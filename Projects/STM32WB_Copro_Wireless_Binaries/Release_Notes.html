@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for STM32WB Copro Wireless Binaries</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../_htmresc/mini-st.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<div class="card fluid">
+<div class="sectione dark">
+<center>
+<h1 id="release-notes-for-stm32wb-copro-wireless-binaries"><small>Release Notes for</small> STM32WB Copro Wireless Binaries</h1>
+<p>Copyright © 2019 STMicroelectronics<br />
+</p>
+<a href="https://www.st.com" class="logo"><img src="../../_htmresc/st_logo.png" alt="ST logo" /></a>
+</center>
+</div>
+</div>
+<h1 id="license">License</h1>
+<p>This software component is licensed by ST under Ultimate Liberty license SLA0044, the “License”;</p>
+<p>You may not use this file except in compliance with the License.</p>
+<p>You may obtain a copy of the License at: <a href="http://www.st.com/SLA0044">SLA0044</a></p>
+<h1 id="purpose">Purpose</h1>
+<p>This release covers the delivery of STM32WB Coprocessor binaries.</p>
+<p>Here is the list of the supported binaries:</p>
+<ul>
+<li>stm32wb5x_BLE_Stack_fw.bin
+<ul>
+<li>Full BLE Stack 5.0 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a></li>
+</ul></li>
+<li>stm32wb5x_BLE_HCILayer_fw.bin
+<ul>
+<li>HCI Layer only mode 5.0 certified : Link Layer, HCI</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
+</ul></li>
+<li>stm32wb5x_Thread_FTD_fw.bin
+<ul>
+<li>Full Thread Device certified v1.1</li>
+<li>To be used for Leader / Router / End Device Thread role (full features excepting Border Router)</li>
+</ul></li>
+<li>stm32wb5x_Thread_MTD_fw.bin
+<ul>
+<li>Minimal Thread Device certified v1.1</li>
+<li>To be used for End Device and Sleepy End Device Thread role</li>
+</ul></li>
+<li>stm32wb5x_BLE_Thread_fw.bin
+<ul>
+<li>Static Concurrent Mode BLE Thread</li>
+<li>Supports Full BLE Stack 5.0 certified and Full Thread Device certified v1.1</li>
+</ul></li>
+<li>stm32wb5x_Mac_802_15_4_fw.bin
+<ul>
+<li>MAC API is based on latest official <a href="http://grouper.ieee.org/groups/802/15/pub/Download.html">IEEE Std 802.15.4-2011</a></li>
+<li>To be used for MAC FFD and RFD devices</li>
+</ul></li>
+<li>stm32wb5x_rfmonitor_phy802_15_4_fw.bin
+<ul>
+<li>Dedicated firmware binary to be used with STM32CubeMonitor-RF application.</li>
+<li>Refer to STM32CubeMonitor-RF User Manual (UM2288) to get application details.</li>
+</ul></li>
+<li>stm32wb5x_FUS_fw.bin
+<ul>
+<li>Firmware Upgrade Services (FUS)</li>
+<li>This binary is the utility to flash the Wireless Coprocessor Binaries.</li>
+</ul></li>
+</ul>
+<p><mark>How to flash the Wireless Coprocessor Binary</mark></p>
+<ul>
+<li><p>STEP 1: Use STM32CubeProgrammer</p>
+<ul>
+<li><p>Version 2.0 or higher.</p></li>
+<li><p>It gives access to Firmware Upgrade Service (FUS) (<a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00513965.pdf">AN5185</a> : ST firmware upgrade services for STM32WB Series.) through Bootloader.</p></li>
+<li><p>It is currently available as Command Line Interface (CLI) mode.</p></li>
+</ul></li>
+<li><p>STEP 2: Access to Bootloader USB Interface (system flash)</p>
+<ul>
+<li>Boot mode selected by Boot0 pin set to VDD
+<ul>
+<li>For P-NUCLEO-WB55.Nucleo :
+<ul>
+<li>Jumper between CN7.5(VDD) and CN7.7(Boot0)</li>
+<li>Power ON via USB_USER and Jumper JP1(USB_MCU)</li>
+</ul></li>
+<li>For P-NUCLEO-WB55.USBDongle :
+<ul>
+<li>Move switch SW2 to Boot0</li>
+<li>Connect P-NUCLEO-WB55.USBDongle</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>STEP 3 : Delete current wireless stack :</p>
+<ul>
+<li><em>STM32_Programmer_CLI.exe -c port=usb1 -fwdelete</em></li>
+</ul></li>
+<li>STEP 4 : Read and upgrade FUS Version
+<ul>
+<li><em>STM32_Programmer_CLI.exe -c port=usb1 -r32 0x20030030 1</em>
+<ul>
+<li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
+<li><em>0x20030030 : 01000100</em> : FUSv1.0.1 =&gt; <strong>Up to date, you can download the new wireless stack using STEP6.</strong></li>
+</ul></li>
+</ul></li>
+<li><p>STEP 5 : Download new FUS :</p>
+<ul>
+<li><em>STM32_Programmer_CLI.exe -c port=usb1 -fwupgrade [FUS_Binary] [Install@] firstinstall=0</em></li>
+</ul>
+<p>Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</p></li>
+<li><p>STEP 6 : Download new wireless stack :</p>
+<ul>
+<li><em>STM32_Programmer_CLI.exe -c port=usb1 -fwupgrade [Wireless_Coprocessor_Binary] [Install@] firstinstall=1</em></li>
+</ul>
+<p>Please check <strong>Wireless Coprocessor Binary Table</strong> for Install@ parameter depending of the binary.</p></li>
+<li><p>STEP 7 : Revert STEP 2 procedure to put back device in normal mode.</p></li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history">Update History</h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" checked aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<p><strong>Introduction of the Firmware Upgrade Services (FUS)</strong>:</p>
+<ul>
+<li>This feature is embedded inside stm32wb5x_FUS_fw.bin.</li>
+<li><strong>This stm32wb5x_FUS_fw.bin v1.0.1 MUST be installed to use Wireless Coprocessor Binaries v1.1.0.</strong></li>
+<li><strong>This stm32wb5x_FUS_fw.bin v1.0.1 CANNOT BE USED with the previous version of Wireless Coprocessor Binary.</strong></li>
+<li><strong>All existing Cortex®-M4 user application are compatible without any update.</strong></li>
+</ul>
+<p>The following table provide the address to use in correspondence with the flash procedure of Wireless Coprocessor Binaries.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Firmware Upgrade Services Binary</th>
+<th>Install address</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td>0x080EC000 (On top of FUS v0.5.3)</td>
+<td><strong>v1.0.1</strong></td>
+<td>04/05/2019</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Introduction of the Customer Key Storage (CKS)</strong>:</p>
+<ul>
+<li>All Wireless Coprocessor Binaries embeds this new feature.</li>
+<li>The FUS allows customer keys to be stored in the dedicated FUS Flash memory area and then to load the stored key to the AES1 in secure mode (AES1 key register accessed only by Cortex®-M0+ and data registers accessible by Cortex®-M4 user application).</li>
+<li>You can refer to <a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00513965.pdf">AN5185</a> : ST firmware upgrade services for STM32WB Series.</li>
+</ul>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE NVM : change behavior when NVM is full
+<ul>
+<li>Inform application before latest record</li>
+<li>Erase and keep latest record when it is full</li>
+</ul></li>
+<li>BLE Link layer : fix issue when pairing fails with SMP_SC_NUMCOMPARISON_FAILED, no response from the slave if the master sends again pairing_req.</li>
+<li>BLE Link layer : fix issue Disconnection with error code 0x3D MIC Failure.</li>
+<li>Thread 802_15_4 radio driver robustness improvement with additional error checks. The application is now notified in case of radio error detected inside the wireless binary.</li>
+<li>Thread TxPower management improvement
+<ul>
+<li>New APIs provided on application side in order to control the Tx power :otPlatRadioGetTransmitPower() and otPlatRadioSetTransmitPower()</li>
+<li>The default Tx power is now set to 0dBm</li>
+</ul></li>
+</ul>
+<p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 5 and STEP 6” of flash procedure.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>Install address</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_BLE_Stack_fw.bin</td>
+<td>0x080CC000</td>
+<td><strong>v1.1.0</strong></td>
+<td>04/05/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_HCILayer_fw.bin</td>
+<td>0x080DC000</td>
+<td><strong>v1.1.0</strong></td>
+<td>04/05/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x0809F000</td>
+<td><strong>v1.1.0</strong></td>
+<td>04/05/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x080B5000</td>
+<td><strong>v1.1.0</strong></td>
+<td>04/05/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Thread_fw.bin</td>
+<td>0x08079000</td>
+<td><strong>v1.1.0</strong></td>
+<td>04/05/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td>0x080E6000</td>
+<td><strong>v1.1.0</strong></td>
+<td>04/05/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_rfmonitor_phy802_15_4_fw.bin</td>
+<td>0x080EC000</td>
+<td><strong>v1.1.0</strong></td>
+<td>04/05/2019</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1"  aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<h3 id="first-release">First release</h3>
+<p>First official release.</p>
+<p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 6” of flash procedure.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Processor Binary</th>
+<th>Install address</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_BLE_Stack_fw.bin</td>
+<td>0x080CB000</td>
+<td>v1.0.0</td>
+<td>02/06/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_HCILayer_fw.bin</td>
+<td>0x080CD000</td>
+<td>v1.0.0</td>
+<td>02/06/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x0809F000</td>
+<td>v1.0.0</td>
+<td>02/06/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x080B5000</td>
+<td>v1.0.0</td>
+<td>02/06/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Thread_fw.bin</td>
+<td>0x08079000</td>
+<td>v1.0.0</td>
+<td>02/06/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td>0x080E5000</td>
+<td>v1.0.0</td>
+<td>02/06/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_rfmonitor_phy802_15_4_fw.bin</td>
+<td>0x080EA000</td>
+<td>v1.0.0</td>
+<td>02/06/2019</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+<p>For complete documentation on STM32WBxx, visit: [<a href="http://www.st.com/stm32wb">www.st.com/stm32wb</a>]</p>
+<em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em>
+</footer>
+</body>
+</html>

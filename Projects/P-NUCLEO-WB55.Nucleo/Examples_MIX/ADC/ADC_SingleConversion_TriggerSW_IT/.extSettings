@@ -1,0 +1,8 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo
+[Others]
+Define=
+HALModule=CORTEX;RCC;FLASH;GPIO;ADC;DMA;TIM;PWR
+[Groups]
+Doc=../readme.txt;
+Drivers/BSP/P-NUCLEO-WB55.Nucleo=../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c;

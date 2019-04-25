@@ -1,0 +1,9 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo
+[Others]
+Define=
+HALModule=TIM
+[Groups]
+Application/User=../Src/main.c;../Src/stm32wbxx_it.c;../Src/stm32wbxx_hal_timebase_tim.c;../Src/app_freertos.c;../Src/stm32wbxx_hal_msp.c;
+Doc=../readme.txt;
+Drivers/BSP/P-NUCLEO-WB55.Nucleo=../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c;

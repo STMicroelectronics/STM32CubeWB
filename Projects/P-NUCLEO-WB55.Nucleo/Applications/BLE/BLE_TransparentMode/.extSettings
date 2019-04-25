@@ -1,0 +1,9 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo
+[Others]
+Define=
+HALModule=IPCC
+[Groups]
+Application/User=../Core/Src/app_entry.c;../Core/Src/main.c;../Core/Src/stm32wbxx_it.c;../Core/Src/stm32wbxx_hal_msp.c;../STM32_WPAN/App/tm.c;
+Drivers/BSP/P-NUCLEO-WB55.Nucleo=../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c;
+Doc=../readme.txt;

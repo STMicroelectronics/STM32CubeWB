@@ -1,0 +1,8 @@
+The STM32WB55xx multiprotocol wireless devices embed a BLE and an 802.15.4 RF subsystem that interfaces with a generic microcontroller subsystem using an Arm® Cortex®-M4 CPU (called CPU1) on which the host application resides.
+The RF subsystem embeds an Arm® Cortex®-M0+ core (CPU2 or Coprocessor) used to run the Bluetooth® Low Energy (BLE) stack and 802.15.4 Low Level layer.
+Several wireless stack binaries are provided within the STM32CubeWB package to be programmed in the RF subsystem prior to the use of any BLE, Thread or Mac 802.15.4 applications.
+
+To program a wireless stack inside stm32wb55xx devices, you need to refer to the following release note:
+- Projects\STM32WB_Copro_Wireless_Binaries\Release_Notes.html
+
+You can refer to the readme.txt of each application to know the required wireless stack binary to be programmed.

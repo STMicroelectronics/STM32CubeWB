@@ -1,0 +1,8 @@
+[ProjectFiles]
+HeaderPath=
+[Others]
+Define=
+HALModule=
+[Groups]
+Application/User=../Src/main.c;../Src/stm32wbxx_it.c;../Src/plaintext.c;../Src/ciphertext.c;../Src/rsa_priv_2048.c;../Src/rsa_pub_2048.c;
+Doc=../readme.txt;../Src/rsa_priv_2048.pem;../Src/rsa_pub_2048.pem;

@@ -1,0 +1,218 @@
+/**
+  ******************************************************************************
+  * @file    jam_detection.c
+  * @author  MCD Application Team
+  * @brief   This file contains the Jam Detection interface shared between M0 and
+  *          M4.
+  ******************************************************************************
+  * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under Ultimate Liberty license
+ * SLA0044, the "License"; You may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at:
+ *                             www.st.com/SLA0044
+ *
+ ******************************************************************************
+ */
+
+
+/* Includes ------------------------------------------------------------------*/
+#include "stm32wbxx_hal.h"
+
+#include "stm32wbxx_core_interface_def.h"
+#include "tl_thread_hci.h"
+
+/* Include definition of compilation flags requested for OpenThread configuration */
+#include OPENTHREAD_CONFIG_FILE
+
+#include "jam_detection.h"
+
+extern otJamDetectionCallback otJamDetectionCallbackCb;
+
+#if OPENTHREAD_ENABLE_JAM_DETECTION
+otError otJamDetectionSetRssiThreshold(otInstance *aInstance, int8_t aRssiThreshold)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_SET_RSSI_THRESHOLD;
+
+    p_ot_req->Size=1;
+    p_ot_req->Data[0] = (uint32_t) aRssiThreshold;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (otError)p_ot_req->Data[0];
+}
+
+int8_t otJamDetectionGetRssiThreshold(otInstance *aInstance)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_GET_RSSI_THRESHOLD;
+
+    p_ot_req->Size=0;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (int8_t)p_ot_req->Data[0];
+}
+
+otError otJamDetectionSetWindow(otInstance *aInstance, uint8_t aWindow)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_SET_WINDOW;
+
+    p_ot_req->Size=1;
+    p_ot_req->Data[0] = (uint32_t) aWindow;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (otError)p_ot_req->Data[0];
+}
+
+uint8_t otJamDetectionGetWindow(otInstance *aInstance)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_GET_WINDOW;
+
+    p_ot_req->Size=0;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (int8_t)p_ot_req->Data[0];
+}
+
+otError otJamDetectionSetBusyPeriod(otInstance *aInstance, uint8_t aBusyPeriod)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_SET_BUSY_PERIOD;
+
+    p_ot_req->Size=1;
+    p_ot_req->Data[0] = (uint32_t) aBusyPeriod;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (otError)p_ot_req->Data[0];
+}
+
+uint8_t otJamDetectionGetBusyPeriod(otInstance *aInstance)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_GET_BUSY_PERIOD;
+
+    p_ot_req->Size=0;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (int8_t)p_ot_req->Data[0];
+}
+
+otError otJamDetectionStart(otInstance *aInstance, otJamDetectionCallback aCallback, void *aContext)
+{
+    Pre_OtCmdProcessing();
+    /* Save Callback to global variable */
+    otJamDetectionCallbackCb = aCallback;
+
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_START;
+
+    p_ot_req->Size=1;
+    p_ot_req->Data[0] = (uint32_t) aContext;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (otError)p_ot_req->Data[0];
+}
+
+otError otJamDetectionStop(otInstance *aInstance)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_STOP;
+
+    p_ot_req->Size=0;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (otError)p_ot_req->Data[0];
+}
+
+bool otJamDetectionIsEnabled(otInstance *aInstance)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_IS_ENABLED;
+
+    p_ot_req->Size=0;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (bool)p_ot_req->Data[0];
+}
+
+bool otJamDetectionGetState(otInstance *aInstance)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_GET_STATE;
+
+    p_ot_req->Size=0;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (bool)p_ot_req->Data[0];
+}
+
+uint64_t otJamDetectionGetHistoryBitmap(otInstance *aInstance)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_JAM_DETECTION_GET_HISTORY_BITMAP;
+
+    p_ot_req->Size=0;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (uint64_t)p_ot_req->Data[0];
+}
+#endif /* OPENTHREAD_ENABLE_JAM_DETECTION */

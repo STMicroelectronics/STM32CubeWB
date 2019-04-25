@@ -1,0 +1,14 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo;..\..\..\..\..\..\Drivers\BSP\Adafruit_Shield;..\..\..\..\..\..\Drivers\BSP\Components;..\..\..\..\..\..\Drivers\BSP\Components\Common
+[Others]
+Define=USE_STM32WBXX_NUCLEO
+HALModule=SPI
+[Groups]
+Drivers/STM32WBxx_HAL_Driver=../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_spi.c;../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_spi_ex.c;
+Drivers/BSP/Adafruit_Shield=../../../../../../Drivers/BSP/Adafruit_Shield/stm32_adafruit_sd.c;../../../../../../Drivers/BSP/Adafruit_Shield/stm32_adafruit_lcd.c;
+Doc=../readme.txt;
+Application/User/USB_Device/Target=../USB_Device/Target/usbd_conf.c;
+Application/User/USB_Device/App=../USB_Device/App/usbd_desc.c;../USB_Device/App/usbd_storage_if.c;../USB_Device/App/usb_device.c;
+Application/User/Core=../Core/Src/main.c;../Core/Src/stm32wbxx_it.c;../Core/Src/stm32wbxx_hal_msp.c;../Core/Src/stm32wbxx_hal_msp.c;
+Drivers/BSP/Components=../../../../../../Drivers/BSP/Components/st7735/st7735.c;
+Drivers/BSP/P-NUCLEO-WB55.Nucleo=../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c;

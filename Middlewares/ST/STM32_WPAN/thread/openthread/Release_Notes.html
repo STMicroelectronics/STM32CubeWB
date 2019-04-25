@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  
+  <title>Release Notes for OpenThread Stack</title><style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="_htmresc/mini-st.css"><!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]--></head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<div class="card fluid">
+<div class="sectione dark">
+<center>
+<h1 id="release-notes-for-openthread-stack"><small>Release Notes for</small> OpenThread Stack</h1>
+<p>Copyright © 2019 STMicroelectronics<br>
+</p>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo.png" alt="ST logo"></a>
+</center>
+</div>
+</div>
+<h1 id="license">License</h1>
+<ul><li>The STM32_WPAN middleware makes the link between the Application and the different stacks (BLE /Thread /Mac 802_15_4).&nbsp;<br>The&nbsp;directory
+named core (Middlewares\ST\STM32_WPAN\thread\openthread\core)
+contains&nbsp;the wrapper used to control the OpenThread stack from the
+Application.<br>This software module is licensed by ST under Ultimate
+Liberty license SLA0044, the “License”; You may not use this file
+except in compliance with the License. You may obtain a copy of the
+License at:&nbsp; <a href="http://www.st.com/SLA0044">SLA0044</a> <br></li><li>The Thread stack running on the STM32WB device is provided by OpenThread.<br>The&nbsp;directory named stack (Middlewares\ST\STM32_WPAN\thread\openthread\stack) contains all the APIs provided by OpenThread.<br>This software module is licensed by ST under BSD 3-Clause
+license, the “License”; You may not use this component except in
+compliance with the License. You may obtain a copy of the License at:<a href="https://opensource.org/licenses/BSD-3-Clause"> https://opensource.org/licenses/BSD-3-Clause</a></li></ul><h1 id="purpose">Thread overview</h1>
+<p>Thread is an IPV6-based,royalty-free networking protocol for
+Internet of Things (Iot). This protocol is mainly used on “smart” home
+automation devices to communicate on a local wireless mesh network.
+Thread uses 6LoWPAN, which in turn uses the IEE 802.15.4 wireless
+protocol.</p>
+<p>The Thread stack contains several layers as shown on the figure below:</p>
+<h1 id="purpose"><br></h1><a href="https://www.threadgroup.org/" class="logo"><img src="_htmresc/ThreadLayers.png" alt="ThreadLayers logo"></a>
+
+<h1 id="purpose">OpenThread Stack</h1>
+<ul>
+<li><p>The Thread stack running on the STM32WB device is provided by OpenThread and available at : <a href="https://github.com/openthread/openthread">https://github.com/openthread/openthread</a></p></li>
+<li><p>OpenThread released by Nest is an open-source implementation of
+the Thread networking protocol. To learn more about this stack, refer
+yourself to the following link: <a href="https://openthread.io">https://openthread.io</a></p></li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history">Update History</h1>
+<div class="collapse">
+<input id="collapse-section4" checked="checked" aria-hidden="true" type="checkbox"> <label for="collapse-section4" aria-hidden="true">V1.0.0 / 31-January-2019</label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<h3 id="first-release">First release</h3>
+<p>OpenThread version based on commit :</p>
+<ul>
+<li><p>SHA1 222acd1362af9f5b58bae9d246fe5492c38e7b14.</p></li>
+<li><p>To support MTD (Minimal Thread Device), on top of above version,
+the following OpenThread commit has been applied: “facd343: [meshcop]
+support operational dataset operations for MTD”. (This commit is
+mandatory for the support of MTD)</p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+For complete documentation on STM32WBxx, visit: [<a href="http://www.st.com/stm32wb">www.st.com/stm32wb</a>]
+</footer>
+</body></html>
