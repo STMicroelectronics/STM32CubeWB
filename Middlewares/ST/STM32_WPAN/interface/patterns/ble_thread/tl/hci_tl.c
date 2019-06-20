@@ -44,7 +44,6 @@
  */
 PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static volatile uint8_t hci_timer_id;
 PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static tListNode HciAsynchEventQueue;
-PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static volatile HCI_TL_CmdStatus_t HCICmdStatus;
 PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static TL_CmdPacket_t *pCmdBuffer;
 PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") HCI_TL_UserEventFlowStatus_t UserEventFlow;
 /**
@@ -56,8 +55,7 @@ static tListNode HciCmdEventQueue;
 static void (* StatusNotCallBackFunction) (HCI_TL_CmdStatus_t status);
 
 /* Private function prototypes -----------------------------------------------*/
-static void Cmd_SetStatus(HCI_TL_CmdStatus_t hcicmdstatus);
-static HCI_TL_CmdStatus_t CmdGetStatus( void );
+static void NotifyCmdStatus(HCI_TL_CmdStatus_t hcicmdstatus);
 static void SendCmd(uint16_t opcode, uint8_t plen, void *param);
 static void TlEvtReceived(TL_EvtPacket_t *hcievt);
 static void TlInit( TL_CmdPacket_t * p_cmdbuffer );
@@ -134,12 +132,14 @@ int hci_send_req(struct hci_request *p_cmd, BOOL async)
   TL_CsEvt_t    *pcommand_status_event;
   TL_EvtPacket_t *pevtpacket;
   uint8_t hci_cmd_complete_return_parameters_length;
+  HCI_TL_CmdStatus_t local_cmd_status;
 
-  Cmd_SetStatus(HCI_TL_CmdBusy);
+  NotifyCmdStatus(HCI_TL_CmdBusy);
+  local_cmd_status = HCI_TL_CmdBusy;
   opcode = ((p_cmd->ocf) & 0x03ff) | ((p_cmd->ogf) << 10);
   SendCmd(opcode, p_cmd->clen, p_cmd->cparam);
 
-  while(CmdGetStatus() == HCI_TL_CmdBusy)
+  while(local_cmd_status == HCI_TL_CmdBusy)
   {
     hci_cmd_resp_wait(HCI_TL_DEFAULT_TIMEOUT);
 
@@ -160,7 +160,7 @@ int hci_send_req(struct hci_request *p_cmd, BOOL async)
 
         if(pcommand_status_event->numcmd != 0)
         {
-          Cmd_SetStatus(HCI_TL_CmdAvailable);
+          local_cmd_status = HCI_TL_CmdAvailable;
         }
       }
       else
@@ -176,11 +176,13 @@ int hci_send_req(struct hci_request *p_cmd, BOOL async)
 
         if(pcommand_complete_event->numcmd != 0)
         {
-          Cmd_SetStatus(HCI_TL_CmdAvailable);
+          local_cmd_status = HCI_TL_CmdAvailable;
         }
       }
     }
   }
+
+  NotifyCmdStatus(HCI_TL_CmdAvailable);
 
   return 0;
 }
@@ -199,8 +201,6 @@ static void TlInit( TL_CmdPacket_t * p_cmdbuffer )
 
   LST_init_head (&HciAsynchEventQueue);
 
-  Cmd_SetStatus(HCI_TL_CmdAvailable);
-
   UserEventFlow = HCI_TL_UserEventFlow_Enable;
 
   /* Initialize low level driver */
@@ -215,11 +215,6 @@ static void TlInit( TL_CmdPacket_t * p_cmdbuffer )
   return;
 }
 
-static HCI_TL_CmdStatus_t CmdGetStatus(void)
-{
-  return HCICmdStatus;
-}
-
 static void SendCmd(uint16_t opcode, uint8_t plen, void *param)
 {
   pCmdBuffer->cmdserial.cmd.cmdcode = opcode;
@@ -231,7 +226,7 @@ static void SendCmd(uint16_t opcode, uint8_t plen, void *param)
   return;
 }
 
-static void Cmd_SetStatus(HCI_TL_CmdStatus_t hcicmdstatus)
+static void NotifyCmdStatus(HCI_TL_CmdStatus_t hcicmdstatus)
 {
   if(hcicmdstatus == HCI_TL_CmdBusy)
   {
@@ -239,11 +234,9 @@ static void Cmd_SetStatus(HCI_TL_CmdStatus_t hcicmdstatus)
     {
       StatusNotCallBackFunction(HCI_TL_CmdBusy);
     }
-    HCICmdStatus = HCI_TL_CmdBusy;
   }
   else
   {
-    HCICmdStatus = HCI_TL_CmdAvailable;
     if(StatusNotCallBackFunction != 0)
     {
       StatusNotCallBackFunction(HCI_TL_CmdAvailable);

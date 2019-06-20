@@ -5,7 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Release Notes for STM32 Middleware WPAN</title>
-  <style type="text/css">
+  <style>
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
       span.underline{text-decoration: underline;}
@@ -51,7 +51,7 @@
 <input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.0.0 / 31-January-2019</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
-<h3 id="first-release">First release</h3>
+<p>First release</p>
 </div>
 </div>
 <div class="collapse">
@@ -76,6 +76,52 @@
 <li>New APIs provided to control the Tx power: otPlatRadioGetTransmitPower() and otPlatRadioSetTransmitPower()</li>
 <li>The default Tx power is now set to 0dBm<br />
 </li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.1.1 / 10-May-2019</label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<p>BLE:</p>
+<ul>
+<li>Fix race condition in transport layer when an operating system is used.</li>
+<li>Mesh Library V1.09.000:
+<ul>
+<li>Fix of the BD Address issue.</li>
+<li>Light HSL Model implementation.</li>
+<li>Sensor Server Model Example.</li>
+<li>CID, PID Configuration.</li>
+</ul></li>
+<li>STM32 Cryptographic Library V3.1.1/ 20 April 2018:
+<ul>
+<li>Two new STM32 Cryptographic Libraries provided for IAR Embedded Workbench for ARM (EWARM) Toolchain v8.22:
+<ul>
+<li><strong>STM32CryptographicV3.1.1_CM4_IARv8.a</strong>: First official release of optimized STM32 Cryptographic Library for <strong><em>Cortex M4</em></strong> with <strong><em>High size</em></strong> optimization.</li>
+<li><strong>STM32CryptographicV3.1.1_CM4_IARv8_otnsc.a</strong>: First official release of optimized STM32 Cryptographic Library for <strong><em>Cortex M4</em></strong> with <strong><em>High speed</em></strong> optimization and the option <strong><em>No Size constraints</em></strong> is enabled.</li>
+</ul></li>
+</ul></li>
+<li>STM32 Cryptographic Library V3.0.0/ 05 June 2015:
+<ul>
+<li>Two STM32 Cryptographic Libraries provided for each Development Toolchain:
+<ul>
+<li>IAR Embedded Workbench for ARM (EWARM) toolchain v7.40:
+<ul>
+<li><strong>STM32CryptographicV3.0.0_CM4_IAR.a</strong>: New official release of optimized STM32 Cryptographic Library for <strong><em>Cortex M4</em></strong> with <strong><em>High size</em></strong> optimization.</li>
+<li><strong>STM32CryptographicV3.0.0_CM4_IAR_otnsc.a</strong>: First official release of optimized STM32 Cryptographic Library for <strong><em>Cortex M4</em></strong> with <strong><em>High speed</em></strong> optimization and the option <strong><em>No Size constraints</em></strong> is enabled.</li>
+</ul></li>
+<li>RealView Microcontroller Development Kit (MDK-ARM) toolchain v5.14:
+<ul>
+<li><strong>STM32CryptographicV3.0.0_CM4_KEIL_slsm1elfspf.lib</strong>: New official release of optimized STM32 Cryptographic Library for <strong><em>Cortex M4</em></strong> with <strong><em>High size</em></strong> optimization.</li>
+<li><strong>STM32CryptographicV3.0.0_CM4_KEIL_otslsm1elfspf.lib</strong>: First official release of optimized STM32 Cryptographic Library for <strong><em>Cortex M4</em></strong> with <strong><em>High speed</em></strong> optimization and the option <strong><em>Split Load and Store Multiple</em></strong> and <strong><em>One elf Section per Function</em></strong> are enabled.</li>
+</ul></li>
+<li>Atollic TrueSTUDIO STM32 (TrueSTUDIO) toolchain v5.3.0:
+<ul>
+<li><strong>STM32CryptographicV3.0.0_CM4_GCC.a</strong>: First official release of optimized STM32 Cryptographic Library for <strong><em>Cortex M4</em></strong> with <strong><em>High size</em></strong> optimization.</li>
+<li><strong>STM32CryptographicV3.0.0_CM4_GCC_ot.a</strong>: First official release of optimized STM32 Cryptographic Library for <strong><em>Cortex M4</em></strong> with <strong><em>High speed</em></strong> optimization.</li>
+</ul></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>

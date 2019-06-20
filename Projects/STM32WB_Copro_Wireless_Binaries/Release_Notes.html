@@ -111,7 +111,7 @@
 <li><em>STM32_Programmer_CLI.exe -c port=usb1 -r32 0x20030030 1</em>
 <ul>
 <li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
-<li><em>0x20030030 : 01000100</em> : FUSv1.0.1 =&gt; <strong>Up to date, you can download the new wireless stack using STEP6.</strong></li>
+<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Up to date, you can download the new wireless stack using STEP6.</strong></li>
 </ul></li>
 </ul></li>
 <li><p>STEP 5 : Download new FUS :</p>
@@ -130,9 +130,115 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section2" checked aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
+<input type="checkbox" id="collapse-section3" checked aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Firmware Upgrade Services (FUS)</strong>:</p>
+<ul>
+<li>Add support for STM32WB5xxE(512K) and STM32WB5xxC(256K) devices.</li>
+<li>On STM32WB5xxC and STM32WB5xxE, it is mandatory to install FUS V1.0.2 before any other operation. Otherwise, the device might be locked in an unrecoverable state.</li>
+</ul>
+<p>The following table provide the address to use in correspondence with the flash procedure of Wireless Coprocessor Binaries and the device to be used.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Firmware Upgrade Services Binary</th>
+<th>Device</th>
+<th>Install address</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td><strong>STM32WB5xxC</strong>(256K)</td>
+<td>0x080<strong>3E</strong>000</td>
+<td><strong>v1.0.2</strong></td>
+<td>04/10/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td><strong>STM32WB5xxE</strong>(512K)</td>
+<td>0x080<strong>7E</strong>000</td>
+<td><strong>v1.0.2</strong></td>
+<td>04/10/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td><strong>STM32WB5xxG</strong>(1M)</td>
+<td>0x080<strong>EC</strong>000</td>
+<td><strong>v1.0.2</strong></td>
+<td>04/10/2019</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE System : fix stopMode2 race condition</li>
+<li>BLE Security : fix pairing issue with numeric comparison</li>
+</ul>
+<p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 5 and STEP 6” of flash procedure.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>Install address</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>stm32wb5x_BLE_Stack_fw.bin</strong></td>
+<td>0x080CC000</td>
+<td><strong>v1.1.1</strong></td>
+<td>05/10/2019</td>
+</tr>
+<tr class="even">
+<td><strong>stm32wb5x_BLE_HCILayer_fw.bin</strong></td>
+<td>0x080DC000</td>
+<td><strong>v1.1.1</strong></td>
+<td>05/10/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x0809F000</td>
+<td>v1.1.0</td>
+<td>04/05/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x080B5000</td>
+<td>v1.1.0</td>
+<td>04/05/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Thread_fw.bin</td>
+<td>0x08079000</td>
+<td>v1.1.0</td>
+<td>04/05/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td>0x080E6000</td>
+<td>v1.1.0</td>
+<td>04/05/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_rfmonitor_phy802_15_4_fw.bin</td>
+<td>0x080EC000</td>
+<td>v1.1.0</td>
+<td>04/05/2019</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Introduction of the Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>This feature is embedded inside stm32wb5x_FUS_fw.bin.</li>
@@ -241,7 +347,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1"  aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 <p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 6” of flash procedure.</p>

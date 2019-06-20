@@ -156,6 +156,55 @@ extern "C" {
  *********************************************************************************
  */
 
+/*  CPU1                                             CPU2
+ *   |             (SYSTEM)                            |
+ *   |----HW_IPCC_SYSTEM_CMD_RSP_CHANNEL-------------->|
+ *   |                                                 |
+ *   |<---HW_IPCC_SYSTEM_EVENT_CHANNEL-----------------|
+ *   |                                                 |
+ *   |            (ZIGBEE)                             |
+ *   |----HW_IPCC_ZIGBEE_CMD_APPLI_CHANNEL------------>|
+ *   |                                                 |
+ *   |----HW_IPCC_ZIGBEE_CMD_CLI_CHANNEL-------------->|
+ *   |                                                 |
+ *   |<---HW_IPCC_ZIGBEE_APPLI_NOTIF_ACK_CHANNEL-------|
+ *   |                                                 |
+ *   |<---HW_IPCC_ZIGBEE_CLI_NOTIF_ACK_CHANNEL---------|
+ *   |                                                 |
+ *   |             (THREAD)                            |
+ *   |----HW_IPCC_THREAD_OT_CMD_RSP_CHANNEL----------->|
+ *   |                                                 |
+ *   |----HW_IPCC_THREAD_CLI_CMD_CHANNEL-------------->|
+ *   |                                                 |
+ *   |<---HW_IPCC_THREAD_NOTIFICATION_ACK_CHANNEL------|
+ *   |                                                 |
+ *   |<---HW_IPCC_THREAD_CLI_NOTIFICATION_ACK_CHANNEL--|
+ *   |                                                 |
+ *   |             (BLE)                               |
+ *   |----HW_IPCC_BLE_CMD_CHANNEL--------------------->|
+ *   |                                                 |
+ *   |----HW_IPCC_HCI_ACL_DATA_CHANNEL---------------->|
+ *   |                                                 |
+ *   |<---HW_IPCC_BLE_EVENT_CHANNEL--------------------|
+ *   |                                                 |
+ *   |             (MAC)                               |
+ *   |----HW_IPCC_MAC_802_15_4_CMD_RSP_CHANNEL-------->|
+ *   |                                                 |
+ *   |<---HW_IPCC_MAC_802_15_4_NOTIFICATION_ACK_CHANNEL|
+ *   |                                                 |
+ *   |             (BUFFER)                            |
+ *   |----HW_IPCC_MM_RELEASE_BUFFER_CHANNE------------>|
+ *   |                                                 |
+ *   |             (TRACE)                             |
+ *   |<----HW_IPCC_TRACES_CHANNEL----------------------|
+ *   |                                                 |
+ *
+ *
+ *
+ */
+
+
+
 /** CPU1 */
 #define HW_IPCC_BLE_CMD_CHANNEL                         LL_IPCC_CHANNEL_1
 #define HW_IPCC_SYSTEM_CMD_RSP_CHANNEL                  LL_IPCC_CHANNEL_2

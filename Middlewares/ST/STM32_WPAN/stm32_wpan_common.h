@@ -134,6 +134,7 @@ extern "C" {
 /* -------------------------------- *
  *  Section attribute               *
  * -------------------------------- */
+#undef PLACE_IN_SECTION
 #define PLACE_IN_SECTION( __x__ )  __attribute__((section (__x__)))
 
 /* ----------------------------------- *

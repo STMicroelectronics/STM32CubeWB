@@ -107,7 +107,7 @@
 /*
  * BLE_PER_LINK_SIZE_BYTES: additional memory size used per link
  */
-#define BLE_PER_LINK_SIZE_BYTES(llo)      ((llo) ? 200 : 368)
+#define BLE_PER_LINK_SIZE_BYTES(llo)      ((llo) ? 208 : 376)
 
 /*
  * BLE_DLEN_EXT_SIZE: amount of memory needed to support Data Length

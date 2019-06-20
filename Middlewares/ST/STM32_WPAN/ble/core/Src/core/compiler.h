@@ -37,21 +37,6 @@
 #define PACKED(decl)                   __packed decl
 
 /**
-  * @brief  REQUIRED
-  *         Use the REQUIRED macro for variables that must be always included.
-  *         Usage:  REQUIRED(static uint8_t my_array[16])
-  *                 REQUIRED(static int my_int)
-  */
-#define REQUIRED(decl)                 __root decl
-
-/**
-  * @brief  NORETURN_FUNCTION
-  *         Use the NORETURN_FUNCTION macro to declare a no return function.
-  *         Usage:  NORETURN_FUNCTION(void my_noretrun_function(void))
-  */
-#define NORETURN_FUNCTION(function)                 __noreturn function
-
-/**
   * @brief  SECTION
   *         Use the SECTION macro to assign data or code in a specific section.
   *         Usage:  SECTION(".my_section")
@@ -99,16 +84,6 @@
 #define VARIABLE_SIZE 0
     
 /**
-  * @brief  OPTIMIZE_0
-  */
-#define OPTIMIZE_0(FUNC) _Pragma ("optimize=none") FUNC
-
-/**
-  * @brief  OPTIMIZE_SIZE
-  */
-#define OPTIMIZE_SIZE(FUNC) _Pragma ("optimize=size") FUNC
-
-/**
   * @brief  This is the section dedicated to Atollic toolchain
   */
 #else
@@ -121,14 +96,6 @@
   *                 PACKED(union) myStruct_s
   */
 #define PACKED(decl)                    decl __attribute__((packed))
-
-/**
-  * @brief  REQUIRED
-  *         Use the REQUIRED macro for variables that must be always included.
-  *         Usage:  REQUIRED(static uint8_t my_array[16])
-  *                 REQUIRED(static int my_int)
-  */
-#define REQUIRED(var)                   var __attribute__((used))
 
 /**
   * @brief  SECTION
@@ -152,13 +119,6 @@
   *         Usage:  WEAK_FUNCTION(int my_weak_function(void))
   */
 #define WEAK_FUNCTION(function)         __attribute__((weak)) function 
-
-/**
-  * @brief  NORETURN_FUNCTION
-  *         Use the NORETURN_FUNCTION macro to declare a no return function.
-  *         Usage:  NORETURN_FUNCTION(void my_noretrun_function(void))
-  */
-#define NORETURN_FUNCTION(function)     __attribute__((noreturn)) function 
 
 /**
   * @brief  NO_INIT
@@ -185,16 +145,6 @@
 #define VARIABLE_SIZE 0
 
 /**
-  * @brief  OPTIMIZE_0
-  */
-#define OPTIMIZE_0(FUNC)  __attribute__((optimize("O0"))) FUNC
-
-/**
-  * @brief  OPTIMIZE_SIZE
-  */
-#define OPTIMIZE_SIZE(FUNC) __attribute__((optimize("Os"))) FUNC
-
-/**
   * @brief  This is the section dedicated to Keil toolchain
   */
 #else
@@ -207,14 +157,6 @@
   *                 PACKED(union) myStruct_s
   */
 #define PACKED(decl)                        decl __attribute__((packed))
-
-/**
-  * @brief  REQUIRED
-  *         Use the REQUIRED macro for variables that must be always included.
-  *         Usage:  REQUIRED(static uint8_t my_array[16])
-  *                 REQUIRED(static int my_int)
-  */
-#define REQUIRED(decl)                      decl __attribute__((used))
 
 /**
   * @brief  SECTION
@@ -240,13 +182,6 @@
 #define WEAK_FUNCTION(function)             __weak function
 
 /**
-  * @brief  NORETURN_FUNCTION
-  *         Use the NORETURN_FUNCTION macro to declare a no return function.
-  *         Usage:  NORETURN_FUNCTION(void my_noretrun_function(void))
-  */
-#define NORETURN_FUNCTION(function)     __attribute__((noreturn)) function 
-
-/**
   * @brief  NO_INIT
   *         Use the NO_INIT macro to declare a not initialized variable.
   *         Usage:  NO_INIT(int my_no_init_var)
@@ -270,16 +205,6 @@
 extern unsigned int Image$$ARM_LIB_STACKHEAP$$ZI$$Limit;
 #define _INITIAL_SP                         (void(*)(void))&Image$$ARM_LIB_STACKHEAP$$ZI$$Limit
 #define VARIABLE_SIZE 1
-
-/**
-  * @brief  OPTIMIZE_0
-  */
-#define OPTIMIZE_0(FUNC)  _Pragma("O0") FUNC
-
-/**
-  * @brief  OPTIMIZE_SIZE
-  */
-#define OPTIMIZE_SIZE(FUNC) _Pragma("Ospace") FUNC
 
 #else
 

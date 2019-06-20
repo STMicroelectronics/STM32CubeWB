@@ -40,6 +40,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_SysTable_t TL_SysTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_MemManagerTable_t TL_MemManagerTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_TracesTable_t TL_TracesTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_Mac_802_15_4_t TL_Mac_802_15_4_Table;
+PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_ZigbeeTable_t TL_Zigbee_Table;
 
 /**< tables */
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static tListNode  FreeBufQueue;
@@ -82,7 +83,7 @@ void TL_Init( void )
   TL_RefTable.p_mem_manager_table = &TL_MemManagerTable;
   TL_RefTable.p_traces_table = &TL_TracesTable;
   TL_RefTable.p_mac_802_15_4_table = &TL_Mac_802_15_4_Table;
-
+  TL_RefTable.p_zigbee_table = &TL_Zigbee_Table;
   HW_IPCC_Init();
 
   return;
@@ -348,13 +349,13 @@ __weak void TL_MAC_802_15_4_NotReceived( TL_EvtPacket_t * Notbuffer ){};
 void TL_ZIGBEE_Init( TL_ZIGBEE_Config_t *p_Config )
 {
 
-    MB_ThreadTable_t  * p_zigbee_table;
+    MB_ZigbeeTable_t  * p_zigbee_table;
 
-    p_zigbee_table = TL_RefTable.p_thread_table;
+    p_zigbee_table = TL_RefTable.p_zigbee_table;
 
-    p_zigbee_table->clicmdrsp_buffer = p_Config->p_ZigbeeCliRspBuffer;
-    p_zigbee_table->otcmdrsp_buffer = p_Config->p_ZigbeeOtCmdRspBuffer;
-    p_zigbee_table->notack_buffer = p_Config->p_ZigbeeNotAckBuffer;
+    p_zigbee_table->cliCmdM4toM0_buffer = p_Config->p_ZigbeeCliRspBuffer;
+    p_zigbee_table->appliCmdM4toM0_buffer = p_Config->p_ZigbeeOtCmdRspBuffer;
+    p_zigbee_table->notifM0toM4_buffer = p_Config->p_ZigbeeNotAckBuffer;
 
     HW_IPCC_ZIGBEE_Init();
 
@@ -363,7 +364,7 @@ void TL_ZIGBEE_Init( TL_ZIGBEE_Config_t *p_Config )
 
 void TL_ZIGBEE_SendAppliCmdToM0( void )
 {
-  ((TL_CmdPacket_t *)(TL_RefTable.p_thread_table->otcmdrsp_buffer))->cmdserial.type = TL_OTCMD_PKT_TYPE;
+  ((TL_CmdPacket_t *)(TL_RefTable.p_zigbee_table->appliCmdM4toM0_buffer))->cmdserial.type = TL_OTCMD_PKT_TYPE;
 
   HW_IPCC_ZIGBEE_SendAppliCmd();
 
@@ -372,7 +373,7 @@ void TL_ZIGBEE_SendAppliCmdToM0( void )
 
 void TL_ZIGBEE_SendCliCmdToM0( void )
 {
-  ((TL_CmdPacket_t *)(TL_RefTable.p_thread_table->clicmdrsp_buffer))->cmdserial.type = TL_CLICMD_PKT_TYPE;
+  ((TL_CmdPacket_t *)(TL_RefTable.p_zigbee_table->cliCmdM4toM0_buffer))->cmdserial.type = TL_CLICMD_PKT_TYPE;
 
   HW_IPCC_ZIGBEE_SendCliCmd();
 
@@ -381,7 +382,7 @@ void TL_ZIGBEE_SendCliCmdToM0( void )
 
 void TL_ZIGBEE_SendAckAfterAppliNotifFromM0 ( void )
 {
-  ((TL_CmdPacket_t *)(TL_RefTable.p_thread_table->notack_buffer))->cmdserial.type = TL_OTACK_PKT_TYPE;
+  ((TL_CmdPacket_t *)(TL_RefTable.p_zigbee_table->notifM0toM4_buffer))->cmdserial.type = TL_OTACK_PKT_TYPE;
 
   HW_IPCC_ZIGBEE_SendAppliCmdAck();
 
@@ -390,7 +391,7 @@ void TL_ZIGBEE_SendAckAfterAppliNotifFromM0 ( void )
 
 void TL_ZIGBEE_SendAckAfterCliNotifFromM0 ( void )
 {
-  ((TL_CmdPacket_t *)(TL_RefTable.p_thread_table->notack_buffer))->cmdserial.type = TL_OTACK_PKT_TYPE;
+  ((TL_CmdPacket_t *)(TL_RefTable.p_zigbee_table->notifM0toM4_buffer))->cmdserial.type = TL_OTACK_PKT_TYPE;
 
   HW_IPCC_ZIGBEE_SendCliCmdAck();
 
@@ -399,21 +400,21 @@ void TL_ZIGBEE_SendAckAfterCliNotifFromM0 ( void )
 
 void HW_IPCC_ZIGBEE_AppliCmdNotification(void)
 {
-  TL_ZIGBEE_CmdEvtReceived( (TL_EvtPacket_t*)(TL_RefTable.p_thread_table->otcmdrsp_buffer) );
+  TL_ZIGBEE_CmdEvtReceived( (TL_EvtPacket_t*)(TL_RefTable.p_zigbee_table->appliCmdM4toM0_buffer) );
 
   return;
 }
 
 void HW_IPCC_ZIGBEE_AppliAsyncEvtNotification( void )
 {
-  TL_ZIGBEE_NotReceived( (TL_EvtPacket_t*)(TL_RefTable.p_thread_table->notack_buffer) );
+  TL_ZIGBEE_NotReceived( (TL_EvtPacket_t*)(TL_RefTable.p_zigbee_table->notifM0toM4_buffer) );
 
   return;
 }
 
 void HW_IPCC_ZIGBEE_CliEvtNotification( void )
 {
-  TL_ZIGBEE_CliNotReceived( (TL_EvtPacket_t*)(TL_RefTable.p_thread_table->clicmdrsp_buffer) );
+  TL_ZIGBEE_CliNotReceived( (TL_EvtPacket_t*)(TL_RefTable.p_zigbee_table->cliCmdM4toM0_buffer) );
 
   return;
 }
