@@ -64,7 +64,7 @@ How to use the Heart Rate profile as specified by the BLE SIG.
   - BLE/BLE_HeartRate_ota/STM32_WPAN/App/dis_app.c      	Device Information Service application
   - BLE/BLE_HeartRate_ota/STM32_WPAN/App/hrs_app.c      	Heart Rate Service application
   - BLE/BLE_HeartRate_ota/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_HeartRate_ota/Core/Src/hw_lpm.c      			Low Power Manager Driver
+  - BLE/BLE_HeartRate_ota/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
   - BLE/BLE_HeartRate_ota/Core/Src/hw_timerserver.c 		Timer Server based on RTC
   - BLE/BLE_HeartRate_ota/Core/Src/hw_uart.c 				UART Driver
 
@@ -117,6 +117,7 @@ The Heart Rate is displayed each second on the android device.
 
 For more details refer to the Application Note: 
   AN5289 - Building a Wireless application 
+  UM2551 - STM32CubeWB Nucleo demonstration firmware
  
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

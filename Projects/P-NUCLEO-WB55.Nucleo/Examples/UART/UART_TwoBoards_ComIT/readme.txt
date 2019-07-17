@@ -116,7 +116,7 @@ Connectivity, UART, Baud rate, RS-232, Full-duplex, DMA, Parity, Stop bit, Trans
 
 @par Hardware and Software environment 
 
-  - This example runs on STM32WB55RGVx devices.    
+  - This example runs on STM32WB55xx devices.    
   - This example has been tested with two P-NUCLEO-WB55 boards embedding
     a STM32WB55RGVx device and can be easily tailored to any other supported device 
     and development board.

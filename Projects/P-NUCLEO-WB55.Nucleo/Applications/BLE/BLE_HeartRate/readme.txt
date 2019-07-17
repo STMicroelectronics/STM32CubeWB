@@ -54,7 +54,7 @@ How to use the Heart Rate profile as specified by the BLE SIG.
   - BLE/BLE_HeartRate/STM32_WPAN/App/dis_app.c      	Device Information Service application
   - BLE/BLE_HeartRate/STM32_WPAN/App/hrs_app.c      	Heart Rate Service application
   - BLE/BLE_HeartRate/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_HeartRate/Core/Src/hw_lpm.c      			Low Power Manager Driver
+  - BLE/BLE_HeartRate/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
   - BLE/BLE_HeartRate/Core/Src/hw_timerserver.c 		Timer Server based on RTC
   - BLE/BLE_HeartRate/Core/Src/hw_uart.c 				UART Driver
 
@@ -66,6 +66,9 @@ How to use the Heart Rate profile as specified by the BLE SIG.
   - This example has been tested with an STMicroelectronics STM32WB55VG-Nucleo
     board and can be easily tailored to any other supported device 
     and development board.
+	
+  - This example is by default configured to support low power mode ( No traces - No debugger )
+    This can be modified in app_conf.h
 
 @par How to use it ? 
 
@@ -94,7 +97,9 @@ In order to make the program work, you must do the following:
  - Then, click on the App icon, ST BLE Sensor (android device)
  - connect to a device
  - select the HRSTM in the device list
-
+ - pairing is supported ( SW1 clears the security database, SW2 requests the slave req pairing )
+ - This example supports switch to 2Mbits PHY ( SW3 is used to enable the feature )
+ 
 The Heart Rate is displayed each second on the android device.
 
 For more details refer to the Application Note: 

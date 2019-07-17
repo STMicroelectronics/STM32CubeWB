@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    serial_if.c
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Serial Interface file 
 ******************************************************************************
 * @attention
@@ -43,60 +43,74 @@
 #include <stdio.h>
 #include <errno.h>
 #include "hal_common.h"
+#include "mesh_cfg.h"
 #include "serial_if.h"
+#if ENABLE_SERIAL_CONTROL
 #include "serial_ctrl.h"
+#endif
+#if ENABLE_UT
+#include "serial_ut.h"
+#endif
+
 /** @addtogroup BLE_Mesh
 *  @{
 */
 
-/** @addtogroup Middlewares_Serial_Interface
+/** @addtogroup Application
 *  @{
 */
 
 /* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
+#define RECEIVE_STRING_SIZE     48
 
+/* Private macro -------------------------------------------------------------*/
 typedef enum 
 {
     STATE_IDLE,
     STATE_INPUT_ENTERED,
 }tSerialState;
-tSerialState SerialCurrentState = STATE_IDLE;
 
 /* Private variables ---------------------------------------------------------*/
-static char Rcvd_String[48];
+static char Rcvd_String[RECEIVE_STRING_SIZE];
+tSerialState SerialCurrentState = STATE_IDLE;
 
 /* Private function prototypes -----------------------------------------------*/
 static int Serial_GetString(MOBLEUINT8*, MOBLEUINT8);
+#if (!ENABLE_UT)
+__weak void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
+#endif 
+#if (!ENABLE_SERIAL_CONTROL)
+__weak void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
+#endif
 
 /* Private functions ---------------------------------------------------------*/
-
 /**
-* @brief  Callback function to print the data on serial terminal
-* @param  message: Pointer to the string to be printed
-* @retval tUpperTesterTestSubState: subState of running test case
-*/
-void Serial_PrintStringCb(const char *message)
+* @brief  This funcrion is used to parse the string given by the user(If 
+*         implemented in application, 
+*         linker would replace weak linking in library )
+* @param  rcvdStringBuff: buffer to store input string 
+* @param  rcvdStringSize: length of the input string 
+* @retval void
+*/ 
+#if (!ENABLE_SERIAL_CONTROL)
+__weak void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
-    printf("%s\n\r", (char*)message);
 }
-
-
+#endif
 /**
-* @brief  Processes Upper Tester control commands (If implemented in application, 
+* @brief  Upper Tester control commands (If implemented in application, 
 *         linker would replace weak linking in library )
 * @param  rcvdStringBuff: Pointer to received string   
-* @param  rcvdStringSize: Size of the received string 
 * @retval void
 */
-__weak void Upper_Tester_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
+#if (!ENABLE_UT)
+__weak void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
 }
-
-
+#endif 
 /**
-* @brief  Processes data coming on serial interface
-* @param  void   
+* @brief  Processes data coming from serial port   
+* @param  void  
 * @retval void
 */
 void Serial_InterfaceProcess(void)
@@ -120,22 +134,21 @@ void Serial_InterfaceProcess(void)
         }
         else if(!strncmp(Rcvd_String, "test", 4))
         {
-            Upper_Tester_Process(Rcvd_String, stringSize);  
+            SerialUt_Process(Rcvd_String, stringSize);  
         }
         else
         {
-            printf("Not Entered valid test parameters");  
+            TRACE_M(TF_SERIAL_CTRL,"Not Entered valid test parameters\r\n");  
             SerialCurrentState = STATE_IDLE;
         }      
     }
 }
 
-
 /**
 * @brief  Gets the input from user from Serial port
-* @param  text: Pointer of String to take input 
-* @param  size: Expected size of input string
-* @retval int: Size of receive string
+* @param  text: String to take input 
+* @param  size: Size of string
+* @retval int: Running Status of the test case
 */
 static int Serial_GetString(MOBLEUINT8* text, MOBLEUINT8 size)
 {
@@ -151,16 +164,18 @@ static int Serial_GetString(MOBLEUINT8* text, MOBLEUINT8 size)
     /* Check for error in get function */
     if (ch == EOF)
     {                       
+#ifndef __IAR_SYSTEMS_ICC__
         clearerr(stdin);
+#endif
     }
     /* check for backspace press */
     else if (ch == 0x7F)
     {
         if (index) --index;
-        printf("\b");
+        TRACE_M(TF_SERIAL_CTRL,"\b");
     }
     /* Check for the enter key*/
-    else if (ch == 0x0D)
+    else if ((ch == 0x0D) || (ch == 0xFFFFFF0D))
     {
         /* check for first time enter to display help message */
         if (!index)
@@ -172,12 +187,12 @@ static int Serial_GetString(MOBLEUINT8* text, MOBLEUINT8 size)
             stringSize = index;
         }
         index = 0;
-        printf("\n\r");
+        TRACE_M(TF_SERIAL_CTRL,"\n\r");
         return stringSize;    
     }
     else
     {
-      printf("%c", ch);
+      TRACE_M(TF_SERIAL_CTRL,"%c", ch);
         if (index < size)
         {
             text[index++] = (char)ch;
@@ -186,6 +201,50 @@ static int Serial_GetString(MOBLEUINT8* text, MOBLEUINT8 size)
     return stringSize;
 }
 
+/**
+* @brief  Convert ASCII character to hexadecimal number
+* @param  addr: input ASCI character
+* @retval MOBLEUINT8
+*/ 
+
+ MOBLEUINT8 Serial_CharToHexConvert(char addr)
+{
+  MOBLEUINT8 retVal=0;
+  if (addr >= '0' && addr <= '9')
+        retVal = addr - '0';
+  else if (addr >= 'a' && addr <= 'f')
+        retVal = addr+10-'a';
+  else if (addr >= 'A' && addr <= 'F')
+        retVal = addr+10-'A';
+  else
+       return 0xFF;
+    
+  return retVal;
+}
+
+/**
+* @brief  Callback function to print data serially  
+* @param  *message: Pointer of data string  
+* @retval void
+*/
+void BLEMesh_PrintStringCb(const char *message)
+{
+    TRACE_M(TF_SERIAL_CTRL,"%s", (char*)message);
+}
+/**
+* @brief  Callback function to print data array on screen LSB first 
+* @param  *data : Pointer to the data to be printed 
+* @param  size : Length of data to be printed
+* @retval void
+*/
+void BLEMesh_PrintDataCb(MOBLEUINT8* data, MOBLEUINT16 size)
+{
+    for (int count=0; count<size; ++count)
+    {
+        TRACE_M(TF_SERIAL_CTRL,"%02X", data[count]);
+    }
+    TRACE_M(TF_SERIAL_CTRL,"\n\r");
+}
 /**
 * @}
 */

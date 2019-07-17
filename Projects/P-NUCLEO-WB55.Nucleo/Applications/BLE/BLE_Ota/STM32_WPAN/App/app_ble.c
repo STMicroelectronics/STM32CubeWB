@@ -26,9 +26,9 @@
 #include "tl.h"
 #include "app_ble.h"
 
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "shci.h"
-#include "lpm.h"
+#include "stm32_lpm.h"
 #include "otp.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -126,12 +126,12 @@ void APP_BLE_Init( void )
   /**
    * Do not allow standby in the application
    */
-  LPM_SetOffMode(1 << CFG_LPM_APP_BLE, LPM_OffMode_Dis);
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
 
   /**
    * Register the hci transport layer to handle BLE User Asynchronous Events
    */
-  SCH_RegTask(CFG_TASK_HCI_ASYNCH_EVT_ID, hci_user_evt_proc);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
 
   /**
    * Starts the BLE Stack on CPU2
@@ -406,18 +406,18 @@ static void Delete_Sectors( void )
   first_secure_sector_idx = (READ_BIT(FLASH->SFR, FLASH_SFR_SFSA) >> FLASH_SFR_SFSA_Pos);
 
   p_erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
-  p_erase_init.Page = *((uint8_t*) SRAM1_BASE + 1);
+
+  p_erase_init.Page = CFG_OTA_START_SECTOR_IDX_VAL_MSG;
   if(p_erase_init.Page < (CFG_APP_START_SECTOR_INDEX - 1))
   {
     /**
      * Something has been wrong as there is no case we should delete the BLE_Ota application
      * Reboot on the firmware application
      */
-    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_FW_APP;
-    NVIC_SystemReset();
-    while(1);
+    CFG_OTA_REBOOT_VAL_MSG = CFG_REBOOT_ON_FW_APP;
+    NVIC_SystemReset(); /* it waits until reset */
   }
-  p_erase_init.NbPages = *((uint8_t*) SRAM1_BASE + 2);
+  p_erase_init.NbPages = CFG_OTA_NBR_OF_SECTOR_VAL_MSG;
 
   if ((p_erase_init.Page + p_erase_init.NbPages) > first_secure_sector_idx)
   {
@@ -481,19 +481,19 @@ const uint8_t* BleGetBdAddress( void )
  *************************************************************/
 void hci_notify_asynch_evt(void* pdata)
 {
-  SCH_SetTask(1 << CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
   return;
 }
 
 void hci_cmd_resp_release(uint32_t flag)
 {
-  SCH_SetEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
+  UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
   return;
 }
 
 void hci_cmd_resp_wait(uint32_t timeout)
 {
-  SCH_WaitEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
+  UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
   return;
 }
 
@@ -526,7 +526,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_PauseTask(task_id_list);
+      UTIL_SEQ_PauseTask(task_id_list);
 
       break;
 
@@ -536,7 +536,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_ResumeTask(task_id_list);
+      UTIL_SEQ_ResumeTask(task_id_list);
 
       break;
 

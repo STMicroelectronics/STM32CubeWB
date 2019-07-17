@@ -31,8 +31,8 @@ extern "C" {
 #include "stm32wbxx_core_interface_def.h"
 #include "tl_thread_hci.h"
 
-/* Use OpenThread FTD */
-#include "openthread_api_config_ftd.h"
+/* OpenThread Library */
+#include OPENTHREAD_CONFIG_FILE
 
 /* USER CODE BEGIN Includes */
 
@@ -61,8 +61,11 @@ typedef enum
   ERR_REC_MULTI_MSG_FROM_M0,
   ERR_THREAD_SET_STATE_CB,
   ERR_THREAD_ERASE_PERSISTENT_INFO,
+/* USER CODE BEGIN ERROR_APPLI_ENUM */
+
+/* USER CODE END ERROR_APPLI_ENUM */
   ERR_THREAD_CHECK_WIRELESS
-} ErrAppliIdEnum_t;
+  } ErrAppliIdEnum_t;
 /* USER CODE BEGIN ET */
 
 /* USER CODE END ET */

@@ -22,7 +22,7 @@
 
 This example is to demonstrate Point-to-Point communication using BLE component. 
 
-Two STM32WB boards are used, one acting as GATT client, and one as GATT server.
+Two STM32WB55xx boards are used, one acting as GATT client, and one as GATT server.
 For example, BLE_p2pClient application is downloaded in a Nucleo board (MB1355C) and BLE P2P_Server application in a USB DONGLE board (MB1293C).
 
 
@@ -48,13 +48,13 @@ For example, BLE_p2pClient application is downloaded in a Nucleo board (MB1355C)
   - BLE/BLE_p2pClient/Core/Src/app_entry.c      		Initialization of the application
   - BLE/BLE_p2pClient/STM32_WPAN/App/p2p_client_app.c   P2P Client Application Implementation
   - BLE/BLE_p2pClient/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_p2pClient/Core/Src/hw_lpm.c      			Low Power Manager Driver
+  - BLE/BLE_p2pClient/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
   - BLE/BLE_p2pClient/Core/Src/hw_timerserver.c 		Timer Server based on RTC
   - BLE/BLE_p2pClient/Core/Src/hw_uart.c 				UART Driver
   
 @par Hardware and Software environment
 
-    - This application runs on STM32WB Nucleo board (MB1355C)
+    - This application runs on STM32WB55xx Nucleo board (MB1355C)
     
     - Nucleo board (MB1355C) Set-up    
        - Connect that Board to your PC with a USB cable type A to mini-B to ST-LINK connector (USB_STLINK).
@@ -76,7 +76,7 @@ In order to make the program work, you must do the following :
  - This must be done for BLE_p2pServer (MB1293C) for example, and BLE_p2pClient (MB1355C).
 
  - BLE_p2pServer may be connected by BLE_p2pClient.
- - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB boards and executed, the modules are initialized. 
+ - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB55xx boards and executed, the modules are initialized. 
 
  - The Peripheral device (BLE_p2pServer) starts advertising (during 1 minute), the green led blinks for each advertising event.
  - The Central device (BLE_p2pClient) starts scanning when pressing the User button (SW1) on the USB Dongle board. 

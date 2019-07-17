@@ -210,4 +210,5 @@
 			<resource resourceType="PROJECT" workspacePath="HID_Standalone"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

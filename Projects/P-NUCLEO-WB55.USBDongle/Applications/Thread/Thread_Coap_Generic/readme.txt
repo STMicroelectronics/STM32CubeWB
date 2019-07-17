@@ -94,7 +94,7 @@ COAP,Thread
   - Thread/Thread_Coap_Generic/Core/Src/app_entry.c        	Initialization of the application
   - Thread/Thread_Coap_Generic/STM32_WPAN/App/app_thread.c      Thread application implementation
   - Thread/Thread_Coap_Generic/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
-  - Thread/Thread_Coap_Generic/Core/Src/hw_lpm.c           	Low Power Manager Driver
+  - Thread/Thread_Coap_Generic/Core/Src/stm32_lpm_if.c     	Low Power Manager Interface
   - Thread/Thread_Coap_Generic/Core/Src/hw_timerserver.c   	Timer Server Driver
   - Thread/Thread_Coap_Generic/Core/Src/hw_uart.c          	UART driver
   - Thread/Thread_Coap_Generic/Core/Src/main.c                  Main program

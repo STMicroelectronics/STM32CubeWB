@@ -24,7 +24,7 @@
 #include "vcp_conf.h"
 #include "vcp.h"
 
-#include "scheduler.h"
+#include "stm32_seq.h"
 
 #include "usbd_cdc.h"
 #include "usbd_desc.h"
@@ -104,7 +104,7 @@ void VCP_Init( uint8_t *p_tx_buffer , uint8_t *p_rx_buffer )
   HW_TS_Create(VCP_TIMER_PROC_ID, &VCP_Context.VcpTxReadyTid, hw_ts_SingleShot, EnableTxPath);
 #endif
 
-  SCH_RegTask(VCP_TASK_ID, SendData);
+  UTIL_SEQ_RegTask(1<<VCP_TASK_ID, UTIL_SEQ_RFU, SendData);
   
   return;
 }
@@ -121,7 +121,7 @@ void VCP_SendData( uint8_t *p_data , uint16_t size , void (*cb)( void ) )
   DISABLE_IRQ();
   if (VCP_Context.VcpStatus != VCP_TX_NOT_READY)
   {
-    SCH_SetTask(1 << VCP_TASK_ID, VCP_TASK_PRIO);
+    UTIL_SEQ_SetTask(1 << VCP_TASK_ID, VCP_TASK_PRIO);
   }
   else
   {
@@ -143,7 +143,7 @@ static void SendData( void )
 
   if (USBD_CDC_TransmitPacket(&VCP_Device) != USBD_OK)
   {
-    SCH_SetTask(1 << VCP_TASK_ID, VCP_TASK_PRIO);
+    UTIL_SEQ_SetTask(1 << VCP_TASK_ID, VCP_TASK_PRIO);
   }
   else
   {
@@ -162,7 +162,7 @@ static void EnableTxPath( void )
 
   if (VCP_Context.TxDataStatus != TX_DATA_NOT_PENDING)
   {
-    SCH_SetTask(1 << VCP_TASK_ID, VCP_TASK_PRIO);
+    UTIL_SEQ_SetTask(1 << VCP_TASK_ID, VCP_TASK_PRIO);
   }
   RESTORE_PRIMASK();
 

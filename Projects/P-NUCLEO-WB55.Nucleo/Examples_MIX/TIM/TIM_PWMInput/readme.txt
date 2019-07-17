@@ -70,7 +70,7 @@ Six combinations are available (see tables aFrequency[] and aDutyCycle[]).
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55RGVx devices.
+  - This example runs on STM32WB55xx devices.
     
   - This example has been tested with STMicroelectronics P-NUCLEO-WB55 
     board and can be easily tailored to any other supported device 

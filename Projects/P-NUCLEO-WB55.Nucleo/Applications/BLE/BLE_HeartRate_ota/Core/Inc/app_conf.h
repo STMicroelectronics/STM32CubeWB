@@ -61,7 +61,7 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY   (0x04)
 
-#define CFG_IO_CAPABILITY             CFG_IO_CAPABILITY_DISPLAY_ONLY
+#define CFG_IO_CAPABILITY             CFG_IO_CAPABILITY_DISPLAY_YES_NO
 
 /**
  * Define MITM modes
@@ -94,6 +94,17 @@
 
 /**< specific parameters */
 /*****************************************************/
+#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
+#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
+#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
+
+/**
+ * SMPS supply
+ * Set to 0 do not use the SPMS
+ * Set to 1 to use the SMPS @1.7V
+ */
+#define CFG_USE_SMPS_1V7    0
+
 /**
 * AD Element - Group B Feature
 */ 
@@ -179,7 +190,7 @@
  *  1 : internal RO
  *  0 : external crystal ( no calibration )
  */
-#define CFG_BLE_LSE_SOURCE  1
+#define CFG_BLE_LSE_SOURCE  0
 
 /**
  * Start up time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 us (~2.44 us)
@@ -241,7 +252,7 @@
 /**
  * Select UART interfaces
  */
-#define DBG_TRACE_UART_CFG    hw_uart1
+#define CFG_DEBUG_TRACE_UART    hw_uart1
 #define CFG_CONSOLE_MENU      
 /******************************************************************************
  * USB interface
@@ -389,8 +400,44 @@ typedef enum
 
 /* USER CODE BEGIN Defines */
 #define CFG_LED_SUPPORTED         0
-#define CFG_BUTTON_SUPPORTED      0
+#define CFG_BUTTON_SUPPORTED      1
 /* USER CODE END Defines */
+
+/**
+ * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
+ * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
+ *
+ * When both are set to 0, no trace are output
+ * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
+ */
+#define CFG_DEBUG_TRACE_LIGHT     1
+#define CFG_DEBUG_TRACE_FULL      0
+
+#if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     1
+#endif
+
+#if ( CFG_DEBUG_TRACE == 0 )
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     0
+#endif
+
+/**
+ * When not set, the traces is looping on sending the trace over UART
+ */
+#define DBG_TRACE_USE_CIRCULAR_QUEUE 1
+
+/**
+ * max buffer Size to queue data traces and max data trace allowed.
+ * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
+ */
+#define DBG_TRACE_MSG_QUEUE_SIZE 4096
+#define MAX_DBG_TRACE_MSG_SIZE 1024
 
 /******************************************************************************
  * Scheduler
@@ -458,6 +505,13 @@ typedef enum
     CFG_LPM_APP,
     CFG_LPM_APP_BLE
 } CFG_LPM_Id_t;
+
+/******************************************************************************
+ * OTP manager
+ ******************************************************************************/
+#define CFG_OTP_BASE_ADDRESS    OTP_AREA_BASE
+
+#define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 #endif /*APP_CONFIG_H */
 

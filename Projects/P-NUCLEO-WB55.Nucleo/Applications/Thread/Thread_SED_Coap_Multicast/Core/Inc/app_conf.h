@@ -1,31 +1,32 @@
 /**
  ******************************************************************************
- * @file    app_conf.h
- * @author  MCD Application Team
- * @brief   Application configuration file
+  * File Name          : app_conf.h
+  * Description        : Application configuration file for STM32WPAN Middleware.
+  *
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
-
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
 #define APP_CONF_H
 
-  /* Includes ------------------------------------------------------------------*/
 #include "hw.h"
 #include "hw_conf.h"
 
+/******************************************************************************
+ * Application Config
+ ******************************************************************************/
 /******************************************************************************
  * Transport Layer
  ******************************************************************************/
@@ -43,7 +44,6 @@
  * to the application a HCI command did not receive its command event within 30s (Default HCI Timeout).
  */
 #define CFG_TL_EVT_QUEUE_LENGTH 5
-
 /**
  * This parameter should be set to fit most events received by the HCI layer. It defines the buffer size of each element
  * allocated in the queue of received events and can be used to optimize the amount of RAM allocated by the Memory Manager.
@@ -57,26 +57,27 @@
 #define CFG_TL_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 
 #define TL_EVENT_FRAME_SIZE ( TL_EVT_HDR_SIZE + CFG_TL_MOST_EVENT_PAYLOAD_SIZE )
-
 /******************************************************************************
  * UART interfaces
  ******************************************************************************/
+
 /**
  * Select UART interfaces
  */
-#define DBG_TRACE_UART_CFG      hw_lpuart1
-#define UART_CLI                hw_uart1
-
+#define CFG_DEBUG_TRACE_UART    hw_lpuart1
+#define CFG_CONSOLE_MENU      
+#define CFG_CLI_UART    hw_uart1
 /******************************************************************************
  * USB interface
  ******************************************************************************/
+
 /**
  * Enable/Disable USB interface
  */
 #define CFG_USB_INTERFACE_ENABLE    0
 
 /******************************************************************************
- * Low Power 
+ * Low Power
  *
  *  When CFG_FULL_LOW_POWER is set to 1, the system is configured in full
  *  low power mode. It means that all what can have an impact on the consumptions
@@ -86,12 +87,11 @@
  *
  ******************************************************************************/
 
-#define CFG_FULL_LOW_POWER   0
+#define CFG_FULL_LOW_POWER    0
 
 #if (CFG_FULL_LOW_POWER == 1)
+#undef CFG_LPM_SUPPORTED
 #define CFG_LPM_SUPPORTED   1
-#else
-#define CFG_LPM_SUPPORTED   0
 #endif /* CFG_FULL_LOW_POWER */
 
 /******************************************************************************
@@ -184,17 +184,77 @@ typedef enum
  * This shall be set to 0 in a final product
  *
  */
-#define CFG_HW_RESET_BY_FW        1
+#define CFG_HW_RESET_BY_FW         1
 
 /**
  * keep debugger enabled while in any low power mode when set to 1
  * should be set to 0 in production
  */
-#if (CFG_FULL_LOW_POWER == 1)
-#define CFG_DEBUGGER_SUPPORTED    0
-#else
 #define CFG_DEBUGGER_SUPPORTED    1
+
+#if (CFG_FULL_LOW_POWER == 1)
+#undef CFG_DEBUGGER_SUPPORTED
+#define CFG_DEBUGGER_SUPPORTED    0
 #endif /* CFG_FULL_LOW_POWER */
+
+/*****************************************************************************
+ * Traces
+ * Enable or Disable traces in application
+ * When CFG_DEBUG_TRACE is set, traces are activated
+ *
+ * Note : Refer to utilities_conf.h file in order to details
+ *        the level of traces : CFG_DEBUG_TRACE_FULL or CFG_DEBUG_TRACE_LIGHT
+ *****************************************************************************/
+#define CFG_DEBUG_TRACE    1
+
+#if (CFG_FULL_LOW_POWER == 1)
+#undef CFG_DEBUG_TRACE
+#define CFG_DEBUG_TRACE      0
+#endif /* CFG_FULL_LOW_POWER */
+
+/**
+ * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
+ * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
+ *
+ * When both are set to 0, no trace are output
+ * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
+ */
+#define CFG_DEBUG_TRACE_LIGHT     1
+#define CFG_DEBUG_TRACE_FULL      0
+
+#if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     1
+#endif
+
+#if ( CFG_DEBUG_TRACE == 0 )
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     0
+#endif
+
+/**
+ * When not set, the traces is looping on sending the trace over UART
+ */
+#define DBG_TRACE_USE_CIRCULAR_QUEUE 1
+
+/**
+ * max buffer Size to queue data traces and max data trace allowed.
+ * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
+ */
+#define DBG_TRACE_MSG_QUEUE_SIZE 4096
+#define MAX_DBG_TRACE_MSG_SIZE 1024
+
+/******************************************************************************
+ * Configure Log level for Application
+ ******************************************************************************/
+#define APPLI_CONFIG_LOG_LEVEL    LOG_LEVEL_INFO
+#define APPLI_PRINT_FILE_FUNC_LINE    0
+
+/* USER CODE BEGIN Defines */
 /******************************************************************************
  * User interaction
  * When CFG_LED_SUPPORTED is set, LEDS are activated if requested
@@ -207,36 +267,7 @@ typedef enum
 #define CFG_LED_SUPPORTED         1
 #define CFG_BUTTON_SUPPORTED      1
 #endif /* CFG_FULL_LOW_POWER */
-
-/* Define platform used: only ARM supported for TRACE trace */
-#define CFG_PLATFORM_LINUX        (0x01)
-#define CFG_PLATFORM_WINDOWS      (0x02)
-#define CFG_PLATFORM_ARM          (0x03)
-
-#define CFG_PLATFORM_TYPE         (CFG_PLATFORM_ARM)
-
-/*****************************************************************************
- * Traces
- * Enable or Disable traces in application
- * When CFG_DEBUG_TRACE is set, traces are activated
- *
- * Note : Refer to utilities_conf.h file in order to details
- *        the level of traces : DBG_TRACE_FULL or DBG_TRACE_LIGHT
- *****************************************************************************/
-
-#if (CFG_FULL_LOW_POWER == 1)
-#define CFG_DEBUG_TRACE      0
-#else
-#define CFG_DEBUG_TRACE      1
-#endif
-
-
-
-/*****************************************************************************
- * Platform configuration
- *****************************************************************************/
-#undef CFG_PLATFORM_TYPE
-#define CFG_PLATFORM_TYPE         (CFG_PLATFORM_ARM)
+/* USER CODE END Defines */
 
 /******************************************************************************
  * Scheduler
@@ -248,28 +279,37 @@ typedef enum
 
 typedef enum
 {
-  CFG_TASK_COAP_SEND_MSG,
   CFG_TASK_MSG_FROM_M0_TO_M4,
   CFG_TASK_SEND_CLI_TO_M0,
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
-  CFG_TASK_SET_THREAD_MODE,
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
+  /* USER CODE BEGIN CFG_IdleTask_Id_t */
+  CFG_TASK_COAP_SEND_MSG,
+  CFG_TASK_SET_THREAD_MODE,
+  /* USER CODE END CFG_IdleTask_Id_t */
   CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
 
+/* Scheduler types and defines        */
+/*------------------------------------*/
+#define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
+/* USER CODE BEGIN DEFINE_TASK */ 
+#define TASK_COAP_SEND_MSG          (1U << CFG_TASK_COAP_SEND_MSG)
+#define TASK_SET_THREAD_MODE        (1U << CFG_TASK_SET_THREAD_MODE)
+/* USER CODE END DEFINE_TASK */  
+ 
+/**
+ * This is the list of priority required by the application
+ * Each Id shall be in the range 0..31
+ */
 typedef enum
 {
-  CFG_SCH_PRIO_0,
-  CFG_SCH_PRIO_1,
-  CFG_PRIO_NBR,
+    CFG_SCH_PRIO_0,
+    CFG_SCH_PRIO_1,
+    CFG_PRIO_NBR,
 } CFG_SCH_Prio_Id_t;
-
-#define TASK_COAP_SEND_MSG          (1U << CFG_TASK_COAP_SEND_MSG)
-#define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
-
-#define TASK_SET_THREAD_MODE        (1U << CFG_TASK_SET_THREAD_MODE)
 
   /**
    * This is a bit mapping over 32bits listing all events id supported in the application
@@ -279,17 +319,16 @@ typedef enum
   CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP,
   CFG_EVT_ACK_FROM_M0_EVT,
   CFG_EVT_SYNCHRO_BYPASS_IDLE,
+  /* USER CODE BEGIN CFG_IdleEvt_Id_t */
+
+  /* USER CODE END CFG_IdleEvt_Id_t */
 } CFG_IdleEvt_Id_t;
 
+#define EVENT_ACK_FROM_M0_EVT           (1U << CFG_EVT_ACK_FROM_M0_EVT)
+#define EVENT_SYNCHRO_BYPASS_IDLE       (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
+/* USER CODE BEGIN DEFINE_EVENT */
 
-
-#define EVENT_ACK_FROM_M0_EVT            (1U << CFG_EVT_ACK_FROM_M0_EVT)
-#define EVENT_SYNCHRO_BYPASS_IDLE        (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
-/******************************************************************************
- * Configure Log level for Application
- ******************************************************************************/
-#define APPLI_CONFIG_LOG_LEVEL          LOG_LEVEL_INFO
-#define APPLI_PRINT_FILE_FUNC_LINE      0
+/* USER CODE END DEFINE_EVENT */
 
 /******************************************************************************
  * LOW POWER
@@ -300,12 +339,20 @@ typedef enum
  */
 typedef enum
 {
-    CFG_LPM_APP
+    CFG_LPM_APP,
+    CFG_LPM_APP_THREAD,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
+
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
 
+/******************************************************************************
+ * OTP manager
+ ******************************************************************************/
+#define CFG_OTP_BASE_ADDRESS    OTP_AREA_BASE
 
+#define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
-
-#endif /* APP_CONF_H */
+#endif /*APP_CONF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

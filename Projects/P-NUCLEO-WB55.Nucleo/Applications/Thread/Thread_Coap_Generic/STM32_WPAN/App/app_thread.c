@@ -22,7 +22,6 @@
 #include "app_common.h"
 #include "utilities_common.h"
 #include "app_entry.h"
-#include "scheduler.h"
 #include "dbg_trace.h"
 #include "app_thread.h"
 #include "stm32wbxx_core_interface_def.h"
@@ -30,6 +29,8 @@
 #include "shci.h"
 #include "stm_logging.h"
 #include "app_conf.h"
+#include "stm32_lpm.h"
+#include "stm32_seq.h"
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #include "vcp.h"
 #include "vcp_conf.h"
@@ -49,8 +50,9 @@
 #define C_SIZE_CMD_STRING       256U
 #define C_PANID                 0x1111U
 #define C_CHANNEL_NB            14U
-#define C_RESSOURCE             "light"
+
 /* USER CODE BEGIN PD */
+#define C_RESSOURCE             "light"
 #define COAP_PAYLOAD_LENGTH 2
 #define WAIT_TIMEOUT                     (5*1000*1000/CFG_TS_TICK_VAL) /**< 5s */
 /* USER CODE END PD */
@@ -83,6 +85,8 @@ static uint32_t ProcessCmdString(uint8_t* buf , uint32_t len);
 #else
 static void RxCpltCallback(void);
 #endif
+
+/* USER CODE BEGIN PFP */
 static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource, otCoapType CoapType, otCoapCode CoapCode, const char *Address, uint8_t* Payload, uint16_t Size);
 static void APP_THREAD_DummyReqHandler(void                * p_context,
     otCoapHeader        * pHeader,
@@ -102,7 +106,7 @@ static void APP_THREAD_CoapDummyRespHandler(void * p_context,
     otMessage * pMessage,
     const otMessageInfo * pMessageInfo,
     otError Result);
-/* USER CODE BEGIN PFP */
+
 static void APP_THREAD_InitPayloadWrite(void);
 static void APP_THREAD_SendCoapMsg(void);
 static void APP_THREAD_TimingElapsed(void);
@@ -125,21 +129,19 @@ static __IO uint16_t CptReceiveCmdFromUser = 0;
 static TL_CmdPacket_t *p_thread_otcmdbuffer;
 static TL_EvtPacket_t *p_thread_notif_M0_to_M4;
 static __IO uint32_t  CptReceiveMsgFromM0 = 0;
-
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
 
+/* USER CODE BEGIN PV */
 static otCoapResource OT_Ressource = {C_RESSOURCE, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapRequestHandler, NULL};
 static otMessageInfo OT_MessageInfo = {0};
 static otCoapHeader  OT_Header = {0};
 static otMessage* pOT_Message = NULL;
 
-/* USER CODE BEGIN PV */
 static uint8_t PayloadWrite[COAP_PAYLOAD_LENGTH]= {0};
 static uint8_t PayloadRead[COAP_PAYLOAD_LENGTH]= {0};
-
 static uint8_t TimerID;
 /* USER CODE END PV */
 
@@ -163,6 +165,11 @@ void APP_THREAD_Init( void )
   /* Register cmdbuffer */
   APP_THREAD_RegisterCmdBuffer(&ThreadOtCmdBuffer);
 
+  /**
+   * Do not allow standby in the application
+   */
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_THREAD, UTIL_LPM_DISABLE);
+
   /* Init config buffer and call TL_THREAD_Init */
   APP_THREAD_TL_THREAD_INIT();
 
@@ -177,10 +184,10 @@ void APP_THREAD_Init( void )
 
   /* Register task */
   /* Create the different tasks */
-  SCH_RegTask((uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, APP_THREAD_ProcessMsgM0ToM4);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
 
   /* USER CODE BEGIN INIT TASKS */
-  SCH_RegTask((uint32_t)CFG_TASK_COAP_MSG_BUTTON, APP_THREAD_SendCoapMsg);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_COAP_MSG_BUTTON, UTIL_SEQ_RFU, APP_THREAD_SendCoapMsg);
   /* USER CODE END INIT TASKS */
 
   /* Initialize and configure the Thread device*/
@@ -203,7 +210,7 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
 {
   /* USER CODE BEGIN APP_THREAD_Error_1 */
 
-  /* USER CODE APP_THREAD_Error_1 */
+  /* USER CODE END APP_THREAD_Error_1 */
   switch(ErrId)
   {
   case ERR_REC_MULTI_MSG_FROM_M0 :
@@ -221,6 +228,16 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
   case ERR_THREAD_IPV6_ENABLE :
     APP_THREAD_TraceError("ERROR : ERR_THREAD_IPV6_ENABLE ",ErrCode);
     break;
+  case ERR_THREAD_START :
+    APP_THREAD_TraceError("ERROR: ERR_THREAD_START ", ErrCode);
+    break;
+  case ERR_THREAD_ERASE_PERSISTENT_INFO :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_ERASE_PERSISTENT_INFO ",ErrCode);
+    break;
+  case ERR_THREAD_CHECK_WIRELESS :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_CHECK_WIRELESS ",ErrCode);
+    break;
+  /* USER CODE BEGIN APP_THREAD_Error_2 */
   case ERR_THREAD_COAP_START :
     APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_START ",ErrCode);
     break;
@@ -239,21 +256,10 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
   case ERR_THREAD_COAP_SEND_REQUEST :
     APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_SEND_REQUEST ",ErrCode);
     break;
-  case ERR_TIMER_INIT :
-    APP_THREAD_TraceError("ERROR : ERR_TIMER_INIT ",ErrCode);
-    break;
-  case ERR_TIMER_START :
-    APP_THREAD_TraceError("ERROR : ERR_TIMER_START ",ErrCode);
-    break;
-  case ERR_THREAD_ERASE_PERSISTENT_INFO :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_ERASE_PERSISTENT_INFO ",ErrCode);
-    break;
   case ERR_THREAD_MSG_COMPARE_FAILED:
     APP_THREAD_TraceError("ERROR : ERR_THREAD_MSG_COMPARE_FAILED ",ErrCode);
     break;
-  case ERR_THREAD_CHECK_WIRELESS :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_CHECK_WIRELESS ",ErrCode);
-    break;
+  /* USER CODE END APP_THREAD_Error_2 */
   default :
     APP_THREAD_TraceError("ERROR Unknown ", 0);
     break;
@@ -306,6 +312,8 @@ static void APP_THREAD_DeviceConfig(void)
   {
     APP_THREAD_Error(ERR_THREAD_START,error);
   }
+
+  /* USER CODE BEGIN DEVICECONFIG */
   /* Start the COAP server */
   error = otCoapStart(NULL, OT_DEFAULT_COAP_PORT);
   if (error != OT_ERROR_NONE)
@@ -318,9 +326,6 @@ static void APP_THREAD_DeviceConfig(void)
   {
     APP_THREAD_Error(ERR_THREAD_COAP_ADD_RESSOURCE,error);
   }
-
-  /* USER CODE BEGIN DEVICECONFIG */
-
   /* USER CODE END DEVICECONFIG */
 }
 
@@ -335,6 +340,10 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(pContext);
+
+  /* USER CODE BEGIN APP_THREAD_STATENOTIF */
+  
+  /* USER CODE END APP_THREAD_STATENOTIF */
 
   if ((NotifFlags & (uint32_t)OT_CHANGED_THREAD_ROLE) == (uint32_t)OT_CHANGED_THREAD_ROLE)
   {
@@ -379,49 +388,74 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
     }
   }
 }
-/**
- * @brief Dummy request handler
- * @param
- * @retval None
- */
-static void APP_THREAD_DummyReqHandler(void            * p_context,
-    otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo)
-{
-}
 
 /**
- * @brief Handler called when the server receives a COAP request.
+ * @brief  Warn the user that an error has occurred.In this case,
+ *         the LEDs on the Board will start blinking.
  *
- * @param pHeader : Header
- * @param pMessage : Message
- * @param pMessageInfo : Message information
+ * @param  pMess  : Message associated to the error.
+ * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
  * @retval None
  */
-static void APP_THREAD_CoapRequestHandler(otCoapHeader * pHeader,
-    otMessage            * pMessage,
-    const otMessageInfo  * pMessageInfo)
+static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
 {
-  APP_DBG(" Received CoAP request");
-  /* USER CODE BEGIN APP_THREAD_CoapRequestHandler */
-  if (otMessageRead(pMessage, otMessageGetOffset(pMessage), &PayloadRead, sizeof(PayloadRead)) != sizeof(PayloadRead))
+  /* USER CODE BEGIN TRACE_ERROR */
+  APP_DBG("**** Fatal error = %s (Err = %d)", pMess, ErrCode);
+  while(1U == 1U)
   {
-    APP_THREAD_Error(ERR_THREAD_MESSAGE_READ, 0);
-  }
-
-  if (APP_THREAD_CheckMsgValidity() == true){
     BSP_LED_Toggle(LED1);
+    HAL_Delay(500U);
+    BSP_LED_Toggle(LED2);
+    HAL_Delay(500U);
+    BSP_LED_Toggle(LED3);
+    HAL_Delay(500U);
   }
-  /* USER CODE END APP_THREAD_CoapRequestHandler */
+  /* USER CODE END TRACE_ERROR */
+}
 
-  /* If Message is Confirmable, send response */
-  if (otCoapHeaderGetType(pHeader) == OT_COAP_TYPE_CONFIRMABLE)
+/**
+ * @brief Check if the Coprocessor Wireless Firmware loaded supports Thread
+ *        and display associated informations
+ * @param  None
+ * @retval None
+ */
+static void APP_THREAD_CheckWirelessFirmwareInfo(void)
+{
+  WirelessFwInfo_t wireless_info_instance;
+  WirelessFwInfo_t* p_wireless_info = &wireless_info_instance;
+
+  if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success)
   {
-    APP_THREAD_CoapSendDataResponse(pHeader, pMessageInfo);
+    APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
+  }
+  else
+  {
+    APP_DBG("**********************************************************");
+    APP_DBG("WIRELESS COPROCESSOR FW:");
+    /* Print version */
+    APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
+
+    switch(p_wireless_info->StackType)
+    {
+    case INFO_STACK_TYPE_THREAD_FTD :
+      APP_DBG("FW Type : Thread FTD");
+      break;
+    case INFO_STACK_TYPE_THREAD_MTD :
+      APP_DBG("FW Type : Thread MTD");
+      break;
+    case INFO_STACK_TYPE_BLE_THREAD_FTD_STATIC :
+      APP_DBG("FW Type : Static Concurrent Mode BLE/Thread");
+      break;
+    default :
+      /* No Thread device supported ! */
+      APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
+      break;
+    }
+    APP_DBG("**********************************************************");
   }
 }
 
+/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 /**
  * @brief Send a CoAP request with defined parameters.
  *
@@ -491,6 +525,50 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
   {
     otMessageFree(pOT_Message);
     APP_THREAD_Error(ERR_THREAD_COAP_SEND_REQUEST,error);
+  }
+}
+
+/**
+ * @brief Dummy request handler
+ *
+ * @param None
+ * @retval None
+ */
+static void APP_THREAD_DummyReqHandler(void            * p_context,
+    otCoapHeader        * pHeader,
+    otMessage           * pMessage,
+    const otMessageInfo * pMessageInfo)
+{
+}
+
+/**
+ * @brief Handler called when the server receives a COAP request.
+ *
+ * @param pHeader : Header
+ * @param pMessage : Message
+ * @param pMessageInfo : Message information
+ * @retval None
+ */
+static void APP_THREAD_CoapRequestHandler(otCoapHeader * pHeader,
+    otMessage            * pMessage,
+    const otMessageInfo  * pMessageInfo)
+{
+  APP_DBG(" Received CoAP request");
+  /* USER CODE BEGIN APP_THREAD_CoapRequestHandler */
+  if (otMessageRead(pMessage, otMessageGetOffset(pMessage), &PayloadRead, sizeof(PayloadRead)) != sizeof(PayloadRead))
+  {
+    APP_THREAD_Error(ERR_THREAD_MESSAGE_READ, 0);
+  }
+
+  if (APP_THREAD_CheckMsgValidity() == true){
+    BSP_LED_Toggle(LED1);
+  }
+  /* USER CODE END APP_THREAD_CoapRequestHandler */
+
+  /* If Message is Confirmable, send response */
+  if (otCoapHeaderGetType(pHeader) == OT_COAP_TYPE_CONFIRMABLE)
+  {
+    APP_THREAD_CoapSendDataResponse(pHeader, pMessageInfo);
   }
 }
 
@@ -583,73 +661,6 @@ static void APP_THREAD_CoapDummyRespHandler(void                * p_context,
 }
 
 /**
- * @brief  Warn the user that an error has occurred.In this case,
- *         the LEDs on the Board will start blinking.
- *
- * @param  pMess  : Message associated to the error.
- * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
- * @retval None
- */
-static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
-{
-  /* USER CODE BEGIN TRACE_ERROR */
-  APP_DBG("**** Fatal error = %s (Err = %d)", pMess, ErrCode);
-  while(1U == 1U)
-  {
-    BSP_LED_Toggle(LED1);
-    HAL_Delay(500U);
-    BSP_LED_Toggle(LED2);
-    HAL_Delay(500U);
-    BSP_LED_Toggle(LED3);
-    HAL_Delay(500U);
-  }
-  /* USER CODE END TRACE_ERROR */
-}
-
-/**
- * @brief Check if the Coprocessor Wireless Firmware loaded supports Thread
- *        and display associated informations
- * @param  None
- * @retval None
- */
-static void APP_THREAD_CheckWirelessFirmwareInfo(void)
-{
-  WirelessFwInfo_t wireless_info_instance;
-  WirelessFwInfo_t* p_wireless_info = &wireless_info_instance;
-
-  if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success)
-  {
-    APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
-  }
-  else
-  {
-    APP_DBG("**********************************************************");
-    APP_DBG("WIRELESS COPROCESSOR FW:");
-    /* Print version */
-    APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
-
-    switch(p_wireless_info->StackType)
-    {
-    case INFO_STACK_TYPE_THREAD_FTD :
-      APP_DBG("FW Type : Thread FTD");
-      break;
-    case INFO_STACK_TYPE_THREAD_MTD :
-      APP_DBG("FW Type : Thread MTD");
-      break;
-    case INFO_STACK_TYPE_BLE_THREAD_FTD_STATIC :
-      APP_DBG("FW Type : Static Concurrent Mode BLE/Thread");
-      break;
-    default :
-      /* No Thread device supported ! */
-      APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
-      break;
-    }
-    APP_DBG("**********************************************************");
-  }
-}
-
-/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
-/**
  * @brief Initialize CoAP write buffer.
  * @param  None
  * @retval None
@@ -677,7 +688,7 @@ static void APP_THREAD_SendCoapMsg(void)
   /* Insert Delay here using Hw timer server */
   /* Start the timer */
   HW_TS_Start(TimerID, (uint32_t)WAIT_TIMEOUT);
-  SCH_WaitEvt(EVENT_TIMER);
+  UTIL_SEQ_WaitEvt(EVENT_TIMER);
 
   APP_DBG("********* STEP 2: Send a CoAP CONFIRMABLE PUT Request *********");
   /* Send a CONFIRMABLE PUT Request */
@@ -687,7 +698,7 @@ static void APP_THREAD_SendCoapMsg(void)
 static void APP_THREAD_TimingElapsed(void)
 {
   APP_DBG("--- APP_THREAD_TimingElapsed ---");
-  SCH_SetEvt(EVENT_TIMER);
+  UTIL_SEQ_SetEvt(EVENT_TIMER);
 }
 
 /**
@@ -717,7 +728,6 @@ static bool APP_THREAD_CheckMsgValidity(void)
   }
   return valid;
 }
-
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
@@ -805,7 +815,7 @@ void TL_THREAD_NotReceived( TL_EvtPacket_t * Notbuffer )
  */
 void Pre_OtCmdProcessing(void)
 {
-  SCH_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
+  UTIL_SEQ_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
 }
 
 /**
@@ -816,7 +826,7 @@ void Pre_OtCmdProcessing(void)
  */
 static void Wait_Getting_Ack_From_M0(void)
 {
-  SCH_WaitEvt(EVENT_ACK_FROM_M0_EVT);
+  UTIL_SEQ_WaitEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
@@ -828,7 +838,7 @@ static void Wait_Getting_Ack_From_M0(void)
  */
 static void Receive_Ack_From_M0(void)
 {
-  SCH_SetEvt(EVENT_ACK_FROM_M0_EVT);
+  UTIL_SEQ_SetEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
@@ -840,7 +850,7 @@ static void Receive_Ack_From_M0(void)
 static void Receive_Notification_From_M0(void)
 {
   CptReceiveMsgFromM0++;
-  SCH_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
 }
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -856,12 +866,12 @@ static void RxCpltCallback(void)
       CptReceiveCmdFromUser = 1U;
 
       /* UART task scheduling*/
-      SCH_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
     }
   }
 
   /* Once a character has been sent, put back the device in reception mode */
-  HW_UART_Receive_IT(UART_CLI, aRxBuffer, 1U, RxCpltCallback);
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
 }
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
@@ -889,9 +899,7 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
   {
     memcpy(CommandString, buf,(i+1));
     indexReceiveChar = i + 1U; /* Length of the buffer containing the command string */
-
-    SCH_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
-
+    UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
     tmp_start = i;
     for (j = 0; j < (len - tmp_start - 1U) ; j++)
     {
@@ -946,11 +954,11 @@ static void Send_CLI_Ack_For_OT(void)
  */
 void APP_THREAD_Init_UART_CLI(void)
 {
-  SCH_RegTask(CFG_TASK_SEND_CLI_TO_M0,Send_CLI_To_M0);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU,Send_CLI_To_M0);
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
   MX_USART1_UART_Init();
-  HW_UART_Receive_IT(UART_CLI, aRxBuffer, 1, RxCpltCallback);
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 }
 
@@ -986,7 +994,7 @@ void TL_THREAD_CliNotReceived( TL_EvtPacket_t * Notbuffer )
 #if (CFG_USB_INTERFACE_ENABLE != 0)
     VCP_SendData( l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
 #else
-    HW_UART_Transmit_IT(UART_CLI, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
+    HW_UART_Transmit_IT(CFG_CLI_UART, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
 #endif /*USAGE_OF_VCP */
   }
   else

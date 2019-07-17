@@ -1,11 +1,11 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
- * @file    app_ble.h
- * @author  MCD Application Team
- * @brief   Header for ble application
- ******************************************************************************
- * @attention
+  ******************************************************************************
+  * @file    app_ble.h
+  * @author  MCD Application Team
+  * @brief   Header for ble application
+  ******************************************************************************
+  * @attention
  *
  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
  * All rights reserved.</center></h2>
@@ -27,7 +27,7 @@
 extern "C" {
 #endif
 
-  /* Includes ------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include "hci_tl.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -35,7 +35,7 @@ extern "C" {
 
 /* USER CODE END Includes */
 
-  /* Exported types ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 
     typedef enum
     {
@@ -52,12 +52,12 @@ extern "C" {
 
 /* USER CODE END ET */  
 
-  /* Exported constants --------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
 
 /* USER CODE END EC */
 
-  /* External variables --------------------------------------------------------*/
+/* External variables --------------------------------------------------------*/
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -70,13 +70,12 @@ extern "C" {
 /* Exported functions ---------------------------------------------*/
   void APP_BLE_Init( void ); 
 
-APP_BLE_ConnStatus_t APP_BLE_Get_Server_Connection_Status(void);
-  void Adv_Update( void );
-      
+  APP_BLE_ConnStatus_t APP_BLE_Get_Server_Connection_Status(void);
+
 /* USER CODE BEGIN EF */
-  void APP_BLE_Key_Button1_Action(void);
+void APP_BLE_Key_Button1_Action(void);
 void APP_BLE_Key_Button2_Action(void);
-  void APP_BLE_Key_Button3_Action(void);
+void APP_BLE_Key_Button3_Action(void);
 
 /* USER CODE END EF */
 

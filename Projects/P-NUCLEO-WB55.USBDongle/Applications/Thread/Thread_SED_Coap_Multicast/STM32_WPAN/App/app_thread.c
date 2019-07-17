@@ -22,7 +22,6 @@
 #include "app_common.h"
 #include "utilities_common.h"
 #include "app_entry.h"
-#include "scheduler.h"
 #include "dbg_trace.h"
 #include "app_thread.h"
 #include "stm32wbxx_core_interface_def.h"
@@ -30,7 +29,8 @@
 #include "shci.h"
 #include "stm_logging.h"
 #include "app_conf.h"
-#include "lpm.h"
+#include "stm32_lpm.h"
+#include "stm32_seq.h"
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #include "vcp.h"
 #include "vcp_conf.h"
@@ -135,7 +135,7 @@ void APP_THREAD_Init( void )
   /**
    * Do not allow standby in the application
    */
-  LPM_SetOffMode(1 << CFG_LPM_APP, LPM_OffMode_Dis);
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_THREAD, UTIL_LPM_DISABLE);
 
   /* Init config buffer and call TL_THREAD_Init */
   APP_THREAD_TL_THREAD_INIT();
@@ -149,9 +149,9 @@ void APP_THREAD_Init( void )
   UNUSED(ThreadInitStatus);
   /* Register task */
   /* Create the different tasks */
-  SCH_RegTask((uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, APP_THREAD_ProcessMsgM0ToM4);
-  SCH_RegTask((uint32_t)CFG_TASK_COAP_SEND_MSG,APP_THREAD_SendCoapMsg);
-  SCH_RegTask((uint32_t)CFG_TASK_SET_THREAD_MODE,APP_THREAD_SetSleepyEndDeviceMode);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_COAP_SEND_MSG, UTIL_SEQ_RFU,APP_THREAD_SendCoapMsg);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_SET_THREAD_MODE, UTIL_SEQ_RFU,APP_THREAD_SetSleepyEndDeviceMode);
 
   /* Initialize and configure the Thread device*/
   APP_THREAD_DeviceConfig();
@@ -246,14 +246,14 @@ static void APP_THREAD_CoapTimingElapsed( void )
   {
     if (sleepyEndDeviceFlag == TRUE)
     {
-      SCH_SetTask(TASK_COAP_SEND_MSG,CFG_SCH_PRIO_1);
+      UTIL_SEQ_SetTask(TASK_COAP_SEND_MSG,CFG_SCH_PRIO_1);
     }
   }
 }
 
 static void APP_THREAD_SetThreadMode( void )
 {
-  SCH_SetTask(TASK_SET_THREAD_MODE,CFG_SCH_PRIO_1);
+  UTIL_SEQ_SetTask(TASK_SET_THREAD_MODE,CFG_SCH_PRIO_1);
 }
 
 /**
@@ -717,7 +717,7 @@ void Pre_OtCmdProcessing(void)
 {
 #ifdef CFG_LPM_CORE
 #else
-    SCH_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
+    UTIL_SEQ_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
 #endif /* CFG_LPM_CORE */
 }
 
@@ -729,7 +729,7 @@ void Pre_OtCmdProcessing(void)
   */
 static void Wait_Getting_Ack_From_M0(void)
 {
-  SCH_WaitEvt(EVENT_ACK_FROM_M0_EVT);
+  UTIL_SEQ_WaitEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
@@ -741,7 +741,7 @@ static void Wait_Getting_Ack_From_M0(void)
   */
 static void Receive_Ack_From_M0(void)
 {
-  SCH_SetEvt(EVENT_ACK_FROM_M0_EVT);
+  UTIL_SEQ_SetEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
@@ -753,7 +753,7 @@ static void Receive_Ack_From_M0(void)
 static void Receive_Notification_From_M0(void)
 {
   CptReceiveMsgFromM0++;
-  SCH_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
 }
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -769,12 +769,12 @@ static void RxCpltCallback(void)
       CptReceiveCmdFromUser = 1U;
 
       /* UART task scheduling*/
-      SCH_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
     }
   }
 
   /* Once a character has been sent, put back the device in reception mode */
-  HW_UART_Receive_IT(UART_CLI, aRxBuffer, 1U, RxCpltCallback);
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
 }
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
@@ -802,9 +802,7 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
   {
     memcpy(CommandString, buf,(i+1));
     indexReceiveChar = i + 1U; /* Length of the buffer containing the command string */
-
-    SCH_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
-
+    UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
     tmp_start = i;
     for (j = 0; j < (len - tmp_start - 1U) ; j++)
     {
@@ -859,11 +857,11 @@ static void Send_CLI_Ack_For_OT(void)
  */
 void APP_THREAD_Init_UART_CLI(void)
 {
-  SCH_RegTask(CFG_TASK_SEND_CLI_TO_M0,Send_CLI_To_M0);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU,Send_CLI_To_M0);
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
-  HW_UART_Init(UART_CLI);
-  HW_UART_Receive_IT(UART_CLI, aRxBuffer, 1, RxCpltCallback);
+  HW_UART_Init(CFG_CLI_UART);
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 }
 
@@ -899,7 +897,7 @@ void TL_THREAD_CliNotReceived( TL_EvtPacket_t * Notbuffer )
 #if (CFG_USB_INTERFACE_ENABLE != 0)
     VCP_SendData( l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
 #else
-    HW_UART_Transmit_IT(UART_CLI, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
+    HW_UART_Transmit_IT(CFG_CLI_UART, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
 #endif /*USAGE_OF_VCP */
   }
   else

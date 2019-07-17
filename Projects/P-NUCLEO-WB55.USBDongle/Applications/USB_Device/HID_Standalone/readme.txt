@@ -82,10 +82,10 @@ Connectivity, USB Device, HID, Full Speed, Mouse, Remote Wakeup
 
 @par Hardware and Software environment
 
-  - This application runs on STM32WBxx devices.
+  - This application runs on STM32WB55xx devices.
 
   - This application has been tested with STMicroelectronics NUCLEO-WB55.USBDongle board
-    board and can be easily tailored to any other supported device and development board.
+    and can be easily tailored to any other supported device and development board.
 
   - NUCLEO-WB55.USBDongle board Set-up
     - Connect the NUCLEO-WB55.USBDongle board to the PC through micro A-Male to standard A Male cable.

@@ -31,8 +31,8 @@ extern "C" {
 #include "stm32wbxx_core_interface_def.h"
 #include "tl_thread_hci.h"
 
-/* Use OpenThread FTD */
-#include "openthread_api_config_ftd.h"
+/* OpenThread Library */
+#include OPENTHREAD_CONFIG_FILE
 
 /* USER CODE BEGIN Includes */
 
@@ -72,6 +72,8 @@ typedef enum
   ERR_THREAD_SET_PANID,
   ERR_THREAD_IPV6_ENABLE,
   ERR_THREAD_START,
+  ERR_THREAD_ERASE_PERSISTENT_INFO,
+/* USER CODE BEGIN ERROR_APPLI_ENUM */
   ERR_THREAD_COAP_START,
   ERR_THREAD_COAP_ADD_RESSOURCE,
   ERR_THREAD_MESSAGE_READ,
@@ -84,10 +86,10 @@ typedef enum
   ERR_THREAD_LINK_MODE,
   ERR_TIMER_INIT,
   ERR_TIMER_START,
-  ERR_THREAD_ERASE_PERSISTENT_INFO,
   ERR_THREAD_MSG_COMPARE_FAILED,
+/* USER CODE END ERROR_APPLI_ENUM */
   ERR_THREAD_CHECK_WIRELESS
-} ErrAppliIdEnum_t;
+  } ErrAppliIdEnum_t;
 /* USER CODE BEGIN ET */
 
 /* USER CODE END ET */

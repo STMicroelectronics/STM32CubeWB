@@ -1060,6 +1060,17 @@ typedef struct {
     uint8_t ranging_FOM;
 } MAC_dataInd_t;
 
+/******************************************************************************/
+/** @brief Defines the structure for MLME POLL Indication which will be used
+ for indicating the Data Request reception to upper layer as defined in
+ Zigbee r22 - D.8.2*/
+
+typedef struct {
+  /*! addressing mode used */
+  uint8_t addr_mode; // Valid Range: 0x02 – 0x03
+  /*! Poll requester address */
+  MAC_addr_t request_address;
+} MAC_pollInd_t;
 
 
 /*Callback Typedef */
@@ -1192,6 +1203,10 @@ typedef MAC_Status_t (* MAC_MLMEDpsIndCbPtr) ( const MAC_dpsInd_t * pDdsInd );
 MCPS DATA Indication*/
 typedef MAC_Status_t (* MAC_MCPSDataIndCbPtr) ( const MAC_dataInd_t * pDataInd );
 
+/******************************************************************************/
+/** @brief Defines the callback function Pointer type for
+MLME POLL Indication*/
+typedef MAC_Status_t (*MAC_MLMEPollIndCbPtr) ( const MAC_pollInd_t * pPollInd );
 
 /******************************************************************************/
 /** @brief Defines callback init structure to be set by NWK upper layer before
@@ -1221,6 +1236,7 @@ typedef struct {
   MAC_MCPSDataIndCbPtr  mcpsDataIndCb;
   MAC_MCPSDataCnfCbPtr  mcpsDataCnfCb;
   MAC_MCPSPurgeCnfCbPtr mcpsPurgeCnfCb;
+  MAC_MLMEPollIndCbPtr mlmePollIndCb;
 } MAC_callbacks_t;
 
 

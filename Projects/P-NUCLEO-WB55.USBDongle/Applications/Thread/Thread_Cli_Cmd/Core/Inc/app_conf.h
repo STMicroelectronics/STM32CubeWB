@@ -64,8 +64,8 @@
 /**
  * Select UART interfaces
  */
-#define DBG_TRACE_UART_CFG      hw_lpuart1
-#define UART_CLI                hw_uart1
+#define CFG_DEBUG_TRACE_UART      hw_lpuart1
+#define CFG_CLI_UART                hw_uart1
 
 /******************************************************************************
  * USB interface
@@ -231,6 +231,63 @@ typedef enum
 
 
 
+/**
+ * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
+ * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
+ *
+ * When both are set to 0, no trace are output
+ * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
+ */
+#define CFG_DEBUG_TRACE_LIGHT     1
+#define CFG_DEBUG_TRACE_FULL      0
+
+#if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     1
+#endif
+
+#if ( CFG_DEBUG_TRACE == 0 )
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     0
+#endif
+
+/**
+ * When not set, the traces is looping on sending the trace over UART
+ */
+#define DBG_TRACE_USE_CIRCULAR_QUEUE 1
+
+/**
+ * max buffer Size to queue data traces and max data trace allowed.
+ * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
+ */
+#define DBG_TRACE_MSG_QUEUE_SIZE 4096
+#define MAX_DBG_TRACE_MSG_SIZE 1024
+
+/******************************************************************************
+ * Configure Log level for Application
+ ******************************************************************************/
+#define APPLI_CONFIG_LOG_LEVEL    LOG_LEVEL_INFO
+#define APPLI_PRINT_FILE_FUNC_LINE    0
+
+/* USER CODE BEGIN Defines */
+/******************************************************************************
+ * User interaction
+ * When CFG_LED_SUPPORTED is set, LEDS are activated if requested
+ * When CFG_BUTTON_SUPPORTED is set, the push button are activated if requested
+ ******************************************************************************/
+#if (CFG_FULL_LOW_POWER == 1)
+#define CFG_LED_SUPPORTED         0
+#define CFG_BUTTON_SUPPORTED      0
+#else
+#define CFG_LED_SUPPORTED         1
+#define CFG_BUTTON_SUPPORTED      1
+#endif /* CFG_FULL_LOW_POWER */
+/* USER CODE END Defines */
+
 /******************************************************************************
  * Scheduler
  ******************************************************************************/
@@ -294,8 +351,19 @@ typedef enum
  */
 typedef enum
 {
-    CFG_LPM_APP
+    CFG_LPM_APP,
+    CFG_LPM_APP_THREAD,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
+
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
+
+/******************************************************************************
+ * OTP manager
+ ******************************************************************************/
+#define CFG_OTP_BASE_ADDRESS    OTP_AREA_BASE
+
+#define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 
 

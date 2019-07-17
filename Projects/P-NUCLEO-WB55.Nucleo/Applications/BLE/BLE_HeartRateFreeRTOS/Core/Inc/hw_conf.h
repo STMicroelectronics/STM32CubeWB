@@ -23,6 +23,8 @@
 #ifndef HW_CONF_H
 #define HW_CONF_H
 
+#include "FreeRTOSConfig.h"
+
 /******************************************************************************
  * Semaphores
  * THIS SHALL NO BE CHANGED AS THESE SEMAPHORES ARE USED AS WELL ON THE CM0+
@@ -56,7 +58,7 @@
  * wakeup timer.
  * This setting is the preemptpriority part of the NVIC.
  */
-#define CFG_HW_TS_NVIC_RTC_WAKEUP_IT_PREEMPTPRIO  6
+#define CFG_HW_TS_NVIC_RTC_WAKEUP_IT_PREEMPTPRIO    (configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1) /* FreeRTOS requirement */
 
 /**
  * The user may define the priority in the NVIC of the RTC_WKUP interrupt handler that is used to manage the

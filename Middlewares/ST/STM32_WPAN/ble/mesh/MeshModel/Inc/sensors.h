@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    sensor.h
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -45,7 +45,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
-#include "light.h"
 #include "ble_mesh.h"
 
 /* Exported macro ------------------------------------------------------------*/
@@ -53,6 +52,9 @@
 /******************************************************************************/
 /********** Following Section defines the Opcodes for the Messages ************/
 /******************************************************************************/
+/* Sensors Property ID */
+#define TEMPERATURE_PID                    0X0071
+#define PRESSURE_PID                       0X2A6D
 
 /* 7.1 Messages summary Page 300 */
 /* Sensor Server Model Opcode */
@@ -71,11 +73,11 @@
 #define SENSOR_CADENCE_SET_UNACK    0X56U
 #define SENSOR_CADENCE_STATUS       0X57U
 #define SENSOR_SETTING_GET          0X8235U
-#define SENSOR_SETTING_STATUS       0X58U
-#define SENSOR_SETTING_GET_DIFF     0X8236U
-#define SENSOR_SETTING_SET_DIFF          0X59U
-#define SENSOR_SETTING_SET_DIFF_UNACK    0X5AU
-#define SENSOR_SETTING_STATUS_DIFF  0X5BU
+#define SENSOR_SETTING_STATUS_PID           0X58U
+#define SENSOR_SETTING_GET_SETTING_ID   0X8236U
+#define SENSOR_SETTING_SET              0X59U
+#define SENSOR_SETTING_SET_UNACK        0X5AU
+#define SENSOR_SETTING_STATUS_SETTING_ID  0X5BU
 
 /******************************************************************************/
 /********** Following Section defines the SIG MODEL IDs            ************/
@@ -88,15 +90,100 @@
 /******************************************************************************/
 /********** SIG MODEL IDs ends                                     ************/
 /******************************************************************************/ 
+/***********Publsh Period For the Sensor **************************************/
+#define SENSOR_PUBLISH_PERIOD    10000
 
-/** \brief Callback map for application from middle layer */ 
+/* 
+ structure for the Property id for the sensors Present inside the firmware.
+*/
+typedef struct 
+{
+    MOBLEUINT16 Property_ID;
+    
+} MODEL_Property_IDTableParam_t;
+
+/* Sensor Cadence Parameters */
+typedef struct 
+{
+ MOBLEUINT16 Property_ID; 
+ MOBLEUINT8 FastCadenceDevisor;
+ MOBLEUINT8 StatusTriggerType; 
+ MOBLEUINT8 triggerDeltaDown;
+ MOBLEUINT8 triggerDeltaUp;
+ MOBLEUINT8 StatusMinInterval;
+ float FastCadenceLow;
+ float FastCadenceHigh;
+}Sensor_CadenceParam_t;
+
+/* Sensor Setting Parameters */
+#pragma pack(1)
+typedef struct 
+{
+ MOBLEUINT16 Property_ID; 
+ MOBLEUINT16 Sensor_Setting_ID; 
+ MOBLEUINT8 Sensor_Setting_Access;
+ MOBLEUINT16 Sensor_Setting_Value;
+}Sensor_SettingParam_t;
+
+/* Sensor Coloumn Parameters */
+#pragma pack(1)
+typedef struct 
+{
+ MOBLEUINT16 Property_ID; 
+ MOBLEUINT16 RowValueX; 
+ MOBLEUINT16 RowValueWidth;
+ MOBLEUINT16 RowValueY;
+}Sensor_ColumnParam_t;
+
+/** \brief Callback map for application from middle layer .
+    this will call the function related to the function pointer in the 
+    model_if.c file
+   const Appli_Sensor_cb_t SensorAppli_cb = 
+  {
+    Appli_Sensor_Cadence_Set,
+    Appli_Sensor_Data_Status,
+    Appli_Sensor_Descriptor_Status ,
+    Appli_Sensor_Setting_Set
+  };
+    
+**/ 
 typedef struct
 {
-  MOBLE_RESULT (*Sensor_Data_cb)(MOBLEUINT8*, MOBLEUINT32*, MOBLEUINT16);   
+  /* Pointer to the function Appli_Sensor_Cadence_Set used for callback 
+     from the middle layer to Application layer
+  */
+  MOBLE_RESULT (*Sensor_Cadence_Set_cb)(Sensor_CadenceParam_t*, MOBLEUINT16 ,MOBLEUINT32);
+  
+  /* Pointer to the function Appli_Sensor_Data_Status used for callback 
+     from the middle layer to Application layer
+  */
+  MOBLE_RESULT (*Sensor_Data_cb)(MOBLEUINT8*, MOBLEUINT32*, MOBLEUINT16 , MOBLEUINT32);
+  
+  /* Pointer to the function Appli_Sensor_Descriptor_Status used for callback 
+     from the middle layer to Application layer
+  */
   MOBLE_RESULT (*Sensor_Descriptor_cb)(MOBLEUINT8*, MOBLEUINT32*);  
+  
+  /* Pointer to the function Appli_Sensor_Setting_Set used for callback 
+     from the middle layer to Application layer
+  */
+  MOBLE_RESULT (*Sensor_Setting_Set_cb)(Sensor_SettingParam_t*, MOBLEUINT8); 
   
 } Appli_Sensor_cb_t;
 
+
+/* function pointer for application to get the value from application to middle 
+   layer file
+*/
+typedef struct
+{ 
+  MOBLE_RESULT (*GetSettingStatus_cb)(MOBLEUINT8*);
+  
+  MOBLE_RESULT (*GetSetting_IDStatus_cb)(MOBLEUINT8*);
+  
+}Appli_Sensor_GetStatus_cb_t;
+
+extern const Appli_Sensor_GetStatus_cb_t Appli_Sensor_GetStatus_cb;
 extern const Appli_Sensor_cb_t SensorAppli_cb;
 
 /* Exported Functions Prototypes ---------------------------------------------*/
@@ -119,13 +206,18 @@ MOBLE_RESULT SensorModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                     MOBLEUINT8 const *pData,
                                     MOBLEUINT32 length,
                                     MOBLEBOOL response);
-MOBLE_RESULT BLEMesh_AddSensorModels(void);
-void Sensor_Process(void);
 
+MOBLE_RESULT Sensor_Cadence_Set(const MOBLEUINT8* pCadence_param, MOBLEUINT32 length);
 MOBLE_RESULT Sensor_Data_Status(MOBLEUINT8* pSensorData_param, MOBLEUINT32* plength ,
                                                       MOBLEUINT8 const *pData, MOBLEUINT32 length);
 MOBLE_RESULT Sensor_Descriptor_Status(MOBLEUINT8* pSensorDiscriptor_param, MOBLEUINT32* plength);
-
+MOBLE_RESULT Sensor_Setting_Set(const MOBLEUINT8* pSetting_param, MOBLEUINT32 length);
+MOBLE_RESULT Sensor_Setting_Status_PID(MOBLEUINT8* pSetting_param, MOBLEUINT32 *plength, 
+                                                 const MOBLEUINT8 *pData,MOBLEUINT32 length);
+MOBLE_RESULT Sensor_Setting_Status_SettingID(MOBLEUINT8* pSetting_param, MOBLEUINT32 *plength, 
+                                                       const MOBLEUINT8 *pData,MOBLEUINT32 length);
+MOBLE_RESULT Sensor_Cadence_Status(MOBLEUINT8* pCadencestatus_param, MOBLEUINT32 *plength,
+                                   MOBLEUINT8 const *pData, MOBLEUINT32 length);
    
 #endif /* __Sensor_H */
 

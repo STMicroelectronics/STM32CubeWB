@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    app_ble.c
@@ -16,25 +17,31 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
 #include "app_common.h"
 
 #include "dbg_trace.h"
-
 #include "ble.h"
 #include "tl.h"
 #include "app_ble.h"
 
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "shci.h"
-#include "lpm.h"
+#include "stm32_lpm.h"
 #include "otp.h"
 
 #include "types.h"
 #include "ble_mesh.h"
 #include "appli_mesh.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 
@@ -163,19 +170,28 @@ typedef struct
    * ID of the Advertising Timeout
    */ 
   uint8_t Advertising_mgr_timer_Id;
+
 } BleApplicationContext_t;
+/* USER CODE BEGIN PTD */
+  
+/* USER CODE END PTD */
 
 /* Private defines -----------------------------------------------------------*/
 #define APPBLE_GAP_DEVICE_NAME_LENGTH 7
-#define SIZE_TAB_CONN_INT            2
-
 #define FAST_ADV_TIMEOUT               (30*1000*1000/CFG_TS_TICK_VAL) /**< 30s */
 #define INITIAL_ADV_TIMEOUT            (60*1000*1000/CFG_TS_TICK_VAL) /**< 60s */
-#define LED_ON_TIMEOUT                 (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */
 
 #define BD_ADDR_SIZE_LOCAL    6
 
-/* Private macros ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+#define LED_ON_TIMEOUT                 (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_CmdPacket_t BleCmdBuffer;
 
@@ -204,7 +220,10 @@ static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
 static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
 
 PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static uint16_t AdvIntervalMin, AdvIntervalMax;
+
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
 
 /* Extern function prototypes -----------------------------------------------*/
 extern void HCI_Event_CB(void *pckt);
@@ -219,13 +238,20 @@ static void Ble_Tl_Init( void );
 static void Ble_Hci_Gap_Gatt_Init(void);
 static const uint8_t* BleGetBdAddress( void );
 
+/* USER CODE BEGIN PFP */
+
+/* USER CODE END PFP */
+
 /* Functions Definition ------------------------------------------------------*/
 void APP_BLE_Init( void )
 {
+/* USER CODE BEGIN APP_BLE_Init_1 */
+
+/* USER CODE END APP_BLE_Init_1 */
   SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
   {
-    0,0,0,                              /**< Header unused */
-    0,                                  /** pBleBufferAddress not used */
+    {{0,0,0}},                              /**< Header unused */
+    {0,                                  /** pBleBufferAddress not used */
     0,                                  /** BleBufferSize not used */
     CFG_BLE_NUM_GATT_ATTRIBUTES,
     CFG_BLE_NUM_GATT_SERVICES,
@@ -242,7 +268,7 @@ void APP_BLE_Init( void )
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
     CFG_BLE_LL_ONLY,
-    0,
+    0}
   };
 
   /**
@@ -253,12 +279,12 @@ void APP_BLE_Init( void )
   /**
    * Do not allow standby in the application
    */
-  LPM_SetOffMode(1 << CFG_LPM_APP_BLE, LPM_OffMode_Dis);
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
 
   /**
    * Register the hci transport layer to handle BLE User Asynchronous Events
    */
-  SCH_RegTask(CFG_TASK_HCI_ASYNCH_EVT_ID, hci_user_evt_proc);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
 
   /**
    * Starts the BLE Stack on CPU2
@@ -275,11 +301,9 @@ void APP_BLE_Init( void )
    */
   SVCCTL_Init();
 
- 
   /**
    * Initialization of the BLE App Context
    */
-
   BleApplicationContext.Device_Connection_Status = APP_BLE_IDLE;
   BleApplicationContext.BleApplicationContext_legacy.connectionHandle = 0xFFFF;  
   
@@ -289,6 +313,10 @@ void APP_BLE_Init( void )
 #endif  
 
   BleApplicationContext.Device_Connection_Status = APP_BLE_FAST_ADV;
+
+/* USER CODE BEGIN APP_BLE_Init_2 */
+
+/* USER CODE END APP_BLE_Init_2 */
   return;
 }
 
@@ -317,56 +345,6 @@ static void Ble_Tl_Init( void )
 
 static void Ble_Hci_Gap_Gatt_Init(void){
 
-#if 0
-    /**
-     * Set TX Power to -2dBm.
-     * This avoids undesired disconnection due to instability on 32KHz
-     * internal oscillator for high transmission power.
-     */
-    aci_hal_set_tx_power_level(1, 0x1D/*0x18*/);
-
-    /**
-     * Initialize IO capability
-     */
-    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.ioCapability = CFG_IO_CAPABILITY;
-    aci_gap_set_io_capability(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.ioCapability);
-
-    /**
-     * Initialize authentication
-     */
-    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;
-    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data_Present = 0;
-    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = 8;
-    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = 16;
-    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 0;
-    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = 111111;
-    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = 1;
-    for (index = 0; index < 16; index++)
-    {
-      BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data[index] = (uint8_t) index;
-    }
-
-    aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
-                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,
-                                           0,
-                                           0,
-                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
-                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
-                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
-                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                           0
-                                           );
-
-    /**
-     * Initialize whitelist
-     */
-    if (BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode)
-    {
-      aci_gap_configure_whitelist();
-    }  
-  }
-#endif
-  
   uint8_t role;
   uint8_t index;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
@@ -401,12 +379,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   srd_bd_addr[1] =  0x0000ED6E;
   srd_bd_addr[0] =  LL_FLASH_GetUDN( );
   aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
-  {
-    uint8_t baddr_tmp[8];
-      
-    aci_hal_read_config_data(0x80, &baddr_tmp[7], baddr_tmp); 
-    aci_hal_read_config_data(0x00, &baddr_tmp[7], baddr_tmp); 
-  }
+
   /**
    * Write Identity root key used to derive LTK and CSRK 
    */
@@ -462,7 +435,6 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   if (role > 0)
   {
     const char *name = "STM32WB";
-
     aci_gap_init(role, 0,
                  APPBLE_GAP_DEVICE_NAME_LENGTH,
                  &gap_service_handle, &gap_dev_name_char_handle, &gap_appearance_char_handle);
@@ -481,7 +453,6 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   {
     BLE_DBG_SVCCTL_MSG("Appearance aci_gatt_update_char_value failed.\n");
   }
-
 /**
    * Initialize Default PHY
    */
@@ -500,7 +471,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data_Present = 0;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = 8;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = 16;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 0;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 1;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = 111111;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = 1;
   for (index = 0; index < 16; index++)
@@ -526,7 +497,6 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   {
     aci_gap_configure_whitelist();
   }
-
 }
 
 const uint8_t* BleGetBdAddress( void )
@@ -570,7 +540,18 @@ const uint8_t* BleGetBdAddress( void )
   return bd_addr;
 }
 
+/* USER CODE BEGIN FD_LOCAL_FUNCTION */
 
+/* USER CODE END FD_LOCAL_FUNCTION */
+
+/*************************************************************
+ *
+ *SPECIFIC FUNCTIONS
+ *
+ *************************************************************/
+/* USER CODE BEGIN FD_SPECIFIC_FUNCTIONS */
+
+/* USER CODE END FD_SPECIFIC_FUNCTIONS */
 /*************************************************************
  *
  * WRAP FUNCTIONS
@@ -578,19 +559,19 @@ const uint8_t* BleGetBdAddress( void )
  *************************************************************/
 void hci_notify_asynch_evt(void* pdata)
 {
-  SCH_SetTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
   return;
 }
 
 void hci_cmd_resp_release(uint32_t flag)
 {
-  SCH_SetEvt( 1<< CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID );
+  UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
   return;
 }
 
 void hci_cmd_resp_wait(uint32_t timeout)
 {
-  SCH_WaitEvt( 1<< CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID );
+  UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
   return;
 }
 
@@ -623,7 +604,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_PauseTask(task_id_list);
+      UTIL_SEQ_PauseTask(task_id_list);
 
       break;
 
@@ -633,7 +614,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_ResumeTask(task_id_list);
+      UTIL_SEQ_ResumeTask(task_id_list);
 
       break;
 
@@ -649,4 +630,7 @@ void SVCCTL_ResumeUserEventFlow( void )
   return;
 }
 
+/* USER CODE BEGIN FD_WRAP_FUNCTIONS */
+
+/* USER CODE END FD_WRAP_FUNCTIONS */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

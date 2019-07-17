@@ -29,7 +29,7 @@
 #include "ble.h"
 #include "p2p_client_app.h"
 
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "app_ble.h"
 
 /* USER CODE BEGIN Includes */
@@ -178,8 +178,8 @@ void P2PC_APP_Init(void)
 {
   uint8_t index =0;
 /* USER CODE BEGIN P2PC_APP_Init_1 */
-  SCH_RegTask( CFG_TASK_SEARCH_SERVICE_ID, Update_Service );
-  SCH_RegTask( CFG_TASK_SW1_BUTTON_PUSHED_ID, Button_Trigger_Received );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_SEARCH_SERVICE_ID, UTIL_SEQ_RFU, Update_Service );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_SW1_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, Button_Trigger_Received );
 
   /**
    * Initialize LedButton Service
@@ -242,7 +242,7 @@ void P2PC_APP_Notification(P2PC_APP_ConnHandle_Not_evt_t *pNotification)
       BSP_LED_Off(LED_BLUE); 
         
 #if OOB_DEMO == 0
-      SCH_SetTask(1<<CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1<<CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
 #endif 
       }
 /* USER CODE END PEER_DISCON_HANDLE_EVT */
@@ -263,7 +263,7 @@ void P2PC_APP_Notification(P2PC_APP_ConnHandle_Not_evt_t *pNotification)
 void P2PC_APP_SW1_Button_Action(void)
 {
 
-  SCH_SetTask(1<<CFG_TASK_SW1_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1<<CFG_TASK_SW1_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
 
 }
 /* USER CODE END FD */
@@ -551,7 +551,7 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           if(index < BLE_CFG_CLT_MAX_NBR_CB)
           {
 
-            SCH_SetTask( 1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0);
+            UTIL_SEQ_SetTask( 1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0);
 
           }
         }

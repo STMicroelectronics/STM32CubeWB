@@ -22,17 +22,8 @@
 #ifndef APP_CONF_H
 #define APP_CONF_H
 
-  /* Includes ------------------------------------------------------------------*/
-#include "stm32wbxx.h"
-#include "stm32wbxx_ll_exti.h"
-#include "stm32wbxx_ll_system.h"
-#include "stm32wbxx_ll_rcc.h"
-#include "stm32wbxx_ll_ipcc.h"
-#include "stm32wbxx_ll_bus.h"
-#include "stm32wbxx_ll_pwr.h"
-#include "stm32wbxx_ll_cortex.h"
-#include "stm32wbxx_ll_utils.h"
 #include "hw.h"
+#include "hw_conf.h"
 
 /******************************************************************************
  * Debug
@@ -54,49 +45,52 @@
  */
 #define CFG_DEBUGGER_SUPPORTED    1
 
+/*****************************************************************************
+ * Traces
+ * Enable or Disable traces in application
+ * When CFG_DEBUG_TRACE is set, traces are activated
+ *
+ * Note : Refer to utilities_conf.h file in order to details
+ *        the level of traces : CFG_DEBUG_TRACE_FULL or CFG_DEBUG_TRACE_LIGHT
+ *****************************************************************************/
+#define CFG_DEBUG_TRACE    1
+
 /**
  * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
- * When CFG_DEBUG_TRACE_LIGTH is set to 1, only the debug message is output
+ * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
  *
  * When both are set to 0, no trace are output
  * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
  */
-#define CFG_DEBUG_TRACE_LIGTH     1
+#define CFG_DEBUG_TRACE_LIGHT     1
 #define CFG_DEBUG_TRACE_FULL      0
 
-/* Define platform used: only ARM supported for TRACE trace */
-#define CFG_PLATFORM_LINUX        (0x01)
-#define CFG_PLATFORM_WINDOWS      (0x02)
-#define CFG_PLATFORM_ARM          (0x03)
+#if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     1
+#endif
 
-#define CFG_PLATFORM_TYPE         (CFG_PLATFORM_ARM)
+#if ( CFG_DEBUG_TRACE == 0 )
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     0
+#endif
 
 /**
- * Enable or Disable traces in application
+ * When not set, the traces is looping on sending the trace over UART
  */
-#define APP_DBG_EN              1
+#define DBG_TRACE_USE_CIRCULAR_QUEUE 1
 
-#if (APP_DBG_EN != 0)
-#define APP_DBG_MSG             PRINT_MESG_DBG
-#else
-#define APP_DBG_MSG             PRINT_NO_MESG
-#endif
+/**
+ * max buffer Size to queue data traces and max data trace allowed.
+ * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
+ */
+#define DBG_TRACE_MSG_QUEUE_SIZE 4096
+#define MAX_DBG_TRACE_MSG_SIZE 1024
 
-#if (( CFG_DEBUG_TRACE_FULL == 1 ) || ( CFG_DEBUG_TRACE_LIGTH == 1 ))
-#define CFG_DEBUG_TRACE      1
-
-#undef CFG_LPM_SUPPORTED
-#define CFG_LPM_SUPPORTED         0
-
-#undef CFG_DEBUGGER_SUPPORTED
-#define CFG_DEBUGGER_SUPPORTED    1
-
-#undef CFG_PLATFORM_TYPE
-#define CFG_PLATFORM_TYPE         (CFG_PLATFORM_ARM)
-
-#else
-#define CFG_DEBUG_TRACE      0
-#endif
 
 /******************************************************************************
  * Configure Log level for Application
@@ -110,8 +104,8 @@
 
 
 
-#define DBG_TRACE_UART_CFG      hw_lpuart1
-#define UART_CLI                hw_uart1
+#define CFG_DEBUG_TRACE_UART      hw_lpuart1
+#define CFG_CLI_UART                hw_uart1
 
 
 /******************************************************************************
@@ -145,6 +139,13 @@
 #define CFG_TL_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 
 #define TL_EVENT_FRAME_SIZE ( TL_EVT_HDR_SIZE + CFG_TL_MOST_EVENT_PAYLOAD_SIZE )
+
+/******************************************************************************
+ * OTP manager
+ ******************************************************************************/
+#define CFG_OTP_BASE_ADDRESS    OTP_AREA_BASE
+
+#define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 #endif /* APP_CONF_H */
 

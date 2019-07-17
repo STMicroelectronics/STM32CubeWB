@@ -7,20 +7,18 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics. All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */
-
+**/
 /* Includes ------------------------------------------------------------------*/
 #include "ff_gen_drv.h"
-#include "sd_diskio.h"
+#include "sd_diskio_dma_rtos.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -69,7 +67,7 @@ See BSP_SD_ErrorCallback() and BSP_SD_AbortCallback() below
 * Notice: This is applicable only for cortex M7 based platform.
 */
 
-#define ENABLE_SD_DMA_CACHE_MAINTENANCE  1
+/* #define ENABLE_SD_DMA_CACHE_MAINTENANCE  1 */
 
 
 /*
@@ -120,9 +118,9 @@ const Diskio_drvTypeDef  SD_Driver =
 
 static int SD_CheckStatusWithTimeout(uint32_t timeout)
 {
-  uint32_t timer = osKernelSysTick() + timeout;
-  /* block until SDIO IP is ready again or a timeout occur */
-  while(timer > osKernelSysTick())
+  uint32_t timer = osKernelSysTick();
+  /* block until SDIO peripherial is ready again or a timeout occur */
+  while( osKernelSysTick() - timer < timeout)
   {
     if (BSP_SD_GetCardState() == SD_TRANSFER_OK)
     {
@@ -172,9 +170,10 @@ DSTATUS SD_initialize(BYTE lun)
 
     /*
     * if the SD is correctly initialized, create the operation queue
+    * if not already created
     */
 
-    if (Stat != STA_NOINIT)
+    if ((Stat != STA_NOINIT) && (SDQueueID == NULL))
     {
       osMessageQDef(SD_Queue, QUEUE_SIZE, uint16_t);
       SDQueueID = osMessageCreate (osMessageQ(SD_Queue), NULL);

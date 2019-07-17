@@ -33,8 +33,8 @@ extern "C" {
 #include "stm32wbxx_core_interface_def.h"
 #include "tl_thread_hci.h"
 
-/* Use OpenThread FTD */
-#include "openthread_api_config_ftd.h"
+/* OpenThread Library */
+#include OPENTHREAD_CONFIG_FILE
 
 /* ---------------------------------------------------------------------------*/
 /* Exported types and defines ------------------------------------------------*/

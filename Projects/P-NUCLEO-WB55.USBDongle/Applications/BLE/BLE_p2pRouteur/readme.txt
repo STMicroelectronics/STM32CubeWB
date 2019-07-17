@@ -21,11 +21,11 @@
 @par Application Description 
 This example is to demonstrate Multipoint communication using BLE component.
 
-STM32WB maintains seven simultaneously connections to transfer information from one device to an another remote.
-Smart phone application is connected to one STM32WB P2P router device allowing  the control of six others
-STM32WB P2P Server devices (End Devices).
+STM32WB55xx maintains seven simultaneously connections to transfer information from one device to an another remote.
+Smart phone application is connected to one STM32WB55xx P2P router device allowing  the control of six others
+STM32WB55xx P2P Server devices (End Devices).
 
-Software Application Architecture demonstrate STM32WB capabilities:
+Software Application Architecture demonstrate STM32WB55xx capabilities:
 -- 1 slave & 6 masters connections on same device
 -- GATT Server & GATT Client on same device
 -- Automatic reconnection
@@ -33,16 +33,16 @@ Software Application Architecture demonstrate STM32WB capabilities:
 -- Proprietary Services & Characteristics are used
 
 With P2P Router Application:
--- STM32WB is Peripheral (GAP) / Server Device (GATT)
+-- STM32WB55xx is Peripheral (GAP) / Server Device (GATT)
 -- Peripheral to be connected by the Smart Phone
--- STM32WB is Central (GAP) / Client Device(GATT)
+-- STM32WB55xx is Central (GAP) / Client Device(GATT)
 -- Central to connect to Server Application 1 to 6 (Peripherals) 
 
 GAP Configuration
 -- Router device is placed in Advertising mode at Startup
 
 
-Once the code is downloaded on the STM32WB board and executed, the modules are initialized. 
+Once the code is downloaded on the STM32WB55xx board and executed, the modules are initialized. 
 The Peripheral device (P2P Server) starts advertising to be connected by Smart Phone application.
 
 Pushing SW1 button starts the SCAN / CONNECTION to END DEVICE
@@ -93,14 +93,14 @@ Smartphone <---------> P2P_Router  ...  <-> P2P_Server6
   - BLE/BLE_p2pRouteur/Core/Src/app_entry.c      			Initialization of the application
   - BLE/BLE_p2pRouteur/STM32_WPAN/App/p2p_routeur_app.c    	P2P Router application
   - BLE/BLE_p2pRouteur/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_p2pRouteur/Core/Src/hw_lpm.c      				Low Power Manager Driver
+  - BLE/BLE_p2pRouteur/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
   - BLE/BLE_p2pRouteur/Core/Src/hw_timerserver.c 			Timer Server based on RTC
   - BLE/BLE_p2pRouteur/Core/Src/hw_uart.c 					UART Driver
   
   
 @par Hardware and Software environment
 
-  - This application runs on STM32WB devices, USB DONGLE board (MB1293C) & Nucleo board (MB1355C)
+  - This application runs on STM32WB55xx devices, USB DONGLE board (MB1293C) & Nucleo board (MB1355C)
     
     - USB DONGLE boards Set-up    
        - Connect the USB DONGLE boards to your PC with a USB connector

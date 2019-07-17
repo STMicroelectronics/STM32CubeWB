@@ -38,7 +38,7 @@
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-
+void USBD_Clock_Config(void);
 /* USER CODE END PFP */
 
 extern void Error_Handler(void);

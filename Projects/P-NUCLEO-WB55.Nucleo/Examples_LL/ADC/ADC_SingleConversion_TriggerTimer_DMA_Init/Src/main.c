@@ -146,6 +146,7 @@ int main(void)
   
 
   /* USER CODE END 1 */
+  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -356,7 +357,7 @@ static void MX_ADC1_Init(void)
   NVIC_SetPriority(ADC1_IRQn, 0);
   NVIC_EnableIRQ(ADC1_IRQn);
   /* USER CODE END ADC1_Init 1 */
-  /**Common config 
+  /** Common config 
   */
   ADC_CommonInitStruct.CommonClock = LL_ADC_CLOCK_SYNC_PCLK_DIV2;
   LL_ADC_CommonInit(__LL_ADC_COMMON_INSTANCE(ADC1), &ADC_CommonInitStruct);
@@ -375,7 +376,7 @@ static void MX_ADC1_Init(void)
   LL_ADC_DisableIT_EOC(ADC1);
   LL_ADC_DisableIT_EOS(ADC1);
   LL_ADC_REG_SetTriggerEdge(ADC1, LL_ADC_REG_TRIG_EXT_FALLING);
-  /**Configure Regular Channel 
+  /** Configure Regular Channel 
   */
   LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_6);
   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_6, LL_ADC_SAMPLINGTIME_247CYCLES_5);
@@ -465,6 +466,7 @@ static void MX_TIM2_Init(void)
   */
 static void MX_DMA_Init(void) 
 {
+
   /* Init with LL driver */
   /* DMA controller clock enable */
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMAMUX1);

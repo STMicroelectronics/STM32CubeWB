@@ -2,8 +2,7 @@
 /**
  ******************************************************************************
   * File Name          : app_entry.h
-  * Description        : App entry configuration file for BLE 
-  *                      middleWare.
+  * Description        : App entry configuration file for STM32WPAN Middleware.
   ******************************************************************************
   * @attention
   *

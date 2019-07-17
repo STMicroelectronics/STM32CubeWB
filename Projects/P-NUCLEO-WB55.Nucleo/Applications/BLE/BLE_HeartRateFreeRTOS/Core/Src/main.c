@@ -40,19 +40,16 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "app_entry.h"
+#include "app_common.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "app_common.h"
-#include "lpm.h"
-#include "cmsis_os.h"
+#include "stm32_lpm.h"
 #include "dbg_trace.h"
 #include "hw_conf.h"
 #include "otp.h"
-#include "app_ble.h"
-#include "hrs_app.h"
-#include "shci_tl.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -70,8 +67,6 @@
 
 /* USER CODE END PM */
 
-osThreadId RF_ThreadId;
-
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart1;
@@ -80,6 +75,7 @@ DMA_HandleTypeDef hdma_usart1_tx;
 
 RTC_HandleTypeDef hrtc;
 
+osThreadId_t defaultTaskHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -92,6 +88,7 @@ void MX_LPUART1_UART_Init(void);
 void MX_USART1_UART_Init(void);
 static void MX_RF_Init(void);
 static void MX_RTC_Init(void);
+void StartDefaultTask(void *argument);
 /* USER CODE BEGIN PFP */
 void PeriphClock_Config(void);
 static void Reset_Device( void );
@@ -100,8 +97,6 @@ static void Reset_BackupDomain( void );
 static void Init_Exti( void );
 static void Config_HSE(void);
 /* USER CODE END PFP */
-
-static void RF_Thread_Process(void const *argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
@@ -123,6 +118,8 @@ int main(void)
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
+  /* Initialize the OS */
+
   /* USER CODE BEGIN Init */
   Reset_Device();
   Config_HSE();
@@ -143,46 +140,56 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
-  osThreadDef(RF_STACK, RF_Thread_Process, osPriorityNormal, 0, 1024);
-  RF_ThreadId = osThreadCreate(osThread(RF_STACK), NULL);
+  /* USER CODE END 2 */
+
+  osKernelInitialize(); // Initialize CMSIS-RTOS
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  const osThreadAttr_t defaultTask_attributes = {
+    .name = "defaultTask",
+    .priority = (osPriority_t) osPriorityNormal,
+    .stack_size = 256
+  };
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* Init code for STM32_WPAN */
+  APPE_Init();
 
   /* Start scheduler */
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
-  for(;;);
-}
 
-static void RF_Thread_Process(void const *argument)
-{
-  (void) argument;
-  osEvent event;
-
-  APPE_Init( );
-
-  for(;;)
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
   {
-    event = osSignalWait( 0, osWaitForever);
-    if(event.value.signals & (1<<CFG_TASK_ADV_UPDATE_ID))
-    {
-      Adv_Update();
-    }
+    /* USER CODE END WHILE */
 
-    if(event.value.signals & (1<<CFG_TASK_MEAS_REQ_ID))
-    {
-      HRSAPP_Measurement();
-    }
-
-    if(event.value.signals & (1<<CFG_TASK_HCI_ASYNCH_EVT_ID))
-    {
-      hci_user_evt_proc();
-    }
-
-    if(event.value.signals & (1<<CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID))
-    {
-      shci_user_evt_proc();
-    }
+    /* USER CODE BEGIN 3 */
   }
+  /* USER CODE END 3 */
 }
 
 /**
@@ -382,7 +389,7 @@ static void MX_RTC_Init(void)
   hrtc.Instance = RTC;
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
   hrtc.Init.AsynchPrediv = CFG_RTC_ASYNCH_PRESCALER;
-  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.SynchPrediv = CFG_RTC_SYNCH_PRESCALER;
   hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
   hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
@@ -602,22 +609,47 @@ static void Init_Exti( void )
  *
  *************************************************************/
 
+/* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_StartDefaultTask */
 /**
- * This function is empty to avoid starting the SysTick Timer
- */
-HAL_StatusTypeDef HAL_InitTick( uint32_t TickPriority )
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used 
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void *argument)
 {
-	return (HAL_OK);
+
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osThreadFlagsWait(1,osFlagsWaitAll,osWaitForever);
+  }
+  /* USER CODE END 5 */ 
 }
 
 /**
- * This function is empty as the SysTick Timer is not used
- */
-void HAL_Delay(__IO uint32_t Delay)
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM17 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	return;
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM17) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
 }
-/* USER CODE END 4 */
 
 /**
   * @brief  This function is executed in case of error occurrence.

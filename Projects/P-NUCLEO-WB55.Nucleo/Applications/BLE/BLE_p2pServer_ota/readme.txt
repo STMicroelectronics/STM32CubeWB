@@ -22,7 +22,7 @@
 
 This example is to demonstrate Point-to-Point communication using BLE component. 
 
-Two STM32WB boards are used, one acting as GATT client, and one as GATT server.
+Two STM32WB55xx boards are used, one acting as GATT client, and one as GATT server.
 For example, BLE P2P_Client application is downloaded in a USB DONGLE board (MB1293C) and BLE_p2pServer_ota application in a Nucleo board (MB1355C).
 The client could be located in a phone also, using the ST BLE Sensor application instead of the MB1293C board.
 
@@ -57,13 +57,13 @@ The client could be located in a phone also, using the ST BLE Sensor application
   - BLE/BLE_p2pServer_ota/Core/Src/app_entry.c      			Initialization of the application
   - BLE/BLE_p2pServer_ota/STM32_WPAN/App/p2p_server_app.c   	P2P Server application
   - BLE/BLE_p2pServer_ota/STM32_WPAN/Target/hw_ipcc.c      		IPCC Driver
-  - BLE/BLE_p2pServer_ota/Core/Src/hw_lpm.c      				Low Power Manager Driver
+  - BLE/BLE_p2pServer_ota/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
   - BLE/BLE_p2pServer_ota/Core/Src/hw_timerserver.c 			Timer Server based on RTC
   - BLE/BLE_p2pServer_ota/Core/Src/hw_uart.c 					UART Driver
   
 @par Hardware and Software environment
 
-    - This application runs on STM32WB devices, USB DONGLE board (MB1293C) & Nucleo board (MB1355C)
+    - This application runs on STM32WB55xx devices, USB DONGLE board (MB1293C) & Nucleo board (MB1355C)
     
     - USB DONGLE board (MB1293C) Set-up    
        - Connect the USB DONGLE boards to your PC 
@@ -107,10 +107,10 @@ On the android/ios device, enable the Bluetooth communications, and if not done 
 
 Second demonstration
  - BLE_p2pServer may be connected by BLE_p2pClient as well(MB1293C).
- - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB boards and executed, the modules are initialized. 
+ - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB55xx boards and executed, the modules are initialized. 
  
  - BLE_p2pServer may be connected by BLE_p2pClient.
- - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB boards and executed, the modules are initialized. 
+ - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB55xx boards and executed, the modules are initialized. 
 
  - The Peripheral device (BLE_p2pServer) starts advertising (during 1 minute), the green led blinks for each advertising event.
  - The Central device (BLE_p2pClient) starts scanning when pressing the User button (SW1) on the USB Dongle board. 

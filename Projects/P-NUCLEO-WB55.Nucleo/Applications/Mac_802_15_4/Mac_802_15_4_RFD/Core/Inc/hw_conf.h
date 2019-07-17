@@ -23,6 +23,25 @@
 #define HW_CONF_H
 
 /******************************************************************************
+ * Semaphores
+ * THIS SHALL NO BE CHANGED AS THESE SEMAPHORES ARE USED AS WELL ON THE CM0+
+ *****************************************************************************/
+/* Index of the semaphore used to manage the entry Stop Mode procedure */
+#define CFG_HW_ENTRY_STOP_MODE_SEMID                            4
+
+/* Index of the semaphore used to access the RCC */
+#define CFG_HW_RCC_SEMID                                        3
+
+/* Index of the semaphore used to access the FLASH */
+#define CFG_HW_FLASH_SEMID                                      2
+
+/* Index of the semaphore used to access the PKA */
+#define CFG_HW_PKA_SEMID                                        1
+
+/* Index of the semaphore used to access the RNG */
+#define CFG_HW_RNG_SEMID                                        0
+
+/******************************************************************************
  * HW UART
  *****************************************************************************/
 

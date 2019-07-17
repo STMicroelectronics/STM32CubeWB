@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    common.c
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Model middleware file
 ******************************************************************************
 * @attention
@@ -42,10 +42,7 @@
 #include "hal_common.h"
 #include "mesh_cfg.h"
 #include "generic.h"
-#include "ble_mesh.h"
-#include "models_if.h"
-#include "appli_generic.h"
-#include "mesh_cfg.h"
+#include "light.h"
 #include "common.h"
 #include <string.h>
 
@@ -298,7 +295,7 @@ MOBLE_RESULT  Chk_MultiParamValidityAllUnsigned(MOBLEUINT16 min_param_range1, MO
  */                                         
 MOBLEUINT32 Get_StepResolutionValue(MOBLEUINT8 time_param)
 {
-  MOBLEUINT32 stepResolution;
+  MOBLEUINT32 stepResolution = 0;
   
   if(time_param == STEP_HEX_VALUE_0)
   {
@@ -353,6 +350,10 @@ MOBLEUINT16 PwmValueMapping(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEI
    {
         duty = 31999;
    }   
+      if(duty == 0)
+      {
+        duty = 1;
+      }
      
    return duty;
 }
@@ -419,6 +420,22 @@ MOBLEUINT16 PWM_WarmValue(float colourValue ,float brightValue)
      
    return duty;
 }
+
+/**
+* @brief  TraceHeader: This function is used print the timestamp , function name
+*         depends on the flag.
+* @param  func_name: function pointer.
+* @param  mode: Flag
+* @retval void
+*/ 
+void TraceHeader(const char* func_name, int mode)
+{
+    if (mode >= 0)
+        printf("%ld %s - ", Clock_Time(), func_name);
+    else
+        printf("%ld %s - <<<ERROR>>>", Clock_Time(), func_name);
+}    
+
 
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
 

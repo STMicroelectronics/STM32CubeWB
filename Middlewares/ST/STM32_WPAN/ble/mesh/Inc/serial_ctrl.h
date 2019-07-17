@@ -1,10 +1,10 @@
 /**
 ******************************************************************************
-* @file    serial_ctrl.h
+* @file    serial_if.h
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
-* @brief   Header file for the serial control file 
+* @version V1.10.000
+* @date    15-Jan-2019
+* @brief   Header file for the serial interface file 
 ******************************************************************************
 * @attention
 *
@@ -50,6 +50,7 @@
 /* Exported variables  ------------------------------------------------------- */
 /* Exported Functions Prototypes ---------------------------------------------*/
 void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
+
 
 #endif /* __SERIAL_CTRL_H */
 

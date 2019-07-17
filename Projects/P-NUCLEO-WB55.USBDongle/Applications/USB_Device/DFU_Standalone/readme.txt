@@ -24,6 +24,7 @@ Compliant implementation of the Device Firmware Upgrade (DFU).
 
 Capability to program the embedded Flash memory through the USB peripheral.
 
+
 At the beginning of the main program the HAL_Init() function is called to reset all the peripherals,
 initialize the Flash interface and the systick. The user is provided with the SystemClock_Config()
 function to configure the system clock (SYSCLK) to run at 64 MHz. The Full Speed (FS) USB module uses
@@ -85,7 +86,7 @@ on the driver installation and PC host user interface.
 @par USB Library Configuration
 
 It is possible to fine tune needed USB Device features by modifying defines values in USBD configuration
-file “usbd_conf.h” available under the project includes directory, in a way to fit the application
+file Â“usbd_conf.hÂ” available under the project includes directory, in a way to fit the application
 requirements, such as:
  - USBD_DFU_APP_DEFAULT_ADD, specifying the address from where user's application will be downloaded.
 
@@ -98,16 +99,16 @@ Middleware, USB Device, DFU, Firmware upgrade
 @par Directory contents
 
   - USB_Device/DFU_Standalone/Core/Src/main.c                   Main program
-  - USB_Device/DFU_Standalone/Core/Src/system_stm32wbxx.c         stm32wbxx system clock configuration file
-  - USB_Device/DFU_Standalone/Core/Src/stm32wbxx_it.c             Interrupt handlers
-  - USB_Device/DFU_Standalone/Core/Src/stm32wbxx_hal_msp.c        HAL MSP Module
+  - USB_Device/DFU_Standalone/Core/Src/system_stm32wbxx.c       stm32wbxx system clock configuration file
+  - USB_Device/DFU_Standalone/Core/Src/stm32wbxx_it.c           Interrupt handlers
+  - USB_Device/DFU_Standalone/Core/Src/stm32wbxx_hal_msp.c      HAL MSP Module
   - USB_Device/DFU_Standalone/USB_Device/App/usb_device.c       USB Device application code
   - USB_Device/DFU_Standalone/USB_Device/App/usb_desc.c         USB device descriptor
   - USB_Device/DFU_Standalone/USB_Device/App/usbd_dfu_flash.c   Internal flash memory management
   - USB_Device/DFU_Standalone/USB_Device/Target/usbd_conf.c     General low level driver configuration
   - USB_Device/DFU_Standalone/Core/Inc/main.h                   Main program header file
-  - USB_Device/DFU_Standalone/Core/Inc/stm32wbxx_it.h             Interrupt handlers header file
-  - USB_Device/DFU_Standalone/Core/Inc/stm32wbxx_hal_conf.h       HAL configuration file
+  - USB_Device/DFU_Standalone/Core/Inc/stm32wbxx_it.h           Interrupt handlers header file
+  - USB_Device/DFU_Standalone/Core/Inc/stm32wbxx_hal_conf.h     HAL configuration file
   - USB_Device/DFU_Standalone/USB_Device/App/usb_device.h       USB Device application header file
   - USB_Device/DFU_Standalone/USB_Device/App/usbd_desc.h        USB device descriptor header file
   - USB_Device/DFU_Standalone/USB_Device/App/usbd_dfu_flash.h   Internal flash memory management header file

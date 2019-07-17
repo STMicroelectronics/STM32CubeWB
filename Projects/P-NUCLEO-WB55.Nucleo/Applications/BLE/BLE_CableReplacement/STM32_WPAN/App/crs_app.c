@@ -25,9 +25,8 @@
 #include "dbg_trace.h"
 #include "ble.h"
 #include "crs_app.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "DispTools.h"
-#include "uuid.h"
 #include "stm_queue.h"
 
 
@@ -201,7 +200,7 @@ void CRSAPP_Notification(CRSAPP_Notification_evt_t *pNotification)
 
 void CRSAPP_Init(void)
 {
-  SCH_RegTask( CFG_TASK_CRS_UPDATE_REQ_ID, CRSAPP_Update );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_CRS_UPDATE_REQ_ID, UTIL_SEQ_RFU, CRSAPP_Update );
 
   PosXRx = POSXRX;
   PosYRx = POSYRX + 2;

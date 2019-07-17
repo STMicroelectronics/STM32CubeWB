@@ -74,7 +74,7 @@ Timer, DMA, Frequency, Input, Capture, External Signal, Measurement
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55RGVx devices.
+  - This example runs on STM32WB55xx devices.
   - In this example, the clock is set to 64 MHz.
     
   - This example has been tested with STMicroelectronics P-NUCLEO-WB55

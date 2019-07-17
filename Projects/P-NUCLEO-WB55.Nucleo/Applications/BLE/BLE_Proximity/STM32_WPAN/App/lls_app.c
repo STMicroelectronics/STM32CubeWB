@@ -25,7 +25,7 @@
 #include "dbg_trace.h"
 #include "lls_app.h"
 #include "ble.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "app_ble.h"
 
 

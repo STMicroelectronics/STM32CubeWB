@@ -29,7 +29,7 @@
 #include "dt_client_app.h"
 #include "dts.h"
 
-#include "scheduler.h"
+#include "stm32_seq.h"
 
 /* Private defines -----------------------------------------------------------*/
 #define UNPACK_2_BYTE_PARAMETER(ptr)  \
@@ -88,8 +88,8 @@ void DT_Client_App_Init( void )
   
   SVCCTL_RegisterCltHandler(DataTransfer_Client_Event_Handler);
 
-  SCH_RegTask(CFG_IdleTask_DataTransfer_ClientDiscovery, DTC_App_Update_Service);
-  SCH_RegTask( CFG_TASK_APP_DATA_THROUGHPUT_ID, DataThroughput_Calculation);
+  UTIL_SEQ_RegTask( 1<<CFG_IdleTask_DataTransfer_ClientDiscovery, UTIL_SEQ_RFU, DTC_App_Update_Service);
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_APP_DATA_THROUGHPUT_ID, UTIL_SEQ_RFU, DataThroughput_Calculation);
 
   aDataTransferClientContext[0].state = DTC_IDLE;
   aDataTransferClientContext[0].connHandle = 0xFFFF;
@@ -374,22 +374,22 @@ static SVCCTL_EvtAckStatus_t DataTransfer_Client_Event_Handler( void *Event )
                  * we need to find the characteristics of Data Transfer
                  * service
                  */
-                SCH_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
               }
                 break;
               case DTC_DISCOVER_NOTIFICATION_CHAR_DESC:
               {
-                SCH_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
               }
                 break;
               case DTC_DISCOVER_TX_CHAR_DESC:
               {
-                SCH_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
               }
                 break;
               case DTC_DISCOVER_RX_CHAR_DESC:
               {
-                SCH_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
               }
                 break;
               case DTC_ENABLE_NOTIFICATION_TX_DESC:
@@ -401,7 +401,7 @@ static SVCCTL_EvtAckStatus_t DataTransfer_Client_Event_Handler( void *Event )
                 else
                 {
                   APP_DBG_MSG("enable notification \n");
-                  SCH_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
+                  UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
                 }
               }
                 break;
@@ -414,7 +414,7 @@ static SVCCTL_EvtAckStatus_t DataTransfer_Client_Event_Handler( void *Event )
                 else
                 {
                   APP_DBG_MSG("disable notification \n");
-                  SCH_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
+                  UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
                 }
               }
                 break;
@@ -637,7 +637,7 @@ void DTC_App_Update_Service( )
 
 static void DataThroughputTimer( void )
 {
-  SCH_SetTask(1 << CFG_TASK_APP_DATA_THROUGHPUT_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_APP_DATA_THROUGHPUT_ID, CFG_SCH_PRIO_0);
   return;
 }
 

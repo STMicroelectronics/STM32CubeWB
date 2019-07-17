@@ -42,7 +42,7 @@ This is the implementation of the BLE Mesh Lighting profile as specified by the 
   - BLE/BLE_MeshLightingDemo/Core/Inc/utilities_conf.h    		Configuration file of the utilities
   - BLE/BLE_MeshLightingDemo/Core/Inc/vcp_conf.h    		    Configuration file of Virtual Com Port Interface
   - BLE/BLE_MeshLightingDemo/Core/Src/app_entry.c      		    Initialization of the application
-  - BLE/BLE_MeshLightingDemo/Core/Src/hw_lpm.c      		    Low Power Manager Driver
+  - BLE/BLE_MeshLightingDemo/Core/Src/stm32_lpm_if.c		    Low Power Manager Interface
   - BLE/BLE_MeshLightingDemo/Core/Src/hw_timerserver.c 		    Timer Server based on RTC
   - BLE/BLE_MeshLightingDemo/Core/Src/hw_uart.c 			    UART Driver
   - BLE/BLE_MeshLightingDemo/Core/Src/main.c                  	Main program
@@ -99,7 +99,7 @@ In order to make the program work, you must do the following:
  - Run the example
  
 For more details refer to the Application Note: 
-  AN5289_STM32WB_How_to_build_BLE_Mesh_Application
+  AN5292_STM32WB_How_to_build_BLE_Mesh_Application
   
 * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

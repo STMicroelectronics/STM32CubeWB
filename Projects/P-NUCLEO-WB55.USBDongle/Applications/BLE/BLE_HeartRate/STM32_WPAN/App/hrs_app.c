@@ -24,7 +24,7 @@
 
 #include "ble.h"
 #include "hrs_app.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,7 +102,7 @@ void HRS_Notification(HRS_App_Notification_evt_t *pNotification)
 
 void HRSAPP_Init(void)
 {
-  SCH_RegTask( CFG_TASK_MEAS_REQ_ID, HRSAPP_Measurement );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_MEAS_REQ_ID, UTIL_SEQ_RFU, HRSAPP_Measurement );
 
   /**
    * Set Body Sensor Location
@@ -175,7 +175,7 @@ static void HrMeas( void )
    * The background is the only place where the application can make sure a new aci command
    * is not sent if there is a pending one
    */
-  SCH_SetTask( 1<<CFG_TASK_MEAS_REQ_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MEAS_REQ_ID, CFG_SCH_PRIO_0);
 
   return;
 }

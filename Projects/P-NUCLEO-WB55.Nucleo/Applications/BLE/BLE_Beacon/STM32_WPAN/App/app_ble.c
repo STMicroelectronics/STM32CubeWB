@@ -29,9 +29,9 @@
 #include "tl.h"
 #include "app_ble.h"
 
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "shci.h"
-#include "lpm.h"
+#include "stm32_lpm.h"
 #include "otp.h"
 #include "eddystone_beacon.h"
 #include "eddystone_uid_service.h"
@@ -160,12 +160,12 @@ void APP_BLE_Init( void )
   /**
    * Do not allow standby in the application
    */
-  LPM_SetOffMode(1 << CFG_LPM_APP_BLE, LPM_OffMode_Dis);
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
 
   /**
    * Register the hci transport layer to handle BLE User Asynchronous Events
    */
-  SCH_RegTask(CFG_TASK_HCI_ASYNCH_EVT_ID, hci_user_evt_proc);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
 
   /**
    * Starts the BLE Stack on CPU2
@@ -185,7 +185,7 @@ void APP_BLE_Init( void )
   /**
    * From here, all initialization are BLE application specific
    */
-  SCH_RegTask(CFG_TASK_BEACON_UPDATE_REQ_ID, Beacon_Update);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_BEACON_UPDATE_REQ_ID, UTIL_SEQ_RFU, Beacon_Update);
 
   /**
    * Make device discoverable
@@ -437,8 +437,6 @@ static void Beacon_Update( void )
    * Nb Sectors  : 1
    */
   NVIC_SystemReset();
-
-  return;
 }
 
 const uint8_t* BleGetBdAddress( void )
@@ -496,19 +494,19 @@ const uint8_t* BleGetBdAddress( void )
  *************************************************************/
 void hci_notify_asynch_evt(void* pdata)
 {
-  SCH_SetTask(1 << CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
   return;
 }
 
 void hci_cmd_resp_release(uint32_t flag)
 {
-  SCH_SetEvt(1 << CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID);
+  UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
   return;
 }
 
 void hci_cmd_resp_wait(uint32_t timeout)
 {
-  SCH_WaitEvt(1 << CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID);
+  UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
   return;
 }
 
@@ -541,7 +539,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_PauseTask(task_id_list);
+      UTIL_SEQ_PauseTask(task_id_list);
 
       break;
 
@@ -551,7 +549,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_ResumeTask(task_id_list);
+      UTIL_SEQ_ResumeTask(task_id_list);
 
       break;
 

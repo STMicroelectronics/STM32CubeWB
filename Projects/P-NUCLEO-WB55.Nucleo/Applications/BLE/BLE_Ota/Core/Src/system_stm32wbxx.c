@@ -274,7 +274,7 @@ static void BootModeCheck( void )
     /**
      * Check Boot Mode from SRAM1
      */
-    if(((*(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_FW_APP) && (CheckFwAppValidity( ) != 0))
+    if((CFG_OTA_REBOOT_VAL_MSG == CFG_REBOOT_ON_FW_APP) && (CheckFwAppValidity( ) != 0))
     {
       /**
        * The user has requested to start on the firmware application and it has been checked
@@ -283,23 +283,23 @@ static void BootModeCheck( void )
        */
       JumpFwApp();
     }
-    else if(((*(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_FW_APP) && (CheckFwAppValidity( ) == 0))
+    else if((CFG_OTA_REBOOT_VAL_MSG == CFG_REBOOT_ON_FW_APP) && (CheckFwAppValidity( ) == 0))
     {
       /**
        * The user has requested to start on the firmware application but there is no valid application
        * Erase all sectors specified by byte1 and byte1 in SRAM1 to download a new App.
        */
-      *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_BLE_OTA_APP;     /* Request to reboot on BLE_Ota application */
-      *((uint8_t*)SRAM1_BASE+1) = CFG_APP_START_SECTOR_INDEX;
-      *((uint8_t*)SRAM1_BASE+2) = 0xFF;
+      CFG_OTA_REBOOT_VAL_MSG = CFG_REBOOT_ON_BLE_OTA_APP;     /* Request to reboot on BLE_Ota application */
+      CFG_OTA_START_SECTOR_IDX_VAL_MSG = CFG_APP_START_SECTOR_INDEX;
+      CFG_OTA_NBR_OF_SECTOR_VAL_MSG = 0xFF;
     }
-    else if((*(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_BLE_OTA_APP)
+    else if(CFG_OTA_REBOOT_VAL_MSG == CFG_REBOOT_ON_BLE_OTA_APP)
     {
       /**
        * It has been requested to reboot on BLE_Ota application to download data
        */
     }
-    else if((*(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_CPU2_UPGRADE)
+    else if(CFG_OTA_REBOOT_VAL_MSG == CFG_REBOOT_ON_CPU2_UPGRADE)
     {
       /**
        * It has been requested to reboot on BLE_Ota application to keep running the firmware upgrade process
@@ -344,7 +344,7 @@ static void JumpSelectionOnPowerUp( void )
      * The SRAM1 is random
      * Initialize SRAM1 to indicate we requested to reboot of firmware application
      */
-    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_FW_APP;
+    CFG_OTA_REBOOT_VAL_MSG = CFG_REBOOT_ON_FW_APP;
 
     /**
      * A valid application is available
@@ -358,14 +358,14 @@ static void JumpSelectionOnPowerUp( void )
      * The SRAM1 is random
      * Initialize SRAM1 to indicate we requested to reboot of BLE_Ota application
      */
-    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_BLE_OTA_APP;
+    CFG_OTA_REBOOT_VAL_MSG = CFG_REBOOT_ON_BLE_OTA_APP;
 
     /**
      * There is no valid application available
      * Erase all sectors specified by byte1 and byte1 in SRAM1 to download a new App.
      */
-    *((uint8_t*)SRAM1_BASE+1) = CFG_APP_START_SECTOR_INDEX;
-    *((uint8_t*)SRAM1_BASE+2) = 0xFF;
+    CFG_OTA_START_SECTOR_IDX_VAL_MSG = CFG_APP_START_SECTOR_INDEX;
+    CFG_OTA_NBR_OF_SECTOR_VAL_MSG = 0xFF;
   }
   return;
 }

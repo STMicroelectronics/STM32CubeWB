@@ -347,6 +347,10 @@ typedef enum MAC_Pib_Ids_Tag {
 
     /*! - Proprietary Id for Default MAC Security Extended Address  */
     g_MAC_DEFAULT_SECURITY_EXTENDED_ADDRESS_c = (uint8_t) 0x81,
+
+    /*! - Proprietary Id for Default MAC Security Extended Address  */
+    g_MAC_ASSOCIATED_PAN_COORDINATOR_c = (uint8_t) 0x56,
+
 #ifdef GENMAC_CERTIF_DEDICATED_ATTRIB
     /*! - Proprietary Id to force FC frameType field to 'Reserved'  */
     g_MAC_CERTIF_SET_FC_RESERVED_FRAME_c = (uint8_t) 0x90,

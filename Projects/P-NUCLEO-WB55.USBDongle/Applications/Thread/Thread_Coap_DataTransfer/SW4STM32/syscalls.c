@@ -88,7 +88,7 @@ void _exit (int status)
 	while (1) {}		/* Make sure we hang here */
 }
 
-int _read (int file, char *ptr, int len)
+__attribute__((weak)) int _read(int file, char *ptr, int len)
 {
 	int DataIdx;
 
@@ -98,6 +98,17 @@ int _read (int file, char *ptr, int len)
 	}
 
 return len;
+}
+
+__attribute__((weak)) int _write(int file, char *ptr, int len)
+{
+	int DataIdx;
+
+	for (DataIdx = 0; DataIdx < len; DataIdx++)
+	{
+		__io_putchar(*ptr++);
+	}
+	return len;
 }
 
 caddr_t _sbrk(int incr)

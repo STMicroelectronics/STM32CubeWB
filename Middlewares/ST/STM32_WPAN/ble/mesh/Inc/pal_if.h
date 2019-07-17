@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    pal_if.h
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Header file for platform dependent functions  
 ******************************************************************************
 * @attention
@@ -32,7 +32,7 @@
 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-* Initial BlueNRG-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
+* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
 * (MoBLE) technology. The present solution is developed and maintained for both 
 * Mesh library and Applications solely by STMicroelectronics.
 *
@@ -43,8 +43,6 @@
 #define __PAL_IF_H
 
 /* Exported Functions Prototypes ---------------------------------------------*/
-unsigned char MoblePalIsBtDisconnected(void);
-void BnrgmPalAdvStop(void);
-MOBLE_RESULT MoblePalNvmProcess(void);
+MOBLE_RESULT BnrgmPalNvmProcess(void);
 
 #endif /* __PAL_IF_H */

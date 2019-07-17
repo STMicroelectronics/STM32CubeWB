@@ -123,21 +123,12 @@
 
 /*!< Uncomment the following line if you need to relocate your vector Table in
      Internal SRAM. */
-#ifdef CORE_CM0PLUS
-/* #define VECT_TAB_SRAM */
-#define VECT_TAB_OFFSET         0x0U            /*!< Vector Table base offset field.
-                                                     This value must be a multiple of 0x100. */
-
-#define VECT_TAB_BASE_ADDRESS   SRAM2A_BASE      /*!< Vector Table base address field.
-                                                     This value must be a multiple of 0x100. */
-#else
 /* #define VECT_TAB_SRAM */
 #define VECT_TAB_OFFSET         0x0U            /*!< Vector Table base offset field.
                                                      This value must be a multiple of 0x200. */
 
 #define VECT_TAB_BASE_ADDRESS   SRAM1_BASE       /*!< Vector Table base offset field.
                                                      This value must be a multiple of 0x200. */
-#endif
 /**
   * @}
   */
@@ -199,21 +190,11 @@
 void SystemInit(void)
 {
   /* Configure the Vector Table location add offset address ------------------*/
-#ifdef CORE_CM0PLUS
-#if defined(VECT_TAB_SRAM) && defined(VECT_TAB_BASE_ADDRESS)  
-  /* program in SRAMx */
-  SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAMx for CPU2 */
-#else    
-  /*  program in FLASH */
-  SCB->VTOR = VECT_TAB_OFFSET;              /* Vector Table Relocation in Internal FLASH */
-#endif  /* Program memory type */ 
-#else   
 #if defined(VECT_TAB_SRAM) && defined(VECT_TAB_BASE_ADDRESS)  
   /* program in SRAMx */
   SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET;  /* Vector Table Relocation in Internal SRAMx for CPU1 */
 #else    /* program in FLASH */
   SCB->VTOR = VECT_TAB_OFFSET;              /* Vector Table Relocation in Internal FLASH */
-#endif
 #endif
 
   /* FPU settings ------------------------------------------------------------*/
@@ -349,14 +330,8 @@ void SystemCoreClockUpdate(void)
   }
   
   /* Compute HCLK clock frequency --------------------------------------------*/
-#ifdef CORE_CM0PLUS
-  /* Get HCLK2 prescaler */
-  tmp = AHBPrescTable[((RCC->EXTCFGR & RCC_EXTCFGR_C2HPRE) >> RCC_EXTCFGR_C2HPRE_Pos)];
-
-#else
   /* Get HCLK1 prescaler */
   tmp = AHBPrescTable[((RCC->CFGR & RCC_CFGR_HPRE) >> RCC_CFGR_HPRE_Pos)];
-#endif
   /* HCLK clock frequency */
   SystemCoreClock = SystemCoreClock / tmp;
 

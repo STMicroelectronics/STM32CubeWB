@@ -1,9 +1,9 @@
 /**
 ******************************************************************************
-* @file    appli_mesh.c
+* @file    pal_nvm.c
 * @author  BLE Mesh Team
-* @version V1.08.000
-* @date    10-July-2018
+* @version V1.09.000
+* @date    15-Oct-2018
 * @brief   Flash management for the Controller
 ******************************************************************************
 * @attention
@@ -301,7 +301,7 @@ MOBLE_RESULT MoblePalNvmWrite(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 s
 * @param  None
 * @retval Result
 */
-MOBLE_RESULT MoblePalNvmProcess(void)
+MOBLE_RESULT BnrgmPalNvmProcess(void)
 {
     /* do nothing */
     return MOBLE_RESULT_SUCCESS;

@@ -85,7 +85,7 @@ COAP,Thread
   - Thread/Thread_FTD_Coap_Multicast/Core/Src/app_entry.c             Initialization of the application
   - Thread/Thread_FTD_Coap_Multicast/STM32_WPAN/App/app_thread.c      Thread application implementation
   - Thread/Thread_FTD_Coap_Multicast/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
-  - Thread/Thread_FTD_Coap_Multicast/Core/Src/hw_lpm.c                Low Power Manager Driver
+  - Thread/Thread_FTD_Coap_Multicast/Core/Src/stm32_lpm_if.c          Low Power Manager Interface
   - Thread/Thread_FTD_Coap_Multicast/Core/Src/hw_uart.c               UART driver
   - Thread/Thread_FTD_Coap_Multicast/Core/Src/main.c                  Main program
   - Thread/Thread_FTD_Coap_Multicast/Core/Src/stm_logging.c           Logging module for traces

@@ -1,24 +1,22 @@
-
- /**
-  ******************************************************************************
-  * @file    stm_logging.c
-  * @author  MCD Application Team
-  * @brief   This file contains all the defines and functions used for logging
-  *          on Application examples.
+/**
+ ******************************************************************************
+  * File Name          : stm_logging.c
+  * Description        : This file contains all the defines and functions used 
+  *                     for logging on Application examples.
   *
   ******************************************************************************
   * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
 
 /**
  * @file
@@ -56,7 +54,6 @@
 #define RTT_COLOR_CODE_YELLOW  ""
 #define RTT_COLOR_CODE_CYAN    ""
 #endif /* LOG_RTT_COLOR_ENABLE == 1 */
-
 
 #if (CFG_DEBUG_TRACE != 0)
 /**
@@ -162,7 +159,6 @@ static inline uint16_t logTimestamp(char *aLogString, uint16_t aMaxSize)
 }
 #endif /* LOG_TIMESTAMP_ENABLE */
 
-
 /**
  * Function for printing application log
  *
@@ -213,5 +209,3 @@ void logApplication(appliLogLevel_t aLogLevel, appliLogRegion_t aLogRegion, cons
   }
 #endif /* CFG_DEBUG_TRACE */
 }
-
-

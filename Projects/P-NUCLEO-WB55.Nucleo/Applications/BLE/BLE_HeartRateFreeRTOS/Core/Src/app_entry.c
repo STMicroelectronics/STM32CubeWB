@@ -27,7 +27,7 @@
 #include "tl.h"
 #include "cmsis_os.h"
 #include "shci_tl.h"
-#include "lpm.h"
+#include "stm32_lpm.h"
 #include "dbg_trace.h"
 
 /* Private includes -----------------------------------------------------------*/
@@ -64,14 +64,27 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t BleSpareEvtBuffer[sizeof(TL_
 /* USER CODE END PV */
 
 /* Global variables ----------------------------------------------------------*/
-extern osThreadId RF_ThreadId;
+osMutexId_t MtxShciId;
+osSemaphoreId_t SemShciId;
+osThreadId_t ShciUserEvtProcessId;
+
+const osThreadAttr_t ShciUserEvtProcess_attr = {
+    .name = CFG_SHCI_USER_EVT_PROCESS_NAME,
+    .attr_bits = CFG_SHCI_USER_EVT_PROCESS_ATTR_BITS,
+    .cb_mem = CFG_SHCI_USER_EVT_PROCESS_CB_MEM,
+    .cb_size = CFG_SHCI_USER_EVT_PROCESS_CB_SIZE,
+    .stack_mem = CFG_SHCI_USER_EVT_PROCESS_STACK_MEM,
+    .priority = CFG_SHCI_USER_EVT_PROCESS_PRIORITY,
+    .stack_size = CFG_SHCI_USER_EVT_PROCESS_STACk_SIZE
+};
 
 /* Private functions prototypes-----------------------------------------------*/
+static void ShciUserEvtProcess(void *argument);
 static void SystemPower_Config( void );
 static void Init_Debug( void );
 static void appe_Tl_Init( void );
-static void Switch_On_HSI( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
+
 static void APPE_SysUserEvtRx( void * pPayload );
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern void MX_LPUART1_UART_Init(void);
@@ -99,7 +112,7 @@ void APPE_Init( void )
    * The Standby mode should not be entered before the initialization is over
    * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
    */
-  LPM_SetOffMode(1 << CFG_LPM_APP, LPM_OffMode_Dis);
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
 
   Led_Init();
 
@@ -178,17 +191,14 @@ static void Init_Debug( void )
  */
 static void SystemPower_Config( void )
 {
-  LPM_Conf_t LowPowerModeConfiguration;
 
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
   LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 
-  /**< Configure low power manager */
-  LowPowerModeConfiguration.Stop_Mode_Config = LPM_StopMode2;
-  LowPowerModeConfiguration.OFF_Mode_Config = LPM_Standby;
-  LPM_SetConf(&LowPowerModeConfiguration);
+  /* Initialize low power manager */
+  UTIL_LPM_Init( );
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   /**
@@ -207,7 +217,11 @@ static void appe_Tl_Init( void )
   /**< Reference table initialization */
   TL_Init();
 
+  MtxShciId = osMutexNew( NULL );
+  SemShciId = osSemaphoreNew( 1, 0, NULL ); /*< Create the semaphore and make it busy at initialization */
+
   /**< System channel initialization */
+  ShciUserEvtProcessId = osThreadNew(ShciUserEvtProcess, NULL, &ShciUserEvtProcess_attr);
   SHci_Tl_Init_Conf.p_cmdbuffer = (uint8_t*)&SystemCmdBuffer;
   SHci_Tl_Init_Conf.StatusNotCallBack = APPE_SysStatusNot;
   shci_init(APPE_SysUserEvtRx, (void*) &SHci_Tl_Init_Conf);
@@ -224,19 +238,23 @@ static void appe_Tl_Init( void )
   return;
 }
 
-static void Switch_On_HSI( void )
-{
-  LL_RCC_HSI_Enable();
-  while(!LL_RCC_HSI_IsReady());
-  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
-  while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI);
 
-  return;
-}
 
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
 {
-  UNUSED(status);
+  switch (status)
+  {
+    case SHCI_TL_CmdBusy:
+      osMutexAcquire( MtxShciId, osWaitForever );
+      break;
+
+    case SHCI_TL_CmdAvailable:
+      osMutexRelease( MtxShciId );
+      break;
+
+    default:
+      break;
+  }
   return;
 }
 
@@ -247,10 +265,30 @@ static void APPE_SysUserEvtRx( void * pPayload )
   TL_TRACES_Init( );
 
   APP_BLE_Init( );
-  LPM_SetOffMode(1 << CFG_LPM_APP, LPM_OffMode_En);
+  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
   return;
 }
 
+/*************************************************************
+ *
+ * FREERTOS WRAPPER FUNCTIONS
+ *
+*************************************************************/
+static void ShciUserEvtProcess(void *argument)
+{
+  UNUSED(argument);
+  for(;;)
+  {
+    /* USER CODE BEGIN SHCI_USER_EVT_PROCESS_1 */
+
+    /* USER CODE END SHCI_USER_EVT_PROCESS_1 */
+     osThreadFlagsWait(1, osFlagsWaitAny, osWaitForever);
+     shci_user_evt_proc();
+    /* USER CODE BEGIN SHCI_USER_EVT_PROCESS_2 */
+
+    /* USER CODE END SHCI_USER_EVT_PROCESS_2 */
+    }
+}
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 static void Led_Init( void )
 {
@@ -277,10 +315,13 @@ static void Button_Init( void )
    */
 
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
 #endif
 
   return;
 }
+
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
@@ -288,96 +329,24 @@ static void Button_Init( void )
  * WRAP FUNCTIONS
  *
  *************************************************************/
-
-void SCH_Idle( void )
-{
-#if ( CFG_LPM_SUPPORTED == 1)
-  LPM_EnterModeSelected();
-#endif
-  return;
-}
-
-void LPM_EnterStopMode(void)
-{
-  /**
-   * This function is called from CRITICAL SECTION
-   */
-
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
-
-  if ( ! LL_HSEM_1StepLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID ) )
-  {
-    if( LL_PWR_IsActiveFlag_C2DS() )
-    {
-      /* Release ENTRY_STOP_MODE semaphore */
-      LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
-
-      Switch_On_HSI();
-    }
-  }
-  else
-  {
-    Switch_On_HSI();
-  }
-
-  /* Release RCC semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
-
-  return;
-}
-
-void LPM_ExitStopMode(void)
-{
-  /**
-   * This function is called from CRITICAL SECTION
-   */
-
-  /* Release ENTRY_STOP_MODE semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
-
-  if( (LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_HSI) || (LL_PWR_IsActiveFlag_C1STOP() != 0) )
-  {
-    LL_PWR_ClearFlag_C1STOP_C1STB();
-
-    while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
-
-    if(LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
-    {
-      LL_RCC_HSE_Enable();
-      while(!LL_RCC_HSE_IsReady());
-      LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSE);
-      while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);
-    }
-    else
-    {
-      /**
-       * As long as the current application is fine with HSE as system clock source,
-       * there is nothing to do here
-       */
-    }
-
-    /* Release RCC semaphore */
-    LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
-  }
-
-  return;
-}
-
 void shci_notify_asynch_evt(void* pdata)
 {
-  osSignalSet( RF_ThreadId, (1<<CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID) );
+  UNUSED(pdata);
+  osThreadFlagsSet( ShciUserEvtProcessId, 1 );
   return;
 }
 
 void shci_cmd_resp_release(uint32_t flag)
 {
-  osSignalSet( RF_ThreadId, (1<<CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID) );
+  UNUSED(flag);
+  osSemaphoreRelease( SemShciId );
   return;
 }
 
 void shci_cmd_resp_wait(uint32_t timeout)
 {
-  osSignalWait( (1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID), osWaitForever);
+  UNUSED(timeout);
+  osSemaphoreAcquire( SemShciId, osWaitForever );
   return;
 }
 
@@ -403,7 +372,7 @@ void DbgOutputInit( void )
   */
 void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 {
-  HW_UART_Transmit_DMA(DBG_TRACE_UART_CFG, p_data, size, cb);
+  HW_UART_Transmit_DMA(CFG_DEBUG_TRACE_UART, p_data, size, cb);
 
   return;
 }

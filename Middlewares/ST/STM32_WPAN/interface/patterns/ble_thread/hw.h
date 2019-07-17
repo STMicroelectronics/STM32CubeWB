@@ -307,10 +307,6 @@ extern "C" {
   void HW_IPCC_ZIGBEE_SendAppliCmd(void);
   void HW_IPCC_ZIGBEE_AppliCmdNotification(void);
 
-  void HW_IPCC_ZIGBEE_SendCliCmd( void );
-  void HW_IPCC_ZIGBEE_CliEvtNotification(void);
-  void HW_IPCC_ZIGBEE_SendCliCmdAck(void);
-
   void HW_IPCC_ZIGBEE_AppliAsyncEvtNotification(void);
   void HW_IPCC_ZIGBEE_SendAppliCmdAck(void);
 

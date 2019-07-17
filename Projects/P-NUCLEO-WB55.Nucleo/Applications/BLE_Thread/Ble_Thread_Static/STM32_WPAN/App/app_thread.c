@@ -128,8 +128,8 @@ void APP_THREAD_Init( void )
   UNUSED(ThreadInitStatus);
   /* Register task */
   /* Create the different tasks */
-  SCH_RegTask((uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, APP_THREAD_ProcessMsgM0ToM4);
-  SCH_RegTask((uint32_t)CFG_TASK_COAP_MSG_BUTTON, APP_THREAD_SendCoapMsg);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_COAP_MSG_BUTTON, UTIL_SEQ_RFU, APP_THREAD_SendCoapMsg);
 
   /* Initialize and configure the Thread device*/
   APP_THREAD_DeviceConfig();
@@ -302,7 +302,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
             BSP_LED_Off(LED3);
             APP_DBG_MSG("\r\n M4: SET CFG_Evt_ThreadStop in Thread_Change_Notification \r\n\n");
             APP_DBG("THREAD: Disabled");
-            SCH_SetEvt(1<<CFG_Evt_ThreadStop);
+            UTIL_SEQ_SetEvt(1<<CFG_Evt_ThreadStop);
             break;
         case OT_DEVICE_ROLE_DETACHED:
             BSP_LED_Off(LED2);
@@ -592,7 +592,7 @@ void TL_THREAD_NotReceived( TL_EvtPacket_t * Notbuffer )
   */
 void Pre_OtCmdProcessing(void)
 {
-    SCH_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
+    UTIL_SEQ_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
 }
 
 /**
@@ -603,7 +603,7 @@ void Pre_OtCmdProcessing(void)
   */
 static void Wait_Getting_Ack_From_M0(void)
 {
-  SCH_WaitEvt(EVENT_ACK_FROM_M0_EVT);
+  UTIL_SEQ_WaitEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
@@ -615,7 +615,7 @@ static void Wait_Getting_Ack_From_M0(void)
   */
 static void Receive_Ack_From_M0(void)
 {
-  SCH_SetEvt(EVENT_ACK_FROM_M0_EVT);
+  UTIL_SEQ_SetEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
@@ -627,7 +627,7 @@ static void Receive_Ack_From_M0(void)
 static void Receive_Notification_From_M0(void)
 {
   CptReceiveMsgFromM0++;
-  SCH_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
 }
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -643,12 +643,12 @@ static void RxCpltCallback(void)
       CptReceiveCmdFromUser = 1U;
 
       /* UART task scheduling*/
-      SCH_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
     }
   }
 
   /* Once a character has been sent, put back the device in reception mode */
-  HW_UART_Receive_IT(UART_CLI, aRxBuffer, 1U, RxCpltCallback);
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
 }
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
@@ -677,7 +677,7 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
     memcpy(CommandString, buf,(i+1));
     indexReceiveChar = i + 1U; /* Length of the buffer containing the command string */
 
-    SCH_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
+    UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
 
     tmp_start = i;
     for (j = 0; j < (len - tmp_start - 1U) ; j++)
@@ -733,11 +733,11 @@ static void Send_CLI_Ack_For_OT(void)
  */
 void APP_THREAD_Init_UART_CLI(void)
 {
-  SCH_RegTask(CFG_TASK_SEND_CLI_TO_M0,Send_CLI_To_M0);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU,Send_CLI_To_M0);
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
-  HW_UART_Init(UART_CLI);
-  HW_UART_Receive_IT(UART_CLI, aRxBuffer, 1, RxCpltCallback);
+  HW_UART_Init(CFG_CLI_UART);
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 }
 
@@ -773,7 +773,7 @@ void TL_THREAD_CliNotReceived( TL_EvtPacket_t * Notbuffer )
 #if (CFG_USB_INTERFACE_ENABLE != 0)
     VCP_SendData( l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
 #else
-    HW_UART_Transmit_IT(UART_CLI, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
+    HW_UART_Transmit_IT(CFG_CLI_UART, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
 #endif /*USAGE_OF_VCP */
   }
   else

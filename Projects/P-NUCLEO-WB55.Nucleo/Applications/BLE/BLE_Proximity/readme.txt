@@ -57,7 +57,7 @@ How to use the Proximity profile as specified by the BLE SIG.
   - BLE/BLE_Proximity/STM32_WPAN/App/lls_app.c      	Link Loss Service application
   - BLE/BLE_Proximity/STM32_WPAN/App/tps_app.c      	Tx Power Service application
   - BLE/BLE_Proximity/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_Proximity/Core/Src/hw_lpm.c      			Low Power Manager Driver
+  - BLE/BLE_Proximity/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
   - BLE/BLE_Proximity/Core/Src/hw_timerserver.c 		Timer Server based on RTC
   - BLE/BLE_Proximity/Core/Src/hw_uart.c 				UART Driver
 
@@ -87,9 +87,9 @@ In order to make the program work, you must do the following:
  - Install the ST BLE Profile application on the android device
 	https://play.google.com/store/apps/details?id=com.stm.bluetoothlevalidation&hl=en
 
-The STM32WB board is used as GATT server and GAP peripheral.
+The STM32WB55xx board is used as GATT server and GAP peripheral.
 With the Smart Phone application: 
- - Select the device (STM32WB)
+ - Select the device (STM32WB55xx)
  - Select Find Me or Proximity Profile. 
    - Find Me Profile includes Immediate Alert Service.
    - Proximity Profile includes Immediate Alert Service, Link Loss Service and Tx power Service. 

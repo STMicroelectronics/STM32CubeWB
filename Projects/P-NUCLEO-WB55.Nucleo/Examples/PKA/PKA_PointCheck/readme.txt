@@ -69,7 +69,7 @@ PKA, PKA_PointCheck, Security, NIST, CAVP, Point check
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55RGVx devices.
+  - This example runs on STM32WB55xx devices.
   
   - This example has been tested with an STMicroelectronics P-NUCLEO-WB55
     board and can be easily tailored to any other supported device 

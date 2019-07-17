@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
   * File Name          : Src/hw_uart.c
-  * Description        : HW UART source file for BLE middleWare.
+  * Description        : HW UART source file for STM32WPAN Middleware.
   *
   ******************************************************************************
   * @attention

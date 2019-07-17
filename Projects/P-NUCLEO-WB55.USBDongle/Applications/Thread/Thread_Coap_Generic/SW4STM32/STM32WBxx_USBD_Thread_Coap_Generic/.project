@@ -36,52 +36,52 @@
     </link>
 		
 	<link>
-			<name>Application/User/Core/Src/app_entry.c</name>
+			<name>Application/User/Core/src/app_entry.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Core/Src/app_entry.c</location>
 		</link>
     <link>
-			<name>Application/User/Core/Src/hw_lpm.c</name>
+			<name>Application/User/Core/src/stm32_lpm_if.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/Core/Src/hw_lpm.c</location>
+			<location>PARENT-2-PROJECT_LOC/Core/Src/stm32_lpm_if.c</location>
 		</link>
     <link>
-			<name>Application/User/Core/Src/hw_timerserver.c</name>
+			<name>Application/User/Core/src/hw_timerserver.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Core/Src/hw_timerserver.c</location>
 		</link>
     <link>
-			<name>Application/User/Core/Src/hw_uart.c</name>
+			<name>Application/User/Core/src/hw_uart.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Core/Src/hw_uart.c</location>
 		</link>
     <link>
-			<name>Application/User/Core/Src/main.c</name>
+			<name>Application/User/Core/src/main.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Core/Src/main.c</location>
 		</link>
     <link>
-			<name>Application/User/Core/Src/stm32wbxx_it.c</name>
+			<name>Application/User/Core/src/stm32wbxx_it.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Core/Src/stm32wbxx_it.c</location>
 		</link>
     <link>
-			<name>Application/User/Core/Src/stm_logging.c</name>
+			<name>Application/User/Core/src/stm_logging.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Core/Src/stm_logging.c</location>
 		</link>
     <link>
-			<name>Application/User/Core/Src/system_stm32wbxx.c</name>
+			<name>Application/User/Core/src/system_stm32wbxx.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Core/Src/system_stm32wbxx.c</location>
 		</link>
     <link>
-			<name>Application/User/STM32_WPAN/App/app_thread.c</name>
+			<name>Application/User/STM32_WPAN/app/app_thread.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/App/app_thread.c</location>
 		</link>
     <link>
-			<name>Application/User/STM32_WPAN/Target/hw_ipcc.c</name>
+			<name>Application/User/STM32_WPAN/target/hw_ipcc.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/Target/hw_ipcc.c</location>
 		</link>
@@ -114,6 +114,11 @@
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_flash.c</name>
 			<type>1</type>
 			<location>PARENT-7-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash.c</location>
+		</link>
+    <link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_flash_ex.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash_ex.c</location>
 		</link>
     <link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_gpio.c</name>
@@ -211,9 +216,9 @@
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</location>
 		</link>
     <link>
-			<name>Middlewares/STM32_WPAN/interface/patterns/ble_thread/tl/tl_if.c</name>
+			<name>Middlewares/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</name>
 			<type>1</type>
-			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_if.c</location>
+			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</location>
 		</link>
     <link>
 			<name>Middlewares/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</name>
@@ -386,24 +391,19 @@
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/udp.c</location>
 		</link>
     <link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/radio.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/radio.c</location>
+		</link>
+    <link>
 			<name>Middlewares/STM32_WPAN/utilities/dbg_trace.c</name>
 			<type>1</type>
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</location>
 		</link>
     <link>
-			<name>Middlewares/STM32_WPAN/utilities/lpm.c</name>
-			<type>1</type>
-			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/lpm.c</location>
-		</link>
-    <link>
 			<name>Middlewares/STM32_WPAN/utilities/otp.c</name>
 			<type>1</type>
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/otp.c</location>
-		</link>
-    <link>
-			<name>Middlewares/STM32_WPAN/utilities/scheduler.c</name>
-			<type>1</type>
-			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/scheduler.c</location>
 		</link>
     <link>
 			<name>Middlewares/STM32_WPAN/utilities/stm_list.c</name>
@@ -414,6 +414,16 @@
 			<name>Middlewares/STM32_WPAN/utilities/stm_queue.c</name>
 			<type>1</type>
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</location>
+		</link>
+    <link>
+			<name>Utilities/stm32_lpm.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Utilities/lpm/tiny_lpm/stm32_lpm.c</location>
+		</link>
+    <link>
+			<name>Utilities/stm32_seq.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Utilities/sequencer/stm32_seq.c</location>
 		</link>
   </linkedResources>
 </projectDescription>

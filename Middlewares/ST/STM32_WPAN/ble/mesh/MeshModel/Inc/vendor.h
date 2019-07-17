@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    vendor.h
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -47,6 +47,9 @@
 #include "types.h"
 
 /* Exported macro ------------------------------------------------------------*/
+
+#define MODEL_BLUEMESH_MID  0x00010030
+
 /*******************Commands Received from Android/IoS*************************/
 #define APPLI_TEST_CMD                               0x1U
 #define APPLI_DEVICE_INFO_CMD                        0x2U
@@ -55,7 +58,7 @@
 #define APPLI_SENSOR_CNTRL_CMD                       0X5U
 /******************************************************************************/
 
-/****************Data Received from Android/IoS. B0 = SubCommand***************/
+/****************Data Received from Android/iOS. B0 = SubCommand***************/
 /********************* Sub Commands for APPLI_TEST_CMD*************************/
 #define APPLI_RESET_TEST_PARAMETERS        0x01U
 #define APPLI_TEST_ECHO                    0x02U
@@ -78,6 +81,7 @@
 #define BLUENRG1_BRD              0X01U
 #define BLUENRG2_BRD              0X02U
 #define BLUENRG_MS_BRD            0X03U
+#define STM32WB55XX_BRD           0X04U
 /******************************************************************************/
 
 /****************Data Received from Android/IoS. B0 = SubCommand***************/

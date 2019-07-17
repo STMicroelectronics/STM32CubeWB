@@ -17,8 +17,8 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef APP_CONFIG_H
-#define APP_CONFIG_H
+#ifndef APP_CONF_H
+#define APP_CONF_H
 
 #include "hw.h"
 #include "hw_conf.h"
@@ -61,7 +61,7 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY   (0x04)
 
-#define CFG_IO_CAPABILITY             CFG_IO_CAPABILITY_DISPLAY_ONLY
+#define CFG_IO_CAPABILITY             CFG_IO_CAPABILITY_DISPLAY_YES_NO
 
 /**
  * Define MITM modes
@@ -94,6 +94,10 @@
 
 /**< specific parameters */
 /*****************************************************/
+#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
+#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
+#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
+
 /**
  * AD Element - Group B Feature
 */ 
@@ -241,7 +245,7 @@
 /**
  * Select UART interfaces
  */
-#define DBG_TRACE_UART_CFG    hw_uart1
+#define CFG_DEBUG_TRACE_UART    hw_uart1
 #define CFG_CONSOLE_MENU      
 /******************************************************************************
  * USB interface
@@ -388,30 +392,82 @@ typedef enum
 #endif
 
 /* USER CODE BEGIN Defines */
-#define CFG_LED_SUPPORTED         0
-#define CFG_BUTTON_SUPPORTED      0
 /* USER CODE END Defines */
 
-/******************************************************************************
- * Scheduler
- ******************************************************************************/
+/**
+ * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
+ * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
+ *
+ * When both are set to 0, no trace are output
+ * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
+ */
+#define CFG_DEBUG_TRACE_LIGHT    0
+#define CFG_DEBUG_TRACE_FULL      0
+
+#if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     1
+#endif
+
+#if ( CFG_DEBUG_TRACE == 0 )
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     0
+#endif
 
 /**
- * This is a bit mapping over 32bits listing all events id supported in the application
+ * When not set, the traces is looping on sending the trace over UART
  */
-typedef enum
-{
-  CFG_TASK_ADV_UPDATE_ID,
-  CFG_TASK_MEAS_REQ_ID,
-  CFG_TASK_HCI_ASYNCH_EVT_ID,
-  CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
-  CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID,
-  CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID,
-/* USER CODE BEGIN CFG_IdleEvt_Id_t */
+#define DBG_TRACE_USE_CIRCULAR_QUEUE 1
 
-/* USER CODE END CFG_IdleEvt_Id_t */
+/**
+ * max buffer Size to queue data traces and max data trace allowed.
+ * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
+ */
+#define DBG_TRACE_MSG_QUEUE_SIZE 4096
+#define MAX_DBG_TRACE_MSG_SIZE 1024
 
-} CFG_IdleEvt_Id_t;
+#define CFG_LED_SUPPORTED         0
+#define CFG_BUTTON_SUPPORTED      1
+/******************************************************************************
+ * FreeRTOS
+ ******************************************************************************/
+#define CFG_SHCI_USER_EVT_PROCESS_NAME        "SHCI_USER_EVT_PROCESS"
+#define CFG_SHCI_USER_EVT_PROCESS_ATTR_BITS   (0)
+#define CFG_SHCI_USER_EVT_PROCESS_CB_MEM      (0)
+#define CFG_SHCI_USER_EVT_PROCESS_CB_SIZE     (0)
+#define CFG_SHCI_USER_EVT_PROCESS_STACK_MEM   (0)
+#define CFG_SHCI_USER_EVT_PROCESS_PRIORITY    osPriorityNone
+#define CFG_SHCI_USER_EVT_PROCESS_STACk_SIZE  (128 * 7)
+
+#define CFG_HCI_USER_EVT_PROCESS_NAME         "HCI_USER_EVT_PROCESS"
+#define CFG_HCI_USER_EVT_PROCESS_ATTR_BITS    (0)
+#define CFG_HCI_USER_EVT_PROCESS_CB_MEM       (0)
+#define CFG_HCI_USER_EVT_PROCESS_CB_SIZE      (0)
+#define CFG_HCI_USER_EVT_PROCESS_STACK_MEM    (0)
+#define CFG_HCI_USER_EVT_PROCESS_PRIORITY     osPriorityNone
+#define CFG_HCI_USER_EVT_PROCESS_STACk_SIZE   (128 * 2)
+/* USER CODE BEGIN FreeRTOS_Defines */
+#define CFG_ADV_UPDATE_PROCESS_NAME           "ADV_UPDATE_PROCESS"
+#define CFG_ADV_UPDATE_PROCESS_ATTR_BITS      (0)
+#define CFG_ADV_UPDATE_PROCESS_CB_MEM         (0)
+#define CFG_ADV_UPDATE_PROCESS_CB_SIZE        (0)
+#define CFG_ADV_UPDATE_PROCESS_STACK_MEM      (0)
+#define CFG_ADV_UPDATE_PROCESS_PRIORITY       osPriorityNone
+#define CFG_ADV_UPDATE_PROCESS_STACk_SIZE     (128 * 6)
+
+
+#define CFG_HRS_PROCESS_NAME                  "HRS_PROCESS"
+#define CFG_HRS_PROCESS_ATTR_BITS             (0)
+#define CFG_HRS_PROCESS_CB_MEM                (0)
+#define CFG_HRS_PROCESS_CB_SIZE               (0)
+#define CFG_HRS_PROCESS_STACK_MEM             (0)
+#define CFG_HRS_PROCESS_PRIORITY              osPriorityNone
+#define CFG_HRS_PROCESS_STACk_SIZE            (128 * 5)
+/* USER CODE END FreeRTOS_Defines */
 
 /******************************************************************************
  * LOW POWER
@@ -423,8 +479,18 @@ typedef enum
 typedef enum
 {
     CFG_LPM_APP,
-    CFG_LPM_APP_BLE
+    CFG_LPM_APP_BLE,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
+
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
+
+/******************************************************************************
+ * OTP manager
+ ******************************************************************************/
+#define CFG_OTP_BASE_ADDRESS    OTP_AREA_BASE
+
+#define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 #endif /*APP_CONFIG_H */
 

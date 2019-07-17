@@ -53,7 +53,7 @@ Mac_802_15_4/Mac_802_15_4_FFD/
    
    
    - Mac_802_15_4/Mac_802_15_4_FFD/Core/Inc/app_entry.c                             Parameters configuration file of the application
-   - Mac_802_15_4/Mac_802_15_4_FFD/Core/Inc/hw_lpm.c                                Low Power Manager Driver
+   - Mac_802_15_4/Mac_802_15_4_FFD/Core/Inc/stm32_lpm_if.c                          Low Power Manager Interface
    - Mac_802_15_4/Mac_802_15_4_FFD/Core/Inc/hw_uart.c                               UART Driver
    - Mac_802_15_4/Mac_802_15_4_FFD/Core/Inc/main.c                                  Main program
    - Mac_802_15_4/Mac_802_15_4_FFD/Core/Inc/stm_logging.c                           Logging Implementation

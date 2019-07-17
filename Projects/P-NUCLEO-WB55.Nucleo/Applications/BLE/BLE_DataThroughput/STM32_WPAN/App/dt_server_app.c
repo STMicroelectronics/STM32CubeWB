@@ -29,11 +29,10 @@
 #include "dt_client_app.h"
 #include "dts.h"
 
-#include "scheduler.h"
-#include "lpm.h"
+#include "stm32_seq.h"
+#include "stm32_lpm.h"
 
 #include "ble_common.h"
-#include "svc_ctl.h"
 
 typedef enum
 {
@@ -80,7 +79,7 @@ void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification )
       {
         APP_DBG_MSG("enable notification appli\n");
         DataTransferServerContext.StartTransferFlag = 1;
-        SCH_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
+        UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
       }
       break;
 
@@ -133,7 +132,7 @@ void BLE_App_dts_Send_Data( void )
       (Notification_Data_Buffer[0])-=1;
     }
     
-    SCH_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
+    UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
   }
   return;
 }
@@ -151,13 +150,13 @@ void DT_App_Button_Trigger_Received( void )
     if (aDTClientContext[0].NotificationStatus == 0)
     {
       aDataTransferClientContext[0].state = DTC_ENABLE_NOTIFICATION_TX_DESC;
-      SCH_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
       aDTClientContext[0].NotificationStatus = 1;
     }
     else
     {
       aDataTransferClientContext[0].state = DTC_DISABLE_NOTIFICATION_TX_DESC;
-      SCH_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0); 
+      UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0); 
       aDTClientContext[0].NotificationStatus = 0;
     }
   }
@@ -184,22 +183,22 @@ void DT_App_Button_Trigger_Received( void )
 void Delay_StartDataReq( void)
 {
   DataTransferServerContext.StartTransferFlag = 1;
-  SCH_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0); 
+  UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0); 
   
   return;
 }
 
 void DT_Server_App_Key_Button_Action( void )
 {
-  SCH_SetTask(1 << CFG_TASK_BUTTON_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_BUTTON_ID, CFG_SCH_PRIO_0);
 }
 
 void DT_Server_App_Init( void )
 {
   uint8_t i;
   
-  SCH_RegTask(CFG_TASK_BUTTON_ID, DT_App_Button_Trigger_Received);
-  SCH_RegTask(CFG_TASK_DATA_TRANSFER_UPDATE_ID, BLE_App_dts_Send_Data);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_BUTTON_ID, UTIL_SEQ_RFU, DT_App_Button_Trigger_Received);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_TRANSFER_UPDATE_ID, UTIL_SEQ_RFU, BLE_App_dts_Send_Data);
 
   /**
    * Initialize data buffer

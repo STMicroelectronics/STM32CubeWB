@@ -92,7 +92,7 @@ Middleware, SD Card, FatFs, File system, FAT Volume, Format, Mount, Read, Write,
 
 @par Hardware and Software environment
 
-  - This application runs on STM32WB55RGVx devices
+  - This application runs on STM32WB55xx devices
 
   - This application has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

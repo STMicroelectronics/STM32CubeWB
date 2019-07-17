@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>BLE_HeartRate_ota</TargetName>
+      <TargetName>BLE_HeartRate</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
@@ -49,10 +49,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>BLE_HeartRate\Exe\</OutputDirectory>
-          <OutputName>BLE_HeartRate_ota</OutputName>
+          <OutputName>BLE_HeartRate</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>1</CreateHexFile>
+          <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath></ListingPath>
@@ -82,7 +82,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>fromelf #L --bincombined --output=$L@L.bin</UserProg1Name>
+            <UserProg1Name>fromelf #L --bin --output=$L@L.bin</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -335,9 +335,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--diag_suppress 1296  </MiscControls>
-              <Define>OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_ftd.h&gt;,USE_HAL_DRIVER,STM32WB55xx</Define>
+              <Define>USE_STM32WBXX_NUCLEO,USE_HAL_DRIVER,STM32WB55xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Middlewares/ST/STM32_WPAN/ble;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Inc;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Inc/core;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/blesvc;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Inc/blesvc;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo</IncludePath>
+              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/ble;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/core;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -400,9 +400,9 @@
               <FilePath>../Core/Src/app_entry.c</FilePath>
             </File>
             <File>
-              <FileName>hw_lpm.c</FileName>
+              <FileName>stm32_lpm_if.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/hw_lpm.c</FilePath>
+              <FilePath>../Core/Src/stm32_lpm_if.c</FilePath>
             </File>
             <File>
               <FileName>hw_timerserver.c</FileName>
@@ -597,27 +597,27 @@
             <File>
               <FileName>ble_gap_aci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_gap_aci.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c</FilePath>
             </File>
             <File>
               <FileName>ble_gatt_aci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_gatt_aci.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c</FilePath>
             </File>
             <File>
               <FileName>ble_hal_aci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_hal_aci.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_hal_aci.c</FilePath>
             </File>
             <File>
               <FileName>ble_hci_le.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_hci_le.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_hci_le.c</FilePath>
             </File>
             <File>
               <FileName>ble_l2cap_aci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_l2cap_aci.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_l2cap_aci.c</FilePath>
             </File>
             <File>
               <FileName>dbg_trace.c</FileName>
@@ -627,7 +627,7 @@
             <File>
               <FileName>dis.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/blesvc/dis.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/dis.c</FilePath>
             </File>
             <File>
               <FileName>hci_tl.c</FileName>
@@ -637,27 +637,17 @@
             <File>
               <FileName>hrs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/blesvc/hrs.c</FilePath>
-            </File>
-            <File>
-              <FileName>lpm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/lpm.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/hrs.c</FilePath>
             </File>
             <File>
               <FileName>osal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/osal.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template/osal.c</FilePath>
             </File>
             <File>
               <FileName>otp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/otp.c</FilePath>
-            </File>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/scheduler.c</FilePath>
             </File>
             <File>
               <FileName>shci.c</FileName>
@@ -682,17 +672,37 @@
             <File>
               <FileName>svc_ctl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/blesvc/svc_ctl.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/svc_ctl.c</FilePath>
             </File>
             <File>
-              <FileName>tl_if.c</FileName>
+              <FileName>hci_tl_if.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_if.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c</FilePath>
+            </File>
+            <File>
+              <FileName>shci_tl_if.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</FilePath>
             </File>
             <File>
               <FileName>tl_mbox.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Utilities</GroupName>
+          <Files>
+            <File>
+              <FileName>stm32_lpm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Utilities/lpm/tiny_lpm/stm32_lpm.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_seq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Utilities/sequencer/stm32_seq.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -709,7 +719,7 @@
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="4.3.0" condition="CMSIS Core">
         <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="4.5.0"/>
         <targetInfos>
-          <targetInfo name="BLE_HeartRate_ota"/>
+          <targetInfo name="BLE_HeartRate"/>
         </targetInfos>
       </component>
     </components>

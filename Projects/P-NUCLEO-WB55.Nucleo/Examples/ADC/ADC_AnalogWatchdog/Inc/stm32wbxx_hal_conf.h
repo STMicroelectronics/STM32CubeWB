@@ -58,6 +58,7 @@
 /*#define HAL_UART_MODULE_ENABLED   */
 /*#define HAL_USART_MODULE_ENABLED   */
 /*#define HAL_WWDG_MODULE_ENABLED   */
+#define HAL_EXTI_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_FLASH_MODULE_ENABLED
@@ -221,6 +222,10 @@
 #ifdef HAL_CRYP_MODULE_ENABLED
   #include "stm32wbxx_hal_cryp.h"
 #endif /* HAL_CRYP_MODULE_ENABLED */
+
+#ifdef HAL_EXTI_MODULE_ENABLED
+  #include "stm32wbxx_hal_exti.h"
+#endif /* HAL_EXTI_MODULE_ENABLED */
    
 #ifdef HAL_FLASH_MODULE_ENABLED
   #include "stm32wbxx_hal_flash.h"

@@ -21,6 +21,7 @@
 
 
 /* Includes ------------------------------------------------------------------*/
+#include "stm32wbxx_it.h"
 #include "app_common.h"
 
 /* CONCURRENT MODE BLE/THREAD */

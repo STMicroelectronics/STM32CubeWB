@@ -49,7 +49,7 @@ How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
   - BLE/BLE_TransparentMode/Core/Src/system_stm32wbxx.c      	stm32wbxx system source file
   - BLE/BLE_TransparentMode/Core/Src/app_entry.c      			Initialization of the application
   - BLE/BLE_TransparentMode/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_TransparentMode/Core/Src/hw_lpm.c      				Low Power Manager Driver
+  - BLE/BLE_TransparentMode/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
   - BLE/BLE_TransparentMode/Core/Src/hw_timerserver.c 			Timer Server based on RTC
   - BLE/BLE_TransparentMode/Core/Src/hw_uart.c 					UART Driver
   - BLE/BLE_TransparentMode/STM32_WPAN/App/tm.c 				Transparent Mode implementation

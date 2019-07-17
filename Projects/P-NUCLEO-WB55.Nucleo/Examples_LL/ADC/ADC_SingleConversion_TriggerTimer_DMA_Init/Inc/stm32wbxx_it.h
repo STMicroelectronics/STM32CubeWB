@@ -32,10 +32,6 @@
 
 /* USER CODE END Includes */
 
-#include "stm32wbxx.h"
-#include "stm32wbxx_ll_system.h"
-#include "stm32wbxx_ll_gpio.h"
-#include "stm32wbxx_ll_exti.h"
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 

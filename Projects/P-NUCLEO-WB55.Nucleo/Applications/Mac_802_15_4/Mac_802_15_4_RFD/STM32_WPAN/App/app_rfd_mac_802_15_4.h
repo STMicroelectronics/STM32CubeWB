@@ -1,7 +1,7 @@
 
 /**
   ******************************************************************************
-  * @file    app_frfd_mac_802_15_4.h
+  * @file    app_rfd_mac_802_15_4.h
   * @author  MCD Application Team
   * @brief   Header for RFD MAC 802.15.4 demo
   ******************************************************************************
@@ -136,6 +136,13 @@ typedef enum
   CFG_LPM_APP,
   CFG_LPM_APP_BLE,
 } CFG_LPM_Id_t;
+
+/******************************************************************************
+ * OTP manager
+ ******************************************************************************/
+#define CFG_OTP_BASE_ADDRESS    OTP_AREA_BASE
+
+#define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 /* Application errors                 */
 /*------------------------------------*/

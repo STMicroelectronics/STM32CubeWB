@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    pal_nvm.h
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Header file for pal_nvm.c 
 ******************************************************************************
 * @attention
@@ -32,7 +32,7 @@
 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-* Initial BlueNRG-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
+* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
 * (MoBLE) technology. The present solution is developed and maintained for both 
 * Mesh library and Applications solely by STMicroelectronics.
 *
@@ -61,6 +61,5 @@ MOBLE_RESULT MoblePalNvmWrite(MOBLEUINT32 address, void const *buf, MOBLEUINT32 
 MOBLEBOOL    MoblePalNvmIsWriteProtected(void);
 MOBLE_RESULT MoblePalNvmCompare(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size, MOBLE_NVM_COMPARE* result);
 MOBLE_RESULT MoblePalNvmErase(MOBLEUINT32 offset);
-MOBLEBOOL MoblePalGetIsFlashEraseOk(void);
 
 #endif /* __PAL_NVM_H */

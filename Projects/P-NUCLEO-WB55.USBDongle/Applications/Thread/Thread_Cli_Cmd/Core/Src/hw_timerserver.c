@@ -1,8 +1,8 @@
 /**
  ******************************************************************************
- * File Name          : hw_timerserver.c
- * Description        : Hardware timerserver source file for BLE
- *                      middleWare.
+  * File Name          : hw_timerserver.c
+  * Description        : Hardware timerserver source file for STM32WPAN Middleware.
+  *
  ******************************************************************************
  * @attention
  *

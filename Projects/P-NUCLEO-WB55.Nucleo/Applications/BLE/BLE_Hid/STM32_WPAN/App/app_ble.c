@@ -30,9 +30,9 @@
 #include "hids_app.h"
 #include "DispTools.h"
 
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "shci.h"
-#include "lpm.h"
+#include "stm32_lpm.h"
 #include "otp.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -261,12 +261,12 @@ void APP_BLE_Init( void )
   /**
    * Do not allow standby in the application
    */
-  LPM_SetOffMode(1 << CFG_LPM_APP_BLE, LPM_OffMode_Dis);
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
 
   /**
    * Register the hci transport layer to handle BLE User Asynchronous Events
    */
-  SCH_RegTask(CFG_TASK_HCI_ASYNCH_EVT_ID, hci_user_evt_proc);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
 
   /**
    * Starts the BLE Stack on CPU2
@@ -286,7 +286,7 @@ void APP_BLE_Init( void )
   /**
    * From here, all initialization are BLE application specific
    */
-  SCH_RegTask( CFG_TASK_CONN_MGR_ID, AdvUpdate );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_CONN_MGR_ID, UTIL_SEQ_RFU, AdvUpdate );
 
   /**
    * Initialization of the BLE App Context
@@ -553,7 +553,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data_Present = 0;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = 8;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = 16;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 0;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 1;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = 111111;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = 1;
   for (index = 0; index < 16; index++)
@@ -596,7 +596,7 @@ static void ConnMgr( void )
    * The background is the only place where the application can make sure a new aci command
    * is not sent if there is a pending one
    */
-  SCH_SetTask( 1<<CFG_TASK_CONN_MGR_ID,CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_CONN_MGR_ID,CFG_SCH_PRIO_0);
 
   return;
 }
@@ -720,7 +720,7 @@ static void Adv_Request(HID_ConnStatus_t New_Status)
 
 void APP_BLE_Key_Button1_Action(void)
 {
-  SCH_SetTask( 1<<CFG_TASK_HID_UPDATE_REQ_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_HID_UPDATE_REQ_ID, CFG_SCH_PRIO_0);
 }
 
 void APP_BLE_Key_Button2_Action(void)
@@ -779,19 +779,19 @@ const uint8_t* BleGetBdAddress( void )
  *************************************************************/
 void hci_notify_asynch_evt(void* pdata)
 {
-  SCH_SetTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
   return;
 }
 
 void hci_cmd_resp_release(uint32_t flag)
 {
-  SCH_SetEvt( 1<< CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID );
+  UTIL_SEQ_SetEvt( 1<< CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID );
   return;
 }
 
 void hci_cmd_resp_wait(uint32_t timeout)
 {
-  SCH_WaitEvt( 1<< CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID );
+  UTIL_SEQ_WaitEvt( 1<< CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID );
   return;
 }
 
@@ -824,7 +824,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_PauseTask( task_id_list );
+      UTIL_SEQ_PauseTask( task_id_list );
 
       break;
 
@@ -834,7 +834,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_ResumeTask( task_id_list );
+      UTIL_SEQ_ResumeTask( task_id_list );
 
       break;
 

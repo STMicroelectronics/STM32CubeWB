@@ -25,7 +25,7 @@
 #define APP_ENTRY_H
 
 #include "stm32wbxx_hal.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "tl.h"
 
 #ifdef __cplusplus

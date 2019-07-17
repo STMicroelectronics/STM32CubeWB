@@ -220,7 +220,7 @@ int main(void)
           sCommand.DataMode    = QSPI_DATA_2_LINES;
           sCommand.NbData      = size;
 
-          if (HAL_QSPI_Command(&hqspi, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+          if (HAL_QSPI_Command(&hqspi, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
           {
             Error_Handler();
           }
@@ -613,7 +613,7 @@ static void QSPI_WriteEnable(QSPI_HandleTypeDef *hqspi)
   sCommand.DdrMode           = QSPI_DDR_MODE_DISABLE;
   sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
-  if (HAL_QSPI_Command(hqspi, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  if (HAL_QSPI_Command(hqspi, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
     Error_Handler();
   }
@@ -629,7 +629,7 @@ static void QSPI_WriteEnable(QSPI_HandleTypeDef *hqspi)
   sCommand.Instruction    = READ_STATUS_REG_CMD;
   sCommand.DataMode       = QSPI_DATA_1_LINE;
 
-  if (HAL_QSPI_AutoPolling(hqspi, &sCommand, &sConfig, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  if (HAL_QSPI_AutoPolling(hqspi, &sCommand, &sConfig, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
     Error_Handler();
   }
@@ -689,12 +689,12 @@ static void QSPI_DummyCyclesCfg(QSPI_HandleTypeDef *hqspi)
   sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
   sCommand.NbData            = 1;
 
-  if (HAL_QSPI_Command(hqspi, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  if (HAL_QSPI_Command(hqspi, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
     Error_Handler();
   }
 
-  if (HAL_QSPI_Receive(hqspi, &reg, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  if (HAL_QSPI_Receive(hqspi, &reg, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
     Error_Handler();
   }
@@ -706,12 +706,12 @@ static void QSPI_DummyCyclesCfg(QSPI_HandleTypeDef *hqspi)
   sCommand.Instruction = WRITE_VOL_CFG_REG_CMD;
   MODIFY_REG(reg, 0xF0, (DUMMY_CLOCK_CYCLES_READ << POSITION_VAL(0xF0)));
 
-  if (HAL_QSPI_Command(hqspi, &sCommand, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  if (HAL_QSPI_Command(hqspi, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
     Error_Handler();
   }
 
-  if (HAL_QSPI_Transmit(hqspi, &reg, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  if (HAL_QSPI_Transmit(hqspi, &reg, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
   {
     Error_Handler();
   }

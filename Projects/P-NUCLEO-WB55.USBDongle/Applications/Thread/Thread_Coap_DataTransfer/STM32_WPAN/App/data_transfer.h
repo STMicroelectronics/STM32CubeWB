@@ -29,7 +29,7 @@
 #include "dbg_trace.h"
 #include "app_common.h"
 #include "stm32wbxx_core_interface_def.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 #define COAP_PAYLOAD_MAX_LENGTH 64
 #define DATA_BUFFER_LENGTH 79872
 #define TOKEN_LENGTH 2

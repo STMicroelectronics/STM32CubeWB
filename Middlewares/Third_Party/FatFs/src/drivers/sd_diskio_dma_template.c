@@ -8,17 +8,15 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics. All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */
-
+**/
 
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
@@ -104,9 +102,9 @@ const Diskio_drvTypeDef  SD_Driver =
 /* Private functions ---------------------------------------------------------*/
 static int SD_CheckStatusWithTimeout(uint32_t timeout)
 {
-  uint32_t timer = HAL_GetTick() + timeout;
+  uint32_t timer = HAL_GetTick();
   /* block until SDIO IP is ready again or a timeout occur */
-  while(timer > HAL_GetTick())
+  while(HAL_GetTick() - timer < timeout)
   {
     if (BSP_SD_GetCardState() == SD_TRANSFER_OK)
     {
@@ -204,9 +202,31 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
       {
         res = RES_ERROR;
       }
+      else
+      {
+        ReadStatus = 0;
+        timeout = HAL_GetTick();
 
+        while((HAL_GetTick() - timeout) < SD_TIMEOUT)
+        {
+          if (BSP_SD_GetCardState() == SD_TRANSFER_OK)
+          {
+            res = RES_OK;
+#if (ENABLE_SD_DMA_CACHE_MAINTENANCE == 1)
+            /*
+            the SCB_InvalidateDCache_by_Addr() requires a 32-Byte aligned address,
+            adjust the address and the D-Cache size to invalidate accordingly.
+            */
+            alignedAddr = (uint32_t)buff & ~0x1F;
+            SCB_InvalidateDCache_by_Addr((uint32_t*)alignedAddr, count*BLOCKSIZE + ((uint32_t)buff - alignedAddr));
+#endif
+            break;
+          }
+        }
+      }
+    }
 #if defined(ENABLE_SCRATCH_BUFFER)
-    } else {
+    else {
       /* Slow path, fetch each sector a part and memcpy to destination buffer */
       int i;
 
@@ -245,9 +265,9 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
       if ((i == count) && (ret == MSD_OK))
         res = RES_OK;
     }
-
 #endif
   }
+
   return res;
 }
 /**

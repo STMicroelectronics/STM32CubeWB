@@ -5,7 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Release Notes for STM32 Middleware WPAN</title>
-  <style>
+  <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
       span.underline{text-decoration: underline;}
@@ -48,42 +48,35 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.0.0 / 31-January-2019</label>
+<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 27-June-2019</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
-<p>First release</p>
-</div>
-</div>
-<div class="collapse">
-<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.1.0 / 29-March-2019</label>
-<div>
-<h2 id="main-changes-1">Main Changes</h2>
 <p>General:</p>
 <ul>
-<li>Licenses in utilities and patterns moved from sla0044 to 3-clauses BSD</li>
-<li>Customer Key Storage APIs</li>
-<li>Get Wireless Coprocessor Firmware information using following API : SHCI_GetWirelessFwInfo()</li>
+<li>Following utilities : Scheduler and Low Power Manager reworked and moved to “Utilities” directory</li>
+<li>Split tl_if.c into hci_tl_if.c (BLE) and shci_tl_if.c (System) to remove dependencies to the BLE library when the application is built on top of HCI.</li>
 </ul>
 <p>BLE:</p>
 <ul>
-<li>New BLE Mesh lib to fix provisioning issue</li>
-</ul>
-<p>Thread:</p>
+<li>Add 2 new GATT events: aci_gatt_indication_event_rp0 and aci_gatt_notification_event_rp0</li>
+<li>Rework BLE folder architecture to separate the Core from the Services implementation</li>
+<li>Mesh library V1.10.000:
 <ul>
-<li>802.15.4 radio driver robustness improvement with additional error checks; the application is now notified in case of radio error detected inside the wireless binary</li>
-<li>TxPower management improvement:
-<ul>
-<li>New APIs provided to control the Tx power: otPlatRadioGetTransmitPower() and otPlatRadioSetTransmitPower()</li>
-<li>The default Tx power is now set to 0dBm<br />
-</li>
+<li>Sensors Model example updated</li>
+<li>Sensor data publishing updated</li>
+<li>PB-ADV implementation added</li>
+<li>APIs to control frequency of unprovisioned device beacon, secure network beacon, provisioning service advertisement and proxy service advertisement</li>
+<li>Node unprovision on 5 consecutive Power Replug or Reset cycle with duration of each cycle(ON) less than 2 seconds</li>
+<li>SIG Models handling optimized</li>
+<li>printf statement is replaced with TRACE_M(Function name print) and TRACE_I in application code</li>
 </ul></li>
 </ul>
 </div>
 </div>
 <div class="collapse">
-<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.1.1 / 10-May-2019</label>
+<input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-1">Main Changes</h2>
 <p>BLE:</p>
 <ul>
 <li>Fix race condition in transport layer when an operating system is used.</li>
@@ -124,6 +117,39 @@
 </ul></li>
 </ul></li>
 </ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 29-March-2019</label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<p>General:</p>
+<ul>
+<li>Licenses in utilities and patterns moved from sla0044 to 3-clauses BSD</li>
+<li>Customer Key Storage APIs</li>
+<li>Get Wireless Coprocessor Firmware information using following API : SHCI_GetWirelessFwInfo()</li>
+</ul>
+<p>BLE:</p>
+<ul>
+<li>New BLE Mesh lib to fix provisioning issue</li>
+</ul>
+<p>Thread:</p>
+<ul>
+<li>802.15.4 radio driver robustness improvement with additional error checks; the application is now notified in case of radio error detected inside the wireless binary</li>
+<li>TxPower management improvement:
+<ul>
+<li>New APIs provided to control the Tx power: otPlatRadioGetTransmitPower() and otPlatRadioSetTransmitPower()</li>
+<li>The default Tx power is now set to 0dBm<br />
+</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 31-January-2019</label>
+<div>
+<h2 id="main-changes-3">Main Changes</h2>
+<p>First release</p>
 </div>
 </div>
 <p>For complete documentation on STM32WBxx, visit: [<a href="http://www.st.com/stm32wb">www.st.com/stm32wb</a>]</p>

@@ -35,6 +35,7 @@
 #include "shci.h"
 #include "stm_logging.h"
 
+#define DEMO_CHANNEL 16
 
 #define DATA_FROM_NODE "DATA FROM NODE\0"
 #define DATA "HELLO COORDINATOR\0"
@@ -50,7 +51,7 @@ static uint16_t     g_panId             = 0x1AAA;
 static uint16_t     g_coordShortAddr    = 0x1122;
 static uint8_t      g_dataHandle        = 0x02;
 static long long    g_extAddr           = 0xACDE480000000002;
-static uint8_t      g_channel           = 16;
+static uint8_t      g_channel           = DEMO_CHANNEL;
 static uint8_t      g_channel_page      = 0x00;
 
 MAC_callbacks_t macCbConfig ;
@@ -76,16 +77,16 @@ void APP_RFD_MAC_802_15_4_Init( APP_MAC_802_15_4_InitMode_t InitMode, TL_CmdPack
 
   /* Register task */
   /* Create the different tasks */
-  SCH_RegTask(CFG_TASK_MSG_FROM_RF_CORE, APP_ENTRY_ProcessMsgFromRFCoreTask);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_MSG_FROM_RF_CORE, UTIL_SEQ_RFU, APP_ENTRY_ProcessMsgFromRFCoreTask);
 
-  SCH_RegTask(CFG_TASK_RFD,APP_RFD_MAC_802_15_4_SetupTask);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_RFD, UTIL_SEQ_RFU,APP_RFD_MAC_802_15_4_SetupTask);
 
   /* Configuration MAC 802_15_4 */
   APP_RFD_MAC_802_15_4_Config();
 
 
   /*Start Main Node - RFD Task*/
-  SCH_SetTask( 1<< CFG_TASK_RFD, CFG_SCH_PRIO_0 );
+  UTIL_SEQ_SetTask( 1<< CFG_TASK_RFD, CFG_SCH_PRIO_0 );
 
 }
 
@@ -126,7 +127,7 @@ void APP_RFD_MAC_802_15_4_SetupTask(void)
     return;
   }
   /* Wait for Reset Confirmation */
-  SCH_WaitEvt( 1U<< CFG_EVT_DEVICE_RESET_CNF );
+  UTIL_SEQ_WaitEvt( 1U<< CFG_EVT_DEVICE_RESET_CNF );
   APP_DBG("RFD MAC APP - Reset CNF Received\0");
 
   /* Set Device Extended Address */
@@ -140,7 +141,7 @@ void APP_RFD_MAC_802_15_4_SetupTask(void)
     APP_DBG("RFD MAC - Set Extended Addr Fails\0");
     return;
   }
-  SCH_WaitEvt( 1U<< CFG_EVT_SET_CNF );
+  UTIL_SEQ_WaitEvt( 1U<< CFG_EVT_SET_CNF );
   APP_DBG("RFD MAC APP - Set Extended Address CNF Received\0");
   BSP_LED_On(LED1);
 
@@ -162,7 +163,7 @@ void APP_RFD_MAC_802_15_4_SetupTask(void)
     APP_DBG("RFD MAC - Association Req Fails\0");
     return;
   }
-  SCH_WaitEvt( 1U << CFG_EVT_ASSOCIATE_CNF );
+  UTIL_SEQ_WaitEvt( 1U << CFG_EVT_ASSOCIATE_CNF );
   APP_DBG("RFD MAC APP - Set Association Permit CNF Received\0");
   if(g_MAC_associateCnf.status != MAC_SUCCESS)
   {
@@ -181,7 +182,7 @@ void APP_RFD_MAC_802_15_4_SetupTask(void)
       APP_DBG("RFD MAC - Set Short Addr Fails\0");
       return;
     }
-    SCH_WaitEvt( 1U << CFG_EVT_SET_CNF );
+    UTIL_SEQ_WaitEvt( 1U << CFG_EVT_SET_CNF );
     APP_DBG("RFD MAC APP - Set Short Address CNF Received\0");
 
     BSP_LED_On(LED2);
@@ -215,7 +216,7 @@ void APP_RFD_MAC_802_15_4_SendData(const char * data)
     APP_DBG("RFD MAC - Data Req Fails\0");
     return;
   }
-  SCH_WaitEvt( 1U << CFG_EVT_DATA_DATA_CNF );
+  UTIL_SEQ_WaitEvt( 1U << CFG_EVT_DATA_DATA_CNF );
   BSP_LED_Off(LED3);
   APP_DBG("RFD MAC APP - DATA CNF Received\0");
 }
@@ -280,6 +281,7 @@ static void APP_RFD_MAC_802_15_4_Config()
   macCbConfig.mcpsDataIndCb = APP_MAC_mcpsDataIndCb;
   macCbConfig.mcpsDataCnfCb = APP_MAC_mcpsDataCnfCb;
   macCbConfig.mcpsPurgeCnfCb = APP_MAC_mcpsPurgeCnfCb;
+  macCbConfig.mlmePollIndCb =  APP_MAC_mlmePollIndCb;
 }
 
 /**

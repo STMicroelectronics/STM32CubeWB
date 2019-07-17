@@ -52,7 +52,7 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-extern void  USBDClock_Config(void);
+extern void USBD_Clock_Config(void);
 void SystemClockConfig_Resume(void);
 /* USER CODE END PFP */
 
@@ -78,7 +78,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
   if(pcdHandle->Instance==USB)
   {
   /* USER CODE BEGIN USB_MspInit 0 */
-  /* GPIO Ports Clock Enable */
+
   /* USER CODE END USB_MspInit 0 */
 
     __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -129,7 +129,7 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle)
     HAL_NVIC_DisableIRQ(USB_LP_IRQn);
 
   /* USER CODE BEGIN USB_MspDeInit 1 */
-
+    __HAL_RCC_GPIOA_CLK_DISABLE();
   /* USER CODE END USB_MspDeInit 1 */
   }
 }
@@ -733,7 +733,7 @@ void USBD_static_free(void *p)
  void SystemClockConfig_Resume(void)
 {
   SystemClock_Config();
-  USBDClock_Config();
+  USBD_Clock_Config();
 }
 /* USER CODE END 5 */
 

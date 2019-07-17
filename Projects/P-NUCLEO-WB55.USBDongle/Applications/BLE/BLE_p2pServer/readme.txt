@@ -22,7 +22,7 @@
 
 This example is to demonstrate Point-to-Point communication using BLE component. 
 
-Two STM32WB boards are used, one acting as GATT client, and one as GATT server.
+Two STM32WB55xx boards are used, one acting as GATT client, and one as GATT server.
 For example, BLE P2P_Client application is downloaded in a Nucleo board (MB1355C) and BLE P2P_Server application in a USB DONGLE board (MB1293C).
 The client could be located in a phone also, using the ST BLE Sensor application instead of the MB1355C board. 
 
@@ -48,14 +48,14 @@ The client could be located in a phone also, using the ST BLE Sensor application
   - BLE/BLE_p2pServer/Core/Src/app_entry.c      			Initialization of the application
   - BLE/BLE_p2pServer/STM32_WPAN/App/p2p_server_app.c   	P2P Server application
   - BLE/BLE_p2pServer/STM32_WPAN/Target/hw_ipcc.c      		IPCC Driver
-  - BLE/BLE_p2pServer/Core/Src/hw_lpm.c      				Low Power Manager Driver
+  - BLE/BLE_p2pServer/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
   - BLE/BLE_p2pServer/Core/Src/hw_timerserver.c 			Timer Server based on RTC
   - BLE/BLE_p2pServer/Core/Src/hw_uart.c 					UART Driver
   
 
 @par Hardware and Software environment
 
-    - This application runs on STM32WB devices, 
+    - This application runs on STM32WB55xx devices, 
        - BLE_p2pServer on USB DONGLE board (MB1293C) 
        - BLE_p2pClient on Nucleo board (MB1355C)
     
@@ -82,6 +82,10 @@ In order to make the program work, you must do the following :
  - OR use the BLE_p2pServer_reference.hex from Binary directory
  - This must be done for BLE_p2pServer (MB1355C & MB1293C) 
 
+Debug traces can be enabled/disabled in app_conf.h 
+Please note that debug traces are disabled. 
+If debug traces are enabled, a debug window (ex teraterm) must be opened (if not program won't work properly).
+
 First demonstration
 On the android/ios device, enable the Bluetooth communications, and if not done before,
  - Install the ST BLE Profile application on the android device
@@ -100,7 +104,7 @@ On the android/ios device, enable the Bluetooth communications, and if not done 
 
 Second demonstration
  - BLE_p2pServer may be connected by BLE_p2pClient as well(MB1293C).
- - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB boards and executed, the modules are initialized. 
+ - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB55xx boards and executed, the modules are initialized. 
 
    - The Peripheral device (BLE_p2pServer) starts advertising (during 1 minute), the green led blinks for each advertising event.
    - The Central device (BLE_p2pClient) starts scanning when pressing the User button (SW1) on the USB Dongle board. BLE_p2pClient blue led becomes on. 

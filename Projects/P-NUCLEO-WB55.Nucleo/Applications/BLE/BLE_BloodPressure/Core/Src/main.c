@@ -45,8 +45,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app_common.h"
-#include "lpm.h"
-#include "scheduler.h"
+#include "stm32_lpm.h"
+#include "stm32_seq.h"
 #include "dbg_trace.h"
 #include "hw_conf.h"
 #include "otp.h"
@@ -143,7 +143,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	while(1)
 	{
-		SCH_Run(~0);
+		UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -348,7 +348,7 @@ static void MX_RTC_Init(void)
   hrtc.Instance = RTC;
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
   hrtc.Init.AsynchPrediv = CFG_RTC_ASYNCH_PRESCALER;
-  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.SynchPrediv = CFG_RTC_SYNCH_PRESCALER;
   hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
   hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;

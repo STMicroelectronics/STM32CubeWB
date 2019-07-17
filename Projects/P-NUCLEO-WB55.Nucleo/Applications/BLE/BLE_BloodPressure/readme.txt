@@ -52,7 +52,7 @@ How to use the Blood Pressure profile as specified by the BLE SIG.
   - BLE/BLE_BloodPressure/Core/Src/app_entry.c      		Initialization of the application
   - BLE/BLE_BloodPressure/STM32_WPAN/App/bls_app.c      	Blood Pressure Service application
   - BLE/BLE_BloodPressure/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_BloodPressure/Core/Src/hw_lpm.c      			Low Power Manager Driver
+  - BLE/BLE_BloodPressure/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
   - BLE/BLE_BloodPressure/Core/Src/hw_timerserver.c 		Timer Server based on RTC
   - BLE/BLE_BloodPressure/Core/Src/hw_uart.c 				UART Driver
 

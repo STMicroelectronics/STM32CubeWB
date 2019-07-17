@@ -57,7 +57,6 @@
 #define RTT_COLOR_CODE_CYAN    ""
 #endif /* LOG_RTT_COLOR_ENABLE == 1 */
 
-
 #if (CFG_DEBUG_TRACE != 0)
 /**
  * Function for outputting code region string.
@@ -162,7 +161,6 @@ static inline uint16_t logTimestamp(char *aLogString, uint16_t aMaxSize)
 }
 #endif /* LOG_TIMESTAMP_ENABLE */
 
-
 /**
  * Function for printing application log
  *
@@ -213,4 +211,3 @@ void logApplication(appliLogLevel_t aLogLevel, appliLogRegion_t aLogRegion, cons
   }
 #endif /* CFG_DEBUG_TRACE */
 }
-

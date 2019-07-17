@@ -130,9 +130,124 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section3" checked aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
+<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 3rd-July-2019</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE Link layer : fix issues with pairing
+<ul>
+<li>Reception of 2 pairing complete events after failing numeric comparison</li>
+<li>Slave_security_req collision with connection update made unstable security</li>
+<li>No timeout event after slave req pairing if link key was deleted @ slave side</li>
+<li>Blackout time should be back to 5sec after bonding OK</li>
+</ul></li>
+<li>BLE GATT : improvement of GATT Read event management for certain values of attribute length and ATT_MTU</li>
+<li>BLE GATT : Add ACI_GATT_INDICATION_EXT_EVENT</li>
+<li>THREAD / MAC 802.15.4 :
+<ul>
+<li>New version of 802.15.4 Low Level Driver (Tx Power management improvement + API alignment)</li>
+</ul></li>
+<li>MAC 802.15.4:
+<ul>
+<li>Updates on robustness and test coverage</li>
+</ul></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Firmware Upgrade Services Binary</th>
+<th>Device</th>
+<th>Install address</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td>STM32WB5xxC(256K)</td>
+<td>0x080<strong>3E</strong>000</td>
+<td>v1.0.2</td>
+<td>04/10/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td>STM32WB5xxE(512K)</td>
+<td>0x080<strong>7E</strong>000</td>
+<td>v1.0.2</td>
+<td>04/10/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td>STM32WB5xxG(1M)</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>v1.0.2</td>
+<td>04/10/2019</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 5 and STEP 6” of flash procedure.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>Install address</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_BLE_Stack_fw.bin</td>
+<td>0x080CC000</td>
+<td><strong>v1.2.0</strong></td>
+<td>07/03/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_HCILayer_fw.bin</td>
+<td>0x080DC000</td>
+<td><strong>v1.2.0</strong></td>
+<td>07/03/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x0809F000</td>
+<td><strong>v1.2.0</strong></td>
+<td>06/25/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x080B5000</td>
+<td><strong>v1.2.0</strong></td>
+<td>06/25/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Thread_fw.bin</td>
+<td>0x08079000</td>
+<td><strong>v1.2.0</strong></td>
+<td>07/03/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td>0x080E4000</td>
+<td><strong>v1.2.0</strong></td>
+<td>06/25/2019</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_rfmonitor_phy802_15_4_fw.bin</td>
+<td>0x080EC000</td>
+<td>v1.1.0</td>
+<td>04/05/2019</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>Add support for STM32WB5xxE(512K) and STM32WB5xxC(256K) devices.</li>
@@ -190,13 +305,13 @@
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>stm32wb5x_BLE_Stack_fw.bin</strong></td>
+<td>stm32wb5x_BLE_Stack_fw.bin</td>
 <td>0x080CC000</td>
 <td><strong>v1.1.1</strong></td>
 <td>05/10/2019</td>
 </tr>
 <tr class="even">
-<td><strong>stm32wb5x_BLE_HCILayer_fw.bin</strong></td>
+<td>stm32wb5x_BLE_HCILayer_fw.bin</td>
 <td>0x080DC000</td>
 <td><strong>v1.1.1</strong></td>
 <td>05/10/2019</td>
@@ -204,31 +319,31 @@
 <tr class="odd">
 <td>stm32wb5x_Thread_FTD_fw.bin</td>
 <td>0x0809F000</td>
-<td>v1.1.0</td>
+<td><strong>v1.1.0</strong></td>
 <td>04/05/2019</td>
 </tr>
 <tr class="even">
 <td>stm32wb5x_Thread_MTD_fw.bin</td>
 <td>0x080B5000</td>
-<td>v1.1.0</td>
+<td><strong>v1.1.0</strong></td>
 <td>04/05/2019</td>
 </tr>
 <tr class="odd">
 <td>stm32wb5x_BLE_Thread_fw.bin</td>
 <td>0x08079000</td>
-<td>v1.1.0</td>
+<td><strong>v1.1.0</strong></td>
 <td>04/05/2019</td>
 </tr>
 <tr class="even">
 <td>stm32wb5x_Mac_802_15_4_fw.bin</td>
 <td>0x080E6000</td>
-<td>v1.1.0</td>
+<td><strong>v1.1.0</strong></td>
 <td>04/05/2019</td>
 </tr>
 <tr class="odd">
 <td>stm32wb5x_rfmonitor_phy802_15_4_fw.bin</td>
 <td>0x080EC000</td>
-<td>v1.1.0</td>
+<td><strong>v1.1.0</strong></td>
 <td>04/05/2019</td>
 </tr>
 </tbody>
@@ -238,7 +353,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Introduction of the Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>This feature is embedded inside stm32wb5x_FUS_fw.bin.</li>
@@ -345,9 +460,9 @@
 </div>
 </div>
 <div class="collapse">
-<input type="checkbox" id="collapse-section1"  aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
+<input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 <p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 6” of flash procedure.</p>

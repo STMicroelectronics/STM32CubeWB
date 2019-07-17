@@ -23,7 +23,7 @@
 This projects provides a reference template that can be used to build any firmware application.
 
 This directory provides a reference template project that can be used to build any firmware application for
-STM32WB55RGVx devices using STM32CubeWB HAL and running on P-NUCLEO-WB55 board from STMicroelectronics. 
+STM32WB55xx devices using STM32CubeWB HAL and running on P-NUCLEO-WB55 board from STMicroelectronics. 
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
@@ -47,7 +47,7 @@ STM32WB55RGVx devices using STM32CubeWB HAL and running on P-NUCLEO-WB55 board f
         
 @par Hardware and Software environment  
 
-  - This example runs on STM32WB55RG devices.
+  - This example runs on STM32WB55xx devices.
     
   - This example has been tested with STMicroelectronics P-NUCLEO-WB55
     boards and can be easily tailored to any other supported device 

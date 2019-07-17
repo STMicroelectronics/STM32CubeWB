@@ -24,7 +24,7 @@
 #define __APP_ENTRY_H
 
 #include "stm32wbxx_hal.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "tl.h"
 
 #ifdef __cplusplus
@@ -40,9 +40,9 @@ extern "C" {
   void APPE_Init( void );
   void APP_ENTRY_RegisterCmdBuffer(TL_CmdPacket_t* p_buffer);
   void APP_ENTRY_ProcessMsgM0ToM4(void);
-  void APP_ENTRY_Init_UART_CLI(void);
+  void APP_ENTRY_Init_CFG_CLI_UART(void);
   void APP_ENTRY_TL_THREAD_INIT(void);
-  void SCH_EvtIdle( uint32_t evt_waited_bm );
+  void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm );
 
 #ifdef __cplusplus
 }

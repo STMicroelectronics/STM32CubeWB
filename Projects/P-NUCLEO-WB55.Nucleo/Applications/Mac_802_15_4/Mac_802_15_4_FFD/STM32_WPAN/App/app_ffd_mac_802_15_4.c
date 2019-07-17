@@ -35,6 +35,7 @@
 #include "stm_logging.h"
 
 
+#define DEMO_CHANNEL 16
 
 
 MAC_associateInd_t g_MAC_associateInd;
@@ -69,20 +70,20 @@ void APP_FFD_MAC_802_15_4_Init( APP_MAC_802_15_4_InitMode_t InitMode, TL_CmdPack
 
   /* Register task */
   /* Create the different tasks */
-  SCH_RegTask(CFG_TASK_MSG_FROM_RF_CORE, APP_ENTRY_ProcessMsgFromRFCoreTask);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_MSG_FROM_RF_CORE, UTIL_SEQ_RFU, APP_ENTRY_ProcessMsgFromRFCoreTask);
 
-  SCH_RegTask(CFG_TASK_FFD,APP_FFD_MAC_802_15_4_SetupTask);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_FFD, UTIL_SEQ_RFU,APP_FFD_MAC_802_15_4_SetupTask);
 
-  SCH_RegTask(CFG_TASK_SERVICE_COORD,APP_FFD_MAC_802_15_4_CoordSrvTask);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SERVICE_COORD, UTIL_SEQ_RFU,APP_FFD_MAC_802_15_4_CoordSrvTask);
 
-  SCH_RegTask(CFG_TASK_DATA_COORD,APP_FFD_MAC_802_15_4_CoordDataTask);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_COORD, UTIL_SEQ_RFU,APP_FFD_MAC_802_15_4_CoordDataTask);
 
   /* Configuration MAC 802_15_4 */
   APP_FFD_MAC_802_15_4_Config();
 
 
   /*Start Main Coordinator - FFD Task*/
-  SCH_SetTask( 1<< CFG_TASK_FFD, CFG_SCH_PRIO_0 );
+  UTIL_SEQ_SetTask( 1<< CFG_TASK_FFD, CFG_SCH_PRIO_0 );
 
 }
 
@@ -145,7 +146,7 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
   long long extAddr = 0xACDE480000000001;
   uint16_t shortAddr   = 0x1122;
   uint16_t panId       = 0x1AAA;
-  uint8_t channel      = 16;
+  uint8_t channel      = DEMO_CHANNEL;
   uint8_t PIB_Value = 0x00;
 
   APP_DBG("Run FFD MAC 802.15.4 - 2 - FFD Startup");
@@ -161,7 +162,7 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
     return;
   }
   /* Wait for Reset Confirmation */
-  SCH_WaitEvt( 1U<< CFG_EVT_DEVICE_RESET_CNF );
+  UTIL_SEQ_WaitEvt( 1U<< CFG_EVT_DEVICE_RESET_CNF );
   APP_DBG("FFD MAC APP - Reset CNF Received");
 
   /* Set Device Extended Address */
@@ -174,7 +175,7 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
     APP_DBG("FFD MAC - Set Extended Addr Fails");
     return;
   }
-  SCH_WaitEvt( 1U<< CFG_EVT_SET_CNF );
+  UTIL_SEQ_WaitEvt( 1U<< CFG_EVT_SET_CNF );
   APP_DBG("FFD MAC APP - Set Extended Address CNF Received");
 
 
@@ -189,7 +190,7 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
     return;
   }
 
-  SCH_WaitEvt( 1U << CFG_EVT_SET_CNF );
+  UTIL_SEQ_WaitEvt( 1U << CFG_EVT_SET_CNF );
   APP_DBG("FFD MAC APP - Set Short Address CNF Received");
 
   /* Set Association Permit */
@@ -205,7 +206,7 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
     APP_DBG("FFD MAC - Set Association Permit Fails");
     return;
   }
-  SCH_WaitEvt( 1U << CFG_EVT_SET_CNF );
+  UTIL_SEQ_WaitEvt( 1U << CFG_EVT_SET_CNF );
   APP_DBG("FFD MAC APP - Set Association Permit CNF Received");
 
 
@@ -225,7 +226,7 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
     APP_DBG("FFD MAC - Set Association Permit Fails");
     return;
   }
-  SCH_WaitEvt( 1U << CFG_EVT_DEVICE_STARTED_CNF );
+  UTIL_SEQ_WaitEvt( 1U << CFG_EVT_DEVICE_STARTED_CNF );
   APP_DBG("FFD MAC APP - Start FFD Device CNF Received");
 
 
@@ -241,7 +242,7 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
     APP_DBG("FFD MAC - Set Rx On When Idle Fails");
     return;
   }
-  SCH_WaitEvt( 1U << CFG_EVT_SET_CNF );
+  UTIL_SEQ_WaitEvt( 1U << CFG_EVT_SET_CNF );
   APP_DBG("FFD MAC APP - Set RX On When Idle CNF Received");
   /* Go in Echo loop */
   APP_DBG("FFD MAC APP - Ready to Handle Association Req and Receive Data");
@@ -309,6 +310,7 @@ static void APP_FFD_MAC_802_15_4_Config()
   macCbConfig.mcpsDataIndCb = APP_MAC_mcpsDataIndCb;
   macCbConfig.mcpsDataCnfCb = APP_MAC_mcpsDataCnfCb;
   macCbConfig.mcpsPurgeCnfCb = APP_MAC_mcpsPurgeCnfCb;
+  macCbConfig.mlmePollIndCb = APP_MAC_mlmePollIndCb;
 }
 
 /**

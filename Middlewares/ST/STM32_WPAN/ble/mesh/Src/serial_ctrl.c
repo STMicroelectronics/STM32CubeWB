@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    serial_ctrl.c
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Serial Control file 
 ******************************************************************************
 * @attention
@@ -45,49 +45,135 @@
 #include "hal_common.h"
 #include "serial_if.h"
 #include "serial_ctrl.h"
-/** @addtogroup BLE_Mesh
+#include "light.h"
+
+/** @addtogroup BlueNRG_Mesh
 *  @{
 */
 
-/** @addtogroup Middlewares_Serial_Control
+/** @addtogroup Middlewares_Serial_Interface
 *  @{
 */
 
 /* Private define ------------------------------------------------------------*/
-#define SERIAL_MODEL_ID_OFFSET      5
-#define SERIAL_MODEL_CMD_OFFSET     7
-
-#define MODEL_ID_LIGHT              0x31
+#define SERIAL_MODEL_DATA_OFFSET      15
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
+const MODEL_OpcodeTableParam_t *lightOptcodeTable;
+const MODEL_OpcodeTableParam_t *genericOptcodeTable;
+MOBLEUINT16 lightOptcodeTableLength;
+MOBLEUINT16 genericOptcodeTableLength;
 
+/* Private function prototypes -----------------------------------------------*/
+MOBLEUINT8 SerialCtrl_GetMinParamLength(MOBLEUINT32 opcode, const MODEL_OpcodeTableParam_t list[], MOBLEUINT16 length);
+
+/* Private functions ---------------------------------------------------------*/ 
 /**
-* @brief  Processes serial control commands
-* @param  rcvdStringBuff: Pointer to received string   
-* @param  rcvdStringSize: Size of received string  
+* @brief  This funcrion is used to parse the string given by the user
+* @param  rcvdStringBuff: buffer to store input string 
+* @param  rcvdStringSize: length of the input string 
 * @retval void
-*/
+*/ 
 void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
-    switch(*(rcvdStringBuff+SERIAL_MODEL_ID_OFFSET))
+  
+  MOBLE_ADDRESS peer;                 /*node adderess of the destination node*/
+  MOBLEUINT16 command;                /*opcode command to be executed by the destination node*/
+  MOBLEUINT8 minPropertyLength = 0;   /*minimum number of properties required by a specific command*/
+  MOBLEUINT8 elementIndex = 0;          /*default element index*/
+  MOBLEUINT8 counter,i,byteCounter = 0; /*variables to convert big-endian input to little endian output*/
+  MOBLEUINT8 msb,lsb;                 /*variables to convert ascii characters to 8-bit hex*/
+  MOBLEUINT8  data [5] = {0};        /*buffer to output property variables */
+  MOBLEUINT8  byteBuff [10] = {0};    /*buffer to store input property variables temperarily*/
+  
+  sscanf(rcvdStringBuff+5, "%hx %hx ", &peer,&command); 
+  
+  /* Callback to store a pointer to opcode table starting sddress and length of the table*/
+  LightModelServer_GetOpcodeTableCb(&lightOptcodeTable,&lightOptcodeTableLength);     
+  GenericModelServer_GetOpcodeTableCb(&genericOptcodeTable,&genericOptcodeTableLength);
+  
+  /* Minimum parameter length required for a valid opcade in Generic opcode table */
+  minPropertyLength = SerialCtrl_GetMinParamLength(command,genericOptcodeTable,genericOptcodeTableLength);
+  
+  /* Opcode not found in Generic opcode table */
+  if (minPropertyLength == 0xff)
+  {
+    minPropertyLength = SerialCtrl_GetMinParamLength(command,lightOptcodeTable,lightOptcodeTableLength);/*Start finding for opcode in Light Table*/
+  }
+  /* Opcode not found in Light opcode table */
+  if (minPropertyLength == 0xff)
+  {
+    TRACE_M(TF_SERIAL_CTRL,"incorrect optcode\r\n");  
+  }
+  /* Found Valid opcode */
+  else 
+  {    
+    i=0;                
+    byteCounter=0;     /*variable to count number of bytes in each space separeted word*/  
+    counter = 0;
+    for(i=SERIAL_MODEL_DATA_OFFSET;i<=(rcvdStringSize);i++)
     {
-        case MODEL_ID_LIGHT:
-          if(*(rcvdStringBuff+SERIAL_MODEL_CMD_OFFSET) == 0x31)
-          {
-//              SetLed(1);
-              BSP_LED_On(LED_BLUE);
-          }
-          else if(*(rcvdStringBuff+SERIAL_MODEL_CMD_OFFSET) == 0x30)
-          {
-//              SetLed(0);
-              BSP_LED_Off(LED_BLUE);
-          }
-          break;
+      /* check if space or NULL found */
+      if(rcvdStringBuff[i] == ' '||rcvdStringBuff[i] == '\0' )
+      {
+        /*if number of bytes is one*/
+        if (byteCounter == 1 )
+        {
+          data[counter] = byteBuff[0];
+        }
+        /*if number of bytes is two*/
+        if (byteCounter == 2 )
+        {
+          /*assigning value from byteBuff to data in swapped way to convert 
+          big-endian input from the user to little-endian input required by the BLEMesh Library */
+          data[counter] = byteBuff[1];    
+          data[counter+1] = byteBuff[0];
+          counter++;
+        }
+        counter++;       /*for next word*/
+        byteCounter=0;          /*for next word, init index to 0*/
+      }
+      else
+      {   /* take two consecutive ascii characters from the rcvdStringBuff and convert to hex values */  
+        msb = Serial_CharToHexConvert(rcvdStringBuff[i]);        
+        lsb = Serial_CharToHexConvert(rcvdStringBuff[i + 1 ]);
+        /*join two hex values to make one hex value*/
+        byteBuff[byteCounter]  = msb << 4;
+        byteBuff[byteCounter] |= lsb;
+        
+        i++;      /*increament for loop counter as two values are used */
+        byteCounter++;   /*increament byteCounter counter*/
+      }
     }
+    /*call BLEMesh Library function to send the processed variables */ 
+    BLEMesh_SetRemoteData(peer,elementIndex,command, 
+                              data, minPropertyLength,
+                              MOBLE_FALSE, MOBLE_FALSE); 
+  }
 }
+
+
+
+/**
+* @brief  Returns the minimum number of parameters required by a particular optcode
+* @param  opcode: Opcode of the model whose minimum number of parameters are required
+* @param  list: 
+* @param  length:  
+* @retval MOBLEUINT16
+*/ 
+MOBLEUINT8 SerialCtrl_GetMinParamLength(MOBLEUINT32 opcode, const MODEL_OpcodeTableParam_t list[], MOBLEUINT16 length)
+{
+  for (int i = 0; i < length; i++)
+  {
+    if (list[i].opcode == opcode)
+    {
+      return list[i].min_payload_size;
+    }
+  }
+  return 0xff;
+}
+
 
 /**
 * @}

@@ -87,7 +87,7 @@ int main(void)
   while (1)
   {
 
-    SCH_Run(~0);
+    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
   }
 }
 
@@ -243,16 +243,13 @@ static void SystemClock_Config( void )
  */
 static void SystemPower_Config( void )
 {
-  LPM_Conf_t LowPowerModeConfiguration;
-
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
   LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 
-  LowPowerModeConfiguration.Stop_Mode_Config = LPM_StopMode2;
-  LowPowerModeConfiguration.OFF_Mode_Config = LPM_Standby;
-  LPM_SetConf(&LowPowerModeConfiguration);
+  /* Initialize low power manager */
+  UTIL_LPM_Init( );
 
   return;
 }

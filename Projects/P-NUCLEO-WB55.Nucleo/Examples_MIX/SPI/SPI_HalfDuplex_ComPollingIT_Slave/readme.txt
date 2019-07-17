@@ -92,7 +92,7 @@ STM32 board's LEDs can be used to monitor the transfer status:
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55RGVx devices.
+  - This example runs on STM32WB55xx devices.
 
   - Take care to cable connection between Master and Slave Board:
     Cable shall be smaller than 5 cm and rigid if possible.

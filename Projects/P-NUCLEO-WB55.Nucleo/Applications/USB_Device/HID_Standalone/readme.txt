@@ -82,7 +82,7 @@ Connectivity, USB Device, HID, Full Speed, Mouse, Remote Wakeup
 
 @par Hardware and Software environment
 
-  - This application runs on STM32WBxx devices.
+  - This application runs on STM32WB55xx devices.
 
   - This application has been tested with STMicroelectronics P-NUCLEO-WB55 board
     and can be easily tailored to any other supported device and development board.

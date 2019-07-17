@@ -30,6 +30,9 @@
 #include "dbg_trace.h"
 #include "stm_logging.h"
 
+#include "tl.h"
+#include "tl_mac_802_15_4.h"
+
 
 /** @defgroup CORE MAC 802.15.4 Core & Utils
   *   @brief Provides  functions to handle MAC Confirmation and notification from
@@ -256,6 +259,13 @@ HAL_StatusTypeDef MAC_802_15_4_CallBack_Processing(void)
       MAC_dataInd_t dataInd ;
       memcpy(&dataInd,p_mac_evt->notPayload, sizeof(MAC_dataInd_t));
       macCbConfig.mcpsDataIndCb(&dataInd);
+    }
+    break;
+    case MSG_M0TOM4_MAC_MLME_POLL_IND:
+    {
+      MAC_pollInd_t pollInd ;
+      memcpy(&pollInd,p_mac_evt->notPayload, sizeof(MAC_pollInd_t));
+      macCbConfig.mlmePollIndCb(&pollInd);
     }
     break;
   default:

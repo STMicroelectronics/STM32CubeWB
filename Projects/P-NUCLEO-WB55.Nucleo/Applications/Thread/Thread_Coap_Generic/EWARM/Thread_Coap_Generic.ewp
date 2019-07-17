@@ -316,7 +316,7 @@
         </option>
         <option>
           <name>CCRequirePrototypes</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -358,6 +358,8 @@
           <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl</state>
           <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci</state>
           <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities</state>
+          <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
+          <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
           <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include</state>
           <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api</state>
           <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include</state>
@@ -1060,7 +1062,7 @@
           <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\Core\Src\hw_lpm.c</name>
+          <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
@@ -1175,7 +1177,7 @@
     <group>
       <name>STM32_WPAN</name>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_if.c</name>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</name>
@@ -1187,13 +1189,7 @@
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/lpm.c</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/otp.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/scheduler.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_list.c</name>
@@ -1296,5 +1292,14 @@
       </file>
     </group>
   </group>
+    <group>
+        <name>Utilities</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\lpm\tiny_lpm\stm32_lpm.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer\stm32_seq.c</name>
+        </file>
+    </group>
 </project>
 

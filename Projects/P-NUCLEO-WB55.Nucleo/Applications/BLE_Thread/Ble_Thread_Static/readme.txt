@@ -55,7 +55,7 @@ COAP,THREAD,BLE
   - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Src/app_entry.c           Initialization of the application
   - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Src/app_thread.c               Thread application implementation
   - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/STM32_WPAN/Target/hw_ipcc.c         IPCC Driver
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Src/hw_lpm.c              Low Power Manager Driver
+  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Src/stm32_lpm_if.c        Low Power Manager Interface
   - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Src/hw_timerserver.c      Timer Server based on RTC
   - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Src/hw_uart.c             UART Driver
   - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Src/main.c                     Main program

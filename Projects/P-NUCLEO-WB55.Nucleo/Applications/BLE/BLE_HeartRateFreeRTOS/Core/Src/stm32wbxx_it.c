@@ -24,6 +24,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32wbxx_it.h"
+#include "cmsis_os.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -60,8 +61,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
+
       
 extern DMA_HandleTypeDef hdma_lpuart1_tx;
   
@@ -73,10 +73,10 @@ extern UART_HandleTypeDef hlpuart1;
   
       
 extern UART_HandleTypeDef huart1;
+extern TIM_HandleTypeDef htim17;
   
       
 /* USER CODE BEGIN EV */
-
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -168,20 +168,6 @@ void DebugMon_Handler(void)
   /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
-/**
-  * @brief This function handles System tick timer.
-  */
-void SysTick_Handler(void)
-{
-  /* USER CODE BEGIN SysTick_IRQn 0 */
-
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
-
-  /* USER CODE END SysTick_IRQn 1 */
-}
-
 /******************************************************************************/
 /* STM32WBxx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
@@ -201,6 +187,20 @@ void DMA1_Channel4_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel4_IRQn 1 */
 
   /* USER CODE END DMA1_Channel4_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM1 trigger and commutation interrupts and TIM17 global interrupt.
+  */
+void TIM1_TRG_COM_TIM17_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 0 */
+
+  /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim17);
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 1 */
+
+  /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 1 */
 }
 
 /**
@@ -254,7 +254,7 @@ void DMA2_Channel4_IRQHandler(void)
  */
 void PUSH_BUTTON_SW1_EXTI_IRQHandler(void)
 {
-
+  HAL_GPIO_EXTI_IRQHandler(BUTTON_SW1_PIN);
 }
 
 /**
@@ -265,7 +265,18 @@ void PUSH_BUTTON_SW1_EXTI_IRQHandler(void)
  */
 void PUSH_BUTTON_SW2_EXTI_IRQHandler(void)
 {
+  HAL_GPIO_EXTI_IRQHandler(BUTTON_SW2_PIN);
+}
 
+/**
+ * @brief  This function handles External line
+ *         interrupt request.
+ * @param  None
+ * @retval None
+ */
+void PUSH_BUTTON_SW3_EXTI_IRQHandler(void)
+{
+  HAL_GPIO_EXTI_IRQHandler(BUTTON_SW3_PIN);
 }
 
 void RTC_WKUP_IRQHandler(void)

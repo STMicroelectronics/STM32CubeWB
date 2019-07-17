@@ -64,7 +64,7 @@ $moduleName$, $exampleName$, Security, IEC 60870-5, hardware CRC,
   - BLE/BLE_Hid/Core/Src/app_entry.c                    Initialization of the application
   - BLE/BLE_Hid/STM32_WPAN/App/hids_app.c      	        Human Interface Device Service application
   - BLE/BLE_Hid/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_Hid/Core/Src/hw_lpm.c      			Low Power Manager Driver
+  - BLE/BLE_Hid/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
   - BLE/BLE_Hid/Core/Src/hw_timerserver.c               Timer Server based on RTC
   - BLE/BLE_Hid/Core/Src/hw_uart.c                      UART Driver
 
@@ -97,7 +97,7 @@ On the Nucleo board side:
 
 On the PC side:
  - enable the Bluetooth 4.0 communication or install any Bluetooth 4.0 USB adapter dongle
- - do a connection to the STM32WB device with PIN code 111111.
+ - do a connection to the STM32WB55xx device with PIN code 111111.
  - open a terminal window with the following settings:
    baud rate of 115200
    Byte size of 8

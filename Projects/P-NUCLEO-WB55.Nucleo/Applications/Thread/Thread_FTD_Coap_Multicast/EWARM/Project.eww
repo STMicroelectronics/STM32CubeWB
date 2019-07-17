@@ -2,7 +2,7 @@
 
 <workspace>
   <project>
-    <path>$WS_DIR$\Project.ewp</path>
+    <path>$WS_DIR$\Thread_FTD_Coap_Multicast.ewp</path>
   </project>
   <batchBuild/>
 </workspace>

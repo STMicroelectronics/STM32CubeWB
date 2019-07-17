@@ -65,15 +65,27 @@ PLACE_IN_SECTION("BLE_APP_CONTEXT") static HRSAPP_Context_t HRSAPP_Context;
 /**
  * END of Section BLE_APP_CONTEXT
  */
+
+osThreadId_t HrsProcessId;
+
+const osThreadAttr_t HrsProcess_attr = {
+    .name = CFG_HRS_PROCESS_NAME,
+    .attr_bits = CFG_HRS_PROCESS_ATTR_BITS,
+    .cb_mem = CFG_HRS_PROCESS_CB_MEM,
+    .cb_size = CFG_HRS_PROCESS_CB_SIZE,
+    .stack_mem = CFG_HRS_PROCESS_STACK_MEM,
+    .priority = CFG_HRS_PROCESS_PRIORITY,
+    .stack_size = CFG_HRS_PROCESS_STACk_SIZE
+};
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
 
-/* Global variables ----------------------------------------------------------*/
-extern osThreadId RF_ThreadId;
-
-/* Private function prototypes -----------------------------------------------*/
+/* Private functions prototypes-----------------------------------------------*/
 static void HrMeas( void );
+static void HrsProcess(void *argument);
+static void HRSAPP_Measurement(void);
 static uint32_t HRSAPP_Read_RTC_SSR_SS ( void );
 /* USER CODE BEGIN PFP */
 
@@ -138,6 +150,7 @@ void HRS_Notification(HRS_App_Notification_evt_t *pNotification)
 
 void HRSAPP_Init(void)
 {
+  HrsProcessId = osThreadNew(HrsProcess, NULL, &HrsProcess_attr);
 /* USER CODE BEGIN HRSAPP_Init */
   /**
    * Set Body Sensor Location
@@ -182,7 +195,18 @@ void HRSAPP_Init(void)
   return;
 }
 
-void HRSAPP_Measurement(void)
+static void HrsProcess(void *argument)
+{
+  UNUSED(argument);
+
+  for(;;)
+  {
+    osThreadFlagsWait( 1, osFlagsWaitAny, osWaitForever);
+    HRSAPP_Measurement( );
+  }
+}
+
+static void HRSAPP_Measurement(void)
 {
 /* USER CODE BEGIN HRSAPP_Measurement */
   uint32_t measurement;
@@ -211,8 +235,7 @@ static void HrMeas( void )
    * The background is the only place where the application can make sure a new aci command
    * is not sent if there is a pending one
    */
-  osSignalSet( RF_ThreadId, (1<<CFG_TASK_MEAS_REQ_ID) );
-
+  osThreadFlagsSet( HrsProcessId, 1 );
   /* USER CODE BEGIN HrMeas */
 
 /* USER CODE END HrMeas */

@@ -27,9 +27,9 @@
 #include "tl.h"
 #include "app_ble.h"
 
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "shci.h"
-#include "lpm.h"
+#include "stm32_lpm.h"
 #include "otp.h"
 
 #include "p2p_routeur_app.h"
@@ -399,12 +399,12 @@ void APP_BLE_Init( void )
   /**
    * Do not allow standby in the application
    */
-  LPM_SetOffMode(1 << CFG_LPM_APP_BLE, LPM_OffMode_Dis);
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
 
   /**
    * Register the hci transport layer to handle BLE User Asynchronous Events
    */
-  SCH_RegTask(CFG_TASK_HCI_ASYNCH_EVT_ID, hci_user_evt_proc);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
 
   /**
    * Starts the BLE Stack on CPU2
@@ -424,15 +424,15 @@ void APP_BLE_Init( void )
   /**
    * From here, all initialization are BLE application specific
    */
-  SCH_RegTask(CFG_TASK_START_SCAN_ID, Scan_Request);
-  SCH_RegTask(CFG_TASK_CONN_DEV_1_ID, ConnReq1);
-  SCH_RegTask(CFG_TASK_START_ADV_ID, Adv_Request);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_START_SCAN_ID, UTIL_SEQ_RFU, Scan_Request);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_1_ID, UTIL_SEQ_RFU, ConnReq1);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_START_ADV_ID, UTIL_SEQ_RFU, Adv_Request);
 #if (CFG_P2P_DEMO_MULTI != 0)      
-  SCH_RegTask(CFG_TASK_CONN_DEV_2_ID, ConnReq2);
-  SCH_RegTask(CFG_TASK_CONN_DEV_3_ID, ConnReq3);
-  SCH_RegTask(CFG_TASK_CONN_DEV_4_ID, ConnReq4);
-  SCH_RegTask(CFG_TASK_CONN_DEV_5_ID, ConnReq5);
-  SCH_RegTask(CFG_TASK_CONN_DEV_6_ID, ConnReq6);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_2_ID, UTIL_SEQ_RFU, ConnReq2);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_3_ID, UTIL_SEQ_RFU, ConnReq3);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_4_ID, UTIL_SEQ_RFU, ConnReq4);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_5_ID, UTIL_SEQ_RFU, ConnReq5);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_6_ID, UTIL_SEQ_RFU, ConnReq6);
 #endif    
 
   /**
@@ -462,7 +462,7 @@ void APP_BLE_Init( void )
   /**
    * Start scanning
    */
-  SCH_SetTask(1 << CFG_TASK_START_ADV_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_START_ADV_ID, CFG_SCH_PRIO_0);
 
   return;
 }
@@ -506,33 +506,33 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
             if (BleApplicationContext.EndDevice1Found == 0x01
                 && BleApplicationContext.EndDevice_Connection_Status[0] != APP_BLE_CONNECTED)
             {
-              SCH_SetTask(1 << CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
+              UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
             }
 #if (CFG_P2P_DEMO_MULTI != 0)                        
             else if (BleApplicationContext.EndDevice2Found == 0x01
                 && BleApplicationContext.EndDevice_Connection_Status[1] != APP_BLE_CONNECTED)
             {
-              SCH_SetTask(1 << CFG_TASK_CONN_DEV_2_ID, CFG_SCH_PRIO_0);
+              UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_2_ID, CFG_SCH_PRIO_0);
             }
             else if (BleApplicationContext.EndDevice3Found == 0x01
                 && BleApplicationContext.EndDevice_Connection_Status[2] != APP_BLE_CONNECTED)
             {
-              SCH_SetTask(1 << CFG_TASK_CONN_DEV_3_ID, CFG_SCH_PRIO_0);
+              UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_3_ID, CFG_SCH_PRIO_0);
             }
             else if (BleApplicationContext.EndDevice4Found == 0x01
                 && BleApplicationContext.EndDevice_Connection_Status[3] != APP_BLE_CONNECTED)
             {
-              SCH_SetTask(1 << CFG_TASK_CONN_DEV_4_ID, CFG_SCH_PRIO_0);
+              UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_4_ID, CFG_SCH_PRIO_0);
             }
             else if (BleApplicationContext.EndDevice5Found == 0x01
                 && BleApplicationContext.EndDevice_Connection_Status[4] != APP_BLE_CONNECTED)
             {
-              SCH_SetTask(1 << CFG_TASK_CONN_DEV_5_ID, CFG_SCH_PRIO_0);
+              UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_5_ID, CFG_SCH_PRIO_0);
             }
             else if (BleApplicationContext.EndDevice6Found == 0x01
                 && BleApplicationContext.EndDevice_Connection_Status[5] != APP_BLE_CONNECTED)
             {
-              SCH_SetTask(1 << CFG_TASK_CONN_DEV_6_ID, CFG_SCH_PRIO_0);
+              UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_6_ID, CFG_SCH_PRIO_0);
             }
 #endif
 
@@ -707,7 +707,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
               if ((BleApplicationContext.EndDevice_Connection_Status[1] != APP_BLE_CONNECTED)
                   && (BleApplicationContext.EndDevice2Found == 0x01))
               {
-                SCH_SetTask(1 << CFG_TASK_CONN_DEV_2_ID, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_2_ID, CFG_SCH_PRIO_0);
               }
 #endif                            
 
@@ -738,7 +738,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                   && (BleApplicationContext.EndDevice1Found == 0x01))
               {
 
-                SCH_SetTask(1 << CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
               }
             }
             if (dev3 == 1)
@@ -766,7 +766,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                   && (BleApplicationContext.EndDevice4Found == 0x01))
               {
 
-                SCH_SetTask(1 << CFG_TASK_CONN_DEV_4_ID, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_4_ID, CFG_SCH_PRIO_0);
               }
             }
             if (dev4 == 1)
@@ -794,7 +794,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                   && (BleApplicationContext.EndDevice3Found == 0x01))
               {
 
-                SCH_SetTask(1 << CFG_TASK_CONN_DEV_3_ID, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_3_ID, CFG_SCH_PRIO_0);
               }
             }
             if (dev5 == 1)
@@ -822,7 +822,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                   && (BleApplicationContext.EndDevice6Found == 0x01))
               {
 
-                SCH_SetTask(1 << CFG_TASK_CONN_DEV_6_ID, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_6_ID, CFG_SCH_PRIO_0);
               }
             }
             if (dev6 == 1)
@@ -850,7 +850,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                   && (BleApplicationContext.EndDevice5Found == 0x01))
               {
 
-                SCH_SetTask(1 << CFG_TASK_CONN_DEV_5_ID, CFG_SCH_PRIO_0);
+                UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_5_ID, CFG_SCH_PRIO_0);
               }
             }
 #endif                        
@@ -1042,7 +1042,7 @@ else
 
 void APP_BLE_Key_Button1_Action(void)
 {
-  SCH_SetTask(1 << CFG_TASK_START_SCAN_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_START_SCAN_ID, CFG_SCH_PRIO_0);
 }
 
 /*************************************************************
@@ -1189,7 +1189,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data_Present = 0;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = 8;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = 16;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 0;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 1;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = 111111;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = 1;
   for (index = 0; index < 16; index++)
@@ -1560,11 +1560,11 @@ void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification )
       device_status.Device1_Status = 0x80; /* Not connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       /* restart Create Connection */
-      SCH_SetTask(1 << CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
       break;
 
     case SMART_PHONE1_DISCON_HANDLE_EVT:
-      SCH_SetTask(1 << CFG_TASK_START_ADV_ID, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1 << CFG_TASK_START_ADV_ID, CFG_SCH_PRIO_0);
       break;
 
 #if (CFG_P2P_DEMO_MULTI != 0)
@@ -1596,33 +1596,33 @@ void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification )
     case P2P_SERVER2_DISCON_HANDLE_EVT:
       device_status.Device2_Status = 0x80; /* Not connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
-      SCH_SetTask(1 << CFG_TASK_CONN_DEV_2_ID, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_2_ID, CFG_SCH_PRIO_0);
       break;
 
     case P2P_SERVER3_DISCON_HANDLE_EVT:
       device_status.Device3_Status = 0x80; /* Not connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       /* restart Create Connection */
-      SCH_SetTask(1 << CFG_TASK_CONN_DEV_3_ID, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_3_ID, CFG_SCH_PRIO_0);
       break;
 
     case P2P_SERVER4_DISCON_HANDLE_EVT:
       device_status.Device4_Status = 0x80; /* Not connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
-      SCH_SetTask(1 << CFG_TASK_CONN_DEV_4_ID, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_4_ID, CFG_SCH_PRIO_0);
       break;
 
     case P2P_SERVER5_DISCON_HANDLE_EVT:
       device_status.Device5_Status = 0x80; /* Not connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       /* restart Create Connection */
-      SCH_SetTask(1 << CFG_TASK_CONN_DEV_5_ID, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_5_ID, CFG_SCH_PRIO_0);
       break;
 
     case P2P_SERVER6_DISCON_HANDLE_EVT:
       device_status.Device6_Status = 0x80; /* Not connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
-      SCH_SetTask(1 << CFG_TASK_CONN_DEV_6_ID, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_6_ID, CFG_SCH_PRIO_0);
       break;
 #endif
 
@@ -1681,19 +1681,19 @@ const uint8_t* BleGetBdAddress( void )
  *************************************************************/
 void hci_notify_asynch_evt(void* pdata)
 {
-  SCH_SetTask(1 << CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
   return;
 }
 
 void hci_cmd_resp_release(uint32_t flag)
 {
-  SCH_SetEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
+  UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
   return;
 }
 
 void hci_cmd_resp_wait(uint32_t timeout)
 {
-  SCH_WaitEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
+  UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
   return;
 }
 
@@ -1726,7 +1726,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_PauseTask(task_id_list);
+      UTIL_SEQ_PauseTask(task_id_list);
 
       break;
 
@@ -1736,7 +1736,7 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        * This is to prevent a new command is sent while one is already pending
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
-      SCH_ResumeTask(task_id_list);
+      UTIL_SEQ_ResumeTask(task_id_list);
 
       break;
 

@@ -28,6 +28,7 @@
 #include "light.h"
 #include "appli_generic.h"
 #include "common.h"
+#include "mesh_cfg_usr.h"
 /** @addtogroup BLE_Mesh
  *  @{
  */
@@ -185,7 +186,8 @@ MOBLE_RESULT Appli_Generic_LevelMove_Set(Generic_LevelStatus_t* pdeltaMoveParam,
 MOBLE_RESULT Appli_Generic_GetOnOffStatus(MOBLEUINT8* pOnOff_Status)                                        
 {
   
-   *pOnOff_Status = AppliOnOffSet.Present_OnOff;
+  *pOnOff_Status = AppliOnOffSet.Present_OnOff;
+  *(pOnOff_Status+1) = AppliOnOffSet.Present_OnOff >> 8;
   
   return MOBLE_RESULT_SUCCESS; 
 }

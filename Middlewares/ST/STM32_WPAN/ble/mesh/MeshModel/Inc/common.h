@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    common.h
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Model middleware file
 ******************************************************************************
 * @attention
@@ -43,10 +43,21 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
-#include "light.h"
-#include "ble_mesh.h"
-#include "mesh_cfg.h"
 
+#define GENERIC_VALID_FLAG                  0xAA
+
+/* 16 bytes are reserved for generic */
+#define GENERIC_VALID_FLAG_OFFSET           0
+#define GENERIC_ON_OFF_NVM_OFFSET           1
+#define GENERIC_LEVEL_NVM_OFFSET            2
+/* 16 bytes are reserved for light
+*  Light model nvm offset is 16 bytes ahead of generic model */
+#define LIGHT_VALID_FLAG_OFFSET             0
+#define LIGHT_LIGHTNESS_NVM_OFFSET          1
+#define LIGHT_CTL_NVM_OFFSET                3
+#define LIGHT_HSL_NVM_OFFSET                7
+
+typedef MOBLE_RESULT (*APPLI_SAVE_MODEL_STATE_CB)(MOBLEUINT8* stateBuff, MOBLEUINT8 size);
 
 /** @addtogroup MODEL_GENERIC
 *  @{
@@ -58,6 +69,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
+
+typedef struct displayFloatToInt_s 
+{
+  MOBLEINT8 sign; /* 0 means positive, 1 means negative*/
+  MOBLEUINT32  out_int;
+  MOBLEUINT32  out_dec;
+} displayFloatToInt_t;
 
 MOBLE_RESULT Chk_OptionalParamValidity(MOBLEUINT8 param_length, MOBLEUINT8
                                         mandatory_length, MOBLEUINT8 param,
@@ -89,5 +107,8 @@ MOBLEUINT16 PwmValueMapping(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEI
 float Ratio_CalculateValue(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEINT16 minRange);
 MOBLEUINT16 PWM_CoolValue(float colourValue ,float brightValue);
 MOBLEUINT16 PWM_WarmValue(float colourValue ,float brightValue);
+void floatToInt(float in, displayFloatToInt_t *out_value, MOBLEINT32 dec_prec);
+void TraceHeader(const char* func_name, int mode);
+/* MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8 flag); */
 
 #endif

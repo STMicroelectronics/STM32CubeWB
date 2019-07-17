@@ -1,22 +1,20 @@
 /**
  ******************************************************************************
- * @file    app_conf.h
- * @author  MCD Application Team
- * @brief   Application configuration file
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
-
+  * File Name          : app_conf.h
+  * Description        : Application configuration file for STM32WPAN middleWare.
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -27,7 +25,7 @@
 #include "hw_conf.h"
 
 /******************************************************************************
- * P2P Server Config
+ * Application Config
  ******************************************************************************/
 
 /**< generic parameters */
@@ -41,10 +39,10 @@
  * Define Advertising parameters
  */
 #define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
-#define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)  /**< 80ms */
-#define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)  /**< 100ms */
+#define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)   /**< 80ms */
+#define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xa0)  /**< 100ms */
 #define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x640) /**< 1s */
-#define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xFA0) /**< 2.5s */
+#define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xfa0) /**< 2.5s */
 
 /**
  * Define IO Authentication
@@ -97,17 +95,18 @@
 #define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
 
 /**< specific parameters */
+/*****************************************************/
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
 #define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
 #define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
 
 
-#define P2P_SERVER1 1    /*1 = Device is Peripherique*/
-#define P2P_SERVER2 0
-#define P2P_SERVER3 0
-#define P2P_SERVER4 0
-#define P2P_SERVER5 0
-#define P2P_SERVER6 0
+#define P2P_SERVER1    1    /*1 = Device is Peripherique*/
+#define P2P_SERVER2    0
+#define P2P_SERVER3    0
+#define P2P_SERVER4    0
+#define P2P_SERVER5    0
+#define P2P_SERVER6    0
 
 #define CFG_DEV_ID_P2P_SERVER1                  (0x83)
 #define CFG_DEV_ID_P2P_SERVER2                  (0x84)
@@ -117,30 +116,27 @@
 #define CFG_DEV_ID_P2P_SERVER6                  (0x8A)   
 #define CFG_DEV_ID_P2P_ROUTER                   (0x85)
 
+#define  RADIO_ACTIVITY_EVENT   1          /* 1 for OOB Demo */     
 
-#define  RADIO_ACTIVITY_EVENT   1          /* 1 for OOB Demo */
-
-   
 /**
 * AD Element - Group B Feature
 */ 
-/* LSB - Firt Byte  */
+/* LSB - Firt Byte */   
 #define CFG_FEATURE_THREAD_SWITCH               (0x40)
 
-/* LSB - Second Byte   */
+/* LSB - Second Byte     */
 #define CFG_FEATURE_OTA_REBOOT                  (0x20)
 
 #define CONN_L(x) ((int)((x)/0.625f))
 #define CONN_P(x) ((int)((x)/1.25f))
 
   /*  L2CAP Connection Update request parameters used for test only with smart Phone */
-#define  L2CAP_REQUEST_NEW_CONN_PARAM    1  
-   
+#define L2CAP_REQUEST_NEW_CONN_PARAM             1
+
 #define L2CAP_INTERVAL_MIN              CONN_P(1000) /* 1s */
 #define L2CAP_INTERVAL_MAX              CONN_P(1000) /* 1s */
 #define L2CAP_SLAVE_LATENCY             0x0000
 #define L2CAP_TIMEOUT_MULTIPLIER        0x1F4
-
 
 /******************************************************************************
  * BLE Stack
@@ -246,8 +242,6 @@
  *  0 : LL + Host
  */
 #define CFG_BLE_LL_ONLY  0
-
-
 /******************************************************************************
  * Transport Layer
  ******************************************************************************/
@@ -283,8 +277,8 @@
 /******************************************************************************
  * UART interfaces
  ******************************************************************************/
-#define DBG_TRACE_UART_CFG      hw_lpuart1
-#define UART_CLI                hw_uart1
+#define CFG_DEBUG_TRACE_UART      hw_lpuart1
+#define CFG_CLI_UART                hw_uart1
 
 /******************************************************************************
  * USB interface
@@ -396,9 +390,6 @@ typedef enum
  */
 #define CFG_HW_RESET_BY_FW        1
 
-#define CFG_LED_SUPPORTED         1
-#define CFG_BUTTON_SUPPORTED      1
-
 /**
  * keep debugger enabled while in any low power mode when set to 1
  * should be set to 0 in production
@@ -434,7 +425,46 @@ typedef enum
 #define CFG_DEBUGGER_SUPPORTED      1
 #endif
 
+/* USER CODE BEGIN Defines */
+#define CFG_LED_SUPPORTED         1
+#define CFG_BUTTON_SUPPORTED      1
+/* USER CODE END Defines */
 
+/**
+ * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
+ * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
+ *
+ * When both are set to 0, no trace are output
+ * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
+ */
+#define CFG_DEBUG_TRACE_LIGHT     1
+#define CFG_DEBUG_TRACE_FULL      0
+
+#if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     1
+#endif
+
+#if ( CFG_DEBUG_TRACE == 0 )
+#undef CFG_DEBUG_TRACE_FULL
+#undef CFG_DEBUG_TRACE_LIGHT
+#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_LIGHT     0
+#endif
+
+/**
+ * When not set, the traces is looping on sending the trace over UART
+ */
+#define DBG_TRACE_USE_CIRCULAR_QUEUE 1
+
+/**
+ * max buffer Size to queue data traces and max data trace allowed.
+ * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
+ */
+#define DBG_TRACE_MSG_QUEUE_SIZE 4096
+#define MAX_DBG_TRACE_MSG_SIZE 1024
 
 /******************************************************************************
  * Scheduler
@@ -472,7 +502,9 @@ typedef enum
     CFG_FIRST_TASK_ID_WITH_NO_HCICMD = CFG_LAST_TASK_ID_WITH_HCICMD - 1,        /**< Shall be FIRST in the list */
 
     CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
+/* USER CODE BEGIN CFG_Task_Id_With_NO_HCI_Cmd_t */
 
+/* USER CODE END CFG_Task_Id_With_NO_HCI_Cmd_t */
     CFG_LAST_TASK_ID_WITHO_NO_HCICMD                                            /**< Shall be LAST in the list */
 } CFG_Task_Id_With_NO_HCI_Cmd_t;
 #define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITHO_NO_HCICMD
@@ -523,6 +555,13 @@ typedef enum
     CFG_LPM_APP,
 	CFG_LPM_APP_BLE
 } CFG_LPM_Id_t;
+
+/******************************************************************************
+ * OTP manager
+ ******************************************************************************/
+#define CFG_OTP_BASE_ADDRESS    OTP_AREA_BASE
+
+#define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 
 typedef enum

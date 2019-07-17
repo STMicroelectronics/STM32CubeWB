@@ -27,7 +27,6 @@ extern "C"
 {
 #endif
 
-#include "ble_status.h"
 #include "ble_types.h"
 #include "ble_conf.h"
 

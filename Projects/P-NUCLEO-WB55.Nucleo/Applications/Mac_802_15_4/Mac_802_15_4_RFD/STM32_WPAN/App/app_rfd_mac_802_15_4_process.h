@@ -64,6 +64,7 @@ MAC_Status_t APP_MAC_mlmeStartCnfCb( const  MAC_startCnf_t * pStartCnf );
 MAC_Status_t APP_MAC_mcpsDataIndCb( const  MAC_dataInd_t * pDataInd );
 MAC_Status_t APP_MAC_mcpsDataCnfCb( const  MAC_dataCnf_t * pDataCnf );
 MAC_Status_t APP_MAC_mcpsPurgeCnfCb( const  MAC_purgeCnf_t * pPurgeCnf );
+MAC_Status_t APP_MAC_mlmePollIndCb( const MAC_pollInd_t * pPollInd );
 
 
 MAC_Status_t APP_MAC_mlmeSyncLossIndCb( const MAC_syncLoss_t * syncLossPtr );

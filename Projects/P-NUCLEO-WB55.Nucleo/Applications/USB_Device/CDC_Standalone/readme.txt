@@ -120,7 +120,7 @@ For more details about the STM32Cube USB Device library, please refer to UM1734
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WBxx devices.
+  - This example runs on STM32WB55xx devices.
 
   - This example has been tested with STMicroelectronics P-NUCLEO-WB55
     board and can be easily tailored to any other supported device and development board.

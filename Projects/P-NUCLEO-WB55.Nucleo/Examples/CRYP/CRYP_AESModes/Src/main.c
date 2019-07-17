@@ -64,19 +64,82 @@ DMA_HandleTypeDef hdma_aes1_out;
   * @brief Defines related to Timeout to uart tranmission
   */
 #define UART_TIMEOUT_VALUE  1000 /* 1 Second */
-#endif
 
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-#if (USE_VCP_CONNECTION == 1)
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
-#endif
 
+/**
+  * @brief  Retargets the C library printf function to the USARTx.
+  * @param  ch: character to send
+  * @param  f: pointer to file (not used)
+  * @retval The character transmitted
+  */
+#ifdef __GNUC__
+/* With GCC, small printf (option LD Linker->Libraries->Small printf
+   set to 'Yes') calls __io_putchar() */
+int __io_putchar(int ch)
+#else
+int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the UART and Loop until the end of transmission */
+  HAL_UART_Transmit(&UartHandle, (uint8_t *)&ch, 1, UART_TIMEOUT_VALUE);
 
-#if !defined(TERMINAL_IO_OUT)
-/* UART handler declaration */
-UART_HandleTypeDef     UartHandle;
+  return ch;
+}
+
+void BSP_COM_Init(UART_HandleTypeDef* huart)
+{
+  GPIO_InitTypeDef GPIO_InitStruct;
+
+  /* Peripheral clock enable */
+  __HAL_RCC_USART1_CLK_ENABLE();
+  
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  /**USART1 GPIO Configuration    
+  PB6     ------> USART1_TX
+  PB7     ------> USART1_RX 
+  */
+  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* Configure the UART peripheral                                        */
+  /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
+  /* UART configured as follows:
+      - Word Length = 8 Bits
+      - Stop Bit = One Stop bit
+      - Parity = None
+      - BaudRate = 115200 baud
+      - Hardware flow control disabled (RTS and CTS signals) */
+  UartHandle.Instance                    = USART1;
+  UartHandle.Init.BaudRate               = 115200;
+  UartHandle.Init.WordLength             = UART_WORDLENGTH_8B;
+  UartHandle.Init.StopBits               = UART_STOPBITS_1;
+  UartHandle.Init.Parity                 = UART_PARITY_NONE;
+  UartHandle.Init.HwFlowCtl              = UART_HWCONTROL_NONE;
+  UartHandle.Init.Mode                   = UART_MODE_TX_RX;
+  UartHandle.Init.HwFlowCtl              = UART_HWCONTROL_NONE;
+  UartHandle.Init.OverSampling           = UART_OVERSAMPLING_16;
+  UartHandle.Init.OneBitSampling         = UART_ONE_BIT_SAMPLE_DISABLE;
+  UartHandle.Init.ClockPrescaler         = UART_PRESCALER_DIV1;
+  UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  
+  if(HAL_UART_DeInit(&UartHandle) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  
+  if(HAL_UART_Init(&UartHandle) != HAL_OK)
+  {
+    Error_Handler();
+  }  
+}
 #endif
 
 
@@ -235,31 +298,8 @@ int main(void)
   BSP_LED_Init(LED3);
 
 #if (USE_VCP_CONNECTION == 1)
-  /* Configure the UART peripheral                                 */
-  /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
-  /* UART configured as follows:
-      - Word Length = 8 Bits
-      - Stop Bit = One Stop bit
-      - Parity = None
-      - BaudRate = 115200 baud
-      - Hardware flow control disabled (RTS and CTS signals) */
-  UartHandle.Instance        = USARTx;
-
-  UartHandle.Init.BaudRate   = 115200;
-  UartHandle.Init.WordLength = UART_WORDLENGTH_8B;
-  UartHandle.Init.StopBits   = UART_STOPBITS_1;
-  UartHandle.Init.Parity     = UART_PARITY_NONE;
-  UartHandle.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
-  UartHandle.Init.Mode       = UART_MODE_TX_RX;
-  UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if(HAL_UART_DeInit(&UartHandle) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if(HAL_UART_Init(&UartHandle) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	/* Configure the virtual com port */
+  BSP_COM_Init(&UartHandle);
 #endif
 
   /*##- Configure the CRYP peripheral ######################################*/

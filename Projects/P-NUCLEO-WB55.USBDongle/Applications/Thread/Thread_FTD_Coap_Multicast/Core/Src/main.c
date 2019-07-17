@@ -82,7 +82,7 @@ int main( void )
 
   while(1)
   {
-    SCH_Run(~0);
+    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
   }
 }
 
@@ -313,7 +313,7 @@ void HAL_Delay(uint32_t delay)
 
   while ((HAL_GetTick() - tickstart) < wait)
   {
-    SCH_Run(~0);
+    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
   }
 }
 

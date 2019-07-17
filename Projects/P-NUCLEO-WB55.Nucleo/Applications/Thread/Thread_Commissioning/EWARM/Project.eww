@@ -2,7 +2,7 @@
 
 <workspace>
   <project>
-    <path>$WS_DIR$\Project.ewp</path>
+    <path>$WS_DIR$\Thread_Commissioning.ewp</path>
   </project>
   <batchBuild/>
 </workspace>

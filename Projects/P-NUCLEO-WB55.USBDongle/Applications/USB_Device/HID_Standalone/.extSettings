@@ -1,0 +1,11 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.USBDongle
+[Others]
+Define=
+HALModule=
+[Groups]
+Doc=../readme.txt;
+Application/User/Core=../Core/Src/main.c;../Core/Src/stm32wbxx_it.c;../Core/Src/stm32wbxx_hal_msp.c;../Core/Src/stm32wbxx_hal_msp.c;
+Application/User/USB_Device/Target=../USB_Device/Target/usbd_conf.c;
+Application/User/USB_Device/App=../USB_Device/App/usbd_desc.c;../USB_Device/App/usb_device.c;
+Drivers/BSP/STM32WBxx_Usb_Dongle=../../../../../../Drivers/BSP/P-NUCLEO-WB55.USBDongle/stm32wbxx_usb_dongle.c;

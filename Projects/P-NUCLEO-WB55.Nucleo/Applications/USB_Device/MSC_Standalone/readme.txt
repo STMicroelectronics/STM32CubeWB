@@ -75,7 +75,7 @@ Connectivity, USB Device, MSC, Full Speed, flash, microSD card
 
 @par Hardware and Software environment
 
-  - This application runs on STM32WBxx devices.
+  - This application runs on STM32WB55xx devices.
     
   - This application has been tested with STMicroelectronics P-NUCLEO-WB55 boards
     and can be easily tailored to any other supported device and development board.

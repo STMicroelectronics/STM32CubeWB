@@ -28,7 +28,7 @@
 #include "models_if.h"
 #include "mesh_cfg.h"
 
-#include "scheduler.h"
+#include "stm32_seq.h"
 
 
 /** @addtogroup BLE_Mesh
@@ -46,7 +46,7 @@
 #define LONG_PRESS_THRESHOLD            1000U
 #define MANUAL_UNPROVISION_TIMER        3000U
 #define FLASH_ERASE_TIME                100U
-
+#define DISCOVER_TIMER                  10*60*1000 /* 10 minutes */
 #define DEFAULT_DELAY_PACKET_FROM         500U
 #define DEFAULT_DELAY_PACKET_RANDOM_TIME  500U
 
@@ -55,6 +55,12 @@
 #define MAX_PENDING_PACKETS_QUE_SIZE    2
 #define DATA_BUFFER_LENGTH              8
 #define MAX_NUMB_ELEMENTS 3
+
+/**********************Friendship callbacks macros ****************************/
+#define FN_CLEARED_REPEAT_REQUEST   1
+#define FN_CLEARED_POLL_TIMEOUT     2
+#define FN_CLEARED_FRIEND_CLEAR     3
+#define LPN_CLEARED_NO_RESPONSE     1
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -70,6 +76,8 @@ enum ButtonState buttonState = BS_OFF;
 tClockTime tBounce = 0;
 MOBLEUINT8 Appli_LedState = 0;
 MOBLEUINT8 ProxyFlag = 0;
+MOBLEUINT8 ProvisionFlag = 0;
+
 /*Number Of Elements selected per Node. Maximum Elements supported = 3*/
 MOBLEUINT8 NumberOfElements = APPLICATION_NUMBER_OF_ELEMENTS;
 /*Select Node as Sniffer, Means able to sniff all the packets*/
@@ -211,7 +219,7 @@ static void Appli_Mesh_Process()
   Appli_Process();
   
   /* Set the task in the scheduler for the next execution */
-  SCH_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
 }
 
 /************************* LED Control functions ********************/
@@ -379,9 +387,10 @@ MOBLE_RESULT Appli_BleSetProductInfoCB(MOBLEUINT8 *company_product_info)
 */ 
 void Appli_BleGattConnectionCompleteCb(void)
 { 
+  ProvisionFlag = 1;
   /* Proxy Node, will be called whenever Gatt connection is established */
   ProxyFlag = 1;
-  BSP_LED_On(LED_GREEN);
+//  BSP_LED_On(LED_GREEN);
 
 }
 
@@ -392,10 +401,11 @@ void Appli_BleGattConnectionCompleteCb(void)
 */ 
 void Appli_BleGattDisconnectionCompleteCb(void)
 { 
+  ProvisionFlag = 0;
   /* Proxy Node, will be called whenever Gatt disconnected */
 
   ProxyFlag = 0;
-  BSP_LED_Off(LED_GREEN);
+//  BSP_LED_Off(LED_GREEN);
 
 }
 
@@ -406,7 +416,7 @@ void Appli_BleGattDisconnectionCompleteCb(void)
 */
 void Appli_BleUnprovisionedIdentifyCb(MOBLEUINT8 data)
 {
-#if !defined(DISABLE_TRACES)
+#ifndef DISABLE_TRACES
   printf("Unprovisioned Node Identifier received: %02x\n\r", data);  
 #endif   
 }
@@ -420,7 +430,7 @@ MOBLEUINT8 Appli_BleSetNumberOfElementsCb(void)
 {
   if(NumberOfElements > MAX_NUMB_ELEMENTS)
   {
-#if !defined(DISABLE_TRACES)
+#ifndef DISABLE_TRACES
     printf("Currently Three Elements per node are supported!\r\n"); 
 #endif
     return MAX_NUMB_ELEMENTS;
@@ -438,7 +448,7 @@ MOBLEUINT8 Appli_BleSetNumberOfElementsCb(void)
 */ 
 MOBLE_RESULT Appli_BleAttentionTimerCb(void)
 {
-  #if !defined(DISABLE_TRACES)
+#ifndef DISABLE_TRACES
   printf("Attention timer callback received \r\n");
   #endif
   
@@ -483,8 +493,9 @@ void Appli_CheckForUnprovision(void)
     if (!interrupted)
     {
       BLEMesh_Unprovision();
+#ifndef DISABLE_TRACES
       printf("Device is unprovisioned by application \r\n");
-
+#endif
       t = Clock_Time();
       while ((Clock_Time() - t) < FLASH_ERASE_TIME);
       
@@ -497,9 +508,9 @@ void Appli_CheckForUnprovision(void)
   }
   
   /* Register the task for all MESH dedicated processes */
-  SCH_RegTask( CFG_TASK_MESH_REQ_ID, Appli_Mesh_Process );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_REQ_ID, UTIL_SEQ_RFU, Appli_Mesh_Process );
   /* Set the task in the scheduler for the next scheduling */
-  SCH_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);  
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);  
 }
 
 /**
@@ -525,7 +536,7 @@ int Appli_CheckBdMacAddr(void)
   MOBLEUINT8 result = 0;
   
 #ifdef EXTERNAL_MAC_ADDR_MGMT
-  memcpy(bdaddr, (MOBLEUINT8 *)CFG_ADV_BD_ADDRESS, 6);
+  memcpy(bdaddr, (MOBLEUINT8 *)CFG_ADV_BD_ADDRESS, 7);
   bdaddr[7] = EXTERNAL_MAC_ADDR_MGMT;
 #endif
   
@@ -619,7 +630,11 @@ static void Appli_GetMACfromUniqueNumber(void)
 */
 void BLEMesh_UnprovisionCallback(MOBLEUINT8 status)
 {
+  ProvisionFlag = 0; 
+
+#ifndef DISABLE_TRACES
   printf("Device is unprovisioned by provisioner \n\r");
+#endif
 }
 
 /**
@@ -629,7 +644,227 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 status)
 */
 void BLEMesh_ProvisionCallback(void)
 {
+  ProvisionFlag = 1;
+#ifndef DISABLE_TRACES
   printf("Device is provisioned by provisioner \r\n");
+#endif
+}
+
+/**
+* @brief  callback for friendship established by friend node
+* @param  address of corresponding low power node
+* @param  receive delay of low power node (unit ms)
+* @param  poll timeout of low power node (unit 100ms)
+* @param  number of elements of low power node
+* @param  previous friend address of low power node (can be invalid address)
+* @retval void
+*/
+void BLEMesh_FnFriendshipEstablishedCallback(MOBLE_ADDRESS lpnAddress,
+                                             MOBLEUINT8 lpnReceiveDelay,
+                                             MOBLEUINT32 lpnPollTimeout,
+                                             MOBLEUINT8 lpnNumElements,
+                                             MOBLE_ADDRESS lpnPrevFriendAddress)
+{ 
+  TRACE_M(TF_LPN_FRND,"Friendship established. Low power node address 0x%.4X \r\n", lpnAddress);
+  TRACE_M(TF_LPN_FRND,"Low power node receive delay %dms \r\n", lpnReceiveDelay);
+  TRACE_M(TF_LPN_FRND,"Low power node poll timeout %dms \r\n", lpnPollTimeout*100);
+  TRACE_M(TF_LPN_FRND,"Low power node number of elements %d \r\n", lpnNumElements);
+  if (lpnPrevFriendAddress != MOBLE_ADDRESS_UNASSIGNED)
+  {
+    TRACE_M(TF_LPN_FRND,"Low power node previous friend address 0x%.4X \r\n", lpnPrevFriendAddress);
+  }
+}
+
+/**
+* @brief  callback for friendship clear by friend node
+* @param  reason of friendship clear
+*         0: reserved,
+*         1: friend request received from existing low power node (friend)
+*         2: low power node poll timeout occurred
+*         3: friend clear received
+* @param  previous friend address of low power node (can be invalid address)
+* @retval void
+*/
+void BLEMesh_FnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS lpnAddress)
+{
+  TRACE_M(TF_LPN_FRND,"Friendship cleared. Low power node address 0x%.4X \r\n", lpnAddress);
+  
+  switch(reason)
+  {
+  case FN_CLEARED_REPEAT_REQUEST: 
+    TRACE_M(TF_LPN_FRND,"Reason: New friend request received from existing low power node \r\n");
+    break;
+  case FN_CLEARED_POLL_TIMEOUT:
+    TRACE_M(TF_LPN_FRND,"Reason: Low power node poll timeout occurred \r\n");
+    break;
+  case FN_CLEARED_FRIEND_CLEAR:
+    TRACE_M(TF_LPN_FRND,"Reason: Friend clear received \r\n");
+    break;
+  default:
+    TRACE_M(TF_LPN_FRND,"Reason: Invalid \r\n");
+    break;
+  }
+}
+
+/**
+* @brief  callback for friendship established by low power node
+* @param  address of corresponding friend node
+* @retval void
+*/
+void BLEMesh_LpnFriendshipEstablishedCallback(MOBLE_ADDRESS fnAddress)
+{
+  /* Friendship established */
+}
+
+/**
+* @brief  callback for friendship cleare by low power node
+* @param  reason of friendship clear.
+*         0: reserved
+*         1: No response received from friend node
+* @retval void
+*/
+void BLEMesh_LpnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS fnAddress)
+{ 
+  TRACE_M(TF_LPN_FRND,"Friendship cleared. Friend node address 0x%.4x \r\n", fnAddress);
+  
+  if (reason == LPN_CLEARED_NO_RESPONSE)
+  {
+    TRACE_M(TF_LPN_FRND,"Reason: Friend node not responding \r\n");
+  }
+  else
+  {
+    TRACE_M(TF_LPN_FRND,"Reason: Invalid \r\n");
+  } 
+}
+
+/** 
+* @brief  New neighbor appeared callback in neighbor table.
+          If MAC address of neighbor changes it appears as new neighbor.
+* @param  MAC address of neighbor.
+*         is neighbor provisioned or unprovisioned device.
+*         uuid of neighbor. NULL if not available
+*         network address of neighbor. MOBLE_ADDRESS_UNASSIGNED if not available
+*         last updated rssi value.
+* @retval void
+*/
+void BLEMesh_NeighborAppearedCallback(const MOBLEUINT8* bdAddr,
+                                          MOBLEBOOL provisioned,
+                                          const MOBLEUINT8* uuid,
+                                          MOBLE_ADDRESS networkAddress,
+                                          MOBLEINT8 rssi)
+{
+  TRACE_M(TF_NEIGHBOUR,"New neighbor appeared. Neighbor MAC address:");
+  
+  for (MOBLEUINT8 count=0 ; count<6; count++)
+  {
+    TRACE_M(TF_NEIGHBOUR,"%.2x ", bdAddr[count]);
+  }
+  
+  if (provisioned == MOBLE_TRUE)
+  {
+    TRACE_M(TF_NEIGHBOUR,"-> Provisioned node. \n\r");
+  }
+  else
+  {
+    TRACE_M(TF_NEIGHBOUR,"-> Unprovisioned device. \n\r");
+  }
+  
+  TRACE_M(TF_NEIGHBOUR,"rssi: %d. ", rssi);
+  
+  if (networkAddress != MOBLE_ADDRESS_UNASSIGNED)
+  {
+    TRACE_M(TF_NEIGHBOUR,"Network address: 0x%.4x\n\r", networkAddress);
+  }
+  else
+  {
+    TRACE_M(TF_NEIGHBOUR,"Network address not available\n\r");
+  }
+
+  for (MOBLEUINT8 i=0; i<16; i++)
+  {
+    if (uuid[i] == 0x00)
+    {
+      continue;
+    }
+    else
+    {
+      TRACE_M(TF_NEIGHBOUR,"UUID: ");
+      
+      for (MOBLEUINT8 count=0 ; count<16; count++)
+      {
+        TRACE_M(TF_NEIGHBOUR,"%.2x ", uuid[count]);
+      }
+      
+      break;
+    }
+  }
+  
+  TRACE_M(TF_NEIGHBOUR,"\n\r");
+}
+
+/** 
+* @brief  Existing neighbor refreshed callback in neighbor table.
+          If MAC address of neighbor changes it appears as new neighbor.
+* @param  MAC address of neighbor.
+*         is neighbor provisioned or unprovisioned device.
+*         uuid of neighbor. NULL if not available
+*         network address of neighbor. MOBLE_ADDRESS_UNASSIGNED if not available
+*         last updated rssi value.
+* @retval void
+*/
+void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
+                                          MOBLEBOOL provisioned,
+                                          const MOBLEUINT8* uuid,
+                                          MOBLE_ADDRESS networkAddress,
+                                          MOBLEINT8 rssi)
+{
+  TRACE_M(TF_NEIGHBOUR,"Existing neighbor refreshed. Neighbor MAC address:");
+  
+  for (MOBLEUINT8 count=0 ; count<6; count++)
+  {
+    TRACE_M(TF_NEIGHBOUR,"%.2x ", bdAddr[count]);
+  }
+  
+  if (provisioned == MOBLE_TRUE)
+  {
+    TRACE_M(TF_NEIGHBOUR,"-> Provisioned node. \n\r");
+  }
+  else
+  {
+    TRACE_M(TF_NEIGHBOUR,"-> Unprovisioned device. \n\r");
+  }
+  
+  TRACE_M(TF_NEIGHBOUR,"rssi: %d. ", rssi);
+  
+  if (networkAddress != MOBLE_ADDRESS_UNASSIGNED)
+  {
+    TRACE_M(TF_NEIGHBOUR,"Network address: 0x%.4x\n\r", networkAddress);
+  }
+  else
+  {
+    TRACE_M(TF_NEIGHBOUR,"Network address not available\n\r");
+  }
+  
+  for (MOBLEUINT8 i=0; i<16; i++)
+  {
+    if (uuid[i] == 0x00)
+    {
+      continue;
+    }
+    else
+    {
+      TRACE_M(TF_NEIGHBOUR,"UUID: ");
+      
+      for (MOBLEUINT8 count=0 ; count<16; count++)
+      {
+        TRACE_M(TF_NEIGHBOUR,"%.2x ", uuid[count]);
+      }
+      
+      break;
+    }
+  }
+  
+  TRACE_M(TF_NEIGHBOUR,"\n\r");
 }
 
 /**

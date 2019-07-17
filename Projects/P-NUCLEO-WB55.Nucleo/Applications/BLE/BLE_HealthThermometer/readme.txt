@@ -54,7 +54,7 @@ How to use the Health Thermometer profile as specified by the BLE SIG.
   - BLE/BLE_HealthThermometer/STM32_WPAN/App/dis_app.c      		Device Information Service application
   - BLE/BLE_HealthThermometer/STM32_WPAN/App/hts_app.c      		Health Thermometer Service application
   - BLE/BLE_HealthThermometer/STM32_WPAN/Target/hw_ipcc.c      		IPCC Driver
-  - BLE/BLE_HealthThermometer/Core/Src/hw_lpm.c      				Low Power Manager Driver
+  - BLE/BLE_HealthThermometer/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
   - BLE/BLE_HealthThermometer/Core/Src/hw_timerserver.c 			Timer Server based on RTC
   - BLE/BLE_HealthThermometer/Core/Src/hw_uart.c 					UART Driver
 

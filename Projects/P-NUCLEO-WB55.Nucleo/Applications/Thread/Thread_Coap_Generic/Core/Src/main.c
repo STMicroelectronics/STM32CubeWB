@@ -41,12 +41,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "app_entry.h"
+#include "app_common.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "app_common.h"
-#include "lpm.h"
-#include "scheduler.h"
+#include "stm32_lpm.h"
+#include "stm32_seq.h"
 #include "dbg_trace.h"
 #include "hw_conf.h"
 #include "otp.h"
@@ -138,13 +138,15 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
+
+  /* Init code for STM32_WPAN */  
   APPE_Init();
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    SCH_Run(~0);
+    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -348,10 +350,9 @@ static void MX_RTC_Init(void)
   */
   hrtc.Instance = RTC;
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
-  hrtc.Init.AsynchPrediv = 15;
-  hrtc.Init.SynchPrediv = 0x7FFF;
+  hrtc.Init.AsynchPrediv = CFG_RTC_ASYNCH_PRESCALER;
+  hrtc.Init.SynchPrediv = CFG_RTC_SYNCH_PRESCALER ;
   hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-  hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
   hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   if (HAL_RTC_Init(&hrtc) != HAL_OK)
@@ -369,6 +370,7 @@ static void MX_RTC_Init(void)
   */
 static void MX_DMA_Init(void) 
 {
+
   /* DMA controller clock enable */
   __HAL_RCC_DMAMUX1_CLK_ENABLE();
   __HAL_RCC_DMA1_CLK_ENABLE();

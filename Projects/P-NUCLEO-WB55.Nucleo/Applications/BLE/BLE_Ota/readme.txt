@@ -50,7 +50,7 @@ OTA implementation to download a new image into the user flash.
   - BLE/BLE_Ota/STM32_WPAN/App/app_ble.c      		BLE Profile implementation
   - BLE/BLE_Ota/Core/Src/app_entry.c      			Initialization of the application
   - BLE/BLE_Ota/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_Ota/Core/Src/hw_lpm.c      				Low Power Manager Driver
+  - BLE/BLE_Ota/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
   - BLE/BLE_Ota/Core/Src/hw_timerserver.c 			Timer Server based on RTC
   - BLE/BLE_Ota/Core/Src/hw_uart.c 					UART Driver
   - BLE/BLE_Ota/STM32_WPAN/App/otas_app.c 			The OTA service mangement

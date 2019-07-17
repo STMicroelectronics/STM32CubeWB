@@ -26,7 +26,7 @@
 #include "ble.h"
 #include "hts_app.h"
 #include <time.h>
-#include "scheduler.h"
+#include "stm32_seq.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -108,7 +108,7 @@ static void HTSAPP_UpdateMeasurement( void )
    * The background is the only place where the application can make sure a new aci command
    * is not sent if there is a pending one
    */
-  SCH_SetTask( 1<<CFG_TASK_HTS_MEAS_REQ_ID,CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_HTS_MEAS_REQ_ID,CFG_SCH_PRIO_0);
 
 /* USER CODE END HTSAPP_UpdateMeasurement */
   return;
@@ -123,7 +123,7 @@ static void HTSAPP_UpdateIntermediateTemperature( void )
    * The background is the only place where the application can make sure a new aci command
    * is not sent if there is a pending one
    */
-  SCH_SetTask( 1<<CFG_TASK_HTS_INTERMEDIATE_TEMPERATURE_REQ_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_HTS_INTERMEDIATE_TEMPERATURE_REQ_ID, CFG_SCH_PRIO_0);
 
 /* USER CODE END HTSAPP_UpdateIntermediateTemperature */
   return;
@@ -139,7 +139,7 @@ static void HTSAPP_UpdateMeasurementInterval( void )
    * The background is the only place where the application can make sure a new aci command
    * is not sent if there is a pending one
    */
-  SCH_SetTask( 1<<CFG_TASK_HTS_MEAS_INTERVAL_REQ_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_HTS_MEAS_INTERVAL_REQ_ID, CFG_SCH_PRIO_0);
 
 /* USER CODE END HTSAPP_UpdateMeasurementInterval */
   return;
@@ -345,12 +345,12 @@ void HTS_App_Notification(HTS_App_Notification_evt_t *pNotification)
 void HTSAPP_Init(void)
 {
 /* USER CODE BEGIN HTSAPP_Init */
-  SCH_RegTask( CFG_TASK_HTS_MEAS_REQ_ID, HTSAPP_Measurement);
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_HTS_MEAS_REQ_ID, UTIL_SEQ_RFU, HTSAPP_Measurement);
 #if(BLE_CFG_HTS_INTERMEDIATE_TEMPERATURE == 1)
-  SCH_RegTask( CFG_TASK_HTS_INTERMEDIATE_TEMPERATURE_REQ_ID, HTSAPP_IntermediateTemperature);
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_HTS_INTERMEDIATE_TEMPERATURE_REQ_ID, UTIL_SEQ_RFU, HTSAPP_IntermediateTemperature);
 #endif
 #if(BLE_CFG_HTS_MEASUREMENT_INTERVAL == 1)
-  SCH_RegTask( CFG_TASK_HTS_MEAS_INTERVAL_REQ_ID, HTSAPP_MeasurementInterval);
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_HTS_MEAS_INTERVAL_REQ_ID, UTIL_SEQ_RFU, HTSAPP_MeasurementInterval);
 #endif
 
   /**

@@ -29,12 +29,12 @@
 #include "utilities_common.h"
 #include "utilities_conf.h"
 #include "otp.h"
-#include "lpm.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "stm_logging.h"
 #include "stm32wbxx_ll_rcc.h"
 #include "shci.h"
 #include "shci_tl.h"
+#include "stm32_lpm.h"
 #include "tl_mac_802_15_4.h"
 #include "tl.h"
 #include "dbg_trace.h"
@@ -102,7 +102,7 @@ void APP_ENTRY_Init( APP_ENTRY_InitMode_t InitMode )
    * The Standby mode should not be entered before the initialization is over
    * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
    */
-  LPM_SetOffMode(1U << CFG_LPM_APP, LPM_OffMode_Dis);
+  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_DISABLE);
   Led_Init();
   appe_Tl_Init(); /* Initialize all transport layers */
 
@@ -124,7 +124,7 @@ static void appe_Tl_Init( void )
   TL_Init();
 
   /**< System channel initialization */
-  SCH_RegTask( CFG_TASK_SYSTEM_HCI_ASYNCH_EVT, shci_user_evt_proc );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_SYSTEM_HCI_ASYNCH_EVT, UTIL_SEQ_RFU, shci_user_evt_proc );
   SHci_Tl_Init_Conf.p_cmdbuffer = (uint8_t*)&SystemCmdBuffer;
   SHci_Tl_Init_Conf.StatusNotCallBack = APPE_StatusNot;
   shci_init(APPE_UserEvtRx, (void*) &SHci_Tl_Init_Conf);
@@ -171,7 +171,7 @@ static void APPE_UserEvtRx( void * pPayload )
 
   APP_RFD_MAC_802_15_4_Init(APP_MAC_802_15_4_FULL, &Mac_802_15_4_CmdBuffer);
 
-  LPM_SetOffMode(1U << CFG_LPM_APP, LPM_OffMode_En);
+  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
 
   return;
 }
@@ -228,44 +228,44 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
   * @param  evt_waited_bm : Event pending.
   * @retval None
   */
-void SCH_EvtIdle( uint32_t evt_waited_bm )
+void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
   switch(evt_waited_bm)
   {
   case EVENT_ACK_FROM_RFCore_EVT:
-    SCH_Run(0);
+    UTIL_SEQ_Run(0);
     break;
   case EVENT_DEVICE_RESET_CNF:
   case EVENT_SET_CNF :
   case EVENT_ASSOCIATE_CNF:
   case EVENT_DATA_CNF:
-    SCH_Run(TASK_MSG_FROM_RF_CORE);
+    UTIL_SEQ_Run(TASK_MSG_FROM_RF_CORE);
     break;
   case EVENT_SYNCHRO_BYPASS_IDLE:
-    SCH_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
+    UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
     break;
   default :
     /* default case */
-    SCH_Run(~0);
+    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
     break;
   }
 }
 
 void shci_notify_asynch_evt(void* pdata)
 {
-  SCH_SetTask( 1U<<CFG_TASK_SYSTEM_HCI_ASYNCH_EVT, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1U<<CFG_TASK_SYSTEM_HCI_ASYNCH_EVT, CFG_SCH_PRIO_0);
   return;
 }
 
 void shci_cmd_resp_release(uint32_t flag)
 {
-  SCH_SetEvt( 1U<< CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP);
+  UTIL_SEQ_SetEvt( 1U<< CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP);
   return;
 }
 
 void shci_cmd_resp_wait(uint32_t timeout)
 {
-  SCH_WaitEvt( 1U<< CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP );
+  UTIL_SEQ_WaitEvt( 1U<< CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP );
   return;
 }
 
@@ -277,7 +277,7 @@ void shci_cmd_resp_wait(uint32_t timeout)
 #if(CFG_DEBUG_TRACE != 0U)
 void DbgOutputInit( void )
 {
-  HW_UART_Init(DBG_TRACE_UART_CFG);
+  HW_UART_Init(CFG_DEBUG_TRACE_UART);
 }
 
 /**
@@ -289,7 +289,7 @@ void DbgOutputInit( void )
   */
 void DbgOutputTraces( uint8_t *p_data, uint16_t size, void (*cb)(void) )
 {
-  HW_UART_Transmit_DMA(DBG_TRACE_UART_CFG, p_data, size, cb);
+  HW_UART_Transmit_DMA(CFG_DEBUG_TRACE_UART, p_data, size, cb);
 }
 
 #endif
@@ -365,7 +365,7 @@ void TL_MAC_802_15_4_NotReceived( TL_EvtPacket_t * Notbuffer )
   */
 void Mac_802_15_4_PreCmdProcessing(void)
 {
-  SCH_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE );
+  UTIL_SEQ_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE );
 }
 
 /*************************************************************
@@ -382,7 +382,7 @@ void Mac_802_15_4_PreCmdProcessing(void)
   */
 static void Wait_Getting_Ack_From_RFCore(void)
 {
-  SCH_WaitEvt(EVENT_ACK_FROM_RFCore_EVT);
+  UTIL_SEQ_WaitEvt(EVENT_ACK_FROM_RFCore_EVT);
 }
 
 /**
@@ -394,7 +394,7 @@ static void Wait_Getting_Ack_From_RFCore(void)
   */
 static void Receive_Ack_From_RFCore(void)
 {
-  SCH_SetEvt(EVENT_ACK_FROM_RFCore_EVT);
+  UTIL_SEQ_SetEvt(EVENT_ACK_FROM_RFCore_EVT);
 }
 
 /**
@@ -406,7 +406,7 @@ static void Receive_Ack_From_RFCore(void)
 static void Receive_Notification_From_RFCore(void)
 {
   CptReceiveMsgFromRFCore++;
-  SCH_SetTask(TASK_MSG_FROM_RF_CORE,CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(TASK_MSG_FROM_RF_CORE,CFG_SCH_PRIO_0);
 }
 
 

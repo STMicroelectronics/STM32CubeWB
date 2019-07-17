@@ -50,9 +50,9 @@
 			<location>PARENT-2-PROJECT_LOC/Core/Src/app_entry.c</location>
 		</link>
     <link>
-			<name>Application/User/Core/hw_lpm.c</name>
+			<name>Application/User/Core/stm32_lpm_if.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/Core/Src/hw_lpm.c</location>
+			<location>PARENT-2-PROJECT_LOC/Core/Src/stm32_lpm_if.c</location>
 		</link>
     <link>
 			<name>Application/User/Core/hw_timerserver.c</name>
@@ -190,9 +190,9 @@
 			<location>PARENT-7-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</location>
 		</link>
     <link>
-			<name>Middlewares/STM32_WPAN/tl_if.c</name>
+			<name>Middlewares/STM32_WPAN/shci_tl_if.c</name>
 			<type>1</type>
-			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_if.c</location>
+			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</location>
 		</link>
     <link>
 			<name>Middlewares/STM32_WPAN/tl_mbox.c</name>
@@ -210,19 +210,9 @@
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</location>
 		</link>
     <link>
-			<name>Middlewares/STM32_WPAN/lpm.c</name>
-			<type>1</type>
-			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/lpm.c</location>
-		</link>
-    <link>
 			<name>Middlewares/STM32_WPAN/otp.c</name>
 			<type>1</type>
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/otp.c</location>
-		</link>
-    <link>
-			<name>Middlewares/STM32_WPAN/scheduler.c</name>
-			<type>1</type>
-			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/scheduler.c</location>
 		</link>
     <link>
 			<name>Middlewares/STM32_WPAN/stm_list.c</name>
@@ -383,6 +373,21 @@
 			<name>Middlewares/STM32_WPAN/udp.c</name>
 			<type>1</type>
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/udp.c</location>
+		</link>
+    <link>
+			<name>Middlewares/STM32_WPAN/radio.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/radio.c</location>
+		</link>
+    <link>
+			<name>Utilities/stm32_lpm.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Utilities/lpm/tiny_lpm/stm32_lpm.c</location>
+		</link>
+    <link>
+			<name>Utilities/stm32_seq.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Utilities/sequencer/stm32_seq.c</location>
 		</link>
   </linkedResources>
 </projectDescription>

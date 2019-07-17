@@ -29,7 +29,7 @@
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size      EQU     0x00000400
+Stack_Size		EQU     0x1000
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
@@ -40,7 +40,7 @@ __initial_sp
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size       EQU     0x00000200
+Heap_Size      EQU     0x400
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
@@ -53,7 +53,9 @@ __heap_limit
 
 ; Vector Table Mapped to Address 0 at Reset
                 AREA    RESET, DATA, READONLY
-
+                EXPORT  __Vectors
+                EXPORT  __Vectors_End
+                EXPORT  __Vectors_Size
 
 __Vectors       DCD     __initial_sp              ; Top of Stack
         DCD     Reset_Handler                     ; Reset Handler
@@ -136,15 +138,9 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
         DCD     DMA2_Channel6_IRQHandler          ; DMA2 Channel 6 Interrupt
         DCD     DMA2_Channel7_IRQHandler          ; DMA2 Channel 7 Interrupt
         DCD     DMAMUX1_OVR_IRQHandler            ; DMAMUX overrun Interrupt
-        DCD     0                                 ; Reserved
+
 __Vectors_End
 
-
- AREA    INFO, DATA, READONLY
-                EXPORT  __Vectors
-                EXPORT  __Vectors_End
-                EXPORT  __Vectors_Size
-					
 __Vectors_Size  EQU  __Vectors_End - __Vectors
 
                 AREA    |.text|, CODE, READONLY

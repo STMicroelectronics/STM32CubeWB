@@ -132,7 +132,7 @@ typedef struct
   uint8_t created;            /* indicate if the menu has been created */
   STRUCTMENU_T *MenuItems;    /* point on the Menu description provide by Caller at creation time */
   ItemPos_t ItemsPos[MAXITEMNB];
-  ColInfo_t ColInfo[MAXCOLNB];
+  ColInfo_t ColInfo[MAXCOLNB+2];
   WinPosSize_t WinPos;
   uint8_t NbCol;
   uint8_t ItemSelectable;
@@ -1306,7 +1306,7 @@ int8_t CreateMenu(STRUCTMENU_T * menu, uint8_t x, uint8_t y, int8_t flag, int8_t
   }
 
   /* reset the data structure */
-  memset (&MenuCtrlData[Handle], sizeof(MenuCtrlData_t), 0);
+  memset (&MenuCtrlData[Handle], 0, sizeof(MenuCtrlData_t));
   MenuCtrlData[Handle].MenuItems = menu;
   /*------------------------------------------------------ */
   /* parse info from menu structure */

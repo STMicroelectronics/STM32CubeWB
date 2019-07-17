@@ -26,7 +26,7 @@
 #include "app_ble.h"
 #include "ble.h"
 #include "hids_app.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include <time.h>
 #include "hids_menu.h"
 
@@ -249,7 +249,7 @@ void HIDSAPP_Init(void)
 {
   tBleStatus result = BLE_STATUS_INVALID_PARAMS;
 
-  SCH_RegTask( CFG_TASK_HID_UPDATE_REQ_ID, HIDSAPP_Profile_UpdateChar );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_HID_UPDATE_REQ_ID, UTIL_SEQ_RFU, HIDSAPP_Profile_UpdateChar );
 
   result = HIDS_Update_Char(REPORT_MAP_CHAR_UUID, 
                             0, 

@@ -52,7 +52,9 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   BSP_LED_On(LED_RED);
+#ifndef DISABLE_TRACES
   printf("HARDFAULT !\r\n");
+#endif
   /* Go to infinite loop when Hard Fault exception occurs */
   while (1)
   {

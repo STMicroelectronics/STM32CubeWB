@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    generic.h
 * @author  BLE Mesh Team
-* @version V1.08.001
-* @date    20-September-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -45,7 +45,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
-#include "light.h"
 #include "ble_mesh.h"
 
 
@@ -216,6 +215,9 @@
 #define PWM_LEVEL_OFF     0X00
 #define PWM_LEVEL_FULL     0X7FFD
 
+#define GENERIC_ON_OFF_FLAG     0X01
+#define GENERIC_LEVEL_FLAG      0X02
+
 #define PACKET_CACHE_SIZE  2
 /* Exported variables  ------------------------------------------------------- */
 
@@ -261,8 +263,8 @@ typedef struct
 #pragma pack(1)
 typedef struct
 {
-  MOBLEUINT8 Present_OnOff;
-  MOBLEUINT8 Target_OnOff;
+  MOBLEUINT16 Present_OnOff;
+  MOBLEUINT16 Target_OnOff;
   MOBLEUINT8 RemainingTime;
 }Generic_OnOffStatus_t;
 
@@ -304,22 +306,54 @@ typedef struct
   MOBLEUINT8  Delay_Time;
 } Generic_LevelMoveParam_t;
   
-/** \brief Callback map to application layer 
-*  these call backs are for set and status messages
-*/
+
+/** \brief Callback map for application from middle layer .
+    this will call the function related to the function pointer in the
+    model_if.c file
+   const Appli_Generic_cb_t GenericAppli_cb = 
+  {    
+    Appli_Generic_OnOff_Set,  
+    Appli_Generic_Level_Set,
+    Appli_Generic_LevelDelta_Set,
+    Appli_Generic_LevelMove_Set,   
+  };
+
+**/ 
 typedef struct
 {
+  /* Pointer to the function Appli_Generic_OnOff_Set used for callback 
+     from the middle layer to Application layer
+  */
   MOBLE_RESULT (*OnOff_Set_cb)(Generic_OnOffStatus_t*, uint8_t);  
-  
+  /* Pointer to the function Appli_Generic_Level_Set used for callback 
+     from the middle layer to Application layer
+  */
   MOBLE_RESULT (*Level_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8);
+  
+  /* Pointer to the function Appli_Generic_LevelDelta_Set used for callback 
+     from the middle layer to Application layer
+  */
   MOBLE_RESULT (*LevelDelta_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8);
+  
+  /* Pointer to the function Appli_Generic_LevelMove_Set used for callback 
+     from the middle layer to Application layer
+  */
   MOBLE_RESULT (*LevelDeltaMove_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8);
-
 } Appli_Generic_cb_t;
 
-/** \brief Callback map to middle layer 
-*  these call backs are for get the value from application layer to middle layer
-*/
+
+/** \brief Callback map for application from middle layer .
+    this will call the function related to the function pointer in the 
+    model_if.c file
+   These function are used to get the values of Parameters from application layer 
+   to the middle layer for processing.
+  const Appli_Generic_State_cb_t Appli_GenericState_cb =
+  {   
+    Appli_Generic_GetOnOffStatus, 
+    Appli_Generic_GetLevelStatus,   
+  };
+
+**/ 
 typedef struct
 { 
   MOBLE_RESULT (*GetOnOffStatus_cb)(MOBLEUINT8*);
@@ -337,7 +371,7 @@ extern const Appli_Generic_cb_t GenericAppli_cb;
 void BLEMesh_GenericModelAppliCb (Appli_Generic_cb_t* map );
 
 
-MOBLE_RESULT Generic_OnOff_Set(const MOBLEUINT8*, MOBLEUINT32);
+MOBLE_RESULT Generic_OnOff_Set(MOBLEUINT8 const*, MOBLEUINT32);
 MOBLE_RESULT Generic_OnOff_Status(MOBLEUINT8* , MOBLEUINT32*);
 
 MOBLE_RESULT Generic_Level_Set(const MOBLEUINT8*, MOBLEUINT32);
@@ -352,8 +386,10 @@ MOBLE_RESULT GenericModelServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t 
 MOBLE_RESULT GenericModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
                                     MOBLE_ADDRESS dst_peer, 
                                     MOBLEUINT16 opcode, 
-                                    MOBLEUINT8 *responsedata, 
+                                    MOBLEUINT8 *pResponsedata, 
                                     MOBLEUINT32 *plength, 
+                                    MOBLEUINT8 const *pData,
+                                    MOBLEUINT32 length,
                                     MOBLEBOOL response);
 
 MOBLE_RESULT GenericModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 
@@ -381,6 +417,8 @@ MOBLE_RESULT Generic_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue);
 MOBLE_RESULT GenericOnOffStateUpdate_Process(void);
 MOBLE_RESULT GenericLevelStateUpdate_Process(void);
    
+MOBLE_RESULT Generic_SaveStateNvm(MOBLEUINT8 flag);
+void Generic_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size);
 #endif /* __GENERIC_H */
 
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/

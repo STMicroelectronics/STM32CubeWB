@@ -27,7 +27,7 @@
 #include "dbg_trace.h"
 #include "ble.h"
 #include "crc_app.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "app_ble.h"
 #include "DispTools.h"
 #include "stm_queue.h"
@@ -132,7 +132,7 @@ static uint8_t InputCharFromUart;
 static queue_t RxQueue;
 static uint8_t RxQueueBuffer[RX_BUFFER_SIZE];  
 static uint8_t PosXTx, PosYTx, PosXRx, PosYRx;
-static char szString[MAX_STRING_SIZE];
+static char szString[MAX_STRING_SIZE+1];
 static uint8_t idx;
 
 
@@ -165,7 +165,7 @@ static void CRCAPP_Write_Char(uint8_t index)
           {
             CRC_Context[con_index].state = CRC_WRITE_TX;
             APP_DBG_MSG("CRC_CONNECTED -> CRC_WRITE_TX\n");
-            SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+            UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
           }
         }
         break;
@@ -177,7 +177,7 @@ static void CRCAPP_Write_Char(uint8_t index)
           {
             CRC_Context[con_index].state = CRC_ENABLE_RX_NOTIFICATION;
             APP_DBG_MSG("CRC_CONNECTED -> CRC_ENABLE_RX_NOTIFICATION\n");
-            SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+            UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
           }
         }
         break;
@@ -189,7 +189,7 @@ static void CRCAPP_Write_Char(uint8_t index)
           {
             CRC_Context[con_index].state = CRC_DISABLE_RX_NOTIFICATION;
             APP_DBG_MSG("CRC_CONNECTED -> CRC_DISABLE_RX_NOTIFICATION\n");
-            SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+            UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
           }
         }
         break;
@@ -696,7 +696,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                       {
                         CRC_Context[index].state = CRC_DISCOVER_CHARACS;
                         APP_DBG_MSG("CRC_IDLE -> CRC_DISCOVER_CHARACS\n");
-                        SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+                        UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
                       }
                       break;
                       
@@ -704,7 +704,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                       {
                         CRC_Context[index].state = CRC_DISCOVER_DESC;
                         APP_DBG_MSG("CRC_DISCOVER_CHARACS -> CRC_DISCOVER_DESC\n");
-                        SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+                        UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
                       }
                       break;
                       
@@ -712,7 +712,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                       {
                         CRC_Context[index].state = CRC_ENABLE_RX_NOTIFICATION;
                         APP_DBG_MSG("CRC_DISCOVER_DESC -> CRC_ENABLE_RX_NOTIFICATION\n");
-                        SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+                        UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
                       }
                       break;
                      
@@ -720,7 +720,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                       {
                         CRC_Context[index].state = CRC_CONNECTED;
                         APP_DBG_MSG("CRC_READ_TX -> CRC_CONNECTED\n");
-                        SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+                        UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
                       }
                       break;
                      
@@ -728,7 +728,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                       {
                         CRC_Context[index].state = CRC_CONNECTED;
                         APP_DBG_MSG("CRC_READ_RX -> CRC_CONNECTED\n");
-                        SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+                        UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
                       }
                       break;
                      
@@ -737,7 +737,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                       {
                         CRC_Context[index].state = CRC_CONNECTED;
                         APP_DBG_MSG("CRC_READ_RX_CCC -> CRC_CONNECTED\n");
-                        SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+                        UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
                       }
                       break;
                      
@@ -745,7 +745,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                       {
                         CRC_Context[index].state = CRC_CONNECTED;
                         APP_DBG_MSG("CRC_WRITE_TX -> CRC_CONNECTED\n");
-                        SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+                        UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
                       }
                       break;
 
@@ -758,7 +758,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
 
                         CRC_Context[index].state = CRC_CONNECTED;
                         APP_DBG_MSG("CRC_ENABLE_RX_NOTIFICATION -> CRC_CONNECTED\n");
-                        SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+                        UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
                       }
                       break;
                      
@@ -766,7 +766,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                       {
                         CRC_Context[index].state = CRC_CONNECTED;
                         APP_DBG_MSG("CRC_DISABLE_RX_NOTIFICATION -> CRC_CONNECTED\n");
-                        SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+                        UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
                       }
                       break;
 
@@ -842,7 +842,7 @@ void CRCAPP_Init(void)
 {
   uint8_t index;
   
-  SCH_RegTask( CFG_TASK_CRC_DISCOVERY_REQ_ID, CRCAPP_Update_Service );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_CRC_DISCOVERY_REQ_ID, UTIL_SEQ_RFU, CRCAPP_Update_Service );
 
   PosXRx = POSXRX;
   PosYRx = POSYRX + 2;
@@ -1031,7 +1031,7 @@ void CRCAPP_Update_Service()
             APP_DBG_MSG("Write CRC TX sent Successfully \n");
             CRC_Context[index].state = CRC_CONNECTED;
             APP_DBG_MSG("CRC_WRITE_TX -> CRC_CONNECTED\n");
-            SCH_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
+            UTIL_SEQ_SetTask( 1<<CFG_TASK_CRC_DISCOVERY_REQ_ID, CFG_SCH_PRIO_0);
           }
           else 
           {

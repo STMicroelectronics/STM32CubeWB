@@ -2,8 +2,7 @@
 /**
  ******************************************************************************
   * File Name          : hw_conf.h
-  * Description        : Hardware configuration file for BLE 
-  *                      middleWare.
+  * Description        : Hardware configuration file for STM32WPAN Middleware.
   ******************************************************************************
   * @attention
   *

@@ -42,6 +42,7 @@ extern PCD_HandleTypeDef hpcd_USB_FS;
 /* Private function prototypes -----------------------------------------------*/
 static void GetPointerData(uint8_t *pbuf);
 extern void SystemClockConfig_Resume(void);
+void USBD_Clock_Config(void);
 /* USER CODE END PFP */
 
 extern void Error_Handler(void);
@@ -58,7 +59,7 @@ extern USBD_DescriptorsTypeDef HID_Desc;
   * @brief USB Clock Configuration
   * @retval None
   */
-void USBDClock_Config(void)
+void USBD_Clock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_CRSInitTypeDef RCC_CRSInitStruct= {0};
@@ -178,7 +179,7 @@ void MX_USB_Device_Init(void)
   /* USER CODE BEGIN USB_Device_Init_PreTreatment */
 
   /* USB Clock Initialization */
-   USBDClock_Config();
+   USBD_Clock_Config();
 
   /* USER CODE END USB_Device_Init_PreTreatment */
 

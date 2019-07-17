@@ -58,7 +58,7 @@ $moduleName$, $exampleName$, Security, IEC 60870-5, hardware CRC,
   - BLE/BLE_DataThroughput/STM32_WPAN/App/app_ble.c      		BLE Profile implementation
   - BLE/BLE_DataThroughput/Core/Src/app_entry.c      			Initialization of the application
   - BLE/BLE_DataThroughput/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_DataThroughput/Core/Src/hw_lpm.c      				Low Power Manager Driver
+  - BLE/BLE_DataThroughput/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
   - BLE/BLE_DataThroughput/Core/Src/hw_timerserver.c 			Timer Server based on RTC
   - BLE/BLE_DataThroughput/Core/Src/hw_uart.c 					UART Driver
   - BLE/BLE_DataThroughput/STM32_WPAN/App/dt_client_app.c     	Data Throughput Client Application implementation
@@ -87,7 +87,7 @@ In order to make the program work, you must do the following:
  - Open your preferred toolchain 
  - Rebuild all files and load your image into target memory
  
-Two STM32WB boards are used, one central and one peripheral. 
+Two STM32WB55xx boards are used, one central and one peripheral. 
 They are both configured as GATT client and GATT server.
 They both support a Data transfer service with a transmission characteristic that supports notification.
 Both boards need to be compiled by changing the definition in app_conf.h

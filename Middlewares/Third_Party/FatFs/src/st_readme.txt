@@ -1,23 +1,42 @@
   @verbatim
   ******************************************************************************
-  * @file    st_readme.txt 
+  * @file    st_readme.txt
   * @author  MCD Application Team
   * @brief   This file lists the main modification done by STMicroelectronics on
   *          FatFs for integration with STM32Cube solution.
   *          For more details on FatFs implementation on STM32Cube, please refer
-  *          to UM1721 "Developing Applications on STM32Cube with FatFs"  
+  *          to UM1721 "Developing Applications on STM32Cube with FatFs"
   ******************************************************************************
   * @attention
   *
   * Copyright (c) 2017 STMicroelectronics. All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   @endverbatim
+
+### V2.1.2/29-03-2019 ###
+============================
++ add st_license.txt in the root directory
++ src/drivers/xxx_diskio_template.[c/h], src/ff_gen_drv.[c/h], src/option/syscall.c: update the license terms to BSD-3-Clause
+
+### V2.1.1/25-01-2019 ###
+============================
++ sd_diskio_dma_rtos_template.c
+  - Fix memory leak in the SD_Initialize()
+  - Disable the ENABLE_SD_DMA_CACHE_MAINTENANCE flag by default to fix a build error for CM4
+  - include correct diskio header file
+
++ sd_diskio_dma_template.c
+  - Correct the SD_read() function when enabling the ENABLE_SCRATCH_BUFFER flag
+
++ sd_diskio_dma_rtos_template.c sd_diskio_dma_template.c
+  - fix potential overflow when using SysTick.
+
 
 ### V2.1.0/21-09-2018 ###
 ============================
@@ -43,11 +62,11 @@
   - define a generic 'SD_TIMEOUT' based on the BSP drivers defines. This fixes
     a build issue when using this driver with the Adafruit shield.
 
-+ sd_diskio_dma_rtos_template.c 
++ sd_diskio_dma_rtos_template.c
   - add a check via  osKernelRunning(), to avoid runtime errors due to
     osMessageXXX calls that needs the "osKernelStart()" call done first.
 
-+ sd_diskio_dma_template.c, sd_diskio_dma_rtos_template.c 
++ sd_diskio_dma_template.c, sd_diskio_dma_rtos_template.c
   - fix wrong address alignment when calling SCB_InvalidateDCache_by_Addr() and
     SCB_CleanDCache_by_Addr(), the address has to be 32-Byte and not
     32-bit aligned.
@@ -56,7 +75,7 @@
     adding 'void' as argument to avoid IAR compiler errors
 
 
-+ sd_diskio_template.c sd_diskio_dma_template.c, sd_diskio_dma_rtos_template.c 
++ sd_diskio_template.c sd_diskio_dma_template.c, sd_diskio_dma_rtos_template.c
   - add the  flag "DISABLE_SD_INIT" to give the user the choice to initialize the SD
     either in the application or in the FatFs diskio driver.
 
@@ -66,8 +85,8 @@
 
 ### V2.0.1/10-July-2017 ###
 ============================
-+ sd_diskio_dma_template.c, sd_diskio_dma_rtos_template.c 
-  - add the  flag "ENABLE_SD_DMA_CACHE_MAINTENACE", to enable cache maintenance  at each read write operation. 
++ sd_diskio_dma_template.c, sd_diskio_dma_rtos_template.c
+  - add the  flag "ENABLE_SD_DMA_CACHE_MAINTENANCE", to enable cache maintenance  at each read write operation.
     This is useful for STM32F7/STM32H7 based platforms when using a cachable memory region.
   - add timeout checks in SD_Read() and SD_Write() to give the control back to the application to decide in case of errors.
 
@@ -82,13 +101,13 @@
   - For more details check the files (doc/updates.txt) and the following urls:
        http://elm-chan.org/fsw/ff/en/mkfs.html
        http://elm-chan.org/fsw/ff/en/config.html
-  
+
   + Add USB, RAMDISK and uSD template drivers under src/drivers.
     - The diskio drivers aren't part of fatfs anymore, they are just templates instead.
     - User has to copy the suitable template .c/.h file under the project, rename them by
       removing the "_template" suffix then link them into the final application.
     - The diskio driver .c/.h files have to be edited according to the used platform.
- 
+
   + Define the macros "ff_malloc" and "ff_free" in the ff_conf_template.h and use
     them in the syscall.c instead of direct calls to stdlib malloc and free functions.
   + Define the "__weak" attribute in diskio.c for the GNU GCC compiler
@@ -98,12 +117,12 @@
 ================================
   + Upgrade to use FatFs R0.12b.
   + ff_conf.h: remove the use of define "_USE_BUFF_WO_ALIGNMENT".
-     
+
 
 ### V1.3.0/08-May-2015 ###
 ==========================
   + Upgrade to use FatFs R0.11.
-  + Add new APIs FATFS_LinkDriverEx() and FATFS_UnLinkDriverEx() to manage USB Key Disk having 
+  + Add new APIs FATFS_LinkDriverEx() and FATFS_UnLinkDriverEx() to manage USB Key Disk having
      multi-lun capability. These APIs are equivalent to FATFS_LinkDriver() and FATFS_UnLinkDriver()
      with "lun" parameter set to 0.
   + ff_conf.h: add new define "_USE_BUFF_WO_ALIGNMENT".
@@ -114,13 +133,13 @@
      before being processed by the DMA . Otherwise (DMA not used), this define must
      be set to 1 to avoid Data alignment and improve the performance.
      Please note that if _USE_BUFF_WO_ALIGNMENT is set to 1 and an unaligned 32bits
-     buffer is forwarded to the FatFs Write/Read functions, an error will be returned. 
+     buffer is forwarded to the FatFs Write/Read functions, an error will be returned.
      (0: default value or 1: unaligned buffer return an error).
 
 
   + Important note:
       For application code based on previous FatFs version; when moving to R0.11
-      the changes that need to be done is to update ffconf.h file, taking 
+      the changes that need to be done is to update ffconf.h file, taking
       ffconf_template.h file as reference.
 
 
@@ -130,7 +149,7 @@
 
   + Important note:
       For application code based on previous FatFs version; when moving to R0.10b
-      the only change that need to be done is to update ffconf.h file, taking 
+      the only change that need to be done is to update ffconf.h file, taking
       ffconf_template.h file as reference.
 
 
@@ -141,7 +160,7 @@
 
   + Important note:
       For application code based on previous FatFs version; when moving to R0.10b
-      the only change that need to be done is to update ffconf.h file, taking 
+      the only change that need to be done is to update ffconf.h file, taking
       ffconf_template.h file as reference.
 
 

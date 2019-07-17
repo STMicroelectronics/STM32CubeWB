@@ -50,6 +50,8 @@ void USART1_IRQHandler(void);
 void DMA2_Channel4_IRQHandler(void);
 void CFG_HW_USART1_DMA_TX_IRQHandler( void );
 void RTC_WKUP_IRQHandler(void);
+void LPUART1_IRQHandler(void);
+void DMA1_Channel4_IRQHandler(void);
 
 #ifdef __cplusplus
 }

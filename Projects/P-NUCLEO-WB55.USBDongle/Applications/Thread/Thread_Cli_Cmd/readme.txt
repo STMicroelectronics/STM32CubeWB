@@ -98,7 +98,7 @@ At this point, the user can check the state of its device by using the cli comma
   - Thread/Thread_Cli_Cmd/Core/Src/app_entry.c             Initialization of the application
   - Thread/Thread_Cli_Cmd/STM32_WPAN/App/app_thread.c      Thread application implementation
   - Thread/Thread_Cli_Cmd/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
-  - Thread/Thread_Cli_Cmd/Core/Src/hw_lpm.c                Low Power Manager Driver
+  - Thread/Thread_Cli_Cmd/Core/Src/stm32_lpm_if.c          Low Power Manager Interface
   - Thread/Thread_Cli_Cmd/Core/Src/hw_uart.c               UART driver
   - Thread/Thread_Cli_Cmd/Core/Src/main.c                  Main program
   - Thread/Thread_Cli_Cmd/Core/Src/stm_logging.c           Logging module for traces

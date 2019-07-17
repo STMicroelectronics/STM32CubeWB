@@ -27,7 +27,7 @@
 #include "ble.h"
 #include "app_ble.h"
 #include "p2p_routeur_app.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -281,7 +281,7 @@ void P2P_Router_APP_Init(void)
     P2PR_APP_Device_Status_t device_status;
     /* USER CODE END P2P_Router_APP_Init_1 */
 
-    SCH_RegTask( CFG_TASK_SEARCH_SERVICE_ID, Client_Update_Service );
+    UTIL_SEQ_RegTask( 1<< CFG_TASK_SEARCH_SERVICE_ID, UTIL_SEQ_RFU, Client_Update_Service );
 
     /* USER CODE BEGIN P2P_Router_APP_Init_2 */
     /**
@@ -891,35 +891,7 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
 
                     if(index < BLE_CFG_CLT_MAX_NBR_CB)
                     {
-
-#if 0
-
-                        switch(aP2PClientContext[index].state)
-                        {
-                            case APP_BLE_DISCOVER_CHARACS:
-                            {
-                                SCH_SetTask(  1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0 );
-                            }
-                            break;
-                            case APP_BLE_DISCOVER_LED_CHAR_DESC:
-                            {
-                                SCH_SetTask(  1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0 );
-                            }
-                            break;
-                            case APP_BLE_DISCOVER_BUTTON_CHAR_DESC:
-                            {
-                                SCH_SetTask(  1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0 );
-                            }
-                            break;
-                            case APP_BLE_ENABLE_NOTIFICATION_BUTTON_DESC:
-                            {
-                                SCH_SetTask(  1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0 );
-                            }
-
-                        }
-#else
-                        SCH_SetTask(  1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0 );
-#endif
+                        UTIL_SEQ_SetTask(  1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0 );
                     }
                 }
                 break; /*EVT_BLUE_GATT_PROCEDURE_COMPLETE*/

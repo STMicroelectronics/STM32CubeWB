@@ -41,8 +41,8 @@
 #include "app_common.h"
 
 #include "app_entry.h"
-#include "lpm.h"
-#include "scheduler.h"
+#include "stm32_lpm.h"
+#include "stm32_seq.h"
 #include "dbg_trace.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,7 +87,7 @@ int main( void )
 
   while(1)
   {
-    SCH_Run(~0);
+    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
   }
 }
 

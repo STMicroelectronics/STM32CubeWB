@@ -25,7 +25,7 @@
 #include "dbg_trace.h"
 #include "ble.h"
 #include "p2p_server_app.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -296,7 +296,7 @@ void P2PS_APP_Notification(P2PS_APP_ConnHandle_Not_evt_t *pNotification)
 void P2PS_APP_Init(void)
 {
 /* USER CODE BEGIN P2PS_APP_Init */
-  SCH_RegTask( CFG_TASK_SW1_BUTTON_PUSHED_ID, P2PS_Send_Notification );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_SW1_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, P2PS_Send_Notification );
 
   /**
    * Initialize LedButton Service
@@ -352,7 +352,7 @@ void P2PS_APP_LED_BUTTON_context_Init(void){
 
 void P2PS_APP_SW1_Button_Action(void)
 {
-  SCH_SetTask( 1<<CFG_TASK_SW1_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_SW1_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
 
   return;
 }

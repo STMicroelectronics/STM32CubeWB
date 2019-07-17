@@ -20,12 +20,12 @@
 
 #include "app_rfd_mac_802_15_4_process.h"
 
+#include "app_conf.h"
 #include "dbg_trace.h"
 #include "shci.h"
-#include "stm_logging.h"
-
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "app_rfd_mac_802_15_4.h"
+#include "stm_logging.h"
 
 /* Global define -------------------------------------------------------------*/
 
@@ -76,7 +76,7 @@ MAC_Status_t APP_MAC_mlmeAssociateCnfCb( const  MAC_associateCnf_t * pAssociateC
   APP_DBG("RFD MAC APP - Association CNF Received");
   memset(&g_MAC_associateCnf,0x00,sizeof(MAC_associateCnf_t));
   memcpy(&g_MAC_associateCnf,pAssociateCnf,sizeof(MAC_associateCnf_t));
-  SCH_SetEvt(EVENT_SRV_ASSOC_CNF);
+  UTIL_SEQ_SetEvt(EVENT_SRV_ASSOC_CNF);
   return MAC_SUCCESS;
 
 }
@@ -128,7 +128,7 @@ MAC_Status_t APP_MAC_mlmePollCnfCb( const  MAC_pollCnf_t * pPollCnf )
 
 MAC_Status_t APP_MAC_mlmeResetCnfCb( const  MAC_resetCnf_t * pResetCnf )
 {
-  SCH_SetEvt(EVENT_DEVICE_RESET_CNF);
+  UTIL_SEQ_SetEvt(EVENT_DEVICE_RESET_CNF);
   return MAC_SUCCESS;
 }
 
@@ -147,7 +147,7 @@ MAC_Status_t APP_MAC_mlmeScanCnfCb( const  MAC_scanCnf_t * pScanCnf )
 
 MAC_Status_t APP_MAC_mlmeSetCnfCb( const  MAC_setCnf_t * pSetCnf )
 {
-  SCH_SetEvt(EVENT_SET_CNF);
+  UTIL_SEQ_SetEvt(EVENT_SET_CNF);
   return MAC_SUCCESS;
 }
 
@@ -167,7 +167,7 @@ MAC_Status_t APP_MAC_mcpsDataIndCb( const  MAC_dataInd_t * pDataInd )
 
 MAC_Status_t APP_MAC_mcpsDataCnfCb( const  MAC_dataCnf_t * pDataCnf )
 {
-  SCH_SetEvt( EVENT_DATA_CNF );
+  UTIL_SEQ_SetEvt( EVENT_DATA_CNF );
   return MAC_SUCCESS;
 
 }
@@ -221,6 +221,10 @@ MAC_Status_t APP_MAC_mlmeGtsIndCb( const MAC_GtsInd_t * pGtsInd )
   return MAC_NOT_IMPLEMENTED_STATUS;
 }
 
+MAC_Status_t APP_MAC_mlmePollIndCb( const MAC_pollInd_t * pPollInd )
+{
+  return MAC_NOT_IMPLEMENTED_STATUS;
+}
 /******************************************************************************/
 
 //@} \\END CLI Commands

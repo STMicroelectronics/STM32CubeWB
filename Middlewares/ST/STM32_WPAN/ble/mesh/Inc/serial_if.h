@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    serial_if.h
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Header file for the serial interface file 
 ******************************************************************************
 * @attention
@@ -51,6 +51,8 @@
 /* Exported Functions Prototypes ---------------------------------------------*/
 void Serial_PrintStringCb(const char *message);
 void Serial_InterfaceProcess(void);
+MOBLEUINT8 Serial_CharToHexConvert(char addr);
+
 
 #endif /* __SERIAL_IF_H */
 

@@ -77,7 +77,6 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
   if(pcdHandle->Instance==USB)
   {
   /* USER CODE BEGIN USB_MspInit 0 */
-  /* GPIO Ports Clock Enable */
 
   /* USER CODE END USB_MspInit 0 */
 
@@ -129,7 +128,7 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle)
     HAL_NVIC_DisableIRQ(USB_LP_IRQn);
 
   /* USER CODE BEGIN USB_MspDeInit 1 */
-
+    __HAL_RCC_GPIOA_CLK_DISABLE();
   /* USER CODE END USB_MspDeInit 1 */
   }
 }

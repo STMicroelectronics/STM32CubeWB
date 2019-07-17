@@ -56,6 +56,7 @@ MAC_Status_t APP_MAC_mlmeDpsIndCb( const MAC_dpsInd_t * pDpsInd );
 MAC_Status_t APP_MAC_mlmeSoundingCnfCb( const MAC_soundingCnf_t * pSoudingCnf);
 MAC_Status_t APP_MAC_mlmeGtsCnfCb( const MAC_gtsCnf_t * pGtsCnf);
 MAC_Status_t APP_MAC_mlmeGtsIndCb( const MAC_GtsInd_t * pGtsInd );
+MAC_Status_t APP_MAC_mlmePollIndCb( const MAC_pollInd_t * pPollInd );
 
 #ifdef __cplusplus
 } /* extern "C" */

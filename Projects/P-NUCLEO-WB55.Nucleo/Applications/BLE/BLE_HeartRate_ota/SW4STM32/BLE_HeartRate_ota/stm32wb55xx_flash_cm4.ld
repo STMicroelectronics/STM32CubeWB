@@ -58,8 +58,7 @@ MEMORY
 FLASH (rx)                 : ORIGIN = 0x08007000, LENGTH = 1k  
 RAM1 (xrw)                 : ORIGIN = 0x20000004, LENGTH = 191k
 RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10k  
-OTA_TAG (rx)               : ORIGIN = 0x08007140 , LENGTH = 1k
-OTA_TAG2(rx)               : ORIGIN = 0x08007144 , LENGTH = 483k
+OTA_TAG (rx)               : ORIGIN = 0x08007178 , LENGTH = 599k
 }
 
 /* Define output sections */
@@ -88,7 +87,7 @@ SECTIONS
 
     . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
-  } >OTA_TAG2
+  } >OTA_TAG
 
   /* Constant data goes into FLASH */
   .rodata :
@@ -97,35 +96,35 @@ SECTIONS
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
     . = ALIGN(4);
-  } >OTA_TAG2
+  } >OTA_TAG
 
   .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
   .ARM : {
     __exidx_start = .;
     *(.ARM.exidx*)
     __exidx_end = .;
-  } >OTA_TAG2
+  } >OTA_TAG
 
   .preinit_array     :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >OTA_TAG2
+  } >OTA_TAG
   .init_array :
   {
     PROVIDE_HIDDEN (__init_array_start = .);
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >OTA_TAG2
+  } >OTA_TAG
   .fini_array :
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
     KEEP (*(SORT(.fini_array.*)))
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >OTA_TAG2
+  } >OTA_TAG
 
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
@@ -140,7 +139,7 @@ SECTIONS
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
-  } >RAM1 AT> OTA_TAG2
+  } >RAM1 AT> OTA_TAG
 
   
   /* Uninitialized data section */
@@ -183,9 +182,9 @@ SECTIONS
   .ARM.attributes 0       : { *(.ARM.attributes) }
    MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED
    MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED
-   MB_MEM2  (NOLOAD)      : { *(MB_MEM2) } >RAM_SHARED 
-   TAG_OTA_START          : { KEEP (*(TAG_OTA_START)) } >OTA_TAG
-   TAG_OTA_END            : { KEEP (*(TAG_OTA_END)) }   >OTA_TAG2
+   MB_MEM2                : { *(MB_MEM2) } >RAM_SHARED 
+   TAG_OTA_START          : { KEEP (*(TAG_OTA_START)) } >FLASH
+   TAG_OTA_END            : { KEEP (*(TAG_OTA_END)) } >OTA_TAG
 }
 
 

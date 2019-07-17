@@ -54,7 +54,7 @@ How to use the Point-to-Point communication using BLE component.
   - BLE/BLE_CableReplacement/STM32_WPAN/App/crs_app.c      	    Cable Replacement Service application
   - BLE/BLE_CableReplacement/STM32_WPAN/App/crc_app.c      	    Cable Replacement Client application
   - BLE/BLE_CableReplacement/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_CableReplacement/Core/Src/hw_lpm.c      			Low Power Manager Driver
+  - BLE/BLE_CableReplacement/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
   - BLE/BLE_CableReplacement/Core/Src/hw_timerserver.c 		    Timer Server based on RTC
   - BLE/BLE_CableReplacement/Core/Src/hw_uart.c 				UART Driver
 
@@ -80,14 +80,14 @@ In order to make the program work, you must do the following:
  - Open your preferred toolchain 
  - Rebuild all files and load your image into target memory
  
-Two STM32WB boards are used one acting as GATT client, the other as GATT server.
+Two STM32WB55xx boards are used one acting as GATT client, the other as GATT server.
 Both boards need to be compiled with different code by changing the #definitions in app_conf.h
 #define GATT_CLIENT         0/1    /* 1 = Device is GATT Client, 0 = Device is GATT Server */
 If device is GATT client, it is also central (defined in ble_conf.h) 
 If device is GATT server, it is also peripheral (defined in ble_conf.h)
 
 Open VT100 Terminals on Client and Server side. Connected to ST Link COM port @115200.
-Once the code is downloaded on the two STM32WB boards and executed,
+Once the code is downloaded on the two STM32WB55xx boards and executed,
 the modules are initialized. 
 The Peripheral device (Cable Replacement Server) starts advertising,
 The Central device (Cable Replacement Client) scans and automatically connects to the Cable Replacement Server.

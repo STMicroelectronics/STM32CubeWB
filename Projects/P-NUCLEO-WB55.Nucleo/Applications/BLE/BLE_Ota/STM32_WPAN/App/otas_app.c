@@ -175,9 +175,8 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
           /**
            * Reboot on FW Application
            */
-          *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_FW_APP;
-          NVIC_SystemReset();
-          while(1);
+          CFG_OTA_REBOOT_VAL_MSG = CFG_REBOOT_ON_FW_APP;
+          NVIC_SystemReset(); /* it waits until reset */
           break;
 
         case Wireless_Fw:

@@ -16,9 +16,9 @@
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx.0.0.7</PackID>
+          <PackID>Keil.STM32WBxx.0.0.6</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
+          <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x20027C03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
           <FlashDriverDll></FlashDriverDll>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32WB55RGVx$CMSIS\SVD\STM32WB55_CM4.svd</SFDFile>
+          <SFDFile>$$Device:STM32WB55RGVx$CMSIS\SVD\STM32WB0xx_v1r0.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -184,6 +184,7 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
+            <RvdsMve>0</RvdsMve>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -244,7 +245,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000004</StartAddress>
-                <Size>0x2fc00</Size>
+                <Size>0x27c00</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -299,7 +300,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000004</StartAddress>
-                <Size>0x2fc00</Size>
+                <Size>0x27c00</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -311,7 +312,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -337,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>CORE_CM4,USE_HAL_DRIVER,USE_STM32WBXX_NUCLEO,STM32WB55xx,ST_OT_DEBUG,OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_concurrent.h&gt;,STATIC_MODE,THREAD_WB</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../Core/Inc;../STM32_WPAN/App;../STM32_WPAN/Target;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Inc/core;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Inc;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Inc/blesvc;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/ble;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/system_api;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread</IncludePath>
+              <IncludePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../Core/Inc;../STM32_WPAN/app;../STM32_WPAN/Target;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Inc;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/ble;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -379,6 +380,9 @@
       </TargetOption>
       <Groups>
         <Group>
+          <GroupName>::CMSIS</GroupName>
+        </Group>
+        <Group>
           <GroupName>Application/MDK-ARM</GroupName>
           <Files>
             <File>
@@ -389,7 +393,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Application/User/Core/Src</GroupName>
+          <GroupName>Application/User/Core/src</GroupName>
           <Files>
             <File>
               <FileName>app_entry.c</FileName>
@@ -397,9 +401,9 @@
               <FilePath>../Core/Src/app_entry.c</FilePath>
             </File>
             <File>
-              <FileName>hw_lpm.c</FileName>
+              <FileName>stm32_lpm_if.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/hw_lpm.c</FilePath>
+              <FilePath>../Core/Src/stm32_lpm_if.c</FilePath>
             </File>
             <File>
               <FileName>hw_timerserver.c</FileName>
@@ -434,7 +438,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Application/User/STM32_WPAN/App</GroupName>
+          <GroupName>Application/User/STM32_WPAN/app</GroupName>
           <Files>
             <File>
               <FileName>app_ble.c</FileName>
@@ -454,7 +458,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Application/User/STM32_WPAN/Target</GroupName>
+          <GroupName>Application/User/STM32_WPAN/target</GroupName>
           <Files>
             <File>
               <FileName>hw_ipcc.c</FileName>
@@ -576,11 +580,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi.c</FilePath>
             </File>
-            <File>
-              <FileName>stm32wbxx_hal_spi_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi_ex.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -589,12 +588,12 @@
             <File>
               <FileName>p2p_stm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/blesvc/p2p_stm.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/p2p_stm.c</FilePath>
             </File>
             <File>
               <FileName>svc_ctl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/blesvc/svc_ctl.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/svc_ctl.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -604,32 +603,32 @@
             <File>
               <FileName>ble_gap_aci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_gap_aci.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c</FilePath>
             </File>
             <File>
               <FileName>ble_gatt_aci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_gatt_aci.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c</FilePath>
             </File>
             <File>
               <FileName>ble_hal_aci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_hal_aci.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_hal_aci.c</FilePath>
             </File>
             <File>
               <FileName>ble_hci_le.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_hci_le.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_hci_le.c</FilePath>
             </File>
             <File>
               <FileName>ble_l2cap_aci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/ble_l2cap_aci.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_l2cap_aci.c</FilePath>
             </File>
             <File>
               <FileName>osal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Src/core/osal.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template/osal.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -657,9 +656,14 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</FilePath>
             </File>
             <File>
-              <FileName>tl_if.c</FileName>
+              <FileName>hci_tl_if.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_if.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c</FilePath>
+            </File>
+            <File>
+              <FileName>shci_tl_if.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</FilePath>
             </File>
             <File>
               <FileName>tl_mbox.c</FileName>
@@ -821,6 +825,11 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/udp.c</FilePath>
             </File>
+            <File>
+              <FileName>radio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/radio.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -832,19 +841,9 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</FilePath>
             </File>
             <File>
-              <FileName>lpm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/lpm.c</FilePath>
-            </File>
-            <File>
               <FileName>otp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/otp.c</FilePath>
-            </File>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/scheduler.c</FilePath>
             </File>
             <File>
               <FileName>stm_list.c</FileName>
@@ -859,7 +858,19 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>::CMSIS</GroupName>
+          <GroupName>Utilities</GroupName>
+          <Files>
+            <File>
+              <FileName>stm32_lpm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Utilities/lpm/tiny_lpm/stm32_lpm.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_seq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Utilities/sequencer/stm32_seq.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>

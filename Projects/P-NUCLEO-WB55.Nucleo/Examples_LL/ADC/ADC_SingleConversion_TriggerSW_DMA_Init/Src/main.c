@@ -138,6 +138,7 @@ int main(void)
   
 
   /* USER CODE END 1 */
+  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -390,6 +391,7 @@ static void MX_ADC1_Init(void)
   */
 static void MX_DMA_Init(void) 
 {
+
   /* Init with LL driver */
   /* DMA controller clock enable */
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMAMUX1);

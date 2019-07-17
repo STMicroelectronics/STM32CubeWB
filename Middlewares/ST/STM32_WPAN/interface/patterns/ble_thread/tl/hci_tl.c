@@ -20,7 +20,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ble_common.h"
-#include "hal_types.h"
 #include "ble_const.h"
 
 #include "stm_list.h"
@@ -125,7 +124,7 @@ void hci_resume_flow( void )
   return;
 }
 
-int hci_send_req(struct hci_request *p_cmd, BOOL async)
+int hci_send_req(struct hci_request *p_cmd, uint8_t async)
 {
   uint16_t opcode;
   TL_CcEvt_t  *pcommand_complete_event;

@@ -89,6 +89,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
   uint32_t tmp_index_adc_converted_data = 0;
   /* USER CODE END 1 */
+  
 
   /* MCU Configuration--------------------------------------------------------*/
 

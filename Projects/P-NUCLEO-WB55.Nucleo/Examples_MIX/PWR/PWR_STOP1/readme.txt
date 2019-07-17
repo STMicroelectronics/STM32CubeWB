@@ -78,7 +78,7 @@ Power, PWR, stop mode, wake-up, external reset, Interrupt, low power mode
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WBxx devices
+  - This example runs on STM32WB55xx devices
     
 
   - This example has been tested with STMicroelectronics P-NUCLEO-WB55

@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    vendor.c
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Vendor model middleware file
 ******************************************************************************
 * @attention
@@ -44,26 +44,22 @@
 #include "mesh_cfg.h"
 #include "ble_mesh.h"
 #include "vendor.h"
-#include "generic.h"
-#include "sensors.h"
 #include "models_if.h"
-#include "mesh_cfg.h"
-
 #include <string.h>
 
 /** @addtogroup BLE_Mesh
- *  @{
- */
+*  @{
+*/
 
 /** @addtogroup models_BLE
- *  @{
- */
+*  @{
+*/
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-   
+
 /*Appli Buffer - Toggle the LEDs*/
 /*0x03 = SubCommand for LED Toggle*/
 MOBLEUINT8 AppliBuffer[DATA_BUFFER_LENGTH] = {0x01,0x00};
@@ -89,35 +85,33 @@ extern MOBLEUINT8 Appli_LedState;
 * @retval MOBLE_RESULT status of result
 */ 
 MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
-                                    MOBLEUINT8 command, 
-                                    MOBLEUINT8 const *data, 
-                                    MOBLEUINT32 length, 
-                                    MOBLEBOOL response)
+                                     MOBLE_ADDRESS dst_peer, 
+                                     MOBLEUINT8 command, 
+                                     MOBLEUINT8 const *data, 
+                                     MOBLEUINT32 length, 
+                                     MOBLEBOOL response)
 {
   
   MOBLE_COMMAND_STATUS status = STATUS_SUCCESS;
-   
-#if !defined(DISABLE_TRACES)
+  
   /* Traces for the Data */
   uint16_t idx = 0;
-  printf("Vendor_WriteLocalDataCb: peer_addr=[%02x], dst_peer=[%02x],\
+  TRACE_M(TF_VENDOR,"Vendor_WriteLocalDataCb: peer_addr=[%02x], dst_peer=[%02x],\
          command=[%02x], \n\r", peer_addr, dst_peer, command);
-           printf("DATA_RECEIVED length = %d\n\r",length);
+          TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %d\n\r",length);
          for (idx=0; idx<length; idx++)
          {
-           printf("data[%d]= %d",idx,data[idx]);
-           printf("\n\r");
+           TRACE_I(TF_VENDOR,"data[%d]= %d",idx,data[idx]);  
+           TRACE_I(TF_VENDOR,"\n\r");
          }
-#endif
          
-    if(ADDRESS_IS_UNICAST(dst_peer))
-     {
-         MOBLEUINT8 elementNumber;
-         elementNumber=BLEMesh_ModelsGetElementNumber(dst_peer);
-           
-         switch (command)
+         if(ADDRESS_IS_UNICAST(dst_peer))
          {
+           MOBLEUINT8 elementNumber;
+           elementNumber=BLEMesh_ModelsGetElementNumber(dst_peer);
+           
+           switch (command)
+           {
              
            case APPLI_TEST_CMD:
              {
@@ -129,9 +123,9 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
            case APPLI_LED_CONTROL_STATUS_CMD:
              {
                /* 
-       Meesage Received     B0     B1    B2      B3    B4    B5    B6     B7 
-                   B0 - Sub-Cmd LED
-                   B1-B7 - Data Bytes       
+               Message Received     B0     B1    B2      B3    B4    B5    B6     B7 
+               B0 - Sub-Cmd LED
+               B1-B7 - Data Bytes       
                */          
                VendorAppli_cb.LEDControlCommand_Cb(data,length,elementNumber,dst_peer);
                break;
@@ -143,73 +137,72 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
                status = STATUS_INVALID_COMMAND;
                break;
              }
-          }
-      }
+           }
+         }
          
-    else if(ADDRESS_IS_GROUP(dst_peer))
-    {
-      
-      MOBLEUINT8 elementNumber;
-      MOBLE_RESULT status1;
-      
-       /*Check the Subscription of Group Address for all the Elements. 
-      In case of Multi Elements, all elements may be subscribed to same Group Address. 
-       e.g 0xC000 is assigned to all elements
-      or different Group addresses. Need to check subscription for each element */
-    for (elementNumber=FIRST_ELEMENT;elementNumber<=NumberOfElements; elementNumber++)
-    {
-       /*If Received Address is Broadcast Address*/
-       if(ADDRESS_IS_ALL_NODES(dst_peer))
-       {
-          status1 =  MOBLE_RESULT_SUCCESS;
-       }
-       else
-       {
-          status1 = BLEMesh_ModelsCheckSubscription(dst_peer,elementNumber);
-       }
-        
-        if(status1 == MOBLE_RESULT_SUCCESS)
-        { 
-          switch (command)
-          { 
-            
-          case APPLI_TEST_CMD:
-            { /*Insert Test Commands here*/
-              break;
-            }    
-          case APPLI_LED_CONTROL_STATUS_CMD:
-            {
-        /* 
-       Meesage Received     B0     B1    B2      B3    B4    B5    B6     B7 
+         else if(ADDRESS_IS_GROUP(dst_peer))
+         {
+           
+           MOBLEUINT8 elementNumber;
+           MOBLE_RESULT status1;
+           
+           /*Check the Subscription of Group Address for all the Elements. 
+           In case of Multi Elements, all elements may be subscribed to same Group Address. 
+           e.g 0xC000 is assigned to all elements
+           or different Group addresses. Need to check subscription for each element */
+           for (elementNumber=FIRST_ELEMENT;elementNumber<=NumberOfElements; elementNumber++)
+           {
+             /*If Received Address is Broadcast Address*/
+             if(ADDRESS_IS_ALL_NODES(dst_peer))
+             {
+               status1 =  MOBLE_RESULT_SUCCESS;
+             }
+             else
+             {
+               status1 = BLEMesh_ModelsCheckSubscription(dst_peer,elementNumber);
+             }
+             
+             if(status1 == MOBLE_RESULT_SUCCESS)
+             { 
+               switch (command)
+               { 
+                 
+               case APPLI_TEST_CMD:
+                 { /*Insert Test Commands here*/
+                   break;
+                 }    
+               case APPLI_LED_CONTROL_STATUS_CMD:
+                 {
+                   /* 
+                   Message Received     B0     B1    B2      B3    B4    B5    B6     B7 
                    B0 - Sub-Cmd LED
                    B1-B7 - Data Bytes       
-
-       */
-              VendorAppli_cb.LEDControlCommand_Cb(data, length, elementNumber,dst_peer);
-              break; 
-            }        
-            /* Default case - Not valid command */
-          default:
-            {
-              status = STATUS_INVALID_COMMAND;
-              break;
-            }
-          }           
-        }
-      }
-    }
-    /* this expression is used to send the status of data received wheather it
-       is correct or not , First 3 bits are for status and last 5 bit are for sub commands
-    */
-      ResponseBuffer[0] = ResponseBuffer[0] | (status << 5);
-      
-      VendorAppli_cb.LEDControl_cb(); /* Controls the LED State */
-        /* 
-       If response is true, Message response will be sent      
-       Message Response     B0     B1    B2      B3    B4    B5    B6     B7 
-                   B0 - Sub-Cmd 
-                   B1-B7 - Response Bytes if any 
-       */
+                   
+                   */
+                   VendorAppli_cb.LEDControlCommand_Cb(data, length, elementNumber,dst_peer);
+                   break; 
+                 }        
+                 /* Default case - Not valid command */
+               default:
+                 {
+                   status = STATUS_INVALID_COMMAND;
+                   break;
+                 }
+               }           
+             }
+           }
+         }
+         /* this expression is used to send the status of data received wheather it
+         is correct or not , First 3 bits are for status and last 5 bit are for sub commands
+         */
+         ResponseBuffer[0] = ResponseBuffer[0] | (status << 5);
+                 
+         /* 
+         If response is true, Message response will be sent      
+         Message Response     B0     B1    B2      B3    B4    B5    B6     B7 
+         B0 - Sub-Cmd 
+         B1-B7 - Response Bytes if any 
+         */
          if (response == MOBLE_TRUE)
          {
            if (ADDRESS_IS_UNICAST(dst_peer))
@@ -220,10 +213,8 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
            {
              /* Randomize responses*/
              BLEMesh_ModelsDelayPacket(peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
-           }
-#if !defined(DISABLE_TRACES)		
-           printf("Sending Response \n\r");
-#endif
+           }		
+           TRACE_M(TF_VENDOR,"Sending Response \n\r");
          }
          
          if (status == STATUS_SUCCESS)
@@ -255,151 +246,149 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
                                    MOBLEUINT32 length, 
                                    MOBLEBOOL response)
 {  
-  
-MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;
-  
-#if !defined(DISABLE_TRACES)
-  /* Traces for the Data */
-  printf("Vendor_ReadLocalDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
-  command=[%02x] \n\r", peer_addr, dst_peer, command);
-  printf("DATA_RECEIVED length = %d\n\r",length);
-  for (MOBLEUINT8 idx=0; idx<length; idx++)
-  {
-    printf("data[%d]= %d",idx,data[idx]);
-    printf("\n\r");
-  }
-#endif
-  
- if(ADDRESS_IS_UNICAST(dst_peer))
-  {
-    MOBLEUINT8 elementNumber;
-    elementNumber=BLEMesh_ModelsGetElementNumber(dst_peer);
-    
-   /* Check which command is in packet */
-   switch(command)
-   {
-    case APPLI_TEST_CMD:
-      {
-       /* 
-       Meesage Received     B0     B1    B2      B3    B4    B5    B6     B7 
-                   B0 - Sub-Cmd for APPLI_TEST_CMD
-                   B1-B7 - Data Bytes if any  
-
-       */
-       status =  VendorAppli_cb.TestCommand_cb(data, length);
-        break;
-      }
-    case APPLI_DEVICE_INFO_CMD:     
-      {
-        /*
-       Meesage Received     B0     B1    B2      B3    B4    B5    B6     B7 
-                   B0 - Sub-Cmd for APPLI_DEVICE_INFO_CMD
-                   B1-B7 - Data Bytes if any      
-
-       */
-       status =  VendorAppli_cb.DeviceInfoCommand_cb(data, length);
-        break;
-      }
-    case APPLI_SENSOR_CNTRL_CMD:
-      {
-          /*Insert Sensors related commands here*/
-          break;
-      }
-   case APPLI_ELEMENT_TYPE_CMD:
-     {
-       /*
-       Meesage Received with Command APPLI_ELEMENT_TYPE_CMD
-       */
-        ResponseBuffer[0] = ELEMENT_TYPE_LED;
-        ResponseBuffer[1] = ELEMENT_TYPE_LED;
-        ResponseBuffer[2] = ELEMENT_TYPE_SWITCH;
-        BuffLength  = 3;      
-        break;
-     }
-   case APPLI_LED_CONTROL_STATUS_CMD:
-    {
-        /*
-         Meesage Received with Command APPLI_LED_CONTROL_STATUS_CMD
-         ResponseBuffer will send the response of selected Element
-       */
-        if(elementNumber == FIRST_ELEMENT)
+ 
+ MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;
+ 
+ /* Traces for the Data */
+ TRACE_M(TF_VENDOR,"Vendor_ReadLocalDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
+        command=[%02x] \n\r", peer_addr, dst_peer, command);
+          TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %d\n\r",length);
+        for (MOBLEUINT8 idx=0; idx<length; idx++)
         {
-          ResponseBuffer[0] = data[0];
-          ResponseBuffer[1] = Appli_LedState;
+          TRACE_I(TF_VENDOR,"data[%d]= %d",idx,data[idx]); 
+          TRACE_I(TF_VENDOR,"\n\r");
         }
         
-        else if(elementNumber == SECOND_ELEMENT)
+        if(ADDRESS_IS_UNICAST(dst_peer))
         {
-          /*Send LED Status*/
+          MOBLEUINT8 elementNumber;
+          elementNumber=BLEMesh_ModelsGetElementNumber(dst_peer);
+          
+          /* Check which command is in packet */
+          switch(command)
+          {
+          case APPLI_TEST_CMD:
+            {
+              /* 
+              Message Received     B0     B1    B2      B3    B4    B5    B6     B7 
+              B0 - Sub-Cmd for APPLI_TEST_CMD
+              B1-B7 - Data Bytes if any  
+              
+              */
+              status =  VendorAppli_cb.TestCommand_cb(data, length);
+              break;
+            }
+          case APPLI_DEVICE_INFO_CMD:     
+            {
+              /*
+              Message Received     B0     B1    B2      B3    B4    B5    B6     B7 
+              B0 - Sub-Cmd for APPLI_DEVICE_INFO_CMD
+              B1-B7 - Data Bytes if any      
+              
+              */
+              status =  VendorAppli_cb.DeviceInfoCommand_cb(data, length);
+              break;
+            }
+          case APPLI_SENSOR_CNTRL_CMD:
+            {
+              /*Insert Sensors related commands here*/
+              break;
+            }
+          case APPLI_ELEMENT_TYPE_CMD:
+            {
+              /*
+              Message Received with Command APPLI_ELEMENT_TYPE_CMD
+              */
+              ResponseBuffer[0] = ELEMENT_TYPE_LED;
+              ResponseBuffer[1] = ELEMENT_TYPE_LED;
+              ResponseBuffer[2] = ELEMENT_TYPE_SWITCH;
+              BuffLength  = 3;      
+              break;
+            }
+          case APPLI_LED_CONTROL_STATUS_CMD:
+            {
+              /*
+              Message Received with Command APPLI_LED_CONTROL_STATUS_CMD
+              ResponseBuffer will send the response of selected Element
+              */
+              if(elementNumber == FIRST_ELEMENT)
+              {
+                ResponseBuffer[0] = data[0];
+                ResponseBuffer[1] = Appli_LedState;
+              }
+              
+              else if(elementNumber == SECOND_ELEMENT)
+              {
+                /*Send LED Status*/
+              }
+              else if(elementNumber == THIRD_ELEMENT) 
+              {
+                /*Sent Button State*/
+              }
+              BuffLength = 1;  
+              
+              break;
+            }
+            
+          default:
+            {
+              status = MOBLE_RESULT_INVALIDARG;
+              break;
+            }   
+            
+          }
         }
-        else if(elementNumber == THIRD_ELEMENT) 
-        {
-          /*Sent Button State*/
-        }
-        BuffLength = 1;  
+        /* this expression is used to send the status of data received wheather it
+        is correct or not , First 3 bits are for status and last 5 bit are for sub commands
+        */
+        ResponseBuffer[0] = ResponseBuffer[0] | (status << 5);
+        /* Check if the command executed sucessfully or not */ 
         
-        break;
-    }
-      
-    default:
-      {
-        status = MOBLE_RESULT_INVALIDARG;
-        break;
-      }   
-    
-  }
-  }
-   /* this expression is used to send the status of data received wheather it
-      is correct or not , First 3 bits are for status and last 5 bit are for sub commands
-  */
-   ResponseBuffer[0] = ResponseBuffer[0] | (status << 5);
-  /* Check if the command executed sucessfully or not */ 
-   
-  if (MOBLE_RESULT_SUCCESS == status)
-  {
-    
-       /* 
-       Read Command will always be reliable      
-       Message Response     B0     B1    B2      B3    B4    B5    B6     B7 
-                   B0 - Sub-Cmd for which response is needed
-                   B1-B7 - Data Bytes if any 
-       */
-      if (ADDRESS_IS_UNICAST(dst_peer))
-      {
-        BLEMesh_SendResponse(peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
-      }
-      else
-      {
-        /* Randomize responses*/
-        BLEMesh_ModelsDelayPacket(peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
-      }
-  }
-  /* Command not successfully processed */
-  else
-  {
-      if (ADDRESS_IS_UNICAST(dst_peer))
-      {
-        BLEMesh_SendResponse(peer_addr, dst_peer, command, ResponseBuffer, 1);
-      }
-      else
-      {
-        /* Randomize responses*/
-        BLEMesh_ModelsDelayPacket(peer_addr, dst_peer, command, ResponseBuffer, 1);
-      }
-  }
-  
-  if (status == MOBLE_RESULT_SUCCESS)
-  {
-    return MOBLE_RESULT_SUCCESS;  
-  }
-  else
-  {
-    return MOBLE_RESULT_FAIL;
-  }
-  
+        if (MOBLE_RESULT_SUCCESS == status)
+        {
+          
+          /* 
+          Read Command will always be reliable      
+          Message Response     B0     B1    B2      B3    B4    B5    B6     B7 
+          B0 - Sub-Cmd for which response is needed
+          B1-B7 - Data Bytes if any 
+          */
+          if (ADDRESS_IS_UNICAST(dst_peer))
+          {
+            BLEMesh_SendResponse(peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
+          }
+          else
+          {
+            /* Randomize responses*/
+            BLEMesh_ModelsDelayPacket(peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
+          }
+        }
+        /* Command not successfully processed */
+        else
+        {
+          if (ADDRESS_IS_UNICAST(dst_peer))
+          {
+            BLEMesh_SendResponse(peer_addr, dst_peer, command, ResponseBuffer, 1);
+          }
+          else
+          {
+            /* Randomize responses*/
+            BLEMesh_ModelsDelayPacket(peer_addr, dst_peer, command, ResponseBuffer, 1);
+          }
+        }
+        
+        if (status == MOBLE_RESULT_SUCCESS)
+        {
+          return MOBLE_RESULT_SUCCESS;  
+        }
+        else
+        {
+          return MOBLE_RESULT_FAIL;
+        }
+        
 }
-
-         
+                  
+                  
 /**
 * @brief  Call back function called when some data is send by the node to app   
 * @param  peer_addr: Address of the peer
@@ -409,26 +398,24 @@ MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;
 * @retval MOBLE_RESULT status of result
 */  
 MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLEUINT8 elementIndex,
-                                    MOBLEUINT8 const * data,
-                                    MOBLEUINT32 length)
+                                     MOBLEUINT8 elementIndex,
+                                     MOBLEUINT8 const * data,
+                                     MOBLEUINT32 length)
 {
   
- #if !defined(DISABLE_TRACES)
   /* Traces for the Data */
-  printf("Vendor_OnResponseDataCb: peer_addr=[%02x], \
-   \n\r", peer_addr);
-  printf("DATA_RECEIVED length = %d\n\r", length);
-  for (MOBLEUINT8 idx=0; idx<length; idx++)
-  {
-    printf("data[%d]= %d",idx,data[idx]);
-    printf("\n\r");
-  }
-#endif 
-  return MOBLE_RESULT_SUCCESS;
+  TRACE_M(TF_VENDOR,"Vendor_OnResponseDataCb: peer_addr=[%02x], \
+         \n\r", peer_addr);
+           TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %d\n\r", length);
+         for (MOBLEUINT8 idx=0; idx<length; idx++)
+         {
+           TRACE_I(TF_VENDOR,"data[%d]= %d",idx,data[idx]);
+           TRACE_I(TF_VENDOR,"\n\r");
+         }
+         return MOBLE_RESULT_SUCCESS;
 } 
-         
-
+                           
+                           
 /**
 * @brief  State machine for Vendor Model
 * @param  void
@@ -438,8 +425,8 @@ void Vendor_Process(void)
 {
   BLEMesh_ModelsSendDelayedPacket();
 }
-
-         
+                           
+                           
 /**
 * @brief  Publish Command for Vendor Model
 * @param  publishAddress: Publish Address of the message 
@@ -448,7 +435,7 @@ void Vendor_Process(void)
 */          
 void Vendor_Publish(MOBLE_ADDRESS publishAddress, MOBLEUINT8 elementIndex)
 {
-  
+
   /* changes the LED status on other nodes in the network */
   if(CommandStatus == APPLI_CMD_ON)
   {
@@ -458,30 +445,31 @@ void Vendor_Publish(MOBLE_ADDRESS publishAddress, MOBLEUINT8 elementIndex)
   {
     AppliBuffer[0] = APPLI_CMD_ON;
   }
-  
-   
+
+
   BLEMesh_SetRemoteData(publishAddress,elementIndex,
-                            APPLI_LED_CONTROL_STATUS_CMD , 
-                            AppliBuffer, sizeof(AppliBuffer), MOBLE_FALSE , MOBLE_TRUE);
-  
-                            
-  
+                   APPLI_LED_CONTROL_STATUS_CMD , 
+                   AppliBuffer, sizeof(AppliBuffer), MOBLE_FALSE , MOBLE_TRUE);
+
+
+
   CommandStatus = AppliBuffer[0];
- 
+
 }
-         
-/**
- * @}
- */
 
 /**
- * @}
- */
+* @}
+*/
+
+/**
+* @}
+*/
 
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
-
-         
-
-
-
-
+                           
+                           
+                           
+                           
+                           
+                           
+                           

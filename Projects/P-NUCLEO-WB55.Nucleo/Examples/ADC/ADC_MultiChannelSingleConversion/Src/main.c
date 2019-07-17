@@ -99,6 +99,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
   uint32_t tmp_index_adc_converted_data = 0;
   /* USER CODE END 1 */
+  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -347,6 +348,7 @@ static void MX_ADC1_Init(void)
   */
 static void MX_DMA_Init(void) 
 {
+
   /* DMA controller clock enable */
   __HAL_RCC_DMAMUX1_CLK_ENABLE();
   __HAL_RCC_DMA1_CLK_ENABLE();

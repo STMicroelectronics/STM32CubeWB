@@ -24,7 +24,7 @@
 
 #include "tps_app.h"
 #include "ble.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 #include "app_ble.h"
 
 

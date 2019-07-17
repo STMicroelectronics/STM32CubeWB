@@ -193,7 +193,6 @@ typedef struct
 typedef struct
 {
   uint8_t *p_ZigbeeOtCmdRspBuffer;
-  uint8_t *p_ZigbeeCliRspBuffer;
   uint8_t *p_ZigbeeNotAckBuffer;
 } TL_ZIGBEE_Config_t;
 
@@ -283,11 +282,8 @@ void TL_MAC_802_15_4_SendAck ( void );
  ******************************************************************************/
 void TL_ZIGBEE_Init( TL_ZIGBEE_Config_t *p_Config );
 void TL_ZIGBEE_SendAppliCmdToM0( void );
-void TL_ZIGBEE_SendCliCmdToM0( void );
 void TL_ZIGBEE_SendAckAfterAppliNotifFromM0 ( void );
-void TL_ZIGBEE_SendAckAfterCliNotifFromM0 ( void );
 void TL_ZIGBEE_NotReceived( TL_EvtPacket_t * Notbuffer );
-void TL_ZIGBEE_CliNotReceived( TL_EvtPacket_t * Notbuffer );
 void TL_ZIGBEE_CmdEvtReceived( TL_EvtPacket_t * Otbuffer );
 
 #ifdef __cplusplus

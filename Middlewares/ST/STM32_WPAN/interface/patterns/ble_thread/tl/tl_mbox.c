@@ -352,8 +352,6 @@ void TL_ZIGBEE_Init( TL_ZIGBEE_Config_t *p_Config )
     MB_ZigbeeTable_t  * p_zigbee_table;
 
     p_zigbee_table = TL_RefTable.p_zigbee_table;
-
-    p_zigbee_table->cliCmdM4toM0_buffer = p_Config->p_ZigbeeCliRspBuffer;
     p_zigbee_table->appliCmdM4toM0_buffer = p_Config->p_ZigbeeOtCmdRspBuffer;
     p_zigbee_table->notifM0toM4_buffer = p_Config->p_ZigbeeNotAckBuffer;
 
@@ -371,15 +369,7 @@ void TL_ZIGBEE_SendAppliCmdToM0( void )
   return;
 }
 
-void TL_ZIGBEE_SendCliCmdToM0( void )
-{
-  ((TL_CmdPacket_t *)(TL_RefTable.p_zigbee_table->cliCmdM4toM0_buffer))->cmdserial.type = TL_CLICMD_PKT_TYPE;
-
-  HW_IPCC_ZIGBEE_SendCliCmd();
-
-  return;
-}
-
+/* Send an ACK to the M0 */
 void TL_ZIGBEE_SendAckAfterAppliNotifFromM0 ( void )
 {
   ((TL_CmdPacket_t *)(TL_RefTable.p_zigbee_table->notifM0toM4_buffer))->cmdserial.type = TL_OTACK_PKT_TYPE;
@@ -389,15 +379,7 @@ void TL_ZIGBEE_SendAckAfterAppliNotifFromM0 ( void )
   return;
 }
 
-void TL_ZIGBEE_SendAckAfterCliNotifFromM0 ( void )
-{
-  ((TL_CmdPacket_t *)(TL_RefTable.p_zigbee_table->notifM0toM4_buffer))->cmdserial.type = TL_OTACK_PKT_TYPE;
-
-  HW_IPCC_ZIGBEE_SendCliCmdAck();
-
-  return;
-}
-
+/* Used to receive an ACK from the M0 */
 void HW_IPCC_ZIGBEE_AppliCmdNotification(void)
 {
   TL_ZIGBEE_CmdEvtReceived( (TL_EvtPacket_t*)(TL_RefTable.p_zigbee_table->appliCmdM4toM0_buffer) );
@@ -405,6 +387,7 @@ void HW_IPCC_ZIGBEE_AppliCmdNotification(void)
   return;
 }
 
+/* Zigbee callback */
 void HW_IPCC_ZIGBEE_AppliAsyncEvtNotification( void )
 {
   TL_ZIGBEE_NotReceived( (TL_EvtPacket_t*)(TL_RefTable.p_zigbee_table->notifM0toM4_buffer) );
@@ -412,17 +395,8 @@ void HW_IPCC_ZIGBEE_AppliAsyncEvtNotification( void )
   return;
 }
 
-void HW_IPCC_ZIGBEE_CliEvtNotification( void )
-{
-  TL_ZIGBEE_CliNotReceived( (TL_EvtPacket_t*)(TL_RefTable.p_zigbee_table->cliCmdM4toM0_buffer) );
-
-  return;
-}
-
 __weak void TL_ZIGBEE_CmdEvtReceived( TL_EvtPacket_t * Otbuffer  ){};
 __weak void TL_ZIGBEE_NotReceived( TL_EvtPacket_t * Notbuffer ){};
-__weak void TL_ZIGBEE_CliNotReceived( TL_EvtPacket_t * Notbuffer ){};
-
 #endif
 
 

@@ -26,7 +26,7 @@
 #include "bls_app.h"
 #include "ble.h"
 #include "app_ble.h"
-#include "scheduler.h"
+#include "stm32_seq.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -152,7 +152,7 @@ static void BLSAPP_UpdateMeasurement( void )
    * The background is the only place where the application can make sure a new aci command
    * is not sent if there is a pending one
    */
-  SCH_SetTask( 1<<CFG_TASK_BLS_MEAS_REQ_ID,CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_BLS_MEAS_REQ_ID,CFG_SCH_PRIO_0);
 
   return;
 }
@@ -164,7 +164,7 @@ static void BLSAPP_UpdateIntCuffPressure( void )
    * The background is the only place where the application can make sure a new aci command
    * is not sent if there is a pending one
    */
-  SCH_SetTask( 1<<CFG_TASK_BLS_INT_CUFF_PRESSURE_REQ_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_BLS_INT_CUFF_PRESSURE_REQ_ID, CFG_SCH_PRIO_0);
 
   return;
 }
@@ -371,8 +371,8 @@ void BLS_App_Notification(BLS_App_Notification_evt_t *pNotification)
 
 void BLSAPP_Init(void)
 {
-  SCH_RegTask( CFG_TASK_BLS_MEAS_REQ_ID, BLSAPP_Measurement );
-  SCH_RegTask( CFG_TASK_BLS_INT_CUFF_PRESSURE_REQ_ID, BLSAPP_IntCuffPressure );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_BLS_MEAS_REQ_ID, UTIL_SEQ_RFU, BLSAPP_Measurement );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_BLS_INT_CUFF_PRESSURE_REQ_ID, UTIL_SEQ_RFU, BLSAPP_IntCuffPressure );
 
   /**
    * Initialise Flags

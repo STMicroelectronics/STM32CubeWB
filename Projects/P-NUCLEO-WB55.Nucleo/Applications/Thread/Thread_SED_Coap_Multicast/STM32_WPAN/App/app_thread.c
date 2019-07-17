@@ -1,8 +1,8 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    app_thread.c
- * @author  MCD Application Team
- * @brief   Thread Application
+ * File Name          : App/app_thread.c
+ * Description        : Thread Application.
  ******************************************************************************
  * @attention
  *
@@ -12,17 +12,16 @@
  * This software component is licensed by ST under Ultimate Liberty license
  * SLA0044, the "License"; You may not use this file except in compliance with
  * the License. You may obtain a copy of the License at:
- *                     www.st.com/SLA0044
+ *                             www.st.com/SLA0044
  *
  ******************************************************************************
  */
-
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "utilities_common.h"
 #include "app_entry.h"
-#include "scheduler.h"
 #include "dbg_trace.h"
 #include "app_thread.h"
 #include "stm32wbxx_core_interface_def.h"
@@ -30,20 +29,37 @@
 #include "shci.h"
 #include "stm_logging.h"
 #include "app_conf.h"
-#include "lpm.h"
+#include "stm32_lpm.h"
+#include "stm32_seq.h"
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #include "vcp.h"
 #include "vcp_conf.h"
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
+/* Private includes -----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
 /* Private defines -----------------------------------------------------------*/
 #define C_SIZE_CMD_STRING   256U
 #define C_PANID             0x2222U
 #define C_CHANNEL_NB        12U
+/* USER CODE BEGIN PD */
 #define C_RESSOURCE         "light"
-
 #define COAP_SEND_TIMEOUT                     (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
 #define THREAD_CHANGE_MODE_TIMEOUT            (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
+/* USER CODE END PD */
+
+/* Private macros ------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
 
 /* Private function prototypes -----------------------------------------------*/
 static void APP_THREAD_CheckWirelessFirmwareInfo(void);
@@ -56,11 +72,19 @@ static void HostTxCb( void );
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
+#if (CFG_HW_LPUART1_ENABLED == 1)
+extern void MX_LPUART1_UART_Init(void);
+#endif
+#if (CFG_HW_USART1_ENABLED == 1)
+extern void MX_USART1_UART_Init(void);
+#endif
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 static uint32_t ProcessCmdString(uint8_t* buf , uint32_t len);
 #else
 static void RxCpltCallback(void);
 #endif
+
+/* USER CODE BEGIN PFP */
 static void APP_THREAD_SendCoapMsg(void);
 static void APP_THREAD_SendCoapMulticastRequest(uint8_t command);
 static void APP_THREAD_DummyReqHandler(void            * p_context,
@@ -74,7 +98,7 @@ static void APP_THREAD_SetSleepyEndDeviceMode(void);
 
 static void APP_THREAD_CoapTimingElapsed( void );
 static void APP_THREAD_SetThreadMode( void );
-
+/* USER CODE END PFP */
 
 /* Private variables -----------------------------------------------*/
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -84,19 +108,20 @@ static uint8_t VcpTxBuffer[sizeof(TL_EvtPacket_t) + 254U]; /* Transmit buffer ov
 #else
 static uint8_t aRxBuffer[C_SIZE_CMD_STRING];
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
+
 static uint8_t CommandString[C_SIZE_CMD_STRING];
 static __IO uint16_t indexReceiveChar = 0;
 static __IO uint16_t CptReceiveCmdFromUser = 0;
 
 static TL_CmdPacket_t *p_thread_otcmdbuffer;
 static TL_EvtPacket_t *p_thread_notif_M0_to_M4;
-static __IO uint32_t  CptReceiveMsgFromM0 = 0; /* Debug counter */
-
+static __IO uint32_t  CptReceiveMsgFromM0 = 0;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
 
+/* USER CODE BEGIN PV */
 static otCoapResource OT_Ressource = {C_RESSOURCE, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapRequestHandler, NULL};
 static otMessageInfo OT_MessageInfo = {0};
 static uint8_t OT_Command = 0;
@@ -110,18 +135,18 @@ static uint32_t DebugCoapCpt = 0;
 
 static uint8_t sedCoapTimerID;
 static uint8_t setThreadModeTimerID;
+/* USER CODE END PV */
 
 /* Functions Definition ------------------------------------------------------*/
 
-/**
- * @brief  Main entry point for the Thread Application
- * @param  none
- * @retval None
- */
 void APP_THREAD_Init( void )
 {
+  /* USER CODE BEGIN APP_THREAD_INIT_1 */
+
+  /* USER CODE END APP_THREAD_INIT_1 */
+
   SHCI_CmdStatus_t ThreadInitStatus;
-  
+
   /* Check the compatibility with the Coprocessor Wireless Firmware loaded */
   APP_THREAD_CheckWirelessFirmwareInfo();
 
@@ -135,7 +160,7 @@ void APP_THREAD_Init( void )
   /**
    * Do not allow standby in the application
    */
-  LPM_SetOffMode(1 << CFG_LPM_APP, LPM_OffMode_Dis);
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_THREAD, UTIL_LPM_DISABLE);
 
   /* Init config buffer and call TL_THREAD_Init */
   APP_THREAD_TL_THREAD_INIT();
@@ -146,16 +171,21 @@ void APP_THREAD_Init( void )
   /* Send Thread start system cmd to M0 */
   ThreadInitStatus = SHCI_C2_THREAD_Init();
 
+  /* Prevent unused argument(s) compilation warning */
   UNUSED(ThreadInitStatus);
+
   /* Register task */
   /* Create the different tasks */
-  SCH_RegTask((uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, APP_THREAD_ProcessMsgM0ToM4);
-  SCH_RegTask((uint32_t)CFG_TASK_COAP_SEND_MSG,APP_THREAD_SendCoapMsg);
-  SCH_RegTask((uint32_t)CFG_TASK_SET_THREAD_MODE,APP_THREAD_SetSleepyEndDeviceMode);
-
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
+  /* USER CODE BEGIN INIT TASKS */
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_COAP_SEND_MSG, UTIL_SEQ_RFU,APP_THREAD_SendCoapMsg);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_SET_THREAD_MODE, UTIL_SEQ_RFU,APP_THREAD_SetSleepyEndDeviceMode);
+  /* USER CODE END INIT TASKS */
+  
   /* Initialize and configure the Thread device*/
   APP_THREAD_DeviceConfig();
 
+  /* USER CODE BEGIN APP_THREAD_INIT_2 */
   /**
    * Create timer to handle COAP request sending
    */
@@ -165,108 +195,79 @@ void APP_THREAD_Init( void )
    * Create timer to change Thread Mode to SED
    */
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &setThreadModeTimerID, hw_ts_SingleShot, APP_THREAD_SetThreadMode);
-
+  /* USER CODE END APP_THREAD_INIT_2 */
 }
 
 /**
-  * @brief  Trace the error or the warning reported.
-  * @param  ErrId :
-  * @param  ErrCode :
-  * @retval None
-  */
-void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
-{
-  switch(ErrId)
-  {
-    case ERR_REC_MULTI_MSG_FROM_M0 :
-      APP_THREAD_TraceError("ERROR : ERR_REC_MULTI_MSG_FROM_M0 ",ErrCode);
-      break;
-    case ERR_THREAD_SET_STATE_CB :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_STATE_CB ",ErrCode);
-      break;
-    case ERR_THREAD_SET_CHANNEL :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_CHANNEL ",ErrCode);
-      break;
-    case ERR_THREAD_SET_PANID :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_PANID ",ErrCode);
-      break;
-    case ERR_THREAD_IPV6_ENABLE :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_IPV6_ENABLE ",ErrCode);
-      break;
-    case ERR_THREAD_COAP_START :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_START ",ErrCode);
-      break;
-    case ERR_THREAD_COAP_ADD_RESSOURCE :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_ADD_RESSOURCE ",ErrCode);
-      break;
-    case ERR_THREAD_MESSAGE_READ :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_MESSAGE_READ ",ErrCode);
-      break;
-    case ERR_THREAD_COAP_SEND_RESPONSE :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_SEND_RESPONSE ",ErrCode);
-      break;
-    case ERR_THREAD_COAP_APPEND :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_APPEND ",ErrCode);
-      break;
-    case ERR_THREAD_COAP_SEND_REQUEST :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_SEND_REQUEST ",ErrCode);
-      break;
-    case ERR_TIMER_INIT :
-      APP_THREAD_TraceError("ERROR : ERR_TIMER_INIT ",ErrCode);
-      break;
-    case ERR_TIMER_START :
-      APP_THREAD_TraceError("ERROR : ERR_TIMER_START ",ErrCode);
-      break;
-    case ERR_THREAD_CHECK_WIRELESS :
-      APP_THREAD_TraceError("ERROR : ERR_THREAD_CHECK_WIRELESS ",ErrCode);
-      break;
-    default :
-      APP_THREAD_TraceError("ERROR Unknown\n",0);
-      break;
-  }
-}
-
-/**
- * @brief Process associated to the sending of a COAP request.
- * @param  None
+ * @brief  Trace the error or the warning reported.
+ * @param  ErrId :
+ * @param  ErrCode
  * @retval None
  */
-static void APP_THREAD_SendCoapMsg(void)
+void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
 {
-  APP_THREAD_SendCoapMulticastRequest(1);
-}
+  /* USER CODE BEGIN APP_THREAD_Error_1 */
 
-static void APP_THREAD_CoapTimingElapsed( void )
-{
-  otDeviceRole role;
-
-  role = otThreadGetDeviceRole(NULL);
-
-  if ((role == OT_DEVICE_ROLE_CHILD) || (role == OT_DEVICE_ROLE_ROUTER))
+  /* USER CODE END APP_THREAD_Error_1 */
+  switch(ErrId)
   {
-    if (sleepyEndDeviceFlag == TRUE)
-    {
-      SCH_SetTask(TASK_COAP_SEND_MSG,CFG_SCH_PRIO_1);
-    }
+  case ERR_REC_MULTI_MSG_FROM_M0 :
+    APP_THREAD_TraceError("ERROR : ERR_REC_MULTI_MSG_FROM_M0 ",ErrCode);
+    break;
+  case ERR_THREAD_SET_STATE_CB :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_STATE_CB ",ErrCode);
+    break;
+  case ERR_THREAD_SET_CHANNEL :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_CHANNEL ",ErrCode);
+    break;
+  case ERR_THREAD_SET_PANID :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_PANID ",ErrCode);
+    break;
+  case ERR_THREAD_IPV6_ENABLE :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_IPV6_ENABLE ",ErrCode);
+    break;
+  case ERR_THREAD_START :
+    APP_THREAD_TraceError("ERROR: ERR_THREAD_START ", ErrCode);
+    break;
+  case ERR_THREAD_ERASE_PERSISTENT_INFO :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_ERASE_PERSISTENT_INFO ",ErrCode);
+    break;
+  case ERR_THREAD_CHECK_WIRELESS :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_CHECK_WIRELESS ",ErrCode);
+    break;
+  /* USER CODE BEGIN APP_THREAD_Error_2 */
+  case ERR_THREAD_COAP_START :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_START ",ErrCode);
+    break;
+  case ERR_THREAD_COAP_ADD_RESSOURCE :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_ADD_RESSOURCE ",ErrCode);
+    break;
+  case ERR_THREAD_MESSAGE_READ :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_MESSAGE_READ ",ErrCode);
+    break;
+  case ERR_THREAD_COAP_SEND_RESPONSE :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_SEND_RESPONSE ",ErrCode);
+    break;
+  case ERR_THREAD_COAP_APPEND :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_APPEND ",ErrCode);
+    break;
+  case ERR_THREAD_COAP_SEND_REQUEST :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_SEND_REQUEST ",ErrCode);
+    break;
+  case ERR_TIMER_INIT :
+    APP_THREAD_TraceError("ERROR : ERR_TIMER_INIT ",ErrCode);
+    break;
+  case ERR_TIMER_START :
+    APP_THREAD_TraceError("ERROR : ERR_TIMER_START ",ErrCode);
+    break;
+  /* USER CODE END APP_THREAD_Error_2 */
+  default :
+    APP_THREAD_TraceError("ERROR Unknown ", 0);
+    break;
   }
 }
 
-static void APP_THREAD_SetThreadMode( void )
-{
-  SCH_SetTask(TASK_SET_THREAD_MODE,CFG_SCH_PRIO_1);
-}
 
-/**
-  * @brief Dummy request handler
-  * @param
-  * @retval None
-  */
-static void APP_THREAD_DummyReqHandler(void    * p_context,
-                           otCoapHeader        * pHeader,
-                           otMessage           * pMessage,
-                           const otMessageInfo * pMessageInfo)
-{
-}
 
 
 /*************************************************************
@@ -277,26 +278,12 @@ static void APP_THREAD_DummyReqHandler(void    * p_context,
 
 /**
  * @brief Thread initialization.
- *        This function configure the Thread mesh network.
- *
- *        It sets the following parameters :
- *        - call back (used to notify state change)
- *        - channel Id
- *        - panId
- *        and enable
- *        - IPV6
- *        - Thread
- *        - Coap
- *
  * @param  None
  * @retval None
  */
 static void APP_THREAD_DeviceConfig(void)
 {
   otError error;
-
-
-  /* Configure the call-back in order to be notified when the device change its state */
   error = otInstanceErasePersistentInfo(NULL);
   if (error != OT_ERROR_NONE)
   {
@@ -309,31 +296,28 @@ static void APP_THREAD_DeviceConfig(void)
   {
     APP_THREAD_Error(ERR_THREAD_SET_STATE_CB,error);
   }
-  /* Set the channel */
   error = otLinkSetChannel(NULL, C_CHANNEL_NB);
   if (error != OT_ERROR_NONE)
   {
     APP_THREAD_Error(ERR_THREAD_SET_CHANNEL,error);
   }
-  /* Set the pandId */
   error = otLinkSetPanId(NULL, C_PANID);
   if (error != OT_ERROR_NONE)
   {
     APP_THREAD_Error(ERR_THREAD_SET_PANID,error);
   }
-  /* Activate IPV6 */
   error = otIp6SetEnabled(NULL, true);
   if (error != OT_ERROR_NONE)
   {
-   APP_THREAD_Error(ERR_THREAD_IPV6_ENABLE,error);
+    APP_THREAD_Error(ERR_THREAD_IPV6_ENABLE,error);
   }
-
-  /* Start Thread */
   error = otThreadSetEnabled(NULL, true);
   if (error != OT_ERROR_NONE)
   {
     APP_THREAD_Error(ERR_THREAD_START,error);
   }
+
+  /* USER CODE BEGIN DEVICECONFIG */
   /* Start the COAP server */
   error = otCoapStart(NULL, OT_DEFAULT_COAP_PORT);
   if (error != OT_ERROR_NONE)
@@ -346,7 +330,140 @@ static void APP_THREAD_DeviceConfig(void)
   {
     APP_THREAD_Error(ERR_THREAD_COAP_ADD_RESSOURCE,error);
   }
+  /* USER CODE END DEVICECONFIG */
 }
+
+/**
+ * @brief Thread notification when the state changes.
+ * @param  aFlags  : Define the item that has been modified
+ *         aContext: Context
+ *
+ * @retval None
+ */
+static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(pContext);
+
+  /* USER CODE BEGIN APP_THREAD_STATENOTIF */
+
+  /* USER CODE END APP_THREAD_STATENOTIF */
+
+  if ((NotifFlags & (uint32_t)OT_CHANGED_THREAD_ROLE) == (uint32_t)OT_CHANGED_THREAD_ROLE)
+  {
+    switch (otThreadGetDeviceRole(NULL))
+    {
+    case OT_DEVICE_ROLE_DISABLED:
+      /* USER CODE BEGIN OT_DEVICE_ROLE_DISABLED */
+      BSP_LED_Off(LED2);
+      BSP_LED_Off(LED3);
+      /* USER CODE END OT_DEVICE_ROLE_DISABLED */
+      break;
+    case OT_DEVICE_ROLE_DETACHED:
+      /* USER CODE BEGIN OT_DEVICE_ROLE_DETACHED */
+      BSP_LED_Off(LED2);
+      BSP_LED_Off(LED3);
+      /* USER CODE END OT_DEVICE_ROLE_DETACHED */
+      break;
+    case OT_DEVICE_ROLE_CHILD:
+      /* USER CODE BEGIN OT_DEVICE_ROLE_CHILD */
+      BSP_LED_Off(LED2);
+      BSP_LED_On(LED3);
+      /* Set the mode sleepy end device */
+      /* Start the timer */
+      HW_TS_Start(setThreadModeTimerID, (uint32_t)THREAD_CHANGE_MODE_TIMEOUT);
+      /* USER CODE END OT_DEVICE_ROLE_CHILD */
+      break;
+    case OT_DEVICE_ROLE_ROUTER :
+      /* USER CODE BEGIN OT_DEVICE_ROLE_ROUTER */
+      BSP_LED_Off(LED2);
+      BSP_LED_On(LED3);
+      /* Set the mode sleepy end device */
+      /* Start the timer */
+      HW_TS_Start(setThreadModeTimerID, (uint32_t)THREAD_CHANGE_MODE_TIMEOUT);
+      /* USER CODE END OT_DEVICE_ROLE_ROUTER */
+      break;
+    case OT_DEVICE_ROLE_LEADER :
+      /* USER CODE BEGIN OT_DEVICE_ROLE_LEADER */
+      BSP_LED_On(LED2);
+      BSP_LED_Off(LED3);
+      /* USER CODE END OT_DEVICE_ROLE_LEADER */
+      break;
+    default:
+      /* USER CODE BEGIN DEFAULT */
+      BSP_LED_Off(LED2);
+      BSP_LED_Off(LED3);
+      /* USER CODE END DEFAULT */
+      break;
+    }
+  }
+}
+
+/**
+ * @brief  Warn the user that an error has occurred.In this case,
+ *         the LEDs on the Board will start blinking.
+ *
+ * @param  pMess  : Message associated to the error.
+ * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
+ * @retval None
+ */
+static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
+{
+  /* USER CODE BEGIN TRACE_ERROR */
+  APP_DBG("**** Fatal error = %s (Err = %d)", pMess, ErrCode);
+  while(1U == 1U)
+  {
+    /* Note : Can be replace by HAL_Delay with timer to toggle LEDs */
+    BSP_LED_On(LED1);
+    BSP_LED_On(LED2);
+    BSP_LED_On(LED3);
+  }
+  /* USER CODE END TRACE_ERROR */
+}
+
+/**
+ * @brief Check if the Coprocessor Wireless Firmware loaded supports Thread
+ *        and display associated informations
+ * @param  None
+ * @retval None
+ */
+static void APP_THREAD_CheckWirelessFirmwareInfo(void)
+{
+  WirelessFwInfo_t wireless_info_instance;
+  WirelessFwInfo_t* p_wireless_info = &wireless_info_instance;
+
+  if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success)
+  {
+    APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
+  }
+  else
+  {
+    APP_DBG("**********************************************************");
+    APP_DBG("WIRELESS COPROCESSOR FW:");
+    /* Print version */
+    APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
+
+    switch(p_wireless_info->StackType)
+    {
+    case INFO_STACK_TYPE_THREAD_FTD :
+      APP_DBG("FW Type : Thread FTD");
+      break;
+    case INFO_STACK_TYPE_THREAD_MTD :
+      APP_DBG("FW Type : Thread MTD");
+      break;
+    case INFO_STACK_TYPE_BLE_THREAD_FTD_STATIC :
+      APP_DBG("FW Type : Static Concurrent Mode BLE/Thread");
+      break;
+    default :
+      /* No Thread device supported ! */
+      APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
+      break;
+    }
+    APP_DBG("**********************************************************");
+  }
+}
+
+/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 
 /**
  * @brief This function is used to set the sleepyEndDevice mode
@@ -510,124 +627,47 @@ static void APP_THREAD_SendCoapMulticastRequest(uint8_t command)
 }
 
 /**
- * @brief Thread notification when the state changes.
- *        When the Thread device change state, a specific LED
- *        color is being displayed.
- *        LED2 On (Green) means that the device is in "Leader" mode.
- *        LED3 On (Red) means that the device is in "Child: mode or
- *         in "Router" mode.
- *        LED2 and LED3 off means that the device is in "Disabled"
- *         or "Detached" mode.
- *
- * @param  aFlags  : Define the item that has been modified
- *         aContext: Context
- *
- * @retval None
- */
-static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
-{
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(pContext);
-  if ((NotifFlags & (uint32_t)OT_CHANGED_THREAD_ROLE) == (uint32_t)OT_CHANGED_THREAD_ROLE)
-  {
-    switch (otThreadGetDeviceRole(NULL))
-    {
-      case OT_DEVICE_ROLE_DISABLED:
-        BSP_LED_Off(LED2);
-        BSP_LED_Off(LED3);
-        break;
-      case OT_DEVICE_ROLE_DETACHED:
-        BSP_LED_Off(LED2);
-        BSP_LED_Off(LED3);
-        break;
-      case OT_DEVICE_ROLE_CHILD:
-        BSP_LED_Off(LED2);
-        BSP_LED_On(LED3);
-        /* Set the mode sleepy end device */
-        /* Start the timer */
-        HW_TS_Start(setThreadModeTimerID, (uint32_t)THREAD_CHANGE_MODE_TIMEOUT);
-        break;
-      case OT_DEVICE_ROLE_ROUTER :
-        BSP_LED_Off(LED2);
-        BSP_LED_On(LED3);
-        /* Set the mode sleepy end device */
-        /* Start the timer */
-        HW_TS_Start(setThreadModeTimerID, (uint32_t)THREAD_CHANGE_MODE_TIMEOUT);
-        break;
-      case OT_DEVICE_ROLE_LEADER :
-        BSP_LED_On(LED2);
-        BSP_LED_Off(LED3);
-        break;
-      default:
-        BSP_LED_Off(LED2);
-        BSP_LED_Off(LED3);
-        break;
-    }
-  }
-}
-
-/**
-  * @brief  Warn the user that an error has occurred.In this case,
-  *         the LEDs on the Board will start blinking.
-  *
-  * @param  mess  : Message associated to the error.
- * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
-  * @retval None
-  */
-static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
-{
-  APP_DBG("**** Fatal error = %s (Err = %d)",pMess,ErrCode);
-
-  while(1U == 1U)
-  {
-    /* Note : Can be replace by HAL_Delay with timer to toggle LEDs */
-    BSP_LED_On(LED1);
-    BSP_LED_On(LED2);
-    BSP_LED_On(LED3);
-  }
-}
-
-/**
- * @brief Check if the Coprocessor Wireless Firmware loaded supports Thread
- *        and display associated informations
+ * @brief Process associated to the sending of a COAP request.
  * @param  None
  * @retval None
  */
-static void APP_THREAD_CheckWirelessFirmwareInfo(void)
+static void APP_THREAD_SendCoapMsg(void)
 {
-  WirelessFwInfo_t wireless_info_instance;
-  WirelessFwInfo_t* p_wireless_info = &wireless_info_instance;
+  APP_THREAD_SendCoapMulticastRequest(1);
+}
 
-  if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success)
-  {
-    APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
-  }
-  else
-  {
-    APP_DBG("**********************************************************");
-    APP_DBG("WIRELESS COPROCESSOR FW:");
-    /* Print version */
-    APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
+static void APP_THREAD_CoapTimingElapsed( void )
+{
+  otDeviceRole role;
 
-    switch(p_wireless_info->StackType)
+  role = otThreadGetDeviceRole(NULL);
+
+  if ((role == OT_DEVICE_ROLE_CHILD) || (role == OT_DEVICE_ROLE_ROUTER))
+  {
+    if (sleepyEndDeviceFlag == TRUE)
     {
-    case INFO_STACK_TYPE_THREAD_FTD :
-      APP_DBG("FW Type : Thread FTD");
-      break;
-    case INFO_STACK_TYPE_THREAD_MTD :
-      APP_DBG("FW Type : Thread MTD");
-      break;
-    case INFO_STACK_TYPE_BLE_THREAD_FTD_STATIC :
-      APP_DBG("FW Type : Static Concurrent Mode BLE/Thread");
-      break;
-    default :
-      /* No Thread device supported ! */
-      APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
-      break;
+      UTIL_SEQ_SetTask(TASK_COAP_SEND_MSG,CFG_SCH_PRIO_1);
     }
-    APP_DBG("**********************************************************");
   }
 }
+
+static void APP_THREAD_SetThreadMode( void )
+{
+  UTIL_SEQ_SetTask(TASK_SET_THREAD_MODE,CFG_SCH_PRIO_1);
+}
+
+/**
+  * @brief Dummy request handler
+  * @param
+  * @retval None
+  */
+static void APP_THREAD_DummyReqHandler(void    * p_context,
+                           otCoapHeader        * pHeader,
+                           otMessage           * pMessage,
+                           const otMessageInfo * pMessageInfo)
+{
+}
+/* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
  *
@@ -639,7 +679,6 @@ void APP_THREAD_RegisterCmdBuffer(TL_CmdPacket_t* p_buffer)
 {
   p_thread_otcmdbuffer = p_buffer;
 }
-
 
 Thread_OT_Cmd_Request_t* THREAD_Get_OTCmdPayloadBuffer(void)
 {
@@ -706,54 +745,51 @@ void TL_THREAD_NotReceived( TL_EvtPacket_t * Notbuffer )
 }
 
 /**
-  * @brief  This function is called before sending any ot command to the M0
-  *         core. The purpose of this function is to be able to check if
-  *         there are no notifications coming from the M0 core which are
-  *         pending before sending a new ot command.
-  * @param  None
-  * @retval None
-  */
+ * @brief  This function is called before sending any ot command to the M0
+ *         core. The purpose of this function is to be able to check if
+ *         there are no notifications coming from the M0 core which are
+ *         pending before sending a new ot command.
+ * @param  None
+ * @retval None
+ */
 void Pre_OtCmdProcessing(void)
 {
-#ifdef CFG_LPM_CORE
-#else
-    SCH_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
-#endif /* CFG_LPM_CORE */
+  UTIL_SEQ_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
 }
 
 /**
-  * @brief  This function waits for getting an acknowledgment from the M0.
-  *
-  * @param  None
-  * @retval None
-  */
+ * @brief  This function waits for getting an acknowledgment from the M0.
+ *
+ * @param  None
+ * @retval None
+ */
 static void Wait_Getting_Ack_From_M0(void)
 {
-  SCH_WaitEvt(EVENT_ACK_FROM_M0_EVT);
+  UTIL_SEQ_WaitEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
-  * @brief  Receive an acknowledgment from the M0+ core.
-  *         Each command send by the M4 to the M0 are acknowledged.
-  *         This function is called under interrupt.
-  * @param  None
-  * @retval None
-  */
+ * @brief  Receive an acknowledgment from the M0+ core.
+ *         Each command send by the M4 to the M0 are acknowledged.
+ *         This function is called under interrupt.
+ * @param  None
+ * @retval None
+ */
 static void Receive_Ack_From_M0(void)
 {
-  SCH_SetEvt(EVENT_ACK_FROM_M0_EVT);
+  UTIL_SEQ_SetEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
-  * @brief  Receive a notification from the M0+ through the IPCC.
-  *         This function is called under interrupt.
-  * @param  None
-  * @retval None
-  */
+ * @brief  Receive a notification from the M0+ through the IPCC.
+ *         This function is called under interrupt.
+ * @param  None
+ * @retval None
+ */
 static void Receive_Notification_From_M0(void)
 {
   CptReceiveMsgFromM0++;
-  SCH_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
 }
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -769,12 +805,12 @@ static void RxCpltCallback(void)
       CptReceiveCmdFromUser = 1U;
 
       /* UART task scheduling*/
-      SCH_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
+      UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
     }
   }
 
   /* Once a character has been sent, put back the device in reception mode */
-  HW_UART_Receive_IT(UART_CLI, aRxBuffer, 1U, RxCpltCallback);
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
 }
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
@@ -802,9 +838,7 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
   {
     memcpy(CommandString, buf,(i+1));
     indexReceiveChar = i + 1U; /* Length of the buffer containing the command string */
-
-    SCH_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
-
+    UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
     tmp_start = i;
     for (j = 0; j < (len - tmp_start - 1U) ; j++)
     {
@@ -859,11 +893,11 @@ static void Send_CLI_Ack_For_OT(void)
  */
 void APP_THREAD_Init_UART_CLI(void)
 {
-  SCH_RegTask(CFG_TASK_SEND_CLI_TO_M0,Send_CLI_To_M0);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU,Send_CLI_To_M0);
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
-  HW_UART_Init(UART_CLI);
-  HW_UART_Receive_IT(UART_CLI, aRxBuffer, 1, RxCpltCallback);
+  MX_USART1_UART_Init();
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 }
 
@@ -899,7 +933,7 @@ void TL_THREAD_CliNotReceived( TL_EvtPacket_t * Notbuffer )
 #if (CFG_USB_INTERFACE_ENABLE != 0)
     VCP_SendData( l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
 #else
-    HW_UART_Transmit_IT(UART_CLI, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
+    HW_UART_Transmit_IT(CFG_CLI_UART, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
 #endif /*USAGE_OF_VCP */
   }
   else
@@ -983,4 +1017,7 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
 }
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
+/* USER CODE BEGIN FD_WRAP_FUNCTIONS */
+
+/* USER CODE END FD_WRAP_FUNCTIONS */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

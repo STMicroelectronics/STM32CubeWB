@@ -1,30 +1,44 @@
-/*
+/**
 *****************************************************************************
 **
-
-**  File        : LinkerScript.ld
+**  File        : stm32wb55xx_flash_cm4.ld
 **
-**  Abstract    : Linker script for STM32WB55RGVx Device with
-**                512KByte FLASH, 222KByte RAM
+**  Abstract    : System Workbench Minimal System calls file
 **
-**                Set heap size, stack size and stack location according
-**                to application requirements.
+** 		          For more information about which c-functions
+**                need which of these lowlevel functions
+**                please consult the Newlib libc-manual
 **
-**                Set memory bank area and size if external memory is used.
+**  Environment : System Workbench for MCU
 **
-**  Target      : STMicroelectronics STM32
-**
-**
-**  Distribution: The file is distributed as is, without any warranty
+**  Distribution: The file is distributed “as is,” without any warranty
 **                of any kind.
 **
-**  (c)Copyright Ac6.
-**  You may use this file as-is or modify it according to the needs of your
-**  project. Distribution of this file (unmodified or modified) is not
-**  permitted. Ac6 permit registered System Workbench for MCU users the
-**  rights to distribute the assembled, compiled & linked contents of this
-**  file as part of an application binary file, provided that it is built
-**  using the System Workbench for MCU toolchain.
+*****************************************************************************
+**
+** <h2><center>&copy; COPYRIGHT(c) 2019 Ac6</center></h2>
+**
+** Redistribution and use in source and binary forms, with or without modification,
+** are permitted provided that the following conditions are met:
+**   1. Redistributions of source code must retain the above copyright notice,
+**      this list of conditions and the following disclaimer.
+**   2. Redistributions in binary form must reproduce the above copyright notice,
+**      this list of conditions and the following disclaimer in the documentation
+**      and/or other materials provided with the distribution.
+**   3. Neither the name of Ac6 nor the names of its contributors
+**      may be used to endorse or promote products derived from this software
+**      without specific prior written permission.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+** DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+** FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+** DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+** SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+** CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+** OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **
 *****************************************************************************
 */
@@ -36,13 +50,13 @@ ENTRY(Reset_Handler)
 _estack = 0x20030000;    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0x400;      /* required amount of heap  */
-_Min_Stack_Size = 0x1000;   /* required amount of stack */
+_Min_Stack_Size = 0x1000; /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
 {
 FLASH (rx)                 : ORIGIN = 0x08000000, LENGTH = 512K
-RAM1 (xrw)                 : ORIGIN = 0x20000004, LENGTH = 191K
+RAM1 (xrw)                 : ORIGIN = 0x20000004, LENGTH = 0x2FFFC
 RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K
 }
 

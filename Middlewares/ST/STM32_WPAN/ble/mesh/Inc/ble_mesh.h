@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    ble_mesh.h
 * @author  BLE Mesh Team
-* @version V1.09.000
-* @date    15-Oct-2018
+* @version V1.10.000
+* @date    15-Jan-2019
 * @brief   Header file for the BLE-Mesh stack 
 ******************************************************************************
 * @attention
@@ -45,11 +45,11 @@
 
 #include "types.h"
 
-#define BLE_MESH_APPLICATION_VERSION "1.09.000"
+#define BLE_MESH_APPLICATION_VERSION "1.10.000"
 /**
 * \mainpage ST BLE-Mesh Solutions Bluetooth LE Mesh Library
 *
-* \version 1.08.000
+* \version 1.10.000
 *
 * \subsection contents_sec Contents
 *
@@ -110,7 +110,6 @@
 * Please refer to the desript
 */
 #include <stdint.h>
-//#include "types.h"
 
 /** \brief List of status values for responses. */
 typedef enum _MOBLE_COMMAND_STATUS
@@ -184,6 +183,30 @@ typedef struct
     uint8_t staticOobSize;  /* Size of Static OOB array */
     const uint8_t *staticOob; /* Pointer to array containing Static OOB info of the device */
 } unprov_node_info_params_t;
+
+/**
+* Structure contains neighbor table initialization parameters
+*/ 
+typedef struct
+{
+    uint8_t count;
+    uint8_t aliveTime;
+    uint8_t unprvnd_dev_beacon_ntu;
+    uint8_t secure_net_beacon_ntu;
+    uint8_t msg_ttlx_ntu;
+} neighbor_table_init_params_t;
+
+/**
+* Structure contains neighbor parameters
+*/
+typedef struct
+{
+  MOBLEUINT8 bdAddr[6];
+  MOBLEBOOL   provisioned; 
+  MOBLEUINT8 uuid[16];
+  MOBLE_ADDRESS networkAddress;
+  MOBLEUINT8 rssi;
+} neighbor_params_t;
 
 /** \brief Callback map */
 typedef struct
@@ -306,60 +329,11 @@ typedef struct
   * This function is a callback to get status opcode form the received opcode 
   * from client side.
   * \param[in] Pointer to get the opcode table address
-  * \param[in] lenght of the opcode.
+  * \param[in] length of the opcode.
   * \return MOBLE_RESULT_SUCCESS on success.
   */
-  MOBLE_RESULT (*GenericGetOpcodeTableCb)(const MODEL_OpcodeTableParam_t **data, 
-                                    MOBLEUINT16 *length);
-   
-  /** \brief get message/status message process callback
-  * This function called when there will acknowleged message received or Get message is
-  * is received to get the status of the message.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
-  * \param[in] opcode to be processed
-  * \param[in] data Data buffer. to be sent back in status
-  * \param[in] length Data buffer length in bytes.
-  * \param[in] response Flag if response is required.
-  * \return MOBLE_RESULT_SUCCESS on success.
-  */ 
-  MOBLE_RESULT (*GenericGetRequestCb)(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
-                                    MOBLEUINT16 opcode, 
-                                    MOBLEUINT8 *data, 
-                                    MOBLEUINT32 *length, 
-                                    MOBLEBOOL response); 
   
-  /** \brief set message process callback
-  * This function called when there will set message is received.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
-  * \param[in] opcode to be processed
-  * \param[in] data Data buffer. to be sent back in status
-  * \param[in] length Data buffer length in bytes.
-  * \param[in] response Flag if response is required.
-  * \return MOBLE_RESULT_SUCCESS on success.
-  */ 
- MOBLE_RESULT (*GenericSetRequestCb)(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
-                                    MOBLEUINT16 opcode, 
-                                    MOBLEUINT8 const *data, 
-                                    MOBLEUINT32 length, 
-                                    MOBLEBOOL response);
-
-} MODEL_Generic_cb_t;
-
-/** \brief Callback map */
-typedef struct
-{
-  /** \brief Get opcode table callback.
-  * This function is a callback to get status opcode form the received opcode 
-  * from client side.
-  * \param[in] Pointer to get the opcode table address
-  * \param[in] lenght of the opcode.
-  * \return MOBLE_RESULT_SUCCESS on success.
-  */
-  MOBLE_RESULT (*LightGetOpcodeTableCb)(const MODEL_OpcodeTableParam_t **data, 
+  MOBLE_RESULT (*ModelSIG_GetOpcodeTableCb)(const MODEL_OpcodeTableParam_t **data, 
                                     MOBLEUINT16 *length);
   
   /** \brief get message/status message process callback
@@ -373,58 +347,7 @@ typedef struct
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */ 
-  MOBLE_RESULT (*LightGetRequestCb)(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
-                                    MOBLEUINT16 opcode, 
-                                    MOBLEUINT8 *data, 
-                                    MOBLEUINT32 *length, 
-                                    MOBLEBOOL response); 
-  
-  /** \brief set message process callback
-  * This function called when there will set message is received.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
-  * \param[in] opcode to be processed
-  * \param[in] data Data buffer. to be sent back in status
-  * \param[in] length Data buffer length in bytes.
-  * \param[in] response Flag if response is required.
-  * \return MOBLE_RESULT_SUCCESS on success.
-  */ 
- MOBLE_RESULT (*LightSetRequestCb)(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
-                                    MOBLEUINT16 opcode, 
-                                    MOBLEUINT8 const *data, 
-                                    MOBLEUINT32 length, 
-                                    MOBLEBOOL response);
-
-} MODEL_Light_cb_t;
-
-/** \brief Callback map */
-typedef struct
-{
-  /** \brief Get opcode table callback.
-  * This function is a callback to get status opcode form the received opcode 
-  * from client side.
-  * \param[in] Pointer to get the opcode table address
-  * \param[in] lenght of the opcode.
-  * \return MOBLE_RESULT_SUCCESS on success.
-  */
-  
-  MOBLE_RESULT (*SensorGetOpcodeTableCb)(const MODEL_OpcodeTableParam_t **data, 
-                                    MOBLEUINT16 *length);
-  
-  /** \brief get message/status message process callback
-  * This function called when there will acknowleged message received or Get message is
-  * is received to get the status of the message.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
-  * \param[in] opcode to be processed
-  * \param[in] data Data buffer. to be sent back in status
-  * \param[in] length Data buffer length in bytes.
-  * \param[in] response Flag if response is required.
-  * \return MOBLE_RESULT_SUCCESS on success.
-  */ 
-  MOBLE_RESULT (*SensorGetRequestCb)(MOBLE_ADDRESS peer_addr, 
+  MOBLE_RESULT (*ModelSIG_GetRequestCb)(MOBLE_ADDRESS peer_addr, 
                                     MOBLE_ADDRESS dst_peer, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 *data, 
@@ -443,14 +366,15 @@ typedef struct
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */ 
-  MOBLE_RESULT (*SensorSetRequestCb)(MOBLE_ADDRESS peer_addr, 
+  MOBLE_RESULT (*ModelSIG_SetRequestCb)(MOBLE_ADDRESS peer_addr, 
                                     MOBLE_ADDRESS dst_peer, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 const *data, 
                                     MOBLEUINT32 length, 
                                     MOBLEBOOL response);
 
-} MODEL_Sensor_cb_t;
+} MODEL_SIG_cb_t;
+
 
 typedef struct
 {
@@ -458,6 +382,7 @@ typedef struct
   const uint16_t dyn_buff_size;
   const uint16_t friend_lp_buff_size;
   const uint16_t max_appli_pkt_size;
+  const uint16_t neighbor_table_buff_size;
 } DynBufferParam_t;
 
 
@@ -467,7 +392,9 @@ typedef struct
   const tr_params_t* pTrParams;
   const fn_params_t* pFnParams;
   const lpn_params_t* pLpnParams;
+  const neighbor_table_init_params_t* pNeighborTableParams;
   const uint16_t features;
+  const uint8_t prvnBearer;
   const DynBufferParam_t* pDynBufferParam;
 } Mesh_Initialization_t;
 
@@ -567,26 +494,6 @@ MOBLE_RESULT BLEMesh_SendResponse(MOBLE_ADDRESS peer, MOBLE_ADDRESS dst,
                                       MOBLEUINT8 status, MOBLEUINT8 const * data, 
                                       MOBLEUINT32 length);
 
-/** \brief Generic Send response on received packet.
-* \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
-* \param[in] data Data buffer.
-* \param[in] length Length of data in bytes. Maximum accepted length is 8. 
-*             If length is zero, no associated data is sent with the report.
-* \return MOBLE_RESULT_SUCCESS on success.
-*/
-MOBLE_RESULT Generic_SendResponse(MOBLE_ADDRESS src_peer,MOBLE_ADDRESS dst_peer ,
-                                          MOBLEUINT16 opcode, MOBLEUINT32 length);  
-
-/** \brief Generic Send response on received packet.
-* \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
-* \param[in] data Data buffer.
-* \param[in] length Length of data in bytes. Maximum accepted length is 8. 
-*             If length is zero, no associated data is sent with the report.
-* \return MOBLE_RESULT_SUCCESS on success.
-*/
-MOBLE_RESULT Light_SendResponse(MOBLE_ADDRESS src_peer,MOBLE_ADDRESS dst_peer ,
-                                          MOBLEUINT16 opcode, MOBLEUINT32 length);  
-
 /** \brief Sensor Send response on received packet.
 * \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
 * \param[in] data Data buffer.
@@ -594,8 +501,8 @@ MOBLE_RESULT Light_SendResponse(MOBLE_ADDRESS src_peer,MOBLE_ADDRESS dst_peer ,
 *             If length is zero, no associated data is sent with the report.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT Sensor_SendResponse(MOBLE_ADDRESS src_peer,MOBLE_ADDRESS dst_peer ,
-                                          MOBLEUINT16 opcode, MOBLEUINT32 length , MOBLEUINT8 const *pData);  
+MOBLE_RESULT Model_SendResponse(MOBLE_ADDRESS src_peer,MOBLE_ADDRESS dst_peer ,
+                                              MOBLEUINT16 opcode,MOBLEUINT8 const *pData,MOBLEUINT32 length); 
 
 /** \brief initialize unprovisioned node to be provisioned.
 * \param None
@@ -738,44 +645,14 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason);
 */
 void BLEMesh_ProvisionCallback(void);
 
-/** \brief Set callback map.
+/** \brief Set SIG Model callback map.
 * \param[in] map callback map. If NULL, nothing is done.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_SetModelGenericCbMap(MODEL_Generic_cb_t const * map);
-
-/** \brief Set Lighting Model callback map.
-* \param[in] map callback map. If NULL, nothing is done.
-* \return MOBLE_RESULT_SUCCESS on success.
-*/
-MOBLE_RESULT BLEMesh_SetModelLightCbMap (const MODEL_Light_cb_t* map);
-
-/** \brief Set Sensor Model callback map.
-* \param[in] map callback map. If NULL, nothing is done.
-* \return MOBLE_RESULT_SUCCESS on success.
-*/
-MOBLE_RESULT BLEMesh_SetModelSensorCbMap (const MODEL_Sensor_cb_t* map);
-
-/** \brief GenericModel_Add_Server 
-* \param[in] model_id: 16bit Model Id
-* \return MOBLE_RESULT_SUCCESS on success.
-*/
-MOBLE_RESULT GenericModel_Add_Server( MOBLEUINT16 model_id);
-
-/** \brief LightModel_Add_Server 
-* \param[in] model_id: 16bit Model Id
-* \return MOBLE_RESULT_SUCCESS on success.
-*/
-MOBLE_RESULT LightModel_Add_Server( MOBLEUINT16 model_id);
-
-/** \brief SensorModel_Add_Server 
-* \param[in] model_id: 16bit Model Id
-* \return MOBLE_RESULT_SUCCESS on success.
-*/
-MOBLE_RESULT SensorModel_Add_Server (MOBLEUINT16 model_id);
+MOBLE_RESULT BLEMesh_SetSIGModelsCbMap(const MODEL_SIG_cb_t* pSig_cb, MOBLEUINT32 count);
 
 /** \brief Returns sleep duration.
-* going to sleep (or no call to BluenrgMesh_Process()) for this duration does not affect operation of mesh library
+* going to sleep (or no call to BLEMesh_Process()) for this duration does not affect operation of mesh library
 * \return Sleep duration.
 */
 MOBLEUINT32 BLEMesh_GetSleepDuration(void);
@@ -785,11 +662,18 @@ MOBLEUINT32 BLEMesh_GetSleepDuration(void);
 * \return MOBLE_RESULT_SUCCESS on success.
 */
 MOBLE_RESULT BLEMesh_UpperTesterDataProcess(MOBLEUINT8 testFunctionIndex, MOBLEUINT8* testFunctionParm);
-/** \brief Data print callback function.
-* \param[in] message: To be printed data pointer 
+
+/** \brief String print callback function.
+* \param[in] message: To be printed string pointer 
 * \return void.
 */
 void BLEMesh_PrintStringCb(const char *message);
+/** \brief Data print callback function.
+* \param[in] data: To be printed data pointer 
+* \param[in] size: Size of data to be printed data pointer 
+* \return void.
+*/
+void BLEMesh_PrintDataCb(MOBLEUINT8* data, MOBLEUINT16 size);
 
 
 /** \brief Friend node callback corresponding to friendship established with low power node.
@@ -828,6 +712,122 @@ void BLEMesh_LpnFriendshipEstablishedCallback(MOBLE_ADDRESS fnAddress);
 */
 void BLEMesh_LpnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS fnAddress);
 
+/** \brief To synchronize flash erase with sufficient available time w.r.t. next connection event.
+* \return MOBLE_TRUE if no connection exists or sufficient time is available for flash erase operation.
+*/
+MOBLEBOOL BLEMesh_IsFlashReadyToErase(void);
+
+/** \brief Stop ongoing scan (if in scan mode) and advertisement (if in adv mode).
+*/
+void BLEMesh_StopAdvScan(void);
+
+/** \brief Set adv interval of provisioning service, 0 value results in stop.
+*          Default value: 1000 ms
+* \param[in] adv interval (ms), min interval value is 100 ms
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_SetProvisioningServAdvInterval(MOBLEUINT16 interval);
+
+/** \brief Set interval of unprovisioned device beacon, 0 value results in stop.
+*          Default value: 1000 ms
+* \param[in] interval (ms) of beacons, min interval value is 100 ms
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_SetUnprovisionedDevBeaconInterval(MOBLEUINT16 interval);
+
+/** \brief Set adv interval of proxy service.
+*          Default value: 1000 ms
+* \param[in] adv interval (ms), min interval value is 1000 ms
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_SetProxyServAdvInterval(MOBLEUINT16 interval);
+
+/** \brief Set interval of secure network beacon.
+*          Default value: 10000 ms
+* \param[in] interval (ms) of beacons, min interval value is 10000 ms
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_SetSecureBeaconInterval(MOBLEUINT16 interval);
+
+/** 
+* @brief ApplicationGetSigModelList: This function provides the list of the 
+*           SIG Models to the calling function
+* @param pModels_sig_ID: Pointer of the array to be filled with SIG Models list
+* retval Count of the SIG Model Servers enabled in the Application
+*/
+MOBLEUINT8 ApplicationGetSigModelList(MOBLEUINT16* pModels_sig_ID);
+
+/** 
+* @brief ApplicationGetVendorModelList: This function provides the list of the 
+*           Vendor Models to the calling function
+* @param pModels_sig_ID: Pointer of the array to be filled with Vendor Models list
+* retval Count of the Vendor Model Servers enabled in the Application
+*/
+MOBLEUINT8 ApplicationGetVendorModelList(MOBLEUINT32* pModels_vendor_ID);
+
+/** 
+* @brief ApplicationChkSigModelActive: This function checks if a specific 
+*          Model Server is active in the Model Server list
+* @param modelID: Model Server ID received for the checking function
+* retval Bool: True or False, if the Server ID matches with the list 
+*/
+MOBLEBOOL ApplicationChkSigModelActive(MOBLEUINT16 modelID);
+
+/** 
+* @brief ApplicationChkVendorModelActive: This function checks if a specific 
+*          Model Server is active in the Vendor Model Server list
+* @param modelID: Model Server ID received for the checking function
+* retval Bool: True or False, if the Server ID matches with the list 
+*/
+MOBLEBOOL ApplicationChkVendorModelActive(MOBLEUINT32 modelID);
+
+/** \brief New neighbor appeared callback in neighbor table.
+* \param[out] MAC address of neighbor.
+* \param[out] is neighbor provisioned or unprovisioned device.
+* \param[out] uuid of neighbor. NULL if not available
+* \param[out] network address of neighbor. MOBLE_ADDRESS_UNASSIGNED if not available
+* \param[out] last updated rssi value.
+*/
+void BLEMesh_NeighborAppearedCallback(const MOBLEUINT8* bdAddr,
+                                          MOBLEBOOL provisioned,
+                                          const MOBLEUINT8* uuid,
+                                          MOBLE_ADDRESS networkAddress,
+                                          MOBLEINT8 rssi);
+
+/** \brief Existing neighbor refreshed callback in neighbor table.
+* \param[out] MAC address of neighbor.
+* \param[out] is neighbor provisioned or unprovisioned device.
+* \param[out] uuid of neighbor. NULL if not available
+* \param[out] network address of neighbor. MOBLE_ADDRESS_UNASSIGNED if not available
+* \param[out] last updated rssi value.
+*/
+void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
+                                           MOBLEBOOL provisioned,
+                                           const MOBLEUINT8* uuid,
+                                           MOBLE_ADDRESS networkAddress,
+                                           MOBLEINT8 rssi);
+
+/** \brief Get neighbor table status.
+* \param[in] pointer to application buff, it will be updated with neighbor table parameters.
+* \param[in] reference to a variable which will be updated according to number of entries in neighbor table.
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BluenrgMesh_GetNeighborState(neighbor_params_t* pNeighborTable, MOBLEUINT8* pNoOfNeighborPresent);
+
+/** \brief Set system faults. Will be used by Health Model. Supporting All Bluetooth assigned FaultValues. 
+* \param[in] pFaultArray FaultValue Array pointer. (FaultValue Range: 0x01–0x32)   
+* \param[in] faultArraySize Size of the fault array. Max supported array size is 5. 
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BluenrgMesh_SetFault(MOBLEUINT8 *pFaultArray, MOBLEUINT8 faultArraySize);
+
+/** \brief Clears already set system faults. Will be used by Health Model.  
+* \param[in] pFaultArray Fault Array pointer  
+* \param[in] faultArraySize Size of the fault array. Max supported array size is 5.
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_ClearFault(MOBLEUINT8 *pFaultArray, MOBLEUINT8 faultArraySize);
+
 #endif /* __BLE_MESH_ */
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
 
