@@ -38,8 +38,8 @@
 *
 ******************************************************************************
 */
-#ifndef __MODEL_COMMON_H
-#define __MODEL_COMMON_H
+#ifndef __COMMON_H
+#define __COMMON_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -50,12 +50,27 @@
 #define GENERIC_VALID_FLAG_OFFSET           0
 #define GENERIC_ON_OFF_NVM_OFFSET           1
 #define GENERIC_LEVEL_NVM_OFFSET            2
+#define GENERIC_POWER_ON_OFF_NVM_OFFSET     4
 /* 16 bytes are reserved for light
 *  Light model nvm offset is 16 bytes ahead of generic model */
 #define LIGHT_VALID_FLAG_OFFSET             0
 #define LIGHT_LIGHTNESS_NVM_OFFSET          1
 #define LIGHT_CTL_NVM_OFFSET                3
 #define LIGHT_HSL_NVM_OFFSET                7
+
+/* Buffer index limit for the generic data */
+#define GENERIC_DATA_LIMIT                  15
+
+#define FLAG_SET      1
+#define FLAG_RESET    0
+
+#define VALUE_UPDATE_SET               0X01
+#define VALUE_UPDATE_RESET             0X00
+
+#define     CLK_FLAG_ENABLE           1 
+#define     CLK_FLAG_DISABLE          0 
+
+#define PWM_ZERO_VALUE                1
 
 typedef MOBLE_RESULT (*APPLI_SAVE_MODEL_STATE_CB)(MOBLEUINT8* stateBuff, MOBLEUINT8 size);
 
@@ -69,13 +84,14 @@ typedef MOBLE_RESULT (*APPLI_SAVE_MODEL_STATE_CB)(MOBLEUINT8* stateBuff, MOBLEUI
 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
-
+#pragma pack(1)
 typedef struct displayFloatToInt_s 
 {
   MOBLEINT8 sign; /* 0 means positive, 1 means negative*/
   MOBLEUINT32  out_int;
   MOBLEUINT32  out_dec;
 } displayFloatToInt_t;
+#pragma pack(4)
 
 MOBLE_RESULT Chk_OptionalParamValidity(MOBLEUINT8 param_length, MOBLEUINT8
                                         mandatory_length, MOBLEUINT8 param,
@@ -109,6 +125,14 @@ MOBLEUINT16 PWM_CoolValue(float colourValue ,float brightValue);
 MOBLEUINT16 PWM_WarmValue(float colourValue ,float brightValue);
 void floatToInt(float in, displayFloatToInt_t *out_value, MOBLEINT32 dec_prec);
 void TraceHeader(const char* func_name, int mode);
-/* MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8 flag); */
+MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8 flag);
+MOBLEUINT8 BLE_GetElementNumber(void);
 
+void Test_Process(void);
+void ModelSave_Process(void);
+void BLEMesh_PacketResponseTime(MOBLEUINT8 *testFunctionParm);
+MOBLEUINT8 BLE_waitPeriod(MOBLEUINT32 waitPeriod);
+MOBLEUINT8 Time_Conversion(MOBLEUINT32 lc_Time);
+
+void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size);
 #endif

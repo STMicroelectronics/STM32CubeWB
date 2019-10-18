@@ -9,10 +9,10 @@
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the 
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -214,6 +214,9 @@ void PWR_ExitStopMode( void )
 void PWR_EnterSleepMode( void )
 {
 /* USER CODE BEGIN PWR_EnterSleepMode */
+
+  HAL_SuspendTick();
+
   /************************************************************************************
    * ENTER SLEEP MODE
    ***********************************************************************************/
@@ -240,6 +243,8 @@ void PWR_ExitSleepMode( void )
 {
 /* USER CODE BEGIN PWR_ExitSleepMode */
 
+  HAL_ResumeTick();
+
 /* USER CODE END PWR_ExitSleepMode */
 }
 
@@ -258,6 +263,7 @@ static void Switch_On_HSI( void )
   LL_RCC_HSI_Enable( );
   while(!LL_RCC_HSI_IsReady( ));
   LL_RCC_SetSysClkSource( LL_RCC_SYS_CLKSOURCE_HSI );
+  LL_RCC_SetSMPSClockSource(LL_RCC_SMPS_CLKSOURCE_HSI);
   while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSI);
 }
 

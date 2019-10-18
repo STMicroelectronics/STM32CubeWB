@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_events.c
  * @author  MCD Application Team
- * @date    14 June 2019
+ * @date    19 July 2019
  * @brief   Source file for STM32WB (Event callbacks)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -224,7 +224,7 @@ reason parameter can be ignored by the Host. For example, this can be the
 case if the Host has issued the Disconnect command and there was a parameter
 error, or the command was not presently allowed, or a Connection_Handle
 that didn't correspond to a connection was given.
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Connection_Handle Connection_Handle which was disconnected.
   * Values:
   - 0x0000 ... 0x0EFF
@@ -234,13 +234,11 @@ that didn't correspond to a connection was given.
   - 0x01: Unknown HCI Command
   - 0x02: Unknown Connection Identifier
   - 0x03: Hardware Failure
-  - 0x04: Page Timeout
   - 0x05: Authentication Failure
   - 0x06: PIN or Key Missing
   - 0x07: Memory Capacity Exceeded
   - 0x08: Connection Timeout
   - 0x09: Connection Limit Exceeded
-  - 0x0A: Synchronous Connection Limit to a Device Exceeded
   - 0x0B: ACL Connection Already Exists
   - 0x0C: Command Disallowed
   - 0x0D: Connection Rejected Due To Limited Resources
@@ -257,9 +255,6 @@ that didn't correspond to a connection was given.
   - 0x18: Pairing Not Allowed
   - 0x19: Unknown LMP PDU
   - 0x1A: Unsupported Remote Feature / Unsupported LMP Feature
-  - 0x1B: SCO Offset Rejected
-  - 0x1C: SCO Interval Rejected
-  - 0x1D: SCO Air Mode Rejected
   - 0x1E: Invalid LMP Parameters
   - 0x1F: Unspecified Error
   - 0x20: Unsupported LMP Parameter Value
@@ -269,19 +264,15 @@ that didn't correspond to a connection was given.
   - 0x24: LMP PDU Not Allowed
   - 0x25: Encryption Mode Not Acceptable
   - 0x26: Link Key cannot be Changed
-  - 0x27: Requested QoS Not Supported
   - 0x28: Instant Passed
   - 0x29: Pairing With Unit Key Not Supported
   - 0x2A: Different Transaction Collision
-  - 0x2C: QoS Unacceptable Parameter
-  - 0x2D: QoS Rejected
   - 0x2E: Channel Assessment Not Supported
   - 0x2F: Insufficient Security
   - 0x30: Parameter Out Of Mandatory Range
   - 0x32: Role Switch Pending
   - 0x34: Reserved Slot Violation
   - 0x35: Role Switch Failed
-  - 0x36: Extended Inquiry Response Too Large
   - 0x37: Secure Simple Pairing Not Supported by Host
   - 0x38: Host Busy - Pairing
   - 0x39: Connection Rejected due to No Suitable Channel Found
@@ -290,7 +281,6 @@ that didn't correspond to a connection was given.
   - 0x3C: Directed Advertising Timeout
   - 0x3D: Connection Terminated Due to MIC Failure
   - 0x3E: Connection Failed to be Established
-  - 0x3F: MAC of the 802.11 AMP
   - 0x41: Failed
   - 0x42: Invalid parameters
   - 0x43: Busy
@@ -299,9 +289,6 @@ that didn't correspond to a connection was given.
   - 0x46: Not allowed
   - 0x47: GATT error
   - 0x48: Address not resolved
-  - 0x49: Flash read failed
-  - 0x4A: Flash write failed
-  - 0x4B: Flash erase failed
   - 0x50: Invalid CID
   - 0x5A: CSRK not found
   - 0x5B: IRK not found
@@ -350,7 +337,7 @@ parameter. When Secure_Connections_Host_Support is
 'disabled' or the Connection_Handle refers to an LE link, the Controller shall
 only use Encryption_Enabled values 0x00 (OFF) and 0x01 (ON).
 (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.7.8)
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Connection_Handle Connection handle for which the command is given.
   * Values:
   - 0x0000 ... 0x0EFF
@@ -390,7 +377,7 @@ event parameter shall be Link Layer VersNr parameter, the Manufacturer_Name
 event parameter shall be the CompId parameter, and the Subversion
 event parameter shall be the SubVersNr parameter.
 (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.7.12)
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Connection_Handle Connection handle for which the command is given.
   * Values:
   - 0x0000 ... 0x0EFF
@@ -498,7 +485,7 @@ If the Encryption Key Refresh Complete event was generated due to an
 encryption pause and resume operation embedded within a role switch procedure,
 the Encryption Key Refresh Complete event shall be sent prior to the
 Role Change event.
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Connection_Handle Connection handle for which the command is given.
   * Values:
   - 0x0000 ... 0x0EFF
@@ -730,15 +717,15 @@ void aci_gap_bond_lost_event_process(uint8_t *buffer_in)
 been terminated by the upper layer or has completed for any other reason
   * @param Procedure_Code Terminated procedure.
   * Values:
-  - 0x01: LIMITED_DISCOVERY_PROC
-  - 0x02: GENERAL_DISCOVERY_PROC
-  - 0x04: NAME_DISCOVERY_PROC
-  - 0x08: AUTO_CONNECTION_ESTABLISHMENT_PROC
-  - 0x10: GENERAL_CONNECTION_ESTABLISHMENT_PROC
-  - 0x20: SELECTIVE_CONNECTION_ESTABLISHMENT_PROC
-  - 0x40: DIRECT_CONNECTION_ESTABLISHMENT_PROC
-  - 0x80: OBSERVATION_PROC
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  - 0x01: GAP_LIMITED_DISCOVERY_PROC
+  - 0x02: GAP_GENERAL_DISCOVERY_PROC
+  - 0x04: GAP_NAME_DISCOVERY_PROC
+  - 0x08: GAP_AUTO_CONNECTION_ESTABLISHMENT_PROC
+  - 0x10: GAP_GENERAL_CONNECTION_ESTABLISHMENT_PROC
+  - 0x20: GAP_SELECTIVE_CONNECTION_ESTABLISHMENT_PROC
+  - 0x40: GAP_DIRECT_CONNECTION_ESTABLISHMENT_PROC
+  - 0x80: GAP_OBSERVATION_PROC
+  * @param Status Status error code.
   * @param Data_Length Length of Data in octets
   * @param Data Procedure Specific Data:
 - For Name Discovery Procedure: the name of the peer device if the procedure completed successfully.
@@ -1235,13 +1222,11 @@ successfully.
   - 0x01: Unknown HCI Command
   - 0x02: Unknown Connection Identifier
   - 0x03: Hardware Failure
-  - 0x04: Page Timeout
   - 0x05: Authentication Failure
   - 0x06: PIN or Key Missing
   - 0x07: Memory Capacity Exceeded
   - 0x08: Connection Timeout
   - 0x09: Connection Limit Exceeded
-  - 0x0A: Synchronous Connection Limit to a Device Exceeded
   - 0x0B: ACL Connection Already Exists
   - 0x0C: Command Disallowed
   - 0x0D: Connection Rejected Due To Limited Resources
@@ -1258,9 +1243,6 @@ successfully.
   - 0x18: Pairing Not Allowed
   - 0x19: Unknown LMP PDU
   - 0x1A: Unsupported Remote Feature / Unsupported LMP Feature
-  - 0x1B: SCO Offset Rejected
-  - 0x1C: SCO Interval Rejected
-  - 0x1D: SCO Air Mode Rejected
   - 0x1E: Invalid LMP Parameters
   - 0x1F: Unspecified Error
   - 0x20: Unsupported LMP Parameter Value
@@ -1270,19 +1252,15 @@ successfully.
   - 0x24: LMP PDU Not Allowed
   - 0x25: Encryption Mode Not Acceptable
   - 0x26: Link Key cannot be Changed
-  - 0x27: Requested QoS Not Supported
   - 0x28: Instant Passed
   - 0x29: Pairing With Unit Key Not Supported
   - 0x2A: Different Transaction Collision
-  - 0x2C: QoS Unacceptable Parameter
-  - 0x2D: QoS Rejected
   - 0x2E: Channel Assessment Not Supported
   - 0x2F: Insufficient Security
   - 0x30: Parameter Out Of Mandatory Range
   - 0x32: Role Switch Pending
   - 0x34: Reserved Slot Violation
   - 0x35: Role Switch Failed
-  - 0x36: Extended Inquiry Response Too Large
   - 0x37: Secure Simple Pairing Not Supported by Host
   - 0x38: Host Busy - Pairing
   - 0x39: Connection Rejected due to No Suitable Channel Found
@@ -1291,7 +1269,6 @@ successfully.
   - 0x3C: Directed Advertising Timeout
   - 0x3D: Connection Terminated Due to MIC Failure
   - 0x3E: Connection Failed to be Established
-  - 0x3F: MAC of the 802.11 AMP
   - 0x41: Failed
   - 0x42: Invalid parameters
   - 0x43: Busy
@@ -1300,9 +1277,6 @@ successfully.
   - 0x46: Not allowed
   - 0x47: GATT error
   - 0x48: Address not resolved
-  - 0x49: Flash read failed
-  - 0x4A: Flash write failed
-  - 0x4B: Flash erase failed
   - 0x50: Invalid CID
   - 0x5A: CSRK not found
   - 0x5B: IRK not found
@@ -1622,7 +1596,7 @@ command and received a Command Status event if the connection
 establishment failed or was successful.
 The Master_Clock_Accuracy parameter is only valid for a slave. On a master,
 this parameter shall be set to 0x00. See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.1
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Connection_Handle Connection handle to be used to identify the connection with the peer device.
   * Values:
   - 0x0000 ... 0x0EFF
@@ -1716,7 +1690,7 @@ void hci_le_advertising_report_event_process(uint8_t *buffer_in)
 process to update the connection has completed.
 On a slave, if no connection parameters are updated, then this event shall not be issued.
 On a master, this event shall be issued if the Connection_Update command was sent. See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.3
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Connection_Handle Connection handle to be used to identify the connection with the peer device.
   * Values:
   - 0x0000 ... 0x0EFF
@@ -1752,7 +1726,7 @@ void hci_le_connection_update_complete_event_process(uint8_t *buffer_in)
   * @brief The LE Read Remote Used Features Complete event is used to indicate the
 completion of the process of the Controller obtaining the used features of the
 remote Bluetooth device specified by the Connection_Handle event parameter.See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.4
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Connection_Handle Connection handle to be used to identify the connection with the peer device.
   * Values:
   - 0x0000 ... 0x0EFF
@@ -1840,7 +1814,7 @@ void hci_le_data_length_change_event_process(uint8_t *buffer_in)
 /**
   * @brief This event is generated when local P-256 key generation is complete. 
                                                                   See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.8
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Local_P256_Public_Key Local P-256 public key.
   * @retval None
 */
@@ -1858,7 +1832,7 @@ void hci_le_read_local_p256_public_key_complete_event_process(uint8_t *buffer_in
 /**
   * @brief This event indicates that LE Diffie Hellman key generation has been completed
 by the Controller. See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.9
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param DHKey Diffie Hellman Key
   * @retval None
 */
@@ -1888,7 +1862,7 @@ command and received a Command Status event if the connection
 establishment failed or was successful.
 The Master_Clock_Accuracy parameter is only valid for a slave. On a master,
 this parameter shall be set to 0x00. See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.10
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Connection_Handle Connection handle to be used to identify the connection with the peer device.
   * Values:
   - 0x0000 ... 0x0EFF
@@ -1990,7 +1964,7 @@ this event shall be issued.
 If an LE_Set_PHY command was sent and the Controller determines that
 neither PHY will change as a result, it issues this event immediately.
  See See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.12
-  * @param Status Error code. See Core v5.0, Vol. 2, part D.
+  * @param Status Status error code.
   * @param Connection_Handle Connection handle to be used to identify the connection with the peer device.
   * Values:
   - 0x0000 ... 0x0EFF

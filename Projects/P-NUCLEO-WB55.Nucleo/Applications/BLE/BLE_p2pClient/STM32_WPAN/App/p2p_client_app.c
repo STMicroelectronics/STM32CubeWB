@@ -339,7 +339,7 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
              * 2bytes start handle
              * 2bytes end handle
              * 2 or 16 bytes data
-             * we are intersted only if the UUID is 16 bit.
+             * we are interested only if the UUID is 16 bit.
              * So check if the data length is 6
              */
 #if (UUID_128BIT_FORMAT==1)           
@@ -539,7 +539,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           APP_DBG_MSG("-- GATT : EVT_BLUE_GATT_PROCEDURE_COMPLETE \n");
           APP_DBG_MSG("\n");
 #endif
-
 
           uint8_t index;
 

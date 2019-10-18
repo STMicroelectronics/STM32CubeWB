@@ -11,7 +11,7 @@
 **
 **  Environment : System Workbench for MCU
 **
-**  Distribution: The file is distributed â€œas is,â€� without any warranty
+**  Distribution: The file is distributed “as is,” without any warranty
 **                of any kind.
 **
 *****************************************************************************
@@ -49,8 +49,8 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = 0x20030000;    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 0x1000;      /* required amount of heap  */
-_Min_Stack_Size = 0x1000; /* required amount of stack */
+_Min_Heap_Size = 0x400;      /* required amount of heap  */
+_Min_Stack_Size = 0x1000;   /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
@@ -181,7 +181,7 @@ SECTIONS
   .ARM.attributes 0       : { *(.ARM.attributes) }
    MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED
    MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED
-   MB_MEM2                : { *(MB_MEM2) } >RAM_SHARED  
+   MB_MEM2 (NOLOAD)       : { _sMB_MEM2 = . ; *(MB_MEM2) ; _eMB_MEM2 = . ; } >RAM_SHARED
 }
 
 

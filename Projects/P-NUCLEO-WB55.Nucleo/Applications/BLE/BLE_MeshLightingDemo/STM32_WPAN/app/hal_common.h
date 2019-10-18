@@ -23,7 +23,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#if defined(NUCLEO_L152RE) || defined(USE_STM32WBXX_NUCLEO) /* NUCLEO_L152RE */
+#if defined(NUCLEO_L152RE) || defined(USE_STM32WBXX_NUCLEO) || USE_STM32WBXX_USB_DONGLE /* NUCLEO_L152RE */
 #include "user_if.h" 
 #else /* not NUCLEO_L152RE */
 #if defined(BLUENRG1) || defined(BLUENRG2) /* BLUENRG1 or BLUENRG2 */

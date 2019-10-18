@@ -1,9 +1,9 @@
 /**
  ******************************************************************************
   * File Name          : App/ble_conf.h
-  * Description        : Configuration file for BLE 
-  *                      middleWare.
-  ******************************************************************************
+  * Description        : Configuration file for BLE Middleware.
+  *
+ ******************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.

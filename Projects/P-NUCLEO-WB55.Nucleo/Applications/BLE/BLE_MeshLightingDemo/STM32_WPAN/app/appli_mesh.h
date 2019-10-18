@@ -23,6 +23,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
+#include "mesh_cfg_usr.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /* MACROS for Power Level definitions */
@@ -44,6 +45,15 @@
 #define TX_POWER_LEVEL_PLUS_4DBM   6 /* =  4 dBm, */
 #define TX_POWER_LEVEL_PLUS_8DBM   7 /* =  8 dBm */
 
+#ifdef SAVE_MODEL_STATE_POWER_FAILURE_DETECTION       
+#define POWEROFF_PIN                                                  GPIO_PIN_4
+#define POWEROFF_GPIO_PORT                                                 GPIOB
+#define POWEROFF_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOB_CLK_ENABLE()
+#define POWEROFF_GPIO_CLK_DISABLE()                __HAL_RCC_GPIOB_CLK_DISABLE()
+#define POWEROFF_EXTI_LINE                                            GPIO_PIN_4
+#define POWEROFF_EXTI_IRQn                                            EXTI2_IRQn
+#endif
+
 /* Exported variables  ------------------------------------------------------- */
 
 extern MOBLEUINT8 bdaddr[]; 
@@ -58,8 +68,12 @@ void Appli_BleGattConnectionCompleteCb(void);
 void Appli_BleGattDisconnectionCompleteCb(void);
 MOBLEUINT8 Appli_BleSetNumberOfElementsCb(void);
 MOBLE_RESULT Appli_BleAttentionTimerCb(void);
+void Appli_BleOutputOOBAuthCb(MOBLEUINT8* output_oob, MOBLEUINT8 size);
+MOBLEUINT8* Appli_BleInputOOBAuthCb(MOBLEUINT8 size);
+void Appli_BleSerialInputOOBValue(char *rcvdStringBuff, uint16_t rcvdStringSize);
 MOBLEUINT8 Appli_BleDisableFilterCb(void);
 
+void Appli_IntensityControlPublishing(void);
 
 int Appli_CheckBdMacAddr(void);
 MOBLE_RESULT Appli_LedBlink(void);
@@ -68,7 +82,7 @@ MOBLE_RESULT Appli_LedStateCtrlCb(MOBLEUINT16 ctrl);
 void Appli_CheckForUnprovision(void);
 void Appli_Process(void);
 void Appli_LedCtrl(void);
-
+void Appli_Init(void);
 #endif /* __APPLI_MESH_H */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

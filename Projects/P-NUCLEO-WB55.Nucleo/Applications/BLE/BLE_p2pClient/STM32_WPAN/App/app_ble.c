@@ -394,12 +394,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           if (gap_evt_proc_complete->Procedure_Code == GAP_GENERAL_DISCOVERY_PROC
               && gap_evt_proc_complete->Status == 0x00)
           {
-              /* USER CODE BEGIN GAP_GENERAL_DISCOVERY_PROC */
-              BSP_LED_Off(LED_BLUE);
-              /* USER CODE END GAP_GENERAL_DISCOVERY_PROC */
-#if(CFG_DEBUG_APP_TRACE != 0)
+            /* USER CODE BEGIN GAP_GENERAL_DISCOVERY_PROC */
+            BSP_LED_Off(LED_BLUE);
+            /* USER CODE END GAP_GENERAL_DISCOVERY_PROC */
             APP_DBG_MSG("-- GAP GENERAL DISCOVERY PROCEDURE_COMPLETED\n");
-#endif
             /*if a device found, connect to it, device 1 being chosen first if both found*/
             if (BleApplicationContext.DeviceServerFound == 0x01 && BleApplicationContext.Device_Connection_Status != APP_BLE_CONNECTED_CLIENT)
             {
@@ -471,9 +469,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           {
             BleApplicationContext.BleApplicationContext_legacy.connectionHandle = 0;
             BleApplicationContext.Device_Connection_Status = APP_BLE_IDLE;
-#if(CFG_DEBUG_APP_TRACE != 0)
             APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH SERVER \n");
-#endif
             handleNotification.P2P_Evt_Opcode = PEER_DISCON_HANDLE_EVT;
             handleNotification.ConnectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
             P2PC_APP_Notification(&handleNotification);
@@ -505,9 +501,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_CLIENT;
 
           /* CONNECTION WITH CLIENT */
-#if(CFG_DEBUG_APP_TRACE != 0)
           APP_DBG_MSG("\r\n\r** CONNECTION EVENT WITH SERVER \n");
-#endif
           handleNotification.P2P_Evt_Opcode = PEER_CONN_HANDLE_EVT;
           handleNotification.ConnectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
           P2PC_APP_Notification(&handleNotification);
@@ -515,16 +509,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           result = aci_gatt_disc_all_primary_services(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
           if (result == BLE_STATUS_SUCCESS)
           {
-#if(CFG_DEBUG_APP_TRACE != 0)
             APP_DBG_MSG("\r\n\r** GATT SERVICES & CHARACTERISTICS DISCOVERY  \n");
             APP_DBG_MSG("* GATT :  Start Searching Primary Services \r\n\r");
-#endif
           }
           else
           {
-#if(CFG_DEBUG_APP_TRACE != 0)
             APP_DBG_MSG("BLE_CTRL_App_Notification(), All services discovery Failed \r\n\r");
-#endif
           }
 
           break; /* HCI_EVT_LE_CONN_COMPLETE */
@@ -541,6 +531,11 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           event_data_size = le_advertising_event->Advertising_Report[0].Length_Data;
 
+          /* WARNING: be careful when decoding advertising report as its raw format cannot be mapped on a C structure. 
+          The data and RSSI values could not be directly decoded from the RAM using the data and RSSI field from hci_le_advertising_report_event_rp0 structure.
+          Instead they must be read by using offsets (please refer to BLE specification).
+          RSSI = *(uint8_t*) (adv_report_data + le_advertising_event->Advertising_Report[0].Length_Data);
+          */
           adv_report_data = (uint8_t*)(&le_advertising_event->Advertising_Report[0].Length_Data) + 1;
           k = 0;
 
@@ -549,13 +544,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           if (event_type == ADV_IND)
           {
 
-            /*ISOLATION OF BD ADDRESS AND LOCAL NAME*/
+            /* ISOLATION OF BD ADDRESS AND LOCAL NAME */
 
-            
             while(k < event_data_size)
             {
-            	adlength = adv_report_data[k];
-            	adtype = adv_report_data[k + 1];
+              adlength = adv_report_data[k];
+              adtype = adv_report_data[k + 1];
               switch (adtype)
               {
                 case AD_TYPE_FLAGS: /* now get flags */
@@ -569,21 +563,17 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
                 /* USER CODE END AD_TYPE_TX_POWER_LEVEL */
                 break;
-                case AD_TYPE_MANUFACTURER_SPECIFIC_DATA: /* Manufactureur Specific */
+                case AD_TYPE_MANUFACTURER_SPECIFIC_DATA: /* Manufacturer Specific */
                 /* USER CODE BEGIN AD_TYPE_MANUFACTURER_SPECIFIC_DATA */
 
                 /* USER CODE END AD_TYPE_MANUFACTURER_SPECIFIC_DATA */
                   if (adlength >= 7 && adv_report_data[k + 2] == 0x01)
                   { /* ST VERSION ID 01 */
-#if(CFG_DEBUG_APP_TRACE != 0)
                     APP_DBG_MSG("--- ST MANUFACTURER ID --- \n");
-#endif
                     switch (adv_report_data[k + 3])
                     {   /* Demo ID */
-			case CFG_DEV_ID_P2P_SERVER1: /* (0End Device 1) */
-#if(CFG_DEBUG_APP_TRACE != 0)
+			          case CFG_DEV_ID_P2P_SERVER1: /* (0End Device 1) */
                         APP_DBG_MSG("-- SERVER DETECTED -- VIA MAN ID\n");
-#endif
                         BleApplicationContext.DeviceServerFound = 0x01;
                         SERVER_REMOTE_BDADDR[0] = le_advertising_event->Advertising_Report[0].Address[0];
                         SERVER_REMOTE_BDADDR[1] = le_advertising_event->Advertising_Report[0].Address[1];
@@ -801,7 +791,7 @@ static void Ble_Tl_Init( void )
 
     aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
                                            BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,
-                                           0,
+                                           1,
                                            0,
                                            BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
                                            BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
@@ -837,18 +827,14 @@ static void Scan_Request( void )
     /* USER CODE BEGIN BLE_SCAN_SUCCESS */
 
     /* USER CODE END BLE_SCAN_SUCCESS */
-#if(CFG_DEBUG_APP_TRACE != 0)
       APP_DBG_MSG(" \r\n\r** START GENERAL DISCOVERY (SCAN) **  \r\n\r");
-#endif
     }
     else
     {
     /* USER CODE BEGIN BLE_SCAN_FAILED */
-    BSP_LED_On(LED_RED);
+      BSP_LED_On(LED_RED);
     /* USER CODE END BLE_SCAN_FAILED */
-#if(CFG_DEBUG_APP_TRACE != 0)
       APP_DBG_MSG("-- BLE_App_Start_Limited_Disc_Req, Failed \r\n\r");
-#endif
     }
   }
   /* USER CODE BEGIN Scan_Request_2 */
@@ -863,9 +849,8 @@ static void Connect_Request( void )
 
   /* USER CODE END Connect_Request_1 */
   tBleStatus result;
-#if(CFG_DEBUG_APP_TRACE != 0)
+  
   APP_DBG_MSG("\r\n\r** CREATE CONNECTION TO SERVER **  \r\n\r");
-#endif
 
   if (BleApplicationContext.Device_Connection_Status != APP_BLE_CONNECTED_CLIENT)
   {

@@ -219,7 +219,6 @@
                     <state>STM32WB55xx</state>
                     <state>USE_HAL_DRIVER</state>
                     <state>CORE_CM4</state>
-                    <state>PHY_2M</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -1048,9 +1047,6 @@
                 <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
             </file>
             <file>
@@ -1058,6 +1054,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\main.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
@@ -1074,16 +1073,16 @@
             <group>
                 <name>app</name>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\app_ble.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\app_ble.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\dt_client_app.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\dt_client_app.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\dt_server_app.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\dt_server_app.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\dts.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\dts.c</name>
                 </file>
             </group>
             <group>
@@ -1144,12 +1143,6 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr_ex.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi_ex.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc.c</name>
             </file>
             <file>
@@ -1160,6 +1153,12 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi_ex.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart.c</name>
@@ -1221,10 +1220,10 @@
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl_if.c</name>

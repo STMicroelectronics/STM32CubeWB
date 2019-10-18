@@ -22,7 +22,6 @@
 #define __TL_ZIGBEE_HCI_H_
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32wbxx_hal_def.h"
 #include "zigbee_core.h"
 #include "stm32wbxx_core_interface_def.h"
 #include "tl.h"
@@ -35,6 +34,7 @@ void ZIGBEE_CmdTransfer(void);
 Zigbee_Cmd_Request_t* ZIGBEE_Get_OTCmdPayloadBuffer(void);
 Zigbee_Cmd_Request_t* ZIGBEE_Get_OTCmdRspPayloadBuffer(void);
 Zigbee_Cmd_Request_t* ZIGBEE_Get_NotificationPayloadBuffer(void);
+Zigbee_Cmd_Request_t * ZIGBEE_Get_LoggingPayloadBuffer(void);
 
 /* Exported defines -----------------------------------------------------------*/
 

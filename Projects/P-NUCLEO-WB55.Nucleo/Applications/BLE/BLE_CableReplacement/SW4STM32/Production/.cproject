@@ -63,7 +63,7 @@
 									<listOptionValue builtIn="false" value="CORE_CM4"/>
 								</option>
 								<option id="fr.ac6.managedbuild.gnu.c.compiler.option.misc.other.1014443615" superClass="fr.ac6.managedbuild.gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-fmessage-length=0" valueType="string"/>
-								<option id="gnu.c.compiler.option.dialect.std.2021449760" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.dialect.std.2021449760" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.1355542295" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
 								<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.2093521244" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
 							</tool>
@@ -89,7 +89,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../../Middlewares/ST/STM32_WPAN/ble"/>
 									<listOptionValue builtIn="false" value="../../../Core/Inc"/>
-									<listOptionValue builtIn="false" value="../../../STM32_WPAN/app"/>
+									<listOptionValue builtIn="false" value="../../../STM32_WPAN/App"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1038060833" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_STM32WBXX_NUCLEO"/>

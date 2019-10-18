@@ -28,30 +28,23 @@
 
 /* Exported macro ------------------------------------------------------------*/
 /* Flash parameters */
-#define PAGE_SIZE                          2048
+#define PAGE_SIZE                          4096
 #define RESET_MANAGER_FLASH_BASE_ADDRESS   (0x10040000)
 
-#ifdef TRACE_ENABLE_MODEL
 void TraceHeader(const char* func_name, int mode);
 #define TraceB0(func_name, ...)
 #define TraceB1(func_name, ...) do {TraceHeader(func_name, 0); printf( __VA_ARGS__);} while(0)
 #define TraceBX(flags, func_name, ...) TraceB ##flags(func_name, ##__VA_ARGS__)
 #define TRACE_M(flag, ...)   TraceBX(flag, __func__, ##__VA_ARGS__)
-#else
-#define TRACE_M(flag, ...)
-#endif
 
 /*Enable this Macro to enable the main function prints.
 * This trace does not print the function name and clock.
 */
-#ifdef TRACE_ENABLE_NO_FUNCTION
 #define TraceC0(...)
 #define TraceC1(...) do { printf( __VA_ARGS__);} while(0)
-#define TraceCX(flags, ...) TraceC ##flags( ##__VA_ARGS__)
+//#define TraceCX(flags, ...) TraceC ##flags( ##__VA_ARGS__)
+#define TraceCX(flags, ...) TraceC ##flags( __VA_ARGS__)
 #define TRACE_I(flag, ...)   TraceCX(flag, ##__VA_ARGS__)
-#else
-#define TRACE_I(flag, ...)
-#endif
 
 
 #ifdef EXTERNAL_MAC_ADDR_MGMT
@@ -64,6 +57,10 @@ void TraceHeader(const char* func_name, int mode);
 #error "Please select atleast one MAC address Option"
 #endif 
 
+#ifdef ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE
+#define ENABLE_SAVE_MODEL_STATE_NVM
+#endif
+
 #ifdef ENABLE_SAVE_MODEL_STATE_NVM
 #define SAVE_MODEL_STATE_NVM 1
 #else
@@ -75,8 +72,24 @@ void TraceHeader(const char* func_name, int mode);
     TR_GAP_BETWEEN_TRANSMISSION          \
 }
 
+#ifdef ENABLE_PB_ADV
+#define PB_ADV_SUPPORTED 1
+#else
 #define PB_ADV_SUPPORTED 0
+#endif
+
+#ifdef ENABLE_PB_GATT
 #define PB_GATT_SUPPORTED 1
+#else
+#define PB_GATT_SUPPORTED 0
+#endif
+
+#ifdef ENABLE_PUB_KEY_TYPE_OOB
+#define PUB_KEY_TYPE_OOB        MOBLE_TRUE
+#else
+#define PUB_KEY_TYPE_OOB        MOBLE_FALSE
+#endif
+
 
 #if  (PB_ADV_SUPPORTED == 0 && PB_GATT_SUPPORTED == 0)
 #error "Atleast one of PB-ADV and PB-GATT should be defined"
@@ -116,20 +129,50 @@ void TraceHeader(const char* func_name, int mode);
 #error "Low power node can't be friend node"
 #endif
 
-#define BLUENRG_MESH_FEATURES (RELAY_FEATURE << 0 | PROXY_FEATURE << 1 | FRIEND_FEATURE << 2)
+#define BLUENRG_MESH_FEATURES (RELAY_FEATURE << 0 | PROXY_FEATURE << 1 | FRIEND_FEATURE << 2 | LOW_POWER_FEATURE << 3)
 
 #define FRIEND_NODE_PARAMS               \
 {                                        \
     FN_NO_OF_LPNS                        \
 }
 
+#define LOW_POWER_NODE_PARAMS            \
+{                                        \
+  LPN_RSSI_FACTOR_LEVEL,                 \
+  LPN_RECIVE_WINDOW_FACTOR_LEVEL,        \
+  LPN_MINIMUM_QUEUE_SIZE_LOG,            \
+  LPN_RECEIVE_DELAY,                     \
+  LPN_POLL_TIMEOUT,                      \
+  LPN_FRIEND_REQUEST_FREQUENCY,          \
+  LPN_FRIEND_POLL_FREQUENCY,             \
+  LPN_RECEIVE_WINDOW_SIZE,               \
+  LPN_SUBSCR_LIST_SIZE,                  \
+  LPN_MINIMUM_RSSI,                      \
+  LPN_NO_OF_RETRIES                      \
+}
 
-
+/*
+*  If PB-GATT and Proxy not supported, optimize related to GATT database not required
+*/
+#if  (PB_GATT_SUPPORTED == 0 && PROXY_FEATURE == 0)
+#define BLUENRG_MESH_GATT_REQ               0
+#else
+#define BLUENRG_MESH_GATT_REQ               1
+#endif
 
 #define UNPROV_NODE_INFO_PARAMS          \
 {                                        \
+    PUB_KEY_TYPE_OOB,                    \
+    PubKeyBuff,                          \
+    PrivKeyBuff,                         \
     STATIC_OOB_SIZE,                     \
-    StaticOobBuff                        \
+    StaticOobBuff,                       \
+    OUTPUT_OOB_SIZE,                     \
+    OUTPUT_OOB_ACTION,                   \
+    Appli_BleOutputOOBAuthCb,            \
+    INPUT_OOB_SIZE,                      \
+    INPUT_OOB_ACTION,                    \
+    Appli_BleInputOOBAuthCb              \
 }
 
 #ifdef ENABLE_NEIGHBOR_TABLE
@@ -170,6 +213,8 @@ void TraceHeader(const char* func_name, int mode);
 
 #if FRIEND_FEATURE
 #define FRIEND_BUFF_DYNAMIC_MEMORY_SIZE    FN_NO_OF_LPNS*816+4
+#elif LOW_POWER_FEATURE
+#define FRIEND_BUFF_DYNAMIC_MEMORY_SIZE    112U
 #else
 #define FRIEND_BUFF_DYNAMIC_MEMORY_SIZE    1U
 #endif
@@ -179,6 +224,7 @@ void TraceHeader(const char* func_name, int mode);
 #define SEGMENTATION_COUNT             (MAX_APPLICATION_PACKET_SIZE / 12) + 2 
 #define SAR_BUFFER_SIZE                ((uint8_t)SEGMENTATION_COUNT) * 40 
 /* Added Interrupt handler for Uart */
+#define SdkEvalComIOUartIrqHandler         UART_Handler  
 
 #if NEIGHBOR_TABLE_SUPPORTED
 #define NEIGHBOR_TABLE_DYNAMIC_MEMORY_SIZE 32U*NEIGHBOR_COUNT
@@ -196,14 +242,14 @@ void TraceHeader(const char* func_name, int mode);
 #define ENABLE_SERIAL_INTERFACE            1    
 #define ENABLE_UT                          0
 #define ENABLE_SERIAL_CONTROL              1
+#define ENABLE_APPLI_TEST                  0
 
 /* Exported variables  ------------------------------------------------------- */
 extern const DynBufferParam_t DynBufferParam;
 extern const tr_params_t TrParams;
 extern const lpn_params_t LpnParams;
 extern const fn_params_t FnParams;
-extern const unprov_node_info_params_t UnprovNodeInfoParams;
-extern const MOBLEUINT8 StaticOobBuff[STATIC_OOB_SIZE];
+extern const prvn_params_t PrvnParams;
 extern const neighbor_table_init_params_t NeighborTableParams;
 
 /* Exported Functions Prototypes ---------------------------------------------*/

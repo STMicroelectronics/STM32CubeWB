@@ -64,7 +64,7 @@ typedef PACKED_STRUCT
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static APPD_TracesConfig_t APPD_TracesConfig={0, 0, 0, 0};
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static APPD_GeneralConfig_t APPD_GeneralConfig={BLE_DTB_CFG, 0, 0, 0};
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static APPD_GeneralConfig_t APPD_GeneralConfig={BLE_DTB_CFG, {0, 0, 0}};
 
 /**
  * THE DEBUG ON GPIO FOR CPU2 IS INTENDED TO BE USED ONLY ON REQUEST FROM ST SUPPORT
@@ -74,36 +74,39 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static APPD_GeneralConfig_t APPD_GeneralCon
  */
 static const APPD_GpioConfig_t aGpioConfigList[GPIO_CFG_NBR_OF_FEATURES] =
 {
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* BLE_ISR - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* BLE_STACK_TICK - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* BLE_CMD_PROCESS - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* BLE_ACL_DATA_PROCESS - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* SYS_CMD_PROCESS - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* RNG_PROCESS - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVM_PROCESS - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_GENERAL - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_BLE_CMD_RX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_BLE_EVT_TX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_BLE_ACL_DATA_RX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_SYS_CMD_RX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_SYS_EVT_TX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_CLI_CMD_RX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_OT_CMD_RX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_OT_ACK_TX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_CLI_ACK_TX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_MEM_MANAGER_RX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_TRACES_TX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* HARD_FAULT - Set on Entry / Reset on Exit */
+/* From v1.1.1 */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IP_CORE_LP_STATUS - Set on Entry / Reset on Exit */
+/* From v1.2.0 */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* END_OF_CONNECTION_EVENT - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* TIMER_SERVER_CALLBACK - Toggle on Entry */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* PES_ACTIVITY - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* MB_BLE_SEND_EVT - Set on Entry / Reset on Exit */
+/* From v1.3.0 */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* BLE_NO_DELAY - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* BLE_STACK_STORE_NVM_CB - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_WRITE_ONGOING - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_WRITE_COMPLETE - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_CLEANUP - Set on Entry / Reset on Exit */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},
     { GPIOA, LL_GPIO_PIN_0, 0, 0},
 };
@@ -184,13 +187,13 @@ void APPD_EnableCPU2( void )
 {
   SHCI_C2_DEBUG_Init_Cmd_Packet_t DebugCmdPacket =
   {
-    {0,0,0},                            /**< Does not need to be initialized */
-    (uint8_t *)aGpioConfigList,
+    {{0,0,0}},                            /**< Does not need to be initialized */
+    {(uint8_t *)aGpioConfigList,
     (uint8_t *)&APPD_TracesConfig,
     (uint8_t *)&APPD_GeneralConfig,
     GPIO_CFG_NBR_OF_FEATURES,
     NBR_OF_TRACES_CONFIG_PARAMETERS,
-    NBR_OF_GENERAL_CONFIG_PARAMETERS
+    NBR_OF_GENERAL_CONFIG_PARAMETERS}
   };
 
   /**< Traces channel initialization */

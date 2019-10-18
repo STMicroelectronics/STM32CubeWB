@@ -39,6 +39,7 @@
 <li><p>Bluetooth Low Energy 5 Certified Applications</p></li>
 <li><p>802.15.4 Thread Certified Applications (based on <a href="thread\openthread\Release_Notes.html">OpenThread</a> stack)</p></li>
 <li><p>802.15.4 MAC layer</p></li>
+<li><p>Zigbee Applications</p></li>
 </ul>
 <p><strong>NOTE</strong> : Depending on the kind of Application targeted, the appropriate Wireless Coprocessor Firmware needs to be loaded.</p>
 <p>All available binaries are located under/Projects/STM32_Copro_Wireless_Binaries directory.</p>
@@ -48,9 +49,47 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 27-June-2019</label>
+<input type="checkbox" id="collapse-section5" checked aria-hidden="true"> <label for="collapse-section5" aria-hidden="false">V1.3.0 / 4-September-2019</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p>General:</p>
+<ul>
+<li>Introducing support of Zigbee</li>
+</ul>
+<p>Interface:</p>
+<ul>
+<li>Cleanup inclusion file dependencies</li>
+<li>Fix local buffer size used in command SHCI_C2_FUS_StoreUsrKey()</li>
+<li>ble user events are now reported one by one (hci_notify_asynch_evt is called for each packet reported)</li>
+<li>system users event are now reported one by one (shci_notify_asynch_evt is called for each packet reported)</li>
+</ul>
+<p>Zigbee:</p>
+<ul>
+<li>First release supporting Zigbee (FFD :Full Function Device)</li>
+<li>Supporting only On/Off Cluster</li>
+</ul>
+<p>BLE-Mesh:</p>
+<ul>
+<li>BLE-Mesh library version 1.10.004
+<ul>
+<li>Light LC Controller state machine for Occupancy detection is implemented</li>
+<li>Light LC Controller state machine for Ambient Lux Level is implemented</li>
+<li>Light LC Server Mode messages added</li>
+<li>Light LC Server Occupancy Mode messages added</li>
+<li>Light LC Server Property messages added</li>
+<li>Save State in NVM controlled by Macro ENABLE_SAVE_MODEL_STATE_NVM</li>
+<li>Mode of Save State in NVM selected by Macro SAVE_MODEL_STATE_FOR_ALL_MESSAGES and SAVE_MODEL_STATE_POWER_FAILURE_DETECTION</li>
+<li>Generic Power OnOff message added</li>
+<li>Generic Power OnOff Setup message added</li>
+<li>Generic Default Transition Time message added</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 27-June-2019</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Following utilities : Scheduler and Low Power Manager reworked and moved to “Utilities” directory</li>
@@ -76,7 +115,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p>BLE:</p>
 <ul>
 <li>Fix race condition in transport layer when an operating system is used.</li>
@@ -122,7 +161,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 29-March-2019</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Licenses in utilities and patterns moved from sla0044 to 3-clauses BSD</li>
@@ -148,7 +187,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 31-January-2019</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p>First release</p>
 </div>
 </div>

@@ -1,9 +1,9 @@
 /**
  ******************************************************************************
   * File Name          : App/ble_conf.h
-  * Description        : Configuration file for BLE 
-  *                      middleWare.
-  ******************************************************************************
+  * Description        : Configuration file for BLE Middleware.
+  *
+ ******************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
@@ -49,7 +49,7 @@
  * This shall take into account all registered handlers
  * (from either the provided services or the custom services)
  */
-#define BLE_CFG_SVC_MAX_NBR_CB                                                 5
+#define BLE_CFG_SVC_MAX_NBR_CB                                                 7
 
 #define BLE_CFG_CLT_MAX_NBR_CB                                                 6
 

@@ -1,20 +1,21 @@
 /**
  ******************************************************************************
   * File Name          : app_conf.h
-  * Description        : Application configuration file for BLE middleWare.
+  * Description        : Application configuration file for STM32WPAN Middleware.
+  *
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -22,12 +23,13 @@
 
 #include "hw.h"
 #include "hw_conf.h"
+#include "hw_if.h"
 
 /******************************************************************************
  * Application Config
  ******************************************************************************/
 
-/**< generic parameters ********************************************************/
+/**< generic parameters ******************************************************/
 
 /**
  * Define Tx Power
@@ -92,16 +94,29 @@
 */
 #define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
 
+/* USER CODE BEGIN Generic_Parameters */
+/**
+ * SMPS supply
+ * SMPS not used when Set to 0
+ * SMPS used when Set to 1
+ */
+#define CFG_USE_SMPS    1
+/* USER CODE END Generic_Parameters */
+
 /**< specific parameters */
 /*****************************************************/
-#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
-#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
-#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
 
 /**
- * AD Element - Group B Feature
+ * SMPS supply
+ * SMPS not used when Set to 0
+ * SMPS used when Set to 1
+ */
+#define CFG_USE_SMPS    1
+
+/**
+* AD Element - Group B Feature
 */ 
-/* LSB - Second Byte     */
+/* LSB - Second Byte */
 #define CFG_FEATURE_OTA_REBOOT                  (0x20)
 
 /******************************************************************************
@@ -373,7 +388,6 @@ typedef enum
  */
 #define CFG_DEBUG_APP_TRACE     0
 
-
 #if (CFG_DEBUG_APP_TRACE != 0)
 #define APP_DBG_MSG                 PRINT_MESG_DBG
 #else
@@ -391,9 +405,6 @@ typedef enum
 #define CFG_DEBUGGER_SUPPORTED      1
 #endif
 
-/* USER CODE BEGIN Defines */
-/* USER CODE END Defines */
-
 /**
  * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
  * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
@@ -402,7 +413,7 @@ typedef enum
  * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
  */
 #define CFG_DEBUG_TRACE_LIGHT    0
-#define CFG_DEBUG_TRACE_FULL      0
+#define CFG_DEBUG_TRACE_FULL     0
 
 #if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
 #undef CFG_DEBUG_TRACE_FULL
@@ -430,8 +441,11 @@ typedef enum
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
 #define MAX_DBG_TRACE_MSG_SIZE 1024
 
+/* USER CODE BEGIN Defines */
 #define CFG_LED_SUPPORTED         0
 #define CFG_BUTTON_SUPPORTED      1
+/* USER CODE END Defines */
+
 /******************************************************************************
  * FreeRTOS
  ******************************************************************************/
@@ -450,7 +464,7 @@ typedef enum
 #define CFG_HCI_USER_EVT_PROCESS_STACK_MEM    (0)
 #define CFG_HCI_USER_EVT_PROCESS_PRIORITY     osPriorityNone
 #define CFG_HCI_USER_EVT_PROCESS_STACk_SIZE   (128 * 2)
-/* USER CODE BEGIN FreeRTOS_Defines */
+
 #define CFG_ADV_UPDATE_PROCESS_NAME           "ADV_UPDATE_PROCESS"
 #define CFG_ADV_UPDATE_PROCESS_ATTR_BITS      (0)
 #define CFG_ADV_UPDATE_PROCESS_CB_MEM         (0)
@@ -459,7 +473,6 @@ typedef enum
 #define CFG_ADV_UPDATE_PROCESS_PRIORITY       osPriorityNone
 #define CFG_ADV_UPDATE_PROCESS_STACk_SIZE     (128 * 6)
 
-
 #define CFG_HRS_PROCESS_NAME                  "HRS_PROCESS"
 #define CFG_HRS_PROCESS_ATTR_BITS             (0)
 #define CFG_HRS_PROCESS_CB_MEM                (0)
@@ -467,6 +480,11 @@ typedef enum
 #define CFG_HRS_PROCESS_STACK_MEM             (0)
 #define CFG_HRS_PROCESS_PRIORITY              osPriorityNone
 #define CFG_HRS_PROCESS_STACk_SIZE            (128 * 5)
+
+/* USER CODE BEGIN FreeRTOS_Defines */
+#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
+#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
+#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
 /* USER CODE END FreeRTOS_Defines */
 
 /******************************************************************************
@@ -492,6 +510,6 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
-#endif /*APP_CONFIG_H */
+#endif /*APP_CONF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

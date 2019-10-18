@@ -35,24 +35,17 @@ extern "C"
 /* Exported types LBR Client Implementation-----------------------------------*/
 typedef struct
 {
-  uint32_t *pPayload;
+  uint8_t *pPayload;
   uint32_t pPayload_n_1;
   uint32_t pPayload_n;
   uint32_t Length;
 } DTS_STM_Payload_t;
-/*typedef struct
-{
-  uint8_t *pPayload;
-  uint8_t pPayload_n_1;
-  uint8_t pPayload_n;
-  uint32_t Length;
-} DTS_STM_Payload_t;*/
 
 typedef enum
 {
   DTS_STM__NOTIFICATION_ENABLED,
   DTS_STM_NOTIFICATION_DISABLED,
-  DTS_STM_DATA_RECEIVED,
+  DTS_STM_GATT_TX_POOL_AVAILABLE,
 } DTS_STM_NotCode_t;
 
 typedef struct
@@ -68,9 +61,7 @@ typedef struct
 /* Exported functions ------------------------------------------------------- */
 void DTS_STM_Init( void );
 tBleStatus DTS_STM_UpdateChar( uint16_t UUID , uint8_t *pPayload );
-void Resume_Notification(void);
-
-extern void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification );
+void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification );
 
 #ifdef __cplusplus
 }

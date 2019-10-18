@@ -219,6 +219,7 @@ PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicatio
 PLACE_IN_SECTION("BLE_APP_CONTEXT") static uint16_t AdvIntervalMin, AdvIntervalMax;
 
 static const char local_name[] = {AD_TYPE_COMPLETE_LOCAL_NAME ,'H','T','S','T','M'};
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -371,7 +372,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
       /* restart advertising */
       Adv_Request(APP_BLE_FAST_ADV);
-}
+      /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
+
+      /* USER CODE END EVT_DISCONN_COMPLETE */
+    }
 
     break; /* EVT_DISCONN_COMPLETE */
 
@@ -732,10 +736,7 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
      */
     HW_TS_Stop(BleApplicationContext.Advertising_mgr_timer_Id);
 
-#if(CFG_DEBUG_APP_TRACE != 0)
-    APP_DBG_MSG("First index in %d state \n",
-    BleApplicationContext.Device_Connection_Status);
-#endif
+    APP_DBG_MSG("First index in %d state \n", BleApplicationContext.Device_Connection_Status);
     if ((New_Status == APP_BLE_LP_ADV)
         && ((BleApplicationContext.Device_Connection_Status == APP_BLE_FAST_ADV)
             || (BleApplicationContext.Device_Connection_Status == APP_BLE_LP_ADV)))
@@ -744,16 +745,12 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
       ret = aci_gap_set_non_discoverable();
       if (ret == BLE_STATUS_SUCCESS)
       {
-#if(CFG_DEBUG_APP_TRACE != 0)
-        APP_DBG_MSG("Successfully Stopped Advertising\n");
-#endif
-        }
+        APP_DBG_MSG("Successfully Stopped Advertising \n");
+      }
       else
       {
-#if(CFG_DEBUG_APP_TRACE != 0)
         APP_DBG_MSG("Stop Advertising Failed , result: %d \n", ret);
-#endif
-        }
+      }
     }
 
     BleApplicationContext.Device_Connection_Status = New_Status;
@@ -770,34 +767,28 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
         BleApplicationContext.BleApplicationContext_legacy.advtServUUID,
         0,
         0);
-     if (ret == BLE_STATUS_SUCCESS)
+    if (ret == BLE_STATUS_SUCCESS)
     {
       if (New_Status == APP_BLE_FAST_ADV)
       {
-        APP_DBG_MSG("Successfully Start Fast Advertising\n" );
+        APP_DBG_MSG("Successfully Start Fast Advertising \n" );
         /* Start Timer to STOP ADV - TIMEOUT */
         HW_TS_Start(BleApplicationContext.Advertising_mgr_timer_Id, INITIAL_ADV_TIMEOUT);
       }
       else
       {
-#if(CFG_DEBUG_APP_TRACE != 0)
-        APP_DBG_MSG("Successfully Start Low Power Advertising\n");
-#endif
-        }
+        APP_DBG_MSG("Successfully Start Low Power Advertising \n");
+      }
     }
     else
     {
       if (New_Status == APP_BLE_FAST_ADV)
       {
-#if(CFG_DEBUG_APP_TRACE != 0)
         APP_DBG_MSG("Start Fast Advertising Failed , result: %d \n", ret);
-#endif
       }
       else
       {
-#if(CFG_DEBUG_APP_TRACE != 0)
         APP_DBG_MSG("Start Low Power Advertising Failed , result: %d \n", ret);
-#endif
       }
     }
 

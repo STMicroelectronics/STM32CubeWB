@@ -55,7 +55,6 @@ static void appe_Tl_Init( void );
 static void Led_Init( void );
 static void Button_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
-
 static void APPE_SysUserEvtRx( void * pPayload );
 
 /* Functions Definition ------------------------------------------------------*/
@@ -81,7 +80,7 @@ void APPE_Init( void )
 
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-   * received on the system channel before starting the BLE Stack
+   * received on the system channel before starting the Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
 
@@ -192,14 +191,6 @@ static void appe_Tl_Init( void )
 
 static void Led_Init( void )
 {
-#if (CFG_BUTTON_SUPPORTED == 1)
-    /**
-     * Button Initialization
-     */
-
-    BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
-#endif
-
 #if (CFG_LED_SUPPORTED == 1)
   /**
    * Leds Initialization
@@ -221,7 +212,6 @@ static void Button_Init( void )
   /**
    * Button Initialization
    */
-
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
 #endif
 
@@ -261,7 +251,6 @@ void UTIL_SEQ_Idle( void )
   return;
 }
 
-
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
   UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
@@ -286,7 +275,6 @@ void shci_cmd_resp_wait(uint32_t timeout)
   UTIL_SEQ_WaitEvt( 1<< CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID );
   return;
 }
-
 
 void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 {

@@ -63,12 +63,10 @@ typedef struct
 {
 uint16_t DataTransferSvcHdle; /**< Service handle */
 uint16_t DataTransferTxCharHdle; /**< Characteristic handle */
-uint16_t DataTransferRxCharHdle; /**< Characteristic handle */
 } DataTransferSvcContext_t;
 
 /* Private defines -----------------------------------------------------------*/
-#define DATA_TRANSFER_NOTIFICATION_LEN_MAX                                 (20)
-#define DATA_TRANSFER_RX_LEN_MAX                                           (255)
+#define DATA_TRANSFER_NOTIFICATION_LEN_MAX                                 (255)
 
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -105,8 +103,6 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
 
       switch (blue_evt->ecode)
       {
-        case EVT_BLUE_ATT_EXCHANGE_MTU_RESP:
-          break;
         /* server */
         case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
         {
@@ -131,11 +127,7 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
           }
         }
           break;
-        case EVT_BLUE_GATT_TX_POOL_AVAILABLE:
-          Resume_Notification();
-          break;
-          /* end server */
-          /* end GATT event  */
+
         default:
           break;
       }
@@ -194,7 +186,7 @@ void DTS_STM_Init( void )
                                       10, &(aDataTransferContext.DataTransferSvcHdle));
   if (hciCmdResult != 0)
   {
-    APP_DBG_MSG("error add service\n");
+    APP_DBG_MSG("error add service 0x%x\n", hciCmdResult);
   }
 
   /**
@@ -203,7 +195,7 @@ void DTS_STM_Init( void )
   aci_gatt_add_char(aDataTransferContext.DataTransferSvcHdle,
   DT_UUID_LENGTH,
                     (Char_UUID_t *) DT_REQ_CHAR_UUID,
-                    255, /* DATA_TRANSFER_NOTIFICATION_LEN_MAX, */
+                    DATA_TRANSFER_NOTIFICATION_LEN_MAX,
                     CHAR_PROP_NOTIFY,
                     ATTR_PERMISSION_NONE,
                     GATT_DONT_NOTIFY_EVENTS, /* gattEvtMask */
@@ -212,7 +204,7 @@ void DTS_STM_Init( void )
                     &(aDataTransferContext.DataTransferTxCharHdle));
   if (hciCmdResult != 0)
   {
-    APP_DBG_MSG("error add char Tx\n");
+    APP_DBG_MSG("error add char Tx 0x%x\n", hciCmdResult);
   }
 
   return;

@@ -1,8 +1,9 @@
 /**
  ******************************************************************************
   * File Name          : app_conf.h
-  * Description        : Application configuration file for BLE middleWare.
-  ******************************************************************************
+  * Description        : Application configuration file for STM32WPAN Middleware.
+  *
+ ******************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
@@ -17,17 +18,18 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef APP_CONFIG_H
-#define APP_CONFIG_H
+#ifndef APP_CONF_H
+#define APP_CONF_H
 
 #include "hw.h"
 #include "hw_conf.h"
+#include "hw_if.h"
 
 /******************************************************************************
  * Application Config
  ******************************************************************************/
 
-/**< generic parameters ********************************************************/
+/**< generic parameters ******************************************************/
 
 /**
  * Define Tx Power
@@ -92,6 +94,15 @@
 */
 #define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
 
+/* USER CODE BEGIN Generic_Parameters */
+/**
+ * SMPS supply
+ * SMPS not used when Set to 0
+ * SMPS used when Set to 1
+ */
+#define CFG_USE_SMPS    1
+/* USER CODE END Generic_Parameters */
+
 /**< specific parameters */
 /*****************************************************/
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
@@ -100,15 +111,15 @@
 
 /**
  * SMPS supply
- * Set to 0 do not use the SPMS
- * Set to 1 to use the SMPS @1.7V
+ * SMPS not used when Set to 0
+ * SMPS used when Set to 1
  */
-#define CFG_USE_SMPS_1V7    0
+#define CFG_USE_SMPS    1
 
 /**
 * AD Element - Group B Feature
 */ 
-/* LSB - Second Byte     */
+/* LSB - Second Byte */
 #define CFG_FEATURE_OTA_REBOOT                  (0x20)
 
 /******************************************************************************
@@ -380,7 +391,6 @@ typedef enum
  */
 #define CFG_DEBUG_APP_TRACE     0
 
-
 #if (CFG_DEBUG_APP_TRACE != 0)
 #define APP_DBG_MSG                 PRINT_MESG_DBG
 #else
@@ -397,11 +407,6 @@ typedef enum
 #define CFG_LPM_SUPPORTED         0
 #define CFG_DEBUGGER_SUPPORTED      1
 #endif
-
-/* USER CODE BEGIN Defines */
-#define CFG_LED_SUPPORTED         0
-#define CFG_BUTTON_SUPPORTED      1
-/* USER CODE END Defines */
 
 /**
  * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
@@ -503,7 +508,10 @@ typedef enum
 typedef enum
 {
     CFG_LPM_APP,
-    CFG_LPM_APP_BLE
+    CFG_LPM_APP_BLE,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
+
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
 
 /******************************************************************************
@@ -513,6 +521,6 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
-#endif /*APP_CONFIG_H */
+#endif /*APP_CONF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

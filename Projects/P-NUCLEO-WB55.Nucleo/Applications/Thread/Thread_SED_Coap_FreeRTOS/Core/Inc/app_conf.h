@@ -23,6 +23,7 @@
 
 #include "hw.h"
 #include "hw_conf.h"
+#include "hw_if.h"
 
 /******************************************************************************
  * Application Config

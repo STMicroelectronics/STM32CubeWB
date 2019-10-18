@@ -50,6 +50,7 @@
 #define BLE_DBG_LNS_EN          0
 #define BLE_DBG_SCPS_EN         0
 #define BLE_DBG_P2P_STM_EN      0
+#define BLE_DBG_CRS_STM_EN      0
 
 
 /**
@@ -199,6 +200,12 @@
 #else
 #define BLE_DBG_DTS_MSG             PRINT_NO_MESG
 #define BLE_DBG_DTS_BUF             PRINT_NO_MESG
+#endif
+
+#if ( BLE_DBG_CRS_STM_EN != 0 )
+#define BLE_DBG_CRS_STM_MSG         PRINT_MESG_DBG
+#else
+#define BLE_DBG_CRS_STM_MSG         PRINT_NO_MESG
 #endif
 
 

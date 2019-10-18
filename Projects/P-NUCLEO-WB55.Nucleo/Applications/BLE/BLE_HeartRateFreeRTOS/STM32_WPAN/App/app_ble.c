@@ -430,7 +430,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
       /* restart advertising */
       Adv_Request(APP_BLE_FAST_ADV);
-      }
+      /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
+
+      /* USER CODE END EVT_DISCONN_COMPLETE */
+    }
 
     break; /* EVT_DISCONN_COMPLETE */
 
@@ -462,25 +465,27 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
             APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE, status nok \n");
           }
          
-      ret = hci_le_read_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,&TX_PHY,&RX_PHY);
-      if (ret == BLE_STATUS_SUCCESS)
-      {
-        APP_DBG_MSG("Read_PHY success \n");
+          ret = hci_le_read_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,&TX_PHY,&RX_PHY);
+          if (ret == BLE_STATUS_SUCCESS)
+          {
+            APP_DBG_MSG("Read_PHY success \n");
        
-        if ((TX_PHY == TX_2M) && (RX_PHY == RX_2M))
-        {
-          APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
-        }
-        else
-        {
-          APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
-        } 
-      }
-      else
-      {
-        APP_DBG_MSG("Read conf not succeess \n");
-      }
-          
+            if ((TX_PHY == TX_2M) && (RX_PHY == RX_2M))
+            {
+              APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
+            }
+            else
+            {
+              APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
+            } 
+          }
+          else
+          {
+            APP_DBG_MSG("Read conf not succeess \n");
+          }
+          /* USER CODE BEGIN EVT_LE_PHY_UPDATE_COMPLETE */
+
+          /* USER CODE END EVT_LE_PHY_UPDATE_COMPLETE */          
           break;  
           
         case EVT_LE_CONN_COMPLETE:
@@ -494,20 +499,18 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           HW_TS_Stop(BleApplicationContext.Advertising_mgr_timer_Id);
 
-          APP_DBG_MSG("EVT_LE_CONN_COMPLETE for connection handle 0x%x\n",
-                      connection_complete_event->Connection_Handle);
-            if (BleApplicationContext.Device_Connection_Status == APP_BLE_LP_CONNECTING)
-            {
-              /* Connection as client */
-              BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_CLIENT;
-            }
-            else
-            {
-              /* Connection as server */
-              BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_SERVER;
-            }
-            BleApplicationContext.BleApplicationContext_legacy.connectionHandle =
-                connection_complete_event->Connection_Handle;
+          APP_DBG_MSG("EVT_LE_CONN_COMPLETE for connection handle 0x%x\n", connection_complete_event->Connection_Handle);
+          if (BleApplicationContext.Device_Connection_Status == APP_BLE_LP_CONNECTING)
+          {
+            /* Connection as client */
+            BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_CLIENT;
+          }
+          else
+          {
+            /* Connection as server */
+            BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_SERVER;
+          }
+          BleApplicationContext.BleApplicationContext_legacy.connectionHandle = connection_complete_event->Connection_Handle;
           /* USER CODE BEGIN HCI_EVT_LE_CONN_COMPLETE */
 
           /* USER CODE END HCI_EVT_LE_CONN_COMPLETE */
@@ -701,7 +704,6 @@ static void Ble_Tl_Init( void )
   MtxHciId = osMutexNew( NULL );
   SemHciId = osSemaphoreNew( 1, 0, NULL ); /*< Create the semaphore and make it busy at initialization */
 
-
   Hci_Tl_Init_Conf.p_cmdbuffer = (uint8_t*)&BleCmdBuffer;
   Hci_Tl_Init_Conf.StatusNotCallBack = BLE_StatusNot;
   hci_init(BLE_UserEvtRx, (void*) &Hci_Tl_Init_Conf);
@@ -783,7 +785,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    * Write Encryption root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
-  
+
   /**
    * Set TX Power to 0dBm.
    */
@@ -906,7 +908,7 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
       ret = aci_gap_set_non_discoverable();
       if (ret == BLE_STATUS_SUCCESS)
       {
-        APP_DBG_MSG("Successfully Stopped Advertising\n");
+        APP_DBG_MSG("Successfully Stopped Advertising \n");
       }
       else
       {
@@ -935,13 +937,13 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
     {
       if (New_Status == APP_BLE_FAST_ADV)
       {
-        APP_DBG_MSG("Successfully Start Fast Advertising\n" );
+        APP_DBG_MSG("Successfully Start Fast Advertising \n" );
         /* Start Timer to STOP ADV - TIMEOUT */
         HW_TS_Start(BleApplicationContext.Advertising_mgr_timer_Id, INITIAL_ADV_TIMEOUT);
       }
       else
       {
-        APP_DBG_MSG("Successfully Start Low Power Advertising\n");
+        APP_DBG_MSG("Successfully Start Low Power Advertising \n");
       }
     }
     else

@@ -150,6 +150,19 @@ extern "C" {
    */
   void SVCCTL_InitCustomSvc( void );
 
+  /**
+   * @brief This API may be overloaded by the application to select a limited list of ble services to initialize.
+   *        It is called by SVCCTL_Init()
+   *        By default, SVCCTL_SvcInit() is implemented to initialize all BLE services which are included in the
+   *        application at build time
+   *        If it is required to initialize only limited part of the BLE service available in the application,
+   *        this API may be used to call the initialization API of the subset of needed services at run time.
+   *
+   * @param  None
+   * @retval None
+   */
+  void SVCCTL_SvcInit( void );
+
 #ifdef __cplusplus
 }
 #endif

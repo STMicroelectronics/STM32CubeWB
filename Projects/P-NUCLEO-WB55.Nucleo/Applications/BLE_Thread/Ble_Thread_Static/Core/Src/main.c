@@ -195,7 +195,13 @@ static void Init_RTC( void )
   hrtc.Init.SynchPrediv = CFG_RTC_SYNCH_PRESCALER;
   HAL_RTC_Init(&hrtc);
 
-  MODIFY_REG(RTC->CR, RTC_CR_WUCKSEL, CFG_RTC_WUCKSEL_DIVIDER);
+  /* Disable RTC registers write protection */
+  LL_RTC_DisableWriteProtection(RTC);
+
+  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
+
+  /* Enable RTC registers write protection */
+  LL_RTC_EnableWriteProtection(RTC);
 
   return;
 }
@@ -218,7 +224,13 @@ void SystemClock_Config( void )
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = { 0 };
 	RCC_CRSInitTypeDef RCC_CRSInitStruct = { 0 };
 
-	LL_RCC_HSI48_Enable();
+	/**
+   * This prevents the CPU2 to disable the HSI48 oscillator when
+   * it does not use anymore the RNG IP
+   */
+  LL_HSEM_1StepLock( HSEM, 5 );
+
+  LL_RCC_HSI48_Enable();
 
 	while(!LL_RCC_HSI48_IsReady());
 
@@ -268,19 +280,6 @@ void SystemClock_Config( void )
 	 */
 	LL_RCC_SetRFWKPClockSource(LL_RCC_RFWKP_CLKSOURCE_LSE);
 
-	/**
-	 * Switch OFF LSI
-	 */
-	LL_RCC_LSI1_Disable();
-
-
-	/**
-	 * Set RNG on HSI48
-	 */
-	LL_RCC_HSI48_Enable();
-	while(!LL_RCC_HSI48_IsReady());
-	LL_RCC_SetCLK48ClockSource(LL_RCC_CLK48_CLKSOURCE_HSI48);
-
 	return;
 }
 
@@ -289,20 +288,32 @@ void SystemClock_Config( void )
  * WRAP FUNCTIONS
  *
  *************************************************************/
-
-void HAL_Delay(uint32_t delay)
+void HAL_Delay(uint32_t Delay)
 {
   uint32_t tickstart = HAL_GetTick();
-  uint32_t wait = delay;
+  uint32_t wait = Delay;
 
+  /* Add a freq to guarantee minimum wait */
   if (wait < HAL_MAX_DELAY)
   {
-    wait ++;
+    wait += HAL_GetTickFreq();
   }
 
   while ((HAL_GetTick() - tickstart) < wait)
   {
-    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+    /************************************************************************************
+     * ENTER SLEEP MODE
+     ***********************************************************************************/
+    LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
+
+    /**
+     * This option is used to ensure that store operations are completed
+     */
+  #if defined ( __CC_ARM)
+    __force_stores();
+  #endif
+
+    __WFI( );
   }
 }
 

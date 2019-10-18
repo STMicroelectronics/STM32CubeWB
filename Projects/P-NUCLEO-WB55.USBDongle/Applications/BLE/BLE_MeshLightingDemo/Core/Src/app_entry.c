@@ -34,6 +34,8 @@
 
 #include "app_debug.h"
 
+#include "appli_mesh.h"
+   
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -41,6 +43,9 @@
 
 /* Private typedef -----------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
+#ifdef SAVE_MODEL_STATE_POWER_FAILURE_DETECTION    
+extern MOBLEUINT8 PowerOnOff_flag;
+#endif
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -107,12 +112,14 @@ void APPE_Init( void )
   Led_Init();
 
   Button_Init();
+  
+  
 /* USER CODE END APPE_Init_1 */
   appe_Tl_Init();	/*  Initialize all transport layers */
 
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-   * received on the system channel before starting the BLE Stack
+   * received on the system channel before starting the Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
 /* USER CODE BEGIN APPE_Init_2 */
@@ -199,7 +206,7 @@ static void APPE_SysUserEvtRx( void * pPayload )
   APPD_EnableCPU2( );
 
   APP_BLE_Init( );
-  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
   return;
 }
 
@@ -282,8 +289,13 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 {
   switch (GPIO_Pin)
   {
-    case BUTTON_SW1_PIN:
+#ifdef SAVE_MODEL_STATE_POWER_FAILURE_DETECTION    
+    case POWEROFF_PIN:
+      {
+        PowerOnOff_flag = 1;
+      }
       break;
+#endif
 
     default:
       break;

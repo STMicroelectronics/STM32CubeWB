@@ -30,17 +30,6 @@ extern "C" {
 #include "hci_tl.h"
   
 /* Exported types ------------------------------------------------------------*/
-typedef enum
-{
-  APP_BLE_Limited,
-  APP_BLE_Full,
-} APP_BLE_InitMode_t;
-
-typedef struct
-{
-uint8_t StopData_Id;  
-} DTTimer_t;
-
 /* Exported constants --------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/

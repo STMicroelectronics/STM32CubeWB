@@ -57,6 +57,10 @@ void USB_LP_IRQHandler(void);
 void USB_HP_IRQHandler(void);
 void USB_FS_WKUP_IRQHandler(void);
 
+void POWEROFF_EXTI_IRQHandler(void);
+void TIM2_IRQHandler(void);
+void TIM1_CC_IRQHandler(void);
+
 #ifdef __cplusplus
 }
 #endif

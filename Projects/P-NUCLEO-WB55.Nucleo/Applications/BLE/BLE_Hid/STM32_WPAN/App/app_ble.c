@@ -225,6 +225,7 @@ static void Add_Advertisment_Service_UUID(uint16_t servUUID);
 static void Adv_Request(HID_ConnStatus_t New_Status);
 static void ConnMgr( void );
 static void AdvUpdate ( void );
+static void Disconnection( void );
 
 /* Functions Definition ------------------------------------------------------*/
 void APP_BLE_Init( void )
@@ -287,6 +288,7 @@ void APP_BLE_Init( void )
    * From here, all initialization are BLE application specific
    */
   UTIL_SEQ_RegTask( 1<< CFG_TASK_CONN_MGR_ID, UTIL_SEQ_RFU, AdvUpdate );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_HID_DISC_REQ_ID, UTIL_SEQ_RFU, Disconnection );
 
   /**
    * Initialization of the BLE App Context
@@ -553,7 +555,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data_Present = 0;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = 8;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = 16;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 1;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 0;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = 111111;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = 1;
   for (index = 0; index < 16; index++)
@@ -718,6 +720,19 @@ static void Adv_Request(HID_ConnStatus_t New_Status)
   return;
 }
 
+static void Disconnection( void )
+{
+  tBleStatus result;
+  uint8_t index;
+  
+  for(index = 0; index < BLE_CFG_HIDS_NUMBER; index++)
+  {
+    result = aci_gap_terminate(BleApplicationContext.BleApplicationContext_legacy.connectionHandle[index],
+                               ERR_RMT_USR_TERM_CONN);
+    APP_DBG_MSG("Disconnection: result = %d\n", result);
+  }
+}
+
 void APP_BLE_Key_Button1_Action(void)
 {
   UTIL_SEQ_SetTask( 1<<CFG_TASK_HID_UPDATE_REQ_ID, CFG_SCH_PRIO_0);
@@ -725,6 +740,7 @@ void APP_BLE_Key_Button1_Action(void)
 
 void APP_BLE_Key_Button2_Action(void)
 {
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_HID_DISC_REQ_ID, CFG_SCH_PRIO_0);
 }
 
 void APP_BLE_Key_Button3_Action(void)

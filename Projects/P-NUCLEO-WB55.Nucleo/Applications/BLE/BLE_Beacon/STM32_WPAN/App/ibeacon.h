@@ -1,8 +1,8 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    ibeacon.h
-  * @author  MCD Application Team
-  * @brief
+  * File Name          : App/ibeacon.h
+  * Description        : Header for ibeacon_application.c module
   ******************************************************************************
   * @attention
   *
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef IBEACON_H

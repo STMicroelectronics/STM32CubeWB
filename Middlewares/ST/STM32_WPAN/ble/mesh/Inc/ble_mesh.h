@@ -44,8 +44,8 @@
 #define _BLE_MESH_
 
 #include "types.h"
-
-#define BLE_MESH_APPLICATION_VERSION "1.10.000"
+//#include "hal_types.h"
+#define BLUENRG_MESH_APPLICATION_VERSION "1.10.004"
 /**
 * \mainpage ST BLE-Mesh Solutions Bluetooth LE Mesh Library
 *
@@ -110,6 +110,21 @@
 * Please refer to the desript
 */
 #include <stdint.h>
+
+/**
+* \brief Output OOB Action values (provisioner)
+*/
+#define OUTPUT_OOB_ACTION_BIT_BLINK               (1 << 0) /**< Blink */
+#define OUTPUT_OOB_ACTION_BIT_BEEP                (1 << 1) /**< Beep */
+#define OUTPUT_OOB_ACTION_BIT_VIBRATE             (1 << 2) /**< Vibrate */
+#define OUTPUT_OOB_ACTION_BIT_DISPLAY_NUM         (1 << 3) /**< Display Numeric */
+
+/**
+* \brief Input OOB Action values (unprovisioned node)
+*/
+#define INPUT_OOB_ACTION_BIT_PUSH                 (1 << 0) /**< Push */
+#define INPUT_OOB_ACTION_BIT_TWIST                (1 << 1) /**< Twist */
+#define INPUT_OOB_ACTION_BIT_ENTER_NUM            (1 << 2) /**< Enter Number */
 
 /** \brief List of status values for responses. */
 typedef enum _MOBLE_COMMAND_STATUS
@@ -180,9 +195,18 @@ typedef struct
 */ 
 typedef struct
 {
+    uint8_t pubKeyTypeOob;  /* Used Public Key: OOB / No OOB */   
+    const uint8_t *pubKey;    /* Pointer to array containing Public Key of the device */
+    const uint8_t *privKey;   /* Pointer to array containing Private Key of the device*/ 
     uint8_t staticOobSize;  /* Size of Static OOB array */
     const uint8_t *staticOob; /* Pointer to array containing Static OOB info of the device */
-} unprov_node_info_params_t;
+    uint8_t OutputOobSize;    /* Size of Output OOB value */
+    uint8_t OutputOobAction;  /* Size of Output OOB Action */
+    void (*OutputOOBAuthCb)(MOBLEUINT8* oobData, MOBLEUINT8 size); /* Callback to Output OOB data */
+    uint8_t InputOobSize;    /* Size of Input OOB value */
+    uint8_t InputOobAction;  /* Size of Input OOB Action */
+    MOBLEUINT8* (*InputOOBAuthCb)(MOBLEUINT8 size); /* Callback to Input OOB data */
+} prvn_params_t;
 
 /**
 * Structure contains neighbor table initialization parameters
@@ -253,8 +277,9 @@ typedef struct
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */
-  MOBLE_RESULT (*OnResponseData)(MOBLE_ADDRESS peer, MOBLEUINT8 elementIndex, 
-                                 MOBLEUINT8 const * data, MOBLEUINT32 length); 
+  MOBLE_RESULT (*OnResponseData)(MOBLE_ADDRESS peer_addr, MOBLE_ADDRESS dst_peer,
+                                 MOBLEUINT8 command, MOBLEUINT8 const *pRxData, 
+                                 MOBLEUINT32 dataLength, MOBLEBOOL response);
 
 } MOBLE_VENDOR_CB_MAP;
 
@@ -376,6 +401,59 @@ typedef struct
 } MODEL_SIG_cb_t;
 
 
+/** \brief Callback map */
+typedef struct
+{  
+  /** \brief Get opcode table callback.
+  * This function is a callback to get status opcode form the received opcode 
+  * from client side.
+  * \param[in] Pointer to get the opcode table address
+  * \param[in] length of the opcode.
+  * \return MOBLE_RESULT_SUCCESS on success.
+  */
+   
+  MOBLE_RESULT (*ModelVendor_GetOpcodeTableCb)(const MODEL_OpcodeTableParam_t **data, 
+                                    MOBLEUINT16 *length);
+  
+  /** \brief get message/status message process callback
+  * This function called when there will acknowleged message received or Get message is
+  * is received to get the status of the message.
+  * \param[in] peer Source network address.
+  * \param[in] dst_peer Destination address set by peer.
+  * \param[in] opcode to be processed
+  * \param[in] data Data buffer. to be sent back in status
+  * \param[in] length Data buffer length in bytes.
+  * \param[in] response Flag if response is required.
+  * \return MOBLE_RESULT_SUCCESS on success.
+  */ 
+  MOBLE_RESULT (*ModelVendor_GetRequestCb)(MOBLE_ADDRESS peer_addr, 
+                                    MOBLE_ADDRESS dst_peer, 
+                                    MOBLEUINT16 opcode, 
+                                    MOBLEUINT8 *data, 
+                                    MOBLEUINT32 *res_length,
+                                    MOBLEUINT8 const *pData,
+                                    MOBLEUINT32 length,
+                                    MOBLEBOOL response); 
+  
+  /** \brief set message process callback
+  * This function called when there will set message is received.
+  * \param[in] peer Source network address.
+  * \param[in] dst_peer Destination address set by peer.
+  * \param[in] opcode to be processed
+  * \param[in] data Data buffer. to be sent back in status
+  * \param[in] length Data buffer length in bytes.
+  * \param[in] response Flag if response is required.
+  * \return MOBLE_RESULT_SUCCESS on success.
+  */ 
+  MOBLE_RESULT (*ModelVendor_SetRequestCb)(MOBLE_ADDRESS peer_addr, 
+                                    MOBLE_ADDRESS dst_peer, 
+                                    MOBLEUINT16 opcode, 
+                                    MOBLEUINT8 const *data, 
+                                    MOBLEUINT32 length, 
+                                    MOBLEBOOL response);
+
+} MODEL_Vendor_cb_t;
+
 typedef struct
 {
   MOBLEUINT8* pbuff_dyn ;
@@ -395,6 +473,7 @@ typedef struct
   const neighbor_table_init_params_t* pNeighborTableParams;
   const uint16_t features;
   const uint8_t prvnBearer;
+  const prvn_params_t* pPrvnParams;
   const DynBufferParam_t* pDynBufferParam;
 } Mesh_Initialization_t;
 
@@ -470,6 +549,24 @@ MOBLE_RESULT BLEMesh_SetRemoteData(MOBLE_ADDRESS peer, MOBLEUINT8 elementIndex,
                                        MOBLEUINT32 length, MOBLEBOOL response, 
                                        MOBLEUINT8 isVendor);
 
+/** \brief Vendor Model Set remote data on the given peer.
+* User is responsible for serializing data into a data buffer. 
+* \param[in] peer Destination address. May be set to MOBLE_ADDRESS_ALL_NODES to broadcast data.
+* \param[in] src_addr index of the element which is generating the data
+* \param[in] command vendor model commands 
+* \param[in] data Data buffer.
+* \param[in] length Length of data in bytes.
+* \param[in] response If 'MOBLE_TRUE', used to get the response. If 'MOBLE_FALSE', no response 
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT Vendor_WriteRemoteData (MOBLEUINT32 vendorModelId,
+                                     MOBLE_ADDRESS src_addr, 
+                                     MOBLE_ADDRESS dst_peer, 
+                                     MOBLEUINT8 command, 
+                                     MOBLEUINT8 const *data, 
+                                     MOBLEUINT32 length, 
+                                     MOBLEBOOL response);
+  
 /** \brief Read remote data on the given peer.
 * User is responsible for serializing data into \a data buffer. Vendor_ReadLocalDataCb 
 *                                  callback will be called on the remote device.
@@ -479,7 +576,24 @@ MOBLE_RESULT BLEMesh_SetRemoteData(MOBLE_ADDRESS peer, MOBLEUINT8 elementIndex,
 * \param[in] command vendor model commands 
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_ReadRemoteData(MOBLE_ADDRESS peer, MOBLEUINT8 elementIndex, MOBLEUINT16 command);
+MOBLE_RESULT BLEMesh_ReadRemoteData(MOBLE_ADDRESS peer,
+                                        MOBLEUINT8 elementIndex, 
+                                        MOBLEUINT16 command,
+                                        MOBLEUINT8 const * data, 
+                                        MOBLEUINT32 length);
+
+/** \brief Send response on received packet.The usage of this API is depracated and replaced with VendorModel_SendResponse
+* \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
+* \param[in] dst Source Address of Node
+* \param[in] status Status of response.
+* \param[in] data Data buffer.
+* \param[in] length Length of data in bytes. Maximum accepted length is 8. 
+*             If length is zero, no associated data is sent with the report.
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_SendResponse(MOBLE_ADDRESS peer, MOBLE_ADDRESS dst, 
+                                      MOBLEUINT8 status, MOBLEUINT8 const * data, 
+                                      MOBLEUINT32 length);
 
 /** \brief Send response on received packet.
 * \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
@@ -490,7 +604,7 @@ MOBLE_RESULT BLEMesh_ReadRemoteData(MOBLE_ADDRESS peer, MOBLEUINT8 elementIndex,
 *             If length is zero, no associated data is sent with the report.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_SendResponse(MOBLE_ADDRESS peer, MOBLE_ADDRESS dst, 
+MOBLE_RESULT VendorModel_SendResponse(MOBLEUINT16 vendorModelId, MOBLE_ADDRESS peer, MOBLE_ADDRESS dst, 
                                       MOBLEUINT8 status, MOBLEUINT8 const * data, 
                                       MOBLEUINT32 length);
 
@@ -515,12 +629,6 @@ MOBLE_RESULT BLEMesh_InitUnprovisionedNode(void);
 * \return MOBLE_RESULT_SUCCESS on success.
 */
 MOBLE_RESULT BLEMesh_InitProvisionedNode(void);
-
-/** \brief Getting Info of unprovisioned node.
-* \param None.
-* \return MOBLE_RESULT_SUCCESS on success.
-*/
-MOBLE_RESULT BLEMesh_UnprovisionedNodeInfo(const unprov_node_info_params_t *);
 
 /** \brief Check if node configures as Unprovisioned node.
 * \return MOBLE_TRUE if node configured as Unprovisioned node. MOBLE_FALSE otherwise.
@@ -615,6 +723,43 @@ MOBLE_RESULT BLEMesh_SetRelayRetransmitCount(MOBLEUINT8 count);
 */
 MOBLEUINT8 BLEMesh_GetRelayRetransmitCount(void);
 
+/** \brief Enable or disable relay feature. Feature can be changed only if it is supported 
+*          0 - disable, 1 - enable
+* \return MOBLE_RESULT_FALSE if no change occur
+*         MOBLE_RESULT_SUCCESS on success
+*/
+MOBLE_RESULT BLEMesh_SetRelayFeatureState(MOBLEUINT8 state);
+
+/** \brief Enable or disable proxy feature. Feature can be changed only if it is supported 
+*          0 - disable, 1 - enable
+* \return MOBLE_RESULT_FALSE if no change occur
+*         MOBLE_RESULT_SUCCESS on success
+*/
+MOBLE_RESULT BLEMesh_SetProxyFeatureState(MOBLEUINT8 state);
+
+/** \brief Enable or disable friend feature. Feature can be changed only if it is supported 
+*          0 - disable, 1 - enable
+* \return MOBLE_RESULT_FALSE if no change occur
+*         MOBLE_RESULT_SUCCESS on success
+*/
+MOBLE_RESULT BLEMesh_SetFriendFeatureState(MOBLEUINT8 state);
+
+/** \brief Disable low power feature only if it is supported and enabled
+*          0 - disable, low power feature can't be enabled using BluenrgMesh_SetLowPowerFeatureState
+* \return MOBLE_RESULT_FALSE if no change occur
+*         MOBLE_RESULT_SUCCESS on success
+*/
+MOBLE_RESULT BLEMesh_SetLowPowerFeatureState(MOBLEUINT8 state);
+
+/** \brief Get features state
+*          Bit0: Relay feature. 0 - disabled, 1 - enabled
+*          Bit1: Proxy feature. 0 - disabled, 1 - enabled
+*          Bit2: Friend feature. 0 - disabled, 1 - enabled
+*          Bit3: Low Power feature. 0 - disabled, 1 - enabled
+* \return Features state
+*/
+MOBLEUINT16 BLEMesh_GetFeatures(void);
+
 /** \brief Set callback for handling heartbeat messages.
 *
 * \param[in] cb Callback
@@ -647,9 +792,17 @@ void BLEMesh_ProvisionCallback(void);
 
 /** \brief Set SIG Model callback map.
 * \param[in] map callback map. If NULL, nothing is done.
+* \count[in] count of the number of models defined in Application
 * \return MOBLE_RESULT_SUCCESS on success.
 */
 MOBLE_RESULT BLEMesh_SetSIGModelsCbMap(const MODEL_SIG_cb_t* pSig_cb, MOBLEUINT32 count);
+
+/** \brief GetApplicationVendorModels
+* \param[in] map callback map. If NULL, nothing is done.
+* \count[in] count of the number of models defined in Application
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+void GetApplicationVendorModels(const MODEL_Vendor_cb_t** pModelsTable, MOBLEUINT32* VendorModelscount);
 
 /** \brief Returns sleep duration.
 * going to sleep (or no call to BLEMesh_Process()) for this duration does not affect operation of mesh library
@@ -749,6 +902,19 @@ MOBLE_RESULT BLEMesh_SetProxyServAdvInterval(MOBLEUINT16 interval);
 */
 MOBLE_RESULT BLEMesh_SetSecureBeaconInterval(MOBLEUINT16 interval);
 
+/** \brief Set interval of custom beacon, 0 value results in stop.
+* \param[in] interval (ms) of beacons, min interval value is 1000 ms
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_SetCustomBeaconInterval(MOBLEUINT16 interval);
+
+/** \brief Set custom beacon data.
+*          If size > 31 bytes, beacon is rejected
+* \param[out] beacon data buffer
+* \param[out] size of beacon data
+*/
+void BLEMesh_CustomBeaconGeneratorCallback(void* buffer, MOBLEUINT8* size);
+
 /** 
 * @brief ApplicationGetSigModelList: This function provides the list of the 
 *           SIG Models to the calling function
@@ -812,14 +978,14 @@ void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
 * \param[in] reference to a variable which will be updated according to number of entries in neighbor table.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BluenrgMesh_GetNeighborState(neighbor_params_t* pNeighborTable, MOBLEUINT8* pNoOfNeighborPresent);
+MOBLE_RESULT BLEMesh_GetNeighborState(neighbor_params_t* pNeighborTable, MOBLEUINT8* pNoOfNeighborPresent);
 
 /** \brief Set system faults. Will be used by Health Model. Supporting All Bluetooth assigned FaultValues. 
 * \param[in] pFaultArray FaultValue Array pointer. (FaultValue Range: 0x01–0x32)   
 * \param[in] faultArraySize Size of the fault array. Max supported array size is 5. 
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BluenrgMesh_SetFault(MOBLEUINT8 *pFaultArray, MOBLEUINT8 faultArraySize);
+MOBLE_RESULT BLEMesh_SetFault(MOBLEUINT8 *pFaultArray, MOBLEUINT8 faultArraySize);
 
 /** \brief Clears already set system faults. Will be used by Health Model.  
 * \param[in] pFaultArray Fault Array pointer  
@@ -828,6 +994,22 @@ MOBLE_RESULT BluenrgMesh_SetFault(MOBLEUINT8 *pFaultArray, MOBLEUINT8 faultArray
 */
 MOBLE_RESULT BLEMesh_ClearFault(MOBLEUINT8 *pFaultArray, MOBLEUINT8 faultArraySize);
 
+/** \brief Bluetooth LE Mesh Library shutdown
+*
+* This function should be called to shutdown Bluetooth LE Mesh Library
+* To resume the operation, \a BluenrgMesh_Resume should be called.
+* \return MOBLE_RESULT_FAIL if already shut down, MOBLE_RESULT_SUCCESS otherwise.
+*/
+MOBLE_RESULT BLEMesh_Shutdown(void);
+
+/** \brief Restore Bluetooth LE Mesh Library after shutdown
+*
+* This function should be called to restore previously shutdown Bluetooth LE Mesh Library
+* in order to resume library operation.
+* \return MOBLE_RESULT_FAIL if already up and running, MOBLE_RESULT_SUCCESS otherwise.
+*/
+MOBLE_RESULT BLEMesh_Resume(void);
 #endif /* __BLE_MESH_ */
+
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
 

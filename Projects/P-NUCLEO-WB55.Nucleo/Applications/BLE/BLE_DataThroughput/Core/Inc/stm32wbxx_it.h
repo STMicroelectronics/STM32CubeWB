@@ -1,10 +1,10 @@
 /**
- ******************************************************************************
- * @file    stm32wbxx_it.h
- * @author  MCD Application Team
- * @brief   This file contains the headers of the interrupt handlers.
- ******************************************************************************
- * @attention
+  ******************************************************************************
+  * @file    stm32wbxx_it.h
+  * @author  MCD Application Team
+  * @brief   This file contains the headers of the interrupt handlers.
+  ******************************************************************************
+  * @attention
  *
  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
  * All rights reserved.</center></h2>
@@ -52,6 +52,7 @@ void CFG_HW_LPUART1_DMA_TX_IRQHandler( void );
 void RTC_WKUP_IRQHandler(void);
 void IPCC_C1_TX_IRQHandler(void);
 void IPCC_C1_RX_IRQHandler(void);
+
 #ifdef __cplusplus
 }
 #endif

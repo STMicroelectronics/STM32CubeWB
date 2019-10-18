@@ -192,30 +192,22 @@ void APP_BLE_Init( void )
    */
   if (CFG_BEACON_TYPE & CFG_EDDYSTONE_UID_BEACON_TYPE)
   {
-#if(CFG_DEBUG_APP_TRACE != 0)
     APP_DBG_MSG("Eddystone UID beacon advertize\n");
-#endif
     EddystoneUID_Process();
   }
   else if (CFG_BEACON_TYPE & CFG_EDDYSTONE_URL_BEACON_TYPE)
   {
-#if(CFG_DEBUG_APP_TRACE != 0)
     APP_DBG_MSG("Eddystone URL beacon advertize\n");
-#endif
     EddystoneURL_Process();
   }
   else if (CFG_BEACON_TYPE & CFG_EDDYSTONE_TLM_BEACON_TYPE)
   {
-#if(CFG_DEBUG_APP_TRACE != 0)
     APP_DBG_MSG("Eddystone TLM beacon advertize\n");
-#endif
     EddystoneTLM_Process();
   }
   else if (CFG_BEACON_TYPE & CFG_IBEACON)
   {
-#if(CFG_DEBUG_APP_TRACE != 0)
     APP_DBG_MSG("Ibeacon advertize\n");
-#endif
     IBeacon_Process();
   }
 /* USER CODE BEGIN APP_BLE_Init_2 */

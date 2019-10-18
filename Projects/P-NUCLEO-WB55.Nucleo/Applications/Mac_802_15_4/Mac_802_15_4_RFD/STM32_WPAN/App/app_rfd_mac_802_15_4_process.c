@@ -221,6 +221,7 @@ MAC_Status_t APP_MAC_mlmeGtsIndCb( const MAC_GtsInd_t * pGtsInd )
   return MAC_NOT_IMPLEMENTED_STATUS;
 }
 
+// APP_MAC_mlmePollIndCbPtr  mlmePollIndCb;
 MAC_Status_t APP_MAC_mlmePollIndCb( const MAC_pollInd_t * pPollInd )
 {
   return MAC_NOT_IMPLEMENTED_STATUS;

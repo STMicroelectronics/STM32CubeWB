@@ -78,11 +78,21 @@ void hci_user_evt_proc(void)
   tHCI_UserEvtRxParam UserEvtRxParam;
 
   /**
+   * Up to release version v1.2.0, a while loop was implemented to read out events from the queue as long as
+   * it is not empty. However, in a bare metal implementation, this leads to calling in a "blocking" mode
+   * hci_user_evt_proc() as long as events are received without giving the opportunity to run other tasks
+   * in the background.
+   * From now, the events are reported one by one. When it is checked there is still an event pending in the queue,
+   * a request to the user is made to call again hci_user_evt_proc().
+   * This gives the opportunity to the application to run other background tasks between each event.
+   */
+
+  /**
    * It is more secure to use LST_remove_head()/LST_insert_head() compare to LST_get_next_node()/LST_remove_node()
    * in case the user overwrite the header where the next/prev pointers are located
    */
 
-  while((LST_is_empty(&HciAsynchEventQueue) == FALSE) && (UserEventFlow != HCI_TL_UserEventFlow_Disable))
+  if((LST_is_empty(&HciAsynchEventQueue) == FALSE) && (UserEventFlow != HCI_TL_UserEventFlow_Disable))
   {
     LST_remove_head ( &HciAsynchEventQueue, (tListNode **)&phcievtbuffer );
 
@@ -107,6 +117,12 @@ void hci_user_evt_proc(void)
       LST_insert_head ( &HciAsynchEventQueue, (tListNode *)phcievtbuffer );
     }
   }
+
+  if((LST_is_empty(&HciAsynchEventQueue) == FALSE) && (UserEventFlow != HCI_TL_UserEventFlow_Disable))
+  {
+    hci_notify_asynch_evt((void*) &HciAsynchEventQueue);
+  }
+
 
   return;
 }

@@ -43,10 +43,20 @@
 #ifndef __PAL_NVM_H
 #define __PAL_NVM_H
 
+#define ATOMIC_SECTION_BEGIN() uint32_t uwPRIMASK_Bit = __get_PRIMASK(); \
+                                __disable_irq()
+/* Must be called in the same or in a lower scope of ATOMIC_SECTION_BEGIN */ 
+#define ATOMIC_SECTION_END() __set_PRIMASK(uwPRIMASK_Bit)
+
 /* Includes ------------------------------------------------------------------*/
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported variables  ------------------------------------------------------- */
+extern const void* mobleNvmBase;
+
+/* Private define ------------------------------------------------------------*/
+#define NVM_BASE ((unsigned int)mobleNvmBase)
+
 typedef enum
 {
     MOBLE_NVM_COMPARE_EQUAL,
@@ -55,11 +65,23 @@ typedef enum
 } MOBLE_NVM_COMPARE;
 
 /* Exported Functions Prototypes ---------------------------------------------*/
-MOBLE_RESULT MoblePalNvmRead(MOBLEUINT32 address, void *buf, MOBLEUINT32 size, MOBLEBOOL backup);
+MOBLE_RESULT MoblePalNvmRead(MOBLEUINT32 address,
+                             MOBLEUINT32 offset,
+                             void *buf, 
+                             MOBLEUINT32 size, 
+                             MOBLEBOOL backup);
 MOBLE_RESULT MoblePalNvmBackupRead(MOBLEUINT32 address, void *buf, MOBLEUINT32 size);
-MOBLE_RESULT MoblePalNvmWrite(MOBLEUINT32 address, void const *buf, MOBLEUINT32 size);
+MOBLE_RESULT MoblePalNvmWrite(MOBLEUINT32 address,
+                              MOBLEUINT32 offset,
+                              void const *buf, 
+                              MOBLEUINT32 size);
 MOBLEBOOL    MoblePalNvmIsWriteProtected(void);
-MOBLE_RESULT MoblePalNvmCompare(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size, MOBLE_NVM_COMPARE* result);
-MOBLE_RESULT MoblePalNvmErase(MOBLEUINT32 offset);
+MOBLE_RESULT MoblePalNvmCompare(MOBLEUINT32 address,
+                                MOBLEUINT32 offset,
+                                void const *buf, 
+                                MOBLEUINT32 size, 
+                                MOBLE_NVM_COMPARE* result);
+MOBLE_RESULT MoblePalNvmErase(MOBLEUINT32 address,
+                              MOBLEUINT32 offset);
 
 #endif /* __PAL_NVM_H */

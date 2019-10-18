@@ -121,7 +121,7 @@
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OGUseCmsisDspLib</name>
@@ -221,7 +221,7 @@
                     <state>CORE_CM4</state>
                     <state>STM32</state>
                     <state>ENABLE_USART</state>
-                    <state>DISABLE_TRACES</state>
+                    <state>TRACE_ENABLE_NO_FUNCTION</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -390,7 +390,7 @@
                 <option>
                     <name>CCOptStrategy</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
@@ -457,7 +457,7 @@
                 <option>
                     <name>CCOptStrategySlave</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCGuardCalls</name>
@@ -1100,7 +1100,13 @@
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light_lc.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_mesh.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_nvm.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_sensor.c</name>
@@ -1110,6 +1116,15 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\models_if.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\pal_nvm.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\PWM_config.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\PWM_handlers.c</name>
                 </file>
             </group>
             <group>
@@ -1194,6 +1209,12 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc_ex.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim_ex.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart.c</name>
             </file>
             <file>
@@ -1237,13 +1258,13 @@
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\light.c</name>
                     </file>
                     <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\light_lc.c</name>
+                    </file>
+                    <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\mesh.c</name>
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\Src\mesh_cfg.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\PAL\STM32WB\pal_nvm.c</name>
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\sensors.c</name>
@@ -1334,6 +1355,12 @@
                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\otp.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\lpm\tiny_lpm\stm32_lpm.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer\stm32_seq.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\stm_list.c</name>
                 </file>
                 <file>
@@ -1341,14 +1368,5 @@
                 </file>
             </group>
         </group>
-    </group>
-    <group>
-        <name>Utilities</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\lpm\tiny_lpm\stm32_lpm.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer\stm32_seq.c</name>
-        </file>
     </group>
 </project>

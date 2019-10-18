@@ -18,20 +18,63 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_SENSOR_MODEL_H
-#define __APPLI_SENSOR_MODEL_H
+#ifndef __APPLI_SENSOR_H
+#define __APPLI_SENSOR_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
 
 /* Exported macro ------------------------------------------------------------*/
+
+#define CONTROLLER_WAIT_TIME            1000
+
 /* Exported variables  -------------------------------------------------------*/
-/* 
- structure for the Property id for the sensors Present inside the firmware.
-*/
-
-
 /* Exported Functions Prototypes ---------------------------------------------*/
+/* Application variables------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+
+/* Sensor Cadence set */
+#pragma pack(1)
+typedef struct
+{
+  MOBLEUINT16 Prop_ID;
+  MOBLEUINT16 PositiveTolerance;
+  MOBLEUINT16 NegativeTolerance;
+  MOBLEUINT8 SamplingFunction;
+  MOBLEUINT8 MeasurementPeriod;
+  MOBLEUINT8 UpdateInterval; 
+}Appli_Sensor_DescriptorStatus_t;
+
+/* Sensor Setting set */
+typedef struct 
+{
+  MOBLEUINT16 Property_ID; 
+  MOBLEUINT16 Sensor_Setting_ID; 
+  MOBLEUINT8 Sensor_Setting_Access;
+  MOBLEUINT16 Sensor_Setting_Value;
+}Appli_Sensor_SettingSet_t;
+
+
+/* structure of flags used for publishing data */
+typedef struct 
+{
+  MOBLEBOOL CadenceDurationFlag ;
+  MOBLEBOOL DeltaDataFlag ;
+}PublishingDataFlag_t;
+
+/* structure for the cadence set */
+typedef struct 
+{
+  MOBLEUINT16 Property_ID; 
+  MOBLEUINT8 FastCadenceDevisor;
+  MOBLEUINT8 StatusTriggerType; 
+  MOBLEUINT8 triggerDeltaDown;
+  MOBLEUINT8 triggerDeltaUp;
+  MOBLEUINT8 StatusMinInterval; 
+  float FastCadenceLow;
+  float FastCadenceHigh;
+}Sensor_CadenceSet_t;
+#pragma pack(4)
 
 MOBLE_RESULT Appli_Sensor_Cadence_Set(Sensor_CadenceParam_t* pCadence_param, MOBLEUINT16 property_ID,
                                                                            MOBLEUINT32 length); 
@@ -52,8 +95,10 @@ MOBLE_RESULT Appli_Sensor_GetSettingStatus(MOBLEUINT8* pSetting_Status);
 MOBLE_RESULT Appli_Sensor_GetSetting_IDStatus(MOBLEUINT8* pSetting_Status);
 MOBLE_RESULT Appli_Sensor_Init(void); 
 void Sensor_Process(void);
+void Sensor_LC_Light_Publish(void);
 
-#endif /* __APPLI_SENSOR_MODEL_H */
+
+#endif /* __APPLI_SENSOR_H */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
 

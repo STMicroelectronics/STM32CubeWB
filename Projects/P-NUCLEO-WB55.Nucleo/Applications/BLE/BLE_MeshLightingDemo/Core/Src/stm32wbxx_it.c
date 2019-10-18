@@ -23,11 +23,15 @@
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "stm32wbxx_it.h"
+#include "appli_mesh.h"
+#include "PWM_handlers.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim2;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -138,6 +142,19 @@ void PUSH_BUTTON_SW3_EXTI_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW3_PIN);
 }
 
+#ifdef SAVE_MODEL_STATE_POWER_FAILURE_DETECTION       
+/**
+ * @brief  This function handles External line
+ *         interrupt request.
+ * @param  None
+ * @retval None
+ */
+void POWEROFF_EXTI_IRQHandler(void)
+{
+  HAL_GPIO_EXTI_IRQHandler(POWEROFF_PIN);
+}
+#endif
+
 #if(CFG_HW_USART1_ENABLED == 1)
 void USART1_IRQHandler(void)
 {
@@ -184,6 +201,33 @@ void IPCC_C1_RX_IRQHandler(void)
   return;
 }
 
+/**
+  * @brief This function handles TIM2 global interrupt.
+  */
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+
+  /* USER CODE END TIM2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM1 global interrupt.
+  */
+void TIM1_CC_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_IRQn 0 */
+
+  /* USER CODE END TIM1_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_IRQn 1 */
+
+  /* USER CODE END TIM1_IRQn 1 */
+}
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

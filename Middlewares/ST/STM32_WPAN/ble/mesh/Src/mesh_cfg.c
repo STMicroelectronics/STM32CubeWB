@@ -49,6 +49,8 @@
 #include "light.h"
 #include "sensors.h"
 #include "vendor.h"
+#include "light_lc.h"
+#include "appli_mesh.h"
 #include <string.h>
 
 /* Note: Please use Full Library configuration in project options to use the full 
@@ -64,6 +66,9 @@
     #if ENABLE_UT
       #include "serial_ut.c"
     #endif
+    #if ENABLE_APPLI_TEST
+      #include "appli_test.c"   
+    #endif       
   #endif
 #endif
 
@@ -76,7 +81,9 @@ MOBLEUINT8 dyn_buffer_m[DYNAMIC_MEMORY_SIZE + \
                         MAX_APPLICATION_PACKET_SIZE + \
                         SAR_BUFFER_SIZE + \
                         NEIGHBOR_TABLE_DYNAMIC_MEMORY_SIZE] = {0};
-
+extern const MOBLEUINT8 StaticOobBuff[];
+extern const MOBLEUINT8 PubKeyBuff[];
+extern const MOBLEUINT8 PrivKeyBuff[];
 __attribute__((aligned(4)))const DynBufferParam_t DynBufferParam =
 {
   dyn_buffer_m,
@@ -85,9 +92,6 @@ __attribute__((aligned(4)))const DynBufferParam_t DynBufferParam =
   (MOBLEUINT16) MAX_APPLICATION_PACKET_SIZE,
   (MOBLEUINT16) NEIGHBOR_TABLE_DYNAMIC_MEMORY_SIZE
 };
-/* 16 octets Static OOB information to be input here. Used during provisioning by Library */
-const uint8_t StaticOobBuff[STATIC_OOB_SIZE] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 
 const tr_params_t TrParams = TRANSMIT_RECEIVE_PARAMS;
 #if defined(BLUENRG1_DEVICE) || defined(BLUENRG2_DEVICE) /* BLUENRG1 or BLUENRG2 */
@@ -96,7 +100,7 @@ const lpn_params_t LpnParams = LOW_POWER_NODE_PARAMS;
 const lpn_params_t LpnParams;
 #endif
 const fn_params_t FnParams = FRIEND_NODE_PARAMS;
-const unprov_node_info_params_t UnprovNodeInfoParams = UNPROV_NODE_INFO_PARAMS;
+const prvn_params_t PrvnParams = UNPROV_NODE_INFO_PARAMS;
 const neighbor_table_init_params_t NeighborTableParams = NEIGHBOR_TABLE_PARAMS;
 
 /*ALIGN(4)*/
@@ -239,7 +243,7 @@ __attribute__((aligned(4))) const MOBLEUINT16 Appli_SIG_Models[]=
 
 const MOBLEUINT32 Appli_Vendor_Models[]=
 {
-  MODEL_BLUEMESH_MID,
+  VENDORMODEL_STMICRO_ID1,
   
  /*****************************************************************************/
  /** End of the Vendor Server Model IDs                               ************/
@@ -350,6 +354,7 @@ MOBLEBOOL ApplicationChkVendorModelActive(MOBLEUINT32 modelID)
        result = MOBLE_TRUE;
        break;
      }
+    
   }
   
   return result;  
@@ -495,6 +500,15 @@ void BLEMesh_UpdateNeighbors(void* param)
   /* empty function */
 }
 #endif /* #if (NEIGHBOR_TABLE_SUPPORTED == 0) */
+
+/* Empty functions to reduce code size in case of PB-ADV functionality not in use */
+
+#if (PB_ADV_SUPPORTED == 0)
+MOBLE_RESULT MoblePBADVInit(void* param){return MOBLE_RESULT_SUCCESS;}
+MOBLE_RESULT MoblePBADVProcessData(void* param){return MOBLE_RESULT_SUCCESS;}
+MOBLE_RESULT MoblePBADVStartProvisioning(void* param){return MOBLE_RESULT_SUCCESS;}
+MOBLE_RESULT MoblePBADVStopProvisioning(void* param){return MOBLE_RESULT_SUCCESS;}
+#endif 
 
 /* PLEASE REFER TO THE .h file for different settings */
 

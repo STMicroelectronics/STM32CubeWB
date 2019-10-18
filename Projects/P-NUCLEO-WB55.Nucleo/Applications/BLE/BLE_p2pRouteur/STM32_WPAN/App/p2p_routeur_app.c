@@ -612,8 +612,6 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
     return_value = SVCCTL_EvtNotAck;
     event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
 
-  
-
     switch(event_pckt->evt)
     {
         case EVT_VENDOR:

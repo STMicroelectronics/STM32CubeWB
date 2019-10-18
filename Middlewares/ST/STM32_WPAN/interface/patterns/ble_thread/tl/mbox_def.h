@@ -6,11 +6,11 @@
  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -96,8 +96,15 @@ extern "C" {
 
   typedef struct
   {
+    uint8_t   *notack_buffer;
+    uint8_t   *clicmdrsp_buffer;
+  } MB_LldTestsTable_t;
+
+  typedef struct
+  {
     uint8_t   *notifM0toM4_buffer;
     uint8_t   *appliCmdM4toM0_buffer;
+    uint8_t   *loggingM0toM4_buffer;
   } MB_ZigbeeTable_t;
   /**
    * msg
@@ -143,6 +150,7 @@ extern "C" {
     MB_TracesTable_t        *p_traces_table;
     MB_Mac_802_15_4_t       *p_mac_802_15_4_table;
     MB_ZigbeeTable_t        *p_zigbee_table;
+    MB_LldTestsTable_t      *p_lld_tests_table;
 } MB_RefTable_t;
 
 #ifdef __cplusplus
@@ -222,6 +230,7 @@ extern "C" {
 #define HW_IPCC_MAC_802_15_4_NOTIFICATION_ACK_CHANNEL   LL_IPCC_CHANNEL_3
 #define HW_IPCC_TRACES_CHANNEL                          LL_IPCC_CHANNEL_4
 #define HW_IPCC_THREAD_CLI_NOTIFICATION_ACK_CHANNEL     LL_IPCC_CHANNEL_5
+#define HW_IPCC_ZIGBEE_APPLI_LOGGING_CHANNEL            LL_IPCC_CHANNEL_5
 #endif /*__MBOX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx.0.0.7</PackID>
+          <PackID>Keil.STM32WBxx.0.0.6</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IROM(0x08007000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -82,7 +82,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>fromelf #L --bin --output=$L@L.bin</UserProg1Name>
+            <UserProg1Name>fromelf #L --bincombined --output=$L@L.bin</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -379,9 +379,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>::CMSIS</GroupName>
-        </Group>
         <Group>
           <GroupName>Application/MDK-ARM</GroupName>
           <Files>
@@ -696,6 +693,9 @@
               <FilePath>../../../../../../Utilities/sequencer/stm32_seq.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>

@@ -24,12 +24,13 @@
 
 #include "hw.h"
 #include "hw_conf.h"
+#include "hw_if.h"
 
 /******************************************************************************
  * Cable Replacement Application Config
  ******************************************************************************/
 
-/**< generic parameters ********************************************************/
+/**< generic parameters ******************************************************/
 
 /**
  * Define Tx Power
@@ -88,6 +89,15 @@
 * Encryption root key used to derive LTK and CSRK
 */
 #define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
+
+/* USER CODE BEGIN Generic_Parameters */
+/**
+ * SMPS supply
+ * SMPS not used when Set to 0
+ * SMPS used when Set to 1
+ */
+#define CFG_USE_SMPS    1
+/* USER CODE END Generic_Parameters */
 
 /**< specific parameters ********************************************************/
 
@@ -195,7 +205,7 @@
  *  1 : internal RO
  *  0 : external crystal ( no calibration )
  */
-#define CFG_BLE_LSE_SOURCE  1
+#define CFG_BLE_LSE_SOURCE  0
 
 /**
  * Start up time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 us (~2.44 us)

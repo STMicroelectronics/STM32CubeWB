@@ -48,13 +48,16 @@
 /* Exported variables  ------------------------------------------------------- */
 
 /* Exported Functions Prototypes ---------------------------------------------*/
-MOBLE_RESULT AppliNvm_FlashProgram(uint32_t TypeProgram, uint32_t Address, uint32_t Data[]);
+MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size);
 MOBLE_RESULT AppliNvm_FactorySettingReset(void);
-MOBLE_RESULT AppliNvm_FlashErase(void);
+//MOBLE_RESULT AppliNvm_FlashErase(uint16_t PageNumber);
 MOBLE_RESULT AppliNvm_SaveModelState(uint8_t* state, uint8_t size);
 MOBLE_RESULT AppliNvm_ClearModelState(void);
-MOBLE_RESULT AppliNvm_LoadGenericState(uint8_t state[], uint8_t* size);
-MOBLE_RESULT AppliNvm_LoadLightState(uint8_t state[], uint8_t* size);
+//MOBLE_RESULT AppliNvm_LoadGenericState(uint8_t state[], uint8_t* size);
+//MOBLE_RESULT AppliNvm_LoadLightState(uint8_t state[], uint8_t* size);
+MOBLE_RESULT AppliNvm_LoadModelState(uint8_t state[], uint8_t* size);
+void AppliNvm_Process(void);
+void AppliNvm_SaveMessageParam (void);
 
 #endif /* __APPLI_NVM_H */
 

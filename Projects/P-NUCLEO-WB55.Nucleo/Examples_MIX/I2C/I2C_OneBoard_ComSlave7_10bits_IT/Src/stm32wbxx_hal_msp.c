@@ -121,9 +121,9 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
     __HAL_RCC_I2C1_CLK_ENABLE();
   /* USER CODE BEGIN I2C1_MspInit 1 */
     /* NVIC for I2Cx_MASTER */
-    HAL_NVIC_SetPriority(I2Cx_MASTER_ER_IRQn, 0, 1);
+    HAL_NVIC_SetPriority(I2Cx_MASTER_ER_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(I2Cx_MASTER_ER_IRQn);
-    HAL_NVIC_SetPriority(I2Cx_MASTER_EV_IRQn, 0, 2);
+    HAL_NVIC_SetPriority(I2Cx_MASTER_EV_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(I2Cx_MASTER_EV_IRQn);
   /* USER CODE END I2C1_MspInit 1 */
   }
@@ -150,9 +150,9 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
   /* USER CODE BEGIN I2C3_MspInit 1 */
 
     /* NVIC for I2Cx_SLAVE */
-    HAL_NVIC_SetPriority(I2Cx_SLAVE_ER_IRQn, 0, 1);
+    HAL_NVIC_SetPriority(I2Cx_SLAVE_ER_IRQn, 1, 0);
     HAL_NVIC_EnableIRQ(I2Cx_SLAVE_ER_IRQn);
-    HAL_NVIC_SetPriority(I2Cx_SLAVE_EV_IRQn, 0, 2);
+    HAL_NVIC_SetPriority(I2Cx_SLAVE_EV_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(I2Cx_SLAVE_EV_IRQn);
   /* USER CODE END I2C3_MspInit 1 */
   }

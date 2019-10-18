@@ -50,6 +50,7 @@
 #define C_SIZE_CMD_STRING       256U
 #define C_PANID                 0x2222U
 #define C_CHANNEL_NB            12U
+
 /* USER CODE BEGIN PD */
 #define C_RESSOURCE             "light"
 /* USER CODE END PD */
@@ -64,8 +65,9 @@ static void APP_THREAD_CheckWirelessFirmwareInfo(void);
 static void APP_THREAD_DeviceConfig(void);
 static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext);
 static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode);
-
+#if (CFG_FULL_LOW_POWER == 0)
 static void Send_CLI_To_M0(void);
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 static void Send_CLI_Ack_For_OT(void);
 static void HostTxCb( void );
 static void Wait_Getting_Ack_From_M0(void);
@@ -80,8 +82,10 @@ extern void MX_USART1_UART_Init(void);
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 static uint32_t ProcessCmdString(uint8_t* buf , uint32_t len);
 #else
+#if (CFG_FULL_LOW_POWER == 0)
 static void RxCpltCallback(void);
-#endif
+#endif /* (CFG_FULL_LOW_POWER == 0) */
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN PFP */
 static void APP_THREAD_SendCoapMulticastRequest(uint8_t command);
@@ -101,10 +105,14 @@ static uint8_t TmpString[C_SIZE_CMD_STRING];
 static uint8_t VcpRxBuffer[sizeof(TL_CmdSerial_t)];        /* Received Data over USB are stored in this buffer */
 static uint8_t VcpTxBuffer[sizeof(TL_EvtPacket_t) + 254U]; /* Transmit buffer over USB */
 #else
+#if (CFG_FULL_LOW_POWER == 0)
 static uint8_t aRxBuffer[C_SIZE_CMD_STRING];
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
+#if (CFG_FULL_LOW_POWER == 0)
 static uint8_t CommandString[C_SIZE_CMD_STRING];
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 static __IO uint16_t indexReceiveChar = 0;
 static __IO uint16_t CptReceiveCmdFromUser = 0;
 
@@ -135,7 +143,7 @@ void APP_THREAD_Init( void )
   /* USER CODE END APP_THREAD_INIT_1 */
 
   SHCI_CmdStatus_t ThreadInitStatus;
-
+  
   /* Check the compatibility with the Coprocessor Wireless Firmware loaded */
   APP_THREAD_CheckWirelessFirmwareInfo();
 
@@ -159,7 +167,7 @@ void APP_THREAD_Init( void )
 
   /* Send Thread start system cmd to M0 */
   ThreadInitStatus = SHCI_C2_THREAD_Init();
-
+  
   /* Prevent unused argument(s) compilation warning */
   UNUSED(ThreadInitStatus);
 
@@ -173,17 +181,18 @@ void APP_THREAD_Init( void )
 
   /* Initialize and configure the Thread device*/
   APP_THREAD_DeviceConfig();
+
   /* USER CODE BEGIN APP_THREAD_INIT_2 */
 
   /* USER CODE END APP_THREAD_INIT_2 */
 }
 
 /**
- * @brief  Trace the error or the warning reported.
- * @param  ErrId :
- * @param  ErrCode
- * @retval None
- */
+  * @brief  Trace the error or the warning reported.
+  * @param  ErrId :
+  * @param  ErrCode
+  * @retval None
+  */
 void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
 {
   /* USER CODE BEGIN APP_THREAD_Error_1 */
@@ -362,13 +371,13 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
 }
 
 /**
- * @brief  Warn the user that an error has occurred.In this case,
- *         the LEDs on the Board will start blinking.
- *
- * @param  pMess  : Message associated to the error.
- * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
- * @retval None
- */
+  * @brief  Warn the user that an error has occurred.In this case,
+  *         the LEDs on the Board will start blinking.
+  *
+  * @param  pMess  : Message associated to the error.
+  * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
+  * @retval None
+  */
 static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
 {
   /* USER CODE BEGIN TRACE_ERROR */
@@ -426,7 +435,6 @@ static void APP_THREAD_CheckWirelessFirmwareInfo(void)
     APP_DBG("**********************************************************");
   }
 }
-
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 /**
   * @brief Dummy request handler
@@ -611,47 +619,47 @@ void TL_THREAD_NotReceived( TL_EvtPacket_t * Notbuffer )
 }
 
 /**
- * @brief  This function is called before sending any ot command to the M0
- *         core. The purpose of this function is to be able to check if
- *         there are no notifications coming from the M0 core which are
- *         pending before sending a new ot command.
- * @param  None
- * @retval None
- */
+  * @brief  This function is called before sending any ot command to the M0
+  *         core. The purpose of this function is to be able to check if
+  *         there are no notifications coming from the M0 core which are
+  *         pending before sending a new ot command.
+  * @param  None
+  * @retval None
+  */
 void Pre_OtCmdProcessing(void)
 {
-  UTIL_SEQ_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
+  UTIL_SEQ_WaitEvt(EVENT_SYNCHRO_BYPASS_IDLE);
 }
 
 /**
- * @brief  This function waits for getting an acknowledgment from the M0.
- *
- * @param  None
- * @retval None
- */
+  * @brief  This function waits for getting an acknowledgment from the M0.
+  *
+  * @param  None
+  * @retval None
+  */
 static void Wait_Getting_Ack_From_M0(void)
 {
   UTIL_SEQ_WaitEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
- * @brief  Receive an acknowledgment from the M0+ core.
- *         Each command send by the M4 to the M0 are acknowledged.
- *         This function is called under interrupt.
- * @param  None
- * @retval None
- */
+  * @brief  Receive an acknowledgment from the M0+ core.
+  *         Each command send by the M4 to the M0 are acknowledged.
+  *         This function is called under interrupt.
+  * @param  None
+  * @retval None
+  */
 static void Receive_Ack_From_M0(void)
 {
   UTIL_SEQ_SetEvt(EVENT_ACK_FROM_M0_EVT);
 }
 
 /**
- * @brief  Receive a notification from the M0+ through the IPCC.
- *         This function is called under interrupt.
- * @param  None
- * @retval None
- */
+  * @brief  Receive a notification from the M0+ through the IPCC.
+  *         This function is called under interrupt.
+  * @param  None
+  * @retval None
+  */
 static void Receive_Notification_From_M0(void)
 {
   CptReceiveMsgFromM0++;
@@ -660,6 +668,7 @@ static void Receive_Notification_From_M0(void)
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
+#if (CFG_FULL_LOW_POWER == 0)
 static void RxCpltCallback(void)
 {
   /* Filling buffer and wait for '\r' char */
@@ -678,6 +687,7 @@ static void RxCpltCallback(void)
   /* Once a character has been sent, put back the device in reception mode */
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
 }
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -720,6 +730,7 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
 }
 #endif/* (CFG_USB_INTERFACE_ENABLE != 0) */
 
+#if (CFG_FULL_LOW_POWER == 0)
 /**
  * @brief Process sends receive CLI command to M0.
  * @param  None
@@ -739,6 +750,7 @@ static void Send_CLI_To_M0(void)
 
   TL_CLI_SendCmd();
 }
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 
 /**
  * @brief Send notification for CLI TL Channel.
@@ -759,11 +771,16 @@ static void Send_CLI_Ack_For_OT(void)
  */
 void APP_THREAD_Init_UART_CLI(void)
 {
+#if (CFG_FULL_LOW_POWER == 0)
   UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU,Send_CLI_To_M0);
+#endif /* (CFG_FULL_LOW_POWER == 0) */
+
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
+#if (CFG_FULL_LOW_POWER == 0)
   MX_USART1_UART_Init();
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 }
 

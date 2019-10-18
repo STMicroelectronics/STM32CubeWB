@@ -14,29 +14,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2019 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the 
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -60,6 +44,48 @@ defined in linker script */
 .word	_sbss
 /* end address for the .bss section. defined in linker script */
 .word	_ebss
+/* start address for the .MB_MEM2 section. defined in linker script */
+.word _sMB_MEM2
+/* end address for the .MB_MEM2 section. defined in linker script */
+.word _eMB_MEM2
+
+/* INIT_BSS macro is used to fill the specified region [start : end] with zeros */
+.macro INIT_BSS start, end
+  ldr r0, =\start
+  ldr r1, =\end
+  movs r3, #0
+  bl LoopFillZerobss
+.endm
+
+/* INIT_DATA macro is used to copy data in the region [start : end] starting from 'src' */
+.macro INIT_DATA start, end, src
+  ldr r0, =\start
+  ldr r1, =\end
+  ldr r2, =\src
+  movs r3, #0
+  bl LoopCopyDataInit
+.endm
+
+.section  .text.data_initializers
+CopyDataInit:
+  ldr r4, [r2, r3]
+  str r4, [r0, r3]
+  adds r3, r3, #4
+
+LoopCopyDataInit:
+  adds r4, r0, r3
+  cmp r4, r1
+  bcc  CopyDataInit
+  bx lr
+
+FillZerobss:
+  str  r3, [r0]
+  adds r0, r0, #4
+
+LoopFillZerobss:
+  cmp r0, r1
+  bcc FillZerobss
+  bx lr
 
   .section .text.Reset_Handler
   .weak Reset_Handler
@@ -69,35 +95,11 @@ Reset_Handler:
   mov   sp, r0          /* set stack pointer */
 
 /* Copy the data segment initializers from flash to SRAM */
-  ldr r0, =_sdata
-  ldr r1, =_edata
-  ldr r2, =_sidata
-  movs r3, #0
-  b	LoopCopyDataInit
+  INIT_DATA _sdata, _edata, _sidata
 
-CopyDataInit:
-  ldr r4, [r2, r3]
-  str r4, [r0, r3]
-  adds r3, r3, #4
-
-LoopCopyDataInit:
-  adds r4, r0, r3
-  cmp r4, r1
-  bcc CopyDataInit
-  
-/* Zero fill the bss segment. */
-  ldr r2, =_sbss
-  ldr r4, =_ebss
-  movs r3, #0
-  b LoopFillZerobss
-
-FillZerobss:
-  str  r3, [r2]
-  adds r2, r2, #4
-
-LoopFillZerobss:
-  cmp r2, r4
-  bcc FillZerobss
+/* Zero fill the bss segments. */
+  INIT_BSS _sbss, _ebss
+  INIT_BSS _sMB_MEM2, _eMB_MEM2
 
 /* Call the clock system intitialization function.*/
   bl  SystemInit

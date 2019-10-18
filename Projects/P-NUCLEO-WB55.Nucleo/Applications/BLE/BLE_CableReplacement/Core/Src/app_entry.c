@@ -55,7 +55,6 @@ static void appe_Tl_Init( void );
 static void Led_Init( void );
 static void Button_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
-
 static void APPE_SysUserEvtRx( void * pPayload );
 
 /* Functions Definition ------------------------------------------------------*/
@@ -81,7 +80,7 @@ void APPE_Init( void )
 
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-   * received on the system channel before starting the BLE Stack
+   * received on the system channel before starting the Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
 
@@ -251,7 +250,6 @@ void UTIL_SEQ_Idle( void )
 #endif
   return;
 }
-
 
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {

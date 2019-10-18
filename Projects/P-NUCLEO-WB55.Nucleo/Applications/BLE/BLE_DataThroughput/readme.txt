@@ -91,7 +91,7 @@ Two STM32WB55xx boards are used, one central and one peripheral.
 They are both configured as GATT client and GATT server.
 They both support a Data transfer service with a transmission characteristic that supports notification.
 Both boards need to be compiled by changing the definition in app_conf.h
-Use #define BLE_PERIPHERAL 1 or #define BLE_CENTRAL 1, comment one of the #define.
+Use #define CFG_BLE_CENTRAL 0 or 1
 One board is defined as GAP peripheral, the other board is defined as GAP central.
 Open a VT100 terminal on Central and Peripheral side (ST Link Com Port, @115200 bauds).
 At startup the connection is established and encryption started(if #define ENCRYPTION_ON 1 uncomment in app_conf.h).
@@ -105,8 +105,9 @@ it stops when SW1 is pushed again (blue led is OFF).
 The notification can be started and stopped from both sides.
 On the client terminal receiving the current notification, the number of bytes per second is displayed.
 
-If PHY_2M is defined as compilation variable, the link is set to 2M
-If PHY_2M is not defined, the link stays at 1M
+In app_conf.h 
+if #define CFG_TX_PHY    2 and #define CFG_RX_PHY    2, link is set to 2M
+if #define CFG_TX_PHY    1 and #define CFG_RX_PHY    1, link stays at 1M
  
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

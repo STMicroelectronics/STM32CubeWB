@@ -89,7 +89,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../../Middlewares/ST/STM32_WPAN/ble"/>
 									<listOptionValue builtIn="false" value="../../../Core/Inc"/>
-									<listOptionValue builtIn="false" value="../../../STM32_WPAN/app"/>
+									<listOptionValue builtIn="false" value="../../../STM32_WPAN/App"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.783237628" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_STM32WBXX_NUCLEO"/>

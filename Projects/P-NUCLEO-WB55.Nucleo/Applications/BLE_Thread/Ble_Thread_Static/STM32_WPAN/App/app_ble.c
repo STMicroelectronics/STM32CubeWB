@@ -219,7 +219,7 @@ P2PS_APP_ConnHandle_Not_evt_t handleNotification;
 
 #if L2CAP_REQUEST_NEW_CONN_PARAM != 0
 #define SIZE_TAB_CONN_INT            2
-float tab_conn_interval[SIZE_TAB_CONN_INT] = { 50, 1000} ; /* in ms */
+float tab_conn_interval[SIZE_TAB_CONN_INT] = {50, 1000} ; /* ms */
 uint8_t index_con_int, mutex; 
 #endif 
 
@@ -342,6 +342,7 @@ uint8_t manuf_data[14] = {
     0x00, /* BLE MAC stop */
 };
 #endif
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -510,7 +511,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         handleNotification.ConnectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
         P2PS_APP_Notification(&handleNotification);
 
-}
+      /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
+
+      /* USER CODE END EVT_DISCONN_COMPLETE */
+    }
 
     break; /* EVT_DISCONN_COMPLETE */
 
@@ -887,13 +891,13 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
     {
       if (New_Status == APP_BLE_FAST_ADV)
       {
-        APP_DBG_MSG("Successfully Start Fast Advertising\n" );
+        APP_DBG_MSG("Successfully Start Fast Advertising \n" );
         /* Start Timer to STOP ADV - TIMEOUT */
         HW_TS_Start(BleApplicationContext.Advertising_mgr_timer_Id, INITIAL_ADV_TIMEOUT);
       }
       else
       {
-        APP_DBG_MSG("Successfully Start Low Power Advertising\n");
+        APP_DBG_MSG("Successfully Start Low Power Advertising \n");
       }
     }
     else

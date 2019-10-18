@@ -1,8 +1,9 @@
 /**
  ******************************************************************************
   * File Name          : app_conf.h
-  * Description        : Application configuration file for BLE middleWare.
-  ******************************************************************************
+  * Description        : Application configuration file for STM32WPAN Middleware.
+  *
+ ******************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
@@ -17,17 +18,18 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef APP_CONFIG_H
-#define APP_CONFIG_H
+#ifndef APP_CONF_H
+#define APP_CONF_H
 
 #include "hw.h"
 #include "hw_conf.h"
+#include "hw_if.h"
 
 /******************************************************************************
  * Application Config
  ******************************************************************************/
 
-/**< generic parameters ********************************************************/
+/**< generic parameters ******************************************************/
 
 /**
  * Define Tx Power
@@ -91,6 +93,15 @@
 * Encryption root key used to derive LTK and CSRK
 */
 #define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
+
+/* USER CODE BEGIN Generic_Parameters */
+/**
+ * SMPS supply
+ * SMPS not used when Set to 0
+ * SMPS used when Set to 1
+ */
+#define CFG_USE_SMPS    1
+/* USER CODE END Generic_Parameters */
 
 /**< specific parameters */
 /*****************************************************/
@@ -174,7 +185,7 @@
  *  1 : internal RO
  *  0 : external crystal ( no calibration )
  */
-#define CFG_BLE_LSE_SOURCE  1
+#define CFG_BLE_LSE_SOURCE  0
 
 /**
  * Start up time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 us (~2.44 us)
@@ -380,12 +391,6 @@ typedef enum
 #define CFG_LPM_SUPPORTED         0
 #define CFG_DEBUGGER_SUPPORTED      1
 #endif
-
-/* USER CODE BEGIN Defines */
-#define CFG_LED_SUPPORTED         1
-#define CFG_BUTTON_SUPPORTED      1
-/* USER CODE END Defines */
-
 /**
  * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
  * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
@@ -421,6 +426,11 @@ typedef enum
  */
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
 #define MAX_DBG_TRACE_MSG_SIZE 1024
+
+/* USER CODE BEGIN Defines */
+#define CFG_LED_SUPPORTED         1
+#define CFG_BUTTON_SUPPORTED      1
+/* USER CODE END Defines */
 
 /******************************************************************************
  * Scheduler
@@ -489,7 +499,10 @@ typedef enum
 typedef enum
 {
     CFG_LPM_APP,
-    CFG_LPM_APP_BLE
+    CFG_LPM_APP_BLE,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
+
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
 
 /******************************************************************************
@@ -499,6 +512,6 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
-#endif /*APP_CONFIG_H */
+#endif /*APP_CONF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

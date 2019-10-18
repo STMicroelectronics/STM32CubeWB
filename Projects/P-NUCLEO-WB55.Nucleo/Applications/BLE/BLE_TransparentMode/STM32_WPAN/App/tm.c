@@ -285,7 +285,7 @@ static void TM_SysLocalCmd ( void )
       ((TL_CcEvt_t *)(((TL_EvtPacket_t*)&SysLocalCmd)->evtserial.evt.payload))->cmdcode = SysLocalCmd.cmdserial.cmd.cmdcode;
       ((TL_CcEvt_t *)(((TL_EvtPacket_t*)&SysLocalCmd)->evtserial.evt.payload))->payload[0] = 0x01;
       ((TL_CcEvt_t *)(((TL_EvtPacket_t*)&SysLocalCmd)->evtserial.evt.payload))->numcmd = 1;
-      ((TL_EvtPacket_t*)&SysLocalCmd)->evtserial.type = TL_BLEEVT_PKT_TYPE;
+      ((TL_EvtPacket_t*)&SysLocalCmd)->evtserial.type = TL_LOCRSP_PKT_TYPE;
       ((TL_EvtPacket_t*)&SysLocalCmd)->evtserial.evt.evtcode = TL_BLEEVT_CC_OPCODE;
       ((TL_EvtPacket_t*)&SysLocalCmd)->evtserial.evt.plen = TL_EVT_CS_PAYLOAD_SIZE;
 

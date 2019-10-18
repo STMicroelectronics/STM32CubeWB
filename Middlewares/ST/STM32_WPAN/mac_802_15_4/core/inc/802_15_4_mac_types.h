@@ -1058,6 +1058,8 @@ typedef struct {
     uint32_t ranging_offset;
     /*! The FoM characterizing the ranging measurement*/
     uint8_t ranging_FOM;
+    /*! The Received Signal Strength Indicator measured*/
+    int8_t rssi;
 } MAC_dataInd_t;
 
 /******************************************************************************/

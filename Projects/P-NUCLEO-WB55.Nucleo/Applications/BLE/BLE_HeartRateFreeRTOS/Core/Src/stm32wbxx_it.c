@@ -61,22 +61,14 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
-      
 extern DMA_HandleTypeDef hdma_lpuart1_tx;
-  
-      
 extern DMA_HandleTypeDef hdma_usart1_tx;
-  
-      
 extern UART_HandleTypeDef hlpuart1;
-  
-      
 extern UART_HandleTypeDef huart1;
 extern TIM_HandleTypeDef htim17;
-  
-      
+
 /* USER CODE BEGIN EV */
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -106,6 +98,7 @@ void HardFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }
@@ -121,6 +114,7 @@ void MemManage_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
+
     /* USER CODE END W1_MemoryManagement_IRQn 0 */
   }
 }
@@ -136,6 +130,7 @@ void BusFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_BusFault_IRQn 0 */
+
     /* USER CODE END W1_BusFault_IRQn 0 */
   }
 }
@@ -151,6 +146,7 @@ void UsageFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
+
     /* USER CODE END W1_UsageFault_IRQn 0 */
   }
 }

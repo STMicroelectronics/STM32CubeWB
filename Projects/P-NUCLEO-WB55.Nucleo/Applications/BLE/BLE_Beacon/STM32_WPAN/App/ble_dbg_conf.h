@@ -1,9 +1,9 @@
 /**
-  ******************************************************************************
+ ******************************************************************************
   * File Name          : App/ble_dbg_conf.h
-  * Description        : Debug configuration file for BLE 
-  *                      middleWare.
-  ******************************************************************************
+  * Description        : Debug configuration file for BLE Middleware.
+  *
+ ******************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.

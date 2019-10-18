@@ -17,12 +17,15 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include "app_conf.h"
 #include "hal_common.h"
 #include "types.h"
 #include "ble_mesh.h"
 #include "appli_mesh.h"
 #include "vendor.h"
 #include "appli_vendor.h"
+#include "common.h"
+#include "appli_light.h"
 #include "models_if.h"
 #include "mesh_cfg.h"
 #include <string.h>
@@ -43,6 +46,9 @@
 MOBLEUINT8 ResponseBuffer[8];
 MOBLEUINT8 BuffLength;
 extern MOBLEUINT8 Appli_LedState;
+extern uint16_t DUTY;
+MOBLEUINT32 TestHitCounter = 0;
+extern Appli_LightPwmValue_t Appli_LightPwmValue;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -164,8 +170,8 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
   {             
   case APPLI_TEST_ECHO: 
     {
-      memcpy ((ResponseBuffer+1),data,length);
-      BuffLength = length+1;
+      memcpy ((ResponseBuffer+1),(data+1),length);
+      BuffLength = length;
       break;
     }
   case APPLI_TEST_RANDOMIZATION_RANGE:  
@@ -175,11 +181,42 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
     }
   case APPLI_TEST_COUNTER:
     {
+      if((DUTY <= PWM_TIME_PERIOD) && (DUTY > 1))
+      {
+        Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+      }
+      else
+      {
+        Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
+       Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+      }
+        TRACE_M(TF_VENDOR,"Test Counter is running \r\n");
+        ResponseBuffer[0] = subCmd;
+        ResponseBuffer[1] = Appli_LedState ;
+        BuffLength = 2; 
       /*Insert Test related Commands here*/
       break;
     }
   case APPLI_TEST_INC_COUNTER: 
     {
+                
+      if((DUTY <= PWM_TIME_PERIOD) && (DUTY > 1))
+      {
+        Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+      }
+      else
+      {
+        Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+      }                                                    
+              
+      TestHitCounter++;              
+      TRACE_M(TF_VENDOR,"Command received Count %.2x \r\n",TestHitCounter);
+      ResponseBuffer[0] = subCmd;
+      ResponseBuffer[1] = Appli_LedState ;
+      BuffLength = 2;
       /*Insert Test related Commands here*/
       break;
     }
@@ -194,6 +231,7 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
       break;
     }
   }
+       
   return status;
 }
 
@@ -211,12 +249,14 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
   MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;
   MOBLEUINT8 subCommand; 
   subCommand = data[0];
+  MOBLEUINT16 duty;
+  MOBLEUINT16 intensityValue = 0;
 /*  tClockTime delay_t = Clock_Time(); */
   
   switch(subCommand)
   {
     /* 
-    Meesage Received     B0     B1    B2      B3    B4    B5    B6     B7 
+    Message Received     B0     B1    B2      B3    B4    B5    B6     B7 
     B0 - Sub-Cmd LED
     B1-B7 - Data Bytes       
     */
@@ -228,7 +268,11 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
       }
       else if(elementNumber == SECOND_ELEMENT)
       {
-        /* Toggle the state of the Yellow LED */
+        /* user application code */
+      }
+      else if(elementNumber == THIRD_ELEMENT)
+      {
+        /* user application code */
       }
       break;
     }
@@ -238,12 +282,27 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
     {
       if(elementNumber == FIRST_ELEMENT)
       {
-            
-        Appli_LedState = !Appli_LedState; /* Toggle the state of the Blue LED */
+        if((Appli_LightPwmValue.IntensityValue <= PWM_TIME_PERIOD) && (Appli_LightPwmValue.IntensityValue > 1))
+        {
+          Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
+          Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+          BSP_LED_Off(LED_BLUE);
+        }
+        else
+        {
+          Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
+          Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+          BSP_LED_On(LED_BLUE);
+        }
+              
       }
       else if(elementNumber == SECOND_ELEMENT)
       {
-        /* Toggle the state of the Yellow LED */
+        /* user application code */
+      }
+      else if(elementNumber == THIRD_ELEMENT)
+      {
+        /* user application code */
       }
       break;
     }
@@ -252,12 +311,21 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
     {
       if(elementNumber == FIRST_ELEMENT)
       {
-             
-        Appli_LedState = 1; /* Switch On the Blue LED */
+        Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+        BSP_LED_On(LED_BLUE);
+        Appli_LedState = 1;
       }
       else if(elementNumber == SECOND_ELEMENT)
       {
-        /* Toggle the state of the Yellow LED */
+        Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue); /* PWM_ID = PWM3, mapped on PWM3_PIN (GPIO_2 in mapping) */
+        BSP_LED_On(LED_BLUE);
+        Appli_LedState = 1;
+      }
+      else if(elementNumber == THIRD_ELEMENT)
+      {
+        /* user application code */
       }
       break;
     }
@@ -266,14 +334,53 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
     {
       if(elementNumber == FIRST_ELEMENT)
       {
-                    
-        Appli_LedState = 0; /* Switch Off the Blue LED */
+        Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+        Appli_LedState = 0;
+        BSP_LED_Off(LED_BLUE);
       }
       else if(elementNumber == SECOND_ELEMENT)
-      {
-        /* Switch Off the Yellow LED */
+      {        
+        Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue); /* PWM_ID = PWM3, mapped on PWM3_PIN (GPIO_2 in mapping) */
+        Appli_LedState = 0;
+        BSP_LED_Off(LED_BLUE);
       }
-      
+      else if(elementNumber == THIRD_ELEMENT)
+      {
+        /* user application code */
+      }
+          
+      break;
+    }
+        /* intensity command */
+    case APPLI_CMD_LED_INTENSITY:
+      {
+        if(elementNumber == FIRST_ELEMENT)
+        {
+          intensityValue = data[2] << 8;
+          intensityValue |= data[1];
+                    
+          duty = PwmValueMapping(intensityValue , 0x7FFF ,0);                         
+          Appli_LightPwmValue.IntensityValue = duty;
+          Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);             
+          if(duty > 16000)
+          {
+            BSP_LED_On(LED_BLUE);
+          }
+          else
+          {
+            BSP_LED_Off(LED_BLUE);
+          }
+        }
+        else if(elementNumber == SECOND_ELEMENT)
+        {
+           /* user application code */
+        }
+        else if(elementNumber == THIRD_ELEMENT)
+        {
+          /* user application code */
+        }
       break;
     }
     /* Default case - Not valid command */
@@ -286,14 +393,29 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
   /*Buffer will be sent for Reliable Response*/
   /*First Byte is Sub Command and 2nd Byte is LED Status*/
   ResponseBuffer[0] = subCommand;
-  ResponseBuffer[1] = Appli_LedState ;
-  BuffLength = 2; 
-  
-  Appli_LedCtrl(); /* Controls the LED State */
+  if(subCommand == APPLI_CMD_LED_INTENSITY)
+  {
+    ResponseBuffer[1] = intensityValue >> 8 ;
+    ResponseBuffer[2] = intensityValue ;
+    BuffLength = 3;
+  }
+  else
+  {
+    ResponseBuffer[1] = Appli_LedState ;
+    BuffLength = 2; 
+  }
       
   return status;
 }
 
+void Appli_GetTestValue (MOBLEUINT8 *responseValue)
+{
+  *responseValue = TestHitCounter;
+  *(responseValue+1)  = TestHitCounter >> 8;
+  *(responseValue+2)  = TestHitCounter >> 16;
+  *(responseValue+3)  = TestHitCounter >> 24;
+  TestHitCounter = 0;
+}
 /**
 * @}
 */

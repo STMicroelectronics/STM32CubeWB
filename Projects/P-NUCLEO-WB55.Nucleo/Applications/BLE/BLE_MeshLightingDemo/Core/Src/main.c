@@ -58,6 +58,8 @@
 /* Private macros ------------------------------------------------------------*/
 /* Global variables ---------------------------------------------------------*/
 RTC_HandleTypeDef hrtc = { 0 }; /**< RTC handler declaration */
+TIM_HandleTypeDef htim1 = { 0 };
+TIM_HandleTypeDef htim2 = { 0 };
 
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -89,34 +91,10 @@ int main( void )
 
   Init_Exti( );
 
-  /* Enable CRC clock */
-  __HAL_RCC_CRC_CLK_ENABLE();
-
   Init_RTC();
 
-  // Enable SMPS supply 
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SMPS ;
-  PeriphClkInit.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSI;
-  PeriphClkInit.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE1;
-  
-  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
-    
-  SET_BIT(PWR->CR5, PWR_CR5_SMPSVOS_2 | PWR_CR5_SMPSVOS_0);             /*Nucleo QFN68 Cut2.1 nb00920*/
-  CLEAR_BIT(PWR->CR5, PWR_CR5_SMPSVOS_3 | PWR_CR5_SMPSVOS_1);
-  SET_BIT(PWR->CR5, PWR_CR5_SMPSEN);
-
-  // CPU 1 and 2 at 32 Mz - Clk source HSE without PLL 
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.AHBCLK2Divider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.AHBCLK4Divider = RCC_SYSCLK_DIV1;
-  
-  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
+  /* Enable CRC clock */
+  __HAL_RCC_CRC_CLK_ENABLE();
 
   APPE_Init( );
   
@@ -230,7 +208,13 @@ static void Init_RTC( void )
   hrtc.Init.SynchPrediv = CFG_RTC_SYNCH_PRESCALER;
   HAL_RTC_Init(&hrtc);
 
-  MODIFY_REG(RTC->CR, RTC_CR_WUCKSEL, CFG_RTC_WUCKSEL_DIVIDER);
+  /* Disable RTC registers write protection */
+  LL_RTC_DisableWriteProtection(RTC);
+  
+  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
+  
+  /* Enable RTC registers write protection */
+  LL_RTC_EnableWriteProtection(RTC);
 
   return;
 }
@@ -252,6 +236,12 @@ void SystemClock_Config( void )
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = { 0 };
   RCC_CRSInitTypeDef RCC_CRSInitStruct = { 0 };
+
+  /**
+   * This prevents the CPU2 to disable the HSI48 oscillator when
+   * it does not use anymore the RNG IP
+   */
+  LL_HSEM_1StepLock( HSEM, 5 );
 
   LL_RCC_HSI48_Enable();
 
@@ -303,19 +293,6 @@ void SystemClock_Config( void )
    */
   LL_RCC_SetRFWKPClockSource(LL_RCC_RFWKP_CLKSOURCE_LSE);
 
-  /**
-   * Switch OFF LSI
-   */
-  LL_RCC_LSI1_Disable();
-
-
-  /**
-   * Set RNG on HSI48
-   */
-  LL_RCC_HSI48_Enable();
-  while(!LL_RCC_HSI48_IsReady());
-  LL_RCC_SetCLK48ClockSource(LL_RCC_CLK48_CLKSOURCE_HSI48);
-
   return;
 }
 
@@ -324,5 +301,33 @@ void SystemClock_Config( void )
  * WRAP FUNCTIONS
  *
  *************************************************************/
+void HAL_Delay(uint32_t Delay)
+{
+  uint32_t tickstart = HAL_GetTick();
+  uint32_t wait = Delay;
+
+  /* Add a freq to guarantee minimum wait */
+  if (wait < HAL_MAX_DELAY)
+  {
+    wait += HAL_GetTickFreq();
+  }
+
+  while ((HAL_GetTick() - tickstart) < wait)
+  {
+    /************************************************************************************
+     * ENTER SLEEP MODE
+     ***********************************************************************************/
+    LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
+
+    /**
+     * This option is used to ensure that store operations are completed
+     */
+  #if defined ( __CC_ARM)
+    __force_stores();
+  #endif
+
+    __WFI( );
+  }
+}
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

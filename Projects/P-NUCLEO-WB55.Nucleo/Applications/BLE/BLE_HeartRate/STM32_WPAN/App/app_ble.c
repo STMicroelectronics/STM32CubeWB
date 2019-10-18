@@ -243,6 +243,7 @@ uint8_t  manuf_data[14] = {
     0x00, /* BLE MAC stop */
 
 };
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -401,7 +402,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
       /* restart advertising */
       Adv_Request(APP_BLE_FAST_ADV);
-}
+      /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
+
+      /* USER CODE END EVT_DISCONN_COMPLETE */
+    }
 
     break; /* EVT_DISCONN_COMPLETE */
 
@@ -432,28 +436,28 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           {
             APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE, status nok \n");
           }
-         
-      ret = hci_le_read_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,&TX_PHY,&RX_PHY);
-      if (ret == BLE_STATUS_SUCCESS)
-      {
-        APP_DBG_MSG("Read_PHY success \n");
-       
-        if ((TX_PHY == TX_2M) && (RX_PHY == RX_2M))
-        {
-          APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
-        }
-        else
-        {
-          APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
-        } 
-      }
-      else
-      {
-        APP_DBG_MSG("Read conf not succeess \n");
-      }
-          
-          break;  
-          
+          ret = hci_le_read_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,&TX_PHY,&RX_PHY);
+          if (ret == BLE_STATUS_SUCCESS)
+          {
+            APP_DBG_MSG("Read_PHY success \n");
+           
+            if ((TX_PHY == TX_2M) && (RX_PHY == RX_2M))
+            {
+              APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
+            }
+            else
+            {
+              APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
+            } 
+          }
+          else
+          {
+            APP_DBG_MSG("Read conf not succeess \n");
+          }
+          /* USER CODE BEGIN EVT_LE_PHY_UPDATE_COMPLETE */
+
+          /* USER CODE END EVT_LE_PHY_UPDATE_COMPLETE */          
+          break;
         case EVT_LE_CONN_COMPLETE:
           {
           hci_le_connection_complete_event_rp0 *connection_complete_event;
@@ -466,7 +470,8 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           HW_TS_Stop(BleApplicationContext.Advertising_mgr_timer_Id);
 
           APP_DBG_MSG("EVT_LE_CONN_COMPLETE for connection handle 0x%x\n",
-                      connection_complete_event->Connection_Handle);
+          connection_complete_event->Connection_Handle);
+
             if (BleApplicationContext.Device_Connection_Status == APP_BLE_LP_CONNECTING)
             {
               /* Connection as client */
@@ -829,8 +834,8 @@ static void Ble_Tl_Init( void )
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-0
-  );
+                                         0
+                                        );
 
   /**
    * Initialize whitelist
@@ -873,7 +878,7 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
       ret = aci_gap_set_non_discoverable();
       if (ret == BLE_STATUS_SUCCESS)
       {
-        APP_DBG_MSG("Successfully Stopped Advertising\n");
+        APP_DBG_MSG("Successfully Stopped Advertising \n");
       }
       else
       {
@@ -902,13 +907,13 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
     {
       if (New_Status == APP_BLE_FAST_ADV)
       {
-        APP_DBG_MSG("Successfully Start Fast Advertising\n" );
+        APP_DBG_MSG("Successfully Start Fast Advertising \n" );
         /* Start Timer to STOP ADV - TIMEOUT */
         HW_TS_Start(BleApplicationContext.Advertising_mgr_timer_Id, INITIAL_ADV_TIMEOUT);
       }
       else
       {
-        APP_DBG_MSG("Successfully Start Low Power Advertising\n");
+        APP_DBG_MSG("Successfully Start Low Power Advertising \n");
       }
     }
     else
@@ -995,7 +1000,7 @@ static void Adv_Mgr( void )
    * The background is the only place where the application can make sure a new aci command
    * is not sent if there is a pending one
    */
-  UTIL_SEQ_SetTask(1 << CFG_TASK_ADV_UPDATE_ID, CFG_SCH_PRIO_0);
+   UTIL_SEQ_SetTask(1 << CFG_TASK_ADV_UPDATE_ID, CFG_SCH_PRIO_0);
 
   return;
 }

@@ -2097,8 +2097,8 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td>12</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=46><p id="Applications">Applications</p></td>
-        <td align=left rowspan=18><p id="BLE">BLE</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=53><p id="Applications">Applications</p></td>
+        <td align=left rowspan=19><p id="BLE">BLE</p></td>
         <td align=left><p id="BLE_Beacon">BLE_Beacon</p></td>
         <td align=left>
 How to advertize 3 types of beacon ( tlm, uuid, url ).
@@ -2152,7 +2152,7 @@ How to use the Heart Rate profile as specified by the BLE SIG.
 How to use the Heart Rate profile as specified by the BLE SIG.
 </td>
         <td>-</td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="BLE_HeartRate_ota">BLE_HeartRate_ota</p></td>
@@ -2175,6 +2175,14 @@ How to use the Human Interface Device profile as specified by the BLE SIG.
         <td align=left>This is the implementation of the BLE Mesh Lighting profile as specified by the BLE SIG.
 </td>
         <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_MultiAppAt">BLE_MultiAppAt</p></td>
+        <td align=left>
+How to use multi BLE applications using a network processor architecture. 
+</td>
+        <td>-</td>
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
@@ -2360,7 +2368,7 @@ How to use MAC 802.15.4 Association and Data exchange.
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=8><p id="Thread">Thread</p></td>
+        <td align=left rowspan=11><p id="Thread">Thread</p></td>
         <td align=left><p id="Thread_Cli_Cmd">Thread_Cli_Cmd</p></td>
         <td align=left>
 How to control the Thread stack via Cli commands.
@@ -2374,7 +2382,7 @@ How to control the Thread stack via Cli commands.
 How to transfer large blocks of data through the CoAP messaging protocol.
 </td>
         <td><font size="5" color=green>X</font></td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Thread_Coap_Generic">Thread_Coap_Generic</p></td>
@@ -2385,12 +2393,20 @@ How to build Thread application based on Coap messages.
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
+        <td align=left><p id="Thread_Coap_Generic_Ota">Thread_Coap_Generic_Ota</p></td>
+        <td align=left>
+How to build Thread application based on Coap messages.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="Thread_Coap_MultiBoard">Thread_Coap_MultiBoard</p></td>
         <td align=left>
 How to use Coap for sending message to multiple boards.
 </td>
         <td>-</td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Thread_Commissioning">Thread_Commissioning</p></td>
@@ -2398,7 +2414,7 @@ How to use Coap for sending message to multiple boards.
 How to use Thread commissioning process.
 </td>
         <td>-</td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Thread_FTD_Coap_Multicast">Thread_FTD_Coap_Multicast</p></td>
@@ -2406,6 +2422,22 @@ How to use Thread commissioning process.
 How to exchange multicast Coap messages.
 </td>
         <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Thread_Ota">Thread_Ota</p></td>
+        <td align=left>
+How to update Over The Air (OTA) FW application and Copro Wireless binary using Thread.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Thread_Ota_Server">Thread_Ota_Server</p></td>
+        <td align=left>
+How to update Over The Air (OTA) FW application and Copro Wireless binary using Thread.
+</td>
+        <td>-</td>
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
@@ -2414,7 +2446,7 @@ How to exchange multicast Coap messages.
 How to exchange a Coap message using the Thread protocol.
 </td>
         <td>-</td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Thread_SED_Coap_Multicast">Thread_SED_Coap_Multicast</p></td>
@@ -2422,7 +2454,7 @@ How to exchange a Coap message using the Thread protocol.
 How to exchange a Coap message using the Thread protocol.
 </td>
         <td><font size="5" color=green>X</font></td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left rowspan=1><p id="TouchSensing">TouchSensing</p></td>
@@ -2467,10 +2499,35 @@ This application shows how to use the USB device application based on the Mass S
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
+      <tr align=center>
+        <td align=left rowspan=3><p id="Zigbee">Zigbee</p></td>
+        <td align=left><p id="Zigbee_OnOff_Coord">Zigbee_OnOff_Coord</p></td>
+        <td align=left>
+How to use OnOff cluster on a Centralized Zigbee network with device acting as coordinator.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_OnOff_Distrib">Zigbee_OnOff_Distrib</p></td>
+        <td align=left>
+How to use OnOff cluster on a Distributed Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_OnOff_Router">Zigbee_OnOff_Router</p></td>
+        <td align=left>
+How to use OnOff cluster on a Centralized Zigbee network with device acting as router.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of applications: 57</b></td>
+        <td colspan="3"><b>Total number of applications: 64</b></td>
         <td>13</td>
-        <td>44</td>
+        <td>51</td>
       </tr>
       <tr align=center>
         <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=2><p id="Demonstrations">Demonstrations</p></td>
@@ -2489,9 +2546,9 @@ Cortex-M devices that can be plugged on a STM32 Nucleo board.
         <td>1</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-      	<td colspan="4"><b>Total number of projects: 264</b></td>
+      	<td colspan="4"><b>Total number of projects: 271</b></td>
       	<td>14</td>
-      	<td>250</td>
+      	<td>257</td>
       </tr>
     </table>
   </body>

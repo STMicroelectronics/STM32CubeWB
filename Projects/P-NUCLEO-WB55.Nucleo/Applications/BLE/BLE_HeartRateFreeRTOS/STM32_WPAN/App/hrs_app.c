@@ -236,7 +236,8 @@ static void HrMeas( void )
    * is not sent if there is a pending one
    */
   osThreadFlagsSet( HrsProcessId, 1 );
-  /* USER CODE BEGIN HrMeas */
+  
+/* USER CODE BEGIN HrMeas */
 
 /* USER CODE END HrMeas */
 

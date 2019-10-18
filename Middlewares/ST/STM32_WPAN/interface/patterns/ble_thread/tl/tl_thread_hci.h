@@ -22,10 +22,7 @@
 #define __TL_THREAD_HCI_H_
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32wbxx_hal_def.h"
 #include "stm32wbxx_core_interface_def.h"
-#include <string.h>
-
 
 /* Exported functions  ------------------------------------------------------------*/
 void Pre_OtCmdProcessing(void);

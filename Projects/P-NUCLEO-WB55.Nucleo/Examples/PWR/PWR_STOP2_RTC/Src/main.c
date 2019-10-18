@@ -141,6 +141,15 @@ int main(void)
   __HAL_RCC_GPIOE_CLK_DISABLE();
   __HAL_RCC_GPIOH_CLK_DISABLE();  
   
+  /* In case of debugger probe attached, work-around of issue specified in "ES0394 - STM32WB55Cx/Rx/Vx device errata":
+    2.2.9 Incomplete Stop 2 mode entry after a wakeup from debug upon EXTI line 48 event
+      "With the JTAG debugger enabled on GPIO pins and after a wakeup from debug triggered by an event on EXTI
+      line 48 (CDBGPWRUPREQ), the device may enter in a state in which attempts to enter Stop 2 mode are not fully
+      effective ..."
+  */
+  LL_EXTI_DisableIT_32_63(LL_EXTI_LINE_48);
+  LL_C2_EXTI_DisableIT_32_63(LL_EXTI_LINE_48);
+  
   /* Disable all used wakeup source */
   HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
   

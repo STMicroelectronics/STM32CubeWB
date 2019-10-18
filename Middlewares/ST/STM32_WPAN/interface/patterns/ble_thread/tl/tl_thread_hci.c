@@ -20,13 +20,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32_wpan_common.h"
-#include "hw.h"
-
 #include "stm_list.h"
-
 #include "tl.h"
 #include "tl_thread_hci.h"
-
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
@@ -46,10 +42,10 @@
 
 
 /* Private functions ----------------------------------------------------------*/
-__weak void Pre_OtCmdProcessing(void){return;}
-__weak void Ot_Cmd_Transfer(void){return;}
-__weak Thread_OT_Cmd_Request_t* THREAD_Get_OTCmdPayloadBuffer(void){return 0;}
-__weak Thread_OT_Cmd_Request_t* THREAD_Get_OTCmdRspPayloadBuffer(void){return 0;}
-__weak Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void){return 0;}
+__WEAK void Pre_OtCmdProcessing(void){return;}
+__WEAK void Ot_Cmd_Transfer(void){return;}
+__WEAK Thread_OT_Cmd_Request_t* THREAD_Get_OTCmdPayloadBuffer(void){return 0;}
+__WEAK Thread_OT_Cmd_Request_t* THREAD_Get_OTCmdRspPayloadBuffer(void){return 0;}
+__WEAK Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void){return 0;}
 
 

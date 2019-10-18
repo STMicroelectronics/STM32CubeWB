@@ -11,7 +11,7 @@
 **
 **  Environment : System Workbench for MCU
 **
-**  Distribution: The file is distributed â€œas is,â€� without any warranty
+**  Distribution: The file is distributed “as is,” without any warranty
 **                of any kind.
 **
 *****************************************************************************

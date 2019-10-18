@@ -58,6 +58,7 @@
 #define HAL_UART_MODULE_ENABLED
 /*#define HAL_USART_MODULE_ENABLED   */
 /*#define HAL_WWDG_MODULE_ENABLED   */
+#define HAL_EXTI_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_FLASH_MODULE_ENABLED
@@ -221,6 +222,10 @@
 #ifdef HAL_CRYP_MODULE_ENABLED
   #include "stm32wbxx_hal_cryp.h"
 #endif /* HAL_CRYP_MODULE_ENABLED */
+
+#ifdef HAL_EXTI_MODULE_ENABLED
+  #include "stm32wbxx_hal_exti.h"
+#endif /* HAL_EXTI_MODULE_ENABLED */
    
 #ifdef HAL_FLASH_MODULE_ENABLED
   #include "stm32wbxx_hal_flash.h"
@@ -333,9 +338,9 @@
   *         If expr is true, it returns no value.
   * @retval None
   */
-#define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
+  #define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
-void assert_failed(uint8_t* file, uint32_t line);
+  void assert_failed(uint8_t* file, uint32_t line);
 #else
   #define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */

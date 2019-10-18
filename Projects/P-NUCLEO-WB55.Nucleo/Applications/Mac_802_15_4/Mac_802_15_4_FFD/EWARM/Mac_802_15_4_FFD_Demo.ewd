@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>STM32WBxx_Nucleo_Mac_802_15_4_FFD_Demo</name>
+        <name>P-NUCLEO-WB55.Nucleo_Mac_802_15_4_FFD_Demo</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>

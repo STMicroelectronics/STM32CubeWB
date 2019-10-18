@@ -130,7 +130,7 @@
         HAL_NVIC_EnableIRQ(CFG_HW_##__USART_BASE__##_TX_DMA_IRQn);                                  \
     } while(0)
 
-        /* Variables ------------------------------------------------------------------*/
+/* Variables ------------------------------------------------------------------*/
 #if (CFG_HW_USART1_ENABLED == 1)
         UART_HandleTypeDef huart1 = {0};
 #if (CFG_HW_USART1_DMA_TX_SUPPORTED == 1)

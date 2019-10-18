@@ -17,7 +17,6 @@
  ******************************************************************************
  */
 
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 
@@ -69,7 +68,6 @@ static void LpTimerCb( void );
 static void LpTimerStart( uint32_t time_to_sleep );
 static void LpEnter( void );
 static uint32_t LpGetElapsedTime( void );
-
 void vPortSetupTimerInterrupt( void );
 
 /* Functions Definition ------------------------------------------------------*/
@@ -307,8 +305,6 @@ static uint32_t LpGetElapsedTime( void )
    * It does not hurt stopping a timer that exists but is not running.
    */
   HW_TS_Stop(LpTimerContext.LpTimerFreeRTOS_Id);
-
-
 
   return (uint32_t)return_value;
 }

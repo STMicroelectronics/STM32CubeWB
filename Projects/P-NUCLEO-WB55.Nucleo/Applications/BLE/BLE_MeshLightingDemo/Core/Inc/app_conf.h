@@ -24,12 +24,13 @@
 
 #include "hw.h"
 #include "hw_conf.h"
+#include "hw_if.h"
 
 /******************************************************************************
  * MESH Application Config
  ******************************************************************************/
 
-/**< generic parameters ********************************************************/
+/**< generic parameters ******************************************************/
 
 /**
  * Define Tx Power
@@ -101,11 +102,22 @@
 */
 #define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
 
+/* USER CODE BEGIN Generic_Parameters */
+/**
+ * SMPS supply
+ * SMPS not used when Set to 0
+ * SMPS used when Set to 1
+ */
+#define CFG_USE_SMPS    1
+/* USER CODE END Generic_Parameters */
+
 /**< specific parameters ********************************************************/
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler                         EXTI4_IRQHandler
 #define PUSH_BUTTON_SW2_EXTI_IRQHandler                         EXTI0_IRQHandler
 #define PUSH_BUTTON_SW3_EXTI_IRQHandler                         EXTI1_IRQHandler
    
+#define POWEROFF_EXTI_IRQHandler                                EXTI2_IRQHandler
+
 #define CFG_MAX_CONNECTION      1
 
 #define  RADIO_ACTIVITY_EVENT   0
@@ -202,7 +214,7 @@
  *  1 : internal RO
  *  0 : external crystal ( no calibration )
  */
-#define CFG_BLE_LSE_SOURCE  1
+#define CFG_BLE_LSE_SOURCE  0
 
 /**
  * Start up time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 us (~2.44 us)
@@ -388,17 +400,17 @@ typedef enum
  * keep debugger enabled while in any low power mode when set to 1
  * should be set to 0 in production
  */
-#define CFG_DEBUGGER_SUPPORTED    0
+#define CFG_DEBUGGER_SUPPORTED    1
 
 /**
  * When set to 1, the traces are enabled in the BLE services
  */
-#define CFG_DEBUG_BLE_TRACE     0
+#define CFG_DEBUG_BLE_TRACE     1
 
 /**
  * Enable or Disable traces in application
  */
-#define CFG_DEBUG_APP_TRACE     0
+#define CFG_DEBUG_APP_TRACE     1
 
 #if (CFG_DEBUG_APP_TRACE != 0)
 #define APP_DBG_MSG                 PRINT_MESG_DBG
@@ -471,6 +483,8 @@ typedef enum
   CFG_TASK_ADV_UPDATE_ID,
   CFG_TASK_HCI_ASYNCH_EVT_ID,
   CFG_TASK_MESH_REQ_ID,
+  CFG_TASK_MESH_BEACON_REQ_ID,
+  CFG_TASK_MESH_UART_RX_REQ_ID,
   
   CFG_LAST_TASK_ID_WITH_HCICMD, /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;
@@ -515,7 +529,7 @@ typedef enum
 typedef enum
 {
   CFG_LPM_APP,
-  CFG_LPM_APP_BLE,
+  CFG_LPM_APP_BLE
 } CFG_LPM_Id_t;
 
 /******************************************************************************

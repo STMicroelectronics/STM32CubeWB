@@ -1,19 +1,19 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    app_entry.c
- * @author  MCD Application Team
- * @brief   Entry point of the Application
+  * File Name          : app_entry.c
+  * Description        : Entry application source file for STM32WPAN Middleware
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
  ******************************************************************************
  */
 /* USER CODE END Header */
@@ -84,8 +84,8 @@ static void SystemPower_Config( void );
 static void Init_Debug( void );
 static void appe_Tl_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
-
 static void APPE_SysUserEvtRx( void * pPayload );
+
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern void MX_LPUART1_UART_Init(void);
 #endif
@@ -102,7 +102,7 @@ static void Button_Init( void );
 void APPE_Init( void )
 {
   SystemPower_Config(); /**< Configure the system Power Mode */
-  
+
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
 /* USER CODE BEGIN APPE_Init_1 */
@@ -122,7 +122,7 @@ void APPE_Init( void )
 
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-   * received on the system channel before starting the BLE Stack
+   * received on the system channel before starting the Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
 /* USER CODE BEGIN APPE_Init_2 */
@@ -238,8 +238,6 @@ static void appe_Tl_Init( void )
   return;
 }
 
-
-
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
 {
   switch (status)
@@ -289,6 +287,7 @@ static void ShciUserEvtProcess(void *argument)
     /* USER CODE END SHCI_USER_EVT_PROCESS_2 */
     }
 }
+
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 static void Led_Init( void )
 {
@@ -329,6 +328,7 @@ static void Button_Init( void )
  * WRAP FUNCTIONS
  *
  *************************************************************/
+
 void shci_notify_asynch_evt(void* pdata)
 {
   UNUSED(pdata);

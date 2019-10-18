@@ -23,6 +23,7 @@
 
 #include "hw.h"
 #include "hw_conf.h"
+#include "hw_if.h"
 
 /******************************************************************************
  * Application Config
@@ -298,8 +299,8 @@ typedef enum
 /* USER CODE BEGIN DEFINE_TASK */ 
 #define TASK_SEND_BUFFER            (1U << CFG_TASK_SEND_BUFFER)
 #define TASK_PROVISIONING           (1U << CFG_TASK_PROVISIONING)
-/* USER CODE END DEFINE_TASK */ 
-
+/* USER CODE END DEFINE_TASK */  
+ 
 /**
  * This is the list of priority required by the application
  * Each Id shall be in the range 0..31
@@ -311,18 +312,17 @@ typedef enum
     CFG_PRIO_NBR,
 } CFG_SCH_Prio_Id_t;
 
-
-/**
-* This is a bit mapping over 32bits listing all events id supported in the application
-*/
+  /**
+   * This is a bit mapping over 32bits listing all events id supported in the application
+   */
 typedef enum
 {
   CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP,
   CFG_EVT_ACK_FROM_M0_EVT,
   CFG_EVT_SYNCHRO_BYPASS_IDLE,
-/* USER CODE BEGIN CFG_IdleEvt_Id_t */
+  /* USER CODE BEGIN CFG_IdleEvt_Id_t */
   CFG_EVT_RESPONSE_ACK,
-/* USER CODE END CFG_IdleEvt_Id_t */
+  /* USER CODE END CFG_IdleEvt_Id_t */
 } CFG_IdleEvt_Id_t;
 
 #define EVENT_ACK_FROM_M0_EVT           (1U << CFG_EVT_ACK_FROM_M0_EVT)

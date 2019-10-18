@@ -46,6 +46,8 @@
 #include "serial_if.h"
 #include "serial_ctrl.h"
 #include "light.h"
+#include "light_lc.h"
+#include "vendor.h"
 
 /** @addtogroup BlueNRG_Mesh
 *  @{
@@ -60,14 +62,19 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-const MODEL_OpcodeTableParam_t *lightOptcodeTable;
-const MODEL_OpcodeTableParam_t *genericOptcodeTable;
-MOBLEUINT16 lightOptcodeTableLength;
-MOBLEUINT16 genericOptcodeTableLength;
+const MODEL_OpcodeTableParam_t *Light_OpcodeTable;
+const MODEL_OpcodeTableParam_t *Generic_OpcodeTable;
+const MODEL_OpcodeTableParam_t *LightLC_OpcodeTable;
+const MODEL_OpcodeTableParam_t *Sensor_OpcodeTable;
+MOBLEUINT16 Light_OpcodeTableLength;
+MOBLEUINT16 Generic_OpcodeTableLength;
+MOBLEUINT16 LightLC_OpcodeTableLength;
+MOBLEUINT16 Sensor_OpcodeTableLength;
+extern MOBLEUINT16 Vendor_Opcodes_Table[] ;
 
 /* Private function prototypes -----------------------------------------------*/
 MOBLEUINT8 SerialCtrl_GetMinParamLength(MOBLEUINT32 opcode, const MODEL_OpcodeTableParam_t list[], MOBLEUINT16 length);
-
+MOBLEUINT8 SerialCtrl_GetData(char *rcvdStringBuff, uint16_t rcvdStringSize, MOBLEUINT8 dataOffset, MOBLEUINT8  *data);
 /* Private functions ---------------------------------------------------------*/ 
 /**
 * @brief  This funcrion is used to parse the string given by the user
@@ -78,85 +85,94 @@ MOBLEUINT8 SerialCtrl_GetMinParamLength(MOBLEUINT32 opcode, const MODEL_OpcodeTa
 void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
   
-  MOBLE_ADDRESS peer;                 /*node adderess of the destination node*/
-  MOBLEUINT16 command;                /*opcode command to be executed by the destination node*/
-  MOBLEUINT8 minPropertyLength = 0;   /*minimum number of properties required by a specific command*/
+  MOBLE_ADDRESS peer = 0;                           /*node adderess of the destination node*/
+  MOBLEUINT16 command = 0;                          /*Opcode command to be executed by the destination node*/
+  MOBLEUINT8 data_length = 0;
+  MOBLEUINT8 dataLen_flag = 0;
+  MOBLEUINT8 minParamLength = 0;                /*minimum number of properties required by a specific command*/
   MOBLEUINT8 elementIndex = 0;          /*default element index*/
-  MOBLEUINT8 counter,i,byteCounter = 0; /*variables to convert big-endian input to little endian output*/
-  MOBLEUINT8 msb,lsb;                 /*variables to convert ascii characters to 8-bit hex*/
-  MOBLEUINT8  data [5] = {0};        /*buffer to output property variables */
-  MOBLEUINT8  byteBuff [10] = {0};    /*buffer to store input property variables temperarily*/
+  MOBLEUINT8  data [10] = {0};        /*buffer to output property variables */
+  MOBLEUINT8 enableVendor = MOBLE_FALSE;        /*varible to enable/disable vendor model callback*/
+  MOBLE_RESULT result;
   
-  sscanf(rcvdStringBuff+5, "%hx %hx ", &peer,&command); 
+  sscanf(rcvdStringBuff+5, "%4hx %hx ", &peer,&command); 
   
-  /* Callback to store a pointer to opcode table starting sddress and length of the table*/
-  LightModelServer_GetOpcodeTableCb(&lightOptcodeTable,&lightOptcodeTableLength);     
-  GenericModelServer_GetOpcodeTableCb(&genericOptcodeTable,&genericOptcodeTableLength);
+  /* Callback to store a pointer to Opcode table starting sddress and length of the table*/
+  GenericModelServer_GetOpcodeTableCb(&Generic_OpcodeTable,&Generic_OpcodeTableLength);
+  LightModelServer_GetOpcodeTableCb(&Light_OpcodeTable,&Light_OpcodeTableLength);     
+  Light_LC_ModelServer_GetOpcodeTableCb(&LightLC_OpcodeTable,&LightLC_OpcodeTableLength);
+  SensorModelServer_GetOpcodeTableCb(&Sensor_OpcodeTable,&Sensor_OpcodeTableLength);
   
   /* Minimum parameter length required for a valid opcade in Generic opcode table */
-  minPropertyLength = SerialCtrl_GetMinParamLength(command,genericOptcodeTable,genericOptcodeTableLength);
+  minParamLength = SerialCtrl_GetMinParamLength(command,Generic_OpcodeTable,Generic_OpcodeTableLength);
   
-  /* Opcode not found in Generic opcode table */
-  if (minPropertyLength == 0xff)
+  /* Opcode not found in Generic opcode table 
+      Start finding for opcode in Light Table*/
+  if (minParamLength == 0xff)
   {
-    minPropertyLength = SerialCtrl_GetMinParamLength(command,lightOptcodeTable,lightOptcodeTableLength);/*Start finding for opcode in Light Table*/
+    minParamLength = SerialCtrl_GetMinParamLength(command,Light_OpcodeTable,Light_OpcodeTableLength);
   }
-  /* Opcode not found in Light opcode table */
-  if (minPropertyLength == 0xff)
+  /* Opcode not found in Light opcode table
+      Start finding for opcode in Light LC Table*/
+  if (minParamLength == 0xff)
   {
-    TRACE_M(TF_SERIAL_CTRL,"incorrect optcode\r\n");  
+     minParamLength = SerialCtrl_GetMinParamLength(command,LightLC_OpcodeTable,LightLC_OpcodeTableLength);
+     dataLen_flag = 1;
   }
-  /* Found Valid opcode */
-  else 
+  /* Opcode not found in Light LC opcode table 
+      Start finding for opcode in Sensor Table*/
+  if (minParamLength == 0xff)
+  {
+    minParamLength = SerialCtrl_GetMinParamLength(command,Sensor_OpcodeTable,Sensor_OpcodeTableLength);
+  }
+  /* Opcode not found in Sensor opcode table
+      Start finding for opcode in Vendor Table*/
+  
+  if(minParamLength == 0xff)
   {    
-    i=0;                
-    byteCounter=0;     /*variable to count number of bytes in each space separeted word*/  
-    counter = 0;
-    for(i=SERIAL_MODEL_DATA_OFFSET;i<=(rcvdStringSize);i++)
+    for(int i = 0; i < 5 ; i++)
     {
-      /* check if space or NULL found */
-      if(rcvdStringBuff[i] == ' '||rcvdStringBuff[i] == '\0' )
+      if(command == Vendor_Opcodes_Table[i])
       {
-        /*if number of bytes is one*/
-        if (byteCounter == 1 )
-        {
-          data[counter] = byteBuff[0];
-        }
-        /*if number of bytes is two*/
-        if (byteCounter == 2 )
-        {
-          /*assigning value from byteBuff to data in swapped way to convert 
-          big-endian input from the user to little-endian input required by the BLEMesh Library */
-          data[counter] = byteBuff[1];    
-          data[counter+1] = byteBuff[0];
-          counter++;
-        }
-        counter++;       /*for next word*/
-        byteCounter=0;          /*for next word, init index to 0*/
-      }
-      else
-      {   /* take two consecutive ascii characters from the rcvdStringBuff and convert to hex values */  
-        msb = Serial_CharToHexConvert(rcvdStringBuff[i]);        
-        lsb = Serial_CharToHexConvert(rcvdStringBuff[i + 1 ]);
-        /*join two hex values to make one hex value*/
-        byteBuff[byteCounter]  = msb << 4;
-        byteBuff[byteCounter] |= lsb;
-        
-        i++;      /*increament for loop counter as two values are used */
-        byteCounter++;   /*increament byteCounter counter*/
+        minParamLength = 0x01;    
+        dataLen_flag = 1;
+        enableVendor = MOBLE_TRUE;
+//        break;
       }
     }
-    /*call BLEMesh Library function to send the processed variables */ 
-    BLEMesh_SetRemoteData(peer,elementIndex,command, 
-                              data, minPropertyLength,
-                              MOBLE_FALSE, MOBLE_FALSE); 
+  }
+  if((minParamLength == 0xff) | (command == 0x00))
+  {
+    TRACE_I(TF_SERIAL_CTRL,"Invalid Command\r\n");
+    return;
+  }
+  /*Valid Opcode Not Found*/
+  else 
+  {
+    data_length = SerialCtrl_GetData(rcvdStringBuff, rcvdStringSize, SERIAL_MODEL_DATA_OFFSET, data);
+    if(dataLen_flag ==1)
+    {
+        minParamLength = data_length;
+      dataLen_flag = 0;
+    }
+      result = BLEMesh_SetRemoteData(peer,elementIndex,command, 
+                                         data, minParamLength,
+                          MOBLE_FALSE, enableVendor); 
+      if(result == MOBLE_RESULT_SUCCESS)
+      {
+        TRACE_I(TF_SERIAL_CTRL,"Command Executed Successfully\r\n");
+      }
+      else
+      {
+        TRACE_I(TF_SERIAL_CTRL,"Invalid Opcode Parameter\r\n");
+      }
   }
 }
 
 
 
 /**
-* @brief  Returns the minimum number of parameters required by a particular optcode
+* @brief  Returns the minimum number of parameters required by a particular Opcode
 * @param  opcode: Opcode of the model whose minimum number of parameters are required
 * @param  list: 
 * @param  length:  
@@ -174,6 +190,50 @@ MOBLEUINT8 SerialCtrl_GetMinParamLength(MOBLEUINT32 opcode, const MODEL_OpcodeTa
   return 0xff;
 }
 
+/**
+* @brief  This function extract the function parameter from the string
+* @param  rcvdStringBuff: array of the string parsed from the serial terminal
+* @param  rcvdStringSize: sizeOf rcvdStringBuff
+* @param  dataOffset:
+* @param  data: Output array comprising of Data
+* @param  dataIndex:  
+* @retval MOBLEUINT8
+*/
+MOBLEUINT8 SerialCtrl_GetData(char *rcvdStringBuff, uint16_t rcvdStringSize, MOBLEUINT8 dataOffset, MOBLEUINT8  *data)
+{
+  MOBLEUINT8 byteBuff[10] = {0};
+  MOBLEUINT8 dataIndex = 0;
+  int msb, lsb, byteCounter=0;           
+
+    for(int i=dataOffset ; i<=(rcvdStringSize) ; i++)
+    {
+      /* check if space or NULL found */
+      if(rcvdStringBuff[i] == ' '||rcvdStringBuff[i] == '\0' )
+      {
+        /*if number of bytes is one*/
+        while(byteCounter > 0)
+        {
+          data[dataIndex++] = byteBuff[--byteCounter];
+            
+        }
+      }
+      else
+      {
+        /* take two consecutive ascii characters from the rcvdStringBuff and convert to hex values */  
+        msb = Serial_CharToHexConvert(rcvdStringBuff[i]);        
+        lsb = Serial_CharToHexConvert(rcvdStringBuff[i + 1 ]);
+        /*join two hex values to make one hex value*/
+        byteBuff[byteCounter]  = msb << 4;
+        byteBuff[byteCounter] |= lsb;
+        
+        i++;      /*increament for loop counter as two values are used */
+        byteCounter++;   /*increament byteCounter counter*/
+      }
+    }
+        
+  return dataIndex;
+
+}
 
 /**
 * @}

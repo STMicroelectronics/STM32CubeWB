@@ -250,11 +250,11 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
 }
 
 /**
- * @brief  Trace the error or the warning reported.
- * @param  ErrId :
- * @param  ErrCode
- * @retval None
- */
+  * @brief  Trace the error or the warning reported.
+  * @param  ErrId :
+  * @param  ErrCode
+  * @retval None
+  */
 
 void APP_FFD_MAC_802_15_4_Error(uint32_t ErrId, uint32_t ErrCode)
 {
@@ -314,13 +314,13 @@ static void APP_FFD_MAC_802_15_4_Config()
 }
 
 /**
- * @brief  Warn the user that an error has occurred.In this case,
- *         the LEDs on the Board will start blinking.
- *
- * @param  pMess  : Message associated to the error.
- * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
- * @retval None
- */
+  * @brief  Warn the user that an error has occurred.In this case,
+  *         the LEDs on the Board will start blinking.
+  *
+  * @param  pMess  : Message associated to the error.
+  * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
+  * @retval None
+  */
 static void APP_FFD_MAC_802_15_4_TraceError(char * pMess, uint32_t ErrCode)
 {
   APP_DBG(pMess);

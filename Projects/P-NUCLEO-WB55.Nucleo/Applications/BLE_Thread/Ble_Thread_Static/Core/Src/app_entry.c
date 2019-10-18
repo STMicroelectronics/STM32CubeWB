@@ -70,7 +70,6 @@ size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
 static void SystemPower_Config( void );
 static void Init_Debug( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
-
 static void APPE_SysUserEvtRx( void * pPayload );
 
 static void appe_Tl_Init( void );
@@ -272,8 +271,6 @@ static void appe_Tl_Init( void )
 
   return;
 }
-
-
 
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
 {

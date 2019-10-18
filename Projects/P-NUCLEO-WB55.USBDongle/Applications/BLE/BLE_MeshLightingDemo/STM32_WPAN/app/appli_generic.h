@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __GENERIC_APPLI_H
-#define __GENERIC_APPLI_H
+#ifndef __APPLI_GENERIC_H
+#define __APPLI_GENERIC_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -45,8 +45,35 @@
 #define BATTERY_REQUIRE_NO_SERVICE      0X01
 #define BATTERY_REQUIRE_SERVICE        0X02
 #define BATTERY_SERVICE_UNKNOWN        0X03   
+
 /* Exported variables  ------------------------------------------------------- */
 /* Application Variable-------------------------------------------------------*/
+#pragma pack(1)
+typedef struct
+{
+  MOBLEUINT8 Present_OnOff;
+  MOBLEUINT16 Present_OnOffValue;
+}Appli_Generic_OnOffSet;
+
+#pragma pack(1)
+typedef struct
+{
+  MOBLEINT16 Present_Level16; 
+}Appli_Generic_LevelSet;
+
+#pragma pack(1)
+typedef struct
+{
+  MOBLEINT16 PowerOnState; 
+}Appli_Generic_PowerOnOffSet;
+
+#pragma pack(1)
+typedef struct
+{
+  MOBLEINT16 DefaultTransitionTime; 
+}Appli_Generic_DefaultTransitionSet;
+
+#pragma pack(1)
 typedef struct 
 {
   MOBLEUINT8 Is_BatteryPresent;
@@ -63,10 +90,19 @@ MOBLE_RESULT Appli_Generic_LevelMove_Set(Generic_LevelStatus_t* pdeltaMoveParam,
                                               MOBLEUINT8 OptionalValid);
 MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8* level_status, 
                                                 MOBLEUINT32 *plength);
-MOBLE_RESULT Appli_Generic_GetOnOffStatus(MOBLEUINT8* pOnOff_Status);
-MOBLE_RESULT Appli_Generic_GetLevelStatus(MOBLEUINT8* pLevel_Status);
+MOBLE_RESULT Appli_Generic_PowerOnOff_Set(Generic_PowerOnOffParam_t* pPowerOnOffParam, 
+                                                MOBLEUINT8 OptionalValid);  
+MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Set(Generic_DefaultTransitionParam_t* pDefaultTimeParam, 
+                                                MOBLEUINT8 OptionalValid);
 
-#endif /* __GENERIC_APPLI_H */
+MOBLE_RESULT Appli_Generic_GetOnOffStatus(MOBLEUINT8* pOnOff_Status);
+MOBLE_RESULT Appli_Generic_GetOnOffValue(MOBLEUINT8* pOnOff_Value);
+MOBLE_RESULT Appli_Generic_GetLevelStatus(MOBLEUINT8* pLevel_Status);
+MOBLE_RESULT Appli_Generic_GetPowerOnOffStatus(MOBLEUINT8* pLevel_Status);
+MOBLE_RESULT Appli_Generic_GetDefaultTransitionStatus(MOBLEUINT8* pTransition_Status) ;
+ 
+
+#endif /* __APPLI_GENERIC_H */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
 

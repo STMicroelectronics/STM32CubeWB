@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32WB55CGUx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx.0.0.4</PackID>
+          <PackID>Keil.STM32WBxx_DFP.1.0.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -53,8 +53,8 @@
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
-          <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <DebugInformation>0</DebugInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4107</DriverSelection>
+            <DriverSelection>4101</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -467,6 +467,31 @@
               <FileType>1</FileType>
               <FilePath>../STM32_WPAN/app/models_if.c</FilePath>
             </File>
+            <File>
+              <FileName>appli_light_lc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\appli_light_lc.c</FilePath>
+            </File>
+            <File>
+              <FileName>pal_nvm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\pal_nvm.c</FilePath>
+            </File>
+            <File>
+              <FileName>PWM_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\PWM_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>PWM_handlers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\PWM_handlers.c</FilePath>
+            </File>
+            <File>
+              <FileName>appli_nvm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\appli_nvm.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -607,6 +632,16 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_ll_usb.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32wbxx_hal_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_tim_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -663,11 +698,6 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/Src/mesh_cfg.c</FilePath>
             </File>
             <File>
-              <FileName>pal_nvm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/PAL/STM32WB/pal_nvm.c</FilePath>
-            </File>
-            <File>
               <FileName>sensors.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/sensors.c</FilePath>
@@ -686,6 +716,11 @@
               <FileName>vendor.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/vendor.c</FilePath>
+            </File>
+            <File>
+              <FileName>light_lc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\light_lc.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -34,9 +34,6 @@ extern "C" {
 
 #include "ble_conf.h"
 #include "ble_dbg_conf.h"
-#include "hw_conf.h"
-
-#include "hw.h"
 
 /* -------------------------------- *
  *  Basic definitions               *

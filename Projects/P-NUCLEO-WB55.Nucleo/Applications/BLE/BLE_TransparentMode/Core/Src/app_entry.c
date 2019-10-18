@@ -76,6 +76,7 @@ static void Init_Debug( void );
 static void appe_Tl_Init( void );
 static void APPE_SysUserEvtRx( TL_EvtPacket_t * p_evt_rx );
 static void shci_user_evt_proc( void );
+
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern void MX_LPUART1_UART_Init(void);
 #endif
@@ -113,7 +114,7 @@ void APPE_Init( void )
 
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-   * received on the system channel before starting the BLE Stack
+   * received on the system channel before starting the Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
 /* USER CODE BEGIN APPE_Init_2 */
@@ -228,8 +229,6 @@ static void appe_Tl_Init( void )
   return;
 }
 
-
-
 static void APPE_SysUserEvtRx( TL_EvtPacket_t * p_evt_rx )
 {
   LST_insert_tail (&SysEvtQueue, (tListNode *)p_evt_rx);
@@ -303,7 +302,6 @@ void UTIL_SEQ_Idle( void )
 #endif
   return;
 }
-
 
 /**
   * @brief  This function is called by the scheduler each time an event

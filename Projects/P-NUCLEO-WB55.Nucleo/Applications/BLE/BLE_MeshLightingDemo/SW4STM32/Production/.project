@@ -85,9 +85,19 @@
 			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/appli_light.c</location>
 		</link>
     <link>
+			<name>Application/STM32_WPAN/app/appli_light_lc.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/appli_light_lc.c</location>
+		</link>
+    <link>
 			<name>Application/STM32_WPAN/app/appli_mesh.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/appli_mesh.c</location>
+		</link>
+    <link>
+			<name>Application/STM32_WPAN/app/appli_nvm.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/appli_nvm.c</location>
 		</link>
     <link>
 			<name>Application/STM32_WPAN/app/appli_sensor.c</name>
@@ -103,6 +113,21 @@
 			<name>Application/STM32_WPAN/app/models_if.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/models_if.c</location>
+		</link>
+    <link>
+			<name>Application/STM32_WPAN/app/pal_nvm.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/pal_nvm.c</location>
+		</link>
+    <link>
+			<name>Application/STM32_WPAN/app/PWM_config.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/PWM_config.c</location>
+		</link>
+    <link>
+			<name>Application/STM32_WPAN/app/PWM_handlers.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/PWM_handlers.c</location>
 		</link>
     <link>
 			<name>Application/STM32_WPAN/target/hw_ipcc.c</name>
@@ -195,6 +220,16 @@
 			<location>PARENT-7-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rtc_ex.c</location>
 		</link>
     <link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_tim.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim.c</location>
+		</link>
+    <link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_tim_ex.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</location>
+		</link>
+    <link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_uart.c</name>
 			<type>1</type>
 			<location>PARENT-7-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart.c</location>
@@ -220,6 +255,11 @@
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/light.c</location>
 		</link>
     <link>
+			<name>Middlewares/STM32_WPAN/ble/blesvc/light_lc.c</name>
+			<type>1</type>
+			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/light_lc.c</location>
+		</link>
+    <link>
 			<name>Middlewares/STM32_WPAN/ble/blesvc/mesh.c</name>
 			<type>1</type>
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/ble/svc/Src/mesh.c</location>
@@ -228,11 +268,6 @@
 			<name>Middlewares/STM32_WPAN/ble/blesvc/mesh_cfg.c</name>
 			<type>1</type>
 			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/ble/mesh/Src/mesh_cfg.c</location>
-		</link>
-    <link>
-			<name>Middlewares/STM32_WPAN/ble/blesvc/pal_nvm.c</name>
-			<type>1</type>
-			<location>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_WPAN/ble/mesh/PAL/STM32WB/pal_nvm.c</location>
 		</link>
     <link>
 			<name>Middlewares/STM32_WPAN/ble/blesvc/sensors.c</name>

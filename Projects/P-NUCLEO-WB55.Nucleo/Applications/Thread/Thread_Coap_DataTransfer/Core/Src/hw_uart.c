@@ -48,9 +48,8 @@ extern UART_HandleTypeDef huart1;
             hal_status = HAL_UART_Transmit(&(__HANDLE__), p_data, size, timeout);                   \
         } while(0)
 
-        /* Variables ------------------------------------------------------------------*/
+/* Variables -----------------------------------------------------------------*/
 #if (CFG_HW_USART1_ENABLED == 1)
-
 #if (CFG_HW_USART1_DMA_TX_SUPPORTED == 1)
     DMA_HandleTypeDef HW_hdma_huart1_tx ={0};
 #endif
@@ -59,7 +58,6 @@ extern UART_HandleTypeDef huart1;
 #endif
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
-
 #if (CFG_HW_LPUART1_DMA_TX_SUPPORTED == 1)
     DMA_HandleTypeDef HW_hdma_hlpuart1_tx ={0};
 #endif
@@ -67,73 +65,73 @@ extern UART_HandleTypeDef huart1;
     void (*HW_hlpuart1TxCb)(void);
 #endif
 
-    void HW_UART_Receive_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size, void (*cb)(void))
+void HW_UART_Receive_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size, void (*cb)(void))
+{
+    switch (hw_uart_id)
     {
-        switch (hw_uart_id)
-        {
 #if (CFG_HW_USART1_ENABLED == 1)
-            case hw_uart1:
-                HW_UART_RX_IT(huart1, USART1);
-                break;
+        case hw_uart1:
+            HW_UART_RX_IT(huart1, USART1);
+            break;
 #endif
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
-            case hw_lpuart1:
-                HW_UART_RX_IT(hlpuart1, LPUART1);
-                break;
+        case hw_lpuart1:
+            HW_UART_RX_IT(hlpuart1, LPUART1);
+            break;
 #endif
 
-            default:
-                break;
-        }
-
-        return;
+        default:
+            break;
     }
 
-    void HW_UART_Transmit_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size,  void (*cb)(void))
+    return;
+}
+
+void HW_UART_Transmit_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size,  void (*cb)(void))
+{
+    switch (hw_uart_id)
     {
-  switch (hw_uart_id)
-        {
 #if (CFG_HW_USART1_ENABLED == 1)
-            case hw_uart1:
-                HW_UART_TX_IT(huart1, USART1);
-                break;
+        case hw_uart1:
+            HW_UART_TX_IT(huart1, USART1);
+            break;
 #endif
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
-            case hw_lpuart1:
-                HW_UART_TX_IT(hlpuart1, LPUART1);
-                break;
+        case hw_lpuart1:
+            HW_UART_TX_IT(hlpuart1, LPUART1);
+            break;
 #endif
 
-            default:
-                break;
-        }
-
-        return;
+        default:
+            break;
     }
+
+    return;
+}
 
 hw_status_t HW_UART_Transmit(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size,  uint32_t timeout)
 {
-  HAL_StatusTypeDef hal_status = HAL_OK;
-  hw_status_t hw_status = hw_uart_ok;
+    HAL_StatusTypeDef hal_status = HAL_OK;
+    hw_status_t hw_status = hw_uart_ok;
 
     switch (hw_uart_id)
     {
 #if (CFG_HW_USART1_ENABLED == 1)
-            case hw_uart1:
-                HW_UART_TX(huart1, USART1);
-                break;
+        case hw_uart1:
+            HW_UART_TX(huart1, USART1);
+            break;
 #endif
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
-            case hw_lpuart1:
-                HW_UART_TX(hlpuart1, LPUART1);
-                break;
+        case hw_lpuart1:
+            HW_UART_TX(hlpuart1, LPUART1);
+            break;
 #endif
 
-            default:
-                break;
+        default:
+            break;
     }
 
     switch (hal_status)
@@ -163,8 +161,8 @@ hw_status_t HW_UART_Transmit(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t 
 
 hw_status_t HW_UART_Transmit_DMA(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size, void (*cb)(void))
 {
-HAL_StatusTypeDef hal_status = HAL_OK;
-hw_status_t hw_status = hw_uart_ok;
+    HAL_StatusTypeDef hal_status = HAL_OK;
+    hw_status_t hw_status = hw_uart_ok;
 
     switch (hw_uart_id)
     {
@@ -252,12 +250,12 @@ void HW_UART_DMA_Interrupt_Handler(hw_uart_id_t hw_uart_id)
             break;
 #endif
 
-            default:
-                break;
-        }
-
-        return;
+        default:
+            break;
     }
+
+    return;
+}
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -265,20 +263,20 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     {
 #if (CFG_HW_USART1_ENABLED == 1)
         case (uint32_t)USART1:
-                if(HW_huart1RxCb)
-                {
-                    HW_huart1RxCb();
-                }
-        break;
+            if(HW_huart1RxCb)
+            {
+                HW_huart1RxCb();
+            }
+            break;
 #endif
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
         case (uint32_t)LPUART1:
-                if(HW_hlpuart1RxCb)
-                {
-                    HW_hlpuart1RxCb();
-                }
-        break;
+            if(HW_hlpuart1RxCb)
+            {
+                HW_hlpuart1RxCb();
+            }
+            break;
 #endif
 
         default:
@@ -294,20 +292,20 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     {
 #if (CFG_HW_USART1_ENABLED == 1)
         case (uint32_t)USART1:
-                if(HW_huart1TxCb)
-                {
-                    HW_huart1TxCb();
-                }
-        break;
+            if(HW_huart1TxCb)
+            {
+                HW_huart1TxCb();
+            }
+            break;
 #endif
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
         case (uint32_t)LPUART1:
-                if(HW_hlpuart1TxCb)
-                {
-                    HW_hlpuart1TxCb();
-                }
-        break;
+            if(HW_hlpuart1TxCb)
+            {
+                HW_hlpuart1TxCb();
+            }
+            break;
 #endif
 
         default:
@@ -317,4 +315,4 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     return;
 }
 
-    /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

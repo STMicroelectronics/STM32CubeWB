@@ -636,7 +636,7 @@ padding-right: 0px;
 }
 
 td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
-</style></head><body><font face="arial"><h1>STM32WB  BLE Wireless Interface</h1><p>This document describes the STM32WB  BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series Website</a></p><h2>Revision history</h2><p>December 2018 -  Rev 1.0  -  Rational: 1st Release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified hci_hardware_event comments</p><p>March 2019 - Rev 1.2 - Removed hal datapump event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Change default mask of HCI_SET_EVENT_MASK </p><p>May 2019   - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019  - Rev 1.6 - Change comment on usage of Char Handles in multiple ACI_GATT commands + Added ACI_GATT_NOTIFICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Change descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Error codes_anchor">Error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h3>HCI commands</h3><table width="800" border="1" class="reference">
+</style></head><body><font face="arial"><h1>STM32WB  BLE Wireless Interface</h1><p>This document describes the STM32WB  BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 -  Rev 1.0  -  Rational: 1st Release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified hci_hardware_event comments</p><p>March 2019 - Rev 1.2 - Removed hal datapump event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Change default mask of HCI_SET_EVENT_MASK </p><p>May 2019   - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019  - Rev 1.6 - Change comment on usage of Char Handles in multiple ACI_GATT commands + Added ACI_GATT_NOTIFICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Change descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section + Added GAP_ prefix to the GAP procedure bitmap definitions</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h3>HCI commands</h3><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>OpCode</th></tr>
 <tr><td><a href="#HCI_DISCONNECT_anchor">HCI_DISCONNECT</a></td><td><p>0x0406</p>
 </td></tr>
@@ -775,7 +775,7 @@ since immediately after <a href="#HCI_DISCONNECTION_COMPLETE_EVENT_anchor">HCI_D
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_DISCONNECTION_COMPLETE_EVENT_anchor">HCI_DISCONNECTION_COMPLETE_EVENT</a></li><h2><a name="HCI_READ_REMOTE_VERSION_INFORMATION_anchor">HCI_READ_REMOTE_VERSION_INFORMATION</a></h2><h3>Description</h3><p>This command will obtain the values for the version information for the remote
 device identified by the Connection_Handle parameter. The Connection_Handle
@@ -790,7 +790,7 @@ must be a Connection_Handle for an ACL or LE connection.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_READ_REMOTE_VERSION_INFORMATION_COMPLETE_EVENT_anchor">HCI_READ_REMOTE_VERSION_INFORMATION_COMPLETE_EVENT</a></li><h2><a name="HCI_SET_EVENT_MASK_anchor">HCI_SET_EVENT_MASK</a></h2><h3>Description</h3><p>The Set_Event_Mask command is used to control which events are generated
 by the HCI for the Host.
@@ -810,7 +810,7 @@ occurs. The event mask allows the Host to control how much it is interrupted.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_RESET_anchor">HCI_RESET</a></h2><h3>Description</h3><p>The Reset command will reset the Link Layer on an LE
 Controller.
@@ -828,7 +828,7 @@ event related to the Reset command has been received.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_READ_TRANSMIT_POWER_LEVEL_anchor">HCI_READ_TRANSMIT_POWER_LEVEL</a></h2><h3>Description</h3><p>This command reads the values for the Transmit_Power_Level parameter for
 the specified Connection_Handle. The Connection_Handle shall be a Connection_Handle
@@ -847,7 +847,7 @@ for an ACL connection.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -883,7 +883,7 @@ exist. See Bluetooth Spec v.5.0, Vol. 2, Part E, 7.3.38</p><h3>Input parameters<
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><h2><a name="HCI_HOST_BUFFER_SIZE_anchor">HCI_HOST_BUFFER_SIZE</a></h2><h3>Description</h3><p>The Host_Buffer_Size command is used by the Host to notify the Controller
 about the maximum size of the data portion of HCI ACL and synchronous Data
@@ -938,7 +938,7 @@ Packet header. See Bluetooth Spec v.5.0, Vol. 2, Part E, 7.3.39</p><h3>Input par
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><h2><a name="HCI_HOST_NUMBER_OF_COMPLETED_PACKETS_anchor">HCI_HOST_NUMBER_OF_COMPLETED_PACKETS</a></h2><h3>Description</h3><p>The Host_Number_Of_Completed_Packets command is used by the Host to
 indicate to the Controller the number of HCI Data Packets that have been
@@ -992,7 +992,7 @@ The HCI Revision and LMP/PAL Subversion are implementation dependent.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>HCI_Version</p>
 </td><td><p>1</p>
@@ -1025,7 +1025,7 @@ that command is also supported.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Supported_Commands</p>
 </td><td><p>64</p>
@@ -1040,7 +1040,7 @@ Part C, Link Manager Protocol Specification on page 227.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>LMP_Features</p>
 </td><td><p>8</p>
@@ -1056,7 +1056,7 @@ BD_ADDR.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>BD_ADDR</p>
 </td><td><p>6</p>
@@ -1078,7 +1078,7 @@ be read, the RSSI metric shall be set to 127.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -1107,7 +1107,7 @@ of how the LE_Event_Mask is set.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_BUFFER_SIZE_anchor">HCI_LE_READ_BUFFER_SIZE</a></h2><h3>Description</h3><p>The LE_Read_Buffer_Size command is used to read the maximum size of the
 data portion of HCI LE ACL Data Packets sent from the Host to the Controller.
@@ -1137,7 +1137,7 @@ include the length of the HCI Data Packet header.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>HC_LE_ACL_Data_Packet_Length</p>
 </td><td><p>2</p>
@@ -1156,7 +1156,7 @@ buffers of the Controller.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>LE_Features</p>
 </td><td><p>8</p>
@@ -1174,7 +1174,7 @@ Random Device Address in the Controller (see [Vol 6] Part B, Section 1.3).
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_ADVERTISING_PARAMETERS_anchor">HCI_LE_SET_ADVERTISING_PARAMETERS</a></h2><h3>Description</h3><p>The LE_Set_Advertising_Parameters command is used by the Host to set the
 advertising parameters.
@@ -1265,7 +1265,7 @@ Default: 00000111b (all channels enabled).</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_ADVERTISING_CHANNEL_TX_POWER_anchor">HCI_LE_READ_ADVERTISING_CHANNEL_TX_POWER</a></h2><h3>Description</h3><p>The LE_Read_Advertising_Channel_Tx_Power command is used by the Host
 to read the transmit power level used for LE advertising channel packets.
@@ -1273,7 +1273,7 @@ to read the transmit power level used for LE advertising channel packets.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Transmit_Power_Level</p>
 </td><td><p>1</p>
@@ -1299,7 +1299,7 @@ packets, as defined in [Vol 3] Part C, Section 11.,
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_SCAN_RESPONSE_DATA_anchor">HCI_LE_SET_SCAN_RESPONSE_DATA</a></h2><h3>Description</h3><p>This command is used to provide data used in Scanning Packets that have a
 data field.
@@ -1319,7 +1319,7 @@ Scanning Packets, as defined in [Vol 3] Part C, Section 11.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_ADVERTISE_ENABLE_anchor">HCI_LE_SET_ADVERTISE_ENABLE</a></h2><h3>Description</h3><p>The LE_Set_Advertise_Enable command is used to request the Controller to
 start or stop advertising. The Controller manages the timing of advertisements
@@ -1340,7 +1340,7 @@ disabled.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#HCI_LE_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_SCAN_PARAMETERS_anchor">HCI_LE_SET_SCAN_PARAMETERS</a></h2><h3>Description</h3><p>The LE_Set_Scan_Parameters command is used to set the scan parameters.
 The LE_Scan_Type parameter controls the type of scan to perform.
@@ -1413,7 +1413,7 @@ the White List.Directed advertisement packets where initiator address is RPA and
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_SCAN_ENABLE_anchor">HCI_LE_SET_SCAN_ENABLE</a></h2><h3>Description</h3><p>The LE_Set_Scan_Enable command is used to start scanning. Scanning is
 used to discover advertising devices nearby.
@@ -1434,7 +1434,7 @@ advertising reports for each packet received.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#HCI_LE_ADVERTISING_REPORT_EVENT_anchor">HCI_LE_ADVERTISING_REPORT_EVENT</a></li><h2><a name="HCI_LE_CREATE_CONNECTION_anchor">HCI_LE_CREATE_CONNECTION</a></h2><h3>Description</h3><p>The LE_Create_Connection command is used to create a Link Layer connection
 to a connectable advertiser.
@@ -1561,7 +1561,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_CREATE_CONNECTION_CANCEL_anchor">HCI_LE_CREATE_CONNECTION_CANCEL</a></h2><h3>Description</h3><p>The LE_Create_Connection_Cancel command is used to cancel the LE_Create_Connection
 command. This command shall only be issued after the
@@ -1572,7 +1572,7 @@ Connection Complete event.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#HCI_LE_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_WHITE_LIST_SIZE_anchor">HCI_LE_READ_WHITE_LIST_SIZE</a></h2><h3>Description</h3><p>The LE_Read_White_List_Size command is used to read the total number of
 white list entries that can be stored in the Controller.
@@ -1580,7 +1580,7 @@ white list entries that can be stored in the Controller.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>White_List_Size</p>
 </td><td><p>1</p>
@@ -1597,7 +1597,7 @@ command is outstanding.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ADD_DEVICE_TO_WHITE_LIST_anchor">HCI_LE_ADD_DEVICE_TO_WHITE_LIST</a></h2><h3>Description</h3><p>The LE_Add_Device_To_White_List command is used to add a single device
 to the white list stored in the Controller.
@@ -1621,7 +1621,7 @@ to be added to the white list.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_REMOVE_DEVICE_FROM_WHITE_LIST_anchor">HCI_LE_REMOVE_DEVICE_FROM_WHITE_LIST</a></h2><h3>Description</h3><p>The LE_Remove_Device_From_White_List command is used to remove a single
 device from the white list stored in the Controller.
@@ -1647,7 +1647,7 @@ is outstanding.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_CONNECTION_UPDATE_anchor">HCI_LE_CONNECTION_UPDATE</a></h2><h3>Description</h3><p>The LE_Connection_Update command is used to change the Link Layer connection
 parameters of a connection. This command is supported only on master side.
@@ -1710,7 +1710,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_HOST_CHANNEL_CLASSIFICATION_anchor">HCI_LE_SET_HOST_CHANNEL_CLASSIFICATION</a></h2><h3>Description</h3><p>The LE_Set_Host_Channel_Classification command allows the Host to specify
 a channel classification for data channels based on its "local information". This
@@ -1738,7 +1738,7 @@ At least one channel shall be marked as unknown.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_CHANNEL_MAP_anchor">HCI_LE_READ_CHANNEL_MAP</a></h2><h3>Description</h3><p>The LE_Read_Channel_Map command returns the current Channel_Map for
 the specified Connection_Handle. The returned value indicates the state of the
@@ -1756,7 +1756,7 @@ acknowledgement.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -1785,7 +1785,7 @@ This command may be issued on both the master and slave.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_READ_REMOTE_USED_FEATURES_COMPLETE_EVENT_anchor">HCI_LE_READ_REMOTE_USED_FEATURES_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ENCRYPT_anchor">HCI_LE_ENCRYPT</a></h2><h3>Description</h3><p>The LE_Encrypt command is used to request the Controller to encrypt the
 Plaintext_Data in the command using the Key given in the command and
@@ -1806,7 +1806,7 @@ fips197/fips-197.pdf).
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Encrypted_Data</p>
 </td><td><p>16</p>
@@ -1820,7 +1820,7 @@ supported.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Random_Number</p>
 </td><td><p>8</p>
@@ -1860,7 +1860,7 @@ This command shall only be used when the local device's role is Master.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_ENCRYPTION_CHANGE_EVENT_anchor">HCI_ENCRYPTION_CHANGE_EVENT</a></li><li><a href="#HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT_anchor">HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_LONG_TERM_KEY_REQUEST_REPLY_anchor">HCI_LE_LONG_TERM_KEY_REQUEST_REPLY</a></h2><h3>Description</h3><p>The LE_Long_Term_Key_Request_Reply command is used to reply to an LE
 Long Term Key Request event from the Controller, and specifies the
@@ -1880,7 +1880,7 @@ Long_Term_Key is used as defined in [Vol 6] Part B, Section 5.1.3.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -1899,7 +1899,7 @@ provide a Long Term Key for this Connection_Handle.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -1918,7 +1918,7 @@ the corresponding Scanning types and Master Role combination are set.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>LE_States</p>
 </td><td><p>8</p>
@@ -1949,7 +1949,7 @@ should use to transmit a single Link Layer packet on this connection.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -1963,7 +1963,7 @@ connections (see Bluetooth Specification v5.0 [Vol 6] Part B, Section 4.5.10). <
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>SuggestedMaxTxOctets</p>
 </td><td><p>2</p>
@@ -1996,7 +1996,7 @@ transmission time to be used for new connections.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_anchor">HCI_LE_READ_LOCAL_P256_PUBLIC_KEY</a></h2><h3>Description</h3><p>The LE_Read_Local_P-256_Public_Key command is used to return the local
 P-256 public key from the Controller. The Controller shall generate a new P-
@@ -2005,7 +2005,7 @@ P-256 public key from the Controller. The Controller shall generate a new P-
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_EVENT_anchor">HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_GENERATE_DHKEY_anchor">HCI_LE_GENERATE_DHKEY</a></h2><h3>Description</h3><p>The LE_Generate_DHKey command is used to initiate generation of a Diffie-
 Hellman key in the Controller for use over the LE transport. This command
@@ -2025,7 +2025,7 @@ Little Endian Format</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_GENERATE_DHKEY_COMPLETE_EVENT_anchor">HCI_LE_GENERATE_DHKEY_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ADD_DEVICE_TO_RESOLVING_LIST_anchor">HCI_LE_ADD_DEVICE_TO_RESOLVING_LIST</a></h2><h3>Description</h3><p>The LE_Add_Device_To_Resolving_List command is used to add one device
 to the list of address translations used to resolve Resolvable Private Addresses
@@ -2061,7 +2061,7 @@ full, it shall respond with error code 0x07 (Memory Capacity Exceeded).
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_REMOVE_DEVICE_FROM_RESOLVING_LIST_anchor">HCI_LE_REMOVE_DEVICE_FROM_RESOLVING_LIST</a></h2><h3>Description</h3><p>The LE_Remove_Device_From_Resolving_List command is used to remove
 one device from the list of address translations used to resolve Resolvable
@@ -2090,7 +2090,7 @@ Identifier).
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_CLEAR_RESOLVING_LIST_anchor">HCI_LE_CLEAR_RESOLVING_LIST</a></h2><h3>Description</h3><p>The LE_Clear_Resolving_List command is used to remove all devices from the
 list of address translations used to resolve Resolvable Private Addresses in the
@@ -2106,7 +2106,7 @@ the Controller.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_RESOLVING_LIST_SIZE_anchor">HCI_LE_READ_RESOLVING_LIST_SIZE</a></h2><h3>Description</h3><p>The LE_Read_Resolving_List_Size command is used to read the total number
 of address translation entries in the resolving list that can be stored in the
@@ -2115,7 +2115,7 @@ Controller.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Resolving_List_Size</p>
 </td><td><p>1</p>
@@ -2143,7 +2143,7 @@ Connection Identifier).
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Peer_Resolvable_Address</p>
 </td><td><p>6</p>
@@ -2171,7 +2171,7 @@ Connection Identifier).
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Local_Resolvable_Address</p>
 </td><td><p>6</p>
@@ -2197,7 +2197,7 @@ This command can be used at any time except when:
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_anchor">HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT</a></h2><h3>Description</h3><p>The LE_Set_Resolvable_Private_Address_Timeout command set the length of
 time the controller uses a Resolvable Private Address before a new resolvable
@@ -2215,7 +2215,7 @@ Default: N= 0x0384 (900 secs or 15 minutes)</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_MAXIMUM_DATA_LENGTH_anchor">HCI_LE_READ_MAXIMUM_DATA_LENGTH</a></h2><h3>Description</h3><p>The LE_Read_Maximum_Data_Length command allows the Host to read the
 Controller’s maximum supported payload octets and packet duration times for
@@ -2225,7 +2225,7 @@ see Bluetooth Specification v5.0 [Vol 6] Part B, Section 4.5.10). </p><h3>Input 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>supportedMaxTxOctets</p>
 </td><td><p>2</p>
@@ -2258,7 +2258,7 @@ receiver PHY on the connection identified by the Connection_Handle. see Bluetoot
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -2304,7 +2304,7 @@ least one bit shall be set to 1. See Bluetooth Specification [Vol2] Part E Secti
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_PHY_anchor">HCI_LE_SET_PHY</a></h2><h3>Description</h3><p>The LE_Set_PHY command is used to set the PHY preferences for the
 connection identified by the Connection_Handle. The Controller might not be
@@ -2361,7 +2361,7 @@ see Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.49 </p><h3>Input pa
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_PHY_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_PHY_UPDATE_COMPLETE_EVENT</a></li><h2><a name="HCI TESTING commands_anchor">HCI TESTING commands</a></h2><h3>HCI TESTING commands</h3><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>OpCode</th></tr>
@@ -2388,7 +2388,7 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_TRANSMITTER_TEST_anchor">HCI_LE_TRANSMITTER_TEST</a></h2><h3>Description</h3><p>This command is used to start a test where the DUT generates test reference
 packets at a fixed interval. The Controller shall transmit at maximum power.
@@ -2414,7 +2414,7 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_TEST_END_anchor">HCI_LE_TEST_END</a></h2><h3>Description</h3><p>This command is used to stop any test which is in progress. The Number_Of_Packets
 for a transmitter test shall be reported as 0x0000. The Number_Of_Packets
@@ -2424,7 +2424,7 @@ packets.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Number_Of_Packets</p>
 </td><td><p>2</p>
@@ -2451,7 +2451,7 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ENHANCED_TRANSMITTER_TEST_anchor">HCI_LE_ENHANCED_TRANSMITTER_TEST</a></h2><h3>Description</h3><p>This command is used to start a test where the DUT generates test reference
 packets at a fixed interval. The Controller shall transmit at maximum power.
@@ -2481,7 +2481,7 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI HAL commands_anchor">ACI HAL commands</a></h2><h3>ACI HAL commands</h3><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>OpCode</th></tr>
@@ -2527,7 +2527,7 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Build_Number</p>
 </td><td><p>2</p>
@@ -2562,7 +2562,7 @@ which has to be written. The valid offsets are:</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_READ_CONFIG_DATA_anchor">ACI_HAL_READ_CONFIG_DATA</a></h2><h3>Description</h3><p>This command requests the value in the low level configure data structure.
 The number of read bytes changes for different Offset. </p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -2585,7 +2585,7 @@ which has to be read. The valid offsets are:</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Data_Length</p>
 </td><td><p>1</p>
@@ -2619,7 +2619,7 @@ components.Here the values are given at the IC pin</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_LE_TX_TEST_PACKET_NUMBER_anchor">ACI_HAL_LE_TX_TEST_PACKET_NUMBER</a></h2><h3>Description</h3><p>This command returns the number of packets sent in Direct Test Mode.
 When the Direct TX test is started, a 32-bit counter is used to count how many packets have been transmitted. 
@@ -2629,7 +2629,7 @@ The counter is not cleared until the next Direct TX test starts. </p><h3>Input p
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Number_Of_Packets</p>
 </td><td><p>4</p>
@@ -2657,19 +2657,19 @@ frequency deviation (250kHz).</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_TONE_STOP_anchor">ACI_HAL_TONE_STOP</a></h2><h3>Description</h3><p>This command is used to stop the previously started <a href="#ACI_HAL_TONE_START_anchor">ACI_HAL_TONE_START</a> command.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_GET_LINK_STATUS_anchor">ACI_HAL_GET_LINK_STATUS</a></h2><h3>Description</h3><p>This command returns the status of the 8 Bluetooth low energy links managed by the device</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Link_Status</p>
 </td><td><p>8</p>
@@ -2690,14 +2690,14 @@ Only the radio activities enabled in the mask will be reported to application by
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT_anchor">ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT</a></li><h2><a name="ACI_HAL_GET_ANCHOR_PERIOD_anchor">ACI_HAL_GET_ANCHOR_PERIOD</a></h2><h3>Description</h3><p>This command returns information about the Anchor Period to help application in selecting 
                       slot timings when operating in multi-link scenarios.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Anchor_Period</p>
 </td><td><p>4</p>
@@ -2719,7 +2719,7 @@ T = N * 0.625 ms.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_SET_SMP_ENG_CONFIG_anchor">ACI_HAL_SET_SMP_ENG_CONFIG</a></h2><h3>Description</h3><p>This command is used to provide a specific engineering setup to the Security Manager Protocol Layer. It may be used during development/debug only!</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -2731,13 +2731,13 @@ T = N * 0.625 ms.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_GET_PM_DEBUG_INFO_anchor">ACI_HAL_GET_PM_DEBUG_INFO</a></h2><h3>Description</h3><p>This command is used to retrieve TX, RX and total buffer count allocated for ACL packets.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Allocated_For_TX</p>
 </td><td><p>1</p>
@@ -2761,7 +2761,7 @@ T = N * 0.625 ms.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>reg_val</p>
 </td><td><p>1</p>
@@ -2781,13 +2781,13 @@ T = N * 0.625 ms.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_READ_RAW_RSSI_anchor">ACI_HAL_READ_RAW_RSSI</a></h2><h3>Description</h3><p>This command returns the raw value of the RSSI </p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Value</p>
 </td><td><p>3</p>
@@ -2806,19 +2806,19 @@ frequency deviation (250kHz).</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_RX_STOP_anchor">ACI_HAL_RX_STOP</a></h2><h3>Description</h3><p>This command stop a previous ACI_HAL_RX_START command </p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_STACK_RESET_anchor">ACI_HAL_STACK_RESET</a></h2><h3>Description</h3><p>This command is equivalent to HCI_RESET but ensures the sleep mode is entered' immediately after its completion</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI GAP commands_anchor">ACI GAP commands</a></h2><h3>ACI GAP commands</h3><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>OpCode</th></tr>
@@ -2910,7 +2910,7 @@ frequency deviation (250kHz).</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_SET_LIMITED_DISCOVERABLE_anchor">ACI_GAP_SET_LIMITED_DISCOVERABLE</a></h2><h3>Description</h3><p>Put the device in limited discoverable mode (as defined in Bluetooth Specification v.5.0,
 Vol. 3, Part C, section 9.2.3). The device will be discoverable for maximum period of TGAP
@@ -3006,7 +3006,7 @@ connIntervalmax = Slave_Conn_Interval_Max x 1.25ms</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GAP_LIMITED_DISCOVERABLE_EVENT_anchor">ACI_GAP_LIMITED_DISCOVERABLE_EVENT</a></li><h2><a name="ACI_GAP_SET_DISCOVERABLE_anchor">ACI_GAP_SET_DISCOVERABLE</a></h2><h3>Description</h3><p>Put the device in general discoverable mode (as defined in Bluetooth Specification v.5.0,
 Vol. 3, Part C, section 9.2.4). The device will be discoverable until the host issues 
@@ -3103,7 +3103,7 @@ connIntervalmax = Slave_Conn_Interval_Max x 1.25ms</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_SET_DIRECT_CONNECTABLE_anchor">ACI_GAP_SET_DIRECT_CONNECTABLE</a></h2><h3>Description</h3><p>Set the device in direct connectable mode (as defined in Bluetooth Specification v.5.0,
 Vol. 3, Part C, section 9.3.3). Device uses direct connectable mode to advertise using High Duty
@@ -3156,7 +3156,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#HCI_LE_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_SET_IO_CAPABILITY_anchor">ACI_GAP_SET_IO_CAPABILITY</a></h2><h3>Description</h3><p>Set the IO capabilities of the device. This command has to be given only when the device is
 not in a connected state.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -3169,7 +3169,7 @@ not in a connected state.</p><h3>Input parameters</h3><table width="800" border=
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_SET_AUTHENTICATION_REQUIREMENT_anchor">ACI_GAP_SET_AUTHENTICATION_REQUIREMENT</a></h2><h3>Description</h3><p>Set the authentication requirements for the device. If the OOB_Enable is set to 0, the
 following 16 octets of OOB_Data will be ignored on reception. This command has to be
@@ -3222,7 +3222,7 @@ Any random value between 0 to 999999</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_SET_AUTHORIZATION_REQUIREMENT_anchor">ACI_GAP_SET_AUTHORIZATION_REQUIREMENT</a></h2><h3>Description</h3><p>Set the authorization requirements of the device. This command has to be given when connected
 to a device if authorization is required to access services which require authorization.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -3243,7 +3243,7 @@ ACI_GAP_AUTHORIZATION_REQ_EVENT will be sent to the Host.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_PASS_KEY_RESP_anchor">ACI_GAP_PASS_KEY_RESP</a></h2><h3>Description</h3><p>This command should be send by the host in response to <a href="#ACI_GAP_PASS_KEY_REQ_EVENT_anchor">ACI_GAP_PASS_KEY_REQ_EVENT</a>
 event. The command parameter contains the pass key which will be used during the pairing process.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -3261,7 +3261,7 @@ Must be a six-digit decimal number.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#ACI_GAP_PAIRING_COMPLETE_EVENT_anchor">ACI_GAP_PAIRING_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_AUTHORIZATION_RESP_anchor">ACI_GAP_AUTHORIZATION_RESP</a></h2><h3>Description</h3><p>Authorize a device to access attributes. This command should be send by the host in
 response to <a href="#ACI_GAP_AUTHORIZATION_REQ_EVENT_anchor">ACI_GAP_AUTHORIZATION_REQ_EVENT</a> event.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -3278,7 +3278,7 @@ response to <a href="#ACI_GAP_AUTHORIZATION_REQ_EVENT_anchor">ACI_GAP_AUTHORIZAT
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_INIT_anchor">ACI_GAP_INIT</a></h2><h3>Description</h3><p>Initialize the GAP layer. Register the GAP service with the GATT.
 All the standard GAP characteristics will also be added:
@@ -3302,7 +3302,7 @@ All the standard GAP characteristics will also be added:
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Service_Handle</p>
 </td><td><p>2</p>
@@ -3341,7 +3341,7 @@ parameters for this command.Advertiser filter policy is internally set to 0x00</
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_SET_UNDIRECTED_CONNECTABLE_anchor">ACI_GAP_SET_UNDIRECTED_CONNECTABLE</a></h2><h3>Description</h3><p>Put the device into undirected connectable mode.
 If privacy is enabled in the device, a resolvable private address is generated and used as the 
@@ -3379,7 +3379,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_SLAVE_SECURITY_REQ_anchor">ACI_GAP_SLAVE_SECURITY_REQ</a></h2><h3>Description</h3><p>Send a slave security request to the master.
 This command has to be issued to notify the master of the security requirements of the slave.
@@ -3393,7 +3393,7 @@ The master may encrypt the link, initiate the pairing procedure, or reject the r
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT_anchor">ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT</a></li><h2><a name="ACI_GAP_UPDATE_ADV_DATA_anchor">ACI_GAP_UPDATE_ADV_DATA</a></h2><h3>Description</h3><p>This command can be used to update the advertising data for a particular AD type. If the AD
 type specified does not exist, then it is added to the advertising data. If the overall
@@ -3412,7 +3412,7 @@ rejected and the old data is retained.</p><h3>Input parameters</h3><table width=
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_DELETE_AD_TYPE_anchor">ACI_GAP_DELETE_AD_TYPE</a></h2><h3>Description</h3><p>This command can be used to delete the specified AD type from the advertisement data if
 present.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -3425,7 +3425,7 @@ present.</p><h3>Input parameters</h3><table width="800" border="1" class="refere
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_GET_SECURITY_LEVEL_anchor">ACI_GAP_GET_SECURITY_LEVEL</a></h2><h3>Description</h3><p>This command can be used to get the current security settings of the device.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -3437,7 +3437,7 @@ present.</p><h3>Input parameters</h3><table width="800" border="1" class="refere
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Security_Mode</p>
 </td><td><p>1</p>
@@ -3457,7 +3457,7 @@ present.</p><h3>Input parameters</h3><table width="800" border="1" class="refere
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_CONFIGURE_WHITELIST_anchor">ACI_GAP_CONFIGURE_WHITELIST</a></h2><h3>Description</h3><p>Add addresses of bonded devices into the controller's whitelist.
 The command will return an error if there are no devices in the database or if it was  
@@ -3465,7 +3465,7 @@ unable to add the device into the whitelist.</p><h3>Input parameters</h3><p>None
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_TERMINATE_anchor">ACI_GAP_TERMINATE</a></h2><h3>Description</h3><p>Command the controller to terminate the connection.
 A <a href="#HCI_DISCONNECTION_COMPLETE_EVENT_anchor">HCI_DISCONNECTION_COMPLETE_EVENT</a> event will be generated when the link is disconnected. It is important to leave an 100 ms blank window
@@ -3484,13 +3484,13 @@ system could save important information in non volatile memory.</p><h3>Input par
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_DISCONNECTION_COMPLETE_EVENT_anchor">HCI_DISCONNECTION_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_CLEAR_SECURITY_DB_anchor">ACI_GAP_CLEAR_SECURITY_DB</a></h2><h3>Description</h3><p>Clear the security database. All the devices in the security database will be removed.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_ALLOW_REBOND_anchor">ACI_GAP_ALLOW_REBOND</a></h2><h3>Description</h3><p>Allows the security manager to complete the pairing procedure and re-bond with the master.
 This command should be given by the application when it receives the
@@ -3505,7 +3505,7 @@ command is not given on receiving the event, the bonding procedure will timeout.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_START_LIMITED_DISCOVERY_PROC_anchor">ACI_GAP_START_LIMITED_DISCOVERY_PROC</a></h2><h3>Description</h3><p>Start the limited discovery procedure. The controller is commanded to start active scanning.
 When this procedure is started, only the devices in limited discoverable mode are returned
@@ -3551,7 +3551,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_ADVERTISING_REPORT_EVENT_anchor">HCI_LE_ADVERTISING_REPORT_EVENT</a></li><li><a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_START_GENERAL_DISCOVERY_PROC_anchor">ACI_GAP_START_GENERAL_DISCOVERY_PROC</a></h2><h3>Description</h3><p>Start the general discovery procedure. The controller is commanded to start active
 scanning. The procedure is terminated when  either the upper layers issue a command
@@ -3594,7 +3594,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_ADVERTISING_REPORT_EVENT_anchor">HCI_LE_ADVERTISING_REPORT_EVENT</a></li><li><a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_START_NAME_DISCOVERY_PROC_anchor">ACI_GAP_START_NAME_DISCOVERY_PROC</a></h2><h3>Description</h3><p>Start the name discovery procedure. A LE_Create_Connection call will be made to the
 controller by GAP with the initiator filter policy set to "ignore whitelist and process
@@ -3676,7 +3676,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_START_AUTO_CONNECTION_ESTABLISH_PROC_anchor">ACI_GAP_START_AUTO_CONNECTION_ESTABLISH_PROC</a></h2><h3>Description</h3><p>Start the auto connection establishment procedure. The devices specified are added to the
 white list of the controller and a LE_Create_Connection call will be made to the controller by
@@ -3764,7 +3764,7 @@ to be added to the white list.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_START_GENERAL_CONNECTION_ESTABLISH_PROC_anchor">ACI_GAP_START_GENERAL_CONNECTION_ESTABLISH_PROC</a></h2><h3>Description</h3><p>Start a general connection establishment procedure. The host enables scanning in the
 controller with the scanner filter policy set to "accept all advertising packets" and from the
@@ -3831,7 +3831,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_START_SELECTIVE_CONNECTION_ESTABLISH_PROC_anchor">ACI_GAP_START_SELECTIVE_CONNECTION_ESTABLISH_PROC</a></h2><h3>Description</h3><p>Start a selective connection establishment procedure. The GAP adds the specified device
 addresses into white list and enables scanning in the controller with the scanner filter policy
@@ -3907,7 +3907,7 @@ to be added to the white list.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_CREATE_CONNECTION_anchor">ACI_GAP_CREATE_CONNECTION</a></h2><h3>Description</h3><p>Start the direct connection establishment procedure. A LE_Create_Connection call will be
 made to the controller by GAP with the initiator filter policy set to "ignore whitelist and
@@ -3992,7 +3992,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_TERMINATE_GAP_PROC_anchor">ACI_GAP_TERMINATE_GAP_PROC</a></h2><h3>Description</h3><p>Terminate the specified GATT procedure. An <a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a> event is
 returned with the procedure code set to the corresponding procedure.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -4000,12 +4000,12 @@ returned with the procedure code set to the corresponding procedure.</p><h3>Inpu
 <tr><td><p>Procedure_Code</p>
 </td><td><p>1</p>
 </td><td><p>GAP procedure bitmap.</p>
-</td><td><li>0x00: No events</li><li>0x01: LIMITED_DISCOVERY_PROC</li><li>0x02: GENERAL_DISCOVERY_PROC</li><li>0x04: NAME_DISCOVERY_PROC</li><li>0x08: AUTO_CONNECTION_ESTABLISHMENT_PROC</li><li>0x10: GENERAL_CONNECTION_ESTABLISHMENT_PROC</li><li>0x20: SELECTIVE_CONNECTION_ESTABLISHMENT_PROC</li><li>0x40: DIRECT_CONNECTION_ESTABLISHMENT_PROC</li><li>0x80: OBSERVATION_PROC</li></td></tr>
+</td><td><li>0x00: No events</li><li>0x01: GAP_LIMITED_DISCOVERY_PROC</li><li>0x02: GAP_GENERAL_DISCOVERY_PROC</li><li>0x04: GAP_NAME_DISCOVERY_PROC</li><li>0x08: GAP_AUTO_CONNECTION_ESTABLISHMENT_PROC</li><li>0x10: GAP_GENERAL_CONNECTION_ESTABLISHMENT_PROC</li><li>0x20: GAP_SELECTIVE_CONNECTION_ESTABLISHMENT_PROC</li><li>0x40: GAP_DIRECT_CONNECTION_ESTABLISHMENT_PROC</li><li>0x80: GAP_OBSERVATION_PROC</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_START_CONNECTION_UPDATE_anchor">ACI_GAP_START_CONNECTION_UPDATE</a></h2><h3>Description</h3><p>Start the connection update procedure (only when role is Master). A <a href="#HCI_LE_CONNECTION_UPDATE_anchor">HCI_LE_CONNECTION_UPDATE</a> is called.
 On completion of the procedure, an <a href="#HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT</a> event is returned to
@@ -4053,7 +4053,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_SEND_PAIRING_REQ_anchor">ACI_GAP_SEND_PAIRING_REQ</a></h2><h3>Description</h3><p>Send the SM pairing request to start a pairing process. The authentication requirements and
 IO capabilities should be set before issuing this command using the
@@ -4075,7 +4075,7 @@ A <a href="#ACI_GAP_PAIRING_COMPLETE_EVENT_anchor">ACI_GAP_PAIRING_COMPLETE_EVEN
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GAP_PAIRING_COMPLETE_EVENT_anchor">ACI_GAP_PAIRING_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_RESOLVE_PRIVATE_ADDR_anchor">ACI_GAP_RESOLVE_PRIVATE_ADDR</a></h2><h3>Description</h3><p>This command tries to resolve the address provided with the IRKs present in its database. If
 the address is resolved successfully with any one of the IRKs present in the database, it
@@ -4090,7 +4090,7 @@ IRK in the database.</p><h3>Input parameters</h3><table width="800" border="1" c
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Actual_Address</p>
 </td><td><p>6</p>
@@ -4144,7 +4144,7 @@ to be added to the white list.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_START_OBSERVATION_PROC_anchor">ACI_GAP_START_OBSERVATION_PROC</a></h2><h3>Description</h3><p>Starts an Observation procedure, when the device is in Observer Role. The host enables
 scanning in the controller. The advertising reports are sent to the upper layer using standard
@@ -4202,14 +4202,14 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_ADVERTISING_REPORT_EVENT_anchor">HCI_LE_ADVERTISING_REPORT_EVENT</a></li><h2><a name="ACI_GAP_GET_BONDED_DEVICES_anchor">ACI_GAP_GET_BONDED_DEVICES</a></h2><h3>Description</h3><p>This command gets the list of the devices which are bonded. It returns the
 number of addresses and the corresponding address types and values.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Num_of_Addresses</p>
 </td><td><p>1</p>
@@ -4240,7 +4240,7 @@ command will return BLE_STATUS_SUCCESS.</p><h3>Input parameters</h3><table width
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_NUMERIC_COMPARISON_VALUE_CONFIRM_YESNO_anchor">ACI_GAP_NUMERIC_COMPARISON_VALUE_CONFIRM_YESNO</a></h2><h3>Description</h3><p>This command allows the User to validate/confirm or not the Numeric Comparison value showed through the ACI_GAP_Numeric_Comparison_Value_Event.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4257,7 +4257,7 @@ command will return BLE_STATUS_SUCCESS.</p><h3>Input parameters</h3><table width
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_PASSKEY_INPUT_anchor">ACI_GAP_PASSKEY_INPUT</a></h2><h3>Description</h3><p>This command permits to signal to the Stack the input type detected during Passkey input.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4273,7 +4273,7 @@ command will return BLE_STATUS_SUCCESS.</p><h3>Input parameters</h3><table width
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_GET_OOB_DATA_anchor">ACI_GAP_GET_OOB_DATA</a></h2><h3>Description</h3><p>This command is sent by the User to get (i.e. to extract from the Stack) the OOB data generated by the Stack itself.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4285,7 +4285,7 @@ command will return BLE_STATUS_SUCCESS.</p><h3>Input parameters</h3><table width
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Address_Type</p>
 </td><td><p>1</p>
@@ -4337,7 +4337,7 @@ command will return BLE_STATUS_SUCCESS.</p><h3>Input parameters</h3><table width
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_ADD_DEVICES_TO_RESOLVING_LIST_anchor">ACI_GAP_ADD_DEVICES_TO_RESOLVING_LIST</a></h2><h3>Description</h3><p>This  command is used to add one device to the list of address translations used to resolve Resolvable Private Addresses in the Controller.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4361,7 +4361,7 @@ command will return BLE_STATUS_SUCCESS.</p><h3>Input parameters</h3><table width
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_REMOVE_BONDED_DEVICE_anchor">ACI_GAP_REMOVE_BONDED_DEVICE</a></h2><h3>Description</h3><p>This command is used to remove a specified device from bonding table</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4377,7 +4377,7 @@ command will return BLE_STATUS_SUCCESS.</p><h3>Input parameters</h3><table width
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></h2><h3>ACI GATT/ATT commands</h3><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>OpCode</th></tr>
@@ -4478,7 +4478,7 @@ connection is opened. This command has to be given before using any of the GAP f
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_ADD_SERVICE_anchor">ACI_GATT_ADD_SERVICE</a></h2><h3>Description</h3><p>Add a service to GATT Server. When a service is created in the server, the host needs to
 reserve the handle ranges for this service using Max_Attribute_Records parameter. This
@@ -4508,7 +4508,7 @@ The attributes for characteristics and descriptors are allocated from the attrib
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Service_Handle</p>
 </td><td><p>2</p>
@@ -4544,7 +4544,7 @@ attribute and return the handle of this attribute in Included_handle.</p><h3>Inp
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Include_Handle</p>
 </td><td><p>2</p>
@@ -4593,7 +4593,7 @@ a variable length.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Char_Handle</p>
 </td><td><p>2</p>
@@ -4658,7 +4658,7 @@ a variable length.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Char_Desc_Handle</p>
 </td><td><p>2</p>
@@ -4705,7 +4705,7 @@ specified for the attribute while adding the characteristic.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DEL_CHAR_anchor">ACI_GATT_DEL_CHAR</a></h2><h3>Description</h3><p>Delete the specified characteristic from the service.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4721,7 +4721,7 @@ specified for the attribute while adding the characteristic.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DEL_SERVICE_anchor">ACI_GATT_DEL_SERVICE</a></h2><h3>Description</h3><p>Delete the specified service from the GATT server database.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4733,7 +4733,7 @@ specified for the attribute while adding the characteristic.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DEL_INCLUDE_SERVICE_anchor">ACI_GATT_DEL_INCLUDE_SERVICE</a></h2><h3>Description</h3><p>Delete the Include definition from the service.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4749,7 +4749,7 @@ specified for the attribute while adding the characteristic.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_SET_EVENT_MASK_anchor">ACI_GATT_SET_EVENT_MASK</a></h2><h3>Description</h3><p>Mask events from the GATT. The default configuration is all the events masked.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4761,7 +4761,7 @@ specified for the attribute while adding the characteristic.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_EXCHANGE_CONFIG_anchor">ACI_GATT_EXCHANGE_CONFIG</a></h2><h3>Description</h3><p>Perform an ATT MTU exchange procedure.
 When the ATT MTU exchange procedure is completed, a <a href="#ACI_ATT_EXCHANGE_MTU_RESP_EVENT_anchor">ACI_ATT_EXCHANGE_MTU_RESP_EVENT</a>
@@ -4776,7 +4776,7 @@ to indicate the end of the procedure.</p><h3>Input parameters</h3><table width="
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_EXCHANGE_MTU_RESP_EVENT_anchor">ACI_ATT_EXCHANGE_MTU_RESP_EVENT</a></li><h2><a name="ACI_ATT_FIND_INFO_REQ_anchor">ACI_ATT_FIND_INFO_REQ</a></h2><h3>Description</h3><p>Send a Find Information Request.
 This command is used to obtain the mapping of attribute handles with their associated
@@ -4800,7 +4800,7 @@ a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_FIND_INFO_RESP_EVENT_anchor">ACI_ATT_FIND_INFO_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_ATT_FIND_BY_TYPE_VALUE_REQ_anchor">ACI_ATT_FIND_BY_TYPE_VALUE_REQ</a></h2><h3>Description</h3><p>Send a Find By Type Value Request
 The Find By Type Value Request is used to obtain the handles of attributes that
@@ -4836,7 +4836,7 @@ The end of the procedure is indicated by a <a href="#ACI_GATT_PROC_COMPLETE_EVEN
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT_anchor">ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_ATT_READ_BY_TYPE_REQ_anchor">ACI_ATT_READ_BY_TYPE_REQ</a></h2><h3>Description</h3><p>Send a Read By Type Request.
 The Read By Type Request is used to obtain the values of attributes where the attribute
@@ -4867,7 +4867,7 @@ The responses are given through the <a href="#ACI_ATT_READ_BY_TYPE_RESP_EVENT_an
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_BY_TYPE_RESP_EVENT_anchor">ACI_ATT_READ_BY_TYPE_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_ATT_READ_BY_GROUP_TYPE_REQ_anchor">ACI_ATT_READ_BY_GROUP_TYPE_REQ</a></h2><h3>Description</h3><p>Send a Read By Group Type Request. 
 The Read By Group Type Request is used to obtain the values of grouping attributes where
@@ -4901,7 +4901,7 @@ The end of the procedure is indicated by a <a href="#ACI_GATT_PROC_COMPLETE_EVEN
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT_anchor">ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_ATT_PREPARE_WRITE_REQ_anchor">ACI_ATT_PREPARE_WRITE_REQ</a></h2><h3>Description</h3><p>Send a Prepare Write Request.
 The Prepare Write Request is used to request the server to prepare to write the value of an attribute. 
@@ -4932,7 +4932,7 @@ The end of the procedure is indicated by a <a href="#ACI_GATT_PROC_COMPLETE_EVEN
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_ATT_EXECUTE_WRITE_REQ_anchor">ACI_ATT_EXECUTE_WRITE_REQ</a></h2><h3>Description</h3><p>Send an Execute Write Request.
 The Execute Write Request is used to request the server to write or cancel the write 
@@ -4952,7 +4952,7 @@ The end of the procedure is indicated by a <a href="#ACI_GATT_PROC_COMPLETE_EVEN
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DISC_ALL_PRIMARY_SERVICES_anchor">ACI_GATT_DISC_ALL_PRIMARY_SERVICES</a></h2><h3>Description</h3><p>Start the GATT client procedure to discover all primary services on the server.
 The responses of the procedure are given through the <a href="#ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT_anchor">ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT</a> event.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -4965,7 +4965,7 @@ The responses of the procedure are given through the <a href="#ACI_ATT_READ_BY_G
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT_anchor">ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DISC_PRIMARY_SERVICE_BY_UUID_anchor">ACI_GATT_DISC_PRIMARY_SERVICE_BY_UUID</a></h2><h3>Description</h3><p>Start the procedure to discover the primary services of the specified UUID on the server.
 The responses of the procedure are given through the <a href="#ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT_anchor">ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT</a> event.
@@ -4987,7 +4987,7 @@ The end of the procedure is indicated by a <a href="#ACI_GATT_PROC_COMPLETE_EVEN
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT_anchor">ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_FIND_INCLUDED_SERVICES_anchor">ACI_GATT_FIND_INCLUDED_SERVICES</a></h2><h3>Description</h3><p>Start the procedure to find all included services.
 The responses of the procedure are given through the <a href="#ACI_ATT_READ_BY_TYPE_RESP_EVENT_anchor">ACI_ATT_READ_BY_TYPE_RESP_EVENT</a> event.
@@ -5009,7 +5009,7 @@ The end of the procedure is indicated by a <a href="#ACI_GATT_PROC_COMPLETE_EVEN
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_BY_TYPE_RESP_EVENT_anchor">ACI_ATT_READ_BY_TYPE_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DISC_ALL_CHAR_OF_SERVICE_anchor">ACI_GATT_DISC_ALL_CHAR_OF_SERVICE</a></h2><h3>Description</h3><p>Start the procedure to discover all the characteristics of a given service.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5032,7 +5032,7 @@ Before procedure completion the response packets are given through
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_BY_TYPE_RESP_EVENT_anchor">ACI_ATT_READ_BY_TYPE_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DISC_CHAR_BY_UUID_anchor">ACI_GATT_DISC_CHAR_BY_UUID</a></h2><h3>Description</h3><p>Start the procedure to discover all the characteristics specified by a UUID.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5063,7 +5063,7 @@ Before procedure completion the response packets are given through
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT_anchor">ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DISC_ALL_CHAR_DESC_anchor">ACI_GATT_DISC_ALL_CHAR_DESC</a></h2><h3>Description</h3><p>Start the procedure to discover all characteristic descriptors on the server.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5086,7 +5086,7 @@ Before procedure completion the response packets are given through
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_FIND_INFO_RESP_EVENT_anchor">ACI_ATT_FIND_INFO_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_READ_CHAR_VALUE_anchor">ACI_GATT_READ_CHAR_VALUE</a></h2><h3>Description</h3><p>Start the procedure to read the attribute value.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5104,7 +5104,7 @@ Before procedure completion the response packet is given through <a href="#ACI_A
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_RESP_EVENT_anchor">ACI_ATT_READ_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_READ_USING_CHAR_UUID_anchor">ACI_GATT_READ_USING_CHAR_UUID</a></h2><h3>Description</h3><p>This command sends a Read By Type Request packet to the server in order to read the value attribute of the characteristics specified by the UUID.
 When the procedure is completed, an <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5135,7 +5135,7 @@ Note: the number of bytes of a value reported by <a href="#ACI_GATT_DISC_READ_CH
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT_anchor">ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_READ_LONG_CHAR_VALUE_anchor">ACI_GATT_READ_LONG_CHAR_VALUE</a></h2><h3>Description</h3><p>Start the procedure to read a long characteristic value.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5157,7 +5157,7 @@ Before procedure completion the response packets are given through <a href="#ACI
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_BLOB_RESP_EVENT_anchor">ACI_ATT_READ_BLOB_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_READ_MULTIPLE_CHAR_VALUE_anchor">ACI_GATT_READ_MULTIPLE_CHAR_VALUE</a></h2><h3>Description</h3><p>Start a procedure to read multiple characteristic values from a server.
 This sub-procedure is used to read multiple Characteristic Values from a server when the
@@ -5182,7 +5182,7 @@ Before procedure completion the response packets are given through
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_MULTIPLE_RESP_EVENT_anchor">ACI_ATT_READ_MULTIPLE_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_CHAR_VALUE_anchor">ACI_GATT_WRITE_CHAR_VALUE</a></h2><h3>Description</h3><p>Start the procedure to write a characteristic value.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -5207,7 +5207,7 @@ When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_LONG_CHAR_VALUE_anchor">ACI_GATT_WRITE_LONG_CHAR_VALUE</a></h2><h3>Description</h3><p>Start the procedure to write a long characteristic value.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5238,7 +5238,7 @@ events are raised.</p><h3>Input parameters</h3><table width="800" border="1" cla
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><li><a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a></li><li><a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a></li><h2><a name="ACI_GATT_WRITE_CHAR_RELIABLE_anchor">ACI_GATT_WRITE_CHAR_RELIABLE</a></h2><h3>Description</h3><p>Start the procedure to write a characteristic reliably.
 When the procedure is completed, a  <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5269,7 +5269,7 @@ events are raised.</p><h3>Input parameters</h3><table width="800" border="1" cla
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><li><a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a></li><li><a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a></li><h2><a name="ACI_GATT_WRITE_LONG_CHAR_DESC_anchor">ACI_GATT_WRITE_LONG_CHAR_DESC</a></h2><h3>Description</h3><p>Start the procedure to write a long characteristic descriptor.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5300,7 +5300,7 @@ events are raised.</p><h3>Input parameters</h3><table width="800" border="1" cla
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><li><a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a></li><li><a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a></li><h2><a name="ACI_GATT_READ_LONG_CHAR_DESC_anchor">ACI_GATT_READ_LONG_CHAR_DESC</a></h2><h3>Description</h3><p>Start the procedure to read a long characteristic value.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is
@@ -5323,7 +5323,7 @@ generated. Before procedure completion the response packets are given through
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_BLOB_RESP_EVENT_anchor">ACI_ATT_READ_BLOB_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_CHAR_DESC_anchor">ACI_GATT_WRITE_CHAR_DESC</a></h2><h3>Description</h3><p>Start the procedure to write a characteristic descriptor.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -5348,7 +5348,7 @@ When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_READ_CHAR_DESC_anchor">ACI_GATT_READ_CHAR_DESC</a></h2><h3>Description</h3><p>Start the procedure to read the descriptor specified.
 When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.
@@ -5366,7 +5366,7 @@ Before procedure completion the response packet is given through <a href="#ACI_A
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_RESP_EVENT_anchor">ACI_ATT_READ_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_WITHOUT_RESP_anchor">ACI_GATT_WRITE_WITHOUT_RESP</a></h2><h3>Description</h3><p>Start the procedure to write a characteristic value without waiting for any response from the
 server. No events are generated after this command is executed.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -5391,7 +5391,7 @@ server. No events are generated after this command is executed.</p><h3>Input par
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_SIGNED_WRITE_WITHOUT_RESP_anchor">ACI_GATT_SIGNED_WRITE_WITHOUT_RESP</a></h2><h3>Description</h3><p>Start a signed write without response from the server.
 The procedure is used to write a characteristic value with an authentication signature without waiting
@@ -5417,7 +5417,7 @@ for any response from the server. It cannot be used when the link is encrypted.<
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_CONFIRM_INDICATION_anchor">ACI_GATT_CONFIRM_INDICATION</a></h2><h3>Description</h3><p>Allow application to confirm indication. This command has to be sent when the application
 receives the event <a href="#ACI_GATT_INDICATION_EVENT_anchor">ACI_GATT_INDICATION_EVENT</a>.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -5430,7 +5430,7 @@ receives the event <a href="#ACI_GATT_INDICATION_EVENT_anchor">ACI_GATT_INDICATI
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_RESP_anchor">ACI_GATT_WRITE_RESP</a></h2><h3>Description</h3><p>Allow or reject a write request from a client.
 This command has to be sent by the application when it receives the
@@ -5466,7 +5466,7 @@ the error code has to be set to the error code that has to be passed to the clie
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_ALLOW_READ_anchor">ACI_GATT_ALLOW_READ</a></h2><h3>Description</h3><p>Allow the GATT server to send a response to a read request from a client.
 The application has to send this command when it receives the
@@ -5485,7 +5485,7 @@ Otherwise the GATT procedure will be timeout.</p><h3>Input parameters</h3><table
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_SET_SECURITY_PERMISSION_anchor">ACI_GATT_SET_SECURITY_PERMISSION</a></h2><h3>Description</h3><p>This command sets the security permission for the attribute handle specified. Currently the
 setting of security permission is allowed only for client configuration descriptor.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -5506,7 +5506,7 @@ setting of security permission is allowed only for client configuration descript
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_SET_DESC_VALUE_anchor">ACI_GATT_SET_DESC_VALUE</a></h2><h3>Description</h3><p>This command sets the value of the descriptor specified by charDescHandle.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -5538,7 +5538,7 @@ setting of security permission is allowed only for client configuration descript
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_READ_HANDLE_VALUE_anchor">ACI_GATT_READ_HANDLE_VALUE</a></h2><h3>Description</h3><p>Reads the value of the attribute handle specified from the local GATT database.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -5558,7 +5558,7 @@ setting of security permission is allowed only for client configuration descript
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Length</p>
 </td><td><p>2</p>
@@ -5617,7 +5617,7 @@ setting of security permission is allowed only for client configuration descript
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DENY_READ_anchor">ACI_GATT_DENY_READ</a></h2><h3>Description</h3><p>Deny the GATT server to send a response to a read request from a client.
 The application may send this command when it receives the <a href="#ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EVENT</a> or  <a href="#ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT</a>.
@@ -5638,7 +5638,7 @@ the <a href="#ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EV
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_SET_ACCESS_PERMISSION_anchor">ACI_GATT_SET_ACCESS_PERMISSION</a></h2><h3>Description</h3><p>This command sets the access permission for the attribute handle specified.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -5658,7 +5658,7 @@ the <a href="#ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EV
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI L2CAP commands_anchor">ACI L2CAP commands</a></h2><h3>ACI L2CAP commands</h3><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>OpCode</th></tr>
@@ -5698,7 +5698,7 @@ Time = N * 1.25 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT</a></li><h2><a name="ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP_anchor">ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP</a></h2><h3>Description</h3><p>Accept or reject a connection update. This command should be sent in response
 to a <a href="#ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT</a> event from the controller. The accept parameter has to be
@@ -5752,7 +5752,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h1><a name="HCI/ACI events_anchor">HCI/ACI events</a></h1><p><a href="#HCI events_anchor">HCI events</a></p><p><a href="#HCI LE meta events_anchor">HCI LE meta events</a></p><p><a href="#ACI GAP events_anchor">ACI GAP events</a></p><p><a href="#ACI GATT/ATT events_anchor">ACI GATT/ATT events</a></p><p><a href="#ACI L2CAP events_anchor">ACI L2CAP events</a></p><p><a href="#ACI HAL events_anchor">ACI HAL events</a></p><h2><a name="HCI events_anchor">HCI events</a></h2><h3>HCI events</h3><table width="800" border="1" class="reference">
 <tr><th>Event name</th><th>Event Code</th></tr>
@@ -5785,7 +5785,7 @@ that didn't correspond to a connection was given.</p><h3>Event parameters</h3><t
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5794,7 +5794,7 @@ that didn't correspond to a connection was given.</p><h3>Event parameters</h3><t
 <tr><td><p>Reason</p>
 </td><td><p>1</p>
 </td><td><p>Reason for disconnection.</p>
-</td><td><li>0x00: Success</li><li>0x01: Unknown HCI Command</li><li>0x02: Unknown Connection Identifier</li><li>0x03: Hardware Failure</li><li>0x04: Page Timeout</li><li>0x05: Authentication Failure</li><li>0x06: PIN or Key Missing</li><li>0x07: Memory Capacity Exceeded</li><li>0x08: Connection Timeout</li><li>0x09: Connection Limit Exceeded</li><li>0x0A: Synchronous Connection Limit to a Device Exceeded</li><li>0x0B: ACL Connection Already Exists</li><li>0x0C: Command Disallowed</li><li>0x0D: Connection Rejected Due To Limited Resources</li><li>0x0E: Connection Rejected Due To Security Reasons</li><li>0x0F: Connection Rejected due to Unacceptable BD_ADDR</li><li>0x10: Connection Accept Timeout Exceeded</li><li>0x11: Unsupported Feature Or Parameter Value</li><li>0x12: Invalid HCI Command Parameters</li><li>0x13: Remote User Terminated Connection</li><li>0x14: Remote Device Terminated Connection due to Low Resources</li><li>0x15: Remote Device Terminated Connection due to Power Off</li><li>0x16: Connection Terminated By Local Host</li><li>0x17: Repeated Attempts</li><li>0x18: Pairing Not Allowed</li><li>0x19: Unknown LMP PDU</li><li>0x1A: Unsupported Remote Feature / Unsupported LMP Feature</li><li>0x1B: SCO Offset Rejected</li><li>0x1C: SCO Interval Rejected</li><li>0x1D: SCO Air Mode Rejected</li><li>0x1E: Invalid LMP Parameters</li><li>0x1F: Unspecified Error</li><li>0x20: Unsupported LMP Parameter Value</li><li>0x21: Role Change Not Allowed</li><li>0x22: LMP Response Timeout / LL Response Timeout</li><li>0x23: LMP Error Transaction Collision</li><li>0x24: LMP PDU Not Allowed</li><li>0x25: Encryption Mode Not Acceptable</li><li>0x26: Link Key cannot be Changed</li><li>0x27: Requested QoS Not Supported</li><li>0x28: Instant Passed</li><li>0x29: Pairing With Unit Key Not Supported</li><li>0x2A: Different Transaction Collision</li><li>0x2C: QoS Unacceptable Parameter</li><li>0x2D: QoS Rejected</li><li>0x2E: Channel Assessment Not Supported</li><li>0x2F: Insufficient Security</li><li>0x30: Parameter Out Of Mandatory Range</li><li>0x32: Role Switch Pending</li><li>0x34: Reserved Slot Violation</li><li>0x35: Role Switch Failed</li><li>0x36: Extended Inquiry Response Too Large</li><li>0x37: Secure Simple Pairing Not Supported by Host</li><li>0x38: Host Busy - Pairing</li><li>0x39: Connection Rejected due to No Suitable Channel Found</li><li>0x3A: Controller Busy</li><li>0x3B: Unacceptable Connection Interval</li><li>0x3C: Directed Advertising Timeout</li><li>0x3D: Connection Terminated Due to MIC Failure</li><li>0x3E: Connection Failed to be Established</li><li>0x3F: MAC of the 802.11 AMP</li><li>0x41: Failed</li><li>0x42: Invalid parameters</li><li>0x43: Busy</li><li>0x44: Invalid length</li><li>0x45: Pending</li><li>0x46: Not allowed</li><li>0x47: GATT error</li><li>0x48: Address not resolved</li><li>0x49: Flash read failed</li><li>0x4A: Flash write failed</li><li>0x4B: Flash erase failed</li><li>0x50: Invalid CID</li><li>0x5A: CSRK not found</li><li>0x5B: IRK not found</li><li>0x5C: Device not found in DB</li><li>0x5D: Security DB full</li><li>0x5E: Device not bonded</li><li>0x5F: Device in blacklist</li><li>0x60: Invalid handle</li><li>0x61: Invalid parameter</li><li>0x62: Out of handles</li><li>0x63: Invalid operation</li><li>0x64: Insufficient resources</li><li>0x65: Insufficient encryption key size</li><li>0x66: Characteristic already exist</li><li>0x82: No valid slot</li><li>0x83: Short window</li><li>0x84: New interval failed</li><li>0x85: Too large interval</li><li>0x86: Slot length failed</li></td></tr>
+</td><td><li>0x00: Success</li><li>0x01: Unknown HCI Command</li><li>0x02: Unknown Connection Identifier</li><li>0x03: Hardware Failure</li><li>0x05: Authentication Failure</li><li>0x06: PIN or Key Missing</li><li>0x07: Memory Capacity Exceeded</li><li>0x08: Connection Timeout</li><li>0x09: Connection Limit Exceeded</li><li>0x0B: ACL Connection Already Exists</li><li>0x0C: Command Disallowed</li><li>0x0D: Connection Rejected Due To Limited Resources</li><li>0x0E: Connection Rejected Due To Security Reasons</li><li>0x0F: Connection Rejected due to Unacceptable BD_ADDR</li><li>0x10: Connection Accept Timeout Exceeded</li><li>0x11: Unsupported Feature Or Parameter Value</li><li>0x12: Invalid HCI Command Parameters</li><li>0x13: Remote User Terminated Connection</li><li>0x14: Remote Device Terminated Connection due to Low Resources</li><li>0x15: Remote Device Terminated Connection due to Power Off</li><li>0x16: Connection Terminated By Local Host</li><li>0x17: Repeated Attempts</li><li>0x18: Pairing Not Allowed</li><li>0x19: Unknown LMP PDU</li><li>0x1A: Unsupported Remote Feature / Unsupported LMP Feature</li><li>0x1E: Invalid LMP Parameters</li><li>0x1F: Unspecified Error</li><li>0x20: Unsupported LMP Parameter Value</li><li>0x21: Role Change Not Allowed</li><li>0x22: LMP Response Timeout / LL Response Timeout</li><li>0x23: LMP Error Transaction Collision</li><li>0x24: LMP PDU Not Allowed</li><li>0x25: Encryption Mode Not Acceptable</li><li>0x26: Link Key cannot be Changed</li><li>0x28: Instant Passed</li><li>0x29: Pairing With Unit Key Not Supported</li><li>0x2A: Different Transaction Collision</li><li>0x2E: Channel Assessment Not Supported</li><li>0x2F: Insufficient Security</li><li>0x30: Parameter Out Of Mandatory Range</li><li>0x32: Role Switch Pending</li><li>0x34: Reserved Slot Violation</li><li>0x35: Role Switch Failed</li><li>0x37: Secure Simple Pairing Not Supported by Host</li><li>0x38: Host Busy - Pairing</li><li>0x39: Connection Rejected due to No Suitable Channel Found</li><li>0x3A: Controller Busy</li><li>0x3B: Unacceptable Connection Interval</li><li>0x3C: Directed Advertising Timeout</li><li>0x3D: Connection Terminated Due to MIC Failure</li><li>0x3E: Connection Failed to be Established</li><li>0x41: Failed</li><li>0x42: Invalid parameters</li><li>0x43: Busy</li><li>0x44: Invalid length</li><li>0x45: Pending</li><li>0x46: Not allowed</li><li>0x47: GATT error</li><li>0x48: Address not resolved</li><li>0x50: Invalid CID</li><li>0x5A: CSRK not found</li><li>0x5B: IRK not found</li><li>0x5C: Device not found in DB</li><li>0x5D: Security DB full</li><li>0x5E: Device not bonded</li><li>0x5F: Device in blacklist</li><li>0x60: Invalid handle</li><li>0x61: Invalid parameter</li><li>0x62: Out of handles</li><li>0x63: Invalid operation</li><li>0x64: Insufficient resources</li><li>0x65: Insufficient encryption key size</li><li>0x66: Characteristic already exist</li><li>0x82: No valid slot</li><li>0x83: Short window</li><li>0x84: New interval failed</li><li>0x85: Too large interval</li><li>0x86: Slot length failed</li></td></tr>
 </table><h2><a name="HCI_ENCRYPTION_CHANGE_EVENT_anchor">HCI_ENCRYPTION_CHANGE_EVENT</a></h2><h3>Description</h3><p>The Encryption Change event is used to indicate that the change of the encryption
 mode has been completed. The Connection_Handle will be a Connection_Handle
 for an ACL connection. The Encryption_Enabled event parameter
@@ -5812,7 +5812,7 @@ only use Encryption_Enabled values 0x00 (OFF) and 0x01 (ON).
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5842,7 +5842,7 @@ event parameter shall be the SubVersNr parameter.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5921,7 +5921,7 @@ Role Change event.</p><h3>Event parameters</h3><table width="800" border="1" cla
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5974,7 +5974,7 @@ is set to 1 or more.</p><h3>Event parameters</h3><table width="800" border="1" c
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Num_HCI_Command_Packets</p>
 </td><td><p>1</p>
@@ -6022,7 +6022,7 @@ this parameter shall be set to 0x00. See Bluetooth spec 5.0 vol 2 [part E] 7.7.6
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -6111,7 +6111,7 @@ On a master, this event shall be issued if the Connection_Update command was sen
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -6138,7 +6138,7 @@ remote Bluetooth device specified by the Connection_Handle event parameter.See B
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -6201,7 +6201,7 @@ Link Layer packet on this connection (connEffectiveMaxRxTime defined in [Vol 6] 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Local_P256_Public_Key</p>
 </td><td><p>64</p>
@@ -6212,7 +6212,7 @@ by the Controller. See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.9</p><h3>Event p
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>DHKey</p>
 </td><td><p>32</p>
@@ -6235,7 +6235,7 @@ this parameter shall be set to 0x00. See Bluetooth spec 5.0 vol 2 [part E] 7.7.6
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -6339,7 +6339,7 @@ neither PHY will change as a result, it issues this event immediately.
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -6419,10 +6419,10 @@ been terminated by the upper layer or has completed for any other reason</p><h3>
 <tr><td><p>Procedure_Code</p>
 </td><td><p>1</p>
 </td><td><p>Terminated procedure.</p>
-</td><td><li>0x01: LIMITED_DISCOVERY_PROC</li><li>0x02: GENERAL_DISCOVERY_PROC</li><li>0x04: NAME_DISCOVERY_PROC</li><li>0x08: AUTO_CONNECTION_ESTABLISHMENT_PROC</li><li>0x10: GENERAL_CONNECTION_ESTABLISHMENT_PROC</li><li>0x20: SELECTIVE_CONNECTION_ESTABLISHMENT_PROC</li><li>0x40: DIRECT_CONNECTION_ESTABLISHMENT_PROC</li><li>0x80: OBSERVATION_PROC</li></td></tr>
+</td><td><li>0x01: GAP_LIMITED_DISCOVERY_PROC</li><li>0x02: GAP_GENERAL_DISCOVERY_PROC</li><li>0x04: GAP_NAME_DISCOVERY_PROC</li><li>0x08: GAP_AUTO_CONNECTION_ESTABLISHMENT_PROC</li><li>0x10: GAP_GENERAL_CONNECTION_ESTABLISHMENT_PROC</li><li>0x20: GAP_SELECTIVE_CONNECTION_ESTABLISHMENT_PROC</li><li>0x40: GAP_DIRECT_CONNECTION_ESTABLISHMENT_PROC</li><li>0x80: GAP_OBSERVATION_PROC</li></td></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Error code. See Core v5.0, Vol. 2, part D.</p>
+</td><td><p>Status error code.</p>
 </td><td></td></tr>
 <tr><td><p>Data_Length</p>
 </td><td><p>1</p>
@@ -6753,7 +6753,7 @@ successfully.</p><h3>Event parameters</h3><table width="800" border="1" class="r
 <tr><td><p>Error_Code</p>
 </td><td><p>1</p>
 </td><td><p>Indicates whether the procedure completed with an error or was successful</p>
-</td><td><li>0x00: Success</li><li>0x01: Unknown HCI Command</li><li>0x02: Unknown Connection Identifier</li><li>0x03: Hardware Failure</li><li>0x04: Page Timeout</li><li>0x05: Authentication Failure</li><li>0x06: PIN or Key Missing</li><li>0x07: Memory Capacity Exceeded</li><li>0x08: Connection Timeout</li><li>0x09: Connection Limit Exceeded</li><li>0x0A: Synchronous Connection Limit to a Device Exceeded</li><li>0x0B: ACL Connection Already Exists</li><li>0x0C: Command Disallowed</li><li>0x0D: Connection Rejected Due To Limited Resources</li><li>0x0E: Connection Rejected Due To Security Reasons</li><li>0x0F: Connection Rejected due to Unacceptable BD_ADDR</li><li>0x10: Connection Accept Timeout Exceeded</li><li>0x11: Unsupported Feature Or Parameter Value</li><li>0x12: Invalid HCI Command Parameters</li><li>0x13: Remote User Terminated Connection</li><li>0x14: Remote Device Terminated Connection due to Low Resources</li><li>0x15: Remote Device Terminated Connection due to Power Off</li><li>0x16: Connection Terminated By Local Host</li><li>0x17: Repeated Attempts</li><li>0x18: Pairing Not Allowed</li><li>0x19: Unknown LMP PDU</li><li>0x1A: Unsupported Remote Feature / Unsupported LMP Feature</li><li>0x1B: SCO Offset Rejected</li><li>0x1C: SCO Interval Rejected</li><li>0x1D: SCO Air Mode Rejected</li><li>0x1E: Invalid LMP Parameters</li><li>0x1F: Unspecified Error</li><li>0x20: Unsupported LMP Parameter Value</li><li>0x21: Role Change Not Allowed</li><li>0x22: LMP Response Timeout / LL Response Timeout</li><li>0x23: LMP Error Transaction Collision</li><li>0x24: LMP PDU Not Allowed</li><li>0x25: Encryption Mode Not Acceptable</li><li>0x26: Link Key cannot be Changed</li><li>0x27: Requested QoS Not Supported</li><li>0x28: Instant Passed</li><li>0x29: Pairing With Unit Key Not Supported</li><li>0x2A: Different Transaction Collision</li><li>0x2C: QoS Unacceptable Parameter</li><li>0x2D: QoS Rejected</li><li>0x2E: Channel Assessment Not Supported</li><li>0x2F: Insufficient Security</li><li>0x30: Parameter Out Of Mandatory Range</li><li>0x32: Role Switch Pending</li><li>0x34: Reserved Slot Violation</li><li>0x35: Role Switch Failed</li><li>0x36: Extended Inquiry Response Too Large</li><li>0x37: Secure Simple Pairing Not Supported by Host</li><li>0x38: Host Busy - Pairing</li><li>0x39: Connection Rejected due to No Suitable Channel Found</li><li>0x3A: Controller Busy</li><li>0x3B: Unacceptable Connection Interval</li><li>0x3C: Directed Advertising Timeout</li><li>0x3D: Connection Terminated Due to MIC Failure</li><li>0x3E: Connection Failed to be Established</li><li>0x3F: MAC of the 802.11 AMP</li><li>0x41: Failed</li><li>0x42: Invalid parameters</li><li>0x43: Busy</li><li>0x44: Invalid length</li><li>0x45: Pending</li><li>0x46: Not allowed</li><li>0x47: GATT error</li><li>0x48: Address not resolved</li><li>0x49: Flash read failed</li><li>0x4A: Flash write failed</li><li>0x4B: Flash erase failed</li><li>0x50: Invalid CID</li><li>0x5A: CSRK not found</li><li>0x5B: IRK not found</li><li>0x5C: Device not found in DB</li><li>0x5D: Security DB full</li><li>0x5E: Device not bonded</li><li>0x5F: Device in blacklist</li><li>0x60: Invalid handle</li><li>0x61: Invalid parameter</li><li>0x62: Out of handles</li><li>0x63: Invalid operation</li><li>0x64: Insufficient resources</li><li>0x65: Insufficient encryption key size</li><li>0x66: Characteristic already exist</li><li>0x82: No valid slot</li><li>0x83: Short window</li><li>0x84: New interval failed</li><li>0x85: Too large interval</li><li>0x86: Slot length failed</li></td></tr>
+</td><td><li>0x00: Success</li><li>0x01: Unknown HCI Command</li><li>0x02: Unknown Connection Identifier</li><li>0x03: Hardware Failure</li><li>0x05: Authentication Failure</li><li>0x06: PIN or Key Missing</li><li>0x07: Memory Capacity Exceeded</li><li>0x08: Connection Timeout</li><li>0x09: Connection Limit Exceeded</li><li>0x0B: ACL Connection Already Exists</li><li>0x0C: Command Disallowed</li><li>0x0D: Connection Rejected Due To Limited Resources</li><li>0x0E: Connection Rejected Due To Security Reasons</li><li>0x0F: Connection Rejected due to Unacceptable BD_ADDR</li><li>0x10: Connection Accept Timeout Exceeded</li><li>0x11: Unsupported Feature Or Parameter Value</li><li>0x12: Invalid HCI Command Parameters</li><li>0x13: Remote User Terminated Connection</li><li>0x14: Remote Device Terminated Connection due to Low Resources</li><li>0x15: Remote Device Terminated Connection due to Power Off</li><li>0x16: Connection Terminated By Local Host</li><li>0x17: Repeated Attempts</li><li>0x18: Pairing Not Allowed</li><li>0x19: Unknown LMP PDU</li><li>0x1A: Unsupported Remote Feature / Unsupported LMP Feature</li><li>0x1E: Invalid LMP Parameters</li><li>0x1F: Unspecified Error</li><li>0x20: Unsupported LMP Parameter Value</li><li>0x21: Role Change Not Allowed</li><li>0x22: LMP Response Timeout / LL Response Timeout</li><li>0x23: LMP Error Transaction Collision</li><li>0x24: LMP PDU Not Allowed</li><li>0x25: Encryption Mode Not Acceptable</li><li>0x26: Link Key cannot be Changed</li><li>0x28: Instant Passed</li><li>0x29: Pairing With Unit Key Not Supported</li><li>0x2A: Different Transaction Collision</li><li>0x2E: Channel Assessment Not Supported</li><li>0x2F: Insufficient Security</li><li>0x30: Parameter Out Of Mandatory Range</li><li>0x32: Role Switch Pending</li><li>0x34: Reserved Slot Violation</li><li>0x35: Role Switch Failed</li><li>0x37: Secure Simple Pairing Not Supported by Host</li><li>0x38: Host Busy - Pairing</li><li>0x39: Connection Rejected due to No Suitable Channel Found</li><li>0x3A: Controller Busy</li><li>0x3B: Unacceptable Connection Interval</li><li>0x3C: Directed Advertising Timeout</li><li>0x3D: Connection Terminated Due to MIC Failure</li><li>0x3E: Connection Failed to be Established</li><li>0x41: Failed</li><li>0x42: Invalid parameters</li><li>0x43: Busy</li><li>0x44: Invalid length</li><li>0x45: Pending</li><li>0x46: Not allowed</li><li>0x47: GATT error</li><li>0x48: Address not resolved</li><li>0x50: Invalid CID</li><li>0x5A: CSRK not found</li><li>0x5B: IRK not found</li><li>0x5C: Device not found in DB</li><li>0x5D: Security DB full</li><li>0x5E: Device not bonded</li><li>0x5F: Device in blacklist</li><li>0x60: Invalid handle</li><li>0x61: Invalid parameter</li><li>0x62: Out of handles</li><li>0x63: Invalid operation</li><li>0x64: Insufficient resources</li><li>0x65: Insufficient encryption key size</li><li>0x66: Characteristic already exist</li><li>0x82: No valid slot</li><li>0x83: Short window</li><li>0x84: New interval failed</li><li>0x85: Too large interval</li><li>0x86: Slot length failed</li></td></tr>
 </table><h2><a name="ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></h2><h3>Description</h3><p>This event is generated when an Error Response is received from the server. The error
 response can be given by the server at the end of one of the GATT discovery procedures.
 This does not mean that the procedure ended with an error, but this error event is part of the
@@ -7116,7 +7116,7 @@ Units: dBm</p>
 </td><td><p>Data_Length</p>
 </td><td><p>The error event info</p>
 </td><td></tr>
-</table><h1><a name="Error codes_anchor">Error codes</a></h1><h2>Status error codes</h2><table width="800" border="1" class="reference">
+</table><h1><a name="Status error codes_anchor">Status error codes</a></h1><p>Status error codes are used for the return status of all commands. Only the codes from 0 to 0x3E are used for HCI commands (see Core Specification v5.0, Vol. 2, part D), while more codes are defined for ACI commands (see table below).</p><h2></h2><table width="800" border="1" class="reference">
 <tr><th>Status error code</th><th>Description</th></tr>
 <tr><td><p>0x00</p>
 </td><td><p>Success</p>
@@ -7129,9 +7129,6 @@ Units: dBm</p>
 </td></tr>
 <tr><td><p>0x03</p>
 </td><td><p>Hardware Failure</p>
-</td></tr>
-<tr><td><p>0x04</p>
-</td><td><p>Page Timeout</p>
 </td></tr>
 <tr><td><p>0x05</p>
 </td><td><p>Authentication Failure</p>
@@ -7147,9 +7144,6 @@ Units: dBm</p>
 </td></tr>
 <tr><td><p>0x09</p>
 </td><td><p>Connection Limit Exceeded</p>
-</td></tr>
-<tr><td><p>0x0A</p>
-</td><td><p>Synchronous Connection Limit to a Device Exceeded</p>
 </td></tr>
 <tr><td><p>0x0B</p>
 </td><td><p>ACL Connection Already Exists</p>
@@ -7199,15 +7193,6 @@ Units: dBm</p>
 <tr><td><p>0x1A</p>
 </td><td><p>Unsupported Remote Feature / Unsupported LMP Feature</p>
 </td></tr>
-<tr><td><p>0x1B</p>
-</td><td><p>SCO Offset Rejected</p>
-</td></tr>
-<tr><td><p>0x1C</p>
-</td><td><p>SCO Interval Rejected</p>
-</td></tr>
-<tr><td><p>0x1D</p>
-</td><td><p>SCO Air Mode Rejected</p>
-</td></tr>
 <tr><td><p>0x1E</p>
 </td><td><p>Invalid LMP Parameters</p>
 </td></tr>
@@ -7235,9 +7220,6 @@ Units: dBm</p>
 <tr><td><p>0x26</p>
 </td><td><p>Link Key cannot be Changed</p>
 </td></tr>
-<tr><td><p>0x27</p>
-</td><td><p>Requested QoS Not Supported</p>
-</td></tr>
 <tr><td><p>0x28</p>
 </td><td><p>Instant Passed</p>
 </td></tr>
@@ -7246,12 +7228,6 @@ Units: dBm</p>
 </td></tr>
 <tr><td><p>0x2A</p>
 </td><td><p>Different Transaction Collision</p>
-</td></tr>
-<tr><td><p>0x2C</p>
-</td><td><p>QoS Unacceptable Parameter</p>
-</td></tr>
-<tr><td><p>0x2D</p>
-</td><td><p>QoS Rejected</p>
 </td></tr>
 <tr><td><p>0x2E</p>
 </td><td><p>Channel Assessment Not Supported</p>
@@ -7270,9 +7246,6 @@ Units: dBm</p>
 </td></tr>
 <tr><td><p>0x35</p>
 </td><td><p>Role Switch Failed</p>
-</td></tr>
-<tr><td><p>0x36</p>
-</td><td><p>Extended Inquiry Response Too Large</p>
 </td></tr>
 <tr><td><p>0x37</p>
 </td><td><p>Secure Simple Pairing Not Supported by Host</p>
@@ -7298,9 +7271,6 @@ Units: dBm</p>
 <tr><td><p>0x3E</p>
 </td><td><p>Connection Failed to be Established</p>
 </td></tr>
-<tr><td><p>0x3F</p>
-</td><td><p>MAC of the 802.11 AMP</p>
-</td></tr>
 <tr><td><p>0x41</p>
 </td><td><p>Failed</p>
 </td></tr>
@@ -7324,15 +7294,6 @@ Units: dBm</p>
 </td></tr>
 <tr><td><p>0x48</p>
 </td><td><p>Address not resolved</p>
-</td></tr>
-<tr><td><p>0x49</p>
-</td><td><p>Flash read failed</p>
-</td></tr>
-<tr><td><p>0x4A</p>
-</td><td><p>Flash write failed</p>
-</td></tr>
-<tr><td><p>0x4B</p>
-</td><td><p>Flash erase failed</p>
 </td></tr>
 <tr><td><p>0x50</p>
 </td><td><p>Invalid CID</p>
@@ -7390,58 +7351,5 @@ Units: dBm</p>
 </td></tr>
 <tr><td><p>0x86</p>
 </td><td><p>Slot length failed</p>
-</td></tr>
-</table><h2>ATT error codes</h2><table width="800" border="1" class="reference">
-<tr><th>ATT error code</th><th>Description</th></tr>
-<tr><td><p>0x01</p>
-</td><td><p>Invalid handle</p>
-</td></tr>
-<tr><td><p>0x02</p>
-</td><td><p>Read not permitted</p>
-</td></tr>
-<tr><td><p>0x03</p>
-</td><td><p>Write not permitted</p>
-</td></tr>
-<tr><td><p>0x04</p>
-</td><td><p>Invalid PDU</p>
-</td></tr>
-<tr><td><p>0x05</p>
-</td><td><p>Insufficient authentication</p>
-</td></tr>
-<tr><td><p>0x06</p>
-</td><td><p>Request not supported</p>
-</td></tr>
-<tr><td><p>0x07</p>
-</td><td><p>Invalid offset</p>
-</td></tr>
-<tr><td><p>0x08</p>
-</td><td><p>Insufficient authorization</p>
-</td></tr>
-<tr><td><p>0x09</p>
-</td><td><p>Prepare queue full</p>
-</td></tr>
-<tr><td><p>0x0A</p>
-</td><td><p>Attribute not found</p>
-</td></tr>
-<tr><td><p>0x0B</p>
-</td><td><p>Attribute not long</p>
-</td></tr>
-<tr><td><p>0x0C</p>
-</td><td><p>Insufficient encryption key size</p>
-</td></tr>
-<tr><td><p>0x0D</p>
-</td><td><p>Invalid attribute value length</p>
-</td></tr>
-<tr><td><p>0x0E</p>
-</td><td><p>Unlikely error</p>
-</td></tr>
-<tr><td><p>0x0F</p>
-</td><td><p>Insufficient encryption</p>
-</td></tr>
-<tr><td><p>0x10</p>
-</td><td><p>Unsupported group type</p>
-</td></tr>
-<tr><td><p>0x11</p>
-</td><td><p>Insufficient resources</p>
 </td></tr>
 </table></font></body></html>

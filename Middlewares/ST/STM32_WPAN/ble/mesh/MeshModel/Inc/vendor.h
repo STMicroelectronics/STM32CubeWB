@@ -45,10 +45,19 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
+#include "ble_mesh.h"
 
 /* Exported macro ------------------------------------------------------------*/
 
-#define MODEL_BLUEMESH_MID  0x00010030
+/* Refer to 3.7.2 Model identifier */
+#define VENDOR_STMICRO_CID     0x0030      /* 16-bit Company Identifier */
+#define VENDOR_STMICRO_MODEL_ID1    0x0001 /* 16-bit vendor-assigned model identifier */
+#define VENDORMODEL_STMICRO_ID1  (MOBLEUINT32)(((MOBLEUINT32)VENDOR_STMICRO_MODEL_ID1 << 16)|(VENDOR_STMICRO_CID)) 
+
+/******************* Read, write and response mask for Vendor opcode **********/
+#define VENDOR_CMD_RESPONSE                          0x20
+#define VENDOR_CMD_READ_nWRITE                       0x10
+/******************************************************************************/
 
 /*******************Commands Received from Android/IoS*************************/
 #define APPLI_TEST_CMD                               0x1U
@@ -131,8 +140,10 @@ typedef struct
   MOBLE_RESULT (*DeviceInfoCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);
   MOBLE_RESULT (*TestCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);
   void (*LEDControl_cb)(void);
+  void (*GetTestCount)(MOBLEUINT8*);
   
 } Appli_Vendor_cb_t;
+#pragma pack(4)
 
 extern const Appli_Vendor_cb_t VendorAppli_cb;
 
@@ -144,10 +155,37 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr, MOBLE_ADDRESS dst_
 MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr, MOBLE_ADDRESS dst_peer, 
                                   MOBLEUINT8 command, MOBLEUINT8 const *data, 
                                   MOBLEUINT32 length, MOBLEBOOL response);
-MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr, MOBLEUINT8 elementIndex,
-                                    MOBLEUINT8 const * data, MOBLEUINT32 length); 
+
+MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr, MOBLE_ADDRESS dst_peer, 
+                                  MOBLEUINT8 command, MOBLEUINT8 const *pRxData, 
+                                  MOBLEUINT32 dataLength, MOBLEBOOL response);
+
 void Vendor_Process(void);
 void Vendor_Publish(MOBLE_ADDRESS publishAddr, MOBLEUINT8 elementIndex);
+void Vendor_TestRemoteData(MOBLE_ADDRESS src,MOBLE_ADDRESS dst,MOBLEUINT8 elementIndex);
+void Vendor_TestCounterInc(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elementIndex);
+
+MOBLE_RESULT VendorModel_PID1_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
+                                                 MOBLEUINT16 *length);
+
+MOBLE_RESULT VendorModel_PID1_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
+                                    MOBLE_ADDRESS dst_peer, 
+                                    MOBLEUINT16 opcode, 
+                                    MOBLEUINT8 *pResponsedata, 
+                                    MOBLEUINT32 *plength, 
+                                    MOBLEUINT8 const *pRxData,
+                                    MOBLEUINT32 dataLength,
+                                    MOBLEBOOL response);
+
+
+MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 
+                                                 MOBLE_ADDRESS dst_peer, 
+                                                 MOBLEUINT16 opcode, 
+                                                 MOBLEUINT8 const *pRxData, 
+                                                 MOBLEUINT32 dataLength, 
+                                                 MOBLEBOOL response
+                                                   );
+
 
 #endif /* __VENDOR_H */
 

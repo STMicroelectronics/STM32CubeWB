@@ -127,7 +127,6 @@ typedef	uint8_t	tBDAddr[6];
 
 
 /* Error Codes as specified by the specification 
- * according to the spec the error codes range from 0x00 to 0x3F 
  */
 #define ERR_CMD_SUCCESS                              0x00
 #define ERR_UNKNOWN_HCI_COMMAND	                     0x01
@@ -154,6 +153,14 @@ typedef	uint8_t	tBDAddr[6];
 #define ERR_DIRECTED_ADV_TIMEOUT                     0x3C
 #define ERR_CONN_END_WITH_MIC_FAILURE                0x3D
 #define ERR_CONN_FAILED_TO_ESTABLISH                 0x3E
+
+
+/* ------------------------------------------------------------------------- */
+
+
+#define FLASH_READ_FAILED                            0x49
+#define FLASH_WRITE_FAILED                           0x4A
+#define FLASH_ERASE_FAILED                           0x4B
 
 
 /* ------------------------------------------------------------------------- */

@@ -33,6 +33,11 @@
 #include "appli_nvm.h"
 #include "ble_hci_le.h"
 #include "models_if.h"
+//#include "bluenrg1_api.h"
+#include "PWM_config.h"
+#include "PWM_handlers.h"
+#include "appli_light_lc.h"
+#include "light_lc.h"
 
 /** @addtogroup BLE_Mesh
 *  @{
@@ -52,7 +57,7 @@ typedef struct
   MOBLEUINT32 length;
 } APPLI_SEND_RESPONSE_MODULE;
 
-
+#pragma pack(1)
 typedef struct
 {
   MOBLEUINT8 packet_count;
@@ -84,7 +89,8 @@ const Appli_Vendor_cb_t VendorAppli_cb =
   Appli_Vendor_LEDControl,
   Appli_Vendor_DeviceInfo,
   Appli_Vendor_Test,
-  Appli_LedCtrl
+  Appli_LedCtrl,
+  Appli_GetTestValue 
 };
 
 __attribute__((aligned(4)))   
@@ -96,7 +102,13 @@ const Appli_Generic_cb_t GenericAppli_cb =
   /* Generic Level callbacks */
   Appli_Generic_Level_Set,
   Appli_Generic_LevelDelta_Set,
-  Appli_Generic_LevelMove_Set 
+  Appli_Generic_LevelMove_Set,
+  
+  /* Generic Power on off callbacks */
+  Appli_Generic_PowerOnOff_Set,
+    
+  /* Generic Default transition time callbacks */  
+  Appli_Generic_DefaultTransitionTime_Set
 };
 
 __attribute__((aligned(4))) 
@@ -105,9 +117,13 @@ const Appli_Generic_State_cb_t Appli_GenericState_cb =
   
   /* Generic Get On Off status */
   Appli_Generic_GetOnOffStatus,
+  Appli_Generic_GetOnOffValue,
   /* Generic Get level status */
   Appli_Generic_GetLevelStatus,
-  
+ /* Generic Get Power on off status */
+  Appli_Generic_GetPowerOnOffStatus, 
+ /* Generic Get Default transition time status */
+  Appli_Generic_GetDefaultTransitionStatus
 };
 
 __attribute__((aligned(4))) 
@@ -125,7 +141,7 @@ const Appli_Light_GetStatus_cb_t Appli_Light_GetStatus_cb =
   Appli_Light_GetHslHueStatus,
   Appli_Light_GetHslSaturationStatus,
   Appli_Light_GetHslHueRange,
-  Appli_Light_GetHslSatRange
+  Appli_Light_GetHslSatRange,
 };
 
 
@@ -152,6 +168,27 @@ const Appli_Light_cb_t LightAppli_cb =
 
 
 __attribute__((aligned(4))) 
+const Appli_Light_Ctrl_cb_t LightLCAppli_cb = 
+{ 
+  /* Light LC mode set callbacks */
+  Appli_LightLC_Mode_Set,
+  Appli_LightLC_OM_Set,
+  Appli_LightLC_OnOff_Set,
+};
+
+__attribute__((aligned(4))) 
+const Appli_LightLC_GetStatus_cb_t Appli_LightLC_GetStatus_cb = 
+{
+  Appli_LightLC_Get_ModeStatus,
+  Appli_LightLC_Get_OMModeStatus,
+  Appli_LightLC_Get_OnOffStatus,
+  Appli_LightLC_Get_AmbientLuxLevelOutput,
+  Appli_Light_LC_PIRegulatorOutput,
+};
+
+#ifdef ENABLE_SENSOR_MODEL_SERVER
+
+__attribute__((aligned(4))) 
 const Appli_Sensor_cb_t SensorAppli_cb = 
 {
   /* Sensor Model callbacks */
@@ -168,6 +205,8 @@ const Appli_Sensor_GetStatus_cb_t Appli_Sensor_GetStatus_cb =
   Appli_Sensor_GetSetting_IDStatus
 };
 
+#endif
+
 
 __attribute__((aligned(4))) 
 const MODEL_SIG_cb_t Model_SIG_cb[] = 
@@ -177,33 +216,66 @@ const MODEL_SIG_cb_t Model_SIG_cb[] =
     GenericModelServer_GetStatusRequestCb,
     GenericModelServer_ProcessMessageCb
   },
+#ifdef ENABLE_LIGHT_MODEL_SERVER
   {
     LightModelServer_GetOpcodeTableCb,
     LightModelServer_GetStatusRequestCb,
     LightModelServer_ProcessMessageCb
   },
+#endif
+#if defined(ENABLE_SENSOR_MODEL_SERVER) || defined(ENABLE_SENSOR_MODEL_SERVER_SETUP)
 {
   SensorModelServer_GetOpcodeTableCb,
   SensorModelServer_GetStatusRequestCb,
   SensorModelServer_ProcessMessageCb
   },
+#endif
+#if defined(ENABLE_TIME_MODEL_SERVER) || defined(ENABLE_SCENE_MODEL_SERVER)
   {
     Time_SceneModelServer_GetOpcodeTableCb,
     Time_SceneModelServer_GetStatusRequestCb,
     Time_SceneModelServer_ProcessMessageCb
   },
+#endif
+#if defined(ENABLE_LIGHT_MODEL_SERVER_LC) || defined(ENABLE_LIGHT_MODEL_SERVER_LC_SETUP)
+  {
+    Light_LC_ModelServer_GetOpcodeTableCb,
+    Light_LC_ModelServer_GetStatusRequestCb,
+    Light_LC_ModelServer_ProcessMessageCb
+  },
+#endif
   { 0, 0,0 }
 };
 
-/* __attribute__((aligned(4))) const APPLI_SAVE_MODEL_STATE_CB SaveModelState_cb = AppliNvm_SaveModelState; */
+__attribute__((aligned(4))) const APPLI_SAVE_MODEL_STATE_CB SaveModelState_cb = AppliNvm_SaveModelState;
 
 #define MODEL_SIG_COUNT ( ( sizeof(Model_SIG_cb)/sizeof(Model_SIG_cb[0]) - 1 ))
                                    
+__attribute__((aligned(4))) 
+const MODEL_Vendor_cb_t Model_Vendor_cb[] = 
+{
+  {
+    VendorModel_PID1_GetOpcodeTableCb,
+    VendorModel_PID1_GetStatusRequestCb,
+    VendorModel_PID1_ProcessMessageCb
+  },
+  { 0, 0,0 }
+};
+
+#define MODEL_VENDOR_COUNT ( ( sizeof(Model_Vendor_cb)/sizeof(Model_Vendor_cb[0]) - 1 ))
+
 extern MOBLEUINT8 NumberOfElements;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
+void GetApplicationVendorModels(const MODEL_Vendor_cb_t** pModelsTable, MOBLEUINT32* VendorModelscount)
+{
+  *pModelsTable = Model_Vendor_cb       ;
+  *VendorModelscount = MODEL_VENDOR_COUNT;
+  
+   TRACE_M(TF_VENDOR,"GetApplicationVendorModels \r\n");
+}
 
 /**
 * @brief  Initialization Commands for Models
@@ -212,24 +284,27 @@ extern MOBLEUINT8 NumberOfElements;
 */    
 void BLEMesh_ModelsInit(void)
 {
-  
-  /* Callbacks used by BLE-Mesh library */
-  BLEMesh_SetVendorCbMap(&vendor_cb);
+  MOBLEUINT8 modelStateLoad_Size;
+  MOBLEUINT8 modelStateLoadBuff[APP_NVM_MODEL_SIZE];    
   
   /* Callbacks used by BLE-Mesh Models */
   BLEMesh_SetSIGModelsCbMap(Model_SIG_cb, MODEL_SIG_COUNT);
   
-#if defined ENABLE_GENERIC_MODEL_SERVER_ONOFF || defined ENABLE_LIGHT_MODEL_SERVER_CTL || defined ENABLE_GENERIC_MODEL_SERVER_LEVEL 
   
   /* Initialization of PWM value to 1 */
-  /* PWM Initialization */
+  Appli_Light_PwmInit();
   
-#endif 
+  /* Load generic model states from nvm */
+  AppliNvm_LoadModelState(modelStateLoadBuff, &modelStateLoad_Size);
+  if (modelStateLoad_Size != 0)
+  {
+    /* update states of generic model */
+    Model_RestoreStates(modelStateLoadBuff, modelStateLoad_Size);
+  }
   
-#ifdef ENABLE_SENSOR_MODEL_SERVER  
+#if defined ENABLE_SENSOR_MODEL_SERVER && !defined CUSTOM_BOARD_PWM_SELECTION  
   /* Initiallization of sensors */
   Appli_Sensor_Init();
-  
 #endif  
 }
 
@@ -243,9 +318,19 @@ void BLEMesh_ModelsProcess(void)
   Generic_Process();
   Lighting_Process();
   Vendor_Process();
-#ifdef ENABLE_SENSOR_PUBLICATION 
+/* Define this Macro to enable the publication of sensors data.*/ 
+#if defined ENABLE_SENSOR_MODEL_SERVER 
   Sensor_Process();
 #endif  
+
+#ifdef ENABLE_APPLI_TEST  
+  Test_Process();
+#endif   
+  ModelSave_Process();
+  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC   
+  Light_control_Process();
+#endif
 }
 
 /**
@@ -281,16 +366,11 @@ void BLEMesh_ModelsCommand(void)
  
   if(publishAddress)
   {
-#ifndef DISABLE_TRACES
-    printf("Published Address is= 0x%2x \n\r", publishAddress); 
-#endif
-   
+    TRACE_M(TF_ADDRESS,"Published Address is= 0x%2x \n\r", publishAddress); 
   }
   else
   {
-#ifndef DISABLE_TRACES
-    printf("Publish Address is unassigned!\r\n"); 
-#endif
+    TRACE_M(TF_ADDRESS,"Publish Address is unassigned!\r\n"); 
   }
   
 #ifdef VENDOR_MODEL_PUBLISH   
@@ -374,9 +454,7 @@ void BLEMesh_ModelsDelayPacket(MOBLE_ADDRESS peer,
           %DEFAULT_DELAY_PACKET_RANDOM_TIME;    
     Appli_PendingPackets.head = Appli_PendingPackets.packet;
     Appli_PendingPackets.head_index = 0;
-#ifndef DISABLE_TRACES
-    printf("Randomized time: %ld\n\r", Appli_PendingPackets.send_time - Clock_Time());
-#endif	
+    TRACE_M(TF_MISC, "Randomized time: %d\n\r", Appli_PendingPackets.send_time - Clock_Time());	
   }
   else 
   {
@@ -421,19 +499,18 @@ void BLEMesh_ModelsSendDelayedPacket(void)
   {
     for (MOBLEUINT8 count=Appli_PendingPackets.packet_count; count!=0; count--)
     {
-#ifndef DISABLE_TRACES
-      printf("Sending randomized packets. Packet count: %d \n\r",\
+    TRACE_M(TF_MISC, "Sending randomized packets. Packet count: %d \n\r",\
         Appli_PendingPackets.packet_count - count + 1);
-#endif      
       temp_index = ((Appli_PendingPackets.head_index+MAX_PENDING_PACKETS_QUE_SIZE+1)\
         -count)%MAX_PENDING_PACKETS_QUE_SIZE;
       ptr = Appli_PendingPackets.packet + temp_index;
       
-      BLEMesh_SendResponse(ptr->peer,
-                           ptr->dst,
-                           ptr->command,
-                           ptr->data,
-                           ptr->length);
+      VendorModel_SendResponse(VENDOR_STMICRO_CID, 
+                               ptr->peer,
+                               ptr->dst,
+                               ptr->command,
+                               ptr->data,
+                               ptr->length);
     }
     
     Appli_PendingPackets.packet_count = 0;
@@ -452,6 +529,9 @@ MOBLEUINT8 BLEMesh_ModelsASCII_To_Char(MOBLEUINT8 tempValue)
   return tempValue;
 } 
 
+__weak void Test_Process(void)
+{
+}
 /**
 * @}
 */

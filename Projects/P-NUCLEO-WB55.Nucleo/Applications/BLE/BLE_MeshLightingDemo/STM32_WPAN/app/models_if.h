@@ -39,7 +39,7 @@ void BLEMesh_ModelsDelayPacket(MOBLE_ADDRESS peer, MOBLE_ADDRESS dst, MOBLEUINT8
                                MOBLEUINT8 const * data, MOBLEUINT32 length);
 void BLEMesh_ModelsSendDelayedPacket(void);
 MOBLEUINT8 BLEMesh_ModelsASCII_To_Char(MOBLEUINT8 tempValue);
-#endif /* __MESH_MODELS_H */
+#endif /* __MODELS_H */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
 

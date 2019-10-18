@@ -1,22 +1,21 @@
 /**
  ******************************************************************************
- * File Name          : hw_timerserver.c
- * Description        : Hardware timerserver source file for BLE
- *                      middleWare.
+  * File Name          : hw_timerserver.c
+  * Description        : Hardware timerserver source file for STM32WPAN Middleware.
+  *
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
-
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -80,7 +79,6 @@ static uint8_t  WakeupTimerDivider;
 static uint8_t  AsynchPrescalerUserConfig;
 static uint16_t SynchPrescalerUserConfig;
 static volatile uint16_t MaxWakeupTimerSetup;
-
 
 /* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -475,7 +473,6 @@ static void RescheduleTimerList(void)
   return ;
 }
 
-
 /* Public functions ----------------------------------------------------------*/
 
 /**
@@ -499,7 +496,7 @@ void HW_TS_RTC_Wakeup_Handler(void)
   __disable_irq();          /**< Disable all interrupts by setting PRIMASK bit on Cortex*/
 #endif
 
-  /* Disable the write protection for RTC registers */
+/* Disable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_DISABLE( phrtc );
 
   /**
@@ -535,7 +532,7 @@ void HW_TS_RTC_Wakeup_Handler(void)
 
         /* Disable the write protection for RTC registers */
         __HAL_RTC_WRITEPROTECTION_DISABLE( phrtc );
-      }
+        }
       else
       {
 #if (CFG_HW_TS_USE_PRIMASK_AS_CRITICAL_SECTION == 1)
@@ -545,7 +542,7 @@ void HW_TS_RTC_Wakeup_Handler(void)
 
         /* Disable the write protection for RTC registers */
         __HAL_RTC_WRITEPROTECTION_DISABLE( phrtc );
-      }
+        }
 
       HW_TS_RTC_Int_AppNot(timer_process_id, local_current_running_timer_id, ptimer_callback);
     }
@@ -597,7 +594,7 @@ void HW_TS_Init(HW_TS_InitMode_t TimerInitMode, RTC_HandleTypeDef *hrtc)
    */
   phrtc = hrtc;
 
-  /* Disable the write protection for RTC registers */
+ /* Disable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_DISABLE( phrtc );
 
   SET_BIT(RTC->CR, RTC_CR_BYPSHAD);
@@ -892,6 +889,5 @@ __weak void HW_TS_RTC_Int_AppNot(uint32_t TimerProcessID, uint8_t TimerID, HW_TS
 
   return;
 }
-
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

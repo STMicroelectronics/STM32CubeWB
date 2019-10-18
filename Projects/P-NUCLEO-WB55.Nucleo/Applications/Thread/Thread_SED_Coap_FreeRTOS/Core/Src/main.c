@@ -202,17 +202,20 @@ void SystemClock_Config(void)
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
+  /** Configure LSE Drive Capability 
+  */
+  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
   /** Configure the main internal regulator output voltage 
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI1
-                              |RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE
+                              |RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -241,8 +244,8 @@ void SystemClock_Config(void)
                               |RCC_PERIPHCLK_LPUART1;
   PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
   PeriphClkInitStruct.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_PCLK1;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-  PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSI;
+  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSE;
   PeriphClkInitStruct.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSE;
   PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE0;
 
@@ -432,6 +435,7 @@ static void MX_GPIO_Init(void)
 {
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
@@ -443,6 +447,12 @@ void PeriphClock_Config(void)
   #if (CFG_USB_INTERFACE_ENABLE != 0)
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = { 0 };
   RCC_CRSInitTypeDef RCC_CRSInitStruct = { 0 };
+
+  /**
+   * This prevents the CPU2 to disable the HSI48 oscillator when
+   * it does not use anymore the RNG IP
+   */
+  LL_HSEM_1StepLock( HSEM, 5 );
 
   LL_RCC_HSI48_Enable();
 
@@ -476,30 +486,6 @@ void PeriphClock_Config(void)
   /* Start automatic synchronization */
   HAL_RCCEx_CRSConfig(&RCC_CRSInitStruct);
 #endif
-
-  /**
-   * Select LSE clock
-   */
-  LL_RCC_LSE_Enable();
-  while(!LL_RCC_LSE_IsReady());
-
-  /**
-   * Select wakeup source of BLE RF
-   */
-  LL_RCC_SetRFWKPClockSource(LL_RCC_RFWKP_CLKSOURCE_LSE);
-
-  /**
-   * Switch OFF LSI
-   */
-  LL_RCC_LSI1_Disable();
-
-
-  /**
-   * Set RNG on HSI48
-   */
-  LL_RCC_HSI48_Enable();
-  while(!LL_RCC_HSI48_IsReady());
-  LL_RCC_SetCLK48ClockSource(LL_RCC_CLK48_CLKSOURCE_HSI48);
 
   return;
 }
@@ -593,6 +579,7 @@ static void Reset_BackupDomain( void )
   return;
 }
 
+
 static void Init_Exti( void )
 {
   /**< Disable all wakeup interrupt on CPU1  except IPCC(36), HSEM(38) */
@@ -600,6 +587,40 @@ static void Init_Exti( void )
   LL_EXTI_DisableIT_32_63( (~0) & (~(LL_EXTI_LINE_36 | LL_EXTI_LINE_38)) );
 
   return;
+}
+
+/*************************************************************
+ *
+ * WRAP FUNCTIONS
+ *
+ *************************************************************/
+void HAL_Delay(uint32_t Delay)
+{
+  uint32_t tickstart = HAL_GetTick();
+  uint32_t wait = Delay;
+
+  /* Add a freq to guarantee minimum wait */
+  if (wait < HAL_MAX_DELAY)
+  {
+    wait += HAL_GetTickFreq();
+  }
+
+  while ((HAL_GetTick() - tickstart) < wait)
+  {
+    /************************************************************************************
+     * ENTER SLEEP MODE
+     ***********************************************************************************/
+    LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
+
+    /**
+     * This option is used to ensure that store operations are completed
+     */
+  #if defined ( __CC_ARM)
+    __force_stores();
+  #endif
+
+    __WFI( );
+  }
 }
 /* USER CODE END 4 */
 

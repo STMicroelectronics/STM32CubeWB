@@ -220,6 +220,10 @@
 #ifdef HAL_CRYP_MODULE_ENABLED
   #include "stm32wbxx_hal_cryp.h"
 #endif /* HAL_CRYP_MODULE_ENABLED */
+
+#ifdef HAL_EXTI_MODULE_ENABLED
+  #include "stm32wbxx_hal_exti.h"
+#endif /* HAL_EXTI_MODULE_ENABLED */
    
 #ifdef HAL_FLASH_MODULE_ENABLED
   #include "stm32wbxx_hal_flash.h"

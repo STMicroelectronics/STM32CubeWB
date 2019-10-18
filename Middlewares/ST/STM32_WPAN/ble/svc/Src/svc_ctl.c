@@ -58,6 +58,8 @@ PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") SVCCTL_CltHandler_t SVCCTL_CltHandler;
 
 /* Private functions ----------------------------------------------------------*/
 /* Weak functions ----------------------------------------------------------*/
+void BVOPUS_STM_Init(void);
+
 __weak void BLS_Init( void )
 {
   return;
@@ -98,6 +100,10 @@ __weak void TPS_Init( void )
 {
   return;
 }
+__weak void MOTENV_STM_Init( void )
+{
+  return;
+}
 __weak void P2PS_STM_Init( void )
 {
   return;
@@ -107,6 +113,10 @@ __weak void OTAS_STM_Init( void )
   return;
 }
 __weak void MESH_Init( void )
+{
+  return;
+}
+__weak void BVOPUS_STM_Init( void )
 {
   return;
 }
@@ -129,7 +139,13 @@ void SVCCTL_Init( void )
   /**
    * Add and Initialize requested services
    */
+  SVCCTL_SvcInit();
 
+  return;
+}
+
+__weak void SVCCTL_SvcInit(void)
+{
   BLS_Init();
 
   CRS_STM_Init();
@@ -150,14 +166,18 @@ void SVCCTL_Init( void )
 
   TPS_Init();
 
+  MOTENV_STM_Init();
+
   P2PS_STM_Init();
 
   OTAS_STM_Init();
+  
+  BVOPUS_STM_Init();
+
+  MESH_Init();
 
   SVCCTL_InitCustomSvc();
   
-  MESH_Init();
-
   return;
 }
 

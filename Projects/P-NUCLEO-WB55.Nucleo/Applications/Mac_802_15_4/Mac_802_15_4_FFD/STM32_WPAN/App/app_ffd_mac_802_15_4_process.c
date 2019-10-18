@@ -51,6 +51,8 @@
 
 /* Private function prototypes -----------------------------------------------*/
 
+uint8_t checkMsgXorSignature(const char * pMessage, uint8_t message_len, 
+                             uint8_t sign, uint8_t expectedRes);
 /* Public variables ----------------------------------------------------------*/
 
 extern MAC_associateInd_t g_MAC_associateInd;
@@ -177,19 +179,28 @@ MAC_Status_t APP_MAC_mlmeStartCnfCb( const  MAC_startCnf_t * pStartCnf )
 
 }
 
-
 MAC_Status_t APP_MAC_mcpsDataIndCb( const  MAC_dataInd_t * pDataInd )
 {
-
   memcpy(&g_DataInd,pDataInd,sizeof(MAC_dataInd_t));
-  APP_DBG("FFD MAC APP - RECEIVE DATA : %s", (char const *) pDataInd->msduPtr);
-  BSP_LED_On(LED3);
-  HAL_Delay(300);
-  BSP_LED_Off(LED3);
+  // Check validity of the received Message extracting associated 
+  // simple xor signature
+  if (!checkMsgXorSignature((char const *)(pDataInd->msduPtr),
+                           pDataInd->msdu_length-1,
+                           pDataInd->msduPtr[pDataInd->msdu_length-1],
+                           0x00))
+  {
+    APP_DBG("FFD MAC APP - ERROR : CORRUPTED RECEIVED DATA ");
+  }
+  else
+  {
+    pDataInd->msduPtr[pDataInd->msdu_length-1] = '\0';//erase signature with EOS
+    APP_DBG("FFD MAC APP - RECEIVE DATA : %s", (char const *) pDataInd->msduPtr);
+    BSP_LED_On(LED3);
+    HAL_Delay(300);
+    BSP_LED_Off(LED3);
+  }
   return MAC_SUCCESS;
-
 }
-
 
 MAC_Status_t APP_MAC_mcpsDataCnfCb( const  MAC_dataCnf_t * pDataCnf )
 {
@@ -197,13 +208,11 @@ MAC_Status_t APP_MAC_mcpsDataCnfCb( const  MAC_dataCnf_t * pDataCnf )
   return MAC_SUCCESS;
 }
 
-
 MAC_Status_t APP_MAC_mcpsPurgeCnfCb( const  MAC_purgeCnf_t * pPurgeCnf )
 {
   return MAC_NOT_IMPLEMENTED_STATUS;
 
 }
-
 
 MAC_Status_t APP_MAC_mlmeSyncLossIndCb( const MAC_syncLoss_t * syncLossPtr )
 {
@@ -246,9 +255,21 @@ MAC_Status_t APP_MAC_mlmeGtsIndCb( const MAC_GtsInd_t * pGtsInd )
   return MAC_NOT_IMPLEMENTED_STATUS;
 }
 
+// APP_MAC_mlmePollIndCbPtr  mlmePollIndCb;
 MAC_Status_t APP_MAC_mlmePollIndCb( const MAC_pollInd_t * pPollInd )
 {
   return MAC_NOT_IMPLEMENTED_STATUS;
+}
+
+/* Private function Definition -----------------------------------------------*/
+
+uint8_t checkMsgXorSignature(const char * pMessage, uint8_t message_len, 
+                             uint8_t sign, uint8_t expectedRes)
+{
+  uint8_t seed = sign;
+  for (uint8_t i=0x00;i<message_len;i++)
+    seed = (uint8_t)pMessage[i]^seed;
+  return (seed==expectedRes);
 }
 
 /******************************************************************************/

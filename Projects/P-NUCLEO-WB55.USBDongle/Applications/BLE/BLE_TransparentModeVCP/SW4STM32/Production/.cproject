@@ -89,7 +89,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../../Middlewares/ST/STM32_WPAN/ble"/>
 									<listOptionValue builtIn="false" value="../../../Core/Inc"/>
-									<listOptionValue builtIn="false" value="../../../STM32_WPAN/app"/>
+									<listOptionValue builtIn="false" value="../../../STM32_WPAN/App"/>
 									<listOptionValue builtIn="false" value="../../../../../../../../Drivers/BSP/P-NUCLEO-WB55.USBDongle"/>
 									<listOptionValue builtIn="false" value="../../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/vcp"/>
 									<listOptionValue builtIn="false" value="../../../../../../../../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc"/>

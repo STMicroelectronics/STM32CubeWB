@@ -18,15 +18,95 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_LIGHT_MODEL_H
-#define __APPLI_LIGHT_MODEL_H
+#ifndef __APPLI_LIGHT_H
+#define __APPLI_LIGHT_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
 #include "light.h"
 
 /* Exported macro ------------------------------------------------------------*/
+#define HUE_UPPER_LIMIT 360
 /* Exported variables  -------------------------------------------------------*/
+
+/* Light Lightness set */
+#pragma pack(1)
+typedef struct
+{
+  MOBLEUINT16 PresentState16; 
+  MOBLEUINT16 LastLightness16;
+  MOBLEUINT16 LightnessDefault;
+  MOBLEUINT8  StatusCode;
+  MOBLEUINT16 RangeMin;     
+  MOBLEUINT16 RangeMax;
+}Appli_Light_lightnessSet;
+
+
+/* Light Lightness Linear set */
+typedef struct
+{
+  MOBLEUINT16 PresentState16;
+}Appli_Light_lightnessLinearSet;
+
+/* Light Ctl Set */
+typedef struct
+{
+  MOBLEUINT16 PresentLightness16;
+  MOBLEUINT16 PresentTemperature16;
+  MOBLEINT16 PresentCtlDelta16;
+}Appli_Light_CtlSet;
+
+/* Light Ctl Temperature Range Set */
+typedef struct
+{
+  MOBLEUINT8  StatusCode;
+  MOBLEUINT16 RangeMin;     
+  MOBLEUINT16 RangeMax;
+}Appli_Light_CtlTemperatureRangeSet;
+
+/* Light Ctl Default set */
+typedef struct
+{
+  MOBLEUINT16 CtlDefaultLightness16;
+  MOBLEUINT16 CtlDefaultTemperature16;
+  MOBLEINT16 CtlDefaultDeltaUv;    
+}Appli_Light_CtlDefaultSet;
+
+/* Light Hsl Hue set */
+typedef struct
+{
+  MOBLEUINT16 HslLightness16;
+  MOBLEUINT16 HslHueLightness16;
+  MOBLEUINT16 HslSaturation16; 
+}Appli_Light_HslSet;
+
+typedef struct
+{
+  MOBLEUINT16 Red_Value;
+  MOBLEUINT16 Green_Value;
+  MOBLEUINT16 Blue_Value; 
+}Appli_Light_RGBSet;
+
+typedef struct
+{
+  MOBLEUINT8 StatusCode;
+  MOBLEUINT16 HslHueMinRange16;
+  MOBLEUINT16 HslHueMaxRange16;
+  MOBLEUINT16 HslMinSaturation16; 
+  MOBLEUINT16 HslMaxSaturation16; 
+}Appli_Light_HslRangeSet;
+
+typedef struct
+{
+  MOBLEUINT16 IntensityValue;
+  MOBLEUINT16 PwmRedValue;
+  MOBLEUINT16 PwmGreenValue;
+  MOBLEUINT16 PwmBlueValue;
+  MOBLEUINT16 PwmWarmValue;
+  MOBLEUINT16 PwmCoolValue; 
+}Appli_LightPwmValue_t;
+#pragma pack(4)
+
 /* Exported Functions Prototypes ---------------------------------------------*/
 
 MOBLE_RESULT Appli_Light_Lightness_Set(Light_LightnessStatus_t*, MOBLEUINT8 OptionalValid);
@@ -68,10 +148,15 @@ MOBLE_RESULT Appli_Light_GetHslHueStatus(MOBLEUINT8* lHslHueState);
 MOBLE_RESULT Appli_Light_GetHslSaturationStatus(MOBLEUINT8* lHslSaturationState);
 MOBLE_RESULT Appli_Light_GetHslHueRange(MOBLEUINT8* lHslHueRange);
 MOBLE_RESULT Appli_Light_GetHslSatRange(MOBLEUINT8* lHslSatRange);
-MOBLEUINT16 Light_Actual_LinearBinding(void);
-void Light_Linear_ActualImplicitBinding(MOBLEUINT8 bindingFlag);
+void Appli_Light_PwmInit(void);
+void HSL2RGB_Conversion(void);
+void Ctl_LedOffState(void);
+void Rgb_LedOffState(void);
+void RgbF_Create(MOBLEUINT16 value1, MOBLEUINT16 value2, MOBLEUINT16 value3);
+void Light_UpdateLedValue(MOBLEUINT8 state , Appli_LightPwmValue_t light_state);
 
-#endif /* __APPLI_LIGHT_MODEL_H */
+
+#endif /* __APPLI_LIGHT_H */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
 

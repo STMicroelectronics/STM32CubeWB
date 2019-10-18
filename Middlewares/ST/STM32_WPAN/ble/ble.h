@@ -49,6 +49,7 @@ extern "C" {
 #include "svc/Inc/ias.h"
 #include "svc/Inc/lls.h"
 #include "svc/Inc/tps.h"
+#include "svc/Inc/motenv_stm.h"
 #include "svc/Inc/p2p_stm.h"
 #include "svc/Inc/otas_stm.h"
 #include "svc/Inc/mesh.h"  

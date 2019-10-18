@@ -49,6 +49,7 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported variables  ------------------------------------------------------- */
 /* Exported Functions Prototypes ---------------------------------------------*/
+void Serial_Init(void);
 void Serial_PrintStringCb(const char *message);
 void Serial_InterfaceProcess(void);
 MOBLEUINT8 Serial_CharToHexConvert(char addr);

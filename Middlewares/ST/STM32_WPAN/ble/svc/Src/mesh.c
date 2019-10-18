@@ -76,6 +76,7 @@ const Mesh_Initialization_t BLEMeshlib_Init_params =
   &NeighborTableParams,
   BLUENRG_MESH_FEATURES,
   BLUENRG_MESH_PRVN_BEARER_INFO,
+  &PrvnParams,
   &DynBufferParam
 };
 
@@ -124,16 +125,23 @@ void MESH_Init(void)
   /* Checks if the node is already provisioned or not */
   if (BLEMesh_IsUnprovisioned() == MOBLE_TRUE)
   {
-    BLEMesh_UnprovisionedNodeInfo(&UnprovNodeInfoParams);
+//    BluenrgMesh_UnprovisionedNodeInfo(&UnprovNodeInfoParams);
     BLEMesh_InitUnprovisionedNode(); /* Initalizes Unprovisioned node */
 
     TRACE_I(TF_PROVISION,"Unprovisioned device \r\n");
+    
+#if PB_ADV_SUPPORTED
+    BLEMesh_SetUnprovisionedDevBeaconInterval(100);
+#endif    
   }
   else
   {
     BLEMesh_InitProvisionedNode();  /* Initalizes Provisioned node */
     TRACE_I(TF_PROVISION,"Provisioned node \r\n");
   }
+  
+  /* Initializes the Application */
+  Appli_Init();
   
 /* Check to manually unprovision the board */
   Appli_CheckForUnprovision();
@@ -148,6 +156,16 @@ void MESH_Init(void)
 
   /* Models intialization */  
   BLEMesh_ModelsInit();
+  /* Turn on Yellow LED */
+#if 0
+#if (LOW_POWER_FEATURE == 1)
+  SdkEvalLedOn(LED1);
+#endif
+  
+#ifdef CUSTOM_BOARD_PWM_SELECTION  
+  Light_UpdatePWMValue((MOBLEUINT8)DEFAULT_STATE);
+#endif
+#endif 
 }
 
 /************************ (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

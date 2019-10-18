@@ -33,9 +33,6 @@
 #define BLE_STATUS_NOT_ALLOWED                      0x46
 #define BLE_STATUS_ERROR                            0x47
 #define BLE_STATUS_ADDR_NOT_RESOLVED                0x48
-#define FLASH_READ_FAILED                           0x49
-#define FLASH_WRITE_FAILED                          0x4A
-#define FLASH_ERASE_FAILED                          0x4B
 #define BLE_STATUS_INVALID_CID                      0x50
 #define TIMER_NOT_VALID_LAYER                       0x54
 #define TIMER_INSUFFICIENT_RESOURCES                0x55
@@ -137,9 +134,13 @@
 #define AD_TYPE_SEC_MGR_OOB_FLAGS                  0x11
 #define AD_TYPE_SLAVE_CONN_INTERVAL                0x12
 #define AD_TYPE_SERV_SOLICIT_16_BIT_UUID_LIST      0x14
-#define AD_TYPE_SERV_SOLICIT_32_BIT_UUID_LIST      0x1F
 #define AD_TYPE_SERV_SOLICIT_128_BIT_UUID_LIST     0x15
 #define AD_TYPE_SERVICE_DATA                       0x16
+#define AD_TYPE_APPEARANCE                         0x19
+#define AD_TYPE_ADVERTISING_INTERVAL               0x1A
+#define AD_TYPE_LE_ROLE                            0x1C
+#define AD_TYPE_SERV_SOLICIT_32_BIT_UUID_LIST      0x1F
+#define AD_TYPE_URI                                0x24
 #define AD_TYPE_MANUFACTURER_SPECIFIC_DATA         0xFF
 
 

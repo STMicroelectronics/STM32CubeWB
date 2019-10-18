@@ -4,7 +4,7 @@
 * @author  BLE Mesh Team
 * @version V1.10.000
 * @date    15-Jan-2019
-* @brief   User Application file 
+* @brief   Light Model middleware implementation
 ******************************************************************************
 * @attention
 *
@@ -78,74 +78,90 @@ static Light_HslParam_t Light_HslParam;
 static Light_HslStatus_t Light_HslStatus;
 static Light_HslRangeParam_t Light_HslRangeParam;
 
+extern Generic_DefaultTransitionParam_t Generic_DefaultTransitionParam;
+MOBLEUINT8 Light_Trnsn_Cmplt; 
+MOBLEUINT8 LightUpdateFlag = 0;
+
 const MODEL_OpcodeTableParam_t Light_Opcodes_Table[] = {
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
   {LIGHT_LIGHTNESS_GET,                 MOBLE_TRUE,  0, 0, LIGHT_LIGHTNESS_STATUS,        2, 5},
   {LIGHT_LIGHTNESS_SET,                 MOBLE_TRUE,  3, 5, LIGHT_LIGHTNESS_STATUS,        2, 5},
-  {LIGHT_LIGHTNESS_SET_UNACK,           MOBLE_FALSE, 3, 5, 0,                          0, 0},
+  {LIGHT_LIGHTNESS_SET_UNACK,           MOBLE_FALSE, 3, 5, 0,        2, 5},
+  {LIGHT_LIGHTNESS_STATUS,              MOBLE_FALSE, 2, 5, 0,        2, 5},
   {LIGHT_LIGHTNESS_LINEAR_GET,          MOBLE_TRUE,  0, 0, LIGHT_LIGHTNESS_LINEAR_STATUS, 2, 5},
   {LIGHT_LIGHTNESS_LINEAR_SET,          MOBLE_TRUE,  3, 5, LIGHT_LIGHTNESS_LINEAR_STATUS, 2, 5},
-  {LIGHT_LIGHTNESS_LINEAR_SET_UNACK,    MOBLE_FALSE, 3, 5, 0,                          0, 0},
-  {LIGHT_LIGHTNESS_LAST_GET,            MOBLE_TRUE,  0, 0, LIGHT_LIGHTNESS_LAST_STATUS,   2, 2},
-  {LIGHT_LIGHTNESS_LAST_STATUS,         MOBLE_TRUE, 2, 2,  LIGHT_LIGHTNESS_LAST_STATUS,   2, 2},
+  {LIGHT_LIGHTNESS_LINEAR_SET_UNACK,    MOBLE_FALSE, 3, 5, 0, 2, 5},
+  {LIGHT_LIGHTNESS_LINEAR_STATUS,       MOBLE_FALSE, 2, 5, 0, 2, 5},
   {LIGHT_LIGHTNESS_DEFAULT_GET,         MOBLE_TRUE,  0, 0, LIGHT_LIGHTNESS_DEFAULT_STATUS,2, 2},
+  {LIGHT_LIGHTNESS_DEFAULT_STATUS,      MOBLE_FALSE, 2, 2, 0,2, 2},
   {LIGHT_LIGHTNESS_RANGE_GET,           MOBLE_TRUE,  0, 0, LIGHT_LIGHTNESS_RANGE_STATUS,  5, 5},
+  {LIGHT_LIGHTNESS_RANGE_STATUS,        MOBLE_FALSE, 5, 5, 0,  5, 5},
 #endif    
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP     
   {LIGHT_LIGHTNESS_DEFAULT_SET,         MOBLE_TRUE, 2, 2,             LIGHT_LIGHTNESS_DEFAULT_STATUS,         2, 2},                 
-  {LIGHT_LIGHTNESS_DEFAULT_SET_UNACK,   MOBLE_FALSE, 2, 2,            LIGHT_LIGHTNESS_DEFAULT_STATUS,         2, 2},    
-  {LIGHT_LIGHTNESS_RANGE_SET,           MOBLE_TRUE, 2, 4,             LIGHT_LIGHTNESS_RANGE_STATUS,           5, 5},    
-  {LIGHT_LIGHTNESS_RANGE_SET_UNACK,     MOBLE_FALSE, 2, 4,            LIGHT_LIGHTNESS_RANGE_STATUS,           5, 5}, 
+  {LIGHT_LIGHTNESS_DEFAULT_SET_UNACK,   MOBLE_FALSE, 2, 2,             0,          2, 2},
+  {LIGHT_LIGHTNESS_RANGE_SET,           MOBLE_TRUE,  4, 4,             LIGHT_LIGHTNESS_RANGE_STATUS,           5, 5},    
+  {LIGHT_LIGHTNESS_RANGE_SET_UNACK,     MOBLE_FALSE, 4, 4,             0,            5, 5},
 #endif 
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL    
   {LIGHT_CTL_GET,                        MOBLE_TRUE, 0, 0,            LIGHT_CTL_STATUS,                       4, 9},     
   {LIGHT_CTL_SET,                        MOBLE_TRUE, 7, 9,            LIGHT_CTL_STATUS,                       4, 9},     
-  {LIGHT_CTL_SET_UNACK,                  MOBLE_FALSE, 7, 9,            0,                                  4, 9},
+  {LIGHT_CTL_SET_UNACK,                  MOBLE_FALSE, 7, 9,            0,                        4, 9},
+  {LIGHT_CTL_STATUS,                     MOBLE_FALSE, 4, 9,            0,                4, 9},
   {LIGHT_CTL_TEMPERATURE_RANGE_GET,      MOBLE_TRUE, 0, 0,            LIGHT_CTL_TEMPERATURE_RANGE_STATUS,     5, 5},
+  {LIGHT_CTL_TEMPERATURE_RANGE_STATUS,   MOBLE_FALSE, 5, 5,            0,               5, 5},
   {LIGHT_CTL_DEFAULT_GET,                MOBLE_TRUE, 0, 0,            LIGHT_CTL_DEFAULT_STATUS,               6, 6},   
+  {LIGHT_CTL_DEFAULT_STATUS,             MOBLE_TRUE,  6, 6,            0,               6, 6},
 #endif
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP 
   {LIGHT_CTL_DEFAULT_SET,                MOBLE_TRUE, 6, 6,             LIGHT_CTL_DEFAULT_STATUS,              6, 6},   
-  {LIGHT_CTL_DEFAULT_SET_UNACK,          MOBLE_FALSE, 6, 6,            LIGHT_CTL_DEFAULT_STATUS,              6, 6}, 
+  {LIGHT_CTL_DEFAULT_SET_UNACK,            MOBLE_FALSE, 6, 6,          0,               6, 6},
   {LIGHT_CTL_TEMPERATURE_RANGE_SET,     MOBLE_TRUE, 4, 4,             LIGHT_CTL_TEMPERATURE_RANGE_STATUS,     5, 5},   
-  {LIGHT_CTL_TEMPERATURE_RANGE_SET_UNACK,  MOBLE_FALSE, 4, 4,         LIGHT_CTL_TEMPERATURE_RANGE_STATUS,     5, 5},
+  {LIGHT_CTL_TEMPERATURE_RANGE_SET_UNACK,  MOBLE_FALSE, 4, 4,          0,         5, 5},
 #endif  
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE  
   {LIGHT_CTL_TEMPERATURE_GET,            MOBLE_TRUE, 0, 0,             LIGHT_CTL_TEMPERATURE_STATUS,          4, 9},
   {LIGHT_CTL_TEMPERATURE_SET,            MOBLE_TRUE, 5, 7,             LIGHT_CTL_TEMPERATURE_STATUS,          4, 9},
-  {LIGHT_CTL_TEMPERATURE_SET_UNACK,      MOBLE_FALSE, 5, 7,            LIGHT_CTL_TEMPERATURE_STATUS,          4, 9},
+  {LIGHT_CTL_TEMPERATURE_SET_UNACK,      MOBLE_FALSE, 5, 7,            0,           4, 9},
+  {LIGHT_CTL_TEMPERATURE_STATUS,         MOBLE_FALSE, 4, 9,            0,          4, 9},
 #endif       
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
+  {LIGHT_HSL_GET,                        MOBLE_TRUE,  0, 0,             LIGHT_HSL_STATUS,                      6, 7}, 
   {LIGHT_HSL_SET,                        MOBLE_TRUE, 7, 9,             LIGHT_HSL_STATUS,                      6, 7},   
-  {LIGHT_HSL_SET_UNACK,                  MOBLE_FALSE, 7, 9,            LIGHT_HSL_STATUS,                      6, 7},    
-  {LIGHT_HSL_GET,                        MOBLE_TRUE, 0, 0,             LIGHT_HSL_STATUS,                      6, 7}, 
+  {LIGHT_HSL_SET_UNACK,                  MOBLE_FALSE, 7, 9,             0,                       6, 7},
+  {LIGHT_HSL_STATUS,                     MOBLE_FALSE, 6, 7,             0,                       6, 7},
   {LIGHT_HSL_TARGET_GET,                 MOBLE_TRUE, 0, 0,             LIGHT_HSL_TARGET_STATUS,               6, 7},   
+  {LIGHT_HSL_TARGET_STATUS,              MOBLE_FALSE, 6, 7,             0,               6, 7},
   {LIGHT_HSL_DEFAULT_GET,                MOBLE_TRUE, 0, 0,             LIGHT_HSL_DEFAULT_STATUS,              6, 6},  
+  {LIGHT_HSL_DEFAULT_STATUS,             MOBLE_FALSE, 6, 6,             0,                6, 6},
   {LIGHT_HSL_RANGE_GET,                  MOBLE_TRUE, 0, 0,             LIGHT_HSL_RANGE_STATUS,                9, 9}, 
+  {LIGHT_HSL_RANGE_STATUS,               MOBLE_TRUE,  9, 9,             0,                9, 9},
 #endif
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP   
   {LIGHT_HSL_RANGE_SET,                  MOBLE_TRUE, 8, 8,             LIGHT_HSL_RANGE_STATUS,                9, 9},   
-  {LIGHT_HSL_RANGE_SET_UNACK,            MOBLE_FALSE, 8, 8,            LIGHT_HSL_RANGE_STATUS,                9, 9},  
+  {LIGHT_HSL_RANGE_SET_UNACK,            MOBLE_FALSE, 8, 8,            0,                9, 9},
   {LIGHT_HSL_DEFAULT_SET,                MOBLE_TRUE, 6, 6,             LIGHT_HSL_DEFAULT_STATUS,              6, 6},   
-  {LIGHT_HSL_DEFAULT_SET_UNACK,          MOBLE_FALSE, 6, 6,            LIGHT_HSL_DEFAULT_STATUS,              6, 6},
+  {LIGHT_HSL_DEFAULT_SET_UNACK,          MOBLE_FALSE, 6, 6,            0,              6, 6},
 #endif
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE    
   {LIGHT_HSL_HUE_GET,                    MOBLE_TRUE, 0, 0,             LIGHT_HSL_HUE_STATUS,                  2, 5},   
   {LIGHT_HSL_HUE_SET,                    MOBLE_TRUE, 3, 5,             LIGHT_HSL_HUE_STATUS,                  2, 5},   
-  {LIGHT_HSL_HUE_SET_UNACK,              MOBLE_FALSE, 3, 5,            LIGHT_HSL_HUE_STATUS,                  2, 5},   
+  {LIGHT_HSL_HUE_SET_UNACK,              MOBLE_FALSE, 3, 5,            0,                  2, 5},
+  {LIGHT_HSL_HUE_STATUS,                 MOBLE_FALSE, 2, 5,            0,                  2, 5},
 #endif
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION    
   {LIGHT_HSL_SATURATION_GET,             MOBLE_TRUE, 0, 0,             LIGHT_HSL_SATURATION_STATUS,           2, 5},   
   {LIGHT_HSL_SATURATION_SET,             MOBLE_TRUE, 3, 5,             LIGHT_HSL_SATURATION_STATUS,           2, 5},    
-  {LIGHT_HSL_SATURATION_SET_UNACK,       MOBLE_FALSE, 3, 5,            LIGHT_HSL_SATURATION_STATUS,           2, 5},              
+  {LIGHT_HSL_SATURATION_SET_UNACK,       MOBLE_FALSE, 3, 5,            0,           2, 5},
+  {LIGHT_HSL_SATURATION_STATUS,          MOBLE_FALSE, 2, 5,            0,           2, 5},
 #endif   
   {0}		
 };
@@ -200,8 +216,7 @@ WEAK_FUNCTION(void Light_UpdatePWMValue(MOBLEUINT8 state));
 
 /**
 * @brief  Light_Lightness_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  plightness_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -221,7 +236,7 @@ MOBLE_RESULT Light_Lightness_Set(const MOBLEUINT8* plightness_param, MOBLEUINT32
   Light_LightnessParam.TID = plightness_param[2];
   
   /* Binding of actual lightness value with lightness range */
-  Light_Actual_RangeBinding(&Light_LightnessParam);
+  //Light_Actual_RangeBinding(&Light_LightnessParam);
   /* Check for Optional Parameters */ 
   if (length > 3)
   {
@@ -245,22 +260,27 @@ MOBLE_RESULT Light_Lightness_Set(const MOBLEUINT8* plightness_param, MOBLEUINT32
     */
     Light_GetStepValue(plightness_param[3]);
     /*option parameter flag, enable to sent all required parameter in status.*/
-    Light_ModelFlag.LightTransitionFlag = 1;  
+    Light_ModelFlag.LightTransitionFlag = LIGHT_LIGHTNESS_TRANSITION_START;  
     Light_ModelFlag.LightOptionalParam = 1;
   }
   else
   {
+#ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME   
+    Light_LightnessDefaultTransitionValue(&Light_LightnessParam);
+#else
     /* When no optional parameter received, target value will
     be set as present value in application.
     */
     Light_LightnessStatus.PresentValue16 = Light_LightnessParam.TargetLightnessStatus;   
+#endif   
+     
   }
   /* Application Callback */
   (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus, 0);
   
 #ifdef ENABLE_MODEL_BINDING    
   /* Binding of actual light lightness with linear light lightness */
-  Light_Linear_ActualImplicitBinding(BINDING_LIGHT_LIGHTNESS_ACTUAL_SET);
+  Light_Linear_ActualImplicitBinding(BINDING_LIGHT_LIGHTNESS_ACTUAL_SET , length);
   
   /* Binding of Light Ctl with Actual Light Lightness */
   Light_BindingCtlToLightness_Actual(BINDING_LIGHT_LIGHTNESS_ACTUAL_SET);
@@ -277,7 +297,6 @@ MOBLE_RESULT Light_Lightness_Set(const MOBLEUINT8* plightness_param, MOBLEUINT32
   
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 /**
 * @brief  Light Lightness Status
@@ -336,8 +355,7 @@ MOBLE_RESULT Light_Lightness_Status(MOBLEUINT8* pLightness_status, MOBLEUINT32* 
 
 /**
 * @brief  Light_Lightness_Linear_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  plightnessLinear_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -378,9 +396,10 @@ MOBLE_RESULT Light_Lightness_Linear_Set(const MOBLEUINT8* plightnessLinear_param
     /* Function to calculate time parameters, step resolution
     step size for transition state machine.
     */
+    
     Light_GetStepValue(plightnessLinear_param[3]);
     /*transition process enable flag. */
-    Light_ModelFlag.LightTransitionFlag = 2; 
+    Light_ModelFlag.LightTransitionFlag = LIGHT_LIGHTNESS_TRANSITION_START; 
     /*option parameter flag, enable to sent all required parameter in status.*/
     Light_ModelFlag.LightOptionalParam = 1;
   }
@@ -394,7 +413,11 @@ MOBLE_RESULT Light_Lightness_Linear_Set(const MOBLEUINT8* plightnessLinear_param
   
 #ifdef ENABLE_MODEL_BINDING   
   /* Binding of data of light lightness with light linear */
-  Light_Linear_ActualImplicitBinding(BINDING_LIGHT_LIGHTNESS_LINEAR_SET);
+  Light_Linear_ActualImplicitBinding(BINDING_LIGHT_LIGHTNESS_LINEAR_SET , length);
+#endif   
+
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC  
+  Light_Linear_ActualBinding(length);
 #endif    
   return MOBLE_RESULT_SUCCESS;
 }
@@ -484,8 +507,7 @@ MOBLE_RESULT Light_Lightness_Last_Status(MOBLEUINT8* pLightnessLast_status, MOBL
 
 /**
 * @brief  Light_Lightness_Default_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  plightnessDefault_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -537,8 +559,7 @@ MOBLE_RESULT Light_Lightness_Default_Status(MOBLEUINT8* pLightnessDefault_status
 
 /**
 * @brief  Light_Lightness_Range_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  plightnessRange_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -602,8 +623,7 @@ MOBLE_RESULT Light_Lightness_Range_Status(MOBLEUINT8* pLightnessRange_status, MO
 
 /**
 * @brief  Light_CTL_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  pLightCtl_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -654,15 +674,19 @@ MOBLE_RESULT Light_Ctl_Set(const MOBLEUINT8* pLightCtl_param, MOBLEUINT32 length
     
     Light_GetStepValue(pLightCtl_param[7]);  
     Light_ModelFlag.LightOptionalParam = 1;
-    Light_ModelFlag.LightTransitionFlag = 3;
+    Light_ModelFlag.LightTransitionFlag = LIGHT_CTL_TRANSITION_START;
   }
   else
   {
+#ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME   
+     Light_CTLDefaultTransitionValue(&Light_CtlParam);
+#else
     /* When no optional parameter received, target value will
     be set as present value in application.
     */
     Light_CtlStatus.PresentCtlLightness16 = Light_CtlParam.CTL_Lightness;
     Light_CtlStatus.PresentCtlTemperature16 = Light_CtlParam.CTL_Temperature;
+#endif    
   }
   /* Application Callback */
   (LightAppli_cb.Light_Ctl_Set_cb)(&Light_CtlStatus, 0);  
@@ -731,8 +755,7 @@ MOBLE_RESULT Light_Ctl_Status(MOBLEUINT8* pLightCtl_status, MOBLEUINT32 *pLength
 
 /**
 * @brief  Light_CTLTemperature_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  pLightCtlTemp_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -758,7 +781,6 @@ MOBLE_RESULT Light_CtlTemperature_Set(const MOBLEUINT8* pLightCtlTemp_param, MOB
   Light_CtlParam.CTL_TID     = pLightCtlTemp_param[4] << 8;
   
   /* Binding with ctl temperature range value */
-  Light_CtlTemperature_TempRangeBinding(&Light_CtlParam);
   
   if(length > 7)
   {
@@ -772,20 +794,23 @@ MOBLE_RESULT Light_CtlTemperature_Set(const MOBLEUINT8* pLightCtlTemp_param, MOB
     Light_TemporaryStatus.TargetParam_1 = Light_CtlStatus.TargetCtlTemperature16;
     Light_TemporaryStatus.TargetParam_2 = Light_CtlStatus.TargetCtlDeltaUv16;
     Light_ModelFlag.LightOptionalParam = 1;
-    Light_ModelFlag.LightTransitionFlag = 4;
+    Light_ModelFlag.LightTransitionFlag = LIGHT_TEMPERATURE_TRANSITION_START;
   }
   else
   {
+#ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME       
+    Light_CTLTemperatureDefaultTransitionValue(&Light_CtlParam);
+#else
     /* When no optional parameter received, target value will
     be set as present value in application.
     */
     Light_CtlStatus.PresentCtlTemperature16 = Light_CtlParam.CTL_Temperature;
     Light_CtlStatus.PresentCtlDelta16 = Light_CtlParam.CTL_DeltaUv;
+#endif    
   }
   
   /* Application Callback */
   (LightAppli_cb.Light_CtlTemperature_Set_cb)(&Light_CtlStatus, OptionalValid);
-  
 #ifdef ENABLE_MODEL_BINDING  
   /* Binding of data Ctl Temperature  with Generic Level */
   Light_CtlTemp_GenericLevelBinding(&Light_CtlParam);
@@ -854,8 +879,7 @@ MOBLE_RESULT Light_CtlTemperature_Status(MOBLEUINT8* pLightCtlTemp_status, MOBLE
 
 /**
 * @brief  Light_CtlTemperature_Range_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library.
+* unacknowledged message. The Acknowledgement is taken care by the Library.
 * @param  plightCtlTempRange_param : Pointer to the parameters received for message.
 * @param  length : Length of the parameters received for message.
 * @retval MOBLE_RESULT
@@ -916,7 +940,7 @@ MOBLE_RESULT Light_CtlTemperature_Range_Status(MOBLEUINT8* pCtlTempRange_status,
   */
   MOBLEUINT8 Light_GetBuff[5];
   
-  TRACE_M(TF_LIGHT,"Light_Lightness_Range_Status callback received \r\n");
+  TRACE_M(TF_LIGHT,"Light_CtlTemperature_Range_Status callback received \r\n");
   
   /* Function call back to get the values from application*/
   (Appli_Light_GetStatus_cb.GetLightCtlTempRange_cb)(Light_GetBuff);
@@ -936,8 +960,7 @@ MOBLE_RESULT Light_CtlTemperature_Range_Status(MOBLEUINT8* pCtlTempRange_status,
 
 /**
 * @brief  Light_CtlDefault_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library.
+* unacknowledged message. The Acknowledgement is taken care by the Library.
 * @param  pCtlDefault_param : Pointer to the parameters received for message.
 * @param  length : Length of the parameters received for message.
 * @retval MOBLE_RESULT
@@ -1007,8 +1030,7 @@ MOBLE_RESULT Light_CtlDefault_Status(MOBLEUINT8* pCtlDefault_status, MOBLEUINT32
 
 /**
 * @brief  Light_Hsl_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  pHsl_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -1054,7 +1076,7 @@ MOBLE_RESULT Light_Hsl_Set(const MOBLEUINT8* pHsl_param, MOBLEUINT32 length)
     
     Light_GetStepValue(pHsl_param[7]);
     Light_ModelFlag.LightOptionalParam = 1;
-    Light_ModelFlag.LightTransitionFlag = 5;    
+    Light_ModelFlag.LightTransitionFlag = LIGHT_HSL_TRANSITION_START;    
   }
   else
   {
@@ -1127,8 +1149,7 @@ MOBLE_RESULT Light_Hsl_Status(MOBLEUINT8* pHsl_status, MOBLEUINT32 *pLength)
 
 /**
 * @brief  Light_HslHue_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  pHslHue_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -1170,7 +1191,7 @@ MOBLE_RESULT Light_HslHue_Set(const MOBLEUINT8* pHslHue_param, MOBLEUINT32 lengt
     Light_GetStepValue(pHslHue_param[3]);
     
     Light_ModelFlag.LightOptionalParam = 1;
-    Light_ModelFlag.LightTransitionFlag = 6;    
+    Light_ModelFlag.LightTransitionFlag = LIGHT_HSL_HUE_TRANSITION_START;    
   }
   else
   {
@@ -1233,8 +1254,7 @@ MOBLE_RESULT Light_HslHue_Status(MOBLEUINT8* pHslHue_status, MOBLEUINT32 *pLengt
 
 /**
 * @brief  Light_HslSaturation_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  pHslSaturation_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -1276,7 +1296,7 @@ MOBLE_RESULT Light_HslSaturation_Set(const MOBLEUINT8* pHslSaturation_param, MOB
     Light_GetStepValue(pHslSaturation_param[3]);
     
     Light_ModelFlag.LightOptionalParam = 1;
-    Light_ModelFlag.LightTransitionFlag = 7; 
+    Light_ModelFlag.LightTransitionFlag = LIGHT_HSL_SATURATION_TRANSITION_START; 
   }
   else
   {
@@ -1339,8 +1359,7 @@ MOBLE_RESULT Light_HslSaturation_Status(MOBLEUINT8* pHslSaturation_status, MOBLE
 
 /**
 * @brief  Light_HslDefault_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  pHslDefault_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -1354,7 +1373,7 @@ MOBLE_RESULT Light_HslDefault_Set(const MOBLEUINT8* pHslDefault_param, MOBLEUINT
   */
   MOBLEUINT8 OptionalValid = 0;
   
-  TRACE_M(TF_LIGHT,"Light_HslSaturation_Set callback received \r\n"); 
+  TRACE_M(TF_LIGHT,"Light_HslDefault_Set callback received \r\n"); 
   
   Light_HslStatus.PresentHslLightness16 = (MOBLEUINT16)pHslDefault_param[1] << 8;
   Light_HslStatus.PresentHslLightness16 |= (MOBLEUINT16)pHslDefault_param[0];
@@ -1408,8 +1427,7 @@ MOBLE_RESULT Light_HslDefault_Status(MOBLEUINT8* pHslDefault_status, MOBLEUINT32
 
 /**
 * @brief  Light_HslRange_Set: This function is called for both Acknowledged and 
-unacknowledged message. The Acknowledgement is taken care by 
-the Library
+* unacknowledged message. The Acknowledgement is taken care by the Library
 * @param  pHslRange_param : Pointer to the parameters received for message
 * @param  length : Length of the parameters received for message
 * @retval MOBLE_RESULT
@@ -1423,7 +1441,7 @@ MOBLE_RESULT Light_HslRange_Set(const MOBLEUINT8* pHslRange_param, MOBLEUINT32 l
   Saturation Range Max   The value of the Saturation Range Max field of the Light HSL Saturation Range state
   */
   MOBLEUINT8 OptionalValid = 0;
-  TRACE_M(TF_LIGHT,"Light_HslSaturation_Set callback received \r\n");
+  TRACE_M(TF_LIGHT,"Light_HslRange_Set callback received \r\n");
   
   Light_HslRangeParam.HslHueMinRange16 = (MOBLEUINT16)pHslRange_param[1] << 8;
   Light_HslRangeParam.HslHueMinRange16 |= (MOBLEUINT16)pHslRange_param[0];
@@ -1547,6 +1565,7 @@ MOBLE_RESULT LightModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                     MOBLEUINT32 dataLength,
                                     MOBLEBOOL response)
 {
+  TRACE_M(TF_LIGHT,"response status enable \n\r");
   switch(opcode)
   {
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
@@ -1612,6 +1631,21 @@ MOBLE_RESULT LightModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
       Light_Hsl_Status(pResponsedata , plength);         
       break;
     } 
+  case LIGHT_HSL_DEFAULT_STATUS:
+    {
+      Light_HslDefault_Status(pResponsedata , plength);         
+      break;
+    }    
+  case LIGHT_HSL_RANGE_STATUS:
+    {
+      Light_HslRange_Status(pResponsedata , plength);         
+      break;
+    } 
+  case LIGHT_HSL_TARGET_STATUS:
+    {
+      Light_HslTarget_Status(pResponsedata , plength);
+      break;
+    }
 #endif
     
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE    
@@ -1629,25 +1663,6 @@ MOBLE_RESULT LightModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
       break;
     } 
 #endif
-    
-#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL 
-    
-  case LIGHT_HSL_DEFAULT_STATUS:
-    {
-      Light_HslDefault_Status(pResponsedata , plength);         
-      break;
-    }    
-  case LIGHT_HSL_RANGE_STATUS:
-    {
-      Light_HslRange_Status(pResponsedata , plength);         
-      break;
-    } 
-  case LIGHT_HSL_TARGET_STATUS:
-    {
-      Light_HslTarget_Status(pResponsedata , plength);
-      break;
-    }
-#endif     
   default:
     {
       break;
@@ -1681,7 +1696,9 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
                                                  )
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  
   TRACE_M(TF_LIGHT,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X,response= %.2X \r\n ",dst_peer, peer_addr, opcode,response);
+  
   switch(opcode)
   {
     
@@ -1698,7 +1715,6 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       }
       break;
     }
-    
   case LIGHT_LIGHTNESS_LINEAR_SET:
   case LIGHT_LIGHTNESS_LINEAR_SET_UNACK: 
     {
@@ -1708,6 +1724,31 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       {
         Light_Lightness_Linear_Set(pRxData, dataLength);
       }
+      break;
+    }
+  case LIGHT_LIGHTNESS_STATUS:
+    {
+      Light_Client_Lightness_Status(pRxData, dataLength);
+      break;
+    }    
+  case LIGHT_LIGHTNESS_LINEAR_STATUS:
+    {
+      Light_Client_Lightness_Linear_Status(pRxData, dataLength);
+      break;
+    }     
+  case LIGHT_LIGHTNESS_LAST_STATUS:
+    {
+      Light_Client_Lightness_Last_Status(pRxData, dataLength);
+      break;
+    }   
+  case LIGHT_LIGHTNESS_DEFAULT_STATUS:
+    {
+      Light_Client_Lightness_Default_Status(pRxData, dataLength);
+      break;
+    }  
+  case LIGHT_LIGHTNESS_RANGE_STATUS:
+    {
+      Light_Client_Lightness_Range_Status(pRxData, dataLength);
       break;
     }
 #endif 
@@ -1751,6 +1792,21 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       }        
       break;
     }
+  case LIGHT_CTL_STATUS:
+    {      
+      Light_Client_Ctl_Status(pRxData, dataLength);    
+      break;
+    }    
+  case LIGHT_CTL_TEMPERATURE_RANGE_STATUS:
+    {    
+      Light_Client_CtlTemperature_Range_Status(pRxData, dataLength);
+      break;
+    }
+  case LIGHT_CTL_DEFAULT_STATUS:
+    {
+      Light_Client_CtlDefault_Status(pRxData, dataLength);          
+      break;
+    } 
 #endif
     
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE  
@@ -1764,6 +1820,11 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       {
         Light_CtlTemperature_Set(pRxData, dataLength);
       }
+      break;
+    }
+  case LIGHT_CTL_TEMPERATURE_STATUS:    
+    {
+      Light_Client_CtlTemperature_Status(pRxData, dataLength);
       break;
     }
 #endif
@@ -1811,6 +1872,26 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       }
       break;
     }
+  case LIGHT_HSL_STATUS:
+    {
+      Light_Client_Hsl_Status(pRxData, dataLength);         
+      break;
+    }
+  case LIGHT_HSL_DEFAULT_STATUS:
+    {
+      Light_Client_HslDefault_Status(pRxData, dataLength);         
+      break;
+    }    
+  case LIGHT_HSL_RANGE_STATUS:
+    {
+      Light_Client_HslRange_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_HSL_TARGET_STATUS:
+    {
+      Light_Client_HslTarget_Status(pRxData, dataLength);
+      break;
+    }
 #endif
     
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE
@@ -1826,6 +1907,11 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       }
       break;
     }
+  case LIGHT_HSL_HUE_STATUS:
+    {
+      Light_Client_HslHue_Status(pRxData, dataLength);          
+      break;
+    } 
 #endif 
     
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP
@@ -1852,6 +1938,11 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       Light_HslSaturation_Set(pRxData, dataLength);
       break;
     }
+  case LIGHT_HSL_SATURATION_STATUS:
+    {
+      Light_Client_HslSaturation_Status(pRxData, dataLength);        
+      break;
+    } 
 #endif  
   default:
     {
@@ -1864,6 +1955,12 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     Model_SendResponse(peer_addr, dst_peer,opcode,pRxData, dataLength);                                           
   }
   
+  /*
+     Publish the status to publish address if the publication is set by client 
+     publication is independent of the response of the message.if the condition 
+     for publication is full filled as per specification then the status will be 
+     published.
+  */
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -1922,7 +2019,7 @@ MOBLE_RESULT Light_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue)
     Light_TimeParam.StepValue--;         
     /* updating the remaining time after each step covered*/
     Light_TemporaryStatus.RemainingTime =  Light_TimeParam.StepValue  | (Light_TimeParam.ResBitValue << 6) ;
-    
+    LightUpdateFlag = VALUE_UPDATE_SET;
     Check_time = 0;
     Clockflag = 0;
     
@@ -1931,12 +2028,12 @@ MOBLE_RESULT Light_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue)
     */
     if(Light_TimeParam.StepValue == 0)
     {              
-      Light_ModelFlag.LightTransitionFlag = 0;
+      Light_ModelFlag.LightTransitionFlag = LIGHT_TRANSITION_STOP;
+      Light_Trnsn_Cmplt = 1;
     }
     
-    TRACE_M(TF_LIGHT,"Inside light lightness transmition time at %d, Current state 0x%.2x ,\
-            target state 0x%.2x , Remaining Time 0x%.2x\n\r", Clock_Time(),\
-                  Light_TemporaryStatus.PresentParam_1,Light_TemporaryStatus.TargetParam_1,\
+ TRACE_M(TF_LIGHT,"Inside light lightness transmition time at %ld, Current state 0x%.2x ,target state 0x%.2x , Remaining Time 0x%.2x\n\r",
+            Clock_Time(),Light_TemporaryStatus.PresentParam_1,Light_TemporaryStatus.TargetParam_1,\
                                          Light_TemporaryStatus.RemainingTime);
     
     
@@ -2040,7 +2137,7 @@ MOBLE_RESULT Light_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue , MOBLEUI
     Light_TimeParam.StepValue--;                           
     /* updating the remaining time after each step covered*/
     Light_TemporaryStatus.RemainingTime = Light_TimeParam.StepValue | (Light_TimeParam.ResBitValue << 6) ;
-    
+    LightUpdateFlag = VALUE_UPDATE_SET;
     Check_time = 0;
     Clockflag = 0;
     /* when transition is completed, disable the transition by disabling 
@@ -2049,9 +2146,10 @@ MOBLE_RESULT Light_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue , MOBLEUI
     
     if(Light_TimeParam.StepValue <= 0)
     {
-      Light_ModelFlag.LightTransitionFlag = 0;        
+      Light_ModelFlag.LightTransitionFlag = LIGHT_TRANSITION_STOP;  
+      Light_Trnsn_Cmplt = 1;      
     }    
-    TRACE_M(TF_LIGHT,"Inside light transmition %d,PV1 0x%.2x ,TV1 0x%.2x ,PV2 0x%.2x , TV2 0x%.2x,PV3 0x%.2x ,TV3 0x%.2x, RT 0x%.2x \n\r",
+    TRACE_M(TF_LIGHT,"Inside light transmition %ld,PV1 0x%.2x ,TV1 0x%.2x ,PV2 0x%.2x , TV2 0x%.2x,PV3 0x%.2x ,TV3 0x%.2x, RT 0x%.2x \n\r",
             Clock_Time(),Light_TemporaryStatus.PresentParam_1,Light_TemporaryStatus.TargetParam_1, 
                 Light_TemporaryStatus.PresentParam_2,Light_TemporaryStatus.TargetParam_2,
                  Light_TemporaryStatus.PresentParam_3, Light_TemporaryStatus.TargetParam_3,
@@ -2090,19 +2188,19 @@ void Light_GetStepValue(MOBLEUINT8 stepParam)
     Light_TimeParam.StepValue = (Light_TimeParam.StepValue * TRANSITION_SCALER);
   }
   
-  TRACE_M(TF_LIGHT," step resolution 0x%.2x, number of step 0x%.2x \r\n",Light_TimeParam.Res_Value , 
+  TRACE_M(TF_LIGHT," step resolution 0x%.2lx, number of step 0x%.2x \r\n",Light_TimeParam.Res_Value ,
           Light_TimeParam.StepValue  );   
 }
 
 
 /**
-* @brief  Function to execute the trnsition state machine for
-particular Light Model
+* @brief  Function to execute the transition state machine for particular Light Model
 * @param  void
 * @retval void
 */ 
 void Lighting_Process(void)
 { 
+  
 #if defined ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS || defined ENABLE_LIGHT_MODEL_SERVER_CTL \
   || defined ENABLE_LIGHT_MODEL_SERVER_HSL
     
@@ -2110,62 +2208,91 @@ void Lighting_Process(void)
 #endif
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
-  if(Light_ModelFlag.LightTransitionFlag == 1)
+  if(Light_ModelFlag.LightTransitionFlag == LIGHT_LIGHTNESS_TRANSITION_START)
   {  
     (Appli_Light_GetStatus_cb.GetLightLightness_cb)(Light_GetBuff);     
     Light_TransitionBehaviourSingle_Param(Light_GetBuff);
+    if(LightUpdateFlag == VALUE_UPDATE_SET)
+    {
     LightLightnessStateUpdate_Process();
     (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus,0);  
+      LightUpdateFlag = VALUE_UPDATE_RESET;
+    }
   }  
-  if(Light_ModelFlag.LightTransitionFlag == 2)
+  if(Light_ModelFlag.LightTransitionFlag == LIGHT_LINEAR_TRANSITION_START)
   {
+    
     (Appli_Light_GetStatus_cb.GetLightLightnessLinear_cb)(Light_GetBuff); 
     Light_TransitionBehaviourSingle_Param(Light_GetBuff);
+    if(LightUpdateFlag == VALUE_UPDATE_SET)
+    {
     LightLinearStateUpdate_Process();
     (LightAppli_cb.Lightness_Linear_Set_cb)(&Light_LightnessStatus,0);
+      LightUpdateFlag = VALUE_UPDATE_RESET;
+    }
   }
 #endif
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL   
-  if(Light_ModelFlag.LightTransitionFlag == 3)
+  if(Light_ModelFlag.LightTransitionFlag == LIGHT_CTL_TRANSITION_START)
   {
     (Appli_Light_GetStatus_cb.GetLightCtl_cb)(Light_GetBuff);
     Light_TransitionBehaviourMulti_Param(Light_GetBuff , 0);
+    if(LightUpdateFlag == VALUE_UPDATE_SET)
+    {
     LightCtlStateUpdate_Process();
     (LightAppli_cb.Light_Ctl_Set_cb)(&Light_CtlStatus , 0);
+      LightUpdateFlag = VALUE_UPDATE_RESET;
+    }
   }
   
-  if(Light_ModelFlag.LightTransitionFlag == 4)
+  if(Light_ModelFlag.LightTransitionFlag == LIGHT_TEMPERATURE_TRANSITION_START)
   {
     (Appli_Light_GetStatus_cb.GetLightCtlTemp_cb)(Light_GetBuff);
     Light_TransitionBehaviourMulti_Param(Light_GetBuff , 0);
-    LightCtlStateUpdate_Process();
+    if(LightUpdateFlag == VALUE_UPDATE_SET)
+    {
+      LightCtlTemperatureStateUpdate_Process();
     (LightAppli_cb.Light_CtlTemperature_Set_cb)(&Light_CtlStatus , 0);
+      LightUpdateFlag = VALUE_UPDATE_RESET;
+    }
   }
 #endif
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL   
-  if(Light_ModelFlag.LightTransitionFlag == 5)
+  if(Light_ModelFlag.LightTransitionFlag == LIGHT_HSL_TRANSITION_START)
   {
     (Appli_Light_GetStatus_cb.GetLightHsl_cb)(Light_GetBuff);
     Light_TransitionBehaviourMulti_Param(Light_GetBuff , 3);
+    if(LightUpdateFlag == VALUE_UPDATE_SET)
+    {
     LightHslStateUpdate_Process();
     (LightAppli_cb.Light_Hsl_Set_cb)(&Light_HslStatus , 0);
+      LightUpdateFlag = VALUE_UPDATE_RESET;
+    }
   }
   
-  if(Light_ModelFlag.LightTransitionFlag == 6)
+  if(Light_ModelFlag.LightTransitionFlag == LIGHT_HSL_HUE_TRANSITION_START)
   {
     (Appli_Light_GetStatus_cb.GetLightHslHue_cb)(Light_GetBuff);
     Light_TransitionBehaviourSingle_Param(Light_GetBuff);
+    if(LightUpdateFlag == VALUE_UPDATE_SET)
+    {
     LightHslHueStateUpdate_Process();
     (LightAppli_cb.Light_HslHue_Set_cb)(&Light_HslStatus , 0);
+      LightUpdateFlag = VALUE_UPDATE_RESET;
+    }
   }
   
-  if(Light_ModelFlag.LightTransitionFlag == 7)
+  if(Light_ModelFlag.LightTransitionFlag == LIGHT_HSL_SATURATION_TRANSITION_START)
   {
     (Appli_Light_GetStatus_cb.GetLightHslSaturation_cb)(Light_GetBuff);
     Light_TransitionBehaviourSingle_Param(Light_GetBuff);
+    if(LightUpdateFlag == VALUE_UPDATE_SET)
+    {
     LightHslSaturationStateUpdate_Process();
     (LightAppli_cb.Light_HslSaturation_Set_cb)(&Light_HslStatus , 0);
+      LightUpdateFlag = VALUE_UPDATE_RESET;
+    }
   }
 #endif  
 }
@@ -2211,6 +2338,7 @@ MOBLE_RESULT LightCtlStateUpdate_Process(void)
 {
   Light_CtlStatus.PresentCtlLightness16 =Light_TemporaryStatus.PresentParam_1; 
   Light_CtlStatus.PresentCtlTemperature16 = Light_TemporaryStatus.PresentParam_2;
+  Light_CtlStatus.PresentCtlDelta16 = Light_TemporaryStatus.PresentParam_3;
   Light_CtlStatus.RemainingTime = Light_TemporaryStatus.RemainingTime;
   return MOBLE_RESULT_SUCCESS;
 }
@@ -2314,15 +2442,15 @@ void LightActual_GenericOnOffBinding(Light_LightnessParam_t* lightActual)
   
   if(lightActual ->TargetLightnessStatus == 0x00)
   {
-    bGeneric_OnOffParam.Present_OnOff = 0x00;
+    bGeneric_OnOffParam.Present_OnOff_State = 0x00;
   }
   else
   {
-    bGeneric_OnOffParam.Present_OnOff = 0x01;
+    bGeneric_OnOffParam.Present_OnOff_State = 0x01;
   }
   
   TRACE_M(TF_LIGHT, "LightActual_GenericOnOffBinding Function - Present OnOff value 0x%.2x \r\n" 
-         , bGeneric_OnOffParam.Present_OnOff);    
+         , bGeneric_OnOffParam.Present_OnOff_State);    
   (GenericAppli_cb.OnOff_Set_cb)(&bGeneric_OnOffParam, 0); 
  
 }
@@ -2342,9 +2470,18 @@ void LightActual_GenericLevelBinding(Light_LightnessParam_t* lightActual)
   As Actual lightness changes, the generic level value will
   change.
   */
+  MOBLE_ADDRESS publishAddress;
+  MOBLEUINT8 elementNumber;
+  MOBLEUINT16 opcode;
   Generic_LevelStatus_t bGeneric_LevelParam ;   
+  
+  elementNumber = BLE_GetElementNumber();
+  publishAddress = BLEMesh_GetPublishAddress(elementNumber);
+  
   bGeneric_LevelParam.Present_Level16 = lightActual->TargetLightnessStatus - 32768;  
   (GenericAppli_cb.Level_Set_cb)(&bGeneric_LevelParam, 0); 
+   opcode = GENERIC_LEVEL_SET_ACK;
+  Model_SendResponse(publishAddress, 0,opcode, NULL,0);
  
 }
 
@@ -2355,18 +2492,24 @@ lightness and Linear Lightness is implicit binding with  generic on off state.
 * @param bindingFlag 
 * return void
 */
-void Light_Linear_ActualImplicitBinding(MOBLEUINT8 bindingFlag)
+void Light_Linear_ActualImplicitBinding(MOBLEUINT8 bindingFlag ,MOBLEUINT32 length)
 { 
   /*
   6.1.2.1.1 - actual lightness = 655354 * squareroot(linear lightness/ 655354).
   */
-  
+  MOBLE_ADDRESS publishAddress;
+  MOBLEUINT8 elementNumber;
+  MOBLEUINT16 opcode;
   Light_LightnessParam_t bLightnessActual;
+  
+  elementNumber = BLE_GetElementNumber();
+  publishAddress = BLEMesh_GetPublishAddress(elementNumber);
+  
   
   if(bindingFlag == BINDING_LIGHT_LIGHTNESS_LINEAR_SET)
   {
     
-    bLightnessActual.TargetLightnessStatus = Light_Linear_ActualBinding();
+    bLightnessActual.TargetLightnessStatus = Light_Linear_ActualBinding(length);
     /* Implicit binding of linear lightness with generic on off.
     linear lightnes set -> actual lightness set -> generic on off set.
     As linear lightness changes, it changes the value of actual lightness
@@ -2379,11 +2522,16 @@ void Light_Linear_ActualImplicitBinding(MOBLEUINT8 bindingFlag)
     which in turn changes the state of generic level state.
     */
     LightActual_GenericLevelBinding(&bLightnessActual);
+   
+    opcode = LIGHT_LIGHTNESS_SET;
   }
   if(bindingFlag == BINDING_LIGHT_LIGHTNESS_ACTUAL_SET)
   {
     Light_Actual_LinearBinding();
+    opcode = LIGHT_LIGHTNESS_LINEAR_SET;
   }
+  
+  Model_SendResponse(publishAddress, 0,opcode, NULL,0);
   
   TRACE_M(TF_LIGHT,"Light_Linear_ActualImplicitBinding - Actual Lightness value 0x%.2x , Linear Lightness value 0x%.2x \r\n " , 
                                                   Light_LightnessStatus.PresentValue16,
@@ -2425,17 +2573,27 @@ MOBLEUINT16 Light_Actual_LinearBinding(void)
 * @param void 
 * return MOBLEUINT16
 */
-MOBLEUINT16 Light_Linear_ActualBinding(void)
+MOBLEUINT16 Light_Linear_ActualBinding(MOBLEUINT32 length)
 {
   /*
   6.1.2.1.1 - actual lightness = 655354 * squareroot(linear lightness/ 655354).
   */
   float productValue;
-  
+  if(length <= 3)
+  {
   productValue = sqrt((((float)Light_LightnessStatus.PresentValue16) / 65535));
   Light_LightnessStatus.PresentValue16 = (MOBLEUINT16)(65535 * productValue);
   (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus, 0);
   return Light_LightnessStatus.PresentValue16;  
+}
+  else
+  {
+    productValue = sqrt((((float)Light_LightnessStatus.TargetValue16) / 65535));
+    Light_LightnessStatus.TargetValue16 = (MOBLEUINT16)(65535 * productValue);
+    Light_TemporaryStatus.TargetParam_1 = Light_LightnessStatus.TargetValue16; 
+    (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus, 0);
+    return Light_LightnessStatus.TargetValue16;  
+  }
 }
 
 
@@ -2532,8 +2690,8 @@ void Light_CtlTemp_GenericLevelBinding(Light_CtlParam_t* bCtlTempParam)
   Generic_LevelStatus_t bLevelStatus;
   MOBLEUINT32 productValue;
   
-  productValue = (bCtlTempParam->CTL_Temperature - 0x0320) * 65535;
-  bLevelStatus.Present_Level16 = (productValue / (0x4E20 - 0x0320)) - 32768;
+  productValue = (bCtlTempParam->CTL_Temperature - MIN_CTL_TEMP_RANGE) * 65535;
+  bLevelStatus.Present_Level16 = (productValue / (MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE)) - 32768;
   /* application callback */
   (GenericAppli_cb.Level_Set_cb)(&bLevelStatus, 0); 
 }
@@ -2688,55 +2846,315 @@ void Light_ActualLightness_HslLightnessBinding(Light_LightnessParam_t* bActualLi
 }
 
 /*
-* @brief Save light states in nvm
+* @brief function called in Light lightness when the default transition time is enabled.
 * @param void.
 * return void.
 */
-MOBLE_RESULT Light_SaveStateNvm(MOBLEUINT8 flag)
+void Light_LightnessDefaultTransitionValue(Light_LightnessParam_t* pLightnessValue)
 {
+  Light_TemporaryStatus.TargetParam_1 = pLightnessValue->TargetLightnessStatus;   
+  Light_TemporaryStatus.RemainingTime = Generic_DefaultTransitionParam.DefaultTransitionTime; 
+  Light_GetStepValue((MOBLEUINT8)Generic_DefaultTransitionParam.DefaultTransitionTime);
+  Light_ModelFlag.LightTransitionFlag = LIGHT_LIGHTNESS_TRANSITION_START;
+  Light_ModelFlag.LightOptionalParam = 1;
+}
+
+/*
+* @brief function called in Light CTL set when the default transition time is enabled.
+* @param void.
+* return void.
+*/
+void Light_CTLDefaultTransitionValue(Light_CtlParam_t* pCTLValue)
+{
+  Light_TemporaryStatus.TargetParam_1 = pCTLValue->CTL_Lightness;
+  Light_TemporaryStatus.TargetParam_2 = pCTLValue->CTL_Temperature;
+  Light_GetStepValue((MOBLEUINT8)Generic_DefaultTransitionParam.DefaultTransitionTime);
+  Light_ModelFlag.LightTransitionFlag = LIGHT_CTL_TRANSITION_START;
+  Light_ModelFlag.LightOptionalParam = 1;
+}
+
+/*
+* @brief function called in Light CTL temperature set when the default transition time is enabled.
+* @param void.
+* return void.
+*/
+void Light_CTLTemperatureDefaultTransitionValue(Light_CtlParam_t* pCTLValue)
+{
+  Light_TemporaryStatus.TargetParam_1 = pCTLValue->CTL_Temperature;
+  Light_TemporaryStatus.TargetParam_2 = pCTLValue->CTL_DeltaUv;
+  Light_GetStepValue((MOBLEUINT8)Generic_DefaultTransitionParam.DefaultTransitionTime);
+  Light_ModelFlag.LightTransitionFlag = LIGHT_TEMPERATURE_TRANSITION_START;
+  Light_ModelFlag.LightOptionalParam = 1;
+}
+
+/*
+* @brief Light_Client_Lightness_Status: Function called when status of the model 
+  received on the client.
+* @param pLightness_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Lightness_Status(MOBLEUINT8 const *pLightness_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_Lightness_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_Lightness_Status: %d\r\n",
+            pLightness_status[i]);
   return MOBLE_RESULT_SUCCESS;
 }
 
 /*
-* @brief function to call light middle layer function for restoration of 
-*        saved states.
-* @param void.
-* return void.
+* @brief Light_Client_Lightness_Linear_Status: Function called when status of the model 
+  received on the client.
+* @param pLightnessLinear_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
 */
-void Light_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
-{  
-  if (size > 0)
-  {
-    switch(pModelState_Load[0])
-    {     
-        case LIGHT_LIGHTNESS_FLAG:
-        { 
-           Light_Lightness_Set((pModelState_Load+LIGHT_LIGHTNESS_NVM_OFFSET), 2);
-           break;
-        } 
-#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL         
-        case LIGHT_CTL_FLAG:
-        {  
-           Light_Ctl_Set((pModelState_Load+LIGHT_CTL_NVM_OFFSET), 4);
-           break;
-        }
-#endif
-
-#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL        
-        case LIGHT_HSL_FLAG:
-        {  
-           Light_Hsl_Set((pModelState_Load+LIGHT_HSL_NVM_OFFSET), 6);
-           break;
-        }
-#endif        
-        default: 
-        {
-          TRACE_M(TF_GENERIC, "data is invalid %d \r\n", pModelState_Load[0]);
-          break;
-        }
-    }
-  }
+MOBLE_RESULT Light_Client_Lightness_Linear_Status(MOBLEUINT8 const *pLightnessLinear_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
   
+  TRACE_M(TF_LIGHT,"Light_Lightness_Linear_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_Lightness_Linear_Status: %d\r\n",
+            pLightnessLinear_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_Lightness_Last_Status: Function called when status of the model 
+  received on the client.
+* @param pLightnessLast_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Lightness_Last_Status(MOBLEUINT8 const *pLightnessLast_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_Lightness_Last_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_Lightness_Last_Status: %d\r\n",
+            pLightnessLast_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_Lightness_Default_Status: Function called when status of the model 
+  received on the client.
+* @param pLightnessDefault_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Lightness_Default_Status(MOBLEUINT8 const *pLightnessDefault_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_Lightness_Default_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_Lightness_Default_Status: %d\r\n",
+            pLightnessDefault_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_Lightness_Range_Status: Function called when status of the model 
+  received on the client.
+* @param pLightnessRange_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Lightness_Range_Status(MOBLEUINT8 const *pLightnessRange_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_Client_Lightness_Range_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_Client_Lightness_Range_Status: %d\r\n",
+            pLightnessRange_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_Ctl_Status: Function called when status of the model 
+  received on the client.
+* @param pLightCtl_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Ctl_Status(MOBLEUINT8 const *pLightCtl_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_Ctl_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_Ctl_Status: %d\r\n",
+            pLightCtl_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_CtlTemperature_Range_Status: Function called when status of the model 
+  received on the client.
+* @param pCtlTempRange_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_CtlTemperature_Range_Status(MOBLEUINT8 const *pCtlTempRange_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_CtlTemperature_Range_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_CtlTemperature_Range_Status: %d\r\n",
+            pCtlTempRange_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_CtlDefault_Status: Function called when status of the model 
+  received on the client.
+* @param pCtlDefault_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_CtlDefault_Status(MOBLEUINT8 const *pCtlDefault_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_Ctl_DefaultStatus callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_Ctl_DefaultStatus: %d\r\n",
+            pCtlDefault_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_CtlTemperature_Status: Function called when status of the model 
+  received on the client.
+* @param pLightCtlTemp_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_CtlTemperature_Status(MOBLEUINT8 const *pLightCtlTemp_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_CtlTemperature_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_CtlTemperature_Status: %d\r\n",
+            pLightCtlTemp_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_Hsl_Status: Function called when status of the model 
+  received on the client.
+* @param pHsl_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Hsl_Status(MOBLEUINT8 const *pHsl_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_Hsl_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_Hsl_Status: %d\r\n",
+            pHsl_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_HslDefault_Status: Function called when status of the model 
+  received on the client.
+* @param pHslDefault_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslDefault_Status(MOBLEUINT8 const *pHslDefault_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_HslDefault_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_HslDefault_Status: %d\r\n",
+            pHslDefault_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_HslRange_Status: Function called when status of the model 
+  received on the client.
+* @param pHslRange_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslRange_Status(MOBLEUINT8 const *pHslRange_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_HslRange_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_HslRange_Status: %d\r\n",
+            pHslRange_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_HslTarget_Status: Function called when status of the model 
+  received on the client.
+* @param pHslTarget_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslTarget_Status(MOBLEUINT8 const *pHslTarget_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_HslTarget_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_HslTarget_Status: %d\r\n",
+            pHslTarget_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_HslHue_Status: Function called when status of the model 
+  received on the client.
+* @param pHslHue_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslHue_Status(MOBLEUINT8 const *pHslHue_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_HslHue_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_HslHue_Status: %d\r\n",
+            pHslHue_status[i]);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/*
+* @brief Light_Client_HslSaturation_Status: Function called when status of the model 
+  received on the client.
+* @param pHslSaturation_status: ointer to the parameters received for message
+* @param pLength: Length of the parameters received for message
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_status, MOBLEUINT32 pLength)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT,"Light_HslSaturation_Status callback received \r\n");
+  for(i = 0; i < pLength; i++)
+    TRACE_M(TF_SERIAL_CTRL,"Light_HslSaturation_Status: %d\r\n",
+            pHslSaturation_status[i]);
+  return MOBLE_RESULT_SUCCESS;
 }
 
 /* Weak function are defined to support the original function if they are not
@@ -2746,10 +3164,8 @@ There is no use of this function for application development purpose.
 WEAK_FUNCTION (MOBLE_RESULT Appli_Light_Lightness_Set(Light_LightnessStatus_t* pLight_LightnessParam,
                                                       MOBLEUINT8 OptionalValid))
 {
-  
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_Lightness_Linear_Set(Light_LightnessStatus_t* pLight_LightnessLinearParam,
                                                             MOBLEUINT8 OptionalValid))   
@@ -2757,13 +3173,11 @@ WEAK_FUNCTION(MOBLE_RESULT Appli_Light_Lightness_Linear_Set(Light_LightnessStatu
   return MOBLE_RESULT_SUCCESS;
 }
 
-
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_Lightness_Default_Set(Light_LightnessDefaultParam_t* pLight_LightnessDefaultParam,
                                                              MOBLEUINT8 OptionalValid))   
 {
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_Lightness_Range_Set(Light_LightnessRangeParam_t* pLight_LightnessRangeParam,
                                                            MOBLEUINT8 OptionalValid))   
@@ -2771,13 +3185,11 @@ WEAK_FUNCTION(MOBLE_RESULT Appli_Light_Lightness_Range_Set(Light_LightnessRangeP
   return MOBLE_RESULT_SUCCESS;
 }
 
-
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_Ctl_Set(Light_CtlStatus_t* pLight_CtlParam,
                                                MOBLEUINT8 OptionalValid))   
 {
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_CtlTemperature_Set(Light_CtlStatus_t* pLight_CtltempParam,
                                                           MOBLEUINT8 OptionalValid))   
@@ -2785,13 +3197,11 @@ WEAK_FUNCTION(MOBLE_RESULT Appli_Light_CtlTemperature_Set(Light_CtlStatus_t* pLi
   return MOBLE_RESULT_SUCCESS;
 }
 
-
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_CtlTemperature_Range_Set(Light_CtlTemperatureRangeParam_t* pLight_CtlTempRangeParam,
                                                                 MOBLEUINT8 OptionalValid))   
 {
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_CtlDefault_Set(Light_CtlDefaultParam_t* pLight_CtlDefaultParam,
                                                       MOBLEUINT8 OptionalValid))   
@@ -2799,13 +3209,11 @@ WEAK_FUNCTION(MOBLE_RESULT Appli_Light_CtlDefault_Set(Light_CtlDefaultParam_t* p
   return MOBLE_RESULT_SUCCESS;
 }
 
-
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_Hsl_Set(Light_HslStatus_t* pLight_HslParam,
                                                MOBLEUINT8 OptionalValid))   
 {
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_HslHue_Set(Light_HslStatus_t* pLight_HslHueParam,
                                                   MOBLEUINT8 OptionalValid))   
@@ -2813,13 +3221,11 @@ WEAK_FUNCTION(MOBLE_RESULT Appli_Light_HslHue_Set(Light_HslStatus_t* pLight_HslH
   return MOBLE_RESULT_SUCCESS;
 }
 
-
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_HslSaturation_Set(Light_HslStatus_t* pLight_HslSaturationParam,
                                                          MOBLEUINT8 OptionalValid))   
 {
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslStatus_t* pLight_HslDefaultParam,
                                                       MOBLEUINT8 OptionalValid))   
@@ -2827,12 +3233,12 @@ WEAK_FUNCTION(MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslStatus_t* pLight_
   return MOBLE_RESULT_SUCCESS;
 }
 
-
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_HslRange_Set(Light_HslRangeParam_t* pLight_HslRangeParam,
                                                     MOBLEUINT8 OptionalValid))   
 {
   return MOBLE_RESULT_SUCCESS;
 }
+
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessStatus(MOBLEUINT8* lLightnessState))
 {  return MOBLE_RESULT_SUCCESS; }
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessLinearStatus(MOBLEUINT8* lLightnessState))
@@ -2859,15 +3265,9 @@ WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetHslHueRange(MOBLEUINT8* lHslHueRange))
 {  return MOBLE_RESULT_SUCCESS; }
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetHslSatRange(MOBLEUINT8* lHslSatRange))
 {  return MOBLE_RESULT_SUCCESS; }
-WEAK_FUNCTION(void HSL_RGB_Conversion(void))
-{
-}
-WEAK_FUNCTION(void RgbF_Create(MOBLEUINT16 value1, MOBLEUINT16 value2, MOBLEUINT16 value3))
-{
-}
-WEAK_FUNCTION(void Light_UpdatePWMValue(MOBLEUINT8 state))
-{
-}
+WEAK_FUNCTION(void HSL2RGB_Conversion(void));
+WEAK_FUNCTION(void RgbF_Create(MOBLEUINT16 value1, MOBLEUINT16 value2, MOBLEUINT16 value3));
+WEAK_FUNCTION(void Light_UpdatePWMValue(MOBLEUINT8 state));
 /**
 * @}
 */
@@ -2875,6 +3275,7 @@ WEAK_FUNCTION(void Light_UpdatePWMValue(MOBLEUINT8 state))
 /**
 * @}
 */
+
 
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
 

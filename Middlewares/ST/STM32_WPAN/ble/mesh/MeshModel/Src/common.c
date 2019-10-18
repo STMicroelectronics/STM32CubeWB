@@ -44,6 +44,8 @@
 #include "generic.h"
 #include "light.h"
 #include "common.h"
+#include "vendor.h"
+#include "light_lc.h"
 #include <string.h>
 
 
@@ -58,6 +60,10 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 
+extern const APPLI_SAVE_MODEL_STATE_CB SaveModelState_cb;
+extern MOBLEUINT8 NumberOfElements;
+MOBLEUINT8 PowerOnOff_flag = FLAG_RESET;
+extern MOBLEUINT8 RestoreFlag;
 /**
 * @brief  Chk_ParamValidity: This function is to check validity of Parameters
 * @param  param: Parameter 
@@ -383,7 +389,6 @@ float Ratio_CalculateValue(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEIN
   
    }
 
-
 /**
 * @brief  PWM_CoolValue: This function is used to calculate the value for the 
           cool temperature for the light.
@@ -436,6 +441,252 @@ void TraceHeader(const char* func_name, int mode)
         printf("%ld %s - <<<ERROR>>>", Clock_Time(), func_name);
 }    
 
+/**
+* @brief  Prepare and save buffer of Generic and Light models state in NVM
+* @param  void
+* @retval MOBLE_RESULT_SUCCESS on success
+*/
+MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8 flag)
+{
+  MOBLEUINT8 Model_GetBuff[APP_NVM_MODEL_SIZE];/* 16 bytes for generic model and 16 bytes for light model */
+  MOBLE_RESULT result = MOBLE_RESULT_FAIL;
+  
+  memset(Model_GetBuff, 0x00, APP_NVM_MODEL_SIZE);
+  
+  Model_GetBuff[GENERIC_VALID_FLAG_OFFSET] = flag;
+  
+#ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF   
+  (Appli_GenericState_cb.GetOnOffStatus_cb)(&Model_GetBuff[GENERIC_ON_OFF_NVM_OFFSET]);
+#endif  
+  
+#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL	
+  (Appli_GenericState_cb.GetLevelStatus_cb)(&Model_GetBuff[GENERIC_LEVEL_NVM_OFFSET]);
+#endif 
+  
+#ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF   
+  (Appli_GenericState_cb.GetPowerOnOffStatus_cb)(&Model_GetBuff[GENERIC_POWER_ON_OFF_NVM_OFFSET]);
+#endif  
+  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS	
+  (Appli_Light_GetStatus_cb.GetLightLightness_cb)(&Model_GetBuff[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_NVM_OFFSET]);
+#endif
+  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL    
+  (Appli_Light_GetStatus_cb.GetLightCtl_cb)(Model_GetBuff+GENERIC_DATA_LIMIT+LIGHT_CTL_NVM_OFFSET);
+#endif
+  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL  
+  (Appli_Light_GetStatus_cb.GetLightHsl_cb)(Model_GetBuff+GENERIC_DATA_LIMIT+LIGHT_HSL_NVM_OFFSET);
+#endif  
+  if (SaveModelState_cb != NULL)
+  {
+    result = SaveModelState_cb(Model_GetBuff, APP_NVM_MODEL_SIZE);
+  }
+  
+  if (MOBLE_FAILED(result))
+  {
+    TRACE_M(TF_MISC, "Failed to save model state \r\n");
+  }
+  else if (result == MOBLE_RESULT_FALSE)
+  {
+    TRACE_M(TF_MISC, "Not able to save model state. Try again \r\n");
+  }
+  
+  return result;
+}
+
+/*
+* @brief function to call light middle layer function for restoration of 
+*        saved states.
+* @param void.
+* return void.
+*/
+void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
+{ 
+  
+  if (size > 0)
+  {
+    switch(pModelState_Load[0])
+    { 
+#ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF      
+      case GENERIC_ON_OFF_NVM_FLAG:
+      {
+        /* checking the Power on off retrieved value according to the given
+           in standered and taking decision for Generic on off.
+        */
+        MOBLEUINT8 pData[2];
+           
+        if(pModelState_Load[4] == GENERIC_POWER_OFF_STATE)
+        {
+          pData[0] = APPLI_LED_OFF;
+          Generic_OnOff_Set(pData,1);
+        }
+        else if(pModelState_Load[4] == GENERIC_POWER_ON_STATE)
+        {
+          pData[0] = APPLI_LED_ON;
+          Generic_OnOff_Set(pData,1);
+        }
+        else if(pModelState_Load[4] == GENERIC_POWER_RESTORE_STATE)
+        {
+          Generic_OnOff_Set(pModelState_Load+GENERIC_ON_OFF_NVM_OFFSET, 1); 
+        }
+        else
+        {
+          TRACE_M(TF_GENERIC, "Power On Off value invalid %d \r\n", pModelState_Load[0]);
+        }         
+              
+        break;
+      }
+#endif
+
+#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL        
+      case GENERIC_LEVEL_NVM_FLAG:
+      {
+        Generic_Level_Set(pModelState_Load+GENERIC_LEVEL_NVM_OFFSET,2);
+        break;
+      }
+#endif
+        
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS        
+      case LIGHT_LIGHTNESS_NVM_FLAG:
+      { 
+        Light_Lightness_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_NVM_OFFSET), 2);
+        break;
+      } 
+#endif 
+        
+#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL         
+      case LIGHT_CTL_NVM_FLAG:
+      {  
+        Light_Ctl_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_CTL_NVM_OFFSET), 4);
+        break;
+      }
+#endif
+
+#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL        
+      case LIGHT_HSL_NVM_FLAG:
+      {  
+        Light_Hsl_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_NVM_OFFSET), 6);
+        break;
+      }
+#endif        
+      default: 
+      {
+        TRACE_M(TF_LIGHT, "data is invalid %d \r\n", pModelState_Load[0]);
+        break;
+      }
+    }
+  }
+  
+}  
+/**
+* @brief  Function used to select the element number
+* @param  void
+* @retval element number
+*/
+MOBLEUINT8 BLE_GetElementNumber(void)
+{
+
+  MOBLEUINT8 elementNumber = 0;
+  
+  /*Select the Element Number for which publication address is required*/
+  
+  if (NumberOfElements == 1)
+  {
+    elementNumber = 0x01; 
+  }
+  
+  else if(NumberOfElements == 2)
+  { 
+    elementNumber = 0x02; /*Element 2 is configured as switch*/
+  }
+  
+  else if(NumberOfElements == 3)
+  {
+    elementNumber = 0x03; /*Element 3 is configured as switch*/
+  }
+  return elementNumber;
+}  
+
+/**
+* @brief  Function used to save the states of the node, when power down is detected.
+* @param  void
+* @retval void
+*/
+void ModelSave_Process(void)
+{
+  if(PowerOnOff_flag == FLAG_SET)
+  {
+    SaveModelsStateNvm(RestoreFlag);
+    PowerOnOff_flag = FLAG_RESET;
+  }
+}
+
+/**
+* @brief  Function used to calculate the delay.
+* @param  MOBLEUINT16
+* @retval MOBLEUINT8
+*/
+MOBLEUINT8 BLE_waitPeriod(MOBLEUINT32 waitPeriod)
+{
+   static MOBLEUINT8 Clockflag = 0;
+   static MOBLEUINT32 Check_time;
+   
+ 
+   if(Clockflag == CLK_FLAG_DISABLE)
+   {
+     Check_time = Clock_Time();
+     Clockflag = CLK_FLAG_ENABLE;
+   } 
+/* The function will called untill the testcount will not become zero */     
+
+     if(((Clock_Time()- Check_time) >= waitPeriod))
+     {
+        Clockflag = CLK_FLAG_DISABLE;
+        return 0x01;
+                
+       }
+   return 0x00;
+}
+
+/**
+* @brief  Function used to convert the time vale in standered Transition time.
+* @param  MOBLEUINT16
+* @retval MOBLEUINT8
+*/
+MOBLEUINT8 Time_Conversion(MOBLEUINT32 lc_Time)
+{
+  MOBLEUINT32 timeValue; 
+  MOBLEUINT8  timeResolution = 0;
+  timeValue = lc_Time/TRANSITION_STEP_VALUE;
+  MOBLEUINT8 totalTime;
+  
+  if((timeValue > (MOBLEUINT32)STEP_RESOLUTION_2) && (timeValue <= (MOBLEUINT32)STEP_RESOLUTION_3))
+  {
+    timeResolution = STEP_HEX_VALUE_3;       
+  }
+  else if((timeValue >STEP_RESOLUTION_1) && (timeValue <= STEP_RESOLUTION_2 ))
+  {
+    timeResolution = STEP_HEX_VALUE_2;       
+  }
+  else if((timeValue >STEP_RESOLUTION_0) && (timeValue <= STEP_RESOLUTION_1))
+  {
+    timeResolution = STEP_HEX_VALUE_1;       
+  }
+  else if(timeValue <= STEP_RESOLUTION_0 )
+  {
+    timeResolution = STEP_HEX_VALUE_0;       
+  }
+  else
+  {
+    /* No Comment */
+  }
+  
+    totalTime = timeResolution << 6;
+    totalTime |= TRANSITION_STEP_VALUE;
+    
+    return totalTime;
+}
 
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
 

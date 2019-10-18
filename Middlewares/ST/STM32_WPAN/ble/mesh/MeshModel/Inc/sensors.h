@@ -40,8 +40,8 @@
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __SENSOR_H
-#define __SENSOR_H
+#ifndef __SENSORS_H
+#define __SENSORS_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -53,8 +53,12 @@
 /********** Following Section defines the Opcodes for the Messages ************/
 /******************************************************************************/
 /* Sensors Property ID */
-#define TEMPERATURE_PID                    0X0071
-#define PRESSURE_PID                       0X2A6D
+#define TEMPERATURE_PID         0x0071// 0x004F
+#define PRESSURE_PID            0x2A6D
+#define HUMIDITY_PID            0x2A6F
+#define MAGNETO_METER_PID       0x2AA1
+#define ACCELERO_METER_PID      0x2BA1
+#define GYROSCOPE_PID           0x2BA2
 
 /* 7.1 Messages summary Page 300 */
 /* Sensor Server Model Opcode */
@@ -96,21 +100,22 @@
 /* 
  structure for the Property id for the sensors Present inside the firmware.
 */
+#pragma pack(1)
 typedef struct 
 {
     MOBLEUINT16 Property_ID;
-    
 } MODEL_Property_IDTableParam_t;
 
+#pragma pack(4)
 /* Sensor Cadence Parameters */
 typedef struct 
 {
- MOBLEUINT16 Property_ID; 
  MOBLEUINT8 FastCadenceDevisor;
  MOBLEUINT8 StatusTriggerType; 
  MOBLEUINT8 triggerDeltaDown;
  MOBLEUINT8 triggerDeltaUp;
  MOBLEUINT8 StatusMinInterval;
+ MOBLEUINT16 Property_ID; 
  float FastCadenceLow;
  float FastCadenceHigh;
 }Sensor_CadenceParam_t;
@@ -126,27 +131,15 @@ typedef struct
 }Sensor_SettingParam_t;
 
 /* Sensor Coloumn Parameters */
-#pragma pack(1)
+
 typedef struct 
 {
  MOBLEUINT16 Property_ID; 
- MOBLEUINT16 RowValueX; 
- MOBLEUINT16 RowValueWidth;
- MOBLEUINT16 RowValueY;
+ MOBLEUINT16 RawValueX; 
+ MOBLEUINT16 RawValueWidth;
+ MOBLEUINT16 RawValueY;
 }Sensor_ColumnParam_t;
 
-/** \brief Callback map for application from middle layer .
-    this will call the function related to the function pointer in the 
-    model_if.c file
-   const Appli_Sensor_cb_t SensorAppli_cb = 
-  {
-    Appli_Sensor_Cadence_Set,
-    Appli_Sensor_Data_Status,
-    Appli_Sensor_Descriptor_Status ,
-    Appli_Sensor_Setting_Set
-  };
-    
-**/ 
 typedef struct
 {
   /* Pointer to the function Appli_Sensor_Cadence_Set used for callback 
@@ -171,10 +164,10 @@ typedef struct
   
 } Appli_Sensor_cb_t;
 
-
 /* function pointer for application to get the value from application to middle 
    layer file
 */
+
 typedef struct
 { 
   MOBLE_RESULT (*GetSettingStatus_cb)(MOBLEUINT8*);
@@ -182,6 +175,7 @@ typedef struct
   MOBLE_RESULT (*GetSetting_IDStatus_cb)(MOBLEUINT8*);
   
 }Appli_Sensor_GetStatus_cb_t;
+#pragma pack(4)
 
 extern const Appli_Sensor_GetStatus_cb_t Appli_Sensor_GetStatus_cb;
 extern const Appli_Sensor_cb_t SensorAppli_cb;
@@ -216,10 +210,9 @@ MOBLE_RESULT Sensor_Setting_Status_PID(MOBLEUINT8* pSetting_param, MOBLEUINT32 *
                                                  const MOBLEUINT8 *pData,MOBLEUINT32 length);
 MOBLE_RESULT Sensor_Setting_Status_SettingID(MOBLEUINT8* pSetting_param, MOBLEUINT32 *plength, 
                                                        const MOBLEUINT8 *pData,MOBLEUINT32 length);
-MOBLE_RESULT Sensor_Cadence_Status(MOBLEUINT8* pCadencestatus_param, MOBLEUINT32 *plength,
-                                   MOBLEUINT8 const *pData, MOBLEUINT32 length);
    
-#endif /* __Sensor_H */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+#endif /* __SENSORS_H */
+
+/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
 

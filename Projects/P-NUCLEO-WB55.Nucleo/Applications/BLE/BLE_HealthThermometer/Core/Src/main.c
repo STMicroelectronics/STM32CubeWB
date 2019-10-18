@@ -41,10 +41,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "app_entry.h"
+#include "app_common.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "app_common.h"
 #include "stm32_lpm.h"
 #include "stm32_seq.h"
 #include "dbg_trace.h"
@@ -110,6 +110,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
+  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -137,6 +138,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
+
+  /* Init code for STM32_WPAN */  
   APPE_Init();
 
   /* Infinite loop */
@@ -161,17 +164,20 @@ void SystemClock_Config(void)
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
+  /** Configure LSE Drive Capability 
+  */
+  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
   /** Configure the main internal regulator output voltage 
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI1
-                              |RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE
+                              |RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -200,8 +206,8 @@ void SystemClock_Config(void)
                               |RCC_PERIPHCLK_LPUART1;
   PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
   PeriphClkInitStruct.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_PCLK1;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-  PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSI;
+  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+  PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSE;
   PeriphClkInitStruct.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSE;
   PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE0;
 
@@ -357,7 +363,13 @@ static void MX_RTC_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN RTC_Init 2 */
-  MODIFY_REG(RTC->CR, RTC_CR_WUCKSEL, CFG_RTC_WUCKSEL_DIVIDER);
+  /* Disable RTC registers write protection */
+  LL_RTC_DisableWriteProtection(RTC);
+
+  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
+
+  /* Enable RTC registers write protection */
+  LL_RTC_EnableWriteProtection(RTC);
   /* USER CODE END RTC_Init 2 */
 
 }
@@ -367,6 +379,7 @@ static void MX_RTC_Init(void)
   */
 static void MX_DMA_Init(void) 
 {
+
   /* DMA controller clock enable */
   __HAL_RCC_DMAMUX1_CLK_ENABLE();
   __HAL_RCC_DMA2_CLK_ENABLE();
@@ -404,7 +417,13 @@ void PeriphClock_Config(void)
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = { 0 };
 	RCC_CRSInitTypeDef RCC_CRSInitStruct = { 0 };
 
-	LL_RCC_HSI48_Enable();
+	/**
+   * This prevents the CPU2 to disable the HSI48 oscillator when
+   * it does not use anymore the RNG IP
+   */
+  LL_HSEM_1StepLock( HSEM, 5 );
+
+  LL_RCC_HSI48_Enable();
 
 	while(!LL_RCC_HSI48_IsReady());
 
@@ -436,30 +455,6 @@ void PeriphClock_Config(void)
 	/* Start automatic synchronization */
 	HAL_RCCEx_CRSConfig(&RCC_CRSInitStruct);
 #endif
-
-	/**
-	 * Select LSE clock
-	 */
-	LL_RCC_LSE_Enable();
-	while(!LL_RCC_LSE_IsReady());
-
-	/**
-	 * Select wakeup source of BLE RF
-	 */
-	LL_RCC_SetRFWKPClockSource(LL_RCC_RFWKP_CLKSOURCE_LSE);
-
-	/**
-	 * Switch OFF LSI
-	 */
-	LL_RCC_LSI1_Disable();
-
-
-	/**
-	 * Set RNG on HSI48
-	 */
-	LL_RCC_HSI48_Enable();
-	while(!LL_RCC_HSI48_IsReady());
-	LL_RCC_SetCLK48ClockSource(LL_RCC_CLK48_CLKSOURCE_HSI48);
 
 	return;
 }
@@ -567,21 +562,33 @@ static void Init_Exti( void )
  * WRAP FUNCTIONS
  *
  *************************************************************/
-
-/**
- * This function is empty to avoid starting the SysTick Timer
- */
-HAL_StatusTypeDef HAL_InitTick( uint32_t TickPriority )
+void HAL_Delay(uint32_t Delay)
 {
-	return (HAL_OK);
-}
+  uint32_t tickstart = HAL_GetTick();
+  uint32_t wait = Delay;
 
-/**
- * This function is empty as the SysTick Timer is not used
- */
-void HAL_Delay(__IO uint32_t Delay)
-{
-	return;
+  /* Add a freq to guarantee minimum wait */
+  if (wait < HAL_MAX_DELAY)
+  {
+    wait += HAL_GetTickFreq();
+  }
+
+  while ((HAL_GetTick() - tickstart) < wait)
+  {
+    /************************************************************************************
+     * ENTER SLEEP MODE
+     ***********************************************************************************/
+    LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
+
+    /**
+     * This option is used to ensure that store operations are completed
+     */
+  #if defined ( __CC_ARM)
+    __force_stores();
+  #endif
+
+    __WFI( );
+  }
 }
 /* USER CODE END 4 */
 

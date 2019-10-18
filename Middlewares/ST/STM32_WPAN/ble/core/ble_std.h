@@ -92,6 +92,16 @@
 #define HCI_RX_PHY_LE_2M                 0x02
 #define HCI_RX_PHY_LE_CODED              0x03
 
+/* HCI_LE_Set_PHY */
+#define HCI_ALL_PHYS_TX_NO_PREF          0x01
+#define HCI_ALL_PHYS_RX_NO_PREF          0x02
+#define HCI_TX_PHYS_LE_1M_PREF           0x01
+#define HCI_TX_PHYS_LE_2M_PREF           0x02
+#define HCI_TX_PHYS_LE_CODED_PREF        0x04
+#define HCI_RX_PHYS_LE_1M_PREF           0x01
+#define HCI_RX_PHYS_LE_2M_PREF           0x02
+#define HCI_RX_PHYS_LE_CODED_PREF        0x04
+
 
 #endif /* BLE_STD_H__ */
 

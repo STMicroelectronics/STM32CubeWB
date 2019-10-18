@@ -553,13 +553,11 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
           if (gap_evt_proc_complete->Procedure_Code == GAP_GENERAL_DISCOVERY_PROC
               && gap_evt_proc_complete->Status == 0x00)
           {
-              /* USER CODE BEGIN GAP_GENERAL_DISCOVERY_PROC */
-              BSP_LED_Off(LED_BLUE);
-              /* USER CODE END GAP_GENERAL_DISCOVERY_PROC */
+            /* USER CODE BEGIN GAP_GENERAL_DISCOVERY_PROC */
+            BSP_LED_Off(LED_BLUE);
+            /* USER CODE END GAP_GENERAL_DISCOVERY_PROC */
 
-#if(CFG_DEBUG_APP_TRACE != 0) 
             APP_DBG_MSG("-- GAP GENERAL DISCOVERY PROCEDURE_COMPLETED\n");
-#endif
             /*if a device found, connect to it, device 1 being chosen first if both found*/
             if (BleApplicationContext.EndDevice1Found == 0x01
                 && BleApplicationContext.EndDevice_Connection_Status[0] != APP_BLE_CONNECTED)
@@ -624,9 +622,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                                                               CONN_L2,
                                                               APP_BLE_p2p_Conn_Update_req.Identifier,
                                                               0x00);
-#if(CFG_DEBUG_APP_TRACE != 0) 
           APP_DBG_MSG("\r\n\r** NO UPDATE \n");
-#endif
           if(result != BLE_STATUS_SUCCESS) {
               /* USER CODE BEGIN BLE_STATUS_SUCCESS */
               BSP_LED_On(LED_RED);
@@ -653,9 +649,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
       /* USER CODE END EVT_DISCONN_COMPLETE */
           if (cc->Connection_Handle == BleApplicationContext.connectionHandleEndDevice1)
           {
-#if(CFG_DEBUG_APP_TRACE != 0) 
             APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF END DEVICE 1 \n");
-#endif
             BleApplicationContext.EndDevice_Connection_Status[0] = APP_BLE_IDLE;
             BleApplicationContext.connectionHandleEndDevice1 = 0xFFFF;
             handleNotification.P2P_Evt_Opcode = P2P_SERVER1_DISCON_HANDLE_EVT;
@@ -777,9 +771,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
             if (dev1 == 1)
             {
               /* Inform Application it is End Device 1 */
-#if(CFG_DEBUG_APP_TRACE != 0) 
               APP_DBG_MSG("-- CONNECTION SUCCESS WITH END DEVICE 1\n");
-#endif
               BleApplicationContext.EndDevice_Connection_Status[0] = APP_BLE_CONNECTED;
               BleApplicationContext.connectionHandleEndDevice1 = connection_handle;
               BleApplicationContext.BleApplicationContext_legacy.connectionHandle[0] = connection_handle;
@@ -789,16 +781,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
               result = aci_gatt_disc_all_primary_services(BleApplicationContext.connectionHandleEndDevice1);
               if (result == BLE_STATUS_SUCCESS)
               {
-#if(CFG_DEBUG_APP_TRACE != 0) 
                 APP_DBG_MSG("\r\n\r** GATT SERVICES & CHARACTERISTICS DISCOVERY  \n");
                 APP_DBG_MSG("* GATT :  Start Searching Primary Services \r\n\r");
-#endif
               }
               else
               {
-#if(CFG_DEBUG_APP_TRACE != 0) 
-              APP_DBG_MSG("BLE_CTRL_App_Notification(), All services discovery Failed \r\n\r");
-#endif
+                APP_DBG_MSG("BLE_CTRL_App_Notification(), All services discovery Failed \r\n\r");
               }
 #if (CFG_P2P_DEMO_MULTI != 0)                            
           /* USER CODE BEGIN EVT_LE_CONN_COMPLETE_Multi_3 */
@@ -961,9 +949,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
 
           else
           {
-#if(CFG_DEBUG_APP_TRACE != 0) 
             APP_DBG_MSG("-- CONNECTION SUCCESS WITH SMART PHONE\n");
-#endif
             BleApplicationContext.connectionHandleCentral = connection_handle;
             handleNotification.P2P_Evt_Opcode = SMART_PHONE1_CONN_HANDLE_EVT;
             handleNotification.ConnectionHandle = connection_handle;
@@ -983,6 +969,11 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
 
           event_data_size = le_advertising_event->Advertising_Report[0].Length_Data;
 
+          /* WARNING: be careful when decoding advertising report as its raw format cannot be mapped on a C structure. 
+          The data and RSSI values could not be directly decoded from the RAM using the data and RSSI field from hci_le_advertising_report_event_rp0 structure.
+          Instead they must be read by using offsets (please refer to BLE specification).
+          RSSI = *(uint8_t*) (adv_report_data + le_advertising_event->Advertising_Report[0].Length_Data);
+          */
           adv_report_data = (uint8_t*)(&le_advertising_event->Advertising_Report[0].Length_Data) + 1;
           k = 0;
           /* search AD TYPE 0x09 (Complete Local Name) */
@@ -1025,15 +1016,11 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                 /* USER CODE END Manufactureur_Specific */
                   if (adlength >= 7 && adv_report_data[k + 2] == 0x01)
                   { /* ST VERSION ID 01 */
-#if(CFG_DEBUG_APP_TRACE != 0) 
                     APP_DBG_MSG("--- ST MANUFACTURER ID --- \n");
-#endif
                     switch (adv_report_data[k + 3])
                     {
                       case CFG_DEV_ID_P2P_SERVER1:
-#if(CFG_DEBUG_APP_TRACE != 0) 
                         APP_DBG_MSG("-- P2P SERVER 1 DETECTED -- VIA MAN ID\n");
-#endif
                         BleApplicationContext.EndDevice1Found = 0x01;
                         P2P_SERVER1_BDADDR[0] = le_advertising_event->Advertising_Report[0].Address[0];
                         P2P_SERVER1_BDADDR[1] = le_advertising_event->Advertising_Report[0].Address[1];
@@ -1392,18 +1379,14 @@ static void Scan_Request( void )
     /* USER CODE BEGIN BLE_SCAN_SUCCESS */
 
     /* USER CODE END BLE_SCAN_SUCCESS */
-#if(CFG_DEBUG_APP_TRACE != 0) 
       APP_DBG_MSG(" \r\n\r** START GENERAL DISCOVERY (SCAN) **  \r\n\r");
-#endif
     }
     else
     {
     /* USER CODE BEGIN BLE_SCAN_FAILED */
       BSP_LED_On(LED_RED);
     /* USER CODE END BLE_SCAN_FAILED */
-    #if(CFG_DEBUG_APP_TRACE != 0) 
       APP_DBG_MSG("-- BLE_App_Start_Limited_Disc_Req, Failed \r\n\r");
-#endif
     }
   }
   /* USER CODE BEGIN Scan_Request_2 */
@@ -1446,19 +1429,15 @@ static void Adv_Request( void )
     /* USER CODE BEGIN BLE_CONNECT_SUCCESS */
 
     /* USER CODE END BLE_CONNECT_SUCCESS */
-#if(CFG_DEBUG_APP_TRACE != 0) 
       APP_DBG_MSG("  \r\n\r");
       APP_DBG_MSG("** START ADVERTISING **  \r\n\r");
-#endif
     }
     else
     {
     /* USER CODE BEGIN BLE_CONNECT_FAILED */
       BSP_LED_On(LED_RED);
     /* USER CODE END BLE_CONNECT_FAILED */
-#if(CFG_DEBUG_APP_TRACE != 0) 
       APP_DBG_MSG("BLE_APP_Adv_Request(), Failed \r\n\r");
-#endif
     }
   }
   /* USER CODE BEGIN Connect_Request_2 */
@@ -1475,9 +1454,7 @@ static void Adv_Request( void )
 static void ConnReq1( void )
 {
   tBleStatus result;
-#if(CFG_DEBUG_APP_TRACE != 0) 
   APP_DBG_MSG("\r\n\r** CREATE CONNECTION TO END DEVICE 1 **  \r\n\r");
-#endif
   if (BleApplicationContext.EndDevice_Connection_Status[0] != APP_BLE_CONNECTED)
   {
     /* USER CODE BEGIN APP_BLE_CONNECTED_SUCCESS_END_DEVICE_1 */

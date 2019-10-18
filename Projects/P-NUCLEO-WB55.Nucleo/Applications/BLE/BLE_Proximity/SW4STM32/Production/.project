@@ -65,24 +65,24 @@
 			<location>PARENT-2-PROJECT_LOC/Core/Src/stm32wbxx_it.c</location>
 		</link>
     <link>
-			<name>Application/STM32_WPAN/app/app_ble.c</name>
+			<name>Application/STM32_WPAN/App/app_ble.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/app_ble.c</location>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/App/app_ble.c</location>
 		</link>
     <link>
-			<name>Application/STM32_WPAN/app/ias_app.c</name>
+			<name>Application/STM32_WPAN/App/ias_app.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/ias_app.c</location>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/App/ias_app.c</location>
 		</link>
     <link>
-			<name>Application/STM32_WPAN/app/lls_app.c</name>
+			<name>Application/STM32_WPAN/App/lls_app.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/lls_app.c</location>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/App/lls_app.c</location>
 		</link>
     <link>
-			<name>Application/STM32_WPAN/app/tps_app.c</name>
+			<name>Application/STM32_WPAN/App/tps_app.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/tps_app.c</location>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/App/tps_app.c</location>
 		</link>
     <link>
 			<name>Application/STM32_WPAN/target/hw_ipcc.c</name>

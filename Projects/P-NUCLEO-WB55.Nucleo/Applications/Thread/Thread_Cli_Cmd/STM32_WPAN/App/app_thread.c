@@ -16,7 +16,7 @@
   *
   ******************************************************************************
   */
-  /* USER CODE END Header */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -63,8 +63,9 @@ static void APP_THREAD_CheckWirelessFirmwareInfo(void);
 static void APP_THREAD_DeviceConfig(void);
 static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext);
 static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode);
-
+#if (CFG_FULL_LOW_POWER == 0)
 static void Send_CLI_To_M0(void);
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 static void Send_CLI_Ack_For_OT(void);
 static void HostTxCb( void );
 static void Wait_Getting_Ack_From_M0(void);
@@ -79,10 +80,12 @@ extern void MX_USART1_UART_Init(void);
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 static uint32_t ProcessCmdString(uint8_t* buf , uint32_t len);
 #else
+#if (CFG_FULL_LOW_POWER == 0)
 static void RxCpltCallback(void);
-#endif
+#endif /* (CFG_FULL_LOW_POWER == 0) */
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
- /* USER CODE BEGIN PFP */
+/* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
@@ -92,10 +95,14 @@ static uint8_t TmpString[C_SIZE_CMD_STRING];
 static uint8_t VcpRxBuffer[sizeof(TL_CmdSerial_t)];        /* Received Data over USB are stored in this buffer */
 static uint8_t VcpTxBuffer[sizeof(TL_EvtPacket_t) + 254U]; /* Transmit buffer over USB */
 #else
+#if (CFG_FULL_LOW_POWER == 0)
 static uint8_t aRxBuffer[C_SIZE_CMD_STRING];
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
+#if (CFG_FULL_LOW_POWER == 0)
 static uint8_t CommandString[C_SIZE_CMD_STRING];
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 static __IO uint16_t indexReceiveChar = 0;
 static __IO uint16_t CptReceiveCmdFromUser = 0;
 
@@ -437,7 +444,7 @@ void TL_THREAD_NotReceived( TL_EvtPacket_t * Notbuffer )
   */
 void Pre_OtCmdProcessing(void)
 {
-    UTIL_SEQ_WaitEvt( EVENT_SYNCHRO_BYPASS_IDLE);
+  UTIL_SEQ_WaitEvt(EVENT_SYNCHRO_BYPASS_IDLE);
 }
 
 /**
@@ -477,6 +484,7 @@ static void Receive_Notification_From_M0(void)
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
+#if (CFG_FULL_LOW_POWER == 0)
 static void RxCpltCallback(void)
 {
   /* Filling buffer and wait for '\r' char */
@@ -495,6 +503,7 @@ static void RxCpltCallback(void)
   /* Once a character has been sent, put back the device in reception mode */
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
 }
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -537,6 +546,7 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
 }
 #endif/* (CFG_USB_INTERFACE_ENABLE != 0) */
 
+#if (CFG_FULL_LOW_POWER == 0)
 /**
  * @brief Process sends receive CLI command to M0.
  * @param  None
@@ -556,6 +566,7 @@ static void Send_CLI_To_M0(void)
 
   TL_CLI_SendCmd();
 }
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 
 /**
  * @brief Send notification for CLI TL Channel.
@@ -576,11 +587,16 @@ static void Send_CLI_Ack_For_OT(void)
  */
 void APP_THREAD_Init_UART_CLI(void)
 {
+#if (CFG_FULL_LOW_POWER == 0)
   UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU,Send_CLI_To_M0);
-  #if (CFG_USB_INTERFACE_ENABLE != 0)
-  #else
+#endif /* (CFG_FULL_LOW_POWER == 0) */
+
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+#else
+#if (CFG_FULL_LOW_POWER == 0)
   MX_USART1_UART_Init();
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 }
 

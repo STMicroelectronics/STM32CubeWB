@@ -56,9 +56,9 @@ _Min_Stack_Size = 0x1000;   /* required amount of stack */
 MEMORY
 {
 FLASH (rx)                 : ORIGIN = 0x08000000, LENGTH = 512K
+QSPI (rx)                  : ORIGIN = 0x90000000, LENGTH = 1024K
 RAM1 (xrw)                 : ORIGIN = 0x20000004, LENGTH = 0x2FFFC
 RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K
-QSPI (xrw)                 : ORIGIN = 0x90000000, LENGTH = 1024K
 }
 
 /* Define output sections */
@@ -104,16 +104,16 @@ SECTIONS
     *(.ARM.exidx*)
     __exidx_end = .;
   } >FLASH
-
+  
   _qspi_init_base = LOADADDR(.qspi);
   _qspi_init_length = SIZEOF(.qspi);
   
-  .qspi :
+ .qspi :
   {
     . = ALIGN(4);
-    _qspi_start = .;       /* create a global symbol at qspi start */
-    *(.qspi)               /* .qspi sections */
-    *(.qspi*)              /* .qspi* sections */
+    _qspi_start = .;        /* create a global symbol at qspi start */
+    *(.qspi)         /* .qspi sections */
+    *(.qspi*)        /* .qspi* sections */
     . = ALIGN(4);
     _qspi_end = .;         /* define a global symbols at end of qspi */
     
@@ -196,7 +196,7 @@ SECTIONS
   .ARM.attributes 0       : { *(.ARM.attributes) }
    MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED
    MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED
-   MB_MEM2                : { *(MB_MEM2) } >RAM_SHARED  
+   MB_MEM2 (NOLOAD)       : { _sMB_MEM2 = . ; *(MB_MEM2) ; _eMB_MEM2 = . ; } >RAM_SHARED
 }
 
 

@@ -36,60 +36,95 @@
 
 typedef enum
 {
-  DT_FLOW_OFF,
-  DT_FLOW_ON
-} DT_Flow_Status_t;
+  DTS_APP_FLOW_OFF,
+  DTS_APP_FLOW_ON
+} DTS_App_Flow_Status_t;
+
+typedef enum
+{
+  DTS_APP_TRANSFER_REQ_OFF,
+  DTS_APP_TRANSFER_REQ_ON
+} DTS_App_Transfer_Req_Status_t;
 
 typedef struct
 {
-DTS_STM_Payload_t TxData;
-DTS_STM_Payload_t RxData;
-uint8_t TimerDataTransfer_Id;
-uint8_t NotificationTransferFlag;
-uint8_t StartTransferFlag;
-DT_Flow_Status_t DtFlowStatus;
-} DT_Server_App_Context_t;
+  DTS_STM_Payload_t TxData;
+  DTS_App_Transfer_Req_Status_t NotificationTransferReq;
+  DTS_App_Transfer_Req_Status_t ButtonTransferReq;
+  DTS_App_Flow_Status_t DtFlowStatus;
+} DTS_App_Context_t;
 
-DT_ClientContext_t aDTClientContext[BLE_CFG_CLT_MAX_NBR_CB];
 /* Private defines -----------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-DT_Server_App_Context_t DataTransferServerContext;
-uint32_t Notification_Data_Buffer[62];
-
-#define DEFAULT_TS_MEASUREMENT_INTERVAL   (1000000/CFG_TS_TICK_VAL)  /**< 1s */
-#define DATA_STOP                         (4*DEFAULT_TS_MEASUREMENT_INTERVAL)
+static DTS_App_Context_t DataTransferServerContext;
+static uint8_t Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE]; /* DATA_NOTIFICATION_MAX_PACKET_SIZE data + CRC */
 
 /* Global variables ----------------------------------------------------------*/
 /* Functions Definition ------------------------------------------------------*/
 /* Private functions ----------------------------------------------------------*/
-static void DT_App_Button_Trigger_Received( void );
-static void BLE_App_dts_Send_Data( void );
+static void ButtonTriggerReceived(void);
+static void SendData(void);
 
-extern DataTransferContext_t aDataTransferClientContext[MAX_CONNECTION];
-/* Private function prototypes -----------------------------------------------*/
+/*************************************************************
+ *
+ * PUBLIC FUNCTIONS
+ *
+ *************************************************************/
+void DTS_App_Init(void)
+{
+  uint8_t i;
 
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_BUTTON_ID, UTIL_SEQ_RFU, ButtonTriggerReceived);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_TRANSFER_UPDATE_ID, UTIL_SEQ_RFU, SendData);
+
+  /**
+   * Initialize data buffer
+   */
+  for (i=0 ; i<(DATA_NOTIFICATION_MAX_PACKET_SIZE-1) ; i++)
+  {
+    Notification_Data_Buffer[i] = i;
+  }
+
+  DataTransferServerContext.NotificationTransferReq = DTS_APP_TRANSFER_REQ_OFF;
+  DataTransferServerContext.ButtonTransferReq = DTS_APP_TRANSFER_REQ_OFF;
+  DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_ON;
+}
+
+void DTS_App_KeyButtonAction( void )
+{
+  UTIL_SEQ_SetTask(1 << CFG_TASK_BUTTON_ID, CFG_SCH_PRIO_0);
+}
+
+void DTS_App_TxPoolAvailableNotification(void)
+{
+  DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_ON;
+  UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
+
+  return;
+}
+
+/*************************************************************
+ *
+ * CALLBACK FUNCTIONS
+ *
+ *************************************************************/
 void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification )
 {
   switch (pNotification->Evt_Opcode)
   {
     case DTS_STM__NOTIFICATION_ENABLED:
-      DataTransferServerContext.NotificationTransferFlag = 0x01;
-      if (BUTTON_SERVER == 0)
-      {
-        APP_DBG_MSG("enable notification appli\n");
-        DataTransferServerContext.StartTransferFlag = 1;
-        UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
-      }
+      DataTransferServerContext.NotificationTransferReq = DTS_APP_TRANSFER_REQ_ON;
+      UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
       break;
 
     case DTS_STM_NOTIFICATION_DISABLED:
-      if (BUTTON_SERVER == 0)
-      {
-        APP_DBG_MSG("disable notification appli\n");
-        DataTransferServerContext.StartTransferFlag = 0;
-      }
-      DataTransferServerContext.NotificationTransferFlag = 0x00;
+      DataTransferServerContext.NotificationTransferReq = DTS_APP_TRANSFER_REQ_OFF;
+      break;
+
+    case DTS_STM_GATT_TX_POOL_AVAILABLE:
+      DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_ON;
+      UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
       break;
 
     default:
@@ -99,122 +134,58 @@ void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification )
   return;
 }
 
-void BLE_App_dts_Send_Data( void )
+/*************************************************************
+ *
+ * LOCAL FUNCTIONS
+ *
+ *************************************************************/
+static void SendData( void )
 {
   tBleStatus status = BLE_STATUS_INVALID_PARAMS;
-  uint8_t CRC_Result;
-  uint32_t mask_byte_low = 0xFFFFFF00;
+  uint8_t crc_result;
 
-
-  if (DataTransferServerContext.StartTransferFlag)
+  if( (DataTransferServerContext.ButtonTransferReq != DTS_APP_TRANSFER_REQ_OFF)
+      && (DataTransferServerContext.NotificationTransferReq != DTS_APP_TRANSFER_REQ_OFF)
+      && (DataTransferServerContext.DtFlowStatus != DTS_APP_FLOW_OFF) )
   {   
     /*Data Packet to send to remote*/
-      Notification_Data_Buffer[0] += 1;
-      /* compute CRC */
-      CRC_Result = APP_BLE_ComputeCRC8((uint8_t*) Notification_Data_Buffer, (DATA_NOTIFICATION_MAX_PACKET_SIZE - 4));
-      Notification_Data_Buffer[59] &= mask_byte_low;
-      Notification_Data_Buffer[59] |= (uint32_t) CRC_Result;
-      
-      DataTransferServerContext.TxData.pPayload = Notification_Data_Buffer;
-      DataTransferServerContext.TxData.Length = DATA_NOTIFICATION_MAX_PACKET_SIZE; /* DATA_NOTIFICATION_MAX_PACKET_SIZE */      
-      
-    if(DataTransferServerContext.DtFlowStatus == DT_FLOW_ON)
-    {      
-      status = DTS_STM_UpdateChar(DATA_TRANSFER_TX_CHAR_UUID, (uint8_t *) &DataTransferServerContext.TxData);
-      if (status == BLE_STATUS_INSUFFICIENT_RESOURCES)
-      {
-        DataTransferServerContext.DtFlowStatus = DT_FLOW_OFF;
-        (Notification_Data_Buffer[0])-=1;
-      }
-    }
-    else 
+    Notification_Data_Buffer[0] += 1;
+    /* compute CRC */
+    crc_result = APP_BLE_ComputeCRC8((uint8_t*) Notification_Data_Buffer, (DATA_NOTIFICATION_MAX_PACKET_SIZE - 1));
+    Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE - 1] = crc_result;
+
+    DataTransferServerContext.TxData.pPayload = Notification_Data_Buffer;
+    DataTransferServerContext.TxData.Length = DATA_NOTIFICATION_MAX_PACKET_SIZE; /* DATA_NOTIFICATION_MAX_PACKET_SIZE */
+
+    status = DTS_STM_UpdateChar(DATA_TRANSFER_TX_CHAR_UUID, (uint8_t *) &DataTransferServerContext.TxData);
+    if (status == BLE_STATUS_INSUFFICIENT_RESOURCES)
     {
+      DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_OFF;
       (Notification_Data_Buffer[0])-=1;
-    }
-    
-    UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
-  }
-  return;
-}
-
-void Resume_Notification(void)
-{
-  DataTransferServerContext.DtFlowStatus = DT_FLOW_ON;
-}
-
-void DT_App_Button_Trigger_Received( void )
-{
-  
-  if (BUTTON_SERVER == 0)
-  {
-    if (aDTClientContext[0].NotificationStatus == 0)
-    {
-      aDataTransferClientContext[0].state = DTC_ENABLE_NOTIFICATION_TX_DESC;
-      UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0);
-      aDTClientContext[0].NotificationStatus = 1;
     }
     else
     {
-      aDataTransferClientContext[0].state = DTC_DISABLE_NOTIFICATION_TX_DESC;
-      UTIL_SEQ_SetTask(1 << CFG_IdleTask_DataTransfer_ClientDiscovery, CFG_SCH_PRIO_0); 
-      aDTClientContext[0].NotificationStatus = 0;
+      UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
     }
+  }
+  return;
+}
+
+static void ButtonTriggerReceived( void )
+{
+  if(DataTransferServerContext.ButtonTransferReq != DTS_APP_TRANSFER_REQ_OFF)
+  {
+    BSP_LED_Off(LED_BLUE);
+    DataTransferServerContext.ButtonTransferReq = DTS_APP_TRANSFER_REQ_OFF;
   }
   else
   {
-      if(DataTransferServerContext.StartTransferFlag == 0)
-      {
-        if (DataTransferServerContext.NotificationTransferFlag == 1)
-        {
-          BSP_LED_On(LED_BLUE);
-          Delay_StartDataReq();
-        }
-      } 
-      else
-      {
-        BSP_LED_Off(LED_BLUE);
-        DataTransferServerContext.StartTransferFlag = 0; 
-      }
+    BSP_LED_On(LED_BLUE);
+    DataTransferServerContext.ButtonTransferReq = DTS_APP_TRANSFER_REQ_ON;
+    UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
   }
-  
+
   return;
 }
 
-void Delay_StartDataReq( void)
-{
-  DataTransferServerContext.StartTransferFlag = 1;
-  UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0); 
-  
-  return;
-}
-
-void DT_Server_App_Key_Button_Action( void )
-{
-  UTIL_SEQ_SetTask(1 << CFG_TASK_BUTTON_ID, CFG_SCH_PRIO_0);
-}
-
-void DT_Server_App_Init( void )
-{
-  uint8_t i;
-  
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_BUTTON_ID, UTIL_SEQ_RFU, DT_App_Button_Trigger_Received);
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_TRANSFER_UPDATE_ID, UTIL_SEQ_RFU, BLE_App_dts_Send_Data);
-
-  /**
-   * Initialize data buffer
-   */
-  for (i=0;i<62;i++)
-  {
-    Notification_Data_Buffer[i] = (uint32_t)i;
-  }
-}
-
-void SVCCTL_InitCustomSvc( void )
-{
-  DTS_STM_Init();
-  DataTransferServerContext.NotificationTransferFlag = 0x00;
-  DataTransferServerContext.StartTransferFlag = 0x00;
-  DataTransferServerContext.DtFlowStatus = DT_FLOW_ON;
-  
-}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

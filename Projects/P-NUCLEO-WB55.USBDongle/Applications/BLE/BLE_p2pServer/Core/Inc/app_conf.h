@@ -24,12 +24,13 @@
 
 #include "hw.h"
 #include "hw_conf.h"
+#include "hw_if.h"
 
 /******************************************************************************
  * P2P Server Config
  ******************************************************************************/
 
-/**< generic parameters ********************************************************/
+/**< generic parameters ******************************************************/
 
 /**
  * Define Tx Power
@@ -95,6 +96,15 @@
 */
 #define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
 
+/* USER CODE BEGIN Generic_Parameters */
+/**
+ * SMPS supply
+ * SMPS not used when Set to 0
+ * SMPS used when Set to 1
+ */
+#define CFG_USE_SMPS    1
+/* USER CODE END Generic_Parameters */
+
 /**< specific parameters ********************************************************/
 #if defined (USE_STM32WBXX_USB_DONGLE_REVA)
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI9_5_IRQHandler
@@ -120,16 +130,16 @@
 #define CFG_DEV_ID_P2P_ROUTER                   (0x85)
 
 
-#define  RADIO_ACTIVITY_EVENT   1          /* 1 for OOB Demo */     
+#define  RADIO_ACTIVITY_EVENT   1          /* 1 for OOB Demo */
 
    
 /**
 * AD Element - Group B Feature
 */ 
-/* LSB - Firt Byte */   
+/* LSB - First Byte */
 #define CFG_FEATURE_THREAD_SWITCH               (0x40)
 
-/* LSB - Second Byte     */
+/* LSB - Second Byte */
 #define CFG_FEATURE_OTA_REBOOT                  (0x20)
 
 #define CONN_L(x) ((int)((x)/0.625f))
@@ -220,7 +230,7 @@
  *  1 : internal RO
  *  0 : external crystal ( no calibration )
  */
-#define CFG_BLE_LSE_SOURCE  1
+#define CFG_BLE_LSE_SOURCE  0
 
 /**
  * Start up time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 us (~2.44 us)
@@ -417,7 +427,6 @@ typedef enum
  * Enable or Disable traces in application
  */
 #define CFG_DEBUG_APP_TRACE     0
-
 #if (CFG_DEBUG_APP_TRACE != 0)
 #define APP_DBG_MSG                 PRINT_MESG_DBG
 #else
@@ -435,7 +444,6 @@ typedef enum
 #define CFG_LPM_SUPPORTED         0
 #define CFG_DEBUGGER_SUPPORTED      1
 #endif
-
 /**
  * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
  * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
@@ -537,6 +545,9 @@ typedef enum
 {
     CFG_LPM_APP,
     CFG_LPM_APP_BLE,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
+
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
 
 /******************************************************************************

@@ -18,11 +18,14 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+
 #include "hal_common.h"
 #include "types.h"
 #include "sensors.h"
+#include "light_lc.h"
 #include "appli_sensor.h"
 #include "mesh_cfg.h"
+//#include "LPS25HB.h"
 #include "string.h"
 #include "common.h"
 #include "math.h"
@@ -37,72 +40,51 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-
-MODEL_Property_IDTableParam_t Property_ID_Table[NUMBER_OF_SENSOR] = {
-  {TEMPERATURE_PID},
-  {PRESSURE_PID}
-};   
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-   
-/* Sensor Cadence set */
-
-typedef struct
+#if 0
+/**
+* @brief  PRESSURE init structure definition
+*/
+PRESSURE_InitTypeDef InitStructure =
 {
-  MOBLEUINT16 Prop_ID;
-  MOBLEUINT16 PositiveTolerance;
-  MOBLEUINT16 NegativeTolerance;
-  MOBLEUINT8 SamplingFunction;
-  MOBLEUINT8 MeasurementPeriod;
-  MOBLEUINT8 UpdateInterval; 
-}Appli_Sensor_DescriptorStatus_t; 
+  LPS25HB_ODR_1Hz,
+  LPS25HB_BDU_READ, 
+  LPS25HB_DIFF_ENABLE,  
+  LPS25HB_SPI_SIM_3W,  
+  LPS25HB_P_RES_AVG_32,
+  LPS25HB_T_RES_AVG_16 
+};
+#endif
+
+/* Application variables of sensor model definition */
+#ifdef ENABLE_SENSOR_MODEL_SERVER
 
 Appli_Sensor_DescriptorStatus_t Appli_Sensor_DescriptorStatus;
-
-/* Sensor Setting set */
-typedef struct 
-{
-  MOBLEUINT16 Property_ID; 
-  MOBLEUINT16 Sensor_Setting_ID; 
-  MOBLEUINT8 Sensor_Setting_Access;
-  MOBLEUINT16 Sensor_Setting_Value;
-}Appli_Sensor_SettingSet_t;
-
 Appli_Sensor_SettingSet_t Appli_Sensor_SettingSet;
-
-/* structure of flags used for publishing data */
-typedef struct 
-{
-  MOBLEBOOL CadenceDurationFlag ;
-  MOBLEBOOL DeltaDataFlag ;
-}PublishingDataFlag_t;
-
-/* structure for the cadence set */
-typedef struct 
-{
-  MOBLEUINT16 Property_ID; 
-  MOBLEUINT8 FastCadenceDevisor;
-  MOBLEUINT8 StatusTriggerType; 
-  MOBLEUINT8 triggerDeltaDown;
-  MOBLEUINT8 triggerDeltaUp;
-  MOBLEUINT8 StatusMinInterval;
-  float FastCadenceLow;
-  float FastCadenceHigh;
-}Sensor_CadenceSet_t;
-
-extern MOBLEUINT8 NumberOfElements;
-extern MOBLEUINT8 ProvisionFlag;
 
 /* By Default value used for cadence set for testing. */
 Sensor_CadenceSet_t Sensor_CadenceSet[NUMBER_OF_SENSOR] = {
                     {0x0071 , 0x2 , 2 , 2 ,2 ,0 ,0X05 , 0x64},
                     {0x2A6D , 0x2 , 1 , 1 , 1, 0, 0X258 , 0x3ED}
 };
+#endif
+
+MODEL_Property_IDTableParam_t Property_ID_Table[NUMBER_OF_SENSOR] = 
+{
+  {TEMPERATURE_PID},
+  {PRESSURE_PID}
+}; 
+MOBLEUINT8 Occupancy_Flag = MOBLE_FALSE;
+extern MOBLEUINT8 NumberOfElements;
+extern MOBLEUINT8 ProvisionFlag;
 
 /* Temperature and Pressure init structure*/ 
+#if 0
+ PRESSURE_DrvTypeDef* xLPS25HBDrv = &LPS25HBDrv; 
+#endif
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+#ifdef ENABLE_SENSOR_MODEL_SERVER
 
 /**
 * @brief  Appli_Sensor_Cadence_Set: This function is callback for Application
@@ -163,8 +145,6 @@ MOBLE_RESULT Appli_Sensor_Setting_Set(Sensor_SettingParam_t* pSensor_SettingPara
   return MOBLE_RESULT_SUCCESS;
 }
 
-
-#ifdef ENABLE_SENSOR_MODEL_SERVER
 /**
 * @brief  Appli_Sensor_Data_Status: This function is callback for Application
            when sensor get message is received
@@ -181,11 +161,11 @@ MOBLE_RESULT Appli_Sensor_Data_Status(MOBLEUINT8* sensor_Data , MOBLEUINT32* pLe
   MOBLEUINT32 pressureData = 0;
   MOBLEUINT8 data_Length = 0x03;
                                      
-/*
+#if 0
   LPS25HB_GetTemperature((float*)&temperatureData);
   
   LPS25HB_GetPressure((float*)&pressureData); 
-*/
+#endif
   
   result = Check_Property_ID(Property_ID_Table , prop_ID);
   
@@ -236,8 +216,8 @@ MOBLE_RESULT Appli_Sensor_Data_Status(MOBLEUINT8* sensor_Data , MOBLEUINT32* pLe
     /* No Comments */
   }
                                      
-  TRACE_M(TF_SENSOR,"the temperature reading from sender in hex 0x%08x \n\r ", temperatureData);
-  TRACE_M(TF_SENSOR,"the pressure reading from sender in hex 0x%08x \n\r", pressureData );  
+  TRACE_M(TF_SENSOR,"the temperature reading from sender in hex 0x%08lx \n\r ", temperatureData);
+  TRACE_M(TF_SENSOR,"the pressure reading from sender in hex 0x%08lx \n\r", pressureData );
       
   return MOBLE_RESULT_SUCCESS;
 }
@@ -252,33 +232,39 @@ when sensor descriptor get message is received
 */ 
 MOBLE_RESULT Appli_Sensor_Descriptor_Status(MOBLEUINT8* sensor_Descriptor , MOBLEUINT32* pLength)
 {
-  Appli_Sensor_DescriptorStatus_t Appli_Sensor_DescriptorStatus1[] = {{PRESSURE_PID,0x00,0x00,0x00,0x00,0x00},
-                                                                       {TEMPERATURE_PID,0x00,0x00,0x00,0x00,0x00}};
+  Appli_Sensor_DescriptorStatus_t Appli_Sensor_DescriptorStatus1[] = {{PRESSURE_PID,0xABC,0xDEF,0x03,0x04,0x05},
+                                                                       {TEMPERATURE_PID,0xc56,0xd78,0x06,0x07,0x08}};
+    MOBLEUINT32 tolerance;
+    tolerance = Appli_Sensor_DescriptorStatus1[0].NegativeTolerance;
+    tolerance = (tolerance << 12 ) | Appli_Sensor_DescriptorStatus1[0].PositiveTolerance;
   
   *(sensor_Descriptor) = Appli_Sensor_DescriptorStatus1[0].Prop_ID;
   *(sensor_Descriptor+1) = Appli_Sensor_DescriptorStatus1[0].Prop_ID >> 8;
-  *(sensor_Descriptor+2) = Appli_Sensor_DescriptorStatus1[0].PositiveTolerance;
-  *(sensor_Descriptor+3) = Appli_Sensor_DescriptorStatus1[0].PositiveTolerance >> 8;
-  *(sensor_Descriptor+4) = Appli_Sensor_DescriptorStatus1[0].NegativeTolerance;
-  *(sensor_Descriptor+5) = Appli_Sensor_DescriptorStatus1[0].NegativeTolerance >> 8;
-  *(sensor_Descriptor+6) = Appli_Sensor_DescriptorStatus1[0].SamplingFunction;
-  *(sensor_Descriptor+7) = Appli_Sensor_DescriptorStatus1[0].MeasurementPeriod;
-  *(sensor_Descriptor+8) = Appli_Sensor_DescriptorStatus1[0].UpdateInterval;
+  *(sensor_Descriptor+2) = tolerance;
+  *(sensor_Descriptor+3) = tolerance >> 8;
+  *(sensor_Descriptor+4) = tolerance >> 16;
+  *(sensor_Descriptor+5) = Appli_Sensor_DescriptorStatus1[0].SamplingFunction;
+  *(sensor_Descriptor+6) = Appli_Sensor_DescriptorStatus1[0].MeasurementPeriod;
+  *(sensor_Descriptor+7) = Appli_Sensor_DescriptorStatus1[0].UpdateInterval;
   
-  *(sensor_Descriptor+9) = Appli_Sensor_DescriptorStatus1[1].Prop_ID;
-  *(sensor_Descriptor+10) = Appli_Sensor_DescriptorStatus1[1].Prop_ID >> 8;
-  *(sensor_Descriptor+11) = Appli_Sensor_DescriptorStatus1[1].PositiveTolerance;
-  *(sensor_Descriptor+12) = Appli_Sensor_DescriptorStatus1[1].PositiveTolerance >> 8;
-  *(sensor_Descriptor+13) = Appli_Sensor_DescriptorStatus1[1].NegativeTolerance;
-  *(sensor_Descriptor+14) = Appli_Sensor_DescriptorStatus1[1].NegativeTolerance >> 8;
-  *(sensor_Descriptor+15) = Appli_Sensor_DescriptorStatus1[1].SamplingFunction;
-  *(sensor_Descriptor+16) = Appli_Sensor_DescriptorStatus1[1].MeasurementPeriod;
-  *(sensor_Descriptor+17) = Appli_Sensor_DescriptorStatus1[1].UpdateInterval;
+   tolerance = Appli_Sensor_DescriptorStatus1[1].NegativeTolerance;
+   tolerance = (tolerance << 12 ) | Appli_Sensor_DescriptorStatus1[1].PositiveTolerance ;
+    
+  *(sensor_Descriptor+8) = Appli_Sensor_DescriptorStatus1[1].Prop_ID;
+  *(sensor_Descriptor+9) = Appli_Sensor_DescriptorStatus1[1].Prop_ID >> 8;
+  *(sensor_Descriptor+10) = tolerance;
+  *(sensor_Descriptor+11) = tolerance >> 8;
+  *(sensor_Descriptor+12) = tolerance >> 16;
+  *(sensor_Descriptor+13) = Appli_Sensor_DescriptorStatus1[1].SamplingFunction;
+  *(sensor_Descriptor+14) = Appli_Sensor_DescriptorStatus1[1].MeasurementPeriod;
+  *(sensor_Descriptor+15) = Appli_Sensor_DescriptorStatus1[1].UpdateInterval;
   
   *pLength = 18;
   
   return MOBLE_RESULT_SUCCESS;
 }
+
+#endif
 
 /**
 * @brief  Sensor Process function
@@ -288,15 +274,60 @@ Function used for the Publishing, data monitoring..
 */ 
 void Sensor_Process(void)
 {
+  
+#ifdef ENABLE_SENSOR_PUBLICATION    
   float sensorValue[NUMBER_OF_SENSOR];
   if(ProvisionFlag == 1)
   {
     Read_Sensor_Data(&sensorValue[0]);
     Sensor_Publication_Process(&sensorValue[0], &Property_ID_Table[0]);
   }
+#endif
   
+/* Occupancy_Flag become True when ever sensor detect occupancy and get interrupt
+   and make flag True to run this routine.
+*/ 
+  if(Occupancy_Flag == MOBLE_TRUE) 
+  {
+    if(BLE_waitPeriod(CONTROLLER_WAIT_TIME))
+    {
+/* publishing the command for LC Light occupancy set message in the sensor status 
+   message .
+*/     
+      Sensor_LC_Light_Publish();  
+      Occupancy_Flag = MOBLE_FALSE;   
+    }  
+  }  
 }
 
+/**
+* @brief  Function check for the couupancy in the location and send the status
+  message with the ocuppancy value, when the interrupt is detected.
+* @param  void     
+* @retval void
+*/  
+void Sensor_LC_Light_Publish(void)
+{
+  MOBLE_ADDRESS publishAddress;
+  MOBLEUINT8 elementNumber;
+  MOBLEUINT8 occupancyData = 0x1;
+  MOBLEUINT8 sensor_Data[5];
+  
+  sensor_Data[1] = (MOBLEUINT8)(LIGHT_CONTROL_LIGHTNESS_ON_ID << 8);
+  sensor_Data[0] = (MOBLEUINT8)LIGHT_CONTROL_LIGHTNESS_ON_ID;
+  sensor_Data[2] = occupancyData;
+  
+  elementNumber = BLE_GetElementNumber();
+  publishAddress = BLEMesh_GetPublishAddress(elementNumber); 
+  
+  BLEMesh_SetRemoteData(publishAddress, 0,
+                        SENSOR_STATUS , 
+                        sensor_Data,3,
+                        MOBLE_FALSE, MOBLE_FALSE);
+   
+}
+
+#if defined ENABLE_SENSOR_PUBLICATION && defined ENABLE_SENSOR_MODEL_SERVER
 /**
 * @brief  Function read the particular sensor value which are called inside.
 * @param  pSensorValue: pointer to the sensor data array.       
@@ -304,13 +335,13 @@ void Sensor_Process(void)
 */ 
 void Read_Sensor_Data(float *pSensorValue)
 {
-  /*
+#if 0
   float temp,press;
-    LPS25HB_GetTemperature(&temp);
-    pSensorValue[0] = temp;
-    LPS25HB_GetPressure(&press); 
-    pSensorValue[1] = press;
-  */
+  LPS25HB_GetTemperature(&temp);
+  pSensorValue[0] = temp;
+  LPS25HB_GetPressure(&press); 
+  pSensorValue[1] = press;
+#endif
 }
 
 /**
@@ -355,7 +386,9 @@ void Sensor_Publication_Process(float* pSensorData, MODEL_Property_IDTableParam_
       if((pSensorData[sensor_Count] >= (previousDataValue[sensor_Count] + Sensor_CadenceSet[sensor_Count].triggerDeltaUp)) ||
          (pSensorData[sensor_Count] <= (previousDataValue[sensor_Count] - Sensor_CadenceSet[sensor_Count].triggerDeltaDown)))
       {        
-        SensorDataPublish((MOBLEUINT32*)&pSensorData[sensor_Count] , &pProp_ID[sensor_Count].Property_ID);
+    MOBLEUINT16 prop_id = pProp_ID[sensor_Count].Property_ID;
+    
+    SensorDataPublish((MOBLEUINT32*)&pSensorData[sensor_Count] , &prop_id);
         
         PublishingDataFlag[sensor_Count].DeltaDataFlag = MOBLE_FALSE;
         TRACE_M(TF_SENSOR,"previous value data %.3f \r\n",previousDataValue[sensor_Count]);
@@ -377,7 +410,9 @@ void Sensor_Publication_Process(float* pSensorData, MODEL_Property_IDTableParam_
         
         if(((Clock_Time()- cadenceDurationTick[sensor_Count]) >= publishTime))
         {                   
-          SensorDataPublish((MOBLEUINT32*)&pSensorData[sensor_Count] , &pProp_ID[sensor_Count].Property_ID);                 
+      MOBLEUINT16 prop_id = pProp_ID[sensor_Count].Property_ID;
+    
+      SensorDataPublish((MOBLEUINT32*)&pSensorData[sensor_Count] , &prop_id);                 
           PublishingDataFlag[sensor_Count].CadenceDurationFlag = MOBLE_FALSE;           
           TRACE_M(TF_SENSOR,"Cadence publication of data %.2f \r\n",*((float*)&pSensorData[sensor_Count])); 
           sensor_Count++;
@@ -389,7 +424,9 @@ void Sensor_Publication_Process(float* pSensorData, MODEL_Property_IDTableParam_
         
         if(((Clock_Time()- cadenceDurationTick[sensor_Count]) >= SENSOR_PUBLISH_PERIOD))
         {            
-          SensorDataPublish((MOBLEUINT32*)&pSensorData[sensor_Count] , &pProp_ID[sensor_Count].Property_ID);
+      MOBLEUINT16 prop_id = pProp_ID[sensor_Count].Property_ID;
+    
+      SensorDataPublish((MOBLEUINT32*)&pSensorData[sensor_Count] , &prop_id);
           
           PublishingDataFlag[sensor_Count].CadenceDurationFlag = MOBLE_FALSE;                
           TRACE_M(TF_SENSOR,"Regular publication of data %.3f \r\n",*((float*)&pSensorData[sensor_Count]));
@@ -469,7 +506,9 @@ void SensorDataPublish(MOBLEUINT32 *pSensor_Value , MOBLEUINT16* pProp_ID)
   
 }
 
+#endif
 
+#ifdef ENABLE_SENSOR_MODEL_SERVER
 /**
 * @brief  Appli_Sensor_GetSettingStatus: This function is callback for Application
 when sensor setting numbers status message is to be provided
@@ -507,6 +546,15 @@ MOBLE_RESULT Appli_Sensor_GetSetting_IDStatus(MOBLEUINT8* pSetting_Status)
   return MOBLE_RESULT_SUCCESS; 
 }
 
+#endif
+
+/**
+* @brief  Check_Property_ID: This function is used for checking the Property id 
+of sensor available in table.
+* @param  prop_ID_Table: address of the property id table array.
+* @param  prop_ID:received property id of sensor.
+* @retval MOBLE_RESULT
+*/
 MOBLE_RESULT Check_Property_ID(const MODEL_Property_IDTableParam_t prop_ID_Table[] 
                                , MOBLEUINT16 prop_ID)
 {
@@ -531,12 +579,12 @@ Application interface
 */ 
 MOBLE_RESULT Appli_Sensor_Init(void)                                        
 {
-  //LPS25HB_Init(&InitStructure);
-   
+#if 0
+  LPS25HB_Init(&InitStructure);
+#endif   
   return MOBLE_RESULT_SUCCESS;
 }
 
-#endif
 
 /**
  * @}

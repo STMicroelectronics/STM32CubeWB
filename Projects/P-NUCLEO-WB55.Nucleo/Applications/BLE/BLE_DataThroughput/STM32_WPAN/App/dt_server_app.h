@@ -33,9 +33,9 @@ extern "C" {
   /* External variables --------------------------------------------------------*/
   /* Exported macros -----------------------------------------------------------*/
   /* Exported functions ------------------------------------------------------- */
-  void DT_Server_App_Init( void );
-  void DT_Server_App_Key_Button_Action( void );
-  void Delay_StartDataReq( void);
+  void DTS_App_Init(void);
+  void DTS_App_KeyButtonAction(void);
+  void DTS_App_TxPoolAvailableNotification(void);
 
 
 #ifdef __cplusplus

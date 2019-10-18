@@ -216,18 +216,6 @@ static void SystemClock_Config( void )
    */
   LL_RCC_SetRFWKPClockSource(LL_RCC_RFWKP_CLKSOURCE_LSE);
 
-  /**
-   * Switch OFF LSI
-   */
-  LL_RCC_LSI1_Disable();
-
-  /**
-   * Set RNG on HSI48
-   */
-  LL_RCC_HSI48_Enable();
-  while(!LL_RCC_HSI48_IsReady());
-  LL_RCC_SetCLK48ClockSource(LL_RCC_CLK48_CLKSOURCE_HSI48);
-
   return;
 }
 

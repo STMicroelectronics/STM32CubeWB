@@ -41,6 +41,11 @@
 #define DATA "HELLO COORDINATOR\0"
 
 /* Private function prototypes -----------------------------------------------*/
+
+
+uint8_t xorSign( const char * pmessage, uint8_t message_len);
+
+
 static void APP_RFD_MAC_802_15_4_TraceError(char * pMess, uint32_t ErrCode);
 static void APP_RFD_MAC_802_15_4_Config(void);
 
@@ -207,10 +212,10 @@ void APP_RFD_MAC_802_15_4_SendData(const char * data)
   DataReq.ack_Tx =0x00;
   DataReq.GTS_Tx = FALSE;
   memcpy(&rfBuffer,data,strlen(data));
+  rfBuffer[strlen(data)] = xorSign(data,strlen(data));
   DataReq.msduPtr = (uint8_t*) rfBuffer;
-  DataReq.msdu_length = strlen(data);
+  DataReq.msdu_length = strlen(data)+1;
   DataReq.security_level = 0x00;
-
   MacStatus = MAC_MCPSDataReq( &DataReq );
   if ( MAC_SUCCESS != MacStatus ) {
     APP_DBG("RFD MAC - Data Req Fails\0");
@@ -221,11 +226,11 @@ void APP_RFD_MAC_802_15_4_SendData(const char * data)
   APP_DBG("RFD MAC APP - DATA CNF Received\0");
 }
 /**
- * @brief  Trace the error or the warning reported.
- * @param  ErrId :
- * @param  ErrCode
- * @retval None
- */
+  * @brief  Trace the error or the warning reported.
+  * @param  ErrId :
+  * @param  ErrCode
+  * @retval None
+  */
 
 void APP_RFD_MAC_802_15_4_Error(uint32_t ErrId, uint32_t ErrCode)
 {
@@ -285,13 +290,13 @@ static void APP_RFD_MAC_802_15_4_Config()
 }
 
 /**
- * @brief  Warn the user that an error has occurred.In this case,
- *         the LEDs on the Board will start blinking.
- *
- * @param  pMess  : Message associated to the error.
- * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
- * @retval None
- */
+  * @brief  Warn the user that an error has occurred.In this case,
+  *         the LEDs on the Board will start blinking.
+  *
+  * @param  pMess  : Message associated to the error.
+  * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
+  * @retval None
+  */
 static void APP_RFD_MAC_802_15_4_TraceError(char * pMess, uint32_t ErrCode)
 {
   APP_DBG(pMess);
@@ -331,6 +336,22 @@ static void APP_RFD_MAC_802_15_4_TraceError(char * pMess, uint32_t ErrCode)
  * @{
  */
 
+
+/**
+  * @brief  comptue simple xor signature of the data to transmit
+  *
+  * @param  pmessage   : Message to sign.
+  * @param  message_len: Message Len
+  * @retval Message Signature
+  */
+
+uint8_t xorSign( const char * pmessage, uint8_t message_len)
+{
+  uint8_t seed = 0x00;
+  for (uint8_t i=0x00;i<message_len;i++)
+    seed = (uint8_t)pmessage[i]^seed;
+  return seed; 
+}
 
 /**
  * @}

@@ -211,7 +211,7 @@ static void HrMeas( void )
    * is not sent if there is a pending one
    */
   UTIL_SEQ_SetTask( 1<<CFG_TASK_MEAS_REQ_ID, CFG_SCH_PRIO_0);
-  /* USER CODE BEGIN HrMeas */
+/* USER CODE BEGIN HrMeas */
 
 /* USER CODE END HrMeas */
 

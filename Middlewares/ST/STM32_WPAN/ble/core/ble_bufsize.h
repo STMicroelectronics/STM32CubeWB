@@ -102,7 +102,7 @@
  * - a part, that may be considered "fixed", i.e. independent from the above
  *   mentioned parameters.
 */
-#define BLE_FIXED_BUFFER_SIZE_BYTES(llo)  ((llo) ? 6068 : 6504)
+#define BLE_FIXED_BUFFER_SIZE_BYTES(llo)  ((llo) ? 6064 : 6504)
 
 /*
  * BLE_PER_LINK_SIZE_BYTES: additional memory size used per link

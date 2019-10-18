@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_gap_aci.h
  * @author  MCD Application Team
- * @date    23 May 2019
+ * @date    19 July 2019
  * @brief   Header file for STM32WB (gap_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -1016,14 +1016,14 @@ returned with the procedure code set to the corresponding procedure.
   * @param Procedure_Code GAP procedure bitmap.
   * Values:
   - 0x00: No events
-  - 0x01: LIMITED_DISCOVERY_PROC
-  - 0x02: GENERAL_DISCOVERY_PROC
-  - 0x04: NAME_DISCOVERY_PROC
-  - 0x08: AUTO_CONNECTION_ESTABLISHMENT_PROC
-  - 0x10: GENERAL_CONNECTION_ESTABLISHMENT_PROC
-  - 0x20: SELECTIVE_CONNECTION_ESTABLISHMENT_PROC
-  - 0x40: DIRECT_CONNECTION_ESTABLISHMENT_PROC
-  - 0x80: OBSERVATION_PROC
+  - 0x01: GAP_LIMITED_DISCOVERY_PROC
+  - 0x02: GAP_GENERAL_DISCOVERY_PROC
+  - 0x04: GAP_NAME_DISCOVERY_PROC
+  - 0x08: GAP_AUTO_CONNECTION_ESTABLISHMENT_PROC
+  - 0x10: GAP_GENERAL_CONNECTION_ESTABLISHMENT_PROC
+  - 0x20: GAP_SELECTIVE_CONNECTION_ESTABLISHMENT_PROC
+  - 0x40: GAP_DIRECT_CONNECTION_ESTABLISHMENT_PROC
+  - 0x80: GAP_OBSERVATION_PROC
   * @retval Value indicating success or error code.
 */
 tBleStatus aci_gap_terminate_gap_proc(uint8_t Procedure_Code);

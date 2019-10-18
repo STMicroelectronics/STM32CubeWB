@@ -38,10 +38,6 @@
 
 /* Private defines -----------------------------------------------------------*/
 #define APPBLE_GAP_DEVICE_NAME_LENGTH 7
-#define DEFAULT_TS_MEASUREMENT_INTERVAL   (1000000/CFG_TS_TICK_VAL)  /**< 1s */
-#define DELAY_FOR_PAIRING                 (2*DEFAULT_TS_MEASUREMENT_INTERVAL)
-#define DATA_START_STOP                   (1*DEFAULT_TS_MEASUREMENT_INTERVAL)
-#define DATA_STOP                         (1*DEFAULT_TS_MEASUREMENT_INTERVAL)
 #define LP_CONN_ADV_INTERVAL_MIN          (0x640) /**< 1s */
 #define LP_CONN_ADV_INTERVAL_MAX          (0xFA0) /**< 2.5s */
 #define FAST_CONN_ADV_INTERVAL_MIN  (0x20)  /**< 20ms */
@@ -57,18 +53,6 @@
 
 #define BD_ADDR_SIZE_LOCAL    6
 /* Private typedef -----------------------------------------------------------*/
-typedef enum
-{
-  BLE_APP_DCS_IDLE,
-  BLE_APP_DCS_FAST_ADV,
-  BLE_APP_DCS_LP_ADV,
-  BLE_APP_DCS_LP_CONNECTING,
-  BLE_APP_DCS_CONNECTED,
-  BLE_APP_DCS_CONNECTED_SERVER,
-  BLE_APP_DCS_CONNECTED_CLIENT
-
-} BLE_APP_Device_Connection_Status_t;
-
 /**
  * security parameters structure
  */
@@ -172,7 +156,7 @@ typedef struct _tBLEProfileGlobalContext
    * connection handle of the current active connection
    * When not in connection, the handle is set to 0xFFFF
    */
-  uint16_t connectionHandle[MAX_CONNECTION];
+  uint16_t connectionHandle;
 
   /**
    * length of the UUID list to be used while advertising
@@ -184,26 +168,24 @@ typedef struct _tBLEProfileGlobalContext
    */
   uint8_t advtServUUID[100];
 
-} tBLEProfileGlobalContext;
+} BleGlobalContext_t;
+
+enum
+{
+  NO_DEVICE_FOUND,
+  AT_LEAST_ONE_DEVICE_FOUND
+};
+
+typedef enum
+{
+  GAP_PROC_PAIRING,
+  GAP_PROC_SET_PHY,
+} GapProcId_t;
 
 typedef struct
 {
-  tBLEProfileGlobalContext DTContext_legacy;
-  DT_Gap_Gatt_State Connection_Status;
-  uint16_t connection_handle;
-  uint8_t Connection_mgr_timer_Id;
+  BleGlobalContext_t BleApplicationContext_legacy;
   uint8_t DeviceServerFound;
-  uint8_t PairingReq_Id;
-  uint8_t StartData_Id;
-  uint8_t StopData_Id;
-} DTContext_t;
-
-typedef struct
-{
-  tBLEProfileGlobalContext BleApplicationContext_legacy;
-  BLE_APP_Device_Connection_Status_t Device_Connection_Status[MAX_CONNECTION];
-  BLE_APP_Device_Connection_Status_t Device1_Connection_Status;
-  uint8_t Connection_mgr_timer_Id;
 } BleApplicationContext_t;
 
 /* Private macros ------------------------------------------------------------*/
@@ -223,17 +205,19 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
 
 /**
-*   Identity root key used to derive LTK and CSRK 
-*/
+ *   Identity root key used to derive LTK and CSRK
+ */
 static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
 
 /**
-* Encryption root key used to derive LTK and CSRK
-*/
+ * Encryption root key used to derive LTK and CSRK
+ */
 static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
 
-
+#if (CFG_BLE_PERIPHERAL != 0)
 static const char local_name[] = { AD_TYPE_COMPLETE_LOCAL_NAME, 'D', 'T', '_', 'S', 'E', 'R', 'V', 'E', 'R' };
+#endif
+
 uint8_t const manuf_data[22] = { 2, AD_TYPE_TX_POWER_LEVEL, 0x00 /* 0 dBm */, /* Trasmission Power */
     10, AD_TYPE_COMPLETE_LOCAL_NAME, 'D', 'T', '_', 'S', 'E', 'R', 'V', 'E', 'R', /* Complete Name */
     7, AD_TYPE_MANUFACTURER_SPECIFIC_DATA, 0x01/*SKD version */,
@@ -243,46 +227,54 @@ uint8_t const manuf_data[22] = { 2, AD_TYPE_TX_POWER_LEVEL, 0x00 /* 0 dBm */, /*
 };
 
 /* Global variables ----------------------------------------------------------*/
-BleApplicationContext_t BleApplicationContext;
+static BleApplicationContext_t BleApplicationContext;
 tBDAddr SERVER_REMOTE_BDADDR;
-DTContext_t DTContext;
 
 /* Private function prototypes -----------------------------------------------*/
-static void BLE_UserEvtRx( void * pPayload );
-static void BLE_StatusNot( HCI_TL_CmdStatus_t status );
-static void Ble_Tl_Init( void );
+static void BLE_UserEvtRx(void * pPayload);
+static void BLE_StatusNot(HCI_TL_CmdStatus_t status);
+static void Ble_Tl_Init(void);
 static void Ble_Hci_Gap_Gatt_Init(void);
-static const uint8_t* BleGetBdAddress( void );
-static void Connect_Request( void );
-static void Scan_Request( void );
-static void Adv_Request( void );
-void Delay_PairingReq( void );
+static const uint8_t* BleGetBdAddress(void);
+static void LinkConfiguration(void);
+
+#if (CFG_BLE_CENTRAL != 0)
+static void GapProcReq(GapProcId_t GapProcId);
+static void Connect_Request(void);
+static void Scan_Request(void);
+static void Connection_Update(void);
+#endif
+
+#if (CFG_BLE_PERIPHERAL != 0)
+static void Adv_Request(void);
+#endif
+
 
 /* Functions Definition ------------------------------------------------------*/
 void APP_BLE_Init( void )
 {
-	SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
-	  {
-		{{0,0,0}},                          /**< Header unused */
-	    {0,                                  /** pBleBufferAddress not used */
-	    0,                                  /** BleBufferSize not used */
-	    CFG_BLE_NUM_GATT_ATTRIBUTES,
-	    CFG_BLE_NUM_GATT_SERVICES,
-	    CFG_BLE_ATT_VALUE_ARRAY_SIZE,
-	    CFG_BLE_NUM_LINK,
-	    CFG_BLE_DATA_LENGTH_EXTENSION,
-	    CFG_BLE_PREPARE_WRITE_LIST_SIZE,
-	    CFG_BLE_MBLOCK_COUNT,
-	    CFG_BLE_MAX_ATT_MTU,
-	    CFG_BLE_SLAVE_SCA,
-	    CFG_BLE_MASTER_SCA,
-	    CFG_BLE_LSE_SOURCE,
-	    CFG_BLE_MAX_CONN_EVENT_LENGTH,
-	    CFG_BLE_HSE_STARTUP_TIME,
-	    CFG_BLE_VITERBI_MODE,
-	    CFG_BLE_LL_ONLY,
-	    0},
-	  };
+  SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
+      {
+          {{0,0,0}},                          /**< Header unused */
+          {0,                                  /** pBleBufferAddress not used */
+              0,                                  /** BleBufferSize not used */
+              CFG_BLE_NUM_GATT_ATTRIBUTES,
+              CFG_BLE_NUM_GATT_SERVICES,
+              CFG_BLE_ATT_VALUE_ARRAY_SIZE,
+              CFG_BLE_NUM_LINK,
+              CFG_BLE_DATA_LENGTH_EXTENSION,
+              CFG_BLE_PREPARE_WRITE_LIST_SIZE,
+              CFG_BLE_MBLOCK_COUNT,
+              CFG_BLE_MAX_ATT_MTU,
+              CFG_BLE_SLAVE_SCA,
+              CFG_BLE_MASTER_SCA,
+              CFG_BLE_LSE_SOURCE,
+              CFG_BLE_MAX_CONN_EVENT_LENGTH,
+              CFG_BLE_HSE_STARTUP_TIME,
+              CFG_BLE_VITERBI_MODE,
+              CFG_BLE_LL_ONLY,
+              0},
+      };
 
 
   /**
@@ -318,33 +310,35 @@ void APP_BLE_Init( void )
   /**
    * From here, all initialization are BLE application specific
    */
+#if(CFG_BLE_PERIPHERAL != 0)
   UTIL_SEQ_RegTask( 1<<CFG_TASK_START_ADV_ID, UTIL_SEQ_RFU, Adv_Request);
+#endif
+
+#if(CFG_BLE_CENTRAL != 0)
   UTIL_SEQ_RegTask( 1<<CFG_TASK_START_SCAN_ID, UTIL_SEQ_RFU, Scan_Request);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_1_ID, UTIL_SEQ_RFU, Connect_Request);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_UPDATE_ID, UTIL_SEQ_RFU, Connection_Update);
+#endif
 
-  /**
-   * Initialization of the BLE App Context
-   */
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_LINK_CONFIG_ID, UTIL_SEQ_RFU, LinkConfiguration);
 
-  DTContext.Connection_Status = DT_IDLE;
+  BleApplicationContext.DeviceServerFound = NO_DEVICE_FOUND;
 
   /**
    * Clear DataBase
    */
   aci_gap_clear_security_db();
 
-  DT_Client_App_Init();
+  DTC_App_Init();
 
-  DT_Server_App_Init();
+  DTS_App_Init();
 
-#ifdef BLE_PERIPHERAL
-
+#if(CFG_BLE_PERIPHERAL != 0)
   /* Start Advertise to be connected by P2P Client */
   UTIL_SEQ_SetTask(1 << CFG_TASK_START_ADV_ID, CFG_SCH_PRIO_0);
-
 #endif
-#ifdef BLE_CENTRAL
 
+#if(CFG_BLE_CENTRAL != 0)
   /* Start Scan to connect to DT server */
   UTIL_SEQ_SetTask(1<<CFG_TASK_START_SCAN_ID, CFG_SCH_PRIO_0);
 #endif
@@ -378,7 +372,7 @@ uint8_t APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen )
 
 void APP_BLE_Key_Button1_Action(void)
 {
-   DT_Server_App_Key_Button_Action();
+  DTS_App_KeyButtonAction();
 }
 
 void APP_BLE_Key_Button2_Action(void)
@@ -412,7 +406,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
   uint32_t srd_bd_addr[2];
-  uint16_t appearance[1] = { CFG_GAP_APPEARANCE }; /* Generic Heart Rate Sensor */
+  uint16_t appearance[1] = { CFG_GAP_APPEARANCE };
 
   /**
    * Initialize HCI layer
@@ -442,13 +436,13 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   /**
    * Write Identity root key used to derive LTK and CSRK 
    */
-    aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
-    
-   /**
+  aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
+
+  /**
    * Write Encryption root key used to derive LTK and CSRK
    */
-    aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
-  
+  aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
+
   /**
    * Set TX Power to 0dBm.
    */
@@ -464,11 +458,11 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    */
   role = 0;
 
-#if (BLE_CFG_PERIPHERAL == 1)
+#if (CFG_BLE_PERIPHERAL != 0)
   role |= GAP_PERIPHERAL_ROLE;
 #endif
 
-#if (BLE_CFG_CENTRAL == 1)
+#if (CFG_BLE_CENTRAL != 0)
   role |= GAP_CENTRAL_ROLE;
 #endif
 
@@ -532,12 +526,61 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   /**
    * Initialize whitelist
    */
-   if (BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode)
-   {
-     aci_gap_configure_whitelist();
-   }
+  if (BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode)
+  {
+    aci_gap_configure_whitelist();
+  }
 
 }
+
+static void LinkConfiguration(void)
+{
+  tBleStatus status;
+#if(CFG_BLE_CENTRAL != 0)
+  uint8_t tx_phy;
+  uint8_t rx_phy;
+#endif  
+
+  /**
+   * The client will start ATT configuration after the link is fully configured
+   * Setup PHY
+   * Setup Data Length
+   * Setup Pairing
+   */
+#if(((CFG_TX_PHY == 2) | (CFG_RX_PHY == 2)) && (CFG_BLE_CENTRAL != 0))
+  GapProcReq(GAP_PROC_SET_PHY);
+#endif
+
+#if(CFG_BLE_CENTRAL != 0)
+  APP_DBG_MSG("Reading_PHY\n");
+  status = hci_le_read_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,&tx_phy,&rx_phy);
+  if (status != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("Read phy cmd failure: 0x%x \n", status);
+  }
+  else
+  {
+    APP_DBG_MSG("TX PHY = %d\n", tx_phy);
+    APP_DBG_MSG("RX PHY = %d\n", rx_phy);
+  }
+#endif
+
+  APP_DBG_MSG("set data length \n");
+  status = hci_le_set_data_length(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,250,2112);
+  if (status != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("set data length command error \n");
+  }
+
+#if ((CFG_ENCRYPTION_ENABLE != 0) && (CFG_BLE_CENTRAL != 0))
+  GapProcReq(GAP_PROC_PAIRING);
+#endif
+
+  DTC_App_LinkReadyNotification(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
+
+  return;
+}
+
 
 SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 {
@@ -547,27 +590,17 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
   hci_le_phy_update_complete_event_rp0 *evt_le_phy_update_complete;
   evt_blue_aci * blue_evt;
   hci_event_pckt * event_pckt;
-  Connection_Context_t Notification;
-  uint16_t connection_handle;
   uint8_t event_type, event_data_size;
   int k = 0;
   uint8_t adtype, adlength;
   uint8_t *adv_report_data;
 
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
-  hci_disconnection_complete_event_rp0 *cc = (void *) event_pckt->data;
 
   switch (event_pckt->evt)
   {
     case EVT_DISCONN_COMPLETE:
-
-      if (cc->Connection_Handle == DTContext.connection_handle)
-      {
-        DTContext.Connection_Status = DT_IDLE;
-        APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_DISCONN_COMPLETE disconnection\n");
-        Notification.Evt_Opcode = DT_DISCONN_COMPLETE;
-        DT_App_Notification(&Notification);
-      }
+      APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_DISCONN_COMPLETE disconnection\n");
       break; /* EVT_DISCONN_COMPLETE */
 
     case EVT_LE_META_EVENT:
@@ -577,42 +610,37 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       switch (meta_evt->subevent)
       {
         case EVT_LE_PHY_UPDATE_COMPLETE:
-
-          APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE \n");
           evt_le_phy_update_complete = (hci_le_phy_update_complete_event_rp0*)meta_evt->data;
           if (evt_le_phy_update_complete->Status == 0)
           {
-            APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE, status ok \n");
-            Notification.Evt_Opcode = DT_SET_PHY;
-            DT_App_Notification(&Notification);
+            APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE, success \n");
           }
           else
           {
-            APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE, status nok \n");
+            APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE, failure %d \n", evt_le_phy_update_complete->Status);
           }
+
+          UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_GAP_PROC_COMPLETE);
           break;
+
         case EVT_LE_CONN_COMPLETE:
-          /**
-           * The connection is done, there is no need anymore to schedule the LP ADV
-           */
           connection_complete_event = (hci_le_connection_complete_event_rp0 *) meta_evt->data;
 
-          connection_handle = connection_complete_event->Connection_Handle;
-
-          DTContext.connection_handle = connection_handle;
-          Notification.Evt_Opcode = DT_CONNECTION_ESTABLISHED;
-          Notification.connection_handle = connection_complete_event->Connection_Handle;
-#ifdef BLE_PERIPHERAL
+          BleApplicationContext.BleApplicationContext_legacy.connectionHandle = connection_complete_event->Connection_Handle;
+#if(CFG_BLE_PERIPHERAL != 0)
           APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_LE_CONN_COMPLETE connection as slave\n");
 #endif
 
-#ifdef BLE_CENTRAL   
+#if(CFG_BLE_CENTRAL != 0)
           APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_LE_CONN_COMPLETE connection as master\n");
-          HW_TS_Stop(BleApplicationContext.Connection_mgr_timer_Id);          
 #endif
-          DT_App_Notification(&Notification);
+          UTIL_SEQ_SetTask(1 << CFG_TASK_LINK_CONFIG_ID, CFG_SCH_PRIO_0);
           break; /* HCI_EVT_LE_CONN_COMPLETE */
 
+        case EVT_LE_CONN_UPDATE_COMPLETE:
+          APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_LE_CONN_UPDATE_COMPLETE \n");                  
+          break;
+          
         case EVT_LE_ADVERTISING_REPORT:
 
           le_advertising_event = (hci_le_advertising_report_event_rp0 *) meta_evt->data;
@@ -620,29 +648,28 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           event_type = le_advertising_event->Advertising_Report[0].Event_Type;
 
           event_data_size = le_advertising_event->Advertising_Report[0].Length_Data;
-          
+
           adv_report_data = (uint8_t*)(&le_advertising_event->Advertising_Report[0].Length_Data) + 1;
           k = 0;
 
-          /* search AD TYPE 0x09 (Complete Local Name) */
-          /* search AD Type 0x02 (16 bits UUIDS) */
+          /* search AD TYPE AD_TYPE_COMPLETE_LOCAL_NAME (Complete Local Name) */
+          /* search AD Type AD_TYPE_16_BIT_SERV_UUID (16 bits UUIDS) */
           if (event_type == ADV_IND)
           {
-
             /*ISOLATION OF BD ADDRESS AND LOCAL NAME*/
-
             while(k < event_data_size)
             {
               adlength = adv_report_data[k];
               adtype = adv_report_data[k + 1];
               switch (adtype)
               {
-                case 0x01: /* now get flags */
+                case AD_TYPE_FLAGS: /* now get flags */
                   break;
 
-                case 0x0A: /* Tx power level */
+                case AD_TYPE_TX_POWER_LEVEL: /* Tx power level */
                   break;
-                case 0xFF: /* Manufacturer Specific */
+
+                case AD_TYPE_MANUFACTURER_SPECIFIC_DATA: /* Manufacturer Specific */
                   if (adlength >= 7 && adv_report_data[k + 2] == 0x01)
                   { /* ST VERSION ID 01 */
                     APP_DBG_MSG("--- ST MANUFACTURER ID --- \n");
@@ -650,13 +677,16 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
                     {   /* Demo ID */
                       case CFG_DEV_ID_PERIPH_SERVER:   /* (Periph Server DT) */
                         APP_DBG_MSG("-- SERVER DETECTED -- VIA MAN ID\n");
-                        DTContext.DeviceServerFound = 0x01;
+                        BleApplicationContext.DeviceServerFound = AT_LEAST_ONE_DEVICE_FOUND;
                         SERVER_REMOTE_BDADDR[0] = le_advertising_event->Advertising_Report[0].Address[0];
                         SERVER_REMOTE_BDADDR[1] = le_advertising_event->Advertising_Report[0].Address[1];
                         SERVER_REMOTE_BDADDR[2] = le_advertising_event->Advertising_Report[0].Address[2];
                         SERVER_REMOTE_BDADDR[3] = le_advertising_event->Advertising_Report[0].Address[3];
                         SERVER_REMOTE_BDADDR[4] = le_advertising_event->Advertising_Report[0].Address[4];
                         SERVER_REMOTE_BDADDR[5] = le_advertising_event->Advertising_Report[0].Address[5];
+
+                        /* The device has been found - scan may be stopped */
+                        aci_gap_terminate_gap_proc(GAP_GENERAL_DISCOVERY_PROC);
                         break;
 
                       default:
@@ -664,11 +694,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
                     }
                   }
                   break;
-                case 0x16: /* service data 16 bits */
+
+                case AD_TYPE_SERVICE_DATA: /* service data 16 bits */
                   break;
+
                 default:
                   break;
-              } /* end switch data_RSSI[k+adlength] */
+              } /* end switch adtype */
               k += adlength + 1;
             } /* end while */
 
@@ -690,34 +722,45 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         {
           aci_gap_proc_complete_event_rp0 *gap_evt_proc_complete = (void*) blue_evt->data;
           /* CHECK GAP GENERAL DISCOVERY PROCEDURE COMPLETED & SUCCEED */
-          if (gap_evt_proc_complete->Procedure_Code == GAP_GENERAL_DISCOVERY_PROC
-              && gap_evt_proc_complete->Status == 0x00)
+          if (gap_evt_proc_complete->Procedure_Code == GAP_GENERAL_DISCOVERY_PROC)
           {
-            BSP_LED_Off(LED_BLUE);
-            APP_DBG_MSG("-- GAP GENERAL DISCOVERY PROCEDURE_COMPLETED\n");
-
-            /*if a device found, connect to it, device 1 being chosen first if both found*/
-            if (DTContext.DeviceServerFound == 0x01 && DTContext.Connection_Status != DT_CONNECTED)
+            if( gap_evt_proc_complete->Status != BLE_STATUS_SUCCESS )
             {
-              UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
+              APP_DBG_MSG("-- GAP GENERAL DISCOVERY PROCEDURE FAILED\n");
+            }
+            else
+            {
+              BSP_LED_Off(LED_BLUE);
+
+              /*if a device found, connect to it, device 1 being chosen first if both found*/
+              if (BleApplicationContext.DeviceServerFound != NO_DEVICE_FOUND)
+              {
+                APP_DBG_MSG("-- GAP GENERAL DISCOVERY PROCEDURE COMPLETED\n");
+                UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
+              }
+              else
+              {
+                APP_DBG_MSG("-- GAP GENERAL DISCOVERY PROCEDURE COMPLETED WITH NO DEVICE FOUND\n");
+              }
             }
           }
         }
         break; /* EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+
         case EVT_BLUE_GAP_PAIRING_CMPLT:
-        {
           APP_DBG_MSG("Pairing complete \n");
-          Notification.Evt_Opcode = DT_PAIRING_COMPLETE;
-          DT_App_Notification(&Notification);
-        }
-        break;
+          UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_GAP_PROC_COMPLETE);
+          break;
+
         case EVT_BLUE_GAP_PASS_KEY_REQUEST:
-        {
-          APP_DBG_MSG("passkey request\n");
-          Notification.Evt_Opcode = DT_PASSKEY_REQ_EVT;
-          DT_App_Notification(&Notification);
-        }
+          APP_DBG_MSG("respond to the passkey request\n");
+          aci_gap_pass_key_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 0x00001234);
         break;
+
+        case EVT_BLUE_GATT_TX_POOL_AVAILABLE:
+          DTS_App_TxPoolAvailableNotification();
+          break;
+
         default:
           break;
       }
@@ -769,6 +812,139 @@ const uint8_t* BleGetBdAddress( void )
   return bd_addr;
 }
 
+#if (CFG_BLE_CENTRAL != 0)
+static void GapProcReq(GapProcId_t GapProcId)
+{
+  tBleStatus status;
+
+  switch(GapProcId)
+  {
+    case GAP_PROC_PAIRING:
+      APP_DBG_MSG("sending pairing req \n");
+
+      status = aci_gap_send_pairing_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, FORCE_REBOND);
+      if (status != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("pairing cmd failure: 0x%x\n", status);
+      }
+      UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GAP_PROC_COMPLETE);
+
+      APP_DBG_MSG("GAP_PROC_PAIRING complete event received\n");
+      break;
+
+    case GAP_PROC_SET_PHY:
+      APP_DBG_MSG("sending Set Phy req \n");
+
+      status = hci_le_set_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,CFG_ALL_PHYS,CFG_TX_PHY,CFG_RX_PHY,0);
+      if (status != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("Set Phy cmd failure: 0x%x\n", status);
+      }
+      UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GAP_PROC_COMPLETE);
+
+      APP_DBG_MSG("GAP_PROC_SET_PHY complete event received\n");
+      break;
+
+    default:
+      break;
+  }
+  return;
+}
+
+static void Scan_Request( void )
+{
+  tBleStatus result;
+
+  BSP_LED_On(LED_BLUE);
+  result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, PUBLIC_ADDR, 1);
+  if (result == BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG(" \r\n\r** START GENERAL DISCOVERY (SCAN) **  \r\n\r");
+  }
+  else
+  {
+    APP_DBG_MSG("-- BLE_App_Start_Limited_Disc_Req, Failed \r\n\r");
+    BSP_LED_On(LED_RED);
+  }
+
+  return;
+}
+
+static void Connect_Request( void )
+{
+  tBleStatus result;
+  APP_DBG_MSG("\r\n\r** CREATE CONNECTION TO SERVER **  \r\n\r");
+
+  result = aci_gap_create_connection(SCAN_P,
+                                     SCAN_L,
+                                     PUBLIC_ADDR, SERVER_REMOTE_BDADDR,
+                                     PUBLIC_ADDR,
+                                     CONN_P1_7_5, //CONN_P1_400,
+                                     CONN_P2_7_5, //CONN_P2_400,
+                                     0, 0x3e8, 0x0000, 0x3E8);
+
+  if (result != BLE_STATUS_SUCCESS)
+  {
+    BSP_LED_On(LED_RED);
+  }
+
+  return;
+}
+
+static void Connection_Update( void )
+{
+  tBleStatus result;
+  APP_DBG_MSG("\r\n\r** CONNECTION UPDATE **  \r\n\r");
+
+  result = aci_gap_start_connection_update(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,
+                                           CONN_P1_400, 
+                                           CONN_P2_400, 
+                                           0, 0x3e8, 0x0000, 0x3E8);
+
+  if (result != BLE_STATUS_SUCCESS)
+  {
+    BSP_LED_On(LED_RED);
+  }
+}
+#endif
+
+#if (CFG_BLE_PERIPHERAL != 0)
+void Adv_Request( void )
+{
+  tBleStatus result;
+
+  result = aci_gap_set_discoverable(ADV_IND,
+                                    FAST_CONN_ADV_INTERVAL_MIN,
+                                    FAST_CONN_ADV_INTERVAL_MAX,
+                                    PUBLIC_ADDR,
+                                    NO_WHITE_LIST_USE, /* use white list */
+                                    sizeof(local_name), (uint8_t*) local_name, 0,
+                                    NULL,
+                                    6, 8);
+  if (result == BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  \r\n\r");APP_DBG_MSG("** START ADVERTISING **  \r\n\r");
+  }
+  else
+  {
+    APP_DBG_MSG("** START ADVERTISING **  Failed \r\n\r");
+  }
+
+  /* Send Advertising data */
+  result = aci_gap_update_adv_data(22, (uint8_t*) manuf_data);
+
+  if (result == BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  \r\n\r");APP_DBG_MSG("** add ADV data **  \r\n\r");
+  }
+  else
+  {
+    APP_DBG_MSG("** add ADV data **  Failed \r\n\r");
+  }
+  return;
+}
+#endif
+
 /*************************************************************
  *
  * WRAP FUNCTIONS
@@ -797,7 +973,7 @@ static void BLE_UserEvtRx( void * pPayload )
   SVCCTL_UserEvtFlowStatus_t svctl_return_status;
   tHCI_UserEvtRxParam *pParam;
 
-  pParam = (tHCI_UserEvtRxParam *)pPayload; 
+  pParam = (tHCI_UserEvtRxParam *)pPayload;
 
   svctl_return_status = SVCCTL_UserEvtRx((void *)&(pParam->pckt->evtserial));
   if (svctl_return_status != SVCCTL_UserEvtFlowDisable)
@@ -847,217 +1023,9 @@ void SVCCTL_ResumeUserEventFlow( void )
   return;
 }
 
-void DT_App_Notification( Connection_Context_t *pNotification )
+void SVCCTL_InitCustomSvc( void )
 {
-  uint8_t TX_PHY;
-  uint8_t RX_PHY;
-#if defined(PHY_2M)
-  Connection_Context_t Notification;
-#endif
-  uint8_t status;
-
-  switch (pNotification->Evt_Opcode)
-  {
-    case DT_CONNECTION_ESTABLISHED:
-      DTContext.connection_handle = pNotification->connection_handle;
-
-#if (defined (ENCRYPTION_ON) && defined (BLE_CENTRAL)) 
-      aci_gap_send_pairing_req(DTContext.connection_handle, FORCE_REBOND);
-      APP_DBG_MSG("send pairing req \n");
-#elif BLE_CENTRAL        
-      aci_gatt_exchange_config(DTContext.connection_handle);
-#endif
-      break;
-
-    case DT_PAIRING_COMPLETE:
-#ifdef BLE_CENTRAL
-      aci_gatt_exchange_config(DTContext.connection_handle);
-#endif
-      break;
-
-    case DT_MTU_EXCHANGED:
-#if defined(PHY_2M)
-      Notification.Evt_Opcode = DT_READ_PHY;
-      DT_App_Notification(&Notification);
-#else
-
-      status = hci_le_set_data_length(DTContext.connection_handle,250,2112);
-      if (status == 0)
-      {
-        APP_DBG_MSG("set data length ok \n");
-        /* discover primary service */
-        aci_gatt_disc_all_primary_services(DTContext.connection_handle);
-      }
-
-#endif
-      break;
-
-    case DT_READ_PHY:
-      status = hci_le_read_phy(DTContext.connection_handle,&TX_PHY,&RX_PHY);
-      if (status == 0)
-      {
-        APP_DBG_MSG("Read_PHY success \n");
-        if ((TX_PHY == TX_1M) && (RX_PHY == RX_1M))
-        {
-          APP_DBG_MSG("Original config is 1M, correct \n");
-        }
-        else
-        {
-          APP_DBG_MSG("Original config not correct TX= %x, RX= %x \n", TX_PHY, RX_PHY);
-        }
-#ifdef BLE_CENTRAL
-        status = hci_le_set_phy(DTContext.connection_handle,ALL_PHYS_PREFERENCE,TX_2M_PREFERRED,RX_2M_PREFERRED,0);
-        if (status == 0)
-        {
-          APP_DBG_MSG("set PHY cmd ok\n");
-        }
-        else 
-        {
-          APP_DBG_MSG("set PHY cmd NOK\n");
-        }
-#endif
-      }
-      else
-      {
-        APP_DBG_MSG("Read config error \n");
-      }
-      break;
-
-    case DT_SET_PHY:
-      APP_DBG_MSG("Set_PHY success \n");
-      status = hci_le_read_phy(DTContext.connection_handle,&TX_PHY,&RX_PHY);
-      if (status == 0)
-      {
-        APP_DBG_MSG("Read_PHY success \n");
-        if ((TX_PHY == TX_2M) && (RX_PHY == RX_2M))
-        {
-          APP_DBG_MSG("Reconf param is 2M, correct \n"); 
-          status = hci_le_set_data_length(DTContext.connection_handle,250,2112);
-          if (status == 0)
-          {
-            APP_DBG_MSG("set data length ok \n");
-            aci_gatt_disc_all_primary_services(DTContext.connection_handle);
-          }
-        }
-        else
-        {
-          APP_DBG_MSG("Reconf param not correct TX= %d, RX= %d \n", TX_PHY, RX_PHY);
-        } 
-      }
-      else
-      {
-        APP_DBG_MSG("Read conf not succeess \n");
-      }
-      break;
-
-    case DT_PASSKEY_REQ_EVT:
-      APP_DBG_MSG("Passkey response \n");
-      aci_gap_pass_key_resp(DTContext.connection_handle, 0x00001234);
-      break;
-
-    case DT_DISCONN_COMPLETE:
-      APP_DBG_MSG("Disconnection \n");
-      break;
-
-    default:
-      break;
-
-  }
-  return;
-}/* end BLE_SVC_TimeServer_App_Notification() */
-
-void Delay_PairingReq( void )
-{
-  aci_gap_send_pairing_req(DTContext.connection_handle, FORCE_REBOND);
-  APP_DBG_MSG("send pairing req \n");
+  DTS_STM_Init();
 }
 
-void Scan_Request( void )
-{
-  tBleStatus result;
-  if (DTContext.Connection_Status != DT_CONNECTED)
-  {
-    BSP_LED_On(LED_BLUE);
-    result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, PUBLIC_ADDR, 1);
-    if (result == BLE_STATUS_SUCCESS)
-    {
-      APP_DBG_MSG(" \r\n\r** START GENERAL DISCOVERY (SCAN) **  \r\n\r");
-    }
-    else
-    {
-      APP_DBG_MSG("-- BLE_App_Start_Limited_Disc_Req, Failed \r\n\r");
-      BSP_LED_On(LED_RED);
-    }
-  }
-  return;
-}
-
-void Connect_Request( void )
-{
-  tBleStatus result;
-  APP_DBG_MSG("\r\n\r** CREATE CONNECTION TO SERVER **  \r\n\r");
-
-  if (DTContext.Connection_Status != DT_CONNECTED)
-  {
-    result = aci_gap_create_connection(SCAN_P,
-                                       SCAN_L,
-                                       PUBLIC_ADDR, SERVER_REMOTE_BDADDR,
-                                       PUBLIC_ADDR,
-                                       CONN_P1_400,
-                                       CONN_P2_400,
-                                       0, 0x3e8, 0x0000, 0x3E8);
-
-    if (result == BLE_STATUS_SUCCESS)
-    {
-      DTContext.Connection_Status = DT_CONNECTING;
-
-    }
-    else
-    {
-      BSP_LED_On(LED_RED);
-      DTContext.Connection_Status = DT_IDLE;
-
-    }
-  }
-
-  return;
-}
-void Adv_Request( void )
-{
-  if (DTContext.Connection_Status != DT_CONNECTED)
-  {
-    tBleStatus result = 0x00;
-
-    result = aci_gap_set_discoverable(ADV_IND,
-                                      FAST_CONN_ADV_INTERVAL_MIN,
-                                      FAST_CONN_ADV_INTERVAL_MAX,
-                                      PUBLIC_ADDR,
-                                      NO_WHITE_LIST_USE, /* use white list */
-                                      sizeof(local_name), (uint8_t*) local_name, 0,
-                                      NULL,
-                                      6, 8);
-    if (result == BLE_STATUS_SUCCESS)
-    {
-      APP_DBG_MSG("  \r\n\r");APP_DBG_MSG("** START ADVERTISING **  \r\n\r");
-    }
-    else
-    {
-      APP_DBG_MSG("** START ADVERTISING **  Failed \r\n\r");
-    }
-
-    /* Send Advertising data */
-    result = aci_gap_update_adv_data(22, (uint8_t*) manuf_data);
-
-    DTContext.Connection_Status = DT_ADV;
-    if (result == BLE_STATUS_SUCCESS)
-    {
-      APP_DBG_MSG("  \r\n\r");APP_DBG_MSG("** add ADV data **  \r\n\r");
-    }
-    else
-    {
-      APP_DBG_MSG("** add ADV data **  Failed \r\n\r");
-    }
-  }
-  return;
-}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
