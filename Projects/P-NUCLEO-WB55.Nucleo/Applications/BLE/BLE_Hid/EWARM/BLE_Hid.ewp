@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Production</name>
+        <name>BLE_Hid</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,15 +16,15 @@
                 <debug>0</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Production\Exe</state>
+                    <state>BLE_Hid\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Production\Obj</state>
+                    <state>BLE_Hid\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Production\List</state>
+                    <state>BLE_Hid\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -654,7 +654,7 @@
                 <option>
                     <name>OOCOutputFormat</name>
                     <version>3</version>
-                    <state>3</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCOutputOverride</name>
@@ -662,7 +662,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>stm32wb55rg_nucleo_BLE_Hid.bin</state>
+                    <state>BLE_Hid.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1054,9 +1054,6 @@
                 <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
             </file>
             <file>
@@ -1064,6 +1061,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\main.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
@@ -1144,12 +1144,6 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr_ex.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi_ex.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc.c</name>
             </file>
             <file>
@@ -1160,6 +1154,12 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi_ex.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart.c</name>
@@ -1233,10 +1233,10 @@
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl_if.c</name>

@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_gap_aci.h
  * @author  MCD Application Team
- * @date    19 July 2019
+ * @date    06 November 2019
  * @brief   Header file for STM32WB (gap_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -375,7 +375,8 @@ tBleStatus aci_gap_authorization_resp(uint16_t Connection_Handle,
 All the standard GAP characteristics will also be added:
 - Device Name
 - Appearance
-- Peripheral Preferred Connection Parameters (peripheral role only)
+- Peripheral Preferred Connection Parameters (peripheral role only).
+Note that if the Peripheral Preferred Connection Parameters characteristic is added, its handle is equal to the Appearance characteristic handle plus 2.
   * @param Role Bitmap of allowed roles.
   * Flags:
   - 0x01: Peripheral
@@ -531,8 +532,7 @@ tBleStatus aci_gap_set_event_mask(uint16_t GAP_Evt_Mask);
 
 /**
   * @brief Add addresses of bonded devices into the controller's whitelist.
-The command will return an error if there are no devices in the database or if it was  
-unable to add the device into the whitelist.
+The command returns an error if it was unable to add the bonded devices into the whitelist.
   * @retval Value indicating success or error code.
 */
 tBleStatus aci_gap_configure_whitelist(void);

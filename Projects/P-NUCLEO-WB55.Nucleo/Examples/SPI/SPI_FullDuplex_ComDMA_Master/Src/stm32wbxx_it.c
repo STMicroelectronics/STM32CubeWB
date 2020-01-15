@@ -59,15 +59,8 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern DMA_HandleTypeDef hdma_spi1_tx;
-  
-      
 extern DMA_HandleTypeDef hdma_spi1_rx;
-  
-      
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */

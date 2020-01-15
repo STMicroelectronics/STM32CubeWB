@@ -35,8 +35,7 @@
 extern "C" {
 #endif
 
-/* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352
- *  --> will be reattributed to MAC 802.15.4 */
+/* MAC command cmdcode range 0x280 .. 0x3DF = 352 */
 #define MAC_802_15_4_CMD_OPCODE_OFFSET 0x280
 
 #define MASK_CMD_CODE_OCF 0x3FF
@@ -56,26 +55,54 @@ typedef PACKED_STRUCT
   uint8_t   notPayload[1];
 }MAC_802_15_4_Notification_t;
 
+/** @defgroup STM32WB55_MAC_CORE STM32WBxx Proxy MAC 802.15.4 Core
+  * @brief           Proxy MAC module allows application to exchange in both ways MAC messages
+  *                  between Application and RF Cores.
+  *                  On application or network upper layer SAP-MAC primitive call, MAC request is
+  *                  interpreted by the Proxy MAC layer and sent to the RF-Core.<br>
+  *                  On RF-Core MAC notification, MAC messages are parsed and sent back to the upper
+  *                  user implemented layer using user defined callback.
+  *
+  * @{
+  */
 /* List of messages sent by the M4 to the M0 */
 typedef enum
 {
+  /*! MAC Message ID to request a MAC association */
   MSG_M4TOM0_MAC_MLME_ASSOCIATE_REQ=0x00,
+  /*! MAC Message ID to respond to a previously received MAC Association Indication */
   MSG_M4TOM0_MAC_MLME_ASSOCIATE_RES,
+  /*! MAC Message ID to request a MAC Disassociation */
   MSG_M4TOM0_MAC_MLME_DISASSOCIATE_REQ,
+  /*! MAC Message ID to retrieve PIB Attibute value */
   MSG_M4TOM0_MAC_MLME_GET_REQ,
+  /*! MAC Message ID to perform a GTS request*/
   MSG_M4TOM0_MAC_MLME_GTS_REQ,
+  /*! MAC Message ID to respond to a previously received MAC Orphan Indication */
   MSG_M4TOM0_MAC_MLME_ORPHAN_RES,
+  /*! MAC Message ID to perform a Reset request*/
   MSG_M4TOM0_MAC_MLME_RESET_REQ,
+  /*! MAC Message ID to perform a RX Enable request*/
   MSG_M4TOM0_MAC_MLME_RX_ENABLE_REQ,
+  /*! MAC Message ID to perform a RX Scan request*/
   MSG_M4TOM0_MAC_MLME_SCAN_REQ,
+  /*! MAC Message ID to setup a MAC/PHY attribute*/
   MSG_M4TOM0_MAC_MLME_SET_REQ,
+  /*! MAC Message ID to request a MAC Start*/
   MSG_M4TOM0_MAC_MLME_START_REQ,
+  /*! MAC Message ID to request a MAC Synchronization*/
   MSG_M4TOM0_MAC_MLME_SYNC_REQ,
+  /*! MAC Message ID to request a MAC Polling*/
   MSG_M4TOM0_MAC_MLME_POLL_REQ,
+  /*! MAC Message ID to request a Dynamic Preamble Selection*/
   MSG_M4TOM0_MAC_MLME_DPS_REQ,
+  /*! MAC Message ID to request a PHY respond with channel sounding information*/
   MSG_M4TOM0_MAC_MLME_SOUNDING_REQ,
+  /*! MAC Message ID to request a PHY respond with RMARKER offset*/
   MSG_M4TOM0_MAC_MLME_CALIBRATE_REQ,
+  /*! MAC Message ID to request a MAC data transfer to other device*/
   MSG_M4TOM0_MAC_MCPS_DATA_REQ,
+  /*! MAC Message ID to request a purge of the pending MSDU from Transaction Queue*/
   MSG_M4TOM0_MAC_MCPS_PURGE_REQ,
 } MAC_802_15_4_MsgIdM4ToM0_t;
 
@@ -109,6 +136,10 @@ typedef enum
   MSG_M0TOM4_MAC_MLME_POLL_IND
 } MAC_802_15_4_MsgIdM0ToM4_t;
 
+/**
+  * @}
+  */
+
 /* List of modes available for UART configuration */
 typedef enum
 {
@@ -123,6 +154,11 @@ typedef enum
   ERR_INTERFACE_WARNING = 2U
 } Error_Interface_Level_Enum_t;
 
+
+/** @addtogroup STM32WB55_MAC_CORE
+ *
+ */
+
 /**
   * @brief  This function is used to manage all the callbacks used by the
   *         MAC 802.15.4 interface.
@@ -134,6 +170,11 @@ typedef enum
   * @retval None
   */
 HAL_StatusTypeDef MAC_802_15_4_CallBack_Processing(void);
+
+/**
+  * @}
+  */
+
 
 #ifdef __cplusplus
 } /* extern "C" */

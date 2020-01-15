@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>BLE_HeartRate</name>
+        <name>BLE_HeartRate_ota</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,15 +16,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>BLE_HeartRate/Exe</state>
+                    <state>BLE_HeartRate_ota/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>BLE_HeartRate/Obj</state>
+                    <state>BLE_HeartRate_ota/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>BLE_HeartRate/List</state>
+                    <state>BLE_HeartRate_ota/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -713,7 +713,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>BLE_HeartRate.out</state>
+                    <state>BLE_HeartRate_ota.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>

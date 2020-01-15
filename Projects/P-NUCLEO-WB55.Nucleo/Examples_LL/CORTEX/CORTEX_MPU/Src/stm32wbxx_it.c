@@ -24,7 +24,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32wbxx_it.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -61,6 +60,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+
 /* USER CODE BEGIN EV */
 
 extern uint32_t accessPermitted;
@@ -70,7 +70,6 @@ extern uint32_t accessPermitted;
 /******************************************************************************/
 /*           Cortex Processor Interruption and Exception Handlers          */ 
 /******************************************************************************/
-
 /**
   * @brief This function handles Non maskable interrupt.
   */

@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>ble_multi_app_at</TargetName>
+      <TargetName>BLE_MultiAppAt</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
@@ -48,8 +48,8 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>ble_multi_app_at\Exe\</OutputDirectory>
-          <OutputName>ble_multi_app_at</OutputName>
+          <OutputDirectory>BLE_MultiAppAt\Exe\</OutputDirectory>
+          <OutputName>BLE_MultiAppAt</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -298,8 +298,8 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x40000</Size>
+                <StartAddress>0x20000004</StartAddress>
+                <Size>0x2fffc</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>

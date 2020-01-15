@@ -91,13 +91,16 @@ void shci_user_evt_proc(void)
   {
     LST_remove_head ( &SHciAsynchEventQueue, (tListNode **)&phcievtbuffer );
 
-    SHCI_TL_UserEventFlow = SHCI_TL_UserEventFlow_Enable;
-
     if (shciContext.UserEvtRx != NULL)
     {
       UserEvtRxParam.pckt = phcievtbuffer;
+      UserEvtRxParam.status = SHCI_TL_UserEventFlow_Enable;
       shciContext.UserEvtRx((void *)&UserEvtRxParam);
       SHCI_TL_UserEventFlow = UserEvtRxParam.status;
+    }
+    else
+    {
+      SHCI_TL_UserEventFlow = SHCI_TL_UserEventFlow_Enable;
     }
 
     if(SHCI_TL_UserEventFlow != SHCI_TL_UserEventFlow_Disable)
@@ -209,6 +212,7 @@ static void Cmd_SetStatus(SHCI_TL_CmdStatus_t shcicmdstatus)
 
 static void TlCmdEvtReceived(TL_EvtPacket_t *shcievt)
 {
+  (void)(shcievt);
   shci_cmd_resp_release(0); /**< Notify the application the Cmd response has been received */
 
   return;

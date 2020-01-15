@@ -34,9 +34,15 @@
 #include "tl_mac_802_15_4.h"
 
 
-/** @defgroup CORE MAC 802.15.4 Core & Utils
-  *   @brief Provides  functions to handle MAC Confirmation and notification from
-  *          RfCore, calling decalred and defined MAC user callbacks.
+/** @defgroup STM32WB55_MAC STM32WBxx MAC 802.15.4 API
+  * @brief Provides MAC 802.15.4 functionalities to address MAC primitives accessed through
+  *                  MLME-SAP and MCPS-SAP.<br>
+  *                  Once RF-Core is initialized, Zigbee or proprietary network layer address RF-Core
+  *                  using MLME or MCPS SAP primitives.<br>
+  *                  On completion or on MAC-RF event, RF-Core sends back notification (ie.: MAC confirmation or MAC indication)
+  *                  to the running application.<br>
+  *                  Zigbee or proprietary network layer is notified (MAC_802_15_4_CallBack_Processing(void)) by the corresponding user defined callback call
+  *                  that has been previously initialized in MAC_callbacks_t macCbConfig.<br>
   * @{
   */
 
@@ -47,9 +53,12 @@
 extern MAC_callbacks_t macCbConfig;
 
 /**
+  * @}
+  */
+
+/**
  * @brief   This system function is used to set defined command ID in message between
  *          Application core and Rf core.
- *          Check STM32WBxx_SW_Architecture_and_Design.pdf for further information.
  *
  *
  * @param  None
@@ -59,24 +68,20 @@ extern MAC_callbacks_t macCbConfig;
 static void utils_mac_set_cmdCode(uint16_t cmdCode)
 {
   /* Set ID of the cmd in cmdcode field */
-  /* According to STM32WBxx_SW_Architecture_and_Design.pdf document opcode field is as following:
-   *
-   * opcode = OCF = bit 0 to 9   ->  MAC_802_15_4_CMD_OPCODE_OFFSET + ID of the Cmd
-   *          OGF = bit 10 to 15 ->  fixed to 0x3F for non BLE commands
-   *
-   */
+
   TL_CmdPacket_t* p_mac_cmd_req = MAC_802_15_4_GetCmdBuffer();
   p_mac_cmd_req->cmdserial.cmd.cmdcode = (0x3F << 9) | (MAC_802_15_4_CMD_OPCODE_OFFSET + cmdCode);
 }
 
-
+/** @addtogroup STM32WB55_MAC_CORE
+ *
+ */
 
 /**
- * @brief  This function is used to manage all the callbacks used by the
- *         MAC 802.15.4 interface.
- *
- *         Important Note: This function must be called each time a message
- *         is sent from the M0 to the M4.
+ * @brief  Handle MAC SAP's confirmations and indications coming from
+ *         RFCore's MAC layer.
+ *         On received RFCore Mac Message, calls upper layer user defined associated callbacks from MAC_callbacks_t macCbConfig .
+ *         Important Note: This method is called on every MAC message from RFCore.
  *
  * @param  None
  * @retval None
@@ -285,15 +290,13 @@ HAL_StatusTypeDef MAC_802_15_4_CallBack_Processing(void)
   */
 
 
-/** @defgroup STM32_MAC MAC 802.15.4 API
-  * @brief Provides  MAC 802.15.4 functions to address MAC primitives accessed through
-  *                  MLME-SAP and MCPS-SAP
+/** \addtogroup STM32WB55_MAC
   * @{
   */
 
 /**
  * @brief  This function is used to handle a MAC MLME Associate REQ as described
- *         in IEEE Std 802.15.4™-2011 standard.
+ *         in IEEE Std 802.15.4-2011 standard.
  *
  *
  * @param  MAC_associateReq_t ref
@@ -328,7 +331,7 @@ MAC_Status_t MAC_MLMEAssociateReq( const  MAC_associateReq_t * pAssociateReq )
 
 /**
  * @brief  This function is used to handle a MAC MLME Disassociate REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_disassociateReq_t ref
  * @retval MAC_Status_t
@@ -361,7 +364,7 @@ MAC_Status_t MAC_MLMEDisassociateReq( const  MAC_disassociateReq_t * pDisassioci
 
 /**
  * @brief  This function is used to handle a MAC MLME Get REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_getReq_t ref
  * @retval MAC_Status_t
@@ -394,7 +397,7 @@ MAC_Status_t MAC_MLMEGetReq( const  MAC_getReq_t * pGetReq )
 
 /**
  * @brief  This function is used to handle a MAC MLME GTS REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_gtsReq_t ref
  * @retval MAC_Status_t
@@ -427,7 +430,7 @@ MAC_Status_t MAC_MLMEGtsReq( const  MAC_gtsReq_t * pGtsReq )
 
 /**
  * @brief  This function is used to handle a MAC MLME Reset REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_resetReq_t ref
  * @retval MAC_Status_t
@@ -462,7 +465,7 @@ MAC_Status_t MAC_MLMEResetReq( const  MAC_resetReq_t * pResetReq )
 
 /**
  * @brief  This function is used to handle a MAC MLME Rx Enabled REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_rxEnableReq_t ref
  * @retval MAC_Status_t
@@ -496,7 +499,7 @@ MAC_Status_t MAC_MLMERxEnableReq( const  MAC_rxEnableReq_t * pRxEnableReq )
 
 /**
 * @brief  This function is used to handle a MAC MLME Scan REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_scanReq_t ref
  * @retval MAC_Status_t
@@ -529,7 +532,7 @@ MAC_Status_t MAC_MLMEScanReq( const  MAC_scanReq_t * pScanReq )
 
 /**
 * @brief  This function is used to handle a MAC MLME Set REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_setReq_t ref
  * @retval MAC_Status_t
@@ -562,7 +565,7 @@ MAC_Status_t MAC_MLMESetReq( const  MAC_setReq_t * pSetReq)
 
 /**
 * @brief  This function is used to handle a MAC MLME Start REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_startReq_t ref
  * @retval MAC_Status_t
@@ -595,7 +598,7 @@ MAC_Status_t MAC_MLMEStartReq( const  MAC_startReq_t * pStartReq)
 
 /**
 * @brief  This function is used to handle a MAC MLME Sync REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_syncReq_t ref
  * @retval MAC_Status_t
@@ -629,7 +632,7 @@ MAC_Status_t MAC_MLMESyncReq( const  MAC_syncReq_t * pSyncReq )
 
 /**
 * @brief  This function is used to handle a MAC MLME Poll REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  *
  * @param  MAC_pollReq_t ref
@@ -663,7 +666,7 @@ MAC_Status_t MAC_MLMEPollReq( const MAC_pollReq_t * pPollReq )
 
 /**
  * @brief  This function is used to handle a MAC MLME Dps REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_dpsReq_t ref
  * @retval MAC_Status_t
@@ -696,7 +699,7 @@ MAC_Status_t MAC_MLMEDpsReq( const MAC_dpsReq_t * pDpsReq)
 
 /**
  * @brief  This function is used to handle a MAC MLME Associate REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_soundingReq_t ref
  * @retval MAC_Status_t
@@ -729,7 +732,7 @@ MAC_Status_t MAC_MLMESoundingReq( const MAC_soundingReq_t * pSoundingReq)
 
 /**
  * @brief  This function is used to handle a MAC MLME Calibrate REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_calibrateReq_t ref
  * @retval MAC_Status_t
@@ -762,7 +765,7 @@ MAC_Status_t MAC_MLMECalibrateReq( const MAC_calibrateReq_t * pCalibrateReq)
 
 /**
  * @brief  This function is used to handle a MAC MCPS Data REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_dataReq_t ref
  * @retval MAC_Status_t
@@ -795,7 +798,7 @@ MAC_Status_t MAC_MCPSDataReq( const MAC_dataReq_t * pDataReq )
 
 /**
  * @brief  This function is used to handle a MAC MCPD Purge REQ as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_purgeReq_t ref
  * @retval MAC_Status_t
@@ -829,7 +832,7 @@ MAC_Status_t MAC_MCPSPurgeReq( const MAC_purgeReq_t * pPurgeReq )
 
 /**
  * @brief  This function is used to handle a MAC MLME Associate RES as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_associateRes_t ref
  * @retval MAC_Status_t
@@ -863,7 +866,7 @@ MAC_Status_t MAC_MLMEAssociateRes(const MAC_associateRes_t * pAssociateRes)
 
 /**
  * @brief  This function is used to handle a MAC MLME Orphan RES as described
- *         in IEEE Std 802.15.4™-2011 standard
+ *         in IEEE Std 802.15.4-2011 standard
  *
  * @param  MAC_orphanRes_t ref
  * @retval MAC_Status_t

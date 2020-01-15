@@ -59,10 +59,11 @@ extern "C" {
   void HW_IPCC_THREAD_CliEvtNot( void );
 
   void HW_IPCC_LLDTESTS_Init( void );
-  void HW_IPCC_LLDTESTS_CliSendCmd( void );
-  void HW_IPCC_LLDTESTS_EvtNot( void );
-  void HW_IPCC_LLDTESTS_CliSendAck( void );
-  void HW_IPCC_LLDTESTS_CliEvtNot( void );
+  void HW_IPCC_LLDTESTS_SendCliCmd( void );
+  void HW_IPCC_LLDTESTS_ReceiveCliRsp( void );
+  void HW_IPCC_LLDTESTS_SendCliRspAck( void );
+  void HW_IPCC_LLDTESTS_ReceiveM0Cmd( void );
+  void HW_IPCC_LLDTESTS_SendM0CmdAck( void );
 
   void HW_IPCC_TRACES_Init( void );
   void HW_IPCC_TRACES_EvtNot( void );

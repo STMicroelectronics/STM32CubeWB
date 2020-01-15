@@ -262,15 +262,15 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE */
 
         /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
-        break; /* EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+          break; /* EVT_BLUE_GAP_PROCEDURE_COMPLETE */
       }
       break; /* EVT_VENDOR */
 
-        default:
-        /* USER CODE BEGIN ECODE_DEFAULT*/
+      default:
+      /* USER CODE BEGIN ECODE_DEFAULT*/
 
-        /* USER CODE END ECODE_DEFAULT*/
-          break;
+      /* USER CODE END ECODE_DEFAULT*/
+        break;
   }
 
   return (SVCCTL_UserEvtFlowEnable);
@@ -308,7 +308,7 @@ static void Ble_Tl_Init( void )
   return;
 }
 
- static void Ble_Hci_Gap_Gatt_Init(void){
+static void Ble_Hci_Gap_Gatt_Init(void){
 
   uint8_t role;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
@@ -376,7 +376,7 @@ static void Ble_Tl_Init( void )
 
   if (role > 0)
   {
-    const char *name = "BLEcore";
+    const char *name = "BEACON";
     aci_gap_init(role, 0,
                  APPBLE_GAP_DEVICE_NAME_LENGTH,
                  &gap_service_handle, &gap_dev_name_char_handle, &gap_appearance_char_handle);

@@ -76,10 +76,18 @@ MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam,
   /* This condition is applicable when user want to on off the light with some default 
    * transition value, or optionalValid =IN_TRANSITION ,  transition is in progress.
    */
-  if((OptionalValid == DEFAULT_TRANSITION) || (OptionalValid == IN_TRANSITION))
+    if((OptionalValid == DEFAULT_TRANSITION) || (OptionalValid == IN_TRANSITION))
   {
     Appli_LightPwmValue.IntensityValue = AppliOnOffSet.Present_OnOffValue;
     Light_UpdateLedValue(LOAD_STATE ,Appli_LightPwmValue);
+    if(AppliOnOffSet.Present_OnOffValue > 16000)
+    {
+      BSP_LED_On(LED_BLUE);
+    }
+    else
+    {
+      BSP_LED_Off(LED_BLUE);
+    }
   }  
   else
   {
@@ -87,21 +95,14 @@ MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam,
     { 
       Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
       Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+      BSP_LED_On(LED_BLUE);
     }
     else
     {  
       Appli_LightPwmValue.IntensityValue = PWM_VALUE_OFF;
       Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);
+      BSP_LED_Off(LED_BLUE);
     } 
-  }
-
-  if(AppliOnOffSet.Present_OnOffValue > 16000)
-  {
-    BSP_LED_On(LED_BLUE);
-  }
-  else
-  {
-    BSP_LED_Off(LED_BLUE);
   }
 
   TRACE_M(TF_SERIAL_CTRL,"#8202%02hx!\n\r",AppliOnOffSet.Present_OnOff);

@@ -61,7 +61,7 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY   (0x04)
 
-#define CFG_IO_CAPABILITY             CFG_IO_CAPABILITY_DISPLAY_ONLY
+#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT
 
 /**
  * Define MITM modes
@@ -92,6 +92,7 @@
 
 /**< specific parameters */
 /*****************************************************/
+
 #define CFG_MAX_CONNECTION                8
 #define UUID_128BIT_FORMAT                1    
 
@@ -354,7 +355,7 @@
 
 typedef enum
 {
-    CFG_TIM_PROC_ID_ISR,
+  CFG_TIM_PROC_ID_ISR,
 } CFG_TimProcID_t;
 
 /******************************************************************************

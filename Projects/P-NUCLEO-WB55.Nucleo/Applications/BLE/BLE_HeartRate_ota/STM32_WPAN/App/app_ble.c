@@ -415,14 +415,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       {
         case EVT_LE_CONN_UPDATE_COMPLETE: 
           APP_DBG_MSG("\r\n\r** CONNECTION UPDATE EVENT WITH CLIENT \n");
-
           /* USER CODE BEGIN EVT_LE_CONN_UPDATE_COMPLETE */
 
           /* USER CODE END EVT_LE_CONN_UPDATE_COMPLETE */
           break;
         case EVT_LE_PHY_UPDATE_COMPLETE:
           APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE \n");
-
           evt_le_phy_update_complete = (hci_le_phy_update_complete_event_rp0*)meta_evt->data;
           if (evt_le_phy_update_complete->Status == 0)
           {

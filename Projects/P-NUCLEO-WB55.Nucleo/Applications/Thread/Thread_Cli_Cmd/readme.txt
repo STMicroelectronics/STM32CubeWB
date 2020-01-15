@@ -163,6 +163,8 @@ In order to make the program work, you must do the following:
  - Connect a second HyperTerminal as described below to get the traces (optional)
  - Run the example and use the HyperTerminal to interact with the Board via the Cli commands
 
+Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
+
 For the Cli control and for the traces, the UART must be configured as follows:
     - BaudRate = 115200 baud  
     - Word Length = 8 Bits 

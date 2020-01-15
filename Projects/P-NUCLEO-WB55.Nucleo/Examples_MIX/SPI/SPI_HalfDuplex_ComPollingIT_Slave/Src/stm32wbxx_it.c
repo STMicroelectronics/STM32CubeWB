@@ -58,9 +58,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern SPI_HandleTypeDef hspi1;
 /* USER CODE BEGIN EV */
 

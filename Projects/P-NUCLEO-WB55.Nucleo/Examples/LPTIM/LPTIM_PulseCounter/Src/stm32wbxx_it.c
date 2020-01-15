@@ -59,9 +59,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern LPTIM_HandleTypeDef hlptim1;
 /* USER CODE BEGIN EV */
 

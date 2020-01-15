@@ -166,6 +166,7 @@ In order to make the program work, you must do the following:
    and load your image into the target memory
  - Run the application 
 
+Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
 
   1)  Starting the application: 
    ============================

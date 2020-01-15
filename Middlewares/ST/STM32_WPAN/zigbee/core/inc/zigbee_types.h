@@ -22,6 +22,4 @@
 
 #include <stdint.h>
 
-#include "zigbee_config.h"
-
 #endif /* _ZIGBEE_TYPES_H_ */

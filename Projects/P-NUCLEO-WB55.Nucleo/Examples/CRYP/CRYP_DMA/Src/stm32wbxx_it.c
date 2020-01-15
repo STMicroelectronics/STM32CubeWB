@@ -59,15 +59,8 @@ extern CRYP_HandleTypeDef hcryp1;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern DMA_HandleTypeDef hdma_aes1_in;
-  
-      
 extern DMA_HandleTypeDef hdma_aes1_out;
-  
-      
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */

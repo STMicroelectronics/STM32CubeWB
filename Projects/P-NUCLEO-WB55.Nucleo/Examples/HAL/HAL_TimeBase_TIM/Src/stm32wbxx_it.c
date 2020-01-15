@@ -60,8 +60,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-  extern TIM_HandleTypeDef htim17;
+extern TIM_HandleTypeDef htim17;
 
 /* USER CODE BEGIN EV */
 

@@ -290,8 +290,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
 
-
-
   switch(event_pckt->evt)
   {
     case EVT_VENDOR:
@@ -331,7 +329,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           if(index < BLE_CFG_CLT_MAX_NBR_CB)
           {
             aP2PClientContext[index].connHandle= handle;
-
 
             numServ = (pr->Data_Length) / pr->Attribute_Data_Length;
 

@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_gatt_aci.h
  * @author  MCD Application Team
- * @date    14 June 2019
+ * @date    08 October 2019
  * @brief   Header file for STM32WB (gatt_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -269,6 +269,7 @@ tBleStatus aci_gatt_del_include_service(uint16_t Serv_Handle,
   - 0x00010000: ACI_GATT_PROC_COMPLETE_EVENT
   - 0x00020000: ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT
   - 0x00040000: ACI_GATT_TX_POOL_AVAILABLE_EVENT
+  - 0x00100000: ACI_GATT_READ_EXT_EVENT
   - 0x00200000: ACI_GATT_INDICATION_EXT_EVENT
   - 0x00400000: ACI_GATT_NOTIFICATION_EXT_EVENT
   * @retval Value indicating success or error code.
@@ -688,13 +689,12 @@ tBleStatus aci_gatt_read_char_desc(uint16_t Connection_Handle,
                                    uint16_t Attr_Handle);
 
 /**
-  * @brief Start the procedure to write a characteristic value without waiting for any response from the
-server. No events are generated after this command is executed.
+  * @brief Start the procedure to write a characteristic value without waiting for any response from the server. No events are generated after this command is executed. The length of the value to be written must not exceed (ATT_MTU - 3); it must also not exceed (BLE_EVT_MAX_PARAM_LEN - 5) i.e. 250 for BLE_EVT_MAX_PARAM_LEN default value.
   * @param Connection_Handle Connection handle for which the command is given.
   * Values:
   - 0x0000 ... 0x0EFF
   * @param Attr_Handle Handle of the characteristic value to be written
-  * @param Attribute_Val_Length Length of the value to be written (maximum value is ATT_MTU - 3)
+  * @param Attribute_Val_Length Length of the value to be written
   * @param Attribute_Val Value to be written
   * @retval Value indicating success or error code.
 */
@@ -706,12 +706,12 @@ tBleStatus aci_gatt_write_without_resp(uint16_t Connection_Handle,
 /**
   * @brief Start a signed write without response from the server.
 The procedure is used to write a characteristic value with an authentication signature without waiting
-for any response from the server. It cannot be used when the link is encrypted.
+for any response from the server. It cannot be used when the link is encrypted. The length of the value to be written must not exceed (ATT_MTU - 15); it must also not exceed (BLE_EVT_MAX_PARAM_LEN - 5) i.e. 250 for BLE_EVT_MAX_PARAM_LEN default value.
   * @param Connection_Handle Connection handle for which the command is given.
   * Values:
   - 0x0000 ... 0x0EFF
   * @param Attr_Handle Handle of the characteristic value to be written
-  * @param Attribute_Val_Length Length of the value to be written (up to ATT_MTU - 13)
+  * @param Attribute_Val_Length Length of the value to be written
   * @param Attribute_Val Value to be written
   * @retval Value indicating success or error code.
 */

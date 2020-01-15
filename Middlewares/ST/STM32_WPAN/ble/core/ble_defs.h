@@ -22,33 +22,87 @@
 
 /* ------------------------------------------------------------------------- */
 
+/* ACI vendor specific event codes */
+
+/* ACI GAP events */
+#define ACI_GAP_LIMITED_DISCOVERABLE_VSEVT_CODE        0x0400
+#define ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE            0x0401
+#define ACI_GAP_PASS_KEY_REQ_VSEVT_CODE                0x0402
+#define ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE           0x0403
+#define ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE    0x0404
+#define ACI_GAP_BOND_LOST_VSEVT_CODE                   0x0405
+#define ACI_GAP_PROC_COMPLETE_VSEVT_CODE               0x0407
+#define ACI_GAP_ADDR_NOT_RESOLVED_VSEVT_CODE           0x0408
+#define ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE    0x0409
+#define ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE       0x040A
+
+/* ACI GATT/ATT events */
+#define ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE          0x0C01
+#define ACI_GATT_PROC_TIMEOUT_VSEVT_CODE                0x0C02
+#define ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE            0x0C03
+#define ACI_ATT_FIND_INFO_RESP_VSEVT_CODE               0x0C04
+#define ACI_ATT_FIND_BY_TYPE_VALUE_RESP_VSEVT_CODE      0x0C05
+#define ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE            0x0C06
+#define ACI_ATT_READ_RESP_VSEVT_CODE                    0x0C07
+#define ACI_ATT_READ_BLOB_RESP_VSEVT_CODE               0x0C08
+#define ACI_ATT_READ_MULTIPLE_RESP_VSEVT_CODE           0x0C09
+#define ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE      0x0C0A
+#define ACI_ATT_PREPARE_WRITE_RESP_VSEVT_CODE           0x0C0C
+#define ACI_ATT_EXEC_WRITE_RESP_VSEVT_CODE              0x0C0D
+#define ACI_GATT_INDICATION_VSEVT_CODE                  0x0C0E
+#define ACI_GATT_NOTIFICATION_VSEVT_CODE                0x0C0F
+#define ACI_GATT_PROC_COMPLETE_VSEVT_CODE               0x0C10
+#define ACI_GATT_ERROR_RESP_VSEVT_CODE                  0x0C11
+#define ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_VSEVT_CODE 0x0C12
+#define ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE            0x0C13
+#define ACI_GATT_READ_PERMIT_REQ_VSEVT_CODE             0x0C14
+#define ACI_GATT_READ_MULTI_PERMIT_REQ_VSEVT_CODE       0x0C15
+#define ACI_GATT_TX_POOL_AVAILABLE_VSEVT_CODE           0x0C16
+#define ACI_GATT_SERVER_CONFIRMATION_VSEVT_CODE         0x0C17
+#define ACI_GATT_PREPARE_WRITE_PERMIT_REQ_VSEVT_CODE    0x0C18
+#define ACI_GATT_READ_EXT_VSEVT_CODE                    0x0C1D
+#define ACI_GATT_INDICATION_EXT_VSEVT_CODE              0x0C1E
+#define ACI_GATT_NOTIFICATION_EXT_VSEVT_CODE            0x0C1F
+
+/* ACI L2CAP events */
+#define ACI_L2CAP_CONNECTION_UPDATE_RESP_VSEVT_CODE     0x0800
+#define ACI_L2CAP_PROC_TIMEOUT_VSEVT_CODE               0x0801
+#define ACI_L2CAP_CONNECTION_UPDATE_REQ_VSEVT_CODE      0x0802
+#define ACI_L2CAP_COMMAND_REJECT_VSEVT_CODE             0x080A
+
+/* ACI HAL events */
+#define ACI_HAL_END_OF_RADIO_ACTIVITY_VSEVT_CODE        0x0004
+#define ACI_HAL_SCAN_REQ_REPORT_VSEVT_CODE              0x0005
+#define ACI_HAL_FW_ERROR_VSEVT_CODE                     0x0006
+
+
+/* ------------------------------------------------------------------------- */
 
 /* Status codes */
 #define BLE_STATUS_SUCCESS                          0x00
+#define BLE_STATUS_SEC_UNKNOWN_CONNECTION_ID        0x40
 #define BLE_STATUS_FAILED                           0x41
 #define BLE_STATUS_INVALID_PARAMS                   0x42
 #define BLE_STATUS_BUSY                             0x43
-#define BLE_STATUS_INVALID_LEN_PDU                  0x44
 #define BLE_STATUS_PENDING                          0x45
 #define BLE_STATUS_NOT_ALLOWED                      0x46
 #define BLE_STATUS_ERROR                            0x47
-#define BLE_STATUS_ADDR_NOT_RESOLVED                0x48
+#define BLE_STATUS_OUT_OF_MEMORY                    0x48
 #define BLE_STATUS_INVALID_CID                      0x50
-#define TIMER_NOT_VALID_LAYER                       0x54
-#define TIMER_INSUFFICIENT_RESOURCES                0x55
+#define BLE_STATUS_DEV_IN_BLACKLIST                 0x59
 #define BLE_STATUS_CSRK_NOT_FOUND                   0x5A
 #define BLE_STATUS_IRK_NOT_FOUND                    0x5B
 #define BLE_STATUS_DEV_NOT_FOUND_IN_DB              0x5C
 #define BLE_STATUS_SEC_DB_FULL                      0x5D
 #define BLE_STATUS_DEV_NOT_BONDED                   0x5E
-#define BLE_STATUS_DEV_IN_BLACKLIST                 0x5F
+#define BLE_STATUS_INSUFFICIENT_ENC_KEYSIZE         0x5F
 #define BLE_STATUS_INVALID_HANDLE                   0x60
-#define BLE_STATUS_INVALID_PARAMETER                0x61
-#define BLE_STATUS_OUT_OF_HANDLE                    0x62
-#define BLE_STATUS_INVALID_OPERATION                0x63
+#define BLE_STATUS_OUT_OF_HANDLE                    0x61
+#define BLE_STATUS_INVALID_OPERATION                0x62
+#define BLE_STATUS_CHARAC_ALREADY_EXISTS            0x63
 #define BLE_STATUS_INSUFFICIENT_RESOURCES           0x64
-#define BLE_INSUFFICIENT_ENC_KEYSIZE                0x65
-#define BLE_STATUS_CHARAC_ALREADY_EXISTS            0x66
+#define BLE_STATUS_SEC_PERMISSION_ERROR             0x65
+#define BLE_STATUS_ADDR_NOT_RESOLVED                0x70
 
 /* Returned when no valid slots are available
  * (e.g. when there are no available state machines).
@@ -84,8 +138,6 @@
  * Library Error Codes
  */
 #define BLE_STATUS_TIMEOUT                          0xFF
-#define BLE_STATUS_PROFILE_ALREADY_INITIALIZED      0xF0
-#define BLE_STATUS_NULL_PARAM                       0xF1 
 
 
 /* ------------------------------------------------------------------------- */
@@ -151,6 +203,60 @@
 #define FLAG_BIT_BR_EDR_NOT_SUPPORTED              0x04
 #define FLAG_BIT_LE_BR_EDR_CONTROLLER              0x08
 #define FLAG_BIT_LE_BR_EDR_HOST                    0x10
+
+
+/* Appearance values
+ */
+#define GAP_APPEARANCE_UNKNOWN                                 0x0000
+#define GAP_APPEARANCE_GENERIC_PHONE                           0x0040
+#define GAP_APPEARANCE_GENERIC_COMPUTER                        0x0080
+#define GAP_APPEARANCE_GENERIC_WATCH                           0x00C0
+#define GAP_APPEARANCE_WATCH_SPORT_WATCH                       0x00C1
+#define GAP_APPEARANCE_GENERIC_CLOCK                           0x0100
+#define GAP_APPEARANCE_GENERIC_DISPLAY                         0x0140
+#define GAP_APPEARANCE_GENERIC_REMOTE_CONTROL                  0x0180
+#define GAP_APPEARANCE_GENERIC_EYE_GLASSES                     0x01C0
+#define GAP_APPEARANCE_GENERIC_TAG                             0x0200
+#define GAP_APPEARANCE_GENERIC_KEYRING                         0x0240
+#define GAP_APPEARANCE_GENERIC_MEDIA_PLAYER                    0x0280
+#define GAP_APPEARANCE_GENERIC_BARCODE_SCANNER                 0x02C0
+#define GAP_APPEARANCE_GENERIC_THERMOMETER                     0x0300
+#define GAP_APPEARANCE_THERMOMETER_EAR                         0x0301
+#define GAP_APPEARANCE_GENERIC_HEART_RATE_SENSOR               0x0340
+#define GAP_APPEARANCE_HEART_RATE_SENSOR_HEART_RATE_BELT       0x0341
+#define GAP_APPEARANCE_GENERIC_BLOOD_PRESSURE                  0x0380
+#define GAP_APPEARANCE_BLOOD_PRESSURE_ARM                      0x0381
+#define GAP_APPEARANCE_BLOOD_PRESSURE_WRIST                    0x0382
+#define GAP_APPEARANCE_HUMAN_INTERFACE_DEVICE                  0x03C0
+#define GAP_APPEARANCE_KEYBOARD                                0x03C1
+#define GAP_APPEARANCE_MOUSE                                   0x03C2
+#define GAP_APPEARANCE_JOYSTICK                                0x03C3
+#define GAP_APPEARANCE_GAMEPAD                                 0x03C4
+#define GAP_APPEARANCE_DIGITIZER_TABLET                        0x03C5
+#define GAP_APPEARANCE_CARD_READER                             0x03C6
+#define GAP_APPEARANCE_DIGITAL_PEN                             0x03C7
+#define GAP_APPEARANCE_BARCODE_SCANNER                         0x03C8
+#define GAP_APPEARANCE_GENERIC_GLUCOSE_METER                   0x0400
+#define GAP_APPEARANCE_GENERIC_RUNNING_WALKING_SENSOR          0x0440
+#define GAP_APPEARANCE_RUNNING_WALKING_IN_SHOE                 0x0441
+#define GAP_APPEARANCE_RUNNING_WALKING_ON_SHOE                 0x0442
+#define GAP_APPEARANCE_RUNNING_WALKING_ON_HIP                  0x0443
+#define GAP_APPEARANCE_GENERIC_CYCLING                         0x0480
+#define GAP_APPEARANCE_CYCLING_CYCLING_COMPUTER                0x0481
+#define GAP_APPEARANCE_CYCLING_SPEED_SENSOR                    0x0482
+#define GAP_APPEARANCE_CYCLING_CADENCE_SENSOR                  0x0483
+#define GAP_APPEARANCE_CYCLING_POWER_SENSOR                    0x0484
+#define GAP_APPEARANCE_CYCLING_SPEED_AND_CADENCE_SENSOR        0x0485
+#define GAP_APPEARANCE_GENERIC_PULSE_OXYMETER                  0x0C40
+#define GAP_APPEARANCE_FINGERTIP                               0x0C41
+#define GAP_APPEARANCE_WRIST_WORN                              0x0C42
+#define GAP_APPEARANCE_GENERIC_WEIGHT_SCALE                    0x0C80
+#define GAP_APPEARANCE_GENERIC_OUTDOOR_SPORT_ACTIVITY          0x1440
+#define GAP_APPEARANCE_LOCATION_DISPLAY_DEVICE                 0x1441
+#define GAP_APPEARANCE_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE  0x1442
+#define GAP_APPEARANCE_LOCATION_POD                            0x1443
+#define GAP_APPEARANCE_LOCATION_AND_NAVIGATION_POD             0x1444
+#define GAP_APPEARANCE_GENERIC_ENVIRONMENTAL_SENSOR            0x1640
 
 
 /* Privacy flag values
@@ -309,6 +415,7 @@
 
 /* Characteristic properties.
  */
+#define CHAR_PROP_NONE                           0x00
 #define CHAR_PROP_BROADCAST                      0x01
 #define CHAR_PROP_READ                           0x02
 #define CHAR_PROP_WRITE_WITHOUT_RESP             0x04

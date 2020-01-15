@@ -59,9 +59,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */

@@ -363,7 +363,7 @@ void APP_BLE_Init( void )
    * Initialization of ADV - Ad Manufacturer Element - Support OTA Bit Mask
    */
 #if(BLE_CFG_OTA_REBOOT_CHAR != 0)  
-    manuf_data[sizeof(manuf_data)-8] = CFG_FEATURE_OTA_REBOOT;
+  manuf_data[sizeof(manuf_data)-8] = CFG_FEATURE_OTA_REBOOT;
 #endif
   /**
    * Initialize DIS Application
@@ -454,7 +454,6 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           break;
         case EVT_LE_PHY_UPDATE_COMPLETE:
           APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE \n");
-
           evt_le_phy_update_complete = (hci_le_phy_update_complete_event_rp0*)meta_evt->data;
           if (evt_le_phy_update_complete->Status == 0)
           {
@@ -464,12 +463,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           {
             APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE, status nok \n");
           }
-         
+
           ret = hci_le_read_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,&TX_PHY,&RX_PHY);
           if (ret == BLE_STATUS_SUCCESS)
           {
             APP_DBG_MSG("Read_PHY success \n");
-       
+
             if ((TX_PHY == TX_2M) && (RX_PHY == RX_2M))
             {
               APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
@@ -486,8 +485,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           /* USER CODE BEGIN EVT_LE_PHY_UPDATE_COMPLETE */
 
           /* USER CODE END EVT_LE_PHY_UPDATE_COMPLETE */          
-          break;  
-          
+          break;
         case EVT_LE_CONN_COMPLETE:
         {
           hci_le_connection_complete_event_rp0 *connection_complete_event;
@@ -612,11 +610,11 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       }
       break; /* EVT_VENDOR */
 
-        default:
-        /* USER CODE BEGIN ECODE_DEFAULT*/
+      default:
+      /* USER CODE BEGIN ECODE_DEFAULT*/
 
-        /* USER CODE END ECODE_DEFAULT*/
-          break;
+      /* USER CODE END ECODE_DEFAULT*/
+        break;
   }
 
   return (SVCCTL_UserEvtFlowEnable);
@@ -811,7 +809,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 
   if (role > 0)
   {
-    const char *name = "STM32WB";
+    const char *name = "HRSTM";
     aci_gap_init(role, 0,
                  APPBLE_GAP_DEVICE_NAME_LENGTH,
                  &gap_service_handle, &gap_dev_name_char_handle, &gap_appearance_char_handle);
@@ -865,7 +863,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
                                          0
-  );
+                                        );
 
   /**
    * Initialize whitelist
@@ -955,8 +953,8 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
       else
       {
         APP_DBG_MSG("Start Low Power Advertising Failed , result: %d \n", ret);
+      }
     }
-  }
 
   return;
 }

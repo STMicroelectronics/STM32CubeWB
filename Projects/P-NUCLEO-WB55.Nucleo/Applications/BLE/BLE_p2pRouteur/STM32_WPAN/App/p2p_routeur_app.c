@@ -606,7 +606,6 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
     SVCCTL_EvtAckStatus_t return_value;
     hci_event_pckt *event_pckt;
     evt_blue_aci *blue_evt;
-
     P2P_Client_App_Notification_evt_t Notification;
 
     return_value = SVCCTL_EvtNotAck;

@@ -122,4 +122,4 @@ void ZbZclTouchlinkServerConfigIdentify(struct ZbZclClusterT *clusterPtr,
 /* Deprecated! ZbStartup will allocate the Touchlink Client cluster if necessary. */
 struct ZbZclClusterT * ZbZclTouchlinkClientAlloc(struct ZigBeeT *zb, uint8_t endpoint) ZB_F_DEPRECATED;
 
-#endif /* __ZCL_ONOFF_H */
+#endif /* ZCL_TOUCHLINK_H */

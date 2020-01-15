@@ -636,7 +636,7 @@ padding-right: 0px;
 }
 
 td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
-</style></head><body><font face="arial"><h1>STM32WB  BLE Wireless Interface</h1><p>This document describes the STM32WB  BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 -  Rev 1.0  -  Rational: 1st Release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified hci_hardware_event comments</p><p>March 2019 - Rev 1.2 - Removed hal datapump event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Change default mask of HCI_SET_EVENT_MASK </p><p>May 2019   - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019  - Rev 1.6 - Change comment on usage of Char Handles in multiple ACI_GATT commands + Added ACI_GATT_NOTIFICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Change descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section + Added GAP_ prefix to the GAP procedure bitmap definitions</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h3>HCI commands</h3><table width="800" border="1" class="reference">
+</style></head><body><font face="arial"><h1>STM32WB  BLE Wireless Interface</h1><p>This document describes the STM32WB  BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h3>HCI commands</h3><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>OpCode</th></tr>
 <tr><td><a href="#HCI_DISCONNECT_anchor">HCI_DISCONNECT</a></td><td><p>0x0406</p>
 </td></tr>
@@ -2545,11 +2545,9 @@ which has to be written. The valid offsets are:</p>
 <li>0x06: DIV used to derive CSRK, Value length to be written: 2 bytes</li>
 <li>0x08: Encryption root key used to derive LTK and CSRK, Value length to be written: 16 bytes</li>
 <li>0x18: Identity root key used to derive LTK and CSRK, Value length to be written: 16 bytes</li>
-<li>0x2C: Link layer without host (for certification purposes), Value length to be written: 1 byte</li>
 <li>0x2E: Static Random Address: 6 bytes</li>
-<li>0x2F: Disable watchdog (1=disable, 0=enable). Value length to be written: 1 byte</li>
 </ul>
-</td><td><li>0x00: CONFIG_DATA_PUBADDR_OFFSET</li><li>0x06: CONFIG_DATA_DIV_OFFSET</li><li>0x08: CONFIG_DATA_ER_OFFSET</li><li>0x18: CONFIG_DATA_IR_OFFSET</li><li>0x2C: LL_WITHOUT_HOST</li><li>0x2E: CONFIG_DATA_RANDOM_ADDRESS_WR</li><li>0x2F: CONFIG_DATA_WATCHDOG_DISABLE</li></td></tr>
+</td><td><li>0x00: CONFIG_DATA_PUBADDR_OFFSET</li><li>0x06: CONFIG_DATA_DIV_OFFSET</li><li>0x08: CONFIG_DATA_ER_OFFSET</li><li>0x18: CONFIG_DATA_IR_OFFSET</li><li>0x2E: CONFIG_DATA_RANDOM_ADDRESS_WR</li></td></tr>
 <tr><td><p>Length</p>
 </td><td><p>1</p>
 </td><td><p>Length of data to be written</p>
@@ -2576,11 +2574,9 @@ which has to be read. The valid offsets are:</p>
 <li>0x06: DIV used to derive CSRK, Value length returned: 2 bytes</li>
 <li>0x08: Encryption root key used to derive LTK and CSRK, Value length returned: 16 bytes</li>
 <li>0x18: Identity root key used to derive LTK and CSRK, Value length returned: 16 bytes</li>
-<li>0x2C: Link layer without host (for certification purposes), Value length returned: 1 byte</li>
-<li>0x2F: Disable watchdog (1=disabled, 0=enable). Value length returned: 1 byte</li>
 <li>0x80: Static random address. Value length returned: 6 bytes (read-only)</li>
 </ul>
-</td><td><li>0x00: CONFIG_DATA_PUBADDR_OFFSET</li><li>0x06: CONFIG_DATA_DIV_OFFSET</li><li>0x08: CONFIG_DATA_ER_OFFSET</li><li>0x18: CONFIG_DATA_IR_OFFSET</li><li>0x2C: LL_WITHOUT_HOST</li><li>0x2F: CONFIG_DATA_WATCHDOG_DISABLE</li><li>0x80: CONFIG_DATA_RANDOM_ADDRESS</li></td></tr>
+</td><td><li>0x00: CONFIG_DATA_PUBADDR_OFFSET</li><li>0x06: CONFIG_DATA_DIV_OFFSET</li><li>0x08: CONFIG_DATA_ER_OFFSET</li><li>0x18: CONFIG_DATA_IR_OFFSET</li><li>0x80: CONFIG_DATA_RANDOM_ADDRESS</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -3284,7 +3280,8 @@ response to <a href="#ACI_GAP_AUTHORIZATION_REQ_EVENT_anchor">ACI_GAP_AUTHORIZAT
 All the standard GAP characteristics will also be added:
 - Device Name
 - Appearance
-- Peripheral Preferred Connection Parameters (peripheral role only)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+- Peripheral Preferred Connection Parameters (peripheral role only).
+Note that if the Peripheral Preferred Connection Parameters characteristic is added, its handle is equal to the Appearance characteristic handle plus 2.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Role</p>
 </td><td><p>1</p>
@@ -3460,8 +3457,7 @@ present.</p><h3>Input parameters</h3><table width="800" border="1" class="refere
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_CONFIGURE_WHITELIST_anchor">ACI_GAP_CONFIGURE_WHITELIST</a></h2><h3>Description</h3><p>Add addresses of bonded devices into the controller's whitelist.
-The command will return an error if there are no devices in the database or if it was  
-unable to add the device into the whitelist.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
+The command returns an error if it was unable to add the bonded devices into the whitelist.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
@@ -4756,7 +4752,7 @@ specified for the attribute while adding the characteristic.</p>
 <tr><td><p>GATT_Evt_Mask</p>
 </td><td><p>4</p>
 </td><td><p>GATT/ATT event mask.</p>
-</td><td><li>0x00000001: ACI_GATT_ATTRIBUTE_MODIFIED_EVENT</li><li>0x00000002: ACI_GATT_PROC_TIMEOUT_EVENT</li><li>0x00000004: ACI_ATT_EXCHANGE_MTU_RESP_EVENT</li><li>0x00000008: ACI_ATT_FIND_INFO_RESP_EVENT</li><li>0x00000010: ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT</li><li>0x00000020: ACI_ATT_READ_BY_TYPE_RESP_EVENT</li><li>0x00000040: ACI_ATT_READ_RESP_EVENT</li><li>0x00000080: ACI_ATT_READ_BLOB_RESP_EVENT</li><li>0x00000100: ACI_ATT_READ_MULTIPLE_RESP_EVENT</li><li>0x00000200: ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT</li><li>0x00000800: ACI_ATT_PREPARE_WRITE_RESP_EVENT</li><li>0x00001000: ACI_ATT_EXEC_WRITE_RESP_EVENT</li><li>0x00002000: ACI_GATT_INDICATION_EVENT</li><li>0x00004000: ACI_GATT_NOTIFICATION_EVENT</li><li>0x00008000: ACI_GATT_ERROR_RESP_EVENT</li><li>0x00010000: ACI_GATT_PROC_COMPLETE_EVENT</li><li>0x00020000: ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT</li><li>0x00040000: ACI_GATT_TX_POOL_AVAILABLE_EVENT</li><li>0x00200000: ACI_GATT_INDICATION_EXT_EVENT</li><li>0x00400000: ACI_GATT_NOTIFICATION_EXT_EVENT</li></td></tr>
+</td><td><li>0x00000001: ACI_GATT_ATTRIBUTE_MODIFIED_EVENT</li><li>0x00000002: ACI_GATT_PROC_TIMEOUT_EVENT</li><li>0x00000004: ACI_ATT_EXCHANGE_MTU_RESP_EVENT</li><li>0x00000008: ACI_ATT_FIND_INFO_RESP_EVENT</li><li>0x00000010: ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT</li><li>0x00000020: ACI_ATT_READ_BY_TYPE_RESP_EVENT</li><li>0x00000040: ACI_ATT_READ_RESP_EVENT</li><li>0x00000080: ACI_ATT_READ_BLOB_RESP_EVENT</li><li>0x00000100: ACI_ATT_READ_MULTIPLE_RESP_EVENT</li><li>0x00000200: ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT</li><li>0x00000800: ACI_ATT_PREPARE_WRITE_RESP_EVENT</li><li>0x00001000: ACI_ATT_EXEC_WRITE_RESP_EVENT</li><li>0x00002000: ACI_GATT_INDICATION_EVENT</li><li>0x00004000: ACI_GATT_NOTIFICATION_EVENT</li><li>0x00008000: ACI_GATT_ERROR_RESP_EVENT</li><li>0x00010000: ACI_GATT_PROC_COMPLETE_EVENT</li><li>0x00020000: ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT</li><li>0x00040000: ACI_GATT_TX_POOL_AVAILABLE_EVENT</li><li>0x00100000: ACI_GATT_READ_EXT_EVENT</li><li>0x00200000: ACI_GATT_INDICATION_EXT_EVENT</li><li>0x00400000: ACI_GATT_NOTIFICATION_EXT_EVENT</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -5368,8 +5364,7 @@ Before procedure completion the response packet is given through <a href="#ACI_A
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_RESP_EVENT_anchor">ACI_ATT_READ_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_WITHOUT_RESP_anchor">ACI_GATT_WRITE_WITHOUT_RESP</a></h2><h3>Description</h3><p>Start the procedure to write a characteristic value without waiting for any response from the
-server. No events are generated after this command is executed.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_RESP_EVENT_anchor">ACI_ATT_READ_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_WITHOUT_RESP_anchor">ACI_GATT_WRITE_WITHOUT_RESP</a></h2><h3>Description</h3><p>Start the procedure to write a characteristic value without waiting for any response from the server. No events are generated after this command is executed. The length of the value to be written must not exceed (ATT_MTU - 3); it must also not exceed (BLE_EVT_MAX_PARAM_LEN - 5) i.e. 250 for BLE_EVT_MAX_PARAM_LEN default value.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5381,7 +5376,7 @@ server. No events are generated after this command is executed.</p><h3>Input par
 </td><td></tr>
 <tr><td><p>Attribute_Val_Length</p>
 </td><td><p>1</p>
-</td><td><p>Length of the value to be written (maximum value is ATT_MTU - 3)</p>
+</td><td><p>Length of the value to be written</p>
 </td><td></tr>
 <tr><td><p>Attribute_Val</p>
 </td><td><p>Attribute_Val_Length</p>
@@ -5395,7 +5390,7 @@ server. No events are generated after this command is executed.</p><h3>Input par
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_SIGNED_WRITE_WITHOUT_RESP_anchor">ACI_GATT_SIGNED_WRITE_WITHOUT_RESP</a></h2><h3>Description</h3><p>Start a signed write without response from the server.
 The procedure is used to write a characteristic value with an authentication signature without waiting
-for any response from the server. It cannot be used when the link is encrypted.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+for any response from the server. It cannot be used when the link is encrypted. The length of the value to be written must not exceed (ATT_MTU - 15); it must also not exceed (BLE_EVT_MAX_PARAM_LEN - 5) i.e. 250 for BLE_EVT_MAX_PARAM_LEN default value.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5407,7 +5402,7 @@ for any response from the server. It cannot be used when the link is encrypted.<
 </td><td></tr>
 <tr><td><p>Attribute_Val_Length</p>
 </td><td><p>1</p>
-</td><td><p>Length of the value to be written (up to ATT_MTU - 13)</p>
+</td><td><p>Length of the value to be written</p>
 </td><td></tr>
 <tr><td><p>Attribute_Val</p>
 </td><td><p>Attribute_Val_Length</p>
@@ -5793,8 +5788,8 @@ that didn't correspond to a connection was given.</p><h3>Event parameters</h3><t
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Reason</p>
 </td><td><p>1</p>
-</td><td><p>Reason for disconnection.</p>
-</td><td><li>0x00: Success</li><li>0x01: Unknown HCI Command</li><li>0x02: Unknown Connection Identifier</li><li>0x03: Hardware Failure</li><li>0x05: Authentication Failure</li><li>0x06: PIN or Key Missing</li><li>0x07: Memory Capacity Exceeded</li><li>0x08: Connection Timeout</li><li>0x09: Connection Limit Exceeded</li><li>0x0B: ACL Connection Already Exists</li><li>0x0C: Command Disallowed</li><li>0x0D: Connection Rejected Due To Limited Resources</li><li>0x0E: Connection Rejected Due To Security Reasons</li><li>0x0F: Connection Rejected due to Unacceptable BD_ADDR</li><li>0x10: Connection Accept Timeout Exceeded</li><li>0x11: Unsupported Feature Or Parameter Value</li><li>0x12: Invalid HCI Command Parameters</li><li>0x13: Remote User Terminated Connection</li><li>0x14: Remote Device Terminated Connection due to Low Resources</li><li>0x15: Remote Device Terminated Connection due to Power Off</li><li>0x16: Connection Terminated By Local Host</li><li>0x17: Repeated Attempts</li><li>0x18: Pairing Not Allowed</li><li>0x19: Unknown LMP PDU</li><li>0x1A: Unsupported Remote Feature / Unsupported LMP Feature</li><li>0x1E: Invalid LMP Parameters</li><li>0x1F: Unspecified Error</li><li>0x20: Unsupported LMP Parameter Value</li><li>0x21: Role Change Not Allowed</li><li>0x22: LMP Response Timeout / LL Response Timeout</li><li>0x23: LMP Error Transaction Collision</li><li>0x24: LMP PDU Not Allowed</li><li>0x25: Encryption Mode Not Acceptable</li><li>0x26: Link Key cannot be Changed</li><li>0x28: Instant Passed</li><li>0x29: Pairing With Unit Key Not Supported</li><li>0x2A: Different Transaction Collision</li><li>0x2E: Channel Assessment Not Supported</li><li>0x2F: Insufficient Security</li><li>0x30: Parameter Out Of Mandatory Range</li><li>0x32: Role Switch Pending</li><li>0x34: Reserved Slot Violation</li><li>0x35: Role Switch Failed</li><li>0x37: Secure Simple Pairing Not Supported by Host</li><li>0x38: Host Busy - Pairing</li><li>0x39: Connection Rejected due to No Suitable Channel Found</li><li>0x3A: Controller Busy</li><li>0x3B: Unacceptable Connection Interval</li><li>0x3C: Directed Advertising Timeout</li><li>0x3D: Connection Terminated Due to MIC Failure</li><li>0x3E: Connection Failed to be Established</li><li>0x41: Failed</li><li>0x42: Invalid parameters</li><li>0x43: Busy</li><li>0x44: Invalid length</li><li>0x45: Pending</li><li>0x46: Not allowed</li><li>0x47: GATT error</li><li>0x48: Address not resolved</li><li>0x50: Invalid CID</li><li>0x5A: CSRK not found</li><li>0x5B: IRK not found</li><li>0x5C: Device not found in DB</li><li>0x5D: Security DB full</li><li>0x5E: Device not bonded</li><li>0x5F: Device in blacklist</li><li>0x60: Invalid handle</li><li>0x61: Invalid parameter</li><li>0x62: Out of handles</li><li>0x63: Invalid operation</li><li>0x64: Insufficient resources</li><li>0x65: Insufficient encryption key size</li><li>0x66: Characteristic already exist</li><li>0x82: No valid slot</li><li>0x83: Short window</li><li>0x84: New interval failed</li><li>0x85: Too large interval</li><li>0x86: Slot length failed</li></td></tr>
+</td><td><p>Reason for disconnection (see Bluetooth Core Specification [Vol 2] Part D, Error Codes).</p>
+</td><td></tr>
 </table><h2><a name="HCI_ENCRYPTION_CHANGE_EVENT_anchor">HCI_ENCRYPTION_CHANGE_EVENT</a></h2><h3>Description</h3><p>The Encryption Change event is used to indicate that the change of the encryption
 mode has been completed. The Connection_Handle will be a Connection_Handle
 for an ACL connection. The Encryption_Enabled event parameter
@@ -6387,12 +6382,12 @@ timeout has occurred so that the upper layer can decide to disconnect the link.<
 </td><td></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Pairing status</p>
+</td><td><p>Specific pairing status (0:Success,1:Timeout,2:Failed)</p>
 </td><td></td></tr>
 <tr><td><p>Reason</p>
 </td><td><p>1</p>
 </td><td><p>Pairing reason error code</p>
-</td><td><li>0x00</li><li>0x01: PASSKEY_ENTRY_FAILED</li><li>0x02: OOB_NOT_AVAILABLE</li><li>0x03: AUTH_REQ_CANNOT_BE_MET</li><li>0x04: CONFIRM_VALUE_FAILED</li><li>0x05: PAIRING_NOT_SUPPORTED</li><li>0x06: INSUFF_ENCRYPTION_KEY_SIZE</li><li>0x07: CMD_NOT_SUPPORTED</li><li>0x08: UNSPECIFIED_REASON</li><li>0x09: VERY_EARLY_NEXT_ATTEMPT</li><li>0x0A: SM_INVALID_PARAMS</li><li>0x0B: SMP_SC_DHKEY_CHECK_FAILED</li><li>0x0C: SMP_SC_NUMCOMPARISON_FAILED</li></td></tr>
+</td><td><li>0x02: OOB_NOT_AVAILABLE</li><li>0x03: AUTH_REQ_CANNOT_BE_MET</li><li>0x04: CONFIRM_VALUE_FAILED</li><li>0x05: PAIRING_NOT_SUPPORTED</li><li>0x06: INSUFF_ENCRYPTION_KEY_SIZE</li><li>0x07: CMD_NOT_SUPPORTED</li><li>0x08: UNSPECIFIED_REASON</li><li>0x09: VERY_EARLY_NEXT_ATTEMPT</li><li>0x0A: SM_INVALID_PARAMS</li><li>0x0B: SMP_SC_DHKEY_CHECK_FAILED</li><li>0x0C: SMP_SC_NUMCOMPARISON_FAILED</li></td></tr>
 </table><h2><a name="ACI_GAP_PASS_KEY_REQ_EVENT_anchor">ACI_GAP_PASS_KEY_REQ_EVENT</a></h2><h3>Description</h3><p>This event is generated by the Security manager to the application when a passkey is
 required for pairing. When this event is received, the application has to respond with the
 <a href="#ACI_GAP_PASS_KEY_RESP_anchor">ACI_GAP_PASS_KEY_RESP</a> command.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
@@ -6509,6 +6504,8 @@ resolved with any of the stored IRK's.</p>
 <tr><td><a href="#ACI_GATT_SERVER_CONFIRMATION_EVENT_anchor">ACI_GATT_SERVER_CONFIRMATION_EVENT</a></td><td><p>0x0C17</p>
 </td></tr>
 <tr><td><a href="#ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT</a></td><td><p>0x0C18</p>
+</td></tr>
+<tr><td><a href="#ACI_GATT_READ_EXT_EVENT_anchor">ACI_GATT_READ_EXT_EVENT</a></td><td><p>0x0C1D</p>
 </td></tr>
 <tr><td><a href="#ACI_GATT_INDICATION_EXT_EVENT_anchor">ACI_GATT_INDICATION_EXT_EVENT</a></td><td><p>0x0C1E</p>
 </td></tr>
@@ -6752,8 +6749,8 @@ successfully.</p><h3>Event parameters</h3><table width="800" border="1" class="r
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Error_Code</p>
 </td><td><p>1</p>
-</td><td><p>Indicates whether the procedure completed with an error or was successful</p>
-</td><td><li>0x00: Success</li><li>0x01: Unknown HCI Command</li><li>0x02: Unknown Connection Identifier</li><li>0x03: Hardware Failure</li><li>0x05: Authentication Failure</li><li>0x06: PIN or Key Missing</li><li>0x07: Memory Capacity Exceeded</li><li>0x08: Connection Timeout</li><li>0x09: Connection Limit Exceeded</li><li>0x0B: ACL Connection Already Exists</li><li>0x0C: Command Disallowed</li><li>0x0D: Connection Rejected Due To Limited Resources</li><li>0x0E: Connection Rejected Due To Security Reasons</li><li>0x0F: Connection Rejected due to Unacceptable BD_ADDR</li><li>0x10: Connection Accept Timeout Exceeded</li><li>0x11: Unsupported Feature Or Parameter Value</li><li>0x12: Invalid HCI Command Parameters</li><li>0x13: Remote User Terminated Connection</li><li>0x14: Remote Device Terminated Connection due to Low Resources</li><li>0x15: Remote Device Terminated Connection due to Power Off</li><li>0x16: Connection Terminated By Local Host</li><li>0x17: Repeated Attempts</li><li>0x18: Pairing Not Allowed</li><li>0x19: Unknown LMP PDU</li><li>0x1A: Unsupported Remote Feature / Unsupported LMP Feature</li><li>0x1E: Invalid LMP Parameters</li><li>0x1F: Unspecified Error</li><li>0x20: Unsupported LMP Parameter Value</li><li>0x21: Role Change Not Allowed</li><li>0x22: LMP Response Timeout / LL Response Timeout</li><li>0x23: LMP Error Transaction Collision</li><li>0x24: LMP PDU Not Allowed</li><li>0x25: Encryption Mode Not Acceptable</li><li>0x26: Link Key cannot be Changed</li><li>0x28: Instant Passed</li><li>0x29: Pairing With Unit Key Not Supported</li><li>0x2A: Different Transaction Collision</li><li>0x2E: Channel Assessment Not Supported</li><li>0x2F: Insufficient Security</li><li>0x30: Parameter Out Of Mandatory Range</li><li>0x32: Role Switch Pending</li><li>0x34: Reserved Slot Violation</li><li>0x35: Role Switch Failed</li><li>0x37: Secure Simple Pairing Not Supported by Host</li><li>0x38: Host Busy - Pairing</li><li>0x39: Connection Rejected due to No Suitable Channel Found</li><li>0x3A: Controller Busy</li><li>0x3B: Unacceptable Connection Interval</li><li>0x3C: Directed Advertising Timeout</li><li>0x3D: Connection Terminated Due to MIC Failure</li><li>0x3E: Connection Failed to be Established</li><li>0x41: Failed</li><li>0x42: Invalid parameters</li><li>0x43: Busy</li><li>0x44: Invalid length</li><li>0x45: Pending</li><li>0x46: Not allowed</li><li>0x47: GATT error</li><li>0x48: Address not resolved</li><li>0x50: Invalid CID</li><li>0x5A: CSRK not found</li><li>0x5B: IRK not found</li><li>0x5C: Device not found in DB</li><li>0x5D: Security DB full</li><li>0x5E: Device not bonded</li><li>0x5F: Device in blacklist</li><li>0x60: Invalid handle</li><li>0x61: Invalid parameter</li><li>0x62: Out of handles</li><li>0x63: Invalid operation</li><li>0x64: Insufficient resources</li><li>0x65: Insufficient encryption key size</li><li>0x66: Characteristic already exist</li><li>0x82: No valid slot</li><li>0x83: Short window</li><li>0x84: New interval failed</li><li>0x85: Too large interval</li><li>0x86: Slot length failed</li></td></tr>
+</td><td><p>Indicates whether the procedure completed with an error or was successful (see &quot;Status error codes&quot; section)</p>
+</td><td></tr>
 </table><h2><a name="ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></h2><h3>Description</h3><p>This event is generated when an Error Response is received from the server. The error
 response can be given by the server at the end of one of the GATT discovery procedures.
 This does not mean that the procedure ended with an error, but this error event is part of the
@@ -6913,6 +6910,27 @@ and an error response will be sent to the client, with the error code as specifi
 <tr><td><p>Data</p>
 </td><td><p>Data_Length</p>
 </td><td><p>The data that the client has requested to write</p>
+</td><td></tr>
+</table><h2><a name="ACI_GATT_READ_EXT_EVENT_anchor">ACI_GATT_READ_EXT_EVENT</a></h2><h3>Description</h3><p>When it is enabled with ACI_GATT_SET_EVENT_MASK, this event is generated instead of ACI_ATT_READ_RESP_EVENT / ACI_ATT_READ_BLOB_RESP_EVENT / ACI_ATT_READ_MULTIPLE_RESP_EVENT.
+This event should be used instead of those events when ATT_MTU &gt; (BLE_EVT_MAX_PARAM_LEN - 4)
+i.e. ATT_MTU &gt; 251 for BLE_EVT_MAX_PARAM_LEN default value.
+</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Connection handle related to the response.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>Offset</p>
+</td><td><p>2</p>
+</td><td><p>Bits 14-0: offset in octets from which Attribute_Value data starts. Bit 15 is used as flag: when set to 1 it indicates that more data are to come (fragmented event in case of long attribute data).</p>
+</td><td></tr>
+<tr><td><p>Event_Data_Length</p>
+</td><td><p>2</p>
+</td><td><p>Length of following data</p>
+</td><td></tr>
+<tr><td><p>Attribute_Value</p>
+</td><td><p>Event_Data_Length</p>
+</td><td><p>The value of the attribute(s).</p>
 </td><td></tr>
 </table><h2><a name="ACI_GATT_INDICATION_EXT_EVENT_anchor">ACI_GATT_INDICATION_EXT_EVENT</a></h2><h3>Description</h3><p>When it is enabled with ACI_GATT_SET_EVENT_MASK and when an indication is received from the server, this event is generated instead of ACI_GATT_INDICATION_EVENT.
 This event should be used instead of ACI_GATT_INDICATION_EVENT when ATT_MTU &gt; (BLE_EVT_MAX_PARAM_LEN - 4)
@@ -7116,7 +7134,7 @@ Units: dBm</p>
 </td><td><p>Data_Length</p>
 </td><td><p>The error event info</p>
 </td><td></tr>
-</table><h1><a name="Status error codes_anchor">Status error codes</a></h1><p>Status error codes are used for the return status of all commands. Only the codes from 0 to 0x3E are used for HCI commands (see Core Specification v5.0, Vol. 2, part D), while more codes are defined for ACI commands (see table below).</p><h2></h2><table width="800" border="1" class="reference">
+</table><p></p><h1><a name="Status error codes_anchor">Status error codes</a></h1><p>Status error codes are used for the return status of all commands. Only the codes from 0 to 0x3E are used for HCI commands (see Core Specification v5.0, Vol. 2, part D), while more codes are defined for ACI commands (see table below).</p><h2></h2><table width="800" border="1" class="reference">
 <tr><th>Status error code</th><th>Description</th></tr>
 <tr><td><p>0x00</p>
 </td><td><p>Success</p>
@@ -7271,6 +7289,9 @@ Units: dBm</p>
 <tr><td><p>0x3E</p>
 </td><td><p>Connection Failed to be Established</p>
 </td></tr>
+<tr><td><p>0x40</p>
+</td><td><p>Unknown connection identifier at SMP level</p>
+</td></tr>
 <tr><td><p>0x41</p>
 </td><td><p>Failed</p>
 </td></tr>
@@ -7280,9 +7301,6 @@ Units: dBm</p>
 <tr><td><p>0x43</p>
 </td><td><p>Busy</p>
 </td></tr>
-<tr><td><p>0x44</p>
-</td><td><p>Invalid length</p>
-</td></tr>
 <tr><td><p>0x45</p>
 </td><td><p>Pending</p>
 </td></tr>
@@ -7290,13 +7308,16 @@ Units: dBm</p>
 </td><td><p>Not allowed</p>
 </td></tr>
 <tr><td><p>0x47</p>
-</td><td><p>GATT error</p>
+</td><td><p>Host error</p>
 </td></tr>
 <tr><td><p>0x48</p>
-</td><td><p>Address not resolved</p>
+</td><td><p>Out of memory</p>
 </td></tr>
 <tr><td><p>0x50</p>
 </td><td><p>Invalid CID</p>
+</td></tr>
+<tr><td><p>0x59</p>
+</td><td><p>Device in blacklist</p>
 </td></tr>
 <tr><td><p>0x5A</p>
 </td><td><p>CSRK not found</p>
@@ -7314,28 +7335,28 @@ Units: dBm</p>
 </td><td><p>Device not bonded</p>
 </td></tr>
 <tr><td><p>0x5F</p>
-</td><td><p>Device in blacklist</p>
+</td><td><p>Insufficient encryption key size</p>
 </td></tr>
 <tr><td><p>0x60</p>
 </td><td><p>Invalid handle</p>
 </td></tr>
 <tr><td><p>0x61</p>
-</td><td><p>Invalid parameter</p>
-</td></tr>
-<tr><td><p>0x62</p>
 </td><td><p>Out of handles</p>
 </td></tr>
-<tr><td><p>0x63</p>
+<tr><td><p>0x62</p>
 </td><td><p>Invalid operation</p>
+</td></tr>
+<tr><td><p>0x63</p>
+</td><td><p>Characteristic already exist</p>
 </td></tr>
 <tr><td><p>0x64</p>
 </td><td><p>Insufficient resources</p>
 </td></tr>
 <tr><td><p>0x65</p>
-</td><td><p>Insufficient encryption key size</p>
+</td><td><p>Security permission error</p>
 </td></tr>
-<tr><td><p>0x66</p>
-</td><td><p>Characteristic already exist</p>
+<tr><td><p>0x70</p>
+</td><td><p>Address not resolved</p>
 </td></tr>
 <tr><td><p>0x82</p>
 </td><td><p>No valid slot</p>

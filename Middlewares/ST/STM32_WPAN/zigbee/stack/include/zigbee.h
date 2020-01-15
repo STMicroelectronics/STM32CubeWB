@@ -243,6 +243,9 @@ struct ZbChannelListT {
 struct ZigBeeT;
 struct ZbMsgFilterT;
 
+typedef unsigned long ZbUptimeT;
+unsigned int ZbTimeoutRemaining(ZbUptimeT now, ZbUptimeT expire_time);
+
 /* A pointer to this struct type is passed to ZbInit to define the various
  * ZigBee tables used in the stack. If the pointer to ZbInit is NULL, the
  * default sizes are used. */
@@ -371,8 +374,9 @@ int ZbPortStackEventFd(struct ZigBeeT *zb);
 void ZbChangeExtAddr(struct ZigBeeT *zb, uint64_t extAddr);
 
 struct ZbNlmeLeaveConfT;
-enum ZbStatusCodeT ZB_WARN_UNUSED ZbLeaveReq(struct ZigBeeT *zb, void (*callback)(struct ZbNlmeLeaveConfT *conf, void *arg), void *cbarg);
-void ZbLeaveWait(struct ZigBeeT *zb);
+enum ZbStatusCodeT ZB_WARN_UNUSED ZbLeaveReq(struct ZigBeeT *zb,
+    void (*callback)(struct ZbNlmeLeaveConfT *conf, void *arg), void *cbarg);
+enum ZbStatusCodeT ZbLeaveWait(struct ZigBeeT *zb);
 
 /* Helper function to perform an APS and NWK reset */
 void ZbReset(struct ZigBeeT *zb);
@@ -434,28 +438,6 @@ enum ZclStatusCodeT ZbZclBasicWriteDirect(struct ZigBeeT *zb, uint8_t endpoint, 
 bool ZbZclBasicPostAlarm(struct ZigBeeT *zb, uint8_t endpoint, uint8_t alarm_code);
 
 /*---------------------------------------------------------------
- * Uptime
- *---------------------------------------------------------------
- */
-typedef unsigned long ZbUptimeT;
-
-#define ZB_UPTIME_MAX               (ULONG_MAX)
-
-/* Max timeout = 12 days
- * FIXME - should probably limit this to on the order of an hour.
- *
- * For long timeouts, keep resetting a timer to a timeout of an hour
- * or the difference between the desired timeout and the current time,
- * whichever is less. And use a real-time clock to get accurate uptime. */
-#define ZB_TIMEOUT_MAX              ((UINT_MAX) / 4U)
-
-/* Returns current uptime in milliseconds.
- * Special behaviour is that it never returns 0. Values are from 1 to ZB_UPTIME_MAX. */
-ZbUptimeT ZbUptime(void);
-
-unsigned int ZbTimeoutRemaining(ZbUptimeT now, ZbUptimeT expire_time);
-
-/*---------------------------------------------------------------
  * ZigBee Timer
  *---------------------------------------------------------------
  */
@@ -470,7 +452,7 @@ void ZbTimerFree(struct ZbTimerT *timer);
 /* Resets and schedules a ZigBee timer. */
 void ZbTimerReset(struct ZbTimerT *timer, unsigned int timeout);
 bool ZbTimerRunning(struct ZbTimerT *timer);
-/* ZbTimerRemaining returns time remaining in mS for given timer, or UINT_MAX if timer is not running. */
+/* ZbTimerRemaining returns time remaining in mS for the given timer. */
 unsigned int ZbTimerRemaining(struct ZbTimerT *timer);
 
 /*---------------------------------------------------------------
@@ -551,6 +533,33 @@ bool ZbPersistNotifyRegister(struct ZigBeeT *zb, void (*callback)(struct ZigBeeT
 void ZbShutdown(struct ZigBeeT *zb);
 
 /*---------------------------------------------------------------
+ * AES Hashing
+ *---------------------------------------------------------------
+ */
+#ifndef AES_BLOCK_SIZE
+# define AES_BLOCK_SIZE                     16U
+#endif
+
+struct ZbHash {
+    uint8_t m[AES_BLOCK_SIZE];
+    uint8_t hash[AES_BLOCK_SIZE];
+    uint8_t key[AES_BLOCK_SIZE];
+    uint8_t length;
+};
+
+/* Matyas-Meyer-Oseas hash function. */
+void ZbHashInit(struct ZbHash *h);
+void ZbHashAdd(struct ZbHash *h, const void *data, uint32_t len);
+void ZbHashByte(struct ZbHash *h, uint8_t data);
+void ZbHashDigest(struct ZbHash *h, void *digest);
+
+/* HMAC hash function (based on AES-MMO) */
+void ZbHmacInit(struct ZbHash *h, const void *key, uint32_t len);
+#define ZbHmacAdd(hash, data, len)   ZbHashAdd(hash, data, len)
+#define ZbHmacByte(hash, byte)         ZbHashByte(hash, byte)
+void ZbHmacDigest(struct ZbHash *h, void *digest);
+
+/*---------------------------------------------------------------
  * Test Case Hooks
  *---------------------------------------------------------------
  */
@@ -606,6 +615,11 @@ unsigned long ZbHeapHighWaterMark(struct ZigBeeT *zb);
  */
 typedef void (*ZbHeapDumpCallbackT)(void *cbarg, const char *fmt, ...);
 void ZbHeapDumpMemAllocTbl(struct ZigBeeT *zb, ZbHeapDumpCallbackT callback, void *cbarg);
+
+/* String conversion */
+int zb_hex_str_to_bin(const char *string, void *out, unsigned int maxlen);
+unsigned int zb_hex_bin_to_str(const uint8_t *in_data, unsigned int in_len, char *out_str, unsigned int max_len,
+    const char delimiter, unsigned int interval);
 
 /*---------------------------------------------------------------
  * Additional Layer Includes

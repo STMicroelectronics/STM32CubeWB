@@ -277,9 +277,9 @@ This may result into excessive flash erase operations, this should be avoided to
    USER_BOARD_COOL_WHITE_LED ,USER_BOARD_RGB_LED
    Default transition is provided only for one led.
 */      
-//#define  USER_BOARD_1LED      
+#define  USER_BOARD_1LED      
 //#define  USER_BOARD_COOL_WHITE_LED
-#define  USER_BOARD_RGB_LED 
+//#define  USER_BOARD_RGB_LED 
 
 #if defined(STEVAL_BLUEMIC_1_BOARD_PWM_SELECTION)      
    #define SINGLE_LED      PWM1

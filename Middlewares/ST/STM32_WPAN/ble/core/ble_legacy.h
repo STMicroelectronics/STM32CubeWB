@@ -107,6 +107,16 @@ typedef PACKED(struct) _evt_blue_aci
 #define EVT_BLUE_L2CAP_CONNECTION_UPDATE_RESP     (0x0800)
 
 
+/* Macro to get RSSI from advertising report #0.
+ * "p" must be a pointer to the event parameters buffer
+ */
+#define HCI_LE_ADVERTISING_REPORT_RSSI_0(p) \
+        (*(int8_t*)((&((hci_le_advertising_report_event_rp0*)(p))-> \
+                      Advertising_Report[0].Length_Data) + 1 + \
+                    ((hci_le_advertising_report_event_rp0*)(p))-> \
+                    Advertising_Report[0].Length_Data))
+
+
 /* ------------------------------------------------------------------------- */
 
 
@@ -158,9 +168,18 @@ typedef	uint8_t	tBDAddr[6];
 /* ------------------------------------------------------------------------- */
 
 
+/* Obsolete error codes
+ */
+#define BLE_STATUS_INVALID_LEN_PDU                   0x44
 #define FLASH_READ_FAILED                            0x49
 #define FLASH_WRITE_FAILED                           0x4A
 #define FLASH_ERASE_FAILED                           0x4B
+#define TIMER_NOT_VALID_LAYER                        0x54
+#define TIMER_INSUFFICIENT_RESOURCES                 0x55
+#define BLE_STATUS_INVALID_PARAMETER                 0x61
+#define BLE_INSUFFICIENT_ENC_KEYSIZE                 0x65
+#define BLE_STATUS_PROFILE_ALREADY_INITIALIZED       0xF0
+#define BLE_STATUS_NULL_PARAM                        0xF1 
 
 
 /* ------------------------------------------------------------------------- */

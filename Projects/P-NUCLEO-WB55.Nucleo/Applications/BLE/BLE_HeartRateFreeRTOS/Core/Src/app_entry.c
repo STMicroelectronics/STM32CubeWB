@@ -128,7 +128,7 @@ void APPE_Init( void )
 /* USER CODE BEGIN APPE_Init_2 */
 
 /* USER CODE END APPE_Init_2 */
-  return;
+   return;
 }
 /* USER CODE BEGIN FD */
 
@@ -220,8 +220,10 @@ static void appe_Tl_Init( void )
   MtxShciId = osMutexNew( NULL );
   SemShciId = osSemaphoreNew( 1, 0, NULL ); /*< Create the semaphore and make it busy at initialization */
 
-  /**< System channel initialization */
+  /** FreeRTOS system task creation */
   ShciUserEvtProcessId = osThreadNew(ShciUserEvtProcess, NULL, &ShciUserEvtProcess_attr);
+
+  /**< System channel initialization */
   SHci_Tl_Init_Conf.p_cmdbuffer = (uint8_t*)&SystemCmdBuffer;
   SHci_Tl_Init_Conf.StatusNotCallBack = APPE_SysStatusNot;
   shci_init(APPE_SysUserEvtRx, (void*) &SHci_Tl_Init_Conf);
@@ -256,6 +258,15 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
   return;
 }
 
+/**
+ * The type of the payload for a system user event is tSHCI_UserEvtRxParam
+ * When the system event is both :
+ *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
+ *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ * The buffer shall not be released
+ * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
+ * When the status is not filled, the buffer is released by default
+ */
 static void APPE_SysUserEvtRx( void * pPayload )
 {
   UNUSED(pPayload);

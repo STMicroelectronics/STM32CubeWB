@@ -150,6 +150,12 @@ void HW_IPCC_Tx_Handler( void )
 void HW_IPCC_Enable( void )
 {
   /**
+   * When the device is out of standby, it is required to use the EXTI mechanism to wakeup CPU2
+   */
+  LL_C2_EXTI_EnableEvent_32_63( LL_EXTI_LINE_41 );
+  LL_EXTI_EnableRisingTrig_32_63( LL_EXTI_LINE_41 );
+	
+  /**
    * In case the SBSFU is implemented, it may have already set the C2BOOT bit to startup the CPU2.
    * In that case, to keep the mechanism transparent to the user application, it shall call the system command
    * SHCI_C2_Reinit( ) before jumping to the application.

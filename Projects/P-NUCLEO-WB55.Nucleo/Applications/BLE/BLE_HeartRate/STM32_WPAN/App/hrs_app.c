@@ -65,6 +65,7 @@ PLACE_IN_SECTION("BLE_APP_CONTEXT") static HRSAPP_Context_t HRSAPP_Context;
 /**
  * END of Section BLE_APP_CONTEXT
  */
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */

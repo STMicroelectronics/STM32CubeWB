@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Production</name>
+        <name>BLE_p2pRouteur</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,15 +16,15 @@
                 <debug>0</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Production\Exe</state>
+                    <state>BLE_p2pRouteur\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Production\Obj</state>
+                    <state>BLE_p2pRouteur\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Production\List</state>
+                    <state>BLE_p2pRouteur\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -656,7 +656,7 @@
                 <option>
                     <name>OOCOutputFormat</name>
                     <version>3</version>
-                    <state>3</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCOutputOverride</name>
@@ -664,7 +664,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>STM32WB55CG_nucleo_BLE_p2pRouteur.bin</state>
+                    <state>BLE_p2pRouteur.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1051,9 +1051,6 @@
                 <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
             </file>
             <file>
@@ -1061,6 +1058,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\main.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
@@ -1077,10 +1077,10 @@
             <group>
                 <name>app</name>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\app_ble.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\app_ble.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\p2p_routeur_app.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\p2p_routeur_app.c</name>
                 </file>
             </group>
             <group>
@@ -1236,10 +1236,10 @@
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl_if.c</name>

@@ -88,6 +88,7 @@ void HAL_MspInit(void)
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+  HAL_DMA_MuxSyncConfigTypeDef pSyncConfig;
   if(huart->Instance==LPUART1)
   {
   /* USER CODE BEGIN LPUART1_MspInit 0 */
@@ -128,6 +129,16 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     hdma_lpuart1_tx.Init.Mode = DMA_NORMAL;
     hdma_lpuart1_tx.Init.Priority = DMA_PRIORITY_LOW;
     if (HAL_DMA_Init(&hdma_lpuart1_tx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    pSyncConfig.SyncSignalID = HAL_DMAMUX1_SYNC_DMAMUX1_CH1_EVT;
+    pSyncConfig.SyncPolarity = HAL_DMAMUX_SYNC_NO_EVENT;
+    pSyncConfig.SyncEnable = DISABLE;
+    pSyncConfig.EventEnable = DISABLE;
+    pSyncConfig.RequestNumber = 1;
+    if (HAL_DMAEx_ConfigMuxSync(&hdma_lpuart1_tx, &pSyncConfig) != HAL_OK)
     {
       Error_Handler();
     }

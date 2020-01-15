@@ -2,7 +2,7 @@
 <project>
 	<fileVersion>3</fileVersion>
 	<configuration>
-		<name>BLE_HeartRate</name>
+		<name>BLE_HeartRate_ota</name>
 		<toolchain>
 			<name>ARM</name>
 		</toolchain>

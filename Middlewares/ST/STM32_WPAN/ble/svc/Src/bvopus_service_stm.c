@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    bvopus_service_stm.c
   * @author  SRA-A&SP
-  * @version V1.0.0
-  * @date    08-May-2019
+  * @version V1.0.1
+  * @date    22-Oct-2019
   * @brief   This file contains definitions for BlueVoice opus service.
   ******************************************************************************
   * @attention
@@ -39,8 +39,7 @@
 #include "bvopus_service_stm.h"
 #include "opus_interface_stm.h"
 #include "common_blesvc.h"
-
-
+    
 #ifndef MIN
 #define MIN(a,b)            ((a) < (b) )? (a) : (b)
 #endif
@@ -75,6 +74,8 @@ typedef struct
   uint8_t AudioNotifEnabled;                            /*!< Audio characteristic enabled. */
   
   uint8_t CtrlNotifEnabled;                             /*!< Control characteristic enabled. */
+  
+  uint8_t MaxDataLength;                                /*!< Maximum ble packet length. */
   
   uint8_t *pInternalMemory_dec;                         /*!< Pointer to the internal memory used for the BlueVoice decoding. */
   
@@ -182,6 +183,9 @@ void BVOPUS_STM_Init(void)
   SVCCTL_RegisterSvcHandler(BVOPUS_Event_Handler);
 
   memset(&hBV_OPUS, 0, sizeof(hBV_OPUS));
+  
+  /* Set default ble packet size equal to 20B*/
+  hBV_OPUS.MaxDataLength = 20;
     
   BluevoiceOPUS_AddService();
   
@@ -215,6 +219,14 @@ static SVCCTL_EvtAckStatus_t BVOPUS_Event_Handler(void *Event)
             {
               aci_gatt_attribute_modified_event_rp0 *pr = (aci_gatt_attribute_modified_event_rp0*)blue_evt->data;
               Evt_code = BluevoiceOPUS_AttributeModified_CB(pr->Attr_Handle, pr->Attr_Data_Length, pr->Attr_Data); 
+              if(Evt_code == BVOPUS_STM_START_STREAMING_EVT)
+              {
+                hBV_OPUS.AudioNotifEnabled = 1;
+              }
+              if(Evt_code == BVOPUS_STM_STOP_STREAMING_EVT)
+              {
+                hBV_OPUS.AudioNotifEnabled = 0;
+              }
               BVOPUS_STM_APP_Notification(Evt_code);
             }
             break;
@@ -244,13 +256,11 @@ BVOPUS_STM_evt_code_t BluevoiceOPUS_AttributeModified_CB(uint16_t attr_handle, u
   if (attr_handle == (hBV_OPUS.BV_handle.CharAudioHandle + 2))
   {
     if (attr_value[0] == 0x01)
-    {
-      hBV_OPUS.AudioNotifEnabled = 1;
+    { 
       return BVOPUS_STM_START_STREAMING_EVT;
     }
     else if(attr_value[0] == 0x00)
     {
-      hBV_OPUS.AudioNotifEnabled = 0;
       return BVOPUS_STM_STOP_STREAMING_EVT;
     }  
   }
@@ -359,7 +369,7 @@ BV_OPUS_Status BluevoiceOPUS_AddChar(uint16_t service_handle)
   memcpy(hBV_OPUS.BV_uuid.audio_uuid.Char_UUID_128, bvopus_audio_char_uuid, sizeof(bvopus_audio_char_uuid));
 
   ret = aci_gatt_add_char(hBV_OPUS.BV_handle.ServiceHandle, UUID_TYPE_128, &hBV_OPUS.BV_uuid.audio_uuid,
-                          20, CHAR_PROP_NOTIFY, ATTR_PERMISSION_NONE, GATT_DONT_NOTIFY_EVENTS, 16, 1,
+                          (CFG_BLE_MAX_ATT_MTU-3), CHAR_PROP_NOTIFY, ATTR_PERMISSION_NONE, GATT_DONT_NOTIFY_EVENTS, 16, 1,
                           &hBV_OPUS.BV_handle.CharAudioHandle);
                       
   if (ret != BLE_STATUS_SUCCESS)
@@ -443,6 +453,18 @@ BV_OPUS_Status BVOPUS_CodecDecInit(OPUS_IF_DEC_ConfigTypeDef *DEC_configOpus)
   
   return BV_OPUS_SUCCESS;
 }
+
+
+/**
+ * @brief  This function sets the maximum ble packet size.
+ * @param  max_length: maximum ble packet size.
+ * @retval None.
+ */                      
+void BluevoiceOPUS_SetMaxDataLength(uint16_t max_length) 
+{
+  hBV_OPUS.MaxDataLength = (max_length-3);
+}
+
 
 /**
  * @brief  This function returns the audio notification status.
@@ -533,7 +555,7 @@ BV_OPUS_Status BluevoiceOPUS_SendAudioData(uint8_t *data_buffer, int *opus_err)
   *opus_err = 0;
   
   OpusEncBufLen = OPUS_IF_ENC_Encode((uint8_t *) data_buffer, hBV_OPUS.pInternalMemory_enc);
-  
+
   if(OpusEncBufLen<=0)
   {
     *opus_err = OpusEncBufLen;
@@ -548,10 +570,10 @@ BV_OPUS_Status BluevoiceOPUS_SendAudioData(uint8_t *data_buffer, int *opus_err)
   /* Data are sent as notifications*/
   while (j < tot_len) 
   {
-    len = MIN(20, tot_len - j);
+    len = MIN(hBV_OPUS.MaxDataLength, tot_len - j);
 
     while(aci_gatt_update_char_value(hBV_OPUS.BV_handle.ServiceHandle, hBV_OPUS.BV_handle.CharAudioHandle, 0,
-                                     len,(uint8_t*) &OpusEncBuf_BV_OPUS_TP[j]) == BLE_STATUS_NOT_ALLOWED)
+                                     len,(uint8_t*) &OpusEncBuf_BV_OPUS_TP[j]) != BLE_STATUS_SUCCESS)
     {
       /* Radio is busy */
       /*-------------------------------------------------------*/
@@ -594,7 +616,7 @@ BV_OPUS_Status BluevoiceOPUS_SendCtrlData(uint8_t* data_buffer, uint8_t Nb_bytes
    
   /* Data are sent as notifications*/
   while (aci_gatt_update_char_value(hBV_OPUS.BV_handle.ServiceHandle, hBV_OPUS.BV_handle.CharCtrlHandle, 0, 
-                                    Nb_bytes, (uint8_t *)data_buffer) == BLE_STATUS_NOT_ALLOWED)
+                                    Nb_bytes, (uint8_t *)data_buffer) != BLE_STATUS_SUCCESS)
   {
     /* Radio is busy */
     /*-------------------------------------------------------*/
@@ -754,9 +776,9 @@ uint32_t BluevoiceOPUS_TP_Encapsulate(uint8_t* buffer_out, uint8_t* buffer_in, u
 
   while (counter < len) 
   {
-    size = MIN(19, len - counter);
+    size = MIN((hBV_OPUS.MaxDataLength-1), len - counter);
 
-    if (len - counter <= 19) 
+    if (len - counter <= (hBV_OPUS.MaxDataLength-1)) 
     {    
       if (counter == 0) 
       {

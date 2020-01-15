@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ProjectOpt xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_opt.xsd">
   <Target>
-    <TargetName>Production</TargetName>
+    <TargetName>BLE_TransparentModeVCP</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>

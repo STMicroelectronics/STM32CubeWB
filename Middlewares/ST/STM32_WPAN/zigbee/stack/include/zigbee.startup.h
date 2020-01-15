@@ -74,7 +74,7 @@ struct ZbStartupT {
     /* Security Parameters (security level, preconfigured keys, etc) */
     struct {
         uint8_t level;
-        unsigned int useInsecureRejoin : 1;
+        bool useInsecureRejoin;
         uint64_t trustCenterAddress;
         uint8_t preconfiguredLinkKey[ZB_SEC_KEYSIZE]; /* 16 bytes */
         uint8_t distributedGlobalKey[ZB_SEC_KEYSIZE]; /* 16 bytes */

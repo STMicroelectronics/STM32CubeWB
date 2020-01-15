@@ -47,6 +47,7 @@ typedef enum {
     MSG_M0TOM4_UNKNOWN = 0x0000,
 
     /* WPAN Interface */
+    MSG_M4TOM0_WPAN_SET_UINT32, /* wpan_set_uint32 */
     MSG_M4TOM0_WPAN_GET_UINT32, /* wpan_get_uint32 */
     MSG_M4TOM0_WPAN_GET_UINT64, /* wpan_get_uint64 */
 
@@ -61,7 +62,6 @@ typedef enum {
     /* Stack Misc */
     MSG_M4TOM0_EXTADDR_GET, /* ZbExtendedAddress */
     MSG_M4TOM0_EXTADDR_CHANGE, /* ZbChangeExtAddr */
-    MSG_M4TOM0_UPTIME, /* ZbUptime */
     MSG_M4TOM0_FILTER_ADD, /* ZbMsgFilterRegister - Create filter in stack */
     MSG_M4TOM0_FILTER_DEL, /* ZbMsgFilterRemove - Delete filter in stack */
     MSG_M0TOM4_FILTER_MSG_CB, /* Callback for filter messages from stack */
@@ -247,24 +247,25 @@ typedef enum {
     /* ZCL Endpoint */
     MSG_M4TOM0_ZCL_ENDPOINT_ADD = 0x0400, /* ZbZclAddEndpoint */
     MSG_M4TOM0_ZCL_ENDPOINT_DEL, /* ZbZclRemoveEndpoint */
-    MSG_M4TOM0_ZCL_CLUSTER_ATTACH, /* ZbZclClusterAttach */
-    MSG_M4TOM0_ZCL_CLUSTER_DETACH, /* ZbZclClusterDetach */
+
+    /* ZCL Cluster ID register for discovery */
     MSG_M4TOM0_ZCL_CLUSTER_EP_REGISTER, /* ZbZclClusterEndpointRegister */
     MSG_M4TOM0_ZCL_CLUSTER_EP_REMOVE, /* ZbZclClusterEndpointRemove */
-    MSG_M4TOM0_ZCL_CLUSTER_BIND, /* zcl_cluster_bind */
+
+    /* ZCL Cluster binding and data indications */
+    MSG_M4TOM0_ZCL_CLUSTER_BIND, /* ZbZclClusterBind */
+    MSG_M0TOM4_ZCL_CLUSTER_DATA_IND = MSG_M4TOM0_ZCL_CLUSTER_BIND,
+    MSG_M4TOM0_ZCL_CLUSTER_UNBIND, /* ZbZclClusterUnbind */
+
+    MSG_M4TOM0_ZCL_CLUSTER_LOOPBACK_BIND, /* ZbZclClusterLoopbackBind */
+    /* Data Indications are sent using MSG_M0TOM4_ZCL_CLUSTER_DATA_IND */
+    MSG_M4TOM0_ZCL_CLUSTER_LOOPBACK_UNBIND, /* ZbZclClusterLoopbackUnbind */
 
     /* ZCL Cluster Alarms */
     MSG_M4TOM0_ZCL_CLUSTER_ALARM_ADD_FILTER, /* ZbZclClusterRegisterAlarmResetHandler */
     MSG_M0TOM4_ZCL_CLUSTER_ALARM_CB = MSG_M4TOM0_ZCL_CLUSTER_ALARM_ADD_FILTER,
+    MSG_M4TOM0_ZCL_CLUSTER_ALARM_REMOVE_FILTER, /* ZbZclClusterRemoveAlarmResetHandler */
     MSG_M4TOM0_ZCL_CLUSTER_ALARM_SEND, /* ZbZclClusterSendAlarm */
-
-    /* ZCL Cluster Unsolicited Callbacks */
-    MSG_M0TOM4_ZCL_CLUSTER_COMMAND_CB, /* ZbZclClusterT.command() */
-    MSG_M0TOM4_ZCL_CLUSTER_CONFIG_CB, /* ZbZclClusterT.config() */
-    MSG_M0TOM4_ZCL_CLUSTER_REPORT_CB, /* ZbZclClusterT.report() */
-    MSG_M0TOM4_ZCL_CLUSTER_GET_SCENE_CB, /* ZbZclClusterT.get_scene_data() */
-    MSG_M0TOM4_ZCL_CLUSTER_SET_SCENE_CB, /* ZbZclClusterT.set_scene_data() */
-    MSG_M0TOM4_ZCL_CLUSTER_CLEANUP_CB, /* ZbZclClusterT.cleanup() */
 
     /* ZCL Cluster Command and Response */
     MSG_M4TOM0_ZCL_CLUSTER_CMD_REQ, /* ZbZclClusterCommandReq */
@@ -273,10 +274,6 @@ typedef enum {
     MSG_M4TOM0_ZCL_CLUSTER_CMD_RSP_WITH_CB, /* ZbZclClusterCommandRspWithCb */
     MSG_M0TOM4_ZCL_CLUSTER_CMD_RSP_CONF_CB = MSG_M4TOM0_ZCL_CLUSTER_CMD_RSP_WITH_CB,
     MSG_M4TOM0_ZCL_CLUSTER_CMD_RSP_WITH_STATUS, /* ZbZclSendClusterStatusResponse */
-
-    /* ZCL Attributes */
-    MSG_M4TOM0_ZCL_ATTR_REGISTER, /* Used by ZbZclAttrAppendList */
-    MSG_M0TOM4_ZCL_ATTR_CB,
 
     /* ZCL Profile-Wide Commands */
     MSG_M4TOM0_ZCL_GET_SEQNUM, /* ZbZclGetNextSeqnum */
@@ -300,13 +297,14 @@ typedef enum {
     MSG_M4TOM0_ZCL_KE_WITH_DEVICE = 0x0440, /* ZbZclKeWithDevice */
     MSG_M0TOM4_ZCL_KE_WITH_DEVICE_CB = MSG_M4TOM0_ZCL_KE_WITH_DEVICE,
 
+    /* ZCL Device Log */
 #if 0 /* needed? */
-      /* ZCL Device Log */
     MSG_M4TOM0_ZCL_DEVICE_LOG_ADD, /* ZbZclDeviceLogAdd */
     MSG_M4TOM0_ZCL_DEVICE_LOG_CLEAR, /* ZbZclDeviceLogClear */
     MSG_M4TOM0_ZCL_DEVICE_LOG_ENABLE, /* ZbZclDeviceLogEnable */
     MSG_M4TOM0_ZCL_DEVICE_LOG_REMOVE, /* ZbZclDeviceLogRemove */
 #endif
+    MSG_M4TOM0_ZCL_DEVICE_LOG_CHECK, /* ZbZclDeviceLogCheckAllow */
 
     /* ZCL Basic Server */
     MSG_M4TOM0_ZCL_BASIC_SERVER_ALARM_POST, /* ZbZclBasicPostAlarm */

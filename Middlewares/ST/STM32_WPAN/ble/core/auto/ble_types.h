@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_types.h
  * @author  MCD Application Team
- * @date    27 May 2019
+ * @date    06 September 2019
  * @brief   Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
@@ -2568,6 +2568,14 @@ typedef PACKED(struct)
   uint8_t Data_Length;
   uint8_t Data[((BLE_EVT_MAX_PARAM_LEN - 2) - 7)/sizeof(uint8_t)];
 } aci_gatt_prepare_write_permit_req_event_rp0;
+
+typedef PACKED(struct)  
+{
+  uint16_t Connection_Handle;
+  uint16_t Offset;
+  uint16_t Event_Data_Length;
+  uint8_t Attribute_Value[((BLE_EVT_MAX_PARAM_LEN - 2) - 6)/sizeof(uint8_t)];
+} aci_gatt_read_ext_event_rp0;
 
 typedef PACKED(struct)  
 {

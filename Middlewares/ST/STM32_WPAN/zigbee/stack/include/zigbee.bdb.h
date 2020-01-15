@@ -121,6 +121,7 @@ enum ZbBdbAttrIdT {
     ZB_BDB_PersistTimeoutMs, /* 0x1117 */
     ZB_BDB_JoinAttemptsMax, /* 0x1118 - uint8_t - maximum number attempts to join a network. If an attempt fails, the EPID is added to a blacklist before the next attempt. */
     ZB_BDB_MaxConcurrentJoiners, /* 0x1119 - uint8_t - maximum number of concurrent joiners the coordinator supports */
+    ZB_BDB_DisablePersistRejoin, /* 0x111a - boolean */
 
     /* Constants which are accessible through a BDB GET IB request. */
     ZB_BDBC_MaxSameNetworkRetryAttempts = 0x1200,

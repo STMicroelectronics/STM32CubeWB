@@ -129,6 +129,7 @@ In order to make the program work, you must do the following:
  - Rebuild all files and load your image OR use the Thread_Cli_Cmd_reference.hex from Binary directory
  - Run the example and use the HyperTerminal to interact with the Board via the Cli commands
 
+Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

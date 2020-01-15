@@ -60,9 +60,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern I2C_HandleTypeDef hi2c3;
 /* USER CODE BEGIN EV */
 

@@ -86,23 +86,23 @@ void ZbZclOnOffServerSetLevelControlCallback(struct ZbZclClusterT *on_off_cluste
 struct ZbZclClusterT * ZbZclOnOffClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 /* Client Cluster Commands */
-uint8_t ZbZclOnOffClientOnReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclOnOffClientOnReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 /* Blocking version. Not supported on all platforms. */
-uint8_t ZbZclOnOffClientOnWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
+enum ZclStatusCodeT ZbZclOnOffClientOnWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 
-uint8_t ZbZclOnOffClientOffReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclOnOffClientOffReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 /* Blocking version. Not supported on all platforms. */
-uint8_t ZbZclOnOffClientOffWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
+enum ZclStatusCodeT ZbZclOnOffClientOffWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 
-uint8_t ZbZclOnOffClientToggleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclOnOffClientToggleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 /* Blocking version. Not supported on all platforms. */
-uint8_t ZbZclOnOffClientToggleWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
+enum ZclStatusCodeT ZbZclOnOffClientToggleWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /* __ZCL_ONOFF_H */
+#endif /* ZCL_ONOFF_H */

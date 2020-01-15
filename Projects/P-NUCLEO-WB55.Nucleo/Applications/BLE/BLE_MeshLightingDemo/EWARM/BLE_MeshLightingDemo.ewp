@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Production</name>
+        <name>BLE_MeshLightingDemo</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,15 +16,15 @@
                 <debug>0</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Production\Exe</state>
+                    <state>BLE_MeshLightingDemo\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Production\Obj</state>
+                    <state>BLE_MeshLightingDemo\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Production\List</state>
+                    <state>BLE_MeshLightingDemo\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -658,7 +658,7 @@
                 <option>
                     <name>OOCOutputFormat</name>
                     <version>3</version>
-                    <state>3</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCOutputOverride</name>
@@ -666,7 +666,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>BLE_Lighting_Demo.bin</state>
+                    <state>BLE_MeshLightingDemo.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>

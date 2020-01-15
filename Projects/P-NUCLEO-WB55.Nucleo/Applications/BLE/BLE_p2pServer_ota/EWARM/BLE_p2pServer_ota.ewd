@@ -2,7 +2,7 @@
 <project>
 	<fileVersion>3</fileVersion>
 	<configuration>
-		<name>BLE_p2pServer</name>
+		<name>BLE_p2pServer_ota</name>
 		<toolchain>
 			<name>ARM</name>
 		</toolchain>

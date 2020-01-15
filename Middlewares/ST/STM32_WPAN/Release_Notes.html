@@ -49,9 +49,25 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section5" checked aria-hidden="true"> <label for="collapse-section5" aria-hidden="false">V1.3.0 / 4-September-2019</label>
+<input type="checkbox" id="collapse-section6" checked aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.4.0 / 22-November-2019</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p>Interface:</p>
+<ul>
+<li>Added new commmand SHCI_C2_ExtpaConfig() to support external PA</li>
+<li>Update System and BLE transport layer so that a user event packet is released by default</li>
+</ul>
+<p>BLE:</p>
+<ul>
+<li>Added support to ACI_GATT_READ_EX_EVENT</li>
+<li>Added macro HCI_LE_ADVERTISING_REPORT_RSSI_0(p) to extract properly RSSI from the event packet</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 4-September-2019</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Introducing support of Zigbee</li>
@@ -89,7 +105,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 27-June-2019</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Following utilities : Scheduler and Low Power Manager reworked and moved to “Utilities” directory</li>
@@ -115,7 +131,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p>BLE:</p>
 <ul>
 <li>Fix race condition in transport layer when an operating system is used.</li>
@@ -161,7 +177,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 29-March-2019</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Licenses in utilities and patterns moved from sla0044 to 3-clauses BSD</li>
@@ -187,7 +203,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 31-January-2019</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p>First release</p>
 </div>
 </div>

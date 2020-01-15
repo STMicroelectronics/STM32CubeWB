@@ -572,7 +572,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
                     APP_DBG_MSG("--- ST MANUFACTURER ID --- \n");
                     switch (adv_report_data[k + 3])
                     {   /* Demo ID */
-			          case CFG_DEV_ID_P2P_SERVER1: /* (0End Device 1) */
+                      case CFG_DEV_ID_P2P_SERVER1: /* End Device 1 */
                         APP_DBG_MSG("-- SERVER DETECTED -- VIA MAN ID\n");
                         BleApplicationContext.DeviceServerFound = 0x01;
                         SERVER_REMOTE_BDADDR[0] = le_advertising_event->Advertising_Report[0].Address[0];
@@ -849,13 +849,13 @@ static void Connect_Request( void )
 
   /* USER CODE END Connect_Request_1 */
   tBleStatus result;
-  
+
   APP_DBG_MSG("\r\n\r** CREATE CONNECTION TO SERVER **  \r\n\r");
 
   if (BleApplicationContext.Device_Connection_Status != APP_BLE_CONNECTED_CLIENT)
   {
     result = aci_gap_create_connection(SCAN_P,
-    SCAN_L,
+                                       SCAN_L,
                                        PUBLIC_ADDR, SERVER_REMOTE_BDADDR,
                                        PUBLIC_ADDR,
                                        CONN_P1,

@@ -1301,4 +1301,10 @@
             <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer\stm32_seq.c</name>
         </file>
     </group>
+	<group>
+        <name>Doc</name>
+        <file>
+            <name>$PROJ_DIR$\..\readme.txt</name>
+        </file>
+    </group>
 </project>

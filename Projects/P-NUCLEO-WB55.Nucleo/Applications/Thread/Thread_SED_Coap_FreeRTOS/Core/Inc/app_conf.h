@@ -172,7 +172,7 @@
 
 typedef enum
 {
-    CFG_TIM_PROC_ID_ISR,
+  CFG_TIM_PROC_ID_ISR,
 } CFG_TimProcID_t;
 
 /******************************************************************************
@@ -314,6 +314,7 @@ typedef enum
 #define CFG_THREAD_SET_SED_MODE_PROCESS_PRIORITY    osPriorityNormal
 #define CFG_THREAD_SET_SED_MODE_PROCESS_STACk_SIZE  (128 * 8)
 /* USER CODE END FreeRTOS_Defines */
+
 /******************************************************************************
  * LOW POWER
  ******************************************************************************/

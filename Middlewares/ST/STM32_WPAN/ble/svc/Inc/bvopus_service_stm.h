@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    bluevoice_opus.h
   * @author  SRA-A&SP
-  * @version V1.0.0
-  * @date    08-May-2019
+  * @version V1.0.1
+  * @date    22-Oct-2019
   * @brief   This file contains definitions for BlueVoiceOPUS service.
   ******************************************************************************
   * @attention
@@ -86,6 +86,7 @@ typedef struct
 typedef struct
 {
   uint16_t ServiceHandle;               /*!< Service handle.*/
+  uint16_t ServiceEndHandle;            /*!< Service End handle.*/ 
   uint16_t CharAudioHandle;             /*!< Audio characteristic handle.*/ 
   uint16_t CharCtrlHandle;              /*!< Control characteristic handle.*/
 } BV_OPUS_ProfileHandle_t;
@@ -94,7 +95,7 @@ typedef struct
 /* Define --------------------------------------------------------------------*/
 
 /*!< BlueNRG low-level communication timeout.*/      
-#define BV_OPUS_SENDING_TIMEOUT                 0xFF                  
+#define BV_OPUS_SENDING_TIMEOUT                 0xFF     
 
 /*!<  Control message type */
 #define BV_OPUS_CONTROL                         (uint8_t)0x0A  
@@ -135,6 +136,13 @@ BV_OPUS_Status BVOPUS_CodecEncInit(OPUS_IF_ENC_ConfigTypeDef *ENC_configOpus);
  * @retval BV_OPUS_Status: Value indicating success or error code.
  */
 BV_OPUS_Status BVOPUS_CodecDecInit(OPUS_IF_DEC_ConfigTypeDef *DEC_configOpus);
+
+/**
+ * @brief  This function sets the maximum ble packet size.
+ * @param  max_length: maximum ble packet size.
+ * @retval None.
+ */                      
+void BluevoiceOPUS_SetMaxDataLength(uint16_t max_length);
 
 /**
  * @brief  This function returns the audio notification status.

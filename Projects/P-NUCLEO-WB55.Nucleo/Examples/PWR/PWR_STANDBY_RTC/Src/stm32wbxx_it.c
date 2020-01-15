@@ -60,9 +60,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
+
 /* USER CODE BEGIN EV */
 extern RTC_HandleTypeDef hrtc;
 /* USER CODE END EV */

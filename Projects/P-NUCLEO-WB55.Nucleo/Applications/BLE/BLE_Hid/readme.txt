@@ -38,11 +38,6 @@ It is free text.
 @note The application needs to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
 
-@par Keywords
-
-Add here all the importants words of the example separated by "," + $moduleName$ $exampleName$
-$moduleName$, $exampleName$, Security, IEC 60870-5, hardware CRC, 
-
 @par Directory contents 
   
   - BLE/BLE_Hid/Core/Inc/stm32wbxx_hal_conf.h	    HAL configuration file

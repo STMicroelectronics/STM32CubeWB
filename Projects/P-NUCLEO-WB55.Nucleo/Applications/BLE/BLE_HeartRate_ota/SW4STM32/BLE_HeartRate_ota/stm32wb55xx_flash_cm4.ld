@@ -50,15 +50,14 @@ ENTRY(Reset_Handler)
 _estack = 0x20030000;    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0x400;      /* required amount of heap  */
-_Min_Stack_Size = 0x1000;   /* required amount of stack */
+_Min_Stack_Size = 0x1000; /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
 {
-FLASH (rx)                 : ORIGIN = 0x08007000, LENGTH = 1k  
+FLASH (rx)                 : ORIGIN = 0x08007000, LENGTH = 484k
 RAM1 (xrw)                 : ORIGIN = 0x20000004, LENGTH = 191k
-RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10k  
-OTA_TAG (rx)               : ORIGIN = 0x08007178 , LENGTH = 599k
+RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K
 }
 
 /* Define output sections */
@@ -72,6 +71,12 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
+ .ota_region 0x08007140:
+  {
+	KEEP(*(TAG_OTA_START))
+	. = ALIGN(4);
+  } >FLASH
+  
   /* The program code and other data goes into FLASH */
   .text :
   {
@@ -87,7 +92,7 @@ SECTIONS
 
     . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
-  } >OTA_TAG
+  } >FLASH
 
   /* Constant data goes into FLASH */
   .rodata :
@@ -96,36 +101,43 @@ SECTIONS
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
     . = ALIGN(4);
-  } >OTA_TAG
+  } >FLASH
 
   .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
   .ARM : {
     __exidx_start = .;
     *(.ARM.exidx*)
     __exidx_end = .;
-  } >OTA_TAG
+  } >FLASH
 
   .preinit_array     :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >OTA_TAG
+  } >FLASH
   .init_array :
   {
     PROVIDE_HIDDEN (__init_array_start = .);
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >OTA_TAG
+  } >FLASH
   .fini_array :
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
     KEEP (*(SORT(.fini_array.*)))
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >OTA_TAG
+  } >FLASH
 
+ .ota_region_end :
+  {
+	. = ALIGN(4);
+	KEEP(*(TAG_OTA_END))
+	. = ALIGN(4);
+  } >FLASH
+  
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
 
@@ -139,7 +151,7 @@ SECTIONS
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
-  } >RAM1 AT> OTA_TAG
+  } >RAM1 AT> FLASH
 
   
   /* Uninitialized data section */
@@ -182,9 +194,8 @@ SECTIONS
   .ARM.attributes 0       : { *(.ARM.attributes) }
    MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED
    MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED
-   MB_MEM2                : { *(MB_MEM2) } >RAM_SHARED 
-   TAG_OTA_START          : { KEEP (*(TAG_OTA_START)) } >FLASH
-   TAG_OTA_END            : { KEEP (*(TAG_OTA_END)) } >OTA_TAG
+   MB_MEM2 (NOLOAD)       : { _sMB_MEM2 = . ; *(MB_MEM2) ; _eMB_MEM2 = . ; } >RAM_SHARED
+   TAG_OTA_END(NOLOAD)    : { KEEP (*(TAG_OTA_END)) } >FLASH
 }
 
 

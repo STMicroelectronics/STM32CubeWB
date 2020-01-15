@@ -78,7 +78,7 @@ static void Init_Debug( void );
 static void appe_Tl_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
-static void APPE_SysEvtReadyProcessing(SHCI_C2_Ready_Evt_t *pReadyEvt);
+static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt );
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
@@ -237,6 +237,15 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
  * @retval None
  */
 
+/**
+ * The type of the payload for a system user event is tSHCI_UserEvtRxParam
+ * When the system event is both :
+ *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
+ *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ * The buffer shall not be released
+ * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
+ * When the status is not filled, the buffer is released by default
+ */
 static void APPE_SysUserEvtRx( void * pPayload )
 {
   TL_AsynchEvt_t *p_sys_event;
@@ -245,7 +254,7 @@ static void APPE_SysUserEvtRx( void * pPayload )
   switch(p_sys_event->subevtcode)
   {
      case SHCI_SUB_EVT_CODE_READY:
-         APPE_SysEvtReadyProcessing( (SHCI_C2_Ready_Evt_t*)p_sys_event->payload );;
+       ((tSHCI_UserEvtRxParam*)pPayload)->status = APPE_SysevtReadyProcessing( (SHCI_C2_Ready_Evt_t*)p_sys_event->payload );
          break;
      case SHCI_SUB_EVT_ERROR_NOTIF:
          APPE_SysEvtError((SCHI_SystemErrCode_t) (p_sys_event->payload[0]));
@@ -279,9 +288,10 @@ static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
   return;
 }
 
-static void APPE_SysEvtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt )
+static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt )
 {
   uint8_t fus_state_value;
+  SHCI_TL_UserEventFlowStatus_t return_value;
 
 #if ( CFG_LED_SUPPORTED != 0)
   BSP_LED_Off(LED_BLUE);
@@ -289,6 +299,8 @@ static void APPE_SysEvtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt )
 
   if(pReadyEvt->sysevt_ready_rsp == WIRELESS_FW_RUNNING)
   {
+    return_value = SHCI_TL_UserEventFlow_Enable;
+
     if((*(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_CPU2_UPGRADE)
     {
       /**
@@ -316,6 +328,7 @@ static void APPE_SysEvtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt )
     /**
      * FUS is running on CPU2
      */
+    return_value = SHCI_TL_UserEventFlow_Disable;
 
     /**
      * The CPU2 firmware update procedure is starting from now
@@ -400,7 +413,7 @@ static void APPE_SysEvtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt )
     }
   }
 
-  return;
+  return return_value;
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */

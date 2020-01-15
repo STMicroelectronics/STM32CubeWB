@@ -261,8 +261,6 @@ enum ZbApsmeIbAttrIdT {
      *      allowRemoteTcPolicyChange = 0xbd */
     ZB_APS_IB_ID_TRUST_CENTER_POLICY, /* 0xad (uint32_t) */
 
-    ZB_APS_IB_ID_FRAGMENTATION_THRESH, /* 0xaf (uint8_t) */
-
     /*** Exegin extensions (0x500 to 0x5ff reserved for custom AIBs) ***/
     ZB_APS_IB_ID_SCAN_COUNT = 0x0500, /* (uint8_t) ZDO join parameter. Is not modified by ZbApsReset. */
     ZB_APS_IB_ID_LEAVE_REMOVE_CHILDREN, /* (uint8_t) ZDO leave parameter */
@@ -274,7 +272,8 @@ enum ZbApsmeIbAttrIdT {
     ZB_APS_IB_ID_KEY_UPDATE_PERIOD, /* (uint32_t) */
     ZB_APS_IB_ID_MANUFACTURER_ID, /* (uint16_t) Manufacturer ID */
     ZB_APS_IB_ID_SEND_PKT_COOLDOWN, /* (uint16_t) milliseconds */
-    ZB_APS_IB_ID_BIND_ADDR_RESOLVE_PERIOD /* (uint16_t) seconds, 0 = disabled */
+    ZB_APS_IB_ID_BIND_ADDR_RESOLVE_PERIOD, /* (uint16_t) seconds, 0 = disabled */
+    ZB_APS_IB_ID_FRAGMENTATION_THRESH /* apsFragmentationThresh */
 };
 
 /* APSME-GET.request */
@@ -395,7 +394,7 @@ typedef struct {
     const uint16_t *inputClusterList;
     uint8_t outputClusterCount; /* Supported Client Clusters */
     const uint16_t *outputClusterList;
-    uint16_t bdbCommissioningGroupID;
+    uint16_t bdbCommissioningGroupID; /* e.g. DEFAULT_EP_BDB_COMMISSION_GRP_ID; */
 } ZbApsmeAddEndpointReqT;
 
 /* APSME-ADD-ENDPOINT.confirm - Exegin Custom */
@@ -451,7 +450,7 @@ void ZbApsmeRemoveEndpoint(struct ZigBeeT *zb, ZbApsmeRemoveEndpointReqT *r, ZbA
 /* Attach a callback to receive all APS messages for this endpoint that have
  * not matched any other filter rules. */
 bool ZbApsmeEndpointConfigNoMatchCallback(struct ZigBeeT *zb, uint8_t endpoint,
-    void (*callback)(ZbApsdeDataIndT *ind, void *cbarg), void *arg);
+    int (*callback)(ZbApsdeDataIndT *ind, void *cbarg), void *arg);
 
 /* Add a cluster ID to the input cluster list of an existing endpoint */
 bool ZbApsmeEndpointClusterListAppend(struct ZigBeeT *zb, uint8_t endpoint,
@@ -841,12 +840,16 @@ enum ZbApsFilterTypeT {
     ZB_APS_FILTER_TYPE_NO_MATCH /* call if there were no other matches for this packet */
 };
 
+/* Packet filter return values. Only used if type = ZB_APS_FILTER_TYPE_NORMAL */
+#define ZB_APS_FILTER_CONTINUE              0 /* Continue processing any further filter callbacks. */
+#define ZB_APS_FILTER_DISCARD               1 /* Stop processing further filter callbacks. */
+
 /* APS packet filter entry. */
 struct ZbApsFilterT {
     struct LinkListT link;
     /* Packet handler actions */
     enum ZbApsFilterTypeT type;
-    void (*callback)(ZbApsdeDataIndT *dataInd, void *cb_arg);
+    int (*callback)(ZbApsdeDataIndT *dataInd, void *cb_arg);
     void *arg;
     /* Packet filter rules */
     uint32_t r[ZB_APS_FILTER_RULES_MAX];
@@ -854,10 +857,10 @@ struct ZbApsFilterT {
 
 /* Create an APS indication filter and callback for an endpoint, with no specific cluster being filtered. */
 struct ZbApsFilterT * ZbApsFilterEndpointAdd(struct ZigBeeT *zb, uint8_t endpoint, uint16_t profileId,
-    void (*callback)(ZbApsdeDataIndT *dataInd, void *cb_arg), void *arg);
+    int (*callback)(ZbApsdeDataIndT *dataInd, void *cb_arg), void *arg);
 /* Create an APS indication filter and callback for an endpoint and a specific cluster ID. */
 struct ZbApsFilterT * ZbApsFilterClusterAdd(struct ZigBeeT *zb, uint8_t endpoint, uint16_t clusterId, uint16_t profileId,
-    void (*callback)(ZbApsdeDataIndT *dataInd, void *cb_arg), void *arg);
+    int (*callback)(ZbApsdeDataIndT *dataInd, void *cb_arg), void *arg);
 void ZbApsFilterClusterFree(struct ZigBeeT *zb, struct ZbApsFilterT *filter);
 
 /*---------------------------------------------------------------

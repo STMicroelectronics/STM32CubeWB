@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Production</name>
+        <name>BLE_HeartRate</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>

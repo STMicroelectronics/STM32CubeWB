@@ -172,7 +172,7 @@
 
 typedef enum
 {
-    CFG_TIM_PROC_ID_ISR,
+  CFG_TIM_PROC_ID_ISR,
 } CFG_TimProcID_t;
 
 /******************************************************************************
@@ -303,9 +303,8 @@ typedef enum
 #define TASK_SEND_BUFFER            (1U << CFG_TASK_SEND_BUFFER)
 #define TASK_Notif_CoapReceived     (1U << CFG_TASK_NOTIF_COAP_RECEIVED)
 #define TASK_IdentifyBoard          (1U << CFG_TASK_IDENTIFY_BOARD)
-/* USER CODE END DEFINE_TASK */
+/* USER CODE END DEFINE_TASK */  
  
-
 /**
  * This is the list of priority required by the application
  * Each Id shall be in the range 0..31

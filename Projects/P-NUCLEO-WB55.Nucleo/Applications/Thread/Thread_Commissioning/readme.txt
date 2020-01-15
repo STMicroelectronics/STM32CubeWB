@@ -100,6 +100,7 @@ In order to make the program work, you must do the following:
    and load your image into the target memory
  - Run the application 
 
+Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
 
  Step 1 : At start both devices are not attached to any Thread network. LED1 (blue) is 
           toggling slowly waiting for a user action. Both devices are in 'disabled' mode.

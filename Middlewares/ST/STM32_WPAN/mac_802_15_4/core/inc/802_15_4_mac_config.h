@@ -170,7 +170,10 @@ typedef enum MAC_Message_ID_Tag {
     g_MLME_POLL_REQUEST_c,
 
     /*! -MLME Poll Confirm */
-    g_MLME_POLL_CONFIRM_c
+    g_MLME_POLL_CONFIRM_c,
+
+    /*! -MLME Poll Indication */
+    g_MLME_POLL_INDICATION_c
 } MAC_Message_ID_t;
 
 /******************************************************************************/
@@ -234,130 +237,172 @@ typedef enum MAC_Security_Mode_Tag {
  */
 #define aMaxSIFSFrameSize               (18)
 
+/** @defgroup MAC 802.15.4 MAC PIB IDs
+  *   @brief identifier list of the MAC PIB attributes
+  * @{
+  */
+
 /******************************************************************************/
 /** @brief This enum contains all the mac pib Ids */
 typedef enum MAC_Pib_Ids_Tag {
-    /*! -Id of mac attribute mac_ack_wait_duration */
+    /*! Attribute ID of mac attribute mac_ack_wait_duration */
     g_MAC_ACK_WAIT_DURATION_c = (uint8_t) 0x40,
 
-    /*! -Id of mac attribute mac_association_permit */
+    /*! Attribute ID of mac attribute mac_association_permit */
     g_MAC_ASSOCIATION_PERMIT_c = (uint8_t) 0x41,
 
-    /*! -Id of mac attribute mac_auto_request */
+    /*! Attribute ID of mac attribute mac_auto_request */
     g_MAC_AUTO_REQUEST_c = (uint8_t) 0x42,
 
-    /*! -Id of mac attribute mac_beacon_payload */
+    /*! Attribute ID of mac attribute mac_beacon_payload */
     g_MAC_BEACON_PAYLOAD_c = (uint8_t) 0x45,
 
-    /*! -Id of mac attribute mac_beacon_payload_length */
+    /*! Attribute ID of mac attribute mac_beacon_payload_length */
     g_MAC_BEACON_PAYLOAD_LENGTH_c = (uint8_t) 0x46,
 
-    /*! -Id of mac attribute mac_beacon_order */
+    /*! Attribute ID of mac attribute mac_beacon_order */
     g_MAC_BEACON_ORDER_c = (uint8_t) 0x47,
 
-    /*! -Id of mac attribute mac_bsn */
+    /*! Attribute ID of mac attribute mac_bsn */
     g_MAC_BSN_c = (uint8_t) 0x49,
 
-    /*! -Id of mac attribute mac_coord_extended_address */
+    /*! Attribute ID of mac attribute mac_coord_extended_address */
     g_MAC_COORD_EXTENDED_ADDDRESS_c = (uint8_t) 0x4A,
 
-    /*! -Id of mac attribute mac_coord_short_address */
+    /*! Attribute ID of mac attribute mac_coord_short_address */
     g_MAC_COORD_SHORT_ADDRESS_c = (uint8_t) 0x4B,
 
-    /*! -Id of mac attribute mac_dsn */
+    /*! Attribute ID of mac attribute mac_dsn */
     g_MAC_DSN_c = (uint8_t) 0x4C,
 
-    /*! -Id of mac attribute mac_max_frame_total_wait_time */
+    /*! Attribute ID of mac attribute mac_max_frame_total_wait_time */
     g_MAC_MAX_FRAME_TOTAL_WAIT_TIME_c = (uint8_t) 0x58,
 
-    /*! -Id of mac attribute mac_max_frame_retries */
+    /*! Attribute ID of mac attribute mac_max_frame_retries */
     g_MAC_MAX_FRAME_RETRIES_c = (uint8_t) 0x59,
 
-    /*! -Id of mac attribute mac_pan_id */
+    /*! Attribute ID of mac attribute mac_pan_id */
     g_MAC_PAN_ID_c = (uint8_t) 0x50,
 
-    /*! -Id of mac attribute mac_response_wait_time */
+    /*! Attribute ID of mac attribute mac_response_wait_time */
     g_MAC_RESPONSE_WAIT_TIME_c = (uint8_t) 0x5A,
 
-    /*! -Id of mac attribute mac_rx_on_when_idle */
+    /*! Attribute ID of mac attribute mac_rx_on_when_idle */
     g_MAC_RX_ON_WHEN_IDLE_c = (uint8_t) 0x52,
 
-    /*! -Id of mac attribute mac_security_enabled */
+    /*! Attribute ID of mac attribute mac_security_enabled */
     g_MAC_SECURITY_ENABLED_c = (uint8_t) 0x5D,
 
-    /*! -Id of mac attribute mac_short_address */
+    /*! Attribute ID of mac attribute mac_short_address */
     g_MAC_SHORT_ADDRESS_c = (uint8_t) 0x53,
 
-    /*! -Id of mac attribute mac_superframe_order */
+    /*! Attribute ID of mac attribute mac_superframe_order */
     g_MAC_SUPERFRAME_ORDER_c = (uint8_t) 0x54,
 
-    /*! -Id of mac attribute mac_time_stamp_supported */
+    /*! Attribute ID of mac attribute mac_time_stamp_supported */
     g_MAC_TIMESTAMP_SUPPORTED_c = (uint8_t) 0x5C,
 
-    /*! -Id of mac attribute mac_transaction_persistence_time */
+    /*!  Attribute ID of mac attribute mac_transaction_persistence_time */
     g_MAC_TRANSACTION_PERSISTENCE_TIME_c = (uint8_t) 0x55,
 
-    /*! -Id of mac attribute mac_max_be */
+    /*! Attribute ID of mac attribute mac_max_be */
     g_MAC_MAX_BE_c = (uint8_t) 0x57,
 
-    /*! -Id of mac attribute mac_lifs */
+    /*! Attribute ID of mac attribute mac_lifs */
     g_MAC_LIFS_PERIOD_c = (uint8_t) 0x5E,
 
-    /*! -Id of mac attribute mac_sifs */
+    /*! Attribute ID of mac attribute mac_sifs */
     g_MAC_SIFS_PERIOD_c = (uint8_t) 0x5F,
 
-    /*! -Id of mac attribute mac_max_csma_backoffs */
+    /*! Attribute ID of mac attribute mac_max_csma_backoffs */
     g_MAC_MAX_CSMA_BACKOFFS_c = (uint8_t) 0x4E,
 
-    /*! -Id of mac attribute mac_min_be */
+    /*! Attribute ID of mac attribute mac_min_be */
     g_MAC_MIN_BE_c = (uint8_t) 0x4F,
 
-    /*! -Id of pan coordinator */
+    /*! Attribute ID of pan coordinator */
     g_MAC_PAN_COORDINATOR_c = (uint8_t) 0x10,
 
-    /*! -Id of parent is a pan coordinator */
+    /*! Attribute ID of parent is a pan coordinator */
     g_MAC_ASSOC_PAN_COORDINATOR_c = (uint8_t) 0x11,
 
-    /*! -Id of mac extended address */
+    /*! Attribute ID of mac extended address */
     g_MAC_EXTENDED_ADDRESS_c = (uint8_t) 0x6F,
 
-    /*! -Id for MAC ACL Entry */
+    /*! Attribute ID of MAC ACL Entry */
     g_MAC_ACL_ENTRY_DESCRIPTOR_c = (uint8_t) 0x70,
 
-    /*! -Id for No of ACL Security Descriptor Entries */
+    /*! Attribute ID of No of ACL Security Descriptor Entries */
     g_MAC_ACL_ENTRY_DESCRIPTOR_SIZE_c = (uint8_t) 0x71,
 
-    /*! -Id for MAC Default Security Support */
+    /*! Attribute ID of MAC Default Security Support */
     g_MAC_DEFAULT_SECURITY_c = (uint8_t) 0x72,
 
-    /*! -Id for MAC Default Security material length */
+    /*! Attribute ID of MAC Default Security material length */
     g_MAC_DEFAULT_SECURITY_MATERIAL_LENGTH_c = (uint8_t) 0x73,
 
-    /*! -Id for MAC Default Security Material */
+    /*! Attribute ID of MAC Default Security Material */
     g_MAC_DEFAULT_SECURITY_MATERIAL_c = (uint8_t) 0x74,
 
-    /*! -Id for MAC Default Security Suite */
+    /*! Attribute ID of MAC Default Security Suite */
     g_MAC_DEFAULT_SECURITY_SUITE_c = (uint8_t) 0x75,
 
-    /*! -Id for MAC Security Mode */
+    /*! Attribute ID of MAC Security Mode */
     g_MAC_SECURITY_MODE_c = (uint8_t) 0x76,
 
-    /*! - Proprietary Id for Current number of ACL Entries  */
+    /*! Attribute ID of Current number of ACL Entries  */
     g_MAC_CURRENT_ACL_ENTRIES_c = (uint8_t) 0x80,
 
-    /*! - Proprietary Id for Default MAC Security Extended Address  */
+    /*! Proprietary Attribute ID of Default MAC Security Extended Address  */
     g_MAC_DEFAULT_SECURITY_EXTENDED_ADDRESS_c = (uint8_t) 0x81,
 
-    /*! - Proprietary Id for Default MAC Security Extended Address  */
+    /*! Proprietary Attribute ID of Default MAC Security Extended Address  */
     g_MAC_ASSOCIATED_PAN_COORDINATOR_c = (uint8_t) 0x56,
 
 #ifdef GENMAC_CERTIF_DEDICATED_ATTRIB
-    /*! - Proprietary Id to force FC frameType field to 'Reserved'  */
+    /*! Attribute ID of proprietary attribute to force FC frameType field to 'Reserved'  */
     g_MAC_CERTIF_SET_FC_RESERVED_FRAME_c = (uint8_t) 0x90,
-    /*! - Proprietary Id to force FC security field to 'Enabled'  */
+    /*! Attribute ID of proprietary attribute to force FC security field to 'Enabled'  */
     g_MAC_CERTIF_SET_FC_SECURITY_FRAME_c = (uint8_t) 0x91,
 #endif
+    /*! Attribute ID of enabling the promiscuous mode */
+    g_MAC_PROMISCUOUS_MODE_c = (uint8_t) 0x51,
 } MAC_Pib_Ids_t;
+
+
+/******************************************************************************/
+/** @brief This enum contains all the PHY pib Ids */
+/** @brief The PHY PIB attribute IDs */
+typedef enum PHY_Pib_Id_Tag {
+    /*! Attribute ID for current channel */
+    g_PHY_CURRENT_CHANNEL_c = 0x0,
+
+    /*! Attribute ID for channels supported */
+    g_PHY_CHANNELS_SUPPORTED_c = 0x1,
+
+    /*! Attribute ID for transmit power */
+    g_PHY_TRANSMIT_POWER_c = 0x2,
+
+    /*! Attribute ID for CCA Mode */
+    g_PHY_CCA_MODE_c = 0x3,
+
+    /*! Attribute ID for current page */
+    g_PHY_CURRENT_PAGE_c = 0x4,
+
+    /*! Attribute ID for Max Frame Duration */
+    g_PHY_MAX_FRAME_DURATION_c = 0x5,
+
+    /*! Attribute ID for SHR duration  */
+    g_PHY_SHR_DURATION_c = 0x6,
+
+    /*! Attribute ID for symbols per octet */
+    g_PHY_SYMBOLS_PER_OCTET_c = 0x7
+} PHY_Pib_Id_t;
+
+
+/**
+  * @}
+  */
 
 /******************************************************************************/
 /** @brief This enum indicates the type of scan to be performed */

@@ -56,6 +56,19 @@
 #define HCI_LE_META_EVT_CODE                                   0x3E
 #define HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE                     0xFF
 
+/* HCI subevent code */
+#define HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE                 0x01
+#define HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE                  0x02
+#define HCI_LE_CONNECTION_UPDATE_COMPLETE_SUBEVT_CODE          0x03
+#define HCI_LE_READ_REMOTE_FEATURES_COMPLETE_SUBEVT_CODE       0x04
+#define HCI_LE_LONG_TERM_KEY_REQUEST_SUBEVT_CODE               0x05
+#define HCI_LE_DATA_LENGTH_CHANGE_SUBEVT_CODE                  0x07
+#define HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_SUBEVT_CODE 0x08
+#define HCI_LE_GENERATE_DHKEY_COMPLETE_SUBEVT_CODE             0x09
+#define HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE        0x0A
+#define HCI_LE_DIRECT_ADVERTISING_REPORT_SUBEVT_CODE           0x0B
+#define HCI_LE_PHY_UPDATE_COMPLETE_SUBEVT_CODE                 0x0C
+
 /* HCI error code */
 #define HCI_SUCCESS_ERR_CODE                                   0x00
 #define HCI_UNKNOWN_HCI_COMMAND_ERR_CODE                       0x01

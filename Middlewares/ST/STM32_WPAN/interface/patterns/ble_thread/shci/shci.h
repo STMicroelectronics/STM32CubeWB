@@ -50,6 +50,7 @@ extern "C" {
      ERR_BLE_INIT = 0,
      ERR_THREAD_LLD_FATAL_ERROR = 125, /* The LLD driver used on 802_15_4 detected a fatal error            */
      ERR_THREAD_UNKNOWN_CMD = 126,     /* The command send by the M4 to control the Thread stack is unknown */
+     ERR_ZIGBEE_UNKNOWN_CMD = 200,     /* The command send by the M4 to control the Zigbee stack is unknown */
    } SCHI_SystemErrCode_t;
 
 #define SHCI_EVTCODE                    ( 0xFF )
@@ -135,7 +136,8 @@ extern "C" {
     SHCI_OCF_C2_MAC_802_15_4_INIT,
     SHCI_OCF_C2_REINIT,
     SHCI_OCF_C2_ZIGBEE_INIT,
-    SHCI_OCF_C2_LLD_TESTS_INIT
+    SHCI_OCF_C2_LLD_TESTS_INIT,
+    SHCI_OCF_C2_EXTPA_CONFIG
   } SHCI_OCF_t;
 
 #define SHCI_OPCODE_C2_FUS_GET_STATE         (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_GET_STATE)
@@ -325,6 +327,7 @@ extern "C" {
     {
       BLE_ENABLE,
       THREAD_ENABLE,
+      ZIGBEE_ENABLE,
     } SHCI_C2_CONCURRENT_Mode_Param_t;
       /** No response parameters*/
 
@@ -335,18 +338,42 @@ extern "C" {
     {
       BLE_IP,
       THREAD_IP,
+      ZIGBEE_IP,
     } SHCI_C2_FLASH_Ip_t;
       /** No response parameters*/
 
-#define SHCI_OPCODE_C2_RADIO_ALLOW_LOW_POWER      (( SHCI_OGF << 10) + SHCI_OCF_C2_RADIO_ALLOW_LOW_POWER)
+#define SHCI_OPCODE_C2_RADIO_ALLOW_LOW_POWER    (( SHCI_OGF << 10) + SHCI_OCF_C2_RADIO_ALLOW_LOW_POWER)
 
 #define SHCI_OPCODE_C2_MAC_802_15_4_INIT        (( SHCI_OGF << 10) + SHCI_OCF_C2_MAC_802_15_4_INIT)
 
 #define SHCI_OPCODE_C2_REINIT                   (( SHCI_OGF << 10) + SHCI_OCF_C2_REINIT)
 
-#define SHCI_OPCODE_C2_ZIGBEE_INIT                (( SHCI_OGF << 10) + SHCI_OCF_C2_ZIGBEE_INIT)
+#define SHCI_OPCODE_C2_ZIGBEE_INIT              (( SHCI_OGF << 10) + SHCI_OCF_C2_ZIGBEE_INIT)
 
-#define SHCI_OPCODE_C2_LLD_TESTS_INIT                (( SHCI_OGF << 10) + SHCI_OCF_C2_LLD_TESTS_INIT)
+#define SHCI_OPCODE_C2_LLD_TESTS_INIT           (( SHCI_OGF << 10) + SHCI_OCF_C2_LLD_TESTS_INIT)
+
+#define SHCI_OPCODE_C2_EXTPA_CONFIG             (( SHCI_OGF << 10) + SHCI_OCF_C2_EXTPA_CONFIG)
+  /** Command parameters */
+    enum
+    {
+      EXT_PA_ENABLED_LOW,
+      EXT_PA_ENABLED_HIGH,
+    }/* gpio_polarity */;
+
+    enum
+    {
+      EXT_PA_DISABLED,
+      EXT_PA_ENABLED,
+    }/* gpio_status */;
+
+    typedef PACKED_STRUCT{
+      uint32_t gpio_port;
+      uint16_t gpio_pin_number;
+      uint8_t gpio_polarity;
+      uint8_t gpio_status;
+    } SHCI_C2_EXTPA_CONFIG_Cmd_Param_t;
+
+    /** No response parameters*/
 
  /* Exported type --------------------------------------------------------*/
 
@@ -408,6 +435,9 @@ typedef  MB_WirelessFwInfoTable_t SHCI_WirelessFwInfoTable_t;
 #define INFO_STACK_TYPE_MAC                         0x40
 #define INFO_STACK_TYPE_BLE_THREAD_FTD_STATIC       0x50
 #define INFO_STACK_TYPE_802154_LLD_TESTS            0x60
+#define INFO_STACK_TYPE_802154_PHY_VALID            0x61
+#define INFO_STACK_TYPE_BLE_PHY_VALID               0x62
+#define INFO_STACK_TYPE_BLE_ZIGBEE_FFD_STATIC       0x70
 
 typedef struct {
 /**
@@ -655,6 +685,27 @@ typedef struct {
   * @retval Status
   */
   SHCI_CmdStatus_t SHCI_C2_Reinit( void );
+
+  /**
+  * SHCI_C2_ExtpaConfig
+  * @brief Send the Ext PA configuration
+  *        When the CPU2 receives the command, it controls the Ext PA as requested by the configuration
+  *        This configures only which IO is used to enable/disable the ExtPA and the associated polarity
+  *        This command has no effect on the other IO that is used to control the mode of the Ext PA (Rx/Tx)
+  *
+  * @param gpio_port: GPIOx where x can be (A..F) to select the GPIO peripheral for STM32WBxx family
+  * @param gpio_pin_number: This parameter can be one of GPIO_PIN_x (= LL_GPIO_PIN_x)  where x can be (0..15).
+  * @param gpio_polarity: This parameter can be either
+  *                       - EXT_PA_ENABLED_LOW: ExtPA is enabled when GPIO is low
+  *                       - EXT_PA_ENABLED_HIGH: ExtPA is enabled when GPIO is high
+  * @param gpio_status: This parameter can be either
+  *                       - EXT_PA_DISABLED: Stop driving the ExtPA
+  *                       - EXT_PA_ENABLED: Drive the ExtPA according to radio activity
+  *                                          (ON before the Event and OFF at the end of the event)
+  * @retval Status
+  */
+  SHCI_CmdStatus_t SHCI_C2_ExtpaConfig(uint32_t gpio_port, uint16_t gpio_pin_number, uint8_t gpio_polarity, uint8_t gpio_status);
+
 
   #ifdef __cplusplus
 }

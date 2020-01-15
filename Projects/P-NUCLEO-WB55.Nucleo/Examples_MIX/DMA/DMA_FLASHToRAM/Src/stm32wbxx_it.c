@@ -60,9 +60,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern DMA_HandleTypeDef hdma_memtomem_dma1_channel1;
 /* USER CODE BEGIN EV */
 

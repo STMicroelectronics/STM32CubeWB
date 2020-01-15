@@ -59,12 +59,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern DMA_HandleTypeDef hdma_tim1_ch3;
-  
-      
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */

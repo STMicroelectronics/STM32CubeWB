@@ -190,8 +190,10 @@ void SVCCTL_RegisterSvcHandler( SVC_CTL_p_EvtHandler_t pfBLE_SVC_Service_Event_H
 {
 #if (BLE_CFG_SVC_MAX_NBR_CB > 0)
   SVCCTL_EvtHandler.SVCCTL__SvcHandlerTab[SVCCTL_EvtHandler.NbreOfRegisteredHandler] = pfBLE_SVC_Service_Event_Handler;
-#endif
   SVCCTL_EvtHandler.NbreOfRegisteredHandler++;
+#else
+  (void)(pfBLE_SVC_Service_Event_Handler);
+#endif
 
   return;
 }
@@ -205,8 +207,10 @@ void SVCCTL_RegisterCltHandler( SVC_CTL_p_EvtHandler_t pfBLE_SVC_Client_Event_Ha
 {
 #if (BLE_CFG_CLT_MAX_NBR_CB > 0)
   SVCCTL_CltHandler.SVCCTL_CltHandlerTable[SVCCTL_CltHandler.NbreOfRegisteredHandler] = pfBLE_SVC_Client_Event_Handler;
-#endif
   SVCCTL_CltHandler.NbreOfRegisteredHandler++;
+#else
+  (void)(pfBLE_SVC_Client_Event_Handler);
+#endif
 
   return;
 }

@@ -83,12 +83,26 @@ On the android/ios device, enable the Bluetooth communications, and if not done 
 	https://play.google.com/store/apps/details?id=com.st.bluems
 	https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
 	
-The Ble_Ota Application allows a remote device to download an application binary.
+The Ble_Ota Application allows a remote device to download an application binary 
+on CPU1 application processor or to download a Wireless FW (as radio stack or RSS/FUS updates)
+on CPU2 Stack processor.
+
+For application binary update example:
  - At Startup, the Ble_Ota application advertises "STM_OTA"
  - with Smart Phone "ST BLE Sensor" application, scan and connect to "STM_OTA" Application.
  - Next, select the binary to be downloaded on the Application Processor
    -  BLE_HeartRate_ota_reference.bin or BLE_p2pServer_ota_reference.bin have to be copied into Smart phone directory
  - Start download
+ - New Application is running and can be connected
+ 
+For Wireless FW binary update example:
+ - At Startup, the Ble_Ota application advertises "STM_OTA"
+ - with Smart Phone "ST BLE Sensor" application, scan and connect to "STM_OTA" Application.
+ - Next, select the binary to be downloaded on the Stack Processor
+   - copy into Smart phone directory binaries available in STM32WB_Copro_Wireless_Binaries folder
+     as stm32wb5x_FUS_fw.bin or stm32wb5x_BLE_Stack_fw.bin 
+    (please refer to UM2551 - STM32CubeWB Nucleo demonstration firmware, chapter 4.3)
+ - Start download in free area of non secure Flash memory
  - New Application is running and can be connected
  
 For more details refer to the Application Note: 

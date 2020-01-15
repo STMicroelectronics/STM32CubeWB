@@ -60,12 +60,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern RTC_HandleTypeDef hrtc;
-  
-      
 extern TIM_HandleTypeDef htim16;
 /* USER CODE BEGIN EV */
 

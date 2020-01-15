@@ -514,7 +514,6 @@ void shci_send( uint16_t cmd_code, uint8_t len_cmd_payload, uint8_t * p_cmd_payl
   return;
 }
 
-
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS*/
 
 /* USER CODE END FD_WRAP_FUNCTIONS*/

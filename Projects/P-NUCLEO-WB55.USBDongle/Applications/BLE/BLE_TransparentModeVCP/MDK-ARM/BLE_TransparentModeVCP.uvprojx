@@ -6,7 +6,7 @@
 
   <Targets>
   <Target> 
-      <TargetName>Production</TargetName>
+      <TargetName>BLE_TransparentModeVCP</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -43,14 +43,14 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>Production\Exe\</OutputDirectory>
+          <OutputDirectory>BLE_TransparentModeVCP\Exe\</OutputDirectory>
           <OutputName>BLE_TransparentModeVCP</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>Production\List</ListingPath>
+          <ListingPath>BLE_TransparentModeVCP\List</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -707,7 +707,7 @@
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="4.3.0" condition="CMSIS Core">
         <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="4.5.0"/>
         <targetInfos>
-          <targetInfo name="Production"/>
+          <targetInfo name="BLE_TransparentModeVCP"/>
         </targetInfos>
       </component>
     </components>

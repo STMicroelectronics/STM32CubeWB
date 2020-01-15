@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Production</name>
+        <name>BLE_TransparentModeVCP</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,15 +16,15 @@
                 <debug>0</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Production\Exe</state>
+                    <state>BLE_TransparentModeVCP\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Production\Obj</state>
+                    <state>BLE_TransparentModeVCP\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Production\List</state>
+                    <state>BLE_TransparentModeVCP\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -665,7 +665,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>STM32WB55CG_nucleo_BLE_TransparentModeVCP.hex</state>
+                    <state>BLE_TransparentModeVCP.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1052,13 +1052,13 @@
                 <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\main.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>

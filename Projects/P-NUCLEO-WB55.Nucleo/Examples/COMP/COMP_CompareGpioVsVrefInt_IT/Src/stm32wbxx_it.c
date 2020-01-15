@@ -60,9 +60,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern COMP_HandleTypeDef hcomp1;
 /* USER CODE BEGIN EV */
 

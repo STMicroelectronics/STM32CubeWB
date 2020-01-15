@@ -20,7 +20,7 @@
 
 @par Application Description
 
-This application shows how to use the USB device application based on the Mass Storage Class (MSC) on the STM32WBxx devices.
+How to use the USB device application based on the Mass Storage Class (MSC) on the STM32WBxx devices.
 
 This is a typical application on how to use the STM32WBxx USB Device peripheral to communicate with a PC
 Host using the Bulk Only Transfer (BOT) and Small Computer System Interface (SCSI) transparent commands,

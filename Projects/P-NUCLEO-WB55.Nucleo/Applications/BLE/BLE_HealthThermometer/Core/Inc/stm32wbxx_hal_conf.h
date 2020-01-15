@@ -276,7 +276,6 @@
 #endif /* HAL_PWR_MODULE_ENABLED */
 
 #ifdef HAL_QSPI_MODULE_ENABLED
- #define USE_HAL_QSPI_REGISTER_CALLBACKS 0U
  #include "stm32wbxx_hal_qspi.h"
 #endif /* HAL_QSPI_MODULE_ENABLED */
 

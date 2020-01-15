@@ -68,12 +68,11 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef hlpuart1;
-UART_HandleTypeDef huart1;
-DMA_HandleTypeDef hdma_lpuart1_tx;
-DMA_HandleTypeDef hdma_usart1_tx;
 
 RTC_HandleTypeDef hrtc;
+
+UART_HandleTypeDef huart1;
+DMA_HandleTypeDef hdma_usart1_tx;
 
 /* USER CODE BEGIN PV */
 
@@ -83,7 +82,6 @@ RTC_HandleTypeDef hrtc;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
-void MX_LPUART1_UART_Init(void);
 void MX_USART1_UART_Init(void);
 static void MX_RF_Init(void);
 static void MX_RTC_Init(void);
@@ -202,66 +200,77 @@ void SystemClock_Config(void)
   /** Initializes the peripherals clocks 
   */
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SMPS|RCC_PERIPHCLK_RFWAKEUP
-                              |RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART1
-                              |RCC_PERIPHCLK_LPUART1;
+                              |RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART1;
   PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
-  PeriphClkInitStruct.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_PCLK1;
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
   PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSE;
   PeriphClkInitStruct.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSE;
-  PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE0;
+  PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE1;
 
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
+  /* USER CODE BEGIN Smps */
+
+  /* USER CODE END Smps */
 }
 
 /**
-  * @brief LPUART1 Initialization Function
+  * @brief RF Initialization Function
   * @param None
   * @retval None
   */
-void MX_LPUART1_UART_Init(void)
+static void MX_RF_Init(void)
 {
 
-  /* USER CODE BEGIN LPUART1_Init 0 */
+  /* USER CODE BEGIN RF_Init 0 */
 
-  /* USER CODE END LPUART1_Init 0 */
+  /* USER CODE END RF_Init 0 */
 
-  /* USER CODE BEGIN LPUART1_Init 1 */
+  /* USER CODE BEGIN RF_Init 1 */
 
-  /* USER CODE END LPUART1_Init 1 */
-  hlpuart1.Instance = LPUART1;
-  hlpuart1.Init.BaudRate = 115200;
-  hlpuart1.Init.WordLength = UART_WORDLENGTH_8B;
-  hlpuart1.Init.StopBits = UART_STOPBITS_1;
-  hlpuart1.Init.Parity = UART_PARITY_NONE;
-  hlpuart1.Init.Mode = UART_MODE_TX_RX;
-  hlpuart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  hlpuart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  hlpuart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  hlpuart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  hlpuart1.FifoMode = UART_FIFOMODE_DISABLE;
-  if (HAL_UART_Init(&hlpuart1) != HAL_OK)
+  /* USER CODE END RF_Init 1 */
+  /* USER CODE BEGIN RF_Init 2 */
+
+  /* USER CODE END RF_Init 2 */
+
+}
+
+/**
+  * @brief RTC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RTC_Init(void)
+{
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
+  /** Initialize RTC Only 
+  */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = CFG_RTC_ASYNCH_PRESCALER;
+  hrtc.Init.SynchPrediv = CFG_RTC_SYNCH_PRESCALER;
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
   {
     Error_Handler();
   }
-  if (HAL_UARTEx_SetTxFifoThreshold(&hlpuart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(&hlpuart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_DisableFifoMode(&hlpuart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN LPUART1_Init 2 */
+  /* USER CODE BEGIN RTC_Init 2 */
+  /* Disable RTC registers write protection */
+  LL_RTC_DisableWriteProtection(RTC);
 
-  /* USER CODE END LPUART1_Init 2 */
+  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
+
+  /* Enable RTC registers write protection */
+  LL_RTC_EnableWriteProtection(RTC);
+  /* USER CODE END RTC_Init 2 */
 
 }
 
@@ -313,67 +322,6 @@ void MX_USART1_UART_Init(void)
 
 }
 
-/**
-  * @brief RF Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_RF_Init(void)
-{
-
-  /* USER CODE BEGIN RF_Init 0 */
-
-  /* USER CODE END RF_Init 0 */
-
-  /* USER CODE BEGIN RF_Init 1 */
-
-  /* USER CODE END RF_Init 1 */
-  /* USER CODE BEGIN RF_Init 2 */
-
-  /* USER CODE END RF_Init 2 */
-
-}
-
-/**
-  * @brief RTC Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_RTC_Init(void)
-{
-
-  /* USER CODE BEGIN RTC_Init 0 */
-
-  /* USER CODE END RTC_Init 0 */
-
-  /* USER CODE BEGIN RTC_Init 1 */
-
-  /* USER CODE END RTC_Init 1 */
-  /** Initialize RTC Only 
-  */
-  hrtc.Instance = RTC;
-  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
-  hrtc.Init.AsynchPrediv = CFG_RTC_ASYNCH_PRESCALER;
-  hrtc.Init.SynchPrediv = CFG_RTC_SYNCH_PRESCALER;
-  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-  if (HAL_RTC_Init(&hrtc) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN RTC_Init 2 */
-  /* Disable RTC registers write protection */
-  LL_RTC_DisableWriteProtection(RTC);
-
-  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
-
-  /* Enable RTC registers write protection */
-  LL_RTC_EnableWriteProtection(RTC);
-  /* USER CODE END RTC_Init 2 */
-
-}
-
 /** 
   * Enable DMA controller clock
   */
@@ -383,12 +331,8 @@ static void MX_DMA_Init(void)
   /* DMA controller clock enable */
   __HAL_RCC_DMAMUX1_CLK_ENABLE();
   __HAL_RCC_DMA2_CLK_ENABLE();
-  __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* DMA1_Channel4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 15, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
   /* DMA2_Channel4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Channel4_IRQn, 15, 0);
   HAL_NVIC_EnableIRQ(DMA2_Channel4_IRQn);
@@ -404,7 +348,7 @@ static void MX_GPIO_Init(void)
 {
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
 }

@@ -107,13 +107,6 @@
 /*****************************************************/
 
 /**
- * SMPS supply
- * SMPS not used when Set to 0
- * SMPS used when Set to 1
- */
-#define CFG_USE_SMPS    1
-
-/**
 * AD Element - Group B Feature
 */ 
 /* LSB - Second Byte */
@@ -412,8 +405,8 @@ typedef enum
  * When both are set to 0, no trace are output
  * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
  */
-#define CFG_DEBUG_TRACE_LIGHT    0
-#define CFG_DEBUG_TRACE_FULL     0
+#define CFG_DEBUG_TRACE_LIGHT     0
+#define CFG_DEBUG_TRACE_FULL      0
 
 #if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
 #undef CFG_DEBUG_TRACE_FULL
@@ -463,7 +456,7 @@ typedef enum
 #define CFG_HCI_USER_EVT_PROCESS_CB_SIZE      (0)
 #define CFG_HCI_USER_EVT_PROCESS_STACK_MEM    (0)
 #define CFG_HCI_USER_EVT_PROCESS_PRIORITY     osPriorityNone
-#define CFG_HCI_USER_EVT_PROCESS_STACk_SIZE   (128 * 2)
+#define CFG_HCI_USER_EVT_PROCESS_STACk_SIZE   (128 * 8)
 
 #define CFG_ADV_UPDATE_PROCESS_NAME           "ADV_UPDATE_PROCESS"
 #define CFG_ADV_UPDATE_PROCESS_ATTR_BITS      (0)

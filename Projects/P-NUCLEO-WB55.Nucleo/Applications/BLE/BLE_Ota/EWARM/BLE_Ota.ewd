@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>Production</name>
+    <name>BLE_Ota</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>

@@ -75,7 +75,13 @@ DMA_HandleTypeDef hdma_usart1_tx;
 
 RTC_HandleTypeDef hrtc;
 
+/* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 1024
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -88,7 +94,7 @@ void MX_LPUART1_UART_Init(void);
 void MX_USART1_UART_Init(void);
 static void MX_RF_Init(void);
 static void MX_RTC_Init(void);
-void StartDefaultTask(void *argument); // for v2
+void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 void PeriphClock_Config(void);
@@ -141,8 +147,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
-
-  osKernelInitialize(); // Initialize CMSIS-RTOS
+  /* Init scheduler */
+  osKernelInitialize();
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -161,12 +167,7 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  const osThreadAttr_t defaultTask_attributes = {
-    .name = "defaultTask",
-    .priority = (osPriority_t) osPriorityNormal,
-    .stack_size = 1024
-  };
+  /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -175,10 +176,10 @@ int main(void)
 
   /* Init code for STM32_WPAN */
   APPE_Init();
-
+ 
   /* Start scheduler */
   osKernelStart();
-  
+ 
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
@@ -253,6 +254,9 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  /* USER CODE BEGIN Smps */
+
+  /* USER CODE END Smps */
 }
 
 /**
@@ -393,9 +397,6 @@ static void MX_RTC_Init(void)
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
   hrtc.Init.AsynchPrediv = CFG_RTC_ASYNCH_PRESCALER;
   hrtc.Init.SynchPrediv = CFG_RTC_SYNCH_PRESCALER;
-  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   if (HAL_RTC_Init(&hrtc) != HAL_OK)
   {
     Error_Handler();
@@ -633,7 +634,6 @@ void HAL_Delay(uint32_t Delay)
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)

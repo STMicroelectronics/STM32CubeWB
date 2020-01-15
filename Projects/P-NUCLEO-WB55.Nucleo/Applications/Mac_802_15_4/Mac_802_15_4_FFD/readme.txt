@@ -25,7 +25,7 @@ How to use MAC 802.15.4 Association and Data exchange.
 
 This application requires two STM32WB55xx-Nucleo boards. One device will act as 
 802.15.4 coordinator ensuring association response and network establishment. 
-The other device will act as a MAC 802.15.4 EFD - Node. The Node request 
+The other device will act as a MAC 802.15.4 RFD - Node. The Node request 
 association on startup and send data to the coordinator. 
 
 Below example implements the FFD Devices.
@@ -103,8 +103,8 @@ Minimum requirements for the demo:
 - 1 STM32WB55xx-Nucleo board in MAC 802.15.4 FFD mode 
 using current generated binary.
     (This device will be referred as COORDINATOR )
-- 1 STM32WB55xx-Nucleo board in MAC 802.15.4 Node - EFD 
-(see MAC 802.14.4 EFD example)
+- 1 STM32WB55xx-Nucleo board in MAC 802.15.4 Node - RFD 
+(see MAC 802.14.4 RFD example)
     (This device will be referred as NODE )
 
 In order to make the program work, you must do the following: 
@@ -117,7 +117,7 @@ In order to make the program work, you must do the following:
          - The example run on Reset
  
  NODE :
-         - Refers to  MAC 802.14.4 EFD example to build 
+         - Refers to  MAC 802.14.4 RFD example to build 
          and load generated image
      
  if you want to get the traces in real time, you can connects an HyperTerminal 
@@ -142,7 +142,7 @@ By default, after a reset, both board starts. Coordinator must be started firstl
 to the node association request.
 
 This MAC 802.15.4 example is to demonstrate Point-to-Point communication using MAC components between 
-a FFD (ie.: the COORDINATOR) and an EFD (ie.: the NODE). 
+a FFD (ie.: the COORDINATOR) and an RFD (ie.: the NODE). 
 
 Upon COORDINATOR start, the device initializes the MAC 802.15.4 and associates resources in non-beaconned
 enable mode. 
@@ -158,7 +158,7 @@ the coordinator is started.
 
 On NODE side, the MAC layer is initialized on startup. In this state, blue LED (ID 1) is switch on.
 
-EFD issues an association request to the COORDINATOR to retrieve its short address. 
+RFD issues an association request to the COORDINATOR to retrieve its short address. 
 On in coming association request FFD's green LED (ID 2) blinks.
 
 Once the association between two devices is completed, RFD's green LED (ID 2) is switch on to indicate the node 
@@ -167,7 +167,7 @@ is associated to the coordinator.
 The NODE sends data to the coordinator that issues a Data Indication.
 On both devices side, on data transmission red led (ID 3) blinked.
 
-User can issue data from EFD to FFD, by pressing the button 1 (SW1). Data transmission can be then observe using OTA sniffer,
+User can issue data from RFD to FFD, by pressing the button 1 (SW1). Data transmission can be then observe using OTA sniffer,
  UART logs and LED status. 
 
 

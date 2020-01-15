@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_gatt_aci.c
  * @author  MCD Application Team
- * @date    23 May 2019
+ * @date    06 September 2019
  * @brief   Source file for ble api STM32WB (gatt_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************

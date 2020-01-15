@@ -20,7 +20,7 @@
 
 @par Application Description
 
-This application describes how to use USB device application based on the Device
+How to use USB device application based on the Device
 Communication Class (CDC) following the PSTN sub-protocol on the STM32WBxx devices.
 
 This example is part of the USB Device Library package using STM32Cube firmware.

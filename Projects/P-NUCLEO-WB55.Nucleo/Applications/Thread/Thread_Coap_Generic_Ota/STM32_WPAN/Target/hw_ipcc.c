@@ -1,21 +1,21 @@
 /**
  ******************************************************************************
- * File Name          : Target/hw_ipcc.c
- * Description        : Hardware IPCC source file for BLE
- *                      Middleware.
+  * File Name          : Target/hw_ipcc.c
+  * Description        : Hardware IPCC source file for STM32WPAN Middleware.
+  *
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -149,6 +149,12 @@ void HW_IPCC_Tx_Handler( void )
  ******************************************************************************/
 void HW_IPCC_Enable( void )
 {
+  /**
+   * When the device is out of standby, it is required to use the EXTI mechanism to wakeup CPU2
+   */
+  LL_C2_EXTI_EnableEvent_32_63( LL_EXTI_LINE_41 );
+  LL_EXTI_EnableRisingTrig_32_63( LL_EXTI_LINE_41 );
+	
   /**
    * In case the SBSFU is implemented, it may have already set the C2BOOT bit to startup the CPU2.
    * In that case, to keep the mechanism transparent to the user application, it shall call the system command

@@ -114,14 +114,11 @@ int main(void)
 
   /* USER CODE END 1 */
   
-  
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* Initialize the OS */
 
   /* USER CODE BEGIN Init */
   Reset_Device();
@@ -145,7 +142,7 @@ int main(void)
 
   /* USER CODE END 2 */
 
-  osKernelInitialize(); // Initialize CMSIS-RTOS
+  osKernelInitialize();
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -181,7 +178,7 @@ int main(void)
 
   /* Start scheduler */
   osKernelStart();
-
+  
   /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
@@ -250,13 +247,12 @@ void SystemClock_Config(void)
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
   PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSE;
   PeriphClkInitStruct.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSE;
-  PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE0;
+  PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE1;
 
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
-
   /* USER CODE BEGIN Smps */
 
 #if (CFG_USE_SMPS != 0)
@@ -271,8 +267,6 @@ void SystemClock_Config(void)
 #endif
 
   /* USER CODE END Smps */
-
-
 }
 
 /**
@@ -413,9 +407,6 @@ static void MX_RTC_Init(void)
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
   hrtc.Init.AsynchPrediv = CFG_RTC_ASYNCH_PRESCALER;
   hrtc.Init.SynchPrediv = CFG_RTC_SYNCH_PRESCALER;
-  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   if (HAL_RTC_Init(&hrtc) != HAL_OK)
   {
     Error_Handler();
@@ -462,6 +453,7 @@ static void MX_GPIO_Init(void)
 {
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
@@ -660,7 +652,6 @@ void HAL_Delay(uint32_t Delay)
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)

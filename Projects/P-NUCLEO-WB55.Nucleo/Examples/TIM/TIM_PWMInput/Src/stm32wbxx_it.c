@@ -59,9 +59,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern TIM_HandleTypeDef htim2;
 /* USER CODE BEGIN EV */
 

@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_hal_aci.h
  * @author  MCD Application Team
- * @date    23 May 2019
+ * @date    06 November 2019
  * @brief   Header file for STM32WB (hal_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -41,17 +41,13 @@ which has to be written. The valid offsets are:
 - 0x06: DIV used to derive CSRK, Value length to be written: 2 bytes
 - 0x08: Encryption root key used to derive LTK and CSRK, Value length to be written: 16 bytes
 - 0x18: Identity root key used to derive LTK and CSRK, Value length to be written: 16 bytes
-- 0x2C: Link layer without host (for certification purposes), Value length to be written: 1 byte
 - 0x2E: Static Random Address: 6 bytes
-- 0x2F: Disable watchdog (1=disable, 0=enable). Value length to be written: 1 byte
   * Values:
   - 0x00: CONFIG_DATA_PUBADDR_OFFSET
   - 0x06: CONFIG_DATA_DIV_OFFSET
   - 0x08: CONFIG_DATA_ER_OFFSET
   - 0x18: CONFIG_DATA_IR_OFFSET
-  - 0x2C: LL_WITHOUT_HOST
   - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_WR
-  - 0x2F: CONFIG_DATA_WATCHDOG_DISABLE
   * @param Length Length of data to be written
   * @param Value Data to be written
   * @retval Value indicating success or error code.
@@ -70,16 +66,12 @@ which has to be read. The valid offsets are:
 * 0x06: DIV used to derive CSRK, Value length returned: 2 bytes
 * 0x08: Encryption root key used to derive LTK and CSRK, Value length returned: 16 bytes
 * 0x18: Identity root key used to derive LTK and CSRK, Value length returned: 16 bytes
-* 0x2C: Link layer without host (for certification purposes), Value length returned: 1 byte
-* 0x2F: Disable watchdog (1=disabled, 0=enable). Value length returned: 1 byte
 * 0x80: Static random address. Value length returned: 6 bytes (read-only)
   * Values:
   - 0x00: CONFIG_DATA_PUBADDR_OFFSET
   - 0x06: CONFIG_DATA_DIV_OFFSET
   - 0x08: CONFIG_DATA_ER_OFFSET
   - 0x18: CONFIG_DATA_IR_OFFSET
-  - 0x2C: LL_WITHOUT_HOST
-  - 0x2F: CONFIG_DATA_WATCHDOG_DISABLE
   - 0x80: CONFIG_DATA_RANDOM_ADDRESS
   * @param[out] Data_Length Length of Data in octets
   * @param[out] Data Data field associated with Offset parameter

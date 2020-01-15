@@ -994,7 +994,6 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
 #endif/* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 #if (CFG_FULL_LOW_POWER == 0)
-#if (CFG_FULL_LOW_POWER == 0)
 /**
  * @brief Process sends receive CLI command to M0.
  * @param  None
@@ -1014,7 +1013,6 @@ static void Send_CLI_To_M0(void)
 
   TL_CLI_SendCmd();
 }
-#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 
 /**

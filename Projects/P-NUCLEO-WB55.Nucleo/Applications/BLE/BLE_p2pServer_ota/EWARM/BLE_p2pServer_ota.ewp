@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>BLE_p2pServer</name>
+        <name>BLE_p2pServer_ota</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,15 +16,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>BLE_p2pServer/Exe</state>
+                    <state>BLE_p2pServer_ota/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>BLE_p2pServer/Obj</state>
+                    <state>BLE_p2pServer_ota/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>BLE_p2pServer/List</state>
+                    <state>BLE_p2pServer_ota/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -355,12 +355,12 @@
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities</state>
-          <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
-          <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core</state>
-                                                  <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo</state>
                 </option>
@@ -713,7 +713,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>BLE_p2pServer.out</state>
+                    <state>BLE_p2pServer_ota.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
@@ -1053,9 +1053,6 @@
                     <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
-                </file>
-                <file>
                     <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
                 </file>
                 <file>
@@ -1063,6 +1060,9 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Core\Src\main.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
@@ -1201,6 +1201,9 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\template\osal.c</name>
             </file>
             <file>
@@ -1216,6 +1219,9 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl_if.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\stm_list.c</name>
             </file>
             <file>
@@ -1223,12 +1229,6 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\svc_ctl.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl_if.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\tl_mbox.c</name>

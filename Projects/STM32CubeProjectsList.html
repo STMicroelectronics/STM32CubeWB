@@ -2097,8 +2097,8 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td>12</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=53><p id="Applications">Applications</p></td>
-        <td align=left rowspan=19><p id="BLE">BLE</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=55><p id="Applications">Applications</p></td>
+        <td align=left rowspan=20><p id="BLE">BLE</p></td>
         <td align=left><p id="BLE_Beacon">BLE_Beacon</p></td>
         <td align=left>
 How to advertize 3 types of beacon ( tlm, uuid, url ).
@@ -2189,6 +2189,14 @@ How to use multi BLE applications using a network processor architecture.
         <td align=left><p id="BLE_Ota">BLE_Ota</p></td>
         <td align=left>
 OTA implementation to download a new image into the user flash.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_Peripheral_Lite">BLE_Peripheral_Lite</p></td>
+        <td align=left>
+How to communicate with simple BLE peripheral with minimum activated features.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2469,7 +2477,7 @@ Use of the STMTouch driver with 1 touchkey sensor.
         <td align=left rowspan=4><p id="USB_Device">USB_Device</p></td>
         <td align=left><p id="CDC_Standalone">CDC_Standalone</p></td>
         <td align=left>
-This application describes how to use USB device application based on the Device
+How to use USB device application based on the Device
 Communication Class (CDC) following the PSTN sub-protocol on the STM32WBxx devices.
 </td>
         <td>-</td>
@@ -2494,40 +2502,48 @@ Use of the USB device application based on the Human Interface (HID).
       <tr align=center>
         <td align=left><p id="MSC_Standalone">MSC_Standalone</p></td>
         <td align=left>
-This application shows how to use the USB device application based on the Mass Storage Class (MSC) on the STM32WBxx devices.
+How to use the USB device application based on the Mass Storage Class (MSC) on the STM32WBxx devices.
 </td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=3><p id="Zigbee">Zigbee</p></td>
-        <td align=left><p id="Zigbee_OnOff_Coord">Zigbee_OnOff_Coord</p></td>
+        <td align=left rowspan=4><p id="Zigbee">Zigbee</p></td>
+        <td align=left><p id="Zigbee_OnOff_Client_Distrib">Zigbee_OnOff_Client_Distrib</p></td>
         <td align=left>
-How to use OnOff cluster on a Centralized Zigbee network with device acting as coordinator.
+How to use OnOff cluster as a client on a distributed Zigbee network.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
-        <td align=left><p id="Zigbee_OnOff_Distrib">Zigbee_OnOff_Distrib</p></td>
+        <td align=left><p id="Zigbee_OnOff_Client_Router">Zigbee_OnOff_Client_Router</p></td>
         <td align=left>
-How to use OnOff cluster on a Distributed Zigbee network.
+How to use OnOff cluster as a client on a centralized Zigbee network.
 </td>
-        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
-        <td align=left><p id="Zigbee_OnOff_Router">Zigbee_OnOff_Router</p></td>
+        <td align=left><p id="Zigbee_OnOff_Server_Coord">Zigbee_OnOff_Server_Coord</p></td>
         <td align=left>
-How to use OnOff cluster on a Centralized Zigbee network with device acting as router.
+How to use OnOff cluster as a server on a centralized Zigbee network.
+</td>
+        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_OnOff_Server_Distrib">Zigbee_OnOff_Server_Distrib</p></td>
+        <td align=left>
+How to use OnOff cluster as a server on a distributed Zigbee network.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of applications: 64</b></td>
-        <td>13</td>
-        <td>51</td>
+        <td colspan="3"><b>Total number of applications: 68</b></td>
+        <td>15</td>
+        <td>53</td>
       </tr>
       <tr align=center>
         <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=2><p id="Demonstrations">Demonstrations</p></td>
@@ -2546,9 +2562,9 @@ Cortex-M devices that can be plugged on a STM32 Nucleo board.
         <td>1</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-      	<td colspan="4"><b>Total number of projects: 271</b></td>
-      	<td>14</td>
-      	<td>257</td>
+      	<td colspan="4"><b>Total number of projects: 275</b></td>
+      	<td>16</td>
+      	<td>259</td>
       </tr>
     </table>
   </body>

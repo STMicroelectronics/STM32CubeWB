@@ -7,15 +7,16 @@
 
   <Targets>
     <Target>
-      <TargetName>Production</TargetName>
+      <TargetName>BLE_Hid</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx_DFP.1.0.0</PackID>
+          <PackID>Keil.STM32WBxx.0.0.6</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -47,11 +48,11 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>Production\Exe\</OutputDirectory>
+          <OutputDirectory>BLE_Hid\Exe\</OutputDirectory>
           <OutputName>BLE_Hid</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath></ListingPath>
@@ -79,9 +80,9 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>fromelf #L --bin --output=$L@L.bin</UserProg1Name>
+            <UserProg1Name></UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -183,7 +184,6 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
-            <RvdsMve>0</RvdsMve>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -378,9 +378,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>::CMSIS</GroupName>
-        </Group>
         <Group>
           <GroupName>Application/Core</GroupName>
           <Files>
@@ -711,6 +708,9 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
+        </Group>
       </Groups>
     </Target>
   </Targets>
@@ -721,7 +721,7 @@
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="4.3.0" condition="CMSIS Core">
         <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="4.5.0"/>
         <targetInfos>
-          <targetInfo name="Production"/>
+          <targetInfo name="BLE_Hid"/>
         </targetInfos>
       </component>
     </components>

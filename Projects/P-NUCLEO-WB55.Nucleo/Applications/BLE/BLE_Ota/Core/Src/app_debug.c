@@ -52,7 +52,7 @@ typedef PACKED_STRUCT
 
 /* Private defines -----------------------------------------------------------*/
 #define GPIO_NBR_OF_RF_SIGNALS                  9
-#define GPIO_CFG_NBR_OF_FEATURES                32
+#define GPIO_CFG_NBR_OF_FEATURES                34
 #define NBR_OF_TRACES_CONFIG_PARAMETERS         4
 #define NBR_OF_GENERAL_CONFIG_PARAMETERS        4
 
@@ -107,8 +107,11 @@ static const APPD_GpioConfig_t aGpioConfigList[GPIO_CFG_NBR_OF_FEATURES] =
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_WRITE_ONGOING - Set on Entry / Reset on Exit */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_WRITE_COMPLETE - Set on Entry / Reset on Exit */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_CLEANUP - Set on Entry / Reset on Exit */
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},
+/* From v1.4.0 */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_START - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_EOP - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_WRITE - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_ERASE - Set on Entry / Reset on Exit */
 };
 
 /**

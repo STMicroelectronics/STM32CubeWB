@@ -127,6 +127,7 @@ In order to make the program work, you must do the following:
  - Rebuild all files and load your image into target memory
  - Run the example
  
+ Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
  
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

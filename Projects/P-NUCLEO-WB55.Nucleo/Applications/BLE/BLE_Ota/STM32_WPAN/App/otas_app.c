@@ -72,14 +72,18 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
         case OTAS_STM_WIRELESS_FW_UPLOAD:
           OTAS_APP_Context.file_type = Wireless_Fw;
           OTAS_APP_Context.base_address = FLASH_BASE;
-          memcpy( (uint8_t*)&OTAS_APP_Context.base_address, ((OTA_STM_Base_Addr_Event_Format_t*)(p_notification->pPayload))->Base_Addr, p_notification->ValueLength -1 );
+          ((uint8_t*)&OTAS_APP_Context.base_address)[0] = (((uint8_t*)((OTA_STM_Base_Addr_Event_Format_t*)(p_notification->pPayload))->Base_Addr))[2];
+          ((uint8_t*)&OTAS_APP_Context.base_address)[1] = (((uint8_t*)((OTA_STM_Base_Addr_Event_Format_t*)(p_notification->pPayload))->Base_Addr))[1];
+          ((uint8_t*)&OTAS_APP_Context.base_address)[2] = (((uint8_t*)((OTA_STM_Base_Addr_Event_Format_t*)(p_notification->pPayload))->Base_Addr))[0];
           OTAS_APP_Context.write_value_index = 0;
           break;
 
         case OTAS_STM_APPLICATION_UPLOAD:
           OTAS_APP_Context.file_type = Fw_App;
           OTAS_APP_Context.base_address = FLASH_BASE;
-          memcpy( (uint8_t*)&OTAS_APP_Context.base_address, ((OTA_STM_Base_Addr_Event_Format_t*)(p_notification->pPayload))->Base_Addr, p_notification->ValueLength -1 );
+          ((uint8_t*)&OTAS_APP_Context.base_address)[0] = (((uint8_t*)((OTA_STM_Base_Addr_Event_Format_t*)(p_notification->pPayload))->Base_Addr))[2];
+          ((uint8_t*)&OTAS_APP_Context.base_address)[1] = (((uint8_t*)((OTA_STM_Base_Addr_Event_Format_t*)(p_notification->pPayload))->Base_Addr))[1];
+          ((uint8_t*)&OTAS_APP_Context.base_address)[2] = (((uint8_t*)((OTA_STM_Base_Addr_Event_Format_t*)(p_notification->pPayload))->Base_Addr))[0];
           OTAS_APP_Context.write_value_index = 0;
           break;
 

@@ -116,6 +116,8 @@ In order to make the program work, you must do the following:
  - Rebuild all files and load your image into target memory
  - Run the example
  
+ Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
+ 
  If you want to control this application, you can directly send and
  retrieve Cli commands connecting an HyperTerminal with the ST_Link cable.
  (Refer to the Thread_Cli_Cmd application for more details) 

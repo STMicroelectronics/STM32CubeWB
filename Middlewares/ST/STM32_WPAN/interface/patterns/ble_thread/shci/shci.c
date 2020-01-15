@@ -470,6 +470,30 @@ SHCI_CmdStatus_t SHCI_C2_Reinit( void )
   return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
 }
 
+SHCI_CmdStatus_t SHCI_C2_ExtpaConfig(uint32_t gpio_port, uint16_t gpio_pin_number, uint8_t gpio_polarity, uint8_t gpio_status)
+{
+  /**
+   * TL_BLEEVT_CS_BUFFER_SIZE is 15 bytes so it is large enough to hold the 8 bytes of command parameters
+   * Buffer is large enough to hold command complete without payload
+   */
+  uint8_t local_buffer[TL_BLEEVT_CS_BUFFER_SIZE];
+  TL_EvtPacket_t * p_rsp;
+
+  p_rsp = (TL_EvtPacket_t *)local_buffer;
+
+  ((SHCI_C2_EXTPA_CONFIG_Cmd_Param_t*)local_buffer)->gpio_port = gpio_port;
+  ((SHCI_C2_EXTPA_CONFIG_Cmd_Param_t*)local_buffer)->gpio_pin_number = gpio_pin_number;
+  ((SHCI_C2_EXTPA_CONFIG_Cmd_Param_t*)local_buffer)->gpio_polarity = gpio_polarity;
+  ((SHCI_C2_EXTPA_CONFIG_Cmd_Param_t*)local_buffer)->gpio_status = gpio_status;
+
+  shci_send( SHCI_OPCODE_C2_EXTPA_CONFIG,
+             8,
+             local_buffer,
+             p_rsp );
+
+  return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
+}
+
 /**
  *  Local System COMMAND
  *  These commands are NOT sent to the CPU2

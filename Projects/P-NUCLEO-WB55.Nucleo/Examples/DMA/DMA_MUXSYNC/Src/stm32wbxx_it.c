@@ -58,14 +58,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
-  
-      
 extern DMA_HandleTypeDef hdma_usart1_tx;
-  
-      
 extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 extern UART_HandleTypeDef UartHandle;

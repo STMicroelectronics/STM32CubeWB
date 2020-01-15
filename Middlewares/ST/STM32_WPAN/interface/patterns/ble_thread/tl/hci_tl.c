@@ -96,13 +96,16 @@ void hci_user_evt_proc(void)
   {
     LST_remove_head ( &HciAsynchEventQueue, (tListNode **)&phcievtbuffer );
 
-    UserEventFlow = HCI_TL_UserEventFlow_Enable;
-
     if (hciContext.UserEvtRx != NULL)
     {
       UserEvtRxParam.pckt = phcievtbuffer;
+      UserEvtRxParam.status = HCI_TL_UserEventFlow_Enable;
       hciContext.UserEvtRx((void *)&UserEvtRxParam);
       UserEventFlow = UserEvtRxParam.status;
+    }
+    else
+    {
+      UserEventFlow = HCI_TL_UserEventFlow_Enable;
     }
 
     if(UserEventFlow != HCI_TL_UserEventFlow_Disable)
@@ -142,6 +145,7 @@ void hci_resume_flow( void )
 
 int hci_send_req(struct hci_request *p_cmd, uint8_t async)
 {
+  (void)(async);
   uint16_t opcode;
   TL_CcEvt_t  *pcommand_complete_event;
   TL_CsEvt_t    *pcommand_status_event;

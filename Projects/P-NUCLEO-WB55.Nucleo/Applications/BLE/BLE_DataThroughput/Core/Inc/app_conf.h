@@ -112,7 +112,7 @@
  * When set to 1, the device is central
  * When set to 0, the device is peripheral
  */
-#define CFG_BLE_CENTRAL     0
+#define CFG_BLE_CENTRAL     1
 /**
  * in this specific application, the device is either central
  * or peripheral but cannot be both
@@ -128,8 +128,8 @@
 
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
 
-#define CONN_L(x) ((int)((x)/0.625f))
-#define CONN_P(x) ((int)((x)/1.25f))
+#define CONN_L(x) ((int)(((float)x)/0.625f))
+#define CONN_P(x) ((int)(((float)x)/1.25f))
 #define SCAN_P (0x320)
 #define SCAN_L (0x320)
 
@@ -521,6 +521,7 @@ typedef enum
   CFG_TASK_START_SCAN_ID,
   CFG_TASK_LINK_CONFIG_ID,
   CFG_TASK_APP_DATA_THROUGHPUT_ID,
+  CFG_TASK_CONN_UPDATE_ID,
   CFG_TASK_HCI_ASYNCH_EVT_ID,
 
     CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */

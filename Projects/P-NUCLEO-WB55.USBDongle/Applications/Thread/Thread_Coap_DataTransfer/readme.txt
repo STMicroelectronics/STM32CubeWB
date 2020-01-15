@@ -190,6 +190,7 @@ In order to make the program work, you must do the following:
  - After a few seconds, if everything goes right, a blue LED should be lit indicating the end of the File transfer 
  - If the above step didn't go as planned, you should look through the traces to locate the source of the error.
     
+ Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
  
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

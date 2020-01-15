@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_events.h
  * @author  MCD Application Team
- * @date    19 July 2019
+ * @date    08 November 2019
  * @brief   Header file for STM32WB (Event callbacks)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -33,7 +33,7 @@ typedef struct
 
 #define HCI_EVENT_TABLE_SIZE 7 
 #define HCI_LE_META_EVENT_TABLE_SIZE 11 
-#define HCI_VENDOR_SPECIFIC_EVENT_TABLE_SIZE 42 
+#define HCI_VENDOR_SPECIFIC_EVENT_TABLE_SIZE 43 
 extern const hci_event_table_t hci_event_table[HCI_EVENT_TABLE_SIZE];
 extern const hci_event_table_t hci_le_meta_event_table[HCI_LE_META_EVENT_TABLE_SIZE];
 extern const hci_event_table_t hci_vendor_specific_event_table[HCI_VENDOR_SPECIFIC_EVENT_TABLE_SIZE];
@@ -56,86 +56,7 @@ that didn't correspond to a connection was given.
   * @param Connection_Handle Connection_Handle which was disconnected.
   * Values:
   - 0x0000 ... 0x0EFF
-  * @param Reason Reason for disconnection.
-  * Values:
-  - 0x00: Success
-  - 0x01: Unknown HCI Command
-  - 0x02: Unknown Connection Identifier
-  - 0x03: Hardware Failure
-  - 0x05: Authentication Failure
-  - 0x06: PIN or Key Missing
-  - 0x07: Memory Capacity Exceeded
-  - 0x08: Connection Timeout
-  - 0x09: Connection Limit Exceeded
-  - 0x0B: ACL Connection Already Exists
-  - 0x0C: Command Disallowed
-  - 0x0D: Connection Rejected Due To Limited Resources
-  - 0x0E: Connection Rejected Due To Security Reasons
-  - 0x0F: Connection Rejected due to Unacceptable BD_ADDR
-  - 0x10: Connection Accept Timeout Exceeded
-  - 0x11: Unsupported Feature Or Parameter Value
-  - 0x12: Invalid HCI Command Parameters
-  - 0x13: Remote User Terminated Connection
-  - 0x14: Remote Device Terminated Connection due to Low Resources
-  - 0x15: Remote Device Terminated Connection due to Power Off
-  - 0x16: Connection Terminated By Local Host
-  - 0x17: Repeated Attempts
-  - 0x18: Pairing Not Allowed
-  - 0x19: Unknown LMP PDU
-  - 0x1A: Unsupported Remote Feature / Unsupported LMP Feature
-  - 0x1E: Invalid LMP Parameters
-  - 0x1F: Unspecified Error
-  - 0x20: Unsupported LMP Parameter Value
-  - 0x21: Role Change Not Allowed
-  - 0x22: LMP Response Timeout / LL Response Timeout
-  - 0x23: LMP Error Transaction Collision
-  - 0x24: LMP PDU Not Allowed
-  - 0x25: Encryption Mode Not Acceptable
-  - 0x26: Link Key cannot be Changed
-  - 0x28: Instant Passed
-  - 0x29: Pairing With Unit Key Not Supported
-  - 0x2A: Different Transaction Collision
-  - 0x2E: Channel Assessment Not Supported
-  - 0x2F: Insufficient Security
-  - 0x30: Parameter Out Of Mandatory Range
-  - 0x32: Role Switch Pending
-  - 0x34: Reserved Slot Violation
-  - 0x35: Role Switch Failed
-  - 0x37: Secure Simple Pairing Not Supported by Host
-  - 0x38: Host Busy - Pairing
-  - 0x39: Connection Rejected due to No Suitable Channel Found
-  - 0x3A: Controller Busy
-  - 0x3B: Unacceptable Connection Interval
-  - 0x3C: Directed Advertising Timeout
-  - 0x3D: Connection Terminated Due to MIC Failure
-  - 0x3E: Connection Failed to be Established
-  - 0x41: Failed
-  - 0x42: Invalid parameters
-  - 0x43: Busy
-  - 0x44: Invalid length
-  - 0x45: Pending
-  - 0x46: Not allowed
-  - 0x47: GATT error
-  - 0x48: Address not resolved
-  - 0x50: Invalid CID
-  - 0x5A: CSRK not found
-  - 0x5B: IRK not found
-  - 0x5C: Device not found in DB
-  - 0x5D: Security DB full
-  - 0x5E: Device not bonded
-  - 0x5F: Device in blacklist
-  - 0x60: Invalid handle
-  - 0x61: Invalid parameter
-  - 0x62: Out of handles
-  - 0x63: Invalid operation
-  - 0x64: Insufficient resources
-  - 0x65: Insufficient encryption key size
-  - 0x66: Characteristic already exist
-  - 0x82: No valid slot
-  - 0x83: Short window
-  - 0x84: New interval failed
-  - 0x85: Too large interval
-  - 0x86: Slot length failed
+  * @param Reason Reason for disconnection (see Bluetooth Core Specification [Vol 2] Part D, Error Codes).
   * @retval None
 */
 WEAK_FUNCTION(void hci_disconnection_complete_event(uint8_t Status,
@@ -595,15 +516,13 @@ procedure timeout has occurred or the pairing has failed. This is to notify the 
 we have paired with a remote device so that it can take further actions or to notify that a
 timeout has occurred so that the upper layer can decide to disconnect the link.
   * @param Connection_Handle Connection handle on which the pairing procedure completed
-  * @param Status Pairing status
+  * @param Status Specific pairing status (0:Success,1:Timeout,2:Failed)
   * Values:
   - 0x00: Success
   - 0x01: Timeout
   - 0x02: Failed
   * @param Reason Pairing reason error code
   * Values:
-  - 0x00
-  - 0x01: PASSKEY_ENTRY_FAILED
   - 0x02: OOB_NOT_AVAILABLE
   - 0x03: AUTH_REQ_CANNOT_BE_MET
   - 0x04: CONFIRM_VALUE_FAILED
@@ -899,86 +818,7 @@ successfully.
   * @param Connection_Handle Connection handle related to the response.
   * Values:
   - 0x0000 ... 0x0EFF
-  * @param Error_Code Indicates whether the procedure completed with an error or was successful
-  * Values:
-  - 0x00: Success
-  - 0x01: Unknown HCI Command
-  - 0x02: Unknown Connection Identifier
-  - 0x03: Hardware Failure
-  - 0x05: Authentication Failure
-  - 0x06: PIN or Key Missing
-  - 0x07: Memory Capacity Exceeded
-  - 0x08: Connection Timeout
-  - 0x09: Connection Limit Exceeded
-  - 0x0B: ACL Connection Already Exists
-  - 0x0C: Command Disallowed
-  - 0x0D: Connection Rejected Due To Limited Resources
-  - 0x0E: Connection Rejected Due To Security Reasons
-  - 0x0F: Connection Rejected due to Unacceptable BD_ADDR
-  - 0x10: Connection Accept Timeout Exceeded
-  - 0x11: Unsupported Feature Or Parameter Value
-  - 0x12: Invalid HCI Command Parameters
-  - 0x13: Remote User Terminated Connection
-  - 0x14: Remote Device Terminated Connection due to Low Resources
-  - 0x15: Remote Device Terminated Connection due to Power Off
-  - 0x16: Connection Terminated By Local Host
-  - 0x17: Repeated Attempts
-  - 0x18: Pairing Not Allowed
-  - 0x19: Unknown LMP PDU
-  - 0x1A: Unsupported Remote Feature / Unsupported LMP Feature
-  - 0x1E: Invalid LMP Parameters
-  - 0x1F: Unspecified Error
-  - 0x20: Unsupported LMP Parameter Value
-  - 0x21: Role Change Not Allowed
-  - 0x22: LMP Response Timeout / LL Response Timeout
-  - 0x23: LMP Error Transaction Collision
-  - 0x24: LMP PDU Not Allowed
-  - 0x25: Encryption Mode Not Acceptable
-  - 0x26: Link Key cannot be Changed
-  - 0x28: Instant Passed
-  - 0x29: Pairing With Unit Key Not Supported
-  - 0x2A: Different Transaction Collision
-  - 0x2E: Channel Assessment Not Supported
-  - 0x2F: Insufficient Security
-  - 0x30: Parameter Out Of Mandatory Range
-  - 0x32: Role Switch Pending
-  - 0x34: Reserved Slot Violation
-  - 0x35: Role Switch Failed
-  - 0x37: Secure Simple Pairing Not Supported by Host
-  - 0x38: Host Busy - Pairing
-  - 0x39: Connection Rejected due to No Suitable Channel Found
-  - 0x3A: Controller Busy
-  - 0x3B: Unacceptable Connection Interval
-  - 0x3C: Directed Advertising Timeout
-  - 0x3D: Connection Terminated Due to MIC Failure
-  - 0x3E: Connection Failed to be Established
-  - 0x41: Failed
-  - 0x42: Invalid parameters
-  - 0x43: Busy
-  - 0x44: Invalid length
-  - 0x45: Pending
-  - 0x46: Not allowed
-  - 0x47: GATT error
-  - 0x48: Address not resolved
-  - 0x50: Invalid CID
-  - 0x5A: CSRK not found
-  - 0x5B: IRK not found
-  - 0x5C: Device not found in DB
-  - 0x5D: Security DB full
-  - 0x5E: Device not bonded
-  - 0x5F: Device in blacklist
-  - 0x60: Invalid handle
-  - 0x61: Invalid parameter
-  - 0x62: Out of handles
-  - 0x63: Invalid operation
-  - 0x64: Insufficient resources
-  - 0x65: Insufficient encryption key size
-  - 0x66: Characteristic already exist
-  - 0x82: No valid slot
-  - 0x83: Short window
-  - 0x84: New interval failed
-  - 0x85: Too large interval
-  - 0x86: Slot length failed
+  * @param Error_Code Indicates whether the procedure completed with an error or was successful (see "Status error codes" section)
   * @retval None
 */
 WEAK_FUNCTION(void aci_gatt_proc_complete_event(uint16_t Connection_Handle,
@@ -1131,6 +971,23 @@ WEAK_FUNCTION(void aci_gatt_prepare_write_permit_req_event(uint16_t Connection_H
                                              uint16_t Offset,
                                              uint8_t Data_Length,
                                              uint8_t Data[]));
+/**
+  * @brief When it is enabled with ACI_GATT_SET_EVENT_MASK, this event is generated instead of ACI_ATT_READ_RESP_EVENT / ACI_ATT_READ_BLOB_RESP_EVENT / ACI_ATT_READ_MULTIPLE_RESP_EVENT.
+This event should be used instead of those events when ATT_MTU > (BLE_EVT_MAX_PARAM_LEN - 4)
+i.e. ATT_MTU > 251 for BLE_EVT_MAX_PARAM_LEN default value.
+
+  * @param Connection_Handle Connection handle related to the response.
+  * Values:
+  - 0x0000 ... 0x0EFF
+  * @param Offset Bits 14-0: offset in octets from which Attribute_Value data starts. Bit 15 is used as flag: when set to 1 it indicates that more data are to come (fragmented event in case of long attribute data).
+  * @param Event_Data_Length Length of following data
+  * @param Attribute_Value The value of the attribute(s).
+  * @retval None
+*/
+WEAK_FUNCTION(void aci_gatt_read_ext_event(uint16_t Connection_Handle,
+                             uint16_t Offset,
+                             uint16_t Event_Data_Length,
+                             uint8_t Attribute_Value[]));
 /**
   * @brief When it is enabled with ACI_GATT_SET_EVENT_MASK and when an indication is received from the server, this event is generated instead of ACI_GATT_INDICATION_EVENT.
 This event should be used instead of ACI_GATT_INDICATION_EVENT when ATT_MTU > (BLE_EVT_MAX_PARAM_LEN - 4)

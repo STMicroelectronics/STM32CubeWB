@@ -92,7 +92,7 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_SymLink = 0x8e,
     ZB_NWK_NIB_ID_CapabilityInformation = 0x8f,
     ZB_NWK_NIB_ID_AddrAlloc = 0x90,
-    ZB_NWK_NIB_ID_UseTreeRouting = 0x91,
+    /* was ZB_NWK_NIB_ID_UseTreeRouting = 0x91 */
     ZB_NWK_NIB_ID_ManagerAddr = 0x92,
     ZB_NWK_NIB_ID_MaxSourceRoute = 0x93,
     ZB_NWK_NIB_ID_UpdateId = 0x94,
@@ -104,7 +104,6 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_GroupIdTable = 0x99,
     ZB_NWK_NIB_ID_ExtendedPanId = 0x9a,
     /* ZigBee 2007+ Attributes */
-    ZB_NWK_NIB_ID_UseMulticast = 0x9b,
     ZB_NWK_NIB_ID_RouteRecordTable = 0x9c,
     ZB_NWK_NIB_ID_IsConcentrator = 0x9d,
     ZB_NWK_NIB_ID_ConcentratorRadius = 0x9e,
@@ -123,6 +122,8 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_AddressMap = 0xa9,
     /* ...continued in zigbee.aps.h with ZB_APS_IB_ID_DEVICE_KEY_PAIR_SET... */
 
+    /* R23+ attributes */
+    ZB_NWK_NIB_ID_DiscoveryTable = 0xb4, /* ZbNwkDiscoveryInfoT - Get only. */
     /* 0x400 to 0x4ff reserved for custom NIBs. */
     ZB_NWK_NIB_ID_Depth = 0x0400,
     ZB_NWK_NIB_ID_FrameCounterSet,
@@ -165,8 +166,6 @@ enum ZbNwkNibAttrIdT {
 
     ZB_NWK_NIB_ID_ActiveChannelList, /* struct ZbChannelListT - Get only. */
     ZB_NWK_NIB_ID_PermitJoinCounter, /* uint8_t - Get only. Set through ZbNlmePermitJoinReq */
-    ZB_NWK_NIB_ID_DiscoveryTable, /* struct ZbNwkDiscoveryInfoT - Get only. */
-
     ZB_NWK_NIB_ID_PassiveAckEnabled /* uint8_t - Enable/Disable Broadcast Passive ACK */
 };
 
@@ -333,8 +332,7 @@ enum ZbNwkRouteStatusT {
     ZB_NWK_ROUTE_STATUS_ACTIVE = 0x00,
     ZB_NWK_ROUTE_STATUS_DISCOVERY_UNDERWAY = 0x01,
     ZB_NWK_ROUTE_STATUS_DISCOVERY_FAILED = 0x02,
-    ZB_NWK_ROUTE_STATUS_INACTIVE = 0x03,
-    ZB_NWK_ROUTE_STATUS_VALIDATION_UNDERWAY = 0x04
+    ZB_NWK_ROUTE_STATUS_INACTIVE = 0x03
 };
 
 #define ZB_NWK_ROUTE_RECORD_RENEWAL_TIMEOUT         (60U * 1000U) /* ms */
@@ -344,7 +342,6 @@ typedef struct {
     enum ZbNwkRouteStatusT status;
     bool noCache; /* flag indicating destination doesn't store source routes. */
     bool isManyToOne; /* flag indicating if destination is a concentrator */
-    bool isMcast; /* flag indicating if destination is a group ID. */
     ZbNwkRouteRecordInfoT routeRecord;
     uint16_t destAddr;
     uint16_t nextAddr;
@@ -550,7 +547,7 @@ typedef struct {
 } ZbNlmeDirectJoinConfT;
 
 /* NLME-LEAVE.request */
-typedef struct {
+typedef struct ZbNlmeLeaveReqT {
     uint64_t deviceAddr;
     bool removeChildren;
     bool rejoin;
@@ -711,9 +708,9 @@ enum ZbStatusCodeT ZB_WARN_UNUSED ZbNlmeEdScanReq(struct ZigBeeT *zb, ZbNlmeEdSc
  * If the local device is being requested to leave, it may take some time
  * (hundreds of mS) to send the appropriate commands and reset the stack
  * before the callback is eventually called, or ZbNlmeLeaveWait returns. */
-enum ZbStatusCodeT ZB_WARN_UNUSED ZbNlmeLeaveReq(struct ZigBeeT *zb, ZbNlmeLeaveReqT *leaveReqPtr,
-    void (*callback)(ZbNlmeLeaveConfT *leaveConfPtr, void *arg), void *cbarg);
-void ZbNlmeLeaveWait(struct ZigBeeT *zb, ZbNlmeLeaveReqT *leaveReqPtr, ZbNlmeLeaveConfT *leaveConfPtr);
+enum ZbStatusCodeT ZB_WARN_UNUSED ZbNlmeLeaveReq(struct ZigBeeT *zb, struct ZbNlmeLeaveReqT *leaveReqPtr,
+    void (*callback)(struct ZbNlmeLeaveConfT *leaveConfPtr, void *arg), void *cbarg);
+void ZbNlmeLeaveWait(struct ZigBeeT *zb, struct ZbNlmeLeaveReqT *leaveReqPtr, struct ZbNlmeLeaveConfT *leaveConfPtr);
 
 /* NLME-ROUTE-DISCOVERY.request */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbNlmeRouteDiscReq(struct ZigBeeT *zb, ZbNlmeRouteDiscReqT *routeDiscReqPtr,

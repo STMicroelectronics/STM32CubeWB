@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Production</name>
+        <name>BLE_p2pServer</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,15 +16,15 @@
                 <debug>0</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Production\Exe</state>
+                    <state>BLE_p2pServer\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Production\Obj</state>
+                    <state>BLE_p2pServer\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Production\List</state>
+                    <state>BLE_p2pServer\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>

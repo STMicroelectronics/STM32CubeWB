@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_events.c
  * @author  MCD Application Team
- * @date    19 July 2019
+ * @date    08 November 2019
  * @brief   Source file for STM32WB (Event callbacks)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -67,6 +67,7 @@ void aci_gatt_read_multi_permit_req_event_process(uint8_t *buffer_in);
 void aci_gatt_tx_pool_available_event_process(uint8_t *buffer_in);
 void aci_gatt_server_confirmation_event_process(uint8_t *buffer_in);
 void aci_gatt_prepare_write_permit_req_event_process(uint8_t *buffer_in);
+void aci_gatt_read_ext_event_process(uint8_t *buffer_in);
 void aci_gatt_indication_ext_event_process(uint8_t *buffer_in);
 void aci_gatt_notification_ext_event_process(uint8_t *buffer_in);
 void hci_le_connection_complete_event_process(uint8_t *buffer_in);
@@ -84,133 +85,135 @@ void hci_le_phy_update_complete_event_process(uint8_t *buffer_in);
 const hci_event_table_t hci_event_table[HCI_EVENT_TABLE_SIZE] = 
 {
   /* hci_disconnection_complete_event */
-  0x0005, hci_disconnection_complete_event_process,
+  {0x0005, hci_disconnection_complete_event_process},
   /* hci_encryption_change_event */
-  0x0008, hci_encryption_change_event_process,
+  {0x0008, hci_encryption_change_event_process},
   /* hci_read_remote_version_information_complete_event */
-  0x000c, hci_read_remote_version_information_complete_event_process,
+  {0x000c, hci_read_remote_version_information_complete_event_process},
   /* hci_hardware_error_event */
-  0x0010, hci_hardware_error_event_process,
+  {0x0010, hci_hardware_error_event_process},
   /* hci_number_of_completed_packets_event */
-  0x0013, hci_number_of_completed_packets_event_process,
+  {0x0013, hci_number_of_completed_packets_event_process},
   /* hci_data_buffer_overflow_event */
-  0x001a, hci_data_buffer_overflow_event_process,
+  {0x001a, hci_data_buffer_overflow_event_process},
   /* hci_encryption_key_refresh_complete_event */
-  0x0030, hci_encryption_key_refresh_complete_event_process,
+  {0x0030, hci_encryption_key_refresh_complete_event_process},
 };
 
 const hci_event_table_t hci_le_meta_event_table[HCI_LE_META_EVENT_TABLE_SIZE] = 
 {
   /* hci_le_connection_complete_event */
-  0x0001, hci_le_connection_complete_event_process,
+  {0x0001, hci_le_connection_complete_event_process},
   /* hci_le_advertising_report_event */
-  0x0002, hci_le_advertising_report_event_process,
+  {0x0002, hci_le_advertising_report_event_process},
   /* hci_le_connection_update_complete_event */
-  0x0003, hci_le_connection_update_complete_event_process,
+  {0x0003, hci_le_connection_update_complete_event_process},
   /* hci_le_read_remote_used_features_complete_event */
-  0x0004, hci_le_read_remote_used_features_complete_event_process,
+  {0x0004, hci_le_read_remote_used_features_complete_event_process},
   /* hci_le_long_term_key_request_event */
-  0x0005, hci_le_long_term_key_request_event_process,
+  {0x0005, hci_le_long_term_key_request_event_process},
   /* hci_le_data_length_change_event */
-  0x0007, hci_le_data_length_change_event_process,
+  {0x0007, hci_le_data_length_change_event_process},
   /* hci_le_read_local_p256_public_key_complete_event */
-  0x0008, hci_le_read_local_p256_public_key_complete_event_process,
+  {0x0008, hci_le_read_local_p256_public_key_complete_event_process},
   /* hci_le_generate_dhkey_complete_event */
-  0x0009, hci_le_generate_dhkey_complete_event_process,
+  {0x0009, hci_le_generate_dhkey_complete_event_process},
   /* hci_le_enhanced_connection_complete_event */
-  0x000a, hci_le_enhanced_connection_complete_event_process,
+  {0x000a, hci_le_enhanced_connection_complete_event_process},
   /* hci_le_direct_advertising_report_event */
-  0x000b, hci_le_direct_advertising_report_event_process,
+  {0x000b, hci_le_direct_advertising_report_event_process},
   /* hci_le_phy_update_complete_event */
-  0x000c, hci_le_phy_update_complete_event_process,
+  {0x000c, hci_le_phy_update_complete_event_process},
 };
 
 const hci_event_table_t hci_vendor_specific_event_table[HCI_VENDOR_SPECIFIC_EVENT_TABLE_SIZE] = 
 {
   /* aci_hal_end_of_radio_activity_event */
-  0x0004, aci_hal_end_of_radio_activity_event_process,
+  {0x0004, aci_hal_end_of_radio_activity_event_process},
   /* aci_hal_scan_req_report_event */
-  0x0005, aci_hal_scan_req_report_event_process,
+  {0x0005, aci_hal_scan_req_report_event_process},
   /* aci_hal_fw_error_event */
-  0x0006, aci_hal_fw_error_event_process,
+  {0x0006, aci_hal_fw_error_event_process},
   /* aci_gap_limited_discoverable_event */
-  0x0400, aci_gap_limited_discoverable_event_process,
+  {0x0400, aci_gap_limited_discoverable_event_process},
   /* aci_gap_pairing_complete_event */
-  0x0401, aci_gap_pairing_complete_event_process,
+  {0x0401, aci_gap_pairing_complete_event_process},
   /* aci_gap_pass_key_req_event */
-  0x0402, aci_gap_pass_key_req_event_process,
+  {0x0402, aci_gap_pass_key_req_event_process},
   /* aci_gap_authorization_req_event */
-  0x0403, aci_gap_authorization_req_event_process,
+  {0x0403, aci_gap_authorization_req_event_process},
   /* aci_gap_slave_security_initiated_event */
-  0x0404, aci_gap_slave_security_initiated_event_process,
+  {0x0404, aci_gap_slave_security_initiated_event_process},
   /* aci_gap_bond_lost_event */
-  0x0405, aci_gap_bond_lost_event_process,
+  {0x0405, aci_gap_bond_lost_event_process},
   /* aci_gap_proc_complete_event */
-  0x0407, aci_gap_proc_complete_event_process,
+  {0x0407, aci_gap_proc_complete_event_process},
   /* aci_gap_addr_not_resolved_event */
-  0x0408, aci_gap_addr_not_resolved_event_process,
+  {0x0408, aci_gap_addr_not_resolved_event_process},
   /* aci_gap_numeric_comparison_value_event */
-  0x0409, aci_gap_numeric_comparison_value_event_process,
+  {0x0409, aci_gap_numeric_comparison_value_event_process},
   /* aci_gap_keypress_notification_event */
-  0x040a, aci_gap_keypress_notification_event_process,
+  {0x040a, aci_gap_keypress_notification_event_process},
   /* aci_l2cap_connection_update_resp_event */
-  0x0800, aci_l2cap_connection_update_resp_event_process,
+  {0x0800, aci_l2cap_connection_update_resp_event_process},
   /* aci_l2cap_proc_timeout_event */
-  0x0801, aci_l2cap_proc_timeout_event_process,
+  {0x0801, aci_l2cap_proc_timeout_event_process},
   /* aci_l2cap_connection_update_req_event */
-  0x0802, aci_l2cap_connection_update_req_event_process,
+  {0x0802, aci_l2cap_connection_update_req_event_process},
   /* aci_l2cap_command_reject_event */
-  0x080a, aci_l2cap_command_reject_event_process,
+  {0x080a, aci_l2cap_command_reject_event_process},
   /* aci_gatt_attribute_modified_event */
-  0x0c01, aci_gatt_attribute_modified_event_process,
+  {0x0c01, aci_gatt_attribute_modified_event_process},
   /* aci_gatt_proc_timeout_event */
-  0x0c02, aci_gatt_proc_timeout_event_process,
+  {0x0c02, aci_gatt_proc_timeout_event_process},
   /* aci_att_exchange_mtu_resp_event */
-  0x0c03, aci_att_exchange_mtu_resp_event_process,
+  {0x0c03, aci_att_exchange_mtu_resp_event_process},
   /* aci_att_find_info_resp_event */
-  0x0c04, aci_att_find_info_resp_event_process,
+  {0x0c04, aci_att_find_info_resp_event_process},
   /* aci_att_find_by_type_value_resp_event */
-  0x0c05, aci_att_find_by_type_value_resp_event_process,
+  {0x0c05, aci_att_find_by_type_value_resp_event_process},
   /* aci_att_read_by_type_resp_event */
-  0x0c06, aci_att_read_by_type_resp_event_process,
+  {0x0c06, aci_att_read_by_type_resp_event_process},
   /* aci_att_read_resp_event */
-  0x0c07, aci_att_read_resp_event_process,
+  {0x0c07, aci_att_read_resp_event_process},
   /* aci_att_read_blob_resp_event */
-  0x0c08, aci_att_read_blob_resp_event_process,
+  {0x0c08, aci_att_read_blob_resp_event_process},
   /* aci_att_read_multiple_resp_event */
-  0x0c09, aci_att_read_multiple_resp_event_process,
+  {0x0c09, aci_att_read_multiple_resp_event_process},
   /* aci_att_read_by_group_type_resp_event */
-  0x0c0a, aci_att_read_by_group_type_resp_event_process,
+  {0x0c0a, aci_att_read_by_group_type_resp_event_process},
   /* aci_att_prepare_write_resp_event */
-  0x0c0c, aci_att_prepare_write_resp_event_process,
+  {0x0c0c, aci_att_prepare_write_resp_event_process},
   /* aci_att_exec_write_resp_event */
-  0x0c0d, aci_att_exec_write_resp_event_process,
+  {0x0c0d, aci_att_exec_write_resp_event_process},
   /* aci_gatt_indication_event */
-  0x0c0e, aci_gatt_indication_event_process,
+  {0x0c0e, aci_gatt_indication_event_process},
   /* aci_gatt_notification_event */
-  0x0c0f, aci_gatt_notification_event_process,
+  {0x0c0f, aci_gatt_notification_event_process},
   /* aci_gatt_proc_complete_event */
-  0x0c10, aci_gatt_proc_complete_event_process,
+  {0x0c10, aci_gatt_proc_complete_event_process},
   /* aci_gatt_error_resp_event */
-  0x0c11, aci_gatt_error_resp_event_process,
+  {0x0c11, aci_gatt_error_resp_event_process},
   /* aci_gatt_disc_read_char_by_uuid_resp_event */
-  0x0c12, aci_gatt_disc_read_char_by_uuid_resp_event_process,
+  {0x0c12, aci_gatt_disc_read_char_by_uuid_resp_event_process},
   /* aci_gatt_write_permit_req_event */
-  0x0c13, aci_gatt_write_permit_req_event_process,
+  {0x0c13, aci_gatt_write_permit_req_event_process},
   /* aci_gatt_read_permit_req_event */
-  0x0c14, aci_gatt_read_permit_req_event_process,
+  {0x0c14, aci_gatt_read_permit_req_event_process},
   /* aci_gatt_read_multi_permit_req_event */
-  0x0c15, aci_gatt_read_multi_permit_req_event_process,
+  {0x0c15, aci_gatt_read_multi_permit_req_event_process},
   /* aci_gatt_tx_pool_available_event */
-  0x0c16, aci_gatt_tx_pool_available_event_process,
+  {0x0c16, aci_gatt_tx_pool_available_event_process},
   /* aci_gatt_server_confirmation_event */
-  0x0c17, aci_gatt_server_confirmation_event_process,
+  {0x0c17, aci_gatt_server_confirmation_event_process},
   /* aci_gatt_prepare_write_permit_req_event */
-  0x0c18, aci_gatt_prepare_write_permit_req_event_process,
+  {0x0c18, aci_gatt_prepare_write_permit_req_event_process},
+  /* aci_gatt_read_ext_event */
+  {0x0c1d, aci_gatt_read_ext_event_process},
   /* aci_gatt_indication_ext_event */
-  0x0c1e, aci_gatt_indication_ext_event_process,
+  {0x0c1e, aci_gatt_indication_ext_event_process},
   /* aci_gatt_notification_ext_event */
-  0x0c1f, aci_gatt_notification_ext_event_process,
+  {0x0c1f, aci_gatt_notification_ext_event_process},
 };
 
 /* hci_disconnection_complete_event */
@@ -228,86 +231,7 @@ that didn't correspond to a connection was given.
   * @param Connection_Handle Connection_Handle which was disconnected.
   * Values:
   - 0x0000 ... 0x0EFF
-  * @param Reason Reason for disconnection.
-  * Values:
-  - 0x00: Success
-  - 0x01: Unknown HCI Command
-  - 0x02: Unknown Connection Identifier
-  - 0x03: Hardware Failure
-  - 0x05: Authentication Failure
-  - 0x06: PIN or Key Missing
-  - 0x07: Memory Capacity Exceeded
-  - 0x08: Connection Timeout
-  - 0x09: Connection Limit Exceeded
-  - 0x0B: ACL Connection Already Exists
-  - 0x0C: Command Disallowed
-  - 0x0D: Connection Rejected Due To Limited Resources
-  - 0x0E: Connection Rejected Due To Security Reasons
-  - 0x0F: Connection Rejected due to Unacceptable BD_ADDR
-  - 0x10: Connection Accept Timeout Exceeded
-  - 0x11: Unsupported Feature Or Parameter Value
-  - 0x12: Invalid HCI Command Parameters
-  - 0x13: Remote User Terminated Connection
-  - 0x14: Remote Device Terminated Connection due to Low Resources
-  - 0x15: Remote Device Terminated Connection due to Power Off
-  - 0x16: Connection Terminated By Local Host
-  - 0x17: Repeated Attempts
-  - 0x18: Pairing Not Allowed
-  - 0x19: Unknown LMP PDU
-  - 0x1A: Unsupported Remote Feature / Unsupported LMP Feature
-  - 0x1E: Invalid LMP Parameters
-  - 0x1F: Unspecified Error
-  - 0x20: Unsupported LMP Parameter Value
-  - 0x21: Role Change Not Allowed
-  - 0x22: LMP Response Timeout / LL Response Timeout
-  - 0x23: LMP Error Transaction Collision
-  - 0x24: LMP PDU Not Allowed
-  - 0x25: Encryption Mode Not Acceptable
-  - 0x26: Link Key cannot be Changed
-  - 0x28: Instant Passed
-  - 0x29: Pairing With Unit Key Not Supported
-  - 0x2A: Different Transaction Collision
-  - 0x2E: Channel Assessment Not Supported
-  - 0x2F: Insufficient Security
-  - 0x30: Parameter Out Of Mandatory Range
-  - 0x32: Role Switch Pending
-  - 0x34: Reserved Slot Violation
-  - 0x35: Role Switch Failed
-  - 0x37: Secure Simple Pairing Not Supported by Host
-  - 0x38: Host Busy - Pairing
-  - 0x39: Connection Rejected due to No Suitable Channel Found
-  - 0x3A: Controller Busy
-  - 0x3B: Unacceptable Connection Interval
-  - 0x3C: Directed Advertising Timeout
-  - 0x3D: Connection Terminated Due to MIC Failure
-  - 0x3E: Connection Failed to be Established
-  - 0x41: Failed
-  - 0x42: Invalid parameters
-  - 0x43: Busy
-  - 0x44: Invalid length
-  - 0x45: Pending
-  - 0x46: Not allowed
-  - 0x47: GATT error
-  - 0x48: Address not resolved
-  - 0x50: Invalid CID
-  - 0x5A: CSRK not found
-  - 0x5B: IRK not found
-  - 0x5C: Device not found in DB
-  - 0x5D: Security DB full
-  - 0x5E: Device not bonded
-  - 0x5F: Device in blacklist
-  - 0x60: Invalid handle
-  - 0x61: Invalid parameter
-  - 0x62: Out of handles
-  - 0x63: Invalid operation
-  - 0x64: Insufficient resources
-  - 0x65: Insufficient encryption key size
-  - 0x66: Characteristic already exist
-  - 0x82: No valid slot
-  - 0x83: Short window
-  - 0x84: New interval failed
-  - 0x85: Too large interval
-  - 0x86: Slot length failed
+  * @param Reason Reason for disconnection (see Bluetooth Core Specification [Vol 2] Part D, Error Codes).
   * @retval None
 */
 
@@ -616,15 +540,13 @@ procedure timeout has occurred or the pairing has failed. This is to notify the 
 we have paired with a remote device so that it can take further actions or to notify that a
 timeout has occurred so that the upper layer can decide to disconnect the link.
   * @param Connection_Handle Connection handle on which the pairing procedure completed
-  * @param Status Pairing status
+  * @param Status Specific pairing status (0:Success,1:Timeout,2:Failed)
   * Values:
   - 0x00: Success
   - 0x01: Timeout
   - 0x02: Failed
   * @param Reason Pairing reason error code
   * Values:
-  - 0x00
-  - 0x01: PASSKEY_ENTRY_FAILED
   - 0x02: OOB_NOT_AVAILABLE
   - 0x03: AUTH_REQ_CANNOT_BE_MET
   - 0x04: CONFIRM_VALUE_FAILED
@@ -1216,86 +1138,7 @@ successfully.
   * @param Connection_Handle Connection handle related to the response.
   * Values:
   - 0x0000 ... 0x0EFF
-  * @param Error_Code Indicates whether the procedure completed with an error or was successful
-  * Values:
-  - 0x00: Success
-  - 0x01: Unknown HCI Command
-  - 0x02: Unknown Connection Identifier
-  - 0x03: Hardware Failure
-  - 0x05: Authentication Failure
-  - 0x06: PIN or Key Missing
-  - 0x07: Memory Capacity Exceeded
-  - 0x08: Connection Timeout
-  - 0x09: Connection Limit Exceeded
-  - 0x0B: ACL Connection Already Exists
-  - 0x0C: Command Disallowed
-  - 0x0D: Connection Rejected Due To Limited Resources
-  - 0x0E: Connection Rejected Due To Security Reasons
-  - 0x0F: Connection Rejected due to Unacceptable BD_ADDR
-  - 0x10: Connection Accept Timeout Exceeded
-  - 0x11: Unsupported Feature Or Parameter Value
-  - 0x12: Invalid HCI Command Parameters
-  - 0x13: Remote User Terminated Connection
-  - 0x14: Remote Device Terminated Connection due to Low Resources
-  - 0x15: Remote Device Terminated Connection due to Power Off
-  - 0x16: Connection Terminated By Local Host
-  - 0x17: Repeated Attempts
-  - 0x18: Pairing Not Allowed
-  - 0x19: Unknown LMP PDU
-  - 0x1A: Unsupported Remote Feature / Unsupported LMP Feature
-  - 0x1E: Invalid LMP Parameters
-  - 0x1F: Unspecified Error
-  - 0x20: Unsupported LMP Parameter Value
-  - 0x21: Role Change Not Allowed
-  - 0x22: LMP Response Timeout / LL Response Timeout
-  - 0x23: LMP Error Transaction Collision
-  - 0x24: LMP PDU Not Allowed
-  - 0x25: Encryption Mode Not Acceptable
-  - 0x26: Link Key cannot be Changed
-  - 0x28: Instant Passed
-  - 0x29: Pairing With Unit Key Not Supported
-  - 0x2A: Different Transaction Collision
-  - 0x2E: Channel Assessment Not Supported
-  - 0x2F: Insufficient Security
-  - 0x30: Parameter Out Of Mandatory Range
-  - 0x32: Role Switch Pending
-  - 0x34: Reserved Slot Violation
-  - 0x35: Role Switch Failed
-  - 0x37: Secure Simple Pairing Not Supported by Host
-  - 0x38: Host Busy - Pairing
-  - 0x39: Connection Rejected due to No Suitable Channel Found
-  - 0x3A: Controller Busy
-  - 0x3B: Unacceptable Connection Interval
-  - 0x3C: Directed Advertising Timeout
-  - 0x3D: Connection Terminated Due to MIC Failure
-  - 0x3E: Connection Failed to be Established
-  - 0x41: Failed
-  - 0x42: Invalid parameters
-  - 0x43: Busy
-  - 0x44: Invalid length
-  - 0x45: Pending
-  - 0x46: Not allowed
-  - 0x47: GATT error
-  - 0x48: Address not resolved
-  - 0x50: Invalid CID
-  - 0x5A: CSRK not found
-  - 0x5B: IRK not found
-  - 0x5C: Device not found in DB
-  - 0x5D: Security DB full
-  - 0x5E: Device not bonded
-  - 0x5F: Device in blacklist
-  - 0x60: Invalid handle
-  - 0x61: Invalid parameter
-  - 0x62: Out of handles
-  - 0x63: Invalid operation
-  - 0x64: Insufficient resources
-  - 0x65: Insufficient encryption key size
-  - 0x66: Characteristic already exist
-  - 0x82: No valid slot
-  - 0x83: Short window
-  - 0x84: New interval failed
-  - 0x85: Too large interval
-  - 0x86: Slot length failed
+  * @param Error_Code Indicates whether the procedure completed with an error or was successful (see "Status error codes" section)
   * @retval None
 */
 
@@ -1525,6 +1368,32 @@ void aci_gatt_prepare_write_permit_req_event_process(uint8_t *buffer_in)
                                           rp0->Offset,
                                           rp0->Data_Length,
                                           rp0->Data);
+}
+
+/* aci_gatt_read_ext_event */
+/* Event len: 2 + 2 + 2 + rp0->Event_Data_Length * (sizeof(uint8_t)) */
+/**
+  * @brief When it is enabled with ACI_GATT_SET_EVENT_MASK, this event is generated instead of ACI_ATT_READ_RESP_EVENT / ACI_ATT_READ_BLOB_RESP_EVENT / ACI_ATT_READ_MULTIPLE_RESP_EVENT.
+This event should be used instead of those events when ATT_MTU > (BLE_EVT_MAX_PARAM_LEN - 4)
+i.e. ATT_MTU > 251 for BLE_EVT_MAX_PARAM_LEN default value.
+
+  * @param Connection_Handle Connection handle related to the response.
+  * Values:
+  - 0x0000 ... 0x0EFF
+  * @param Offset Bits 14-0: offset in octets from which Attribute_Value data starts. Bit 15 is used as flag: when set to 1 it indicates that more data are to come (fragmented event in case of long attribute data).
+  * @param Event_Data_Length Length of following data
+  * @param Attribute_Value The value of the attribute(s).
+  * @retval None
+*/
+
+void aci_gatt_read_ext_event_process(uint8_t *buffer_in)
+{
+  /* Input params */
+  aci_gatt_read_ext_event_rp0 *rp0 = (aci_gatt_read_ext_event_rp0 *)buffer_in;
+  aci_gatt_read_ext_event(rp0->Connection_Handle,
+                          rp0->Offset,
+                          rp0->Event_Data_Length,
+                          rp0->Attribute_Value);
 }
 
 /* aci_gatt_indication_ext_event */

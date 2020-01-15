@@ -900,4 +900,7 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
 }
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
+/* USER CODE BEGIN FD_WRAP_FUNCTIONS */
+
+/* USER CODE END FD_WRAP_FUNCTIONS */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

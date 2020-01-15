@@ -105,6 +105,7 @@
 
 /**< specific parameters */
 /*****************************************************/
+
 /**
 * AD Element - Group B Feature
 */ 
@@ -349,7 +350,7 @@
 
 typedef enum
 {
-    CFG_TIM_PROC_ID_ISR,
+  CFG_TIM_PROC_ID_ISR,
 } CFG_TimProcID_t;
 
 /******************************************************************************

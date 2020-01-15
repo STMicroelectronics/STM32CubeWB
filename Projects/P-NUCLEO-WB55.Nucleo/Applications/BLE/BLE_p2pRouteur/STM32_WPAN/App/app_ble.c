@@ -480,6 +480,7 @@ void APP_BLE_Init( void )
   BleApplicationContext.SmartPhone_Connection_Status = APP_BLE_IDLE;
   BleApplicationContext.EndDevice_Connection_Status[0] = APP_BLE_IDLE;
   BleApplicationContext.EndDevice1Found = 0x00;
+
 #if (CFG_P2P_DEMO_MULTI != 0)
 /* USER CODE BEGIN Connection_Status_Multi */
   BleApplicationContext.EndDevice_Connection_Status[1] = APP_BLE_IDLE;
@@ -647,28 +648,28 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
       /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
 
       /* USER CODE END EVT_DISCONN_COMPLETE */
-          if (cc->Connection_Handle == BleApplicationContext.connectionHandleEndDevice1)
-          {
-            APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF END DEVICE 1 \n");
-            BleApplicationContext.EndDevice_Connection_Status[0] = APP_BLE_IDLE;
-            BleApplicationContext.connectionHandleEndDevice1 = 0xFFFF;
-            handleNotification.P2P_Evt_Opcode = P2P_SERVER1_DISCON_HANDLE_EVT;
-            handleNotification.ConnectionHandle = connection_handle;
-            Evt_Notification(&handleNotification);
-          }
-          
-          if (cc->Connection_Handle == BleApplicationContext.connectionHandleCentral)
-          {
-            APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF SMART PHONE \n");
-            BleApplicationContext.connectionHandleCentral = APP_BLE_IDLE;
-            handleNotification.P2P_Evt_Opcode = SMART_PHONE1_DISCON_HANDLE_EVT;
-            handleNotification.ConnectionHandle = 0xFFFF;
-            Evt_Notification(&handleNotification);
-          } 
-         
+      if (cc->Connection_Handle == BleApplicationContext.connectionHandleEndDevice1)
+      {
+        APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF END DEVICE 1 \n");
+        BleApplicationContext.EndDevice_Connection_Status[0] = APP_BLE_IDLE;
+        BleApplicationContext.connectionHandleEndDevice1 = 0xFFFF;
+        handleNotification.P2P_Evt_Opcode = P2P_SERVER1_DISCON_HANDLE_EVT;
+        handleNotification.ConnectionHandle = connection_handle;
+        Evt_Notification(&handleNotification);
+      }
+
+      if (cc->Connection_Handle == BleApplicationContext.connectionHandleCentral)
+      {
+        APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF SMART PHONE \n");
+        BleApplicationContext.connectionHandleCentral = APP_BLE_IDLE;
+        handleNotification.P2P_Evt_Opcode = SMART_PHONE1_DISCON_HANDLE_EVT;
+        handleNotification.ConnectionHandle = 0xFFFF;
+        Evt_Notification(&handleNotification);
+      }
+
 #if (CFG_P2P_DEMO_MULTI != 0)
-          /* USER CODE BEGIN EVT_DISCONN_COMPLETE_Multi */
-          if (cc->Connection_Handle == BleApplicationContext.connectionHandleEndDevice2)
+      /* USER CODE BEGIN EVT_DISCONN_COMPLETE_Multi */
+      if (cc->Connection_Handle == BleApplicationContext.connectionHandleEndDevice2)
       {
         APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF END DEVICE 2 \n");
         BleApplicationContext.EndDevice_Connection_Status[1] = APP_BLE_IDLE;
@@ -715,7 +716,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
       }
 
       
-          /* USER CODE END EVT_DISCONN_COMPLETE_Multi */
+      /* USER CODE END EVT_DISCONN_COMPLETE_Multi */
 #endif           
 
       break; /* EVT_DISCONN_COMPLETE */
@@ -959,7 +960,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
           break; /* HCI_EVT_LE_CONN_COMPLETE */
 
         case EVT_LE_ADVERTISING_REPORT:
-          
+
           /* USER CODE BEGIN EVT_LE_ADVERTISING_REPORT */
 
           /* USER CODE END EVT_LE_ADVERTISING_REPORT */
@@ -976,14 +977,14 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
           */
           adv_report_data = (uint8_t*)(&le_advertising_event->Advertising_Report[0].Length_Data) + 1;
           k = 0;
+
           /* search AD TYPE 0x09 (Complete Local Name) */
           /* search AD Type 0x02 (16 bits UUIDS) */
           if (event_type == ADV_IND)
           {
 
-            /*ISOLATION OF BD ADDRESS AND LOCAL NAME*/
+            /* ISOLATION OF BD ADDRESS AND LOCAL NAME */
 
-            
             while(k < event_data_size)
             {
               adlength = adv_report_data[k];
@@ -1010,7 +1011,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
 
                 /* USER CODE END Tx_power_level */
                   break;
-                case 0xFF: /* Manufactureur Specific */
+                case 0xFF: /* Manufacturer Specific */
                 /* USER CODE BEGIN Manufactureur_Specific */
 
                 /* USER CODE END Manufactureur_Specific */
@@ -1331,7 +1332,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 
   aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,
-                                         0,
+                                         1,
                                          0,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
@@ -1719,7 +1720,7 @@ void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification )
       break;
 
     case P2P_SERVER1_CONN_HANDLE_EVT:
-      device_status.Device1_Status = 0x81; /* connected */
+      device_status.Device1_Status = 0x81; /* Connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       break;
 

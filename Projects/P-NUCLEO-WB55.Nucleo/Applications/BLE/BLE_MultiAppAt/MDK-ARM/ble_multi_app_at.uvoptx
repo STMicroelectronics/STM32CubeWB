@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>ble_multi_app_at</TargetName>
+    <TargetName>BLE_MultiAppAt</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>

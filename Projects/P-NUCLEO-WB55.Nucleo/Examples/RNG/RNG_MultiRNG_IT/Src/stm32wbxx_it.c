@@ -59,9 +59,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
- 
-    
-      
 extern RNG_HandleTypeDef hrng;
 /* USER CODE BEGIN EV */
 

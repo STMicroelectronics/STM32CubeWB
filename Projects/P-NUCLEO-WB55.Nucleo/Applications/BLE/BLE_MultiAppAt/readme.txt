@@ -69,6 +69,7 @@ How to use multi BLE applications using a network processor architecture.
     - Nucleo board (MB1355C) Set-up    
        - Connect the Nucleo Board to your PC with a USB cable type A to mini-B to ST-LINK connector (USB_STLINK).
        - Please ensure that the ST-LINK connectors and jumpers are fitted.
+       - Connect an USB-UART converter from PC to STM32WB LPUART pins. (PA2(CN10.35) = LPUART1_TX ; PA3(CN10.37) = LPUART1_RX)
 
 One STM32WB55xx and one computer running a Terminal like TeraTerm are used. The computer is the orders giver and the STM32WB55xx is the slave that listens to the orders and performs them.
 The STM32WB55xx can either run the AT_P2PServer application, the AT_P2PClient application or the AT_HeartRate application.

@@ -1210,44 +1210,49 @@ typedef MAC_Status_t (* MAC_MCPSDataIndCbPtr) ( const MAC_dataInd_t * pDataInd )
 MLME POLL Indication*/
 typedef MAC_Status_t (*MAC_MLMEPollIndCbPtr) ( const MAC_pollInd_t * pPollInd );
 
+/**
+  * @}
+  */
+
+/**@addtogroup  STM32WB55_MAC
+  * @{
+  */
+
 /******************************************************************************/
 /** @brief Defines callback init structure to be set by NWK upper layer before
  MAC Initialisation */
+
 typedef struct {
-  MAC_MLMEAssociateCnfCbPtr  mlmeAssociateCnfCb;
-  MAC_MLMEAssociateIndCbPtr  mlmeAssociateIndCb;
-  MAC_MLMEBeaconNotifyIndCbPtr  mlmeBeaconNotifyIndCb;
-  MAC_MLMECalibrateCnfCbPtr  mlmeCalibrateCnfCb;
-  MAC_MLMECommStatusIndCbPtr  mlmeCommStatusIndCb;
-  MAC_MLMEDisassociateCnfCbPtr   mlmeDisassociateCnfCb;
-  MAC_MLMEDisassociateIndCbPtr  mlmeDisassociateIndCb;
-  MAC_MLMEDpsCnfCbPtr  mlmeDpsCnfCb;
-  MAC_MLMEDpsIndCbPtr  mlmeDpsIndCb;
-  MAC_MLMEGetCnfCbPtr  mlmeGetCnfCb;
-  MAC_MLMEGtsCnfCbPtr  mlmeGtsCnfCb;
-  MAC_MLMEGtsIndCbPtr  mlmeGtsIndCb;
-  MAC_MLMEOrphanIndCbPtr  mlmeOrphanIndCb;
-  MAC_MLMEPollCnfCbPtr  mlmePollCnfCb;
-  MAC_MLMEResetCnfCbPtr  mlmeResetCnfCb;
-  MAC_MLMERxEnableCnfCbPtr  mlmeRxEnableCnfCb;
-  MAC_MLMEScanCnfCbPtr  mlmeScanCnfCb;
-  MAC_MLMESetCnfCbPtr  mlmeSetCnfCb;
-  MAC_MLMESoundingCnfCbPtr  mlmeSoundingCnfCb;
-  MAC_MLMEStartCnfCbPtr  mlmeStartCnfCb;
-  MAC_MLMESyncLossIndCbPtr  mlmeSyncLossIndCb;
-  MAC_MCPSDataIndCbPtr  mcpsDataIndCb;
-  MAC_MCPSDataCnfCbPtr  mcpsDataCnfCb;
-  MAC_MCPSPurgeCnfCbPtr mcpsPurgeCnfCb;
-  MAC_MLMEPollIndCbPtr mlmePollIndCb;
+  MAC_MLMEAssociateCnfCbPtr       mlmeAssociateCnfCb;
+  MAC_MLMEAssociateIndCbPtr       mlmeAssociateIndCb;
+  MAC_MLMEBeaconNotifyIndCbPtr    mlmeBeaconNotifyIndCb;
+  MAC_MLMECalibrateCnfCbPtr       mlmeCalibrateCnfCb;
+  MAC_MLMECommStatusIndCbPtr      mlmeCommStatusIndCb;
+  MAC_MLMEDisassociateCnfCbPtr    mlmeDisassociateCnfCb;
+  MAC_MLMEDisassociateIndCbPtr    mlmeDisassociateIndCb;
+  MAC_MLMEDpsCnfCbPtr             mlmeDpsCnfCb;
+  MAC_MLMEDpsIndCbPtr             mlmeDpsIndCb;
+  MAC_MLMEGetCnfCbPtr             mlmeGetCnfCb;
+  MAC_MLMEGtsCnfCbPtr             mlmeGtsCnfCb;
+  MAC_MLMEGtsIndCbPtr             mlmeGtsIndCb;
+  MAC_MLMEOrphanIndCbPtr          mlmeOrphanIndCb;
+  MAC_MLMEPollCnfCbPtr            mlmePollCnfCb;
+  MAC_MLMEResetCnfCbPtr           mlmeResetCnfCb;
+  MAC_MLMERxEnableCnfCbPtr        mlmeRxEnableCnfCb;
+  MAC_MLMEScanCnfCbPtr            mlmeScanCnfCb;
+  MAC_MLMESetCnfCbPtr             mlmeSetCnfCb;
+  MAC_MLMESoundingCnfCbPtr        mlmeSoundingCnfCb;
+  MAC_MLMEStartCnfCbPtr           mlmeStartCnfCb;
+  MAC_MLMESyncLossIndCbPtr        mlmeSyncLossIndCb;
+  MAC_MCPSDataIndCbPtr            mcpsDataIndCb;
+  MAC_MCPSDataCnfCbPtr            mcpsDataCnfCb;
+  MAC_MCPSPurgeCnfCbPtr           mcpsPurgeCnfCb;
+  MAC_MLMEPollIndCbPtr            mlmePollIndCb;
 } MAC_callbacks_t;
 
 
 /**
   * @}
   */
-
-
-
-
 
 #endif /* _INC_802_15_4_MAC_TYPES_H_ */
