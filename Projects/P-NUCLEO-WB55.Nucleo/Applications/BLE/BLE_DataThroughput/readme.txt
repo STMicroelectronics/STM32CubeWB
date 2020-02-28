@@ -86,12 +86,12 @@ Two STM32WB55xx boards are used, one central and one peripheral.
 They are both configured as GATT client and GATT server.
 They both support a Data transfer service with a transmission characteristic that supports notification.
 Both boards need to be compiled by changing the definition in app_conf.h
-Use #define CFG_BLE_CENTRAL 0 or 1
+Use #define CFG_BLE_CENTRAL 0 or 1 and CFG_SERVER_ONLY 0
 One board is defined as GAP peripheral, the other board is defined as GAP central.
 Open a VT100 terminal on Central and Peripheral side (ST Link Com Port, @115200 bauds).
 At startup the connection is established and encryption started(if #define ENCRYPTION_ON 1 uncomment in app_conf.h).
  - The peripheral device starts advertising.
- - The central device scans and automatically connects to the peripheral. 
+ - The central device scans and automatically connects to the peripheral (use of CFG_DEV_ID_PERIPH_SERVER). 
  - After pairing and authentication (if enabled),  
    the client on each device starts to search the data transfer service and characteristic.
  - Each client enables the notification of the transmission characteristic.
@@ -99,6 +99,13 @@ On server side, the notification is started when the SW1 button is pushed (blue 
 it stops when SW1 is pushed again (blue led is OFF).
 The notification can be started and stopped from both sides.
 On the client terminal receiving the current notification, the number of bytes per second is displayed.
+
+One STM32WB55xx board is used as peripheral and server only.
+Use #define CFG_BLE_CENTRAL 0 and CFG_SERVER_ONLY 1 (in app_conf.h)
+This board can be connected with a smartphone supporting ST BLE SENSOR application.
+Start a scan and choose DT_SERVER board to connect.
+SW1 starts the notification data.
+SW2 changes the PHY (1M or 2M). 
 
 In app_conf.h 
 if #define CFG_TX_PHY    2 and #define CFG_RX_PHY    2, link is set to 2M

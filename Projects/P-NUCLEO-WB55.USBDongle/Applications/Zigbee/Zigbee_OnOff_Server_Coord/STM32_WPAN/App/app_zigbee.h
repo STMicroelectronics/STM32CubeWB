@@ -48,7 +48,8 @@ typedef enum {
 void APP_ZIGBEE_Init(void);
 void APP_ZIGBEE_Error(uint32_t ErrId, uint32_t ErrCode);
 void APP_ZIGBEE_RegisterCmdBuffer(TL_CmdPacket_t *p_buffer);
-void APP_ZIGBEE_ProcessMsgM0ToM4(void);
+void APP_ZIGBEE_ProcessNotifyM0ToM4(void);
+void APP_ZIGBEE_ProcessRequestM0ToM4(void);
 void APP_ZIGBEE_TL_INIT(void);
 void Pre_ZigbeeCmdProcessing(void);
 

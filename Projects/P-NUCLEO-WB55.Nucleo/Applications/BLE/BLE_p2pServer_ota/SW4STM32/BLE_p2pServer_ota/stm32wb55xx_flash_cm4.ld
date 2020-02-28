@@ -11,7 +11,7 @@
 **
 **  Environment : System Workbench for MCU
 **
-**  Distribution: The file is distributed ìas is,î without any warranty
+**  Distribution: The file is distributed ‚Äúas is,‚Äù without any warranty
 **                of any kind.
 **
 *****************************************************************************
@@ -50,7 +50,7 @@ ENTRY(Reset_Handler)
 _estack = 0x20030000;    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0x400;      /* required amount of heap  */
-_Min_Stack_Size = 0x1000; /* required amount of stack */
+_Min_Stack_Size = 0x1000;   /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY

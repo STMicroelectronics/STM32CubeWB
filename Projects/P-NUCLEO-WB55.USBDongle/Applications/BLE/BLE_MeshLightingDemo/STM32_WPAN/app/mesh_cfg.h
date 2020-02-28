@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    mesh_cfg.h
   * @author  BLE Mesh Team
-  * @version V1.09.000
-  * @date    15-Oct-2018
+* @version V1.12.000
+* @date    06-12-2019
   * @brief   Header file for mesh_usr_cfg.c 
   ******************************************************************************
   * @attention
@@ -121,6 +121,12 @@ void TraceHeader(const char* func_name, int mode);
 #define LOW_POWER_FEATURE 0
 #endif
 
+#ifdef ENABLE_PROVISIONER_FEATURE
+#define PROVISIONER_FEATURE 1
+#else
+#define PROVISIONER_FEATURE 0
+#endif
+
 #if (LOW_POWER_FEATURE && RELAY_FEATURE)
 #error "Low power node can't be relay node"
 #elif (LOW_POWER_FEATURE && PROXY_FEATURE)
@@ -150,15 +156,6 @@ void TraceHeader(const char* func_name, int mode);
   LPN_MINIMUM_RSSI,                      \
   LPN_NO_OF_RETRIES                      \
 }
-
-/*
-*  If PB-GATT and Proxy not supported, optimize related to GATT database not required
-*/
-#if  (PB_GATT_SUPPORTED == 0 && PROXY_FEATURE == 0)
-#define BLUENRG_MESH_GATT_REQ               0
-#else
-#define BLUENRG_MESH_GATT_REQ               1
-#endif
 
 #define UNPROV_NODE_INFO_PARAMS          \
 {                                        \
@@ -216,7 +213,7 @@ void TraceHeader(const char* func_name, int mode);
 #elif LOW_POWER_FEATURE
 #define FRIEND_BUFF_DYNAMIC_MEMORY_SIZE    112U
 #else
-#define FRIEND_BUFF_DYNAMIC_MEMORY_SIZE    1U
+#define FRIEND_BUFF_DYNAMIC_MEMORY_SIZE    4U
 #endif
 
 #define DYNAMIC_MEMORY_SIZE                4096U
@@ -235,15 +232,6 @@ void TraceHeader(const char* func_name, int mode);
 #define SdkEvalComIOUartIrqHandler         UART_Handler /* Added Interrupt handler for Uart */
 /******************** Serial Interface Handling Control **********************/
 
-/* Note: Please use Full Library configuration in project options to use the full 
-         configuration of the C/C++ runtime library for printf and scanf functionality */
-
-/* Enables the serial interface using Uart */
-#define ENABLE_SERIAL_INTERFACE            1    
-#define ENABLE_UT                          0
-#define ENABLE_SERIAL_CONTROL              1
-#define ENABLE_APPLI_TEST                  0
-
 /* Exported variables  ------------------------------------------------------- */
 extern const DynBufferParam_t DynBufferParam;
 extern const tr_params_t TrParams;
@@ -253,5 +241,6 @@ extern const prvn_params_t PrvnParams;
 extern const neighbor_table_init_params_t NeighborTableParams;
 
 /* Exported Functions Prototypes ---------------------------------------------*/
+MOBLEUINT8 ApplicationSetNodeSigModelList(void);
 
 #endif /* __MESH_CFG_H */

@@ -232,7 +232,7 @@ P2PS_APP_ConnHandle_Not_evt_t handleNotification;
 #define SIZE_TAB_CONN_INT            2
 float tab_conn_interval[SIZE_TAB_CONN_INT] = {50, 1000} ; /* ms */
 uint8_t index_con_int, mutex; 
-#endif 
+#endif
 
 /**
  * Advertising Data
@@ -445,19 +445,19 @@ void APP_BLE_Init( void )
    * From here, all initialization are BLE application specific
    */
   UTIL_SEQ_RegTask( 1<<CFG_TASK_ADV_CANCEL_ID, UTIL_SEQ_RFU, Adv_Cancel);
-#if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )    
+#if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
   UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_UPDATE_REG_ID, UTIL_SEQ_RFU, Connection_Interval_Update_Req);
 #endif
-  
+
   /**
    * Initialization of ADV - Ad Manufacturer Element - Support OTA Bit Mask
    */
-#if(BLE_CFG_OTA_REBOOT_CHAR != 0)  
+#if(BLE_CFG_OTA_REBOOT_CHAR != 0)
   manuf_data[sizeof(manuf_data)-8] = CFG_FEATURE_OTA_REBOOT;
 #endif
 #if(RADIO_ACTIVITY_EVENT != 0)  
   aci_hal_set_radio_activity_mask(0x0006);
-#endif  
+#endif
   
 #if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
   index_con_int = 0; 
@@ -482,6 +482,7 @@ void APP_BLE_Init( void )
    */
   BleApplicationContext.BleApplicationContext_legacy.advtServUUID[0] = NULL;
   BleApplicationContext.BleApplicationContext_legacy.advtServUUIDlen = 0;
+
   /* Initialize intervals for reconnexion without intervals update */
   AdvIntervalMin = CFG_FAST_CONN_ADV_INTERVAL_MIN;
   AdvIntervalMax = CFG_FAST_CONN_ADV_INTERVAL_MAX;
@@ -527,11 +528,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       Adv_Request(APP_BLE_FAST_ADV);
  /*
 * SPECIFIC to P2P Server APP
-*/     
+*/
       handleNotification.P2P_Evt_Opcode = PEER_DISCON_HANDLE_EVT;
       handleNotification.ConnectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
       P2PS_APP_Notification(&handleNotification);
-
       /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
 
       /* USER CODE END EVT_DISCONN_COMPLETE */
@@ -547,7 +547,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       /* USER CODE END EVT_LE_META_EVENT */
       switch (meta_evt->subevent)
       {
-        case EVT_LE_CONN_UPDATE_COMPLETE: 
+        case EVT_LE_CONN_UPDATE_COMPLETE:
           APP_DBG_MSG("\r\n\r** CONNECTION UPDATE EVENT WITH CLIENT \n");
 
           /* USER CODE BEGIN EVT_LE_CONN_UPDATE_COMPLETE */
@@ -611,9 +611,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
             BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_SERVER;
           }
           BleApplicationContext.BleApplicationContext_legacy.connectionHandle = connection_complete_event->Connection_Handle;
- /*
+/*
 * SPECIFIC to P2P Server APP
-*/             
+*/
           handleNotification.P2P_Evt_Opcode = PEER_CONN_HANDLE_EVT;
           handleNotification.ConnectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
           P2PS_APP_Notification(&handleNotification);
@@ -814,7 +814,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   manuf_data[ sizeof(manuf_data)-3] = bd_addr[2];
   manuf_data[ sizeof(manuf_data)-2] = bd_addr[1];
   manuf_data[ sizeof(manuf_data)-1] = bd_addr[0];
-  
+
   /**
    * Static random Address
    * The two upper bits shall be set to 1
@@ -895,11 +895,11 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    */
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data_Present = 0;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = 8;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = 16;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 1;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = 111111;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = 1;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = CFG_USED_FIXED_PIN;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = CFG_FIXED_PIN;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = CFG_BONDING_MODE;
   for (index = 0; index < 16; index++)
   {
     BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data[index] = (uint8_t) index;
@@ -907,14 +907,14 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 
   aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,
-                                         1,
-                                         0,
+                                         CFG_SC_SUPPORT,
+                                         CFG_KEYPRESS_NOTIFICATION_SUPPORT,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                         0
-                                        );
+                                         PUBLIC_ADDR
+                                         );
 
   /**
    * Initialize whitelist
@@ -979,9 +979,9 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
         BleApplicationContext.BleApplicationContext_legacy.advtServUUID,
         0,
         0);
+
     /* Update Advertising data */
     ret = aci_gap_update_adv_data(sizeof(manuf_data), (uint8_t*) manuf_data);
-
     if (ret == BLE_STATUS_SUCCESS)
     {
       if (New_Status == APP_BLE_FAST_ADV)
@@ -1144,7 +1144,7 @@ void BLE_SVC_L2CAP_Conn_Update(uint16_t Connection_Handle)
 }
 #endif
 
-#if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )    
+#if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
 static void Connection_Interval_Update_Req( void )
 {
   if (BleApplicationContext.Device_Connection_Status != APP_BLE_FAST_ADV && BleApplicationContext.Device_Connection_Status != APP_BLE_IDLE)
@@ -1153,8 +1153,7 @@ static void Connection_Interval_Update_Req( void )
   }
   return;
 }
-#endif    
-
+#endif
 
 /* USER CODE BEGIN FD_SPECIFIC_FUNCTIONS */
 

@@ -28,6 +28,12 @@
 
 
 /* Private typedef -----------------------------------------------------------*/
+typedef enum
+{
+  HCI_TL_CMD_RESP_RELEASE,
+  HCI_TL_CMD_RESP_WAIT,
+} HCI_TL_CmdRespStatus_t;
+
 /* Private defines -----------------------------------------------------------*/
 
 /**
@@ -52,6 +58,8 @@ PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") HCI_TL_UserEventFlowStatus_t UserEventFlo
 static tHciContext hciContext;
 static tListNode HciCmdEventQueue;
 static void (* StatusNotCallBackFunction) (HCI_TL_CmdStatus_t status);
+
+static volatile HCI_TL_CmdRespStatus_t CmdRspStatusFlag;
 
 /* Private function prototypes -----------------------------------------------*/
 static void NotifyCmdStatus(HCI_TL_CmdStatus_t hcicmdstatus);
@@ -277,6 +285,26 @@ static void TlEvtReceived(TL_EvtPacket_t *hcievt)
     LST_insert_tail(&HciAsynchEventQueue, (tListNode *)hcievt);
     hci_notify_asynch_evt((void*) &HciAsynchEventQueue); /**< Notify the application a full HCI event has been received */
   }
+
+  return;
+}
+
+/* Weak implementation ----------------------------------------------------------------*/
+__WEAK void hci_cmd_resp_wait(uint32_t timeout)
+{
+  (void)timeout;
+
+  CmdRspStatusFlag = HCI_TL_CMD_RESP_WAIT;
+  while(CmdRspStatusFlag != HCI_TL_CMD_RESP_RELEASE);
+
+  return;
+}
+
+__WEAK void hci_cmd_resp_release(uint32_t flag)
+{
+  (void)flag;
+
+  CmdRspStatusFlag = HCI_TL_CMD_RESP_RELEASE;
 
   return;
 }

@@ -55,51 +55,57 @@ typedef struct
   MOBLEUINT16 Present_OnOffValue;
 }Appli_Generic_OnOffSet;
 
-#pragma pack(1)
 typedef struct
 {
   MOBLEINT16 Present_Level16; 
 }Appli_Generic_LevelSet;
 
-#pragma pack(1)
 typedef struct
 {
   MOBLEINT16 PowerOnState; 
 }Appli_Generic_PowerOnOffSet;
 
-#pragma pack(1)
 typedef struct
 {
   MOBLEINT16 DefaultTransitionTime; 
 }Appli_Generic_DefaultTransitionSet;
 
-#pragma pack(1)
 typedef struct 
 {
   MOBLEUINT8 Is_BatteryPresent;
   MOBLEUINT8 Is_Chargeable;
   MOBLEUINT8 Is_Serviceable;
 }Appli_BatteryUserflag_param_t;
+#pragma pack(4)
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 
 MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t*, MOBLEUINT8);
+MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status,
+                                               MOBLEUINT32 plength);
 MOBLE_RESULT Appli_Generic_Level_Set(Generic_LevelStatus_t*, MOBLEUINT8);
 MOBLE_RESULT Appli_Generic_LevelDelta_Set(Generic_LevelStatus_t*, MOBLEUINT8 );
 MOBLE_RESULT Appli_Generic_LevelMove_Set(Generic_LevelStatus_t* pdeltaMoveParam, 
                                               MOBLEUINT8 OptionalValid);
-MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8* level_status, 
-                                                MOBLEUINT32 *plength);
+MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8 const *plevel_status,
+                                               MOBLEUINT32 plength);
 MOBLE_RESULT Appli_Generic_PowerOnOff_Set(Generic_PowerOnOffParam_t* pPowerOnOffParam, 
                                                 MOBLEUINT8 OptionalValid);  
+MOBLE_RESULT Appli_Generic_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , 
+                                               MOBLEUINT32 plength); 
 MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Set(Generic_DefaultTransitionParam_t* pDefaultTimeParam, 
                                                 MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , 
+                                               MOBLEUINT32 plength); 
 
 MOBLE_RESULT Appli_Generic_GetOnOffStatus(MOBLEUINT8* pOnOff_Status);
 MOBLE_RESULT Appli_Generic_GetOnOffValue(MOBLEUINT8* pOnOff_Value);
 MOBLE_RESULT Appli_Generic_GetLevelStatus(MOBLEUINT8* pLevel_Status);
 MOBLE_RESULT Appli_Generic_GetPowerOnOffStatus(MOBLEUINT8* pLevel_Status);
+void Appli_Generic_Restore_PowerOn_Value(MOBLEUINT8 restoreValue);
 MOBLE_RESULT Appli_Generic_GetDefaultTransitionStatus(MOBLEUINT8* pTransition_Status) ;
+MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status,
+                                               MOBLEUINT32 plength);
  
 
 #endif /* __APPLI_GENERIC_H */

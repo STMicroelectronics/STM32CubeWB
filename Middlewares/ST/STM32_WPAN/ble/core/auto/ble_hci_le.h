@@ -1,13 +1,13 @@
 /******************************************************************************
  * @file    ble_hci_le.h
  * @author  MCD Application Team
- * @date    23 May 2019
+ * @date    22 January 2020
  * @brief   Header file for STM32WB (hci_le)
  *          Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -988,7 +988,7 @@ This command may be issued on both the master and slave.
   - 0x0000 ... 0x0EFF
   * @retval Value indicating success or error code.
 */
-tBleStatus hci_le_read_remote_used_features(uint16_t Connection_Handle);
+tBleStatus hci_le_read_remote_features(uint16_t Connection_Handle);
 
 /**
   * @brief The LE_Encrypt command is used to request the Controller to encrypt the

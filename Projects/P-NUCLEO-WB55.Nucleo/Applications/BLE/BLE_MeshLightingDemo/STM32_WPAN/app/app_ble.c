@@ -37,6 +37,7 @@
 #include "types.h"
 #include "ble_mesh.h"
 #include "appli_mesh.h"
+#include "mesh_cfg.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -282,6 +283,13 @@ void APP_BLE_Init( void )
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
 
   /**
+   * Do not allow stop mode in the application
+   */
+#if (LOW_POWER_FEATURE == 0)
+  UTIL_LPM_SetStopMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
+#endif
+
+  /**
    * Register the hci transport layer to handle BLE User Asynchronous Events
    */
   UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
@@ -309,7 +317,7 @@ void APP_BLE_Init( void )
   
   /*Radio mask Activity*/
 #if(RADIO_ACTIVITY_EVENT != 0)  
-  aci_hal_set_radio_activity_mask(0x0006);
+  aci_hal_set_radio_activity_mask(0x00FF);
 #endif  
 
   BleApplicationContext.Device_Connection_Status = APP_BLE_FAST_ADV;
@@ -323,6 +331,10 @@ void APP_BLE_Init( void )
 SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 {
   HCI_Event_CB(pckt);
+
+#if (LOW_POWER_FEATURE == 1)
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
+#endif
 
   return (SVCCTL_UserEvtFlowEnable);
 }
@@ -563,15 +575,28 @@ void hci_notify_asynch_evt(void* pdata)
   return;
 }
 
+#if (LOW_POWER_FEATURE == 1)
+static volatile uint8_t HciResponse = 0;
+#endif
+
 void hci_cmd_resp_release(uint32_t flag)
 {
+#if (LOW_POWER_FEATURE == 0)
   UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
+#else
+  HciResponse = 1;
+#endif
   return;
 }
 
 void hci_cmd_resp_wait(uint32_t timeout)
 {
+#if (LOW_POWER_FEATURE == 0)
   UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
+#else
+  while(HciResponse == 0);
+  HciResponse = 0;
+#endif  
   return;
 }
 

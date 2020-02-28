@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    mesh_cfg_usr.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for mesh_usr_cfg.c 
 ******************************************************************************
 * @attention
@@ -69,6 +69,8 @@ Either use 0 to disable or 1 to enable
 #define TF_LIGHT_LC                                                            0
 #define TF_SENSOR                                                              0
 #define TF_VENDOR                                                              0
+#define TF_COMMON                                                              0
+#define TF_VENDOR_COMMAND                                                      0
 #define TF_NEIGHBOUR                                                           0
 #define TF_LPN_FRND                                                            0
 #define TF_ELEMENTS                                                            0
@@ -77,26 +79,38 @@ Either use 0 to disable or 1 to enable
 #define TF_HANDLER                                                             0
 #define TF_INIT                                                                0
 #define TF_MISC                                                                0
+#define TF_MEMORY                                                              0
 #define TF_SERIAL_CTRL                                                         0
+#define TF_BEACON                                                              0
+#define TF_GENERIC_CLIENT                                                      0
+#define TF_LIGHT_CLIENT                                                        0
+#define TF_CONFIG_CLIENT                                                       0
+#define TF_LIGHT_CLIENT                                                        0
 
 /*******************************************************************************
 *** Following section helps to select right configuration of Models  ***********
 *******************************************************************************/
 /******* Define the following Macros to enable the usage of the  Models  ******/
 
+#ifdef CLIENT
+#define ENABLE_GENERIC_MODEL_SERVER_ONOFF 
+#endif
+
+#ifdef SERVER
 /* Define the following Macros to enable the usage of the Server Generic Models  */
 #define ENABLE_GENERIC_MODEL_SERVER_ONOFF 
 #define ENABLE_GENERIC_MODEL_SERVER_LEVEL
-#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF
-#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP
+//#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF
+//#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP
 //#define ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME
 
 /* The Following Models are not available in this version, will be developed in 
    next version.
 */
+
+//#define ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL
+//#define ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP
 /*
-#define ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL
-#define ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP
 #define ENABLE_GENERIC_MODEL_SERVER_BATTERY
 #define ENABLE_GENERIC_MODEL_SERVER_LOCATION
 #define ENABLE_GENERIC_MODEL_SERVER_LOCATION_SETUP
@@ -104,12 +118,7 @@ Either use 0 to disable or 1 to enable
 #define ENABLE_GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY
 #define ENABLE_GENERIC_MODEL_SERVER_USER_PROPERTY
 #define ENABLE_GENERIC_MODEL_SERVER_CLIENT_PROPERTY
-*/
 
-/* Define the following Macros to enable the usage of the Client Generic Models  */
-/*
-#define ENABLE_GENERIC_MODEL_CLIENT_ONOFF 
-#define ENABLE_GENERIC_MODEL_CLIENT_LEVEL
 */
 
 /******************************************************************************/
@@ -118,19 +127,35 @@ Either use 0 to disable or 1 to enable
 
 #define ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
 #define ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP 
-#define ENABLE_LIGHT_MODEL_SERVER_CTL
-#define ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP 
-#define ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE
-#define ENABLE_LIGHT_MODEL_SERVER_HSL 
-#define ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP  
-#define ENABLE_LIGHT_MODEL_SERVER_HSL_HUE 
-#define ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION 
+//#define ENABLE_LIGHT_MODEL_SERVER_CTL
+//#define ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP 
+//#define ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE
+//#define ENABLE_LIGHT_MODEL_SERVER_HSL 
+//#define ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP  
+//#define ENABLE_LIGHT_MODEL_SERVER_HSL_HUE 
+//#define ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION 
 
 /* 
    The following Models are managed in different file light_lc.c in middleware
 */
-#define ENABLE_LIGHT_MODEL_SERVER_LC 
-#define ENABLE_LIGHT_MODEL_SERVER_LC_SETUP 
+//#define ENABLE_LIGHT_MODEL_SERVER_LC 
+//#define ENABLE_LIGHT_MODEL_SERVER_LC_SETUP 
+
+/******************************************************************************/
+/* Define the following Macros to enable the usage of the Sensor Models  */
+/******************************************************************************/
+
+//#define ENABLE_SENSOR_MODEL_SERVER
+//#define ENABLE_SENSOR_MODEL_SERVER_SETUP
+
+/******************************************************************************/
+/* Define the following Macros to enable the usage of the time and scene Models */
+/******************************************************************************/
+
+//#define ENABLE_TIME_MODEL_SERVER
+//#define ENABLE_TIME_MODEL_SERVER_SETUP
+//#define ENABLE_SCENE_MODEL_SERVER
+//#define ENABLE_SCENE_MODEL_SERVER_SETUP
 
 /* 
    The Following Models are not available in this version
@@ -138,29 +163,42 @@ Either use 0 to disable or 1 to enable
 //#define ENABLE_LIGHT_MODEL_SERVER_XYL 
 //#define ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP 
 
-
-/* Following Macro helps to know if the Fixed functions are needed or not 
-   DO NOT change or add any space at the end of the file */
-#if defined(ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_HUE) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LC) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LC_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_XYL) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP)
-  #define  ENABLE_LIGHT_MODEL_SERVER  
+/******* Define the following Macros to enable the vendor model  ******/
+//#define ENABLE_VENDOR_MODEL_SERVER  
+#define GENERIC_SERVER_MODEL_PUBLISH  
 #endif
+
+#ifdef CLIENT
+/* Define the following Macros to enable the usage of the Client Generic Models  */
+#define ENABLE_GENERIC_MODEL_CLIENT_ONOFF 
+#define ENABLE_GENERIC_MODEL_CLIENT_LEVEL
+#define ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS
+#define ENABLE_CONFIG_MODEL_CLIENT
+
+/******************************************************************************/
+/*
+Define the Macro for enabling/disabling the Publishing with Generic on off
+or by Vendor Model.
+@ define Macro for Vendor Publishing
+@ Undefine or comment Macro for Generic On Off Publishing
+*/
+//#define VENDOR_CLIENT_MODEL_PUBLISH
+#define GENERIC_CLIENT_MODEL_PUBLISH  
+//#define LIGHT_CLIENT_MODEL_PUBLISH
+ 
+#if defined (ENABLE_GENERIC_MODEL_CLIENT_ONOFF) \
+    || defined (ENABLE_GENERIC_MODEL_CLIENT_LEVEL) 
       
-#if defined(ENABLE_LIGHT_MODEL_SERVER_LC) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LC_SETUP)
-   #define  ENABLE_LIGHT_LC_MODEL_SERVER  
+ #define ENABLE_GENERIC_MODEL_CLIENT
+#endif
+
+#if defined (ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS) 
+         
+ #define ENABLE_LIGHT_MODEL_CLIENT
 #endif      
+      
+#endif
+
 /******************************************************************************/
 /*
 Define the Macros for Enabling/disabling the binding of data between the Generic 
@@ -171,61 +209,15 @@ and Light model.
 /******************************************************************************/
 //#define ENABLE_MODEL_BINDING
 
-
-/******************************************************************************/
-/* Define the following Macros to enable the usage of the Sensor Models  */
-/******************************************************************************/
-
-#define ENABLE_SENSOR_MODEL_SERVER
-#define ENABLE_SENSOR_MODEL_SERVER_SETUP
-
 /* Define the macros for the numbers of sensor present.*/
 #define NUMBER_OF_SENSOR                   2
-#define ENABLE_OCCUPANCY_SENSOR
+//#define ENABLE_OCCUPANCY_SENSOR
 /*
 Macro is responsible for enabling and desabling the sensor publication.
 Comment this macro to disable the publication
 */
 //#define ENABLE_SENSOR_PUBLICATION
 
-/******************************************************************************/
-/* Define the following Macros to enable the usage of the time and scene Models  */
-/******************************************************************************/
-
-//#define ENABLE_TIME_MODEL_SERVER
-//#define ENABLE_TIME_MODEL_SERVER_SETUP
-//#define ENABLE_SCENE_MODEL_SERVER
-//#define ENABLE_SCENE_MODEL_SERVER_SETUP
-
-/******************************************************************************/
-/*
-Macros are defined to enable the setting for the PWM. these Macros are given for 
-eval board of BlueNRG-1 and BlueNRG-2, costom board and STEVAL-BLUEMIC-1 board
-and default transition inserted in generic on off.
-IMPORTATNT NOTE-  STEVAL_BLUENRG_1_BOARD_PWM_SELECTION
-                  STEVAL_BLUENRG_2_BOARD_PWM_SELECTION
-                  STEVAL_BLUEMIC_1_BOARD_PWM_SELECTION
-                  CUSTOM_BOARD_PWM_SELECTION
-                  GENERIC_ONOFF_DEFAULT_TRANSITION_ENABLE
-Only one macro must be enabled at one time from list of mocros provided here,
-otherwise get confliction and firmware will not work properly.
-*/
-/******************************************************************************/
-//#define STEVAL_BLUENRG_1_BOARD_PWM_SELECTION
-//#define STEVAL_BLUENRG_2_BOARD_PWM_SELECTION
-//#define STEVAL_BLUEMIC_1_BOARD_PWM_SELECTION
-//#define CUSTOM_BOARD_PWM_SELECTION
-
-
-/******************************************************************************/
-/*
-Define the Macro for enabling/disabling the Publishing with Generic on off
-or by Vendor Model.
-@ define Macro for Vendor Publishing
-@ Undefine or comment Macro for Generic On Off Publishing
-*/
-//#define VENDOR_MODEL_PUBLISH
- 
 /******************************************************************************/
 
 
@@ -256,8 +248,13 @@ This may result into excessive flash erase operations, this should be avoided to
 
 /* Only one Macro will be enable at one time */
 //#define SAVE_MODEL_STATE_FOR_ALL_MESSAGES         
-#define SAVE_MODEL_STATE_POWER_FAILURE_DETECTION
+//#define SAVE_MODEL_STATE_POWER_FAILURE_DETECTION
 
+/*      
+Define the following Macro to save the nodes data in provisioner in NVM
+This may result into excessive flash erase operations, this should be avoided to ensure flash longevity
+*/
+#define SAVE_EMBD_PROVISION_DATA     1
 /* Macros defined for the number of bytes saved, number of bytes dedicated for ganeric 
   model and light model.
 */     
@@ -281,40 +278,18 @@ This may result into excessive flash erase operations, this should be avoided to
 //#define  USER_BOARD_COOL_WHITE_LED
 //#define  USER_BOARD_RGB_LED 
 
-#if defined(STEVAL_BLUEMIC_1_BOARD_PWM_SELECTION)      
-   #define SINGLE_LED      PWM1
-#endif    
+/* Note: Please use Full Library configuration in project options to use the full 
+         configuration of the C/C++ runtime library for printf and scanf functionality */
 
-/*******************************************************************************
-*** Following section helps to configure the LEDs of Application of Mesh     ***********
-*******************************************************************************/
-
-#if defined STEVAL_BLUENRG_1_BOARD_PWM_SELECTION || defined STEVAL_BLUENRG_2_BOARD_PWM_SELECTION
-  #define SINGLE_LED   PWM4
-  #define COOL_LED     PWM0
-  #define WARM_LED     PWM1
-  #define RED_LED      PWM2
-  #define GREEN_LED    PWM3
-  #define BLUE_LED     PWM4 
-#endif   
-
-#if defined CUSTOM_BOARD_PWM_SELECTION || defined USE_STM32WBXX_NUCLEO || defined USE_STM32WBXX_USB_DONGLE
-  #define SINGLE_LED   PWM4    
-  #define COOL_LED     PWM0  
-  #define WARM_LED     PWM1
-  #define RED_LED      PWM2
-  #define GREEN_LED    PWM3
-  #define BLUE_LED     PWM4 
+/* Enables the serial interface using Uart */
+#define ENABLE_SERIAL_INTERFACE            1
+#define ENABLE_UT                          0
+#define ENABLE_SERIAL_CONTROL              1
+#define ENABLE_APPLI_TEST                  0
+#ifdef CLIENT
+#define ENABLE_SERIAL_PRVN                 1
 #endif
-
-#ifdef STEVAL_BLUEMIC_1_BOARD_PWM_SELECTION
-  #define SINGLE_LED   PWM1   
-  #define COOL_LED     PWM0  
-  #define WARM_LED     PWM1
-  #define RED_LED      PWM2
-  #define GREEN_LED    PWM3
-  #define BLUE_LED     PWM4 
-#endif      
+      
 /*******************************************************************************
 *** Following section helps to configure the Application of Mesh     ***********
 *******************************************************************************/
@@ -327,12 +302,14 @@ For STMicroelectronics : it is 0x0030 */
 #define COMPANY_ID                                                        0x0030
 
 /* Contains a 16-bit vendor-assigned product identifier */
-#define PRODUCT_ID                                                        0x0001
+#define PRODUCT_ID                                                        0x0002
 
 /* Contains a 16-bit vendor-assigned product version ID */
-#define PRODUCT_VERSION_ID                                                0x0001
+#define PRODUCT_VERSION_ID                                                0x010A   
 
 #define MAX_APPLICATION_PACKET_SIZE                                          160
+
+#define TPT_SEGMENT_COUNT                  (((MAX_APPLICATION_PACKET_SIZE)/12)+2)
 
 /*******************************************************************************
 ********** MAC Address Configuration *******************************************
@@ -366,14 +343,14 @@ For STMicroelectronics : it is 0x0030 */
 
 
 /*
-*  Different provision bearer supported by BlueNRG-Mesh. Define according to application.
+*  Different provision bearer supported by BLE-Mesh. Define according to application.
 *      Atleast one of PB-ADV and PB-GATT should be defined
 */
 #define ENABLE_PB_ADV
 #define ENABLE_PB_GATT
-#define ENABLE_PUB_KEY_TYPE_OOB
-#define ENABLE_AUTH_TYPE_STATIC_OOB
-#define ENABLE_AUTH_TYPE_OUTPUT_OOB
+//#define ENABLE_PUB_KEY_TYPE_OOB
+//#define ENABLE_AUTH_TYPE_STATIC_OOB
+//#define ENABLE_AUTH_TYPE_OUTPUT_OOB
 //#define ENABLE_AUTH_TYPE_INPUT_OOB
 
 /* Static OOB Configurations */
@@ -401,16 +378,18 @@ For STMicroelectronics : it is 0x0030 */
 #endif
 
 /*
-*  Different features supported by BlueNRG-Mesh. Uncomment according to application.
+*  Different features supported by BLE-Mesh. Uncomment according to application.
 *      Low power feature enabled node do not support other features. 
 *      Do not define any other feature if Low Power feature is defined
 */
 #define ENABLE_RELAY_FEATURE
 #define ENABLE_PROXY_FEATURE
 #define ENABLE_FRIEND_FEATURE
-/* #define ENABLE_LOW_POWER_FEATURE */
-
-
+//#define ENABLE_LOW_POWER_FEATURE
+#ifdef CLIENT
+#define ENABLE_PROVISIONER_FEATURE
+#endif
+      
 /*
 * Friend node receive window size is fixed at 50 ms
 */
@@ -427,12 +406,16 @@ For STMicroelectronics : it is 0x0030 */
 *  Number of Low power nodes that can be associated with Friend node
 *  varies from 1 to 10
 */
-#define FN_NO_OF_LPNS                                                         2U
+#define FN_NO_OF_LPNS                                                         6U
 
 /* 
 *  For prioritizing friendship offer with good RSSI link
 *  varies from 0 to 3
 *  Ref @Mesh_v1.0
+*  0  ->  1
+*  1  ->  1.5
+*  2  ->  2
+*  3  ->  2.5
 */
 #define LPN_RSSI_FACTOR_LEVEL                                                 1U
 
@@ -440,13 +423,24 @@ For STMicroelectronics : it is 0x0030 */
 *  For prioritizing friendship offer with good receive window factor
 *  varies from 0 to 3
 *  Ref @Mesh_v1.0
+*  0  ->  1
+*  1  ->  1.5
+*  2  ->  2
+*  3  ->  2.5
 */
 #define LPN_RECIVE_WINDOW_FACTOR_LEVEL                                        1U
 
 /* 
-*  Minimum packets queue size required
+*  Minimum packets queue size required by Low Power node
 *  varies from 1 to 7
 *  Ref @Mesh_v1.0
+*  1  ->  2
+*  2  ->  4
+*  3  ->  8
+*  4  ->  16
+*  5  ->  32
+*  6  ->  64
+*  7  ->  128
 */
 #define LPN_MINIMUM_QUEUE_SIZE_LOG                                            2U
 
@@ -454,6 +448,8 @@ For STMicroelectronics : it is 0x0030 */
 *  (unit ms)
 *  varies from 0x0A to 0xFF
 *  Ref @Mesh_v1.0
+*  0x0A  ->  10ms
+*  0xFF  ->  255ms
 */
 #define LPN_RECEIVE_DELAY                                                   150U
 
@@ -461,15 +457,19 @@ For STMicroelectronics : it is 0x0030 */
 *  Poll timeout value after which friendship cease to exist (unit 100ms)
 *  varies from 0x00000A to 0x34BBFF
 *  Ref @Mesh_v1.0
+*  0x00000A  ->  1 second
+*  0x34BBFF  ->  96 hours
 */
 #define LPN_POLL_TIMEOUT                                                   2000U
 
 /* 
 *  Maximum receive window size acceptable to low power node (unit ms)
-*  varies from 10 to 255
+*  varies from 0x0A to 0xFF
 *  Ref @Mesh_v1.0
+*  0x0A  ->  10ms
+*  0xFF  ->  255ms
 */
-#define LPN_RECEIVE_WINDOW_SIZE                                              55U
+#define LPN_RECEIVE_WINDOW_SIZE                                              255U/*55U*/
 
 /* 
 *  Minimum friend's subscription list size capability required by lpn
@@ -481,12 +481,14 @@ For STMicroelectronics : it is 0x0030 */
 /* 
 *  Frequency at which low power node would send friend request (unit 100ms)
 *  varies from 0 to 255
+*  100  ->  10s
 */
 #define LPN_FRIEND_REQUEST_FREQUENCY                                         50U
 
 /* 
 *  Frequency at which low power node would poll friend node (unit 100ms)
 *  should be less than poll timeout
+*  100  ->  10s
 */
 #define LPN_FRIEND_POLL_FREQUENCY                                            25U
 
@@ -502,6 +504,10 @@ For STMicroelectronics : it is 0x0030 */
 */
 #define LPN_NO_OF_RETRIES                                                    10U
 
+/* 
+*  Maximum address list size buffer in Friend Subscription List Add Message is 10
+*/
+      
 
 /*
 *  Enable or disable neighbor table
@@ -533,14 +539,14 @@ For STMicroelectronics : it is 0x0030 */
 *  0: Disable neighbor table update with unprovisioned device beacon
 *  1: Enable neighbor table update with unprovisioned device beacon
 */
-#define NEIGHBOR_UNPRVND_DEV_BEACON_NTU                                       0U
+#define NEIGHBOR_UNPRVND_DEV_BEACON_NTU                                      1U
 
 /* 
 *  Enable/disable neighbor table update with secure network beacon
 *  0: Disable neighbor table update with secure network beacon
 *  1: Enable neighbor table update with secure network beacon
 */
-#define NEIGHBOR_SECURE_NET_BEACON_NTU                                        1U
+#define NEIGHBOR_SECURE_NET_BEACON_NTU                                       0U
 
 /* 
 *  Enable/disable neighbor table update with TTL 0 message
@@ -548,7 +554,68 @@ For STMicroelectronics : it is 0x0030 */
 *  1: Enable neighbor table update with messages with 0 TTL
 *  2: Enable neighbor table update with messages with any TTL
 */
-#define NEIGHBOR_MSG_TTLX_NTU                                                 1U
+#define NEIGHBOR_MSG_TTLX_NTU                                                0U
+
+/*******************************************************************************
+*** Following section helps to configure the LEDs of Application of Mesh     ***********
+*******************************************************************************/
+
+#if defined USE_STM32WBXX_NUCLEO || defined USE_STM32WBXX_USB_DONGLE
+  #define SINGLE_LED   PWM4
+  #define COOL_LED     PWM0
+  #define WARM_LED     PWM1
+  #define RED_LED      PWM2
+  #define GREEN_LED    PWM3
+  #define BLUE_LED     PWM4 
+#endif   
+
+/* Following Macro helps to know if the Fixed functions are needed or not 
+   DO NOT change or add any space at the end of the file */
+#if defined (ENABLE_GENERIC_MODEL_SERVER_ONOFF) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_LEVEL) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_BATTERY) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_LOCATION) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_LOCATION_SETUP) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_ADMIN_PROPERTY) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_USER_PROPERTY) \
+    || defined (ENABLE_GENERIC_MODEL_SERVER_CLIENT_PROPERTY)
+ #define ENABLE_GENERIC_MODEL_SERVER
+ #define GENERIC_SERVER_MODEL_ADD_CONFIGURATION     
+      
+#endif      
+
+
+/* Following Macro helps to know if the Fixed functions are needed or not 
+   DO NOT change or add any space at the end of the file */
+#if defined(ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_HUE) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_LC) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_LC_SETUP) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_XYL) \
+    || defined(ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP)
+  #define  ENABLE_LIGHT_MODEL_SERVER 
+  #define LIGHT_SERVER_MODEL_ADD_CONFIGURATION    
+#endif  
+
+#if defined(ENABLE_TIME_MODEL_SERVER) \
+    || defined(ENABLE_TIME_MODEL_SERVER_SETUP)\
+    || defined(ENABLE_SCENE_MODEL_SERVER)\
+    || defined(ENABLE_SCENE_MODEL_SERVER_SETUP)
+   #define ENABLE_TIME_SCENE_MODEL_SERVER
+#endif             
 
 /* Exported variables  -------------------------------------------------------*/
 /* Exported Functions Prototypes ---------------------------------------------*/

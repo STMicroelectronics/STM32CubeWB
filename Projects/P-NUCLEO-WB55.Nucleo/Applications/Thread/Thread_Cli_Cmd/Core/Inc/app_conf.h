@@ -1,12 +1,12 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : app_conf.h
   * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -295,9 +296,9 @@ typedef enum
 /* Scheduler types and defines        */
 /*------------------------------------*/
 #define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
-/* USER CODE BEGIN DEFINE_TASK */ 
+/* USER CODE BEGIN DEFINE_TASK */
 
-/* USER CODE END DEFINE_TASK */  
+/* USER CODE END DEFINE_TASK */
  
 /**
  * This is the list of priority required by the application

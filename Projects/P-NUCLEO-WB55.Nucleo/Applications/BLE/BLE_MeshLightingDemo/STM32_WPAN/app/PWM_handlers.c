@@ -32,7 +32,7 @@
 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-* Initial BlueNRG-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
+* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
 * (MoBLE) technology. The present solution is developed and maintained for both 
 * Mesh library and Applications solely by STMicroelectronics.
 *
@@ -41,6 +41,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"
+#include "app_conf.h"
 #include "PWM_handlers.h"
 #include "mesh_cfg_usr.h"
 
@@ -190,6 +191,7 @@ void Ton_sorting(void)
   */
 void Modify_PWM(uint8_t PWM_ID, uint16_t duty_cycle) 
 {  
+#if ( CFG_LPM_SUPPORTED == 0)
   GPIO_InitTypeDef GPIO_InitStructure1 = {0};
    
   if (PWM_ID == 0)     /* PD14 */
@@ -245,7 +247,7 @@ void Modify_PWM(uint8_t PWM_ID, uint16_t duty_cycle)
   else
   {
   }
-
+  
   DUTY = duty_cycle;
   switch (PWM_ID) 
   {
@@ -278,6 +280,7 @@ void Modify_PWM(uint8_t PWM_ID, uint16_t duty_cycle)
       }
       break;
   }
+#endif
 }
 
 /**

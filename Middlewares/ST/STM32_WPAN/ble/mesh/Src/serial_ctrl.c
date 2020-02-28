@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    serial_ctrl.c
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Serial Control file 
 ******************************************************************************
 * @attention
@@ -82,18 +82,123 @@ MOBLEUINT8 SerialCtrl_GetData(char *rcvdStringBuff, uint16_t rcvdStringSize, MOB
 * @param  rcvdStringSize: length of the input string 
 * @retval void
 */ 
+void SerialCtrlVendorRead_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
+{
+   MOBLE_ADDRESS peer = 0;                           /*node adderess of the destination node*/
+  MOBLEUINT16 command = 0;                          /*Opcode command to be executed by the destination node*/
+  MOBLEUINT8 datalength = 0;
+  MOBLEUINT8 elementIndex = 0;                  /*default element index*/  
+  MOBLEUINT8  data [10] = {0};                  /*buffer to output property variables */
+  MOBLE_RESULT result = MOBLE_RESULT_FAIL;
+  
+  sscanf(rcvdStringBuff+5, "%4hx %hx ", &peer,&command); 
+  
+    for(int i = 0; i < 6 ; i++)
+    {
+      if(command == Vendor_Opcodes_Table[i])
+      {                 
+        result = MOBLE_RESULT_SUCCESS;
+        break;
+      }
+    
+    }
+  
+  datalength = SerialCtrl_GetData(rcvdStringBuff, rcvdStringSize, SERIAL_MODEL_DATA_OFFSET, data);
+  
+  
+  if(result)
+  {
+    TRACE_I(TF_SERIAL_CTRL,"Invalid Command\r\n");
+    return;
+  }
+  
+ else
+  {
+      
+      result = BLEMesh_ReadRemoteData(peer,elementIndex,command, 
+                                         data, datalength);   
+      if(result == MOBLE_RESULT_SUCCESS)
+      {
+        TRACE_I(TF_SERIAL_CTRL,"Command Executed Successfully\r\n");
+      }
+      else
+      {
+        TRACE_I(TF_SERIAL_CTRL,"Invalid Opcode Parameter\r\n");
+      }
+  }
+   
+}
+void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
+{
+  MOBLE_ADDRESS peer = 0;                           /*node adderess of the destination node*/
+  MOBLEUINT16 command = 0;                          /*Opcode command to be executed by the destination node*/
+  MOBLEUINT8 elementIndex = 0;                  /*default element index*/  
+  MOBLE_RESULT result = MOBLE_RESULT_FAIL;
+  MOBLEBOOL response = MOBLE_FALSE;
+  MOBLEUINT8 data_buff[VENDOR_DATA_BYTE];
+  MOBLEUINT16 idx=0;
+  MOBLEUINT8 length;
+  MOBLEUINT8 j = 1;
+  
+  sscanf(rcvdStringBuff+5, "%4hx %hx %hx", &peer,&command,&idx); 
+  
+  if(command == 0x000E)
+  {
+    data_buff[0] = 0x01;     // data write sub command;
+    length = sizeof(data_buff)-idx;
+  
+    for(MOBLEUINT8 i=idx;i <sizeof(data_buff);i++)
+    {
+      data_buff[j] = i;
+      j++;
+    }
+  }
+  else
+  {
+    length = SerialCtrl_GetData(rcvdStringBuff, rcvdStringSize, SERIAL_MODEL_DATA_OFFSET, data_buff);
+  }
+  
+  for(int i = 0; i < 6 ; i++)
+    {
+      if(command == Vendor_Opcodes_Table[i])
+      {                 
+        result = MOBLE_RESULT_SUCCESS;
+        break;
+      }
+    }
+  if(result)
+  {
+    TRACE_I(TF_SERIAL_CTRL,"Invalid Command\r\n");
+    return;
+  }
+  
+ else
+  {
+      
+      result = BLEMesh_SetRemoteData(peer,elementIndex,command, 
+                                         data_buff, length,
+                                         response, MOBLE_TRUE);   
+      if(result == MOBLE_RESULT_SUCCESS)
+      {
+        TRACE_I(TF_SERIAL_CTRL,"Command Executed Successfully\r\n");
+      }
+      else
+      {
+        TRACE_I(TF_SERIAL_CTRL,"Invalid Opcode Parameter\r\n");
+      }
+  }
+}
+  
 void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
   
   MOBLE_ADDRESS peer = 0;                           /*node adderess of the destination node*/
   MOBLEUINT16 command = 0;                          /*Opcode command to be executed by the destination node*/
-  MOBLEUINT8 data_length = 0;
-  MOBLEUINT8 dataLen_flag = 0;
   MOBLEUINT8 minParamLength = 0;                /*minimum number of properties required by a specific command*/
   MOBLEUINT8 elementIndex = 0;          /*default element index*/
   MOBLEUINT8  data [10] = {0};        /*buffer to output property variables */
-  MOBLEUINT8 enableVendor = MOBLE_FALSE;        /*varible to enable/disable vendor model callback*/
   MOBLE_RESULT result;
+  MOBLEBOOL response = MOBLE_TRUE;
   
   sscanf(rcvdStringBuff+5, "%4hx %hx ", &peer,&command); 
   
@@ -117,7 +222,7 @@ void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   if (minParamLength == 0xff)
   {
      minParamLength = SerialCtrl_GetMinParamLength(command,LightLC_OpcodeTable,LightLC_OpcodeTableLength);
-     dataLen_flag = 1;
+     
   }
   /* Opcode not found in Light LC opcode table 
       Start finding for opcode in Sensor Table*/
@@ -125,39 +230,16 @@ void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   {
     minParamLength = SerialCtrl_GetMinParamLength(command,Sensor_OpcodeTable,Sensor_OpcodeTableLength);
   }
+  
   /* Opcode not found in Sensor opcode table
       Start finding for opcode in Vendor Table*/
-  
-  if(minParamLength == 0xff)
-  {    
-    for(int i = 0; i < 5 ; i++)
-    {
-      if(command == Vendor_Opcodes_Table[i])
-      {
-        minParamLength = 0x01;    
-        dataLen_flag = 1;
-        enableVendor = MOBLE_TRUE;
-//        break;
-      }
-    }
-  }
-  if((minParamLength == 0xff) | (command == 0x00))
-  {
-    TRACE_I(TF_SERIAL_CTRL,"Invalid Command\r\n");
-    return;
-  }
-  /*Valid Opcode Not Found*/
   else 
   {
-    data_length = SerialCtrl_GetData(rcvdStringBuff, rcvdStringSize, SERIAL_MODEL_DATA_OFFSET, data);
-    if(dataLen_flag ==1)
-    {
-        minParamLength = data_length;
-      dataLen_flag = 0;
-    }
+      minParamLength = SerialCtrl_GetData(rcvdStringBuff, rcvdStringSize, SERIAL_MODEL_DATA_OFFSET, data);
+      
       result = BLEMesh_SetRemoteData(peer,elementIndex,command, 
                                          data, minParamLength,
-                          MOBLE_FALSE, enableVendor); 
+                                         response, MOBLE_FALSE);   
       if(result == MOBLE_RESULT_SUCCESS)
       {
         TRACE_I(TF_SERIAL_CTRL,"Command Executed Successfully\r\n");
@@ -234,6 +316,8 @@ MOBLEUINT8 SerialCtrl_GetData(char *rcvdStringBuff, uint16_t rcvdStringSize, MOB
   return dataIndex;
 
 }
+
+
 
 /**
 * @}

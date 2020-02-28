@@ -48,9 +48,44 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section5" checked aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.4.0 / 06-December-2019</label>
+<input type="checkbox" id="collapse-section6" checked aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.5.0 / 14-February-2020</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<h3 id="add-blezigbee-static-concurrent-mode-support-and-additionnal-zigbee-applications">Add BLE/Zigbee static concurrent mode support and additionnal zigbee applications</h3>
+<ul>
+<li><strong>Add BLE/Zigbee static concurrent mode support</strong>
+<ul>
+<li>A new application BLE_Zigbee_Static is provided under Applications\BLE_Zigbee\BLE_Zigbee_Static.</li>
+<li>This application requires the usage of the <strong>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin</strong></li>
+</ul></li>
+<li><strong>Add new Zigbee applications highlighting the usage of the following clusters : Device temperature, Pressure Measurement and SE Messaging</strong>
+<ul>
+<li>Those applications are provided under Applications\Zigbee:
+<ul>
+<li>Zigbee_DevTemp_Server_Coord</li>
+<li>Zigbee_DevTemp_Client_Router</li>
+<li>Zigbee_PressMeas_Server_Coord</li>
+<li>Zigbee_PressMeas_Client_Router</li>
+<li>Zigbee_SE_Msg_Client_Coord</li>
+<li>Zigbee_SE_Msg_Server_Router</li>
+</ul></li>
+<li>Those application requires the usage of the <strong>stm32wb5x_Zigbee_FFD_Full_fw.bin</strong></li>
+</ul></li>
+<li><strong>Enhancement of the task scheduling management in all Zigbee applications</strong>
+<ul>
+<li>Support of new Zigbee applications on P-NUCLEO-WB55.Nucleo board in order to highlight the usage of the MeterId and PowerProfile clusters.</li>
+</ul></li>
+<li><strong>MAC_802_15_4</strong>
+<ul>
+<li>Support of a new application (Mac_802_15_4_LPM_Periodic_Transmit) highlighting the usage of the low power.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.4.0 / 06-December-2019</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <h3 id="maintenance">Maintenance</h3>
 <ul>
 <li>Add SW4STM32 and MDK-ARM IDE files for:
@@ -64,7 +99,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.3.0 / 11-September-2019</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <h3 id="introduction-of-zigbee-support">Introduction of ZIGBEE support</h3>
 <ul>
 <li>Ensure compatibility with <strong>STM32CubeMX V5.4</strong>.</li>
@@ -94,7 +129,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.2.0 / 26-June-2019</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <h3 id="addition-of-new-application">Addition of new application</h3>
 <p><strong>Add CKS (Customer Key Storage) application</strong></p>
 <ul>
@@ -109,7 +144,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2"  aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <h3 id="remove-binaries-addition-of-new-examples">Remove binaries, Addition of new examples</h3>
 <p>Change directory name to reflect board RPN: <a href="https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/stm32-nucleo-expansion-boards/p-nucleo-wb55.html">P-NUCLEO-WB55</a></p>
 <p>Add QSPI examples:</p>
@@ -132,7 +167,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 </div>

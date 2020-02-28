@@ -1,13 +1,13 @@
 /******************************************************************************
  * @file    ble_hci_le.c
  * @author  MCD Application Team
- * @date    23 May 2019
+ * @date    22 January 2020
  * @brief   Source file for ble api STM32WB (hci_le)
  *          Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -927,11 +927,11 @@ tBleStatus hci_le_read_channel_map(uint16_t Connection_Handle,
   return BLE_STATUS_SUCCESS;
 }
 
-tBleStatus hci_le_read_remote_used_features(uint16_t Connection_Handle)
+tBleStatus hci_le_read_remote_features(uint16_t Connection_Handle)
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  hci_le_read_remote_used_features_cp0 *cp0 = (hci_le_read_remote_used_features_cp0*)(cmd_buffer);
+  hci_le_read_remote_features_cp0 *cp0 = (hci_le_read_remote_features_cp0*)(cmd_buffer);
   tBleStatus status = 0;
   int index_input = 0;
   cp0->Connection_Handle = htob(Connection_Handle, 2);

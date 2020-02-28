@@ -29,12 +29,16 @@
 #include "stm32_seq.h"
 #include "shci_tl.h"
 #include "stm32_lpm.h"
-#include "dbg_trace.h"
+#include "app_debug.h"
 #include "vcp.h"
 
 #include "app_debug.h"
 
 #include "appli_mesh.h"
+#include "appli_nvm.h"
+#include "pal_nvm.h"
+#include "lp_timer.h"
+#include "mesh_cfg.h"
    
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -46,6 +50,21 @@ extern RTC_HandleTypeDef hrtc;
 #ifdef SAVE_MODEL_STATE_POWER_FAILURE_DETECTION    
 extern MOBLEUINT8 PowerOnOff_flag;
 #endif
+#ifdef ENABLE_OCCUPANCY_SENSOR           
+extern MOBLEUINT8 Occupancy_Flag;
+#endif
+extern const void *mobleNvmBase; 
+extern const void *appNvmBase;
+extern const void *prvsnr_data;
+#if (LOW_POWER_FEATURE == 1)
+extern __IO uint32_t uwTick;
+extern HAL_TickFreqTypeDef uwTickFreq;
+#if ( CFG_LPM_SUPPORTED == 1)
+static uint32_t BleMesh_sleepTime;
+#endif
+extern volatile uint8_t BleProcessInit;
+#endif
+
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -68,9 +87,9 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 
-#if(CFG_DEBUG_TRACE != 0)
-static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
-#endif
+//#if(CFG_DEBUG_TRACE != 0)
+//static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
+//#endif
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -93,9 +112,13 @@ static void Led_Init( void );
 static void Button_Init( void );
 /* USER CODE END PFP */
 
+uint8_t Mesh_Stop_Mode;
+
 /* Functions Definition ------------------------------------------------------*/
 void APPE_Init( void )
 {
+  MOBLEUINT32 last_user_flash_address = ((READ_BIT(FLASH->SFR, FLASH_SFR_SFSA) >> FLASH_SFR_SFSA_Pos) << 12) + FLASH_BASE;
+  
   SystemPower_Config(); /**< Configure the system Power Mode */
   
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
@@ -113,6 +136,16 @@ void APPE_Init( void )
 
   Button_Init();
   
+  mobleNvmBase = (const void *)(last_user_flash_address - NVM_SIZE);
+  appNvmBase   = (const void *)(last_user_flash_address - NVM_SIZE - APP_NVM_SIZE);
+  prvsnr_data  = (const void *)(last_user_flash_address - NVM_SIZE - APP_NVM_SIZE - PRVN_NVM_PAGE_SIZE);    
+  
+#if (LOW_POWER_FEATURE == 1)
+  /**
+   * Initialize the lp timer to be used when the systick is stopped in low power mode
+   */
+  LpTimerInit();
+#endif
   
 /* USER CODE END APPE_Init_1 */
   appe_Tl_Init();	/*  Initialize all transport layers */
@@ -198,6 +231,15 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
   return;
 }
 
+/**
+ * The type of the payload for a system user event is tSHCI_UserEvtRxParam
+ * When the system event is both :
+ *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
+ *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ * The buffer shall not be released
+ * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
+ * When the status is not filled, the buffer is released by default
+ */
 static void APPE_SysUserEvtRx( void * pPayload )
 {
   UNUSED(pPayload);
@@ -249,7 +291,31 @@ static void Button_Init( void )
 void UTIL_SEQ_Idle( void )
 {
 #if ( CFG_LPM_SUPPORTED == 1)
+#if (LOW_POWER_FEATURE == 1)
+  if(BleProcessInit != 0)
+  {
+    BleMesh_sleepTime = (uint32_t)BLEMesh_GetSleepDuration();
+
+    if (BleMesh_sleepTime > 0)
+    {
+      LpTimerStart(BleMesh_sleepTime);
+
+      UTIL_LPM_EnterLowPower( );
+
+      uwTick += (uwTickFreq*LpGetElapsedTime());
+    }
+    UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
+  }
+#else
   UTIL_LPM_EnterLowPower( );
+#endif
+#else
+#if (LOW_POWER_FEATURE == 1)
+  if(BleProcessInit != 0)
+  {
+    UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
+  }
+#endif
 #endif
   return;
 }
@@ -263,7 +329,11 @@ void UTIL_SEQ_Idle( void )
   */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
+#if (LOW_POWER_FEATURE == 1)
+  UTIL_SEQ_Run( 0 );
+#else
   UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+#endif
 }
 
 void shci_notify_asynch_evt(void* pdata)
@@ -297,6 +367,12 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
       break;
 #endif
 
+    case BUTTON_SW1_PIN:
+      {
+        UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_SW1_REQ_ID, CFG_SCH_PRIO_0);
+      }
+      break;
+ 
     default:
       break;
 

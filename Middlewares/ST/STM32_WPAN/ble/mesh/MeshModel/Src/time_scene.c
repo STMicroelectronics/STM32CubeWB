@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    time_scene.c
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Time and Scene model middleware file
 ******************************************************************************
 * @attention
@@ -47,8 +47,11 @@
 #include "Math.h"
 #include "time_scene.h"
 
+/** @addtogroup MODEL_TIME_SCENE
+*  @{
+*/
 
-/** @addtogroup Model_Callbacks
+/** @addtogroup Time_Scene_Model_Callbacks
 *  @{
 */
 
@@ -61,24 +64,35 @@ const MODEL_OpcodeTableParam_t Time_Scene_Opcodes_Table[] = {
   MOBLEUINT16 max_payload_size;
   Here in this array, Handler is not defined; */
 #ifdef ENABLE_TIME_MODEL_SERVER     
-  {TIME_GET,                    MOBLE_TRUE,  0, 0,               TIME_STATUS ,             10, 10},
-  {TIME_SET,                    MOBLE_TRUE,  10, 10,             TIME_STATUS ,             10, 10},  
-  {TIME_ROLE_GET,               MOBLE_TRUE,  0, 0,               TIME_ROLL_STATUS ,        1, 1},    
-  {TIME_ROLL_SET,               MOBLE_TRUE,  1, 1,               TIME_ROLL_STATUS ,        1, 1},
-  {TIME_ZONE_GET,               MOBLE_TRUE,  0, 0,               TIME_ZONE_STATUS ,        7, 7},
-  {TIME_ZONE_SET,               MOBLE_TRUE,  6, 6,               TIME_ZONE_STATUS ,        7, 7},
-  {TAI_UTC_DELTA_GET,           MOBLE_TRUE,  0, 0,               TAI_UTC_DELTA_STATUS ,    9, 9},
-  {TAI_UTC_DELTA_SET,           MOBLE_TRUE,  7, 7,               TAI_UTC_DELTA_STATUS ,    9, 9}, 
+  {TIME_MODEL_SERVER_MODEL_ID   ,TIME_SET,                    MOBLE_TRUE,  10, 10,             TIME_STATUS ,             10, 10},
+  {TIME_MODEL_SERVER_MODEL_ID   ,TIME_ZONE_SET,               MOBLE_TRUE,  6, 6,               TIME_ZONE_STATUS ,        7, 7}, 
+  {TIME_MODEL_SERVER_MODEL_ID   ,TAI_UTC_DELTA_SET,           MOBLE_TRUE,  7, 7,               TAI_UTC_DELTA_STATUS ,    9, 9},
+  {TIME_MODEL_SERVER_MODEL_ID   ,TIME_ROLE_GET,               MOBLE_TRUE,  0, 0,               TIME_ROLL_STATUS ,        1, 1},    
+  {TIME_MODEL_SERVER_MODEL_ID   ,TIME_ROLL_SET,               MOBLE_TRUE,  1, 1,               TIME_ROLL_STATUS ,        1, 1},
+  {TIME_MODEL_SERVER_MODEL_ID   ,TIME_ROLL_STATUS,            MOBLE_FALSE,  1, 1,              NULL ,                   1, 1},
+#endif  
+#ifdef ENABLE_TIME_MODEL_SERVER_SETUP 
+  {TIME_MODEL_SERVER_SETUP_MODEL_ID  ,TIME_GET,                    MOBLE_TRUE,   0, 0,               TIME_STATUS ,             10, 10},
+  {TIME_MODEL_SERVER_SETUP_MODEL_ID  ,TIME_STATUS,                 MOBLE_FALSE,  10, 10,             NULL ,                    10, 10},
+  {TIME_MODEL_SERVER_SETUP_MODEL_ID  ,TIME_ZONE_GET,               MOBLE_TRUE,   0, 0,               TIME_ZONE_STATUS ,        7, 7},
+  {TIME_MODEL_SERVER_SETUP_MODEL_ID  ,TIME_ZONE_STATUS,            MOBLE_FALSE,  7, 7,               NULL ,        7, 7},
+  {TIME_MODEL_SERVER_SETUP_MODEL_ID  ,TAI_UTC_DELTA_GET,           MOBLE_TRUE,   0, 0,               TAI_UTC_DELTA_STATUS ,    9, 9},  
+  {TIME_MODEL_SERVER_SETUP_MODEL_ID  ,TAI_UTC_DELTA_STATUS,        MOBLE_FALSE,  9, 9,               NULL ,    9, 9},  
+  
 #endif
 #ifdef ENABLE_SCENE_MODEL_SERVER
-  {SCENE_GET,                   MOBLE_TRUE,  0, 0,               SCENE_STATUS ,            3, 6}, 
-  {SCENE_RECALL,                MOBLE_TRUE,  3, 5,               SCENE_STATUS ,            3, 6},   
-  {SCENE_RECALL_UNACK,          MOBLE_FALSE, 3, 5,               SCENE_STATUS ,            3, 6},     
-  {SCENE_REGISTER_GET,          MOBLE_TRUE,  0, 0,               SCENE_REGISTER_STATUS ,   5, 8},
-  {SCENE_STORE,                 MOBLE_TRUE,  2, 2,               SCENE_REGISTER_STATUS ,   5, 8},                  
-  {SCENE_STORE_UNACK,           MOBLE_FALSE,  2, 2,              SCENE_REGISTER_STATUS ,   5, 8},
-  {SCENE_DELETE,                MOBLE_TRUE,  2, 2,               SCENE_REGISTER_STATUS ,   5, 8},
-  {SCENE_DELETE_UNACK,          MOBLE_FALSE, 2, 2,               SCENE_REGISTER_STATUS ,   5, 8},
+  {SCENE_MODEL_SERVER_MODEL_ID   ,SCENE_GET,                   MOBLE_TRUE,     0, 0,               SCENE_STATUS ,            3, 6},
+  {SCENE_MODEL_SERVER_MODEL_ID   ,SCENE_STATUS,                MOBLE_FALSE,    3, 6,               NULL ,            3, 6},
+  {SCENE_MODEL_SERVER_MODEL_ID   ,SCENE_REGISTER_GET,          MOBLE_TRUE,     0, 0,               SCENE_REGISTER_STATUS ,   5, 8},
+  {SCENE_MODEL_SERVER_MODEL_ID   ,SCENE_REGISTER_STATUS,       MOBLE_FALSE,     5, 8,              NULL ,   5, 8},
+  {SCENE_MODEL_SERVER_MODEL_ID   ,SCENE_RECALL,                MOBLE_TRUE,     3, 5,               SCENE_STATUS ,            3, 6},   
+  {SCENE_MODEL_SERVER_MODEL_ID   ,SCENE_RECALL_UNACK,          MOBLE_FALSE,    3, 5,               SCENE_STATUS ,            3, 6},     
+#endif
+#ifdef ENABLE_SCENE_MODEL_SERVER_SETUP  
+  {SCENE_MODEL_SERVER_SETUP_MODEL_ID  ,SCENE_STORE,                 MOBLE_TRUE,     2, 2,               SCENE_REGISTER_STATUS ,   5, 8},                  
+  {SCENE_MODEL_SERVER_SETUP_MODEL_ID  ,SCENE_STORE_UNACK,           MOBLE_FALSE,    2, 2,               SCENE_REGISTER_STATUS ,   5, 8},
+  {SCENE_MODEL_SERVER_SETUP_MODEL_ID  ,SCENE_DELETE,                MOBLE_TRUE,     2, 2,               SCENE_REGISTER_STATUS ,   5, 8},
+  {SCENE_MODEL_SERVER_SETUP_MODEL_ID  ,SCENE_DELETE_UNACK,          MOBLE_FALSE,    2, 2,               SCENE_REGISTER_STATUS ,   5, 8},
 #endif
   {0}
 };

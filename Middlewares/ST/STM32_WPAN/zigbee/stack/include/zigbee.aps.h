@@ -259,7 +259,7 @@ enum ZbApsmeIbAttrIdT {
      *      networkKeyUpdateMethod = 0xba
      *      allowApplicationKeyRequests = 0xbb
      *      allowRemoteTcPolicyChange = 0xbd */
-    ZB_APS_IB_ID_TRUST_CENTER_POLICY, /* 0xad (uint32_t) */
+    ZB_APS_IB_ID_TRUST_CENTER_POLICY, /* 0xad (type = uint32_t, enum ZbApsmePolicyT) */
 
     /*** Exegin extensions (0x500 to 0x5ff reserved for custom AIBs) ***/
     ZB_APS_IB_ID_SCAN_COUNT = 0x0500, /* (uint8_t) ZDO join parameter. Is not modified by ZbApsReset. */
@@ -484,7 +484,7 @@ enum ZbApsmeDeviceStatusT {
     ZB_APSME_DEV_HIGH_INSECURE_REJOIN = 0x07 /* HIGHSEC INSECURE REJOIN 0x07 */
 };
 
-/* FIXME 1 - change the these values so the low nibble represents an
+/* EXEGIN - change the these values so the low nibble represents an
  * enumeration, and the high nibble is a mask representing the key type
  * (e.g. global, unique, unverified, derived, etc)
  *
@@ -878,10 +878,6 @@ bool ZbApsGroupIsMember(struct ZigBeeT *zb, uint16_t groupAddr, uint8_t endpoint
 bool ZbApsLinkKeyExists(struct ZigBeeT *zb, uint64_t partner);
 ZbApsmeKeyPairT * ZbApsLookupKey(struct ZigBeeT *zb, ZbApsmeKeyPairT *key,
     uint64_t addr, unsigned int *idx);
-
-/* Required for ZDP Mgmt_Bind_rsp */
-uint8_t ZbApsBindTblNumEntries(struct ZigBeeT *zb);
-unsigned int ZbApsAckWaitDuration(struct ZigBeeT *zb);
 
 bool ZbApsAddrIsBcast(struct ZbApsAddrT *addr);
 bool ZbApsAddrIsLocal(struct ZigBeeT *zb, struct ZbApsAddrT *addr);

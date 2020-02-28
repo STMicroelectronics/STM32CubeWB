@@ -97,7 +97,6 @@ MOBLE_RESULT Appli_Sensor_Init(void);
 void Sensor_Process(void);
 void Sensor_LC_Light_Publish(void);
 
-
 #endif /* __APPLI_SENSOR_H */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

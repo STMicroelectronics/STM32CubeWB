@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    light.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the Lighting Model file 
 ******************************************************************************
 * @attention
@@ -176,14 +176,12 @@
 #define TRANSITION_SCALER                  1
 #define PWM_DEFAULT_VALUE                  10000U
 #define PWM_VALUE_OFF                      1
-
 /******************************************************************************/
 /* Macros are used to update the PWM state according to the condition. */
 #define         RESUME_STATE       1
 #define         RESET_STATE        2
 #define         DEFAULT_STATE      3
 #define         LOAD_STATE         4
-
 
 /* Macros for the Light model transition flag */
 #define LIGHT_TRANSITION_STOP                   0X00
@@ -323,6 +321,13 @@ typedef struct
   
 typedef struct
 {
+  MOBLEUINT16 HslHueDefault16;
+  MOBLEUINT16 HslSaturationDefault16;
+  MOBLEUINT16 HslLightnessDefualt16;
+}Light_HslDefault_t;
+ 
+typedef struct
+{
   MOBLEUINT16 HslHueMinRange16;
   MOBLEUINT16 HslHueMaxRange16;
   MOBLEUINT16 HslMinSaturation16; 
@@ -336,65 +341,92 @@ typedef struct
   */
   MOBLE_RESULT (*Lightness_Set_cb)(Light_LightnessStatus_t*, MOBLEUINT8);  
   
+  MOBLE_RESULT (*Lightness_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  
   /* Pointer to the function Appli_Light_Lightness_Linear_Set used for callback 
      from the middle layer to Application layer
   */  
   MOBLE_RESULT (*Lightness_Linear_Set_cb)(Light_LightnessStatus_t*, MOBLEUINT8);  
+   
+  MOBLE_RESULT (*Lightness_Linear_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+   
    
   /* Pointer to the function Appli_Light_Lightness_Default_Set used for callback 
      from the middle layer to Application layer
   */  
   MOBLE_RESULT (*Lightness_Default_Set_cb)(Light_LightnessDefaultParam_t*, MOBLEUINT8);
   
+   MOBLE_RESULT (*Lightness_Default_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  
   /* Pointer to the function Appli_Light_Lightness_Range_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Lightness_Range_Set_cb)(Light_LightnessRangeParam_t*, MOBLEUINT8);
+ 
+  MOBLE_RESULT (*Lightness_Range_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
  
   /* Pointer to the function Appli_Light_Ctl_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Light_Ctl_Set_cb)(Light_CtlStatus_t*, MOBLEUINT8);
   
+  MOBLE_RESULT (*Light_Ctl_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  
   /* Pointer to the function Appli_Light_CtlTemperature_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Light_CtlTemperature_Set_cb)(Light_CtlStatus_t*, MOBLEUINT8);
   
+  MOBLE_RESULT (*Light_CtlTemperature_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+       
   /* Pointer to the function Appli_Light_CtlTemperature_Range_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Light_CtlTemperature_Range_Set_cb)(Light_CtlTemperatureRangeParam_t*, MOBLEUINT8);
+  
+  MOBLE_RESULT (*Light_CtlTemperature_Range_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
   
   /* Pointer to the function Appli_Light_CtlDefault_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Light_CtlDefault_Set_cb)(Light_CtlDefaultParam_t*, MOBLEUINT8);
     
+  MOBLE_RESULT (*Light_CtlDefault_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+    
   /* Pointer to the function Appli_Light_Hsl_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Light_Hsl_Set_cb)(Light_HslStatus_t*, MOBLEUINT8);
+  
+  MOBLE_RESULT (*Light_Hsl_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
   
   /* Pointer to the function Appli_Light_HslHue_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Light_HslHue_Set_cb)(Light_HslStatus_t*, MOBLEUINT8);
   
+  MOBLE_RESULT (*Light_HslHue_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  
   /* Pointer to the function Appli_Light_HslSaturation_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Light_HslSaturation_Set_cb)(Light_HslStatus_t*, MOBLEUINT8);
+  
+   MOBLE_RESULT (*Light_HslSaturation_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
   
   /* Pointer to the function Appli_Light_HslDefault_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Light_HslDefault_Set_cb)(Light_HslStatus_t*, MOBLEUINT8);
   
+  MOBLE_RESULT (*Light_HslDefault_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  
   /* Pointer to the function Appli_Light_HslRange_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*Light_HslRange_Set_cb)(Light_HslRangeParam_t*, MOBLEUINT8);
+  
+  MOBLE_RESULT (*Light_HslRange_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
 } Appli_Light_cb_t;
  
 typedef struct
@@ -413,6 +445,7 @@ typedef struct
   MOBLE_RESULT (*GetLightHslSaturation_cb)(MOBLEUINT8*);
   MOBLE_RESULT (*GetLightHslHueRange_cb)(MOBLEUINT8*);
   MOBLE_RESULT (*GetLightHslSatRange_cb)(MOBLEUINT8*);
+  MOBLE_RESULT (*GetLightHslDefault_cb)(MOBLEUINT8*);
 }Appli_Light_GetStatus_cb_t; 
 #pragma pack(4)
 
@@ -528,7 +561,6 @@ MOBLE_RESULT Light_Client_HslRange_Status(MOBLEUINT8 const *pHslRange_status, MO
 MOBLE_RESULT Light_Client_HslTarget_Status(MOBLEUINT8 const *pHslTarget_status, MOBLEUINT32 pLength);
 MOBLE_RESULT Light_Client_HslHue_Status(MOBLEUINT8 const *pHslHue_status, MOBLEUINT32 pLength);
 MOBLE_RESULT Light_Client_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_status, MOBLEUINT32 pLength);
-
 
 #endif /* __LIGHT_MODEL_H */
 

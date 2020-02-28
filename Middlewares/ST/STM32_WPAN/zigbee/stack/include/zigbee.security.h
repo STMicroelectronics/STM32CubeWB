@@ -74,7 +74,7 @@ extern const uint8_t sec_key_touchlink_cert[ZB_SEC_KEYSIZE];
 #define ZB_SEC_LEVEL_ENC_MIC128             (uint8_t)(ZB_SEC_LEVEL_ENC | ZB_SEC_LEVEL_MIC128)
 
 /* Macro checks security level if encryption is enabled */
-#define ZB_SEC_ENCRYPTED(level)             (level & ZB_SEC_LEVEL_ENC)
+#define ZB_SEC_ENCRYPTED(level)             ((level & ZB_SEC_LEVEL_ENC) != 0U)
 
 /* Macro returns the length of the MIC, can be computed
  * as 4bytes * Floor((2 ^ (level - 1))), or:
@@ -117,7 +117,7 @@ enum ZbSecHdrKeyIdT {
 };
 
 /* Maximum value for a frame counter. */
-#define ZB_SEC_MAX_FRAME_COUNTER            0xffffffffUL
+#define ZB_SEC_MAX_FRAME_COUNTER            0xffffffffU
 
 /* Frame Counter Resets are controlled much like a lollipop counter, and require
  * the 'new' value to be near zero to guard against replay attacks. */
@@ -137,13 +137,15 @@ enum ZbSecKeyTypeT {
  * Flags to indicate encryption used. Loosely based on enum ZbSecKeyTypeT.
  *---------------------------------------------------------------
  */
+#define ZB_SEC_ENCRYPT_TYPE_LINK_FLAG       0x80U
+
 enum ZbSecEncryptT {
     /* No encryption used */
     ZB_SEC_ENCRYPT_TYPE_NONE = 0x00,
     /* Encrypted with standard network key */
     ZB_SEC_ENCRYPT_TYPE_STANDARD_NWK = 0x01,
     /* Link keys */
-    ZB_SEC_ENCRYPT_TYPE_LINK_FLAG = 0x80,
+    /* ZB_SEC_ENCRYPT_TYPE_LINK_FLAG = ZB_SEC_ENCRYPT_TYPE_LINK_FLAG, */
     /* Application link key */
     ZB_SEC_ENCRYPT_TYPE_APP_LINK = 0x83, /* ZB_SEC_ENCRYPT_TYPE_LINK_FLAG | 0x03U */
     /* Trust-Center link key */
@@ -260,44 +262,11 @@ void ZbSecMakeNonce(uint8_t *nonce, uint64_t extAddr, uint32_t frameCounter, uin
 void ZbAesMmoHash(uint8_t const *data, const unsigned int length, uint8_t *hash);
 void ZbSecKeyTransform(uint8_t *key, uint8_t input, uint8_t *keyOut);
 
-/*FUNCTION:-------------------------------------------------------------------
- *  NAME
- *      ZbSecInstallCodeCreate
- *  DESCRIPTION
- *      Produces an install code with CRC.
- *  PARAMETERS
- *      zb              ; ZigBee stack structure.
- *      inputCode       ; Pointer to original code without a CRC, or NULL
- *                        to generate a random code.
- *      outputCode      ; Pointer to buffer to contain install code and CRC
- *      codeLen         ; Length of the output code in bytes, including CRC.
- *                        If an inputCode is provided, codeLen is the length
- *                        of inputCode plus 2 for the CRC.
- *                        Valid lengths:
- *                           8 (48-bit)
- *                          10 (64-bit)
- *                          14 (96-bit)
- *                          18 (128-bit)
- *  RETURNS
- *      true on success, false otherwise.
- *----------------------------------------------------------------------------
- */
+/* Produces an install code with CRC. */
 bool ZbSecInstallCodeCreate(struct ZigBeeT *zb, const void *inputCode, void *outputCode, unsigned int codeLen);
 
-/*FUNCTION:-------------------------------------------------------------------
- *  NAME
- *      ZbSecInstallCodeCheck
- *  DESCRIPTION
- *      Performs redundancy checks on a ZSE installation code and
- *      optionally converts the code into an application link key.
- *  PARAMETERS
- *      installCode     ; Pointer to installation code (includes CRC)
- *      codeLen         ; Length of the installation code (in bytes).
- *      keyOut          ; Output link key (if NULL will not compute)
- *  RETURNS
- *      TRUE if the IC is consistent, FALSE otherwise.
- *----------------------------------------------------------------------------
- */
+/* Performs redundancy checks on a ZSE installation code and optionally converts the code
+ * into an application link key. */
 bool ZbSecInstallCodeCheck(const void *installCode, unsigned int codeLen, void *keyOut);
 
 /* Computes the 2-byte CRC of the input Install Code */
@@ -321,7 +290,8 @@ enum ZbSecEcdsaSigType {
 
 enum ZbStatusCodeT ZbSecEcdsaValidate(struct ZigBeeT *zb, enum ZbSecEcdsaSigType sig_type,
     const uint8_t *ca_pub_key_array, unsigned int ca_pub_key_len,
-    const uint8_t *certificate, const uint8_t *signature, uint8_t *image_digest, uint8_t *cert_digest);
+    const uint8_t *certificate, const uint8_t *signature,
+    const uint8_t *image_digest, const uint8_t *cert_digest);
 
 /*---------------------------------------------------------------
  * Misc. Helper Functions

@@ -70,14 +70,14 @@
 			<location>PARENT-2-PROJECT_LOC/Core/Src/system_stm32wbxx.c</location>
 		</link>
     <link>
-			<name>Application/User/STM32_WPAN/app/app_ffd_mac_802_15_4.c</name>
+			<name>Application/User/STM32_WPAN/App/app_ffd_mac_802_15_4.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/app_ffd_mac_802_15_4.c</location>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/App/app_ffd_mac_802_15_4.c</location>
 		</link>
     <link>
-			<name>Application/User/STM32_WPAN/app/app_ffd_mac_802_15_4_process.c</name>
+			<name>Application/User/STM32_WPAN/App/app_ffd_mac_802_15_4_process.c</name>
 			<type>1</type>
-			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/app/app_ffd_mac_802_15_4_process.c</location>
+			<location>PARENT-2-PROJECT_LOC/STM32_WPAN/App/app_ffd_mac_802_15_4_process.c</location>
 		</link>
     <link>
 			<name>Application/User/STM32_WPAN/target/hw_ipcc.c</name>

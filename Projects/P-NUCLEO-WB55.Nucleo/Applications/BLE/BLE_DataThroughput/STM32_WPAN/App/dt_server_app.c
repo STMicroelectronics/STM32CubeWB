@@ -57,15 +57,23 @@ typedef struct
 /* Private defines -----------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-static DTS_App_Context_t DataTransferServerContext;
+DTS_App_Context_t DataTransferServerContext;
 static uint8_t Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE]; /* DATA_NOTIFICATION_MAX_PACKET_SIZE data + CRC */
+uint32_t DataReceived;
 
 /* Global variables ----------------------------------------------------------*/
 /* Functions Definition ------------------------------------------------------*/
 /* Private functions ----------------------------------------------------------*/
 static void ButtonTriggerReceived(void);
+static void DT_App_Button2_Trigger_Received( void );
 static void SendData(void);
+static void BLE_App_Delay_DataThroughput( void );
+extern uint16_t Att_Mtu_Exchanged;
+extern uint8_t TimerDataThroughputWrite_Id;
 
+#define DEFAULT_TS_MEASUREMENT_INTERVAL   (1000000/CFG_TS_TICK_VAL)  /**< 1s */
+#define DELAY_1s  (1*DEFAULT_TS_MEASUREMENT_INTERVAL)
+#define TIMEUNIT  1
 /*************************************************************
  *
  * PUBLIC FUNCTIONS
@@ -76,7 +84,9 @@ void DTS_App_Init(void)
   uint8_t i;
 
   UTIL_SEQ_RegTask( 1<<CFG_TASK_BUTTON_ID, UTIL_SEQ_RFU, ButtonTriggerReceived);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SW2_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, DT_App_Button2_Trigger_Received);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_TRANSFER_UPDATE_ID, UTIL_SEQ_RFU, SendData);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_WRITE_ID, UTIL_SEQ_RFU, BLE_App_Delay_DataThroughput);
 
   /**
    * Initialize data buffer
@@ -94,6 +104,11 @@ void DTS_App_Init(void)
 void DTS_App_KeyButtonAction( void )
 {
   UTIL_SEQ_SetTask(1 << CFG_TASK_BUTTON_ID, CFG_SCH_PRIO_0);
+}
+
+void DTS_App_KeyButton2Action( void )
+{
+    UTIL_SEQ_SetTask(1 << CFG_TASK_SW2_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
 }
 
 void DTS_App_TxPoolAvailableNotification(void)
@@ -120,6 +135,29 @@ void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification )
 
     case DTS_STM_NOTIFICATION_DISABLED:
       DataTransferServerContext.NotificationTransferReq = DTS_APP_TRANSFER_REQ_OFF;
+      break;
+      
+    case DTC_NOTIFICATION_ENABLED:
+      BLE_SVC_L2CAP_Conn_Update_7_5();
+      //DataTransferServerContext.NotificationClientTransferFlag = 0x01;
+      break;
+      
+    case DTC_NOTIFICATION_DISABLED:
+      //DataTransferServerContext.NotificationClientTransferFlag = 0x00;
+      APP_DBG_MSG("write data notification disabled \n");
+      break;
+      
+    case DTS_STM_DATA_RECEIVED:
+      if (DataReceived == 0)
+      {
+        /* start timer */
+        DataReceived += pNotification->DataTransfered.Length;
+        HW_TS_Start(TimerDataThroughputWrite_Id, DELAY_1s);
+      }
+      else
+      {
+        DataReceived += pNotification->DataTransfered.Length;
+      }
       break;
 
     case DTS_STM_GATT_TX_POOL_AVAILABLE:
@@ -155,7 +193,8 @@ static void SendData( void )
     Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE - 1] = crc_result;
 
     DataTransferServerContext.TxData.pPayload = Notification_Data_Buffer;
-    DataTransferServerContext.TxData.Length = DATA_NOTIFICATION_MAX_PACKET_SIZE; /* DATA_NOTIFICATION_MAX_PACKET_SIZE */
+    //DataTransferServerContext.TxData.Length = DATA_NOTIFICATION_MAX_PACKET_SIZE; /* DATA_NOTIFICATION_MAX_PACKET_SIZE */
+    DataTransferServerContext.TxData.Length = Att_Mtu_Exchanged-10;
 
     status = DTS_STM_UpdateChar(DATA_TRANSFER_TX_CHAR_UUID, (uint8_t *) &DataTransferServerContext.TxData);
     if (status == BLE_STATUS_INSUFFICIENT_RESOURCES)
@@ -170,7 +209,10 @@ static void SendData( void )
   }
   return;
 }
-
+void Resume_Notification(void)
+{
+  DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_ON;
+}
 static void ButtonTriggerReceived( void )
 {
   if(DataTransferServerContext.ButtonTransferReq != DTS_APP_TRANSFER_REQ_OFF)
@@ -188,4 +230,25 @@ static void ButtonTriggerReceived( void )
   return;
 }
 
+static void DT_App_Button2_Trigger_Received( void )
+{
+  APP_DBG_MSG("change PHY \n");
+  BLE_SVC_GAP_Change_PHY();
+  return;
+}
+
+static void BLE_App_Delay_DataThroughput(void)
+{
+  uint32_t DataThroughput;
+  DTS_STM_Payload_t ThroughputToSend; 
+  
+  DataThroughput = (uint32_t)(DataReceived/TIMEUNIT);
+  APP_DBG_MSG("DataThroughput = %ld  bytes/s\n", DataThroughput);
+  
+  ThroughputToSend.Length = 4;
+  ThroughputToSend.pPayload = (uint8_t*)&DataThroughput;
+  
+  DTS_STM_UpdateCharThroughput( (DTS_STM_Payload_t*) &ThroughputToSend);  
+  DataReceived = 0;
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

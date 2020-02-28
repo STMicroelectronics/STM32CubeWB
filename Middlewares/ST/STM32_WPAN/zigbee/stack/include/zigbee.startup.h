@@ -11,7 +11,9 @@ enum ZbStartType {
     ZbStartTypeForm = 0x01,
     ZbStartTypeRejoin = 0x02,
     ZbStartTypeJoin = 0x03,
-    /* Exegin add-on */
+    /* Exegin add-ons (Internal use only) */
+    ZbStartTypeTouchlink = 0xfd,
+    ZbStartTypeFindBind = 0xfe,
     ZbStartTypeNone = 0xff
 };
 
@@ -118,39 +120,6 @@ struct ZbStartupT {
     } touchlink;
 };
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbStartup
- *  DESC
- *  PARAMS      zb          ; ZigBee stack instance.
- *              config      ; If not NULL, the configuration to set to the stack
- *                            before forming or joining the network.
- *                            Warning: if not NULL, any configuration to the stack
- *                            prior to calling this function will be lost. Once this
- *                            function is finished, you may continue configuring the
- *                            stack (e.g. adding application link keys).
- *              func        ; The callback function when startup is finished.
- *              arg         ; Argument to pass to func.
- *  RETURNS     none
- *
- *FUNCTION:------------------------------------------------------
- *  NAME        ZbStartupWait
- *  DESC        Blocking version of ZbStartup. Calls ZbStartup.
- *  PARAMS      See ZbStartup.
- *  RETURNS     ZigBee status byte.
- *
- *FUNCTION:------------------------------------------------------
- *  NAME        ZbStartupPersist
- *  DESC        Start the stack using persistent settings.
- *  PARAMS      zb          ;
- *              pdata       ; Persistent data as returned by ZbPersistGet().
- *                            This function calls ZbPersistSet() and performs
- *                            NWK-RESET.request with warm-start set.
- *              plen        ; Length of persistent data.
- *  RETURNS     ZigBee status byte.
- *
- *---------------------------------------------------------------
- */
-
 /* Non-blocking startup function */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbStartup(struct ZigBeeT *zb, struct ZbStartupT *configPtr, void (*callback)(enum ZbStatusCodeT status, void *cb_arg), void *arg);
 
@@ -160,9 +129,14 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
 /* If Touchlink Target was started with ZbStartup, this API can be used to stop it. */
 enum ZbStatusCodeT ZbStartupTouchlinkTargetStop(struct ZigBeeT *zb);
 
-/* Manually start Finding & Binding. F&B is also started automatically after
- * joining the network. */
-enum ZbStatusCodeT ZB_WARN_UNUSED ZbStartupFindBindStart(struct ZigBeeT *zb, void (*callback)(enum ZbStatusCodeT status, void *arg), void *arg);
+/* Manually start Finding & Binding. F&B is also started automatically after joining
+ * the network. */
+enum ZbStatusCodeT ZB_WARN_UNUSED ZbStartupFindBindStart(struct ZigBeeT *zb,
+    void (*callback)(enum ZbStatusCodeT status, void *arg), void *arg);
+
+/* Same as ZbStartupFindBindStart, but only for a single endpoint. */
+enum ZbStatusCodeT ZB_WARN_UNUSED ZbStartupFindBindStartEndpoint(struct ZigBeeT *zb, uint8_t endpoint,
+    void (*callback)(enum ZbStatusCodeT status, void *arg), void *arg);
 
 /* ZbStartupRejoin is a wrapper for ZbNlmeJoinReq(ZB_NWK_REJOIN_TYPE_NWKREJOIN).
  * Use ZbStartupRejoin instead, because the internal startup handler will restart

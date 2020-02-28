@@ -7,13 +7,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -59,6 +59,7 @@ uint8_t workBuffer[_MAX_SS];
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
 static int32_t FS_FileOperations(void);
+static uint8_t Buffercmp(uint32_t* pBuffer1, uint32_t* pBuffer2, uint16_t BufferLength);
 /* USER CODE END PFP */
 
 /**
@@ -90,7 +91,7 @@ int32_t MX_FATFS_Init(void)
 int32_t MX_FATFS_Process(void)
 {
   /* USER CODE BEGIN FATFS_Process */
-  int32_t process_res = APP_OK;  
+  int32_t process_res = APP_OK;
   /* Mass Storage Application State Machine */
   switch(Appli_state)
   {
@@ -106,13 +107,20 @@ int32_t MX_FATFS_Process(void)
       {
         process_res = APP_ERROR;
       }
-#endif
+      else
+      {
+        process_res = APP_INIT;
+        Appli_state = APPLICATION_RUNNING;
+      }
+#else
+      process_res = APP_INIT;
       Appli_state = APPLICATION_RUNNING;
+#endif
     }
     else
     {
     process_res = APP_ERROR;
-      
+
     }
 
     break;
@@ -145,7 +153,7 @@ DWORD get_fattime(void)
 /* USER CODE BEGIN Application */
 /**
   * @brief File system : file operation
-  * @retval File operation result 
+  * @retval File operation result
   */
 static int32_t FS_FileOperations(void)
 {
@@ -182,8 +190,10 @@ static int32_t FS_FileOperations(void)
             /* Compare read data with the expected data */
             if((bytesread == byteswritten))
             {
-              /* Success of the demo: no error occurrence */
-              return 0;
+              if(Buffercmp((uint32_t *)rtext, (uint32_t *)wtext, sizeof(rtext)))
+              {  /* Success of the demo: no error occurrence */
+                return 0;
+              }
             }
           }
         }
@@ -192,6 +202,31 @@ static int32_t FS_FileOperations(void)
   }
   /* Error */
   return -1;
+}
+
+
+/**
+  * @brief  Compares two buffers.
+  * @param  pBuffer1, pBuffer2: buffers to be compared.
+  * @param  BufferLength: buffer's length
+  * @retval 1: pBuffer identical to pBuffer1
+  *         0: pBuffer differs from pBuffer1
+  */
+static uint8_t Buffercmp(uint32_t* pBuffer1, uint32_t* pBuffer2, uint16_t BufferLength)
+{
+
+  while (BufferLength--)
+  {
+    if (*pBuffer1 != *pBuffer2)
+    {
+      return 1;
+    }
+
+    pBuffer1++;
+    pBuffer2++;
+  }
+
+  return 0;
 }
 
 /* USER CODE END Application */

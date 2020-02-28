@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    generic_client.h
 * @author  BLE Mesh Team
-* @version V1.11.000
-* @date    25-07-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -49,6 +49,13 @@
 
 
 /* Exported macro ------------------------------------------------------------*/
+/* Variable-------------------------------------------------------------------*/
+#pragma pack(1)
+typedef union  
+{
+  Generic_OnOffParam_t sGeneric_OnOffParam;
+  MOBLEUINT8 a_OnOff_param[sizeof(Generic_OnOffParam_t)]; 
+} _Generic_OnOffParam;
 
 /******************************************************************************/
 /********** Following Section defines the Opcodes for the Messages ************/

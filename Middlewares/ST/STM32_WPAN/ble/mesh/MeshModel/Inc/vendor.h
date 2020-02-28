@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    vendor.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -65,7 +65,13 @@
 #define APPLI_LED_CONTROL_STATUS_CMD                 0x3U
 #define APPLI_ELEMENT_TYPE_CMD                       0x4U
 #define APPLI_SENSOR_CNTRL_CMD                       0X5U
+#define APPLI_DATA_CNTRL_CMD                         0xEU
 /******************************************************************************/
+
+/****************Data Received from Android/iOS. B0 = SubCommand***************/
+/********************* Sub Commands for APPLI_DATA_WRITE*************************/
+#define APPLI_STRING_WRITE                     0X01
+#define APPLI_STRING_READ                      0X02
 
 /****************Data Received from Android/iOS. B0 = SubCommand***************/
 /********************* Sub Commands for APPLI_TEST_CMD*************************/
@@ -75,6 +81,8 @@
 #define APPLI_TEST_COUNTER                 0x04U
 #define APPLI_TEST_INC_COUNTER             0x05U
 #define APPLI_MODEL_PUBLISH_SELECT         0X06U
+#define APPLI_OTA_ENABLE                   0x07U
+#define APPLI_OTA_ENTER                    0x08U
 /******************************************************************************/
 
 /****************Data Received from Android/IoS. B0 = SubCommand***************/
@@ -113,6 +121,8 @@
 #define PRESS_SENSOR        0X2U
 #define ACCEL_SENSOR        0X3U
 /******************************************************************************/
+#define VENDOR_DATA_BYTE       50
+#define R_ASCI_CODE            0X52
 
 #define DEFAULT_DELAY_PACKET_FROM         500U
 #define DEFAULT_DELAY_PACKET_RANDOM_TIME  500U
@@ -141,7 +151,7 @@ typedef struct
   MOBLE_RESULT (*TestCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);
   void (*LEDControl_cb)(void);
   void (*GetTestCount)(MOBLEUINT8*);
-  
+  MOBLE_RESULT (*DataControlCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);
 } Appli_Vendor_cb_t;
 #pragma pack(4)
 
@@ -161,7 +171,7 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr, MOBLE_ADDRESS dst_
                                   MOBLEUINT32 dataLength, MOBLEBOOL response);
 
 void Vendor_Process(void);
-void Vendor_Publish(MOBLE_ADDRESS publishAddr, MOBLEUINT8 elementIndex);
+void Vendor_Publish(MOBLE_ADDRESS srcAddress);
 void Vendor_TestRemoteData(MOBLE_ADDRESS src,MOBLE_ADDRESS dst,MOBLEUINT8 elementIndex);
 void Vendor_TestCounterInc(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elementIndex);
 
@@ -185,7 +195,6 @@ MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
                                                  MOBLEUINT32 dataLength, 
                                                  MOBLEBOOL response
                                                    );
-
 
 #endif /* __VENDOR_H */
 

@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    appli_nvm.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.11.000
+* @date    25-07-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -32,7 +32,7 @@
 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-* Initial BlueNRG-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
+* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
 * (MoBLE) technology. The present solution is developed and maintained for both 
 * Mesh library and Applications solely by STMicroelectronics.
 *
@@ -46,6 +46,10 @@
 /* Includes ------------------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported variables  ------------------------------------------------------- */
+#define APP_NVM_BASE                                  ((unsigned int)appNvmBase)
+#define APP_NVM_SIZE                                                       4096U
+#define PRVN_NVM_BASE_OFFSET                         ((unsigned int)prvsnr_data)
+#define PRVN_NVM_PAGE_SIZE                                                 4096U
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size);
@@ -53,12 +57,21 @@ MOBLE_RESULT AppliNvm_FactorySettingReset(void);
 //MOBLE_RESULT AppliNvm_FlashErase(uint16_t PageNumber);
 MOBLE_RESULT AppliNvm_SaveModelState(uint8_t* state, uint8_t size);
 MOBLE_RESULT AppliNvm_ClearModelState(void);
-//MOBLE_RESULT AppliNvm_LoadGenericState(uint8_t state[], uint8_t* size);
-//MOBLE_RESULT AppliNvm_LoadLightState(uint8_t state[], uint8_t* size);
 MOBLE_RESULT AppliNvm_LoadModelState(uint8_t state[], uint8_t* size);
 void AppliNvm_Process(void);
 void AppliNvm_SaveMessageParam (void);
+MOBLE_RESULT AppliNvm_FindFirstEmptyPage(MOBLEINT8* subPageIndex,MOBLEUINT32 SubPageSize,
+                                          MOBLEUINT32 totalSubPage, MOBLEUINT32 nvmBaseOffset);
+MOBLE_RESULT AppliPrvnNvm_LoadData(uint8_t state[], uint8_t* size);
+MOBLE_RESULT AppliPrvnNvm_SaveData(uint8_t* data, uint8_t size);
+MOBLEUINT32* AppliPrvnNvm_GetNodeDevKey(MOBLE_ADDRESS addrss);
+void AppliPrvnNvm_Process(void);
 
+MOBLE_RESULT AppliPrvnNvm_FactorySettingReset(MOBLEUINT8*flag);
+
+MOBLE_RESULT AppliPrvnNvm_CopyData(uint8_t state[], uint8_t* size);
+void AppliNvm_saveProvisionerDevKey(MOBLEUINT8 *data , MOBLEUINT8 size 
+                                                     , MOBLEUINT8 *prvnFlag);
 #endif /* __APPLI_NVM_H */
 
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/

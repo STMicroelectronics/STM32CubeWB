@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>BLE_MeshLightingDemo</name>
+        <name>Lighting_Node</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,15 +16,15 @@
                 <debug>0</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>BLE_MeshLightingDemo\Exe</state>
+                    <state>Lighting_Node\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>BLE_MeshLightingDemo\Obj</state>
+                    <state>Lighting_Node\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>BLE_MeshLightingDemo\List</state>
+                    <state>Lighting_Node\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -222,6 +222,7 @@
                     <state>STM32</state>
                     <state>ENABLE_USART</state>
                     <state>TRACE_ENABLE_NO_FUNCTION</state>
+                    <state>SERVER</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -349,7 +350,7 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Device\ST\STM32WBxx\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Inc</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.USBDongle</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\Inc</state>
                     <state>$PROJ_DIR$\..\Core\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN</state>
@@ -361,7 +362,6 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\shci</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.USBDongle</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread</state>
                     <state>$PROJ_DIR$\..\STM32_WPAN\app</state>
@@ -669,7 +669,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>BLE_MeshLightingDemo.hex</state>
+                    <state>BLE_MeshLightingNodeDemo.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -724,7 +724,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>BLE_MeshLightingDemo.out</state>
+                    <state>BLE_MeshLightingNodeDemo.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
@@ -1065,10 +1065,16 @@
                 <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Core\Src\hw_flash.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_uart.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\lp_timer.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\main.c</name>
@@ -1094,10 +1100,28 @@
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\app_ble.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config_client.c</name>
+                    <excluded>
+                        <configuration>Lighting_Node</configuration>
+                    </excluded>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_generic.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_generic_client.c</name>
+                    <excluded>
+                        <configuration>Lighting_Node</configuration>
+                    </excluded>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light_client.c</name>
+                    <excluded>
+                        <configuration>Lighting_Node</configuration>
+                    </excluded>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light_lc.c</name>
@@ -1252,10 +1276,28 @@
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\common.c</name>
                     </file>
                     <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\config_client.c</name>
+                        <excluded>
+                            <configuration>Lighting_Node</configuration>
+                        </excluded>
+                    </file>
+                    <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\generic.c</name>
                     </file>
                     <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\generic_client.c</name>
+                        <excluded>
+                            <configuration>Lighting_Node</configuration>
+                        </excluded>
+                    </file>
+                    <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\light.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\light_client.c</name>
+                        <excluded>
+                            <configuration>Lighting_Node</configuration>
+                        </excluded>
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\light_lc.c</name>

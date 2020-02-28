@@ -36,7 +36,7 @@ extern "C" {
 /* Exported functions ------------------------------------------------------- */
 void APP_BLE_Init( void );
 uint8_t APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen );
-
+void BLE_SVC_L2CAP_Conn_Update_7_5(void);
 void APP_BLE_Key_Button1_Action(void);
 void APP_BLE_Key_Button2_Action(void);
 void APP_BLE_Key_Button3_Action(void);

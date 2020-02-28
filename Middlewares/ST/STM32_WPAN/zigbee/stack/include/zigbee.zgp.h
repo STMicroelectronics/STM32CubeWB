@@ -228,7 +228,7 @@ int ZbZgpDecryptKey(struct ZigBeeT *zb, uint8_t appId, uint64_t gpdId, void *key
 uint8_t ZbZgpAddKey(struct ZigBeeT *zb, uint8_t applicationId, uint64_t gpdId, uint8_t endpoint,
     uint8_t level, uint8_t keytype, const void *key);
 
-#if 0 /* FIXME - NOT_INCLUDED */
+#if 0 /* EXEGIN - NOT_INCLUDED */
 void ZbZgpRecvDataInd(ZbApsdeDataIndT *dataIndPtr, void *arg);
 bool ZbZgpHandleUnsolicited(struct ZbZgpT *zgp, ZbApsdeDataIndT *dataIndPtr, uint8_t seqnum);
 void ZbZgpHandleUnsupported(struct ZigBeeT *zb, ZbApsdeDataIndT *ind, uint8_t seqnum);

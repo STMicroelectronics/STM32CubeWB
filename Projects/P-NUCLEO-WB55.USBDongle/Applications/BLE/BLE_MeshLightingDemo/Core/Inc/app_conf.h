@@ -35,7 +35,7 @@
 /**
  * Define Tx Power
  */   
-#define CFG_TX_POWER                      (0x1D) /**< +4 dBm */
+#define CFG_TX_POWER                      (0x18) /**< +0 dBm */
    
 /**
  * Define Advertising parameters
@@ -113,14 +113,12 @@
 
 /**< specific parameters ********************************************************/
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler                         EXTI15_10_IRQHandler
-//#define PUSH_BUTTON_SW2_EXTI_IRQHandler                         EXTI0_IRQHandler
-//#define PUSH_BUTTON_SW3_EXTI_IRQHandler                         EXTI1_IRQHandler
    
 #define POWEROFF_EXTI_IRQHandler                                EXTI2_IRQHandler
    
 #define CFG_MAX_CONNECTION      1
 
-#define  RADIO_ACTIVITY_EVENT   0
+#define  RADIO_ACTIVITY_EVENT   1
    
 
 #define CONN_L(x) ((int)((x)/0.625f))
@@ -299,7 +297,7 @@
  *  When set to 1, the low power mode is enable
  *  When set to 0, the device stays in RUN mode
  */
-#define CFG_LPM_SUPPORTED   1
+#define CFG_LPM_SUPPORTED   0
 
 /******************************************************************************
  * Timer Server
@@ -400,7 +398,7 @@ typedef enum
  * keep debugger enabled while in any low power mode when set to 1
  * should be set to 0 in production
  */
-#define CFG_DEBUGGER_SUPPORTED    1
+#define CFG_DEBUGGER_SUPPORTED    0
 
 /**
  * When set to 1, the traces are enabled in the BLE services
@@ -485,6 +483,9 @@ typedef enum
   CFG_TASK_MESH_REQ_ID,
   CFG_TASK_MESH_BEACON_REQ_ID,
   CFG_TASK_MESH_UART_RX_REQ_ID,
+  CFG_TASK_APPLI_REQ_ID,
+  CFG_TASK_MESH_SW1_REQ_ID,
+  CFG_TASK_MESH_LPN_REQ_ID,
   
   CFG_LAST_TASK_ID_WITH_HCICMD, /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;

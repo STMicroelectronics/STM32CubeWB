@@ -75,7 +75,7 @@ const osThreadAttr_t HrsProcess_attr = {
     .cb_size = CFG_HRS_PROCESS_CB_SIZE,
     .stack_mem = CFG_HRS_PROCESS_STACK_MEM,
     .priority = CFG_HRS_PROCESS_PRIORITY,
-    .stack_size = CFG_HRS_PROCESS_STACk_SIZE
+    .stack_size = CFG_HRS_PROCESS_STACK_SIZE
 };
 
 /* USER CODE BEGIN PV */

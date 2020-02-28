@@ -73,7 +73,7 @@ void Error_Handler(void);
   #define VAR_CONVERTED_DATA_INIT_VALUE    (DIGITAL_SCALE_12BITS + 1)
 
   /* Definition of ADCx conversions data table size */
-  #define ADC_CONVERTED_DATA_BUFFER_SIZE   ((uint32_t)  12)
+  #define ADC_CONVERTED_DATA_BUFFER_SIZE   ((uint32_t)  3)
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

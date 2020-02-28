@@ -143,10 +143,10 @@ void (*HW_huart1TxCb)(void);
 #if (CFG_HW_LPUART1_ENABLED == 1)
     UART_HandleTypeDef hlpuart1 = {0};
 #if (CFG_HW_LPUART1_DMA_TX_SUPPORTED == 1)
-DMA_HandleTypeDef HW_hdma_lpuart1_tx ={0};
+DMA_HandleTypeDef HW_hdma_hlpuart1_tx ={0};
 #endif
-void (*HW_lpuart1RxCb)(void);
-void (*HW_lpuart1TxCb)(void);
+void (*HW_hlpuart1RxCb)(void);
+void (*HW_hlpuart1TxCb)(void);
 #endif
 
 void HW_UART_Init(hw_uart_id_t hw_uart_id)
@@ -184,7 +184,7 @@ void HW_UART_Receive_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size,
     
 #if (CFG_HW_LPUART1_ENABLED == 1)
     case hw_lpuart1:
-                HW_UART_RX_IT(hlpuart1, LPUART1);
+      HW_UART_RX_IT(hlpuart1, LPUART1);
       break;
 #endif
     
@@ -207,7 +207,7 @@ void HW_UART_Transmit_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size
     
 #if (CFG_HW_LPUART1_ENABLED == 1)
     case hw_lpuart1:
-                HW_UART_TX_IT(hlpuart1, LPUART1);
+      HW_UART_TX_IT(hlpuart1, LPUART1);
       break;
 #endif
     
@@ -291,7 +291,7 @@ hw_status_t HW_UART_Transmit_DMA(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint1
     
 #if (CFG_HW_LPUART1_ENABLED == 1)
     case hw_lpuart1:
-      HW_lpuart1TxCb = cb;
+      HW_hlpuart1TxCb = cb;
                 hlpuart1.Instance = LPUART1;
                 hal_status = HAL_UART_Transmit_DMA(&hlpuart1, p_data, size);
       break;
@@ -425,9 +425,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     
 #if (CFG_HW_LPUART1_ENABLED == 1)
     case (uint32_t)LPUART1:
-      if(HW_lpuart1RxCb)
+      if(HW_hlpuart1RxCb)
       {
-        HW_lpuart1RxCb();
+        HW_hlpuart1RxCb();
       }
       break;
 #endif
@@ -454,9 +454,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     
 #if (CFG_HW_LPUART1_ENABLED == 1)
     case (uint32_t)LPUART1:
-      if(HW_lpuart1TxCb)
+      if(HW_hlpuart1TxCb)
       {
-        HW_lpuart1TxCb();
+        HW_hlpuart1TxCb();
       }
       break;
 #endif

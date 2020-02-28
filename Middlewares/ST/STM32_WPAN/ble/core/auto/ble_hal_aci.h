@@ -1,13 +1,13 @@
 /******************************************************************************
  * @file    ble_hal_aci.h
  * @author  MCD Application Team
- * @date    06 November 2019
+ * @date    13 January 2020
  * @brief   Header file for STM32WB (hal_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -38,13 +38,11 @@ directly some low level parameters for the system in the runtime.
 which has to be written. The valid offsets are:
 
 - 0x00: Bluetooth public address, Value length to be written: 6 bytes
-- 0x06: DIV used to derive CSRK, Value length to be written: 2 bytes
 - 0x08: Encryption root key used to derive LTK and CSRK, Value length to be written: 16 bytes
 - 0x18: Identity root key used to derive LTK and CSRK, Value length to be written: 16 bytes
 - 0x2E: Static Random Address: 6 bytes
   * Values:
   - 0x00: CONFIG_DATA_PUBADDR_OFFSET
-  - 0x06: CONFIG_DATA_DIV_OFFSET
   - 0x08: CONFIG_DATA_ER_OFFSET
   - 0x18: CONFIG_DATA_IR_OFFSET
   - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_WR
@@ -63,13 +61,11 @@ The number of read bytes changes for different Offset.
 which has to be read. The valid offsets are:
 
 * 0x00: Bluetooth public address, Value length returned: 6 bytes
-* 0x06: DIV used to derive CSRK, Value length returned: 2 bytes
 * 0x08: Encryption root key used to derive LTK and CSRK, Value length returned: 16 bytes
 * 0x18: Identity root key used to derive LTK and CSRK, Value length returned: 16 bytes
 * 0x80: Static random address. Value length returned: 6 bytes (read-only)
   * Values:
   - 0x00: CONFIG_DATA_PUBADDR_OFFSET
-  - 0x06: CONFIG_DATA_DIV_OFFSET
   - 0x08: CONFIG_DATA_ER_OFFSET
   - 0x18: CONFIG_DATA_IR_OFFSET
   - 0x80: CONFIG_DATA_RANDOM_ADDRESS

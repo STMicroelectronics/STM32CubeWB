@@ -76,13 +76,13 @@ extern "C" {
 
   void HW_IPCC_ZIGBEE_Init( void );
 
-  void HW_IPCC_ZIGBEE_SendAppliCmd(void);
-  void HW_IPCC_ZIGBEE_AppliCmdNotification(void);
+  void HW_IPCC_ZIGBEE_SendM4RequestToM0(void); /* M4 Request to M0 */
+  void HW_IPCC_ZIGBEE_RecvAppliAckFromM0(void); /* Request ACK from M0 */
 
-  void HW_IPCC_ZIGBEE_AppliAsyncEvtNotification(void);
-  void HW_IPCC_ZIGBEE_SendAppliCmdAck(void);
-  void HW_IPCC_ZIGBEE_AppliAsyncLoggingNotification( void );
-  void HW_IPCC_ZIGBEE_SendLoggingAck(void);
+  void HW_IPCC_ZIGBEE_RecvM0NotifyToM4(void); /* M0 Notify to M4 */
+  void HW_IPCC_ZIGBEE_SendM4AckToM0Notify(void); /* Notify ACK from M4 */
+  void HW_IPCC_ZIGBEE_RecvM0RequestToM4(void); /* M0 Request to M4 */
+  void HW_IPCC_ZIGBEE_SendM4AckToM0Request(void); /* Request ACK from M4 */
 
 
 #ifdef __cplusplus

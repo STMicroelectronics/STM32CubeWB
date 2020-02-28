@@ -34,7 +34,7 @@ void ZIGBEE_CmdTransfer(void);
 Zigbee_Cmd_Request_t* ZIGBEE_Get_OTCmdPayloadBuffer(void);
 Zigbee_Cmd_Request_t* ZIGBEE_Get_OTCmdRspPayloadBuffer(void);
 Zigbee_Cmd_Request_t* ZIGBEE_Get_NotificationPayloadBuffer(void);
-Zigbee_Cmd_Request_t * ZIGBEE_Get_LoggingPayloadBuffer(void);
+Zigbee_Cmd_Request_t* ZIGBEE_Get_M0RequestPayloadBuffer(void);
 
 /* Exported defines -----------------------------------------------------------*/
 

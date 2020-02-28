@@ -39,6 +39,11 @@
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Core/Src/main.c</location>
 		</link>
+	<link>
+			<name>Application/User/Core/app_debug.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/Core/Src/app_debug.c</location>
+		</link>
     <link>
 			<name>Application/User/Core/app_entry.c</name>
 			<type>1</type>

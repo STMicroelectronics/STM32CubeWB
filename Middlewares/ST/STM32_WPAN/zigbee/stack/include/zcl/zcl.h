@@ -189,14 +189,11 @@ typedef uint16_t ZclAttrFlagT;
 #define ZCL_ATTR_FLAG_REPORTABLE            (ZclAttrFlagT)0x0002U
 /* attribute is persisted */
 #define ZCL_ATTR_FLAG_PERSISTABLE           (ZclAttrFlagT)0x0004U
-/* attribute is allowed to be reset to a default value */
-#define ZCL_ATTR_FLAG_DEFAULTABLE           (ZclAttrFlagT)0x0008U
 /* Which callbacks does the application support */
 #define ZCL_ATTR_FLAG_CB_MASK               0x00f0U
 #define ZCL_ATTR_FLAG_CB_READ               (ZclAttrFlagT)0x0010U /* ZCL_ATTR_CB_TYPE_READ */
 #define ZCL_ATTR_FLAG_CB_WRITE              (ZclAttrFlagT)0x0020U /* ZCL_ATTR_CB_TYPE_WRITE */
-#define ZCL_ATTR_FLAG_CB_DEFAULT            (ZclAttrFlagT)0x0040U /* ZCL_ATTR_CB_TYPE_DEFAULT */
-#define ZCL_ATTR_FLAG_CB_NOTIFY             (ZclAttrFlagT)0x0080U /* ZCL_ATTR_CB_TYPE_NOTIFY */
+#define ZCL_ATTR_FLAG_CB_NOTIFY             (ZclAttrFlagT)0x0040U /* ZCL_ATTR_CB_TYPE_NOTIFY */
 /* This flag means the attribute is for internal use only. Not discoverable. */
 #define ZCL_ATTR_FLAG_INTERNAL              (ZclAttrFlagT)0x8000U
 
@@ -215,14 +212,14 @@ typedef uint16_t ZclWriteModeT;
 /* ZCL Data Types */
 enum ZclDataTypeT {
     ZCL_DATATYPE_NULL = 0x00,
-    ZCL_DATATYPE_GENERIC_8BIT = 0x08,
-    ZCL_DATATYPE_GENERIC_16BIT = 0x09,
-    ZCL_DATATYPE_GENERIC_24BIT = 0x0a,
-    ZCL_DATATYPE_GENERIC_32BIT = 0x0b,
-    ZCL_DATATYPE_GENERIC_40BIT = 0x0c,
-    ZCL_DATATYPE_GENERIC_48BIT = 0x0d,
-    ZCL_DATATYPE_GENERIC_56BIT = 0x0e,
-    ZCL_DATATYPE_GENERIC_64BIT = 0x0f,
+    ZCL_DATATYPE_GENERAL_8BIT = 0x08,
+    ZCL_DATATYPE_GENERAL_16BIT = 0x09,
+    ZCL_DATATYPE_GENERAL_24BIT = 0x0a,
+    ZCL_DATATYPE_GENERAL_32BIT = 0x0b,
+    ZCL_DATATYPE_GENERAL_40BIT = 0x0c,
+    ZCL_DATATYPE_GENERAL_48BIT = 0x0d,
+    ZCL_DATATYPE_GENERAL_56BIT = 0x0e,
+    ZCL_DATATYPE_GENERAL_64BIT = 0x0f,
     ZCL_DATATYPE_BOOLEAN = 0x10,
     ZCL_DATATYPE_BITMAP_8BIT = 0x18,
     ZCL_DATATYPE_BITMAP_16BIT = 0x19,
@@ -807,7 +804,6 @@ enum ZclStatusCodeT ZbZclAttrAppendList(struct ZbZclClusterT *clusterPtr, const 
 enum ZbZclAttrCbTypeT {
     ZCL_ATTR_CB_TYPE_READ, /* Read Attribute */
     ZCL_ATTR_CB_TYPE_WRITE, /* Write Attribute */
-    ZCL_ATTR_CB_TYPE_DEFAULT, /* Write Default Value */
     ZCL_ATTR_CB_TYPE_NOTIFY /* Write Notification */
 };
 
@@ -968,7 +964,7 @@ void ZbZclRemoveEndpoint(struct ZigBeeT *zb, ZbApsmeRemoveEndpointReqT *req, ZbA
 void * ZbZclClusterAlloc(struct ZigBeeT *zb, unsigned int alloc_sz, enum ZbZclClusterIdT cluster_id,
     uint8_t endpoint, enum ZbZclDirectionT direction);
 /* Attach the cluster to the stack (after callbacks have been configured) */
-void ZbZclClusterAttach(struct ZbZclClusterT *clusterPtr);
+enum ZclStatusCodeT ZbZclClusterAttach(struct ZbZclClusterT *clusterPtr);
 /* Free and detach the cluster */
 void ZbZclClusterFree(struct ZbZclClusterT *clusterPtr);
 
@@ -998,6 +994,7 @@ int ZbZclAppendHeader(struct ZbZclHeaderT *zclHdrPtr, uint8_t *data, unsigned in
  */
 int ZbZclAttrParseLength(enum ZclDataTypeT type, const uint8_t *ptr, unsigned int max_len, uint8_t recurs_depth);
 
+bool ZbZclAttrIsFloat(enum ZclDataTypeT dataType);
 bool ZbZclAttrIsAnalog(enum ZclDataTypeT dataType);
 bool ZbZclAttrIsInteger(enum ZclDataTypeT dataType);
 
@@ -1061,18 +1058,27 @@ extern const uint8_t zcl_attr_str_short_zero[1]; /* i.e. {0x00} */
 extern const uint8_t zcl_attr_str_long_zero[2]; /* i.e. {0x00, 0x00} */
 
 /*---------------------------------------------------------------
- * Request Remote reporting of attribute changes.
+ * Configure Reporting
  *---------------------------------------------------------------
  */
-typedef struct {
+struct ZbZclAttrReportConfigT {
     struct ZbApsAddrT dst;
     uint16_t min;
     uint16_t max;
-    uint16_t attribute;
+    uint16_t attr_id;
     uint8_t attr_type;
-} ZbZclAttrReportT;
+    uint64_t change;
+};
 
-void ZbZclAttrReportConfigReq(struct ZbZclClusterT *clusterPtr, ZbZclAttrReportT *rp,
+enum ZclStatusCodeT ZbZclAttrReportConfigReq(struct ZbZclClusterT *clusterPtr, struct ZbZclAttrReportConfigT *report,
+    void (*callback)(struct ZbZclCommandRspT *cmd_rsp, void *arg), void *arg);
+
+struct ZbZclAttrReportReadT {
+    struct ZbApsAddrT dst;
+    uint16_t attr_id;
+};
+
+enum ZclStatusCodeT ZbZclAttrReportReadReq(struct ZbZclClusterT *clusterPtr, struct ZbZclAttrReportReadT *report,
     void (*callback)(struct ZbZclCommandRspT *cmd_rsp, void *arg), void *arg);
 
 /*---------------------------------------------------------------
@@ -1311,17 +1317,18 @@ bool ZbZclDeviceLogRemove(struct ZigBeeT *zb, uint64_t ext_addr);
 void ZbZclDeviceLogClear(struct ZigBeeT *zb);
 
 /*---------------------------------------------------------------
- * ZCL Command Request/Response Helpers
+ * ZCL Internal Use Only
  *---------------------------------------------------------------
  */
-#define ZCL_STATE_CONTINUE   0 /* Return zero to continue waiting for responses. */
-#define ZCL_STATE_CLEANUP    1 /* Return one to cleanup the state. */
+enum ZclStateReqReturn {
+    ZCL_STATE_CONTINUE = 0, /**< Return zero to continue waiting for responses. */
+    ZCL_STATE_CLEANUP /**< Return one to cleanup the state. */
+};
 
-typedef int (*ZbZclHandlerFuncT)(struct ZbZclCommandRspT *cmdRsp, void (*callback)(void *msg, void *arg), void *arg);
+typedef enum ZclStateReqReturn (*ZbZclHandlerFuncT)(struct ZbZclCommandRspT *cmdRsp, void *callback, void *arg);
 
 enum ZclStatusCodeT ZbZclStateBegin(struct ZigBeeT *zb, ZbApsdeDataReqT *apsReq, struct ZbZclHeaderT *zclHdr,
-    unsigned int timeout, ZbZclHandlerFuncT handler,
-    void (*callback)(void *msg, void *arg), void *arg);
+    unsigned int timeout, ZbZclHandlerFuncT handler, void *callback, void *arg);
 
 /*---------------------------------------------------------------
  * Helper Functions
@@ -1329,9 +1336,6 @@ enum ZclStatusCodeT ZbZclStateBegin(struct ZigBeeT *zb, ZbApsdeDataReqT *apsReq,
  */
 /* Get the next ZCL sequence number to use in a request/notify message. */
 uint8_t ZbZclGetNextSeqnum(void);
-
-/* Tell all of this cluster's attributes to revert to default values */
-void ZbZclClusterAttrWriteDefaults(struct ZbZclClusterT *clusterPtr, bool force);
 
 /* Helper functions to SET cluster parameters */
 void ZbZclClusterSetCallbackArg(struct ZbZclClusterT *clusterPtr, void *app_cb_arg);
@@ -1390,8 +1394,6 @@ enum {
 /* Exegin's Manufacturer Specific Global Commands
  * ZCL_FRAMECTRL_MANUFACTURER && ZCL_FRAMETYPE_PROFILE && (Manufacturer Code == ZCL_MANUF_CODE_INTERNAL) */
 enum {
-    ZCL_CMD_MANUF_INTERNAL_ATTR_RESET_DEFAULT, /* attr_reset() */
-
     /* For Scene Store Command (ZCL_SCENES_COMMAND_STORE_SCENE)
      * Payload for Request (to Server): None
      * Payload for Response: [CLUSTER(2) | EXT_LEN(1) | EXT_ATTR_DATA(N)] */

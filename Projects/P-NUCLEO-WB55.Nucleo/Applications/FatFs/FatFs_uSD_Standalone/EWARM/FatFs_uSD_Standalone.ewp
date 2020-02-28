@@ -1054,15 +1054,15 @@
       <group>
         <name>FATFS</name>
         <group>
-          <name>App</name>
-          <file>
-            <name>$PROJ_DIR$/../FATFS/App/app_fatfs.c</name>
-          </file>
-        </group>
-        <group>
           <name>Target</name>
           <file>
             <name>$PROJ_DIR$/../FATFS/Target/sd_diskio.c</name>
+          </file>
+        </group>
+        <group>
+          <name>App</name>
+          <file>
+            <name>$PROJ_DIR$/../FATFS/App/app_fatfs.c</name>
           </file>
         </group>
       </group>
@@ -1086,12 +1086,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_gpio.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc.c</name>
@@ -1125,6 +1119,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</name>
       </file>
     </group>
     <group>

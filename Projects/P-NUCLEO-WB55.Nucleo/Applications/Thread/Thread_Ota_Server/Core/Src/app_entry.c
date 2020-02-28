@@ -412,7 +412,7 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 #if(CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
-    MX_LPUART1_UART_Init();
+  MX_USART1_UART_Init(); 
 
   return;
 }

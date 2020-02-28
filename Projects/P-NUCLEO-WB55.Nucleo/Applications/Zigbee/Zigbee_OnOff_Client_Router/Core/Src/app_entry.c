@@ -65,6 +65,19 @@ extern void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 static void Led_Init(void);
 static void Button_Init(void);
+
+/* Section specific to button management using UART */
+static void RxUART_Init(void);
+static void RxCpltCallback(void);
+static void UartCmdExecute(void);
+
+#define C_SIZE_CMD_STRING       256U
+#define RX_BUFFER_SIZE          8U
+
+static uint8_t aRxBuffer[RX_BUFFER_SIZE];
+static uint8_t CommandString[C_SIZE_CMD_STRING];
+static uint16_t indexReceiveChar = 0;
+EXTI_HandleTypeDef exti_handle;
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -82,6 +95,7 @@ void APPE_Init( void )
     UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
     Led_Init();
     Button_Init();
+    RxUART_Init();
     appe_Tl_Init(); /* Initialize all transport layers */
 
     /**
@@ -323,16 +337,19 @@ void UTIL_SEQ_Idle( void )
   */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
-    switch (evt_waited_bm) {
-        case EVENT_ACK_FROM_M0_EVT:
-		   /* Run only the task CFG_TASK_MSG_FROM_M0_TO_M4 */
-		   UTIL_SEQ_Run((1U << CFG_TASK_MSG_FROM_M0_TO_M4));
-            break;
-        case EVENT_SYNCHRO_BYPASS_IDLE:
-            UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
-            /* Run only the task CFG_TASK_MSG_FROM_M0_TO_M4 */
-            UTIL_SEQ_Run((1U << CFG_TASK_MSG_FROM_M0_TO_M4));
-            break;
+  switch (evt_waited_bm) {
+    case EVENT_ACK_FROM_M0_EVT:
+      /* Run only the task CFG_TASK_REQUEST_FROM_M0_TO_M4 to process
+      * direct requests from the M0 (e.g. ZbMalloc), but no stack notifications
+      * until we're done the request to the M0. */
+      UTIL_SEQ_Run((1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
+      break;
+
+    case EVENT_SYNCHRO_BYPASS_IDLE:
+      UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
+      /* Process notifications and requests from the M0 */
+      UTIL_SEQ_Run((1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4) | (1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
+      break;
 
         default:
             /* default case */
@@ -423,6 +440,63 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
   default:
     break;
+  }
+}
+
+static void RxUART_Init(void)
+{
+  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void RxCpltCallback(void)
+{
+  /* Filling buffer and wait for '\r' char */
+  if (indexReceiveChar < C_SIZE_CMD_STRING)
+  {
+    if (aRxBuffer[0] == '\r')
+    {
+      APP_DBG("received %s", CommandString);
+
+      UartCmdExecute();
+
+      /* Clear receive buffer and character counter*/
+      indexReceiveChar = 0;
+      memset(CommandString, 0, C_SIZE_CMD_STRING);
+    }
+    else
+    {
+      CommandString[indexReceiveChar++] = aRxBuffer[0];
+    }
+  }
+
+  /* Once a character has been sent, put back the device in reception mode */
+  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void UartCmdExecute(void)
+{
+  /* Parse received CommandString */
+  if(strcmp((char const*)CommandString, "SW1") == 0)
+  {
+    APP_DBG("SW1 OK");
+    exti_handle.Line = EXTI_LINE_4;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW2") == 0)
+  {
+    APP_DBG("SW2 OK");
+    exti_handle.Line = EXTI_LINE_0;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW3") == 0)
+  {
+    APP_DBG("SW3 OK");
+    exti_handle.Line = EXTI_LINE_1;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else
+  {
+    APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
   }
 }
 /* USER CODE END FD_WRAP_FUNCTIONS */

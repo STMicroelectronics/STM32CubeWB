@@ -279,7 +279,8 @@ typedef enum
  */
 
 typedef enum {
-  CFG_TASK_MSG_FROM_M0_TO_M4,
+  CFG_TASK_NOTIFY_FROM_M0_TO_M4,
+  CFG_TASK_REQUEST_FROM_M0_TO_M4,
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
   CFG_TASK_ZIGBEE_NETWORK_FORM,
   CFG_TASK_BUTTON_SW1,
@@ -314,10 +315,12 @@ typedef enum {
     CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP,
     CFG_EVT_ACK_FROM_M0_EVT,
     CFG_EVT_SYNCHRO_BYPASS_IDLE,
+    CFG_EVT_ZIGBEE_STARTUP_ENDED,
 } CFG_IdleEvt_Id_t;
 
 #define EVENT_ACK_FROM_M0_EVT           (1U << CFG_EVT_ACK_FROM_M0_EVT)
 #define EVENT_SYNCHRO_BYPASS_IDLE       (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
+#define EVENT_ZIGBEE_STARTUP_ENDED      (1U << CFG_EVT_ZIGBEE_STARTUP_ENDED)
 
 /******************************************************************************
  * Configure Log level for Application

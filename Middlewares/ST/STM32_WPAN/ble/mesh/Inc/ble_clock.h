@@ -1,8 +1,8 @@
 /******************** (C) COPYRIGHT 2012 STMicroelectronics ********************
 * File Name          : ble_clock.h
 * Author             : AMS - HEA&RF BU
-* Version            : V1.0.1
-* Date               : 19-July-2012
+* @version V1.12.000
+* @date    06-12-2019
 * Description        : Header file for clock library, that gives a simple time
 *                       reference to the BLE Stack.
 ********************************************************************************

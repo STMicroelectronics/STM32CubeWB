@@ -636,7 +636,7 @@ padding-right: 0px;
 }
 
 td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
-</style></head><body><font face="arial"><h1>STM32WB  BLE Wireless Interface</h1><p>This document describes the STM32WB  BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h3>HCI commands</h3><table width="800" border="1" class="reference">
+</style></head><body><font face="arial"><h1>STM32WB  BLE Wireless Interface</h1><p>This document describes the STM32WB  BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h3>HCI commands</h3><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>OpCode</th></tr>
 <tr><td><a href="#HCI_DISCONNECT_anchor">HCI_DISCONNECT</a></td><td><p>0x0406</p>
 </td></tr>
@@ -704,7 +704,7 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 </td></tr>
 <tr><td><a href="#HCI_LE_READ_CHANNEL_MAP_anchor">HCI_LE_READ_CHANNEL_MAP</a></td><td><p>0x2015</p>
 </td></tr>
-<tr><td><a href="#HCI_LE_READ_REMOTE_USED_FEATURES_anchor">HCI_LE_READ_REMOTE_USED_FEATURES</a></td><td><p>0x2016</p>
+<tr><td><a href="#HCI_LE_READ_REMOTE_FEATURES_anchor">HCI_LE_READ_REMOTE_FEATURES</a></td><td><p>0x2016</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_ENCRYPT_anchor">HCI_LE_ENCRYPT</a></td><td><p>0x2017</p>
 </td></tr>
@@ -1771,7 +1771,7 @@ Channel n is unused = 0.
 Channel n is used = 1.
 The most significant bits are reserved and shall be set to 0.</p>
 </td><td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_REMOTE_USED_FEATURES_anchor">HCI_LE_READ_REMOTE_USED_FEATURES</a></h2><h3>Description</h3><p>This command requests a list of the used LE features from the remote device.
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_REMOTE_FEATURES_anchor">HCI_LE_READ_REMOTE_FEATURES</a></h2><h3>Description</h3><p>This command requests a list of the used LE features from the remote device.
 This command shall return a list of the used LE features. For details see [Vol 6]
 Part B, Section 4.6.
 This command may be issued on both the master and slave.
@@ -1787,7 +1787,7 @@ This command may be issued on both the master and slave.
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_READ_REMOTE_USED_FEATURES_COMPLETE_EVENT_anchor">HCI_LE_READ_REMOTE_USED_FEATURES_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ENCRYPT_anchor">HCI_LE_ENCRYPT</a></h2><h3>Description</h3><p>The LE_Encrypt command is used to request the Controller to encrypt the
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT_anchor">HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ENCRYPT_anchor">HCI_LE_ENCRYPT</a></h2><h3>Description</h3><p>The LE_Encrypt command is used to request the Controller to encrypt the
 Plaintext_Data in the command using the Key given in the command and
 returns the Encrypted_Data to the Host. The AES-128 bit block cypher is
 defined in NIST Publication FIPS-197 (http://csrc.nist.gov/publications/fips/
@@ -2542,12 +2542,11 @@ directly some low level parameters for the system in the runtime.</p><h3>Input p
 which has to be written. The valid offsets are:</p>
 <ul class="simple">
 <li>0x00: Bluetooth public address, Value length to be written: 6 bytes</li>
-<li>0x06: DIV used to derive CSRK, Value length to be written: 2 bytes</li>
 <li>0x08: Encryption root key used to derive LTK and CSRK, Value length to be written: 16 bytes</li>
 <li>0x18: Identity root key used to derive LTK and CSRK, Value length to be written: 16 bytes</li>
 <li>0x2E: Static Random Address: 6 bytes</li>
 </ul>
-</td><td><li>0x00: CONFIG_DATA_PUBADDR_OFFSET</li><li>0x06: CONFIG_DATA_DIV_OFFSET</li><li>0x08: CONFIG_DATA_ER_OFFSET</li><li>0x18: CONFIG_DATA_IR_OFFSET</li><li>0x2E: CONFIG_DATA_RANDOM_ADDRESS_WR</li></td></tr>
+</td><td><li>0x00: CONFIG_DATA_PUBADDR_OFFSET</li><li>0x08: CONFIG_DATA_ER_OFFSET</li><li>0x18: CONFIG_DATA_IR_OFFSET</li><li>0x2E: CONFIG_DATA_RANDOM_ADDRESS_WR</li></td></tr>
 <tr><td><p>Length</p>
 </td><td><p>1</p>
 </td><td><p>Length of data to be written</p>
@@ -2571,12 +2570,11 @@ The number of read bytes changes for different Offset. </p><h3>Input parameters<
 which has to be read. The valid offsets are:</p>
 <ul class="simple">
 <li>0x00: Bluetooth public address, Value length returned: 6 bytes</li>
-<li>0x06: DIV used to derive CSRK, Value length returned: 2 bytes</li>
 <li>0x08: Encryption root key used to derive LTK and CSRK, Value length returned: 16 bytes</li>
 <li>0x18: Identity root key used to derive LTK and CSRK, Value length returned: 16 bytes</li>
 <li>0x80: Static random address. Value length returned: 6 bytes (read-only)</li>
 </ul>
-</td><td><li>0x00: CONFIG_DATA_PUBADDR_OFFSET</li><li>0x06: CONFIG_DATA_DIV_OFFSET</li><li>0x08: CONFIG_DATA_ER_OFFSET</li><li>0x18: CONFIG_DATA_IR_OFFSET</li><li>0x80: CONFIG_DATA_RANDOM_ADDRESS</li></td></tr>
+</td><td><li>0x00: CONFIG_DATA_PUBADDR_OFFSET</li><li>0x08: CONFIG_DATA_ER_OFFSET</li><li>0x18: CONFIG_DATA_IR_OFFSET</li><li>0x80: CONFIG_DATA_RANDOM_ADDRESS</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -5988,7 +5986,7 @@ Controller from the Host.</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT</a></td><td><p>0x03</p>
 </td></tr>
-<tr><td><a href="#HCI_LE_READ_REMOTE_USED_FEATURES_COMPLETE_EVENT_anchor">HCI_LE_READ_REMOTE_USED_FEATURES_COMPLETE_EVENT</a></td><td><p>0x04</p>
+<tr><td><a href="#HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT_anchor">HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT</a></td><td><p>0x04</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_LONG_TERM_KEY_REQUEST_EVENT_anchor">HCI_LE_LONG_TERM_KEY_REQUEST_EVENT</a></td><td><p>0x05</p>
 </td></tr>
@@ -6127,7 +6125,7 @@ Time = N * 1.25 msec</p>
 It shall be a multiple of 10 ms and larger than (1 + connSlaveLatency) * connInterval * 2.
 Time = N * 10 msec.</p>
 </td><td><li>0x000A (100 ms)  ... 0x0C80 (32000 ms) </li></td></tr>
-</table><h2><a name="HCI_LE_READ_REMOTE_USED_FEATURES_COMPLETE_EVENT_anchor">HCI_LE_READ_REMOTE_USED_FEATURES_COMPLETE_EVENT</a></h2><h3>Description</h3><p>The LE Read Remote Used Features Complete event is used to indicate the
+</table><h2><a name="HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT_anchor">HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT</a></h2><h3>Description</h3><p>The LE Read Remote Features Complete event is used to indicate the
 completion of the process of the Controller obtaining the used features of the
 remote Bluetooth device specified by the Connection_Handle event parameter.See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.4</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>

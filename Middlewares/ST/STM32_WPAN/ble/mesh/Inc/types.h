@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    types.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for various type declarations 
 ******************************************************************************
 * @attention
@@ -47,7 +47,7 @@
 * \file types.h
 * \brief This file defines Motorola Solutions Bluetooth LE Mesh Library types.
 *
-* This file contains data types defined in the ST BlueNRG-Mesh Library . Please refer to the
+* This file contains data types defined in the ST BLE-Mesh Library . Please refer to the
 * desription of each type to get the information on it's purpose.
 */
 

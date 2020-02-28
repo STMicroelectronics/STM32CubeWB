@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    light_lc.c
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Light Control model middleware file
 ******************************************************************************
 * @attention
@@ -71,35 +71,32 @@ Light_LC_TimeParam_t Light_LC_TimeParam;
 
 Light_LC_Param_t Light_LC_Param;
 
-Light_LC_ModelFlag_t Light_LC_ModelFlag;
-
-Light_LC_OnOffState_t Light_LC_OnOffState;
-
 MOBLEUINT8 Light_LC_UpdateFlag = 0;
 MOBLEUINT32 Timer_value;
+extern MOBLEUINT8 TidSend;
 #endif
 
 MODEL_OpcodeTableParam_t Light_LC_Opcodes_Table[] = {
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC  
- {LIGHT_LC_MODE_GET,                       MOBLE_TRUE,   0, 0,         LIGHT_LC_MODE_STATUS     , 1, 1},
- {LIGHT_LC_MODE_SET,                       MOBLE_TRUE,   1, 1,         LIGHT_LC_MODE_STATUS     , 1, 1},
- {LIGHT_LC_MODE_SET_UNACK,                 MOBLE_FALSE,  1, 1,         0     , 1, 1},
- {LIGHT_LC_MODE_STATUS,                    MOBLE_FALSE,  1, 1,         0     , 1, 1},
- {LIGHT_LC_OM_GET,                         MOBLE_TRUE,   0, 0,         LIGHT_LC_OM_STATUS       , 1, 1},
- {LIGHT_LC_OM_SET,                         MOBLE_TRUE,   1, 1,         LIGHT_LC_OM_STATUS       , 1, 1},
- {LIGHT_LC_OM_SET_UNACK,                   MOBLE_FALSE,  1, 1,         0       , 1, 1},
- {LIGHT_LC_OM_STATUS,                      MOBLE_FALSE,  1, 1,         0       , 1, 1},
- {LIGHT_LC_ON_OFF_GET,                     MOBLE_TRUE,   0, 0,         LIGHT_LC_ON_OFF_STATUS   , 1, 3},
- {LIGHT_LC_ON_OFF_SET,                     MOBLE_TRUE,   2, 4,         LIGHT_LC_ON_OFF_STATUS   , 1, 3},
- {LIGHT_LC_ON_OFF_SET_UNACK,               MOBLE_FALSE,  2, 4,         0   , 1, 3},
- {LIGHT_LC_ON_OFF_STATUS,                  MOBLE_FALSE,  1, 3,         0   , 1, 3},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_MODE_GET,                       MOBLE_TRUE,   0, 0,         LIGHT_LC_MODE_STATUS     , 1, 1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_MODE_SET,                       MOBLE_TRUE,   1, 1,         LIGHT_LC_MODE_STATUS     , 1, 1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_MODE_SET_UNACK,                 MOBLE_FALSE,  1, 1,         0     , 1, 1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_MODE_STATUS,                    MOBLE_FALSE,  1, 1,         0     , 1, 1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_OM_GET,                         MOBLE_TRUE,   0, 0,         LIGHT_LC_OM_STATUS       , 1, 1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_OM_SET,                         MOBLE_TRUE,   1, 1,         LIGHT_LC_OM_STATUS       , 1, 1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_OM_SET_UNACK,                   MOBLE_FALSE,  1, 1,         0       , 1, 1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_OM_STATUS,                      MOBLE_FALSE,  1, 1,         0       , 1, 1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_ON_OFF_GET,                     MOBLE_TRUE,   0, 0,         LIGHT_LC_ON_OFF_STATUS   , 1, 3},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_ON_OFF_SET,                     MOBLE_TRUE,   2, 4,         LIGHT_LC_ON_OFF_STATUS   , 1, 3},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_ON_OFF_SET_UNACK,               MOBLE_FALSE,  2, 4,         0   , 1, 3},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_ON_OFF_STATUS,                  MOBLE_FALSE,  1, 3,         0   , 1, 3},
 #endif
 
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC_SETUP  
- {LIGHT_LC_PROPERTY_GET,                   MOBLE_TRUE,   2, 2,         LIGHT_LC_PROPERTY_STATUS , 2, 10},
- {LIGHT_LC_PROPERTY_SET,                   MOBLE_TRUE,   2, 10,         LIGHT_LC_PROPERTY_STATUS , 2, 10},
- {LIGHT_LC_PROPERTY_SET_UNACK,             MOBLE_FALSE,  2, 10,         0 , 2, 10},
- {LIGHT_LC_PROPERTY_STATUS,                MOBLE_FALSE,  2, 10,         0 , 2, 10},
+ {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID   ,LIGHT_LC_PROPERTY_GET,                   MOBLE_TRUE,   2, 2,          LIGHT_LC_PROPERTY_STATUS , 2, 10},
+ {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID   ,LIGHT_LC_PROPERTY_SET,                   MOBLE_TRUE,   2, 10,         LIGHT_LC_PROPERTY_STATUS , 2, 10},
+ {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID   ,LIGHT_LC_PROPERTY_SET_UNACK,             MOBLE_FALSE,  2, 10,         0 , 2, 10},
+ {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID   ,LIGHT_LC_PROPERTY_STATUS,                MOBLE_FALSE,  2, 10,         0 , 2, 10}, 
 #endif 
  {0}
 };
@@ -283,7 +280,7 @@ MOBLE_RESULT Light_LC_OnOffSet(MOBLEUINT8 const *lcOnOff_param, MOBLEUINT32 leng
   }
   
   /* Application Callback */
-  (LightLCAppli_cb.LightLC_OnOff_Set_cb)(&Light_LC_OnOffState , 0);
+  (LightLCAppli_cb.LightLC_OnOff_Set_cb)(&Light_LC_Param , 0);
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -299,23 +296,9 @@ MOBLE_RESULT Light_LC_OnOffStatus(MOBLEUINT8* lcOnOff_status, MOBLEUINT32 *pleng
   TRACE_I(TF_LIGHT_LC,"Light_LC_OnOffStatus callback received \r\n");
   
     Appli_LightLC_GetStatus_cb.GetLightLC_OnOffState_cb(LightLC_GetBuff);
-    Light_LC_OnOffState.Present_OnOff_State = LightLC_GetBuff[0];
-  if((Light_LC_ModelFlag.LightLcOptionalParam == 1) || (Light_LC_TimeParam.StepValue != 0))
-  {  
-    *lcOnOff_status = Light_LC_OnOffState.Present_OnOff_State ;
-    *(lcOnOff_status+1) = Light_LC_OnOffState.Target_OnOff;
-    *(lcOnOff_status+2) = Light_LC_OnOffState.RemainingTime;
     
-    *plength = 3; 
-    Light_LC_ModelFlag.LightLcOptionalParam = 0;
-  }
-  else
-  { /* When no optional parameter received, target value will
-    be sent in status message.
-    */
-    *lcOnOff_status = Light_LC_OnOffState.Present_OnOff_State ;
+    *lcOnOff_status = LightLC_GetBuff[0] ;
     *plength = 1;
-  }  
    
   return MOBLE_RESULT_SUCCESS;
 }
@@ -335,8 +318,6 @@ MOBLE_RESULT Light_LC_PropertySet(MOBLEUINT8 const *lcProp_param, MOBLEUINT32 le
   MOBLEUINT32  property_Value;
   
   Light_LC_Value_t Light_LC_Value;
-
-  Light_LC_Value.Property_Value = 0;
 
   Light_LC_PropertyID = lcProp_param[1] << 8;
   Light_LC_PropertyID |= lcProp_param[0];
@@ -440,8 +421,8 @@ MOBLE_RESULT Light_LC_PropertyStatus( MOBLEUINT8* lcData_param, MOBLEUINT32* ple
 /**
 * @brief   Light_LC_GetPropertyID_value: This function is call-back 
 *          from the library to send Model Opcode Table info to library
-* @param  Light_LC_Property_Table_t:  Pointer to the property id table array 
-* @param  pROPERTY_ID: Property id of the parameter.
+* @param  Prop_Value:value belongs to property id
+* @param  prop_ID: Property id of the parameter.
 * @retval MOBLEUINT32
 */ 
 MOBLE_RESULT Light_LC_SetPropertyID_value(MOBLEUINT32 Prop_Value,
@@ -510,8 +491,7 @@ MOBLE_RESULT Light_LC_SetPropertyID_value(MOBLEUINT32 Prop_Value,
 /**
 * @brief   Light_LC_GetPropertyID_value: This function is call-back 
 *          from the library to send Model Opcode Table info to library
-* @param  Light_LC_Property_Table_t:  Pointer to the property id table array 
-* @param  pROPERTY_ID: Property id of the parameter.
+* @param  property_ID: Property id of the parameter.
 * @retval MOBLEUINT32
 */ 
 MOBLEUINT32 Light_LC_GetPropertyID_value(MOBLEUINT16 property_ID)                                             
@@ -601,7 +581,6 @@ MOBLE_RESULT Light_LC_ModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                     MOBLEBOOL response)
 
 {
-  TRACE_M(TF_LIGHT,"response status enable \n\r");
   switch(opcode)
   {
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC 
@@ -696,7 +675,10 @@ MOBLE_RESULT Light_LC_ModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     case LIGHT_LC_ON_OFF_SET:
     case LIGHT_LC_ON_OFF_SET_UNACK:
       {
-        Light_LC_OnOffSet(pRxData,dataLength);      
+        if(!MOBLE_FAILED(result = Chk_TidValidity(peer_addr,dst_peer,pRxData[6])))
+        {
+          Light_LC_OnOffSet(pRxData,dataLength);
+        }      
         break;
       }
     case LIGHT_LC_ON_OFF_STATUS:
@@ -748,14 +730,13 @@ void Light_LC_Fsm(void)
   MOBLEUINT32 resetTime = Clock_Time();
   MOBLEUINT32 delta = resetTime - Timer_value;
   MOBLEUINT8 data_Buff[6];
-  MOBLE_ADDRESS publishAddress;
-  MOBLEUINT8 elementNumber;
-  MOBLEUINT8 elementIndex = 0;
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLE_ADDRESS srcAdd;
   MOBLEUINT16 state_Value = 0;
   MOBLEUINT16 LightnessValue;
   MOBLEUINT16 luxLightnessvalue = 0;
   MOBLEUINT16 opcode;
-  MOBLEUINT8 transitionTime = 0;
+  MOBLEUINT8 transitionTime;
   MOBLEUINT32 length = 5;
   
   static MOBLEUINT8 Publish_flag = 0;
@@ -1281,27 +1262,35 @@ void Light_LC_Fsm(void)
       {
         
       }
-      elementNumber = BLE_GetElementNumber();
-    
-      publishAddress = BLEMesh_GetPublishAddress(elementNumber);
     
       data_Buff[0] = state_Value;
       data_Buff[1] = state_Value >> 8;
-      data_Buff[2] = 0x01;
+      data_Buff[2] = TidSend;
       data_Buff[3] = transitionTime;
+      TidSend++;
+      if(TidSend >= MAX_TID_VALUE)
+     {
+       TidSend = 0;
+     }
+     srcAdd = BLEMesh_GetAddress();
       
-      BLEMesh_SetRemoteData(publishAddress, elementIndex,
+     result = BLEMesh_SetRemotePublication(LIGHT_MODEL_SERVER_LC_MODEL_ID, srcAdd ,
                                 opcode , 
                                 data_Buff, length,
                                 MOBLE_FALSE, MOBLE_FALSE);
+    
+   if(result)
+   {
+     TRACE_I(TF_LIGHT_LC,"Publication Error \r\n");
+   }
       Publish_flag = 0;
    }
 } 
 
 /** 
-* @brief Generic_GetStepValue: This function calculates values for transition time
+* @brief Light_LC_GetStepValue: This function calculates values for transition time
 * @param stepParam: Transition time set value of particular model message.
-* retval void
+* retval MOBLEUINT32
 */
 MOBLEUINT32 Light_LC_GetStepValue(MOBLEUINT8 stepParam)
 {
@@ -1328,9 +1317,9 @@ MOBLEUINT32 Light_LC_GetStepValue(MOBLEUINT8 stepParam)
 }
 
 /** 
-* @brief Generic_GetStepValue: This function calculates values for transition time
-* @param stepParam: Transition time set value of particular model message.
-* retval void
+* @brief Get_TimeToWait: This function calculates the time to wait foe any condition
+* @param Proprety_ID: property id of the parameter
+* retval MOBLEUINT32
 */
 MOBLEUINT32 Get_TimeToWait(MOBLEUINT16 Proprety_ID)
 {
@@ -1349,7 +1338,7 @@ MOBLEUINT32 Get_TimeToWait(MOBLEUINT16 Proprety_ID)
 
 /**
 * @brief  Light_control_Process: Function to execute the transition state machine for
-particular Light LC model and state machine Light LC application
+*         particular Light LC model and state machine Light LC application
 * @param  void
 * @retval void
 */ 
@@ -1371,7 +1360,7 @@ void Light_control_Process(void)
 /**
 * @brief Light_LC_LuxLevelOutputValue: This function will return the lightness value 
          from the lux sensors.
-* @param void:
+* @param property_ID:property id of the parameter
 * @retval MOBLEUINT16:    
 **/
 MOBLEUINT16 Light_LC_LuxLevelOutputValue(MOBLEUINT16 property_ID)
@@ -1392,7 +1381,8 @@ MOBLEUINT16 Light_LC_LuxLevelOutputValue(MOBLEUINT16 property_ID)
 /**
 * @brief Light_LC_MaxLightnessValue: This function will return the  maximum value 
          after comparision.
-* @param void:
+* @param Param1:paramter to the function
+* @param Param2:paramter to the function
 * @retval MOBLEUINT16:    
 **/
 MOBLEUINT16 Light_LC_MaxLightnessValue(MOBLEUINT16 Param1,MOBLEUINT16 Param2)

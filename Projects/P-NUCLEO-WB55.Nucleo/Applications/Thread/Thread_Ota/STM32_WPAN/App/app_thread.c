@@ -105,6 +105,7 @@ static void RxCpltCallback(void);
 
 /* USER CODE BEGIN PFP */
 static void Delete_Sectors( void );
+static uint32_t GetFirstSecureSector(void);
 
 static void APP_THREAD_DummyReqHandler(void                * p_context,
     otCoapHeader        * pHeader,
@@ -516,7 +517,7 @@ static void Delete_Sectors( void )
   FLASH_EraseInitTypeDef p_erase_init;
   uint32_t first_secure_sector_idx;
 
-  first_secure_sector_idx = (READ_BIT(FLASH->SFR, FLASH_SFR_SFSA) >> FLASH_SFR_SFSA_Pos);
+  first_secure_sector_idx = GetFirstSecureSector();
 
   p_erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
   p_erase_init.Page = *((uint8_t*) SRAM1_BASE + 1);
@@ -536,7 +537,6 @@ static void Delete_Sectors( void )
     p_erase_init.NbPages = first_secure_sector_idx - p_erase_init.Page;
   }
 
-  APP_DBG("SFSA Option Bytes set to sector = %d (0x080%x)", first_secure_sector_idx, first_secure_sector_idx*4096);
   APP_DBG("Erase FLASH Memory from sector %d (0x080%x) to sector %d (0x080%x)", p_erase_init.Page, p_erase_init.Page*4096, p_erase_init.NbPages+p_erase_init.Page, (p_erase_init.NbPages+p_erase_init.Page)*4096);
 
   HAL_FLASH_Unlock();
@@ -546,6 +546,38 @@ static void Delete_Sectors( void )
   HAL_FLASH_Lock();
 
   return;
+}
+
+static uint32_t GetFirstSecureSector(void)
+{
+  uint32_t first_secure_sector_idx, sfsa_field, sbrv_field, sbrv_field_sector;
+
+  /* Read SFSA */
+  sfsa_field = (READ_BIT(FLASH->SFR, FLASH_SFR_SFSA) >> FLASH_SFR_SFSA_Pos);
+  APP_DBG("SFSA OB = 0x%x", sfsa_field);
+  APP_DBG("SFSA Option Bytes set to sector = 0x%x (0x080%x)", sfsa_field, sfsa_field*4096);
+
+  /* Read SBRV */
+  /* Contains the word aligned CPU2 boot reset start address offset within the selected memory area by C2OPT. */
+  sbrv_field = (READ_BIT(FLASH->SRRVR, FLASH_SRRVR_SBRV) >> FLASH_SRRVR_SBRV_Pos);
+  APP_DBG("SBRV OB = 0x%x", sbrv_field);
+  /* Divide sbrv_field by 1024 to be compared to SFSA value */
+  sbrv_field_sector = sbrv_field / 1024;
+  APP_DBG("SBRV Option Bytes set to sector = 0x%x (0x080%x)", sbrv_field_sector, sbrv_field*4);
+
+  /* If SBRV is below SFSA then set first_secure_sector_idx to SBRV */
+  if (sbrv_field_sector < sfsa_field)
+  {
+    first_secure_sector_idx = sbrv_field_sector;
+  }
+  else
+  {
+    first_secure_sector_idx = sfsa_field;
+  }
+
+  APP_DBG("first_secure_sector_idx = 0x%x", first_secure_sector_idx);
+
+  return first_secure_sector_idx;
 }
 
 /**
@@ -699,8 +731,7 @@ static APP_THREAD_StatusTypeDef APP_THREAD_CheckDeviceCapabilities(void)
 
   APP_DBG("Check Device capabilities");
 
-  first_secure_sector_idx = (READ_BIT(FLASH->SFR, FLASH_SFR_SFSA) >> FLASH_SFR_SFSA_Pos);
-  APP_DBG("SFSA Option Bytes set to sector = %d (0x080%x)", first_secure_sector_idx, first_secure_sector_idx*4096);
+  first_secure_sector_idx = GetFirstSecureSector();
 
   first_sector_idx = *((uint8_t*) SRAM1_BASE + 1);
   if (first_sector_idx == 0)
@@ -1186,7 +1217,7 @@ void APP_THREAD_Init_UART_CLI(void)
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
 #if (CFG_FULL_LOW_POWER == 0)
-  MX_USART1_UART_Init();
+  MX_LPUART1_UART_Init();
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */

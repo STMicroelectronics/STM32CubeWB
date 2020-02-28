@@ -1,12 +1,12 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : app_conf.h
   * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -28,6 +29,35 @@
 /******************************************************************************
  * Application Config
  ******************************************************************************/
+
+/**
+ * Define Secure Connections Support
+ */
+#define CFG_SECURE_NOT_SUPPORTED       (0x00)
+#define CFG_SECURE_OPTIONAL            (0x01)
+#define CFG_SECURE_MANDATORY           (0x02)
+
+#define CFG_SC_SUPPORT                 CFG_SECURE_OPTIONAL
+
+/**
+ * Define Keypress Notification Support
+ */
+#define CFG_KEYPRESS_NOT_SUPPORTED      (0x00)
+#define CFG_KEYPRESS_SUPPORTED          (0x01)
+
+#define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
+   
+/**
+ * Numeric Comparison Answers
+ */   
+#define YES (0x01)
+#define NO  (0x00)
+
+/**
+ * Device name configuration for Generic Access Service
+ */
+#define CFG_GAP_DEVICE_NAME             "TEMPLATE"
+#define CFG_GAP_DEVICE_NAME_LENGTH      (8)
 
 /**
 *   Identity root key used to derive LTK and CSRK
@@ -212,7 +242,7 @@
  * Select UART interfaces
  */
 #define CFG_UART_GUI          hw_uart1
-#define CFG_DEBUG_TRACE_UART    
+#define CFG_DEBUG_TRACE_UART    0
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -411,11 +441,11 @@ typedef enum
 /**< Add in that list all tasks that may send a ACI/HCI command */
 typedef enum
 {
-  CFG_TASK_BLE_HCI_CMD_ID,
-  CFG_TASK_SYS_HCI_CMD_ID,
-  CFG_TASK_HCI_ACL_DATA_ID,
-  CFG_TASK_SYS_LOCAL_CMD_ID,
-  CFG_TASK_TX_TO_HOST_ID,
+    CFG_TASK_BLE_HCI_CMD_ID,
+    CFG_TASK_SYS_HCI_CMD_ID,
+    CFG_TASK_HCI_ACL_DATA_ID,
+    CFG_TASK_SYS_LOCAL_CMD_ID,
+    CFG_TASK_TX_TO_HOST_ID,
 /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
 
 /* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */

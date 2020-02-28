@@ -49,6 +49,8 @@
 #include "appli_mesh.h"
 #include "models_if.h"
 #include "mesh_cfg.h"
+#include "appli_config_client.h"
+#include "appli_nvm.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,6 +67,9 @@ const MOBLE_USER_BLE_CB_MAP user_ble_cb =
   Appli_BleSetNumberOfElementsCb,
   Appli_BleDisableFilterCb
 };
+
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 
 /* This structure contains Mesh library Initialisation info data */
 const Mesh_Initialization_t BLEMeshlib_Init_params = 
@@ -97,6 +102,12 @@ extern MOBLEUINT8 bdaddr[];
  */
 void MESH_Init(void)
 {
+  MOBLEUINT8 uuid[16];
+  MOBLEUINT8 PrvnDevKeyFlag = 0;
+#if PROVISIONER_FEATURE
+//   MOBLEUINT8 prvsnrDevKey[16];
+#endif
+  
   /* Check for valid Board Address */
   if (!Appli_CheckBdMacAddr())
   {
@@ -114,7 +125,7 @@ void MESH_Init(void)
   /* Initializes BLE-Mesh Library */
   if (MOBLE_FAILED(BLEMesh_Init(&BLEMeshlib_Init_params)))
   {
-    TRACE_I(TF_INIT,"Could not initialize BlueNRG-Mesh library!\r\n");   
+    TRACE_I(TF_INIT,"Could not initialize BLE-Mesh library!\r\n");   
     /* LED continuously blinks if library fails to initialize */
     while (1)
     {
@@ -122,10 +133,30 @@ void MESH_Init(void)
     }
   }
   
+/* Check if Node is a Provisioner */
+//#if PROVISIONER_FEATURE
+//  MOBLEUINT8 prvsnrDevKey[16];
+//  /* Initializes Mesh network parameters */
+//  BluenrgMesh_CreateNetwork(prvsnrDevKey);
+//  
+//  /* Following functions help to Configure the Provisioner to default settings*/
+//  ApplicationSetNodeSigModelList();
+//  AppliConfigClient_SelfPublicationSetDefault();
+//  AppliConfigClient_SelfSubscriptionSetDefault();
+//  Appli_ConfigClient_SelfDefaultAppKeyBind();
+//
+//  TRACE_I(TF_PROVISION,"Provisioner node \r\n");
+//  TRACE_I(TF_PROVISION,"Provisioner Dev Key:");
+//   for(MOBLEUINT8 i=0;i<16;i++)
+//  {
+//    TRACE_I(TF_INIT,"[%02x] ",prvsnrDevKey[i]);
+//  }
+//  TRACE_I(TF_INIT,"\r\n");  
+  
+//#else
   /* Checks if the node is already provisioned or not */
   if (BLEMesh_IsUnprovisioned() == MOBLE_TRUE)
   {
-//    BluenrgMesh_UnprovisionedNodeInfo(&UnprovNodeInfoParams);
     BLEMesh_InitUnprovisionedNode(); /* Initalizes Unprovisioned node */
 
     TRACE_I(TF_PROVISION,"Unprovisioned device \r\n");
@@ -138,34 +169,52 @@ void MESH_Init(void)
   {
     BLEMesh_InitProvisionedNode();  /* Initalizes Provisioned node */
     TRACE_I(TF_PROVISION,"Provisioned node \r\n");
+    TRACE_I(TF_INIT,"Provisioned Node Address: [%04x] \n\r", BLEMesh_GetAddress());       
   }
-  
+//#endif  
   /* Initializes the Application */
-  Appli_Init();
+  /* This function also checks for Power OnOff Cycles     
+     Define the following Macro "ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE" 
+     to check the Power-OnOff Cycles
+    5 Continous cycles of OnOff with Ontime <2 sec will cause unprovisioning
+  */
+  Appli_Init(&PrvnDevKeyFlag);
+#if PROVISIONER_FEATURE  
+//  AppliNvm_saveProvisionerDevKey(&prvsnrDevKey[0],
+//                                 sizeof(prvsnrDevKey),
+//                                 &PrvnDevKeyFlag);  
+#endif  
   
 /* Check to manually unprovision the board */
   Appli_CheckForUnprovision();
   /* Set attention timer callback */
   BLEMesh_SetAttentionTimerCallback(Appli_BleAttentionTimerCb);
 
+  /* Set uuid for the board*/
+  Appli_BleSetUUIDCb(uuid);
+  
   /* Prints the MAC Address of the board */ 
   TRACE_I(TF_INIT,"BLE-Mesh Lighting Demo v%s\n\r", BLE_MESH_APPLICATION_VERSION); 
   TRACE_I(TF_INIT,"BLE-Mesh Library v%s\n\r", BLEMesh_GetLibraryVersion()); 
   TRACE_I(TF_INIT,"BD_MAC Address = [%02x]:[%02x]:[%02x]:[%02x]:[%02x]:[%02x] \n\r",
           bdaddr[5],bdaddr[4],bdaddr[3],bdaddr[2],bdaddr[1],bdaddr[0]);
-
+  TRACE_I(TF_INIT,"UUID Address = ");
+  for(MOBLEUINT8 i=0;i<16;i++)
+  {
+    TRACE_I(TF_INIT,"[%02x] ",uuid[i]);
+  }
+  TRACE_I(TF_INIT,"\r\n");
   /* Models intialization */  
   BLEMesh_ModelsInit();
+
   /* Turn on Yellow LED */
-#if 0
 #if (LOW_POWER_FEATURE == 1)
-  SdkEvalLedOn(LED1);
+//  BSP_LED_On(LED_RED);
 #endif
   
 #ifdef CUSTOM_BOARD_PWM_SELECTION  
   Light_UpdatePWMValue((MOBLEUINT8)DEFAULT_STATE);
 #endif
-#endif 
 }
 
 /************************ (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

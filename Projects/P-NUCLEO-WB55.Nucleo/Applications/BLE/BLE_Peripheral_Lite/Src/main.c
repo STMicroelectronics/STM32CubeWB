@@ -77,8 +77,6 @@ detailed procedure to change the Wireless Coprocessor binary.
 #define APP_FLAG_BLE_INITIALIZED            3
 #define APP_FLAG_BLE_ADVERTISING            4
 #define APP_FLAG_BLE_CONNECTED              5
-#define APP_FLAG_HCI_COMMAND_SENT          16
-#define APP_FLAG_SHCI_COMMAND_SENT         17
 #define APP_FLAG_HCI_EVENT_PENDING         18
 #define APP_FLAG_SHCI_EVENT_PENDING        19
 #define APP_FLAG_GET(flag)                  VariableBit_Get_BB(((uint32_t)&APP_State), flag)
@@ -726,39 +724,6 @@ void shci_notify_asynch_evt(void* pdata)
 }
 
 /**
-* @brief  This function informs the user that the response of the pending
-*         system command has been received. It is called in the IPCC interrupt
-*         context. When moving out from this API, the application may return
-*         from the API shci_cmd_resp_wait().
-* @param  flag: Release flag, always 0 (unused)
-* @retval None
-*/
-void shci_cmd_resp_release(uint32_t flag)
-{
-  APP_FLAG_RESET(APP_FLAG_SHCI_COMMAND_SENT);
-  return;
-}
-
-/**
-* @brief  This function is called when an System HCI Command is sent and the response
-*         is waited from the CPU2.
-*         The application shall implement a mechanism to not return from this function 
-*         until the waited event is received.
-*         This is notified to the application with shci_cmd_resp_release().
-*         It is called from the same context the System HCI command has been sent.
-*
-* @param  timeout: Waiting timeout, SHCI_TL_DEFAULT_TIMEOUT passed (fixed to 33 seconds as of today)
-* @retval None
-*/
-void shci_cmd_resp_wait(uint32_t timeout)
-{
-  APP_FLAG_SET(APP_FLAG_SHCI_COMMAND_SENT);
-  while (APP_FLAG_GET(APP_FLAG_SHCI_COMMAND_SENT) == 1);
-  return;
-}
-
-
-/**
 * @brief As stated in AN5289, this is the system event user callback. It is
 *        registered and passed as argument to shci_init() function.
 *        This reports the received system user event.
@@ -892,37 +857,6 @@ static void SYS_ProcessEvent(void)
 void hci_notify_asynch_evt(void* pdata)
 {
   APP_FLAG_SET(APP_FLAG_HCI_EVENT_PENDING);
-  return;
-}
-
-/**
-* @brief  As stated in AN5289, this function is called when an ACI/HCI command is sent and the response is
-*         received from the BLE core.
-*
-* @param  flag: Release flag, always 0 (unused)
-* @retval None
-*/
-void hci_cmd_resp_release(uint32_t flag)
-{
-  APP_FLAG_RESET(APP_FLAG_HCI_COMMAND_SENT);
-  return;
-}
-
-/**
-* @brief  As stated in AN5289, this function is called when an ACI/HCI command is sent and the response 
-*         is waited from the BLE core.
-*         The application shall implement a mechanism to not return from this function 
-*         until the waited event is received.
-*         This is notified to the application with hci_cmd_resp_release().
-*         It is called from the same context the HCI command has been sent.
-*
-* @param  timeout: Waiting timeout, HCI_TL_DEFAULT_TIMEOUT passed (fixed to 33 seconds as of today)
-* @retval None
-*/
-void hci_cmd_resp_wait(uint32_t timeout)
-{
-  APP_FLAG_SET(APP_FLAG_HCI_COMMAND_SENT);
-  while (APP_FLAG_GET(APP_FLAG_HCI_COMMAND_SENT) == 1);
   return;
 }
 

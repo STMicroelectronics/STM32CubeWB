@@ -36,20 +36,6 @@ typedef PACKED_STRUCT
   uint8_t reserved;
 } APPD_GpioConfig_t;
 
-typedef PACKED_STRUCT
-{
-  uint8_t thread_config;
-  uint8_t ble_config;
-  uint8_t mac_802_15_4;
-  uint8_t reserved;
-} APPD_TracesConfig_t;
-
-typedef PACKED_STRUCT
-{
-  uint8_t ble_dtb_cfg;
-  uint8_t reserved[3];
-} APPD_GeneralConfig_t;
-
 /* Private defines -----------------------------------------------------------*/
 #define GPIO_NBR_OF_RF_SIGNALS                  9
 #define GPIO_CFG_NBR_OF_FEATURES                34
@@ -63,8 +49,8 @@ typedef PACKED_STRUCT
 
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static APPD_TracesConfig_t APPD_TracesConfig={0, 0, 0, 0};
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static APPD_GeneralConfig_t APPD_GeneralConfig={BLE_DTB_CFG, {0, 0, 0}};
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_TracesConfig_t APPD_TracesConfig={0, 0, 0, 0};
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_GeneralConfig_t APPD_GeneralConfig={BLE_DTB_CFG, {0, 0, 0}};
 
 /**
  * THE DEBUG ON GPIO FOR CPU2 IS INTENDED TO BE USED ONLY ON REQUEST FROM ST SUPPORT
@@ -124,15 +110,15 @@ static const APPD_GpioConfig_t aGpioConfigList[GPIO_CFG_NBR_OF_FEATURES] =
 #if( BLE_DTB_CFG == 7)
 static const APPD_GpioConfig_t aRfConfigList[GPIO_NBR_OF_RF_SIGNALS] =
 {
-    { GPIOB, LL_GPIO_PIN_2, 0, 0},      /* DTB10 */
-    { GPIOB, LL_GPIO_PIN_7, 0, 0},      /* DTB11 */
-    { GPIOA, LL_GPIO_PIN_8, 0, 0},      /* DTB12 */
-    { GPIOA, LL_GPIO_PIN_9, 0, 0},      /* DTB13 */
-    { GPIOA, LL_GPIO_PIN_10, 0, 0},     /* DTB14 */
-    { GPIOA, LL_GPIO_PIN_11, 0, 0},     /* DTB15 */
-    { GPIOB, LL_GPIO_PIN_8, 0, 0},      /* DTB16 */
-    { GPIOB, LL_GPIO_PIN_11, 0, 0},     /* DTB17 */
-    { GPIOB, LL_GPIO_PIN_10, 0, 0},     /* DTB18 */
+    { GPIOB, LL_GPIO_PIN_2, 0, 0},      /* DTB10 - Tx/Rx SPI */
+    { GPIOB, LL_GPIO_PIN_7, 0, 0},      /* DTB11 - Tx/Tx SPI Clk */
+    { GPIOA, LL_GPIO_PIN_8, 0, 0},      /* DTB12 - Tx/Rx Ready & SPI Select */
+    { GPIOA, LL_GPIO_PIN_9, 0, 0},      /* DTB13 - Tx/Rx Start */
+    { GPIOA, LL_GPIO_PIN_10, 0, 0},     /* DTB14 - FSM0 */
+    { GPIOA, LL_GPIO_PIN_11, 0, 0},     /* DTB15 - FSM1 */
+    { GPIOB, LL_GPIO_PIN_8, 0, 0},      /* DTB16 - FSM2 */
+    { GPIOB, LL_GPIO_PIN_11, 0, 0},     /* DTB17 - FSM3 */
+    { GPIOB, LL_GPIO_PIN_10, 0, 0},     /* DTB18 - FSM4 */
 };
 #endif
 

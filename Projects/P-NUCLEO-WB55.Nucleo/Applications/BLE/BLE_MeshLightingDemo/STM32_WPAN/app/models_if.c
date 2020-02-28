@@ -33,21 +33,28 @@
 #include "appli_nvm.h"
 #include "ble_hci_le.h"
 #include "models_if.h"
-//#include "bluenrg1_api.h"
+
 #include "PWM_config.h"
 #include "PWM_handlers.h"
 #include "appli_light_lc.h"
 #include "light_lc.h"
+#ifdef ENABLE_PROVISIONER_FEATURE
+#include "appli_generic_client.h"
+#include "config_client.h"
+#endif
+#include "generic_client.h"
+#include "appli_light_client.h"
 
-/** @addtogroup BLE_Mesh
+/** @addtogroup ST_BLE_Mesh
 *  @{
 */
 
-/** @addtogroup models_BLE
+/** @addtogroup Application_Mesh_Models
 *  @{
 */
 
 /* Private typedef -----------------------------------------------------------*/
+#pragma pack(1)
 typedef struct
 {
   MOBLE_ADDRESS peer;
@@ -57,7 +64,6 @@ typedef struct
   MOBLEUINT32 length;
 } APPLI_SEND_RESPONSE_MODULE;
 
-
 typedef struct
 {
   MOBLEUINT8 packet_count;
@@ -66,6 +72,7 @@ typedef struct
   MOBLEUINT8 head_index;
   APPLI_SEND_RESPONSE_MODULE packet[MAX_PENDING_PACKETS_QUE_SIZE];
 } APPLI_PENDING_PACKETS;
+#pragma pack(4)
 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -90,7 +97,8 @@ const Appli_Vendor_cb_t VendorAppli_cb =
   Appli_Vendor_DeviceInfo,
   Appli_Vendor_Test,
   Appli_LedCtrl,
-  Appli_GetTestValue 
+  Appli_GetTestValue, 
+  Appli_Vendor_Data_write
 };
 
 __attribute__((aligned(4)))   
@@ -98,17 +106,25 @@ const Appli_Generic_cb_t GenericAppli_cb =
 {
   /* Generic OnOff callbacks */
   Appli_Generic_OnOff_Set,
-  
+  /* Generic OnOff Status callbacks */
+  Appli_Generic_OnOff_Status,
   /* Generic Level callbacks */
   Appli_Generic_Level_Set,
   Appli_Generic_LevelDelta_Set,
   Appli_Generic_LevelMove_Set,
-  
+  /* Generic Level Status callbacks */ 
+  Appli_Generic_Level_Status,
   /* Generic Power on off callbacks */
   Appli_Generic_PowerOnOff_Set,
+  /* Generic Power on off callbacks */
+  Appli_Generic_PowerOnOff_Status,
+    
+  Appli_Generic_Restore_PowerOn_Value,
     
   /* Generic Default transition time callbacks */  
-  Appli_Generic_DefaultTransitionTime_Set
+  Appli_Generic_DefaultTransitionTime_Set,
+  /* Generic Default transition time callbacks */
+  Appli_Generic_DefaultTransitionTime_Status
 };
 
 __attribute__((aligned(4))) 
@@ -142,6 +158,7 @@ const Appli_Light_GetStatus_cb_t Appli_Light_GetStatus_cb =
   Appli_Light_GetHslSaturationStatus,
   Appli_Light_GetHslHueRange,
   Appli_Light_GetHslSatRange,
+  Appli_Light_GetHslDefaultStatus  
 };
 
 
@@ -150,20 +167,43 @@ const Appli_Light_cb_t LightAppli_cb =
 {
   /* Light Lightness callbacks */
   Appli_Light_Lightness_Set,
+  Appli_Light_Lightness_Status,
+  
   Appli_Light_Lightness_Linear_Set,
+  Appli_Light_Lightness_Linear_Status,
+  
   Appli_Light_Lightness_Default_Set,
+  Appli_Light_Lightness_Default_Status,
+  
   Appli_Light_Lightness_Range_Set,
+  Appli_Light_Lightness_Range_Status,
   
   Appli_Light_Ctl_Set,
+  Appli_Light_Ctl_Status,
+  
   Appli_Light_CtlTemperature_Set,
+  Appli_Light_CtlTemperature_Status,
+  
   Appli_Light_CtlTemperature_Range_Set,
+  Appli_Light_CtlTemperature_Range_Status,
+  
   Appli_Light_CtlDefault_Set,
+  Appli_Light_CtlDefault_Status,
   
   Appli_Light_Hsl_Set,
+  Appli_Light_Hsl_Status,
+  
   Appli_Light_HslHue_Set,
+  Appli_Light_HslHue_Status,
+  
   Appli_Light_HslSaturation_Set,
+  Appli_Light_HslSaturation_Status,
+  
   Appli_Light_HslDefault_Set,
-  Appli_Light_HslRange_Set
+  Appli_Light_HslDefault_Status,
+  
+  Appli_Light_HslRange_Set,
+  Appli_Light_HslRange_Status
 };
 
 
@@ -211,11 +251,14 @@ const Appli_Sensor_GetStatus_cb_t Appli_Sensor_GetStatus_cb =
 __attribute__((aligned(4))) 
 const MODEL_SIG_cb_t Model_SIG_cb[] = 
 {
+#ifdef ENABLE_GENERIC_MODEL_SERVER  
   {
     GenericModelServer_GetOpcodeTableCb,
     GenericModelServer_GetStatusRequestCb,
     GenericModelServer_ProcessMessageCb
   },
+#endif
+  
 #ifdef ENABLE_LIGHT_MODEL_SERVER
   {
     LightModelServer_GetOpcodeTableCb,
@@ -223,27 +266,42 @@ const MODEL_SIG_cb_t Model_SIG_cb[] =
     LightModelServer_ProcessMessageCb
   },
 #endif
-#if defined(ENABLE_SENSOR_MODEL_SERVER) || defined(ENABLE_SENSOR_MODEL_SERVER_SETUP)
+#ifdef ENABLE_SENSOR_MODEL_SERVER
 {
   SensorModelServer_GetOpcodeTableCb,
   SensorModelServer_GetStatusRequestCb,
   SensorModelServer_ProcessMessageCb
   },
 #endif
-#if defined(ENABLE_TIME_MODEL_SERVER) || defined(ENABLE_SCENE_MODEL_SERVER)
+#ifdef ENABLE_TIME_SCENE_MODEL_SERVER
   {
     Time_SceneModelServer_GetOpcodeTableCb,
     Time_SceneModelServer_GetStatusRequestCb,
     Time_SceneModelServer_ProcessMessageCb
   },
 #endif
-#if defined(ENABLE_LIGHT_MODEL_SERVER_LC) || defined(ENABLE_LIGHT_MODEL_SERVER_LC_SETUP)
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC
   {
     Light_LC_ModelServer_GetOpcodeTableCb,
     Light_LC_ModelServer_GetStatusRequestCb,
     Light_LC_ModelServer_ProcessMessageCb
   },
 #endif
+#ifdef ENABLE_GENERIC_MODEL_CLIENT
+  {
+    GenericModelClient_GetOpcodeTableCb,
+    GenericModelClient_GetStatusRequestCb,
+    GenericModelClient_ProcessMessageCb
+  },
+#endif  
+#ifdef ENABLE_CONFIG_MODEL_CLIENT
+  {
+    ConfigClientModel_GetOpcodeTableCb,
+    ConfigClientModel_GetStatusRequestCb,
+    ConfigClientModel_ProcessMessageCb
+  },
+#endif
+  
   { 0, 0,0 }
 };
 
@@ -254,11 +312,13 @@ __attribute__((aligned(4))) const APPLI_SAVE_MODEL_STATE_CB SaveModelState_cb = 
 __attribute__((aligned(4))) 
 const MODEL_Vendor_cb_t Model_Vendor_cb[] = 
 {
+#ifdef ENABLE_VENDOR_MODEL_SERVER  
   {
     VendorModel_PID1_GetOpcodeTableCb,
     VendorModel_PID1_GetStatusRequestCb,
     VendorModel_PID1_ProcessMessageCb
   },
+#endif  
   { 0, 0,0 }
 };
 
@@ -284,18 +344,27 @@ void GetApplicationVendorModels(const MODEL_Vendor_cb_t** pModelsTable, MOBLEUIN
 */    
 void BLEMesh_ModelsInit(void)
 {
+  
+#ifdef ENABLE_SAVE_MODEL_STATE_NVM
+  
   MOBLEUINT8 modelStateLoad_Size;
   MOBLEUINT8 modelStateLoadBuff[APP_NVM_MODEL_SIZE];    
   
+#ifdef CLIENT
+  MOBLEUINT8 PrvnStateLoad_Size;
+  MOBLEUINT8 PrvnlStateLoadBuff[16]; 
+#endif
+  
   /* Callbacks used by BLE-Mesh Models */
   BLEMesh_SetSIGModelsCbMap(Model_SIG_cb, MODEL_SIG_COUNT);
-  
-  
-  /* Initialization of PWM value to 1 */
-  Appli_Light_PwmInit();
-  
+ 
   /* Load generic model states from nvm */
   AppliNvm_LoadModelState(modelStateLoadBuff, &modelStateLoad_Size);
+  
+#ifdef CLIENT
+  AppliPrvnNvm_LoadData(PrvnlStateLoadBuff,&PrvnStateLoad_Size);
+#endif
+  
   if (modelStateLoad_Size != 0)
   {
     /* update states of generic model */
@@ -306,6 +375,8 @@ void BLEMesh_ModelsInit(void)
   /* Initiallization of sensors */
   Appli_Sensor_Init();
 #endif  
+
+#endif  
 }
 
 /**
@@ -315,18 +386,29 @@ void BLEMesh_ModelsInit(void)
 */    
 void BLEMesh_ModelsProcess(void)
 {
+#ifdef ENABLE_GENERIC_MODEL_SERVER  
   Generic_Process();
+#endif
+
+#ifdef ENABLE_LIGHT_MODEL_SERVER  
   Lighting_Process();
+#endif
+
+#ifdef ENABLE_VENDOR_MODEL_SERVER  
   Vendor_Process();
+#endif  
 /* Define this Macro to enable the publication of sensors data.*/ 
 #if defined ENABLE_SENSOR_MODEL_SERVER 
   Sensor_Process();
 #endif  
 
-#ifdef ENABLE_APPLI_TEST  
+#if ENABLE_APPLI_TEST  
   Test_Process();
 #endif   
+
+#ifdef ENABLE_SAVE_MODEL_STATE_NVM  
   ModelSave_Process();
+#endif
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC   
   Light_control_Process();
@@ -340,44 +422,25 @@ void BLEMesh_ModelsProcess(void)
 */    
 void BLEMesh_ModelsCommand(void)
 {
-  MOBLE_ADDRESS publishAddress;
-  MOBLEUINT8 elementNumber = 0;
-  MOBLEUINT8 elementIndex;
+  MOBLE_ADDRESS srcAdd = BLEMesh_GetAddress();
   
-  /*Select the Element Number for which publication address is required*/
+#ifdef VENDOR_CLIENT_MODEL_PUBLISH     
+  Vendor_Publish(srcAdd);
+#endif
   
-  if (NumberOfElements == 1)
-  {
-    elementNumber = 0x01; 
-  }
-  
-  else if(NumberOfElements == 2)
-  { 
-    elementNumber = 0x02; /*Element 2 is configured as switch*/
-  }
-  
-  else if(NumberOfElements == 3)
-  {
-    elementNumber = 0x03; /*Element 3 is configured as switch*/
-  }
-  
-  publishAddress = BLEMesh_GetPublishAddress(elementNumber);
-  elementIndex = elementNumber-1;
- 
-  if(publishAddress)
-  {
-    TRACE_M(TF_ADDRESS,"Published Address is= 0x%2x \n\r", publishAddress); 
-  }
-  else
-  {
-    TRACE_M(TF_ADDRESS,"Publish Address is unassigned!\r\n"); 
-  }
-  
-#ifdef VENDOR_MODEL_PUBLISH   
-  Vendor_Publish(publishAddress, elementIndex);
-#else
-  Generic_Publish(publishAddress, elementIndex);
+#ifdef GENERIC_CLIENT_MODEL_PUBLISH  
+  Generic_Publish(srcAdd);
+//  Appli_GenericClient_OnOff_Set();
 #endif  
+
+#ifndef CLIENT
+/* if CLIENT and SERVER => Publish is already done in CLIENT */
+#ifdef GENERIC_SERVER_MODEL_PUBLISH 
+  Generic_Publish(srcAdd);
+#else
+  Vendor_Publish(srcAdd);
+#endif
+#endif
 }
 
 /**
@@ -409,8 +472,8 @@ MOBLE_RESULT BLEMesh_ModelsCheckSubscription(MOBLE_ADDRESS dst_peer, \
   MOBLE_RESULT status = MOBLE_RESULT_FAIL;
   MOBLE_ADDRESS subscriptionList[10] = {0};
   MOBLEUINT8 length;
-  
-  BLEMesh_GetSubscriptionAddress(subscriptionList,&length,elementNumber);
+  MOBLEUINT32 modelId = GENERIC_MODEL_SERVER_LEVEL_MODEL_ID;
+  BLEMesh_GetSubscriptionAddress(subscriptionList,&length,elementNumber, modelId);
   
   
   for(uint8_t list=0; list<length; list++)
@@ -454,7 +517,7 @@ void BLEMesh_ModelsDelayPacket(MOBLE_ADDRESS peer,
           %DEFAULT_DELAY_PACKET_RANDOM_TIME;    
     Appli_PendingPackets.head = Appli_PendingPackets.packet;
     Appli_PendingPackets.head_index = 0;
-    TRACE_M(TF_MISC, "Randomized time: %d\n\r", Appli_PendingPackets.send_time - Clock_Time());	
+    TRACE_M(TF_MISC, "Randomized time: %ld\n\r", Appli_PendingPackets.send_time - Clock_Time());
   }
   else 
   {
@@ -517,6 +580,34 @@ void BLEMesh_ModelsSendDelayedPacket(void)
   }
 }
 
+/** \brief Set remote publication for the given Model ID & node Address
+* User is responsible for serializing data into \a data buffer. Vendor_WriteLocalDataCb 
+*                                  callback will be called on the remote device.
+* @param modelId ID of the model. 
+* @param srcAddress element Address of the Node
+* @param command vendor model commands 
+* @param data Data buffer.
+* @param length Length of data in bytes.
+* @param response If 'MOBLE_TRUE', used to get the response. If 'MOBLE_FALSE', no response 
+* @return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT MeshClient_SetRemotePublication(MOBLEUINT32 modelId, MOBLEUINT16 elementIdx,
+                                              MOBLEUINT16 msg_opcode, MOBLEUINT8 const *msg_buff, 
+                                              MOBLEUINT32 length, MOBLEBOOL ack_flag,
+                                              MOBLEUINT8 isVendor)
+{
+    MOBLE_ADDRESS srcAddress;
+      
+    srcAddress = BLEMesh_GetAddress();
+    srcAddress += elementIdx;  /* Get the Address to send in the message */
+    
+    return BLEMesh_SetRemotePublication(GENERIC_MODEL_SERVER_ONOFF_MODEL_ID, 
+                                            srcAddress ,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+}
 
 /**
 * @brief  Convert ASCII value into Character

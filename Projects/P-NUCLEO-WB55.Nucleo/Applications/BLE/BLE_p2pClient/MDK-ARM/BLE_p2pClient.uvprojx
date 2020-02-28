@@ -396,6 +396,11 @@
               <FilePath>../Core/Src/main.c</FilePath>
             </File>
             <File>
+              <FileName>app_debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/app_debug.c</FilePath>
+            </File>
+            <File>
               <FileName>app_entry.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/app_entry.c</FilePath>

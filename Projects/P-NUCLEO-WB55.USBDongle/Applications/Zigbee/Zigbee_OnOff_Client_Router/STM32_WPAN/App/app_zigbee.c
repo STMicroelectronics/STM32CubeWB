@@ -57,12 +57,14 @@ static void Receive_Notification_From_M0(void);
 /* Private variables -----------------------------------------------*/
 static TL_CmdPacket_t *p_ZIGBEE_otcmdbuffer;
 static TL_EvtPacket_t *p_ZIGBEE_notif_M0_to_M4;
-static __IO uint32_t CptReceiveMsgFromM0 = 0;
+static TL_EvtPacket_t *p_ZIGBEE_request_M0_to_M4;
+static __IO uint32_t CptReceiveNotifyFromM0 = 0;
+static __IO uint32_t CptReceiveRequestFromM0 = 0;
 
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_ZIGBEE_Config_t ZigbeeConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ZigbeeOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifLoggingBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRequestBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 
 struct zigbee_app_info {
   bool has_init;
@@ -95,7 +97,8 @@ void APP_ZIGBEE_Init(void)
 
   /* Register task */
   /* Create the different tasks */
-  UTIL_SEQ_RegTask(1U << (uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU,APP_ZIGBEE_ProcessMsgM0ToM4);
+  UTIL_SEQ_RegTask(1U << (uint32_t)CFG_TASK_NOTIFY_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_ZIGBEE_ProcessNotifyM0ToM4);
+  UTIL_SEQ_RegTask(1U << (uint32_t)CFG_TASK_REQUEST_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_ZIGBEE_ProcessRequestM0ToM4);
 
   /* Task associated with network creation process */
   UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM, UTIL_SEQ_RFU, APP_ZIGBEE_NwkForm);
@@ -163,7 +166,7 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
   assert(zigbee_app_info.onoff_client_1 != NULL);
   ZbZclClusterEndpointRegister(zigbee_app_info.onoff_client_1);
 
-} /* config_endpoints */
+}
 
 /**
  * @brief  Handle Zigbee network forming and joining
@@ -261,6 +264,7 @@ static void ZbStartupWaitCb(enum ZbStatusCodeT status, void *cb_arg)
 
   info->status = status;
   info->active = false;
+  UTIL_SEQ_SetEvt(EVENT_ZIGBEE_STARTUP_ENDED);
 } /* ZbStartupWaitCb */
 
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
@@ -280,9 +284,7 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
     info->active = false;
     return status;
   }
-  while (info->active) {
-    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-  }
+  UTIL_SEQ_WaitEvt(EVENT_ZIGBEE_STARTUP_ENDED);
   status = info->status;
   free(info);
   return status;
@@ -404,6 +406,11 @@ Zigbee_Cmd_Request_t * ZIGBEE_Get_NotificationPayloadBuffer(void)
   return (Zigbee_Cmd_Request_t *)(p_ZIGBEE_notif_M0_to_M4)->evtserial.evt.payload;
 } /* ZIGBEE_Get_NotificationPayloadBuffer */
 
+Zigbee_Cmd_Request_t * ZIGBEE_Get_M0RequestPayloadBuffer(void)
+{
+  return (Zigbee_Cmd_Request_t *)(p_ZIGBEE_request_M0_to_M4)->evtserial.evt.payload;
+}
+
 /**
  * @brief  This function is used to transfer the commands from the M4 to the M0.
  *
@@ -420,7 +427,7 @@ void ZIGBEE_CmdTransfer(void)
    * + ID (4 bytes) + Size (4 bytes) */
   p_ZIGBEE_otcmdbuffer->cmdserial.cmd.plen = 8U + (cmd_req->Size * 4U);
 
-  TL_ZIGBEE_SendAppliCmdToM0();
+  TL_ZIGBEE_SendM4RequestToM0();
 
   /* Wait completion of cmd */
   Wait_Getting_Ack_From_M0();
@@ -498,9 +505,23 @@ static void Receive_Ack_From_M0(void)
  */
 static void Receive_Notification_From_M0(void)
 {
-  CptReceiveMsgFromM0++;
-  UTIL_SEQ_SetTask(1U << CFG_TASK_MSG_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
-} /* Receive_Notification_From_M0 */
+    CptReceiveNotifyFromM0++;
+    UTIL_SEQ_SetTask(1U << (uint32_t)CFG_TASK_NOTIFY_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
+}
+
+/**
+ * @brief  This function is called when a request from M0+ is received.
+ *
+ * @param   Notbuffer : a pointer to TL_EvtPacket_t
+ * @return  None
+ */
+void TL_ZIGBEE_M0RequestReceived(TL_EvtPacket_t *Reqbuffer)
+{
+    p_ZIGBEE_request_M0_to_M4 = Reqbuffer;
+
+    CptReceiveRequestFromM0++;
+    UTIL_SEQ_SetTask(1U << (uint32_t)CFG_TASK_REQUEST_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
+}
 
 /**
  * @brief Perform initialization of TL for Zigbee.
@@ -509,30 +530,43 @@ static void Receive_Notification_From_M0(void)
  */
 void APP_ZIGBEE_TL_INIT(void)
 {
-  ZigbeeConfigBuffer.p_ZigbeeOtCmdRspBuffer = (uint8_t *)&ZigbeeOtCmdBuffer;
-  ZigbeeConfigBuffer.p_ZigbeeNotAckBuffer = (uint8_t *)ZigbeeNotifRspEvtBuffer;
-  ZigbeeConfigBuffer.p_ZigbeeLoggingBuffer = (uint8_t *)ZigbeeNotifLoggingBuffer;
-  TL_ZIGBEE_Init(&ZigbeeConfigBuffer);
-} /* APP_ZIGBEE_TL_INIT */
+    ZigbeeConfigBuffer.p_ZigbeeOtCmdRspBuffer = (uint8_t *)&ZigbeeOtCmdBuffer;
+    ZigbeeConfigBuffer.p_ZigbeeNotAckBuffer = (uint8_t *)ZigbeeNotifRspEvtBuffer;
+    ZigbeeConfigBuffer.p_ZigbeeNotifRequestBuffer = (uint8_t *)ZigbeeNotifRequestBuffer;
+    TL_ZIGBEE_Init(&ZigbeeConfigBuffer);
+}
 
 /**
  * @brief Process the messages coming from the M0.
  * @param  None
  * @retval None
  */
-void APP_ZIGBEE_ProcessMsgM0ToM4(void)
+void APP_ZIGBEE_ProcessNotifyM0ToM4(void)
 {
-  if (CptReceiveMsgFromM0 != 0) {
-    /* If CptReceiveMsgFromM0 is > 1. it means that we did not serve all the events from the radio */
-    if (CptReceiveMsgFromM0 > 1U) {
-      APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0);
+    if (CptReceiveNotifyFromM0 != 0) {
+        /* If CptReceiveNotifyFromM0 is > 1. it means that we did not serve all the events from the radio */
+        if (CptReceiveNotifyFromM0 > 1U) {
+            APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0);
+        }
+        else {
+            Zigbee_CallBackProcessing();
+        }
+        /* Reset counter */
+        CptReceiveNotifyFromM0 = 0;
     }
-    else {
-      Zigbee_CallBackProcessing();
+}
+
+/**
+ * @brief Process the requests coming from the M0.
+ * @param
+ * @return
+ */
+void APP_ZIGBEE_ProcessRequestM0ToM4(void)
+{
+    if (CptReceiveRequestFromM0 != 0) {
+        Zigbee_M0RequestProcessing();
+        CptReceiveRequestFromM0 = 0;
     }
-    /* Reset counter */
-    CptReceiveMsgFromM0 = 0;
-  }
-} /* APP_ZIGBEE_ProcessMsgM0ToM4 */
+}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

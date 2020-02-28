@@ -14,8 +14,7 @@
 ;******************************************************************************
 ;* @attention
 ;*
-;* <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
-;* All rights reserved.</center></h2>
+;* Copyright (c) 2019 STMicroelectronics. All rights reserved.
 ;*
 ;* This software component is licensed by ST under BSD 3-Clause license,
 ;* the "License"; You may not use this file except in compliance with the 
@@ -51,11 +50,12 @@ __heap_limit
                 PRESERVE8
                 THUMB
 
+
 ; Vector Table Mapped to Address 0 at Reset
                 AREA    RESET, DATA, READONLY
-               ; EXPORT  __Vectors
-               ; EXPORT  __Vectors_End
-                ;EXPORT  __Vectors_Size
+                EXPORT  __Vectors
+                EXPORT  __Vectors_End
+                EXPORT  __Vectors_Size
 
 __Vectors       DCD     __initial_sp              ; Top of Stack
         DCD     Reset_Handler                     ; Reset Handler
@@ -138,14 +138,10 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
         DCD     DMA2_Channel6_IRQHandler          ; DMA2 Channel 6 Interrupt
         DCD     DMA2_Channel7_IRQHandler          ; DMA2 Channel 7 Interrupt
         DCD     DMAMUX1_OVR_IRQHandler            ; DMAMUX overrun Interrupt
-		DCD     0                                 ; Reserved
+        DCD     0                                 ; Reserved
 
 __Vectors_End
 
- AREA    INFO, DATA, READONLY
-                EXPORT  __Vectors
-                EXPORT  __Vectors_End
-                EXPORT  __Vectors_Size
 __Vectors_Size  EQU  __Vectors_End - __Vectors
 
                 AREA    |.text|, CODE, READONLY

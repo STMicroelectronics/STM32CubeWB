@@ -1,12 +1,12 @@
 /******************************************************************************
  * @file    ble_types.h
  * @author  MCD Application Team
- * @date    06 September 2019
+ * @date    22 January 2020
  * @brief   Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -623,12 +623,12 @@ typedef PACKED(struct)
 typedef PACKED(struct)  
 {
   uint16_t Connection_Handle;
-} hci_le_read_remote_used_features_cp0;
+} hci_le_read_remote_features_cp0;
 
 typedef PACKED(struct)  
 {
   uint8_t Status;
-} hci_le_read_remote_used_features_rp0;
+} hci_le_read_remote_features_rp0;
 
 typedef PACKED(struct)  
 {
@@ -2628,7 +2628,7 @@ typedef PACKED(struct)
   uint8_t Status;
   uint16_t Connection_Handle;
   uint8_t LE_Features[8];
-} hci_le_read_remote_used_features_complete_event_rp0;
+} hci_le_read_remote_features_complete_event_rp0;
 
 typedef PACKED(struct)  
 {

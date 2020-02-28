@@ -79,6 +79,21 @@
  */
 #define CFG_UNKNOWN_APPEARANCE                  (0)
 #define CFG_GAP_APPEARANCE                      (832)
+ 
+/**
+ * Define PHY
+ */
+#define ALL_PHYS_PREFERENCE                             0x00
+#define RX_2M_PREFERRED                                 0x02
+#define TX_2M_PREFERRED                                 0x02
+#define RX_1M_PREFERRED                                 0x01
+#define TX_1M_PREFERRED                                 0x01
+#define RX_ALL_PHY_PREFERRED                            0x03
+#define TX_ALL_PHY_PREFERRED                            0x03
+#define TX_1M                                           0x01
+#define TX_2M                                           0x02
+#define RX_1M                                           0x01
+#define RX_2M                                           0x02 
    
 /**
 *   Identity root key used to derive LTK and CSRK
@@ -113,6 +128,8 @@
  * When set to 0, the device is peripheral
  */
 #define CFG_BLE_CENTRAL     1
+
+#define CFG_SERVER_ONLY     0
 /**
  * in this specific application, the device is either central
  * or peripheral but cannot be both
@@ -127,6 +144,7 @@
 #endif
 
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
+#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
 
 #define CONN_L(x) ((int)(((float)x)/0.625f))
 #define CONN_P(x) ((int)(((float)x)/1.25f))
@@ -152,7 +170,7 @@
  * 4 if LE_CODED
  * or any combination of 1M | 2M | LE_CODED
  */
-#define CFG_TX_PHY    2
+#define CFG_TX_PHY    1
 
 /**
  * RX PHY configuration
@@ -163,13 +181,14 @@
  * 4 if LE_CODED
  * or any combination of 1M | 2M | LE_CODED
  */
-#define CFG_RX_PHY    2
+#define CFG_RX_PHY    1
 
 /**
  * ALL PHYS configuration
  */
 #define CFG_ALL_PHYS    ((!CFG_TX_PHY) + ((!CFG_RX_PHY)*2))
-
+#define L2CAP_SLAVE_LATENCY             0x0000
+#define L2CAP_TIMEOUT_MULTIPLIER        0x1F4
 /******************************************************************************
  * BLE Stack
  ******************************************************************************/
@@ -411,6 +430,7 @@
 
 /** tick timer value in us */
 #define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), HSE_VALUE/32 )
+//#define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE )
 typedef enum
 {
     CFG_TIM_PROC_ID_ISR,
@@ -515,8 +535,10 @@ typedef enum
 typedef enum
 {
   CFG_TASK_DATA_TRANSFER_UPDATE_ID,
+  CFG_TASK_DATA_WRITE_ID,
   CFG_TASK_CONN_DEV_1_ID,
   CFG_TASK_BUTTON_ID,
+  CFG_TASK_SW2_BUTTON_PUSHED_ID,
   CFG_TASK_START_ADV_ID,
   CFG_TASK_START_SCAN_ID,
   CFG_TASK_LINK_CONFIG_ID,

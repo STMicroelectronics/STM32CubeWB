@@ -25,9 +25,11 @@
 
 #include "ble.h"
 #include "shci.h"
+#include "mesh_cfg_usr.h"
+
+#include "hw_flash.h"
 
 /* Private define ------------------------------------------------------------*/
-#define NVM_SIZE 0x00002000
 #define FLASH_SECTOR_SIZE 0x1000
 #define MAX_NVM_PENDING_WRITE_REQS         1
 
@@ -181,6 +183,7 @@ MOBLE_RESULT MoblePalNvmCompare(MOBLEUINT32 address,
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
+#ifdef ENABLE_SAVE_MODEL_STATE_NVM
 //  printf("MoblePalNvmCompare >>>\r\n");
   
   if ((comparison == NULL) || (buf == NULL))
@@ -210,18 +213,17 @@ MOBLE_RESULT MoblePalNvmCompare(MOBLEUINT32 address,
   else
   {
     *comparison = MOBLE_NVM_COMPARE_EQUAL;
-    size >>= 3;
-    
-    uint64_t* src = (uint64_t*)buf;
-    uint64_t* dst = (uint64_t*)(address + offset);
+
+    uint8_t* src = (uint8_t*)buf;
+    uint8_t* dst = (uint8_t*)(address + offset);
     
     for (MOBLEUINT32 i=0; i<size; ++i)
     {
-      if ((src[i<<3] != dst[i<<3]) && (*comparison == MOBLE_NVM_COMPARE_EQUAL))
+      if ((src[i] != dst[i]) && (*comparison == MOBLE_NVM_COMPARE_EQUAL))
       {
         *comparison = MOBLE_NVM_COMPARE_NOT_EQUAL;
       }
-        if ((src[i<<3] & dst[i<<3]) != dst[i<<3])
+        if ((src[i] & dst[i]) != dst[i])
         {
           *comparison = MOBLE_NVM_COMPARE_NOT_EQUAL_ERASE;
           break;
@@ -230,7 +232,9 @@ MOBLE_RESULT MoblePalNvmCompare(MOBLEUINT32 address,
   }
   
 //  printf("MoblePalNvmCompare <<<\r\n");
-  
+#else
+  *comparison = MOBLE_NVM_COMPARE_EQUAL;
+#endif  
   return result;
 }
 
@@ -242,14 +246,6 @@ MOBLE_RESULT MoblePalNvmCompare(MOBLEUINT32 address,
 MOBLE_RESULT MoblePalNvmErase(MOBLEUINT32 address,
                               MOBLEUINT32 offset)
 {
-#if 0
-  if (BnrgmNvmReqs.no_of_pages_to_be_erased == 0)
-  {
-    BnrgmNvmReqs.no_of_pages_to_be_erased = BNRGM_NVM_SIZE/PAGE_SIZE;
-  }
-    
-  return MOBLE_RESULT_SUCCESS;
-#else
   HAL_StatusTypeDef status = HAL_OK;
   uint32_t pageError = 0;
 
@@ -264,21 +260,20 @@ MOBLE_RESULT MoblePalNvmErase(MOBLEUINT32 address,
   HAL_FLASH_Unlock();
   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_WRPERR | FLASH_FLAG_OPTVERR);
   
-//  SHCI_C2_FLASH_EraseActivity( ERASE_ACTIVITY_ON);
+  SHCI_C2_FLASH_EraseActivity( ERASE_ACTIVITY_ON);
 
   while(LL_FLASH_IsActiveFlag_OperationSuspended());
   status = HAL_FLASHEx_Erase(&erase, &pageError);
   while(LL_FLASH_IsActiveFlag_OperationSuspended());
   
-//  SHCI_C2_FLASH_EraseActivity( ERASE_ACTIVITY_OFF);
-
+  SHCI_C2_FLASH_EraseActivity( ERASE_ACTIVITY_OFF);
+  
   HAL_FLASH_Lock();
   LL_HSEM_ReleaseLock( HSEM, CFG_HW_FLASH_SEMID, 0 );
   
 //  printf("MoblePalNvmErase <<<\r\n");
   
   return status == HAL_OK ? MOBLE_RESULT_SUCCESS : MOBLE_RESULT_FAIL;
-#endif
 }
 
 /**
@@ -296,7 +291,9 @@ MOBLE_RESULT MoblePalNvmWrite(MOBLEUINT32 address,
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
-//  printf("MoblePalNvmWrite >>>\r\n");
+#ifdef ENABLE_SAVE_MODEL_STATE_NVM
+  
+  //  printf("MoblePalNvmWrite >>>\r\n");
   
   if (offset > NVM_SIZE)
   {
@@ -320,72 +317,29 @@ MOBLE_RESULT MoblePalNvmWrite(MOBLEUINT32 address,
   }
   else
   {
-#if 0
-    /* Check for repeated write request */
-    for (MOBLEUINT8 count = 0; count < BnrgmNvmReqs.no_of_write_reqs; count++)
-    {
-      if ((BnrgmNvmReqs.write_req[count].offset == (MOBLEUINT16)offset) && 
-          (BnrgmNvmReqs.write_req[count].size == (MOBLEUINT16)size) &&
-          (BnrgmNvmReqs.write_req[count].buff == buf))
-      {
-        return result;
-      }
-    }
-        
-    if (BnrgmNvmReqs.no_of_write_reqs < MAX_NVM_PENDING_WRITE_REQS)
-    {
-      BnrgmNvmReqs.write_req[BnrgmNvmReqs.no_of_write_reqs].offset = (MOBLEUINT16)offset;
-      BnrgmNvmReqs.write_req[BnrgmNvmReqs.no_of_write_reqs].size = (MOBLEUINT16)size;        
-      BnrgmNvmReqs.write_req[BnrgmNvmReqs.no_of_write_reqs].buff = buf;
-      BnrgmNvmReqs.no_of_write_reqs++;
-    }
-    /* If pending write requests already full, overwrite oldest one */
-    else
-    {
-      for (MOBLEINT8 count=0; count<MAX_NVM_PENDING_WRITE_REQS-2; count++)
-      {
-        BnrgmNvmReqs.write_req[count].offset = BnrgmNvmReqs.write_req[count+1].offset;
-        BnrgmNvmReqs.write_req[count].size = BnrgmNvmReqs.write_req[count+1].size;
-        BnrgmNvmReqs.write_req[count].buff = BnrgmNvmReqs.write_req[count+1].buff;
-      }
-            
-      BnrgmNvmReqs.write_req[MAX_NVM_PENDING_WRITE_REQS - 1].offset = (MOBLEUINT16)offset;
-      BnrgmNvmReqs.write_req[MAX_NVM_PENDING_WRITE_REQS - 1].size = (MOBLEUINT16)size;        
-      BnrgmNvmReqs.write_req[MAX_NVM_PENDING_WRITE_REQS - 1].buff = buf;
-    }
-#else
     size >>= 3;
     
     uint64_t* src = (uint64_t*)buf;
-//    uint64_t* dst = (uint64_t*)(address + offset);
-    
-    HAL_StatusTypeDef status = HAL_OK;
     
     while( LL_HSEM_1StepLock( HSEM, CFG_HW_FLASH_SEMID ) );
     HAL_FLASH_Unlock();
-    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_WRPERR | FLASH_FLAG_OPTVERR);
-    for (size_t i = 0; (i < size) && (status == HAL_OK); i++)
+    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_WRPERR | FLASH_FLAG_OPTVERR | FLASH_FLAG_PGSERR | FLASH_FLAG_SIZERR | FLASH_FLAG_PGAERR);
+
+    for (size_t i = 0; i < size; i++)
+    {
+      do
       {
-//      if (src[i<<3] != dst[i<<3])
-//      {
         while(LL_FLASH_IsActiveFlag_OperationSuspended());
-        status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address + offset + (i <<3), src[i]);
-        if (status != HAL_OK)
-        {
-          break;
-        }
-//      }
+        HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, address + offset + (i <<3), src[i]);
+        while(LL_FLASH_IsActiveFlag_OperationSuspended());
+      } while(*((uint64_t*)(address + offset + (i <<3))) != src[i]);
     }
+
     HAL_FLASH_Lock();
     LL_HSEM_ReleaseLock( HSEM, CFG_HW_FLASH_SEMID, 0 );
-    
-    if (HAL_OK != status)
-    {
-      result = MOBLE_RESULT_FAIL;
-    }
-#endif
   }
 //  printf("MoblePalNvmWrite <<<\r\n");
+#endif
   
   return result;
 }

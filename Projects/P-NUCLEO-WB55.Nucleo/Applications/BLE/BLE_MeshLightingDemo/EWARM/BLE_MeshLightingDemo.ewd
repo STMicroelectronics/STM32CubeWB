@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>BLE_MeshLightingDemo</name>
+        <name>Lighting_Node</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB_M4.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB55_CM4.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>7.80.3.12143</state>
+                    <state>8.20.2.14834</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -1352,6 +1352,11 @@
                     <state>1</state>
                 </option>
             </data>
+        </settings>
+        <settings>
+            <name>NULINK_ID</name>
+            <archiveVersion>2</archiveVersion>
+            <data />
         </settings>
         <debuggerPlugins>
             <plugin>

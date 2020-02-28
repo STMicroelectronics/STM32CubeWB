@@ -34,6 +34,7 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
                                        MOBLEUINT8 elementNumber, MOBLE_ADDRESS dst_peer);
 MOBLE_RESULT Appli_Vendor_DeviceInfo(MOBLEUINT8 const *data, MOBLEUINT32 length);
 MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length);
+MOBLE_RESULT Appli_Vendor_Data_write(MOBLEUINT8 const *data, MOBLEUINT32 length);
 void Appli_GetTestValue (MOBLEUINT8 *responseValue);
 
 #endif /* __APPLI_VENDOR_H */

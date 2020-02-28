@@ -26,11 +26,11 @@
 #include "mesh_cfg_usr.h"
 #include "appli_light_lc.h"
 
-/** @addtogroup BlueNRG_Mesh
+/** @addtogroup ST_BLE_Mesh
 *  @{
 */
 
-/** @addtogroup models_BlueNRG2
+/** @addtogroup Application_Mesh_Models
 *  @{
 */
 
@@ -48,7 +48,7 @@ MOBLEUINT16 AmbientLuxLevel;
 
 /**
 * @brief  Appli_Light_LCMode_Set: This function is callback for Application
-when Light LC mode Set message is received
+*         when Light LC mode Set message is received
 * @param  pLight_LC_Param: Pointer to the parameters received for message
 * @param  OptionalValid: Flag to inform about the validity of optional parameters 
 * @retval MOBLE_RESULT
@@ -62,7 +62,7 @@ MOBLE_RESULT Appli_LightLC_Mode_Set(Light_LC_Param_t* pLight_LC_Param,
   
 /**
 * @brief  Appli_LightLC_OM_Set: This function is callback for Application
-when Light LC mode Occupancy Model Set message is received
+*         when Light LC mode Occupancy Model Set message is received
 * @param  pLight_LC_Param: Pointer to the parameters received for message
 * @param  OptionalValid: Flag to inform about the validity of optional parameters 
 * @retval MOBLE_RESULT
@@ -76,15 +76,15 @@ MOBLE_RESULT Appli_LightLC_OM_Set(Light_LC_Param_t* pLight_LC_Param,
 
 /**
 * @brief  Appli_LightLC_OnOff_Set: This function is callback for Application
-when Light LC On Off Set message is received
+*         when Light LC On Off Set message is received
 * @param  pLight_LC_Param: Pointer to the parameters received for message
 * @param  OptionalValid: Flag to inform about the validity of optional parameters 
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Appli_LightLC_OnOff_Set(Light_LC_OnOffState_t* pLight_LC_Param,
+MOBLE_RESULT Appli_LightLC_OnOff_Set(Light_LC_Param_t* pLight_LC_Param,
                                                      MOBLEUINT8 OptionalValid)
 {
-  Appli_LightLC_set.Light_OnOffState = pLight_LC_Param->Present_OnOff_State;
+  Appli_LightLC_set.Light_OnOffState = pLight_LC_Param->Light_OnOff;
   return MOBLE_RESULT_SUCCESS;
 }  
 
@@ -105,8 +105,9 @@ MOBLEUINT16 Appli_LightLC_Get_AmbientLuxLevelOutput(void)
 
 /**
 * @brief Light_LC_LuxLevelPIRegulator: This function will calculate all the parameter
-         Kid,kpu,kiu,kpd and return the value Light Lightness Linear.           
-* @param void:
+*        Kid,kpu,kiu,kpd and return the value Light Lightness Linear.           
+* @param tableLuxLevel:
+* @param ambientLuxLevel:
 * @retval MOBLEUINT16:    
 **/
 MOBLEUINT16 Appli_Light_LC_PIRegulatorOutput(MOBLEUINT16 tableLuxLevel,MOBLEUINT16 ambientLuxLevel)
@@ -120,8 +121,8 @@ MOBLEUINT16 Appli_Light_LC_PIRegulatorOutput(MOBLEUINT16 tableLuxLevel,MOBLEUINT
 
 /**
 * @brief  Appli_LightLC_Get_ModeStatus: This function is callback for Application
-to get the application values in middleware used for transition change.
-* @param  lcModeState: Pointer to the status message
+*         to get the application values in middleware used for transition change.
+* @param  plcModeState: Pointer to the status message
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT Appli_LightLC_Get_ModeStatus(MOBLEUINT8* plcModeState)
@@ -135,8 +136,8 @@ MOBLE_RESULT Appli_LightLC_Get_ModeStatus(MOBLEUINT8* plcModeState)
 
 /**
 * @brief  Appli_LightLC_Get_OMModeStatus: This function is callback for Application
-to get the application values in middleware used for transition change.
-* @param  lcOM_ModeState: Pointer to the status message
+*         to get the application values in middleware used for transition change.
+* @param  plcOM_ModeState: Pointer to the status message
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT Appli_LightLC_Get_OMModeStatus(MOBLEUINT8* plcOM_ModeState)
@@ -150,8 +151,8 @@ MOBLE_RESULT Appli_LightLC_Get_OMModeStatus(MOBLEUINT8* plcOM_ModeState)
 
 /**
 * @brief  Appli_LightLC_Get_OnOffStatus: This function is callback for Application
-to get the application values in middleware used for transition change.
-* @param  lcOnOffState: Pointer to the status message
+*         to get the application values in middleware used for transition change.
+* @param  plcOnOffState: Pointer to the status message
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT Appli_LightLC_Get_OnOffStatus(MOBLEUINT8* plcOnOffState)
@@ -161,17 +162,6 @@ MOBLE_RESULT Appli_LightLC_Get_OnOffStatus(MOBLEUINT8* plcOnOffState)
           Appli_LightLC_set.Light_OnOffState);
   
   
-  return MOBLE_RESULT_SUCCESS;
-}  
-
-/**
-* @brief  Appli_LightLC_Get_PropertyStatus: This function is callback for Application
-to get the application values in middleware used for transition change.
-* @param  plcPropertyState: Pointer to the status message
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT Appli_LightLC_Get_PropertyStatus(MOBLEUINT8* plcPropertyState)
-{  
   return MOBLE_RESULT_SUCCESS;
 }  
 

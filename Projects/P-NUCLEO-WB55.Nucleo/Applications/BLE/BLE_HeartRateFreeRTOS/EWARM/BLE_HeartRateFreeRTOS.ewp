@@ -1050,6 +1050,9 @@
                 <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Core\Src\freertos_port.c</name>
             </file>
             <file>

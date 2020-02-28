@@ -276,6 +276,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Core/Src/main.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/Core/app_debug.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Core/Src/app_debug.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/Core/stm32_lpm_if.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Core/Src/stm32_lpm_if.c</locationURI>

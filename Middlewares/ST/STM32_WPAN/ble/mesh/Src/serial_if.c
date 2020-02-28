@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    serial_if.c
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Serial Interface file 
 ******************************************************************************
 * @attention
@@ -57,6 +57,9 @@
 #endif
 #include "stm_queue.h"
 #include "stm32_seq.h"
+#if ENABLE_SERIAL_PRVN
+#include "serial_prvn.h"
+#endif
 
 /** @addtogroup BLE_Mesh
 *  @{
@@ -99,6 +102,9 @@ __weak void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
 #endif
 #if (!ENABLE_APPLI_TEST)
 __weak void SerialResponse_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
+#endif
+#if (!ENABLE_SERIAL_PRVN)
+__weak void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
 #endif
 
 /* Private functions ---------------------------------------------------------*/
@@ -277,8 +283,11 @@ static int Serial_GetString(MOBLEUINT8* text, MOBLEUINT8 size)
 */ 
 #if (!ENABLE_SERIAL_CONTROL)
 __weak void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
-{
-}
+{}
+__weak void SerialCtrlVendorRead_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
+{}
+__weak void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
+{}
 #endif
 /**
 * @brief  Upper Tester control commands (If implemented in application, 
@@ -298,6 +307,11 @@ __weak void SerialResponse_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
 }
 #endif
 
+#if (!ENABLE_SERIAL_PRVN)
+__weak void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
+{
+}
+#endif
 /**
 * @brief  Processes data coming from serial port   
 * @param  void  
@@ -322,6 +336,14 @@ void Serial_InterfaceProcess(void)
     {            
       SerialCtrl_Process(Rcvd_String, stringSize);
     }
+    else if (!strncmp(Rcvd_String, "ATVR", 4))
+    {            
+      SerialCtrlVendorRead_Process(Rcvd_String, stringSize);
+    }
+    else if (!strncmp(Rcvd_String, "ATVW", 4))
+    {            
+      SerialCtrlVendorWrite_Process(Rcvd_String, stringSize);
+    }
 #endif
 #if ENABLE_UT
     else if(!strncmp(Rcvd_String, "ATUT", 4))
@@ -341,6 +363,12 @@ void Serial_InterfaceProcess(void)
       Appli_BleSerialInputOOBValue(Rcvd_String, stringSize);  
     }
 #endif
+#if ENABLE_SERIAL_PRVN        
+    else if(!strncmp(Rcvd_String, "ATEP", 4))
+    {
+       SerialPrvn_Process(Rcvd_String, stringSize);
+    }
+#endif        
     else
     {
       TRACE_I(TF_SERIAL_CTRL,"Not Entered valid test parameters\r\n");  
@@ -368,6 +396,8 @@ MOBLEUINT8 Serial_CharToHexConvert(char addr)
         retVal = addr+10-'a';
   else if (addr >= 'A' && addr <= 'F')
         retVal = addr+10-'A';
+  else if (addr == ' ')
+        retVal = addr+10-' ';
   else
        return 0xFF;
     

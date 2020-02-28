@@ -9,13 +9,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
   *
   ******************************************************************************
   @endverbatim
@@ -80,19 +80,21 @@ Middleware, SD Card, FatFs, File system, FAT Volume, Format, Mount, Read, Write,
 
 @par Directory contents
 
-  - FatFs/FatFs_uSD_Standalone/Inc/stm32wbxx_hal_conf.h    HAL configuration file
-  - FatFs/FatFs_uSD_Standalone/Inc/stm32wbxx_it.h          Interrupt handlers header file
-  - FatFs/FatFs_uSD_Standalone/Inc/main.h                        Header for main.c module
-  - FatFs/FatFs_uSD_Standalone/Src/sd_diskio.h                   uSD diskio header file
-  - FatFs/FatFs_uSD_Standalone/Inc/ffconf.h                      FAT file system module configuration file
-  - FatFs/FatFs_uSD_Standalone/Src/stm32wbxx_it.c          Interrupt handlers
-  - FatFs/FatFs_uSD_Standalone/Src/main.c                        Main program
-  - FatFs/FatFs_uSD_Standalone/Src/sd_diskio.c                   FatFs uSD diskio driver
-  - FatFs/FatFs_uSD_Standalone/Src/system_stm32wbxx.c      STM32WBxx system source file
+  - FatFs/FatFs_uSD_Standalone/Core/Inc/stm32wbxx_hal_conf.h               HAL configuration file
+  - FatFs/FatFs_uSD_Standalone/Core/Inc/stm32wbxx_it.h                     Interrupt handlers header file
+  - FatFs/FatFs_uSD_Standalone/Core/Inc/main.h                             Header for main.c module
+  - FatFs/FatFs_uSD_Standalone/Core/Src/stm32wbxx_it.c                     Interrupt handlers
+  - FatFs/FatFs_uSD_Standalone/Core/Src/main.c                             Main program
+  - FatFs/FatFs_uSD_Standalone/Core/Src/system_stm32wbxx.c                 STM32WBxx system source file
+  - FatFs/FatFs_uSD_Standalone/FATFS/Target/ffconf.h                       FAT file system module configuration file
+  - FatFs/FatFs_uSD_Standalone/FATFS/Target/sd_diskio.h                    uSD diskio header file
+  - FatFs/FatFs_uSD_Standalone/FATFS/Target/sd_diskio.c                    FatFs uSD diskio driver
+  - FatFs/FatFs_uSD_Standalone/FATFS/App/app_fatfs.h                       Header file for App_fatfs.c file
+  - FatFs/FatFs_uSD_Standalone/FATFS/App/app_fatfs.c                       FatFs application code
 
 @par Hardware and Software environment
 
-  - This application runs on STM32WB55xx devices
+  - This application runs on STM32WB55RGVx devices
 
   - This application has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

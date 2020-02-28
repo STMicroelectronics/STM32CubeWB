@@ -171,6 +171,11 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  /** Initializes the peripherals clocks 
+  */
+  /* USER CODE BEGIN Smps */
+
+  /* USER CODE END Smps */
 }
 
 /**
@@ -197,9 +202,6 @@ static void MX_RTC_Init(void)
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
   hrtc.Init.AsynchPrediv = RTC_ASYNCH_PREDIV;
   hrtc.Init.SynchPrediv = RTC_SYNCH_PREDIV;
-  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   if (HAL_RTC_Init(&hrtc) != HAL_OK)
   {
     Error_Handler();
@@ -214,6 +216,7 @@ static void MX_RTC_Init(void)
   sTime.Hours = 0x2;
   sTime.Minutes = 0x0;
   sTime.Seconds = 0x0;
+  sTime.SubSeconds = 0x0;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
   if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
@@ -224,7 +227,6 @@ static void MX_RTC_Init(void)
   sDate.Month = RTC_MONTH_APRIL;
   sDate.Date = 0x16;
   sDate.Year = 0x18;
-
   if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
   {
     Error_Handler();

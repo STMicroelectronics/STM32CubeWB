@@ -37,8 +37,14 @@
 #ifndef __FLASH_EMULATION_H
 #define __FLASH_EMULATION_H
 
+#ifdef STM32WB35xx
+#error  TMP_STORAGE_BUF_ADDR will be determined during Zigbee porting on Little Dory
+#define TMP_STORAGE_BUF_ADDR          xxx /* Should be __ICFEDIT_region_RAM_end__ inside the scatter file*/
+#define TMP_STORAGE_BUF_SIZE         (xxx - TMP_STORAGE_BUF_ADDR)
+#else
 #define TMP_STORAGE_BUF_ADDR          0x2002F000 /* Should be __ICFEDIT_region_RAM_end__ inside the scatter file*/
 #define TMP_STORAGE_BUF_SIZE         (0x2002FFFF - TMP_STORAGE_BUF_ADDR)
+#endif
 
 uint32_t utilsFlashGetSize(void);
 uint32_t utilsFlashWrite(uint32_t aAddress, uint8_t *aData, uint32_t aSize);

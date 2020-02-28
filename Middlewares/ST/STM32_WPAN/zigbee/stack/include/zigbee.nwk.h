@@ -80,7 +80,7 @@ enum ZbNwkNibAttrIdT {
      * It is generally a bad idea for an application to modify the NNT directly.
      * Use ZbNwkNeighborClearAll to clear all entries (or all except parent, e.g.
      * before end-device rejoin).
-     * FIXME 1 - This NIB should be made read-only. */
+     * EXEGIN - This NIB should be made read-only. */
     ZB_NWK_NIB_ID_NeighborTable = 0x87,
     /* Time duration in seconds (Note, the Spec defines this as OctetDurations) */
     ZB_NWK_NIB_ID_NetworkBroadcastDeliveryTime = 0x88,
@@ -88,7 +88,7 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_RouteDiscoveryRetriesPermitted = 0x8a,
     ZB_NWK_NIB_ID_RouteTable = 0x8b,
     ZB_NWK_NIB_ID_TimeStamp = 0x8c,
-    ZB_NWK_NIB_ID_TxTotal = 0x8d, /* FIXME - make TxTotal a per interface thing */
+    ZB_NWK_NIB_ID_TxTotal = 0x8d, /* EXEGIN - make TxTotal a per interface thing */
     ZB_NWK_NIB_ID_SymLink = 0x8e,
     ZB_NWK_NIB_ID_CapabilityInformation = 0x8f,
     ZB_NWK_NIB_ID_AddrAlloc = 0x90,
@@ -140,7 +140,7 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_PersistCounter, /* Persisted outgoing frame counter. */
 
     /* R21+ attributes */
-    /* FIXME 2 - The following NIBs should have IDs from 0xaa to 0xad, but
+    /* EXEGIN - The following NIBs should have IDs from 0xaa to 0xad, but
      * these are already being used by APS security. I think the only place
      * this would be a problem is the Gateway API which has a single generic
      * GET/SET API, which means attribute IDs must be unique and not overlap. */
@@ -152,8 +152,8 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_DisablePeriodicTimers, /* If set, NWK layer disables edka & link power timers. Default is 0 (enabled). */
 
     /* R22+ attributes */
-    /* FIXME 2 - nwkIeeeAddress (should be 0xae, but already being used by APS security) */
-    /* FIXME 2 - nwkMacInterfaceTable (should be 0xaf, but already being used by APS security) */
+    /* EXEGIN - nwkIeeeAddress (should be 0xae, but already being used by APS security) */
+    /* EXEGIN - nwkMacInterfaceTable (should be 0xaf, but already being used by APS security) */
     ZB_NWK_NIB_ID_TxPowerMgmtSupported, /* not affected by nwk_reset_nib, keeps value. */
     ZB_NWK_NIB_ID_LinkPowerDeltaPeriod,
 
@@ -200,6 +200,7 @@ enum ZbNwkRejoinTypeT {
 #define ZB_NWK_CONST_MAC_FRAME_OVERHEAD             0x0bU /* See D.4 of 053474r17. */
 /* The following are added by Exegin */
 #define ZB_NWK_CONST_SECURITY_OVERHEAD              (14U + ZB_SEC_MIC_LENGTH_5)
+/* 127 - 8 - 11 = 108 bytes */
 #define ZB_NWK_CONST_MAX_PAYLOAD_SIZE               (WPAN_CONST_MAX_PHY_PACKET_SIZE - ZB_NWK_CONST_MIN_HEADER_OVERHEAD - ZB_NWK_CONST_MAC_FRAME_OVERHEAD)
 
 #define ZB_NWK_BCNPAYLOAD_MIN_SIZE                  15U
@@ -299,6 +300,8 @@ enum ZbNwkNeighborRelT {
 #define ZB_NWK_PARENT_INFO_POWER_NEGOT              0x0004U /* Power Negotiation Supported (R22: Link Power Delta) */
 /* Exegin add-on to track the status of parent info */
 #define ZB_NWK_PARENT_INFO_START                    0x0100U
+/* Exegin add-on to track a manual EDKA request. */
+#define ZB_NWK_PARENT_INFO_MANUAL_EDKA_REQ          0x0200U
 
 #define ZB_NWK_NEIGHBOR_TIMEOUT_SECONDS(_x_)        ((_x_ != 0U) ? ((ZbUptimeT)60U << (_x_)) : (ZbUptimeT)10U)
 #define ZB_NWK_NEIGHBOR_TIMEOUT_MAX                 14U
@@ -311,7 +314,7 @@ typedef struct {
     uint16_t nwkAddr; /* Set to ZB_NWK_ADDR_UNDEFINED to invalidate entry */
     uint8_t capability;
     enum ZbNwkNeighborTypeT deviceType;
-    bool rxOnWhenIdle; /* FIXME 1 - why not just use capability? */
+    bool rxOnWhenIdle; /* EXEGIN - why not just use capability? */
     enum ZbNwkNeighborRelT relationship;
     uint8_t txFailure;
     uint8_t lqi; /* Average LQI. */
@@ -362,7 +365,7 @@ typedef struct {
     uint8_t nsduLength;
     uint32_t handle;
     uint8_t radius;
-    uint8_t discoverRoute;
+    bool discoverRoute;
     bool security;
     /* Alias */
     bool useAlias;
@@ -641,13 +644,15 @@ typedef struct {
     struct ZbChannelListT supportedChannels;
     bool routersAllowed;
     bool powerNegotSupported;
+    /* Exegin add-on */
+    struct WpanPublicT *mac;
 } ZbNlmeGetInterfaceConfT;
 
 /* Broadcast transaction table entry */
 typedef struct {
     uint16_t srcAddr;
     uint8_t seqnum;
-    /* FIXME 1 - replace pAckCount with a list of router neighbors */
+    /* EXEGIN - replace pAckCount with a list of router neighbors */
     uint8_t pAckCount; /* passive ack count for flood limiting. */
     ZbUptimeT expireTime; /* expiration time relative to ZbUptime. */
 } ZbNwkBttEntryT;

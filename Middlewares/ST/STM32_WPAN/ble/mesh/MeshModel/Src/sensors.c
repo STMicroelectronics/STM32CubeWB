@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    sensors.c
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Sensors model middleware file
 ******************************************************************************
 * @attention
@@ -73,28 +73,28 @@ const MODEL_OpcodeTableParam_t Sensor_Opcodes_Table[] = {
   Here in this array, Handler is not defined; */
   
 #ifdef ENABLE_SENSOR_MODEL_SERVER       
-  {SENSOR_DESCRIPTOR_GET,                    MOBLE_TRUE,  0, 2,               SENSOR_DESCRIPTOR_STATUS , 2, 16},
-  {SENSOR_DESCRIPTOR_STATUS,                 MOBLE_FALSE,  2, 16,               SENSOR_DESCRIPTOR_STATUS , 2, 16},
-  {SENSOR_GET,                               MOBLE_TRUE,  0, 2,               SENSOR_STATUS , 0,65 },  /* STATUS MESSAGE AS MARSHALLED DATA */
-  {SENSOR_STATUS,                            MOBLE_FALSE,  0, 65,               SENSOR_STATUS , 0,65 }, 
-  {SENSOR_COLUMN_GET,                        MOBLE_TRUE,  3, 3,               SENSOR_COLUMN_STATUS , 4, 8},  /* GET VARIABLE TAKEN AS 1 (2+VARIABLE) */
-  {SENSOR_COLUMN_STATUS,                     MOBLE_FALSE,  4, 8,               SENSOR_COLUMN_STATUS , 4, 8},
+  {SENSOR_SERVER_MODEL_ID    ,SENSOR_DESCRIPTOR_GET,                    MOBLE_TRUE,   0, 2,               SENSOR_DESCRIPTOR_STATUS , 2, 75},
+  {SENSOR_SERVER_MODEL_ID    ,SENSOR_DESCRIPTOR_STATUS,                 MOBLE_FALSE,  2, 75,               SENSOR_DESCRIPTOR_STATUS , 2, 75},
+  {SENSOR_SERVER_MODEL_ID    ,SENSOR_GET,                               MOBLE_TRUE,   0, 2,               SENSOR_STATUS , 0,65 },  /* STATUS MESSAGE AS MARSHALLED DATA */
+  {SENSOR_SERVER_MODEL_ID    ,SENSOR_STATUS,                            MOBLE_FALSE,  0, 65,              0 , 0,65 }, 
+  {SENSOR_SERVER_MODEL_ID    ,SENSOR_COLUMN_GET,                        MOBLE_TRUE,   3, 3,               SENSOR_COLUMN_STATUS , 4, 8},  /* GET VARIABLE TAKEN AS 1 (2+VARIABLE) */
+  {SENSOR_SERVER_MODEL_ID    ,SENSOR_COLUMN_STATUS,                     MOBLE_FALSE,  4, 8,               0 , 4, 8},
 #endif
   
 #ifdef ENABLE_SENSOR_MODEL_SERVER_SETUP     
-  {SENSOR_CADENCE_GET,                       MOBLE_TRUE,  2, 2,               SENSOR_CADENCE_STATUS , 2, 8},
-  {SENSOR_CADENCE_SET,                       MOBLE_TRUE,  8, 8,               SENSOR_CADENCE_STATUS , 2, 8},
-  {SENSOR_CADENCE_SET_UNACK,                 MOBLE_FALSE,  8, 8,              SENSOR_CADENCE_STATUS , 2, 8},
-  {SENSOR_CADENCE_STATUS,                    MOBLE_FALSE,  2, 8,               SENSOR_CADENCE_STATUS , 2, 8},
-  {SENSOR_SETTING_GET,                       MOBLE_TRUE,  2, 2,               SENSOR_SETTING_STATUS_PID , 4 , 4},
-  {SENSOR_SETTING_STATUS_PID,                MOBLE_FALSE,  4, 4,               SENSOR_SETTING_STATUS_PID , 4 , 4},
-  {SENSOR_SETTING_GET_SETTING_ID,            MOBLE_TRUE,  4, 4,               SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},  /* STATUS VARIABLE  TAKEN AS 1 (4 + VARIABLE) */
-  {SENSOR_SETTING_SET,                       MOBLE_TRUE,  5, 5,               SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},  /* SET VARIABLE TAKEN AS 1  (4_VARIABLE) */
-  {SENSOR_SETTING_SET_UNACK,                 MOBLE_FALSE,  5, 5,              SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},   
-  {SENSOR_SETTING_STATUS_SETTING_ID,         MOBLE_FALSE,  5, 5,               SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},
-  {SENSOR_SERIES_GET,                        MOBLE_TRUE,  2, 6,               SENSOR_SERIES_STATUS , 8, 8},  /* GET VARIABLE TAKEN AS 4 (2+VARAIBLE) , 2 VARIABLE PARAMTER */
-  {SENSOR_SERIES_STATUS,                     MOBLE_FALSE,  8, 8,               SENSOR_SERIES_STATUS , 8, 8},
-#endif    
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_CADENCE_GET,                       MOBLE_TRUE,   2, 2,               SENSOR_CADENCE_STATUS , 2, 8},
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_CADENCE_SET,                       MOBLE_TRUE,   8, 8,               SENSOR_CADENCE_STATUS , 2, 8},
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_CADENCE_SET_UNACK,                 MOBLE_FALSE,  8, 8,               SENSOR_CADENCE_STATUS , 2, 8},
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_CADENCE_STATUS,                    MOBLE_FALSE,  2, 8,               0 , 2, 8},
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_GET,                       MOBLE_TRUE,   2, 2,               SENSOR_SETTING_STATUS_PID , 4 , 4},
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_STATUS_PID,                MOBLE_FALSE,  4, 4,               0 , 4 , 4},
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_GET_SETTING_ID,            MOBLE_TRUE,   4, 4,               SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},  /* STATUS VARIABLE  TAKEN AS 1 (4 + VARIABLE) */
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_SET,                       MOBLE_TRUE,   5, 5,               SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},  /* SET VARIABLE TAKEN AS 1  (4_VARIABLE) */
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_SET_UNACK,                 MOBLE_FALSE,  5, 5,               SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},  
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_STATUS_SETTING_ID,         MOBLE_FALSE,  5, 5,               0 , 5, 5},
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SERIES_GET,                        MOBLE_TRUE,   2, 6,               SENSOR_SERIES_STATUS , 8, 8},  /* GET VARIABLE TAKEN AS 4 (2+VARAIBLE) , 2 VARIABLE PARAMTER */
+  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SERIES_STATUS,                     MOBLE_FALSE,  8, 8,               0 , 8, 8},
+#endif
   {0}
 };
 
@@ -521,7 +521,7 @@ MOBLE_RESULT SensorModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
           return MOBLE_RESULT_FALSE;
         }
      
-     if(property_ID == LIGHT_CONTROL_LIGHTNESS_ON_ID)
+     if(property_ID == PRESENCE_DETECTED_PROPERTY)
      {  
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC        
         Light_LC_ModeSet(&pRxData[2],1);  

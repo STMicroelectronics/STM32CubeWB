@@ -44,12 +44,12 @@
 #define FAST_CONN_ADV_INTERVAL_MAX  (0x30)  /**< 30ms */
 
 #define FORCE_REBOND                      0x01
-#define CONN_P1_7_5                        (CONN_P(7.5))
-#define CONN_P2_7_5                        (CONN_P(7.5))
+#define CONN_P1_7_5                     (CONN_P(7.5))
+#define CONN_P2_7_5                     (CONN_P(7.5))
 #define CONN_P1_50                        (CONN_P(50))
 #define CONN_P2_50                        (CONN_P(50))
-#define CONN_P1_400                        (CONN_P(400))
-#define CONN_P2_400                        (CONN_P(400))
+#define CONN_P1_400                       (CONN_P(400))
+#define CONN_P2_400                       (CONN_P(400))
 
 #define BD_ADDR_SIZE_LOCAL    6
 /* Private typedef -----------------------------------------------------------*/
@@ -218,6 +218,8 @@ static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
 static const char local_name[] = { AD_TYPE_COMPLETE_LOCAL_NAME, 'D', 'T', '_', 'S', 'E', 'R', 'V', 'E', 'R' };
 #endif
 
+uint8_t index_con_int, mutex; 
+
 uint8_t const manuf_data[22] = { 2, AD_TYPE_TX_POWER_LEVEL, 0x00 /* 0 dBm */, /* Trasmission Power */
     10, AD_TYPE_COMPLETE_LOCAL_NAME, 'D', 'T', '_', 'S', 'E', 'R', 'V', 'E', 'R', /* Complete Name */
     7, AD_TYPE_MANUFACTURER_SPECIFIC_DATA, 0x01/*SKD version */,
@@ -237,6 +239,7 @@ static void Ble_Tl_Init(void);
 static void Ble_Hci_Gap_Gatt_Init(void);
 static const uint8_t* BleGetBdAddress(void);
 static void LinkConfiguration(void);
+uint8_t TimerDataThroughputWrite_Id;
 
 #if (CFG_BLE_CENTRAL != 0)
 static void GapProcReq(GapProcId_t GapProcId);
@@ -247,6 +250,7 @@ static void Connection_Update(void);
 
 #if (CFG_BLE_PERIPHERAL != 0)
 static void Adv_Request(void);
+static void DataThroughput_proc(void);
 #endif
 
 
@@ -306,12 +310,16 @@ void APP_BLE_Init( void )
    * Initialization of the BLE Services
    */
   SVCCTL_Init();
-
+  mutex = 1; 
   /**
    * From here, all initialization are BLE application specific
    */
 #if(CFG_BLE_PERIPHERAL != 0)
   UTIL_SEQ_RegTask( 1<<CFG_TASK_START_ADV_ID, UTIL_SEQ_RFU, Adv_Request);
+  /**
+    * Create timer for Data Throughput process (write data)
+    */
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(TimerDataThroughputWrite_Id), hw_ts_SingleShot, DataThroughput_proc);
 #endif
 
 #if(CFG_BLE_CENTRAL != 0)
@@ -377,6 +385,7 @@ void APP_BLE_Key_Button1_Action(void)
 
 void APP_BLE_Key_Button2_Action(void)
 {
+  DTS_App_KeyButton2Action();
 }
 
 void APP_BLE_Key_Button3_Action(void)
@@ -601,6 +610,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
   {
     case EVT_DISCONN_COMPLETE:
       APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_DISCONN_COMPLETE disconnection\n");
+      /* restart advertising */
+#if(CFG_BLE_PERIPHERAL != 0)
+      UTIL_SEQ_SetTask(1 << CFG_TASK_START_ADV_ID, CFG_SCH_PRIO_0);
+#endif      
       break; /* EVT_DISCONN_COMPLETE */
 
     case EVT_LE_META_EVENT:
@@ -638,6 +651,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           break; /* HCI_EVT_LE_CONN_COMPLETE */
 
         case EVT_LE_CONN_UPDATE_COMPLETE:
+          mutex = 1;
           APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_LE_CONN_UPDATE_COMPLETE \n");                  
           break;
           
@@ -943,6 +957,11 @@ void Adv_Request( void )
   }
   return;
 }
+
+static void DataThroughput_proc(){
+  
+  UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_WRITE_ID, CFG_SCH_PRIO_0);
+}
 #endif
 
 /*************************************************************
@@ -1014,6 +1033,78 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
     default:
       break;
   }
+  return;
+}
+
+void BLE_SVC_L2CAP_Conn_Update_7_5(void)
+{
+/* USER CODE BEGIN BLE_SVC_L2CAP_Conn_Update_1 */
+
+/* USER CODE END BLE_SVC_L2CAP_Conn_Update_1 */
+  if(mutex == 1) { 
+    mutex = 0;
+    uint16_t interval_min = CONN_P(7.5);
+    uint16_t interval_max = CONN_P(7.5);
+    uint16_t slave_latency = L2CAP_SLAVE_LATENCY;
+    uint16_t timeout_multiplier = L2CAP_TIMEOUT_MULTIPLIER;
+    tBleStatus result;
+
+    result = aci_l2cap_connection_parameter_update_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,
+                                                       interval_min, interval_max,
+                                                       slave_latency, timeout_multiplier);
+    if( result == BLE_STATUS_SUCCESS )
+    {
+#if(CFG_DEBUG_APP_TRACE != 0)
+      APP_DBG_MSG("BLE_SVC_L2CAP_Conn_Update(), Successfully \r\n\r");
+#endif
+    }
+    else
+    {
+#if(CFG_DEBUG_APP_TRACE != 0)
+      APP_DBG_MSG("BLE_SVC_L2CAP_Conn_Update(), Failed \r\n\r");
+#endif
+    }
+  }
+/* USER CODE BEGIN BLE_SVC_L2CAP_Conn_Update_2 */
+
+/* USER CODE END BLE_SVC_L2CAP_Conn_Update_2 */
+  return;
+}
+
+void BLE_SVC_GAP_Change_PHY(void)
+{
+  uint8_t TX_PHY, RX_PHY;
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
+  ret = hci_le_read_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,&TX_PHY,&RX_PHY);
+  if (ret == BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("Read_PHY success \n");
+    APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
+    if ((TX_PHY == TX_2M) && (RX_PHY == RX_2M))
+    {
+      APP_DBG_MSG("hci_le_set_phy PHY Param  TX= %d, RX= %d \n", TX_1M, RX_1M);
+      ret = hci_le_set_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,ALL_PHYS_PREFERENCE,TX_1M,RX_1M,0);
+    }
+    else
+    {
+      APP_DBG_MSG("hci_le_set_phy PHY Param  TX= %d, RX= %d \n", TX_2M_PREFERRED, RX_2M_PREFERRED);
+      ret = hci_le_set_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,ALL_PHYS_PREFERENCE,TX_2M_PREFERRED,RX_2M_PREFERRED,0);
+    } 
+  }
+  else
+  {
+    APP_DBG_MSG("Read conf not succeess \n");
+  }
+  
+  if (ret == BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("set PHY cmd ok\n");
+  }
+  else 
+  {
+    APP_DBG_MSG("set PHY cmd NOK\n");
+  }
+  
   return;
 }
 

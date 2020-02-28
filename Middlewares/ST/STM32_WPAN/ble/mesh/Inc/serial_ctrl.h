@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    serial_if.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the serial interface file 
 ******************************************************************************
 * @attention
@@ -50,8 +50,8 @@
 /* Exported variables  ------------------------------------------------------- */
 /* Exported Functions Prototypes ---------------------------------------------*/
 void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
-
-
+void SerialCtrlVendorRead_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
+void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
 #endif /* __SERIAL_CTRL_H */
 
 /******************* (C) COPYRIGHT 2018 STMicroelectronics *****END OF FILE****/

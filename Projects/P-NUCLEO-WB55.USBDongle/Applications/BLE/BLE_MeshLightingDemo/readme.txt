@@ -32,60 +32,72 @@ This is the implementation of the BLE Mesh Lighting profile as specified by the 
 
 @par Directory contents 
             mesh_lighting_demo
-  - BLE/BLE_MeshLightingDemo/Core/Inc/app_common.h            	Header for all modules with common definition
-  - BLE/BLE_MeshLightingDemo/Core/Inc/app_conf.h              	Parameters configuration file of the application
-  - BLE/BLE_MeshLightingDemo/Core/Inc/app_entry.h            	Parameters configuration file of the application
-  - BLE/BLE_MeshLightingDemo/Core/Inc/hw_conf.h           		Configuration file of the HW
-  - BLE/BLE_MeshLightingDemo/Core/Inc/main.h                  	Header for main.c module
-  - BLE/BLE_MeshLightingDemo/Core/Inc/stm32wbxx_hal_conf.h		HAL configuration file
-  - BLE/BLE_MeshLightingDemo/Core/Inc/stm32wbxx_it.h          	Interrupt handlers header file
-  - BLE/BLE_MeshLightingDemo/Core/Inc/utilities_conf.h    		Configuration file of the utilities
-  - BLE/BLE_MeshLightingDemo/Core/Inc/vcp_conf.h    		    Configuration file of Virtual Com Port Interface
-  - BLE/BLE_MeshLightingDemo/Core/Src/app_entry.c      		    Initialization of the application
-  - BLE/BLE_MeshLightingDemo/Core/Src/stm32_lpm_if.c		    Low Power Manager Interface
-  - BLE/BLE_MeshLightingDemo/Core/Src/hw_timerserver.c 		    Timer Server based on RTC
-  - BLE/BLE_MeshLightingDemo/Core/Src/hw_uart.c 			    UART Driver
-  - BLE/BLE_MeshLightingDemo/Core/Src/main.c                  	Main program
-  - BLE/BLE_MeshLightingDemo/Core/Src/stm32wbxx_it.c          	Interrupt handlers
-  - BLE/BLE_MeshLightingDemo/Core/Src/system_stm32wbxx.c      	stm32wbxx system source file
-  - BLE/BLE_MeshLightingDemo/Core/Inc/app_ble.h               	Header for app_ble.c module
-  - BLE/BLE_MeshLightingDemo/Core/Inc/tl_conf.h           		Configuration file of the Transport layer
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/app_ble.c      		BLE Profile implementation
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/app_ble.h      		Header of BLE Profile implementation 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_generic.c     BLE Mesh Generic Profile implementation
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_generic.h     Header of BLE Mesh Generic Profile implementation 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light.c       BLE Mesh Light Profile implementation
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light.h       Header of BLE Mesh Light Profile implementation 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light_lc.c    BLE Mesh Light Lightness Controller Profile implementation
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light_lc.h    Header of BLE Mesh Light Lightness Controller Profile implementation 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_mesh.c        BLE Mesh application implementation
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_mesh.h        Header of BLE Mesh application implementation 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_nvm.c         BLE Mesh NVM application implementation
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_nvm.h         Header of BLE Mesh NVM application implementation 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_sensor.c      BLE Mesh Sensor Profile implementation
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_sensor.h      Header of BLE Mesh Sensor Profile implementation 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_vendor.c      BLE Mesh Vendor Profile implementation
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_vendor.h      Header of BLE Mesh Vendor Profile implementation 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/ble_conf.h          BLE Services configuration
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/ble_dbg_conf.h      BLE Traces configuration of the BLE services
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/hal_common.h        Header for common function of HAL file
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/mesh_cfg.h         	Header for Mesh configuration
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/mesh_cfg_usr.h      Header for user Mesh configuration
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/models_if.h         Header for the BLE Mesh Models Interface file
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/models_if.c         BLE Mesh Models Interface file
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/pal_nvm.c           BLE Mesh NVM management implementation
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/pal_nvm.h           Header of BLE Mesh NVM management implementation 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/PWM_config.c        Pulse Width Modulation configuration
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/PWM_config.h        Header of Pulse Width Modulation configuration 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/PWM_handlers.c      Pulse Width Modulation handlers
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/PWM_handlers.h      Header of Pulse Width Modulation handlers 
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/svcctl_conf.c 		Service Controller configuration API
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/tl_conf.h           Configuration file of the Transport layer
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/tl_if.c 			Transport Layer interface
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/user_if.h 		    Header file for User interface file
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/user_if.c 		    User interface file
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/vcp_conf.h          Header Virtual Com Port configuration file
-  - BLE/BLE_MeshLightingDemo/STM32_WPAN/Target/hw_ipcc.c     	IPCC Driver
+  - BLE/BLE_MeshLightingDemo/Core/Inc/app_common.h                  Header for all modules with common definition
+  - BLE/BLE_MeshLightingDemo/Core/Inc/app_conf.h                    Parameters configuration file of the application
+  - BLE/BLE_MeshLightingDemo/Core/Inc/app_debug.h                   Interface to support debug in the application
+  - BLE/BLE_MeshLightingDemo/Core/Inc/app_entry.h                   Parameters configuration file of the application
+  - BLE/BLE_MeshLightingDemo/Core/Inc/hw_conf.h                     Configuration file of the HW
+  - BLE/BLE_MeshLightingDemo/Core/Inc/hw_flash.h                    Configuration file of the FLASH driver needed by EE module
+  - BLE/BLE_MeshLightingDemo/Core/Inc/hw_if.h                       Configuration file of the Hardware Iterface
+  - BLE/BLE_MeshLightingDemo/Core/Inc/lp_timer.h                    Configuration file of the Low power timer to be used within Mesh Application.
+  - BLE/BLE_MeshLightingDemo/Core/Inc/main.h                        Header for main.c module
+  - BLE/BLE_MeshLightingDemo/Core/Inc/stm32wbxx_hal_conf.h          HAL configuration file
+  - BLE/BLE_MeshLightingDemo/Core/Inc/stm32_lpm_if.h                Configuration file of the Low layer function to enter/exit low power modes (stop, sleep).
+  - BLE/BLE_MeshLightingDemo/Core/Inc/stm32wbxx_it.h                Interrupt handlers header file
+  - BLE/BLE_MeshLightingDemo/Core/Inc/utilities_conf.h              Configuration file of the utilities
+  - BLE/BLE_MeshLightingDemo/Core/Inc/vcp_conf.h                    Configuration file of Virtual Com Port Interface
+  - BLE/BLE_MeshLightingDemo/Core/Src/app_debug.c                   Interface to support debug in the application
+  - BLE/BLE_MeshLightingDemo/Core/Src/app_entry.c                   Initialization of the application
+  - BLE/BLE_MeshLightingDemo/Core/Src/hw_flash.c                    FLASH driver needed by EE module
+  - BLE/BLE_MeshLightingDemo/Core/Src/hw_timerserver.c              Timer Server based on RTC
+  - BLE/BLE_MeshLightingDemo/Core/Src/hw_uart.c                     UART Driver
+  - BLE/BLE_MeshLightingDemo/Core/Src/lp_timer.c                    Low power timer to be used within Mesh Application.
+  - BLE/BLE_MeshLightingDemo/Core/Src/main.c                        Main program
+  - BLE/BLE_MeshLightingDemo/Core/Src/stm32_lpm_if.c                Low Power Manager Interface
+  - BLE/BLE_MeshLightingDemo/Core/Src/stm32wbxx_it.c                Interrupt handlers
+  - BLE/BLE_MeshLightingDemo/Core/Src/system_stm32wbxx.c            stm32wbxx system source file
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/app_ble.c               BLE Profile implementation
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/app_ble.h               Header of BLE Profile implementation 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_config_client.c   Application interface for Config CLient Mesh Model
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_config_client.h   Header of Application interface for Config CLient Mesh Model 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_generic.c         Application interface for Generic Mesh Models
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_generic.h         Header of Application interface for Generic Mesh Models 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_generic_client.c  Application interface for Client Generic Mesh Models
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_generic_client.h  Header of Application interface for Client Generic Mesh Models 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light.c           BLE Mesh Light Profile implementation
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light.h           Header of BLE Mesh Light Profile implementation 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light_client.c    Application interface for Client Light Mesh Models
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light_client.h    Header of Application interface for Client Light Mesh Models 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light_lc.c        BLE Mesh Light Lightness Controller Profile implementation
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_light_lc.h        Header of BLE Mesh Light Lightness Controller Profile implementation 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_mesh.c            BLE Mesh application implementation
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_mesh.h            Header of BLE Mesh application implementation 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_nvm.c             BLE Mesh NVM application implementation
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_nvm.h             Header of BLE Mesh NVM application implementation 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_sensor.c          BLE Mesh Sensor Profile implementation
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_sensor.h          Header of BLE Mesh Sensor Profile implementation 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_vendor.c          BLE Mesh Vendor Profile implementation
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/appli_vendor.h          Header of BLE Mesh Vendor Profile implementation 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/ble_conf.h              BLE Services configuration
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/ble_dbg_conf.h          BLE Traces configuration of the BLE services
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/hal_common.h            Header for common function of HAL file
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/mesh_cfg.h              Header for Mesh configuration
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/mesh_cfg_usr.h          Header for user Mesh configuration
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/models_if.h             Header for the BLE Mesh Models Interface file
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/models_if.c             BLE Mesh Models Interface file
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/pal_nvm.c               BLE Mesh NVM management implementation
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/pal_nvm.h               Header of BLE Mesh NVM management implementation 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/PWM_config.c            Pulse Width Modulation configuration
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/PWM_config.h            Header of Pulse Width Modulation configuration 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/PWM_handlers.c          Pulse Width Modulation handlers
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/PWM_handlers.h          Header of Pulse Width Modulation handlers 
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/svcctl_conf.c           Service Controller configuration API
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/tl_conf.h               Configuration file of the Transport layer
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/tl_if.c                 Transport Layer interface
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/user_if.h               Header file for User interface file
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/user_if.c               User interface file
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/App/vcp_conf.h              Configuration of the vcp interface
+  - BLE/BLE_MeshLightingDemo/STM32_WPAN/Target/hw_ipcc.c            IPCC Driver
 
      
 @par Hardware and Software environment

@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    serial_prvn.c
 * @author  BLE Mesh Team
-* @version V1.11.000
-* @date    25-07-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Embedded provisioner Serial Control file 
 ******************************************************************************
 * @attention
@@ -47,6 +47,9 @@
 #include "serial_ctrl.h"
 #include "mesh_cfg.h"
 #include "ble_mesh.h"
+#include "appli_config_client.h"
+#include "serial_prvn.h"
+#include "appli_mesh.h"
 
 /** @addtogroup BlueNRG_Mesh
 *  @{
@@ -61,11 +64,34 @@
 /* Private variables ---------------------------------------------------------*/
 static neighbor_params_t NeighborTable[5]; 
 static MOBLEUINT8 NoOfNeighborPresent;
-
+static MOBLEUINT8 PrvningInProcess = 0;
+static MOBLEUINT16 PrvndNodeAddress = 0;
+extern MOBLEUINT16 nodeAddressOffset;
 /* Private function prototypes -----------------------------------------------*/
 static MOBLE_RESULT SerialPrvn_ProvisionDevice(char *text);
+static MOBLE_RESULT SerialPrvn_UnProvisionDevice(char *text);
 static MOBLE_RESULT SerialPrvn_ScanDevices(char *text);
 /* Private functions ---------------------------------------------------------*/ 
+/**
+* @brief  This function scans and prints unprovisioned devices  
+* @param  unprovDeviceArray: Pointer of an array for filling unprovisioned device UUIDs
+* @param  noOfUnprovDevices: Pointer to take total count of nearby unprovisioned devices
+* @retval MOBLE_RESULT
+*/  
+__weak MOBLE_RESULT BLEMesh_ScanDevices(neighbor_params_t *unprovDeviceArray, MOBLEUINT8 *noOfUnprovDevices)
+{
+  return MOBLE_RESULT_NOTIMPL;
+}
+/**
+* @brief  This function returns starts the provisioning of one of the devices
+* @param  unprovDeviceArray: Pointer of an array having unprovisioned device UUIDs
+* @param  index: Index of the device to be provisioned
+* @retval MOBLE_RESULT
+*/  
+__weak MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray, MOBLEUINT16 index)
+{
+    return MOBLE_RESULT_NOTIMPL;
+}
 /**
 * @brief  This funcrion is used to parse the string given by the user
 * @param  rcvdStringBuff: buffer to store input string 
@@ -75,16 +101,58 @@ static MOBLE_RESULT SerialPrvn_ScanDevices(char *text);
 void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
   MOBLE_RESULT result;
+  MOBLEUINT8 prvsnrDevKey[16];
+  /* Command to make a devices as Root node which creates Mesh network credentials */
+  if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "ROOT",4))
+  {   
+      /* Initializes Mesh network parameters */
+      result = BLEMesh_CreateNetwork(prvsnrDevKey);
+#ifdef ENABLE_PROVISIONER_FEATURE      
+      Start_SelfConfiguration();
+#endif      
                  
+  }
   /* Command to scan the unprovisioned devices */
-  if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "SCAN",4))
+  else if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "SCAN",4))
   {   
       result = SerialPrvn_ScanDevices(rcvdStringBuff+COMMAND_OFFSET);
   }
    /* Command to start the unprovisioned devices */
   else if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "PRVN-",4))
   {   
-      result = SerialPrvn_ProvisionDevice(rcvdStringBuff+COMMAND_OFFSET);
+      if(!PrvningInProcess)
+      {
+          result = SerialPrvn_ProvisionDevice(rcvdStringBuff+COMMAND_OFFSET);
+      }
+      else
+      {
+          BLEMesh_PrintStringCb("Link opened already. Wait.\r\n");
+          result = MOBLE_RESULT_FAIL;
+      }
+  }
+  else if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "UNPV",4))
+  {
+      
+    result = SerialPrvn_UnProvisionDevice(rcvdStringBuff+COMMAND_OFFSET);
+      
+  }
+     /* Command to start the unprovisioned devices */
+  else if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "RESET",5))
+  {
+        BLEMesh_PrintStringCb("Reseting Board...\r\n");
+        NVIC_SystemReset();
+  }
+  /* Command to scan the unprovisioned devices - Used By node only */
+  else if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "NDSCAN",4))
+  {   
+      result = BLEMesh_ScanDevices(NeighborTable, &NoOfNeighborPresent);
+  }
+   /* Command to start the unprovisioned devices - Used By node only */
+  else if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "NDPRVN-",4))
+  {   
+      MOBLEINT16 index = 0;  
+      sscanf(rcvdStringBuff, "PRVN-%hd", &index);
+      result = BLEMesh_ProvisionDevice(NeighborTable, index);
   }
   else
   {
@@ -113,23 +181,55 @@ void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 
 /**
 * @brief  This function returns starts the provisioning of one of the devices
-* @param  text: recieved array
+* @param  text: received array
 * @retval MOBLE_RESULT
 */  
 static MOBLE_RESULT SerialPrvn_ProvisionDevice(char *text)
 {
   MOBLEINT16 index = 0;
+  MOBLEINT16 na = 0;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
-  sscanf(text, "PRVN-%hd", &index);
-  result = BLEMesh_ProvisionRemote(NeighborTable[index].uuid);
+  sscanf(text, "PRVN-%hd %hd", &index, &na);  
+  if(na>1)
+  {
+      nodeAddressOffset = na - 1;
+      result = BLEMesh_ProvisionRemote(NeighborTable[index].uuid);
+  }
+  else 
+  {
+      result = MOBLE_RESULT_INVALIDARG;
+  }
   
   return result;
 }
 
 /**
+* @brief  This function Un-Provision one of the devices
+* @param  text: received array
+* @retval MOBLE_RESULT
+*/  
+static MOBLE_RESULT SerialPrvn_UnProvisionDevice(char *text)
+{
+  MOBLEINT16 na = 0;
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  
+  sscanf(text, "UNPV %hd", &na);  
+  if(na>1)
+  {
+      result = ConfigClient_NodeReset(na);
+  }
+  else 
+  {
+      result = MOBLE_RESULT_INVALIDARG;
+  }
+
+  return result;
+}
+
+/**
 * @brief  This function scans and prints unprovisioned devices  
-* @param  text: recieved array
+* @param  text: received array
 * @retval MOBLE_RESULT
 */  
 static MOBLE_RESULT SerialPrvn_ScanDevices(char *text)
@@ -153,7 +253,15 @@ static MOBLE_RESULT SerialPrvn_ScanDevices(char *text)
     }
   return result;
   }
-  
+/**
+* @brief  This funcrion is used to update the status of the provisioning
+* @retval void
+*/ 
+void SerialPrvn_ProvisioningStatusUpdateCb(uint8_t flagPrvningInProcess, MOBLEUINT16 nodeAddress)
+{
+    PrvningInProcess = flagPrvningInProcess;
+    PrvndNodeAddress = nodeAddress;
+}
 /**
 * @}
 */

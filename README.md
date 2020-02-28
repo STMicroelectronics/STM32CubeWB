@@ -11,7 +11,12 @@
    
 The **STM32CubeWB MCU Package** projects are directly running on the STM32WB series boards. You can find in each Projects/*Board name* directories a set of software projects (Applications/Demonstration/Examples) 
 
+## Release note
+
+Details about the content of this release are available in the release note [here](https://htmlpreview.github.io/?https://github.com/STMicroelectronics/STM32CubeWB/blob/master/Release_Notes.html).
+
 ## Boards available
+
   * STM32WB55
     * [P-NUCLEO-WB55.Nucleo](https://www.st.com/en/evaluation-tools/p-nucleo-wb55.html)
     * [P-NUCLEO-WB55.USBDongle](https://www.st.com/en/evaluation-tools/p-nucleo-wb55.html)

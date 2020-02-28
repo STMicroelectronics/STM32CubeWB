@@ -13,7 +13,6 @@
 * INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *******************************************************************************/
 
-//#include "BlueNRG1_mft.h"
 #include "mesh_cfg_usr.h"
 
 /* Macros defined for the number of PWM Provided */
@@ -23,80 +22,6 @@
 #define PWM3   3
 #define PWM4   4 
 
-/* Setting for the Hardware PWM selection for BlueNRG-1 & BlueNRG-2 board.
-if user want to change the hardware pwm according to his application then user
-can select the given settings.
-
-               SERIAL1_MODE        SERIAL2_MODE
-PWM0_PIN       GPIO_2              GPIO_4
-PWM1_PIN       GPIO_3              GPIO_5
-*/
-
-/*STEVAL_BlueNRG-1 
- *STEVAL_BlueNRG-2
- * This configuration given below is for the BlueNRG-1 and BlueNRG-2 board.
- * Here user has selected the PWM0 in SERIAL2_MODE and PWM1 in SERIAL1_MODE.
- * User can configure software PWM to any of the GPIO which are not used for 
- * hardware PWM.
-*/
-/* PWM pins for MFT1 and MFT2 respectively */
-#if defined STEVAL_BLUENRG_1_BOARD_PWM_SELECTION || defined STEVAL_BLUENRG_2_BOARD_PWM_SELECTION
-
-#define PWM0_PIN			GPIO_Pin_4 
-#define PWM1_PIN			GPIO_Pin_3 
-
-/* GPIOs pins (SOFTWARE PWM) used to output a PWM signal */
-#define PWM2_PIN                        GPIO_Pin_1 
-#define PWM3_PIN                        GPIO_Pin_2
-#define PWM4_PIN                        GPIO_Pin_14 /*Blue Led*/
-#endif
-/**************************************************************************/
-
-/* CUSTOM BOARD SETTING 
- * Uncomment the macros given below for custom board and comment the above macros 
- * which are given for BlueNRG board.
- * This configuration given below is for the custom board.
- * Here user has selected the PWM0 in SERIAL2_MODE and PWM1 in SERIAL2_MODE.
- * User can configure software PWM to any of the GPIO which are not used for 
- * hardware PWM.
-NOTE - Do not enable the sensor model with this configuration.As GPIO_4 is used
-       for sensor already.
-*/
-/* PWM pins for MFT1 and MFT2 respectively */
-#ifdef CUSTOM_BOARD_PWM_SELECTION 
-
-#define PWM0_PIN			GPIO_Pin_4 
-#define PWM1_PIN			GPIO_Pin_5 
-
-/* GPIOs pins (SOFTWARE PWM) used to output a PWM signal */
-#define PWM2_PIN                        GPIO_Pin_0 /* Red Led*/
-#define PWM3_PIN                        GPIO_Pin_2 /*Green Led*/ 
-#define PWM4_PIN                        GPIO_Pin_3 /*Blue Led*/
-
-#endif
-/*************************************************************************/
-
-/*
- * STEVAL-BLUEMIC-1 
- * This configuration given below is for the BlueNRG-1 and BlueNRG-2 board.
- * Here user has selected the PWM0 in SERIAL2_MODE and PWM1 in SERIAL1_MODE.
- * User can configure software PWM to any of the GPIO which are not used for 
- * hardware PWM.
-NOTE - Do not enable the sensor model with this configuration.As GPIO_4 is used
-       for sensor already.
-*/
-/* PWM pins for MFT1 and MFT2 respectively */
-#ifdef STEVAL_BLUEMIC_1_BOARD_PWM_SELECTION
-
-#define PWM0_PIN			GPIO_Pin_4 
-#define PWM1_PIN			GPIO_Pin_3 //blue_led
-
-/* GPIOs pins (SOFTWARE PWM) used to output a PWM signal */
-#define PWM2_PIN                        GPIO_Pin_8 
-#define PWM3_PIN                        GPIO_Pin_6 
-#define PWM4_PIN                        GPIO_Pin_14
-         
-#endif
 /************************************************************************/
 
 /*STM32WB

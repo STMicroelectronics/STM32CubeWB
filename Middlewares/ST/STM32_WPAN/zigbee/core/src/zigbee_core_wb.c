@@ -45,7 +45,7 @@
 #endif
 
 /* ZbTimerAlloc() needs ZbHeapAlloc */
-/* FIXME - remove this dependancy? */
+/* EXEGIN - remove this dependancy? */
 void * zb_heap_alloc(struct ZigBeeT *zb, size_t sz, const char *funcname, unsigned int linenum);
 void zb_heap_free(struct ZigBeeT *zb, void *ptr, const char *funcname, unsigned int linenum);
 #if defined(CONFIG_ZB_MEMORY_DEBUG) || defined(CONFIG_ZB_MEMPOOL_HISTORY)
@@ -107,6 +107,7 @@ const struct ZbApsAddrT *ZbApsAddrBinding = &sendToBinding;
 struct zb_ipc_m4_cb_info {
     void *callback;
     void *arg;
+    bool zcl_recv_multi_rsp;
 };
 
 /* Single static callback for persistent data notifications */
@@ -140,17 +141,17 @@ zb_ipc_m4_memcpy2(void *dst, void *src, unsigned int len)
 {
     unsigned int i;
 
-    for (i=0; i<len; i++) {
+    for (i = 0; i < len; i++) {
         ((uint8_t *)dst)[i] = ((uint8_t *)src)[i];
     }
 }
 
-/* FIXME - need to get rid of calling this from the application */
+/* EXEGIN - need to get rid of calling this from the application */
 ZbUptimeT
 ZbUptime(void)
 {
     return HAL_GetTick();
-} /* ZbUptime */
+}
 
 void
 zb_ipc_m4_stack_logging_config(bool enable)
@@ -164,7 +165,7 @@ zb_ipc_m4_stack_logging_config(bool enable)
      * the current log mask in-use, before re-asserting it back to the M0. */
     ZbGetLogging(zb_ipc_globals.zb, &mask, NULL);
     ZbSetLogging(zb_ipc_globals.zb, mask, NULL);
-} /* zb_ipc_m4_stack_logging_config */
+}
 
 static struct zb_ipc_m4_cb_info *
 zb_ipc_m4_cb_info_alloc(void *callback, void *arg)
@@ -178,13 +179,13 @@ zb_ipc_m4_cb_info_alloc(void *callback, void *arg)
         info->arg = arg;
     }
     return info;
-} /* zb_ipc_m4_cb_info_alloc */
+}
 
 static void
 zb_ipc_m4_cb_info_free(struct zb_ipc_m4_cb_info *info)
 {
     free(info);
-} /* zb_ipc_m4_cb_info_free */
+}
 
 static uint32_t
 zb_ipc_m4_get_retval(void)
@@ -196,7 +197,7 @@ zb_ipc_m4_get_retval(void)
     assert(ipcc_req->Size == 1);
     zb_ipc_m4_memcpy2(&retval, &ipcc_req->Data[0], 4);
     return retval;
-} /* zb_ipc_m4_get_retval */
+}
 
 bool
 wpan_set_uint32(struct WpanPublicT *publicPtr, enum mcp_attr_id attrId, uint32_t value, uint16_t index)
@@ -213,19 +214,19 @@ wpan_set_uint32(struct WpanPublicT *publicPtr, enum mcp_attr_id attrId, uint32_t
     ipcc_req->Data[2] = (uint32_t)index;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* wpan_set_uint16 */
+}
 
 bool
 wpan_set_uint16(struct WpanPublicT *publicPtr, enum mcp_attr_id attrId, uint16_t value, uint16_t index)
 {
     return wpan_set_uint32(publicPtr, attrId, (uint32_t)value, index);
-} /* wpan_set_uint16 */
+}
 
 bool
 wpan_set_uint8(struct WpanPublicT *publicPtr, enum mcp_attr_id attrId, uint8_t value, uint16_t index)
 {
     return wpan_set_uint32(publicPtr, attrId, (uint32_t)value, index);
-} /* wpan_set_uint8 */
+}
 
 bool
 wpan_get_uint32(struct WpanPublicT *publicPtr, enum mcp_attr_id attrId, uint32_t *value, uint16_t index)
@@ -242,7 +243,7 @@ wpan_get_uint32(struct WpanPublicT *publicPtr, enum mcp_attr_id attrId, uint32_t
     ipcc_req->Data[2] = (uint32_t)index;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* wpan_get_uint32 */
+}
 
 bool
 wpan_get_uint64(struct WpanPublicT *publicPtr, enum mcp_attr_id attrId, uint64_t *value, uint16_t index)
@@ -259,13 +260,13 @@ wpan_get_uint64(struct WpanPublicT *publicPtr, enum mcp_attr_id attrId, uint64_t
     ipcc_req->Data[2] = (uint32_t)index;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* wpan_get_uint64 */
+}
 
 unsigned int
 ZbHeapMaxAlloc(void)
 {
     return ZB_HEAP_MAX_ALLOC;
-} /* ZbHeapMaxAlloc */
+}
 
 struct ZigBeeT *
 ZbInit(uint64_t extAddr, ZbInitTblSizesT *tblSizes, ZbInitSetLoggingT *setLogging)
@@ -289,7 +290,7 @@ ZbInit(uint64_t extAddr, ZbInitTblSizesT *tblSizes, ZbInitSetLoggingT *setLoggin
         zb_ipc_globals.log_mask = setLogging->mask;
     }
     return zb_ipc_globals.zb;
-} /* ZbInit */
+}
 
 void
 ZbDestroy(struct ZigBeeT *zb)
@@ -305,7 +306,7 @@ ZbDestroy(struct ZigBeeT *zb)
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
     zb_ipc_globals.zb = NULL;
-} /* ZbDestroy */
+}
 
 void
 ZbSetLogging(struct ZigBeeT *zb, uint32_t mask,
@@ -325,7 +326,7 @@ ZbSetLogging(struct ZigBeeT *zb, uint32_t mask,
     ZIGBEE_CmdTransfer();
     /* Save the log mask */
     zb_ipc_globals.log_mask = mask;
-} /* ZbSetLogging */
+}
 
 void
 ZbGetLogging(struct ZigBeeT *zb, uint32_t *mask,
@@ -337,7 +338,7 @@ ZbGetLogging(struct ZigBeeT *zb, uint32_t *mask,
     if (func != NULL) {
         *func = NULL;
     }
-} /* ZbGetLogging */
+}
 
 uint64_t
 ZbExtendedAddress(struct ZigBeeT *zb)
@@ -354,7 +355,7 @@ ZbExtendedAddress(struct ZigBeeT *zb)
     assert(ipcc_req->Size == 2);
     zb_ipc_m4_memcpy2(&ext_addr, &ipcc_req->Data, 8);
     return ext_addr;
-} /* ZbExtendedAddress */
+}
 
 uint16_t
 ZbShortAddress(struct ZigBeeT *zb)
@@ -363,7 +364,7 @@ ZbShortAddress(struct ZigBeeT *zb)
 
     (void)ZbNwkGet(zb, ZB_NWK_NIB_ID_NetworkAddress, &nwkAddr, sizeof(nwkAddr));
     return nwkAddr;
-} /* ZbShortAddress */
+}
 
 void
 ZbChangeExtAddr(struct ZigBeeT *zb, uint64_t extAddr)
@@ -377,7 +378,7 @@ ZbChangeExtAddr(struct ZigBeeT *zb, uint64_t extAddr)
     ipcc_req->Size = 2;
     zb_ipc_m4_memcpy2(&ipcc_req->Data[0], &extAddr, 8);
     ZIGBEE_CmdTransfer();
-} /* ZbChangeExtAddr */
+}
 
 uint8_t
 WpanGetNumChannelsFromMask(uint32_t mask, uint8_t *first_channel)
@@ -394,9 +395,9 @@ WpanGetNumChannelsFromMask(uint32_t mask, uint8_t *first_channel)
                 *first_channel = i;
             }
         }
-    } /* for */
+    }
     return num_channels;
-} /* WpanGetNumChannelsFromMask */
+}
 
 void
 ZbStartupConfigGetProDefaults(struct ZbStartupT *configPtr)
@@ -409,7 +410,7 @@ ZbStartupConfigGetProDefaults(struct ZbStartupT *configPtr)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)configPtr;
     ZIGBEE_CmdTransfer();
-} /* ZbStartupConfigGetProDefaults */
+}
 
 void
 ZbStartupConfigGetProSeDefaults(struct ZbStartupT *configPtr)
@@ -419,14 +420,14 @@ ZbStartupConfigGetProSeDefaults(struct ZbStartupT *configPtr)
     (void)memset(configPtr->security.preconfiguredLinkKey, 0, ZB_SEC_KEYSIZE);
     /* Remove the distributed link key by clearing it. */
     (void)memset(configPtr->security.distributedGlobalKey, 0, ZB_SEC_KEYSIZE);
-} /* ZbStartupConfigGetProSeDefaults */
+}
 
 enum ZbStatusCodeT
 ZbStartupCbkeConfig(struct ZigBeeT *zb, struct ZbStartupCbkeT *cbke_config)
 {
     /* TODO - may be required for SE certification */
     return ZB_APS_STATUS_NOT_SUPPORTED;
-} /* ZbStartupCbkeConfig */
+}
 
 enum ZbStatusCodeT
 ZbStartup(struct ZigBeeT *zb, struct ZbStartupT *configPtr, void (*callback)(enum ZbStatusCodeT status, void *cb_arg), void *arg)
@@ -447,7 +448,7 @@ ZbStartup(struct ZigBeeT *zb, struct ZbStartupT *configPtr, void (*callback)(enu
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_STARTUP_CB handler */
-} /* ZbStartup */
+}
 
 enum ZbStatusCodeT
 ZbStartupRejoin(struct ZigBeeT *zb, void (*callback)(ZbNlmeJoinConfT *conf, void *arg), void *cbarg)
@@ -467,7 +468,7 @@ ZbStartupRejoin(struct ZigBeeT *zb, void (*callback)(ZbNlmeJoinConfT *conf, void
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_STARTUP_REJOIN_CB handler */
-} /* ZbStartupRejoin */
+}
 
 enum ZbStatusCodeT
 ZbStartupPersist(struct ZigBeeT *zb, const void *pdata, unsigned int plen, struct ZbStartupCbkeT *cbke_config)
@@ -483,7 +484,7 @@ ZbStartupPersist(struct ZigBeeT *zb, const void *pdata, unsigned int plen, struc
     ipcc_req->Data[2] = (uint32_t)cbke_config;
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
-} /* ZbStartupPersist */
+}
 
 enum ZbStatusCodeT
 ZbStartupFindBindStart(struct ZigBeeT *zb, void (*callback)(enum ZbStatusCodeT status, void *arg), void *arg)
@@ -508,7 +509,7 @@ ZbStartupFindBindStart(struct ZigBeeT *zb, void (*callback)(enum ZbStatusCodeT s
     }
     return status;
     /* Followed up in MSG_M0TOM4_STARTUP_FINDBIND_CB handler */
-} /* ZbStartupFindBindStart */
+}
 
 enum ZbStatusCodeT
 ZbStartupTouchlinkTargetStop(struct ZigBeeT *zb)
@@ -521,7 +522,7 @@ ZbStartupTouchlinkTargetStop(struct ZigBeeT *zb)
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
-} /* ZbStartupTouchlinkTargetStop */
+}
 
 bool
 ZbStartupTcsoStart(struct ZigBeeT *zb, void (*callback)(enum ZbTcsoStatusT status, void *arg), void *arg)
@@ -546,7 +547,7 @@ ZbStartupTcsoStart(struct ZigBeeT *zb, void (*callback)(enum ZbTcsoStatusT statu
     }
     return retval;
     /* Followed up in MSG_M0TOM4_STARTUP_TCSO_CB */
-} /* ZbStartupTcsoStart */
+}
 
 void
 ZbStartupTcsoAbort(struct ZigBeeT *zb)
@@ -558,7 +559,7 @@ ZbStartupTcsoAbort(struct ZigBeeT *zb)
     ipcc_req->ID = MSG_M4TOM0_STARTUP_TCSO_ABORT;
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
-} /* ZbStartupTcsoAbort */
+}
 
 enum ZbStatusCodeT
 ZbTrustCenterRejoin(struct ZigBeeT *zb, void (*callback)(enum ZbStatusCodeT status, void *arg), void *cbarg)
@@ -578,7 +579,7 @@ ZbTrustCenterRejoin(struct ZigBeeT *zb, void (*callback)(enum ZbStatusCodeT stat
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_STARTUP_TC_REJOIN_CB handler */
-} /* ZbTrustCenterRejoin */
+}
 
 bool
 ZbPersistNotifyRegister(struct ZigBeeT *zb, void (*callback)(struct ZigBeeT *zb, void *cbarg), void *cbarg)
@@ -602,7 +603,7 @@ ZbPersistNotifyRegister(struct ZigBeeT *zb, void (*callback)(struct ZigBeeT *zb,
     }
     return result;
     /* Followed up by M0 calls to MSG_M0TOM4_PERSIST_CB */
-} /* ZbPersistNotifyRegister */
+}
 
 unsigned int
 ZbPersistGet(struct ZigBeeT *zb, uint8_t *buf, unsigned int maxlen)
@@ -617,7 +618,7 @@ ZbPersistGet(struct ZigBeeT *zb, uint8_t *buf, unsigned int maxlen)
     ipcc_req->Data[1] = (uint32_t)maxlen;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval();
-} /* ZbPersistGet */
+}
 
 enum ZbStatusCodeT
 ZbLeaveReq(struct ZigBeeT *zb, void (*callback)(struct ZbNlmeLeaveConfT *conf, void *arg), void *cbarg)
@@ -637,7 +638,7 @@ ZbLeaveReq(struct ZigBeeT *zb, void (*callback)(struct ZbNlmeLeaveConfT *conf, v
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZB_LEAVE_CB handler */
-} /* ZbLeaveReq */
+}
 
 void
 ZbReset(struct ZigBeeT *zb)
@@ -649,7 +650,7 @@ ZbReset(struct ZigBeeT *zb)
     ipcc_req->ID = MSG_M4TOM0_ZB_RESET_REQ;
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
-} /* ZbReset */
+}
 
 /******************************************************************************
  * ECDSA Signature
@@ -658,7 +659,8 @@ ZbReset(struct ZigBeeT *zb)
 enum ZbStatusCodeT
 ZbSecEcdsaValidate(struct ZigBeeT *zb, enum ZbSecEcdsaSigType sig_type,
     const uint8_t *ca_pub_key_array, unsigned int ca_pub_key_len,
-    const uint8_t *certificate, const uint8_t *signature, uint8_t *image_digest, uint8_t *cert_digest)
+    const uint8_t *certificate, const uint8_t *signature, 
+    const uint8_t *image_digest, const uint8_t *cert_digest)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
 
@@ -675,7 +677,7 @@ ZbSecEcdsaValidate(struct ZigBeeT *zb, enum ZbSecEcdsaSigType sig_type,
     ipcc_req->Data[6] = (uint32_t)cert_digest;
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
-} /* ZbSecEcdsaValidate */
+}
 
 /******************************************************************************
  * BDB
@@ -703,7 +705,7 @@ ZbBdbGetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, void *attrPtr,
     ipcc_req->Data[1] = (uint32_t)&bdbGetConf;
     ZIGBEE_CmdTransfer();
     return bdbGetConf.status;
-} /* ZbBdbGetIndex */
+}
 
 enum ZbStatusCodeT
 ZbBdbSetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, const void *attrPtr,
@@ -727,9 +729,26 @@ ZbBdbSetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, const void *attrPtr,
     ipcc_req->Data[1] = (uint32_t)&bdbSetConf;
     ZIGBEE_CmdTransfer();
     return bdbSetConf.status;
-} /* ZbBdbSetIndex */
+}
 
-/* ZbBdbSetEndpointStatus is required for the Identify Server Cluster */
+enum ZbBdbCommissioningStatusT
+ZbBdbGetEndpointStatus(struct ZigBeeT *zb, uint8_t endpoint)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+    uint32_t retval;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_BDB_GET_EP_STATUS;
+    ipcc_req->Size = 1;
+    ipcc_req->Data[0] = (uint32_t)endpoint;
+    ZIGBEE_CmdTransfer();
+    /* Get the status code */
+    retval = zb_ipc_m4_get_retval();
+    return (enum ZbBdbCommissioningStatusT)retval;
+}
+
+/* Required for the Identify Server Cluster */
 void
 ZbBdbSetEndpointStatus(struct ZigBeeT *zb, enum ZbBdbCommissioningStatusT status, uint8_t endpoint)
 {
@@ -742,7 +761,7 @@ ZbBdbSetEndpointStatus(struct ZigBeeT *zb, enum ZbBdbCommissioningStatusT status
     ipcc_req->Data[0] = (uint32_t)status;
     ipcc_req->Data[1] = (uint32_t)endpoint;
     ZIGBEE_CmdTransfer();
-} /* ZbBdbSetEndpointStatus */
+}
 
 /******************************************************************************
  * APS
@@ -773,7 +792,7 @@ ZbApsdeDataReqCallback(struct ZigBeeT *zb, ZbApsdeDataReqT *req, void (*callback
     }
     return (enum ZbStatusCodeT)retval;
     /* If success, followed up in MSG_M0TOM4_APSDE_DATA_REQ_CB handler */
-} /* ZbApsdeDataReqCallback */
+}
 
 void
 ZbApsmeAddEndpoint(struct ZigBeeT *zb, ZbApsmeAddEndpointReqT *r, ZbApsmeAddEndpointConfT *c)
@@ -787,7 +806,7 @@ ZbApsmeAddEndpoint(struct ZigBeeT *zb, ZbApsmeAddEndpointReqT *r, ZbApsmeAddEndp
     ipcc_req->Data[0] = (uint32_t)r;
     ipcc_req->Data[1] = (uint32_t)c;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeAddEndpoint */
+}
 
 void
 ZbApsmeRemoveEndpoint(struct ZigBeeT *zb, ZbApsmeRemoveEndpointReqT *r, ZbApsmeRemoveEndpointConfT *c)
@@ -801,7 +820,7 @@ ZbApsmeRemoveEndpoint(struct ZigBeeT *zb, ZbApsmeRemoveEndpointReqT *r, ZbApsmeR
     ipcc_req->Data[0] = (uint32_t)r;
     ipcc_req->Data[1] = (uint32_t)c;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeRemoveEndpoint */
+}
 
 struct ZbApsFilterT *
 ZbApsFilterEndpointAdd(struct ZigBeeT *zb, uint8_t endpoint, uint16_t profileId,
@@ -811,7 +830,7 @@ ZbApsFilterEndpointAdd(struct ZigBeeT *zb, uint8_t endpoint, uint16_t profileId,
     struct aps_filter_cb *aps_filter_cb;
     struct ZbApsFilterT *filter;
 
-    /* FIXME - track these allocations so they can be freed later? */
+    /* EXEGIN - track these allocations so they can be freed later? */
     aps_filter_cb = malloc(sizeof(struct aps_filter_cb));
     if (aps_filter_cb == NULL) {
         return NULL;
@@ -833,7 +852,7 @@ ZbApsFilterEndpointAdd(struct ZigBeeT *zb, uint8_t endpoint, uint16_t profileId,
     }
     /* Callbacks go to MSG_M0TOM4_APS_FILTER_ENDPOINT_CB handler */
     return filter;
-} /* ZbApsFilterEndpointAdd */
+}
 
 bool
 ZbApsmeEndpointConfigNoMatchCallback(struct ZigBeeT *zb, uint8_t endpoint,
@@ -843,7 +862,7 @@ ZbApsmeEndpointConfigNoMatchCallback(struct ZigBeeT *zb, uint8_t endpoint,
     struct aps_filter_cb *aps_filter_cb;
     bool retval;
 
-    /* FIXME - track these allocations so they can be freed later? */
+    /* EXEGIN - track these allocations so they can be freed later? */
     aps_filter_cb = malloc(sizeof(struct aps_filter_cb));
     if (aps_filter_cb == NULL) {
         return false;
@@ -864,7 +883,7 @@ ZbApsmeEndpointConfigNoMatchCallback(struct ZigBeeT *zb, uint8_t endpoint,
     }
     /* Callbacks go to MSG_M0TOM4_APS_FILTER_ENDPOINT_CB handler */
     return retval;
-} /* ZbApsmeEndpointConfigNoMatchCallback */
+}
 
 struct ZbApsFilterT *
 ZbApsFilterClusterAdd(struct ZigBeeT *zb, uint8_t endpoint, uint16_t clusterId, uint16_t profileId,
@@ -874,7 +893,7 @@ ZbApsFilterClusterAdd(struct ZigBeeT *zb, uint8_t endpoint, uint16_t clusterId, 
     struct aps_filter_cb *aps_filter_cb;
     struct ZbApsFilterT *filter;
 
-    /* FIXME - track these allocations so they can be freed later. */
+    /* EXEGIN - track these allocations so they can be freed later. */
     aps_filter_cb = malloc(sizeof(struct aps_filter_cb));
     if (aps_filter_cb == NULL) {
         return NULL;
@@ -897,7 +916,7 @@ ZbApsFilterClusterAdd(struct ZigBeeT *zb, uint8_t endpoint, uint16_t clusterId, 
     }
     /* Callbacks go to MSG_M0TOM4_APS_FILTER_CLUSTER_CB handler */
     return filter;
-} /* ZbApsFilterClusterAdd */
+}
 
 bool
 ZbApsmeEndpointClusterListAppend(struct ZigBeeT *zb, uint8_t endpoint, uint16_t cluster_id, bool is_input)
@@ -913,7 +932,7 @@ ZbApsmeEndpointClusterListAppend(struct ZigBeeT *zb, uint8_t endpoint, uint16_t 
     ipcc_req->Data[2] = (uint32_t)is_input;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbApsmeEndpointClusterListAppend */
+}
 
 bool
 ZbApsEndpointExists(struct ZigBeeT *zb, uint8_t endpoint)
@@ -927,7 +946,7 @@ ZbApsEndpointExists(struct ZigBeeT *zb, uint8_t endpoint)
     ipcc_req->Data[0] = (uint32_t)endpoint;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbApsEndpointExists */
+}
 
 uint16_t
 ZbApsEndpointProfile(struct ZigBeeT *zb, uint8_t endpoint)
@@ -941,7 +960,7 @@ ZbApsEndpointProfile(struct ZigBeeT *zb, uint8_t endpoint)
     ipcc_req->Data[0] = (uint32_t)endpoint;
     ZIGBEE_CmdTransfer();
     return (uint16_t)zb_ipc_m4_get_retval();
-} /* ZbApsEndpointProfile */
+}
 
 bool
 ZbApsAddrIsBcast(struct ZbApsAddrT *addr)
@@ -954,7 +973,7 @@ ZbApsAddrIsBcast(struct ZbApsAddrT *addr)
         return true;
     }
     return false;
-} /* ZbApsAddrIsBcast */
+}
 
 bool
 ZbApsAddrIsLocal(struct ZigBeeT *zb, struct ZbApsAddrT *addr)
@@ -972,7 +991,7 @@ ZbApsAddrIsLocal(struct ZigBeeT *zb, struct ZbApsAddrT *addr)
         }
     }
     return false;
-} /* ZbApsAddrIsLocal */
+}
 
 enum ZbStatusCodeT
 ZbApsGetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId, void *attrPtr, unsigned int attrSz, unsigned int attrIndex)
@@ -995,7 +1014,7 @@ ZbApsGetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId, void *attrPtr, u
     ipcc_req->Data[1] = (uint32_t)&apsmeGetConf;
     ZIGBEE_CmdTransfer();
     return apsmeGetConf.status;
-} /* ZbApsGetIndex */
+}
 
 enum ZbStatusCodeT
 ZbApsSetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId, const void *attrPtr, unsigned int attrSz, unsigned int attrIndex)
@@ -1018,7 +1037,7 @@ ZbApsSetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId, const void *attr
     ipcc_req->Data[1] = (uint32_t)&apsmeSetConf;
     ZIGBEE_CmdTransfer();
     return apsmeSetConf.status;
-} /* ZbApsSetIndex */
+}
 
 void
 ZbApsmeAddGroupReq(struct ZigBeeT *zb, ZbApsmeAddGroupReqT *r, ZbApsmeAddGroupConfT *c)
@@ -1032,7 +1051,7 @@ ZbApsmeAddGroupReq(struct ZigBeeT *zb, ZbApsmeAddGroupReqT *r, ZbApsmeAddGroupCo
     ipcc_req->Data[0] = (uint32_t)r;
     ipcc_req->Data[1] = (uint32_t)c;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeAddGroupReq */
+}
 
 void
 ZbApsmeRemoveGroupReq(struct ZigBeeT *zb, ZbApsmeRemoveGroupReqT *r, ZbApsmeRemoveGroupConfT *c)
@@ -1046,7 +1065,7 @@ ZbApsmeRemoveGroupReq(struct ZigBeeT *zb, ZbApsmeRemoveGroupReqT *r, ZbApsmeRemo
     ipcc_req->Data[0] = (uint32_t)r;
     ipcc_req->Data[1] = (uint32_t)c;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeRemoveGroupReq */
+}
 
 void
 ZbApsmeRemoveAllGroupsReq(struct ZigBeeT *zb, ZbApsmeRemoveAllGroupsReqT *r, ZbApsmeRemoveAllGroupsConfT *c)
@@ -1060,7 +1079,7 @@ ZbApsmeRemoveAllGroupsReq(struct ZigBeeT *zb, ZbApsmeRemoveAllGroupsReqT *r, ZbA
     ipcc_req->Data[0] = (uint32_t)r;
     ipcc_req->Data[1] = (uint32_t)c;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeRemoveAllGroupsReq */
+}
 
 bool
 ZbApsGroupIsMember(struct ZigBeeT *zb, uint16_t groupAddr, uint8_t endpoint)
@@ -1089,10 +1108,10 @@ ZbApsGroupIsMember(struct ZigBeeT *zb, uint16_t groupAddr, uint8_t endpoint)
         /* We are a member. */
         ZbExitCritical(zb);
         return true;
-    } /* for */
+    }
     ZbExitCritical(zb);
     return false;
-} /* ZbApsGroupIsMember */
+}
 
 /* Helper to iterate through the Groups table using the APSME-GET interface */
 uint8_t
@@ -1112,10 +1131,10 @@ ZbApsGroupsGetCapacity(struct ZigBeeT *zb)
             continue;
         }
         num_found++;
-    } /* for */
+    }
     ZbExitCritical(zb);
     return (uint8_t)(i - num_found);
-} /* ZbApsGroupsGetCapacity */
+}
 
 /* Helper to iterate through the Groups table using the APSME-GET interface */
 uint8_t
@@ -1145,10 +1164,10 @@ ZbApsGroupsGetMembership(struct ZigBeeT *zb, uint8_t endpoint, uint16_t *group_l
             break;
         }
         group_list[len++] = group.groupAddr;
-    } /* for */
+    }
     ZbExitCritical(zb);
     return len;
-} /* ZbApsGroupsGetMembership */
+}
 
 void
 ZbApsmeBindReq(struct ZigBeeT *zb, ZbApsmeBindReqT *bindReqPtr, ZbApsmeBindConfT *bindConfPtr)
@@ -1162,7 +1181,7 @@ ZbApsmeBindReq(struct ZigBeeT *zb, ZbApsmeBindReqT *bindReqPtr, ZbApsmeBindConfT
     ipcc_req->Data[0] = (uint32_t)bindReqPtr;
     ipcc_req->Data[1] = (uint32_t)bindConfPtr;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeBindReq */
+}
 
 void
 ZbApsmeUnbindReq(struct ZigBeeT *zb, ZbApsmeUnbindReqT *unbindReqPtr, ZbApsmeUnbindConfT *unbindConfPtr)
@@ -1176,7 +1195,7 @@ ZbApsmeUnbindReq(struct ZigBeeT *zb, ZbApsmeUnbindReqT *unbindReqPtr, ZbApsmeUnb
     ipcc_req->Data[0] = (uint32_t)unbindReqPtr;
     ipcc_req->Data[1] = (uint32_t)unbindConfPtr;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeUnbindReq */
+}
 
 void
 ZbApsUnbindAllReq(struct ZigBeeT *zb)
@@ -1188,7 +1207,7 @@ ZbApsUnbindAllReq(struct ZigBeeT *zb)
     ipcc_req->ID = MSG_M4TOM0_APS_UNBIND_ALL;
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
-} /* ZbApsUnbindAllReq */
+}
 
 void
 ZbApsmeTransportKeyReq(struct ZigBeeT *zb, ZbApsmeTransportKeyReqT *req)
@@ -1201,7 +1220,7 @@ ZbApsmeTransportKeyReq(struct ZigBeeT *zb, ZbApsmeTransportKeyReqT *req)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)req;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeTransportKeyReq */
+}
 
 void
 ZbApsmeRemoveDeviceReq(struct ZigBeeT *zb, ZbApsmeRemoveDeviceReqT *req)
@@ -1214,7 +1233,7 @@ ZbApsmeRemoveDeviceReq(struct ZigBeeT *zb, ZbApsmeRemoveDeviceReqT *req)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)req;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeRemoveDeviceReq */
+}
 
 enum ZbStatusCodeT
 ZbApsmeRequestKeyReq(struct ZigBeeT *zb, ZbApsmeRequestKeyReqT *req)
@@ -1228,7 +1247,7 @@ ZbApsmeRequestKeyReq(struct ZigBeeT *zb, ZbApsmeRequestKeyReqT *req)
     ipcc_req->Data[0] = (uint32_t)req;
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
-} /* ZbApsmeRequestKeyReq */
+}
 
 void
 ZbApsmeSwitchKeyReq(struct ZigBeeT *zb, ZbApsmeSwitchKeyReqT *req)
@@ -1241,7 +1260,7 @@ ZbApsmeSwitchKeyReq(struct ZigBeeT *zb, ZbApsmeSwitchKeyReqT *req)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)req;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeSwitchKeyReq */
+}
 
 void
 ZbApsmeAddKeyReq(struct ZigBeeT *zb, ZbApsmeAddKeyReqT *req, ZbApsmeAddKeyConfT *conf)
@@ -1255,7 +1274,7 @@ ZbApsmeAddKeyReq(struct ZigBeeT *zb, ZbApsmeAddKeyReqT *req, ZbApsmeAddKeyConfT 
     ipcc_req->Data[0] = (uint32_t)req;
     ipcc_req->Data[1] = (uint32_t)conf;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeAddKeyReq */
+}
 
 void
 ZbApsmeGetKeyReq(struct ZigBeeT *zb, ZbApsmeGetKeyReqT *req, ZbApsmeGetKeyConfT *conf)
@@ -1269,7 +1288,7 @@ ZbApsmeGetKeyReq(struct ZigBeeT *zb, ZbApsmeGetKeyReqT *req, ZbApsmeGetKeyConfT 
     ipcc_req->Data[0] = (uint32_t)req;
     ipcc_req->Data[1] = (uint32_t)conf;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeGetKeyReq */
+}
 
 void
 ZbApsmeRemoveKeyReq(struct ZigBeeT *zb, ZbApsmeRemoveKeyReqT *req, ZbApsmeRemoveKeyConfT *conf)
@@ -1283,7 +1302,7 @@ ZbApsmeRemoveKeyReq(struct ZigBeeT *zb, ZbApsmeRemoveKeyReqT *req, ZbApsmeRemove
     ipcc_req->Data[0] = (uint32_t)req;
     ipcc_req->Data[1] = (uint32_t)conf;
     ZIGBEE_CmdTransfer();
-} /* ZbApsmeRemoveKeyReq */
+}
 
 /******************************************************************************
 * Zigbee Message Filters
@@ -1291,7 +1310,7 @@ ZbApsmeRemoveKeyReq(struct ZigBeeT *zb, ZbApsmeRemoveKeyReqT *req, ZbApsmeRemove
 */
 struct zb_msg_filter_cb_info {
     struct ZbMsgFilterT *filter;
-    int (*callback)(struct ZigBeeT *zb, uint32_t id, void *msg, void *cbarg);
+    enum zb_msg_filter_rc (*callback)(struct ZigBeeT *zb, uint32_t id, void *msg, void *cbarg);
     void *arg;
 };
 
@@ -1300,7 +1319,7 @@ static struct zb_msg_filter_cb_info zb_msg_filter_cb_list[ZB_IPC_MSG_FILTER_CB_L
 
 struct ZbMsgFilterT *
 ZbMsgFilterRegister(struct ZigBeeT *zb, uint32_t mask, uint8_t prio,
-    int (*callback)(struct ZigBeeT *zb, uint32_t id, void *msg, void *cbarg), void *arg)
+    enum zb_msg_filter_rc (*callback)(struct ZigBeeT *zb, uint32_t id, void *msg, void *cbarg), void *arg)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
     struct ZbMsgFilterT *filter;
@@ -1333,7 +1352,7 @@ ZbMsgFilterRegister(struct ZigBeeT *zb, uint32_t mask, uint8_t prio,
     }
     return filter;
     /* Followed up by MSG_M0TOM4_FILTER_MSG_CB */
-} /* ZbMsgFilterRegister */
+}
 
 void
 ZbMsgFilterRemove(struct ZigBeeT *zb, struct ZbMsgFilterT *filter)
@@ -1362,7 +1381,7 @@ ZbMsgFilterRemove(struct ZigBeeT *zb, struct ZbMsgFilterT *filter)
     ipcc_req->Data[0] = (uint32_t)filter;
     ZIGBEE_CmdTransfer();
     cb_info->filter = NULL;
-} /* ZbMsgFilterRemove */
+}
 
 /******************************************************************************
  * Zigbee Timer API
@@ -1404,7 +1423,7 @@ ZbTimerAlloc(struct ZigBeeT *zb, void (*callback)(struct ZigBeeT *zb, void *cn_a
         }
     }
     return timer;
-} /* ZbTimerAlloc */
+}
 
 void
 ZbTimerChangeCallback(struct ZbTimerT *timer, void (*callback)(struct ZigBeeT *zb, void *cb_arg), void *arg)
@@ -1412,7 +1431,7 @@ ZbTimerChangeCallback(struct ZbTimerT *timer, void (*callback)(struct ZigBeeT *z
     ZbTimerStop(timer);
     timer->callback = callback;
     timer->arg = arg;
-} /* ZbTimerChangeCallback */
+}
 
 void
 ZbTimerFree(struct ZbTimerT *timer)
@@ -1429,7 +1448,7 @@ ZbTimerFree(struct ZbTimerT *timer)
 
     /* Free the timer struct on the M4 */
     ZbHeapFree(NULL, timer);
-} /* ZbTimerFree */
+}
 
 bool
 ZbTimerRunning(struct ZbTimerT *timer)
@@ -1445,7 +1464,7 @@ ZbTimerRunning(struct ZbTimerT *timer)
     ZIGBEE_CmdTransfer();
     retval = zb_ipc_m4_get_retval();
     return retval != 0 ? true : false;
-} /* ZbTimerRunning */
+}
 
 unsigned int
 ZbTimerRemaining(struct ZbTimerT *timer)
@@ -1459,7 +1478,7 @@ ZbTimerRemaining(struct ZbTimerT *timer)
     ipcc_req->Data[0] = (uint32_t)timer->m0_timer;
     ZIGBEE_CmdTransfer();
     return (unsigned int)zb_ipc_m4_get_retval();
-} /* ZbTimerRemaining */
+}
 
 void
 ZbTimerStop(struct ZbTimerT *timer)
@@ -1472,7 +1491,7 @@ ZbTimerStop(struct ZbTimerT *timer)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)timer->m0_timer;
     ZIGBEE_CmdTransfer();
-} /* ZbTimerStop */
+}
 
 void
 ZbTimerReset(struct ZbTimerT *timer, unsigned int timeout)
@@ -1486,7 +1505,7 @@ ZbTimerReset(struct ZbTimerT *timer, unsigned int timeout)
     ipcc_req->Data[0] = (uint32_t)timer->m0_timer;
     ipcc_req->Data[1] = (uint32_t)timeout;
     ZIGBEE_CmdTransfer();
-} /* ZbTimerReset */
+}
 
 unsigned int
 ZbTimeoutRemaining(ZbUptimeT now, ZbUptimeT expire_time)
@@ -1518,7 +1537,7 @@ ZbTimeoutRemaining(ZbUptimeT now, ZbUptimeT expire_time)
     u_delta = expire_time - now;
 
     return (unsigned int)u_delta;
-} /* ZbTimeoutRemaining */
+}
 
 /******************************************************************************
  * NWK
@@ -1546,7 +1565,7 @@ ZbNwkGetIndex(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr,
     ipcc_req->Data[1] = (uint32_t)&nlmeGetConf;
     ZIGBEE_CmdTransfer();
     return nlmeGetConf.status;
-} /* ZbNwkGetIndex */
+}
 
 enum ZbStatusCodeT
 ZbNwkSetIndex(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr,
@@ -1570,19 +1589,19 @@ ZbNwkSetIndex(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr,
     ipcc_req->Data[1] = (uint32_t)&nlmeSetConf;
     ZIGBEE_CmdTransfer();
     return nlmeSetConf.status;
-} /* ZbNwkSetIndex */
+}
 
 enum ZbStatusCodeT
 ZbNwkGet(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr, unsigned int attrSz)
 {
     return ZbNwkGetIndex(zb, attrId, attrPtr, attrSz, 0);
-} /* ZbNwkGet */
+}
 
 enum ZbStatusCodeT
 ZbNwkSet(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr, unsigned int attrSz)
 {
     return ZbNwkSetIndex(zb, attrId, attrPtr, attrSz, 0);
-} /* ZbNwkSet */
+}
 
 uint64_t
 ZbNwkGetParentExtAddr(struct ZigBeeT *zb)
@@ -1600,7 +1619,7 @@ ZbNwkGetParentExtAddr(struct ZigBeeT *zb)
     assert(ipcc_req->Size == 2);
     zb_ipc_m4_memcpy2(&ext_addr, &ipcc_req->Data[0], 8);
     return ext_addr;
-} /* ZbNwkGetParentExtAddr */
+}
 
 uint16_t
 ZbNwkGetParentShortAddr(struct ZigBeeT *zb)
@@ -1613,7 +1632,7 @@ ZbNwkGetParentShortAddr(struct ZigBeeT *zb)
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
     return (uint16_t)zb_ipc_m4_get_retval();
-} /* ZbNwkGetParentShortAddr */
+}
 
 uint64_t
 ZbNwkAddrLookupExt(struct ZigBeeT *zb, uint16_t nwkAddr)
@@ -1632,7 +1651,7 @@ ZbNwkAddrLookupExt(struct ZigBeeT *zb, uint16_t nwkAddr)
     assert(ipcc_req->Size == 2);
     zb_ipc_m4_memcpy2(&ext_addr, &ipcc_req->Data[0], 8);
     return ext_addr;
-} /* ZbNwkAddrLookupExt */
+}
 
 uint16_t
 ZbNwkAddrLookupNwk(struct ZigBeeT *zb, uint64_t extAddr)
@@ -1647,7 +1666,7 @@ ZbNwkAddrLookupNwk(struct ZigBeeT *zb, uint64_t extAddr)
     zb_ipc_m4_memcpy2(ipcc_req->Data, &extAddr, 8);
     ZIGBEE_CmdTransfer();
     return (uint16_t)zb_ipc_m4_get_retval();
-} /* ZbNwkAddrLookupNwk */
+}
 
 bool
 ZbNwkAddrIsChildExt(struct ZigBeeT *zb, uint64_t extAddr, uint16_t *nwkAddrPtr)
@@ -1663,7 +1682,7 @@ ZbNwkAddrIsChildExt(struct ZigBeeT *zb, uint64_t extAddr, uint16_t *nwkAddrPtr)
     ipcc_req->Data[2] = (uint32_t)nwkAddrPtr;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbNwkAddrIsChildExt */
+}
 
 bool
 ZbNwkAddrIsChildNwk(struct ZigBeeT *zb, uint16_t nwkAddr, uint64_t *extAddrPtr)
@@ -1678,7 +1697,7 @@ ZbNwkAddrIsChildNwk(struct ZigBeeT *zb, uint16_t nwkAddr, uint64_t *extAddrPtr)
     ipcc_req->Data[1] = (uint32_t)extAddrPtr;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbNwkAddrIsChildNwk */
+}
 
 bool
 ZbNwkGetSecMaterial(struct ZigBeeT *zb, uint8_t keySeqno, ZbNwkSecMaterialT *material)
@@ -1693,7 +1712,7 @@ ZbNwkGetSecMaterial(struct ZigBeeT *zb, uint8_t keySeqno, ZbNwkSecMaterialT *mat
     ipcc_req->Data[1] = (uint32_t)material;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbNwkGetSecMaterial */
+}
 
 enum ZbStatusCodeT
 ZbNlmeNetDiscReq(struct ZigBeeT *zb, ZbNlmeNetDiscReqT *req,
@@ -1715,7 +1734,7 @@ ZbNlmeNetDiscReq(struct ZigBeeT *zb, ZbNlmeNetDiscReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_NLME_NET_DISC_CB handler */
-} /* ZbNlmeNetDiscReq */
+}
 
 enum ZbStatusCodeT
 ZbNlmeLeaveReq(struct ZigBeeT *zb, struct ZbNlmeLeaveReqT *req,
@@ -1737,7 +1756,7 @@ ZbNlmeLeaveReq(struct ZigBeeT *zb, struct ZbNlmeLeaveReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_NLME_LEAVE_CB handler */
-} /* ZbNlmeLeaveReq */
+}
 
 void
 ZbNlmePermitJoinReq(struct ZigBeeT *zb, ZbNlmePermitJoinReqT *req, ZbNlmePermitJoinConfT *conf)
@@ -1751,7 +1770,7 @@ ZbNlmePermitJoinReq(struct ZigBeeT *zb, ZbNlmePermitJoinReqT *req, ZbNlmePermitJ
     ipcc_req->Data[0] = (uint32_t)req;
     ipcc_req->Data[1] = (uint32_t)conf;
     ZIGBEE_CmdTransfer();
-} /* ZbNlmePermitJoinReq */
+}
 
 void
 ZbNlmeResetReq(struct ZigBeeT *zb, ZbNlmeResetReqT *req, ZbNlmeResetConfT *conf)
@@ -1765,7 +1784,7 @@ ZbNlmeResetReq(struct ZigBeeT *zb, ZbNlmeResetReqT *req, ZbNlmeResetConfT *conf)
     ipcc_req->Data[0] = (uint32_t)req;
     ipcc_req->Data[1] = (uint32_t)conf;
     ZIGBEE_CmdTransfer();
-} /* ZbNlmeResetReq */
+}
 
 enum ZbStatusCodeT
 ZbNlmeSyncReq(struct ZigBeeT *zb, ZbNlmeSyncReqT *req,
@@ -1787,7 +1806,7 @@ ZbNlmeSyncReq(struct ZigBeeT *zb, ZbNlmeSyncReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_NLME_SYNC_CB handler */
-} /* ZbNlmeSyncReq */
+}
 
 enum ZbStatusCodeT
 ZbNlmeRouteDiscReq(struct ZigBeeT *zb, ZbNlmeRouteDiscReqT *req,
@@ -1809,14 +1828,14 @@ ZbNlmeRouteDiscReq(struct ZigBeeT *zb, ZbNlmeRouteDiscReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_NLME_ROUTE_DISC_CB handler */
-} /* ZbNlmeRouteDiscReq */
+}
 
 enum WpanJoinPolicyT
 ZbNlmeJoiningPolicyGet(struct ZigBeeT *zb)
 {
     /* This is only for zbcli. We don't need this for 2.4 GHz operation. */
     return WPAN_JOIN_POLICY_ALL;
-} /* ZbNlmeJoiningPolicyGet */
+}
 
 void
 ZbNwkNeighborClearAll(struct ZigBeeT *zb, bool keep_parent, bool keep_children)
@@ -1830,7 +1849,7 @@ ZbNwkNeighborClearAll(struct ZigBeeT *zb, bool keep_parent, bool keep_children)
     ipcc_req->Data[0] = (uint32_t)keep_parent;
     ipcc_req->Data[1] = (uint32_t)keep_children;
     ZIGBEE_CmdTransfer();
-} /* ZbNwkNeighborClearAll */
+}
 
 void
 ZbNlmeDirectJoinReq(struct ZigBeeT *zb, ZbNlmeDirectJoinReqT *req, ZbNlmeDirectJoinConfT *conf)
@@ -1844,7 +1863,7 @@ ZbNlmeDirectJoinReq(struct ZigBeeT *zb, ZbNlmeDirectJoinReqT *req, ZbNlmeDirectJ
     ipcc_req->Data[0] = (uint32_t)req;
     ipcc_req->Data[1] = (uint32_t)conf;
     ZIGBEE_CmdTransfer();
-} /* ZbNlmeDirectJoinReq */
+}
 
 void
 ZbNlmeSetInterface(struct ZigBeeT *zb, ZbNlmeSetInterfaceReqT *req, ZbNlmeSetInterfaceConfT *conf)
@@ -1858,7 +1877,7 @@ ZbNlmeSetInterface(struct ZigBeeT *zb, ZbNlmeSetInterfaceReqT *req, ZbNlmeSetInt
     ipcc_req->Data[0] = (uint32_t)req;
     ipcc_req->Data[1] = (uint32_t)conf;
     ZIGBEE_CmdTransfer();
-} /* ZbNlmeSetInterface */
+}
 
 void
 ZbNlmeGetInterface(struct ZigBeeT *zb, ZbNlmeGetInterfaceReqT *req, ZbNlmeGetInterfaceConfT *conf)
@@ -1872,7 +1891,7 @@ ZbNlmeGetInterface(struct ZigBeeT *zb, ZbNlmeGetInterfaceReqT *req, ZbNlmeGetInt
     ipcc_req->Data[0] = (uint32_t)req;
     ipcc_req->Data[1] = (uint32_t)conf;
     ZIGBEE_CmdTransfer();
-} /* ZbNlmeGetInterface */
+}
 
 bool
 ZbNwkIfSetTxPower(struct ZigBeeT *zb, const char *name, int8_t tx_power)
@@ -1887,7 +1906,7 @@ ZbNwkIfSetTxPower(struct ZigBeeT *zb, const char *name, int8_t tx_power)
     ipcc_req->Data[1] = (uint32_t)tx_power;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbNwkIfSetTxPower */
+}
 
 bool
 ZbNwkIfGetTxPower(struct ZigBeeT *zb, const char *name, int8_t *tx_power)
@@ -1902,7 +1921,7 @@ ZbNwkIfGetTxPower(struct ZigBeeT *zb, const char *name, int8_t *tx_power)
     ipcc_req->Data[1] = (uint32_t)tx_power;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbNwkIfGetTxPower */
+}
 
 bool
 ZbNwkIfSetDsn(struct ZigBeeT *zb, const char *name, uint8_t macDsn)
@@ -1933,7 +1952,7 @@ ZbNwkSetFrameCounter(struct ZigBeeT *zb, uint8_t keySeqno, uint64_t srcAddr, uin
     ipcc_req->Data[3] = (uint32_t)newFrameCount;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbNwkSetFrameCounter */
+}
 
 bool
 ZbNwkFastPollRequest(struct ZigBeeT *zb)
@@ -1946,7 +1965,7 @@ ZbNwkFastPollRequest(struct ZigBeeT *zb)
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbNwkFastPollRequest */
+}
 
 bool
 ZbNwkFastPollRelease(struct ZigBeeT *zb)
@@ -1959,7 +1978,7 @@ ZbNwkFastPollRelease(struct ZigBeeT *zb)
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbNwkFastPollRelease */
+}
 
 unsigned int
 ZbNwkFastPollResourceCount(struct ZigBeeT *zb)
@@ -1972,7 +1991,7 @@ ZbNwkFastPollResourceCount(struct ZigBeeT *zb)
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval();
-} /* ZbNwkFastPollResourceCount */
+}
 
 /* Only required by zbcli. And only helps with automated verification of test cases.
  * Do not use for certification. */
@@ -1987,7 +2006,7 @@ ZbNwkAddrSetNextChildAddr(struct ZigBeeT *zb, uint16_t nextChildAddr)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)nextChildAddr;
     ZIGBEE_CmdTransfer();
-} /* ZbNwkAddrSetNextChildAddr */
+}
 
 /* Required for zigbee certification only. May not be required for a DUT though. */
 bool
@@ -1996,7 +2015,7 @@ nwk_status_send(struct ZigBeeT *zb, uint16_t dstAddr, enum ZbNwkAddrModeT dstAdd
 {
     /* TODO? */
     return false;
-} /* nwk_status_send */
+}
 
 /* Required for zigbee certification only. May not be required for a DUT though. */
 bool
@@ -2004,7 +2023,7 @@ nwk_rreq_by_route_is_active(struct ZigBeeT *zb, ZbNwkRouteEntryT *route)
 {
     /* TODO? */
     return false;
-} /* nwk_rreq_by_route_is_active */
+}
 
 bool
 ZbNwkSendEdkaReq(struct ZigBeeT *zb)
@@ -2060,7 +2079,7 @@ ZbZdoDeviceAnnceFilterRegister(struct ZigBeeT *zb,
     }
     return handle;
     /* Followed up in MSG_M0TOM4_ZDO_DEVICE_ANNCE_FILTER_CB handler */
-} /* ZbZdoDeviceAnnceFilterRegister */
+}
 
 void
 ZbZdoDeviceAnnceFilterRemove(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceFilterT *handle)
@@ -2089,7 +2108,7 @@ ZbZdoDeviceAnnceFilterRemove(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceFilterT 
     ipcc_req->Data[0] = (uint32_t)handle;
     ZIGBEE_CmdTransfer();
     cb_info->handle = NULL;
-} /* ZbZdoDeviceAnnceFilterRemove */
+}
 
 /******************************************************************************
  * ZDO
@@ -2115,7 +2134,7 @@ ZbZdoNwkAddrReq(struct ZigBeeT *zb, ZbZdoNwkAddrReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_NWK_ADDR_CB handler */
-} /* ZbZdoNwkAddrReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoIeeeAddrReq(struct ZigBeeT *zb, ZbZdoIeeeAddrReqT *req,
@@ -2137,7 +2156,7 @@ ZbZdoIeeeAddrReq(struct ZigBeeT *zb, ZbZdoIeeeAddrReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_IEEE_ADDR_CB handler */
-} /* ZbZdoIeeeAddrReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoNodeDescReq(struct ZigBeeT *zb, ZbZdoNodeDescReqT *req,
@@ -2159,7 +2178,7 @@ ZbZdoNodeDescReq(struct ZigBeeT *zb, ZbZdoNodeDescReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_NODE_DESC_CB handler */
-} /* ZbZdoNodeDescReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoPowerDescReq(struct ZigBeeT *zb, ZbZdoPowerDescReqT *req,
@@ -2181,7 +2200,7 @@ ZbZdoPowerDescReq(struct ZigBeeT *zb, ZbZdoPowerDescReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_POWER_DESC_CB handler */
-} /* ZbZdoPowerDescReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoSimpleDescReq(struct ZigBeeT *zb, ZbZdoSimpleDescReqT *req,
@@ -2203,7 +2222,7 @@ ZbZdoSimpleDescReq(struct ZigBeeT *zb, ZbZdoSimpleDescReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_SIMPLE_DESC_CB handler */
-} /* ZbZdoSimpleDescReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoActiveEpReq(struct ZigBeeT *zb, ZbZdoActiveEpReqT *req,
@@ -2225,7 +2244,7 @@ ZbZdoActiveEpReq(struct ZigBeeT *zb, ZbZdoActiveEpReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_ACTIVE_EP_CB handler */
-} /* ZbZdoActiveEpReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoMatchDescReq(struct ZigBeeT *zb, ZbZdoMatchDescReqT *req,
@@ -2247,28 +2266,38 @@ ZbZdoMatchDescReq(struct ZigBeeT *zb, ZbZdoMatchDescReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_MATCH_DESC_CB handler */
-} /* ZbZdoMatchDescReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoMatchDescMulti(struct ZigBeeT *zb, ZbZdoMatchDescReqT *req,
     void (*callback)(ZbZdoMatchDescRspT *ind, void *cb_arg), void *arg)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
+    enum ZbStatusCodeT status;
 
     /* The callback must be static so we can receive multiple responses. We don't check here if
      * we're overwriting an existing callback, so application cannot effecticely perform more
-     * than one of these at a time. There should be no practical need for this though.
-     * There may even be no practical need for this API. */
+     * than one of these at a time. */
+
+    /* Check if a request is already active */
+    if (zdo_match_multi_cb != NULL) {
+        return ZB_ZDP_STATUS_TABLE_FULL;
+    }
     zdo_match_multi_cb = callback;
+
     Pre_ZigbeeCmdProcessing();
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
     ipcc_req->ID = MSG_M4TOM0_ZDO_MATCH_DESC_MULTI;
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)req;
     ZIGBEE_CmdTransfer();
-    return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
+    status = (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
+    if (status != ZB_STATUS_SUCCESS) {
+        zdo_match_multi_cb = NULL;
+    }
+    return status;
     /* Followed up in MSG_M0TOM4_ZDO_MATCH_DESC_MULTI_CB handler */
-} /* ZbZdoMatchDescMulti */
+}
 
 void
 ZbZdoDeviceAnnce(struct ZigBeeT *zb, ZbZdoDeviceAnnceT *deviceAnncePtr)
@@ -2281,7 +2310,7 @@ ZbZdoDeviceAnnce(struct ZigBeeT *zb, ZbZdoDeviceAnnceT *deviceAnncePtr)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)deviceAnncePtr;
     ZIGBEE_CmdTransfer();
-} /* ZbZdoDeviceAnnce */
+}
 
 void
 ZbZdoDeviceAnnceAlias(struct ZigBeeT *zb, ZbZdoDeviceAnnceT *deviceAnncePtr)
@@ -2294,7 +2323,7 @@ ZbZdoDeviceAnnceAlias(struct ZigBeeT *zb, ZbZdoDeviceAnnceT *deviceAnncePtr)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)deviceAnncePtr;
     ZIGBEE_CmdTransfer();
-} /* ZbZdoDeviceAnnceAlias */
+}
 
 enum ZbStatusCodeT
 ZbZdoBindReq(struct ZigBeeT *zb, ZbZdoBindReqT *req,
@@ -2316,7 +2345,7 @@ ZbZdoBindReq(struct ZigBeeT *zb, ZbZdoBindReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_BIND_CB handler */
-} /* ZbZdoBindReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoUnbindReq(struct ZigBeeT *zb, ZbZdoBindReqT *req,
@@ -2338,7 +2367,7 @@ ZbZdoUnbindReq(struct ZigBeeT *zb, ZbZdoBindReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_UNBIND_CB handler */
-} /* ZbZdoUnbindReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoLqiReq(struct ZigBeeT *zb, ZbZdoLqiReqT *req, void (*callback)(ZbZdoLqiRspT *rsp, void *cb_arg), void *arg)
@@ -2359,7 +2388,7 @@ ZbZdoLqiReq(struct ZigBeeT *zb, ZbZdoLqiReqT *req, void (*callback)(ZbZdoLqiRspT
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_MGMT_LQI_CB handler */
-} /* ZbZdoLqiReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoMgmtBindReq(struct ZigBeeT *zb, ZbZdoMgmtBindReqT *req,
@@ -2381,7 +2410,7 @@ ZbZdoMgmtBindReq(struct ZigBeeT *zb, ZbZdoMgmtBindReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_MGMT_BIND_CB handler */
-} /* ZbZdoMgmtBindReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoLeaveReq(struct ZigBeeT *zb, ZbZdoLeaveReqT *req,
@@ -2403,7 +2432,7 @@ ZbZdoLeaveReq(struct ZigBeeT *zb, ZbZdoLeaveReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_MGMT_LEAVE_CB handler */
-} /* ZbZdoLeaveReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoPermitJoinReq(struct ZigBeeT *zb, ZbZdoPermitJoinReqT *req,
@@ -2425,7 +2454,7 @@ ZbZdoPermitJoinReq(struct ZigBeeT *zb, ZbZdoPermitJoinReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_MGMT_PERMIT_JOIN_CB handler */
-} /* ZbZdoPermitJoinReq */
+}
 
 enum ZbStatusCodeT
 ZbZdoNwkUpdateReq(struct ZigBeeT *zb, ZbZdoNwkUpdateReqT *req,
@@ -2447,7 +2476,7 @@ ZbZdoNwkUpdateReq(struct ZigBeeT *zb, ZbZdoNwkUpdateReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZDO_MGMT_NWK_UPDATE_CB handler */
-} /* ZbZdoNwkUpdateReq */
+}
 
 /******************************************************************************
  * ZCL
@@ -2482,7 +2511,7 @@ ZbZclBasicPostAlarm(struct ZigBeeT *zb, uint8_t endpoint, uint8_t alarm_code)
     ipcc_req->Data[1] = (uint32_t)alarm_code;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
-} /* ZbZclBasicPostAlarm */
+}
 
 void
 ZbZclBasicServerResetCmdConfig(struct ZigBeeT *zb, bool allow_reset)
@@ -2495,7 +2524,7 @@ ZbZclBasicServerResetCmdConfig(struct ZigBeeT *zb, bool allow_reset)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)allow_reset;
     ZIGBEE_CmdTransfer();
-} /* ZbZclBasicServerResetCmdConfig */
+}
 
 enum ZclStatusCodeT
 ZbZclBasicWriteDirect(struct ZigBeeT *zb, uint8_t endpoint, uint16_t attributeId, const void *ptr, unsigned int len)
@@ -2512,7 +2541,7 @@ ZbZclBasicWriteDirect(struct ZigBeeT *zb, uint8_t endpoint, uint16_t attributeId
     ipcc_req->Data[3] = (uint32_t)len;
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
-} /* ZbZclBasicWriteDirect */
+}
 
 bool
 ZbZclDiagnosticsServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, uint16_t profileId, enum ZbStatusCodeT minSecurity)
@@ -2542,7 +2571,7 @@ ZbZclAddEndpoint(struct ZigBeeT *zb, ZbApsmeAddEndpointReqT *addReqPtr, ZbApsmeA
     ipcc_req->Data[0] = (uint32_t)addReqPtr;
     ipcc_req->Data[1] = (uint32_t)addConfPtr;
     ZIGBEE_CmdTransfer();
-} /* ZbZclAddEndpoint */
+}
 
 void
 ZbZclRemoveEndpoint(struct ZigBeeT *zb, ZbApsmeRemoveEndpointReqT *req, ZbApsmeRemoveEndpointConfT *conf)
@@ -2556,7 +2585,7 @@ ZbZclRemoveEndpoint(struct ZigBeeT *zb, ZbApsmeRemoveEndpointReqT *req, ZbApsmeR
     ipcc_req->Data[0] = (uint32_t)req;
     ipcc_req->Data[1] = (uint32_t)conf;
     ZIGBEE_CmdTransfer();
-} /* ZbZclRemoveEndpoint */
+}
 
 enum ZclStatusCodeT
 ZbZclReadReq(struct ZbZclClusterT *clusterPtr, ZbZclReadReqT *req,
@@ -2579,7 +2608,7 @@ ZbZclReadReq(struct ZbZclClusterT *clusterPtr, ZbZclReadReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZCL_READ_CB handler */
-} /* ZbZclReadReq */
+}
 
 enum ZclStatusCodeT
 ZbZclWriteReq(struct ZbZclClusterT *clusterPtr, ZbZclWriteReqT *req,
@@ -2602,7 +2631,7 @@ ZbZclWriteReq(struct ZbZclClusterT *clusterPtr, ZbZclWriteReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZCL_WRITE_CB handler */
-} /* ZbZclWriteReq */
+}
 
 enum ZclStatusCodeT
 ZbZclDiscoverAttrReq(struct ZbZclClusterT *clusterPtr, ZbZclDiscoverAttrReqT *req,
@@ -2625,7 +2654,7 @@ ZbZclDiscoverAttrReq(struct ZbZclClusterT *clusterPtr, ZbZclDiscoverAttrReqT *re
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZCL_DISCOVER_ATTR_CB handler */
-} /* ZbZclDiscoverAttrReq */
+}
 
 uint8_t
 ZbZclGetNextSeqnum(void)
@@ -2638,18 +2667,23 @@ ZbZclGetNextSeqnum(void)
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
     return (uint8_t)zb_ipc_m4_get_retval();
-} /* ZbZclGetNextSeqnum */
+}
 
 enum ZclStatusCodeT
 ZbZclCommandReq(struct ZigBeeT *zb, ZbZclCommandReqT *zclReq,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
-    struct zb_ipc_m4_cb_info *info;
+    struct zb_ipc_m4_cb_info *info = NULL;
 
-    info = zb_ipc_m4_cb_info_alloc((void *)callback, arg);
-    if (info == NULL) {
-        return ZB_STATUS_ALLOC_FAIL;
+    if (callback != NULL) {
+        info = zb_ipc_m4_cb_info_alloc((void *)callback, arg);
+        if (info == NULL) {
+            return ZB_STATUS_ALLOC_FAIL;
+        }
+        if (ZbApsAddrIsBcast(&zclReq->dst)) {
+            info->zcl_recv_multi_rsp = true; /* callback only freed on ZCL_STATUS_TIMEOUT */
+        }
     }
     Pre_ZigbeeCmdProcessing();
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
@@ -2659,8 +2693,8 @@ ZbZclCommandReq(struct ZigBeeT *zb, ZbZclCommandReqT *zclReq,
     ipcc_req->Data[1] = (uint32_t)info;
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
-    /* Followed up in MSG_M0TOM4_ZCL_COMMAND_REQ_CB handler */
-} /* ZbZclCommandReq */
+    /* Followed up in MSG_M0TOM4_ZCL_COMMAND_REQ_CB handler if callback != NULL */
+}
 
 enum ZclStatusCodeT
 ZbZclCommandNoResp(struct ZigBeeT *zb, ZbZclCommandReqT *req,
@@ -2682,7 +2716,7 @@ ZbZclCommandNoResp(struct ZigBeeT *zb, ZbZclCommandReqT *req,
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_ZCL_COMMAND_NO_RSP_CB handler */
-} /* ZbZclCommandNoResp */
+}
 
 void
 ZbZclSendDefaultResponse(struct ZbZclClusterT *clusterPtr, ZbApsdeDataIndT *dataIndPtr,
@@ -2699,18 +2733,23 @@ ZbZclSendDefaultResponse(struct ZbZclClusterT *clusterPtr, ZbApsdeDataIndT *data
     ipcc_req->Data[2] = (uint32_t)zclHdrPtr;
     ipcc_req->Data[3] = (uint32_t)status;
     ZIGBEE_CmdTransfer();
-} /* ZbZclSendDefaultResponse */
+}
 
 enum ZclStatusCodeT
 ZbZclClusterCommandReq(struct ZbZclClusterT *clusterPtr, struct ZbZclClusterCommandReqT *req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
-    struct zb_ipc_m4_cb_info *info;
+    struct zb_ipc_m4_cb_info *info = NULL;
 
-    info = zb_ipc_m4_cb_info_alloc((void *)callback, arg);
-    if (info == NULL) {
-        return ZB_STATUS_ALLOC_FAIL;
+    if (callback != NULL) {
+        info = zb_ipc_m4_cb_info_alloc((void *)callback, arg);
+        if (info == NULL) {
+            return ZB_STATUS_ALLOC_FAIL;
+        }
+        if (ZbApsAddrIsBcast(&req->dst)) {
+            info->zcl_recv_multi_rsp = true; /* callback only freed on ZCL_STATUS_TIMEOUT */
+        }
     }
     Pre_ZigbeeCmdProcessing();
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
@@ -2721,8 +2760,8 @@ ZbZclClusterCommandReq(struct ZbZclClusterT *clusterPtr, struct ZbZclClusterComm
     ipcc_req->Data[2] = (uint32_t)info;
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
-    /* Followed up in MSG_M0TOM4_ZCL_CLUSTER_CMD_REQ_CB handler */
-} /* ZbZclClusterCommandReq */
+    /* Followed up in MSG_M0TOM4_ZCL_CLUSTER_CMD_REQ_CB handler if callback != NULL */
+}
 
 enum ZclStatusCodeT
 ZbZclClusterCommandRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dstInfo,
@@ -2741,7 +2780,7 @@ ZbZclClusterCommandRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *
     ipcc_req->Data[4] = (uint32_t)numPayloads;
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
-} /* ZbZclClusterCommandRsp */
+}
 
 enum ZclStatusCodeT
 ZbZclClusterCommandRspWithCb(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dstInfo, uint8_t cmdId,
@@ -2751,11 +2790,12 @@ ZbZclClusterCommandRspWithCb(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrI
     struct zb_ipc_m4_cb_info *info = NULL;
     enum ZclStatusCodeT status;
 
-    if (callback != NULL) {
-        info = zb_ipc_m4_cb_info_alloc((void *)callback, arg);
-        if (info == NULL) {
-            return ZCL_STATUS_ALLOC_FAIL;
-        }
+    if (callback == NULL) {
+        return ZbZclClusterCommandRsp(clusterPtr, dstInfo, cmdId, payloads, numPayloads);
+    }
+    info = zb_ipc_m4_cb_info_alloc((void *)callback, arg);
+    if (info == NULL) {
+        return ZCL_STATUS_ALLOC_FAIL;
     }
     Pre_ZigbeeCmdProcessing();
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
@@ -2774,7 +2814,7 @@ ZbZclClusterCommandRspWithCb(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrI
     }
     return status;
     /* Followed up in MSG_M0TOM4_ZCL_CLUSTER_CMD_RSP_CONF_CB handler */
-} /* ZbZclClusterCommandRspWithCb */
+}
 
 enum ZclStatusCodeT
 ZbZclSendClusterStatusResponse(struct ZbZclClusterT *clusterPtr, ZbApsdeDataIndT *dataIndPtr,
@@ -2794,7 +2834,7 @@ ZbZclSendClusterStatusResponse(struct ZbZclClusterT *clusterPtr, ZbApsdeDataIndT
     ipcc_req->Data[5] = (uint32_t)zclPaylen;
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
-} /* ZbZclSendClusterStatusResponse */
+}
 
 bool
 ZbZclClusterEndpointRegister(struct ZbZclClusterT *clusterPtr)
@@ -2810,7 +2850,7 @@ ZbZclClusterEndpointRegister(struct ZbZclClusterT *clusterPtr)
     ZIGBEE_CmdTransfer();
     retval = zb_ipc_m4_get_retval();
     return retval != 0 ? true : false;
-} /* ZbZclClusterEndpointRegister */
+}
 
 bool
 ZbZclClusterEndpointRemove(struct ZbZclClusterT *clusterPtr)
@@ -2826,7 +2866,7 @@ ZbZclClusterEndpointRemove(struct ZbZclClusterT *clusterPtr)
     ZIGBEE_CmdTransfer();
     retval = zb_ipc_m4_get_retval();
     return retval != 0 ? true : false;
-} /* ZbZclClusterEndpointRemove */
+}
 
 enum ZclStatusCodeT
 ZbZclClusterBind(struct ZbZclClusterT *clusterPtr, uint8_t endpoint, uint16_t profileId, enum ZbZclDirectionT direction)
@@ -2844,7 +2884,7 @@ ZbZclClusterBind(struct ZbZclClusterT *clusterPtr, uint8_t endpoint, uint16_t pr
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
     /* Data indication callbacks go to MSG_M0TOM4_ZCL_CLUSTER_DATA_IND */
-} /* ZbZclClusterBind */
+}
 
 void
 ZbZclClusterUnbind(struct ZbZclClusterT *clusterPtr)
@@ -2857,7 +2897,7 @@ ZbZclClusterUnbind(struct ZbZclClusterT *clusterPtr)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)clusterPtr;
     ZIGBEE_CmdTransfer();
-} /* ZbZclClusterUnbind */
+}
 
 enum ZclStatusCodeT
 ZbZclClusterLoopbackBind(struct ZbZclClusterT *clusterPtr, struct ZbApsFilterT *filter)
@@ -2873,7 +2913,7 @@ ZbZclClusterLoopbackBind(struct ZbZclClusterT *clusterPtr, struct ZbApsFilterT *
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
     /* Data indication callbacks go to MSG_M0TOM4_ZCL_CLUSTER_DATA_IND */
-} /* ZbZclClusterLoopbackBind */
+}
 
 void
 ZbZclClusterLoopbackUnbind(struct ZbZclClusterT *clusterPtr, struct ZbApsFilterT *filter)
@@ -2887,7 +2927,7 @@ ZbZclClusterLoopbackUnbind(struct ZbZclClusterT *clusterPtr, struct ZbApsFilterT
     ipcc_req->Data[0] = (uint32_t)clusterPtr;
     ipcc_req->Data[1] = (uint32_t)filter;
     ZIGBEE_CmdTransfer();
-} /* ZbZclClusterLoopbackUnbind */
+}
 
 enum ZclStatusCodeT
 ZbZclClusterRegisterAlarmResetHandler(struct ZbZclClusterT *clusterPtr, ZbZclAlarmResetFuncT callback)
@@ -2905,7 +2945,7 @@ ZbZclClusterRegisterAlarmResetHandler(struct ZbZclClusterT *clusterPtr, ZbZclAla
     status = (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
     return status;
     /* Callbacks followed up in MSG_M0TOM4_ZCL_CLUSTER_ALARM_CB handler. */
-} /* ZbZclClusterRegisterAlarmResetHandler */
+}
 
 void
 ZbZclClusterRemoveAlarmResetHandler(struct ZbZclClusterT *clusterPtr)
@@ -2933,7 +2973,7 @@ ZbZclClusterSendAlarm(struct ZbZclClusterT *clusterPtr, uint8_t src_endpoint, ui
     ipcc_req->Data[1] = (uint32_t)src_endpoint;
     ipcc_req->Data[2] = (uint32_t)alarm_code;
     ZIGBEE_CmdTransfer();
-} /* ZbZclClusterSendAlarm */
+}
 
 /******************************************************************************
  * SE Key Exchange
@@ -2967,7 +3007,7 @@ ZbZclKeWithDevice(struct ZigBeeT *zb, uint64_t partnerAddr, bool aps_req_key,
     }
     return status;
     /* Followed up in MSG_M0TOM4_ZCL_KE_WITH_DEVICE_CB handler */
-} /* ZbZclKeWithDevice */
+}
 
 /******************************************************************************
  * Certification Test Hooks
@@ -2983,7 +3023,7 @@ ZbTestCaseClear(struct ZigBeeT *zb)
     ipcc_req->ID = MSG_M4TOM0_TEST_CASE_CLEAR;
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
-} /* ZbTestCaseClear */
+}
 
 uint32_t
 ZbTestCaseCurrent(struct ZigBeeT *zb)
@@ -2996,7 +3036,7 @@ ZbTestCaseCurrent(struct ZigBeeT *zb)
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval();
-} /* ZbTestCaseCurrent */
+}
 
 void
 ZbTestCaseDisable(struct ZigBeeT *zb, enum ZbTestcaseT testcase)
@@ -3009,7 +3049,7 @@ ZbTestCaseDisable(struct ZigBeeT *zb, enum ZbTestcaseT testcase)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)testcase;
     ZIGBEE_CmdTransfer();
-} /* ZbTestCaseDisable */
+}
 
 void
 ZbTestCaseEnable(struct ZigBeeT *zb, enum ZbTestcaseT testcase)
@@ -3022,7 +3062,7 @@ ZbTestCaseEnable(struct ZigBeeT *zb, enum ZbTestcaseT testcase)
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)testcase;
     ZIGBEE_CmdTransfer();
-} /* ZbTestCaseEnable */
+}
 
 bool
 ZbApsFragDropTxAdd(struct ZigBeeT *zb, uint8_t blockNum)
@@ -3038,7 +3078,7 @@ ZbApsFragDropTxAdd(struct ZigBeeT *zb, uint8_t blockNum)
     ZIGBEE_CmdTransfer();
     retval = zb_ipc_m4_get_retval();
     return retval != 0 ? true : false;
-} /* ZbApsFragDropTxAdd */
+}
 
 void
 ZbApsFragDropTxClear(struct ZigBeeT *zb)
@@ -3050,7 +3090,7 @@ ZbApsFragDropTxClear(struct ZigBeeT *zb)
     ipcc_req->ID = MSG_M4TOM0_APS_FRAG_DROP_CLEAR;
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
-} /* ZbApsFragDropTxClear */
+}
 
 /******************************************************************************
  * AES & Hashing
@@ -3064,7 +3104,7 @@ ZbAesMmoHash(uint8_t const *data, const unsigned int length, uint8_t *hash)
     ZbHashInit(&newHash);
     ZbHashAdd(&newHash, data, length);
     ZbHashDigest(&newHash, hash);
-} /* ZbAesMmoHash */
+}
 
 void
 ZbHashInit(struct ZbHash *h)
@@ -3072,7 +3112,7 @@ ZbHashInit(struct ZbHash *h)
     (void)memset(h->m, 0, sizeof(h->m));
     (void)memset(h->hash, 0, sizeof(h->hash));
     h->length = 0;
-} /* ZbHashInit */
+}
 
 void
 ZbHashAdd(struct ZbHash *h, const void *data, uint32_t len)
@@ -3087,7 +3127,7 @@ ZbHashAdd(struct ZbHash *h, const void *data, uint32_t len)
     ipcc_req->Data[1] = (uint32_t)data;
     ipcc_req->Data[2] = (uint32_t)len;
     ZIGBEE_CmdTransfer();
-} /* ZbHashAdd */
+}
 
 void
 ZbHashByte(struct ZbHash *h, uint8_t byte)
@@ -3101,7 +3141,7 @@ ZbHashByte(struct ZbHash *h, uint8_t byte)
     ipcc_req->Data[0] = (uint32_t)h;
     ipcc_req->Data[1] = (uint32_t)byte;
     ZIGBEE_CmdTransfer();
-} /* ZbHashByte */
+}
 
 void
 ZbHashDigest(struct ZbHash *h, void *digest)
@@ -3115,7 +3155,7 @@ ZbHashDigest(struct ZbHash *h, void *digest)
     ipcc_req->Data[0] = (uint32_t)h;
     ipcc_req->Data[1] = (uint32_t)digest;
     ZIGBEE_CmdTransfer();
-} /* ZbHashDigest */
+}
 
 /******************************************************************************
  * Memory Helpers
@@ -3200,9 +3240,9 @@ WpanCrc(uint16_t crc, const void *dataPtr, unsigned int dataLen)
      */
     while (dataLen--) {
         crc = (crc >> 8) ^ wpanCrcTable[(crc & 0xff) ^ *p++];
-    } /* while */
+    }
     return crc;
-} /* WpanCrc */
+}
 
 /**
   * @brief  This function is used to manage all the callbacks used by the
@@ -3227,24 +3267,6 @@ Zigbee_CallBackProcessing(void)
     p_notification = ZIGBEE_Get_NotificationPayloadBuffer();
 
     switch (p_notification->ID) {
-        case MSG_M0TOM4_ZB_MALLOC:
-        {
-            void *ptr;
-
-             assert(p_notification->Size == 1);
-             ptr = malloc((uint32_t)p_notification->Data[0]);
-
-             /* Return ptr in second argument */
-             p_notification->Data[1] = (uint32_t) ptr;
-
-            break;
-        }
-
-        case MSG_M0TOM4_ZB_FREE:
-            assert(p_notification->Size == 1);
-            free((void *)p_notification->Data[0]);
-            break;
-
         case MSG_M0TOM4_FILTER_MSG_CB:
         {
             struct zb_msg_filter_cb_info *cb_info;
@@ -3274,7 +3296,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_STARTUP_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(enum ZbStatusCodeT status, void *arg);
 
                 callback = (void (*)(enum ZbStatusCodeT status, void *arg))info->callback;
@@ -3285,7 +3307,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_STARTUP_REJOIN_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbNlmeJoinConfT *conf, void *arg);
 
                 callback = (void (*)(ZbNlmeJoinConfT *conf, void *arg))info->callback;
@@ -3296,7 +3318,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_STARTUP_FINDBIND_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(enum ZbStatusCodeT status, void *arg);
 
                 callback = (void (*)(enum ZbStatusCodeT status, void *arg))info->callback;
@@ -3307,7 +3329,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_STARTUP_TCSO_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(enum ZbTcsoStatusT status, void *arg);
 
                 callback = (void (*)(enum ZbTcsoStatusT status, void *arg))info->callback;
@@ -3318,7 +3340,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_STARTUP_TC_REJOIN_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(enum ZbStatusCodeT status, void *arg);
 
                 callback = (void (*)(enum ZbStatusCodeT status, void *arg))info->callback;
@@ -3335,7 +3357,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZB_LEAVE_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(enum ZbStatusCodeT status, void *arg);
 
                 callback = (void (*)(enum ZbStatusCodeT status, void *arg))info->callback;
@@ -3346,7 +3368,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_APSDE_DATA_REQ_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbApsdeDataConfT *conf, void *arg);
 
                 callback = (void (*)(ZbApsdeDataConfT *conf, void *arg))info->callback;
@@ -3391,7 +3413,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_NLME_NET_DISC_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbNlmeNetDiscConfT *conf, void *arg);
 
                 callback = (void (*)(ZbNlmeNetDiscConfT *conf, void *arg))info->callback;
@@ -3402,7 +3424,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_NLME_LEAVE_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(struct ZbNlmeLeaveConfT *conf, void *arg);
 
                 callback = (void (*)(struct ZbNlmeLeaveConfT *conf, void *arg))info->callback;
@@ -3413,7 +3435,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_NLME_SYNC_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbNlmeSyncConfT *conf, void *arg);
 
                 callback = (void (*)(ZbNlmeSyncConfT *discConf, void *arg))info->callback;
@@ -3424,7 +3446,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_NLME_ROUTE_DISC_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbNlmeRouteDiscConfT *discConf, void *cbarg);
 
                 callback = (void (*)(ZbNlmeRouteDiscConfT *discConf, void *cbarg))info->callback;
@@ -3451,7 +3473,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_NWK_ADDR_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoNwkAddrRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoNwkAddrRspT *rsp, void *cbarg))info->callback;
@@ -3462,7 +3484,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_IEEE_ADDR_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoIeeeAddrRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoIeeeAddrRspT *rsp, void *cbarg))info->callback;
@@ -3473,7 +3495,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_NODE_DESC_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoNodeDescRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoNodeDescRspT *rsp, void *cbarg))info->callback;
@@ -3484,7 +3506,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_POWER_DESC_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoPowerDescRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoPowerDescRspT *rsp, void *cbarg))info->callback;
@@ -3495,7 +3517,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_SIMPLE_DESC_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoSimpleDescRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoSimpleDescRspT *rsp, void *cbarg))info->callback;
@@ -3506,7 +3528,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_ACTIVE_EP_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoActiveEpRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoActiveEpRspT *rsp, void *cbarg))info->callback;
@@ -3517,7 +3539,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_MATCH_DESC_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoMatchDescRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoMatchDescRspT *rsp, void *cbarg))info->callback;
@@ -3527,16 +3549,24 @@ Zigbee_CallBackProcessing(void)
 
         case MSG_M0TOM4_ZDO_MATCH_DESC_MULTI_CB:
             if (zdo_match_multi_cb != NULL) {
-                assert(p_notification->Size == 2);
-                zdo_match_multi_cb((ZbZdoMatchDescRspT *)p_notification->Data[0], (void *)p_notification->Data[1]);
-                /* Don't release zdo_match_multi_cb */
+                ZbZdoMatchDescRspT *rsp;
+
+                /* Note, we're not using zb_ipc_m4_cb_info for this API, so we don't need
+                 * the callback argument. */
+                assert(p_notification->Size == 1);
+                rsp = (ZbZdoMatchDescRspT *)p_notification->Data[0];
+                zdo_match_multi_cb(rsp, NULL);
+                if (rsp->status == ZB_ZDP_STATUS_TIMEOUT) {
+                    /* Release the callback */
+                    zdo_match_multi_cb = NULL;
+                }
             }
             break;
 
         case MSG_M0TOM4_ZDO_BIND_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoBindRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoBindRspT *rsp, void *cbarg))info->callback;
@@ -3547,7 +3577,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_UNBIND_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoBindRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoBindRspT *rsp, void *cbarg))info->callback;
@@ -3558,7 +3588,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_MGMT_LQI_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoLqiRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoLqiRspT *rsp, void *cbarg))info->callback;
@@ -3569,7 +3599,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_MGMT_BIND_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoMgmtBindRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoMgmtBindRspT *rsp, void *cbarg))info->callback;
@@ -3580,7 +3610,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_MGMT_LEAVE_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoLeaveRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoLeaveRspT *rsp, void *cbarg))info->callback;
@@ -3591,7 +3621,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_MGMT_PERMIT_JOIN_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoPermitJoinRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoPermitJoinRspT *rsp, void *cbarg))info->callback;
@@ -3602,7 +3632,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZDO_MGMT_NWK_UPDATE_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZdoNwkUpdateNotifyT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZdoNwkUpdateNotifyT *rsp, void *cbarg))info->callback;
@@ -3643,18 +3673,28 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZCL_CLUSTER_CMD_REQ_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
-                void (*callback)(struct ZbZclCommandRspT *rsp, void *cbarg);
+            /* Note: shouldn't get here if callback was NULL in request, so info should
+             * always be non-NULL. */
+            if (info != NULL) {
+                struct ZbZclCommandRspT *zcl_rsp = (struct ZbZclCommandRspT *)p_notification->Data[0];
 
-                callback = (void (*)(struct ZbZclCommandRspT *rsp, void *cbarg))info->callback;
-                callback((struct ZbZclCommandRspT *)p_notification->Data[0], info->arg);
+                if (info->callback != NULL) {
+                    void (*callback)(struct ZbZclCommandRspT *rsp, void *cbarg);
+
+                    callback = (void (*)(struct ZbZclCommandRspT *rsp, void *cbarg))info->callback;
+                    callback(zcl_rsp, info->arg);
+                }
+                if (info->zcl_recv_multi_rsp && (zcl_rsp->status != ZCL_STATUS_TIMEOUT)) {
+                    /* Don't free the callback yet */
+                    info = NULL;
+                }
             }
             break;
 
         case MSG_M0TOM4_ZCL_CLUSTER_CMD_RSP_CONF_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbApsdeDataConfT *conf, void *arg);
 
                 callback = (void (*)(ZbApsdeDataConfT *conf, void *arg))info->callback;
@@ -3668,11 +3708,21 @@ Zigbee_CallBackProcessing(void)
 
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
-                int (*callback)(struct ZbZclCommandRspT *conf, void *arg);
+            /* Note: shouldn't get here if callback was NULL in request, so info should
+             * always be non-NULL. */
+            if (info != NULL) {
+                struct ZbZclCommandRspT *zcl_rsp = (struct ZbZclCommandRspT *)p_notification->Data[0];
 
-                callback = (int (*)(struct ZbZclCommandRspT *rsp, void *arg))info->callback;
-                err = callback((struct ZbZclCommandRspT *)p_notification->Data[0], info->arg);
+                if (info->callback != NULL) {
+                    int (*callback)(struct ZbZclCommandRspT *conf, void *arg);
+
+                    callback = (int (*)(struct ZbZclCommandRspT *rsp, void *arg))info->callback;
+                    err = callback(zcl_rsp, info->arg);
+                }
+                if (info->zcl_recv_multi_rsp && (zcl_rsp->status != ZCL_STATUS_TIMEOUT)) {
+                    /* Don't free the callback yet */
+                    info = NULL;
+                }
             }
             /* Return err in second argument */
             p_notification->Data[1] = (uint32_t)err;
@@ -3682,7 +3732,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZCL_COMMAND_NO_RSP_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbApsdeDataConfT *conf, void *arg);
 
                 callback = (void (*)(ZbApsdeDataConfT *conf, void *arg))info->callback;
@@ -3693,7 +3743,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZCL_READ_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZclReadRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZclReadRspT *rsp, void *cbarg))info->callback;
@@ -3704,7 +3754,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZCL_WRITE_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZclWriteRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZclWriteRspT *rsp, void *cbarg))info->callback;
@@ -3715,7 +3765,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZCL_DISCOVER_ATTR_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[1];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(ZbZclDiscoverAttrRspT *rsp, void *cbarg);
 
                 callback = (void (*)(ZbZclDiscoverAttrRspT *rsp, void *cbarg))info->callback;
@@ -3726,7 +3776,7 @@ Zigbee_CallBackProcessing(void)
         case MSG_M0TOM4_ZCL_KE_WITH_DEVICE_CB:
             assert(p_notification->Size == 5);
             info = (struct zb_ipc_m4_cb_info *)p_notification->Data[4];
-            if (info->callback != NULL) {
+            if ((info != NULL) && (info->callback != NULL)) {
                 void (*callback)(uint64_t partnerAddr, uint16_t keSuite, enum ZbZclKeyStatusT key_status, void *arg);
                 uint64_t partnerAddr;
 
@@ -3745,20 +3795,59 @@ Zigbee_CallBackProcessing(void)
         zb_ipc_m4_cb_info_free(info);
     }
 
-    TL_ZIGBEE_SendAckAfterAppliNotifFromM0();
+    TL_ZIGBEE_SendM4AckToM0Notify();
     return status;
-} /* Zigbee_CallBackProcessing */
+}
 
 HAL_StatusTypeDef
-Zigbee_LoggingProcessing(void)
+Zigbee_M0RequestProcessing(void)
 {
-    const char *log_str;
-    Zigbee_Cmd_Request_t *p_logging = ZIGBEE_Get_LoggingPayloadBuffer();
+    HAL_StatusTypeDef status = HAL_OK;
+    Zigbee_Cmd_Request_t *p_logging = ZIGBEE_Get_M0RequestPayloadBuffer();
 
-    assert(p_logging->Size == 1);
-    log_str = (const char *)p_logging->Data[0];
-    cli_port_print_msg(NULL, log_str);
+    switch (p_logging->ID) {
+        case MSG_M0TOM4_ZB_LOGGING:
+        {
+            const char *log_str;
 
-    TL_ZIGBEE_SendAckAfterAppliLoggingFromM0();
-    return HAL_OK;
-} /* Zigbee_LoggingProcessing */
+            assert(p_logging->Size == 1);
+            log_str = (const char *)p_logging->Data[0];
+            cli_port_print_msg(NULL, log_str);
+            break;
+        }
+
+        case MSG_M0TOM4_ZB_MALLOC:
+        {
+            void *ptr;
+
+            assert(p_logging->Size == 1);
+            ptr = malloc((uint32_t)p_logging->Data[0]);
+            /* Return ptr in second argument */
+            p_logging->Data[1] = (uint32_t)ptr;
+            break;
+        }
+
+        case MSG_M0TOM4_ZB_FREE:
+            assert(p_logging->Size == 1);
+            free((void *)p_logging->Data[0]);
+            break;
+
+        default:
+            status = HAL_ERROR;
+            break;
+    }
+
+    TL_ZIGBEE_SendM4AckToM0Request();
+    return status;
+}
+
+
+/* Function which needs to be overloaded for test purpose
+ * In particular when using the ZbCli interface
+ */
+__weak void cli_port_print_msg(struct cli_app *cli_p, const char *msg)
+{
+    UNUSED(cli_p);
+    UNUSED(msg);
+
+}

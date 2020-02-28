@@ -1,13 +1,13 @@
 /******************************************************************************
  * @file    ble_events.c
  * @author  MCD Application Team
- * @date    08 November 2019
+ * @date    22 January 2020
  * @brief   Source file for STM32WB (Event callbacks)
  *          Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -73,7 +73,7 @@ void aci_gatt_notification_ext_event_process(uint8_t *buffer_in);
 void hci_le_connection_complete_event_process(uint8_t *buffer_in);
 void hci_le_advertising_report_event_process(uint8_t *buffer_in);
 void hci_le_connection_update_complete_event_process(uint8_t *buffer_in);
-void hci_le_read_remote_used_features_complete_event_process(uint8_t *buffer_in);
+void hci_le_read_remote_features_complete_event_process(uint8_t *buffer_in);
 void hci_le_long_term_key_request_event_process(uint8_t *buffer_in);
 void hci_le_data_length_change_event_process(uint8_t *buffer_in);
 void hci_le_read_local_p256_public_key_complete_event_process(uint8_t *buffer_in);
@@ -82,138 +82,138 @@ void hci_le_enhanced_connection_complete_event_process(uint8_t *buffer_in);
 void hci_le_direct_advertising_report_event_process(uint8_t *buffer_in);
 void hci_le_phy_update_complete_event_process(uint8_t *buffer_in);
 
-const hci_event_table_t hci_event_table[HCI_EVENT_TABLE_SIZE] = 
+const hci_event_table_t hci_event_table[HCI_EVENT_TABLE_SIZE] =
 {
   /* hci_disconnection_complete_event */
-  {0x0005, hci_disconnection_complete_event_process},
+  { 0x0005, hci_disconnection_complete_event_process },
   /* hci_encryption_change_event */
-  {0x0008, hci_encryption_change_event_process},
+  { 0x0008, hci_encryption_change_event_process },
   /* hci_read_remote_version_information_complete_event */
-  {0x000c, hci_read_remote_version_information_complete_event_process},
+  { 0x000c, hci_read_remote_version_information_complete_event_process },
   /* hci_hardware_error_event */
-  {0x0010, hci_hardware_error_event_process},
+  { 0x0010, hci_hardware_error_event_process },
   /* hci_number_of_completed_packets_event */
-  {0x0013, hci_number_of_completed_packets_event_process},
+  { 0x0013, hci_number_of_completed_packets_event_process },
   /* hci_data_buffer_overflow_event */
-  {0x001a, hci_data_buffer_overflow_event_process},
+  { 0x001a, hci_data_buffer_overflow_event_process },
   /* hci_encryption_key_refresh_complete_event */
-  {0x0030, hci_encryption_key_refresh_complete_event_process},
+  { 0x0030, hci_encryption_key_refresh_complete_event_process },
 };
 
-const hci_event_table_t hci_le_meta_event_table[HCI_LE_META_EVENT_TABLE_SIZE] = 
+const hci_event_table_t hci_le_meta_event_table[HCI_LE_META_EVENT_TABLE_SIZE] =
 {
   /* hci_le_connection_complete_event */
-  {0x0001, hci_le_connection_complete_event_process},
+  { 0x0001, hci_le_connection_complete_event_process },
   /* hci_le_advertising_report_event */
-  {0x0002, hci_le_advertising_report_event_process},
+  { 0x0002, hci_le_advertising_report_event_process },
   /* hci_le_connection_update_complete_event */
-  {0x0003, hci_le_connection_update_complete_event_process},
-  /* hci_le_read_remote_used_features_complete_event */
-  {0x0004, hci_le_read_remote_used_features_complete_event_process},
+  { 0x0003, hci_le_connection_update_complete_event_process },
+  /* hci_le_read_remote_features_complete_event */
+  { 0x0004, hci_le_read_remote_features_complete_event_process },
   /* hci_le_long_term_key_request_event */
-  {0x0005, hci_le_long_term_key_request_event_process},
+  { 0x0005, hci_le_long_term_key_request_event_process },
   /* hci_le_data_length_change_event */
-  {0x0007, hci_le_data_length_change_event_process},
+  { 0x0007, hci_le_data_length_change_event_process },
   /* hci_le_read_local_p256_public_key_complete_event */
-  {0x0008, hci_le_read_local_p256_public_key_complete_event_process},
+  { 0x0008, hci_le_read_local_p256_public_key_complete_event_process },
   /* hci_le_generate_dhkey_complete_event */
-  {0x0009, hci_le_generate_dhkey_complete_event_process},
+  { 0x0009, hci_le_generate_dhkey_complete_event_process },
   /* hci_le_enhanced_connection_complete_event */
-  {0x000a, hci_le_enhanced_connection_complete_event_process},
+  { 0x000a, hci_le_enhanced_connection_complete_event_process },
   /* hci_le_direct_advertising_report_event */
-  {0x000b, hci_le_direct_advertising_report_event_process},
+  { 0x000b, hci_le_direct_advertising_report_event_process },
   /* hci_le_phy_update_complete_event */
-  {0x000c, hci_le_phy_update_complete_event_process},
+  { 0x000c, hci_le_phy_update_complete_event_process },
 };
 
-const hci_event_table_t hci_vendor_specific_event_table[HCI_VENDOR_SPECIFIC_EVENT_TABLE_SIZE] = 
+const hci_event_table_t hci_vendor_specific_event_table[HCI_VENDOR_SPECIFIC_EVENT_TABLE_SIZE] =
 {
   /* aci_hal_end_of_radio_activity_event */
-  {0x0004, aci_hal_end_of_radio_activity_event_process},
+  { 0x0004, aci_hal_end_of_radio_activity_event_process },
   /* aci_hal_scan_req_report_event */
-  {0x0005, aci_hal_scan_req_report_event_process},
+  { 0x0005, aci_hal_scan_req_report_event_process },
   /* aci_hal_fw_error_event */
-  {0x0006, aci_hal_fw_error_event_process},
+  { 0x0006, aci_hal_fw_error_event_process },
   /* aci_gap_limited_discoverable_event */
-  {0x0400, aci_gap_limited_discoverable_event_process},
+  { 0x0400, aci_gap_limited_discoverable_event_process },
   /* aci_gap_pairing_complete_event */
-  {0x0401, aci_gap_pairing_complete_event_process},
+  { 0x0401, aci_gap_pairing_complete_event_process },
   /* aci_gap_pass_key_req_event */
-  {0x0402, aci_gap_pass_key_req_event_process},
+  { 0x0402, aci_gap_pass_key_req_event_process },
   /* aci_gap_authorization_req_event */
-  {0x0403, aci_gap_authorization_req_event_process},
+  { 0x0403, aci_gap_authorization_req_event_process },
   /* aci_gap_slave_security_initiated_event */
-  {0x0404, aci_gap_slave_security_initiated_event_process},
+  { 0x0404, aci_gap_slave_security_initiated_event_process },
   /* aci_gap_bond_lost_event */
-  {0x0405, aci_gap_bond_lost_event_process},
+  { 0x0405, aci_gap_bond_lost_event_process },
   /* aci_gap_proc_complete_event */
-  {0x0407, aci_gap_proc_complete_event_process},
+  { 0x0407, aci_gap_proc_complete_event_process },
   /* aci_gap_addr_not_resolved_event */
-  {0x0408, aci_gap_addr_not_resolved_event_process},
+  { 0x0408, aci_gap_addr_not_resolved_event_process },
   /* aci_gap_numeric_comparison_value_event */
-  {0x0409, aci_gap_numeric_comparison_value_event_process},
+  { 0x0409, aci_gap_numeric_comparison_value_event_process },
   /* aci_gap_keypress_notification_event */
-  {0x040a, aci_gap_keypress_notification_event_process},
+  { 0x040a, aci_gap_keypress_notification_event_process },
   /* aci_l2cap_connection_update_resp_event */
-  {0x0800, aci_l2cap_connection_update_resp_event_process},
+  { 0x0800, aci_l2cap_connection_update_resp_event_process },
   /* aci_l2cap_proc_timeout_event */
-  {0x0801, aci_l2cap_proc_timeout_event_process},
+  { 0x0801, aci_l2cap_proc_timeout_event_process },
   /* aci_l2cap_connection_update_req_event */
-  {0x0802, aci_l2cap_connection_update_req_event_process},
+  { 0x0802, aci_l2cap_connection_update_req_event_process },
   /* aci_l2cap_command_reject_event */
-  {0x080a, aci_l2cap_command_reject_event_process},
+  { 0x080a, aci_l2cap_command_reject_event_process },
   /* aci_gatt_attribute_modified_event */
-  {0x0c01, aci_gatt_attribute_modified_event_process},
+  { 0x0c01, aci_gatt_attribute_modified_event_process },
   /* aci_gatt_proc_timeout_event */
-  {0x0c02, aci_gatt_proc_timeout_event_process},
+  { 0x0c02, aci_gatt_proc_timeout_event_process },
   /* aci_att_exchange_mtu_resp_event */
-  {0x0c03, aci_att_exchange_mtu_resp_event_process},
+  { 0x0c03, aci_att_exchange_mtu_resp_event_process },
   /* aci_att_find_info_resp_event */
-  {0x0c04, aci_att_find_info_resp_event_process},
+  { 0x0c04, aci_att_find_info_resp_event_process },
   /* aci_att_find_by_type_value_resp_event */
-  {0x0c05, aci_att_find_by_type_value_resp_event_process},
+  { 0x0c05, aci_att_find_by_type_value_resp_event_process },
   /* aci_att_read_by_type_resp_event */
-  {0x0c06, aci_att_read_by_type_resp_event_process},
+  { 0x0c06, aci_att_read_by_type_resp_event_process },
   /* aci_att_read_resp_event */
-  {0x0c07, aci_att_read_resp_event_process},
+  { 0x0c07, aci_att_read_resp_event_process },
   /* aci_att_read_blob_resp_event */
-  {0x0c08, aci_att_read_blob_resp_event_process},
+  { 0x0c08, aci_att_read_blob_resp_event_process },
   /* aci_att_read_multiple_resp_event */
-  {0x0c09, aci_att_read_multiple_resp_event_process},
+  { 0x0c09, aci_att_read_multiple_resp_event_process },
   /* aci_att_read_by_group_type_resp_event */
-  {0x0c0a, aci_att_read_by_group_type_resp_event_process},
+  { 0x0c0a, aci_att_read_by_group_type_resp_event_process },
   /* aci_att_prepare_write_resp_event */
-  {0x0c0c, aci_att_prepare_write_resp_event_process},
+  { 0x0c0c, aci_att_prepare_write_resp_event_process },
   /* aci_att_exec_write_resp_event */
-  {0x0c0d, aci_att_exec_write_resp_event_process},
+  { 0x0c0d, aci_att_exec_write_resp_event_process },
   /* aci_gatt_indication_event */
-  {0x0c0e, aci_gatt_indication_event_process},
+  { 0x0c0e, aci_gatt_indication_event_process },
   /* aci_gatt_notification_event */
-  {0x0c0f, aci_gatt_notification_event_process},
+  { 0x0c0f, aci_gatt_notification_event_process },
   /* aci_gatt_proc_complete_event */
-  {0x0c10, aci_gatt_proc_complete_event_process},
+  { 0x0c10, aci_gatt_proc_complete_event_process },
   /* aci_gatt_error_resp_event */
-  {0x0c11, aci_gatt_error_resp_event_process},
+  { 0x0c11, aci_gatt_error_resp_event_process },
   /* aci_gatt_disc_read_char_by_uuid_resp_event */
-  {0x0c12, aci_gatt_disc_read_char_by_uuid_resp_event_process},
+  { 0x0c12, aci_gatt_disc_read_char_by_uuid_resp_event_process },
   /* aci_gatt_write_permit_req_event */
-  {0x0c13, aci_gatt_write_permit_req_event_process},
+  { 0x0c13, aci_gatt_write_permit_req_event_process },
   /* aci_gatt_read_permit_req_event */
-  {0x0c14, aci_gatt_read_permit_req_event_process},
+  { 0x0c14, aci_gatt_read_permit_req_event_process },
   /* aci_gatt_read_multi_permit_req_event */
-  {0x0c15, aci_gatt_read_multi_permit_req_event_process},
+  { 0x0c15, aci_gatt_read_multi_permit_req_event_process },
   /* aci_gatt_tx_pool_available_event */
-  {0x0c16, aci_gatt_tx_pool_available_event_process},
+  { 0x0c16, aci_gatt_tx_pool_available_event_process },
   /* aci_gatt_server_confirmation_event */
-  {0x0c17, aci_gatt_server_confirmation_event_process},
+  { 0x0c17, aci_gatt_server_confirmation_event_process },
   /* aci_gatt_prepare_write_permit_req_event */
-  {0x0c18, aci_gatt_prepare_write_permit_req_event_process},
+  { 0x0c18, aci_gatt_prepare_write_permit_req_event_process },
   /* aci_gatt_read_ext_event */
-  {0x0c1d, aci_gatt_read_ext_event_process},
+  { 0x0c1d, aci_gatt_read_ext_event_process },
   /* aci_gatt_indication_ext_event */
-  {0x0c1e, aci_gatt_indication_ext_event_process},
+  { 0x0c1e, aci_gatt_indication_ext_event_process },
   /* aci_gatt_notification_ext_event */
-  {0x0c1f, aci_gatt_notification_ext_event_process},
+  { 0x0c1f, aci_gatt_notification_ext_event_process },
 };
 
 /* hci_disconnection_complete_event */
@@ -1589,10 +1589,10 @@ void hci_le_connection_update_complete_event_process(uint8_t *buffer_in)
                                           rp0->Supervision_Timeout);
 }
 
-/* hci_le_read_remote_used_features_complete_event */
+/* hci_le_read_remote_features_complete_event */
 /* Event len: 1 + 2 + 8 */
 /**
-  * @brief The LE Read Remote Used Features Complete event is used to indicate the
+  * @brief The LE Read Remote Features Complete event is used to indicate the
 completion of the process of the Controller obtaining the used features of the
 remote Bluetooth device specified by the Connection_Handle event parameter.See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.4
   * @param Status Status error code.
@@ -1603,13 +1603,13 @@ remote Bluetooth device specified by the Connection_Handle event parameter.See B
   * @retval None
 */
 
-void hci_le_read_remote_used_features_complete_event_process(uint8_t *buffer_in)
+void hci_le_read_remote_features_complete_event_process(uint8_t *buffer_in)
 {
   /* Input params */
-  hci_le_read_remote_used_features_complete_event_rp0 *rp0 = (hci_le_read_remote_used_features_complete_event_rp0 *)buffer_in;
-  hci_le_read_remote_used_features_complete_event(rp0->Status,
-                                                  rp0->Connection_Handle,
-                                                  rp0->LE_Features);
+  hci_le_read_remote_features_complete_event_rp0 *rp0 = (hci_le_read_remote_features_complete_event_rp0 *)buffer_in;
+  hci_le_read_remote_features_complete_event(rp0->Status,
+                                             rp0->Connection_Handle,
+                                             rp0->LE_Features);
 }
 
 /* hci_le_long_term_key_request_event */

@@ -72,8 +72,8 @@ void Appli_BleOutputOOBAuthCb(MOBLEUINT8* output_oob, MOBLEUINT8 size);
 MOBLEUINT8* Appli_BleInputOOBAuthCb(MOBLEUINT8 size);
 void Appli_BleSerialInputOOBValue(char *rcvdStringBuff, uint16_t rcvdStringSize);
 MOBLEUINT8 Appli_BleDisableFilterCb(void);
-
-void Appli_IntensityControlPublishing(void);
+void BLEMesh_PbAdvLinkCloseCb(void);
+void Appli_IntensityControlPublishing(MOBLEUINT8* value);
 
 int Appli_CheckBdMacAddr(void);
 MOBLE_RESULT Appli_LedBlink(void);
@@ -82,7 +82,18 @@ MOBLE_RESULT Appli_LedStateCtrlCb(MOBLEUINT16 ctrl);
 void Appli_CheckForUnprovision(void);
 void Appli_Process(void);
 void Appli_LedCtrl(void);
-void Appli_Init(void);
+void Appli_Init(MOBLEUINT8 *flag);
+
+MOBLE_ADDRESS GetAddressToConfigure(void);
+MOBLE_ADDRESS GetNewAddressToProvision(void);
+void SaveProvisionedNodeAddress(void);
+MOBLEUINT8* GetNewProvNodeDevKey(void);
+MOBLEUINT8* GetNewProvNodeAppKey(void);
+void IntensityPublish(void);
+MOBLE_RESULT BLEMesh_ScanDevices(neighbor_params_t *unprovDeviceArray, MOBLEUINT8 *noOfUnprovDevices);
+MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray, MOBLEUINT16 index);
+void Start_SelfConfiguration (void);
+
 #endif /* __APPLI_MESH_H */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

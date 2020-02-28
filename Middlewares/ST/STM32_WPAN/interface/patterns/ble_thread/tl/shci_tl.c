@@ -26,6 +26,12 @@
 
 
 /* Private typedef -----------------------------------------------------------*/
+typedef enum
+{
+  SHCI_TL_CMD_RESP_RELEASE,
+  SHCI_TL_CMD_RESP_WAIT,
+} SHCI_TL_CmdRespStatus_t;
+
 /* Private defines -----------------------------------------------------------*/
 /**
  * The default System HCI layer timeout is set to 33s
@@ -48,6 +54,8 @@ PLACE_IN_SECTION("SYSTEM_DRIVER_CONTEXT") SHCI_TL_UserEventFlowStatus_t SHCI_TL_
 
 static tSHciContext shciContext;
 static void (* StatusNotCallBackFunction) (SHCI_TL_CmdStatus_t status);
+
+static volatile SHCI_TL_CmdRespStatus_t CmdRspStatusFlag;
 
 /* Private function prototypes -----------------------------------------------*/
 static void Cmd_SetStatus(SHCI_TL_CmdStatus_t shcicmdstatus);
@@ -225,4 +233,25 @@ static void TlUserEvtReceived(TL_EvtPacket_t *shcievt)
 
   return;
 }
+
+/* Weak implementation ----------------------------------------------------------------*/
+__WEAK void shci_cmd_resp_wait(uint32_t timeout)
+{
+  (void)timeout;
+
+  CmdRspStatusFlag = SHCI_TL_CMD_RESP_WAIT;
+  while(CmdRspStatusFlag != SHCI_TL_CMD_RESP_RELEASE);
+
+  return;
+}
+
+__WEAK void shci_cmd_resp_release(uint32_t flag)
+{
+  (void)flag;
+
+  CmdRspStatusFlag = SHCI_TL_CMD_RESP_RELEASE;
+
+  return;
+}
+
 

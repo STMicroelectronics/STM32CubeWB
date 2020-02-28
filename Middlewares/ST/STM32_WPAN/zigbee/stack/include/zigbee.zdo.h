@@ -26,7 +26,7 @@ enum ZbZdoAddrReqTypeT {
 #define ZB_ZDP_NWK_UPDATE_MANAGER_PARAMETERS        0xffU
 
 /* Maximum Response Sizes */
-/* FIXME 1 (sal) was 64, but end up allocating too much on the stack */
+/* EXEGIN (sal) was 64, but end up allocating too much on the stack */
 #define ZB_ZDO_CLUSTER_LIST_MAX_SZ                  16U
 #define ZB_ZDO_NETWORK_LIST_MAX_SZ                  8U
 #define ZB_ZDO_NEIGHBOR_LIST_MAX_SZ                 4U
@@ -281,7 +281,7 @@ typedef struct {
 /* Routing Descriptor */
 typedef struct {
     uint16_t destAddr;
-    uint8_t status; /* FIXME - convert to an enum type? */
+    uint8_t status; /* EXEGIN - convert to an enum type? */
     uint8_t constrained;
     uint8_t manyToOne;
     uint8_t recordRequired;
@@ -575,86 +575,38 @@ struct ZbZdoNwkIeeeJoinListRspT {
  * ZDO
  *---------------------------------------------------------------
  */
+/* Get the next ZDO sequence number */
+uint8_t ZbZdoGetNextSeqNum(struct ZigBeeT *zb);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoNwkAddrWait
- *  DESC        NWK_addr_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkAddrReq(struct ZigBeeT *zb, ZbZdoNwkAddrReqT *req, void (*callback)(ZbZdoNwkAddrRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoNwkAddrWait(struct ZigBeeT *zb, ZbZdoNwkAddrReqT *req, ZbZdoNwkAddrRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoIeeeAddrWait
- *  DESC        IEEE_addr_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoIeeeAddrReq(struct ZigBeeT *zb, ZbZdoIeeeAddrReqT *req, void (*callback)(ZbZdoIeeeAddrRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoIeeeAddrWait(struct ZigBeeT *zb, ZbZdoIeeeAddrReqT *req, ZbZdoIeeeAddrRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoNodeDescWait
- *  DESC        Node_Desc_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNodeDescReq(struct ZigBeeT *zb, ZbZdoNodeDescReqT *req, void (*callback)(ZbZdoNodeDescRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoNodeDescWait(struct ZigBeeT *zb, ZbZdoNodeDescReqT *req, ZbZdoNodeDescRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoPowerDescWait
- *  DESC        Power_Desc_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoPowerDescReq(struct ZigBeeT *zb, ZbZdoPowerDescReqT *req, void (*callback)(ZbZdoPowerDescRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoPowerDescWait(struct ZigBeeT *zb, ZbZdoPowerDescReqT *req, ZbZdoPowerDescRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoSimpleDescWait
- *  DESC        Simple_Desc_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoSimpleDescReq(struct ZigBeeT *zb, ZbZdoSimpleDescReqT *req, void (*callback)(ZbZdoSimpleDescRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoSimpleDescWait(struct ZigBeeT *zb, ZbZdoSimpleDescReqT *req, ZbZdoSimpleDescRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoActiveEpWait
- *  DESC        Active_EP_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoActiveEpReq(struct ZigBeeT *zb, ZbZdoActiveEpReqT *req, void (*callback)(ZbZdoActiveEpRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoActiveEpWait(struct ZigBeeT *zb, ZbZdoActiveEpReqT *req, ZbZdoActiveEpRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoMatchDescReq
- *  DESC        Active_EP_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoMatchDescReq(struct ZigBeeT *zb, ZbZdoMatchDescReqT *req, void (*callback)(ZbZdoMatchDescRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoMatchDescWait(struct ZigBeeT *zb, ZbZdoMatchDescReqT *req, ZbZdoMatchDescRspT *rsp);
-
-/**
- * ZbZdoMatchDescMulti:
+/* ZbZdoMatchDescMulti:
  * Returns ZB_ZDP_STATUS_SUCCESS for received responses.
  * Returns ZB_ZDP_STATUS_TABLE_FULL if there's a problem starting the request.
- * Returns ZB_ZDP_STATUS_TIMEOUT when the stack decides to stop receiving responses.
- **/
+ * Returns ZB_ZDP_STATUS_TIMEOUT when the stack decides to stop receiving responses. */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoMatchDescMulti(struct ZigBeeT *zb, ZbZdoMatchDescReqT *req, void (*callback)(ZbZdoMatchDescRspT *rsp, void *cb_arg), void *arg);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoDeviceAnnce
- *  DESC        Device_annce
- *  PARAMS
- *  RETURNS     none
- */
 void ZbZdoDeviceAnnce(struct ZigBeeT *zb, ZbZdoDeviceAnnceT *deviceAnncePtr);
 void ZbZdoDeviceAnnceAlias(struct ZigBeeT *zb, ZbZdoDeviceAnnceT *deviceAnncePtr);
+int ZbZdoParseDeviceAnnce(ZbZdoDeviceAnnceT *structPtr, const uint8_t *buf, unsigned int len);
 
 /* API to register a filter in the ZDO for the application to
  * receive Device_Annce messages. */
@@ -667,22 +619,9 @@ void ZbZdoDeviceAnnceFilterRemove(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceFil
  * ZDP Binding Requests
  *---------------------------------------------------------------
  */
-
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoBindWait
- *  DESC        Bind_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoBindReq(struct ZigBeeT *zb, ZbZdoBindReqT *req, void (*callback)(ZbZdoBindRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoBindWait(struct ZigBeeT *zb, ZbZdoBindReqT *req, ZbZdoBindRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoUnbindWait
- *  DESC        Unbind_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoUnbindReq(struct ZigBeeT *zb, ZbZdoBindReqT *req, void (*callback)(ZbZdoBindRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoUnbindWait(struct ZigBeeT *zb, ZbZdoBindReqT *req, ZbZdoBindRspT *rsp);
 
@@ -690,51 +629,19 @@ void ZbZdoUnbindWait(struct ZigBeeT *zb, ZbZdoBindReqT *req, ZbZdoBindRspT *rsp)
  * ZDP Management Requests
  *---------------------------------------------------------------
  */
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoLqiWait
- *  DESC        Mgmt_Lqi_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoLqiReq(struct ZigBeeT *zb, ZbZdoLqiReqT *req, void (*callback)(ZbZdoLqiRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoLqiWait(struct ZigBeeT *zb, ZbZdoLqiReqT *req, ZbZdoLqiRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoRtgWait
- *  DESC        Mgmt_Rtg_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoRtgReq(struct ZigBeeT *zb, ZbZdoRtgReqT *req, void (*callback)(ZbZdoRtgRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoRtgWait(struct ZigBeeT *zb, ZbZdoRtgReqT *req, ZbZdoRtgRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoMgmtBindWait
- *  DESC        Mgmt_Bind_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoMgmtBindReq(struct ZigBeeT *zb, ZbZdoMgmtBindReqT *req, void (*callback)(ZbZdoMgmtBindRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoMgmtBindWait(struct ZigBeeT *zb, ZbZdoMgmtBindReqT *req, ZbZdoMgmtBindRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoPermitJoinWait
- *  DESC        Mgmt_Permit_Join_req
- *              If sent to broadcast, then doesn't wait for responses, and
- *              will return the status from the APSDE-DATA.confirm.
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoPermitJoinReq(struct ZigBeeT *zb, ZbZdoPermitJoinReqT *req,
     void (*callback)(ZbZdoPermitJoinRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoPermitJoinWait(struct ZigBeeT *zb, ZbZdoPermitJoinReqT *req, ZbZdoPermitJoinRspT *rsp);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoNwkUpdateWait
- *  DESC        Mgmt_Nwk_Update_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkUpdateReq(struct ZigBeeT *zb, ZbZdoNwkUpdateReqT *req,
     void (*callback)(ZbZdoNwkUpdateNotifyT *reqPtr, void *cb_arg), void *arg);
 void ZbZdoNwkUpdateWait(struct ZigBeeT *zb, ZbZdoNwkUpdateReqT *req, ZbZdoNwkUpdateNotifyT *rsp);
@@ -742,20 +649,8 @@ void ZbZdoNwkUpdateWait(struct ZigBeeT *zb, ZbZdoNwkUpdateReqT *req, ZbZdoNwkUpd
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkEnhUpdateReq(struct ZigBeeT *zb, struct ZbZdoNwkEnhUpdateReqT *req,
     void (*callback)(ZbZdoNwkUpdateNotifyT *reqPtr, void *cb_arg), void *arg);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoNwkUpdateNotify
- *  DESC        Mgmt_Nwk_Update_notify
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkUpdateNotify(struct ZigBeeT *zb, ZbZdoNwkUpdateNotifyT *reqPtr);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoMgmtLeaveWait
- *  DESC        Mgmt_Nwk_Leave_req
- *  PARAMS
- *  RETURNS     none
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoLeaveReq(struct ZigBeeT *zb, ZbZdoLeaveReqT *req,
     void (*callback)(ZbZdoLeaveRspT *rsp, void *cb_arg), void *arg);
 void ZbZdoLeaveWait(struct ZigBeeT *zb, ZbZdoLeaveReqT *req, ZbZdoLeaveRspT *rsp);
@@ -764,50 +659,14 @@ void ZbZdoLeaveWait(struct ZigBeeT *zb, ZbZdoLeaveReqT *req, ZbZdoLeaveRspT *rsp
  * Receive incoming ZDO messages
  *---------------------------------------------------------------
  */
-
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoSetPreHandler
- *  DESC        Configures the callback to receive incoming ZDO messages
- *              in your application.
- *  PARAMS      zb              ; ZigBee stack instance.
- *              func            ; The callback function.
- *  RETURNS     none
- *
- *FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoPreHandlerFuncT func
- *  DESC        The callback that's called for an incoming ZDO message.
- *  PARAMS      zb              ; ZigBee stack instance.
- *              dataIndPtr      ; APS-DATA.indication
- *              seqnum          ; ZDO message sequence number
- *  RETURNS     true (1) if the application has handled it and the stack
- *              should not process the message further.
- *              FALSE (0) if the application has not handled the message or
- *              wants to let the stack finish whatever processing it needs
- *              to do.
- *              Typically, the callback should return 0 to let the stack
- *              perform its own processing on the message.
- *---------------------------------------------------------------
- */
+/* Configures the callback to receive incoming ZDO messages in your application. */
 typedef int (*ZbZdoPreHandlerFuncT)(struct ZigBeeT *zb, ZbApsdeDataIndT *dataIndPtr, uint8_t seqnum);
 void ZbZdoSetPreHandler(struct ZigBeeT *zb, ZbZdoPreHandlerFuncT func);
 
 /*---------------------------------------------------------------
- * Misc. Helper Functions
+ * Complex Descriptor
  *---------------------------------------------------------------
  */
-uint8_t ZbZdoGetNextSeqNum(struct ZigBeeT *zb);
-
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoParseDeviceAnnce
- *  DESC        Parses a Device_annce message.
- *  PARAMS      structPtr       ; Pointer to structure to fill in.
- *              buf             ; e.g. dataIndPtr->asdu
- *              len             ; e.g. dataIndPtr->asduLength
- *  RETURNS     # of bytes parsed, or <0 on error.
- *---------------------------------------------------------------
- */
-int ZbZdoParseDeviceAnnce(ZbZdoDeviceAnnceT *structPtr, const uint8_t *buf, unsigned int len);
-
 /* Internal complex descriptor format */
 typedef struct {
     char manufacturerName[16];
@@ -815,17 +674,12 @@ typedef struct {
     char serialNumber[16];
 } ZbZdoComplexDescT;
 
-/*FUNCTION:------------------------------------------------------
- *  NAME        ZbZdoSetComplexDesc
- *  DESC        Configures the local complex descriptor. The information from
- *              the structPtr parameter is copied to the stack instance.
- *  PARAMS      zb              ; ZigBee stack instance.
- *              structPtr       ; Pointer to complex descriptor structure to copy.
- *  RETURNS     ZDP Status Code (success == 0x00)
- *---------------------------------------------------------------
- */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoSetComplexDesc(struct ZigBeeT *zb, ZbZdoComplexDescT *structPtr);
 
+/*---------------------------------------------------------------
+ * IEEE Joining List
+ *---------------------------------------------------------------
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkIeeeJoinListReq(struct ZigBeeT *zb, struct ZbZdoNwkIeeeJoinListReqT *req,
     void (*callback)(struct ZbZdoNwkIeeeJoinListRspT *rsp, void *cb_arg), void *arg);
 unsigned int ZbZdoNwkIeeeJoinListRsp(struct ZigBeeT *zb, uint16_t dstNwkAddr,

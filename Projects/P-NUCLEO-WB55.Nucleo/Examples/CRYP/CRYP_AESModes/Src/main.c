@@ -789,6 +789,11 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  /** Initializes the peripherals clocks 
+  */
+  /* USER CODE BEGIN Smps */
+
+  /* USER CODE END Smps */
 }
 
 /**
@@ -812,6 +817,7 @@ static void MX_AES1_Init(void)
   hcryp1.Init.pKey = (uint32_t *)pKeyAES1;
   hcryp1.Init.Algorithm = CRYP_AES_ECB;
   hcryp1.Init.DataWidthUnit = CRYP_DATAWIDTHUNIT_WORD;
+  hcryp1.Init.KeyIVConfigSkip = CRYP_KEYIVCONFIG_ALWAYS;
   if (HAL_CRYP_Init(&hcryp1) != HAL_OK)
   {
     Error_Handler();
@@ -827,6 +833,7 @@ static void MX_AES1_Init(void)
   */
 static void MX_DMA_Init(void) 
 {
+
   /* DMA controller clock enable */
   __HAL_RCC_DMAMUX1_CLK_ENABLE();
   __HAL_RCC_DMA1_CLK_ENABLE();

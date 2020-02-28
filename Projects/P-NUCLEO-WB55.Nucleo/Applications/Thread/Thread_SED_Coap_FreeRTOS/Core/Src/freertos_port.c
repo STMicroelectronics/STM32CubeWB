@@ -1,21 +1,23 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
  * File Name          : freertos_port.c
- * Description        : Custom porting of FreeRTIS functionalities
+ * Description        : Custom porting of FreeRTOS functionalities
  *
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -81,6 +83,8 @@ void vPortSetupTimerInterrupt( void );
  */
 void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
 {
+  /* If low power is not used, do not stop the SysTick and continue execution */
+#if ( CFG_LPM_SUPPORTED != 0)
   /**
    * Although this is not documented as such, when xExpectedIdleTime = 0xFFFFFFFF = (~0),
    * it likely means the system may enter low power for ever ( from a FreeRTOS point of view ).
@@ -119,6 +123,8 @@ void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
   {
     if (xExpectedIdleTime != (~0))
     {
+      /* Remove one tick to wake up before the event occurs */
+      xExpectedIdleTime--;
       /* Start the low power timer */
       LpTimerStart( xExpectedIdleTime );
     }
@@ -145,6 +151,7 @@ void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
     /* Exit with interrUpts enabled. */
     __enable_irq();
   }
+#endif
 }
 
 /*
@@ -293,10 +300,18 @@ static void LpEnter( void )
  */
 static uint32_t LpGetElapsedTime( void )
 {
-  uint64_t return_value;
+  uint64_t val_ticks, time_us;
 
-  return_value = (configTICK_RATE_HZ) * (CFG_TS_TICK_VAL) * (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - HW_TS_RTC_ReadLeftTicksToCount( ));
-  return_value = return_value / (1000 * 1000);
+  time_us = (CFG_TS_TICK_VAL) * (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - HW_TS_RTC_ReadLeftTicksToCount( ));
+  
+  val_ticks = time_us * configTICK_RATE_HZ;
+  val_ticks = val_ticks / (1000 * 1000);
+  
+  /* add a tick if the time elapsed is above 50 % of a tick */
+  if( (time_us % (portTICK_PERIOD_MS * 1000) > (portTICK_PERIOD_MS * 1000 / 2)) )
+  {
+    val_ticks++;
+  }
 
   /**
    * The system may have been out from another reason than the timer
@@ -306,7 +321,7 @@ static uint32_t LpGetElapsedTime( void )
    */
   HW_TS_Stop(LpTimerContext.LpTimerFreeRTOS_Id);
 
-  return (uint32_t)return_value;
+  return (uint32_t)val_ticks;
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

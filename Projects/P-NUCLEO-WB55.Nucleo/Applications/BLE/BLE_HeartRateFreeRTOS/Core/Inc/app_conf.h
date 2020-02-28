@@ -1,12 +1,12 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : app_conf.h
   * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -48,11 +49,11 @@
 /**
  * Define IO Authentication
  */
-#define CFG_BONDING_MODE                  (1)
-#define CFG_FIXED_PIN                     (111111)
-#define CFG_USED_FIXED_PIN                (0)
-#define CFG_ENCRYPTION_KEY_SIZE_MAX       (16)
-#define CFG_ENCRYPTION_KEY_SIZE_MIN       (8)
+#define CFG_BONDING_MODE                 (0)
+#define CFG_FIXED_PIN                    (111111)
+#define CFG_USED_FIXED_PIN               (0)
+#define CFG_ENCRYPTION_KEY_SIZE_MAX      (16)
+#define CFG_ENCRYPTION_KEY_SIZE_MIN      (8)
 
 /**
  * Define IO capabilities
@@ -63,7 +64,7 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY   (0x04)
 
-#define CFG_IO_CAPABILITY             CFG_IO_CAPABILITY_DISPLAY_YES_NO
+#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_DISPLAY_YES_NO
 
 /**
  * Define MITM modes
@@ -72,6 +73,35 @@
 #define CFG_MITM_PROTECTION_REQUIRED          (0x01)
 
 #define CFG_MITM_PROTECTION             CFG_MITM_PROTECTION_REQUIRED
+
+/**
+ * Define Secure Connections Support
+ */
+#define CFG_SECURE_NOT_SUPPORTED       (0x00)
+#define CFG_SECURE_OPTIONAL            (0x01)
+#define CFG_SECURE_MANDATORY           (0x02)
+
+#define CFG_SC_SUPPORT                 CFG_SECURE_OPTIONAL
+
+/**
+ * Define Keypress Notification Support
+ */
+#define CFG_KEYPRESS_NOT_SUPPORTED      (0x00)
+#define CFG_KEYPRESS_SUPPORTED          (0x01)
+
+#define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
+   
+/**
+ * Numeric Comparison Answers
+ */   
+#define YES (0x01)
+#define NO  (0x00)
+
+/**
+ * Device name configuration for Generic Access Service
+ */
+#define CFG_GAP_DEVICE_NAME             "TEMPLATE"
+#define CFG_GAP_DEVICE_NAME_LENGTH      (8)
 
 /**
  * Define PHY
@@ -254,7 +284,7 @@
  * Select UART interfaces
  */
 #define CFG_DEBUG_TRACE_UART    hw_uart1
-#define CFG_CONSOLE_MENU      
+#define CFG_CONSOLE_MENU      0
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -448,7 +478,7 @@ typedef enum
 #define CFG_SHCI_USER_EVT_PROCESS_CB_SIZE     (0)
 #define CFG_SHCI_USER_EVT_PROCESS_STACK_MEM   (0)
 #define CFG_SHCI_USER_EVT_PROCESS_PRIORITY    osPriorityNone
-#define CFG_SHCI_USER_EVT_PROCESS_STACk_SIZE  (128 * 7)
+#define CFG_SHCI_USER_EVT_PROCESS_STACK_SIZE  (128 * 7)
 
 #define CFG_HCI_USER_EVT_PROCESS_NAME         "HCI_USER_EVT_PROCESS"
 #define CFG_HCI_USER_EVT_PROCESS_ATTR_BITS    (0)
@@ -456,7 +486,7 @@ typedef enum
 #define CFG_HCI_USER_EVT_PROCESS_CB_SIZE      (0)
 #define CFG_HCI_USER_EVT_PROCESS_STACK_MEM    (0)
 #define CFG_HCI_USER_EVT_PROCESS_PRIORITY     osPriorityNone
-#define CFG_HCI_USER_EVT_PROCESS_STACk_SIZE   (128 * 8)
+#define CFG_HCI_USER_EVT_PROCESS_STACK_SIZE   (128 * 8)
 
 #define CFG_ADV_UPDATE_PROCESS_NAME           "ADV_UPDATE_PROCESS"
 #define CFG_ADV_UPDATE_PROCESS_ATTR_BITS      (0)
@@ -464,7 +494,7 @@ typedef enum
 #define CFG_ADV_UPDATE_PROCESS_CB_SIZE        (0)
 #define CFG_ADV_UPDATE_PROCESS_STACK_MEM      (0)
 #define CFG_ADV_UPDATE_PROCESS_PRIORITY       osPriorityNone
-#define CFG_ADV_UPDATE_PROCESS_STACk_SIZE     (128 * 6)
+#define CFG_ADV_UPDATE_PROCESS_STACK_SIZE     (128 * 6)
 
 #define CFG_HRS_PROCESS_NAME                  "HRS_PROCESS"
 #define CFG_HRS_PROCESS_ATTR_BITS             (0)
@@ -472,7 +502,7 @@ typedef enum
 #define CFG_HRS_PROCESS_CB_SIZE               (0)
 #define CFG_HRS_PROCESS_STACK_MEM             (0)
 #define CFG_HRS_PROCESS_PRIORITY              osPriorityNone
-#define CFG_HRS_PROCESS_STACk_SIZE            (128 * 5)
+#define CFG_HRS_PROCESS_STACK_SIZE            (128 * 5)
 
 /* USER CODE BEGIN FreeRTOS_Defines */
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler

@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    embd_provision.h
 * @author  BLE Mesh Team
-* @version V1.11.000
-* @date    25-07-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the serial interface file 
 ******************************************************************************
 * @attention
@@ -51,8 +51,7 @@
 /* Exported variables  ------------------------------------------------------- */
 /* Exported Functions Prototypes ---------------------------------------------*/
 void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
-
-
+void SerialPrvn_ProvisioningStatusUpdateCb(uint8_t flagPrvningInProcess, MOBLEUINT16 nodeAddress);
 #endif /* __EMBD_PROVISION_H */
 
 /******************* (C) COPYRIGHT 2018 STMicroelectronics *****END OF FILE****/

@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    config_client.c
 * @author  BLE Mesh Team
-* @version V1.11.002
-* @date    27-09-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Config model Client middleware file
 ******************************************************************************
 * @attention
@@ -40,7 +40,6 @@
 */
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"
-#include "mesh_cfg.h"
 #include "config_client.h"
 #include "common.h"
 #include "models_if.h"
@@ -76,11 +75,105 @@ const MODEL_OpcodeTableParam_t Config_Client_Opcodes_Table[] = {
   MOBLEUINT16 max_payload_size;
   Here in this array, Handler is not defined; */
 #ifdef ENABLE_CONFIG_MODEL_CLIENT
-  {OPCODE_CONFIG_COMPOSITION_DATA_STATUS,  MOBLE_FALSE,  10, 100, 0x8FFF , 0, 0},
-  {OPCODE_CONFIG_APPKEY_STATUS,            MOBLE_FALSE,  4, 4, 0x8FFF , 0, 0},
-  {OPCODE_CONFIG_SUBSCRIPTION_STATUS,      MOBLE_FALSE,  7, 9, 0x8FFF , 0, 0},
-  {OPCODE_CONFIG_MODEL_PUBLI_STATUS,       MOBLE_FALSE,  12, 14, 0x8FFF , 0, 0},
-  {OPCODE_CONFIG_MODEL_APP_STATUS,         MOBLE_FALSE,  7, 9, 0x8FFF , 0, 0},
+
+  /* 4.3.2.42 Config AppKey List, Opcode= 0x80 0x02
+     The Config AppKey List is an unacknowledged message reporting all AppKeys 
+     that are bound to the NetKey.*/
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_APPKEY_LIST,         MOBLE_FALSE,  5, 9, 0x8FFF , 0, 0},
+  
+  /* 4.3.2.40 Config AppKey Status, Opcode= 0x80 0x03
+   The Config AppKey Status is an unacknowledged message used to report a status
+   for the requesting message, based on the NetKey Index identifying the NetKey 
+   on the NetKey List and on the AppKey Index identifying the AppKey on the 
+   AppKey List. */  
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_APPKEY_STATUS,            MOBLE_FALSE,  4, 4, 0x8FFF , 0, 0},
+  
+  /* 4.3.2.3 Config Beacon Status, Opcode= 0x80 0x0B
+    The Config Beacon Status is an unacknowledged message used to report the 
+    current Secure Network Beacon state of a node (see Section 4.2.10). 
+
+    Beacon : 1B : Secure Network Beacon state */
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_BEACON_STATUS,  MOBLE_FALSE,  1, 1, 0x8FFF , 0, 0},
+
+  /* 4.3.2.5 Config Composition Data Status, Opcode= 0x02
+     The Config Composition Data Status is an unacknowledged message used to 
+     report a single page of the Composition Data (see Section 4.2.1).
+    This message uses a single octet opcode to maximize the size of a payload.
+    Parameters: 
+      Page : 1B : Page number of the Composition Data
+      Data : variable : Composition Data for the identified page */
+  {SIG_MODEL_ID_CONFIG_CLIENT, OPCODE_CONFIG_COMPOSITION_DATA_STATUS,  MOBLE_FALSE,  10, 100, 0x8FFF , 0, 0},
+  
+  /* 4.3.2.8 Config Default TTL Status, Opcode = 0x80 0x0E
+     The Config Default TTL Status is an unacknowledged message used to report 
+     the current Default TTL state of a node (see Section 4.2.7). 
+     Parameter:
+     TTL : 1B : Default TTL  */
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_DEFAULT_TTL_STATUS,MOBLE_FALSE,  1, 1, 0x8FFF , 0, 0},
+    
+  /* 4.3.2.57 Config Friend Status, Opcode = 0x80 0x11
+     The Config Friend Status is an unacknowledged message used to report the 
+     current Friend state of a node (see Section 4.2.13).
+     Parameter:
+     Friend : 1B : Friend state */
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_FRIEND_STATUS,MOBLE_FALSE,  1, 1, 0x8FFF , 0, 0},
+  
+  /* 4.3.2.11 Config GATT Proxy Status, Opcode = 0x80 0x14
+     The Config GATT Proxy Status is an unacknowledged message used to report the 
+     current GATT Proxy state of a node (see Section 4.2.11). 
+     Parameter:
+     GATTProxy : 1B : GATT Proxy state */
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_GATT_PROXY_STATUS,MOBLE_FALSE,  1, 1, 0x8FFF , 0, 0},
+  
+  /* 4.3.2.63 Config Heartbeat Publication Status, Opcode = 0x06
+      The Config Heartbeat Publication Status is an unacknowledged message used 
+      to report the Heartbeat Publication state of a node (see Section 4.2.17).
+     Parameter:
+     Status : 1B : Status Code for the requesting message
+     Destination : 2B : Destination address for Heartbeat messages
+     CountLog : 1B : Number of Heartbeat messages remaining to be sent
+     PeriodLog : 1B : Period for sending Heartbeat messages
+     TTL : 1B : TTL to be used when sending Heartbeat messages
+     Features : 2B : Bit field indicating features that trigger Heartbeat messages when changed
+     NetKeyIndex : 2B : NetKey Index */
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_HEARTBEAT_PUBLICATION_STATUS, MOBLE_FALSE,  10, 10, 0x8FFF , 0, 0},
+  
+  /* 4.3.2.66 Config Heartbeat Subscription Status, Opcode = 0x80 0x3C
+     The Config Heartbeat Subscription Status is an unacknowledged message used 
+     to report the Heartbeat Subscription state of a node (see Section 4.2.18) 
+     Parameters:
+      Status : 1B : Status Code for the requesting message
+      Source : 2B : Source address for Heartbeat messages
+      Destination : 2B : Destination address for Heartbeat messages
+      PeriodLog : 1B : Remaining Period for processing Heartbeat messages
+      CountLog : 1B : Number of Heartbeat messages received
+      MinHops : 1B : Minimum hops when receiving Heartbeat messages
+      MaxHops : 1B : Maximum hops when receiving Heartbeat messages */
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_HEARTBEAT_SUBSCRIPTION_STATUS,MOBLE_FALSE,  9, 9, 0x8FFF , 0, 0},
+  
+  /* 4.3.2.60 Config Key Refresh Phase Status, Opcode = 0x80 0x17
+     The Config Key Refresh Phase Status is an unacknowledged message used to 
+     report the current Key Refresh Phase state of the identified network key 
+     (see Section 4.2.14). 
+    Parameters:
+      Status : 1B : Status Code for the requesting message
+      NetKeyIndex : 2B : NetKey Index
+      Phase : 1B : Key Refresh Phase State */      
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_KEY_REFRESH_PHASE_STATUS,MOBLE_FALSE,  4, 4, 0x8FFF , 0, 0},
+  
+  /* 4.3.2.68 Config Low Power Node PollTimeout Status, Opcode = 0x80 0x2E
+     The Config Low Power Node PollTimeout Status is an unacknowledged message 
+     used to report the current value of the PollTimeout timer of the Low Power 
+     node within a Friend node. 
+    Parameters:
+      LPNAddress: 2B : The unicast address of the Low Power node
+      PollTimeout: 3B : The current value of the PollTimeout timer of the Low Power node */
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_LOW_POWER_NODE_POLLTIMEOUT_STATUS, MOBLE_FALSE,  5, 5, 0x8FFF , 0, 0},
+  
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_MODEL_SUBSCRIPTION_STATUS,MOBLE_FALSE,  7, 9, 0x8FFF , 0, 0},
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_MODEL_PUBLICATION_STATUS, MOBLE_FALSE,  12, 14, 0x8FFF , 0, 0},
+  {SIG_MODEL_ID_CONFIG_CLIENT, OPCODE_CONFIG_MODEL_APP_STATUS,         MOBLE_FALSE,  7, 9, 0x8FFF , 0, 0},
+  {SIG_MODEL_ID_CONFIG_CLIENT,   OPCODE_CONFIG_NODE_RESET_STATUS,        MOBLE_FALSE,  0, 0, 0x8FFF , 0, 0},
 #endif
   {0}
 };
@@ -111,6 +204,8 @@ MOBLE_RESULT ConfigClient_ModelAppUnbind (void);
 MOBLEUINT16 CopyU8LittleEndienArrayToU16word (MOBLEUINT8* pArray);
 MOBLEUINT32 CopyU8LittleEndienArrayToU32word (MOBLEUINT8* pArray);
 WEAK_FUNCTION (MOBLEUINT8* GetNewProvNodeDevKey(void));
+MOBLE_RESULT ConfigClient_NodeResetStatus(MOBLEUINT8 const *pStatus, 
+                                          MOBLEUINT32 length);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -280,6 +375,21 @@ MOBLE_RESULT ConfigClient_CompositionDataStatusResponse(MOBLEUINT8 const *pSrcCo
 MOBLEUINT16 GetNodeElementAddress(void)
 {
   return NodeInfo.nodePrimaryAddress; 
+}
+
+/**
+* @brief  GetServerElementAddress: This function gets the element address 
+          from elementIndex
+* @param  None
+* @retval MOBLE_RESULT
+*/ 
+MOBLEUINT16 GetServerElementAddress(MOBLEUINT8 elementIdx)
+{
+  MOBLEUINT16 elementAddr;
+  
+  elementAddr = NodeInfo.nodePrimaryAddress; 
+  elementAddr += elementIdx;
+  return elementAddr;
 }
 
 /**
@@ -685,9 +795,11 @@ maximize the size of a payload.
   MOBLEUINT8* pConfigData;
   MOBLEUINT32 dataLength;
   MOBLE_ADDRESS dst_peer;
+  MOBLE_ADDRESS self_addr;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   configClientModelPublication_t configClientModelPublication;
 
+  
   TRACE_M(TF_CONFIG_CLIENT,"Config Client Publication Add Message  \r\n");  
   dataLength = sizeof(configClientModelPublication_t);
 
@@ -720,26 +832,28 @@ maximize the size of a payload.
   }
   
 
-  msg_opcode = OPCODE_CONFIG_MODEL_PUBLI_SET;
+  msg_opcode = OPCODE_CONFIG_CONFIG_MODEL_PUBLICATION_SET;
   pConfigData = (MOBLEUINT8*) &(configClientModelPublication);
   dst_peer = NodeInfo.nodePrimaryAddress; 
   
   TRACE_M(TF_CONFIG_CLIENT,"Config Client Publication Add  \r\n");  
   TRACE_M(TF_CONFIG_CLIENT,"elementAddr = [%04x]\r\n", elementAddress);  
   TRACE_M(TF_CONFIG_CLIENT,"publishAddress = [%04x]\r\n", publishAddress); 
-  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08x]\r\n", modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08lx]\r\n", modelIdentifier);
   
-  TRACE_I(TF_CONFIG_CLIENT,"Publication Set buffer ");
+  TRACE_I(TF_CONFIG_CLIENT,"Publication Set buffer \r\n");
   
   for (MOBLEUINT8 count=0 ; count<dataLength; count++)
   {
     TRACE_I(TF_CONFIG_CLIENT,"%.2x ", pConfigData[count]);
   } 
+  TRACE_I(TF_CONFIG_CLIENT,"\r\n");
   
-  if (elementAddress == CONFIG_CLIENT_UNICAST_ADDR)
+  self_addr = BLEMesh_GetAddress();
+  if (elementAddress == self_addr)  
   {
     /* Provisioner needs to be configured */
-    ConfigModel_SelfPublishConfig(CONFIG_CLIENT_UNICAST_ADDR,
+    ConfigModel_SelfPublishConfig(self_addr,
                                          msg_opcode,pConfigData,dataLength);
   }
   else
@@ -831,7 +945,7 @@ MOBLE_RESULT ConfigClient_PublicationStatus(MOBLEUINT8 const *pPublicationStatus
   }  
   TRACE_M(TF_CONFIG_CLIENT,"elementAddr = [%04x]\r\n", configClientPublicationStatus.elementAddr);  
   TRACE_M(TF_CONFIG_CLIENT,"publishAddress = [%04x]\r\n", configClientPublicationStatus.publishAddr); 
-  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08x]\r\n", configClientPublicationStatus.modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08lx]\r\n", configClientPublicationStatus.modelIdentifier);
   TRACE_M(TF_CONFIG_CLIENT,"status = [%02x]\r\n", configClientPublicationStatus.Status);  
 
   Appli_PublicationStatusCb(configClientPublicationStatus.Status);
@@ -866,8 +980,9 @@ Config Model Subscription Status message.
   ModelIdentifier : 2B or 4B : SIG Model ID or Vendor Model ID
 */
 
-  MOBLEUINT32 dataLength;
+  MOBLEUINT32 dataLength = 0;
   MOBLE_ADDRESS dst_peer;
+  MOBLE_ADDRESS self_addr;
   MOBLEUINT16 msg_opcode;
   MOBLEUINT8* pConfigData;
   configClientModelSubscriptionAdd_t modelSubscription;
@@ -909,7 +1024,7 @@ Config Model Subscription Status message.
     }
   } /* else: address is valid */
   
-   msg_opcode = OPCODE_CONFIG_MODEL_SUBSCR_ADD;
+   msg_opcode = OPCODE_CONFIG_MODEL_SUBSCRIPTION_ADD;
    pConfigData = (MOBLEUINT8*) &(modelSubscription);
    dst_peer = NodeInfo.nodePrimaryAddress; 
   
@@ -922,12 +1037,13 @@ Config Model Subscription Status message.
    
   TRACE_M(TF_CONFIG_CLIENT,"elementAddr = [%04x]\r\n", elementAddress);  
   TRACE_M(TF_CONFIG_CLIENT,"SubscriptionAddress = [%04x]\r\n", address); 
-  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08x]\r\n", modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08lx]\r\n", modelIdentifier);
    
-  if (elementAddress == CONFIG_CLIENT_UNICAST_ADDR)
+  self_addr = BLEMesh_GetAddress();
+  if (elementAddress == self_addr)
   {
     /* Provisioner needs to be configured */
-    ConfigModel_SelfSubscriptionConfig(CONFIG_CLIENT_UNICAST_ADDR,
+    ConfigModel_SelfSubscriptionConfig(self_addr,
                                               msg_opcode,pConfigData,dataLength);
   }
   else
@@ -1055,7 +1171,7 @@ MOBLE_RESULT ConfigClient_SubscriptionStatus(MOBLEUINT8 const *pSrcSubscriptionS
   
   TRACE_M(TF_CONFIG_CLIENT,"elementAddr = [%04x]\r\n", configClientSubscriptionStatus.elementAddress);  
   TRACE_M(TF_CONFIG_CLIENT,"SubscriptionAddress = [%04x]\r\n", configClientSubscriptionStatus.address); 
-  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08x]\r\n", configClientSubscriptionStatus.modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08lx]\r\n", configClientSubscriptionStatus.modelIdentifier);
   TRACE_M(TF_CONFIG_CLIENT,"subscription status = [%02x]\r\n", configClientSubscriptionStatus.Status);
   
   Appli_SubscriptionAddStatusCb(configClientSubscriptionStatus.Status);
@@ -1132,6 +1248,7 @@ The response to a Config Model App Bind message is a Config Model App Status mes
   MOBLEUINT8* pConfigData;
   MOBLE_ADDRESS dst_peer;
   configClientModelAppBind_t modelAppBind;
+  MOBLE_ADDRESS self_addr;
   
   modelAppBind.appKeyIndex = appKeyIndex;
   modelAppBind.elementAddress = elementAddress; /* Will be converted to address inside lib */
@@ -1150,12 +1267,18 @@ The response to a Config Model App Bind message is a Config Model App Status mes
   dst_peer = NodeInfo.nodePrimaryAddress; 
   
   TRACE_M(TF_CONFIG_CLIENT,"Config Client App Key Bind message  \r\n");   
-  TRACE_M(TF_CONFIG_CLIENT,"Model = 0x%8x \r\n", modelIdentifier );
+  TRACE_M(TF_CONFIG_CLIENT,"Model = 0x%8lx \r\n", modelIdentifier );
   
-  if (elementAddress == CONFIG_CLIENT_UNICAST_ADDR)
+  if(ADDRESS_IS_UNASSIGNED(elementAddress))
+  {
+    return MOBLE_RESULT_INVALIDARG;
+  }
+  
+  self_addr = BLEMesh_GetAddress();
+  if (elementAddress == self_addr)
   {
     /* Provisioner needs to be configured */
-    ConfigClient_SelfModelAppBindConfig(CONFIG_CLIENT_UNICAST_ADDR,
+    ConfigClient_SelfModelAppBindConfig(self_addr,
                                         msg_opcode,pConfigData,dataLength);
   }
   else
@@ -1245,6 +1368,79 @@ MOBLE_RESULT ConfigClient_ModelAppStatus(MOBLEUINT8 const *pSrcModelAppStatus,
 }
 
 
+/**
+* @brief  ConfigClient_ModelNodeReset: This function is called for reset of the 
+           Node 
+* @param  elementAddress: Element address to be reset / Un-provisioned
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT ConfigClient_NodeReset (MOBLEUINT16 elementAddress)
+{
+/*
+4.3.2.53 Config Node Reset
+The Config Node Reset is an acknowledged message used to reset a node (other than a Provisioner) and remove it from the network.
+The response to a Config Node Reset message is a Config Node Reset Status message.
+There are no Parameters for this message.
+*/
+  MOBLEUINT32 dataLength;
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT16 msg_opcode;
+  MOBLEUINT8* pConfigData;
+  MOBLE_ADDRESS dst_peer;
+  MOBLE_ADDRESS self_addr;
+
+  dataLength = 0;
+  msg_opcode = OPCODE_CONFIG_NODE_RESET;
+  pConfigData = (MOBLEUINT8*)(NULL);
+
+  dst_peer = elementAddress; 
+
+  TRACE_M(TF_CONFIG_CLIENT,"Config Client Node Reset message  \r\n");   
+  if(ADDRESS_IS_UNASSIGNED(elementAddress))
+  {
+    return MOBLE_RESULT_INVALIDARG;
+  }
+  
+  self_addr = BLEMesh_GetAddress();
+  if (elementAddress == self_addr)
+  {
+    /* Provisioner needs to be configured */
+// TBD 
+//    ConfigClient_SelfModelAppBindConfig(self_addr,
+//                                         msg_opcode,pConfigData,dataLength);
+  }
+  else
+  {
+    /* Node address to be configured */
+    ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);
+  }
+  
+  return result;
+}
+
+
+/**
+* @brief  ConfigClient_NodeResetStatus: This function is a call
+           back when the response is received for Node Reset
+* @param  pStatus: Pointer to the Status message parameters
+* @param  length: Length of the status parameter message 
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT ConfigClient_NodeResetStatus(MOBLEUINT8 const *pStatus, 
+                                                        MOBLEUINT32 length)  
+{
+  /*
+   4.3.2.54 Config Node Reset Status
+   The Config Node Reset Status is an unacknowledged message used to acknowledge that an element has received a Config Node Reset message.
+   There are no Parameters for this message.  */
+  
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;  
+  TRACE_M(TF_CONFIG_CLIENT,"ConfigClient_NodeResetStatus Received \r\n");    
+  Appli_NodeResetStatusCb();
+
+  return result;
+}
+
 void CopyU8LittleEndienArray_fromU16word (MOBLEUINT8* pArray, MOBLEUINT16 inputWord)
 {
   *(pArray+1) = (MOBLEUINT8)(inputWord & 0x00ff);  /* Copy the LSB first */
@@ -1308,7 +1504,7 @@ MOBLE_RESULT ConfigClientModel_SendMessage(MOBLE_ADDRESS dst_peer ,
                                      MOBLEUINT32 dataLength)
 {
   MOBLE_ADDRESS peer_addr;  
-  peer_addr = 0; //inside the library, it is taken as index
+  peer_addr = BLEMesh_GetAddress(); 
   MOBLEUINT8 *pTargetDevKey;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;  
   
@@ -1374,10 +1570,45 @@ MOBLEUINT8 ConfigClient_ChkRetrialState (eServerRespRecdState_t* peRespRecdState
       *peRespRecdState = NodeNoResponse_State;
       ConfigClient_ErrorState();
     }
-    else //(NodeInfo.numberOfAttemptsTx >= CONFIGCLIENT_RE_TRIALS)
+    else 
     {
        retry_state = CLIENT_TX_TIMEOUT;   
        *peRespRecdState = NodeIdle_State;    /* Run next re-trial cycle again */
+       TRACE_M(TF_CONFIG_CLIENT,"Retry started \n\r");       
+    }
+    
+    ConfigClient_SaveMsgSendingTime(); /* Save the time again for next loop */
+  }
+
+  return retry_state;
+}
+
+/**
+* @brief  ConfigClient_ChkRetries: This function is used by application 
+          to check if there is a timeout of the Config Client Message sending
+* @param  None
+* @retval None
+*/ 
+MOBLEUINT8 ConfigClient_ChkRetries (void)
+{
+  MOBLEUINT8 retry_state = CLIENT_TX_INPROGRESS;
+  MOBLEUINT32 nowClockTime;
+  
+  nowClockTime = Clock_Time();
+  if(( (nowClockTime - NodeInfo.Initial_time) >= CONFIGCLIENT_RESPONSE_TIMEOUT))
+  {
+    /* Timeout occured, Do retry or enter the error state  */
+    NodeInfo.numberOfAttemptsTx++;
+    
+    if (NodeInfo.numberOfAttemptsTx >= CONFIGCLIENT_MAX_TRIALS)
+    {
+      NodeInfo.numberOfAttemptsTx = 0;
+      retry_state = CLIENT_TX_RETRY_ENDS; /* re-trial cycle ends, no response */
+      ConfigClient_ErrorState();
+    }
+    else 
+    {
+       retry_state = CLIENT_TX_TIMEOUT;   
        TRACE_M(TF_CONFIG_CLIENT,"Retry started \n\r");       
     }
     
@@ -1494,7 +1725,7 @@ MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
 {
   
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
-  tClockTime delay_t = Clock_Time();
+//  tClockTime delay_t = Clock_Time();
   
   TRACE_M(TF_CONFIG_CLIENT,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
                                                       dst_peer, peer_addr, opcode , response);
@@ -1522,14 +1753,14 @@ MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       break;
     }
 
-  case OPCODE_CONFIG_SUBSCRIPTION_STATUS:
+  case OPCODE_CONFIG_MODEL_SUBSCRIPTION_STATUS:
     {
       ConfigClient_SubscriptionStatus(pRxData, dataLength); 
         
       break;
     }
     
-   case OPCODE_CONFIG_MODEL_PUBLI_STATUS:
+   case OPCODE_CONFIG_MODEL_PUBLICATION_STATUS:
     {
       ConfigClient_PublicationStatus(pRxData, dataLength); 
       break;
@@ -1538,6 +1769,12 @@ MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
    case OPCODE_CONFIG_MODEL_APP_STATUS:
     {
       ConfigClient_ModelAppStatus(pRxData, dataLength); 
+      break;
+    }
+
+   case OPCODE_CONFIG_NODE_RESET_STATUS:
+    {
+      ConfigClient_NodeResetStatus(pRxData, dataLength); 
       break;
     }
 

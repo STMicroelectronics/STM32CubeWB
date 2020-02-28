@@ -39,6 +39,7 @@
 /*#define HAL_CRC_MODULE_ENABLED   */
 /*#define HAL_HSEM_MODULE_ENABLED   */
 /*#define HAL_I2C_MODULE_ENABLED   */
+/*#define HAL_I2S_MODULE_ENABLED   */
 /*#define HAL_IPCC_MODULE_ENABLED   */
 /*#define HAL_IRDA_MODULE_ENABLED   */
 /*#define HAL_IWDG_MODULE_ENABLED   */
@@ -58,6 +59,7 @@
 /*#define HAL_UART_MODULE_ENABLED   */
 /*#define HAL_USART_MODULE_ENABLED   */
 /*#define HAL_WWDG_MODULE_ENABLED   */
+#define HAL_EXTI_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_FLASH_MODULE_ENABLED
@@ -69,6 +71,7 @@
 #define USE_HAL_COMP_REGISTER_CALLBACKS      0u
 #define USE_HAL_CRYP_REGISTER_CALLBACKS      0u
 #define USE_HAL_I2C_REGISTER_CALLBACKS       0u
+#define USE_HAL_I2S_REGISTER_CALLBACKS       0u
 #define USE_HAL_IRDA_REGISTER_CALLBACKS      0u
 #define USE_HAL_LPTIM_REGISTER_CALLBACKS     0u
 #define USE_HAL_PCD_REGISTER_CALLBACKS       0u
@@ -221,6 +224,10 @@
 #ifdef HAL_CRYP_MODULE_ENABLED
   #include "stm32wbxx_hal_cryp.h"
 #endif /* HAL_CRYP_MODULE_ENABLED */
+
+#ifdef HAL_EXTI_MODULE_ENABLED
+  #include "stm32wbxx_hal_exti.h"
+#endif /* HAL_EXTI_MODULE_ENABLED */
    
 #ifdef HAL_FLASH_MODULE_ENABLED
   #include "stm32wbxx_hal_flash.h"
@@ -237,6 +244,10 @@
 #ifdef HAL_I2C_MODULE_ENABLED
  #include "stm32wbxx_hal_i2c.h"
 #endif /* HAL_I2C_MODULE_ENABLED */
+
+#ifdef HAL_I2S_MODULE_ENABLED
+ #include "stm32wbxx_hal_i2s.h"
+#endif /* HAL_I2S_MODULE_ENABLED */
 
 #ifdef HAL_IPCC_MODULE_ENABLED
  #include "stm32wbxx_hal_ipcc.h"
@@ -271,7 +282,6 @@
 #endif /* HAL_PWR_MODULE_ENABLED */
 
 #ifdef HAL_QSPI_MODULE_ENABLED
- #define USE_HAL_QSPI_REGISTER_CALLBACKS 0U
  #include "stm32wbxx_hal_qspi.h"
 #endif /* HAL_QSPI_MODULE_ENABLED */
 
@@ -333,9 +343,9 @@
   *         If expr is true, it returns no value.
   * @retval None
   */
-#define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
+  #define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
-void assert_failed(uint8_t* file, uint32_t line);
+  void assert_failed(uint8_t* file, uint32_t line);
 #else
   #define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */

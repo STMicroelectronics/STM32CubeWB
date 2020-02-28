@@ -92,6 +92,8 @@ static DTS_STM_App_Notification_evt_t NotificationData;
 static uint8_t TimerDataThroughput_Id;
 uint32_t N=0;
 uint32_t DataTransfered = 0;
+uint16_t Att_Mtu_Exchanged;
+//extern DTS_App_Context_t DataTransferServerContext;
 
 /* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -123,14 +125,17 @@ void DTC_App_Init( void )
 
 void DTC_App_LinkReadyNotification(uint16_t ConnectionHandle)
 {
+#if(CFG_SERVER_ONLY != 1)
   tBleStatus status;
   uint16_t enable_notification = 0x0001;
+#endif  
 
   DataTransferClientContext.connHandle = ConnectionHandle;
 
-#if(CFG_BLE_CENTRAL != 0)
+#if(CFG_BLE_CENTRAL != 1)
   GattProcReq(GATT_PROC_MTU_UPDATE);
 #endif
+#if(CFG_SERVER_ONLY != 1)
   GattProcReq(GATT_PROC_DISC_ALL_PRIMARY_SERVICES);
   GattProcReq(GATT_PROC_DISC_ALL_CHAR_OF_DT_SERVICE);
   GattProcReq(GATT_PROC_DISC_TX_CHAR_DESC);
@@ -149,6 +154,8 @@ void DTC_App_LinkReadyNotification(uint16_t ConnectionHandle)
   {
     APP_DBG_MSG("Enable notification cmd failure: 0x%x\n", status);
   }
+#endif
+  
 #if(CFG_BLE_CENTRAL != 0)
     UTIL_SEQ_SetTask(1<<CFG_TASK_CONN_UPDATE_ID, CFG_SCH_PRIO_0); 
 #endif
@@ -165,7 +172,6 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt * event_pckt;
   evt_blue_aci * blue_evt;
-  aci_att_exchange_mtu_resp_event_rp0 * exchange_mtu_resp;
   uint8_t CRC_Result;
   uint8_t CRC_Received;
 
@@ -179,12 +185,6 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
       blue_evt = (evt_blue_aci*) event_pckt->data;
       switch (blue_evt->ecode)
       {
-        case EVT_BLUE_ATT_EXCHANGE_MTU_RESP:
-          APP_DBG_MSG("EVT_BLUE_ATT_EXCHANGE_MTU_RESP \n");
-          exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blue_evt->data;
-          APP_DBG_MSG("MTU_size = %d \n",exchange_mtu_resp->Server_RX_MTU );
-          APP_DBG_MSG("MTU_handle = 0x%x \n",exchange_mtu_resp->Connection_Handle );
-          break;
 
         case EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP:
         {
@@ -326,7 +326,7 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
               && (pr->Attribute_Value_Length > (2)))
           {
             NotificationData.DataTransfered.Length = pr->Attribute_Value_Length;
-            NotificationData.DataTransfered.pPayload =  pr->Attribute_Value;
+            NotificationData.DataTransfered.pPayload = (pr->Attribute_Value);
             NotificationData.DataTransfered.pPayload_n = *((uint32_t*) &(pr->Attribute_Value[0]));
             __disable_irq();
             if (NotificationData.DataTransfered.pPayload_n >= (NotificationData.DataTransfered.pPayload_n_1 + 2))

@@ -747,7 +747,7 @@ static void Ble_Tl_Init( void )
 
   if (role > 0)
   {
-    const char *name = "STM32WB";
+    const char *name = "P2P_C";
 
     aci_gap_init(role, 0,
                  APPBLE_GAP_DEVICE_NAME_LENGTH,

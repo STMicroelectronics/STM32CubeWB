@@ -305,6 +305,8 @@ void UTIL_SEQ_WaitEvt( UTIL_SEQ_bm_t evt_id_bm )
   {
     UTIL_SEQ_EvtIdle(current_task_id_bm, EvtWaited);
   }
+  CurrentTaskIdx = bit_position(current_task_id_bm);
+
   EvtSet &= (~EvtWaited);
   EvtWaited = event_waited_id_backup;
 

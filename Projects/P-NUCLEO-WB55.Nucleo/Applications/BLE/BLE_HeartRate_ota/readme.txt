@@ -89,6 +89,8 @@ Wireless Coprocessor binary.
 In order to make the program work, you must do the following:
  - Open your toolchain 
  - Rebuild all files and flash the board with the executable file
+   [Warning: not use CMSIS startup_stm32wb55xx_cm4.s to compile under Keil toolchain as specific 
+    DCD offset added for OTA application]
  - OR use the BLE_HeartRate_ota_reference.bin from Binary directory
    - to be flashed at 0x0800 7000
 

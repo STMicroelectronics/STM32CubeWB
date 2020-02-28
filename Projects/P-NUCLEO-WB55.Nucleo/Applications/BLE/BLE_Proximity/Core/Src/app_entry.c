@@ -33,7 +33,7 @@
 #include "stm32_lpm.h"
 
 
-#include "dbg_trace.h"
+#include "app_debug.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +50,6 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_
 /* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 static void SystemPower_Config( void );
-static void Init_Debug( void );
 static void appe_Tl_Init( void );
 static void Led_Init( void );
 static void Button_Init( void );
@@ -64,7 +63,7 @@ void APPE_Init( void )
   
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
-  Init_Debug();
+  APPD_Init();
 
   /**
    * The Standby mode should not be entered before the initialization is over
@@ -92,48 +91,6 @@ void APPE_Init( void )
  * LOCAL FUNCTIONS
  *
  *************************************************************/
-static void Init_Debug( void )
-{
-#if (CFG_DEBUGGER_SUPPORTED == 1)
-  /**
-   * Keep debugger enabled while in any low power mode
-   */
-  HAL_DBGMCU_EnableDBGSleepMode();
-
-  /***************** ENABLE DEBUGGER *************************************/
-  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
-  LL_C2_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
-
-#else
-
-  GPIO_InitTypeDef gpio_config = {0};
-
-  gpio_config.Pull = GPIO_NOPULL;
-  gpio_config.Mode = GPIO_MODE_ANALOG;
-
-  gpio_config.Pin = GPIO_PIN_15 | GPIO_PIN_14 | GPIO_PIN_13;
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  HAL_GPIO_Init(GPIOA, &gpio_config);
-  __HAL_RCC_GPIOA_CLK_DISABLE();
-
-  gpio_config.Pin = GPIO_PIN_4 | GPIO_PIN_3;
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  HAL_GPIO_Init(GPIOB, &gpio_config);
-  __HAL_RCC_GPIOB_CLK_DISABLE();
-
-  HAL_DBGMCU_DisableDBGSleepMode();
-  HAL_DBGMCU_DisableDBGStopMode();
-  HAL_DBGMCU_DisableDBGStandbyMode();
-
-#endif /* (CFG_DEBUGGER_SUPPORTED == 1) */
-
-#if(CFG_DEBUG_TRACE != 0)
-  DbgTraceInit();
-#endif
-
-  return;
-}
-
 /**
  * @brief  Configure the system for power optimization
  *
@@ -238,7 +195,7 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
 static void APPE_SysUserEvtRx( void * pPayload )
 {
   /**< Traces channel initialization */
-  TL_TRACES_Init( );
+  APPD_EnableCPU2();
 
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_ENABLE);
 
@@ -307,22 +264,5 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
   }
   return;
 }
-
-#if(CFG_DEBUG_TRACE != 0)
-void DbgOutputInit( void )
-{
-  HW_UART_Init(CFG_DEBUG_TRACE_UART);
-  return;
-}
-
-
-void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
-{
-  HW_UART_Transmit_DMA(CFG_DEBUG_TRACE_UART, p_data, size, cb);
-
-  return;
-}
-#endif
-
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

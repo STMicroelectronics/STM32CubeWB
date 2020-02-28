@@ -1,0 +1,9 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\NUCLEO-WB35CE
+[Others]
+Define=
+HALModule=TIM
+[Groups]
+Application/User=../Src/main.c;../Src/stm32wbxx_it.c;../Src/stm32wbxx_hal_timebase_tim.c;../Src/stm32wbxx_hal_msp.c;../Src/app_freertos.c;
+Doc=../readme.txt;
+Drivers/BSP/NUCLEO-WB35CE=../../../../../../Drivers/BSP/NUCLEO-WB35CE/nucleo_wb35ce.c;

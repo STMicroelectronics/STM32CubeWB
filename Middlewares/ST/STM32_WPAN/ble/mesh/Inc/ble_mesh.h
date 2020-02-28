@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    ble_mesh.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the BLE-Mesh stack 
 ******************************************************************************
 * @attention
@@ -45,11 +45,11 @@
 
 #include "types.h"
 //#include "hal_types.h"
-#define BLUENRG_MESH_APPLICATION_VERSION "1.10.004"
+#define BLE_MESH_APPLICATION_VERSION "1.12.003" 
 /**
 * \mainpage ST BLE-Mesh Solutions Bluetooth LE Mesh Library
 *
-* \version 1.10.000
+* \version 1.12.003
 *
 * \subsection contents_sec Contents
 *
@@ -237,7 +237,8 @@ typedef struct
 {
   /** \brief Write local data callback.
   * Called when the device gets a request to modify its data. Such a request is 
-  * made via a call to \a BLEMesh_SetRemoteData on a remote device.
+  * made via a call to \a BluenrgMesh_SetRemotePublication
+  * on a remote device.
   * User is responsible for deserializing the data.
   * \param[in] peer Source network address.
   * \param[in] dst_peer Destination address set by peer.
@@ -338,6 +339,7 @@ typedef struct
  **/
 typedef struct 
 {
+    MOBLEUINT32 model_id;
     MOBLEUINT32 opcode;
     MOBLEBOOL reliable;
     MOBLEUINT16 min_payload_size;
@@ -461,6 +463,7 @@ typedef struct
   const uint16_t friend_lp_buff_size;
   const uint16_t max_appli_pkt_size;
   const uint16_t neighbor_table_buff_size;
+  const uint16_t models_buff_size;
 } DynBufferParam_t;
 
 
@@ -533,7 +536,8 @@ MOBLE_RESULT BLEMesh_Process(void);
 */
 MOBLE_RESULT BLEMesh_SetVendorCbMap(MOBLE_VENDOR_CB_MAP const * map);
 
-/** \brief Set remote data on the given peer.
+/** \brief Set remote data on the given peer. The usage of this API is depracated and replaced with
+*                                                     BluenrgMesh_SetRemotePublication
 * User is responsible for serializing data into \a data buffer. Vendor_WriteLocalDataCb 
 *                                  callback will be called on the remote device.
 * \param[in] peer Destination address. May be set to MOBLE_ADDRESS_ALL_NODES to broadcast data.
@@ -545,6 +549,23 @@ MOBLE_RESULT BLEMesh_SetVendorCbMap(MOBLE_VENDOR_CB_MAP const * map);
 * \return MOBLE_RESULT_SUCCESS on success.
 */
 MOBLE_RESULT BLEMesh_SetRemoteData(MOBLE_ADDRESS peer, MOBLEUINT8 elementIndex,
+                                       MOBLEUINT16 command, MOBLEUINT8 const * data, 
+                                       MOBLEUINT32 length, MOBLEBOOL response, 
+                                       MOBLEUINT8 isVendor);
+
+
+/** \brief Set remote publication for the given Model ID & node Address
+* User is responsible for serializing data into \a data buffer. Vendor_WriteLocalDataCb 
+*                                  callback will be called on the remote device.
+* \param[in] modelId ID of the model. 
+* \param[in] srcAddress element Address of the Node
+* \param[in] command vendor model commands 
+* \param[in] data Data buffer.
+* \param[in] length Length of data in bytes.
+* \param[in] response If 'MOBLE_TRUE', used to get the response. If 'MOBLE_FALSE', no response 
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_SetRemotePublication(MOBLEUINT32 modelId, MOBLE_ADDRESS srcAddress,
                                        MOBLEUINT16 command, MOBLEUINT8 const * data, 
                                        MOBLEUINT32 length, MOBLEBOOL response, 
                                        MOBLEUINT8 isVendor);
@@ -618,6 +639,60 @@ MOBLE_RESULT VendorModel_SendResponse(MOBLEUINT16 vendorModelId, MOBLE_ADDRESS p
 MOBLE_RESULT Model_SendResponse(MOBLE_ADDRESS src_peer,MOBLE_ADDRESS dst_peer ,
                                               MOBLEUINT16 opcode,MOBLEUINT8 const *pData,MOBLEUINT32 length); 
 
+
+/** \brief Config Model Send message to the remote
+* \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
+* \param[in] data Data buffer.
+* \param[in] length Length of data in bytes. Maximum accepted length is 8. 
+*             If length is zero, no associated data is sent with the report.
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT ConfigModel_SendMessage(MOBLE_ADDRESS src_peer,
+                                     MOBLE_ADDRESS dst_peer,
+                                     MOBLEUINT16 opcode, 
+                                     MOBLEUINT8 *pData,
+                                     MOBLEUINT32 length,
+                                     MOBLEUINT8 *pTargetDevKey); 
+
+
+
+/** \brief Publish Send to the provisioner
+* \param[in] peer Destination address is Provisioner address 
+* \param[in] data Data buffer.
+* \param[in] length Length of data in bytes. Maximum accepted length is 8. 
+*             If length is zero, no associated data is sent with the report.
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT ConfigModel_SelfPublishConfig (MOBLE_ADDRESS dst_peer,
+                                                   MOBLEUINT16 opcode, 
+                                                   MOBLEUINT8 *pData,
+                                                   MOBLEUINT32 length); 
+
+/** \brief Subscription Send to the provisioner
+* \param[in] peer Destination address is Provisioner address 
+* \param[in] data Data buffer.
+* \param[in] length Length of data in bytes. Maximum accepted length is 8. 
+*             If length is zero, no associated data is sent with the report.
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT ConfigModel_SelfSubscriptionConfig (MOBLE_ADDRESS dst_peer,
+                                                   MOBLEUINT16 opcode, 
+                                                   MOBLEUINT8 *pData,
+                                                   MOBLEUINT32 length); 
+
+/** \brief App binding Send to the provisioner
+* \param[in] peer Destination address is Provisioner address 
+* \param[in] data Data buffer.
+* \param[in] length Length of data in bytes. Maximum accepted length is 8. 
+*             If length is zero, no associated data is sent with the report.
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+
+MOBLE_RESULT ConfigClient_SelfModelAppBindConfig  (MOBLE_ADDRESS dst_peer,
+                                                   MOBLEUINT16 opcode, 
+                                                   MOBLEUINT8 *pData,
+                                                   MOBLEUINT32 length); 
+
 /** \brief initialize unprovisioned node to be provisioned.
 * \param None
 * \return MOBLE_RESULT_SUCCESS on success.
@@ -669,7 +744,7 @@ MOBLE_ADDRESS BLEMesh_GetAddress(void);
 * \return mesh address of a node.
 *
 */
-MOBLE_ADDRESS BLEMesh_GetPublishAddress(MOBLEUINT8 elementNumber);
+MOBLE_ADDRESS BLEMesh_GetPublishAddress(MOBLEUINT8 elementNumber, MOBLEUINT32 modelId);
 
 /** \brief Get Subscription address of a node
 *
@@ -680,7 +755,8 @@ MOBLE_ADDRESS BLEMesh_GetPublishAddress(MOBLEUINT8 elementNumber);
 */
 MOBLE_RESULT BLEMesh_GetSubscriptionAddress(MOBLE_ADDRESS *addressList, 
                                                      MOBLEUINT8 *sizeOfList, 
-                                                     MOBLEUINT8 elementNumber);
+                                                     MOBLEUINT8 elementNumber,
+                                                     MOBLEUINT32 modelId);
 
 /** \brief Set default TTL value.
 * When message is sent to mesh network, it contains TTL field. User shall call 
@@ -790,6 +866,29 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason);
 */
 void BLEMesh_ProvisionCallback(void);
 
+/** \brief Call back function called when PB-ADV link Opened 
+* Callback on Provision by provisioner
+*
+*/
+void BLEMesh_PbAdvLinkOpenCb(void);
+
+/** \brief Call back function called when PB-ADV link Closed   
+* Callback on Provision by provisioner
+*
+*/
+void BLEMesh_PbAdvLinkCloseCb(void);
+
+/** \brief Provisioning of a node from Provisioner 
+* \param[in] UUID of the Unprovisioned node
+*
+*/
+MOBLE_RESULT BLEMesh_ProvisionRemote(MOBLEUINT8 uuid[16]);
+
+/** \brief Creates credentials for Provisioner 
+*
+*/
+MOBLE_RESULT BLEMesh_CreateNetwork(MOBLEUINT8 *devKey);
+
 /** \brief Set SIG Model callback map.
 * \param[in] map callback map. If NULL, nothing is done.
 * \count[in] count of the number of models defined in Application
@@ -865,6 +964,12 @@ void BLEMesh_LpnFriendshipEstablishedCallback(MOBLE_ADDRESS fnAddress);
 */
 void BLEMesh_LpnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS fnAddress);
 
+/** \brief Disable continuous scan
+* Applicable only to provisioned Low Power feature enabled node
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_LpnDisableScan(void);
+
 /** \brief To synchronize flash erase with sufficient available time w.r.t. next connection event.
 * \return MOBLE_TRUE if no connection exists or sufficient time is available for flash erase operation.
 */
@@ -876,6 +981,7 @@ void BLEMesh_StopAdvScan(void);
 
 /** \brief Set adv interval of provisioning service, 0 value results in stop.
 *          Default value: 1000 ms
+*          Actual value -> interval + random(16)
 * \param[in] adv interval (ms), min interval value is 100 ms
 * \return MOBLE_RESULT_SUCCESS on success.
 */
@@ -883,6 +989,7 @@ MOBLE_RESULT BLEMesh_SetProvisioningServAdvInterval(MOBLEUINT16 interval);
 
 /** \brief Set interval of unprovisioned device beacon, 0 value results in stop.
 *          Default value: 1000 ms
+*          Actual value -> interval + random(16)
 * \param[in] interval (ms) of beacons, min interval value is 100 ms
 * \return MOBLE_RESULT_SUCCESS on success.
 */
@@ -890,6 +997,7 @@ MOBLE_RESULT BLEMesh_SetUnprovisionedDevBeaconInterval(MOBLEUINT16 interval);
 
 /** \brief Set adv interval of proxy service.
 *          Default value: 1000 ms
+*          Actual value -> interval + random(128)
 * \param[in] adv interval (ms), min interval value is 1000 ms
 * \return MOBLE_RESULT_SUCCESS on success.
 */
@@ -897,12 +1005,14 @@ MOBLE_RESULT BLEMesh_SetProxyServAdvInterval(MOBLEUINT16 interval);
 
 /** \brief Set interval of secure network beacon.
 *          Default value: 10000 ms
+*          Actual value -> interval + random(128)
 * \param[in] interval (ms) of beacons, min interval value is 10000 ms
 * \return MOBLE_RESULT_SUCCESS on success.
 */
 MOBLE_RESULT BLEMesh_SetSecureBeaconInterval(MOBLEUINT16 interval);
 
 /** \brief Set interval of custom beacon, 0 value results in stop.
+*          Actual value -> interval + random(128)
 * \param[in] interval (ms) of beacons, min interval value is 1000 ms
 * \return MOBLE_RESULT_SUCCESS on success.
 */
@@ -910,26 +1020,63 @@ MOBLE_RESULT BLEMesh_SetCustomBeaconInterval(MOBLEUINT16 interval);
 
 /** \brief Set custom beacon data.
 *          If size > 31 bytes, beacon is rejected
-* \param[out] beacon data buffer
-* \param[out] size of beacon data
+* \param[out] beacon data buffer. Includes length, adtype, data
+* \param[out] size of buffer
 */
 void BLEMesh_CustomBeaconGeneratorCallback(void* buffer, MOBLEUINT8* size);
+
+/** \brief Callback to receive non-mesh beacons
+*
+* Beacons are received only if received beacon ad type is not Mesh Message, 
+* Mesh Beacon or PB-ADV
+* \param[out] MAC address
+* \param[out] data
+* \param[out] length
+* \param[out] rssi
+*/
+void BLEMesh_CustomBeaconReceivedCallback(const MOBLEUINT8* bdAddr,
+                                              const MOBLEUINT8* data,
+                                              MOBLEUINT8 length,
+                                              MOBLEINT8 rssi);
 
 /** 
 * @brief ApplicationGetSigModelList: This function provides the list of the 
 *           SIG Models to the calling function
 * @param pModels_sig_ID: Pointer of the array to be filled with SIG Models list
+* @param elementIndex: Index of the element for Model List
 * retval Count of the SIG Model Servers enabled in the Application
 */
-MOBLEUINT8 ApplicationGetSigModelList(MOBLEUINT16* pModels_sig_ID);
+MOBLEUINT8 ApplicationGetSigModelList(MOBLEUINT16* pModels_sig_ID, \
+                                                        MOBLEUINT8 elementIndex);
+
+/** 
+* @brief ApplicationGetCLIENTSigModelList: This function provides the list of the 
+*           SIG Models to the calling function
+* @param pModels_sig_ID: Pointer of the array to be filled with SIG Models list
+* @param elementIndex: Index of the element for Model List
+* retval Count of the SIG Model Servers enabled in the Application
+*/
+MOBLEUINT8 ApplicationGetCLIENTSigModelList(MOBLEUINT16* pModels_sig_ID, 
+                                            MOBLEUINT8 elementIndex);
+
+/** 
+* @brief BLEMeshSetSelfModelList: This function provides the list of the 
+*           SIG Models to the calling function
+* @param Node: Pointer of the array to be filled with SIG Models list
+* @param elementIndex: Index of the element for Model List
+* retval Count of the SIG Model Servers enabled in the Application
+*/
+MOBLEUINT8 BLEMeshSetSelfModelList(MOBLEUINT8 numberOfElements);
 
 /** 
 * @brief ApplicationGetVendorModelList: This function provides the list of the 
 *           Vendor Models to the calling function
 * @param pModels_sig_ID: Pointer of the array to be filled with Vendor Models list
+* @param elementIndex: Index of the element for Model List
 * retval Count of the Vendor Model Servers enabled in the Application
 */
-MOBLEUINT8 ApplicationGetVendorModelList(MOBLEUINT32* pModels_vendor_ID);
+MOBLEUINT8 ApplicationGetVendorModelList(MOBLEUINT32* pModels_vendor_ID, \
+                                                       MOBLEUINT8 elementIndex);
 
 /** 
 * @brief ApplicationChkSigModelActive: This function checks if a specific 
@@ -946,6 +1093,15 @@ MOBLEBOOL ApplicationChkSigModelActive(MOBLEUINT16 modelID);
 * retval Bool: True or False, if the Server ID matches with the list 
 */
 MOBLEBOOL ApplicationChkVendorModelActive(MOBLEUINT32 modelID);
+
+/** 
+* @brief ApplicationGetConfigServerDeviceKey: This function provides the 
+         device key to the node from Application 
+* @param modelID: Model Server ID received for the checking function
+* retval Bool: True or False, if the Server ID matches with the list 
+*/
+MOBLE_RESULT ApplicationGetConfigServerDeviceKey(MOBLE_ADDRESS src, 
+                                                 const MOBLEUINT8 **ppkeyTbUse);
 
 /** \brief New neighbor appeared callback in neighbor table.
 * \param[out] MAC address of neighbor.
@@ -1009,6 +1165,44 @@ MOBLE_RESULT BLEMesh_Shutdown(void);
 * \return MOBLE_RESULT_FAIL if already up and running, MOBLE_RESULT_SUCCESS otherwise.
 */
 MOBLE_RESULT BLEMesh_Resume(void);
+
+/** \brief Get the Buffer for Mesh Model data Received
+*
+* This function should be called to Get the buffer from the Mesh Models
+* \return MOBLE_RESULT_FAIL if NOT available, MOBLE_RESULT_SUCCESS if available
+*/
+
+#ifdef STATIC_MEMORY_ALLOCATION_IN_APPLI
+void* GetMemoryDataBuffer(MOBLEUINT8 type, MOBLEUINT32 len);
+#endif
+
+
+
+
+#define MESH_MODEL_BUFFER 1
+#define MESH_MODEL_RESPONSE_BUFFER 2
+#define MESH_LOWER_TPT_BUFFER 3
+#define MESH_LOWER_TPT_FN_BUFFER 4
+#define MESH_LOWER_TPT_APP_BUFFER 5
+#define VENDOR_MODEL_WRITE_BUFFER 6
+#define VENDOR_MODEL_WRITE_PUBLISHBUFFER 7
+#define VENDOR_MODEL_RESPONSE_BUFFER 8
+#define GENERIC_MODEL_REPLY_BUFFER 9
+#define GENERIC_MODEL_PUBLISH_BUFFER 10
+#define GENERIC_MODEL_SENDREMOTE_BUFFER 11
+#define GENERIC_MODEL_SENDDATA_BUFFER 12
+#define HEALTH_MODEL_PUBLISH_BUFFER 13
+#define HEALTH_MODEL_NEW_BUFFER 14
+#define CONFIG_MODEL_PUBLISH_BUFFER 15
+#define PROVISIONER_BUFFER 16
+#define PROVISION_NODE_BUFFER 17
+#define ACCESS_APPLI_BUFFER 18
+#define MESH_LOWER_TPT_INSEG 19
+#define MESH_LOWER_TPT_INSEQ0 20
+#define MESH_LOWER_TPT_OUTMSG 21
+
+
+
 #endif /* __BLE_MESH_ */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

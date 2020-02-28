@@ -102,18 +102,24 @@
  * - a part, that may be considered "fixed", i.e. independent from the above
  *   mentioned parameters.
 */
-#define BLE_FIXED_BUFFER_SIZE_BYTES(llo)  ((llo) ? 6104 : 6544)
+#if (SLAVE_ONLY == 0) && (LL_ONLY == 0)
+#define BLE_FIXED_BUFFER_SIZE_BYTES  6976   /* Full stack */
+#elif SLAVE_ONLY == 0
+#define BLE_FIXED_BUFFER_SIZE_BYTES  6272   /* LL only */
+#else
+#define BLE_FIXED_BUFFER_SIZE_BYTES  4628   /* Slave only */
+#endif
 
 /*
  * BLE_PER_LINK_SIZE_BYTES: additional memory size used per link
  */
-#define BLE_PER_LINK_SIZE_BYTES(llo)      ((llo) ? 208 : 376)
-
-/*
- * BLE_DLEN_EXT_SIZE: amount of memory needed to support Data Length
- * Extension feature.
- */
-#define BLE_DLEN_EXT_SIZE(en)             ((en) ? 436 : 0)
+#if (SLAVE_ONLY == 0) && (LL_ONLY == 0)
+#define BLE_PER_LINK_SIZE_BYTES      376   /* Full stack */
+#elif SLAVE_ONLY == 0
+#define BLE_PER_LINK_SIZE_BYTES      192   /* LL only */
+#else
+#define BLE_PER_LINK_SIZE_BYTES      332   /* Slave only */
+#endif
 
 /*
  * BLE_TOTAL_BUFFER_SIZE: this macro returns the amount of memory, in bytes,
@@ -124,15 +130,11 @@
  * will support. Valid values are from 1 to 8.
  *
  * @param mblocks_count: Number of memory blocks allocated for packets.
- *
- * @param dlen_ext_en: Enable or disable the Extended Packet length feature.
- * Valid values are 0 or 1.
-  */
-#define BLE_TOTAL_BUFFER_SIZE(n_link, mblocks_count, dlen_ext_en) \
-          (BLE_FIXED_BUFFER_SIZE_BYTES(LL_ONLY) + \
-           (BLE_PER_LINK_SIZE_BYTES(LL_ONLY) * (n_link)) + \
-           ((BLE_MEM_BLOCK_SIZE + 12) * (mblocks_count)) + \
-           BLE_DLEN_EXT_SIZE(dlen_ext_en))
+ */
+#define BLE_TOTAL_BUFFER_SIZE(n_link, mblocks_count) \
+          (BLE_FIXED_BUFFER_SIZE_BYTES + \
+           (BLE_PER_LINK_SIZE_BYTES * (n_link)) + \
+           ((BLE_MEM_BLOCK_SIZE + 12) * (mblocks_count)))
 
 /*
  * BLE_TOTAL_BUFFER_SIZE_GATT: this macro returns the amount of memory,

@@ -104,7 +104,7 @@ extern "C" {
   {
     uint8_t   *notifM0toM4_buffer;
     uint8_t   *appliCmdM4toM0_buffer;
-    uint8_t   *loggingM0toM4_buffer;
+    uint8_t   *requestM0toM4_buffer;
   } MB_ZigbeeTable_t;
   /**
    * msg
@@ -233,7 +233,7 @@ extern "C" {
 #define HW_IPCC_TRACES_CHANNEL                          LL_IPCC_CHANNEL_4
 #define HW_IPCC_THREAD_CLI_NOTIFICATION_ACK_CHANNEL     LL_IPCC_CHANNEL_5
 #define HW_IPCC_LLDTESTS_CLI_RSP_CHANNEL                LL_IPCC_CHANNEL_5
-#define HW_IPCC_ZIGBEE_APPLI_LOGGING_CHANNEL            LL_IPCC_CHANNEL_5
+#define HW_IPCC_ZIGBEE_M0_REQUEST_CHANNEL               LL_IPCC_CHANNEL_5
 #endif /*__MBOX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

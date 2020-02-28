@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    generic.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -222,13 +222,12 @@
 
 #define APPLI_LED_OFF     0X00
 #define APPLI_LED_ON      0X01
-#define INTENSITY_LEVEL_ZERO     0X00
-#define INTENSITY_LEVEL_FULL     31990U
 
 #define NO_TRANSITION             0X01
 #define IN_TRANSITION             0X02
 #define DEFAULT_TRANSITION        0X03
 
+#define No_NVM_FLAG                        0XFE
 #define GENERIC_ON_OFF_NVM_FLAG            0X01
 #define GENERIC_LEVEL_NVM_FLAG             0X02
 
@@ -329,6 +328,13 @@ typedef struct
   MOBLEUINT8 DefaultTransitionTime;
 }Generic_DefaultTransitionParam_t; 
 
+typedef union  
+{
+  Generic_LevelParam_t sGeneric_LevelParam;
+  MOBLEUINT8 a_Level_param[sizeof(Generic_LevelParam_t)]; 
+} _Generic_LevelParam;
+
+/******************************************************/
 typedef struct
 {
   /* Pointer to the function Appli_Generic_OnOff_Set used for callback 
@@ -336,6 +342,7 @@ typedef struct
   */
   MOBLE_RESULT (*OnOff_Set_cb)(Generic_OnOffStatus_t*, uint8_t);  
    
+  MOBLE_RESULT (*OnOff_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32); 
   /* Pointer to the function Appli_Generic_Level_Set used for callback 
      from the middle layer to Application layer
   */
@@ -351,16 +358,22 @@ typedef struct
   */
   MOBLE_RESULT (*LevelDeltaMove_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8);
   
+  MOBLE_RESULT (*Level_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
   /* Pointer to the function Appli_Generic_PowerOnOff_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*GenericPowerOnOff_cb)(Generic_PowerOnOffParam_t*, MOBLEUINT8);
+  
+  MOBLE_RESULT (*GenericPowerOnOff_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  
+  void (*GenericRestorePowerOnOff_cb)(MOBLEUINT8);
   
   /* Pointer to the function Generic_DefaultTransitionTime_Set used for callback 
      from the middle layer to Application layer
   */
   MOBLE_RESULT (*GenericDefaultTransition_cb)(Generic_DefaultTransitionParam_t*, MOBLEUINT8);
   
+  MOBLE_RESULT (*GenericDefaultTransition_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
 } Appli_Generic_cb_t;
 
 typedef struct
@@ -418,7 +431,7 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
                                     MOBLEUINT32 length, 
                                     MOBLEBOOL response);
 void Generic_Process(void);
-void Generic_Publish(MOBLE_ADDRESS publishAddr, MOBLEUINT8 elementIndex);
+void Generic_Publish(MOBLE_ADDRESS srcAddress);
 
 MOBLE_RESULT BLEMesh_AddGenericModels(void);
 
@@ -445,7 +458,6 @@ MOBLE_RESULT Generic_Client_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEU
 MOBLE_RESULT Generic_Client_Level_Status(MOBLEUINT8 const *plevel_status, MOBLEUINT32 plength);
 MOBLE_RESULT Generic_Client_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , MOBLEUINT32 plength);
 MOBLE_RESULT Generic_Client_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , MOBLEUINT32 plength);
-
 #endif /* __GENERIC_H */
 
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/

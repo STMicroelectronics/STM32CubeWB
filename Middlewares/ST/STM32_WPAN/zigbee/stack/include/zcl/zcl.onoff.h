@@ -33,8 +33,7 @@
  * OO.S.C41.Rsp | False
  * OO.S.C42.Rsp | False
  *
- *
- * OO.C.A0000.Report.Rsp | False (https://exegin.atlassian.net/browse/ZSDK-2624)
+ * OO.C.A0000.Report.Rsp | False
  *
  * OO.C.Afffd | True
  *
@@ -72,7 +71,16 @@ enum {
  * OnOff Server Cluster
  *---------------------------------------------------------------
  */
-struct ZbZclClusterT * ZbZclOnOffServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, void *arg);
+struct ZbZclOnOffServerCallbacksT {
+    /* The application is expected to update ZCL_ONOFF_ATTR_ONOFF if these callbacks are
+     * successfully executed. */
+    enum ZclStatusCodeT (*off)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    enum ZclStatusCodeT (*on)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    enum ZclStatusCodeT (*toggle)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg);
+};
+
+struct ZbZclClusterT * ZbZclOnOffServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
+    struct ZbZclOnOffServerCallbacksT *callbacks, void *arg);
 
 /* Allow the Level Control Cluster to be notified of OnOff commands */
 typedef void (*ZbZclLevelControlCallbackT)(struct ZbZclClusterT *level_cluster, uint8_t on_off_command);

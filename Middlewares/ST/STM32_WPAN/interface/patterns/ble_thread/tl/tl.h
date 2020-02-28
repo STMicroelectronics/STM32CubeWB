@@ -202,7 +202,7 @@ typedef struct
 {
   uint8_t *p_ZigbeeOtCmdRspBuffer;
   uint8_t *p_ZigbeeNotAckBuffer;
-  uint8_t *p_ZigbeeLoggingBuffer;
+  uint8_t *p_ZigbeeNotifRequestBuffer;
 } TL_ZIGBEE_Config_t;
 
 /**
@@ -299,12 +299,12 @@ void TL_MAC_802_15_4_SendAck ( void );
  * ZIGBEE
  ******************************************************************************/
 void TL_ZIGBEE_Init( TL_ZIGBEE_Config_t *p_Config );
-void TL_ZIGBEE_SendAppliCmdToM0( void );
-void TL_ZIGBEE_SendAckAfterAppliNotifFromM0 ( void );
+void TL_ZIGBEE_SendM4RequestToM0( void );
+void TL_ZIGBEE_SendM4AckToM0Notify ( void );
 void TL_ZIGBEE_NotReceived( TL_EvtPacket_t * Notbuffer );
 void TL_ZIGBEE_CmdEvtReceived( TL_EvtPacket_t * Otbuffer );
-void TL_ZIGBEE_LoggingReceived(TL_EvtPacket_t * Otbuffer );
-void TL_ZIGBEE_SendAckAfterAppliLoggingFromM0 ( void );
+void TL_ZIGBEE_M0RequestReceived(TL_EvtPacket_t * Otbuffer );
+void TL_ZIGBEE_SendM4AckToM0Request(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

@@ -36,6 +36,7 @@ extern "C"
 typedef struct
 {
   uint8_t *pPayload;
+//  uint32_t *pPayload;
   uint32_t pPayload_n_1;
   uint32_t pPayload_n;
   uint32_t Length;
@@ -46,10 +47,15 @@ typedef enum
   DTS_STM__NOTIFICATION_ENABLED,
   DTS_STM_NOTIFICATION_DISABLED,
   DTS_STM_GATT_TX_POOL_AVAILABLE,
+  DTC_NOTIFICATION_ENABLED,
+  DTC_NOTIFICATION_DISABLED,
+  DTS_STM_DATA_RECEIVED,
+  DTS_MTU_EXCHANGED,
 } DTS_STM_NotCode_t;
 
 typedef struct
 {
+  uint8_t ATT_MTU_exchanged;
   DTS_STM_NotCode_t Evt_Opcode;
   DTS_STM_Payload_t DataTransfered;
 } DTS_STM_App_Notification_evt_t;
@@ -62,6 +68,9 @@ typedef struct
 void DTS_STM_Init( void );
 tBleStatus DTS_STM_UpdateChar( uint16_t UUID , uint8_t *pPayload );
 void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification );
+void BLE_SVC_GAP_Change_PHY(void);
+void Resume_Notification(void);
+tBleStatus DTS_STM_UpdateCharThroughput(DTS_STM_Payload_t *pDataValue );
 
 #ifdef __cplusplus
 }

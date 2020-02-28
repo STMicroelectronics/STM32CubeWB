@@ -26,7 +26,7 @@ enum ZbBdbCommissioningStatusT {
 /* Bits for ZB_BDB_CommissioningMode */
 #define BDB_COMMISSION_MODE_MASK                0x0FU
 #define BDB_COMMISSION_MODE_TOUCHLINK           0x01U
-#define BDB_COMMISSION_MODE_NET_STEER           0x02U /* currently not used */
+#define BDB_COMMISSION_MODE_NET_STEER           0x02U
 #define BDB_COMMISSION_MODE_NET_FORM            0x04U /* Whether to form a network. Configured by ZbStartup (e.g. ZbStartTypeForm) */
 #define BDB_COMMISSION_MODE_FIND_BIND           0x08U
 
@@ -71,9 +71,14 @@ enum ZbBdbTouchlinkKeyIndexT {
     TOUCHLINK_KEY_INDEX_CERTIFICATION = 15
 };
 
+/* Touchlink Steal Flags */
+#define TOUCHLINK_STEAL_START               0x01 /* Target is allowed to process a Touchlink Network Start Request */
+#define TOUCHLINK_STEAL_JOIN                0x02 /* Target is allowed to process a Touchlink Join Request */
+/* EXEGIN - Make ZB_BDB_TLDenyFactoryNew one of these flags */
+
 /* BDB IB attributes */
 enum ZbBdbAttrIdT {
-    /* FIXME ? ZB_BDB_CommissioningGroupID ? = 0x1000 */
+    /* EXEGIN ZB_BDB_CommissioningGroupID ? = 0x1000 */
     ZB_BDB_CommissioningMode = 0x1001, /* bdbCommissioningMode - e.g. BDB_COMMISSION_MODE_MASK */
     ZB_BDB_JoiningNodeEui64 = 0x1002, /* for internal use only */
     ZB_BDB_JoiningNodeNewTCLinkKey = 0x1003, /* for internal use only */
@@ -122,6 +127,7 @@ enum ZbBdbAttrIdT {
     ZB_BDB_JoinAttemptsMax, /* 0x1118 - uint8_t - maximum number attempts to join a network. If an attempt fails, the EPID is added to a blacklist before the next attempt. */
     ZB_BDB_MaxConcurrentJoiners, /* 0x1119 - uint8_t - maximum number of concurrent joiners the coordinator supports */
     ZB_BDB_DisablePersistRejoin, /* 0x111a - boolean */
+    ZB_BDB_ZdoBindCheckCluster, /* boolean */
 
     /* Constants which are accessible through a BDB GET IB request. */
     ZB_BDBC_MaxSameNetworkRetryAttempts = 0x1200,
@@ -131,7 +137,7 @@ enum ZbBdbAttrIdT {
     ZB_BDBC_TLInterPANTransIdLifetime, /* seconds */
     ZB_BDBC_TLMinStartupDelayTime, /* seconds */
     ZB_BDBC_TLRxWindowDuration, /* seconds */
-    ZB_BDBC_TLScanTimeBaseDuration /* mS */
+    ZB_BDBC_TLScanTimeBaseDuration /* uint8_t - milliseconds */
 };
 
 /* BDB-GET.request */
@@ -176,11 +182,14 @@ bool ZbBdbCommissionModeBitSupported(struct ZigBeeT *zb, uint8_t new_mode_bit);
 enum ZbStatusCodeT ZbBdbCommissionModeBitSet(struct ZigBeeT *zb, uint8_t new_mode_bit);
 enum ZbStatusCodeT ZbBdbCommissionModeBitClear(struct ZigBeeT *zb, uint8_t new_mode_bit);
 
-int ZbBdbGetEndpointStatus(struct ZigBeeT *zb, uint8_t endpoint);
-
 enum ZbBdbCommissioningStatusT ZbBdbNwkStatusToBdbStatus(enum ZbStatusCodeT status);
 enum ZbStatusCodeT ZbBdbStatusToNwkStatus(enum ZbBdbCommissioningStatusT status);
 
+/* Returns the commissioning status for the given endpoint (same for all endpoints?).
+ * If endpoint = ZB_ENDPOINT_BCAST, returns the status for the first endpoint found. */
+enum ZbBdbCommissioningStatusT ZbBdbGetEndpointStatus(struct ZigBeeT *zb, uint8_t endpoint);
+
+/* Configures the endpoint with the given commissioning status. Mostly for internal use only. */
 void ZbBdbSetEndpointStatus(struct ZigBeeT *zb, enum ZbBdbCommissioningStatusT status, uint8_t endpoint);
 
 #endif /* ZIGBEE_BDB_H */

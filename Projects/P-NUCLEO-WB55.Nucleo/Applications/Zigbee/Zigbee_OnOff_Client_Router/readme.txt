@@ -66,18 +66,6 @@ To setup the application :
       You must see the LED1 toggling on the server side.
 
 
-              ----------             -----------
-              |Device 1 |............|Device 2 |           
-              |(distr.) |            |(distr.) |
-              -----------            -----------
-                  .                       .
-                  .                       .
-                  .                       .
-             -----------                  .
-             |Device 3 |...................      
-             |(distr.) |
-             -----------
-
  Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
  
 @par Hardware and Software environment

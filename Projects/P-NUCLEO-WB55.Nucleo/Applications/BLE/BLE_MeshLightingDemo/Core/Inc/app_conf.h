@@ -35,7 +35,7 @@
 /**
  * Define Tx Power
  */   
-#define CFG_TX_POWER                      (0x1D) /**< +4 dBm */
+#define CFG_TX_POWER                      (0x18) /**< +0 dBm */
    
 /**
  * Define Advertising parameters
@@ -120,7 +120,7 @@
 
 #define CFG_MAX_CONNECTION      1
 
-#define  RADIO_ACTIVITY_EVENT   0
+#define  RADIO_ACTIVITY_EVENT   1
    
 
 #define CONN_L(x) ((int)((x)/0.625f))
@@ -280,8 +280,8 @@
 /**
  * Select UART interfaces
  */
-#define CFG_DEBUG_TRACE_UART              hw_uart1
-#define CFG_CONSOLE_MENU		hw_lpuart1
+#define CFG_DEBUG_TRACE_UART                                            hw_uart1
+#define CFG_CONSOLE_MENU                                              hw_lpuart1
 
 /******************************************************************************
  * USB interface
@@ -299,7 +299,7 @@
  *  When set to 1, the low power mode is enable
  *  When set to 0, the device stays in RUN mode
  */
-#define CFG_LPM_SUPPORTED   1
+#define CFG_LPM_SUPPORTED   0
 
 /******************************************************************************
  * Timer Server
@@ -400,17 +400,17 @@ typedef enum
  * keep debugger enabled while in any low power mode when set to 1
  * should be set to 0 in production
  */
-#define CFG_DEBUGGER_SUPPORTED    1
+#define CFG_DEBUGGER_SUPPORTED    0
 
 /**
  * When set to 1, the traces are enabled in the BLE services
  */
-#define CFG_DEBUG_BLE_TRACE     1
+#define CFG_DEBUG_BLE_TRACE     0
 
 /**
  * Enable or Disable traces in application
  */
-#define CFG_DEBUG_APP_TRACE     1
+#define CFG_DEBUG_APP_TRACE     0
 
 #if (CFG_DEBUG_APP_TRACE != 0)
 #define APP_DBG_MSG                 PRINT_MESG_DBG
@@ -423,11 +423,13 @@ typedef enum
 #define CFG_DEBUG_TRACE             1
 #endif
 
+#if 1
 #if (CFG_DEBUG_TRACE != 0)
 #undef CFG_LPM_SUPPORTED
 #undef CFG_DEBUGGER_SUPPORTED
 #define CFG_LPM_SUPPORTED         0
 #define CFG_DEBUGGER_SUPPORTED      1
+#endif
 #endif
 
 /**
@@ -485,6 +487,9 @@ typedef enum
   CFG_TASK_MESH_REQ_ID,
   CFG_TASK_MESH_BEACON_REQ_ID,
   CFG_TASK_MESH_UART_RX_REQ_ID,
+  CFG_TASK_APPLI_REQ_ID,
+  CFG_TASK_MESH_SW1_REQ_ID,
+  CFG_TASK_MESH_LPN_REQ_ID,
   
   CFG_LAST_TASK_ID_WITH_HCICMD, /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;

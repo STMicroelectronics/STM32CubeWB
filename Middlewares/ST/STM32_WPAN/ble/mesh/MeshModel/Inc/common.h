@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    common.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Model middleware file
 ******************************************************************************
 * @attention
@@ -57,6 +57,7 @@
 #define LIGHT_LIGHTNESS_NVM_OFFSET          1
 #define LIGHT_CTL_NVM_OFFSET                3
 #define LIGHT_HSL_NVM_OFFSET                7
+#define LIGHT_HSL_DEFAULT_NVM_OFFSET        13
 
 /* Buffer index limit for the generic data */
 #define GENERIC_DATA_LIMIT                  15
@@ -71,9 +72,15 @@
 #define     CLK_FLAG_DISABLE          0 
 
 #define PWM_ZERO_VALUE                1
+#define INTENSITY_LEVEL_ZERO     0X00
+#define INTENSITY_LEVEL_FULL     31990U
 
+#define MAX_TID_VALUE          0XFF
+//#if STM32 
+//typedef MOBLE_RESULT (*APPLI_SAVE_MODEL_STATE_CB)(MOBLEUINT8* stateBuff, MOBLEUINT16 size);
+//#elif BLUENRG2_DEVICE
 typedef MOBLE_RESULT (*APPLI_SAVE_MODEL_STATE_CB)(MOBLEUINT8* stateBuff, MOBLEUINT8 size);
-
+//#endif
 /** @addtogroup MODEL_GENERIC
 *  @{
 */
@@ -116,6 +123,7 @@ MOBLE_RESULT  Chk_MultiParamValidityAllUnsigned(MOBLEUINT16 min_param_range1, MO
                                       MOBLEINT16 min_param_range3, MOBLEUINT16 max_param_range3,
                                         const MOBLEUINT8* param);
 
+MOBLE_RESULT Chk_TidValidity(MOBLE_ADDRESS peer_Addrs,MOBLE_ADDRESS dst_Addrs,MOBLEUINT8 tidValue);
 MOBLEUINT32 Get_StepResolutionValue(MOBLEUINT8 time_param);
 
 MOBLEUINT16 PwmValueMapping(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEINT16 minRange);
@@ -125,7 +133,9 @@ MOBLEUINT16 PWM_CoolValue(float colourValue ,float brightValue);
 MOBLEUINT16 PWM_WarmValue(float colourValue ,float brightValue);
 void floatToInt(float in, displayFloatToInt_t *out_value, MOBLEINT32 dec_prec);
 void TraceHeader(const char* func_name, int mode);
+#ifdef ENABLE_SAVE_MODEL_STATE_NVM
 MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8 flag);
+#endif
 MOBLEUINT8 BLE_GetElementNumber(void);
 
 void Test_Process(void);

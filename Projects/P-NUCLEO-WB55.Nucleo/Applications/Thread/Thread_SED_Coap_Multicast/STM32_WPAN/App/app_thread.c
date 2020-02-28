@@ -200,6 +200,8 @@ void APP_THREAD_Init( void )
    * Create timer to handle COAP request sending
    */
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &sedCoapTimerID, hw_ts_Repeated, APP_THREAD_CoapTimingElapsed);
+  /* Allow the 800_15_4 IP to enter in low power mode */
+  SHCI_C2_RADIO_AllowLowPower(THREAD_IP,TRUE);
 
   /**
    * Create timer to change Thread Mode to SED
@@ -910,7 +912,7 @@ void APP_THREAD_Init_UART_CLI(void)
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
 #if (CFG_FULL_LOW_POWER == 0)
-  MX_USART1_UART_Init();
+  MX_LPUART1_UART_Init();
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */

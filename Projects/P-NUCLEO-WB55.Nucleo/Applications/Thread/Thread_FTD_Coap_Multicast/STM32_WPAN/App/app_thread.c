@@ -43,7 +43,19 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef PACKED_STRUCT
+{
+  GPIO_TypeDef* port;
+  uint16_t pin;
+  uint8_t enable;
+  uint8_t reserved;
+} APPD_GpioConfig_t;
 
+typedef PACKED_STRUCT
+{
+  uint8_t ble_dtb_cfg;
+  uint8_t reserved[3];
+} APPD_GeneralConfig_t;
 /* USER CODE END PTD */
 
 /* Private defines -----------------------------------------------------------*/
@@ -53,6 +65,9 @@
 
 /* USER CODE BEGIN PD */
 #define C_RESSOURCE             "light"
+
+/* Debug */
+#define NBR_OF_TRACES_CONFIG_PARAMETERS         4
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/
@@ -132,6 +147,8 @@ static otCoapHeader  OT_Header = {0};
 static uint8_t OT_ReceivedCommand = 0;
 static otMessage   * pOT_Message = NULL;
 
+/* Debug */
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_TracesConfig_t APPD_TracesConfig;
 /* USER CODE END PV */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -183,7 +200,24 @@ void APP_THREAD_Init( void )
   APP_THREAD_DeviceConfig();
 
   /* USER CODE BEGIN APP_THREAD_INIT_2 */
+  /* Debug Configuration */
+  /* To Disable THREAD Traces on Copro Wireless Side :
+   * -> Set APPD_TracesConfig.thread_config = 0x0
+   */
+  APPD_TracesConfig.thread_config = 0x1;
 
+  SHCI_C2_DEBUG_Init_Cmd_Packet_t DebugCmdPacket =
+  {
+    {{0,0,0}},                            /**< Does not need to be initialized */
+    {(uint8_t *)NULL,
+    (uint8_t *)&APPD_TracesConfig,
+    (uint8_t *)NULL,
+    0,
+    NBR_OF_TRACES_CONFIG_PARAMETERS,
+    0}
+  };
+
+  SHCI_C2_DEBUG_Init(&DebugCmdPacket);
   /* USER CODE END APP_THREAD_INIT_2 */
 }
 
@@ -778,7 +812,7 @@ void APP_THREAD_Init_UART_CLI(void)
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
 #if (CFG_FULL_LOW_POWER == 0)
-  MX_USART1_UART_Init();
+  MX_LPUART1_UART_Init();
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */

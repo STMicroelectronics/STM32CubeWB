@@ -31,11 +31,12 @@
 #include "common.h"
 #include "mesh_cfg_usr.h"
 #include "appli_nvm.h"
-/** @addtogroup BLE_Mesh
+
+/** @addtogroup ST_BLE_Mesh
  *  @{
  */
 
-/** @addtogroup models_BLE
+/** @addtogroup Application_Mesh_Models
  *  @{
  */
 
@@ -44,12 +45,11 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
    
-MOBLEUINT8 RestoreFlag;
+extern MOBLEUINT8 RestoreFlag;
 extern MOBLEUINT16 IntensityValue;
 extern MOBLEUINT8 IntensityFlag;
 extern MOBLEUINT8 PowerOnOff_flag;
 extern Appli_LightPwmValue_t Appli_LightPwmValue;
-
 Appli_Generic_OnOffSet AppliOnOffSet;
 Appli_Generic_LevelSet AppliLevelSet;
 Appli_Generic_PowerOnOffSet AppliPowerOnSet;
@@ -105,8 +105,6 @@ MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam,
     } 
   }
 
-  
-
   TRACE_M(TF_SERIAL_CTRL,"#8202%02hx!\n\r",AppliOnOffSet.Present_OnOff);
 
   /* set the flag value for NVM store */
@@ -116,6 +114,25 @@ MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam,
     
   return MOBLE_RESULT_SUCCESS;
 }
+
+
+
+/**
+* @brief  Appli_Generic_OnOff_Set: This function is callback for Application
+*          when Generic OnOff message is received
+* @param  pOnOff_status: Pointer to the parameters received for message
+* @param  plength: length of the data 
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUINT32 plength)
+{
+  TRACE_M(TF_GENERIC,"Appli_Generic_OnOff_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#8204! \n\r");
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
 #endif
 
 #ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL
@@ -200,6 +217,7 @@ MOBLE_RESULT Appli_Generic_LevelDelta_Set(Generic_LevelStatus_t* pdeltalevelPara
     Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);
     BSP_LED_Off(LED_BLUE);
   }
+  TRACE_M(TF_SERIAL_CTRL,"#8206!\n\r");
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -219,6 +237,24 @@ MOBLE_RESULT Appli_Generic_LevelMove_Set(Generic_LevelStatus_t* pdeltaMoveParam,
   {
     AppliLevelSet.Present_Level16= pdeltaMoveParam->Present_Level16;   
   }
+   TRACE_M(TF_SERIAL_CTRL,"#8206!\n\r");
+  
+  return MOBLE_RESULT_SUCCESS;
+  
+}
+  /**
+* @brief  Appli_Generic_Level_Status: This function is callback for Application
+*          when Generic Level Move message is received
+* @param  plevel_status: Pointer to the parameters message
+* @param  plength: length of data 
+* @retval MOBLE_RESULT
+*/
+MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8 const *plevel_status, MOBLEUINT32 plength)
+{
+  
+  TRACE_M(TF_GENERIC,"Generic_Level_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#8208! \n\r");
       
   return MOBLE_RESULT_SUCCESS;
 }
@@ -238,14 +274,29 @@ MOBLE_RESULT Appli_Generic_PowerOnOff_Set(Generic_PowerOnOffParam_t* pPowerOnOff
 { 
   AppliPowerOnSet.PowerOnState = pPowerOnOffParam->PowerOnOffState;
   
-  TRACE_M(TF_SERIAL_CTRL,"Generic Power OnOff Set: State %d!\n\r",
-          pPowerOnOffParam->PowerOnOffState);
+  TRACE_M(TF_SERIAL_CTRL,"#8213!\n\r");
 
   /* set the flag value for NVM store */
-  RestoreFlag = GENERIC_ON_OFF_NVM_FLAG;
+  RestoreFlag = No_NVM_FLAG;
 
   AppliNvm_SaveMessageParam();
     
+  return MOBLE_RESULT_SUCCESS;
+}
+/**
+* @brief  Appli_Generic_PowerOnOff_Set: This function is callback for Application
+*           when Generic Power on off set message is received
+* @param   powerOnOff_status: Pointer to the parameters message
+* @param  plength: length of data 
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT Appli_Generic_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , MOBLEUINT32 plength) 
+{  
+
+  TRACE_M(TF_GENERIC,"Generic_PowerOnOff_Status callback received \r\n"); 
+  
+  TRACE_M(TF_SERIAL_CTRL,"#8212! \n\r");
+
   return MOBLE_RESULT_SUCCESS;
 }
 #endif  /* ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF */
@@ -264,6 +315,23 @@ MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Set(Generic_DefaultTransitionPa
 {
   
   AppliDefaultTransitionSet.DefaultTransitionTime = pDefaultTimeParam->DefaultTransitionTime;
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief  Appli_Generic_DefaultTransitionTime_Status: This function is callback for Application
+*          when Generic Power on off set message is received
+* @param  pTransition_status: Pointer to the parameters message
+* @param  plength: length of data 
+* @retval MOBLE_RESULT
+*/
+MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , MOBLEUINT32 plength) 
+{  
+
+  TRACE_M(TF_GENERIC,"Generic_DefaultTransitionTime_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#8210! \n\r");
   
   return MOBLE_RESULT_SUCCESS;
 }
@@ -323,9 +391,9 @@ MOBLE_RESULT Appli_Generic_GetLevelStatus(MOBLEUINT8* pLevel_Status)
 * @param  pLevel_status: Pointer to the status message
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Appli_Generic_GetPowerOnOffStatus(MOBLEUINT8* pLevel_Status) 
+MOBLE_RESULT Appli_Generic_GetPowerOnOffStatus(MOBLEUINT8* pPower_Status) 
 { 
-  *pLevel_Status = AppliPowerOnSet.PowerOnState;
+  *pPower_Status = AppliPowerOnSet.PowerOnState;
   TRACE_M(TF_SERIAL_CTRL,"Generic Get OnOff Status: Status %d!\n\r",
           AppliPowerOnSet.PowerOnState);
   
@@ -333,8 +401,8 @@ MOBLE_RESULT Appli_Generic_GetPowerOnOffStatus(MOBLEUINT8* pLevel_Status)
 }
 
 /**
-* @brief  Appli_Generic_GetDefaultTransitionStatus: This function is callback for Application
-* when Generic Level status message is to be provided
+* @brief  Appli_Generic_GetDefaultTransitionStatus: This function is callback for 
+*           Application when Generic Level status message is to be provided
 * @param  pTransition_Status: Pointer to the status message
 * @retval MOBLE_RESULT
 */ 

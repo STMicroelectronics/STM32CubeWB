@@ -32,7 +32,7 @@
 * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *
-* Initial BlueNRG-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
+* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
 * (MoBLE) technology. The present solution is developed and maintained for both 
 * Mesh library and Applications solely by STMicroelectronics.
 *

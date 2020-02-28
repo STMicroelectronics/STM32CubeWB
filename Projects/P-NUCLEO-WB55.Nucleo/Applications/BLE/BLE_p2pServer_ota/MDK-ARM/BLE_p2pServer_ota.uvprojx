@@ -413,6 +413,11 @@
               <FilePath>../Core/Src/main.c</FilePath>
             </File>
             <File>
+              <FileName>app_debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/app_debug.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32_lpm_if.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32_lpm_if.c</FilePath>

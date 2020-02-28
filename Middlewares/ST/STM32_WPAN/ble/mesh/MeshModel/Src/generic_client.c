@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    generic_client.c
 * @author  BLE Mesh Team
-* @version V1.11.002
-* @date    27-09-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Generic model client middleware file
 ******************************************************************************
 * @attention
@@ -43,18 +43,17 @@
 #include "mesh_cfg.h"
 #include "generic.h"
 #include "generic_client.h"
-//#include "light.h"
 #include "common.h"
 #include "models_if.h"
 #include <string.h>
 #include "compiler.h"
 
 
-/** @addtogroup MODEL_GENERIC
+/** @addtogroup MODEL_CLIENT_GENERIC
 *  @{
 */
 
-/** @addtogroup Generic_Model_Callbacks
+/** @addtogroup Generic_Model_Client_Callbacks
 *  @{
 */
 
@@ -62,17 +61,17 @@
 /* Private macro -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
-
+extern MOBLEUINT8 TidSend;
 const MODEL_OpcodeTableParam_t Generic_Client_Opcodes_Table[] = {
   /* Generic OnOff Client */
   /*    MOBLEUINT32 opcode, MOBLEBOOL reliable, MOBLEUINT16 min_payload_size, 
   MOBLEUINT16 max_payload_size;
   Here in this array, Handler is not defined; */
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_ONOFF  
-  {GENERIC_ON_OFF_STATUS,                                 MOBLE_FALSE, 1, 3,              NULL , 1, 3},
+  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID     ,GENERIC_ON_OFF_STATUS,                                 MOBLE_FALSE, 1, 3,              0 , 1, 3},
 #endif
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL  
-  {GENERIC_LEVEL_STATUS,                                  MOBLE_FALSE,  2, 5,             NULL , 2 , 5},
+  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID     ,GENERIC_LEVEL_STATUS,                                  MOBLE_FALSE,  2, 5,             0 , 2 , 5},
 #endif  
   {0}
 };
@@ -166,7 +165,7 @@ MOBLE_RESULT GenericClient_OnOff_Set_Unack(MOBLE_ADDRESS element_number,
   MOBLEBOOL ack_flag;
 
   TRACE_M(TF_GENERIC_CLIENT,"Generic_OnOff_Set Client Message \r\n");  
-  
+  pOnOff_param->a_OnOff_param[1] = TidSend;
   msg_buff = pOnOff_param->a_OnOff_param;
   ack_flag = MOBLE_FALSE;
   msg_opcode = GENERIC_ON_OFF_SET_UNACK;
@@ -181,6 +180,12 @@ MOBLE_RESULT GenericClient_OnOff_Set_Unack(MOBLE_ADDRESS element_number,
                                             msg_buff, length,
                                             ack_flag, 
                                             MOBLE_FALSE);
+  TidSend++;
+  if(TidSend >= MAX_TID_VALUE)
+  {
+    TidSend = 0;
+  }  
+  
   if(result)
   {
     TRACE_M(TF_GENERIC_CLIENT,"Publication Error \r\n");
@@ -214,7 +219,7 @@ MOBLE_RESULT GenericClient_Level_Set_Unack(MOBLE_ADDRESS element_number,
   MOBLEBOOL ack_flag;
 
   TRACE_M(TF_GENERIC_CLIENT,"Generic_Level_Set Client Message \r\n");  
-  
+  plevel_param->a_Level_param[2] = TidSend;
   msg_buff = plevel_param->a_Level_param;
   ack_flag = MOBLE_TRUE;
   msg_opcode = GENERIC_LEVEL_SET_UNACK;
@@ -229,6 +234,11 @@ MOBLE_RESULT GenericClient_Level_Set_Unack(MOBLE_ADDRESS element_number,
                                             msg_buff, length,
                                             ack_flag, 
                                             MOBLE_FALSE);
+  TidSend++;
+  if(TidSend >= MAX_TID_VALUE)
+  {
+    TidSend = 0;
+  }  
   if(result)
   {
     TRACE_M(TF_GENERIC_CLIENT,"Publication Error \r\n");
@@ -255,7 +265,7 @@ MOBLE_RESULT GenericModelClient_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t 
 
 /**
 * @brief  GenericModelClient_GetStatusRequestCb : This function is call-back 
-from the library to send response to the message from peer
+*         from the library to send response to the message from peer
 * @param  peer_addr: Address of the peer
 * @param  dst_peer: destination send by peer for this node. It can be a
 *                                                     unicast or group address 
@@ -277,7 +287,7 @@ MOBLE_RESULT GenericModelClient_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                                    MOBLEBOOL response)
 
 {
-  TRACE_M(TF_GENERIC,"response status enable \n\r");
+  TRACE_M(TF_GENERIC_CLIENT,"response status enable \n\r");
   
   return MOBLE_RESULT_SUCCESS;    
 }
@@ -285,7 +295,7 @@ MOBLE_RESULT GenericModelClient_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
 
 /**
 * @brief  GenericModelClient_ProcessMessageCb: This is a callback function from
-the library whenever a Generic Model message is received
+*         the library whenever a Generic Model message is received
 * @param  peer_addr: Address of the peer
 * @param  dst_peer: destination send by peer for this node. It can be a
 *                                                     unicast or group address 
@@ -308,9 +318,9 @@ MOBLE_RESULT GenericModelClient_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
 {
   
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
-  tClockTime delay_t = Clock_Time();
+  //tClockTime delay_t = Clock_Time();
   
-  TRACE_M(TF_GENERIC,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
+  TRACE_M(TF_GENERIC_CLIENT,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
           dst_peer, peer_addr, opcode , response);
   
   switch(opcode)
@@ -338,67 +348,6 @@ MOBLE_RESULT GenericModelClient_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   
   return MOBLE_RESULT_SUCCESS;
 }
-
-/*
-* @brief Generic_Client_OnOff_Status: Function called when status of the model 
-received on the client.
-* @param pOnOff_status: ointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT Generic_Client_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUINT32 plength)
-{
-  TRACE_M(TF_GENERIC,"Generic_OnOff_Status callback received \r\n");
-  return MOBLE_RESULT_SUCCESS;
-}
-
-/*
-* @brief Generic_Client_Level_Status: Function called when status of the model 
-received on the client.
-* @param plevel_status: ointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT Generic_Client_Level_Status(MOBLEUINT8 const *plevel_status, MOBLEUINT32 plength)
-{
-  
-  TRACE_M(TF_GENERIC,"Generic_Level_Status callback received \r\n");
-  return MOBLE_RESULT_SUCCESS;
-}
-
-/*
-* @brief Generic_Client_PowerOnOff_Status: Function called when status of the model 
-received on the client.
-* @param powerOnOff_status: ointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT Generic_Client_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , MOBLEUINT32 plength) 
-{  
-  
-  TRACE_M(TF_GENERIC,"Generic_PowerOnOff_Status callback received \r\n"); 
-  return MOBLE_RESULT_SUCCESS;
-}
-
-/*
-* @brief Generic_Client_DefaultTransitionTime_Status: Function called when status of the model 
-received on the client.
-* @param pTransition_status: ointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT Generic_Client_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , MOBLEUINT32 plength) 
-{  
-  
-  TRACE_M(TF_GENERIC,"Generic_DefaultTransitionTime_Status callback received \r\n");
-  return MOBLE_RESULT_SUCCESS;
-}
-
-/**
-Weak function are defined to support the original function if they are not
-included in firmware.
-There is no use of this function for application development purpose.
-**/
 
 /**
 * @}

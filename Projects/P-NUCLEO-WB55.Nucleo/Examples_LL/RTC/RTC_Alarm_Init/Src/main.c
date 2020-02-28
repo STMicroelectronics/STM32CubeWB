@@ -248,6 +248,9 @@ void SystemClock_Config(void)
 
   /* Update CMSIS variable (which can be updated also through SystemCoreClockUpdate function) */
   LL_SetSystemCoreClock(16000000);
+  /* USER CODE BEGIN Smps */
+
+  /* USER CODE END Smps */
 }
 
 /**
@@ -279,13 +282,11 @@ static void MX_RTC_Init(void)
   RTC_TimeStruct.Hours = 0x11;
   RTC_TimeStruct.Minutes = 0x59;
   RTC_TimeStruct.Seconds = 0x55;
-
   LL_RTC_TIME_Init(RTC, LL_RTC_FORMAT_BCD, &RTC_TimeStruct);
   RTC_DateStruct.WeekDay = LL_RTC_WEEKDAY_FRIDAY;
   RTC_DateStruct.Month = LL_RTC_MONTH_DECEMBER;
   RTC_DateStruct.Day = 0x29;
   RTC_DateStruct.Year = 0x16;
-
   LL_RTC_DATE_Init(RTC, LL_RTC_FORMAT_BCD, &RTC_DateStruct);
   /** Enable the Alarm A 
   */

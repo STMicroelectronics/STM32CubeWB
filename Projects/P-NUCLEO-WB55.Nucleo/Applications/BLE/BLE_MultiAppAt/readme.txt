@@ -104,7 +104,8 @@ On the android/ios device, enable the Bluetooth communications, and if not done 
  - Type "AT+SV\r", you should receive "SV OK". You are now in AT P2P Server mode.
  - Type "AT+SV$ADV_START\r". You should receive A and see a green led blinking rapidly on the board.
  - Then, with your phone, click on the App icon, ST BLE Sensor (android device)
- - select the ATP2PSV in the device list, connect to the device and play with the App as well as the terminal, using commands described in the Application Note.
+ - select the ATP2PSV in the device list, connect to the device and play with the App as well as the terminal, using commands described in the Application Note
+   as the instruction "AT+SV$NOTIFY=XXXX\r" with XXXX input parameter being 2 bytes hex values in range [0-9]/[A-F].
 
 
 Second demonstration

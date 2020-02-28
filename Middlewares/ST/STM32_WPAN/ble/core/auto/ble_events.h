@@ -1,13 +1,13 @@
 /******************************************************************************
  * @file    ble_events.h
  * @author  MCD Application Team
- * @date    08 November 2019
+ * @date    22 January 2020
  * @brief   Header file for STM32WB (Event callbacks)
  *          Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -297,7 +297,7 @@ WEAK_FUNCTION(void hci_le_connection_update_complete_event(uint8_t Status,
                                              uint16_t Conn_Latency,
                                              uint16_t Supervision_Timeout));
 /**
-  * @brief The LE Read Remote Used Features Complete event is used to indicate the
+  * @brief The LE Read Remote Features Complete event is used to indicate the
 completion of the process of the Controller obtaining the used features of the
 remote Bluetooth device specified by the Connection_Handle event parameter.See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.4
   * @param Status Status error code.
@@ -307,9 +307,9 @@ remote Bluetooth device specified by the Connection_Handle event parameter.See B
   * @param LE_Features Bit Mask List of used LE features. For details see LE Link Layer specification.
   * @retval None
 */
-WEAK_FUNCTION(void hci_le_read_remote_used_features_complete_event(uint8_t Status,
-                                                     uint16_t Connection_Handle,
-                                                     uint8_t LE_Features[8]));
+WEAK_FUNCTION(void hci_le_read_remote_features_complete_event(uint8_t Status,
+                                                uint16_t Connection_Handle,
+                                                uint8_t LE_Features[8]));
 /**
   * @brief The LE Long Term Key Request event indicates that the master device is
 attempting to encrypt or re-encrypt the link and is requesting the Long Term

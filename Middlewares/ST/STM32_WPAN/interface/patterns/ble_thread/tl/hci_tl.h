@@ -87,9 +87,11 @@ typedef struct
 void hci_register_io_bus(tHciIO* fops);
 
 /**
- * @brief  Interrupt service routine that must be called when the BLE core
- *         reports a packet received or an event to the host through the 
- *         related IPCC RX interrupt line.
+ * @brief  This callback is called from either
+ *          - IPCC RX interrupt context
+ *          - hci_user_evt_proc() context.
+ *          - hci_resume_flow() context
+ *         It requests hci_user_evt_proc() to be executed.
  *
  * @param  pdata Packet or event pointer
  * @retval None
@@ -107,12 +109,13 @@ void hci_resume_flow(void);
 
 
 /**
- * @brief  This function is called when an ACI/HCI command is sent and the response 
- *         is waited from the BLE core.
- *         The application shall implement a mechanism to not return from this function 
- *         until the waited event is received.
- *         This is notified to the application with hci_cmd_resp_release().
+ * @brief  This function is called when an ACI/HCI command is sent to the CPU2 and the response is waited.
  *         It is called from the same context the HCI command has been sent.
+ *         It shall not return until the command response notified by hci_cmd_resp_release() is received.
+ *         A weak implementation is available in hci_tl.c based on polling mechanism
+ *         The user may re-implement this function in the application to improve performance :
+ *         - It may use UTIL_SEQ_WaitEvt() API when using the Sequencer
+ *         - It may use a semaphore when using cmsis_os interface
  *
  * @param  timeout: Waiting timeout
  * @retval None
@@ -120,8 +123,11 @@ void hci_resume_flow(void);
 void hci_cmd_resp_wait(uint32_t timeout);
 
 /**
- * @brief  This function is called when an ACI/HCI command is sent and the response is
- *         received from the BLE core.
+ * @brief  This function is called when an ACI/HCI command response is received from the CPU2.
+ *         A weak implementation is available in hci_tl.c based on polling mechanism
+ *         The user may re-implement this function in the application to improve performance :
+ *         - It may use UTIL_SEQ_SetEvt() API when using the Sequencer
+ *         - It may use a semaphore when using cmsis_os interface
  *
  * @param  flag: Release flag
  * @retval None
@@ -142,7 +148,7 @@ void hci_cmd_resp_release(uint32_t flag);
  */
 
 /**
- * @brief  This process shall be called by the scheduler each time it is requested with TL_BLE_HCI_UserEvtProcReq()
+ * @brief  This process shall be called by the scheduler each time it is requested with hci_notify_asynch_evt()
  *         This process may send an ACI/HCI command when the svc_ctl.c module is used
  *
  * @param  None

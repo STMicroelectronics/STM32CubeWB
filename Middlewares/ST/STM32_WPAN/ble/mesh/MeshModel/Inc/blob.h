@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    blob.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-May-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   BLE-Mesh Block transfer Server implementation header file  
 ******************************************************************************
 * @attention

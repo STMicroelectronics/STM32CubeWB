@@ -185,4 +185,14 @@ typedef	uint8_t	tBDAddr[6];
 /* ------------------------------------------------------------------------- */
 
 
+/* Deprecative name for LE Read Remote Features command
+ */
+#define hci_le_read_remote_used_features hci_le_read_remote_features
+#define hci_le_read_remote_used_features_complete_event_rp0 \
+          hci_le_read_remote_features_complete_event_rp0
+
+
+/* ------------------------------------------------------------------------- */
+
+
 #endif /* BLE_LEGACY_H__ */

@@ -1,0 +1,8 @@
+[ProjectFiles]
+HeaderPath=
+[Others]
+Define=
+HALModule=
+[Groups]
+Application/User=../Src/main.c;../Src/stm32wbxx_it.c;../Src/prime256v1.c;../Src/SigGen.c;
+Doc=../readme.txt;

@@ -1,9 +1,9 @@
 /**
 ******************************************************************************
-* @file    response_test.h
+* @file    appli_test.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the serial interface file 
 ******************************************************************************
 * @attention
@@ -40,8 +40,8 @@
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __RESPONSE_TEST_H
-#define __RESPONSE_TEST_H
+#ifndef __APPLI_TEST_H
+#define __APPLI_TEST_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -49,11 +49,11 @@
 /* Exported macro ------------------------------------------------------------*/
 #define     TEST_1_WAIT_PERIOD          2000
 #define     TEST_2_WAIT_PERIOD          100
-#define     TEST_3_WAIT_PERIOD          5000
+#define     TEST_3_WAIT_PERIOD          3000
 #define     TEST_READ_PERIOD            2000
 #define     CLOCK_FLAG_ENABLE           1 
 #define     CLOCK_FLAG_DISABLE          0 
-#define     DATA_BYTE_SEND              100
+#define     DATA_BYTE_SEND              50
 /* Exported variables  ------------------------------------------------------- */
 /* Exported Functions Prototypes ---------------------------------------------*/
 void SerialResponse_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);

@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file   time_scene.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -77,10 +77,10 @@
 /******************************************************************************/
 /********** Following Section defines the SIG MODEL IDs            ************/
 /******************************************************************************/
-#define TIME_SERVER             0X1200
-#define TIME_SETUP_SERVER       0X1201
-#define SCENE_SERVER            0X1203
-#define SCENE_SETUP_SERVER      0X1204
+#define TIME_MODEL_SERVER_MODEL_ID             0X1200
+#define TIME_MODEL_SERVER_SETUP_MODEL_ID       0X1201
+#define SCENE_MODEL_SERVER_MODEL_ID            0X1203
+#define SCENE_MODEL_SERVER_SETUP_MODEL_ID      0X1204
 
 /******************************************************************************/
 /********** SIG MODEL IDs ends                                     ************/

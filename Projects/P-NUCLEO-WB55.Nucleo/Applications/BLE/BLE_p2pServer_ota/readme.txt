@@ -85,6 +85,8 @@ Wireless Coprocessor binary.
 In order to make the program work, you must do the following :
  - Open your preferred toolchain 
  - Rebuild all files and load the image into Target memory
+   [Warning: not use CMSIS startup_stm32wb55xx_cm4.s to compile under Keil toolchain as specific 
+    DCD offset added for OTA application]
  - OR use the BLE_p2pServer_ota_reference.bin from Binary directory
    - to be flashed at 0x0800 7000
  - This must be done for BLE_p2pServer (MB1355C & MB1293C) 

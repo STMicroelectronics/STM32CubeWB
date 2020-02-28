@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    common.c
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Model middleware file
 ******************************************************************************
 * @attention
@@ -47,6 +47,8 @@
 #include "vendor.h"
 #include "light_lc.h"
 #include <string.h>
+#include "appli_nvm.h"
+#include "compiler.h"
 
 
 /** @addtogroup MODEL_GENERIC
@@ -57,13 +59,23 @@
 *  @{
 */
 
+WEAK_FUNCTION(MOBLE_RESULT ApplicationGetConfigServerDeviceKey(MOBLE_ADDRESS src,
+                                                               const MOBLEUINT8**ppkeyTbUse));
+MOBLEUINT8 TimeDelay(MOBLEUINT16 waitPeriod);
+
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 
+#ifdef ENABLE_SAVE_MODEL_STATE_NVM
 extern const APPLI_SAVE_MODEL_STATE_CB SaveModelState_cb;
+#endif
 extern MOBLEUINT8 NumberOfElements;
 MOBLEUINT8 PowerOnOff_flag = FLAG_RESET;
-extern MOBLEUINT8 RestoreFlag;
+MOBLEUINT8 RestoreFlag;
+MOBLE_ADDRESS Peer_Addrs;
+MOBLE_ADDRESS Dst_Addrs;
+MOBLEUINT8 Tid_Value = 0;
+MOBLEUINT8 TidSend = 0;
 /**
 * @brief  Chk_ParamValidity: This function is to check validity of Parameters
 * @param  param: Parameter 
@@ -340,6 +352,54 @@ MOBLEUINT16 PwmValueMapping(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEI
   MOBLEUINT16 percentValue;
   MOBLEUINT16 duty;
   
+#ifdef SMART_PLUG
+   percentValue =  (setValue * 100)/ (maxRange - minRange);
+        
+   if(percentValue < 2)
+   {
+     duty = 0;
+   }   
+   else if((percentValue > 2) && (percentValue <= 10))
+   {
+     duty = 1;
+   }
+   else if((percentValue > 10) && (percentValue <= 20))
+   {
+     duty = 2;
+   }
+   else if((percentValue > 20) && (percentValue <= 30))
+   {
+     duty = 3;
+   }
+   else if((percentValue > 30) && (percentValue <= 40))
+   {
+     duty = 4;
+   }
+   else if((percentValue > 40) && (percentValue <= 50))
+   {
+     duty = 5;
+   }
+   else if((percentValue > 50) && (percentValue <= 60))
+   {
+     duty = 6;
+   }
+   else if((percentValue > 60) && (percentValue <= 70))
+   {
+     duty = 7;
+   }
+   else if((percentValue > 70) && (percentValue <= 80))
+   {
+     duty = 8;
+   }
+   else if((percentValue > 80) && (percentValue <= 90))
+   {
+     duty = 9;
+   }
+   else if(percentValue > 90)
+   {
+     duty = 10;
+   }
+#else
       if(minRange > 0x00)
       {
         percentValue =  (setValue - 800)/ (maxRange - minRange);
@@ -360,6 +420,7 @@ MOBLEUINT16 PwmValueMapping(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEI
       {
         duty = 1;
       }
+#endif
      
    return duty;
 }
@@ -441,6 +502,7 @@ void TraceHeader(const char* func_name, int mode)
         printf("%ld %s - <<<ERROR>>>", Clock_Time(), func_name);
 }    
 
+#ifdef ENABLE_SAVE_MODEL_STATE_NVM
 /**
 * @brief  Prepare and save buffer of Generic and Light models state in NVM
 * @param  void
@@ -448,8 +510,8 @@ void TraceHeader(const char* func_name, int mode)
 */
 MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8 flag)
 {
-  MOBLEUINT8 Model_GetBuff[APP_NVM_MODEL_SIZE];/* 16 bytes for generic model and 16 bytes for light model */
   MOBLE_RESULT result = MOBLE_RESULT_FAIL;
+  MOBLEUINT8 Model_GetBuff[APP_NVM_MODEL_SIZE];/* 16 bytes for generic model and 16 bytes for light model */
   
   memset(Model_GetBuff, 0x00, APP_NVM_MODEL_SIZE);
   
@@ -477,6 +539,8 @@ MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8 flag)
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL  
   (Appli_Light_GetStatus_cb.GetLightHsl_cb)(Model_GetBuff+GENERIC_DATA_LIMIT+LIGHT_HSL_NVM_OFFSET);
+  (Appli_Light_GetStatus_cb.GetLightHslDefault_cb)(Model_GetBuff+GENERIC_DATA_LIMIT+LIGHT_HSL_DEFAULT_NVM_OFFSET);
+  
 #endif  
   if (SaveModelState_cb != NULL)
   {
@@ -494,7 +558,7 @@ MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8 flag)
   
   return result;
 }
-
+#endif
 /*
 * @brief function to call light middle layer function for restoration of 
 *        saved states.
@@ -511,6 +575,34 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
 #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF      
       case GENERIC_ON_OFF_NVM_FLAG:
       {
+//#ifdef STM32          
+/* checking the Power on off retrieved value according to the given
+             in standered and taking decision for Generic on off.
+           */
+          ////////krt
+         //   MOBLEUINT8 pData[2];
+            
+//            if(pModelState_Load[4] == GENERIC_POWER_OFF_STATE)
+//            {
+//              pData[0] = APPLI_LED_OFF;
+//              Generic_OnOff_Set(pData,1);
+//            }
+//            else if(pModelState_Load[4] == GENERIC_POWER_ON_STATE)
+//            {
+//              pData[0] = APPLI_LED_ON;
+//              Generic_OnOff_Set(pData,1);
+//            }
+//            else if(pModelState_Load[4] == GENERIC_POWER_RESTORE_STATE)
+//            {
+              Generic_OnOff_Set(pModelState_Load+GENERIC_ON_OFF_NVM_OFFSET, 1); 
+           // }
+//            else
+//            {
+//              TRACE_M(TF_GENERIC, "Power On Off value invalid %d \r\n", pModelState_Load[0]);
+//            }         
+//              Generic_PowerOnOff_Set(pModelState_Load+GENERIC_POWER_ON_OFF_NVM_OFFSET, 1);
+//          break;
+//#elif BLUENRG2_DEVICE
         /* checking the Power on off retrieved value according to the given
            in standered and taking decision for Generic on off.
         */
@@ -536,6 +628,7 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
         }         
               
         break;
+//#endif          
       }
 #endif
 
@@ -566,16 +659,36 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL        
       case LIGHT_HSL_NVM_FLAG:
       {  
+            
+          if((pModelState_Load[4] == GENERIC_POWER_OFF_STATE) || (pModelState_Load[4] == GENERIC_POWER_ON_STATE))
+          {         
+            Light_Hsl_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_DEFAULT_NVM_OFFSET), 6);
+          }          
+          else if(pModelState_Load[4] == GENERIC_POWER_RESTORE_STATE)
+          {
         Light_Hsl_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_NVM_OFFSET), 6);
+          }
+          else
+          {
+            TRACE_M(TF_GENERIC, "Power On Off value invalid %d \r\n", pModelState_Load[0]);
+          }                   
+           
         break;
       }
 #endif        
+      case No_NVM_FLAG:
+      {
+        TRACE_M(TF_GENERIC,"Power OnOff value stored = %d \r\n",pModelState_Load[4]);
+        break;
+      }
       default: 
       {
-        TRACE_M(TF_LIGHT, "data is invalid %d \r\n", pModelState_Load[0]);
+          TRACE_M(TF_LIGHT, "No Saved Data Found \r\n");
         break;
       }
     }
+    (GenericAppli_cb.GenericRestorePowerOnOff_cb)(pModelState_Load[4]);
+     
   }
   
 }  
@@ -608,6 +721,7 @@ MOBLEUINT8 BLE_GetElementNumber(void)
   return elementNumber;
 }  
 
+#ifdef ENABLE_SAVE_MODEL_STATE_NVM
 /**
 * @brief  Function used to save the states of the node, when power down is detected.
 * @param  void
@@ -622,6 +736,7 @@ void ModelSave_Process(void)
   }
 }
 
+#endif
 /**
 * @brief  Function used to calculate the delay.
 * @param  MOBLEUINT16
@@ -647,6 +762,69 @@ MOBLEUINT8 BLE_waitPeriod(MOBLEUINT32 waitPeriod)
                 
        }
    return 0x00;
+}
+
+/**
+* @brief  Function used to calculate the delay.
+* @param  MOBLEUINT16
+* @retval MOBLEUINT8
+*/
+MOBLEUINT8 TimeDelay(MOBLEUINT16 waitPeriod)
+{
+  static MOBLEUINT8 Clockflag = 0;
+  static MOBLEUINT32 Check_time;
+  
+  
+  if(Clockflag == CLK_FLAG_DISABLE)
+  {
+    Check_time = Clock_Time();
+    Clockflag = CLK_FLAG_ENABLE;
+  } 
+  /* The function will called untill the testcount will not become zero */     
+  
+  if(((Clock_Time()- Check_time) <= waitPeriod))
+  {
+    Clockflag = CLK_FLAG_DISABLE;
+    return 0x01;
+    
+  }
+  return 0x00;
+}
+
+MOBLE_RESULT Chk_TidValidity(MOBLE_ADDRESS peer_Addrs,MOBLE_ADDRESS dst_Addrs,MOBLEUINT8 tidValue)
+{
+  static MOBLEUINT32 Check_time;
+  MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;
+  
+  if(((Clock_Time()- Check_time) <= 6000))
+  {
+    if((Peer_Addrs == peer_Addrs)&&(Dst_Addrs == dst_Addrs)&&(Tid_Value == tidValue))
+    {
+      TRACE_M(TF_COMMON,"dst_peer = %.2X , peer_add = %.2X,tid = %.2X \r\n",dst_Addrs,peer_Addrs,tidValue);
+      TRACE_M(TF_COMMON,"Duplicate Message Parameter within six second \r\n");
+      status =  MOBLE_RESULT_INVALIDARG;       
+    }
+    else
+    {
+      Check_time = Clock_Time();
+      Peer_Addrs = peer_Addrs;
+      Dst_Addrs = dst_Addrs;
+      Tid_Value = tidValue; 
+      TRACE_M(TF_COMMON,"dst_peer = %.2X , peer_add = %.2X,tid = %.2X \r\n",dst_Addrs,peer_Addrs,tidValue);
+      TRACE_M(TF_COMMON,"New Message Parameter within six second \r\n");
+    }
+  }
+  else
+  {
+    Check_time = Clock_Time();
+    Peer_Addrs = peer_Addrs;
+    Dst_Addrs = dst_Addrs;
+    Tid_Value = tidValue;
+    TRACE_M(TF_COMMON,"dst_peer = %.2X , peer_add = %.2X,tid = %.2X \r\n",dst_Addrs,peer_Addrs,tidValue);
+    TRACE_M(TF_COMMON,"New Message Parameter  \r\n");
+  }
+  
+  return status;
 }
 
 /**
@@ -682,10 +860,19 @@ MOBLEUINT8 Time_Conversion(MOBLEUINT32 lc_Time)
     /* No Comment */
   }
   
-    totalTime = timeResolution << 6;
-    totalTime |= TRANSITION_STEP_VALUE;
-    
-    return totalTime;
+  totalTime = timeResolution << 6;
+  totalTime |= TRANSITION_STEP_VALUE;
+  
+  return totalTime;
+}
+
+
+WEAK_FUNCTION(MOBLE_RESULT ApplicationGetConfigServerDeviceKey(MOBLE_ADDRESS src, 
+                                                               const MOBLEUINT8**ppkeyTbUse))
+{
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  
+  return result;
 }
 
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/

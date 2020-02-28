@@ -99,7 +99,6 @@ int main(void)
   /* USER CODE BEGIN 1 */
   uint32_t tmp_index_adc_converted_data = 0;
   /* USER CODE END 1 */
-  
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -266,6 +265,11 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  /** Initializes the peripherals clocks 
+  */
+  /* USER CODE BEGIN Smps */
+
+  /* USER CODE END Smps */
 }
 
 /**

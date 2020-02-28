@@ -32,8 +32,7 @@
 #include "shci_tl.h"
 #include "stm32_lpm.h"
 
-
-#include "dbg_trace.h"
+#include "app_debug.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,13 +49,18 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_
 /* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 static void SystemPower_Config( void );
-static void Init_Debug( void );
 static void appe_Tl_Init( void );
 static void Led_Init( void );
 static void Button_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
 
+#if (CFG_HW_LPUART1_ENABLED == 1)
+extern void MX_LPUART1_UART_Init(void);
+#endif
+#if (CFG_HW_USART1_ENABLED == 1)
+extern void MX_USART1_UART_Init(void);
+#endif
 /* Functions Definition ------------------------------------------------------*/
 void APPE_Init( void )
 {
@@ -64,7 +68,7 @@ void APPE_Init( void )
   
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
-  Init_Debug();
+  APPD_Init();
 
   /**
    * The Standby mode should not be entered before the initialization is over
@@ -80,60 +84,23 @@ void APPE_Init( void )
 
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-   * received on the system channel before starting the Stack
+   * received on the system channel before starting the BLE Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
+/* USER CODE BEGIN APPE_Init_2 */
 
-  return;
+/* USER CODE END APPE_Init_2 */
+   return;
 }
+/* USER CODE BEGIN FD */
+
+/* USER CODE END FD */
 
 /*************************************************************
  *
  * LOCAL FUNCTIONS
  *
  *************************************************************/
-static void Init_Debug( void )
-{
-#if (CFG_DEBUGGER_SUPPORTED == 1)
-  /**
-   * Keep debugger enabled while in any low power mode
-   */
-  HAL_DBGMCU_EnableDBGSleepMode();
-
-  /***************** ENABLE DEBUGGER *************************************/
-  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
-  LL_C2_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
-
-#else
-
-  GPIO_InitTypeDef gpio_config = {0};
-
-  gpio_config.Pull = GPIO_NOPULL;
-  gpio_config.Mode = GPIO_MODE_ANALOG;
-
-  gpio_config.Pin = GPIO_PIN_15 | GPIO_PIN_14 | GPIO_PIN_13;
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  HAL_GPIO_Init(GPIOA, &gpio_config);
-  __HAL_RCC_GPIOA_CLK_DISABLE();
-
-  gpio_config.Pin = GPIO_PIN_4 | GPIO_PIN_3;
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  HAL_GPIO_Init(GPIOB, &gpio_config);
-  __HAL_RCC_GPIOB_CLK_DISABLE();
-
-  HAL_DBGMCU_DisableDBGSleepMode();
-  HAL_DBGMCU_DisableDBGStopMode();
-  HAL_DBGMCU_DisableDBGStandbyMode();
-
-#endif /* (CFG_DEBUGGER_SUPPORTED == 1) */
-
-#if(CFG_DEBUG_TRACE != 0)
-  DbgTraceInit();
-#endif
-
-  return;
-}
-
 /**
  * @brief  Configure the system for power optimization
  *
@@ -167,7 +134,6 @@ static void appe_Tl_Init( void )
 {
   TL_MM_Config_t tl_mm_config;
   SHCI_TL_HciInitConf_t SHci_Tl_Init_Conf;
-
   /**< Reference table initialization */
   TL_Init();
 
@@ -189,6 +155,35 @@ static void appe_Tl_Init( void )
   return;
 }
 
+
+
+static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
+{
+  UNUSED(status);
+  return;
+}
+
+/**
+ * The type of the payload for a system user event is tSHCI_UserEvtRxParam
+ * When the system event is both :
+ *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
+ *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ * The buffer shall not be released
+ * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
+ * When the status is not filled, the buffer is released by default
+ */
+static void APPE_SysUserEvtRx( void * pPayload )
+{
+  UNUSED(pPayload);
+  /* Traces channel initialization */
+  APPD_EnableCPU2();
+
+  APP_BLE_Init( );
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  return;
+}
+
+/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 static void Led_Init( void )
 {
 #if (CFG_LED_SUPPORTED == 1)
@@ -212,39 +207,15 @@ static void Button_Init( void )
   /**
    * Button Initialization
    */
+
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
 #endif
 
   return;
 }
-
-
-
-static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
-{
-  return;
-}
-
-/**
- * The type of the payload for a system user event is tSHCI_UserEvtRxParam
- * When the system event is both :
- *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
- *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
- * The buffer shall not be released
- * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
- * When the status is not filled, the buffer is released by default
- */
-static void APPE_SysUserEvtRx( void * pPayload )
-{
-  /**< Traces channel initialization */
-  TL_TRACES_Init( );
-
-  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_ENABLE);
-
-  APP_BLE_Init( );
-  return;
-}
-
+/* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
  *
@@ -260,11 +231,17 @@ void UTIL_SEQ_Idle( void )
   return;
 }
 
+
+/**
+  * @brief  This function is called by the scheduler each time an event
+  *         is pending.
+  *
+  * @param  evt_waited_bm : Event pending.
+  * @retval None
+  */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
   UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-
-  return;
 }
 
 void shci_notify_asynch_evt(void* pdata)
@@ -306,23 +283,5 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
   }
   return;
 }
-
-
-#if(CFG_DEBUG_TRACE != 0)
-void DbgOutputInit( void )
-{
-  HW_UART_Init(CFG_DEBUG_TRACE_UART);
-  return;
-}
-
-
-void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
-{
-  HW_UART_Transmit_DMA(CFG_DEBUG_TRACE_UART, p_data, size, cb);
-
-  return;
-}
-#endif
-
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

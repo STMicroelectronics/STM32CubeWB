@@ -70,6 +70,13 @@ static void Switch_On_HSI( void );
 void PWR_EnterOffMode( void )
 {
 /* USER CODE BEGIN PWR_EnterOffMode */
+
+  /**
+   * The systick should be disabled for the same reason than when the device enters stop mode because
+   * at this time, the device may enter either OffMode or StopMode.
+   */
+  HAL_SuspendTick();
+
   /************************************************************************************
    * ENTER OFF MODE
    ***********************************************************************************/
@@ -106,6 +113,8 @@ void PWR_ExitOffMode( void )
 {
 /* USER CODE BEGIN PWR_ExitOffMode */
 
+  HAL_ResumeTick();
+
 /* USER CODE END PWR_ExitOffMode */
 }
 
@@ -118,6 +127,16 @@ void PWR_ExitOffMode( void )
 void PWR_EnterStopMode( void )
 {
 /* USER CODE BEGIN PWR_EnterStopMode */
+  /**
+   * When HAL_DBGMCU_EnableDBGStopMode() is called to keep the debugger active in Stop Mode,
+   * the systick shall be disabled otherwise the cpu may crash when moving out from stop mode
+   *
+   * When in production, the HAL_DBGMCU_EnableDBGStopMode() is not called so that the device can reach best power consumption
+   * However, the systick should be disabled anyway to avoid the case when it is about to expire at the same time the device enters
+   * stop mode ( this will abort the Stop Mode entry ).
+   */
+  HAL_SuspendTick();
+
   /**
    * This function is called from CRITICAL SECTION
    */
@@ -202,6 +221,9 @@ void PWR_ExitStopMode( void )
 
   /* Release RCC semaphore */
   LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+
+  HAL_ResumeTick();
+
 /* USER CODE END PWR_ExitStopMode */
 }
 

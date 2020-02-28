@@ -51,9 +51,10 @@ typedef enum {
     MSG_M4TOM0_WPAN_GET_UINT32, /* wpan_get_uint32 */
     MSG_M4TOM0_WPAN_GET_UINT64, /* wpan_get_uint64 */
 
-    /* ZbMalloc / ZbFree */
-    MSG_M0TOM4_ZB_MALLOC,
-    MSG_M0TOM4_ZB_FREE,
+    /* M0 Request (Separate IPCC Channel) */
+    MSG_M0TOM4_ZB_LOGGING, /* Zigbee stack logging (configured by ZbSetLogging) */
+    MSG_M0TOM4_ZB_MALLOC, /* ZbMalloc */
+    MSG_M0TOM4_ZB_FREE, /* ZbFree */
 
     /* Stack Init / Destroy */
     MSG_M4TOM0_ZB_INIT, /* ZbInit */
@@ -114,6 +115,7 @@ typedef enum {
     MSG_M4TOM0_BDB_GET_REQ = 0x0040, /* ZbBdbGetReq */
     MSG_M4TOM0_BDB_SET_REQ, /* ZbBdbSetReq */
     MSG_M4TOM0_BDB_SET_EP_STATUS, /* ZbBdbSetEndpointStatus */
+    MSG_M4TOM0_BDB_GET_EP_STATUS, /* ZbBdbGetEndpointStatus */
     /* Reserved to 0x004f for Future Use */
 
     /* ZDO Commands */
@@ -337,7 +339,7 @@ typedef enum {
 } Error_Interface_Id_Enum_t;
 
 HAL_StatusTypeDef Zigbee_CallBackProcessing(void);
-HAL_StatusTypeDef Zigbee_LoggingProcessing(void);
+HAL_StatusTypeDef Zigbee_M0RequestProcessing(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

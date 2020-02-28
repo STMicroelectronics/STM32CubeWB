@@ -35,6 +35,7 @@ extern "C" {
   /* Exported functions ------------------------------------------------------- */
   void DTS_App_Init(void);
   void DTS_App_KeyButtonAction(void);
+  void DTS_App_KeyButton2Action( void );
   void DTS_App_TxPoolAvailableNotification(void);
 
 

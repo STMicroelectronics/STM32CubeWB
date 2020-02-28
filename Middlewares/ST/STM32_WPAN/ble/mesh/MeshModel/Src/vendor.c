@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    vendor.c
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Vendor model middleware file
 ******************************************************************************
 * @attention
@@ -48,11 +48,11 @@
 #include "models_if.h"
 #include <string.h>
 
-/** @addtogroup BLE_Mesh
+/** @addtogroup MODEL_VENDOR
 *  @{
 */
 
-/** @addtogroup models_BLE
+/** @addtogroup Vendor_Model_Callbacks
 *  @{
 */
 
@@ -66,10 +66,9 @@
 MOBLEUINT8 AppliBuffer[DATA_BUFFER_LENGTH] = {0x01,0x00};
 MOBLEUINT16 CommandStatus = 0;
 extern MOBLEUINT8 NumberOfElements;
-extern MOBLEUINT8 ResponseBuffer[8];
-extern MOBLEUINT8 BuffLength;
+extern MOBLEUINT8 ResponseBuffer[VENDOR_DATA_BYTE];
+extern MOBLEUINT16 BuffLength;
 extern MOBLEUINT8 Appli_LedState;
-
 /*
 -------------*******************-------------------------
 Vendor Model Opcode Table
@@ -79,9 +78,16 @@ MOBLEUINT16 Vendor_Opcodes_Table[] = {
   APPLI_DEVICE_INFO_CMD,
   APPLI_LED_CONTROL_STATUS_CMD,
   APPLI_ELEMENT_TYPE_CMD,
-  APPLI_SENSOR_CNTRL_CMD                       
+  APPLI_SENSOR_CNTRL_CMD,
+  APPLI_DATA_CNTRL_CMD
 };
 
+char *Board_Type[] =
+{
+  "BLUENRG1_BRD_TYPE",           
+  "BLUENRG2_BRD_TYPE",             
+  "BLUENRG_MS_BRD_TYPE"              
+}; 
 /* Private function prototypes -----------------------------------------------*/
 #if ENABLE_APPLI_TEST
   extern MOBLEUINT8 txDataArray[];
@@ -146,11 +152,17 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
                B0 - Sub-Cmd LED
                B1-B7 - Data Bytes       
                */          
-               TRACE_M(TF_VENDOR,"st device id %4.x \r\n",VENDORMODEL_STMICRO_ID1);
                VendorAppli_cb.LEDControlCommand_Cb(data,length,elementNumber,dst_peer);
                break;
              }
-             
+           case APPLI_DATA_CNTRL_CMD:
+             {
+               /*This is callback when ever command is coming for test of response
+                 time,command reached count, data byte sent
+               */          
+               VendorAppli_cb.DataControlCommand_cb(data,length);    
+               break;       
+             }            
              /* Default case - Not valid command */
            default:
              {
@@ -206,6 +218,14 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
                    VendorAppli_cb.LEDControlCommand_Cb(data, length, elementNumber,dst_peer);
                    break; 
                  }        
+               case APPLI_DATA_CNTRL_CMD:
+                 {
+                   /*This is callback when ever command is coming for test of response
+                     time,command reached count, data byte sent
+                   */          
+                   VendorAppli_cb.DataControlCommand_cb(data,length);    
+                   break;       
+                 }    
                  /* Default case - Not valid command */
                default:
                  {
@@ -346,8 +366,7 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
               */
               if(elementNumber == FIRST_ELEMENT)
               {
-                ResponseBuffer[0] = data[0];
-                ResponseBuffer[1] = Appli_LedState;
+                ResponseBuffer[0] = Appli_LedState;
               }
               
               else if(elementNumber == SECOND_ELEMENT)
@@ -362,6 +381,14 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
               
               break;
             }
+          case APPLI_DATA_CNTRL_CMD:
+            {
+              /*This is callback when ever command is coming for test of response
+                time,command reached count, data byte sent
+              */          
+           
+              break;       
+            }  
             
           default:
             {
@@ -440,12 +467,14 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
    MOBLEUINT32 timeStampRcv;
    MOBLEUINT8 subCmd = pRxData[0];
    MOBLEUINT16 hitcmdcount = 0;
-   
+   MOBLEUINT8 increment = 1;
   
   /* Traces for the Data */
-  TRACE_I(TF_SERIAL_CTRL,"Peer_addr=[%02x],\n\r", peer_addr);
-  TRACE_I(TF_SERIAL_CTRL,"DATA_RECEIVED length = %ld\n\r", dataLength);
+  TRACE_I(TF_VENDOR,"Vendor_OnResponseDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
+        command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response );
+  TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %d\n\r", dataLength);
   
+  TRACE_M(TF_VENDOR_COMMAND,"#%02hx-%02hx! \n\r",command,pRxData[0]);
   switch(command)
   {
     case APPLI_TEST_CMD:
@@ -458,34 +487,6 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
            receiver node.
         */
  #if ENABLE_APPLI_TEST
-                 MOBLEUINT8 idx;
-                 if(dataLength !=0)
-                 {
-                   MOBLEUINT8 valueCounter = 0;
-
-                 for (idx=0; idx<dataLength; idx++)
-         {
-                     if(pRxData[idx] == txDataArray[idx])
-                     {
-                       valueCounter++;
-                     }
-                     else
-                     {
-                       break;
-                     }
-                   }            
-                   if(valueCounter == dataLength)
-                   {
-                     successCounter++;
-                     TRACE_I(TF_SERIAL_CTRL,"Response data matched %d out of %d\n\r",successCounter, sendCounter);
-                     TRACE_I(TF_SERIAL_CTRL,"\n\r");                     
-                   }
-                   else
-                   {
-                     TRACE_I(TF_SERIAL_CTRL,"Response data unmatched %d out of %d\n\r",successCounter, sendCounter);
-                     TRACE_I(TF_SERIAL_CTRL,"\n\r");  
-                   }
-         }
 #endif
                  break;
                }
@@ -515,7 +516,7 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
                  hitcmdcount |=(MOBLEUINT32)( pRxData[3] << 16);
                  hitcmdcount |=(MOBLEUINT32)( pRxData[2] << 8);
                  hitcmdcount |=(MOBLEUINT32)( pRxData[1]);                
-                 TRACE_I(TF_SERIAL_CTRL,"NUMBER OF COMMANDS RECEIVED %d \r\n",hitcmdcount);
+                 TRACE_I(TF_VENDOR,"NUMBER OF COMMANDS RECEIVED %d \r\n",hitcmdcount);
                  /*Insert Test related Commands here*/
                  break;
                }
@@ -529,7 +530,66 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
                   break;
                }
          }
+         break;
       }                  
+  case APPLI_LED_CONTROL_STATUS_CMD:
+    {
+      TRACE_I(TF_VENDOR,"Led State %d \r\n",pRxData[0]);
+      break;
+    }
+   case APPLI_DEVICE_INFO_CMD:
+     {
+      switch(subCmd)
+         {             
+             case IC_TYPE: 
+               { 
+                 TRACE_I(TF_VENDOR,"IC type is %s \r\n" ,Board_Type[pRxData[1]-1]); 
+                 break;
+               }
+         case LIB_VER:
+           {
+             while(increment!=8)
+             {
+               TRACE_I(TF_VENDOR,"Lib Version is %d \r\n",pRxData[increment]);
+               increment++;
+             }
+             increment=1;
+             break;
+           }
+           case LIB_SUB_VER:
+             {
+               while(increment!=7)
+               {
+                 if(pRxData[increment] != R_ASCI_CODE)
+                 {
+                   TRACE_I(TF_VENDOR,"Lib Sub Version is %x \r\n",pRxData[increment]);
+                 }
+                 else
+                 {
+                   TRACE_I(TF_VENDOR,"Lib Sub Version is %c \r\n",pRxData[increment]);
+                 }
+                  increment++;
+               }
+             increment=1;
+             break;   
+             }
+         }
+      break;
+     }
+    case APPLI_DATA_CNTRL_CMD:  
+      {
+        for (MOBLEUINT8 idx=0; idx<dataLength; idx++)
+        {
+          TRACE_I(TF_VENDOR,"data[%d]= %d",idx,pRxData[idx]); 
+          TRACE_I(TF_VENDOR,"\n\r");
+        }
+        break;
+      }
+       default:
+    {              
+        break;
+    }
+      
   }   
       
          return MOBLE_RESULT_SUCCESS;
@@ -549,13 +609,12 @@ void Vendor_Process(void)
                            
 /**
 * @brief  Publish Command for Vendor Model
-* @param  publishAddress: Publish Address of the message 
-* @param  elementIndex: index of the element
+* @param  srcAddress: Source Address of Node 
 * @retval void
 */          
-void Vendor_Publish(MOBLE_ADDRESS publishAddress, MOBLEUINT8 elementIndex)
+void Vendor_Publish(MOBLE_ADDRESS srcAddress)
 {
-
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   /* changes the LED status on other nodes in the network */
   if(CommandStatus == APPLI_CMD_ON)
   {
@@ -566,10 +625,15 @@ void Vendor_Publish(MOBLE_ADDRESS publishAddress, MOBLEUINT8 elementIndex)
     AppliBuffer[0] = APPLI_CMD_ON;
   }
 
+  result = BLEMesh_SetRemotePublication(VENDORMODEL_STMICRO_ID1, srcAddress,
+                                            APPLI_LED_CONTROL_STATUS_CMD, 
+                                            AppliBuffer, sizeof(AppliBuffer),
+                                            MOBLE_FALSE, MOBLE_TRUE);
 
-  BLEMesh_SetRemoteData(publishAddress,elementIndex,
-                   APPLI_LED_CONTROL_STATUS_CMD , 
-                   AppliBuffer, sizeof(AppliBuffer), MOBLE_FALSE , MOBLE_TRUE);
+   if(result)
+   {
+     TRACE_I(TF_VENDOR,"Publication Error \r\n");
+   }
 
   CommandStatus = AppliBuffer[0];
 }
@@ -585,12 +649,18 @@ void Vendor_TestRemoteData(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elem
 {
 
   /* changes the LED status on other nodes in the network */
- 
+    MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
     AppliBuffer[0] = APPLI_TEST_COUNTER;
+ 
+    result = BLEMesh_SetRemoteData(dst, 0,
+                                       APPLI_TEST_CMD, AppliBuffer, 
+                                       sizeof(AppliBuffer), MOBLE_TRUE, 
+                                       MOBLE_TRUE);
 
-    BLEMesh_SetRemoteData(dst,elementIndex,
-                   APPLI_TEST_CMD , 
-                   AppliBuffer, sizeof(AppliBuffer), MOBLE_TRUE , MOBLE_TRUE);
+     if(result)
+     {
+          TRACE_I(TF_VENDOR,"Publication Error \r\n");
+     }
 
   CommandStatus = AppliBuffer[0];
 }
@@ -606,12 +676,18 @@ void Vendor_TestCounterInc(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elem
 {
 
   /* changes the LED status on other nodes in the network */
- 
+    MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
     AppliBuffer[0] = APPLI_TEST_INC_COUNTER;
 
-    BLEMesh_SetRemoteData(dst,elementIndex,
-                   APPLI_TEST_CMD , 
-                   AppliBuffer, sizeof(AppliBuffer), MOBLE_FALSE , MOBLE_TRUE);
+    result = BLEMesh_SetRemoteData(dst, 0,
+                                   APPLI_TEST_CMD, AppliBuffer, 
+                                   sizeof(AppliBuffer), MOBLE_FALSE, 
+                                   MOBLE_TRUE);
+
+    if(result)
+    {
+      TRACE_I(TF_VENDOR,"Publication Error \r\n");
+    }
 }         
          
 

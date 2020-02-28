@@ -131,14 +131,10 @@ typedef enum
 #else
 #define BUTTON_SW1_EXTI_LINE                    GPIO_PIN_10
 #endif
-#ifdef CORE_CM0PLUS
-#define BUTTON_SW1_EXTI_IRQn                    EXTI15_4_IRQn				
-#else
 #if defined (USE_STM32WBXX_USB_DONGLE_REVA)
 #define BUTTON_SW1_EXTI_IRQn                    EXTI9_5_IRQn
 #else
 #define BUTTON_SW1_EXTI_IRQn                    EXTI15_10_IRQn
-#endif
 #endif
 
 #define BUTTONx_GPIO_CLK_ENABLE(__INDEX__)      __HAL_RCC_GPIOA_CLK_ENABLE()

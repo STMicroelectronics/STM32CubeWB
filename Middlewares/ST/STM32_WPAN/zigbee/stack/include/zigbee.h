@@ -8,7 +8,7 @@
 # define ZB_F_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER) && (_MSC_VER >= 1800)
 # define ZB_WARN_UNUSED
-# define ZB_F_DEPRECATED __declspec(deprecated)
+# define ZB_F_DEPRECATED
 #else
 # define ZB_WARN_UNUSED
 # define ZB_F_DEPRECATED
@@ -54,6 +54,12 @@
 
 /* A subset of WPAN_CHANNELMASK_2400MHZ (HA and SE preferred channels) */
 #define ZB_CHANNELMASK_2400MHZ_HA       0x0318C800U /* Channels 11, 14, 15, 19, 20, 24, 25 */
+
+/* A predefined time to let the stack run in order to send a response, before
+ * proceeding to the next step. This is used to either prevent potential contention
+ * on the RF or if a packet must be sent before the stack parameters are modified
+ * or reset. */
+#define ZB_TIMER_DELAY_FOR_RESPONSE     200U
 
 /* ZigBee Status Codes */
 enum ZbStatusCodeT {
@@ -276,99 +282,31 @@ typedef struct {
         const char *fmt, va_list argptr);
 } ZbInitSetLoggingT;
 
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbInit
- *
- *  DESC
- *      Allocates a new Zigbee stack instance.
- *
- *  PARAMS
- *      extAddr         ; The extended address for this stack instance.
- *      tblSizes        ; defines various table sizes with the stack.
- *                        If NULL, default values are used.
- *      setLogging      ; calls ZbSetLogging with info provided.
- *                        Allows debug output during ZbInit process.
- *                        If NULL, ZbSetLogging is not called.
- *
- *  RETURNS
- *      Pointer to allocated ZigBee stack instance. Used to reference the stack instance in
- *      many of the function calls to and from the stack.
- */
+/* Allocates a new Zigbee stack instance. */
 struct ZigBeeT * ZbInit(uint64_t extAddr, ZbInitTblSizesT *tblSizes, ZbInitSetLoggingT *setLogging);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbDestroy
- *  DESC
- *      Deallocates a Zigbee stack instance.
- *  PARAMS
- *      none
- *  RETURNS
- *      none
- *----------------------------------------------------------------
- */
+/* Deallocates a Zigbee stack instance. */
 void ZbDestroy(struct ZigBeeT *zb);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbSeedRand
- *  DESC
- *      Help seed the stack's PRNG. If the data has real entropy, set the has_entropy flag
- *      to true.
- *  PARAMS
- *      none
- *  RETURNS
- *      none
- *----------------------------------------------------------------
- */
+/* Help seed the stack's PRNG. If the data has real entropy, set the has_entropy flag to true. */
 void ZbSeedRand(struct ZigBeeT *zb, uint8_t *randBuf, unsigned int len, bool has_entropy);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbTimerWork
- *  DESC
- *      Non-blocking, must be called periodically to run the stack. Returns the length of
- *      time (in milliseconds) until the next scheduled timer will elapse, or zero if there
- *      are no scheduled timers.
- *  PARAMS
- *      none
- *  RETURNS
- *      none
- *----------------------------------------------------------------
- */
+/* Called periodically to run the stack. */
 void ZbTimerWork(struct ZigBeeT *zb);
+
+/* Returns the length of time (in milliseconds) until the next scheduled timer will elapse,
+ * or UINT_MAX if there are no scheduled timers. */
 unsigned int ZbCheckTime(struct ZigBeeT *zb);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbWakeupCallbackConfig
- *  DESC
- *      Configure a callback to wakeup the application if there's a new stack event to
- *      process. Not all stack ports require this.
- *  PARAMS
- *      none
- *  RETURNS
- *      none
- *----------------------------------------------------------------
- */
+/* Configure a callback to wakeup the application if there's a new stack event to
+ *      process. Not all stack ports require this. */
 void ZbWakeupCallbackConfig(struct ZigBeeT *zb, void (*wakeup_cb)(void));
 
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbPortStackEventFd
- *  DESC
- *      Called to get the file descriptor to be used to wake-up the stack thread that is
- *      calling ZbTimerWork if something in the stack needs attention. This is only required
- *      in multi-threaded environments. Without this event, it is possible for a user thread
- *      to initiate a stack function which* doesn't tickle the MAC layer, which in turn would
- *      wake up the stack thread.
- *  PARAMS
- *      none
- *  RETURNS
- *      none
- *----------------------------------------------------------------
- */
+/* Called to get the file descriptor to be used to wake-up the stack thread that is
+ * calling ZbTimerWork if something in the stack needs attention. This is only required
+ * in multi-threaded environments. Without this event, it is possible for a user thread
+ * to initiate a stack function which* doesn't tickle the MAC layer, which in turn would
+ * wake up the stack thread. */
 int ZbPortStackEventFd(struct ZigBeeT *zb);
 
 void ZbChangeExtAddr(struct ZigBeeT *zb, uint64_t extAddr);
@@ -381,45 +319,14 @@ enum ZbStatusCodeT ZbLeaveWait(struct ZigBeeT *zb);
 /* Helper function to perform an APS and NWK reset */
 void ZbReset(struct ZigBeeT *zb);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbIfAttach
- *  DESC
- *      Attaches an IEEE 802.15.4 device driver to the ZigBee stack. Uses the link pointers
- *      within the device structure for linking.
- *  PARAMS
- *      zb              ; ZigBee stack instance pointer
- *      dev             ; pointer to driver instance to attach.
- *  RETURNS
- *      true (1) or false (0)
- */
+/* Attaches an IEEE 802.15.4 device driver to the ZigBee stack. Uses the link pointers
+ * within the device structure for linking. */
 bool ZbIfAttach(struct ZigBeeT *zb, struct WpanPublicT *dev);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbIfDetach
- *  DESC
- *      Detaches an IEEE 802.15.4 device driver from the ZigBee stack.
- *  PARAMS
- *      zb          ; ZigBee stack instance pointer
- *      dev         ; pointer to driver instance to detach.
- *  RETURNS
- *      none
- */
+/* Detaches an IEEE 802.15.4 device driver from the ZigBee stack. */
 void ZbIfDetach(struct ZigBeeT *zb, struct WpanPublicT *dev);
 
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbSetLogging
- *  DESC
- *      Specifies the level of logging to use, and a callback that outputs the log information.
- *  PARAMS
- *      zb          ; ZigBee stack instance pointer
- *      mask        ; Log mask of the debug messages you wish to receive.
- *  RETURNS
- *      none
- *---------------------------------------------------------------
- */
+/* Specifies the level of logging to use, and a callback that outputs the log information. */
 void ZbSetLogging(struct ZigBeeT *zb, uint32_t mask,
     void (*func)(struct ZigBeeT *zb, uint32_t mask, const char *hdr, const char *fmt, va_list argptr));
 
@@ -430,6 +337,29 @@ void ZbGetLogging(struct ZigBeeT *zb, uint32_t *mask,
  * ZCL Basic Server API
  *---------------------------------------------------------------
  */
+/* Basic Cluster maximum string lengths. */
+#define ZCL_BASIC_MANUFACTURER_NAME_LENGTH       32U
+#define ZCL_BASIC_MODEL_IDENTIFIER_LENGTH        32U
+#define ZCL_BASIC_DATE_CODE_LENGTH               16U
+#define ZCL_BASIC_LOCATION_DESC_LENGTH           16U
+#define ZCL_BASIC_SW_BUILD_ID_LENGTH             16U
+
+/**
+ * Basic Server Attribute Defaults (ZCL data format).
+ */
+struct ZbZclBasicServerDefaults {
+    uint8_t app_version; /**< ZCL_BASIC_ATTR_APP_VERSION */
+    uint8_t stack_version; /**< ZCL_BASIC_ATTR_STACK_VERSION */
+    uint8_t hw_version; /**< ZCL_BASIC_ATTR_HARDWARE_VERSION */
+    uint8_t mfr_name[ZCL_BASIC_MANUFACTURER_NAME_LENGTH + 1U]; /**< ZCL_BASIC_ATTR_MFR_NAME (First byte length) */
+    uint8_t model_name[ZCL_BASIC_MODEL_IDENTIFIER_LENGTH + 1U]; /**< ZCL_BASIC_ATTR_MODEL_NAME (First byte length) */
+    uint8_t date_code[ZCL_BASIC_DATE_CODE_LENGTH + 1U]; /**< ZCL_BASIC_ATTR_DATE_CODE (First byte length) */
+    uint8_t power_source; /**< ZCL_BASIC_ATTR_POWER_SOURCE (e.g. ZCL_BASIC_POWER_UNKNOWN) */
+    uint8_t sw_build_id[ZCL_BASIC_SW_BUILD_ID_LENGTH + 1U]; /**< ZCL_BASIC_ATTR_SW_BUILD_ID (First byte length) */
+};
+
+void ZbZclBasicServerConfigDefaults(struct ZigBeeT *zb, const struct ZbZclBasicServerDefaults *defaults);
+
 /* Controls whether the Basic Server is allowed to process the ZCL_BASIC_RESET_FACTORY command. */
 void ZbZclBasicServerResetCmdConfig(struct ZigBeeT *zb, bool allow_reset);
 /* Write to the local attributes (e.g. ZCL_BASIC_ATTR_MFR_NAME) */
@@ -478,7 +408,9 @@ unsigned int ZbTimerRemaining(struct ZbTimerT *timer);
 #define ZB_MSG_FILTER_APSDE_DATA_IND            0x00001000U /* APSDE-DATA.indication (ZbApsdeDataIndT) */
 /* Startup Indications */
 #define ZB_MSG_FILTER_STARTUP_IND               0x00002000U /* (struct ZbMsgStartupInd) */
-/* Note, max filter bit we can specify here is  0x00008000U */
+/* Reset to Factory Defaults (e.g. Basic Server ZCL_BASIC_RESET_FACTORY command) */
+#define ZB_MSG_FILTER_FACTORY_RESET             0x00004000U
+/* Note, max filter bit we can specify here is  0x00080000U */
 
 /* Groups of messages that are filterable. */
 #define ZB_MSG_FILTER_NLME \
@@ -494,12 +426,14 @@ unsigned int ZbTimerRemaining(struct ZbTimerT *timer);
 #define ZB_MSG_DEFAULT_PRIO                     64 /* default application priority */
 
 /* Message filter return values. */
-#define ZB_MSG_CONTINUE                         0 /* Continue processing any further filter callbacks. */
-#define ZB_MSG_DISCARD                          1 /* Stop processing further filter callbacks. */
+enum zb_msg_filter_rc {
+    ZB_MSG_CONTINUE = 0, /* Continue processing any further filter callbacks. */
+    ZB_MSG_DISCARD /* Stop processing further filter callbacks. */
+};
 
 struct ZbApsFilterT;
 struct ZbMsgFilterT * ZbMsgFilterRegister(struct ZigBeeT *zb, uint32_t mask, uint8_t prio,
-    int (*callback)(struct ZigBeeT *zb, uint32_t id, void *msg, void *cbarg), void *arg);
+    enum zb_msg_filter_rc (*callback)(struct ZigBeeT *zb, uint32_t id, void *msg, void *cbarg), void *arg);
 void ZbMsgFilterRemove(struct ZigBeeT *zb, struct ZbMsgFilterT *filter);
 
 struct ZbMsgStartupInd {
@@ -517,19 +451,7 @@ bool ZbPersistNotifyRegister(struct ZigBeeT *zb, void (*callback)(struct ZigBeeT
  * ZED Shutdown
  *---------------------------------------------------------
  */
-/*FUNCTION:------------------------------------------------------
- *  NAME
- *      ZbShutdown
- *  DESC
- *      This API moves the stack to shutdown mode, used in case of
- *      a sleepy end device to conserve power.
- *  PARAMS
- *      zb          ; ZigBee stack instance pointer
- *      mask        ; Log mask of the debug messages you wish to receive.
- *  RETURNS
- *      none
- *---------------------------------------------------------------
- */
+/* This API moves the stack to shutdown mode, used in case of a sleepy end device to conserve power. */
 void ZbShutdown(struct ZigBeeT *zb);
 
 /*---------------------------------------------------------------

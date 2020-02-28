@@ -29,22 +29,31 @@
 #include "models_if.h"
 #include "mesh_cfg.h"
 #include "generic.h"
+#include "common.h"
 #include "serial_if.h"
 #include "appli_nvm.h"
-//#include "gp_timer.h"
+#include "pal_nvm.h"
+#include "appli_config_client.h"
+#include "appli_generic_client.h"
+#include "appli_light_client.h"
 
 #include "stm32_seq.h"
 #include "PWM_config.h"
+#ifdef ENABLE_PROVISIONER_FEATURE
+#include "serial_prvn.h"
+#endif
+#include "mesh_cfg_usr.h"
 
-/** @addtogroup BLE_Mesh
+/** @addtogroup ST_BLE_Mesh
 *  @{
 */
 
-/** @addtogroup Application_Callbacks_BLE
+/** @addtogroup Application_Mesh_Models
 *  @{
 */
 
 /* Private define ------------------------------------------------------------*/
+#define APPLI_OPTIM                     0
 
 /*********** Macros to be modified according to the requirement *************/
 #define BOUNCE_THRESHOLD                20U
@@ -52,17 +61,28 @@
 #define MANUAL_UNPROVISION_TIMER        3000U
 #define FLASH_ERASE_TIME                100U
 //#define DISCOVER_TIMER                  10*60*1000 /* 10 minutes */
-#define DISCOVER_TIMER_INTERVAL         /*10*60**/(1000000/CFG_TS_TICK_VAL)  /* 10 minutes */
+#define DISCOVER_TIMER_INTERVAL         10*60*(1000000/CFG_TS_TICK_VAL)  /* 10 minutes */
+#if (APPLI_OPTIM == 1)
+#define APPLI_MESH_TIMER_INTERVAL       1*(1000/CFG_TS_TICK_VAL)  /* 1 ms */
+#endif
 #define DEFAULT_DELAY_PACKET_FROM         500U
 #define DEFAULT_DELAY_PACKET_RANDOM_TIME  500U
 #define USER_OUTPUT_OOB_APPLI_PROCESS           0U
 #define INPUT_OOB_TIMEOUT                       300U /* input Oob30 Sec timeout*/
 #define PBADV_UNPROV_DEV_BEACON_INTERVAL        100U /* 100 ms */
+#define DEVICE_KEY_SIZE                         16U
+#define APP_KEY_SIZE                            16U
+#if (LOW_POWER_FEATURE == 1)
+#define LPN_API_TIMER_INTERVAL           15*(1000000/CFG_TS_TICK_VAL)  /* 15 secondes */
+#endif
 /* Private macro -------------------------------------------------------------*/
 #define MAX_APPLI_BUFF_SIZE             8 
 #define MAX_PENDING_PACKETS_QUE_SIZE    2
 #define DATA_BUFFER_LENGTH              8
-#define MAX_NUMB_ELEMENTS 3
+#define MAX_NUMB_ELEMENTS               APPLICATION_NUMBER_OF_ELEMENTS
+#define CUSTOM_BEACON_AD_TYPE           0x00
+#define ENABLE_CUSTOM_BEACON            0
+#define CUSTOM_BEACON_INTERVAL          2000U
 
 /**********************Friendship callbacks macros ****************************/
 #define FN_CLEARED_REPEAT_REQUEST   1
@@ -77,9 +97,7 @@ enum ButtonState
   BS_OFF,
   BS_DEBOUNCE,
   BS_SHORT_PRESS,
-  BS_SHORT_PRESS2,
-  BS_LONG_PRESS,
-  BS_LONG_PRESS2
+  BS_LONG_PRESS
 };
 
 enum ButtonState buttonState = BS_OFF;
@@ -96,10 +114,17 @@ static MOBLEUINT8 PrvngInProcess = 0;
 static MOBLEUINT32 OutputOobData = 0;
 static MOBLEUINT32 OutputOobBlinkCount = 0;
 #endif
+
 #ifdef ENABLE_AUTH_TYPE_INPUT_OOB
 MOBLEUINT8 InputOobData[8] = {0};
 MOBLEUINT8 inputOOBDataReady = 0;
 #endif
+
+#ifdef ENABLE_PROVISIONER_FEATURE
+static MOBLEUINT8 NewProvNodeDevKey[DEVICE_KEY_SIZE] = {0};  
+static MOBLEUINT8 NewProvNodeAppKey[APP_KEY_SIZE] = {0}; 
+#endif
+MOBLEUINT16 nodeAddressOffset = 1;
 /*Number Of Elements selected per Node. Maximum Elements supported = 3*/
 MOBLEUINT8 NumberOfElements = APPLICATION_NUMBER_OF_ELEMENTS;
 
@@ -110,6 +135,7 @@ const MOBLEUINT8 StaticOobBuff[STATIC_OOB_SIZE] = {0x01, 0x00, 0x00, 0x00, 0x00,
 #else
 const MOBLEUINT8 StaticOobBuff[] = {0};
 #endif
+
 #ifdef PUB_KEY_TYPE_OOB
 /* 64 octets Public Key information to be input here. It is only required for Public Key OOB case.
 Used during provisioning by Library */
@@ -131,11 +157,14 @@ const MOBLEUINT8 PrivKeyBuff[] = NULL;
 
 
 
-/*Select Node as Sniffer, Means able to sniff all the packets*/
+/* Select Node as Sniffer, Means able to sniff all the packets 
+*  0 - Filters are enabled and packets not targeted to node are filtered
+*  1 - Filters are disabled and packets not targeted to node are not filtered
+*/
 MOBLEUINT8 DisableFilter = 0;
 
 #if LOW_POWER_FEATURE
-MOBLEINT32 BluenrgMesh_sleepTime;
+MOBLEINT32 BLEMesh_sleepTime;
 MOBLEUINT32 SysRefCount;
 #endif
 
@@ -147,30 +176,30 @@ MOBLEUINT8 provisioning_completion;
 /* Timer to control unprovisioned device beacons */
 #if PB_ADV_SUPPORTED
 MOBLEUINT8 discoverTimer_Id;
+tClockTime discoverTimerinterval = DISCOVER_TIMER_INTERVAL;
+#endif
+
+#if (APPLI_OPTIM == 1)
+MOBLEUINT8 appliTaskTimer_Id;
+#endif
+#if LOW_POWER_FEATURE
+volatile uint8_t BleProcessInit = 0;
+#endif
+#if (LOW_POWER_FEATURE == 1)
+MOBLEUINT8 lowPowerNodeApiTimer_Id;
 #endif
 
 /********************* Application configuration **************************/
 #if defined(__GNUC__) || defined(__IAR_SYSTEMS_ICC__) || defined(__CC_ARM)
 MOBLEUINT8 bdaddr[8];
-/* Mesh application data 1 sector used 125 */
-//extern const MOBLEUINT8 _bdaddr[];
-//const void *appNvmBase = _bdaddr;
-
-/* Mesh library configuration 2 sectors used: 126 and 127 */
-//extern const char* _bleNvmBase_data[];
-//const void *mobleNvmBase = _bleNvmBase_data;
 
 #ifdef INTERNAL_UNIQUE_NUMBER_MAC
 static void Appli_GetMACfromUniqueNumber(void);
 #endif /* INTERNAL_UNIQUE_NUMBER_MAC */
 
-/* NVM addresses for Nucleo 1Mb */
-const void *mobleNvmBase = (const void *)0x0807E000; /* 2 sectors used: 126 and 127 */ 
-const void *appNvmBase   = (const void *)0x0807D000; /* 1 sector  used: 125 */
-/* NVM addresses for Nucleo 512Kb */
-//const void *mobleNvmBase = (const void *)0x08056000; /* 2 sectors used: 86 and 87 */ 
-//const void *appNvmBase   = (const void *)0x08055000; /* 1 sector  used: 85 */
-
+const void *mobleNvmBase; 
+const void *appNvmBase;
+const void *prvsnr_data;
 #else
 #error "Unknown compiler"
 #endif /* __GNUC__ || defined(__IAR_SYSTEMS_ICC__) || defined(__CC_ARM) */
@@ -178,10 +207,20 @@ const void *appNvmBase   = (const void *)0x0807D000; /* 1 sector  used: 125 */
 /* Private function prototypes -----------------------------------------------*/
 //static void Appli_LongButtonPress(void);
 static void Appli_ShortButtonPress(void);
+#if USER_OUTPUT_OOB_APPLI_PROCESS
 void Appli_OobAuthenticationProcess(void);
+#endif
 void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason);
 void Appli_LowPowerProcess(void);
-
+#if (PROVISIONER_FEATURE == 1)
+MOBLEUINT16 BLEMesh_PvnrDataInputCallback(MOBLEUINT8* devKey, MOBLEUINT8* appKey);
+#endif
+#if (APPLI_OPTIM == 1)
+static void AppliMeshTask(void);
+#endif
+#if (PROVISIONER_FEATURE == 1) 
+void Appli_SelfConfigurationProcess(void);
+#endif
 /* Private functions ---------------------------------------------------------*/
 
 /************************* Button Control functions ********************/
@@ -214,75 +253,21 @@ static void Appli_LongButtonPress(void)
 */ 
 static void Appli_UpdateButtonState(int isPressed)
 {
-  /* Check for button state */
-  switch (buttonState)
-  {
-    /* Case for Button State off */
-  case BS_OFF:
-    if (isPressed)
-    {
-        /* move to debounce state */
-      buttonState = BS_DEBOUNCE;
-      tBounce = Clock_Time();
-    }
-    break;
-    /* Case for Button Debounce */
-  case BS_DEBOUNCE:
-    if (isPressed)
-    {
-      /* Debouncing Delay check */
-      if (Clock_Time() - tBounce > BOUNCE_THRESHOLD)
-      {   
-        if (BSP_PB_GetState(BUTTON_SW1) == BUTTON_PRESSED)    
-          buttonState = BS_SHORT_PRESS;
-      }
-      else
-      {
-          /* continue to be in BS_DEBOUNCE */
-      }
-    }
-    else
-    {
-      buttonState = BS_OFF;
-      }
-      break;
-    /* Case if Button 1 is pressed for duration > BOUNCE_THRESHOLD */
-  case BS_SHORT_PRESS:
-      if (isPressed)
-      {
-        if ((Clock_Time() - tBounce) > LONG_PRESS_THRESHOLD)
-    {
-          /* If Button 1 is pressed for duration > LONG_PRESS_THRESHOLD  */
-      buttonState = BS_LONG_PRESS;
-    }
-    else
-    {
-          /* continue in same state */
-        }
-      }
-      else
-      {
-        /* Button 1 short press action */
-        Appli_ShortButtonPress();
+  uint32_t t0 = 0,t1 = 1;
+
+  t0 = Clock_Time(); /* SW1 press timing */
   
-        buttonState = BS_OFF;
-      }
-      break;
-    case BS_LONG_PRESS:
-      if (isPressed)
-      {
-        /* Long press action */
-        Appli_IntensityControlPublishing();
-    }
-      else
-    {
-        buttonState = BS_OFF;
-    }
-    break;
-    /* Default case */
-  default:
-    buttonState = BS_OFF;
-    break;
+  while(BSP_PB_GetState(BUTTON_SW1) == BUTTON_PRESSED);
+  t1 = Clock_Time(); /* SW1 release timing */
+  
+  if((t1 - t0) > LONG_PRESS_THRESHOLD)
+  {
+    IntensityPublish();
+  }
+  else if((t1 - t0) > BOUNCE_THRESHOLD)
+  {
+    /* Button 1 short press action */
+    Appli_ShortButtonPress();
   }
 }
 
@@ -291,14 +276,34 @@ static void Appli_UpdateButtonState(int isPressed)
 * @param  void
 * @retval void
 */ 
-static void Appli_Mesh_Process()
+static void Mesh_Task()
 {
   BLEMesh_Process();
   BLEMesh_ModelsProcess(); /* Models Processing */
+  
+#if (APPLI_OPTIM == 0)
+  /* Set the task in the scheduler for the next execution */
+#if (LOW_POWER_FEATURE == 0)
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
+#endif
+#endif
+}
+
+/**
+* @brief  task for the BLE MESH, the MESH Models and the Appli processes  
+* @param  void
+* @retval void
+*/ 
+static void Appli_Task()
+{
   Appli_Process();
   
+#if (APPLI_OPTIM == 0)
   /* Set the task in the scheduler for the next execution */
-  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
+#if (LOW_POWER_FEATURE == 0)
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_APPLI_REQ_ID, CFG_SCH_PRIO_0);
+#endif
+#endif
 }
 
 /************************* LED Control functions ********************/
@@ -391,7 +396,7 @@ MOBLE_RESULT Appli_BleSetTxPowerCb(void)
   en_high_power Can be only 0 or 1. Set high power bit on or off.
   pa_level Can be from 0 to 7. Set the PA level value
   */ 
-  status = aci_hal_set_tx_power_level(1, 0x18);
+  status = aci_hal_set_tx_power_level(1, CFG_TX_POWER);
   if (status)
     return MOBLE_RESULT_FAIL;
   else
@@ -471,11 +476,7 @@ void Appli_BleGattConnectionCompleteCb(void)
   /* Proxy Node, will be called whenever Gatt connection is established */
   /* Turn ON Red LED*/
   ProxyFlag = 1;
-#if LOW_POWER_FEATURE
-  /* do nothing */
-#else
   BSP_LED_On(LED_GREEN);
-#endif
 }
 
 /**
@@ -489,11 +490,7 @@ void Appli_BleGattDisconnectionCompleteCb(void)
   /* Proxy Node, will be called whenever Gatt disconnected */
   /* Turn Off Red LED*/
   ProxyFlag = 0;
-#if LOW_POWER_FEATURE
-  /* do nothing */
-#else
   BSP_LED_Off(LED_GREEN);
-#endif
 }
 
 /**
@@ -518,9 +515,16 @@ MOBLEUINT8 Appli_BleSetNumberOfElementsCb(void)
 {
   if(NumberOfElements > MAX_NUMB_ELEMENTS)
   {
-    TRACE_M(TF_ELEMENTS,"Currently Three Elements per node are supported!\r\n"); 
+    TRACE_M(TF_ELEMENTS,"In version 1.11.00x one Element per node is supported!\r\n"); 
     return MAX_NUMB_ELEMENTS;
   }
+  
+  else if(NumberOfElements == 0)
+  {
+    TRACE_M(TF_ELEMENTS,"Number Of Elements must be 1 or greater than 1!\r\n"); 
+    return 1;
+  }
+  
   else
   {
   return NumberOfElements;
@@ -665,6 +669,12 @@ void Appli_CheckForUnprovision(void)
     if (!interrupted)
     {
       BLEMesh_Unprovision();
+      
+      MoblePalNvmErase(NVM_BASE, 0);      
+      MoblePalNvmErase(NVM_BASE, 0x1000);
+      MoblePalNvmErase(APP_NVM_BASE, 0);
+      MoblePalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
+      
       AppliNvm_ClearModelState();     
       TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
       t = Clock_Time();
@@ -679,12 +689,30 @@ void Appli_CheckForUnprovision(void)
       }
     }
     BSP_LED_Off(LED_BLUE);
+    NVIC_SystemReset();
   }
   
   /* Register the task for all MESH dedicated processes */
-  UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_REQ_ID, UTIL_SEQ_RFU, Appli_Mesh_Process );
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_REQ_ID, UTIL_SEQ_RFU, Mesh_Task );
   /* Set the task in the scheduler for the next scheduling */
+#if (LOW_POWER_FEATURE == 0)
   UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);  
+#else
+  BleProcessInit = 1;
+#endif
+  
+  /* Register the task for all MESH dedicated processes */
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_APPLI_REQ_ID, UTIL_SEQ_RFU, Appli_Task );
+  /* Set the task in the scheduler for the next scheduling */
+#if (LOW_POWER_FEATURE == 0)
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_APPLI_REQ_ID, CFG_SCH_PRIO_0);
+#endif  
+
+#if (APPLI_OPTIM == 1)
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &appliTaskTimer_Id, hw_ts_Repeated, AppliMeshTask);
+  
+  HW_TS_Start(appliTaskTimer_Id, APPLI_MESH_TIMER_INTERVAL);
+#endif
 }
 
 /**
@@ -816,12 +844,53 @@ SleepModes App_SleepMode_Check(SleepModes sleepMode)
 void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason)
 {
   ProvisionFlag = 0; 
-  TRACE_M(TF_PROVISION,"Device is unprovisioned by provisioner \n\r");
+  TRACE_I(TF_PROVISION,"Device is unprovisioned by provisioner \n\r");
 #if PB_ADV_SUPPORTED
-  BLEMesh_SetUnprovisionedDevBeaconInterval(100);
+  BLEMesh_SetUnprovisionedDevBeaconInterval(PBADV_UNPROV_DEV_BEACON_INTERVAL);
 #endif
   AppliNvm_ClearModelState();
 }
+
+#if (PROVISIONER_FEATURE == 1)
+void SaveProvisionedNodeAddress(void)
+{
+  nodeAddressOffset += 1;   /* Increment the last known address by 1 
+                               after success */
+
+  Appli_ConfigClientStartNodeConfiguration(1);
+}
+
+MOBLEUINT8* GetNewProvNodeDevKey(void)
+{
+  return &NewProvNodeDevKey[0];
+}
+
+MOBLEUINT8* GetNewProvNodeAppKey(void)
+{
+  return &NewProvNodeAppKey[0];
+}
+
+/**
+* @brief  Function to Get the Node Address for provisioning 
+* @param  void
+* @retval void
+*/
+MOBLE_ADDRESS GetAddressToConfigure(void)
+{
+  return nodeAddressOffset; /* Take last address provisioned */
+}
+
+/**
+* @brief  Function to Get the Node Address for provisioning 
+* @param  void
+* @retval void
+*/
+MOBLE_ADDRESS GetNewAddressToProvision(void)
+{
+  return nodeAddressOffset+1; /* Take last address and increment by 1 before to 
+                                give to provisioner FSM */
+}
+#endif
 
 /**
 * @brief  callback for provision the node by provisioner.
@@ -834,9 +903,206 @@ void BLEMesh_ProvisionCallback(void)
 #ifdef ENABLE_AUTH_TYPE_OUTPUT_OOB
   PrvngInProcess = 0;
 #endif
-  TRACE_M(TF_PROVISION,"Device is provisioned by provisioner \r\n");
+  TRACE_I(TF_PROVISION,"Device is provisioned by provisioner \r\n");
+  
+//#if (PROVISIONER_FEATURE == 1)
+//  //nodeAddressOffset = nodeAddressOffset + 1;
+//  SaveProvisionedNodeAddress();
+//#endif
+#if (LOW_POWER_FEATURE == 1)
+  /* Call API LPN_API_TIMER_INTERVAL after LPN provisioning */
+  HW_TS_Start(lowPowerNodeApiTimer_Id, LPN_API_TIMER_INTERVAL);
+#endif
 }
 
+#if (PROVISIONER_FEATURE == 1) 
+/**
+* @brief  callback for getting the Node Address by provisioner & giving device key.
+* @param  void
+* @retval void
+*/
+MOBLEUINT16 BLEMesh_PvnrDataInputCallback(MOBLEUINT8* devKey, MOBLEUINT8* appKey)
+{
+  MOBLE_ADDRESS newNodeAddressToProvision;
+  memcpy(NewProvNodeDevKey,devKey,sizeof(NewProvNodeDevKey));
+  memcpy(NewProvNodeAppKey,appKey,sizeof(NewProvNodeAppKey));
+  
+  TRACE_M(TF_PROVISION,"Device Key: ");
+  for (MOBLEUINT8 count=0 ; count<DEVICE_KEY_SIZE; count++)
+  {
+    TRACE_I(TF_PROVISION,"%.2x ", NewProvNodeDevKey[count]);
+  }
+
+  TRACE_M(TF_PROVISION,"\r\n");
+  TRACE_M(TF_PROVISION,"App Key: ");
+  for (MOBLEUINT8 count=0 ; count<DEVICE_KEY_SIZE; count++)
+  {
+    TRACE_I(TF_PROVISION,"%.2x ", NewProvNodeAppKey[count]);
+  }
+  
+  TRACE_M(TF_PROVISION,"\r\n");
+  
+  AppliPrvnNvm_SaveData(NewProvNodeDevKey ,sizeof(NewProvNodeDevKey));
+  newNodeAddressToProvision = GetNewAddressToProvision();
+  
+  TRACE_M(TF_PROVISION,"Node Address Assigning = %d \r\n",newNodeAddressToProvision);
+  
+  return newNodeAddressToProvision;
+}
+
+
+#define SELF_CONFIG_IDLE_STATE 0
+#define SELF_CONFIG_INIT_STATE 1 
+#define SELF_CONFIG_START_STATE 2
+#define SELF_APPKEY_BIND_STATE 3
+#define SELF_SUBSCRIBE_DEFAULT_STATE 4
+#define SELF_PUBLISH_DEFAULT_STATE 5
+uint8_t self_config_state= SELF_CONFIG_IDLE_STATE;
+
+void Start_SelfConfiguration (void)
+{
+  self_config_state = SELF_CONFIG_INIT_STATE;
+}
+
+/**
+* @brief  callback for getting the Node Address by provisioner & giving device key.
+* @param  void
+* @retval void
+*/
+void Appli_SelfConfigurationProcess(void)
+{
+  /* Following functions help to Configure the Provisioner to default settings*/
+    
+  switch (self_config_state)
+  {
+  case SELF_CONFIG_IDLE_STATE:
+   /* Nothing to do, just wait*/ 
+    return;
+    
+  case SELF_CONFIG_INIT_STATE:
+     /* This state is just to make a "NVM Process" to run once, because the 
+         function will exit after changing the state*/
+    self_config_state = SELF_CONFIG_START_STATE;
+    break;
+  
+  case SELF_CONFIG_START_STATE:
+    ApplicationSetNodeSigModelList();
+    self_config_state = SELF_APPKEY_BIND_STATE;
+   break;
+    
+  case SELF_APPKEY_BIND_STATE:
+    Appli_ConfigClient_SelfDefaultAppKeyBind();
+    self_config_state = SELF_SUBSCRIBE_DEFAULT_STATE;
+    break;
+  
+  case SELF_SUBSCRIBE_DEFAULT_STATE:
+    AppliConfigClient_SelfSubscriptionSetDefault();
+    self_config_state = SELF_PUBLISH_DEFAULT_STATE;
+    break;
+
+  case SELF_PUBLISH_DEFAULT_STATE:
+    AppliConfigClient_SelfPublicationSetDefault();
+    self_config_state = SELF_CONFIG_IDLE_STATE;
+    break;
+    
+    
+  default:
+    break;
+  }
+}
+#endif
+
+
+/**
+* @brief  This function scans and prints unprovisioned devices  
+* @param  unprovDeviceArray: Pointer of an array for filling unprovisioned device UUIDs
+* @param  noOfUnprovDevices: Pointer to take total count of nearby unprovisioned devices
+* @retval MOBLE_RESULT
+*/  
+MOBLE_RESULT BLEMesh_ScanDevices(neighbor_params_t *unprovDeviceArray, MOBLEUINT8 *noOfUnprovDevices)
+{
+  MOBLE_RESULT result;
+  
+    result = BLEMesh_GetNeighborState(unprovDeviceArray,noOfUnprovDevices);
+    /* Array print for testing */
+    /* Check if any unprovisioned device is available */
+    if(!(*noOfUnprovDevices))
+    {
+        TRACE_I(TF_PROVISION,"No Unprovisioned Device Nearby\r\n");  
+    }
+    else
+    {
+        for(MOBLEINT8 count=0; count < *noOfUnprovDevices; count++)
+        {
+          BLEMesh_PrintStringCb("");  
+          TRACE_I(TF_PROVISION,"Device-%d -> ", count);  
+          BLEMesh_PrintDataCb(unprovDeviceArray[count].uuid, 16);
+        }
+    }
+  return result;
+}
+/**
+* @brief  This function returns starts the provisioning of one of the devices
+* @param  unprovDeviceArray: Pointer of an array having unprovisioned device UUIDs
+* @param  index: Index of the device to be provisioned
+* @retval MOBLE_RESULT
+*/  
+MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray, MOBLEUINT16 index)
+{
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+    
+  result = BLEMesh_ProvisionRemote((unprovDeviceArray+index)->uuid);
+
+  return result;
+}
+
+/* Customized implementation for provisioning a device from mesh node - End */
+
+/**
+* @brief  Call back function called when PB-ADV link Opened  
+* @param  none
+* @retval none
+*/ 
+void BLEMesh_PbAdvLinkOpenCb(void)
+{ 
+  ProvisionFlag = 0;
+  TRACE_M(TF_PROVISION,"PB-ADV Link opened successfully \n\r");    
+#ifdef ENABLE_PROVISIONER_FEATURE
+  SerialPrvn_ProvisioningStatusUpdateCb(MOBLE_TRUE, 0);
+#endif
+  /* Turn ON Red LED*/
+#if LOW_POWER_FEATURE
+  /* do nothing */
+#else
+  BSP_LED_On(LED_RED);
+#endif
+}
+
+/**
+* @brief  Call back function called when PB-ADV link Closed   
+* @param  none
+* @retval none
+*/ 
+void BLEMesh_PbAdvLinkCloseCb(void)
+{
+  TRACE_M(TF_PROVISION,"PB-ADV Link Closed successfully \n\r");   
+  /* Turn Off Red LED*/
+#if LOW_POWER_FEATURE
+  /* do nothing */
+#else
+  BSP_LED_Off(LED_RED);
+#ifdef ENABLE_PROVISIONER_FEATURE
+  SerialPrvn_ProvisioningStatusUpdateCb(MOBLE_FALSE, nodeAddressOffset);
+#endif
+#endif
+  #if (PROVISIONER_FEATURE == 1)
+  if (ProvisionFlag == 1)
+  {
+    SaveProvisionedNodeAddress();
+    ProvisionFlag = 0;
+  }
+#endif
+}
 /**
 * @brief  callback for friendship established by friend node
 * @param  address of corresponding low power node
@@ -854,7 +1120,7 @@ void BLEMesh_FnFriendshipEstablishedCallback(MOBLE_ADDRESS lpnAddress,
 { 
   TRACE_M(TF_LPN_FRND,"Friendship established. Low power node address 0x%.4X \r\n", lpnAddress);
   TRACE_M(TF_LPN_FRND,"Low power node receive delay %dms \r\n", lpnReceiveDelay);
-  TRACE_M(TF_LPN_FRND,"Low power node poll timeout %dms \r\n", lpnPollTimeout*100);
+  TRACE_M(TF_LPN_FRND,"Low power node poll timeout %ldms \r\n", lpnPollTimeout*100);
   TRACE_M(TF_LPN_FRND,"Low power node number of elements %d \r\n", lpnNumElements);
   if (lpnPrevFriendAddress != MOBLE_ADDRESS_UNASSIGNED)
   {
@@ -901,6 +1167,7 @@ void BLEMesh_FnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS lpnAdd
 void BLEMesh_LpnFriendshipEstablishedCallback(MOBLE_ADDRESS fnAddress)
 {
   /* Friendship established */
+  TRACE_M(TF_LPN_FRND,"Friend node responding, friendship established.\r\n");
 }
 
 /**
@@ -1054,81 +1321,80 @@ void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
   TRACE_M(TF_NEIGHBOUR,"\n\r");
 }
 
-/**
-* @brief  Appli_IntensityControl:Function to increase the intensity of led by
-*          Publishing the value.
-* @param  void
+/** 
+* @brief  Beacon received callback
+*         Beacons are received only if received beacon ad type is not 
+*         Mesh Message, Mesh Beacon or PB-ADV
+* @param  MAC address
+*         data
+*         length of beacon
+*         rssi value of beacon
+* @retval void
 */
-void Appli_IntensityControlPublishing(void)
+#if (ENABLE_CUSTOM_BEACON == 1)
+/* BLEMesh_CustomBeaconReceivedCallback high frequency callback */
+void BLEMesh_CustomBeaconReceivedCallback(const MOBLEUINT8* bdAddr,
+                                              const MOBLEUINT8* data,
+                                              MOBLEUINT8 length,
+                                              MOBLEINT8 rssi)
 {
-  MOBLEUINT8 generic_Level_Buff[3];
-  MOBLE_ADDRESS publishAddress;
-  MOBLEUINT8 elementNumber;
-  MOBLEUINT8 elementIndex;
-        
-  /*Select the Element Number for which publication address is required*/
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
-  if (NumberOfElements == 1)
+  if (length < 2)
   {
-    elementNumber = 0x01; 
+    result = MOBLE_RESULT_FAIL;
+    TRACE_M(TF_BEACON, "Message is too small \r\n");
   }
   
-  else if(NumberOfElements == 2)
-  { 
-    elementNumber = 0x02; /*Element 2 is configured as switch*/
-  }
-  
-  else if(NumberOfElements == 3)
+  if (result == MOBLE_RESULT_SUCCESS)
   {
-    elementNumber = 0x03; /*Element 3 is configured as switch*/
-  }
-  
-  else
-  {
-    elementNumber = 0x01;
-  }
-  
-  publishAddress = BLEMesh_GetPublishAddress(elementNumber);
-  elementIndex = elementNumber-1;
-  
-  TRACE_M(TF_MISC,"IntensityFlag %d\n\r", IntensityFlag);
-      
-  if(IntensityFlag == FALSE)
-  {
-      
-    IntensityValue = IntensityValue + (INTENSITY_LEVEL_FULL/5);
-    generic_Level_Buff[0] = (MOBLEUINT8)IntensityValue;
-    generic_Level_Buff[1] = (MOBLEUINT8)(IntensityValue >> 8) ;
-    
-    TRACE_M(TF_MISC,"IntensityValue %d\n\r", IntensityValue);
-    
-    BLEMesh_SetRemoteData(publishAddress, elementIndex, GENERIC_LEVEL_SET_UNACK , 
-                          generic_Level_Buff,3, MOBLE_FALSE, MOBLE_FALSE);
-    
-    if(IntensityValue >= INTENSITY_LEVEL_FULL)
+    if ((length-1) < data[0])
     {
-      IntensityFlag = TRUE;
-    }
-     
+      result = MOBLE_RESULT_FAIL;
+      TRACE_M(TF_BEACON, "Length field does not match with message length \r\n");
+    }    
   }
-  else
-  {
-     
-    IntensityValue = IntensityValue - (INTENSITY_LEVEL_FULL/5);
-    generic_Level_Buff[0] = (MOBLEUINT8)IntensityValue;
-    generic_Level_Buff[1] = (MOBLEUINT8)(IntensityValue >> 8) ;
-    
-    TRACE_M(TF_MISC,"IntensityValue %d\n\r", IntensityValue);
-    
-    BLEMesh_SetRemoteData(publishAddress, elementIndex, GENERIC_LEVEL_SET_UNACK, 
-                              generic_Level_Buff, 3, MOBLE_FALSE, MOBLE_FALSE); 
-    
-    if(IntensityValue <= INTENSITY_LEVEL_ZERO)
-    {
-      IntensityFlag = FALSE;
-    }
   
+  if (result == MOBLE_RESULT_SUCCESS)
+  {
+    MOBLEUINT8 adType = data[1];
+    MOBLEUINT8 i;
+    
+    if (adType == CUSTOM_BEACON_AD_TYPE)
+    {
+      TRACE_M(TF_BEACON, "Message length(%d), ad type(0x%.2x), rssi(%d) \r\n", length-2, adType, rssi);        
+      TRACE_M(TF_BEACON, "Message:\r\n");        
+      for(i = 0; i < length-2; i++)
+        TRACE_M(TF_BEACON, "data[%d]= %d\r\n", i, data[2+i]);
+    }
+    else
+    {
+      /* Discard, Ad type mismatch */
+    }
   }
+}
+#endif /* BLEMesh_CustomBeaconReceivedCallback high frequency callback */
+
+/** 
+* @brief  Custom beacon generator
+*         If size set to > 31 bytes, beacon is rejected
+*         BLEMesh_SetCustomBeaconInterval should be set to get this callback
+* @param  beacon data buffer. It includes length and AD type fields
+*         buffer size
+* @retval void
+*/
+void BLEMesh_CustomBeaconGeneratorCallback(void* buffer, MOBLEUINT8* size)
+{
+  MOBLEUINT8 adType = CUSTOM_BEACON_AD_TYPE;
+  MOBLEUINT8 dataLength = 5;
+  MOBLEUINT8 data[5] = {0x00,0x01,0x02,0x03,0x04};
+  MOBLEUINT8* buf = (MOBLEUINT8*)buffer;
+  
+  buf[0] = dataLength+1;
+  buf[1] = adType;
+  memcpy(buf+2, data, dataLength);
+  
+  *size = dataLength+2;  
 }
 
 /**
@@ -1169,6 +1435,61 @@ void Appli_LowPowerProcess(void)
 }
 
 /**
+* @brief  Appli_IntensityControlPublishing:Function is used to set the intensity value.
+*          Publishing the value.
+* @param  void
+* @retval void
+*/
+void Appli_IntensityControlPublishing(MOBLEUINT8* value)
+{
+      
+  if(IntensityFlag == FALSE)
+  {
+      
+    IntensityValue = IntensityValue + (INTENSITY_LEVEL_FULL/5);
+    value[0] = (MOBLEUINT8)IntensityValue;
+    value[1] = (MOBLEUINT8)(IntensityValue >> 8) ;
+    
+    if(IntensityValue >= INTENSITY_LEVEL_FULL)
+    {
+      IntensityFlag = TRUE;
+    }
+     
+  }
+  else
+  {
+     
+    IntensityValue = IntensityValue - (INTENSITY_LEVEL_FULL/5);
+    value[0] = (MOBLEUINT8)IntensityValue;
+    value[1] = (MOBLEUINT8)(IntensityValue >> 8) ;    
+    
+    if(IntensityValue <= INTENSITY_LEVEL_ZERO)
+    {
+      IntensityFlag = FALSE;
+    }
+  
+  }
+}
+
+/**
+* @brief  Publish the intensity value for generic level or light lightness 
+*         This function should be called in main loop
+* @param  void
+* @retval void
+*/
+void IntensityPublish(void)
+{  
+  
+#ifdef LIGHT_CLIENT_MODEL_PUBLISH 
+  Appli_LightClient_Lightness_Set();
+#endif
+  
+#ifdef GENERIC_CLIENT_MODEL_PUBLISH
+  Appli_GenericClient_Level_Set_Unack();
+#endif  
+}
+
+/**
 * @brief  Application processing 
 *         This function should be called in main loop
 * @param  void
@@ -1176,10 +1497,15 @@ void Appli_LowPowerProcess(void)
 */
 void Appli_Process(void)
 {
-  Appli_UpdateButtonState(BSP_PB_GetState(BUTTON_SW1) == BUTTON_PRESSED);
-
-  Appli_LowPowerProcess();
+#ifdef ENABLE_SAVE_MODEL_STATE_NVM  
+  AppliNvm_Process();
+#endif
   
+#if (SAVE_EMBD_PROVISION_DATA == 1)  
+  AppliPrvnNvm_Process();
+#endif    
+    
+  Appli_LowPowerProcess();
 #ifdef ENABLE_AUTH_TYPE_OUTPUT_OOB
   if(PrvngInProcess)
   {
@@ -1188,10 +1514,11 @@ void Appli_Process(void)
 #endif
   }
 #endif
-#ifdef ENABLE_SAVE_MODEL_STATE_NVM  
-  AppliNvm_Process();
+
+#if PROVISIONER_FEATURE      
+  Appli_ConfigClient_Process();
+  Appli_SelfConfigurationProcess();
 #endif
-  
 }
 
 #if PB_ADV_SUPPORTED
@@ -1209,6 +1536,40 @@ static void UnprovisionedDeviceBeaconTask(void)
    */
   UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_BEACON_REQ_ID, CFG_SCH_PRIO_0);
 
+  return;
+}
+#endif
+
+#if (APPLI_OPTIM == 1)
+static void AppliMeshTask(void)
+{
+  /* Set the task in the scheduler for the next execution */
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
+
+  return;
+}
+#endif
+
+static void AppliMeshSW1Task(void)
+{
+  Appli_UpdateButtonState(BSP_PB_GetState(BUTTON_SW1) == BUTTON_PRESSED);
+  
+  return;
+}
+
+#if (LOW_POWER_FEATURE == 1)
+static void LowPowerNodeApiApp(void)
+{
+  TRACE_I(TF_PROVISION,"Scan disabled \r\n");
+  BLEMesh_LpnDisableScan();
+  return;
+}
+
+static void LowPowerNodeApiTask(void)
+{
+  /* Set the task in the scheduler for the next execution */
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_LPN_REQ_ID, CFG_SCH_PRIO_0);
+  
   return;
 }
 #endif
@@ -1243,13 +1604,18 @@ static void GPIO_InitNVICPowerOff(void)
 * @param  void
 * @retval void
 */
-void Appli_Init(void)
+void Appli_Init(MOBLEUINT8 *flag)
 {
 #ifdef ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE  
   /* Hardware Factory Restore implementation */
   AppliNvm_FactorySettingReset();
 #endif
   
+#ifdef ENABLE_PROVISIONER_FEATURE  
+  /* Hardware Factory Provisioner data Restore implementation */  
+  AppliPrvnNvm_FactorySettingReset(flag);
+#endif
+
 #if PB_ADV_SUPPORTED
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_BEACON_REQ_ID, UTIL_SEQ_RFU, UnprovisionedDeviceBeaconApp );
   /**
@@ -1259,16 +1625,34 @@ void Appli_Init(void)
   
   HW_TS_Start(discoverTimer_Id, DISCOVER_TIMER_INTERVAL);
 #endif
+  
 #if ENABLE_SERIAL_INTERFACE
   Serial_Init();
 #endif
+  
 #ifdef SAVE_MODEL_STATE_POWER_FAILURE_DETECTION       
   GPIO_InitNVICPowerOff();
 #endif 
   
+#if ( CFG_LPM_SUPPORTED == 0)
   __HAL_RCC_TIM1_CLK_ENABLE();
   __HAL_RCC_TIM2_CLK_ENABLE();
   PWM_Init();
+#endif
+  
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SW1_REQ_ID, UTIL_SEQ_RFU, AppliMeshSW1Task );
+  
+#if (ENABLE_CUSTOM_BEACON == 1)
+  BLEMesh_SetCustomBeaconInterval(CUSTOM_BEACON_INTERVAL);
+#endif
+
+#if (LOW_POWER_FEATURE == 1)  /**
+  * Create Timer to control unprovisioned device beacons
+  */
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &lowPowerNodeApiTimer_Id, hw_ts_SingleShot, LowPowerNodeApiTask);
+  
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_LPN_REQ_ID, UTIL_SEQ_RFU, LowPowerNodeApiApp );
+#endif
 }
 
 /**

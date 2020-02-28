@@ -1055,6 +1055,9 @@
                     <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
                 </file>
                 <file>

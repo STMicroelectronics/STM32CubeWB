@@ -60,6 +60,11 @@
 			<location>PARENT-2-PROJECT_LOC/Core/Src/main.c</location>
 		</link>
     <link>
+			<name>Application/Core/app_debug.c</name>
+			<type>1</type>
+			<location>PARENT-2-PROJECT_LOC/Core/Src/app_debug.c</location>
+		</link>
+    <link>
 			<name>Application/Core/stm32wbxx_it.c</name>
 			<type>1</type>
 			<location>PARENT-2-PROJECT_LOC/Core/Src/stm32wbxx_it.c</location>

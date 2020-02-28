@@ -74,7 +74,7 @@ comparator, window mode, votage compare
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.
 
-  - Apply an external variable voltage on PA1 (connected on pin 30 on CN7) with average voltage 1.22V.
+  - Apply an external variable voltage on PA1 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32) with average voltage 1.22V.
     
      
 @par How to use it ? 

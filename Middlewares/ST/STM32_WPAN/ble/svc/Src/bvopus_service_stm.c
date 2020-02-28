@@ -836,5 +836,4 @@ uint32_t BluevoiceOPUS_TP_Encapsulate(uint8_t* buffer_out, uint8_t* buffer_in, u
 }
 
 
-
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -114,11 +114,15 @@ int main(void)
   MX_COMP1_Init();
   MX_COMP2_Init();
   /* USER CODE BEGIN 2 */
-
+  /* Initialize LEDs available */
+  BSP_LED_Init(LED2);
+  BSP_LED_Init(LED1);
+  BSP_LED_Init(LED3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  
   /* Start COMP1 */
   if(HAL_COMP_Start(&hcomp1) != HAL_OK)
   {
@@ -185,7 +189,7 @@ int main(void)
         /* Restore GPIO configuration */
         BSP_LED_Init(LED1);
         EnterInStopMode = 0;
-      }      
+      }
       while(State == STATE_UNDER_THRESHOLD)
       {
         /* Toggle LED1 */
@@ -239,6 +243,11 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  /** Initializes the peripherals clocks 
+  */
+  /* USER CODE BEGIN Smps */
+
+  /* USER CODE END Smps */
 }
 
 /**
@@ -264,7 +273,7 @@ static void MX_COMP1_Init(void)
   hcomp1.Init.BlankingSrce = COMP_BLANKINGSRC_NONE;
   hcomp1.Init.Mode = COMP_POWERMODE_MEDIUMSPEED;
   hcomp1.Init.WindowMode = COMP_WINDOWMODE_DISABLE;
-  hcomp1.Init.TriggerMode = COMP_TRIGGERMODE_NONE;
+  hcomp1.Init.TriggerMode = COMP_TRIGGERMODE_IT_RISING_FALLING;
   if (HAL_COMP_Init(&hcomp1) != HAL_OK)
   {
     Error_Handler();
@@ -298,7 +307,7 @@ static void MX_COMP2_Init(void)
   hcomp2.Init.BlankingSrce = COMP_BLANKINGSRC_NONE;
   hcomp2.Init.Mode = COMP_POWERMODE_MEDIUMSPEED;
   hcomp2.Init.WindowMode = COMP_WINDOWMODE_COMP1_INPUT_PLUS_COMMON;
-  hcomp2.Init.TriggerMode = COMP_TRIGGERMODE_NONE;
+  hcomp2.Init.TriggerMode = COMP_TRIGGERMODE_IT_RISING_FALLING;
   if (HAL_COMP_Init(&hcomp2) != HAL_OK)
   {
     Error_Handler();

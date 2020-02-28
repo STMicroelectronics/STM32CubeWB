@@ -43,14 +43,12 @@ typedef struct
 
 
 /* Light Lightness Linear set */
-#pragma pack(1)
 typedef struct
 {
   MOBLEUINT16 PresentState16;
 }Appli_Light_lightnessLinearSet;
 
 /* Light Ctl Set */
-#pragma pack(1)
 typedef struct
 {
   MOBLEUINT16 PresentLightness16;
@@ -59,7 +57,6 @@ typedef struct
 }Appli_Light_CtlSet;
 
 /* Light Ctl Temperature Range Set */
-#pragma pack(1)
 typedef struct
 {
   MOBLEUINT8  StatusCode;
@@ -68,7 +65,6 @@ typedef struct
 }Appli_Light_CtlTemperatureRangeSet;
 
 /* Light Ctl Default set */
-#pragma pack(1)
 typedef struct
 {
   MOBLEUINT16 CtlDefaultLightness16;
@@ -77,7 +73,6 @@ typedef struct
 }Appli_Light_CtlDefaultSet;
 
 /* Light Hsl Hue set */
-#pragma pack(1)
 typedef struct
 {
   MOBLEUINT16 HslLightness16;
@@ -85,7 +80,14 @@ typedef struct
   MOBLEUINT16 HslSaturation16; 
 }Appli_Light_HslSet;
 
-#pragma pack(1)
+/* Light Hsl Hue set */
+typedef struct
+{
+  MOBLEUINT16 HslDefaultLightness16;
+  MOBLEUINT16 HslDefaultHueLightness16;
+  MOBLEUINT16 HslDefaultSaturation16; 
+}Appli_Light_HslDefaultSet;
+
 typedef struct
 {
   MOBLEUINT16 Red_Value;
@@ -93,7 +95,6 @@ typedef struct
   MOBLEUINT16 Blue_Value; 
 }Appli_Light_RGBSet;
 
-#pragma pack(1)
 typedef struct
 {
   MOBLEUINT8 StatusCode;
@@ -103,7 +104,6 @@ typedef struct
   MOBLEUINT16 HslMaxSaturation16; 
 }Appli_Light_HslRangeSet;
 
-#pragma pack(1)
 typedef struct
 {
   MOBLEUINT16 IntensityValue;
@@ -113,34 +113,62 @@ typedef struct
   MOBLEUINT16 PwmWarmValue;
   MOBLEUINT16 PwmCoolValue; 
 }Appli_LightPwmValue_t;
+#pragma pack(4)
+
 /* Exported Functions Prototypes ---------------------------------------------*/
 
 MOBLE_RESULT Appli_Light_Lightness_Set(Light_LightnessStatus_t*, MOBLEUINT8 OptionalValid);
 
+MOBLE_RESULT Appli_Light_Lightness_Status(MOBLEUINT8 const *pLightness_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_Lightness_Linear_Set(Light_LightnessStatus_t* pLight_LightnessLinearParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_Lightness_Linear_Status(MOBLEUINT8 const *pLightnessLinear_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_Lightness_Default_Set(Light_LightnessDefaultParam_t* pLight_LightnessDefaultParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_Lightness_Default_Status(MOBLEUINT8 const *pLightnessDefault_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_Lightness_Range_Set(Light_LightnessRangeParam_t* pLight_LightnessRangeParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_Lightness_Range_Status(MOBLEUINT8 const *pLightnessRange_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_Ctl_Set(Light_CtlStatus_t* pLight_CtlParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_Ctl_Status(MOBLEUINT8 const *pLightCtl_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_CtlTemperature_Set(Light_CtlStatus_t* pLight_CtltempParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_CtlTemperature_Status(MOBLEUINT8 const *pLightCtlTemp_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_CtlTemperature_Range_Set(Light_CtlTemperatureRangeParam_t* pLight_CtlTempRangeParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_CtlTemperature_Range_Status(MOBLEUINT8 const *pCtlTempRange_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_CtlDefault_Set(Light_CtlDefaultParam_t* pLight_CtlDefaultParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_CtlDefault_Status(MOBLEUINT8 const *pCtlDefault_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_Hsl_Set(Light_HslStatus_t* pLight_HslParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_Hsl_Status(MOBLEUINT8 const *pHsl_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_HslHue_Set(Light_HslStatus_t* pLight_HslHueParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_HslHue_Status(MOBLEUINT8 const *pHslHue_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_HslSaturation_Set(Light_HslStatus_t* pLight_HslSaturationParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslStatus_t* pLight_HslDefaultParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_HslDefault_Status(MOBLEUINT8 const *pHslDefault_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_HslRange_Set(Light_HslRangeParam_t* pLight_HslDefaultParam,
                                      MOBLEUINT8 OptionalValid);
+MOBLE_RESULT Appli_Light_HslRange_Status(MOBLEUINT8 const *pHslRange_status, MOBLEUINT32 pLength);
+
 MOBLE_RESULT Appli_Light_GetLightnessStatus(MOBLEUINT8* lLightnessState);
 MOBLE_RESULT Appli_Light_GetLightnessLinearStatus(MOBLEUINT8* lLightnessState);
 MOBLE_RESULT Appli_Light_GetLightnessDefaultStatus(MOBLEUINT8* lDefaultState);
@@ -154,6 +182,7 @@ MOBLE_RESULT Appli_Light_GetHslHueStatus(MOBLEUINT8* lHslHueState);
 MOBLE_RESULT Appli_Light_GetHslSaturationStatus(MOBLEUINT8* lHslSaturationState);
 MOBLE_RESULT Appli_Light_GetHslHueRange(MOBLEUINT8* lHslHueRange);
 MOBLE_RESULT Appli_Light_GetHslSatRange(MOBLEUINT8* lHslSatRange);
+MOBLE_RESULT Appli_Light_GetHslDefaultStatus(MOBLEUINT8* lHslDefaultState);
 void Appli_Light_PwmInit(void);
 void HSL2RGB_Conversion(void);
 void Ctl_LedOffState(void);

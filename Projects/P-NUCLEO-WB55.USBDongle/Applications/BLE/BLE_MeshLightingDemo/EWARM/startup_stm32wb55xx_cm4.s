@@ -1,4 +1,4 @@
-;/********************* COPYRIGHT(c) 2019 STMicroelectronics ********************
+;******************************************************************************
 ;* File Name          : startup_stm32wb55xx_cm4.s
 ;* Author             : MCD Application Team
 ;* Description        : M4 core vector table of the STM32WB55xx devices for the
@@ -13,31 +13,18 @@
 ;*                        calls main()).
 ;*                      After Reset the Cortex-M4 processor is in Thread mode,
 ;*                      priority is Privileged, and the Stack is set to Main.
-;********************************************************************************
+;******************************************************************************
+;* @attention
 ;*
-;* Redistribution and use in source and binary forms, with or without modification,
-;* are permitted provided that the following conditions are met:
-;*   1. Redistributions of source code must retain the above copyright notice,
-;*      this list of conditions and the following disclaimer.
-;*   2. Redistributions in binary form must reproduce the above copyright notice,
-;*      this list of conditions and the following disclaimer in the documentation
-;*      and/or other materials provided with the distribution.
-;*   3. Neither the name of STMicroelectronics nor the names of its contributors
-;*      may be used to endorse or promote products derived from this software
-;*      without specific prior written permission.
+;* <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+;* All rights reserved.</center></h2>
 ;*
-;* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-;* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-;* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-;* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-;* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-;* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-;* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-;* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-;* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-;* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;* This software component is licensed by ST under BSD 3-Clause license,
+;* the "License"; You may not use this file except in compliance with the 
+;* License. You may obtain a copy of the License at:
+;*                        opensource.org/licenses/BSD-3-Clause
 ;*
-;*******************************************************************************
+;******************************************************************************
 ;
 ;
 ; The modules in this file are included in the libraries, and may be replaced
@@ -86,10 +73,10 @@ __vector_table
         DCD     PendSV_Handler                    ; PendSV Handler
         DCD     SysTick_Handler                   ; SysTick Handler
 
-         ; External Interrupts
+        ; External Interrupts
         DCD     WWDG_IRQHandler                   ; Window WatchDog
-        DCD     PVD_PVM_IRQHandler                ; PVD and PVM detector
-        DCD     TAMP_STAMP_LSECSS_IRQHandler      ; RTC Tamper and TimeStamp Interrupts and LSECSS Interrupts
+        DCD     PVD_PVM_IRQHandler                ; PVD and PVM Interrupt
+        DCD     TAMP_STAMP_LSECSS_IRQHandler      ; RTC Tamper, TimeStamp Interrupts and LSECSS Interrupts
         DCD     RTC_WKUP_IRQHandler               ; RTC Wakeup Interrupt
         DCD     FLASH_IRQHandler                  ; FLASH global Interrupt
         DCD     RCC_IRQHandler                    ; RCC Interrupt
@@ -129,7 +116,7 @@ __vector_table
         DCD     TSC_IRQHandler                    ; TSC Interrupt
         DCD     EXTI15_10_IRQHandler              ; EXTI Lines1[15:10 ]Interrupts
         DCD     RTC_Alarm_IRQHandler              ; RTC Alarms (A and B) Interrupt
-        DCD     USB_FS_WKUP_CRS_IRQHandler        ; USB Full speed wakeup
+        DCD     CRS_IRQHandler                    ; CRS interrupt
         DCD     PWR_SOTF_BLEACT_802ACT_RFPHASE_IRQHandler ; WKUP Interrupt from PWR
         DCD     IPCC_C1_RX_IRQHandler             ; IPCC CPU1 RX occupied interrupt
         DCD     IPCC_C1_TX_IRQHandler             ; IPCC CPU1 RX free interrupt
@@ -156,6 +143,7 @@ __vector_table
 ;; Default interrupt handlers.
 ;;
         THUMB
+
         PUBWEAK Reset_Handler
         SECTION .text:CODE:NOROOT:REORDER(2)
 Reset_Handler
@@ -419,10 +407,10 @@ EXTI15_10_IRQHandler
 RTC_Alarm_IRQHandler
         B RTC_Alarm_IRQHandler
 
-        PUBWEAK USB_FS_WKUP_CRS_IRQHandler
+        PUBWEAK CRS_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
-USB_FS_WKUP_CRS_IRQHandler
-        B USB_FS_WKUP_CRS_IRQHandler
+CRS_IRQHandler
+        B CRS_IRQHandler
 
         PUBWEAK PWR_SOTF_BLEACT_802ACT_RFPHASE_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
@@ -523,6 +511,7 @@ DMA2_Channel7_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
 DMAMUX1_OVR_IRQHandler
         B DMAMUX1_OVR_IRQHandler
+
         END
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+;************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE*****

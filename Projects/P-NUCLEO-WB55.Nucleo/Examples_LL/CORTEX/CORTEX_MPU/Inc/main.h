@@ -37,8 +37,8 @@ extern "C" {
 #include "stm32wbxx_ll_utils.h"
 #include "stm32wbxx_ll_pwr.h"
 #include "stm32wbxx_ll_dma.h"
-#include "stm32wbxx.h"
 #include "stm32wbxx_ll_gpio.h"
+
 #if defined(USE_FULL_ASSERT)
 #include "stm32_assert.h"
 #endif /* USE_FULL_ASSERT */
@@ -115,7 +115,7 @@ void UserButton_Callback(void);
 #define NVIC_PRIORITYGROUP_3         ((uint32_t)0x00000004) /*!< 3 bits for pre-emption priority,
                                                                  1 bit  for subpriority */
 #define NVIC_PRIORITYGROUP_4         ((uint32_t)0x00000003) /*!< 4 bits for pre-emption priority,
-                                                                0 bit  for subpriority */
+                                                                 0 bit  for subpriority */
 #endif
 /* USER CODE BEGIN Private defines */
 

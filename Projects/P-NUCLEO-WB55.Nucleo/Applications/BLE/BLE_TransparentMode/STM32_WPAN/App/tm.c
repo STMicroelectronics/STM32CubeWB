@@ -193,6 +193,7 @@ void TM_SysCmdRspCb (TL_EvtPacket_t * p_cmd_resp)
 
     UTIL_SEQ_SetTask( 1<<CFG_TASK_TX_TO_HOST_ID,CFG_SCH_PRIO_0);
   }
+
 /* USER CODE BEGIN TM_SysCmdRspCb_2 */
 
 /* USER CODE END TM_SysCmdRspCb_2 */

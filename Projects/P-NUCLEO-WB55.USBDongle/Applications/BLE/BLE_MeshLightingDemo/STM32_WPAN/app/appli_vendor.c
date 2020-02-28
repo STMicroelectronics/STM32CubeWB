@@ -17,7 +17,7 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include "ble.h"
+#include "app_conf.h"
 #include "hal_common.h"
 #include "types.h"
 #include "ble_mesh.h"
@@ -43,8 +43,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 
-MOBLEUINT8 ResponseBuffer[8];
-MOBLEUINT8 BuffLength;
+MOBLEUINT8 ResponseBuffer[VENDOR_DATA_BYTE];
+MOBLEUINT16 BuffLength;
 extern MOBLEUINT8 Appli_LedState;
 extern uint16_t DUTY;
 MOBLEUINT32 TestHitCounter = 0;
@@ -70,6 +70,7 @@ MOBLE_RESULT Appli_Vendor_DeviceInfo(MOBLEUINT8 const *data, MOBLEUINT32 length)
   MOBLEUINT8 inc = 0;
         /*First Byte is sending the Sub Command*/      
   ResponseBuffer[0] = subCmd;
+        TRACE_M(TF_VENDOR_COMMAND,"#02-%02hx! \n\r",data[0]);
   
   switch(subCmd)
   {
@@ -100,17 +101,26 @@ MOBLE_RESULT Appli_Vendor_DeviceInfo(MOBLEUINT8 const *data, MOBLEUINT32 length)
       while(*libVersion != '\0')
       {
         tempBuffer[inc] = *libVersion;
+        if(tempBuffer[inc] != 0x2E)
+        {
+          tempBuffer[inc] = BLEMesh_ModelsASCII_To_Char(tempBuffer[inc]);
+          TRACE_M(TF_VENDOR,"Lib version is %x\n\r" ,(unsigned char)tempBuffer[inc]);
+        }
+        else
+        {
+          TRACE_M(TF_VENDOR,"Lib version is %c\n\r" ,(unsigned char)tempBuffer[inc]);
+        }             
         libVersion++;  
-              TRACE_M(TF_VENDOR,"Lib version is %x\n\r" ,(unsigned char)tempBuffer[inc]); 
+             
         inc++;
       } 
-      ResponseBuffer[1]= BLEMesh_ModelsASCII_To_Char(tempBuffer[0]);
-      ResponseBuffer[2]= BLEMesh_ModelsASCII_To_Char(tempBuffer[1]);
-      ResponseBuffer[3]= BLEMesh_ModelsASCII_To_Char(tempBuffer[3]);
-      ResponseBuffer[4]= BLEMesh_ModelsASCII_To_Char(tempBuffer[4]);
-      ResponseBuffer[5]= BLEMesh_ModelsASCII_To_Char(tempBuffer[6]);
-      ResponseBuffer[6]= BLEMesh_ModelsASCII_To_Char(tempBuffer[7]);
-      ResponseBuffer[7]= BLEMesh_ModelsASCII_To_Char(tempBuffer[8]);
+      ResponseBuffer[1]= tempBuffer[0];
+      ResponseBuffer[2]= tempBuffer[1];
+      ResponseBuffer[3]= tempBuffer[3];
+      ResponseBuffer[4]= tempBuffer[4];
+      ResponseBuffer[5]= tempBuffer[6];
+      ResponseBuffer[6]= tempBuffer[7];
+      ResponseBuffer[7]= tempBuffer[8];
       BuffLength = 8;      
       break;
     }
@@ -120,15 +130,23 @@ MOBLE_RESULT Appli_Vendor_DeviceInfo(MOBLEUINT8 const *data, MOBLEUINT32 length)
       while(*subLibVersion != '\0')
       {
         tempBuffer[inc] = * subLibVersion;
+        if((tempBuffer[inc] != 0x2E) && (tempBuffer[inc] != 0x52))
+        {               
+          tempBuffer[inc] = BLEMesh_ModelsASCII_To_Char(tempBuffer[inc]);
+          TRACE_M(TF_VENDOR,"Sub Lib version is %x\n\r" ,(unsigned char)tempBuffer[inc]);
+        }
+        else
+        {
+          TRACE_M(TF_VENDOR,"Sub Lib version is %c\n\r" ,(unsigned char)tempBuffer[inc]);
+        } 
         subLibVersion++;  
-              TRACE_M(TF_VENDOR," Lib Sub Version is %x\n\r" ,(unsigned char)tempBuffer[inc]);           
         inc++;
       } 
-      ResponseBuffer[1]= BLEMesh_ModelsASCII_To_Char(tempBuffer[0]);
-      ResponseBuffer[2]= BLEMesh_ModelsASCII_To_Char(tempBuffer[1]);
-      ResponseBuffer[3]= BLEMesh_ModelsASCII_To_Char(tempBuffer[3]);
-      ResponseBuffer[4]= BLEMesh_ModelsASCII_To_Char(tempBuffer[5]);
-      ResponseBuffer[5]= BLEMesh_ModelsASCII_To_Char(tempBuffer[7]);
+      ResponseBuffer[1]= tempBuffer[0];
+      ResponseBuffer[2]= tempBuffer[1];
+      ResponseBuffer[3]= tempBuffer[3];
+      ResponseBuffer[4]= tempBuffer[5];
+      ResponseBuffer[5]= tempBuffer[7];
       ResponseBuffer[6]= tempBuffer[9];
       
       BuffLength = 7;
@@ -165,12 +183,17 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
   MOBLEUINT8 subCmd = data[0];
        /*First Byte is sending the Sub Command*/      
        ResponseBuffer[0]=subCmd;
-
+       TRACE_M(TF_VENDOR_COMMAND,"#01-%02hx! \n\r",data[0]);
   switch(subCmd)
   {             
   case APPLI_TEST_ECHO: 
     {
-      memcpy ((ResponseBuffer+1),(data+1),length);
+      if(length > sizeof(ResponseBuffer))
+      {
+        length = sizeof(ResponseBuffer);
+        TRACE_M(TF_VENDOR,"Length received greater than size of response buffer \r\n");
+      }
+      memcpy (&(ResponseBuffer[1]),&(data[1]),(length-1));
       BuffLength = length;
       break;
     }
@@ -213,7 +236,7 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
       }                                                    
               
       TestHitCounter++;              
-      TRACE_M(TF_VENDOR,"Command received Count %.2x \r\n",TestHitCounter);
+      TRACE_M(TF_VENDOR,"Command received Count %.2lx \r\n",TestHitCounter);
       ResponseBuffer[0] = subCmd;
       ResponseBuffer[1] = Appli_LedState ;
       BuffLength = 2;
@@ -222,9 +245,14 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
     }
   case APPLI_MODEL_PUBLISH_SELECT:
     {
-                
-      break;
-    }
+       for (MOBLEUINT8 idx=0; idx<length; idx++)
+       {
+         TRACE_I(TF_VENDOR,"data[%d]= %d",idx,data[idx]);  
+         TRACE_I(TF_VENDOR,"\n\r");
+       } 
+       break;
+     }
+             
   default:
     {
       status = MOBLE_RESULT_FALSE;
@@ -252,7 +280,8 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
   MOBLEUINT16 duty;
   MOBLEUINT16 intensityValue = 0;
 /*  tClockTime delay_t = Clock_Time(); */
-  
+      
+  TRACE_M(TF_VENDOR_COMMAND,"#03-%02hx!\n\r",data[0]);
   switch(subCommand)
   {
     /* 
@@ -282,16 +311,23 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
     {
       if(elementNumber == FIRST_ELEMENT)
       {
-        if((Appli_LightPwmValue.IntensityValue <= PWM_TIME_PERIOD) && (Appli_LightPwmValue.IntensityValue > 1))
+        if(Appli_LedState == 1)
         {
           Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
-          Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+                                    
+#ifndef CUSTOM_BOARD_PWM_SELECTION            
+            Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+#else
+          Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+#endif            
+          Appli_LedState = 0;
           BSP_LED_Off(LED_BLUE);
         }
         else
         {
           Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
           Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+          Appli_LedState = 1;
           BSP_LED_On(LED_BLUE);
         }
               
@@ -335,7 +371,12 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
       if(elementNumber == FIRST_ELEMENT)
       {
         Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
+            
+#ifndef CUSTOM_BOARD_PWM_SELECTION            
         Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+#else
+            Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+#endif            
         Appli_LedState = 0;
         BSP_LED_Off(LED_BLUE);
       }
@@ -408,6 +449,42 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
   return status;
 }
 
+/**
+* @brief  Process the Vendor Data write Command 
+* @param  data: Pointer to the data received from peer_addr
+* @param  length: Length of the data
+* @retval MOBLE_RESULT status of result
+*/          
+MOBLE_RESULT Appli_Vendor_Data_write(MOBLEUINT8 const *data, MOBLEUINT32 length)
+{
+       MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;  
+       MOBLEUINT8 subCmd = data[0];
+       /*First Byte is sending the Sub Command*/      
+       ResponseBuffer[0]=subCmd;
+       TRACE_M(TF_VENDOR_COMMAND,"#0E-%02hx! \n\r",data[0]);
+       switch(subCmd)
+       {     
+         case APPLI_STRING_WRITE:
+           {            
+             memcpy(&ResponseBuffer,data,length);
+             BuffLength = length;
+             break;
+           }
+         default:
+          {
+            status = MOBLE_RESULT_FALSE;
+            break;
+          }
+       }
+      return status;        
+}
+         
+/**
+* @brief  Appli_GetTestValue: This function is callback for Application
+*          when Vensor application test command received then status message is to be provided
+* @param  responseValue: Pointer to the status message
+* @retval void
+*/ 
 void Appli_GetTestValue (MOBLEUINT8 *responseValue)
 {
   *responseValue = TestHitCounter;

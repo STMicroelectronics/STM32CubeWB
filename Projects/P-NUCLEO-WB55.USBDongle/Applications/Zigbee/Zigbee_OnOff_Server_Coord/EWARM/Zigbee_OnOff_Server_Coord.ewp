@@ -16,15 +16,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Zigbee_OnOff_Router/Exe</state>
+                    <state>Zigbee_OnOff_Coord/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Zigbee_OnOff_Router/Obj</state>
+                    <state>Zigbee_OnOff_Coord/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Zigbee_OnOff_Router/List</state>
+                    <state>Zigbee_OnOff_Coord/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -666,7 +666,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Zigbee_OnOff_Router.bin</state>
+                    <state>Zigbee_OnOff_Coord.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -721,7 +721,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>Zigbee_OnOff_Router.out</state>
+                    <state>Zigbee_OnOff_Coord.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>

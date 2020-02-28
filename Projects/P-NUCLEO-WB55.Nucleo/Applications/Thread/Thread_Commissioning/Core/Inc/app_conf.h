@@ -1,12 +1,12 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : app_conf.h
   * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -65,9 +66,9 @@
 /**
  * Select UART interfaces
  */
-#define CFG_DEBUG_TRACE_UART    hw_lpuart1
+#define CFG_DEBUG_TRACE_UART    hw_uart1
 #define CFG_CONSOLE_MENU      
-#define CFG_CLI_UART    hw_uart1
+#define CFG_CLI_UART    hw_lpuart1
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -297,11 +298,11 @@ typedef enum
 /* Scheduler types and defines        */
 /*------------------------------------*/
 #define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
-/* USER CODE BEGIN DEFINE_TASK */ 
+/* USER CODE BEGIN DEFINE_TASK */
 #define TASK_START_COMMISSIONER      (1U << CFG_TASK_START_COMMISSIONER)
 #define TASK_START_JOINER            (1U << CFG_TASK_START_JOINER)
 #define TASK_CONFIG_LEADER           (1U << CFG_TASK_CONFIG_LEADER)
-/* USER CODE END DEFINE_TASK */  
+/* USER CODE END DEFINE_TASK */
  
 /**
  * This is the list of priority required by the application

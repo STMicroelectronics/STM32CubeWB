@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    serial_ut.h
 * @author  BLE Mesh Team
-* @version V1.07.000
-* @date    15-June-2018
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the upper tester file 
 ******************************************************************************
 * @attention

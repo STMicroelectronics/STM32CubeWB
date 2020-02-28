@@ -59,7 +59,7 @@ const osThreadAttr_t ThreadMsgM0ToM4Process_attr = {
     .cb_size = CFG_THREAD_MSG_M0_TO_M4_PROCESS_CB_SIZE,
     .stack_mem = CFG_THREAD_MSG_M0_TO_M4_PROCESS_STACK_MEM,
     .priority = CFG_THREAD_MSG_M0_TO_M4_PROCESS_PRIORITY,
-    .stack_size = CFG_THREAD_MSG_M0_TO_M4_PROCESS_STACk_SIZE
+    .stack_size = CFG_THREAD_MSG_M0_TO_M4_PROCESS_STACK_SIZE
 };
 
 const osThreadAttr_t ThreadCliProcess_attr = {
@@ -69,7 +69,7 @@ const osThreadAttr_t ThreadCliProcess_attr = {
      .cb_size = CFG_THREAD_CLI_PROCESS_CB_SIZE,
      .stack_mem = CFG_THREAD_CLI_PROCESS_STACK_MEM,
      .priority = CFG_THREAD_CLI_PROCESS_PRIORITY,
-     .stack_size = CFG_THREAD_CLI_PROCESS_STACk_SIZE
+     .stack_size = CFG_THREAD_CLI_PROCESS_STACK_SIZE
  };
 
 /* USER CODE BEGIN PD */
@@ -1041,7 +1041,7 @@ void APP_THREAD_Init_UART_CLI(void)
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
 #if (CFG_FULL_LOW_POWER == 0)
-  MX_USART1_UART_Init();
+  MX_LPUART1_UART_Init();
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */

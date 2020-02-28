@@ -1,0 +1,9 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\NUCLEO-WB35CE
+[Others]
+Define=
+HALModule=RTC
+[Groups]
+Application/User=../Src/stm32wbxx_hal_timebase_rtc_alarm.c;
+Doc=../readme.txt;
+Drivers/BSP/NUCLEO-WB35CE=../../../../../../Drivers/BSP/NUCLEO-WB35CE/nucleo_wb35ce.c;

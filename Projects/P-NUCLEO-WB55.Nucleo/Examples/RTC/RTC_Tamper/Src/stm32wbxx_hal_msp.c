@@ -151,6 +151,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE END RTC_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_RTC_ENABLE();
+    __HAL_RCC_RTCAPB_CLK_ENABLE();
     /* RTC interrupt Init */
     HAL_NVIC_SetPriority(TAMP_STAMP_LSECSS_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(TAMP_STAMP_LSECSS_IRQn);
@@ -178,6 +179,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE END RTC_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_RTC_DISABLE();
+    __HAL_RCC_RTCAPB_CLK_DISABLE();
 
     /* RTC interrupt DeInit */
     HAL_NVIC_DisableIRQ(TAMP_STAMP_LSECSS_IRQn);

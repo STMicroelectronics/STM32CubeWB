@@ -330,9 +330,25 @@ static uint8_t CheckFwAppValidity( void )
   uint8_t status;
   uint32_t magic_keyword_address;
   uint32_t last_user_flash_address;
+  uint32_t sbrv_field, sbrv_field_sector, last_user_flash_address_sfsa, last_user_flash_address_sbrv;
 
   magic_keyword_address = *(uint32_t*)(FLASH_BASE + (CFG_APP_START_SECTOR_INDEX * 0x1000 + 0x140));
-  last_user_flash_address = (((READ_BIT(FLASH->SFR, FLASH_SFR_SFSA) >> FLASH_SFR_SFSA_Pos) << 12) + FLASH_BASE) - 4;
+  last_user_flash_address_sfsa = (((READ_BIT(FLASH->SFR, FLASH_SFR_SFSA) >> FLASH_SFR_SFSA_Pos) << 12) + FLASH_BASE) - 4;
+
+  sbrv_field = (READ_BIT(FLASH->SRRVR, FLASH_SRRVR_SBRV) >> FLASH_SRRVR_SBRV_Pos);
+  /* Divide sbrv_field by 1024 to be compared to SFSA value */
+  sbrv_field_sector = sbrv_field / 1024;
+  last_user_flash_address_sbrv = ((sbrv_field_sector << 12) + FLASH_BASE) - 4;
+
+  if(last_user_flash_address_sbrv < last_user_flash_address_sfsa)
+  {
+    last_user_flash_address = last_user_flash_address_sbrv;
+  }
+  else
+  {
+    last_user_flash_address = last_user_flash_address_sfsa;
+  }
+
   if( (magic_keyword_address < FLASH_BASE) || (magic_keyword_address > last_user_flash_address) )
   {
     /**

@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    pal_nvm.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for pal_nvm.c 
 ******************************************************************************
 * @attention
@@ -51,11 +51,12 @@
 /* Includes ------------------------------------------------------------------*/
 
 /* Exported macro ------------------------------------------------------------*/
-/* Exported variables  ------------------------------------------------------- */
+/* Exported variables  -------------------------------------------------------*/
 extern const void* mobleNvmBase;
 
 /* Private define ------------------------------------------------------------*/
-#define NVM_BASE ((unsigned int)mobleNvmBase)
+#define NVM_BASE                                     ((unsigned int)mobleNvmBase)
+#define NVM_SIZE                                                           8192U
 
 typedef enum
 {

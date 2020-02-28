@@ -39,6 +39,11 @@ void BLEMesh_ModelsDelayPacket(MOBLE_ADDRESS peer, MOBLE_ADDRESS dst, MOBLEUINT8
                                MOBLEUINT8 const * data, MOBLEUINT32 length);
 void BLEMesh_ModelsSendDelayedPacket(void);
 MOBLEUINT8 BLEMesh_ModelsASCII_To_Char(MOBLEUINT8 tempValue);
+MOBLE_RESULT MeshClient_SetRemotePublication(MOBLEUINT32 modelId, MOBLE_ADDRESS element_number,
+                                              MOBLEUINT16 msg_opcode, MOBLEUINT8 const *msg_buff, 
+                                              MOBLEUINT32 length, MOBLEBOOL ack_flag,
+                                              MOBLEUINT8 isVendor);
+
 #endif /* __MODELS_H */
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

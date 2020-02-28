@@ -85,9 +85,9 @@ void ZbZclIdentifyServerSetTime(struct ZbZclClusterT *clusterPtr, uint16_t secon
 uint16_t ZbZclIdentifyServerGetTime(struct ZbZclClusterT *clusterPtr);
 
 /* Client commands */
-uint8_t zcl_identify_identify_request(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
+enum ZclStatusCodeT zcl_identify_identify_request(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     uint16_t identify_time, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-uint8_t zcl_identify_query_request(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
+enum ZclStatusCodeT zcl_identify_query_request(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 #endif /* __ZCL_IDENTIFY_H */

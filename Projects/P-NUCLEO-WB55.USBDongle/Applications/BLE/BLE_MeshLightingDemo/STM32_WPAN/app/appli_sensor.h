@@ -46,7 +46,6 @@ typedef struct
 }Appli_Sensor_DescriptorStatus_t;
 
 /* Sensor Setting set */
-#pragma pack(1)
 typedef struct 
 {
   MOBLEUINT16 Property_ID; 
@@ -57,7 +56,6 @@ typedef struct
 
 
 /* structure of flags used for publishing data */
-#pragma pack(1)
 typedef struct 
 {
   MOBLEBOOL CadenceDurationFlag ;
@@ -65,7 +63,6 @@ typedef struct
 }PublishingDataFlag_t;
 
 /* structure for the cadence set */
-#pragma pack(1)
 typedef struct 
 {
   MOBLEUINT16 Property_ID; 
@@ -77,6 +74,7 @@ typedef struct
   float FastCadenceLow;
   float FastCadenceHigh;
 }Sensor_CadenceSet_t;
+#pragma pack(4)
 
 MOBLE_RESULT Appli_Sensor_Cadence_Set(Sensor_CadenceParam_t* pCadence_param, MOBLEUINT16 property_ID,
                                                                            MOBLEUINT32 length); 

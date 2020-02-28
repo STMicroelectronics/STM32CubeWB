@@ -79,7 +79,7 @@ typedef struct {
     uint32_t validTo;
     uint64_t subject;
     uint8_t keyUsage;
-    size_t publicLen;
+    unsigned int publicLen;
     uint8_t publicKey[CBKE2_CERT_PUBLIC_KEY_SIZE];
 } ZbZclCertificateT;
 
@@ -91,7 +91,7 @@ struct ZbZclKeClusterT;
  */
 enum ZclStatusCodeT ZbZclKeAddCbke(struct ZbZclClusterT *clusterPtr, const struct ZbZclCbkeInfoT *info);
 enum ZclStatusCodeT ZbZclKeAddCbke2(struct ZbZclClusterT *clusterPtr, const struct ZbZclCbke2InfoT *info);
-ZbZclCertificateT * ZbZclParseCertificate(ZbZclCertificateT *dst, const void *src, size_t len);
+ZbZclCertificateT * ZbZclParseCertificate(ZbZclCertificateT *dst, const void *src, unsigned int len);
 enum ZbZclKeyStatusT ZbZclCbke2ReconstPrivateKey(struct ZigBeeT *zb, const uint8_t *icu, const uint8_t *se, const uint8_t *du, uint8_t *wu);
 
 /* Helper function to reconstruct a private key. */

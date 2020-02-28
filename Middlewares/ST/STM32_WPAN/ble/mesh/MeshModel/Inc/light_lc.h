@@ -2,8 +2,8 @@
 ******************************************************************************
 * @file    light_control.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -94,25 +94,29 @@
 #define LIGHT_CONTROL_TIME_PROLONG_ID                                     0X003B
 #define LIGHT_CONTROL_TIME_RUN_ON_ID                                      0X003C
 
-/* Exported variables  ------------------------------------------------------- */
+/* Macros  ------------------------------------------------------- */
 #define LIGHT_CONTROL_AMBIENT_LUXLEVEL_ON                                 0XEA60
 #define LIGHT_CONTROL_AMBIENT_LUXLEVEL_PROLONG                            0XC350 
 #define LIGHT_CONTROL_AMBIENT_LUXLEVEL_STANDBY                            0X0000
 #define LIGHT_CONTROL_LIGHTNESS_ON_VALUE                                  0xFFFF 
-#define LIGHT_CONTROL_LIGHTNESS_PROLONG_VALUE                  0xFFF/*0x7FFF*/
+#define LIGHT_CONTROL_LIGHTNESS_PROLONG_VALUE                  0x3A98
 #define LIGHT_CONTROL_LIGHTNESS_STANDBY_VALUE                               0x01
-#define LIGHT_CONTROL_TIME_FADE_ON_VALUE                                    0x0a
-#define LIGHT_CONTROL_TIME_RUN_ON_VALUE                                   0x2710
-#define LIGHT_CONTROL_TIME_FADE_VALUE                                       0x0a
-#define LIGHT_CONTROL_TIME_PROLONG_VALUE                                  0X1388
-#define LIGHT_CONTROL_TIME_FADE_STANDBY_AUTO_VALUE                          0x0a
-#define LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_VALUE                        0X0a
+#define LIGHT_CONTROL_TIME_FADE_ON_VALUE                       0xa    /* 20 steps */
+#define LIGHT_CONTROL_TIME_RUN_ON_VALUE                        0x1388  /* 5 second */
+#define LIGHT_CONTROL_TIME_FADE_VALUE                          0Xa
+#define LIGHT_CONTROL_TIME_PROLONG_VALUE                       0X0bb8  /* 3 second */
+#define LIGHT_CONTROL_TIME_FADE_STANDBY_AUTO_VALUE             0xa
+#define LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_VALUE           0Xa
 #define LIGHT_CONTROL_KID                                                   0X01
 #define LIGHT_CONTROL_KIU                                                   0X02
 #define LIGHT_CONTROL_KPD                                                   0X03
 #define LIGHT_CONTROL_KPU                                                   0X04
 #define LIGHT_CONTROL_REGULATOR_ACCURACY_VALUE                             0X100
 
+/* Property IDs by SIG ------------------------------------------------------- */
+#define MOTION_SENSED_PROPERTY        0X0042
+#define PEOPLE_COUNT_PROPERTY         0X004C
+#define PRESENCE_DETECTED_PROPERTY    0X004D
 
 #define TRANSITION_STEP_VALUE                                               0X0A
 #define LC_MODE_ENABLE                                                      0X01
@@ -188,12 +192,6 @@ typedef struct
   MOBLEUINT32 TotalTime;
 }Light_LC_TimeParam_t;
 
-/* Transition Flag variables */
-typedef struct
-{
-  MOBLEUINT8 LightLcTransitionFlag;
-  MOBLEUINT8 LightLcOptionalParam;
-}Light_LC_ModelFlag_t;
 #pragma pack(4)
 
 /* Light LC state machine states */
@@ -241,7 +239,7 @@ typedef struct
   /* Pointer to the function Appli_LightLC_OnOff_Set used for callback 
      from the middle layer to Application layer
   */
-  MOBLE_RESULT (*LightLC_OnOff_Set_cb)(Light_LC_OnOffState_t*, MOBLEUINT8);
+  MOBLE_RESULT (*LightLC_OnOff_Set_cb)(Light_LC_Param_t*, MOBLEUINT8);
   
   /* Pointer to the function Appli_LightLC_Property_Set used for callback 
      from the middle layer to Application layer

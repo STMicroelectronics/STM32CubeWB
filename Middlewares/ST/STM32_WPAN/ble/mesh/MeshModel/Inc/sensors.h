@@ -1,9 +1,9 @@
 /**
 ******************************************************************************
-* @file    sensor.h
+* @file    sensors.h
 * @author  BLE Mesh Team
-* @version V1.10.000
-* @date    15-Jan-2019
+* @version V1.12.000
+* @date    06-12-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
@@ -53,12 +53,23 @@
 /********** Following Section defines the Opcodes for the Messages ************/
 /******************************************************************************/
 /* Sensors Property ID */
-#define TEMPERATURE_PID         0x0071// 0x004F
+#define TEMPERATURE_PID         0x0071
 #define PRESSURE_PID            0x2A6D
 #define HUMIDITY_PID            0x2A6F
+#define TIME_OF_FLIGHT_PID      0X2A7F
 #define MAGNETO_METER_PID       0x2AA1
 #define ACCELERO_METER_PID      0x2BA1
 #define GYROSCOPE_PID           0x2BA2
+#define VOLTAGE_PID             0x0005
+#define CURRENT_PID             0x0004
+#define POWER_FACTOR_PID        0x0072
+#define ACTIVE_POWER_PID        0x0073
+#define REACTIVE_POWER_PID      0x0074
+#define APPARENT_POWER_PID      0x0075
+#define ACTIVE_ENERGY_PID       0x0083
+#define REACTIVE_ENERGY_PID     0x0084
+#define APPARENT_ENERGY_PID     0x0085
+
 
 /* 7.1 Messages summary Page 300 */
 /* Sensor Server Model Opcode */
@@ -100,7 +111,7 @@
 /* 
  structure for the Property id for the sensors Present inside the firmware.
 */
-#pragma pack(1)
+#pragma pack(4)
 typedef struct 
 {
     MOBLEUINT16 Property_ID;
@@ -131,7 +142,7 @@ typedef struct
 }Sensor_SettingParam_t;
 
 /* Sensor Coloumn Parameters */
-
+#pragma pack(1)
 typedef struct 
 {
  MOBLEUINT16 Property_ID; 
@@ -163,6 +174,7 @@ typedef struct
   MOBLE_RESULT (*Sensor_Setting_Set_cb)(Sensor_SettingParam_t*, MOBLEUINT8); 
   
 } Appli_Sensor_cb_t;
+
 
 /* function pointer for application to get the value from application to middle 
    layer file
