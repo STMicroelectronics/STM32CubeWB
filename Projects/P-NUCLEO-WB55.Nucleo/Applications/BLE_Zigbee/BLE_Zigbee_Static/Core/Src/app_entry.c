@@ -33,39 +33,29 @@
 #include "app_ble.h"
 #include "shci.h"
 
-/* Private includes -----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
+/* External definition */
+extern RTC_HandleTypeDef hrtc; /**< RTC handler declaration */
 
 /* Private defines -----------------------------------------------------------*/
-/* POOL_SIZE = 2(TL_PacketHeader_t) + 258 (3(TL_EVT_HDR_SIZE) + 255(Payload size)) */
+/* POOL_SIZE */
 #define POOL_SIZE (CFG_TLBLE_EVT_QUEUE_LENGTH*4*DIVC(( sizeof(TL_PacketHeader_t) + TL_BLE_EVENT_FRAME_SIZE ), 4))
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-/* Private variables ---------------------------------------------------------*/
-
-extern RTC_HandleTypeDef hrtc; /**< RTC handler declaration */
+/* Switch timeout */
+#define SWITCH_TMO 3*1000*1000/CFG_TS_TICK_VAL
 
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 
-/* SELECT THE PROTOCOL THAT WILL START FIRST (BLE or ZIGBEE) */
 static SHCI_C2_CONCURRENT_Mode_Param_t ConcurrentMode = BLE_ENABLE;
-//static SHCI_C2_CONCURRENT_Mode_Param_t ConcurrentMode = ZIGBEE_ENABLE;
+static uint8_t TS_ID1;
+static int NbTotalSwitch = 0;
+static int FlagSwitchingOnGoing = 0;
 
-/* Global variables ----------------------------------------------------------*/
-
-/* Global function prototypes -----------------------------------------------*/
+/* Global functions prototypes -----------------------------------------------*/
 size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
+SHCI_C2_CONCURRENT_Mode_Param_t APP_GetCurrentProtocolMode(void);
 
 /* Private function prototypes -----------------------------------------------*/
 static void SystemPower_Config( void );
@@ -74,13 +64,12 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
 
 static void appe_Tl_Init( void );
-/* USER CODE BEGIN PFP */
 static void Led_Init( void );
 static void Button_Init( void );
-/* USER CODE END PFP */
 
-static void Process_Switch_Protocol(void);
-
+static void Process_InitiateSwitchProtocol(void);
+static void Process_ActivateNewProtocol(void);
+static void ScheduleProcessSwitchProtocol(void);
 
 /* Functions Definition ------------------------------------------------------*/
 void APPE_Init( void )
@@ -94,8 +83,8 @@ void APPE_Init( void )
   APP_DBG("ConcurrentMode = %d", ConcurrentMode);
 
   /* Task common to Zigbee and BLE */
-  UTIL_SEQ_RegTask( 1<<CFG_Task_Switch_Protocol, UTIL_SEQ_RFU,Process_Switch_Protocol);
-
+  UTIL_SEQ_RegTask( 1U <<CFG_TASK_INIT_SWITCH_PROTOCOL, UTIL_SEQ_RFU,Process_InitiateSwitchProtocol);
+  UTIL_SEQ_RegTask( 1U <<CFG_TASK_ACTIVATE_PROTOCOL, UTIL_SEQ_RFU,Process_ActivateNewProtocol);
   /**
    * The Standby mode should not be entered before the initialization is over
    * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
@@ -117,29 +106,69 @@ void APPE_Init( void )
   return;
 }
 
-/** Scheduler tasks **/
-static void Process_Switch_Protocol(void)
+/**
+ * @brief  Return the current protocol in use
+ * @param  None
+ * @retval None
+ */
+SHCI_C2_CONCURRENT_Mode_Param_t APP_GetCurrentProtocolMode()
 {
-  APP_DBG("Process_Switch_Protocol");
+    return ConcurrentMode;
+}
+
+/**
+ * @brief  Process used to initiate the protocol switch
+ * @param  None
+ * @retval None
+ */
+static void Process_InitiateSwitchProtocol(void)
+{
+   APP_DBG("Process_InitiateSwitchProtocol (nb = %d)",NbTotalSwitch ++);
 
   /* Send Switch event to M0 */
   /* SWITCH BLE <-> ZIGBEE */
+  if (FlagSwitchingOnGoing == 1)
+      return;
+  FlagSwitchingOnGoing = 1;
+
   if(ConcurrentMode == ZIGBEE_ENABLE)
   {
     APP_DBG("STOP ZIGBEE");
     APP_ZIGBEE_Stop();
 
-    /* wait Zigbee has stopped completely -> callback changed state called */
+    /* start a timer */
+    HW_TS_Create(CFG_TIM_WAIT_BEFORE_SWITCH, &TS_ID1, hw_ts_SingleShot, ScheduleProcessSwitchProtocol);
+
+    HW_TS_Start(TS_ID1, SWITCH_TMO);
     APP_DBG("SWITCH PROTOCOL TO BLE");
   }
   else
   {
     APP_DBG("STOP BLE");
-
     APP_BLE_Stop();
-
     APP_DBG("SWITCH PROTOCOL TO Zigbee");
+    ScheduleProcessSwitchProtocol();
   }
+}
+
+/**
+ * @brief  Schedule the process used to switch protocol
+ * @param  None
+ * @retval None
+ */
+static void ScheduleProcessSwitchProtocol(void)
+{
+    UTIL_SEQ_SetTask(1 << CFG_TASK_ACTIVATE_PROTOCOL,CFG_SCH_PRIO_0);
+}
+
+/**
+ * @brief  Process the activation of the new protocol
+ * @param  None
+ * @retval None
+ */
+static void Process_ActivateNewProtocol(void)
+{
+  APP_DBG("Process_ActivateNewProtocol");
 
   /* Toggle Mode flag */
   if(ConcurrentMode == ZIGBEE_ENABLE){
@@ -159,7 +188,9 @@ static void Process_Switch_Protocol(void)
     APP_DBG("INIT BLE");
     APP_BLE_Init( );
   }
+  FlagSwitchingOnGoing = 0;
 }
+
 
 /*************************************************************
  *
@@ -306,7 +337,6 @@ static void Led_Init( void )
   BSP_LED_Init(LED_GREEN);
   BSP_LED_Init(LED_RED);
 
-  //BSP_LED_On(LED_GREEN);
 #endif
 
   return;
@@ -343,7 +373,6 @@ void UTIL_SEQ_Idle( void )
   return;
 }
 
-
 /**
   * @brief  This function is called by the scheduler each time an event
   *         is pending.
@@ -367,10 +396,10 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
       UTIL_SEQ_Run((1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4) | (1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
       break;
 
-        default:
-            /* default case */
-            UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-            break;
+    default:
+     /* default case */
+      UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+      break;
     }
 }
 
@@ -454,8 +483,8 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 
   case BUTTON_SW2_PIN:
     APP_DBG("BUTTON 2 PUSHED ! : SWITCHING PROTOCOL");
-    /* Set "Switch Protocol" Task */
-    UTIL_SEQ_SetTask(1<<CFG_Task_Switch_Protocol,CFG_SCH_PRIO_0);
+    UTIL_SEQ_PauseTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM);
+    UTIL_SEQ_SetTask(1U << CFG_TASK_INIT_SWITCH_PROTOCOL,CFG_SCH_PRIO_0);
     break;
 
   case BUTTON_SW3_PIN:

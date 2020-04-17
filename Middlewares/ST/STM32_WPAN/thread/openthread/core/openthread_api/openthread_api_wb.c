@@ -79,6 +79,7 @@ typedef void (*CoapResponseHandlerCallback)(otCoapHeader *aHeader, otMessage *aM
                                       const otMessageInfo *aMessageInfo, otError aResult);
 
 CoapRequestHandlerCallback coapRequestHandlerCb = NULL;
+otCoapRequestHandler defaultCoapRequestHandlerCb = NULL;
 CoapResponseHandlerCallback coapResponseHandlerCb = NULL;
 
 #if OPENTHREAD_ENABLE_JAM_DETECTION
@@ -122,6 +123,15 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
         if (coapRequestHandlerCb != NULL)
         {
             coapRequestHandlerCb( (otCoapHeader *) p_notification->Data[1],
+                    (otMessage *) p_notification->Data[2],
+                    (otMessageInfo *) p_notification->Data[3]);
+        }
+        break;
+    case MSG_M0TOM4_DEFAULT_COAP_REQUEST_HANDLER:
+        if (defaultCoapRequestHandlerCb != NULL)
+        {
+            defaultCoapRequestHandlerCb((void *) p_notification->Data[0],
+                    (otCoapHeader *) p_notification->Data[1],
                     (otMessage *) p_notification->Data[2],
                     (otMessageInfo *) p_notification->Data[3]);
         }

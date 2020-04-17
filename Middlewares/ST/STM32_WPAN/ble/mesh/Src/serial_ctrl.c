@@ -144,7 +144,7 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
   
   if(command == 0x000E)
   {
-    data_buff[0] = 0x01;     // data write sub command;
+    data_buff[0] = 0x01;     /*  data write sub command; */
     length = sizeof(data_buff)-idx;
   
     for(MOBLEUINT8 i=idx;i <sizeof(data_buff);i++)
@@ -221,8 +221,7 @@ void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
       Start finding for opcode in Light LC Table*/
   if (minParamLength == 0xff)
   {
-     minParamLength = SerialCtrl_GetMinParamLength(command,LightLC_OpcodeTable,LightLC_OpcodeTableLength);
-     
+    minParamLength = SerialCtrl_GetMinParamLength(command,LightLC_OpcodeTable,LightLC_OpcodeTableLength);
   }
   /* Opcode not found in Light LC opcode table 
       Start finding for opcode in Sensor Table*/
@@ -231,23 +230,25 @@ void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
     minParamLength = SerialCtrl_GetMinParamLength(command,Sensor_OpcodeTable,Sensor_OpcodeTableLength);
   }
   
-  /* Opcode not found in Sensor opcode table
-      Start finding for opcode in Vendor Table*/
-  else 
+  if (minParamLength != 0xff)
   {
-      minParamLength = SerialCtrl_GetData(rcvdStringBuff, rcvdStringSize, SERIAL_MODEL_DATA_OFFSET, data);
-      
-      result = BLEMesh_SetRemoteData(peer,elementIndex,command, 
-                                         data, minParamLength,
-                                         response, MOBLE_FALSE);   
-      if(result == MOBLE_RESULT_SUCCESS)
-      {
-        TRACE_I(TF_SERIAL_CTRL,"Command Executed Successfully\r\n");
-      }
-      else
-      {
-        TRACE_I(TF_SERIAL_CTRL,"Invalid Opcode Parameter\r\n");
-      }
+    minParamLength = SerialCtrl_GetData(rcvdStringBuff, rcvdStringSize, SERIAL_MODEL_DATA_OFFSET, data);
+
+    result = BLEMesh_SetRemoteData(peer,elementIndex,command, 
+                                       data, minParamLength,
+                                       response, MOBLE_FALSE);   
+    if(result == MOBLE_RESULT_SUCCESS)
+    {
+      TRACE_I(TF_SERIAL_CTRL,"Command Executed Successfully\r\n");
+    }
+    else
+    {
+      TRACE_I(TF_SERIAL_CTRL,"Invalid Opcode Parameter\r\n");
+    }
+  }
+  else
+  {
+    TRACE_I(TF_SERIAL_CTRL,"Unknown Opcode\r\n");
   }
 }
 

@@ -41,16 +41,67 @@
 <ul>
 <li>Projects\NUCLEO-WB55.Nucleo\Applications\BLE</li>
 <li>Projects\NUCLEO-WB55.Nucleo\Applications\BLE_Thread</li>
+<li>Projects\NUCLEO-WB55.Nucleo\Applications\BLE_Zigbee</li>
 <li>Projects\NUCLEO-WB55.Nucleo\Applications\Mac_802_15_4</li>
 <li>Projects\NUCLEO-WB55.Nucleo\Applications\Thread</li>
+<li>Projects\NUCLEO-WB55.Nucleo\Applications\Zigbee</li>
 </ul>
 </div>
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section6" checked aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.5.0 / 14-February-2020</label>
+<input type="checkbox" id="collapse-section7" checked aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.6.0 / 26-March-2020</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<h3 id="ble">BLE</h3>
+<ul>
+<li><strong>Add BLE Mesh split of BLE_MeshLightingDemo project in</strong>:
+<ul>
+<li>BLE_MeshLightingLPN (Low Power Node),</li>
+<li>BLE_MeshLightingPRFNode (Proxy Relay Friend Node),</li>
+<li>BLE_MeshLightingProvisioner (Embedded Provisioner in Dynamic Mode)</li>
+</ul></li>
+<li><strong>Add BLE_RfWithFlash project</strong>
+<ul>
+<li>demonstrates the capability to erase/write the flash while a Point-to-Point communication using BLE component is active</li>
+</ul></li>
+<li><strong>Add BLE_HeartRate_ANCS and BLE_HeartRateFreeRTOS_ANCS projects (based on Sequencer &amp; FreeRTOS)</strong>
+<ul>
+<li>Demonstrate the Apple Notification Center Service to access many kinds of notifications that are generated on iOS devices</li>
+<li>Combined with Heart rate server Application</li>
+</ul></li>
+</ul>
+<h3 id="thread">Thread</h3>
+<ul>
+<li><strong>Add new application demonstrating usage of UDP packet exchange</strong>
+<ul>
+<li>Thread_Udp</li>
+</ul></li>
+</ul>
+<h3 id="zigbee">Zigbee</h3>
+<ul>
+<li><strong>Add new Zigbee applications highlighting the usage of the following clusters : Commissioning, Diagnostic, IAS_WD and Poll control</strong>
+<ul>
+<li>Those applications are provided under Applications\Zigbee:
+<ul>
+<li>Zigbee_Commissioning_Client_Coord</li>
+<li>Zigbee_Commissioning_Server_Router</li>
+<li>Zigbee_Diagnostic_Client_Router</li>
+<li>Zigbee_Diagnostic_Server_Coord</li>
+<li>Zigbee_IAS_WD_Client_Router</li>
+<li>Zigbee_IAS_WD_Server_Coord</li>
+<li>Zigbee_PollControl_Client_Coord</li>
+<li>Zigbee_PollControl_Server_SED</li>
+</ul></li>
+<li>Those application requires the usage of the <strong>stm32wb5x_Zigbee_FFD_Full_fw.bin</strong></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.5.0 / 14-February-2020</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <h3 id="add-blezigbee-static-concurrent-mode-support-and-additionnal-zigbee-applications">Add BLE/Zigbee static concurrent mode support and additionnal zigbee applications</h3>
 <ul>
 <li><strong>Add BLE/Zigbee static concurrent mode support</strong>
@@ -85,7 +136,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.4.0 / 06-December-2019</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <h3 id="maintenance">Maintenance</h3>
 <ul>
 <li>Add SW4STM32 and MDK-ARM IDE files for:
@@ -99,7 +150,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.3.0 / 11-September-2019</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <h3 id="introduction-of-zigbee-support">Introduction of ZIGBEE support</h3>
 <ul>
 <li>Ensure compatibility with <strong>STM32CubeMX V5.4</strong>.</li>
@@ -129,7 +180,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.2.0 / 26-June-2019</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <h3 id="addition-of-new-application">Addition of new application</h3>
 <p><strong>Add CKS (Customer Key Storage) application</strong></p>
 <ul>
@@ -144,7 +195,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2"  aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <h3 id="remove-binaries-addition-of-new-examples">Remove binaries, Addition of new examples</h3>
 <p>Change directory name to reflect board RPN: <a href="https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/stm32-nucleo-expansion-boards/p-nucleo-wb55.html">P-NUCLEO-WB55</a></p>
 <p>Add QSPI examples:</p>
@@ -167,7 +218,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 </div>

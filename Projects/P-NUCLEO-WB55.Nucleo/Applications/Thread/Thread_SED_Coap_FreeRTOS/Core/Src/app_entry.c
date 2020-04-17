@@ -119,7 +119,6 @@ void APPE_Init( void )
 /* USER CODE BEGIN APPE_Init_1 */
   Init_Debug();
 
-  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
   Led_Init();
   Button_Init();
 /* USER CODE END APPE_Init_1 */
@@ -205,6 +204,10 @@ static void SystemPower_Config( void )
   /* Initialize low power manager */
   UTIL_LPM_Init( );
 
+  /* Disable low power mode until INIT is complete */
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+  UTIL_LPM_SetStopMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+  
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   /**
    *  Enable USB power
@@ -320,7 +323,13 @@ static void APPE_SysEvtReadyProcessing( void )
   TL_TRACES_Init( );
 
   APP_THREAD_Init();
+  
+#if ( CFG_LPM_SUPPORTED == 1)
+  /* Thread stack is initialized, low power mode can be enabled */
   UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  UTIL_LPM_SetStopMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+#endif
+
   return;
 }
 

@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 /*--------------------------------------------------------------------------
  *  DESCRIPTION
@@ -177,9 +177,6 @@ struct ZbZclClusterT * ZbZclIasZoneServerAlloc(struct ZigBeeT *zb, uint8_t endpo
     uint16_t zone_type, uint16_t manuf_code, bool use_trip_pair,
     struct ZbZclIasZoneServerCallbacksT *callbacks, void *arg);
 
-void ZbZclIasZoneServerConfigCallbacks(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclIasZoneServerCallbacksT *callbacks);
-
 /* Used with 'trip-to-pair'. Before sending a Zone Enroll Request, the IAS CIE
  * must write to the IAS_CIE_Address attribute with its IEEE address. */
 uint8_t ZbZclIasZoneServerEnrollRequest(struct ZbZclClusterT *clusterPtr,
@@ -215,12 +212,9 @@ struct ZbZclIasZoneClientCallbacksT {
 struct ZbZclClusterT * ZbZclIasZoneClientAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclIasZoneClientCallbacksT *callbacks, void *arg);
 
-void ZbZclIasZoneClientConfigCallbacks(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclIasZoneClientCallbacksT *callbacks);
-
 uint8_t ZbZclIasZoneClientInitiateAutoEnroll(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst,
-    void (*callback)(const ZbZclWriteRspT *, void *), void *arg);
+    void (*callback)(const struct ZbZclWriteRspT *, void *), void *arg);
 
 uint8_t ZbZclIasZoneClientSendAutoEnrollResponse(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, uint8_t zone_id,

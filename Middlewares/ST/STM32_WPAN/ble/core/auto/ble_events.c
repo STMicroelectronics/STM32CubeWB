@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_events.c
  * @author  MCD Application Team
- * @date    22 January 2020
+ * @date    04 March 2020
  * @brief   Source file for STM32WB (Event callbacks)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -25,7 +25,6 @@ void hci_encryption_change_event_process(uint8_t *buffer_in);
 void hci_read_remote_version_information_complete_event_process(uint8_t *buffer_in);
 void hci_hardware_error_event_process(uint8_t *buffer_in);
 void hci_number_of_completed_packets_event_process(uint8_t *buffer_in);
-void hci_data_buffer_overflow_event_process(uint8_t *buffer_in);
 void hci_encryption_key_refresh_complete_event_process(uint8_t *buffer_in);
 void aci_hal_end_of_radio_activity_event_process(uint8_t *buffer_in);
 void aci_hal_scan_req_report_event_process(uint8_t *buffer_in);
@@ -94,8 +93,6 @@ const hci_event_table_t hci_event_table[HCI_EVENT_TABLE_SIZE] =
   { 0x0010, hci_hardware_error_event_process },
   /* hci_number_of_completed_packets_event */
   { 0x0013, hci_number_of_completed_packets_event_process },
-  /* hci_data_buffer_overflow_event */
-  { 0x001a, hci_data_buffer_overflow_event_process },
   /* hci_encryption_key_refresh_complete_event */
   { 0x0030, hci_encryption_key_refresh_complete_event_process },
 };
@@ -376,25 +373,6 @@ void hci_number_of_completed_packets_event_process(uint8_t *buffer_in)
                                         rp0->Handle_Packets_Pair_Entry);
 }
 
-/* hci_data_buffer_overflow_event */
-/* Event len: 1 */
-/**
-  * @brief 'This event is used to indicate that the Controller's data buffers have been overflowed.
-This can occur if the Host has sent more packets than allowed. The
-Link_Type parameter is used to indicate that the overflow was caused by ACL data.
-  * @param Link_Type On wich type of channel overflow has occurred.
-  * Values:
-  - 0x01: ACL Buffer Overflow
-  * @retval None
-*/
-
-void hci_data_buffer_overflow_event_process(uint8_t *buffer_in)
-{
-  /* Input params */
-  hci_data_buffer_overflow_event_rp0 *rp0 = (hci_data_buffer_overflow_event_rp0 *)buffer_in;
-  hci_data_buffer_overflow_event(rp0->Link_Type);
-}
-
 /* hci_encryption_key_refresh_complete_event */
 /* Event len: 1 + 2 */
 /**
@@ -503,8 +481,8 @@ void aci_hal_scan_req_report_event_process(uint8_t *buffer_in)
   * @param FW_Error_Type FW Error type
   * Values:
   - 0x01: L2CAP recombination failure
-  - 0x02: GATT UNEXPECTED RESPONSE ERROR
-  - 0x03: NVM LEVEL WARNING
+  - 0x02: GATT unexpected peer message
+  - 0x03: NVM level warning
   * @param Data_Length Length of Data in octets
   * @param Data The error event info
   * @retval None
@@ -540,12 +518,13 @@ procedure timeout has occurred or the pairing has failed. This is to notify the 
 we have paired with a remote device so that it can take further actions or to notify that a
 timeout has occurred so that the upper layer can decide to disconnect the link.
   * @param Connection_Handle Connection handle on which the pairing procedure completed
-  * @param Status Specific pairing status (0:Success,1:Timeout,2:Failed)
+  * @param Status Pairing status
   * Values:
   - 0x00: Success
-  - 0x01: Timeout
-  - 0x02: Failed
-  * @param Reason Pairing reason error code
+  - 0x01: SMP timeout
+  - 0x02: Pairing failed
+  - 0x03: Encryption failed
+  * @param Reason Pairing reason error code (valid in case of pairing failed status)
   * Values:
   - 0x02: OOB_NOT_AVAILABLE
   - 0x03: AUTH_REQ_CANNOT_BE_MET

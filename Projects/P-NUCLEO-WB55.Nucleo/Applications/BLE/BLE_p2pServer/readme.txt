@@ -96,9 +96,6 @@ On the android/ios device, enable the Bluetooth communications, and if not done 
 
 
 Second demonstration
- - BLE_p2pServer may be connected by BLE_p2pClient as well(MB1293C).
- - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB55xx boards and executed, the modules are initialized. 
- 
  - BLE_p2pServer may be connected by BLE_p2pClient.
  - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB55xx boards and executed, the modules are initialized. 
 

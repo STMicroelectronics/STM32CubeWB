@@ -133,10 +133,6 @@
 #define BOUNCE_THRESHOLD                20U
 #define LONG_PRESS_THRESHOLD            1000U
 
-#define ADDRESS_IS_UNICAST(a)   (((MOBLEINT16)(a)>0)&&((MOBLEUINT16)(a)<0x8000))
-#define ADDRESS_IS_GROUP(a)     (((MOBLEINT16)(a) & 0xC000) == 0xC000)  
-#define ADDRESS_IS_ALL_NODES(a) ((MOBLEUINT16)(a) == 0xFFFF)
-
 #define FIRST_ELEMENT 1
 #define SECOND_ELEMENT 2
 #define THIRD_ELEMENT 3

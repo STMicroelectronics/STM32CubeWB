@@ -12,7 +12,8 @@ define symbol __ICFEDIT_region_RAM_end__   = 0x20025FFF;
 
 /*-Sizes-*/
 define symbol __ICFEDIT_size_cstack__ = 0x1000;
-define symbol __ICFEDIT_size_heap__   = 102400; /* Heap increased for Zigbee */
+define symbol __ICFEDIT_size_heap__   = 138400; 
+/* 102400; Heap increased for Zigbee */
 /**** End of ICF editor section. ###ICF###*/
 
 define symbol __ICFEDIT_region_RAM_SHARED_start__ = 0x20030000;

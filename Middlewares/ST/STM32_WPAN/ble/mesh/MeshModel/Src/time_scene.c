@@ -44,7 +44,7 @@
 #include "common.h"
 #include <string.h>
 #include "compiler.h"
-#include "Math.h"
+#include "math.h"
 #include "time_scene.h"
 
 /** @addtogroup MODEL_TIME_SCENE

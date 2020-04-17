@@ -138,7 +138,8 @@ extern "C" {
     SHCI_OCF_C2_ZIGBEE_INIT,
     SHCI_OCF_C2_LLD_TESTS_INIT,
     SHCI_OCF_C2_EXTPA_CONFIG,
-    SHCI_OCF_C2_SET_FLASH_ACTIVITY_CONTROL
+    SHCI_OCF_C2_SET_FLASH_ACTIVITY_CONTROL,
+	SHCI_OCF_C2_LLD_BLE_INIT
   } SHCI_OCF_t;
 
 #define SHCI_OPCODE_C2_FUS_GET_STATE         (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_GET_STATE)
@@ -367,6 +368,8 @@ extern "C" {
 
 #define SHCI_OPCODE_C2_LLD_TESTS_INIT           (( SHCI_OGF << 10) + SHCI_OCF_C2_LLD_TESTS_INIT)
 
+#define SHCI_OPCODE_C2_LLD_BLE_INIT             (( SHCI_OGF << 10) + SHCI_OCF_C2_LLD_BLE_INIT)
+
 #define SHCI_OPCODE_C2_EXTPA_CONFIG             (( SHCI_OGF << 10) + SHCI_OCF_C2_EXTPA_CONFIG)
   /** Command parameters */
     enum
@@ -457,13 +460,16 @@ typedef  MB_WirelessFwInfoTable_t SHCI_WirelessFwInfoTable_t;
 #define INFO_STACK_TYPE_BLE_LIGHT                   0x03
 #define INFO_STACK_TYPE_THREAD_FTD                  0x10
 #define INFO_STACK_TYPE_THREAD_MTD                  0x11
-#define INFO_STACK_TYPE_ZIGBEE                      0x30
+#define INFO_STACK_TYPE_ZIGBEE_FFD                  0x30
+#define INFO_STACK_TYPE_ZIGBEE_RFD                  0x31
 #define INFO_STACK_TYPE_MAC                         0x40
 #define INFO_STACK_TYPE_BLE_THREAD_FTD_STATIC       0x50
 #define INFO_STACK_TYPE_802154_LLD_TESTS            0x60
 #define INFO_STACK_TYPE_802154_PHY_VALID            0x61
 #define INFO_STACK_TYPE_BLE_PHY_VALID               0x62
 #define INFO_STACK_TYPE_BLE_LLD_TESTS               0x63
+#define INFO_STACK_TYPE_BLE_RLV                     0x64
+#define INFO_STACK_TYPE_802154_RLV                  0x65
 #define INFO_STACK_TYPE_BLE_ZIGBEE_FFD_STATIC       0x70
 
 typedef struct {
@@ -614,6 +620,16 @@ typedef struct {
   */
   SHCI_CmdStatus_t SHCI_C2_LLDTESTS_Init( uint8_t param_size, uint8_t * p_param );
 
+    /**
+  * SHCI_C2_LLD_BLE_Init
+  * @brief Starts the LLD tests CLI
+  *
+  * @param  param_size : Nb of bytes
+  * @param  p_param : pointeur with data to give from M4 to M0
+  * @retval Status
+  */
+  SHCI_CmdStatus_t SHCI_C2_LLD_BLE_Init( uint8_t param_size, uint8_t * p_param );
+  
     /**
   * SHCI_C2_ZIGBEE_Init
   * @brief Starts the Zigbee Stack

@@ -1,13 +1,13 @@
 /******************************************************************************
  * @file    ble_gap_aci.h
  * @author  MCD Application Team
- * @date    06 November 2019
+ * @date    18 March 2020
  * @brief   Header file for STM32WB (gap_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -582,7 +582,7 @@ When this procedure is started, only the devices in limited discoverable mode ar
 to the upper layers.
 The procedure is terminated when either the upper layers issue a command to terminate 
 the procedure by issuing the command @ref aci_gap_terminate_gap_proc with the procedure 
-code set to 0x01 or a timeout happens. When the procedure is terminated due to any of the 
+code set to 0x01 or a timeout happens (the timeout value is fixed at 10.24 s.). When the procedure is terminated due to any of the 
 above  reasons, @ref aci_gap_proc_complete_event event is returned with the procedure code
 set to 0x01.
 The device found when the procedure is ongoing is returned to the upper layers through the
@@ -622,7 +622,7 @@ tBleStatus aci_gap_start_limited_discovery_proc(uint16_t LE_Scan_Interval,
   * @brief Start the general discovery procedure. The controller is commanded to start active
 scanning. The procedure is terminated when  either the upper layers issue a command
 to terminate the procedure by issuing the command @ref aci_gap_terminate_gap_proc
-with the procedure code set to 0x02 or a timeout happens. When the procedure is
+with the procedure code set to 0x02 or a timeout happens (the timeout value is fixed at 10.24 s.). When the procedure is
 terminated due to any of the above reasons, @ref aci_gap_proc_complete_event event
 is returned with the procedure code set to 0x02. The device found when the procedure
 is ongoing is returned to @ref hci_le_advertising_report_event.

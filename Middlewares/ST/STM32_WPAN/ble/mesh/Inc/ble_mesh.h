@@ -45,11 +45,11 @@
 
 #include "types.h"
 //#include "hal_types.h"
-#define BLE_MESH_APPLICATION_VERSION "1.12.003" 
+#define BLE_MESH_APPLICATION_VERSION "1.12.007" 
 /**
 * \mainpage ST BLE-Mesh Solutions Bluetooth LE Mesh Library
 *
-* \version 1.12.003
+* \version 1.12.007
 *
 * \subsection contents_sec Contents
 *
@@ -125,6 +125,10 @@
 #define INPUT_OOB_ACTION_BIT_PUSH                 (1 << 0) /**< Push */
 #define INPUT_OOB_ACTION_BIT_TWIST                (1 << 1) /**< Twist */
 #define INPUT_OOB_ACTION_BIT_ENTER_NUM            (1 << 2) /**< Enter Number */
+
+#define ADDRESS_IS_UNICAST(a)   (((MOBLEINT16)(a)>0)&&((MOBLEUINT16)(a)<0x8000))
+#define ADDRESS_IS_GROUP(a)     (((MOBLEINT16)(a) & 0xC000) == 0xC000)  
+#define ADDRESS_IS_ALL_NODES(a) ((MOBLEUINT16)(a) == 0xFFFF)
 
 /** \brief List of status values for responses. */
 typedef enum _MOBLE_COMMAND_STATUS
@@ -836,6 +840,11 @@ MOBLE_RESULT BLEMesh_SetLowPowerFeatureState(MOBLEUINT8 state);
 */
 MOBLEUINT16 BLEMesh_GetFeatures(void);
 
+/** \brief Get status of transmission in process state.
+* \return  Status of the packet transmission.
+*/
+MOBLEBOOL BLEMesh_TrsptIsBusyState(void);
+
 /** \brief Set callback for handling heartbeat messages.
 *
 * \param[in] cb Callback
@@ -1082,17 +1091,22 @@ MOBLEUINT8 ApplicationGetVendorModelList(MOBLEUINT32* pModels_vendor_ID, \
 * @brief ApplicationChkSigModelActive: This function checks if a specific 
 *          Model Server is active in the Model Server list
 * @param modelID: Model Server ID received for the checking function
+* @param elementIndex : index of element for which active model checking is needed
 * retval Bool: True or False, if the Server ID matches with the list 
 */
-MOBLEBOOL ApplicationChkSigModelActive(MOBLEUINT16 modelID);
+//MOBLEBOOL ApplicationChkSigModelActive(MOBLEUINT16 modelID);
+MOBLEBOOL ApplicationChkSigModelActive(MOBLEUINT16 modelID, MOBLEUINT8 elementIndex);
+
 
 /** 
 * @brief ApplicationChkVendorModelActive: This function checks if a specific 
 *          Model Server is active in the Vendor Model Server list
 * @param modelID: Model Server ID received for the checking function
+* @param elementIndex : index of element for which active model checking is needed
 * retval Bool: True or False, if the Server ID matches with the list 
 */
-MOBLEBOOL ApplicationChkVendorModelActive(MOBLEUINT32 modelID);
+//MOBLEBOOL ApplicationChkVendorModelActive(MOBLEUINT32 modelID);
+MOBLEBOOL ApplicationChkVendorModelActive(MOBLEUINT32 modelID, MOBLEUINT8 elementIndex);
 
 /** 
 * @brief ApplicationGetConfigServerDeviceKey: This function provides the 

@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZIGBEE_SECURITY_H
 #define ZIGBEE_SECURITY_H
@@ -22,26 +22,6 @@ struct ZigBeeT;
 /* ZB_SEC_KEYSTR_SIZE is a helper to know how much to allocate
  * for ascii string buffer. */
 #define ZB_SEC_KEYSTR_SIZE      ((ZB_SEC_KEYSIZE * 2U) + ZB_SEC_KEYSIZE /* separators */ + 1U /* NULL */)
-
-/*---------------------------------------------------------------
- * Security Keys
- *---------------------------------------------------------------
- */
-/* Null (all zeroes)
- * 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00 */
-extern const uint8_t sec_key_null[ZB_SEC_KEYSIZE];
-
-/* "ZigBeeAlliance09"
- * 5a:69:67:42:65:65:41:6c:6c:69:61:6e:63:65:30:39 */
-extern const uint8_t sec_key_ha[ZB_SEC_KEYSIZE];
-
-/* Uncertified Device's Distributed Link Key
- * d0:d1:d2:d3:d4:d5:d6:d7:d8:d9:da:db:dc:dd:dedf */
-extern const uint8_t sec_key_distrib_uncert[ZB_SEC_KEYSIZE];
-
-/* TOUCHLINK_KEY_INDEX_CERTIFICATION key
- * c0:c1:c2:c3:c4:c5:c6:c7 0xc8:c9:ca:cb:cc:cd:ce:cf */
-extern const uint8_t sec_key_touchlink_cert[ZB_SEC_KEYSIZE];
 
 /*---------------------------------------------------------------
  * Security Level
@@ -121,7 +101,7 @@ enum ZbSecHdrKeyIdT {
 
 /* Frame Counter Resets are controlled much like a lollipop counter, and require
  * the 'new' value to be near zero to guard against replay attacks. */
-#define ZB_FRAME_COUNTER_RESET_MAX                  256U
+#define ZB_FRAME_COUNTER_RESET_MAX          256U
 
 /* Key Type Enumerations (Primitives and over-the-air). */
 enum ZbSecKeyTypeT {
@@ -259,9 +239,17 @@ void ZbSecMakeNonce(uint8_t *nonce, uint64_t extAddr, uint32_t frameCounter, uin
  * Security Transformations
  *---------------------------------------------------------------
  */
-void ZbAesMmoHash(uint8_t const *data, const unsigned int length, uint8_t *hash);
+bool ZbAesMmoHash(struct ZigBeeT *zb, uint8_t const *data, const unsigned int length, uint8_t *digest);
 void ZbSecKeyTransform(uint8_t *key, uint8_t input, uint8_t *keyOut);
 
+/* Add a device-key-pair */
+uint8_t ZbSecAddDeviceLinkKeyByKey(struct ZigBeeT *zb, uint64_t extAddr, uint8_t *key);
+uint8_t ZbSecAddDeviceLinkKeyByKeyStr(struct ZigBeeT *zb, uint64_t extAddr, char *str);
+
+/*---------------------------------------------------------------
+ * Extras: Install Code Helpers (Optional, may not be included in all builds)
+ *---------------------------------------------------------------
+ */
 /* Produces an install code with CRC. */
 bool ZbSecInstallCodeCreate(struct ZigBeeT *zb, const void *inputCode, void *outputCode, unsigned int codeLen);
 
@@ -271,10 +259,6 @@ bool ZbSecInstallCodeCheck(const void *installCode, unsigned int codeLen, void *
 
 /* Computes the 2-byte CRC of the input Install Code */
 void ZbSecInstallCodeCrc(const uint8_t *ic_in, uint8_t ic_len, uint8_t *crc_out);
-
-/* Add a device-key-pair */
-uint8_t ZbSecAddDeviceLinkKeyByKey(struct ZigBeeT *zb, uint64_t extAddr, uint8_t *key);
-uint8_t ZbSecAddDeviceLinkKeyByKeyStr(struct ZigBeeT *zb, uint64_t extAddr, char *str);
 
 /* Add a device-key-pair using an Install Code (includes trailing 2-octet CRC). */
 uint8_t ZbSecAddDeviceLinkKeyByInstallCode(struct ZigBeeT *zb, uint64_t extAddr, uint8_t *ic, unsigned int len);
@@ -288,6 +272,21 @@ enum ZbSecEcdsaSigType {
     ZB_SEC_ECDSA_SIG_SUITE_2
 };
 
+#define ZB_SEC_CRYPTO_SUITE_V2_CERT_LEN             74U
+#define ZB_SEC_CRYPTO_SUITE_V2_SIG_LEN              80U /* IEEE[8] r[36] s[36] */
+
+/**
+ * Description
+ * @param zb
+ * @param sig_type
+ * @param ca_pub_key_array
+ * @param ca_pub_key_len
+ * @param certificate Length must be ZB_SEC_CRYPTO_SUITE_V2_CERT_LEN (74 bytes)
+ * @param signature Length must be ZB_SEC_CRYPTO_SUITE_V2_SIG_LEN (80 bytes)
+ * @param image_digest Length is AES_BLOCK_SIZE (16 bytes)
+ * @param cert_digest Length is AES_BLOCK_SIZE (16 bytes)
+ * @return
+ */
 enum ZbStatusCodeT ZbSecEcdsaValidate(struct ZigBeeT *zb, enum ZbSecEcdsaSigType sig_type,
     const uint8_t *ca_pub_key_array, unsigned int ca_pub_key_len,
     const uint8_t *certificate, const uint8_t *signature,

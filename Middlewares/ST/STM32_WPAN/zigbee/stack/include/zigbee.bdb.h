@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZIGBEE_BDB_H
 #define ZIGBEE_BDB_H
@@ -113,7 +113,7 @@ enum ZbBdbAttrIdT {
     ZB_BDB_JoinScanType, /* 0x110a - MCP_SCAN_ACTIVE (default) or MCP_SCAN_ENHANCED */
     ZB_BDB_JoinIgnoreLqi, /* 0x110b - bool - Ignore LQI (link cost <= 3) of potential parent's beacon  */
     ZB_BDB_NlmeSyncFailNumBeforeError, /* 0x110c - uint8_t - Number of consecutive NLME-SYNC failures before reporting ZB_NWK_STATUS_CODE_PARENT_LINK_FAILURE */
-    ZB_BDB_ZdoTimeout, /* 0x110d - ZDO response-wait timeout - default is 6 seconds */
+    ZB_BDB_ZdoTimeout, /* 0x110d - ZDO response wait timeout in milliseconds - default is 6000 mS */
     ZB_BDB_TLStealFlags, /* 0x110e */
     ZB_BDB_JoinTclkNodeDescReqDelay, /* 0x110f */
     ZB_BDB_JoinTclkRequestKeyDelay, /* 0x1110 */
@@ -128,6 +128,7 @@ enum ZbBdbAttrIdT {
     ZB_BDB_MaxConcurrentJoiners, /* 0x1119 - uint8_t - maximum number of concurrent joiners the coordinator supports */
     ZB_BDB_DisablePersistRejoin, /* 0x111a - boolean */
     ZB_BDB_ZdoBindCheckCluster, /* boolean */
+    ZB_BDB_ApsInterpanDisabled, /* boolean */
 
     /* Constants which are accessible through a BDB GET IB request. */
     ZB_BDBC_MaxSameNetworkRetryAttempts = 0x1200,
@@ -141,7 +142,7 @@ enum ZbBdbAttrIdT {
 };
 
 /* BDB-GET.request */
-typedef struct {
+typedef struct ZbBdbGetReqT {
     enum ZbBdbAttrIdT attrId;
     void *attr;
     unsigned int attrLength;
@@ -149,13 +150,13 @@ typedef struct {
 } ZbBdbGetReqT;
 
 /* BDB-GET.confirm */
-typedef struct {
+typedef struct ZbBdbGetConfT {
     enum ZbStatusCodeT status;
     enum ZbBdbAttrIdT attrId;
 } ZbBdbGetConfT;
 
 /* BDB-SET.request */
-typedef struct {
+typedef struct ZbBdbSetReqT {
     enum ZbBdbAttrIdT attrId;
     const void *attr;
     unsigned int attrLength;
@@ -163,7 +164,7 @@ typedef struct {
 } ZbBdbSetReqT;
 
 /* BDB-SET.confirm */
-typedef struct {
+typedef struct ZbBdbSetConfT {
     enum ZbStatusCodeT status;
     enum ZbBdbAttrIdT attrId;
 } ZbBdbSetConfT;
@@ -172,8 +173,8 @@ typedef struct {
 #define ZbBdbSet(_zb_, _id_, _ptr_, _sz_) ZbBdbSetIndex(_zb_, _id_, _ptr_, _sz_, 0)
 enum ZbStatusCodeT ZbBdbGetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
 enum ZbStatusCodeT ZbBdbSetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, const void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
-void ZbBdbGetReq(struct ZigBeeT *zb, ZbBdbGetReqT *getReqPtr, ZbBdbGetConfT *getConfPtr);
-void ZbBdbSetReq(struct ZigBeeT *zb, ZbBdbSetReqT *setReqPtr, ZbBdbSetConfT *setConfPtr);
+void ZbBdbGetReq(struct ZigBeeT *zb, struct ZbBdbGetReqT *getReqPtr, struct ZbBdbGetConfT *getConfPtr);
+void ZbBdbSetReq(struct ZigBeeT *zb, struct ZbBdbSetReqT *setReqPtr, struct ZbBdbSetConfT *setConfPtr);
 
 /* Helpers for bdbCommissioningMode bits */
 /* ZbBdbCommissionModeBitSupported - Check if a BDB_COMMISSION_MODE_ bit or mask is

@@ -304,6 +304,35 @@ size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize)
 
 #if   defined ( __CC_ARM )     /* Keil */
 
+/**
+  Called from assert() and prints a message on stderr and calls abort().
+
+  \param[in] expr  assert expression that was not TRUE
+  \param[in] file  source file of the assertion
+  \param[in] line  source line of the assertion
+*/
+__attribute__((weak,noreturn))
+void __aeabi_assert (const char *expr, const char *file, int line) {
+  char str[12], *p;
+
+  fputs("*** assertion failed: ", stderr);
+  fputs(expr, stderr);
+  fputs(", file ", stderr);
+  fputs(file, stderr);
+  fputs(", line ", stderr);
+
+  p = str + sizeof(str);
+  *--p = '\0';
+  *--p = '\n';
+  while (line > 0) {
+    *--p = '0' + (line % 10);
+    line /= 10;
+  }
+  fputs(p, stderr);
+
+  abort();
+}
+
 /* For KEIL re-implement our own version of fputc */
 int fputc(int ch, FILE *f)
 {

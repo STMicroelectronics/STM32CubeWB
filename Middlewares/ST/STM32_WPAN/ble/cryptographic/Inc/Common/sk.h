@@ -2,25 +2,17 @@
   ******************************************************************************
   * @file    sk.h
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    05-June-2015
   * @brief   Symmetric Key Common Definitions
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2015 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Licensed under MCD-ST Image SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software component is licensed by ST under Image license SLA0044,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        http://www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -39,15 +31,15 @@
 /** @addtogroup SymKey
   * @{
   */
-/* Exported types ----------------------------------------------------------- */  
+/* Exported types ----------------------------------------------------------- */
 
-typedef enum {  
-  E_SK_DEFAULT = (uint32_t) (0x00000000), /*!< User Flag: No flag specified. This is the default value that should be set to this flag  */  
+typedef enum {
+  E_SK_DEFAULT = (uint32_t) (0x00000000), /*!< User Flag: No flag specified. This is the default value that should be set to this flag  */
   E_SK_DONT_PERFORM_KEY_SCHEDULE = (uint32_t) (0x00000001), /*!< User Flag: Used to force the init to not reperform key schedule.\n
                                                                  The classic example is where the same key is used on a new message, in this case to redo key scheduling is
-                                                                 a useless waste of computation, could be particularly useful on GCM, where key schedule is very complicated. */    
+                                                                 a useless waste of computation, could be particularly useful on GCM, where key schedule is very complicated. */
   E_SK_FINAL_APPEND = (uint32_t) (0x00000020),   /*!< User Flag: Must be set in CMAC mode before the final Append call occurs. */
-  E_SK_OPERATION_COMPLETED  = (uint32_t) (0x00000002),   /*!< Internal Flag (not to be set/read by user): used to check that the Finish function has been already called */  
+  E_SK_OPERATION_COMPLETED  = (uint32_t) (0x00000002),   /*!< Internal Flag (not to be set/read by user): used to check that the Finish function has been already called */
   E_SK_NO_MORE_APPEND_ALLOWED = (uint32_t) (0x00000004), /*!< Internal Flag (not to be set/read by user): it is set when the last append has been called. Used where the append is called with an InputSize not
                                                                     multiple of the block size, which means that is the last input.*/
   E_SK_NO_MORE_HEADER_APPEND_ALLOWED = (uint32_t) (0x00000010),   /*!< Internal Flag (not to be set/read by user): only for authenticated encryption modes. \n
@@ -65,11 +57,11 @@ typedef enum {
 /** @addtogroup InternalAPI Internal functions
   * @{
   */
-  
+
 /** @defgroup SymKeylowlevel Symmetric Key Low Level Flags
   * @{
   */
-  
+
 #define  C_ENC       (uint32_t) (0x00000000) /*!< Internal contant indicating "Encryption"          */
 #define  C_DEC       (uint32_t) (0x00000001) /*!< Internal contant indicating "Decryption"          */
 #define  C_DIR_MASK  (uint32_t) (0x00000001) /*!< Internal mask for Encryption/Decryption           */

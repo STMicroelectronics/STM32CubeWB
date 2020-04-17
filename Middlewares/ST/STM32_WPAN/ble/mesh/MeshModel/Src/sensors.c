@@ -46,7 +46,7 @@
 #include "light_lc.h"
 #include <string.h>
 #include "compiler.h"
-#include "Math.h"
+#include "math.h"
 
 /** @addtogroup MODEL_SENSOR
 *  @{
@@ -74,7 +74,7 @@ const MODEL_OpcodeTableParam_t Sensor_Opcodes_Table[] = {
   
 #ifdef ENABLE_SENSOR_MODEL_SERVER       
   {SENSOR_SERVER_MODEL_ID    ,SENSOR_DESCRIPTOR_GET,                    MOBLE_TRUE,   0, 2,               SENSOR_DESCRIPTOR_STATUS , 2, 75},
-  {SENSOR_SERVER_MODEL_ID    ,SENSOR_DESCRIPTOR_STATUS,                 MOBLE_FALSE,  2, 75,               SENSOR_DESCRIPTOR_STATUS , 2, 75},
+  {SENSOR_SERVER_MODEL_ID    ,SENSOR_DESCRIPTOR_STATUS,                 MOBLE_FALSE,  2, 75,              0 , 2, 75},
   {SENSOR_SERVER_MODEL_ID    ,SENSOR_GET,                               MOBLE_TRUE,   0, 2,               SENSOR_STATUS , 0,65 },  /* STATUS MESSAGE AS MARSHALLED DATA */
   {SENSOR_SERVER_MODEL_ID    ,SENSOR_STATUS,                            MOBLE_FALSE,  0, 65,              0 , 0,65 }, 
   {SENSOR_SERVER_MODEL_ID    ,SENSOR_COLUMN_GET,                        MOBLE_TRUE,   3, 3,               SENSOR_COLUMN_STATUS , 4, 8},  /* GET VARIABLE TAKEN AS 1 (2+VARIABLE) */
@@ -296,8 +296,10 @@ MOBLE_RESULT Sensor_Setting_Set(const MOBLEUINT8* pSetting_param, MOBLEUINT32 le
 * @param  length: length of the data in packet.
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Sensor_Setting_Status_PID(MOBLEUINT8* pSetting_param, MOBLEUINT32 *plength 
-                                       ,const MOBLEUINT8 *pData,MOBLEUINT32 length)
+MOBLE_RESULT Sensor_Setting_Status_PID(MOBLEUINT8* pSetting_param, 
+                                       MOBLEUINT32 *plength,
+                                       const MOBLEUINT8 *pData,
+                                       MOBLEUINT32 length)
 {
   MOBLEUINT8 Sensor_GetBuff[4];
   MOBLEUINT16 propery_ID;
@@ -394,6 +396,8 @@ MOBLE_RESULT SensorModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                                   MOBLEUINT32 dataLength,
                                                   MOBLEBOOL response)
 {
+  TRACE_M(TF_SENSOR,"dst_peer = %.2X , peer_add = %.2X, opcode = %.2X, response= %.2X \r\n ",
+          dst_peer, peer_addr, opcode, response);
   switch(opcode)
   {
 #ifdef ENABLE_SENSOR_MODEL_SERVER
@@ -483,9 +487,9 @@ MOBLE_RESULT SensorModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   case SENSOR_GET:
     {
       if((dataLength > 0) && (property_ID == 0x00))
-        {
-          return MOBLE_RESULT_FALSE;
-        }
+      {
+        return MOBLE_RESULT_FALSE;
+      }
       break;
     }
     
@@ -512,22 +516,39 @@ MOBLE_RESULT SensorModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     } 
   case SENSOR_DESCRIPTOR_STATUS:
     {
+      MOBLEUINT8 index;
+      
+      TRACE_M(TF_SENSOR,"Sensor Descritpor Status:\r\n");
+      for(index = 0; index < dataLength; index++)
+      {
+        TRACE_M(TF_SENSOR,"Value: %d\r\n", pRxData[index]);
+      }
       break;
     }
   case SENSOR_STATUS:
     {
-     if((dataLength > 0) && (property_ID == 0x00))
+      MOBLEUINT8 index;
+
+      if((dataLength > 0) && (property_ID == 0x00))
+      {
+        return MOBLE_RESULT_FALSE;
+      }
+      else
+      {
+        TRACE_M(TF_SENSOR,"Sensor Status:\r\n");
+        for(index = 0; index < dataLength; index++)
         {
-          return MOBLE_RESULT_FALSE;
+          TRACE_M(TF_SENSOR,"Value: %d\r\n", pRxData[index]);
         }
+      }
      
-     if(property_ID == PRESENCE_DETECTED_PROPERTY)
-     {  
+      if(property_ID == PRESENCE_DETECTED_PROPERTY)
+      {  
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC        
         Light_LC_ModeSet(&pRxData[2],1);  
         Light_LC_OMSet(&pRxData[2],1);   
 #endif        
-     }
+      }
       break;
     }
   case SENSOR_COLUMN_STATUS:
@@ -536,18 +557,46 @@ MOBLE_RESULT SensorModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     }
   case SENSOR_SERIES_STATUS:
     {
+      MOBLEUINT8 index;
+      
+      TRACE_M(TF_SENSOR,"Sensor Series Status:\r\n");
+      for(index = 0; index < dataLength; index++)
+      {
+        TRACE_M(TF_SENSOR,"Value: %d\r\n", pRxData[index]);
+      }
       break;
     }
   case SENSOR_CADENCE_STATUS:
     {
-      break;
+      MOBLEUINT8 index;
+      
+      TRACE_M(TF_SENSOR,"Sensor Cadence Status:\r\n");
+      for(index = 0; index < dataLength; index++)
+      {
+        TRACE_M(TF_SENSOR,"Value: %d\r\n", pRxData[index]);
       }
+      break;
+    }
   case SENSOR_SETTING_STATUS_PID:
     {
+      MOBLEUINT8 index;
+      
+      TRACE_M(TF_SENSOR,"Sensor Settings Status:\r\n");
+      for(index = 0; index < dataLength; index++)
+      {
+        TRACE_M(TF_SENSOR,"Value: %d\r\n", pRxData[index]);
+      }
       break;
     }
   case SENSOR_SETTING_STATUS_SETTING_ID:
     {
+      MOBLEUINT8 index;
+      
+      TRACE_M(TF_SENSOR,"Sensor Setting Status:\r\n");
+      for(index = 0; index < dataLength; index++)
+      {
+        TRACE_M(TF_SENSOR,"Value: %d\r\n", pRxData[index]);
+      }
       break;
     } 
 #endif		
@@ -559,7 +608,7 @@ MOBLE_RESULT SensorModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   } /* Switch ends */
   
   
-  if((result == MOBLE_RESULT_SUCCESS) && (response == MOBLE_TRUE))
+  if((result == MOBLE_RESULT_SUCCESS) && (response == MOBLE_TRUE) && (ADDRESS_IS_UNICAST(dst_peer)))
   {
     Model_SendResponse(peer_addr, dst_peer,opcode,pRxData,dataLength);
   }

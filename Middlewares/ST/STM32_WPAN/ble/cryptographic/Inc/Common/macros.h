@@ -2,25 +2,17 @@
   ******************************************************************************
   * @file    macros.h
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    05-June-2015
-  * @brief   Support Macros for functions of the Cryptolib 
+  * @brief   Support Macros for functions of the Cryptolib
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2015 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Licensed under MCD-ST Image SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software component is licensed by ST under Image license SLA0044,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        http://www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -34,8 +26,8 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-/* Exported types --------------------------------------------------------*/  
-/* Exported constants --------------------------------------------------------*/  
+/* Exported types --------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /** @addtogroup InternalAPI Internal functions
   * @{
@@ -44,7 +36,7 @@
 /** @addtogroup Macros Macros
   * @{
   */
-  
+
 /**
   * @brief  This macro returns the number of 32-bit words required
   *                    to store a variable whose byte size is passed in input
@@ -57,7 +49,7 @@
   * @brief  This macro returns the maximum value between two inputs,
   *                    the evaluation is done with the ">" operator
   * @param  a  First input
-  * @param  b  Second input  
+  * @param  b  Second input
   * @retval Max(a,b)
   */
 #define MAX(a,b)        ((((uint32_t)(a)) > ((uint32_t)(b)))  ? (a)  : (b))
@@ -66,7 +58,7 @@
   * @brief  This macro returns the minumum value between two inputs,
   *                     the evaluation is done with the ">" operator
   * @param  a  First input
-  * @param  b  Second input  
+  * @param  b  Second input
   * @retval Min(a,b)
   */
 #define MIN(a,b)        ((((uint32_t)(a)) > ((uint32_t)(b)))  ? (b)  : (a))
@@ -127,7 +119,7 @@
 /**
   * @brief  This macro returns a byte within an word
   * @param   P_word The 32-bit from which the byte
-  * @param   P_n The index of the byte to be taken, 0 = MSB, 3 = LSB   
+  * @param   P_n The index of the byte to be taken, 0 = MSB, 3 = LSB
   * @retval  Selected P_n byte from P_word
   */
 #define BYTE_X(P_word, P_n) (uint8_t) ((P_word >> (24 - (8 * (P_n)))) & 0xFFu)
@@ -136,10 +128,10 @@
 /**
   * @brief   This macro outputs the 4 octects that form the input 32bit integer
   * @param   [in]    P_x The input 32bit integer
-  * @param   [out]   P_a The least significant byte of P_x   
+  * @param   [out]   P_a The least significant byte of P_x
   * @param   [out]   P_b The second least significant byte of P_x
   * @param   [out]   P_c The second most significant byte of P_x
-  * @param   P_d The most significant byte of P_x       
+  * @param   P_d The most significant byte of P_x
   * @retval  none
   */
 #define WORD32_TO_WORD8(P_x,P_a,P_b,P_c,P_d) P_a=(uint8_t)BYTE_3(P_x),P_b=(uint8_t)BYTE_2(P_x),P_c=(uint8_t)BYTE_1(P_x),P_d=(uint8_t)BYTE_0(P_x)
@@ -148,9 +140,9 @@
 /**
   * @brief   This macro returns an integer from 4 octects
   * @param   P_b0 The most significant byte of the resulting integer
-  * @param   P_b1 The second most byte of the resulting integer   
+  * @param   P_b1 The second most byte of the resulting integer
   * @param   P_b2 The second least byte of the resulting integer
-  * @param   P_b3 The least byte of the resulting integer       
+  * @param   P_b3 The least byte of the resulting integer
   * @retval  The resulting 32bit integer formed by P_b0 || P_b1 || P_b2 || P_b3
   */
 #define WORD8_TO_WORD32(P_b0, P_b1, P_b2, P_b3) (uint32_t) ((uint32_t)(P_b0) << 24 | (uint32_t)(P_b1) << 16 | (uint32_t)(P_b2) << 8 | (P_b3))
@@ -160,7 +152,7 @@
 /**
   * @brief   This macro is used on little endian cpus to convert a
   *                        4 byte array into a 32 bit integer or viceversa.
-  * @param   VariableToConvert The 32 bits value to be converted      
+  * @param   VariableToConvert The 32 bits value to be converted
   * @retval  The converted 32 bits value
   */
 #ifdef CL_ON_STM32
@@ -174,9 +166,9 @@
 /**
   * @brief   This macro doesn't do anything. It exist for compatibility with
   *                        little endian cpus.
-  * @param   VariableToConvert The 32 bit value to be converted      
+  * @param   VariableToConvert The 32 bit value to be converted
   * @retval  VariableToConvert as it was passed
-  * @note This macro simply returns its argument as it is.  
+  * @note This macro simply returns its argument as it is.
   */
 #define LE_CONVERT_W32(VariableToConvert) (VariableToConvert)
 #else  /* CRL_ENDIANNESS NOT SET */
@@ -190,8 +182,8 @@
 /**
   * @brief   This macro is used on big endian cpus to convert a
   *                        a 32 bit integer into a little endian array of 4 bytes.
-  * @param   VariableToConvert The 32 bits value to be converted      
-  * @retval  The converted 32 bits value  
+  * @param   VariableToConvert The 32 bits value to be converted
+  * @retval  The converted 32 bits value
   */
 #define BE_CONVERT_W32(VariableToConvert) ((ROL(VariableToConvert,24)&0xFF00FF00) | (ROL(VariableToConvert,8)&0x00FF00FF))
 #endif
@@ -202,9 +194,9 @@
   * @brief   This macro is used to read a 4 bytes from a byte array and return
   *                        it as a 32-bit word, taking care of system endianness
   * @param   P_pInputBuffer Pointer to the input byte buffer
-  * @param   P_index        Index of P_pInputBuffer where the reading should start         
+  * @param   P_index        Index of P_pInputBuffer where the reading should start
   * @retval  The 32 bits value
-  * @note    This macro is for systems where unaligned reading is allowed    
+  * @note    This macro is for systems where unaligned reading is allowed
   */
 #define BUFFER_2_W32(P_pInputBuffer,P_index)   (LE_CONVERT_W32(*((const uint32_t *) ((P_pInputBuffer)+(P_index)))))
 /**
@@ -222,20 +214,20 @@
   *                        taking care of system endianness
   * @param   [out]   P_pOutputBuffer Pointer to the output byte buffer
   * @param   [in]    P_index         Index of P_pOutputBuffer where the writing should start
-  * @param   [in]    P_word          The 32-bit word that will be written           
+  * @param   [in]    P_word          The 32-bit word that will be written
   * @retval  none
-  * @note    This macro is for systems where unaligned writing is allowed    
+  * @note    This macro is for systems where unaligned writing is allowed
   */
-  
+
 #define W32_2_BUFFER(P_pOutputBuffer,P_index,P_word) *((uint32_t*)(P_pOutputBuffer+(P_index)))=LE_CONVERT_W32(P_word)
 /**
 * @brief   This macro is used to write a 32bit integer into a byte buffer,
 *                        with reversed endiannes
 * @param   [out]   P_pOutputBuffer Pointer to the output byte buffer
 * @param   [in]    P_index         Index of P_pOutputBuffer where the writing should start
-* @param   [in]    P_word          The 32-bit word that will be written           
+* @param   [in]    P_word          The 32-bit word that will be written
 * @retval  none
-* @note    This macro is for systems where unaligned writing is allowed    
+* @note    This macro is for systems where unaligned writing is allowed
 */
 #define LEW32_2_BUFFER(P_pOutputBuffer,P_index,P_word) *((uint32_t*)(P_pOutputBuffer+(P_index)))=(P_word)
 #else
@@ -244,9 +236,9 @@
   * @brief   This macro is used to read a 4 bytes from a byte array and return
   *                        it as a 32-bit word
   * @param   P_pInputBuffer Pointer to the input byte buffer
-  * @param   P_index        Index of P_pInputBuffer where the reading should start           
+  * @param   P_index        Index of P_pInputBuffer where the reading should start
   * @retval  The 32 bits value
-  * @note    This macro is for systems where unaligned reading is \b not allowed    
+  * @note    This macro is for systems where unaligned reading is \b not allowed
   */
 #define BUFFER_2_W32(P_pInputBuffer,P_index)   (WORD8_TO_WORD32(P_pInputBuffer[(P_index)],P_pInputBuffer[(P_index)+1],P_pInputBuffer[(P_index)+2],P_pInputBuffer[(P_index)+3]))
 
@@ -265,9 +257,9 @@
   *                        taking care of system endianness
   * @param   [out]   P_pOutputBuffer Pointer to the output byte buffer
   * @param   [in]    P_index         Index of P_pOutputBuffer where the writing should start
-  * @param   [in]    P_word          The 32-bit word that will be written             
+  * @param   [in]    P_word          The 32-bit word that will be written
   * @retval  none
-  * @note    This macro is for systems where unaligned writing is \b  not allowed    
+  * @note    This macro is for systems where unaligned writing is \b  not allowed
   */
 #define W32_2_BUFFER(P_pOutputBuffer,P_index,P_word) WORD32_TO_WORD8((P_word),P_pOutputBuffer[(P_index)+3],P_pOutputBuffer[(P_index)+2],P_pOutputBuffer[(P_index)+1],P_pOutputBuffer[(P_index)])
 
@@ -281,7 +273,7 @@
 * @note    This macro is for systems where unaligned writing is \b  not allowed
 */
 #define LEW32_2_BUFFER(P_pOutputBuffer,P_index,P_word) WORD32_TO_WORD8((P_word),(P_pOutputBuffer)[(P_index)],(P_pOutputBuffer)[(P_index)+1],(P_pOutputBuffer)[(P_index)+2],(P_pOutputBuffer)[(P_index)+3])
-   
+
 
 #endif
 
@@ -292,7 +284,7 @@
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
 }
 #endif

@@ -313,4 +313,15 @@
 #define CRS_TX_CHAR_UUID                                              (0xFE61)
 #define CRS_RX_CHAR_UUID                                              (0xFE62)
 
+/* UUIDs for Apple Notification Center Service */
+#define ANCS_SERVICE_UUID                                             (0xF431) 
+#define ANCS_NOTIFICATION_SOURCE_CHAR_UUID                            (0x120D) 
+#define ANCS_CONTROL_POINT_CHAR_UUID                                  (0xD8F3) 
+#define ANCS_DATA_SOURCE_CHAR_UUID                                    (0xC6E9) 
+
+/* UUIDs for Apple Media Service start from iOS 8*/
+#define AMS_SERVICE_UUID                                              (0x502B) 
+#define AMS_REMOTE_COMMAND_CHAR_UUID                                  (0x81D8) 
+#define AMS_ENTITY_UPDATE_CHAR_UUID                                   (0xABCE) 
+#define AMS_ENTITY_ATTRIBUTE_CHAR_UUID                                (0xF38C) 
 #endif  /* _UUID_H_ */

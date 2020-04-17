@@ -88,6 +88,7 @@ void HAL_MspInit(void)
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+  HAL_DMA_MuxSyncConfigTypeDef pSyncConfig;
   if(huart->Instance==LPUART1)
   {
   /* USER CODE BEGIN LPUART1_MspInit 0 */
@@ -128,6 +129,16 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     hdma_lpuart1_tx.Init.Mode = DMA_NORMAL;
     hdma_lpuart1_tx.Init.Priority = DMA_PRIORITY_LOW;
     if (HAL_DMA_Init(&hdma_lpuart1_tx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    pSyncConfig.SyncSignalID = HAL_DMAMUX1_SYNC_DMAMUX1_CH1_EVT;
+    pSyncConfig.SyncPolarity = HAL_DMAMUX_SYNC_NO_EVENT;
+    pSyncConfig.SyncEnable = DISABLE;
+    pSyncConfig.EventEnable = DISABLE;
+    pSyncConfig.RequestNumber = 1;
+    if (HAL_DMAEx_ConfigMuxSync(&hdma_lpuart1_tx, &pSyncConfig) != HAL_OK)
     {
       Error_Handler();
     }
@@ -282,6 +293,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE END RTC_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_RTC_ENABLE();
+    __HAL_RCC_RTCAPB_CLK_ENABLE();
   /* USER CODE BEGIN RTC_MspInit 1 */
   HAL_RTCEx_EnableBypassShadow(hrtc);
   /* USER CODE END RTC_MspInit 1 */
@@ -304,6 +316,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE END RTC_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_RTC_DISABLE();
+    __HAL_RCC_RTCAPB_CLK_DISABLE();
   /* USER CODE BEGIN RTC_MspDeInit 1 */
 
   /* USER CODE END RTC_MspDeInit 1 */

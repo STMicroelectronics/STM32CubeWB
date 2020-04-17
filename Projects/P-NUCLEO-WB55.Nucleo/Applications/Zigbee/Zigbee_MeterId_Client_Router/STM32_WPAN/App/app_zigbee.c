@@ -39,6 +39,9 @@
 #define CHANNEL                                     19
 #define NB_MAX_STRING                               10
 
+/* external definition */
+enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
+
 /* Private function prototypes -----------------------------------------------*/
 static void APP_ZIGBEE_StackLayersInit(void);
 static void APP_ZIGBEE_ConfigEndpoints(void);
@@ -461,8 +464,11 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
     APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
 
     switch (p_wireless_info->StackType) {
-    case INFO_STACK_TYPE_ZIGBEE:
-      APP_DBG("FW Type : Zigbee stack");
+    case INFO_STACK_TYPE_ZIGBEE_FFD:
+      APP_DBG("FW Type : FFD Zigbee stack");
+      break;
+   case INFO_STACK_TYPE_ZIGBEE_RFD:
+      APP_DBG("FW Type : RFD Zigbee stack");
       break;
     default:
       /* No Zigbee device supported ! */

@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 /*--------------------------------------------------------------------------
  *  DESCRIPTION
@@ -284,9 +284,6 @@ struct ZbZclIasAceServerCallbacksT {
  * unsolicited Auto-Enroll-Response. */
 struct ZbZclClusterT * ZbZclIasAceServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclIasAceServerCallbacksT *callbacks, void *arg);
-
-void ZbZclIasAceServerConfigCallbacks(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclIasAceServerCallbacksT *callbacks);
 
 /* Change the Panel Arm/Disarm Code */
 bool ZbZclIasAceServerPanelCodeConfig(struct ZbZclClusterT *clusterPtr,

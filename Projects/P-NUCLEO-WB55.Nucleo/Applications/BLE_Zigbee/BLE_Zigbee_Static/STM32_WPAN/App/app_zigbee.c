@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -34,7 +34,6 @@
 #include "zcl/zcl.onoff.h"
 #include "zcl/zcl.identify.h"
 
-#include "flash_emulation.h"
 
 /* Private defines -----------------------------------------------------------*/
 #define APP_ZIGBEE_STARTUP_FAIL_DELAY               500U
@@ -42,15 +41,9 @@
 #define SW1_GROUP_ADDR          0x0001
 #define CHANNEL                 13U
 
-/******************************************************************************
- * Persistence
- ******************************************************************************
- */
-/* For certification testing, we need a little more than 2K for one of the tests.
- * Set to 4K to be safe. 4K is enough for a Coordinator to persist an 80-node
- * network. */
-#define ST_PERSIST_MAX_ALLOC_SZ            (4U * 1024U)
-#define ST_PERSIST_FLASH_DATA_OFFSET       4U
+/* external definition */
+extern const uint8_t sec_key_ha[ZB_SEC_KEYSIZE];
+extern SHCI_C2_CONCURRENT_Mode_Param_t APP_GetCurrentProtocolMode(void);
 
 /* Private function prototypes -----------------------------------------------*/
 static void APP_ZIGBEE_StackLayersInit(void);
@@ -61,17 +54,20 @@ static void APP_ZIGBEE_ConfigGroupAddr(void);
 
 static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode);
 static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void);
+static void APP_ZIGBEE_persist_delete(void);
 
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
 
-static const void * APP_ZIGBEE_persist_load(unsigned int *bufLen);
-static void APP_ZIGBEE_persist_delete(void);
-static void APP_ZIGBEE_persist_buf_free(const void *buf);
+static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb);
+static void APP_ZIGBEE_persist_notify_cb(struct ZigBeeT *zb, void *cbarg);
+static bool APP_ZIGBEE_persist_save(void);
+static bool APP_ZIGBEE_persist_load(void);
 
-static uint32_t APP_ZIGBEE_GetStartNb(void);
-static void APP_ZIGBEE_IncrementStartNb(void);
+static uint32_t APP_ZIGBEE_GetCompleteJoinCpt(void);
+static void APP_ZIGBEE_IncrCompleteJoinCpt(void);
+static void APP_ZIGBEE_ResetCompleteJoinCpt(void);
 
 /* Private variables -----------------------------------------------*/
 static TL_CmdPacket_t *p_ZIGBEE_otcmdbuffer;
@@ -96,15 +92,24 @@ struct zigbee_app_info {
 
   struct ZbZclClusterT *onoff_client_1;
 };
-static struct zigbee_app_info zigbee_app_info;
 
+/* NVM variables */
+/* cache in uninit RAM to store/retrieve persistent data */
+union cache
+{
+  uint8_t  U8_data[ST_PERSIST_MAX_ALLOC_SZ];     // in bytes
+  uint32_t U32_data[ST_PERSIST_MAX_ALLOC_SZ/4U]; // in U32 words
+};
+__no_init union cache cache_persistent_data;
+
+static struct zigbee_app_info zigbee_app_info;
 static uint32_t join_start_time;
 static double join_time_duration;
-
-/* Keep track of number of Zigbee start */
-static uint8_t zigbee_start_nb = 0U;
+static uint8_t zigbee_complete_join_cpt = 1U;
 
 /* Functions Definition ------------------------------------------------------*/
+/* external definition */
+enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
 
 void APP_ZIGBEE_Init(void)
 {
@@ -141,8 +146,6 @@ void APP_ZIGBEE_Init(void)
   /* Initialize Zigbee stack layers */
   APP_ZIGBEE_StackLayersInit();
 
-  APP_ZIGBEE_IncrementStartNb();
-
 } /* APP_ZIGBEE_Init */
 
 void APP_ZIGBEE_Stop(void)
@@ -153,6 +156,8 @@ void APP_ZIGBEE_Stop(void)
   BSP_LED_Off(LED_GREEN);
   BSP_LED_Off(LED_BLUE);
 
+  UTIL_SEQ_PauseTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM);
+
   /* Save Persistent data */
   APP_DBG("Save persistent data");
   APP_ZIGBEE_persist_save();
@@ -162,7 +167,6 @@ void APP_ZIGBEE_Stop(void)
   if (zigbee_app_info.zb == NULL) {
       return;
   }
-  //ZbIfDetach(zigbee_app_info.zb, &zigbee_app_info.device);
   ZbDestroy(zigbee_app_info.zb);
   zigbee_app_info.zb = NULL;
 }
@@ -198,6 +202,12 @@ static void APP_ZIGBEE_StackLayersInit(void)
   join_start_time = HAL_GetTick();
   UTIL_SEQ_SetTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM, CFG_SCH_PRIO_0);
 }
+
+/**
+ * @brief  Configuration of the end points
+ * @param  None
+ * @retval None
+ */
 
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
@@ -248,9 +258,14 @@ static void APP_ZIGBEE_NwkForm(void)
     config.channelList.list[0].page = 0;
     config.channelList.list[0].channelMask = 1 << CHANNEL; /* Channel in use*/
 
-    APP_DBG("*** zigbee_start_nb value = %d ***", APP_ZIGBEE_GetStartNb());
-    if(APP_ZIGBEE_GetStartNb() < 2U)
+    APP_DBG("*** zigbee_complete_join_cpt value = %d ***", APP_ZIGBEE_GetCompleteJoinCpt());
+
+    ZbPersistNotifyRegister(zigbee_app_info.zb,NULL,NULL);
+
+    if(APP_ZIGBEE_GetCompleteJoinCpt() < 2U)
     {
+      /* Clear the persistemt data before starting a complete join */
+      APP_ZIGBEE_persist_delete();
       /* Using ZbStartupWait (blocking) here instead of ZbStartup, in order to demonstrate how to do
        * a blocking call on the M4. */
       status = ZbStartupWait(zigbee_app_info.zb, &config);
@@ -263,6 +278,7 @@ static void APP_ZIGBEE_NwkForm(void)
         APP_DBG("JOIN SUCCESS, Duration = (%.2f seconds)", join_time_duration);
         zigbee_app_info.join_delay = 0U;
         zigbee_app_info.init_after_join = true;
+        APP_ZIGBEE_IncrCompleteJoinCpt();
         BSP_LED_On(LED_BLUE);
       }
       else
@@ -273,22 +289,31 @@ static void APP_ZIGBEE_NwkForm(void)
     }
     else
     {
-      /* Restart from persistence */
-      if (APP_ZIGBEE_ZbStartupPersist(zigbee_app_info.zb) == ZB_STATUS_SUCCESS)
-      {
-        APP_DBG("APP_ZIGBEE_ZbStartupPersist SUCCESS!");
-        zigbee_app_info.join_status = ZB_STATUS_SUCCESS;
-        BSP_LED_On(LED_BLUE);
-      }
-      else
-      {
-        APP_DBG("APP_ZIGBEE_ZbStartupPersist FAILED!");
-      }
+       /* Disabling of the notification */
+       ZbPersistNotifyRegister(zigbee_app_info.zb,NULL,NULL);
+
+       /* Restart from persistence */
+       if (APP_ZIGBEE_ZbStartupPersist(zigbee_app_info.zb) == ZB_STATUS_SUCCESS)
+       {
+         APP_DBG("APP_ZIGBEE_ZbStartupPersist SUCCESS!");
+         zigbee_app_info.join_status = ZB_STATUS_SUCCESS;
+
+         /* Register Persistent data change notification */
+         ZbPersistNotifyRegister(zigbee_app_info.zb,APP_ZIGBEE_persist_notify_cb,NULL);
+         /* Call the callback once here to save persistence data */
+         APP_ZIGBEE_persist_notify_cb(zigbee_app_info.zb,NULL);
+
+         BSP_LED_On(LED_BLUE);
+       }
+       else
+       {
+           APP_DBG("APP_ZIGBEE_ZbStartupPersist FAILED!");
+           APP_ZIGBEE_ResetCompleteJoinCpt();
+       }
     }
   }
-
   /* If Network forming/joining was not successful reschedule the current task to retry the process */
-  if (zigbee_app_info.join_status != ZB_STATUS_SUCCESS)
+  if ((zigbee_app_info.join_status != ZB_STATUS_SUCCESS) && (APP_GetCurrentProtocolMode() == ZIGBEE_ENABLE))
   {
     UTIL_SEQ_SetTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM, CFG_SCH_PRIO_0);
   }
@@ -297,7 +322,7 @@ static void APP_ZIGBEE_NwkForm(void)
     zigbee_app_info.init_after_join = false;
 
     /* Do it only first time */
-    if(APP_ZIGBEE_GetStartNb() == 1U)
+    if(APP_ZIGBEE_GetCompleteJoinCpt() == 2U)
     {
       /* Assign ourselves to the group addresses */
       APP_ZIGBEE_ConfigGroupAddr();
@@ -334,12 +359,14 @@ struct ZbStartupWaitInfo {
   enum ZbStatusCodeT status;
 };
 
+
 static void ZbStartupWaitCb(enum ZbStatusCodeT status, void *cb_arg)
 {
   struct ZbStartupWaitInfo *info = cb_arg;
 
   info->status = status;
   info->active = false;
+  UTIL_SEQ_SetEvt(EVENT_ZIGBEE_STARTUP_ENDED);
 } /* ZbStartupWaitCb */
 
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
@@ -359,173 +386,145 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
     info->active = false;
     return status;
   }
-  while (info->active) {
-    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-  }
+  UTIL_SEQ_WaitEvt(EVENT_ZIGBEE_STARTUP_ENDED);
   status = info->status;
   free(info);
   return status;
 } /* ZbStartupWait */
 
 
-static void APP_ZIGBEE_IncrementStartNb(void)
-{
-  zigbee_start_nb++;
-}
-
-static uint32_t APP_ZIGBEE_GetStartNb(void)
-{
-  return zigbee_start_nb;
-}
-
-/* Persistence */
 /**
- * @brief  Start Zigbee Network with data from persistent memory
- * @param  zb : Zigbee Device object
+ * @brief  Increment counter
+ * @param  None
  * @retval None
  */
-enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT *zb)
+static void APP_ZIGBEE_IncrCompleteJoinCpt(void)
 {
-  const void *buf_ptr;
-  unsigned int buf_len;
-  enum ZbStatusCodeT status = ZB_STATUS_SUCCESS;
-
-  /* Restore persistence */
-  buf_ptr = APP_ZIGBEE_persist_load(&buf_len);
-  APP_ZIGBEE_persist_delete();
-
-  if (buf_ptr != NULL) {
-    APP_DBG("APP_ZIGBEE_ZbStartupPersist: restoring stack persistence");
-    /* FIXME 0 - CBKE config? */
-    status = ZbStartupPersist(zb, buf_ptr, buf_len, NULL);
-    APP_ZIGBEE_persist_buf_free(buf_ptr);
-
-  }else
-  {
-    status = ZB_STATUS_ALLOC_FAIL;
-  }
-
-  return status;
-
+  zigbee_complete_join_cpt ++;
 }
+
+/**
+ * @brief  Return counter value
+ * @param  None
+ * @retval Counter value
+ */
+static uint32_t APP_ZIGBEE_GetCompleteJoinCpt(void)
+{
+  return zigbee_complete_join_cpt;
+}
+
+/**
+ * @brief  Reset counter value
+ * @param  None
+ * @retval None
+ */
+static void APP_ZIGBEE_ResetCompleteJoinCpt(void)
+{
+  zigbee_complete_join_cpt = 1;
+}
+
+/**
+ * @brief  Start Zigbee Network from persistent data
+ * @param  zb: Zigbee device object pointer
+ * @retval Zigbee stack Status code
+ */
+static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
+{
+   bool read_status;
+   enum ZbStatusCodeT status = ZB_STATUS_SUCCESS;
+
+   /* Restore persistence */
+   read_status = APP_ZIGBEE_persist_load();
+
+   if (read_status)
+   {
+       /* Make sure the EPID is cleared, before we are allowed to restore persistence */
+       uint64_t epid = 0U;
+       ZbNwkSet(zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(uint64_t));
+
+       /* Start-up from persistence */
+       APP_DBG("APP_ZIGBEE_ZbStartupPersist: restoring stack persistence");
+       status = ZbStartupPersist(zb, &cache_persistent_data.U8_data[4], cache_persistent_data.U32_data[0],NULL);
+   }
+   else
+   {
+       /* Failed to restart from persistence */
+       APP_DBG("APP_ZIGBEE_ZbStartupPersist: no persistence data to restore");
+       status = ZB_STATUS_ALLOC_FAIL;
+   }
+
+   return status;
+}/* APP_ZIGBEE_ZbStartupPersist */
+
+/**
+ * @brief  notify to save persitent data callback
+ * @param  zb: Zigbee device object pointer, cbarg: callback arg pointer
+ * @retval None
+ */
+static void APP_ZIGBEE_persist_notify_cb(struct ZigBeeT *zb, void *cbarg)
+{
+  APP_DBG("Notification to save persistent data requested from stack");
+  /* Save the persistent data */
+  APP_ZIGBEE_persist_save();
+}
+
 
 /**
  * @brief  Load persitent data
- * @param  bufLen : pointer on buffer length
- * @retval None
- */
-static const void * APP_ZIGBEE_persist_load(unsigned int *bufLen)
-{
-    uint8_t *buf;
-    uint32_t persist_len;
-
-    buf = malloc(ST_PERSIST_MAX_ALLOC_SZ);
-    if (buf == NULL) {
-        APP_DBG("APP_ZIGBEE_persist_load : memory exhausted!");
-        return NULL;
-    }
-
-    /* Read the persistence length */
-    if (utilsFlashRead(0, buf, ST_PERSIST_FLASH_DATA_OFFSET) != ST_PERSIST_FLASH_DATA_OFFSET) {
-        APP_DBG("APP_ZIGBEE_persist_load : failed to read length from Flash!");
-        return NULL;
-    }
-    persist_len = pletoh32(buf);
-    APP_DBG("ZIGBBE Persistent data length = %d ", persist_len);
-    if (persist_len > ST_PERSIST_MAX_ALLOC_SZ) {
-        APP_DBG("APP_ZIGBEE_persist_load : invalid length = %d!", persist_len);
-        return NULL;
-    }
-
-    if (utilsFlashRead(ST_PERSIST_FLASH_DATA_OFFSET, buf, persist_len) != persist_len) {
-        APP_DBG("APP_ZIGBEE_persist_load : failed to read persist data from Flash!");
-        return NULL;
-    }
-
-    APP_DBG("Successfully retrieved data from persistence");
-
-    *bufLen = persist_len;
-    return buf;
-}
-
-/**
- * @brief  Delete first word of persistent data (size = 0 meaning no data)
  * @param  None
- * @retval None
+ * @retval true if sucess, false if fail
  */
-static void APP_ZIGBEE_persist_delete(void)
+static bool APP_ZIGBEE_persist_load()
 {
-    uint8_t len_buf[ST_PERSIST_FLASH_DATA_OFFSET];
-
-    putle32(len_buf, 0);
-    if (utilsFlashWrite(0, len_buf, ST_PERSIST_FLASH_DATA_OFFSET) != ST_PERSIST_FLASH_DATA_OFFSET) {
-        APP_DBG("APP_ZIGBEE_persist_delete : failed to write flash");
+    /* Check length range */
+    if ((cache_persistent_data.U32_data[0] == 0) ||
+        (cache_persistent_data.U32_data[0] > ST_PERSIST_MAX_ALLOC_SZ))
+    {
+        APP_DBG("No data or too large lenght : %d",cache_persistent_data.U32_data[0]);
+        return false;
     }
-}
+    return true;
+} /* APP_ZIGBEE_persist_load */
 
 /**
- * @brief  Free buffer
- * @param  buf : pointer on buffer to free
- * @retval None
- */
-static void APP_ZIGBEE_persist_buf_free(const void *buf)
-{
-    free((void *)buf);
-}
-
-/**
- * @brief  Save persistent data in FLASH (Or Flash Emulation in RAM)
+ * @brief  Save persistent data
  * @param  None
- * @retval None
+ * @retval true if success , false if fail
  */
-bool APP_ZIGBEE_persist_save(void)
+static bool APP_ZIGBEE_persist_save(void)
 {
-    uint8_t *buf;
-    uint8_t len_buf[ST_PERSIST_FLASH_DATA_OFFSET];
-    unsigned int len;
+    uint32_t len;
+
+    /* Clear the RAM cache before saving */
+    memset(cache_persistent_data.U8_data, 0x00, ST_PERSIST_MAX_ALLOC_SZ);
 
     len = ZbPersistGet(zigbee_app_info.zb, 0, 0);
-    if (len == 0U) {
-        /* If the persistence length was zero, then remove the file. */
-        APP_DBG("APP_ZIGBEE_persist_save: no persistence data!");
-        //cli_persist_delete(cli_p, filename);
-        return true;
+    /* Check Length range */
+    if (len == 0U)
+    {
+        /* If the persistence length was zero then no data available. */
+        APP_DBG("APP_ZIGBEE_persist_save: no persistence data to save !");
+        return false;
     }
-    if (len > ST_PERSIST_MAX_ALLOC_SZ) {
+    if (len > ST_PERSIST_MAX_ALLOC_SZ)
+    {
+        /* if persistence length to big to store */
         APP_DBG("APP_ZIGBEE_persist_save: persist size too large for storage (%d)", len);
         return false;
     }
 
-    buf = malloc(ST_PERSIST_MAX_ALLOC_SZ);
-    if (buf == NULL) {
-        APP_DBG("APP_ZIGBEE_persist_save: memory exhausted");
-        return false;
-    }
+    /* Store in cache the persistent data */
+    len = ZbPersistGet(zigbee_app_info.zb, &cache_persistent_data.U8_data[ST_PERSIST_FLASH_DATA_OFFSET], len);
 
-    len = ZbPersistGet(zigbee_app_info.zb, buf, len);
-
-    /* Write the length */
-    putle32(len_buf, len);
-    if (utilsFlashWrite(0, len_buf, ST_PERSIST_FLASH_DATA_OFFSET) != ST_PERSIST_FLASH_DATA_OFFSET) {
-        APP_DBG("APP_ZIGBEE_persist_save: failed to write flash");
-        free(buf);
-        return false;
-    }
-
-    /* Write the persistent data */
-    if (utilsFlashWrite(ST_PERSIST_FLASH_DATA_OFFSET, buf, len) != len) {
-        APP_DBG("APP_ZIGBEE_persist_save: failed to write flash");
-        free(buf);
-        return false;
-    }
-
-    free(buf);
+    /* Store in cache the persistent data length */
+    cache_persistent_data.U32_data[0] = len;
 
     zigbee_app_info.persistNumWrites++;
-    APP_DBG("APP_ZIGBEE_persist_save: Persistence written (num writes = %d)", zigbee_app_info.persistNumWrites);
-    return true;
-}
+    APP_DBG("APP_ZIGBEE_persist_save: Persistence written in cache RAM (num writes = %d) len=%d",
+             zigbee_app_info.persistNumWrites, cache_persistent_data.U32_data[0]);
 
+    return true;
+} /* APP_ZIGBEE_persist_save */
 
 
 /**
@@ -807,4 +806,16 @@ void APP_ZIGBEE_ProcessRequestM0ToM4(void)
     }
 }
 
+/**
+ * @brief  Delete persistent data
+ * @param  None
+ * @retval None
+ */
+static void APP_ZIGBEE_persist_delete(void)
+{
+  /* Clear RAM cache */
+   memset(cache_persistent_data.U8_data, 0x00, ST_PERSIST_MAX_ALLOC_SZ);
+   APP_DBG("Persistent Data RAM cache cleared");
+
+} /* APP_ZIGBEE_persist_delete */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

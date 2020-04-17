@@ -2,25 +2,17 @@
   ******************************************************************************
   * @file    ecc.h
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    05-June-2015
   * @brief   Provides Elliptic Curve Cryptography (ECC) primitives
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2015 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Licensed under MCD-ST Image SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software component is licensed by ST under Image license SLA0044,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        http://www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -210,7 +202,7 @@ extern "C"
                                 uint8_t *P_pCoordinateValue,
                                 int32_t *P_pCoordinateSize);
   int32_t ECCgetPointFlag(const ECpoint_stt *P_pECPnt);
-    void ECCsetPointFlag(ECpoint_stt *P_pECPnt, 
+    void ECCsetPointFlag(ECpoint_stt *P_pECPnt,
                          ECPntFlags_et P_newFlag);
   int32_t ECCsetPointGenerator(ECpoint_stt *P_pPoint, const EC_stt *P_pECctx);
   int32_t ECCcopyPoint(const ECpoint_stt *P_pOriginalPoint, ECpoint_stt *P_pCopyPoint);

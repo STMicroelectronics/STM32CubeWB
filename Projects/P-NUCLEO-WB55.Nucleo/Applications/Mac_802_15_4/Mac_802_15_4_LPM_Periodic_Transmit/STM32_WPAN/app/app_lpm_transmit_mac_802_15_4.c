@@ -25,6 +25,7 @@
 #include "app_conf.h"
 #include "utilities_common.h"
 #include "app_entry.h"
+#include "main.h"
 
 #include "app_lpm_transmit_mac_802_15_4.h"
 #include "802_15_4_mac_sap.h"

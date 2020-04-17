@@ -54,7 +54,7 @@ typedef struct
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t BleCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t HciAclDataBuffer[sizeof(TL_PacketHeader_t) + 5 + 251];
 
-static TL_CmdPacket_t SysLocalCmd;
+ALIGN(4) static TL_CmdPacket_t SysLocalCmd;
 static tListNode HostTxQueue;
 static TL_EvtPacket_t *pTxToHostPacket;
 static MB_RefTable_t * p_RefTable;

@@ -2,25 +2,17 @@
   ******************************************************************************
   * @file    err_codes.h
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    05-June-2015
   * @brief   Provides defines for error codes
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2015 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Licensed under MCD-ST Image SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software component is licensed by ST under Image license SLA0044,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        http://www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -46,11 +38,11 @@
 /** @addtogroup ErrCodes Error Codes Definitions
   * @{
   */
-  
-/** @defgroup GenericError Generic Error Codes 
+
+/** @defgroup GenericError Generic Error Codes
   * @{
-  */  
-  
+  */
+
 #define AUTHENTICATION_SUCCESSFUL (int32_t) (1003)          /*!<  Authentication successful */
 #define AUTHENTICATION_FAILED     (int32_t) (1004)          /*!<  Authentication failed */
 #define SIGNATURE_VALID           AUTHENTICATION_SUCCESSFUL /*!<  Signature is valid */
@@ -59,8 +51,8 @@
 /**
   * @}
   */
-  
-/** @defgroup AESError AES Error Codes 
+
+/** @defgroup AESError AES Error Codes
   * @{
   */
 #define AES_SUCCESS             (int32_t) (0)    /*!< AES of PRIVKEY Success */
@@ -71,7 +63,7 @@
 /**
   * @}
   */
-/** @defgroup CHACHAError ChaCha Error Codes        
+/** @defgroup CHACHAError ChaCha Error Codes
 * @{
 */
 #define CHACHA_SUCCESS             (int32_t) (0)    /*!<  ChaCha Success */
@@ -83,7 +75,7 @@
 * @}
 */
 
-/** @defgroup POLY1305Error POLY1305 Error Codes     
+/** @defgroup POLY1305Error POLY1305 Error Codes
 * @{
 */
 #define POLY1305_SUCCESS             (int32_t) (0)    /*!< POLY1305 Success */
@@ -94,7 +86,7 @@
 * @}
 */
 
-  
+
 /** @defgroup ARC4Error ARC4 Error Codes
   * @{
   */
@@ -105,7 +97,7 @@
 /**
   * @}
   */
-  
+
 /** @defgroup DESError DES Error Codes
   * @{
   */
@@ -117,7 +109,7 @@
 /**
   * @}
   */
-  
+
 /** @defgroup TDESError TDES Error Codes
   * @{
   */
@@ -129,7 +121,7 @@
 /**
   * @}
   */
-  
+
 /** @defgroup HASHError HASH Error Codes
   * @{
   */
@@ -141,7 +133,7 @@
 /**
   * @}
   */
-  
+
 /** @defgroup RSAError RSA Error Codes
   * @{
   */
@@ -156,7 +148,7 @@
 /**
   * @}
   */
-  
+
 /** @defgroup ECCError ECC Error Codes
   * @{
   */
@@ -171,7 +163,7 @@
 /**
   * @}
   */
-    
+
 /** @defgroup RNGError Random Number Error Codes
   * @{
   */
@@ -191,19 +183,19 @@
 
 
 
-/** @defgroup ED25519Error Ed25519 Error Codes              
+/** @defgroup ED25519Error Ed25519 Error Codes
 * @{
 */
 #define ED25519_SUCCESS                  (int32_t) (0)    /*!<  Ed25519 Success */
 #define ED25519_ERR_BAD_POINT            (int32_t) (5505) /*!<  Ed25519 Invalid Packet Point */
 #define ED25519_ERR_BAD_PARAMETER        (int32_t) (5504) /*!<  Ed25519 One of the expected function parameters is invalid */
-   
+
 
 /**
 * @}
 */
 
-/** @defgroup C25519Error Curve25519 Error Codes              
+/** @defgroup C25519Error Curve25519 Error Codes
 * @{
 */
 #define C25519_SUCCESS                  (int32_t) (0)    /*!<  Curve25519 Success */
@@ -219,7 +211,7 @@
   * @{
   */
 #define MATH_SUCCESS                (int32_t) (0)    /*!<  Math Success */
-#define MATH_ERR_BIGNUM_OVERFLOW    (int32_t) (5301) /*!<  Math Overflow, the returned BigNum would be greater than its maximum size */                                                                 
+#define MATH_ERR_BIGNUM_OVERFLOW    (int32_t) (5301) /*!<  Math Overflow, the returned BigNum would be greater than its maximum size */
 #define MATH_ERR_EVEN_MODULUS       (int32_t) (5302) /*!<  Math This function can be used only with odd moduli */
 #define MATH_ERR_BAD_PARAMETER      (int32_t) (5304) /*!<  Math One of the expected function parameters is invalid */
 #define MATH_ERR_INTERNAL           (int32_t) (5311) /*!<  Math Generic internal error */
@@ -235,11 +227,11 @@
 #define CHACHA20POLY1305_ERR_BAD_OPERATION   (int32_t) (3102) /*!< ChaCha20-Poly1305 Invalid operation */
 #define CHACHA20POLY1305_ERR_BAD_CONTEXT     (int32_t) (3103) /*!< ChaCha20-Poly1305 The context contains some invalid or uninitialized values */
 #define CHACHA20POLY1305_ERR_BAD_PARAMETER   (int32_t) (3104) /*!< ChaCha20-Poly1305 One of the expected function parameters is invalid */
-   
+
 /**
 * @}
 */
-   
+
  #ifdef __cplusplus
 }
 #endif

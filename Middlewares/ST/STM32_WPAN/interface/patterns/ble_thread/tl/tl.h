@@ -57,6 +57,7 @@ extern "C" {
 
 #define TL_BLEEVT_CC_OPCODE            (0x0E)
 #define TL_BLEEVT_CS_OPCODE            (0x0F)
+#define TL_BLEEVT_VS_OPCODE            (0xFF)
 
 #define TL_BLEEVT_CS_PACKET_SIZE       (TL_EVT_HDR_SIZE + sizeof(TL_CsEvt_t))
 #define TL_BLEEVT_CS_BUFFER_SIZE       (sizeof(TL_PacketHeader_t) + TL_BLEEVT_CS_PACKET_SIZE)
@@ -194,6 +195,12 @@ typedef struct
 
 typedef struct
 {
+  uint8_t *p_LldBleCmdRspBuffer;
+  uint8_t *p_LldBleM0CmdBuffer;
+} TL_LLD_BLE_Config_t;
+
+typedef struct
+{
   uint8_t *p_Mac_802_15_4_CmdRspBuffer;
   uint8_t *p_Mac_802_15_4_NotAckBuffer;
 } TL_MAC_802_15_4_Config_t;
@@ -274,6 +281,18 @@ void TL_LLDTESTS_SendCliRspAck( void );
 void TL_LLDTESTS_ReceiveM0Cmd( TL_CmdPacket_t * Notbuffer );
 void TL_LLDTESTS_SendM0CmdAck( void );
 
+/******************************************************************************
+ * LLD BLE
+ ******************************************************************************/
+void TL_LLD_BLE_Init( TL_LLD_BLE_Config_t *p_Config );
+void TL_LLD_BLE_SendCliCmd( void );
+void TL_LLD_BLE_ReceiveCliRsp( TL_CmdPacket_t * Notbuffer );
+void TL_LLD_BLE_SendCliRspAck( void );
+void TL_LLD_BLE_ReceiveM0Cmd( TL_CmdPacket_t * Notbuffer );
+void TL_LLD_BLE_SendM0CmdAck( void );
+void TL_LLD_BLE_SendCmd( void );
+void TL_LLD_BLE_ReceiveRsp( TL_CmdPacket_t * Notbuffer );
+void TL_LLD_BLE_SendRspAck( void );
 /******************************************************************************
  * MEMORY MANAGER
  ******************************************************************************/

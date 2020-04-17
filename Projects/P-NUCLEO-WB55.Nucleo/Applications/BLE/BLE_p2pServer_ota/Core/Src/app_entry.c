@@ -73,6 +73,9 @@ static void APPE_SysUserEvtRx( void * pPayload );
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern void MX_LPUART1_UART_Init(void);
 #endif
+#if (CFG_HW_USART1_ENABLED == 1)
+extern void MX_USART1_UART_Init(void);
+#endif
 
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
@@ -120,6 +123,7 @@ void APPE_Init( void )
  * LOCAL FUNCTIONS
  *
  *************************************************************/
+
 /**
  * @brief  Configure the system for power optimization
  *
@@ -193,7 +197,7 @@ static void APPE_SysUserEvtRx( void * pPayload )
 {
   UNUSED(pPayload);
   /* Traces channel initialization */
-  APPD_EnableCPU2();
+  APPD_EnableCPU2( );
 
   APP_BLE_Init( );
   UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);

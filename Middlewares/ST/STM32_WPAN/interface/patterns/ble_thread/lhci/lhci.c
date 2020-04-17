@@ -126,6 +126,12 @@ void LHCI_C1_Read_Register( TL_CmdPacket_t *pcmd )
 
 void LHCI_C1_Read_Device_Information( TL_CmdPacket_t *pcmd )
 {
+  uint32_t ipccdba;
+  MB_RefTable_t * p_ref_table;
+
+  ipccdba = READ_BIT(FLASH->IPCCBR, FLASH_IPCCBR_IPCCDBA);
+  p_ref_table = (MB_RefTable_t*)((ipccdba<<2) + SRAM2A_BASE);
+
 	((TL_EvtPacket_t*) pcmd)->evtserial.type = TL_LOCRSP_PKT_TYPE;
 	((TL_EvtPacket_t*) pcmd)->evtserial.evt.evtcode = TL_BLEEVT_CC_OPCODE;
 	((TL_EvtPacket_t*) pcmd)->evtserial.evt.plen = TL_EVT_HDR_SIZE + sizeof(LHCI_C1_Device_Information_ccrp_t);
@@ -198,7 +204,7 @@ void LHCI_C1_Read_Device_Information( TL_CmdPacket_t *pcmd )
 	 */
 	memcpy(
 			&(((LHCI_C1_Device_Information_ccrp_t *) (((TL_CcEvt_t *) (((TL_EvtPacket_t*) pcmd)->evtserial.evt.payload))->payload))->SafeBootInf),
-			&((MB_RefTable_t*) 0x20030000)->p_device_info_table->SafeBootInfoTable,
+			&(p_ref_table->p_device_info_table->SafeBootInfoTable),
 			sizeof(MB_SafeBootInfoTable_t));
 
 	/**
@@ -206,7 +212,7 @@ void LHCI_C1_Read_Device_Information( TL_CmdPacket_t *pcmd )
 	 */
 	memcpy(
 			&(((LHCI_C1_Device_Information_ccrp_t *) (((TL_CcEvt_t *) (((TL_EvtPacket_t*) pcmd)->evtserial.evt.payload))->payload))->FusInf),
-			&((MB_RefTable_t*) 0x20030000)->p_device_info_table->FusInfoTable,
+			&(p_ref_table->p_device_info_table->FusInfoTable),
 			sizeof(MB_FusInfoTable_t));
 
 	/**
@@ -214,7 +220,7 @@ void LHCI_C1_Read_Device_Information( TL_CmdPacket_t *pcmd )
 	 */
 	memcpy(
 			&(((LHCI_C1_Device_Information_ccrp_t *) (((TL_CcEvt_t *) (((TL_EvtPacket_t*) pcmd)->evtserial.evt.payload))->payload))->WirelessFwInf),
-			&((MB_RefTable_t*) 0x20030000)->p_device_info_table->WirelessFwInfoTable,
+			&(p_ref_table->p_device_info_table->WirelessFwInfoTable),
 			sizeof(MB_WirelessFwInfoTable_t));
 
 	/**

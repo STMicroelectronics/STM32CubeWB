@@ -1,12 +1,12 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : app_conf.h
   * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -48,11 +49,11 @@
 /**
  * Define IO Authentication
  */
-#define CFG_BONDING_MODE                  (1)
-#define CFG_FIXED_PIN                     (111111)
-#define CFG_USED_FIXED_PIN                (0)
-#define CFG_ENCRYPTION_KEY_SIZE_MAX       (16)
-#define CFG_ENCRYPTION_KEY_SIZE_MIN       (8)
+#define CFG_BONDING_MODE                 (0)
+#define CFG_FIXED_PIN                    (111111)
+#define CFG_USED_FIXED_PIN               (0)
+#define CFG_ENCRYPTION_KEY_SIZE_MAX      (16)
+#define CFG_ENCRYPTION_KEY_SIZE_MIN      (8)
 
 /**
  * Define IO capabilities
@@ -63,7 +64,7 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY   (0x04)
 
-#define CFG_IO_CAPABILITY             CFG_IO_CAPABILITY_DISPLAY_ONLY
+#define CFG_IO_CAPABILITY               CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT
 
 /**
  * Define MITM modes
@@ -72,6 +73,35 @@
 #define CFG_MITM_PROTECTION_REQUIRED          (0x01)
 
 #define CFG_MITM_PROTECTION             CFG_MITM_PROTECTION_REQUIRED
+
+/**
+ * Define Secure Connections Support
+ */
+#define CFG_SECURE_NOT_SUPPORTED       (0x00)
+#define CFG_SECURE_OPTIONAL            (0x01)
+#define CFG_SECURE_MANDATORY           (0x02)
+
+#define CFG_SC_SUPPORT                 CFG_SECURE_OPTIONAL
+
+/**
+ * Define Keypress Notification Support
+ */
+#define CFG_KEYPRESS_NOT_SUPPORTED      (0x00)
+#define CFG_KEYPRESS_SUPPORTED          (0x01)
+
+#define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
+   
+/**
+ * Numeric Comparison Answers
+ */   
+#define YES (0x01)
+#define NO  (0x00)
+
+/**
+ * Device name configuration for Generic Access Service
+ */
+#define CFG_GAP_DEVICE_NAME             "TEMPLATE"
+#define CFG_GAP_DEVICE_NAME_LENGTH      (8)
 
 /**
  * Define PHY
@@ -105,6 +135,7 @@
 
 /**< specific parameters */
 /*****************************************************/
+
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler                         EXTI4_IRQHandler
 #define PUSH_BUTTON_SW2_EXTI_IRQHandler                         EXTI0_IRQHandler
 
@@ -119,8 +150,8 @@
 #define CFG_DEV_ID_P2P_SERVER2                  (0x84)
 #define CFG_DEV_ID_P2P_SERVER3                  (0x87)
 #define CFG_DEV_ID_P2P_SERVER4                  (0x88)
-#define CFG_DEV_ID_P2P_SERVER5                  (0x89)   
-#define CFG_DEV_ID_P2P_SERVER6                  (0x8A)   
+#define CFG_DEV_ID_P2P_SERVER5                  (0x89)
+#define CFG_DEV_ID_P2P_SERVER6                  (0x8A)
 #define CFG_DEV_ID_P2P_ROUTER                   (0x85)
 
 #define  RADIO_ACTIVITY_EVENT   1          /* 1 for OOB Demo */
@@ -144,6 +175,10 @@
 #define L2CAP_INTERVAL_MAX              CONN_P(1000) /* 1s */
 #define L2CAP_SLAVE_LATENCY             0x0000
 #define L2CAP_TIMEOUT_MULTIPLIER        0x1F4
+
+/* USER CODE BEGIN Specific_Parameters */
+
+/* USER CODE END Specific_Parameters */
 
 /******************************************************************************
  * BLE Stack
@@ -383,7 +418,7 @@
 
 typedef enum
 {
-    CFG_TIM_PROC_ID_ISR,
+  CFG_TIM_PROC_ID_ISR,
 } CFG_TimProcID_t;
 
 /******************************************************************************
@@ -431,11 +466,6 @@ typedef enum
 #define CFG_DEBUGGER_SUPPORTED      1
 #endif
 
-/* USER CODE BEGIN Defines */
-#define CFG_LED_SUPPORTED         1
-#define CFG_BUTTON_SUPPORTED      1
-/* USER CODE END Defines */
-
 /**
  * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
  * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
@@ -472,6 +502,11 @@ typedef enum
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
 #define MAX_DBG_TRACE_MSG_SIZE 1024
 
+/* USER CODE BEGIN Defines */
+#define CFG_LED_SUPPORTED         1
+#define CFG_BUTTON_SUPPORTED      1
+/* USER CODE END Defines */
+
 /******************************************************************************
  * Scheduler
  ******************************************************************************/
@@ -488,6 +523,9 @@ typedef enum
 {
     CFG_TASK_ADV_CANCEL_ID,
     CFG_TASK_SW1_BUTTON_PUSHED_ID,
+#if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
+    CFG_TASK_CONN_UPDATE_REG_ID,
+#endif
     CFG_TASK_HCI_ASYNCH_EVT_ID,
 /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
 

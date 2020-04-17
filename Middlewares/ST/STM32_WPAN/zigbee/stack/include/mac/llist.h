@@ -1,11 +1,8 @@
-/* Copyright [2009 - 2018] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 /* Description: Double Linked List Helpers */
 
 #ifndef LLIST_H
 #define LLIST_H
-
-/* Static initializers */
-#define LINK_LIST_STATIC(_p_) {(_p_), (_p_)}
 
 /* Initialize a list to an empty state, or an item to an unlinked state. */
 #define LINK_LIST_INIT(_p_) \
@@ -66,14 +63,8 @@
 #define LINK_LIST_INSERT_HEAD(_list_, _add_) LINK_LIST_INSERT_AFTER(_list_, _add_)
 #define LINK_LIST_INSERT_TAIL(_list_, _add_) LINK_LIST_INSERT_BEFORE(_list_, _add_)
 
-/* FIXME 1 - replace these with their INSERT relatives, but careful with parameters */
-#define LINK_LIST_ADD_BEFORE(_p_, _at_) LINK_LIST_INSERT_BEFORE(_at_, _p_)
-#define LINK_LIST_ADD_AFTER(_p_, _at_) LINK_LIST_INSERT_AFTER(_at_, _p_)
-#define LINK_LIST_ADD_HEAD(_p_, _list_) LINK_LIST_INSERT_AFTER(_list_, _p_)
-#define LINK_LIST_ADD_TAIL(_p_, _list_) LINK_LIST_INSERT_BEFORE(_list_, _p_)
-
 /* Adds an item to a list while keeping the list sorted. */
-#define LINK_LIST_ADD_SORT(_add_, _list_, _cmp_) \
+#define LINK_LIST_INSERT_SORT(_list_, _add_, _cmp_) \
     do { \
         struct LinkListT *_i_ = (_list_)->next; \
         while (true) { \

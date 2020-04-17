@@ -2,26 +2,18 @@
   ******************************************************************************
   * @file    crypto.h
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    05-June-2015
   * @brief   This file contains all the functions prototypes for the config firmware
   *          library.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2015 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Licensed under MCD-ST Image SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software component is licensed by ST under Image license SLA0044,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        http://www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -55,11 +47,11 @@
 
 /** Hash functions are included  */
 #ifdef INCLUDE_HKDF
-#define INCLUDE_HMAC  ((uint16_t)0x0040)           
+#define INCLUDE_HMAC  ((uint16_t)0x0040)
 #define INCLUDE_SHA512 ((uint16_t)0x0020)
 #endif
 
-#if defined(INCLUDE_SHA1) || defined(INCLUDE_SHA224) || defined(INCLUDE_SHA256) || defined(INCLUDE_MD5)|| defined(INCLUDE_SHA512)    
+#if defined(INCLUDE_SHA1) || defined(INCLUDE_SHA224) || defined(INCLUDE_SHA256) || defined(INCLUDE_MD5)|| defined(INCLUDE_SHA512)
 #define INCLUDE_HASH /*!< Hash functions are included  */
 #endif
 
@@ -105,12 +97,12 @@
 #error "DRBG_AES128 requires INCLUDE_AES_128"
 #endif
 
-#if defined(INCLUDE_POLY1305) && !defined(INCLUDE_AES128)   
+#if defined(INCLUDE_POLY1305) && !defined(INCLUDE_AES128)
 #error "POLY1305-AES requires INCLUDE_AES_128"
 #endif
 
 
-#if defined(INCLUDE_ED25519) && !defined(INCLUDE_SHA512)   
+#if defined(INCLUDE_ED25519) && !defined(INCLUDE_SHA512)
 #error "ED25519 requires INCLUDE_SHA512"
 #endif
 
@@ -180,23 +172,23 @@
 #ifdef INCLUDE_ECC
 #include "ECC/ecc.h"
 #endif
-#ifdef INCLUDE_POLY1305            
-#include "POLY1305/poly1305.h"     
+#ifdef INCLUDE_POLY1305
+#include "POLY1305/poly1305.h"
 #endif
 
-#ifdef INCLUDE_ED25519             
+#ifdef INCLUDE_ED25519
 #include "ED25519/ed25519.h"
 #endif
 
-#ifdef INCLUDE_CURVE25519         
+#ifdef INCLUDE_CURVE25519
 #include "C25519/c25519.h"
 #endif
-                                  
+
 #ifdef INCLUDE_CHACHA
 #include "CHACHA/chacha.h"
 #endif
 
-#ifdef INCLUDE_CHACHA20POLY1305               
+#ifdef INCLUDE_CHACHA20POLY1305
 #include "CHACHA20-POLY1305/chacha20-poly1305.h"
 #endif
 

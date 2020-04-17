@@ -61,10 +61,6 @@ extern "C" {
  *  Some useful macro definitions   *
  * -------------------------------- */
 
-#define MAX( x, y )          (((x)>(y))?(x):(y))
-
-#define MIN( x, y )          (((x)<(y))?(x):(y))
-
 #define MODINC( a, m )       M_BEGIN  (a)++;  if ((a)>=(m)) (a)=0;  M_END
 
 #define MODDEC( a, m )       M_BEGIN  if ((a)==0) (a)=(m);  (a)--;  M_END
@@ -104,9 +100,6 @@ extern "C" {
 #define DISABLE_IRQ()       __disable_irq()
 #define RESTORE_PRIMASK()   __set_PRIMASK(primask_bit)
 
-
-/* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

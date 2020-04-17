@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_ALARM_H
 # define ZCL_ALARM_H
@@ -100,19 +100,14 @@ uint8_t ZbZclAlarmClientBindDiscover(struct ZbZclClusterT *clusterPtr);
 */
 enum ZclStatusCodeT ZbZclAlarmClientResetAlarmReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     uint8_t alarm_code, uint16_t cluster_id, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-enum ZclStatusCodeT ZbZclAlarmClientResetAlarmWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
-    uint8_t alarm_code, uint16_t cluster_id);
 
 enum ZclStatusCodeT ZbZclAlarmClientResetAllAlarmsReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-enum ZclStatusCodeT ZbZclAlarmClientResetAllAlarmsWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 
 enum ZclStatusCodeT ZbZclAlarmClientGetAlarmReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-enum ZclStatusCodeT ZbZclAlarmClientGetAlarmWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst, struct ZbZclCommandRspT *rsp);
 
 enum ZclStatusCodeT ZbZclAlarmClientResetAlarmLogReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-enum ZclStatusCodeT ZbZclAlarmClientResetAlarmLogWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 
 #endif /* __ZCL_ALARM_H */

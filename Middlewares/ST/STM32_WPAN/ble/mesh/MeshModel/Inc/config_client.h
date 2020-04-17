@@ -179,7 +179,7 @@
 #define ADDRESS_IS_GROUP(a) (((MOBLEINT16)(a) & 0xC000) == 0xC000)  
 #define ADDRESS_UNASSIGNED              0x0000U 
 #define ADDRESS_IS_UNASSIGNED(a) ((MOBLEINT16)(a) == ADDRESS_UNASSIGNED)  
-
+#define MODEL_IS_FOUNDATION_MODEL(a) ( ((MOBLEINT16)(a) & 0xFFF0) == 0)  
 
 /* Exported structure --------------------------------------------------------*/
 
@@ -191,14 +191,7 @@ typedef struct {
   MOBLEUINT32 Initial_time; /* Initial time for the Message */
 
   MOBLEUINT8 NbOfSIGModelsToConfigure;
-  MOBLEUINT8 NbOfSIGModelsToAppBind;
-  MOBLEUINT8 NbOfSIGModelsToPublish;
-  MOBLEUINT8 NbOfSIGModelsToSubscribe;
-  
   MOBLEUINT8 NbOfVendorModelsToConfigure;
-  MOBLEUINT8 NbOfVendorModelsToAppBind;
-  MOBLEUINT8 NbOfVendorModelsToPublish;
-  MOBLEUINT8 NbOfVendorModelsToSubscribe;
 } NodeInfo_t;
 
 typedef struct {
@@ -339,6 +332,8 @@ typedef enum
 typedef enum
 {
  NodeIdle_State,
+ NodeNextSigModel_State,
+ NodeNextVendorModel_State,
  NodeSendMessage_State,
  InProgress_State,
  CompositionRecd_State,
@@ -384,14 +379,12 @@ typedef enum
 typedef struct 
 {   
     MOBLEUINT16 opcode;
-//    MOBLEBOOL reliable;
     MOBLEUINT8 min_payload_size;
     MOBLEUINT8 max_payload_size;
     const MOBLEUINT8 *pDefaultParam;
-//    MOBLEUINT16 response_opcode;
-//    MOBLEUINT16 min_response_size;
-//    MOBLEUINT16 max_response_size;    
 } MODEL_CONFIG_CLIENT_OpcodeTableParam_t;
+
+extern Elements_Page0_t aNodeElements[MAX_ELEMENTS_PER_NODE];
 
 /******************************************************************************/
 /********** Following Section defines the Opcodes for the Messages ************/
@@ -411,7 +404,7 @@ MOBLE_RESULT ConfigClientModel_SendMessage(MOBLE_ADDRESS dst_peer ,
                                      MOBLEUINT32 length); 
 
 
-MOBLE_RESULT ConfigClient_CompositionDataGet(void); 
+MOBLE_RESULT ConfigClient_CompositionDataGet(MOBLE_ADDRESS dst_peer); 
 
 MOBLE_RESULT ConfigClient_CompositionDataStatusResponse(MOBLEUINT8 const *pCompositionData, 
                                                         MOBLEUINT32 length);  
@@ -433,8 +426,11 @@ void ConfigClient_SaveMsgSendingTime (void);
 void ConfigClient_ResetTrials (void);
 void ConfigClient_ErrorState (void);
 
-MOBLE_RESULT ConfigClient_AppKeyAdd (MOBLEUINT16 netKeyIndex, MOBLEUINT16 appKeyIndex, 
+MOBLE_RESULT ConfigClient_AppKeyAdd (MOBLE_ADDRESS dst_peer,
+                                     MOBLEUINT16 netKeyIndex, 
+                                     MOBLEUINT16 appKeyIndex, 
                                      MOBLEUINT8* appkey);
+
 MOBLE_RESULT _ConfigClient_AppKeyAdd (configClientAppKeyAdd_t* pClientAppKey);
 
 MOBLE_RESULT ConfigClient_ModelAppBind (MOBLEUINT16 elementAddress,

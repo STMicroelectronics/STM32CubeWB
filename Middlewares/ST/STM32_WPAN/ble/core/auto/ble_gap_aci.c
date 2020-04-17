@@ -1,13 +1,13 @@
 /******************************************************************************
  * @file    ble_gap_aci.c
  * @author  MCD Application Team
- * @date    23 May 2019
+ * @date    04 March 2020
  * @brief   Source file for ble api STM32WB (gap_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license

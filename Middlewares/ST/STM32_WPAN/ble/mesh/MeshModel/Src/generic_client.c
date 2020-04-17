@@ -68,10 +68,10 @@ const MODEL_OpcodeTableParam_t Generic_Client_Opcodes_Table[] = {
   MOBLEUINT16 max_payload_size;
   Here in this array, Handler is not defined; */
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_ONOFF  
-  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID     ,GENERIC_ON_OFF_STATUS,                                 MOBLE_FALSE, 1, 3,              0 , 1, 3},
+  {GENERIC_MODEL_CLIENT_ONOFF_MODEL_ID     ,GENERIC_ON_OFF_STATUS,                                 MOBLE_FALSE, 1, 3,              0 , 1, 3},
 #endif
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL  
-  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID     ,GENERIC_LEVEL_STATUS,                                  MOBLE_FALSE,  2, 5,             0 , 2 , 5},
+  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID     ,GENERIC_LEVEL_STATUS,                                  MOBLE_FALSE,  2, 5,             0 , 2 , 5},
 #endif  
   {0}
 };

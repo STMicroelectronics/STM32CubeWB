@@ -31,7 +31,7 @@
 
 /** @brief  Defines the max num of target device in beacon indication in case
 of pending data*/
-#define  g_MAX_PENDING_ADDRESS_c 5
+#define  g_MAX_PENDING_ADDRESS_c 7
 
 /** @brief  Defines the max num of ED scan results supported */
 #define g_MAX_ED_SCAN_RESULTS_SUPPORTED_c   16

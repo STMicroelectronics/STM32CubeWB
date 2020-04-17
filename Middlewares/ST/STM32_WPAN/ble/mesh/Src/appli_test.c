@@ -82,6 +82,7 @@ MOBLEUINT32 Totaltest = 0;
 /* Private function prototypes -----------------------------------------------*/
 static MOBLE_RESULT SerialResponse_doubleHexToHex(MOBLEUINT8* hexArray,MOBLEUINT8* outputArray, MOBLEUINT8 length);
 static MOBLEUINT16 SerialResponse_GetFunctionIndex(char *text);
+MOBLE_RESULT Read_CommandCount(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst);
 MOBLEUINT32 timeStampSend = 0;
 MOBLE_ADDRESS srcAddress;
 MOBLE_ADDRESS destAddress;

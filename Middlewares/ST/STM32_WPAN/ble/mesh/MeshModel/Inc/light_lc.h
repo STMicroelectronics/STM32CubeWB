@@ -72,9 +72,6 @@
 #define LIGHT_MODEL_SERVER_LC_MODEL_ID                                    0x130F
 #define LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID                              0x1310
 
-#define LIGHT_LC_TRANSITION_STOP                                            0X00
-#define LIGHT_LC_ON_OFF_TRANSITION_START                                    0X01
-
 /* Property id for the light LC model */
 #define LIGHT_CONTROL_LUX_LEVEL_ON_ID                                     0X002B
 #define LIGHT_CONTROL_LUX_LEVEL_PROLONG_ID                                0X002C
@@ -101,35 +98,67 @@
 #define LIGHT_CONTROL_LIGHTNESS_ON_VALUE                                  0xFFFF 
 #define LIGHT_CONTROL_LIGHTNESS_PROLONG_VALUE                  0x3A98
 #define LIGHT_CONTROL_LIGHTNESS_STANDBY_VALUE                               0x01
-#define LIGHT_CONTROL_TIME_FADE_ON_VALUE                       0xa    /* 20 steps */
-#define LIGHT_CONTROL_TIME_RUN_ON_VALUE                        0x1388  /* 5 second */
-#define LIGHT_CONTROL_TIME_FADE_VALUE                          0Xa
-#define LIGHT_CONTROL_TIME_PROLONG_VALUE                       0X0bb8  /* 3 second */
-#define LIGHT_CONTROL_TIME_FADE_STANDBY_AUTO_VALUE             0xa
-#define LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_VALUE           0Xa
+#define LIGHT_CONTROL_TIME_FADE_ON_VALUE                       0x00//0xa    /* 20 steps */
+#define LIGHT_CONTROL_TIME_RUN_ON_VALUE                        0x00//0x1388  /* 5 second */
+#define LIGHT_CONTROL_TIME_FADE_VALUE                          0x00//0Xa
+#define LIGHT_CONTROL_TIME_PROLONG_VALUE                       0x00//0X0bb8  /* 3 second */
+#define LIGHT_CONTROL_TIME_FADE_STANDBY_AUTO_VALUE             0x00//0xa
+#define LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_VALUE           0x00//0Xa
 #define LIGHT_CONTROL_KID                                                   0X01
 #define LIGHT_CONTROL_KIU                                                   0X02
 #define LIGHT_CONTROL_KPD                                                   0X03
 #define LIGHT_CONTROL_KPU                                                   0X04
-#define LIGHT_CONTROL_REGULATOR_ACCURACY_VALUE                             0X100
+#define LIGHT_CONTROL_REGULATOR_ACCURACY_VALUE                 0X10
 
 /* Property IDs by SIG ------------------------------------------------------- */
 #define MOTION_SENSED_PROPERTY        0X0042
 #define PEOPLE_COUNT_PROPERTY         0X004C
 #define PRESENCE_DETECTED_PROPERTY    0X004D
 
-#define TRANSITION_STEP_VALUE                                               0X0A
+#define TRANSITION_RES_VALUE                                                 100  
 #define LC_MODE_ENABLE                                                      0X01
 #define LC_MODE_DISABLE                                                     0X00
+
+#define LIGHT_LC_TRANSITION_START    1
+#define LIGHT_LC_TRANSITION_STOP     0
+/* Property Vlaue in Byte */
+#define ONE_BYTE_VALUE       1
+#define TWO_BYTE_VALUE       2
+#define THREE_BYTE_VALUE     3
+#define FOUR_BYTE_VALUE      4
+
+#define VALUE_SET           1
+#define VALUE_RESET         0
+
+/* Transition Flag variables */
+#pragma pack(1)
+typedef struct
+{
+  MOBLEUINT8 Light_LC_Transition_Flag;
+  MOBLEUINT8 Light_LC_OptionalParam;
+  MOBLEUINT8 Transition_Cmplt;
+  MOBLEUINT8 LightLCUpdateFlag;
+}Light_LC_ModelFlag_t;
+
+#pragma pack(1)
+typedef struct
+{
+  MOBLEUINT16 PresentParam_1;
+  MOBLEUINT16 TargetParam_1;
+  MOBLEUINT8 RemainingTime;
+}Light_LC_TemporaryStatus_t;
+
 /* Light control mode messages*/
 #pragma pack(1)
 typedef struct
 {
   MOBLEUINT8 LC_mode;
   MOBLEUINT8 LC_OM;
-  MOBLEUINT8 Light_OnOff;
+  MOBLEUINT8 Present_Light_OnOff;
+  MOBLEUINT8 Target_Light_OnOff;
   MOBLEUINT8 Tid;
   MOBLEUINT8 Transition_Time;
+  MOBLEUINT8 Remaining_Time;
   MOBLEUINT8 Delay;
 }Light_LC_Param_t; 
 
@@ -156,7 +185,7 @@ Light_LC_PropertyTablefloat_t;
 typedef struct
 {
   MOBLEUINT16 Property_ID;
-  MOBLEUINT16 Property_Value_8b;
+  MOBLEUINT8 Property_Value_8b;
 }
 Light_LC_PropertyTable8b_t;
 
@@ -293,21 +322,17 @@ MOBLE_RESULT Light_LC_PropertyStatus( MOBLEUINT8* lcData_param, MOBLEUINT32* ple
 MOBLE_RESULT Light_LC_SetPropertyID_value(MOBLEUINT32 Prop_Value,
                                                             MOBLEUINT16 prop_ID);
 
-MOBLEUINT32 Light_LC_GetPropertyID_value(MOBLEUINT16 property_ID);                                                         
+MOBLEUINT32 Light_LC_GetPropertyID_value(MOBLEUINT16 property_ID,MOBLEUINT16 *value_length);                                                         
 MOBLEUINT32 Light_LC_GetStepValue(MOBLEUINT8 stepParam);
 MOBLEUINT32 Get_TimeToWait(MOBLEUINT16 Proprety_ID);
 MOBLEUINT16 Light_LC_LuxLevelOutputValue(MOBLEUINT16 property_ID);
 MOBLEUINT16 Light_LC_MaxLightnessValue(MOBLEUINT16 Param1,MOBLEUINT16 Param2);
 void Light_LC_Fsm(void);
-
+MOBLE_RESULT Light_LC_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue);
+MOBLE_RESULT Light_LC_LightnessStateUpdate_Process(Light_LC_TemporaryStatus_t *lc_Temp_Value);
 void Light_control_Process(void);
-
-MOBLE_RESULT Light_LC_Client_Mode_Status(MOBLEUINT8 const *pLightLc_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_LC_Client_OM_Status(MOBLEUINT8 const *pLightLc_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_LC_Client_ON_OFF_Status(MOBLEUINT8 const *pLightLc_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_LC_Client_Property_Status(MOBLEUINT8 const *pLightLc_status, MOBLEUINT32 pLength);
-
-
+void Light_LC_GenericOnOffBinding(Light_LC_Param_t* light_LC);
+void Light_LC_OnOff_Generic_OnOffBinding(void);
 #endif /* __LIGHT_LC_H */
 
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/

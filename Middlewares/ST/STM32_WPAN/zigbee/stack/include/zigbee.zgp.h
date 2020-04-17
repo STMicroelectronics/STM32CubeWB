@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZIGBEE_ZGP_H
 # define ZIGBEE_ZGP_H
@@ -181,14 +181,13 @@ typedef struct ZbZgpDataReqT {
     uint16_t lifetime;
 } ZbZgpDataReqT;
 
-/* Same format as ZbNldeDataConfT */
+/* Same format as struct ZbNldeDataConfT */
 typedef struct ZbZgpDataConfT {
     uint32_t handle;
     enum ZgpStatusCodeT status;
 } ZbZgpDataConfT;
 
 /* Add items to the gpTxQueue */
-void ZbZgpDataReqWait(struct ZigBeeT *zb, ZbZgpDataReqT *req, ZbZgpDataConfT *conf);
 void ZbZgpDataReqCallback(struct ZigBeeT *, ZbZgpDataReqT *, void (*callback)(ZbZgpDataConfT *, void *), void *arg);
 
 /* Remove items from the gpTxQueue */
@@ -229,9 +228,9 @@ uint8_t ZbZgpAddKey(struct ZigBeeT *zb, uint8_t applicationId, uint64_t gpdId, u
     uint8_t level, uint8_t keytype, const void *key);
 
 #if 0 /* EXEGIN - NOT_INCLUDED */
-void ZbZgpRecvDataInd(ZbApsdeDataIndT *dataIndPtr, void *arg);
-bool ZbZgpHandleUnsolicited(struct ZbZgpT *zgp, ZbApsdeDataIndT *dataIndPtr, uint8_t seqnum);
-void ZbZgpHandleUnsupported(struct ZigBeeT *zb, ZbApsdeDataIndT *ind, uint8_t seqnum);
+void ZbZgpRecvDataInd(struct ZbApsdeDataIndT *dataIndPtr, void *arg);
+bool ZbZgpHandleUnsolicited(struct ZbZgpT *zgp, struct ZbApsdeDataIndT *dataIndPtr, uint8_t seqnum);
+void ZbZgpHandleUnsupported(struct ZigBeeT *zb, struct ZbApsdeDataIndT *ind, uint8_t seqnum);
 #endif
 
 /* NOTE! This is only an empty server used for testing */

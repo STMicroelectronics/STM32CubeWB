@@ -281,7 +281,6 @@ void SystemCoreClockUpdate(void)
   /*MSI frequency range in Hz*/
   msirange = MSIRangeTable[(RCC->CR & RCC_CR_MSIRANGE) >> RCC_CR_MSIRANGE_Pos];
 
-  /*SystemCoreClock=HAL_RCC_GetSysClockFreq();*/
   /* Get SYSCLK source -------------------------------------------------------*/
   switch (RCC->CFGR & RCC_CFGR_SWS)
   {

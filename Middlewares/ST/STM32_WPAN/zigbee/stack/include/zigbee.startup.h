@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZIGBEE_STARTUP_H
 # define ZIGBEE_STARTUP_H
@@ -123,9 +123,6 @@ struct ZbStartupT {
 /* Non-blocking startup function */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbStartup(struct ZigBeeT *zb, struct ZbStartupT *configPtr, void (*callback)(enum ZbStatusCodeT status, void *cb_arg), void *arg);
 
-/* Blocking version of ZbStartup. Not supported on all platforms. */
-enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
-
 /* If Touchlink Target was started with ZbStartup, this API can be used to stop it. */
 enum ZbStatusCodeT ZbStartupTouchlinkTargetStop(struct ZigBeeT *zb);
 
@@ -144,10 +141,7 @@ enum ZbStatusCodeT ZB_WARN_UNUSED ZbStartupFindBindStartEndpoint(struct ZigBeeT 
  *
  * Must already be connected to a network. If not on a network and want to
  * rejoin as way to connect, use ZbStartup with ZbStartTypeRejoin.*/
-enum ZbStatusCodeT ZB_WARN_UNUSED ZbStartupRejoin(struct ZigBeeT *zb, void (*callback)(ZbNlmeJoinConfT *conf, void *arg), void *cbarg);
-
-/* Blocking version. Not supported on all platforms. */
-enum ZbStatusCodeT ZbStartupRejoinWait(struct ZigBeeT *zb);
+enum ZbStatusCodeT ZB_WARN_UNUSED ZbStartupRejoin(struct ZigBeeT *zb, void (*callback)(struct ZbNlmeJoinConfT *conf, void *arg), void *cbarg);
 
 /* Trust Center Rejoin - unsecured rejoin (already joined to network, but
  * missed a NWK key update). */
@@ -165,6 +159,6 @@ void ZbStartupConfigGetProSeDefaults(struct ZbStartupT *configPtr);
  * Trust Center. The Trust Center Swap Out process will be performed.
  * The callback status is set to ZB_STATUS_SUCCESS if the stack is operational. */
 bool ZB_WARN_UNUSED ZbStartupTcsoStart(struct ZigBeeT *zb, void (*callback)(enum ZbTcsoStatusT status, void *arg), void *arg);
-void ZbStartupTcsoAbort(struct ZigBeeT *zb);
+bool ZbStartupTcsoAbort(struct ZigBeeT *zb);
 
 #endif /* ZIGBEE_STARTUP_H */

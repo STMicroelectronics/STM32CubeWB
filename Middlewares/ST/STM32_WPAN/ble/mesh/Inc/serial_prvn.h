@@ -40,8 +40,8 @@
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __EMBD_PROVISION_H
-#define __EMBD_PROVISION_H
+#ifndef __SERIAL_PRVN_H
+#define __SERIAL_PRVN_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -52,7 +52,7 @@
 /* Exported Functions Prototypes ---------------------------------------------*/
 void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
 void SerialPrvn_ProvisioningStatusUpdateCb(uint8_t flagPrvningInProcess, MOBLEUINT16 nodeAddress);
-#endif /* __EMBD_PROVISION_H */
+#endif /* __SERIAL_PRVN_H */
 
 /******************* (C) COPYRIGHT 2018 STMicroelectronics *****END OF FILE****/
 

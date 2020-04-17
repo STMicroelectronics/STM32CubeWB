@@ -2,25 +2,17 @@
   ******************************************************************************
   * @file    types.h
   * @author  MCD Application Team
-  * @version V3.0.0
-  * @date    05-June-2015
   * @brief   Define the various basic types needed by the Library
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2015 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2015 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Licensed under MCD-ST Image SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+  * This software component is licensed by ST under Image license SLA0044,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        http://www.st.com/SLA0044
   *
   ******************************************************************************
   */
@@ -74,7 +66,7 @@ typedef signed char int8_t;        /*!< stdint.h defintion of int8_t */
 #endif /* !defined(_STDINT_H) && !defined(__stdint_h) && !defined(_STDINT) */
 
 /** @brief Type definitation for a pre-allocated memory buffer that is required by some functions */
-typedef struct 
+typedef struct
 {
   uint8_t *pmBuf;  /*!< Pointer to the pre-allocated memory buffer, this must be set by the user*/
   uint16_t  mSize; /*!< Total size of the pre-allocated memory buffer */
@@ -89,7 +81,7 @@ membuf_stt;
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
 }
 #endif

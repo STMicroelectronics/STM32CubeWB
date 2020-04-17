@@ -21,9 +21,11 @@
 ******************************************************************************
 */
 
+
+#include "app_common.h"
 #include "app_lpm_transmit_mac_802_15_4.h"
 #include "app_lpm_transmit_mac_802_15_4_process.h"
-#include "app_common.h"
+#include "main.h"
 #include "shci.h"
 #include "stm32_seq.h"
 

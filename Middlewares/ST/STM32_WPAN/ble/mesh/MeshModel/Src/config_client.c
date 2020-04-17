@@ -40,6 +40,7 @@
 */
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"
+#include "mesh_cfg.h"
 #include "config_client.h"
 #include "common.h"
 #include "models_if.h"
@@ -185,9 +186,9 @@ void PackNetkeyAppkeyInto3Bytes (MOBLEUINT16 netKeyIndex,
 void NetkeyAppkeyUnpack (MOBLEUINT16 *pnetKeyIndex, 
                                 MOBLEUINT16 *pappKeyIndex,
                                 MOBLEUINT8* keysArray3B);
-MOBLE_RESULT ConfigClient_AppKeyAdd (MOBLEUINT16 netKeyIndex, 
-                                     MOBLEUINT16 appKeyIndex, 
-                                     MOBLEUINT8* appkey);
+//MOBLE_RESULT ConfigClient_AppKeyAdd (MOBLEUINT16 netKeyIndex, 
+//                                     MOBLEUINT16 appKeyIndex, 
+//                                     MOBLEUINT8* appkey);
 MOBLE_RESULT ConfigClient_AppKeyStatus(MOBLEUINT8 const *pSrcAppKeyStatus, 
                                                         MOBLEUINT32 length); 
 MOBLE_RESULT ConfigClient_AppKeyUpdate (MOBLEUINT8* appkey);
@@ -215,7 +216,7 @@ MOBLE_RESULT ConfigClient_NodeResetStatus(MOBLEUINT8 const *pStatus,
 * @param  None: No parameter for this function
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT ConfigClient_CompositionDataGet(void) 
+MOBLE_RESULT ConfigClient_CompositionDataGet(MOBLE_ADDRESS dst_peer) 
 {
   
   /* 4.3.2.4 Config Composition Data Get
@@ -228,7 +229,6 @@ MOBLE_RESULT ConfigClient_CompositionDataGet(void)
   MOBLEUINT16 msg_opcode;
   MOBLEUINT8* pConfigData;
   MOBLEUINT32 dataLength;
-  MOBLE_ADDRESS dst_peer;
     
   configClientGetCompositionMsg_t ccGetCompositionMsg;
   
@@ -236,16 +236,10 @@ MOBLE_RESULT ConfigClient_CompositionDataGet(void)
   ccGetCompositionMsg.Opcode = OPCODE_CONFIG_COMPOSITION_DATA_GET;
   ccGetCompositionMsg.page = COMPOSITION_PAGE0;
 
-  
-  if(result)
-  {
-    TRACE_M(TF_CONFIG_CLIENT,"Get Composition Data Error  \r\n");
-  }  
-  
   msg_opcode = OPCODE_CONFIG_COMPOSITION_DATA_GET;
   pConfigData = (MOBLEUINT8*) &(ccGetCompositionMsg.page);
   dataLength = sizeof(ccGetCompositionMsg.page);
-  dst_peer = NodeInfo.nodePrimaryAddress; 
+
 
   ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);
   
@@ -598,7 +592,8 @@ void NetkeyAppkeyUnpack (MOBLEUINT16 *pnetKeyIndex,
 * @param  configClientAppKeyAdd_t: Structure of the AppKey add message 
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT ConfigClient_AppKeyAdd (MOBLEUINT16 netKeyIndex, 
+MOBLE_RESULT ConfigClient_AppKeyAdd (  MOBLE_ADDRESS dst_peer,
+                                       MOBLEUINT16 netKeyIndex, 
                                      MOBLEUINT16 appKeyIndex, 
                                      MOBLEUINT8* appkey)
 {
@@ -618,7 +613,6 @@ AppKey 16B : AppKey value
   MOBLEUINT16 msg_opcode;
   MOBLEUINT8* pConfigData;
   MOBLEUINT32 dataLength;
-  MOBLE_ADDRESS dst_peer;
   
   configClientAppKeyAdd.netKeyIndex = netKeyIndex; 
   configClientAppKeyAdd.appKeyIndex = appKeyIndex;
@@ -627,7 +621,6 @@ AppKey 16B : AppKey value
   msg_opcode = OPCODE_CONFIG_APPKEY_ADD;
   pConfigData = (MOBLEUINT8*) &(configClientAppKeyAdd);
   dataLength = sizeof(configClientAppKeyAdd_t);
-  dst_peer = NodeInfo.nodePrimaryAddress; 
   
   TRACE_M(TF_CONFIG_CLIENT,"Config Client App Key Add  \r\n");  
   ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);
@@ -677,6 +670,7 @@ NetKeyIndexAndAppKeyIndex : 3B : Index of the NetKey and index of the AppKey
 
   return result;
 }
+
 
 /**
 * @brief  ConfigClient_AppKeyUpdate: This function is called for both Acknowledged and 
@@ -794,7 +788,6 @@ maximize the size of a payload.
   MOBLEUINT16 msg_opcode;
   MOBLEUINT8* pConfigData;
   MOBLEUINT32 dataLength;
-  MOBLE_ADDRESS dst_peer;
   MOBLE_ADDRESS self_addr;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   configClientModelPublication_t configClientModelPublication;
@@ -834,7 +827,6 @@ maximize the size of a payload.
 
   msg_opcode = OPCODE_CONFIG_CONFIG_MODEL_PUBLICATION_SET;
   pConfigData = (MOBLEUINT8*) &(configClientModelPublication);
-  dst_peer = NodeInfo.nodePrimaryAddress; 
   
   TRACE_M(TF_CONFIG_CLIENT,"Config Client Publication Add  \r\n");  
   TRACE_M(TF_CONFIG_CLIENT,"elementAddr = [%04x]\r\n", elementAddress);  
@@ -850,16 +842,17 @@ maximize the size of a payload.
   TRACE_I(TF_CONFIG_CLIENT,"\r\n");
   
   self_addr = BLEMesh_GetAddress();
-  if (elementAddress == self_addr)  
+  
+  if ((elementAddress >= self_addr) && (elementAddress < (self_addr+APPLICATION_NUMBER_OF_ELEMENTS)) )
   {
     /* Provisioner needs to be configured */
-    ConfigModel_SelfPublishConfig(self_addr,
+    ConfigModel_SelfPublishConfig(elementAddress,
                                          msg_opcode,pConfigData,dataLength);
   }
   else
   {
     /* Node address to be configured */
-    ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);
+    ConfigClientModel_SendMessage(elementAddress,msg_opcode,pConfigData,dataLength);
   }
 
   return result;
@@ -981,7 +974,6 @@ Config Model Subscription Status message.
 */
 
   MOBLEUINT32 dataLength = 0;
-  MOBLE_ADDRESS dst_peer;
   MOBLE_ADDRESS self_addr;
   MOBLEUINT16 msg_opcode;
   MOBLEUINT8* pConfigData;
@@ -1026,7 +1018,6 @@ Config Model Subscription Status message.
   
    msg_opcode = OPCODE_CONFIG_MODEL_SUBSCRIPTION_ADD;
    pConfigData = (MOBLEUINT8*) &(modelSubscription);
-   dst_peer = NodeInfo.nodePrimaryAddress; 
   
   TRACE_I(TF_CONFIG_CLIENT,"Subscription Set buffer ");
   
@@ -1040,15 +1031,16 @@ Config Model Subscription Status message.
   TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08lx]\r\n", modelIdentifier);
    
   self_addr = BLEMesh_GetAddress();
-  if (elementAddress == self_addr)
+
+  if ((elementAddress >= self_addr) && (elementAddress < (self_addr+APPLICATION_NUMBER_OF_ELEMENTS)) )
   {
     /* Provisioner needs to be configured */
-    ConfigModel_SelfSubscriptionConfig(self_addr,
+    ConfigModel_SelfSubscriptionConfig(elementAddress,
                                               msg_opcode,pConfigData,dataLength);
   }
   else
   {
-    ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);  
+    ConfigClientModel_SendMessage(elementAddress,msg_opcode,pConfigData,dataLength);  
   }
   
   return result;
@@ -1246,7 +1238,6 @@ The response to a Config Model App Bind message is a Config Model App Status mes
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   MOBLEUINT16 msg_opcode;
   MOBLEUINT8* pConfigData;
-  MOBLE_ADDRESS dst_peer;
   configClientModelAppBind_t modelAppBind;
   MOBLE_ADDRESS self_addr;
   
@@ -1264,8 +1255,6 @@ The response to a Config Model App Bind message is a Config Model App Status mes
   msg_opcode = OPCODE_CONFIG_MODEL_APP_BIND;
   pConfigData = (MOBLEUINT8*) &(modelAppBind);
 
-  dst_peer = NodeInfo.nodePrimaryAddress; 
-  
   TRACE_M(TF_CONFIG_CLIENT,"Config Client App Key Bind message  \r\n");   
   TRACE_M(TF_CONFIG_CLIENT,"Model = 0x%8lx \r\n", modelIdentifier );
   
@@ -1275,7 +1264,7 @@ The response to a Config Model App Bind message is a Config Model App Status mes
   }
   
   self_addr = BLEMesh_GetAddress();
-  if (elementAddress == self_addr)
+  if ((elementAddress >= self_addr) && (elementAddress < (self_addr+APPLICATION_NUMBER_OF_ELEMENTS)) )
   {
     /* Provisioner needs to be configured */
     ConfigClient_SelfModelAppBindConfig(self_addr,
@@ -1284,7 +1273,7 @@ The response to a Config Model App Bind message is a Config Model App Status mes
   else
   {
     /* Node address to be configured */
-    ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);
+    ConfigClientModel_SendMessage(elementAddress,msg_opcode,pConfigData,dataLength);
   }
   
   return result;
@@ -1404,10 +1393,7 @@ There are no Parameters for this message.
   self_addr = BLEMesh_GetAddress();
   if (elementAddress == self_addr)
   {
-    /* Provisioner needs to be configured */
-// TBD 
-//    ConfigClient_SelfModelAppBindConfig(self_addr,
-//                                         msg_opcode,pConfigData,dataLength);
+
   }
   else
   {
@@ -1443,8 +1429,8 @@ MOBLE_RESULT ConfigClient_NodeResetStatus(MOBLEUINT8 const *pStatus,
 
 void CopyU8LittleEndienArray_fromU16word (MOBLEUINT8* pArray, MOBLEUINT16 inputWord)
 {
-  *(pArray+1) = (MOBLEUINT8)(inputWord & 0x00ff);  /* Copy the LSB first */
-  *pArray = (MOBLEUINT8)((inputWord & 0xff00) >> 0x08); /* Copy the MSB later */
+  *(pArray) = (MOBLEUINT8)(inputWord & 0x00ff);  /* Copy the LSB first */
+  *(pArray+1) = (MOBLEUINT8)((inputWord & 0xff00) >> 0x08); /* Copy the MSB later */
 }
 
 MOBLEUINT16 CopyU8LittleEndienArrayToU16word (MOBLEUINT8* pArray) 

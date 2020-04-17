@@ -44,7 +44,7 @@
 #include "common.h"
 #include <string.h>
 #include "compiler.h"
-#include "Math.h"
+#include "math.h"
 #include "meshdfu_node.h"
 
 

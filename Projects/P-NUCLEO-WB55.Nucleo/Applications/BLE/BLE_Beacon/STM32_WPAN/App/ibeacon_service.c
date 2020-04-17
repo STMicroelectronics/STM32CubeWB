@@ -127,28 +127,6 @@ static tBleStatus IBeacon_Init(IBeacon_InitTypeDef *IBeacon_Init)
     IBeacon_Init->CalibratedTxPower,                                         /*< Ranging data. */
   };
   
-  uint8_t service_uuid_list[] =
-  {
-    17,                                                                      /*< Length. */
-    AD_TYPE_16_BIT_SERV_UUID_CMPLT_LIST,                                    /*< Complete list of 16-bit Service UUIDs data type value. */
-    IBeacon_Init->UuID[0],                                                  /*< 16-byte Proximity UUID. */
-    IBeacon_Init->UuID[1],
-    IBeacon_Init->UuID[2],
-    IBeacon_Init->UuID[3],
-    IBeacon_Init->UuID[4],
-    IBeacon_Init->UuID[5],
-    IBeacon_Init->UuID[6],
-    IBeacon_Init->UuID[7],
-    IBeacon_Init->UuID[8],
-    IBeacon_Init->UuID[9],
-    IBeacon_Init->UuID[10],
-    IBeacon_Init->UuID[11],
-    IBeacon_Init->UuID[12],
-    IBeacon_Init->UuID[13],
-    IBeacon_Init->UuID[14],
-    IBeacon_Init->UuID[15],
-  };
-  
   uint8_t flags[] =
   {
     2,                                                                      /*< Length. */
@@ -158,14 +136,6 @@ static tBleStatus IBeacon_Init(IBeacon_InitTypeDef *IBeacon_Init)
   
   /* Update the service data. */
   ret = aci_gap_update_adv_data(sizeof(service_data), service_data);
-  
-  if (ret != BLE_STATUS_SUCCESS)
-  {
-    return ret;
-  }
-  
-  /* Update the service UUID list. */
-  ret = aci_gap_update_adv_data(sizeof(service_uuid_list), service_uuid_list);
   
   if (ret != BLE_STATUS_SUCCESS)
   {

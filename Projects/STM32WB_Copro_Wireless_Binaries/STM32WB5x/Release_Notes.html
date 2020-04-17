@@ -40,30 +40,39 @@
 <li>stm32wb5x_BLE_Stack_full_fw.bin
 <ul>
 <li>Full BLE Stack 5.0 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a></li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a>
+<ul>
+<li>Following features are kept:
+<ul>
+<li>GAP peripheral, central (LL slave up to 2 links, LL master up to 6 links)</li>
+<li>GATT server, client</li>
+<li>Data length extension</li>
+<li>2Mbit PHY / PHY update</li>
+<li>Privacy / White list</li>
+<li>Legacy Pairing, LE secure connections</li>
+<li>HCI interface (full, like stm32wb5x_BLE_HCILayer_fw.bin)</li>
+<li>Direct Test Mode</li>
+</ul></li>
+</ul></li>
 </ul></li>
 <li>stm32wb5x_BLE_Stack_light_fw.bin
 <ul>
-<li>Erase/Write Flash of Wireless Stack Non Volatile Memory while BLE link is active (Min Interval 28ms)</li>
-<li>Fix IFS (Inter Frame Spacing) sometimes longer than 152us</li>
+<li>Full BLE Stack 5.0 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a></li>
 <li>Wireless Ble stack Light configuration – Slave Only
 <ul>
 <li>Following features are kept:
 <ul>
-<li>GAP peripheral / LL slave</li>
+<li>GAP peripheral only (LL slave up to 2 links)</li>
 <li>GATT server</li>
 <li>Data length extension</li>
-<li>Double LL slave</li>
+<li>Legacy Pairing</li>
+<li>HCI interface (reduced)</li>
+<li>Direct Test Mode</li>
 </ul></li>
-<li>Following Feature are removed
-<ul>
-<li>GAP central / LL master</li>
-<li>GATT client</li>
-<li>Privacy / White list</li>
-<li>Secure connections</li>
-<li>2 MB / PHY update</li>
-<li>HCI interface (useless functions are removed)</li>
-</ul></li>
+<li>BLE “Slave Only” stack implies that with this stack configuration, STM32WB is not able to scan and request a BLE connection.</li>
+<li>It will just advertise, and accept incoming connection request from other master devices (e.g. Smartphone).</li>
+<li>While with the “full feature” BLE stack, STM32WB55xx is able to support both master and slave roles on different links (with the limitation of max 8 links in parallel, from which max 2 slave links).</li>
 </ul></li>
 </ul></li>
 <li>stm32wb5x_BLE_HCILayer_fw.bin
@@ -101,6 +110,12 @@
 <li>Zigbee Compliant Platform certified</li>
 <li>Supports Full Function Device (FFD)</li>
 </ul></li>
+<li>stm32wb5x_Zigbee_RFD_fw.bin
+<ul>
+<li>Zigbee Reduced Function Device</li>
+<li>Zigbee Compliant Platform certified</li>
+<li>To be used for End Device Zigbee role</li>
+</ul></li>
 <li>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin
 <ul>
 <li>Static Concurrent Mode BLE Zigbee</li>
@@ -119,7 +134,7 @@
 <li>Latest version of the FUS</li>
 </ul></li>
 </ul>
-<p><mark>How to flash the Wireless Coprocessor Binary via USB</mark></p>
+<p><mark>How to flash the Wireless Coprocessor Binary via USB (Command Line Interface)</mark></p>
 <ul>
 <li><p><em>Inside the below procedure, the references to binaries name and install address are provided in the section <strong>Main Changes</strong> of this file.</em></p></li>
 <li><p>STEP 1: Use STM32CubeProgrammer</p>
@@ -144,7 +159,7 @@
 </ul></li>
 </ul></li>
 </ul></li>
-<li><p>STEP 3 : Delete current wireless stack :</p>
+<li><p>STEP 3 : Delete current wireless stack</p>
 <ul>
 <li><em>STM32_Programmer_CLI.exe -c port=usb1 -fwdelete</em></li>
 </ul></li>
@@ -174,39 +189,169 @@
 <p>Please check <strong>Wireless Coprocessor Binary Table</strong> for Install@ parameter depending of the binary.</p></li>
 <li><p>STEP 8 : Revert STEP 2 procedure to put back device in normal mode.</p></li>
 </ul>
-<p><mark>How to flash the Wireless Coprocessor Binary via SWD/JTAG</mark></p>
+<p><mark>How to flash the Wireless Coprocessor Binary via SWD/JTAG by ST-LINK (Command Line Interface)</mark></p>
 <ul>
 <li><p><em>Inside the below procedure, the references to binaries name and install address are provided in the section <strong>Main Changes</strong> of this file.</em></p></li>
 <li><p>STEP 1: Use STM32CubeProgrammer</p>
 <ul>
-<li><p>Version 2.2.0 or higher.</p></li>
+<li><p>Version 2.4.0 or higher.</p></li>
 <li><p>It gives access to Firmware Upgrade Service (FUS) (<a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00513965.pdf">AN5185</a> : ST firmware upgrade services for STM32WB Series.) through Bootloader.</p></li>
 <li><p>It is currently available as Command Line Interface (CLI) mode.</p></li>
 </ul></li>
-<li>STEP 2 : Read and upgrade FUS Version
+<li><p>STEP 2: Access to SWD Interface (system flash)</p>
 <ul>
-<li><em>STM32_Programmer_CLI.exe -c port=usb1 -r32 0x20030030 1</em>
+<li>For P-NUCLEO-WB55.Nucleo :
 <ul>
-<li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 3.</strong></li>
-<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using using STEP 4.</strong></li>
-<li><em>0x20030030 : 0x10100000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 5.</strong></li>
+<li>Power ON via ST-LINK and Jumper JP1(USB_STL)</li>
+</ul></li>
+<li>For P-NUCLEO-WB55.USBDongle :
+<ul>
+<li>remain switch SW2 to Boot1</li>
+<li>Connect P-NUCLEO-WB55.USBDongle</li>
 </ul></li>
 </ul></li>
-<li><p>STEP 3 : Download FUS 1.0.2 (stm32wb5x_FUS_fw_1_0_2.bin) :</p>
+<li><p>STEP 3: Delete current wireless stack</p>
 <ul>
-<li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWboot0=0 nboot1=1 nboot0=1 -fwupgrade stm32wb5x_FUS_fw_1_0_2.bin [Install@] firstinstall=0</em></li>
+<li><em>STM32_Programmer_CLI.exe -c port=swd -fwdelete</em></li>
+</ul></li>
+<li><p>STEP 4 : Read and upgrade FUS Version (if unknown FUS version)</p>
+<ul>
+<li>it can been obtained with Transparent Mode application from STM32CubeMonitor-RF interface or using other flashing method via USB described in RN.
+<ul>
+<li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
+<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using using STEP 6.</strong></li>
+<li><em>0x20030030 : 0x10100000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
+</ul></li>
+</ul></li>
+<li><p>STEP 5 : Download FUS v1.0.2:</p>
+<ul>
+<li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -fwupgrade stm32wb5x_FUS_fw_1_0_2.bin [Install@] firstinstall=0</em></li>
 </ul>
 <p>Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</p></li>
-<li><p>STEP 4 :Download latest FUS :</p>
+<li><p>STEP 6 :Download latest FUS v1.1.0:</p>
 <ul>
-<li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWboot0=0 nboot1=1 nboot0=1 -fwupgrade [FUS_Binary] [Install@] firstinstall=0</em></li>
+<li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -fwupgrade [FUS_Binary] [Install@] firstinstall=0</em></li>
 </ul>
 <p>Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</p></li>
-<li><p>STEP 5 : Download new wireless stack :</p>
+<li><p>STEP 7 : Download new wireless stack :</p>
 <ul>
-<li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWboot0=0 nboot1=1 nboot0=1 -fwupgrade [Wireless_Coprocessor_Binary] [Install@] firstinstall=1</em></li>
+<li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -fwupgrade [Wireless_Coprocessor_Binary] [Install@] firstinstall=1</em></li>
 </ul>
 <p>Please check <strong>Wireless Coprocessor Binary Table</strong> for Install@ parameter depending of the binary.</p></li>
+<li><p>STEP 8 : Revert to default OB configuration :</p>
+<ul>
+<li>*STM32_Programmer_CLI.exe -c port=swd mode=UR -ob nSWboot0=1 nboot1=1 nboot0=1</li>
+</ul></li>
+</ul>
+<p><mark>How to flash the Wireless Coprocessor Binary via USB (STM32CubeProgrammer GUI)</mark></p>
+<ul>
+<li><p><em>Inside the below procedure, the references to binaries name and install address are provided in the section <strong>Main Changes</strong> of this file.</em></p></li>
+<li><p>STEP 1: Use STM32CubeProgrammer GUI</p>
+<ul>
+<li><p>Version 2.4.0 or higher.</p></li>
+<li><p>It gives access to Firmware Upgrade Service (FUS) (<a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00513965.pdf">AN5185</a> : ST firmware upgrade services for STM32WB Series.) through Bootloader.</p></li>
+<li><p>It is currently available as Graphical User Interface (GUI) mode (or Command Line Interface (CLI) mode).</p></li>
+</ul></li>
+<li><p>STEP 2: Access to Bootloader USB Interface (system flash)</p>
+<ul>
+<li>Boot mode selected by Boot0 pin set to VDD
+<ul>
+<li>For P-NUCLEO-WB55.Nucleo :
+<ul>
+<li>Jumper between CN7.5(VDD) and CN7.7(Boot0)</li>
+<li>Power ON via USB_USER and Jumper JP1(USB_MCU)</li>
+</ul></li>
+<li>For P-NUCLEO-WB55.USBDongle :
+<ul>
+<li>Move switch SW2 to Boot0</li>
+<li>Connect P-NUCLEO-WB55.USBDongle</li>
+</ul></li>
+</ul></li>
+<li>open STM32CubeProgrammer GUI and select “USB”</li>
+<li>in USB configuration: (Port: USB1) then select “Connect”</li>
+</ul></li>
+<li><p>STEP 3 : Delete current wireless stack</p>
+<ul>
+<li>in Firmware Upgrade Services: select “Delete Firmware”</li>
+</ul></li>
+<li><p>STEP 4 : Read and upgrade FUS Version</p>
+<ul>
+<li>in Firmware Upgrade Services: select “Read FUS state”
+<ul>
+<li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
+<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using using STEP 6.</strong></li>
+<li><em>0x20030030 : 0x10100000</em> : FUSv1.1.0 =&gt; **Up to date, you can download the new wireless stack using STEP 7.</li>
+</ul></li>
+</ul></li>
+<li><p>STEP 5 : Download FUS v1.0.2 :</p>
+<ul>
+<li>in Firmware Upgrade Service: (File Path: [stm32wb5x_FUS_fw_1_0_2.bin], Start Adress: [Install@])</li>
+<li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
+</ul></li>
+<li><p>STEP 6 :Download latest FUS v1.1.0 :</p>
+<ul>
+<li>in Firmware Upgrade Service: (File Path: [FUS_Binary], Start Adress: [Install@])</li>
+<li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
+</ul></li>
+<li><p>STEP 7 : Download new wireless stack :</p>
+<ul>
+<li>in Firmware Upgrade Service: (File Path: [Wireless_Coprocessor_Binary], Start Adress: [Install@])</li>
+<li>then select “Firmware Upgrade” with “Verify download” and “Start stack after upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
+</ul></li>
+<li><p>STEP 8 : Revert STEP 2 procedure to put back device in normal mode.</p></li>
+</ul>
+<p><mark>How to flash the Wireless Coprocessor Binary via SWD/JTAG by ST-LINK (STM32CubeProgrammer GUI)</mark></p>
+<ul>
+<li><p><em>Inside the below procedure, the references to binaries name and install address are provided in the section <strong>Main Changes</strong> of this file.</em></p></li>
+<li><p>STEP 1: Use STM32CubeProgrammer GUI</p>
+<ul>
+<li><p>Version 2.4.0 or higher.</p></li>
+<li><p>It gives access to Firmware Upgrade Service (FUS) (<a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00513965.pdf">AN5185</a> : ST firmware upgrade services for STM32WB Series.) through Bootloader.</p></li>
+<li><p>It is currently available as Graphical User Interface (GUI) mode (or Command Line Interface (CLI) mode).</p></li>
+</ul></li>
+<li><p>STEP 2: Access to SWD Interface (system flash)</p>
+<ul>
+<li>For P-NUCLEO-WB55.Nucleo :
+<ul>
+<li>Power ON via ST-LINK and Jumper JP1(USB_STL)</li>
+</ul></li>
+<li>For P-NUCLEO-WB55.USBDongle :
+<ul>
+<li>remain switch SW2 to Boot1</li>
+<li>Connect P-NUCLEO-WB55.USBDongle</li>
+</ul></li>
+<li>open STM32CubeProgrammer GUI and select “ST-LINK”</li>
+<li>in ST-LINK configuration: (Port: SWD) then select “Connect”</li>
+</ul></li>
+<li><p>STEP 3: Delete current wireless stack</p>
+<ul>
+<li>in Firmware Upgrade Services: select “Delete Firmware”</li>
+</ul></li>
+<li><p>STEP 4 : Read and upgrade FUS Version (if unknown FUS version)</p>
+<ul>
+<li>it can been obtained with Transparent Mode application from STM32CubeMonitor-RF interface or using other flashing method via USB described in RN.
+<ul>
+<li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
+<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using using STEP 6.</strong></li>
+<li><em>0x20030030 : 0x10100000</em> : FUSv1.1.0 =&gt; **Up to date, you can download the new wireless stack using STEP 7.</li>
+</ul></li>
+</ul></li>
+<li><p>STEP 5 : Download FUS v1.0.2 :</p>
+<ul>
+<li>in Firmware Upgrade Services: (File Path: [stm32wb5x_FUS_fw_1_0_2.bin], Start Adress: [Install@])</li>
+<li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
+</ul></li>
+<li><p>STEP 6 :Download latest FUS v1.1.0 :</p>
+<ul>
+<li>in Firmware Upgrade Service: (File Path: [FUS_Binary], Start Adress: [Install@])</li>
+<li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
+</ul></li>
+<li><p>STEP 7 : Download new wireless stack :</p>
+<ul>
+<li>in Firmware Upgrade Service: (File Path: [Wireless_Coprocessor_Binary], Start Adress: [Install@])</li>
+<li>then select “Firmware Upgrade” with “Verify download” and “Start stack after upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
+</ul></li>
+<li><p>STEP 8 : Revert to default configuration: in Option Bytes menu for User Configuration set: nSWboot0=1 (checked) nboot1=1 nboot0=1</p></li>
 </ul>
 <p><mark>How to compute available flash size </mark></p>
 <ul>
@@ -220,9 +365,205 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section7" checked aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 14-February-2020</label>
+<input type="checkbox" id="collapse-section8" checked aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>MAC:
+<ul>
+<li>ID 81423 - Exceeding max Pending Data crashed the board</li>
+<li>ID 81426 - Beacon Ind msg wrongly issued</li>
+</ul></li>
+<li>ZIGBEE:
+<ul>
+<li>Introducing <strong>stm32wb5x_Zigbee_RFD_fw.bin</strong> (targeted for Zigbee End Device)<br />
+</li>
+<li>MAC layer bug fixed</li>
+</ul></li>
+<li>THREAD:
+<ul>
+<li>Parameter check updates for notification to the application.</li>
+<li>ID 80054 - Coap Default Handler fixed</li>
+<li>ID 82579 - Some commands such as otLinkGetExtendedAddress return data in the SRAM2a section</li>
+</ul></li>
+<li>BLE:
+<ul>
+<li>BLE stack updates:</li>
+<li>Fix vulnerability referenced as CVE-2019-19192</li>
+<li>ID 82231 - The PESD bit is kept high when BLE Mesh un-provisioning is requested by AT Command</li>
+<li>ID 68815 - Min connection interval does not allow scan @ master side</li>
+<li>ID 76341 - Ellisys LL/SEC/ADV/BV-03-C test fail due to wrong RPA Timeout value 10.7s vs 10s expected</li>
+<li>ID 74352 - STM32WB BLE Stack DoS deadlock vulnerability</li>
+<li>ID 81795 - STM32WB BLE stack blocks at some commands following ACI_HAL_RX_START</li>
+<li>ID 81758 - Apply specific workarounds and RF trimming parameters when using ACI_HAL_TONE_START</li>
+<li>ID 77395 - Ellisys LL/CON/INI/BV-04 issue on connection supervision timeout</li>
+<li>ID 82288 - BLE stack: behavior of HCI SC key events in full stack mode</li>
+<li>ID 79038 - SMP changes to avoid master pairing without “force rebond” working after bond lost</li>
+<li>ID 68859 - Multilink Secure Pairing Collision make pairing failing</li>
+<li>ID 75302 - SMP: no more possible from master or slave to redo a new refresh key, or force rebond if master send several GAP_send_pairing_REQ before HCI_ENCRYPTION event issue.</li>
+<li>ID 76809 - PTS: SM/MAS/SCOB/BV-01-C issue on GAP_AUTHENTICATON that modifies OOB data</li>
+<li>ID 79042 - SMP: bond lost event on master side</li>
+<li>ID 81007 - HCI_Data_Buffer_Overflow event to be removed as useless</li>
+<li>ID 82059 - BLE stack init: change handling of a too large number of links parameter</li>
+</ul></li>
+</ul>
+<p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5” via USB or “STEP 3” via SWD/JTAG.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 6%" />
+<col style="width: 3%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw_1_0_2.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>v1.0.2</td>
+<td>04/10/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td><strong>v1.1.0</strong></td>
+<td>02/10/2020</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 6” via USB or “STEP 4” via SWD/JTAG.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 4%" />
+<col style="width: 3%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_BLE_HCILayer_fw.bin</td>
+<td>0x080DC000</td>
+<td>0x08068000</td>
+<td>0x08028000</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Stack_full_fw.bin</td>
+<td>0x080CB000</td>
+<td>0x08057000</td>
+<td>0x08017000</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Stack_light_fw.bin</td>
+<td>0x80D9000</td>
+<td>0x8065000</td>
+<td>0x8025000</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Thread_fw.bin</td>
+<td>0x08078000</td>
+<td>NA</td>
+<td>NA</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin</td>
+<td>0x0807C000</td>
+<td>NA</td>
+<td>NA</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td>0x080E4000</td>
+<td>0x08070000</td>
+<td>0x08030000</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_rfmonitor_phy802_15_4_fw.bin</td>
+<td>0x080EC000</td>
+<td>0x08078000</td>
+<td>0x08038000</td>
+<td>v1.1.0</td>
+<td>04/05/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x0809F000</td>
+<td>0x0802B000</td>
+<td>NA</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x080B4000</td>
+<td>0x08040000</td>
+<td>NA</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Zigbee_FFD_Full_fw.bin</td>
+<td>0x080A9000 </td>
+<td>0x08035000</td>
+<td>NA</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Zigbee_RFD_fw.bin</td>
+<td>0x080B3000 </td>
+<td>0x0803F000</td>
+<td>NA</td>
+<td><strong>v1.6.0</strong></td>
+<td>03/27/2020</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 14-February-2020</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>FUS:
@@ -263,6 +604,8 @@
 <li>Introduction of new binary <strong>stm32wb5x_BLE_Stack_light_fw.bin</strong> for supporting Slave only (cf previous detailed description).</li>
 <li><strong>WARNING</strong>: when using the stm32wb5x_BLE_Stack_light_fw.bin binary, the maximum number of simultaneous connections that the device will support is 2<br />
 then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
+<li>Erase/Write Flash of Wireless Stack Non Volatile Memory while BLE link is active (Min Interval 28ms)</li>
+<li>Fix IFS (Inter Frame Spacing) sometimes longer than 152us</li>
 </ul></li>
 </ul>
 <p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5” via USB or “STEP 3” via SWD/JTAG.</p>
@@ -278,9 +621,9 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <thead>
 <tr class="header">
 <th>Wireless Coprocessor Binary</th>
-<th>STM32WB5xG(1M)</th>
-<th>STM32WB5xE(512K)</th>
-<th>STM32WB5xC(256K)</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
 <th>Version</th>
 <th>Date</th>
 </tr>
@@ -317,9 +660,9 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <thead>
 <tr class="header">
 <th>Wireless Coprocessor Binary</th>
-<th>STM32WB5xG(1M)</th>
-<th>STM32WB5xE(512K)</th>
-<th>STM32WB5xC(256K)</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
 <th>Version</th>
 <th>Date</th>
 </tr>
@@ -412,7 +755,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -447,9 +790,9 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <thead>
 <tr class="header">
 <th>Wireless Coprocessor Binary</th>
-<th>STM32WB5xG(1M)</th>
-<th>STM32WB5xE(512K)</th>
-<th>STM32WB5xC(256K)</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
 <th>Version</th>
 <th>Date</th>
 </tr>
@@ -478,9 +821,9 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <thead>
 <tr class="header">
 <th>Wireless Coprocessor Binary</th>
-<th>STM32WB5xG(1M)</th>
-<th>STM32WB5xE(512K)</th>
-<th>STM32WB5xC(256K)</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
 <th>Version</th>
 <th>Date</th>
 </tr>
@@ -557,7 +900,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 09-September-2019</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -587,9 +930,9 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <thead>
 <tr class="header">
 <th>Wireless Coprocessor Binary</th>
-<th>STM32WB5xG(1M)</th>
-<th>STM32WB5xE(512K)</th>
-<th>STM32WB5xC(256K)</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
 <th>Version</th>
 <th>Date</th>
 </tr>
@@ -618,9 +961,9 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <thead>
 <tr class="header">
 <th>Wireless Coprocessor Binary</th>
-<th>STM32WB5xG(1M)</th>
-<th>STM32WB5xE(512K)</th>
-<th>STM32WB5xC(256K)</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
 <th>Version</th>
 <th>Date</th>
 </tr>
@@ -697,7 +1040,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 3rd-July-2019</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE Link layer : fix issues with pairing</li>
@@ -729,21 +1072,21 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <tbody>
 <tr class="odd">
 <td>stm32wb5x_FUS_fw.bin</td>
-<td>STM32WB5xC(256K)</td>
+<td>STM32WB5xxC(256K)</td>
 <td>0x080<strong>3E</strong>000</td>
 <td>v1.0.2</td>
 <td>04/10/2019</td>
 </tr>
 <tr class="even">
 <td>stm32wb5x_FUS_fw.bin</td>
-<td>STM32WB5xE(512K)</td>
+<td>STM32WB5xxE(512K)</td>
 <td>0x080<strong>7E</strong>000</td>
 <td>v1.0.2</td>
 <td>04/10/2019</td>
 </tr>
 <tr class="odd">
 <td>stm32wb5x_FUS_fw.bin</td>
-<td>STM32WB5xG(1M)</td>
+<td>STM32WB5xxG(1M)</td>
 <td>0x080<strong>EC</strong>000</td>
 <td>v1.0.2</td>
 <td>04/10/2019</td>
@@ -810,7 +1153,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>Add support for STM32WB5xE(512K) and STM32WB5xC(256K) devices.</li>
@@ -830,21 +1173,21 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <tbody>
 <tr class="odd">
 <td>stm32wb5x_FUS_fw.bin</td>
-<td><strong>STM32WB5xC</strong>(256K)</td>
+<td><strong>STM32WB5xxC</strong>(256K)</td>
 <td>0x080<strong>3E</strong>000</td>
 <td><strong>v1.0.2</strong></td>
 <td>04/10/2019</td>
 </tr>
 <tr class="even">
 <td>stm32wb5x_FUS_fw.bin</td>
-<td><strong>STM32WB5xE</strong>(512K)</td>
+<td><strong>STM32WB5xxE</strong>(512K)</td>
 <td>0x080<strong>7E</strong>000</td>
 <td><strong>v1.0.2</strong></td>
 <td>04/10/2019</td>
 </tr>
 <tr class="odd">
 <td>stm32wb5x_FUS_fw.bin</td>
-<td><strong>STM32WB5xG</strong>(1M)</td>
+<td><strong>STM32WB5xxG</strong>(1M)</td>
 <td>0x080<strong>EC</strong>000</td>
 <td><strong>v1.0.2</strong></td>
 <td>04/10/2019</td>
@@ -916,7 +1259,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Introduction of the Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>This feature is embedded inside stm32wb5x_FUS_fw.bin.</li>
@@ -1025,7 +1368,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 <p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 6” of flash procedure.</p>

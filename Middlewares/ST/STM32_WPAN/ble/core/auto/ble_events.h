@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_events.h
  * @author  MCD Application Team
- * @date    22 January 2020
+ * @date    04 March 2020
  * @brief   Header file for STM32WB (Event callbacks)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -31,7 +31,7 @@ typedef struct
     void (*process)(uint8_t *buffer_in);
 } hci_event_table_t;
 
-#define HCI_EVENT_TABLE_SIZE 7 
+#define HCI_EVENT_TABLE_SIZE 6 
 #define HCI_LE_META_EVENT_TABLE_SIZE 11 
 #define HCI_VENDOR_SPECIFIC_EVENT_TABLE_SIZE 43 
 extern const hci_event_table_t hci_event_table[HCI_EVENT_TABLE_SIZE];
@@ -158,16 +158,6 @@ flushed.
 */
 WEAK_FUNCTION(void hci_number_of_completed_packets_event(uint8_t Number_of_Handles,
                                            Handle_Packets_Pair_Entry_t Handle_Packets_Pair_Entry[]));
-/**
-  * @brief 'This event is used to indicate that the Controller's data buffers have been overflowed.
-This can occur if the Host has sent more packets than allowed. The
-Link_Type parameter is used to indicate that the overflow was caused by ACL data.
-  * @param Link_Type On wich type of channel overflow has occurred.
-  * Values:
-  - 0x01: ACL Buffer Overflow
-  * @retval None
-*/
-WEAK_FUNCTION(void hci_data_buffer_overflow_event(uint8_t Link_Type));
 /**
   * @brief 'The Encryption Key Refresh Complete event is used to indicate to the Host
 that the encryption key was refreshed on the given Connection_Handle any
@@ -516,12 +506,13 @@ procedure timeout has occurred or the pairing has failed. This is to notify the 
 we have paired with a remote device so that it can take further actions or to notify that a
 timeout has occurred so that the upper layer can decide to disconnect the link.
   * @param Connection_Handle Connection handle on which the pairing procedure completed
-  * @param Status Specific pairing status (0:Success,1:Timeout,2:Failed)
+  * @param Status Pairing status
   * Values:
   - 0x00: Success
-  - 0x01: Timeout
-  - 0x02: Failed
-  * @param Reason Pairing reason error code
+  - 0x01: SMP timeout
+  - 0x02: Pairing failed
+  - 0x03: Encryption failed
+  * @param Reason Pairing reason error code (valid in case of pairing failed status)
   * Values:
   - 0x02: OOB_NOT_AVAILABLE
   - 0x03: AUTH_REQ_CANNOT_BE_MET
@@ -1169,8 +1160,8 @@ WEAK_FUNCTION(void aci_hal_scan_req_report_event(uint8_t RSSI,
   * @param FW_Error_Type FW Error type
   * Values:
   - 0x01: L2CAP recombination failure
-  - 0x02: GATT UNEXPECTED RESPONSE ERROR
-  - 0x03: NVM LEVEL WARNING
+  - 0x02: GATT unexpected peer message
+  - 0x03: NVM level warning
   * @param Data_Length Length of Data in octets
   * @param Data The error event info
   * @retval None

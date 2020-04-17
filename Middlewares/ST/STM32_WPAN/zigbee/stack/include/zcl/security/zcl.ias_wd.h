@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 /*--------------------------------------------------------------------------
  *  DESCRIPTION
@@ -101,9 +101,6 @@ struct ZbZclIasWdServerCallbacksT {
 
 struct ZbZclClusterT * ZbZclIasWdServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclIasWdServerCallbacksT *callbacks, void *arg);
-
-void ZbZclIasWdServerConfigCallbacks(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclIasWdServerCallbacksT *callbacks);
 
 /*---------------------------------------------------------------
  * Client API

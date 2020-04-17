@@ -4,17 +4,17 @@
  * @author  MCD Application Team
  * @brief   Transport layer for the mailbox interface
  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
+ * @attention
+ *
+ * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * All rights reserved.</center></h2>
+ *
+ * This software component is licensed by ST under BSD 3-Clause license,
+ * the "License"; You may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at:
+ *                        opensource.org/licenses/BSD-3-Clause
+ *
+ ******************************************************************************
  */
 
 
@@ -25,6 +25,21 @@
 #include "stm_list.h"
 #include "tl.h"
 #include "mbox_def.h"
+
+/**
+ * These traces are not yet supported in an usual way in the delivery package
+ * They can enabled by adding the definition of TL_MM_DBG_EN in the preprocessor option in the IDE
+ */
+#if(TL_MM_DBG_EN != 0)
+#include "app_conf.h"
+#include "dbg_trace.h"
+#endif
+
+#if (TL_MM_DBG_EN != 0)
+#define TL_MM_DBG__MSG             PRINT_MESG_DBG
+#else
+#define TL_MM_DBG__MSG(...)
+#endif
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
@@ -37,6 +52,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_DeviceInfoTable_t TL_DeviceInfoTa
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_BleTable_t TL_BleTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_ThreadTable_t TL_ThreadTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_LldTestsTable_t TL_LldTestsTable;
+PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_LldBleTable_t TL_LldBleTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_SysTable_t TL_SysTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_MemManagerTable_t TL_MemManagerTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_TracesTable_t TL_TracesTable;
@@ -61,6 +77,7 @@ static void (* SYS_EVT_IoBusCallBackFunction) (TL_EvtPacket_t *phcievt);
 /* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 static void SendFreeBuf( void );
+static void OutputMemReleaseTrace(TL_EvtPacket_t * phcievt);
 
 /* Public Functions Definition ------------------------------------------------------*/
 
@@ -81,6 +98,7 @@ void TL_Init( void )
   TL_RefTable.p_ble_table = &TL_BleTable;
   TL_RefTable.p_thread_table = &TL_ThreadTable;
   TL_RefTable.p_lld_tests_table = &TL_LldTestsTable;
+  TL_RefTable.p_lld_ble_table = &TL_LldBleTable;
   TL_RefTable.p_sys_table = &TL_SysTable;
   TL_RefTable.p_mem_manager_table = &TL_MemManagerTable;
   TL_RefTable.p_traces_table = &TL_TracesTable;
@@ -90,7 +108,6 @@ void TL_Init( void )
 
   return;
 }
-
 
 /******************************************************************************
  * BLE
@@ -350,6 +367,77 @@ __WEAK void TL_LLDTESTS_ReceiveCliRsp( TL_CmdPacket_t * Notbuffer ){};
 __WEAK void TL_LLDTESTS_ReceiveM0Cmd( TL_CmdPacket_t * Notbuffer ){};
 #endif /* LLD_TESTS_WB */
 
+/******************************************************************************
+ * LLD BLE
+ ******************************************************************************/
+#ifdef LLD_BLE_WB 
+void TL_LLD_BLE_Init( TL_LLD_BLE_Config_t *p_Config )
+{
+  MB_LldBleTable_t  * p_lld_ble_table;
+
+  p_lld_ble_table = TL_RefTable.p_lld_ble_table;
+  p_lld_ble_table->cmdrsp_buffer = p_Config->p_LldBleCmdRspBuffer;
+  p_lld_ble_table->m0cmd_buffer = p_Config->p_LldBleM0CmdBuffer;
+  HW_IPCC_LLD_BLE_Init();
+  return;
+}
+
+void TL_LLD_BLE_SendCliCmd( void )
+{
+  ((TL_CmdPacket_t *)(TL_RefTable.p_lld_ble_table->cmdrsp_buffer))->cmdserial.type = TL_CLICMD_PKT_TYPE;
+  HW_IPCC_LLD_BLE_SendCliCmd();
+  return;
+}
+
+void HW_IPCC_LLD_BLE_ReceiveCliRsp( void )
+{
+  TL_LLD_BLE_ReceiveCliRsp( (TL_CmdPacket_t*)(TL_RefTable.p_lld_ble_table->cmdrsp_buffer) );
+  return;
+}
+
+void TL_LLD_BLE_SendCliRspAck( void )
+{
+  HW_IPCC_LLD_BLE_SendCliRspAck();
+  return;
+}
+
+void HW_IPCC_LLD_BLE_ReceiveM0Cmd( void )
+{
+  TL_LLD_BLE_ReceiveM0Cmd( (TL_CmdPacket_t*)(TL_RefTable.p_lld_ble_table->m0cmd_buffer) );
+  return;
+}
+
+
+void TL_LLD_BLE_SendM0CmdAck( void )
+{
+  HW_IPCC_LLD_BLE_SendM0CmdAck();
+  return;
+}
+
+__WEAK void TL_LLD_BLE_ReceiveCliRsp( TL_CmdPacket_t * Notbuffer ){};
+__WEAK void TL_LLD_BLE_ReceiveM0Cmd( TL_CmdPacket_t * Notbuffer ){};
+
+/* Transparent Mode */
+void TL_LLD_BLE_SendCmd( void )
+{
+  ((TL_CmdPacket_t *)(TL_RefTable.p_lld_ble_table->cmdrsp_buffer))->cmdserial.type = TL_CLICMD_PKT_TYPE;
+  HW_IPCC_LLD_BLE_SendCmd();
+  return;
+}
+
+void HW_IPCC_LLD_BLE_ReceiveRsp( void )
+{
+  TL_LLD_BLE_ReceiveRsp( (TL_CmdPacket_t*)(TL_RefTable.p_lld_ble_table->cmdrsp_buffer) );
+  return;
+}
+
+void TL_LLD_BLE_SendRspAck( void )
+{
+  HW_IPCC_LLD_BLE_SendRspAck();
+  return;
+}
+#endif /* LLD_BLE_WB */
+
 #ifdef MAC_802_15_4_WB
 /******************************************************************************
  * MAC 802.15.4
@@ -410,16 +498,16 @@ __WEAK void TL_MAC_802_15_4_NotReceived( TL_EvtPacket_t * Notbuffer ){};
  ******************************************************************************/
 void TL_ZIGBEE_Init( TL_ZIGBEE_Config_t *p_Config )
 {
-    MB_ZigbeeTable_t  * p_zigbee_table;
+  MB_ZigbeeTable_t  * p_zigbee_table;
 
-    p_zigbee_table = TL_RefTable.p_zigbee_table;
-    p_zigbee_table->appliCmdM4toM0_buffer = p_Config->p_ZigbeeOtCmdRspBuffer;
-    p_zigbee_table->notifM0toM4_buffer = p_Config->p_ZigbeeNotAckBuffer;
-    p_zigbee_table->requestM0toM4_buffer = p_Config->p_ZigbeeNotifRequestBuffer;
+  p_zigbee_table = TL_RefTable.p_zigbee_table;
+  p_zigbee_table->appliCmdM4toM0_buffer = p_Config->p_ZigbeeOtCmdRspBuffer;
+  p_zigbee_table->notifM0toM4_buffer = p_Config->p_ZigbeeNotAckBuffer;
+  p_zigbee_table->requestM0toM4_buffer = p_Config->p_ZigbeeNotifRequestBuffer;
 
-    HW_IPCC_ZIGBEE_Init();
+  HW_IPCC_ZIGBEE_Init();
 
-    return;
+  return;
 }
 
 /* Zigbee M4 to M0 Request */
@@ -510,6 +598,8 @@ void TL_MM_EvtDone(TL_EvtPacket_t * phcievt)
 {
   LST_insert_tail(&LocalFreeBufQueue, (tListNode *)phcievt);
 
+  OutputMemReleaseTrace(phcievt);
+
   HW_IPCC_MM_SendFreeBuf( SendFreeBuf );
 
   return;
@@ -528,6 +618,38 @@ static void SendFreeBuf( void )
   return;
 }
 
+static void OutputMemReleaseTrace(TL_EvtPacket_t * phcievt)
+{
+  switch(phcievt->evtserial.evt.evtcode)
+  {
+    case TL_BLEEVT_CS_OPCODE:
+      TL_MM_DBG__MSG("mm evt released: 0x%02X", phcievt->evtserial.evt.evtcode);
+      TL_MM_DBG__MSG(" cmd opcode: 0x%04X", ((TL_CsEvt_t*)(phcievt->evtserial.evt.payload))->cmdcode);
+      TL_MM_DBG__MSG(" buffer addr: 0x%08X", phcievt);
+      break;
+
+    case TL_BLEEVT_CC_OPCODE:
+      TL_MM_DBG__MSG("mm evt released: 0x%02X", phcievt->evtserial.evt.evtcode);
+      TL_MM_DBG__MSG(" cmd opcode: 0x%04X", ((TL_CcEvt_t*)(phcievt->evtserial.evt.payload))->cmdcode);
+      TL_MM_DBG__MSG(" buffer addr: 0x%08X", phcievt);
+      break;
+
+    case TL_BLEEVT_VS_OPCODE:
+      TL_MM_DBG__MSG("mm evt released: 0x%02X", phcievt->evtserial.evt.evtcode);
+      TL_MM_DBG__MSG(" subevtcode: 0x%04X", ((TL_AsynchEvt_t*)(phcievt->evtserial.evt.payload))->subevtcode);
+      TL_MM_DBG__MSG(" buffer addr: 0x%08X", phcievt);
+      break;
+
+    default:
+      TL_MM_DBG__MSG("mm evt released: 0x%02X", phcievt->evtserial.evt.evtcode);
+      TL_MM_DBG__MSG(" buffer addr: 0x%08X", phcievt);
+      break;
+  }
+
+  TL_MM_DBG__MSG("\r\n");
+
+  return;
+}
 
 /******************************************************************************
  * TRACES
@@ -558,7 +680,7 @@ void HW_IPCC_TRACES_EvtNot(void)
 
 __WEAK void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 {
-    (void)(hcievt);
+  (void)(hcievt);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

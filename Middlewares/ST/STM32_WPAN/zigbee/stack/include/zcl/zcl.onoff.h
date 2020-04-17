@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_ONOFF_H
 # define ZCL_ONOFF_H
@@ -96,18 +96,12 @@ struct ZbZclClusterT * ZbZclOnOffClientAlloc(struct ZigBeeT *zb, uint8_t endpoin
 /* Client Cluster Commands */
 enum ZclStatusCodeT ZbZclOnOffClientOnReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-/* Blocking version. Not supported on all platforms. */
-enum ZclStatusCodeT ZbZclOnOffClientOnWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 
 enum ZclStatusCodeT ZbZclOnOffClientOffReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-/* Blocking version. Not supported on all platforms. */
-enum ZclStatusCodeT ZbZclOnOffClientOffWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 
 enum ZclStatusCodeT ZbZclOnOffClientToggleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-/* Blocking version. Not supported on all platforms. */
-enum ZclStatusCodeT ZbZclOnOffClientToggleWait(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 
 #ifdef __cplusplus
 } /* extern "C" */

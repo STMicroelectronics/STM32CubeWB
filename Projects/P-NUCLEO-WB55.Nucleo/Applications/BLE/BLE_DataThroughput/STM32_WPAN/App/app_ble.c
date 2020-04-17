@@ -242,7 +242,9 @@ static void LinkConfiguration(void);
 uint8_t TimerDataThroughputWrite_Id;
 
 #if (CFG_BLE_CENTRAL != 0)
+#if (((CFG_TX_PHY == 2) || (CFG_RX_PHY == 2)) || (CFG_ENCRYPTION_ENABLE != 0))
 static void GapProcReq(GapProcId_t GapProcId);
+#endif
 static void Connect_Request(void);
 static void Scan_Request(void);
 static void Connection_Update(void);
@@ -545,7 +547,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 static void LinkConfiguration(void)
 {
   tBleStatus status;
-#if(CFG_BLE_CENTRAL != 0)
+#if (CFG_BLE_CENTRAL != 0)
   uint8_t tx_phy;
   uint8_t rx_phy;
 #endif  
@@ -556,11 +558,11 @@ static void LinkConfiguration(void)
    * Setup Data Length
    * Setup Pairing
    */
-#if(((CFG_TX_PHY == 2) | (CFG_RX_PHY == 2)) && (CFG_BLE_CENTRAL != 0))
+#if (((CFG_TX_PHY == 2) || (CFG_RX_PHY == 2)) && (CFG_BLE_CENTRAL != 0))
   GapProcReq(GAP_PROC_SET_PHY);
 #endif
 
-#if(CFG_BLE_CENTRAL != 0)
+#if (CFG_BLE_CENTRAL != 0)
   APP_DBG_MSG("Reading_PHY\n");
   status = hci_le_read_phy(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,&tx_phy,&rx_phy);
   if (status != BLE_STATUS_SUCCESS)
@@ -827,6 +829,7 @@ const uint8_t* BleGetBdAddress( void )
 }
 
 #if (CFG_BLE_CENTRAL != 0)
+#if (((CFG_TX_PHY == 2) || (CFG_RX_PHY == 2)) || (CFG_ENCRYPTION_ENABLE != 0))
 static void GapProcReq(GapProcId_t GapProcId)
 {
   tBleStatus status;
@@ -864,6 +867,7 @@ static void GapProcReq(GapProcId_t GapProcId)
   }
   return;
 }
+#endif
 
 static void Scan_Request( void )
 {

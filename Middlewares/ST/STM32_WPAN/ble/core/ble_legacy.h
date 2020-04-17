@@ -185,6 +185,17 @@ typedef	uint8_t	tBDAddr[6];
 /* ------------------------------------------------------------------------- */
 
 
+/* Obsolete pairing complete definitions
+ */
+#define SM_PAIRING_SUCCESS                   0x00
+#define SM_PAIRING_TIMEOUT                   0x01
+#define SM_PAIRING_FAILED                    0x02
+#define PASSKEY_ENTRY_FAILED                 0x01
+
+
+/* ------------------------------------------------------------------------- */
+
+
 /* Deprecative name for LE Read Remote Features command
  */
 #define hci_le_read_remote_used_features hci_le_read_remote_features

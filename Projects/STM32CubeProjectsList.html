@@ -2330,8 +2330,8 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td>8</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=67><p id="Applications">Applications</p></td>
-        <td align=left rowspan=20><p id="BLE">BLE</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=83><p id="Applications">Applications</p></td>
+        <td align=left rowspan=25><p id="BLE">BLE</p></td>
         <td align=left><p id="BLE_Beacon">BLE_Beacon</p></td>
         <td align=left>
 How to advertize 3 types of beacon ( tlm, uuid, url ).
@@ -2395,6 +2395,28 @@ How to use the Heart Rate profile as specified by the BLE SIG.
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_HeartRateFreeRTOS_ANCS">BLE_HeartRateFreeRTOS_ANCS</p></td>
+        <td align=left>
+How to read notifications from Apple Notification Center Service (ANCS) as specified by Apple specification at:
+https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/
+and also use the Heart Rate profile as specified by the BLE SIG.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_HeartRate_ANCS">BLE_HeartRate_ANCS</p></td>
+        <td align=left>
+How to read notifications from Apple Notification Center Service (ANCS) as specified by Apple specification at:
+https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/
+and also use the Heart Rate profile as specified by the BLE SIG.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_HeartRate_ota">BLE_HeartRate_ota</p></td>
         <td align=left>
 How to use the Heart Rate profile as specified by the BLE SIG.
@@ -2413,10 +2435,26 @@ How to use the Human Interface Device profile as specified by the BLE SIG.
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left><p id="BLE_MeshLightingDemo">BLE_MeshLightingDemo</p></td>
+        <td align=left><p id="BLE_MeshLightingLPN">BLE_MeshLightingLPN</p></td>
         <td align=left>This is the implementation of the BLE Mesh Lighting profile as specified by the BLE SIG.
 </td>
         <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_MeshLightingPRFNode">BLE_MeshLightingPRFNode</p></td>
+        <td align=left>This is the implementation of the BLE Mesh Lighting profile as specified by the BLE SIG.
+</td>
+        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_MeshLightingProvisioner">BLE_MeshLightingProvisioner</p></td>
+        <td align=left>This is the implementation of the BLE Mesh Lighting profile as specified by the BLE SIG.
+</td>
+        <td>-</td>
         <td><font size="5" color=green>X</font></td>
         <td>-</td>
       </tr>
@@ -2451,6 +2489,15 @@ How to communicate with simple BLE peripheral with minimum activated features.
         <td align=left><p id="BLE_Proximity">BLE_Proximity</p></td>
         <td align=left>
 How to use the Proximity profile as specified by the BLE SIG.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_RfWithFlash">BLE_RfWithFlash</p></td>
+        <td align=left>
+This example is to demonstrate the capability to erase/write the flash while a Point-to-Point communication using BLE component is active. 
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2662,7 +2709,7 @@ How to use MAC 802.15.4 Association and Data exchange.
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=11><p id="Thread">Thread</p></td>
+        <td align=left rowspan=12><p id="Thread">Thread</p></td>
         <td align=left><p id="Thread_Cli_Cmd">Thread_Cli_Cmd</p></td>
         <td align=left>
 How to control the Thread stack via Cli commands.
@@ -2762,6 +2809,15 @@ How to exchange a Coap message using the Thread protocol.
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="Thread_Udp">Thread_Udp</p></td>
+        <td align=left>
+How to transfer data using UDP.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left rowspan=1><p id="TouchSensing">TouchSensing</p></td>
         <td align=left><p id="TouchSensing_1touchKey">TouchSensing_1touchKey</p></td>
         <td align=left>
@@ -2810,7 +2866,25 @@ How to use the USB device application based on the Mass Storage Class (MSC) on t
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=14><p id="Zigbee">Zigbee</p></td>
+        <td align=left rowspan=24><p id="Zigbee">Zigbee</p></td>
+        <td align=left><p id="Zigbee_Commissioning_Client_Coord">Zigbee_Commissioning_Client_Coord</p></td>
+        <td align=left>
+How to use Commissioning cluster as a client on a centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_Commissioning_Server_Router">Zigbee_Commissioning_Server_Router</p></td>
+        <td align=left>
+How to use Commissioning cluster as a client on a centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="Zigbee_DevTemp_Client_Router">Zigbee_DevTemp_Client_Router</p></td>
         <td align=left>
 How to use DevTemp cluster on a Centralized Zigbee network with device acting as router.
@@ -2823,6 +2897,60 @@ How to use DevTemp cluster on a Centralized Zigbee network with device acting as
         <td align=left><p id="Zigbee_DevTemp_Server_Coord">Zigbee_DevTemp_Server_Coord</p></td>
         <td align=left>
 How to use DevTemp cluster on a Centralized Zigbee network with device acting as server.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_Diagnostic_Client_Router">Zigbee_Diagnostic_Client_Router</p></td>
+        <td align=left>
+How to use Diagnostic cluster as a client on a centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_Diagnostic_Server_Coord">Zigbee_Diagnostic_Server_Coord</p></td>
+        <td align=left>
+How to use Diagnostic cluster as a client on a centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_DoorLock_Client_Router">Zigbee_DoorLock_Client_Router</p></td>
+        <td align=left>
+How to use Door Lock cluster as a client on a centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_DoorLock_Server_Coord">Zigbee_DoorLock_Server_Coord</p></td>
+        <td align=left>
+How to use Door Lock cluster as a client on a centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_IAS_WD_Client_Router">Zigbee_IAS_WD_Client_Router</p></td>
+        <td align=left>
+How to use IAS WD cluster as a client on a centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_IAS_WD_Server_Coord">Zigbee_IAS_WD_Server_Coord</p></td>
+        <td align=left>
+How to use IAS WD cluster as a server on a centralized Zigbee network.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2883,6 +3011,24 @@ How to use OnOff cluster as a server on a distributed Zigbee network.
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="Zigbee_PollControl_Client_Coord">Zigbee_PollControl_Client_Coord</p></td>
+        <td align=left>
+How to use Poll Control cluster as a client on a centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_PollControl_Server_SED">Zigbee_PollControl_Server_SED</p></td>
+        <td align=left>
+How to use Poll Control cluster as a server on a centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="Zigbee_PowerProfile_Client_Coord">Zigbee_PowerProfile_Client_Coord</p></td>
         <td align=left>
 How to use Power Profile cluster as a client on a centralized Zigbee network.
@@ -2937,9 +3083,9 @@ How to use SE Messaging cluster on a Centralized Zigbee network with device acti
         <td>-</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of applications: 97</b></td>
-        <td>17</td>
-        <td>65</td>
+        <td colspan="3"><b>Total number of applications: 114</b></td>
+        <td>18</td>
+        <td>81</td>
         <td>15</td>
       </tr>
       <tr align=center>
@@ -2961,9 +3107,9 @@ Cortex-M devices that can be plugged on a STM32 Nucleo board.
         <td>1</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-      	<td colspan="4"><b>Total number of projects: 390</b></td>
-      	<td>18</td>
-      	<td>271</td>
+      	<td colspan="4"><b>Total number of projects: 407</b></td>
+      	<td>19</td>
+      	<td>287</td>
       	<td>101</td>
       </tr>
     </table>

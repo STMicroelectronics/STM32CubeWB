@@ -27,6 +27,9 @@
 #include "802_15_4_mac_sap.h"
 #include "802_15_4_mac_core.h"
 
+#include "dbg_trace.h"
+#include "stm_logging.h"
+
 #include "tl.h"
 #include "tl_mac_802_15_4.h"
 

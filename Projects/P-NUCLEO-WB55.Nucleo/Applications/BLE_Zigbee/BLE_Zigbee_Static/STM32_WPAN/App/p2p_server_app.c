@@ -151,15 +151,15 @@ void P2PS_STM_App_Notification(P2PS_STM_App_Notification_evt_t *pNotification)
           APP_DBG_MSG(" \n\r");
           P2P_Server_App_Context.LedControl.Led1=0x00; /* LED1 OFF */
         }
-        /* Switch to Thread */
+        /* Switch to Zigbee */
         if(pNotification->DataTransfered.pPayload[1] == 0x02)
         {
             BSP_LED_Off(LED_BLUE);
             APP_DBG("SYSTEM: SWITCH TO THREAD");
-            APP_DBG_MSG("-- P2P APPLICATION SERVER 1 : SWITCH TO THREAD\n");
+            APP_DBG_MSG("-- P2P APPLICATION SERVER 1 : SWITCH TO ZIGBEE\n");
             APP_DBG_MSG(" \n\r");
             /* Set "Switch Protocol" Task */
-            UTIL_SEQ_SetTask(1<<CFG_Task_Switch_Protocol,CFG_SCH_PRIO_0);
+            UTIL_SEQ_SetTask(1<<CFG_TASK_INIT_SWITCH_PROTOCOL,CFG_SCH_PRIO_0);
         }
       }
 #endif

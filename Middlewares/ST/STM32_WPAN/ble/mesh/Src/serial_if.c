@@ -441,6 +441,7 @@ void BLEMesh_PrintDataCb(MOBLEUINT8* data, MOBLEUINT16 size)
     {
         TRACE_I(TF_SERIAL_CTRL,"%02X", data[count]);
     }
+    
     TRACE_I(TF_SERIAL_CTRL,"\n\r");
 }
 

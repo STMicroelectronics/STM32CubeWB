@@ -40,6 +40,9 @@
 #define SW1_GROUP_ADDR          0x0001
 #define CHANNEL                 18
 
+/* external definition */
+enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
+
 /* Private function prototypes -----------------------------------------------*/
 static void APP_ZIGBEE_StackLayersInit(void);
 static void APP_ZIGBEE_ConfigEndpoints(void);
@@ -360,8 +363,11 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
     APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
 
     switch (p_wireless_info->StackType) {
-    case INFO_STACK_TYPE_ZIGBEE:
-      APP_DBG("FW Type : Zigbee stack");
+    case INFO_STACK_TYPE_ZIGBEE_FFD:
+      APP_DBG("FW Type : FFD Zigbee stack");
+      break;
+   case INFO_STACK_TYPE_ZIGBEE_RFD:
+      APP_DBG("FW Type : RFD Zigbee stack");
       break;
     default:
       /* No Zigbee device supported ! */
@@ -420,7 +426,7 @@ static void device_temp_read_cb(const ZbZclReadRspT *readRsp, void *arg)
       {
       case ZCL_DEV_TEMP_CURRENT:
         current_temp = pletoh16(readRsp->attr[i].value);
-        APP_DBG("[DEV TEMP] Current Temperature= %dC",current_temp);
+        APP_DBG("[DEV TEMP]Current Temperature= %dC",current_temp);
         break;
       case ZCL_DEV_TEMP_MIN_TEMP:
         min_temp = pletoh16(readRsp->attr[i].value);

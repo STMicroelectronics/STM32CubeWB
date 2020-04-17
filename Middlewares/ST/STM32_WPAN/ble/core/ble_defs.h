@@ -151,7 +151,7 @@
 #define PERIPHERAL_PRIVACY_FLAG_UUID               0x2A02
 #define RECONNECTION_ADDR_UUID                     0x2A03
 #define PERIPHERAL_PREFERRED_CONN_PARAMS_UUID      0x2A04
-
+#define CENTRAL_ADDRESS_RESOLUTION_UUID            0x2AA6
 
 /* Characteristic value lengths
  */
@@ -360,9 +360,16 @@
 #define SM_LINK_ENCRYPTED                    0x04
 
 
-/* SMP pairing failed reason codes
+/* SMP pairing status (ACI_GAP_PAIRING_COMPLETE_EVENT)
  */
-#define PASSKEY_ENTRY_FAILED                 0x01
+#define SMP_PAIRING_STATUS_SUCCESS           0x00
+#define SMP_PAIRING_STATUS_SMP_TIMEOUT       0x01
+#define SMP_PAIRING_STATUS_PAIRING_FAILED    0x02
+#define SMP_PAIRING_STATUS_ENCRYPT_FAILED    0x03
+
+
+/* SMP pairing failed reason code (ACI_GAP_PAIRING_COMPLETE_EVENT)
+ */
 #define OOB_NOT_AVAILABLE                    0x02
 #define AUTH_REQ_CANNOT_BE_MET               0x03
 #define CONFIRM_VALUE_FAILED                 0x04
@@ -372,14 +379,8 @@
 #define UNSPECIFIED_REASON                   0x08
 #define VERY_EARLY_NEXT_ATTEMPT              0x09
 #define SM_INVALID_PARAMS                    0x0A
-
-
-/* Pairing failed error codes
- * Error codes in EVT_BLUE_GAP_PAIRING_CMPLT event
- */
-#define SM_PAIRING_SUCCESS                   0x00
-#define SM_PAIRING_TIMEOUT                   0x01
-#define SM_PAIRING_FAILED                    0x02
+#define SMP_SC_DHKEY_CHECK_FAILED            0x0B
+#define SMP_SC_NUMCOMPARISON_FAILED          0x0C
 
 
 /* ------------------------------------------------------------------------- */

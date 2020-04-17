@@ -11,7 +11,7 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="./_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="_htmresc/mini-st.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -42,16 +42,295 @@
 <li><p>Zigbee Applications</p></li>
 </ul>
 <p><strong>NOTE</strong> : Depending on the kind of Application targeted, the appropriate Wireless Coprocessor Firmware needs to be loaded.</p>
-<p>All available binaries are located under/Projects/STM32_Copro_Wireless_Binaries directory.</p>
-<p>Refer to UM2237 to learn how to use/install STM32CubeProgrammer.</p>
-<p>Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the detailed procedure to change the Coprocessor binary.</p>
+<ul>
+<li><strong>Zigbee</strong> clusters are provided as a library.
+<ul>
+<li>Available on <strong>IAR/SW4STM32</strong>(<strong>stm32wb_zigbee_wb_lib.a</strong>) and <strong>Keil</strong>(<strong>stm32wb_zigbee_wb_lib_keil.lib</strong>) under Middlewares/ST/STM32_WPAN/zigbee/lib.</li>
+<li>To get access to Zigbee clusters source code, please contact ST local office.</li>
+</ul></li>
+<li><p>All available binaries are located under/Projects/STM32_Copro_Wireless_Binaries directory.</p></li>
+<li><p>Refer to UM2237 to learn how to use/install STM32CubeProgrammer.</p></li>
+<li>Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the detailed procedure to change the Coprocessor binary.</li>
+</ul>
 </div>
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section7" checked aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 22-January-2020</label>
+<input type="checkbox" id="collapse-section8" checked aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p>BLE-Mesh:</p>
+<ul>
+<li>BLE-Mesh library version 1.12.007
+<ul>
+<li>Updated for Delta level set binding to Light lightness</li>
+<li>Multi Key updates.</li>
+<li>Correction of FSM issues in the LC Model: no way to consume a packet internally.</li>
+<li>Correction of Sensor_LC_Light_Publish sending wrong property (and LC Model handling wrong property).</li>
+<li>Updates on Generic Models for Certification tests: Generic OnOff, Level, Power OnOff, Transition Time<br />
+</li>
+<li>Update Multi elements support</li>
+<li>Changes for DYNAMIC_PROVISIONER in Provisioner project</li>
+</ul></li>
+<li>New Cryptographic library v3.1.3</li>
+</ul>
+<p>Zigbee:</p>
+<ul>
+<li>Libarry available on IAR/SW4STM32(stm32wb_zigbee_wb_lib.a) and Keil(stm32wb_zigbee_wb_lib_keil.lib)</li>
+<li>Support following list (47 clusters):</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>Cluster Number</th>
+<th>Cluster ID</th>
+<th style="text-align: left;">Cluster Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0x0000</td>
+<td style="text-align: left;">Basic</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0x0001</td>
+<td style="text-align: left;">Power Configuration</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>0x0003</td>
+<td style="text-align: left;">Identify6</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>0x0004</td>
+<td style="text-align: left;">Groups</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>0x0005</td>
+<td style="text-align: left;">Scenes</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>0x0006</td>
+<td style="text-align: left;">On/Off</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>0x0008</td>
+<td style="text-align: left;">Level Control</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>0x000a</td>
+<td style="text-align: left;">Time</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>0x0019</td>
+<td style="text-align: left;">OTA Upgrade</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>0x0020</td>
+<td style="text-align: left;">Poll Control</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td>0x0021</td>
+<td style="text-align: left;">Green Power Proxy</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>0x0102</td>
+<td style="text-align: left;">Window Covering</td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td>0x0202</td>
+<td style="text-align: left;">Fan Control</td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td>0x0204</td>
+<td style="text-align: left;">Thermostat User Interface Configuration</td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td>0x0300</td>
+<td style="text-align: left;">Color control</td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td>0x0301</td>
+<td style="text-align: left;">Ballast Configuration</td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td>0x0400</td>
+<td style="text-align: left;">Illuminance Measurement</td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td>0x0402</td>
+<td style="text-align: left;">Temperature Measurement</td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td>0x0406</td>
+<td style="text-align: left;">Occupancy Sensing</td>
+</tr>
+<tr class="even">
+<td>20</td>
+<td>0x0502</td>
+<td style="text-align: left;">IAS Warning Device (WD)</td>
+</tr>
+<tr class="odd">
+<td>21</td>
+<td>0x0b05</td>
+<td style="text-align: left;">Diagnostics</td>
+</tr>
+<tr class="even">
+<td>22</td>
+<td>0x1000</td>
+<td style="text-align: left;">Touchlink</td>
+</tr>
+<tr class="odd">
+<td>23</td>
+<td>0x0002</td>
+<td style="text-align: left;">Device Temperature Configuration</td>
+</tr>
+<tr class="even">
+<td>24</td>
+<td>0x0007</td>
+<td style="text-align: left;">On/Off Switch Configuration</td>
+</tr>
+<tr class="odd">
+<td>25</td>
+<td>0x0009</td>
+<td style="text-align: left;">Alarms</td>
+</tr>
+<tr class="even">
+<td>26</td>
+<td>0x000b</td>
+<td style="text-align: left;">RSSI Location</td>
+</tr>
+<tr class="odd">
+<td>27</td>
+<td>0x0015</td>
+<td style="text-align: left;">Commissioning</td>
+</tr>
+<tr class="even">
+<td>28</td>
+<td>0x001a</td>
+<td style="text-align: left;">Power Profile Cluster</td>
+</tr>
+<tr class="odd">
+<td>29</td>
+<td>0x0024</td>
+<td style="text-align: left;">Nearest Gateway Cluster</td>
+</tr>
+<tr class="even">
+<td>30</td>
+<td>0x0101</td>
+<td style="text-align: left;">Door Lock</td>
+</tr>
+<tr class="odd">
+<td>31</td>
+<td>0x0200</td>
+<td style="text-align: left;">Pump Configuration and Control</td>
+</tr>
+<tr class="even">
+<td>32</td>
+<td>0x0201</td>
+<td style="text-align: left;">Thermostat</td>
+</tr>
+<tr class="odd">
+<td>33</td>
+<td>0x0203</td>
+<td style="text-align: left;">Dehumidification Control</td>
+</tr>
+<tr class="even">
+<td>34</td>
+<td>0x0401</td>
+<td style="text-align: left;">Illuminance Level Sensing</td>
+</tr>
+<tr class="odd">
+<td>35</td>
+<td>0x0403</td>
+<td style="text-align: left;">Pressure Measurement</td>
+</tr>
+<tr class="even">
+<td>36</td>
+<td>0x0405</td>
+<td style="text-align: left;">Relative Humidity Measurement</td>
+</tr>
+<tr class="odd">
+<td>37</td>
+<td>0x0500</td>
+<td style="text-align: left;">IAS Zone</td>
+</tr>
+<tr class="even">
+<td>38</td>
+<td>0x0501</td>
+<td style="text-align: left;">IAS Ancillary Control Equipment (ACE)</td>
+</tr>
+<tr class="odd">
+<td>39</td>
+<td>0x0700</td>
+<td style="text-align: left;">Price</td>
+</tr>
+<tr class="even">
+<td>40</td>
+<td>0x0701</td>
+<td style="text-align: left;">Demand Response and Load Control</td>
+</tr>
+<tr class="odd">
+<td>41</td>
+<td>0x0702</td>
+<td style="text-align: left;">Metering</td>
+</tr>
+<tr class="even">
+<td>42</td>
+<td>0x0703</td>
+<td style="text-align: left;">Messaging</td>
+</tr>
+<tr class="odd">
+<td>43</td>
+<td>0x0704</td>
+<td style="text-align: left;">Smart Energy Tunneling (Complex Metering)</td>
+</tr>
+<tr class="even">
+<td>44</td>
+<td>0x0800</td>
+<td style="text-align: left;">Key Establishment</td>
+</tr>
+<tr class="odd">
+<td>45</td>
+<td>0x0904</td>
+<td style="text-align: left;">Voice Over ZigBee</td>
+</tr>
+<tr class="even">
+<td>46</td>
+<td>0x0b01</td>
+<td style="text-align: left;">Meter Identification</td>
+</tr>
+<tr class="odd">
+<td>47</td>
+<td>0x0b04</td>
+<td style="text-align: left;">Electrical Measurement</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 22-January-2020</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_SetFlashActivityControl() to configure BLE timing protection</li>
@@ -94,7 +373,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_ExtpaConfig() to support external PA</li>
@@ -110,7 +389,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 4-September-2019</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Introducing support of Zigbee</li>
@@ -148,7 +427,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 27-June-2019</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Following utilities : Scheduler and Low Power Manager reworked and moved to “Utilities” directory</li>
@@ -174,7 +453,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p>BLE:</p>
 <ul>
 <li>Fix race condition in transport layer when an operating system is used.</li>
@@ -220,7 +499,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 29-March-2019</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Licenses in utilities and patterns moved from sla0044 to 3-clauses BSD</li>
@@ -246,7 +525,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 31-January-2019</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p>First release</p>
 </div>
 </div>

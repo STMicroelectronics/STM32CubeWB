@@ -1,7 +1,7 @@
 /******************************************************************************
  * @file    ble_types.h
  * @author  MCD Application Team
- * @date    22 January 2020
+ * @date    02 March 2020
  * @brief   Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
@@ -2295,11 +2295,6 @@ typedef PACKED(struct)
   uint8_t Number_of_Handles;
   Handle_Packets_Pair_Entry_t Handle_Packets_Pair_Entry[(BLE_EVT_MAX_PARAM_LEN - 1)/sizeof(Handle_Packets_Pair_Entry_t)];
 } hci_number_of_completed_packets_event_rp0;
-
-typedef PACKED(struct)  
-{
-  uint8_t Link_Type;
-} hci_data_buffer_overflow_event_rp0;
 
 typedef PACKED(struct)  
 {

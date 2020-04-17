@@ -1,13 +1,13 @@
 /******************************************************************************
  * @file    ble_gatt_aci.h
  * @author  MCD Application Team
- * @date    08 October 2019
+ * @date    04 March 2020
  * @brief   Header file for STM32WB (gatt_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license

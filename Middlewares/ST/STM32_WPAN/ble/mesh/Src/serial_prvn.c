@@ -100,17 +100,15 @@ __weak MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray
 */ 
 void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
-  MOBLE_RESULT result;
-  MOBLEUINT8 prvsnrDevKey[16];
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+
   /* Command to make a devices as Root node which creates Mesh network credentials */
   if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "ROOT",4))
   {   
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
       /* Initializes Mesh network parameters */
-      result = BLEMesh_CreateNetwork(prvsnrDevKey);
-#ifdef ENABLE_PROVISIONER_FEATURE      
-      Start_SelfConfiguration();
+    Appli_StartProvisionerMode(1);
 #endif      
-                 
   }
   /* Command to scan the unprovisioned devices */
   else if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "SCAN",4))
@@ -186,21 +184,30 @@ void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 */  
 static MOBLE_RESULT SerialPrvn_ProvisionDevice(char *text)
 {
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+    
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)  
   MOBLEINT16 index = 0;
   MOBLEINT16 na = 0;
-  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+
   
   sscanf(text, "PRVN-%hd %hd", &index, &na);  
   if(na>1)
-  {
-      nodeAddressOffset = na - 1;
+  { /* Address 1 is reserved for the Provisioner */
+    
       result = BLEMesh_ProvisionRemote(NeighborTable[index].uuid);
+      
+      /* Make copy of the UUID */
+      memcpy (NodeUnderProvisionParam.NewProvNodeUUID, 
+              NeighborTable[index].uuid,
+              UUID_SIZE);
   }
   else 
   {
       result = MOBLE_RESULT_INVALIDARG;
   }
   
+#endif  
   return result;
 }
 

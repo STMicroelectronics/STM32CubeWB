@@ -85,10 +85,10 @@ extern "C" {
    *  Some useful macro definitions   *
    * -------------------------------- */
 #undef MAX
-#define MAX( x, y )          (((x)>(y))?(x):(y))
+#define MAX(a, b)  (((a) > (b)) ? (a) : (b))
 
 #undef MIN
-#define MIN( x, y )          (((x)<(y))?(x):(y))
+#define MIN(a, b)  (((a) < (b)) ? (a) : (b))
 
 #undef MODINC
 #define MODINC( a, m )       M_BEGIN  (a)++;  if ((a)>=(m)) (a)=0;  M_END

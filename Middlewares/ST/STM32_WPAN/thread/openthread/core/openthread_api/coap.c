@@ -31,6 +31,7 @@
 #include "thread.h"
 #include "coap.h"
 
+extern otCoapRequestHandler defaultCoapRequestHandlerCb;
 
 #if OPENTHREAD_ENABLE_APPLICATION_COAP
 
@@ -477,6 +478,8 @@ void otCoapSetDefaultHandler(otInstance *aInstance, otCoapRequestHandler aHandle
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    defaultCoapRequestHandlerCb = aHandler;
 
     p_ot_req->ID = MSG_M4TOM0_OT_COAP_SET_DEFAULT_HANDLER;
 

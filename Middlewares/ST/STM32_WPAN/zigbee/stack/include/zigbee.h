@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZIGBEE_H
 # define ZIGBEE_H
@@ -19,18 +19,24 @@
 #include "zb_make_config.h"
 #endif
 
+#include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <inttypes.h>
+
+/* stdarg is required for the logging (ZbSetLogging) */
 /*lint -save -e829 [ 'stdarg.h' usage should be deprecated - 17.1 REQUIRED] */
 /*lint -save -e451 [ header file included withoutstandard guard - 4.10 REQUIRED] */
 #include <stdarg.h>
 /*lint -restore */
 /*lint -restore */
 
-#include "ieee802154.api.h"
 #include "llist.h"
+#include "ieee802154_enums.h"
+
+struct ZigBeeT;
+struct WpanPublicT;
 
 /* ZigBee Protocol Versions as related to the spec version. */
 #if 0 /* deprecated */
@@ -66,7 +72,6 @@ enum ZbStatusCodeT {
     /* General Status Codes */
     ZB_STATUS_SUCCESS = 0x00,
     ZB_STATUS_ALLOC_FAIL = 0x70, /* Memory allocation failure. */
-    ZB_STATUS_TIMEOUT = 0x71, /* Message timeout. */
 
     /* ZDP Status Codes */
     ZB_ZDP_STATUS_SUCCESS = ZB_STATUS_SUCCESS,
@@ -133,7 +138,7 @@ enum ZbStatusCodeT {
     ZB_NWK_STATUS_INVALID_INDEX = 0xd4,
     ZB_NWK_STATUS_INTERNAL_ERR = 0xd6,
 
-    /* WPAN Status Codes (copied from ieee802154.api.h to here for MISRA) */
+    /* WPAN Status Codes (copied from mcp_enums.h to here for MISRA) */
     ZB_WPAN_STATUS_SUCCESS = ZB_STATUS_SUCCESS,
     ZB_WPAN_STATUS_COUNTER_ERROR = mcp_STATUS_COUNTER_ERROR,
     ZB_WPAN_STATUS_IMPROPER_KEY_TYPE = mcp_STATUS_IMPROPER_KEY_TYPE,
@@ -183,6 +188,10 @@ enum ZbTcsoStatusT {
     ZB_TCSO_STATUS_FATAL /* TCSO failed and unable to restore previous operation. */
 };
 
+/*---------------------------------------------------------------
+ * Stack Logging
+ *---------------------------------------------------------------
+ */
 /* Debugging log mask. */
 #define ZB_LOG_MASK_FATAL               0x00000001U /* Unrecoverable errors. */
 #define ZB_LOG_MASK_ERROR               0x00000002U /* Recoverable internal errors. */
@@ -204,7 +213,9 @@ enum ZbTcsoStatusT {
 #define ZB_LOG_MASK_ZCL                 0x00002000U
 /* Green Power */
 #define ZB_LOG_MASK_GREENPOWER          0x00004000U
-/* Reserved                             0x0fffc000U */
+/* Diagnostics */
+#define ZB_LOG_MASK_DIAG                0x00008000U
+/* Reserved                             0x0fff0000U */
 /* MAC */
 #define ZB_LOG_MASK_MAC_RSSI            0x10000000U /* Print debug message per MCPS-DATA.indication showing RSSI */
 
@@ -218,6 +229,17 @@ enum ZbTcsoStatusT {
 #define ZB_LOG_MASK_LEVEL_6             (ZB_LOG_MASK_LEVEL_5 | ZB_LOG_MASK_ZCL)
 #define ZB_LOG_MASK_LEVEL_ALL           0xFFFFFFFFU
 
+/* Specifies the level of logging to use, and a callback that outputs the log information. */
+void ZbSetLogging(struct ZigBeeT *zb, uint32_t mask,
+    void (*func)(struct ZigBeeT *zb, uint32_t mask, const char *hdr, const char *fmt, va_list argptr));
+
+void ZbGetLogging(struct ZigBeeT *zb, uint32_t *mask,
+    void(**func)(struct ZigBeeT *zb, uint32_t mask, const char *hdr, const char *fmt, va_list argptr));
+
+/*---------------------------------------------------------------
+ * Exegin Manufacturing ID
+ *---------------------------------------------------------------
+ */
 /* The Exegin manufacturer ID. */
 #define ZB_MFG_CODE_EXEGIN              0x10D7U
 #define ZB_MFG_CODE_WILDCARD            0xFFFFU
@@ -255,20 +277,20 @@ unsigned int ZbTimeoutRemaining(ZbUptimeT now, ZbUptimeT expire_time);
 /* A pointer to this struct type is passed to ZbInit to define the various
  * ZigBee tables used in the stack. If the pointer to ZbInit is NULL, the
  * default sizes are used. */
-typedef struct {
+typedef struct ZbInitTblSizesT {
     /* NWK Table Sizes */
     unsigned int nwkNeighborTblSz; /* Default: 64 */
     unsigned int nwkRouteTblSz; /* Default: 32 */
     unsigned int nwkAddrMapTblSz; /* Default: 32 */
     unsigned int nwkBttSz; /* Default is 32 */
     unsigned int nwkRReqSz; /* default 16 */
-#if 0 /* TODO? */
+#if 0 /* EXEGIN? */
     unsigned int nwkRRecBits; /* default 10 */
 #endif
 
     /* APS Table Sizes */
     unsigned int apsPeerLinkKeyTblSz; /* Default: 32 */
-#if 0 /* TODO? */
+#if 0 /* EXEGIN? */
     unsigned int aps_binding_table_size; /* Default: 64 */
     unsigned int aps_group_table_size; /* Default: 16 */
 #endif
@@ -276,14 +298,14 @@ typedef struct {
 
 /* Same parameters as ZbSetLogging takes. Allows debug log output
  * as stack is being initialized. */
-typedef struct {
+typedef struct ZbInitSetLoggingT {
     uint32_t mask;
     void (*func)(struct ZigBeeT *zb, uint32_t mask, const char *hdr,
         const char *fmt, va_list argptr);
 } ZbInitSetLoggingT;
 
 /* Allocates a new Zigbee stack instance. */
-struct ZigBeeT * ZbInit(uint64_t extAddr, ZbInitTblSizesT *tblSizes, ZbInitSetLoggingT *setLogging);
+struct ZigBeeT * ZbInit(uint64_t extAddr, struct ZbInitTblSizesT *tblSizes, struct ZbInitSetLoggingT *setLogging);
 
 /* Deallocates a Zigbee stack instance. */
 void ZbDestroy(struct ZigBeeT *zb);
@@ -314,7 +336,6 @@ void ZbChangeExtAddr(struct ZigBeeT *zb, uint64_t extAddr);
 struct ZbNlmeLeaveConfT;
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbLeaveReq(struct ZigBeeT *zb,
     void (*callback)(struct ZbNlmeLeaveConfT *conf, void *arg), void *cbarg);
-enum ZbStatusCodeT ZbLeaveWait(struct ZigBeeT *zb);
 
 /* Helper function to perform an APS and NWK reset */
 void ZbReset(struct ZigBeeT *zb);
@@ -325,13 +346,6 @@ bool ZbIfAttach(struct ZigBeeT *zb, struct WpanPublicT *dev);
 
 /* Detaches an IEEE 802.15.4 device driver from the ZigBee stack. */
 void ZbIfDetach(struct ZigBeeT *zb, struct WpanPublicT *dev);
-
-/* Specifies the level of logging to use, and a callback that outputs the log information. */
-void ZbSetLogging(struct ZigBeeT *zb, uint32_t mask,
-    void (*func)(struct ZigBeeT *zb, uint32_t mask, const char *hdr, const char *fmt, va_list argptr));
-
-void ZbGetLogging(struct ZigBeeT *zb, uint32_t *mask,
-    void(**func)(struct ZigBeeT *zb, uint32_t mask, const char *hdr, const char *fmt, va_list argptr));
 
 /*---------------------------------------------------------------
  * ZCL Basic Server API
@@ -391,25 +405,26 @@ unsigned int ZbTimerRemaining(struct ZbTimerT *timer);
  */
 /* Asynchronous message filter mask. */
 /* NWK Indications */
-#define ZB_MSG_FILTER_JOIN_IND                  0x00000001U /* NLME-JOIN.indication (ZbNlmeJoinIndT) */
-#define ZB_MSG_FILTER_LEAVE_IND                 0x00000002U /* NLME-LEAVE.indication (ZbNlmeLeaveIndT) */
-#define ZB_MSG_FILTER_STATUS_IND                0x00000004U /* NLME-NETWORK-STATUS.indication (ZbNlmeNetworkStatusIndT) */
+#define ZB_MSG_FILTER_JOIN_IND                  0x00000001U /* NLME-JOIN.indication (struct ZbNlmeJoinIndT) */
+#define ZB_MSG_FILTER_LEAVE_IND                 0x00000002U /* NLME-LEAVE.indication (struct ZbNlmeLeaveIndT) */
+#define ZB_MSG_FILTER_STATUS_IND                0x00000004U /* NLME-NETWORK-STATUS.indication (struct ZbNlmeNetworkStatusIndT) */
 /* APS Indications */
-#define ZB_MSG_FILTER_TRANSPORT_KEY_IND         0x00000008U /* APSME-TRANSPORT-KEY.indication (ZbApsmeTransKeyIndT) */
-#define ZB_MSG_FILTER_UPDATE_DEVICE_IND         0x00000010U /* APSME-UPDATE-DEVICE.indication (ZbApsmeUpdateDeviceIndT) */
-#define ZB_MSG_FILTER_REMOVE_DEVICE_IND         0x00000020U /* APSME-REMOVE-DEVICE.indication (ZbApsmeRemoveDeviceIndT) */
-#define ZB_MSG_FILTER_REQUEST_KEY_IND           0x00000040U /* APSME-REQUEST-KEY.indication (ZbApsmeRequestKeyIndT) */
-#define ZB_MSG_FILTER_SWITCH_KEY_IND            0x00000080U /* APSME-SWITCH-KEY.indication (ZbApsmeSwitchKeyIndT) */
-#define ZB_MSG_FILTER_VERIFY_KEY_IND            0x00000100U /* APSME-VERIFY-KEY.indication (ZbApsmeVerifyKeyIndT) */
-#define ZB_MSG_FILTER_CONFIRM_KEY_IND           0x00000200U /* APSME-CONFIRM-KEY.indication (ZbApsmeConfirmKeyIndT) */
+#define ZB_MSG_FILTER_TRANSPORT_KEY_IND         0x00000008U /* APSME-TRANSPORT-KEY.indication (struct ZbApsmeTransKeyIndT) */
+#define ZB_MSG_FILTER_UPDATE_DEVICE_IND         0x00000010U /* APSME-UPDATE-DEVICE.indication (struct ZbApsmeUpdateDeviceIndT) */
+#define ZB_MSG_FILTER_REMOVE_DEVICE_IND         0x00000020U /* APSME-REMOVE-DEVICE.indication (struct ZbApsmeRemoveDeviceIndT) */
+#define ZB_MSG_FILTER_REQUEST_KEY_IND           0x00000040U /* APSME-REQUEST-KEY.indication (struct ZbApsmeRequestKeyIndT) */
+#define ZB_MSG_FILTER_SWITCH_KEY_IND            0x00000080U /* APSME-SWITCH-KEY.indication (struct ZbApsmeSwitchKeyIndT) */
+#define ZB_MSG_FILTER_VERIFY_KEY_IND            0x00000100U /* APSME-VERIFY-KEY.indication (struct ZbApsmeVerifyKeyIndT) */
+#define ZB_MSG_FILTER_CONFIRM_KEY_IND           0x00000200U /* APSME-CONFIRM-KEY.indication (struct ZbApsmeConfirmKeyIndT) */
 /* Data Indications */
 #define ZB_MSG_FILTER_MCPS_DATA_IND             0x00000400U /* MCPS-DATA.indication (struct wpan_data_ind) */
-#define ZB_MSG_FILTER_NLDE_DATA_IND             0x00000800U /* NLDE-DATA.indication (ZbNldeDataIndT) */
-#define ZB_MSG_FILTER_APSDE_DATA_IND            0x00001000U /* APSDE-DATA.indication (ZbApsdeDataIndT) */
+#define ZB_MSG_FILTER_NLDE_DATA_IND             0x00000800U /* NLDE-DATA.indication (struct ZbNldeDataIndT) */
+#define ZB_MSG_FILTER_APSDE_DATA_IND            0x00001000U /* APSDE-DATA.indication (struct ZbApsdeDataIndT) */
 /* Startup Indications */
 #define ZB_MSG_FILTER_STARTUP_IND               0x00002000U /* (struct ZbMsgStartupInd) */
 /* Reset to Factory Defaults (e.g. Basic Server ZCL_BASIC_RESET_FACTORY command) */
 #define ZB_MSG_FILTER_FACTORY_RESET             0x00004000U
+#define ZB_MSG_FILTER_RESET_REPORTS             0x00008000U
 /* Note, max filter bit we can specify here is  0x00080000U */
 
 /* Groups of messages that are filterable. */

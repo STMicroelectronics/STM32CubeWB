@@ -1281,9 +1281,6 @@
                 </group>
                 <group>
                     <name>platform</name>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\zigbee\platform\flash_emulation.c</name>
-                    </file>
                 </group>
                 <group>
                     <name>stack</name>

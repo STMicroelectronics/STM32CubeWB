@@ -39,6 +39,7 @@
 /*#define HAL_CRC_MODULE_ENABLED   */
 #define HAL_HSEM_MODULE_ENABLED
 /*#define HAL_I2C_MODULE_ENABLED   */
+/*#define HAL_I2S_MODULE_ENABLED   */
 #define HAL_IPCC_MODULE_ENABLED
 /*#define HAL_IRDA_MODULE_ENABLED   */
 /*#define HAL_IWDG_MODULE_ENABLED   */
@@ -70,6 +71,7 @@
 #define USE_HAL_COMP_REGISTER_CALLBACKS      0u
 #define USE_HAL_CRYP_REGISTER_CALLBACKS      0u
 #define USE_HAL_I2C_REGISTER_CALLBACKS       0u
+#define USE_HAL_I2S_REGISTER_CALLBACKS       0u
 #define USE_HAL_IRDA_REGISTER_CALLBACKS      0u
 #define USE_HAL_LPTIM_REGISTER_CALLBACKS     0u
 #define USE_HAL_PCD_REGISTER_CALLBACKS       0u
@@ -243,6 +245,10 @@
  #include "stm32wbxx_hal_i2c.h"
 #endif /* HAL_I2C_MODULE_ENABLED */
 
+#ifdef HAL_I2S_MODULE_ENABLED
+ #include "stm32wbxx_hal_i2s.h"
+#endif /* HAL_I2S_MODULE_ENABLED */
+
 #ifdef HAL_IPCC_MODULE_ENABLED
  #include "stm32wbxx_hal_ipcc.h"
 #endif /* HAL_IPCC_MODULE_ENABLED */
@@ -276,7 +282,6 @@
 #endif /* HAL_PWR_MODULE_ENABLED */
 
 #ifdef HAL_QSPI_MODULE_ENABLED
- #define USE_HAL_QSPI_REGISTER_CALLBACKS 0U
  #include "stm32wbxx_hal_qspi.h"
 #endif /* HAL_QSPI_MODULE_ENABLED */
 

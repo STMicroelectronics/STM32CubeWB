@@ -267,12 +267,9 @@ static void APPE_SysUserEvtRx( void * pPayload )
  */
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
 {
-    switch (ErrorCode) // TODO 
+    switch (ErrorCode)
 	{
-        case ERR_THREAD_LLD_FATAL_ERROR:
-            APP_DBG("** ERR_ZIGBEE : LLD_FATAL_ERROR \n");
-            break;
-        case ERR_THREAD_UNKNOWN_CMD:
+        case ERR_ZIGBEE_UNKNOWN_CMD:
             APP_DBG("** ERR_ZIGBEE : UNKNOWN_CMD \n");
             break;
         default:

@@ -636,7 +636,7 @@ padding-right: 0px;
 }
 
 td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
-</style></head><body><font face="arial"><h1>STM32WB  BLE Wireless Interface</h1><p>This document describes the STM32WB  BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h3>HCI commands</h3><table width="800" border="1" class="reference">
+</style></head><body><font face="arial"><h1>STM32WB  BLE Wireless Interface</h1><p>This document describes the STM32WB  BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event</p><p>March 2020 - Rev 1.14 - Removed unused HCI_Data_Buffer_Overflow event; Fixed naming of FW_Error_Type possible values; Fixed pairing status possible values</p><p>March 2020 - Rev 1.15 - Add GAP scan timeout value</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h3>HCI commands</h3><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>OpCode</th></tr>
 <tr><td><a href="#HCI_DISCONNECT_anchor">HCI_DISCONNECT</a></td><td><p>0x0406</p>
 </td></tr>
@@ -805,7 +805,7 @@ occurs. The event mask allows the Host to control how much it is interrupted.
 <tr><td><p>Event_Mask</p>
 </td><td><p>8</p>
 </td><td><p>Event mask. Default: 0x20001FFFFFFFFFFF</p>
-</td><td><p>Bitmask of:</p><br><li>0x0000000000000000: No events specified</li><li>0x0000000000000001: Inquiry Complete Event</li><li>0x0000000000000002: Inquiry Result Event</li><li>0x0000000000000004: Connection Complete Event</li><li>0x0000000000000008: Connection Request Event</li><li>0x0000000000000010: Disconnection Complete Event</li><li>0x0000000000000020: Authentication Complete Event</li><li>0x0000000000000040: Remote Name Request Complete Event</li><li>0x0000000000000080: Encryption Change Event</li><li>0x0000000000000100: Change Connection Link Key Complete Event</li><li>0x0000000000000200: Master Link Key Complete Event</li><li>0x0000000000000400: Read Remote Supported Features Complete Event</li><li>0x0000000000000800: Read Remote Version Information Complete Event</li><li>0x0000000000001000: QoS Setup Complete Event</li><li>0x0000000000008000: Hardware Error Event</li><li>0x0000000000010000: Flush Occurred Event</li><li>0x0000000000020000: Role Change Event</li><li>0x0000000000080000: Mode Change Event</li><li>0x0000000000100000: Return Link Keys Event</li><li>0x0000000000200000: PIN Code Request Event</li><li>0x0000000000400000: Link Key Request Event</li><li>0x0000000000800000: Link Key Notification Event</li><li>0x0000000001000000: Loopback Command Event</li><li>0x0000000002000000: Data Buffer Overflow Event</li><li>0x0000000004000000: Max Slots Change Event</li><li>0x0000000008000000: Read Clock Offset Complete Event</li><li>0x0000000010000000: Connection Packet Type Changed Event</li><li>0x0000000020000000: QoS Violation Event</li><li>0x0000000040000000: Page Scan Mode Change Event</li><li>0x0000000080000000: Page Scan Repetition Mode Change Event</li><li>0x0000000100000000: Flow Specification Complete Event</li><li>0x0000000200000000: Inquiry Result with RSSI Event</li><li>0x0000000400000000: Read Remote Extended Features Complete Event</li><li>0x0000080000000000: Synchronous Connection Complete Event</li><li>0x0000100000000000: Synchronous Connection Changed Event</li><li>0x0000200000000000: Sniff Subrating Event</li><li>0x0000400000000000: Extended Inquiry Result Event</li><li>0x0000800000000000: Encryption Key Refresh Complete Event</li><li>0x0001000000000000: IO Capability Request Event</li><li>0x0002000000000000: IO Capability Request Reply Event</li><li>0x0004000000000000: User Confirmation Request Event</li><li>0x0008000000000000: User Passkey Request Event</li><li>0x0010000000000000: Remote OOB Data Request Event</li><li>0x0020000000000000: Simple Pairing Complete Event</li><li>0x0080000000000000: Link Supervision Timeout Changed Event</li><li>0x0100000000000000: Enhanced Flush Complete Event</li><li>0x0400000000000000: User Passkey Notification Event</li><li>0x0800000000000000: Keypress Notification Event</li><li>0x1000000000000000: Remote Host Supported Features Notification Event</li><li>0x2000000000000000: LE Meta-Event</li></td></tr>
+</td><td><p>Bitmask of:</p><br><li>0x0000000000000000: No events specified</li><li>0x0000000000000010: Disconnection Complete Event</li><li>0x0000000000000080: Encryption Change Event</li><li>0x0000000000000800: Read Remote Version Information Complete Event</li><li>0x0000000000008000: Hardware Error Event</li><li>0x0000800000000000: Encryption Key Refresh Complete Event</li><li>0x2000000000000000: LE Meta-Event</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -3506,7 +3506,7 @@ When this procedure is started, only the devices in limited discoverable mode ar
 to the upper layers.
 The procedure is terminated when either the upper layers issue a command to terminate 
 the procedure by issuing the command <a href="#ACI_GAP_TERMINATE_GAP_PROC_anchor">ACI_GAP_TERMINATE_GAP_PROC</a> with the procedure 
-code set to 0x01 or a timeout happens. When the procedure is terminated due to any of the 
+code set to 0x01 or a timeout happens (the timeout value is fixed at 10.24 s.). When the procedure is terminated due to any of the 
 above  reasons, <a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a> event is returned with the procedure code
 set to 0x01.
 The device found when the procedure is ongoing is returned to the upper layers through the
@@ -3550,7 +3550,7 @@ Time = N * 0.625 msec.</p>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_ADVERTISING_REPORT_EVENT_anchor">HCI_LE_ADVERTISING_REPORT_EVENT</a></li><li><a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_START_GENERAL_DISCOVERY_PROC_anchor">ACI_GAP_START_GENERAL_DISCOVERY_PROC</a></h2><h3>Description</h3><p>Start the general discovery procedure. The controller is commanded to start active
 scanning. The procedure is terminated when  either the upper layers issue a command
 to terminate the procedure by issuing the command <a href="#ACI_GAP_TERMINATE_GAP_PROC_anchor">ACI_GAP_TERMINATE_GAP_PROC</a>
-with the procedure code set to 0x02 or a timeout happens. When the procedure is
+with the procedure code set to 0x02 or a timeout happens (the timeout value is fixed at 10.24 s.). When the procedure is
 terminated due to any of the above reasons, <a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a> event
 is returned with the procedure code set to 0x02. The device found when the procedure
 is ongoing is returned to <a href="#HCI_LE_ADVERTISING_REPORT_EVENT_anchor">HCI_LE_ADVERTISING_REPORT_EVENT</a>.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
@@ -5759,8 +5759,6 @@ Time = N * 0.625 msec.</p>
 </td></tr>
 <tr><td><a href="#HCI_NUMBER_OF_COMPLETED_PACKETS_EVENT_anchor">HCI_NUMBER_OF_COMPLETED_PACKETS_EVENT</a></td><td><p>0x13</p>
 </td></tr>
-<tr><td><a href="#HCI_DATA_BUFFER_OVERFLOW_EVENT_anchor">HCI_DATA_BUFFER_OVERFLOW_EVENT</a></td><td><p>0x1A</p>
-</td></tr>
 <tr><td><a href="#HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT_anchor">HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT</a></td><td><p>0x30</p>
 </td></tr>
 <tr><td><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></td><td><p>0x0E</p>
@@ -5892,14 +5890,6 @@ flushed.</p><h3>Event parameters</h3><table width="800" border="1" class="refere
 or flushed) for the associated Connection_Handle since the previous time
 the event was returned.</p>
 </td><td></tr>
-</table><h2><a name="HCI_DATA_BUFFER_OVERFLOW_EVENT_anchor">HCI_DATA_BUFFER_OVERFLOW_EVENT</a></h2><h3>Description</h3><p>'This event is used to indicate that the Controller's data buffers have been overflowed.
-This can occur if the Host has sent more packets than allowed. The
-Link_Type parameter is used to indicate that the overflow was caused by ACL data.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Link_Type</p>
-</td><td><p>1</p>
-</td><td><p>On wich type of channel overflow has occurred.</p>
-</td><td><li>0x01: ACL Buffer Overflow</li></td></tr>
 </table><h2><a name="HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT_anchor">HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT</a></h2><h3>Description</h3><p>'The Encryption Key Refresh Complete event is used to indicate to the Host
 that the encryption key was refreshed on the given Connection_Handle any
 time encryption is paused and then resumed.
@@ -6380,11 +6370,11 @@ timeout has occurred so that the upper layer can decide to disconnect the link.<
 </td><td></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
-</td><td><p>Specific pairing status (0:Success,1:Timeout,2:Failed)</p>
-</td><td></td></tr>
+</td><td><p>Pairing status</p>
+</td><td><li>0x00: Success</li><li>0x01: SMP timeout</li><li>0x02: Pairing failed</li><li>0x03: Encryption failed</li></td></tr>
 <tr><td><p>Reason</p>
 </td><td><p>1</p>
-</td><td><p>Pairing reason error code</p>
+</td><td><p>Pairing reason error code (valid in case of pairing failed status)</p>
 </td><td><li>0x02: OOB_NOT_AVAILABLE</li><li>0x03: AUTH_REQ_CANNOT_BE_MET</li><li>0x04: CONFIRM_VALUE_FAILED</li><li>0x05: PAIRING_NOT_SUPPORTED</li><li>0x06: INSUFF_ENCRYPTION_KEY_SIZE</li><li>0x07: CMD_NOT_SUPPORTED</li><li>0x08: UNSPECIFIED_REASON</li><li>0x09: VERY_EARLY_NEXT_ATTEMPT</li><li>0x0A: SM_INVALID_PARAMS</li><li>0x0B: SMP_SC_DHKEY_CHECK_FAILED</li><li>0x0C: SMP_SC_NUMCOMPARISON_FAILED</li></td></tr>
 </table><h2><a name="ACI_GAP_PASS_KEY_REQ_EVENT_anchor">ACI_GAP_PASS_KEY_REQ_EVENT</a></h2><h3>Description</h3><p>This event is generated by the Security manager to the application when a passkey is
 required for pairing. When this event is received, the application has to respond with the
@@ -7123,7 +7113,7 @@ Units: dBm</p>
 <tr><td><p>FW_Error_Type</p>
 </td><td><p>1</p>
 </td><td><p>FW Error type</p>
-</td><td><li>0x01: L2CAP recombination failure</li><li>0x02: GATT UNEXPECTED RESPONSE ERROR</li><li>0x03: NVM LEVEL WARNING</li></td></tr>
+</td><td><li>0x01: L2CAP recombination failure</li><li>0x02: GATT unexpected peer message</li><li>0x03: NVM level warning</li></td></tr>
 <tr><td><p>Data_Length</p>
 </td><td><p>1</p>
 </td><td><p>Length of Data in octets</p>

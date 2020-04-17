@@ -76,7 +76,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t HciAclDataBuffer[sizeof(TL_P
 
 static uint8_t RxHostData[5];
 static HciReceiveStatus_t HciReceiveStatus;
-static TL_CmdPacket_t SysLocalCmd;
+ALIGN(4) static TL_CmdPacket_t SysLocalCmd;
 static uint8_t *pHostRx;
 static tListNode  HostTxQueue;
 static TL_EvtPacket_t *pTxToHostPacket;
@@ -280,11 +280,10 @@ static void TM_SysLocalCmd ( void )
     case LHCI_OPCODE_C1_READ_REG:
       LHCI_C1_Read_Register( &SysLocalCmd );
       break;
-#ifndef LITTLE_DORY
+
     case LHCI_OPCODE_C1_DEVICE_INF:
       LHCI_C1_Read_Device_Information( &SysLocalCmd );
-      break;
-#endif      
+      break;  
 
     default:
       

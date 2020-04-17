@@ -44,7 +44,8 @@
 #include "light.h"
 #include "generic.h"
 #include "common.h"
-#include "Math.h"
+#include "light_lc.h"
+#include "math.h"
 #include "compiler.h"
 #include <string.h>
 /** @addtogroup MODEL_Light
@@ -66,32 +67,36 @@ static Light_TemporaryStatus_t Light_TemporaryStatus;
 static Light_LightnessParam_t Light_LightnessParam;
 static Light_LightnessStatus_t Light_LightnessStatus;
 static Light_LightnessDefaultParam_t Light_LightnessDefaultParam;
-static Light_LightnessRangeParam_t Light_LightnessRangeParam ;
+static Light_LightnessRangeParam_t Light_LightnessRangeParam = {0x00,MIN_VALID_RANGE,MAX_VALID_RANGE};
 
 static Light_CtlParam_t Light_CtlParam;
-static Light_CtlStatus_t Light_CtlStatus;
+static Light_CtlStatus_t Light_CtlStatus =  {0x00,MIN_CTL_TEMP_RANGE,0x8000,0x00,0x00,0x00,0x00};
 static Light_CtlDefaultParam_t Light_CtlDefaultParam;
-
-static Light_CtlTemperatureRangeParam_t CtlTemperatureRangeParam;
-
+static Light_CtlTemperatureRangeParam_t CtlTemperatureRangeParam = {0x00,MIN_CTL_TEMP_RANGE,MAX_CTL_TEMP_RANGE};
 static Light_HslParam_t Light_HslParam;
 static Light_HslStatus_t Light_HslStatus;
-static Light_HslRangeParam_t Light_HslRangeParam;
+static Light_HslRangeParam_t Light_HslRangeParam = {0x00,MIN_HUE_RANGE,MAX_HUE_RANGE,
+                                                     MIN_SATURATION_RANGE,MAX_SATURATION_RANGE};
+
+Light_PublishOpcodeList_t Light_PublishOpcodeList;
 
 extern Generic_DefaultTransitionParam_t Generic_DefaultTransitionParam;
-MOBLEUINT8 Light_Trnsn_Cmplt; 
 MOBLEUINT8 LightUpdateFlag = 0;
-
+extern MOBLEUINT16 Model_Rx_Opcode;
+extern MOBLEUINT16 Model_ID;
+extern MOBLE_ADDRESS Dst_Peer;
 const MODEL_OpcodeTableParam_t Light_Opcodes_Table[] = {
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
   {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_GET,                 MOBLE_TRUE,  0, 0, LIGHT_LIGHTNESS_STATUS,        2, 5},
   {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_SET,                 MOBLE_TRUE,  3, 5, LIGHT_LIGHTNESS_STATUS,        2, 5},
-  {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_SET_UNACK,           MOBLE_FALSE, 3, 5, 0,        2, 5},
+  {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_SET_UNACK,           MOBLE_FALSE, 3, 5, LIGHT_LIGHTNESS_STATUS,        2, 5},
   {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_STATUS,              MOBLE_FALSE, 2, 5, 0,        2, 5},
   {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_LINEAR_GET,          MOBLE_TRUE,  0, 0, LIGHT_LIGHTNESS_LINEAR_STATUS, 2, 5},
   {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_LINEAR_SET,          MOBLE_TRUE,  3, 5, LIGHT_LIGHTNESS_LINEAR_STATUS, 2, 5},
-  {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_LINEAR_SET_UNACK,    MOBLE_FALSE, 3, 5, 0, 2, 5},
+  {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_LINEAR_SET_UNACK,    MOBLE_FALSE, 3, 5, LIGHT_LIGHTNESS_LINEAR_STATUS, 2, 5},
   {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_LINEAR_STATUS,       MOBLE_FALSE, 2, 5, 0, 2, 5},
+  {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_LAST_GET,            MOBLE_TRUE, 0, 0, LIGHT_LIGHTNESS_LAST_STATUS,  2, 2},
+  {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_LAST_STATUS,         MOBLE_FALSE, 2, 2, 0,  2, 2},
   {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_DEFAULT_GET,         MOBLE_TRUE,  0, 0, LIGHT_LIGHTNESS_DEFAULT_STATUS,2, 2},
   {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_DEFAULT_STATUS,      MOBLE_FALSE, 2, 2, 0,2, 2},
   {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID     ,LIGHT_LIGHTNESS_RANGE_GET,           MOBLE_TRUE,  0, 0, LIGHT_LIGHTNESS_RANGE_STATUS,  5, 5},
@@ -108,7 +113,7 @@ const MODEL_OpcodeTableParam_t Light_Opcodes_Table[] = {
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL    
   {LIGHT_MODEL_SERVER_CTL_MODEL_ID    ,LIGHT_CTL_GET,                        MOBLE_TRUE,  0, 0,            LIGHT_CTL_STATUS,                       4, 9},     
   {LIGHT_MODEL_SERVER_CTL_MODEL_ID    ,LIGHT_CTL_SET,                        MOBLE_TRUE,  7, 9,            LIGHT_CTL_STATUS,                       4, 9},     
-  {LIGHT_MODEL_SERVER_CTL_MODEL_ID    ,LIGHT_CTL_SET_UNACK,                  MOBLE_FALSE, 7, 9,            0,                        4, 9},
+  {LIGHT_MODEL_SERVER_CTL_MODEL_ID    ,LIGHT_CTL_SET_UNACK,                  MOBLE_FALSE, 7, 9,            LIGHT_CTL_STATUS,                        4, 9},
   {LIGHT_MODEL_SERVER_CTL_MODEL_ID    ,LIGHT_CTL_STATUS,                     MOBLE_FALSE, 4, 9,            0,                4, 9},
   {LIGHT_MODEL_SERVER_CTL_MODEL_ID    ,LIGHT_CTL_TEMPERATURE_RANGE_GET,      MOBLE_TRUE,  0, 0,            LIGHT_CTL_TEMPERATURE_RANGE_STATUS,     5, 5},
   {LIGHT_MODEL_SERVER_CTL_MODEL_ID    ,LIGHT_CTL_TEMPERATURE_RANGE_STATUS,   MOBLE_FALSE, 5, 5,            0,               5, 5},
@@ -118,7 +123,7 @@ const MODEL_OpcodeTableParam_t Light_Opcodes_Table[] = {
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP 
   {LIGHT_MODEL_SERVER_CTL_SETUP_MODEL_ID       ,LIGHT_CTL_DEFAULT_SET,                  MOBLE_TRUE,  6, 6,          LIGHT_CTL_DEFAULT_STATUS,              6, 6},   
-  {LIGHT_MODEL_SERVER_CTL_SETUP_MODEL_ID       ,LIGHT_CTL_DEFAULT_SET_UNACK,            MOBLE_FALSE, 6, 6,          0,               6, 6}, 
+  {LIGHT_MODEL_SERVER_CTL_SETUP_MODEL_ID       ,LIGHT_CTL_DEFAULT_SET_UNACK,            MOBLE_FALSE, 6, 6,          LIGHT_CTL_DEFAULT_STATUS,               6, 6}, 
   {LIGHT_MODEL_SERVER_CTL_SETUP_MODEL_ID       ,LIGHT_CTL_TEMPERATURE_RANGE_SET,        MOBLE_TRUE,  4, 4,          LIGHT_CTL_TEMPERATURE_RANGE_STATUS,    5, 5},   
   {LIGHT_MODEL_SERVER_CTL_SETUP_MODEL_ID       ,LIGHT_CTL_TEMPERATURE_RANGE_SET_UNACK,  MOBLE_FALSE, 4, 4,          0,         5, 5},
 #endif  
@@ -126,14 +131,14 @@ const MODEL_OpcodeTableParam_t Light_Opcodes_Table[] = {
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE  
   {LIGHT_MODEL_SERVER_CTL_TEMPERATURE_MODEL_ID   ,LIGHT_CTL_TEMPERATURE_GET,            MOBLE_TRUE,  0, 0,            LIGHT_CTL_TEMPERATURE_STATUS,          4, 9},
   {LIGHT_MODEL_SERVER_CTL_TEMPERATURE_MODEL_ID   ,LIGHT_CTL_TEMPERATURE_SET,            MOBLE_TRUE,  5, 7,            LIGHT_CTL_TEMPERATURE_STATUS,          4, 9},
-  {LIGHT_MODEL_SERVER_CTL_TEMPERATURE_MODEL_ID   ,LIGHT_CTL_TEMPERATURE_SET_UNACK,      MOBLE_FALSE, 5, 7,            0,           4, 9},
+  {LIGHT_MODEL_SERVER_CTL_TEMPERATURE_MODEL_ID   ,LIGHT_CTL_TEMPERATURE_SET_UNACK,      MOBLE_FALSE, 5, 7,            LIGHT_CTL_TEMPERATURE_STATUS,           4, 9},
   {LIGHT_MODEL_SERVER_CTL_TEMPERATURE_MODEL_ID   ,LIGHT_CTL_TEMPERATURE_STATUS,         MOBLE_FALSE, 4, 9,            0,          4, 9},
 #endif       
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
   {LIGHT_MODEL_SERVER_HSL_MODEL_ID      ,LIGHT_HSL_GET,                        MOBLE_TRUE,  0, 0,             LIGHT_HSL_STATUS,                      6, 7}, 
   {LIGHT_MODEL_SERVER_HSL_MODEL_ID      ,LIGHT_HSL_SET,                        MOBLE_TRUE,  7, 9,             LIGHT_HSL_STATUS,                      6, 7},   
-  {LIGHT_MODEL_SERVER_HSL_MODEL_ID      ,LIGHT_HSL_SET_UNACK,                  MOBLE_FALSE, 7, 9,             0,                       6, 7},    
+  {LIGHT_MODEL_SERVER_HSL_MODEL_ID      ,LIGHT_HSL_SET_UNACK,                  MOBLE_FALSE, 7, 9,             LIGHT_HSL_STATUS,                       6, 7},    
   {LIGHT_MODEL_SERVER_HSL_MODEL_ID      ,LIGHT_HSL_STATUS,                     MOBLE_FALSE, 6, 7,             0,                       6, 7},  
   {LIGHT_MODEL_SERVER_HSL_MODEL_ID      ,LIGHT_HSL_TARGET_GET,                 MOBLE_TRUE,  0, 0,             LIGHT_HSL_TARGET_STATUS,               6, 7}, 
   {LIGHT_MODEL_SERVER_HSL_MODEL_ID      ,LIGHT_HSL_TARGET_STATUS,              MOBLE_FALSE, 6, 7,             0,               6, 7},  
@@ -147,20 +152,20 @@ const MODEL_OpcodeTableParam_t Light_Opcodes_Table[] = {
   {LIGHT_MODEL_SERVER_HSL_SETUP_MODEL_ID   ,LIGHT_HSL_RANGE_SET,                  MOBLE_TRUE, 8, 8,             LIGHT_HSL_RANGE_STATUS,                9, 9},   
   {LIGHT_MODEL_SERVER_HSL_SETUP_MODEL_ID   ,LIGHT_HSL_RANGE_SET_UNACK,            MOBLE_FALSE, 8, 8,            0,                9, 9},  
   {LIGHT_MODEL_SERVER_HSL_SETUP_MODEL_ID   ,LIGHT_HSL_DEFAULT_SET,                MOBLE_TRUE, 6, 6,             LIGHT_HSL_DEFAULT_STATUS,              6, 6},   
-  {LIGHT_MODEL_SERVER_HSL_SETUP_MODEL_ID   ,LIGHT_HSL_DEFAULT_SET_UNACK,          MOBLE_FALSE, 6, 6,            0,              6, 6},
+  {LIGHT_MODEL_SERVER_HSL_SETUP_MODEL_ID   ,LIGHT_HSL_DEFAULT_SET_UNACK,          MOBLE_FALSE, 6, 6,            LIGHT_HSL_DEFAULT_STATUS,              6, 6},
 #endif
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE    
   {LIGHT_MODEL_SERVER_HSL_HUE_MODEL_ID    ,LIGHT_HSL_HUE_GET,                    MOBLE_TRUE, 0, 0,             LIGHT_HSL_HUE_STATUS,                  2, 5},   
   {LIGHT_MODEL_SERVER_HSL_HUE_MODEL_ID    ,LIGHT_HSL_HUE_SET,                    MOBLE_TRUE, 3, 5,             LIGHT_HSL_HUE_STATUS,                  2, 5},   
-  {LIGHT_MODEL_SERVER_HSL_HUE_MODEL_ID    ,LIGHT_HSL_HUE_SET_UNACK,              MOBLE_FALSE, 3, 5,            0,                  2, 5}, 
+  {LIGHT_MODEL_SERVER_HSL_HUE_MODEL_ID    ,LIGHT_HSL_HUE_SET_UNACK,              MOBLE_FALSE, 3, 5,            LIGHT_HSL_HUE_STATUS,                  2, 5}, 
   {LIGHT_MODEL_SERVER_HSL_HUE_MODEL_ID    ,LIGHT_HSL_HUE_STATUS,                 MOBLE_FALSE, 2, 5,            0,                  2, 5},   
 #endif
   
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION    
   {LIGHT_MODEL_SERVER_HSL_SATURATION_MODEL_ID   ,LIGHT_HSL_SATURATION_GET,             MOBLE_TRUE, 0, 0,             LIGHT_HSL_SATURATION_STATUS,           2, 5},   
   {LIGHT_MODEL_SERVER_HSL_SATURATION_MODEL_ID   ,LIGHT_HSL_SATURATION_SET,             MOBLE_TRUE, 3, 5,             LIGHT_HSL_SATURATION_STATUS,           2, 5},    
-  {LIGHT_MODEL_SERVER_HSL_SATURATION_MODEL_ID   ,LIGHT_HSL_SATURATION_SET_UNACK,       MOBLE_FALSE, 3, 5,            0,           2, 5},    
+  {LIGHT_MODEL_SERVER_HSL_SATURATION_MODEL_ID   ,LIGHT_HSL_SATURATION_SET_UNACK,       MOBLE_FALSE, 3, 5,            LIGHT_HSL_SATURATION_STATUS,           2, 5},    
   {LIGHT_MODEL_SERVER_HSL_SATURATION_MODEL_ID   ,LIGHT_HSL_SATURATION_STATUS,          MOBLE_FALSE, 2, 5,            0,           2, 5},    
 #endif   
   {0}		
@@ -198,6 +203,7 @@ WEAK_FUNCTION(MOBLE_RESULT Appli_Light_HslRange_Set(Light_HslRangeParam_t* pLigh
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessStatus(MOBLEUINT8* lLightnessState));
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessLinearStatus(MOBLEUINT8* lLightnessState));
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessDefaultStatus(MOBLEUINT8* lDefaultState));
+WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessLastStatus(MOBLEUINT8* lLastState));
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessRangeStatus(MOBLEUINT8* lRangeState));
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetCtlLightStatus(MOBLEUINT8* lCtlLightState));
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetCtlTemperatureStatus(MOBLEUINT8* lCtlTempState));
@@ -248,11 +254,12 @@ MOBLE_RESULT Light_Lightness_Set(const MOBLEUINT8* plightness_param, MOBLEUINT32
   
   Light_LightnessParam.TargetLightnessStatus = (plightness_param[0] | plightness_param[1] << 8);
   Light_LightnessParam.TID = plightness_param[2];
-  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP  
   /* Binding of actual lightness value with lightness range */
-  //Light_Actual_RangeBinding(&Light_LightnessParam);
+  Light_Actual_RangeBinding(&Light_LightnessParam);
+#endif  
   /* Check for Optional Parameters */ 
-  if (length > 3)
+  if ((length > 3) && (plightness_param[3] !=0))
   {
     /* Transition_Time & Delay_Time Present */
     Light_LightnessParam.TransitionTime = plightness_param[3];
@@ -285,28 +292,20 @@ MOBLE_RESULT Light_Lightness_Set(const MOBLEUINT8* plightness_param, MOBLEUINT32
     /* When no optional parameter received, target value will
     be set as present value in application.
     */
-    Light_LightnessStatus.PresentValue16 = Light_LightnessParam.TargetLightnessStatus;   
+    Light_LightnessStatus.LightnessPresentValue16 = Light_LightnessParam.TargetLightnessStatus; 
 #endif   
      
+  }
+  if(Light_LightnessStatus.LightnessPresentValue16 > 0x00)
+  {
+    Light_LightnessStatus.LightnessLastStatus = Light_LightnessStatus.LightnessPresentValue16;
   }
   /* Application Callback */
   (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus, 0);
   
 #ifdef ENABLE_MODEL_BINDING    
-  /* Binding of actual light lightness with linear light lightness */
-  Light_Linear_ActualImplicitBinding(BINDING_LIGHT_LIGHTNESS_ACTUAL_SET , length);
-  
-  /* Binding of Light Ctl with Actual Light Lightness */
-  Light_BindingCtlToLightness_Actual(BINDING_LIGHT_LIGHTNESS_ACTUAL_SET);
-  
-  /* Binding of data b/w light lightness actual and Generic on off */
-  LightActual_GenericOnOffBinding(&Light_LightnessParam);
-  
-  /* Binding of data b/w light lightness actual and Generic Level */
-  LightActual_GenericLevelBinding(&Light_LightnessParam);
-  
-  /* Binding of data b/W Actual Lightness and Hsl Lightness.*/
-  Light_ActualLightness_HslLightnessBinding(&Light_LightnessParam);
+  /* Binding of actual light lightness with other models */
+  Light_Lightness_Binding(BINDING_LIGHT_LIGHTNESS_ACTUAL_SET , length);  
 #endif  
   
   return MOBLE_RESULT_SUCCESS;
@@ -327,18 +326,9 @@ MOBLE_RESULT Light_Lightness_Status(MOBLEUINT8* pLightness_status, MOBLEUINT32* 
   Remaining Time        1B Time to complete the transition to the target Light Lightness
   
   */ 
-  MOBLEUINT8 Light_GetBuff[2];
   
   TRACE_M(TF_LIGHT,"Light_Lightness_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#824B! \n\r");
-  
-  /* reading the value from the application by passing Appli_LightParam
-  array parameter 
-  */    
-  (Appli_Light_GetStatus_cb.GetLightLightness_cb)(Light_GetBuff);
-  
-  Light_LightnessStatus.PresentValue16 = Light_GetBuff[1] << 8;
-  Light_LightnessStatus.PresentValue16 |= Light_GetBuff[0];
   
   /* This condition will be processed when message received will have
   transition time and delay parameter.
@@ -346,8 +336,8 @@ MOBLE_RESULT Light_Lightness_Status(MOBLEUINT8* pLightness_status, MOBLEUINT32* 
   */
   if((Light_ModelFlag.LightOptionalParam == 1) || (Light_TimeParam.StepValue != 0))
   {
-    *(pLightness_status) = Light_LightnessStatus.PresentValue16;
-    *(pLightness_status+1) = Light_LightnessStatus.PresentValue16 >> 8;
+    *(pLightness_status) = Light_LightnessStatus.LightnessPresentValue16;
+    *(pLightness_status+1) = Light_LightnessStatus.LightnessPresentValue16 >> 8;
     *(pLightness_status+2) = Light_LightnessStatus.TargetValue16;
     *(pLightness_status+3) = Light_LightnessStatus.TargetValue16 >>8;
     *(pLightness_status+4) = Light_LightnessStatus.RemainingTime;
@@ -359,14 +349,13 @@ MOBLE_RESULT Light_Lightness_Status(MOBLEUINT8* pLightness_status, MOBLEUINT32* 
     /* When no optional parameter received then, target value will
     be sent in status message.
     */    
-    *(pLightness_status) = Light_LightnessStatus.PresentValue16 ;
-    *(pLightness_status+1) = Light_LightnessStatus.PresentValue16 >> 8;
+    *(pLightness_status) = Light_LightnessStatus.LightnessPresentValue16 ;
+    *(pLightness_status+1) = Light_LightnessStatus.LightnessPresentValue16 >> 8;
     *pLength = 2;          
   }
   
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 /**
 * @brief  Light_Lightness_Linear_Set: This function is called for both Acknowledged and 
@@ -393,7 +382,7 @@ MOBLE_RESULT Light_Lightness_Linear_Set(const MOBLEUINT8* plightnessLinear_param
   Light_LightnessParam.TID = plightnessLinear_param[2];
   
   /* Check for Optional Parameters */ 
-  if (length > 3)
+  if ((length > 3) && (plightnessLinear_param[3] !=0))
   {
     /* Transition_Time & Delay_Time Present */
     Light_LightnessParam.TransitionTime = plightnessLinear_param[3];
@@ -414,13 +403,13 @@ MOBLE_RESULT Light_Lightness_Linear_Set(const MOBLEUINT8* plightnessLinear_param
     
     Light_GetStepValue(plightnessLinear_param[3]);
     /*transition process enable flag. */
-    Light_ModelFlag.LightTransitionFlag = LIGHT_LIGHTNESS_TRANSITION_START; 
+    Light_ModelFlag.LightTransitionFlag = LIGHT_LINEAR_TRANSITION_START; 
     /*option parameter flag, enable to sent all required parameter in status.*/
     Light_ModelFlag.LightOptionalParam = 1;
   }
   else
   {
-    Light_LightnessStatus.PresentValue16 = Light_LightnessParam .TargetLightnessLinearStatus;   
+    Light_LightnessStatus.LinearPresentValue16 = Light_LightnessParam .TargetLightnessLinearStatus;   
   }
   
   /* Application Callback */
@@ -428,7 +417,7 @@ MOBLE_RESULT Light_Lightness_Linear_Set(const MOBLEUINT8* plightnessLinear_param
   
 #ifdef ENABLE_MODEL_BINDING   
   /* Binding of data of light lightness with light linear */
-  Light_Linear_ActualImplicitBinding(BINDING_LIGHT_LIGHTNESS_LINEAR_SET , length);
+  Light_Lightness_Linear_Binding(BINDING_LIGHT_LIGHTNESS_LINEAR_SET ,length);
 #endif   
 
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC  
@@ -452,17 +441,9 @@ MOBLE_RESULT Light_Lightness_Linear_Status(MOBLEUINT8* pLightnessLinear_status, 
   Target Lightness      2B The target value of the Light Lightness Linear state (Optional).
   Remaining Time        1B Time to complete the transition to the target Light Lightness Li
   */
-  MOBLEUINT8 Light_GetBuff[2];
   
   TRACE_M(TF_LIGHT,"Light_Lightness_Linear_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#824F! \n\r");
-  
-  /* reading the value from the application by passing Appli_LightParam
-  array parameter 
-  */   
-  (Appli_Light_GetStatus_cb.GetLightLightnessLinear_cb)(Light_GetBuff);
-  Light_LightnessStatus.PresentValue16 = Light_GetBuff[1] << 8;
-  Light_LightnessStatus.PresentValue16 |= Light_GetBuff[0];
   
   /* This condition will be processed when message received will have
   transition time and delay parameter.
@@ -470,8 +451,8 @@ MOBLE_RESULT Light_Lightness_Linear_Status(MOBLEUINT8* pLightnessLinear_status, 
   */
   if((Light_ModelFlag.LightOptionalParam == 1) || (Light_TimeParam.StepValue != 0))
   {
-    *(pLightnessLinear_status) = Light_LightnessStatus.PresentValue16;
-    *(pLightnessLinear_status+1) = Light_LightnessStatus.PresentValue16 >> 8;
+    *(pLightnessLinear_status) = Light_LightnessStatus.LinearPresentValue16;
+    *(pLightnessLinear_status+1) = Light_LightnessStatus.LinearPresentValue16 >> 8;
     *(pLightnessLinear_status+2) = Light_LightnessStatus.TargetValue16;
     *(pLightnessLinear_status+3) = Light_LightnessStatus.TargetValue16 >>8;
     *(pLightnessLinear_status+4) = Light_LightnessStatus.RemainingTime;
@@ -484,8 +465,8 @@ MOBLE_RESULT Light_Lightness_Linear_Status(MOBLEUINT8* pLightnessLinear_status, 
     /* When no optional parameter received then, target value will
     be sent in status message.
     */
-    *(pLightnessLinear_status) = Light_LightnessStatus.PresentValue16;
-    *(pLightnessLinear_status+1) = Light_LightnessStatus.PresentValue16 >> 8;
+    *(pLightnessLinear_status) = Light_LightnessStatus.LinearPresentValue16;
+    *(pLightnessLinear_status+1) = Light_LightnessStatus.LinearPresentValue16 >> 8;
     *pLength = 2;
     
   }
@@ -493,6 +474,20 @@ MOBLE_RESULT Light_Lightness_Linear_Status(MOBLEUINT8* pLightnessLinear_status, 
   return MOBLE_RESULT_SUCCESS;
 }
 
+/**
+* @brief  Light_Lightness_Last_Set: This function is called for both Acknowledged and 
+*         unacknowledged message. The Acknowledgement is taken care by the Library
+* @param  plightnessLast_param : Pointer to the parameters received for message
+* @param  length : Length of the parameters received for message
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT Light_Lightness_Last_Set(const MOBLEUINT8* plightnessLast_param, MOBLEUINT32 length)
+{
+  Light_LightnessStatus.LightnessLastStatus = plightnessLast_param[1] << 8;
+  Light_LightnessStatus.LightnessLastStatus |= plightnessLast_param[0];
+  
+  return MOBLE_RESULT_SUCCESS;
+}  
 
 /**
 * @brief  Light Lightness Last Status
@@ -506,16 +501,12 @@ MOBLE_RESULT Light_Lightness_Last_Status(MOBLEUINT8* pLightnessLast_status, MOBL
   Following is the status message:
   Lightness     2B The value of the Light Lightness Last. 
   */
-  MOBLEUINT8 Light_GetBuff[4];
   
   TRACE_M(TF_LIGHT,"Light_Lightness_Last_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8253! \n\r");
   
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightLightness_cb)(Light_GetBuff);
-  
-  *pLightnessLast_status = Light_GetBuff[2] ;
-  *(pLightnessLast_status+1) = Light_GetBuff [3];
+  *pLightnessLast_status = Light_LightnessStatus.LightnessLastStatus ;
+  *(pLightnessLast_status+1) = Light_LightnessStatus.LightnessLastStatus >> 8;
   *pLength = 2;
   
   return MOBLE_RESULT_SUCCESS;
@@ -560,15 +551,13 @@ MOBLE_RESULT Light_Lightness_Default_Status(MOBLEUINT8* pLightnessDefault_status
   Following is the status message:
   Lightness     2B The value of the Light Lightness Default state. 
   */
-  MOBLEUINT8 Light_GetBuff[2];
   
   TRACE_M(TF_LIGHT,"Light_Lightness_Default_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8255! \n\r");
   
   /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightLightnessDefault_cb)(Light_GetBuff);
-  *pLightnessDefault_status = Light_GetBuff[0] ;
-  *(pLightnessDefault_status+1) = Light_GetBuff[1];
+  *pLightnessDefault_status = Light_LightnessDefaultParam.LightnessDefaultStatus ;
+  *(pLightnessDefault_status+1) = Light_LightnessDefaultParam.LightnessDefaultStatus >>8;
   *pLength = 2;
   
   return MOBLE_RESULT_SUCCESS;
@@ -621,19 +610,15 @@ MOBLE_RESULT Light_Lightness_Range_Status(MOBLEUINT8* pLightnessRange_status, MO
   Min Range      2B The Minimum range value of the Light Lightness state. 
   Max Range      2B The Maximum range value of the Light Lightness state         
   */
-  MOBLEUINT8 Light_GetBuff[5];
   
   TRACE_M(TF_LIGHT,"Light_Lightness_Range_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8257! \n\r");
   
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightLightnessRange_cb)(Light_GetBuff);
-  
-  *(pLightnessRange_status) = Light_GetBuff[0];
-  *(pLightnessRange_status+1) = Light_GetBuff[1];
-  *(pLightnessRange_status+2) = Light_GetBuff[2];
-  *(pLightnessRange_status+3) = Light_GetBuff[3];
-  *(pLightnessRange_status+4) = Light_GetBuff[4];
+  *(pLightnessRange_status) = Light_LightnessRangeParam.StatusCode;
+  *(pLightnessRange_status+1) = Light_LightnessRangeParam.MinRangeStatus;
+  *(pLightnessRange_status+2) = Light_LightnessRangeParam.MinRangeStatus >> 8;
+  *(pLightnessRange_status+3) = Light_LightnessRangeParam.MaxRangeStatus;
+  *(pLightnessRange_status+4) = Light_LightnessRangeParam.MaxRangeStatus >> 8;
   *pLength = 5;
   
   return MOBLE_RESULT_SUCCESS;
@@ -679,7 +664,8 @@ MOBLE_RESULT Light_Ctl_Set(const MOBLEUINT8* pLightCtl_param, MOBLEUINT32 length
   Light_CtlParam.Last_Lightness = Light_CtlParam.CTL_Lightness;
   Light_CtlParam.Last_Temperature = Light_CtlParam.CTL_Temperature;
   Light_CtlStatus.PresentCtlDelta16 = Light_CtlParam.CTL_DeltaUv;
-  if(length > 7) 
+  
+  if((length > 7) && (pLightCtl_param[7] !=0)) 
   {
     Light_CtlParam.CTL_TransitionTime = pLightCtl_param[7];    
     Light_CtlParam.CTL_Delay          = pLightCtl_param[8];
@@ -690,7 +676,6 @@ MOBLE_RESULT Light_Ctl_Set(const MOBLEUINT8* pLightCtl_param, MOBLEUINT32 length
     
     Light_TemporaryStatus.TargetParam_1 = Light_CtlStatus.TargetCtlLightness16;
     Light_TemporaryStatus.TargetParam_2 = Light_CtlStatus.TargetCtlTemperature16;
-    
     Light_GetStepValue(pLightCtl_param[7]);  
     Light_ModelFlag.LightOptionalParam = 1;
     Light_ModelFlag.LightTransitionFlag = LIGHT_CTL_TRANSITION_START;
@@ -712,7 +697,7 @@ MOBLE_RESULT Light_Ctl_Set(const MOBLEUINT8* pLightCtl_param, MOBLEUINT32 length
   
 #ifdef ENABLE_MODEL_BINDING   
   /* binding of light ctl with actual lightness */
-  Light_BindingCtlToLightness_Actual(BINDING_LIGHT_CTL_LIGHTNESS_SET);
+  Light_Ctl_LightActual_Binding(BINDING_LIGHT_CTL_SET);
 #endif 
   
   return MOBLE_RESULT_SUCCESS;
@@ -734,17 +719,9 @@ MOBLE_RESULT Light_Ctl_Status(MOBLEUINT8* pLightCtl_status, MOBLEUINT32 *pLength
   Target Ctl Temeperature         2B The Target ctl Temperature value of the model state.
   Remaining Time                  1B The Remaining Time value of the model state        
   */
-  MOBLEUINT8 Light_GetBuff[4];
   
   TRACE_M(TF_LIGHT,"Light_Ctl_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#825D! \n\r");
-  
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightCtl_cb)(Light_GetBuff);
-  Light_CtlStatus.PresentCtlLightness16 = Light_GetBuff[1] << 8;
-  Light_CtlStatus.PresentCtlLightness16 |= Light_GetBuff[0];
-  Light_CtlStatus.PresentCtlTemperature16 = Light_GetBuff[3] << 8;
-  Light_CtlStatus.PresentCtlTemperature16 |= Light_GetBuff[2];
   
   if((Light_ModelFlag.LightOptionalParam == 1) || (Light_TimeParam.StepValue != 0))
   {
@@ -800,9 +777,10 @@ MOBLE_RESULT Light_CtlTemperature_Set(const MOBLEUINT8* pLightCtlTemp_param, MOB
   Light_CtlParam.CTL_DeltaUv |= pLightCtlTemp_param[2];
   Light_CtlParam.CTL_TID     = pLightCtlTemp_param[4] << 8;
   
+  Light_CtlTemperature_TempRangeBinding(&Light_CtlParam);
   /* Binding with ctl temperature range value */
   
-  if(length > 7)
+  if((length > 5) && (pLightCtlTemp_param[5] !=0))
   {
     Light_CtlParam.CTL_TransitionTime = pLightCtlTemp_param[5];
     Light_CtlParam.CTL_Delay          = pLightCtlTemp_param[6];
@@ -813,6 +791,7 @@ MOBLE_RESULT Light_CtlTemperature_Set(const MOBLEUINT8* pLightCtlTemp_param, MOB
     
     Light_TemporaryStatus.TargetParam_1 = Light_CtlStatus.TargetCtlTemperature16;
     Light_TemporaryStatus.TargetParam_2 = Light_CtlStatus.TargetCtlDeltaUv16;
+    Light_GetStepValue(pLightCtlTemp_param[5]); 
     Light_ModelFlag.LightOptionalParam = 1;
     Light_ModelFlag.LightTransitionFlag = LIGHT_TEMPERATURE_TRANSITION_START;
   }
@@ -833,7 +812,7 @@ MOBLE_RESULT Light_CtlTemperature_Set(const MOBLEUINT8* pLightCtlTemp_param, MOB
   (LightAppli_cb.Light_CtlTemperature_Set_cb)(&Light_CtlStatus, OptionalValid);
 #ifdef ENABLE_MODEL_BINDING  
   /* Binding of data Ctl Temperature  with Generic Level */
-  Light_CtlTemp_GenericLevelBinding(&Light_CtlParam);
+  Light_CtlTemperature_Binding();
 #endif   
   
   return MOBLE_RESULT_SUCCESS;
@@ -856,17 +835,9 @@ MOBLE_RESULT Light_CtlTemperature_Status(MOBLEUINT8* pLightCtlTemp_status, MOBLE
   Target Ctl Delta Uv             2B The Target ctl Delta Uv value of the model state.
   Remaining Time                  1B The Remaining Time value of the model state
   */
-  MOBLEUINT8 Light_GetBuff[4];
   
   TRACE_M(TF_LIGHT,"Light_CtlTemperature_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8261! \n\r");
-  
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightCtlTemp_cb)(Light_GetBuff);
-  Light_CtlStatus.PresentCtlTemperature16 = Light_GetBuff[1] << 8;
-  Light_CtlStatus.PresentCtlTemperature16 |= Light_GetBuff[0];
-  Light_CtlStatus.PresentCtlDelta16 = Light_GetBuff[3] << 8;
-  Light_CtlStatus.PresentCtlDelta16 |= Light_GetBuff[2];
   
   if((Light_ModelFlag.LightOptionalParam == 1) || (Light_TimeParam.StepValue != 0))
   {
@@ -959,21 +930,16 @@ MOBLE_RESULT Light_CtlTemperature_Range_Status(MOBLEUINT8* pCtlTempRange_status,
   Min Range          2B The minimum value for Ctl temperature state.
   Max Range          2B The maximum value for Ctl temperature state.
   */
-  MOBLEUINT8 Light_GetBuff[5];
   
   TRACE_M(TF_LIGHT,"Light_CtlTemperature_Range_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8262! \n\r");
   
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightCtlTempRange_cb)(Light_GetBuff);
+  *pCtlTempRange_status = CtlTemperatureRangeParam.StatusCode;
+  *(pCtlTempRange_status+1) = CtlTemperatureRangeParam.MinRangeStatus ;
+  *(pCtlTempRange_status+2) = CtlTemperatureRangeParam.MinRangeStatus >> 8;
+  *(pCtlTempRange_status+3) = CtlTemperatureRangeParam.MaxRangeStatus ;
+  *(pCtlTempRange_status+4) = CtlTemperatureRangeParam.MaxRangeStatus >> 8;
   
-  CtlTemperatureRangeParam.StatusCode = Light_GetBuff[0];
-  CtlTemperatureRangeParam.MinRangeStatus = Light_GetBuff[2] << 8;
-  CtlTemperatureRangeParam.MinRangeStatus |= Light_GetBuff[1];
-  CtlTemperatureRangeParam.MaxRangeStatus = Light_GetBuff[4] << 8;
-  CtlTemperatureRangeParam.MaxRangeStatus |= Light_GetBuff[3];
-  
-  memcpy(pCtlTempRange_status ,Light_GetBuff, 5); 
   *pLength = 5;
   
   return MOBLE_RESULT_SUCCESS;
@@ -1007,9 +973,6 @@ MOBLE_RESULT Light_CtlDefault_Set(const MOBLEUINT8* pCtlDefault_param, MOBLEUINT
   Light_CtlDefaultParam.CtlDefaultDeltaUv = pCtlDefault_param[5] << 8;
   Light_CtlDefaultParam.CtlDefaultDeltaUv |= pCtlDefault_param[4];
   
-  TRACE_M(TF_LIGHT,"Inside the Ctl Default set Default Lightness 0x%.2x , Default temperature 0x%.2x , Default delta 0x%.2x  \r\n " ,
-          Light_CtlDefaultParam.CtlDefaultLightness16,Light_CtlDefaultParam.CtlDefaultTemperature16, Light_CtlDefaultParam.CtlDefaultDeltaUv );                
-  
   /* Application Callback */
   (LightAppli_cb.Light_CtlDefault_Set_cb)(&Light_CtlDefaultParam , OptionalValid);
   return MOBLE_RESULT_SUCCESS;
@@ -1029,22 +992,17 @@ MOBLE_RESULT Light_CtlDefault_Status(MOBLEUINT8* pCtlDefault_status, MOBLEUINT32
   Ctl Temperature       2B The Default value of the Ctl Temperature..
   Ctl Delta Uv          2B The Default value of the Ctl Delta Uv.. 
   */
-  MOBLEUINT8 Light_GetBuff[6];
   
   TRACE_M(TF_LIGHT,"Light_Ctl_DefaultStatus callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8267! \n\r");
   
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightCtlDefault_cb)(Light_GetBuff);
+  *pCtlDefault_status = Light_CtlDefaultParam.CtlDefaultLightness16 ;
+  *(pCtlDefault_status +1) = Light_CtlDefaultParam.CtlDefaultLightness16 >> 8;
+  *(pCtlDefault_status +2) = Light_CtlDefaultParam.CtlDefaultTemperature16;
+  *(pCtlDefault_status +3) = Light_CtlDefaultParam.CtlDefaultTemperature16 >> 8;
+  *(pCtlDefault_status +4) = Light_CtlDefaultParam.CtlDefaultDeltaUv;
+  *(pCtlDefault_status +5) = Light_CtlDefaultParam.CtlDefaultDeltaUv >> 8;
   
-  Light_CtlDefaultParam.CtlDefaultLightness16 = Light_GetBuff[1] << 8;
-  Light_CtlDefaultParam.CtlDefaultLightness16 |= Light_GetBuff[0];
-  Light_CtlDefaultParam.CtlDefaultTemperature16 = Light_GetBuff[3] << 8;
-  Light_CtlDefaultParam.CtlDefaultTemperature16 |= Light_GetBuff[2];
-  Light_CtlDefaultParam.CtlDefaultDeltaUv = Light_GetBuff[5] << 8;
-  Light_CtlDefaultParam.CtlDefaultDeltaUv |= Light_GetBuff[4];
-  
-  memcpy(pCtlDefault_status , Light_GetBuff, 6); 
   *pLength = 6;
   
   return MOBLE_RESULT_SUCCESS;
@@ -1083,7 +1041,7 @@ MOBLE_RESULT Light_Hsl_Set(const MOBLEUINT8* pHsl_param, MOBLEUINT32 length)
   
   Light_HslParam.Hsl_TID = pHsl_param[6];
   
-  if(length > 7U)
+  if((length > 7U) && (pHsl_param[7] !=0))
   {
     Light_HslParam.Hsl_TransitionTime = pHsl_param[7];
     Light_HslParam.Hsl_Delay = pHsl_param[8];
@@ -1113,7 +1071,7 @@ MOBLE_RESULT Light_Hsl_Set(const MOBLEUINT8* pHsl_param, MOBLEUINT32 length)
   
 #ifdef ENABLE_MODEL_BINDING   
   /* Light Hsl Lightness binding with lightness Actual */
-  Light_HslLightness_LightnessActualBinding(&Light_HslParam);
+  Light_HslLightness_LightnessActualBinding();
 #endif  
   
   return MOBLE_RESULT_SUCCESS;
@@ -1134,36 +1092,38 @@ MOBLE_RESULT Light_Hsl_Status(MOBLEUINT8* pHsl_status, MOBLEUINT32 *pLength)
   HSL Saturation          2B The present value of the Light HSL Saturation state.
   Remaining Time          1B The remaining time value for transition of state.
   */
-  MOBLEUINT8 Light_GetBuff[8];
   
   TRACE_M(TF_LIGHT,"Light_Hsl_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#826D! \n\r");
   
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightHsl_cb)(Light_GetBuff);
-  
-  Light_HslStatus.PresentHslLightness16 = Light_GetBuff[1] << 8;
-  Light_HslStatus.PresentHslLightness16 |= Light_GetBuff[0];
-  Light_HslStatus.PresentHslHueLightness16 = Light_GetBuff[3] << 8;
-  Light_HslStatus.PresentHslHueLightness16 |= Light_GetBuff[2];
-  Light_HslStatus.PresentHslSaturation16 = Light_GetBuff[5] << 8;
-  Light_HslStatus.PresentHslSaturation16 |= Light_GetBuff[4];
-  
+  if((Light_ModelFlag.LightOptionalParam == 1) || (Light_TimeParam.StepValue != 0))
+  {
   *(pHsl_status) = Light_HslStatus.PresentHslLightness16 ; 
   *(pHsl_status+1) = Light_HslStatus.PresentHslLightness16 >> 8;
   *(pHsl_status+2) = Light_HslStatus.PresentHslHueLightness16;
   *(pHsl_status+3) = Light_HslStatus.PresentHslHueLightness16 >> 8;
   *(pHsl_status+4) = Light_HslStatus.PresentHslSaturation16;
   *(pHsl_status+5) = Light_HslStatus.PresentHslSaturation16 >> 8;
+    *(pHsl_status+6) = Light_HslStatus.TargetHslLightness16;
+    *(pHsl_status+7) = Light_HslStatus.TargetHslLightness16 >> 8;
+    *(pHsl_status+8) = Light_HslStatus.PresentHslHueLightness16;
+    *(pHsl_status+9) = Light_HslStatus.PresentHslHueLightness16 >> 8;
+    *(pHsl_status+10) = Light_HslStatus.TargetHslSaturation16;
+    *(pHsl_status+11) = Light_HslStatus.TargetHslSaturation16 >> 8;
+    *(pHsl_status+12) = Light_HslStatus.RemainingTime;
   
-  if((Light_ModelFlag.LightOptionalParam == 1) || (Light_TimeParam.StepValue != 0))
-  {          
-    *(pHsl_status+6) = Light_HslStatus.RemainingTime;
-    *pLength = 7;
+    *pLength = 13;
     Light_ModelFlag.LightOptionalParam = 0;     
   }
   else
   {            
+    *(pHsl_status) = Light_HslStatus.PresentHslLightness16 ; 
+    *(pHsl_status+1) = Light_HslStatus.PresentHslLightness16 >> 8;
+    *(pHsl_status+2) = Light_HslStatus.PresentHslHueLightness16;
+    *(pHsl_status+3) = Light_HslStatus.PresentHslHueLightness16 >> 8;
+    *(pHsl_status+4) = Light_HslStatus.PresentHslSaturation16;
+    *(pHsl_status+5) = Light_HslStatus.PresentHslSaturation16 >> 8;
+    
     *pLength = 6;         
   }
   
@@ -1196,8 +1156,8 @@ MOBLE_RESULT Light_HslHue_Set(const MOBLEUINT8* pHslHue_param, MOBLEUINT32 lengt
   Light_HslParam.HslHueLightness16 |= (MOBLEUINT16)pHslHue_param[0];
   
   Light_HslParam.Hsl_TID = pHslHue_param[2];
-  
-  if(length > 3U)
+  Light_HslHue_RangeBinding(&Light_HslParam);
+  if((length > 3U) && (pHslHue_param[3] !=0))
   {
     Light_HslParam.Hsl_TransitionTime = pHslHue_param[3];
     Light_HslParam.Hsl_Delay = pHslHue_param[4]; 
@@ -1225,8 +1185,8 @@ MOBLE_RESULT Light_HslHue_Set(const MOBLEUINT8* pHslHue_param, MOBLEUINT32 lengt
   (LightAppli_cb.Light_HslHue_Set_cb)(&Light_HslStatus , OptionalValid);
   
 #ifdef ENABLE_MODEL_BINDING   
-  /* Hsl Hue binding with Generic Level */
-  Light_HslHue_GenericLevelBinding(&Light_HslParam);
+   /* Light Hsl Hue  binding with Generic level */
+   Light_Hsl_Hue_Binding();
 #endif    
   
   return MOBLE_RESULT_SUCCESS;
@@ -1246,16 +1206,9 @@ MOBLE_RESULT Light_HslHue_Status(MOBLEUINT8* pHslHue_status, MOBLEUINT32 *pLengt
   Target HSL Hue          2B The target value of the Light HSL Hue state.
   Remaining Time          1B The remaining time value for transition of state.
   */
-  MOBLEUINT8 Light_GetBuff[6];
   
   TRACE_M(TF_LIGHT,"Light_HslHue_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#826E! \n\r");
-  
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightHslHue_cb)(Light_GetBuff);
-  
-  Light_HslStatus.PresentHslHueLightness16 = Light_GetBuff[1] << 8;
-  Light_HslStatus.PresentHslHueLightness16 |= Light_GetBuff[0];
   
   *(pHslHue_status) = Light_HslStatus.PresentHslHueLightness16;
   *(pHslHue_status+1) = Light_HslStatus.PresentHslHueLightness16 >> 8;
@@ -1301,8 +1254,8 @@ MOBLE_RESULT Light_HslSaturation_Set(const MOBLEUINT8* pHslSaturation_param, MOB
   Light_HslParam.HslSaturation16 |= (MOBLEUINT16)pHslSaturation_param[0];
   
   Light_HslParam.Hsl_TID = pHslSaturation_param[2];
-  
-  if(length > 3U)
+  Light_HslSaturation_RangeBinding(&Light_HslParam);
+  if((length > 3U) && (pHslSaturation_param[3] != 0))
   {
     Light_HslParam.Hsl_TransitionTime = pHslSaturation_param[3];
     Light_HslParam.Hsl_Delay = pHslSaturation_param[4];
@@ -1331,8 +1284,8 @@ MOBLE_RESULT Light_HslSaturation_Set(const MOBLEUINT8* pHslSaturation_param, MOB
   (LightAppli_cb.Light_HslSaturation_Set_cb)(&Light_HslStatus , OptionalValid);
   
 #ifdef ENABLE_MODEL_BINDING   
-  /* Light Hsl Saturation binding with Generic Level */
-  Light_HslSaturation_GenericLevelBinding(&Light_HslParam);
+  /* Light Hsl Saturation binding with Generic level model*/
+  Light_Hsl_Saturation_Binding();
 #endif    
   
   return MOBLE_RESULT_SUCCESS;
@@ -1352,16 +1305,9 @@ MOBLE_RESULT Light_HslSaturation_Status(MOBLEUINT8* pHslSaturation_status, MOBLE
   Target HSL Saturation          2B The target value of the Light HSL Hue state.
   Remaining Time          1B The remaining time value for transition of state.
   */
-  MOBLEUINT8 Light_GetBuff[6];
   
   TRACE_M(TF_LIGHT,"Light_HslSaturation_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8272! \n\r");
-  
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightHslSaturation_cb)(Light_GetBuff);
-  
-  Light_HslStatus.PresentHslSaturation16 = Light_GetBuff[1] << 8;
-  Light_HslStatus.PresentHslSaturation16 |= Light_GetBuff[0];
   
   *(pHslSaturation_status) = Light_HslStatus.PresentHslSaturation16;
   *(pHslSaturation_status+1) = Light_HslStatus.PresentHslSaturation16 >> 8;
@@ -1430,22 +1376,17 @@ MOBLE_RESULT Light_HslDefault_Status(MOBLEUINT8* pHslDefault_status, MOBLEUINT32
   HSL Hue                 2B The target value of the Light HSL Hue state.
   HSL Saturation          2B The target value of the Light HSL Saturation state.
   */
-  MOBLEUINT8 Light_GetBuff[6];
   
   TRACE_M(TF_LIGHT,"Light_HslDefault_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#827B! \n\r");
   
-  /* Function call back to get the values from application*/
-  (Appli_Light_GetStatus_cb.GetLightHslDefault_cb)(Light_GetBuff);
+  *pHslDefault_status = Light_HslStatus.PresentHslLightness16;
+  *(pHslDefault_status+1) = Light_HslStatus.PresentHslLightness16 >> 8;
+  *(pHslDefault_status+2) = Light_HslStatus.PresentHslHueLightness16;
+  *(pHslDefault_status+3) = Light_HslStatus.PresentHslHueLightness16 >> 8;
+  *(pHslDefault_status+4) = Light_HslStatus.PresentHslSaturation16;
+  *(pHslDefault_status+5) = Light_HslStatus.PresentHslSaturation16 >> 8;
   
-  Light_HslStatus.PresentHslLightness16 = Light_GetBuff[1] << 8;
-  Light_HslStatus.PresentHslLightness16 |= Light_GetBuff[0];
-  Light_HslStatus.PresentHslHueLightness16 = Light_GetBuff[3] << 8;
-  Light_HslStatus.PresentHslHueLightness16 |= Light_GetBuff[2];
-  Light_HslStatus.PresentHslSaturation16 = Light_GetBuff[5] << 8;
-  Light_HslStatus.PresentHslSaturation16 |= Light_GetBuff[4];
-  
-  memcpy(pHslDefault_status , Light_GetBuff, 6); 
   *pLength = 6; 
   
   return MOBLE_RESULT_SUCCESS;
@@ -1508,6 +1449,17 @@ MOBLE_RESULT Light_HslRange_Status(MOBLEUINT8* pHslRange_status, MOBLEUINT32 *pL
   TRACE_M(TF_SERIAL_CTRL,"#827D! \n\r");
   
   /* Function call back to get the values from application*/   
+  *pHslRange_status = Light_HslRangeParam.Status_Code;  
+  *(pHslRange_status+1) = Light_HslRangeParam.HslHueMinRange16;
+  *(pHslRange_status+2) = Light_HslRangeParam.HslHueMinRange16 >> 8;
+  *(pHslRange_status+3) = Light_HslRangeParam.HslHueMaxRange16;
+  *(pHslRange_status+4) = Light_HslRangeParam.HslHueMaxRange16 >> 8;
+  *(pHslRange_status+5) = Light_HslRangeParam.HslMinSaturation16;
+  *(pHslRange_status+6) = Light_HslRangeParam.HslMinSaturation16 >> 8;
+  *(pHslRange_status+7) = Light_HslRangeParam.HslMaxSaturation16;
+  *(pHslRange_status+8) = Light_HslRangeParam.HslMaxSaturation16 >> 8;
+  
+  *pLength = 9;
   
   return MOBLE_RESULT_SUCCESS;
 }
@@ -1723,6 +1675,14 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
                                                  )
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLE_ADDRESS publishAddress;
+  MOBLEUINT8 elementNumber;
+  MOBLEUINT8 modelStateChangeFlag = MOBLE_FALSE;  
+  MOBLE_ADDRESS my_Address;  
+  
+  Model_Rx_Opcode = opcode;
+  my_Address = BLEMesh_GetAddress();
+  Dst_Peer = dst_peer;
   
   TRACE_M(TF_LIGHT,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X,response= %.2X \r\n ",dst_peer, peer_addr, opcode,response);
   
@@ -1741,6 +1701,8 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
         if(!MOBLE_FAILED(result = Chk_TidValidity(peer_addr,dst_peer,pRxData[2])))
         {
           Light_Lightness_Set(pRxData, dataLength);
+          Model_ID = (MOBLEUINT16)LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
+          modelStateChangeFlag = MOBLE_TRUE;          
         }
       }
       break;
@@ -1755,6 +1717,8 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
         if(!MOBLE_FAILED(result = Chk_TidValidity(peer_addr,dst_peer,pRxData[2])))
         {
           Light_Lightness_Linear_Set(pRxData, dataLength);
+          Model_ID = (MOBLEUINT16)LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
+          modelStateChangeFlag = MOBLE_TRUE;
         }
       }
       break;
@@ -1824,6 +1788,8 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
         if(!MOBLE_FAILED(result = Chk_TidValidity(peer_addr,dst_peer,pRxData[6])))
         {
           Light_Ctl_Set(pRxData, dataLength);
+          Model_ID = (MOBLEUINT16)LIGHT_MODEL_SERVER_CTL_MODEL_ID;
+          modelStateChangeFlag = MOBLE_TRUE;    
         }        
       }        
       break;
@@ -1857,6 +1823,8 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
         if(!MOBLE_FAILED(result = Chk_TidValidity(peer_addr,dst_peer,pRxData[4])))
         {
           Light_CtlTemperature_Set(pRxData, dataLength);
+          Model_ID = (MOBLEUINT16)LIGHT_MODEL_SERVER_CTL_TEMPERATURE_MODEL_ID;
+          modelStateChangeFlag = MOBLE_TRUE;
         }
       }
       break;
@@ -1884,7 +1852,7 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   case LIGHT_CTL_DEFAULT_SET:
   case LIGHT_CTL_DEFAULT_SET_UNACK:
     { 
-      result = Chk_MultiParamValidityAllUnsigned(MIN_VALID_RANGE ,MAX_VALID_RANGE ,
+      result = Chk_MultiParamValidity(MIN_VALID_RANGE ,MAX_VALID_RANGE ,
                                                  MIN_CTL_TEMP_RANGE ,MAX_CTL_TEMP_RANGE ,
                                                   MIN_CTL_DELTA_VALUE ,MAX_CTL_DELTA_VALUE ,pRxData);
       
@@ -1910,6 +1878,8 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
         if(!MOBLE_FAILED(result = Chk_TidValidity(peer_addr,dst_peer,pRxData[6])))
         {
           Light_Hsl_Set(pRxData, dataLength);
+          Model_ID = (MOBLEUINT16)LIGHT_MODEL_SERVER_HSL_MODEL_ID;
+          modelStateChangeFlag = MOBLE_TRUE;
         }
       }
       break;
@@ -1948,6 +1918,9 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
         if(!MOBLE_FAILED(result = Chk_TidValidity(peer_addr,dst_peer,pRxData[2])))
         {
           Light_HslHue_Set(pRxData, dataLength);
+          Model_ID = (MOBLEUINT16)LIGHT_MODEL_SERVER_HSL_HUE_MODEL_ID;
+          modelStateChangeFlag = MOBLE_TRUE;
+          
         }
       }
       break;
@@ -1970,7 +1943,12 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   case LIGHT_HSL_RANGE_SET:                     
   case LIGHT_HSL_RANGE_SET_UNACK:
     {
+      result = Chk_HslRangeValidity(pRxData ,MIN_HUE_RANGE,MAX_HUE_RANGE,
+                                  MIN_SATURATION_RANGE,MAX_SATURATION_RANGE);
+      if(result == MOBLE_RESULT_SUCCESS)
+      {
       Light_HslRange_Set(pRxData , dataLength);
+      }
       break;
     }
 #endif
@@ -1983,6 +1961,8 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       if(!MOBLE_FAILED(result = Chk_TidValidity(peer_addr,dst_peer,pRxData[2])))
       {
         Light_HslSaturation_Set(pRxData, dataLength);
+        Model_ID = (MOBLEUINT16)LIGHT_MODEL_SERVER_HSL_SATURATION_MODEL_ID;
+          modelStateChangeFlag = MOBLE_TRUE;
       }
       break;
     }
@@ -1998,9 +1978,9 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     }    
   } /* Switch ends */
   
-  if((result == MOBLE_RESULT_SUCCESS) && (response == MOBLE_TRUE))
+  if((result == MOBLE_RESULT_SUCCESS) && (response == MOBLE_TRUE) && (ADDRESS_IS_UNICAST(dst_peer)))
   {
-    Model_SendResponse(peer_addr, dst_peer,opcode,pRxData, dataLength);                                           
+    Model_SendResponse(peer_addr, my_Address,opcode,pRxData, dataLength);                                           
   }
   
   /*
@@ -2009,6 +1989,19 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
      for publication is full filled as per specification then the status will be 
      published.
   */
+    elementNumber = BLE_GetElementNumber();
+    publishAddress = BLEMesh_GetPublishAddress(elementNumber,Model_ID);
+  
+  if((result == MOBLE_RESULT_SUCCESS) && (publishAddress != 0x0000) && (modelStateChangeFlag == MOBLE_TRUE)
+     && (ADDRESS_IS_UNICAST(dst_peer)))
+  {
+    Model_SendResponse(publishAddress,my_Address,opcode,pRxData,dataLength);
+    
+    modelStateChangeFlag = MOBLE_FALSE;  
+    
+    TRACE_I(TF_LIGHT,"Publishing state to the address  %.2X \r\n",publishAddress);
+  }
+
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -2359,10 +2352,11 @@ MOBLE_RESULT Light_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue)
     if(Light_TimeParam.StepValue == 0)
     {              
       Light_ModelFlag.LightTransitionFlag = LIGHT_TRANSITION_STOP;
-      Light_Trnsn_Cmplt = 1;
+      Light_ModelFlag.Light_Trnsn_Cmplt = 1;
+     
     }
     
- TRACE_M(TF_LIGHT,"Inside light lightness transmition time at %ld, Current state 0x%.2x ,target state 0x%.2x , Remaining Time 0x%.2x\n\r",
+ TRACE_M(TF_LIGHT,"Inside light lightness transition time at %ld, Current state 0x%.2x ,target state 0x%.2x , Remaining Time 0x%.2x\n\r",
             Clock_Time(),Light_TemporaryStatus.PresentParam_1,Light_TemporaryStatus.TargetParam_1,\
                                          Light_TemporaryStatus.RemainingTime);
     
@@ -2477,9 +2471,9 @@ MOBLE_RESULT Light_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue , MOBLEUI
     if(Light_TimeParam.StepValue <= 0)
     {
       Light_ModelFlag.LightTransitionFlag = LIGHT_TRANSITION_STOP;  
-      Light_Trnsn_Cmplt = 1;      
+      Light_ModelFlag.Light_Trnsn_Cmplt = 1;      
     }    
-    TRACE_M(TF_LIGHT,"Inside light transmition %ld,PV1 0x%.2x ,TV1 0x%.2x ,PV2 0x%.2x , TV2 0x%.2x,PV3 0x%.2x ,TV3 0x%.2x, RT 0x%.2x \n\r",
+    TRACE_M(TF_LIGHT,"Inside light transition %ld,PV1 0x%.2x ,TV1 0x%.2x ,PV2 0x%.2x , TV2 0x%.2x,PV3 0x%.2x ,TV3 0x%.2x, RT 0x%.2x \n\r",
             Clock_Time(),Light_TemporaryStatus.PresentParam_1,Light_TemporaryStatus.TargetParam_1, 
                 Light_TemporaryStatus.PresentParam_2,Light_TemporaryStatus.TargetParam_2,
                  Light_TemporaryStatus.PresentParam_3, Light_TemporaryStatus.TargetParam_3,
@@ -2490,6 +2484,43 @@ MOBLE_RESULT Light_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue , MOBLEUI
   return MOBLE_RESULT_SUCCESS;         
 } 
 
+/**
+* @brief  Function to publish the status of the node to the publish address.
+*         The Publishing of all the model states will depend on the model message received 
+          and supporting binding with other models.
+* @param  void
+* @param  void
+*/ 
+void Model_BindingPublishStatus(void)
+{
+  MOBLE_ADDRESS publishAddress;
+  MOBLEUINT8 elementNumber;
+  MOBLEUINT16 opcode;
+  MOBLEUINT8 const pRxData[12] = {0};
+  MOBLEUINT32 dataLength = 0;
+  MOBLEUINT8 count = 0;
+  MOBLE_ADDRESS my_Address;
+
+   if(Light_PublishOpcodeList.BindedStateCount > 0)
+   {
+      for(count = 0;count<Light_PublishOpcodeList.BindedStateCount;count++) 
+      {
+        my_Address = BLEMesh_GetAddress();
+        elementNumber = BLE_GetElementNumber();       
+        publishAddress = BLEMesh_GetPublishAddress(elementNumber, Light_PublishOpcodeList.Model_ID[count]);
+        opcode = (MOBLEUINT16)Light_PublishOpcodeList.PublishStateOpcode[count];
+        
+        if((publishAddress != 0x0000 ) && (ADDRESS_IS_UNICAST(Dst_Peer)))
+        {
+          Model_SendResponse(publishAddress,my_Address,opcode,pRxData,dataLength);
+          TRACE_I(TF_LIGHT,"Binded publishing address %.2x opcode %.2x model id %.2x \r\n",
+                  publishAddress,Light_PublishOpcodeList.PublishStateOpcode[count],Light_PublishOpcodeList.Model_ID[count]);
+        }       
+      }
+      Light_PublishOpcodeList.BindedStateCount = 0;
+   }
+   
+}
 
 /**
 * @brief  Light_GetStepValue:Function calculates parameters for transition time 
@@ -2530,7 +2561,11 @@ void Light_GetStepValue(MOBLEUINT8 stepParam)
 */ 
 void Lighting_Process(void)
 { 
-  
+  MOBLE_ADDRESS publishAddress;
+  MOBLE_ADDRESS my_Address;
+  MOBLEUINT8 elementNumber;
+  MOBLEUINT8 const pRxData[12] = {0};
+  MOBLEUINT32 dataLength = 0;
 #if defined ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS || defined ENABLE_LIGHT_MODEL_SERVER_CTL \
   || defined ENABLE_LIGHT_MODEL_SERVER_HSL
     
@@ -2540,24 +2575,35 @@ void Lighting_Process(void)
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
   if(Light_ModelFlag.LightTransitionFlag == LIGHT_LIGHTNESS_TRANSITION_START)
   {  
+     /* Fetching the state value from the applcation layer to middle layer */
     (Appli_Light_GetStatus_cb.GetLightLightness_cb)(Light_GetBuff);     
+    /* Transition function called to change the state in transition */
     Light_TransitionBehaviourSingle_Param(Light_GetBuff);
     if(LightUpdateFlag == VALUE_UPDATE_SET)
     {
+      /* updating the state value after the each transition step complete */
     LightLightnessStateUpdate_Process();
+      /*Application Callback */
     (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus,0);  
+      /* Binding of actual light lightness with other models */
+      Light_Lightness_Binding(BINDING_LIGHT_LIGHTNESS_ACTUAL_SET , 0);
       LightUpdateFlag = VALUE_UPDATE_RESET;
     }
   }  
   if(Light_ModelFlag.LightTransitionFlag == LIGHT_LINEAR_TRANSITION_START)
   {
-    
+    /* Fetching the state value from the applcation layer to middle layer */
     (Appli_Light_GetStatus_cb.GetLightLightnessLinear_cb)(Light_GetBuff); 
+    /* Transition function called to change the state in transition */
     Light_TransitionBehaviourSingle_Param(Light_GetBuff);
     if(LightUpdateFlag == VALUE_UPDATE_SET)
     {
+      /* updating the state value after the each transition step complete */
     LightLinearStateUpdate_Process();
+      /*Application Callback */
     (LightAppli_cb.Lightness_Linear_Set_cb)(&Light_LightnessStatus,0);
+      /* Binding of data of light lightness with light linear */
+      Light_Lightness_Binding(BINDING_LIGHT_LIGHTNESS_LINEAR_SET , 0);
       LightUpdateFlag = VALUE_UPDATE_RESET;
     }
   }
@@ -2571,6 +2617,8 @@ void Lighting_Process(void)
     {
     LightCtlStateUpdate_Process();
     (LightAppli_cb.Light_Ctl_Set_cb)(&Light_CtlStatus , 0);
+      /* binding of light ctl with actual lightness */
+      Light_Ctl_LightActual_Binding(BINDING_LIGHT_CTL_SET);
       LightUpdateFlag = VALUE_UPDATE_RESET;
     }
   }
@@ -2583,6 +2631,8 @@ void Lighting_Process(void)
     {
       LightCtlTemperatureStateUpdate_Process();
     (LightAppli_cb.Light_CtlTemperature_Set_cb)(&Light_CtlStatus , 0);
+      /* Binding of data Ctl Temperature  with Generic Level */
+      Light_CtlTemperature_Binding();
       LightUpdateFlag = VALUE_UPDATE_RESET;
     }
   }
@@ -2597,6 +2647,8 @@ void Lighting_Process(void)
     {
     LightHslStateUpdate_Process();
     (LightAppli_cb.Light_Hsl_Set_cb)(&Light_HslStatus , 0);
+      /* Light Hsl Lightness binding with lightness Actual */
+      Light_HslLightness_LightnessActualBinding();
       LightUpdateFlag = VALUE_UPDATE_RESET;
     }
   }
@@ -2609,6 +2661,8 @@ void Lighting_Process(void)
     {
     LightHslHueStateUpdate_Process();
     (LightAppli_cb.Light_HslHue_Set_cb)(&Light_HslStatus , 0);
+      /* Light Hsl Hue  binding with Generic level */
+      Light_Hsl_Hue_Binding();
       LightUpdateFlag = VALUE_UPDATE_RESET;
     }
   }
@@ -2621,9 +2675,26 @@ void Lighting_Process(void)
     {
     LightHslSaturationStateUpdate_Process();
     (LightAppli_cb.Light_HslSaturation_Set_cb)(&Light_HslStatus , 0);
+      /* Light Hsl Saturation binding with Generic level model*/
+      Light_Hsl_Saturation_Binding();
       LightUpdateFlag = VALUE_UPDATE_RESET;
     }
   }
+#endif  
+  
+  if(Light_ModelFlag.Light_Trnsn_Cmplt == MOBLE_TRUE)
+  {         
+    elementNumber = BLE_GetElementNumber();
+    my_Address = BLEMesh_GetAddress();
+    publishAddress = BLEMesh_GetPublishAddress(elementNumber,Model_ID);
+    if(publishAddress != 0x00)
+    {
+      Model_SendResponse(publishAddress,my_Address,Model_Rx_Opcode,pRxData,dataLength);
+    }
+    Light_ModelFlag.Light_Trnsn_Cmplt = MOBLE_FALSE;
+  }
+#ifdef  ENABLE_MODEL_BINDING 
+    Model_BindingPublishStatus();
 #endif  
 }
 
@@ -2636,13 +2707,28 @@ void Lighting_Process(void)
 */
 MOBLE_RESULT LightLightnessStateUpdate_Process(void)
 {
-  Light_LightnessStatus.PresentValue16 = Light_TemporaryStatus.PresentParam_1;
-  Light_LightnessStatus.TargetValue16 = Light_TemporaryStatus.TargetParam_1;;
+  Light_LightnessStatus.LightnessPresentValue16 = Light_TemporaryStatus.PresentParam_1;
+  Light_LightnessStatus.TargetValue16 = Light_TemporaryStatus.TargetParam_1;
   Light_LightnessStatus.RemainingTime = Light_TemporaryStatus.RemainingTime ;
   return MOBLE_RESULT_SUCCESS;
 }
 
+/**
+* @brief Light_LC_LightnessStateUpdate_Process:Function to update the parametes of light
+*        lightness model in application file from Temporary parameter in model file.
+* @param void
+* return MOBLE_RESULT.
+*/
+MOBLE_RESULT Light_LC_LightnessStateUpdate_Process(Light_LC_TemporaryStatus_t *lc_Temp_Value)
+{
+  Light_LightnessStatus.LightnessPresentValue16 = lc_Temp_Value->PresentParam_1;
+  Light_LightnessStatus.TargetValue16 = lc_Temp_Value->TargetParam_1;
+  Light_LightnessStatus.RemainingTime = lc_Temp_Value->RemainingTime;
+  
+  (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus,0); 
 
+  return MOBLE_RESULT_SUCCESS;
+}
 /**
 * @brief LightLinearStateUpdate_Process:function to update the parametes of light 
 *        lightness linear model in application file from Temporary parameter in model file.
@@ -2651,8 +2737,8 @@ MOBLE_RESULT LightLightnessStateUpdate_Process(void)
 */
 MOBLE_RESULT LightLinearStateUpdate_Process(void)
 {
-  Light_LightnessStatus.PresentValue16 = Light_TemporaryStatus.PresentParam_1;
-  Light_LightnessStatus.TargetValue16 =  Light_TemporaryStatus.TargetParam_1;;
+  Light_LightnessStatus.LinearPresentValue16 = Light_TemporaryStatus.PresentParam_1;
+  Light_LightnessStatus.TargetValue16 =  Light_TemporaryStatus.TargetParam_1;
   Light_LightnessStatus.RemainingTime = Light_TemporaryStatus.RemainingTime ;
   return MOBLE_RESULT_SUCCESS;
 }
@@ -2734,142 +2820,248 @@ MOBLE_RESULT LightHslSaturationStateUpdate_Process(void)
 
 
 /**
-* @brief Light_BindingCtlToLightness_Actual:Function for binding the data of actual 
+* @brief Light_Ctl_LightActual_Binding:Function for binding the data of actual 
 *        lightness and light Ctl set.
 * @param bindingFlag: value pass to function from light lightness
 * return void
 */
-void Light_BindingCtlToLightness_Actual(MOBLEUINT8 bindingFlag)
+void Light_Ctl_LightActual_Binding(MOBLEUINT8 bindingFlag)
 { 
-  if(bindingFlag == BINDING_LIGHT_CTL_LIGHTNESS_SET)
+  if(bindingFlag == BINDING_LIGHT_CTL_SET)
   {
-    Light_LightnessStatus.PresentValue16 = Light_CtlParam.CTL_Lightness;   
-    (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus, 0);   
+    Light_LightnessStatus.LightnessPresentValue16 = Light_CtlParam.CTL_Lightness;         
+    Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_LIGHTNESS_SET_UNACK;
+    Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
+    Light_PublishOpcodeList.BindedStateCount++;
+    
+    TRACE_M(TF_LIGHT, "Light_Ctl_LightActual_Binding Function - Present Light lightness value 0x%.2x \r\n" 
+         , Light_LightnessStatus.LightnessPresentValue16);
   }
   if(bindingFlag == BINDING_LIGHT_LIGHTNESS_ACTUAL_SET)
   {
     Light_CtlStatus.PresentCtlLightness16 = Light_LightnessParam.TargetLightnessStatus;   
-    (LightAppli_cb.Light_Ctl_Set_cb)(&Light_CtlStatus, 0);  
-  }
-}
-
-
-/**
-* @brief  LightActual_GenericOnOffBinding: Reverse Data binding b/w Generic On Off and 
-*         light lightness Actual. this function will set the On Off status of
-*         Light when the light lightness Actual is set.
-* @param lightActual: used to select the binding and reverse binding 
-* return void.
-*/
-void LightActual_GenericOnOffBinding(Light_LightnessParam_t* lightActual)
-{
-  /*
-  6.1.2.2.3 - Binding of actual light lightness with generic on off,
-  As actual lightness will set which changes the on off state in 
-  generic model
-  */
-  Generic_OnOffStatus_t bGeneric_OnOffParam;
-  
-  if(lightActual ->TargetLightnessStatus == 0x00)
-  {
-    bGeneric_OnOffParam.Present_OnOff_State = 0x00;
-  }
-  else
-  {
-    bGeneric_OnOffParam.Present_OnOff_State = 0x01;
+    Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_CTL_SET_UNACK;
+    Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_CTL_MODEL_ID;
+    Light_PublishOpcodeList.BindedStateCount++;    
+    
+    TRACE_M(TF_LIGHT, "Light Lightness set Function - Present CTL lightness value 0x%.2x \r\n" 
+         , Light_CtlStatus.PresentCtlLightness16);
   }
   
-  TRACE_M(TF_LIGHT, "LightActual_GenericOnOffBinding Function - Present OnOff value 0x%.2x \r\n" 
-         , bGeneric_OnOffParam.Present_OnOff_State);    
-  (GenericAppli_cb.OnOff_Set_cb)(&bGeneric_OnOffParam, 0); 
- 
+  Light_Lightness_Binding(bindingFlag , 0);
+  
+   
 }
 
-
 /**
-* @brief  LightActual_GenericLevelBinding: Data binding b/w Generic Level and 
-*         light lightness Actual. this function will set the actual light lightness
-*         value at the time of  generic Level set. 
-* @param lightActual: Pointer to the data which needs to be checked.
-* return void.
-*/
-void LightActual_GenericLevelBinding(Light_LightnessParam_t* lightActual)
-{
-  /*
-  6.1.2.2.2 - Binding of actual light lightness with generic level
-  As Actual lightness changes, the generic level value will
-  change.
-  */
-  MOBLE_ADDRESS publishAddress;
-  MOBLEUINT8 elementNumber;
-  MOBLEUINT16 opcode;
-  Generic_LevelStatus_t bGeneric_LevelParam ;   
-  
-  elementNumber = BLE_GetElementNumber();
-  publishAddress = BLEMesh_GetPublishAddress(elementNumber, GENERIC_MODEL_SERVER_LEVEL_MODEL_ID);
-  
-  bGeneric_LevelParam.Present_Level16 = lightActual->TargetLightnessStatus - 32768;  
-  (GenericAppli_cb.Level_Set_cb)(&bGeneric_LevelParam, 0); 
-   opcode = GENERIC_LEVEL_SET_ACK;
-  Model_SendResponse(publishAddress, 0,opcode, NULL,0);
- 
-}
-
-
-/**
-* @brief Light_Linear_ActualImplicitBinding:Function for binding the data of actual 
+* @brief Light_Lightness_Binding:Function for binding the data of actual 
 lightness and Linear Lightness is implicit binding with  generic on off state.              
 * @param bindingFlag: flag value passed in function 
 * @param length:length of data
 * return void
 */
-void Light_Linear_ActualImplicitBinding(MOBLEUINT8 bindingFlag ,MOBLEUINT32 length)
+void Light_Lightness_Linear_Binding(MOBLEUINT8 bindingFlag ,MOBLEUINT32 length)
+{
+  if(bindingFlag == BINDING_LIGHT_LIGHTNESS_LINEAR_SET)
+  {
+    Light_Linear_ActualBinding(length);
+    Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_LIGHTNESS_SET;
+    Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;    
+    Light_PublishOpcodeList.BindedStateCount++;
+  }
+  Light_Lightness_Binding(bindingFlag , 0);
+}
+
+/**
+* @brief Light_Lightness_Binding:Function for binding the data of actual 
+lightness and Linear Lightness is implicit binding with  generic on off state.              
+* @param bindingFlag: flag value passed in function 
+* @param length:length of data
+* return void
+*/
+void Light_Lightness_Binding(MOBLEUINT8 bindingFlag ,MOBLEUINT32 length)
 { 
   /*
   6.1.2.1.1 - actual lightness = 655354 * squareroot(linear lightness/ 655354).
   */
-  MOBLE_ADDRESS publishAddress;
-  MOBLEUINT8 elementNumber;
-  MOBLEUINT16 opcode;
-  Light_LightnessParam_t bLightnessActual;
-  
-  elementNumber = BLE_GetElementNumber();
-  publishAddress = BLEMesh_GetPublishAddress(elementNumber, LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID);
-  
-  
-  if(bindingFlag == BINDING_LIGHT_LIGHTNESS_LINEAR_SET)
+ 
+  if(bindingFlag != BINDING_LIGHT_LIGHTNESS_LINEAR_SET)
   {
-    
-    bLightnessActual.TargetLightnessStatus = Light_Linear_ActualBinding(length);
+    Light_Actual_LinearBinding(); 
+    Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_LIGHTNESS_SET;
+    Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;    
+    Light_PublishOpcodeList.BindedStateCount++;
+  }
     /* Implicit binding of linear lightness with generic on off.
     linear lightnes set -> actual lightness set -> generic on off set.
     As linear lightness changes, it changes the value of actual lightness
     which in turn changes the state of generic on off state.
     */
-    LightActual_GenericOnOffBinding(&bLightnessActual);
+#ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF  
+    /* Binding of data b/w light lightness actual and Generic on off */
+  if(bindingFlag != BINDING_GENERIC_ON_OFF_SET)
+  {
+    LightActual_GenericOnOffBinding(&Light_LightnessStatus);
+    Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= GENERIC_ON_OFF_SET_UNACK;
+    Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = GENERIC_MODEL_SERVER_ONOFF_MODEL_ID;
+    Light_PublishOpcodeList.BindedStateCount++;
+  }
+#endif 
+  
     /* Implicit binding of linear lightness with generic level.
     linear lightnes set -> actual lightness set -> generic Level set.
     As linear lightness changes, it changes the value of actual lightness
     which in turn changes the state of generic level state.
     */
-    LightActual_GenericLevelBinding(&bLightnessActual);
-   
-    opcode = LIGHT_LIGHTNESS_SET;
-  }
-  if(bindingFlag == BINDING_LIGHT_LIGHTNESS_ACTUAL_SET)
+#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL  
+  /* Binding of data b/w light lightness actual and Generic Level */
+  if(bindingFlag != BINDING_GENERIC_LEVEL_SET)
   {
-    Light_Actual_LinearBinding();
-    opcode = LIGHT_LIGHTNESS_LINEAR_SET;
+    LightActual_GenericLevelBinding(&Light_LightnessStatus);
+    Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= GENERIC_LEVEL_SET_UNACK;
+    Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = GENERIC_MODEL_SERVER_LEVEL_MODEL_ID;
+    Light_PublishOpcodeList.BindedStateCount++;
   }
+#endif   
+     
+#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL  
+  /* Binding of Light Ctl with Actual Light Lightness */
+  if(bindingFlag != BINDING_LIGHT_CTL_SET)
+  {
+    Light_Ctl_LightActual_Binding(BINDING_LIGHT_LIGHTNESS_ACTUAL_SET);
+  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_CTL_SET_UNACK;
+  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_CTL_MODEL_ID;
+  Light_PublishOpcodeList.BindedStateCount++;
+  }
+#endif  
   
-  Model_SendResponse(publishAddress, 0,opcode, NULL,0);
-  
-  TRACE_M(TF_LIGHT,"Light_Linear_ActualImplicitBinding - Actual Lightness value 0x%.2x , Linear Lightness value 0x%.2x \r\n " , 
-                                                  Light_LightnessStatus.PresentValue16,
-                                                  Light_LightnessStatus.PresentValue16  ); 
-  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL  
+  /* Binding of data b/W Actual Lightness and Hsl Lightness.*/
+  if(bindingFlag != BINDING_LIGHT_HSL_SET)
+  {
+    Light_ActualLightness_HslLightnessBinding(&Light_LightnessStatus);
+  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_HSL_SET_UNACK;
+  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_HSL_MODEL_ID;
+  Light_PublishOpcodeList.BindedStateCount++;
+  }
+#endif     
+   
+  TRACE_M(TF_LIGHT,"Light_Lightness_Binding - Actual Lightness value 0x%.2x , Linear Lightness value 0x%.2x \r\n " , 
+                                                  Light_LightnessStatus.LightnessPresentValue16,
+                                                  Light_LightnessStatus.LinearPresentValue16  ); 
+ 
 }
 
+/**
+* @brief  GenericOnOff_LightActualBinding: Data binding b/w Generic On Off and 
+*         light lightness Actual. this function will set the actual light lightness
+*         value at the time of  generic on off set. 
+* @param onOff_param: Pointer to the data which needs to be checked.
+* return void.
+*/
+void GenericOnOff_LightActualBinding(Generic_OnOffStatus_t* onOff_param)
+{
+  /*
+  6.1.2.2.3 - Binding of actual light lightness with Generic on off.
+  As generic on off state changes, the actual lightness value will
+  change.
+  */
+  /* condition is depends on the generic on off state */  
+  if(onOff_param->Present_OnOff_State == 0x00)
+  {
+    Light_LightnessStatus.LightnessPresentValue16 = 0x00;    
+  }
+  else if((onOff_param->Present_OnOff_State == 0x01) && 
+          (Light_LightnessDefaultParam.LightnessDefaultStatus == 0x00))
+  {
+    Light_LightnessStatus.LightnessPresentValue16 = Light_LightnessStatus.LightnessLastStatus;
+  }
+  else if((onOff_param->Present_OnOff_State == 0x01) && 
+          (Light_LightnessDefaultParam.LightnessDefaultStatus != 0x000))
+  {
+    Light_LightnessStatus.LightnessPresentValue16 = Light_LightnessDefaultParam.LightnessDefaultStatus;
+  }
+  else
+  {
+    /* no condition to Execute */
+  }
+  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_LIGHTNESS_SET_UNACK;
+  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
+  Light_PublishOpcodeList.BindedStateCount++;
+  
+  /*As Generic on off changes, it will chnage the value of the light linear due to change in the light lightness 
+    value due to binding of the states.
+ */
+  
+  Light_Lightness_Binding(BINDING_GENERIC_ON_OFF_SET,0);
+
+ 
+}
+
+/*
+* @Brief  GenericLevel_LightBinding: Data binding b/w Generic Level and 
+*         light lightness Actual. this function will set the actual light lightness
+*         value at the time of  generic Level set. 
+* @param gLevel_param: Pointer to the data which needs to be checked.
+* return void.
+*/
+void GenericLevel_LightBinding(Generic_LevelStatus_t* gLevel_param , MOBLEUINT8 flag)
+{ 
+  /*
+  6.1.2.2.2 - Binding of actual light lightness with generic level
+  As generic Level changes, the actual lightness value will
+  change.
+  */
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS    
+  Light_PublishOpcodeList.BindedStateCount = 0;
+  Light_LightnessStatus.LightnessPresentValue16 = gLevel_param->Present_Level16 + 32768;   
+  
+  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_LIGHTNESS_SET_UNACK;
+  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
+  Light_PublishOpcodeList.BindedStateCount++;
+  
+  /*As Generic Level changes, it will change the value of the light linear due to change in the light lightness 
+    value due to binding of the states.
+    */
+    Light_Actual_LinearBinding();
+  
+  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_LIGHTNESS_LINEAR_SET_UNACK;
+  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
+  Light_PublishOpcodeList.BindedStateCount++;
+  
+#endif  
+  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE
+  if(flag != BINDING_LIGHT_CTL_TEMP_SET)
+  {
+    GenericLevel_CtlTempBinding(gLevel_param);
+    Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_CTL_TEMPERATURE_SET_UNACK;
+    Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_CTL_TEMPERATURE_MODEL_ID;
+    Light_PublishOpcodeList.BindedStateCount++;
+  }
+#endif  
+  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE  
+  if(flag != BINDIG_LIGHT_HSL_HUE_SET)
+  {
+    GenericLevel_HslHueBinding(gLevel_param);
+    Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_HSL_HUE_SET_UNACK;
+    Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_HSL_HUE_MODEL_ID;
+    Light_PublishOpcodeList.BindedStateCount++;
+  }
+#endif  
+  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION  
+  if(flag != BINDIG_LIGHT_HSL_SATURATION_SET)
+  {
+    GenericLevel_HslSaturationBinding(gLevel_param);
+    Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_HSL_SATURATION_SET_UNACK;
+    Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_HSL_SATURATION_MODEL_ID;
+    Light_PublishOpcodeList.BindedStateCount++;
+  }
+#endif    
+  
+}
 
 /**
 * @brief Light_Actual_LinearBinding:Light_Actual_LinearBinding:Function used for 
@@ -2882,18 +3074,11 @@ MOBLEUINT16 Light_Actual_LinearBinding(void)
 {
   
   float productValue;
-  MOBLEUINT8 Light_GetBuff[2];
   
-  (Appli_Light_GetStatus_cb.GetLightLightness_cb)(Light_GetBuff);
-  
-  Light_LightnessStatus.PresentValue16 = Light_GetBuff[1] << 8;
-  Light_LightnessStatus.PresentValue16 |= Light_GetBuff[0];
-  
-  productValue = pow((((float)Light_LightnessStatus.PresentValue16)/65535) , 2);
-  Light_LightnessStatus.PresentValue16 = (MOBLEUINT16)(65535 * productValue);
+  productValue = pow((((float)Light_LightnessStatus.LightnessPresentValue16)/65535) , 2);
+  Light_LightnessStatus.LinearPresentValue16 = (MOBLEUINT16)(65535 * productValue);
  
-  (LightAppli_cb.Lightness_Linear_Set_cb)(&Light_LightnessStatus, 0);
-  return Light_LightnessStatus.PresentValue16; 
+  return Light_LightnessStatus.LinearPresentValue16; 
 }
 
 
@@ -2902,6 +3087,7 @@ MOBLEUINT16 Light_Actual_LinearBinding(void)
 *        lightness and linear lightness. this function changes the value of Actual 
 *        lightness as Linear lightness value is set.
 * @param length: length of the data 
+* @param binding_Flag: flag for the binding
 * return MOBLEUINT16
 */
 MOBLEUINT16 Light_Linear_ActualBinding(MOBLEUINT32 length)
@@ -2912,17 +3098,16 @@ MOBLEUINT16 Light_Linear_ActualBinding(MOBLEUINT32 length)
   float productValue;
   if(length <= 3)
   {
-  productValue = sqrt((((float)Light_LightnessStatus.PresentValue16) / 65535));
-  Light_LightnessStatus.PresentValue16 = (MOBLEUINT16)(65535 * productValue);
-  (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus, 0);
-  return Light_LightnessStatus.PresentValue16;  
+    productValue = sqrt((((float)Light_LightnessStatus.LinearPresentValue16) / 65535));
+    Light_LightnessStatus.LightnessPresentValue16 = (MOBLEUINT16)(65535 * productValue);      
+    return Light_LightnessStatus.LightnessPresentValue16;  
+    
 }
   else
   {
     productValue = sqrt((((float)Light_LightnessStatus.TargetValue16) / 65535));
     Light_LightnessStatus.TargetValue16 = (MOBLEUINT16)(65535 * productValue);
     Light_TemporaryStatus.TargetParam_1 = Light_LightnessStatus.TargetValue16; 
-    (LightAppli_cb.Lightness_Set_cb)(&Light_LightnessStatus, 0);
     return Light_LightnessStatus.TargetValue16;  
   }
 }
@@ -2943,13 +3128,6 @@ void Light_Actual_RangeBinding(Light_LightnessParam_t* lightActual)
   actual lightness = range maximum if actual lighteness is greater than range max
   value.
   */
-  MOBLEUINT8 Light_GetBuff[5];
-  (Appli_Light_GetStatus_cb.GetLightLightnessRange_cb)(Light_GetBuff);
-  Light_LightnessRangeParam.MinRangeStatus = Light_GetBuff[2] << 8;
-  Light_LightnessRangeParam.MinRangeStatus |= Light_GetBuff[1];
-  Light_LightnessRangeParam.MaxRangeStatus = Light_GetBuff[4] << 8;
-  Light_LightnessRangeParam.MaxRangeStatus |= Light_GetBuff[3];
-  
   if((lightActual->TargetLightnessStatus < Light_LightnessRangeParam.MinRangeStatus)
      && (lightActual->TargetLightnessStatus != 0))
   {
@@ -2966,6 +3144,23 @@ void Light_Actual_RangeBinding(Light_LightnessParam_t* lightActual)
   }
 }
 
+/**
+* @brief Light_CtlTemperature_Binding: Function used for binding the data of 
+*        Ctl temperature with other models.
+* @param void 
+* return void
+*/
+void Light_CtlTemperature_Binding(void)
+{
+#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL  
+  Light_CtlTemp_GenericLevelBinding(&Light_CtlStatus);
+  
+  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= GENERIC_LEVEL_SET_UNACK;
+  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = GENERIC_MODEL_SERVER_LEVEL_MODEL_ID;
+  Light_PublishOpcodeList.BindedStateCount++;
+#endif  
+  
+}
 
 /**
 * @brief Light_CtlTemperature_TempRangeBinding: Function used for binding the data of 
@@ -2982,12 +3177,6 @@ void Light_CtlTemperature_TempRangeBinding(Light_CtlParam_t* ctlTemperature)
   actual lightness = range maximum if actual lighteness is greater than range max
   value.
   */
-  MOBLEUINT8 Light_GetBuff[5];
-  (Appli_Light_GetStatus_cb.GetLightCtlTempRange_cb)(Light_GetBuff);
-  CtlTemperatureRangeParam.MinRangeStatus = Light_GetBuff[2] << 8;
-  CtlTemperatureRangeParam.MinRangeStatus |= Light_GetBuff[1];
-  CtlTemperatureRangeParam.MaxRangeStatus = Light_GetBuff[4] << 8;
-  CtlTemperatureRangeParam.MaxRangeStatus |= Light_GetBuff[3];
   
   if(ctlTemperature->CTL_Temperature < CtlTemperatureRangeParam.MinRangeStatus)        
   {
@@ -3003,49 +3192,109 @@ void Light_CtlTemperature_TempRangeBinding(Light_CtlParam_t* ctlTemperature)
   }
 }
 
-
 /**
-* @brief  Light_CtlTemp_GenericLevelBinding: Data binding b/w Generic Level and 
-*         light Ctl temperature . this function will set the generic Level
-*         value at the time of  Ctl temperature value set. 
-* @param bCtlTempParam: Pointer to the data which needs to be checked.
+* @brief GenericLevel_CtlTempBinding: Data binding b/w Generic level and Ctl
+*        Temperature set.
+* @param bLevelParam: pointer to the structure, which should be set.
 * return void.
 */
-void Light_CtlTemp_GenericLevelBinding(Light_CtlParam_t* bCtlTempParam)
+void GenericLevel_CtlTempBinding(Generic_LevelStatus_t * bLevelParam)
 {
   /* 6.1.3.1.1 Binding with the Generic Level state.
-  Generic Level = (Light CTL Temperature - T _MIN) * 65535 / (T_MAX - T_MIN) - 32768
+  Light CTL Temperature = T_MIN + (Generic Level + 32768) * (T_MAX - T_MIN) / 65535
   T_MIN = minimum range of ctl temperature
   T_MAX = maximum range of ctl temperature
   */
-  Generic_LevelStatus_t bLevelStatus;
   MOBLEUINT32 productValue;
   
-  productValue = (bCtlTempParam->CTL_Temperature - MIN_CTL_TEMP_RANGE) * 65535;
-  bLevelStatus.Present_Level16 = (productValue / (MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE)) - 32768;
-  /* application callback */
-  (GenericAppli_cb.Level_Set_cb)(&bLevelStatus, 0); 
+  productValue = (bLevelParam->Present_Level16 + 32768) * (MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE) ;
+  Light_CtlStatus.PresentCtlTemperature16 = MIN_CTL_TEMP_RANGE + ((productValue) /65535);
+  
 }
-
 
 /**
-* @brief  Light_HslHue_GenericLevelBinding: Data binding b/w Generic Level and 
-*         light Hsl . this function will set the Generic Level
-*         value at the time of  Hsl Hue value set. 
-* @param bHslHueParam: Pointer to the data which needs to be checked.
+* @brief  Light_HslLightness_LightnessActualBinding: Data binding b/w Hsl lightness and 
+*         Lightness Atual . this function will set the Lightness Actual
+*         value at the time of  Hsl Lightness value set. 
+* @param void
 * return void.
 */
-void Light_HslHue_GenericLevelBinding(Light_HslParam_t* bHslHueParam)
+void Light_HslLightness_LightnessActualBinding(void)
 {
-  /* 6.1.4.1.1 Binding with the Generic Level state
-  Generic Level = Light HSL Hue – 32768
+  /* 6.1.4.7.1 Binding with the Light Lightness Actual state
+  Light Lightness Actual = Light HSL Lightness
   */
-  Generic_LevelStatus_t bLevelStatus;
-  bLevelStatus.Present_Level16 = bHslHueParam->HslHueLightness16 - 32768;
-  /* application callback */
-  (GenericAppli_cb.Level_Set_cb)(&bLevelStatus, 0); 
+  Light_LightnessStatus.LightnessPresentValue16= Light_HslStatus.PresentHslLightness16;
+  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_LIGHTNESS_SET_UNACK;
+  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
+  Light_PublishOpcodeList.BindedStateCount++;
+  
+  Light_Lightness_Binding(BINDING_LIGHT_HSL_SET , 0); 
 }
 
+/**
+* @brief Light_HSL_HUE_Binding: Function used for binding the data of 
+*        hsl hue parameter with other models.
+* @param void.  
+* return void
+*/
+void Light_Hsl_Hue_Binding(void)     
+{
+
+#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL  
+  /* Hsl Hue binding with Generic Level */
+  Light_HslHue_GenericLevelBinding(&Light_HslStatus);
+  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= GENERIC_LEVEL_SET_UNACK;
+  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = GENERIC_MODEL_SERVER_LEVEL_MODEL_ID;
+  Light_PublishOpcodeList.BindedStateCount++;
+#endif  
+}
+
+/**
+* @brief Light_HSL_Saturation_Binding: Function used for binding the data of 
+*        hsl saturation parameter with other models.
+* @param void.  
+* return void
+*/
+void Light_Hsl_Saturation_Binding(void)     
+{
+
+#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL  
+  /* Hsl Hue binding with Generic Level */
+  Light_HslSaturation_GenericLevelBinding(&Light_HslStatus);
+  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= GENERIC_LEVEL_SET_UNACK;
+  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = GENERIC_MODEL_SERVER_LEVEL_MODEL_ID;
+  Light_PublishOpcodeList.BindedStateCount++;
+#endif  
+}
+
+/**
+* @brief GenericLevel_HslSaturationBinding: Data binding b/w Generic level and Hsl
+*        Hue set.
+* @param bLevelParam: pointer to the structure, which should be set.
+* return void.
+*/
+void GenericLevel_HslSaturationBinding(Generic_LevelStatus_t * bLevelParam)
+{
+  /* 6.1.4.1.1 Binding with the Generic Level state
+  Light HSL Hue = Generic Level + 32768
+  */
+  
+  Light_HslStatus.PresentHslSaturation16 = bLevelParam->Present_Level16 + 32768;   
+}
+/*
+* @brief GenericLevel_HslHueBinding: Data binding b/w Generic level and Hsl
+*        Hue set.
+* @param bLevelParam: pointer to the structure, which should be set.
+* return void.
+*/
+void GenericLevel_HslHueBinding(Generic_LevelStatus_t * bLevelParam)
+{ 
+  /*  6.1.4.1.1 Binding with the Generic Level state
+  Light HSL Hue = Generic Level + 32768
+  */  
+  Light_HslStatus.PresentHslHueLightness16 = bLevelParam->Present_Level16 + 32768;   
+}
 
 /**
 * @brief Light_HslHue_RangeBinding: Function used for binding the data of 
@@ -3061,12 +3310,6 @@ void Light_HslHue_RangeBinding(Light_HslParam_t* bHslHueParam)
   Light HSL Hue = Light HSL Hue Range Min->for (Light HSL Hue < Light HSL Hue Range Min)
   Light HSL Hue = Light HSL Hue Range Max->for (Light HSL Hue > Light HSL Hue Range Min)
   */
-  MOBLEUINT8 Light_GetBuff[5];
-  (Appli_Light_GetStatus_cb.GetLightHslHueRange_cb)(Light_GetBuff);
-  Light_HslRangeParam.HslHueMinRange16 = Light_GetBuff[2] << 8;
-  Light_HslRangeParam.HslHueMinRange16 |= Light_GetBuff[1];
-  Light_HslRangeParam.HslHueMaxRange16 = Light_GetBuff[4] << 8;
-  Light_HslRangeParam.HslHueMaxRange16 |= Light_GetBuff[3];
   
   if(bHslHueParam->HslHueLightness16 < Light_HslRangeParam.HslHueMinRange16)        
   {
@@ -3082,26 +3325,6 @@ void Light_HslHue_RangeBinding(Light_HslParam_t* bHslHueParam)
   }
 }
 
-
-/**
-* @brief  Light_HslSaturation_GenericLevelBinding: Data binding b/w Generic Level and 
-*         light Hsl . this function will set the Generic Level
-*         value at the time of  Hsl Saturation value set. 
-* @param bHslSatParam: Pointer to the data which needs to be checked.
-* return void.
-*/
-void Light_HslSaturation_GenericLevelBinding(Light_HslParam_t* bHslSatParam)
-{
-  /* 6.1.4.4.1 Binding with the Generic Level state
-  Generic Level = Light HSL Saturation – 32768
-  */
-  Generic_LevelStatus_t bLevelStatus;
-  bLevelStatus.Present_Level16 = bHslSatParam->HslSaturation16 - 32768;
-  /* application callback */
-  (GenericAppli_cb.Level_Set_cb)(&bLevelStatus, 0); 
-}
-
-
 /**
 * @brief Light_HslSaturation_RangeBinding: Function used for binding the data of 
 *        Hsl saturation value and Hsl saturation range. this function changes the value of 
@@ -3116,12 +3339,6 @@ void Light_HslSaturation_RangeBinding(Light_HslParam_t* bHslSatParam)
   Light HSL Saturation = Light HSL Saturation Range Min Min->for (Light HSL Saturation < Light HSL Saturation Min)
   Light HSL Saturation = Light HSL Saturation Range Max->for (Light HSL Saturation > Light HSL Saturation Max)
   */
-  MOBLEUINT8 Light_GetBuff[5];
-  (Appli_Light_GetStatus_cb.GetLightHslSatRange_cb)(Light_GetBuff);
-  Light_HslRangeParam.HslMinSaturation16 = Light_GetBuff[2] << 8;
-  Light_HslRangeParam.HslMinSaturation16 |= Light_GetBuff[1];
-  Light_HslRangeParam.HslMaxSaturation16 = Light_GetBuff[4] << 8;
-  Light_HslRangeParam.HslMaxSaturation16 |= Light_GetBuff[3];
   
   if(bHslSatParam->HslSaturation16 < Light_HslRangeParam.HslMinSaturation16)        
   {
@@ -3137,26 +3354,17 @@ void Light_HslSaturation_RangeBinding(Light_HslParam_t* bHslSatParam)
   }
 }
 
-
 /**
-* @brief  Light_HslLightness_LightnessActualBinding: Data binding b/w Hsl lightness and 
-*         Lightness Atual . this function will set the Lightness Actual
-*         value at the time of  Hsl Lightness value set. 
-* @param bHslLightParam: Pointer to the data which needs to be checked.
-* return void.
+* @brief Light_Linear_Ligth_LC_binding: Function used for binding the data of 
+*        Light_LC_lightness output data with the Light lightness linear data.
+* @param lc_OutValue: value of Light LC lightness..  
+* return void
 */
-void Light_HslLightness_LightnessActualBinding(Light_HslParam_t* bHslLightParam)
+void Light_Linear_Ligth_LC_binding(MOBLEUINT16 lc_OutValue)
 {
-  /* 6.1.4.7.1 Binding with the Light Lightness Actual state
-  Light Lightness Actual = Light HSL Lightness
-  */
-  Light_LightnessStatus_t bActualLightStatus;
-  bActualLightStatus.PresentValue16= bHslLightParam->HslHueLightness16;
-  /* application callback */
-  (LightAppli_cb.Lightness_Set_cb)(&bActualLightStatus, 0);
- 
+  Light_LightnessStatus.LinearPresentValue16 = lc_OutValue;
+  Light_Lightness_Binding(BINDING_LIGHT_LIGHTNESS_LINEAR_SET , 3);
 }
-
 
 /**
 * @brief  Light_ActualLightness_HslLightnessBinding: Data binding b/w Actual Lightness and 
@@ -3165,15 +3373,15 @@ void Light_HslLightness_LightnessActualBinding(Light_HslParam_t* bHslLightParam)
 * @param bActualLightParam: Pointer to the data which needs to be checked.
 * return void.
 */
-void Light_ActualLightness_HslLightnessBinding(Light_LightnessParam_t* bActualLightParam)
+void Light_ActualLightness_HslLightnessBinding(Light_LightnessStatus_t* bActualLightParam)
 {
   /* 6.1.4.7.1 Binding with the Light Lightness Actual state
   Light HSL Lightness = Light Lightness Actual
   */
-  Light_HslStatus_t bHslLightStatus;
-  bHslLightStatus.PresentHslLightness16= bActualLightParam->TargetLightnessStatus;
-  /* application callback */
-  (LightAppli_cb.Light_Hsl_Set_cb)(&bHslLightStatus , 0); 
+  Light_HslStatus.PresentHslLightness16= bActualLightParam->LightnessPresentValue16;
+  
+  TRACE_M(TF_LIGHT, "Light_ActualLightness_HslLightnessBinding Function - Present HSL lightness value 0x%.2x \r\n" 
+         , Light_HslStatus.PresentHslLightness16); 
 }
 
 /**
@@ -3321,6 +3529,8 @@ WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessStatus(MOBLEUINT8* lLightness
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessLinearStatus(MOBLEUINT8* lLightnessState))
 {  return MOBLE_RESULT_SUCCESS; }
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessDefaultStatus(MOBLEUINT8* lDefaultState))
+{  return MOBLE_RESULT_SUCCESS; }
+WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessLastStatus(MOBLEUINT8* lLastState))
 {  return MOBLE_RESULT_SUCCESS; }
 WEAK_FUNCTION(MOBLE_RESULT Appli_Light_GetLightnessRangeStatus(MOBLEUINT8* lRangeState))
 {  return MOBLE_RESULT_SUCCESS; }

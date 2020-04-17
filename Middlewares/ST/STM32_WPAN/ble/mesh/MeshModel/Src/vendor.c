@@ -121,7 +121,7 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
   uint16_t idx = 0;
   TRACE_I(TF_VENDOR,"Vendor_WriteLocalDataCb: peer_addr=[%02x], dst_peer=[%02x],\
          command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response);
-          TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %d\n\r",length);
+          TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %ld\n\r",length);
          for (idx=0; idx<length; idx++)
          {
            TRACE_I(TF_VENDOR,"data[%d]= %d",idx,data[idx]);  
@@ -298,7 +298,7 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
  /* Traces for the Data */
  TRACE_M(TF_VENDOR,"Vendor_ReadLocalDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
         command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response );
-          TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %d\n\r",length);
+          TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %ld\n\r",length);
         for (MOBLEUINT8 idx=0; idx<length; idx++)
         {
           TRACE_I(TF_VENDOR,"data[%d]= %d",idx,data[idx]); 
@@ -472,7 +472,7 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
   /* Traces for the Data */
   TRACE_I(TF_VENDOR,"Vendor_OnResponseDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
         command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response );
-  TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %d\n\r", dataLength);
+  TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %ld\n\r", dataLength);
   
   TRACE_M(TF_VENDOR_COMMAND,"#%02hx-%02hx! \n\r",command,pRxData[0]);
   switch(command)

@@ -105,7 +105,9 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   MOBLEUINT16 commandIndex = SerialUt_GetFunctionIndex(rcvdStringBuff+5);
   MOBLEUINT8 testFunctionParm[6]= {'\0'} ;
   MOBLEUINT8 asciiFunctionParameter[7] = {'\0'} ;
-  MOBLE_RESULT result;
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEBOOL unprovisioned = MOBLE_FALSE;
+  
   switch (commandIndex)
   {
   case CMD_INDEX_SEND_01:
@@ -129,8 +131,6 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
     break;
     /* Resets the Board */
   case CMD_INDEX_SET_01: 
-    /* Unprovisions the Node */
-  case CMD_INDEX_SET_02:     
     /* test signal in IV Update */
   case CMD_INDEX_SET_04:     
     /* Breakes the exsisting friendship */
@@ -169,6 +169,14 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
     result = BLEMesh_UpperTesterDataProcess( commandIndex,  testFunctionParm);
     break;
       
+  /* Unprovisions the Node */
+  case CMD_INDEX_SET_02:
+    {
+      unprovisioned = BLEMesh_IsUnprovisioned();
+      result = BLEMesh_UpperTesterDataProcess(commandIndex, testFunctionParm);
+    }
+    break;
+    
     /* Print Security Credentials */
   case CMD_INDEX_PRINT_01:  
     result = BLEMesh_UpperTesterDataProcess( commandIndex,  testFunctionParm);
@@ -177,23 +185,34 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   default:
     printf("Invalid Command\r\n");
   }
-      if (result == MOBLE_RESULT_SUCCESS)
+  if (result == MOBLE_RESULT_SUCCESS)
+  {
+    BLEMesh_PrintStringCb("Test command executed successfully\r\n");
+    if(commandIndex == CMD_INDEX_SET_02)
+    {
+      if(!unprovisioned)
       {
-      BLEMesh_PrintStringCb("Test command executed successfully\r\n");
-      }
-  else if(result == MOBLE_RESULT_OUTOFMEMORY)
-      {
-      BLEMesh_PrintStringCb("Test command Failed. Out of memory\r\n");  
-}
-  else if(result == MOBLE_RESULT_INVALIDARG)
-{
-      BLEMesh_PrintStringCb("Test command Failed. Invalid Argument\r\n");  
+        Appli_Unprovision();
       }
       else
       {
-       BLEMesh_PrintStringCb("Test command Failed.\r\n");   
+        BLEMesh_PrintStringCb("Device is already unprovisioned !\r\n");
       }
+    }
   }
+  else if(result == MOBLE_RESULT_OUTOFMEMORY)
+  {
+    BLEMesh_PrintStringCb("Test command Failed. Out of memory\r\n");  
+  }
+  else if(result == MOBLE_RESULT_INVALIDARG)
+  {
+    BLEMesh_PrintStringCb("Test command Failed. Invalid Argument\r\n");  
+  }
+  else
+  {
+    BLEMesh_PrintStringCb("Test command Failed.\r\n");   
+  }
+}
           
 /**
 * @brief  SerialUt_GetFunctionIndex: This function returns the calculated index 
@@ -267,3 +286,4 @@ __weak MOBLE_RESULT BLEMesh_UpperTesterDataProcess(MOBLEUINT8 testFunctionIndex,
 
   return MOBLE_RESULT_SUCCESS;
 }
+

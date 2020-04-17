@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_CORE_IDENTIFY_H
 # define ZCL_CORE_IDENTIFY_H
@@ -65,7 +65,7 @@ enum ZbZclIdentifyServerStateT {
 /* Create the Identify Server Cluster.
  * 'arg' gets assigned to ZbZclClusterSetCallbackArg. */
 struct ZbZclClusterT * ZbZclIdentifyServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, void *arg);
-struct ZbZclClusterT * ZbZclIdentifyClientAlloc(struct ZigBeeT *zb, uint8_t endpoint, void *arg);
+struct ZbZclClusterT * ZbZclIdentifyClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 /* Configure a callback to receive events to "start" or "stop" identifying. */
 typedef void (*ZbZclIdentifyCallbackT)(struct ZbZclClusterT *clusterPtr,
