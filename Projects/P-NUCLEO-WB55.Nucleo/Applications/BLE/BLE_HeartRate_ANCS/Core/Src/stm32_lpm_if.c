@@ -150,8 +150,7 @@ void PWR_EnterStopMode( void )
       LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
 
       /**
-       * The switch on HSI before entering Stop Mode is required on Cut2.0
-       * It is useless from Cut2.1
+       * The switch on HSI before entering Stop Mode is required 
        */
       Switch_On_HSI( );
     }
@@ -159,8 +158,7 @@ void PWR_EnterStopMode( void )
   else
   {
     /**
-     * The switch on HSI before entering Stop Mode is required on Cut2.0
-     * It is useless from Cut2.1
+     * The switch on HSI before entering Stop Mode is required 
      */
     Switch_On_HSI( );
   }

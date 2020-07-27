@@ -24,7 +24,7 @@
 #define IBEACON_SERVICE_H
 
 #ifdef __cplusplus
-extern "C" 
+extern "C"
 {
 #endif
 

@@ -20,12 +20,11 @@
 
 @par Application Description
 
-How to use USB device application based on the Device
+This application describes how to use USB device application based on the Device
 Communication Class (CDC) following the PSTN sub-protocol on the STM32WBxx devices.
 
 This example is part of the USB Device Library package using STM32Cube firmware.
-
-This is a typical application on how to use the STM32WBxx USB Device peripheral where the STM32 MCU
+This is a typical application on how to use the stm32wbxx USB OTG Device peripheral where the STM32 MCU
 behaves as a USB-to-UART bridge following the Virtual COM Port (VCP) implementation.
  - On one side, the STM32 exchanges data with a PC host through USB interface in Device mode.
  - On the other side, the STM32 exchanges data with other devices (same host, other host,
@@ -33,8 +32,7 @@ behaves as a USB-to-UART bridge following the Virtual COM Port (VCP) implementat
 
 At the beginning of the main program the HAL_Init() function is called to reset
 all the peripherals, initialize the Flash interface and the systick. The user is
-provided with the SystemClock_Config()function to configure the clock (SYSCLK) to run at 64 MHz.
-In this application the system clock is set to 64MHz.
+provided with the SystemClock_Config()function to configure the clock (SYSCLK).
 
 When the VCP application is started, the STM32 MCU is enumerated as serial communication port and is
 configured in the same way (baudrate, data format, parity, stop bit) as it would configure a standard
@@ -79,8 +77,9 @@ Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src directory.
 To run this application, the user can use one of the following configuration:
 
  - Configuration 1:
-   Connect USB cable to host and UART (RS232) to a different host (PC or other device) or to same host.
-   In this case, you can open two hyperterminals to send/receive data to/from host to/from device.
+  By default the USART  interface available of the microcontroller is connected to ST-LINK MCU. (The USART 
+  communication between the target MCU and ST-LINK MCU is enabled.) The choice can be changed by 
+  setting the related jumpers.
 
  - Configuration 2:
    Connect USB cable to Host and connect UART TX pin to UART RX pin on the P-NUCLEO-WB55 board
@@ -99,6 +98,10 @@ To run this application, the user can use one of the following configuration:
 
 For more details about the STM32Cube USB Device library, please refer to UM1734
 "STM32Cube USB Device library".
+
+@par Keywords
+
+Connectivity, USB_Device, USB, CDC, Virtual COM Port
 
 @par Directory contents
 
@@ -120,16 +123,17 @@ For more details about the STM32Cube USB Device library, please refer to UM1734
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WBxx devices.
 
   - This example has been tested with STMicroelectronics P-NUCLEO-WB55
     board and can be easily tailored to any other supported device and development board.
+
   - P-NUCLEO-WB55 Set-up
-    - Connect the P-NUCLEO-WB55 board to the PC through micro A-Male to standard A Male cable.
-    - For loopback mode test: connect directly USART1 TX and RX pins,
-  The USART1 interface available on PB6 and PB7 of the microcontroller can be
-  connected to ST-LINK MCU. The choice can be changed by setting the related jumpers.
-  By default the USART1 communication between the target MCU and ST-LINK MCU is enabled.
+  - Connect the P-NUCLEO-WB55 board CN1 to the PC through micro A-Male to standard A Male cable.
+  - The USART1  interface available on PB6 and PB7 of the microcontroller is
+  connected to ST-LINK MCU. By default connect to USART ComPORT using ST-Link interface.
+  (For loopback mode test: connect directly USART1 TX and RX pins.)
+
   - Hyperterminal configuration:
     - BaudRate = 115200 baud
     - Word Length = 8 Bits

@@ -457,12 +457,10 @@ void HW_IPCC_ZIGBEE_SendM4AckToM0Request( void )
     return;
 }
 
-
 __weak void HW_IPCC_ZIGBEE_RecvAppliAckFromM0( void ){};
 __weak void HW_IPCC_ZIGBEE_RecvM0NotifyToM4( void ){};
 __weak void HW_IPCC_ZIGBEE_RecvM0RequestToM4( void ){};
 #endif /* ZIGBEE_WB */
-
 
 /******************************************************************************
  * MEMORY MANAGER

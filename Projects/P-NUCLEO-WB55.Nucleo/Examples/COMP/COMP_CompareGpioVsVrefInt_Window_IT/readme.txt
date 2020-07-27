@@ -49,12 +49,11 @@ NB: The MCU wakes up from STOP mode when the input voltage is out of the thresho
 
 @note This example can not be used in DEBUG mode due to the fact that the Cortex-M4 core is no longer 
       clocked during low power mode so debugging features are disabled. Power on/off is needed to run 
-	  correctly the example.
-
+      correctly the example.
 
 @par Keywords
 
-comparator, window mode, votage compare
+Comparator, COMP, analog, voltage, analog input, threshold, VrefInt, window
 
 @par Directory contents 
 

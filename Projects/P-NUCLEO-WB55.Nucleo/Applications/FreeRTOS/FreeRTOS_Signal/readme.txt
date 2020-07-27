@@ -83,13 +83,16 @@ As a result, LEDs show the following behaviour:
 For more details about FreeRTOS implementation on STM32Cube, please refer to UM1722 "Developing Applications 
 on STM32Cube with RTOS".
 
+@par Keywords
+
+RTOS, FreeRTOS, Thread, Signal,
 
 @par Directory contents
     - FreeRTOS/FreeRTOS_Signal/Src/main.c                       Main program
-	- FreeRTOS/FreeRTOS_Signal/Src/app_FreeRTOS.c               Code for freertos applications
+    - FreeRTOS/FreeRTOS_Signal/Src/app_FreeRTOS.c               Code for freertos applications
     - FreeRTOS/FreeRTOS_Signal/Src/stm32wbxx_hal_timebase_tim.c HAL timebase file
     - FreeRTOS/FreeRTOS_Signal/Src/stm32wbxx_it.c               Interrupt handlers
-	- FreeRTOS/FreeRTOS_Signal/Src/stm32wbxx_hal_msp.c          MSP Initialization file
+    - FreeRTOS/FreeRTOS_Signal/Src/stm32wbxx_hal_msp.c          MSP Initialization file
     - FreeRTOS/FreeRTOS_Signal/Src/system_stm32wbxx.c           STM32WBxx system clock configuration file
     - FreeRTOS/FreeRTOS_Signal/Inc/main.h                       Main program header file
     - FreeRTOS/FreeRTOS_Signal/Inc/stm32wbxx_hal_conf.h         HAL Library Configuration file
@@ -98,8 +101,8 @@ on STM32Cube with RTOS".
 
 @par Hardware and Software environment
 
-  - This application runs on STM32WB55xx devices.
-    
+  - This application runs on STM32WB55RGVx devices.
+
   - This application has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.
     

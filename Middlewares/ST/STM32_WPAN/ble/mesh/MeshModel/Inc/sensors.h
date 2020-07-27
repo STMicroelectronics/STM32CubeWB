@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    sensors.h
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Header file for the user application file 
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -107,7 +85,7 @@
 /******************************************************************************/ 
 /***********Publsh Period For the Sensor **************************************/
 #define SENSOR_PUBLISH_PERIOD    10000
-
+#define SENSOR_SERIES_VALUE      4
 /* 
  structure for the Property id for the sensors Present inside the firmware.
 */
@@ -121,14 +99,14 @@ typedef struct
 /* Sensor Cadence Parameters */
 typedef struct 
 {
+ MOBLEUINT16 Property_ID;
  MOBLEUINT8 FastCadenceDevisor;
  MOBLEUINT8 StatusTriggerType; 
  MOBLEUINT8 triggerDeltaDown;
  MOBLEUINT8 triggerDeltaUp;
  MOBLEUINT8 StatusMinInterval;
- MOBLEUINT16 Property_ID; 
- float FastCadenceLow;
- float FastCadenceHigh;
+ MOBLEUINT16 FastCadenceLow;
+ MOBLEUINT16 FastCadenceHigh;  
 }Sensor_CadenceParam_t;
 
 /* Sensor Setting Parameters */
@@ -151,6 +129,17 @@ typedef struct
  MOBLEUINT16 RawValueY;
 }Sensor_ColumnParam_t;
 
+/* Sensor Series Parameters*/
+typedef struct
+{
+  MOBLEUINT16 Property_ID;
+  MOBLEUINT16 RawValueX1;
+  MOBLEUINT16 RawValueX2;
+  
+}Sensor_SeriesParam_t ;
+
+
+
 typedef struct
 {
   /* Pointer to the function Appli_Sensor_Cadence_Set used for callback 
@@ -166,12 +155,22 @@ typedef struct
   /* Pointer to the function Appli_Sensor_Descriptor_Status used for callback 
      from the middle layer to Application layer
   */
-  MOBLE_RESULT (*Sensor_Descriptor_cb)(MOBLEUINT8*, MOBLEUINT32*);  
+  MOBLE_RESULT (*Sensor_Descriptor_cb)(MOBLEUINT8*, MOBLEUINT32* , MOBLEUINT16 , MOBLEUINT32);
+  
+
   
   /* Pointer to the function Appli_Sensor_Setting_Set used for callback 
      from the middle layer to Application layer
   */
-  MOBLE_RESULT (*Sensor_Setting_Set_cb)(Sensor_SettingParam_t*, MOBLEUINT8); 
+ // MOBLE_RESULT (*Sensor_Setting_Set_cb)(Sensor_SettingParam_t*, MOBLEUINT8,MOBLEUINT16); 
+  MOBLE_RESULT (*Sensor_Setting_Set_cb)(Sensor_SettingParam_t*,MOBLEUINT8,MOBLEUINT16);
+  
+  
+    
+  MOBLE_RESULT (*Sensor_Column_cb)(MOBLEUINT8*,MOBLEUINT32*,MOBLEUINT16,MOBLEUINT32);
+  
+  MOBLE_RESULT (*Sensor_Series_cb)(MOBLEUINT8*,MOBLEUINT32*,MOBLEUINT16,MOBLEUINT32);
+   
   
 } Appli_Sensor_cb_t;
 
@@ -182,10 +181,10 @@ typedef struct
 
 typedef struct
 { 
-  MOBLE_RESULT (*GetSettingStatus_cb)(MOBLEUINT8*);
+//  MOBLE_RESULT (*GetSettingStatus_cb)(MOBLEUINT8*);
   
-  MOBLE_RESULT (*GetSetting_IDStatus_cb)(MOBLEUINT8*);
-  
+  MOBLE_RESULT (*GetSetting_IDStatus_cb)(MOBLEUINT8*  , MOBLEUINT16);
+ // MOBLE_RESULT (*GetSetting_IDStatus_cb)(MOBLEUINT8* ,);
 }Appli_Sensor_GetStatus_cb_t;
 #pragma pack(4)
 
@@ -216,13 +215,16 @@ MOBLE_RESULT SensorModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
 MOBLE_RESULT Sensor_Cadence_Set(const MOBLEUINT8* pCadence_param, MOBLEUINT32 length);
 MOBLE_RESULT Sensor_Data_Status(MOBLEUINT8* pSensorData_param, MOBLEUINT32* plength ,
                                                       MOBLEUINT8 const *pData, MOBLEUINT32 length);
-MOBLE_RESULT Sensor_Descriptor_Status(MOBLEUINT8* pSensorDiscriptor_param, MOBLEUINT32* plength);
+MOBLE_RESULT Sensor_Descriptor_Status(MOBLEUINT8* pSensorDiscriptor_param, MOBLEUINT32* plength,MOBLEUINT8 const *pData, MOBLEUINT32 length);
 MOBLE_RESULT Sensor_Setting_Set(const MOBLEUINT8* pSetting_param, MOBLEUINT32 length);
 MOBLE_RESULT Sensor_Setting_Status_PID(MOBLEUINT8* pSetting_param, MOBLEUINT32 *plength, 
                                                  const MOBLEUINT8 *pData,MOBLEUINT32 length);
 MOBLE_RESULT Sensor_Setting_Status_SettingID(MOBLEUINT8* pSetting_param, MOBLEUINT32 *plength, 
                                                        const MOBLEUINT8 *pData,MOBLEUINT32 length);
    
+MOBLE_RESULT Check_Property_ID(const MODEL_Property_IDTableParam_t prop_ID_Table[] 
+                                                         , MOBLEUINT16 prop_ID);
+MOBLE_RESULT Appli_Sensor_Column_Status(MOBLEUINT8* sensor_Column , MOBLEUINT32* pLength,MOBLEUINT16 prop_ID , MOBLEUINT32 length);
 
 #endif /* __SENSORS_H */
 

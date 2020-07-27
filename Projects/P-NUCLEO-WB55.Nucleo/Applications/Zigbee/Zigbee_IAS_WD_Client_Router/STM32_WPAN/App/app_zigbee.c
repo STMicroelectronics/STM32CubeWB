@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -101,10 +101,6 @@ static UTIL_SEQ_bm_t RemoteWriteMaxDurationAttr_OK = UTIL_SEQ_ALL_BIT_SET;
  * @retval None
  */
 static void APP_ZIGBEE_App_Init(void){
-  /* Task associated with push button SW1, 2 and 3 */
-  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_ZIGBEE_SW1_Process);
-  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW2, UTIL_SEQ_RFU, APP_ZIGBEE_SW2_Process);
-
   /* Initialize Zigbee IAS WD Client parameters */
   APP_ZIGBEE_IAS_WD_Client_Init();
 } /* APP_ZIGBEE_App_Init */
@@ -297,6 +293,10 @@ void APP_ZIGBEE_Init(void)
 
   /* Task associated with network creation process */
   UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM, UTIL_SEQ_RFU, APP_ZIGBEE_NwkForm);
+  
+  /* Task associated with push button SW1, 2 */
+  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_ZIGBEE_SW1_Process);
+  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW2, UTIL_SEQ_RFU, APP_ZIGBEE_SW2_Process);
   
   /* Task associated with application init */
   UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_APP_START, UTIL_SEQ_RFU, APP_ZIGBEE_App_Init);
@@ -555,6 +555,20 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
  */
 static void APP_ZIGBEE_SW1_Process(void)
 {
+  uint64_t epid = 0U;
+
+  if(zigbee_app_info.zb == NULL){
+    return;
+  }
+  
+  /* Check if the router joined the network */
+  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) {
+    return;
+  }
+  if (epid == 0U) {
+    return;
+  }
+  
   APP_ZIGBEE_IAS_WD_Client_Send_StartWarning_cmd();
 } /* APP_ZIGBEE_SW1_Process */
 
@@ -565,14 +579,23 @@ static void APP_ZIGBEE_SW1_Process(void)
  */
 static void APP_ZIGBEE_SW2_Process(void)
 {
+  uint64_t epid = 0U;
+
+  if(zigbee_app_info.zb == NULL){
+    return;
+  }
+  
+  /* Check if the router joined the network */
+  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) {
+    return;
+  }
+  if (epid == 0U) {
+    return;
+  }
+  
   APP_ZIGBEE_IAS_WD_Client_Send_Squawk_cmd();
 } /* APP_ZIGBEE_SW2_Process */
 
-/**
- * @brief  Button 3 callback
- * @param  None
- * @retval None
- */
 
 /*************************************************************
  *

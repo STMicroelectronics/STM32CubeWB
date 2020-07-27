@@ -18,7 +18,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 
 #include "main.h"
@@ -162,7 +161,7 @@ void P2P_Client_Init(void);
 
 /* Functions Definition ------------------------------------------------------*/
 /**
- * @brief  End Device service Notification 
+ * @brief  End Device service Notification
  * @param  GATT Notification (Opcode & Data)
  * @retval None
  */
@@ -177,7 +176,7 @@ void EDS_STM_App_Notification(EDS_STM_App_Notification_evt_t *pNotification)
 
         /* USER CODE END EDS_Evt_Opcode */
         case EDS_STM_NOTIFY_ENABLED_EVT:
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
             APP_DBG_MSG("-- APPLICATION ROUTER : ENDDEVICEMGT NOTIFICATION ENABLED\r\n");
 #endif
             /* USER CODE BEGIN EDS_STM_NOTIFY_ENABLED_EVT */
@@ -186,7 +185,7 @@ void EDS_STM_App_Notification(EDS_STM_App_Notification_evt_t *pNotification)
             break;
 
         case EDS_STM_NOTIFY_DISABLED_EVT:
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
             APP_DBG_MSG("-- APPLICATION ROUTER : ENDDEVICEMGT NOTIFICATION DISABLED\r\n");
 #endif
             /* USER CODE BEGIN EDS_STM_NOTIFY_DISABLED_EVT */
@@ -206,7 +205,7 @@ void EDS_STM_App_Notification(EDS_STM_App_Notification_evt_t *pNotification)
     return;
 }
 /**
- * @brief  P2P service Notification 
+ * @brief  P2P service Notification
  * @param  GATT Notification (Opcode & Data)
  * @retval None
  */
@@ -221,7 +220,7 @@ void P2PS_STM_App_Notification(P2PS_STM_App_Notification_evt_t *pNotification)
 
         /* USER CODE END P2P_Evt_Opcode */
         case P2PS_STM__NOTIFY_ENABLED_EVT:
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
             APP_DBG_MSG("-- APPLICATION ROUTER : BUTTON NOTIFICATION ENABLED\n\r");
 #endif
             /* USER CODE BEGIN P2PS_STM__NOTIFY_ENABLED_EVT */
@@ -230,7 +229,7 @@ void P2PS_STM_App_Notification(P2PS_STM_App_Notification_evt_t *pNotification)
             break;
 
         case P2PS_STM_NOTIFY_DISABLED_EVT:
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
             APP_DBG_MSG("-- APPLICATION ROUTER : BUTTON NOTIFICATION DISABLED\n\r");
 #endif
             /* USER CODE BEGIN P2PS_STM_NOTIFY_DISABLED_EVT */
@@ -239,7 +238,7 @@ void P2PS_STM_App_Notification(P2PS_STM_App_Notification_evt_t *pNotification)
             break;
 
         case P2PS_STM_READ_EVT:
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
             APP_DBG_MSG("-- APPLICATION ROUTER : LED READ STATUS\n\r");
 #endif
             /* USER CODE BEGIN P2PS_STM_READ_EVT */
@@ -248,7 +247,7 @@ void P2PS_STM_App_Notification(P2PS_STM_App_Notification_evt_t *pNotification)
             break;
 
         case P2PS_STM_WRITE_EVT:
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
             APP_DBG_MSG("-- APPLICATION ROUTER : WRITE LED CONFIG TO ALL END DEVICE \n\r");
 #endif
             /* USER CODE BEGIN P2PS_STM_WRITE_EVT */
@@ -271,7 +270,7 @@ void P2PS_STM_App_Notification(P2PS_STM_App_Notification_evt_t *pNotification)
 }
 
 /**
- * @brief  Router Application initialisation 
+ * @brief  Router Application initialisation
  * @param  None
  * @retval None
  */
@@ -330,7 +329,7 @@ void P2PR_APP_End_Device_Mgt_Connection_Update( P2PR_APP_Device_Status_t *p_devi
       P2P_Router_App_Context.EndDeviceStatus.Device1_Status = (p_device_status->Device1_Status) & (0x7F);
     /* USER CODE END Device1_Status */
     }
-#if (CFG_P2P_DEMO_MULTI != 0 )   
+#if (CFG_P2P_DEMO_MULTI != 0 )
     /* USER CODE BEGIN CFG_P2P_DEMO_MULTI */
     if( (p_device_status->Device2_Status) & (0x80) )
     {
@@ -506,7 +505,7 @@ static void Client_Update_Service( void )
                 break;
             /* USER CODE END aP2PClientContext */
             case APP_BLE_DISCOVER_SERVICES:
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
                 APP_DBG_MSG("APP_BLE_DISCOVER_SERVICES\n");
 #endif
             /* USER CODE BEGIN APP_BLE_DISCOVER_SERVICES */
@@ -514,7 +513,7 @@ static void Client_Update_Service( void )
             /* USER CODE END APP_BLE_DISCOVER_SERVICES */
             break;
             case APP_BLE_DISCOVER_CHARACS:
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
                 APP_DBG_MSG("* GATT : Discover Led Button  Characteristics\n");
 #endif
                 aci_gatt_disc_all_char_of_service(aP2PClientContext[index].connHandle,
@@ -526,7 +525,7 @@ static void Client_Update_Service( void )
                 break;
 
             case APP_BLE_DISABLE_NOTIFICATION_TX_DESC :
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
                 APP_DBG_MSG("* GATT : Disable Button Notification\n");
 #endif
                 aci_gatt_write_char_desc(aP2PClientContext[index].connHandle,
@@ -876,7 +875,7 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
 
                     /* USER CODE END EVT_BLUE_GATT_PROCEDURE_COMPLETE */
                     aci_gatt_proc_complete_event_rp0 *pr = (void*)blue_evt->data;
-#if(CFG_DEBUG_APP_TRACE != 0) 
+#if(CFG_DEBUG_APP_TRACE != 0)
                     APP_DBG_MSG("-- GATT : EVT_BLUE_GATT_PROCEDURE_COMPLETE \n");
                     APP_DBG_MSG("\n");
 #endif

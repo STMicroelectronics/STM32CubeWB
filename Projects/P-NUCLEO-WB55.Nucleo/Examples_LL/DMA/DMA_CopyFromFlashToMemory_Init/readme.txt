@@ -45,6 +45,10 @@ P-NUCLEO-WB55's LED2 can be used to monitor the transfer status:
 - LED2 is turned ON if the DMA data transfer is successfully completed.
 - LED2 is blinking every 1 sec in case of error.
 
+@par Keywords
+
+System, DMA, Data Transfer, Memory to memory, Flash, SRAM
+
 
 @par Directory contents 
 
@@ -57,7 +61,7 @@ P-NUCLEO-WB55's LED2 can be used to monitor the transfer status:
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

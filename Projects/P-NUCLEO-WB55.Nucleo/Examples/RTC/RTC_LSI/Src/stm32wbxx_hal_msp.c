@@ -190,10 +190,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM16_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_TIM16_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**TIM16 GPIO Configuration    
-    PA6     ------> TIM16_CH1 
+    /**TIM16 GPIO Configuration
+    PA6     ------> TIM16_CH1
     */
     GPIO_InitStruct.Pin = GPIO_PIN_6;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -227,9 +227,9 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
   /* USER CODE END TIM16_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_TIM16_CLK_DISABLE();
-  
-    /**TIM16 GPIO Configuration    
-    PA6     ------> TIM16_CH1 
+
+    /**TIM16 GPIO Configuration
+    PA6     ------> TIM16_CH1
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_6);
 

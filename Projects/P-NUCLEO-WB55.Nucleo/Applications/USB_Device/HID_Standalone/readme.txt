@@ -21,19 +21,18 @@
 @par Application Description
 
 Use of the USB device application based on the Human Interface (HID).
-
-This is a typical application on how to use the STM32WBxx USB OTG Device peripheral where the STM32 MCU is
+  This is a typical application on how to use the stm32wbxx USB OTG Device peripheral, where the STM32 MCU is
 enumerated as a HID device using the native PC Host HID driver to which the P-NUCLEO-WB55
-board is connected, in order to emulate the Mouse directions using User push-button (SW1) mounted on the
+board is connected, in order to emulate the Mouse directions using User push-button mounted on the
 P-NUCLEO-WB55 board.
 
 At the beginning of the main program the HAL_Init() function is called to reset all the peripherals,
 initialize the Flash interface and the systick. The user is provided with the SystemClock_Config()
-function to configure the system clock (SYSCLK) to run at 64 MHz. The Full Speed (FS) USB module uses
+function to configure the system clock (SYSCLK). The Full Speed (FS) USB module uses
 internally a 48-MHz clock which is coming from a specific output of two PLLs (PLL or PLL SAI) or from MSI
 
 This example supports remote wakeup (which is the ability of a USB device to bring a suspended bus back
-to the active condition), and the User push-button (SW1) is used as the remote wakeup source.
+to the active condition), and the User push-button is used as the remote wakeup source.
 
 By default, in Windows powered PC the Power Management feature of USB mouse devices is turned off.
 This setting is different from classic PS/2 computer functionality. Therefore, to enable the Wake from
@@ -61,7 +60,7 @@ For more details about the STM32Cube USB Device library, please refer to UM1734
 
 @par Keywords
 
-Connectivity, USB Device, HID, Full Speed, Mouse, Remote Wakeup
+Connectivity, USB_Device, USB, HID, Full Speed, Mouse, Remote Wakeup
 
 @par Directory contents
 
@@ -82,14 +81,14 @@ Connectivity, USB Device, HID, Full Speed, Mouse, Remote Wakeup
 
 @par Hardware and Software environment
 
-  - This application runs on STM32WB55xx devices.
+  - This application runs on STM32WBxx devices.
 
   - This application has been tested with STMicroelectronics P-NUCLEO-WB55 board
     and can be easily tailored to any other supported device and development board.
 
   - P-NUCLEO-WB55 board Set-up
-    - Connect the P-NUCLEO-WB55 board to the PC through micro A-Male to standard A Male cable.
-    - Press the user key sw1 to move the cursor.
+    - Connect the P-NUCLEO-WB55 board CN1 to the PC through micro A-Male to standard A Male cable.
+    - Press the User push-button (SW1)  to move the cursor.
 
 @par How to use it ?
 

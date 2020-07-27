@@ -9,7 +9,7 @@
   *          using a centralized network. 
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
   *
   * This software component is licensed by ST under Ultimate Liberty license 
   * SLA0044, the "License"; You may not use this file except in compliance with 
@@ -107,14 +107,14 @@ Step 4:
              |        |                                                                                |        |
              |        |         ZbZclPowerProfServerStateNotify(ZCL_PWR_PROF_STATE_PROFILE_IDLE)       |        |
              |        | <----------------------------------------------------------------------------- |        |<== PushB SW1
-       	     |        | -----------------------------------------------------------------------------> |        |		 
+             |        | -----------------------------------------------------------------------------> |        |         
              |        |                                                                                |        |
              |        |                      ZbZclPowerProfServerProfileNotify                         |        |
              |        | <----------------------------------------------------------------------------- |        |
              |        |                                                                                |        |
              |        |      ZbZclPowerProfServerStateNotify(ZCL_PWR_PROF_STATE_PROFILE_PROGRAMMED)    |        |
              |        | <----------------------------------------------------------------------------- |        |
-       	     |        | -----------------------------------------------------------------------------> |        |
+             |        | -----------------------------------------------------------------------------> |        |
              |        |                                                                                |        |
              |        |                                                                                |        |
              |        |                                   /* Step 2 */                                 |        |
@@ -130,7 +130,7 @@ Step 4:
              |        |                                                                                |        |
              |        |     ZbZclPowerProfServerStateNotify(ZCL_PWR_PROF_STATE_PHASE_WAITING_START)    |        |
              |        | <----------------------------------------------------------------------------- |        |
-       	     |        | -----------------------------------------------------------------------------> |        |
+             |        | -----------------------------------------------------------------------------> |        |
              |        |                                                                                |        |
              |        |                                                                             -->|        | 
              |        |                                                                    Wait 2s |   |        |
@@ -141,7 +141,7 @@ Step 4:
              |        |                                                                                |        |
              |        |        ZbZclPowerProfServerStateNotify(ZCL_PWR_PROF_STATE_PHASE_RUNNING)       |        |
              |        | <----------------------------------------------------------------------------- |        |
-       	     |        | -----------------------------------------------------------------------------> |        |
+             |        | -----------------------------------------------------------------------------> |        |
              |        |                                                                                |        |
              |        |                                                                             -->|        | 
              |        |                                                                   Wait 10s |   |        |=> GREEN LED is blinking
@@ -149,7 +149,7 @@ Step 4:
              |        |                                                                                |        |
              |        |        ZbZclPowerProfServerStateNotify(ZCL_PWR_PROF_STATE_PROFILE_ENDED)       |        |
              |        | <----------------------------------------------------------------------------- |        |
-       	     |        | -----------------------------------------------------------------------------> |        |
+             |        | -----------------------------------------------------------------------------> |        |
              |        |                                                                                |        |
              +--------+                                                                                +--------+
   
@@ -169,6 +169,10 @@ To setup the application :
       it is now possible to simulate a generic appliance behaviour on the server by pressing the SW1 push button. 
 
  Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
+
+@par Keywords
+
+Zigbee
  
 @par Hardware and Software environment
 

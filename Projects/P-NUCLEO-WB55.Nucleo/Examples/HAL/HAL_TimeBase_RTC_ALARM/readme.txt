@@ -1,5 +1,5 @@
 /**
-  @page HAL_TimeBase_RTC_Alarm HAL TimeBase RTC Alarm
+  @page HAL_TimeBase_RTC_ALARM HAL TimeBase RTC Alarm
   
   @verbatim
   ******************************************************************************

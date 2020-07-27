@@ -17,7 +17,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "main.h"
@@ -66,7 +65,9 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(
 /* USER CODE END PV */
 
 /* Global function prototypes -----------------------------------------------*/
+#if(CFG_DEBUG_TRACE != 0)
 size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
+#endif
 
 /* USER CODE BEGIN GFP */
 
@@ -102,10 +103,7 @@ void APPE_Init( void )
 
 /* USER CODE BEGIN APPE_Init_1 */
   Init_Debug();
-  /**
-   * The Standby mode should not be entered before the initialization is over
-   * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
-   */
+  
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
   Led_Init();
   Button_Init();
@@ -181,7 +179,7 @@ static void Init_Debug( void )
  * @param  None
  * @retval None
  */
-static void SystemPower_Config( void )
+static void SystemPower_Config(void)
 {
 
   /**
@@ -190,7 +188,9 @@ static void SystemPower_Config( void )
   LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 
   /* Initialize low power manager */
-  UTIL_LPM_Init( );
+  UTIL_LPM_Init();
+  /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
+  LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   /**
@@ -301,9 +301,15 @@ static void Led_Init( void )
   /**
    * Leds Initialization
    */
-
+#if (CFG_HW_LPUART1_ENABLED != 1) || ! defined (STM32WB35xx)
+  // On Little DORY, LED_BLUE share the GPIO PB5 with LPUART
   BSP_LED_Init(LED_BLUE);
+#endif
+  
+#if (CFG_HW_EXTPA_ENABLED != 1)
   BSP_LED_Init(LED_GREEN);
+#endif
+  
   BSP_LED_Init(LED_RED);
 
 #endif
@@ -409,9 +415,10 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 #if(CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
-    MX_LPUART1_UART_Init();
-
+#ifdef CFG_DEBUG_TRACE_UART
+  MX_LPUART1_UART_Init();
   return;
+#endif
 }
 
 /**

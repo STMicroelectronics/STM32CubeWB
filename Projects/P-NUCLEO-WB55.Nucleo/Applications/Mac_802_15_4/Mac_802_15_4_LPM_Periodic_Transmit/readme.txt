@@ -1,6 +1,5 @@
 /**
-  @page MAC 802.15.4 Application - End Node - Periodic data transmition example
-        with low power enabled
+  @page Mac_802_15_4_LPM_Periodic_Transmit application
   
   @verbatim
   ******************************************************************************

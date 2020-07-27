@@ -110,11 +110,11 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
         DCD     I2C3_EV_IRQHandler                ; I2C3 Event Interrupt
         DCD     I2C3_ER_IRQHandler                ; I2C3 Error Interrupt
         DCD     SPI1_IRQHandler                   ; SPI1 Interrupt
-        DCD     SPI2_IRQHandler                   ; SPI2 Interrupt
+        DCD     0                                 ; Reserved
         DCD     USART1_IRQHandler                 ; USART1 Interrupt
         DCD     LPUART1_IRQHandler                ; LPUART1 Interrupt
         DCD     0                                 ; Reserved
-        DCD     TSC_IRQHandler                    ; TSC Interrupt
+        DCD     0                                 ; Reserved
         DCD     EXTI15_10_IRQHandler              ; EXTI Lines1[15:10 ]Interrupts
         DCD     RTC_Alarm_IRQHandler              ; RTC Alarms (A and B) Interrupt
         DCD     CRS_IRQHandler                    ; CRS interrupt
@@ -238,10 +238,8 @@ Default_Handler PROC
                 EXPORT  I2C3_EV_IRQHandler                [WEAK]
                 EXPORT  I2C3_ER_IRQHandler                [WEAK]
                 EXPORT  SPI1_IRQHandler                   [WEAK]
-                EXPORT  SPI2_IRQHandler                   [WEAK]
                 EXPORT  USART1_IRQHandler                 [WEAK]
                 EXPORT  LPUART1_IRQHandler                [WEAK]
-                EXPORT  TSC_IRQHandler                    [WEAK]
                 EXPORT  EXTI15_10_IRQHandler              [WEAK]
                 EXPORT  RTC_Alarm_IRQHandler              [WEAK]
                 EXPORT  CRS_IRQHandler                    [WEAK]
@@ -300,10 +298,8 @@ I2C1_ER_IRQHandler
 I2C3_EV_IRQHandler
 I2C3_ER_IRQHandler
 SPI1_IRQHandler
-SPI2_IRQHandler
 USART1_IRQHandler
 LPUART1_IRQHandler
-TSC_IRQHandler
 EXTI15_10_IRQHandler
 RTC_Alarm_IRQHandler
 CRS_IRQHandler

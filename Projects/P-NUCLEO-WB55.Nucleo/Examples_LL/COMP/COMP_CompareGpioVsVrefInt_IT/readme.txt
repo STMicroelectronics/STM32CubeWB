@@ -61,6 +61,9 @@ Other peripheral used:
   1 GPIO for analog input of comparator: PC.05 (Morpho connector CN7 pin 3)
   EXTI line 20 (connected to COMP1 output)
 
+@par Keywords
+
+Comparator, COMP, analog, voltage, analog input, threshold, VrefInt
 
 @par Directory contents 
 

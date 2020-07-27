@@ -20,7 +20,7 @@
 
 @par Example Description 
 
-How to handle single I2C data buffer transmission/reception between two boards, 
+How to handle I2C data buffer transmission/reception between two boards, 
 using an interrupt.
 
 Board: P-NUCLEO-WB55 (embeds a STM32WB55RG device)

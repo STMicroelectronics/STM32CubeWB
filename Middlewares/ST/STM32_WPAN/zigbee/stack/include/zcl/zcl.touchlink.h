@@ -2,7 +2,7 @@
  * file zcl.touchlink.h
  * brief Deprecated Touchlink API - Excluded from DOxygen documentation
  * author Exegin Technologies Limited
- * copyright Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved.
+ * copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
  *
  * The functions in this header file are deprecated
  */
@@ -90,77 +90,5 @@
 #define ZCL_TL_FLAGS_IS_TARGET                      (uint8_t)0x10
 #define ZCL_TL_FLAGS_USE_PERSIST                    (uint8_t)0x20
 #define ZCL_TL_FLAGS_FACTORY_RESET                  (uint8_t)0x40
-
-/**
- * @brief Deprecated API Use ZbStartup instead
- *
- * Touchlink should be started by setting the BDB_COMMISSION_MODE_TOUCHLINK
- * commissioning mode bit in the ZbStartupT configuration struct, filling in the
- * touchlink configuration in ZbStartupT, and calling ZbStartup
- *
- * @deprecated Touchlink should be started by setting the BDB_COMMISSION_MODE_TOUCHLINK
- * commissioning mode bit in the ZbStartupT configuration struct, filling in the
- * touchlink configuration in ZbStartupT, and calling ZbStartup
- */
-uint8_t ZbZclTouchlinkStart(struct ZbZclClusterT *clusterPtr,
-    struct WpanPublicT *wpan, uint8_t flags,
-    const void *persist_buf, unsigned int persist_len) ZB_F_DEPRECATED;
-
-/**
- * @brief Deprecated API Use ZbStartup instead
- *
- * Touchlink should be started by setting the BDB_COMMISSION_MODE_TOUCHLINK
- * commissioning mode bit in the ZbStartupT configuration struct, filling in the
- * touchlink configuration in ZbStartupT, and calling ZbStartup
- *
- * @deprecated Touchlink should be started by setting the BDB_COMMISSION_MODE_TOUCHLINK
- * commissioning mode bit in the ZbStartupT configuration struct, filling in the
- * touchlink configuration in ZbStartupT, and calling ZbStartup
- */
-uint8_t ZbZclTouchlinkScan(struct ZbZclClusterT *clusterPtr,
-    void (*callback)(enum ZbBdbCommissioningStatusT status, void *arg), void *arg) ZB_F_DEPRECATED;
-
-/**
- * @brief Deprecated API Use ZbStartup instead
- *
- * Call ZbStartup touchlink ZCL_TL_FLAGS_FACTORY_RESET flag bit set
- *
- * @deprecated Touchlink should be started by setting the BDB_COMMISSION_MODE_TOUCHLINK
- * commissioning mode bit in the ZbStartupT configuration struct, filling in the
- * touchlink configuration in ZbStartupT, and calling ZbStartup
- */
-uint8_t ZbZclTouchlinkFactoryReset(struct ZbZclClusterT *clusterPtr,
-    void (*callback)(enum ZbBdbCommissioningStatusT status, void *arg), void *arg) ZB_F_DEPRECATED;
-
-/**
- * @brief Deprecated API Use ZbStartupTouchlinkTargetStop instead
- *
- * @deprecated After starting Touchlink using ZbStartup, use the new API
- * instead of this call
- */
-uint8_t ZbZclTouchlinkStop(struct ZbZclClusterT *clusterPtr) ZB_F_DEPRECATED;
-
-/**
- * @brief Deprecated do not use this API
- *
- * @deprecated ZbStartup will allocate the Touchlink Server cluster if necessary
- */
-struct ZbZclClusterT * ZbZclTouchlinkServerAlloc(struct ZigBeeT *zb, uint8_t endpoint) ZB_F_DEPRECATED;
-
-/**
- * @brief Deprecated do not use this API
- *
- * @deprecated ZbStartup will allocate the Identify Server cluster if not already
- * allocated on the endpoint chosen for Touchlink
- */
-void ZbZclTouchlinkServerConfigIdentify(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclClusterT *identifyCluster) ZB_F_DEPRECATED;
-
-/**
- * @brief Deprecated do not use this API
- *
- * @deprecated ZbStartup will allocate the Touchlink Client cluster if necessary
- */
-struct ZbZclClusterT * ZbZclTouchlinkClientAlloc(struct ZigBeeT *zb, uint8_t endpoint) ZB_F_DEPRECATED;
 
 #endif

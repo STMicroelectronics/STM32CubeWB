@@ -56,9 +56,45 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section9" checked aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.6.1 / 11-May-2020</label>
+<input type="checkbox" id="collapse-section10" checked aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.8.0 / 22-June-2020</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>BLE-Mesh library version 1.12.008
+<ul>
+<li>Mesh Model Client &amp; Server Certification Passed – TCRL 2019-2</li>
+<li>Management of Client Models in PRF Node project</li>
+<li>Correction on Vendor message commands</li>
+<li>Changes Models enabling in mesh_cfg_usr.h with the definition of a bitmap of 3 bits:
+<ul>
+<li>bit 2 element 3</li>
+<li>bit 1 element 2</li>
+<li>bit 0 element 1</li>
+</ul></li>
+</ul></li>
+<li>BLE WPAN updates
+<ul>
+<li><strong>ID 83714</strong> - Support of four new events to notify the CPU1 about flash operation (after aci_gap_clear_security_db())</li>
+<li><strong>ID 83750</strong> - PREPARE_WRITE_LIST_SIZE and MBLOCKS_COUNT in app_conf.f defined with macro The macro definition is required to keep these parameters consistent with other parameters.</li>
+<li><strong>ID 85448</strong> - Bonding (CFG_BONDING_MODE=1) in BLE_HeartRate application</li>
+<li><strong>ID 85782</strong> - Option to move NVM to unsecure SRAM2</li>
+<li><strong>ID 86573</strong> - BLE_Ota updated to pad with 0xFF the uncomplete data to be written in flash</li>
+<li><strong>ID 86711</strong> - New command SHCI_C2_Config() available to configure system parameter on the CPU2 This command can be used to configure the NVM in either SRAM2 or Flash and to mask asynchronous system events reported by the CPU2. More details in ./interface/patterns/ble_thread/shci/shci.h</li>
+</ul></li>
+<li>ZigBee
+<ul>
+<li>FFD Zigbee 3.0 certification compliant.</li>
+<li>Support of OTA.</li>
+<li>Support of persistent data management (NVM).</li>
+<li>Exposure of APIs allowing access to APS layer.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.7.0 / 11-May-2020</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p>BLE-Mesh:</p>
 <ul>
 <li>BLE Mesh Models Fixe/Update</li>
@@ -66,9 +102,9 @@
 </div>
 </div>
 <div class="collapse">
-<input type="checkbox" id="collapse-section8" checked aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
+<input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p>BLE-Mesh:</p>
 <ul>
 <li>BLE-Mesh library version 1.12.007
@@ -340,7 +376,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 22-January-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_SetFlashActivityControl() to configure BLE timing protection</li>
@@ -383,7 +419,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_ExtpaConfig() to support external PA</li>
@@ -399,7 +435,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 4-September-2019</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Introducing support of Zigbee</li>
@@ -437,7 +473,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 27-June-2019</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Following utilities : Scheduler and Low Power Manager reworked and moved to “Utilities” directory</li>
@@ -463,7 +499,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p>BLE:</p>
 <ul>
 <li>Fix race condition in transport layer when an operating system is used.</li>
@@ -509,7 +545,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 29-March-2019</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Licenses in utilities and patterns moved from sla0044 to 3-clauses BSD</li>
@@ -535,7 +571,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 31-January-2019</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p>First release</p>
 </div>
 </div>

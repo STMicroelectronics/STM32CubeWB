@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    common.c
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Model middleware file
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -667,6 +645,7 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
   MOBLEUINT16 opcode = 0;
   MOBLEUINT32 length = 0;
   MOBLE_ADDRESS my_Address;
+  
   if (size > 0)
   {
     switch(pModelState_Load[0])
@@ -696,8 +675,8 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
         {
           TRACE_M(TF_GENERIC, "Power On Off value invalid %d \r\n", pModelState_Load[0]);
         }         
-              opcode = GENERIC_ON_OFF_SET_UNACK;
-              model_ID = GENERIC_MODEL_SERVER_ONOFF_MODEL_ID;
+        opcode = GENERIC_ON_OFF_SET_UNACK;
+        model_ID = GENERIC_MODEL_SERVER_ONOFF_MODEL_ID;
         break;
       }
 #endif
@@ -713,14 +692,14 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS        
       case LIGHT_LIGHTNESS_NVM_FLAG:
       { 
-           MOBLEUINT16 light_LightnessValue;
-           light_LightnessValue = Light_lightnessPowerOnValue(pModelState_Load);
-           *pData = light_LightnessValue;
-           *(pData+1) = light_LightnessValue >> 8;
-           Light_Lightness_Set(pData, 2);
-          
-           opcode = LIGHT_LIGHTNESS_SET_UNACK;
-           model_ID = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
+        MOBLEUINT16 light_LightnessValue;
+        light_LightnessValue = Light_lightnessPowerOnValue(pModelState_Load);
+        *pData = light_LightnessValue;
+        *(pData+1) = light_LightnessValue >> 8;
+        Light_Lightness_Set(pData, 2);
+
+        opcode = LIGHT_LIGHTNESS_SET_UNACK;
+        model_ID = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
         break;
       } 
 #endif 
@@ -739,37 +718,39 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL        
       case LIGHT_HSL_NVM_FLAG:
       {  
-          if((pModelState_Load[4] == GENERIC_POWER_OFF_STATE) || (pModelState_Load[4] == GENERIC_POWER_ON_STATE))
-          {         
-            Light_Hsl_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_DEFAULT_NVM_OFFSET), 6);
-            Light_HslDefault_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_DEFAULT_NVM_OFFSET), 6);
-          }          
-          else if(pModelState_Load[4] == GENERIC_POWER_RESTORE_STATE)
-          {
-        Light_Hsl_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_NVM_OFFSET), 6);
-          }
-          else
-          {
-            TRACE_M(TF_GENERIC, "Power On Off value invalid %d \r\n", pModelState_Load[0]);
-          }                   
-           
-           opcode = LIGHT_HSL_SET_UNACK;
-           model_ID = LIGHT_MODEL_SERVER_HSL_MODEL_ID;
+        if((pModelState_Load[4] == GENERIC_POWER_OFF_STATE) || (pModelState_Load[4] == GENERIC_POWER_ON_STATE))
+        {         
+          Light_Hsl_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_DEFAULT_NVM_OFFSET), 6);
+          Light_HslDefault_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_DEFAULT_NVM_OFFSET), 6);
+        }          
+        else if(pModelState_Load[4] == GENERIC_POWER_RESTORE_STATE)
+        {
+          Light_Hsl_Set((pModelState_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_NVM_OFFSET), 6);
+        }
+        else
+        {
+          TRACE_M(TF_GENERIC_M, "Power On Off value invalid %d \r\n", pModelState_Load[0]);
+        }                   
+         
+        opcode = LIGHT_HSL_SET_UNACK;
+        model_ID = LIGHT_MODEL_SERVER_HSL_MODEL_ID;
         break;
       }
 #endif        
       case No_NVM_FLAG:
       {
-        TRACE_M(TF_GENERIC,"Power OnOff value stored = %d \r\n",pModelState_Load[4]);
+        TRACE_M(TF_GENERIC_M, "Power OnOff value stored = %d \r\n",pModelState_Load[4]);
         break;
       }
       default: 
       {
-          TRACE_M(TF_LIGHT, "No Saved Data Found \r\n");
+        TRACE_M(TF_LIGHT_M, "No Saved Data Found \r\n");
         break;
       }
-    }     pData[0] = pModelState_Load[4];
-          Generic_PowerOnOff_Set(pData,1);
+    }     
+    
+    pData[0] = pModelState_Load[4];
+    Generic_PowerOnOff_Set(pData,1);
      
     my_Address = BLEMesh_GetAddress();
     elementNumber = BLE_GetElementNumber();
@@ -782,9 +763,9 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
       TRACE_I(TF_MISC,"Publishing the Power on state to address %.2X \r\n",publishAddress);
     }
      
-    }
+  }
      
-    }
+}
   
 /**
 * @brief  Function used to restore the light lighness with respect to Power on off

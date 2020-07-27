@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    ble_mesh.h
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Header file for the BLE-Mesh stack 
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -45,11 +23,11 @@
 
 #include "types.h"
 //#include "hal_types.h"
-#define BLE_MESH_APPLICATION_VERSION "1.12.007" 
+#define BLE_MESH_APPLICATION_VERSION "1.12.008" 
 /**
 * \mainpage ST BLE-Mesh Solutions Bluetooth LE Mesh Library
 *
-* \version 1.12.007
+* \version 1.12.008
 *
 * \subsection contents_sec Contents
 *
@@ -159,6 +137,15 @@ typedef enum _MOBLE_COMMAND_STATUS
   STATUS_DEVICE_ERROR = 0x04
     
 } MOBLE_COMMAND_STATUS;
+
+/**
+* This structure contains device name parameters
+*/
+typedef struct
+{
+    uint8_t deviceNameSize;/* size of device name */
+    const uint8_t* pDeviceName;
+} device_name_params_t;
 
 /**
 * This structure contains transmit receive parameters
@@ -473,6 +460,7 @@ typedef struct
 
 typedef struct
 {
+  const device_name_params_t* pDeviceNameParams;
   MOBLEUINT8* pbdaddr ;
   const tr_params_t* pTrParams;
   const fn_params_t* pFnParams;
@@ -552,10 +540,13 @@ MOBLE_RESULT BLEMesh_SetVendorCbMap(MOBLE_VENDOR_CB_MAP const * map);
 * \param[in] response If 'MOBLE_TRUE', used to get the response. If 'MOBLE_FALSE', no response 
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_SetRemoteData(MOBLE_ADDRESS peer, MOBLEUINT8 elementIndex,
-                                       MOBLEUINT16 command, MOBLEUINT8 const * data, 
-                                       MOBLEUINT32 length, MOBLEBOOL response, 
-                                       MOBLEUINT8 isVendor);
+MOBLE_RESULT BLEMesh_SetRemoteData(MOBLE_ADDRESS peer, 
+                                   MOBLEUINT8 elementIndex,
+                                   MOBLEUINT16 command, 
+                                   MOBLEUINT8 const * data, 
+                                   MOBLEUINT32 length, 
+                                   MOBLEBOOL response, 
+                                   MOBLEUINT8 isVendor);
 
 
 /** \brief Set remote publication for the given Model ID & node Address
@@ -569,10 +560,13 @@ MOBLE_RESULT BLEMesh_SetRemoteData(MOBLE_ADDRESS peer, MOBLEUINT8 elementIndex,
 * \param[in] response If 'MOBLE_TRUE', used to get the response. If 'MOBLE_FALSE', no response 
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_SetRemotePublication(MOBLEUINT32 modelId, MOBLE_ADDRESS srcAddress,
-                                       MOBLEUINT16 command, MOBLEUINT8 const * data, 
-                                       MOBLEUINT32 length, MOBLEBOOL response, 
-                                       MOBLEUINT8 isVendor);
+MOBLE_RESULT BLEMesh_SetRemotePublication(MOBLEUINT32 modelId, 
+                                          MOBLE_ADDRESS srcAddress,
+                                          MOBLEUINT16 command, 
+                                          MOBLEUINT8 const * data, 
+                                          MOBLEUINT32 length, 
+                                          MOBLEBOOL response, 
+                                          MOBLEUINT8 isVendor);
 
 /** \brief Vendor Model Set remote data on the given peer.
 * User is responsible for serializing data into a data buffer. 
@@ -616,9 +610,11 @@ MOBLE_RESULT BLEMesh_ReadRemoteData(MOBLE_ADDRESS peer,
 *             If length is zero, no associated data is sent with the report.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_SendResponse(MOBLE_ADDRESS peer, MOBLE_ADDRESS dst, 
-                                      MOBLEUINT8 status, MOBLEUINT8 const * data, 
-                                      MOBLEUINT32 length);
+MOBLE_RESULT BLEMesh_SendResponse(MOBLE_ADDRESS peer, 
+                                  MOBLE_ADDRESS dst, 
+                                  MOBLEUINT8 status,
+                                  MOBLEUINT8 const * data, 
+                                  MOBLEUINT32 length);
 
 /** \brief Send response on received packet.
 * \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
@@ -629,8 +625,11 @@ MOBLE_RESULT BLEMesh_SendResponse(MOBLE_ADDRESS peer, MOBLE_ADDRESS dst,
 *             If length is zero, no associated data is sent with the report.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT VendorModel_SendResponse(MOBLEUINT16 vendorModelId, MOBLE_ADDRESS peer, MOBLE_ADDRESS dst, 
-                                      MOBLEUINT8 status, MOBLEUINT8 const * data, 
+MOBLE_RESULT VendorModel_SendResponse(MOBLEUINT16 vendorModelId, 
+                                      MOBLE_ADDRESS peer, 
+                                      MOBLE_ADDRESS dst, 
+                                      MOBLEUINT8 status, 
+                                      MOBLEUINT8 const * data, 
                                       MOBLEUINT32 length);
 
 /** \brief Sensor Send response on received packet.
@@ -640,8 +639,11 @@ MOBLE_RESULT VendorModel_SendResponse(MOBLEUINT16 vendorModelId, MOBLE_ADDRESS p
 *             If length is zero, no associated data is sent with the report.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT Model_SendResponse(MOBLE_ADDRESS src_peer,MOBLE_ADDRESS dst_peer ,
-                                              MOBLEUINT16 opcode,MOBLEUINT8 const *pData,MOBLEUINT32 length); 
+MOBLE_RESULT Model_SendResponse(MOBLE_ADDRESS src_peer,
+                                MOBLE_ADDRESS dst_peer ,
+                                MOBLEUINT16 opcode,
+                                MOBLEUINT8 const *pData,
+                                MOBLEUINT32 length); 
 
 
 /** \brief Config Model Send message to the remote
@@ -657,8 +659,6 @@ MOBLE_RESULT ConfigModel_SendMessage(MOBLE_ADDRESS src_peer,
                                      MOBLEUINT8 *pData,
                                      MOBLEUINT32 length,
                                      MOBLEUINT8 *pTargetDevKey); 
-
-
 
 /** \brief Publish Send to the provisioner
 * \param[in] peer Destination address is Provisioner address 
@@ -748,7 +748,8 @@ MOBLE_ADDRESS BLEMesh_GetAddress(void);
 * \return mesh address of a node.
 *
 */
-MOBLE_ADDRESS BLEMesh_GetPublishAddress(MOBLEUINT8 elementNumber, MOBLEUINT32 modelId);
+MOBLE_ADDRESS BLEMesh_GetPublishAddress(MOBLEUINT8 elementNumber, 
+                                        MOBLEUINT32 modelId);
 
 /** \brief Get Subscription address of a node
 *
@@ -869,11 +870,18 @@ MOBLE_RESULT BLEMesh_SetAttentionTimerCallback(MOBLE_ATTENTION_TIMER_CB cb);
 */
 void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason);
 
+/* EME: configuration complete callback to application */
 /** \brief Provision callback
 * Callback on Provision by provisioner
 *
 */
 void BLEMesh_ProvisionCallback(void);
+
+/** \brief Configuration callback
+* Callback on Configuration by provisioner
+*
+*/
+void BLEMesh_ConfigurationCallback(void);
 
 /** \brief Call back function called when PB-ADV link Opened 
 * Callback on Provision by provisioner
@@ -903,14 +911,16 @@ MOBLE_RESULT BLEMesh_CreateNetwork(MOBLEUINT8 *devKey);
 * \count[in] count of the number of models defined in Application
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_SetSIGModelsCbMap(const MODEL_SIG_cb_t* pSig_cb, MOBLEUINT32 count);
+MOBLE_RESULT BLEMesh_SetSIGModelsCbMap(const MODEL_SIG_cb_t* pSig_cb, 
+                                       MOBLEUINT32 count);
 
 /** \brief GetApplicationVendorModels
 * \param[in] map callback map. If NULL, nothing is done.
 * \count[in] count of the number of models defined in Application
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-void GetApplicationVendorModels(const MODEL_Vendor_cb_t** pModelsTable, MOBLEUINT32* VendorModelscount);
+void GetApplicationVendorModels(const MODEL_Vendor_cb_t** pModelsTable, 
+                                MOBLEUINT32* VendorModelscount);
 
 /** \brief Returns sleep duration.
 * going to sleep (or no call to BLEMesh_Process()) for this duration does not affect operation of mesh library
@@ -922,7 +932,8 @@ MOBLEUINT32 BLEMesh_GetSleepDuration(void);
 * \param[in] testFunctionParm: Test function parameters
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_UpperTesterDataProcess(MOBLEUINT8 testFunctionIndex, MOBLEUINT8* testFunctionParm);
+MOBLE_RESULT BLEMesh_UpperTesterDataProcess(MOBLEUINT8 testFunctionIndex, 
+                                            MOBLEUINT8* testFunctionParm);
 
 /** \brief String print callback function.
 * \param[in] message: To be printed string pointer 
@@ -958,7 +969,8 @@ void BLEMesh_FnFriendshipEstablishedCallback(MOBLE_ADDRESS lpnAddress,
 *             3: friend clear received
 * \param[out] address of corresponding low power node.
 */
-void BLEMesh_FnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS lpnAddress);
+void BLEMesh_FnFriendshipClearedCallback(MOBLEUINT8 reason, 
+                                         MOBLE_ADDRESS lpnAddress);
 
 /** \brief Low Power node callback corresponding to friendship established with friend node.
 * \param[out] address of corresponding friend node.
@@ -971,7 +983,8 @@ void BLEMesh_LpnFriendshipEstablishedCallback(MOBLE_ADDRESS fnAddress);
 *             1: No response received from friend node
 * \param[out] address of corresponding friend node.
 */
-void BLEMesh_LpnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS fnAddress);
+void BLEMesh_LpnFriendshipClearedCallback(MOBLEUINT8 reason, 
+                                          MOBLE_ADDRESS fnAddress);
 
 /** \brief Disable continuous scan
 * Applicable only to provisioned Low Power feature enabled node
@@ -1044,9 +1057,9 @@ void BLEMesh_CustomBeaconGeneratorCallback(void* buffer, MOBLEUINT8* size);
 * \param[out] rssi
 */
 void BLEMesh_CustomBeaconReceivedCallback(const MOBLEUINT8* bdAddr,
-                                              const MOBLEUINT8* data,
-                                              MOBLEUINT8 length,
-                                              MOBLEINT8 rssi);
+                                          const MOBLEUINT8* data,
+                                          MOBLEUINT8 length,
+                                          MOBLEINT8 rssi);
 
 /** 
 * @brief ApplicationGetSigModelList: This function provides the list of the 
@@ -1055,8 +1068,8 @@ void BLEMesh_CustomBeaconReceivedCallback(const MOBLEUINT8* bdAddr,
 * @param elementIndex: Index of the element for Model List
 * retval Count of the SIG Model Servers enabled in the Application
 */
-MOBLEUINT8 ApplicationGetSigModelList(MOBLEUINT16* pModels_sig_ID, \
-                                                        MOBLEUINT8 elementIndex);
+MOBLEUINT8 ApplicationGetSigModelList(MOBLEUINT16* pModels_sig_ID,
+                                      MOBLEUINT8 elementIndex);
 
 /** 
 * @brief ApplicationGetCLIENTSigModelList: This function provides the list of the 
@@ -1075,7 +1088,7 @@ MOBLEUINT8 ApplicationGetCLIENTSigModelList(MOBLEUINT16* pModels_sig_ID,
 * @param elementIndex: Index of the element for Model List
 * retval Count of the SIG Model Servers enabled in the Application
 */
-MOBLEUINT8 BLEMeshSetSelfModelList(MOBLEUINT8 numberOfElements);
+MOBLE_RESULT BLEMeshSetSelfModelList(MOBLEUINT8 numberOfElements);
 
 /** 
 * @brief ApplicationGetVendorModelList: This function provides the list of the 
@@ -1084,8 +1097,8 @@ MOBLEUINT8 BLEMeshSetSelfModelList(MOBLEUINT8 numberOfElements);
 * @param elementIndex: Index of the element for Model List
 * retval Count of the Vendor Model Servers enabled in the Application
 */
-MOBLEUINT8 ApplicationGetVendorModelList(MOBLEUINT32* pModels_vendor_ID, \
-                                                       MOBLEUINT8 elementIndex);
+MOBLEUINT8 ApplicationGetVendorModelList(MOBLEUINT32* pModels_vendor_ID,
+                                         MOBLEUINT8 elementIndex);
 
 /** 
 * @brief ApplicationChkSigModelActive: This function checks if a specific 
@@ -1094,8 +1107,8 @@ MOBLEUINT8 ApplicationGetVendorModelList(MOBLEUINT32* pModels_vendor_ID, \
 * @param elementIndex : index of element for which active model checking is needed
 * retval Bool: True or False, if the Server ID matches with the list 
 */
-//MOBLEBOOL ApplicationChkSigModelActive(MOBLEUINT16 modelID);
-MOBLEBOOL ApplicationChkSigModelActive(MOBLEUINT16 modelID, MOBLEUINT8 elementIndex);
+MOBLEBOOL ApplicationChkSigModelActive(MOBLEUINT16 modelID, 
+                                       MOBLEUINT8 elementIndex);
 
 
 /** 
@@ -1105,8 +1118,8 @@ MOBLEBOOL ApplicationChkSigModelActive(MOBLEUINT16 modelID, MOBLEUINT8 elementIn
 * @param elementIndex : index of element for which active model checking is needed
 * retval Bool: True or False, if the Server ID matches with the list 
 */
-//MOBLEBOOL ApplicationChkVendorModelActive(MOBLEUINT32 modelID);
-MOBLEBOOL ApplicationChkVendorModelActive(MOBLEUINT32 modelID, MOBLEUINT8 elementIndex);
+MOBLEBOOL ApplicationChkVendorModelActive(MOBLEUINT32 modelID, 
+                                          MOBLEUINT8 elementIndex);
 
 /** 
 * @brief ApplicationGetConfigServerDeviceKey: This function provides the 
@@ -1125,10 +1138,10 @@ MOBLE_RESULT ApplicationGetConfigServerDeviceKey(MOBLE_ADDRESS src,
 * \param[out] last updated rssi value.
 */
 void BLEMesh_NeighborAppearedCallback(const MOBLEUINT8* bdAddr,
-                                          MOBLEBOOL provisioned,
-                                          const MOBLEUINT8* uuid,
-                                          MOBLE_ADDRESS networkAddress,
-                                          MOBLEINT8 rssi);
+                                      MOBLEBOOL provisioned,
+                                      const MOBLEUINT8* uuid,
+                                      MOBLE_ADDRESS networkAddress,
+                                      MOBLEINT8 rssi);
 
 /** \brief Existing neighbor refreshed callback in neighbor table.
 * \param[out] MAC address of neighbor.
@@ -1138,31 +1151,34 @@ void BLEMesh_NeighborAppearedCallback(const MOBLEUINT8* bdAddr,
 * \param[out] last updated rssi value.
 */
 void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
-                                           MOBLEBOOL provisioned,
-                                           const MOBLEUINT8* uuid,
-                                           MOBLE_ADDRESS networkAddress,
-                                           MOBLEINT8 rssi);
+                                       MOBLEBOOL provisioned,
+                                       const MOBLEUINT8* uuid,
+                                       MOBLE_ADDRESS networkAddress,
+                                       MOBLEINT8 rssi);
 
 /** \brief Get neighbor table status.
 * \param[in] pointer to application buff, it will be updated with neighbor table parameters.
 * \param[in] reference to a variable which will be updated according to number of entries in neighbor table.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_GetNeighborState(neighbor_params_t* pNeighborTable, MOBLEUINT8* pNoOfNeighborPresent);
+MOBLE_RESULT BLEMesh_GetNeighborState(neighbor_params_t* pNeighborTable, 
+                                      MOBLEUINT8* pNoOfNeighborPresent);
 
 /** \brief Set system faults. Will be used by Health Model. Supporting All Bluetooth assigned FaultValues. 
 * \param[in] pFaultArray FaultValue Array pointer. (FaultValue Range: 0x01–0x32)   
 * \param[in] faultArraySize Size of the fault array. Max supported array size is 5. 
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_SetFault(MOBLEUINT8 *pFaultArray, MOBLEUINT8 faultArraySize);
+MOBLE_RESULT BLEMesh_SetFault(MOBLEUINT8 *pFaultArray, 
+                              MOBLEUINT8 faultArraySize);
 
 /** \brief Clears already set system faults. Will be used by Health Model.  
 * \param[in] pFaultArray Fault Array pointer  
 * \param[in] faultArraySize Size of the fault array. Max supported array size is 5.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_ClearFault(MOBLEUINT8 *pFaultArray, MOBLEUINT8 faultArraySize);
+MOBLE_RESULT BLEMesh_ClearFault(MOBLEUINT8 *pFaultArray, 
+                                MOBLEUINT8 faultArraySize);
 
 /** \brief Bluetooth LE Mesh Library shutdown
 *

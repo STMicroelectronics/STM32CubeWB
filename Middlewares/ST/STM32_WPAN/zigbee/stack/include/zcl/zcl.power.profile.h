@@ -80,13 +80,13 @@ struct ZbZclPowerProfPhase {
 /* PowerProfileNotification and PowerProfileResponse share the same payload format. */
 struct ZbZclPowerProfSvrProfileRsp {
     uint8_t total_profile_num;
-    uint8_t power_profile_id;
+    uint8_t profile_id;
     uint8_t num_transferred_phases;
     struct ZbZclPowerProfPhase phase_list[ZCL_PWR_PROF_MAX_ENERGY_PHASES];
 };
 
 struct ZbZclPowerProfileRecord {
-    uint8_t power_profile_id;
+    uint8_t profile_id;
     uint8_t energy_phase_id;
     uint8_t remote_control;
     enum ZbZclPowerProfState state;
@@ -109,13 +109,13 @@ struct ZbZclPowerProfSchedPhase {
 };
 
 struct ZbZclPowerProfCliPhasesNotify {
-    uint8_t power_profile_id;
+    uint8_t profile_id;
     uint8_t num_phases;
     struct ZbZclPowerProfSchedPhase sched_list[ZCL_PWR_PROF_MAX_ENERGY_PHASES];
 };
 
 struct ZbZclPowerProfCliPriceRsp {
-    uint8_t power_profile_id;
+    uint8_t profile_id;
     uint16_t currency;
     uint32_t price;
     uint8_t trailing_digit;
@@ -129,13 +129,13 @@ struct ZbZclPowerProfCliSchedPriceRsp {
 
 /* ZCL_PWR_PROF_SVR_PHASES_RSP / ZCL_PWR_PROF_SVR_PHASES_NOTIFY */
 struct ZbZclPowerProfSvrPhasesRsp {
-    uint8_t power_profile_id;
+    uint8_t profile_id;
     uint8_t num_sched_energy_phases;
 };
 
 /* ZCL_PWR_PROF_SVR_CONSTRAINTS_NOTIFY */
 struct ZbZclPowerProfSvrConstraintsNotify {
-    uint8_t power_profile_id;
+    uint8_t profile_id;
     uint16_t start_after;
     uint16_t stop_before;
 };
@@ -147,7 +147,7 @@ struct ZbZclPowerProfSvrConstraintsNotify {
 /* ZCL_PWR_PROF_SVR_GET_PRICE_EXT */
 struct ZbZclPowerProfSvrGetPriceExtReq {
     uint8_t options; /* e.g. ZCL_PWR_PROF_PRICE_EXT_OPT_START_TIME_PRESENT */
-    uint8_t power_profile_id;
+    uint8_t profile_id;
     uint16_t start_time; /* optional (ZCL_PWR_PROF_PRICE_EXT_OPT_START_TIME_PRESENT) */
 };
 
@@ -194,7 +194,7 @@ struct ZbZclClusterT * ZbZclPowerProfClientAlloc(struct ZigBeeT *zb, uint8_t end
 
 /* ZCL_PWR_PROF_CLI_PROFILE_REQ */
 enum ZclStatusCodeT ZbZclPowerProfClientProfileReq(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclPowerProfCliProfileReq *req, const struct ZbApsAddrT *dst,
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_CLI_STATE_REQ */
@@ -214,22 +214,22 @@ enum ZclStatusCodeT ZbZclPowerProfClientSchedPriceRsp(struct ZbZclClusterT *clus
 
 /* ZCL_PWR_PROF_CLI_PHASES_NOTIFY */
 enum ZclStatusCodeT ZbZclPowerProfClientPhasesNotify(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclPowerProfCliPhasesNotify *notify, struct ZbApsAddrT *dst,
-    void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliPhasesNotify *notify,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_CLI_PHASES_RSP */
 enum ZclStatusCodeT ZbZclPowerProfClientPhasesResponse(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclPowerProfCliPhasesNotify *notify, struct ZbZclAddrInfoT *dst,
+    struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfCliPhasesNotify *notify,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_CLI_SCHED_CONS_REQ */
 enum ZclStatusCodeT ZbZclPowerProfClientSchedConsReq(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclPowerProfCliProfileReq *req, const struct ZbApsAddrT *dst,
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_CLI_PHASES_SCHED_STATE_REQ */
 enum ZclStatusCodeT ZbZclPowerProfClientPhasesSchedStateReq(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclPowerProfCliProfileReq *req, const struct ZbApsAddrT *dst,
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_CLI_PRICE_EXT_RSP */
@@ -266,12 +266,13 @@ struct ZbZclPowerProfServerCallbacks {
 struct ZbZclClusterT * ZbZclPowerProfServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclPowerProfServerCallbacks *callbacks, void *arg);
 
-/* ZCL_PWR_PROF_SVR_PROFILE_NOTIFY */
+/* Send a PowerProfileNotification Command. It is sent as a ZCL request with a unique
+ * sequence number, and can receive a Default Response if applicable. */
 enum ZclStatusCodeT ZbZclPowerProfServerProfileNotify(struct ZbZclClusterT *clusterPtr,
-    struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrProfileRsp *notify,
-    void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrProfileRsp *notify,
+    void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_PROFILE_RSP */
+/* Send a PowerProfileResponse Command. */
 enum ZclStatusCodeT ZbZclPowerProfServerProfileRsp(struct ZbZclClusterT *clusterPtr,
     struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfSvrProfileRsp *rsp,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -283,13 +284,13 @@ enum ZclStatusCodeT ZbZclPowerProfServerStateRsp(struct ZbZclClusterT *clusterPt
 
 /* ZCL_PWR_PROF_SVR_GET_PRICE */
 enum ZclStatusCodeT ZbZclPowerProfServerGetPriceReq(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclPowerProfCliProfileReq *req, const struct ZbApsAddrT *dst,
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_SVR_STATE_NOTIFY */
 enum ZclStatusCodeT ZbZclPowerProfServerStateNotify(struct ZbZclClusterT *clusterPtr,
-    struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrStateRsp *notify,
-    void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrStateRsp *notify,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_SVR_GET_SCHED_PRICE */
 enum ZclStatusCodeT ZbZclPowerProfServerGetSchedPriceReq(struct ZbZclClusterT *clusterPtr,
@@ -297,7 +298,7 @@ enum ZclStatusCodeT ZbZclPowerProfServerGetSchedPriceReq(struct ZbZclClusterT *c
 
 /* ZCL_PWR_PROF_SVR_PHASES_REQ */
 enum ZclStatusCodeT ZbZclPowerProfServerPhasesReq(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclPowerProfCliProfileReq *req, const struct ZbApsAddrT *dst,
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_SVR_PHASES_RSP */
@@ -307,13 +308,13 @@ enum ZclStatusCodeT ZbZclPowerProfServerPhasesRsp(struct ZbZclClusterT *clusterP
 
 /* ZCL_PWR_PROF_SVR_PHASES_NOTIFY */
 enum ZclStatusCodeT ZbZclPowerProfServerPhasesNotify(struct ZbZclClusterT *clusterPtr,
-    struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrPhasesRsp *notify,
-    void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrPhasesRsp *notify,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_SVR_CONSTRAINTS_NOTIFY */
 enum ZclStatusCodeT ZbZclPowerProfServerConstraintsNotify(struct ZbZclClusterT *clusterPtr,
-    struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrConstraintsNotify *notify,
-    void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrConstraintsNotify *notify,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* ZCL_PWR_PROF_SVR_CONSTRAINTS_RSP */
 enum ZclStatusCodeT ZbZclPowerProfServerConstraintsRsp(struct ZbZclClusterT *clusterPtr,
@@ -322,7 +323,7 @@ enum ZclStatusCodeT ZbZclPowerProfServerConstraintsRsp(struct ZbZclClusterT *clu
 
 /* ZCL_PWR_PROF_SVR_GET_PRICE_EXT */
 enum ZclStatusCodeT ZbZclPowerProfServerGetPriceReqExtReq(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclPowerProfSvrGetPriceExtReq *req, const struct ZbApsAddrT *dst,
+    const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrGetPriceExtReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 #endif /* ZCL_PWR_PROF_H */

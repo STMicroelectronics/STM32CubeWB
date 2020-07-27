@@ -80,9 +80,10 @@ Other peripherals used:
   1 GPIO for analog input: PA.01 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32)
   DMA
   Timer
+
 @par Keywords
 
-ADC,ADC channel, ADC group regular, ADC group injected, conversion, single conversion mode, interrupt,
+ADC, analog digital converter, analog, conversion, voltage, channel, analog input, regular, injected
 
 @par Directory contents 
 
@@ -96,7 +97,7 @@ ADC,ADC channel, ADC group regular, ADC group injected, conversion, single conve
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

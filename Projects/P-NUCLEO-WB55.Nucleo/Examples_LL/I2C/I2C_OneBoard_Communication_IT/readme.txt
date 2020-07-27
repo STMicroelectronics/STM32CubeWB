@@ -27,8 +27,14 @@ with LL unitary service functions to  optimize for performance and size.
 This example guides you through the different configuration steps by mean of LL API
 to configure GPIO and I2C peripherals using only one P-NUCLEO-WB55.
 
-The user can disable internal pull-up through "#define EXTERNAL_PULL_UP_AVAILABLE"
-This help for an integration of this example inside an ecosystem board with external pull-up */
+The user can disable internal pull-up by opening ioc file.
+For that, user can follow the procedure :
+1- Double click on the I2C_OneBoard_Communication_IT.ioc file
+2- When CUBEMX tool is opened, select System Core category
+3- Then in the configuration of GPIO/I2C3, change Pull-up to No pull-up and no pull-down for the both pins
+4- Same action in the configuration of GPIO/I2C1, change Pull-up to No pull-up and no pull-down for the both pins
+5- Last step, generate new code thanks to button "GENERATE CODE"
+The example is updated with no pull on each pin used for I2C communication
 
 I2C1 Peripheral is configured in Slave mode with EXTI (Clock 400Khz, Own address 7-bit enabled).
 I2C3 Peripheral is configured in Master mode with EXTI (Clock 400Khz).
@@ -53,6 +59,10 @@ LED2 is On if data is well received.
 
 In case of errors, LED2 is blinking.
 
+@par Keywords
+
+Connectivity, Communication, I2C, IT , Master, Slave, Transmission, Reception, Fast mode,
+
 
 @par Directory contents 
 
@@ -73,7 +83,7 @@ In case of errors, LED2 is blinking.
   - P-NUCLEO-WB55 Set-up
     - Connect GPIOs connected to I2C1 SCL/SDA (PB.8 and PB.9)
     to respectively SCL and SDA pins of I2C3 (PC.0 and PC.1).
-      - I2C1_SCL  PB.8 (CN10, pin 3) : connected to I2C3_SCL PC.0 (CN7, pin 28) 
+      - I2C1_SCL  PB.8 (CN10, pin 3) : connected to I2C3_SCL PC.0 (CN7, pin 28)
       - I2C1_SDA  PB.9 (CN10, pin 5) : connected to I2C3_SDA PC.1 (CN7, pin 30)
 
   - Launch the program. Press User push-button (SW1) to initiate a read request by Master 

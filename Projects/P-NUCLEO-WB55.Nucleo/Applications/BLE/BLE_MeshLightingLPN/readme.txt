@@ -1,5 +1,5 @@
 /**
-  @page BLE_MeshLightingDemo example
+  @page BLE_MeshLightingLPN example
   
   @verbatim
   ******************** (C) COPYRIGHT 2020 STMicroelectronics *******************
@@ -29,6 +29,10 @@ This is the implementation of the BLE Mesh Low Power Node profile as specified b
       
 @note The application needs to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
+
+@par Keywords
+
+Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE mesh, Dual core
 
 @par Directory contents 
             mesh_lighting_demo
@@ -104,7 +108,7 @@ This is the implementation of the BLE Mesh Low Power Node profile as specified b
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -147,7 +151,7 @@ undefined.
 
 General default setting defined in mesh_cfg_usr.h:
         ENABLE_GENERIC_MODEL_SERVER_ONOFF                                    (1) /* GENERIC SERVER ONOFF MODEL ON FIRST ELEMENT */
-        APPLICATION_NUMBER_OF_ELEMENTS                                         3 /* NUMBER OF ELEMENT SUPPORTED */ 
+        APPLICATION_NUMBER_OF_ELEMENTS                                         1 /* NUMBER OF ELEMENT SUPPORTED */ 
         APPLICATION_SIG_MODELS_MAX_COUNT                                      20 /* TOTAL NUMBER OF MODELS SUPPORTED */
         APPLICATION_VENDOR_MODELS_MAX_COUNT                                    2 /* TOTAL NIMBER OF VENDOR MODELS SUPPORTED */
         ENABLE_PB_ADV                                                            /* Provisioning Bearer over advertising channels support */
@@ -174,8 +178,9 @@ Step 2. Generate and flash binary in 2 boards (LPN1, LPN2)
 
 Friend Node setup (use the Proxy Relay Friend Node BLE_MeshLightingPRFNode project):
 Step 1. Generate and flash binary in a board (FN)
-Step 2. Provision the 3 boards with the default parameters, using BLE-Mesh Android or BLE-Mesh iOS smartphone application
-        (subscribe and publish to default group)
+Step 2. Provision the 3 boards with the default parameters, using BLE-Mesh Android (https://play.google.com/store/apps/details?id=com.st.bluenrgmesh&hl=en) or 
+        BLE-Mesh iOS (https://apps.apple.com/us/app/st-ble-mesh/id1348645067) smartphone application (subscribe and publish to default group)
+
 
 Demo operation
 After provisioning, it might take a few seconds for Friendship to be established between FN and LPNs.

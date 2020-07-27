@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -128,14 +128,6 @@ typedef	uint8_t	tBDAddr[6];
 /* ------------------------------------------------------------------------- */
 
 
-/* Min. ATT MTU size
- */
-#define ATT_MTU                               23
-
-
-/* ------------------------------------------------------------------------- */
-
-
 /* Error Codes as specified by the specification 
  */
 #define ERR_CMD_SUCCESS                              0x00
@@ -168,30 +160,74 @@ typedef	uint8_t	tBDAddr[6];
 /* ------------------------------------------------------------------------- */
 
 
-/* Obsolete error codes
+/* Bluetooth address types
  */
+#define PUBLIC_ADDR                            0X00U
+#define RANDOM_ADDR                            0X01U
+#define STATIC_RANDOM_ADDR                     0X01U
+#define RESOLVABLE_PRIVATE_ADDR                0X02U
+#define NON_RESOLVABLE_PRIVATE_ADDR            0X03U
+
+
+/* Scan_types Scan types
+ */
+#define PASSIVE_SCAN                           0x00U
+#define ACTIVE_SCAN                            0x01U
+
+
+/* ------------------------------------------------------------------------- */
+
+
+/* Various obsolete definitions
+ */
+
+#define LIM_DISC_MODE_TIMEOUT                      180000 /* 180 seconds */
+#define PRIVATE_ADDR_INT_TIMEOUT                   900000 /* 15 minutes */
+
+#define BLE_STATUS_SEC_UNKNOWN_CONNECTION_ID         0x40
 #define BLE_STATUS_INVALID_LEN_PDU                   0x44
 #define FLASH_READ_FAILED                            0x49
 #define FLASH_WRITE_FAILED                           0x4A
 #define FLASH_ERASE_FAILED                           0x4B
 #define TIMER_NOT_VALID_LAYER                        0x54
 #define TIMER_INSUFFICIENT_RESOURCES                 0x55
+#define BLE_STATUS_DEV_NOT_FOUND_IN_DB               0x5C
 #define BLE_STATUS_INVALID_PARAMETER                 0x61
 #define BLE_INSUFFICIENT_ENC_KEYSIZE                 0x65
+#define BLE_STATUS_ADDR_NOT_RESOLVED                 0x70
 #define BLE_STATUS_PROFILE_ALREADY_INITIALIZED       0xF0
-#define BLE_STATUS_NULL_PARAM                        0xF1 
+#define BLE_STATUS_NULL_PARAM                        0xF1
 
+#define ATT_MTU                                        23
 
-/* ------------------------------------------------------------------------- */
+#define DEVICE_NAME_LEN                                 7
 
+#define CONFIG_DATA_DIV_OFFSET                       0x06
+#define CONFIG_DATA_DIV_LEN                             2
 
-/* Obsolete pairing complete definitions
- */
-#define SM_PAIRING_SUCCESS                   0x00
-#define SM_PAIRING_TIMEOUT                   0x01
-#define SM_PAIRING_FAILED                    0x02
-#define PASSKEY_ENTRY_FAILED                 0x01
+#define USE_FIXED_PIN_FOR_PAIRING                    0x00
+#define DONOT_USE_FIXED_PIN_FOR_PAIRING              0x01
 
+#define SM_LINK_AUTHENTICATED                        0x01
+#define SM_LINK_AUTHORIZED                           0x02
+#define SM_LINK_ENCRYPTED                            0x04
+
+#define SM_PAIRING_SUCCESS                           0x00
+#define SM_PAIRING_TIMEOUT                           0x01
+#define SM_PAIRING_FAILED                            0x02
+#define PASSKEY_ENTRY_FAILED                         0x01
+
+#define ADV_IND                                        0
+#define ADV_DIRECT_IND                                 1
+#define ADV_SCAN_IND                                   2
+#define ADV_NONCONN_IND                                3
+#define SCAN_RSP                                       4
+#define HIGH_DUTY_CYCLE_DIRECTED_ADV                   1
+#define LOW_DUTY_CYCLE_DIRECTED_ADV                    4
+
+#define ADV_INTERVAL_LOWEST_CONN                     0X0020
+#define ADV_INTERVAL_HIGHEST                         0X4000
+#define ADV_INTERVAL_LOWEST_NONCONN                  0X00A0
 
 /* ------------------------------------------------------------------------- */
 
@@ -201,6 +237,23 @@ typedef	uint8_t	tBDAddr[6];
 #define hci_le_read_remote_used_features hci_le_read_remote_features
 #define hci_le_read_remote_used_features_complete_event_rp0 \
           hci_le_read_remote_features_complete_event_rp0
+
+
+/* ------------------------------------------------------------------------- */
+
+
+/* Byte order conversions
+*/
+#define htob( d, n )  (d)     /* LE */
+#define btoh( d, n )  (d)     /* LE */
+
+
+/* Events table
+ */
+#define HCI_LE_META_EVENT_TABLE_SIZE HCI_LE_EVENT_TABLE_SIZE
+#define HCI_VENDOR_SPECIFIC_EVENT_TABLE_SIZE HCI_VS_EVENT_TABLE_SIZE
+#define hci_le_meta_event_table hci_le_event_table
+#define hci_vendor_specific_event_table hci_vs_event_table
 
 
 /* ------------------------------------------------------------------------- */

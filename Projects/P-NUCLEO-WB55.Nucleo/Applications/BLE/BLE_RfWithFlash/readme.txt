@@ -1,11 +1,11 @@
 /**
-  @page  Application
-
+  @page BLE_RfWithFlash example
+  
   @verbatim
   ******************************************************************************
   * @file    BLE/BLE_RfWithFlash/readme.txt 
   * @author  MCD Application Team
-  * @brief   Description of the BLE_RfWithFlash application
+  * @brief   Description of the BLE_RfWithFlash example
   ******************************************************************************
   *
   * Copyright (c) 2020 STMicroelectronics. All rights reserved.
@@ -18,7 +18,7 @@
   ******************************************************************************
   @endverbatim
 
-@par Application Description
+@par Example Description
 
 This example is to demonstrate the capability to erase/write the flash while a Point-to-Point communication using BLE component is active. 
 
@@ -27,7 +27,11 @@ timing protection versus flash activity from CPU1.
 The flash driver implements the algorithm described in AN5289 - Building a Wireless application.
 The BLE_RfWithFlash shall be downloaded in a STM32WB55xx board acting as a GATT server.
 The client could be either a phone with the ST BLE Sensor application or the BLE_P2PClient application downloaded on a STM32WB55xx board.
-	
+
+@par Keywords
+
+Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, Dual core
+
 @par Directory contents 
   
   - BLE/BLE_RfWithFlash/Core/Inc/stm32wbxx_hal_conf.h	        HAL configuration file
@@ -65,7 +69,7 @@ The client could be either a phone with the ST BLE Sensor application or the BLE
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.

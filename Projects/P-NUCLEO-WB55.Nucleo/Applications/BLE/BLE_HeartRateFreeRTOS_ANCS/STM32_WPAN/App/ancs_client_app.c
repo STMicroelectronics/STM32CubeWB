@@ -41,11 +41,6 @@
 #define MAX_DATA_LEN           0x0128
 
 /**
- * The default GAP command timeout is set to 30s
- */
-#define GAP_DEFAULT_TIMEOUT (30000)
-
-/**
  * The default GATT command timeout is set to 30s
  */
 #define GATT_DEFAULT_TIMEOUT (30000)
@@ -74,15 +69,6 @@ do {\
 #define COPY_ANCS_CONTROL_POINT_UUID(uuid_struct)                COPY_UUID_128(uuid_struct, 0x69, 0xD1, 0xD8, 0xF3, 0x45, 0xE1, 0x49, 0xA8, 0x98, 0x21, 0x9B, 0xBD, 0xFD, 0xAA, 0xD9, 0xD9)
 
 /* Private typedef -----------------------------------------------------------*/
-typedef enum
-{
-  GAP_PROC_TERMINATE_CONNECTION,
-  GAP_PROC_SLAVE_SECURITY_REQ,
-  GAP_PROC_PASS_KEY_RESPONSE,
-  GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM,
-  GAP_PROC_ALLOW_REBOND,
-} GapProcId_t;
-
 typedef enum
 {
   GATT_PROC_MTU_UPDATE,
@@ -119,12 +105,6 @@ typedef struct ancs_contextS {
   
   ANCS_ProfileState state;
   uint16_t connection_handle;
-  
-  uint8_t Peer_Bonded;
-  uint8_t Security_Mode;
-  uint8_t Security_Level;
-  uint8_t Peer_Address_Type;
-  uint8_t Peer_Address[6];
   
   uint8_t appDisplayName_len;
   uint8_t appDisplayName[MAX_DISPLAY_NAME_LEN];
@@ -186,9 +166,6 @@ uint16_t gCharUUID=0,gCharStartHandle=0,gCharValueHandle=0,gCharDescriptorHandle
 extern UART_HandleTypeDef huart1;
 #endif
 /* Private function prototypes -----------------------------------------------*/
-static void gap_cmd_resp_wait(uint32_t timeout);
-static void gap_cmd_resp_release(uint32_t flag);
-static void GapProcReq(GapProcId_t GapProcId);
 static void gatt_cmd_resp_wait(uint32_t timeout);
 static void gatt_cmd_resp_release(uint32_t flag);
 static void GattProcReq(GattProcId_t GattProcId);
@@ -798,7 +775,7 @@ void ANCS_Notification_Check(EventFlags EventFlagMask)
     //ancs_context.notifyList[i].notifUID = 0x00;
   }
 
-  ancs_context.state = ANCS_UNINITIALIZED;
+  ancs_context.state = ANCS_IDLE;
   ancs_context.connection_handle = 0xFFFF;
   ancs_context.notifyEntry = INVALID_NOTIFY_ENTRY;
 
@@ -807,7 +784,7 @@ void ANCS_Notification_Check(EventFlags EventFlagMask)
   return;
 }
 
-osSemaphoreId_t SemGapId;
+
 osSemaphoreId_t SemGattId;
 
 osThreadId_t AncsProcessId;
@@ -839,8 +816,7 @@ static void AncsProcess(void *argument)
 */
 static void Ancs_Mgr( void )
 {
-
-    osThreadFlagsSet( AncsProcessId, 1 );
+  osThreadFlagsSet( AncsProcessId, 1 );
   return;
 }
 
@@ -852,31 +828,15 @@ void ANCS_Client_App_Init( void )
   /* register ANCS_Client_Event_Handler to BLE Controller initialization*/
   SVCCTL_RegisterCltHandler(ANCS_Client_Event_Handler);
 
-   AncsProcessId = osThreadNew(AncsProcess, NULL, &AncsProcess_attr);
-
-    SemGapId = osSemaphoreNew( 1, 0, NULL ); /*< Create the semaphore and make it busy at initialization */
-    SemGattId = osSemaphoreNew( 1, 0, NULL ); /*< Create the semaphore and make it busy at initialization */
-
+  AncsProcessId = osThreadNew(AncsProcess, NULL, &AncsProcess_attr);
+  
+  SemGattId = osSemaphoreNew( 1, 0, NULL ); /*< Create the semaphore and make it busy at initialization */
 
   /* reset ANCS context */
   ANCS_Client_Reset();
 		
   APP_DBG_MSG("-- ANCS CLIENT INITIALIZED \n\r");
   
-  return;
-}
-
-static void gap_cmd_resp_release(uint32_t flag)
-{
-  UNUSED(flag);
-  osSemaphoreRelease( SemGapId ); 
-  return;
-}
-
-static void gap_cmd_resp_wait(uint32_t timeout)
-{
-  UNUSED(timeout);
-  osSemaphoreAcquire( SemGapId, osWaitForever );
   return;
 }
 
@@ -1521,8 +1481,7 @@ static SVCCTL_EvtAckStatus_t ANCS_Client_Event_Handler( void *Event )
 
 void ANCS_App_KeyButton1Action(void)
 {
-   APP_DBG_MSG("\n\r ** Term CONNECTION **  \n\r");
-   aci_gap_terminate(ancs_context.connection_handle, 0x13);
+
 }
 void ANCS_App_KeyButton2Action(void)
 {
@@ -1534,10 +1493,7 @@ void ANCS_App_KeyButton2Action(void)
 }
 void ANCS_App_KeyButton3Action(void)
 {
-  APP_DBG_MSG(" aci_gap_clear_security_db & aci_gap_remove_bonded_device & aci_gap_terminate \n\r");
-  aci_gap_remove_bonded_device(ancs_context.Peer_Address_Type,ancs_context.Peer_Address);
-  aci_gap_clear_security_db();
-  aci_gap_terminate(ancs_context.connection_handle, 0x13);
+
 }
 
 #if (GET_ACTION_ID_FROM_UART == 1)
@@ -1590,65 +1546,11 @@ static ActionID ANCS_App_Get_ActionID(void)
 
   return actID;
 }
-void ANCS_App_Remove_Bonding_Info(void)
-{
-  APP_DBG_MSG(" aci_gap_clear_security_db & aci_gap_remove_bonded_device \n\r");
-  aci_gap_remove_bonded_device(ancs_context.Peer_Address_Type,ancs_context.Peer_Address);
-  aci_gap_clear_security_db();
-}
-
-void ANCS_App_Peer_Bonded_Check(uint16_t Connection_Handle, uint8_t Peer_Address_Type, uint8_t Peer_Address[6])
-{
-  tBleStatus result = BLE_STATUS_SUCCESS;
-
-  ancs_context.connection_handle = Connection_Handle;
-  
-  ancs_context.Peer_Address_Type = Peer_Address_Type;
-  ancs_context.Peer_Address[5] = Peer_Address[5];
-  ancs_context.Peer_Address[4] = Peer_Address[4];
-  ancs_context.Peer_Address[3] = Peer_Address[3];
-  ancs_context.Peer_Address[2] = Peer_Address[2];
-  ancs_context.Peer_Address[1] = Peer_Address[1];
-  ancs_context.Peer_Address[0] = Peer_Address[0];
-          
-  result = aci_gap_is_device_bonded(ancs_context.Peer_Address_Type,ancs_context.Peer_Address);
-  if (result == BLE_STATUS_SUCCESS)
-  {
-    ancs_context.Peer_Bonded = 0x01;
-  }
-  else 
-  {
-    ancs_context.Peer_Bonded = 0x00;
-  }
-  
-  uint8_t Security_Mode, Security_Level;
-  
-  result = aci_gap_get_security_level(ancs_context.connection_handle,&Security_Mode,&Security_Level);
-  ancs_context.Security_Mode = Security_Mode;
-  ancs_context.Security_Level = Security_Level;
-  if (result == BLE_STATUS_SUCCESS)
-  {
-  APP_DBG_MSG("Peer_Bonded=%d Security_Mode= %d, Security_Level= %d \n\r", ancs_context.Peer_Bonded, Security_Mode, Security_Level);
-  }
-	
-}
 
 void ANCS_App_Update_Service( )
 {
   switch(ancs_context.state)
   {
-    case ANCS_NUMERIC_COMPARISON_VALUE_CONFIRM:
-    {
-      GapProcReq(GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM);
-    }
-    break;
-	
-    case ANCS_ALLOW_REBOND:
-    {
-      GapProcReq(GAP_PROC_ALLOW_REBOND);
-    }
-    break;
-
     case ANCS_MTU_UPDATE:
     {
       GattProcReq(GATT_PROC_MTU_UPDATE);
@@ -1663,19 +1565,9 @@ void ANCS_App_Update_Service( )
       GattProcReq(GATT_PROC_DISC_ALL_CHARS);
       GattProcReq(GATT_PROC_DISC_ALL_DESCS);
 	  
-      APP_DBG_MSG("Peer_Bonded=%d Security_Mode= %d, Security_Level= %d \n\r", ancs_context.Peer_Bonded, ancs_context.Security_Mode,ancs_context.Security_Level);
       if ( (ancs_context.ANCSServiceStartHandle != 0x0000) && (ancs_context.ANCSServiceEndHandle != 0x0000) )
       {
-        if( (ancs_context.Peer_Bonded == 0x00) ||
-            ( (ancs_context.Peer_Bonded == 0x01) && (ancs_context.Security_Mode == 0x01) && (ancs_context.Security_Level == 0x01) )
-          )
-        {
-          GapProcReq(GAP_PROC_SLAVE_SECURITY_REQ);
-          
-          APP_DBG_MSG("waiting for  EVT_BLUE_GAP_PAIRING_CMPLT \n\r");
-          gap_cmd_resp_wait(GAP_DEFAULT_TIMEOUT);/* waiting for EVT_BLUE_GAP_PAIRING_CMPLT */
-          APP_DBG_MSG("waited for  EVT_BLUE_GAP_PAIRING_CMPLT \n\r");
-        }
+          APP_BLE_Slave_Security_Request();
       }
 		
       GattProcReq(GATT_PROC_ENABLE_ALL_NOTIFICATIONS);
@@ -1707,79 +1599,6 @@ void ANCS_App_Update_Service( )
     }
     break;
   }
-}
-
-static void GapProcReq(GapProcId_t GapProcId)
-{
-  tBleStatus status;
-  uint8_t Security_Mode, Security_Level;
-
-  switch(GapProcId)
-  {
-    case GAP_PROC_SLAVE_SECURITY_REQ:
-    {
-      ancs_context.state = ANCS_SECURITY_REQUEST;
-      status = aci_gap_get_security_level(ancs_context.connection_handle,&Security_Mode,&Security_Level);
-      if (status == BLE_STATUS_SUCCESS)
-      {
-        APP_DBG_MSG("ANCS_SECURITY_REQUEST Security_Mode= %d, Security_Level= %d \n", Security_Mode, Security_Level);
-        status = aci_gap_slave_security_req(ancs_context.connection_handle); 
-        if (status != BLE_STATUS_SUCCESS)
-        {
-          APP_DBG_MSG("ANCS_SECURITY_REQUEST aci_gap_slave_security_req  status=0x%02x \n\r",status);
-        }
-
-         APP_DBG_MSG("ANCS_SECURITY_REQUEST waiting for EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED \n\r");
-	  gap_cmd_resp_wait(GAP_DEFAULT_TIMEOUT);/* waiting for EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED */
-	  APP_DBG_MSG("ANCS_SECURITY_REQUEST waited for EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED  \n\r");
-      }   
-    }
-    break;
-
-    case GAP_PROC_PASS_KEY_RESPONSE:
-    {
-      ancs_context.state = ANCS_PASS_KEY_RESPONSE;
-      APP_DBG_MSG("ANCS_PASS_KEY_RESPONSE \n\r");
-      aci_gap_pass_key_resp(ancs_context.connection_handle, CFG_FIXED_PIN);/* response for EVT_BLUE_GAP_PASS_KEY_REQUEST */
-    }
-    break;
-
-    case GAP_PROC_ALLOW_REBOND:
-    {
-      ancs_context.state = ANCS_ALLOW_REBOND;
-      APP_DBG_MSG("ANCS_ALLOW_REBOND aci_gap_allow_rebond(0x%04X)\n\r",ancs_context.connection_handle);
-      aci_gap_allow_rebond(ancs_context.connection_handle);/* response for EVT_BLUE_GAP_BOND_LOST */
-    }
-    break;
-
-    case GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM:
-    {
-      ancs_context.state = ANCS_NUMERIC_COMPARISON_VALUE_CONFIRM;   
-      aci_gap_numeric_comparison_value_confirm_yesno(ancs_context.connection_handle, 1); /* CONFIRM_YES = 1 */
-      
-      APP_DBG_MSG("GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM ** aci_gap_numeric_comparison_value_confirm_yesno-->YES \n");
-    }
-    break;
-		  
-    case GAP_PROC_TERMINATE_CONNECTION:
-    {
-      APP_DBG_MSG("terminate connection \n");
-      ancs_context.state = ANCS_DISCONNECTING;
-      status = aci_gap_terminate(ancs_context.connection_handle,0x13);
-      if (status != BLE_STATUS_SUCCESS)
-      {
-        APP_DBG_MSG("Term Connection cmd failure: 0x%x\n", status);
-      }
-      gap_cmd_resp_wait(GAP_DEFAULT_TIMEOUT);
-      
-      APP_DBG_MSG("GAP_PROC_TERMINATE_CONNECTION complete event received\n");
-    }
-    break;
-	  
-    default:
-      break;
-  }
-  return;
 }
 
 static void GattProcReq(GattProcId_t GattProcId)
@@ -2007,7 +1826,6 @@ static void GattProcReq(GattProcId_t GattProcId)
         if (result == BLE_STATUS_SUCCESS)
         {
           APP_DBG_MSG("ANCSNotificationSourceCharDescHdle notification enabled Successfully \n\r");
-	     ancs_context.state = ANCS_INITIALIZED;
         }
         else
         {
@@ -2099,8 +1917,6 @@ static void AncsProcReq(AncsProcId_t AncsProcId)
 
 void ANCS_App_Notification( Connection_Context_t *pNotification )
 {
-  uint8_t status = BLE_STATUS_SUCCESS;
-
   switch (pNotification->Evt_Opcode)
   {
     case ANCS_CONNECTED:
@@ -2112,112 +1928,23 @@ void ANCS_App_Notification( Connection_Context_t *pNotification )
       Ancs_Mgr();
     }
     break;
-     
+    
+    case ANCS_DISCONNECTING:
+    {
+      APP_DBG_MSG("ANCS_DISCONNECTING \n\r");
+      ancs_context.state = ANCS_DISCONNECTING;
+      ANCS_Client_Reset();
+    }
+    break;
+    
     case ANCS_DISCONN_COMPLETE:
     {
       APP_DBG_MSG("ANCS_DISCONN_COMPLETE \n\r");
-      if(ancs_context.state == ANCS_DISCONNECTING)
-        gap_cmd_resp_release(0);
-	  
       ancs_context.state = ANCS_DISCONN_COMPLETE;
       ANCS_Client_Reset();
     }
     break;
 
-    case ANCS_PASS_KEY_REQUEST:
-    {
-      ancs_context.state = ANCS_PASS_KEY_RESPONSE;
-      APP_DBG_MSG("ANCS_PASS_KEY_REQUEST ==> ANCS_PASS_KEY_RESPONSE \n\r");
-      Ancs_Mgr();
-    }
-    break;
-
-    case ANCS_NUMERIC_COMPARISON_VALUE_CONFIRM:
-    {
-      ancs_context.state = ANCS_NUMERIC_COMPARISON_VALUE_CONFIRM;
-      APP_DBG_MSG("ANCS_NUMERIC_COMPARISON_VALUE_CONFIRM \n\r");
-      Ancs_Mgr();
-    }
-    break;
-	
-    case ANCS_SECURITY_INITIATED:
-    {
-      ancs_context.state = ANCS_SECURITY_INITIATED;
-      APP_DBG_MSG("ANCS_SECURITY_INITIATED \n\r");
-      gap_cmd_resp_release(0);
-    }
-    break;
-
-    case ANCS_PAIRING_COMPLETE:
-    {
-      uint8_t Security_Mode, Security_Level;
-  
-      status = aci_gap_get_security_level(ancs_context.connection_handle,&Security_Mode,&Security_Level);
-      if (status == BLE_STATUS_SUCCESS)
-      {
-        APP_DBG_MSG("ANCS_PAIRING_COMPLETE Peer_Bonded=%d Security_Mode=%d Security_Level=%d \n",ancs_context.Peer_Bonded, Security_Mode, Security_Level);
-      }
-	  
-      if (ancs_context.Peer_Bonded == 0x00)/* only for the first paring complete*/
-      { 
-        status = aci_gap_is_device_bonded(ancs_context.Peer_Address_Type,ancs_context.Peer_Address);
-        if (status == BLE_STATUS_SUCCESS)
-        {
-          ancs_context.Peer_Bonded = 0x01;
-        }
-        else 
-        {
-          ancs_context.Peer_Bonded = 0x00;
-        }
-		
-        APP_DBG_MSG("ANCS_PAIRING_COMPLETE  Peer_Bonded from 0x00 ==> %d Term Connection for the first pairing complete to save bonding infomation !!! \n\r",ancs_context.Peer_Bonded);
-		 
-         for (int loop=0;loop<10;loop++) /* */
-         {
-           /* hci_disconnection_complete_event event will be generated when the link is disconnected. 
-           It is important to leave an 100 ms blank window before sending any new command (including system hardware reset), 
-           since immediately after @ref hci_disconnection_complete_event event, system could save important information in non volatile memory. */
-           int cnt = 1000000;
-           while(cnt--);
-           printf(".\n\r");
-        }
-		 
-        status = aci_gap_terminate(ancs_context.connection_handle, 0x13);
-        if (status == BLE_STATUS_SUCCESS)
-        {
-          if ( (ancs_context.ANCSServiceStartHandle != 0x0000) && (ancs_context.ANCSServiceEndHandle != 0x0000) )
-          {
-            ANCS_Client_Reset();
-            gap_cmd_resp_release(0);
-          }
-        }		 
-      }
-	else if(ancs_context.Peer_Bonded == 0x01)
-	{
-	  if( (ancs_context.Security_Mode == 0x01) && (ancs_context.Security_Level == 0x01) )
-	  {
-	    if( (Security_Mode == 0x01) && (Security_Level >= 0x02) )
-          {
-            APP_DBG_MSG("ANCS_PAIRING_COMPLETE  Security_Level=%d ==> Security_Level=%d \n\r",ancs_context.Security_Level,Security_Level);
-            ancs_context.Security_Level = Security_Level;  
-     	     ancs_context.Security_Mode = Security_Mode;  
-          }
-	  }
-
-       if ( (ancs_context.ANCSServiceStartHandle != 0x0000) && (ancs_context.ANCSServiceEndHandle != 0x0000) )
-         gap_cmd_resp_release(0);
-      }
-    }
-    break; /* ANCS_PAIRING_COMPLETE */
-
-    case ANCS_ALLOW_REBOND:
-    {
-      ancs_context.state = ANCS_ALLOW_REBOND;
-      APP_DBG_MSG("ANCS_ALLOW_REBOND \n\r");
-      Ancs_Mgr();
-    }
-    break;
-	
     case ANCS_MTU_UPDATE:
     {
       APP_DBG_MSG("ANCS_MTU_UPDATE \n\r");

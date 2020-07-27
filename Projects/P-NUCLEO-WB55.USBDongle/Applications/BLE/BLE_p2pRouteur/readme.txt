@@ -1,5 +1,5 @@
 /**
-  @page BLE p2pRouter Application
+  @page BLE_p2pRouteur Application
 
   @verbatim
   ******************************************************************************
@@ -71,6 +71,10 @@ Smartphone <---------> P2P_Router  ...  <-> P2P_Server6
 
 
 						
+@par Keywords
+
+Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE profile, Dual core
+
 @par Directory contents 
   
   - BLE/BLE_p2pRouteur/Core/Inc/stm32wbxx_hal_conf.h		HAL configuration file
@@ -112,7 +116,7 @@ Smartphone <---------> P2P_Router  ...  <-> P2P_Server6
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -126,7 +130,7 @@ If debug traces are enabled, a debug window (ex teraterm) must be opened (if not
 In order to make the program work, follow the next steps:
  - Open your preferred toolchain 
  - Rebuild all files and load your image into Target memory
- - For example, BLE_p2pRouteur can be generated and downloaded in a Nucleo board, BLE_p2pServer(s) in USB Dongle boards.
+ - For example, BLE_p2pRouteur can be generated and downloaded in a USB Dongle board, BLE_p2pServer(s) in Nucleo boards.
  - Server 1 to 6 are defined in app_conf.h file, setting the good #define P2P_SERVERx (1 <= x <= 6).
  - Switch on ST BLE Router and the first ST BLE Server board. 
  - The smartphone application discovers and connects to the P2P_router, using the ST BLE Starnet application.
@@ -138,6 +142,19 @@ In order to make the program work, follow the next steps:
  - The smart phone can send write commands to BLE_p2pServer via BLE_p2pRouteur and receive notifications from BLE_p2pServers.
  - For each server, the blue led can be switched on/off when turning on/off the led button of the wanted server on the smartphone display.
  - Each BLE_p2pServer can send a notification event to the smart phone via BLE_p2pRouteur when SW1 is pressed (a bell is displayed or removed on the corresponding server on the phone).  
+
+=> Getting traces:
+  To get the traces, you have to enable CFG_USB_INTERFACE_ENABLE, with CFG_DEBUG_BLE_TRACE for BLE services traces 
+  or with CFG_DEBUG_APP_TRACE for application traces.
+  You need also to connect your Board to the Hyperterminal (through USB STVirtual COM Port).
+  The UART must be configured as follows:
+    - BaudRate = 115200 baud  
+    - Word Length = 8 Bits 
+    - Stop Bit = 1 bit
+    - Parity = none
+    - Flow control = none
+
+=> Running the application
  
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

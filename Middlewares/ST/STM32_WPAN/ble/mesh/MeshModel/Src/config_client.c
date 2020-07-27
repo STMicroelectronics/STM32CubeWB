@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    config_client.c
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Config model Client middleware file
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -232,7 +210,7 @@ MOBLE_RESULT ConfigClient_CompositionDataGet(MOBLE_ADDRESS dst_peer)
     
   configClientGetCompositionMsg_t ccGetCompositionMsg;
   
-  TRACE_M(TF_CONFIG_CLIENT,"Config CompositionDataGet Message \r\n");  
+  TRACE_M(TF_CONFIG_CLIENT_M, "Config CompositionDataGet Message \r\n");  
   ccGetCompositionMsg.Opcode = OPCODE_CONFIG_COMPOSITION_DATA_GET;
   ccGetCompositionMsg.page = COMPOSITION_PAGE0;
 
@@ -264,7 +242,7 @@ MOBLE_RESULT ConfigClient_CompositionDataStatusResponse(MOBLEUINT8 const *pSrcCo
   MOBLEUINT8 indexModels;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
        
-  TRACE_M(TF_CONFIG_CLIENT,"Composition Status Cb \r\n");  
+  TRACE_M(TF_CONFIG_CLIENT_M, "Composition Status Cb \r\n");  
 
   /* Copy the header of the Composition page */ 
   NodeCompositionPage0.sComposition_Data_Page0.sheader.DataPage = *pSrcComposition; 
@@ -622,7 +600,7 @@ AppKey 16B : AppKey value
   pConfigData = (MOBLEUINT8*) &(configClientAppKeyAdd);
   dataLength = sizeof(configClientAppKeyAdd_t);
   
-  TRACE_M(TF_CONFIG_CLIENT,"Config Client App Key Add  \r\n");  
+  TRACE_M(TF_CONFIG_CLIENT_M, "Config Client App Key Add  \r\n");  
   ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);
 
   return result;
@@ -793,7 +771,7 @@ maximize the size of a payload.
   configClientModelPublication_t configClientModelPublication;
 
   
-  TRACE_M(TF_CONFIG_CLIENT,"Config Client Publication Add Message  \r\n");  
+  TRACE_M(TF_CONFIG_CLIENT_M, "Config Client Publication Add Message \r\n");  
   dataLength = sizeof(configClientModelPublication_t);
 
   
@@ -828,18 +806,18 @@ maximize the size of a payload.
   msg_opcode = OPCODE_CONFIG_CONFIG_MODEL_PUBLICATION_SET;
   pConfigData = (MOBLEUINT8*) &(configClientModelPublication);
   
-  TRACE_M(TF_CONFIG_CLIENT,"Config Client Publication Add  \r\n");  
-  TRACE_M(TF_CONFIG_CLIENT,"elementAddr = [%04x]\r\n", elementAddress);  
-  TRACE_M(TF_CONFIG_CLIENT,"publishAddress = [%04x]\r\n", publishAddress); 
-  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08lx]\r\n", modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "Config Client Publication Add  \r\n");  
+  TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", elementAddress);  
+  TRACE_M(TF_CONFIG_CLIENT_M, "publishAddress = [%04x]\r\n", publishAddress); 
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", modelIdentifier);
   
-  TRACE_I(TF_CONFIG_CLIENT,"Publication Set buffer \r\n");
+  TRACE_I(TF_CONFIG_CLIENT_M, "Publication Set buffer \r\n");
   
   for (MOBLEUINT8 count=0 ; count<dataLength; count++)
   {
-    TRACE_I(TF_CONFIG_CLIENT,"%.2x ", pConfigData[count]);
+    TRACE_I(TF_CONFIG_CLIENT_M, "%.2x ", pConfigData[count]);
   } 
-  TRACE_I(TF_CONFIG_CLIENT,"\r\n");
+  TRACE_I(TF_CONFIG_CLIENT_M, "\r\n");
   
   self_addr = BLEMesh_GetAddress();
   
@@ -930,16 +908,16 @@ MOBLE_RESULT ConfigClient_PublicationStatus(MOBLEUINT8 const *pPublicationStatus
     /* Status returned is an error */
   }
   
-  TRACE_M(TF_CONFIG_CLIENT,"\r\n Config Client Publication Status Recd \r\n");  
-  TRACE_I(TF_CONFIG_CLIENT,"Publication Status buffer: ");
+  TRACE_M(TF_CONFIG_CLIENT_M, "\r\n Config Client Publication Status Recd \r\n");  
+  TRACE_I(TF_CONFIG_CLIENT_M, "Publication Status buffer: ");
   for (MOBLEUINT8 count=0 ; count<length; count++)
   {
-    TRACE_I(TF_CONFIG_CLIENT,"%.2x ", pPublicationStatus[count]);
+    TRACE_I(TF_CONFIG_CLIENT_M, "%.2x ", pPublicationStatus[count]);
   }  
-  TRACE_M(TF_CONFIG_CLIENT,"elementAddr = [%04x]\r\n", configClientPublicationStatus.elementAddr);  
-  TRACE_M(TF_CONFIG_CLIENT,"publishAddress = [%04x]\r\n", configClientPublicationStatus.publishAddr); 
-  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08lx]\r\n", configClientPublicationStatus.modelIdentifier);
-  TRACE_M(TF_CONFIG_CLIENT,"status = [%02x]\r\n", configClientPublicationStatus.Status);  
+  TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", configClientPublicationStatus.elementAddr);  
+  TRACE_M(TF_CONFIG_CLIENT_M, "publishAddress = [%04x]\r\n", configClientPublicationStatus.publishAddr); 
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", configClientPublicationStatus.modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "status = [%02x]\r\n", configClientPublicationStatus.Status);  
 
   Appli_PublicationStatusCb(configClientPublicationStatus.Status);
 
@@ -980,7 +958,7 @@ Config Model Subscription Status message.
   configClientModelSubscriptionAdd_t modelSubscription;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
    
-  TRACE_M(TF_CONFIG_CLIENT,"Config Client Subscription Add Message  \r\n");  
+  TRACE_M(TF_CONFIG_CLIENT_M, "Config Client Subscription Add Message  \r\n");  
   
   /* The ElementAddress field is the unicast address of the element, 
      all other address types are Prohibited.
@@ -1019,16 +997,16 @@ Config Model Subscription Status message.
    msg_opcode = OPCODE_CONFIG_MODEL_SUBSCRIPTION_ADD;
    pConfigData = (MOBLEUINT8*) &(modelSubscription);
   
-  TRACE_I(TF_CONFIG_CLIENT,"Subscription Set buffer ");
+  TRACE_I(TF_CONFIG_CLIENT_M, "Subscription Set buffer ");
   
   for (MOBLEUINT8 count=0 ; count<dataLength; count++)
   {
-    TRACE_I(TF_CONFIG_CLIENT,"%.2x ", pConfigData[count]);
+    TRACE_I(TF_CONFIG_CLIENT_M, "%.2x ", pConfigData[count]);
   } 
    
-  TRACE_M(TF_CONFIG_CLIENT,"elementAddr = [%04x]\r\n", elementAddress);  
-  TRACE_M(TF_CONFIG_CLIENT,"SubscriptionAddress = [%04x]\r\n", address); 
-  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08lx]\r\n", modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", elementAddress);  
+  TRACE_M(TF_CONFIG_CLIENT_M, "SubscriptionAddress = [%04x]\r\n", address); 
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", modelIdentifier);
    
   self_addr = BLEMesh_GetAddress();
 
@@ -1153,18 +1131,18 @@ MOBLE_RESULT ConfigClient_SubscriptionStatus(MOBLEUINT8 const *pSrcSubscriptionS
     /* Status returned is an error */
   }
   
-  TRACE_M(TF_CONFIG_CLIENT,"ConfigClient_SubscriptionStatus  \r\n");  
-  TRACE_I(TF_CONFIG_CLIENT,"SubscriptionStatus buffer ");
+  TRACE_M(TF_CONFIG_CLIENT_M, "ConfigClient_SubscriptionStatus  \r\n"); 
+  TRACE_I(TF_CONFIG_CLIENT_M, "SubscriptionStatus buffer ");
   
   for (MOBLEUINT8 count=0 ; count<length; count++)
   {
-    TRACE_I(TF_CONFIG_CLIENT,"%.2x ", pSrcSubscriptionStatus[count]);
+    TRACE_I(TF_CONFIG_CLIENT_M, "%.2x ", pSrcSubscriptionStatus[count]);
   }
   
-  TRACE_M(TF_CONFIG_CLIENT,"elementAddr = [%04x]\r\n", configClientSubscriptionStatus.elementAddress);  
-  TRACE_M(TF_CONFIG_CLIENT,"SubscriptionAddress = [%04x]\r\n", configClientSubscriptionStatus.address); 
-  TRACE_M(TF_CONFIG_CLIENT,"modelIdentifier = [%08lx]\r\n", configClientSubscriptionStatus.modelIdentifier);
-  TRACE_M(TF_CONFIG_CLIENT,"subscription status = [%02x]\r\n", configClientSubscriptionStatus.Status);
+  TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", configClientSubscriptionStatus.elementAddress);  
+  TRACE_M(TF_CONFIG_CLIENT_M, "SubscriptionAddress = [%04x]\r\n", configClientSubscriptionStatus.address); 
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", configClientSubscriptionStatus.modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "subscription status = [%02x]\r\n", configClientSubscriptionStatus.Status);
   
   Appli_SubscriptionAddStatusCb(configClientSubscriptionStatus.Status);
 
@@ -1255,8 +1233,8 @@ The response to a Config Model App Bind message is a Config Model App Status mes
   msg_opcode = OPCODE_CONFIG_MODEL_APP_BIND;
   pConfigData = (MOBLEUINT8*) &(modelAppBind);
 
-  TRACE_M(TF_CONFIG_CLIENT,"Config Client App Key Bind message  \r\n");   
-  TRACE_M(TF_CONFIG_CLIENT,"Model = 0x%8lx \r\n", modelIdentifier );
+  TRACE_M(TF_CONFIG_CLIENT_M, "Config Client App Key Bind message  \r\n");   
+  TRACE_M(TF_CONFIG_CLIENT_M, "Model = 0x%8lx \r\n", modelIdentifier );
   
   if(ADDRESS_IS_UNASSIGNED(elementAddress))
   {
@@ -1350,7 +1328,7 @@ MOBLE_RESULT ConfigClient_ModelAppStatus(MOBLEUINT8 const *pSrcModelAppStatus,
     /* Status returned is an error */
   }
   
-  TRACE_M(TF_CONFIG_CLIENT,"ConfigClient_ModelAppStatus = %d \r\n", configClientModelAppStatus.Status);    
+  TRACE_M(TF_CONFIG_CLIENT_M, "ConfigClient_ModelAppStatus = %d \r\n", configClientModelAppStatus.Status);    
   Appli_AppBindModelStatusCb(configClientModelAppStatus.Status);
 
   return result;
@@ -1384,7 +1362,7 @@ There are no Parameters for this message.
 
   dst_peer = elementAddress; 
 
-  TRACE_M(TF_CONFIG_CLIENT,"Config Client Node Reset message  \r\n");   
+  TRACE_M(TF_CONFIG_CLIENT_M, "Config Client Node Reset message  \r\n");   
   if(ADDRESS_IS_UNASSIGNED(elementAddress))
   {
     return MOBLE_RESULT_INVALIDARG;
@@ -1421,7 +1399,7 @@ MOBLE_RESULT ConfigClient_NodeResetStatus(MOBLEUINT8 const *pStatus,
    There are no Parameters for this message.  */
   
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;  
-  TRACE_M(TF_CONFIG_CLIENT,"ConfigClient_NodeResetStatus Received \r\n");    
+  TRACE_M(TF_CONFIG_CLIENT_M, "ConfigClient_NodeResetStatus Received \r\n");    
   Appli_NodeResetStatusCb();
 
   return result;
@@ -1560,7 +1538,7 @@ MOBLEUINT8 ConfigClient_ChkRetrialState (eServerRespRecdState_t* peRespRecdState
     {
        retry_state = CLIENT_TX_TIMEOUT;   
        *peRespRecdState = NodeIdle_State;    /* Run next re-trial cycle again */
-       TRACE_M(TF_CONFIG_CLIENT,"Retry started \n\r");       
+       TRACE_M(TF_CONFIG_CLIENT_M, "Retry started \n\r");       
     }
     
     ConfigClient_SaveMsgSendingTime(); /* Save the time again for next loop */
@@ -1595,7 +1573,7 @@ MOBLEUINT8 ConfigClient_ChkRetries (void)
     else 
     {
        retry_state = CLIENT_TX_TIMEOUT;   
-       TRACE_M(TF_CONFIG_CLIENT,"Retry started \n\r");       
+       TRACE_M(TF_CONFIG_CLIENT_M, "Retry started \n\r");       
     }
     
     ConfigClient_SaveMsgSendingTime(); /* Save the time again for next loop */
@@ -1613,7 +1591,7 @@ MOBLEUINT8 ConfigClient_ChkRetries (void)
 void ConfigClient_ErrorState (void)
 {
    /* No Response from the Node under provisioning after trials */
-  TRACE_M(TF_CONFIG_CLIENT,"No response from Node \n\r"); 
+  TRACE_M(TF_CONFIG_CLIENT_M, "No response from Node \n\r"); 
 }
 
 /**
@@ -1669,7 +1647,7 @@ MOBLE_RESULT ConfigClientModel_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                     MOBLEBOOL response)
 
 {
-  TRACE_M(TF_CONFIG_CLIENT,"Response **Should Never enter here  \n\r");
+  TRACE_M(TF_CONFIG_CLIENT_M, "Response **Should Never enter here  \n\r");
   switch(opcode)
   {
  
@@ -1713,7 +1691,7 @@ MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
 //  tClockTime delay_t = Clock_Time();
   
-  TRACE_M(TF_CONFIG_CLIENT,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
+  TRACE_M(TF_CONFIG_CLIENT_M, "dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
                                                       dst_peer, peer_addr, opcode , response);
 
   switch(opcode)

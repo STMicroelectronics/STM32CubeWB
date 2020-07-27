@@ -46,7 +46,7 @@ extern "C" {
       APP_BLE_LP_CONNECTING,
       APP_BLE_CONNECTED_SERVER,
       APP_BLE_CONNECTED_CLIENT,
-      
+
       APP_BLE_DISCOVER_SERVICES,
       APP_BLE_DISCOVER_CHARACS,
       APP_BLE_DISCOVER_WRITE_DESC,
@@ -57,7 +57,7 @@ extern "C" {
 
 /* USER CODE BEGIN ET */
 
-/* USER CODE END ET */  
+/* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
@@ -75,7 +75,7 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void APP_BLE_Init( void ); 
+  void APP_BLE_Init( void );
 
   APP_BLE_ConnStatus_t APP_BLE_Get_Client_Connection_Status( uint16_t Connection_Handle );
 

@@ -1,4 +1,4 @@
-/* Copyright [2017 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2017 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_THERM_H
 #define ZCL_THERM_H
@@ -27,10 +27,10 @@
  * TSTAT.S.A0008 | False
  * TSTAT.S.A0008.Report.Tx | False
  * TSTAT.S.A0010 | False
- * TSTAT.S.A0011 | False
- * TSTAT.S.A0011.Scene | False
- * TSTAT.S.A0012 | False
- * TSTAT.S.A0012.Scene | False
+ * TSTAT.S.A0011 | True
+ * TSTAT.S.A0011.Scene | True
+ * TSTAT.S.A0012 | True
+ * TSTAT.S.A0012.Scene | True
  * TSTAT.S.A0013 | False
  * TSTAT.S.A0014 | False
  * TSTAT.S.A0015 | False
@@ -67,10 +67,10 @@
  *
  * Commands Received
  * TSTAT.S.C00.Rsp | True
- * TSTAT.S.C01.Rsp | False
- * TSTAT.S.C02.Rsp | False
- * TSTAT.S.C03.Rsp | False
- * TSTAT.S.C04.Rsp | False
+ * TSTAT.S.C01.Rsp | True
+ * TSTAT.S.C02.Rsp | True
+ * TSTAT.S.C03.Rsp | True
+ * TSTAT.S.C04.Rsp | True
  *
  * Commands Generated
  * TSTAT.S.C00.Tx | True

@@ -115,7 +115,8 @@ Connectivity, Communication, I2C, DMA, Master, Slave, Transmission, Reception, F
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.    
 
-  - P-NUCLEO-WB55 Set-ups
+  - P-NUCLEO-WB55 Set-up
+
     - Connect I2C_SCL line of Master board (PB8, CN10, pin3) to I2C_SCL line of Slave Board (PB8, CN10, pin3).
     - Connect I2C_SDA line of Master board (PB9, CN10, pin5) to I2C_SDA line of Slave Board (PB9, CN10, pin5).
     - Connect GND of Master board to GND of Slave Board.

@@ -67,7 +67,7 @@
  * Select UART interfaces
  */
 #define CFG_DEBUG_TRACE_UART    hw_uart1
-#define CFG_CONSOLE_MENU      
+#define CFG_CONSOLE_MENU
 #define CFG_CLI_UART    hw_lpuart1
 /******************************************************************************
  * USB interface

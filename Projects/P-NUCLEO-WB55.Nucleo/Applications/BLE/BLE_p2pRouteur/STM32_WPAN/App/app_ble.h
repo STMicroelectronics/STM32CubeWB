@@ -45,7 +45,7 @@ extern "C" {
       APP_BLE_SCAN,
       APP_BLE_CONNECTING,
       APP_BLE_CONNECTED,
-       
+
       APP_BLE_DISCOVER_SERVICES,
       APP_BLE_DISCOVER_CHARACS,
       APP_BLE_DISCOVER_LED_CHAR_DESC,
@@ -53,7 +53,7 @@ extern "C" {
       APP_BLE_DISCOVER_NOTIFICATION_CHAR_DESC,
       APP_BLE_ENABLE_NOTIFICATION_BUTTON_DESC,
       APP_BLE_DISABLE_NOTIFICATION_TX_DESC
-    } APP_BLE_ConnStatus_t;  
+    } APP_BLE_ConnStatus_t;
 
 typedef enum
 {
@@ -66,7 +66,7 @@ typedef struct
 {
   uint8_t * pPayload;
   uint8_t     Length;
-}P2P_Client_Data_t;  
+}P2P_Client_Data_t;
 
 typedef struct
 {
@@ -77,7 +77,7 @@ typedef struct
 
 /* USER CODE BEGIN ET */
 
-/* USER CODE END ET */  
+/* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
@@ -95,7 +95,7 @@ typedef struct
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void APP_BLE_Init( void ); 
+  void APP_BLE_Init( void );
 
   APP_BLE_ConnStatus_t APP_BLE_Get_Client_Connection_Status( uint16_t Connection_Handle );
 

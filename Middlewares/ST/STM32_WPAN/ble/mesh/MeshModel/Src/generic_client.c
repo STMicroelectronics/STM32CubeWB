@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    generic_client.c
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Generic model client middleware file
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola�s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -116,7 +94,7 @@ MOBLE_RESULT GenericClient_OnOff_Set(MOBLE_ADDRESS element_number,
   MOBLEUINT16 msg_opcode;
   MOBLEBOOL ack_flag;
 
-  TRACE_M(TF_GENERIC_CLIENT,"Generic_OnOff_Set Client Message \r\n");  
+  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_OnOff_Set Client Message \r\n");  
   
   msg_buff = pOnOff_param->a_OnOff_param;
   ack_flag = MOBLE_TRUE;
@@ -134,7 +112,7 @@ MOBLE_RESULT GenericClient_OnOff_Set(MOBLE_ADDRESS element_number,
                                             MOBLE_FALSE);
   if(result)
   {
-    TRACE_M(TF_GENERIC_CLIENT,"Publication Error \r\n");
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
   }  
   
   return result;
@@ -164,7 +142,7 @@ MOBLE_RESULT GenericClient_OnOff_Set_Unack(MOBLE_ADDRESS element_number,
   MOBLEUINT16 msg_opcode;
   MOBLEBOOL ack_flag;
 
-  TRACE_M(TF_GENERIC_CLIENT,"Generic_OnOff_Set Client Message \r\n");  
+  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_OnOff_Set Client Message \r\n");  
   pOnOff_param->a_OnOff_param[1] = TidSend;
   msg_buff = pOnOff_param->a_OnOff_param;
   ack_flag = MOBLE_FALSE;
@@ -188,7 +166,7 @@ MOBLE_RESULT GenericClient_OnOff_Set_Unack(MOBLE_ADDRESS element_number,
   
   if(result)
   {
-    TRACE_M(TF_GENERIC_CLIENT,"Publication Error \r\n");
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
   }  
   
   return result;
@@ -218,7 +196,7 @@ MOBLE_RESULT GenericClient_Level_Set_Unack(MOBLE_ADDRESS element_number,
   MOBLEUINT16 msg_opcode;
   MOBLEBOOL ack_flag;
 
-  TRACE_M(TF_GENERIC_CLIENT,"Generic_Level_Set Client Message \r\n");  
+  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_Level_Set Client Message \r\n");  
   plevel_param->a_Level_param[2] = TidSend;
   msg_buff = plevel_param->a_Level_param;
   ack_flag = MOBLE_TRUE;
@@ -241,7 +219,7 @@ MOBLE_RESULT GenericClient_Level_Set_Unack(MOBLE_ADDRESS element_number,
   }  
   if(result)
   {
-    TRACE_M(TF_GENERIC_CLIENT,"Publication Error \r\n");
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
   }  
   
   return result;
@@ -287,7 +265,7 @@ MOBLE_RESULT GenericModelClient_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                                    MOBLEBOOL response)
 
 {
-  TRACE_M(TF_GENERIC_CLIENT,"response status enable \n\r");
+  TRACE_M(TF_GENERIC_CLIENT_M, "response status enable \n\r");
   
   return MOBLE_RESULT_SUCCESS;    
 }
@@ -320,7 +298,7 @@ MOBLE_RESULT GenericModelClient_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   //tClockTime delay_t = Clock_Time();
   
-  TRACE_M(TF_GENERIC_CLIENT,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
+  TRACE_M(TF_GENERIC_CLIENT_M, "dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
           dst_peer, peer_addr, opcode , response);
   
   switch(opcode)
@@ -333,6 +311,16 @@ MOBLE_RESULT GenericModelClient_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   case GENERIC_LEVEL_STATUS:
     {     
       Generic_Client_Level_Status(pRxData, dataLength);         
+      break;
+    } 
+  case GENERIC_DEFAULT_TRANSITION_TIME_STATUS:
+    {     
+      Generic_Client_DefaultTransitionTime_Status(pRxData, dataLength);         
+      break;
+    } 
+  case GENERIC_POWER_ON_OFF_STATUS:
+    {     
+      Generic_Client_PowerOnOff_Status(pRxData, dataLength);         
       break;
     } 
   default:

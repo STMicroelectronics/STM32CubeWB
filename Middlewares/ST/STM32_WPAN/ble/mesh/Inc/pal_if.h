@@ -43,6 +43,6 @@
 #define __PAL_IF_H
 
 /* Exported Functions Prototypes ---------------------------------------------*/
-MOBLE_RESULT BnrgmPalNvmProcess(void);
+MOBLE_RESULT PalNvmProcess(void);
 
 #endif /* __PAL_IF_H */

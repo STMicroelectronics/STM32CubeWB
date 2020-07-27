@@ -82,6 +82,8 @@ At this point, the user can check the state of its device by using the cli comma
 
 @par Keywords
 
+THREAD
+
 @par Directory contents 
   
   - Thread/Thread_Cli_Cmd/Core/Inc/app_common.h            Header for all modules with common definition

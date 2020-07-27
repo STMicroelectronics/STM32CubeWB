@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    generic.c
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Generic model middleware file
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -66,11 +44,14 @@
 static Generic_TemporaryStatus_t Generic_TemporaryStatus;
 
 static Generic_TimeParam_t Generic_TimeParam;
-
-static Generic_LevelStatus_t Generic_LevelStatus = {0x8000,0x00,0x00,0x00,0x00,0x00};
+/* initialize the array with minimum level value and other parameter as zero */
+static Generic_LevelStatus_t Generic_LevelStatus = {LEVEL_MIN_VALID_RANGE,0x00,0x00,0x00,0x00,0x00};
  
 static Generic_OnOffStatus_t Generic_OnOffStatus;
 
+/* Initialize the default transition value 0x06 
+   with 100 ms resolution and 6 step count
+*/
 Generic_DefaultTransitionParam_t Generic_DefaultTransitionParam = {0x06};
 
 static Generic_ModelFlag_t Generic_ModelFlag;
@@ -85,45 +66,75 @@ MOBLEUINT16 Model_ID = 0;
 extern MOBLEUINT8 TidSend;
 extern MOBLE_ADDRESS Dst_Peer;
 
-const MODEL_OpcodeTableParam_t Generic_Opcodes_Table[] = {
+const MODEL_OpcodeTableParam_t Generic_Opcodes_Table[] = 
+{
   /* Generic OnOff Server */
-  /*    MOBLEUINT32 opcode, MOBLEBOOL reliable, MOBLEUINT16 min_payload_size, 
-    MOBLEUINT16 max_payload_size;
+/* model_id                                               opcode,                                    reliable,    min_payload_size, max_payload_size, response_opcode,                        min_response_size, max_response_size
     Here in this array, Handler is not defined; */
 #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF  
-  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID   ,GENERIC_ON_OFF_GET,                                    MOBLE_TRUE,  0, 0,              GENERIC_ON_OFF_STATUS , 1, 3},
-  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID   ,GENERIC_ON_OFF_SET_ACK,                                MOBLE_TRUE,  2, 4,              GENERIC_ON_OFF_STATUS , 1, 3},  
-  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID   ,GENERIC_ON_OFF_SET_UNACK,                              MOBLE_FALSE, 2, 4,              GENERIC_ON_OFF_STATUS , 1, 3}, 
-  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID   ,GENERIC_ON_OFF_STATUS,                                 MOBLE_FALSE, 1, 3,              0 , 1, 3},
-#endif
-#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL  
-  /* Generic Level Server */
-  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID   ,GENERIC_LEVEL_GET,                                     MOBLE_TRUE,   0, 0,             GENERIC_LEVEL_STATUS , 2 , 5}, 
-  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID   ,GENERIC_LEVEL_SET_ACK,                                 MOBLE_TRUE,   3, 5,             GENERIC_LEVEL_STATUS , 2 , 5},
-  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID   ,GENERIC_LEVEL_SET_UNACK,                               MOBLE_FALSE,  3, 5,             GENERIC_LEVEL_STATUS , 2 , 5}, 
-  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID   ,GENERIC_DELTA_SET,                                     MOBLE_TRUE,   5, 7,             GENERIC_LEVEL_STATUS , 2 , 5},
-  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID   ,GENERIC_DELTA_SET_UNACK,                               MOBLE_FALSE,  5, 7,             GENERIC_LEVEL_STATUS, 2 , 5},
-  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID   ,GENERIC_MOVE_SET,                                      MOBLE_TRUE,   3, 5,             GENERIC_LEVEL_STATUS , 2 , 5},
-  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID   ,GENERIC_MOVE_SET_UNACK,                                 MOBLE_FALSE,  3, 5,             GENERIC_LEVEL_STATUS, 2 , 5},
-  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID   ,GENERIC_LEVEL_STATUS,                                  MOBLE_FALSE,  2, 5,             0 , 2 , 5},
-#endif  
-#ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF  
-  {GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP_MODEL_ID   ,GENERIC_POWER_ON_OFF_SET,                              MOBLE_TRUE,   1, 1,             GENERIC_POWER_ON_OFF_STATUS, 1,1},
-  {GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP_MODEL_ID   ,GENERIC_POWER_ON_OFF_SET_UNACK,                        MOBLE_FALSE,  1, 1,             0, 1,1},
-  {GENERIC_MODEL_SERVER_POWER_ONOFF_MODEL_ID   ,GENERIC_POWER_ON_OFF_GET ,                             MOBLE_TRUE,   0, 0,             GENERIC_POWER_ON_OFF_STATUS, 1,1},
-  {GENERIC_MODEL_SERVER_POWER_ONOFF_MODEL_ID   ,GENERIC_POWER_ON_OFF_STATUS ,                          MOBLE_FALSE,  1, 1,             0, 1,1},
-#endif  
-#ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME     
-  /* Generic Default Transition Time Server Model  */
-  {GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID   ,GENERIC_DEFAULT_TRANSITION_TIME_GET,                   MOBLE_TRUE,  0, 0,              GENERIC_DEFAULT_TRANSITION_TIME_STATUS , 1, 1}, 
-  {GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID   ,GENERIC_DEFAULT_TRANSITION_TIME_SET,                   MOBLE_TRUE,  1, 1,              GENERIC_DEFAULT_TRANSITION_TIME_STATUS , 1, 1},
-  {GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID   ,GENERIC_DEFAULT_TRANSITION_TIME_SET_UNACK,             MOBLE_FALSE, 1, 1,              GENERIC_DEFAULT_TRANSITION_TIME_STATUS  ,1 ,1}, 
-  {GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID   ,GENERIC_DEFAULT_TRANSITION_TIME_STATUS,                MOBLE_FALSE, 1, 1,              0  ,1, 1},
-#endif  
-    
-#ifdef ENABLE_GENERIC_MODEL_SERVER_BATTERY     
-  /* Generic Battery Server Model  */
-  {GENERIC_MODEL_SERVER_BATTERY_MODEL_ID   GENERIC_BATTERY_GET,                                   MOBLE_TRUE,  0, 0,              GENERIC_BATTERY_STATUS , 8 , 8},         
+  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID,                   GENERIC_ON_OFF_GET,                        MOBLE_TRUE,  0,                0,                GENERIC_ON_OFF_STATUS,                  1,                 3},
+  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID,                   GENERIC_ON_OFF_SET_ACK,                    MOBLE_TRUE,  2,                4,                GENERIC_ON_OFF_STATUS,                  1,                 3},  
+  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID,                   GENERIC_ON_OFF_SET_UNACK,                  MOBLE_FALSE, 2,                4,                GENERIC_ON_OFF_STATUS,                  1,                 3}, 
+  {GENERIC_MODEL_SERVER_ONOFF_MODEL_ID,                   GENERIC_ON_OFF_STATUS,                     MOBLE_FALSE, 1,                3,                0,                                      1,                 3},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_ONOFF  
+  {GENERIC_MODEL_CLIENT_ONOFF_MODEL_ID,                   GENERIC_ON_OFF_GET,                        MOBLE_TRUE,  0,                0,                GENERIC_ON_OFF_STATUS,                  1,                 3},
+  {GENERIC_MODEL_CLIENT_ONOFF_MODEL_ID,                   GENERIC_ON_OFF_SET_ACK,                    MOBLE_TRUE,  2,                4,                GENERIC_ON_OFF_STATUS,                  1,                 3},  
+  {GENERIC_MODEL_CLIENT_ONOFF_MODEL_ID,                   GENERIC_ON_OFF_SET_UNACK,                  MOBLE_FALSE, 2,                4,                GENERIC_ON_OFF_STATUS,                  1,                 3}, 
+  {GENERIC_MODEL_CLIENT_ONOFF_MODEL_ID,                   GENERIC_ON_OFF_STATUS,                     MOBLE_FALSE, 1,                3,                0,                                      1,                 3},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL                                                                                                                                                                         
+  /* Generic Level Server */                                                                                                                                                                                     
+  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,                   GENERIC_LEVEL_GET,                         MOBLE_TRUE,   0,                0,               GENERIC_LEVEL_STATUS,                   2,                 5}, 
+  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,                   GENERIC_LEVEL_SET_ACK,                     MOBLE_TRUE,   3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,                   GENERIC_LEVEL_SET_UNACK,                   MOBLE_FALSE,  3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5}, 
+  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,                   GENERIC_DELTA_SET,                         MOBLE_TRUE,   5,                7,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,                   GENERIC_DELTA_SET_UNACK,                   MOBLE_FALSE,  5,                7,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,                   GENERIC_MOVE_SET,                          MOBLE_TRUE,   3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,                   GENERIC_MOVE_SET_UNACK,                    MOBLE_FALSE,  3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,                   GENERIC_LEVEL_STATUS,                      MOBLE_FALSE,  2,                5,               0,                                      2,                 5},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL                                                                                                                                                                         
+  /* Generic Level Server */                                                                                                                                                                                     
+  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID,                   GENERIC_LEVEL_GET,                         MOBLE_TRUE,   0,                0,               GENERIC_LEVEL_STATUS,                   2,                 5}, 
+  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID,                   GENERIC_LEVEL_SET_ACK,                     MOBLE_TRUE,   3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID,                   GENERIC_LEVEL_SET_UNACK,                   MOBLE_FALSE,  3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5}, 
+  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID,                   GENERIC_DELTA_SET,                         MOBLE_TRUE,   5,                7,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID,                   GENERIC_DELTA_SET_UNACK,                   MOBLE_FALSE,  5,                7,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID,                   GENERIC_MOVE_SET,                          MOBLE_TRUE,   3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID,                   GENERIC_MOVE_SET_UNACK,                    MOBLE_FALSE,  3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID,                   GENERIC_LEVEL_STATUS,                      MOBLE_FALSE,  2,                5,               0,                                      2,                 5},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF                                                                                                                                                                   
+  {GENERIC_MODEL_SERVER_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_SET,                  MOBLE_TRUE,   1,                1,               GENERIC_POWER_ON_OFF_STATUS,            1,                 1},
+  {GENERIC_MODEL_SERVER_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_SET_UNACK,            MOBLE_FALSE,  1,                1,               0,                                      1,                 1},
+  {GENERIC_MODEL_SERVER_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_GET ,                 MOBLE_TRUE,   0,                0,               GENERIC_POWER_ON_OFF_STATUS,            1,                 1},
+  {GENERIC_MODEL_SERVER_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_STATUS ,              MOBLE_FALSE,  1,                1,               0,                                      1,                 1},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF                                                                                                                                                                   
+  {GENERIC_MODEL_CLIENT_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_SET,                  MOBLE_TRUE,   1,                1,               GENERIC_POWER_ON_OFF_STATUS,            1,                 1},
+  {GENERIC_MODEL_CLIENT_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_SET_UNACK,            MOBLE_FALSE,  1,                1,               0,                                      1,                 1},
+  {GENERIC_MODEL_CLIENT_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_GET ,                 MOBLE_TRUE,   0,                0,               GENERIC_POWER_ON_OFF_STATUS,            1,                 1},
+  {GENERIC_MODEL_CLIENT_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_STATUS ,              MOBLE_FALSE,  1,                1,               0,                                      1,                 1},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME                                                                                                                                                       
+  /* Generic Default Transition Time Server Model  */                                                                                                                                                            
+  {GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_GET,       MOBLE_TRUE,  0,                0,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1,                 1}, 
+  {GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_SET,       MOBLE_TRUE,  1,                1,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1,                 1},
+  {GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_SET_UNACK, MOBLE_FALSE, 1,                1,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1 ,                1}, 
+  {GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_STATUS,    MOBLE_FALSE, 1,                1,                0,                                      1,                 1},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME                                                                                                                                                       
+  /* Generic Default Transition Time Server Model  */                                                                                                                                                            
+  {GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_GET,       MOBLE_TRUE,  0,                0,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1,                 1}, 
+  {GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_SET,       MOBLE_TRUE,  1,                1,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1,                 1},
+  {GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_SET_UNACK, MOBLE_FALSE, 1,                1,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1 ,                1}, 
+  {GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_STATUS,    MOBLE_FALSE, 1,                1,                0,                                      1,                 1},
+#endif                                                                                                                                                                                                           
+                                                                                                                                                                                                                 
+#ifdef ENABLE_GENERIC_MODEL_SERVER_BATTERY                                                                                                                                                                       
+  /* Generic Battery Server Model  */                                                                                                                                                                            
+  {GENERIC_MODEL_SERVER_BATTERY_MODEL_ID,                 GENERIC_BATTERY_GET,                       MOBLE_TRUE,  0,                0,                GENERIC_BATTERY_STATUS,                 8,                 8},         
 #endif
   {0}
 };
@@ -176,7 +187,7 @@ MOBLE_RESULT Generic_OnOff_Set(MOBLEUINT8 const *pOnOff_param, MOBLEUINT32 lengt
   Delay: 1B Message execution delay in 5 millisecond steps (C.1)
   */
   
-  TRACE_M(TF_GENERIC,"Generic_OnOff_Set callback received \r\n");  
+  TRACE_M(TF_GENERIC_M, "Generic_OnOff_Set callback received \r\n");  
   
   Generic_OnOffParam_t Generic_OnOffParam; 
   Generic_OnOffParam.TargetOnOffState = pOnOff_param[0];
@@ -264,7 +275,7 @@ MOBLE_RESULT Generic_OnOff_Status(MOBLEUINT8* pOnOff_status, MOBLEUINT32 *plengt
   Remaining Time is transition time. 
   */
   
-  TRACE_M(TF_GENERIC,"Generic_OnOff_Status callback received \r\n");
+  TRACE_M(TF_GENERIC_M, "Generic_OnOff_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8201! \n\r");
    /* 
   Default value of GenericOptionalParam=0, 
@@ -312,7 +323,7 @@ MOBLE_RESULT Generic_Level_Set(const MOBLEUINT8* plevel_param, MOBLEUINT32 lengt
   Delay:1B Message execution delay in 5 milliseconds steps (C.1)
   */
   
-  TRACE_M(TF_GENERIC,"Generic_Level_Set callback received \r\n");
+  TRACE_M(TF_GENERIC_M, "Generic_Level_Set callback received \r\n");
   
   Generic_LevelParam_t Generic_LevelParam;
   MOBLEINT16 setValue;
@@ -393,7 +404,7 @@ MOBLE_RESULT Generic_Delta_Set(const MOBLEUINT8* plevel_param, MOBLEUINT32 lengt
   Delay: 1B Message execution delay in 5 milliseconds steps (C.1)
   */
   
-  TRACE_M(TF_GENERIC,"Generic_Delta_Set callback received \r\n");
+  TRACE_M(TF_GENERIC_M, "Generic_Delta_Set callback received \r\n");
   
   Generic_DeltaLevelParam_t Generic_DeltaLevelParam ;
   MOBLEUINT32 delta;
@@ -405,7 +416,7 @@ MOBLE_RESULT Generic_Delta_Set(const MOBLEUINT8* plevel_param, MOBLEUINT32 lengt
   delta |= (plevel_param[0]);
   Generic_DeltaLevelParam.TargetDeltaLevel32 = delta;
   
-  TRACE_M(TF_GENERIC,"Generic delta value %.2lx \r\n"
+  TRACE_M(TF_GENERIC_M,"Generic delta value %.2lx \r\n"
                       ,Generic_DeltaLevelParam.TargetDeltaLevel32);
   
   Generic_DeltaLevelParam.Generic_TID = plevel_param[4];
@@ -469,13 +480,13 @@ MOBLE_RESULT Generic_Delta_Set(const MOBLEUINT8* plevel_param, MOBLEUINT32 lengt
     }
     }
   
-  TRACE_M(TF_GENERIC,"Generic Level value %.2x \r\n" ,Generic_LevelStatus.Present_Level16);
+  TRACE_M(TF_GENERIC_M, "Generic Level value %.2x \r\n" ,Generic_LevelStatus.Present_Level16);
   
   Generic_LevelStatus.Last_delta_level = Generic_DeltaLevelParam.TargetDeltaLevel32;
          Generic_LevelStatus.Last_Level_TID = Generic_DeltaLevelParam.Generic_TID;   
       
     /* Application Callback */
-   (GenericAppli_cb.LevelDelta_Set_cb)(&Generic_LevelStatus, 0);
+  (GenericAppli_cb.Level_Set_cb)(&Generic_LevelStatus, 0);
 #ifdef ENABLE_MODEL_BINDING    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS  
   /* Binding of Generic level with light lightnes actual */
@@ -502,7 +513,7 @@ MOBLE_RESULT Generic_Move_Set(const MOBLEUINT8* plevel_param, MOBLEUINT32 length
   Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
   Delay: 1B Message execution delay in 5 milliseconds steps (C.1)
   */
-  TRACE_M(TF_GENERIC,"Generic_Move_Set callback received \r\n");
+  TRACE_M(TF_GENERIC_M, "Generic_Move_Set callback received \r\n");
   
     Generic_LevelMoveParam_t  Generic_LevelMoveParam;
   
@@ -571,7 +582,7 @@ MOBLE_RESULT Generic_Level_Status(MOBLEUINT8* plevel_status, MOBLEUINT32 *plengt
   
   */
   
-  TRACE_M(TF_GENERIC,"Generic_Level_Status callback received \r\n");
+  TRACE_M(TF_GENERIC_M, "Generic_Level_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8205! \n\r");
   
        /* checking the transition is in process.
@@ -611,7 +622,7 @@ MOBLE_RESULT Generic_PowerOnOff_Set(const MOBLEUINT8 *powerOnOff_param , MOBLEUI
   Following is the set message:
   powerOnOff_param:1B parameter is received to set the power on off model.  
   */
-  TRACE_M(TF_GENERIC,"Generic_PowerOnOff_Set callback received \r\n");
+  TRACE_M(TF_GENERIC_M, "Generic_PowerOnOff_Set callback received \r\n");
   
   Generic_PowerOnOffParam_t Generic_PowerOnOffParam;
   Generic_PowerOnOffParam.PowerOnOffState = powerOnOff_param[0];
@@ -635,7 +646,7 @@ MOBLE_RESULT Generic_PowerOnOff_Status(MOBLEUINT8 *powerOnOff_status , MOBLEUINT
   powerOnOff_status: 1B is the status parameter of the Power on off model. 
   */  
   MOBLEUINT8 Generic_GetBuff[2] ;
-  TRACE_M(TF_GENERIC,"Generic_PowerOnOff_Status callback received \r\n");
+  TRACE_M(TF_GENERIC_M, "Generic_PowerOnOff_Status callback received \r\n");
   TRACE_M(TF_SERIAL_CTRL,"#8211! \n\r");
   
   /* Function call back to get the values from application*/
@@ -661,7 +672,7 @@ MOBLE_RESULT Generic_DefaultTransitionTime_Set(const MOBLEUINT8 *defaultTransiti
   Following is the set message:
   defaultTime_param:1B parameter is received to set the Default transition time model.  
   */
-  TRACE_M(TF_GENERIC,"Generic_DefaultTransitionTime_Set callback received \r\n"); 
+  TRACE_M(TF_GENERIC_M, "Generic_DefaultTransitionTime_Set callback received \r\n"); 
 
   Generic_DefaultTransitionParam.DefaultTransitionTime = defaultTransition_param[0];
   /* Application Callback */
@@ -683,7 +694,7 @@ MOBLE_RESULT Generic_DefaultTransitionTime_Status(MOBLEUINT8 *pTransition_status
   powerOnOff_status: 1B is the status parameter of the Default transition time model. 
   */  
   MOBLEUINT8 Generic_GetBuff[2] ;
-  TRACE_M(TF_GENERIC,"Generic_DefaultTransitionTime_Status callback received \r\n");
+  TRACE_M(TF_GENERIC_M, "Generic_DefaultTransitionTime_Status callback received \r\n");
   /* Function call back to get the values from application*/
   (Appli_GenericState_cb.GetDefaultTransitionStatus_cb)(Generic_GetBuff);
    
@@ -734,7 +745,7 @@ MOBLE_RESULT GenericModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                     MOBLEBOOL response)
 
 {
-  TRACE_M(TF_GENERIC,"response status enable \n\r");
+  TRACE_M(TF_GENERIC_M, "response status enable \n\r");
   switch(opcode)
   {
 #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF      
@@ -809,9 +820,8 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   
   my_Address = BLEMesh_GetAddress();
   Dst_Peer = dst_peer;
-  Model_Rx_Opcode = opcode; 
   
-  TRACE_M(TF_GENERIC,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
+  TRACE_M(TF_GENERIC_M,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
                                                        dst_peer, peer_addr, opcode , response);
   switch(opcode)
   {
@@ -835,10 +845,8 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       
         if(result == MOBLE_RESULT_SUCCESS)
         {
-          /*
-           when device is working as proxy and is a part of node
-           delay will be included in the toggelinf of led.
-          */
+        /* when device is working as proxy and is a part of node
+        delay is included in LED toggle */              
           if(!MOBLE_FAILED(result = Chk_TidValidity(peer_addr,dst_peer,pRxData[1])))
           {
             Generic_OnOff_Set(pRxData,dataLength);   
@@ -980,7 +988,7 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     Model_SendResponse(publishAddress,my_Address,opcode,pRxData,dataLength);
     
     modelStateChangeFlag = MOBLE_FALSE;   
-    TRACE_I(TF_GENERIC,"Publishing state when change to the address %.2X \r\n",publishAddress);
+    TRACE_I(TF_GENERIC_M,"Publishing state when change to the address %.2X \r\n",publishAddress);
   }
   return MOBLE_RESULT_SUCCESS;
 }
@@ -1059,7 +1067,7 @@ MOBLE_RESULT Generic_TransitionBehaviour(MOBLEUINT8 *GetValue)
       Generic_ModelFlag.GenericTransitionFlag = GENERIC_TRANSITION_STOP; 
       Generic_ModelFlag.Generic_Trnsn_Cmplt = MOBLE_TRUE;
         }
-    TRACE_M(TF_GENERIC,"Inside virtual application at %ld, Current state 0x%.2x, Target state 0x%.2x, Remaining Time 0x%.2x \n\r",
+    TRACE_M(TF_GENERIC_M,"Inside virtual application at %ld, Current state 0x%.2x, Target state 0x%.2x, Remaining Time 0x%.2x \n\r",
              Clock_Time(), Generic_TemporaryStatus.PresentValue16,Generic_TemporaryStatus.TargetValue16,Generic_TemporaryStatus.RemainingTime);  
     }
 return MOBLE_RESULT_SUCCESS;       
@@ -1093,7 +1101,7 @@ void Generic_GetStepValue(MOBLEUINT8 stepParam)
     Generic_TimeParam.StepValue = (Generic_TimeParam.StepValue * TRANSITION_SCALER);
   }
   
-  TRACE_M(TF_GENERIC," step resolution 0x%.2lx, number of step 0x%.2x \r\n",
+  TRACE_M(TF_GENERIC_M," step resolution 0x%.2lx, number of step 0x%.2x \r\n",
           Generic_TimeParam.Res_Value , Generic_TimeParam.StepValue );
 }
 
@@ -1206,7 +1214,7 @@ void Generic_Publish(MOBLE_ADDRESS srcAddress)
   }  
   if(result)
   {
-    TRACE_M(TF_GENERIC,"Publication Error \r\n");
+    TRACE_M(TF_GENERIC_M, "Publication Error \r\n");
   }
   
     CommandStatus = generic_Buff[0];
@@ -1266,7 +1274,7 @@ void LightActual_GenericOnOffBinding(Light_LightnessStatus_t* lightActual)
     Generic_OnOffStatus.Present_OnOff_State = 0x01;
   }
   
-  TRACE_M(TF_LIGHT, "LightActual_GenericOnOffBinding Function - Present OnOff value 0x%.2x \r\n" 
+  TRACE_M(TF_LIGHT_M, "LightActual_GenericOnOffBinding Function - Present OnOff value 0x%.2x \r\n" 
          , Generic_OnOffStatus.Present_OnOff_State);    
  
 }
@@ -1287,7 +1295,7 @@ void LightActual_GenericLevelBinding(Light_LightnessStatus_t* lightActual)
      */
   Generic_LevelStatus.Present_Level16 = lightActual->LightnessPresentValue16 - 32768;  
  
-   TRACE_M(TF_LIGHT, "LightActual_GenericLevelBinding Function - Present Level value 0x%.2x \r\n" 
+   TRACE_M(TF_LIGHT_M, "LightActual_GenericLevelBinding Function - Present Level value 0x%.2x \r\n" 
          , Generic_LevelStatus.Present_Level16); 
       
 }
@@ -1406,7 +1414,7 @@ void Generic_LevelDefaultTransitionValue(MOBLEUINT16 levelValue)
 */
 MOBLE_RESULT Generic_Client_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUINT32 plength)
 {
-  TRACE_M(TF_GENERIC_CLIENT,"Generic_OnOff_Status received \r\n");
+  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_OnOff_Status received \r\n");
   GenericAppli_cb.OnOff_Status_cb(pOnOff_status , plength);
   return MOBLE_RESULT_SUCCESS;
 }
@@ -1421,7 +1429,7 @@ MOBLE_RESULT Generic_Client_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEU
 MOBLE_RESULT Generic_Client_Level_Status(MOBLEUINT8 const *plevel_status, MOBLEUINT32 plength)
 {
   
-  TRACE_M(TF_GENERIC_CLIENT,"Generic_Level_Status received \r\n");
+  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_Level_Status received \r\n");
   GenericAppli_cb.Level_Status_cb(plevel_status , plength);
   return MOBLE_RESULT_SUCCESS;
 }
@@ -1436,7 +1444,7 @@ MOBLE_RESULT Generic_Client_Level_Status(MOBLEUINT8 const *plevel_status, MOBLEU
 MOBLE_RESULT Generic_Client_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , MOBLEUINT32 plength) 
 {  
   
-  TRACE_M(TF_GENERIC_CLIENT,"Generic_PowerOnOff_Status received \r\n"); 
+  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_PowerOnOff_Status received \r\n"); 
   GenericAppli_cb.GenericPowerOnOff_Status_cb(powerOnOff_status, plength);
   return MOBLE_RESULT_SUCCESS;
 }
@@ -1451,7 +1459,7 @@ MOBLE_RESULT Generic_Client_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_statu
 MOBLE_RESULT Generic_Client_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , MOBLEUINT32 plength) 
 {  
   
-  TRACE_M(TF_GENERIC_CLIENT,"Generic_DefaultTransitionTime_Status received \r\n");
+  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_DefaultTransitionTime_Status received \r\n");
   GenericAppli_cb.GenericDefaultTransition_Status_cb(pTransition_status, plength);
   return MOBLE_RESULT_SUCCESS;
 }

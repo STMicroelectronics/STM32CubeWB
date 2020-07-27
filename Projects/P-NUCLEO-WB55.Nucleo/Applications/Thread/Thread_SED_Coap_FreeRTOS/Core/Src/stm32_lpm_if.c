@@ -17,8 +17,8 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-  
-/* Includes ------------------------------------------------------------------*/  
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32_lpm_if.h"
 #include "stm32_lpm.h"
 #include "app_conf.h"
@@ -27,14 +27,14 @@
 /* USER CODE END include */
 
 /* Exported variables --------------------------------------------------------*/
-const struct UTIL_LPM_Driver_s UTIL_PowerDriver = 
+const struct UTIL_LPM_Driver_s UTIL_PowerDriver =
 {
   PWR_EnterSleepMode,
   PWR_ExitSleepMode,
-  
+
   PWR_EnterStopMode,
-  PWR_ExitStopMode, 
-  
+  PWR_ExitStopMode,
+
   PWR_EnterOffMode,
   PWR_ExitOffMode,
 };
@@ -131,8 +131,7 @@ void PWR_EnterStopMode( void )
       LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
 
       /**
-       * The switch on HSI before entering Stop Mode is required on Cut2.0
-       * It is useless from Cut2.1
+       * The switch on HSI before entering Stop Mode is required 
        */
       Switch_On_HSI( );
     }
@@ -140,8 +139,7 @@ void PWR_EnterStopMode( void )
   else
   {
     /**
-     * The switch on HSI before entering Stop Mode is required on Cut2.0
-     * It is useless from Cut2.1
+     * The switch on HSI before entering Stop Mode is required 
      */
     Switch_On_HSI( );
   }

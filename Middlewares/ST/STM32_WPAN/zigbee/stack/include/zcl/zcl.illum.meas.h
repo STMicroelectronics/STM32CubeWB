@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_ILLUM_MEAS_H
 # define ZCL_ILLUM_MEAS_H
@@ -36,8 +36,8 @@
  * Illuminance Measurement Cluster Definitions
  *---------------------------------------------------------------
  */
-/* Illuminance Measurement Information Attribute Set */
-enum {
+/* Illuminance Measurement Server Attribute IDs */
+enum ZbZclIllumMeasSvrAttrT {
     ZCL_ILLUM_MEAS_ATTR_MEAS_VAL = 0x0000,
     ZCL_ILLUM_MEAS_ATTR_MIN_MEAS_VAL = 0x0001,
     ZCL_ILLUM_MEAS_ATTR_MAX_MEAS_VAL = 0x0002,
@@ -60,13 +60,10 @@ enum {
 #define ZCL_ILLUM_MEAS_LIGHT_SENS_TYPE_CMOS         0x0001
 #define ZCL_ILLUM_MEAS_LIGHT_SENS_TYPE_UNKNOWN      0x00ff
 
-/*---------------------------------------------------------------
- * Illuminance Measurement Cluster Definitions
- *---------------------------------------------------------------
- */
-struct ZbZclClusterT * ZbZclIllumMeasServerAlloc(struct ZigBeeT *zb,
-    uint8_t endpoint, uint16_t min, uint16_t max);
-
+/* Illuminance Measurement Client */
 struct ZbZclClusterT * ZbZclIllumMeasClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
-#endif /* __ZCL_ILLUM_MEAS_H */
+/* Illuminance Measurement Server */
+struct ZbZclClusterT * ZbZclIllumMeasServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, uint16_t min, uint16_t max);
+
+#endif

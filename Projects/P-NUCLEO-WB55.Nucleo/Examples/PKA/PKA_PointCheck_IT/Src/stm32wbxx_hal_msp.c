@@ -89,10 +89,11 @@ void HAL_PKA_MspInit(PKA_HandleTypeDef* hpka)
   /* USER CODE END PKA_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_PKA_CLK_ENABLE();
+    /* PKA interrupt Init */
+    HAL_NVIC_SetPriority(PKA_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(PKA_IRQn);
   /* USER CODE BEGIN PKA_MspInit 1 */
-  /* Enable the PKA interrupt */
-  HAL_NVIC_SetPriority(PKA_IRQn, 0x0F, 0);
-  HAL_NVIC_EnableIRQ(PKA_IRQn);
+
   /* USER CODE END PKA_MspInit 1 */
   }
 
@@ -116,9 +117,11 @@ void HAL_PKA_MspDeInit(PKA_HandleTypeDef* hpka)
   /* USER CODE END PKA_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_PKA_CLK_DISABLE();
+
+    /* PKA interrupt DeInit */
+    HAL_NVIC_DisableIRQ(PKA_IRQn);
   /* USER CODE BEGIN PKA_MspDeInit 1 */
-  /* Disable the PKA interrupt */
-  HAL_NVIC_DisableIRQ(PKA_IRQn);
+
   /* USER CODE END PKA_MspDeInit 1 */
   }
 

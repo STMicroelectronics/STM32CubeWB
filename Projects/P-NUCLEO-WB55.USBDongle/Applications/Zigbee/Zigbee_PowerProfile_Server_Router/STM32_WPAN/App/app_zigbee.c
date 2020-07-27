@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -63,7 +63,7 @@ static void APP_ZIGBEE_PowerProfile_GetPrice_Step(void);
 static void APP_ZIGBEE_PowerProfile_Start_Step(void);
 static void APP_ZIGBEE_PowerProfile_Running_Loop(void);
 static void APP_ZIGBEE_PowerProfile_Send_StateNotification(struct ZbApsAddrT* dst, struct ZbZclPowerProfSvrStateRsp* notify);
-static void APP_ZIGBEE_PowerProfile_Notification_cb(ZbApsdeDataConfT *conf, void *arg);
+static void APP_ZIGBEE_PowerProfile_Notification_cb(struct ZbZclCommandRspT *rsp, void *arg);
 static void APP_ZIGBEE_PowerProfile_Send_ProfileNotification(struct ZbApsAddrT* dst, struct ZbZclPowerProfSvrProfileRsp* notify);
 static void APP_ZIGBEE_PowerProfile_GetPrice_cb(struct ZbZclCommandRspT *rsp, void *arg);
 
@@ -202,7 +202,7 @@ static void APP_ZIGBEE_PowerProfile_Program_Step(void){
   
   /* Point 2: Power Profile Notification is sent from Server to Client */
   memset(&profile_notify, 0, sizeof(profile_notify));
-  profile_notify.power_profile_id = 0x01;
+  profile_notify.profile_id = 0x01;
   profile_notify.num_transferred_phases = 0x01;  /* single energy phase */
   profile_notify.phase_list[0].energy_phase_id = 0x01;  /* first energy phase */
   profile_notify.phase_list[0].expect_duration = 90; /* expected duration = 90 min */
@@ -243,7 +243,7 @@ static void APP_ZIGBEE_PowerProfile_GetPrice_Step(void){
   req.profile_id = 0x01;
   
   APP_DBG("[POWER PROFILE] Sending Power Profile GetPrice request.\n");
-  status = ZbZclPowerProfServerGetPriceReq(zigbee_app_info.powerprofile_server_1, &req, &dst, APP_ZIGBEE_PowerProfile_GetPrice_cb, NULL);
+  status = ZbZclPowerProfServerGetPriceReq(zigbee_app_info.powerprofile_server_1, &dst, &req, APP_ZIGBEE_PowerProfile_GetPrice_cb, NULL);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("[POWER PROFILE] Error sending Power Profile GetPrice request.");
     assert(0);
@@ -381,11 +381,11 @@ static void APP_ZIGBEE_PowerProfile_Send_ProfileNotification(struct ZbApsAddrT* 
 
 /**
  * @brief  Power Profile State and Profile notification response callback
- * @param  conf: Response sender APS Data Entity info
+ * @param  rsp: Sender status response
  * @param  arg: Passed argument
  * @retval None
  */
-static void APP_ZIGBEE_PowerProfile_Notification_cb(ZbApsdeDataConfT *conf, void *arg){
+static void APP_ZIGBEE_PowerProfile_Notification_cb(struct ZbZclCommandRspT *rsp, void *arg){
   UNUSED(arg);
   
   /* Unlock the waiting event */
@@ -430,14 +430,14 @@ static void APP_ZIGBEE_PowerProfile_GetPrice_cb(struct ZbZclCommandRspT *rsp, vo
   APP_DBG("[POWER PROFILE] Power Profile GetPrice response received.");
   
   /* Parse the payload */
-  price_rsp.power_profile_id = rsp->payload[len++];
+  price_rsp.profile_id = rsp->payload[len++];
   price_rsp.currency = pletoh16(&rsp->payload[len]);
   len += 2;
   price_rsp.price = pletoh32(&rsp->payload[len]);
   len += 4;
   price_rsp.trailing_digit = rsp->payload[len++];
   
-  APP_DBG("[POWER PROFILE] Power Profile ID %d.", price_rsp.power_profile_id);
+  APP_DBG("[POWER PROFILE] Power Profile ID %d.", price_rsp.profile_id);
   APP_DBG("[POWER PROFILE] The price is %d.\n", price_rsp.price);
   
   UTIL_SEQ_SetTask(1U << CFG_TASK_ZIGBEE_APP_POWER_PROFILE_STEP_3, CFG_SCH_PRIO_0);

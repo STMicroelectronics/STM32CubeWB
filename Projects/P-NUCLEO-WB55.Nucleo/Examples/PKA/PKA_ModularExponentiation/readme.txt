@@ -52,7 +52,7 @@ In case of any error, the LED2 (GREEN) is toggling slowly.
 
 @par Keywords
 
-PKA, PKA_ModularExponentiation, Security, RSA, modular exponentiation, cipher ,decipher
+Security, PKA, RSA, modular exponentiation, cipher ,decipher
 
 @par Directory contents 
   
@@ -78,7 +78,7 @@ PKA, PKA_ModularExponentiation, Security, RSA, modular exponentiation, cipher ,d
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
   
   - This example has been tested with an STMicroelectronics P-NUCLEO-WB55
     board and can be easily tailored to any other supported device 

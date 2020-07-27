@@ -299,17 +299,15 @@ enum {
 };
 
 /* Default Values */
-
 #define ZCL_ELEC_MEAS_DEFAULT_MEAS_TYPE         0x00000000
-#define ZCL_ELEC_MEAS_DEFAULT_DC_MEAS           0x8000
+#define ZCL_ELEC_MEAS_DEFAULT_DC_MEAS           ZCL_INVALID_SIGNED_16BIT
 #define ZCL_ELEC_MEAS_DEFAULT_DC_FORMATTING     0x0001
 #define ZCL_ELEC_MEAS_DEFAULT_DC_OL_ALARMS_MASK 0x00
 #define ZCL_ELEC_MEAS_DEFAULT_DC_VOLT_OL        0xffff
 
 /* Min and Max Values */
-
-#define ZCL_ELEC_MEAS_MIN_DC_MEAS               0x8001
-#define ZCL_ELEC_MEAS_MAX_DC_MEAS               0x7fff
+#define ZCL_ELEC_MEAS_MIN_DC_MEAS               (-32767)
+#define ZCL_ELEC_MEAS_MAX_DC_MEAS               32767
 #define ZCL_ELEC_MEAS_MIN_DC_FORMATTING         0x0001
 #define ZCL_ELEC_MEAS_MAX_DC_FORMATTING         0xffff
 #define ZCL_ELEC_MEAS_MIN_OL_ALARMS_MASK        0x00
@@ -348,9 +346,13 @@ struct elec_meas_get_meas_profile_rsp_t {
     uint32_t start_time;
     uint8_t status;
     uint8_t profile_interval_period;
-    uint8_t num_intervals_delivered;
-    uint8_t attr_id;
-    uint8_t *intervals;
+    uint8_t num_intervals_delivered; /**< Number of intervals in interval_data. */
+    uint16_t attr_id; /**< The attribute Id being profiled */
+    uint8_t *interval_data;
+    /**< Pointer to buffer of interval attribute data in the format as sent over the air
+     * (endian conversion already done). If an interval is invalid, it should be set to
+     * all f's (e.g. 0xffff for an int16 type). */
+    uint16_t interval_len; /**< Octet length of interval_data. */
 };
 
 struct zcl_elec_meas_callbacks_t {
@@ -369,9 +371,9 @@ struct ZbZclClusterT * ZbZclElecMeasClientAlloc(struct ZigBeeT *zb, uint8_t endp
 struct ZbZclClusterT * ZbZclElecMeasServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, struct zcl_elec_meas_callbacks_t *callbacks, void *arg);
 
 /* Client Generated Commands */
-enum ZclStatusCodeT ZbZclElecMeasClientGetProfileInfoReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclElecMeasClientGetProfileInfoReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-enum ZclStatusCodeT ZbZclElecMeasClientGetMeasProfileReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclElecMeasClientGetMeasProfileReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct elec_meas_get_meas_profile_req_t *get_meas_profile_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 

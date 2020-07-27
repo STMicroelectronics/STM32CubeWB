@@ -39,67 +39,69 @@
       
 /* Macros Used for user defined serial print data for models. 
 Either use 0 to disable or 1 to enable
-@  TF_GENERIC is responsible for the Generic model traces.
-@  TF_LIGHT is responsible for the Light model traces.
-@  TF_SENSOR is responsible for the Sensor model traces.
-@  TF_VENDOR is responsible for the vendor model traces.
-@  TF_NEIGHBOUR is responsible for the neighbour function traces.
-@  TF_PROVISION is responsible for the Provision related function traces.
-@  TF_LPN_FRND is responsible for the Low power nodef function traces.
-@  TF_ELEMENTS is responsible for the element selection function traces.
-@  TF_ADDRESS is responsible for the address of element traces.
-@  TF_HANDLER is responsible for the interrupt file traces.
-@  TF_INIT is responsible for the main function traces.
-@  TF_MISC is responsible for the other type traces.
-
+@  TF_GENERIC -> Generic server
+@  TF_GENERIC_CLIENT -> Generic client
+@  TF_SENSOR -> Sensor server
+@  TF_LIGHT -> Lighting server
+@  TF_LIGHT_CLIENT -> Lighting client
+@  TF_LIGHT_LC -> Light LC server
+@  TF_VENDOR -> vendor model
+@  TF_CONFIG_CLIENT -> config client
+@  TF_LPN_FRND -> Friendship, Friend and Low Power
+@  TF_PROVISION -> Provisioning related
+@  TF_HANDLER -> interrupt handler
+@  TF_INIT -> main function
+@  TF_MISC -> others
+@  TF_COMMON -> common (middleware)
+@  TF_GENERIC_M -> Generic server (middleware)
+@  TF_GENERIC_CLIENT_M -> Config client (middleware)
+@  TF_SENSOR_M -> Sensor server (middleware)
+@  TF_LIGHT_M -> Lighting server (middleware)
+@  TF_LIGHT_CLIENT_M -> Lighting client (middleware)
+@  TF_LIGHT_LC_M -> Light LC server (middleware)
+@  TF_VENDOR_M -> vendor model (middleware)
+@  TF_CONFIG_CLIENT_M -> Config client (middleware)
+@  TF_NEIGHBOUR -> neighbour table
+@  TF_MEMORY
+@  TF_BEACON -> Beacons
+@  TF_SERIAL_CTRL
 */
 #ifndef ENABLE_LOW_POWER_FEATURE
 #define TF_GENERIC                                                             1
-#define TF_LIGHT                                                               1
-#define TF_LIGHT_LC                                                            1
+#define TF_GENERIC_CLIENT                                                      1
 #define TF_SENSOR                                                              1
+#define TF_LIGHT                                                               1
+#define TF_LIGHT_CLIENT                                                        1
+#define TF_LIGHT_LC                                                            1
 #define TF_VENDOR                                                              1
-#define TF_COMMON                                                              1
-#define TF_VENDOR_COMMAND                                                      1
-#define TF_NEIGHBOUR                                                           0
+#define TF_CONFIG_CLIENT                                                       1
 #define TF_LPN_FRND                                                            1
-#define TF_ELEMENTS                                                            0
-#define TF_ADDRESS                                                             0
 #define TF_PROVISION                                                           1
-#define TF_HANDLER                                                             0
+#define TF_HANDLER                                                             1
 #define TF_INIT                                                                1
 #define TF_MISC                                                                1
-#define TF_MEMORY                                                              0
-#define TF_SERIAL_CTRL                                                         1
-#define TF_BEACON                                                              0
-#define TF_GENERIC_CLIENT                                                      1
-#define TF_LIGHT_CLIENT                                                        1
-#define TF_CONFIG_CLIENT                                                       1
-#define TF_LIGHT_CLIENT                                                        1
-#else
-#define TF_GENERIC                                                             0
-#define TF_LIGHT                                                               0
-#define TF_LIGHT_LC                                                            0
-#define TF_SENSOR                                                              0
-#define TF_VENDOR                                                              0
+/* Disabled by default */
 #define TF_COMMON                                                              0
-#define TF_VENDOR_COMMAND                                                      0
+#define TF_GENERIC_M                                                           0
+#define TF_GENERIC_CLIENT_M                                                    0
+#define TF_SENSOR_M                                                            0
+#define TF_LIGHT_M                                                             0
+#define TF_LIGHT_CLIENT_M                                                      0
+#define TF_LIGHT_LC_M                                                          0
+#define TF_VENDOR_M                                                            0
+#define TF_CONFIG_CLIENT_M                                                     0
 #define TF_NEIGHBOUR                                                           0
-#define TF_LPN_FRND                                                            0
-#define TF_ELEMENTS                                                            0
-#define TF_ADDRESS                                                             0
-#define TF_PROVISION                                                           0
-#define TF_HANDLER                                                             0
-#define TF_INIT                                                                0
-#define TF_MISC                                                                0
 #define TF_MEMORY                                                              0
-#define TF_SERIAL_CTRL                                                         0
 #define TF_BEACON                                                              0
-#define TF_GENERIC_CLIENT                                                      0
-#define TF_LIGHT_CLIENT                                                        0
-#define TF_CONFIG_CLIENT                                                       0
-#define TF_LIGHT_CLIENT                                                        0
+#define TF_SERIAL_CTRL                                                         0
 #endif
+
+/*******************************************************************************
+*** Following section helps to define Device Name during Provisioning  *********
+*******************************************************************************/
+
+#define DEVICE_NAME_SIZE                                                      11
+#define DEVICE_NAME                  'S','T',' ','B','L','E',' ','M','e','s','h'
 
 /*******************************************************************************
 *** Following section helps to select right configuration of Models  ***********
@@ -113,11 +115,18 @@ Either use 0 to disable or 1 to enable
 /* Example: 6 means Model enabled in element 2 and 3                          */
 /******************************************************************************/
 
+/* Define the following Macros to enable the usage of the Server Generic Models  */
 #define ENABLE_GENERIC_MODEL_SERVER_ONOFF                                    (1)
 //#define ENABLE_GENERIC_MODEL_SERVER_LEVEL 
 //#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF
 //#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP
 //#define ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME
+
+/* Define the following Macros to enable the usage of the Client Generic Models  */
+//#define ENABLE_GENERIC_MODEL_CLIENT_ONOFF                                    (1)
+//#define ENABLE_GENERIC_MODEL_CLIENT_LEVEL                                    (1)
+//#define ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF                              (1)
+//#define ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME                  (1)
 
 /* The Following Models are not available in this version, will be developed in 
    next version.
@@ -143,7 +152,7 @@ Either use 0 to disable or 1 to enable
 /* Example: 6 means Model enabled in element 2 and 3                          */
 /******************************************************************************/
 
-//#define ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
+#define ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS                                  (1)
 //#define ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP
 //#define ENABLE_LIGHT_MODEL_SERVER_CTL
 //#define ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP 
@@ -153,11 +162,17 @@ Either use 0 to disable or 1 to enable
 //#define ENABLE_LIGHT_MODEL_SERVER_HSL_HUE 
 //#define ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION 
 
+//#define ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS                                  (1)
+//#define ENABLE_LIGHT_MODEL_CLIENT_CTL                                        (1)
+//#define ENABLE_LIGHT_MODEL_CLIENT_HSL                                        (1)
+
 /* 
    The following Models are managed in different file light_lc.c in middleware
 */
 //#define ENABLE_LIGHT_MODEL_SERVER_LC 
 //#define ENABLE_LIGHT_MODEL_SERVER_LC_SETUP 
+
+//#define ENABLE_LIGHT_MODEL_CLIENT_LC                                         (1)
 
 /******************************************************************************/
 /* Define the following Macros to enable the usage of the Sensor Models  */
@@ -169,6 +184,8 @@ Either use 0 to disable or 1 to enable
 
 //#define ENABLE_SENSOR_MODEL_SERVER                                           
 //#define ENABLE_SENSOR_MODEL_SERVER_SETUP                                     
+
+//#define ENABLE_SENSOR_MODEL_CLIENT                                           (1)
 
 /******************************************************************************/
 /* Define the following Macros to enable the usage of the time and            */
@@ -194,6 +211,9 @@ Either use 0 to disable or 1 to enable
 //#define ENABLE_VENDOR_MODEL_SERVER                                           
 #define GENERIC_SERVER_MODEL_PUBLISH  
 
+/* Define the following Macros to enable the usage of the Client Generic Models  */
+//#define ENABLE_CONFIG_MODEL_CLIENT                                          (1)
+
 /******************************************************************************/
 /*
 Define the Macros for Enabling/disabling the binding of data between the Generic 
@@ -202,10 +222,15 @@ and Light model.
 @ Undefine or comment the macro for disabling the binding.
 */
 /******************************************************************************/
-#define ENABLE_MODEL_BINDING
+//#define VENDOR_CLIENT_MODEL_PUBLISH
+//#define GENERIC_CLIENT_MODEL_PUBLISH  
+//#define LIGHT_CLIENT_MODEL_PUBLISH
+
+
+//#define ENABLE_MODEL_BINDING
 
 /* Define the macros for the numbers of sensor present.*/
-#define NUMBER_OF_SENSOR                                                       2
+#define NUMBER_OF_SENSOR                                                       3
 //#define ENABLE_OCCUPANCY_SENSOR
 /*
 Macro is responsible for enabling and desabling the sensor publication.
@@ -250,8 +275,9 @@ this should be avoided to ensure flash longevity
    number of bytes dedicated for generic model and light model.
 */     
 #define APP_NVM_GENERIC_MODEL_SIZE                                           16U
-#define APP_NVM_LIGHT_MODEL_SIZE                                             16U
-#define APP_NVM_MODEL_SIZE                                                   40U
+#define APP_NVM_LIGHT_MODEL_SIZE                                             32U
+#define APP_NVM_MODEL_SIZE                                                   50U
+
       
 /*Macros are defined for the selection of the number of led and type of lighting 
   used for the application.
@@ -558,6 +584,17 @@ For STMicroelectronics : it is 0x0030 */
 
 /* Following Macro helps to know if the Fixed functions are needed or not 
    DO NOT change or add any space at the end of the file */
+#if defined (ENABLE_GENERIC_MODEL_CLIENT_ONOFF) \
+    || defined (ENABLE_GENERIC_MODEL_CLIENT_LEVEL) 
+
+ #define ENABLE_GENERIC_MODEL_CLIENT
+#endif
+
+#if defined (ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS)
+         
+ #define ENABLE_LIGHT_MODEL_CLIENT
+#endif
+
 #if defined (ENABLE_GENERIC_MODEL_SERVER_ONOFF) \
     || defined (ENABLE_GENERIC_MODEL_SERVER_LEVEL) \
     || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF) \

@@ -17,7 +17,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "utilities_common.h"
@@ -64,10 +63,10 @@ typedef PACKED_STRUCT
 #define C_CHANNEL_NB            12U
 
 /* USER CODE BEGIN PD */
-#define C_RESSOURCE             "light"
+#define C_RESSOURCE                     "light"
 
 /* Debug */
-#define NBR_OF_TRACES_CONFIG_PARAMETERS         4
+#define NBR_OF_TRACES_CONFIG_PARAMETERS 4
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/
@@ -103,15 +102,15 @@ static void RxCpltCallback(void);
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN PFP */
+static void APP_THREAD_SendCoapMsg(void);
 static void APP_THREAD_SendCoapMulticastRequest(uint8_t command);
 static void APP_THREAD_DummyReqHandler(void                * p_context,
-                                   otCoapHeader        * pHeader,
-                                   otMessage           * pMessage,
-                                   const otMessageInfo * pMessageInfo);
+                                       otCoapHeader        * pHeader,
+                                       otMessage           * pMessage,
+                                       const otMessageInfo * pMessageInfo);
 static void APP_THREAD_CoapRequestHandler(otCoapHeader        * pHeader,
-                                  otMessage           * pMessage,
-                                  const otMessageInfo * pMessageInfo);
-static void APP_THREAD_SendCoapMsg(void);
+                                          otMessage           * pMessage,
+                                          const otMessageInfo * pMessageInfo);
 /* USER CODE END PFP */
 
 /* Private variables -----------------------------------------------*/
@@ -149,6 +148,8 @@ static otMessage   * pOT_Message = NULL;
 
 /* Debug */
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_TracesConfig_t APPD_TracesConfig;
+static uint32_t DebugRxCoapCpt = 0;
+static uint32_t DebugTxCoapCpt = 0;
 /* USER CODE END PV */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -160,7 +161,7 @@ void APP_THREAD_Init( void )
   /* USER CODE END APP_THREAD_INIT_1 */
 
   SHCI_CmdStatus_t ThreadInitStatus;
-  
+
   /* Check the compatibility with the Coprocessor Wireless Firmware loaded */
   APP_THREAD_CheckWirelessFirmwareInfo();
 
@@ -184,7 +185,7 @@ void APP_THREAD_Init( void )
 
   /* Send Thread start system cmd to M0 */
   ThreadInitStatus = SHCI_C2_THREAD_Init();
-  
+
   /* Prevent unused argument(s) compilation warning */
   UNUSED(ThreadInitStatus);
 
@@ -499,9 +500,9 @@ static void APP_THREAD_SendCoapMsg(void)
   * @param pMessageInfo : Message information
   * @retval None
   */
-static void APP_THREAD_CoapRequestHandler(otCoapHeader * pHeader,
-                                  otMessage            * pMessage,
-                                  const otMessageInfo  * pMessageInfo)
+static void APP_THREAD_CoapRequestHandler(otCoapHeader        * pHeader,
+                                          otMessage           * pMessage,
+                                          const otMessageInfo * pMessageInfo)
 {
   do
   {
@@ -523,6 +524,7 @@ static void APP_THREAD_CoapRequestHandler(otCoapHeader * pHeader,
     if (OT_ReceivedCommand == 1U)
     {
       BSP_LED_Toggle(LED1);
+      APP_DBG("**** Recept COAP nb **** %d ",DebugRxCoapCpt++);
     }
 
   } while (false);
@@ -536,7 +538,8 @@ static void APP_THREAD_CoapRequestHandler(otCoapHeader * pHeader,
   */
 static void APP_THREAD_SendCoapMulticastRequest(uint8_t command)
 {
-  otError   error = OT_ERROR_NONE;
+  otError error = OT_ERROR_NONE;
+
   OT_Command = command;
   do
   {
@@ -569,10 +572,12 @@ static void APP_THREAD_SendCoapMulticastRequest(uint8_t command)
                               NULL);
   } while (false);
 
+  APP_DBG("*** Send COAP nb **** %d",DebugTxCoapCpt++);
+
   if (error != OT_ERROR_NONE && pOT_Message != NULL)
   {
-        otMessageFree(pOT_Message);
-        APP_THREAD_Error(ERR_THREAD_COAP_SEND_REQUEST,error);
+    otMessageFree(pOT_Message);
+    APP_THREAD_Error(ERR_THREAD_COAP_SEND_REQUEST,error);
   }
 }
 /* USER CODE END FD_LOCAL_FUNCTIONS */

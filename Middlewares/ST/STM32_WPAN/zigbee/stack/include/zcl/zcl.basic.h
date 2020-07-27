@@ -1,9 +1,12 @@
 /**
  * @file zcl.basic.h
- * @brief ZCL Basic Cluster
- * @author Exegin Technologies
- * @copyright Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved.
- *
+ * @brief ZCL Basic cluster header
+ * ZCL 7 section 3.2
+ * ZCL 8 section 3.2
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
+
+/*
  * Client and Server support for the ZCL Basic Cluster
  *
  * The Basic cluster is unique amoung the ZCL clusters in ZSDK. There is no
@@ -55,24 +58,24 @@
 
 #include "zcl/zcl.h"
 
-/* Basic Cluster Attribute Identifiers */
+/** Basic Cluster Attribute Ids */
 enum {
-    ZCL_BASIC_ATTR_ZCL_VERSION = 0x0000,
-    ZCL_BASIC_ATTR_APP_VERSION, /* 0x0001 */
-    ZCL_BASIC_ATTR_STACK_VERSION, /* 0x0002 */
-    ZCL_BASIC_ATTR_HARDWARE_VERSION, /* 0x0003 */
-    ZCL_BASIC_ATTR_MFR_NAME, /* 0x0004 */
-    ZCL_BASIC_ATTR_MODEL_NAME, /* 0x0005 */
-    ZCL_BASIC_ATTR_DATE_CODE, /* 0x0006 */
-    ZCL_BASIC_ATTR_POWER_SOURCE, /* 0x0007 */
+    ZCL_BASIC_ATTR_ZCL_VERSION = 0x0000, /**< ZCLVersion */
+    ZCL_BASIC_ATTR_APP_VERSION, /**< ApplicationVersion */
+    ZCL_BASIC_ATTR_STACK_VERSION, /**< StackVersion */
+    ZCL_BASIC_ATTR_HARDWARE_VERSION, /**< HWVersion */
+    ZCL_BASIC_ATTR_MFR_NAME, /**< ManufacturerName */
+    ZCL_BASIC_ATTR_MODEL_NAME, /**< ModelIdentifier */
+    ZCL_BASIC_ATTR_DATE_CODE, /**< DateCode */
+    ZCL_BASIC_ATTR_POWER_SOURCE, /**< PowerSource */
 
-    ZCL_BASIC_ATTR_LOCATION = 0x0010,
-    ZCL_BASIC_ATTR_ENVIRONMENT, /* 0x0011 */
-    ZCL_BASIC_ATTR_ENABLED, /* 0x0012 */
-    ZCL_BASIC_ATTR_ALARM_MASK, /* 0x0013 */
-    ZCL_BASIC_ATTR_DISABLE_LOCAL_CONFIG, /* 0x0014 */
+    ZCL_BASIC_ATTR_LOCATION = 0x0010, /**< LocationDescription */
+    ZCL_BASIC_ATTR_ENVIRONMENT, /**< PhysicalEnvironment */
+    ZCL_BASIC_ATTR_ENABLED, /**< DeviceEnabled */
+    ZCL_BASIC_ATTR_ALARM_MASK, /**< AlarmMask */
+    ZCL_BASIC_ATTR_DISABLE_LOCAL_CONFIG, /**< DisableLocalConfig */
 
-    ZCL_BASIC_ATTR_SW_BUILD_ID = 0x4000
+    ZCL_BASIC_ATTR_SW_BUILD_ID = 0x4000 /**< SWBuildID */
 };
 
 /* Power Source Enumerations */
@@ -119,8 +122,6 @@ enum {
  * behaviour. The API is found in zigbee.h. */
 
 /**
- * @brief Instantiate a new instance of the Basic client cluster
- *
  * Creates a new instance of the Basic client cluster
  *
  * @param zb the ZSDK stack pointer
@@ -130,7 +131,7 @@ enum {
 struct ZbZclClusterT * ZbZclBasicClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 /**
- * @brief Send Basic Cluster Reset to Factory Defaults command to the server
+ * Send Basic Cluster Reset to Factory Defaults command to the server
  *
  * The reset to factory defaults commands instructs the server to resets all attributes
  * to their factory default values. Other functionality is not affected.
@@ -139,6 +140,6 @@ struct ZbZclClusterT * ZbZclBasicClientAlloc(struct ZigBeeT *zb, uint8_t endpoin
  * @param dst the destination address to the server to which the command is sent
  * @return ZCL_STATUS_SUCEESS if successful or other ZclStatusCodeT value on error
  */
-enum ZclStatusCodeT ZbZclBasicClientResetReq(struct ZbZclClusterT *clusterPtr, struct ZbApsAddrT *dst);
+enum ZclStatusCodeT ZbZclBasicClientResetReq(struct ZbZclClusterT *clusterPtr, const struct ZbApsAddrT *dst);
 
 #endif /* __ZCL_BASIC_H */

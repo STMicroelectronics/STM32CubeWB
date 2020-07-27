@@ -1,4 +1,10 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.window.h
+ * @brief ZCL Window Covering cluster header
+ * ZCL 7 section 7.4
+ * ZCL 8 section 7.4
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_WINDOW_H
 # define ZCL_WINDOW_H
@@ -77,114 +83,157 @@
 
 #include "zcl/zcl.h"
 
-/* Window Covering Cluster Attribute Set */
-enum {
-    /* M* - mandatory if closed loop and lift/tile action is supported */
+/** Window Covering Server Attribute Ids */
+enum ZbZclWncvServerAttrT {
     /* Information Attribute Set */
-    ZCL_WINDOW_ATTR_COVERING_TYPE = 0x0000, /* R- mandatory */
-    ZCL_WINDOW_PHY_CLOSE_LIMIT_LIFT = 0x0001, /* R */
-    ZCL_WINDOW_PHY_CLOSE_LIMIT_TILT = 0x0002, /* R */
-    ZCL_WINDOW_CURR_POSITION_LIFT = 0x0003, /* R */
-    ZCL_WINDOW_CURR_POSITION_TILT = 0x0004, /* R */
-    ZCL_WINDOW_ACTUATION_NUMBER_LIFT = 0x0005, /* R */
-    ZCL_WINDOW_ACCUATION_NUMBER_TILT = 0x0006, /* R */
-    ZCL_WINDOW_CONFIG_STATUS = 0x0007, /* R - mandatory */
-    ZCL_WINDOW_CURR_POS_LIFT_PERCENT = 0x0008, /* RSP - M* */
-    ZCL_WINDOW_CURR_POS_TILT_PERCENT = 0x0009, /* RSP - M* */
+    ZCL_WNCV_SVR_ATTR_COVERING_TYPE = 0x0000, /**< WindowCoveringType */
+    ZCL_WNCV_SVR_ATTR_PHY_CLOSE_LIMIT_LIFT = 0x0001, /**< PhysicalClosedLimitLift (Optional) */
+    ZCL_WNCV_SVR_ATTR_PHY_CLOSE_LIMIT_TILT = 0x0002, /**<  PhysicalClosedLimitTilt (Optional) */
+    ZCL_WNCV_SVR_ATTR_CURR_POSITION_LIFT = 0x0003, /**< CurrentPositionLift (Optional) */
+    ZCL_WNCV_SVR_ATTR_CURR_POSITION_TILT = 0x0004, /**< CurrentPositionTilt (Optional) */
+    ZCL_WNCV_SVR_ATTR_ACTUATION_NUMBER_LIFT = 0x0005, /**< NumberOfActuationsLift (Optional) */
+    ZCL_WNCV_SVR_ATTR_ACCUATION_NUMBER_TILT = 0x0006, /**< NumberOfActuationsTilt (Optional) */
+    ZCL_WNCV_SVR_ATTR_CONFIG_STATUS = 0x0007, /**< ConfigStatus */
+    ZCL_WNCV_SVR_ATTR_CURR_POS_LIFT_PERCENT = 0x0008, /**< CurrentPositionLiftPercentage */
+    ZCL_WNCV_SVR_ATTR_CURR_POS_TILT_PERCENT = 0x0009, /**< CurrentPositionTiltPercentage */
     /* Settings Attribute Set */
-    ZCL_WINDOW_INSTALLED_OPENED_LIMIT_LIFT = 0x0010, /* R - M* */
-    ZCL_WINDOW_INSTALLED_CLOSED_LIMIT_LIFT = 0x0011, /* R - M* */
-    ZCL_WINDOW_INSTALLED_OPENED_LIMIT_TILT = 0x0012, /* R - M* */
-    ZCL_WINDOW_INSTALLED_CLOSED_LIMIT_TILT = 0x0013, /* R - M* */
-    ZCL_WINDOW_VELOCITY_LIFT = 0x0014, /* RW */
-    ZCL_WINDOW_ACCELERATION_TIME_LIFT = 0x0015, /* RW */
-    ZCL_WINDOW_DECELERATION_TIME_LIFT = 0x0016, /* RW */
-    ZCL_WINDOW_MODE = 0x0017, /* RW - mandatory */
-    ZCL_WINDOW_INTERMEDIATE_SETPOINTS_LIFT = 0x0018, /* RW */
-    ZCL_WINDOW_INTERMEDIATE_SETPOINTS_TILT = 0x0019 /* RW */
-
+    ZCL_WNCV_SVR_ATTR_INSTALLED_OPENED_LIMIT_LIFT = 0x0010, /**< InstalledOpenLimitLift */
+    ZCL_WNCV_SVR_ATTR_INSTALLED_CLOSED_LIMIT_LIFT = 0x0011, /**< InstalledClosedLimitLift */
+    ZCL_WNCV_SVR_ATTR_INSTALLED_OPENED_LIMIT_TILT = 0x0012, /**< InstalledOpenLimitTilt */
+    ZCL_WNCV_SVR_ATTR_INSTALLED_CLOSED_LIMIT_TILT = 0x0013, /**< InstalledClosedLimitTilt */
+    ZCL_WNCV_SVR_ATTR_VELOCITY_LIFT = 0x0014, /**< VelocityLift (Optional) */
+    ZCL_WNCV_SVR_ATTR_ACCELERATION_TIME_LIFT = 0x0015, /**< AccelerationTimeLift (Optional) */
+    ZCL_WNCV_SVR_ATTR_DECELERATION_TIME_LIFT = 0x0016, /**< DecelerationTimeLift (Optional) */
+    ZCL_WNCV_SVR_ATTR_MODE = 0x0017, /**< Mode */
+    ZCL_WNCV_SVR_ATTR_INTERMEDIATE_SETPOINTS_LIFT = 0x0018, /**< Intermediate Setpoints - Lift (Optional) */
+    ZCL_WNCV_SVR_ATTR_INTERMEDIATE_SETPOINTS_TILT = 0x0019 /**< Intermediate Setpoints - Tilt (Optional) */
 };
 
-/* Window Covering Type Attributes */
-enum {
-    WINDOW_ROLLERSHADE = 0x00,
-    WINDOW_ROLLERSHADE_2_MOTOR,
-    WINDOW_ROLLERSHADE_EXTERIOR,
-    WINDOW_ROLLERSHADE_EXTERIOR_2_MOTOR,
-    WINDOW_DRAPERY,
-    WINDOW_AWNING,
-    WINDOW_SHUTTER,
-    WINDOW_TILT_BLIND_TILT,
-    WINDOW_TILT_BLIND_LIFT_TILT,
-    WINDOW_PROJECTOR_SCREEN
+/** Window Covering Type enumerations */
+enum ZbZclWncvTypes {
+    ZCL_WNCV_TYPE_ROLLERSHADE = 0x00, /**< Rollershade */
+    ZCL_WNCV_TYPE_ROLLERSHADE_2_MOTOR, /**< Rollershade - 2 Motor */
+    ZCL_WNCV_TYPE_ROLLERSHADE_EXTERIOR, /**< Rollershade – Exterior */
+    ZCL_WNCV_TYPE_ROLLERSHADE_EXTERIOR_2_MOTOR, /**< Rollershade - Exterior - 2 Motor */
+    ZCL_WNCV_TYPE_DRAPERY, /**< Drapery */
+    ZCL_WNCV_TYPE_AWNING, /**< Awning */
+    ZCL_WNCV_TYPE_SHUTTER, /**< Shutter */
+    ZCL_WNCV_TYPE_TILT_BLIND_TILT_ONLY, /**< Tilt Blind - Tilt Only */
+    ZCL_WNCV_TYPE_TILT_BLIND_LIFT_TILT, /**< Tilt Blind - Lift and Tilt */
+    ZCL_WNCV_TYPE_PROJECTOR_SCREEN /**< Projector Screen */
 };
 
-/* Commands */
-#define ZCL_WINDOW_COMMAND_UP                    0x00 /* mandatory */
-#define ZCL_WINDOW_COMMAND_DOWN                  0x01 /* mandatory */
-#define ZCL_WINDOW_COMMAND_STOP                  0x02 /* mandatory */
-#define ZCL_WINDOW_COMMAND_GOTO_LIFT_VALUE       0x04
-#define ZCL_WINDOW_COMMAND_GOTO_LIFT_PERCENTAGE  0x05
-#define ZCL_WINDOW_COMMAND_GOTO_TILT_VALUE       0x07
-#define ZCL_WINDOW_COMMAND_GOTO_TILT_PERCENTAGE  0x08
+/* Window Covering Commands */
+#define ZCL_WNCV_COMMAND_UP                      0x00
+#define ZCL_WNCV_COMMAND_DOWN                    0x01
+#define ZCL_WNCV_COMMAND_STOP                    0x02
+#define ZCL_WNCV_COMMAND_GOTO_LIFT_VALUE         0x04
+#define ZCL_WNCV_COMMAND_GOTO_LIFT_PERCENTAGE    0x05
+#define ZCL_WNCV_COMMAND_GOTO_TILT_VALUE         0x07
+#define ZCL_WNCV_COMMAND_GOTO_TILT_PERCENTAGE    0x08
 
-/* Config/Status Bits */
-#define ZCL_WINDOW_OPERATIONAL                   0x01
-#define ZCL_WINDOW_ONLINE                        0x02
-#define ZCL_WINDOW_UP_REVERSED                   0x04
-#define ZCL_WINDOW_LIFT_CLOSED_LOOP              0x08
-#define ZCL_WINDOW_TILT_CLOSED_LOOP              0x16
-#define ZCL_WINDOW_LIFT_ENCODER                  0x32
-#define ZCL_WINDOW_TILT_ENCODER                  0x64
+/* Window Covering Config/Status Bit Mask */
+#define ZCL_WNCV_STATUS_OPERATIONAL              0x01
+#define ZCL_WNCV_STATUS_ONLINE                   0x02
+#define ZCL_WNCV_STATUS_UP_REVERSED              0x04
+#define ZCL_WNCV_STATUS_LIFT_CLOSED_LOOP         0x08
+#define ZCL_WNCV_STATUS_TILT_CLOSED_LOOP         0x16
+#define ZCL_WNCV_STATUS_LIFT_ENCODER             0x32
+#define ZCL_WNCV_STATUS_TILT_ENCODER             0x64
 
-/* Mode Bits */
-#define ZCL_WINDOW_REVERSED                      0x01
-#define ZCL_WINDOW_CALIBRATION                   0x02
-#define ZCL_WINDOW_MAINTENANCE                   0x04
-#define ZCL_WINDOW_LED_FEEDBACK                  0x08
+/* Window Covering Mode Bit Mask */
+#define ZCL_WNCV_MODE_REVERSED                   0x01
+#define ZCL_WNCV_MODE_CALIBRATION                0x02
+#define ZCL_WNCV_MODE_MAINTENANCE                0x04
+#define ZCL_WNCV_MODE_LED_FEEDBACK               0x08
 
-/*---------------------------------------------------------------
- * Server API
- *---------------------------------------------------------------
- */
+/* Window Covering Server */
+/** Window Covering Server callbacks configuration */
 struct ZbZclWindowServerCallbacksT {
-    /* Returns a ZCL Status code to send in the Default Response, or
-     * ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE if no Default Response
-     * to be generated.
-     * All 3 commnads should update ZCL_WINDOW_CURR_POS_LIFT_PERCENT&
-     * ZCL_WINDOW_CURR_POS_TILT_PERCENT accordingly*/
-    uint8_t (*up_command)(struct ZbZclClusterT *clusterPtr,
+    enum ZclStatusCodeT (*up_command)(struct ZbZclClusterT *cluster,
         struct ZbZclHeaderT *zclHdrPtr, struct ZbApsdeDataIndT *dataIndPtr, void *arg);
+    /**< Callback to application, invoked on receipt of Up/Open command.
+     * Application should update ZCL_WNCV_SVR_ATTR_CURR_POS_LIFT_PERCENT and ZCL_WNCV_SVR_ATTR_CURR_POS_TILT_PERCENT.
+     */
 
-    uint8_t (*down_command)(struct ZbZclClusterT *clusterPtr,
+    enum ZclStatusCodeT (*down_command)(struct ZbZclClusterT *cluster,
         struct ZbZclHeaderT *zclHdrPtr, struct ZbApsdeDataIndT *dataIndPtr, void *arg);
+    /**< Callback to application, invoked on receipt of Down/Close command.
+     * Application should update ZCL_WNCV_SVR_ATTR_CURR_POS_LIFT_PERCENT and ZCL_WNCV_SVR_ATTR_CURR_POS_TILT_PERCENT.
+     */
 
-    uint8_t (*set_lift_and_tilt_command)(struct ZbZclClusterT *clusterPtr, void *arg, uint8_t liftPercentage, uint8_t tiltPercentage);
-
-    uint8_t (*stop_command)(struct ZbZclClusterT *clusterPtr,
+    enum ZclStatusCodeT (*stop_command)(struct ZbZclClusterT *cluster,
         struct ZbZclHeaderT *zclHdrPtr, struct ZbApsdeDataIndT *dataIndPtr, void *arg);
+    /**< Callback to application, invoked on receipt of Stop command.
+     * Application should update ZCL_WNCV_SVR_ATTR_CURR_POS_LIFT_PERCENT and ZCL_WNCV_SVR_ATTR_CURR_POS_TILT_PERCENT.
+     */
+
+    enum ZclStatusCodeT (*set_lift_and_tilt_command)(struct ZbZclClusterT *cluster,
+        void *arg, uint8_t liftPercentage, uint8_t tiltPercentage);
+    /**< Callback to application, invoked to handle setting a Scene, which includes Lift and Tilt values.
+     * Application should update ZCL_WNCV_SVR_ATTR_CURR_POS_LIFT_PERCENT and ZCL_WNCV_SVR_ATTR_CURR_POS_TILT_PERCENT.
+     */
 };
 
-struct ZbZclClusterT * ZbZclWindowServerAlloc(struct ZigBeeT *zb, uint8_t ept,
+/**
+ * Create a new instance of the Window Covering Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param callbacks Structure containing any callback function pointers for this cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
+struct ZbZclClusterT * ZbZclWindowServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclWindowServerCallbacksT *callbacks, void *arg);
 
-uint8_t ZbZclWindowClosureServerMode(struct ZbZclClusterT *clusterPtr, uint8_t mode);
-
-/*---------------------------------------------------------------
- * Client API
- *---------------------------------------------------------------
+/**
+ * Configure the Window Covering mode
+ * @param cluster Cluster instance from which to send this command
+ * @param mode Window Covering mode bit mask
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-struct ZbZclClusterT * ZbZclWindowClientAlloc(struct ZigBeeT *zb, uint8_t ept);
-uint8_t ZbZclWindowClientCommandUp(struct ZbZclClusterT *clusterPtr,
-    const struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclWindowClosureServerMode(struct ZbZclClusterT *cluster, uint8_t mode);
+
+/* Window Covering Client */
+/**
+ * Create a new instance of the Window Covering Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
+ */
+struct ZbZclClusterT * ZbZclWindowClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
+
+/**
+ * Send an Up/Open command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst The destination address information
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclWindowClientCommandUp(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-uint8_t ZbZclWindowClientCommandDown(struct ZbZclClusterT *clusterPtr,
-    const struct ZbApsAddrT *dst,
+/**
+ * Send a Down/Close command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst The destination address information
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclWindowClientCommandDown(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-uint8_t ZbZclWindowClientCommandStop(struct ZbZclClusterT *clusterPtr,
-    const struct ZbApsAddrT *dst,
+/**
+ * Send a Stop command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst The destination address information
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclWindowClientCommandStop(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-#endif /* __ZCL_WINDOW_H */
+#endif

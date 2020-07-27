@@ -70,12 +70,8 @@
  * S.C.C42.Tx | True
  */
 
-/*---------------------------------------------------------------
- * Definitions
- *---------------------------------------------------------------
- */
-/* Attribute Identifiers */
-enum {
+/** Scenes Attribute IDs */
+enum ZbZclScenesAttrT {
     ZCL_SCENES_ATTR_SCENE_COUNT = 0x0000,
     ZCL_SCENES_ATTR_CURRENT_SCENE = 0x0001,
     ZCL_SCENES_ATTR_CURRENT_GROUP = 0x0002,
@@ -84,7 +80,7 @@ enum {
     ZCL_SCENES_ATTR_LAST_CONFIGURED_BY = 0x0005,
 };
 
-/* Commands (Request IDs are the same as the Response IDs. */
+/* Scenes Commands (Request IDs are the same as the Response IDs) */
 enum {
     ZCL_SCENES_COMMAND_ADD_SCENE = 0x00,
     ZCL_SCENES_COMMAND_VIEW_SCENE = 0x01,
@@ -98,60 +94,49 @@ enum {
     ZCL_SCENES_COMMAND_COPY_SCENE = 0x42,
 };
 
+/** Scenes Constants */
 #define ZCL_SCENES_NAME_MAX_LENGTH                  16
-
 #define ZCL_SCENES_RECALL_TRANSITION_INVALID        0xffff
 
 /*---------------------------------------------------------------------------
  * Scenes Server
  *---------------------------------------------------------------------------
  */
-struct ZbZclClusterT * ZbZclScenesServerAlloc(
-    struct ZigBeeT *zb,
-    /* Define the endpoint to bind this cluster to. */
-    uint8_t endpoint,
-    /* Define the maximum number of scenes supported by this cluster. */
-    uint8_t max_scenes);
+struct ZbZclClusterT * ZbZclScenesServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, uint8_t maxScenes);
 
 /*---------------------------------------------------------------------------
  * Scenes Client
  *---------------------------------------------------------------------------
  */
-struct ZbZclClusterT * ZbZclScenesClientAlloc(
-    struct ZigBeeT *zb,
-    /* Define the endpoint to bind this cluster to. */
-    uint8_t endpoint);
 
-/*---------------------------------------------------------------
- * Client Add Scene Helper
- *---------------------------------------------------------------
- */
+struct ZbZclClusterT * ZbZclScenesClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
+
+/** Add Scene command structure */
 struct zcl_scenes_add_request_t {
     bool isEnhanced;
     struct ZbApsAddrT dst;
     uint16_t groupId;
     uint8_t sceneId;
     uint16_t transition;
-    const char *sceneName; /* string length must be <= ZCL_SCENES_NAME_MAX_LENGTH */
+    const char *sceneName;
     const char *extStrPtr;
 };
 
+/** Add Scene Response command structure */
 struct zcl_scenes_add_response_t {
     uint8_t status;
     uint16_t groupId;
     uint8_t sceneId;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_add_req(struct ZbZclClusterT *clusterPtr,
-    struct zcl_scenes_add_request_t *add_req, void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
+enum ZclStatusCodeT zcl_scenes_client_add_req(struct ZbZclClusterT *cluster,
+    struct zcl_scenes_add_request_t *add_req,
+    void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT zcl_scenes_client_add_rsp_parse(struct zcl_scenes_add_response_t *add_rsp,
     struct ZbZclCommandRspT *zcl_rsp);
 
-/*---------------------------------------------------------------
- * Client View Scene Helper
- *---------------------------------------------------------------
- */
+/** View Scene command structure */
 struct zcl_scenes_view_request_t {
     bool isEnhanced;
     struct ZbApsAddrT dst;
@@ -159,18 +144,17 @@ struct zcl_scenes_view_request_t {
     uint8_t sceneId;
 };
 
-/* EXEGIN - arbitrary */
 #define ZCL_SCENES_VIEW_NAME_MAX_LEN                128
 #define ZCL_SCENES_VIEW_EXT_FIELD_MAX_LEN           128
 #define ZCL_SCENES_VIEW_EXT_LIST_MAX_SZ             8
 
+/** View Scene Response command structure */
 struct zcl_scenes_view_response_t {
     uint8_t status;
     uint16_t groupId;
     uint8_t sceneId;
     uint16_t transition;
     char nameStr[ZCL_SCENES_NAME_MAX_LENGTH + 1U];
-
     uint8_t extNum;
     struct {
         uint16_t clusterId;
@@ -179,84 +163,75 @@ struct zcl_scenes_view_response_t {
     } extList[ZCL_SCENES_VIEW_EXT_LIST_MAX_SZ];
 };
 
-enum ZclStatusCodeT zcl_scenes_client_view_req(struct ZbZclClusterT *clusterPtr,
+enum ZclStatusCodeT zcl_scenes_client_view_req(struct ZbZclClusterT *cluster,
     struct zcl_scenes_view_request_t *view_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT zcl_scenes_client_view_rsp_parse(struct zcl_scenes_view_response_t *view_rsp,
     struct ZbZclCommandRspT *zcl_rsp);
 
-/*---------------------------------------------------------------
- * Client Remove Scene Helper
- *---------------------------------------------------------------
- */
+/** Remove Scene command structure */
 struct zcl_scenes_remove_request_t {
     struct ZbApsAddrT dst;
     uint16_t groupId;
     uint8_t sceneId;
 };
 
+/** Remove Scene Response command structure */
 struct zcl_scenes_remove_response_t {
     uint8_t status;
     uint16_t groupId;
     uint8_t sceneId;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_remove_req(struct ZbZclClusterT *clusterPtr,
+enum ZclStatusCodeT zcl_scenes_client_remove_req(struct ZbZclClusterT *cluster,
     struct zcl_scenes_remove_request_t *remove_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT zcl_scenes_client_remove_rsp_parse(struct zcl_scenes_remove_response_t *remove_rsp,
     struct ZbZclCommandRspT *zcl_rsp);
 
-/*---------------------------------------------------------------
- * Client Remove All Scenes Helper
- *---------------------------------------------------------------
- */
+/** Remove All Scenes command structure */
 struct zcl_scenes_remove_all_request_t {
     struct ZbApsAddrT dst;
     uint16_t groupId;
 };
 
+/** Remove All Scenes Response command structure */
 struct zcl_scenes_remove_all_response_t {
     uint8_t status;
     uint16_t groupId;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_remove_all_req(struct ZbZclClusterT *clusterPtr,
+enum ZclStatusCodeT zcl_scenes_client_remove_all_req(struct ZbZclClusterT *cluster,
     struct zcl_scenes_remove_all_request_t *remove_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT zcl_scenes_client_remove_all_rsp_parse(struct zcl_scenes_remove_all_response_t *remove_rsp,
     struct ZbZclCommandRspT *zcl_rsp);
 
-/*---------------------------------------------------------------
- * Client Store Scene Helper
- *---------------------------------------------------------------
- */
+/** Store Scene command structure */
 struct zcl_scenes_store_request_t {
     struct ZbApsAddrT dst;
     uint16_t groupId;
     uint8_t sceneId;
 };
 
+/** Store Scene Response command structure */
 struct zcl_scenes_store_response_t {
     uint8_t status;
     uint16_t groupId;
     uint8_t sceneId;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_store_req(struct ZbZclClusterT *clusterPtr,
+enum ZclStatusCodeT zcl_scenes_client_store_req(struct ZbZclClusterT *cluster,
     struct zcl_scenes_store_request_t *store_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT zcl_scenes_client_store_rsp_parse(struct zcl_scenes_store_response_t *store_rsp,
     struct ZbZclCommandRspT *zcl_rsp);
 
-/*---------------------------------------------------------------
- * Client Recall Scene Helper
- *---------------------------------------------------------------
- */
+/** Recall Scene command structure */
 struct zcl_scenes_recall_request_t {
     struct ZbApsAddrT dst;
     uint16_t groupId;
@@ -266,21 +241,19 @@ struct zcl_scenes_recall_request_t {
     uint16_t transition;
 };
 
-/* No cluster-specific response. Expect a Default Response with status. */
+/** Recall Scene Response command structure */
 struct zcl_scenes_recall_response_t {
     uint8_t status;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_recall_req(struct ZbZclClusterT *clusterPtr,
+enum ZclStatusCodeT zcl_scenes_client_recall_req(struct ZbZclClusterT *cluster,
     struct zcl_scenes_recall_request_t *recall_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT zcl_scenes_client_recall_rsp_parse(struct zcl_scenes_recall_response_t *recall_rsp, struct ZbZclCommandRspT *zcl_rsp);
+enum ZclStatusCodeT zcl_scenes_client_recall_rsp_parse(struct zcl_scenes_recall_response_t *recall_rsp,
+    struct ZbZclCommandRspT *zcl_rsp);
 
-/*---------------------------------------------------------------
- * Client Get Membership Helper
- *---------------------------------------------------------------
- */
+/** Get Scene Membership command structure */
 struct zcl_scenes_membership_request_t {
     struct ZbApsAddrT dst;
     uint16_t groupId;
@@ -289,6 +262,7 @@ struct zcl_scenes_membership_request_t {
 /* EXEGIN - arbitrary */
 #define ZCL_SCENES_GET_MEMBERSHIP_MAX_SCENES        128
 
+/** Get Scene Membership Response command structure */
 struct zcl_scenes_membership_response_t {
     uint8_t status;
     uint8_t capacity;
@@ -297,37 +271,35 @@ struct zcl_scenes_membership_response_t {
     uint8_t sceneList[ZCL_SCENES_GET_MEMBERSHIP_MAX_SCENES];
 };
 
-enum ZclStatusCodeT zcl_scenes_client_get_membership_req(struct ZbZclClusterT *clusterPtr,
+enum ZclStatusCodeT zcl_scenes_client_get_membership_req(struct ZbZclClusterT *cluster,
     struct zcl_scenes_membership_request_t *get_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT zcl_scenes_client_get_membership_rsp_parse(
-    struct zcl_scenes_membership_response_t *get_rsp, struct ZbZclCommandRspT *zcl_rsp);
+enum ZclStatusCodeT zcl_scenes_client_get_membership_rsp_parse(struct zcl_scenes_membership_response_t *get_rsp,
+    struct ZbZclCommandRspT *zcl_rsp);
 
-/*---------------------------------------------------------------
- * Client Copy Scene Helper
- *---------------------------------------------------------------
- */
+/** Copy Scene command structure */
 struct zcl_scenes_copy_request_t {
     struct ZbApsAddrT dst;
     bool allScenes;
     uint16_t groupFrom;
-    uint8_t sceneFrom; /* only used if allScenes is false */
+    uint8_t sceneFrom;
     uint16_t groupTo;
-    uint8_t sceneTo; /* only used if allScenes is false */
+    uint8_t sceneTo;
 };
 
+/** Copy Scene Response command structure */
 struct zcl_scenes_copy_response_t {
     uint8_t status;
     uint16_t groupFrom;
     uint8_t sceneFrom;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_copy_req(struct ZbZclClusterT *clusterPtr,
+enum ZclStatusCodeT zcl_scenes_client_copy_req(struct ZbZclClusterT *cluster,
     struct zcl_scenes_copy_request_t *copy_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT zcl_scenes_client_copy_rsp_parse(struct zcl_scenes_copy_response_t *copy_rsp,
     struct ZbZclCommandRspT *zcl_rsp);
 
-#endif /* __ZCL_SCENES_H */
+#endif

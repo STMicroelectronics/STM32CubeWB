@@ -68,7 +68,7 @@ P-NUCLEO-WB55 board LED is be used to monitor the program execution status:
 
 @par Keywords
 
-Analog, ADC, Analog to Digital, Dual mode, Continuous conversion mode, DMA, Analog watchdog
+ADC, analog digital converter, analog, conversion, voltage, channel, analog input, trigger, analog watchdog, threshold, window
 
 @par Directory contents 
 

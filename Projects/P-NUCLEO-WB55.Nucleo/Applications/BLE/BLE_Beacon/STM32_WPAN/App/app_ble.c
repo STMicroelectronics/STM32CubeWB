@@ -18,7 +18,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -89,7 +88,7 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
 
 /**
-*   Identity root key used to derive LTK and CSRK 
+*   Identity root key used to derive LTK and CSRK
 */
 static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
 
@@ -224,6 +223,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
 
+  /* USER CODE BEGIN SVCCTL_App_Notification */
+
+  /* USER CODE END SVCCTL_App_Notification */
+
   switch (event_pckt->evt)
   {
     case EVT_DISCONN_COMPLETE:
@@ -239,6 +242,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       {
         case EVT_LE_CONN_COMPLETE:
         break; /* HCI_EVT_LE_CONN_COMPLETE */
+
+        /* USER CODE BEGIN META_EVT */
+
+        /* USER CODE END META_EVT */
 
         default:
           /* USER CODE BEGIN SUBEVENT_DEFAULT */
@@ -263,8 +270,16 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
         /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
           break; /* EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+
+      /* USER CODE BEGIN BLUE_EVT */
+
+      /* USER CODE END BLUE_EVT */
       }
       break; /* EVT_VENDOR */
+
+      /* USER CODE BEGIN EVENT_PCKT */
+
+      /* USER CODE END EVENT_PCKT */
 
       default:
       /* USER CODE BEGIN ECODE_DEFAULT*/
@@ -314,7 +329,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
   uint32_t srd_bd_addr[2];
-  uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE }; 
+  uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
 
   /**
    * Initialize HCI layer
@@ -340,12 +355,12 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   srd_bd_addr[1] =  0x0000ED6E;
   srd_bd_addr[0] =  LL_FLASH_GetUDN( );
   aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
-  
+
   /**
-   * Write Identity root key used to derive LTK and CSRK 
+   * Write Identity root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
-    
+
    /**
    * Write Encryption root key used to derive LTK and CSRK
    */
@@ -413,16 +428,16 @@ static void Beacon_Update( void )
     {
       erase.NbPages = 1; /* 1 sector for beacon user data */
     }
-    
+
     HAL_FLASH_Unlock();
     __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_WRPERR | FLASH_FLAG_OPTVERR);
-    
+
     HAL_FLASHEx_Erase(&erase, &pageError);
-    
+
     HAL_FLASH_Lock();
   }
-  
-  *(uint32_t*) SRAM1_BASE = BOOT_MODE_AND_SECTOR; 
+
+  *(uint32_t*) SRAM1_BASE = BOOT_MODE_AND_SECTOR;
   /**
    * Boot Mode:    1 (OTA)
    * Sector Index: 6
@@ -507,7 +522,7 @@ static void BLE_UserEvtRx( void * pPayload )
   SVCCTL_UserEvtFlowStatus_t svctl_return_status;
   tHCI_UserEvtRxParam *pParam;
 
-  pParam = (tHCI_UserEvtRxParam *)pPayload; 
+  pParam = (tHCI_UserEvtRxParam *)pPayload;
 
   svctl_return_status = SVCCTL_UserEvtRx((void *)&(pParam->pckt->evtserial));
   if (svctl_return_status != SVCCTL_UserEvtFlowDisable)

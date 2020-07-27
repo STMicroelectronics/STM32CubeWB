@@ -109,7 +109,6 @@ void HAL_PKA_MspDeInit(PKA_HandleTypeDef* hpka)
   /* USER CODE BEGIN PKA_MspDeInit 0 */
   /* Enable PKA reset state */
   __HAL_RCC_PKA_FORCE_RESET();
-
   /* Release PKA from reset state */
   __HAL_RCC_PKA_RELEASE_RESET();
   /* USER CODE END PKA_MspDeInit 0 */

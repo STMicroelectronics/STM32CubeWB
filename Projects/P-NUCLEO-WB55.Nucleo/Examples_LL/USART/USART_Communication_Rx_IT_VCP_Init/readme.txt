@@ -38,6 +38,10 @@ Received character is echoed on Tx line.
 On press on push button, LED2 is turned Off.
 In case of errors, LED2 is blinking.
 
+@par Keywords
+
+Connectivity, USART, Asynchronous mode, RS-232, baud rate, Interrupt, HyperTerminal, Receiver, VCP
+
 @par Directory contents 
 
   - USART/USART_Communication_Rx_IT_VCP_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file
@@ -50,7 +54,7 @@ In case of errors, LED2 is blinking.
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

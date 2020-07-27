@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * File Name          : App/eddystone_beacon.h
-  * Description        : 
+  * Description        :
   ******************************************************************************
   * @attention
   *
@@ -21,7 +21,7 @@
 #define EDDYSTONE_BEACON_H
 
 #ifdef __cplusplus
-extern "C" 
+extern "C"
 {
 #endif
 

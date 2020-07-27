@@ -27,6 +27,15 @@
 #include "osal.h"
 
 
+/* Default BLE variant */
+#ifndef LL_ONLY
+#define LL_ONLY 0
+#endif
+#ifndef SLAVE_ONLY
+#define SLAVE_ONLY 0
+#endif
+
+
 /* Size of command/events buffers:
  *
  * To change the size of commands and events parameters used in the
@@ -90,11 +99,6 @@ struct hci_request
   int      rlen;
 };
 extern int hci_send_req( struct hci_request* req, uint8_t async );
-
-
-/* Byte order conversions */
-#define htob( d, n )  (d)     /* LE */
-#define btoh( d, n )  (d)     /* LE */
 
 
 #ifndef FALSE

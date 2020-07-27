@@ -62,7 +62,7 @@
 * CC.S.A003c | FALSE
 * CC.S.A4000 | TRUE
 * CC.S.A4000.Scene | TRUE
-* CC.S.A4001 | FALSE
+* CC.S.A4001 | TRUE
 * CC.S.A4002 | TRUE
 * CC.S.A4002.Scene | TRUE
 * CC.S.A4003 | TRUE
@@ -133,58 +133,60 @@
 */
 
 /* Color Control Attributes */
-#define ZCL_COLOR_ATTR_CURRENT_HUE               0x0000
-#define ZCL_COLOR_ATTR_CURRENT_SAT               0x0001
-#define ZCL_COLOR_ATTR_REMAINING_TIME            0x0002
-#define ZCL_COLOR_ATTR_CURRENT_X                 0x0003
-#define ZCL_COLOR_ATTR_CURRENT_Y                 0x0004
-#define ZCL_COLOR_ATTR_DRIFT_COMP                0x0005
-#define ZCL_COLOR_ATTR_COMPENSATION_TEXT         0x0006
-#define ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS         0x0007
-#define ZCL_COLOR_ATTR_COLOR_MODE                0x0008
-#define ZCL_COLOR_ATTR_OPTIONS                   0x000f
-#define ZCL_COLOR_ATTR_NUM_PRIMARIES             0x0010
-#define ZCL_COLOR_ATTR_PRIMARY_1X                0x0011
-#define ZCL_COLOR_ATTR_PRIMARY_1Y                0x0012
-#define ZCL_COLOR_ATTR_PRIMARY_1_INTENS          0x0013
-#define ZCL_COLOR_ATTR_PRIMARY_2X                0x0015
-#define ZCL_COLOR_ATTR_PRIMARY_2Y                0x0016
-#define ZCL_COLOR_ATTR_PRIMARY_2_INTENS          0x0017
-#define ZCL_COLOR_ATTR_PRIMARY_3X                0x0019
-#define ZCL_COLOR_ATTR_PRIMARY_3Y                0x001a
-#define ZCL_COLOR_ATTR_PRIMARY_3_INTENS          0x001b
-#define ZCL_COLOR_ATTR_PRIMARY_4X                0x0020
-#define ZCL_COLOR_ATTR_PRIMARY_4Y                0x0021
-#define ZCL_COLOR_ATTR_PRIMARY_4_INTENS          0x0022
-#define ZCL_COLOR_ATTR_PRIMARY_5X                0x0024
-#define ZCL_COLOR_ATTR_PRIMARY_5Y                0x0025
-#define ZCL_COLOR_ATTR_PRIMARY_5_INTENS          0x0026
-#define ZCL_COLOR_ATTR_PRIMARY_6X                0x0028
-#define ZCL_COLOR_ATTR_PRIMARY_6Y                0x0029
-#define ZCL_COLOR_ATTR_PRIMARY_6_INTENS          0x002a
-#define ZCL_COLOR_ATTR_WHITE_POINT_X             0x0030
-#define ZCL_COLOR_ATTR_WHITE_POINT_Y             0x0031
-#define ZCL_COLOR_ATTR_COLOR_POINT_RX            0x0032
-#define ZCL_COLOR_ATTR_COLOR_POINT_RY            0x0033
-#define ZCL_COLOR_ATTR_COLOR_POINT_R_INTENS      0x0034
-#define ZCL_COLOR_ATTR_COLOR_POINT_GX            0x0036
-#define ZCL_COLOR_ATTR_COLOR_POINT_GY            0x0037
-#define ZCL_COLOR_ATTR_COLOR_POINT_G_INTENS      0x0038
-#define ZCL_COLOR_ATTR_COLOR_POINT_BX            0x003a
-#define ZCL_COLOR_ATTR_COLOR_POINT_BY            0x003b
-#define ZCL_COLOR_ATTR_COLOR_POINT_B_INTENS      0x003c
-#define ZCL_COLOR_ATTR_ENH_CURR_HUE              0x4000
-#define ZCL_COLOR_ATTR_ENH_COLOR_MODE            0x4001
-#define ZCL_COLOR_ATTR_COLOR_LOOP_ACTIVE         0x4002
-#define ZCL_COLOR_ATTR_COLOR_LOOP_DIR            0x4003
-#define ZCL_COLOR_ATTR_COLOR_LOOP_TIME           0x4004
-#define ZCL_COLOR_ATTR_COLOR_LOOP_START_HUE      0x4005
-#define ZCL_COLOR_ATTR_COLOR_LOOP_STORE_HUE      0x4006
-#define ZCL_COLOR_ATTR_COLOR_CAPABILITIES        0x400A
-#define ZCL_COLOR_ATTR_COLOR_TEMP_MIN            0x400B
-#define ZCL_COLOR_ATTR_COLOR_TEMP_MAX            0x400C
-#define ZCL_COLOR_ATTR_COUPLE_COLOR_TL_MIN       0x400d
-#define ZCL_COLOR_ATTR_STARTUP_COLOR_TEMP        0x4010
+enum ZbZclColorSvrAttrT {
+    ZCL_COLOR_ATTR_CURRENT_HUE = 0x0000,
+    ZCL_COLOR_ATTR_CURRENT_SAT = 0x0001,
+    ZCL_COLOR_ATTR_REMAINING_TIME = 0x0002,
+    ZCL_COLOR_ATTR_CURRENT_X = 0x0003,
+    ZCL_COLOR_ATTR_CURRENT_Y = 0x0004,
+    ZCL_COLOR_ATTR_DRIFT_COMP = 0x0005,
+    ZCL_COLOR_ATTR_COMPENSATION_TEXT = 0x0006,
+    ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS = 0x0007,
+    ZCL_COLOR_ATTR_COLOR_MODE = 0x0008,
+    ZCL_COLOR_ATTR_OPTIONS = 0x000f,
+    ZCL_COLOR_ATTR_NUM_PRIMARIES = 0x0010,
+    ZCL_COLOR_ATTR_PRIMARY_1X = 0x0011,
+    ZCL_COLOR_ATTR_PRIMARY_1Y = 0x0012,
+    ZCL_COLOR_ATTR_PRIMARY_1_INTENS = 0x0013,
+    ZCL_COLOR_ATTR_PRIMARY_2X = 0x0015,
+    ZCL_COLOR_ATTR_PRIMARY_2Y = 0x0016,
+    ZCL_COLOR_ATTR_PRIMARY_2_INTENS = 0x0017,
+    ZCL_COLOR_ATTR_PRIMARY_3X = 0x0019,
+    ZCL_COLOR_ATTR_PRIMARY_3Y = 0x001a,
+    ZCL_COLOR_ATTR_PRIMARY_3_INTENS = 0x001b,
+    ZCL_COLOR_ATTR_PRIMARY_4X = 0x0020,
+    ZCL_COLOR_ATTR_PRIMARY_4Y = 0x0021,
+    ZCL_COLOR_ATTR_PRIMARY_4_INTENS = 0x0022,
+    ZCL_COLOR_ATTR_PRIMARY_5X = 0x0024,
+    ZCL_COLOR_ATTR_PRIMARY_5Y = 0x0025,
+    ZCL_COLOR_ATTR_PRIMARY_5_INTENS = 0x0026,
+    ZCL_COLOR_ATTR_PRIMARY_6X = 0x0028,
+    ZCL_COLOR_ATTR_PRIMARY_6Y = 0x0029,
+    ZCL_COLOR_ATTR_PRIMARY_6_INTENS = 0x002a,
+    ZCL_COLOR_ATTR_WHITE_POINT_X = 0x0030,
+    ZCL_COLOR_ATTR_WHITE_POINT_Y = 0x0031,
+    ZCL_COLOR_ATTR_COLOR_POINT_RX = 0x0032,
+    ZCL_COLOR_ATTR_COLOR_POINT_RY = 0x0033,
+    ZCL_COLOR_ATTR_COLOR_POINT_R_INTENS = 0x0034,
+    ZCL_COLOR_ATTR_COLOR_POINT_GX = 0x0036,
+    ZCL_COLOR_ATTR_COLOR_POINT_GY = 0x0037,
+    ZCL_COLOR_ATTR_COLOR_POINT_G_INTENS = 0x0038,
+    ZCL_COLOR_ATTR_COLOR_POINT_BX = 0x003a,
+    ZCL_COLOR_ATTR_COLOR_POINT_BY = 0x003b,
+    ZCL_COLOR_ATTR_COLOR_POINT_B_INTENS = 0x003c,
+    ZCL_COLOR_ATTR_ENH_CURR_HUE = 0x4000,
+    ZCL_COLOR_ATTR_ENH_COLOR_MODE = 0x4001,
+    ZCL_COLOR_ATTR_COLOR_LOOP_ACTIVE = 0x4002,
+    ZCL_COLOR_ATTR_COLOR_LOOP_DIR = 0x4003,
+    ZCL_COLOR_ATTR_COLOR_LOOP_TIME = 0x4004,
+    ZCL_COLOR_ATTR_COLOR_LOOP_START_HUE = 0x4005,
+    ZCL_COLOR_ATTR_COLOR_LOOP_STORE_HUE = 0x4006,
+    ZCL_COLOR_ATTR_COLOR_CAPABILITIES = 0x400A,
+    ZCL_COLOR_ATTR_COLOR_TEMP_MIN = 0x400B,
+    ZCL_COLOR_ATTR_COLOR_TEMP_MAX = 0x400C,
+    ZCL_COLOR_ATTR_COUPLE_COLOR_TL_MIN = 0x400d,
+    ZCL_COLOR_ATTR_STARTUP_COLOR_TEMP = 0x4010
+};
 
 /* Color Control Command Identifiers  */
 enum ZbZclColorCommandT {
@@ -209,7 +211,7 @@ enum ZbZclColorCommandT {
     ZCL_COLOR_COMMAND_STEP_COLOR_TEMP = 0x4c,
 };
 
-/* drift compensation */
+/* Drift Compensation */
 enum ZbZclColorDriftComp {
     ZCL_COLOR_DRIFT_NONE = 0x00,
     ZCL_COLOR_DRIFT_OTHER_UKN = 0x01,
@@ -218,14 +220,14 @@ enum ZbZclColorDriftComp {
     ZCL_COLOR_DRIFT_OPTIC_COLOR = 0x04,
 };
 
-/* color mode */
+/* Color Mode */
 enum ZbZclColorMode {
     ZCL_COLOR_MODE_HS = 0x00,
     ZCL_COLOR_MODE_XY = 0x01,
     ZCL_COLOR_MODE_TEMP = 0x02,
 };
 
-/* enhanced color mode */
+/* Enhanced Color Mode */
 enum ZbZclColorModeEnh {
     ZCL_COLOR_ENH_MODE_CURR_HS = 0x00,
     ZCL_COLOR_ENH_MODE_CURR_XY = 0x01,
@@ -233,14 +235,14 @@ enum ZbZclColorModeEnh {
     ZCL_COLOR_ENH_MODE_ENH_HUE_SAT = 0x03,
 };
 
-/* color capabilities - bit field */
-#define ZCL_COLOR_CAP_HS                    0x01U
+/* Color Capabilities - bit field */
+#define ZCL_COLOR_CAP_HS                    0x01U /* Mandatory if ZCL_COLOR_CAP_ENH_HUE */
 #define ZCL_COLOR_CAP_ENH_HUE               0x02U
 #define ZCL_COLOR_CAP_COLOR_LOOP            0x04U
-#define ZCL_COLOR_CAP_XY                    0x08U
+#define ZCL_COLOR_CAP_XY                    0x08U /* Mandatory */
 #define ZCL_COLOR_CAP_COLOR_TEMP            0x10U
 
-/* direction field */
+/* Move direction field */
 enum ZbZclColorMoveDir {
     ZCL_COLOR_MOVE_TO_DIR_SHORTEST = 0x00,
     ZCL_COLOR_MOVE_TO_DIR_LONGEST = 0x01,
@@ -248,33 +250,33 @@ enum ZbZclColorMoveDir {
     ZCL_COLOR_MOVE_TO_DIR_DOWN = 0x03,
 };
 
-/* move mode */
+/* Move mode */
 enum ZbZclColorMoveMode {
     ZCL_COLOR_MOVE_MODE_STOP = 0x00,
     ZCL_COLOR_MOVE_MODE_UP = 0x01,
     ZCL_COLOR_MOVE_MODE_DOWN = 0x03,
 };
 
-/* step mode */
+/* Step mode */
 enum ZbZclColorStepMode {
     ZCL_COLOR_STEP_MODE_UP = 0x01,
     ZCL_COLOR_STEP_MODE_DOWN = 0X03,
 };
 
-/* color loop set direction */
+/* Color Loop Set action */
 enum ZbZclColorLoopAction {
     ZCL_COLOR_LOOP_ACTION_DEACTIVATE = 0x00,
     ZCL_COLOR_LOOP_ACTION_ACTIVATE_FIELD = 0x01,
     ZCL_COLOR_LOOP_ACTION_ACTIVATE_ATTR = 0x02,
 };
 
-/* color loop set direction */
+/* Color Loop Set direction */
 enum ZbZclColorLoopDir {
     ZCL_COLOR_LOOP_DIR_DECREMENT_HUE = 0x00,
     ZCL_COLOR_LOOP_DIR_INCREMENT_HUE = 0x01,
 };
 
-/* color loop update flags */
+/* Color Loop Set update flags */
 enum ZbZclColorLoopFlags {
     ZCL_COLOR_LOOP_FLAG_UPDATE_ACTION = 0x01,
     ZCL_COLOR_LOOP_FLAG_UPDATE_DIRECTION = 0x02,
@@ -282,6 +284,7 @@ enum ZbZclColorLoopFlags {
     ZCL_COLOR_LOOP_FLAG_UPDATE_START_HUE = 0x08,
 };
 
+/* Options Attribute - bit field */
 #define ZCL_COLOR_OPTIONS_EXECUTE_IF_OFF            0x01
 
 #define ZCL_COLOR_MODE_DEFAULT                      0x01
@@ -421,7 +424,7 @@ struct ZbZclColorClientColorLoopSetReqT {
     uint8_t action;
     uint8_t direction;
     uint16_t transition_time;
-    uint16_t start_hue;
+    uint16_t start_hue; /* Enhanced Hue */
     uint8_t mask; /* OptionsMask */
     uint8_t override; /* OptionsOverride */
 };
@@ -440,6 +443,11 @@ struct ZbZclColorClientMoveColorTempReqT {
     uint8_t override; /* OptionsOverride */
 };
 
+/* The color_temp_min and color_temp_max fields need to be checked against in the application layer.
+ * The current value (ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS) needs to be known and the step may need
+ * to be clipped so that the final value of ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS satisfies:
+ * ZCL_COLOR_ATTR_COLOR_TEMP_MIN <= Color Temperature Minimum Mireds field <= ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS
+ * ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS  <= Color Temperature Maximum Mireds field <= ZCL_COLOR_ATTR_COLOR_TEMP_MAX */
 struct ZbZclColorClientStepColorTempReqT {
     uint8_t step_mode;
     uint16_t step_size;
@@ -528,7 +536,6 @@ struct ZbZclColorServerCallbacksT {
 struct ZbColorClusterConfig {
     struct ZbZclColorServerCallbacksT callbacks;
     uint8_t capabilities; /* e.g. ZCL_COLOR_CAP_HS */
-    bool enhanced_supported;
 };
 
 struct ZbZclClusterT * ZbZclColorServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, struct ZbZclClusterT *onoff_server,

@@ -1,5 +1,5 @@
 /**
-  @page PWR_Standby PWR_STOP2_RTC example
+  @page PWR_STOP2_RTC PWR_STOP2_RTC example
   
   @verbatim
   ******************************************************************************
@@ -82,7 +82,7 @@ Power, PWR, Stop 2 mode, Interrupt, EXTI, Wakeup, Low Power, RTC, External reset
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices
+  - This example runs on STM32WB55RGVx devices
     
   - This example has been tested with STMicroelectronics P-NUCLEO-WB55
     board and can be easily tailored to any other supported device 

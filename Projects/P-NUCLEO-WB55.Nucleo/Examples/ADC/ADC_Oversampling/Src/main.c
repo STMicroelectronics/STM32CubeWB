@@ -21,7 +21,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -204,7 +203,8 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
@@ -221,7 +221,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers 
+  /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
                               |RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -237,7 +237,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the peripherals clocks 
+  /** Initializes the peripherals clocks
   */
   /* USER CODE BEGIN Smps */
 
@@ -283,7 +283,7 @@ void SystemClock_Config(void)
   *           - Sequencer discont:      disabled: sequence done in 1 scan (default configuration from reset state)
   *           - Sequencer rank 1:       first channel available      (default configuration from reset state)
   *         - Channel
-  *           - Sampling time:          ADCx ADCx_CHANNELa set to sampling time 47.5 ADC clock cycles (on this STM32 serie, sampling time is channel wise)
+  *           - Sampling time:          ADCx ADCx_CHANNELa set to sampling time 47.5 ADC clock cycles (on this STM32 series, sampling time is channel wise)
   *           - Differential mode:      single ended                 (default configuration from reset state)
   *         - Analog watchdog
   *           Feature not used: all parameters let to default configuration from reset state
@@ -320,7 +320,7 @@ __STATIC_INLINE void Configure_ADC(void)
   
   /* Configuration of HAL ADC handle init structure:                          */
   /* parameters of scope ADC instance and ADC group regular.                  */
-  /* Note: On this STM32 serie, ADC group regular sequencer is                */
+  /* Note: On this STM32 series, ADC group regular sequencer is                */
   /*       fully configurable: sequencer length and each rank                 */
   /*       affectation to a channel are configurable.                         */
   AdcHandle.Init.ClockPrescaler        = ADC_CLOCK_SYNC_PCLK_DIV2;
@@ -363,7 +363,7 @@ __STATIC_INLINE void Configure_ADC(void)
   /*## channels mapped on group regular         ##############################*/
   
   /* Configuration of channel on ADCx regular group on sequencer rank 1 */
-  /* Note: On this STM32 serie, ADC group regular sequencer is                */
+  /* Note: On this STM32 series, ADC group regular sequencer is                */
   /*       fully configurable: sequencer length and each rank                 */
   /*       affectation to a channel are configurable.                         */
   sConfig.Channel      = ADCx_CHANNELa;               /* ADC channel selection */
@@ -442,7 +442,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

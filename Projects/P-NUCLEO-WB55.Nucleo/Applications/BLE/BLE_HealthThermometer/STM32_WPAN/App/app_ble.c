@@ -18,7 +18,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -45,7 +44,7 @@
 
 /**
  * security parameters structure
- */ 
+ */
 typedef struct _tSecurityParams
 {
   /**
@@ -68,13 +67,13 @@ typedef struct _tSecurityParams
    * Flag to tell whether OOB data has
    * to be used during the pairing process
    */
-  uint8_t OOB_Data_Present; 
+  uint8_t OOB_Data_Present;
 
   /**
    * OOB data to be used in the pairing process if
    * OOB_Data_Present is set to TRUE
    */
-  uint8_t OOB_Data[16]; 
+  uint8_t OOB_Data[16];
 
   /**
    * this variable indicates whether to use a fixed pin
@@ -82,7 +81,7 @@ typedef struct _tSecurityParams
    * requested to the application during the pairing process
    * 0 implies use fixed pin and 1 implies request for passkey
    */
-  uint8_t Use_Fixed_Pin; 
+  uint8_t Use_Fixed_Pin;
 
   /**
    * minimum encryption key size requirement
@@ -116,15 +115,15 @@ typedef struct _tSecurityParams
 
 /**
  * global context
- * contains the variables common to all 
+ * contains the variables common to all
  * services
- */ 
+ */
 typedef struct _tBLEProfileGlobalContext
 {
 
   /**
    * security requirements of the host
-   */ 
+   */
   tSecurityParams bleSecurityParam;
 
   /**
@@ -134,28 +133,28 @@ typedef struct _tBLEProfileGlobalContext
 
   /**
    * device name characteristic handle
-   */ 
+   */
   uint16_t devNameCharHandle;
 
   /**
    * appearance characteristic handle
-   */ 
+   */
   uint16_t appearanceCharHandle;
 
   /**
    * connection handle of the current active connection
    * When not in connection, the handle is set to 0xFFFF
-   */ 
+   */
   uint16_t connectionHandle;
 
   /**
    * length of the UUID list to be used while advertising
-   */ 
+   */
   uint8_t advtServUUIDlen;
 
   /**
    * the UUID list to be used while advertising
-   */ 
+   */
   uint8_t advtServUUID[100];
 
 }BleGlobalContext_t;
@@ -163,11 +162,12 @@ typedef struct _tBLEProfileGlobalContext
 typedef struct
 {
   BleGlobalContext_t BleApplicationContext_legacy;
-   APP_BLE_ConnStatus_t Device_Connection_Status;
-   /**
+  APP_BLE_ConnStatus_t Device_Connection_Status;
+
+  /**
    * ID of the Advertising Timeout
    */
-   uint8_t Advertising_mgr_timer_Id;
+  uint8_t Advertising_mgr_timer_Id;
 
 }BleApplicationContext_t;
 /* USER CODE BEGIN PTD */
@@ -206,7 +206,7 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
 
 /**
-*   Identity root key used to derive LTK and CSRK 
+*   Identity root key used to derive LTK and CSRK
 */
 static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
 
@@ -302,7 +302,7 @@ void APP_BLE_Init( void )
    * Initialization of the BLE App Context
    */
   BleApplicationContext.Device_Connection_Status = APP_BLE_IDLE;
-  BleApplicationContext.BleApplicationContext_legacy.connectionHandle = 0xFFFF;  
+  BleApplicationContext.BleApplicationContext_legacy.connectionHandle = 0xFFFF;
   /**
    * From here, all initialization are BLE application specific
    */
@@ -349,11 +349,15 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
   hci_event_pckt *event_pckt;
   evt_le_meta_event *meta_evt;
   evt_blue_aci *blue_evt;
-  hci_le_phy_update_complete_event_rp0 *evt_le_phy_update_complete; 
+  hci_le_phy_update_complete_event_rp0 *evt_le_phy_update_complete;
   uint8_t TX_PHY, RX_PHY;
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
 
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
+
+  /* USER CODE BEGIN SVCCTL_App_Notification */
+
+  /* USER CODE END SVCCTL_App_Notification */
 
   switch (event_pckt->evt)
   {
@@ -372,6 +376,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
       /* restart advertising */
       Adv_Request(APP_BLE_FAST_ADV);
+
       /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
 
       /* USER CODE END EVT_DISCONN_COMPLETE */
@@ -418,7 +423,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
             else
             {
               APP_DBG_MSG("PHY Param  TX= %d, RX= %d \n", TX_PHY, RX_PHY);
-            } 
+            }
           }
           else
           {
@@ -426,7 +431,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           }
           /* USER CODE BEGIN EVT_LE_PHY_UPDATE_COMPLETE */
 
-          /* USER CODE END EVT_LE_PHY_UPDATE_COMPLETE */          
+          /* USER CODE END EVT_LE_PHY_UPDATE_COMPLETE */
           break;
         case EVT_LE_CONN_COMPLETE:
         {
@@ -456,6 +461,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           /* USER CODE END HCI_EVT_LE_CONN_COMPLETE */
         }
         break; /* HCI_EVT_LE_CONN_COMPLETE */
+
+        /* USER CODE BEGIN META_EVT */
+
+        /* USER CODE END META_EVT */
 
         default:
           /* USER CODE BEGIN SUBEVENT_DEFAULT */
@@ -533,8 +542,16 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
         /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
           break; /* EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+
+      /* USER CODE BEGIN BLUE_EVT */
+
+      /* USER CODE END BLUE_EVT */
       }
       break; /* EVT_VENDOR */
+
+      /* USER CODE BEGIN EVENT_PCKT */
+
+      /* USER CODE END EVENT_PCKT */
 
       default:
       /* USER CODE BEGIN ECODE_DEFAULT*/
@@ -590,7 +607,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
   uint32_t srd_bd_addr[2];
-  uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE }; 
+  uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
 
   /**
    * Initialize HCI layer
@@ -616,12 +633,12 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   srd_bd_addr[1] =  0x0000ED6E;
   srd_bd_addr[0] =  LL_FLASH_GetUDN( );
   aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
-  
+
   /**
-   * Write Identity root key used to derive LTK and CSRK 
+   * Write Identity root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
-    
+
    /**
    * Write Encryption root key used to derive LTK and CSRK
    */
@@ -907,7 +924,7 @@ static void BLE_UserEvtRx( void * pPayload )
   SVCCTL_UserEvtFlowStatus_t svctl_return_status;
   tHCI_UserEvtRxParam *pParam;
 
-  pParam = (tHCI_UserEvtRxParam *)pPayload; 
+  pParam = (tHCI_UserEvtRxParam *)pPayload;
 
   svctl_return_status = SVCCTL_UserEvtRx((void *)&(pParam->pckt->evtserial));
   if (svctl_return_status != SVCCTL_UserEvtFlowDisable)

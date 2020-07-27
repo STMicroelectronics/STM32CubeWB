@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    light.h
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Header file for the Lighting Model file 
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -132,11 +110,14 @@
 
 #define LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID       0x1300
 #define LIGHT_MODEL_SERVER_LIGHTNESS_SETUP_MODEL_ID 0x1301
+#define LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID       0x1302
 #define LIGHT_MODEL_SERVER_CTL_MODEL_ID             0x1303
 #define LIGHT_MODEL_SERVER_CTL_SETUP_MODEL_ID       0x1304
+#define LIGHT_MODEL_CLIENT_CTL_MODEL_ID             0x1305
 #define LIGHT_MODEL_SERVER_CTL_TEMPERATURE_MODEL_ID 0x1306
 #define LIGHT_MODEL_SERVER_HSL_MODEL_ID             0x1307
 #define LIGHT_MODEL_SERVER_HSL_SETUP_MODEL_ID       0x1308
+#define LIGHT_MODEL_CLIENT_HSL_MODEL_ID             0x1309
 #define LIGHT_MODEL_SERVER_HSL_HUE_MODEL_ID         0x130A
 #define LIGHT_MODEL_SERVER_HSL_SATURATION_MODEL_ID  0x130B
 #define LIGHT_MODEL_SERVER_XYL_MODEL_ID             0x130C
@@ -202,7 +183,7 @@
 #define LIGHT_HSL_HUE_TRANSITION_START          0X06
 #define LIGHT_HSL_SATURATION_TRANSITION_START   0X07
 
-#define MAX_NUM_BINDED_STATE      5
+#define MAX_NUM_BINDED_STATE                                             /*5*/20
 /* Exported variables  ------------------------------------------------------- */
 /* Transition flag of models*/
 #pragma pack(1)
@@ -475,55 +456,81 @@ extern const Appli_Light_cb_t LightAppli_cb;
 
 void BLEMesh_LightModelAppliCb (Appli_Light_cb_t* map );
 
-MOBLE_RESULT Light_Lightness_Set(const MOBLEUINT8* plightness_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_Lightness_Status(MOBLEUINT8* pLightness_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_Lightness_Linear_Set(const MOBLEUINT8* plightnessLinear_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_Lightness_Linear_Status(MOBLEUINT8* pLightnessLinear_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_Lightness_Last_Set(const MOBLEUINT8* plightnessLast_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_Lightness_Last_Status(MOBLEUINT8* pLightnessLast_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_Lightness_Default_Set(const MOBLEUINT8* plightnessDefault_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_Lightness_Default_Status(MOBLEUINT8* pLightnessDefault_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_Lightness_Range_Set(const MOBLEUINT8* plightnessRange_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_Lightness_Range_Status(MOBLEUINT8* pLightnessRange_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_Ctl_Set(const MOBLEUINT8* pLightCtl_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_CtlTemperature_Set(const MOBLEUINT8* pLightCtlTemp_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_CtlTemperature_Range_Set(const MOBLEUINT8* plightCtlTempRange_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_CtlTemperature_Range_Status(MOBLEUINT8* pCtlTempRange_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_CtlDefault_Set(const MOBLEUINT8* pCtlDefault_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_CtlDefault_Status(MOBLEUINT8* pCtlDefault_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_Hsl_Set(const MOBLEUINT8* pHsl_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_Hsl_Status(MOBLEUINT8* pHsl_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_HslHue_Set(const MOBLEUINT8* pHslHue_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_HslHue_Status(MOBLEUINT8* pHslHue_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_HslSaturation_Set(const MOBLEUINT8* pHslSaturation_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_HslSaturation_Status(MOBLEUINT8* pHslSaturation_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_HslDefault_Set(const MOBLEUINT8* pHslDefault_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_HslDefault_Status(MOBLEUINT8* pHslDefault_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_HslRange_Set(const MOBLEUINT8* pHslRange_param, MOBLEUINT32 length);
-MOBLE_RESULT Light_HslRange_Status(MOBLEUINT8* pHslRange_status, MOBLEUINT32 *pLength);
-MOBLE_RESULT Light_HslTarget_Status(MOBLEUINT8* pHslTarget_status, MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_Lightness_Set(const MOBLEUINT8* plightness_param, 
+                                 MOBLEUINT32 length);
+MOBLE_RESULT Light_Lightness_Status(MOBLEUINT8* pLightness_status, 
+                                    MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_Lightness_Linear_Set(const MOBLEUINT8* plightnessLinear_param, 
+                                        MOBLEUINT32 length);
+MOBLE_RESULT Light_Lightness_Linear_Status(MOBLEUINT8* pLightnessLinear_status, 
+                                           MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_Lightness_Last_Set(const MOBLEUINT8* plightnessLast_param, 
+                                      MOBLEUINT32 length);
+MOBLE_RESULT Light_Lightness_Last_Status(MOBLEUINT8* pLightnessLast_status, 
+                                         MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_Lightness_Default_Set(const MOBLEUINT8* plightnessDefault_param, 
+                                         MOBLEUINT32 length);
+MOBLE_RESULT Light_Lightness_Default_Status(MOBLEUINT8* pLightnessDefault_status, 
+                                            MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_Lightness_Range_Set(const MOBLEUINT8* plightnessRange_param, 
+                                       MOBLEUINT32 length);
+MOBLE_RESULT Light_Lightness_Range_Status(MOBLEUINT8* pLightnessRange_status, 
+                                          MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_Ctl_Set(const MOBLEUINT8* pLightCtl_param, 
+                           MOBLEUINT32 length);
+MOBLE_RESULT Light_CtlTemperature_Set(const MOBLEUINT8* pLightCtlTemp_param,
+                                      MOBLEUINT32 length);
+MOBLE_RESULT Light_CtlTemperature_Range_Set(const MOBLEUINT8* plightCtlTempRange_param, 
+                                            MOBLEUINT32 length);
+MOBLE_RESULT Light_CtlTemperature_Range_Status(MOBLEUINT8* pCtlTempRange_status, 
+                                               MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_CtlDefault_Set(const MOBLEUINT8* pCtlDefault_param, 
+                                  MOBLEUINT32 length);
+MOBLE_RESULT Light_CtlDefault_Status(MOBLEUINT8* pCtlDefault_status, 
+                                     MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_Hsl_Set(const MOBLEUINT8* pHsl_param, 
+                           MOBLEUINT32 length);
+MOBLE_RESULT Light_Hsl_Status(MOBLEUINT8* pHsl_status, 
+                              MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_HslHue_Set(const MOBLEUINT8* pHslHue_param, 
+                              MOBLEUINT32 length);
+MOBLE_RESULT Light_HslHue_Status(MOBLEUINT8* pHslHue_status, 
+                                 MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_HslSaturation_Set(const MOBLEUINT8* pHslSaturation_param, 
+                                     MOBLEUINT32 length);
+MOBLE_RESULT Light_HslSaturation_Status(MOBLEUINT8* pHslSaturation_status, 
+                                        MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_HslDefault_Set(const MOBLEUINT8* pHslDefault_param, 
+                                  MOBLEUINT32 length);
+MOBLE_RESULT Light_HslDefault_Status(MOBLEUINT8* pHslDefault_status, 
+                                     MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_HslRange_Set(const MOBLEUINT8* pHslRange_param, 
+                                MOBLEUINT32 length);
+MOBLE_RESULT Light_HslRange_Status(MOBLEUINT8* pHslRange_status, 
+                                   MOBLEUINT32 *pLength);
+MOBLE_RESULT Light_HslTarget_Status(MOBLEUINT8* pHslTarget_status, 
+                                    MOBLEUINT32 *pLength);
 
 
 MOBLE_RESULT LightModelServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
                                     MOBLEUINT16 *length);
 
 MOBLE_RESULT LightModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
-                                    MOBLEUINT16 opcode, 
-                                    MOBLEUINT8 *pResponsedata, 
-                                    MOBLEUINT32 *plength, 
-                                    MOBLEUINT8 const *pData,
-                                    MOBLEUINT32 length,
-                                    MOBLEBOOL response);
+                                                 MOBLE_ADDRESS dst_peer, 
+                                                 MOBLEUINT16 opcode, 
+                                                 MOBLEUINT8 *pResponsedata, 
+                                                 MOBLEUINT32 *plength, 
+                                                 MOBLEUINT8 const *pData,
+                                                 MOBLEUINT32 length,
+                                                 MOBLEBOOL response);
 
 
 MOBLE_RESULT LightModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
-                                    MOBLEUINT16 opcode, 
-                                    MOBLEUINT8 const *data, 
-                                    MOBLEUINT32 length, 
-                                    MOBLEBOOL response
-                                    );
+                                               MOBLE_ADDRESS dst_peer, 
+                                               MOBLEUINT16 opcode, 
+                                               MOBLEUINT8 const *data, 
+                                               MOBLEUINT32 length, 
+                                               MOBLEBOOL response);
 void Lighting_Process(void);
 MOBLE_RESULT BLEMesh_AddLightingModels(void);
 
@@ -533,9 +540,11 @@ void Light_BindingTemperatureToTemperatureRange(void);
 void LightActual_GenericOnOffBinding(Light_LightnessStatus_t* lightActual);
 void LightActual_GenericLevelBinding(Light_LightnessStatus_t* lightActual);
 void Light_CtlTemp_GenericLevelBinding(Light_CtlStatus_t* bCtlTempParam);
-void Light_Lightness_Binding(MOBLEUINT8 bindingFlag ,MOBLEUINT32 length);
+void Light_Lightness_Binding(MOBLEUINT8 bindingFlag ,
+                             MOBLEUINT32 length);
 MOBLEUINT16 Light_Actual_LinearBinding(void);
-void Light_Lightness_Linear_Binding(MOBLEUINT8 bindingFlag ,MOBLEUINT32 length);
+void Light_Lightness_Linear_Binding(MOBLEUINT8 bindingFlag ,
+                                    MOBLEUINT32 length);
 MOBLEUINT16 Light_Linear_ActualBinding(MOBLEUINT32 length);
 void Light_Actual_RangeBinding(Light_LightnessParam_t* lightActual);
 void Light_CtlTemperature_Binding(void);
@@ -551,7 +560,8 @@ void Light_ActualLightness_HslLightnessBinding(Light_LightnessStatus_t* bActualL
 void Light_Linear_Ligth_LC_binding(MOBLEUINT16 lc_OutValue);
 
 MOBLE_RESULT Light_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue);
-MOBLE_RESULT Light_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue , MOBLEUINT8 param_Count);
+MOBLE_RESULT Light_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue , 
+                                                  MOBLEUINT8 param_Count);
 void Model_BindingPublishStatus(void);
 void Light_GetStepValue(MOBLEUINT8 stepParam);
 
@@ -569,21 +579,38 @@ void Light_LightnessDefaultTransitionValue(Light_LightnessParam_t* pLightnessVal
 void Light_CTLDefaultTransitionValue(Light_CtlParam_t* pCTLValue);
 void Light_CTLTemperatureDefaultTransitionValue(Light_CtlParam_t* pCTLValue);
 
-MOBLE_RESULT Light_Client_Lightness_Status(MOBLEUINT8 const *pLightness_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_Lightness_Linear_Status(MOBLEUINT8 const *pLightnessLinear_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_Lightness_Last_Status(MOBLEUINT8 const *pLightnessLast_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_Lightness_Default_Status(MOBLEUINT8 const *pLightnessDefault_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_Lightness_Range_Status(MOBLEUINT8 const *pLightnessRange_status, MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_Lightness_Status(MOBLEUINT8 const *pLightness_status, 
+                                           MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_Lightness_Linear_Status(MOBLEUINT8 const *pLightnessLinear_status, 
+                                                  MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_Lightness_Last_Status(MOBLEUINT8 const *pLightnessLast_status, 
+                                                MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_Lightness_Default_Status(MOBLEUINT8 const *pLightnessDefault_status, 
+                                                   MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_Lightness_Range_Status(MOBLEUINT8 const *pLightnessRange_status, 
+                                                 MOBLEUINT32 pLength);
 MOBLE_RESULT Light_Client_Ctl_Status(MOBLEUINT8 const *pLightCtl_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_CtlTemperature_Range_Status(MOBLEUINT8 const *pCtlTempRange_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_CtlDefault_Status(MOBLEUINT8 const *pCtlDefault_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_CtlTemperature_Status(MOBLEUINT8 const *pLightCtlTemp_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_Hsl_Status(MOBLEUINT8 const *pHsl_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_HslDefault_Status(MOBLEUINT8 const *pHslDefault_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_HslRange_Status(MOBLEUINT8 const *pHslRange_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_HslTarget_Status(MOBLEUINT8 const *pHslTarget_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_HslHue_Status(MOBLEUINT8 const *pHslHue_status, MOBLEUINT32 pLength);
-MOBLE_RESULT Light_Client_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_status, MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_CtlTemperature_Range_Status(MOBLEUINT8 const *pCtlTempRange_status, 
+                                                      MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_CtlDefault_Status(MOBLEUINT8 const *pCtlDefault_status, 
+                                            MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_CtlTemperature_Status(MOBLEUINT8 const *pLightCtlTemp_status, 
+                                                MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_Hsl_Status(MOBLEUINT8 const *pHsl_status, 
+                                     MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_HslDefault_Status(MOBLEUINT8 const *pHslDefault_status, 
+                                            MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_HslRange_Status(MOBLEUINT8 const *pHslRange_status, 
+                                          MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_HslTarget_Status(MOBLEUINT8 const *pHslTarget_status, 
+                                           MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_HslHue_Status(MOBLEUINT8 const *pHslHue_status,
+                                        MOBLEUINT32 pLength);
+MOBLE_RESULT Light_Client_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_status, 
+                                               MOBLEUINT32 pLength);
+
+void Light_Publish_Add(MOBLEUINT16 model_id, MOBLEUINT16 opcode);
+void Light_Publish_Reset(void);
 
 #endif /* __LIGHT_MODEL_H */
 

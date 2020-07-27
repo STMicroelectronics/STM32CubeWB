@@ -38,6 +38,10 @@ installed to be used as GAP Central and GATT Client.
 @note The application needs to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
       
+@par Keywords
+
+Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE profile, Dual core
+
 @par Directory contents 
   
   - BLE/BLE_Peripheral_Lite/Inc/stm32wbxx_hal_conf.h	        HAL configuration file
@@ -61,7 +65,7 @@ installed to be used as GAP Central and GATT Client.
  
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -96,10 +100,11 @@ Demonstration scheduling
  - The green LED switch On to indicate that the wireless stack FW is running.
  - The blue LED switch On to indicate that the wireless stack FW has been initialized.
    and blue LED switch OFF when custom STM GATT service called "My very own service" has been initialized.
+   
  - The Peripheral device (BLE_Peripheral_Lite) starts advertising with data using local name "HELLO!".
  - The green led blinks for each advertising event slowly each ~0.5sec.
  - The Central device (ST BLE Sensor smart phone application) starts scanning and when the peripheral is found and selected in advices list,
-   it connects to the Server device Nucleo board (MB1355C). 
+   it connects to the Server device Nucleo board (MB1355C) and the green led toggles faster. 
  - The button event on ST BLE Sensor application interface enables to switch On/Off blue led on Nucleo board.
  - Notification is sent from the server (Peripheral device - Nucleo board (MB1355C)) to the client (Central device - Smart phone) every ~1sec.
  - When the Peripheral device (Nucleo board (MB1355C)) is disconnected, advertising is restarted and it is possible to connect to it again.

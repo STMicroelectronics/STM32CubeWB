@@ -81,10 +81,6 @@ extern "C" {
 /* Size of Reception buffer */
 #define RXBUFFERSIZE                            TXBUFFERSIZE
 
-/* Definition for usage of internal pull up */
-/* Enable this define, for an integration of this example inside
-   an ecosystem board with external pull-up */
-#define EXTERNAL_PULL_UP_AVAILABLE      0
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

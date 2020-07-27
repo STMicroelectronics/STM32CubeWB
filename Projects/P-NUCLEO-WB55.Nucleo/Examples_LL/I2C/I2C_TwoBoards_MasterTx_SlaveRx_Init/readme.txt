@@ -43,7 +43,7 @@ SDA Pin: PB.9 (CN10, pin 5)
   |         __           |                     |             __       |
   |        |__|          |                     |            |__|      |
   |        USER       GND|_____________________|GND         USER      |
-  |___STM32WBxx_Nucleo___|                     |___STM32WBxx_Nucleo___|
+  |___P-NUCLEO-WB55.Nucleo___|                     |___P-NUCLEO-WB55.Nucleo___|
 
 The project is splitted in two parts the Master Board and the Slave Board
 - Master Board
@@ -57,11 +57,16 @@ in the "main.h" file:
 - Comment "#define SLAVE_BOARD" to select Master board.
 - Uncomment "#define SLAVE_BOARD" to select Slave board.
 
-The user can disable internal pull-up through "#define EXTERNAL_PULL_UP_AVAILABLE"
-This help for an integration of this example inside an ecosystem board with external pull-up */
+The user can disable internal pull-up by opening ioc file.
+For that, user can follow the procedure :
+1- Double click on the I2C_TwoBoards_MasterTx_SlaveRx_Init.ioc file
+2- When CUBEMX tool is opened, select System Core category
+3- Then in the configuration of GPIO/I2C1, change Pull-up to No pull-up and no pull-down for the both pins
+4- Last step, generate new code thanks to button "GENERATE CODE"
+The example is updated with no pull on each pin used for I2C communication
 
 A first program launch, BOARD SLAVE waiting Address Match code through Handle_I2C_Slave() routine.
-LED2 blinks quickly on BOARD MASTER to wait for user-button press.
+LED2 blinks quickly on BOARD MASTER to wait for User push-button (SW1) press.
 
 Example execution:
 Press the User push-button (SW1) on BOARD MASTER to initiate a write request by Master through Handle_I2C_Master() routine.
@@ -84,6 +89,10 @@ LED2 is On :
 
 In case of errors, LED2 is blinking slowly (1s).
 
+@par Keywords
+
+Connectivity, Communication, I2C, Master Rx, Slave Tx, Transmission, Reception, Fast mode, SDA, SCL
+
 
 @par Directory contents
 
@@ -96,9 +105,9 @@ In case of errors, LED2 is blinking slowly (1s).
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
 
-  - This example has been tested with P-NUCLEO-WB55 board and can be
+  - This example has been tested with STM32WB55RGVx board and can be
     easily tailored to any other supported device and development board.
 
   - P-NUCLEO-WB55 Set-up
@@ -108,7 +117,8 @@ In case of errors, LED2 is blinking slowly (1s).
       - I2C1_SDA  PB.9 (CN10, pin 5) : connected to I2C1_SDA PB.9 (CN10, pin 5)
     - Connect Master board GND to Slave Board GND
 
-  - Launch the program. Press User push-button (SW1) to initiate a write request by Master
+  - Launch the program.
+  - Press User push-button (SW1) to initiate a write request by Master
       then Slave receive bytes.
 
 @par How to use it ?

@@ -18,7 +18,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "main.h"
@@ -29,8 +28,6 @@
 #include "stm32_seq.h"
 #include "shci_tl.h"
 #include "stm32_lpm.h"
-#include "app_debug.h"
-#include "vcp.h"
 
 #include "app_debug.h"
 
@@ -58,7 +55,7 @@ extern const void *appNvmBase;
 extern const void *prvsnr_data;
 #if (LOW_POWER_FEATURE == 1)
 extern __IO uint32_t uwTick;
-extern uint32_t uwTickFreq;
+extern HAL_TickFreqTypeDef uwTickFreq;
 #if ( CFG_LPM_SUPPORTED == 1)
 static uint32_t BleMesh_sleepTime;
 #endif
@@ -87,9 +84,6 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 
-#if(CFG_DEBUG_TRACE != 0)
-static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
-#endif
 
 /* USER CODE BEGIN PV */
 
@@ -178,7 +172,7 @@ void APPE_Init( void )
  * @param  None
  * @retval None
  */
-static void SystemPower_Config( void )
+static void SystemPower_Config(void)
 {
 
   /**
@@ -187,7 +181,9 @@ static void SystemPower_Config( void )
   LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 
   /* Initialize low power manager */
-  UTIL_LPM_Init( );
+  UTIL_LPM_Init();
+  /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
+  LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   /**

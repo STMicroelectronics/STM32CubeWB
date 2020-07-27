@@ -1,4 +1,3 @@
-/* USER CODE BEGIN Header */
 /**
   @page ADC_SingleConversion_TriggerTimer_DMA ADC example
   
@@ -71,7 +70,7 @@ P-NUCLEO-WB55 board LED is be used to monitor the program execution status:
 
 @par Keywords
 
-Analog, ADC, Analog to Digital, Single conversion, Timer trigger, DMA, circular mode
+ADC, analog digital converter, analog, conversion, voltage, channel, analog input, DMA transfer, trigger
 
 @par Directory contents 
 

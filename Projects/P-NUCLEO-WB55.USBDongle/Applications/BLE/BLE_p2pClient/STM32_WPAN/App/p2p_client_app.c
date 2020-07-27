@@ -632,7 +632,7 @@ void Button_Trigger_Received(void)
 void Update_Service()
 {
   uint16_t enable = 0x0001;
-
+  uint16_t disable = 0x0000;
 
   uint8_t index;
 
@@ -685,7 +685,7 @@ void Update_Service()
         aci_gatt_write_char_desc(aP2PClientContext[index].connHandle,
                                  aP2PClientContext[index].P2PNotificationDescHandle,
                                  2,
-                                 (uint8_t *)&enable);
+                                 (uint8_t *)&disable);
 
         aP2PClientContext[index].state = APP_BLE_CONNECTED_CLIENT;
 

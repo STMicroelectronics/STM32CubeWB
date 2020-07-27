@@ -56,7 +56,7 @@ Other peripherals used:
 
 @par Keywords
 
-ADC,ADC channel,DAC channel, conversion, EOC, single channel, single conversion mode, interrupt,
+ADC, analog digital converter, analog, conversion, voltage, channel, analog input, trigger
 
 @par Directory contents 
 

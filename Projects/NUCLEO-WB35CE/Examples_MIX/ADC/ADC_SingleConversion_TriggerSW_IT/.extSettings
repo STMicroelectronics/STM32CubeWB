@@ -1,8 +1,0 @@
-[ProjectFiles]
-HeaderPath=..\..\..\..\..\..\Drivers\BSP\NUCLEO-WB35CE
-[Others]
-Define=
-HALModule=CORTEX;RCC;FLASH;GPIO;ADC;DMA;TIM;PWR
-[Groups]
-Doc=../readme.txt;
-Drivers/BSP/NUCLEO-WB35CE=../../../../../../Drivers/BSP/NUCLEO-WB35CE/nucleo_wb35ce.c;

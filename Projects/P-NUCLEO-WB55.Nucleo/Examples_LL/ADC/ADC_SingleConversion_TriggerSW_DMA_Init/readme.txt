@@ -51,9 +51,9 @@ For debug: variables to monitor with debugger watch window:
  
 After 4 steps the DMA complete the transfer and the following scenario must be displayed:
  -First press:  aADCxConvertedData [0] displayed. 
- -Second press: aADCxConvertedData [1], ADCxConvertedData_Voltage_mVolt [0] and ADCxConvertedData_Voltage_mVolt [1] displayed.
+ -Second press: aADCxConvertedData [1], aADCxConvertedData_Voltage_mVolt [0] and aADCxConvertedData_Voltage_mVolt [1] displayed.
  -Third press:  aADCxConvertedData [2] displayed.
- -Fourth press: aADCxConvertedData [3], ADCxConvertedData_Voltage_mVolt [2] and ADCxConvertedData_Voltage_mVolt [3] displayed.
+ -Fourth press: aADCxConvertedData [3], aADCxConvertedData_Voltage_mVolt [2] and aADCxConvertedData_Voltage_mVolt [3] displayed.
 
 LED2 is blinking every 1 sec in case of error.
  
@@ -70,9 +70,10 @@ Other peripherals used:
   1 GPIO for LED2
   1 GPIO for analog input: PA.01 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32)
   DMA
+
 @par Keywords
 
-ADC, ADC channel, DMA transfers conversion, DMA half transfer, DMA transfer complete, conversion, single channel, single conversion mode, interrupt,
+ADC, analog digital converter, analog, conversion, voltage, channel, analog input, DMA transfer
 
 @par Directory contents 
 
@@ -86,7 +87,7 @@ ADC, ADC channel, DMA transfers conversion, DMA half transfer, DMA transfer comp
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

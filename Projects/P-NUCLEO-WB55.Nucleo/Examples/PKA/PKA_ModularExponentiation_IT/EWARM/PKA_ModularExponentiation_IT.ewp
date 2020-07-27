@@ -1072,7 +1072,7 @@
     <group>
       <name>BSP</name>
       <group>
-        <name>P-NUCLEO-WB55.Nucleo</name>
+        <name>P-NUCLEO-WB55-Nucleo</name>
         <file>
           <name>$PROJ_DIR$/../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c</name>
         </file>

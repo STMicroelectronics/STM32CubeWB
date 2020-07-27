@@ -2,7 +2,7 @@
   @page I2C_TwoBoards_RestartComIT I2C Two Boards Communication IT  with Restart condition example
   
   @verbatim
-  ********************* COPYRIGHT(c) 2019 STMicroelectronics *******************
+  ******************************************************************************
   * @file    I2C/I2C_TwoBoards_RestartComIT/readme.txt 
   * @author  MCD Application Team
   * @brief   Description of the I2C Two Boards IT Communication with Restart condition example.
@@ -41,7 +41,6 @@ SDA Pin: PB9 (CN10, pin5)
   |                         |                     |                         |
   |                      GND|_____________________|GND                      |
   |_STM32_Board 1___________|                     |_STM32_Board 2___________|
-
 
 At the beginning of the main program the HAL_Init() function is called to reset 
 all the peripherals, initialize the Flash interface and the systick.
@@ -107,7 +106,7 @@ or buffers compared error. (communication is stopped if any, using infinite loop
 
 @par Keywords
 
-Connectivity, I2C, Communication, Trasmission, Reception, SCL, SDA, Interrupt
+Connectivity, I2C, Communication, Transmission, Reception, SCL, SDA, Interrupt
 
 @par Directory contents 
 

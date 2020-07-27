@@ -70,7 +70,7 @@ MOBLE_RESULT Appli_Vendor_DeviceInfo(MOBLEUINT8 const *data, MOBLEUINT32 length)
   MOBLEUINT8 inc = 0;
         /*First Byte is sending the Sub Command*/      
   ResponseBuffer[0] = subCmd;
-        TRACE_M(TF_VENDOR_COMMAND,"#02-%02hx! \n\r",data[0]);
+        TRACE_M(TF_VENDOR,"#02-%02hx! \n\r",data[0]);
   
   switch(subCmd)
   {
@@ -183,7 +183,7 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
   MOBLEUINT8 subCmd = data[0];
        /*First Byte is sending the Sub Command*/      
        ResponseBuffer[0]=subCmd;
-       TRACE_M(TF_VENDOR_COMMAND,"#01-%02hx! \n\r",data[0]);
+       TRACE_M(TF_VENDOR,"#01-%02hx! \n\r",data[0]);
   switch(subCmd)
   {             
   case APPLI_TEST_ECHO: 
@@ -281,7 +281,7 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
   MOBLEUINT16 intensityValue = 0;
 /*  tClockTime delay_t = Clock_Time(); */
       
-  TRACE_M(TF_VENDOR_COMMAND,"#03-%02hx!\n\r",data[0]);
+  TRACE_M(TF_VENDOR,"#03-%02hx!\n\r",data[0]);
   switch(subCommand)
   {
     /* 
@@ -461,7 +461,7 @@ MOBLE_RESULT Appli_Vendor_Data_write(MOBLEUINT8 const *data, MOBLEUINT32 length)
        MOBLEUINT8 subCmd = data[0];
        /*First Byte is sending the Sub Command*/      
        ResponseBuffer[0]=subCmd;
-       TRACE_M(TF_VENDOR_COMMAND,"#0E-%02hx! \n\r",data[0]);
+       TRACE_M(TF_VENDOR,"#0E-%02hx! \n\r",data[0]);
        switch(subCmd)
        {     
          case APPLI_STRING_WRITE:

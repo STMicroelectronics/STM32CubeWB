@@ -2,8 +2,6 @@
 ******************************************************************************
 * @file    appli_generic_client.h
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Application interface for Generic Mesh Models  
 ******************************************************************************
 * @attention
@@ -36,6 +34,7 @@
 MOBLE_RESULT Appli_ConfigClient_Set(void); 
 MOBLE_RESULT Appli_GenericClient_OnOff_Set(void);
 MOBLE_RESULT Appli_GenericClient_Level_Set_Unack(void);
+
 
 
 #endif /* __APPLI_GENERIC_CLIENT_H */

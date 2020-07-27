@@ -63,8 +63,8 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN Private defines */
-#define BUTTON_KEY2                      BUTTON_SW2
-#define BUTTON_KEY2_PIN                  BUTTON_SW2_PIN
+#define BUTTON_KEY                      BUTTON_SW1
+#define BUTTON_KEY_PIN                  BUTTON_SW1_PIN
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

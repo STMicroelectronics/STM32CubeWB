@@ -25,6 +25,11 @@
 
 =======
 
+### 17-January-2020 ###
+=========================
+  + Fix compile error in the GCC CM7_MPU port caused by a duplicated variable declaration
+      - Source/portable/GCC/ARM_CM7_MPU/r0p1/port.c
+
 ### 13-December-2019 ###
 =========================
   + Remove warnings thrown by EWARM for CM33/CM23 ports

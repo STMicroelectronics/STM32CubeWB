@@ -2,7 +2,7 @@
   @page I2C_TwoBoards_RestartAdvComIT I2C Two Boards Restart Advanced Communication IT example
   
   @verbatim
-  ********************* COPYRIGHT(c) 2019 STMicroelectronics *******************
+  ******************************************************************************
   * @file    I2C/I2C_TwoBoards_RestartAdvComIT/readme.txt 
   * @author  MCD Application Team
   * @brief   Description of the I2C_TwoBoards_RestartAdvComIT I2C example.
@@ -113,7 +113,7 @@ Master board side only :
  - LED2 is turned ON when the transmission process is completed.
  
 Both side
- - LED3 turns ON when there is an error in communication process.(communication is stopped if any, using infinite loop)
+ - LED3 is slowly blinking (1 sec. period) when there is an error in communication process.(communication is stopped if any, using infinite loop)
 
 These LEDs status are keeped at same value during 1 Second and then clear, this will allow to monitor a next transfer status.
  
@@ -125,9 +125,11 @@ Depending of IDE, to watch content of Terminal I/O note that
  - When resorting to MDK-ARM KEIL IDE:
    Command Code is displayed on debugger as follows: View --> Serial Viewer --> Debug (printf) Viewer
 
- - When resorting to AC6 SW4STM32 IDE:
-   In Debug configuration window\ Startup, in addition to "monitor reset halt" add the command "monitor arm semihosting enable"
-   Command Code is displayed on debugger as follows: Window--> Show View--> Console.
+ When resorting to STM32CubeIDE:
+ Command Code is displayed on debugger as follows: Window--> Show View--> Console.
+ In Debug configuration : 
+- Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
+- Window\Startup,add the command "monitor arm semihosting enable"
 
 2- Request Command code :
     a. Type of command which need a specific data answer from Slave Device.
@@ -173,7 +175,7 @@ Master board side :
  - LED2 is turned OFF when the reception process is completed.
  
 Both side
- - LED3 is turned ON when there is an error in communication process.(communication is stopped if any, using infinite loop)
+ - LED3 is slowly blinking (1 sec. period) when there is an error in communication process.(communication is stopped if any, using infinite loop)
 
 These LEDs status are keeped at same value during 1 Second and then clear, this will allow to monitor a next transfer status.
 
@@ -184,9 +186,12 @@ Also only on Master board side, Terminal I/O can be used to watch the Request Co
  - When resorting to MDK-ARM KEIL IDE:
    Command Code is displayed on debugger as follows: View --> Serial Viewer --> Debug (printf) Viewer
  
- - When resorting to AC6 SW4STM32 IDE:
-   In Debug configuration window\ Startup, in addition to "monitor reset halt" add the command "monitor arm semihosting enable"
-   Command Code is displayed on debugger as follows: Window--> Show View--> Console.
+ When resorting to STM32CubeIDE:
+ Command Code is displayed on debugger as follows: Window--> Show View--> Console.
+ In Debug configuration : 
+- Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
+- Window\Startup,add the command "monitor arm semihosting enable"
+
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
@@ -199,7 +204,7 @@ Also only on Master board side, Terminal I/O can be used to watch the Request Co
 
 @par Keywords
 
-Connectivity, I2C, Communication, Trasmission, Reception, SCL, SDA, Interrupt, Request, Sequential
+Connectivity, I2C, Communication, Transmission, Reception, SCL, SDA, Interrupt, Request, Sequential
 
 @par Directory contents 
 

@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -432,7 +432,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   memset(&RestartDeviceReq, 0, sizeof(RestartDeviceReq));
   
   /* We want the receiver to install the current set of startup parameters before restarting */
-  RestartDeviceReq.options = ZCL_COMMISSION_OPTIONS_MODE_USE_NEW;
+  RestartDeviceReq.options = ZCL_COMMISS_RESTART_OPTS_MODE_USE_STARTUP;
   RestartDeviceReq.delay = ZR_RESTART_DEVICE_DELAY;
   status = ZbZclCommissionClientSendRestart(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, &RestartDeviceReq,
                                             APP_ZIGBEE_Generic_Cmd_Rsp_cb, NULL);
@@ -494,9 +494,6 @@ static void APP_ZIGBEE_NwkInfo(void){
  * @retval None
  */
 static void APP_ZIGBEE_App_Init(void){
-  /* Task associated with push button SW1 */
-  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_ZIGBEE_SW1_Process);
-  
   /* Initialize Zigbee Commissioning Client parameters */
   APP_ZIGBEE_Commissioning_Client_Init();
 } /* APP_ZIGBEE_App_Init */
@@ -559,6 +556,9 @@ void APP_ZIGBEE_Init(void)
 
   /* Task associated with network creation process */
   UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM, UTIL_SEQ_RFU, APP_ZIGBEE_NwkForm);
+  
+  /* Task associated with push button SW1 */
+  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_ZIGBEE_SW1_Process);
   
   /* Task associated with application init */
   UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_APP_START, UTIL_SEQ_RFU, APP_ZIGBEE_App_Init);
@@ -799,6 +799,20 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
  */
 static void APP_ZIGBEE_SW1_Process(void)
 {
+  uint64_t epid = 0U;
+
+  if(zigbee_app_info.zb == NULL){
+    return;
+  }
+  
+  /* Check if the router joined the network */
+  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) {
+    return;
+  }
+  if (epid == 0U) {
+    return;
+  }
+  
   /* Set NWK configuration 1 on the commissioning server */
   APP_DBG("Setting up NWK configuration for the ZR.");
   APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(nwk_config.currentConfig, &nwk_config.config[nwk_config.currentConfig]);

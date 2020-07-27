@@ -42,6 +42,10 @@ In case of errors, LED2 is blinking.
 
 Virtual Com port feature of STLINK could be used for UART communication between board and PC.
 
+@par Keywords
+
+Connectivity, USART, Asynchronous mode, RS-232, baud rate, Interrupt, HyperTerminal, Continuous Reception, VCP
+
 @par Directory contents 
 
   - USART/USART_Communication_Rx_IT_Continuous_VCP_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file
@@ -54,7 +58,7 @@ Virtual Com port feature of STLINK could be used for UART communication between 
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

@@ -88,7 +88,6 @@ const MOBLEUINT8 aNoParamDefaultConfig;
 const MOBLEUINT8 aNoInitParamDefault[MAX_CONFIG_PARAM_SIZE]= {0};
 
 /* Private macro -------------------------------------------------------------*/
-#ifndef CONFIGURE_AS_PER_COMPOSITION_DATA
 MOBLEUINT16 aSigModelsToBind[][MAX_ELEMENTS_PER_NODE] = {
 {
   GENERIC_MODEL_SERVER_ONOFF_MODEL_ID, 
@@ -115,7 +114,7 @@ MOBLEUINT16 aSigModelsToBind[][MAX_ELEMENTS_PER_NODE] = {
     //                  LIGHT_MODEL_SERVER_LC_MODEL_ID
   }
 };
-#endif
+
 
 MOBLEUINT16 aPublishModels[] = 
 {

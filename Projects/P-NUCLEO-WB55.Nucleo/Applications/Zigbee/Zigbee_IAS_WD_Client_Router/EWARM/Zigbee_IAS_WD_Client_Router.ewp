@@ -283,7 +283,7 @@
                 <option>
                     <name>CCAllowList</name>
                     <version>1</version>
-                    <state>00000000</state>
+                    <state>11111110</state>
                 </option>
                 <option>
                     <name>CCDebugInfo</name>
@@ -383,7 +383,7 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
@@ -392,7 +392,7 @@
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules98</name>
@@ -1067,6 +1067,9 @@
                     <name>$PROJ_DIR$\..\Core\Src\main.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
                 </file>
                 <file>
@@ -1092,6 +1095,12 @@
                 </group>
             </group>
         </group>
+    </group>
+    <group>
+        <name>Doc</name>
+        <file>
+            <name>$PROJ_DIR$\..\readme.txt</name>
+        </file>
     </group>
     <group>
         <name>Drivers</name>

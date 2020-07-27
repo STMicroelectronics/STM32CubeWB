@@ -39,6 +39,10 @@ RX DMA transfer is also ready to retrieve characters from PC ("END" string is ex
 In case of both transfers successfully completed, LED2 is turned on.
 In case of errors, LED2 is blinking (1sec period).
 
+@par Keywords
+
+Connectivity, USART, Asynchronous mode, RS-232, baud rate, DMA, HyperTerminal, Transmitter
+
 @par Directory contents 
 
   - USART/USART_Communication_TxRx_DMA_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file
@@ -50,7 +54,7 @@ In case of errors, LED2 is blinking (1sec period).
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

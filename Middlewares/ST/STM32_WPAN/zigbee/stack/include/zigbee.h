@@ -1,17 +1,23 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zigbee.h
+ * @brief Zigbee header file.
+ * @author Exegin Technologies
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ *
+ * This file groups global/external definitions from all the layer specific header files
+ * e.g, aps, nwk, zdo etc... into a single place, so that one can just include zigbee.h for
+ * all the global definitions eliminating the header file inclusion clutter from source files.
+ */
 
 #ifndef ZIGBEE_H
 # define ZIGBEE_H
 
 #if defined(__GNUC__)
 # define ZB_WARN_UNUSED __attribute__((warn_unused_result))
-# define ZB_F_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER) && (_MSC_VER >= 1800)
 # define ZB_WARN_UNUSED
-# define ZB_F_DEPRECATED
 #else
 # define ZB_WARN_UNUSED
-# define ZB_F_DEPRECATED
 #endif
 
 #ifdef __CDT_PARSER__
@@ -284,9 +290,7 @@ typedef struct ZbInitTblSizesT {
     unsigned int nwkAddrMapTblSz; /* Default: 32 */
     unsigned int nwkBttSz; /* Default is 32 */
     unsigned int nwkRReqSz; /* default 16 */
-#if 0 /* EXEGIN? */
-    unsigned int nwkRRecBits; /* default 10 */
-#endif
+    /* unsigned int nwkRRecBits; not used */ /* default 10 */
 
     /* APS Table Sizes */
     unsigned int apsPeerLinkKeyTblSz; /* Default: 32 */
@@ -359,7 +363,9 @@ void ZbIfDetach(struct ZigBeeT *zb, struct WpanPublicT *dev);
 #define ZCL_BASIC_SW_BUILD_ID_LENGTH             16U
 
 /**
- * Basic Server Attribute Defaults (ZCL data format).
+ * This data structure is used to configure the default attribute values
+ * for the Basic Server. All values are in ZCL data format (i.e. strings
+ * are prefixed with the length byte)
  */
 struct ZbZclBasicServerDefaults {
     uint8_t app_version; /**< ZCL_BASIC_ATTR_APP_VERSION */
@@ -372,6 +378,14 @@ struct ZbZclBasicServerDefaults {
     uint8_t sw_build_id[ZCL_BASIC_SW_BUILD_ID_LENGTH + 1U]; /**< ZCL_BASIC_ATTR_SW_BUILD_ID (First byte length) */
 };
 
+/**
+ * Configure the default ZCL Basic Server attribute values. The Basic Server
+ * is integral to the stack in order for the attribute values to be made "global"
+ * and shared between all Basic Server instances on all endpoints.
+ * @param zb Zigbee instance
+ * @param defaults Pointer to the default configuration data structure
+ * @return None
+ */
 void ZbZclBasicServerConfigDefaults(struct ZigBeeT *zb, const struct ZbZclBasicServerDefaults *defaults);
 
 /* Controls whether the Basic Server is allowed to process the ZCL_BASIC_RESET_FACTORY command. */
@@ -446,9 +460,13 @@ enum zb_msg_filter_rc {
     ZB_MSG_DISCARD /* Stop processing further filter callbacks. */
 };
 
+/* The APS Filter struct is opaque and cannot be accessed directly outside
+ * of the stack. */
 struct ZbApsFilterT;
+
 struct ZbMsgFilterT * ZbMsgFilterRegister(struct ZigBeeT *zb, uint32_t mask, uint8_t prio,
     enum zb_msg_filter_rc (*callback)(struct ZigBeeT *zb, uint32_t id, void *msg, void *cbarg), void *arg);
+
 void ZbMsgFilterRemove(struct ZigBeeT *zb, struct ZbMsgFilterT *filter);
 
 struct ZbMsgStartupInd {
@@ -518,7 +536,8 @@ enum ZbTestcaseT {
     ZB_TESTCASE_EDKA_DROP_REQUEST,
     ZB_TESTCASE_ASSOC_RSP_FULL,
     ZB_TESTCASE_TOUCHLINK_DEBUG_KEY,
-    ZB_TESTCASE_ZED_STACK_SHUTDOWN
+    ZB_TESTCASE_ZED_STACK_SHUTDOWN,
+    ZB_TESTCASE_REQUEST_KEY_DROP
 };
 
 /* External API */

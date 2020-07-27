@@ -30,6 +30,7 @@
 #include "tm.h"
 #include "stm32_lpm.h"
 #include "shci_tl.h"
+#include "ble_bufsize.h"
 
 #include "vcp.h"
 

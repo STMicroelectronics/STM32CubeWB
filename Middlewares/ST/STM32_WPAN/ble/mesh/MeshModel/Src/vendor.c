@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    vendor.c
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Vendor model middleware file
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -119,13 +97,13 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
   
   /* Traces for the Data */
   uint16_t idx = 0;
-  TRACE_I(TF_VENDOR,"Vendor_WriteLocalDataCb: peer_addr=[%02x], dst_peer=[%02x],\
+  TRACE_I(TF_VENDOR_M,"Vendor_WriteLocalDataCb: peer_addr=[%02x], dst_peer=[%02x],\
          command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response);
-          TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %ld\n\r",length);
+          TRACE_I(TF_VENDOR_M,"DATA_RECEIVED length = %ld\n\r",length);
          for (idx=0; idx<length; idx++)
          {
-           TRACE_I(TF_VENDOR,"data[%d]= %d",idx,data[idx]);  
-           TRACE_I(TF_VENDOR,"\n\r");
+           TRACE_I(TF_VENDOR_M,"data[%d]= %d",idx,data[idx]);  
+           TRACE_I(TF_VENDOR_M,"\n\r");
          }
          
          if(ADDRESS_IS_UNICAST(dst_peer))
@@ -252,13 +230,13 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
            if (ADDRESS_IS_UNICAST(dst_peer))
            {
              VendorModel_SendResponse(VENDOR_STMICRO_CID, peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
-             TRACE_M(TF_VENDOR,"Sending Response for Unicast \n\r");
+             TRACE_M(TF_VENDOR_M,"Sending Response for Unicast \n\r");
            }
            else
            {
              /* Randomize responses*/
              BLEMesh_ModelsDelayPacket(peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
-             TRACE_M(TF_VENDOR,"Sending Response for Multicast \n\r");
+             TRACE_M(TF_VENDOR_M,"Sending Response for Multicast \n\r");
            }		
          }
          
@@ -296,13 +274,13 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
  MOBLEUINT8 getBuff[5];
  
  /* Traces for the Data */
- TRACE_M(TF_VENDOR,"Vendor_ReadLocalDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
+ TRACE_M(TF_VENDOR_M,"Vendor_ReadLocalDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
         command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response );
-          TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %ld\n\r",length);
+          TRACE_I(TF_VENDOR_M,"DATA_RECEIVED length = %ld\n\r",length);
         for (MOBLEUINT8 idx=0; idx<length; idx++)
         {
-          TRACE_I(TF_VENDOR,"data[%d]= %d",idx,data[idx]); 
-          TRACE_I(TF_VENDOR,"\n\r");
+          TRACE_I(TF_VENDOR_M,"data[%d]= %d",idx,data[idx]); 
+          TRACE_I(TF_VENDOR_M,"\n\r");
         }
         
         if(ADDRESS_IS_UNICAST(dst_peer))
@@ -470,11 +448,11 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
    MOBLEUINT8 increment = 1;
   
   /* Traces for the Data */
-  TRACE_I(TF_VENDOR,"Vendor_OnResponseDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
+  TRACE_I(TF_VENDOR_M,"Vendor_OnResponseDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
         command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response );
-  TRACE_I(TF_VENDOR,"DATA_RECEIVED length = %ld\n\r", dataLength);
+  TRACE_I(TF_VENDOR_M,"DATA_RECEIVED length = %ld\n\r", dataLength);
   
-  TRACE_M(TF_VENDOR_COMMAND,"#%02hx-%02hx! \n\r",command,pRxData[0]);
+  TRACE_M(TF_VENDOR_M,"#%02hx-%02hx! \n\r",command,pRxData[0]);
   switch(command)
   {
     case APPLI_TEST_CMD:
@@ -516,7 +494,7 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
                  hitcmdcount |=(MOBLEUINT32)( pRxData[3] << 16);
                  hitcmdcount |=(MOBLEUINT32)( pRxData[2] << 8);
                  hitcmdcount |=(MOBLEUINT32)( pRxData[1]);                
-                 TRACE_I(TF_VENDOR,"NUMBER OF COMMANDS RECEIVED %d \r\n",hitcmdcount);
+                 TRACE_I(TF_VENDOR_M,"NUMBER OF COMMANDS RECEIVED %d \r\n",hitcmdcount);
                  /*Insert Test related Commands here*/
                  break;
                }
@@ -534,7 +512,7 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
       }                  
   case APPLI_LED_CONTROL_STATUS_CMD:
     {
-      TRACE_I(TF_VENDOR,"Led State %d \r\n",pRxData[0]);
+      TRACE_I(TF_VENDOR_M,"Led State %d \r\n",pRxData[0]);
       break;
     }
    case APPLI_DEVICE_INFO_CMD:
@@ -543,14 +521,14 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
          {             
              case IC_TYPE: 
                { 
-                 TRACE_I(TF_VENDOR,"IC type is %s \r\n" ,Board_Type[pRxData[1]-1]); 
+                 TRACE_I(TF_VENDOR_M,"IC type is %s \r\n" ,Board_Type[pRxData[1]-1]); 
                  break;
                }
          case LIB_VER:
            {
              while(increment!=8)
              {
-               TRACE_I(TF_VENDOR,"Lib Version is %d \r\n",pRxData[increment]);
+               TRACE_I(TF_VENDOR_M,"Lib Version is %d \r\n",pRxData[increment]);
                increment++;
              }
              increment=1;
@@ -562,11 +540,11 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
                {
                  if(pRxData[increment] != R_ASCI_CODE)
                  {
-                   TRACE_I(TF_VENDOR,"Lib Sub Version is %x \r\n",pRxData[increment]);
+                   TRACE_I(TF_VENDOR_M,"Lib Sub Version is %x \r\n",pRxData[increment]);
                  }
                  else
                  {
-                   TRACE_I(TF_VENDOR,"Lib Sub Version is %c \r\n",pRxData[increment]);
+                   TRACE_I(TF_VENDOR_M,"Lib Sub Version is %c \r\n",pRxData[increment]);
                  }
                   increment++;
                }
@@ -580,8 +558,8 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
       {
         for (MOBLEUINT8 idx=0; idx<dataLength; idx++)
         {
-          TRACE_I(TF_VENDOR,"data[%d]= %d",idx,pRxData[idx]); 
-          TRACE_I(TF_VENDOR,"\n\r");
+          TRACE_I(TF_VENDOR_M,"data[%d]= %d",idx,pRxData[idx]); 
+          TRACE_I(TF_VENDOR_M,"\n\r");
         }
         break;
       }
@@ -632,7 +610,7 @@ void Vendor_Publish(MOBLE_ADDRESS srcAddress)
 
    if(result)
    {
-     TRACE_I(TF_VENDOR,"Publication Error \r\n");
+     TRACE_I(TF_VENDOR_M,"Publication Error \r\n");
    }
 
   CommandStatus = AppliBuffer[0];
@@ -659,7 +637,7 @@ void Vendor_TestRemoteData(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elem
 
      if(result)
      {
-          TRACE_I(TF_VENDOR,"Publication Error \r\n");
+          TRACE_I(TF_VENDOR_M,"Publication Error \r\n");
      }
 
   CommandStatus = AppliBuffer[0];
@@ -686,7 +664,7 @@ void Vendor_TestCounterInc(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elem
 
     if(result)
     {
-      TRACE_I(TF_VENDOR,"Publication Error \r\n");
+      TRACE_I(TF_VENDOR_M,"Publication Error \r\n");
     }
 }         
          
@@ -763,7 +741,7 @@ MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     
   /*tClockTime delay_t = Clock_Time();*/
   
-  TRACE_I(TF_VENDOR,"dst_peer = [0x%02x] , peer_add = [0x%02x], opcode= [0x%02x] \r\n  ",
+  TRACE_I(TF_VENDOR_M,"dst_peer = [0x%02x] , peer_add = [0x%02x], opcode= [0x%02x] \r\n  ",
                                                     dst_peer, peer_addr, opcode);
 
   /*  opcode: response  : Read-Write           : Command   
@@ -794,18 +772,18 @@ MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     /* Parse the command */
     if( (cmd_response == MOBLE_FALSE) && (opcode & VENDOR_CMD_READ_nWRITE))
     { /* Response Packet is received */
-       TRACE_I(TF_VENDOR,"Response received from remote node \n\r");
+       TRACE_I(TF_VENDOR_M,"Response received from remote node \n\r");
 
        Vendor_OnResponseDataCb(peer_addr, dst_peer, command, pRxData, dataLength, MOBLE_FALSE);
     }
     else if ( (cmd_response == MOBLE_TRUE) && (opcode & VENDOR_CMD_READ_nWRITE))
     { /* Read Packet is received */
-       TRACE_M(TF_VENDOR,"Read Command received   \n\r");
+       TRACE_M(TF_VENDOR_M,"Read Command received   \n\r");
        result = Vendor_ReadLocalDataCb(peer_addr, dst_peer, command, pRxData, dataLength, MOBLE_TRUE);
     }
     else 
     {  /* Write Commands with or without response received */
-       TRACE_M(TF_VENDOR,"Command Write received, process the command  \n\r");
+       TRACE_M(TF_VENDOR_M,"Command Write received, process the command  \n\r");
        result = Vendor_WriteLocalDataCb(peer_addr, dst_peer, command, pRxData, dataLength, cmd_response );
     }
 

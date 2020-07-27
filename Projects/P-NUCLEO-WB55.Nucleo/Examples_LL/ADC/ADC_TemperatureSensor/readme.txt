@@ -48,14 +48,18 @@ For debug: variables to monitor with debugger watch window:
  - "uhADCxConvertedData": ADC group regular conversion data
  - "hADCxConvertedData_Temperature_DegreeCelsius": Value of temperature (unit: degree Celcius)
 
-LED2 is blinking every 1 sec in case of error.
- 
+LED2 is blinking every 1 sec in case of error. 
+
 Connection needed:
 None.
 
 Other peripherals used:
   1 GPIO for User push-button (SW1)
   1 GPIO for LED2
+
+@par Keywords
+
+ADC, analog digital converter, analog, conversion, voltage, channel, analog input, trigger, temperature sensor
 
 @par Directory contents 
 

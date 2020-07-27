@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -455,6 +455,19 @@ static void APP_ZIGBEE_SW1_Process()
   int16_t cur_press ;
   enum ZclDataTypeT type = ZCL_DATATYPE_SIGNED_16BIT;
   enum ZclStatusCodeT status;
+  uint64_t epid = 0U;
+
+  if(zigbee_app_info.zb == NULL){
+    return;
+  }
+  
+  /* Check if the router joined the network */
+  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) {
+    return;
+  }
+  if (epid == 0U) {
+    return;
+  }
   
   /* Read the current pressure */
   cur_press = (int16_t)ZbZclAttrIntegerRead(zigbee_app_info.press_meas_server, ZCL_PRESS_MEAS_ATTR_MEAS_VAL, &type, &status);
@@ -481,6 +494,19 @@ static void APP_ZIGBEE_SW2_Process()
   int16_t cur_press ;
   enum ZclDataTypeT type = ZCL_DATATYPE_SIGNED_16BIT;
   enum ZclStatusCodeT status;
+  uint64_t epid = 0U;
+
+  if(zigbee_app_info.zb == NULL){
+    return;
+  }
+  
+  /* Check if the router joined the network */
+  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) {
+    return;
+  }
+  if (epid == 0U) {
+    return;
+  }
 
   /* Read the current pressure */
   cur_press = (int16_t) ZbZclAttrIntegerRead(zigbee_app_info.press_meas_server, ZCL_PRESS_MEAS_ATTR_MEAS_VAL, &type, &status);

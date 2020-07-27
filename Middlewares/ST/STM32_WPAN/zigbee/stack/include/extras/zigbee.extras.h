@@ -33,9 +33,6 @@ void ZbZdoNodeBandsStr(const uint8_t band, char *buf, const unsigned int max_len
  *  Blocking Functions (CONFIG_ZB_BLOCKING_CALLS)
  *-----------------------------------------------------------------------------
  */
-enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
-enum ZbStatusCodeT ZbStartupRejoinWait(struct ZigBeeT *zb);
-
 void ZbNldeDataReqWait(struct ZigBeeT *zb, struct ZbNldeDataReqT *req, struct ZbNldeDataConfT *conf);
 void ZbNldeFrameReqWait(struct ZigBeeT *zb, struct ZbNldeFrameReqT *req, ZbNldeFrameConfT *conf);
 void ZbNlmeNetDiscWait(struct ZigBeeT *zb, struct ZbNlmeNetDiscReqT *req, struct ZbNlmeNetDiscConfT *conf);

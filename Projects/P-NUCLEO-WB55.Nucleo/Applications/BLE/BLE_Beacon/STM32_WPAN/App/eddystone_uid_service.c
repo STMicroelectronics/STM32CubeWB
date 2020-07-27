@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  * File Name          : App/eddystone_uid_service.c
- *  Description        :   
+ *  Description        :
  ******************************************************************************
   * @attention
   *
@@ -131,29 +131,29 @@ void EddystoneUID_Process(void)
 {
 #ifdef USE_OTA
   uint32_t data_address = OTA_BEACON_DATA_ADDRESS + OFFSET_PAYLOAD_LENGTH; /* 0x8006009 */
-    
+
   if(((*(uint8_t *)(OTA_BEACON_DATA_ADDRESS)) !=  0xFF) &&
      ((*(uint8_t *)(data_address + 9)) ==  0x00))
   {
-    /* Eddystone UID beacon User Data download */  
+    /* Eddystone UID beacon User Data download */
     uint8_t NamespaceID[10];
     uint8_t BeaconID[6];
     EddystoneUID_InitTypeDef EddystoneUID_InitStruct;
     uint8_t i;
-    
+
     EddystoneUID_InitStruct.NamespaceID         = NamespaceID;
     EddystoneUID_InitStruct.BeaconID            = BeaconID;
     EddystoneUID_InitStruct.AdvertisingInterval = ADVERTISING_INTERVAL_IN_MS;
-    
+
     data_address += 5; /* 0x800600E */
     EddystoneUID_InitStruct.CalibratedTxPower   = *(uint8_t *)(data_address);
     data_address += 1; /* 0x800600F */
-    for(i = 0; i < 10; i++) 
+    for(i = 0; i < 10; i++)
      EddystoneUID_InitStruct.NamespaceID[i] = *(uint8_t *)(data_address + i);
     data_address += 10; /* 0x8006019 */
-    for(i = 0; i < 6; i++) 
+    for(i = 0; i < 6; i++)
       EddystoneUID_InitStruct.BeaconID[i] = *(uint8_t *)(data_address + i);
-  
+
     EddystoneUID_Init(&EddystoneUID_InitStruct);
   }
   else
@@ -182,7 +182,7 @@ void EddystoneUID_Process(void)
     .NamespaceID = NamespaceID,
     .BeaconID = BeaconID
   };
-    
+
   EddystoneUID_Init(&EddystoneUID_InitStruct);
 #endif
 

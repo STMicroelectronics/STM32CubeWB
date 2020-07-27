@@ -20,7 +20,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -96,6 +95,16 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  /* Set low-power mode of CPU2 */
+  /* Note: Typically, action performed by CPU2 on a dual core application.
+           Since this example is single core, perform it by CPU1. */
+  /* Note: On STM32WB, both CPU1 and CPU2 must be in low-power mode
+           to set the entire System in low-power mode, corresponding to
+           the deepest low-power mode possible.
+           For example, CPU1 in Standby mode and CPU2 in Shutdown mode 
+           will make system enter in Standby mode. */
+  LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
+
   /* Configure LED2, LED3 */
   BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
@@ -163,13 +172,12 @@ int main(void)
   /*         In case of RF stack not started, CPU2 low-power mode must be     */
   /*         forced to the lowest level. This allows to require all system    */
   /*         low-power modes using only PWR for CPU1.                         */
-  /*         low-power mode.                                                  */
   /*       - Initial power-up: In case of power-on reset, CPU2 low-power mode */
   /*         has its reset value and must be set.                             */
   /*         In case of system is resumed from low-power mode standby         */
   /*         or shutdown, configuration of PWR parameters related to CPU2 are */
-  /*         retained and must not modified (This check is required in case   */
-  /*         of RF stack started afterwards and not to overwritte its         */
+  /*         retained and must not be modified (This check is required in     */
+  /*         case of RF stack started afterwards and not to overwritte its    */
   /*         low-power configuration).                                        */
   if(   (LL_PWR_IsActiveFlag_C1SB() == 0)
      || (LL_PWR_IsActiveFlag_C2SB() == 0)
@@ -207,7 +215,8 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
@@ -224,7 +233,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers 
+  /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
                               |RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -240,7 +249,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the peripherals clocks 
+  /** Initializes the peripherals clocks
   */
   /* USER CODE BEGIN Smps */
 
@@ -262,7 +271,7 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
-  /** Initialize RTC Only 
+  /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
@@ -271,6 +280,7 @@ static void MX_RTC_Init(void)
   hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
   hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
   if (HAL_RTC_Init(&hrtc) != HAL_OK)
   {
     Error_Handler();
@@ -331,7 +341,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

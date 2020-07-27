@@ -51,7 +51,10 @@ MOBLE_RESULT Appli_Light_GetLightnessLastStatus(MOBLEUINT8* lLastState);
 /*******************************************************************************
 Following Variables are used for the LIGHTING Lightness MODEL 
 *******************************************************************************/
+
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
+/******************************************************************************/
 
 Appli_Light_lightnessSet ApplilightnessSet = {1,0,0,0,0,0};
 Appli_Light_lightnessLinearSet ApplilightnessLinearSet;
@@ -64,7 +67,9 @@ Appli_Light_lightnessLinearSet ApplilightnessLinearSet;
 Following Variables are used for the LIGHTING CTL MODEL 
 *******************************************************************************/
 
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL
+/******************************************************************************/
 
 Appli_Light_CtlSet AppliCtlSet;
 Appli_Light_CtlTemperatureRangeSet AppliCtlTemperatureRangeSet;
@@ -78,7 +83,10 @@ Appli_Light_CtlDefaultSet AppliCtlDefaultSet;
 Following Variables are used for the LIGHTING HSL MODEL 
 *******************************************************************************/
 
+/*******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
+/*******************************************************************************/
+
   Appli_Light_HslSet AppliHslSet;
   Appli_Light_HslDefaultSet Appli_HslDefaultSet = {0x7FFF,0x7FFF,0x7FFF};
   Appli_Light_RGBSet Appli_RGBParam;
@@ -100,7 +108,10 @@ extern MOBLEUINT16 IntensityValue;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS 
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_Lightness_Set: This function is callback for Application
 * when Light Lightness Set message is received
@@ -113,7 +124,9 @@ MOBLE_RESULT Appli_Light_Lightness_Set(Light_LightnessStatus_t* pLight_Lightness
 {
   MOBLEUINT16 duty;
   static MOBLEUINT16 previousIntensity = 0;
+  
   TRACE_M(TF_SERIAL_CTRL,"#824C!\n\r");
+  
   ApplilightnessSet.PresentState16 = pLight_LightnessParam->LightnessPresentValue16;
   ApplilightnessSet.LastLightness16 = pLight_LightnessParam->LightnessLastStatus;
 
@@ -157,6 +170,10 @@ MOBLE_RESULT Appli_Light_Lightness_Set(Light_LightnessStatus_t* pLight_Lightness
   
 }
 
+/******************************************************************************/
+#endif /* #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS */
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_Lightness_Status: This function is callback for Application
 *           when Light Lightness status message is received
@@ -166,18 +183,46 @@ MOBLE_RESULT Appli_Light_Lightness_Set(Light_LightnessStatus_t* pLight_Lightness
 */ 
 MOBLE_RESULT Appli_Light_Lightness_Status(MOBLEUINT8 const *pLightness_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
+  
   TRACE_M(TF_LIGHT,"Light_Lightness_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#824E! \n\r");
   
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if((i == 0) || (i == 2))
+    {
+      value = pLightness_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Present Lightness: %d \r\n",
+              value << 8 | pLightness_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"Target Lightness: %d \r\n",
+              value << 8 | pLightness_status[i]);
+    }
+    else if(i == 4)
+    {
+      TRACE_M(TF_LIGHT,"Remaining Time: %d \r\n",
+              pLightness_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
 /******************************************************************************/
-#endif
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS 
 /******************************************************************************/
 
-#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS 
 /**
 * @brief  Appli_Light_Lightness_Linear_Set: This function is callback for Application
 * when Light Lightness Linear Set message is received
@@ -195,6 +240,10 @@ MOBLE_RESULT Appli_Light_Lightness_Linear_Set(Light_LightnessStatus_t* pLight_Li
   return MOBLE_RESULT_SUCCESS;
 }
 
+/******************************************************************************/
+#endif /* #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS  */
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_Lightness_Linear_Status: This function is callback for Application
 *         when Light Lightness Linear status message is received
@@ -204,18 +253,45 @@ MOBLE_RESULT Appli_Light_Lightness_Linear_Set(Light_LightnessStatus_t* pLight_Li
 */
 MOBLE_RESULT Appli_Light_Lightness_Linear_Status(MOBLEUINT8 const *pLightnessLinear_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_Lightness_Linear_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8252! \n\r");
   
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if((i == 0) || (i == 2))
+    {
+      value = pLightnessLinear_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Present Lightness: %d \r\n",
+              value << 8 | pLightnessLinear_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"Target Lightness: %d \r\n",
+              value << 8 | pLightnessLinear_status[i]);
+    }
+    else if(i == 4)
+    {
+      TRACE_M(TF_LIGHT,"Remaining Time: %d \r\n",
+              pLightnessLinear_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
 /******************************************************************************/
-#endif
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP
 /******************************************************************************/
 
-#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP
 /**
 * @brief  Appli_Light_Lightness_Default_Set: This function is callback for Application
 *         when Light Lightness Default Set message is received
@@ -246,6 +322,10 @@ MOBLE_RESULT Appli_Light_Lightness_Default_Set(Light_LightnessDefaultParam_t* pL
   return MOBLE_RESULT_SUCCESS;
 }
 
+/******************************************************************************/
+#endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP */
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_Lightness_Default_Status: This function is callback for Application
 *         when Light Lightness Default status message is received
@@ -255,18 +335,35 @@ MOBLE_RESULT Appli_Light_Lightness_Default_Set(Light_LightnessDefaultParam_t* pL
 */
 MOBLE_RESULT Appli_Light_Lightness_Default_Status(MOBLEUINT8 const *pLightnessDefault_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+ #endif
   TRACE_M(TF_LIGHT,"Light_Lightness_Default_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8256! \n\r");
   
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if(i == 0)
+    {
+      value = pLightnessDefault_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Lightness: %d \r\n",
+              value << 8 | pLightnessDefault_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
 /******************************************************************************/
-#endif
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP
 /******************************************************************************/
 
-#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP
 /**
 * @brief  Appli_Light_Lightness_Range_Set: This function is callback for Application
 *         when Light Lightness Range Set message is received
@@ -286,6 +383,10 @@ MOBLE_RESULT Appli_Light_Lightness_Range_Set(Light_LightnessRangeParam_t* pLight
   return MOBLE_RESULT_SUCCESS;
 }
 
+/******************************************************************************/
+#endif  /* #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP */
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_Lightness_Range_Status: This function is callback for Application
 *         when Light Lightness range ststus message is received
@@ -295,18 +396,45 @@ MOBLE_RESULT Appli_Light_Lightness_Range_Set(Light_LightnessRangeParam_t* pLight
 */
 MOBLE_RESULT Appli_Light_Lightness_Range_Status(MOBLEUINT8 const *pLightnessRange_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_Lightness_Range_Status callback received \r\n");
 
   TRACE_M(TF_SERIAL_CTRL,"#8258! \n\r");
   
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if(i == 0)
+    {
+      TRACE_M(TF_LIGHT,"Status Code: %d \r\n",
+              value << 8 | pLightnessRange_status[i]);
+    }
+    else if((i == 1) || (i == 3))
+    {
+      value = pLightnessRange_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Range Min: %d \r\n",
+              value << 8 | pLightnessRange_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"Range Max: %d \r\n",
+              value << 8 | pLightnessRange_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
 /******************************************************************************/
-#endif
+#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL
 /******************************************************************************/
 
-#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL
 /**
 * @brief  Appli_Light_Ctl_Set: This function is callback for Application
 *         when Light Ctl Set message is received
@@ -319,6 +447,7 @@ MOBLE_RESULT Appli_Light_Ctl_Set(Light_CtlStatus_t* pLight_CtlParam,
 {
   float colourRatio;
   float brightRatio;
+  
   TRACE_M(TF_SERIAL_CTRL,"#825E! \n\r");
   
   AppliCtlSet.PresentLightness16 = pLight_CtlParam->PresentCtlLightness16;
@@ -348,6 +477,10 @@ MOBLE_RESULT Appli_Light_Ctl_Set(Light_CtlStatus_t* pLight_CtlParam,
   return MOBLE_RESULT_SUCCESS;
 }
 
+/******************************************************************************/
+#endif  /* #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL */
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_Ctl_Status: This function is callback for Application
 *         when Light CTL status message is received
@@ -355,19 +488,58 @@ MOBLE_RESULT Appli_Light_Ctl_Set(Light_CtlStatus_t* pLight_CtlParam,
 * @param  pLength: length of data
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Appli_Light_Ctl_Status(MOBLEUINT8 const *pLightCtl_status, MOBLEUINT32 pLength)
+MOBLE_RESULT Appli_Light_Ctl_Status(MOBLEUINT8 const *pLightCtl_status, 
+                                    MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_Ctl_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8260! \n\r");
   
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if((i == 0) || (i == 2) || (i == 4) || (i == 6))
+    {
+      value = pLightCtl_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Present CTL Lightness: %d \r\n",
+              value << 8 | pLightCtl_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"Present CTL Temperature: %d \r\n",
+              value << 8 | pLightCtl_status[i]);
+    }
+    else if(i == 5)
+    {
+      TRACE_M(TF_LIGHT,"Target CTL Lightness: %d \r\n",
+              value << 8 | pLightCtl_status[i]);
+    }
+    else if(i == 7)
+    {
+      TRACE_M(TF_LIGHT,"Target CTL Temperature: %d \r\n",
+              value << 8 | pLightCtl_status[i]);
+    }
+    else if(i == 8)
+    {
+      TRACE_M(TF_LIGHT,"Remaining Time: %d \r\n",
+              pLightCtl_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
-#endif
-
-
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE 
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_CtlTemperature_Set: This function is callback for Application
 *         when Light Ctl Temperature Set message is received
@@ -381,6 +553,7 @@ MOBLE_RESULT Appli_Light_CtlTemperature_Set(Light_CtlStatus_t* pLight_CtltempPar
   float colourRatio;
   float brightRatio;
   TRACE_M(TF_SERIAL_CTRL,"#8264!\n\r");
+  
   AppliCtlSet.PresentTemperature16 = pLight_CtltempParam->PresentCtlTemperature16;
   AppliCtlSet.PresentCtlDelta16 = pLight_CtltempParam->PresentCtlDelta16;
   
@@ -402,6 +575,10 @@ MOBLE_RESULT Appli_Light_CtlTemperature_Set(Light_CtlStatus_t* pLight_CtltempPar
   return MOBLE_RESULT_SUCCESS;
 }
 
+/******************************************************************************/
+#endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE */
+/******************************************************************************/
+
 /**                                                  
 * @brief  Appli_Light_CtlTemperature_Status: This function is callback for Application
 *         when Light CTL temperature status message is received
@@ -411,19 +588,56 @@ MOBLE_RESULT Appli_Light_CtlTemperature_Set(Light_CtlStatus_t* pLight_CtltempPar
 */ 
 MOBLE_RESULT Appli_Light_CtlTemperature_Status(MOBLEUINT8 const *pLightCtlTemp_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_CtlTemperature_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8266! \n\r");
   
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if((i == 0) || (i == 2) || (i == 4) || (i == 6))
+    {
+      value = pLightCtlTemp_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Present CTL Temperature: %d \r\n",
+              value << 8 | pLightCtlTemp_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"Present CTL Delta UV: %d \r\n",
+              value << 8 | pLightCtlTemp_status[i]);
+    }
+    else if(i == 5)
+    {
+      TRACE_M(TF_LIGHT,"Target CTL Temperature: %d \r\n",
+              value << 8 | pLightCtlTemp_status[i]);
+    }
+    else if(i == 7)
+    {
+      TRACE_M(TF_LIGHT,"Target CTL Delta UV: %d \r\n",
+              value << 8 | pLightCtlTemp_status[i]);
+    }
+    else if(i == 8)
+    {
+      TRACE_M(TF_LIGHT,"Remaining Time: %d \r\n",
+              pLightCtlTemp_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
 
 /******************************************************************************/
-#endif
+#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP
 /******************************************************************************/
 
-#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP
 /**
 * @brief  Appli_Light_CtlTemperature_Range_Set: This function is callback for Application
 *         when Light Ctl Temperature range Set message is received
@@ -442,6 +656,12 @@ MOBLE_RESULT Appli_Light_CtlTemperature_Range_Set(Light_CtlTemperatureRangeParam
   
   return MOBLE_RESULT_SUCCESS;
 }
+
+
+/******************************************************************************/
+#endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP */
+/******************************************************************************/
+
 /**                                                  
 * @brief  Appli_Light_CtlTemperature_Range_Set: This function is callback for Application
 *         when Light CTL temperature range status message is received
@@ -451,6 +671,10 @@ MOBLE_RESULT Appli_Light_CtlTemperature_Range_Set(Light_CtlTemperatureRangeParam
 */ 
 MOBLE_RESULT Appli_Light_CtlTemperature_Range_Status(MOBLEUINT8 const *pCtlTempRange_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_CtlTemperature_Range_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8263! \n\r");
@@ -459,14 +683,37 @@ MOBLE_RESULT Appli_Light_CtlTemperature_Range_Status(MOBLEUINT8 const *pCtlTempR
   
   AppliNvm_SaveMessageParam();
   
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if(i == 0)
+    {
+      TRACE_M(TF_LIGHT,"Status Code: %d \r\n",
+              pCtlTempRange_status[i]);
+    }
+    else if((i == 1) || (i == 3))
+    {
+      value = pCtlTempRange_status[i];
+    }
+    else if(i == 2)
+    {
+      TRACE_M(TF_LIGHT,"Range Min: %d \r\n",
+              value << 8 | pCtlTempRange_status[i]);
+    }
+    else if(i == 4)
+    {
+      TRACE_M(TF_LIGHT,"Range Max: %d \r\n",
+              value << 8 | pCtlTempRange_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
 /******************************************************************************/
-#endif
+#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP
 /******************************************************************************/
 
-#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP
 /**
 * @brief  Appli_Light_CtlDefault_Set: This function is callback for Application
 *         when Light Ctl Default Set message is received
@@ -486,6 +733,10 @@ MOBLE_RESULT Appli_Light_CtlDefault_Set(Light_CtlDefaultParam_t* pLight_CtlDefau
   return MOBLE_RESULT_SUCCESS;
 } 
 
+/******************************************************************************/
+#endif   /* #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP */
+/******************************************************************************/
+
 /**                                                  
 * @brief  Appli_Light_CtlDefault_Status: This function is callback for Application
 *         when Light CTL Default status message is received
@@ -495,17 +746,45 @@ MOBLE_RESULT Appli_Light_CtlDefault_Set(Light_CtlDefaultParam_t* pLight_CtlDefau
 */ 
 MOBLE_RESULT Appli_Light_CtlDefault_Status(MOBLEUINT8 const *pCtlDefault_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_Ctl_DefaultStatus callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8268! \n\r");
   
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if((i == 0) || (i == 2) || (i == 4))
+    {
+      value = pCtlDefault_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Lightness: %d \r\n",
+              value << 8 | pCtlDefault_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"Temperature: %d \r\n",
+              value << 8 | pCtlDefault_status[i]);
+    }
+    else if(i == 5)
+    {
+      TRACE_M(TF_LIGHT,"Delta UV: %d \r\n",
+              value << 8 | pCtlDefault_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 } 
 
-#endif
-
-
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_Hsl_Set: This function is callback for Application
 *         when Light Hsl Set message is received
@@ -517,6 +796,7 @@ MOBLE_RESULT Appli_Light_Hsl_Set(Light_HslStatus_t* pLight_HslParam,
                                              MOBLEUINT8 OptionalValid)
 { 
   TRACE_M(TF_SERIAL_CTRL,"#8276!\n\r");
+  
   AppliHslSet.HslLightness16 = pLight_HslParam->PresentHslLightness16;
   AppliHslSet.HslHueLightness16 = pLight_HslParam->PresentHslHueLightness16;
   AppliHslSet.HslSaturation16 = pLight_HslParam->PresentHslSaturation16;
@@ -540,6 +820,10 @@ MOBLE_RESULT Appli_Light_Hsl_Set(Light_HslStatus_t* pLight_HslParam,
   return MOBLE_RESULT_SUCCESS;
 } 
 
+/******************************************************************************/
+#endif     /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL */
+/******************************************************************************/
+
 /**                                                  
 * @brief  Appli_Light_Hsl_Status: This function is callback for Application
 *         when Light HSL status message is received
@@ -549,17 +833,50 @@ MOBLE_RESULT Appli_Light_Hsl_Set(Light_HslStatus_t* pLight_HslParam,
 */
 MOBLE_RESULT Appli_Light_Hsl_Status(MOBLEUINT8 const *pHsl_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_Hsl_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8278! \n\r");
   
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if((i == 0) || (i == 2) || (i == 4))
+    {
+      value = pHsl_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"HSL Lightness: %d \r\n",
+              value << 8 | pHsl_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"HSL Hue: %d \r\n",
+              value << 8 | pHsl_status[i]);
+    }
+    else if(i == 5)
+    {
+      TRACE_M(TF_LIGHT,"HSL Saturation: %d \r\n",
+              value << 8 | pHsl_status[i]);
+    }
+    else if(i == 6)
+    {
+      TRACE_M(TF_LIGHT,"Remaining Time: %d \r\n",
+              pHsl_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
-#endif
-
-
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_HslHue_Set: This function is callback for Application
 * when Light Hsl Hue Set message is received
@@ -571,6 +888,7 @@ MOBLE_RESULT Appli_Light_HslHue_Set(Light_HslStatus_t* pLight_HslHueParam,
                                              MOBLEUINT8 OptionalValid)
 {
   TRACE_M(TF_SERIAL_CTRL,"#826F! \n\r");	
+  
   AppliHslSet.HslHueLightness16 = pLight_HslHueParam->PresentHslHueLightness16; 
   
   HSL2RGB_Conversion();
@@ -591,6 +909,10 @@ MOBLE_RESULT Appli_Light_HslHue_Set(Light_HslStatus_t* pLight_HslHueParam,
    
 }
 
+/******************************************************************************/
+#endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE */
+/******************************************************************************/
+
 /**                                                  
 * @brief  Appli_Light_HslHue_Status: This function is callback for Application
 *         when Light HSL HUE status message is received
@@ -600,17 +922,45 @@ MOBLE_RESULT Appli_Light_HslHue_Set(Light_HslStatus_t* pLight_HslHueParam,
 */
 MOBLE_RESULT Appli_Light_HslHue_Status(MOBLEUINT8 const *pHslHue_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_HslHue_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8271! \n\r");
     
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if((i == 0) || (i == 2))
+    {
+      value = pHslHue_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Present Hue: %d \r\n",
+              value << 8 | pHslHue_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"Target Hue: %d \r\n",
+              value << 8 | pHslHue_status[i]);
+    }
+    else if(i == 4)
+    {
+      TRACE_M(TF_LIGHT,"Remaining Time: %d \r\n",
+              pHslHue_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 } 
 
-#endif
-
-
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_HslSaturation_Set: This function is callback for Application
 * when Light Hsl Saturation Set message is received
@@ -622,6 +972,7 @@ MOBLE_RESULT Appli_Light_HslSaturation_Set(Light_HslStatus_t* pLight_HslSaturati
                                              MOBLEUINT8 OptionalValid)
 {
   TRACE_M(TF_SERIAL_CTRL,"#8273! \n\r");	
+  
   AppliHslSet.HslSaturation16 = pLight_HslSaturationParam->PresentHslSaturation16;
   
   HSL2RGB_Conversion();
@@ -641,6 +992,10 @@ MOBLE_RESULT Appli_Light_HslSaturation_Set(Light_HslStatus_t* pLight_HslSaturati
   return MOBLE_RESULT_SUCCESS;
 } 
 
+/******************************************************************************/
+#endif   /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION */
+/******************************************************************************/
+
 /**                                                  
 * @brief  Appli_Light_HslSaturation_Status: This function is callback for Application
 *         when Light HSL Saturation status message is received
@@ -650,18 +1005,45 @@ MOBLE_RESULT Appli_Light_HslSaturation_Set(Light_HslStatus_t* pLight_HslSaturati
 */
 MOBLE_RESULT Appli_Light_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_HslSaturation_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8275! \n\r");
     
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if((i == 0) || (i == 2))
+    {
+      value = pHslSaturation_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Present Saturation: %d \r\n",
+              value << 8 | pHslSaturation_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"Target Saturation: %d \r\n",
+              value << 8 | pHslSaturation_status[i]);
+    }
+    else if(i == 4)
+    {
+      TRACE_M(TF_LIGHT,"Remaining Time: %d \r\n",
+              pHslSaturation_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
-
-#endif
-              
-
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_HslDefault_Set: This function is callback for Application
 * when Light Hsl Default Set message is received
@@ -673,6 +1055,7 @@ MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslStatus_t* pLight_HslDefaultPara
                                              MOBLEUINT8 OptionalValid)
 {
   TRACE_M(TF_SERIAL_CTRL,"#827F! \n\r");	
+  
   Appli_HslDefaultSet.HslDefaultLightness16 = pLight_HslDefaultParam->PresentHslLightness16;
   Appli_HslDefaultSet.HslDefaultHueLightness16 = pLight_HslDefaultParam->PresentHslHueLightness16;
   Appli_HslDefaultSet.HslDefaultSaturation16 = pLight_HslDefaultParam->PresentHslSaturation16;  
@@ -698,6 +1081,10 @@ MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslStatus_t* pLight_HslDefaultPara
   return MOBLE_RESULT_SUCCESS;
 } 
 
+/******************************************************************************/
+#endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP */
+/******************************************************************************/
+              
 /**                                                  
 * @brief  Appli_Light_HslDefault_Status: This function is callback for Application
 *          when Light HSL Default status  message is received
@@ -707,17 +1094,45 @@ MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslStatus_t* pLight_HslDefaultPara
 */
 MOBLE_RESULT Appli_Light_HslDefault_Status(MOBLEUINT8 const *pHslDefault_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_HslDefault_Status callback received \r\n");
   
-    TRACE_M(TF_SERIAL_CTRL,"#827C! \n\r");
+  TRACE_M(TF_SERIAL_CTRL,"#827C! \n\r");
     
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if((i == 0) || (i == 2) || (i == 4))
+    {
+      value = pHslDefault_status[i];
+    }
+    else if(i == 1)
+    {
+      TRACE_M(TF_LIGHT,"Lightness: %d \r\n",
+              value << 8 | pHslDefault_status[i]);
+    }
+    else if(i == 3)
+    {
+      TRACE_M(TF_LIGHT,"Hue: %d \r\n",
+              value << 8 | pHslDefault_status[i]);
+    }
+    else if(i == 4)
+    {
+      TRACE_M(TF_LIGHT,"Saturation: %d \r\n",
+              value << 8 | pHslDefault_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
 
-#endif 
-              
-
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_HslRange_Set: This function is callback for Application
 *         when Light Hsl Range Set message is received
@@ -729,6 +1144,7 @@ MOBLE_RESULT Appli_Light_HslRange_Set(Light_HslRangeParam_t* pLight_HslRangePara
                                              MOBLEUINT8 OptionalValid)
 {
   TRACE_M(TF_SERIAL_CTRL,"#8281! \n\r"); 	
+  
    AppliHslRangeSet.HslHueMinRange16 = pLight_HslRangeParam->HslHueMinRange16;
    AppliHslRangeSet.HslHueMaxRange16 = pLight_HslRangeParam->HslHueMaxRange16;
    AppliHslRangeSet.HslMinSaturation16 = pLight_HslRangeParam->HslMinSaturation16;
@@ -736,6 +1152,10 @@ MOBLE_RESULT Appli_Light_HslRange_Set(Light_HslRangeParam_t* pLight_HslRangePara
    
    return MOBLE_RESULT_SUCCESS;
 } 
+
+/******************************************************************************/
+#endif               /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP */
+/******************************************************************************/
 
 /**                                                  
 * @brief  Appli_Light_HslRange_Status: This function is callback for Application
@@ -746,22 +1166,59 @@ MOBLE_RESULT Appli_Light_HslRange_Set(Light_HslRangeParam_t* pLight_HslRangePara
 */
 MOBLE_RESULT Appli_Light_HslRange_Status(MOBLEUINT8 const *pHslRange_status, MOBLEUINT32 pLength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT32 i;
+  MOBLEUINT16 value  = 0;
+#endif
   TRACE_M(TF_LIGHT,"Light_HslRange_Status callback received \r\n");
   
- TRACE_M(TF_SERIAL_CTRL,"#827E! \n\r");
+  TRACE_M(TF_SERIAL_CTRL,"#827E! \n\r");
     
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < pLength; i++)
+  {
+    if(i == 0)
+    {
+      TRACE_M(TF_LIGHT,"Status Code: %d \r\n",
+              pHslRange_status[i]);
+    }
+    else if((i == 1) || (i == 3) || (i == 5) || (i == 7))
+    {
+      value = pHslRange_status[i];
+    }
+    else if(i == 2)
+    {
+      TRACE_M(TF_LIGHT,"Hue Range Min: %d \r\n",
+              value << 8 | pHslRange_status[i]);
+    }
+    else if(i == 4)
+    {
+      TRACE_M(TF_LIGHT,"Hue Range Max: %d \r\n",
+              value << 8 | pHslRange_status[i]);
+    }
+    else if(i == 6)
+    {
+      TRACE_M(TF_LIGHT,"Saturation Range Min: %d \r\n",
+              value << 8 | pHslRange_status[i]);
+    }
+    else if(i == 8)
+    {
+      TRACE_M(TF_LIGHT,"Saturation Range Max: %d \r\n",
+              value << 8 | pHslRange_status[i]);
+    }
+  }
+#endif
   return MOBLE_RESULT_SUCCESS;
 }
-
-
-#endif            
 
 
 /*******************************************************************************
 Following Functions are used for the LIGHTING Lightness MODEL 
 *******************************************************************************/
 
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS 
+/******************************************************************************/
 
 /**
 * @brief  Appli_Light_GetLightnessStatus: This function is callback for Application
@@ -855,13 +1312,17 @@ MOBLE_RESULT Appli_Light_GetLightnessRangeStatus(MOBLEUINT8* lRangeState)
   return MOBLE_RESULT_SUCCESS;
 }
 
+/******************************************************************************/
 #endif /* #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS  */
+/******************************************************************************/
 
 /*******************************************************************************
 Following Functions are used for the LIGHTING CTL MODEL 
 *******************************************************************************/
 
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL
+/******************************************************************************/
 
 /**
 * @brief  Appli_Light_GetCtlLightStatus: This function is callback for Application
@@ -950,13 +1411,18 @@ MOBLE_RESULT Appli_Light_GetCtlDefaultStatus(MOBLEUINT8* lCtlDefaultState)
   return MOBLE_RESULT_SUCCESS;
 }  
 
+/******************************************************************************/
 #endif /* #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL  */
+/******************************************************************************/
 
 /*******************************************************************************
 Following Functions are used for the LIGHTING HSL MODEL 
 *******************************************************************************/
 
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
+/******************************************************************************/
+
 /**
 * @brief  Appli_Light_GetHslStatus: This function is callback for Application
 * to get the application values in middleware used for transition change.
@@ -1088,7 +1554,9 @@ void Appli_Light_PwmInit()
    Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);
 }
 
+/******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
+/******************************************************************************/
 
 /**
 * @brief  Function to convert the map the RGB values in real values.
@@ -1177,7 +1645,9 @@ void HSL2RGB_Conversion(void)
   }
 }
 
-#endif
+/******************************************************************************/
+#endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL */
+/******************************************************************************/
 
 /**
 * @brief  Rgb_LedOffState: This function is called while using CTL, makes all the RGB 

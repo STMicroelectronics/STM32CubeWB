@@ -43,16 +43,15 @@
 
 #include "zcl/zcl.h"
 
-/* Poll Control Cluster Attribute Set */
-enum {
-    /* Server Attribute Set */
-    ZCL_POLL_CHECK_IN_INTERVAL = 0x0000, /* RW- mandatory */
-    ZCL_POLL_LONG_POLL_INTERVAL = 0x0001, /* R - mandatory */
-    ZCL_POLL_SHORT_POLL_INTERVAL = 0x0002, /* R - mandatory  */
-    ZCL_POLL_FAST_POLL_TIMEOUT = 0x0003, /* RW - mandatory  */
-    ZCL_POLL_CHECK_IN_INTERVAL_MIN = 0x0004, /* R */
-    ZCL_POLL_LONG_POLL_INTERVAL_MIN = 0x0005, /* R */
-    ZCL_POLL_FAST_POLL_TIMEOUT_MAX = 0x0006, /* R */
+/** Poll Control Server Attribute IDs */
+enum ZbZclPollControlSvrAttrT {
+    ZCL_POLL_CHECK_IN_INTERVAL = 0x0000,
+    ZCL_POLL_LONG_POLL_INTERVAL = 0x0001,
+    ZCL_POLL_SHORT_POLL_INTERVAL = 0x0002,
+    ZCL_POLL_FAST_POLL_TIMEOUT = 0x0003,
+    ZCL_POLL_CHECK_IN_INTERVAL_MIN = 0x0004,
+    ZCL_POLL_LONG_POLL_INTERVAL_MIN = 0x0005,
+    ZCL_POLL_FAST_POLL_TIMEOUT_MAX = 0x0006,
 
 };
 

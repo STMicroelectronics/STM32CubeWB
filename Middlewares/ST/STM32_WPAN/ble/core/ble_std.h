@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -56,7 +56,7 @@
 #define HCI_LE_META_EVT_CODE                                   0x3E
 #define HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE                     0xFF
 
-/* HCI subevent code */
+/* HCI LE subevent code */
 #define HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE                 0x01
 #define HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE                  0x02
 #define HCI_LE_CONNECTION_UPDATE_COMPLETE_SUBEVT_CODE          0x03

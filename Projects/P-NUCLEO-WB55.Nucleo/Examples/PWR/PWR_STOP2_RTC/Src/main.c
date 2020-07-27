@@ -4,7 +4,7 @@
   * @file    PWR/PWR_STOP2_RTC/Src/main.c
   * @author  MCD Application Team
   * @brief   This sample code shows how to use STM32WBxx PWR HAL API to enter
-  *          and exit the STOP 2 mode using RTC.
+  *          and exit the Stop 2 mode using RTC.
   ******************************************************************************
   * @attention
   *
@@ -19,7 +19,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -88,15 +87,24 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
 
+  /* Set low-power mode of CPU2 */
+  /* Note: Typically, action performed by CPU2 on a dual core application.
+           Since this example is single core, perform it by CPU1. */
+  /* Note: On STM32WB, both CPU1 and CPU2 must be in low-power mode
+           to set the entire System in low-power mode, corresponding to
+           the deepest low-power mode possible.
+           For example, CPU1 in Stop2 mode and CPU2 in Shutdown mode 
+           will make system enter in Stop2 mode. */
+  LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  /* Configure LED2, and LED1 */
+  /* Configure LED2 and LED1 */
   BSP_LED_Init(LED2);
   BSP_LED_Init(LED1);
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,8 +114,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-   /* Insert 5 second delay */
+    /* Insert 5 second delay */
     HAL_Delay(5000);
+  
+   /* Turn off the LED2 */
+    BSP_LED_Off(LED2);
 
      /* Enable GPIOs clock */
   __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -139,7 +150,7 @@ int main(void)
   __HAL_RCC_GPIOC_CLK_DISABLE();
   __HAL_RCC_GPIOD_CLK_DISABLE();
   __HAL_RCC_GPIOE_CLK_DISABLE();
-  __HAL_RCC_GPIOH_CLK_DISABLE();  
+  __HAL_RCC_GPIOH_CLK_DISABLE();
   
   /* In case of debugger probe attached, work-around of issue specified in "ES0394 - STM32WB55Cx/Rx/Vx device errata":
     2.2.9 Incomplete Stop 2 mode entry after a wakeup from debug upon EXTI line 48 event
@@ -167,26 +178,26 @@ int main(void)
       = (RTC_WAKEUPCLOCK_RTCCLK_DIV /(LSI)) * WakeUpCounter
       ==> WakeUpCounter = Wakeup Time / Wakeup Time Base
   
-    To configure the wake up timer to 60s the WakeUpCounter is set to 0xFFFF:
+    To configure the wake up timer to maximum value, the WakeUpCounter is set to 0xFFFF:
     Wakeup Time Base = 16 /(~32.000KHz) = ~0.5 ms
     Wakeup Time = 0.5 ms  * WakeUpCounter
     Therefore, with wake-up counter =  0xFFFF  = 65,535 
        Wakeup Time =  0,5 ms *  65,535 = 32,7675 s ~ 33 sec. */
-  HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x0FFFF, RTC_WAKEUPCLOCK_RTCCLK_DIV16);
+    HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x0FFFF, RTC_WAKEUPCLOCK_RTCCLK_DIV16);
   
     /* Enter STOP 2 mode */
     HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
     
-    /* ... STOP2 mode ... */
+    /* ... Stop 2 mode ... */
 
-    /* Configure system clock after wake-up from STOP: enable HSE, PLL and select
-    PLL as system clock source (HSE and PLL are disabled in STOP mode) */
+    /* Configure system clock after wake-up from STOP: enable MSI, PLL and select
+    MSI as system clock source (MSI and PLL are disabled in STOP mode) */
     SYSCLKConfig_STOP();
-    
-  /* Re-configure and turn on LED2  */
-  BSP_LED_Init(LED2 ); 
-  BSP_LED_On(LED2 );   
-  
+
+    /* Re-configure LED2 */
+    /* Note: LED state is controlled in function "HAL_SYSTICK_Callback" */
+    BSP_LED_Init(LED2);
+
   }
   /* USER CODE END 3 */
 }
@@ -200,7 +211,8 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
@@ -217,7 +229,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers 
+  /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
                               |RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -233,7 +245,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the peripherals clocks 
+  /** Initializes the peripherals clocks
   */
   /* USER CODE BEGIN Smps */
 
@@ -255,7 +267,7 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
-  /** Initialize RTC Only 
+  /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
   hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
@@ -264,6 +276,7 @@ static void MX_RTC_Init(void)
   hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
   hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
   if (HAL_RTC_Init(&hrtc) != HAL_OK)
   {
     Error_Handler();
@@ -277,8 +290,8 @@ static void MX_RTC_Init(void)
 /* USER CODE BEGIN 4 */
 
 /**
-  * @brief  Configures system clock after wake-up from STOP: enable HSE, PLL
-  *         and select PLL as system clock source.
+  * @brief  Configures system clock after wake-up from STOP: enable MSI, PLL
+  *         and select MSI as system clock source.
   * @param  None
   * @retval None
   */
@@ -291,9 +304,9 @@ void SYSCLKConfig_STOP(void)
   /* Get the Oscillators configuration according to the internal RCC registers */
   HAL_RCC_GetOscConfig(&RCC_OscInitStruct);
 
-  /* After wake-up from STOP reconfigure the system clock: Enable HSE and PLL */
-  RCC_OscInitStruct.OscillatorType  = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState        = RCC_HSE_ON;
+  /* After wake-up from STOP reconfigure the system clock: Enable MSI and PLL */
+  RCC_OscInitStruct.OscillatorType  = RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.MSIState        = RCC_MSI_ON;
   RCC_OscInitStruct.PLL.PLLState    = RCC_PLL_ON;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -303,17 +316,14 @@ void SYSCLKConfig_STOP(void)
   /* Get the Clocks configuration according to the internal RCC registers */
   HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &pFLatency);
 
-  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2
-     clocks dividers */
+  /* Select MSI as system clock source */
   RCC_ClkInitStruct.ClockType     = RCC_CLOCKTYPE_SYSCLK;
-  RCC_ClkInitStruct.SYSCLKSource  = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.SYSCLKSource  = RCC_SYSCLKSOURCE_MSI;
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, pFLatency) != HAL_OK)
   {
     Error_Handler();
   }
 }
-
-
 
 /**
   * @brief SYSTICK callback
@@ -322,8 +332,6 @@ void SYSCLKConfig_STOP(void)
   */
 void HAL_SYSTICK_Callback(void)
 {
-
-
   if (TimingDelay != 0)
   {
     TimingDelay--;
@@ -363,7 +371,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

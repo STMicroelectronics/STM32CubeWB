@@ -21,8 +21,8 @@
 
 @par Example Description 
 
-How to handle multiple I2C data buffer transmission/reception between two boards, 
-using an interrupt.
+How to handle several I2C data buffer transmission/reception between
+a master and a slave device, using an interrupt.
 
 Board: P-NUCLEO-WB55 (embeds a STM32WB55RG device)
 SCL Pin: PB8 (CN10, pin3)

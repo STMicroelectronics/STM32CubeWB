@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_OCCUP_H
 # define ZCL_OCCUP_H
@@ -37,20 +37,20 @@
 
 #include "zcl/zcl.h"
 
-/* Power Configuration Cluster Attributes */
-enum {
-    ZCL_OCC_ATTR_OCCUPANCY = 0x0000, /* R- mandatory! */
-    ZCL_OCC_ATTR_SENSORTYPE = 0x0001, /* R- mandatory! */
-    ZCL_OCC_ATTR_SENSORTYPE_BITMAP = 0x0002, /* R- mandatory! */
-    ZCL_OCC_ATTR_PIR_OU_DELAY = 0x0010, /* RW */
-    ZCL_OCC_ATTR_PIR_UO_DELAY = 0x0011, /* RW */
-    ZCL_OCC_ATTR_PIR_UO_THRESHOLD = 0x0012, /* RW */
-    ZCL_OCC_ATTR_US_OU_DELAY = 0x0020, /* RW */
-    ZCL_OCC_ATTR_US_UO_DELAY = 0x0021, /* RW */
-    ZCL_OCC_ATTR_US_UO_THRESHOLD = 0x0022, /* RW */
-    ZCL_OCC_ATTR_PHY_OU_DELAY = 0x0030, /* RW */
-    ZCL_OCC_ATTR_PHY_UO_DELAY = 0x0031, /* RW */
-    ZCL_OCC_ATTR_PHY_UO_THRESHOLD = 0x0032, /* RW */
+/** Occupancy Sensing Server Attribute IDs */
+enum ZbZclOccupancySvrAttrT {
+    ZCL_OCC_ATTR_OCCUPANCY = 0x0000,
+    ZCL_OCC_ATTR_SENSORTYPE = 0x0001,
+    ZCL_OCC_ATTR_SENSORTYPE_BITMAP = 0x0002,
+    ZCL_OCC_ATTR_PIR_OU_DELAY = 0x0010,
+    ZCL_OCC_ATTR_PIR_UO_DELAY = 0x0011,
+    ZCL_OCC_ATTR_PIR_UO_THRESHOLD = 0x0012,
+    ZCL_OCC_ATTR_US_OU_DELAY = 0x0020,
+    ZCL_OCC_ATTR_US_UO_DELAY = 0x0021,
+    ZCL_OCC_ATTR_US_UO_THRESHOLD = 0x0022,
+    ZCL_OCC_ATTR_PHY_OU_DELAY = 0x0030,
+    ZCL_OCC_ATTR_PHY_UO_DELAY = 0x0031,
+    ZCL_OCC_ATTR_PHY_UO_THRESHOLD = 0x0032,
 };
 
 #define OCC_SENSOR_PIR                      0x00

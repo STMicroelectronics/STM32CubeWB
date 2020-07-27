@@ -24,7 +24,7 @@
 #define __HTS_APP_H
 
 #ifdef __cplusplus
-extern "C" 
+extern "C"
 {
 #endif
 

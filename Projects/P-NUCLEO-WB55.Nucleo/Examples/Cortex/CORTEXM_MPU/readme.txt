@@ -1,5 +1,5 @@
     /**
-  @page CortexM_MPU Cortex-M4 MPU example
+  @page CORTEXM_MPU Cortex-M4 MPU example
 
   @verbatim
   ******************************************************************************

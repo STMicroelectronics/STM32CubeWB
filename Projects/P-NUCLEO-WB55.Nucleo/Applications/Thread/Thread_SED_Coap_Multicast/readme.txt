@@ -42,7 +42,7 @@ The other device that will act as a SleepyEndDevice can be flashed with this MTD
  
 After the reset of the 2 boards, one board (Device 1) will automatically reach the 
 Leader mode (Green LED2 ON) and the other one (Device 2) will automatically reach the
-Sleepy End Device mode (Red LED3 ON) after a few seconds.
+Sleepy End Device mode (Red LED3 ON*) after a few seconds.
 
 At this stage, these two boards belong to the same Thread network and Device 2 will 
 send every second a Coap request to Device 1 in order to light on/off its blue LED.
@@ -60,11 +60,15 @@ send every second a Coap request to Device 1 in order to light on/off its blue L
   ---------------------------                       ---------------------------
   | Role : SleepyEndDevice  |                       | Role : Leader           |
   |                         |                       |                         |
-  | LED : Red               |                       | LED : Green             |
+  | LED : Red*              |                       | LED : Green             |
   |                         |                       |                         |
   |_________________________|                       |_________________________|
 
 
+(*)Note:
+Thread_SED_Coap_Multicast application is compiled with default following configuration in app_conf.h: #define CFG_FULL_LOW_POWER 1
+The define CFG_FULL_LOW_POWER when set to 1 will not configure resources that have impact on consumption (LED, Traces, Access to Debugger, etc...)  
+If you set CFG_FULL_LOW_POWER 0 and recompile, then you should see Red LED switching on.
        
 @par Keywords
 
@@ -159,15 +163,6 @@ In order to make the program work, you must do the following:
     - Stop Bit = 1 bit
     - Parity = none
     - Flow control = none
-
- Note for addressing the low power :
-  ----------------------------------
- To set the Application in full power mode, it is requested to set the define 
- CFG_FULL_LOW_POWER to 1 inside the app_conf.h file and to recompile the application.
- In this case, the Application is optimized in terms of power consumption.
- In this configuration,in order to save power,the LEDs are always powered off,
- the debugger cannot be attached any more to the target and there are no more traces.
-
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

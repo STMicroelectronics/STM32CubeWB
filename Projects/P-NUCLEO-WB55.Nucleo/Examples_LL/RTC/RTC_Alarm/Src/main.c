@@ -156,6 +156,7 @@ void Configure_RTC(void)
     /*##-3- Enable RTC peripheral Clocks #######################################*/
     /* Enable RTC Clock */
     LL_RCC_EnableRTC();
+    LL_APB2_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_RTCAPB);
   }
 #elif defined(RTC_CLOCK_SOURCE_LSI)
   if (LL_RCC_LSI1_IsReady() == 0)
@@ -185,6 +186,7 @@ void Configure_RTC(void)
     /*##-3- Enable RTC peripheral Clocks #######################################*/
     /* Enable RTC Clock */
     LL_RCC_EnableRTC();
+    LL_APB2_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_RTCAPB);
   }
 
 #else
@@ -470,7 +472,7 @@ void SystemClock_Config(void)
   LL_RCC_HSI_Enable();
   while(LL_RCC_HSI_IsReady() != 1)
   {
-  };
+  }
 
   /* Sysclk activation on the HSI */
   /* Set CPU1 prescaler*/
@@ -482,7 +484,7 @@ void SystemClock_Config(void)
   LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
   while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
   {
-  };
+  }
 
   /* Set AHB SHARED prescaler*/
   LL_RCC_SetAHB4Prescaler(LL_RCC_SYSCLK_DIV_1);
@@ -497,7 +499,7 @@ void SystemClock_Config(void)
   LL_RCC_MSI_Disable();
   while(LL_RCC_MSI_IsReady() != 0)
   {
-  };
+  }
 
   /* Set systick to 1ms in using frequency set to 16MHz */
   LL_Init1msTick(16000000);

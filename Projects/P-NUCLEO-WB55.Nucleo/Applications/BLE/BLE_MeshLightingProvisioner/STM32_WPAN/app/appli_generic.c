@@ -62,7 +62,10 @@ MOBLE_RESULT Appli_Generic_Delta_Set(Generic_LevelStatus_t* pdeltalevelParam,
                                      MOBLEUINT8 OptionalValid);
 /* Private functions ---------------------------------------------------------*/
 
+/******************************************************************************/
 #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF
+/******************************************************************************/
+
 /**
 * @brief  Appli_Generic_OnOff_Set: This function is callback for Application
 *          when Generic OnOff message is received
@@ -129,6 +132,10 @@ MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam,
 }
 
 
+/******************************************************************************/
+#endif  /* #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF */
+/******************************************************************************/
+
 
 /**
 * @brief  Appli_Generic_OnOff_Status: This function is callback for Application
@@ -150,16 +157,17 @@ MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUI
       TRACE_M(TF_SERIAL_CTRL,"Present OnOff value: %d\n\r", pOnOff_status[i]);
     else if(i == 1)
       TRACE_M(TF_SERIAL_CTRL,"Target OnOff value: %d\n\r", pOnOff_status[i]);
-    else if(i == 1)
+    else if(i == 2)
       TRACE_M(TF_SERIAL_CTRL,"Remaining Time value: %d\n\r", pOnOff_status[i]);
   }
   
   return MOBLE_RESULT_SUCCESS;
 }
 
-#endif
-
+/******************************************************************************/
 #ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL
+/******************************************************************************/
+
 /**
 * @brief  Appli_Generic_Level_Set: This function is callback for Application
 *          when Generic Level message is received
@@ -246,6 +254,7 @@ MOBLE_RESULT Appli_Generic_Delta_Set(Generic_LevelStatus_t* pdeltalevelParam,
     BSP_LED_Off(LED_BLUE);
   }
   TRACE_M(TF_SERIAL_CTRL,"#8206!\n\r");
+  
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -260,16 +269,23 @@ MOBLE_RESULT Appli_Generic_Delta_Set(Generic_LevelStatus_t* pdeltalevelParam,
 MOBLE_RESULT Appli_Generic_Move_Set(Generic_LevelStatus_t* pdeltaMoveParam, 
                                                MOBLEUINT8 OptionalValid)
 {
+  AppliLevelSet.Last_delta_level     = pdeltaMoveParam->Last_delta_level;
+  AppliLevelSet.Last_Level_TID       = pdeltaMoveParam->Last_Level_TID;
+  AppliLevelSet.Last_Present_Level16 = pdeltaMoveParam->Last_Present_Level16;
+  AppliLevelSet.Present_Level16      = pdeltaMoveParam->Present_Level16;
+  AppliLevelSet.RemainingTime        = pdeltaMoveParam->RemainingTime;
+  AppliLevelSet.Target_Level16       = pdeltaMoveParam->Target_Level16;
   
-  if(OptionalValid == 1)
-  {
-    AppliLevelSet.Present_Level16= pdeltaMoveParam->Present_Level16;   
-  }
    TRACE_M(TF_SERIAL_CTRL,"#8206!\n\r");
   
   return MOBLE_RESULT_SUCCESS;
   
 }
+
+/******************************************************************************/
+#endif   /* ENABLE_GENERIC_MODEL_SERVER_LEVEL */
+/******************************************************************************/
+
   /**
 * @brief  Appli_Generic_Level_Status: This function is callback for Application
 *          when Generic Level Move message is received
@@ -277,19 +293,41 @@ MOBLE_RESULT Appli_Generic_Move_Set(Generic_LevelStatus_t* pdeltaMoveParam,
 * @param  plength: length of data 
 * @retval MOBLE_RESULT
 */
-MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8 const *plevel_status, MOBLEUINT32 plength)
+MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8 const *plevel_status, 
+                                        MOBLEUINT32 plength)
 {
+#ifdef CFG_DEBUG_TRACE
+  MOBLEUINT8 i;
+  MOBLEUINT8 level = 0;
+#endif  
   
   TRACE_M(TF_GENERIC,"Generic_Level_Status callback received \r\n");
   
   TRACE_M(TF_SERIAL_CTRL,"#8208! \n\r");
       
+#ifdef CFG_DEBUG_TRACE
+  for(i = 0; i < plength; i++)
+  {
+    if((i == 0) || (i == 2))
+      level = plevel_status[i];
+    else if(i == 1)
+      TRACE_M(TF_GENERIC,"Present Level value: %d\n\r", 
+              (plevel_status[i]<<8)|level);
+    else if(i == 3)
+      TRACE_M(TF_GENERIC,"Target Level value: %d\n\r", 
+              (plevel_status[i]<<8)|level);
+    else if(i == 4)
+      TRACE_M(TF_GENERIC,"Remaining Time value: %d\n\r", plevel_status[i]);
+  }
+#endif  
   return MOBLE_RESULT_SUCCESS;
 }
-#endif   /* ENABLE_GENERIC_MODEL_SERVER_LEVEL */
 
  
+/******************************************************************************/
 #ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF
+/******************************************************************************/
+ 
 /**
 * @brief  Appli_Generic_PowerOnOff_Set: This function is callback for Application
 *           when Generic Power on off set message is received
@@ -311,6 +349,11 @@ MOBLE_RESULT Appli_Generic_PowerOnOff_Set(Generic_PowerOnOffParam_t* pPowerOnOff
     
   return MOBLE_RESULT_SUCCESS;
 }
+
+/******************************************************************************/
+#endif  /* ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF */
+/******************************************************************************/
+
 /**
 * @brief  Appli_Generic_PowerOnOff_Set: This function is callback for Application
 *           when Generic Power on off set message is received
@@ -318,19 +361,30 @@ MOBLE_RESULT Appli_Generic_PowerOnOff_Set(Generic_PowerOnOffParam_t* pPowerOnOff
 * @param  plength: length of data 
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Appli_Generic_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , MOBLEUINT32 plength) 
+MOBLE_RESULT Appli_Generic_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , 
+                                             MOBLEUINT32 plength) 
 {  
+  MOBLEUINT8 i;
 
   TRACE_M(TF_GENERIC,"Generic_PowerOnOff_Status callback received \r\n"); 
   
   TRACE_M(TF_SERIAL_CTRL,"#8212! \n\r");
 
+  for(i = 0; i < plength; i++)
+  {
+    if(i == 0)
+      TRACE_M(TF_SERIAL_CTRL,"On Power up value: %d\n\r", 
+              powerOnOff_status[i]);
+  }
+
   return MOBLE_RESULT_SUCCESS;
 }
-#endif  /* ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF */
 
 
+/******************************************************************************/
 #ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME
+/******************************************************************************/
+
 /**
 * @brief  Appli_Generic_DefaultTransitionTime_Set: This function is callback for Application
 *          when Generic Power on off set message is received
@@ -347,6 +401,12 @@ MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Set(Generic_DefaultTransitionPa
   return MOBLE_RESULT_SUCCESS;
 }
 
+
+/******************************************************************************/
+#endif   /* ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME */
+/******************************************************************************/
+
+
 /**
 * @brief  Appli_Generic_DefaultTransitionTime_Status: This function is callback for Application
 *          when Generic Power on off set message is received
@@ -354,7 +414,8 @@ MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Set(Generic_DefaultTransitionPa
 * @param  plength: length of data 
 * @retval MOBLE_RESULT
 */
-MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , MOBLEUINT32 plength) 
+MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , 
+                                                        MOBLEUINT32 plength) 
 {  
 
   TRACE_M(TF_GENERIC,"Generic_DefaultTransitionTime_Status callback received \r\n");
@@ -363,7 +424,7 @@ MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Status(MOBLEUINT8 const *pTrans
   
   return MOBLE_RESULT_SUCCESS;
 }
-#endif   /* ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME */
+
 
 
 /**
@@ -410,8 +471,10 @@ MOBLE_RESULT Appli_Generic_GetLevelStatus(MOBLEUINT8* pLevel_Status)
 { 
    *pLevel_Status = AppliLevelSet.Present_Level16;
    *(pLevel_Status+1) = AppliLevelSet.Present_Level16 >> 8;
-  TRACE_M(TF_SERIAL_CTRL,"Generic Get Level Status: Value %d!\n\r",
-          *pLevel_Status);
+   *(pLevel_Status+2) = AppliLevelSet.Target_Level16;
+   *(pLevel_Status+3) = AppliLevelSet.Target_Level16 >> 8;
+//  TRACE_M(TF_SERIAL_CTRL,"Generic Get Level Status: Value %d!\n\r",
+//          *pLevel_Status);
   return MOBLE_RESULT_SUCCESS; 
 }
 

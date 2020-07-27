@@ -1,5 +1,5 @@
 /**
-  @page UART_Hyperterminal_IT UART Hyperterminal IT example (HAL/LL mixed usage example)
+  @page UART_HyperTerminal_IT UART Hyperterminal IT example (HAL/LL mixed usage example)
 
   @verbatim
   ******************************************************************************

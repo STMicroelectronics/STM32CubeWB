@@ -1,5 +1,5 @@
 /**
-  @page PWR_Standby PWR_STANDBY_RTC example
+  @page PWR_STANDBY_RTC PWR_STANDBY_RTC example
 
   @verbatim
   ******************************************************************************

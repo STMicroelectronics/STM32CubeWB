@@ -1,9 +1,9 @@
 /**
-  @page DMAMUX_RequestGen DMA & DMAMUX request generator Example
+  @page DMA_MUX_RequestGen DMA & DMAMUX request generator Example
   
   @verbatim
   ******************************************************************************
-  * @file    DMA/DMAMUX_RequestGen/readme.txt 
+  * @file    DMA/DMA_MUX_RequestGen/readme.txt 
   * @author  MCD Application Team
   * @brief   Description of the DMA & request generator Example.
   ******************************************************************************
@@ -43,7 +43,7 @@ with the following parameters :
 - Polarity  : Set to RISING to use rising edge the External line 4 for DMA requests generation.
 - RequestNumber : 1 i.e on each rising edge of the External line 4 signal a DMA request is generated.
 
-The DMA request generator is then enabled using function HAL_DMAEx_EnableMuxRequestGenerator.
+The DMA request generator is then enabled using function "HAL_DMAEx_EnableMuxRequestGenerator".
 
 The function BSP_PB_Init is then used to configure the PC.04 pin to  
 external Interrupt Mode with Rising edge trigger detection. 
@@ -74,21 +74,21 @@ P-NUCLEO-WB55 board's LEDs can be used to monitor the transfer status:
 	  
 @par Keywords
 
-System, DMA, Data Transfer, Memory to memory, Stream, Flash
+System, DMA, Data Transfer, Memory to memory, Channel, Flash
 
 @par Directory contents 
 
   - DMA/DMAMUX_RequestGen/Inc/stm32wbxx_hal_conf.h    HAL configuration file
   - DMA/DMAMUX_RequestGen/Inc/stm32wbxx_it.h          DMA interrupt handlers header file
-  - DMA/DMAMUX_RequestGen/Inc/main.h                        Header for main.c module  
+  - DMA/DMAMUX_RequestGen/Inc/main.h                  Header for main.c module  
   - DMA/DMAMUX_RequestGen/Src/stm32wbxx_it.c          DMA interrupt handlers
-  - DMA/DMAMUX_RequestGen/Src/main.c                        Main program
-  - DMA/DMAMUX_RequestGen/Src/system_stm32wbxx.c      FAMILYNAME_UC system source file
+  - DMA/DMAMUX_RequestGen/Src/main.c                  Main program
+  - DMA/DMAMUX_RequestGen/Src/system_stm32wbxx.c      STM32WBxx system source file
   - DMA/DMAMUX_RequestGen/Src/stm32wbxx_hal_msp.c     HAL MSP module
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

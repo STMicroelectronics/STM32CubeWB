@@ -94,7 +94,7 @@ Device's end address is the end address of the flash memory and it is dependent 
 
 @par Keywords
 
-Middleware, USB Device, DFU, Firmware upgrade
+Connectivity, USB_Device, USB, DFU, Firmware upgrade
 
 @par Directory contents
 
@@ -139,7 +139,10 @@ In order to make the program work, you must do the following:
  - To run the application, proceed as follows:
    - Install "DfuSe Demonstrator"
    - Install the DFU driver available in "DfuSe Demonstrator" installation directory
-   - Open "DfuSe Demo", choose the "stm32wbxx_usb_dongle_LED_Toggle_@0x0800C000.dfu" provided in Binary
+   - For Windows 8.1 and later : Update STM32 DFU device driver manually from Windows Device Manager.
+     The install of required device driver is available under:
+     "Program Files\STMicroelectronics\Software\DfuSe v3.0.6\Bin\Driver\Win8.1" directory.
+   - Open "DfuSe Demo", choose the "P-NUCLEO-WB55.USBDongle_LED_Toggle_@0x0800C000.dfu" provided in Core\Binary
      directory, upgrade and verify to check that it is successfully downloaded.
    - This application allows also to upload a dfu file (either the provided DFU file or by creating a new dfu file).
      To check that the upload was successfully performed, choose the dfu uploaded file, upgrade and verify.

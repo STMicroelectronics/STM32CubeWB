@@ -1,4 +1,9 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zigbee.nwk.h
+ * @brief NWK header file
+ * @author Exegin Technologies
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZIGBEE_NWK_H
 # define ZIGBEE_NWK_H
@@ -666,17 +671,24 @@ typedef struct ZbNwkBttEntryT {
     ZbUptimeT expireTime; /* expiration time relative to ZbUptime. */
 } ZbNwkBttEntryT;
 
-/* Commissioning API (so we don't have to expose the wpan_set_xxx() API */
+/** Commissioning configuration. */
 struct ZbNwkCommissioningInfo {
-    uint8_t ifc_index;
-    uint16_t nwk_addr;
-    uint16_t pan_id;
-    uint8_t rx_on;
-    uint8_t page;
-    uint8_t channel;
+    uint8_t ifc_index; /**< NWK interface index. Starts at 0. */
+    uint16_t nwk_addr; /**< Network Address to configure (default is ZB_NWK_ADDR_UNDEFINED) */
+    uint16_t pan_id; /**< PAN Id to configure (default is ZB_NWK_ADDR_UNDEFINED) */
+    uint8_t rx_on; /**< Configures RxOnWhenIdle to MAC */
+    uint8_t page; /**< Channge Page to configure */
+    uint8_t channel; /**< Channel to configure */
 };
 
-/* ifcIndex should be 0. */
+/**
+ * Configures the MAC interface to be able to send and receive commissioning InterPAN packets.
+ * This API is provided so the stack doesn't need to expose the MLME-SET API.
+ * This should be called before the stack has been started (i.e. ZbStartup).
+ * @param zb Zigbee instance.
+ * @param commission_info Pointer to commissioning configuration data structure.
+ * @return True if configuration was successfully applied, false otherwise.
+ */
 bool ZbNwkCommissioningConfig(struct ZigBeeT *zb, struct ZbNwkCommissioningInfo *commission_info);
 
 /* NLME-GET.request */

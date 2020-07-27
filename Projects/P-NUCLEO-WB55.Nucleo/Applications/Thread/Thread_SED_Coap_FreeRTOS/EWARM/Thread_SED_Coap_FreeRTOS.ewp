@@ -121,7 +121,7 @@
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OGUseCmsisDspLib</name>
@@ -214,13 +214,16 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
+                    <name>CCOptimizationNoSizeConstraints</name>
+                    <state>0</state>
+                </option>
+                <option>
                     <name>CCDefines</name>
                     <state>CORE_CM4</state>
                     <state>USE_HAL_DRIVER</state>
                     <state>USE_STM32WBXX_NUCLEO</state>
                     <state>THREAD_WB</state>
                     <state>STM32WB55xx</state>
-                    <state>ST_OT_DEBUG</state>
                     <state>OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_mtd.h&gt;</state>
                 </option>
                 <option>
@@ -282,7 +285,7 @@
                 <option>
                     <name>CCAllowList</name>
                     <version>1</version>
-                    <state>00000000</state>
+                    <state>11111110</state>
                 </option>
                 <option>
                     <name>CCDebugInfo</name>
@@ -310,7 +313,7 @@
                 </option>
                 <option>
                     <name>CCSignedPlainChar</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCRequirePrototypes</name>
@@ -346,34 +349,31 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Inc</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Device\ST\STM32WBxx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo\</state>
-                    <state>$PROJ_DIR$\..\Core\Inc</state>
-                    <state>$PROJ_DIR$\..\STM32_WPAN\App</state>
-                    <state>$PROJ_DIR$\..\STM32_WPAN\Target</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\include\openthread</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Utilities\lpm\tiny_lpm</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\shci</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\vcp</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Class\CDC\Inc</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Core\Inc</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\Third_Party\FreeRTOS\Source\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\Third_Party\FreeRTOS\Source\portable\IAR\ARM_CM4F</state>
-                    <state>$PROJ_DIR$/../tiny_lpm</state>
-                    <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo</state>
+                    <state>$PROJ_DIR$/../Core/Inc</state>
+                    <state>$PROJ_DIR$/../STM32_WPAN/App</state>
+                    <state>$PROJ_DIR$/../STM32_WPAN/Target</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/vcp</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST\STM32_USB_Device_Library/Class/CDC/Inc</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST\STM32_USB_Device_Library/Core/Inc</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/Third_Party/FreeRTOS/Source/include</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/Third_Party/FreeRTOS/Source/portable/IAR/ARM_CM4F</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -389,7 +389,7 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
@@ -398,7 +398,7 @@
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules98</name>
@@ -448,10 +448,6 @@
                 </option>
                 <option>
                     <name>IccFloatSemantics</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>CCOptimizationNoSizeConstraints</name>
                     <state>0</state>
                 </option>
                 <option>
@@ -539,7 +535,7 @@
                 </option>
                 <option>
                     <name>ADebug</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>AltRegisterNames</name>
@@ -1064,88 +1060,70 @@
             <name>User</name>
             <group>
                 <name>Core</name>
-                <group>
-                    <name>src</name>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\freertos_port.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\hw_uart.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\main.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_timebase_tim.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\stm_logging.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\Core\Src\system_stm32wbxx.c</name>
-                    </file>
-                </group>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
+                </file>
                 <file>
                     <name>$PROJ_DIR$\..\Core\Src\app_freertos.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\freertos_port.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\hw_uart.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\main.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_timebase_tim.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\stm_logging.c</name>
                 </file>
             </group>
             <group>
                 <name>STM32_WPAN</name>
                 <group>
-                    <name>app</name>
+                    <name>App</name>
                     <file>
                         <name>$PROJ_DIR$\..\STM32_WPAN\App\app_thread.c</name>
                     </file>
                 </group>
                 <group>
-                    <name>App</name>
-                </group>
-                <group>
-                    <name>target</name>
+                    <name>Target</name>
                     <file>
                         <name>$PROJ_DIR$\..\STM32_WPAN\Target\hw_ipcc.c</name>
                     </file>
                 </group>
-                <group>
-                    <name>Target</name>
-                </group>
             </group>
         </group>
-    </group>
-    <group>
-        <name>Doc</name>
-        <file>
-            <name>$PROJ_DIR$\..\readme.txt</name>
-        </file>
     </group>
     <group>
         <name>Drivers</name>
         <group>
             <name>BSP</name>
-            <group>
-                <name>P-NUCLEO-WB55.Nucleo</name>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo\stm32wbxx_nucleo.c</name>
-                </file>
-            </group>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo\stm32wbxx_nucleo.c</name>
+            </file>
         </group>
         <group>
             <name>CMSIS</name>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\system_stm32wbxx.c</name>
+            </file>
         </group>
         <group>
             <name>STM32WBxx_HAL_Driver</name>
@@ -1220,9 +1198,6 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart_ex.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_usb.c</name>
             </file>
         </group>
     </group>
@@ -1366,9 +1341,6 @@
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\netdata.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\network_time.cpp</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\openthread.c</name>

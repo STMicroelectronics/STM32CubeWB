@@ -82,6 +82,7 @@ typedef enum {
     MSG_M4TOM0_STARTUP_REJOIN, /* ZbStartupRejoin */
     MSG_M0TOM4_STARTUP_REJOIN_CB, /* Callback for ZbStartupRejoin */
     MSG_M4TOM0_STARTUP_PERSIST, /* ZbStartupPersist */
+    MSG_M0TOM4_STARTUP_PERSIST_CB,
     MSG_M4TOM0_STARTUP_FINDBIND, /* ZbStartupFindBindStart */
     MSG_M0TOM4_STARTUP_FINDBIND_CB,
     MSG_M4TOM0_STARTUP_TOUCHLINK_TARGET_STOP, /* ZbStartupTouchlinkTargetStop */
@@ -161,10 +162,10 @@ typedef enum {
     /* APS Endpoint */
     MSG_M4TOM0_APS_FILTER_ENDPOINT_ADD, /* ZbApsFilterEndpointAdd */
     MSG_M0TOM4_APS_FILTER_ENDPOINT_CB,
-    MSG_M4TOM0_APS_FILTER_ENDPOINT_NOMATCH_ADD, /* ZbApsmeEndpointConfigNoMatchCallback */
     /* NoMatch filter callbacks go through MSG_M0TOM4_APS_FILTER_ENDPOINT_CB, since parameters are the same. */
     MSG_M4TOM0_APS_FILTER_CLUSTER_ADD, /* ZbApsFilterClusterAdd */
     MSG_M0TOM4_APS_FILTER_CLUSTER_CB,
+    MSG_M4TOM0_APS_FILTER_REMOVE, /* ZbApsFilterEndpointFree */
     MSG_M4TOM0_APS_EP_CLUSTER_ID_ADD, /* ZbApsmeEndpointClusterListAppend */
     MSG_M4TOM0_APS_EP_EXISTS, /* ZbApsEndpointExists */
     MSG_M4TOM0_APS_EP_GET_PROFILE, /* ZbApsEndpointProfile */
@@ -270,7 +271,7 @@ typedef enum {
     MSG_M4TOM0_ZCL_BASIC_SERVER_LOCAL_WRITE, /* ZbZclBasicWriteDirect */
     MSG_M4TOM0_ZCL_BASIC_SERVER_CONFIG_DEFAULTS, /* ZbZclBasicServerConfigDefaults */
     /* ZCL Diagnostics Server */
-    MSG_M4TOM0_ZCL_DIAG_SERVER_ALLOC, /* ZbZclDiagnosticsServerAlloc */
+    MSG_M4TOM0_ZCL_DIAG_SERVER_ALLOC, /* ZbZclDiagServerAlloc */
     /* Reserved to 0x04ff for Future Use */
 
     /* Reserved to 0x0fff for Future Use */

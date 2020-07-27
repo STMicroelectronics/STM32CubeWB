@@ -59,6 +59,11 @@ typedef struct
 typedef struct
 {
   MOBLEINT16 Present_Level16; 
+  MOBLEINT16 Target_Level16;
+  MOBLEUINT8 RemainingTime;
+  MOBLEUINT8 Last_Level_TID;
+  MOBLEINT16 Last_Present_Level16;  
+  MOBLEINT32 Last_delta_level;
 }Appli_Generic_LevelSet;
 
 typedef struct

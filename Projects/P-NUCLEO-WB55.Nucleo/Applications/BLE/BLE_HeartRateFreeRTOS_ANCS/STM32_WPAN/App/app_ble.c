@@ -18,7 +18,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -165,11 +164,15 @@ typedef struct _tBLEProfileGlobalContext
 typedef struct
 {
   BleGlobalContext_t BleApplicationContext_legacy;
-   APP_BLE_ConnStatus_t Device_Connection_Status;
+  APP_BLE_ConnStatus_t Device_Connection_Status;
   uint16_t connection_handle;
   uint8_t Peer_Bonded;
   uint8_t Peer_Address_Type;
   uint8_t Peer_Address[6];
+  uint8_t Security_Request;
+  uint8_t Security_Mode;
+  uint8_t Security_Level;
+  
    /**
    * ID of the Advertising Timeout
    */
@@ -177,7 +180,15 @@ typedef struct
 
 }BleApplicationContext_t;
 /* USER CODE BEGIN PTD */
-  
+typedef enum
+{
+  GAP_PROC_TERMINATE_CONNECTION,
+  GAP_PROC_SLAVE_SECURITY_REQ,
+  GAP_PROC_PASS_KEY_RESPONSE,
+  GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM,
+  GAP_PROC_ALLOW_REBOND,
+} GapProcId_t;
+
 /* USER CODE END PTD */
 
 /* Private defines -----------------------------------------------------------*/
@@ -189,6 +200,11 @@ typedef struct
 
 /* USER CODE BEGIN PD */
 #define LED_ON_TIMEOUT                 (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */
+
+/**
+ * The default GAP command timeout is set to 30s
+ */
+#define GAP_DEFAULT_TIMEOUT (30000)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -257,6 +273,7 @@ uint8_t  manuf_data[14] = {
 /* Global variables ----------------------------------------------------------*/
 osMutexId_t MtxHciId;
 osSemaphoreId_t SemHciId;
+osSemaphoreId_t SemGapId;
 osThreadId_t AdvUpdateProcessId;
 osThreadId_t HciUserEvtProcessId;
 
@@ -298,7 +315,9 @@ static void AdvUpdateProcess(void *argument);
 static void Adv_Update( void );
 
 /* USER CODE BEGIN PFP */
-
+static void gap_cmd_resp_wait(uint32_t timeout);
+static void gap_cmd_resp_release(uint32_t flag);
+static void GapProcReq(GapProcId_t GapProcId);
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -449,7 +468,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH CLIENT disconnection Reason=0x%02X Connection terminated by local host \n\r",disconnection_complete_event->Reason);
         }else if(disconnection_complete_event->Reason == HCI_CONNECTION_TERMINATED_DUE_TO_MIC_FAILURE_ERR_CODE){
           APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH CLIENT disconnection Reason=0x%02X Connection terminated due to MIC failure \n\r",disconnection_complete_event->Reason);
-          ANCS_App_Remove_Bonding_Info();
+          APP_BLE_Remove_Bonding_Info();
         }else{
           APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH CLIENT disconnection Reason=0x%02X \n\r",disconnection_complete_event->Reason);
         }
@@ -457,6 +476,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         Notification.Evt_Opcode = ANCS_DISCONN_COMPLETE;
         Notification.connection_handle = disconnection_complete_event->Connection_Handle;
         ANCS_App_Notification(&Notification);
+        gap_cmd_resp_release(0);
       }
 
       /* restart advertising */
@@ -564,7 +584,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           BleApplicationContext.Peer_Address[2] = connection_complete_event->Peer_Address[2];
           BleApplicationContext.Peer_Address[1] = connection_complete_event->Peer_Address[1];
           BleApplicationContext.Peer_Address[0] = connection_complete_event->Peer_Address[0];
-	   ANCS_App_Peer_Bonded_Check(connection_complete_event->Connection_Handle, connection_complete_event->Peer_Address_Type, connection_complete_event->Peer_Address);
+          APP_BLE_Peer_Bonded_Check();
 		  
           Notification.Evt_Opcode = ANCS_CONNECTED;
           Notification.connection_handle = connection_complete_event->Connection_Handle;
@@ -599,10 +619,8 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       case EVT_BLUE_GAP_PASS_KEY_REQUEST:  
       {
         aci_gap_pass_key_req_event_rp0 *gap_evt_pass_key_req = (aci_gap_pass_key_req_event_rp0*) blue_evt->data;
-        APP_DBG_MSG("EVT_BLUE_GAP_PASS_KEY_REQUEST ==> ANCS_PASS_KEY_REQUEST Connection_Handle=0x%04X \n\r",gap_evt_pass_key_req->Connection_Handle);
-        Notification.Evt_Opcode = ANCS_PASS_KEY_REQUEST;
-        Notification.connection_handle= gap_evt_pass_key_req->Connection_Handle;
-        ANCS_App_Notification(&Notification);
+        APP_DBG_MSG("EVT_BLUE_GAP_PASS_KEY_REQUEST ==> GAP_PROC_PASS_KEY_RESPONSE Connection_Handle=0x%04X \n\r",gap_evt_pass_key_req->Connection_Handle);
+        GapProcReq(GAP_PROC_PASS_KEY_RESPONSE);
       }
           break; /* EVT_BLUE_GAP_PASS_KEY_REQUEST */
 
@@ -612,19 +630,15 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
       case EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED: 
       {
-        APP_DBG_MSG("EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED slave security request is successfully sent to the master => ANCS_SECURITY_INITIATED \n");
-        Notification.Evt_Opcode = ANCS_SECURITY_INITIATED;
-        Notification.connection_handle= BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
-        ANCS_App_Notification(&Notification);
+        APP_DBG_MSG("EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED slave security request is successfully sent to the master \n");
+        //gap_cmd_resp_release(0);
       }
           break; /* EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED */
 
       case EVT_BLUE_GAP_BOND_LOST:    
       {
-        APP_DBG_MSG("EVT_BLUE_GAP_BOND_LOST ==> ANCS_ALLOW_REBOND \n\r");
-        Notification.Evt_Opcode = ANCS_ALLOW_REBOND;
-        Notification.connection_handle= BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
-        ANCS_App_Notification(&Notification);
+        APP_DBG_MSG("EVT_BLUE_GAP_BOND_LOST ==> GAP_PROC_ALLOW_REBOND \n\r");
+        GapProcReq(GAP_PROC_ALLOW_REBOND);
       }
           break; /* EVT_BLUE_GAP_BOND_LOST */
 
@@ -644,11 +658,8 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       {
         APP_DBG_MSG(" numeric_value = %d\n", ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
         APP_DBG_MSG(" Hex_value = %x\n", ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
-		
-        APP_DBG_MSG("EVT_BLUE_GAP_NUMERIC_COMPARISON_VALUE ==> ANCS_NUMERIC_COMPARISON_VALUE_CONFIRM \n\r");
-        Notification.Evt_Opcode = ANCS_NUMERIC_COMPARISON_VALUE_CONFIRM;
-        Notification.connection_handle= BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
-        ANCS_App_Notification(&Notification);
+        APP_DBG_MSG("EVT_BLUE_GAP_NUMERIC_COMPARISON_VALUE ==> GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM \n\r");
+        GapProcReq(GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM);
       }
           break;
 
@@ -657,22 +668,50 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
             pairing_complete = (aci_gap_pairing_complete_event_rp0*)blue_evt->data;
 
             APP_DBG_MSG("EVT_BLUE_GAP_PAIRING_CMPLT, Connection_Handle=0x%04X Status=%d Reason=0x%02x \n",pairing_complete->Connection_Handle,pairing_complete->Status,pairing_complete->Reason);
-            if(pairing_complete->Status == SM_PAIRING_SUCCESS){
-              APP_DBG_MSG(" ** Pairing OK \n");
-            }else if(pairing_complete->Status == SM_PAIRING_TIMEOUT){
+            if(pairing_complete->Status == SM_PAIRING_TIMEOUT){
               APP_DBG_MSG(" ** Pairing Timeout Status=%d Reason=0x%02x , \n\r !!! Please ignore this BLE Device on the iOS/Android Device Setting=>Bluetooth=>My Device or Paired Device !!! \n\r",pairing_complete->Status,pairing_complete->Reason);
-              ANCS_App_Remove_Bonding_Info();
+              APP_BLE_Remove_Bonding_Info();
             }else if(pairing_complete->Status == SM_PAIRING_FAILED){
               APP_DBG_MSG(" ** Pairing KO Status=%d Reason=0x%02x , \n\r !!! Please ignore this BLE Device on the iOS/Android Device Setting=>Bluetooth=>My Device or Paired Device !!! \n\r",pairing_complete->Status,pairing_complete->Reason);
-              ANCS_App_Remove_Bonding_Info();
-            }
+              APP_BLE_Remove_Bonding_Info();
+            }else if(pairing_complete->Status == SM_PAIRING_SUCCESS){
+              uint8_t Peer_Bonded,Security_Mode, Security_Level;
+              Peer_Bonded = BleApplicationContext.Peer_Bonded;
+              Security_Mode = BleApplicationContext.Security_Mode;
+              Security_Level = BleApplicationContext.Security_Level;
+        
+              APP_BLE_Peer_Bonded_Check();
+              APP_DBG_MSG("EVT_BLUE_GAP_PAIRING_CMPLT  Peer_Bonded =%d => %d  Security_Mode=%d => %d Security_Level=%d => %d \n\r",
+			  	Peer_Bonded,BleApplicationContext.Peer_Bonded,Security_Mode,BleApplicationContext.Security_Mode,Security_Level,BleApplicationContext.Security_Level);
 
-	    APP_DBG_MSG("EVT_BLUE_GAP_PAIRING_CMPLT ==> ANCS_PAIRING_COMPLETE \n\r");
-          Notification.Evt_Opcode = ANCS_PAIRING_COMPLETE;
-          Notification.connection_handle= pairing_complete->Connection_Handle;
-          ANCS_App_Notification(&Notification);
+              if (Peer_Bonded == 0x00)/* only for the first paring complete*/
+              {		
+                APP_DBG_MSG("Term Connection for the first pairing complete to save bonding infomation !!! \n\r");
+        		 
+                for (int loop=0;loop<10;loop++) /* */
+                {
+                  /* hci_disconnection_complete_event event will be generated when the link is disconnected. 
+                  It is important to leave an 100 ms blank window before sending any new command (including system hardware reset), 
+                  since immediately after @ref hci_disconnection_complete_event event, system could save important information in non volatile memory. */
+                  int cnt = 1000000;
+                  while(cnt--);
+                  printf(".\n\r");
+                }
+        		 
+                ret = aci_gap_terminate(BleApplicationContext.connection_handle, 0x13);
+                if (ret == BLE_STATUS_SUCCESS)
+                {
+                  Notification.Evt_Opcode = ANCS_DISCONNECTING;
+                  ANCS_App_Notification(&Notification);
+                }		 
+              }
+            } /* SM_PAIRING_SUCCESS */
+
+	     if(BleApplicationContext.Security_Request == 0x01)
+             gap_cmd_resp_release(0);
+
           }
-           break;    
+           break; /* EVT_BLUE_GAP_PAIRING_CMPLT */
 
         case EVT_BLUE_GATT_PROCEDURE_COMPLETE:
         APP_DBG_MSG(" ** EVT_BLUE_GATT_PROCEDURE_COMPLETE \n");
@@ -708,7 +747,9 @@ APP_BLE_ConnStatus_t APP_BLE_Get_Server_Connection_Status(void)
 /* USER CODE BEGIN FD*/
 void APP_BLE_Key_Button1_Action(void)
 {
-  ANCS_App_KeyButton1Action();
+  //ANCS_App_KeyButton1Action();
+  APP_DBG_MSG("\n\r ** Term CONNECTION **  \n\r");
+  aci_gap_terminate(BleApplicationContext.connection_handle, 0x13);
 }
 
 void APP_BLE_Key_Button2_Action(void)
@@ -718,7 +759,11 @@ void APP_BLE_Key_Button2_Action(void)
   
 void APP_BLE_Key_Button3_Action(void)
 {
-  ANCS_App_KeyButton3Action();
+  //ANCS_App_KeyButton3Action();
+  APP_DBG_MSG(" aci_gap_clear_security_db & aci_gap_remove_bonded_device & aci_gap_terminate \n\r");
+  aci_gap_remove_bonded_device(BleApplicationContext.Peer_Address_Type,BleApplicationContext.Peer_Address);
+  aci_gap_clear_security_db();
+  aci_gap_terminate(BleApplicationContext.connection_handle, 0x13);
 }
 
 /* USER CODE END FD*/
@@ -733,6 +778,7 @@ static void Ble_Tl_Init( void )
 
   MtxHciId = osMutexNew( NULL );
   SemHciId = osSemaphoreNew( 1, 0, NULL ); /*< Create the semaphore and make it busy at initialization */
+  SemGapId = osSemaphoreNew( 1, 0, NULL ); /*< Create the semaphore and make it busy at initialization */
 
   Hci_Tl_Init_Conf.p_cmdbuffer = (uint8_t*)&BleCmdBuffer;
   Hci_Tl_Init_Conf.StatusNotCallBack = BLE_StatusNot;
@@ -1058,18 +1104,15 @@ static void Add_Advertisment_Service_UUID( uint16_t servUUID )
 static void Adv_Mgr( void )
 {
   /**
-   * The code shall be executed in the background as an aci command may be sent
-   * The background is the only place where the application can make sure a new aci command
-   * is not sent if there is a pending one
-   */
-
+  * The code shall be executed in the background as an aci command may be sent
+  * The background is the only place where the application can make sure a new aci command
+  * is not sent if there is a pending one
+  */
   osThreadFlagsSet( AdvUpdateProcessId, 1 );
 
   
-
   return;
 }
-
 
 static void AdvUpdateProcess(void *argument)
 {
@@ -1102,6 +1145,136 @@ static void HciUserEvtProcess(void *argument)
 
 /* USER CODE BEGIN FD_SPECIFIC_FUNCTIONS */
 
+void APP_BLE_Peer_Bonded_Check(void)
+{
+  tBleStatus result = BLE_STATUS_SUCCESS;
+  uint8_t Security_Mode, Security_Level;
+
+  result = aci_gap_is_device_bonded(BleApplicationContext.Peer_Address_Type,BleApplicationContext.Peer_Address);
+  if (result == BLE_STATUS_SUCCESS)
+  {
+    BleApplicationContext.Peer_Bonded = 0x01;
+  }
+  else 
+  {
+    BleApplicationContext.Peer_Bonded = 0x00;
+  }
+    
+  result = aci_gap_get_security_level(BleApplicationContext.connection_handle,&Security_Mode,&Security_Level);
+  BleApplicationContext.Security_Mode = Security_Mode;
+  BleApplicationContext.Security_Level = Security_Level;
+  if (result == BLE_STATUS_SUCCESS)
+  {
+  APP_DBG_MSG("Peer_Bonded=%d Security_Mode= %d, Security_Level= %d \n\r", BleApplicationContext.Peer_Bonded, Security_Mode, Security_Level);
+  }
+
+  return;	
+}
+
+void APP_BLE_Remove_Bonding_Info(void)
+{
+  APP_DBG_MSG(" aci_gap_clear_security_db & aci_gap_remove_bonded_device \n\r");
+  aci_gap_remove_bonded_device(BleApplicationContext.Peer_Address_Type,BleApplicationContext.Peer_Address);
+  aci_gap_clear_security_db();
+  return;
+}
+
+void APP_BLE_Slave_Security_Request(void)
+{
+  APP_BLE_Peer_Bonded_Check();
+  
+  if( (BleApplicationContext.Peer_Bonded == 0x00) ||
+      ( (BleApplicationContext.Peer_Bonded == 0x01) && (BleApplicationContext.Security_Mode == 0x01) && (BleApplicationContext.Security_Level == 0x01) )
+    )
+  {
+    GapProcReq(GAP_PROC_SLAVE_SECURITY_REQ);
+  }
+  
+  return;
+}
+
+static void GapProcReq(GapProcId_t GapProcId)
+{
+  tBleStatus status;
+
+  switch(GapProcId)
+  {
+    case GAP_PROC_SLAVE_SECURITY_REQ:
+    {
+      BleApplicationContext.Security_Request = 0x01;
+      status = aci_gap_slave_security_req(BleApplicationContext.connection_handle); 
+      if (status != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("GAP_PROC_SLAVE_SECURITY_REQ aci_gap_slave_security_req  status=0x%02x \n\r",status);
+      }
+      
+      //APP_DBG_MSG("GAP_PROC_SLAVE_SECURITY_REQ waiting for EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED \n\r");
+      //gap_cmd_resp_wait(GAP_DEFAULT_TIMEOUT);/* waiting for EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED */
+      //APP_DBG_MSG("GAP_PROC_SLAVE_SECURITY_REQ waited for EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED  \n\r");
+      
+      APP_DBG_MSG("waiting for  EVT_BLUE_GAP_PAIRING_CMPLT \n\r");
+      gap_cmd_resp_wait(GAP_DEFAULT_TIMEOUT);/* waiting for EVT_BLUE_GAP_PAIRING_CMPLT */
+      BleApplicationContext.Security_Request = 0x00;
+      APP_DBG_MSG("waited for  EVT_BLUE_GAP_PAIRING_CMPLT \n\r");
+    }
+    break;
+
+    case GAP_PROC_PASS_KEY_RESPONSE:
+    {
+      APP_DBG_MSG("GAP_PROC_PASS_KEY_RESPONSE \n\r");
+      aci_gap_pass_key_resp(BleApplicationContext.connection_handle, CFG_FIXED_PIN);/* response for EVT_BLUE_GAP_PASS_KEY_REQUEST */
+    }
+    break;
+
+    case GAP_PROC_ALLOW_REBOND:
+    {
+      APP_DBG_MSG("GAP_PROC_ALLOW_REBOND aci_gap_allow_rebond(0x%04X)\n\r",BleApplicationContext.connection_handle);
+      aci_gap_allow_rebond(BleApplicationContext.connection_handle);/* response for EVT_BLUE_GAP_BOND_LOST */
+    }
+    break;
+
+    case GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM:
+    {
+      aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.connection_handle, 1); /* CONFIRM_YES = 1 */
+      
+      APP_DBG_MSG("GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM ** aci_gap_numeric_comparison_value_confirm_yesno-->YES \n");
+    }
+    break;
+		  
+    case GAP_PROC_TERMINATE_CONNECTION:
+    {
+      APP_DBG_MSG("terminate connection \n");
+      status = aci_gap_terminate(BleApplicationContext.connection_handle,0x13);
+      if (status != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("Term Connection cmd failure: 0x%x\n", status);
+      }
+      gap_cmd_resp_wait(GAP_DEFAULT_TIMEOUT);
+      
+      APP_DBG_MSG("GAP_PROC_TERMINATE_CONNECTION complete event received\n");
+    }
+    break;
+	  
+    default:
+      break;
+  }
+  return;
+}
+
+static void gap_cmd_resp_release(uint32_t flag)
+{
+  UNUSED(flag);
+  osSemaphoreRelease( SemGapId );
+  return;
+}
+
+static void gap_cmd_resp_wait(uint32_t timeout)
+{
+  UNUSED(timeout);
+  osSemaphoreAcquire( SemGapId, osWaitForever );
+  return;
+}
+
 /* USER CODE END FD_SPECIFIC_FUNCTIONS */
 /*************************************************************
  *
@@ -1112,7 +1285,7 @@ void hci_notify_asynch_evt(void* pdata)
 {
   UNUSED(pdata);
   osThreadFlagsSet( HciUserEvtProcessId, 1 );
-   return;
+  return;
 }
 
 void hci_cmd_resp_release(uint32_t flag)

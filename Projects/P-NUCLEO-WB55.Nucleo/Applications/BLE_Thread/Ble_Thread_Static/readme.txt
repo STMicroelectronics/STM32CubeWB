@@ -1,9 +1,9 @@
 /**
-  @page Ble_Thread_Concurrent_Static example
+  @page Ble_Thread_Static example
   
   @verbatim
   ******************************************************************************
-  * @file    BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/readme.txt 
+  * @file    BLE_Thread/Ble_Thread_Static/readme.txt 
   * @author  MCD Application Team
   * @brief   Example of application using BLE and Thread protocols in Static 
   *          Concurrent mode.
@@ -28,9 +28,9 @@ Static means that application can perform alternatively BLE or Thread activities
 
 The idea is to present a demo with a Thread Network (at least 2 Nucleo Boards
 running THREAD_FTD_Coap_Multicast application) and a BLE connection between 1 Nucleo
-board running Ble_Thread_Concurrent_Static application with a smartphone running 
+board running Ble_Thread_Static application with a smartphone running 
 "ST BLE Sensor" Application (available on App Store and Google Play)
-The STM32WB55xx-Nucleo board running Ble_Thread_Concurrent_Static application is capable 
+The STM32WB55xx-Nucleo board running Ble_Thread_Static application is capable 
 of switching from BLE network to Thread network and vice-versa.
 
 @par Keywords
@@ -39,29 +39,29 @@ COAP,THREAD,BLE
 
 @par Directory contents 
 
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/STM32_WPAN/App/app_ble.h            Header for app_ble.c module
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Inc/app_common.h          Header for all modules with common definition
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Inc/app_conf.h            Parameters configuration file of the application
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Inc/app_entry.h           Parameters configuration file of the application
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/STM32_WPAN/App/app_thread.h         Header for app_thread.c module
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/STM32_WPAN/App/ble_conf.h           BLE Services configuration
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/STM32_WPAN/App/ble_dbg_conf.h       BLE Traces configuration of the BLE services
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Inc/hw_conf.h             Configuration file of the HW
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Inc/main.h                     Header for main.c module
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/STM32_WPAN/App/p2p_server_app.h     Header for BLE P2P Server application
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Inc/stm32wbxx_hal_conf.h       HAL configuration file
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Inc/stm32wbxx_it.h             Interrupt handlers header file
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/STM32_WPAN/App/app_ble.c            BLE Profile implementation
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Src/app_entry.c           Initialization of the application
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Src/app_thread.c               Thread application implementation
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/STM32_WPAN/Target/hw_ipcc.c         IPCC Driver
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Src/stm32_lpm_if.c        Low Power Manager Interface
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Src/hw_timerserver.c      Timer Server based on RTC
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Core/Src/hw_uart.c             UART Driver
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Src/main.c                     Main program
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/STM32_WPAN/App/p2p_server_app.c     BLE P2P Server application implementation
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Src/stm32wbxx_it.c             Interrupt handlers
-  - BLE_Thread_Concurrent/Ble_Thread_Concurrent_Static/Core/Src/system_stm32wbxx.c         stm32wbxx system source file
+  - BLE_Thread/Ble_Thread_Static/STM32_WPAN/App/app_ble.h            Header for app_ble.c module
+  - BLE_Thread/Ble_Thread_Static/Core/Core/Inc/app_common.h          Header for all modules with common definition
+  - BLE_Thread/Ble_Thread_Static/Core/Core/Inc/app_conf.h            Parameters configuration file of the application
+  - BLE_Thread/Ble_Thread_Static/Core/Core/Inc/app_entry.h           Parameters configuration file of the application
+  - BLE_Thread/Ble_Thread_Static/STM32_WPAN/App/app_thread.h         Header for app_thread.c module
+  - BLE_Thread/Ble_Thread_Static/STM32_WPAN/App/ble_conf.h           BLE Services configuration
+  - BLE_Thread/Ble_Thread_Static/STM32_WPAN/App/ble_dbg_conf.h       BLE Traces configuration of the BLE services
+  - BLE_Thread/Ble_Thread_Static/Core/Core/Inc/hw_conf.h             Configuration file of the HW
+  - BLE_Thread/Ble_Thread_Static/Core/Inc/main.h                     Header for main.c module
+  - BLE_Thread/Ble_Thread_Static/STM32_WPAN/App/p2p_server_app.h     Header for BLE P2P Server application
+  - BLE_Thread/Ble_Thread_Static/Core/Inc/stm32wbxx_hal_conf.h       HAL configuration file
+  - BLE_Thread/Ble_Thread_Static/Core/Inc/stm32wbxx_it.h             Interrupt handlers header file
+  - BLE_Thread/Ble_Thread_Static/STM32_WPAN/App/app_ble.c            BLE Profile implementation
+  - BLE_Thread/Ble_Thread_Static/Core/Core/Src/app_entry.c           Initialization of the application
+  - BLE_Thread/Ble_Thread_Static/Core/Src/app_thread.c               Thread application implementation
+  - BLE_Thread/Ble_Thread_Static/STM32_WPAN/Target/hw_ipcc.c         IPCC Driver
+  - BLE_Thread/Ble_Thread_Static/Core/Core/Src/stm32_lpm_if.c        Low Power Manager Interface
+  - BLE_Thread/Ble_Thread_Static/Core/Core/Src/hw_timerserver.c      Timer Server based on RTC
+  - BLE_Thread/Ble_Thread_Static/Core/Core/Src/hw_uart.c             UART Driver
+  - BLE_Thread/Ble_Thread_Static/Core/Src/main.c                     Main program
+  - BLE_Thread/Ble_Thread_Static/STM32_WPAN/App/p2p_server_app.c     BLE P2P Server application implementation
+  - BLE_Thread/Ble_Thread_Static/Core/Src/stm32wbxx_it.c             Interrupt handlers
+  - BLE_Thread/Ble_Thread_Static/Core/Src/system_stm32wbxx.c         stm32wbxx system source file
   
  
 @par Hardware and Software environment
@@ -90,7 +90,7 @@ COAP,THREAD,BLE
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Thread_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the STM32WB5x_BLE_Thread_static_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.

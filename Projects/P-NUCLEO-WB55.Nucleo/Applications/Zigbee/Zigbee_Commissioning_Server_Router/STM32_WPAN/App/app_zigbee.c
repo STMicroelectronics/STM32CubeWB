@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -142,7 +142,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_Commissioning_RestartDevice_cb(struct ZbZc
   BSP_LED_Off(LED_BLUE);
   zigbee_app_info.join_status = ZB_ZDP_STATUS_NOT_ACTIVE;
   
-  if(req->options == ZCL_COMMISSION_OPTIONS_MODE_USE_NEW){
+  if(req->options == ZCL_COMMISS_RESTART_OPTS_MODE_USE_STARTUP){
     /* Installing current set of startup parameters */
     status = ZbZclCommissionServerGetStartup(zigbee_app_info.commissioning_server, &config);
     if(status!=ZCL_STATUS_SUCCESS){

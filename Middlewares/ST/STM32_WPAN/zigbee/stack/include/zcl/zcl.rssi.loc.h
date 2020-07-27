@@ -52,6 +52,12 @@ enum {
 #define ZCL_RSSI_LOC_LOC_TYPE_COORD_MASK        0x0c
 #define ZCL_RSSI_LOC_LOC_TYPE_COORD_RECT        0x00
 
+#define ZCL_RSSI_LOC_LOC_DATA_ABS_ONLY          0x01
+#define ZCL_RSSI_LOC_LOC_DATA_RECALCULATE       0x02
+#define ZCL_RSSI_LOC_LOC_DATA_BROAD_IND         0x04
+#define ZCL_RSSI_LOC_LOC_DATA_BROAD_RSP         0x08
+#define ZCL_RSSI_LOC_LOC_DATA_COMP_RSP          0x10
+
 #define ZCL_RSSI_LOC_MAX_NEIGHBOURS             16U
 
 /* Structures */
@@ -175,10 +181,6 @@ struct rssi_loc_req_own_loc {
 
 /* Callbacks */
 struct zcl_rssi_loc_server_callbacks_t {
-    enum ZclStatusCodeT (*set_abs_loc)(struct ZbZclClusterT *clusterPtr, struct rssi_loc_set_abs_loc *cmd_req,
-        struct ZbZclAddrInfoT *src_info, void *arg);
-    enum ZclStatusCodeT (*set_dev_config)(struct ZbZclClusterT *clusterPtr, struct rssi_loc_set_dev_config *cmd_req,
-        struct ZbZclAddrInfoT *src_info, void *arg);
     enum ZclStatusCodeT (*get_dev_config)(struct ZbZclClusterT *clusterPtr, struct rssi_loc_get_dev_config *cmd_req,
         struct ZbZclAddrInfoT *src_info, void *arg);
     enum ZclStatusCodeT (*get_loc_data)(struct ZbZclClusterT *clusterPtr, struct rssi_loc_get_loc_data *cmd_req,
@@ -209,25 +211,25 @@ struct ZbZclClusterT * ZbZclRssiLocClientAlloc(struct ZigBeeT *zb, uint8_t endpo
 struct ZbZclClusterT * ZbZclRssiLocServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, struct zcl_rssi_loc_server_callbacks_t *callbacks, void *arg);
 
 /* Client API */
-enum ZclStatusCodeT ZbZclRssiLocClientSetAbsLocation(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocClientSetAbsLocation(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct rssi_loc_set_abs_loc *set_abs_loc, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocClientSetDevConfig(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocClientSetDevConfig(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct rssi_loc_set_dev_config *set_dev_config, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocClientGetDevConfig(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocClientGetDevConfig(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct rssi_loc_get_dev_config *get_dev_config, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocClientGetLocData(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocClientGetLocData(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct rssi_loc_get_loc_data *get_loc_data, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocServerSendRssiRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
+enum ZclStatusCodeT ZbZclRssiLocClientSendRssiRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
     struct rssi_loc_rssi_rsp *rsp);
 
-enum ZclStatusCodeT ZbZclRssiLocClientSendPings(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocClientSendPings(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct rssi_loc_send_pings *send_pings, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocClientAnchorNodeAnnc(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocClientAnchorNodeAnnc(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct rssi_loc_anchor_node_annc *anchor_node_annc, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* Server API */
@@ -238,22 +240,22 @@ enum ZclStatusCodeT ZbZclRssiLocServerSendDevConfigRsp(struct ZbZclClusterT *clu
 enum ZclStatusCodeT ZbZclRssiLocServerSendLocDataRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
     struct rssi_loc_loc_data_rsp *rsp);
 
-enum ZclStatusCodeT ZbZclRssiLocServerLocDataNotif(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocServerLocDataNotif(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocServerCompDataNotif(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocServerCompDataNotif(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocServerRssiPing(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocServerRssiPing(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocServerRssiReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocServerRssiReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocServerReportRssi(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocServerReportRssi(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct rssi_loc_report_rssi *report_rssi, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclRssiLocServerReqOwnLoc(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclRssiLocServerReqOwnLoc(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct rssi_loc_req_own_loc *req_own_loc, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 #endif /* ZCL_RSSI_LOC_H */

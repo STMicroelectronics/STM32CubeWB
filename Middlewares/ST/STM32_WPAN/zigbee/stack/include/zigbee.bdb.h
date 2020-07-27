@@ -1,4 +1,9 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zigbee.bdb.h
+ * @brief BDB header file
+ * @author Exegin Technologies
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZIGBEE_BDB_H
 #define ZIGBEE_BDB_H
@@ -53,6 +58,11 @@ enum ZbBdbLinkKeyExchMethodT {
 /* Touchlink Default Primary Channel Set (2.4 GHz, Page 0, based on WPAN_CHANNELMASK_2400MHZ)
  * Channels: 11, 15, 20, 25 */
 #define BDBC_TL_PRIMARY_CHANNEL_SET             0x02108800U
+/* Secondary = 0x05ef7000.
+ * Note that scanning the full primary and secondary channels sets may
+ * not get done before the Touchlink process times-out. This is an
+ * inherent problem with the Touchlink spec. By default, the stack
+ * uses a secondary mask equal to zero. */
 #define BDBC_TL_SECONDARY_CHANNEL_SET           (WPAN_CHANNELMASK_2400MHZ ^ BDBC_TL_PRIMARY_CHANNEL_SET)
 
 /* value for bdbRssiMin - used by touchLink ONLY */

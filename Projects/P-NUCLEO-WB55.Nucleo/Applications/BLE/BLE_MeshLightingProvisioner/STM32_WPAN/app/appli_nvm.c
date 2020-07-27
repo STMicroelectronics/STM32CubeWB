@@ -72,7 +72,7 @@ extern const void* prvsnr_data;
 #define APP_NVM_RESERVED_SIZE             256U
 #define APP_NVM_SUBPAGE_SIZE              256U
 #define APP_NVM_MAX_SUBPAGE               15U
-#define APP_NVM_SUBPAGE_OFFSET(i)         (unsigned int)(APP_NVM_SUBPAGE_SIZE + APP_NVM_SUBPAGE_SIZE*(i))
+#define APP_NVM_SUBPAGE_OFFSET(i)         (unsigned int)(APP_NVM_RESERVED_SIZE + APP_NVM_SUBPAGE_SIZE*(i))
 
 /* offsets defined wrt start of subpage */
 #define APP_NVM_VALID_FLAG_OFFSET         0U
@@ -80,9 +80,9 @@ extern const void* prvsnr_data;
 #define APP_NVM_RESET_COUNT_OFFSET        (unsigned int)APP_NVM_VALID_FLAG_SIZE
 #define APP_NVM_RESET_COUNT_SIZE          12U /* 12 bytes reserved for write cycle optimization */
 #define APP_NVM_GENERIC_MODEL_OFFSET      (unsigned int)(APP_NVM_VALID_FLAG_SIZE+APP_NVM_RESET_COUNT_SIZE)
-#define APP_NVM_GENERIC_MODEL_SIZE        16U
+//#define APP_NVM_GENERIC_MODEL_SIZE        16U
 #define APP_NVM_LIGHT_MODEL_OFFSET        (unsigned int)(APP_NVM_VALID_FLAG_SIZE+APP_NVM_RESET_COUNT_SIZE+APP_NVM_GENERIC_MODEL_SIZE)
-#define APP_NVM_LIGHT_MODEL_SIZE          16U
+//#define APP_NVM_LIGHT_MODEL_SIZE          16U
 
 #define FIRST_PRVND_NODE_ADDRSS           2U
 #define LAST_PRVND_NODE_ADDRSS            (unsigned int)(PRVN_NVM_MAX_SUBPAGE+FIRST_PRVND_NODE_ADDRSS)
@@ -185,7 +185,7 @@ MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUIN
   }
   else
   {
-    result = MoblePalNvmWrite(APP_NVM_BASE, offset, buf, size);
+    result = PalNvmWrite(APP_NVM_BASE, offset, buf, size);
   }
   
   return result;
@@ -225,7 +225,7 @@ MOBLE_RESULT AppliPrvnNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBL
   }
   else
   {
-    result = MoblePalNvmWrite(PRVN_NVM_BASE_OFFSET, offset, buf, size);
+    result = PalNvmWrite(PRVN_NVM_BASE_OFFSET, offset, buf, size);
   }
   
   return result;
@@ -239,8 +239,9 @@ MOBLE_RESULT AppliPrvnNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBL
 */
 MOBLE_RESULT AppliNvm_MarkSubpageInvalid(void)
 {
-  MOBLEUINT32 valid = 0;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+#if 0
+  MOBLEUINT32 valid = 0;
   MOBLEINT16 currSubPageIdx;
   MOBLEUINT8 subPageTemp[APP_NVM_SUBPAGE_SIZE];
   
@@ -278,7 +279,7 @@ MOBLE_RESULT AppliNvm_MarkSubpageInvalid(void)
       /* do nothing */
     }
   }
-  
+#endif  
   return result;
 }
 
@@ -293,8 +294,9 @@ MOBLE_RESULT AppliNvm_MarkSubpageInvalid(void)
 */
 MOBLE_RESULT AppliNvm_FactorySettingReset(void)
 {
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+#if 0
   MOBLEINT16 currSubPageIdx = 0;
-  MOBLE_RESULT result;
   MOBLEUINT32 resetCount;
   MOBLEUINT8 subPageTemp[APP_NVM_SUBPAGE_SIZE];
     
@@ -360,7 +362,7 @@ MOBLE_RESULT AppliNvm_FactorySettingReset(void)
       
       /* Load model data copy from nvm */
       memcpy((void*)AppliNvm_Reqs.modelData, 
-             (void*)(APP_NVM_SUBPAGE_OFFSET(currSubPageIdx)+APP_NVM_GENERIC_MODEL_OFFSET), 
+             (void*)(APP_NVM_BASE + APP_NVM_SUBPAGE_OFFSET(currSubPageIdx) + APP_NVM_GENERIC_MODEL_OFFSET), 
              APP_NVM_GENERIC_MODEL_SIZE+APP_NVM_LIGHT_MODEL_SIZE);
       
       result = AppliNvm_MarkSubpageInvalid();
@@ -376,8 +378,8 @@ MOBLE_RESULT AppliNvm_FactorySettingReset(void)
       BLEMesh_Unprovision();
       
       /* Clear lib data, primary and backup nvm used by BLE-Mesh lib */
-      MoblePalNvmErase(NVM_BASE, 0);      
-      MoblePalNvmErase(NVM_BASE, 0x1000);
+      PalNvmErase(NVM_BASE, 0);      
+      PalNvmErase(NVM_BASE, 0x1000);
       
       AppliNvm_ClearModelState();
       
@@ -394,7 +396,7 @@ MOBLE_RESULT AppliNvm_FactorySettingReset(void)
     
     result = MOBLE_RESULT_SUCCESS;
   }
-  
+#endif
   return result;
 }
 
@@ -407,7 +409,7 @@ MOBLE_RESULT AppliNvm_FactorySettingReset(void)
 */
 MOBLE_RESULT AppliNvm_SaveModelState(uint8_t* state, uint8_t size)
 {
-  MOBLE_RESULT result = MOBLE_RESULT_FAIL; /* if save model state not defined, return MOBLE_RESULT_FAIL */
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS; /* if save model state not defined, return MOBLE_RESULT_FAIL */
   
 #if (SAVE_MODEL_STATE_NVM == 1)
 
@@ -457,7 +459,7 @@ MOBLE_RESULT AppliNvm_ClearModelState(void)
   }
   else
   {
-    if(subPageIdx > 1)
+    if(subPageIdx > 0)
     { /* Not the first subpage */
       /* clear models states */
       memcpy((void*)&(subPageTemp[0]),
@@ -502,10 +504,35 @@ MOBLE_RESULT AppliNvm_LoadModelState(uint8_t state[], uint8_t* size)
 {  
 #if (SAVE_MODEL_STATE_NVM == 1)  
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEINT16 currSubPageIdx = 0;
   
+  *size = 0;
+  result = AppliNvm_FindFirstEmptyPage(&currSubPageIdx,
+                                       APP_NVM_SUBPAGE_SIZE,
+                                       APP_NVM_MAX_SUBPAGE,
+                                       APP_NVM_BASE + APP_NVM_RESERVED_SIZE);
+  
+  if(result == MOBLE_RESULT_OUTOFMEMORY)
+  {
+    AppliNvm_Reqs.erasePageReq = MOBLE_TRUE;
+#if (LOW_POWER_FEATURE == 1)
+    UTIL_SEQ_SetTask( 1<<CFG_TASK_APPLI_REQ_ID, CFG_SCH_PRIO_0);
+#endif
+    result = MOBLE_RESULT_FAIL;
+  }
+  else
+  {
+    if(currSubPageIdx > 0)
+    { 
+      /* Not the first reset */
+      /* Load model data copy from nvm */
+      memcpy((void*)AppliNvm_Reqs.modelData, 
+             (void*)(APP_NVM_BASE + APP_NVM_SUBPAGE_OFFSET(currSubPageIdx-1) + APP_NVM_GENERIC_MODEL_OFFSET), 
+             APP_NVM_GENERIC_MODEL_SIZE + APP_NVM_LIGHT_MODEL_SIZE);
   memcpy((void*)state, (void*)(AppliNvm_Reqs.modelData), APP_NVM_MODEL_SIZE);
   *size = APP_NVM_MODEL_SIZE;
-  
+    }
+  }
   return result;  
 #else /* SAVE_MODEL_STATE_NVM */  
   *size = 0;
@@ -531,7 +558,7 @@ void AppliNvm_Process(void)
     /* save reserve flash area */
     memcpy((void*)reserveAreaCopy, (void*)APP_NVM_BASE, APP_NVM_RESERVED_SIZE);
   
-    result = MoblePalNvmErase(APP_NVM_BASE, 0);
+    result = PalNvmErase(APP_NVM_BASE, 0);
 
     if(result == MOBLE_RESULT_OUTOFMEMORY)
     {

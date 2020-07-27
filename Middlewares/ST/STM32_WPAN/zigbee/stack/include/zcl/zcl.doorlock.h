@@ -277,32 +277,32 @@ enum {
 #define DOORLOCK_HD_SCHED_SUPP               0x02
 
 /* User Status Values */
-#define DOORLOCK_USER_STATUS_AVAILABLE       (uint8_t)0x00
-#define DOORLOCK_USER_STATUS_OCC_ENABLED     (uint8_t)0x01
-#define DOORLOCK_USER_STATUS_OCC_DISABLED    (uint8_t)0x03
-#define DOORLOCK_USER_STATUS_NOT_SUPP        (uint8_t)0xFF
+#define DOORLOCK_USER_STATUS_AVAILABLE      0x00U
+#define DOORLOCK_USER_STATUS_OCC_ENABLED    0x01U
+#define DOORLOCK_USER_STATUS_OCC_DISABLED   0x03U
+#define DOORLOCK_USER_STATUS_NOT_SUPP       0xffU
 
 /* User Type Values */
-#define DOORLOCK_USER_TYPE_UNRESTRICTED      (uint8_t)0x00
-#define DOORLOCK_USER_TYPE_YD_SCHEDULE       (uint8_t)0x01
-#define DOORLOCK_USER_TYPE_WD_SCHEDULE       (uint8_t)0x02
-#define DOORLOCK_USER_TYPE_MASTER            (uint8_t)0x03
-#define DOORLOCK_USER_TYPE_NON_ACCESS        (uint8_t)0x04
-#define DOORLOCK_USER_TYPE_NOT_SUPPORTED     (uint8_t)0xFF
+#define DOORLOCK_USER_TYPE_UNRESTRICTED     0x00U
+#define DOORLOCK_USER_TYPE_YD_SCHEDULE      0x01U
+#define DOORLOCK_USER_TYPE_WD_SCHEDULE      0x02U
+#define DOORLOCK_USER_TYPE_MASTER           0x03U
+#define DOORLOCK_USER_TYPE_NON_ACCESS       0x04U
+#define DOORLOCK_USER_TYPE_NOT_SUPPORTED    0xffU
 
 /* Response Status Values */
-#define DOORLOCK_STATUS_SUCCESS              (uint8_t)0x0
-#define DOORLOCK_STATUS_GENERAL_FAILURE      (uint8_t)0x1
-#define DOORLOCK_STATUS_MEM_FULL             (uint8_t)0x2
-#define DOORLOCK_STATUS_DUPLICATE            (uint8_t)0x3
+#define DOORLOCK_STATUS_SUCCESS             0U
+#define DOORLOCK_STATUS_FAIL                1U
+#define DOORLOCK_STATUS_MEM_FULL            2U /* Only used with Set PIN/RFID Code Response Commands */
+#define DOORLOCK_STATUS_DUPLICATE           3U /* Only used with Set PIN/RFID Code Response Commands */
 
 /* Schedule Values */
-#define DOORLOCK_HOURS_LIMIT                 (uint8_t)0x17
-#define DOORLOCK_MINUTES_LIMIT               (uint8_t)0x3B
+#define DOORLOCK_HOURS_LIMIT                0x17U
+#define DOORLOCK_MINUTES_LIMIT              0x3BU
 
 /* Security Settings */
-#define DOORLOCK_PIN_REQUIRED                1
-#define DOORLOCK_PIN_NOT_REQUIRED            0
+#define DOORLOCK_PIN_REQUIRED               1U
+#define DOORLOCK_PIN_NOT_REQUIRED           0U
 
 /* Client Generated Commands */
 enum {
@@ -397,7 +397,7 @@ enum ZclStatusCodeT ZbZclDoorLockClientLockReq(struct ZbZclClusterT *clusterPtr,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockLockDoorRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 
 enum ZclStatusCodeT ZbZclDoorLockServerSendLockRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
@@ -414,7 +414,7 @@ enum ZclStatusCodeT ZbZclDoorLockClientUnlockReq(struct ZbZclClusterT *clusterPt
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockUnlockDoorRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 
 enum ZclStatusCodeT ZbZclDoorLockServerSendUnlockRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
@@ -431,7 +431,7 @@ enum ZclStatusCodeT ZbZclDoorLockClientToggleReq(struct ZbZclClusterT *clusterPt
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockToggleRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 
 enum ZclStatusCodeT ZbZclDoorLockServerSendToggleRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
@@ -449,7 +449,7 @@ enum ZclStatusCodeT ZbZclDoorLockClientUnlockTimeoutReq(struct ZbZclClusterT *cl
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockUnlockTimeoutRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 
 enum ZclStatusCodeT ZbZclDoorLockServerSendUnlockTimeoutRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
@@ -459,11 +459,11 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendUnlockTimeoutRsp(struct ZbZclClusterT
  * Client Get Log Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockGetLogReqT {
     uint16_t log_index;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientGetLogReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+
+enum ZclStatusCodeT ZbZclDoorLockClientGetLogReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetLogReqT *get_log_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
@@ -477,6 +477,7 @@ struct ZbZclDoorLockGetLogRspT {
     uint8_t pin[DOORLOCK_MAX_PIN];
     uint8_t pin_len;
 };
+
 enum ZclStatusCodeT ZbZclDoorLockServerSendGetLogRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockGetLogRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -484,7 +485,6 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetLogRsp(struct ZbZclClusterT *clust
  * Client Set Pin Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockSetPinReqT {
     uint16_t user_id;
     uint8_t user_status; /* e.g. DOORLOCK_USER_STATUS_AVAILABLE */
@@ -492,13 +492,15 @@ struct ZbZclDoorLockSetPinReqT {
     uint8_t pin[DOORLOCK_MAX_PIN];
     uint8_t pin_len;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientSetPinReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+
+enum ZclStatusCodeT ZbZclDoorLockClientSetPinReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetPinReqT *set_pin_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockSetPinRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
+
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetPinRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetPinRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -506,11 +508,11 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetPinRsp(struct ZbZclClusterT *clust
  * Client Get Pin Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockGetPinReqT {
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientGetPinReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+
+enum ZclStatusCodeT ZbZclDoorLockClientGetPinReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetPinReqT *get_pin_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
@@ -528,17 +530,18 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetPinRsp(struct ZbZclClusterT *clust
  * Client Clear Pin Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockClrPinReqT {
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientClrPinReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+
+enum ZclStatusCodeT ZbZclDoorLockClientClrPinReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrPinReqT *clr_pin_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockClrPinRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
+
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrPinRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrPinRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -546,13 +549,13 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrPinRsp(struct ZbZclClusterT *clust
  * Client Clear All Pin Helper
  *---------------------------------------------------------------
  */
-
-enum ZclStatusCodeT ZbZclDoorLockClientClrAllPinReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientClrAllPinReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockClrAllPinRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
+
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrAllPinRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrAllPinRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -560,18 +563,19 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrAllPinRsp(struct ZbZclClusterT *cl
  * Client Set User Status Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockSetUserStatusReqT {
     uint16_t user_id;
     uint8_t user_status;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientSetUserStatusReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+
+enum ZclStatusCodeT ZbZclDoorLockClientSetUserStatusReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetUserStatusReqT *set_user_status_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockSetUserStatusRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
+
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetUserStatusRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetUserStatusRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -579,11 +583,11 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetUserStatusRsp(struct ZbZclClusterT
  * Client Get User Status Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockGetUserStatusReqT {
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientGetUserStatusReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+
+enum ZclStatusCodeT ZbZclDoorLockClientGetUserStatusReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetUserStatusReqT *get_user_status_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
@@ -591,6 +595,7 @@ struct ZbZclDoorLockGetUserStatusRspT {
     uint16_t user_id;
     uint8_t user_status;
 };
+
 enum ZclStatusCodeT ZbZclDoorLockServerSendGetUserStatusRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockGetUserStatusRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -598,7 +603,6 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetUserStatusRsp(struct ZbZclClusterT
  * Client Set WD Schedule Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockSetWDScheduleReqT {
     uint8_t schedule_id;
     uint16_t user_id;
@@ -608,12 +612,12 @@ struct ZbZclDoorLockSetWDScheduleReqT {
     uint8_t end_hour;
     uint8_t end_minute;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientSetWDScheduleReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientSetWDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetWDScheduleReqT *set_wd_sched_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockSetWDScheduleRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetWDScheduleRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetWDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -622,19 +626,18 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetWDScheduleRsp(struct ZbZclClusterT
  * Client Get WD Schedule Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockGetWDScheduleReqT {
     uint8_t schedule_id;
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientGetWDScheduleReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientGetWDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetWDScheduleReqT *get_wd_sched_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockGetWDScheduleRspT {
     uint8_t schedule_id;
     uint16_t user_id;
-    uint8_t status;
+    uint8_t status; /* e.g. ZCL_STATUS_SUCCESS */
     uint8_t days_mask;
     uint8_t start_hour;
     uint8_t start_minute;
@@ -648,17 +651,16 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetWDScheduleRsp(struct ZbZclClusterT
  * Client Clear WD Schedule Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockClrWDScheduleReqT {
     uint8_t schedule_id;
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientClrWDScheduleReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientClrWDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrWDScheduleReqT *clr_wd_schedule_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockClrWDScheduleRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrWDScheduleRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrWDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -667,19 +669,18 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrWDScheduleRsp(struct ZbZclClusterT
  * Client Set YD Schedule Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockSetYDScheduleReqT {
     uint8_t schedule_id;
     uint16_t user_id;
     uint32_t local_start_time;
     uint32_t local_end_time;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientSetYDScheduleReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientSetYDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetYDScheduleReqT *set_yd_sched_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockSetYDScheduleRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetYDScheduleRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetYDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -688,19 +689,18 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetYDScheduleRsp(struct ZbZclClusterT
  * Client Get YD Schedule Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockGetYDScheduleReqT {
     uint8_t schedule_id;
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientGetYDScheduleReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientGetYDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetYDScheduleReqT *get_yd_sched_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockGetYDScheduleRspT {
     uint8_t schedule_id;
     uint16_t user_id;
-    uint8_t status;
+    uint8_t status; /* e.g. ZCL_STATUS_SUCCESS */
     uint32_t local_start_time;
     uint32_t local_end_time;
 };
@@ -711,17 +711,16 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetYDScheduleRsp(struct ZbZclClusterT
  * Client Clear YD Schedule Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockClrYDScheduleReqT {
     uint8_t schedule_id;
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientClrYDScheduleReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientClrYDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrYDScheduleReqT *clr_yd_schedule_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockClrYDScheduleRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrYDScheduleRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrYDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -730,19 +729,18 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrYDScheduleRsp(struct ZbZclClusterT
  * Client Set HD Schedule Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockSetHDScheduleReqT {
     uint8_t schedule_id;
     uint32_t local_start_time;
     uint32_t local_end_time;
     uint8_t operating_mode;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientSetHDScheduleReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientSetHDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetHDScheduleReqT *set_hd_sched_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockSetHDScheduleRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetHDScheduleRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetHDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -751,17 +749,16 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetHDScheduleRsp(struct ZbZclClusterT
  * Client Get HD Schedule Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockGetHDScheduleReqT {
     uint8_t schedule_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientGetHDScheduleReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientGetHDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetHDScheduleReqT *get_hd_sched_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockGetHDScheduleRspT {
     uint8_t schedule_id;
-    uint8_t status;
+    uint8_t status; /* e.g. ZCL_STATUS_SUCCESS */
     uint32_t local_start_time;
     uint32_t local_end_time;
     uint8_t operating_mode;
@@ -773,16 +770,15 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetHDScheduleRsp(struct ZbZclClusterT
  * Client Clear HD Schedule Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockClrHDScheduleReqT {
     uint8_t schedule_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientClrHDScheduleReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientClrHDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrHDScheduleReqT *clr_hd_schedule_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockClrHDScheduleRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrHDScheduleRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrHDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -791,17 +787,16 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrHDScheduleRsp(struct ZbZclClusterT
  * Client Set User Type Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockSetUserTypeReqT {
     uint16_t user_id;
     uint8_t user_type;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientSetUserTypeReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientSetUserTypeReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetUserTypeReqT *set_user_type_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockSetUserTypeRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetUserTypeRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetUserTypeRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -810,11 +805,10 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetUserTypeRsp(struct ZbZclClusterT *
  * Client Get User Type Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockGetUserTypeReqT {
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientGetUserTypeReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientGetUserTypeReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetUserTypeReqT *get_user_type_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
@@ -829,7 +823,6 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetUserTypeRsp(struct ZbZclClusterT *
  * Client Set RFID Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockSetRfidReqT {
     uint16_t user_id;
     uint8_t user_status;
@@ -837,12 +830,12 @@ struct ZbZclDoorLockSetRfidReqT {
     uint8_t rfid[DOORLOCK_MAX_RFID];
     uint8_t rfid_len;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientSetRfidReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientSetRfidReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetRfidReqT *set_rfid_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockSetRfidRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetRfidRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetRfidRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -851,11 +844,10 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetRfidRsp(struct ZbZclClusterT *clus
  * Client Get RFID Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockGetRfidReqT {
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientGetRfidReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientGetRfidReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetRfidReqT *get_rfid_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
@@ -873,16 +865,15 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetRfidRsp(struct ZbZclClusterT *clus
  * Client Clear RFID Helper
  *---------------------------------------------------------------
  */
-
 struct ZbZclDoorLockClrRfidReqT {
     uint16_t user_id;
 };
-enum ZclStatusCodeT ZbZclDoorLockClientClrRfidReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientClrRfidReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrRfidReqT *clr_rfid_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockClrRfidRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrRfidRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrRfidRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -891,12 +882,11 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrRfidRsp(struct ZbZclClusterT *clus
  * Client Clear All RFID Helper
  *---------------------------------------------------------------
  */
-
-enum ZclStatusCodeT ZbZclDoorLockClientClrAllRfidReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclDoorLockClientClrAllRfidReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 struct ZbZclDoorLockClrAllRfidRspT {
-    uint8_t status;
+    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
 };
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrAllRfidRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrAllRfidRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);

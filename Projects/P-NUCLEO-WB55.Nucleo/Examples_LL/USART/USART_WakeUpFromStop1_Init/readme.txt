@@ -40,6 +40,10 @@ Received character value is checked :
 
 In case of errors, LED2 is slowly blinking (1 sec period).
 
+@par Keywords
+
+Connectivity, USART, Asynchronous mode, RS-232, baud rate, Interrupt, HyperTerminal, Receiver, Low Power
+
 @par Directory contents 
 
   - USART/USART_WakeUpFromStop1_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file
@@ -51,7 +55,7 @@ In case of errors, LED2 is slowly blinking (1 sec period).
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

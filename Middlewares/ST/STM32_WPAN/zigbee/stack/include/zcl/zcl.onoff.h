@@ -1,4 +1,10 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.onoff.h
+ * @brief ZCL OnOff cluster header
+ * ZCL 7 section 3.8
+ * ZCL 8 section 3.8
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_ONOFF_H
 # define ZCL_ONOFF_H
@@ -52,16 +58,16 @@ extern "C" {
 
 #include "zcl/zcl.h"
 
-/* Attribute Identifiers */
-enum {
+/** OnOff Server Attribute IDs */
+enum ZbZclOnOffSvrAttrT {
     ZCL_ONOFF_ATTR_ONOFF = 0x0000,
     ZCL_ONOFF_ATTR_GLOBAL_SCENE_CONTROL = 0x4000,
-    ZCL_ONOFF_ATTR_ON_TIME, /* 0x4001 */
-    ZCL_ONOFF_OFF_WAIT_TIME, /* 0x4002 */
+    ZCL_ONOFF_ATTR_ON_TIME,
+    ZCL_ONOFF_ATTR_OFF_WAIT_TIME,
 };
 
-/* Commands */
-enum {
+/* OnOff Command IDs (don't include in doxygen) */
+enum ZbZclOnOffCmdT {
     ZCL_ONOFF_COMMAND_OFF = 0x00,
     ZCL_ONOFF_COMMAND_ON = 0x01,
     ZCL_ONOFF_COMMAND_TOGGLE = 0x02,
@@ -71,14 +77,30 @@ enum {
  * OnOff Server Cluster
  *---------------------------------------------------------------
  */
+
+/** OnOff Server callbacks configuration */
 struct ZbZclOnOffServerCallbacksT {
-    /* The application is expected to update ZCL_ONOFF_ATTR_ONOFF if these callbacks are
-     * successfully executed. */
-    enum ZclStatusCodeT (*off)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*on)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*toggle)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    enum ZclStatusCodeT (*off)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of an Off command. The application is expected to
+    * update ZCL_ONOFF_ATTR_ONOFF. */
+
+    enum ZclStatusCodeT (*on)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of an On command. The application is expected to
+    * update ZCL_ONOFF_ATTR_ONOFF. */
+
+    enum ZclStatusCodeT (*toggle)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of a Toggle command. The application is expected to
+    * update ZCL_ONOFF_ATTR_ONOFF. */
 };
 
+/**
+ * Create a new instance of the OnOff Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param callbacks Structure containing any callback function pointers for this cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclOnOffServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclOnOffServerCallbacksT *callbacks, void *arg);
 
@@ -91,15 +113,45 @@ void ZbZclOnOffServerSetLevelControlCallback(struct ZbZclClusterT *on_off_cluste
  * OnOff Client Cluster
  *---------------------------------------------------------------
  */
+
+/**
+ * Create a new instance of the OnOff Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclOnOffClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
-/* Client Cluster Commands */
-enum ZclStatusCodeT ZbZclOnOffClientOnReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
-    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-
+/**
+ * Send an Off command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclOnOffClientOffReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send an On command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclOnOffClientOnReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
+
+/**
+ * Send a Toggle command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclOnOffClientToggleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
   @page COMP_CompareGpioVsVrefInt_IT COMP example
   
   @verbatim
@@ -35,12 +35,17 @@ and exit from STOP mode.
 The System enters STOP mode 5 seconds after the comparator is started and 
 after any system wake-up triggered by the comparator interrupt.
 
-In this example, the comparator input is connected on the pin PA1 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32).
-The user shall apply a voltage on and each time the comparator input crosses VREFINT, MCU is awake,
+In this example, the comparator input is connected on pin PA1 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32).
+The user shall apply a voltage on and each time the comparator input crosses VrefInt (1.21V), MCU is awake,
 system clock is reconfigured and LED2 is ON.
 
 If LED3 is toggling continuously without any voltage update, it indicates that the system 
 generated an error.
+
+@note This example can not be used in debug mode because GPIO used by debugger are set in analog mode
+      to optimize power consumption, and because system enters in Stop mode (debugging features disabled).
+      To enable debug capability when program is out of Stop mode (to not change mode of GPIO used by debugger),
+      a solution is to comment call of function MX_GPIO_Init.
 
 @note Care must be taken when using HAL_Delay(), this function provides 
       accurate delay (in milliseconds) based on variable incremented in SysTick ISR. 
@@ -51,9 +56,10 @@ generated an error.
       
 @note The application need to ensure that the SysTick time base is always set 
       to 1 millisecond to have correct HAL operation.
+
 @par Keywords
 
-comparator, stop mode, voltage compare, wakeup trigger, comparator interrupt.
+Comparator, COMP, analog, voltage, analog input, threshold, VrefInt
 
 @par Directory contents 
 
@@ -68,7 +74,7 @@ comparator, stop mode, voltage compare, wakeup trigger, comparator interrupt.
 
 @par Hardware and Software environment 
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
 
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

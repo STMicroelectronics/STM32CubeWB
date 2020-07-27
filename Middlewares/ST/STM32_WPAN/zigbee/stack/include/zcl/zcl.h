@@ -631,7 +631,25 @@ enum {
     ZCL_COMMAND_DISCOVER_ATTR_RSP = 0x0d,
     ZCL_COMMAND_READ_STRUCTURED = 0x0e,
     ZCL_COMMAND_WRITE_STRUCTURED = 0x0f,
-    ZCL_COMMAND_WRITE_STRUCTURED_RESPONSE = 0x10
+    ZCL_COMMAND_WRITE_STRUCTURED_RESPONSE = 0x10,
+
+    /* Exegin's Manufacturer Specific Global Commands
+     * ZCL_FRAMECTRL_MANUFACTURER && ZCL_FRAMETYPE_PROFILE &&
+     * (Manufacturer Code == ZCL_MANUF_CODE_INTERNAL) */
+
+    /* For Scene Store Command (ZCL_SCENES_COMMAND_STORE_SCENE)
+     * Payload for Request (to Server): None
+     * Payload for Response: [CLUSTER(2) | EXT_LEN(1) | EXT_ATTR_DATA(N)] */
+    ZCL_CMD_MANUF_INTERNAL_GET_SCENE_EXTDATA = 0xf0, /* get_scene_data() */
+
+    /* For Scene Recall Command (ZCL_SCENES_COMMAND_RECALL_SCENE)
+     * Payload for Request (to Server): [EXT_LEN(1) | EXT_ATTR_DATA(N)]
+     * Payload for Response: [STATUS(1)] */
+    ZCL_CMD_MANUF_INTERNAL_SET_SCENE_EXTDATA, /* set_scene_data() */
+
+    /* ZCL Cluster Persistence: Profile-Wide Manufacturer-Specific command
+     * sent to a cluster to restore persistence. */
+    ZCL_CMD_MANUF_INTERNAL_ATTR_PERSIST_SET
 };
 
 struct ZbZclAddrInfoT {
@@ -715,79 +733,50 @@ enum ZclStatusCodeT ZbZclCommandReq(struct ZigBeeT *zb, struct ZbZclCommandReqT 
 
 struct ZbZclAttrCbInfoT;
 
-/* The structure used to initialize a ZCL attribute when calling ZbZclAttrAppendList.
- *
- * PARAMETERS:
- *   attributeId    ; The attribute's ID
- *
- *   dataType       ; The attribute's data type, or ZCL_DATATYPE_UNKNOWN
- *                    if this is the last entry in a list.
- *
- *   flags          ; Flags that determine whether this attribute is writable,
- *                    reportable, persisted, etc
- *
- *   customValSz    ; A custom size is required if both customRead and
- *                    customWrite callbacks are provided (for maximum
- *                    persistence size), or for the following attribute data
- *                    types:
- *
- *                      ZCL_DATATYPE_STRING_OCTET,
- *                      ZCL_DATATYPE_STRING_CHARACTER,
- *                      ZCL_DATATYPE_STRING_LONG_OCTET,
- *                      ZCL_DATATYPE_STRING_LONG_CHARACTER,
- *                      ZCL_DATATYPE_ARRAY,
- *                      ZCL_DATATYPE_STRUCT,
- *                      ZCL_DATATYPE_SET,
- *                      ZCL_DATATYPE_BAG
- *
- *                    Maximum size is the length returned by ZbZclClusterGetMaxAsduLength() or
- *                    the cluster's maxAsduLength parameter. It should not exceed
- *                    ZB_APS_CONST_MAX_FRAG_SIZE.
- *
- *   customRead     ; Callback to let application handle an attribute read
- *                    request. If NULL, the default stack attribute read
- *                    handler is used.
- *
- *   customWrite    ; Callback to let application handle an attribute write
- *                    request. If NULL, the default stack attribute write
- *                    handler is used.
- *
- *                    NOTE: If customRead and customWrite are both provided,
- *                    ZbZclAttrAppendList will not allocate memory for the
- *                    attribute's data. The application must maintain this
- *                    information separately from the attribute.
- *
- *   customDefault  ; Called to reset attribute to default value. If NULL,
- *                    the attribute will be reset to the default value for the
- *                    given data type.
- *
- *   writeNotify    ; If customWrite is NULL and the stack is handling attribute
- *                    writes for this attribute, then this callback notifies
- *                    the application whenever a successful write takes place.
- *                    This callback is also called when the attributes is reset
- *                    to defaults and customDefault is NULL.
- *
- *   report_interval_secs_min ; Default minimum attribute reporting interval
- *                              in seconds.
- *
- *   report_interval_secs_max ; Default maximum attribute reporting interval
- *                              in seconds.
+/**
+ * The structure used to initialize a ZCL attribute when calling ZbZclAttrAppendList.
  */
 struct ZbZclAttrT {
-    uint16_t attributeId;
+    uint16_t attributeId; /**< The attribute ID */
+
     enum ZclDataTypeT dataType;
-    ZclAttrFlagT flags;
+    /**< The attribute data type (ZCL_DATATYPE_UNKNOWN if last entry) */
+
+    ZclAttrFlagT flags; /**< Attribute flags (e.g. writeable, reportable, etc) */
+
     unsigned int customValSz;
+    /**< A custom size is required if the data type is one of:
+     *    ZCL_DATATYPE_STRING_OCTET,
+     *    ZCL_DATATYPE_STRING_CHARACTER,
+     *    ZCL_DATATYPE_STRING_LONG_OCTET,
+     *    ZCL_DATATYPE_STRING_LONG_CHARACTER,
+     *    ZCL_DATATYPE_ARRAY,
+     *    ZCL_DATATYPE_STRUCT,
+     *    ZCL_DATATYPE_SET,
+     *    ZCL_DATATYPE_BAG
+     *
+     * A custom size is also required if both customRead and customWrite callbacks
+     * are provided and ZCL_ATTR_FLAG_PERSISTABLE is set.
+     *
+     * The maximum size is the length returned by ZbZclClusterGetMaxAsduLength() or
+     * the cluster's maxAsduLength parameter. It should not exceed
+     * ZB_APS_CONST_MAX_FRAG_SIZE. */
+
     enum ZclStatusCodeT (*callback)(struct ZbZclClusterT *clusterPtr, struct ZbZclAttrCbInfoT *info);
+    /**< If flags ZCL_ATTR_FLAG_CB_READ or ZCL_ATTR_FLAG_CB_WRITE are set, then
+     * this callback is called for attribute read or write commands. */
+
     struct {
-        /* If min and max both equal zero, range checking is disabled. */
         long long min;
         long long max;
     } integer_range;
+    /**< Optional integer attribute value range. If both are set to zero, range checking is disabled. */
+
     struct {
         uint16_t interval_min; /* seconds */
         uint16_t interval_max; /* seconds */
     } reporting;
+    /**< Default attribute minimum and maximum reporting intervals in seconds. */
 };
 
 #define ZCL_ATTR_LIST_LEN(_list_)        (sizeof(_list_) / sizeof(struct ZbZclAttrT))
@@ -795,9 +784,10 @@ struct ZbZclAttrT {
 /* Appends attributes to the cluster.
  * Important note: attrList memory is attached to the cluster, so
  * it cannot be freed until the cluster is freed. */
-enum ZclStatusCodeT ZbZclAttrAppendList(struct ZbZclClusterT *clusterPtr, const struct ZbZclAttrT *attrList, unsigned int num_attrs);
+enum ZclStatusCodeT ZbZclAttrAppendList(struct ZbZclClusterT *clusterPtr,
+    const struct ZbZclAttrT *attrList, unsigned int num_attrs);
 
-/* Attribute Callback Types */
+/** Attribute Callback Types */
 enum ZbZclAttrCbTypeT {
     ZCL_ATTR_CB_TYPE_READ,
     /**< Read attribute callback. Use to have the application handle
@@ -812,7 +802,7 @@ enum ZbZclAttrCbTypeT {
      * ZCL Write Requests. */
 };
 
-/* Attribute Callback Information */
+/** Attribute Callback Information */
 struct ZbZclAttrCbInfoT {
     const struct ZbZclAttrT *info;
     /**< Pointer to the original info struct used to create the attribute */
@@ -820,46 +810,42 @@ struct ZbZclAttrCbInfoT {
     enum ZbZclAttrCbTypeT type; /**< Callback type (read, write, etc) */
 
     uint8_t *zcl_data;
-    /**< Incoming or outgoing ZCL attribute payload data. If callback type
-     * is ZCL_ATTR_CB_TYPE_WRITE, this is the source of the new value.
-     * If callback type is ZCL_ATTR_CB_TYPE_READ, this is the destination
-     * of the value to return in the ZCL Read Response. */
+    /**< Incoming or outgoing ZCL attribute payload data.
+     *
+     * If callback type is ZCL_ATTR_CB_TYPE_WRITE, this is the source of the new value,
+     * to be validated and written back to attr_data if applicable.
+     *
+     * If callback type is ZCL_ATTR_CB_TYPE_READ, this is the destination of the value
+     * to return in the ZCL Read Response. */
 
-    unsigned int zcl_len;
-    /**< Maximum length of 'zcl_data' */
+    unsigned int zcl_len; /**< Maximum length of 'zcl_data' */
 
-    /* The following are only used if type == ZCL_ATTR_CB_TYPE_WRITE */
     ZclWriteModeT write_mode;
+    /**< Write mode (e.g. normal, test, force, persist).
+     * Only applicable if type == ZCL_ATTR_CB_TYPE_WRITE. */
 
     void *attr_data;
-    /**< Local attribute storage, if application is letting the cluster maintain
-     * the attribute data. */
+    /**< Pointer to local attribute storage.
+     * Only applicable if type == ZCL_ATTR_CB_TYPE_WRITE.
+     *
+     * If NULL, then application is maintaining attribute value
+     * (i.e. both ZCL_ATTR_FLAG_CB_READ and ZCL_ATTR_FLAG_CB_WRITE were set).
+     *
+     * If not NULL, current attribute value can be read from here, and
+     * updated value from WRITE command to be written here.
+     */
 
-    struct ZbApsAddrT *src; /**< Source of the command, if not locally generated. May be NULL. */
+    const struct ZbApsAddrT *src;
+    /**< Source of the command, if not locally generated. May be NULL. */
 
-    /* Application's defined callback argument */
-    void *app_cb_arg;
-};
-
-/* The internal allocated attribute struct */
-struct ZbZclAttrListEntryT {
-    struct LinkListT link;
-    const struct ZbZclAttrT *info; /* Attribute info */
-    uint8_t *valBuf; /* ZCL format (i.e. same as what is sent over-the-air) */
-    unsigned int valSz; /* Allocation size of valBuf. */
-    struct {
-        uint16_t interval_secs_min; /* seconds */
-        uint16_t interval_secs_max; /* seconds */
-    } reporting;
+    void *app_cb_arg; /**< Application's defined callback argument */
 };
 
 /* Returns the length of an attribute, solely based on type. Or 0, if length is unknown. */
 unsigned int ZbZclAttrTypeLength(enum ZclDataTypeT type);
-struct ZbZclAttrListEntryT * ZbZclAttrFind(struct ZbZclClusterT *clusterPtr, uint16_t attrId);
+
 /* Returns the attribute length, or -1 on error. */
 int ZbZclAttrDefaultValue(enum ZclDataTypeT type, uint8_t *buf, unsigned int max_len);
-enum ZclStatusCodeT ZbZclAttrCallbackExec(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclAttrListEntryT *attrPtr, struct ZbZclAttrCbInfoT *cb);
 
 /*---------------------------------------------------------------
  * Alarm Cluster Helpers
@@ -869,10 +855,16 @@ enum ZclStatusCodeT ZbZclAttrCallbackExec(struct ZbZclClusterT *clusterPtr,
  * ZbZclClusterReverseBind is used by the Alarms Server so it can receive loopback
  * messages sent in the direction of the client (i.e. reverse).
  * @param clusterPtr
- * @param filter
- * @return ZCL Status
+ * @return Filter pointer (handle)
  */
-enum ZclStatusCodeT ZbZclClusterReverseBind(struct ZbZclClusterT *clusterPtr, struct ZbApsFilterT *filter);
+struct ZbApsFilterT * ZbZclClusterReverseBind(struct ZbZclClusterT *clusterPtr);
+
+/**
+ * Remove the reverse (loopback) filter and free it.
+ * @param clusterPtr
+ * @param filter Filter to remove and free
+ * @return None
+ */
 void ZbZclClusterReverseUnbind(struct ZbZclClusterT *clusterPtr, struct ZbApsFilterT *filter);
 
 /**
@@ -889,24 +881,15 @@ void ZbZclClusterReverseUnbind(struct ZbZclClusterT *clusterPtr, struct ZbApsFil
 void ZbZclClusterSendAlarm(struct ZbZclClusterT *clusterPtr, uint8_t src_endpoint, uint8_t alarm_code);
 
 /**
- * Alarm Reset handler prototype
- * @param clusterPtr
- * @param alarm_code
- * @param cluster_id
- * @param data_ind
- * @param hdr
- * @return None
- */
-typedef void (*ZbZclAlarmResetFuncT)(struct ZbZclClusterT *clusterPtr, uint8_t alarm_code,
-    uint16_t cluster_id, struct ZbApsdeDataIndT *data_ind, struct ZbZclHeaderT *hdr);
-
-/**
- * Register a callback handler for the given cluster to receive Alarm Reset messages.
- * @param clusterPtr
- * @param callback
+ * Register a callback handler for the given cluster to receive Alarm "Reset Alarm"
+ * and "Reset all alarms" commands.
+ * @param clusterPtr Cluster instance
+ * @param callback Application callback to handle reset alarm(s) commands.
  * @return ZCL Status Code
  */
-enum ZclStatusCodeT ZbZclClusterRegisterAlarmResetHandler(struct ZbZclClusterT *clusterPtr, ZbZclAlarmResetFuncT callback);
+enum ZclStatusCodeT ZbZclClusterRegisterAlarmResetHandler(struct ZbZclClusterT *clusterPtr,
+    enum ZclStatusCodeT (*callback)(struct ZbZclClusterT *clusterPtr, uint8_t alarm_code,
+        uint16_t cluster_id, struct ZbApsdeDataIndT *data_ind, struct ZbZclHeaderT *hdr));
 void ZbZclClusterRemoveAlarmResetHandler(struct ZbZclClusterT *clusterPtr);
 
 /*---------------------------------------------------------------
@@ -940,9 +923,10 @@ struct ZbZclClusterT {
      * Filters, Lists, Timers
      *-------------------------------------------
      */
-    struct ZbApsFilterT filter;
-    struct ZbApsFilterT alarm_reset_filter;
-    ZbZclAlarmResetFuncT alarm_reset_callback;
+    struct ZbApsFilterT *dataind_filter;
+    struct ZbApsFilterT *alarm_reset_filter;
+    enum ZclStatusCodeT (*alarm_reset_callback)(struct ZbZclClusterT *clusterPtr, uint8_t alarm_code,
+        uint16_t cluster_id, struct ZbApsdeDataIndT *data_ind, struct ZbZclHeaderT *hdr);
     struct LinkListT attributeList;
     struct LinkListT reports;
     struct ZbTimerT *persist_timer;
@@ -1086,7 +1070,7 @@ enum ZclStatusCodeT ZbZclAttrRead(struct ZbZclClusterT *clusterPtr, uint16_t att
  *  max_len         ; IN: Length of attribute data
  *  mode            ; IN: Write mode
  */
-enum ZclStatusCodeT ZbZclAttrWrite(struct ZbZclClusterT *clusterPtr, struct ZbApsAddrT *src, uint16_t attr_id,
+enum ZclStatusCodeT ZbZclAttrWrite(struct ZbZclClusterT *clusterPtr, const struct ZbApsAddrT *src, uint16_t attr_id,
     const uint8_t *attr_data, unsigned int max_len, ZclWriteModeT mode);
 
 /* Integer Attribute Helpers */
@@ -1420,27 +1404,10 @@ enum {
     ZCL_MANUF_CODE_INTERNAL = 0xfffe
 };
 
-/* Exegin's Manufacturer Specific Global Commands
- * ZCL_FRAMECTRL_MANUFACTURER && ZCL_FRAMETYPE_PROFILE && (Manufacturer Code == ZCL_MANUF_CODE_INTERNAL) */
-enum {
-    /* For Scene Store Command (ZCL_SCENES_COMMAND_STORE_SCENE)
-     * Payload for Request (to Server): None
-     * Payload for Response: [CLUSTER(2) | EXT_LEN(1) | EXT_ATTR_DATA(N)] */
-    ZCL_CMD_MANUF_INTERNAL_GET_SCENE_EXTDATA, /* get_scene_data() */
-
-    /* For Scene Recall Command (ZCL_SCENES_COMMAND_RECALL_SCENE)
-     * Payload for Request (to Server): [EXT_LEN(1) | EXT_ATTR_DATA(N)]
-     * Payload for Response: [STATUS(1)] */
-    ZCL_CMD_MANUF_INTERNAL_SET_SCENE_EXTDATA, /* set_scene_data() */
-
-    /* ZCL Cluster Persistence: Profile-Wide Manufacturer-Specific command
-     * sent to a cluster to restore persistence. */
-    ZCL_CMD_MANUF_INTERNAL_ATTR_PERSIST_SET
-};
-
 /* Offsets into ZCL_CMD_MANUF_INTERNAL_SET_SCENE_EXTDATA message */
-#define SET_SCENE_EXTDATA_OFFSET_EXT_LEN                4U
-#define SET_SCENE_EXTDATA_OFFSET_EXT_FIELD              5U
+#define SET_SCENE_EXTDATA_OFFSET_TRANSITION             0U /* 4 octets (tenths of a second) */
+#define SET_SCENE_EXTDATA_OFFSET_EXT_LEN                4U /* 1 octet */
+#define SET_SCENE_EXTDATA_OFFSET_EXT_FIELD              5U /* variable length */
 #define SET_SCENE_EXTDATA_HEADER_LEN                    (4U + 1U)
 
 enum {

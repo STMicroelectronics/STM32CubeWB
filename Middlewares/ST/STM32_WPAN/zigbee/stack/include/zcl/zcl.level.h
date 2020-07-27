@@ -55,8 +55,9 @@
  * Level Control Cluster
  *---------------------------------------------------------------
  */
-/* Level Control Cluster Attribute */
-enum {
+
+/* Level Server Attribute IDs */
+enum ZbZclLevelSvrAttrT {
     ZCL_LEVEL_ATTR_CURRLEVEL = 0x0000,
     ZCL_LEVEL_ATTR_REMAINTIME = 0x0001,
     ZCL_LEVEL_ATTR_MINLEVEL = 0x0002,
@@ -73,7 +74,7 @@ enum {
     ZCL_LEVEL_ATTR_STARTUP_CURRLEVEL = 0x4000
 };
 
-/* Level Control Command Identifiers  */
+/* Level Command IDs  */
 enum {
     ZCL_LEVEL_COMMAND_MOVELEVEL = 0x00,
     ZCL_LEVEL_COMMAND_MOVE = 0x01,

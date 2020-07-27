@@ -81,7 +81,6 @@ extern "C" {
   hw_status_t HW_UART_Transmit_DMA(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size, void (*Callback)(void));
   void HW_UART_Interrupt_Handler(hw_uart_id_t hw_uart_id);
   void HW_UART_DMA_Interrupt_Handler(hw_uart_id_t hw_uart_id);
-  uint8_t GETCHAR_UART(void);
 
   /******************************************************************************
    * HW TimerServer

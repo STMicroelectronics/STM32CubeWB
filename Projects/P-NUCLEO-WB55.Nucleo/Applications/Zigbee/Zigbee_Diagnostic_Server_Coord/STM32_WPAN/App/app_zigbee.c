@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -235,7 +235,7 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
   assert(conf.status == ZB_STATUS_SUCCESS);
 
   /* Diagnotic Server */
-  zigbee_app_info.diagnostic_server = ZbZclDiagnosticsServerAlloc(zigbee_app_info.zb, SW1_ENDPOINT, ZCL_PROFILE_HOME_AUTOMATION, ZB_APS_STATUS_UNSECURED);
+  zigbee_app_info.diagnostic_server = ZbZclDiagServerAlloc(zigbee_app_info.zb, SW1_ENDPOINT, ZCL_PROFILE_HOME_AUTOMATION, ZB_APS_STATUS_UNSECURED);
   assert(zigbee_app_info.diagnostic_server != false);
   
   /* On Off Server */

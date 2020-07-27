@@ -46,7 +46,7 @@ For debug: variables to monitor with debugger watch window:
  - "aADCxConvertedData": ADC group regular conversion data
  - "aADCxConvertedData_Voltage_mVolt": ADC conversion data computation to physical values (array of data)
 
-LED2 is blinking every 1 sec in case of error.
+LED2 is blinking every 1 sec in case of error. 
  
 Connection needed:
 None.
@@ -62,9 +62,10 @@ Other peripherals used:
   1 GPIO for analog input: PA.01 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32)
   DMA
   Timer
+
 @par Keywords
 
-ADC, ADC channel, DMA transfers conversion, DMA half transfer, DMA transfer complete, conversion, single channel, single conversion mode, interrupt,
+ADC, analog digital converter, analog, conversion, voltage, channel, analog input, DMA transfer, trigger
 
 
 @par Directory contents 
@@ -79,7 +80,7 @@ ADC, ADC channel, DMA transfers conversion, DMA half transfer, DMA transfer comp
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

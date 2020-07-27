@@ -283,7 +283,7 @@
                 <option>
                     <name>CCAllowList</name>
                     <version>1</version>
-                    <state>00000000</state>
+                    <state>11111110</state>
                 </option>
                 <option>
                     <name>CCDebugInfo</name>
@@ -368,7 +368,7 @@
                     <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
-		            <state>$PROJ_DIR$/../../../../../..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\vcp</state>
+                    <state>$PROJ_DIR$/../../../../../..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\vcp</state>
                     <state>$PROJ_DIR$/../../../../../..\Middlewares\ST\STM32_USB_Device_Library\Class\CDC\Inc</state>
                     <state>$PROJ_DIR$/../../../../../..\Middlewares\ST\STM32_USB_Device_Library\Core\Inc</state>
                 </option>
@@ -386,7 +386,7 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
@@ -395,7 +395,7 @@
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules98</name>
@@ -1070,6 +1070,9 @@
                     <name>$PROJ_DIR$\..\Core\Src\main.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
                 </file>
                 <file>
@@ -1095,6 +1098,12 @@
                 </group>
             </group>
         </group>
+    </group>
+    <group>
+        <name>Doc</name>
+        <file>
+            <name>$PROJ_DIR$\..\readme.txt</name>
+        </file>
     </group>
     <group>
         <name>Drivers</name>
@@ -1143,6 +1152,12 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pcd.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pcd_ex.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr.c</name>
             </file>
             <file>
@@ -1172,21 +1187,14 @@
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart_ex.c</name>
             </file>
-			<file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_usb.c</name>
             </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pcd.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pcd_ex.c</name>
-            </file>
-
         </group>
     </group>
     <group>
         <name>Middlewares</name>
-		<group>
+        <group>
             <name>STM32_USB_Device_Library</name>
             <group>
                 <name>Class</name>
@@ -1242,7 +1250,7 @@
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\tl_zigbee_hci.c</name>
                             </file>
                         </group>
-						<group>
+                        <group>
                             <name>vcp</name>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\vcp\usbd_conf.c</name>

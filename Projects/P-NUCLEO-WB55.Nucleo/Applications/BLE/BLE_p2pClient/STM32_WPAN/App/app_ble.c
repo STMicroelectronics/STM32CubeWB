@@ -18,7 +18,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 
@@ -177,7 +176,7 @@ typedef struct
   uint16_t Slave_Latency;
   uint16_t Timeout_Multiplier;
 } APP_BLE_p2p_Conn_Update_req_t;
-#endif 
+#endif
 
 /* USER CODE BEGIN PTD */
 
@@ -214,7 +213,7 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
 
 /**
-*   Identity root key used to derive LTK and CSRK 
+*   Identity root key used to derive LTK and CSRK
 */
 static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
 
@@ -246,7 +245,7 @@ static const uint8_t* BleGetBdAddress( void );
 static void Scan_Request( void );
 static void Connect_Request( void );
 static void Switch_OFF_GPIO( void );
- 
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -328,9 +327,9 @@ void APP_BLE_Init( void )
       BleApplicationContext.Device_Connection_Status = APP_BLE_IDLE;
 
     /*Radio mask Activity*/
-#if (OOB_DEMO != 0)  
+#if (OOB_DEMO != 0)
   aci_hal_set_radio_activity_mask(0x0020);
-#endif 
+#endif
   /**
    * Initialize P2P Client Application
    */
@@ -345,7 +344,7 @@ void APP_BLE_Init( void )
    * Start scanning
    */
   UTIL_SEQ_SetTask(1 << CFG_TASK_START_SCAN_ID, CFG_SCH_PRIO_0);
-#endif 
+#endif
 /* USER CODE BEGIN APP_BLE_Init_2 */
 
 /* USER CODE END APP_BLE_Init_2 */
@@ -407,7 +406,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         }
         break;
 #if (OOB_DEMO != 0)
-        case EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ: 
+        case EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ:
         {
           /* USER CODE BEGIN EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ */
 
@@ -420,7 +419,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           APP_BLE_p2p_Conn_Update_req.Interval_Max = pr->Interval_Max;
           APP_BLE_p2p_Conn_Update_req.Slave_Latency = pr->Slave_Latency;
           APP_BLE_p2p_Conn_Update_req.Timeout_Multiplier = pr->Timeout_Multiplier;
-            
+
           result = aci_l2cap_connection_parameter_update_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,
                                                            APP_BLE_p2p_Conn_Update_req.Interval_Min,
                                                            APP_BLE_p2p_Conn_Update_req.Interval_Max,
@@ -436,11 +435,11 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
               /* USER CODE END BLE_STATUS_SUCCESS */
           }
           aci_hal_set_radio_activity_mask(0x0020);
-          
-        } 
-        
+
+        }
+
         break;
-        
+
         case 0x0004:
         {
           /* USER CODE BEGIN RADIO_ACTIVITY_EVENT */
@@ -448,17 +447,22 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           HW_TS_Start(BleApplicationContext.SwitchOffGPIO_timer_Id, (uint32_t)LED_ON_TIMEOUT);
           /* USER CODE END RADIO_ACTIVITY_EVENT */
         }
-        break; 
-#endif 
+        break;
+#endif
+
+        /* USER CODE BEGIN BLUE_EVT */
+
+        /* USER CODE END BLUE_EVT */
+
         default:
           /* USER CODE BEGIN ecode_default */
 
           /* USER CODE END ecode_default */
           break;
-       
+
       }
     }
-    break; 
+    break;
 
     case EVT_DISCONN_COMPLETE:
       {
@@ -494,7 +498,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           /* USER CODE END EVT_LE_CONN_COMPLETE */
           /**
-           * The connection is done, 
+           * The connection is done,
            */
           connection_complete_event = (hci_le_connection_complete_event_rp0 *) meta_evt->data;
           BleApplicationContext.BleApplicationContext_legacy.connectionHandle = connection_complete_event->Connection_Handle;
@@ -531,7 +535,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           event_data_size = le_advertising_event->Advertising_Report[0].Length_Data;
 
-          /* WARNING: be careful when decoding advertising report as its raw format cannot be mapped on a C structure. 
+          /* WARNING: be careful when decoding advertising report as its raw format cannot be mapped on a C structure.
           The data and RSSI values could not be directly decoded from the RAM using the data and RSSI field from hci_le_advertising_report_event_rp0 structure.
           Instead they must be read by using offsets (please refer to BLE specification).
           RSSI = *(uint8_t*) (adv_report_data + le_advertising_event->Advertising_Report[0].Length_Data);
@@ -608,6 +612,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           break;
 
+        /* USER CODE BEGIN META_EVT */
+
+        /* USER CODE END META_EVT */
+
         default:
           /* USER CODE BEGIN subevent_default */
 
@@ -617,6 +625,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       }
     }
     break; /* HCI_EVT_LE_META_EVENT */
+
+    /* USER CODE BEGIN EVENT_PCKT */
+
+    /* USER CODE END EVENT_PCKT */
 
     default:
       /* USER CODE BEGIN evt_default */
@@ -679,24 +691,24 @@ static void Ble_Tl_Init( void )
 }
 
  static void Ble_Hci_Gap_Gatt_Init(void){
- 
+
   uint8_t role;
   uint8_t index;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
   uint32_t srd_bd_addr[2];
-  uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE }; 
-  
+  uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
+
   /**
    * Initialize HCI layer
    */
   /*HCI Reset to synchronise BLE Stack*/
    hci_reset();
-  
+
    /**
    * Write the BD Address
    */
- 
+
   bd_addr = BleGetBdAddress();
   aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                             CONFIG_DATA_PUBADDR_LEN,
@@ -713,20 +725,20 @@ static void Ble_Tl_Init( void )
   aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
 
   /**
-   * Write Identity root key used to derive LTK and CSRK 
+   * Write Identity root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
-    
+
    /**
    * Write Encryption root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
-  
+
   /**
      * Set TX Power to 0dBm.
      */
     aci_hal_set_tx_power_level(1, CFG_TX_POWER);
-  
+
 /**
    * Initialize GATT interface
    */
@@ -807,7 +819,7 @@ static void Ble_Tl_Init( void )
     {
       aci_gap_configure_whitelist();
     }
-  
+
 }
 
 static void Scan_Request( void )
@@ -965,8 +977,8 @@ static void BLE_UserEvtRx( void * pPayload )
   SVCCTL_UserEvtFlowStatus_t svctl_return_status;
   tHCI_UserEvtRxParam *pParam;
 
-  pParam = (tHCI_UserEvtRxParam *)pPayload; 
-  
+  pParam = (tHCI_UserEvtRxParam *)pPayload;
+
   svctl_return_status = SVCCTL_UserEvtRx((void *)&(pParam->pckt->evtserial));
   if (svctl_return_status != SVCCTL_UserEvtFlowDisable)
 {

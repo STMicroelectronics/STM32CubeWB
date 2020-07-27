@@ -60,11 +60,10 @@ Other peripheral used:
   1 GPIO for LED2
   1 GPIO for analog input of comparator: PC.05 (Morpho connector CN7 pin 3)
   EXTI line 20 (connected to COMP1 output)
-  
+
 @par Keywords
 
-Comparator, voltage, VREFINT, COMP1, Vdda, interrupt
-
+Comparator, COMP, analog, voltage, analog input, threshold, VrefInt
 
 @par Directory contents 
 
@@ -78,7 +77,7 @@ Comparator, voltage, VREFINT, COMP1, Vdda, interrupt
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

@@ -67,7 +67,10 @@ MOBLE_RESULT Appli_GenericClient_OnOff_Set(void)
   return MOBLE_RESULT_SUCCESS;
 }
 
+/******************************************************************************/
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL
+/******************************************************************************/
+
 /**
 * @brief  Appli_Generic_Level_Set: This function is callback for Application
 *          when Generic Level message is called
@@ -87,7 +90,9 @@ MOBLE_RESULT Appli_GenericClient_Level_Set_Unack(void)
   return MOBLE_RESULT_SUCCESS;
 }
 
-#endif
+/******************************************************************************/
+#endif  /* #ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL */
+/******************************************************************************/
 
 /**
 * @}

@@ -71,7 +71,7 @@
 #define DEVICE_KEY_SIZE                         16U
 #define APP_KEY_SIZE                            16U
 #if (LOW_POWER_FEATURE == 1)
-#define LPN_API_TIMER_INTERVAL           30*(1000000/CFG_TS_TICK_VAL)  /* 30 secondes */
+#define LPN_API_TIMER_INTERVAL           5*(1000000/CFG_TS_TICK_VAL)  /* 5 secondes */
 #endif
 /* Private macro -------------------------------------------------------------*/
 #define MAX_APPLI_BUFF_SIZE             8 
@@ -159,9 +159,9 @@ MOBLEUINT8 DisableFilter = 0;
 #if LOW_POWER_FEATURE
 MOBLEINT32 BLEMesh_sleepTime;
 MOBLEUINT32 SysRefCount;
+MOBLEBOOL LPN_scan_enabled;
 #endif
 
-MOBLEUINT8 network_conf[0x1000];
 MOBLEUINT8 nvm_operation;
 MOBLEUINT8 nvm_flash_page;
 MOBLEUINT8 provisioning_completion;
@@ -503,13 +503,13 @@ MOBLEUINT8 Appli_BleSetNumberOfElementsCb(void)
 {
   if(NumberOfElements > MAX_NUMB_ELEMENTS)
   {
-    TRACE_M(TF_ELEMENTS,"In version 1.11.00x one Element per node is supported!\r\n"); 
+    TRACE_M(TF_MISC,"In version 1.11.00x one Element per node is supported!\r\n"); 
     return MAX_NUMB_ELEMENTS;
   }
   
   else if(NumberOfElements == 0)
   {
-    TRACE_M(TF_ELEMENTS,"Number Of Elements must be 1 or greater than 1!\r\n"); 
+    TRACE_M(TF_MISC,"Number Of Elements must be 1 or greater than 1!\r\n"); 
     return 1;
   }
   
@@ -663,14 +663,13 @@ void Appli_CheckForUnprovision(void)
     wait until user releases button*/
     if (!interrupted)
     {
-      BLEMesh_Unprovision();
-      
-      MoblePalNvmErase(NVM_BASE, 0);      
-      MoblePalNvmErase(NVM_BASE, 0x1000);
-      MoblePalNvmErase(APP_NVM_BASE, 0);
-      MoblePalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
+      PalNvmErase(NVM_BASE, 0); 
+      PalNvmErase(NVM_BASE, 0x1000);
+      PalNvmErase(APP_NVM_BASE, 0);
+      PalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
       TRACE_M(TF_PROVISION,"NVM erased\r\n");      
       
+      BLEMesh_Unprovision();
       AppliNvm_ClearModelState();     
       TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
       t = Clock_Time();
@@ -718,10 +717,10 @@ void Appli_Unprovision(void)
     /* No GATT connection */
     BLEMesh_Unprovision();
       
-    MoblePalNvmErase(NVM_BASE, 0);      
-    MoblePalNvmErase(NVM_BASE, 0x1000);
-    MoblePalNvmErase(APP_NVM_BASE, 0);
-    MoblePalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
+    PalNvmErase(NVM_BASE, 0);      
+    PalNvmErase(NVM_BASE, 0x1000);
+    PalNvmErase(APP_NVM_BASE, 0);
+    PalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
     AppliNvm_ClearModelState();     
@@ -964,7 +963,27 @@ void BLEMesh_ProvisionCallback(void)
   
 #if (LOW_POWER_FEATURE == 1)
   /* Call API LPN_API_TIMER_INTERVAL after LPN provisioning */
-  HW_TS_Start(lowPowerNodeApiTimer_Id, LPN_API_TIMER_INTERVAL);
+//  HW_TS_Start(lowPowerNodeApiTimer_Id, LPN_API_TIMER_INTERVAL);
+#endif
+}
+
+
+/**
+* @brief  callback for configuration the node by provisioner.
+* @param  void
+* @retval void
+*/
+void BLEMesh_ConfigurationCallback(void)
+{
+#if (LOW_POWER_FEATURE == 1)
+//  /* Set the task in the scheduler for the next execution */
+//  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_LPN_REQ_ID, CFG_SCH_PRIO_0);
+  /* Call API LPN_API_TIMER_INTERVAL after LPN provisioning */
+  if(LPN_scan_enabled == MOBLE_FALSE)
+  {
+    HW_TS_Start(lowPowerNodeApiTimer_Id, LPN_API_TIMER_INTERVAL);
+    LPN_scan_enabled = MOBLE_TRUE;
+  }
 #endif
 }
 
@@ -1431,6 +1450,7 @@ static void LowPowerNodeApiApp(void)
 {
   TRACE_I(TF_PROVISION,"Scan disabled \r\n");
   BLEMesh_LpnDisableScan();
+    
   return;
 }
 
@@ -1475,9 +1495,11 @@ static void GPIO_InitNVICPowerOff(void)
 */
 void Appli_Init(MOBLEUINT8 *flag)
 {
+#if 0
 #ifdef ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE  
   /* Hardware Factory Restore implementation */
   AppliNvm_FactorySettingReset();
+#endif
 #endif
   
 #if PB_ADV_SUPPORTED
@@ -1516,6 +1538,7 @@ void Appli_Init(MOBLEUINT8 *flag)
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &lowPowerNodeApiTimer_Id, hw_ts_SingleShot, LowPowerNodeApiTask);
   
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_LPN_REQ_ID, UTIL_SEQ_RFU, LowPowerNodeApiApp );
+  LPN_scan_enabled = MOBLE_FALSE;
 #endif
 }
 

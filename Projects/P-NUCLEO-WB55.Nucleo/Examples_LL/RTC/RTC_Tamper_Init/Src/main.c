@@ -20,7 +20,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -95,7 +94,6 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  
 
   NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
@@ -165,7 +163,7 @@ void SystemClock_Config(void)
   LL_RCC_HSI_Enable();
   while(LL_RCC_HSI_IsReady() != 1)
   {
-  };
+  }
 
   /* Sysclk activation on the HSI */
   /* Set CPU1 prescaler*/
@@ -177,7 +175,7 @@ void SystemClock_Config(void)
   LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
   while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
   {
-  };
+  }
 
   /* Set AHB SHARED prescaler*/
   LL_RCC_SetAHB4Prescaler(LL_RCC_SYSCLK_DIV_1);
@@ -213,6 +211,7 @@ static void MX_RTC_Init(void)
 
   /* Peripheral clock enable */
   LL_RCC_EnableRTC();
+  LL_APB2_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_RTCAPB);
 
   /* USER CODE BEGIN RTC_Init 1 */
 
@@ -223,14 +222,14 @@ static void MX_RTC_Init(void)
   RTC_InitStruct.AsynchPrescaler = 127;
   RTC_InitStruct.SynchPrescaler = 255;
   LL_RTC_Init(RTC, &RTC_InitStruct);
-  /** Enable the RTC Tamper 1 
+  /** Enable the RTC Tamper 1
   */
   LL_RTC_TAMPER_Enable(RTC, LL_RTC_TAMPER_1);
-  LL_RTC_TAMPER_EnableMask(RTC, LL_RTC_TAMPER_MASK_TAMPER3);
-  LL_RTC_TAMPER_EnableEraseBKP(RTC, LL_RTC_TAMPER_NOERASE_TAMPER1);
   LL_RTC_TAMPER_SetFilterCount(RTC, LL_RTC_TAMPER_FILTER_DISABLE);
   LL_RTC_TAMPER_SetPrecharge(RTC, LL_RTC_TAMPER_DURATION_1RTCCLK);
   LL_RTC_TAMPER_SetSamplingFreq(RTC, LL_RTC_TAMPER_SAMPLFREQDIV_32768);
+  LL_RTC_TAMPER_EnableEraseBKP(RTC, LL_RTC_TAMPER_NOERASE_TAMPER1);
+  LL_RTC_TAMPER_EnableMask(RTC, LL_RTC_TAMPER_MASK_TAMPER1);
   LL_RTC_TAMPER_EnablePullUp(RTC);
   /* USER CODE BEGIN RTC_Init 2 */
   /* Enable IT TAMPER */
@@ -358,7 +357,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

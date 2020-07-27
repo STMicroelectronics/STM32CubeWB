@@ -67,7 +67,7 @@
  * Select UART interfaces
  */
 #define CFG_DEBUG_TRACE_UART    hw_uart1
-#define CFG_CONSOLE_MENU      
+#define CFG_CONSOLE_MENU
 #define CFG_CLI_UART    hw_lpuart1
 /******************************************************************************
  * USB interface
@@ -305,7 +305,7 @@ typedef enum
 #define TASK_Notif_CoapReceived     (1U << CFG_TASK_NOTIF_COAP_RECEIVED)
 #define TASK_IdentifyBoard          (1U << CFG_TASK_IDENTIFY_BOARD)
 /* USER CODE END DEFINE_TASK */
- 
+
 /**
  * This is the list of priority required by the application
  * Each Id shall be in the range 0..31

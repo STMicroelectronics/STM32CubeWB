@@ -61,6 +61,7 @@ enum {
 
 /* DRLC Criticality Levels */
 enum ZbZclDrlcCriticalityLevelT {
+    ZCL_DRLC_CRITICALITY_INVALID = 0,
     ZCL_DRLC_CRITICALITY_GREEN = 1,
     ZCL_DRLC_CRITICALITY_1 = 2,
     ZCL_DRLC_CRITICALITY_2 = 3,
@@ -82,7 +83,7 @@ enum ZbZclDrlcCriticalityLevelT {
 #define ZCL_DRLC_CANCEL_CONTROL_GRACEFUL        0x01U
 
 /* Event Status Values */
-enum {
+enum ZbZclDrlcEventStatusT {
     ZCL_DRLC_STATUS_EVENT_RECEIVED = 0x01,
     ZCL_DRLC_STATUS_EVENT_STARTED = 0x02,
     ZCL_DRLC_STATUS_EVENT_COMPLETED = 0x03,
@@ -100,6 +101,11 @@ enum {
     ZCL_DRLC_STATUS_RJCTD = 0xfe
 };
 
+#define ZCL_DRLC_COOL_SETPOINT_IGNORED      0x8000U
+#define ZCL_DRLC_HEAT_SETPOINT_IGNORED      0x8000U
+#define ZCL_DRLC_AVG_LOAD_ADJ_IGNORED       0x80U
+#define ZCL_DRLC_DUTYCYCLE_IGNORED          0xffU
+
 enum ZbZclDrlcSignatureT {
     ZCL_DRLC_SIGNATURE_TYPE_NONE = 0x00,
     ZCL_DRLC_SIGNATURE_TYPE_ECDSA = 0x01
@@ -114,52 +120,50 @@ enum ZbZclDrlcSignatureT {
  */
 /* Structure describing a load control event. */
 struct ZbZclDrlcEventT {
-    uint32_t eventId;
-    uint16_t deviceClass;
-    uint8_t enrolmentGroup;
-    uint32_t startTime; /* UTC, or 0 = now */
+    uint32_t issuer_id;
+    uint16_t device_class;
+    uint8_t util_enrol_group;
+    uint32_t start_time; /* UTC, or 0 = now */
     uint16_t duration; /* minutes */
     enum ZbZclDrlcCriticalityLevelT criticality;
-    uint8_t coolingOffset;
-    uint8_t heatingOffset;
-    uint16_t coolingSetPoint;
-    uint16_t heatingSetPoint;
-    int8_t loadAdjustment;
-    uint8_t dutyCycle;
-    uint8_t ctrl; /* e.g. ZCL_DRLC_EVENT_CTRL_RAND_START */
+    uint8_t cool_offset;
+    uint8_t heat_offset;
+    int16_t cool_setpoint;
+    int16_t heat_setpoint;
+    int8_t avg_load_adj;
+    uint8_t dutycycle;
+    uint8_t event_control; /* e.g. ZCL_DRLC_EVENT_CTRL_RAND_START */
 };
 
 /* Structure describing a cancel event command. */
 struct ZbZclDrlcCancelT {
-    uint32_t eventId;
-    uint16_t deviceClass;
-    uint8_t enrolmentGroup;
-    uint8_t ctrl; /* e.g. ZCL_DRLC_CANCEL_CONTROL_GRACEFUL */
-#if 0 /* effectiveTime is now deprecated - must be zero */
-    uint32_t effectiveTime;
-#endif
+    uint32_t issuer_id;
+    uint16_t device_class;
+    uint8_t util_enrol_group;
+    uint8_t cancel_control; /* e.g. ZCL_DRLC_CANCEL_CONTROL_GRACEFUL */
+    /* effectiveTime is now deprecated - must be zero */
+    /* uint32_t effectiveTime; */
 };
 
-/* Structure describing an event status. */
+/* Report Event Status Command data structure */
 struct ZbZclDrlcStatusT {
-    uint32_t eventId;
-    uint8_t status;
-    uint32_t statusTime;
-    uint8_t appliedCriticality;
-    uint16_t appliedCooling;
-    uint16_t appliedHeating;
-    int8_t loadAdjustment;
-    uint8_t appliedDutyCycle;
-    uint8_t eventControl;
-    enum ZbZclDrlcSignatureT signatureType;
-    /*  */
-    uint8_t signature[ZCL_DRLC_SIGNATURE_LENGTH];
+    uint32_t issuer_id;
+    enum ZbZclDrlcEventStatusT status;
+    uint32_t status_time;
+    enum ZbZclDrlcCriticalityLevelT crit_level_applied;
+    uint16_t cool_setpoint_applied; /* Set to ZCL_DRLC_COOL_SETPOINT_IGNORED if not used */
+    uint16_t heat_setpoint_applied; /* Set to ZCL_DRLC_HEAT_SETPOINT_IGNORED if not used */
+    int8_t avg_load_adj_applied; /* Set to ZCL_DRLC_AVG_LOAD_ADJ_IGNORED if not used */
+    uint8_t dutycycle_applied; /* Set to ZCL_DRLC_DUTYCYCLE_IGNORED if not used */
+    uint8_t event_control;
+    enum ZbZclDrlcSignatureT sig_type;
+    uint8_t sig_data[ZCL_DRLC_SIGNATURE_LENGTH];
 };
 
 struct ZbZclDrlcGetEventsReqT {
-    uint32_t startTime;
-    uint8_t maxEvents;
-    uint32_t issuerId;
+    uint32_t start_time;
+    uint8_t num_events;
+    uint32_t issuer_id;
 };
 
 /*---------------------------------------------------------------
@@ -170,10 +174,9 @@ struct ZbZclDrlcServerCallbacksT {
     void (*report_status)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo,
         struct ZbZclDrlcStatusT *status, void *arg);
 
-    /* The get_events callback handler in the application should return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE
-     * if successful and the application will call ZbZclDrlcServerCommandEventNotify in response.
-     * Or, the callback should return ZCL_STATUS_NOT_FOUND if no events found and no response sent,
-     * which causes a Default Response to be sent with the error status code. */
+    /* The get_events callback handler in the application should return ZCL_STATUS_SUCCESS,
+     * or ZCL_STATUS_NOT_FOUND if no events are found. Events are re-issued by calling
+     * ZbZclDrlcServerCommandEventReq(). */
     enum ZclStatusCodeT (*get_events)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo,
         struct ZbZclDrlcGetEventsReqT *req, void *arg);
 };
@@ -184,11 +187,6 @@ struct ZbZclClusterT * ZbZclDrlcServerAlloc(struct ZigBeeT *zb, uint8_t endpoint
 /* Server Commands */
 enum ZclStatusCodeT ZbZclDrlcServerCommandEventReq(struct ZbZclClusterT *clusterPtr, struct ZbZclDrlcEventT *eventPtr,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
-
-/* ZbZclDrlcServerCommandEventNotify is similar to ZbZclDrlcServerCommandEventReq, but it
- * sends the ZCL_DRLC_COMMAND_EVENT command as a response to a ZCL_DRLC_COMMAND_GET_SCHEDULED_EVENTS. */
-enum ZclStatusCodeT ZbZclDrlcServerCommandEventNotify(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclDrlcEventT *eventPtr, struct ZbZclAddrInfoT *dstInfo);
 
 enum ZclStatusCodeT ZbZclDrlcServerCommandCancelReq(struct ZbZclClusterT *clusterPtr,
     struct ZbZclDrlcCancelT *cancelInfoPtr, const struct ZbApsAddrT *dst,
@@ -220,6 +218,7 @@ enum ZclStatusCodeT ZbZclDrlcClientCommandReportStatusReq(struct ZbZclClusterT *
     const struct ZbApsAddrT *dst, struct ZbZclDrlcStatusT *statusPtr,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
+/* This command is used to request that Load Control Events are re-issued to the requesting device. */
 enum ZclStatusCodeT ZbZclDrlcClientCommandGetEventsReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclDrlcGetEventsReqT *cmd_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);

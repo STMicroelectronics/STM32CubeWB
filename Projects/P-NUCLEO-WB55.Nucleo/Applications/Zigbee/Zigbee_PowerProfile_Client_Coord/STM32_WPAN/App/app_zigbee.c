@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -102,7 +102,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_PowerProfile_ProfileNotify_cb(struct ZbZcl
   UNUSED(arg);
   
   APP_DBG("[POWER PROFILE] Power Profile profile notification received.");
-  APP_DBG("[POWER PROFILE] Power Profile ID: %d.", notify->power_profile_id);
+  APP_DBG("[POWER PROFILE] Power Profile ID: %d.", notify->profile_id);
   APP_DBG("[POWER PROFILE] Power Profile nb energy phase: %d.", notify->num_transferred_phases);
   APP_DBG("[POWER PROFILE] Power Profile expected duration: %d.", notify->phase_list[0].expect_duration);
   APP_DBG("[POWER PROFILE] Power Profile maximum activation delay: 0x%02x.\n", notify->phase_list[0].max_activation_delay);
@@ -145,7 +145,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_PowerProfile_GetPrice_cb(struct ZbZclClust
   APP_DBG("[POWER PROFILE] Power Profile GetPrice request received.");
   APP_DBG("[POWER PROFILE] Power Profile profile ID: %d.", req->profile_id);
   
-  rsp.power_profile_id = 0x01;
+  rsp.profile_id = 0x01;
   rsp.price = 10;
   
   APP_DBG("[POWER PROFILE] Sending Power Profile GetPrice response.\n");

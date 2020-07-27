@@ -66,7 +66,7 @@
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex Processor Interruption and Exception Handlers          */ 
+/*           Cortex Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.
@@ -188,7 +188,7 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
-  
+
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
@@ -217,7 +217,7 @@ void COMP_IRQHandler(void)
     ComparatorTrigger_Callback();
   }
   /* USER CODE END COMP_IRQn 0 */
-  
+
   /* USER CODE BEGIN COMP_IRQn 1 */
 
   /* USER CODE END COMP_IRQn 1 */

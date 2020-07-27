@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    light_lc.c
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Light Control model middleware file
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -79,7 +57,7 @@ Light_LC_ModelFlag_t Light_LC_ModelFlag;
 
 Light_LC_TemporaryStatus_t Light_LC_TemporaryStatus;
 
-extern Light_PublishOpcodeList_t Light_PublishOpcodeList;
+//extern Light_PublishOpcodeList_t Light_PublishOpcodeList;
 
 MOBLEUINT8 Light_LC_UpdateFlag = 0;
 MOBLEUINT32 Timer_value;
@@ -88,26 +66,42 @@ extern MOBLE_ADDRESS Dst_Peer;
 #endif
 
 MODEL_OpcodeTableParam_t Light_LC_Opcodes_Table[] = {
-#ifdef ENABLE_LIGHT_MODEL_SERVER_LC  
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_MODE_GET,                       MOBLE_TRUE,   0, 0,         LIGHT_LC_MODE_STATUS     , 1, 1},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_MODE_SET,                       MOBLE_TRUE,   1, 1,         LIGHT_LC_MODE_STATUS     , 1, 1},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_MODE_SET_UNACK,                 MOBLE_FALSE,  1, 1,         LIGHT_LC_MODE_STATUS     , 1, 1},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_MODE_STATUS,                    MOBLE_FALSE,  1, 1,         0     , 1, 1},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_OM_GET,                         MOBLE_TRUE,   0, 0,         LIGHT_LC_OM_STATUS       , 1, 1},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_OM_SET,                         MOBLE_TRUE,   1, 1,         LIGHT_LC_OM_STATUS       , 1, 1},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_OM_SET_UNACK,                   MOBLE_FALSE,  1, 1,         LIGHT_LC_OM_STATUS       , 1, 1},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_OM_STATUS,                      MOBLE_FALSE,  1, 1,         0       , 1, 1},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_ON_OFF_GET,                     MOBLE_TRUE,   0, 0,         LIGHT_LC_ON_OFF_STATUS   , 1, 3},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_ON_OFF_SET,                     MOBLE_TRUE,   2, 4,         LIGHT_LC_ON_OFF_STATUS   , 1, 3},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_ON_OFF_SET_UNACK,               MOBLE_FALSE,  2, 4,         LIGHT_LC_ON_OFF_STATUS   , 1, 3},
- {LIGHT_MODEL_SERVER_LC_MODEL_ID    ,LIGHT_LC_ON_OFF_STATUS,                  MOBLE_FALSE,  1, 3,         0   , 1, 3},
-#endif
-
-#ifdef ENABLE_LIGHT_MODEL_SERVER_LC_SETUP  
- {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID   ,LIGHT_LC_PROPERTY_GET,                   MOBLE_TRUE,   2, 2,          LIGHT_LC_PROPERTY_STATUS , 2, 10},
- {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID   ,LIGHT_LC_PROPERTY_SET,                   MOBLE_TRUE,   2, 10,         LIGHT_LC_PROPERTY_STATUS , 2, 10},
- {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID   ,LIGHT_LC_PROPERTY_SET_UNACK,             MOBLE_FALSE,  2, 10,         LIGHT_LC_PROPERTY_STATUS , 2, 10},
- {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID   ,LIGHT_LC_PROPERTY_STATUS,                MOBLE_FALSE,  2, 10,         0 , 2, 10}, 
+/* model_id                             opcode                       reliable      min_payload_size max_payload_size response_opcode           min_response_size max_response_size */
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC      
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_MODE_GET,           MOBLE_TRUE,   0,               0,               LIGHT_LC_MODE_STATUS  ,   1,                1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_MODE_SET,           MOBLE_TRUE,   1,               1,               LIGHT_LC_MODE_STATUS  ,   1,                1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_MODE_SET_UNACK,     MOBLE_FALSE,  1,               1,               LIGHT_LC_MODE_STATUS  ,   1,                1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_MODE_STATUS,        MOBLE_FALSE,  1,               1,               0                     ,   1,                1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_OM_GET,             MOBLE_TRUE,   0,               0,               LIGHT_LC_OM_STATUS    ,   1,                1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_OM_SET,             MOBLE_TRUE,   1,               1,               LIGHT_LC_OM_STATUS    ,   1,                1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_OM_SET_UNACK,       MOBLE_FALSE,  1,               1,               LIGHT_LC_OM_STATUS    ,   1,                1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_OM_STATUS,          MOBLE_FALSE,  1,               1,               0                     ,   1,                1},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_ON_OFF_GET,         MOBLE_TRUE,   0,               0,               LIGHT_LC_ON_OFF_STATUS,   1,                3},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_ON_OFF_SET,         MOBLE_TRUE,   2,               4,               LIGHT_LC_ON_OFF_STATUS,   1,                3},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_ON_OFF_SET_UNACK,   MOBLE_FALSE,  2,               4,               LIGHT_LC_ON_OFF_STATUS,   1,                3},
+ {LIGHT_MODEL_SERVER_LC_MODEL_ID,       LIGHT_LC_ON_OFF_STATUS,      MOBLE_FALSE,  1,               3,               0                     ,   1,                3},
+#endif                                                                                                                  
+                                                                                                                        
+#ifdef ENABLE_LIGHT_MODEL_CLIENT_LC      
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_MODE_GET,           MOBLE_TRUE,   0,               0,               LIGHT_LC_MODE_STATUS  ,   1,                1},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_MODE_SET,           MOBLE_TRUE,   1,               1,               LIGHT_LC_MODE_STATUS  ,   1,                1},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_MODE_SET_UNACK,     MOBLE_FALSE,  1,               1,               LIGHT_LC_MODE_STATUS  ,   1,                1},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_MODE_STATUS,        MOBLE_FALSE,  1,               1,               0                     ,   1,                1},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_OM_GET,             MOBLE_TRUE,   0,               0,               LIGHT_LC_OM_STATUS    ,   1,                1},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_OM_SET,             MOBLE_TRUE,   1,               1,               LIGHT_LC_OM_STATUS    ,   1,                1},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_OM_SET_UNACK,       MOBLE_FALSE,  1,               1,               LIGHT_LC_OM_STATUS    ,   1,                1},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_OM_STATUS,          MOBLE_FALSE,  1,               1,               0                     ,   1,                1},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_ON_OFF_GET,         MOBLE_TRUE,   0,               0,               LIGHT_LC_ON_OFF_STATUS,   1,                3},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_ON_OFF_SET,         MOBLE_TRUE,   2,               4,               LIGHT_LC_ON_OFF_STATUS,   1,                3},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_ON_OFF_SET_UNACK,   MOBLE_FALSE,  2,               4,               LIGHT_LC_ON_OFF_STATUS,   1,                3},
+ {LIGHT_MODEL_CLIENT_LC_MODEL_ID,       LIGHT_LC_ON_OFF_STATUS,      MOBLE_FALSE,  1,               3,               0                     ,   1,                3},
+#endif                                                                                                                  
+                                                                                                                        
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC_SETUP                                                                               
+ {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID, LIGHT_LC_PROPERTY_GET,       MOBLE_TRUE,   2,               2,               LIGHT_LC_PROPERTY_STATUS, 2,                10},
+ {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID, LIGHT_LC_PROPERTY_SET,       MOBLE_TRUE,   2,               10,              LIGHT_LC_PROPERTY_STATUS, 2,                10},
+ {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID, LIGHT_LC_PROPERTY_SET_UNACK, MOBLE_FALSE,  2,               10,              LIGHT_LC_PROPERTY_STATUS, 2,                10},
+ {LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID, LIGHT_LC_PROPERTY_STATUS,    MOBLE_FALSE,  2,               10,              0                       , 2,                10}, 
 #endif 
  {0}
 };
@@ -160,7 +154,7 @@ Light_Property_Table_t Light_Property_Table = {
 MOBLE_RESULT Light_LC_ModeSet(MOBLEUINT8 const *lcMode_param, MOBLEUINT32 length)
 {  
   
-  TRACE_I(TF_LIGHT_LC, "Light_LC_ModeSet callback received \r\n");
+  TRACE_I(TF_LIGHT_LC_M, "Light_LC_ModeSet callback received \r\n");
   
   Light_LC_Param.LC_mode = lcMode_param[0];
   
@@ -179,7 +173,7 @@ MOBLE_RESULT Light_LC_ModeSet(MOBLEUINT8 const *lcMode_param, MOBLEUINT32 length
 MOBLE_RESULT Light_LC_ModeStatus(MOBLEUINT8* lcMode_status, MOBLEUINT32 *plength)
 {
   MOBLEUINT8 LightLC_GetBuff[2];
-  TRACE_I(TF_LIGHT_LC,"Light_LC_ModeStatus callback received \r\n");
+  TRACE_I(TF_LIGHT_LC_M,"Light_LC_ModeStatus callback received \r\n");
   Appli_LightLC_GetStatus_cb.GetLightLC_ModeState_cb(LightLC_GetBuff);
   
   *lcMode_status = LightLC_GetBuff[0];
@@ -197,7 +191,7 @@ MOBLE_RESULT Light_LC_ModeStatus(MOBLEUINT8* lcMode_status, MOBLEUINT32 *plength
 MOBLE_RESULT Light_LC_OMSet(MOBLEUINT8 const *lcOM_param, MOBLEUINT32 length)
 {
   
-  TRACE_I(TF_LIGHT_LC,"Light_LC_OMSet callback received \r\n");
+  TRACE_I(TF_LIGHT_LC_M,"Light_LC_OMSet callback received \r\n");
   
   Light_LC_Param.LC_OM = lcOM_param[0];
   
@@ -225,7 +219,7 @@ MOBLE_RESULT Light_LC_OMSet(MOBLEUINT8 const *lcOM_param, MOBLEUINT32 length)
 MOBLE_RESULT Light_LC_OMStatus(MOBLEUINT8* lcOM_status, MOBLEUINT32 *plength)
 {
   MOBLEUINT8 LightLC_GetBuff[2];
-  TRACE_I(TF_LIGHT_LC,"Light_LC_OMStatus callback received \r\n");
+  TRACE_I(TF_LIGHT_LC_M,"Light_LC_OMStatus callback received \r\n");
   
    Appli_LightLC_GetStatus_cb.GetLightLC_OMState_cb(LightLC_GetBuff);
   
@@ -244,7 +238,7 @@ MOBLE_RESULT Light_LC_OMStatus(MOBLEUINT8* lcOM_status, MOBLEUINT32 *plength)
 */ 
 MOBLE_RESULT Light_LC_OnOffSet(MOBLEUINT8 const *lcOnOff_param, MOBLEUINT32 length)
 {
-  TRACE_I(TF_LIGHT_LC,"Light_LC_OnOffSet callback received \r\n");
+  TRACE_I(TF_LIGHT_LC_M,"Light_LC_OnOffSet callback received \r\n");
   
   Light_LC_Param.Target_Light_OnOff = lcOnOff_param[0];
   Light_LC_Param.Tid = lcOnOff_param[1];
@@ -314,7 +308,7 @@ MOBLE_RESULT Light_LC_OnOffSet(MOBLEUINT8 const *lcOnOff_param, MOBLEUINT32 leng
 */ 
 MOBLE_RESULT Light_LC_OnOffStatus(MOBLEUINT8* lcOnOff_status, MOBLEUINT32 *plength)
 {
-  TRACE_I(TF_LIGHT_LC,"Light_LC_OnOffStatus callback received \r\n");
+  TRACE_I(TF_LIGHT_LC_M,"Light_LC_OnOffStatus callback received \r\n");
   
   if((Light_LC_ModelFlag.Light_LC_OptionalParam == VALUE_SET) || (Light_LC_TimeParam.StepValue != 0)) 
   {   
@@ -344,12 +338,14 @@ MOBLE_RESULT Light_LC_OnOffStatus(MOBLEUINT8* lcOnOff_status, MOBLEUINT32 *pleng
 */ 
 MOBLE_RESULT Light_LC_PropertySet(MOBLEUINT8 const *lcProp_param, MOBLEUINT32 length)
 {
-  TRACE_I(TF_LIGHT_LC,"Light_LC_PropertySet callback received \r\n");
+  TRACE_I(TF_LIGHT_LC_M,"Light_LC_PropertySet callback received \r\n");
   
   MOBLEUINT16  Light_LC_PropertyID;
   MOBLEUINT32  property_Value;
   
   Light_LC_Value_t Light_LC_Value;
+
+  Light_LC_Value.Property_Value = 0;
 
   Light_LC_PropertyID = lcProp_param[1] << 8;
   Light_LC_PropertyID |= lcProp_param[0];
@@ -379,7 +375,7 @@ MOBLE_RESULT Light_LC_PropertySet(MOBLEUINT8 const *lcProp_param, MOBLEUINT32 le
     break;
     
   default:
-        break;
+    break;
   }
    property_Value = Light_LC_Value.Property_Value;
    Light_LC_SetPropertyID_value(property_Value,Light_LC_PropertyID);
@@ -402,7 +398,7 @@ MOBLE_RESULT Light_LC_PropertyStatus( MOBLEUINT8* lcData_param, MOBLEUINT32* ple
   MOBLEUINT32 Property_Value;
   MOBLEUINT16 prop_value_length;
   
-  TRACE_M(TF_LIGHT_LC,"Light_LC_PropertyStatus callback received \r\n");
+  TRACE_M(TF_LIGHT_LC_M,"Light_LC_PropertyStatus callback received \r\n");
   
   if(length > 0)  
   {
@@ -516,7 +512,7 @@ MOBLE_RESULT Light_LC_SetPropertyID_value(MOBLEUINT32 Prop_Value,
   
   if(valid_flag == 0)
   {
-    TRACE_I(TF_LIGHT_LC,"Wrong Property ID \r\n");
+    TRACE_I(TF_LIGHT_LC_M,"Wrong Property ID \r\n");
   }
     return MOBLE_RESULT_SUCCESS;
 }
@@ -572,7 +568,7 @@ MOBLEUINT32 Light_LC_GetPropertyID_value(MOBLEUINT16 property_ID,MOBLEUINT16 *va
     }
   }
    
-  TRACE_I(TF_LIGHT_LC,"Wrong Property ID \r\n");
+  TRACE_I(TF_LIGHT_LC_M,"Wrong Property ID \r\n");
   return 0xFFFF;
     
 }
@@ -703,13 +699,13 @@ MOBLE_RESULT Light_LC_ModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   MOBLE_ADDRESS publishAddress;
   MOBLEUINT8 elementNumber;
   MOBLEUINT8 modelStateChangeFlag = MOBLE_FALSE;  
-  MOBLEUINT16 model_ID;
+  MOBLEUINT16 model_ID = 0;
   MOBLE_ADDRESS my_Address;  
  
   Dst_Peer = dst_peer;
   my_Address = BLEMesh_GetAddress();
 
-  TRACE_M(TF_LIGHT_LC,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X,response= %.2X \r\n ",dst_peer, peer_addr, opcode,response);
+  TRACE_M(TF_LIGHT_LC_M,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X,response= %.2X \r\n ",dst_peer, peer_addr, opcode,response);
 
   switch(opcode)
   {
@@ -799,7 +795,7 @@ MOBLE_RESULT Light_LC_ModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     Model_SendResponse(publishAddress,my_Address,opcode,pRxData,dataLength);
     
     modelStateChangeFlag = MOBLE_FALSE;  
-    TRACE_I(TF_LIGHT_LC,"Publishing state to the address  %.2X \r\n",publishAddress);
+    TRACE_I(TF_LIGHT_LC_M,"Publishing state to the address  %.2X \r\n",publishAddress);
   }
   
   return MOBLE_RESULT_SUCCESS;
@@ -849,7 +845,7 @@ void Light_LC_Fsm(void)
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_ON_ID);
           Timer_value = resetTime;
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-          TRACE_I(TF_LIGHT_LC,"STANDBY STATE --> FADE ON STATE , LIGHT ON EVENT \r\n\n");
+          TRACE_I(TF_LIGHT_LC_M,"STANDBY STATE --> FADE ON STATE , LIGHT ON EVENT \r\n\n");
         }
         else if(Lc_Event == LC_OCCUPANCY_ON)
         {            
@@ -871,7 +867,7 @@ void Light_LC_Fsm(void)
         Light_LC_TemporaryStatus.TargetParam_1 = state_Value;   
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_ON_ID);
           Timer_value = resetTime;
-          TRACE_I(TF_LIGHT_LC,"STANDBY STATE --> FADE ON STATE , OCCUPANCY ON EVENT \r\n\n");
+          TRACE_I(TF_LIGHT_LC_M,"STANDBY STATE --> FADE ON STATE , OCCUPANCY ON EVENT \r\n\n");
         }
         else
         {
@@ -901,7 +897,7 @@ void Light_LC_Fsm(void)
           /* Getting the wait time for the timer on the state */
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_ID);
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-          TRACE_I(TF_LIGHT_LC,"FADE ON STATE --> RUN STATE, LIGHT OFF EVENT \r\n\n");
+          TRACE_I(TF_LIGHT_LC_M,"FADE ON STATE --> RUN STATE, LIGHT OFF EVENT \r\n\n");
         }
         else 
         {           
@@ -915,7 +911,7 @@ void Light_LC_Fsm(void)
           wait_time = Light_LC_GetPropertyID_value(LIGHT_CONTROL_TIME_RUN_ON_ID,&prop_value_length);
             Timer_value = resetTime;    
             Lc_Event = LC_TIMER_OFF;
-          TRACE_I(TF_LIGHT_LC,"FADE ON STATE --> RUN STATE , wait time = %d \r\n",wait_time);
+          TRACE_I(TF_LIGHT_LC_M,"FADE ON STATE --> RUN STATE , wait time = %ld \r\n",wait_time);
           }
         }     
         break;
@@ -940,7 +936,7 @@ void Light_LC_Fsm(void)
                  
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_ID);
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-        TRACE_I(TF_LIGHT_LC,"RUN STATE --> STANDBY MANUAL STATE , LIGHT OFF EVENT \r\n");
+        TRACE_I(TF_LIGHT_LC_M,"RUN STATE --> STANDBY MANUAL STATE , LIGHT OFF EVENT \r\n");
         }
         else if(Lc_Event == LC_OCCUPANCY_ON)
         {
@@ -951,7 +947,7 @@ void Light_LC_Fsm(void)
           LightLC_States.Lc_States = LC_RUN; 
           Timer_value = resetTime;
           Lc_Event = LC_TIMER_OFF;  
-          TRACE_I(TF_LIGHT_LC,"RUN STATE --> RUN STATE , OCCUPANCY EVENT \r\n");
+          TRACE_I(TF_LIGHT_LC_M,"RUN STATE --> RUN STATE , OCCUPANCY EVENT \r\n");
         }
         else if(Lc_Event == LC_LIGHT_ON)
         {
@@ -962,7 +958,7 @@ void Light_LC_Fsm(void)
           LightLC_States.Lc_States = LC_RUN;        
           Timer_value = resetTime;
           Lc_Event = LC_TIMER_OFF;
-          TRACE_I(TF_LIGHT_LC,"RUN STATE --> RUN STATE , LIGHT ON EVENT \r\n\n");
+          TRACE_I(TF_LIGHT_LC_M,"RUN STATE --> RUN STATE , LIGHT ON EVENT \r\n\n");
         }      
         else if(Lc_Event == LC_TIMER_OFF)
         {
@@ -989,7 +985,7 @@ void Light_LC_Fsm(void)
           Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
             Timer_value = resetTime;
             Lc_Event = LC_TIMER_OFF;
-          TRACE_I(TF_LIGHT_LC,"RUN STATE --> FADE STATE , wait time = %d \r\n",wait_time);
+          TRACE_I(TF_LIGHT_LC_M,"RUN STATE --> FADE STATE , wait time = %ld \r\n",wait_time);
           }
         }
         else
@@ -1017,7 +1013,7 @@ void Light_LC_Fsm(void)
                  
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_ID);
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-        TRACE_I(TF_LIGHT_LC,"FADE STATE --> STANDBY MANUAL , LIGHT OFF EVENT \r\n");
+        TRACE_I(TF_LIGHT_LC_M,"FADE STATE --> STANDBY MANUAL , LIGHT OFF EVENT \r\n");
         }
         else if(Lc_Event == LC_OCCUPANCY_ON)
         {
@@ -1041,7 +1037,7 @@ void Light_LC_Fsm(void)
           Lc_Event = LC_TIMER_OFF;
           Timer_value = resetTime;
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-        TRACE_I(TF_LIGHT_LC,"FADE STATE --> FADE ON STATE , OCCUPANCY ON EVENT \r\n");
+        TRACE_I(TF_LIGHT_LC_M,"FADE STATE --> FADE ON STATE , OCCUPANCY ON EVENT \r\n");
         }
         else if(Lc_Event == LC_LIGHT_ON)
         {
@@ -1065,7 +1061,7 @@ void Light_LC_Fsm(void)
           Timer_value = resetTime;
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
           Lc_Event = LC_TIMER_OFF;
-        TRACE_I(TF_LIGHT_LC,"FADE STATE --> FADE ON STATE , LIGHT ON EVENT \r\n");
+        TRACE_I(TF_LIGHT_LC_M,"FADE STATE --> FADE ON STATE , LIGHT ON EVENT \r\n");
         }  
         else if(Lc_Event == LC_TIMER_OFF)
         {
@@ -1079,7 +1075,7 @@ void Light_LC_Fsm(void)
           wait_time = Light_LC_GetPropertyID_value(LIGHT_CONTROL_TIME_PROLONG_ID,&prop_value_length);                
             Timer_value = resetTime;
             Lc_Event = LC_TIMER_OFF;
-          TRACE_I(TF_LIGHT_LC,"FADE STATE --> PROLONG STATE , wait time = %d \r\n",wait_time);
+          TRACE_I(TF_LIGHT_LC_M,"FADE STATE --> PROLONG STATE , wait time = %ld \r\n",wait_time);
           }
         }
          else
@@ -1107,7 +1103,7 @@ void Light_LC_Fsm(void)
           
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_ID);
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-        TRACE_I(TF_LIGHT_LC,"PROLONG STATE --> STANDBY MANUAL , LIGHT OFF EVENT \r\n");
+        TRACE_I(TF_LIGHT_LC_M,"PROLONG STATE --> STANDBY MANUAL , LIGHT OFF EVENT \r\n");
         }
         else if(Lc_Event == LC_OCCUPANCY_ON)
         {
@@ -1130,7 +1126,7 @@ void Light_LC_Fsm(void)
             wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_ON_ID);
             Timer_value = resetTime;
           Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-          TRACE_I(TF_LIGHT_LC,"STANDBY AUTO --> FADE ON STATE , OCCUPANCY ON EVENT \r\n");
+          TRACE_I(TF_LIGHT_LC_M,"STANDBY AUTO --> FADE ON STATE , OCCUPANCY ON EVENT \r\n");
         }
         else if(Lc_Event == LC_LIGHT_ON)
         {
@@ -1153,7 +1149,7 @@ void Light_LC_Fsm(void)
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_ON_ID);
           Timer_value = resetTime; 
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-        TRACE_I(TF_LIGHT_LC,"PROLONG STATE --> FADE ON STATE , LIGHT ON EVENT \r\n");
+        TRACE_I(TF_LIGHT_LC_M,"PROLONG STATE --> FADE ON STATE , LIGHT ON EVENT \r\n");
         }
         else if(Lc_Event == LC_TIMER_OFF)
         {
@@ -1179,7 +1175,7 @@ void Light_LC_Fsm(void)
              wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_STANDBY_AUTO_ID);
            Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
              Timer_value = resetTime;    
-           TRACE_I(TF_LIGHT_LC,"PROLONG STATE --> STANDBY AUTO STATE , wait time = %d \r\n",wait_time);
+           TRACE_I(TF_LIGHT_LC_M,"PROLONG STATE --> STANDBY AUTO STATE , wait time = %ld \r\n",wait_time);
           }            
         }
          else
@@ -1207,7 +1203,7 @@ void Light_LC_Fsm(void)
          
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_ID);
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-        TRACE_I(TF_LIGHT_LC,"STANDBY AUTO STATE --> STANDBY MANUAL , LIGHT OFF EVENT \r\n");
+        TRACE_I(TF_LIGHT_LC_M,"STANDBY AUTO STATE --> STANDBY MANUAL , LIGHT OFF EVENT \r\n");
         }
         else if(Lc_Event == LC_OCCUPANCY_ON)
         {
@@ -1230,7 +1226,7 @@ void Light_LC_Fsm(void)
             wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_ON_ID);
             Timer_value = resetTime; 
           Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-          TRACE_I(TF_LIGHT_LC,"STANDBY AUTO --> FADE ON STATE , OCCUPANCY ON EVENT \r\n");
+          TRACE_I(TF_LIGHT_LC_M,"STANDBY AUTO --> FADE ON STATE , OCCUPANCY ON EVENT \r\n");
         }
         else if(Lc_Event == LC_LIGHT_ON)
         {
@@ -1253,7 +1249,7 @@ void Light_LC_Fsm(void)
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_ON_ID);
           Timer_value = resetTime; 
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-        TRACE_I(TF_LIGHT_LC,"STANDBY AUTO --> FADE ON STATE , LIGHT ON EVENT \r\n");
+        TRACE_I(TF_LIGHT_LC_M,"STANDBY AUTO --> FADE ON STATE , LIGHT ON EVENT \r\n");
         }
         else if(Lc_Event == LC_TIMER_OFF)
         {
@@ -1266,7 +1262,7 @@ void Light_LC_Fsm(void)
              LightLC_States.Lc_States = LC_STANDBY;
              Lc_Event = LC_NO_EVENT;
              Timer_value = resetTime;
-           TRACE_I(TF_LIGHT_LC,"STANDBY AUTO --> STANDBY STATE , wait time = %d \r\n",wait_time);   
+           TRACE_I(TF_LIGHT_LC_M,"STANDBY AUTO --> STANDBY STATE , wait time = %ld \r\n",wait_time);
           }       
         }
          else
@@ -1298,7 +1294,7 @@ void Light_LC_Fsm(void)
           wait_time = Get_TimeToWait(LIGHT_CONTROL_TIME_FADE_ON_ID);
           Timer_value = resetTime; 
         Light_LC_ModelFlag.Light_LC_Transition_Flag = LIGHT_LC_TRANSITION_START;
-        TRACE_I(TF_LIGHT_LC,"STANDBY MANUAL STATE --> FADE ON STATE , LIGHT ON EVENT \r\n");
+        TRACE_I(TF_LIGHT_LC_M,"STANDBY MANUAL STATE --> FADE ON STATE , LIGHT ON EVENT \r\n");
         }
         else
         { 
@@ -1311,7 +1307,7 @@ void Light_LC_Fsm(void)
             LightLC_States.Lc_States = LC_STANDBY;  
             Lc_Event = LC_NO_EVENT;
             Timer_value = resetTime;
-          TRACE_I(TF_LIGHT_LC,"STANDBY MANUAL STATE --> STANDBY STATE , wait time = %d \r\n",wait_time);
+          TRACE_I(TF_LIGHT_LC_M,"STANDBY MANUAL STATE --> STANDBY STATE , wait time = %ld \r\n",wait_time);
           }
         }
         break;
@@ -1391,7 +1387,7 @@ MOBLE_RESULT Light_LC_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue)
       Light_LC_Param.Present_Light_OnOff = Light_LC_Param.Target_Light_OnOff;
    }
     
- TRACE_M(TF_LIGHT,"Inside light lightness transmition time at %d, Current state 0x%.2x ,target state 0x%.2x , Remaining Time 0x%.2x\n\r", 
+ TRACE_M(TF_LIGHT_M,"Inside light lightness transmition time at %ld, Current state 0x%.2x ,target state 0x%.2x , Remaining Time 0x%.2x\n\r",
             Clock_Time(),Light_LC_TemporaryStatus.PresentParam_1,Light_LC_TemporaryStatus.TargetParam_1,\
                                                                 Light_LC_Param.Remaining_Time);
     
@@ -1450,7 +1446,7 @@ MOBLEUINT32 Get_TimeToWait(MOBLEUINT16 Proprety_ID)
   
   }
   
-  TRACE_I(TF_LIGHT_LC,"TOTAL WAIT TIME %lu \r\n",total_time);
+  TRACE_I(TF_LIGHT_LC_M,"TOTAL WAIT TIME %lu \r\n",total_time);
     
   return total_time;
 }
@@ -1466,9 +1462,11 @@ void Light_LC_OnOff_Generic_OnOffBinding(void)
 {
   Light_LC_GenericOnOffBinding(&Light_LC_Param);
   
-  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= GENERIC_ON_OFF_SET_UNACK;
-  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = GENERIC_MODEL_SERVER_ONOFF_MODEL_ID;
-  Light_PublishOpcodeList.BindedStateCount++;
+  Light_Publish_Add(GENERIC_MODEL_SERVER_ONOFF_MODEL_ID, 
+                    GENERIC_ON_OFF_SET_UNACK);
+//  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= GENERIC_ON_OFF_SET_UNACK;
+//  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = GENERIC_MODEL_SERVER_ONOFF_MODEL_ID;
+//  Light_PublishOpcodeList.BindedStateCount++;
 }
 /**
 * @brief  GenericOnOff_Light_LC_Binding: Data binding b/w Generic On Off and 
@@ -1487,9 +1485,11 @@ void GenericOnOff_Light_LC_Binding(Generic_OnOffStatus_t* onOff_param)
   {
     Light_LC_Param.Present_Light_OnOff = 0x01;
   }
-  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_LC_ON_OFF_SET_UNACK;
-  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_LC_MODEL_ID;
-  Light_PublishOpcodeList.BindedStateCount++;
+  Light_Publish_Add(LIGHT_MODEL_SERVER_LC_MODEL_ID, 
+                    LIGHT_LC_ON_OFF_SET_UNACK);
+//  Light_PublishOpcodeList.PublishStateOpcode[Light_PublishOpcodeList.BindedStateCount]= LIGHT_LC_ON_OFF_SET_UNACK;
+//  Light_PublishOpcodeList.Model_ID[Light_PublishOpcodeList.BindedStateCount] = LIGHT_MODEL_SERVER_LC_MODEL_ID;
+//  Light_PublishOpcodeList.BindedStateCount++;
 }
 /**
 * @brief  Light_control_Process: Function to execute the transition state machine for
@@ -1529,7 +1529,7 @@ void Light_control_Process(void)
       {
         Model_SendResponse(publishAddress,my_Address,LIGHT_LC_ON_OFF_SET_UNACK,pRxData,dataLength);
       }
-      TRACE_I(TF_LIGHT_LC,"PUBLISHING OF LIGHT LC AT END OF TRANSITION \r\n");
+      TRACE_I(TF_LIGHT_LC_M,"PUBLISHING OF LIGHT LC AT END OF TRANSITION \r\n");
       Light_LC_ModelFlag.Transition_Cmplt = MOBLE_FALSE;
     }
   }   

@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    sensors.c
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Sensors model middleware file
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -46,7 +24,8 @@
 #include "light_lc.h"
 #include <string.h>
 #include "compiler.h"
-#include "math.h"
+//#include "math.h"
+#include "mesh_cfg_usr.h"
 
 /** @addtogroup MODEL_SENSOR
 *  @{
@@ -59,43 +38,69 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 
-#define S_VARIABLE 2
-
 /* Private variables ---------------------------------------------------------*/
 
-Sensor_SettingParam_t Sensor_SettingParam;
-Sensor_ColumnParam_t Sensor_ColumnParam;
-Sensor_CadenceParam_t Sensor_CadenceParam[2];
+
+Sensor_SettingParam_t Sensor_SettingParam[NUMBER_OF_SENSOR];
+/*  */
+//Sensor_ColumnParam_t Sensor_ColumnParam[NUMBER_OF_SENSOR];
+
+//Sensor_Series_Param_t Sensor_SeriesParam;
+
+Sensor_SettingParam_t Sensor_SettingParameter;
+Sensor_SeriesParam_t Sensor_SeriesParam;
+/*  */
+Sensor_CadenceParam_t Sensor_CadenceParam[NUMBER_OF_SENSOR];
+/*
+=
+{
+  {0x0071 , 0x2 , 2 , 2 ,2 ,1 ,0X05 , 0x64},
+  {0x2A6D , 0x2 , 1 , 1 , 1, 1, 0X258 , 0x3ED},
+  {0X2A7F ,0x2,1,1,1,0,0x10, 0x20}
+};*/
+
 
 const MODEL_OpcodeTableParam_t Sensor_Opcodes_Table[] = {
-  /*MOBLEUINT32 opcode, MOBLEBOOL reliable, MOBLEUINT16 min_payload_size, 
-  MOBLEUINT16 max_payload_size;
-  Here in this array, Handler is not defined; */
+/* model_id                      opcode                    reliable     min_payload_size max_payload_size response_opcode           min_response_size max_response_size */
   
 #ifdef ENABLE_SENSOR_MODEL_SERVER       
-  {SENSOR_SERVER_MODEL_ID    ,SENSOR_DESCRIPTOR_GET,                    MOBLE_TRUE,   0, 2,               SENSOR_DESCRIPTOR_STATUS , 2, 75},
-  {SENSOR_SERVER_MODEL_ID    ,SENSOR_DESCRIPTOR_STATUS,                 MOBLE_FALSE,  2, 75,              0 , 2, 75},
-  {SENSOR_SERVER_MODEL_ID    ,SENSOR_GET,                               MOBLE_TRUE,   0, 2,               SENSOR_STATUS , 0,65 },  /* STATUS MESSAGE AS MARSHALLED DATA */
-  {SENSOR_SERVER_MODEL_ID    ,SENSOR_STATUS,                            MOBLE_FALSE,  0, 65,              0 , 0,65 }, 
-  {SENSOR_SERVER_MODEL_ID    ,SENSOR_COLUMN_GET,                        MOBLE_TRUE,   3, 3,               SENSOR_COLUMN_STATUS , 4, 8},  /* GET VARIABLE TAKEN AS 1 (2+VARIABLE) */
-  {SENSOR_SERVER_MODEL_ID    ,SENSOR_COLUMN_STATUS,                     MOBLE_FALSE,  4, 8,               0 , 4, 8},
-#endif
-  
-#ifdef ENABLE_SENSOR_MODEL_SERVER_SETUP     
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_CADENCE_GET,                       MOBLE_TRUE,   2, 2,               SENSOR_CADENCE_STATUS , 2, 8},
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_CADENCE_SET,                       MOBLE_TRUE,   8, 8,               SENSOR_CADENCE_STATUS , 2, 8},
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_CADENCE_SET_UNACK,                 MOBLE_FALSE,  8, 8,               SENSOR_CADENCE_STATUS , 2, 8},
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_CADENCE_STATUS,                    MOBLE_FALSE,  2, 8,               0 , 2, 8},
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_GET,                       MOBLE_TRUE,   2, 2,               SENSOR_SETTING_STATUS_PID , 4 , 4},
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_STATUS_PID,                MOBLE_FALSE,  4, 4,               0 , 4 , 4},
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_GET_SETTING_ID,            MOBLE_TRUE,   4, 4,               SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},  /* STATUS VARIABLE  TAKEN AS 1 (4 + VARIABLE) */
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_SET,                       MOBLE_TRUE,   5, 5,               SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},  /* SET VARIABLE TAKEN AS 1  (4_VARIABLE) */
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_SET_UNACK,                 MOBLE_FALSE,  5, 5,               SENSOR_SETTING_STATUS_SETTING_ID , 5, 5},  
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SETTING_STATUS_SETTING_ID,         MOBLE_FALSE,  5, 5,               0 , 5, 5},
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SERIES_GET,                        MOBLE_TRUE,   2, 6,               SENSOR_SERIES_STATUS , 8, 8},  /* GET VARIABLE TAKEN AS 4 (2+VARAIBLE) , 2 VARIABLE PARAMTER */
-  {SENSOR_SETUP_SERVER_MODEL_ID    ,SENSOR_SERIES_STATUS,                     MOBLE_FALSE,  8, 8,               0 , 8, 8},
+  {SENSOR_SERVER_MODEL_ID,       SENSOR_DESCRIPTOR_GET,    MOBLE_FALSE, 0,               2,               SENSOR_DESCRIPTOR_STATUS, 2,                75},
+  {SENSOR_SERVER_MODEL_ID,       SENSOR_DESCRIPTOR_STATUS, MOBLE_FALSE, 2,               75,              0,                        1,                1},
+  {SENSOR_SERVER_MODEL_ID,       SENSOR_GET,               MOBLE_FALSE, 0,               2,               SENSOR_STATUS,            0,                65},
+  {SENSOR_SERVER_MODEL_ID,       SENSOR_STATUS,            MOBLE_FALSE, 0,               65,              0,                        1,                1},
+  {SENSOR_SERVER_MODEL_ID,       SENSOR_COLUMN_GET,        MOBLE_FALSE, 3,               6,               SENSOR_COLUMN_STATUS,     2,                14},
+  {SENSOR_SERVER_MODEL_ID,       SENSOR_COLUMN_STATUS,     MOBLE_FALSE, 2,               14,              0,                        1,                1},
+#endif                                                                                                                              
+                                                                                                                                    
+#ifdef ENABLE_SENSOR_MODEL_CLIENT       
+  {SENSOR_CLIENT_MODEL_ID,       SENSOR_DESCRIPTOR_GET,    MOBLE_FALSE, 0,               2,               SENSOR_DESCRIPTOR_STATUS, 2,                75},
+  {SENSOR_CLIENT_MODEL_ID,       SENSOR_DESCRIPTOR_STATUS, MOBLE_FALSE, 2,               75,              0,                        1,                1},
+  {SENSOR_CLIENT_MODEL_ID,       SENSOR_GET,               MOBLE_FALSE, 0,               2,               SENSOR_STATUS,            0,                65},
+  {SENSOR_CLIENT_MODEL_ID,       SENSOR_STATUS,            MOBLE_FALSE, 0,               65,              0,                        1,                1},
+  {SENSOR_CLIENT_MODEL_ID,       SENSOR_COLUMN_GET,        MOBLE_FALSE, 3,               6,               SENSOR_COLUMN_STATUS,     2,                14},
+  {SENSOR_CLIENT_MODEL_ID,       SENSOR_COLUMN_STATUS,     MOBLE_FALSE, 2,               14,              0,                        1,                1},
+#endif                                                                                                                              
+                                                                                                                                    
+#ifdef ENABLE_SENSOR_MODEL_SERVER_SETUP                                                                                             
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_CADENCE_GET,       MOBLE_FALSE, 2,               2,               SENSOR_CADENCE_STATUS,    2,                2},
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_CADENCE_SET,       MOBLE_FALSE, 8,               20,              0,                        2,                2},
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_CADENCE_SET_UNACK, MOBLE_FALSE, 8,               20,              0,                        2,                2},
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_CADENCE_STATUS,    MOBLE_FALSE, 2,               2,               0,                        1,                1},
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_SETTINGS_GET,      MOBLE_FALSE, 2,               2,               SENSOR_SETTINGS_STATUS,   2,                2},
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_SETTINGS_STATUS,   MOBLE_FALSE, 2,               2,               0,                        1,                1},
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_SETTING_GET,       MOBLE_FALSE, 4,               4,               SENSOR_SETTING_STATUS,    2,                2},
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_SETTING_SET,       MOBLE_FALSE, 5,               8,               0,                        2,                2},  
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_SETTING_SET_UNACK, MOBLE_FALSE, 5,               8,               0,                        2,                2},  
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_SETTING_STATUS,    MOBLE_FALSE, 2,               2,               0,                        1,                1},
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_SERIES_GET,        MOBLE_TRUE,  2,               10,              SENSOR_SERIES_STATUS,     2,                2},  
+  {SENSOR_SETUP_SERVER_MODEL_ID, SENSOR_SERIES_STATUS,     MOBLE_FALSE, 2,               2,               0,                        1,                1},
 #endif
   {0}
+};
+
+int Property_ID_TableSet[NUMBER_OF_SENSOR] = 
+{
+  TEMPERATURE_PID,PRESSURE_PID,TIME_OF_FLIGHT_PID
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,56 +116,248 @@ WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_GetSettingStatus(MOBLEUINT8* pSetting_S
 WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_GetSetting_IDStatus(MOBLEUINT8* pSetting_Status));
 MOBLE_RESULT Sensor_Cadence_Status(MOBLEUINT8* pCadencestatus_param, MOBLEUINT32 *plength,
                                    MOBLEUINT8 const *pData, MOBLEUINT32 length);
+MOBLE_RESULT Sensor_Column_Status(MOBLEUINT8* pSensorColumn_param, MOBLEUINT32* plength,
+                                  MOBLEUINT8 const *pData, MOBLEUINT32 length);
+MOBLE_RESULT  Sensor_Series_Status(MOBLEUINT8* pSensorSeries_param, 
+                                   MOBLEUINT32* plength,
+                                   MOBLEUINT8 const *pData, 
+                                   MOBLEUINT32 length);
 
 /* Private functions ---------------------------------------------------------*/
 
 #ifdef ENABLE_SENSOR_MODEL_SERVER
 
 /**
-* @brief  Sensor_Data_Status: This function is called for both Acknowledged and 
-unacknowledged message
+* @brief  This function is called for both Acknowledged and unacknowledged message
+*         //
 * @param  pSensorData_param: Pointer to the status message, which needs to be updated
 * @param  plength: Pointer to the Length of the Status message.
 * @param  pData:Pointer of data coming in packet.
 * @param  length: lenth of the data in packet.
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Sensor_Data_Status(MOBLEUINT8* pSensorData_param, MOBLEUINT32* plength ,
-                                MOBLEUINT8 const *pData, MOBLEUINT32 length)
+MOBLE_RESULT Sensor_Data_Status(MOBLEUINT8* pSensorData_param, 
+                                MOBLEUINT32* plength ,
+                                MOBLEUINT8 const *pData, 
+                                MOBLEUINT32 length)
 {
-  MOBLEUINT16 prop_ID = 0x00;
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT16 prop_ID = 0x0000;
   
-  TRACE_M(TF_SENSOR,"Sensor_Data_Status received \r\n");
+  TRACE_M(TF_SENSOR_M, "Sensor_Data_Status received \r\n");
+  
+  TRACE_M(TF_SENSOR_M, "Length of Received Data %lu:", length);
   
   if(length > 0)  
   {
+    /* Extract Property ID */
     prop_ID = pData[1] << 8;
     prop_ID |= pData[0]; 
   }
-  /* Application Callback */   
-  (SensorAppli_cb.Sensor_Data_cb)(pSensorData_param,plength,prop_ID,length);
   
-  return MOBLE_RESULT_SUCCESS;
+  /* Application Callback */   
+  if (SensorAppli_cb.Sensor_Data_cb != NULL)
+  {
+    (SensorAppli_cb.Sensor_Data_cb)(pSensorData_param,plength,prop_ID,length);
+  }
+  else
+  {
+    result = MOBLE_RESULT_FAIL;
+  }
+  
+  return result;
 }
 
 
 /**
 * @brief  Sensor_Descriptor_Status: This function is called for both Acknowledged and 
-unacknowledged message
+*         unacknowledged message
 * @param  pSensorDescriptor_param: Pointer to the parameters received for message
 * @param  plength: Length of the parameters received for message
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Sensor_Descriptor_Status(MOBLEUINT8* pSensorDescriptor_param, MOBLEUINT32* plength)
+MOBLE_RESULT Sensor_Descriptor_Status(MOBLEUINT8* pSensorDescriptor_param, MOBLEUINT32* plength,
+                                      MOBLEUINT8 const *pData, MOBLEUINT32 length)
 {
+  MOBLEUINT16 prop_ID = 0x0000;
   
-  TRACE_M(TF_SENSOR,"Sensor_Descriptor_Status received \r\n");
+  TRACE_M(TF_SENSOR_M,"Sensor_Descriptor_Status received \r\n");
+  if(length>0){  
+    prop_ID = pData[1]<<8;
+    prop_ID |= pData[0];
+  }
+  printf("plength %ld, length %ld, Prop Id 0x%.4x \r\n", *plength, length, prop_ID);
+  
   
   /* Application Callback */ 
-  (SensorAppli_cb.Sensor_Descriptor_cb)(pSensorDescriptor_param,plength);
+  (SensorAppli_cb.Sensor_Descriptor_cb)(pSensorDescriptor_param,plength,prop_ID,length); 
+  /*
+  
+  
+  if (prop_ID == 0x0000)
+  {
+  TRACE_M(TF_SENSOR_M, "Property ID Prohibited \r\n");
+}
+  else  
+  {
+  (SensorAppli_cb.Sensor_Descriptor_cb)(pSensorDescriptor_param,plength,prop_ID,length);  
+}
+  */
   return MOBLE_RESULT_SUCCESS;
 }
 
+
+/**
+* @brief  This function is called for both Acknowledged and unacknowledged message
+*         //
+* @param  pSensorData_param: Pointer to the status message, which needs to be updated
+* @param  plength: Pointer to the Length of the Status message.
+* @param  pData: Pointer of data (parameters) coming in packet.
+* @param  length: lenth of the data in packet.
+* @retval MOBLE_RESULT
+*/ 
+
+MOBLE_RESULT Sensor_Column_Status(MOBLEUINT8* pSensorColumn_param, MOBLEUINT32* plength,
+                                  MOBLEUINT8 const *pData, MOBLEUINT32 length)
+{
+  MOBLEUINT16 prop_ID = 0x0000;
+  //  MOBLEUINT16 rawvaluex=0x0000;
+  MOBLEUINT8 getBuff[8];
+  
+  TRACE_M(TF_SENSOR_M,"Sensor_Column_Status received \r\n");
+  
+  
+  if(length > 0){
+    
+    prop_ID = pData[1] << 8;
+    prop_ID |= pData[0];
+    (SensorAppli_cb.Sensor_Column_cb)(getBuff,plength,prop_ID,length);
+  }
+  
+  
+  // (SensorAppli_cb.Sensor_Column_cb)(getBuff,plength,prop_ID,length);
+  
+  *pSensorColumn_param = pData[0];
+  *(pSensorColumn_param+1) = pData[1];
+  
+  if(*plength == 4 )
+  {
+    *pSensorColumn_param = pData[0];
+    *(pSensorColumn_param+1) = pData[1];
+    
+    *(pSensorColumn_param+2)=pData[2];
+    *(pSensorColumn_param+3)=pData[3];
+    //memcpy(pSensorColumn_param , getBuff,2);
+    
+    *plength = 4;
+  }
+  else 
+  {
+    if( pData[2] == getBuff[2]  && pData[3] == getBuff[3])
+    {
+      memcpy(pSensorColumn_param , getBuff,8);
+    }
+    else
+    {
+      
+    }
+    
+  }
+  
+  TRACE_M(TF_SENSOR_M,"plength Value: %ld\r\n",*plength);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+       
+* @brief  This function is called for both Acknowledged and unacknowledged message
+*         
+* @param  pSensorData_param: Pointer to the status message, which needs to be updated
+* @param  plength: Pointer to the Length of the Status message.
+* @param  pData: Pointer of data (parameters) coming in packet.
+* @param  length: lenth of the data in packet.
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT  Sensor_Series_Status(MOBLEUINT8* pSensorSeries_param, 
+                                   MOBLEUINT32* plength,
+                                   MOBLEUINT8 const *pData, 
+                                   MOBLEUINT32 length)
+{
+  
+  
+  MOBLEUINT8 getBuff[2+6*SENSOR_SERIES_VALUE];
+  
+  TRACE_M(TF_SENSOR_M,"Sensor_Series_Get callback received \r\n");
+  
+  MOBLEUINT16 prop_ID=0x0000;
+  MOBLEUINT16 RawValueX1=0x0000;
+  MOBLEUINT16 RawValueX2=0x0000;
+  MOBLEUINT8 z =0;
+  MOBLEUINT8 i =0;
+  
+  if(length>0){
+    prop_ID = pData[1] << 8;
+    prop_ID |= pData[0];
+    if(length>2)
+    {
+      RawValueX1 = pData[2];
+      RawValueX1 |=pData[3]<< 8;
+      
+      RawValueX2 = pData[4];
+      RawValueX2|=pData[5] << 8;
+      
+    }
+  }
+  for(i=0;i<NUMBER_OF_SENSOR;i++)
+  {  
+    if(Property_ID_TableSet[i] ==  prop_ID)
+    { 
+      (SensorAppli_cb.Sensor_Series_cb)(getBuff,plength,prop_ID,length);
+      break;
+    }
+  }
+  
+  if(i<NUMBER_OF_SENSOR)
+  {
+    if(length ==2){
+    memcpy(pSensorSeries_param,getBuff,*plength);
+    }
+    else if(length == 6){
+    
+      for(int y=0;y<SENSOR_SERIES_VALUE;y++)
+      {
+      MOBLEUINT16 RawpDataX1 = getBuff[2+6*y]<<8 | getBuff[3+6*y];
+      if( RawpDataX1 <= RawValueX1    && RawpDataX1 >=RawValueX2)
+      {
+        
+        *(pSensorSeries_param+2+6*z) = getBuff[2+6*y];
+        *(pSensorSeries_param+3+6*z) = getBuff[3+6*y];
+        *(pSensorSeries_param+4+6*z) = getBuff[4+6*y];
+        *(pSensorSeries_param+5+6*z) = getBuff[5+6*y];
+        *(pSensorSeries_param+6+6*z) = getBuff[6+6*y];
+        *(pSensorSeries_param+7+6*z) = getBuff[7+6*y];
+        z=z+1;
+        
+      }
+    
+    }
+    
+  }
+  }
+  else if( prop_ID != 0x0000)
+  {
+    *pSensorSeries_param=prop_ID>>8;
+    *(pSensorSeries_param+1) = prop_ID;
+    *plength=2;
+  }
+  else
+  {
+    //*plength =2;
+  }
+  
+  TRACE_M(TF_SENSOR_M,"plength Value: %ld",*plength);
+  return MOBLE_RESULT_SUCCESS; 
+}
 
 /**
 * @brief  Sensor_Cadence_Set
@@ -170,9 +367,9 @@ MOBLE_RESULT Sensor_Descriptor_Status(MOBLEUINT8* pSensorDescriptor_param, MOBLE
 */ 
 MOBLE_RESULT Sensor_Cadence_Set(const MOBLEUINT8* pCadence_param, MOBLEUINT32 length)
 {
-  MOBLEUINT16 prop_ID = 0x00; 
+  MOBLEUINT16 prop_ID = 0x0000; 
   
-  TRACE_M(TF_SENSOR,"Sensor_Cadence_Set callback received \r\n");
+  TRACE_M(TF_SENSOR_M,"Sensor_Cadence_Set callback received \r\n");
   
   if(length > 0)  
   {
@@ -180,40 +377,28 @@ MOBLE_RESULT Sensor_Cadence_Set(const MOBLEUINT8* pCadence_param, MOBLEUINT32 le
     prop_ID |= pCadence_param[0]; 
   }
   
-  if(prop_ID == (MOBLEUINT16)TEMPERATURE_PID)
+for(int i=0;i<NUMBER_OF_SENSOR;i++)
   {
-    Sensor_CadenceParam[0].Property_ID = pCadence_param[1] << 8;
-    Sensor_CadenceParam[0].Property_ID = pCadence_param[0];
-    Sensor_CadenceParam[0].FastCadenceDevisor = (pCadence_param[2] && 0xFE) ;
-    Sensor_CadenceParam[0].StatusTriggerType = (pCadence_param[2] && 0x01) ;
-    Sensor_CadenceParam[0].triggerDeltaDown = pCadence_param[3];
-    Sensor_CadenceParam[0].triggerDeltaUp = pCadence_param[4];
-    Sensor_CadenceParam[0].StatusMinInterval = pCadence_param[5];
-    Sensor_CadenceParam[0].FastCadenceLow = pCadence_param[6];
-    Sensor_CadenceParam[0].FastCadenceHigh = pCadence_param[7];
-  }
-  else if(prop_ID == (MOBLEUINT16)PRESSURE_PID)
-  {
-    Sensor_CadenceParam[1].Property_ID = pCadence_param[9] << 8;
-    Sensor_CadenceParam[1].Property_ID = pCadence_param[8];
-    Sensor_CadenceParam[1].FastCadenceDevisor = (pCadence_param[10] && 0xFE) ;
-    Sensor_CadenceParam[1].StatusTriggerType = (pCadence_param[10] && 0x01) ;
-    Sensor_CadenceParam[1].triggerDeltaDown = pCadence_param[11];
-    Sensor_CadenceParam[1].triggerDeltaUp = pCadence_param[12];
-    Sensor_CadenceParam[1].StatusMinInterval = pCadence_param[13];
-    Sensor_CadenceParam[1].FastCadenceLow = pCadence_param[14];
-    Sensor_CadenceParam[1].FastCadenceHigh = pCadence_param[15];
-  }
-  else
-  {
-    /* No Comments */
-  }
   
+  if(prop_ID == Property_ID_TableSet[i])
+  {
+    Sensor_CadenceParam[i].Property_ID = pCadence_param[1] << 8;
+    Sensor_CadenceParam[i].Property_ID |= pCadence_param[0];
+    Sensor_CadenceParam[i].FastCadenceDevisor = (pCadence_param[2] && 0xFE) ;
+    Sensor_CadenceParam[i].StatusTriggerType = (pCadence_param[2] && 0x01) ;
+    Sensor_CadenceParam[i].triggerDeltaDown = pCadence_param[3];
+    Sensor_CadenceParam[i].triggerDeltaUp = pCadence_param[4];
+    Sensor_CadenceParam[i].StatusMinInterval = pCadence_param[5];
+    Sensor_CadenceParam[i].FastCadenceLow = pCadence_param[6];
+    Sensor_CadenceParam[i].FastCadenceHigh = pCadence_param[7];
+  }
+  }
   /* Application Callback */ 
   (SensorAppli_cb.Sensor_Cadence_Set_cb)(Sensor_CadenceParam,prop_ID,length);
   
   return MOBLE_RESULT_SUCCESS;
 }
+
 
 
 /**
@@ -227,39 +412,46 @@ MOBLE_RESULT Sensor_Cadence_Set(const MOBLEUINT8* pCadence_param, MOBLEUINT32 le
 MOBLE_RESULT Sensor_Cadence_Status(MOBLEUINT8* pCadencestatus_param, MOBLEUINT32 *plength,
                                    MOBLEUINT8 const *pData, MOBLEUINT32 length)
 {
-  MOBLEUINT16 propery_ID;
-  TRACE_M(TF_SENSOR,"Sensor_Cadence_Get callback received \r\n");
+  MOBLEUINT16 propery_ID = 0x00;
+  TRACE_M(TF_SENSOR_M,"Sensor_Cadence_Get callback received \r\n");
+  
+  MOBLEUINT8 flag = 0;
+//  MOBLEUINT8 Sensor_GetBuff[8];
+  // MOBLEUINT16 propery_ID;
   
   propery_ID = pData[1] << 8;
   propery_ID |= pData[0];   
   
-  if(propery_ID == (MOBLEUINT16)TEMPERATURE_PID)
-  {
-    *(pCadencestatus_param) = Sensor_CadenceParam[0].Property_ID;
-    *(pCadencestatus_param+1) = Sensor_CadenceParam[0].Property_ID >> 8;
-    *(pCadencestatus_param+2) = Sensor_CadenceParam[0].FastCadenceDevisor;
-    *(pCadencestatus_param+3) = Sensor_CadenceParam[0].StatusTriggerType;
-    *(pCadencestatus_param+4) = Sensor_CadenceParam[0].triggerDeltaDown;
-    *(pCadencestatus_param+5) = Sensor_CadenceParam[0].triggerDeltaUp;
-    
-    memcpy(&pCadencestatus_param[6],(void*)&Sensor_CadenceParam[0].FastCadenceLow,4);
-    memcpy(&pCadencestatus_param[10],(MOBLEUINT8*)&Sensor_CadenceParam[0].FastCadenceHigh,4);
-  }
-  if(propery_ID == (MOBLEUINT16)PRESSURE_PID)
-  {
-    *(pCadencestatus_param) = Sensor_CadenceParam[1].Property_ID;
-    *(pCadencestatus_param+1) = Sensor_CadenceParam[1].Property_ID >> 8;
-    *(pCadencestatus_param+2) = Sensor_CadenceParam[1].FastCadenceDevisor;
-    *(pCadencestatus_param+3) = Sensor_CadenceParam[1].StatusTriggerType;
-    *(pCadencestatus_param+4) = Sensor_CadenceParam[1].triggerDeltaDown;
-    *(pCadencestatus_param+5) = Sensor_CadenceParam[1].triggerDeltaUp;
-    
-    memcpy(&pCadencestatus_param[6],(void*)&Sensor_CadenceParam[1].FastCadenceLow,4);
-    memcpy(&pCadencestatus_param[10],(void*)&Sensor_CadenceParam[1].FastCadenceHigh,4);
-  }
+  // (SensorAppli_cb.Sensor_Cadence_Get_cb)(Sensor_GetBuff,propery_ID,length);
   
-  *plength = 13;
+  for (int i=0 ;i< NUMBER_OF_SENSOR ; i++){  
+    
+    if(propery_ID == Sensor_CadenceParam[i].Property_ID)
+  {
+      flag =1;
+      *(pCadencestatus_param) = Sensor_CadenceParam[i].Property_ID;
+      *(pCadencestatus_param+1) = Sensor_CadenceParam[i].Property_ID >> 8;
+      //  *(pCadencestatus_param+2) = Sensor_CadenceParam[0].FastCadenceDevisor;
+      *(pCadencestatus_param+2) = (Sensor_CadenceParam[i].FastCadenceDevisor << 0x07)|(Sensor_CadenceParam[i].StatusTriggerType & 0x01);
+      *(pCadencestatus_param+3) = Sensor_CadenceParam[i].triggerDeltaDown;
+      *(pCadencestatus_param+4) = Sensor_CadenceParam[i].triggerDeltaUp;
+      *(pCadencestatus_param+5) = Sensor_CadenceParam[i].StatusMinInterval;
+        *(pCadencestatus_param+6) = Sensor_CadenceParam[i].FastCadenceLow;
+         *(pCadencestatus_param+7) = Sensor_CadenceParam[i].FastCadenceHigh;
+      //    memcpy(&pCadencestatus_param[6],(void*)&Sensor_CadenceParam[0].FastCadenceLow,4);
+   //   memcpy(&pCadencestatus_param[10],(MOBLEUINT8*)&Sensor_CadenceParam[i].FastCadenceHigh,4);
+   //   memcpy(&pCadencestatus_param[10],(void*)&Sensor_CadenceParam[i].FastCadenceHigh,4);
+      *plength = 8;
+    
   
+    }}
+  
+  if(flag == 0)
+  {
+    * pCadencestatus_param = propery_ID;
+    *(pCadencestatus_param+1) = propery_ID >> 8;
+    *plength=2;
+  }
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -270,23 +462,55 @@ MOBLE_RESULT Sensor_Cadence_Status(MOBLEUINT8* pCadencestatus_param, MOBLEUINT32
 * @param  length: Length of the parameters received for message
 * @retval MOBLE_RESULT
 */ 
+
 MOBLE_RESULT Sensor_Setting_Set(const MOBLEUINT8* pSetting_param, MOBLEUINT32 length)
 {
   
-  TRACE_M(TF_SENSOR,"Sensor_Setting_Set callback received \r\n");
+  TRACE_M(TF_SENSOR_M,"Sensor_Setting_Set callback received \r\n");
+  MOBLEUINT8 flag=0;
   
-  Sensor_SettingParam.Property_ID = pSetting_param[1] << 8;
-  Sensor_SettingParam.Property_ID = pSetting_param[0];
-  Sensor_SettingParam.Sensor_Setting_ID = pSetting_param[3] << 8; 
-  Sensor_SettingParam.Sensor_Setting_ID = pSetting_param[2];
-  Sensor_SettingParam.Sensor_Setting_Value = pSetting_param[5] << 8;
-  Sensor_SettingParam.Sensor_Setting_Value = pSetting_param[4];
   
+  MOBLEUINT16 prop_ID = 0x0000; 
+  
+  if(length > 0)  
+  {
+    prop_ID = pSetting_param[1] << 8;
+    prop_ID |= pSetting_param[0]; 
+  }
+  
+  for(int i=0 ; i< NUMBER_OF_SENSOR ;i++)
+  {
+    
+    if(prop_ID == Property_ID_TableSet[i])
+    {
+      Sensor_SettingParameter.Property_ID = pSetting_param[1]<<8 ;
+      Sensor_SettingParameter.Property_ID|= pSetting_param[0];
+      Sensor_SettingParameter.Sensor_Setting_ID = pSetting_param[3] << 8; 
+      Sensor_SettingParameter.Sensor_Setting_ID |= pSetting_param[2];
+      Sensor_SettingParameter.Sensor_Setting_Value = pSetting_param[5] << 8;
+      Sensor_SettingParameter.Sensor_Setting_Value |= pSetting_param[4];
+      
+  
+      Sensor_SettingParam[i].Property_ID = pSetting_param[1] << 8;
+      Sensor_SettingParam[i].Property_ID |= pSetting_param[0];
+      Sensor_SettingParam[i].Sensor_Setting_ID = pSetting_param[3] << 8; 
+      Sensor_SettingParam[i].Sensor_Setting_ID |= pSetting_param[2];
+      Sensor_SettingParam[i].Sensor_Setting_Value = pSetting_param[5] << 8;
+      Sensor_SettingParam[i].Sensor_Setting_Value |= pSetting_param[4];
+      flag=1;
+      break;
+    }
+  
+  }
   /* Application Callback */ 
-  (SensorAppli_cb.Sensor_Setting_Set_cb)(&Sensor_SettingParam,0);
+  if(flag==1)
+  {
+    (SensorAppli_cb.Sensor_Setting_Set_cb)(&Sensor_SettingParameter,0,prop_ID );
+  }
   
   return MOBLE_RESULT_SUCCESS;
 }
+
 
 /**
 * @brief  Sensor_Setting_Status_PID
@@ -301,21 +525,58 @@ MOBLE_RESULT Sensor_Setting_Status_PID(MOBLEUINT8* pSetting_param,
                                        const MOBLEUINT8 *pData,
                                        MOBLEUINT32 length)
 {
-  MOBLEUINT8 Sensor_GetBuff[4];
-  MOBLEUINT16 propery_ID;
   
-  TRACE_M(TF_SENSOR,"Sensor_Setting_Status callback received \r\n");
+  MOBLEUINT16 propery_ID = 0x0000;
+  MOBLEUINT16 sensor_setting_propertID = 0x0000;
   
-  (Appli_Sensor_GetStatus_cb.GetSettingStatus_cb)(Sensor_GetBuff);
+  
+  MOBLEUINT8 flag =1;
+  TRACE_M(TF_SENSOR_M,"Sensor_Setting_Status callback received \r\n");
+  
+  // (Appli_Sensor_GetStatus_cb.GetSettingStatus_cb)(Sensor_GetBuff);
   
   propery_ID = pData[1] << 8;
-  propery_ID = pData[0];
+  propery_ID |= pData[0];
   
-  if(Sensor_SettingParam.Property_ID == propery_ID)             
+  sensor_setting_propertID=pData[3]<<8;
+  sensor_setting_propertID=pData[2];
+  
+  // result = Check_Property_ID(Property_ID_Table , propery_ID);
+  
+  
+  //  (Appli_Sensor_GetStatus_cb.GetSettingStatus_cb)(Sensor_GetBuff);
+  
+  for(int i=0;i<NUMBER_OF_SENSOR;i++)  
+  
   {
-    memcpy(pSetting_param , Sensor_GetBuff,4); 
+    
+    if(propery_ID == Sensor_SettingParam[i].Property_ID) 
+    {
+      flag=0;
+      *pSetting_param = Sensor_SettingParam[i].Property_ID;
+      *(pSetting_param+1) = Sensor_SettingParam[i].Property_ID >> 8;
+      
+      /* Comapre received setting property Id with existing value */
+      if(sensor_setting_propertID == Sensor_SettingParam[i].Sensor_Setting_ID)
+      {
+        *(pSetting_param+2) = Sensor_SettingParam[i].Sensor_Setting_ID;
+        *(pSetting_param+3) = Sensor_SettingParam[i].Sensor_Setting_ID >> 8;
     
     *plength = 4;
+  }
+      else /* setting property id not matched */
+      {
+        *plength = 2;
+      }
+      break;
+    }
+  }
+  
+  /* unknown property Id */
+  if(flag ==1){
+    *pSetting_param = propery_ID>>8;
+    *(pSetting_param+1) = propery_ID;
+    *plength = 2 ;
   }
   
   return MOBLE_RESULT_SUCCESS;
@@ -330,35 +591,89 @@ MOBLE_RESULT Sensor_Setting_Status_PID(MOBLEUINT8* pSetting_param,
 * @param  length: length of the data in packet.
 * @retval MOBLE_RESULT
 */ 
+
 MOBLE_RESULT Sensor_Setting_Status_SettingID(MOBLEUINT8* pSetting_param, MOBLEUINT32 *plength 
                                              ,const MOBLEUINT8 *pData,MOBLEUINT32 length)
 {
-  MOBLEUINT8 Sensor_GetBuff[7];
-  MOBLEUINT16 propery_ID;
+  MOBLEUINT8 sensor_GetBuff[7];
+  MOBLEUINT16 propery_ID= 0x00;
+  MOBLEUINT16 sensor_setting_propertID=0x00;
+  MOBLEUINT8 flag=0;
   
-  TRACE_M(TF_SENSOR,"Sensor_Setting_Status with setting id callback received \r\n");
+  TRACE_M(TF_SENSOR_M,"Sensor_Setting_Status with setting id callback received \r\n");
+  
+  if(length >= 4){
+  
+    propery_ID = pData[1] << 8;
+    propery_ID |= pData[0] ;
+  
+    sensor_setting_propertID = pData[3]<<8;
+    sensor_setting_propertID |= pData[2];
   
   
-  (Appli_Sensor_GetStatus_cb.GetSetting_IDStatus_cb)(Sensor_GetBuff);
+    for(int i=0; i< NUMBER_OF_SENSOR ; i++){
   
-  propery_ID = pData[1] << 8;
-  propery_ID = pData[0];
-  
-  if(Sensor_SettingParam.Property_ID == propery_ID)             
+      if(propery_ID == Sensor_SettingParam[i].Property_ID)
+      { 
+        if(sensor_setting_propertID == Sensor_SettingParam[i].Sensor_Setting_ID)
   {
-    memcpy(pSetting_param , Sensor_GetBuff,7); 
+          flag=1; 
+          (Appli_Sensor_GetStatus_cb.GetSetting_IDStatus_cb)(sensor_GetBuff , propery_ID);
+        }
+        else
+        {
+          *pSetting_param =  Sensor_SettingParam[i].Property_ID >>8 ;
+          *(pSetting_param+1) =Sensor_SettingParam[i].Property_ID ;
+          *(pSetting_param+2) = Sensor_SettingParam[i].Sensor_Setting_ID>>8;
+          *(pSetting_param+3) = Sensor_SettingParam[i].Sensor_Setting_ID ;
+          *plength=4;
+        } 
+        break;
+      }
+      
+    } 
     
-    *plength = 7;
   }
   
+  if(flag==1)
+  {
+    if(sensor_GetBuff[4] == 0x03){
+      memcpy(pSetting_param , sensor_GetBuff,7);
+    *plength = 7;
+  }
+    else if(sensor_GetBuff[4] == 0x01)
+    {
+      //memcpy(pSetting_param , sensor_GetBuff,5);
+      *pSetting_param =  sensor_GetBuff[0];
+      *(pSetting_param+1) =sensor_GetBuff[1];
+      *(pSetting_param+2) = sensor_GetBuff[2];
+      *(pSetting_param+3) = sensor_GetBuff[3];
+      *(pSetting_param+4)= sensor_GetBuff[4];
+  
+      *plength=5;
+    }
+  }
   return MOBLE_RESULT_SUCCESS;
 }
+
+
+
+
+/**
+* @brief  Sensor_Setting_Status_SettingID with setting id
+* @param  pSetting_param: Pointer to the status message, which needs to be updated
+* @param  plength: Pointer to the Length of the Status message
+* @param  pData: Pointer of data coming in packet.
+* @param  length: length of the data in packet.
+* @retval MOBLE_RESULT
+*/ 
+
 
 #endif
 
 /**
 * @brief  SensorModelServer_GetOpcodeTableCb: This function is call-back 
-from the library to send Model Opcode Table info to library
+*         from the library to send Model Opcode Table info to library
 * @param  MODEL_OpcodeTableParam_t:  Pointer to the sensor Model opcode array 
 * @param  length: Pointer to the Length of sensor Model opcode array
 * @retval MOBLE_RESULT
@@ -375,7 +690,7 @@ MOBLE_RESULT SensorModelServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t *
 
 /**
 * @brief  SensorModelServer_GetStatusRequestCb : This function is call-back 
-from the library to send response to the message from peer
+*         from the library to send response to the message from peer
 * @param  peer_addr: Address of the peer
 * @param  dst_peer: destination send by peer for this node. It can be a
 *                                                     unicast or group address 
@@ -396,14 +711,15 @@ MOBLE_RESULT SensorModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                                   MOBLEUINT32 dataLength,
                                                   MOBLEBOOL response)
 {
-  TRACE_M(TF_SENSOR,"dst_peer = %.2X , peer_add = %.2X, opcode = %.2X, response= %.2X \r\n ",
-          dst_peer, peer_addr, opcode, response);
+  MOBLEUINT16 property_ID = 0;
+  property_ID = pRxData[1] << 8;
+  property_ID |= pRxData[0];
   switch(opcode)
   {
 #ifdef ENABLE_SENSOR_MODEL_SERVER
   case SENSOR_DESCRIPTOR_STATUS:
     {
-      Sensor_Descriptor_Status(pResponsedata ,plength);
+      Sensor_Descriptor_Status(pResponsedata ,plength,pRxData,dataLength);
       break;
     }
   case SENSOR_STATUS:
@@ -414,10 +730,21 @@ MOBLE_RESULT SensorModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
     
   case SENSOR_COLUMN_STATUS:
     {
+      if((dataLength > 0) && (property_ID == 0x00))
+      {             
+        return MOBLE_RESULT_FALSE;
+      }   
+    
+      Sensor_Column_Status(pResponsedata,plength,pRxData,dataLength);
       break;
     }
   case SENSOR_SERIES_STATUS:
     {
+       if((dataLength > 0) && (property_ID == 0x00))
+      {             
+        return MOBLE_RESULT_FALSE;
+      }  
+      Sensor_Series_Status(pResponsedata,plength,pRxData,dataLength); 
       break;
     }
   case SENSOR_CADENCE_STATUS:
@@ -432,7 +759,7 @@ MOBLE_RESULT SensorModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
     }
   case SENSOR_SETTING_STATUS_SETTING_ID:
     {
-      Model_SendResponse(peer_addr, dst_peer,opcode,pRxData,dataLength);
+      Sensor_Setting_Status_SettingID(pResponsedata,plength,pRxData,dataLength);
       break;
     }
 #endif           
@@ -447,7 +774,7 @@ MOBLE_RESULT SensorModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
 
 /**
 * @brief  SensorModelServer_ProcessMessageCb: This is a callback function from
-the library whenever a sensor Model message is received
+*         the library whenever a sensor Model message is received
 * @param  peer_addr: Address of the peer
 * @param  dst_peer: destination send by peer for this node. It can be a
 *                                                     unicast or group address 
@@ -475,13 +802,16 @@ MOBLE_RESULT SensorModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     property_ID |= pRxData[0];
 #endif
   
-  TRACE_M(TF_SENSOR,"dst_peer = %.2X , peer_add = %.2X, opcode = %.2X, response= %.2X \r\n ",
-          dst_peer, peer_addr, opcode, response);
+  TRACE_M(TF_SENSOR_M,"dst_peer = %.2X , peer_add = %.2X \r\n ",dst_peer, peer_addr);
   switch(opcode)
   {
 #ifdef ENABLE_SENSOR_MODEL_SERVER
   case SENSOR_DESCRIPTOR_GET:
     {
+      if((dataLength > 0) && (property_ID == 0x00))
+      {             
+        return MOBLE_RESULT_FALSE;
+      }   
       break;
     }    
   case SENSOR_GET:
@@ -490,6 +820,14 @@ MOBLE_RESULT SensorModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       {
         return MOBLE_RESULT_FALSE;
       }
+      break;
+    }
+  case SENSOR_CADENCE_GET:
+    {
+       if((dataLength > 0) && (property_ID == 0x00))
+      {             
+        return MOBLE_RESULT_FALSE;
+      }  
       break;
     }
     
@@ -504,6 +842,26 @@ MOBLE_RESULT SensorModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
       break;
     }
     
+  case SENSOR_COLUMN_GET:
+    {
+      
+      if(property_ID == 0x00)
+      {
+        result = MOBLE_RESULT_FALSE;
+      }
+      break;
+      
+    }
+     case SENSOR_SERIES_GET:
+    {
+      
+      if(property_ID == 0x00)
+      {
+        result = MOBLE_RESULT_FALSE;
+      }
+      break;
+      
+    }
   case SENSOR_SETTING_SET:
   case SENSOR_SETTING_SET_UNACK:
     {
@@ -616,11 +974,12 @@ MOBLE_RESULT SensorModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
 }
 
 
+#if 0
 /**
 * @brief  floatToInt: This function is used to convert the float to integer 
 * @param  in: sensor data value
 * @param  out_value: pointer to the structure
-* @@param dec_prec: decimal point resolution
+* @param dec_prec: decimal point resolution
 * @retval void
 */ 
 void floatToInt(float in, displayFloatToInt_t *out_value, MOBLEINT32 dec_prec)
@@ -637,10 +996,10 @@ void floatToInt(float in, displayFloatToInt_t *out_value, MOBLEINT32 dec_prec)
   in = in - (float)(out_value->out_int);
   out_value->out_dec = (int32_t)trunc(in * pow(10, dec_prec));
 }
+#endif
 
-
-
-/* Weak function are defined to support the original function if they are not
+/**
+Weak function are defined to support the original function if they are not
 included in firmware.
 There is no use of this function for application development purpose.
 */
@@ -661,10 +1020,15 @@ WEAK_FUNCTION (void Sensor_Publication_Process(float* pSensorData, MODEL_Propert
 }
 WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_Cadence_Set(Sensor_CadenceParam_t* pCadence_param, 
                                                               MOBLEUINT16 property_ID, MOBLEUINT32 length) );
-WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_Setting_Set(Sensor_SettingParam_t* pSensor_SettingParam,
-                                                                       MOBLEUINT8 OptionalValid));
-WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_GetSettingStatus(MOBLEUINT8* pSetting_Status));
-WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_GetSetting_IDStatus(MOBLEUINT8* pSetting_Status));
+WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_Cadence_Get(MOBLEUINT8* sensor_DataCadence, 
+                                                     MOBLEUINT16 property_ID, MOBLEUINT32 length) );
+//WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_Setting_Set(Sensor_SettingParam_t* pSensor_SettingParam,
+//                                                                       MOBLEUINT8 OptionalValid,MOBLEUINT16 prop_ID));
 
+WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_Setting_Set(Sensor_SettingParam_t* pSensor_SettingParam,
+                                                     MOBLEUINT8 OptionalValid)); //,MOBLEUINT16 prop_ID));
+WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_GetSettingStatus(MOBLEUINT8* pSetting_Status));
+//WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_GetSetting_IDStatus(MOBLEUINT8* pSetting_Status, MOBLEUINT16 prop_ID, MOBLEUINT16 Sensor_PropertyID , MOBLEUINT8* plength));
+WEAK_FUNCTION (MOBLE_RESULT Appli_Sensor_GetSetting_IDStatus(MOBLEUINT8* pSetting_Status));
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
 

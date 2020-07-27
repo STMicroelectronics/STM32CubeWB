@@ -106,9 +106,6 @@
 
 /**< specific parameters */
 /*****************************************************/
-#define CFG_LED_SUPPORTED         1
-#define CFG_BUTTON_SUPPORTED      1
-
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
 #define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
 #define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
@@ -195,12 +192,12 @@
 /**
  * Prepare Write List size in terms of number of packet with ATT_MTU=23 bytes
  */
-#define CFG_BLE_PREPARE_WRITE_LIST_SIZE         ( 0x3A )
+#define CFG_BLE_PREPARE_WRITE_LIST_SIZE         BLE_PREP_WRITE_X_ATT(CFG_BLE_MAX_ATT_MTU)
 
 /**
  * Number of allocated memory blocks
  */
-#define CFG_BLE_MBLOCK_COUNT            ( 0x79 )
+#define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, CFG_BLE_MAX_ATT_MTU, CFG_BLE_NUM_LINK))
 
 /**
  * Enable or disable the Extended Packet length feature. Valid values are 0 or 1.
@@ -290,8 +287,8 @@
 /******************************************************************************
  * UART interfaces
  ******************************************************************************/
-#define CFG_DEBUG_TRACE_UART      hw_lpuart1
-#define CFG_CLI_UART                hw_uart1
+#define CFG_DEBUG_TRACE_UART      hw_uart1
+#define CFG_CLI_UART              hw_lpuart1
 
 /******************************************************************************
  * USB interface
@@ -304,12 +301,24 @@
 
 /******************************************************************************
  * Low Power
+ *
+ *  When CFG_FULL_LOW_POWER is set to 1, the system is configured in full
+ *  low power mode. It means that all what can have an impact on the consumptions
+ *  are powered down.(For instance LED, Access to Debugger, Etc.)
+ *
+ *  When CFG_FULL_LOW_POWER is set to 0, the low power mode is not activated
+ *
  ******************************************************************************/
-/**
- *  When set to 1, the low power mode is enable
- *  When set to 0, the device stays in RUN mode
- */
-#define CFG_LPM_SUPPORTED   0
+
+#define CFG_FULL_LOW_POWER    0
+
+#if (CFG_FULL_LOW_POWER == 1)
+#undef CFG_LPM_SUPPORTED
+#define CFG_LPM_SUPPORTED   1
+#endif /* CFG_FULL_LOW_POWER */
+
+/* FOR DEBUGGING ONLY ! */
+//#define CFG_LPM_SUPPORTED   1
 
 /******************************************************************************
  * Timer Server
@@ -388,7 +397,7 @@
 
 typedef enum
 {
-    CFG_TIM_PROC_ID_ISR,
+  CFG_TIM_PROC_ID_ISR,
 } CFG_TimProcID_t;
 
 /******************************************************************************
@@ -409,8 +418,21 @@ typedef enum
  */
 #define CFG_DEBUGGER_SUPPORTED    1
 
-/**
+#if (CFG_FULL_LOW_POWER == 1)
+#undef CFG_DEBUGGER_SUPPORTED
+#define CFG_DEBUGGER_SUPPORTED    0
+#endif /* CFG_FULL_LOW_POWER */
 
+/*****************************************************************************
+ * Traces
+ * Enable or Disable traces in application
+ * When CFG_DEBUG_TRACE is set, traces are activated
+ *
+ * Note : Refer to utilities_conf.h file in order to details
+ *        the level of traces : CFG_DEBUG_TRACE_FULL or CFG_DEBUG_TRACE_LIGHT
+ *****************************************************************************/
+ 
+ /**
  * When set to 1, the traces are enabled in the BLE services
  */
 #define CFG_DEBUG_BLE_TRACE     1
@@ -418,7 +440,7 @@ typedef enum
 /**
  * Enable or Disable traces in application
  */
-#define CFG_DEBUG_APP_TRACE   1
+#define CFG_DEBUG_APP_TRACE     1
 
 #if (CFG_DEBUG_APP_TRACE != 0)
 #define APP_DBG_MSG                 PRINT_MESG_DBG
@@ -426,17 +448,14 @@ typedef enum
 #define APP_DBG_MSG                 PRINT_NO_MESG
 #endif
 
-
 #if ( (CFG_DEBUG_BLE_TRACE != 0) || (CFG_DEBUG_APP_TRACE != 0) )
 #define CFG_DEBUG_TRACE             1
 #endif
 
-#if (CFG_DEBUG_TRACE != 0)
-#undef CFG_LPM_SUPPORTED
-#undef CFG_DEBUGGER_SUPPORTED
-#define CFG_LPM_SUPPORTED         0
-#define CFG_DEBUGGER_SUPPORTED      1
-#endif
+#if (CFG_FULL_LOW_POWER == 1)
+#undef CFG_DEBUG_TRACE
+#define CFG_DEBUG_TRACE      0
+#endif /* CFG_FULL_LOW_POWER */
 
 /**
  * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
@@ -475,6 +494,27 @@ typedef enum
 #define MAX_DBG_TRACE_MSG_SIZE 1024
 
 /******************************************************************************
+ * Configure Log level for Application
+ ******************************************************************************/
+#define APPLI_CONFIG_LOG_LEVEL    LOG_LEVEL_INFO
+#define APPLI_PRINT_FILE_FUNC_LINE    0
+
+/* USER CODE BEGIN Defines */
+/******************************************************************************
+ * User interaction
+ * When CFG_LED_SUPPORTED is set, LEDS are activated if requested
+ * When CFG_BUTTON_SUPPORTED is set, the push button are activated if requested
+ ******************************************************************************/
+#if (CFG_FULL_LOW_POWER == 1)
+#define CFG_LED_SUPPORTED         0
+#define CFG_BUTTON_SUPPORTED      0
+#else
+#define CFG_LED_SUPPORTED         1
+#define CFG_BUTTON_SUPPORTED      1
+#endif /* CFG_FULL_LOW_POWER */
+/* USER CODE END Defines */
+
+/******************************************************************************
  * Scheduler
  ******************************************************************************/
 
@@ -497,6 +537,8 @@ typedef enum
   CFG_TASK_COAP_MSG_BUTTON,
   CFG_TASK_MSG_FROM_M0_TO_M4,
   CFG_TASK_SEND_CLI_TO_M0,
+  CFG_TASK_COAP_SEND_MSG,
+  CFG_TASK_SET_THREAD_MODE,
 
   /* Concurrent System */
   CFG_Task_Switch_Protocol,
@@ -530,6 +572,8 @@ typedef enum
 
 #define TASK_COAP_MSG_BUTTON        (1U << CFG_TASK_COAP_MSG_BUTTON)
 #define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
+#define TASK_COAP_SEND_MSG          (1U << CFG_TASK_COAP_SEND_MSG)
+#define TASK_SET_THREAD_MODE        (1U << CFG_TASK_SET_THREAD_MODE)
 /**
  * This is a bit mapping over 32bits listing all events id supported in the application
  */
@@ -545,11 +589,6 @@ typedef enum
 
 #define EVENT_ACK_FROM_M0_EVT            (1U << CFG_EVT_ACK_FROM_M0_EVT)
 #define EVENT_SYNCHRO_BYPASS_IDLE        (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
-/******************************************************************************
- * Configure Log level for Application
- ******************************************************************************/
-#define APPLI_CONFIG_LOG_LEVEL          LOG_LEVEL_INFO
-#define APPLI_PRINT_FILE_FUNC_LINE      0
 
 /******************************************************************************
  * LOW POWER
@@ -561,7 +600,8 @@ typedef enum
 typedef enum
 {
     CFG_LPM_APP,
-	  CFG_LPM_APP_BLE
+	  CFG_LPM_APP_BLE,
+	  CFG_LPM_APP_THREAD
     /* USER CODE BEGIN CFG_LPM_Id_t */
 
     /* USER CODE END CFG_LPM_Id_t */

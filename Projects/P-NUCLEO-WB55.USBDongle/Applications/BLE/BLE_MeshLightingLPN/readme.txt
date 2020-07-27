@@ -1,14 +1,14 @@
 /**
-  @page BLE_MeshLightingDemo example
+  @page BLE_MeshLightingLPN example
   
   @verbatim
-  ******************** (C) COPYRIGHT 2019 STMicroelectronics *******************
+  ******************** (C) COPYRIGHT 2020 STMicroelectronics *******************
   * @file    BLE/BLE_MeshLightingLPN/readme.txt 
   * @author  MCD Application Team
   * @brief   Description of the BLE Mesh Lighting Low Power Node demo example.
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
   *
   * This software component is licensed by ST under Ultimate Liberty license 
   * SLA0044, the "License"; You may not use this file except in compliance with 
@@ -19,7 +19,7 @@
   @endverbatim
 
 @par Example Description 
-This is the implementation of the BLE Mesh Lighting profile as specified by the BLE SIG.
+This is the implementation of the BLE Mesh Low Power Node profile as specified by the BLE SIG.
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
@@ -29,6 +29,10 @@ This is the implementation of the BLE Mesh Lighting profile as specified by the 
       
 @note The application needs to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
+
+@par Keywords
+
+Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE mesh, Dual core
 
 @par Directory contents 
             mesh_lighting_demo
@@ -103,7 +107,7 @@ This is the implementation of the BLE Mesh Lighting profile as specified by the 
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -137,6 +141,13 @@ one FN must be in the direct radio range of an LPN to establish Friendship.
   
 @Configuration
 
+Low Power Node
+Low Power feature support is defined in mesh_cfg_usr.h by hte predefinition of ENABLE_LOW_POWER_FEATURE.
+Note: A Low Power feature-enabled node does not support any other feature: all the other features should be
+undefined.
+
+@Demo setup based on USB DONGLE board (MB1293C)
+
 General default setting defined in mesh_cfg_usr.h:
         ENABLE_GENERIC_MODEL_SERVER_ONOFF                                    (1) /* GENERIC SERVER ONOFF MODEL ON FIRST ELEMENT */
         APPLICATION_NUMBER_OF_ELEMENTS                                         1 /* NUMBER OF ELEMENT SUPPORTED */ 
@@ -145,14 +156,7 @@ General default setting defined in mesh_cfg_usr.h:
         ENABLE_PB_ADV                                                            /* Provisioning Bearer over advertising channels support */
         ENABLE_PB_GATT                                                           /* Provisioning Bearer over GATT proxy support */ 
 
-Low Power Node
-Low Power feature support is defined in mesh_cfg_usr.h by hte predefinition of ENABLE_LOW_POWER_FEATURE.
-Note: A Low Power feature-enabled node does not support any other feature: all the other features should be
-undefined.
-
-@Demo setup based on STM32WB55CG-Nucleo
-
-The following demo based on STM32WB55CG-Nucleo has been set up using one board as a Friend node and two
+The following demo based on USB DONGLE board (MB1293C) has been set up using one board as a Friend node and two
 boards as Low Power nodes.
 
 Low Power node setup:
@@ -173,12 +177,13 @@ Step 2. Generate and flash binary in 2 boards (LPN1, LPN2)
 
 Friend Node setup (use the Proxy Relay Friend Node BLE_MeshLightingPRFNode project):
 Step 1. Generate and flash binary in a board (FN)
-Step 2. Provision the 3 boards with the default parameters, using BLE-Mesh Android or BLE-Mesh iOS smartphone application
-        (subscribe and publish to default group)
+Step 2. Provision the 3 boards with the default parameters, using BLE-Mesh Android (https://play.google.com/store/apps/details?id=com.st.bluenrgmesh&hl=en) or 
+        BLE-Mesh iOS (https://apps.apple.com/us/app/st-ble-mesh/id1348645067) smartphone application (subscribe and publish to default group)
+
 
 Demo operation
 After provisioning, it might take a few seconds for Friendship to be established between FN and LPNs.
-In this demo, the FN establishes Friendship with LPN1 and LPN2
+In this demo, the FN establishes Friendship with LPN1 and LPN2, LPN2 is optional.
 Any packet targeted to LPN1/LPN2 or to a group address subscribed by LPN1 or LPN2 is put in queue by the FN
 that forwards packets to LPN1/LPN2 as soon as it receives a Friend Poll from the respective LPN.
 The LPN is free to send packets (generate traffic) any time.
@@ -218,6 +223,19 @@ By pressing [SW1] button on the Low Power Node 1:
                      |                                |
                      |------------LED off------------>|<-Blue LED off
                      |                                |
+
+=> Getting traces:
+  To get the traces, you have to enable CFG_USB_INTERFACE_ENABLE, with CFG_DEBUG_BLE_TRACE for BLE services traces 
+  or with CFG_DEBUG_APP_TRACE for application traces.
+  You need also to connect your Board to the Hyperterminal (through USB STVirtual COM Port).
+  The UART must be configured as follows:
+    - BaudRate = 115200 baud  
+    - Word Length = 8 Bits 
+    - Stop Bit = 1 bit
+    - Parity = none
+    - Flow control = none
+
+=> Running the application
 
 * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

@@ -1,8 +1,7 @@
 /******************************************************************************
  * @file    ble_l2cap_aci.c
  * @author  MCD Application Team
- * @date    04 March 2020
- * @brief   Source file for ble api STM32WB (l2cap_aci)
+ * @brief   STM32WB BLE API (l2cap_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
  * @attention
@@ -20,28 +19,28 @@
 
 #include "ble_l2cap_aci.h"
 
-tBleStatus aci_l2cap_connection_parameter_update_req(uint16_t Connection_Handle,
-                                                     uint16_t Conn_Interval_Min,
-                                                     uint16_t Conn_Interval_Max,
-                                                     uint16_t Slave_latency,
-                                                     uint16_t Timeout_Multiplier)
+tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle,
+                                                      uint16_t Conn_Interval_Min,
+                                                      uint16_t Conn_Interval_Max,
+                                                      uint16_t Slave_latency,
+                                                      uint16_t Timeout_Multiplier )
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
   aci_l2cap_connection_parameter_update_req_cp0 *cp0 = (aci_l2cap_connection_parameter_update_req_cp0*)(cmd_buffer);
   tBleStatus status = 0;
   int index_input = 0;
-  cp0->Connection_Handle = htob(Connection_Handle, 2);
+  cp0->Connection_Handle = Connection_Handle;
   index_input += 2;
-  cp0->Conn_Interval_Min = htob(Conn_Interval_Min, 2);
+  cp0->Conn_Interval_Min = Conn_Interval_Min;
   index_input += 2;
-  cp0->Conn_Interval_Max = htob(Conn_Interval_Max, 2);
+  cp0->Conn_Interval_Max = Conn_Interval_Max;
   index_input += 2;
-  cp0->Slave_latency = htob(Slave_latency, 2);
+  cp0->Slave_latency = Slave_latency;
   index_input += 2;
-  cp0->Timeout_Multiplier = htob(Timeout_Multiplier, 2);
+  cp0->Timeout_Multiplier = Timeout_Multiplier;
   index_input += 2;
-  Osal_MemSet(&rq, 0, sizeof(rq));
+  Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x3f;
   rq.ocf = 0x181;
   rq.event = 0x0F;
@@ -49,61 +48,53 @@ tBleStatus aci_l2cap_connection_parameter_update_req(uint16_t Connection_Handle,
   rq.clen = index_input;
   rq.rparam = &status;
   rq.rlen = 1;
-  if (hci_send_req(&rq, FALSE) < 0)
+  if ( hci_send_req(&rq, FALSE) < 0 )
     return BLE_STATUS_TIMEOUT;
-  if (status) 
-  {
-    return status;
-  }
-  return BLE_STATUS_SUCCESS;
+  return status;
 }
 
-tBleStatus aci_l2cap_connection_parameter_update_resp(uint16_t Connection_Handle,
-                                                      uint16_t Conn_Interval_Min,
-                                                      uint16_t Conn_Interval_Max,
-                                                      uint16_t Slave_latency,
-                                                      uint16_t Timeout_Multiplier,
-                                                      uint16_t Minimum_CE_Length,
-                                                      uint16_t Maximum_CE_Length,
-                                                      uint8_t Identifier,
-                                                      uint8_t Accept)
+tBleStatus aci_l2cap_connection_parameter_update_resp( uint16_t Connection_Handle,
+                                                       uint16_t Conn_Interval_Min,
+                                                       uint16_t Conn_Interval_Max,
+                                                       uint16_t Slave_latency,
+                                                       uint16_t Timeout_Multiplier,
+                                                       uint16_t Minimum_CE_Length,
+                                                       uint16_t Maximum_CE_Length,
+                                                       uint8_t Identifier,
+                                                       uint8_t Accept )
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
   aci_l2cap_connection_parameter_update_resp_cp0 *cp0 = (aci_l2cap_connection_parameter_update_resp_cp0*)(cmd_buffer);
   tBleStatus status = 0;
   int index_input = 0;
-  cp0->Connection_Handle = htob(Connection_Handle, 2);
+  cp0->Connection_Handle = Connection_Handle;
   index_input += 2;
-  cp0->Conn_Interval_Min = htob(Conn_Interval_Min, 2);
+  cp0->Conn_Interval_Min = Conn_Interval_Min;
   index_input += 2;
-  cp0->Conn_Interval_Max = htob(Conn_Interval_Max, 2);
+  cp0->Conn_Interval_Max = Conn_Interval_Max;
   index_input += 2;
-  cp0->Slave_latency = htob(Slave_latency, 2);
+  cp0->Slave_latency = Slave_latency;
   index_input += 2;
-  cp0->Timeout_Multiplier = htob(Timeout_Multiplier, 2);
+  cp0->Timeout_Multiplier = Timeout_Multiplier;
   index_input += 2;
-  cp0->Minimum_CE_Length = htob(Minimum_CE_Length, 2);
+  cp0->Minimum_CE_Length = Minimum_CE_Length;
   index_input += 2;
-  cp0->Maximum_CE_Length = htob(Maximum_CE_Length, 2);
+  cp0->Maximum_CE_Length = Maximum_CE_Length;
   index_input += 2;
-  cp0->Identifier = htob(Identifier, 1);
+  cp0->Identifier = Identifier;
   index_input += 1;
-  cp0->Accept = htob(Accept, 1);
+  cp0->Accept = Accept;
   index_input += 1;
-  Osal_MemSet(&rq, 0, sizeof(rq));
+  Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x3f;
   rq.ocf = 0x182;
   rq.cparam = cmd_buffer;
   rq.clen = index_input;
   rq.rparam = &status;
   rq.rlen = 1;
-  if (hci_send_req(&rq, FALSE) < 0)
+  if ( hci_send_req(&rq, FALSE) < 0 )
     return BLE_STATUS_TIMEOUT;
-  if (status) 
-  {
-    return status;
-  }
-  return BLE_STATUS_SUCCESS;
+  return status;
 }
 

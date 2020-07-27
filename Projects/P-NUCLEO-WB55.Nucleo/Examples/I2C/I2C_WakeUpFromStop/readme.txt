@@ -95,12 +95,12 @@ P-NUCLEO-WB55's LEDs can be used to monitor the transfer status on the Slave Boa
       than the peripheral interrupt. Otherwise the caller ISR process will be blocked.
       To change the SysTick interrupt priority you have to use HAL_NVIC_SetPriority() function.
 
-@note The application need to ensure that the SysTick time base is always set to 1 millisecond
+@note The application needs to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
 
 @par Keywords
 
-Connectivity, I2C, Communication, Trasmission, Reception, SCL, SDA, Wake up, Interrupt
+Connectivity, I2C, Communication, Transmission, Reception, SCL, SDA, Wake up, Interrupt
 
 @par Directory contents 
 

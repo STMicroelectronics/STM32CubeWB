@@ -1,15 +1,15 @@
 /**
-  @page Zigbee_Diagnostic_Server_Router application
+  @page Zigbee_Diagnostic_Server_Coord application
   
   @verbatim
   ******************************************************************************
-  * @file    Zigbee/Zigbee_Diagnostic_Server_Router/readme.txt 
+  * @file    Zigbee/Zigbee_Diagnostic_Server_Coord/readme.txt 
   * @author  MCD Application Team
   * @brief   Description of the Zigbee Diagnostic Cluster application as a client  
   *          using a centralized network. 
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
   *
   * This software component is licensed by ST under Ultimate Liberty license 
   * SLA0044, the "License"; You may not use this file except in compliance with 
@@ -21,7 +21,7 @@
 
 @par Application Description 
 
-How to use Diagnostic cluster as a client on a centralized Zigbee network.
+How to use Diagnostic cluster as a server on a centralized Zigbee network.
 
 The purpose of this application is to show how to create a Zigbee centralized network, and 
 how to communicate from one node to another one using the Diagnostic cluster. Once the Zigbee mesh 
@@ -90,6 +90,10 @@ To setup the application :
       the SW1/SW2 push button. 
 
  Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
+
+@par Keywords
+
+Zigbee
  
 @par Hardware and Software environment
 

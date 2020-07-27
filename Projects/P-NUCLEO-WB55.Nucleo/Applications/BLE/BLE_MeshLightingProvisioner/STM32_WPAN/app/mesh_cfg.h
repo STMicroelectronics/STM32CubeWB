@@ -2,8 +2,6 @@
   ******************************************************************************
   * @file    mesh_cfg.h
   * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
   * @brief   Header file for mesh_usr_cfg.c 
   ******************************************************************************
   * @attention
@@ -25,6 +23,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "mesh_cfg_usr.h"
+#include "app_conf.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /* Flash parameters */
@@ -38,17 +37,28 @@
 
 #define NO_MODEL_AVLBL                       0xFFFF
 
+/*
+* TRACE_M includes function name and clock
+*/
 void TraceHeader(const char* func_name, int mode);
 #define TraceB0(func_name, ...)
+#if ( CFG_DEBUG_TRACE != 0 )
 #define TraceB1(func_name, ...) do {TraceHeader(func_name, 0); printf( __VA_ARGS__);} while(0)
+#else
+#define TraceB1(func_name, ...)
+#endif
 #define TraceBX(flags, func_name, ...) TraceB ##flags(func_name, ##__VA_ARGS__)
 #define TRACE_M(flag, ...)   TraceBX(flag, __func__, ##__VA_ARGS__)
 
-/*Enable this Macro to enable the main function prints.
-* This trace does not print the function name and clock.
+/*
+* TRACE_I does not include function name and clock
 */
 #define TraceC0(...)
+#if ( CFG_DEBUG_TRACE != 0 )
 #define TraceC1(...) do { printf( __VA_ARGS__);} while(0)
+#else
+#define TraceC1(...)
+#endif
 //#define TraceCX(flags, ...) TraceC ##flags( ##__VA_ARGS__)
 #define TraceCX(flags, ...) TraceC ##flags( __VA_ARGS__)
 #define TRACE_I(flag, ...)   TraceCX(flag, ##__VA_ARGS__)
@@ -74,6 +84,12 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size);
 #else
 #define SAVE_MODEL_STATE_NVM 0
 #endif
+
+#define DEVICE_NAME_PARAMS               \
+{                                        \
+    DEVICE_NAME_SIZE,                    \
+    Device_Name                          \
+}     
 
 #define TRANSMIT_RECEIVE_PARAMS          \
 {                                        \
@@ -134,6 +150,10 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size);
 #else
 #define PROVISIONER_FEATURE 0
 #endif
+
+#if defined (ENABLE_PROVISIONER_FEATURE) && defined (DYNAMIC_PROVISIONER)
+#error "Please select one Provisioner Option"
+#endif 
 
 #if (LOW_POWER_FEATURE && RELAY_FEATURE)
 #error "Low power node can't be relay node"
@@ -241,7 +261,7 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size);
 /******************** Serial Interface Handling Control **********************/
 
 /* Exported variables  ------------------------------------------------------- */
-
+extern const device_name_params_t DeviceNameParams;
 extern const DynBufferParam_t DynBufferParam;
 extern const tr_params_t TrParams;
 extern const lpn_params_t LpnParams;

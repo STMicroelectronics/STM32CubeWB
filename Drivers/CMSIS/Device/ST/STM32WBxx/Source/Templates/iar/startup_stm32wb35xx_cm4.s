@@ -109,11 +109,11 @@ __vector_table
         DCD     I2C3_EV_IRQHandler                ; I2C3 Event Interrupt
         DCD     I2C3_ER_IRQHandler                ; I2C3 Error Interrupt
         DCD     SPI1_IRQHandler                   ; SPI1 Interrupt
-        DCD     SPI2_IRQHandler                   ; SPI2 Interrupt
+        DCD     0                                 ; Reserved
         DCD     USART1_IRQHandler                 ; USART1 Interrupt
         DCD     LPUART1_IRQHandler                ; LPUART1 Interrupt
         DCD     0                                 ; Reserved
-        DCD     TSC_IRQHandler                    ; TSC Interrupt
+        DCD     0                                 ; Reserved
         DCD     EXTI15_10_IRQHandler              ; EXTI Lines1[15:10 ]Interrupts
         DCD     RTC_Alarm_IRQHandler              ; RTC Alarms (A and B) Interrupt
         DCD     CRS_IRQHandler                    ; CRS interrupt
@@ -372,11 +372,6 @@ I2C3_ER_IRQHandler
 SPI1_IRQHandler
         B SPI1_IRQHandler
 
-        PUBWEAK SPI2_IRQHandler
-        SECTION .text:CODE:NOROOT:REORDER(1)
-SPI2_IRQHandler
-        B SPI2_IRQHandler
-
         PUBWEAK USART1_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
 USART1_IRQHandler
@@ -386,11 +381,6 @@ USART1_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
 LPUART1_IRQHandler
         B LPUART1_IRQHandler
-
-        PUBWEAK TSC_IRQHandler
-        SECTION .text:CODE:NOROOT:REORDER(1)
-TSC_IRQHandler
-        B TSC_IRQHandler
 
         PUBWEAK EXTI15_10_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)

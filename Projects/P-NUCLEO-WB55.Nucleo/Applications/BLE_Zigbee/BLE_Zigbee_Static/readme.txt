@@ -1,9 +1,9 @@
 /**
-  @page Ble_Zigbee_Concurrent_Static example
+  @page BLE_Zigbee_Static example
   
   @verbatim
   ******************************************************************************
-  * @file    BLE_Zigbee_Concurrent/Ble_Zigbee_Concurrent_Static/readme.txt 
+  * @file    BLE_Zigbee/BLE_Zigbee_Static/readme.txt 
   * @author  MCD Application Team
   * @brief   Example of application using BLE and Zigbee protocols in Static 
   *          Concurrent mode.
@@ -28,9 +28,9 @@ Static means that application can perform alternatively BLE or Zigbee activities
 
 The idea is to present a demo with a Zigbee Network (at least 2 Nucleo Boards
 running Zigbee_OnOff_Server_Coord and Zigbee_OnOff_Client_Router application) and a BLE connection between 1 Nucleo
-board running Ble_Zigbee_Concurrent_Static application with a smartphone running 
+board running BLE_Zigbee_Static application with a smartphone running 
 "ST BLE Sensor" Application (available on App Store and Google Play)
-The STM32WB55xx-Nucleo board running Ble_Zigbee_Concurrent_Static application is capable 
+The STM32WB55xx-Nucleo board running BLE_Zigbee_Static application is capable 
 of switching from BLE network to Zigbee network and vice-versa.
 
 @par Keywords
@@ -67,7 +67,7 @@ Zigbee, BLE
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Zigbee_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Zigbee_FFD_static_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.

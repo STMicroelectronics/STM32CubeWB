@@ -42,6 +42,10 @@ In case of errors, LED2 is blinking (1sec period).
 
 Program is written so that, any new press on User push-button will lead to new transmission of complete buffer.
 
+@par Keywords
+
+Connectivity, USART, Asynchronous mode, RS-232, baud rate, Interrupt, HyperTerminal, Transmitter, VCP
+
 @par Directory contents 
 
   - USART/USART_Communication_Tx_IT_VCP_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file
@@ -54,12 +58,13 @@ Program is written so that, any new press on User push-button will lead to new t
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.
 
   - P-NUCLEO-WB55 Set-up
+
     Please ensure that USART communication between the target MCU and ST-LINK MCU is properly enabled 
     on HW board in order to support Virtual Com Port (Default HW SB configuration allows use of VCP)
 

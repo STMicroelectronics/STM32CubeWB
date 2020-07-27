@@ -31,6 +31,10 @@ OTA implementation to download a new image into the user flash.
 @note The application needs to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
 
+@par Keywords
+
+Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, Dual core
+
 @par Directory contents 
   
   - BLE/BLE_Ota/Core/Inc/stm32wbxx_hal_conf.h		HAL configuration file
@@ -66,7 +70,7 @@ OTA implementation to download a new image into the user flash.
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -75,6 +79,7 @@ Wireless Coprocessor binary.
 
 In order to make the program work, you must do the following:
  - Open your preferred toolchain 
+ - Please erase Flash memory before loading example
  - Rebuild all files and load your image into target memory
  - OR use BLE_Ota_reference.hex from Binary directory
 
@@ -100,7 +105,7 @@ For Wireless FW binary update example:
  - with Smart Phone "ST BLE Sensor" application, scan and connect to "STM_OTA" Application.
  - Next, select the binary to be downloaded on the Stack Processor
    - copy into Smart phone directory binaries available in STM32WB_Copro_Wireless_Binaries folder
-     as stm32wb5x_FUS_fw.bin or stm32wb5x_BLE_Stack_fw.bin 
+     as stm32wb5x_FUS_fw.bin or stm32wb5x_BLE_Stack_full_fw.bin 
     (please refer to UM2551 - STM32CubeWB Nucleo demonstration firmware, chapter 4.3)
  - Start download in free area of non secure Flash memory
  - New Application is running and can be connected

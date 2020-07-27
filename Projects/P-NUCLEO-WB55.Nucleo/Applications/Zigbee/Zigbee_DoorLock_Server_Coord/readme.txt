@@ -5,11 +5,11 @@
   ******************************************************************************
   * @file    Zigbee/Zigbee_DoorLock_Server_Coord/readme.txt 
   * @author  MCD Application Team
-  * @brief   Description of the Zigbee Door Lock Cluster application as a client  
+  * @brief   Description of the Zigbee Door Lock Cluster application as a server  
   *          using a centralized network. 
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
   *
   * This software component is licensed by ST under Ultimate Liberty license 
   * SLA0044, the "License"; You may not use this file except in compliance with 
@@ -90,56 +90,73 @@ Note: When the Door Lock server is in passage mode, the PIN code is not checked
              |        |                                                                   -->|        | 
              |        |            ZbZclAttrIntegerWrite(ZCL_DOORLOCK_ATTR_AUTO_RELOCK)  |   |        |
              |        |                                                                   ---|        |
-             |        |                                                                      |        |
-             |        |                                                                      |        |
-             |        |          /* Door Lock client/server normal mode interaction */       |        |
-             |        |                                                                      |        |
-             |        |                   ZbZclDoorLockClientUnlockReq(PIN)                  |        |
-  PushB SW1=>|        | -------------------------------------------------------------------> |        |=> GREEN LED OFF
+             |        |                                                                      |       ||=> GREEN LED ON
+             |        |                                                                      |       ||
+             |        |          /* Door Lock client/server normal mode interaction */       | Door  ||
+             |        |                                                                      | locked||
+             |        |                   ZbZclDoorLockClientUnlockReq(PIN)                  |       ||
+  PushB SW1=>|        | -------------------------------------------------------------------> |       ||=> GREEN LED OFF
              |        | <------------------------------------------------------------------- |        |
              |        |                                                                      |        |
              |        |                /* When Auto Relock Time is reached */             -->|        | 
-             |        |              ZbZclAttrIntegerWrite(ZCL_DOORLOCK_ATTR_LOCKSTATE)  |   |        |=> GREEN LED ON
-             |        |                                                                   ---|        |
+             |        |              ZbZclAttrIntegerWrite(ZCL_DOORLOCK_ATTR_LOCKSTATE)  |   |       ||=> GREEN LED ON
+             |        |                                                                   ---|       ||
+             |        |                                                                      |       ||
+             |        |                    ZbZclDoorLockClientLockReq(PIN)                   |       ||
+  PushB SW2=>|        | -------------------------------------------------------------------> |       ||=> GREEN LED ON
+             |        | <------------------------------------------------------------------- | Door  ||
+             |        |                                                                      | locked||
+             |        |                ZbZclDoorLockClientUnlockReq(WRONG_PIN)               |       ||
+  PushB SW3=>|        | -------------------------------------------------------------------> |       ||=> GREEN LED remains ON
+             |        | <------------------------------------------------------------------- |       ||
+             |        |                                                                      |       ||
+             |        |                                                                      |       ||
+             |        |            /* Door Lock client/server passage interaction */         |       ||
+             |        |                                                                      |       ||
+             |        |                   ZbZclDoorLockClientUnlockReq(PIN)                  |       ||
+  PushB SW1=>|        | -------------------------------------------------------------------> |       ||=> GREEN LED OFF
+             |        | <------------------------------------------------------------------- |        |
              |        |                                                                      |        |
              |        |                    ZbZclDoorLockClientLockReq(PIN)                   |        |
-  PushB SW2=>|        | -------------------------------------------------------------------> |        |=> GREEN LED ON
-             |        | <------------------------------------------------------------------- |        |
+  PushB SW2=>|        | -------------------------------------------------------------------> |       ||=> GREEN LED ON
+             |        | <------------------------------------------------------------------- |       ||
+             |        |                                                                      | Door  ||
+             |        |                ZbZclDoorLockClientUnlockReq(WRONG_PIN)               | locked||
+  PushB SW3=>|        | -------------------------------------------------------------------> |       ||
+             |        | <------------------------------------------------------------------- |       ||
+             |        |                                                                      |       ||
+             |        |                                                                      |       ||
+             |        |       /* Forced Door Open under Door Locked Condition alarm */       |       ||
+             |        |                                                                      |       ||
+             |        |                                                                   -->|       || 
+             |        |              ZbZclAttrIntegerWrite(ZCL_DOORLOCK_ATTR_DOORSTATE)  |   |       ||<=PushB SW1
+             |        |                                                                   ---|       ||
+             |        |                         ZbZclClusterSendAlarm                        |       ||
+RED LED ON <=|        | <------------------------------------------------------------------- |       ||
+             |        |                                                                      |       ||
+             |        |                                                                      |       ||
+             |        |                                        /* Passage mode for 10s */ <==|       ||<=PushB SW2
+             |        |                                                                      |       ||
+             |        |                ZbZclDoorLockClientUnlockReq(WRONG_PIN)               |       ||
+  PushB SW3=>|        | -------------------------------------------------------------------> |       ||=> GREEN LED OFF 
+             |        | <------------------------------------------------------------------- |        | (It is possible to unlock
+             |        |                                                                      |        |  the door, even if the
+             |        |                                                                      |        |  pin is wrong because of
+             |        |                                                                      |        |  the 'passage' mode)
              |        |                                                                      |        |
-             |        |                ZbZclDoorLockClientUnlockReq(WRONG_PIN)               |        |
-  PushB SW3=>|        | -------------------------------------------------------------------> |        |=> GREEN LED remains ON
-             |        | <------------------------------------------------------------------- |        |
-             |        |                                                                      |        |
-             |        |                                                                      |        |
-             |        |            /* Door Lock client/server passage interaction */         |        |
-             |        |                                                                      |        |
-             |        |                   ZbZclDoorLockClientUnlockReq(PIN)                  |        |
-  PushB SW1=>|        | -------------------------------------------------------------------> |        |=> GREEN LED OFF
-             |        | <------------------------------------------------------------------- |        |
-             |        |                                                                      |        |
-             |        |                    ZbZclDoorLockClientLockReq(PIN)                   |        |
-  PushB SW2=>|        | -------------------------------------------------------------------> |        |=> GREEN LED ON
-             |        | <------------------------------------------------------------------- |        |
-             |        |                                                                      |        |
-             |        |                ZbZclDoorLockClientUnlockReq(WRONG_PIN)               |        |
-  PushB SW3=>|        | -------------------------------------------------------------------> |        |=> GREEN LED OFF
-             |        | <------------------------------------------------------------------- |        |
-             |        |                                                                      |        |
-             |        |                                                                      |        |
-             |        |       /* Forced Door Open under Door Locked Condition alarm */       |        |
-             |        |                                                                      |        |
-             |        |                                                                   -->|        | 
-             |        |              ZbZclAttrIntegerWrite(ZCL_DOORLOCK_ATTR_DOORSTATE)  |   |        |<=PushB SW1
-             |        |                                                                   ---|        |
-             |        |                         ZbZclClusterSendAlarm                        |        |
-RED LED ON <=|        | <------------------------------------------------------------------- |        |
-             |        |                                                                      |        |
-             |        |                                                                   -->|        |
-             |        |                         /* Passage mode for 10s */               |   |        |<=PushB SW2
-             |        |                                                                   ---|        |
-             |        |                                                                      |        |
-             |        |                                                                      |        |
+             |        |                                /* Expiration of Passage mode */  ==> |        |  
+             |        |                                                                      |        | 
+             |        |                                                                      |        | 
+             |        |                ZbZclDoorLockClientLockReq(PIN)                       |        |
+  PushB SW3=>|        | -------------------------------------------------------------------> |       ||=> GREEN LED ON 
+             |        | <------------------------------------------------------------------- | Door  ||
+             |        |                                                                      | locked||
+             |        |                 ZbZclDoorLockClientUnlockReq(WRONG_PIN)              |       ||
+  PushB SW3=>|        | -------------------------------------------------------------------> |       ||
+             |        | <------------------------------------------------------------------- |       ||
+             |        |                                                                      |       || 
              +--------+                                                                      +--------+
+  
   
 To setup the application :
 
@@ -158,6 +175,10 @@ To setup the application :
       the SW1/SW2 push button. 
 
  Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
+
+@par Keywords
+
+Zigbee
  
 @par Hardware and Software environment
 

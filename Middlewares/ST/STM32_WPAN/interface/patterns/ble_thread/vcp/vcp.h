@@ -65,6 +65,17 @@ void VCP_SendData ( uint8_t *p_data , uint16_t size , void (*cb)( void ) );
  */
 extern void VCP_DataReceived( uint8_t* Buf , uint32_t *Len );
 
+/**
+ * @brief Report to the application data transmission complete over USB (VCP)
+ *
+ * @param  Buf : Address of the data transmitted
+ * @param  Len : length of transmitted data
+ * @param  epnum : endpoint number
+ *
+ * @retval None
+ */
+extern  int8_t VCP_TransmitCplt( uint8_t *Buf, uint32_t *Len, uint8_t epnum );
+
 
 #ifdef __cplusplus
 }

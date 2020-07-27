@@ -29,8 +29,8 @@
 
 
 /* Exported macro ------------------------------------------------------------*/
-#define CONFIGURE_AS_PER_COMPOSITION_DATA
 #define MAX_CONFIG_PARAM_SIZE 22
+#define CONFIGURE_AS_PER_COMPOSITION_DATA
 
 /* Exported variables  ------------------------------------------------------- */
 /* Application Variable-------------------------------------------------------*/

@@ -18,7 +18,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "app_common.h"
@@ -31,6 +30,7 @@
 #include "stm32_lpm.h"
 #include "shci_tl.h"
 #include "stm32_seq.h"
+#include "ble_bufsize.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */

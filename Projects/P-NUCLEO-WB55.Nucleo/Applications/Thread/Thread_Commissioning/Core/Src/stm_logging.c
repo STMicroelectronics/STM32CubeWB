@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
   * File Name          : stm_logging.c
-  * Description        : This file contains all the defines and functions used 
+  * Description        : This file contains all the defines and functions used
   *                     for logging on Application examples.
   *
   ******************************************************************************

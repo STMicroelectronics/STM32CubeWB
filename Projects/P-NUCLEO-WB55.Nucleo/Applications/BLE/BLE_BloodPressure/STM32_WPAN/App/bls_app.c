@@ -18,7 +18,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 
@@ -85,7 +84,7 @@ typedef struct
 #define BODY_MOVEMENT_DETECTION_SUPPORT_BIT                                    1
 #define CUFF_FIT_DETECTION_SUPPORT_BIT                                         2
 #define IRREGULAR_PULSE_DETECTION_SUPPORT_BIT                                  4
-#define PULSE_RATE_RANGE_DETECTION_SUPPORT_BIT                                 8    
+#define PULSE_RATE_RANGE_DETECTION_SUPPORT_BIT                                 8
 #define MEASUREMENT_POSITION_DETECTION_SUPPORT_BIT                            16
 #define MULTIPLE_BOND_SUPPORT_BIT                                             32
 #define MEASUREMENT                                                            0
@@ -117,12 +116,12 @@ static void BLSAPP_UpdateIntCuffPressure( void );
 /* Functions Definition ------------------------------------------------------*/
 static void BLSAPP_Store(void)
 {
-  memcpy(&aMeasurement[storeIndex++], 
-              &(BLSAPP_Context.BloodPressureMeasurementChar), 
-              sizeof(BLS_Value_t)); 
-   memcpy(&aMeasurement[storeIndex++], 
-          &(BLSAPP_Context.BloodPressureMeasurementChar), 
-          sizeof(BLS_Value_t)); 
+  memcpy(&aMeasurement[storeIndex++],
+              &(BLSAPP_Context.BloodPressureMeasurementChar),
+              sizeof(BLS_Value_t));
+   memcpy(&aMeasurement[storeIndex++],
+          &(BLSAPP_Context.BloodPressureMeasurementChar),
+          sizeof(BLS_Value_t));
  if(storeIndex == 100)
     storeIndex = 0;
 }
@@ -130,17 +129,17 @@ static void BLSAPP_Store(void)
 static void BLSAPP_Suppress(void)
 {
   uint8_t i;
-  
-  BLS_Update_Char(BLOOD_PRESSURE_MEASUREMENT_CHAR_UUID, 
+
+  BLS_Update_Char(BLOOD_PRESSURE_MEASUREMENT_CHAR_UUID,
                   (uint8_t *)&aMeasurement[0]);
   for(i = 1; i < storeIndex; i++)
   {
-    memcpy(&aMeasurement[i-1], 
-                &aMeasurement[i], 
-                sizeof(BLS_Value_t)); 
-    memcpy(&aMeasurement[i-1], 
-           &aMeasurement[i], 
-           sizeof(BLS_Value_t)); 
+    memcpy(&aMeasurement[i-1],
+                &aMeasurement[i],
+                sizeof(BLS_Value_t));
+    memcpy(&aMeasurement[i-1],
+           &aMeasurement[i],
+           sizeof(BLS_Value_t));
   }
   storeIndex--;
 }
@@ -172,10 +171,10 @@ static void BLSAPP_UpdateIntCuffPressure( void )
 void BLSAPP_Measurement(void)
 {
 #if(BLE_CFG_BLS_INTERMEDIATE_CUFF_PRESSURE == 0)
-  uint16_t systolic_measurement;  
+  uint16_t systolic_measurement;
   uint16_t diastolic_measurement;
   uint16_t mean_measurement;
-  
+
   systolic_measurement  = (uint16_t)((rand()&0x1F)+DEFAULT_BLS_MEASUREMENTVALUE_SYSTOLIC);
   diastolic_measurement = (uint16_t)((rand()&0x1F)+DEFAULT_BLS_MEASUREMENTVALUE_DIASTOLIC);
   mean_measurement      = (uint16_t)((rand()&0x1F)+DEFAULT_BLS_MEASUREMENTVALUE_MEAN);
@@ -200,17 +199,17 @@ void BLSAPP_Measurement(void)
         if(BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Day > 31)
           BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Day = 1;
       }
-    }  
+    }
   }
 #endif
 #else
   if(BLSAPP_Context.NotIntCufPressureEnabled == 1)
   {
-    BLSAPP_Context.BloodPressureMeasurementChar.MeasurementValue_Systolic  = 
+    BLSAPP_Context.BloodPressureMeasurementChar.MeasurementValue_Systolic  =
       BLSAPP_Context.IntermediateCuffPressureChar.MeasurementValue_Systolic;
-    BLSAPP_Context.BloodPressureMeasurementChar.MeasurementValue_Diastolic = 
+    BLSAPP_Context.BloodPressureMeasurementChar.MeasurementValue_Diastolic =
       BLSAPP_Context.IntermediateCuffPressureChar.MeasurementValue_Diastolic;
-    BLSAPP_Context.BloodPressureMeasurementChar.MeasurementValue_Mean      = 
+    BLSAPP_Context.BloodPressureMeasurementChar.MeasurementValue_Mean      =
       BLSAPP_Context.IntermediateCuffPressureChar.MeasurementValue_Mean;
 #if( BLE_CFG_BLS_TIME_STAMP_FLAG == 1)
     BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Seconds =
@@ -225,10 +224,10 @@ void BLSAPP_Measurement(void)
   }
   else
   {
-    uint16_t systolic_measurement;  
+    uint16_t systolic_measurement;
     uint16_t diastolic_measurement;
     uint16_t mean_measurement;
-    
+
     systolic_measurement  = (uint16_t)((rand()&0x1F)+DEFAULT_BLS_MEASUREMENTVALUE_SYSTOLIC);
     diastolic_measurement = (uint16_t)((rand()&0x1F)+DEFAULT_BLS_MEASUREMENTVALUE_DIASTOLIC);
     mean_measurement      = (uint16_t)((rand()&0x1F)+DEFAULT_BLS_MEASUREMENTVALUE_MEAN);
@@ -253,7 +252,7 @@ void BLSAPP_Measurement(void)
           if(BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Day > 31)
             BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Day = 1;
         }
-      }  
+      }
     }
 #endif
   }
@@ -263,7 +262,7 @@ void BLSAPP_Measurement(void)
   {
     if(storeIndex >= 0)
     {
-      BLE_DBG_APP_MSG ("BLSAPP_Measurement(): send stored measurement %d\n", storeIndex);  
+      BLE_DBG_APP_MSG ("BLSAPP_Measurement(): send stored measurement %d\n", storeIndex);
       BLSAPP_Suppress();
       HW_TS_Stop(BLSAPP_Context.TimerMeasurement_Id);
       HW_TS_Start(BLSAPP_Context.TimerMeasurement_Id, DEFAULT_ONE_SECOND_INTERVAL);
@@ -272,10 +271,10 @@ void BLSAPP_Measurement(void)
     {
       HW_TS_Stop(BLSAPP_Context.TimerMeasurement_Id);
       HW_TS_Start(BLSAPP_Context.TimerMeasurement_Id, DEFAULT_ONE_SECOND_INTERVAL*4);
-      BLS_Update_Char(BLOOD_PRESSURE_MEASUREMENT_CHAR_UUID, 
+      BLS_Update_Char(BLOOD_PRESSURE_MEASUREMENT_CHAR_UUID,
                       (uint8_t *)&BLSAPP_Context.BloodPressureMeasurementChar);
     }
-  }  
+  }
   else
     BLSAPP_Store();
   return;
@@ -284,10 +283,10 @@ void BLSAPP_Measurement(void)
 void BLSAPP_IntCuffPressure(void)
 {
 #if(BLE_CFG_BLS_INTERMEDIATE_CUFF_PRESSURE == 1)
-  uint16_t systolic_measurement;  
+  uint16_t systolic_measurement;
   uint16_t diastolic_measurement;
   uint16_t mean_measurement;
-  
+
   systolic_measurement  = (uint16_t)((rand()&0x1F)+DEFAULT_BLS_MEASUREMENTVALUE_SYSTOLIC);
   diastolic_measurement = (uint16_t)((rand()&0x1F)+DEFAULT_BLS_MEASUREMENTVALUE_DIASTOLIC);
   mean_measurement      = (uint16_t)((rand()&0x1F)+DEFAULT_BLS_MEASUREMENTVALUE_MEAN);
@@ -312,13 +311,13 @@ void BLSAPP_IntCuffPressure(void)
         if(BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Day > 31)
           BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Day = 1;
       }
-    }  
+    }
   }
 #endif
 
   if((APP_BLE_Get_Server_Connection_Status() == APP_BLE_CONNECTED_SERVER) &&
      (BLSAPP_Context.NotIntCufPressureEnabled == 1))
-    BLS_Update_Char(INTERMEDIATE_CUFF_PRESSURE_CHAR_UUID, 
+    BLS_Update_Char(INTERMEDIATE_CUFF_PRESSURE_CHAR_UUID,
                     (uint8_t *)&BLSAPP_Context.IntermediateCuffPressureChar);
 #endif
 
@@ -380,29 +379,29 @@ void BLSAPP_Init(void)
   BLSAPP_Context.BloodPressureMeasurementChar.Flags = (uint8_t)NO_FLAG;
 #if( BLE_CFG_BLS_INTERMEDIATE_CUFF_PRESSURE == 1)
   BLSAPP_Context.IntermediateCuffPressureChar.Flags = (uint8_t)NO_FLAG;
-  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(BLSAPP_Context.TimerMeasurement_Id), 
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(BLSAPP_Context.TimerMeasurement_Id),
                hw_ts_Repeated, BLSAPP_UpdateIntCuffPressure);
   BLSAPP_Context.NotIntCufPressureEnabled = 0;
 #endif
 
   /**
-   * 
+   *
    */
 #if( BLE_CFG_BLS_TIME_STAMP_FLAG == 1)
   BLSAPP_Context.BloodPressureMeasurementChar.Flags |= TIME_STAMP_PRESENT;
   BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Year = DEFAULT_BLS_TIME_STAMP_YEAR;
-  BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Month = DEFAULT_BLS_TIME_STAMP_MONTH;  
-  BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Day = DEFAULT_BLS_TIME_STAMP_DAY; 
-  BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Hours = DEFAULT_BLS_TIME_STAMP_HOURS; 
+  BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Month = DEFAULT_BLS_TIME_STAMP_MONTH;
+  BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Day = DEFAULT_BLS_TIME_STAMP_DAY;
+  BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Hours = DEFAULT_BLS_TIME_STAMP_HOURS;
   BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Minutes = DEFAULT_BLS_TIME_STAMP_MINUTES;
   BLSAPP_Context.BloodPressureMeasurementChar.TimeStamp.Seconds = DEFAULT_BLS_TIME_STAMP_SECONDS;
   storeIndex = 0;
 #if( BLE_CFG_BLS_INTERMEDIATE_CUFF_PRESSURE == 1)
   BLSAPP_Context.IntermediateCuffPressureChar.Flags            |= TIME_STAMP_PRESENT;
   BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Year    = DEFAULT_BLS_TIME_STAMP_YEAR;
-  BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Month   = DEFAULT_BLS_TIME_STAMP_MONTH;  
-  BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Day     = DEFAULT_BLS_TIME_STAMP_DAY; 
-  BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Hours   = DEFAULT_BLS_TIME_STAMP_HOURS; 
+  BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Month   = DEFAULT_BLS_TIME_STAMP_MONTH;
+  BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Day     = DEFAULT_BLS_TIME_STAMP_DAY;
+  BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Hours   = DEFAULT_BLS_TIME_STAMP_HOURS;
   BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Minutes = DEFAULT_BLS_TIME_STAMP_MINUTES;
   BLSAPP_Context.IntermediateCuffPressureChar.TimeStamp.Seconds = DEFAULT_BLS_TIME_STAMP_SECONDS;
 #endif
@@ -421,7 +420,7 @@ void BLSAPP_Init(void)
 #endif
   /**
    * Set initial User Id
-   */  
+   */
 #if( BLE_CFG_BLS_USER_ID_FLAG == 1)
   BLSAPP_Context.BloodPressureMeasurementChar.Flags |= USER_ID_PRESENT;
   BLSAPP_Context.BloodPressureMeasurementChar.UserID = DEFAULT_BLS_MEASUREMENTVALUE_USER_ID;
@@ -430,29 +429,29 @@ void BLSAPP_Init(void)
   BLSAPP_Context.IntermediateCuffPressureChar.UserID    = DEFAULT_BLS_MEASUREMENTVALUE_USER_ID;
 #endif
 #endif
-  
+
 #if ( BLE_CFG_BLS_MEASUREMENT_STATUS_FLAG == 1)
   BLSAPP_Context.BloodPressureMeasurementChar.Flags |= MEASUREMENT_STATUS_PRESENT;
   BLSAPP_Context.BloodPressureMeasurementChar.MeasurementStatus = 0;
 #if( BLE_CFG_BLS_INTERMEDIATE_CUFF_PRESSURE == 1)
   BLSAPP_Context.IntermediateCuffPressureChar.Flags |= MEASUREMENT_STATUS_PRESENT;
   BLSAPP_Context.IntermediateCuffPressureChar.MeasurementStatus = 0;
-  BLS_Update_Char(INTERMEDIATE_CUFF_PRESSURE_CHAR_UUID, 
+  BLS_Update_Char(INTERMEDIATE_CUFF_PRESSURE_CHAR_UUID,
                   (uint8_t *)&BLSAPP_Context.IntermediateCuffPressureChar);
 #endif
-#endif  
-  BLS_Update_Char(BLOOD_PRESSURE_MEASUREMENT_CHAR_UUID, 
+#endif
+  BLS_Update_Char(BLOOD_PRESSURE_MEASUREMENT_CHAR_UUID,
                   (uint8_t *)&BLSAPP_Context.BloodPressureMeasurementChar);
-  
+
 #if( BLE_CFG_BLS_SUPPORTED_FEATURES == 1)
-  BLSAPP_Context.BloodPressureFeatureChar = 0; 
+  BLSAPP_Context.BloodPressureFeatureChar = 0;
   BLSAPP_Context.BloodPressureFeatureChar = (BODY_MOVEMENT_DETECTION_SUPPORT_BIT       |
                                                   CUFF_FIT_DETECTION_SUPPORT_BIT             |
                                                   IRREGULAR_PULSE_DETECTION_SUPPORT_BIT      |
-                                                  PULSE_RATE_RANGE_DETECTION_SUPPORT_BIT     | 
+                                                  PULSE_RATE_RANGE_DETECTION_SUPPORT_BIT     |
                                                   MEASUREMENT_POSITION_DETECTION_SUPPORT_BIT |
                                                   MULTIPLE_BOND_SUPPORT_BIT);
-  BLS_Update_Char(BLOOD_PRESSURE_FEATURE_CHAR_UUID, 
+  BLS_Update_Char(BLOOD_PRESSURE_FEATURE_CHAR_UUID,
                   (uint8_t *)&BLSAPP_Context.BloodPressureFeatureChar);
 #endif
 

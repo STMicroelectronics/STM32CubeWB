@@ -1,5 +1,5 @@
 /**
-  @page BSP  Example on how to use the BSP drivers
+  @page BSP_Example Example on how to use the BSP drivers
   
   @verbatim
   ******************************************************************************

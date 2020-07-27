@@ -186,11 +186,13 @@ uint16_t FLASH_If_DeInit(void)
 uint16_t FLASH_If_Erase(uint32_t Add)
 {
   /* USER CODE BEGIN 2 */
-  uint32_t PageError = 0U;
-
-  /* Variable contains Flash operation status */
-  HAL_StatusTypeDef status;
   FLASH_EraseInitTypeDef eraseinitstruct;
+  uint32_t PageError = 0U;
+  HAL_StatusTypeDef status;
+
+
+  /* Unlock the Flash to enable the flash control register access */
+  HAL_FLASH_Unlock();
 
   /* Clear OPTVERR bit set on virgin samples */
   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
@@ -305,22 +307,22 @@ uint16_t FLASH_If_GetStatus(uint32_t Add, uint8_t Cmd, uint8_t *buffer)
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
 /**
   * @brief  Gets the page of a given address
-  * @param  Addr: Address of the FLASH Memory
+  * @param  Address: Address of the FLASH Memory
   * @retval The page of a given address
   */
-static uint32_t GetPage(uint32_t Addr)
+static uint32_t GetPage(uint32_t Address)
 {
-  uint32_t page = 0;
+  uint32_t page = 0U;
 
-  if (Addr < (FLASH_BASE + FLASH_BANK_SIZE))
+  if (Address < (FLASH_BASE + FLASH_BANK_SIZE))
   {
     /* Bank 1 */
-    page = (Addr - FLASH_BASE) / FLASH_PAGE_SIZE;
+    page = (Address - FLASH_BASE) / FLASH_PAGE_SIZE;
   }
   else
   {
     /* Bank 2 */
-    page = (Addr - (FLASH_BASE + FLASH_BANK_SIZE)) / FLASH_PAGE_SIZE;
+    page = (Address - (FLASH_BASE + FLASH_BANK_SIZE)) / FLASH_PAGE_SIZE;
   }
 
   return page;

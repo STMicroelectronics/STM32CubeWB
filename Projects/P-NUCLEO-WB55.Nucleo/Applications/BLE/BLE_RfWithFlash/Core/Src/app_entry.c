@@ -18,7 +18,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "main.h"
@@ -30,6 +29,8 @@
 #include "shci_tl.h"
 #include "stm32_lpm.h"
 #include "app_debug.h"
+#include "shci.h"
+#include "dbg_trace.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -132,7 +133,7 @@ void APPE_Init( void )
  * @param  None
  * @retval None
  */
-static void SystemPower_Config( void )
+static void SystemPower_Config(void)
 {
 
   /**
@@ -141,7 +142,9 @@ static void SystemPower_Config( void )
   LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 
   /* Initialize low power manager */
-  UTIL_LPM_Init( );
+  UTIL_LPM_Init();
+  /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
+  LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   /**
@@ -195,12 +198,91 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
  */
 static void APPE_SysUserEvtRx( void * pPayload )
 {
-  UNUSED(pPayload);
-  /* Traces channel initialization */
-  APPD_EnableCPU2( );
+  TL_AsynchEvt_t *p_sys_event;
 
-  APP_BLE_Init( );
-  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  SHCI_C2_CONFIG_Cmd_Param_t config_param = {0};
+
+  p_sys_event = (TL_AsynchEvt_t*)(((tSHCI_UserEvtRxParam*)pPayload)->pckt->evtserial.evt.payload);
+
+  switch(p_sys_event->subevtcode)
+  {
+    case SHCI_SUB_EVT_CODE_READY:
+      APP_DBG_MSG("SHCI_SUB_EVT_CODE_READY WITH PARAMETER %x \n", ((SHCI_C2_Ready_Evt_t*)p_sys_event->payload)->sysevt_ready_rsp );
+
+      if(((SHCI_C2_Ready_Evt_t*)p_sys_event->payload)->sysevt_ready_rsp == WIRELESS_FW_RUNNING)
+      {
+        /**
+         * The wireless firmware is running on the CPU2
+         */
+
+        /* Traces channel initialization */
+        APPD_EnableCPU2( );
+
+        /* Enable all events Notification */
+        config_param.PayloadCmdSize = SHCI_C2_CONFIG_PAYLOAD_CMD_SIZE;
+        config_param.EvtMask1 = SHCI_C2_CONFIG_EVTMASK1_BIT0_ERROR_NOTIF_ENABLE
+                                +  SHCI_C2_CONFIG_EVTMASK1_BIT1_BLE_NVM_RAM_UPDATE_ENABLE
+                                +  SHCI_C2_CONFIG_EVTMASK1_BIT2_OT_NVM_RAM_UPDATE_ENABLE
+                                +  SHCI_C2_CONFIG_EVTMASK1_BIT3_NVM_START_WRITE_ENABLE
+                                +  SHCI_C2_CONFIG_EVTMASK1_BIT4_NVM_END_WRITE_ENABLE
+                                +  SHCI_C2_CONFIG_EVTMASK1_BIT5_NVM_START_ERASE_ENABLE
+                                +  SHCI_C2_CONFIG_EVTMASK1_BIT6_NVM_END_ERASE_ENABLE;
+        (void)SHCI_C2_Config(&config_param);
+
+        APP_BLE_Init( );
+        UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+
+      }
+      else
+      {
+        /**
+         * The FUS firmware is running on the CPU2
+         * In the scope of this application, there should be no case when we get here
+         */
+
+        /* The packet shall not be released as this is not supported by the FUS */
+        ((tSHCI_UserEvtRxParam*)pPayload)->status = SHCI_TL_UserEventFlow_Disable;
+      }
+      break;
+
+    case SHCI_SUB_EVT_ERROR_NOTIF:
+      APP_DBG_MSG("SHCI_SUB_EVT_ERROR_NOTIF WITH REASON %x \n", ((SHCI_C2_ErrorNotif_Evt_t*)p_sys_event->payload)->errorCode );
+      break;
+
+    case SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE:
+      APP_DBG_MSG("SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE : StartAddress = %x , Size = %x\n",
+                  ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->StartAddress,
+                  ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->Size);
+      break;
+
+    case SHCI_SUB_EVT_OT_NVM_RAM_UPDATE:
+      APP_DBG_MSG("SHCI_SUB_EVT_OT_NVM_RAM_UPDATE : StartAddress = %x , Size = %x\n",
+                  ((SHCI_C2_OtNvmRamUpdate_Evt_t*)p_sys_event->payload)->StartAddress,
+                  ((SHCI_C2_OtNvmRamUpdate_Evt_t*)p_sys_event->payload)->Size);
+      break;
+
+    case SHCI_SUB_EVT_NVM_START_WRITE:
+      APP_DBG_MSG("SHCI_SUB_EVT_NVM_START_WRITE : NumberOfWords = %x\n",
+                  ((SHCI_C2_NvmStartWrite_Evt_t*)p_sys_event->payload)->NumberOfWords);
+      break;
+
+    case SHCI_SUB_EVT_NVM_END_WRITE:
+      APP_DBG_MSG("SHCI_SUB_EVT_NVM_END_WRITE\n");
+      break;
+
+    case SHCI_SUB_EVT_NVM_START_ERASE:
+      APP_DBG_MSG("SHCI_SUB_EVT_NVM_START_WRITE : NumberOfSectors = %x\n",
+                  ((SHCI_C2_NvmStartErase_Evt_t*)p_sys_event->payload)->NumberOfSectors);
+      break;
+
+    case SHCI_SUB_EVT_NVM_END_ERASE:
+      APP_DBG_MSG("SHCI_SUB_EVT_NVM_END_ERASE\n");
+      break;
+
+    default:
+      break;
+  }
+
   return;
 }
 

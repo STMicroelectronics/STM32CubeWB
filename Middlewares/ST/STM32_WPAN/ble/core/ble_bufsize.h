@@ -103,22 +103,22 @@
  *   mentioned parameters.
 */
 #if (SLAVE_ONLY == 0) && (LL_ONLY == 0)
-#define BLE_FIXED_BUFFER_SIZE_BYTES  6976   /* Full stack */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  6960   /* Full stack */
 #elif SLAVE_ONLY == 0
-#define BLE_FIXED_BUFFER_SIZE_BYTES  6272   /* LL only */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  6256   /* LL only */
 #else
-#define BLE_FIXED_BUFFER_SIZE_BYTES  4628   /* Slave only */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  6696   /* Slave only */
 #endif
 
 /*
  * BLE_PER_LINK_SIZE_BYTES: additional memory size used per link
  */
 #if (SLAVE_ONLY == 0) && (LL_ONLY == 0)
-#define BLE_PER_LINK_SIZE_BYTES      376   /* Full stack */
+#define BLE_PER_LINK_SIZE_BYTES       380   /* Full stack */
 #elif SLAVE_ONLY == 0
-#define BLE_PER_LINK_SIZE_BYTES      192   /* LL only */
+#define BLE_PER_LINK_SIZE_BYTES       196   /* LL only */
 #else
-#define BLE_PER_LINK_SIZE_BYTES      332   /* Slave only */
+#define BLE_PER_LINK_SIZE_BYTES       332   /* Slave only */
 #endif
 
 /*

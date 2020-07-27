@@ -49,6 +49,9 @@
   * @{
   */
 /* USER CODE BEGIN EXPORTED_DEFINES */
+#define APP_RX_DATA_SIZE  2048
+#define APP_TX_DATA_SIZE  2048
+
 #define USARTx                           USART1
 #define USARTx_CLK_ENABLE()              __HAL_RCC_USART1_CLK_ENABLE()
 #define DMAx_CLK_ENABLE()                do {                                \

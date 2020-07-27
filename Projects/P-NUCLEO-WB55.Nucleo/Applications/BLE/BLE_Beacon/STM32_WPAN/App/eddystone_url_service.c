@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  * File Name          : App/eddystone_url_service.c
- * Description        : 
+ * Description        :
  ******************************************************************************
   * @attention
   *
@@ -137,28 +137,28 @@ void EddystoneURL_Process(void)
 {
 #ifdef USE_OTA
   uint32_t data_address = OTA_BEACON_DATA_ADDRESS + OFFSET_PAYLOAD_LENGTH; /* 0x8006009 */
-    
+
   if(((*(uint8_t *)(OTA_BEACON_DATA_ADDRESS)) !=  0xFF) &&
      ((*(uint8_t *)(data_address + 9)) ==  0x10))
   {
-    /* Eddystone URL beacon User Data download */  
+    /* Eddystone URL beacon User Data download */
     EddystoneURL_InitTypeDef EddystoneURL_InitStruct;
     uint8_t Url[100];
     uint8_t i;
-    
+
     EddystoneURL_InitStruct.Url                 = Url;
     EddystoneURL_InitStruct.AdvertisingInterval = ADVERTISING_INTERVAL_IN_MS;
-  
+
     data_address += 5; /* 0x800600e */
     EddystoneURL_InitStruct.UrlLength           = *(uint8_t *)(data_address);
-    data_address += 5; /* 0x8006013 */   
+    data_address += 5; /* 0x8006013 */
     EddystoneURL_InitStruct.CalibratedTxPower   = *(uint8_t *)(data_address);
     data_address += 1; /* 0x8006014 */
     EddystoneURL_InitStruct.UrlScheme           = *(uint8_t *)(data_address);
     data_address += 1; /* 0x8006015 */
-    for(i = 0; i < EddystoneURL_InitStruct.UrlLength - 6; i++) 
+    for(i = 0; i < EddystoneURL_InitStruct.UrlLength - 6; i++)
       EddystoneURL_InitStruct.Url[i] = *(uint8_t *)(data_address + i);
-  
+
     EddystoneURL_Init(&EddystoneURL_InitStruct);
   }
   else

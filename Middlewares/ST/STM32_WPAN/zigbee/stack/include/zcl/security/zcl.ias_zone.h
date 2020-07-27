@@ -192,7 +192,7 @@ struct ZbZclIasZoneClientCallbacksT {
         struct ZbZclClusterT *clusterPtr,
         void *arg, /* ZbZclClusterSetCallbackArg */
         struct ZbZclIasZoneServerStatusChangeNotifyT *notify,
-        struct ZbApsAddrT *src);
+        const struct ZbApsAddrT *src);
 
     /* ZCL_IAS_ZONE_SVR_CMD_ZONE_ENROLL_REQUEST callback.
      * Returns a ZCL Status Code. If not SUCCESS, a Default Response is

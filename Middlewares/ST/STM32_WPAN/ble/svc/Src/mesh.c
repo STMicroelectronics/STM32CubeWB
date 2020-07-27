@@ -49,6 +49,7 @@ const MOBLE_USER_BLE_CB_MAP user_ble_cb =
 /* This structure contains Mesh library Initialisation info data */
 const Mesh_Initialization_t BLEMeshlib_Init_params = 
 {
+  &DeviceNameParams,
   bdaddr,
   &TrParams,
   &FnParams,
@@ -113,6 +114,18 @@ void MESH_Init(void)
   
   /* Initialization of the  SIG Models list */
   if(MOBLE_FAILED(ApplicationInitSigModelList()))
+  {
+    TRACE_I(TF_INIT,"The number of Models enabled exceed the limit of %d !\r\n",
+            APPLICATION_SIG_MODELS_MAX_COUNT);   
+    /* LED continuously blinks if library fails to initialize */
+    while (1)
+    {
+      Appli_LedBlink();
+    }
+  }
+  
+  /* Initialization of the  Vendor Models list */
+  if(MOBLE_FAILED(ApplicationInitVendorModelList()))
   {
     TRACE_I(TF_INIT,"The number of Models enabled exceed the limit of %d !\r\n",
             APPLICATION_SIG_MODELS_MAX_COUNT);   

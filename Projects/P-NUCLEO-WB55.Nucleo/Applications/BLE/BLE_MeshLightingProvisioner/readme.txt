@@ -1,5 +1,5 @@
 /**
-  @page BLE_MeshLightingDemo example
+  @page BLE_MeshLightingProvisioner example
   
   @verbatim
   ******************** (C) COPYRIGHT 2020 STMicroelectronics *******************
@@ -29,6 +29,10 @@ This is the implementation of the BLE Mesh Lighting profile as specified by the 
       
 @note The application needs to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
+
+@par Keywords
+
+Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE mesh, Dual core
 
 @par Directory contents 
             mesh_lighting_demo
@@ -110,7 +114,7 @@ This is the implementation of the BLE Mesh Lighting profile as specified by the 
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -159,7 +163,9 @@ When the ENABLE_PROVISIONER_FEATURE is defined after generating and flashing the
 the Provisioner Node is self provisioned and configured during the initialization.
 
 When the DYNAMIC_PROVISIONER is defined after generating, flashing the binary and the initialization the provisioner is like 
-an unprovisioned device that can be provisioned and configured by BLE-Mesh Android or BLE-Mesh iOS smartphone application.
+an unprovisioned device that can be provisioned and configured by 
+BLE-Mesh Android (https://play.google.com/store/apps/details?id=com.st.bluenrgmesh&hl=en) or 
+BLE-Mesh iOS (https://apps.apple.com/us/app/st-ble-mesh/id1348645067) smartphone application.
 To dynamically set the device as a provisioner self provisioned and self configured, you can run the following command in an external
 terminal: atep root
 Here are the external terminal settings:

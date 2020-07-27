@@ -211,9 +211,6 @@ typedef struct notificationAttrS {
 
   typedef enum
 {
-  ANCS_UNINITIALIZED = 0x00,
-  ANCS_INITIALIZED = 0x01,
- 
   ANCS_IDLE,
   ANCS_CONNECTED,             /* Connection_Evt: ANCS_CONNECTION_ESTABLISHED */
   ANCS_DISCONNECTING,      /* Connection_Evt */
@@ -223,16 +220,6 @@ typedef struct notificationAttrS {
   ANCS_MTU_UPDATE,            /* Connection_Evt */
   ANCS_MTU_EXCHANGE_COMPLETE, /* Connection_Evt */
   
-  ANCS_SECURITY_REQUEST,
-  ANCS_SECURITY_INITIATED,
-  ANCS_ALLOW_REBOND,
-  ANCS_PAIRING_COMPLETE,      /* Connection_Evt */
-
-  ANCS_PASS_KEY_REQUEST,      /* Connection_Evt: ANCS_PASSKEY_REQ_EVT */
-  ANCS_PASS_KEY_RESPONSE,
-
-  ANCS_NUMERIC_COMPARISON_VALUE_CONFIRM,
-
   ANCS_DISCOVER_ALL_SERVICES,
   ANCS_DISCOVER_ANCS_SERVICE,
   ANCS_DISCOVER_ALL_CHARS,
@@ -277,7 +264,6 @@ void ANCS_App_KeyButton2Action(void);
 void ANCS_App_KeyButton3Action(void);
 void ANCS_App_Peer_Bonded_Check(uint16_t Connection_Handle, uint8_t Peer_Address_Type, uint8_t Peer_Address[6]);
 void ANCS_App_Notification( Connection_Context_t *pNotification );
-void ANCS_App_Remove_Bonding_Info(void);
 
 #ifdef __cplusplus
 }

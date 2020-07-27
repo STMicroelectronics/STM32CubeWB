@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    light_client.c
 * @author  BLE Mesh Team
-* @version V1.12.000
-* @date    06-12-2019
 * @brief   Generic model client middleware file
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -61,15 +39,56 @@
 
 /* Private variables ---------------------------------------------------------*/
 extern MOBLEUINT8 TidSend;
-const MODEL_OpcodeTableParam_t Light_Client_Opcodes_Table[] = {
+const MODEL_OpcodeTableParam_t Light_Client_Opcodes_Table[] = 
+{
   /* Light Lightness Client */
   /*    MOBLEUINT32 opcode, MOBLEBOOL reliable, MOBLEUINT16 min_payload_size, 
   MOBLEUINT16 max_payload_size;
   Here in this array, Handler is not defined; */
-#ifdef ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS  
-  {LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID      ,LIGHT_LIGHTNESS_STATUS,              MOBLE_FALSE, 2, 5, 0,        2, 5},
+/* model_id                                     opcode                                 reliable     min_payload_size max_payload_size response_opcode                      min_response_size max_response_size */
+                                                                                                                                                                           
+#ifdef ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS                                                                                                                                 
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_GET,                   MOBLE_TRUE,  0,               0,                LIGHT_LIGHTNESS_STATUS,             2,                5},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_SET,                   MOBLE_TRUE,  3,               5,                LIGHT_LIGHTNESS_STATUS,             2,                5},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_SET_UNACK,             MOBLE_FALSE, 3,               5,                LIGHT_LIGHTNESS_STATUS,             2,                5},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_STATUS,                MOBLE_FALSE, 2,               5,                0,                                  2,                5},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_LINEAR_GET,            MOBLE_TRUE,  0,               0,                LIGHT_LIGHTNESS_LINEAR_STATUS,      2,                5},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_LINEAR_SET,            MOBLE_TRUE,  3,               5,                LIGHT_LIGHTNESS_LINEAR_STATUS,      2,                5},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_LINEAR_SET_UNACK,      MOBLE_FALSE, 3,               5,                LIGHT_LIGHTNESS_LINEAR_STATUS,      2,                5},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_LINEAR_STATUS,         MOBLE_FALSE, 2,               5,                0,                                  2,                5},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_LAST_GET,              MOBLE_TRUE,  0,               0,                LIGHT_LIGHTNESS_LAST_STATUS,        2,                2},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_LAST_STATUS,           MOBLE_FALSE, 2,               2,                0,                                  2,                2},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_DEFAULT_GET,           MOBLE_TRUE,  0,               0,                LIGHT_LIGHTNESS_DEFAULT_STATUS,     2,                2},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_DEFAULT_STATUS,        MOBLE_FALSE, 2,               2,                0,                                  2,                2},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_RANGE_GET,             MOBLE_TRUE,  0,               0,                LIGHT_LIGHTNESS_RANGE_STATUS,       5,                5},
+  {LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID,       LIGHT_LIGHTNESS_RANGE_STATUS,          MOBLE_FALSE, 5,               5,                0,                                  5,                5},
+#endif                                                                                                                                                                     
+                                                                                                                                                                           
+#ifdef ENABLE_LIGHT_MODEL_CLIENT_CTL                                                                                                                                       
+  {LIGHT_MODEL_CLIENT_CTL_MODEL_ID,             LIGHT_CTL_GET,                         MOBLE_TRUE,  0,               0,                LIGHT_CTL_STATUS,                   4,                9},     
+  {LIGHT_MODEL_CLIENT_CTL_MODEL_ID,             LIGHT_CTL_SET,                         MOBLE_TRUE,  7,               9,                LIGHT_CTL_STATUS,                   4,                9},     
+  {LIGHT_MODEL_CLIENT_CTL_MODEL_ID,             LIGHT_CTL_SET_UNACK,                   MOBLE_FALSE, 7,               9,                LIGHT_CTL_STATUS,                   4,                9},
+  {LIGHT_MODEL_CLIENT_CTL_MODEL_ID,             LIGHT_CTL_STATUS,                      MOBLE_FALSE, 4,               9,                0,                                  4,                9},
+  {LIGHT_MODEL_CLIENT_CTL_MODEL_ID,             LIGHT_CTL_TEMPERATURE_RANGE_GET,       MOBLE_TRUE,  0,               0,                LIGHT_CTL_TEMPERATURE_RANGE_STATUS, 5,                5},
+  {LIGHT_MODEL_CLIENT_CTL_MODEL_ID,             LIGHT_CTL_TEMPERATURE_RANGE_STATUS,    MOBLE_FALSE, 5,               5,                0,                                  5,                5},
+  {LIGHT_MODEL_CLIENT_CTL_MODEL_ID,             LIGHT_CTL_DEFAULT_GET,                 MOBLE_TRUE,  0,               0,                LIGHT_CTL_DEFAULT_STATUS,           6,                6},  
+  {LIGHT_MODEL_CLIENT_CTL_MODEL_ID,             LIGHT_CTL_DEFAULT_STATUS,              MOBLE_TRUE,  6,               6,                0,                                  6,                6},   
+#endif                                                                                                                                                                     
+                                                                                                                                                                           
+#ifdef ENABLE_LIGHT_MODEL_CLIENT_HSL
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_GET,                         MOBLE_TRUE,  0,               0,                LIGHT_HSL_STATUS,                   6,                7}, 
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_SET,                         MOBLE_TRUE,  7,               9,                LIGHT_HSL_STATUS,                   6,                7},   
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_SET_UNACK,                   MOBLE_FALSE, 7,               9,                LIGHT_HSL_STATUS,                   6,                7},    
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_STATUS,                      MOBLE_FALSE, 6,               7,                0,                                  6,                7},  
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_TARGET_GET,                  MOBLE_TRUE,  0,               0,                LIGHT_HSL_TARGET_STATUS,            6,                7}, 
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_TARGET_STATUS,               MOBLE_FALSE, 6,               7,                0,                                  6,                7},  
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_DEFAULT_GET,                 MOBLE_TRUE,  0,               0,                LIGHT_HSL_DEFAULT_STATUS,           6,                6},  
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_DEFAULT_STATUS,              MOBLE_FALSE, 6,               6,                0,                                  6,                6},  
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_RANGE_GET,                   MOBLE_TRUE,  0,               0,                LIGHT_HSL_RANGE_STATUS,             9,                9},
+  {LIGHT_MODEL_CLIENT_HSL_MODEL_ID,             LIGHT_HSL_RANGE_STATUS,                MOBLE_TRUE,  9,               9,                0,                                  9,                9},
 #endif
-  {0}
+  
+  {0}		
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,7 +112,7 @@ MOBLE_RESULT LightClient_Lightness_Set_Unack(MOBLE_ADDRESS element_number,
   MOBLEUINT16 msg_opcode;
   MOBLEBOOL ack_flag;
   
-  TRACE_M(TF_LIGHT_CLIENT,"Light_Lightness_Set_Unack Client Message \r\n");  
+  TRACE_M(TF_LIGHT_CLIENT_M,"Light_Lightness_Set_Unack Client Message \r\n");  
   pLightness_param->a_Lightness_param[2] = TidSend;
   msg_buff = pLightness_param->a_Lightness_param;
   ack_flag = MOBLE_FALSE;
@@ -115,7 +134,7 @@ MOBLE_RESULT LightClient_Lightness_Set_Unack(MOBLE_ADDRESS element_number,
   }                 
   if(result)
   {
-    TRACE_M(TF_LIGHT_CLIENT,"Publication Error \r\n");
+    TRACE_M(TF_LIGHT_CLIENT_M,"Publication Error \r\n");
   }  
   
   return result;
@@ -162,7 +181,7 @@ MOBLE_RESULT LightModelClient_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                                    MOBLEBOOL response)
 
 {
-  TRACE_M(TF_LIGHT_CLIENT,"response status enable \n\r");
+  TRACE_M(TF_LIGHT_CLIENT_M,"response status enable \n\r");
   
   return MOBLE_RESULT_SUCCESS;    
 }
@@ -195,7 +214,7 @@ MOBLE_RESULT LightModelClient_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   //tClockTime delay_t = Clock_Time();
   
-  TRACE_M(TF_LIGHT_CLIENT,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
+  TRACE_M(TF_LIGHT_CLIENT_M,"dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
           dst_peer, peer_addr, opcode , response);
   
   switch(opcode)
@@ -203,6 +222,76 @@ MOBLE_RESULT LightModelClient_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   case LIGHT_LIGHTNESS_STATUS:
     {     
       Light_Client_Lightness_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_LIGHTNESS_LINEAR_STATUS:
+    {     
+      Light_Client_Lightness_Linear_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_LIGHTNESS_LAST_STATUS:
+    {     
+      Light_Client_Lightness_Last_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_LIGHTNESS_DEFAULT_STATUS:
+    {     
+      Light_Client_Lightness_Default_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_LIGHTNESS_RANGE_STATUS:
+    {     
+      Light_Client_Lightness_Range_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_CTL_STATUS:
+    {     
+      Light_Client_Ctl_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_CTL_TEMPERATURE_RANGE_STATUS:
+    {     
+      Light_Client_CtlTemperature_Range_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_CTL_TEMPERATURE_STATUS:
+    {     
+      Light_Client_CtlTemperature_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_CTL_DEFAULT_STATUS:
+    {     
+      Light_Client_CtlDefault_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_HSL_HUE_STATUS:
+    {     
+      Light_Client_HslHue_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_HSL_SATURATION_STATUS:
+    {     
+      Light_Client_HslSaturation_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_HSL_STATUS:
+    {     
+      Light_Client_Hsl_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_HSL_TARGET_STATUS:
+    {     
+      Light_Client_HslTarget_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_HSL_DEFAULT_STATUS:
+    {     
+      Light_Client_HslDefault_Status(pRxData, dataLength);         
+      break;
+    } 
+  case LIGHT_HSL_RANGE_STATUS:
+    {     
+      Light_Client_HslRange_Status(pRxData, dataLength);         
       break;
     } 
   default:

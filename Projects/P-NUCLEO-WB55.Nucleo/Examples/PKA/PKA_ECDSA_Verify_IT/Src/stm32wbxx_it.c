@@ -59,13 +59,13 @@ extern PKA_HandleTypeDef hpka;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern PKA_HandleTypeDef hpka;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex Processor Interruption and Exception Handlers          */ 
+/*           Cortex Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.
@@ -200,16 +200,21 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32wbxx.s).                    */
 /******************************************************************************/
 
-/* USER CODE BEGIN 1 */
 /**
-  * @brief  This function handles PKA Handler.
-  * @param  None
-  * @retval None
+  * @brief This function handles PKA interrupt.
   */
 void PKA_IRQHandler(void)
 {
+  /* USER CODE BEGIN PKA_IRQn 0 */
+
+  /* USER CODE END PKA_IRQn 0 */
   HAL_PKA_IRQHandler(&hpka);
+  /* USER CODE BEGIN PKA_IRQn 1 */
+
+  /* USER CODE END PKA_IRQn 1 */
 }
+
+/* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

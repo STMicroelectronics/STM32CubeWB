@@ -1,9 +1,9 @@
 /**
-  @page BLE_TransparentMode example
+  @page BLE_TransparentModeVCP example
   
   @verbatim
   ******************************************************************************
-  * @file    BLE/BLE_TransparentMode/readme.txt 
+  * @file    BLE/BLE_TransparentModeVCP/readme.txt 
   * @author  MCD Application Team
   * @brief   add here the very short description of the example (the name ?).
   ******************************************************************************
@@ -31,28 +31,32 @@ How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
 @note The application needs to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
 
+@par Keywords
+
+Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, Dual core
+
 @par Directory contents 
   
-  - BLE/BLE_TransparentMode/Core/Inc/stm32wbxx_hal_conf.h		HAL configuration file
-  - BLE/BLE_TransparentMode/Core/Inc/stm32wbxx_it.h          	Interrupt handlers header file
-  - BLE/BLE_TransparentMode/Core/Inc/main.h                  	Header for main.c module
-  - BLE/BLE_TransparentMode/STM32_WPAN/App/tm.h               	Header for tm.c module
-  - BLE/BLE_TransparentMode/Core/Inc/app_common.h            	Header for all modules with common definition
-  - BLE/BLE_TransparentMode/Core/Inc/app_conf.h              	Parameters configuration file of the application
-  - BLE/BLE_TransparentMode/Core/Inc/app_entry.h              	Parameters configuration file of the application
-  - BLE/BLE_TransparentMode/STM32_WPAN/App/ble_conf.h          	BLE Services configuration
-  - BLE/BLE_TransparentMode/STM32_WPAN/App/ble_dbg_conf.h      	BLE Traces configuration of the BLE services
-  - BLE/BLE_TransparentMode/Core/Inc/hw_conf.h           		Configuration file of the HW
-  - BLE/BLE_TransparentMode/Core/Inc/utilities_conf.h    		Configuration file of the utilities
-  - BLE/BLE_TransparentMode/Core/Src/stm32wbxx_it.c          	Interrupt handlers
-  - BLE/BLE_TransparentMode/Core/Src/main.c                  	Main program
-  - BLE/BLE_TransparentMode/Core/Src/system_stm32wbxx.c      	stm32wbxx system source file
-  - BLE/BLE_TransparentMode/Core/Src/app_entry.c      			Initialization of the application
-  - BLE/BLE_TransparentMode/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_TransparentMode/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
-  - BLE/BLE_TransparentMode/Core/Src/hw_timerserver.c 			Timer Server based on RTC
-  - BLE/BLE_TransparentMode/Core/Src/hw_uart.c 					UART Driver
-  - BLE/BLE_TransparentMode/STM32_WPAN/App/tm.c 				Transparent Mode implementation
+  - BLE/BLE_TransparentModeVCP/Core/Inc/stm32wbxx_hal_conf.h		HAL configuration file
+  - BLE/BLE_TransparentModeVCP/Core/Inc/stm32wbxx_it.h          	Interrupt handlers header file
+  - BLE/BLE_TransparentModeVCP/Core/Inc/main.h                  	Header for main.c module
+  - BLE/BLE_TransparentModeVCP/STM32_WPAN/App/tm.h               	Header for tm.c module
+  - BLE/BLE_TransparentModeVCP/Core/Inc/app_common.h            	Header for all modules with common definition
+  - BLE/BLE_TransparentModeVCP/Core/Inc/app_conf.h              	Parameters configuration file of the application
+  - BLE/BLE_TransparentModeVCP/Core/Inc/app_entry.h              	Parameters configuration file of the application
+  - BLE/BLE_TransparentModeVCP/STM32_WPAN/App/ble_conf.h          	BLE Services configuration
+  - BLE/BLE_TransparentModeVCP/STM32_WPAN/App/ble_dbg_conf.h      	BLE Traces configuration of the BLE services
+  - BLE/BLE_TransparentModeVCP/Core/Inc/hw_conf.h           		Configuration file of the HW
+  - BLE/BLE_TransparentModeVCP/Core/Inc/utilities_conf.h    		Configuration file of the utilities
+  - BLE/BLE_TransparentModeVCP/Core/Src/stm32wbxx_it.c          	Interrupt handlers
+  - BLE/BLE_TransparentModeVCP/Core/Src/main.c                  	Main program
+  - BLE/BLE_TransparentModeVCP/Core/Src/system_stm32wbxx.c      	stm32wbxx system source file
+  - BLE/BLE_TransparentModeVCP/Core/Src/app_entry.c      			Initialization of the application
+  - BLE/BLE_TransparentModeVCP/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
+  - BLE/BLE_TransparentModeVCP/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
+  - BLE/BLE_TransparentModeVCP/Core/Src/hw_timerserver.c 			Timer Server based on RTC
+  - BLE/BLE_TransparentModeVCP/Core/Src/hw_uart.c 					UART Driver
+  - BLE/BLE_TransparentModeVCP/STM32_WPAN/App/tm.c 				Transparent Mode implementation
   
      
 @par Hardware and Software environment
@@ -65,7 +69,7 @@ How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -75,11 +79,24 @@ Wireless Coprocessor binary.
 In order to make the program work, you must do the following:
  - Open your preferred toolchain 
  - Rebuild all files and load your image into Target memory
- - OR use the BLE_TransparentModeVCP_reference.hex from Binary directory
+ - OR use the BLE_TransparentModeVCPVCP_reference.hex from Binary directory
  - to test the BLE Transparent Mode application, use the STM32CubeMonitor RF tool
- - make the connection between STM32CubeMonitor RF tool and BLE_TransparentMode application
+ - make the connection between STM32CubeMonitor RF tool and BLE_TransparentModeVCP application
  - send some ACI commands from STM32CubeMonitor RF tool as HCI_RESET, HCI_LE_RECEIVER_TEST, HCI_LE_TRANSMITTER_TEST, ...
  - the application must acknowledge the command with a "Command Complete" answer 
+
+=> Getting traces:
+  To get the traces, you have to enable CFG_USB_INTERFACE_ENABLE, with CFG_DEBUG_BLE_TRACE for BLE services traces 
+  or with CFG_DEBUG_APP_TRACE for application traces.
+  You need also to connect your Board to the Hyperterminal (through USB STVirtual COM Port).
+  The UART must be configured as follows:
+    - BaudRate = 115200 baud  
+    - Word Length = 8 Bits 
+    - Stop Bit = 1 bit
+    - Parity = none
+    - Flow control = none
+
+=> Running the application
 
 For more details refer to the Application Note: 
   AN5289 - Building a Wireless application 

@@ -55,7 +55,7 @@ The associated firmware performs the following:
 3. Apply a low level on RTC tamper pin PC13,(Note: On board STM32WB Nucleo68, User push-button (SW1) can be used to control PC13 with a specific configuration: solder bridge SB48 must be closed. Alternate solution: connect a wire between PC4 (pin connected to User push-button (SW1) by default) and PC13)
    the RTC backup data registers are reset and the Tamper interrupt is generated. 
    The corresponding ISR then checks whether the RTC Backup data registers are cleared.
-   If yes LED1 toggles with a period of 100ms, otherwise LED3 turns ON.
+   If yes LED2 toggles with a period of 100ms, otherwise LED3 turns ON.
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from

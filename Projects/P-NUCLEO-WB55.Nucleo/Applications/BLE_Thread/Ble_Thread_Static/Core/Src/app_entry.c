@@ -1,23 +1,22 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    app_entry.c
- * @author  MCD Application Team
- * @brief   Entry point of the Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
+  * File Name          : app_entry.c
+  * Description        : Entry application source file for STM32WPAN Middleware.
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
  ******************************************************************************
  */
-
-
+/* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "main.h"
@@ -49,6 +48,12 @@
 /* USER CODE BEGIN PD */
 
 /* USER CODE END PD */
+
+/* Private macros ------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
 
 extern RTC_HandleTypeDef hrtc; /**< RTC handler declaration */
@@ -64,13 +69,21 @@ static SHCI_C2_CONCURRENT_Mode_Param_t ConcurrentMode = BLE_ENABLE;
 /* Global variables ----------------------------------------------------------*/
 
 /* Global function prototypes -----------------------------------------------*/
+#if(CFG_DEBUG_TRACE != 0)
 size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
+#endif
 
-/* Private function prototypes -----------------------------------------------*/
+/* USER CODE BEGIN GFP */
+
+/* USER CODE END GFP */
+
+/* Private functions prototypes-----------------------------------------------*/
 static void SystemPower_Config( void );
 static void Init_Debug( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
+static void APPE_SysEvtReadyProcessing( void );
+static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
 
 static void appe_Tl_Init( void );
 /* USER CODE BEGIN PFP */
@@ -78,19 +91,25 @@ static void Led_Init( void );
 static void Button_Init( void );
 /* USER CODE END PFP */
 
+static void displayConcurrentMode(void);
 static void Process_Switch_Protocol(void);
 
 
 /* Functions Definition ------------------------------------------------------*/
 void APPE_Init( void )
 {
-  SystemPower_Config(); /**< Configure the system Power Mode */
+  /* Configure the system Power Mode */
+  SystemPower_Config();
   
-  HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
-
+  /* Initialize the TimerServer */
+  HW_TS_Init(hw_ts_InitMode_Full, &hrtc);
+  
+/* USER CODE BEGIN APPE_Init_1 */
+  /* initialize debugger module if supported and debug trace if activated */
   Init_Debug();
 
-  APP_DBG("ConcurrentMode = %d", ConcurrentMode);
+  /* Display concurrent mode (BLE or Thread) that will start first */
+  displayConcurrentMode();
 
   /* Task common to Thread and BLE */
   UTIL_SEQ_RegTask( 1<<CFG_Task_Switch_Protocol, UTIL_SEQ_RFU,Process_Switch_Protocol);
@@ -102,21 +121,38 @@ void APPE_Init( void )
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
 
   Led_Init();
-
   Button_Init();
-
-  appe_Tl_Init(); /**< Initialize all transport layers */
-
+  
+/* USER CODE END APPE_Init_1 */
+  /* Initialize all transport layers and start CPU2 which will send back a ready event to CPU1 */
+  appe_Tl_Init();
+  
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-   * received on the system channel before starting the BLE or Thread Stack
-   * This system event is received with APPE_UserEvtRx()
+   * received on the system channel before starting the Stack
+   * This system event is received with APPE_SysUserEvtRx()
    */
+/* USER CODE BEGIN APPE_Init_2 */
 
-  return;
+/* USER CODE END APPE_Init_2 */
+   return;
 }
 
-
+static void displayConcurrentMode()
+{
+  if(ConcurrentMode == BLE_ENABLE)
+  {
+    APP_DBG("ConcurrentMode starting in BLE mode");
+  }
+  else if (ConcurrentMode == THREAD_ENABLE)
+  {
+    APP_DBG("ConcurrentMode starting in Thread mode");
+  }
+  else
+  {
+    APP_DBG("ERROR: Starting with unknown ConcurrentMode ID %d", ConcurrentMode);
+  }
+}
 
 /** Scheduler tasks **/
 static void Process_Switch_Protocol(void)
@@ -182,12 +218,15 @@ static void Init_Debug( void )
    * Keep debugger enabled while in any low power mode
    */
   HAL_DBGMCU_EnableDBGSleepMode();
-
-  /***************** ENABLE DEBUGGER *************************************/
+  
+  /* Enable debugger EXTI lines */
   LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
   LL_C2_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
 
 #else
+  /* Disable debugger EXTI lines */
+  LL_EXTI_DisableIT_32_63(LL_EXTI_LINE_48);
+  LL_C2_EXTI_DisableIT_32_63(LL_EXTI_LINE_48);
 
   GPIO_InitTypeDef gpio_config = {0};
 
@@ -204,16 +243,18 @@ static void Init_Debug( void )
   HAL_GPIO_Init(GPIOB, &gpio_config);
   __HAL_RCC_GPIOB_CLK_DISABLE();
 
+  /**
+   * Do not keep debugger enabled while in any low power mode
+   */
   HAL_DBGMCU_DisableDBGSleepMode();
   HAL_DBGMCU_DisableDBGStopMode();
   HAL_DBGMCU_DisableDBGStandbyMode();
-
 #endif /* (CFG_DEBUGGER_SUPPORTED == 1) */
-
+  
 #if(CFG_DEBUG_TRACE != 0)
   DbgTraceInit();
 #endif
-
+  
   return;
 }
 
@@ -227,7 +268,10 @@ static void Init_Debug( void )
  */
 static void SystemPower_Config( void )
 {
-
+  // Before going to stop or standby modes, do the settings so that system clock and IP80215.4 clock
+  // start on HSI automatically
+  LL_RCC_HSI_EnableAutoFromStop();
+  
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -235,13 +279,21 @@ static void SystemPower_Config( void )
 
   /* Initialize low power manager */
   UTIL_LPM_Init( );
-
+  
+  /* Disable low power mode until INIT is complete */
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+  UTIL_LPM_SetStopMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+  
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   /**
    *  Enable USB power
    */
   HAL_PWREx_EnableVddUSB();
 #endif
+
+  /* Enable RAM1 (because OT instance.o is located here for Concurrent Mode */
+  LL_C2_AHB1_GRP1_EnableClock(LL_C2_AHB1_GRP1_PERIPH_SRAM1);
+  LL_C2_AHB1_GRP1_EnableClockSleep(LL_C2_AHB1_GRP1_PERIPH_SRAM1);
 
   return;
 }
@@ -289,7 +341,52 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
  */
 static void APPE_SysUserEvtRx( void * pPayload )
 {
-  UNUSED(pPayload);
+  TL_AsynchEvt_t *p_sys_event;
+  p_sys_event = (TL_AsynchEvt_t*)(((tSHCI_UserEvtRxParam*)pPayload)->pckt->evtserial.evt.payload);
+  
+  switch(p_sys_event->subevtcode)
+  {
+    case SHCI_SUB_EVT_CODE_READY:
+      APPE_SysEvtReadyProcessing();
+      break;
+      
+    case SHCI_SUB_EVT_ERROR_NOTIF:
+      APPE_SysEvtError((SCHI_SystemErrCode_t) (p_sys_event->payload[0]));
+      break;
+      
+    default:
+      break;
+  }
+  return;
+}
+
+/**
+ * @brief Notify a system error coming from the M0 firmware
+ * @param  ErrorCode  : errorCode detected by the M0 firmware
+ *
+ * @retval None
+ */
+static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
+{
+  switch(ErrorCode)
+  {
+  case ERR_THREAD_LLD_FATAL_ERROR:
+    APP_DBG("** ERR_THREAD : LLD_FATAL_ERROR \n");
+    break;
+    
+  case ERR_THREAD_UNKNOWN_CMD:
+    APP_DBG("** ERR_THREAD : UNKNOWN_CMD \n");
+    break;
+    
+  default:
+    APP_DBG("** ERR_THREAD : ErroCode=%d \n",ErrorCode);
+    break;
+  }
+  return;
+}
+
+static void APPE_SysEvtReadyProcessing( void )
+{
   /* Traces channel initialization */
   TL_TRACES_Init( );
 
@@ -299,7 +396,11 @@ static void APPE_SysUserEvtRx( void * pPayload )
     APP_BLE_Init();
   }
 
+#if ( CFG_LPM_SUPPORTED == 1)
+  /* Thread stack is initialized, low power mode can be enabled */
   UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  UTIL_LPM_SetStopMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+#endif
 
   return;
 }
@@ -348,10 +449,8 @@ void UTIL_SEQ_Idle( void )
 #if ( CFG_LPM_SUPPORTED == 1)
   UTIL_LPM_EnterLowPower( );
 #endif
-
   return;
 }
-
 
 /**
   * @brief  This function is called by the scheduler each time an event
@@ -420,7 +519,9 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 #if(CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
+#if (CFG_HW_USART1_ENABLED == 1)
   HW_UART_Init(CFG_DEBUG_TRACE_UART);
+#endif
   return;
 }
 

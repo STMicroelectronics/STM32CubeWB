@@ -41,6 +41,7 @@
 #include "appli_generic_client.h"
 #include "config_client.h"
 #include "generic_client.h"
+#include "light_client.h"
 #include "appli_light_client.h"
 
 /** @addtogroup ST_BLE_Mesh
@@ -232,14 +233,16 @@ const Appli_Sensor_cb_t SensorAppli_cb =
   Appli_Sensor_Cadence_Set,
   Appli_Sensor_Data_Status,
   Appli_Sensor_Descriptor_Status ,
-  Appli_Sensor_Setting_Set
+  Appli_Sensor_Setting_Set,
+  Appli_Sensor_Column_Status,
+  Appli_Sensor_Series_Status  
 };
 
 __attribute__((aligned(4))) 
 const Appli_Sensor_GetStatus_cb_t Appli_Sensor_GetStatus_cb = 
 {
-  Appli_Sensor_GetSettingStatus,
-  Appli_Sensor_GetSetting_IDStatus
+ // Appli_Sensor_GetSettingStatus,
+  Appli_Sensor_GetSetting_IDStatus,
 };
 
 #endif
@@ -298,6 +301,13 @@ const MODEL_SIG_cb_t Model_SIG_cb[] =
     ConfigClientModel_ProcessMessageCb
   },
 #endif
+#ifdef ENABLE_LIGHT_MODEL_CLIENT
+  {
+    LightModelClient_GetOpcodeTableCb,
+    LightModelClient_GetStatusRequestCb,
+    LightModelClient_ProcessMessageCb
+  },
+#endif  
   
   { 0, 0,0 }
 };

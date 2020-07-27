@@ -9,7 +9,7 @@
   *          using a centralized network. 
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
   *
   * This software component is licensed by ST under Ultimate Liberty license 
   * SLA0044, the "License"; You may not use this file except in compliance with 
@@ -88,6 +88,10 @@ To setup the application :
       the SW1/SW2 push button. 
 
  Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
+
+@par Keywords
+
+Zigbee
  
 @par Hardware and Software environment
 

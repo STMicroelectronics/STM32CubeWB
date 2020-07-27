@@ -128,7 +128,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
       RCC_OscInitStruct.OscillatorType =  RCC_OSCILLATORTYPE_LSI1 | RCC_OSCILLATORTYPE_LSE;
       RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
       RCC_OscInitStruct.LSEState = RCC_LSE_ON;
-      RCC_OscInitStruct.LSIState = RCC_LSI_OFF
+      RCC_OscInitStruct.LSIState = RCC_LSI_OFF;
 #elif defined (RTC_CLOCK_SOURCE_LSI)
       RCC_OscInitStruct.OscillatorType =  RCC_OSCILLATORTYPE_LSI1 | RCC_OSCILLATORTYPE_LSE;
       RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;

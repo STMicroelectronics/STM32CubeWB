@@ -100,6 +100,7 @@ void USBD_Clock_Config(void)
   /* Start automatic synchronization */
   HAL_RCCEx_CRSConfig (&RCC_CRSInitStruct);
 }
+
 /**
   * @brief  Check the availability of adafruit 1.8" TFT shield on top of STM32NUCLEO
   *         board. This is done by reading the state of IO PF.03 pin (mapped to

@@ -1,20 +1,5 @@
 /* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
-/*--------------------------------------------------------------------------
- *  DESCRIPTION
- *      Interface definition for the ZCL OTA upgrade cluster.
- *
- *  SPECIFICATION
- *      docs-14-0477-00-pfnd-ota-bootload-cluster-with-outstanding-se-ccbs.docx
- *      Interim spec, not released.
- *      Oct 16, 2014.
- *
- *  DOCUMENTATION
- *      Exegin can provide an OTA Firmware Upgrade Process sequence chart
- *      to better explain the OTA process implemented by these clusters.
- *--------------------------------------------------------------------------
- */
-
 /* PICS.ZCL.OTA
  *
  * OTA Upgrade Image
@@ -104,25 +89,19 @@
  * OUPC11 | True
  * OUPC12 | True
  */
+
 #ifndef ZCL_OTA_H
 # define ZCL_OTA_H
 
-/*---------------------------------------------------------------
- * Dependencies
- *---------------------------------------------------------------
- */
+/* OTA cluster dependencies */
 /* Prototype the structs we need in this header file, rather than including
  * other header files. This file is included by tools outside of zigbee.git. */
 struct ZbZclClusterT;
 struct ZbApsAddrT;
 struct ZbZclCommandRspT;
 
-/*---------------------------------------------------------------
- * Definitions
- *---------------------------------------------------------------
- */
-/* OTA Upgrade Cluster attributes */
-enum ZbZclOtaAttrId {
+/* OTA Upgrade Server Attribute IDs */
+enum ZbZclOtaSvrAttrId {
     ZCL_OTA_ATTR_UPGRADE_SERVER_ID = 0x0000,
     ZCL_OTA_ATTR_FILE_OFFSET = 0x0001,
     ZCL_OTA_ATTR_CURRENT_FILE_VERSION = 0x0002,
@@ -138,7 +117,7 @@ enum ZbZclOtaAttrId {
     ZCL_OTA_ATTR_UPGRADE_TIMEOUT_POLICY = 0x000c
 };
 
-/* Upgrade Status Values */
+/* OTA Upgrade Status Attribute Values */
 enum ZbZclOtaStatus {
     ZCL_OTA_STATUS_NORMAL = 0,
     ZCL_OTA_STATUS_DOWNLOAD_IN_PROGRESS = 1,
@@ -162,6 +141,7 @@ enum ZbZclOtaCommandId {
     ZCL_OTA_COMMAND_QUERY_FILE_RESPONSE = 0x09
 };
 
+/* OTA Upgrade Zigbee Stack Version Values */
 enum ZbZclOtaStackVersion {
     ZCL_OTA_STACK_VERSION_2006 = 0x0000,
     ZCL_OTA_STACK_VERSION_2007 = 0x0001,
@@ -169,16 +149,19 @@ enum ZbZclOtaStackVersion {
     ZCL_OTA_STACK_VERSION_IP = 0x0003
 };
 
+/* OTA Upgrade UpgradeActivationPolicy enumerations */
 enum ZbZclOtaActivationPolicy {
     ZCL_OTA_ACTIVATION_POLICY_SERVER = 0x00,
     ZCL_OTA_ACTIVATION_POLICY_OUT_OF_BAND = 0x01
 };
 
+/* OTA Upgrade UpgradeTimeoutPolicy enumerations */
 enum ZbZclOtaTimeoutPolicy {
     ZCL_OTA_TIMEOUT_POLICY_APPLY_UPGRADE = 0x00,
     ZCL_OTA_TIMEOUT_POLICY_DO_NOT_APPLY = 0x01
 };
 
+/* OTA Upgrade Security Credential Version enumerations */
 enum ZbZclOtaSecCredential {
     ZCL_OTA_SEC_CRED_SE_1_0 = 0x00,
     ZCL_OTA_SEC_CRED_SE_1_1 = 0x01,
@@ -186,18 +169,21 @@ enum ZbZclOtaSecCredential {
     ZCL_OTA_SEC_CRED_SE_1_2 = 0x03
 };
 
-enum {
-    ZCL_OTA_NOTIFY_TYPE_JITTER = 0x00, /* just jitter */
-    ZCL_OTA_NOTIFY_TYPE_MFG_CODE = 0x01, /* also includes jitter */
-    ZCL_OTA_NOTIFY_TYPE_IMAGE_TYPE = 0x02, /* also includes jitter, mfg code*/
-    ZCL_OTA_NOTIFY_TYPE_FILE_VERSION = 0x03 /* includes all */
+/* OTA Upgrade Image Notify Command Payload enumerations */
+enum ZbZclOtaImageNotifyCmd {
+    ZCL_OTA_NOTIFY_TYPE_JITTER = 0x00,
+    ZCL_OTA_NOTIFY_TYPE_MFG_CODE = 0x01,
+    ZCL_OTA_NOTIFY_TYPE_IMAGE_TYPE = 0x02,
+    ZCL_OTA_NOTIFY_TYPE_FILE_VERSION = 0x03
 };
 
-enum {
+/* OTA Upgrade Field Control Hardware Version enumerations */
+enum ZbZclOtaQueryFldCtrlHwVer {
     ZCL_OTA_QUERY_FIELD_CONTROL_HW_VERSION = 0x01
 };
 
-enum {
+/* OTA Upgrade Image Block Request Field Control Bitmask enumerations */
+enum ZbZclOtaImageBlkReqFldCtrl {
     ZCL_OTA_IMAGE_BLOCK_FC_IEEE = 0x01,
     ZCL_OTA_IMAGE_BLOCK_FC_MAX_BLOCK = 0x02
 };
@@ -232,18 +218,21 @@ struct ZbZclOtaHeader {
     uint16_t max_hardware_version;
 };
 
-enum {
+/* OTA Upgrade Header Field Control Bitmask enumerations */
+enum ZbZclOtaHeaderFieldCtrlBitmask {
     ZCL_OTA_HEADER_FIELD_CONTROL_SECURITY_VERSION = 0x01,
     ZCL_OTA_HEADER_FIELD_CONTROL_DEVICE_SPECIFIC = 0x02,
     ZCL_OTA_HEADER_FIELD_CONTROL_HARDWARE_VERSIONS = 0x04
 };
 
+/* OTA Header Image Definition structure */
 struct ZbZclOtaImageDefinition {
     uint16_t manufacturer_code;
     uint16_t image_type;
     uint32_t file_version;
 };
 
+/* OTA Upgrade Image Types enumerations */
 enum ZbZclOtaImageType {
     ZCL_OTA_IMAGE_TYPE_MFG_MIN = 0x0000,
     ZCL_OTA_IMAGE_TYPE_MFG_MAX = 0xffbf,
@@ -254,6 +243,7 @@ enum ZbZclOtaImageType {
     ZCL_OTA_IMAGE_TYPE_WILDCARD = 0xffff
 };
 
+/* OTA Upgrade Tag Identifiers enumerations */
 enum ZbZclOtaSubElementTag {
     ZCL_OTA_SUB_TAG_UPGRADE_IMAGE = 0x0000,
     ZCL_OTA_SUB_TAG_ECDSA_SIG1 = 0x0001,
@@ -265,48 +255,46 @@ enum ZbZclOtaSubElementTag {
 };
 #define ZCL_OTA_SUB_TAG_TOTAL               7U
 
+/* OTA Upgrade Image Data structure */
 struct ZbZclOtaImageData {
     uint32_t file_offset;
     uint8_t data_size;
     uint8_t data[256];
 };
 
+/* Image Block Response Command Payload with WAIT_FOR_DATA status structure */
 struct ZbZclOtaImageWaitForData {
     uint32_t current_time;
     uint32_t request_time;
     uint16_t minimum_block_period;
 };
 
+/* Upgrade End Response command structure */
 struct ZbZclOtaEndResponseTimes {
     uint32_t current_time;
     uint32_t upgrade_time;
 };
 
-/*------------------------------------------------------------------------------
- * OTA Client
- *------------------------------------------------------------------------------
- */
-/* Application Callbacks
- * Note, 'arg' is always the cluster's callback argument, which is passed in through
- * ZbZclOtaClientAlloc, and can also be configured with ZbZclClusterSetCallbackArg. */
+/* OTA Client API */
+/** OTA Upgrade callbacks configuration */
 struct ZbZclOtaClientCallbacksT {
     /* discover_complete: If NULL and ZbZclOtaClientDiscover is successful, the default handler
      * will automatically call ZbZclOtaClientQueryNextImageReq. */
-    enum ZclStatusCodeT (*discover_complete)(struct ZbZclClusterT *clusterPtr, void *arg);
+    enum ZclStatusCodeT (*discover_complete)(struct ZbZclClusterT *cluster, void *arg);
 
     /* If NULL, the OTA Client has default callback handlers to take care of a typical OTA
      * firmware upgrade file. */
-    enum ZclStatusCodeT (*image_notify)(struct ZbZclClusterT *clusterPtr,
+    enum ZclStatusCodeT (*image_notify)(struct ZbZclClusterT *cluster,
         uint8_t payload_type, uint8_t jitter, struct ZbZclOtaImageDefinition *image_definition,
         struct ZbApsdeDataIndT *data_ind, struct ZbZclHeaderT *zcl_header);
 
-    void (*query_next)(struct ZbZclClusterT *clusterPtr, enum ZclStatusCodeT status,
+    void (*query_next)(struct ZbZclClusterT *cluster, enum ZclStatusCodeT status,
         struct ZbZclOtaImageDefinition *image_definition, uint32_t image_size, void *arg);
 
     /* update_raw: Raw image data is sent through this callback, to update running hash of image for example. */
-    enum ZclStatusCodeT (*update_raw)(struct ZbZclClusterT *clusterPtr, uint8_t length, uint8_t *data, void *arg);
+    enum ZclStatusCodeT (*update_raw)(struct ZbZclClusterT *cluster, uint8_t length, uint8_t *data, void *arg);
 
-    enum ZclStatusCodeT (*write_tag)(struct ZbZclClusterT *clusterPtr, struct ZbZclOtaHeader *header,
+    enum ZclStatusCodeT (*write_tag)(struct ZbZclClusterT *cluster, struct ZbZclOtaHeader *header,
         uint16_t tag_id, uint32_t tag_length, uint8_t data_length, uint8_t *data, void *arg);
 
     /* write_image: If set, called by the 'write_tag' default handler (ZbZclOtaClientImageWriteTagCb)
@@ -315,20 +303,20 @@ struct ZbZclOtaClientCallbacksT {
      *      ZCL_STATUS_SUCCESS              : request the next block
      *      ZCL_STATUS_WAIT_FOR_DATA        : wait for NHLE to call ??? before requesting the next block.
      *      Anything else                   : abort the OTA download */
-    enum ZclStatusCodeT (*write_image)(struct ZbZclClusterT *clusterPtr, struct ZbZclOtaHeader *header,
+    enum ZclStatusCodeT (*write_image)(struct ZbZclClusterT *cluster, struct ZbZclOtaHeader *header,
         uint8_t length, uint8_t *data, void *arg);
 
     /* image_validate: If NULL, provide the ca_pub_key_array in ZbZclOtaClientConfig. */
-    enum ZclStatusCodeT (*image_validate)(struct ZbZclClusterT *clusterPtr, struct ZbZclOtaHeader *header, void *arg);
+    enum ZclStatusCodeT (*image_validate)(struct ZbZclClusterT *cluster, struct ZbZclOtaHeader *header, void *arg);
 
-    enum ZclStatusCodeT (*upgrade_end)(struct ZbZclClusterT *clusterPtr, struct ZbZclOtaHeader *header,
+    enum ZclStatusCodeT (*upgrade_end)(struct ZbZclClusterT *cluster, struct ZbZclOtaHeader *header,
         uint32_t current_time, uint32_t upgrade_time, void *arg);
 
     /* reboot: Shall not be NULL. If set, called by the 'upgrade_end' default handler if successful. */
-    void (*reboot)(struct ZbZclClusterT *clusterPtr, void *arg);
+    void (*reboot)(struct ZbZclClusterT *cluster, void *arg);
 
     /* abort_download: Shall not be NULL. */
-    enum ZclStatusCodeT (*abort_download)(struct ZbZclClusterT *clusterPtr, enum ZbZclOtaCommandId commandId, void *arg);
+    enum ZclStatusCodeT (*abort_download)(struct ZbZclClusterT *cluster, enum ZbZclOtaCommandId commandId, void *arg);
 };
 
 struct ZbZclOtaClientConfig {
@@ -360,10 +348,9 @@ void ZbZclOtaClientGetDefaultCallbacks(struct ZbZclOtaClientCallbacksT *callback
 struct ZbZclClusterT * ZbZclOtaClientAlloc(struct ZigBeeT *zb, struct ZbZclOtaClientConfig *config, void *arg);
 
 /* Callback "discover" is called once complete */
-enum ZclStatusCodeT ZbZclOtaClientDiscover(struct ZbZclClusterT *cluster, struct ZbApsAddrT *addr);
+enum ZclStatusCodeT ZbZclOtaClientDiscover(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *addr);
 
-void ZbZclOtaClientDiscoverForced(struct ZbZclClusterT *cluster, uint64_t ieee,
-    uint8_t endpoint, uint16_t nwkaddr);
+void ZbZclOtaClientDiscoverForced(struct ZbZclClusterT *cluster, uint64_t ieee, uint8_t endpoint);
 
 enum ZclStatusCodeT ZbZclOtaClientQueryNextImageReq(struct ZbZclClusterT *cluster,
     struct ZbZclOtaImageDefinition *image_definition, uint8_t field_control,
@@ -416,10 +403,13 @@ struct ZbZclOtaServerConfig {
 struct ZbZclClusterT * ZbZclOtaServerAlloc(struct ZigBeeT *zb, struct ZbZclOtaServerConfig *config, void *arg);
 
 /* Registering an image does not automatically send an Image Notify message, the OTA Server application can use */
-/* ZbZclOtaServerImageNotifyReq or ZbZclOtaServerImageNotifyWait after registering an image to notify clients of the
- * availability of a new image */
+/* ZbZclOtaServerImageNotifyReq after registering an image to notify clients of the availability of a new image */
 enum ZclStatusCodeT ZbZclOtaServerImageNotifyReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     uint8_t payload_type, uint8_t jitter, struct ZbZclOtaImageDefinition *image_definition);
+
+/* The OTA server can send an upgrade end response unsolicited */
+enum ZclStatusCodeT ZbZclOtaServerUpgradeEndResp(struct ZbZclClusterT *cluster, const struct ZbApsAddrT dst,
+    struct ZbZclOtaImageDefinition *image_definition, struct ZbZclOtaEndResponseTimes end_response_times);
 
 /*------------------------------------------------------------------------------
  * OTA Misc Helpers
@@ -427,4 +417,4 @@ enum ZclStatusCodeT ZbZclOtaServerImageNotifyReq(struct ZbZclClusterT *cluster, 
  */
 uint8_t ZbZclOtaHeaderParse(const uint8_t *payload, const uint8_t length, struct ZbZclOtaHeader *header);
 
-#endif /* __ZCL_OTA_H */
+#endif

@@ -85,7 +85,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   if(hrtc->Instance==RTC)
   {
   /* USER CODE BEGIN RTC_MspInit 0 */
- RCC_OscInitTypeDef RCC_OscInitStruct;
+  RCC_OscInitTypeDef RCC_OscInitStruct;
   RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
 
   /* Specific procedure on STM32WB before setting RTC clock to LSI1:          */
@@ -109,7 +109,6 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   {
     while(1);
   }
-
   /* -b- Select LSI as RTC clock source */
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
@@ -117,10 +116,10 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   { 
     while(1);
   }
-
   /* USER CODE END RTC_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_RTC_ENABLE();
+    __HAL_RCC_RTCAPB_CLK_ENABLE();
   /* USER CODE BEGIN RTC_MspInit 1 */
   /*## Configure the NVIC for RTC Alarm ###################################*/
   HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 0x0, 0);
@@ -145,6 +144,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE END RTC_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_RTC_DISABLE();
+    __HAL_RCC_RTCAPB_CLK_DISABLE();
   /* USER CODE BEGIN RTC_MspDeInit 1 */
 
   /* USER CODE END RTC_MspDeInit 1 */

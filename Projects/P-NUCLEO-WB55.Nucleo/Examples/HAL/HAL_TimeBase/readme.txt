@@ -57,6 +57,7 @@ In an infinite loop, LED2 toggles spaced out over 1s delay, except when tick inc
       to have correct HAL operation.
 
 @par Keywords
+
 System, TIM, Time base, HAL
 
 @par Directory contents  

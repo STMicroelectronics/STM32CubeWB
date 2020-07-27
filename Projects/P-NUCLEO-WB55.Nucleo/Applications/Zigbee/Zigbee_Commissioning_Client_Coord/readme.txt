@@ -9,7 +9,7 @@
   *          client using a centralized network. 
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
   *
   * This software component is licensed by ST under Ultimate Liberty license 
   * SLA0044, the "License"; You may not use this file except in compliance with 
@@ -94,13 +94,17 @@ The Commissioning process is as follow:
 
               Device 1                                                                        Device 2
           
-             +--------+                                                                      +--------+
+              +--------+                                                                      +--------+
              |        |                                                                      |        |  
              | Client |                                                                      | Server |     
              |        |                   /* Commissioning server init */                    |        |              
              |        |                                                                   -->|        | 
              |        |                                   ZbZclCommissionServerEnable()  |   |        |
              |        |                                                                   ---|        |
+             |        |                                                                      |        |
+             |        |                                          /* Show network info */  <--|        | <=PushB SW1
+             |        |                                                                      |        |
+             |        |                                                                      |        |
              |        |                                                                      |        |
              |        |                    /* Commissioning process */                       |        |
              |        |                                                                      |        |
@@ -136,9 +140,9 @@ The Commissioning process is as follow:
              |        |                                   /* Router joins the network*/  |   |        |=> BLUE LED ON
              |        |                                                                   ---|        |
              |        |                                                                      |        |
-             |        |                                                                   -->|        | 
-             |        |                                         /* Show network info */  |   |        |<=PushB SW1
-             |        |                                                                   ---|        |
+             |        |                                                                      |        | 
+             |        |                                 /* Show updated network info */  <-- |        |<=PushB SW1
+             |        |                                                                      |        |
              |        |                                                                      |        |
              +--------+                                                                      +--------+
   
@@ -153,10 +157,20 @@ To setup the application :
       Wait for the Blue LED (LED1) ON. 
       Start the second board. This board is configured as Zigbee router but it will not connect to the 
       Zigbee network. Connecting the router to the network is the goal of this demo.
+
+  b)  Press the SW1 button on Device 2 to check for the network information through the traces.
+
+  c)  Press the SW1 button to initiate the commissioning
       
-  b)  When Commissioning process is complete, the router joins the network and its Blue LED (LED1) is ON.
+  d)  When Commissioning process is complete, the router joins the network and its Blue LED (LED1) is ON.
+
+  e)  Press the SW1 button again on Device 2 and check that the network information have been updated.
 
  Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
+
+@par Keywords
+
+Zigbee
  
 @par Hardware and Software environment
 

@@ -73,7 +73,7 @@ static int8_t Vcp_Itf_DeInit( void );
 static int8_t Vcp_Itf_Control( uint8_t cmd , uint8_t* pbuf , uint16_t length );
 static int8_t Vcp_Itf_Receive( uint8_t* pbuf , uint32_t *Len );
 
-static USBD_CDC_ItfTypeDef VCP_CDC_fops = { Vcp_Itf_Init, Vcp_Itf_DeInit, Vcp_Itf_Control, Vcp_Itf_Receive };
+static USBD_CDC_ItfTypeDef VCP_CDC_fops = { Vcp_Itf_Init, Vcp_Itf_DeInit, Vcp_Itf_Control, Vcp_Itf_Receive, VCP_TransmitCplt };
 
 /* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -294,6 +294,12 @@ __weak void VCP_DataReceived( uint8_t* Buf , uint32_t *Len )
 {
   return;
 }
+__weak int8_t VCP_TransmitCplt( uint8_t *Buf, uint32_t *Len, uint8_t epnum )
+{
+  return(USBD_OK);
+}
+
+
 
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

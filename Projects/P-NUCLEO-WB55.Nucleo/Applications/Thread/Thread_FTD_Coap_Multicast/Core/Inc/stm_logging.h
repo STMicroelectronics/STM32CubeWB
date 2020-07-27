@@ -25,25 +25,27 @@
 #define LOG_LEVEL_INFO  3U  /* Info     */
 #define LOG_LEVEL_DEBG  4U  /* Debug    */
 
-#define APP_DBG_FULL(level, region, ...)       \
-    if (APPLI_PRINT_FILE_FUNC_LINE == 1U)                  \
-    {                                           \
+#define APP_DBG_FULL(level, region, ...)                                                    \
+  {                                                                                         \
+    if (APPLI_PRINT_FILE_FUNC_LINE == 1U)                                                   \
+    {                                                                                       \
         printf("\r\n[%s][%s][%d] ", DbgTraceGetFileName(__FILE__),__FUNCTION__,__LINE__);   \
-    }                                           \
-    logApplication(level, region, __VA_ARGS__);
-
-#define APP_DBG(...)       \
-    if (APPLI_PRINT_FILE_FUNC_LINE == 1U)                  \
-    {                                           \
+    }                                                                                       \
+    logApplication(level, region, __VA_ARGS__);                                             \
+  }
+#define APP_DBG(...)                                                                        \
+  {                                                                                         \
+    if (APPLI_PRINT_FILE_FUNC_LINE == 1U)                                                   \
+    {                                                                                       \
         printf("\r\n[%s][%s][%d] ", DbgTraceGetFileName(__FILE__),__FUNCTION__,__LINE__);   \
-    }                                           \
-    logApplication(LOG_LEVEL_NONE, APPLI_LOG_REGION_GENERAL, __VA_ARGS__);
-
+    }                                                                                       \
+    logApplication(LOG_LEVEL_NONE, APPLI_LOG_REGION_GENERAL, __VA_ARGS__);                  \
+  }
 /**
  * This enumeration represents log regions.
  *
  */
-typedef enum 
+typedef enum
 {
   APPLI_LOG_REGION_GENERAL                    = 1U,  /* General                 */
   APPLI_LOG_REGION_OPENTHREAD_API             = 2U,  /* OpenThread API          */

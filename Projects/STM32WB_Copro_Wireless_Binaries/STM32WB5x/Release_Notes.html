@@ -23,7 +23,7 @@
 <div class="sectione dark">
 <center>
 <h1 id="release-notes-for-stm32wb-copro-wireless-binaries"><small>Release Notes for</small> STM32WB Copro Wireless Binaries</h1>
-<p>Copyright © 2019 STMicroelectronics<br />
+<p>Copyright © 2020 STMicroelectronics<br />
 </p>
 <a href="https://www.st.com" class="logo"><img src="../../../_htmresc/st_logo.png" alt="ST logo" /></a>
 </center>
@@ -90,7 +90,7 @@
 <li>Minimal Thread Device certified v1.1</li>
 <li>To be used for End Device and Sleepy End Device Thread role</li>
 </ul></li>
-<li>stm32wb5x_BLE_Thread_fw.bin
+<li>stm32wb5x_BLE_Thread_static_fw.bin
 <ul>
 <li>Static Concurrent Mode BLE Thread</li>
 <li>Supports Full BLE Stack 5.0 certified and Full Thread Device certified v1.1</li>
@@ -105,7 +105,7 @@
 <li>Dedicated firmware binary to be used with STM32CubeMonitor-RF application.</li>
 <li>Refer to STM32CubeMonitor-RF User Manual (UM2288) to get application details.</li>
 </ul></li>
-<li>stm32wb5x_Zigbee_FFD_Full_fw.bin
+<li>stm32wb5x_Zigbee_FFD_fw.bin
 <ul>
 <li>Zigbee Compliant Platform certified</li>
 <li>Supports Full Function Device (FFD)</li>
@@ -116,7 +116,7 @@
 <li>Zigbee Compliant Platform certified</li>
 <li>To be used for End Device Zigbee role</li>
 </ul></li>
-<li>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin
+<li>stm32wb5x_BLE_Zigbee_static_fw.bin
 <ul>
 <li>Static Concurrent Mode BLE Zigbee</li>
 <li>Supports Full BLE Stack 5.0 certified and Zigbee FFD(Full Function Device) Compliant Platform certified</li>
@@ -169,7 +169,7 @@
 <ul>
 <li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
 <li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using STEP 6.</strong></li>
-<li><em>0x20030030 : 0x10100000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
+<li><em>0x20030030 : 01010000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
 </ul></li>
 </ul></li>
 <li><p>STEP 5 : Download FUS 1.0.2 (stm32wb5x_FUS_fw_1_0_2.bin):</p>
@@ -219,8 +219,8 @@
 <li>it can been obtained with Transparent Mode application from STM32CubeMonitor-RF interface or using other flashing method via USB described in RN.
 <ul>
 <li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
-<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using using STEP 6.</strong></li>
-<li><em>0x20030030 : 0x10100000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
+<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using STEP 6.</strong></li>
+<li><em>0x20030030 : 01010000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
 </ul></li>
 </ul></li>
 <li><p>STEP 5 : Download FUS v1.0.2:</p>
@@ -279,8 +279,8 @@
 <li>in Firmware Upgrade Services: select “Read FUS state”
 <ul>
 <li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
-<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using using STEP 6.</strong></li>
-<li><em>0x20030030 : 0x10100000</em> : FUSv1.1.0 =&gt; **Up to date, you can download the new wireless stack using STEP 7.</li>
+<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using STEP 6.</strong></li>
+<li><em>0x20030030 : 01010000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
 </ul></li>
 </ul></li>
 <li><p>STEP 5 : Download FUS v1.0.2 :</p>
@@ -332,8 +332,8 @@
 <li>it can been obtained with Transparent Mode application from STM32CubeMonitor-RF interface or using other flashing method via USB described in RN.
 <ul>
 <li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
-<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using using STEP 6.</strong></li>
-<li><em>0x20030030 : 0x10100000</em> : FUSv1.1.0 =&gt; **Up to date, you can download the new wireless stack using STEP 7.</li>
+<li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using STEP 6.</strong></li>
+<li><em>0x20030030 : 01010000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
 </ul></li>
 </ul></li>
 <li><p>STEP 5 : Download FUS v1.0.2 :</p>
@@ -365,9 +365,205 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section8" checked aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
+<input type="checkbox" id="collapse-section9" checked aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.8.0 / 19-June-2020</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE:
+<ul>
+<li>BLE Light Stack: Slave mode only, Secure connection, Privacy moe, and White list</li>
+<li>BLE stack updates:</li>
+<li>ID 72580 - Ellisys issue on LE_PHY_UPDATE_COMPLETE_EVENT with LL/CON/SLA-BV-40-C Test Fail</li>
+<li>ID 76257 - Ellisys LL/SLA-BI-11-C Test Fail (Data Length Update)</li>
+<li>ID 83714 - Support of four new events to notify the CPU1 about flash operation (after aci_gap_clear_security_db())</li>
+<li>ID 83847 - Add event weak callback functions in ble_events.c called for each static event process function</li>
+<li>ID 85414 - M0 FW: increase RNG pool size to 32</li>
+<li>ID 85523 - Issue in generation of Non Resolvable Private Address</li>
+<li>ID 85782 - Option to move NVM to unsecure SRAM2</li>
+<li>ID 85833 - Update feature content of BLE Stack Light: Secure Connections, some Privacy and White List features</li>
+<li>ID 87142 - Generic Access characteristics properties (Read/Write) for device name and appearance</li>
+<li>ID 89182 - [GitHub][FUS]Fix FUS version value mentioned in the release note</li>
+</ul></li>
+<li>MAC:
+<ul>
+<li>ID 86016 - Wait ACK to be Tx (if expected) before managing incoming Frame</li>
+<li>ID 86017 - Remove IFS Period management from MAC layer</li>
+<li>ID 87175 - Function ip802154_lld_enterSleep() must not be called in IT context as RF is no more accessible after its execution</li>
+</ul></li>
+<li>ZIGBEE:
+<ul>
+<li>FFD Zigbee stack certified: : Zigbee PRO Feature Set(2017) + Green Power</li>
+<li>RFD Zigbee stack certification compliant: Zigbee PRO Feature Set(2017) + Green Power</li>
+<li>Low power mode support</li>
+<li>Support of persistent data management (NVM)</li>
+<li>ID 75709 - [LowPower] Improve SFTimer wrap around time</li>
+</ul></li>
+<li>THREAD:
+<ul>
+<li>ID 75709 - [LowPower] Improve SFTimer wrap around time</li>
+</ul></li>
+<li>BLE THREAD Concurrent Static Mode:
+<ul>
+<li>ID 82777 BLE Thread Static Concurrent Low Power Modes support</li>
+</ul></li>
+</ul>
+<p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 6%" />
+<col style="width: 3%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw_1_0_2.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>v1.0.2</td>
+<td>04/10/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td><strong>v1.1.0</strong></td>
+<td>02/10/2020</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 7” via USB or via SWD/JTAG.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 4%" />
+<col style="width: 3%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_BLE_HCILayer_fw.bin</td>
+<td>0x080DC000</td>
+<td>0x08068000</td>
+<td>0x08028000</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/19/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Stack_full_fw.bin</td>
+<td>0x080CB000</td>
+<td>0x08057000</td>
+<td>0x08017000</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/19/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Stack_light_fw.bin</td>
+<td>0x080D6000</td>
+<td>0x08062000</td>
+<td>0x8022000</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/19/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Thread_static_fw.bin</td>
+<td>0x08076000</td>
+<td>NA</td>
+<td>NA</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/22/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Zigbee_static_fw.bin</td>
+<td>0x0807B000</td>
+<td>NA</td>
+<td>NA</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/22/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td>0x080E3000</td>
+<td>0x0806F000</td>
+<td>0x0802F000</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/22/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_rfmonitor_phy802_15_4_fw.bin</td>
+<td>0x080EC000</td>
+<td>0x08078000</td>
+<td>0x08038000</td>
+<td>v1.1.0</td>
+<td>04/05/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x0809D000</td>
+<td>0x08029000</td>
+<td>NA</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/22/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x080B3000</td>
+<td>0x0803F000</td>
+<td>NA</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/22/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Zigbee_FFD_fw.bin</td>
+<td>0x080A7000 </td>
+<td>0x08033000</td>
+<td>NA</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/22/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Zigbee_RFD_fw.bin</td>
+<td>0x080B6000 </td>
+<td>0x08042000</td>
+<td>NA</td>
+<td><strong>v1.8.0</strong></td>
+<td>06/22/2020</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>MAC:
@@ -563,7 +759,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>FUS:
@@ -755,7 +951,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -900,7 +1096,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 09-September-2019</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -1040,7 +1236,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 3rd-July-2019</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE Link layer : fix issues with pairing</li>
@@ -1153,7 +1349,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>Add support for STM32WB5xE(512K) and STM32WB5xC(256K) devices.</li>
@@ -1259,7 +1455,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Introduction of the Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>This feature is embedded inside stm32wb5x_FUS_fw.bin.</li>
@@ -1368,7 +1564,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 <p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 6” of flash procedure.</p>

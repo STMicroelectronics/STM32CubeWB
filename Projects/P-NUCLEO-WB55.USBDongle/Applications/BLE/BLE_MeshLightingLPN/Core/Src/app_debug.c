@@ -22,6 +22,8 @@
 #include "app_common.h"
 
 #include "app_debug.h"
+#include "vcp.h"
+
 #include "utilities_common.h"
 #include "shci.h"
 #include "tl.h"
@@ -51,6 +53,10 @@ typedef PACKED_STRUCT
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_TracesConfig_t APPD_TracesConfig={0, 0, 0, 0};
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_GeneralConfig_t APPD_GeneralConfig={BLE_DTB_CFG, {0, 0, 0}};
+
+#if(CFG_DEBUG_TRACE != 0)
+static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
+#endif
 
 /**
  * THE DEBUG ON GPIO FOR CPU2 IS INTENDED TO BE USED ONLY ON REQUEST FROM ST SUPPORT

@@ -177,12 +177,12 @@
 /**
  * Prepare Write List size in terms of number of packet with ATT_MTU=23 bytes
  */
-#define CFG_BLE_PREPARE_WRITE_LIST_SIZE         ( 0x3A )
+#define CFG_BLE_PREPARE_WRITE_LIST_SIZE         BLE_PREP_WRITE_X_ATT(CFG_BLE_MAX_ATT_MTU)
 
 /**
  * Number of allocated memory blocks
  */
-#define CFG_BLE_MBLOCK_COUNT            ( 0x79 )
+#define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, CFG_BLE_MAX_ATT_MTU, CFG_BLE_NUM_LINK))
 
 /**
  * Enable or disable the Extended Packet length feature. Valid values are 0 or 1.
@@ -496,7 +496,8 @@ typedef enum
   CFG_FIRST_TASK_ID_WITH_NO_HCICMD = CFG_LAST_TASK_ID_WITH_HCICMD - 1, /**< Shall be FIRST in the list */
 
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
-
+  CFG_TASK_VCP_SEND_DATA_ID,
+  
   CFG_LAST_TASK_ID_WITHO_NO_HCICMD /**< Shall be LAST in the list */
 } CFG_Task_Id_With_NO_HCI_Cmd_t;
 #define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITHO_NO_HCICMD
@@ -507,7 +508,9 @@ typedef enum
  */
 typedef enum
 {
-    CFG_SCH_PRIO_0,
+  CFG_SCH_PRIO_0,
+  CFG_SCH_PRIO_1,
+
   CFG_PRIO_NBR,
 } CFG_SCH_Prio_Id_t;
 

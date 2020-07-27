@@ -1,12 +1,10 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #include "zcl/se/zcl.meter.h"
 
 #ifdef ZCL_METER_ATTR_GBCS_CALLBACK
-/* Optional attribute flags. If providing an attribute callback (), then need to specify the appropriate flag(s):
- *      ZCL_ATTR_FLAG_CB_READ
- *      ZCL_ATTR_FLAG_CB_WRITE
- *      ZCL_ATTR_FLAG_CB_NOTIFY
+/* Optional attribute flags. If providing an attribute callback (), then need to
+ * specify the appropriate flags: (ZCL_ATTR_FLAG_CB_READ | ZCL_ATTR_FLAG_CB_WRITE)
  */
 # ifndef ZCL_METER_ATTR_GBCS_FLAGS
 #  error "Must define ZCL_METER_ATTR_GBCS_FLAGS if defining ZCL_METER_ATTR_GBCS_CALLBACK"
@@ -15,10 +13,6 @@
 # define ZCL_METER_ATTR_GBCS_CALLBACK       NULL
 # define ZCL_METER_ATTR_GBCS_FLAGS          ZCL_ATTR_FLAG_NONE
 #endif
-
-/* Uncrustify is adding too many new-lines. For some reason, it doesn't
- * do this in a .c file. */
-/* *INDENT-OFF* */
 
 /* Use this as-is to append the GBCS Metering Attributes to the
  * Metering Server. Or use this as a template to create the

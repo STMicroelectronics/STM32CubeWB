@@ -191,7 +191,7 @@ void Ton_sorting(void)
   */
 void Modify_PWM(uint8_t PWM_ID, uint16_t duty_cycle) 
 {  
-#if ( CFG_LPM_SUPPORTED == 0)
+#if (( CFG_LPM_SUPPORTED == 0) && (ENABLE_PWM_SUPPORT == 1))
   GPIO_InitTypeDef GPIO_InitStructure1 = {0};
    
   if (PWM_ID == 0)     /* PD14 */

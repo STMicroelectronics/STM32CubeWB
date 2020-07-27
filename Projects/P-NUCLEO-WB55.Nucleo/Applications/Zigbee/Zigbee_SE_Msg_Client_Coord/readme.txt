@@ -1,5 +1,5 @@
 /**
-  @page Zigbee_SE_Msg_Coord application
+  @page Zigbee_SE_Msg_Client_Coord application
   
   @verbatim
   ******************************************************************************
@@ -10,7 +10,7 @@
   *          coordinator role.
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
   *
   * This software component is licensed by ST under Ultimate Liberty license 
   * SLA0044, the "License"; You may not use this file except in compliance with 
@@ -74,7 +74,10 @@ To run the application :
               |(Router) |            |(Coord.) |
               -----------            -----------
 
-                                  
+@par Keywords
+
+Zigbee
+                              
 @par Hardware and Software environment
 
   - This example runs on STM32WB55xx devices (Nucleo board) 

@@ -61,7 +61,7 @@ containing an infinite loop and preventing to return to main program (the IWDG
 reload counter is not refreshed).
 As a result, when the IWDG counter reaches 0, the IWDG reset occurs.
 
-If the IWDG reset is generated, after the system resumes from reset, LED3 turns on for 4 seconds.
+If the IWDG reset is generated, after the system resumes from reset, LED2 turns on for 4 seconds.
 If the EXTI Line event does not occur, the IWDG counter is indefinitely refreshed in the main 
 program infinite loop, and there is no IWDG reset.
 
@@ -94,7 +94,7 @@ System, IWDG, reload counter, MCU Reset, Timeout, Software fault
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

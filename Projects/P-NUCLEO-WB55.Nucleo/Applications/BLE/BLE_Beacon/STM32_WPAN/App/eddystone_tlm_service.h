@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
   * File Name          : App/eddystone_tlm_service.h
-  * Description        : 
+  * Description        :
  ******************************************************************************
   * @attention
   *
@@ -21,7 +21,7 @@
 #define EDDYSTONE_TLM_SERVICE_H
 
 #ifdef __cplusplus
-extern "C" 
+extern "C"
 {
 #endif
 

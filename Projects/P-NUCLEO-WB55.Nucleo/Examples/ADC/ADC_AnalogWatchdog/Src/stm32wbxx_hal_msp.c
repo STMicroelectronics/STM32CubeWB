@@ -94,10 +94,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* Enable clock of GPIO associated to the peripheral channels */
   ADCx_CHANNELa_GPIO_CLK_ENABLE();
-  
+
   /* Enable clock of ADCx peripheral (core clock) */
   ADCx_CLK_ENABLE();
-  
+
   /* Enable clock of ADCx peripheral (conversion clock) */
   /* Note: Configuration necessary only when ADC clock source is set to       */
   /*       asynchronous clock source:                                         */
@@ -106,7 +106,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
   
   /* Enable clock of DMA associated to the peripheral */
   ADCx_DMA_CLK_ENABLE();
-  
+
   /*##-2- Configure peripheral GPIO ##########################################*/
   /* Configure GPIO pin of the selected ADC channel */
   GPIO_InitStruct.Pin = ADCx_CHANNELa_PIN;

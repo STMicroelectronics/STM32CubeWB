@@ -66,7 +66,7 @@
 
 //#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_DISPLAY_YES_NO /* for iOS Device */ /* need to press YES on iOS device side */
 //#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_DISPLAY_ONLY /* for iOS Device */ /* need to input password (111111) on iOS device side */
-#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT /* compatible for Android Device */ /* nothing need to do on iOS device side */
+#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT /* compatible for Android Device *//* need to press Pairing on iOS device side */
 
 /**
  * Define MITM modes
@@ -204,12 +204,12 @@
 /**
  * Prepare Write List size in terms of number of packet with ATT_MTU=23 bytes
  */
-#define CFG_BLE_PREPARE_WRITE_LIST_SIZE         ( 0x3A )
+#define CFG_BLE_PREPARE_WRITE_LIST_SIZE         BLE_PREP_WRITE_X_ATT(CFG_BLE_MAX_ATT_MTU)
 
 /**
  * Number of allocated memory blocks
  */
-#define CFG_BLE_MBLOCK_COUNT            ( 0x79 )
+#define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, CFG_BLE_MAX_ATT_MTU, CFG_BLE_NUM_LINK))
 
 /**
  * Enable or disable the Extended Packet length feature. Valid values are 0 or 1.

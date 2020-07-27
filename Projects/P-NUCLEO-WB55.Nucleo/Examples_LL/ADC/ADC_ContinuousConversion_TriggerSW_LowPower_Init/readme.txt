@@ -78,10 +78,10 @@ Other peripherals used:
   1 GPIO for User push-button (SW1)
   1 GPIO for LED2
   1 GPIO for analog input: PA.01 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32)
+
 @par Keywords
 
-ADC,ADC channel, conversion, low-power modes, single conversion mode, interrupt,
-
+ADC, analog digital converter, analog, conversion, voltage, channel, analog input, trigger
 
 
 @par Directory contents 
@@ -96,7 +96,7 @@ ADC,ADC channel, conversion, low-power modes, single conversion mode, interrupt,
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

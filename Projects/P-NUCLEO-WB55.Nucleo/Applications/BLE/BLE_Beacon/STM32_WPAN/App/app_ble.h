@@ -39,7 +39,7 @@ extern "C" {
 
 /* USER CODE BEGIN ET */
 
-/* USER CODE END ET */  
+/* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
@@ -57,7 +57,7 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void APP_BLE_Init( void ); 
+  void APP_BLE_Init( void );
 
 /* USER CODE BEGIN EF */
 void APP_BLE_Key_Button1_Action(void);

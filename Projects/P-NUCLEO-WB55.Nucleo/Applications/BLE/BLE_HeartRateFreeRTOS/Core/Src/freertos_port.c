@@ -18,7 +18,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 
@@ -303,10 +302,10 @@ static uint32_t LpGetElapsedTime( void )
   uint64_t val_ticks, time_us;
 
   time_us = (CFG_TS_TICK_VAL) * (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - HW_TS_RTC_ReadLeftTicksToCount( ));
-  
+
   val_ticks = time_us * configTICK_RATE_HZ;
   val_ticks = val_ticks / (1000 * 1000);
-  
+
   /* add a tick if the time elapsed is above 50 % of a tick */
   if( (time_us % (portTICK_PERIOD_MS * 1000) > (portTICK_PERIOD_MS * 1000 / 2)) )
   {

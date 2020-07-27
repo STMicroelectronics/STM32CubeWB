@@ -47,8 +47,6 @@ For debug: variables to monitor with debugger watch window:
  - "uhADCxConvertedData": ADC group regular conversion data
  - "uhADCxConvertedData_Voltage_mVolt": ADC conversion data computation to physical values
 
-LED2 is blinking every 1 sec in case of error. 
-
 Connection needed:
 None.
 Note: Optionally, a voltage can be supplied to the analog input pin (cf pin below),
@@ -61,10 +59,10 @@ Other peripherals used:
   1 GPIO for User push-button (SW1)
   1 GPIO for LED2
   1 GPIO for analog input: PA.01 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32)
+
 @par Keywords
 
-ADC, ADC channel, conversion, single channel, single conversion mode, interrupt,
-
+ADC, analog digital converter, analog, conversion, voltage, channel, analog input, trigger, continuous
 
 @par Directory contents 
 

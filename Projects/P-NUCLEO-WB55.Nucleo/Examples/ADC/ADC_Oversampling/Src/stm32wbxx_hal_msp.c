@@ -93,10 +93,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc)
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* Enable clock of GPIO associated to the peripheral channels */
   ADCx_CHANNELa_GPIO_CLK_ENABLE();
-  
+
   /* Enable clock of ADCx peripheral (core clock) */
   ADCx_CLK_ENABLE();
-  
+
   /* Note: In case of usage of asynchronous clock for ADC, with ADC setting   */
   /*       "AdcHandle.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIVx",            */
   /*       the clock source has to be enabled at RCC top level using function */

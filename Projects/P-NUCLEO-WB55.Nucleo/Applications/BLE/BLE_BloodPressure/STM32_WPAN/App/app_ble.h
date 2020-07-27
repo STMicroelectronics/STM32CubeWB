@@ -47,10 +47,10 @@ extern "C" {
       APP_BLE_CONNECTED_SERVER,
       APP_BLE_CONNECTED_CLIENT
     } APP_BLE_ConnStatus_t;
-    
+
 /* USER CODE BEGIN ET */
 
-/* USER CODE END ET */  
+/* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
@@ -68,7 +68,7 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void APP_BLE_Init( void ); 
+  void APP_BLE_Init( void );
 
   APP_BLE_ConnStatus_t APP_BLE_Get_Server_Connection_Status(void);
 

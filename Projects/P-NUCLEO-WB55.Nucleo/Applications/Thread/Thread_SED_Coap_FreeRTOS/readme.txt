@@ -1,9 +1,9 @@
 /**
-  @page Thread_SED_Coap_Multicast_FreeRTOS application
+  @page Thread_SED_Coap_FreeRTOS application
   
   @verbatim
   ******************************************************************************
-  * @file    Thread/Thread_SED_Coap_Multicast_FreeRTOS/readme.txt 
+  * @file    Thread/Thread_SED_Coap_FreeRTOS/readme.txt 
   * @author  MCD Application Team
   * @brief   Description of the Thread Coap Multicast FreeRTOS application
   ******************************************************************************
@@ -42,7 +42,7 @@ The other device that will act as a SleepyEndDevice can be flashed with this MTD
  
 After the reset of the 2 boards, one board (Device 1) will automatically reach the 
 Leader mode (Green LED2 ON) and the other one (Device 2) will automatically reach the
-Sleepy End Device mode (Red LED3 ON) after a few seconds.
+Sleepy End Device mode (Red LED3 ON*) after a few seconds.
 
 At this stage, these two boards belong to the same Thread network and Device 2 will 
 send every second a Coap request to Device 1 in order to light on/off its blue LED.
@@ -60,11 +60,15 @@ send every second a Coap request to Device 1 in order to light on/off its blue L
   ---------------------------                       ---------------------------
   | Role : SleepyEndDevice  |                       | Role : Leader           |
   |                         |                       |                         |
-  | LED : Red               |                       | LED : Green             |
+  | LED : Red*              |                       | LED : Green             |
   |                         |                       |                         |
   |_________________________|                       |_________________________|
 
 
+(*)Note:
+Thread_SED_Coap_FreeRTOS application is compiled with default following configuration in app_conf.h: #define CFG_FULL_LOW_POWER 1
+The define CFG_FULL_LOW_POWER when set to 1 will not configure resources that have impact on consumption (LED, Traces, Access to Debugger, etc...) 
+If you set CFG_FULL_LOW_POWER 0 and recompile, then you should see Red LED switching on.
        
 @par Keywords
 
@@ -72,28 +76,28 @@ COAP,Thread
 
 @par Directory contents 
   
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/app_common.h            Header for all modules with common definition
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/app_conf.h              Parameters configuration file of the application 
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/app_entry.h             Parameters configuration file of the application
-  - Thread/Thread_SED_Coap_Multicast/STM32_WPAN/App/app_thread.h      Header for app_thread.c module
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/hw_conf.h               Configuration file of the HW 
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/main.h                  Header for main.c module
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/stm_logging.h           Header for stm_logging.c module
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/stm32wbxx_hal_conf.h    HAL configuration file
-  - Thread/Thread_SED_Coap_Multicast/Core/Src/stm32wbxx_it.h          Interrupt header file
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/system_infra.h          System infrastructure header file
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/utilities_conf.h        Configuration file of the utilities
-  - Thread/Thread_SED_Coap_Multicast/Core/Src/app_entry.c             Initialization of the application
-  - Thread/Thread_SED_Coap_Multicast/STM32_WPAN/App/app_thread.c      Thread application implementation
-  - Thread/Thread_SED_Coap_Multicast/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
-  - Thread/Thread_SED_Coap_Multicast/Core/Src/stm32_lpm_if.c          Low Power Manager Interface
-  - Thread/Thread_SED_Coap_Multicast/Core/Src/hw_uart.c               UART driver
-  - Thread/Thread_SED_Coap_Multicast/Core/Src/main.c                  Main program
-  - Thread/Thread_SED_Coap_Multicast/Core/Src/stm_logging.c           Logging module for traces
-  - Thread/Thread_SED_Coap_Multicast/Core/Src/stm32xx_it.c            Interrupt handlers
-  - Thread/Thread_SED_Coap_Multicast/Core/Src/system_stm32wbxx.c      stm32wbxx system source file
-  - Thread/Thread_SED_Coap_Multicast/Core/Src/freertos_port.c         Custom porting of FreeRTOS functionalities
-  - Thread/Thread_SED_Coap_Multicast/Core/Inc/FreeRTOSConfig.h        FreeRTOS specific defines
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/app_common.h            Header for all modules with common definition
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/app_conf.h              Parameters configuration file of the application 
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/app_entry.h             Parameters configuration file of the application
+  - Thread/Thread_SED_Coap_FreeRTOS/STM32_WPAN/App/app_thread.h      Header for app_thread.c module
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/hw_conf.h               Configuration file of the HW 
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/main.h                  Header for main.c module
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/stm_logging.h           Header for stm_logging.c module
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/stm32wbxx_hal_conf.h    HAL configuration file
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Src/stm32wbxx_it.h          Interrupt header file
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/system_infra.h          System infrastructure header file
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/utilities_conf.h        Configuration file of the utilities
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Src/app_entry.c             Initialization of the application
+  - Thread/Thread_SED_Coap_FreeRTOS/STM32_WPAN/App/app_thread.c      Thread application implementation
+  - Thread/Thread_SED_Coap_FreeRTOS/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Src/stm32_lpm_if.c          Low Power Manager Interface
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Src/hw_uart.c               UART driver
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Src/main.c                  Main program
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Src/stm_logging.c           Logging module for traces
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Src/stm32xx_it.c            Interrupt handlers
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Src/system_stm32wbxx.c      stm32wbxx system source file
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Src/freertos_port.c         Custom porting of FreeRTOS functionalities
+  - Thread/Thread_SED_Coap_FreeRTOS/Core/Inc/FreeRTOSConfig.h        FreeRTOS specific defines
   
 @par Hardware and Software environment
 
@@ -138,7 +142,7 @@ In order to make the program work, you must do the following:
 
     The second Board (Device 2) must be configured in MTD 
     -> Open your preferred toolchain 
-    -> Rebuild all files of Thread/Thread_SED_Coap_Multicast application 
+    -> Rebuild all files of Thread/Thread_SED_Coap_FreeRTOS application 
          and load your image into the other target memory
 
  - Run the application
@@ -160,15 +164,6 @@ In order to make the program work, you must do the following:
     - Stop Bit = 1 bit
     - Parity = none
     - Flow control = none
-
- Note for addressing the low power :
-  ----------------------------------
- To set the Application in full power mode, it is requested to set the define 
- CFG_FULL_LOW_POWER to 1 inside the app_conf.h file and to recompile the application.
- In this case, the Application is optimized in terms of power consumption.
- In this configuration,in order to save power,the LEDs are always powered off,
- the debugger cannot be attached any more to the target and there are no more traces.
-
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

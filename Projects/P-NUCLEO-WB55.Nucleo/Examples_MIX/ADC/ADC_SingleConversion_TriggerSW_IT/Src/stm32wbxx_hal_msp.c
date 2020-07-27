@@ -86,14 +86,14 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
   if(hadc->Instance==ADC1)
   {
   /* USER CODE BEGIN ADC1_MspInit 0 */
-  
+
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* Enable clock of GPIO associated to the peripheral channels */
   ADCx_CHANNELa_GPIO_CLK_ENABLE();
-  
+
   /* Enable clock of ADCx peripheral (core clock) */
   ADCx_CLK_ENABLE();
-  
+
   /* Note: In case of usage of asynchronous clock for ADC, with ADC setting   */
   /*       "AdcHandle.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIVx",            */
   /*       the clock source has to be enabled at RCC top level using function */
@@ -108,10 +108,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
   /* USER CODE END ADC1_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_ADC_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOC_CLK_ENABLE();
-    /**ADC1 GPIO Configuration    
-    PC3     ------> ADC1_IN4 
+    /**ADC1 GPIO Configuration
+    PC3     ------> ADC1_IN4
     */
     GPIO_InitStruct.Pin = GPIO_PIN_3;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
@@ -159,9 +159,9 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
   /* USER CODE END ADC1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_ADC_CLK_DISABLE();
-  
-    /**ADC1 GPIO Configuration    
-    PC3     ------> ADC1_IN4 
+
+    /**ADC1 GPIO Configuration
+    PC3     ------> ADC1_IN4
     */
     HAL_GPIO_DeInit(GPIOC, GPIO_PIN_3);
 

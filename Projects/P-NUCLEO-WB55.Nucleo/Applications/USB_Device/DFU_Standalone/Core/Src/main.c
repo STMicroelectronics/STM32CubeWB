@@ -18,7 +18,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "usb_device.h"
@@ -86,11 +85,11 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
 
- /* Configure user KEY Button SW2 */
-  BSP_PB_Init(BUTTON_KEY2, BUTTON_MODE_GPIO);
+ /* Configure User push-button (SW1) */
+  BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
 
-  /* Check if the user KEY Button SW2 is pressed */
-  if (BSP_PB_GetState(BUTTON_KEY2) != GPIO_PIN_RESET)
+  /* Check if the User push-button (SW1) is pressed */
+  if (BSP_PB_GetState(BUTTON_KEY) != GPIO_PIN_RESET)
   {
     /* Test if user code is programmed starting from address 0x0800C000 */
     if (((*(__IO uint32_t *) USBD_DFU_APP_DEFAULT_ADD) & 0x2FFC0000) ==
@@ -135,7 +134,8 @@ void SystemClock_Config(void)
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Initializes the CPU, AHB and APB busses clocks
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
@@ -168,7 +168,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the peripherals clocks 
+  /** Initializes the peripherals clocks
   */
   /* USER CODE BEGIN Smps */
 

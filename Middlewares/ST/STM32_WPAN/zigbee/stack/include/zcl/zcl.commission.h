@@ -122,33 +122,40 @@ enum ZbZclCommissionServerAttrT {
     ZCL_COMMISSION_CLI_ATTR_CONCDISCTIME = 0x0042
 };
 
-/* Options Field */
-#define ZCL_COMMISSION_OPTIONS_MODE_MASK            0x07U
-#define ZCL_COMMISSION_OPTIONS_MODE_USE_NEW         0x00U
-#define ZCL_COMMISSION_OPTIONS_MODE_USE_CURRENT     0x01U
+/*** Client Commands (Requests) */
+
+/* Restart Device Options Field */
+#define ZCL_COMMISS_RESTART_OPTS_MODE_MASK          0x07U
+#define ZCL_COMMISS_RESTART_OPTS_MODE_USE_STARTUP   0x00U /* Current set of startup parameters */
+#define ZCL_COMMISS_RESTART_OPTS_MODE_USE_STACK     0x01U /* Current state of device / stack parameters */
 /* Reserved Mode bits: 2 */
-#define ZCL_COMMISSION_OPTIONS_IMMEDIATE            0x08U
+#define ZCL_COMMISS_RESTART_OPTS_IMMEDIATE          0x08U
 /* Reserved Options Field bits: 4..7 */
 
-/*** Client Commands (Requests) */
 struct ZbZclCommissionClientRestartDev {
-    uint8_t options; /* e.g. ZCL_COMMISSION_OPTIONS_MODE_MASK */
+    uint8_t options; /* e.g. ZCL_COMMISS_RESTART_OPTS_MODE_MASK */
     uint8_t delay; /* seconds */
     uint8_t jitter; /* RAND(jitter * 80) milliseconds */
 };
 
 struct ZbZclCommissionClientSaveStartup {
-    uint8_t options; /* Startup Mode, ... */
+    uint8_t options; /* all bits are reserved */
     uint8_t index;
 };
 
 struct ZbZclCommissionClientRestoreStartup {
-    uint8_t options; /* Startup Mode, ... */
+    uint8_t options; /* all bits are reserved */
     uint8_t index;
 };
 
+/* Reset Device Options Field */
+#define ZCL_COMMISS_RESET_OPTS_RESET_CURR           0x01U
+#define ZCL_COMMISS_RESET_OPTS_RESET_ALL            0x02U
+#define ZCL_COMMISS_RESET_OPTS_RESET_ERASE          0x04U
+/* Reserved Options Field bits: 3..7 */
+
 struct ZbZclCommissionClientResetStartup {
-    uint8_t options; /* Startup Mode, ... */
+    uint8_t options; /* e.g. ZCL_COMMISS_RESET_OPTS_RESET_CURR */
     uint8_t index;
 };
 
@@ -207,6 +214,9 @@ struct ZbZclCommissionServerCallbacksT {
 
 struct ZbZclClusterT * ZbZclCommissionServerAlloc(struct ZigBeeT *zb, uint16_t profile, bool aps_secured,
     struct ZbZclCommissionServerCallbacksT *callbacks, void *arg);
+
+/* Helper function to reset the startup configuration cluster attributes back to defaults. */
+enum ZclStatusCodeT ZbZclCommissionServerResetStartup(struct ZbZclClusterT *clusterPtr);
 
 /* Helper function to load the startup configuration from the Cluster Server's Attributes
  * into the ZbStartupT struct. */

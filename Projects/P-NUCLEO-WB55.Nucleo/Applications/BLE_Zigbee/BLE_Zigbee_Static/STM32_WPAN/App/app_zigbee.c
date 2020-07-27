@@ -100,7 +100,7 @@ union cache
   uint8_t  U8_data[ST_PERSIST_MAX_ALLOC_SZ];     // in bytes
   uint32_t U32_data[ST_PERSIST_MAX_ALLOC_SZ/4U]; // in U32 words
 };
-__no_init union cache cache_persistent_data;
+__attribute__ ((section(".noinit"))) union cache cache_persistent_data;
 
 static struct zigbee_app_info zigbee_app_info;
 static uint32_t join_start_time;
@@ -444,7 +444,7 @@ static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
 
        /* Start-up from persistence */
        APP_DBG("APP_ZIGBEE_ZbStartupPersist: restoring stack persistence");
-       status = ZbStartupPersist(zb, &cache_persistent_data.U8_data[4], cache_persistent_data.U32_data[0],NULL);
+       status = ZbStartupPersist(zb, &cache_persistent_data.U8_data[4], cache_persistent_data.U32_data[0],NULL,NULL,NULL);
    }
    else
    {

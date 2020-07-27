@@ -92,7 +92,7 @@ void HAL_CRYP_MspInit(CRYP_HandleTypeDef* hcryp)
   /* USER CODE END AES1_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_AES1_CLK_ENABLE();
-  
+
     /* AES1 DMA Init */
     /* AES1_IN Init */
     hdma_aes1_in.Instance = DMA1_Channel1;

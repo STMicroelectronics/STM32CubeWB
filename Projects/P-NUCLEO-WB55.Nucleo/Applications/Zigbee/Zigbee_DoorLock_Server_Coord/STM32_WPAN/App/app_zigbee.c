@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -248,8 +248,9 @@ static void APP_ZIGBEE_BINDING_TABLE_insert(uint16_t ntw_addr, uint8_t endpoint,
  */
 static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Attr_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclAttrCbInfoT *cb){
   if (cb->type == ZCL_ATTR_CB_TYPE_NOTIFY) {
-    return APP_ZIGBEE_DoorLock_Server_AttrNotify_cb(clusterPtr, cb->src, cb->info->attributeId, cb->zcl_data, cb->zcl_len,
-                             cb->attr_data, cb->write_mode, cb->app_cb_arg);
+    return APP_ZIGBEE_DoorLock_Server_AttrNotify_cb(clusterPtr, (struct ZbApsAddrT *)cb->src, cb->info->attributeId, 
+                                                    cb->zcl_data, cb->zcl_len, cb->attr_data, cb->write_mode, 
+                                                    cb->app_cb_arg);
   } else {
     return ZCL_STATUS_FAILURE;
   }
@@ -330,7 +331,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
                                                               struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
   enum ZclStatusCodeT status;
-  struct ZbZclDoorLockLockDoorRspT rsp = {.status = DOORLOCK_STATUS_GENERAL_FAILURE};
+  struct ZbZclDoorLockLockDoorRspT rsp = {.status = DOORLOCK_STATUS_FAIL};
   struct doorlock_info_t* info = (struct doorlock_info_t*) arg;  
   long long res;
   uint8_t currentMode = 0;
@@ -433,7 +434,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
                                                                 struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
   enum ZclStatusCodeT status;
-  struct ZbZclDoorLockUnlockDoorRspT rsp = {.status = DOORLOCK_STATUS_GENERAL_FAILURE};
+  struct ZbZclDoorLockUnlockDoorRspT rsp = {.status = DOORLOCK_STATUS_FAIL};
   struct doorlock_info_t* info = (struct doorlock_info_t*) arg;  
   long long res;
   uint32_t autoRelockTime = 0;
@@ -544,7 +545,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
 static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_SetPin_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclDoorLockSetPinReqT *cmd_req, 
                                                                 struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
-  struct ZbZclDoorLockSetPinRspT rsp = {.status = DOORLOCK_STATUS_GENERAL_FAILURE};
+  struct ZbZclDoorLockSetPinRspT rsp = {.status = DOORLOCK_STATUS_FAIL};
   struct doorlock_info_t* info = (struct doorlock_info_t*) arg;  
   APP_DBG("Set PIN requested.");
   
@@ -798,10 +799,6 @@ static void APP_ZIGBEE_Time_Server_SetTime_cb(struct ZbZclClusterT *clusterPtr, 
  * @retval None
  */
 static void APP_ZIGBEE_App_Init(void){
-  /* Task associated with push button SW1 and SW2 */
-  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_ZIGBEE_SW1_Process);
-  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW2, UTIL_SEQ_RFU, APP_ZIGBEE_SW2_Process);
-  
   /* Timers associated with Door Lock passage operating mode */
   HW_TS_Create(1U << CFG_TIM_ZIGBEE_APP_DOORLOCK_PASSAGE_MODE_DURATION, &TS_ID1, hw_ts_SingleShot, APP_ZIGBEE_DoorLock_Server_PassageMode_Ended_exec);
   HW_TS_Create(1U << CFG_TIM_ZIGBEE_APP_DOORLOCK_AUTO_RELOCK_TIME, &TS_ID2, hw_ts_SingleShot, APP_ZIGBEE_DoorLock_Server_AutoRelockTime_exec);
@@ -903,6 +900,10 @@ void APP_ZIGBEE_Init(void)
 
   /* Task associated with network creation process */
   UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM, UTIL_SEQ_RFU, APP_ZIGBEE_NwkForm);
+  
+  /* Task associated with push button SW1 and SW2 */
+  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_ZIGBEE_SW1_Process);
+  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW2, UTIL_SEQ_RFU, APP_ZIGBEE_SW2_Process);
 
  /* Task associated with application init */
   UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_APP_START, UTIL_SEQ_RFU, APP_ZIGBEE_App_Init);
@@ -1178,6 +1179,19 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
  */
 static void APP_ZIGBEE_SW1_Process(void){
   enum ZclStatusCodeT status;
+  uint64_t epid = 0U;
+
+  if(zigbee_app_info.zb == NULL){
+    return;
+  }
+  
+  /* Check if the router joined the network */
+  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) {
+    return;
+  }
+  if (epid == 0U) {
+    return;
+  }
   
   /* Door state is forced opened */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_ERROR_FORCED_OPEN);
@@ -1194,6 +1208,19 @@ static void APP_ZIGBEE_SW1_Process(void){
  * @retval None
  */
 static void APP_ZIGBEE_SW2_Process(void){
+  uint64_t epid = 0U;
+
+  if(zigbee_app_info.zb == NULL){
+    return;
+  }
+  
+  /* Check if the router joined the network */
+  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) {
+    return;
+  }
+  if (epid == 0U) {
+    return;
+  }
   
   /* Start passage mode */
   APP_ZIGBEE_DoorLock_Server_PassageMode_exec();

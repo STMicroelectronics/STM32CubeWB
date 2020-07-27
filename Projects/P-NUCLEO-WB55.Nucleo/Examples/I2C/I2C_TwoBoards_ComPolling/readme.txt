@@ -67,9 +67,6 @@ in the "main.c" file:
 If the Master board is used, the "#define MASTER_BOARD" must be uncommented.
 If the Slave board is used the "#define MASTER_BOARD" must be commented.
 
-The user can disable internal pull-up through "#define EXTERNAL_PULL_UP_AVAILABLE"
-This help for an integration of this example inside an ecosystem board with external pull-up */
-
 For this example the aTxBuffer is predefined and the aRxBuffer size is same as aTxBuffer.
 
 In a first step after the user press the User push-button (SW1) on the Master Board,

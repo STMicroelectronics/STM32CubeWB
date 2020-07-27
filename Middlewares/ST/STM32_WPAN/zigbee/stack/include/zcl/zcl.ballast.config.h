@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_BALLAST_CONFIG_H
 # define ZCL_BALLAST_CONFIG_H
@@ -71,7 +71,11 @@ enum {
     ZCL_BALLAST_CONFIG_ATTR_LAMP_BURN_HOURS_TRIP_POINT = 0x0035,
 };
 
-/* Ballast Information attribute set defines*/
+/* Ballast Status (bit mask) defines */
+#define ZCL_BALLAST_CONFIG_STATUS_NON_OP                         0x01 /* Ballast Non-operational */
+#define ZCL_BALLAST_CONFIG_STATUS_LAMP_FAIL                      0x02 /* Lamp Failure */
+
+/* Ballast Information attribute set defines */
 #define ZCL_BALLAST_CONFIG_PHY_MIN_LEVEL_DEFAULT                 0x01
 #define ZCL_BALLAST_CONFIG_PHY_MIN_LEVEL_MIN                     0x01
 #define ZCL_BALLAST_CONFIG_PHY_MIN_LEVEL_MAX                     0xfe
@@ -89,19 +93,7 @@ enum {
     ((1 << ZCL_BALLAST_CONFIG_BALLAST_STATUS_NON_OPERATIONAL_BIT) | \
      (1 << ZCL_BALLAST_CONFIG_BALLAST_STATUS_LAMP_FAILURE_BIT))
 
-/* Ballast status - Ballast Non-operational */
-enum ZbZclBallastStatusNonOper {
-    ZCL_BC_BALLAST_STATUS_OPERATIONAL = 0x00,
-    ZCL_BC_BALLAST_STATUS_NOT_OPERATIONAL = 0x01,
-};
-
-/* Ballast status - Lamp Failure */
-enum ZbZclBallastStatusLampFailure {
-    ZCL_BC_BALLAST_STATUS_LAMP_OPERATIONAL = 0x00,
-    ZCL_BC_BALLAST_STATUS_LAMP_FAILURE = 0x01,
-};
-
-/* Ballast Settings attribute set defines*/
+/* Ballast Configuration Settings attribute set defines */
 #define ZCL_BALLAST_CONFIG_MIN_LEVEL_MIN                         0x01
 #define ZCL_BALLAST_CONFIG_MIN_LEVEL_MAX                         0xfe
 
@@ -116,12 +108,12 @@ enum ZbZclBallastStatusLampFailure {
 #define ZCL_BALLAST_CONFIG_BALLAST_FACTOR_ADJ_MIN                0x64
 #define ZCL_BALLAST_CONFIG_BALLAST_FACTOR_ADJ_MAX                0xfe
 
-/* Ballast Settings attribute set defines*/
+/* Ballast Settings attribute set defines */
 #define ZCL_BALLAST_CONFIG_LAMP_QUANTITY_DEFAULT                 0x00
 #define ZCL_BALLAST_CONFIG_LAMP_QUANTITY_MIN                     0x00
 #define ZCL_BALLAST_CONFIG_LAMP_QUANTITY_MAX                     0xfe
 
-/* Ballast Settings attribute set defines*/
+/* Ballast Settings attribute set defines */
 #define ZCL_BALLAST_CONFIG_LAMP_TYPE_NAME_LENGTH                 0x10
 #define ZCL_BALLAST_CONFIG_LAMP_MANUFACTURER_NAME_LENGTH         0x10
 
@@ -153,4 +145,4 @@ struct ZbZclClusterT * ZbZclBallastConfigServerAlloc(struct ZigBeeT *zb,
 struct ZbZclClusterT * ZbZclBallastConfigClientAlloc(struct ZigBeeT *zb,
     uint8_t endpoint);
 
-#endif /* __ZCL_BALLAST_CONFIG_H */
+#endif

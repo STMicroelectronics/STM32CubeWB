@@ -49,7 +49,7 @@ In case of any error, the LED2 (GREEN) is toggling slowly.
 
 @par Keywords
 
-PKA, PKA_ECDSA_Sign, Security, NIST, CAVP, ECDSA verification
+Security, PKA, NIST, CAVP, ECDSA verification
 
 @par Directory contents 
   
@@ -68,7 +68,7 @@ PKA, PKA_ECDSA_Sign, Security, NIST, CAVP, ECDSA verification
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB55RGVx devices.
   
   - This example has been tested with an STMicroelectronics P-NUCLEO-WB55
     board and can be easily tailored to any other supported device 

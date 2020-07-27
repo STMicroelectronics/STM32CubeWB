@@ -1104,6 +1104,9 @@
       <file>
         <name>$PROJ_DIR$/../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal.c</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</name>
+      </file>
     </group>
     <group>
       <name>CMSIS</name>

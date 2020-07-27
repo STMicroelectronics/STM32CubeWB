@@ -18,7 +18,6 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 
 #include "main.h"
@@ -339,7 +338,7 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
              * we are interested only if the UUID is 16 bit.
              * So check if the data length is 6
              */
-#if (UUID_128BIT_FORMAT==1)           
+#if (UUID_128BIT_FORMAT==1)
           if (pr->Attribute_Data_Length == 20)
           {
             idx = 16;
@@ -347,7 +346,7 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           if (pr->Attribute_Data_Length == 6)
           {
             idx = 4;
-#endif             
+#endif
               for (i=0; i<numServ; i++)
               {
                 uuid = UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx]);
@@ -356,13 +355,13 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
 #if(CFG_DEBUG_APP_TRACE != 0)
                   APP_DBG_MSG("-- GATT : P2P_SERVICE_UUID FOUND - connection handle 0x%x \n", aP2PClientContext[index].connHandle);
 #endif
-#if (UUID_128BIT_FORMAT==1)                     
+#if (UUID_128BIT_FORMAT==1)
                 aP2PClientContext[index].P2PServiceHandle = UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx-16]);
                 aP2PClientContext[index].P2PServiceEndHandle = UNPACK_2_BYTE_PARAMETER (&pr->Attribute_Data_List[idx-14]);
-#else   
+#else
                 aP2PClientContext[index].P2PServiceHandle = UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx-4]);
                 aP2PClientContext[index].P2PServiceEndHandle = UNPACK_2_BYTE_PARAMETER (&pr->Attribute_Data_List[idx-2]);
-#endif                  
+#endif
                   aP2PClientContext[index].state = APP_BLE_DISCOVER_CHARACS ;
                 }
                 idx += 6;
@@ -677,7 +676,7 @@ void Button_Trigger_Received(void)
 void Update_Service()
 {
   uint16_t enable = 0x0001;
-
+  uint16_t disable = 0x0000;
 
   uint8_t index;
 
@@ -730,7 +729,7 @@ void Update_Service()
         aci_gatt_write_char_desc(aP2PClientContext[index].connHandle,
                                  aP2PClientContext[index].P2PNotificationDescHandle,
                                  2,
-                                 (uint8_t *)&enable);
+                                 (uint8_t *)&disable);
 
         aP2PClientContext[index].state = APP_BLE_CONNECTED_CLIENT;
 

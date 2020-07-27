@@ -41,6 +41,10 @@ How to use the Heart Rate profile as specified by the BLE SIG.
 	  and shall not be changed to a different value)
           - set BLE_CFG_OTA_REBOOT_CHAR to 1 in ble_conf.h
 
+@par Keywords
+
+Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE profile, Dual core
+
 @par Directory contents 
   
   - BLE/BLE_HeartRate_ota/Core/Inc/stm32wbxx_hal_conf.h		HAL configuration file
@@ -79,7 +83,7 @@ How to use the Heart Rate profile as specified by the BLE SIG.
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -109,7 +113,8 @@ In order to make the program work, you must do the following:
  - select the HRSTM in the device list
 
 Next demonstration 
- - Move to download panel with the smart Phone Application 
+ - Move to download panel with the smart Phone Application (called FW upgrade for ST BLE sensor application 
+   and select reboot options to delete sectors used by previous coprocessor binary)
  - select the binary to be downloaded on the Application Processor
    -  BLE_HeartRate_ota_reference.bin or BLE_p2pServer_ota_reference.bin have to be copied into Smart phone directory
  - Start download

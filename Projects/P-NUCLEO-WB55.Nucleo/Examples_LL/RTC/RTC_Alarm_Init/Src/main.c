@@ -20,7 +20,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -108,7 +107,6 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  
 
   NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
@@ -221,7 +219,7 @@ void SystemClock_Config(void)
   LL_RCC_HSI_Enable();
   while(LL_RCC_HSI_IsReady() != 1)
   {
-  };
+  }
 
   /* Sysclk activation on the HSI */
   /* Set CPU1 prescaler*/
@@ -233,7 +231,7 @@ void SystemClock_Config(void)
   LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
   while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
   {
-  };
+  }
 
   /* Set AHB SHARED prescaler*/
   LL_RCC_SetAHB4Prescaler(LL_RCC_SYSCLK_DIV_1);
@@ -272,6 +270,7 @@ static void MX_RTC_Init(void)
 
   /* Peripheral clock enable */
   LL_RCC_EnableRTC();
+  LL_APB2_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_RTCAPB);
 
   /* USER CODE BEGIN RTC_Init 1 */
   /* USER CODE END RTC_Init 1 */
@@ -288,7 +287,7 @@ static void MX_RTC_Init(void)
   RTC_DateStruct.Day = 0x29;
   RTC_DateStruct.Year = 0x16;
   LL_RTC_DATE_Init(RTC, LL_RTC_FORMAT_BCD, &RTC_DateStruct);
-  /** Enable the Alarm A 
+  /** Enable the Alarm A
   */
   RTC_AlarmStruct.AlarmTime.Hours = 0x12;
   RTC_AlarmStruct.AlarmTime.Minutes = 0x0;
@@ -296,7 +295,6 @@ static void MX_RTC_Init(void)
   RTC_AlarmStruct.AlarmMask = LL_RTC_ALMA_MASK_DATEWEEKDAY;
   RTC_AlarmStruct.AlarmDateWeekDaySel = LL_RTC_ALMA_DATEWEEKDAYSEL_DATE;
   RTC_AlarmStruct.AlarmDateWeekDay = 0x1;
-
   LL_RTC_ALMA_Init(RTC, LL_RTC_FORMAT_BCD, &RTC_AlarmStruct);
   /* USER CODE BEGIN RTC_Init 2 */
 
@@ -439,7 +437,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

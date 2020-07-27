@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STM32WBXX_NUCLEO,STM32WB55xx,USE_HAL_DRIVER,CORE_CM4</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/Inc;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/maptab;../../../../../../Middlewares/ST/STM32_WPAN/ble/menu;../../../../../../Drivers/CMSIS/Include;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/ble;../Core/Inc;../STM32_WPAN/app</IncludePath>
+              <IncludePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/ble/menu;../../../../../../Drivers/CMSIS/Include;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/ble;../Core/Inc;../STM32_WPAN/app</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -460,6 +460,16 @@
               <FileName>hw_ipcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>../STM32_WPAN/Target/hw_ipcc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Doc</GroupName>
+          <Files>
+            <File>
+              <FileName>readme.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>../readme.txt</FilePath>
             </File>
           </Files>
         </Group>

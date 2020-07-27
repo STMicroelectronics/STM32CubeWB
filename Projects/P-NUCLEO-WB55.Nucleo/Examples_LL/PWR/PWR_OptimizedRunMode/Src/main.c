@@ -19,7 +19,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -100,7 +99,6 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  
 
   NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
@@ -166,7 +164,7 @@ void SystemClock_Config(void)
   LL_RCC_MSI_Enable();
   while(LL_RCC_MSI_IsReady() != 1)
   {
-  };
+  }
 
   /* Main PLL configuration and activation */
   LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_MSI, LL_RCC_PLLM_DIV_1, 32, LL_RCC_PLLR_DIV_2);
@@ -174,7 +172,7 @@ void SystemClock_Config(void)
   LL_RCC_PLL_EnableDomain_SYS();
   while(LL_RCC_PLL_IsReady() != 1)
   {
-  };
+  }
 
   /* Sysclk activation on the main PLL */
   /* Set CPU1 prescaler*/
@@ -186,7 +184,7 @@ void SystemClock_Config(void)
   LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
   while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL)
   {
-  };
+  }
 
   /* Set AHB SHARED prescaler*/
   LL_RCC_SetAHB4Prescaler(LL_RCC_SYSCLK_DIV_1);
@@ -323,7 +321,7 @@ void EnterRunMode_DownTo16MHz(void)
   LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_MSI);    
   while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_MSI) 
   {
-  };
+  }
   
   /* Set MSI to 16MHz */
   LL_RCC_MSI_SetRange(LL_RCC_MSIRANGE_8);
@@ -332,7 +330,7 @@ void EnterRunMode_DownTo16MHz(void)
   LL_RCC_PLL_Disable();
   while(LL_RCC_PLL_IsReady() != 0) 
   {
-  };
+  }
   LL_RCC_PLL_DisableDomain_SYS();
 
   /* Set systick to 1ms in using frequency set to 16MHz */
@@ -389,7 +387,7 @@ void EnterRunMode_UpTo16MHz(void)
   /* Wait for flash latency setting effective before increase clock frequency */
   while(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1)
   {
-  };
+  }
   
   /* 3 - Set Frequency to 16MHz (MSI) */
   LL_RCC_MSI_SetRange(LL_RCC_MSIRANGE_8);
@@ -412,7 +410,7 @@ void EnterRunMode_UpTo64MHz(void)
   /* 2 - Wait Voltage Scaling 1 before increase frequency */
   while(LL_PWR_IsActiveFlag_VOS() !=  0)
   {
-  };
+  }
 
   /* 3 - Adjust Flash Wait state before increase Clock Frequency */
   LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
@@ -420,7 +418,7 @@ void EnterRunMode_UpTo64MHz(void)
   /* Wait for flash latency setting effective before increase clock frequency */
   while(LL_FLASH_GetLatency() != LL_FLASH_LATENCY_3)
   {
-  };
+  }
   
   /* 4 - Set Frequency to 64MHz (PLL) */
   LL_RCC_MSI_SetRange(LL_RCC_MSIRANGE_6);
@@ -429,13 +427,13 @@ void EnterRunMode_UpTo64MHz(void)
   LL_RCC_PLL_EnableDomain_SYS();
   while(LL_RCC_PLL_IsReady() != 1) 
   {
-  };
+  }
 
   /* Switch on PLL. Previous configuration done by SystemClock_Config is used */
   LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
   while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL) 
   {
-  };
+  }
 
   /* Set systick to 1ms in using frequency set to 64MHz */
   LL_Init1msTick(64 * 1000000);
@@ -544,7 +542,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d", file, line) */

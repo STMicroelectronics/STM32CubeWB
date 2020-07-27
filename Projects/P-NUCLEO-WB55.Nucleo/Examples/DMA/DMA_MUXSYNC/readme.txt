@@ -1,9 +1,9 @@
 /**
-  @page DMAMUX_SYNC DMA & DMAMUX Synchronization Example
+  @page DMA_MUXSYNC DMA & DMAMUX Synchronization Example
   
   @verbatim
   ******************************************************************************
-  * @file    DMA/DMAMUX_SYNC/readme.txt 
+  * @file    DMA/DMA_MUXSYNC/readme.txt 
   * @author  MCD Application Team
   * @brief   Description of the DMA & DMAMUX Synchronization Example.
   ******************************************************************************
@@ -48,9 +48,8 @@ The DMAMUX synchronization block is configured using function "HAL_DMAEx_ConfigM
 - EventState : enabled , in order to generate an event each time "RequestNumber" are transmitted.
   Note that this event could be used with the DMAMUX external request generator to trigger another DMA stream transfer.
 
-The LPTIM1 is configured using function "LPTIM_Config" in order to configure and start a PWM on the LPTIM1 timer with
+The LPTIM1 is configured using function  HAL_LPTIM_PWM_Start() in order to configure and start a PWM on the LPTIM1 timer with
 2 seconds period and 50% duty cycle.
-
 The USART1 peripheral configuration is ensured by the HAL_UART_Init() function.
 This later is calling the HAL_UART_MspInit()function which core is implementing
 the configuration of the needed UART resources according to the used hardware (CLOCK, 
@@ -108,12 +107,12 @@ System, DMA, DMAMUX, LPTIM, USART, Data Transfer, Memory to periph, synchronizat
   - DMA/DMAMUX_SYNC/Src/stm32wbxx_it.c          DMA interrupt handlers
   - DMA/DMAMUX_SYNC/Src/main.c                  Main program
   - DMA/DMAMUX_SYNC/Src/stm32wbxx_hal_msp.c     HAL MSP module
-  - DMA/DMAMUX_SYNC/Src/system_stm32wbxx.c      FAMILYNAME_UC system source file
+  - DMA/DMAMUX_SYNC/Src/system_stm32wbxx.c      STM32WBxx system source file
 
 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx device.
+  - This example runs on STM32WB55RGVx devices.
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.

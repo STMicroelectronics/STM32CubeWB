@@ -1,4 +1,9 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zigbee.zdo.h
+ * @brief ZDO header file
+ * @author Exegin Technologies
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZIGBEE_ZDO_H
 # define ZIGBEE_ZDO_H

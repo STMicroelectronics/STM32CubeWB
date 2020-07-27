@@ -77,6 +77,10 @@ void APP_BLE_Key_Button1_Action(void);
 void APP_BLE_Key_Button2_Action(void);
 void APP_BLE_Key_Button3_Action(void);
 
+void APP_BLE_Slave_Security_Request(void);
+void APP_BLE_Peer_Bonded_Check(void);
+void APP_BLE_Remove_Bonding_Info(void);
+
 /* USER CODE END EF */
 
 #ifdef __cplusplus

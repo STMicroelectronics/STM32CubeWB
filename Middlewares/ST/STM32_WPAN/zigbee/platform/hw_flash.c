@@ -31,20 +31,21 @@ static void HW_FLASH_PageErase(uint32_t Page);
 int HW_FLASH_Write(uint32_t address, uint64_t data)
 {
   /* Enable EOP interrupt */
- // __HAL_FLASH_ENABLE_IT(FLASH_IT_EOP);
+  HAL_FLASH_Unlock();
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_WRPERR |FLASH_FLAG_PGSERR | FLASH_FLAG_OPTVERR); 
 
- // __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP);
-
+  /*Enable EOP interupt */
+  __HAL_FLASH_ENABLE_IT(FLASH_IT_EOP);
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP);
+  
   HW_FLASH_Program_DoubleWord(address, data);
 
- // HW_FLASH_WaitEndOfOperation();
-
   /* Disable EOP interrupt */
-//  __HAL_FLASH_DISABLE_IT(FLASH_IT_EOP);
-
+  __HAL_FLASH_DISABLE_IT(FLASH_IT_EOP);
+  
   /* Clear the PG bit once data has been written */
   CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
-
+  HAL_FLASH_Lock();
   return (HW_OK);
 }
 
@@ -53,9 +54,11 @@ int HW_FLASH_Write(uint32_t address, uint64_t data)
 int HW_FLASH_Erase(uint32_t page, uint16_t n, int interrupt)
 {
   UNUSED(interrupt);
-
+ 
   uint32_t loop;
-
+ 
+   HAL_FLASH_Unlock();
+    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP |FLASH_FLAG_ALL_ERRORS); 
   /* Enable EOP interrupt */
   __HAL_FLASH_ENABLE_IT(FLASH_IT_EOP);
 
@@ -64,8 +67,6 @@ int HW_FLASH_Erase(uint32_t page, uint16_t n, int interrupt)
     __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP);
 
     HW_FLASH_PageErase(page+loop);
-
-//    HW_FLASH_WaitEndOfOperation();
   }
 
   /* Disable EOP interrupt */
@@ -73,39 +74,11 @@ int HW_FLASH_Erase(uint32_t page, uint16_t n, int interrupt)
 
   /* Clear the page erase bit */
   CLEAR_BIT(FLASH->CR, (FLASH_CR_PER | FLASH_CR_PNB));
-
+  HAL_FLASH_Lock();
   return (HW_OK);
 }
 
-#if 0
-/*****************************************************************************/
 
-uint32_t HW_FLASH_OB_GetIPCCBufferAddr(void)
-{
-  return READ_BIT(FLASH->IPCCBR, FLASH_IPCCBR_IPCCDBA);
-}
-
-/*****************************************************************************/
-
-uint32_t HW_FLASH_OB_GetSFSA(void)
-{
-  return (READ_BIT(FLASH->SFR, FLASH_SFR_SFSA) >> FLASH_SFR_SFSA_Pos);
-}
-
-/*****************************************************************************/
-
-uint32_t HW_FLASH_OB_GetSBRSA(void)
-{
-  return (READ_BIT(FLASH->SRRVR, FLASH_SRRVR_SBRSA) >> FLASH_SRRVR_SBRSA_Pos);
-}
-
-/*****************************************************************************/
-
-uint32_t HW_FLASH_OB_GetSNBRSA(void)
-{
-  return (READ_BIT(FLASH->SRRVR, FLASH_SRRVR_SNBRSA) >> FLASH_SRRVR_SNBRSA_Pos);
-}
-#endif
 
 /*************************************************************
  *
@@ -142,10 +115,13 @@ static void HW_FLASH_Program_DoubleWord(uint32_t Address, uint64_t Data)
 static void HW_FLASH_PageErase(uint32_t Page)
 {
 //  DBG_GPIO_Gr2Set(DBG_GPIO_GR2_FLASH_ERASE);
+  
+  /* Check the parameters */
+  assert_param(IS_FLASH_PAGE(Page));
 
   /* Proceed to erase the page */
   MODIFY_REG(FLASH->CR, FLASH_CR_PNB, ((Page << FLASH_CR_PNB_Pos) | FLASH_CR_PER | FLASH_CR_STRT));
-
+ 
 //  DBG_GPIO_Gr2Set(DBG_GPIO_GR2_FLASH_ERASE);
 }
 

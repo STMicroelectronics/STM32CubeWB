@@ -1,5 +1,5 @@
 /**
-  @page Demo   Demo P-NUCLEO-WB55
+  @page Adafruit_LCD_1_8_SD_Joystick Demo P-NUCLEO-WB55
  
   @verbatim
   ******************************************************************************

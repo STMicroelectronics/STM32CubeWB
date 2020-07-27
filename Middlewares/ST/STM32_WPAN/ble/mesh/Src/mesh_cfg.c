@@ -87,6 +87,13 @@ MOBLE_RESULT BnrgmFrndMgmtQueLpnPkt(void* param);
 void BnrgmFrndMgmtSendSecurityUpdate(void* param);
 #endif /* #if (FRIEND_FEATURE == 0) */
 
+#if (PB_ADV_SUPPORTED == 0)
+MOBLE_RESULT MoblePBADVInit(void* param);
+MOBLE_RESULT MoblePBADVProcessData(void* param);
+MOBLE_RESULT MoblePBADVStartProvisioning(void* param);
+MOBLE_RESULT MoblePBADVStopProvisioning(void* param);
+#endif 
+
 
 /* Private define ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -152,8 +159,8 @@ __attribute__((aligned(4)))const DynBufferParam_t DynBufferParam =
   (MOBLEUINT16) MODELS_BUFFER_SIZE
 };
 
-
-
+const MOBLEUINT8 Device_Name[] = {DEVICE_NAME_SIZE+1, 0x09, DEVICE_NAME};
+const device_name_params_t DeviceNameParams = DEVICE_NAME_PARAMS;
 
 const tr_params_t TrParams = TRANSMIT_RECEIVE_PARAMS;
 const lpn_params_t LpnParams = LOW_POWER_NODE_PARAMS;
@@ -206,178 +213,209 @@ MOBLE_RESULT ApplicationInitSigModelList(void)
     Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
 #ifdef ENABLE_CONFIG_MODEL_CLIENT
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_CONFIG_MODEL_CLIENT & (1 << index)) == 1) ||
-       ((ENABLE_CONFIG_MODEL_CLIENT & (1 << index)) == 2) ||
-       ((ENABLE_CONFIG_MODEL_CLIENT & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_CONFIG_MODEL_CLIENT & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = SIG_MODEL_ID_CONFIG_CLIENT;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF
+    
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_ONOFF & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_ONOFF & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_ONOFF & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_ONOFF & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_ONOFF_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_LEVEL & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_LEVEL & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_LEVEL & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_LEVEL & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_LEVEL_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
+    
 #endif
 #ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF
+    
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_POWER_ONOFF_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_POWER_LEVEL_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_BATTERY
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_BATTERY & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_BATTERY & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_BATTERY & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_BATTERY & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_BATTERY_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_LOCATION
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_LOCATION & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_LOCATION & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_LOCATION & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_LOCATION & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_LOCATION_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_LOCATION_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_LOCATION_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_LOCATION_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_LOCATION_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_LOCATION_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_LOCATION_SETUP_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_ADMIN_PROPERTY
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_ADMIN_PROPERTY & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_ADMIN_PROPERTY & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_ADMIN_PROPERTY & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_ADMIN_PROPERTY & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_ADMIN_PROPERTY_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_USER_PROPERTY
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_USER_PROPERTY & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_USER_PROPERTY & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_USER_PROPERTY & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_USER_PROPERTY & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_USER_PROPERTY_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_SERVER_CLIENT_PROPERTY
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_SERVER_CLIENT_PROPERTY & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_CLIENT_PROPERTY & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_SERVER_CLIENT_PROPERTY & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_SERVER_CLIENT_PROPERTY & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_SERVER_CLIENT_PROPERTY_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
@@ -391,106 +429,123 @@ MOBLE_RESULT ApplicationInitSigModelList(void)
 
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;       
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_LIGHTNESS_SETUP_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_CTL & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_CTL & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_CTL & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_CTL & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_CTL_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_CTL_SETUP_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_CTL_TEMPERATURE_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_HSL & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_HSL & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_HSL & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_HSL & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_HSL_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_HSL_SETUP_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_HSL_HUE & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_HSL_HUE & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_HSL_HUE & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_HSL_HUE & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_HSL_HUE_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_HSL_SATURATION_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
@@ -503,22 +558,25 @@ MOBLE_RESULT ApplicationInitSigModelList(void)
     /**************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_XYL
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_XYL & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_XYL & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_XYL & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_XYL & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_XYL_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP
-    if(modelIndex >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_XYL_SETUP_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
@@ -531,22 +589,25 @@ MOBLE_RESULT ApplicationInitSigModelList(void)
     /**************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_LC & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_LC & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_LC & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_LC & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_LC_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_SERVER_LC_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_LC_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_SERVER_LC_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_SERVER_LC_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_LC_SETUP_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
@@ -559,22 +620,25 @@ MOBLE_RESULT ApplicationInitSigModelList(void)
     /**************************************************************************/
 #ifdef ENABLE_SENSOR_MODEL_SERVER
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_SENSOR_MODEL_SERVER & (1 << index)) == 1) ||
-       ((ENABLE_SENSOR_MODEL_SERVER & (1 << index)) == 2) ||
-       ((ENABLE_SENSOR_MODEL_SERVER & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_SENSOR_MODEL_SERVER & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = SENSOR_SERVER_MODEL_ID;    
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_SENSOR_MODEL_SERVER_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_SENSOR_MODEL_SERVER_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_SENSOR_MODEL_SERVER_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_SENSOR_MODEL_SERVER_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_SENSOR_MODEL_SERVER_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = SENSOR_SETUP_SERVER_MODEL_ID; 
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
@@ -588,46 +652,53 @@ MOBLE_RESULT ApplicationInitSigModelList(void)
 
 #ifdef ENABLE_TIME_MODEL_SERVER
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_TIME_MODEL_SERVER & (1 << index)) == 1) ||
-       ((ENABLE_TIME_MODEL_SERVER & (1 << index)) == 2) ||
-       ((ENABLE_TIME_MODEL_SERVER & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_TIME_MODEL_SERVER & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = TIME_MODEL_SERVER_MODEL_ID;             
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_TIME_MODEL_SERVER_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_TIME_MODEL_SERVER_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_TIME_MODEL_SERVER_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_TIME_MODEL_SERVER_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_TIME_MODEL_SERVER_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = TIME_MODEL_SERVER_SETUP_MODEL_ID;       
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_SCENE_MODEL_SERVER
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_SCENE_MODEL_SERVER & (1 << index)) == 1) ||
-       ((ENABLE_SCENE_MODEL_SERVER & (1 << index)) == 2) ||
-       ((ENABLE_SCENE_MODEL_SERVER & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_SCENE_MODEL_SERVER & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = SCENE_MODEL_SERVER_MODEL_ID;            
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_SCENE_MODEL_SERVER_SETUP
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_SCENE_MODEL_SERVER_SETUP & (1 << index)) == 1) ||
-       ((ENABLE_SCENE_MODEL_SERVER_SETUP & (1 << index)) == 2) ||
-       ((ENABLE_SCENE_MODEL_SERVER_SETUP & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_SCENE_MODEL_SERVER_SETUP & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = SCENE_MODEL_SERVER_SETUP_MODEL_ID;      
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
@@ -640,36 +711,125 @@ MOBLE_RESULT ApplicationInitSigModelList(void)
     /**************************************************************************/ 
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_ONOFF
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_CLIENT_ONOFF & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_CLIENT_ONOFF & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_CLIENT_ONOFF & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_CLIENT_ONOFF & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_CLIENT_ONOFF_MODEL_ID;   
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
       return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_GENERIC_MODEL_CLIENT_LEVEL & (1 << index)) == 1) ||
-       ((ENABLE_GENERIC_MODEL_CLIENT_LEVEL & (1 << index)) == 2) ||
-       ((ENABLE_GENERIC_MODEL_CLIENT_LEVEL & (1 << index)) == 4))
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_CLIENT_LEVEL & (1 << index)) == (1 << index)))
     {
       Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
 #endif
+    
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME
+    if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
+      return(MOBLE_RESULT_FAIL);
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME & (1 << index)) == (1 << index)))
+    {
+      Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME_MODEL_ID;
+      Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
+      modelCount++;
+    }
+#endif
+    
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF
+    if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
+      return(MOBLE_RESULT_FAIL);
+    }
+    
+    if(((ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF & (1 << index)) == (1 << index)))
+    {
+      Appli_SIG_Models[index][modelIndex++] = GENERIC_MODEL_CLIENT_POWER_ONOFF_MODEL_ID;
+      Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
+      modelCount++;
+    }
+#endif
+    
+#ifdef ENABLE_SENSOR_MODEL_CLIENT
+    if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
+      return(MOBLE_RESULT_FAIL);
+    }
+    
+    if(((ENABLE_SENSOR_MODEL_CLIENT & (1 << index)) == (1 << index)))
+    {
+      Appli_SIG_Models[index][modelIndex++] = SENSOR_CLIENT_MODEL_ID;
+      Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
+      modelCount++;
+    }
+#endif
+    
 #ifdef ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS
     if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
-      return(MOBLE_RESULT_FAIL);
-    if(((ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS & (1 << index)) == 1) ||
-       ((ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS & (1 << index)) == 2) ||
-       ((ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS & (1 << index)) == 4))
     {
-      Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID;
+      return(MOBLE_RESULT_FAIL);
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS & (1 << index)) == (1 << index)))
+    {
+      Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_CLIENT_LIGHTNESS_MODEL_ID;
+      Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
+      modelCount++;
+    }
+#endif
+
+#ifdef ENABLE_LIGHT_MODEL_CLIENT_CTL
+    if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
+      return(MOBLE_RESULT_FAIL);
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_CLIENT_CTL & (1 << index)) == (1 << index)))
+    {
+      Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_CLIENT_CTL_MODEL_ID;
+      Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
+      modelCount++;
+    }
+#endif
+
+#ifdef ENABLE_LIGHT_MODEL_CLIENT_HSL
+    if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
+      return(MOBLE_RESULT_FAIL);
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_CLIENT_HSL & (1 << index)) == (1 << index)))
+    {
+      Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_CLIENT_HSL_MODEL_ID;
+      Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
+      modelCount++;
+    }
+#endif
+
+#ifdef ENABLE_LIGHT_MODEL_CLIENT_LC
+    if(modelCount >= APPLICATION_SIG_MODELS_MAX_COUNT)
+    {
+      return(MOBLE_RESULT_FAIL);
+    }
+    
+    if(((ENABLE_LIGHT_MODEL_CLIENT_LC & (1 << index)) == (1 << index)))
+    {
+      Appli_SIG_Models[index][modelIndex++] = LIGHT_MODEL_CLIENT_LC_MODEL_ID;
       Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
       modelCount++;
     }
@@ -772,9 +932,10 @@ MOBLEUINT8 ApplicationGetCLIENTSigModelList(MOBLEUINT16* pModels_sig_ID, MOBLEUI
 */
 MOBLEUINT8 ApplicationSetNodeSigModelList(void)
 {
-  BLEMeshSetSelfModelList(NumberOfElements);
-  
-  return  1; //APPLI_SIG_MODELS_COUNT;  TBD
+  if (MOBLE_SUCCEEDED(BLEMeshSetSelfModelList(NumberOfElements)))
+    return 1; //APPLI_SIG_MODELS_COUNT;  TBD
+  else
+    return 0;
 }
 
 

@@ -29,6 +29,8 @@
 #include "shci.h"
 #include "stm_logging.h"
 #include "app_conf.h"
+#include "stm32_lpm.h"
+#include "stm32_seq.h"
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #include "vcp.h"
 #include "vcp_conf.h"
@@ -39,6 +41,10 @@
 #define C_PANID                 0x2222U
 #define C_CHANNEL_NB            12U
 #define C_RESSOURCE             "light"
+
+#define COAP_SEND_TIMEOUT               (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
+#define THREAD_CHANGE_MODE_TIMEOUT      (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
+#define THREAD_LINK_POLL_PERIOD         (5*1000*1000/CFG_TS_TICK_VAL) /**< 5s */
 
 /* Private function prototypes -----------------------------------------------*/
 static void APP_THREAD_CheckWirelessFirmwareInfo(void);
@@ -56,8 +62,13 @@ static void Receive_Notification_From_M0(void);
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 static uint32_t ProcessCmdString(uint8_t* buf , uint32_t len);
 #else
+#if (CFG_FULL_LOW_POWER == 0)
 static void RxCpltCallback(void);
-#endif
+#endif /* (CFG_FULL_LOW_POWER == 0) */
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
+
+/* USER CODE BEGIN PFP */
+static void APP_THREAD_SendCoapMsg(void);
 static void APP_THREAD_SendCoapMulticastRequest(uint8_t command);
 static void APP_THREAD_DummyReqHandler(void                * p_context,
                                    otCoapHeader        * pHeader,
@@ -66,7 +77,10 @@ static void APP_THREAD_DummyReqHandler(void                * p_context,
 static void APP_THREAD_CoapRequestHandler(otCoapHeader        * pHeader,
                                   otMessage           * pMessage,
                                   const otMessageInfo * pMessageInfo);
-static void APP_THREAD_SendCoapMsg(void);
+
+static void APP_THREAD_SetSleepyEndDeviceMode(void);
+static void APP_THREAD_CoapTimingElapsed(void);
+static void APP_THREAD_SetThreadMode(void);
 
 /* Private variables ---------------------------------------------------------*/
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -74,27 +88,41 @@ static uint8_t TmpString[C_SIZE_CMD_STRING];
 static uint8_t VcpRxBuffer[sizeof(TL_CmdSerial_t)];        /* Received Data over USB are stored in this buffer */
 static uint8_t VcpTxBuffer[sizeof(TL_EvtPacket_t) + 254U]; /* Transmit buffer over USB */
 #else
+#if (CFG_FULL_LOW_POWER == 0)
 static uint8_t aRxBuffer[C_SIZE_CMD_STRING];
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
+
+#if (CFG_FULL_LOW_POWER == 0)
 static uint8_t CommandString[C_SIZE_CMD_STRING];
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 static __IO uint16_t indexReceiveChar = 0;
 static __IO uint16_t CptReceiveCmdFromUser = 0;
 
 static TL_CmdPacket_t *p_thread_otcmdbuffer;
 static TL_EvtPacket_t *p_thread_notif_M0_to_M4;
-static __IO uint32_t  CptReceiveMsgFromM0 = 0; /* Debug counter */
-
+static __IO uint32_t  CptReceiveMsgFromM0 = 0;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
 
+/* USER CODE BEGIN PV */
 static otCoapResource OT_Ressource = {C_RESSOURCE, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapRequestHandler, NULL};
 static otMessageInfo OT_MessageInfo = {0};
 static uint8_t OT_Command = 0;
 static otCoapHeader  OT_Header = {0};
 static uint8_t OT_ReceivedCommand = 0;
 static otMessage   * pOT_Message = NULL;
+static otLinkModeConfig OT_LinkMode = {0};
+static uint32_t sleepyEndDeviceFlag = FALSE;
+static uint8_t sedCoapTimerID;
+static uint8_t setThreadModeTimerID;
+
+/* Debug */
+static uint32_t DebugRxCoapCpt = 0;
+static uint32_t DebugTxCoapCpt = 0;
+/* USER CODE END PV */
 
 /* Functions Definition ------------------------------------------------------*/
 
@@ -104,7 +132,11 @@ static otMessage   * pOT_Message = NULL;
  * @retval None
  */
 void APP_THREAD_Init( void )
-{  
+{
+  /* USER CODE BEGIN APP_THREAD_INIT_1 */
+
+  /* USER CODE END APP_THREAD_INIT_1 */
+
   SHCI_CmdStatus_t ThreadInitStatus;
   
   /* Check the compatibility with the Coprocessor Wireless Firmware loaded */
@@ -116,6 +148,11 @@ void APP_THREAD_Init( void )
   /* Register cmdbuffer */
   APP_THREAD_RegisterCmdBuffer(&ThreadOtCmdBuffer);
 
+  /**
+   * Do not allow standby in the application
+   */
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_THREAD, UTIL_LPM_DISABLE);
+
   /* Init config buffer and call TL_THREAD_Init */
   APP_THREAD_TL_THREAD_INIT();
 
@@ -124,15 +161,33 @@ void APP_THREAD_Init( void )
 
   /* Send Thread start system cmd to M0 */
   ThreadInitStatus = SHCI_C2_THREAD_Init();
-
+  
+  /* Prevent unused argument(s) compilation warning */
   UNUSED(ThreadInitStatus);
+
   /* Register task */
   /* Create the different tasks */
   UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
   UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_COAP_MSG_BUTTON, UTIL_SEQ_RFU, APP_THREAD_SendCoapMsg);
 
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_COAP_SEND_MSG, UTIL_SEQ_RFU,APP_THREAD_SendCoapMsg);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_SET_THREAD_MODE, UTIL_SEQ_RFU,APP_THREAD_SetSleepyEndDeviceMode);
+
   /* Initialize and configure the Thread device*/
   APP_THREAD_DeviceConfig();
+
+  /**
+   * Create timer to handle COAP request sending
+   */
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &sedCoapTimerID, hw_ts_Repeated, APP_THREAD_CoapTimingElapsed);
+  /* Allow the 800_15_4 IP to enter in low power mode */
+  SHCI_C2_RADIO_AllowLowPower(THREAD_IP,TRUE);
+
+  /**
+   * Create timer to change Thread Mode to SED
+   */
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &setThreadModeTimerID, hw_ts_SingleShot, APP_THREAD_SetThreadMode);
+
 }
 
 void APP_THREAD_Stop(void)
@@ -150,6 +205,10 @@ void APP_THREAD_CleanCallbacks(void)
 {
   otRemoveStateChangeCallback(NULL, APP_THREAD_StateNotif, NULL);
   otCoapRemoveResource(NULL, &OT_Ressource);
+
+  /* Remove Timers if any */
+  HW_TS_Delete(setThreadModeTimerID);
+  HW_TS_Delete(sedCoapTimerID);
 }
 
 /**
@@ -313,11 +372,13 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
             BSP_LED_Off(LED2);
             BSP_LED_On(LED3);
             APP_DBG("THREAD: Child");
+            HW_TS_Start(setThreadModeTimerID, (uint32_t)THREAD_CHANGE_MODE_TIMEOUT);
             break;
         case OT_DEVICE_ROLE_ROUTER :
             BSP_LED_Off(LED2);
             BSP_LED_On(LED3);
             APP_DBG("THREAD: Router");
+            HW_TS_Start(setThreadModeTimerID, (uint32_t)THREAD_CHANGE_MODE_TIMEOUT);
             break;
         case OT_DEVICE_ROLE_LEADER :
             BSP_LED_On(LED2);
@@ -387,6 +448,7 @@ static void APP_THREAD_CoapRequestHandler(otCoapHeader * pHeader,
     if (OT_ReceivedCommand == 1U)
     {
       BSP_LED_Toggle(LED1);
+      APP_DBG("**** Recept COAP nb **** %d ",DebugRxCoapCpt++);
     }
 
   } while (false);
@@ -400,10 +462,22 @@ static void APP_THREAD_CoapRequestHandler(otCoapHeader * pHeader,
   */
 static void APP_THREAD_SendCoapMulticastRequest(uint8_t command)
 {
-  otError   error = OT_ERROR_NONE;
+  otError error = OT_ERROR_NONE;
+
   OT_Command = command;
 
-  APP_DBG("APP_THREAD_SendCoapMulticastRequest");
+  /* Forbid the 800_15_4 IP to enter in low power mode.
+   *
+   * Reason for that...
+   * As soon as the M0 is receiving an ot cmd, it wake up the IP 802_15_4,
+   * send the command and put back the IP 802_15_4 in sleep mode when possible.
+   * If the application send too much ot_cmd commands sequentially, the IP 802_15_4
+   * will wake up and sleep at a non reasonable speed. It is why it is advised
+   * to control when the IP 802_15_4 radio is allowed to enter in low power.
+   */
+  SHCI_C2_RADIO_AllowLowPower(THREAD_IP,FALSE);
+
+  /* Send the COAP request */
   do
   {
     otCoapHeaderInit(&OT_Header, OT_COAP_TYPE_NON_CONFIRMABLE, OT_COAP_CODE_PUT);
@@ -435,11 +509,97 @@ static void APP_THREAD_SendCoapMulticastRequest(uint8_t command)
                               NULL);
   } while (false);
 
+  APP_DBG("*** Send COAP nb **** %d",DebugTxCoapCpt++);
+
   if (error != OT_ERROR_NONE && pOT_Message != NULL)
   {
-        otMessageFree(pOT_Message);
-        APP_THREAD_Error(ERR_THREAD_COAP_SEND_REQUEST,error);
+    otMessageFree(pOT_Message);
+    APP_THREAD_Error(ERR_THREAD_COAP_SEND_REQUEST,error);
   }
+
+  /* Allow the 800_15_4 IP to enter in low power mode */
+  SHCI_C2_RADIO_AllowLowPower(THREAD_IP,TRUE);
+}
+
+
+/**
+ * @brief This function is used to set the sleepyEndDevice mode
+ *        and configure its pool period.
+ *
+ * @param None
+ * @retval None
+ */
+static void APP_THREAD_SetSleepyEndDeviceMode(void)
+{
+  otError   error = OT_ERROR_NONE;
+
+  APP_DBG("Set pool period to %d seconds", THREAD_LINK_POLL_PERIOD);
+
+  /* Set the pool period to 5 sec. It means that when the device will enter
+   * in 'sleepy end device' mode, it will send an ACK_Request every 5 sec.
+   * This message will act as keep alive message.
+   */
+  otLinkSetPollPeriod(NULL, THREAD_LINK_POLL_PERIOD);
+
+  /* Set the sleepy end device mode */
+  OT_LinkMode.mRxOnWhenIdle = 0;
+  OT_LinkMode.mSecureDataRequests = 1U;
+  OT_LinkMode.mDeviceType = 0;
+  OT_LinkMode.mNetworkData = 1U;
+
+  error = otThreadSetLinkMode(NULL,OT_LinkMode);
+  if (error != OT_ERROR_NONE)
+    APP_THREAD_Error(ERR_THREAD_LINK_MODE,error);
+
+  /* After reaching the child or router state, the system
+   *   a) sets the 'sleepy end device' mode
+   *   b) perform a Thread stop
+   *   c) perform a Thread start.
+   *
+   *  NOTE : According to the Thread specification, it is necessary to set the
+   *         mode before starting Thread.
+   *
+   * A Child that has attached to its Parent indicating it is an FTD MUST NOT use Child UpdateRequest
+   * to modify its mode to MTD.
+   * As a result, you need to first detach from the network before switching from FTD to MTD at runtime,
+   * then reattach.
+   *
+   */
+  if (sleepyEndDeviceFlag == FALSE)
+  {
+    error = otThreadSetEnabled(NULL, false);
+    if (error != OT_ERROR_NONE)
+      APP_THREAD_Error(ERR_THREAD_LINK_MODE,error);
+    error = otThreadSetEnabled(NULL, true);
+    if (error != OT_ERROR_NONE)
+      APP_THREAD_Error(ERR_THREAD_LINK_MODE,error);
+    sleepyEndDeviceFlag = TRUE;
+  }
+
+  APP_DBG("Start CoAP timer for data sending");
+  /* Start the timer */
+  HW_TS_Start(sedCoapTimerID, (uint32_t)COAP_SEND_TIMEOUT);
+
+}
+
+static void APP_THREAD_CoapTimingElapsed( void )
+{
+  otDeviceRole role;
+
+  role = otThreadGetDeviceRole(NULL);
+
+  if ((role == OT_DEVICE_ROLE_CHILD) || (role == OT_DEVICE_ROLE_ROUTER))
+  {
+    if (sleepyEndDeviceFlag == TRUE)
+    {
+      UTIL_SEQ_SetTask(TASK_COAP_SEND_MSG,CFG_SCH_PRIO_1);
+    }
+  }
+}
+
+static void APP_THREAD_SetThreadMode( void )
+{
+  UTIL_SEQ_SetTask(TASK_SET_THREAD_MODE,CFG_SCH_PRIO_1);
 }
 
 /**
@@ -694,6 +854,7 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
 }
 #endif/* (CFG_USB_INTERFACE_ENABLE != 0) */
 
+#if (CFG_FULL_LOW_POWER == 0)
 /**
  * @brief Process sends receive CLI command to M0.
  * @param  None
@@ -713,6 +874,7 @@ static void Send_CLI_To_M0(void)
 
   TL_CLI_SendCmd();
 }
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 
 /**
  * @brief Send notification for CLI TL Channel.
@@ -733,11 +895,16 @@ static void Send_CLI_Ack_For_OT(void)
  */
 void APP_THREAD_Init_UART_CLI(void)
 {
+#if (CFG_FULL_LOW_POWER == 0)
   UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU,Send_CLI_To_M0);
+#endif /* (CFG_FULL_LOW_POWER == 0) */
+
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
+#if (CFG_FULL_LOW_POWER == 0)
   HW_UART_Init(CFG_CLI_UART);
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 }
 

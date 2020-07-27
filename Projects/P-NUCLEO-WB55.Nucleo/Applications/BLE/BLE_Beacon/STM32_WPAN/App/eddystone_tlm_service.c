@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  * File Name          : App/eddystone_tlm_service.c
- * Description        :   
+ * Description        :
  ******************************************************************************
   * @attention
   *
@@ -46,7 +46,7 @@ uint8_t tlm_adv;
 uint8_t TimerTLM_Id;
 EddystoneURL_InitTypeDef EddystoneURL_InitStruct;
 EddystoneUID_InitTypeDef EddystoneUID_InitStruct;
-EddystoneTLM_InitTypeDef EddystoneTLM_InitStruct;    
+EddystoneTLM_InitTypeDef EddystoneTLM_InitStruct;
 
 /* Private constants ---------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
@@ -147,11 +147,11 @@ static void EddystoneTLM(void)
 #ifdef USE_OTA
   uint32_t data_address = OTA_BEACON_DATA_ADDRESS + OFFSET_PAYLOAD_LENGTH; /* 0x8006009 */
 #endif
-  
+
   if(tlm_adv == TRUE)
   { /* Advertising of TLM */
     ret = aci_gap_set_non_discoverable();
-    
+
     if (ret != BLE_STATUS_SUCCESS)
     {
       while(1);
@@ -162,7 +162,7 @@ static void EddystoneTLM(void)
        ((*(uint8_t *)(OTA_BEACON_DATA_ADDRESS + 8)) == 0x01))
     { /* TLM present and User Data downloaded */
       EddystoneTLM_InitStruct.AdvertisingInterval = ADVERTISING_INTERVAL_IN_MS;
-      
+
       if((*(uint8_t *)(data_address + 9) == 0x00))
       { /* 0x8006012: EDDYSTONE UUID => TLM Data start at 0x8006027 */
         data_address += 0x09 + 0x15; /* 0x8006009 -> 0x8006027: 0x1E */
@@ -171,7 +171,7 @@ static void EddystoneTLM(void)
       { /* 0x8006012: EDDYSTONE URL => TLM Data start at 0x8006012 + 3 + (URL length - 6) */
         data_address += 0x09 + 0x03 + (EddystoneURL_InitStruct.UrlLength - 6);
       }
-          
+
       EddystoneTLM_InitStruct.TLM_Version = *(uint8_t *)data_address;
       if((*(uint8_t *)data_address) != 0xFF)
       { /* Battery Voltage downloaded */
@@ -201,63 +201,63 @@ static void EddystoneTLM(void)
         }
       }
       EddystoneTLM_Init(&EddystoneTLM_InitStruct);
-      
+
       tlm_adv = FALSE;
-      
-      /* Wait 1s */      
+
+      /* Wait 1s */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC);
     }
     else
-    { /* TLM not present or User Data not downloaded */ 
+    { /* TLM not present or User Data not downloaded */
       EddystoneTLM_Init(&EddystoneTLM_InitStruct);
-      
+
       tlm_adv = FALSE;
-      
-      /* Wait 1s */      
+
+      /* Wait 1s */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC);
     }
 #else
     /* No OTA */
     EddystoneTLM_Init(&EddystoneTLM_InitStruct);
-    
+
     tlm_adv = FALSE;
-    
-    /* Wait 1s */      
+
+    /* Wait 1s */
     HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC);
 #endif
   }
   else
   { /* Advertising of UUID or URL */
     ret = aci_gap_set_non_discoverable();
-    
+
     if (ret != BLE_STATUS_SUCCESS)
     {
       while(1);
     }
-    
+
 #ifdef USE_OTA
     data_address += 9; /* 0x8006012 */
     if((*(uint8_t *)data_address) == 0x00)
     {
       /* Eddystone UID */
       uint8_t i, NameId[10], BeaconId[6];
-      
+
       EddystoneUID_InitStruct.NamespaceID = NameId;
       EddystoneUID_InitStruct.BeaconID = BeaconId;
-      
+
       data_address += 1; /* 0x8006013 */
       EddystoneUID_InitStruct.CalibratedTxPower   = *(uint8_t *)data_address;
       data_address += 1; /* 0x8006014 */
-      for(i = 0; i < 10; i++) 
+      for(i = 0; i < 10; i++)
        EddystoneUID_InitStruct.NamespaceID[i] = *(uint8_t *)(data_address + i);
       data_address += 10; /* 0x800601E */
-      for(i = 0; i < 6; i++) 
+      for(i = 0; i < 6; i++)
         EddystoneUID_InitStruct.BeaconID[i] = *(uint8_t *)(data_address + i);
       data_address += 8; /* 0x8006026 */
 
       EddystoneUID_Init(&EddystoneUID_InitStruct);
       tlm_adv = TRUE;  /* Next TLM advertize */
-      /* 10s of UID advertize */        
+      /* 10s of UID advertize */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
     else if((*(uint8_t *)data_address) == 0x10)
@@ -265,37 +265,37 @@ static void EddystoneTLM(void)
       /* Eddystone URL */
       uint8_t i;
       uint8_t Url[100];
-      
+
       EddystoneURL_InitStruct.Url = Url;
       EddystoneURL_InitStruct.AdvertisingInterval = ADVERTISING_INTERVAL_IN_MS;
-      
+
       data_address += 1; /* 0x8006013 */
       EddystoneURL_InitStruct.CalibratedTxPower   = *(uint8_t *)data_address;
       data_address += 1; /* 0x8006014 */
       EddystoneURL_InitStruct.CalibratedTxPower   = *(uint8_t *)data_address;
       data_address += 1; /* 0x8006015 */
-      for(i = 0; i < EddystoneURL_InitStruct.UrlLength - 6; i++) 
+      for(i = 0; i < EddystoneURL_InitStruct.UrlLength - 6; i++)
         EddystoneURL_InitStruct.Url[i] = *(uint8_t *)(data_address + i);
       EddystoneURL_InitStruct.UrlLength           = *(uint8_t *)(OTA_BEACON_DATA_ADDRESS + OFFSET_PAYLOAD_LENGTH + 5); /* 0x800600e */
       data_address += EddystoneURL_InitStruct.UrlLength - 6; /* 0x8006015 + EddystoneURL_InitStruct.UrlLength - 6 */
-      
+
       EddystoneURL_Init(&EddystoneURL_InitStruct);
       tlm_adv = TRUE;  /* Next TLM advertize */
-      /* 10s of URL advertize */      
+      /* 10s of URL advertize */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
     else
     {
       EddystoneURL_Init(&EddystoneURL_InitStruct);
       tlm_adv = TRUE;
-      /* 10s of URL advertize */      
+      /* 10s of URL advertize */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
 #else
     /* No OTA */
     EddystoneURL_Init(&EddystoneURL_InitStruct);
     tlm_adv = TRUE;
-    /* 10s of URL advertize */      
+    /* 10s of URL advertize */
     HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
 #endif
   }
@@ -312,7 +312,7 @@ void EddystoneTLM_Process(void)
   uint8_t Url[]         = PHYSICAL_WEB_URL;
   uint8_t NamespaceID[] = { NAMESPACE_ID };
   uint8_t BeaconID[]    = { BEACON_ID };
-  
+
   EddystoneURL_InitStruct.AdvertisingInterval = ADVERTISING_INTERVAL_IN_MS;
   EddystoneURL_InitStruct.CalibratedTxPower = CALIBRATED_TX_POWER_AT_0_M;
   EddystoneURL_InitStruct.UrlScheme = UrlScheme;
@@ -333,9 +333,9 @@ void EddystoneTLM_Process(void)
 #endif
 
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(TimerTLM_Id), hw_ts_SingleShot, EddystoneTLM);
-    
+
 #ifdef USE_OTA
-  if(((*(uint8_t *)(OTA_BEACON_DATA_ADDRESS)) !=  0xFF) && 
+  if(((*(uint8_t *)(OTA_BEACON_DATA_ADDRESS)) !=  0xFF) &&
      (length !=  0xFF))
   {
     /* Service Data Updated via OTA */
@@ -344,23 +344,23 @@ void EddystoneTLM_Process(void)
     {
       /* Eddystone UID */
       uint8_t i, NameId[10], BeaconId[6];
-      
+
       EddystoneUID_InitStruct.NamespaceID = NameId;
       EddystoneUID_InitStruct.BeaconID = BeaconId;
-      
+
       data_address += 1; /* 0x8006013 */
       EddystoneUID_InitStruct.CalibratedTxPower   = *(uint8_t *)data_address;
       data_address += 1; /* 0x8006014 */
-      for(i = 0; i < 10; i++) 
+      for(i = 0; i < 10; i++)
        EddystoneUID_InitStruct.NamespaceID[i] = *(uint8_t *)(data_address + i);
       data_address += 10; /* 0x800601E */
-      for(i = 0; i < 6; i++) 
+      for(i = 0; i < 6; i++)
         EddystoneUID_InitStruct.BeaconID[i] = *(uint8_t *)(data_address + i);
       data_address += 8; /* 0x8006026 */
 
       EddystoneUID_Init(&EddystoneUID_InitStruct);
       tlm_adv = TRUE;
-      /* 10s of UID advertize */        
+      /* 10s of UID advertize */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
     else if((*(uint8_t *)data_address) == 0x10)
@@ -368,23 +368,23 @@ void EddystoneTLM_Process(void)
       /* Eddystone URL */
       uint8_t i;
       uint8_t Url[100];
-      
+
       EddystoneURL_InitStruct.Url = Url;
       EddystoneURL_InitStruct.AdvertisingInterval = ADVERTISING_INTERVAL_IN_MS;
-      
+
       data_address += 1; /* 0x8006013 */
       EddystoneURL_InitStruct.CalibratedTxPower   = *(uint8_t *)data_address;
       data_address += 1; /* 0x8006014 */
       EddystoneURL_InitStruct.CalibratedTxPower   = *(uint8_t *)data_address;
       data_address += 1; /* 0x8006015 */
-      for(i = 0; i < EddystoneURL_InitStruct.UrlLength - 6; i++) 
+      for(i = 0; i < EddystoneURL_InitStruct.UrlLength - 6; i++)
         EddystoneURL_InitStruct.Url[i] = *(uint8_t *)(data_address + i);
       EddystoneURL_InitStruct.UrlLength           = *(uint8_t *)(OTA_BEACON_DATA_ADDRESS + OFFSET_PAYLOAD_LENGTH + 5); /* 0x800600e */
       data_address += EddystoneURL_InitStruct.UrlLength - 6; /* 0x8006015 + EddystoneURL_InitStruct.UrlLength - 6 */
-      
+
       EddystoneURL_Init(&EddystoneURL_InitStruct);
       tlm_adv = TRUE;
-      /* 10s of URL advertize */      
+      /* 10s of URL advertize */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
   }
@@ -413,11 +413,11 @@ void EddystoneTLM_Process(void)
     EddystoneUID_InitStruct.CalibratedTxPower   = CALIBRATED_TX_POWER_AT_0_M;
     EddystoneUID_InitStruct.NamespaceID         = NamespaceID;
     EddystoneUID_InitStruct.BeaconID            = BeaconID;
-    
+
     EddystoneURL_Init(&EddystoneURL_InitStruct);
     tlm_adv = TRUE;
 
-    /* 10s of URL advertize */      
+    /* 10s of URL advertize */
     HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
   }
 }

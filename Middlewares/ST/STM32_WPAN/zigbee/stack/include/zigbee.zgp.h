@@ -1,4 +1,9 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zigbee.bdb.h
+ * @brief BDB header file
+ * @author Exegin Technologies
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZIGBEE_ZGP_H
 # define ZIGBEE_ZGP_H

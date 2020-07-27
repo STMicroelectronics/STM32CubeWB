@@ -1,4 +1,4 @@
-/* Copyright [2019 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_VOICE_H
 #define ZCL_VOICE_H
@@ -42,11 +42,13 @@ enum {
 };
 
 /* Voice of Zigbee Defined Values */
-#define FLAG_CODEC_TYPE_SUB_1           0x01
-#define FLAG_CODEC_TYPE_SUB_2           0x02
-#define FLAG_CODEC_TYPE_SUB_3           0x04
-#define FLAG_COMPRESSION_TYPE           0x08
-#define FLAG_COMPRESSION_RATE           0x10
+#define ZCL_VOICE_FLAG_CODEC_TYPE_SUB_1     0x01
+#define ZCL_VOICE_FLAG_CODEC_TYPE_SUB_2     0x02
+#define ZCL_VOICE_FLAG_CODEC_TYPE_SUB_3     0x04
+#define ZCL_VOICE_FLAG_COMPRESSION          0x08
+
+#define ZCL_VOICE_TX_RSP_ERROR_DECODE       0x00 /* Failure to decode voice data */
+#define ZCL_VOICE_TX_RSP_ERROR_ORDER        0x01 /* Wrong order of voice data */
 
 /* Request and Response Structures */
 struct voice_estab_req_t {
@@ -73,8 +75,7 @@ struct voice_voice_tx_t {
 };
 
 struct voice_voice_tx_rsp_t {
-    uint8_t seq_no;
-    uint8_t error_flag;
+    uint8_t error_flag; /* e.g. ZCL_VOICE_TX_RSP_ERROR_DECODE */
 };
 
 struct voice_control_t {
@@ -87,47 +88,44 @@ struct voice_control_rsp_t {
 
 /* Callback Structures */
 struct zcl_voice_server_callbacks_t {
-    /* For voice_tx, the application should return ZCL_STATUS_SUCCESS for all received packets, which will send
-     * a Default Response with SUCCESS. The ZCL7 spec is written such that it appears the server should not
-     * send a response at all, and the application would return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE and only
-     * send ZbZclVoiceServerSendVoiceTxRsp() upon error. This doesn't follow the standard ZCL method, where all
-     * requests should generate a reponse using the same ZCL sequence number. We'll leave this open to the
-     * application developer to decide. */
+    /* For voice_tx, the application should return ZCL_STATUS_SUCCESS or call ZbZclVoiceServerSendVoiceTxRsp
+     * to send an error response and return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE */
     enum ZclStatusCodeT (*estab_req)(struct ZbZclClusterT *clusterPtr, struct voice_estab_req_t *cmd_req,
         struct ZbZclAddrInfoT *src_info, void *arg);
+
     enum ZclStatusCodeT (*voice_tx)(struct ZbZclClusterT *clusterPtr, struct voice_voice_tx_t *cmd_req,
         struct ZbZclAddrInfoT *src_info, void *arg);
-    enum ZclStatusCodeT (*tx_complete)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *src_info, void *arg);
+
+    enum ZclStatusCodeT (*tx_complete)(struct ZbZclClusterT *clusterPtr,
+        struct ZbZclAddrInfoT *src_info, void *arg);
 };
 
 struct zcl_voice_client_callbacks_t {
-    enum ZclStatusCodeT (*voice_tx_rsp)(struct ZbZclClusterT *clusterPtr, struct voice_voice_tx_rsp_t *cmd_rsp,
-        struct ZbZclAddrInfoT *src_info, void *arg);
     enum ZclStatusCodeT (*control)(struct ZbZclClusterT *clusterPtr, struct voice_control_t *cmd_req,
         struct ZbZclAddrInfoT *src_info, void *arg);
 };
 
-/* Allocation Functions */
+/* Client API */
 struct ZbZclClusterT * ZbZclVoiceClientAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct zcl_voice_client_callbacks_t *callbacks, void *arg);
-struct ZbZclClusterT * ZbZclVoiceServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
-    struct zcl_voice_server_callbacks_t *callbacks, void *arg);
 
-/* Client API */
-enum ZclStatusCodeT ZbZclVoiceClientEstabReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclVoiceClientEstabReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct voice_estab_req_t *estab_req, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclVoiceVoiceTxReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclVoiceVoiceTxReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct voice_voice_tx_t *voice_tx, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclVoiceTxCompletedReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+enum ZclStatusCodeT ZbZclVoiceTxCompletedReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT ZbZclVoiceClientSendControlRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
     struct voice_control_rsp_t *rsp);
 
 /* Server API */
-enum ZclStatusCodeT ZbZclVoiceServerControlReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+struct ZbZclClusterT * ZbZclVoiceServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
+    struct zcl_voice_server_callbacks_t *callbacks, void *arg);
+
+enum ZclStatusCodeT ZbZclVoiceServerControlReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct voice_control_t *control_cmd, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT ZbZclVoiceServerSendEstabRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
@@ -135,7 +133,7 @@ enum ZclStatusCodeT ZbZclVoiceServerSendEstabRsp(struct ZbZclClusterT *clusterPt
 
 /* The application calls this to send the Voice Transmission Reponse Command if it ever encounters an
  * error processing a Voice Transmission packet */
-enum ZclStatusCodeT ZbZclVoiceServerSendVoiceTxRsp(struct ZbZclClusterT *clusterPtr, struct ZbApsAddrT *dst,
-    void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), struct voice_voice_tx_rsp_t *rsp, void *arg);
+enum ZclStatusCodeT ZbZclVoiceServerSendVoiceTxRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst,
+    struct voice_voice_tx_rsp_t *rsp);
 
 #endif /* ZCL_VOICE_H */

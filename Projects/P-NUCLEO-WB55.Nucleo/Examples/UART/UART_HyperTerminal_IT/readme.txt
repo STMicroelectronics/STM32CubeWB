@@ -1,5 +1,5 @@
 /**
-  @page UART_Hyperterminal_IT UART Hyperterminal IT example
+  @page UART_HyperTerminal_IT UART Hyperterminal IT example
   
   @verbatim
   ******************************************************************************

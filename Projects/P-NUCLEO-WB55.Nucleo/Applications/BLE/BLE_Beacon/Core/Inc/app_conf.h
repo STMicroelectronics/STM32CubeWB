@@ -34,8 +34,8 @@
 
 /**
  * Define Tx Power
- */   
-#define CFG_TX_POWER                      (0x18) /**< 0dbm */
+ */
+#define CFG_TX_POWER                      (0x18) /* -0.15dBm */
 
 /**
  * Define Advertising parameters
@@ -90,10 +90,10 @@
 #define CFG_KEYPRESS_SUPPORTED          (0x01)
 
 #define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
-   
+
 /**
  * Numeric Comparison Answers
- */   
+ */
 #define YES (0x01)
 #define NO  (0x00)
 
@@ -182,14 +182,14 @@
 #define CFG_BLE_ATT_VALUE_ARRAY_SIZE    (1344)
 
 /**
- * Prepare Write List size in terms of number of packet with ATT_MTU=23 bytes
+ * Prepare Write List size in terms of number of packet
  */
-#define CFG_BLE_PREPARE_WRITE_LIST_SIZE         ( 0x3A )
+#define CFG_BLE_PREPARE_WRITE_LIST_SIZE         BLE_PREP_WRITE_X_ATT(CFG_BLE_MAX_ATT_MTU)
 
 /**
  * Number of allocated memory blocks
  */
-#define CFG_BLE_MBLOCK_COUNT            ( 0x79 )
+#define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, CFG_BLE_MAX_ATT_MTU, CFG_BLE_NUM_LINK))
 
 /**
  * Enable or disable the Extended Packet length feature. Valid values are 0 or 1.

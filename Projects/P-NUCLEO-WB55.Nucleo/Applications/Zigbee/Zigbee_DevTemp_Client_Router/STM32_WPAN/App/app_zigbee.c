@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -385,10 +385,22 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
  */
 static void APP_ZIGBEE_SW1_Process()
 {
-  
   ZbZclReadReqT readReq;
-  memset(&readReq, 0, sizeof(readReq));
+  uint64_t epid = 0U;
+
+  if(zigbee_app_info.zb == NULL){
+    return;
+  }
   
+  /* Check if the router joined the network */
+  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) {
+    return;
+  }
+  if (epid == 0U) {
+    return;
+  }
+  
+  memset(&readReq, 0, sizeof(readReq));
   readReq.dst.mode = ZB_APSDE_ADDRMODE_SHORT;
   readReq.dst.endpoint =SW1_ENDPOINT;
   readReq.dst.nwkAddr = 0x0000;

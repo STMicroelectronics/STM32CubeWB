@@ -153,6 +153,22 @@ typedef MOBLE_RESULT (*MOBLE_HEARTBEAT_CB)(MOBLE_ADDRESS src, MOBLE_ADDRESS dst,
 */
 typedef MOBLE_RESULT (*MOBLE_ATTENTION_TIMER_CB)(void);
 
+//typedef __packed struct
+typedef struct __attribute__((packed))
+{
+  MOBLEUINT8 length;
+  MOBLEUINT8 type;
+  MOBLEUINT8 data[];
+} LE_ADV;
+
+/**
+  * @brief  WEAK_FUNCTION
+  *         Use the WEAK_FUNCTION macro to declare a weak function.
+  *         Usage:  WEAK_FUNCTION(int my_weak_function(void))
+  */
+#define WEAK_FUNCTION(function)        __weak function
+
+
 #endif /* _TYPES_H */
 /******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
 

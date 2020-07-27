@@ -18,7 +18,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "ble.h"
@@ -74,10 +73,10 @@ static tBleStatus IBeacon_Init(IBeacon_InitTypeDef *IBeacon_Init)
 /* USER CODE END IBeacon_Init_1 */
   tBleStatus ret = BLE_STATUS_SUCCESS;
   uint16_t AdvertisingInterval = (IBeacon_Init->AdvertisingInterval * ADVERTISING_INTERVAL_INCREMENT / 10);
-  
+
   /* Disable scan response. */
   hci_le_set_scan_response_data(0, NULL);
-  
+
   /* Put the device in a non-connectable mode. */
   ret = aci_gap_set_discoverable(ADV_NONCONN_IND,                          /*< Advertise as non-connectable, undirected. */
                                  AdvertisingInterval, AdvertisingInterval, /*< Set the advertising interval as 700 ms (0.625 us increment). */
@@ -85,20 +84,20 @@ static tBleStatus IBeacon_Init(IBeacon_InitTypeDef *IBeacon_Init)
                                  0, NULL,                                  /*< Do not use a local name. */
                                  0, NULL,                                  /*< Do not include the service UUID list. */
                                  0, 0);                                    /*< Do not set a slave connection interval. */
-  
+
   if (ret != BLE_STATUS_SUCCESS)
   {
     return ret;
   }
-  
+
   /* Remove the TX power level advertisement (this is done to decrease the packet size). */
   ret = aci_gap_delete_ad_type(AD_TYPE_TX_POWER_LEVEL);
-  
+
   if (ret != BLE_STATUS_SUCCESS)
   {
     return ret;
   }
-  
+
   uint8_t service_data[] =
   {
     26,                                                                      /*< Length. */
@@ -126,32 +125,32 @@ static tBleStatus IBeacon_Init(IBeacon_InitTypeDef *IBeacon_Init)
     IBeacon_Init->MinorID[1],
     IBeacon_Init->CalibratedTxPower,                                         /*< Ranging data. */
   };
-  
+
   uint8_t flags[] =
   {
     2,                                                                      /*< Length. */
     AD_TYPE_FLAGS,                                                          /*< Flags data type value. */
     (FLAG_BIT_LE_GENERAL_DISCOVERABLE_MODE | FLAG_BIT_BR_EDR_NOT_SUPPORTED) /*< BLE general discoverable, without BR/EDR support. */
   };
-  
+
   /* Update the service data. */
   ret = aci_gap_update_adv_data(sizeof(service_data), service_data);
-  
+
   if (ret != BLE_STATUS_SUCCESS)
   {
     return ret;
   }
-  
+
   /* Update the adverstising flags. */
   ret = aci_gap_update_adv_data(sizeof(flags), flags);
-  
+
   if (ret != BLE_STATUS_SUCCESS)
   {
     return ret;
   }
 /* USER CODE BEGIN IBeacon_Init_2 */
 
-/* USER CODE END IBeacon_Init_2 */  
+/* USER CODE END IBeacon_Init_2 */
   return ret;
 }
 
@@ -164,7 +163,7 @@ void IBeacon_Process(void)
   uint8_t UuID[]    = { UUID };
   uint8_t MajorID[] = { MAJOR_ID };
   uint8_t MinorID[] = { MINOR_ID };
-  
+
   IBeacon_InitTypeDef IBeacon_InitStruct =
   {
     .AdvertisingInterval = ADVERTISING_INTERVAL_IN_MS,
@@ -173,14 +172,14 @@ void IBeacon_Process(void)
     .MinorID             = MinorID,
     .CalibratedTxPower   = CALIBRATED_TX_POWER_AT_1_M
   };
-  
+
 #ifdef USE_OTA
-  if(((*(uint8_t *)(OTA_BEACON_DATA_ADDRESS + OFFSET_PAYLOAD_LENGTH)) ==  27) && 
+  if(((*(uint8_t *)(OTA_BEACON_DATA_ADDRESS + OFFSET_PAYLOAD_LENGTH)) ==  27) &&
      ((*(uint8_t *)(OTA_BEACON_DATA_ADDRESS + OFFSET_PAYLOAD_DATA)) ==  26))
   {
     uint8_t i;
     uint32_t data_address = OTA_BEACON_DATA_ADDRESS + OFFSET_PAYLOAD_DATA + 6;
-    
+
     for(i = 0; i < 16; i++)
       IBeacon_InitStruct.UuID[i] = *(uint8_t *)(data_address + i);
     data_address += 16;
@@ -193,11 +192,11 @@ void IBeacon_Process(void)
     IBeacon_InitStruct.CalibratedTxPower = *(uint8_t *)(data_address);
   }
 #endif
-  
+
   IBeacon_Init(&IBeacon_InitStruct);
 /* USER CODE BEGIN IBeacon_Process_2 */
 
-/* USER CODE END IBeacon_Process_2 */  
+/* USER CODE END IBeacon_Process_2 */
 }
 /* USER CODE BEGIN FD */
 

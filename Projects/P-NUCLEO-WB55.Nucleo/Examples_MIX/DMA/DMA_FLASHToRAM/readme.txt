@@ -55,6 +55,10 @@ example by modifying defines values in the file main.h.
 
 @note This example need to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
+      
+@par Keywords
+
+System, DMA, Data Transfer, Memory to memory, Flash, SRAM
 
 @par Directory contents
 

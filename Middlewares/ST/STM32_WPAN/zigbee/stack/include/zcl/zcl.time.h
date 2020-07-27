@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_TIME_H
 # define ZCL_TIME_H
@@ -24,7 +24,7 @@
  * T.S.A0008 | True
  * T.S.A0009 | True
  * T.S.AFFFD | True
- * 
+ *
  * Client Attributes
  * T.C.AFFFD | True
  */
@@ -35,8 +35,9 @@
  * Definitions
  *---------------------------------------------------------------
  */
-/* Time cluster attributes */
-enum {
+
+/** Time Server Attribute IDs */
+enum ZbZclTimeSvrAttrT {
     ZCL_TIME_ATTR_TIME = 0x0000,
     ZCL_TIME_ATTR_STATUS = 0x0001,
     ZCL_TIME_ATTR_TIME_ZONE = 0x0002,
@@ -62,30 +63,32 @@ enum {
 /* January 1, 2000, which equates to 946,684,800 seconds. */
 #define ZCL_TIME_EPOCH_UNIX                  0x386D4380UL
 
+#define ZCL_TIME_TIME_ZONE_MIN              (-86400)
+#define ZCL_TIME_TIME_ZONE_MAX              (86400)
+
+#define ZCL_TIME_DST_SHIFT_MIN              (-86400)
+#define ZCL_TIME_DST_SHIFT_MAX              (86400)
+
 /*---------------------------------------------------------------
  * Time Server
  *---------------------------------------------------------------
  */
+
+/** Time Server callbacks configuration */
 struct ZbZclTimeServerCallbacks {
     uint32_t (*get_time)(struct ZbZclClusterT *clusterPtr, void *arg);
+
     void (*set_time)(struct ZbZclClusterT *clusterPtr, uint32_t time_val, void *arg);
+    /**< The set_time app callback should also set the ZCL_TIME_ATTR_LAST_SET_TIME
+     * attribute if successful. */
 };
 
 struct ZbZclClusterT * ZbZclTimeServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclTimeServerCallbacks *callbacks, void *arg);
 
-/*---------------------------------------------------------------
- * Time Server Helper Functions
- *---------------------------------------------------------------
- */
-/* Wrappers to read/write the server's ZCL_TIME_ATTR_STATUS attribute */
-void ZbZclTimeServerSetSynchronized(struct ZbZclClusterT *clusterPtr, bool isSynchronized);
-bool ZbZclTimeServerIsSynchronized(struct ZbZclClusterT *clusterPtr);
-void ZbZclTimeServerSetStatusMaster(struct ZbZclClusterT *clusterPtr, bool enable);
+void ZbZclTimeServerSetTime(struct ZbZclClusterT *cluster, uint32_t current_time);
 
-/* Wrapper to get/set the current time. This is only applicable if ZbZclTimeServerAlloc() was called with use_stack_uptime=true. */
-void ZbZclTimeServerSetTime(struct ZbZclClusterT *clusterPtr, uint32_t currentTime);
-uint32_t ZbZclTimeServerCurrentTime(struct ZbZclClusterT *clusterPtr);
+uint32_t ZbZclTimeServerCurrentTime(struct ZbZclClusterT *cluster);
 
 /*---------------------------------------------------------------
  * Time Client
