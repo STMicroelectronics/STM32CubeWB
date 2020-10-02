@@ -213,6 +213,8 @@ uint64_t otJamDetectionGetHistoryBitmap(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (uint64_t)p_ot_req->Data[0];
+
+    /* 64bit word is returned with two 32bits words (MSB are at offset 1 and LSB are offset 0) */
+    return (uint64_t)((p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
 }
 #endif /* OPENTHREAD_ENABLE_JAM_DETECTION */

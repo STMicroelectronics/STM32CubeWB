@@ -99,7 +99,7 @@
 #define PRESS_SENSOR        0X2U
 #define ACCEL_SENSOR        0X3U
 /******************************************************************************/
-#define VENDOR_DATA_BYTE       50
+#define VENDOR_DATA_BUFFER_SIZE           140
 #define R_ASCI_CODE            0X52
 
 #define DEFAULT_DELAY_PACKET_FROM         500U
@@ -110,10 +110,6 @@
 
 #define BOUNCE_THRESHOLD                20U
 #define LONG_PRESS_THRESHOLD            1000U
-
-#define FIRST_ELEMENT 1
-#define SECOND_ELEMENT 2
-#define THIRD_ELEMENT 3
 
 /* Exported variables  ------------------------------------------------------- */
 /** \brief Callback map */
@@ -127,20 +123,19 @@ typedef struct
   void (*GetTestCount)(MOBLEUINT8*);
   MOBLE_RESULT (*DataControlCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);
 } Appli_Vendor_cb_t;
-#pragma pack(4)
 
 extern const Appli_Vendor_cb_t VendorAppli_cb;
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 
-MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr, MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT Vendor_WriteLocalDataCb(MODEL_MessageHeader_t *pmsgParams,  
                                     MOBLEUINT8 command, MOBLEUINT8 const *data, 
                                     MOBLEUINT32 length, MOBLEBOOL response);
-MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr, MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT Vendor_ReadLocalDataCb(MODEL_MessageHeader_t *pmsgParams,  
                                   MOBLEUINT8 command, MOBLEUINT8 const *data, 
                                   MOBLEUINT32 length, MOBLEBOOL response);
 
-MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr, MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT Vendor_OnResponseDataCb(MODEL_MessageHeader_t *pmsgParams,  
                                   MOBLEUINT8 command, MOBLEUINT8 const *pRxData, 
                                   MOBLEUINT32 dataLength, MOBLEBOOL response);
 
@@ -148,12 +143,11 @@ void Vendor_Process(void);
 void Vendor_Publish(MOBLE_ADDRESS srcAddress);
 void Vendor_TestRemoteData(MOBLE_ADDRESS src,MOBLE_ADDRESS dst,MOBLEUINT8 elementIndex);
 void Vendor_TestCounterInc(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elementIndex);
-
+void Vendor_SendDataFreq(MOBLEUINT8 freq);
 MOBLE_RESULT VendorModel_PID1_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
                                                  MOBLEUINT16 *length);
 
-MOBLE_RESULT VendorModel_PID1_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT VendorModel_PID1_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParams, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 *pResponsedata, 
                                     MOBLEUINT32 *plength, 
@@ -162,8 +156,7 @@ MOBLE_RESULT VendorModel_PID1_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                     MOBLEBOOL response);
 
 
-MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 
-                                                 MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParams,  
                                                  MOBLEUINT16 opcode, 
                                                  MOBLEUINT8 const *pRxData, 
                                                  MOBLEUINT32 dataLength, 
@@ -172,4 +165,4 @@ MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
 
 #endif /* __VENDOR_H */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

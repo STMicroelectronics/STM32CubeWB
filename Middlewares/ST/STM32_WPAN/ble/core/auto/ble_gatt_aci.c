@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_gatt_aci.c
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (gatt_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************

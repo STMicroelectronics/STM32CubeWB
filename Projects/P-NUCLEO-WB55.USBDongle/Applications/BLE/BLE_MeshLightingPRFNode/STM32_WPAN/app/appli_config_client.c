@@ -6,7 +6,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -24,6 +24,7 @@
 #include "appli_generic.h"
 #include "appli_light.h"
 #include "common.h"
+#include "mesh_cfg.h"
 #include "mesh_cfg_usr.h"
 #include "appli_nvm.h"
 #include "config_client.h"
@@ -58,6 +59,10 @@
 #define NUM_VENDOR_MODELS_TO_PUBLISH 0
 #define NUM_VENDOR_MODELS_TO_BIND_APP 0
 
+/******************************************************************************/
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
+/******************************************************************************/
+
 const MOBLEUINT8 aConfigAppKeyDefault[19]= 
                 { /* NetKeyIndexAndAppKeyIndex : 3B
                 Index of the NetKey and index of the AppKey*/
@@ -88,51 +93,6 @@ const MOBLEUINT8 aNoParamDefaultConfig;
 const MOBLEUINT8 aNoInitParamDefault[MAX_CONFIG_PARAM_SIZE]= {0};
 
 /* Private macro -------------------------------------------------------------*/
-MOBLEUINT16 aSigModelsToBind[][MAX_ELEMENTS_PER_NODE] = {
-{
-  GENERIC_MODEL_SERVER_ONOFF_MODEL_ID, 
-  GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,
-  //                  GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID, 
-  //                  SENSOR_SERVER_MODEL_ID,
-  //                  LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID,
-  //                  LIGHT_MODEL_SERVER_LC_MODEL_ID
-  },
-  {
-    GENERIC_MODEL_SERVER_ONOFF_MODEL_ID, 
-    GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,
-    //                  GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID, 
-    //                  SENSOR_SERVER_MODEL_ID,
-    //                  LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID,
-    //                  LIGHT_MODEL_SERVER_LC_MODEL_ID
-  },
-  {
-    GENERIC_MODEL_SERVER_ONOFF_MODEL_ID, 
-    GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,
-    //                  GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID, 
-    //                  SENSOR_SERVER_MODEL_ID,
-    //                  LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID,
-    //                  LIGHT_MODEL_SERVER_LC_MODEL_ID
-  }
-};
-
-
-MOBLEUINT16 aPublishModels[] = 
-{
-                  GENERIC_MODEL_SERVER_ONOFF_MODEL_ID,
-                  GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,
-//                  GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID, 
-//                  SENSOR_SERVER_MODEL_ID,
-//                  LIGHT_MODEL_SERVER_LIGHTNESS_MODEL_ID,
-//                  LIGHT_MODEL_SERVER_LC_MODEL_ID
-};
-
-MOBLEUINT16 aSubscribeModels[] = 
-{
-                  GENERIC_MODEL_SERVER_ONOFF_MODEL_ID, 
-                  GENERIC_MODEL_SERVER_LEVEL_MODEL_ID,
-//                  GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID, 
-//                  LIGHT_MODEL_SERVER_LC_MODEL_ID
-};        
 
 const MODEL_CONFIG_CLIENT_OpcodeTableParam_t ConfigClient_MessageOpcodes_Table[] = {
   /*    MOBLEUINT16 opcode, 
@@ -618,7 +578,7 @@ const MODEL_CONFIG_CLIENT_OpcodeTableParam_t ConfigClient_MessageOpcodes_Table[]
                Modified Publish Period is used for sending Current 
            Health Status messages when there are active faults to communicate */
   { OPCODE_HEALTH_PERIOD_SET_UNACKNOWLEDGED, 1, 1, aNoInitParamDefault },
-////  { OPCODE_HEALTH_PERIOD_STATUS              0x8037
+   /* { OPCODE_HEALTH_PERIOD_STATUS              0x8037  */
 
 
 
@@ -732,6 +692,8 @@ eClientSendMsgState_t eClientSendMsgState; /* Keeps the state of Sent Message */
 eServerRespRecdState_t eServerRespRecdState; /* Keeps the state of Received Message */
 
 /* Private function prototypes -----------------------------------------------*/
+MOBLEUINT8 AppliConfigClient_SendMessageDefault(MOBLEUINT8 elementIdx);
+
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -1478,10 +1440,10 @@ MOBLE_RESULT AppliConfigClient_SelfPublicationSetDefault (void)
   MOBLEUINT8  elementIndex;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
-  for (elementIndex=0; elementIndex < MAX_ELEMENTS_PER_NODE; elementIndex++ )
+  for (elementIndex=0; elementIndex < APPLICATION_NUMBER_OF_ELEMENTS; elementIndex++ )
   { 
     /*Checking for SIG Models*/
-    for (MOBLEUINT8 index=0; index < MAX_SIG_MODELS_PER_ELEMENT;  index++)
+    for (MOBLEUINT8 index=0; index < APPLICATION_SIG_MODELS_MAX_COUNT;  index++)
     {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
@@ -1492,6 +1454,14 @@ MOBLE_RESULT AppliConfigClient_SelfPublicationSetDefault (void)
       {
         break;
       }
+      else if (MODEL_IS_FOUNDATION_MODEL(modelIdentifier)) 
+      {
+        /* If Model is Foundation Model, then it doesnt need to be 
+            added for Publishing */  
+        
+        /* Do NOTHING, let the next Model be picked */
+      }
+
       else
       {
         ConfigClient_PublicationSet(elementAddress,
@@ -1507,7 +1477,7 @@ MOBLE_RESULT AppliConfigClient_SelfPublicationSetDefault (void)
     }
     
     /*Checking for VENDOR Models*/
-    for (MOBLEUINT8 index=0; index < MAX_VENDOR_MODELS_PER_ELEMENT;  index++)
+    for (MOBLEUINT8 index=0; index < APPLICATION_VENDOR_MODELS_MAX_COUNT;  index++)
   {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
@@ -1551,10 +1521,10 @@ MOBLE_RESULT AppliConfigClient_SelfSubscriptionSetDefault (void)
   MOBLEUINT16 address = DEFAULT_GROUP_ADDR;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
-  for (elementIndex=0; elementIndex < MAX_ELEMENTS_PER_NODE; elementIndex++ )
+  for (elementIndex=0; elementIndex < APPLICATION_NUMBER_OF_ELEMENTS; elementIndex++ )
   {
     /*Checking for SIG Models*/
-    for (MOBLEUINT8 index=0; index < MAX_SIG_MODELS_PER_ELEMENT;  index++)
+    for (MOBLEUINT8 index=0; index < APPLICATION_SIG_MODELS_MAX_COUNT;  index++)
     {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
@@ -1566,6 +1536,13 @@ MOBLE_RESULT AppliConfigClient_SelfSubscriptionSetDefault (void)
       {
         break;
       }
+      else if (MODEL_IS_FOUNDATION_MODEL(modelIdentifier)) 
+      {
+        /* If Model is Foundation Model, then it doesnt need to be 
+            Subscribed */  
+        
+        /* Do NOTHING, let the next Model be picked */
+      }
       else
       {
         ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
@@ -1573,7 +1550,7 @@ MOBLE_RESULT AppliConfigClient_SelfSubscriptionSetDefault (void)
     }
   
     /*Checking for Vendor Models*/
-    for (MOBLEUINT8 index=0; index < MAX_VENDOR_MODELS_PER_ELEMENT;  index++)
+    for (MOBLEUINT8 index=0; index < APPLICATION_VENDOR_MODELS_MAX_COUNT;  index++)
   {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
@@ -1610,10 +1587,10 @@ MOBLE_RESULT Appli_ConfigClient_SelfDefaultAppKeyBind (void)
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   appKeyIndex = DEFAULT_APPKEY_INDEX;
   
-  for (elementIndex=0; elementIndex < MAX_ELEMENTS_PER_NODE; elementIndex++ )
+  for (elementIndex=0; elementIndex < APPLICATION_NUMBER_OF_ELEMENTS; elementIndex++ )
   {
     /*Checking for SIG Models*/
-    for (MOBLEUINT8 index=0; index < MAX_SIG_MODELS_PER_ELEMENT;  index++)
+    for (MOBLEUINT8 index=0; index < APPLICATION_SIG_MODELS_MAX_COUNT;  index++)
     {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
@@ -1624,6 +1601,13 @@ MOBLE_RESULT Appli_ConfigClient_SelfDefaultAppKeyBind (void)
       {
         break;
       }
+      else if (MODEL_IS_FOUNDATION_MODEL(modelIdentifier)) 
+      {
+        /* If Model is Foundation Model, then it doesnt need to be binded 
+           with AppKey */  
+        
+        /* Do NOTHING, let the next Model be picked */
+      }
       else
   {
         ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
@@ -1631,7 +1615,7 @@ MOBLE_RESULT Appli_ConfigClient_SelfDefaultAppKeyBind (void)
     }
   
     /*Checking for VENDOR Models*/
-    for (MOBLEUINT8 index=0; index < MAX_VENDOR_MODELS_PER_ELEMENT;  index++)
+    for (MOBLEUINT8 index=0; index < APPLICATION_VENDOR_MODELS_MAX_COUNT;  index++)
   {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
@@ -1741,7 +1725,6 @@ MOBLEUINT16 GetSIGModelToBindApp(MOBLEUINT8 elementIndex,
                                  MOBLEUINT8 numberOfModels) 
 {
   
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   MOBLEUINT16 model_id;
   MOBLEUINT8 index;
   MOBLEUINT8 idxSIG = *pModelIndex;
@@ -1762,9 +1745,7 @@ MOBLEUINT16 GetSIGModelToBindApp(MOBLEUINT8 elementIndex,
   
   *pModelIndex = index;
   return model_id;
-#else  
-  return aSigModelsToBind[idxSIG][elementIdx] ; 
-#endif  
+
 }
 
 
@@ -1777,11 +1758,7 @@ MOBLEUINT16 GetSIGModelToBindApp(MOBLEUINT8 elementIndex,
 */ 
 MOBLEUINT32 GetVendorModelToBindApp(MOBLEUINT8 elementIndex, MOBLEUINT8 indexModels)
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return aNodeElements[elementIndex].aVendorModels[indexModels];
-#else 
-  return VENDORMODEL_STMICRO_ID1 ; 
-#endif
 }
 
 /**
@@ -1792,11 +1769,7 @@ MOBLEUINT32 GetVendorModelToBindApp(MOBLEUINT8 elementIndex, MOBLEUINT8 indexMod
 */ 
 MOBLEUINT8 GetCountSIGModelToBindApp(MOBLEUINT8 elementIndex)
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return aNodeElements[elementIndex].NumSIGmodels;
-#else   
-  return sizeof(aSigModelsToBind)/sizeof(MOBLEUINT16); 
-#endif  
 }
 
 
@@ -1807,11 +1780,7 @@ MOBLEUINT8 GetCountSIGModelToBindApp(MOBLEUINT8 elementIndex)
 */ 
 MOBLEUINT8 GetCountVendorModelToBindApp(MOBLEUINT8 elementIndex)
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return aNodeElements[elementIndex].NumVendorModels;
-#else  
-  return NUM_VENDOR_MODELS_TO_BIND_APP; 
-#endif
 }
 
 
@@ -1827,13 +1796,9 @@ MOBLEUINT16 GetSIGModelToPublish(MOBLEUINT8 elementIndex,
                                      MOBLEUINT8 numberOfModels)
 
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return GetSIGModelToBindApp(elementIndex, 
                               pModelIndex, 
                               numberOfModels);
-#else  
-  return aPublishModels[idxSIG] ; 
-#endif  
 }
 
 
@@ -1845,11 +1810,7 @@ MOBLEUINT16 GetSIGModelToPublish(MOBLEUINT8 elementIndex,
 */ 
 MOBLEUINT32 GetVendorModelToPublish(MOBLEUINT8 elementIndex, MOBLEUINT8 idxSIG)
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return aNodeElements[elementIndex].aVendorModels[idxSIG];
-#else   
-  return VENDORMODEL_STMICRO_ID1 ; 
-#endif  
 }
 
 
@@ -1860,11 +1821,7 @@ MOBLEUINT32 GetVendorModelToPublish(MOBLEUINT8 elementIndex, MOBLEUINT8 idxSIG)
 */ 
 MOBLEUINT8 GetCountSIGModelToPublish(MOBLEUINT8 elementIndex)
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return aNodeElements[elementIndex].NumSIGmodels;
-#else   
-  return sizeof(aPublishModels)/sizeof(MOBLEUINT16); 
-#endif  
 }
 
 
@@ -1875,11 +1832,7 @@ MOBLEUINT8 GetCountSIGModelToPublish(MOBLEUINT8 elementIndex)
 */ 
 MOBLEUINT8 GetCountVendorModelToPublish(MOBLEUINT8 elementIndex)
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return aNodeElements[elementIndex].NumVendorModels;
-#else   
-  return NUM_VENDOR_MODELS_TO_PUBLISH; 
-#endif    
 }
 
 
@@ -1894,13 +1847,9 @@ MOBLEUINT16 GetSIGModelToSubscribe(MOBLEUINT8 elementIndex,
                                  MOBLEUINT8 *pModelIndex, 
                                  MOBLEUINT8 numberOfModels) 
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return GetSIGModelToBindApp(elementIndex, 
                               pModelIndex, 
                               numberOfModels);
-#else    
-  return aSubscribeModels[idxSIG] ; 
-#endif  
 }
 
 
@@ -1914,11 +1863,7 @@ MOBLEUINT16 GetSIGModelToSubscribe(MOBLEUINT8 elementIndex,
 MOBLEUINT32 GetVendorModelToSubscribe(MOBLEUINT8 elementIndex, 
                                       MOBLEUINT8 idxSIG)
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return aNodeElements[elementIndex].aVendorModels[idxSIG];
-#else   
-  return VENDORMODEL_STMICRO_ID1 ; 
-#endif  
 }
 
 
@@ -1929,11 +1874,7 @@ MOBLEUINT32 GetVendorModelToSubscribe(MOBLEUINT8 elementIndex,
 */ 
 MOBLEUINT8 GetCountSIGModelToSubscribe(MOBLEUINT8 elementIndex)
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return aNodeElements[elementIndex].NumSIGmodels;
-#else   
-  return sizeof(aSubscribeModels)/sizeof(MOBLEUINT16); 
-#endif  
 }
 
 
@@ -1945,11 +1886,7 @@ MOBLEUINT8 GetCountSIGModelToSubscribe(MOBLEUINT8 elementIndex)
 */ 
 MOBLEUINT8 GetCountVendorModelToSubscribe(MOBLEUINT8 elementIndex)
 {
-#ifdef CONFIGURE_AS_PER_COMPOSITION_DATA
   return aNodeElements[elementIndex].NumVendorModels;
-#else  
-  return NUM_VENDOR_MODELS_TO_SUBSCRIBE; 
-#endif    
 }
 
 
@@ -1965,6 +1902,9 @@ MOBLEUINT8 AppliConfigClient_SendMessageDefault(MOBLEUINT8 elementIdx)
   return NUM_VENDOR_MODELS_TO_SUBSCRIBE; 
 }
 
+/******************************************************************************/
+#endif /* defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER) */
+/******************************************************************************/
 
 /**
 * @}
@@ -1974,5 +1914,5 @@ MOBLEUINT8 AppliConfigClient_SendMessageDefault(MOBLEUINT8 elementIdx)
 * @}
 */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

@@ -71,14 +71,14 @@ __weak MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray
     return MOBLE_RESULT_NOTIMPL;
 }
 /**
-* @brief  This funcrion is used to parse the string given by the user
+* @brief  This function is used to parse the string given by the user
 * @param  rcvdStringBuff: buffer to store input string 
 * @param  rcvdStringSize: length of the input string 
 * @retval void
 */ 
 void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
-  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLE_RESULT result = MOBLE_RESULT_INVALIDARG;
 
   /* Command to make a devices as Root node which creates Mesh network credentials */
   if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "ROOT",4))
@@ -86,6 +86,7 @@ void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 #if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
       /* Initializes Mesh network parameters */
     Appli_StartProvisionerMode(1);
+    result = MOBLE_RESULT_SUCCESS;
 #endif      
   }
   /* Command to scan the unprovisioned devices */
@@ -166,11 +167,12 @@ static MOBLE_RESULT SerialPrvn_ProvisionDevice(char *text)
     
 #if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)  
   MOBLEINT16 index = 0;
-  MOBLEINT16 na = 0;
+//  MOBLEINT16 na = 0;
 
   
-  sscanf(text, "PRVN-%hd %hd", &index, &na);  
-  if(na>1)
+//  sscanf(text, "PRVN-%hd %hd", &index, &na);  
+  sscanf(text, "PRVN-%hd", &index);  
+//  if(na>1)
   { /* Address 1 is reserved for the Provisioner */
     
       result = BLEMesh_ProvisionRemote(NeighborTable[index].uuid);
@@ -180,10 +182,10 @@ static MOBLE_RESULT SerialPrvn_ProvisionDevice(char *text)
               NeighborTable[index].uuid,
               UUID_SIZE);
   }
-  else 
-  {
-      result = MOBLE_RESULT_INVALIDARG;
-  }
+//  else 
+//  {
+//      result = MOBLE_RESULT_INVALIDARG;
+//  }
   
 #endif  
   return result;
@@ -254,4 +256,4 @@ void SerialPrvn_ProvisioningStatusUpdateCb(uint8_t flagPrvningInProcess, MOBLEUI
 /**
 * @}
 */
-/******************* (C) COPYRIGHT 2018 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

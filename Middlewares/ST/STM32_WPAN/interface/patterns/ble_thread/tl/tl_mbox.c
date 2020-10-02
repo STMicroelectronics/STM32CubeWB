@@ -25,23 +25,20 @@
 #include "stm_list.h"
 #include "tl.h"
 #include "mbox_def.h"
-
-/**
- * These traces are not yet supported in an usual way in the delivery package
- * They can enabled by adding the definition of TL_MM_DBG_EN in the preprocessor option in the IDE
- */
-#if(TL_MM_DBG_EN != 0)
-#include "app_conf.h"
-#include "dbg_trace.h"
-#endif
-
-#if (TL_MM_DBG_EN != 0)
-#define TL_MM_DBG__MSG             PRINT_MESG_DBG
-#else
-#define TL_MM_DBG__MSG(...)
-#endif
+#include "tl_dbg_conf.h"
 
 /* Private typedef -----------------------------------------------------------*/
+typedef enum
+{
+  TL_MB_MM_RELEASE_BUFFER,
+  TL_MB_BLE_CMD,
+  TL_MB_BLE_CMD_RSP,
+  TL_MB_BLE_ASYNCH_EVT,
+  TL_MB_SYS_CMD,
+  TL_MB_SYS_CMD_RSP,
+  TL_MB_SYS_ASYNCH_EVT,
+} TL_MB_PacketType_t;
+
 /* Private defines -----------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -77,7 +74,7 @@ static void (* SYS_EVT_IoBusCallBackFunction) (TL_EvtPacket_t *phcievt);
 /* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 static void SendFreeBuf( void );
-static void OutputMemReleaseTrace(TL_EvtPacket_t * phcievt);
+static void OutputDbgTrace(TL_MB_PacketType_t packet_type, uint8_t* buffer);
 
 /* Public Functions Definition ------------------------------------------------------*/
 
@@ -142,6 +139,8 @@ int32_t TL_BLE_SendCmd( uint8_t* buffer, uint16_t size )
 
   ((TL_CmdPacket_t*)(TL_RefTable.p_ble_table->pcmd_buffer))->cmdserial.type = TL_BLECMD_PKT_TYPE;
 
+  OutputDbgTrace(TL_MB_BLE_CMD, TL_RefTable.p_ble_table->pcmd_buffer);
+
   HW_IPCC_BLE_SendCmd();
 
   return 0;
@@ -154,6 +153,15 @@ void HW_IPCC_BLE_RxEvtNot(void)
   while(LST_is_empty(&EvtQueue) == FALSE)
   {
     LST_remove_head (&EvtQueue, (tListNode **)&phcievt);
+
+    if ( ((phcievt->evtserial.evt.evtcode) == TL_BLEEVT_CS_OPCODE) || ((phcievt->evtserial.evt.evtcode) == TL_BLEEVT_CC_OPCODE ) )
+    {
+      OutputDbgTrace(TL_MB_BLE_CMD_RSP, (uint8_t*)phcievt);
+    }
+    else
+    {
+      OutputDbgTrace(TL_MB_BLE_ASYNCH_EVT, (uint8_t*)phcievt);
+    }
 
     BLE_IoBusEvtCallBackFunction(phcievt);
   }
@@ -209,6 +217,8 @@ int32_t TL_SYS_SendCmd( uint8_t* buffer, uint16_t size )
 
   ((TL_CmdPacket_t *)(TL_RefTable.p_sys_table->pcmd_buffer))->cmdserial.type = TL_SYSCMD_PKT_TYPE;
 
+  OutputDbgTrace(TL_MB_SYS_CMD, TL_RefTable.p_sys_table->pcmd_buffer);
+
   HW_IPCC_SYS_SendCmd();
 
   return 0;
@@ -216,6 +226,8 @@ int32_t TL_SYS_SendCmd( uint8_t* buffer, uint16_t size )
 
 void HW_IPCC_SYS_CmdEvtNot(void)
 {
+  OutputDbgTrace(TL_MB_SYS_CMD_RSP, (uint8_t*)(TL_RefTable.p_sys_table->pcmd_buffer) );
+
   SYS_CMD_IoBusCallBackFunction( (TL_EvtPacket_t*)(TL_RefTable.p_sys_table->pcmd_buffer) );
 
   return;
@@ -228,6 +240,9 @@ void HW_IPCC_SYS_EvtNot( void )
   while(LST_is_empty(&SystemEvtQueue) == FALSE)
   {
     LST_remove_head (&SystemEvtQueue, (tListNode **)&p_evt);
+
+    OutputDbgTrace(TL_MB_SYS_ASYNCH_EVT, (uint8_t*)p_evt );
+
     SYS_EVT_IoBusCallBackFunction( p_evt );
   }
 
@@ -598,7 +613,7 @@ void TL_MM_EvtDone(TL_EvtPacket_t * phcievt)
 {
   LST_insert_tail(&LocalFreeBufQueue, (tListNode *)phcievt);
 
-  OutputMemReleaseTrace(phcievt);
+  OutputDbgTrace(TL_MB_MM_RELEASE_BUFFER, (uint8_t*)phcievt);
 
   HW_IPCC_MM_SendFreeBuf( SendFreeBuf );
 
@@ -614,39 +629,6 @@ static void SendFreeBuf( void )
     LST_remove_head( &LocalFreeBufQueue, (tListNode **)&p_node );
     LST_insert_tail( (tListNode*)(TL_RefTable.p_mem_manager_table->pevt_free_buffer_queue), p_node );
   }
-
-  return;
-}
-
-static void OutputMemReleaseTrace(TL_EvtPacket_t * phcievt)
-{
-  switch(phcievt->evtserial.evt.evtcode)
-  {
-    case TL_BLEEVT_CS_OPCODE:
-      TL_MM_DBG__MSG("mm evt released: 0x%02X", phcievt->evtserial.evt.evtcode);
-      TL_MM_DBG__MSG(" cmd opcode: 0x%04X", ((TL_CsEvt_t*)(phcievt->evtserial.evt.payload))->cmdcode);
-      TL_MM_DBG__MSG(" buffer addr: 0x%08X", phcievt);
-      break;
-
-    case TL_BLEEVT_CC_OPCODE:
-      TL_MM_DBG__MSG("mm evt released: 0x%02X", phcievt->evtserial.evt.evtcode);
-      TL_MM_DBG__MSG(" cmd opcode: 0x%04X", ((TL_CcEvt_t*)(phcievt->evtserial.evt.payload))->cmdcode);
-      TL_MM_DBG__MSG(" buffer addr: 0x%08X", phcievt);
-      break;
-
-    case TL_BLEEVT_VS_OPCODE:
-      TL_MM_DBG__MSG("mm evt released: 0x%02X", phcievt->evtserial.evt.evtcode);
-      TL_MM_DBG__MSG(" subevtcode: 0x%04X", ((TL_AsynchEvt_t*)(phcievt->evtserial.evt.payload))->subevtcode);
-      TL_MM_DBG__MSG(" buffer addr: 0x%08X", phcievt);
-      break;
-
-    default:
-      TL_MM_DBG__MSG("mm evt released: 0x%02X", phcievt->evtserial.evt.evtcode);
-      TL_MM_DBG__MSG(" buffer addr: 0x%08X", phcievt);
-      break;
-  }
-
-  TL_MM_DBG__MSG("\r\n");
 
   return;
 }
@@ -681,6 +663,189 @@ void HW_IPCC_TRACES_EvtNot(void)
 __WEAK void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 {
   (void)(hcievt);
+}
+
+/******************************************************************************
+ * DEBUG INFORMATION
+ ******************************************************************************/
+static void OutputDbgTrace(TL_MB_PacketType_t packet_type, uint8_t* buffer)
+{
+  TL_EvtPacket_t *p_evt_packet;
+  TL_CmdPacket_t *p_cmd_packet;
+
+  switch(packet_type)
+  {
+    case TL_MB_MM_RELEASE_BUFFER:
+      p_evt_packet = (TL_EvtPacket_t*)buffer;
+      switch(p_evt_packet->evtserial.evt.evtcode)
+      {
+        case TL_BLEEVT_CS_OPCODE:
+          TL_MM_DBG_MSG("mm evt released: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+          TL_MM_DBG_MSG(" cmd opcode: 0x%04X", ((TL_CsEvt_t*)(p_evt_packet->evtserial.evt.payload))->cmdcode);
+          TL_MM_DBG_MSG(" buffer addr: 0x%08X", p_evt_packet);
+          break;
+
+        case TL_BLEEVT_CC_OPCODE:
+          TL_MM_DBG_MSG("mm evt released: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+          TL_MM_DBG_MSG(" cmd opcode: 0x%04X", ((TL_CcEvt_t*)(p_evt_packet->evtserial.evt.payload))->cmdcode);
+          TL_MM_DBG_MSG(" buffer addr: 0x%08X", p_evt_packet);
+          break;
+
+        case TL_BLEEVT_VS_OPCODE:
+          TL_MM_DBG_MSG("mm evt released: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+          TL_MM_DBG_MSG(" subevtcode: 0x%04X", ((TL_AsynchEvt_t*)(p_evt_packet->evtserial.evt.payload))->subevtcode);
+          TL_MM_DBG_MSG(" buffer addr: 0x%08X", p_evt_packet);
+          break;
+
+        default:
+          TL_MM_DBG_MSG("mm evt released: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+          TL_MM_DBG_MSG(" buffer addr: 0x%08X", p_evt_packet);
+          break;
+      }
+
+      TL_MM_DBG_MSG("\r\n");
+      break;
+
+    case TL_MB_BLE_CMD:
+      p_cmd_packet = (TL_CmdPacket_t*)buffer;
+      TL_HCI_CMD_DBG_MSG("ble cmd: 0x%04X", p_cmd_packet->cmdserial.cmd.cmdcode);
+      if(p_cmd_packet->cmdserial.cmd.plen != 0)
+      {
+        TL_HCI_CMD_DBG_MSG(" payload:");
+        TL_HCI_CMD_DBG_BUF(p_cmd_packet->cmdserial.cmd.payload, p_cmd_packet->cmdserial.cmd.plen, "");
+      }
+      TL_HCI_CMD_DBG_MSG("\r\n");
+
+      TL_HCI_CMD_DBG_RAW(&p_cmd_packet->cmdserial, p_cmd_packet->cmdserial.cmd.plen+TL_CMD_HDR_SIZE);
+      break;
+
+    case TL_MB_BLE_CMD_RSP:
+      p_evt_packet = (TL_EvtPacket_t*)buffer;
+      switch(p_evt_packet->evtserial.evt.evtcode)
+      {
+        case TL_BLEEVT_CS_OPCODE:
+          TL_HCI_CMD_DBG_MSG("ble rsp: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+          TL_HCI_CMD_DBG_MSG(" cmd opcode: 0x%04X", ((TL_CsEvt_t*)(p_evt_packet->evtserial.evt.payload))->cmdcode);
+          TL_HCI_CMD_DBG_MSG(" numhci: 0x%02X", ((TL_CsEvt_t*)(p_evt_packet->evtserial.evt.payload))->numcmd);
+          TL_HCI_CMD_DBG_MSG(" status: 0x%02X", ((TL_CsEvt_t*)(p_evt_packet->evtserial.evt.payload))->status);
+          break;
+
+        case TL_BLEEVT_CC_OPCODE:
+          TL_HCI_CMD_DBG_MSG("ble rsp: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+          TL_HCI_CMD_DBG_MSG(" cmd opcode: 0x%04X", ((TL_CcEvt_t*)(p_evt_packet->evtserial.evt.payload))->cmdcode);
+          TL_HCI_CMD_DBG_MSG(" numhci: 0x%02X", ((TL_CcEvt_t*)(p_evt_packet->evtserial.evt.payload))->numcmd);
+          TL_HCI_CMD_DBG_MSG(" status: 0x%02X", ((TL_CcEvt_t*)(p_evt_packet->evtserial.evt.payload))->payload[0]);
+          if((p_evt_packet->evtserial.evt.plen-4) != 0)
+          {
+            TL_HCI_CMD_DBG_MSG(" payload:");
+            TL_HCI_CMD_DBG_BUF(&((TL_CcEvt_t*)(p_evt_packet->evtserial.evt.payload))->payload[1], p_evt_packet->evtserial.evt.plen-4, "");
+          }
+          break;
+
+        default:
+          TL_HCI_CMD_DBG_MSG("unknown ble rsp received: %02X", p_evt_packet->evtserial.evt.evtcode);
+          break;
+      }
+
+      TL_HCI_CMD_DBG_MSG("\r\n");
+
+      TL_HCI_CMD_DBG_RAW(&p_evt_packet->evtserial, p_evt_packet->evtserial.evt.plen+TL_EVT_HDR_SIZE);
+      break;
+
+    case TL_MB_BLE_ASYNCH_EVT:
+      p_evt_packet = (TL_EvtPacket_t*)buffer;
+      if(p_evt_packet->evtserial.evt.evtcode != TL_BLEEVT_VS_OPCODE)
+      {
+        TL_HCI_EVT_DBG_MSG("ble evt: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+        if((p_evt_packet->evtserial.evt.plen) != 0)
+        {
+          TL_HCI_EVT_DBG_MSG(" payload:");
+          TL_HCI_EVT_DBG_BUF(p_evt_packet->evtserial.evt.payload, p_evt_packet->evtserial.evt.plen, "");
+        }
+      }
+      else
+      {
+        TL_HCI_EVT_DBG_MSG("ble evt: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+        TL_HCI_EVT_DBG_MSG(" subevtcode: 0x%04X", ((TL_AsynchEvt_t*)(p_evt_packet->evtserial.evt.payload))->subevtcode);
+        if((p_evt_packet->evtserial.evt.plen-2) != 0)
+        {
+          TL_HCI_EVT_DBG_MSG(" payload:");
+          TL_HCI_EVT_DBG_BUF(((TL_AsynchEvt_t*)(p_evt_packet->evtserial.evt.payload))->payload, p_evt_packet->evtserial.evt.plen-2, "");
+        }
+      }
+
+      TL_HCI_EVT_DBG_MSG("\r\n");
+
+      TL_HCI_EVT_DBG_RAW(&p_evt_packet->evtserial, p_evt_packet->evtserial.evt.plen+TL_EVT_HDR_SIZE);
+      break;
+
+    case TL_MB_SYS_CMD:
+      p_cmd_packet = (TL_CmdPacket_t*)buffer;
+
+      TL_SHCI_CMD_DBG_MSG("sys cmd: 0x%04X", p_cmd_packet->cmdserial.cmd.cmdcode);
+
+      if(p_cmd_packet->cmdserial.cmd.plen != 0)
+      {
+        TL_SHCI_CMD_DBG_MSG(" payload:");
+        TL_SHCI_CMD_DBG_BUF(p_cmd_packet->cmdserial.cmd.payload, p_cmd_packet->cmdserial.cmd.plen, "");
+      }
+      TL_SHCI_CMD_DBG_MSG("\r\n");
+
+      TL_SHCI_CMD_DBG_RAW(&p_cmd_packet->cmdserial, p_cmd_packet->cmdserial.cmd.plen+TL_CMD_HDR_SIZE);
+      break;
+
+    case TL_MB_SYS_CMD_RSP:
+      p_evt_packet = (TL_EvtPacket_t*)buffer;
+      switch(p_evt_packet->evtserial.evt.evtcode)
+      {
+        case TL_BLEEVT_CC_OPCODE:
+          TL_SHCI_CMD_DBG_MSG("sys rsp: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+          TL_SHCI_CMD_DBG_MSG(" cmd opcode: 0x%02X", ((TL_CcEvt_t*)(p_evt_packet->evtserial.evt.payload))->cmdcode);
+          TL_SHCI_CMD_DBG_MSG(" status: 0x%02X", ((TL_CcEvt_t*)(p_evt_packet->evtserial.evt.payload))->payload[0]);
+          if((p_evt_packet->evtserial.evt.plen-4) != 0)
+          {
+            TL_SHCI_CMD_DBG_MSG(" payload:");
+            TL_SHCI_CMD_DBG_BUF(&((TL_CcEvt_t*)(p_evt_packet->evtserial.evt.payload))->payload[1], p_evt_packet->evtserial.evt.plen-4, "");
+          }
+          break;
+
+        default:
+          TL_SHCI_CMD_DBG_MSG("unknown sys rsp received: %02X", p_evt_packet->evtserial.evt.evtcode);
+          break;
+      }
+
+      TL_SHCI_CMD_DBG_MSG("\r\n");
+
+      TL_SHCI_CMD_DBG_RAW(&p_evt_packet->evtserial, p_evt_packet->evtserial.evt.plen+TL_EVT_HDR_SIZE);
+      break;
+
+    case  TL_MB_SYS_ASYNCH_EVT:
+      p_evt_packet = (TL_EvtPacket_t*)buffer;
+      if(p_evt_packet->evtserial.evt.evtcode != TL_BLEEVT_VS_OPCODE)
+      {
+        TL_SHCI_EVT_DBG_MSG("unknown sys evt received: %02X", p_evt_packet->evtserial.evt.evtcode);
+      }
+      else
+      {
+        TL_SHCI_EVT_DBG_MSG("sys evt: 0x%02X", p_evt_packet->evtserial.evt.evtcode);
+        TL_SHCI_EVT_DBG_MSG(" subevtcode: 0x%04X", ((TL_AsynchEvt_t*)(p_evt_packet->evtserial.evt.payload))->subevtcode);
+        if((p_evt_packet->evtserial.evt.plen-2) != 0)
+        {
+          TL_SHCI_EVT_DBG_MSG(" payload:");
+          TL_SHCI_EVT_DBG_BUF(((TL_AsynchEvt_t*)(p_evt_packet->evtserial.evt.payload))->payload, p_evt_packet->evtserial.evt.plen-2, "");
+        }
+      }
+
+      TL_SHCI_EVT_DBG_MSG("\r\n");
+
+      TL_SHCI_EVT_DBG_RAW(&p_evt_packet->evtserial, p_evt_packet->evtserial.evt.plen+TL_EVT_HDR_SIZE);
+      break;
+
+    default:
+      break;
+  }
+
+  return;
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

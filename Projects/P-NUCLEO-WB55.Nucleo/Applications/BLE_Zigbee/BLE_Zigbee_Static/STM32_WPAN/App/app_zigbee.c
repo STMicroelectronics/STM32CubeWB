@@ -192,7 +192,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
   zigbee_app_info.startupControl = ZbStartTypeJoin;
 
@@ -592,6 +592,9 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
     switch (p_wireless_info->StackType) {
     case INFO_STACK_TYPE_BLE_ZIGBEE_FFD_STATIC:
       APP_DBG("FW Type : STACK_TYPE_BLE_ZIGBEE_FFD_STATIC");
+      break;
+    case INFO_STACK_TYPE_BLE_ZIGBEE_RFD_STATIC:
+      APP_DBG("FW Type : STACK_TYPE_BLE_ZIGBEE_RFD_STATIC");
       break;
     default:
       /* No Zigbee device supported ! */

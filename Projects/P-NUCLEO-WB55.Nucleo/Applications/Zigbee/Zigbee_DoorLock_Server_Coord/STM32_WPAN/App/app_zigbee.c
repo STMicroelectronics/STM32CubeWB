@@ -145,7 +145,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRequestBuffer[siz
 /* Adding required optional attributes */
 static const struct ZbZclAttrT optionalAttrList[] = {
     {
-        ZCL_DOORLOCK_ATTR_DOORSTATE, ZCL_DATATYPE_UNSIGNED_8BIT,
+        ZCL_DRLK_ATTR_DOORSTATE, ZCL_DATATYPE_UNSIGNED_8BIT,
         ZCL_ATTR_FLAG_CB_NOTIFY, 0, APP_ZIGBEE_DoorLock_Server_Attr_cb, {0, 0}, {0, 0}
     },
 };
@@ -280,10 +280,10 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_AttrNotify_cb(struct ZbZcl
   }
   
   switch(attributeId){
-    case ZCL_DOORLOCK_ATTR_DOORSTATE:  
+    case ZCL_DRLK_ATTR_DOORSTATE:  
       
       /* getting the door state */
-      currentDoorState = (uint8_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_DOORSTATE, NULL, &status);
+      currentDoorState = (uint8_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_DOORSTATE, NULL, &status);
       if (status != ZCL_STATUS_SUCCESS){
         APP_DBG("Error reading local attribute.");
         return ZCL_STATUS_FAILURE;
@@ -292,7 +292,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_AttrNotify_cb(struct ZbZcl
       APP_DBG("[DOORLOCK] Door state changed to 0x%02x.", currentDoorState);
       
       /* getting the alarm mask */
-      alarmMask = (uint16_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_ALARM_MASK, NULL, &status);
+      alarmMask = (uint16_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_ALARM_MASK, NULL, &status);
       if (status != ZCL_STATUS_SUCCESS){
         APP_DBG("Error reading local attribute.");
         return ZCL_STATUS_FAILURE;
@@ -307,7 +307,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_AttrNotify_cb(struct ZbZcl
       }
       
       /* setting door state to closed */
-      status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_CLOSE);
+      status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_CLOSE);
       if(status != ZCL_STATUS_SUCCESS){
         APP_DBG("Error writting local attribute.");
         assert(0);
@@ -331,14 +331,14 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
                                                               struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
   enum ZclStatusCodeT status;
-  struct ZbZclDoorLockLockDoorRspT rsp = {.status = DOORLOCK_STATUS_FAIL};
+  struct ZbZclDoorLockLockDoorRspT rsp = {.status = ZCL_DRLK_STATUS_FAIL};
   struct doorlock_info_t* info = (struct doorlock_info_t*) arg;  
   long long res;
   uint8_t currentMode = 0;
   int8_t user_pos = 0;
   
   /* Get the lock operating mode */
-  currentMode = (uint8_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_MODE, NULL, &status);
+  currentMode = (uint8_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_MODE, NULL, &status);
   if (status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error reading local attribute.");
     (void) ZbZclDoorLockServerSendLockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
@@ -348,14 +348,14 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
   APP_DBG("Lock requested.");
   
   /* Read the lock state */
-  res = ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_LOCKSTATE, NULL, &status);
+  res = ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, NULL, &status);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error reqding local attribute: cannot read lock state.\n");
     (void) ZbZclDoorLockServerSendLockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
     return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
   }
   
-  if(res == DOORLOCK_LOCKSTATE_LOCKED){
+  if(res == ZCL_DRLK_LOCKSTATE_LOCKED){
     /* Lock already locked */
     APP_DBG("Already locked!\n");
     (void) ZbZclDoorLockServerSendLockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
@@ -367,7 +367,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
     APP_DBG("Passage mode is activated.");
     
     /* Lock is unlocked -> locked it  */
-    status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_LOCKSTATE, DOORLOCK_LOCKSTATE_LOCKED);
+    status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_LOCKED);
     if(status != ZCL_STATUS_SUCCESS){
       APP_DBG("Error writting local attribute: cannot set lock state to 'locked'.\n");
       (void) ZbZclDoorLockServerSendLockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
@@ -375,7 +375,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
     }
         
     APP_DBG("Door locked!");
-    rsp.status = DOORLOCK_STATUS_SUCCESS;
+    rsp.status = ZCL_DRLK_STATUS_SUCCESS;
     
     BSP_LED_On(LED_GREEN);
     APP_DBG("LED_GREEN ON\n");
@@ -385,8 +385,8 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
   }
   
   /* Check pin length */
-  if(cmd_req->pin_len>DOORLOCK_MAX_PIN
-     || cmd_req->pin_len<DOORLOCK_MIN_PIN){ 
+  if(cmd_req->pin_len>ZCL_DRLK_MAX_PIN_LEN
+     || cmd_req->pin_len<ZCL_DRLK_MIN_PIN_LEN){ 
     APP_DBG("Error: Wrong pin format.\n");
     (void) ZbZclDoorLockServerSendLockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
     return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
@@ -402,7 +402,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
   APP_DBG("Request from user %d.", info->user_tab[user_pos].user_id);
   
   /* Lock is unlocked -> locked it  */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_LOCKSTATE, DOORLOCK_LOCKSTATE_LOCKED);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_LOCKED);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set lock state to 'unlocked'.\n");
     (void) ZbZclDoorLockServerSendLockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
@@ -410,7 +410,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
   }
       
   APP_DBG("Door locked!");
-  rsp.status = DOORLOCK_STATUS_SUCCESS;
+  rsp.status = ZCL_DRLK_STATUS_SUCCESS;
   
   BSP_LED_On(LED_GREEN);
   APP_DBG("LED_GREEN ON\n");
@@ -434,7 +434,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
                                                                 struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
   enum ZclStatusCodeT status;
-  struct ZbZclDoorLockUnlockDoorRspT rsp = {.status = DOORLOCK_STATUS_FAIL};
+  struct ZbZclDoorLockUnlockDoorRspT rsp = {.status = ZCL_DRLK_STATUS_FAIL};
   struct doorlock_info_t* info = (struct doorlock_info_t*) arg;  
   long long res;
   uint32_t autoRelockTime = 0;
@@ -442,7 +442,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
   int8_t user_pos = 0;
   
   /* Get the lock operating mode */
-  currentMode = (uint8_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_MODE, NULL, &status);
+  currentMode = (uint8_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_MODE, NULL, &status);
   if (status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error reading local attribute.");
     (void) ZbZclDoorLockServerSendUnlockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
@@ -452,14 +452,14 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
   APP_DBG("Unlock requested.");
   
   /* Read the lock state */
-  res = ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_LOCKSTATE, NULL, &status);
+  res = ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, NULL, &status);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error reqding local attribute: cannot reqd lock state.\n");
     (void) ZbZclDoorLockServerSendUnlockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
     return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
   }
   
-  if(res == DOORLOCK_LOCKSTATE_UNLOCKED){
+  if(res == ZCL_DRLK_LOCKSTATE_UNLOCKED){
     /* Lock already unlocked */
     APP_DBG("Already unlocked!\n");
     (void) ZbZclDoorLockServerSendUnlockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
@@ -471,7 +471,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
     APP_DBG("Passage mode is activated.");
     
   /* Lock is locked -> unlocked it  */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_LOCKSTATE, DOORLOCK_LOCKSTATE_UNLOCKED);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_UNLOCKED);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set lock state to 'unlocked'.\n");
     (void) ZbZclDoorLockServerSendUnlockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
@@ -479,7 +479,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
   }
     
     APP_DBG("Door unlocked!");
-    rsp.status = DOORLOCK_STATUS_SUCCESS;
+    rsp.status = ZCL_DRLK_STATUS_SUCCESS;
     
     BSP_LED_Off(LED_GREEN);
     APP_DBG("LED_GREEN OFF\n");
@@ -489,8 +489,8 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
   }
   
   /* Check pin length */
-  if(cmd_req->pin_len>DOORLOCK_MAX_PIN
-     || cmd_req->pin_len<DOORLOCK_MIN_PIN){ 
+  if(cmd_req->pin_len>ZCL_DRLK_MAX_PIN_LEN
+     || cmd_req->pin_len<ZCL_DRLK_MIN_PIN_LEN){ 
     APP_DBG("Error: Wrong pin format.\n");
     (void) ZbZclDoorLockServerSendUnlockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
     return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
@@ -506,7 +506,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
   APP_DBG("Request from user %d.", info->user_tab[user_pos].user_id);
   
   /* Lock is locked -> unlocked it  */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_LOCKSTATE, DOORLOCK_LOCKSTATE_UNLOCKED);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_UNLOCKED);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set lock state to 'unlocked'.\n");
     (void) ZbZclDoorLockServerSendUnlockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
@@ -514,7 +514,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
   }
   
   /* Read the auto relock time value */
-  autoRelockTime = ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_AUTO_RELOCK, NULL, &status);
+  autoRelockTime = ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_AUTO_RELOCK, NULL, &status);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error reqding local attribute: cannot reqd lock state.\n");
     (void) ZbZclDoorLockServerSendUnlockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
@@ -525,7 +525,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
   HW_TS_Start(TS_ID2, autoRelockTime*HW_TS_SERVER_1S_NB_TICKS); 
     
   APP_DBG("Door unlocked for %d seconds !", autoRelockTime);
-  rsp.status = DOORLOCK_STATUS_SUCCESS;
+  rsp.status = ZCL_DRLK_STATUS_SUCCESS;
   
   BSP_LED_Off(LED_GREEN);
   APP_DBG("LED_GREEN OFF\n");
@@ -545,14 +545,14 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
 static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_SetPin_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclDoorLockSetPinReqT *cmd_req, 
                                                                 struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
-  struct ZbZclDoorLockSetPinRspT rsp = {.status = DOORLOCK_STATUS_FAIL};
+  struct ZbZclDoorLockSetPinRspT rsp = {.status = ZCL_DRLK_STATUS_FAIL};
   struct doorlock_info_t* info = (struct doorlock_info_t*) arg;  
   APP_DBG("Set PIN requested.");
   
   /* Check if we can add a new PIN user */
   if(info->current_nb_users >= MAX_PIN_NB_USERS){
     APP_DBG("Error: PIN users limit reached.\n");
-    rsp.status = DOORLOCK_STATUS_MEM_FULL;
+    rsp.status = ZCL_DRLK_STATUS_MEM_FULL;
     (void) ZbZclDoorLockServerSendSetPinRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
     return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
   }
@@ -563,8 +563,8 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_SetPin_cb(struct ZbZclClus
   }
   
   /* PIN length check */
-  if(cmd_req->pin_len>DOORLOCK_MAX_PIN
-     || cmd_req->pin_len<DOORLOCK_MIN_PIN){ 
+  if(cmd_req->pin_len>ZCL_DRLK_MAX_PIN_LEN
+     || cmd_req->pin_len<ZCL_DRLK_MIN_PIN_LEN){ 
     APP_DBG("Error: Wrong pin format.\n");
     (void) ZbZclDoorLockServerSendSetPinRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
     return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
@@ -588,7 +588,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_SetPin_cb(struct ZbZclClus
   /* DoorLock and Alarm cluster are mapped in the same endpoint */
   APP_ZIGBEE_BINDING_TABLE_insert(srcInfo->addr.nwkAddr, srcInfo->addr.endpoint, ZCL_CLUSTER_ALARMS);
   
-  rsp.status = DOORLOCK_STATUS_SUCCESS;
+  rsp.status = ZCL_DRLK_STATUS_SUCCESS;
   (void) ZbZclDoorLockServerSendSetPinRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
   return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
 }
@@ -614,7 +614,7 @@ static void APP_ZIGBEE_DoorLock_Server_PassageMode(void){
   uint8_t currentMode = 0;
   
   /* Get current operating mode */
-  currentMode = (uint8_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_MODE, NULL, &status);
+  currentMode = (uint8_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_MODE, NULL, &status);
   if (status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error reading local attribute.");
     return;
@@ -625,7 +625,7 @@ static void APP_ZIGBEE_DoorLock_Server_PassageMode(void){
   }
   
   /* Get available operating modes */
-  supportedModes = (uint16_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_SUPPORTED_MODES, NULL, &status);
+  supportedModes = (uint16_t)ZbZclAttrIntegerRead(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_SUPPORTED_MODES, NULL, &status);
   if (status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error reading local attribute.");
     return;
@@ -638,7 +638,7 @@ static void APP_ZIGBEE_DoorLock_Server_PassageMode(void){
   }
   
   /* Activate passage mode */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_MODE, DOORLOCK_PASSAGE_MODE);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_MODE, DOORLOCK_PASSAGE_MODE);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set operating mode.");
   }
@@ -670,7 +670,7 @@ static void APP_ZIGBEE_DoorLock_Server_PassageMode_Ended(void){
   enum ZclStatusCodeT status = ZCL_STATUS_FAILURE;
   
   /* Operating mode set to normal */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_MODE, DOORLOCK_NORMAL_MODE);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_MODE, DOORLOCK_NORMAL_MODE);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set operating mode.");
   }
@@ -701,7 +701,7 @@ static void APP_ZIGBEE_DoorLock_Server_AutoRelockTime(void){
   APP_DBG("Auto Relock Time reached.");
   
   /* Lock the door */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_LOCKSTATE, DOORLOCK_LOCKSTATE_LOCKED);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_LOCKED);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set lock state to 'unlocked'.\n");
     return;
@@ -824,21 +824,21 @@ static void APP_ZIGBEE_DoorLock_Server_Init(void){
   memset(&doorlock_info, 0, sizeof(doorlock_info));
   
   /* At startup, the lock is locked */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_LOCKSTATE, DOORLOCK_LOCKSTATE_LOCKED);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_LOCKED);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set lock state to 'locked'.");
     assert(0);
   }
   
   /* Door state is closed */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_CLOSE);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_CLOSE);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute.");
     assert(0);
   }
   
   /* Setting up supported mode bitmap */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_SUPPORTED_MODES, 
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_SUPPORTED_MODES, 
                                  (uint16_t)DOORLOCK_NORMAL_MODE_SUPPORTED|DOORLOCK_PASSAGE_MODE_SUPPORTED);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set supported mode.");
@@ -846,21 +846,21 @@ static void APP_ZIGBEE_DoorLock_Server_Init(void){
   }
   
   /* Setting up operating mode attribute */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_MODE, DOORLOCK_NORMAL_MODE);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_MODE, DOORLOCK_NORMAL_MODE);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set operating mode.");
     assert(0);
   }
   
   /* Setting up auto relock time attribute */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_AUTO_RELOCK, DOORLOCK_AUTO_RELOCK_TIME);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_AUTO_RELOCK, DOORLOCK_AUTO_RELOCK_TIME);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set operating mode.");
     assert(0);
   }
   
   /* Setting up alarm bitmap */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_ALARM_MASK, 1<<DOORLOCK_ALARM_FORCED_DOOR);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_ALARM_MASK, 1<<DOORLOCK_ALARM_FORCED_DOOR);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute: cannot set operating mode.");
     assert(0);
@@ -939,7 +939,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
 
   /* Initialization Complete */
@@ -1194,7 +1194,7 @@ static void APP_ZIGBEE_SW1_Process(void){
   }
   
   /* Door state is forced opened */
-  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DOORLOCK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_ERROR_FORCED_OPEN);
+  status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_ERROR_FORCED_OPEN);
   if(status != ZCL_STATUS_SUCCESS){
     APP_DBG("Error writting local attribute.");
     assert(0);

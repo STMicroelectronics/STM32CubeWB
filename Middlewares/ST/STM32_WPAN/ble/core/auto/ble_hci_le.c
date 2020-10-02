@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_hci_le.c
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (hci_le)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -1509,6 +1509,33 @@ tBleStatus hci_le_enhanced_transmitter_test( uint8_t TX_Frequency,
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x08;
   rq.ocf = 0x034;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus hci_le_set_privacy_mode( uint8_t Peer_Identity_Address_Type,
+                                    const uint8_t* Peer_Identity_Address,
+                                    uint8_t Privacy_Mode )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  hci_le_set_privacy_mode_cp0 *cp0 = (hci_le_set_privacy_mode_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Peer_Identity_Address_Type = Peer_Identity_Address_Type;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Peer_Identity_Address, (const void*)Peer_Identity_Address, 6 );
+  index_input += 6;
+  cp0->Privacy_Mode = Privacy_Mode;
+  index_input += 1;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x08;
+  rq.ocf = 0x04e;
   rq.cparam = cmd_buffer;
   rq.clen = index_input;
   rq.rparam = &status;

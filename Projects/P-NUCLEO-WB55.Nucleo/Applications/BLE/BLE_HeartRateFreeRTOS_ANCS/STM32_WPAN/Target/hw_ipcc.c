@@ -45,6 +45,16 @@ static void HW_IPCC_THREAD_NotEvtHandler( void );
 static void HW_IPCC_THREAD_CliNotEvtHandler( void );
 #endif
 
+#ifdef LLD_TESTS_WB
+static void HW_IPCC_LLDTESTS_ReceiveCliRspHandler( void );
+static void HW_IPCC_LLDTESTS_ReceiveM0CmdHandler( void );
+#endif
+#ifdef LLD_BLE_WB
+/*static void HW_IPCC_LLD_BLE_ReceiveCliRspHandler( void );*/
+static void HW_IPCC_LLD_BLE_ReceiveRspHandler( void );
+static void HW_IPCC_LLD_BLE_ReceiveM0CmdHandler( void );
+#endif
+
 #ifdef MAC_802_15_4_WB
 static void HW_IPCC_MAC_802_15_4_CmdEvtHandler( void );
 static void HW_IPCC_MAC_802_15_4_NotEvtHandler( void );
@@ -53,7 +63,7 @@ static void HW_IPCC_MAC_802_15_4_NotEvtHandler( void );
 #ifdef ZIGBEE_WB
 static void HW_IPCC_ZIGBEE_CmdEvtHandler( void );
 static void HW_IPCC_ZIGBEE_StackNotifEvtHandler( void );
-static void HW_IPCC_ZIGBEE_CliNotifEvtHandler( void );
+static void HW_IPCC_ZIGBEE_StackM0RequestHandler( void );
 #endif
 
 /* Public function definition -----------------------------------------------*/
@@ -83,14 +93,34 @@ void HW_IPCC_Rx_Handler( void )
     HW_IPCC_THREAD_CliNotEvtHandler();
   }
 #endif /* THREAD_WB */
+#ifdef LLD_TESTS_WB
+  else if (HW_IPCC_RX_PENDING( HW_IPCC_LLDTESTS_CLI_RSP_CHANNEL ))
+  {
+    HW_IPCC_LLDTESTS_ReceiveCliRspHandler();
+  }
+  else if (HW_IPCC_RX_PENDING( HW_IPCC_LLDTESTS_M0_CMD_CHANNEL ))
+  {
+    HW_IPCC_LLDTESTS_ReceiveM0CmdHandler();
+  }
+#endif /* LLD_TESTS_WB */
+#ifdef LLD_BLE_WB
+  else if (HW_IPCC_RX_PENDING( HW_IPCC_LLD_BLE_RSP_CHANNEL ))
+  {
+    HW_IPCC_LLD_BLE_ReceiveRspHandler();
+  }
+  else if (HW_IPCC_RX_PENDING( HW_IPCC_LLD_BLE_M0_CMD_CHANNEL ))
+  {
+    HW_IPCC_LLD_BLE_ReceiveM0CmdHandler();
+  }
+#endif /* LLD_TESTS_WB */
 #ifdef ZIGBEE_WB
-  else if (HW_IPCC_RX_PENDING( HW_IPCC_THREAD_NOTIFICATION_ACK_CHANNEL ))
+  else if (HW_IPCC_RX_PENDING( HW_IPCC_ZIGBEE_APPLI_NOTIF_ACK_CHANNEL ))
   {
     HW_IPCC_ZIGBEE_StackNotifEvtHandler();
   }
-  else if (HW_IPCC_RX_PENDING( HW_IPCC_THREAD_CLI_NOTIFICATION_ACK_CHANNEL ))
+  else if (HW_IPCC_RX_PENDING( HW_IPCC_ZIGBEE_M0_REQUEST_CHANNEL ))
   {
-      HW_IPCC_ZIGBEE_CliNotifEvtHandler();
+    HW_IPCC_ZIGBEE_StackM0RequestHandler();
   }
 #endif /* ZIGBEE_WB */
   else if (HW_IPCC_RX_PENDING( HW_IPCC_BLE_EVENT_CHANNEL ))
@@ -123,8 +153,11 @@ void HW_IPCC_Tx_Handler( void )
     HW_IPCC_OT_CmdEvtHandler();
   }
 #endif /* THREAD_WB */
+#ifdef LLD_TESTS_WB
+// No TX handler for LLD tests
+#endif /* LLD_TESTS_WB */
 #ifdef ZIGBEE_WB
-  if (HW_IPCC_TX_PENDING( HW_IPCC_THREAD_OT_CMD_RSP_CHANNEL ))
+  if (HW_IPCC_TX_PENDING( HW_IPCC_ZIGBEE_CMD_APPLI_CHANNEL ))
   {
       HW_IPCC_ZIGBEE_CmdEvtHandler();
   }
@@ -150,6 +183,12 @@ void HW_IPCC_Tx_Handler( void )
 void HW_IPCC_Enable( void )
 {
   /**
+  * Such as IPCC IP available to the CPU2, it is required to keep the IPCC clock running
+    when FUS is running on CPU2 and CPU1 enters deep sleep mode
+  */
+  LL_C2_AHB3_GRP1_EnableClock(LL_C2_AHB3_GRP1_PERIPH_IPCC);
+
+   /**
    * When the device is out of standby, it is required to use the EXTI mechanism to wakeup CPU2
    */
   LL_C2_EXTI_EnableEvent_32_63( LL_EXTI_LINE_41 );
@@ -394,78 +433,191 @@ __weak void HW_IPCC_THREAD_EvtNot( void ){};
 #endif /* THREAD_WB */
 
 /******************************************************************************
+ * LLD TESTS
+ ******************************************************************************/
+#ifdef LLD_TESTS_WB
+void HW_IPCC_LLDTESTS_Init( void )
+{
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_LLDTESTS_CLI_RSP_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_LLDTESTS_M0_CMD_CHANNEL );
+  return;
+}
+
+void HW_IPCC_LLDTESTS_SendCliCmd( void )
+{
+  LL_C1_IPCC_SetFlag_CHx( IPCC, HW_IPCC_LLDTESTS_CLI_CMD_CHANNEL );
+  return;
+}
+
+static void HW_IPCC_LLDTESTS_ReceiveCliRspHandler( void )
+{
+  LL_C1_IPCC_DisableReceiveChannel( IPCC, HW_IPCC_LLDTESTS_CLI_RSP_CHANNEL );
+  HW_IPCC_LLDTESTS_ReceiveCliRsp();
+  return;
+}
+
+void HW_IPCC_LLDTESTS_SendCliRspAck( void )
+{
+  LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_LLDTESTS_CLI_RSP_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_LLDTESTS_CLI_RSP_CHANNEL );
+  return;
+}
+
+static void HW_IPCC_LLDTESTS_ReceiveM0CmdHandler( void )
+{
+  LL_C1_IPCC_DisableReceiveChannel( IPCC, HW_IPCC_LLDTESTS_M0_CMD_CHANNEL );
+  HW_IPCC_LLDTESTS_ReceiveM0Cmd();
+  return;
+}
+
+
+void HW_IPCC_LLDTESTS_SendM0CmdAck( void )
+{
+  LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_LLDTESTS_M0_CMD_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_LLDTESTS_M0_CMD_CHANNEL );
+  return;
+}
+__weak void HW_IPCC_LLDTESTS_ReceiveCliRsp( void ){};
+__weak void HW_IPCC_LLDTESTS_ReceiveM0Cmd( void ){};
+#endif /* LLD_TESTS_WB */
+
+/******************************************************************************
+ * LLD BLE
+ ******************************************************************************/
+#ifdef LLD_BLE_WB
+void HW_IPCC_LLD_BLE_Init( void )
+{
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_LLD_BLE_RSP_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_LLD_BLE_M0_CMD_CHANNEL );
+  return;
+}
+
+void HW_IPCC_LLD_BLE_SendCliCmd( void )
+{
+  LL_C1_IPCC_SetFlag_CHx( IPCC, HW_IPCC_LLD_BLE_CLI_CMD_CHANNEL );
+  return;
+}
+
+/*static void HW_IPCC_LLD_BLE_ReceiveCliRspHandler( void )
+{
+  LL_C1_IPCC_DisableReceiveChannel( IPCC, HW_IPCC_LLD_BLE_CLI_RSP_CHANNEL );
+  HW_IPCC_LLD_BLE_ReceiveCliRsp();
+  return;
+}*/
+
+void HW_IPCC_LLD_BLE_SendCliRspAck( void )
+{
+  LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_LLD_BLE_CLI_RSP_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_LLD_BLE_CLI_RSP_CHANNEL );
+  return;
+}
+
+static void HW_IPCC_LLD_BLE_ReceiveM0CmdHandler( void )
+{
+  //LL_C1_IPCC_DisableReceiveChannel( IPCC, HW_IPCC_LLD_BLE_M0_CMD_CHANNEL );
+  HW_IPCC_LLD_BLE_ReceiveM0Cmd();
+  return;
+}
+
+
+void HW_IPCC_LLD_BLE_SendM0CmdAck( void )
+{
+  LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_LLD_BLE_M0_CMD_CHANNEL );
+  //LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_LLD_BLE_M0_CMD_CHANNEL );
+  return;
+}
+__weak void HW_IPCC_LLD_BLE_ReceiveCliRsp( void ){};
+__weak void HW_IPCC_LLD_BLE_ReceiveM0Cmd( void ){};
+
+/* Transparent Mode */
+void HW_IPCC_LLD_BLE_SendCmd( void )
+{
+  LL_C1_IPCC_SetFlag_CHx( IPCC, HW_IPCC_LLD_BLE_CMD_CHANNEL );
+  return;
+}
+
+static void HW_IPCC_LLD_BLE_ReceiveRspHandler( void )
+{
+  LL_C1_IPCC_DisableReceiveChannel( IPCC, HW_IPCC_LLD_BLE_RSP_CHANNEL );
+  HW_IPCC_LLD_BLE_ReceiveRsp();
+  return;
+}
+
+void HW_IPCC_LLD_BLE_SendRspAck( void )
+{
+  LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_LLD_BLE_RSP_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_LLD_BLE_RSP_CHANNEL );
+  return;
+}
+
+#endif /* LLD_BLE_WB */
+
+/******************************************************************************
  * ZIGBEE
  ******************************************************************************/
 #ifdef ZIGBEE_WB
 void HW_IPCC_ZIGBEE_Init( void )
 {
-  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_THREAD_NOTIFICATION_ACK_CHANNEL );
-  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_THREAD_CLI_NOTIFICATION_ACK_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_ZIGBEE_APPLI_NOTIF_ACK_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_ZIGBEE_M0_REQUEST_CHANNEL );
 
   return;
 }
 
-void HW_IPCC_ZIGBEE_SendAppliCmd( void )
+void HW_IPCC_ZIGBEE_SendM4RequestToM0( void )
 {
-  LL_C1_IPCC_SetFlag_CHx( IPCC, HW_IPCC_THREAD_OT_CMD_RSP_CHANNEL );
-  LL_C1_IPCC_EnableTransmitChannel( IPCC, HW_IPCC_THREAD_OT_CMD_RSP_CHANNEL );
+  LL_C1_IPCC_SetFlag_CHx( IPCC, HW_IPCC_ZIGBEE_CMD_APPLI_CHANNEL );
+  LL_C1_IPCC_EnableTransmitChannel( IPCC, HW_IPCC_ZIGBEE_CMD_APPLI_CHANNEL );
 
   return;
 }
 
-void HW_IPCC_ZIGBEE_SendCliCmd( void )
+void HW_IPCC_ZIGBEE_SendM4AckToM0Notify( void )
 {
-  LL_C1_IPCC_SetFlag_CHx( IPCC, HW_IPCC_THREAD_CLI_CMD_CHANNEL );
-
-   return;
-}
-
-void HW_IPCC_ZIGBEE_SendAppliCmdAck( void )
-{
-  LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_THREAD_NOTIFICATION_ACK_CHANNEL );
-  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_THREAD_NOTIFICATION_ACK_CHANNEL );
+  LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_ZIGBEE_APPLI_NOTIF_ACK_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_ZIGBEE_APPLI_NOTIF_ACK_CHANNEL );
 
   return;
-}
-
-void HW_IPCC_ZIGBEE_SendCliCmdAck( void )
-{
-    LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_THREAD_CLI_NOTIFICATION_ACK_CHANNEL );
-    LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_THREAD_CLI_NOTIFICATION_ACK_CHANNEL );
-
-    return;
 }
 
 static void HW_IPCC_ZIGBEE_CmdEvtHandler( void )
 {
-    LL_C1_IPCC_DisableTransmitChannel( IPCC, HW_IPCC_THREAD_OT_CMD_RSP_CHANNEL );
+  LL_C1_IPCC_DisableTransmitChannel( IPCC, HW_IPCC_ZIGBEE_CMD_APPLI_CHANNEL );
 
-    HW_IPCC_ZIGBEE_AppliCmdNotification();
-
-    return;
-}
-
-static void HW_IPCC_ZIGBEE_StackNotifEvtHandler( void )
-{
-    LL_C1_IPCC_DisableReceiveChannel( IPCC, HW_IPCC_THREAD_NOTIFICATION_ACK_CHANNEL );
-
-    HW_IPCC_ZIGBEE_AppliAsyncEvtNotification();
-
-    return;
-}
-
-static void HW_IPCC_ZIGBEE_CliNotifEvtHandler( void )
-{
-  LL_C1_IPCC_DisableReceiveChannel( IPCC, HW_IPCC_THREAD_CLI_NOTIFICATION_ACK_CHANNEL );
-
-  HW_IPCC_ZIGBEE_CliEvtNotification();
+  HW_IPCC_ZIGBEE_RecvAppliAckFromM0();
 
   return;
 }
 
-__weak void HW_IPCC_ZIGBEE_AppliCmdNotification( void ){};
-__weak void HW_IPCC_ZIGBEE_AppliAsyncEvtNotification( void ){};
-__weak void HW_IPCC_ZIGBEE_CliEvtNotification( void ){};
+static void HW_IPCC_ZIGBEE_StackNotifEvtHandler( void )
+{
+  LL_C1_IPCC_DisableReceiveChannel( IPCC, HW_IPCC_ZIGBEE_APPLI_NOTIF_ACK_CHANNEL );
+
+  HW_IPCC_ZIGBEE_RecvM0NotifyToM4();
+
+  return;
+}
+
+static void HW_IPCC_ZIGBEE_StackM0RequestHandler( void )
+{
+  LL_C1_IPCC_DisableReceiveChannel( IPCC, HW_IPCC_ZIGBEE_M0_REQUEST_CHANNEL );
+
+  HW_IPCC_ZIGBEE_RecvM0RequestToM4();
+
+  return;
+}
+
+void HW_IPCC_ZIGBEE_SendM4AckToM0Request( void )
+{
+  LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_ZIGBEE_M0_REQUEST_CHANNEL );
+  LL_C1_IPCC_EnableReceiveChannel( IPCC, HW_IPCC_ZIGBEE_M0_REQUEST_CHANNEL );
+
+  return;
+}
+
+__weak void HW_IPCC_ZIGBEE_RecvAppliAckFromM0( void ){};
+__weak void HW_IPCC_ZIGBEE_RecvM0NotifyToM4( void ){};
+__weak void HW_IPCC_ZIGBEE_RecvM0RequestToM4( void ){};
 #endif /* ZIGBEE_WB */
 
 /******************************************************************************

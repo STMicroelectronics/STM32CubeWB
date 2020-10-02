@@ -18,6 +18,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "main.h"
@@ -191,7 +192,7 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
  * When the system event is both :
  *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
- *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ *    - reported by the FUS (sysevt_ready_rsp == FUS_FW_RUNNING)
  * The buffer shall not be released
  * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
  * When the status is not filled, the buffer is released by default
@@ -199,21 +200,26 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
 static void APPE_SysUserEvtRx( void * pPayload )
 {
   TL_AsynchEvt_t *p_sys_event;
-
   SHCI_C2_CONFIG_Cmd_Param_t config_param = {0};
+  WirelessFwInfo_t WirelessInfo;
 
   p_sys_event = (TL_AsynchEvt_t*)(((tSHCI_UserEvtRxParam*)pPayload)->pckt->evtserial.evt.payload);
+
+  /* Read the firmware version of both the wireless firmware and the FUS */
+  SHCI_GetWirelessFwInfo( &WirelessInfo );
+  APP_DBG_MSG("Wireless Firmware version %d.%d.%d\n", WirelessInfo.VersionMajor, WirelessInfo.VersionMinor, WirelessInfo.VersionSub);
+  APP_DBG_MSG("Wireless Firmware build %d\n", WirelessInfo.VersionReleaseType);
+  APP_DBG_MSG("FUS version %d.%d.%d\n\n", WirelessInfo.FusVersionMinor, WirelessInfo.FusVersionMinor, WirelessInfo.FusVersionSub);
 
   switch(p_sys_event->subevtcode)
   {
     case SHCI_SUB_EVT_CODE_READY:
-      APP_DBG_MSG("SHCI_SUB_EVT_CODE_READY WITH PARAMETER %x \n", ((SHCI_C2_Ready_Evt_t*)p_sys_event->payload)->sysevt_ready_rsp );
-
       if(((SHCI_C2_Ready_Evt_t*)p_sys_event->payload)->sysevt_ready_rsp == WIRELESS_FW_RUNNING)
       {
         /**
          * The wireless firmware is running on the CPU2
          */
+        APP_DBG_MSG("SHCI_SUB_EVT_CODE_READY - WIRELESS_FW_RUNNING \n");
 
         /* Traces channel initialization */
         APPD_EnableCPU2( );
@@ -222,7 +228,7 @@ static void APPE_SysUserEvtRx( void * pPayload )
         config_param.PayloadCmdSize = SHCI_C2_CONFIG_PAYLOAD_CMD_SIZE;
         config_param.EvtMask1 = SHCI_C2_CONFIG_EVTMASK1_BIT0_ERROR_NOTIF_ENABLE
                                 +  SHCI_C2_CONFIG_EVTMASK1_BIT1_BLE_NVM_RAM_UPDATE_ENABLE
-                                +  SHCI_C2_CONFIG_EVTMASK1_BIT2_OT_NVM_RAM_UPDATE_ENABLE
+                                +  SHCI_C2_CONFIG_EVTMASK1_BIT2_THREAD_NVM_RAM_UPDATE_ENABLE
                                 +  SHCI_C2_CONFIG_EVTMASK1_BIT3_NVM_START_WRITE_ENABLE
                                 +  SHCI_C2_CONFIG_EVTMASK1_BIT4_NVM_END_WRITE_ENABLE
                                 +  SHCI_C2_CONFIG_EVTMASK1_BIT5_NVM_START_ERASE_ENABLE
@@ -239,6 +245,7 @@ static void APPE_SysUserEvtRx( void * pPayload )
          * The FUS firmware is running on the CPU2
          * In the scope of this application, there should be no case when we get here
          */
+        APP_DBG_MSG("SHCI_SUB_EVT_CODE_READY - FUS_FW_RUNNING \n");
 
         /* The packet shall not be released as this is not supported by the FUS */
         ((tSHCI_UserEvtRxParam*)pPayload)->status = SHCI_TL_UserEventFlow_Disable;
@@ -250,19 +257,19 @@ static void APPE_SysUserEvtRx( void * pPayload )
       break;
 
     case SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE:
-      APP_DBG_MSG("SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE : StartAddress = %x , Size = %x\n",
+      APP_DBG_MSG("SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE : StartAddress = %lx , Size = %ld\n",
                   ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->StartAddress,
                   ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->Size);
       break;
 
-    case SHCI_SUB_EVT_OT_NVM_RAM_UPDATE:
-      APP_DBG_MSG("SHCI_SUB_EVT_OT_NVM_RAM_UPDATE : StartAddress = %x , Size = %x\n",
-                  ((SHCI_C2_OtNvmRamUpdate_Evt_t*)p_sys_event->payload)->StartAddress,
-                  ((SHCI_C2_OtNvmRamUpdate_Evt_t*)p_sys_event->payload)->Size);
+    case SHCI_SUB_EVT_THREAD_NVM_RAM_UPDATE:
+      APP_DBG_MSG("SHCI_SUB_EVT_THREAD_NVM_RAM_UPDATE : StartAddress = %lx , Size = %ld\n",
+                  ((SHCI_C2_ThreadNvmRamUpdate_Evt_t*)p_sys_event->payload)->StartAddress,
+                  ((SHCI_C2_ThreadNvmRamUpdate_Evt_t*)p_sys_event->payload)->Size);
       break;
 
     case SHCI_SUB_EVT_NVM_START_WRITE:
-      APP_DBG_MSG("SHCI_SUB_EVT_NVM_START_WRITE : NumberOfWords = %x\n",
+      APP_DBG_MSG("SHCI_SUB_EVT_NVM_START_WRITE : NumberOfWords = %ld\n",
                   ((SHCI_C2_NvmStartWrite_Evt_t*)p_sys_event->payload)->NumberOfWords);
       break;
 
@@ -271,7 +278,7 @@ static void APPE_SysUserEvtRx( void * pPayload )
       break;
 
     case SHCI_SUB_EVT_NVM_START_ERASE:
-      APP_DBG_MSG("SHCI_SUB_EVT_NVM_START_WRITE : NumberOfSectors = %x\n",
+      APP_DBG_MSG("SHCI_SUB_EVT_NVM_START_WRITE : NumberOfSectors = %ld\n",
                   ((SHCI_C2_NvmStartErase_Evt_t*)p_sys_event->payload)->NumberOfSectors);
       break;
 

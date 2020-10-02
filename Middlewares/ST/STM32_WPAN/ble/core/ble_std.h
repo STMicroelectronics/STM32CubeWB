@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_std.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   BLE standard definitions
  ******************************************************************************
  * @attention

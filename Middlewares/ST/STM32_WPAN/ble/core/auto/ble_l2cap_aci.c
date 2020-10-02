@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_l2cap_aci.c
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (l2cap_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************

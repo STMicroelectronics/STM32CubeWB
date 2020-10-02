@@ -17,6 +17,7 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "utilities_common.h"
@@ -531,8 +532,9 @@ static void APP_THREAD_ConfigJoiner(void)
 }
 
 /**
- * @brief Dummy request handler
- * @param
+ * @brief APP_THREAD_JoinerHandler
+ * @param OtError
+ * @param pContext
  * @retval None
  */
 static void APP_THREAD_JoinerHandler(otError OtError, void *pContext)

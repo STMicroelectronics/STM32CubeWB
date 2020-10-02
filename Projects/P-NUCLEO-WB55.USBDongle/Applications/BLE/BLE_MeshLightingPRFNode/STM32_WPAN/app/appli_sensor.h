@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -23,118 +23,118 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
+#include "sensors.h"
+#include "mesh_cfg.h"
 
-/* Exported macro ------------------------------------------------------------*/
-
-#define CONTROLLER_WAIT_TIME            1000
-
-/* Exported variables  -------------------------------------------------------*/
-/* Exported Functions Prototypes ---------------------------------------------*/
-/* Application variables------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-
-/* Sensor Cadence set */
-#pragma pack(1)
-typedef struct
-{
-  MOBLEUINT16 Prop_ID;
-  MOBLEUINT16 PositiveTolerance;
-  MOBLEUINT16 NegativeTolerance;
-  MOBLEUINT8 SamplingFunction;
-  MOBLEUINT8 MeasurementPeriod;
-  MOBLEUINT8 UpdateInterval; 
-}Appli_Sensor_DescriptorStatus_t;
-
-/* Sensor Setting set */
-typedef struct 
-{
-  MOBLEUINT16 Property_ID; 
-  MOBLEUINT16 Sensor_Setting_ID; 
-  MOBLEUINT8 Sensor_Setting_Access;
-  MOBLEUINT16 Sensor_Setting_Value;
-}Appli_Sensor_SettingSet_t;
-
-
-/* structure of flags used for publishing data */
-typedef struct 
-{
-  MOBLEBOOL CadenceDurationFlag ;
-  MOBLEBOOL DeltaDataFlag ;
-}PublishingDataFlag_t;
-
-/* structure for the cadence set */
-typedef struct 
-{
-  MOBLEUINT16 Property_ID; 
-  MOBLEUINT8 FastCadenceDevisor;
-  MOBLEUINT8 StatusTriggerType; 
-  MOBLEUINT8 triggerDeltaDown;
-  MOBLEUINT8 triggerDeltaUp;
-  MOBLEUINT8 StatusMinInterval; 
-  MOBLEUINT8 FastCadenceLow;
-  MOBLEUINT8 FastCadenceHigh;
- // float FastCadenceLow;
-//  float FastCadenceHigh;
-}Sensor_CadenceSet_t;
-
-typedef struct
-{
-  MOBLEUINT16 Property_ID;
-  MOBLEUINT16 RawValueX;
-  MOBLEUINT16 RawValueWidth;
-  MOBLEUINT16 RawValueY;
-}Sensor_Column_param_t;
-
-/* Sensor Series */
-struct Sensor_SeriesData
-{
-  MOBLEUINT16 RawValueX;
-  MOBLEUINT16 RawColumnWidth;
-  MOBLEUINT16 RawValueY;
-};
-
-typedef struct
-{
-  MOBLEUINT16 Property_ID;
-  struct Sensor_SeriesData SeriesData[SENSOR_SERIES_VALUE];
-}Sensor_Series_param_t ;
-
-#pragma pack(4)
-
-MOBLE_RESULT Appli_Sensor_Cadence_Set(Sensor_CadenceParam_t* pCadence_param, 
-                                       MOBLEUINT16 property_ID,
-                                       MOBLEUINT32 length); 
-MOBLE_RESULT Appli_Sensor_Cadence_Get(MOBLEUINT8* sensor_DataCadence, 
-                                      MOBLEUINT16 property_ID,
-                                      MOBLEUINT32 length);
-MOBLE_RESULT Appli_Sensor_Data_Status(MOBLEUINT8* sensor_Data , 
-                                      MOBLEUINT32* pLength, 
-                                      MOBLEUINT16 prop_ID , 
-                                      MOBLEUINT32 length);
-MOBLE_RESULT Appli_Sensor_Descriptor_Status(MOBLEUINT8* sensor_Discriptor , 
-                                            MOBLEUINT32* pLength,
-                                            MOBLEUINT16 prop_ID, 
-                                            MOBLEUINT32 length);
-MOBLE_RESULT Appli_Sensor_Setting_Set(Sensor_SettingParam_t* pSensor_SettingParam,
-                                      MOBLEUINT8 OptionalValid,
-                                      MOBLEUINT16 prop_ID); 
-MOBLE_RESULT Appli_Sensor_Series_Status(MOBLEUINT8* sensor_Series, 
-                                        MOBLEUINT32* pLength,
-                                        MOBLEUINT16 prop_ID, 
-                                        MOBLEUINT32 length);
-void Sensor_Publication_Process(float* , MODEL_Property_IDTableParam_t*);
-void SensorDataPublish(MOBLEUINT32 * , MOBLEUINT16*);
-void Read_Sensor_Data(float *);
-MOBLE_RESULT Check_Property_ID(const MODEL_Property_IDTableParam_t prop_ID_Table[],
-                               MOBLEUINT16 prop_ID);
-MOBLE_RESULT Appli_Sensor_GetSettingStatus(MOBLEUINT8* pSetting_Status);
-MOBLE_RESULT Appli_Sensor_GetSetting_IDStatus(MOBLEUINT8* pSetting_Status, 
-                                              MOBLEUINT16 prop_ID);
+/* Exported functions ------------------------------------------------------- */
+void Appli_Sensor_CadenceGet(sensor_CadenceCbParam_t* pDescriptorParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_CadenceSet(sensor_CadenceCbParam_t* pDescriptorParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_CadenceSetUnack(sensor_CadenceCbParam_t* pDescriptorParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_SettingsGet(sensor_SettingsCbParams_t* pDescriptorParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_SettingGet(sensor_SettingCbParams_t* pSettingParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_SettingSet(sensor_SettingCbParams_t* pSettingParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_SettingSetUnack(sensor_SettingCbParams_t* pSettingParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_DescriptorGet(MOBLEUINT8 pDescriptorParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_Get (MOBLEUINT16 prop_ID,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_ColumnGet(sensor_ColumnCbParams_t* pDescriptorParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_SeriesGet(sensor_SeriesCbParams_t* pDescriptorParam,
+                                         MOBLEUINT32 length,
+                                         MOBLE_ADDRESS peerAddr,
+                                         MOBLE_ADDRESS dstPeer,
+                                         MOBLEUINT8 elementIndex);
+MOBLE_RESULT Appli_Sensor_ReadDescriptor(MOBLEUINT8 sensorOffset,
+                                         sensor_DescriptorCbParams_t* pDescriptorParams);
+MOBLE_RESULT Appli_Sensor_ReadValue(MOBLEUINT8 sensorOffset,
+                                    sensor_ValueCbParams_t* pValueParams);
+MOBLE_RESULT Appli_Sensor_ReadColumn(MOBLEUINT8 sensorOffset,
+                                   MOBLEUINT8 columnOffset,
+                                     sensor_ColumnCbParams_t* pColumnParams);
+MOBLE_RESULT Appli_Sensor_ReadSeries(MOBLEUINT8 sensorOffset,
+                                     sensor_SeriesCbParams_t* pSeriesParams);
+MOBLEUINT8 Appli_Sensor_IsFastCadence(MOBLEUINT8 sensorOffset,
+                                      void* pFastCadenceLow, 
+                                      void* pFastCadenceHigh);
+MOBLEUINT8 Appli_Sensor_IsStatusTrigger(MOBLEUINT8 sensorOffset,
+                                        status_trigger_type_e triggerType,
+                                        void* pDeltaDown,
+                                        void* pDeltaUp);
 MOBLE_RESULT Appli_Sensor_Init(void); 
-void Sensor_Process(void);
-void Sensor_LC_Light_Publish(void);
+//void Appli_Sensor_SerialCmd(char *rcvdStringBuff, uint16_t rcvdStringSize);
+MOBLE_RESULT Appli_Sensor_Update(MOBLEUINT8 sensorOffset, MOBLEUINT32 value);
 
+void Appli_Sensor_Descriptor_Status(const MOBLEUINT8 *pDescriptor,
+                                    MOBLEUINT32 length,
+                                    MOBLE_ADDRESS dstPeer,
+                                    MOBLEUINT8 elementIndex);
+void Appli_Sensor_Cadence_Status(const MOBLEUINT8 *pCadence,
+                                 MOBLEUINT32 length,
+                                 MOBLE_ADDRESS dstPeer,
+                                 MOBLEUINT8 elementIndex);
+void Appli_Sensor_Settings_Status(const MOBLEUINT8 *pSettings,
+                                 MOBLEUINT32 length,
+                                 MOBLE_ADDRESS dstPeer,
+                                 MOBLEUINT8 elementIndex);
+void Appli_Sensor_Setting_Status(const MOBLEUINT8 *pSetting,
+                                 MOBLEUINT32 length,
+                                 MOBLE_ADDRESS dstPeer,
+                                 MOBLEUINT8 elementIndex);
+void Appli_Sensor_Status(const MOBLEUINT8 *pStatus,
+                         MOBLEUINT32 length,
+                         MOBLE_ADDRESS dstPeer,
+                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_Column_Status(const MOBLEUINT8 *pColumn,
+                                MOBLEUINT32 length,
+                                MOBLE_ADDRESS dstPeer,
+                                MOBLEUINT8 elementIndex);
+void Appli_Sensor_Series_Status(const MOBLEUINT8 *pSeries,
+                                MOBLEUINT32 length,
+                                MOBLE_ADDRESS dstPeer,
+                                MOBLEUINT8 elementIndex);  
+MOBLE_RESULT Appli_Sensor_Update(MOBLEUINT8 sensorOffset, 
+                                 MOBLEUINT32 value);
+void Appli_Sensor_SerialCmd(char *rcvdStringBuff, 
+                            uint16_t rcvdStringSize);
 #endif /* __APPLI_SENSOR_H */
 
-/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

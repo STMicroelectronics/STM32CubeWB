@@ -52,8 +52,8 @@
  * DIAG.S.Afffe | False
  *
  * Client Attributes
- * ILLVL.C.Afffd | True
- * ILLVL.C.Afffe | False
+ * DIAG.C.Afffd | True
+ * DIAG.C.Afffe | False
  */
 
 /** Diagnostics Server Attribute IDs */

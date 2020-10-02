@@ -128,20 +128,20 @@
 /********** Following Section defines the SERVER SIG MODEL IDs     ************/
 /******************************************************************************/
 
-#define GENERIC_MODEL_SERVER_ONOFF_MODEL_ID   0x1000
-#define GENERIC_MODEL_SERVER_LEVEL_MODEL_ID   0x1002
-#define GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME_MODEL_ID   0x1004
-#define GENERIC_MODEL_SERVER_POWER_ONOFF_MODEL_ID   0x1006
-#define GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP_MODEL_ID   0x1007
-#define GENERIC_MODEL_SERVER_POWER_LEVEL_MODEL_ID   0x1009
-#define GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP_MODEL_ID   0x100A
-#define GENERIC_MODEL_SERVER_BATTERY_MODEL_ID   0x100C
-#define GENERIC_MODEL_SERVER_LOCATION_MODEL_ID   0x100E
-#define GENERIC_MODEL_SERVER_LOCATION_SETUP_MODEL_ID   0x100F
-#define GENERIC_MODEL_SERVER_ADMIN_PROPERTY_MODEL_ID   0x1011
-#define GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY_MODEL_ID   0x1012
-#define GENERIC_MODEL_SERVER_USER_PROPERTY_MODEL_ID   0x1013
-#define GENERIC_MODEL_SERVER_CLIENT_PROPERTY_MODEL_ID   0x1014
+#define GENERIC_MODEL_SERVER_ONOFF_MODEL_ID                               0x1000
+#define GENERIC_LEVEL_SERVER_MODEL_ID                               0x1002
+#define GENERIC_DEFAULT_TRANSITION_TIME_SERVER_MODEL_ID             0x1004
+#define GENERIC_SERVER_POWER_ONOFF_MODEL_ID                         0x1006
+#define GENERIC_POWER_ONOFF_SETUP_SERVER_MODEL_ID                   0x1007
+#define GENERIC_MODEL_SERVER_POWER_LEVEL_MODEL_ID                         0x1009
+#define GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP_MODEL_ID                   0x100A
+#define GENERIC_MODEL_SERVER_BATTERY_MODEL_ID                             0x100C
+#define GENERIC_MODEL_SERVER_LOCATION_MODEL_ID                            0x100E
+#define GENERIC_MODEL_SERVER_LOCATION_SETUP_MODEL_ID                      0x100F
+#define GENERIC_MODEL_SERVER_ADMIN_PROPERTY_MODEL_ID                      0x1011
+#define GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY_MODEL_ID               0x1012
+#define GENERIC_MODEL_SERVER_USER_PROPERTY_MODEL_ID                       0x1013
+#define GENERIC_MODEL_SERVER_CLIENT_PROPERTY_MODEL_ID                     0x1014
 
 /******************************************************************************/
 /********** SIG MODEL IDs ends                                     ************/
@@ -151,10 +151,10 @@
 /********** Following Section defines the CLIENT SIG MODEL IDs     ************/
 /******************************************************************************/
 
-#define GENERIC_MODEL_CLIENT_ONOFF_MODEL_ID   0x1001
-#define GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID   0x1003
-#define GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME_MODEL_ID             0x1005
-#define GENERIC_MODEL_CLIENT_POWER_ONOFF_MODEL_ID                         0x1008
+#define GENERIC_ONOFF_CLIENT_MODEL_ID                               0x1001
+#define GENERIC_LEVEL_CLIENT_MODEL_ID                               0x1003
+#define GENERIC_DEFAULT_TRANSITION_TIME_CLIENT_MODEL_ID             0x1005
+#define GENERIC_POWER_ONOFF_CLIENT_MODEL_ID                         0x1008
 
 /******************************************************************************/
 /********** SIG MODEL IDs ends                                     ************/
@@ -163,11 +163,7 @@
 
 #define MAXSTEPVALUE   0X3E
 #define MINSTEPVALUE   0X00
-
-#define STEP_RESOLUTION_0     100
-#define STEP_RESOLUTION_1     1000
-#define STEP_RESOLUTION_2     10000
-#define STEP_RESOLUTION_3     600000
+#define UNDEFSTEPVAL   0x3F
 
 #define STEP_HEX_VALUE_0       0X00
 #define STEP_HEX_VALUE_1       0X01
@@ -207,10 +203,6 @@
 #define IN_TRANSITION             0X02
 #define DEFAULT_TRANSITION        0X03
 
-#define No_NVM_FLAG                        0XFE
-#define GENERIC_ON_OFF_NVM_FLAG            0X01
-#define GENERIC_LEVEL_NVM_FLAG             0X02
-
 #define GENERIC_TRANSITION_STOP            0X00
 #define GENERIC_ON_OFF_TRANSITION_START    0X01
 #define GENERIC_LEVEL_TRANSITION_START     0X02
@@ -229,6 +221,7 @@ typedef struct
   MOBLEINT16 PresentValue16;
   MOBLEINT16 TargetValue16;
 } Generic_TemporaryStatus_t;
+
 /*****************************************************/
 /* Transition time variables */
 typedef struct
@@ -309,12 +302,11 @@ typedef struct
 /******************************************************/
 /* Generic Default transition time messages*/
 typedef struct
-  {    
+{    
   MOBLEUINT8 DefaultTransitionTime;
 }Generic_DefaultTransitionParam_t; 
 
-typedef union  
-{
+typedef union  {
   Generic_LevelParam_t sGeneric_LevelParam;
   MOBLEUINT8 a_Level_param[sizeof(Generic_LevelParam_t)]; 
 } _Generic_LevelParam;
@@ -325,51 +317,61 @@ typedef struct
   /* Pointer to the function Appli_Generic_OnOff_Set used for callback 
      from the middle layer to Application layer
   */
-  MOBLE_RESULT (*OnOff_Set_cb)(Generic_OnOffStatus_t*, uint8_t);  
+  MOBLE_RESULT (*OnOff_Set_cb)(Generic_OnOffStatus_t*, uint8_t, uint16_t, \
+                                                                       uint8_t);  
    
-  MOBLE_RESULT (*OnOff_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32); 
+  MOBLE_RESULT (*OnOff_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32, uint16_t,\
+                                                                        uint8_t); 
   /* Pointer to the function Appli_Generic_Level_Set used for callback 
      from the middle layer to Application layer
   */
-  MOBLE_RESULT (*Level_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8);
+  MOBLE_RESULT (*Level_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8, uint16_t,\
+                                                                        uint8_t);
   
   /* Pointer to the function Appli_Generic_Delta_Set used for callback 
      from the middle layer to Application layer
   */
-  MOBLE_RESULT (*LevelDelta_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8);
+  MOBLE_RESULT (*LevelDelta_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8, uint16_t,\
+                                                                        uint8_t);
   
   /* Pointer to the function Appli_Generic_Move_Set used for callback 
      from the middle layer to Application layer
   */
-  MOBLE_RESULT (*LevelDeltaMove_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8);
+  MOBLE_RESULT (*LevelDeltaMove_Set_cb)(Generic_LevelStatus_t*, MOBLEUINT8, \
+                                                          uint16_t, uint8_t);
   
-  MOBLE_RESULT (*Level_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  MOBLE_RESULT (*Level_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32, uint16_t, \
+                                                                        uint8_t);
   /* Pointer to the function Appli_Generic_PowerOnOff_Set used for callback 
      from the middle layer to Application layer
   */
-  MOBLE_RESULT (*GenericPowerOnOff_cb)(Generic_PowerOnOffParam_t*, MOBLEUINT8);
+  MOBLE_RESULT (*GenericPowerOnOff_cb)(Generic_PowerOnOffParam_t*, MOBLEUINT8, \
+                                                          uint16_t, uint8_t);
   
-  MOBLE_RESULT (*GenericPowerOnOff_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  MOBLE_RESULT (*GenericPowerOnOff_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32, \
+                                                          uint16_t, uint8_t);
   
   /* Pointer to the function Generic_DefaultTransitionTime_Set used for callback 
      from the middle layer to Application layer
   */
-  MOBLE_RESULT (*GenericDefaultTransition_cb)(Generic_DefaultTransitionParam_t*, MOBLEUINT8);
+  MOBLE_RESULT (*GenericDefaultTransition_cb)(Generic_DefaultTransitionParam_t*,\
+                                              MOBLEUINT8, uint16_t, uint8_t);
   
-  MOBLE_RESULT (*GenericDefaultTransition_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  MOBLE_RESULT (*GenericDefaultTransition_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32, \
+                                                            uint16_t, uint8_t);
 } Appli_Generic_cb_t;
 
 typedef struct
 { 
-  MOBLE_RESULT (*GetOnOffStatus_cb)(MOBLEUINT8*);
+  MOBLE_RESULT (*GetOnOffStatus_cb)(MOBLEUINT8*, uint16_t, uint8_t);
   
-  MOBLE_RESULT (*GetOnOffValue_cb)(MOBLEUINT8*);
+  MOBLE_RESULT (*GetOnOffValue_cb)(MOBLEUINT8*, uint16_t, uint8_t);
   
-  MOBLE_RESULT (*GetLevelStatus_cb)(MOBLEUINT8*);
+  MOBLE_RESULT (*GetLevelStatus_cb)(MOBLEUINT8*, uint16_t, uint8_t);
   
-  MOBLE_RESULT (*GetPowerOnOffStatus_cb)(MOBLEUINT8*);
+  MOBLE_RESULT (*GetPowerOnOffStatus_cb)(MOBLEUINT8*, uint16_t, uint8_t);
   
-  MOBLE_RESULT (*GetDefaultTransitionStatus_cb)(MOBLEUINT8*);
+  MOBLE_RESULT (*GetDefaultTransitionStatus_cb)(MOBLEUINT8*, uint16_t, uint8_t);
   
 }Appli_Generic_State_cb_t;
 #pragma pack(4)
@@ -382,24 +384,26 @@ extern const Appli_Generic_cb_t GenericAppli_cb;
 void BLEMesh_GenericModelAppliCb (Appli_Generic_cb_t* map );
 
 
-MOBLE_RESULT Generic_OnOff_Set(MOBLEUINT8 const*, MOBLEUINT32);
-MOBLE_RESULT Generic_OnOff_Status(MOBLEUINT8* , MOBLEUINT32*);
+MOBLE_RESULT Generic_OnOff_Set(MOBLEUINT8 const*, MOBLEUINT32, MODEL_MessageHeader_t*);
+MOBLE_RESULT Generic_OnOff_Status(MOBLEUINT8*, MOBLEUINT32*, MODEL_MessageHeader_t*);
 
-MOBLE_RESULT Generic_Level_Set(const MOBLEUINT8*, MOBLEUINT32);
-MOBLE_RESULT Generic_Delta_Set(const MOBLEUINT8*, MOBLEUINT32);
-MOBLE_RESULT Generic_Move_Set(const MOBLEUINT8*, MOBLEUINT32);
-MOBLE_RESULT Generic_Level_Status(MOBLEUINT8* , MOBLEUINT32*);
-MOBLE_RESULT Generic_PowerOnOff_Set(const MOBLEUINT8*, MOBLEUINT32 length); 
-MOBLE_RESULT Generic_PowerOnOff_Status(MOBLEUINT8*, MOBLEUINT32*);
-MOBLE_RESULT Generic_DefaultTransitionTime_Set(const MOBLEUINT8*, MOBLEUINT32 length); 
-MOBLE_RESULT Generic_DefaultTransitionTime_Status(MOBLEUINT8 *pTransition_status , MOBLEUINT32 *plength); 
+MOBLE_RESULT Generic_Level_Set(const MOBLEUINT8*, MOBLEUINT32, MODEL_MessageHeader_t*);
+MOBLE_RESULT Generic_Delta_Set(const MOBLEUINT8*, MOBLEUINT32, MODEL_MessageHeader_t*);
+MOBLE_RESULT Generic_Move_Set(const MOBLEUINT8*, MOBLEUINT32, MODEL_MessageHeader_t*);
+MOBLE_RESULT Generic_Level_Status(MOBLEUINT8*, MOBLEUINT32*, MODEL_MessageHeader_t*);
+MOBLE_RESULT Generic_PowerOnOff_Set(const MOBLEUINT8*, MOBLEUINT32 length, MODEL_MessageHeader_t*); 
+MOBLE_RESULT Generic_PowerOnOff_Status(MOBLEUINT8*, MOBLEUINT32*, MODEL_MessageHeader_t*);
+MOBLE_RESULT Generic_DefaultTransitionTime_Set(const MOBLEUINT8*, MOBLEUINT32 length,\
+                                                         MODEL_MessageHeader_t*); 
+MOBLE_RESULT Generic_DefaultTransitionTime_Status(MOBLEUINT8 *pTransition_status , \
+                                                           MOBLEUINT32 *plength, 
+                                                         MODEL_MessageHeader_t*); 
 
 
 MOBLE_RESULT GenericModelServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
                                     MOBLEUINT16 *length);
 
-MOBLE_RESULT GenericModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT GenericModelServer_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 *pResponsedata, 
                                     MOBLEUINT32 *plength, 
@@ -407,8 +411,7 @@ MOBLE_RESULT GenericModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                     MOBLEUINT32 length,
                                     MOBLEBOOL response);
 
-MOBLE_RESULT GenericModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParam, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 const *data, 
                                     MOBLEUINT32 length, 
@@ -418,28 +421,33 @@ void Generic_Publish(MOBLE_ADDRESS srcAddress);
 
 MOBLE_RESULT BLEMesh_AddGenericModels(void);
 
-void Generic_GetStepValue(MOBLEUINT8 stepParam);
+void Generic_GetStepValue(MOBLEUINT8 stepParam, MOBLEUINT8 elementIndex);
 
-void GenericOnOff_LightActualBinding(Generic_OnOffStatus_t* onOff_param);
-void GenericLevel_LightBinding(Generic_LevelStatus_t* gLevel_param , MOBLEUINT8 flag);
-void GenericLevel_CtlTempBinding(Generic_LevelStatus_t * bLevelParam);
-void GenericLevel_HslHueBinding(Generic_LevelStatus_t * bLevelParam);
-void GenericLevel_HslSaturationBinding(Generic_LevelStatus_t * bLevelParam);
-void GenericOnOff_Light_LC_Binding(Generic_OnOffStatus_t* onOff_param);
+void GenericOnOff_LightActualBinding(Generic_OnOffStatus_t* onOff_param,MOBLEUINT8 elementIndex);
+void GenericLevel_LightBinding(Generic_LevelStatus_t* gLevel_param , MOBLEUINT8 flag,MOBLEUINT8 elementIndex);
+void GenericLevel_CtlTempBinding(Generic_LevelStatus_t * bLevelParam,MOBLEUINT8 elementIndex);
+void GenericLevel_HslHueBinding(Generic_LevelStatus_t * bLevelParam,MOBLEUINT8 elementIndex);
+void GenericLevel_HslSaturationBinding(Generic_LevelStatus_t * bLevelParam,MOBLEUINT8 elementIndex);
+void GenericOnOff_Light_LC_Binding(Generic_OnOffStatus_t* onOff_param,MOBLEUINT8 elementIndex);
 
-MOBLE_RESULT Generic_TransitionBehaviour(MOBLEUINT8 *GetValue);
-
-MOBLE_RESULT GenericOnOffStateUpdate_Process(void);
-MOBLE_RESULT GenericLevelStateUpdate_Process(void);
-   
-void Generic_OnOffDefaultTransitionValue(void);
-void Generic_LevelDefaultTransitionValue(MOBLEUINT16 levelValue);
-   
-MOBLE_RESULT Generic_Client_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUINT32 plength);
-MOBLE_RESULT Generic_Client_Level_Status(MOBLEUINT8 const *plevel_status, MOBLEUINT32 plength);
-MOBLE_RESULT Generic_Client_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , MOBLEUINT32 plength);
-MOBLE_RESULT Generic_Client_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , MOBLEUINT32 plength);
+MOBLE_RESULT Generic_TransitionBehaviour(MOBLEUINT8 *GetValue, MOBLEUINT8 elementIndex);
+MOBLE_RESULT Generic_OnOffStateUpdate_Process(MOBLEUINT8 elementIndex);
+MOBLE_RESULT Generic_LevelStateUpdate_Process(MOBLEUINT8 elementIndex);
+void Generic_OnOffDefaultTransitionValue(MOBLEUINT8 elementIndex);
+void Generic_LevelDefaultTransitionValue(MOBLEUINT8 elementIndex, MOBLEUINT16 levelValue); 
+void Generic_DeltaDefaultTransitionValue(MOBLEUINT8 elementIndex, MOBLEUINT32 deltaValue); 
+void Generic_OnOffUpdate(MOBLEUINT8 elementIndex, MOBLEUINT8 onOff);
+MOBLE_RESULT Generic_Client_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUINT32 plength,\
+                                                                uint16_t, uint8_t); 
+MOBLE_RESULT Generic_Client_Level_Status(MOBLEUINT8 const *plevel_status, MOBLEUINT32 plength,\
+                                                                uint16_t, uint8_t); 
+MOBLE_RESULT Generic_Client_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , 
+                                                            MOBLEUINT32 plength,\
+                                                                uint16_t, uint8_t); 
+MOBLE_RESULT Generic_Client_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , 
+                                                            MOBLEUINT32 plength,\
+                                                                uint16_t, uint8_t); 
 #endif /* __GENERIC_H */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

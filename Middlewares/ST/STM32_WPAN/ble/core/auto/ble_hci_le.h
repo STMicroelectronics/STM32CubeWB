@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_hci_le.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (hci_le)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -34,7 +34,7 @@
  * connection on the same physical connection is disconnected.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.1.6)
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Reason The reason for ending the connection.
@@ -57,8 +57,7 @@ tBleStatus hci_disconnect( uint16_t Connection_Handle,
  * Connection_Handle must be a Connection_Handle for an ACL or LE connection.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.1.23)
  * 
- * @param Connection_Handle Specifies which Connection_Handle's version
- *        information to get.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
@@ -115,8 +114,7 @@ tBleStatus hci_reset( void );
  * Connection_Handle for an ACL connection.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.3.35)
  * 
- * @param Connection_Handle Specifies which Connection_Handle's Transmit Power
- *        Level setting to read.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Type Current or maximum transmit power level.
@@ -349,7 +347,7 @@ tBleStatus hci_read_bd_addr( uint8_t* BD_ADDR );
  * RSSI cannot be read, the RSSI metric shall be set to 127.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.5.4)
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param[out] RSSI N Size: 1 Octet (signed integer)
@@ -909,8 +907,7 @@ tBleStatus hci_le_clear_white_list( void );
  *        Values:
  *        - 0x00: Public Device Address
  *        - 0x01: Random Device Address
- * @param Address Public Device Address or Random Device Address of the device
- *        to be added to the white list.
+ * @param Address Public Device Address or Random Device Address.
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_add_device_to_white_list( uint8_t Address_Type,
@@ -932,8 +929,7 @@ tBleStatus hci_le_add_device_to_white_list( uint8_t Address_Type,
  *        Values:
  *        - 0x00: Public Device Address
  *        - 0x01: Random Device Address
- * @param Address Public Device Address or Random Device Address of the device
- *        to be removed from the white list.
+ * @param Address Public Device Address or Random Device Address.
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_remove_device_from_white_list( uint8_t Address_Type,
@@ -960,7 +956,7 @@ tBleStatus hci_le_remove_device_from_white_list( uint8_t Address_Type,
  * the parameter values provided by the Host through this command.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.18)
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
@@ -1038,7 +1034,7 @@ tBleStatus hci_le_set_host_channel_classification( const uint8_t* LE_Channel_Map
  * acknowledgement.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.20)
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param[out] LE_Channel_Map This parameter contains 37 1-bit fields.
@@ -1060,7 +1056,7 @@ tBleStatus hci_le_read_channel_map( uint16_t Connection_Handle,
  * This command may be issued on both the master and slave.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.21)
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
@@ -1114,7 +1110,7 @@ tBleStatus hci_le_rand( uint8_t* Random_Number );
  * This command shall only be used when the local device's role is Master.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.24)
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Random_Number 64 bit random number.
@@ -1135,7 +1131,7 @@ tBleStatus hci_le_start_encryption( uint16_t Connection_Handle,
  * is used as defined in [Vol 6] Part B, Section 5.1.3.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.25)
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Long_Term_Key 128 bit long term key.
@@ -1151,7 +1147,7 @@ tBleStatus hci_le_long_term_key_request_reply( uint16_t Connection_Handle,
  * provide a Long Term Key for this Connection_Handle.
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.26)
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
@@ -1248,7 +1244,7 @@ tBleStatus hci_le_test_end( uint16_t* Number_Of_Packets );
  * 6] Part B, Section 4.5.10) to be used for a given connection. The Controller
  * may use smaller or larger values based on local information.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param TxOctets Preferred maximum number of payload octets that the local
@@ -1493,7 +1489,7 @@ tBleStatus hci_le_read_local_resolvable_address( uint8_t Peer_Identity_Address_T
  * - Advertising is enabled
  * - Scanning is enabled
  * - Create connection command is outstanding
- * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.44)
+ * (See Bluetooth Specification v.5.0, Vol. 2, Part E, Section 7.8.44)
  * 
  * @param Address_Resolution_Enable Enable/disable address resolution in the
  *        controller.
@@ -1512,7 +1508,7 @@ tBleStatus hci_le_set_address_resolution_enable( uint8_t Address_Resolution_Enab
  * the controller uses a Resolvable Private Address before a new resolvable
  * private address is generated and starts being used. This timeout applies to
  * all addresses generated by the controller.
- * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.45)
+ * (See Bluetooth Specification v.5.0 [Vol 2] Part E, Section 7.8.45)
  * 
  * @param RPA_Timeout RPA_Timeout measured in seconds.
  *        Range for N: 0x0001 - 0xA1B8 (1 sec - approximately 11.5 hours)
@@ -1560,9 +1556,9 @@ tBleStatus hci_le_read_maximum_data_length( uint16_t* supportedMaxTxOctets,
  * @brief HCI_LE_READ_PHY
  * The LE_Read_PHY command is used to read the current transmitter PHY and
  * receiver PHY on the connection identified by the Connection_Handle. see
- * Bluetooth Specification [vol2] part E Section 7.8.47
+ * Bluetooth Specification [Vol 2] part E, Section 7.8.47
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param[out] TX_PHY Transmitter PHY in use
@@ -1649,9 +1645,9 @@ tBleStatus hci_le_set_default_phy( uint8_t ALL_PHYS,
  * the LE Coded PHY.
  * The Host may specify a preferred coding even if it prefers not to use the LE
  * Coded transmitter PHY since the Controller may override the PHY preference.
- * see Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.49
+ * (See Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.49)
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param ALL_PHYS Host preferences for TX PHY and RX PHY
@@ -1663,7 +1659,7 @@ tBleStatus hci_le_set_default_phy( uint8_t ALL_PHYS,
  * @param RX_PHYS Host preferences for RX PHY (no LE coded support)
  *        Values:
  *        - 0x00 ... 0x03
- * @param PHY_options Not Supported by STM32WB
+ * @param PHY_options Not supported
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_set_phy( uint16_t Connection_Handle,
@@ -1677,7 +1673,7 @@ tBleStatus hci_le_set_phy( uint16_t Connection_Handle,
  * This command is used to start a test where the DUT receives test reference
  * packets at a fixed interval. The tester generates the test reference
  * packets.
- * see Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.50
+ * (See Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.50)
  * 
  * @param RX_Frequency N = (F - 2402) / 2
  *        Frequency Range : 2402 MHz to 2480 MHz
@@ -1709,7 +1705,7 @@ tBleStatus hci_le_enhanced_receiver_test( uint8_t RX_Frequency,
  * supporting the LE Coded PHY shall also support Packet_Payload value 0x04
  * (not supported by STM32WB). An LE Controller may support other values of
  * Packet_Payload.
- * see Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.51
+ * (See Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.51)
  * 
  * @param TX_Frequency N = (F - 2402) / 2
  *        Frequency Range : 2402 MHz to 2480 MHz
@@ -1741,6 +1737,28 @@ tBleStatus hci_le_enhanced_transmitter_test( uint8_t TX_Frequency,
                                              uint8_t Length_Of_Test_Data,
                                              uint8_t Packet_Payload,
                                              uint8_t PHY );
+
+/**
+ * @brief HCI_LE_SET_PRIVACY_MODE
+ * This command is used to allow the Host to specify the privacy mode to be
+ * used for a given entry on the resolving list.
+ * (See Bluetooth Specification v.5.0 [Vol 2] Part E, Section 7.8.77)
+ * 
+ * @param Peer_Identity_Address_Type Identity address type.
+ *        Values:
+ *        - 0x00: Public Identity Address
+ *        - 0x01: Random (static) Identity Address
+ * @param Peer_Identity_Address Public or Random (static) Identity address of
+ *        the peer device
+ * @param Privacy_Mode Privacy Mode.
+ *        Values:
+ *        - 0x00: Use Network Privacy Mode
+ *        - 0x01: Use Device Privacy Mode
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_set_privacy_mode( uint8_t Peer_Identity_Address_Type,
+                                    const uint8_t* Peer_Identity_Address,
+                                    uint8_t Privacy_Mode );
 
 
 #endif /* BLE_HCI_LE_H__ */

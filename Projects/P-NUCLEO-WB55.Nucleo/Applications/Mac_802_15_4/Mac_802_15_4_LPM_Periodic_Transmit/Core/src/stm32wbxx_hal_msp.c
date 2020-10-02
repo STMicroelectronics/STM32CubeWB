@@ -116,9 +116,9 @@ void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef* hlptim)
   /* USER CODE END LPTIM1_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_LPTIM1_CLK_ENABLE();
-
+  
     __HAL_RCC_GPIOC_CLK_ENABLE();
-    /**LPTIM1 GPIO Configuration
+    /**LPTIM1 GPIO Configuration    
     PC3     ------> LPTIM1_ETR 
     */
     GPIO_InitStruct.Pin = GPIO_PIN_3;
@@ -176,8 +176,8 @@ void HAL_LPTIM_MspDeInit(LPTIM_HandleTypeDef* hlptim)
   /* USER CODE END LPTIM1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_LPTIM1_CLK_DISABLE();
-
-    /**LPTIM1 GPIO Configuration
+  
+    /**LPTIM1 GPIO Configuration    
     PC3     ------> LPTIM1_ETR 
     */
     HAL_GPIO_DeInit(GPIOC, GPIO_PIN_3);

@@ -26,31 +26,6 @@
 #include "tl.h"
 #include "hci_tl.h"
 
-/**
- * These traces are not yet supported in an usual way in the delivery package
- * They can enabled by adding the definition of TL_HCI_CMD_DBG_EN and/or TL_HCI_EVT_DBG_EN in the preprocessor option in the IDE
- */
-#if ( (TL_HCI_CMD_DBG_EN != 0) || (TL_HCI_EVT_DBG_EN != 0) )
-#include "dbg_trace.h"
-#endif
-
-#if (TL_HCI_CMD_DBG_EN != 0)
-#define TL_HCI_CMD_DBG_MSG             PRINT_MESG_DBG
-#define TL_HCI_CMD_DBG_BUF             PRINT_LOG_BUFF_DBG
-#else
-#define TL_HCI_CMD_DBG_MSG(...)
-#define TL_HCI_CMD_DBG_BUF(...)
-#endif
-
-#if (TL_HCI_EVT_DBG_EN != 0)
-#define TL_HCI_EVT_DBG_MSG             PRINT_MESG_DBG
-#define TL_HCI_EVT_DBG_BUF             PRINT_LOG_BUFF_DBG
-#else
-#define TL_HCI_EVT_DBG_MSG(...)
-#define TL_HCI_EVT_DBG_BUF(...)
-#endif
-
-
 /* Private typedef -----------------------------------------------------------*/
 typedef enum
 {
@@ -89,9 +64,6 @@ static void NotifyCmdStatus(HCI_TL_CmdStatus_t hcicmdstatus);
 static void SendCmd(uint16_t opcode, uint8_t plen, void *param);
 static void TlEvtReceived(TL_EvtPacket_t *hcievt);
 static void TlInit( TL_CmdPacket_t * p_cmdbuffer );
-static void OutputCmdTrace(TL_CmdPacket_t *pCmdBuffer);
-static void OutputRspTrace(TL_EvtPacket_t *hcievt);
-static void OutputEvtTrace(TL_EvtPacket_t *phcievtbuffer);
 
 /* Interface ------- ---------------------------------------------------------*/
 void hci_init(void(* UserEvtRx)(void* pData), void* pConf)
@@ -129,8 +101,6 @@ void hci_user_evt_proc(void)
   if((LST_is_empty(&HciAsynchEventQueue) == FALSE) && (UserEventFlow != HCI_TL_UserEventFlow_Disable))
   {
     LST_remove_head ( &HciAsynchEventQueue, (tListNode **)&phcievtbuffer );
-
-    OutputEvtTrace(phcievtbuffer);
 
     if (hciContext.UserEvtRx != NULL)
     {
@@ -205,8 +175,6 @@ int hci_send_req(struct hci_request *p_cmd, uint8_t async)
     {
       LST_remove_head (&HciCmdEventQueue, (tListNode **)&pevtpacket);
 
-      OutputRspTrace(pevtpacket);
-
       if(pevtpacket->evtserial.evt.evtcode == TL_BLEEVT_CS_OPCODE)
       {
         pcommand_status_event = (TL_CsEvt_t*)pevtpacket->evtserial.evt.payload;
@@ -278,8 +246,6 @@ static void SendCmd(uint16_t opcode, uint8_t plen, void *param)
   pCmdBuffer->cmdserial.cmd.plen = plen;
   memcpy( pCmdBuffer->cmdserial.cmd.payload, param, plen );
 
-  OutputCmdTrace(pCmdBuffer);
-
   hciContext.io.Send(0,0);
 
   return;
@@ -317,79 +283,6 @@ static void TlEvtReceived(TL_EvtPacket_t *hcievt)
     LST_insert_tail(&HciAsynchEventQueue, (tListNode *)hcievt);
     hci_notify_asynch_evt((void*) &HciAsynchEventQueue); /**< Notify the application a full HCI event has been received */
   }
-
-  return;
-}
-
-static void OutputCmdTrace(TL_CmdPacket_t *pCmdBuffer)
-{
-  TL_HCI_CMD_DBG_MSG("ble cmd: 0x%04X", pCmdBuffer->cmdserial.cmd.cmdcode);
-  if(pCmdBuffer->cmdserial.cmd.plen != 0)
-  {
-    TL_HCI_CMD_DBG_MSG(" payload:");
-    TL_HCI_CMD_DBG_BUF(pCmdBuffer->cmdserial.cmd.payload, pCmdBuffer->cmdserial.cmd.plen, "");
-  }
-  TL_HCI_CMD_DBG_MSG("\r\n");
-
-  return;
-}
-
-static void OutputRspTrace(TL_EvtPacket_t *hcievt)
-{
-  switch(hcievt->evtserial.evt.evtcode)
-  {
-    case TL_BLEEVT_CS_OPCODE:
-      TL_HCI_CMD_DBG_MSG("ble rsp: 0x%02X", hcievt->evtserial.evt.evtcode);
-      TL_HCI_CMD_DBG_MSG(" cmd opcode: 0x%04X", ((TL_CsEvt_t*)(hcievt->evtserial.evt.payload))->cmdcode);
-      TL_HCI_CMD_DBG_MSG(" numhci: 0x%02X", ((TL_CsEvt_t*)(hcievt->evtserial.evt.payload))->numcmd);
-      TL_HCI_CMD_DBG_MSG(" status: 0x%02X", ((TL_CsEvt_t*)(hcievt->evtserial.evt.payload))->status);
-      break;
-
-    case TL_BLEEVT_CC_OPCODE:
-      TL_HCI_CMD_DBG_MSG("ble rsp: 0x%02X", hcievt->evtserial.evt.evtcode);
-      TL_HCI_CMD_DBG_MSG(" cmd opcode: 0x%04X", ((TL_CcEvt_t*)(hcievt->evtserial.evt.payload))->cmdcode);
-      TL_HCI_CMD_DBG_MSG(" numhci: 0x%02X", ((TL_CcEvt_t*)(hcievt->evtserial.evt.payload))->numcmd);
-      TL_HCI_CMD_DBG_MSG(" status: 0x%02X", ((TL_CcEvt_t*)(hcievt->evtserial.evt.payload))->payload[0]);
-      if((hcievt->evtserial.evt.plen-4) != 0)
-      {
-        TL_HCI_CMD_DBG_MSG(" payload:");
-        TL_HCI_CMD_DBG_BUF(&((TL_CcEvt_t*)(hcievt->evtserial.evt.payload))->payload[1], hcievt->evtserial.evt.plen-4, "");
-      }
-      break;
-
-    default:
-      TL_HCI_CMD_DBG_MSG("unknown ble rsp received: %02X", hcievt->evtserial.evt.evtcode);
-      break;
-  }
-
-  TL_HCI_CMD_DBG_MSG("\r\n");
-
-  return;
-}
-
-static void OutputEvtTrace(TL_EvtPacket_t *phcievtbuffer)
-{
-  if(phcievtbuffer->evtserial.evt.evtcode != TL_BLEEVT_VS_OPCODE)
-  {
-    TL_HCI_EVT_DBG_MSG("ble evt: 0x%02X", phcievtbuffer->evtserial.evt.evtcode);
-    if((phcievtbuffer->evtserial.evt.plen) != 0)
-    {
-      TL_HCI_EVT_DBG_MSG(" payload:");
-      TL_HCI_EVT_DBG_BUF(phcievtbuffer->evtserial.evt.payload, phcievtbuffer->evtserial.evt.plen, "");
-    }
-  }
-  else
-  {
-    TL_HCI_EVT_DBG_MSG("ble evt: 0x%02X", phcievtbuffer->evtserial.evt.evtcode);
-    TL_HCI_EVT_DBG_MSG(" subevtcode: 0x%04X", ((TL_AsynchEvt_t*)(phcievtbuffer->evtserial.evt.payload))->subevtcode);
-    if((phcievtbuffer->evtserial.evt.plen-2) != 0)
-    {
-      TL_HCI_EVT_DBG_MSG(" payload:");
-      TL_HCI_EVT_DBG_BUF(((TL_AsynchEvt_t*)(phcievtbuffer->evtserial.evt.payload))->payload, phcievtbuffer->evtserial.evt.plen-2, "");
-    }
-  }
-
-  TL_HCI_EVT_DBG_MSG("\r\n");
 
   return;
 }

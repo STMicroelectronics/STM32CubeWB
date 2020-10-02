@@ -801,7 +801,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
 
   /* Initialization Complete */
@@ -1074,7 +1074,7 @@ static void APP_ZIGBEE_SW1_Process(void)
   APP_DBG("[OTA] M4 application firmware upgrade available.\n");
   
   /*  Update OTA server context file type */
-  OTA_server_info.ctx.file_type = IMAGE_TYPE_FW_APP;
+  OTA_server_info.ctx.file_type = (enum APP_ZIGBEE_OtaFileTypeDef_t) IMAGE_TYPE_FW_APP;
   OTA_server_info.ctx.base_address = FUOTA_APP_FW_BINARY_ADDRESS;
   OTA_server_info.ctx.magic_keyword = FUOTA_MAGIC_KEYWORD_APP;
   OTA_server_info.ctx.file_version = FILE_VERSION_FW_APP;

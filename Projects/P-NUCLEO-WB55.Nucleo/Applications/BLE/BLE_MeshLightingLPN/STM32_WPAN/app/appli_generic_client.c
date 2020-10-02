@@ -6,7 +6,7 @@
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
 * All rights reserved.</center></h2>
 *
 * This software component is licensed by ST under Ultimate Liberty license
@@ -41,59 +41,167 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-
-MOBLEUINT8 Led_Value;
 /* Private function prototypes -----------------------------------------------*/
-MOBLE_RESULT Appli_GenericClient_OnOff_Set(void);
+
+
 /* Private functions ---------------------------------------------------------*/
-
 /**
-* @brief  Appli_Generic_OnOff_Set: This function is callback for Application
-*          when Generic OnOff message is called
-* @param  void
+* @brief  Appli_GenericClient_API: This function is a Wrapper to call Generic Client API depending on opcode received in input
+* @param  elementIndex: Index of the element
+* @param  msg_opcode: opcode of the desired API
+* @param  msg_params: buffer containing the desired API parameters
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Appli_GenericClient_OnOff_Set(void) 
+MOBLE_RESULT Appli_GenericClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opcode, MOBLEUINT8 *msg_params) 
 { 
-  MOBLE_ADDRESS elementAddr = 0; 
-  MOBLEUINT8 pGeneric_OnOffParam[2];
-   
-  Led_Value ^= APPLI_LED_ON;
-  pGeneric_OnOffParam[0] = Led_Value;
-  GenericClient_OnOff_Set_Unack(elementAddr,
-                          (_Generic_OnOffParam*) pGeneric_OnOffParam, 
-                          sizeof(pGeneric_OnOffParam) ); 
-     
-  return MOBLE_RESULT_SUCCESS;
-}
-
+  MOBLE_RESULT result = MOBLE_RESULT_FAIL;
+  switch(msg_opcode){
 /******************************************************************************/
-#ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_ONOFF  
 /******************************************************************************/
-
-/**
-* @brief  Appli_Generic_Level_Set: This function is callback for Application
-*          when Generic Level message is called
-* @param  void: 
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT Appli_GenericClient_Level_Set_Unack(void) 
-{ 
-  MOBLE_ADDRESS elementAddr = 0; 
-  MOBLEUINT8 pGeneric_LevelParam[3];
-  
-  Appli_IntensityControlPublishing(pGeneric_LevelParam);
-  GenericClient_Level_Set_Unack(elementAddr,
-                          (_Generic_LevelParam*) pGeneric_LevelParam, 
-                          sizeof(pGeneric_LevelParam));
+  case GENERIC_ON_OFF_GET:
+    {
+      result = GenericClient_OnOff_Get(elementIndex);
+      break;
+    }
+  case GENERIC_ON_OFF_SET_ACK:
+    {
+      result = GenericClient_OnOff_Set_Ack(elementIndex,
+                              msg_params, 
+                              sizeof(Generic_OnOffParam_t) ); 
+      break;
+    }
+  case GENERIC_ON_OFF_SET_UNACK:
+    {  
+      result = GenericClient_OnOff_Set_Unack(elementIndex,
+                              msg_params, 
+                              sizeof(Generic_OnOffParam_t) );
+      break;
+    }
+/******************************************************************************/    
+#endif /* #ifdef ENABLE_GENERIC_MODEL_CLIENT_ONOFF */
+/******************************************************************************/   
     
-  return MOBLE_RESULT_SUCCESS;
+/******************************************************************************/
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL 
+/******************************************************************************/
+  case GENERIC_LEVEL_GET:
+    {
+      result = GenericClient_Level_Get(elementIndex);
+      break;
+    }
+  case GENERIC_LEVEL_SET_ACK:
+    {
+      result = GenericClient_Level_Set_Ack(elementIndex,
+                                    msg_params, 
+                                    sizeof(Generic_LevelParam_t));
+      break;
+    }
+  case GENERIC_LEVEL_SET_UNACK:
+    {
+      result = GenericClient_Level_Set_Unack(elementIndex,
+                                    msg_params, 
+                                    sizeof(Generic_LevelParam_t));
+      break;
+    }
+  case GENERIC_DELTA_SET:
+    {
+
+      result = GenericClient_Delta_Set_Ack(elementIndex,
+                                    msg_params, 
+                                    sizeof(Generic_DeltaLevelParam_t));
+        break;
+    }
+  case GENERIC_DELTA_SET_UNACK:
+    {
+      result = GenericClient_Delta_Set_Unack(elementIndex,
+                                    msg_params, 
+                                    sizeof(Generic_DeltaLevelParam_t));
+      break;
+    }  
+  case GENERIC_MOVE_SET:
+    {
+      result = GenericClient_Move_Set_Ack(elementIndex,
+                                    msg_params, 
+                                    sizeof(Generic_LevelMoveParam_t));
+        break;
+    }
+  case GENERIC_MOVE_SET_UNACK:
+    {
+      result = GenericClient_Move_Set_Unack(elementIndex,
+                                    msg_params, 
+                                    sizeof(Generic_LevelMoveParam_t));
+      break;
+    }   
+/******************************************************************************/    
+#endif /* #ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL */
+/******************************************************************************/   
+
+/******************************************************************************/
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF 
+/******************************************************************************/
+  case GENERIC_POWER_ON_OFF_GET:
+    {
+      GenericClient_PowerOnOff_Get(elementIndex);
+      break;
+    }
+  case GENERIC_POWER_ON_OFF_SET:
+    {
+      result = GenericClient_PowerOnOff_Set_Ack(elementIndex,
+                                  msg_params, 
+                                  sizeof(Generic_PowerOnOffParam_t));
+      break;
+    }
+      case GENERIC_POWER_ON_OFF_SET_UNACK:
+    {
+      result = GenericClient_PowerOnOff_Set_Unack(elementIndex,
+                                  msg_params, 
+                                  sizeof(Generic_PowerOnOffParam_t));
+      break;
+    }
+    
+/******************************************************************************/    
+#endif /* #ifdef ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF */
+/******************************************************************************/   
+
+/******************************************************************************/    
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME 
+/******************************************************************************/
+  case GENERIC_DEFAULT_TRANSITION_TIME_GET:
+    {
+      result = GenericClient_DefaultTransitionTime_Get(elementIndex);
+      break;
+    }
+    
+  case GENERIC_DEFAULT_TRANSITION_TIME_SET:
+    {
+      result = GenericClient_DefaultTransitionTime_Set_Ack(elementIndex,
+                                  msg_params, 
+                                  sizeof(Generic_DefaultTransitionParam_t));
+      break;
+    }
+    
+      case GENERIC_DEFAULT_TRANSITION_TIME_SET_UNACK:
+    { 
+      result = GenericClient_DefaultTransitionTime_Set_Unack(elementIndex,
+                                  msg_params, 
+                                  sizeof(Generic_DefaultTransitionParam_t));
+      break;
+    }
+    
+/******************************************************************************/    
+#endif /* #ifdef ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME */
+/******************************************************************************/ 
+ 
+  default:
+    {
+      TRACE_M(TF_GENERIC, "OpCode value invalid %d \r\n", msg_opcode);
+      result = MOBLE_RESULT_FAIL;
+    }
+  }
+  return result;
 }
 
-/******************************************************************************/
-#endif  /* #ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL */
-/******************************************************************************/
-
 /**
 * @}
 */
@@ -102,5 +210,5 @@ MOBLE_RESULT Appli_GenericClient_Level_Set_Unack(void)
 * @}
 */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

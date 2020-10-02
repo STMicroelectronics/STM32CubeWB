@@ -6,7 +6,7 @@
 ******************************************************************************
 * @attention
 *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -32,12 +32,12 @@
 /* Application Variable-------------------------------------------------------*/
 /* Exported Functions Prototypes ---------------------------------------------*/
 MOBLE_RESULT Appli_ConfigClient_Set(void); 
-MOBLE_RESULT Appli_GenericClient_OnOff_Set(void);
-MOBLE_RESULT Appli_GenericClient_Level_Set_Unack(void);
+MOBLE_RESULT Appli_GenericClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opcode, MOBLEUINT8 *msg_params);
+
 
 
 
 #endif /* __APPLI_GENERIC_CLIENT_H */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

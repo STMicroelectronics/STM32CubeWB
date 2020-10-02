@@ -5,12 +5,6 @@
 
 #include "zcl/zcl.h"
 
-/*--------------------------------------------------------------------------
- *  DESCRIPTION
- *      Interface definition for the ZCL Electrical Measurement cluster.
- *--------------------------------------------------------------------------
- */
-
 /* PICS.ZCL.Electrical.Measurement
  * EMR.S | True
  * EMR.C | True
@@ -167,8 +161,8 @@
  * EMR.C.C01.Tx | True
  */
 
-/* Attribute Identifiers */
-enum {
+/** Electrical Measurement Server Attribute IDs */
+enum ZbZclElecMeasSvrAttrT {
     ZCL_ELEC_MEAS_ATTR_MEAS_TYPE = 0x0000,
     ZCL_ELEC_MEAS_ATTR_DC_VOLT = 0x0100,
     ZCL_ELEC_MEAS_ATTR_DC_VOLT_MIN = 0x0101,
@@ -281,9 +275,9 @@ enum {
     ZCL_ELEC_MEAS_ATTR_RMS_VOLT_MIN_C = 0x0a06,
     ZCL_ELEC_MEAS_ATTR_RMS_VOLT_MAX_C = 0x0a07,
     ZCL_ELEC_MEAS_ATTR_RMS_CURR_C = 0x0a08,
-    ZCL_ELEC_MEAS_ATTR_RMS_CURR_MIN_C = 0x0a0a,
+    ZCL_ELEC_MEAS_ATTR_RMS_CURR_MIN_C = 0x0a09, /**< RMSCurrentMinPhC (Optional) */
     ZCL_ELEC_MEAS_ATTR_RMS_CURR_MAX_C = 0x0a0a,
-    ZCL_ELEC_MEAS_ATTR_ACTIVE_PWR_C = 0x0a0C,
+    ZCL_ELEC_MEAS_ATTR_ACTIVE_PWR_C = 0x0a0b, /**< ActivePowerPhC (Optional) */
     ZCL_ELEC_MEAS_ATTR_ACTIVE_PWR_MIN_C = 0x0a0c,
     ZCL_ELEC_MEAS_ATTR_ACTIVE_PWR_MAX_C = 0x0a0d,
     ZCL_ELEC_MEAS_ATTR_REACTIVE_PWR_C = 0x0a0e,
@@ -325,13 +319,13 @@ enum {
     ZCL_ELEC_MEAS_SVR_GET_MEAS_PROFILE_RSP = 0x01
 };
 
-struct elec_meas_get_meas_profile_req_t {
+struct ZbZclElecMeasClientGetMeasProfileReqT {
     uint16_t attr_id;
     uint32_t start_time;
     uint8_t num_intervals;
 };
 
-struct elec_meas_get_profile_info_rsp_t {
+struct ZbZclElecMeasSvrGetProfileInfoRspT {
     /* Profile count is the total number for supported profile, and the list of
      * attributes is the list of attributes being profiled. This relationship has
      * been interpreted as profile count holding the number of attributes in
@@ -342,7 +336,7 @@ struct elec_meas_get_profile_info_rsp_t {
     uint16_t *attr_list;
 };
 
-struct elec_meas_get_meas_profile_rsp_t {
+struct ZbZclElecMeasSvrGetMeasProfileRspT {
     uint32_t start_time;
     uint8_t status;
     uint8_t profile_interval_period;
@@ -355,9 +349,9 @@ struct elec_meas_get_meas_profile_rsp_t {
     uint16_t interval_len; /**< Octet length of interval_data. */
 };
 
-struct zcl_elec_meas_callbacks_t {
+struct ZbZclElecMeasSvrCallbacksT {
     enum ZclStatusCodeT (*get_profile_info)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *src_info, void *arg);
-    enum ZclStatusCodeT (*get_meas_profile)(struct ZbZclClusterT *clusterPtr, struct elec_meas_get_meas_profile_req_t *cmd_req,
+    enum ZclStatusCodeT (*get_meas_profile)(struct ZbZclClusterT *clusterPtr, struct ZbZclElecMeasClientGetMeasProfileReqT *cmd_req,
         struct ZbZclAddrInfoT *src_info, void *arg);
 };
 
@@ -368,19 +362,20 @@ struct zcl_elec_meas_callbacks_t {
 
 /* Allocation Functions */
 struct ZbZclClusterT * ZbZclElecMeasClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
-struct ZbZclClusterT * ZbZclElecMeasServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, struct zcl_elec_meas_callbacks_t *callbacks, void *arg);
+struct ZbZclClusterT * ZbZclElecMeasServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
+    struct ZbZclElecMeasSvrCallbacksT *callbacks, void *arg);
 
 /* Client Generated Commands */
 enum ZclStatusCodeT ZbZclElecMeasClientGetProfileInfoReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 enum ZclStatusCodeT ZbZclElecMeasClientGetMeasProfileReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
-    struct elec_meas_get_meas_profile_req_t *get_meas_profile_req,
+    struct ZbZclElecMeasClientGetMeasProfileReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* Server Reponse Commands */
-enum ZclStatusCodeT ZbZclElecMeasServerSendProfileInfoRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
-    struct elec_meas_get_profile_info_rsp_t *rsp);
-enum ZclStatusCodeT ZbZclElecMeasServerSendMeasProfileRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
-    struct elec_meas_get_meas_profile_rsp_t *rsp);
+enum ZclStatusCodeT ZbZclElecMeasServerSendProfileInfoRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
+    struct ZbZclElecMeasSvrGetProfileInfoRspT *rsp);
+enum ZclStatusCodeT ZbZclElecMeasServerSendMeasProfileRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
+    struct ZbZclElecMeasSvrGetMeasProfileRspT *rsp);
 
 #endif /* _ZCL_ELEC_MEAS_H */

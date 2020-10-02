@@ -2,39 +2,17 @@
 ******************************************************************************
 * @file    serial_ut.c
 * @author  BLE Mesh Team
-* @version V1.07.000
-* @date    15-June-2018
 * @brief   Upper Tester file 
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* All rights reserved.</center></h2>
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of STMicroelectronics nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-* Initial BLE-Mesh is built over Motorola’s Mesh over Bluetooth Low Energy 
-* (MoBLE) technology. The present solution is developed and maintained for both 
-* Mesh library and Applications solely by STMicroelectronics.
+* This software component is licensed by ST under Ultimate Liberty license
+* SLA0044, the "License"; You may not use this file except in compliance with
+* the License. You may obtain a copy of the License at:
+*                             www.st.com/SLA0044
 *
 ******************************************************************************
 */
@@ -48,6 +26,13 @@
 #if (ENABLE_UT)
 #include "serial_ctrl.h"
 #endif
+#ifdef ENABLE_SENSOR_MODEL_SERVER_SETUP
+#include "appli_sensor.h"
+#endif
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC
+#include "appli_light_lc.h"
+#endif
+
 /** @addtogroup BLE_Mesh
 *  @{
 */
@@ -76,15 +61,18 @@
 #define CMD_INDEX_SET_13                  15
 #define CMD_INDEX_SET_14                  16
 #define CMD_INDEX_SET_15                  17
-#define CMD_INDEX_PRINT_01                18
+#define CMD_INDEX_SET_16                  18        //TR0
+#define CMD_INDEX_SET_17                  19        //OCCUPANCY
+#define CMD_INDEX_SET_18                  20        //setv
+#define CMD_INDEX_SET_19                  21       //PUBLISH
+#define CMD_INDEX_PRINT_01                22
 
-#define CMD_SET_COUNT                     15 
+#define CMD_SET_COUNT                     19 
 #define CMD_SEND_COUNT                    2
 #define CMD_PRINT_COUNT                   1
 
 #define CMD_SET_OFFSET                    7
 #define CMD_SEND_OFFSET                   8
-#define CMD_SET_OFFSET                    7
 #define CMD_PRINT_OFFSET                  9
 #define CMD_CTRL_OFFSET                   5
 /* Private variables ---------------------------------------------------------*/
@@ -105,6 +93,10 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   MOBLEUINT16 commandIndex = SerialUt_GetFunctionIndex(rcvdStringBuff+5);
   MOBLEUINT8 testFunctionParm[6]= {'\0'} ;
   MOBLEUINT8 asciiFunctionParameter[7] = {'\0'} ;
+#ifdef ENABLE_SENSOR_MODEL_SERVER
+  MOBLEUINT16 value = 0;           
+  MOBLEUINT8 sensorOffset = 0;    
+#endif
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   MOBLEBOOL unprovisioned = MOBLE_FALSE;
   
@@ -149,7 +141,18 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   case CMD_INDEX_SET_15:
     result = BLEMesh_UpperTesterDataProcess(commandIndex, testFunctionParm);
     break;
-      
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC    
+    /* Change Light LC property states transitions that are immediate*/
+  case CMD_INDEX_SET_16:
+    result = Light_LC_SetTransitionTimeZero(1);
+    break;
+    /* Change IUT's Light LC Occupancy state to 1*/
+  case CMD_INDEX_SET_17: 
+    /* For Light LC on element index 1 */
+    Appli_Light_LC_SensorPropertyUpdate(1, PRESENCE_DETECTED_PID, 1);
+    result = MOBLE_RESULT_SUCCESS;
+    break;
+#endif    
     /* Updates the 96 hour IV Update limit */
   case CMD_INDEX_SET_03: 
     /* Subscribe/Un-Subscribe to group address */
@@ -161,17 +164,30 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
     sscanf(rcvdStringBuff + CMD_CTRL_OFFSET + CMD_SET_OFFSET, "%1c", testFunctionParm);
     result = BLEMesh_UpperTesterDataProcess( commandIndex,  testFunctionParm);
     break;
-      
     /* Sets system faults for Health Model*/
   case CMD_INDEX_SET_10: 
     sscanf(rcvdStringBuff + CMD_CTRL_OFFSET + CMD_SET_OFFSET, "%2s %1c", asciiFunctionParameter, testFunctionParm+1);
     SerialUt_doubleHexToHex(asciiFunctionParameter,testFunctionParm,2);
     result = BLEMesh_UpperTesterDataProcess( commandIndex,  testFunctionParm);
     break;
-      
+#ifdef ENABLE_SENSOR_MODEL_SERVER
+  /* MMDL/SR/SNRS/BV-09-C, during test */
+  case CMD_INDEX_SET_18:
+    sscanf(rcvdStringBuff + CMD_CTRL_OFFSET + CMD_SET_OFFSET, "%4hx", &value);
+    result = Appli_Sensor_Update(sensorOffset, value);
+    break;
+   
+  /* MMDL/SR/SNRS/BV-08-C */
+  case CMD_INDEX_SET_19:
+    scanf(rcvdStringBuff + CMD_CTRL_OFFSET + CMD_SET_OFFSET, "%1hx %1hx", &value);
+    sensorOffset = value;
+    result = Sensor_UpdatePublishState(sensorOffset, value);
+    break;
+#endif
   /* Unprovisions the Node */
   case CMD_INDEX_SET_02:
     {
+      BLEMesh_StopAdvScan();
       unprovisioned = BLEMesh_IsUnprovisioned();
       result = BLEMesh_UpperTesterDataProcess(commandIndex, testFunctionParm);
     }
@@ -286,4 +302,5 @@ __weak MOBLE_RESULT BLEMesh_UpperTesterDataProcess(MOBLEUINT8 testFunctionIndex,
 
   return MOBLE_RESULT_SUCCESS;
 }
+
 

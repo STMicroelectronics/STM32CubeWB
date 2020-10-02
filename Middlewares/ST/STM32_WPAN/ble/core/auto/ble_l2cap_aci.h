@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_l2cap_aci.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (l2cap_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -30,7 +30,7 @@
  * An ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT event is raised when the master
  * responds to the request (accepts or rejects).
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
@@ -64,7 +64,7 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
  * controller. The accept parameter has to be set if the connection parameters
  * given in the event are acceptable.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.

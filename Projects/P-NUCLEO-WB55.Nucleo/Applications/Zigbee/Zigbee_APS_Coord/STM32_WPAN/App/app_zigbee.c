@@ -259,7 +259,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
 
   /* Initialization Complete */

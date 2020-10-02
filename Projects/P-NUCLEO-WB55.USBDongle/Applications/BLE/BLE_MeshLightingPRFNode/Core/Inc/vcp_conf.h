@@ -33,7 +33,7 @@ extern "C"
 #define VCP_BAUD_RATE                             (115200)
 #define VCP_TX_PATH_INTERFACE_READY_SETUP_TIME    (20*1000*1000/CFG_TS_TICK_VAL)  /** 20s   */
 #define VCP_TASK_ID                               (CFG_TASK_VCP_SEND_DATA_ID)
-#define VCP_TASK_PRIO                             (CFG_SCH_PRIO_1)
+#define VCP_TASK_PRIO                             (CFG_SEQ_PRIO_1)
 
 #ifdef  VCP_TX_PATH_INTERFACE_READY_SETUP_TIME
 #define VCP_TIMER_PROC_ID                         (CFG_TIM_PROC_ID_ISR)

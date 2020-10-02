@@ -6,7 +6,7 @@
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
 * All rights reserved.</center></h2>
 *
 * This software component is licensed by ST under Ultimate Liberty license
@@ -26,7 +26,7 @@
 #include "generic.h"
 #include "mesh_cfg.h"
 #include "config_client.h"
-
+#include "mesh_cfg_usr.h"
 
 /* Exported macro ------------------------------------------------------------*/
 #define MAX_CONFIG_PARAM_SIZE 22
@@ -35,6 +35,9 @@
 /* Exported variables  ------------------------------------------------------- */
 /* Application Variable-------------------------------------------------------*/
 /* Exported Functions Prototypes ---------------------------------------------*/
+
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
+
 MOBLE_RESULT Appli_ConfigClient_Init(void);
 MOBLE_RESULT Appli_ConfigClient_Process(void);
 MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void);
@@ -82,8 +85,9 @@ MOBLEUINT8 GetCountSIGModelToPublish(MOBLEUINT8 elementIdx);
 
 MOBLEUINT8 GetCountVendorModelToPublish(MOBLEUINT8 elementIdx);
 
+#endif /*defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER) */
 
 #endif /* __APPLI_CONFIG_CLIENT_H */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

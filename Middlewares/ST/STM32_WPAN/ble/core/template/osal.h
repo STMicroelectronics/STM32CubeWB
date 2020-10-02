@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    osal.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   This header file defines the OS abstraction layer used by
  *          the BLE stack. OSAL defines the set of functions which needs to be
  *          ported to target operating system and target platform.
@@ -8,7 +8,7 @@
  *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license

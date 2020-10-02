@@ -11,7 +11,7 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="../../../_htmresc/mini-st.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -56,9 +56,71 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section10" checked aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.8.0 / 22-June-2020</label>
+<input type="checkbox" id="collapse-section11" checked aria-hidden="true"> <label for="collapse-section11" aria-hidden="false">V1.9.0 / 21-September-2020</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>BLE-Mesh library version 1.13.000
+<ul>
+<li>New Development:
+<ul>
+<li>Light LC Server model</li>
+<li>New state transition functions and structures in common, new TID check &amp; update functions in common</li>
+<li>Disable No OOB authentication</li>
+<li>Multi-element support in Friendship</li>
+<li>Use of hardware cryptogrphic functions instead of ST Cryptographic Library</li>
+<li>Remove hci_reset() function calls during provisionning</li>
+</ul></li>
+<li>Improvements:
+<ul>
+<li>Logs optimization and clean up of Server models</li>
+<li>ATLLC &amp; ATSNR modified to ATUT</li>
+<li>Server model publication modifications</li>
+<li>Serial_ut moved to middleware</li>
+<li>Fixed firmware for crash issue with the publish message</li>
+<li>Model flash data saving for multi-element</li>
+<li>APIs update, naming convention updated in light.c</li>
+<li>Unused code commented in model_generic.c</li>
+<li>NULL checks added in remaining exposed functions to avoid hardfault in case sensor server is not initialized or failed to initialize</li>
+</ul></li>
+<li>Bug fix:
+<ul>
+<li>Generic OnOff bug when Generic Default Transition Time is enabled</li>
+<li>Element index update for Generic OnOff</li>
+<li>Generic OnOff Transition bug, LED not turning off</li>
+<li>Ongoing Transition should be turned off if any other on/off command received in between</li>
+<li>The Light Lightness model appears to behave in a non compliant way in the case a new Light_Lightness_Set command is received during an ongoing transition of the Light Level. This causes also the ‘Light Lightness Last’ value to get a wrong value.</li>
+<li>API MobleConfigModel_SendAppKeyList updated in model_config.c &amp; pal_crypto.c to get the list of all appKeys bounded with a netKey if number of appKeys is&gt;1</li>
+<li>Bug related to AppKey Delete resolved</li>
+<li>Bug related to Memory Leak resolved</li>
+<li>Checkpoint has been added in API ApplicationGetVendorModelList if someone commented ENABLE_VENDOR_MODEL_SERVER in mesh_cfg_usr.h</li>
+</ul></li>
+</ul></li>
+<li>BLE WPAN updates
+<ul>
+<li><strong>ID 88523</strong> - SHCI_C2_BLE_Init() return value type wrong</li>
+<li><strong>ID 91533</strong> - Improve the SHCI_GetWirelessFwInfo() to decode the Device Information Table when FUS is running on CPU2</li>
+</ul></li>
+<li>Thread
+<ul>
+<li><strong>ID 91267</strong> - Fix CoAP OpenThread API exposed on application side
+<ul>
+<li>The CoAP API is now compliant with OpenThread definition and mContext parameter is then correctly returned to the application.</li>
+</ul></li>
+</ul></li>
+<li>Zigbee
+<ul>
+<li>Update on PICS for following clusters : Power Configuration, Diagnostics, Scenes</li>
+<li>APIs renaming on the Door Lock cluster</li>
+<li>Parameter range checking updates on several clusters (Power config, Door lock, Commissioning, Color)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.8.0 / 22-June-2020</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <ul>
 <li>BLE-Mesh library version 1.12.008
 <ul>
@@ -94,7 +156,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.7.0 / 11-May-2020</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p>BLE-Mesh:</p>
 <ul>
 <li>BLE Mesh Models Fixe/Update</li>
@@ -104,7 +166,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p>BLE-Mesh:</p>
 <ul>
 <li>BLE-Mesh library version 1.12.007
@@ -376,7 +438,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 22-January-2020</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_SetFlashActivityControl() to configure BLE timing protection</li>
@@ -419,7 +481,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_ExtpaConfig() to support external PA</li>
@@ -435,7 +497,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 4-September-2019</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Introducing support of Zigbee</li>
@@ -473,7 +535,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 27-June-2019</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Following utilities : Scheduler and Low Power Manager reworked and moved to “Utilities” directory</li>
@@ -499,7 +561,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p>BLE:</p>
 <ul>
 <li>Fix race condition in transport layer when an operating system is used.</li>
@@ -545,7 +607,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 29-March-2019</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Licenses in utilities and patterns moved from sla0044 to 3-clauses BSD</li>
@@ -571,7 +633,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 31-January-2019</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <p>First release</p>
 </div>
 </div>

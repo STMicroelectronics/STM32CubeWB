@@ -71,35 +71,32 @@ static void RxCpltCallback(void);
 
 static void APP_THREAD_CheckMsgValidity(void);
 static void APP_THREAD_SendNextBuffer(void);
-static void APP_THREAD_DummyReqHandler(void * p_context,
-                  otCoapHeader * pHeader,
-                  otMessage * pMessage,
-                  const otMessageInfo * pMessageInfo);
-static void APP_THREAD_CoapDataReqHandler(otCoapHeader * pHeader,
-                 otMessage * pMessage,
-                 const otMessageInfo * pMessageInfo);
+static void APP_THREAD_CoapDataReqHandler(void * pContext,
+                                          otCoapHeader * pHeader,
+                                          otMessage * pMessage,
+                                          const otMessageInfo * pMessageInfo);
 static void APP_THREAD_SendDataResponse(otCoapHeader * pRequestHeader,
                  const otMessageInfo * pMessageInfo);
-static void APP_THREAD_ProvisioningReqHandler(otCoapHeader * pHeader,
-                     otMessage * pMessage,
-                     const otMessageInfo * pMessageInfo);
+static void APP_THREAD_ProvisioningReqHandler(void * pContext,
+                                              otCoapHeader * pHeader,
+                                              otMessage * pMessage,
+                                              const otMessageInfo * pMessageInfo);
 static otError APP_THREAD_ProvisioningRespSend(otCoapHeader* pRequestHeader,
                       const otMessageInfo * pMessageInfo);
 static void APP_THREAD_ProvisioningReqSend(void);
-static void APP_THREAD_ProvisioningRespHandler(otCoapHeader * pHeader,
+static void APP_THREAD_ProvisioningRespHandler(
+                      void  * pContext,
+                      otCoapHeader * pHeader,
                       otMessage * pMessage,
                       const otMessageInfo * pMessageInfo,
                       otError Result);
 static void APP_THREAD_SendCoapUnicastRequest(void);
-static void APP_THREAD_DataRespHandler(otCoapHeader  * pHeader,
-                  otMessage * pMessage,
-                  const otMessageInfo * pMessageInfo,
-                  otError Result);
-static void APP_THREAD_DummyRespHandler(void * p_context,
-                   otCoapHeader * pHeader,
-                   otMessage * pMessage,
-                   const otMessageInfo * pMessageInfo,
-                   otError Result);
+static void APP_THREAD_DataRespHandler(
+    void * pContext,
+    otCoapHeader  * pHeader,
+    otMessage * pMessage,
+    const otMessageInfo * pMessageInfo,
+    otError Result);
 static void APP_THREAD_AskProvisioning(void);
 
 /* Private variables -----------------------------------------------*/
@@ -128,8 +125,8 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
 
-static otCoapResource OT_RessourceDataTransfer = {C_RESSOURCE_DATA_TRANSFER, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapDataReqHandler, NULL};
-static otCoapResource OT_RessourceProvisionning = {C_RESSOURCE_Provisioning, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_ProvisioningReqHandler, NULL};
+static otCoapResource OT_RessourceDataTransfer = {C_RESSOURCE_DATA_TRANSFER, APP_THREAD_CoapDataReqHandler, "myDataTransferCtx", NULL};
+static otCoapResource OT_RessourceProvisionning = {C_RESSOURCE_Provisioning, APP_THREAD_ProvisioningReqHandler,"myProvisionningCtx", NULL};
 static otMessageInfo OT_MessageInfo = {0};
 static otCoapHeader  OT_Header = {0};
 static uint8_t OT_Command = 0;
@@ -410,19 +407,6 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
 }
 
 /**
- * @brief Dummy request handler
- *
- * @param None
- * @retval None
- */
-static void APP_THREAD_DummyReqHandler(void        * p_context,
-                     otCoapHeader    * pHeader,
-                     otMessage       * pMessage,
-                     const otMessageInfo * pMessageInfo)
-{
-}
-
-/**
  * @brief  Warn the user that an error has occurred.In this case,
  *     the LEDs on the Board will start blinking.
  *
@@ -504,14 +488,16 @@ static void APP_THREAD_SendNextBuffer(void)
 
 /**
  * @brief Data request handler triggered at the reception of the COAP message
+ * @param pContext : Context
  * @param pHeader header pointer
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @retval None
  */
-static void APP_THREAD_CoapDataReqHandler(otCoapHeader    * pHeader,
-                      otMessage       * pMessage,
-                      const otMessageInfo * pMessageInfo)
+static void APP_THREAD_CoapDataReqHandler(void            * pContext,
+                                          otCoapHeader    * pHeader,
+                                          otMessage       * pMessage,
+                                          const otMessageInfo * pMessageInfo)
 {
   do
   {
@@ -581,14 +567,16 @@ static void APP_THREAD_SendDataResponse(otCoapHeader    * pRequestHeader,
 /**
  * @brief This function is used to handle the APP_THREAD_AskProvisioning handler
  *
+ * @param pContext : Context
  * @param pHeader header pointer
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @retval None
  */
-static void APP_THREAD_ProvisioningReqHandler(otCoapHeader    * pHeader,
-                     otMessage       * pMessage,
-                     const otMessageInfo * pMessageInfo)
+static void APP_THREAD_ProvisioningReqHandler(void                * pContext,
+                                              otCoapHeader        * pHeader,
+                                              otMessage           * pMessage,
+                                              const otMessageInfo * pMessageInfo)
 {
   (void)pMessage;
 
@@ -692,8 +680,8 @@ static void APP_THREAD_ProvisioningReqSend()
     error = otCoapSendRequest(NULL,
         pOT_Message,
         &OT_MessageInfo,
-        &APP_THREAD_DummyRespHandler,
-        (void*)&APP_THREAD_ProvisioningRespHandler);
+        &APP_THREAD_ProvisioningRespHandler,
+        "myContext");
   } while (false);
 
   if (error != OT_ERROR_NONE && pOT_Message != NULL)
@@ -706,18 +694,22 @@ static void APP_THREAD_ProvisioningReqSend()
  * @brief This function is used to manage the APP_THREAD_AskProvisioning response
  *    handler.
  *
+ * @param pContext context
  * @param pHeader  header
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code if any
  * @retval None
  */
-static void APP_THREAD_ProvisioningRespHandler(otCoapHeader        * pHeader,
+static void APP_THREAD_ProvisioningRespHandler(void                * pContext,
+                                               otCoapHeader        * pHeader,
                                                otMessage           * pMessage,
                                                const otMessageInfo * pMessageInfo,
                                                otError             Result)
 {
-  (void)pHeader;
+  UNUSED(pContext);
+  UNUSED(pHeader);
+
   if (Result == OT_ERROR_NONE)
   {
     if ((otMessageRead(pMessage, otMessageGetOffset(pMessage), &OT_Command, sizeof(OT_Command)) == sizeof(OT_Command)))
@@ -791,8 +783,8 @@ static void APP_THREAD_SendCoapUnicastRequest()
   error = otCoapSendRequest(NULL,
           pOT_Message,
           &OT_MessageInfo,
-          &APP_THREAD_DummyRespHandler,
-          (void*)&APP_THREAD_DataRespHandler);
+          &APP_THREAD_DataRespHandler,
+          "myCtx");
 
   if (error != OT_ERROR_NONE && pOT_Message != NULL)
   {
@@ -804,18 +796,21 @@ static void APP_THREAD_SendCoapUnicastRequest()
  * @brief This function manages the data response handler
  *    and reschedules the sending of data.
  *
+ * @param pContext context
  * @param pHeader  header
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code
  * @retval None
  */
-static void APP_THREAD_DataRespHandler(otCoapHeader        * pHeader,
+static void APP_THREAD_DataRespHandler(void                * pContext,
+                                       otCoapHeader        * pHeader,
                                        otMessage           * pMessage,
                                        const otMessageInfo * pMessageInfo,
                                        otError             Result)
 {
   /* Prevent unused argument(s) compilation warning */
+  UNUSED(pContext);
   UNUSED(pHeader);
   UNUSED(pMessage);
   UNUSED(pMessageInfo);
@@ -830,30 +825,6 @@ static void APP_THREAD_DataRespHandler(otCoapHeader        * pHeader,
   {
     APP_THREAD_Error(ERR_FILE_RESP_HANDLER,Result);
   }
-}
-
-/**
- * @brief This function is used to handle a dummy response handler
- *
- * @param p_context  context
- * @param pHeader  coap header
- * @param pMessage message
- * @paramp pMessageInfo otMessage information
- * @param Result error status
- * @retval None
- */
-static void APP_THREAD_DummyRespHandler(void                * p_context,
-                                        otCoapHeader        * pHeader,
-                                        otMessage           * pMessage,
-                                        const otMessageInfo * pMessageInfo,
-                                        otError             Result)
-{
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(p_context);
-  UNUSED(pHeader);
-  UNUSED(pMessage);
-  UNUSED(pMessageInfo);
-  UNUSED(Result);
 }
 
 /**

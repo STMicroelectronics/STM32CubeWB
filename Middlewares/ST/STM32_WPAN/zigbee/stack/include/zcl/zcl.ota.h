@@ -192,10 +192,10 @@ enum ZbZclOtaImageBlkReqFldCtrl {
 
 #define ZCL_OTA_HEADER_FILE_IDENTIFIER              0x0BEEF11E
 #define ZCL_OTA_HEADER_FILE_VERSION                 0x0100
-#define ZCL_OTA_HEADER_LENGTH_MIN                   56 /* no optional fields */
-#define ZCL_OTA_HEADER_LENGTH_MAX                   69 /* all optional fields */
-#define ZCL_OTA_IMAGE_BLOCK_SUB_ELEMENT_HEADER      6 /* tag id [2] tag length [4] */
-#define ZCL_OTA_IMAGE_BLOCK_ZCL_MESSAGE_SIZE        14 /* size of Image Block Response ZCL excluding data */
+#define ZCL_OTA_HEADER_LENGTH_MIN                   56U /* no optional fields */
+#define ZCL_OTA_HEADER_LENGTH_MAX                   69U /* all optional fields */
+#define ZCL_OTA_IMAGE_BLOCK_SUB_ELEMENT_HEADER      6U /* tag id [2] tag length [4] */
+#define ZCL_OTA_IMAGE_BLOCK_ZCL_MESSAGE_SIZE        14U /* size of Image Block Response ZCL excluding data */
 #define ZCL_OTA_BLOCK_DATA_SIZE_MAX \
     (ZCL_PAYLOAD_UNFRAG_SAFE_SIZE - ZCL_OTA_IMAGE_BLOCK_ZCL_MESSAGE_SIZE)
 

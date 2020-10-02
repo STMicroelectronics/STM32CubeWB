@@ -18,6 +18,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "main.h"
@@ -91,12 +92,12 @@ static void Mode_Selec( void );
 /* USER CODE END PFP */
 
 
-APP_Mode_t APP_MODE;
+APP_Mode_t app_mode;
 
 /* Functions Definition ------------------------------------------------------*/
 void APPE_Init( void )
 {
-  APP_MODE = NO_APP;
+  app_mode = NO_APP;
   
   SystemPower_Config(); /**< Configure the system Power Mode */
 
@@ -143,22 +144,29 @@ void APPE_Init( void )
  *************************************************************/
 static void Mode_Selec( void )
 {
+
+  if(LL_RCC_IsActiveFlag_SFTRST() == 0)
+  {
+    *(volatile uint32_t*) SRAM1_BASE = 0;
+  }
+  LL_RCC_ClearResetFlags();
+
   switch(*(uint32_t*)SRAM1_BASE) 
   {
     case SRAM1_BASE_P2P_SERVER :
-      APP_MODE = P2P_SERVER;
+      app_mode = P2P_SERVER;
       break;
     
     case SRAM1_BASE_P2P_CLIENT :
-      APP_MODE = P2P_CLIENT;
+      app_mode = P2P_CLIENT;
       break;
     
     case SRAM1_BASE_HEART_RATE :
-      APP_MODE = HEART_RATE;
+      app_mode = HEART_RATE;
       break;
     
     default : 
-      APP_MODE = NO_APP;
+      app_mode = NO_APP;
       break;
   }
 }
@@ -229,7 +237,7 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
  * When the system event is both :
  *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
- *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ *    - reported by the FUS (sysevt_ready_rsp == FUS_FW_RUNNING)
  * The buffer shall not be released
  * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
  * When the status is not filled, the buffer is released by default
@@ -240,7 +248,7 @@ static void APPE_SysUserEvtRx( void * pPayload )
   /* Traces channel initialization */
   APPD_EnableCPU2();
   
-  switch(APP_MODE)
+  switch(app_mode)
   {
     case P2P_SERVER :
       APP_BLE_SV_Init( );

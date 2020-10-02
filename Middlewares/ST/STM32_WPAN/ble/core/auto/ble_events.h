@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_events.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (event callbacks)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -82,7 +82,7 @@ void hci_disconnection_complete_event( uint8_t Status,
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.7.8)
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Encryption_Enabled Link Level Encryption.
@@ -117,7 +117,7 @@ void hci_encryption_change_event( uint8_t Status,
  * (See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.7.12)
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Version Version of the Current LMP in the remote Controller
@@ -190,7 +190,7 @@ void hci_number_of_completed_packets_event( uint8_t Number_of_Handles,
  * the Role Change event.
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return None
@@ -216,8 +216,7 @@ void hci_encryption_key_refresh_complete_event( uint8_t Status,
  * 7.7.65.1
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle to be used to identify the
- *        connection with the peer device.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Role Role of the local device in the connection.
@@ -294,8 +293,7 @@ void hci_le_advertising_report_event( uint8_t Num_Reports,
  * sent. See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.3
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle to be used to identify the
- *        connection with the peer device.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval Connection interval used on this connection.
@@ -329,8 +327,7 @@ void hci_le_connection_update_complete_event( uint8_t Status,
  * See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.4
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle to be used to identify the
- *        connection with the peer device.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param LE_Features Bit Mask List of used LE features. For details see LE
@@ -349,8 +346,7 @@ void hci_le_read_remote_features_complete_event( uint8_t Status,
  * (See [Vol 6] Part B, Section 5.1.3)and Bluetooth spec 5.0 vol 2 [part E]
  * 7.7.65.5
  * 
- * @param Connection_Handle Connection handle to be used to identify the
- *        connection with the peer device.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Random_Number 64-bit random number
@@ -371,8 +367,7 @@ void hci_le_long_term_key_request_event( uint16_t Connection_Handle,
  * corresponding parameter has a lower value.
  * See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.7
  * 
- * @param Connection_Handle Connection handle to be used to identify the
- *        connection with the peer device.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param MaxTxOctets The maximum number of payload octets in a Link Layer
@@ -448,8 +443,7 @@ void hci_le_generate_dhkey_complete_event( uint8_t Status,
  * See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.10
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle to be used to identify the
- *        connection with the peer device.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Role Role of the local device in the connection.
@@ -715,7 +709,6 @@ void aci_gap_addr_not_resolved_event( uint16_t Connection_Handle );
  * application has to respond with the ACI_GAP_NUMERIC_COMPARISON_RESP command.
  * 
  * @param Connection_Handle Connection handle related to the underlying Pairing
-
  * @return None
  */
 void aci_gap_numeric_comparison_value_event( uint16_t Connection_Handle,
@@ -789,7 +782,7 @@ void aci_gatt_proc_timeout_event( uint16_t Connection_Handle );
  * This event is generated in response to an Exchange MTU request. See
  * ACI_GATT_EXCHANGE_CONFIG.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Server_RX_MTU Attribute server receive MTU size
@@ -805,7 +798,7 @@ void aci_att_exchange_mtu_resp_event( uint16_t Connection_Handle,
  * spec. This event is also generated in response to
  * ACI_GATT_DISC_ALL_CHAR_DESC
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Format Format of the hanndle-uuid pairs
@@ -824,7 +817,7 @@ void aci_att_find_info_resp_event( uint16_t Connection_Handle,
  * @brief ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT
  * This event is generated in response to a ACI_ATT_FIND_BY_TYPE_VALUE_REQ
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Num_of_Handle_Pair Number of attribute, group handle pairs
@@ -840,7 +833,7 @@ void aci_att_find_by_type_value_resp_event( uint16_t Connection_Handle,
  * This event is generated in response to a ACI_ATT_READ_BY_TYPE_REQ. See
  * ACI_GATT_FIND_INCLUDED_SERVICES and ACI_GATT_DISC_ALL_CHAR_DESC.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Handle_Value_Pair_Length The size of each attribute handle-value pair
@@ -861,7 +854,7 @@ void aci_att_read_by_type_resp_event( uint16_t Connection_Handle,
  * This event is generated in response to a Read Request. See
  * ACI_GATT_READ_CHAR_VALUE.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Event_Data_Length Length of following data
@@ -877,7 +870,7 @@ void aci_att_read_resp_event( uint16_t Connection_Handle,
  * This event can be generated during a read long characteristic value
  * procedure. See ACI_GATT_READ_LONG_CHAR_VALUE.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Event_Data_Length Length of following data
@@ -892,7 +885,7 @@ void aci_att_read_blob_resp_event( uint16_t Connection_Handle,
  * @brief ACI_ATT_READ_MULTIPLE_RESP_EVENT
  * This event is generated in response to a Read Multiple Request.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Event_Data_Length Length of following data
@@ -910,7 +903,7 @@ void aci_att_read_multiple_resp_event( uint16_t Connection_Handle,
  * This event is generated in response to a Read By Group Type Request. See
  * ACI_GATT_DISC_ALL_PRIMARY_SERVICES.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attribute_Data_Length The size of each attribute data
@@ -930,7 +923,7 @@ void aci_att_read_by_group_type_resp_event( uint16_t Connection_Handle,
  * @brief ACI_ATT_PREPARE_WRITE_RESP_EVENT
  * This event is generated in response to a ACI_ATT_PREPARE_WRITE_REQ.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attribute_Handle The handle of the attribute to be written
@@ -949,7 +942,7 @@ void aci_att_prepare_write_resp_event( uint16_t Connection_Handle,
  * @brief ACI_ATT_EXEC_WRITE_RESP_EVENT
  * This event is generated in response to an Execute Write Request.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return None
@@ -960,7 +953,7 @@ void aci_att_exec_write_resp_event( uint16_t Connection_Handle );
  * @brief ACI_GATT_INDICATION_EVENT
  * This event is generated when an indication is received from the server.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attribute_Handle The handle of the attribute
@@ -977,7 +970,7 @@ void aci_gatt_indication_event( uint16_t Connection_Handle,
  * @brief ACI_GATT_NOTIFICATION_EVENT
  * This event is generated when a notification is received from the server.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attribute_Handle The handle of the attribute
@@ -995,7 +988,7 @@ void aci_gatt_notification_event( uint16_t Connection_Handle,
  * This event is generated when a GATT client procedure completes either with
  * error or successfully.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Error_Code Indicates whether the procedure completed with an error or
@@ -1012,7 +1005,7 @@ void aci_gatt_proc_complete_event( uint16_t Connection_Handle,
  * discovery procedures. This does not mean that the procedure ended with an
  * error, but this error event is part of the procedure itself.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Req_Opcode The request that generated this error response
@@ -1054,7 +1047,7 @@ void aci_gatt_error_resp_event( uint16_t Connection_Handle,
  * By UUID" has been started. It will be the value of the Characteristic if a*
  * "Read using Characteristic UUID" has been performed.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attribute_Handle The handle of the attribute
@@ -1089,8 +1082,9 @@ void aci_gatt_disc_read_char_by_uuid_resp_event( uint16_t Connection_Handle,
  * In case of write/signed write commands, no response is sent to the client
  * but the attribute is not modified.
  * 
- * @param Connection_Handle Handle of the connection on which there was the
- *        request to write the attribute
+ * @param Connection_Handle Connection handle for which the event applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Attribute_Handle The handle of the attribute
  * @param Data_Length Length of Data field
  * @param Data The data that the client has requested to write
@@ -1111,7 +1105,7 @@ void aci_gatt_write_permit_req_event( uint16_t Connection_Handle,
  * if it desires and when done, it has to send the ACI_GATT_ALLOW_READ command
  * to indicate to the stack that it can send the response to the client.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attribute_Handle The handle of the attribute
@@ -1135,7 +1129,6 @@ void aci_gatt_read_permit_req_event( uint16_t Connection_Handle,
  * 
  * @param Connection_Handle Handle of the connection which requested to read
  *        the attribute
-
  * @param Handle_Item See @ref Handle_Item_t
  * @return None
  */
@@ -1150,7 +1143,9 @@ void aci_gatt_read_multi_permit_req_event( uint16_t Connection_Handle,
  * there are at least two buffers available for notifications or write
  * commands.
  * 
- * @param Connection_Handle Connection handle related to the request
+ * @param Connection_Handle Connection handle for which the event applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Available_Buffers Number of buffers available
  * @return None
  */
@@ -1162,7 +1157,9 @@ void aci_gatt_tx_pool_available_event( uint16_t Connection_Handle,
  * This event is generated when the client has sent the confirmation to a
  * previously sent indication
  * 
- * @param Connection_Handle Connection handle related to the event
+ * @param Connection_Handle Connection handle for which the event applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @return None
  */
 void aci_gatt_server_confirmation_event( uint16_t Connection_Handle );
@@ -1181,8 +1178,9 @@ void aci_gatt_server_confirmation_event( uint16_t Connection_Handle );
  * will not be modified and an error response will be sent to the client, with
  * the error code as specified by the application.
  * 
- * @param Connection_Handle Handle of the connection on which there was the
- *        request to write the attribute
+ * @param Connection_Handle Connection handle for which the event applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Attribute_Handle The handle of the attribute
  * @param Offset The offset from which the prepare write has been requested
  * @param Data_Length Length of Data field
@@ -1204,7 +1202,7 @@ void aci_gatt_prepare_write_permit_req_event( uint16_t Connection_Handle,
  * (BLE_EVT_MAX_PARAM_LEN - 4) i.e. ATT_MTU > 251 for BLE_EVT_MAX_PARAM_LEN
  * default value.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Offset Bits 14-0: offset in octets from which Attribute_Value data
@@ -1228,7 +1226,7 @@ void aci_gatt_read_ext_event( uint16_t Connection_Handle,
  * > (BLE_EVT_MAX_PARAM_LEN - 4) i.e. ATT_MTU > 251 for BLE_EVT_MAX_PARAM_LEN
  * default value.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attribute_Handle The handle of the attribute
@@ -1254,7 +1252,7 @@ void aci_gatt_indication_ext_event( uint16_t Connection_Handle,
  * ATT_MTU > (BLE_EVT_MAX_PARAM_LEN - 4) i.e. ATT_MTU > 251 for
  * BLE_EVT_MAX_PARAM_LEN default value.
  * 
- * @param Connection_Handle Connection handle related to the response.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attribute_Handle The handle of the attribute
@@ -1280,7 +1278,6 @@ void aci_gatt_notification_ext_event( uint16_t Connection_Handle,
  * 
  * @param Connection_Handle Connection handle referring to the COS Channel
  *        where the Disconnection has been received.
-
  * @return None
  */
 void aci_l2cap_connection_update_resp_event( uint16_t Connection_Handle,
@@ -1295,7 +1292,6 @@ void aci_l2cap_connection_update_resp_event( uint16_t Connection_Handle,
  * @param Connection_Handle Handle of the connection related to this L2CAP
  *        procedure.
  * @param Data_Length Length of following data
-
  * @return None
  */
 void aci_l2cap_proc_timeout_event( uint16_t Connection_Handle,

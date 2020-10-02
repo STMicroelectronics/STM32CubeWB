@@ -99,7 +99,7 @@ For application binary update example:
    -  BLE_HeartRate_ota_reference.bin or BLE_p2pServer_ota_reference.bin have to be copied into Smart phone directory
  - Start download
  - New Application is running and can be connected
- 
+  
 For Wireless FW binary update example:
  - At Startup, the Ble_Ota application advertises "STM_OTA"
  - with Smart Phone "ST BLE Sensor" application, scan and connect to "STM_OTA" Application.
@@ -109,6 +109,9 @@ For Wireless FW binary update example:
     (please refer to UM2551 - STM32CubeWB Nucleo demonstration firmware, chapter 4.3)
  - Start download in free area of non secure Flash memory
  - New Application is running and can be connected
+
++ Known limitation: Debug configuration of BLE_Ota CubeIDE project is not supported by current BLE_Ota application settings
+as generated binary in debug mode is too big for allocated 24kB Flash sectors (between 0x8000000-0x8006000).  
  
 For more details refer to the Application Note: 
   AN5289 - Building a Wireless application 

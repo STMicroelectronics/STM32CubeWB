@@ -18,6 +18,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "main.h"
@@ -172,7 +173,7 @@ void APPE_Init( void )
  * @param  None
  * @retval None
  */
-static void SystemPower_Config(void)
+static void SystemPower_Config( void )
 {
 
   /**
@@ -181,7 +182,7 @@ static void SystemPower_Config(void)
   LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 
   /* Initialize low power manager */
-  UTIL_LPM_Init();
+  UTIL_LPM_Init( );
   /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
   LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
 
@@ -232,7 +233,7 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
  * When the system event is both :
  *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
- *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ *    - reported by the FUS (sysevt_ready_rsp == FUS_FW_RUNNING)
  * The buffer shall not be released
  * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
  * When the status is not filled, the buffer is released by default
@@ -373,37 +374,14 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
       break;
 
 #ifdef ENABLE_OCCUPANCY_SENSOR       
-    case BUTTON_SW2_PIN:
+    case BUTTON_SW3_PIN:
       {
         Occupancy_Flag = 1;
+        UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_SW3_REQ_ID, CFG_SCH_PRIO_0);
       }
       break;
 #endif
 
-#if ( CFG_LPM_SUPPORTED == 1)
-    case BUTTON_SW3_PIN:
-      {
-        if(Mesh_Stop_Mode == 0)
-        {
-          Mesh_Stop_Mode = 1;
-          /**
-           * Do allow stop mode in the application
-           */
-          UTIL_LPM_SetStopMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_ENABLE);
-          BSP_LED_Off(LED_GREEN);
-        }
-        else
-        {
-          Mesh_Stop_Mode = 0;
-          /**
-          * Do not allow stop mode in the application
-          */
-          UTIL_LPM_SetStopMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
-          BSP_LED_On(LED_GREEN);
-        }
-      }
-      break;
-#endif
       
   default:
       break;

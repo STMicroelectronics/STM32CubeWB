@@ -92,7 +92,7 @@
  *---------------------------------------------------------------
  */
 /* Attribute Identifiers */
-enum {
+enum ZbZclThermAttrT {
     /* Thermostat Info - 0x000x */
     ZCL_THERM_SVR_ATTR_LOCAL_TEMP = 0x0000, /* int16 [0x954d,0x7fff] - MANDATORY */
     ZCL_THERM_SVR_ATTR_OUTDOOR_TEMP = 0x0001, /* int16 */
@@ -192,18 +192,9 @@ enum {
     ZCL_THERM_SVR_GET_RELAY_LOG_RSP = 0x01
 };
 
-struct ZbZclThermCliSetpointT {
-    uint8_t mode;
-    int8_t amount;
-};
+/* Thermostat Client */
 
 #define ZCL_THERM_NUM_TRANSITIONS_MAX               10U
-
-struct ZbZclThermTransitionsT {
-    uint16_t transition_time;
-    int16_t heat_set_point; /* optional */
-    int16_t cool_set_point; /* optional */
-};
 
 #define ZCL_THERM_DAY_OF_WEEK_SUNDAY                0x01
 #define ZCL_THERM_DAY_OF_WEEK_MONDAY                0x02
@@ -217,6 +208,41 @@ struct ZbZclThermTransitionsT {
 #define ZCL_THERM_MODE_HEAT_SETPOINT_PRESENT        0x01
 #define ZCL_THERM_MODE_COOL_SETPOINT_PRESENT        0x02
 
+/**
+ * Create a new instance of the Scenes Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
+ */
+struct ZbZclClusterT * ZbZclThermClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
+
+/** Thermostat Setpoint structure */
+struct ZbZclThermCliSetpointT {
+    uint8_t mode; /**< Mode */
+    int8_t amount; /**< Amount */
+};
+
+/**
+ * Send a Setpoint Raise/Lower command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Thermostat Setpoint structure
+ * @param callback Callback function that will be called when the response for this request is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclThermClientSetpointRaiseLower(struct ZbZclClusterT *cluster,
+    const struct ZbApsAddrT *dst, struct ZbZclThermCliSetpointT *req,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
+
+/** Thermostat Transition structure */
+struct ZbZclThermTransitionsT {
+    uint16_t transition_time; /**< Transition Time */
+    int16_t heat_set_point; /**< Heat Set Point (optional) */
+    int16_t cool_set_point; /**< Cool Set Point (optional) */
+};
+
+/** Thermostat Weekly Schedule structure */
 struct ZbZclThermWeeklySchedT {
     uint8_t num_transitions;
     uint8_t day_of_week_seq; /* e.g. ZCL_THERM_DAY_OF_WEEK_SUNDAY */
@@ -224,76 +250,126 @@ struct ZbZclThermWeeklySchedT {
     struct ZbZclThermTransitionsT transitions[ZCL_THERM_NUM_TRANSITIONS_MAX];
 };
 
+/**
+ * Send a Set Weekly Schedule command (Optional)
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Thermostat Weekly Schedule structure
+ * @param callback Callback function that will be called when the response for this request is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclThermClientSetWeeklySched(struct ZbZclClusterT *cluster,
+    const struct ZbApsAddrT *dst, struct ZbZclThermWeeklySchedT *req,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
+
+/** Thermostat Get Weekly Schedule structure */
 struct ZbZclThermCliGetWeeklyT {
     uint8_t days_to_return;
     uint8_t mode_to_return;
 };
 
-/* Thermostat Client */
-struct ZbZclClusterT * ZbZclThermClientAlloc(struct ZigBeeT *zb, uint8_t ep);
-
-/* ZCL_THERM_CLI_SETPOINT_RAISE_LOWER */
-enum ZclStatusCodeT ZbZclThermClientSetpointRaiseLower(struct ZbZclClusterT *clusterPtr,
-    const struct ZbApsAddrT *dst, struct ZbZclThermCliSetpointT *req,
-    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-
-/* ZCL_THERM_CLI_SET_WEEK_SCHED */
-enum ZclStatusCodeT ZbZclThermClientSetWeeklySched(struct ZbZclClusterT *clusterPtr,
-    const struct ZbApsAddrT *dst, struct ZbZclThermWeeklySchedT *req,
-    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
-
-/* ZCL_THERM_CLI_GET_WEEK_SCHED */
-enum ZclStatusCodeT ZbZclThermClientGetWeeklySched(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send a Get Weekly Schedule command (Optional)
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Thermostat Get Weekly Schedule info
+ * @param callback Callback function that will be called when the response for this request is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclThermClientGetWeeklySched(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclThermCliGetWeeklyT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_THERM_CLI_CLEAR_WEEK_SCHED */
-enum ZclStatusCodeT ZbZclThermClientClearWeeklySched(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send a Clear Weekly Schedule command (Optional)
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be called when the response for this request is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclThermClientClearWeeklySched(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_THERM_CLI_GET_RELAY_LOG */
-enum ZclStatusCodeT ZbZclThermClientGetRelayStatusLog(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send a Get Relay Status Log command (Optional)
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be called when the response for this request is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclThermClientGetRelayStatusLog(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* Thermostat Server */
 
-struct ZbZclThermSvrGetRelayStatusLogRspT {
-    uint16_t time_of_day;
-    uint16_t relay_status;
-    int16_t local_temp;
-    uint8_t humidity_percent;
-    int16_t set_point;
-    uint16_t unread_entries;
-};
-
+/** Thermostat Server callbacks configuration */
 struct ZbZclThermServerCallbacksT {
-    enum ZclStatusCodeT (*setpoint_raise_lower)(struct ZbZclClusterT *clusterPtr, void *arg,
+    enum ZclStatusCodeT (*setpoint_raise_lower)(struct ZbZclClusterT *cluster, void *arg,
         struct ZbZclThermCliSetpointT *req, struct ZbZclAddrInfoT *srcInfo);
+    /**< Callback to handle Setpoint Raise/Lower command response */
 
-    enum ZclStatusCodeT (*set_weekly)(struct ZbZclClusterT *clusterPtr, void *arg,
+    enum ZclStatusCodeT (*set_weekly)(struct ZbZclClusterT *cluster, void *arg,
         struct ZbZclThermWeeklySchedT *req, struct ZbZclAddrInfoT *srcInfo);
+    /**< Callback to handle Set Weekly Schedule command response */
 
-    enum ZclStatusCodeT (*get_weekly)(struct ZbZclClusterT *clusterPtr, void *arg,
+    enum ZclStatusCodeT (*get_weekly)(struct ZbZclClusterT *cluster, void *arg,
         struct ZbZclThermCliGetWeeklyT *req, struct ZbZclAddrInfoT *srcInfo);
+    /**< Callback to handle Get Weekly Schedule command response */
 
-    enum ZclStatusCodeT (*clear_weekly)(struct ZbZclClusterT *clusterPtr, void *arg,
+    enum ZclStatusCodeT (*clear_weekly)(struct ZbZclClusterT *cluster, void *arg,
         struct ZbZclAddrInfoT *srcInfo);
+    /**< Callback to handle Clear Weekly Schedule command response */
 
-    enum ZclStatusCodeT (*get_relay_status_log)(struct ZbZclClusterT *clusterPtr, void *arg,
+    enum ZclStatusCodeT (*get_relay_status_log)(struct ZbZclClusterT *cluster, void *arg,
         struct ZbZclAddrInfoT *srcInfo);
+    /**< Callback to handle Get Relay Status Log command response */
 };
 
-struct ZbZclClusterT * ZbZclThermServerAlloc(struct ZigBeeT *zb, uint8_t ep,
+/**
+ * Create a new instance of the Thermostat Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param callbacks Structure containing callback function pointers for this cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
+struct ZbZclClusterT * ZbZclThermServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclThermServerCallbacksT *callbacks, void *arg);
 
-/* ZCL_THERM_SVR_GET_WEEK_RSP */
-enum ZclStatusCodeT ZbZclThermServerGetWeeklySchedRsp(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclAddrInfoT *dstInfo, struct ZbZclThermWeeklySchedT *rsp);
+/**
+ * Send a Get Weekly Schedule Response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param rsp Server Clear Get Weekly Schedule response
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclThermServerGetWeeklySchedRsp(struct ZbZclClusterT *cluster,
+    struct ZbZclAddrInfoT *dst, struct ZbZclThermWeeklySchedT *rsp);
 
-/* ZCL_THERM_SVR_GET_RELAY_LOG_RSP */
-enum ZclStatusCodeT ZbZclThermServerGetRelayStatusLogRsp(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclAddrInfoT *dstInfo, struct ZbZclThermSvrGetRelayStatusLogRspT *rsp);
+/** Get Relay Status Log Response structure */
+struct ZbZclThermSvrGetRelayStatusLogRspT {
+    uint16_t time_of_day; /**< Time of Day */
+    uint16_t relay_status; /**< Relay Status */
+    int16_t local_temp; /**< Local Temperature */
+    uint8_t humidity_percent; /**< Humidity in Percentage */
+    int16_t set_point; /*8< Set Point */
+    uint16_t unread_entries; /**< Unread Entries */
+};
 
-#endif /* __ZCL_TERM__H */
+/**
+ * Send a Get Relay Status Log Response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param rsp Get Relay Status Log Response structure
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclThermServerGetRelayStatusLogRsp(struct ZbZclClusterT *cluster,
+    struct ZbZclAddrInfoT *dst, struct ZbZclThermSvrGetRelayStatusLogRspT *rsp);
+
+#endif

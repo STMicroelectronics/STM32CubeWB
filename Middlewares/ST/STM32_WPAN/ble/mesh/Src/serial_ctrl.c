@@ -26,7 +26,10 @@
 #include "light.h"
 #include "light_lc.h"
 #include "vendor.h"
-
+#include "appli_vendor.h"
+#include "generic_client.h"
+#include "light_client.h"
+#include "sensors_client.h"
 /** @addtogroup BlueNRG_Mesh
 *  @{
 */
@@ -62,14 +65,22 @@ MOBLEUINT8 SerialCtrl_GetData(char *rcvdStringBuff, uint16_t rcvdStringSize, MOB
 */ 
 void SerialCtrlVendorRead_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
-   MOBLE_ADDRESS peer = 0;                           /*node adderess of the destination node*/
   MOBLEUINT16 command = 0;                          /*Opcode command to be executed by the destination node*/
   MOBLEUINT8 datalength = 0;
-  MOBLEUINT8 elementIndex = 0;                  /*default element index*/  
   MOBLEUINT8  data [10] = {0};                  /*buffer to output property variables */
   MOBLE_RESULT result = MOBLE_RESULT_FAIL;
+  MODEL_MessageHeader_t msgHdr;
   
-  sscanf(rcvdStringBuff+5, "%4hx %hx ", &peer,&command); 
+  /*Initializing the parameters*/
+  msgHdr.elementIndex = 0;
+  msgHdr.peer_addr = 0;
+  msgHdr.dst_peer = 0;
+  msgHdr.ttl = 0;
+  msgHdr.rssi = 0;
+  msgHdr.rcvdAppKeyOffset = 0;
+  msgHdr.rcvdNetKeyOffset = 0;
+  
+  sscanf(rcvdStringBuff+5, "%4hx %hx ", &msgHdr.peer_addr, &command); 
   
     for(int i = 0; i < 6 ; i++)
     {
@@ -86,26 +97,26 @@ void SerialCtrlVendorRead_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   
   if(result)
   {
-    TRACE_I(TF_SERIAL_CTRL,"Invalid Command\r\n");
+    TRACE_I(TF_SERIAL_PRINTS,"Invalid Command\r\n");
     return;
   }
   
  else
   {
-      
-      result = BLEMesh_ReadRemoteData(peer,elementIndex,command, 
-                                         data, datalength);   
+      result = BLEMesh_ReadRemoteData(&msgHdr,command, data, datalength);   
       if(result == MOBLE_RESULT_SUCCESS)
       {
-        TRACE_I(TF_SERIAL_CTRL,"Command Executed Successfully\r\n");
+        TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
       }
       else
       {
-        TRACE_I(TF_SERIAL_CTRL,"Invalid Opcode Parameter\r\n");
+        TRACE_I(TF_SERIAL_PRINTS,"Invalid Opcode Parameter\r\n");
       }
   }
    
 }
+
+
 void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
   MOBLE_ADDRESS peer = 0;                           /*node adderess of the destination node*/
@@ -113,7 +124,7 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
   MOBLEUINT8 elementIndex = 0;                  /*default element index*/  
   MOBLE_RESULT result = MOBLE_RESULT_FAIL;
   MOBLEBOOL response = MOBLE_FALSE;
-  MOBLEUINT8 data_buff[VENDOR_DATA_BYTE];
+  MOBLEUINT8 data_buff[VENDOR_DATA_BUFFER_SIZE];
   MOBLEUINT16 idx=0;
   MOBLEUINT8 length;
   MOBLEUINT8 j = 1;
@@ -122,14 +133,41 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
   
   if(command == 0x000E)
   {
+    /* Check parameter if data to be send continuously */
+    if (idx == 0xFF)
+    {
+        data_buff[0] = 0x01;     /*  data write sub command; */
+        length = sizeof(data_buff)-1;
+        for(MOBLEUINT8 i=1;i <sizeof(data_buff);i++)
+        {
+          data_buff[j] = i;
+          j++;
+        }
+        Appli_Vendor_SetBigDataPacket(data_buff, length, 0 , peer);
+        Vendor_SendDataFreq(0xFF);
+        TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
+        return;
+    }
+    /* Check parameter if continuously data send operation need to stop  */
+    else if (idx == 0x00)
+    {
+        BSP_LED_Off(LED_BLUE);
+        Vendor_SendDataFreq(0x00);
+        TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
+        return;
+    }
+    /* Data will be sent only once */
+    else
+    {
     data_buff[0] = 0x01;     /*  data write sub command; */
     length = sizeof(data_buff)-idx;
-  
+        Vendor_SendDataFreq(0x00); /* To stop sending packets periodically */
     for(MOBLEUINT8 i=idx;i <sizeof(data_buff);i++)
     {
       data_buff[j] = i;
       j++;
     }
+  }
   }
   else
   {
@@ -146,27 +184,27 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
     }
   if(result)
   {
-    TRACE_I(TF_SERIAL_CTRL,"Invalid Command\r\n");
+    TRACE_I(TF_SERIAL_PRINTS,"Invalid Command\r\n");
     return;
   }
   
  else
   {
-      
       result = BLEMesh_SetRemoteData(peer,elementIndex,command, 
                                          data_buff, length,
                                          response, MOBLE_TRUE);   
       if(result == MOBLE_RESULT_SUCCESS)
       {
-        TRACE_I(TF_SERIAL_CTRL,"Command Executed Successfully\r\n");
+        TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
       }
       else
       {
-        TRACE_I(TF_SERIAL_CTRL,"Invalid Opcode Parameter\r\n");
+        TRACE_I(TF_SERIAL_PRINTS,"Invalid Opcode Parameter\r\n");
       }
   }
 }
   
+
 void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
   MOBLE_ADDRESS peer = 0;                           /*node adderess of the destination node*/
@@ -180,10 +218,29 @@ void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   sscanf(rcvdStringBuff+5, "%4hx %hx ", &peer,&command); 
   
   /* Callback to store a pointer to Opcode table starting sddress and length of the table*/
+#ifdef ENABLE_GENERIC_MODEL_SERVER  
   GenericModelServer_GetOpcodeTableCb(&Generic_OpcodeTable,&Generic_OpcodeTableLength);
+#else /* Get Generic Client OpCode Table */
+#ifdef ENABLE_GENERIC_MODEL_CLIENT
+  GenericModelClient_GetOpcodeTableCb(&Generic_OpcodeTable,&Generic_OpcodeTableLength);
+#endif
+#endif
+#ifdef ENABLE_LIGHT_MODEL_SERVER  
   LightModelServer_GetOpcodeTableCb(&Light_OpcodeTable,&Light_OpcodeTableLength);     
-  Light_LC_ModelServer_GetOpcodeTableCb(&LightLC_OpcodeTable,&LightLC_OpcodeTableLength);
+  LightLcServer_GetOpcodeTableCb(&LightLC_OpcodeTable,&LightLC_OpcodeTableLength);
+#else /* Get Light Client OpCode Table */
+#ifdef ENABLE_LIGHT_MODEL_CLIENT
+  LightModelClient_GetOpcodeTableCb(&Light_OpcodeTable,&Light_OpcodeTableLength);
+  //Note: Light LC is included in Lighting Client Model
+#endif
+#endif
+#ifdef ENABLE_SENSOR_MODEL_SERVER   
   SensorModelServer_GetOpcodeTableCb(&Sensor_OpcodeTable,&Sensor_OpcodeTableLength);
+#else /* Get Sensor Client OpCode Table */
+#ifdef ENABLE_SENSOR_MODEL_CLIENT
+  SensorsModelClient_GetOpcodeTableCb(&Sensor_OpcodeTable,&Sensor_OpcodeTableLength);
+#endif
+#endif
   
   /* Minimum parameter length required for a valid opcade in Generic opcode table */
   minParamLength = SerialCtrl_GetMinParamLength(command,
@@ -215,7 +272,7 @@ void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
                                                   Sensor_OpcodeTable,
                                                   Sensor_OpcodeTableLength);
     
-    TRACE_I(TF_SERIAL_CTRL, "Min Parameter Length after sensor model check %d\r\n", 
+    TRACE_I(TF_SERIAL_PRINTS, "Min Parameter Length after sensor model check %d\r\n", 
                              minParamLength);
   }
   
@@ -235,16 +292,16 @@ void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
                                      MOBLE_FALSE);   
     if(result == MOBLE_RESULT_SUCCESS)
     {
-      TRACE_I(TF_SERIAL_CTRL,"Command Executed Successfully\r\n");
+        TRACE_I(TF_SERIAL_PRINTS, "Command Executed Successfully\r\n");
     }
     else
     {
-      TRACE_I(TF_SERIAL_CTRL,"Invalid Opcode Parameter\r\n");
+        TRACE_I(TF_SERIAL_PRINTS, "Invalid Opcode Parameter\r\n");
     }
   }
   else
   {
-    TRACE_I(TF_SERIAL_CTRL,"Unknown Opcode\r\n");
+    TRACE_I(TF_SERIAL_PRINTS, "Unknown Opcode\r\n");
   }
 }
 
@@ -268,6 +325,7 @@ MOBLEUINT8 SerialCtrl_GetMinParamLength(MOBLEUINT32 opcode, const MODEL_OpcodeTa
   }
   return 0xff;
 }
+
 
 /**
 * @brief  This function extract the function parameter from the string
@@ -323,4 +381,4 @@ MOBLEUINT8 SerialCtrl_GetData(char *rcvdStringBuff, uint16_t rcvdStringSize, MOB
 /**
 * @}
 */
-/******************* (C) COPYRIGHT 2018 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

@@ -22,10 +22,10 @@
 
 @par Application Description 
 
-How to use PressMeas cluster on a Centralized Zigbee network with device acting as router.
+How to use Pressure Measurement cluster on a Centralized Zigbee network with device acting as router.
 
 The purpose of this application is to show how to create a centralized Zigbee network, and how to communicate
-from one node to another one using the PressMeas cluster. Once the Zigbee mesh network is created, the 
+from one node to another one using the Pressure Measurement cluster. Once the Zigbee mesh network is created, the 
 user can send requests to the server boards through the push buttons in order to have current pressure,
 min pressure that can be measured and max pressure that can be measured.
 
@@ -36,11 +36,11 @@ On this application, the Server send periodically reports back to the Client wit
         
              ---------                                      ---------
              |       |         ZbZclReadReq                 |       |
-      PushB=>|Client | -----------------------------------> |Server | <= PushB ---> Increase Pressure ->ZbZclAttrIntegerWrite
-             |       |                                      |       | <= PushB ---> Decrease Pressure  ->ZbZclAttrIntegerWrite
+      PushB=>|Client | -----------------------------------> |Server | <= PushB (SW1) --> Increase Pressure ->ZbZclAttrIntegerWrite
+             |       |                                      |       | <= PushB (SW2) --> Decrease Pressure  ->ZbZclAttrIntegerWrite
              |       |                                      |       |
-             |       |         ZbZclReadRsp                 |       |=>LED Green
-   Display <=|       | <----------------------------------- |       |=>LED Red
+             |       |         ZbZclReadRsp                 |       |=>LED Green (Pressure below max value)
+   Display <=|       | <----------------------------------- |       |=>LED Red   (Max pressure reached)
    Pressure  |       |                                      |       |=> Display attributes written
    info      |       |                                      |       |
              |       |                                      |       |
@@ -52,7 +52,7 @@ On this application, the Server send periodically reports back to the Client wit
 
 This application requires at minimum two STM32WB55xx nucleo boards, but you can use up four boards. 
 
-This application requests having the stm32wb5x_zigbee_full_fw.bin binary flashed on the wireless coprocessor 
+This application requests having the stm32wb5x_Zigbee_FFD_fw.binbinary flashed on the wireless coprocessor 
 and the correct binary flashed on the application processor.
 
 Important note :
@@ -71,9 +71,13 @@ To run the application :
 
   b)  Wait for a few seconds (around 5 sec), in order to let the zigbee mesh network being created. 
         
-  c)  At this stage, a Zigbee network is automatically created and it is possible to request Pressure Measurement Cluster attributes
-      value in unicast mode by pressing on the SW1 push button. 
-      Client traces the current pressure, the min and max pressure experienced values .
+  c)  At this stage, a Zigbee network is automatically created and an initial pressure is set and GREEN LED is ON.
+      pressing on the SW1 push button increase the pressure by 2C.
+      pressing on the SW2 push button decrease the pressure by 2C. 
+      
+      Once pressure is above a limit, GREEN LED is OFF and RED LED is ON.
+      If pressure is set back under the limit GREEN LED is ON and RED LED is OFF.
+      Server traces the current pressure, the min and max pressure experienced values written.
 
  
               ----------             -----------
@@ -118,9 +122,9 @@ Zigbee
 
 @par How to use it ? 
 
-=> Loading of the stm32wb5x_zigbee_full_fw.bin binary
+=> Loading of the stm32wb5x_Zigbee_FFD_fw.binbinary
 
-  This application requests having the stm32wb5x_zigbee_full_fw.bin binary flashed on the Wireless Coprocessor.
+  This application requests having the stm32wb5x_Zigbee_FFD_fw.binbinary flashed on the Wireless Coprocessor.
   If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
   All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
   Refer to UM2237 to learn how to use/install STM32CubeProgrammer.

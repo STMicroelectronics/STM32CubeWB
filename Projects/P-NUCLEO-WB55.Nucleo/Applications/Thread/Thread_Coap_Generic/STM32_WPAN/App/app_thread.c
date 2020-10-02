@@ -17,6 +17,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "utilities_common.h"
@@ -90,24 +91,19 @@ static void RxCpltCallback(void);
 
 /* USER CODE BEGIN PFP */
 static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource, otCoapType CoapType, otCoapCode CoapCode, const char *Address, uint8_t* Payload, uint16_t Size);
-static void APP_THREAD_DummyReqHandler(void                * p_context,
-    otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo);
-static void APP_THREAD_CoapRequestHandler(otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo);
+
+static void APP_THREAD_CoapRequestHandler(void                * pContext,
+                                          otCoapHeader        * pHeader,
+                                          otMessage           * pMessage,
+                                          const otMessageInfo * pMessageInfo);
 static void APP_THREAD_CoapSendDataResponse(otCoapHeader    * pRequestHeader,
     const otMessageInfo * pMessageInfo);
-static void APP_THREAD_CoapDataRespHandler(otCoapHeader  * pHeader,
+static void APP_THREAD_CoapDataRespHandler(
+    void *        aContext,
+    otCoapHeader  * pHeader,
     otMessage * pMessage,
     const otMessageInfo * pMessageInfo,
-    otError Result);
-static void APP_THREAD_CoapDummyRespHandler(void * p_context,
-    otCoapHeader * pHeader,
-    otMessage * pMessage,
-    const otMessageInfo * pMessageInfo,
-    otError Result);
+    otError result);
 
 static void APP_THREAD_InitPayloadWrite(void);
 static void APP_THREAD_SendCoapMsg(void);
@@ -141,7 +137,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[size
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
 
 /* USER CODE BEGIN PV */
-static otCoapResource OT_Ressource = {C_RESSOURCE, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapRequestHandler, NULL};
+static otCoapResource OT_Ressource = {C_RESSOURCE, APP_THREAD_CoapRequestHandler,"MyOwnContext", NULL};
 static otMessageInfo OT_MessageInfo = {0};
 static otCoapHeader  OT_Header = {0};
 static otMessage* pOT_Message = NULL;
@@ -521,8 +517,8 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
       error = otCoapSendRequest(NULL,
           pOT_Message,
           &OT_MessageInfo,
-          &APP_THREAD_CoapDummyRespHandler,
-          (void*)&APP_THREAD_CoapDataRespHandler);
+          &APP_THREAD_CoapDataRespHandler,
+          "COAP context");
     }
 
   }while(false);
@@ -534,31 +530,21 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
 }
 
 /**
- * @brief Dummy request handler
- *
- * @param None
- * @retval None
- */
-static void APP_THREAD_DummyReqHandler(void            * p_context,
-    otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo)
-{
-}
-
-/**
  * @brief Handler called when the server receives a COAP request.
  *
+ * @param pContext : Context
  * @param pHeader : Header
  * @param pMessage : Message
  * @param pMessageInfo : Message information
  * @retval None
  */
-static void APP_THREAD_CoapRequestHandler(otCoapHeader * pHeader,
-    otMessage            * pMessage,
-    const otMessageInfo  * pMessageInfo)
+static void APP_THREAD_CoapRequestHandler(void                 * pContext,
+                                          otCoapHeader         * pHeader,
+                                          otMessage            * pMessage,
+                                          const otMessageInfo  * pMessageInfo)
+
 {
-  APP_DBG(" Received CoAP request");
+  APP_DBG(" Received CoAP request (context = %s)",pContext);
   /* USER CODE BEGIN APP_THREAD_CoapRequestHandler */
   if (otMessageRead(pMessage, otMessageGetOffset(pMessage), &PayloadRead, sizeof(PayloadRead)) != sizeof(PayloadRead))
   {
@@ -615,54 +601,33 @@ static void APP_THREAD_CoapSendDataResponse(otCoapHeader    * pRequestHeader,
 /**
  * @brief This function manages the data response handler.
  *
+ * @param pHeader  context
  * @param pHeader  header
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
- * @param Result error code
+ * @param result error code
  * @retval None
  */
-static void APP_THREAD_CoapDataRespHandler(otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo,
-    otError             Result)
-{
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(pHeader);
-  UNUSED(pMessage);
-  UNUSED(pMessageInfo);
-
-  if (Result == OT_ERROR_NONE)
-  {
-    APP_DBG("APP_THREAD_CoapDataRespHandler : NO ERROR");
-  }
-  else
-  {
-    APP_DBG("APP_THREAD_CoapDataRespHandler : WARNING Result");
-  }
-}
-
-/**
- * @brief This function is used to handle a dummy response handler
- *
- * @param p_context  context
- * @param pHeader  coap header
- * @param pMessage message
- * @paramp pMessageInfo otMessage information
- * @param Result error status
- * @retval None
- */
-static void APP_THREAD_CoapDummyRespHandler(void                * p_context,
+static void APP_THREAD_CoapDataRespHandler(
+    void                * pContext,
     otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
-    otError             Result)
+    otError               result)
 {
   /* Prevent unused argument(s) compilation warning */
-  UNUSED(p_context);
   UNUSED(pHeader);
   UNUSED(pMessage);
   UNUSED(pMessageInfo);
-  UNUSED(Result);
+
+  if (result == OT_ERROR_NONE)
+  {
+    APP_DBG("APP_THREAD_CoapDataRespHandler : NO ERROR with context = %s",pContext);
+  }
+  else
+  {
+    APP_DBG("APP_THREAD_CoapDataRespHandler : WARNING Result = %d wih context = %s",result,pContext);
+  }
 }
 
 /**

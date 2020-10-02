@@ -18,6 +18,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "app_common.h"
@@ -37,7 +38,7 @@ extern void MX_LPUART1_UART_Init(void);
 extern UART_HandleTypeDef hlpuart1;
 #endif
 
-extern APP_Mode_t APP_MODE;
+extern APP_Mode_t app_mode;
 
 extern APP_BLE_ConnStatus_t SV_Connection_Status;
 extern APP_BLE_ConnStatus_t CL_Connection_Status;
@@ -256,15 +257,15 @@ static void at_cmd_analysing( void )
       break;
     case AT_SV :
       Next_Mode = P2P_SERVER;
-      if(APP_MODE == P2P_SERVER) UART_App_SendData("\r\nERROR\r\n", 9);
+      if(app_mode == P2P_SERVER) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         /* Switch to P2P Server */
         disconnection_status = TO_SWITCH_APP;
-        if((APP_MODE == HEART_RATE) && (HR_Connection_Status == APP_BLE_CONNECTED_SERVER))
+        if((app_mode == HEART_RATE) && (HR_Connection_Status == APP_BLE_CONNECTED_SERVER))
         {
           UTIL_SEQ_SetTask( 1<<CFG_TASK_HR_GAP_DISCON_ID, CFG_SCH_PRIO_0);
         }
-        else if((APP_MODE == P2P_CLIENT) && (CL_Connection_Status == APP_BLE_CONNECTED_CLIENT))
+        else if((app_mode == P2P_CLIENT) && (CL_Connection_Status == APP_BLE_CONNECTED_CLIENT))
         {
           UTIL_SEQ_SetTask( 1<<CFG_TASK_CL_GAP_DISCON_ID, CFG_SCH_PRIO_0);
         }
@@ -275,21 +276,21 @@ static void at_cmd_analysing( void )
       }
       break;
     case AT_SV_ADV_START :
-      if( APP_MODE != P2P_SERVER ) UART_App_SendData("\r\nERROR\r\n", 9);
+      if( app_mode != P2P_SERVER ) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         /* Request advertising */
         UTIL_SEQ_SetTask(1 << CFG_TASK_ADV_REQ_ID, CFG_SCH_PRIO_0);
       }
       break;
     case AT_SV_ADV_STOP :
-      if( APP_MODE != P2P_SERVER ) UART_App_SendData("\r\nERROR\r\n", 9);
+      if( app_mode != P2P_SERVER ) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         /* Cancel advertising */
         UTIL_SEQ_SetTask(1 << CFG_TASK_ADV_CANCEL_ID, CFG_SCH_PRIO_0);
       }
       break;
     case AT_SV_NOTIFY :
-      if((APP_MODE != P2P_SERVER) || (param != PARAM)) UART_App_SendData("\r\nERROR\r\n", 9);
+      if((app_mode != P2P_SERVER) || (param != PARAM)) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         if((pDataRx[12] == '=') && (pDataRx[17] == '\r')) 
         {
@@ -302,7 +303,7 @@ static void at_cmd_analysing( void )
       }
       break;
     case AT_SV_CONN_UPD :
-      if(APP_MODE != P2P_SERVER) UART_App_SendData("\r\nERROR\r\n", 9);
+      if(app_mode != P2P_SERVER) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         uint8_t lenConnUpdStr;
         lenConnUpdStr = (indexRx-1)-(14+1); /* indexRx - 1 to compensate the indexRx++ when filling the pDataRx buffer */
@@ -325,15 +326,15 @@ static void at_cmd_analysing( void )
       break;
     case AT_CL :
       Next_Mode = P2P_CLIENT;
-      if(APP_MODE == P2P_CLIENT) UART_App_SendData("\r\nERROR\r\n", 9);
+      if(app_mode == P2P_CLIENT) UART_App_SendData("\r\nERROR\r\n", 9);
       else {  
         /* Switch to P2P Client */
         disconnection_status = TO_SWITCH_APP;
-        if((APP_MODE == HEART_RATE) && (HR_Connection_Status == APP_BLE_CONNECTED_SERVER))
+        if((app_mode == HEART_RATE) && (HR_Connection_Status == APP_BLE_CONNECTED_SERVER))
         {
           UTIL_SEQ_SetTask( 1<<CFG_TASK_HR_GAP_DISCON_ID, CFG_SCH_PRIO_0);
         }
-        else if((APP_MODE == P2P_SERVER) && (SV_Connection_Status == APP_BLE_CONNECTED_SERVER))
+        else if((app_mode == P2P_SERVER) && (SV_Connection_Status == APP_BLE_CONNECTED_SERVER))
         {
           UTIL_SEQ_SetTask( 1<<CFG_TASK_SV_GAP_DISCON_ID, CFG_SCH_PRIO_0);
         }
@@ -344,7 +345,7 @@ static void at_cmd_analysing( void )
       }
       break;
     case AT_CL_WRITE :
-      if(APP_MODE != P2P_CLIENT || (param != PARAM)) UART_App_SendData("\r\nERROR\r\n", 9);
+      if(app_mode != P2P_CLIENT || (param != PARAM)) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         if((pDataRx[11] == '=') && (pDataRx[16] == '\r')) 
         {
@@ -357,7 +358,7 @@ static void at_cmd_analysing( void )
       }
       break;
     case AT_CL_SCAN :
-      if( APP_MODE != P2P_CLIENT ) UART_App_SendData("\r\nERROR\r\n", 9);
+      if( app_mode != P2P_CLIENT ) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         /* Clear BD Address buffer in order to be able to re-send the BD addresses discovered during a previous scan on the UART */
         for(i = 0; i < 5; i++)
@@ -373,7 +374,7 @@ static void at_cmd_analysing( void )
       }
       break;
     case AT_CL_CONN :
-      if((APP_MODE != P2P_CLIENT) || (param != PARAM)) UART_App_SendData("\r\nERROR\r\n", 9); //Make sure we are in P2P Client mode and the parameter is set
+      if((app_mode != P2P_CLIENT) || (param != PARAM)) UART_App_SendData("\r\nERROR\r\n", 9); //Make sure we are in P2P Client mode and the parameter is set
       else {
         if((pDataRx[10] == '=') && (pDataRx[23] == '\r')) 
         {
@@ -387,7 +388,7 @@ static void at_cmd_analysing( void )
       }
       break;
     case AT_CL_DISCONN :
-      if((APP_MODE != P2P_CLIENT) || (CL_Connection_Status != APP_BLE_CONNECTED_CLIENT)) UART_App_SendData("\r\nERROR\r\n", 9); //Make sure we are in P2P Client mode and the Client is connected to a Server
+      if((app_mode != P2P_CLIENT) || (CL_Connection_Status != APP_BLE_CONNECTED_CLIENT)) UART_App_SendData("\r\nERROR\r\n", 9); //Make sure we are in P2P Client mode and the Client is connected to a Server
       else {
         disconnection_status = FROM_AT_CMD;
         /* Disconnect from the connected device */
@@ -395,7 +396,7 @@ static void at_cmd_analysing( void )
       }
       break;
     case AT_CL_AUTOCONN :
-      if((APP_MODE != P2P_CLIENT) || (param != PARAM)) UART_App_SendData("\r\nERROR\r\n", 9); //Make sure we are in P2P Client mode and the parameter is set
+      if((app_mode != P2P_CLIENT) || (param != PARAM)) UART_App_SendData("\r\nERROR\r\n", 9); //Make sure we are in P2P Client mode and the parameter is set
       else {
         if((pDataRx[14] == '=') && (pDataRx[27] == '\r')) 
         {
@@ -410,14 +411,14 @@ static void at_cmd_analysing( void )
       }
       break;
     case AT_CL_EN :
-      if(APP_MODE != P2P_CLIENT) UART_App_SendData("\r\nERROR\r\n", 9);
+      if(app_mode != P2P_CLIENT) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         /* Enable notifications */
         Enable_Notification();
       }
       break;
     case AT_CL_DIS :
-      if(APP_MODE != P2P_CLIENT) UART_App_SendData("\r\nERROR\r\n", 9);
+      if(app_mode != P2P_CLIENT) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         /* Disable notifications */
         Disable_Notification();
@@ -425,15 +426,15 @@ static void at_cmd_analysing( void )
       break;
     case AT_HR :
       Next_Mode = HEART_RATE;
-      if(APP_MODE == HEART_RATE) UART_App_SendData("\r\nERROR\r\n", 9);
+      if(app_mode == HEART_RATE) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         /* Switch to Heart Rate */
         disconnection_status = TO_SWITCH_APP;
-        if((APP_MODE == P2P_SERVER) && (SV_Connection_Status == APP_BLE_CONNECTED_SERVER))
+        if((app_mode == P2P_SERVER) && (SV_Connection_Status == APP_BLE_CONNECTED_SERVER))
         {
           UTIL_SEQ_SetTask( 1<<CFG_TASK_SV_GAP_DISCON_ID, CFG_SCH_PRIO_0);
         }
-        else if((APP_MODE == P2P_CLIENT) && (CL_Connection_Status == APP_BLE_CONNECTED_CLIENT))
+        else if((app_mode == P2P_CLIENT) && (CL_Connection_Status == APP_BLE_CONNECTED_CLIENT))
         {
           UTIL_SEQ_SetTask( 1<<CFG_TASK_CL_GAP_DISCON_ID, CFG_SCH_PRIO_0);
         }
@@ -444,7 +445,7 @@ static void at_cmd_analysing( void )
       }
       break;
     case AT_HR_NOTIFY :
-      if((APP_MODE != HEART_RATE) || (param != PARAM) || (multi_param.state != MULTI_PARAM)) UART_App_SendData("\r\nERROR\r\n", 9);
+      if((app_mode != HEART_RATE) || (param != PARAM) || (multi_param.state != MULTI_PARAM)) UART_App_SendData("\r\nERROR\r\n", 9);
       else {
         if(pDataRx[12] == '=') 
         {

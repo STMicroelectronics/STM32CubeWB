@@ -26,7 +26,7 @@ How to use OnOff cluster with persistent data on a centralized Zigbee network.
 The purpose of this application is to show how to create a Zigbee centralized network, and 
 how to communicate from one node to another one using the OnOff cluster. Once the Zigbee mesh 
 network is created, the user can send requests from the client to the server through the push button 
-in order to make the LED togglingaand with a restart from peristence of remote device. 
+in order to make the LED toggling and with a restart from persistence of remote device. 
 
 For this application it is requested to have:
 
@@ -36,7 +36,7 @@ For this application it is requested to have:
     
 - 1 or more STM32WB55xx board loaded with: 
     - wireless coprocessor : stm32wb5x_Zigbee_FFD_fw.bin
-    - application : Zigbee_OnOff_Router_Persistent_Data
+    - application : Zigbee_OnOff_Router_NVM
     
 
                   Device 1                                       Device 2
@@ -57,7 +57,7 @@ To setup the application :
  To run the application :
 
   a)  Start the first board. It must be the coordinator of the Zigbee network so in this demo application it is
-      the device running Zigbee_OnOff_Coord_Persistent_Data application (Device2 in the above diagram). 
+      the device running Zigbee_OnOff_Coord_NVM application (Device2 in the above diagram). 
       Wait for the Blue LED (LED1) ON. 
       
       Start the second board. This board is configured as Zigbee router with persistence and will attached to the network created 
@@ -66,20 +66,20 @@ To setup the application :
             
   b)  At this stage the second board tries to start from persistence this leads to two choices:
 
-        - Peristence Data read from NVM are valid -> the router takes back is role in the network and restore the on/off cluster
+        - Persistent Data read from NVM are valid -> the router takes back is role in the network and restore the on/off cluster
           attribute saved in NVM (LED3 on or off). GREEN LED2 is ON indicating a restart form persistence.
           
-        - No persitence data found or wrong data,a fresh start is perfomed, the Zigbee network is automatically created 
+        - No Persistent data found or wrong data, a fresh start is performed, the Zigbee network is automatically created 
           and BLUE LED (LED1) is ON on all devices.
         
           
      It is now possible to send OnOff Cluster commands from the client to the server in multicast mode 
      by pressing on the SW1 push button. 
-     You must see the LED3 toggling on the server side. (this for all devices). Persistence Data are updated in NVM.Stack and cluster 
+     You must see the LED3 toggling on the server side. (this for all devices). Persistence Data are updated in NVM. Stack and cluster 
      attribute (LED3 state).
      
-   c)  If the user power cycle the Device 1, Peristence Data are read back and cluster attribute (LED3 state) restored.
-       The device start from peristence and GREEN LED LED2 is on.
+   c)  If the user power cycle the Device 1, Persistent Data are read back and cluster attribute (LED3 state) restored.
+       The device start from Persistent and GREEN LED LED2 is on.
        Pushing SW1 on any boards toggle LED3.
    
    d)  Push Button SW2 is used to delete NVM (fresh start will be done on next start up ,reproduce a))
@@ -142,4 +142,4 @@ Zigbee
   Refer to the Application description at the beginning of this readme.txt
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
-
+*/

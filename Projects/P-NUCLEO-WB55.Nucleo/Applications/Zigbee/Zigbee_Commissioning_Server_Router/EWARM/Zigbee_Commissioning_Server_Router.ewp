@@ -354,7 +354,6 @@
                     <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN</state>
-                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/app</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci</state>
@@ -363,8 +362,7 @@
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/core/Inc</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include</state>
-                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/mac</state>
-                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/M4</state>
+                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/mac</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>

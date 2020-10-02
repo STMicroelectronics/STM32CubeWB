@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -26,9 +26,7 @@
 #include "mesh_cfg.h"
 #include "pal_nvm.h"
 #include "appli_mesh.h"
-#ifdef SAVE_MODEL_STATE_FOR_ALL_MESSAGES
 #include "common.h"
-#endif
 #if (LOW_POWER_FEATURE == 1)
 #include "app_conf.h"
 #include "stm32_seq.h"
@@ -89,6 +87,8 @@ extern const void* prvsnr_data;
 
 #define FLASH_EMPTY_SIGNATURE       0xFFFFFFFF
 
+#define RADIO_OFF_DELAY             1000
+
 /* Private variables ---------------------------------------------------------*/
 
 typedef struct
@@ -100,6 +100,7 @@ typedef struct
 
 /* ALIGN(4) */
 __attribute__((aligned(4))) APPLI_NVM_REQS AppliNvm_Reqs;
+MOBLEUINT16 StopRadioInProgress;
 
 typedef struct
 {
@@ -159,7 +160,9 @@ MOBLE_RESULT AppliNvm_FlashErase(uint16_t PageNumber)
 *  @param  Data: word to write
 *  @retval MOBLE_RESULT_SUCCESS on success
 */
-MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size)
+MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, 
+                                   void const *buf, 
+                                   MOBLEUINT32 size)
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
@@ -185,7 +188,10 @@ MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUIN
   }
   else
   {
-    result = PalNvmWrite(APP_NVM_BASE, offset, buf, size);
+    result = PalNvmWrite(APP_NVM_BASE, 
+                         offset, 
+                         buf, 
+                         size);
   }
   
   return result;
@@ -362,8 +368,8 @@ MOBLE_RESULT AppliNvm_FactorySettingReset(void)
       
       /* Load model data copy from nvm */
       memcpy((void*)AppliNvm_Reqs.modelData, 
-             (void*)(APP_NVM_BASE + APP_NVM_SUBPAGE_OFFSET(currSubPageIdx) + APP_NVM_GENERIC_MODEL_OFFSET), 
-             APP_NVM_GENERIC_MODEL_SIZE+APP_NVM_LIGHT_MODEL_SIZE);
+             (void*)(APP_NVM_SUBPAGE_OFFSET(currSubPageIdx)+APP_NVM_GENERIC_MODEL_OFFSET), 
+             APP_NVM_MODELDATA_PER_ELEMENT_SIZE);
       
       result = AppliNvm_MarkSubpageInvalid();
       
@@ -407,7 +413,8 @@ MOBLE_RESULT AppliNvm_FactorySettingReset(void)
 * @param  model state buff size
 * @retval MOBLE_RESULT_SUCCESS on success
 */
-MOBLE_RESULT AppliNvm_SaveModelState(uint8_t* state, uint8_t size)
+MOBLE_RESULT AppliNvm_SaveModelState(uint8_t* state, 
+                                     uint16_t size)
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS; /* if save model state not defined, return MOBLE_RESULT_FAIL */
   
@@ -420,7 +427,9 @@ MOBLE_RESULT AppliNvm_SaveModelState(uint8_t* state, uint8_t size)
   }
   else
   {
-    memcpy(AppliNvm_Reqs.modelData, state, size);
+    memcpy(AppliNvm_Reqs.modelData, 
+           state, 
+           size);
     
     AppliNvm_Reqs.writeReq = MOBLE_TRUE;
     AppliNvm_Reqs.erasePageReq = MOBLE_FALSE;
@@ -445,7 +454,7 @@ MOBLE_RESULT AppliNvm_ClearModelState(void)
 #if (SAVE_MODEL_STATE_NVM == 1)
   MOBLEUINT8 subPageTemp[APP_NVM_SUBPAGE_SIZE];
   MOBLEINT16 subPageIdx;
-  MOBLEUINT8 clearBuff[APP_NVM_GENERIC_MODEL_SIZE+APP_NVM_LIGHT_MODEL_SIZE] = {0};
+  MOBLEUINT8 clearBuff[APP_NVM_MODELDATA_PER_ELEMENT_SIZE] = {0};
   MOBLEUINT32 valid = 0;
   
   result = AppliNvm_FindFirstEmptyPage(&subPageIdx,
@@ -500,7 +509,8 @@ MOBLE_RESULT AppliNvm_ClearModelState(void)
 * @param  model state buff size
 * @retval MOBLE_RESULT_SUCCESS on success
 */
-MOBLE_RESULT AppliNvm_LoadModelState(uint8_t state[], uint8_t* size)
+MOBLE_RESULT AppliNvm_LoadModelState(uint8_t state[], 
+                                     uint16_t* size)
 {  
 #if (SAVE_MODEL_STATE_NVM == 1)  
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
@@ -529,7 +539,9 @@ MOBLE_RESULT AppliNvm_LoadModelState(uint8_t state[], uint8_t* size)
       memcpy((void*)AppliNvm_Reqs.modelData, 
              (void*)(APP_NVM_BASE + APP_NVM_SUBPAGE_OFFSET(currSubPageIdx-1) + APP_NVM_GENERIC_MODEL_OFFSET), 
              APP_NVM_GENERIC_MODEL_SIZE + APP_NVM_LIGHT_MODEL_SIZE);
-  memcpy((void*)state, (void*)(AppliNvm_Reqs.modelData), APP_NVM_MODEL_SIZE);
+      memcpy((void*)state, 
+             (void*)(AppliNvm_Reqs.modelData), 
+             APP_NVM_MODEL_SIZE);
   *size = APP_NVM_MODEL_SIZE;
     }
   }
@@ -553,11 +565,17 @@ void AppliNvm_Process(void)
   uint8_t reserveAreaCopy[APP_NVM_RESERVED_SIZE];
   
   /* Erase if required */
-  if (AppliNvm_Reqs.erasePageReq == MOBLE_TRUE)
+  if ((AppliNvm_Reqs.erasePageReq == MOBLE_TRUE) &&
+      (!LL_FLASH_IsActiveFlag_OperationSuspended()))
+  {
+    if(StopRadioInProgress == 0)
   {
     /* save reserve flash area */
-    memcpy((void*)reserveAreaCopy, (void*)APP_NVM_BASE, APP_NVM_RESERVED_SIZE);
+      memcpy((void*)reserveAreaCopy, 
+             (void*)APP_NVM_BASE, 
+             APP_NVM_RESERVED_SIZE);
   
+      TRACE_M(TF_PROVISION,"Erase flash page\r\n");
     result = PalNvmErase(APP_NVM_BASE, 0);
 
     if(result == MOBLE_RESULT_OUTOFMEMORY)
@@ -579,15 +597,15 @@ void AppliNvm_Process(void)
       result = AppliNvm_FlashProgram(0,
                                      (uint32_t*)&reserveAreaCopy, 
                                      APP_NVM_RESERVED_SIZE);
-      if (result == MOBLE_RESULT_SUCCESS)
-      {
-        AppliNvm_Reqs.writeReq = MOBLE_FALSE;
+        BLEMesh_ResumeAdvScan();
       }
     }
+    else
+      StopRadioInProgress--;
   }
       
-  if (AppliNvm_Reqs.erasePageReq == MOBLE_FALSE
-      && AppliNvm_Reqs.writeReq == MOBLE_TRUE)
+  if (AppliNvm_Reqs.erasePageReq == MOBLE_FALSE && 
+      AppliNvm_Reqs.writeReq == MOBLE_TRUE)
   {
     result = AppliNvm_FindFirstEmptyPage(&subPageIdx,
                                          APP_NVM_SUBPAGE_SIZE,
@@ -596,11 +614,14 @@ void AppliNvm_Process(void)
     
     if(result == MOBLE_RESULT_OUTOFMEMORY)
     {
+      BLEMesh_SuspendAdvScan();
+      StopRadioInProgress = RADIO_OFF_DELAY;
+
       AppliNvm_Reqs.erasePageReq = MOBLE_TRUE;
 #if (LOW_POWER_FEATURE == 1)
       UTIL_SEQ_SetTask( 1<<CFG_TASK_APPLI_REQ_ID, CFG_SCH_PRIO_0);
 #endif
-      result = MOBLE_RESULT_FAIL;
+      result = MOBLE_RESULT_SUCCESS;
     }  
     else
     {
@@ -704,6 +725,87 @@ MOBLE_RESULT AppliNvm_FindFirstEmptyPage(MOBLEINT16* subPageIndex,
   
   return result;
 }
+
+
+#if 0
+MOBLE_RESULT AppliNVM_Save_FlashTesting(MOBLEUINT8 *buffer, 
+                                        MOBLEUINT16 buffer_size)
+{
+  MOBLE_RESULT result = MOBLE_RESULT_FAIL;
+  uint8_t reserveAreaCopy[APP_NVM_RESERVED_SIZE];
+  MOBLEINT16 subPageIdx;
+  
+  for(MOBLEUINT8 count = 0;count <= buffer_size;count++)
+  {
+    buffer[count] = count;
+  }
+      
+      /* save reserve flash area */
+  memcpy((void*)reserveAreaCopy, 
+         (void*)APP_NVM_BASE, 
+         APP_NVM_RESERVED_SIZE);
+  
+  result = AppliNvm_FlashErase((uint16_t)((APP_NVM_BASE - RESET_MANAGER_FLASH_BASE_ADDRESS) / PAGE_SIZE));
+  
+  if (result == MOBLE_RESULT_SUCCESS)
+  {
+    /* restore reserve area */
+//    FLASH_ProgramWordBurst(APP_NVM_BASE, (uint32_t*)reserveAreaCopy);
+      result = AppliNvm_FlashProgram(0,
+                                     (uint32_t*)&reserveAreaCopy, 
+                                     APP_NVM_RESERVED_SIZE);
+  }
+              
+  result = AppliNvm_FindFirstEmptyPage(&subPageIdx,
+                                       APP_NVM_SUBPAGE_SIZE,
+                                       APP_NVM_MAX_SUBPAGE,
+                                       (APP_NVM_BASE+APP_NVM_RESERVED_SIZE));
+
+  if(result == MOBLE_RESULT_OUTOFMEMORY)
+  {
+    TRACE_M(TF_PROVISION, "Flash sub page is full, preparing new subpage\r\n");
+  }
+  else
+  {
+    result = AppliNvm_FlashProgram(APP_NVM_SUBPAGE_OFFSET(subPageIdx)+APP_NVM_GENERIC_MODEL_OFFSET, 
+                                   buffer,
+                                   buffer_size); 
+  }	
+   return result;	
+}
+
+MOBLE_RESULT AppliNVM_Retrieve_FlashTesting(MOBLEUINT8 *buffer,
+                                            MOBLEUINT16 buffer_size)
+{
+  MOBLEINT16 currSubPageIdx;
+  MOBLE_RESULT result = MOBLE_RESULT_FAIL;
+
+  result = AppliNvm_FindFirstEmptyPage(&currSubPageIdx,
+                                       APP_NVM_SUBPAGE_SIZE,
+                                       APP_NVM_MAX_SUBPAGE,
+                                       (APP_NVM_BASE+APP_NVM_RESERVED_SIZE));
+
+  if(result == MOBLE_RESULT_OUTOFMEMORY)
+  {
+    TRACE_M(TF_PROVISION," Can not find the empty page for testing flash \r\n");
+  }
+  else
+  {		
+    memcpy((void*)buffer, 
+           (void*)(APP_NVM_SUBPAGE_OFFSET(currSubPageIdx)+APP_NVM_GENERIC_MODEL_OFFSET), 
+           buffer_size);
+                                               
+    result = AppliNvm_MarkSubpageInvalid();
+                  
+    if (MOBLE_FAILED(result))
+    {
+      result = MOBLE_RESULT_FAIL;
+    }	
+  }		
+
+  return result;					 
+}
+#endif
 
 
 /**
@@ -873,7 +975,8 @@ void AppliPrvnNvm_Process(void)
     }
     else
     {
-      TRACE_M(TF_PROVISION,"Saving in SubPage[%.8x] = \r\n", PRVN_NVM_SUBPAGE_OFFSET(subPageIdx));
+      TRACE_M(TF_PROVISION,"Saving provisioning data in SubPage[%.8x]\r\n", 
+              PRVN_NVM_SUBPAGE_OFFSET(subPageIdx));
 
       result = AppliPrvnNvm_FlashProgram(PRVN_NVM_SUBPAGE_OFFSET(subPageIdx), 
                                          PrvnNvm_Reqs.prvnData,
@@ -949,7 +1052,7 @@ MOBLE_RESULT AppliPrvnNvm_FactorySettingReset(MOBLEUINT8 *flag)
   }
   else
   {    
-      /* After reset of provisioner , retreiving the next node address to be provisioned */
+    /* After reset of provisioner , retreiving the next node address to be provisioned */
     if(currSubPageIdx == 0)
     {
       *flag = 1;
@@ -973,12 +1076,12 @@ MOBLE_RESULT AppliPrvnNvm_FactorySettingReset(MOBLEUINT8 *flag)
 
       NodeUnderProvisionParam.nodeAddress = CopyU8LittleEndienArrayToU16word (&PrvnNvm_Reqs.prvnData[0]);  
       NodeUnderProvisionParam.numOfElements = PrvnNvm_Reqs.prvnData[2];  
-     }
+    }
       
-    TRACE_I(TF_PROVISION,"Next NVM Address %.8x \r\n",
-            PRVN_NVM_BASE_OFFSET + PRVN_NVM_SUBPAGE_OFFSET(currSubPageIdx));
+//    TRACE_I(TF_PROVISION,"Next NVM Address %.8x \r\n",
+//            PRVN_NVM_BASE_OFFSET + PRVN_NVM_SUBPAGE_OFFSET(currSubPageIdx));
       
-   }
+  }
      
   return result;
 }
@@ -990,4 +1093,4 @@ MOBLE_RESULT AppliPrvnNvm_FactorySettingReset(MOBLEUINT8 *flag)
 /**
 * @}
 */
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

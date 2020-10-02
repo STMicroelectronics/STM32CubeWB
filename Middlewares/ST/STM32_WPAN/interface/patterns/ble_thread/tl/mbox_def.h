@@ -160,6 +160,29 @@ extern "C" {
     MB_LldBleTable_t        *p_lld_ble_table;
 } MB_RefTable_t;
 
+/**
+ * This table shall be used only in the case the CPU2 runs the FUS.
+ * It is used by the command SHCI_GetWirelessFwInfo()
+ */
+typedef struct
+{
+  uint32_t  DeviceInfoTableState;
+  uint8_t   Reserved1;
+  uint8_t   LastFusActiveState;
+  uint8_t   LastWirelessStackState;
+  uint8_t   CurrentWirelessStackType;
+  uint32_t  SafeBootVersion;
+  uint32_t  FusVersion;
+  uint32_t  FusMemorySize;
+  uint32_t  WirelessStackVersion;
+  uint32_t  WirelessStackMemorySize;
+  uint32_t  WirelessFirmwareBleInfo;
+  uint32_t  WirelessFirmwareThreadInfo;
+  uint32_t  Reserved2;
+  uint64_t  UID64;
+  uint16_t  DeviceId;
+} MB_FUS_DeviceInfoTable_t ;
+
 #ifdef __cplusplus
 }
 #endif

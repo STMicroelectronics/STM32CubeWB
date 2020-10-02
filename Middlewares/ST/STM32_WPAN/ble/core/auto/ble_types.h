@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_types.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE command/event types
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -58,8 +58,7 @@ typedef PACKED(struct)
    */
   uint8_t Peer_Address_Type;
   /**
-   * Public Device Address or Random Device Address of the device to be added
-   * to the white list.
+   * Public Device Address or Random Device Address.
    */
   uint8_t Peer_Address[6];
 } Whitelist_Entry_t;
@@ -75,8 +74,7 @@ typedef PACKED(struct)
    */
   uint8_t Address_Type;
   /**
-   * Public Device Address or Random Device Address of the device to be added
-   * to the white list.
+   * Public Device Address or Random Device Address.
    */
   uint8_t Address[6];
 } Bonded_Device_Entry_t;
@@ -941,6 +939,18 @@ typedef PACKED(struct)
 {
   uint8_t Status;
 } hci_le_enhanced_transmitter_test_rp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Peer_Identity_Address_Type;
+  uint8_t Peer_Identity_Address[6];
+  uint8_t Privacy_Mode;
+} hci_le_set_privacy_mode_cp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Status;
+} hci_le_set_privacy_mode_rp0;
 
 typedef PACKED(struct)
 {

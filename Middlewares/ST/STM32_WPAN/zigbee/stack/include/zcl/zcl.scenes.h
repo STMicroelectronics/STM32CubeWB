@@ -52,7 +52,6 @@
  * S.C.C02.Rsp | True
  * S.C.C03.Rsp | True
  * S.C.C04.Rsp | True
- * S.C.C05.Rsp | True
  * S.C.C06.Rsp | True
  * S.C.C40.Rsp | True
  * S.C.C41.Rsp | True
@@ -64,6 +63,7 @@
  * S.C.C02.Tx | True
  * S.C.C03.Tx | True
  * S.C.C04.Tx | True
+ * S.C.C05.Tx | True
  * S.C.C06.Tx | True
  * S.C.C40.Tx | True
  * S.C.C41.Tx | True
@@ -129,12 +129,10 @@ struct zcl_scenes_add_response_t {
     uint8_t sceneId;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_add_req(struct ZbZclClusterT *cluster,
-    struct zcl_scenes_add_request_t *add_req,
+enum ZclStatusCodeT zcl_scenes_client_add_req(struct ZbZclClusterT *cluster, struct zcl_scenes_add_request_t *add_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT zcl_scenes_client_add_rsp_parse(struct zcl_scenes_add_response_t *add_rsp,
-    struct ZbZclCommandRspT *zcl_rsp);
+enum ZclStatusCodeT zcl_scenes_client_add_rsp_parse(struct zcl_scenes_add_response_t *add_rsp, struct ZbZclCommandRspT *zcl_rsp);
 
 /** View Scene command structure */
 struct zcl_scenes_view_request_t {
@@ -163,12 +161,10 @@ struct zcl_scenes_view_response_t {
     } extList[ZCL_SCENES_VIEW_EXT_LIST_MAX_SZ];
 };
 
-enum ZclStatusCodeT zcl_scenes_client_view_req(struct ZbZclClusterT *cluster,
-    struct zcl_scenes_view_request_t *view_req,
+enum ZclStatusCodeT zcl_scenes_client_view_req(struct ZbZclClusterT *cluster, struct zcl_scenes_view_request_t *view_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT zcl_scenes_client_view_rsp_parse(struct zcl_scenes_view_response_t *view_rsp,
-    struct ZbZclCommandRspT *zcl_rsp);
+enum ZclStatusCodeT zcl_scenes_client_view_rsp_parse(struct zcl_scenes_view_response_t *view_rsp, struct ZbZclCommandRspT *zcl_rsp);
 
 /** Remove Scene command structure */
 struct zcl_scenes_remove_request_t {
@@ -184,12 +180,10 @@ struct zcl_scenes_remove_response_t {
     uint8_t sceneId;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_remove_req(struct ZbZclClusterT *cluster,
-    struct zcl_scenes_remove_request_t *remove_req,
+enum ZclStatusCodeT zcl_scenes_client_remove_req(struct ZbZclClusterT *cluster, struct zcl_scenes_remove_request_t *remove_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT zcl_scenes_client_remove_rsp_parse(struct zcl_scenes_remove_response_t *remove_rsp,
-    struct ZbZclCommandRspT *zcl_rsp);
+enum ZclStatusCodeT zcl_scenes_client_remove_rsp_parse(struct zcl_scenes_remove_response_t *remove_rsp, struct ZbZclCommandRspT *zcl_rsp);
 
 /** Remove All Scenes command structure */
 struct zcl_scenes_remove_all_request_t {
@@ -203,8 +197,7 @@ struct zcl_scenes_remove_all_response_t {
     uint16_t groupId;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_remove_all_req(struct ZbZclClusterT *cluster,
-    struct zcl_scenes_remove_all_request_t *remove_req,
+enum ZclStatusCodeT zcl_scenes_client_remove_all_req(struct ZbZclClusterT *cluster, struct zcl_scenes_remove_all_request_t *remove_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT zcl_scenes_client_remove_all_rsp_parse(struct zcl_scenes_remove_all_response_t *remove_rsp,
@@ -224,12 +217,10 @@ struct zcl_scenes_store_response_t {
     uint8_t sceneId;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_store_req(struct ZbZclClusterT *cluster,
-    struct zcl_scenes_store_request_t *store_req,
+enum ZclStatusCodeT zcl_scenes_client_store_req(struct ZbZclClusterT *cluster, struct zcl_scenes_store_request_t *store_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT zcl_scenes_client_store_rsp_parse(struct zcl_scenes_store_response_t *store_rsp,
-    struct ZbZclCommandRspT *zcl_rsp);
+enum ZclStatusCodeT zcl_scenes_client_store_rsp_parse(struct zcl_scenes_store_response_t *store_rsp, struct ZbZclCommandRspT *zcl_rsp);
 
 /** Recall Scene command structure */
 struct zcl_scenes_recall_request_t {
@@ -246,12 +237,10 @@ struct zcl_scenes_recall_response_t {
     uint8_t status;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_recall_req(struct ZbZclClusterT *cluster,
-    struct zcl_scenes_recall_request_t *recall_req,
+enum ZclStatusCodeT zcl_scenes_client_recall_req(struct ZbZclClusterT *cluster, struct zcl_scenes_recall_request_t *recall_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT zcl_scenes_client_recall_rsp_parse(struct zcl_scenes_recall_response_t *recall_rsp,
-    struct ZbZclCommandRspT *zcl_rsp);
+enum ZclStatusCodeT zcl_scenes_client_recall_rsp_parse(struct zcl_scenes_recall_response_t *recall_rsp, struct ZbZclCommandRspT *zcl_rsp);
 
 /** Get Scene Membership command structure */
 struct zcl_scenes_membership_request_t {
@@ -271,8 +260,7 @@ struct zcl_scenes_membership_response_t {
     uint8_t sceneList[ZCL_SCENES_GET_MEMBERSHIP_MAX_SCENES];
 };
 
-enum ZclStatusCodeT zcl_scenes_client_get_membership_req(struct ZbZclClusterT *cluster,
-    struct zcl_scenes_membership_request_t *get_req,
+enum ZclStatusCodeT zcl_scenes_client_get_membership_req(struct ZbZclClusterT *cluster, struct zcl_scenes_membership_request_t *get_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 enum ZclStatusCodeT zcl_scenes_client_get_membership_rsp_parse(struct zcl_scenes_membership_response_t *get_rsp,
@@ -295,11 +283,9 @@ struct zcl_scenes_copy_response_t {
     uint8_t sceneFrom;
 };
 
-enum ZclStatusCodeT zcl_scenes_client_copy_req(struct ZbZclClusterT *cluster,
-    struct zcl_scenes_copy_request_t *copy_req,
+enum ZclStatusCodeT zcl_scenes_client_copy_req(struct ZbZclClusterT *cluster, struct zcl_scenes_copy_request_t *copy_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT zcl_scenes_client_copy_rsp_parse(struct zcl_scenes_copy_response_t *copy_rsp,
-    struct ZbZclCommandRspT *zcl_rsp);
+enum ZclStatusCodeT zcl_scenes_client_copy_rsp_parse(struct zcl_scenes_copy_response_t *copy_rsp, struct ZbZclCommandRspT *zcl_rsp);
 
 #endif

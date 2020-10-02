@@ -564,14 +564,6 @@ unsigned long ZbHeapUsed(struct ZigBeeT *zb);
 
 unsigned long ZbHeapHighWaterMark(struct ZigBeeT *zb);
 
-/*
- * Dumps outstanding memory allocation information.
- * If printfCb is NULL, output is sent to log output provided by
- * ZbSetLogging.
- */
-typedef void (*ZbHeapDumpCallbackT)(void *cbarg, const char *fmt, ...);
-void ZbHeapDumpMemAllocTbl(struct ZigBeeT *zb, ZbHeapDumpCallbackT callback, void *cbarg);
-
 /* String conversion */
 int zb_hex_str_to_bin(const char *string, void *out, unsigned int maxlen);
 unsigned int zb_hex_bin_to_str(const uint8_t *in_data, unsigned int in_len, char *out_str, unsigned int max_len,

@@ -21,6 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 
+#include "main.h"
 #include "dbg_trace.h"
 #include "ble.h"
 #include "tl.h"
@@ -136,7 +137,10 @@ void APP_BLE_Init( void )
   /**
    * Starts the BLE Stack on CPU2
    */
-  SHCI_C2_BLE_Init( &ble_init_cmd_packet );
+  if (SHCI_C2_BLE_Init( &ble_init_cmd_packet ) != SHCI_Success)
+  {
+    Error_Handler();
+  }
 
   /**
    * Initialization of HCI & GATT & GAP layer

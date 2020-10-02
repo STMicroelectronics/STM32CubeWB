@@ -12,7 +12,7 @@
  */
 
 /* Attribute Identifiers */
-enum {
+enum ZbZclRssiLocSvrAttrT {
     ZCL_RSSI_LOC_SVR_ATTR_LOCATION_TYPE = 0x0000,
     ZCL_RSSI_LOC_SVR_ATTR_LOCATION_METHOD = 0x0001,
     ZCL_RSSI_LOC_SVR_ATTR_LOCATION_AGE = 0x0002,

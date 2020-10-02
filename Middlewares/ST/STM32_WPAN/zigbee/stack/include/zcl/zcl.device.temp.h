@@ -46,7 +46,7 @@
  */
 
 /** Device Temp Cluster Attribute Ids */
-enum {
+enum ZbZclDeviceTempSvrAttrT {
     ZCL_DEV_TEMP_CURRENT = 0x0000, /**< CurrentTemperature */
     ZCL_DEV_TEMP_MIN_TEMP = 0x0001, /**< MinTempExperienced */
     ZCL_DEV_TEMP_MAX_TEMP = 0x0002, /**< MaxTempExperienced */
@@ -66,14 +66,14 @@ enum {
 #define ZCL_DEVICE_TEMP_INVALID                     ((int16_t)0x8000)
 
 /* Alarm Mask */
-enum {
+enum ZbZclDeviceTempAlarmMask {
     ZCL_DEV_TEMP_ALARM_MASK_CLEAR = 0x00,
     ZCL_DEV_TEMP_ALARM_MASK_LOW = 0x01,
     ZCL_DEV_TEMP_ALARM_MASK_HIGH = 0x02,
 };
 
 /* Alarms */
-enum {
+enum ZbZclDeviceTempAlarmCode {
     ZCL_DEV_TEMP_ALARM_CODE_LOW = 0x00,
     ZCL_DEV_TEMP_ALARM_CODE_HIGH = 0x01,
 };

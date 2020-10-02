@@ -67,13 +67,10 @@ static void RxCpltCallback(void);
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 static void APP_THREAD_SendCoapMsg(void);
 static void APP_THREAD_SendCoapMulticastRequest(uint8_t command);
-static void APP_THREAD_DummyReqHandler(void            * p_context,
-                       otCoapHeader        * pHeader,
-                       otMessage       * pMessage,
-                       const otMessageInfo * pMessageInfo);
-static void APP_THREAD_CoapRequestHandler(otCoapHeader        * pHeader,
-                      otMessage       * pMessage,
-                      const otMessageInfo * pMessageInfo);
+static void APP_THREAD_CoapRequestHandler(void               * pContext,
+                                          otCoapHeader       * pHeader,
+                                          otMessage          * pMessage,
+                                          const otMessageInfo * pMessageInfo);
 static void APP_THREAD_SetSleepyEndDeviceMode(void);
 
 static void APP_THREAD_CoapTimingElapsed( void );
@@ -105,7 +102,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
 
-static otCoapResource OT_Ressource = {C_RESSOURCE, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapRequestHandler, NULL};
+static otCoapResource OT_Ressource = {C_RESSOURCE, APP_THREAD_CoapRequestHandler,"myCtx", NULL};
 static otMessageInfo OT_MessageInfo = {0};
 static uint8_t OT_Command = 0;
 static otCoapHeader  OT_Header = {0};
@@ -264,18 +261,6 @@ static void APP_THREAD_SetThreadMode( void )
   UTIL_SEQ_SetTask(TASK_SET_THREAD_MODE,CFG_SCH_PRIO_1);
 }
 
-/**
-  * @brief Dummy request handler
-  * @param
-  * @retval None
-  */
-static void APP_THREAD_DummyReqHandler(void    * p_context,
-                           otCoapHeader        * pHeader,
-                           otMessage           * pMessage,
-                           const otMessageInfo * pMessageInfo)
-{
-}
-
 /*************************************************************
  *
  * LOCAL FUNCTIONS
@@ -414,14 +399,16 @@ static void APP_THREAD_SetSleepyEndDeviceMode(void)
 
 /**
   * @brief Handler called when the server receives a COAP request.
+  * @param pContext : Context
   * @param pHeader : Header
   * @param pMessage : Message
   * @param pMessageInfo : Message information
   * @retval None
   */
-static void APP_THREAD_CoapRequestHandler(otCoapHeader        * pHeader,
-                          otMessage       * pMessage,
-                          const otMessageInfo * pMessageInfo)
+static void APP_THREAD_CoapRequestHandler(void                * pContext,
+                                          otCoapHeader        * pHeader,
+                                          otMessage           * pMessage,
+                                          const otMessageInfo * pMessageInfo)
 {
   do
   {

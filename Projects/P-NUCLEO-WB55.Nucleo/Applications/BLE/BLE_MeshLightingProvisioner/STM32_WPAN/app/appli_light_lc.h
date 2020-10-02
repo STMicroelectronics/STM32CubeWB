@@ -25,43 +25,55 @@
 #include "types.h"
 #include "light_lc.h"
 
-
 /* Exported macro ------------------------------------------------------------*/
 /* Exported Functions Prototypes ---------------------------------------------*/
 /*******************************************************************************
 Following Variables are used for the Light LC Mode MODEL 
 *******************************************************************************/
-/* Light Lightness set */
-#pragma pack(1)
-typedef struct
-{
-  MOBLEUINT8 LC_mode;
-  MOBLEUINT8 LC_OM;
-  MOBLEUINT8 Light_OnOffState;
-  MOBLEUINT16 Light_OnOffValue;
-}Appli_LightLC_Set_t;
-
-typedef struct
-{
-  MOBLEUINT16 Property_ID;
-  MOBLEUINT16 Property_Value; 
-}Appli_Light_LC_PropertySet_t;
-#pragma pack(4)
-
-
-MOBLE_RESULT Appli_LightLC_Mode_Set(Light_LC_Param_t* pLight_LC_Param,
-                                                     MOBLEUINT8 OptionalValid);
-MOBLE_RESULT Appli_LightLC_OM_Set(Light_LC_Param_t* pLight_LC_Param,
-                                                     MOBLEUINT8 OptionalValid);
-MOBLE_RESULT Appli_LightLC_OnOff_Set(Light_LC_Param_t* pLight_LC_Param,
-                                                     MOBLEUINT8 OptionalValid);
-MOBLE_RESULT Appli_LightLC_Get_OnOffStatus(MOBLEUINT8* plcOnOffState);   
-MOBLE_RESULT Appli_LightLC_Get_ModeStatus(MOBLEUINT8* plcModeState);
-MOBLE_RESULT Appli_LightLC_Get_OMModeStatus(MOBLEUINT8* plcOM_ModeState);
-MOBLEUINT16 Appli_LightLC_Get_AmbientLuxLevelOutput(void);
-MOBLEUINT16 Appli_Light_LC_PIRegulatorOutput(MOBLEUINT16 tableLuxLevel,
-                                               MOBLEUINT16 ambientLuxLevel);
+void Appli_LightLCs_ModeGet(MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_ModeSet(MOBLEUINT8 const* pRxData, 
+                            MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_ModeSetUnack(MOBLEUINT8 const* pRxData, 
+                                 MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_ModeStatus(MOBLEUINT8 const* pLightLCMode_status,
+                               MOBLEUINT32 plength, 
+                               MOBLEUINT16 dstPeer, 
+                               MOBLEUINT8 elementIndex);
+void Appli_LightLCs_OmGet(MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_OmSet(MOBLEUINT8 const* pRxData, 
+                          MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_OmSetUnack(MOBLEUINT8 const* pRxData, 
+                               MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_OmStatus(MOBLEUINT8 const* pLightLCOccupancyMode_status,
+                             MOBLEUINT32 plength, 
+                             MOBLEUINT16 dstPeer, 
+                             MOBLEUINT8 elementIndex);
+void Appli_LightLCs_OnOffGet(MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_OnOffSet(MOBLEUINT8 const* pRxData, 
+                             MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_OnOffSetUnack(MOBLEUINT8 const* pRxData, 
+                                  MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_OnOffStatus(MOBLEUINT8 const* pLightLCOnOff_status,
+                                MOBLEUINT32 plength, 
+                                MOBLEUINT16 dstPeer, 
+                                MOBLEUINT8 elementIndex);
+void Appli_LightLCs_PropertyGet(MOBLEUINT8 const* pRxData, 
+                                MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_PropertySet(MOBLEUINT8 const* pRxData, 
+                                MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_PropertySetUnack(MOBLEUINT8 const* pRxData, 
+                                     MODEL_MessageHeader_t *pmsgParam);
+void Appli_LightLCs_PropertyStatus(MOBLEUINT8 const* pLightLCOccupancyMode_status,
+                                   MOBLEUINT32 plength, 
+                                   MOBLEUINT16 dstPeer, 
+                                   MOBLEUINT8 elementIndex);
+MOBLE_RESULT Appli_Light_LCs_Init(void);
+MOBLE_RESULT Appli_Light_LC_SensorPropertyUpdate(MOBLEUINT8 elementIndex,
+                                                 MOBLEUINT16 propertyId,
+                                                 MOBLEUINT32 value);
+void Appli_Light_LC_SerialCmd(char *rcvdStringBuff, 
+                              uint16_t rcvdStringSize);
 #endif /* __APPLI_LIGHT_LC_H */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

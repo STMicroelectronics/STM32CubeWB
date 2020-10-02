@@ -51,7 +51,7 @@
  */
 #define CFG_BONDING_MODE                  (1)
 #define CFG_FIXED_PIN                     (111111)
-#define CFG_USED_FIXED_PIN                (0)
+#define CFG_USED_FIXED_PIN                (1)
 #define CFG_ENCRYPTION_KEY_SIZE_MAX       (16)
 #define CFG_ENCRYPTION_KEY_SIZE_MIN       (8)
 
@@ -74,6 +74,28 @@
 
 #define CFG_MITM_PROTECTION                   CFG_MITM_PROTECTION_REQUIRED
 
+/**
+ * Define Secure Connections Support
+ */
+#define CFG_SECURE_NOT_SUPPORTED       (0x00)
+#define CFG_SECURE_OPTIONAL            (0x01)
+#define CFG_SECURE_MANDATORY           (0x02)
+
+#define CFG_SC_SUPPORT                 CFG_SECURE_NOT_SUPPORTED
+
+/**
+ * Define Keypress Notification Support
+ */
+#define CFG_KEYPRESS_NOT_SUPPORTED      (0x00)
+#define CFG_KEYPRESS_SUPPORTED          (0x01)
+
+#define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
+
+/**
+ * Numeric Comparison Answers
+ */
+#define YES (0x01)
+#define NO  (0x00)
 
 /**
  * Define PHY
@@ -142,7 +164,7 @@
  * Maximum number of simultaneous connections that the device will support.
  * Valid values are from 1 to 8
  */
-#define CFG_BLE_NUM_LINK            8
+#define CFG_BLE_NUM_LINK            2
 
 /**
  * Maximum number of Services that can be stored in the GATT database.
@@ -290,7 +312,7 @@
 /**
  * Enable/Disable USB interface
  */
-#define CFG_USB_INTERFACE_ENABLE        0
+#define CFG_USB_INTERFACE_ENABLE                                               0
 
 /******************************************************************************
  * Low Power
@@ -299,7 +321,7 @@
  *  When set to 1, the low power mode is enable
  *  When set to 0, the device stays in RUN mode
  */
-#define CFG_LPM_SUPPORTED   1
+#define CFG_LPM_SUPPORTED                                                     1
 
 /******************************************************************************
  * Timer Server
@@ -487,6 +509,7 @@ typedef enum
   CFG_TASK_MESH_UART_RX_REQ_ID,
   CFG_TASK_APPLI_REQ_ID,
   CFG_TASK_MESH_SW1_REQ_ID,
+  CFG_TASK_MESH_SW3_REQ_ID,
   CFG_TASK_MESH_LPN_REQ_ID,
   
   CFG_LAST_TASK_ID_WITH_HCICMD, /**< Shall be LAST in the list */
@@ -496,7 +519,7 @@ typedef enum
 typedef enum
 {
   CFG_FIRST_TASK_ID_WITH_NO_HCICMD = CFG_LAST_TASK_ID_WITH_HCICMD - 1, /**< Shall be FIRST in the list */
-
+  CFG_TASK_SW1_BUTTON_PUSHED_ID,
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
 
   CFG_LAST_TASK_ID_WITHO_NO_HCICMD /**< Shall be LAST in the list */

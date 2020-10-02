@@ -156,11 +156,6 @@ enum ZclStatusCodeT ZbZclGroupsClientRemoveReq(struct ZbZclClusterT *cluster, st
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /** Remove All Groups Command */
-struct ZbZclGroupsClientRemoveAllReqT {
-    struct ZbApsAddrT dst; /**< Destination Address */
-    uint8_t num_groups; /**< Group count */
-    uint16_t group_list[ZCL_GROUPS_GET_MEMBERS_MAX]; /**< Group list */
-};
 /**
  * Direct receiving entity or entities to remove all group associations
  * @param clusterPtr Cluster instance to send this command from
@@ -169,8 +164,7 @@ struct ZbZclGroupsClientRemoveAllReqT {
  * @param arg Application argument that will be included with the callback
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-enum ZclStatusCodeT ZbZclGroupsClientRemoveAllReq(struct ZbZclClusterT *cluster,
-    struct ZbZclGroupsClientRemoveAllReqT *req,
+enum ZclStatusCodeT ZbZclGroupsClientRemoveAllReq(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /** Add Group If Identifying Command */

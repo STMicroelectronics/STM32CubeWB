@@ -27,10 +27,32 @@
 #define STM32WBxx_CORE_INTERFACE_DEF_H
 
 #include "stm32_wpan_common.h"
+#include "coap.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+ 
+typedef struct  {
+        void * mContext;
+        otCoapRequestHandler mHandler;
+    } STCoapSpecificRequestContextType;
+
+typedef struct  {
+        void * mContext;
+        otCoapResponseHandler mHandler;
+    } STCoapSpecificResponseContextType;
+
+
+typedef struct  {
+        const char * mUriPath;                              /* The URI Path string */
+        STCoapSpecificRequestContextType  mSpecificContext; /* Contains context and handler */
+     } STCoapResourceType;
+
+typedef struct  {
+         STCoapSpecificResponseContextType  mSpecificContext; /* Contains context and handler */
+      } STCoapRespHandlerType;
+
 
 /* Structure of the messages exchanged between M0 and M4 */
 #define OT_CMD_BUFFER_SIZE 20U

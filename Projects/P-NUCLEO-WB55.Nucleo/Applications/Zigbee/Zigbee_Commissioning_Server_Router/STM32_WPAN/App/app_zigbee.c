@@ -264,6 +264,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_Commissioning_ResetStartup_cb(struct ZbZcl
   
   /* reset the current network configuration */
   memset(&currentConfig, 0, sizeof(currentConfig));
+  currentConfig.stackProfile = ZB_NWK_STACK_PROFILE_PRO;
   status = ZbZclCommissionServerSetStartup(zigbee_app_info.commissioning_server, &currentConfig);
   if(status !=ZCL_STATUS_SUCCESS){
     APP_DBG("Error, ZbZclCommissionServerSetStartup failed.");
@@ -312,6 +313,7 @@ static void APP_ZIGBEE_Commissioning_Server_Init(void){
   
   /* Init nwk configuration with NULL values */
   memset(&config, 0, sizeof(config));
+  config.stackProfile = ZB_NWK_STACK_PROFILE_PRO;
   
   status = ZbZclCommissionServerSetStartup(zigbee_app_info.commissioning_server, &config);
   if (status != ZCL_STATUS_SUCCESS){
@@ -329,37 +331,37 @@ static enum ZclStatusCodeT ZbZclCommissionServerSetStartup(struct ZbZclClusterT 
     enum ZclStatusCodeT status;
     uint8_t scan_count = 0;
 
-    /* ZCL_COMMISSION_CLI_ATTR_SHORT_ADDR */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_SHORT_ADDR, (uint16_t)config->shortAddress);
+    /* ZCL_COMMISSION_SVR_ATTR_SHORT_ADDR */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_SHORT_ADDR, (uint16_t)config->shortAddress);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_EPID */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_EPID, (uint64_t)config->extendedPanId);
+    /* ZCL_COMMISSION_SVR_ATTR_EPID */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_EPID, (uint64_t)config->extendedPanId);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_PANID */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_PANID, (uint16_t)config->panId);
+    /* ZCL_COMMISSION_SVR_ATTR_PANID */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_PANID, (uint16_t)config->panId);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_CHANNELMASK */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_CHANNELMASK, (config->channelList.list[0].channelMask & WPAN_PAGE_CHANNELMASK_ALL));
+    /* ZCL_COMMISSION_SVR_ATTR_CHANNELMASK */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_CHANNELMASK, (config->channelList.list[0].channelMask & WPAN_PAGE_CHANNELMASK_ALL));
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_STACKPROFILE */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_STACKPROFILE, (uint8_t)config->stackProfile);
+    /* ZCL_COMMISSION_SVR_ATTR_STACKPROFILE */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_STACKPROFILE, (uint8_t)config->stackProfile);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_STARTUPCONTROL */
+    /* ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL */
     switch (config->startupControl) {
         case ZbStartTypePreconfigured:
         case ZbStartTypeForm:
@@ -370,56 +372,56 @@ static enum ZclStatusCodeT ZbZclCommissionServerSetStartup(struct ZbZclClusterT 
         default:
             return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_STARTUPCONTROL, (enum ZbStartType)config->startupControl);
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL, (enum ZbStartType)config->startupControl);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_TCADDR */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_TCADDR, (uint64_t)config->security.trustCenterAddress);
+    /* ZCL_COMMISSION_SVR_ATTR_TCADDR */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_TCADDR, (uint64_t)config->security.trustCenterAddress);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_NWKKEY */
-    status = ZbZclAttrWrite(clusterPtr, NULL, ZCL_COMMISSION_CLI_ATTR_NWKKEY, (const uint8_t*)&(config->security.networkKey), ZB_SEC_KEYSIZE, ZCL_ATTR_WRITE_FLAG_NORMAL);
+    /* ZCL_COMMISSION_SVR_ATTR_NWKKEY */
+    status = ZbZclAttrWrite(clusterPtr, NULL, ZCL_COMMISSION_SVR_ATTR_NWKKEY, (const uint8_t*)&(config->security.networkKey), ZB_SEC_KEYSIZE, ZCL_ATTR_WRITE_FLAG_NORMAL);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_USEINSECJOIN */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_USEINSECJOIN, (bool)config->security.useInsecureRejoin);
+    /* ZCL_COMMISSION_SVR_ATTR_USEINSECJOIN */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_USEINSECJOIN, (bool)config->security.useInsecureRejoin);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_PRECONFLINKKEY */
-    status = ZbZclAttrWrite(clusterPtr, NULL, ZCL_COMMISSION_CLI_ATTR_PRECONFLINKKEY, (const uint8_t*)&(config->security.preconfiguredLinkKey), ZB_SEC_KEYSIZE, ZCL_ATTR_WRITE_FLAG_NORMAL);
+    /* ZCL_COMMISSION_SVR_ATTR_PRECONFLINKKEY */
+    status = ZbZclAttrWrite(clusterPtr, NULL, ZCL_COMMISSION_SVR_ATTR_PRECONFLINKKEY, (const uint8_t*)&(config->security.preconfiguredLinkKey), ZB_SEC_KEYSIZE, ZCL_ATTR_WRITE_FLAG_NORMAL);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_NWKKEYSEQNUM */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_NWKKEYSEQNUM, (uint8_t)config->security.networkKeySeqNum);
+    /* ZCL_COMMISSION_SVR_ATTR_NWKKEYSEQNUM */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_NWKKEYSEQNUM, (uint8_t)config->security.networkKeySeqNum);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_NWKKEYTYPE */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_NWKKEYTYPE, (enum ZbSecKeyTypeT)config->security.networkKeySeqNum);
+    /* ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE, (enum ZbSecKeyTypeT)config->security.networkKeySeqNum);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_NWKMGRADDR */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_NWKMGRADDR, (uint16_t)config->networkManagerAddress);
+    /* ZCL_COMMISSION_SVR_ATTR_NWKMGRADDR */
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_NWKMGRADDR, (uint16_t)config->networkManagerAddress);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
 
-    /* ZCL_COMMISSION_CLI_ATTR_SCANATTEMPTS */
+    /* ZCL_COMMISSION_SVR_ATTR_SCANATTEMPTS */
     ZbApsGet(clusterPtr->zb, ZB_APS_IB_ID_SCAN_COUNT, &scan_count, sizeof(scan_count));
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_CLI_ATTR_SCANATTEMPTS, (uint8_t)scan_count);
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_SCANATTEMPTS, (uint8_t)scan_count);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }
@@ -488,7 +490,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
   zigbee_app_info.startupControl = ZbStartTypeJoin;
 

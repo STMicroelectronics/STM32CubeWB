@@ -936,7 +936,7 @@ static bool APP_ZIGBEE_NVM_Read(void)
 {
     uint16_t num_words = 0;
     bool status = true;
-    int ee_status;
+    int ee_status = 0;
     HAL_FLASH_Unlock();
     __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_PGSERR | FLASH_FLAG_WRPERR | FLASH_FLAG_OPTVERR); 
 
@@ -993,7 +993,7 @@ static bool APP_ZIGBEE_NVM_Read(void)
  */
 static bool APP_ZIGBEE_NVM_Write(void)
 {
-    int ee_status;
+    int ee_status = 0;
     
     uint16_t num_words;
     uint16_t local_current_size;
@@ -1184,7 +1184,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
 
   /* STEP 1 - TRY to START FROM PERSISTENCE */

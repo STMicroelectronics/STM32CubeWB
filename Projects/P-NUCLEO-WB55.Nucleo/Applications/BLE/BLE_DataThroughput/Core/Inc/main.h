@@ -32,7 +32,6 @@ extern RTC_HandleTypeDef hrtc; /**< RTC handler declaration */
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-
 #endif /* __MAIN_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

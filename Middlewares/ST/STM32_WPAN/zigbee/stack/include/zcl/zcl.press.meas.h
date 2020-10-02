@@ -1,4 +1,4 @@
-/* Copyright [2019 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_PRESS_MEAS_H
 #define ZCL_PRESS_MEAS_H
@@ -12,7 +12,7 @@
  */
 
 /* Attribute Identifiers */
-enum {
+enum ZbZclPressMeasSvrAttrT {
     ZCL_PRESS_MEAS_ATTR_MEAS_VAL = 0x0000,
     ZCL_PRESS_MEAS_ATTR_MIN_MEAS_VAL = 0x0001,
     ZCL_PRESS_MEAS_ATTR_MAX_MEAS_VAL = 0x0002,

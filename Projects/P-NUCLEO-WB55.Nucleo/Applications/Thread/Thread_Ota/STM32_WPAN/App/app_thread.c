@@ -17,6 +17,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "utilities_common.h"
@@ -106,24 +107,25 @@ static void RxCpltCallback(void);
 static void Delete_Sectors( void );
 static uint32_t GetFirstSecureSector(void);
 
-static void APP_THREAD_DummyReqHandler(void                * p_context,
+static void APP_THREAD_CoapReqHandlerFuotaProvisioning(
+    void                * pContext,
     otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo);
-
-static void APP_THREAD_CoapReqHandlerFuotaProvisioning(otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo);
 static void APP_THREAD_ProvisioningRespSend(otCoapHeader    * pRequestHeader,
     const otMessageInfo * pMessageInfo);
 
-static void APP_THREAD_CoapReqHandlerFuota(otCoapHeader        * pHeader,
+static void APP_THREAD_CoapReqHandlerFuota(
+    void                * pContext,
+    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo);
 static void APP_THREAD_CoapSendDataResponseFuota(otCoapHeader    * pRequestHeader,
     const otMessageInfo * pMessageInfo);
 
-static void APP_THREAD_CoapReqHandlerFuotaParameters(otCoapHeader * pHeader,
+static void APP_THREAD_CoapReqHandlerFuotaParameters(
+    void                 * pContext,
+    otCoapHeader         * pHeader,
     otMessage            * pMessage,
     const otMessageInfo  * pMessageInfo);
 static void APP_THREAD_CoapSendRespFuotaParameters(otCoapHeader    * pRequestHeader,
@@ -160,9 +162,9 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[size
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
 
 /* USER CODE BEGIN PV */
-static otCoapResource OT_RessourceFuotaProvisioning = {C_RESSOURCE_FUOTA_PROVISIONING, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapReqHandlerFuotaProvisioning, NULL};
-static otCoapResource OT_RessourceFuotaParameters = {C_RESSOURCE_FUOTA_PARAMETERS, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapReqHandlerFuotaParameters, NULL};
-static otCoapResource OT_RessourceFuotaSend = {C_RESSOURCE_FUOTA_SEND, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapReqHandlerFuota, NULL};
+static otCoapResource OT_RessourceFuotaProvisioning = {C_RESSOURCE_FUOTA_PROVISIONING, APP_THREAD_CoapReqHandlerFuotaProvisioning,"myCtxProvisioning", NULL};
+static otCoapResource OT_RessourceFuotaParameters = {C_RESSOURCE_FUOTA_PARAMETERS, APP_THREAD_CoapReqHandlerFuotaParameters, "myCtxReqFuotaParamHdl", NULL};
+static otCoapResource OT_RessourceFuotaSend = {C_RESSOURCE_FUOTA_SEND, APP_THREAD_CoapReqHandlerFuota,"myCtxReqFuotaHdl", NULL};
 
 static uint8_t OT_Command = 0;
 static otMessageInfo OT_MessageInfo = {0};
@@ -580,27 +582,17 @@ static uint32_t GetFirstSecureSector(void)
 }
 
 /**
- * @brief Dummy request handler
- *
- * @param None
- * @retval None
- */
-static void APP_THREAD_DummyReqHandler(void            * p_context,
-    otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo)
-{
-}
-
-/**
  * @brief Handler called when the server receives a COAP request.
  *
+ * @param pContext : Context
  * @param pHeader : Header
  * @param pMessage : Message
  * @param pMessageInfo : Message information
  * @retval None
  */
-static void APP_THREAD_CoapReqHandlerFuotaProvisioning(otCoapHeader * pHeader,
+static void APP_THREAD_CoapReqHandlerFuotaProvisioning(
+    void                 * pContext,
+    otCoapHeader         * pHeader,
     otMessage            * pMessage,
     const otMessageInfo  * pMessageInfo)
 {
@@ -667,12 +659,15 @@ static void APP_THREAD_ProvisioningRespSend(otCoapHeader    * pRequestHeader,
 /**
  * @brief Handler called when the server receives a COAP request.
  *
+ * @param pContext : Context
  * @param pHeader : Header
  * @param pMessage : Message
  * @param pMessageInfo : Message information
  * @retval None
  */
-static void APP_THREAD_CoapReqHandlerFuotaParameters(otCoapHeader * pHeader,
+static void APP_THREAD_CoapReqHandlerFuotaParameters(
+    void                 * pContext,
+    otCoapHeader         * pHeader,
     otMessage            * pMessage,
     const otMessageInfo  * pMessageInfo)
 {
@@ -764,12 +759,15 @@ static APP_THREAD_StatusTypeDef APP_THREAD_CheckDeviceCapabilities(void)
 /**
  * @brief Handler called when the server receives a COAP request.
  *
+ * @param pContext : Context
  * @param pHeader : Header
  * @param pMessage : Message
  * @param pMessageInfo : Message information
  * @retval None
  */
-static void APP_THREAD_CoapReqHandlerFuota(otCoapHeader * pHeader,
+static void APP_THREAD_CoapReqHandlerFuota(
+    void                 *pContext,
+    otCoapHeader         * pHeader,
     otMessage            * pMessage,
     const otMessageInfo  * pMessageInfo)
 {

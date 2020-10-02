@@ -833,7 +833,6 @@
                 <option>
                     <name>IlinkAdditionalLibs</name>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\Library\libBle_Mesh_CM4_IAR.a</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\cryptographic\Lib\STM32CryptographicV3.1.3_CM4_IARv8.a</state>
                 </option>
                 <option>
                     <name>IlinkOverrideProgramEntryLabel</name>
@@ -1120,6 +1119,9 @@
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_sensor.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_sensors_client.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_vendor.c</name>
                 </file>
                 <file>
@@ -1258,6 +1260,9 @@
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\sensors.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\sensors_client.c</name>
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\svc_ctl.c</name>

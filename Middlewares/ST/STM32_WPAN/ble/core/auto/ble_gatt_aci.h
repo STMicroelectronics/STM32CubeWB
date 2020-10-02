@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_gatt_aci.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (gatt_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -334,7 +334,7 @@ tBleStatus aci_gatt_set_event_mask( uint32_t GATT_Evt_Mask );
  * ACI_GATT_PROC_COMPLETE_EVENT event is also generated to indicate the end of
  * the procedure.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
@@ -349,7 +349,7 @@ tBleStatus aci_gatt_exchange_config( uint16_t Connection_Handle );
  * ACI_ATT_FIND_INFO_RESP_EVENT event. The end of the procedure is indicated by
  * a ACI_GATT_PROC_COMPLETE_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Start_Handle First requested handle number
@@ -370,7 +370,7 @@ tBleStatus aci_att_find_info_req( uint16_t Connection_Handle,
  * The end of the procedure is indicated by a ACI_GATT_PROC_COMPLETE_EVENT
  * event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Start_Handle First requested handle number
@@ -395,7 +395,7 @@ tBleStatus aci_att_find_by_type_value_req( uint16_t Connection_Handle,
  * the attribute type is known but the handle is not known.
  * The responses are given through the ACI_ATT_READ_BY_TYPE_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Start_Handle First requested handle number
@@ -421,7 +421,7 @@ tBleStatus aci_att_read_by_type_req( uint16_t Connection_Handle,
  * ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT event.
  * The end of the procedure is indicated by a ACI_GATT_PROC_COMPLETE_EVENT.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Start_Handle First requested handle number
@@ -445,7 +445,7 @@ tBleStatus aci_att_read_by_group_type_req( uint16_t Connection_Handle,
  * ACI_ATT_PREPARE_WRITE_RESP_EVENT event.
  * The end of the procedure is indicated by a ACI_GATT_PROC_COMPLETE_EVENT.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the attribute to be written
@@ -472,7 +472,7 @@ tBleStatus aci_att_prepare_write_req( uint16_t Connection_Handle,
  * The end of the procedure is indicated by a ACI_GATT_PROC_COMPLETE_EVENT
  * event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Execute Execute or cancel writes.
@@ -491,7 +491,7 @@ tBleStatus aci_att_execute_write_req( uint16_t Connection_Handle,
  * The responses of the procedure are given through the
  * ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
@@ -507,7 +507,7 @@ tBleStatus aci_gatt_disc_all_primary_services( uint16_t Connection_Handle );
  * The end of the procedure is indicated by a ACI_GATT_PROC_COMPLETE_EVENT
  * event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param UUID_Type UUID type: 0x01 = 16 bits UUID while 0x02 = 128 bits UUID
@@ -526,7 +526,7 @@ tBleStatus aci_gatt_disc_primary_service_by_uuid( uint16_t Connection_Handle,
  * The end of the procedure is indicated by a ACI_GATT_PROC_COMPLETE_EVENT
  * event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Start_Handle Start attribute handle of the service
@@ -544,7 +544,7 @@ tBleStatus aci_gatt_find_included_services( uint16_t Connection_Handle,
  * generated. Before procedure completion the response packets are given
  * through ACI_ATT_READ_BY_TYPE_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Start_Handle Start attribute handle of the service
@@ -562,7 +562,7 @@ tBleStatus aci_gatt_disc_all_char_of_service( uint16_t Connection_Handle,
  * generated. Before procedure completion the response packets are given
  * through ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Start_Handle Start attribute handle of the service
@@ -585,7 +585,7 @@ tBleStatus aci_gatt_disc_char_by_uuid( uint16_t Connection_Handle,
  * generated. Before procedure completion the response packets are given
  * through ACI_ATT_FIND_INFO_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Char_Handle Handle of the characteristic value
@@ -603,7 +603,7 @@ tBleStatus aci_gatt_disc_all_char_desc( uint16_t Connection_Handle,
  * generated. Before procedure completion the response packet is given through
  * ACI_ATT_READ_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the characteristic value to be read
@@ -624,7 +624,7 @@ tBleStatus aci_gatt_read_char_value( uint16_t Connection_Handle,
  * BLE_EVT_MAX_PARAM_LEN - 7 i.e. 248 bytes for default value of
  * BLE_EVT_MAX_PARAM_LEN.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Start_Handle Starting handle of the range to be searched
@@ -646,7 +646,7 @@ tBleStatus aci_gatt_read_using_char_uuid( uint16_t Connection_Handle,
  * generated. Before procedure completion the response packets are given
  * through ACI_ATT_READ_BLOB_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the characteristic value to be read
@@ -666,7 +666,7 @@ tBleStatus aci_gatt_read_long_char_value( uint16_t Connection_Handle,
  * generated. Before procedure completion the response packets are given
  * through ACI_ATT_READ_MULTIPLE_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Number_of_Handles The number of handles for which the value has to be
@@ -684,7 +684,7 @@ tBleStatus aci_gatt_read_multiple_char_value( uint16_t Connection_Handle,
  * When the procedure is completed, a ACI_GATT_PROC_COMPLETE_EVENT event is
  * generated.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the characteristic value to be written
@@ -704,7 +704,7 @@ tBleStatus aci_gatt_write_char_value( uint16_t Connection_Handle,
  * generated. During the procedure, ACI_ATT_PREPARE_WRITE_RESP_EVENT and
  * ACI_ATT_EXEC_WRITE_RESP_EVENT events are raised.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the characteristic value to be written
@@ -726,7 +726,7 @@ tBleStatus aci_gatt_write_long_char_value( uint16_t Connection_Handle,
  * generated. During the procedure, ACI_ATT_PREPARE_WRITE_RESP_EVENT and
  * ACI_ATT_EXEC_WRITE_RESP_EVENT events are raised.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the attribute to be written
@@ -748,7 +748,7 @@ tBleStatus aci_gatt_write_char_reliable( uint16_t Connection_Handle,
  * generated. During the procedure, ACI_ATT_PREPARE_WRITE_RESP_EVENT and
  * ACI_ATT_EXEC_WRITE_RESP_EVENT events are raised.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the attribute to be written
@@ -770,7 +770,7 @@ tBleStatus aci_gatt_write_long_char_desc( uint16_t Connection_Handle,
  * generated. Before procedure completion the response packets are given
  * through ACI_ATT_READ_BLOB_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the characteristic descriptor
@@ -787,7 +787,7 @@ tBleStatus aci_gatt_read_long_char_desc( uint16_t Connection_Handle,
  * When the procedure is completed, a ACI_GATT_PROC_COMPLETE_EVENT event is
  * generated.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the attribute to be written
@@ -808,7 +808,7 @@ tBleStatus aci_gatt_write_char_desc( uint16_t Connection_Handle,
  * Before procedure completion the response packet is given through
  * ACI_ATT_READ_RESP_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the descriptor to be read
@@ -825,7 +825,7 @@ tBleStatus aci_gatt_read_char_desc( uint16_t Connection_Handle,
  * 3); it must also not exceed (BLE_EVT_MAX_PARAM_LEN - 5) i.e. 250 for
  * BLE_EVT_MAX_PARAM_LEN default value.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the characteristic value to be written
@@ -847,7 +847,7 @@ tBleStatus aci_gatt_write_without_resp( uint16_t Connection_Handle,
  * not exceed (ATT_MTU - 15); it must also not exceed (BLE_EVT_MAX_PARAM_LEN -
  * 5) i.e. 250 for BLE_EVT_MAX_PARAM_LEN default value.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the characteristic value to be written
@@ -865,7 +865,7 @@ tBleStatus aci_gatt_signed_write_without_resp( uint16_t Connection_Handle,
  * Allow application to confirm indication. This command has to be sent when
  * the application receives the event ACI_GATT_INDICATION_EVENT.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
@@ -881,7 +881,7 @@ tBleStatus aci_gatt_confirm_indication( uint16_t Connection_Handle );
  * then the status has to be set to 1 and the error code has to be set to the
  * error code that has to be passed to the client.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the attribute that was passed in the event
@@ -919,7 +919,7 @@ tBleStatus aci_gatt_write_resp( uint16_t Connection_Handle,
  * should perform the required operations within 30 seconds. Otherwise the GATT
  * procedure will be timeout.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
@@ -1042,7 +1042,7 @@ tBleStatus aci_gatt_update_char_value_ext( uint16_t Conn_Handle_To_Notify,
  * ACI_GATT_READ_PERMIT_REQ_EVENT or  ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT
  * events; otherwise the GATT procedure issues a timeout.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Error_Code Error code for the command

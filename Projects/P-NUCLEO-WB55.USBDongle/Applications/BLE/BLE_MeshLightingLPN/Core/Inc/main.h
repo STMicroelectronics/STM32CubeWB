@@ -30,6 +30,8 @@
 /* Exported variables --------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc; /**< RTC handler declaration */
 
+/* Exported functions prototypes ---------------------------------------------*/
+void Error_Handler(void);
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 

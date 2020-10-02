@@ -20,7 +20,7 @@
 
 @par Example Description
 
-How to use the Heart Rate profile as specified by the BLE SIG.
+How to use the Heart Rate profile as specified by the BLE SIG with FreeRTOS.
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from

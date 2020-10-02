@@ -23,7 +23,9 @@
 #include "ble_mesh.h"
 #include "vendor.h"
 #include "appli_test.h"
+#include "appli_vendor.h"
 #include "models_if.h"
+#include "common.h"
 #include <string.h>
 
 /** @addtogroup MODEL_VENDOR
@@ -43,15 +45,17 @@
 /*0x03 = SubCommand for LED Toggle*/
 MOBLEUINT8 AppliBuffer[DATA_BUFFER_LENGTH] = {0x01,0x00};
 MOBLEUINT16 CommandStatus = 0;
+MOBLEUINT8 Vendor_SendDataFreqState = 0x00;
 extern MOBLEUINT8 NumberOfElements;
-extern MOBLEUINT8 ResponseBuffer[VENDOR_DATA_BYTE];
+extern MOBLEUINT8 ResponseBuffer[VENDOR_DATA_BUFFER_SIZE];
 extern MOBLEUINT16 BuffLength;
 extern MOBLEUINT8 Appli_LedState;
 /*
 -------------*******************-------------------------
 Vendor Model Opcode Table
 */
-MOBLEUINT16 Vendor_Opcodes_Table[] = {
+MOBLEUINT16 Vendor_Opcodes_Table[] =
+{
   APPLI_TEST_CMD,
   APPLI_DEVICE_INFO_CMD,
   APPLI_LED_CONTROL_STATUS_CMD,
@@ -64,7 +68,8 @@ char *Board_Type[] =
 {
   "BLUENRG1_BRD_TYPE",           
   "BLUENRG2_BRD_TYPE",             
-  "BLUENRG_MS_BRD_TYPE"              
+  "BLUENRG_MS_BRD_TYPE",
+  "STM32WB55XX"
 }; 
 /* Private function prototypes -----------------------------------------------*/
 #if ENABLE_APPLI_TEST
@@ -76,17 +81,15 @@ char *Board_Type[] =
 
 /**
 * @brief  Call back function called when action is required on node itself  
-* @param  peer_addr: Address of the peer
-* @param  dst_peer: destination send by peer for this node. It can be a
-*                                                     unicast or group address 
+* @param  *pmsgParam Pointer to structure of message header for parameters:
+*          elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset                                     
 * @param  command: Receiving command code
 * @param  *data: Pointer to the data received from peer_addr
 * @param  length: Length of the data
 * @param  response: 1 if command acknowledgement is expected by peer_addr 
 * @retval MOBLE_RESULT status of result
 */ 
-MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr, 
-                                     MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT Vendor_WriteLocalDataCb(MODEL_MessageHeader_t *pmsgParams,  
                                      MOBLEUINT8 command, 
                                      MOBLEUINT8 const *data, 
                                      MOBLEUINT32 length, 
@@ -97,20 +100,22 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
   
   /* Traces for the Data */
   uint16_t idx = 0;
-  TRACE_I(TF_VENDOR_M,"Vendor_WriteLocalDataCb: peer_addr=[%02x], dst_peer=[%02x],\
-         command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response);
-          TRACE_I(TF_VENDOR_M,"DATA_RECEIVED length = %ld\n\r",length);
+  TRACE_I(TF_VENDOR_M, 
+          "Vendor_WriteLocalDataCb: elementIndex=[%02x], peer_addr=[%02x], dst_peer=[%02x], command=[%02x], Response=[%02x]\n\r", 
+          pmsgParams->elementIndex,
+          pmsgParams->peer_addr, 
+          pmsgParams->dst_peer, 
+          command, 
+          response);
+  
+  TRACE_I(TF_VENDOR_M, "DATA_RECEIVED length = %ld\n\r",length);
+  
          for (idx=0; idx<length; idx++)
          {
            TRACE_I(TF_VENDOR_M,"data[%d]= %d",idx,data[idx]);  
            TRACE_I(TF_VENDOR_M,"\n\r");
          }
          
-         if(ADDRESS_IS_UNICAST(dst_peer))
-         {
-           MOBLEUINT8 elementNumber;
-           elementNumber=BLEMesh_ModelsGetElementNumber(dst_peer);
-           
            switch (command)
            {
              
@@ -130,7 +135,8 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
                B0 - Sub-Cmd LED
                B1-B7 - Data Bytes       
                */          
-               VendorAppli_cb.LEDControlCommand_Cb(data,length,elementNumber,dst_peer);
+      VendorAppli_cb.LEDControlCommand_Cb(data, length, pmsgParams->elementIndex,\
+                                                           pmsgParams->dst_peer);
                break;
              }
            case APPLI_DATA_CNTRL_CMD:
@@ -148,72 +154,7 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
                break;
              }
            }
-         }
-         
-         else if(ADDRESS_IS_GROUP(dst_peer))
-         {
-           
-           MOBLEUINT8 elementNumber;
-           MOBLE_RESULT status1;
-           
-           /*Check the Subscription of Group Address for all the Elements. 
-           In case of Multi Elements, all elements may be subscribed to same Group Address. 
-           e.g 0xC000 is assigned to all elements
-           or different Group addresses. Need to check subscription for each element */
-           for (elementNumber=FIRST_ELEMENT;elementNumber<=NumberOfElements; elementNumber++)
-           {
-             /*If Received Address is Broadcast Address*/
-             if(ADDRESS_IS_ALL_NODES(dst_peer))
-             {
-               status1 =  MOBLE_RESULT_SUCCESS;
-             }
-             else
-             {
-               status1 = BLEMesh_ModelsCheckSubscription(dst_peer,elementNumber);
-             }
-             
-             if(status1 == MOBLE_RESULT_SUCCESS)
-             { 
-               switch (command)
-               { 
-                 
-               case APPLI_TEST_CMD:
-                 { 
-                   /*This is callback when ever command is coming for test of response
-                     time,command reached count, data byte sent
-                   */   
-                   VendorAppli_cb.TestCommand_cb(data,length); 
-                   break;
-                 }    
-               case APPLI_LED_CONTROL_STATUS_CMD:
-                 {
-                   /* 
-                   Message Received     B0     B1    B2      B3    B4    B5    B6     B7 
-                   B0 - Sub-Cmd LED
-                   B1-B7 - Data Bytes       
                    
-                   */
-                   VendorAppli_cb.LEDControlCommand_Cb(data, length, elementNumber,dst_peer);
-                   break; 
-                 }        
-               case APPLI_DATA_CNTRL_CMD:
-                 {
-                   /*This is callback when ever command is coming for test of response
-                     time,command reached count, data byte sent
-                   */          
-                   VendorAppli_cb.DataControlCommand_cb(data,length);    
-                   break;       
-                 }    
-                 /* Default case - Not valid command */
-               default:
-                 {
-                   status = STATUS_INVALID_COMMAND;
-                   break;
-                 }
-               }           
-             }
-           }
-         }
          /* this expression is used to send the status of data received wheather it
          is correct or not , First 3 bits are for status and last 5 bit are for sub commands
          */
@@ -227,16 +168,16 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
          */
          if (response == MOBLE_TRUE)
          {
-           if (ADDRESS_IS_UNICAST(dst_peer))
+           if (ADDRESS_IS_UNICAST(pmsgParams->dst_peer))
            {
-             VendorModel_SendResponse(VENDOR_STMICRO_CID, peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
-             TRACE_M(TF_VENDOR_M,"Sending Response for Unicast \n\r");
+             VendorModel_SendResponse(VENDOR_STMICRO_CID, pmsgParams, command, ResponseBuffer, BuffLength);
+             TRACE_M(TF_VENDOR,"Sending Response for Unicast \n\r");
            }
            else
            {
              /* Randomize responses*/
-             BLEMesh_ModelsDelayPacket(peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
-             TRACE_M(TF_VENDOR_M,"Sending Response for Multicast \n\r");
+             BLEMesh_ModelsDelayPacket(pmsgParams, command, ResponseBuffer, BuffLength);
+             TRACE_M(TF_VENDOR,"Sending Response for Multicast \n\r");
            }		
          }
          
@@ -254,16 +195,15 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MOBLE_ADDRESS peer_addr,
          
 /**
 * @brief  Call back function called when some data is required from node    
-* @param  peer_addr: Address of the peer
-* @param  dst_peer: destination set by peer
+* *pmsgParam Pointer to structure of message header for parameters:
+*            elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * @param  command: Receiving command code 
 * @param  data: Pointer to the data
 * @param  length: Length of the data
 * @param  response: Response Enable. For future use
 * @retval MOBLE_RESULT status of result
 */
-MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr, 
-                                   MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT Vendor_ReadLocalDataCb(MODEL_MessageHeader_t *pmsgParams,  
                                    MOBLEUINT8 command, 
                                    MOBLEUINT8 const *data, 
                                    MOBLEUINT32 length, 
@@ -274,20 +214,22 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
  MOBLEUINT8 getBuff[5];
  
  /* Traces for the Data */
- TRACE_M(TF_VENDOR_M,"Vendor_ReadLocalDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
-        command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response );
-          TRACE_I(TF_VENDOR_M,"DATA_RECEIVED length = %ld\n\r",length);
+  TRACE_M(TF_VENDOR_M,
+          "Vendor_ReadLocalDataCb: elementIndex=[%02x], peer_addr=[%02x], dst_peer_addr=[%02x], command=[%02x], Response=[%02x]\n\r", 
+          pmsgParams->elementIndex,
+          pmsgParams->peer_addr, 
+          pmsgParams->dst_peer, 
+          command, 
+          response);
+  
+  TRACE_I(TF_VENDOR_M,"DATA_RECEIVED length = %ld\n\r",length);
+  
         for (MOBLEUINT8 idx=0; idx<length; idx++)
         {
           TRACE_I(TF_VENDOR_M,"data[%d]= %d",idx,data[idx]); 
           TRACE_I(TF_VENDOR_M,"\n\r");
         }
         
-        if(ADDRESS_IS_UNICAST(dst_peer))
-        {
-          MOBLEUINT8 elementNumber;
-          elementNumber=BLEMesh_ModelsGetElementNumber(dst_peer);
-          
           /* Check which command is in packet */
           switch(command)
           {
@@ -342,19 +284,10 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
               Message Received with Command APPLI_LED_CONTROL_STATUS_CMD
               ResponseBuffer will send the response of selected Element
               */
-              if(elementNumber == FIRST_ELEMENT)
-              {
+      
+      TRACE_M(TF_VENDOR,"Appli_LED_Control_Status callback received for elementIndex %d \r\n", pmsgParams->elementIndex);     
+      /*User Need to send the status as per the element selected*/
                 ResponseBuffer[0] = Appli_LedState;
-              }
-              
-              else if(elementNumber == SECOND_ELEMENT)
-              {
-                /*Send LED Status*/
-              }
-              else if(elementNumber == THIRD_ELEMENT) 
-              {
-                /*Sent Button State*/
-              }
               BuffLength = 1;  
               
               break;
@@ -375,7 +308,7 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
             }   
             
           }
-        }
+  
         /* this expression is used to send the status of data received wheather it
         is correct or not , First 3 bits are for status and last 5 bit are for sub commands
         */
@@ -391,27 +324,27 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
           B0 - Sub-Cmd for which response is needed
           B1-B7 - Data Bytes if any 
           */
-          if (ADDRESS_IS_UNICAST(dst_peer))
+         if (ADDRESS_IS_UNICAST(pmsgParams->dst_peer))
           {
-            VendorModel_SendResponse(VENDOR_STMICRO_CID, peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
+            VendorModel_SendResponse(VENDOR_STMICRO_CID, pmsgParams, command, ResponseBuffer, BuffLength);
           }
           else
           {
             /* Randomize responses*/
-            BLEMesh_ModelsDelayPacket(peer_addr, dst_peer, command, ResponseBuffer, BuffLength);
+            BLEMesh_ModelsDelayPacket(pmsgParams, command, ResponseBuffer, BuffLength);
           }
         }
         /* Command not successfully processed */
         else
         {
-          if (ADDRESS_IS_UNICAST(dst_peer))
+          if (ADDRESS_IS_UNICAST(pmsgParams->dst_peer))
           {
-            VendorModel_SendResponse(VENDOR_STMICRO_CID, peer_addr, dst_peer, command, ResponseBuffer, 1);
+            VendorModel_SendResponse(VENDOR_STMICRO_CID, pmsgParams, command, ResponseBuffer, 1);
           }
           else
           {
             /* Randomize responses*/
-            BLEMesh_ModelsDelayPacket(peer_addr, dst_peer, command, ResponseBuffer, 1);
+            BLEMesh_ModelsDelayPacket(pmsgParams, command, ResponseBuffer, 1);
           }
         }
         
@@ -423,20 +356,18 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MOBLE_ADDRESS peer_addr,
         {
           return MOBLE_RESULT_FAIL;
         }
-        
 }
                   
                   
 /**
 * @brief  Call back function called when some data is send by the node to app   
-* @param  peer_addr: Address of the peer
-* @param  elementIndex: Index of the selected element
+* *pmsgParam Pointer to structure of message header for parameters:
+*             elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * @param  data: Pointer to the data
 * @param  length: Length of the data
 * @retval MOBLE_RESULT status of result
 */  
-MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr, 
-                                     MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT Vendor_OnResponseDataCb(MODEL_MessageHeader_t *pmsgParam,  
                                      MOBLEUINT8 command, 
                                      MOBLEUINT8 const *pRxData, 
                                      MOBLEUINT32 dataLength, 
@@ -448,11 +379,16 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
    MOBLEUINT8 increment = 1;
   
   /* Traces for the Data */
-  TRACE_I(TF_VENDOR_M,"Vendor_OnResponseDataCb: peer_addr=[%02x], dst_peer_addr=[%02x],\
-        command=[%02x], Response=[%02x] \n\r", peer_addr, dst_peer, command, response );
+  TRACE_I(TF_VENDOR_M,
+          "Vendor_OnResponseDataCb: elementIndex=[%02x], peer_addr=[%02x], dst_peer_addr=[%02x], command=[%02x], Response=[%02x]\n\r", 
+          pmsgParam->elementIndex,
+          pmsgParam->peer_addr, 
+          pmsgParam->dst_peer, 
+          command, 
+          response);
   TRACE_I(TF_VENDOR_M,"DATA_RECEIVED length = %ld\n\r", dataLength);
-  
   TRACE_M(TF_VENDOR_M,"#%02hx-%02hx! \n\r",command,pRxData[0]);
+  
   switch(command)
   {
     case APPLI_TEST_CMD:
@@ -464,8 +400,6 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
         /* this case is responsible for printing of the received back data byte from 
            receiver node.
         */
- #if ENABLE_APPLI_TEST
-#endif
                  break;
                }
              case APPLI_TEST_RANDOMIZATION_RANGE:  
@@ -582,6 +516,11 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MOBLE_ADDRESS peer_addr,
 void Vendor_Process(void)
 {
   BLEMesh_ModelsSendDelayedPacket();
+  
+  if (Vendor_SendDataFreqState == 0xFF)
+  {
+    Appli_Vendor_SendBigDataPacket();
+  }
 }
                            
                            
@@ -668,7 +607,23 @@ void Vendor_TestCounterInc(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elem
     }
 }         
          
-
+/**
+* @brief  Set the state of the Vendor Data frequency
+* @param  State: New state of sending vendor packet frequency 
+* @retval void
+*/          
+void Vendor_SendDataFreq(MOBLEUINT8 freq)
+{
+    /* Data to be sent continuosly with out any time gap */ 
+    if ((freq == 0xFF) || (freq == 0x00))
+    {
+        Vendor_SendDataFreqState = freq;
+    }
+    else
+    {
+        TRACE_I(TF_VENDOR_M, "Invalid Data send Freq parameter \r\n");
+    }
+}
          
 /**
 * @brief   GenericModelServer_GetOpcodeTableCb: This function is call-back 
@@ -687,9 +642,8 @@ MOBLE_RESULT VendorModel_PID1_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **
 /**
 * @brief  GenericModelServer_GetStatusRequestCb : This function is call-back 
 from the library to send response to the message from peer
-* @param  peer_addr: Address of the peer
-* @param  dst_peer: destination send by peer for this node. It can be a
-*                                                     unicast or group address 
+* @param *pmsgParam Pointer to structure of message header for parameters:
+*         elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * @param  opcode: Received opcode of the Status message callback
 * @param  pResponsedata: Pointer to the buffer to be updated with status
 * @param  plength: Pointer to the Length of the data, to be updated by application
@@ -698,8 +652,7 @@ from the library to send response to the message from peer
 * @param  response: Value to indicate wheather message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT VendorModel_PID1_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT VendorModel_PID1_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParams,  
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 *pResponsedata, 
                                     MOBLEUINT32 *plength, 
@@ -714,9 +667,8 @@ MOBLE_RESULT VendorModel_PID1_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
 /**
 * @brief  VendorModelServer_ProcessMessageCb: This is a callback function from
 the library whenever a Generic Model message is received
-* @param  peer_addr: Address of the peer
-* @param  dst_peer: destination send by peer for this node. It can be a
-*                                                     unicast or group address 
+* @param *pmsgParam Pointer to structure of message header for parameters:
+*         elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * @param  opcode: Received opcode of the Status message callback
 * @param  pData: Pointer to the buffer to be updated with status
 * @param  length: Length of the parameters received 
@@ -726,8 +678,7 @@ the library whenever a Generic Model message is received
 * @param  response: Value to indicate wheather message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 
-                                                 MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParams,  
                                                  MOBLEUINT16 opcode, 
                                                  MOBLEUINT8 const *pRxData, 
                                                  MOBLEUINT32 dataLength, 
@@ -741,8 +692,12 @@ MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     
   /*tClockTime delay_t = Clock_Time();*/
   
-  TRACE_I(TF_VENDOR_M,"dst_peer = [0x%02x] , peer_add = [0x%02x], opcode= [0x%02x] \r\n  ",
-                                                    dst_peer, peer_addr, opcode);
+  TRACE_I(TF_VENDOR_M, 
+          "elementIndex=[0x%02x], dst_peer=[0x%02x], peer_add=[0x%02x], opcode=[0x%02x]\r\n",
+          pmsgParams->elementIndex, 
+          pmsgParams->dst_peer,
+          pmsgParams->peer_addr, 
+          opcode);
 
   /*  opcode: response  : Read-Write           : Command   
                           R/nW : 1 = Read
@@ -774,17 +729,17 @@ MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
     { /* Response Packet is received */
        TRACE_I(TF_VENDOR_M,"Response received from remote node \n\r");
 
-       Vendor_OnResponseDataCb(peer_addr, dst_peer, command, pRxData, dataLength, MOBLE_FALSE);
+       Vendor_OnResponseDataCb(pmsgParams, command, pRxData, dataLength, MOBLE_FALSE);
     }
     else if ( (cmd_response == MOBLE_TRUE) && (opcode & VENDOR_CMD_READ_nWRITE))
     { /* Read Packet is received */
        TRACE_M(TF_VENDOR_M,"Read Command received   \n\r");
-       result = Vendor_ReadLocalDataCb(peer_addr, dst_peer, command, pRxData, dataLength, MOBLE_TRUE);
+       result = Vendor_ReadLocalDataCb(pmsgParams, command, pRxData, dataLength, MOBLE_TRUE);
     }
     else 
     {  /* Write Commands with or without response received */
-       TRACE_M(TF_VENDOR_M,"Command Write received, process the command  \n\r");
-       result = Vendor_WriteLocalDataCb(peer_addr, dst_peer, command, pRxData, dataLength, cmd_response );
+       TRACE_M(TF_VENDOR_M,"Command Write received, process the command\n\r");
+       result = Vendor_WriteLocalDataCb(pmsgParams, command, pRxData, dataLength, cmd_response );
     }
 
 return result;
@@ -803,7 +758,7 @@ __weak MOBLE_RESULT Packet_ResponseTimeStamp(MOBLEUINT32 rcvTimeStamp)
 * @}
 */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
                            
                            
                            

@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    compiler.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   This file contains the definitions which are compiler dependent.
  *****************************************************************************
  * @attention
@@ -150,6 +150,6 @@
 #endif
 
 
-#endif /* ! COMPILER_H__ */
+#endif /* COMPILER_H__ */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE***/

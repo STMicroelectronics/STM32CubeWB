@@ -251,7 +251,7 @@ MOBLE_RESULT Read_CommandCount(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst)
   if(processDelay(TEST_READ_PERIOD) == 0x01)
   {   
     TRACE_I(TF_SERIAL_CTRL, " NUMBER OF COMMANDS SEND     %d \r\n",Totaltest); 
-    BLEMesh_ReadRemoteData(dst,elementIndex,APPLI_TEST_CMD,readData,sizeof(readData));      
+//    BLEMesh_ReadRemoteData(dst,elementIndex,APPLI_TEST_CMD,readData,sizeof(readData));      
     ReadFlag = 0;
   }     
 

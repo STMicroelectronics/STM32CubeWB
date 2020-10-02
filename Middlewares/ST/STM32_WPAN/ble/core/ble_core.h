@@ -1,11 +1,11 @@
 /*****************************************************************************
  * @file    ble_core.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   This file contains the definitions for BLE stack
  *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -23,7 +23,7 @@
 /* BLE standard definitions */
 #include "ble_std.h"
 
-/* BLE API definitions */
+/* BLE stack API definitions */
 #include "ble_defs.h"
 #include "auto/ble_gap_aci.h"
 #include "auto/ble_gatt_aci.h"
@@ -35,10 +35,10 @@
 /* BLE stack buffer size definitions */
 #include "ble_bufsize.h"
 
-/* BLE legacy definitions */
+/* BLE stack legacy definitions */
 #include "ble_legacy.h"
 
 
-#endif /* ! BLE_CORE_H__ */
+#endif /* BLE_CORE_H__ */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE***/

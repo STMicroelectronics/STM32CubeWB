@@ -20,7 +20,7 @@
 
 @par Example Description
 
-This example is to demonstrate the capability to erase/write the flash while a Point-to-Point communication using BLE component is active. 
+How to demonstrate the capability to erase/write the flash while a Point-to-Point communication using BLE component is active. 
 
 This project is built on top of BLE_p2pServer where SW3 has been added to erase/write in flash and SW1 has been modified to enable/disable
 timing protection versus flash activity from CPU1.

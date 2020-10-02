@@ -64,7 +64,7 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY   (0x04)
 
-#define CFG_IO_CAPABILITY                     CFG_IO_CAPABILITY_DISPLAY_ONLY
+#define CFG_IO_CAPABILITY                     CFG_IO_CAPABILITY_DISPLAY_YES_NO
    
 /**
  * Define MITM modes
@@ -73,6 +73,29 @@
 #define CFG_MITM_PROTECTION_REQUIRED          (0x01)
 
 #define CFG_MITM_PROTECTION                   CFG_MITM_PROTECTION_REQUIRED
+
+/**
+ * Define Secure Connections Support
+ */
+#define CFG_SECURE_NOT_SUPPORTED       (0x00)
+#define CFG_SECURE_OPTIONAL            (0x01)
+#define CFG_SECURE_MANDATORY           (0x02)
+
+#define CFG_SC_SUPPORT                 CFG_SECURE_OPTIONAL
+
+/**
+ * Define Keypress Notification Support
+ */
+#define CFG_KEYPRESS_NOT_SUPPORTED      (0x00)
+#define CFG_KEYPRESS_SUPPORTED          (0x01)
+
+#define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
+
+/**
+ * Numeric Comparison Answers
+ */
+#define YES (0x01)
+#define NO  (0x00)
 
 /**
  * Generic Access Appearance
@@ -127,7 +150,7 @@
  * When set to 1, the device is central
  * When set to 0, the device is peripheral
  */
-#define CFG_BLE_CENTRAL     1
+#define CFG_BLE_CENTRAL     0
 
 #define CFG_SERVER_ONLY     0
 /**
@@ -196,7 +219,7 @@
  * Maximum number of simultaneous connections that the device will support.
  * Valid values are from 1 to 8
  */
-#define CFG_BLE_NUM_LINK            8
+#define CFG_BLE_NUM_LINK            2
 
 /**
  * Maximum number of Services that can be stored in the GATT database.

@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_gap_aci.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (gap_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************
@@ -266,11 +266,15 @@ tBleStatus aci_gap_set_discoverable( uint8_t Advertising_Type,
  * @param Advertising_Interval_Min Minimum advertising interval.
  *        Time = N * 0.625 msec.
  *        Values:
- *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0006 (3.750 ms) : for High Duty Cycle Directed Advertising
+ *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) : for Low Duty Cycle
+ *          Directed Advertising
  * @param Advertising_Interval_Max Maximum advertising interval.
  *        Time = N * 0.625 msec.
  *        Values:
- *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0006 (3.750 ms) : for High Duty Cycle Directed Advertising
+ *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) : for Low Duty Cycle
+ *          Directed Advertising
  * @return Value indicating success or error code.
  */
 tBleStatus aci_gap_set_direct_connectable( uint8_t Own_Address_Type,
@@ -361,7 +365,7 @@ tBleStatus aci_gap_set_authentication_requirement( uint8_t Bonding_Mode,
  * given when connected to a device if authorization is required to access
  * services which require authorization.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Authorization_Enable Enable the authorization in the device and when
@@ -384,7 +388,7 @@ tBleStatus aci_gap_set_authorization_requirement( uint16_t Connection_Handle,
  * ACI_GAP_PASS_KEY_REQ_EVENT event. The command parameter contains the pass
  * key which will be used during the pairing process.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Pass_Key Pass key that will be used during the pairing process.
@@ -401,7 +405,7 @@ tBleStatus aci_gap_pass_key_resp( uint16_t Connection_Handle,
  * Authorize a device to access attributes. This command should be send by the
  * host in response to ACI_GAP_AUTHORIZATION_REQ_EVENT event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Authorize Authorization response.
@@ -518,7 +522,7 @@ tBleStatus aci_gap_set_undirected_connectable( uint16_t Advertising_Interval_Min
  * requirements of the slave. The master may encrypt the link, initiate the
  * pairing procedure, or reject the request.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
@@ -555,7 +559,7 @@ tBleStatus aci_gap_delete_ad_type( uint8_t ADType );
  * @brief ACI_GAP_GET_SECURITY_LEVEL
  * This command can be used to get the current security settings of the device.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param[out] Security_Mode Security mode.
@@ -613,7 +617,7 @@ tBleStatus aci_gap_configure_whitelist( void );
  * HCI_DISCONNECTION_COMPLETE_EVENT event is generated when the link is
  * disconnected.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Reason The reason for ending the connection.
@@ -646,7 +650,7 @@ tBleStatus aci_gap_clear_security_db( void );
  * successfully. If this command is not given on receiving the event, the
  * bonding procedure will timeout.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
@@ -1167,7 +1171,7 @@ tBleStatus aci_gap_create_connection( uint16_t LE_Scan_Interval,
 
 /**
  * @brief ACI_GAP_TERMINATE_GAP_PROC
- * Terminate the specified GATT procedure. An ACI_GAP_PROC_COMPLETE_EVENT event
+ * Terminate the specified GAP procedure. An ACI_GAP_PROC_COMPLETE_EVENT event
  * is returned with the procedure code set to the corresponding procedure.
  * 
  * @param Procedure_Code GAP procedure bitmap.
@@ -1192,7 +1196,7 @@ tBleStatus aci_gap_terminate_gap_proc( uint8_t Procedure_Code );
  * On completion of the procedure, an HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT
  * event is returned to the upper layer.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
@@ -1244,7 +1248,7 @@ tBleStatus aci_gap_start_connection_update( uint16_t Connection_Handle,
  * A ACI_GAP_PAIRING_COMPLETE_EVENT event is returned after the pairing process
  * is completed.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Force_Rebond If 1, Pairing request will be sent even if the device
@@ -1406,11 +1410,12 @@ tBleStatus aci_gap_get_bonded_devices( uint8_t* Num_of_Addresses,
  * command, is bonded. If the device is using a resolvable private address and
  * it has been bonded, then the command will return BLE_STATUS_SUCCESS.
  * 
- * @param Peer_Address_Type Address type.
+ * @param Peer_Address_Type Identity address type.
  *        Values:
- *        - 0x00: Public Device Address
- *        - 0x01: Random Device Address
- * @param Peer_Address Address used by the peer device while advertising
+ *        - 0x00: Public Identity Address
+ *        - 0x01: Random (static) Identity Address
+ * @param Peer_Address Public or Random (static) Identity address of the peer
+ *        device
  * @return Value indicating success or error code.
  */
 tBleStatus aci_gap_is_device_bonded( uint8_t Peer_Address_Type,
@@ -1421,7 +1426,7 @@ tBleStatus aci_gap_is_device_bonded( uint8_t Peer_Address_Type,
  * This command allows the User to validate/confirm or not the Numeric
  * Comparison value showed through the ACI_GAP_Numeric_Comparison_Value_Event.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Confirm_Yes_No 0 : The Numeric Values showed on both local and peer
@@ -1441,7 +1446,7 @@ tBleStatus aci_gap_numeric_comparison_value_confirm_yesno( uint16_t Connection_H
  * This command permits to signal to the Stack the input type detected during
  * Passkey input.
  * 
- * @param Connection_Handle Connection handle for which the command is given.
+ * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Input_Type Passkey input type detected

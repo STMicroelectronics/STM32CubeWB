@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    ble_legacy.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   This file contains legacy definitions used for BLE.
  *****************************************************************************
  * @attention
@@ -228,6 +228,26 @@ typedef	uint8_t	tBDAddr[6];
 #define ADV_INTERVAL_LOWEST_CONN                     0X0020
 #define ADV_INTERVAL_HIGHEST                         0X4000
 #define ADV_INTERVAL_LOWEST_NONCONN                  0X00A0
+
+
+/* ------------------------------------------------------------------------- */
+
+
+/*
+ * BLE_DEFAULT_MAX_ATT_MTU: maximum supported ATT MTU size.
+ */
+#define BLE_DEFAULT_MAX_ATT_MTU             158
+
+/*
+ * BLE_DEFAULT_MBLOCKS_COUNT: default memory blocks count
+ */
+#define BLE_DEFAULT_MBLOCKS_COUNT(n_link) \
+          BLE_MBLOCKS_CALC(BLE_DEFAULT_PREP_WRITE_LIST_SIZE, \
+                           BLE_DEFAULT_MAX_ATT_MTU, n_link)
+
+
+#define TOTAL_DEVICE_ID_DATA_SIZE 56
+
 
 /* ------------------------------------------------------------------------- */
 

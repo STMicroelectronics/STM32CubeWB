@@ -502,6 +502,21 @@
               <FileType>1</FileType>
               <FilePath>../STM32_WPAN/app/PWM_handlers.c</FilePath>
             </File>
+            <File>
+              <FileName>appli_generic_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\appli_generic_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>appli_light_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\appli_light_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>appli_sensors_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\appli_sensors_client.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -732,6 +747,21 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/vendor.c</FilePath>
             </File>
+            <File>
+              <FileName>generic_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\generic_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>light_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\light_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>sensors_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\sensors_client.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -871,16 +901,6 @@
               <FileName>libBle_Mesh_CM4_Keil.lib</FileName>
               <FileType>4</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/Library/libBle_Mesh_CM4_Keil.lib</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/ST/STM32_WPAN/ble/cryptographic/Lib</GroupName>
-          <Files>
-            <File>
-              <FileName>STM32CryptographicV3.1.3_CM4_KEIL_1elfspf.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/cryptographic/Lib/STM32CryptographicV3.1.3_CM4_KEIL_1elfspf.lib</FilePath>
             </File>
           </Files>
         </Group>

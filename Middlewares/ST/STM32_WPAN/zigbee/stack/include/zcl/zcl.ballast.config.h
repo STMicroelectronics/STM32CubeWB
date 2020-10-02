@@ -42,8 +42,7 @@
  * Ballast Configuration Cluster Definitions
  *---------------------------------------------------------------
  */
-/* Ballast Configuration Attribute Sets */
-enum {
+enum ZbZclBallastConfigSvrAttrT {
     /* Ballast Information Attribute Set */
     ZCL_BALLAST_CONFIG_ATTR_PHY_MIN_LEVEL = 0x0000,
     ZCL_BALLAST_CONFIG_ATTR_PHY_MAX_LEVEL = 0x0001,
@@ -139,10 +138,8 @@ enum {
  * Ballast Configuration Cluster Definitions
  *---------------------------------------------------------------
  */
-struct ZbZclClusterT * ZbZclBallastConfigServerAlloc(struct ZigBeeT *zb,
-    uint8_t endpoint, uint8_t phyMin, uint8_t phyMax);
+struct ZbZclClusterT * ZbZclBallastConfigClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
-struct ZbZclClusterT * ZbZclBallastConfigClientAlloc(struct ZigBeeT *zb,
-    uint8_t endpoint);
+struct ZbZclClusterT * ZbZclBallastConfigServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, uint8_t phyMin, uint8_t phyMax);
 
 #endif

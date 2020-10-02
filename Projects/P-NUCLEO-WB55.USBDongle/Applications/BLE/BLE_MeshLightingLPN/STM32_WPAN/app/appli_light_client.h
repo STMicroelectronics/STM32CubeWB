@@ -31,10 +31,10 @@
 /* Exported variables  ------------------------------------------------------- */
 /* Application Variable-------------------------------------------------------*/
 /* Exported Functions Prototypes ---------------------------------------------*/
-MOBLE_RESULT Appli_LightClient_Lightness_Set(void);
+MOBLE_RESULT Appli_LightClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opcode, MOBLEUINT8* msg_params);
  
 
 #endif /* __APPLI_LIGHT_CLIENT_H */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

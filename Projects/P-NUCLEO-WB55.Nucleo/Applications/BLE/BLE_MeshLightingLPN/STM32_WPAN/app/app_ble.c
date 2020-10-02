@@ -18,6 +18,7 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -35,7 +36,7 @@
 
 #include "types.h"
 #include "ble_mesh.h"
-#include "appli_mesh.h"
+//#include "appli_mesh.h"
 #include "mesh_cfg.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -296,7 +297,10 @@ void APP_BLE_Init( void )
   /**
    * Starts the BLE Stack on CPU2
    */
-  SHCI_C2_BLE_Init( &ble_init_cmd_packet );
+  if (SHCI_C2_BLE_Init( &ble_init_cmd_packet ) != SHCI_Success)
+  {
+    Error_Handler();
+  }
 
   /**
    * Initialization of HCI & GATT & GAP layer
@@ -329,6 +333,7 @@ void APP_BLE_Init( void )
 
 SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 {
+/* callback of mesh Library to receive all GAP/GATT events*/  
   HCI_Event_CB(pckt);
 
 #if (LOW_POWER_FEATURE == 1)
@@ -480,11 +485,11 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    */
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data_Present = 0;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = 8;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = 16;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 1;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = 111111;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = 1;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = CFG_USED_FIXED_PIN;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = CFG_FIXED_PIN;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = CFG_BONDING_MODE;
   for (index = 0; index < 16; index++)
   {
     BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data[index] = (uint8_t) index;
@@ -492,13 +497,13 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 
   aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,
-                                         0,
-                                         0,
+                                         CFG_SC_SUPPORT,
+                                         CFG_KEYPRESS_NOTIFICATION_SUPPORT,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                         0
+                                         PUBLIC_ADDR
   );
 
   /**

@@ -6,7 +6,7 @@
 ******************************************************************************
 * @attention
 *
-* <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+* <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
 * All rights reserved.</center></h2>
 *
 * This software component is licensed by ST under Ultimate Liberty license
@@ -38,8 +38,15 @@
 #if ENABLE_SERIAL_PRVN
 #include "serial_prvn.h"
 #endif
+#ifdef ENABLE_SENSOR_MODEL_SERVER_SETUP
+#include "appli_sensor.h"
+#endif
 
-/** @addtogroup BLE_Mesh
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC_SETUP
+#include "appli_light_lc.h"
+#endif
+
+/** @addtogroup BlueNRG_Mesh
 *  @{
 */
 
@@ -309,6 +316,14 @@ void Serial_InterfaceProcess(void)
     Rcvd_String[stringSize] = 0; /* Make last char NULL for string comp */
 
     /* Check if correct string has been entered or not */
+        
+    if ( 1 != 1 )
+    {
+      /* This will ALWAYS FAIL
+         This statement is put here so, next all statements can enter 
+     "else if" 
+      */
+    }
 #ifdef ENABLE_SERIAL_CONTROL
     if (!strncmp(Rcvd_String, "ATCL", 4))
     {            
@@ -347,9 +362,22 @@ void Serial_InterfaceProcess(void)
        SerialPrvn_Process(Rcvd_String, stringSize);
     }
 #endif        
+#ifdef ENABLE_SENSOR_MODEL_SERVER_SETUP
+    else if(!strncmp(Rcvd_String, "ATSNR", 5))
+    {
+      Appli_Sensor_SerialCmd(Rcvd_String, stringSize);
+    }
+#endif
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC
+    else if(!strncmp(Rcvd_String, "ATLLC", 5))
+    {
+      Appli_Light_LC_SerialCmd(Rcvd_String, stringSize);
+    }
+#endif
+
     else
     {
-      TRACE_I(TF_SERIAL_CTRL,"Not Entered valid test parameters\r\n");  
+      TRACE_I(TF_SERIAL_PRINTS,"Not Entered valid test parameters\r\n");  
       SerialCurrentState = STATE_IDLE;
     }      
     while(stringSize)
@@ -405,7 +433,7 @@ void Serial_Init(void)
 */
 void BLEMesh_PrintStringCb(const char *message)
 {
-    TRACE_I(TF_SERIAL_CTRL,"%s\n\r", (char*)message);
+    TRACE_I(TF_SERIAL_PRINTS,"%s\n\r", (char*)message);
 }
 /**
 * @brief  Callback function to print data array on screen LSB first 
@@ -417,12 +445,11 @@ void BLEMesh_PrintDataCb(MOBLEUINT8* data, MOBLEUINT16 size)
 {
     for (int count=0; count<size; ++count)
     {
-        TRACE_I(TF_SERIAL_CTRL,"%02X", data[count]);
+        TRACE_I(TF_SERIAL_PRINTS,"%02X", data[count]);
     }
     
-    TRACE_I(TF_SERIAL_CTRL,"\n\r");
+    TRACE_I(TF_SERIAL_PRINTS,"\n\r");
 }
-
 /**
 * @}
 */
@@ -430,4 +457,4 @@ void BLEMesh_PrintDataCb(MOBLEUINT8* data, MOBLEUINT16 size)
 /**
 * @}
 */
-/******************* (C) COPYRIGHT 2018 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

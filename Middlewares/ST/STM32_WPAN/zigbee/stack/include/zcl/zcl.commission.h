@@ -90,36 +90,36 @@ enum ZbZclCommissionClientCommandsT {
 
 enum ZbZclCommissionServerAttrT {
     /* Startup Parameters */
-    ZCL_COMMISSION_CLI_ATTR_SHORT_ADDR = 0x0000,
-    ZCL_COMMISSION_CLI_ATTR_EPID = 0x0001,
-    ZCL_COMMISSION_CLI_ATTR_PANID = 0x0002,
-    ZCL_COMMISSION_CLI_ATTR_CHANNELMASK = 0x0003,
-    ZCL_COMMISSION_CLI_ATTR_PROTOCOLVER = 0x0004,
-    ZCL_COMMISSION_CLI_ATTR_STACKPROFILE = 0x0005,
-    ZCL_COMMISSION_CLI_ATTR_STARTUPCONTROL = 0x0006,
-    ZCL_COMMISSION_CLI_ATTR_TCADDR = 0x0010,
-    ZCL_COMMISSION_CLI_ATTR_TCMASTER = 0x0011,
-    ZCL_COMMISSION_CLI_ATTR_NWKKEY = 0x0012,
-    ZCL_COMMISSION_CLI_ATTR_USEINSECJOIN = 0x0013,
-    ZCL_COMMISSION_CLI_ATTR_PRECONFLINKKEY = 0x0014,
-    ZCL_COMMISSION_CLI_ATTR_NWKKEYSEQNUM = 0x0015,
-    ZCL_COMMISSION_CLI_ATTR_NWKKEYTYPE = 0x0016,
-    ZCL_COMMISSION_CLI_ATTR_NWKMGRADDR = 0x0017,
+    ZCL_COMMISSION_SVR_ATTR_SHORT_ADDR = 0x0000, /**< ShortAddress */
+    ZCL_COMMISSION_SVR_ATTR_EPID = 0x0001, /**< ExtendedPANId */
+    ZCL_COMMISSION_SVR_ATTR_PANID = 0x0002, /**< PANId */
+    ZCL_COMMISSION_SVR_ATTR_CHANNELMASK = 0x0003, /**< Channelmask */
+    ZCL_COMMISSION_SVR_ATTR_PROTOCOLVER = 0x0004, /**< ProtocolVersion */
+    ZCL_COMMISSION_SVR_ATTR_STACKPROFILE = 0x0005, /**< StackProfile */
+    ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL = 0x0006, /**< StartupControl */
+    ZCL_COMMISSION_SVR_ATTR_TCADDR = 0x0010, /**< TrustCenterAddress */
+    ZCL_COMMISSION_SVR_ATTR_TCMASTER = 0x0011, /**< TrustCenterMasterKey (Optional) */
+    ZCL_COMMISSION_SVR_ATTR_NWKKEY = 0x0012, /**< NetworkKey */
+    ZCL_COMMISSION_SVR_ATTR_USEINSECJOIN = 0x0013, /**< UseInsecureJoin */
+    ZCL_COMMISSION_SVR_ATTR_PRECONFLINKKEY = 0x0014, /**< PreconfiguredLinkKey */
+    ZCL_COMMISSION_SVR_ATTR_NWKKEYSEQNUM = 0x0015, /**< NetworkKeySeqNum */
+    ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE = 0x0016, /**< NetworkKeyType */
+    ZCL_COMMISSION_SVR_ATTR_NWKMGRADDR = 0x0017, /**< NetworkManagerAddress */
 
     /* Join Parameters */
-    ZCL_COMMISSION_CLI_ATTR_SCANATTEMPTS = 0x0020,
-    ZCL_COMMISSION_CLI_ATTR_TIMEBTWSCANS = 0x0021,
-    ZCL_COMMISSION_CLI_ATTR_REJOININTERVAL = 0x0022,
-    ZCL_COMMISSION_CLI_ATTR_MAXREJOININTERVAL = 0x0023,
+    ZCL_COMMISSION_SVR_ATTR_SCANATTEMPTS = 0x0020, /**< ScanAttempts (Optional) */
+    ZCL_COMMISSION_SVR_ATTR_TIMEBTWSCANS = 0x0021, /**< TimeBetweenScans (Optional) */
+    ZCL_COMMISSION_SVR_ATTR_REJOININTERVAL = 0x0022, /**< RejoinInterval (Optional) */
+    ZCL_COMMISSION_SVR_ATTR_MAXREJOININTERVAL = 0x0023, /**< MaxRejoinInterval (Optional) */
 
     /* End Device Parameters */
-    ZCL_COMMISSION_CLI_ATTR_POLLRATE = 0x0030,
-    ZCL_COMMISSION_CLI_ATTR_PARENTRETRYTHRESH = 0x0031,
+    ZCL_COMMISSION_SVR_ATTR_POLLRATE = 0x0030, /**< IndirectPollRate (Optional) */
+    ZCL_COMMISSION_SVR_ATTR_PARENTRETRYTHRESH = 0x0031, /**< ParentRetryThreshold (Optional) */
 
     /* Concentrator Parameters */
-    ZCL_COMMISSION_CLI_ATTR_CONCFLAG = 0x0040,
-    ZCL_COMMISSION_CLI_ATTR_CONCRADIUS = 0x0041,
-    ZCL_COMMISSION_CLI_ATTR_CONCDISCTIME = 0x0042
+    ZCL_COMMISSION_SVR_ATTR_CONCFLAG = 0x0040, /**< ConcentratorFlag (Optional) */
+    ZCL_COMMISSION_SVR_ATTR_CONCRADIUS = 0x0041, /**< ConcentratorRadius (Optional) */
+    ZCL_COMMISSION_SVR_ATTR_CONCDISCTIME = 0x0042 /**< ConcentratorDiscoveryTime (Optional) */
 };
 
 /*** Client Commands (Requests) */
@@ -188,78 +188,174 @@ struct ZbZclCommissionClientEnableInfoT {
 
 /*** Server API ***/
 
-/**
- * Commissioning Server Cluster Callbacks
- */
+/** Commissioning Server callbacks configuration */
 struct ZbZclCommissionServerCallbacksT {
-    enum ZclStatusCodeT (*restart_device)(struct ZbZclClusterT *clusterPtr,
+    enum ZclStatusCodeT (*restart_device)(struct ZbZclClusterT *cluster,
         struct ZbZclCommissionClientRestartDev *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
-    /**< Restart Device Request callback. Should call ZbZclCommissionServerSendRestartRsp
-     * to send response. Since the application will end up calling ZbStartup or similar, the
+    /**< Callback to application, invoked on receipt of Restart Device command.
+     * Should call ZbZclCommissionServerSendRestartRsp to send response.
+     * Since the application will end up calling ZbStartup or similar, the
      * application must wait and let the stack send the response before something like ZbStartup
-     * is called. 100 milliseconds should be sufficient (ZCL_COMMISSION_RESTART_DEVICE_DELAY_MS). */
+     * is called. 100 milliseconds should be sufficient (ZCL_COMMISSION_RESTART_DEVICE_DELAY_MS).
+     */
 
-    enum ZclStatusCodeT (*save_startup)(struct ZbZclClusterT *clusterPtr,
+    enum ZclStatusCodeT (*save_startup)(struct ZbZclClusterT *cluster,
         struct ZbZclCommissionClientSaveStartup *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
-    /**< Save Startup Request callback */
+    /**< Callback to application, invoked on receipt of Save Startup Parameters command. */
 
-    enum ZclStatusCodeT (*restore_startup)(struct ZbZclClusterT *clusterPtr,
+    enum ZclStatusCodeT (*restore_startup)(struct ZbZclClusterT *cluster,
         struct ZbZclCommissionClientRestoreStartup *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
-    /**< Restore Startup Request callback */
+    /**< Callback to application, invoked on receipt of Restore Startup Parameters command. */
 
-    enum ZclStatusCodeT (*reset_startup)(struct ZbZclClusterT *clusterPtr,
+    enum ZclStatusCodeT (*reset_startup)(struct ZbZclClusterT *cluster,
         struct ZbZclCommissionClientResetStartup *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
-    /**< Reset Startup Request callback */
+    /**< Callback to application, invoked on receipt of Reset Startup Parameters command. */
 };
 
+/**
+ * Create a new instance of the Commissioning Server cluster
+ * @param zb Zigbee stack instance
+ * @param profile Profile ID
+ * @param aps_secured APS Security - true if APS Security enabled, else false
+ * @param callbacks Structure containing any callback function pointers for this cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclCommissionServerAlloc(struct ZigBeeT *zb, uint16_t profile, bool aps_secured,
     struct ZbZclCommissionServerCallbacksT *callbacks, void *arg);
 
-/* Helper function to reset the startup configuration cluster attributes back to defaults. */
-enum ZclStatusCodeT ZbZclCommissionServerResetStartup(struct ZbZclClusterT *clusterPtr);
+/**
+ * Reset startup configurations cluster attributes back to defaults
+ * @param cluster Cluster instance from which to send this command
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionServerResetStartup(struct ZbZclClusterT *cluster);
 
-/* Helper function to load the startup configuration from the Cluster Server's Attributes
- * into the ZbStartupT struct. */
-enum ZclStatusCodeT ZbZclCommissionServerGetStartup(struct ZbZclClusterT *clusterPtr, struct ZbStartupT *config);
+/**
+ * Load startup configuration from Cluster Server's attributes to the stack's ZbStartupT structure
+ * @param cluster Cluster instance from which to send this command
+ * @param config Zigbee Stack Startup Configuration structure
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionServerGetStartup(struct ZbZclClusterT *cluster, struct ZbStartupT *config);
 
-/* Helper to configure MAC layer to listen for packets
- * If info = NULL, then Commissioning Server will stop processing any received Commissioning
- * packets. */
-enum ZclStatusCodeT ZbZclCommissionServerEnable(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclCommissionServerEnableInfoT *info);
+/**
+ * Enable the Commissioning Server by configuring the MAC layer to listen for packets
+ * If info = NULL, then Commissioning Server will stop processing any received Commissioning packets.
+ * @param cluster Cluster instance from which to send this command
+ * @param info Commissioning Server Enable Information structure
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionServerEnable(struct ZbZclClusterT *cluster, struct ZbZclCommissionServerEnableInfoT *info);
 
-enum ZclStatusCodeT ZbZclCommissionServerSendRestartRsp(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclAddrInfoT *dstInfo, struct ZbZclCommissionServerRestartDevRsp *rsp);
+/**
+ * Send a Restart Device Response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Restart Device Response command structure
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionServerSendRestartRsp(struct ZbZclClusterT *cluster,
+    struct ZbZclAddrInfoT *dst, struct ZbZclCommissionServerRestartDevRsp *rsp);
 
-enum ZclStatusCodeT ZbZclCommissionServerSendSaveStartupRsp(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclAddrInfoT *dstInfo, struct ZbZclCommissionServerSaveStartupRsp *rsp);
+/**
+ * Send a Save Startup Parameters Response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Save Startup Parameters Response command structure
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionServerSendSaveStartupRsp(struct ZbZclClusterT *cluster,
+    struct ZbZclAddrInfoT *dst, struct ZbZclCommissionServerSaveStartupRsp *rsp);
 
-enum ZclStatusCodeT ZbZclCommissionServerSendRestoreStartupRsp(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclAddrInfoT *dstInfo, struct ZbZclCommissionServerRestoreStartupRsp *rsp);
+/**
+ * Send a Restore Startup Parameters Response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Restore Startup Parameters Response command structure
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionServerSendRestoreStartupRsp(struct ZbZclClusterT *cluster,
+    struct ZbZclAddrInfoT *dst, struct ZbZclCommissionServerRestoreStartupRsp *rsp);
 
-enum ZclStatusCodeT ZbZclCommissionServerSendResetStartupRsp(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclAddrInfoT *dstInfo, struct ZbZclCommissionServerResetStartupRsp *rsp);
+/**
+ * Send a Reset Startup Parameters Response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Reset Startup Parameters Response command structure
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionServerSendResetStartupRsp(struct ZbZclClusterT *cluster,
+    struct ZbZclAddrInfoT *dst, struct ZbZclCommissionServerResetStartupRsp *rsp);
 
-/*** Client API */
+/* Commissioning Client */
+
+/**
+ * Create a new instance of the Commissioning Client cluster
+ * @param zb Zigbee stack instance
+ * @param profile Profile ID
+ * @param aps_secured APS Security - true if APS Security enabled, else false
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclCommissionClientAlloc(struct ZigBeeT *zb, uint16_t profile, bool aps_secured);
 
-/* Helper to configure MAC layer to listen for packets */
-enum ZclStatusCodeT ZbZclCommissionClientEnable(struct ZbZclClusterT *clusterPtr,
-    struct ZbZclCommissionClientEnableInfoT *info);
+/**
+ * Enable Commissioning Client by configuring MAC layer to listen for packets.
+ * @param cluster Cluster instance from which to send this command
+ * @param info Commissioning Client Enable Information structure
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionClientEnable(struct ZbZclClusterT *cluster, struct ZbZclCommissionClientEnableInfoT *info);
 
-enum ZclStatusCodeT ZbZclCommissionClientSendRestart(struct ZbZclClusterT *clusterPtr, uint64_t ext_addr,
+/**
+ * Send a Restart Device command
+ * @param cluster Cluster instance from which to send this command
+ * @param ext_addr Extended address of the device to send this command
+ * @param req Restart Device command structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionClientSendRestart(struct ZbZclClusterT *cluster, uint64_t ext_addr,
     struct ZbZclCommissionClientRestartDev *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclCommissionClientSendSaveStartup(struct ZbZclClusterT *clusterPtr, uint64_t ext_addr,
+/**
+ * Send a Save Startup Parameters command
+ * @param cluster Cluster instance from which to send this command
+ * @param ext_addr Extended address of the device to send this command
+ * @param req Save Startup Parameters command structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionClientSendSaveStartup(struct ZbZclClusterT *cluster, uint64_t ext_addr,
     struct ZbZclCommissionClientSaveStartup *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclCommissionClientSendRestoreStartup(struct ZbZclClusterT *clusterPtr, uint64_t ext_addr,
+/**
+ * Send a Restore Startup Parameters command
+ * @param cluster Cluster instance from which to send this command
+ * @param ext_addr Extended address of the device to send this command
+ * @param req Restore Startup Parameters command structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionClientSendRestoreStartup(struct ZbZclClusterT *cluster, uint64_t ext_addr,
     struct ZbZclCommissionClientRestoreStartup *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclCommissionClientSendResetStartup(struct ZbZclClusterT *clusterPtr, uint64_t ext_addr,
+/**
+ * Send a Reset Startup Parameters command
+ * @param cluster Cluster instance from which to send this command
+ * @param ext_addr Address including sequence number and tx options
+ * @param req Reset Startup Parameters command structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclCommissionClientSendResetStartup(struct ZbZclClusterT *cluster, uint64_t ext_addr,
     struct ZbZclCommissionClientResetStartup *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 

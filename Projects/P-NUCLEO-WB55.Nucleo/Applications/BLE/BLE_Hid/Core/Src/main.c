@@ -38,6 +38,7 @@
 
 
 /* Includes ------------------------------------------------------------------*/
+#include "main.h"
 #include "app_common.h"
 
 #include "app_entry.h"
@@ -59,6 +60,7 @@ static void SystemClock_Config( void );
 static void Reset_Device( void );
 static void Reset_IPCC( void );
 static void Init_Exti( void );
+void Error_Handler(void);
 
 /* Functions Definition ------------------------------------------------------*/
 
@@ -204,6 +206,18 @@ static void Init_RTC( void )
   LL_RTC_EnableWriteProtection(RTC);
 
   return;
+}
+
+  /**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+   */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+ 
+  /* USER CODE END Error_Handler_Debug */
 }
 
 /**

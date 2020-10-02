@@ -57,7 +57,7 @@ enum ZbZclOccupancySvrAttrT {
 #define OCC_SENSOR_ULTRASONIC               0x01
 #define OCC_SENSOR_PIR_ULTRASONIC           0x02
 
-struct ZbZclClusterT * ZbZclOccupancyClientAlloc(struct ZigBeeT *zb, uint8_t ept);
-struct ZbZclClusterT * ZbZclOccupancyServerAlloc(struct ZigBeeT *zb, uint8_t ept);
+struct ZbZclClusterT * ZbZclOccupancyClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
+struct ZbZclClusterT * ZbZclOccupancyServerAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 #endif /* ZCL_OCCUP_H */

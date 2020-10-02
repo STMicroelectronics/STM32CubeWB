@@ -75,20 +75,20 @@
 /* Zigbee Information Field
  * See Figure 13-10. Format of the ZigBee Information Field */
 /* Logical Type */
-#define ZCL_TL_ZBINFO_TYPE_MASK                     0x03
-#define ZCL_TL_ZBINFO_TYPE_COORD                    0x00
-#define ZCL_TL_ZBINFO_TYPE_ROUTER                   0x01
-#define ZCL_TL_ZBINFO_TYPE_END_DEVICE               0x02
+#define ZCL_TL_ZBINFO_TYPE_MASK                     0x03U
+#define ZCL_TL_ZBINFO_TYPE_COORD                    0x00U
+#define ZCL_TL_ZBINFO_TYPE_ROUTER                   0x01U
+#define ZCL_TL_ZBINFO_TYPE_END_DEVICE               0x02U
 /* Rx on when idle */
-#define ZCL_TL_ZBINFO_RX_ON_IDLE                    0x04
+#define ZCL_TL_ZBINFO_RX_ON_IDLE                    0x04U
 /* Reserved */
-#define ZCL_TL_ZBINFO_RESERVED                      0xf8
+#define ZCL_TL_ZBINFO_RESERVED                      0xf8U
 
 /* Internal use flags (don't get sent over-the-air)
  * EXEGIN - These used to be mixed with the ZCL_TL_ZBINFO_ flags, so for backward
  * compatibility make sure they don't conflict. */
-#define ZCL_TL_FLAGS_IS_TARGET                      (uint8_t)0x10
-#define ZCL_TL_FLAGS_USE_PERSIST                    (uint8_t)0x20
-#define ZCL_TL_FLAGS_FACTORY_RESET                  (uint8_t)0x40
+#define ZCL_TL_FLAGS_IS_TARGET                      0x10U
+#define ZCL_TL_FLAGS_USE_PERSIST                    0x20U
+#define ZCL_TL_FLAGS_FACTORY_RESET                  0x40U
 
 #endif

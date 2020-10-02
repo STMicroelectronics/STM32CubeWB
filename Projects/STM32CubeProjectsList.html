@@ -64,8 +64,8 @@
     <p>The provided examples can be tailored to run on any compatible hardware; user simply need to update the BSP drivers for his board, if it has the same hardware functions (LED, LCD display, pushbuttons...etc.). The BSP is based on a modular architecture that allows it to be ported easily to any hardware by just implementing the low level routines.</p>
 
     <p>
-    <div>The table below contains the list of examples provided within STM32CubeWB Firmware package.</div>
-    <div>In this table, the label <b>CubeMX</b> means the projects have been created using <a href="https://www.st.com/en/development-tools/stm32cubemx.html" target="_blank">STM32CubeMX</a>, the STM32Cube initialization code generator. Those projects can be opened with this tools to modify the projects itself. The others projects are manually created to demonstrate the product features.</div>
+      <div>The table below contains the list of examples provided within STM32CubeWB Firmware package.</div>
+      <div>In this table, the label <b>CubeMX</b> means the projects have been created using <a href="https://www.st.com/en/development-tools/stm32cubemx.html" target="_blank">STM32CubeMX</a>, the STM32Cube initialization code generator. Those projects can be opened with this tools to modify the projects itself. The others projects are manually created to demonstrate the product features.</div>
     </p>
 
     <p id="STM32WBxxImportantLink">
@@ -79,8 +79,6 @@
         <li>AN5289 : Building a Wireless application</li>
       </ul>
     </p>
-    
-    
 		<table border='1' bgcolor='#f0f0fF' >
 			<tr align=center style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;">
 				<td><b>Level</b></td>
@@ -2004,7 +2002,7 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td>9</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=95><p id="Applications">Applications</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=101><p id="Applications">Applications</p></td>
         <td align=left rowspan=26><p id="BLE">BLE</p></td>
         <td align=left><p id="BLE_Beacon">BLE_Beacon</p></td>
         <td align=left>
@@ -2064,7 +2062,7 @@ How to use the Heart Rate profile as specified by the BLE SIG.
       <tr align=center>
         <td align=left><p id="BLE_HeartRateFreeRTOS">BLE_HeartRateFreeRTOS</p></td>
         <td align=left>
-How to use the Heart Rate profile as specified by the BLE SIG.
+How to use the Heart Rate profile as specified by the BLE SIG with FreeRTOS.
 </td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -2072,9 +2070,8 @@ How to use the Heart Rate profile as specified by the BLE SIG.
       <tr align=center>
         <td align=left><p id="BLE_HeartRateFreeRTOS_ANCS">BLE_HeartRateFreeRTOS_ANCS</p></td>
         <td align=left>
-How to read notifications from Apple Notification Center Service (ANCS) as specified by Apple specification at:
-https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/
-and also use the Heart Rate profile as specified by the BLE SIG.
+How to read notifications from Apple Notification Center Service (ANCS) as specified by Apple specification 
+and use the Heart Rate profile as specified by the BLE SIG with FreeRTOS.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2082,9 +2079,8 @@ and also use the Heart Rate profile as specified by the BLE SIG.
       <tr align=center>
         <td align=left><p id="BLE_HeartRate_ANCS">BLE_HeartRate_ANCS</p></td>
         <td align=left>
-How to read notifications from Apple Notification Center Service (ANCS) as specified by Apple specification at:
-https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/
-and also use the Heart Rate profile as specified by the BLE SIG.
+How to read notifications from Apple Notification Center Service (ANCS) as specified by Apple specification
+and use Heart Rate profile as specified by the BLE SIG.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2092,7 +2088,7 @@ and also use the Heart Rate profile as specified by the BLE SIG.
       <tr align=center>
         <td align=left><p id="BLE_HeartRate_ota">BLE_HeartRate_ota</p></td>
         <td align=left>
-How to use the Heart Rate profile as specified by the BLE SIG.
+How to use the Heart Rate profile as specified by the BLE SIG to be downloaded with BLE OTA application.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2161,7 +2157,7 @@ How to use the Proximity profile as specified by the BLE SIG.
       <tr align=center>
         <td align=left><p id="BLE_RfWithFlash">BLE_RfWithFlash</p></td>
         <td align=left>
-This example is to demonstrate the capability to erase/write the flash while a Point-to-Point communication using BLE component is active. 
+How to demonstrate the capability to erase/write the flash while a Point-to-Point communication using BLE component is active. 
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2185,7 +2181,7 @@ How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
       <tr align=center>
         <td align=left><p id="BLE_p2pClient">BLE_p2pClient</p></td>
         <td align=left>
-This example is to demonstrate Point-to-Point communication using BLE component. 
+How to demonstrate Point-to-Point communication using BLE component (as GATT client). 
 </td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -2200,7 +2196,7 @@ This example is to demonstrate Point-to-Point communication using BLE component.
       <tr align=center>
         <td align=left><p id="BLE_p2pServer">BLE_p2pServer</p></td>
         <td align=left>
-This example is to demonstrate Point-to-Point communication using BLE component. 
+How to demonstrate Point-to-Point communication using BLE component (as GATT server). 
 </td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -2208,13 +2204,29 @@ This example is to demonstrate Point-to-Point communication using BLE component.
       <tr align=center>
         <td align=left><p id="BLE_p2pServer_ota">BLE_p2pServer_ota</p></td>
         <td align=left>
-This example is to demonstrate Point-to-Point communication using BLE component. 
+How to demonstrate Point-to-Point communication using BLE component (peripherical as GATT server) to be downloaded with BLE OTA application. 
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=1><p id="BLE_Thread">BLE_Thread</p></td>
+        <td align=left rowspan=3><p id="BLE_Thread">BLE_Thread</p></td>
+        <td align=left><p id="Ble_Thread_Dyn">Ble_Thread_Dyn</p></td>
+        <td align=left>
+How to use BLE application and Thread application in dynamic concurrent mode.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Ble_Thread_Dyn_SED">Ble_Thread_Dyn_SED</p></td>
+        <td align=left>
+How to use BLE application and Thread application in dynamic concurrent mode.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="Ble_Thread_Static">Ble_Thread_Static</p></td>
         <td align=left>
 How to use BLE application and Thread application in static concurrent mode.
@@ -2223,7 +2235,31 @@ How to use BLE application and Thread application in static concurrent mode.
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=1><p id="BLE_Zigbee">BLE_Zigbee</p></td>
+        <td align=left rowspan=4><p id="BLE_Zigbee">BLE_Zigbee</p></td>
+        <td align=left><p id="BLE_Zigbee_Dyn">BLE_Zigbee_Dyn</p></td>
+        <td align=left>
+How to use BLE application and Zigbee application in dynamic concurrent  mode.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_Zigbee_Dyn_NVM">BLE_Zigbee_Dyn_NVM</p></td>
+        <td align=left>
+How to use BLE application and Zigbee application in dynamic concurent mode with Zigbee persistent data feature.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_Zigbee_Dyn_SED">BLE_Zigbee_Dyn_SED</p></td>
+        <td align=left>
+How to use BLE application and Zigbee application in dynamic concurrent  mode.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_Zigbee_Static">BLE_Zigbee_Static</p></td>
         <td align=left>
 How to use BLE application and Zigbee application in static concurrent mode.
@@ -2328,7 +2364,7 @@ How to use timers of CMSIS RTOS API.
         <td align=left rowspan=3><p id="LLD_BLE">LLD_BLE</p></td>
         <td align=left><p id="LLD_BLE_Chat">LLD_BLE_Chat</p></td>
         <td align=left>
-This example is to communicate Over The Air (OTA) using LLD_BLE between 2 boards in BLE Radio format not BLE Stack protocol.
+How to create a "Chat" talk between 2 STM32WB55xx boards using terminals.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2336,8 +2372,7 @@ This example is to communicate Over The Air (OTA) using LLD_BLE between 2 boards
       <tr align=center>
         <td align=left><p id="LLD_BLE_Pressbutton">LLD_BLE_Pressbutton</p></td>
         <td align=left>
-This example is to communicate Over The Air (OTA) using LLD_BLE between 2 boards (one send, other receive)
-in BLE Radio format not BLE Stack protocol.
+How to make blinking LED between 2 STM32WB55xx boards by pressing buttons.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2345,7 +2380,7 @@ in BLE Radio format not BLE Stack protocol.
       <tr align=center>
         <td align=left><p id="LLD_BLE_Proximity">LLD_BLE_Proximity</p></td>
         <td align=left>
-This example is to communicate Over The Air (OTA) using LLD_BLE between several boards in BLE Radio format not BLE Stack protocol. 
+How to create a Proximity detection with all other boards that are running this same application.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2371,6 +2406,15 @@ How to use MAC 802.15.4 data transmission with STOP1 low power mode enabled.
         <td align=left><p id="Mac_802_15_4_RFD">Mac_802_15_4_RFD</p></td>
         <td align=left>
 How to use MAC 802.15.4 Association and Data exchange.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left rowspan=1><p id="Phy_802_15_4">Phy_802_15_4</p></td>
+        <td align=left><p id="Phy_802_15_4_Cli">Phy_802_15_4_Cli</p></td>
+        <td align=left>  
+How to create a "PHY_802.15.4 command line interface" application on STM32WB55xx boards using terminals.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2743,7 +2787,7 @@ How to use Power Profile cluster as a server on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_PressMeas_Client_Router">Zigbee_PressMeas_Client_Router</p></td>
         <td align=left>
-How to use PressMeas cluster on a Centralized Zigbee network with device acting as router.
+How to use Pressure Measurement cluster on a Centralized Zigbee network with device acting as router.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2773,9 +2817,9 @@ How to use SE Messaging cluster on a Centralized Zigbee network with device acti
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of applications: 111</b></td>
+        <td colspan="3"><b>Total number of applications: 117</b></td>
         <td>18</td>
-        <td>93</td>
+        <td>99</td>
       </tr>
       <tr align=center>
         <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=2><p id="Demonstrations">Demonstrations</p></td>
@@ -2794,9 +2838,9 @@ Cortex-M devices that can be plugged on a STM32 Nucleo board.
         <td>1</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-      	<td colspan="4"><b>Total number of projects: 308</b></td>
+      	<td colspan="4"><b>Total number of projects: 314</b></td>
       	<td>19</td>
-      	<td>289</td>
+      	<td>295</td>
       </tr>
     </table>
   </body>

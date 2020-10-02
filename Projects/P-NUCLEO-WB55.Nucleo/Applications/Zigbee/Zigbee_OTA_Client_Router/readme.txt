@@ -192,7 +192,7 @@ To setup the application :
  To run the application :
 
   a)  Start the first board. It must be the coordinator of the Zigbee network so in this demo application it is
-      the device running Zigbee_OTA_Server_Coord application (Device2 in the above diagram). 
+      the device running Zigbee_OTA_Server_Coord application (Device1 in the above diagram). 
       Wait for the Blue LED (LED1) ON. 
       
   b)  Start the second board. This board is configured as Zigbee router and will be attached to the network created 

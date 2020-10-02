@@ -47,7 +47,7 @@
  *---------------------------------------------------------------
  */
 /* Alarms cluster attribute identifiers. */
-enum {
+enum ZbZclAlarmsAttrT {
     ZCL_ALARM_ATTR_COUNT = 0x0000
 };
 
@@ -73,12 +73,8 @@ enum {
 /*
  * Callback on Alarm Client Cluster when an alarm is received
  */
-typedef void (*ZbZclAlarmClientCallbackT)
-    (void *arg,          /* supplied argument */
-    uint16_t nwk_addr, /* address where the alarm originates */
-    uint8_t endpoint, /* endpoint from which it originates */
-    uint8_t alarm_code, /* code of detected alarm condition */
-    uint16_t cluster_id); /* cluster where alarm condition occurred */
+typedef void (*ZbZclAlarmClientCallbackT)(void *arg, uint16_t nwk_addr, uint8_t endpoint,
+    uint8_t alarm_code, uint16_t cluster_id);
 
 /*---------------------------------------------------------------
  * Function Declarations

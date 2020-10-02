@@ -18,6 +18,7 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 
@@ -28,6 +29,7 @@
 /* Private typedef -----------------------------------------------------------*/
 typedef struct
 {
+  uint64_t LpTimeDiffVal;
   uint32_t LpTimeLeftOnEntry;
   uint8_t LpTimerFreeRTOS_Id;
 } LpTimerContext_t;
@@ -60,19 +62,20 @@ typedef struct
  */
 #if ( CFG_LPM_SUPPORTED != 0)
 static uint32_t ulTimerCountsForOneTick;
+
 static LpTimerContext_t LpTimerContext;
 #endif
-
 /* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 #if ( CFG_LPM_SUPPORTED != 0)
-static void LpTimerCb( void );
 static void LpTimerInit( void );
+static void LpTimerCb( void );
 static void LpTimerStart( uint32_t time_to_sleep );
 static void LpEnter( void );
 static uint32_t LpGetElapsedTime( void );
 void vPortSetupTimerInterrupt( void );
 #endif
+
 /* Functions Definition ------------------------------------------------------*/
 
 /**
@@ -198,6 +201,7 @@ void vPortSetupTimerInterrupt( void )
 static void LpTimerInit( void )
 {
   ( void ) HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(LpTimerContext.LpTimerFreeRTOS_Id), hw_ts_SingleShot, LpTimerCb);
+  LpTimerContext.LpTimeDiffVal = 0;
 
   return;
 }
@@ -219,6 +223,7 @@ static void LpTimerCb( void )
   return;
 }
 #endif
+
 /**
  * @brief  Request to start a low power timer ( running is stop mode )
  *
@@ -228,52 +233,15 @@ static void LpTimerCb( void )
 #if ( CFG_LPM_SUPPORTED != 0)
 static void LpTimerStart( uint32_t time_to_sleep )
 {
+  uint64_t time;
+
   /* Converts the number of FreeRTOS ticks into hw timer tick */
-  if(time_to_sleep <=  0x10C6)
-  {
-    /**
-     * ( time_to_sleep * 1000 * 1000 ) fit a 32bits word
-     */
-    time_to_sleep = (time_to_sleep * 1000 * 1000 );
-    time_to_sleep = time_to_sleep / ( CFG_TS_TICK_VAL * configTICK_RATE_HZ );
-  }
-  else if(time_to_sleep <= 0x418937)
-  {
-    /**
-     * ( time_to_sleep * 1000 ) fit a 32bits word
-     */
-    time_to_sleep = (time_to_sleep * 1000);
-    time_to_sleep = time_to_sleep / ( CFG_TS_TICK_VAL * configTICK_RATE_HZ );
-    if(time_to_sleep <= 0x418937)
-    {
-      /**
-       * ( time_to_sleep * 1000 ) fit a 32bits word
-       */
-      time_to_sleep = (time_to_sleep * 1000);
-    }
-    else
-    {
-      time_to_sleep = (~0); /* Max value */
-    }
-  }
-  else
-  {
-    time_to_sleep = time_to_sleep / ( CFG_TS_TICK_VAL * configTICK_RATE_HZ );
-    if(time_to_sleep <= 0x10C6)
-    {
-      /**
-       * ( time_to_sleep * 1000 * 1000 ) fit a 32bits word
-       */
-      time_to_sleep = (time_to_sleep * 1000 * 1000 );
-    }
-    else
-    {
-      time_to_sleep = (~0); /* Max value */
-    }
-  }
-
-  HW_TS_Start(LpTimerContext.LpTimerFreeRTOS_Id, time_to_sleep);
-
+  
+  time = (time_to_sleep * 1000 * 1000 );
+  time = time / ( CFG_TS_TICK_VAL * configTICK_RATE_HZ );
+  
+  HW_TS_Start(LpTimerContext.LpTimerFreeRTOS_Id, (uint32_t)time);
+  
   /**
    * There might be other timers already running in the timer server that may elapse
    * before this one.
@@ -311,18 +279,33 @@ static void LpEnter( void )
 #if ( CFG_LPM_SUPPORTED != 0)
 static uint32_t LpGetElapsedTime( void )
 {
-  uint64_t val_ticks, time_us;
+  uint64_t val_ticks, time_us, diff_ps;
+  uint32_t LpTimeLeftOnExit;
 
-  time_us = (CFG_TS_TICK_VAL) * (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - HW_TS_RTC_ReadLeftTicksToCount( ));
+  LpTimeLeftOnExit = HW_TS_RTC_ReadLeftTicksToCount();    
+  time_us = (CFG_TS_TICK_VAL) * (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - LpTimeLeftOnExit);
   
+  /* Corrects the time precision lost in CFG_TS_TICK_VAL computation */
+  
+  /* Compute the amount of pico seconds lost at each TS ticks */
+  diff_ps = DIVR( ((uint64_t)CFG_RTCCLK_DIV * 1000000 * 1000000), (uint64_t)LSE_VALUE );
+  diff_ps -= DIVF( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE ) * 1000000;
+  /* Compute the total amount of time shift */  
+  diff_ps *= (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - LpTimeLeftOnExit);
+  
+  /* Save the time shift for next time */
+  LpTimerContext.LpTimeDiffVal += diff_ps;
+
+  while(LpTimerContext.LpTimeDiffVal >= (uint64_t)(1000 * 1000))
+  {
+    /* Reports the time difference into returned time elapsed value */
+    time_us++;
+    LpTimerContext.LpTimeDiffVal -= (uint64_t)(1000 * 1000);
+  }
+
+  /* Convert uS time into OS ticks */
   val_ticks = time_us * configTICK_RATE_HZ;
   val_ticks = val_ticks / (1000 * 1000);
-  
-  /* add a tick if the time elapsed is above 50 % of a tick */
-  if( (time_us % (portTICK_PERIOD_MS * 1000) > (portTICK_PERIOD_MS * 1000 / 2)) )
-  {
-    val_ticks++;
-  }
 
   /**
    * The system may have been out from another reason than the timer
@@ -335,4 +318,5 @@ static uint32_t LpGetElapsedTime( void )
   return (uint32_t)val_ticks;
 }
 #endif
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

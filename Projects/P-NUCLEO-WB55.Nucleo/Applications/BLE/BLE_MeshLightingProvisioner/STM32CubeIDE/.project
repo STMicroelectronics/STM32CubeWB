@@ -237,6 +237,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/appli_sensor.c</locationURI>
 		</link>
 		<link>
+			<name>Application/STM32_WPAN/app/appli_sensors_client.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/appli_sensors_client.c</locationURI>
+		</link>
+		<link>
 			<name>Application/STM32_WPAN/app/appli_vendor.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/appli_vendor.c</locationURI>
@@ -340,6 +345,11 @@
 			<name>Middlewares/STM32_WPAN/ble/blesvc/sensors.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/sensors.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/ble/blesvc/sensors_client.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/sensors_client.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/ble/blesvc/svc_ctl.c</name>

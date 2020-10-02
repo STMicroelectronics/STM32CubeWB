@@ -23,9 +23,9 @@
 #define HW_CONF_H
 
 /******************************************************************************
-* Semaphores
-* THIS SHALL NO BE CHANGED AS THESE SEMAPHORES ARE USED AS WELL ON THE CM0+
-*****************************************************************************/
+ * Semaphores
+ * THIS SHALL NO BE CHANGED AS THESE SEMAPHORES ARE USED AS WELL ON THE CM0+
+ *****************************************************************************/
 /**
 *  Index of the semaphore used by CPU2 to prevent the CPU1 to either write or erase data in flash
 *  The CPU1 shall not either write or erase in flash when this semaphore is taken by the CPU2

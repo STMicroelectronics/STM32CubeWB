@@ -158,7 +158,7 @@ static void APPE_StatusNot( SHCI_TL_CmdStatus_t status )
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
  * When the system event is both :
  *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
- *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ *    - reported by the FUS (sysevt_ready_rsp == FUS_FW_RUNNING)
  * The buffer shall not be released
  * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
  * When the status is not filled, the buffer is released by default

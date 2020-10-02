@@ -1,4 +1,4 @@
-/* Copyright [2019 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_METER_ID_H
 #define ZCL_METER_ID_H
@@ -33,7 +33,7 @@
  */
 
 /* Attribute Identifiers */
-enum {
+enum ZbZclMeterIdSvrAttrT {
     ZCL_METER_ID_ATTR_COMPANY_NAME = 0x0000,
     ZCL_METER_ID_ATTR_METER_TYPE_ID = 0x0001,
     ZCL_METER_ID_ATTR_DATA_QUAL_ID = 0x0004,
@@ -48,9 +48,8 @@ enum {
     ZCL_METER_ID_ATTR_POWER_THRESH = 0x000E
 };
 
-/* Level Status values */
-#define ZCL_METER_ID_COMPANY_NAME_LEN             32U
-#define ZCL_METER_ID_POD_LEN                      32U
+#define ZCL_METER_ID_COMPANY_NAME_LEN_MAX   16U
+#define ZCL_METER_ID_POD_LEN_MAX            16U
 
 /*---------------------------------------------------------------
  * Meter Identification Cluster Definitions

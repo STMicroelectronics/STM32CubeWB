@@ -31,6 +31,7 @@
 #include "dbg_trace.h"
 #include "shci.h"
 
+
 /* INSTANCE */
 otStateChangedCallback otStateChangedCb = NULL;
 
@@ -78,10 +79,11 @@ typedef void (*CoapRequestHandlerCallback)(otCoapHeader *aHeader, otMessage *aMe
 typedef void (*CoapResponseHandlerCallback)(otCoapHeader *aHeader, otMessage *aMessage,
                                       const otMessageInfo *aMessageInfo, otError aResult);
 
-CoapRequestHandlerCallback coapRequestHandlerCb = NULL;
+otCoapRequestHandler coapRequestHandlerCb = NULL;
 otCoapRequestHandler defaultCoapRequestHandlerCb = NULL;
-CoapResponseHandlerCallback coapResponseHandlerCb = NULL;
-
+otCoapResponseHandler coapResponseHandlerCb = NULL;
+STCoapSpecificRequestContextType * mySTCoapContext;
+STCoapSpecificResponseContextType * mySTCoapResponseContext; 
 #if OPENTHREAD_ENABLE_JAM_DETECTION
 /* JAM_DETECTION */
 otJamDetectionCallback otJamDetectionCallbackCb = NULL;
@@ -105,6 +107,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
 {
     HAL_StatusTypeDef status = HAL_OK;
 
+
     /* Get pointer on received event buffer from M0 */
     Thread_OT_Cmd_Request_t* p_notification = THREAD_Get_NotificationPayloadBuffer();
 
@@ -118,13 +121,14 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
         }
         break;
     case MSG_M0TOM4_COAP_REQUEST_HANDLER:
-        coapRequestHandlerCb = (CoapRequestHandlerCallback) p_notification->Data[0];
-
+        mySTCoapContext = (STCoapSpecificRequestContextType * ) p_notification->Data[0];
+        coapRequestHandlerCb = mySTCoapContext->mHandler;
         if (coapRequestHandlerCb != NULL)
         {
-            coapRequestHandlerCb( (otCoapHeader *) p_notification->Data[1],
-                    (otMessage *) p_notification->Data[2],
-                    (otMessageInfo *) p_notification->Data[3]);
+            coapRequestHandlerCb(mySTCoapContext->mContext,
+                                (otCoapHeader *) p_notification->Data[1],
+                                (otMessage *) p_notification->Data[2],
+                                (otMessageInfo *) p_notification->Data[3]);
         }
         break;
     case MSG_M0TOM4_DEFAULT_COAP_REQUEST_HANDLER:
@@ -136,11 +140,13 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
                     (otMessageInfo *) p_notification->Data[3]);
         }
         break;
-    case MSG_M0TOM4_COAP_RESPONSE_HANDLER:
-        coapResponseHandlerCb = (CoapResponseHandlerCallback) p_notification->Data[0];
+    case MSG_M0TOM4_COAP_RESPONSE_HANDLER: 
+        mySTCoapResponseContext = (STCoapSpecificResponseContextType * ) p_notification->Data[0];
+        coapResponseHandlerCb = mySTCoapResponseContext->mHandler;
         if (coapResponseHandlerCb != NULL)
         {
-            coapResponseHandlerCb( (otCoapHeader *) p_notification->Data[1],
+            coapResponseHandlerCb(mySTCoapResponseContext->mContext,
+                    (otCoapHeader *) p_notification->Data[1],
                     (otMessage *) p_notification->Data[2],
                     (otMessageInfo *) p_notification->Data[3],
                     (otError) p_notification->Data[4]);

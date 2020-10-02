@@ -46,7 +46,6 @@ enum ZbZclTempMeasSvrAttrT {
 struct ZbZclClusterT * ZbZclTempMeasClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 /* Temperature Measurement Server */
-struct ZbZclClusterT * ZbZclTempMeasServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
-    int16_t min, int16_t max, uint16_t tolerance);
+struct ZbZclClusterT * ZbZclTempMeasServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, int16_t min, int16_t max, uint16_t tolerance);
 
 #endif

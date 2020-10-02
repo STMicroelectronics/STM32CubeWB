@@ -18,6 +18,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "main.h"
@@ -83,7 +84,6 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
-
 
 /* USER CODE BEGIN PV */
 
@@ -232,7 +232,7 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
  * When the system event is both :
  *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
- *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ *    - reported by the FUS (sysevt_ready_rsp == FUS_FW_RUNNING)
  * The buffer shall not be released
  * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
  * When the status is not filled, the buffer is released by default
@@ -370,6 +370,7 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
       }
       break;
 
+      
   default:
       break;
 

@@ -19,6 +19,7 @@
 
 
 /* Includes ------------------------------------------------------------------*/
+#include "main.h"
 #include "app_common.h"
 
 #include "dbg_trace.h"
@@ -73,18 +74,6 @@ typedef struct _tSecurityParams
    * bonding mode of the device
    */
   uint8_t bonding_mode;
-
-  /**
-   * Flag to tell whether OOB data has
-   * to be used during the pairing process
-   */
-  uint8_t OOB_Data_Present;
-
-  /**
-   * OOB data to be used in the pairing process if
-   * OOB_Data_Present is set to TRUE
-   */
-  uint8_t OOB_Data[16];
 
   /**
    * this variable indicates whether to use a fixed pin
@@ -301,7 +290,10 @@ void APP_BLE_Init( void )
   /**
    * Starts the BLE Stack on CPU2
    */
-  SHCI_C2_BLE_Init( &ble_init_cmd_packet );
+  if (SHCI_C2_BLE_Init( &ble_init_cmd_packet ) != SHCI_Success)
+  {
+    Error_Handler();
+  }
 
   /**
    * Initialization of HCI & GATT & GAP layer
@@ -413,7 +405,6 @@ static void Ble_Tl_Init( void )
 static void Ble_Hci_Gap_Gatt_Init(void){
 
   uint8_t role;
-  uint8_t index;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
   uint32_t srd_bd_addr[2];
@@ -512,26 +503,21 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    * Initialize authentication
    */
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data_Present = 0;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = 8;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = 16;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = 1;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = 111111;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = 1;
-  for (index = 0; index < 16; index++)
-  {
-    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data[index] = (uint8_t) index;
-  }
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = CFG_USED_FIXED_PIN;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = CFG_FIXED_PIN;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = CFG_BONDING_MODE;
 
   aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,
-                                         0,
-                                         0,
+                                         CFG_SC_SUPPORT,
+                                         CFG_KEYPRESS_NOTIFICATION_SUPPORT,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                         0
+                                         PUBLIC_ADDR
   );
 
   /**
@@ -770,8 +756,17 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
         case EVT_BLUE_GAP_PASS_KEY_REQUEST:
           APP_DBG_MSG("respond to the passkey request\n");
-          aci_gap_pass_key_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 0x00001234);
+          aci_gap_pass_key_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 111111);
         break;
+        
+        case (EVT_BLUE_GAP_NUMERIC_COMPARISON_VALUE):
+          APP_DBG_MSG("Hex_value = %lx\n",
+                      ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
+
+          aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 1); /* CONFIRM_YES = 1 */
+
+          APP_DBG_MSG("\r\n\r** aci_gap_numeric_comparison_value_confirm_yesno-->YES \n");
+          break;
 
         case EVT_BLUE_GATT_TX_POOL_AVAILABLE:
           DTS_App_TxPoolAvailableNotification();

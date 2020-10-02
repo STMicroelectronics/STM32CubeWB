@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -44,12 +44,10 @@
 void SetLed(int state);
 BUTTON_STATE GetButtonState(void);
 BUTTON_STATE GetButton2State(void);
-bool Accel_Process(uint8_t *evt);
-bool Temperature_Read(int16_t *data);
 void InitDevice(void);
 
 void ShouldSleepFunc(void);
 
 #endif /* _HAL_H_ */
-/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

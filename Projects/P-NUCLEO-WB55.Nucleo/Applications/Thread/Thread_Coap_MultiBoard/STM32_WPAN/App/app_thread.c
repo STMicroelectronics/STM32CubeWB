@@ -17,6 +17,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "utilities_common.h"
@@ -89,24 +90,18 @@ static void RxCpltCallback(void);
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN PFP */
-static void APP_THREAD_DummyReqHandler(void            * p_context,
-    otCoapHeader        * pHeader,
-    otMessage       * pMessage,
-    const otMessageInfo * pMessageInfo);
-static void APP_THREAD_CoapRequestHandler(otCoapHeader        * pHeader,
-    otMessage       * pMessage,
-    const otMessageInfo * pMessageInfo);
-static void APP_THREAD_CoapRespHandler(otCoapHeader        * pHeader,
+static void APP_THREAD_CoapRequestHandler(void                * pContext,
+                                          otCoapHeader        * pHeader,
+                                          otMessage           * pMessage,
+                                          const otMessageInfo * pMessageInfo);
+static void APP_THREAD_CoapRespHandler(
+    void            * pContext,   
+    otCoapHeader    * pHeader,
     otMessage       * pMessage,
     const otMessageInfo * pMessageInfo,
     otError         Result);
 static void APP_THREAD_DataRespSend(otCoapHeader        * pRequestHeader,
     const otMessageInfo * pMessageInfo);
-static void APP_THREAD_DummyRespHandler(void            * p_context,
-    otCoapHeader        * pHeader,
-    otMessage       * pMessage,
-    const otMessageInfo * pMessageInfo,
-    otError         Result);
 static void APP_THREAD_SendCoapMsg(void);
 static void APP_THREAD_SendNextbuffer(void);
 static void APP_THREAD_IdentifyBoard(void);
@@ -141,7 +136,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[size
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
 
 /* USER CODE BEGIN PV */
-static otCoapResource OT_Ressource = {C_RESSOURCE, APP_THREAD_DummyReqHandler, (void*)APP_THREAD_CoapRequestHandler, NULL};
+static otCoapResource OT_Ressource = {C_RESSOURCE, APP_THREAD_CoapRequestHandler,"myContext", NULL};
 static otMessageInfo OT_MessageInfo = {0};
 static otCoapHeader  OT_Header = {0};
 static uint8_t OT_Command = 0;
@@ -536,8 +531,8 @@ static void APP_THREAD_SendCoapUnicastRequest(uint8_t device_receiver)
   error = otCoapSendRequest(NULL,
       pOT_Message,
       &OT_MessageInfo,
-      &APP_THREAD_DummyRespHandler,
-      (void*)&APP_THREAD_CoapRespHandler);
+      &APP_THREAD_CoapRespHandler,
+      "myContext");
 
   if (error != OT_ERROR_NONE && pOT_Message != NULL)
   {
@@ -547,29 +542,18 @@ static void APP_THREAD_SendCoapUnicastRequest(uint8_t device_receiver)
 }
 
 /**
- * @brief Dummy request handler
- *
- * @param None
- * @retval None
- */
-static void APP_THREAD_DummyReqHandler(void            * p_context,
-    otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo)
-{
-}
-
-/**
  * @brief Handler called when the server receives a COAP request.
  *
+ * @param pContext : Context
  * @param pHeader : Header
  * @param pMessage : Message
  * @param pMessageInfo : Message information
  * @retval None
  */
-static void APP_THREAD_CoapRequestHandler(otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo)
+static void APP_THREAD_CoapRequestHandler(void                * pContext,
+                                          otCoapHeader        * pHeader,
+                                          otMessage           * pMessage,
+                                          const otMessageInfo * pMessageInfo)
 {
   APP_DBG(" ********* APP_THREAD_CoapRequestHandler \r\n");
   do
@@ -719,13 +703,16 @@ static void APP_THREAD_AllocateUnicastIpAddr(uint8_t boardId, uint8_t flagNewIpA
  * @brief This function manages the data response handler
  *        and reschedules the sending of data.
  *
+ * @param pContext context
  * @param pHeader  header
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result
  * @retval None
  */
-static void APP_THREAD_CoapRespHandler(otCoapHeader        * pHeader,
+static void APP_THREAD_CoapRespHandler(
+    void            * pContext,
+    otCoapHeader    * pHeader,
     otMessage       * pMessage,
     const otMessageInfo * pMessageInfo,
     otError         Result)
@@ -738,26 +725,6 @@ static void APP_THREAD_CoapRespHandler(otCoapHeader        * pHeader,
   {
     APP_THREAD_Error(ERR_THREAD_RESPONSE_HANDLER, Result);
   }
-}
-
-/**
- * @brief This function is used to set the EndDevice mode
- *
- * @param None
- * @retval None
- */
-static void APP_THREAD_DummyRespHandler(void                * p_context,
-    otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo,
-    otError             Result)
-{
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(p_context);
-  UNUSED(pHeader);
-  UNUSED(pMessage);
-  UNUSED(pMessageInfo);
-  UNUSED(Result);
 }
 
 /**

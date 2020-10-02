@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    ble_defs.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   This file contains definitions used for BLE Stack interface.
  *****************************************************************************
  * @attention

@@ -54,8 +54,6 @@ void APP_ZIGBEE_ProcessRequestM0ToM4(void);
 void APP_ZIGBEE_TL_INIT(void);
 void Pre_ZigbeeCmdProcessing(void);
 void APP_ZIGBEE_Stop(void);
-enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT *zb);
-bool APP_ZIGBEE_persist_save(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

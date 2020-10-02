@@ -41,8 +41,8 @@
 
 /* DoorLock specific defines -------------------------------------------------*/
 #define USER_ID                                     0x1
-#define USER_STATUS                                 DOORLOCK_USER_STATUS_OCC_ENABLED
-#define USER_TYPE                                   DOORLOCK_USER_TYPE_UNRESTRICTED
+#define USER_STATUS                                 ZCL_DRLK_USER_STATUS_OCC_ENABLED
+#define USER_TYPE                                   ZCL_DRLK_USER_TYPE_UNRESTRICTED
 #define PIN_CODE                                    "PASSWD"
 
 /* external definition */
@@ -162,7 +162,7 @@ static void APP_ZIGBEE_DoorLock_Client_Init(void){
   DoorLockSetPinReq.user_status = USER_STATUS;
   DoorLockSetPinReq.user_type = USER_TYPE;
   DoorLockSetPinReq.pin_len = sizeof(PIN_CODE);
-  memset(DoorLockSetPinReq.pin, 0, DOORLOCK_MAX_PIN);
+  memset(DoorLockSetPinReq.pin, 0, ZCL_DRLK_MAX_PIN_LEN);
   memcpy(DoorLockSetPinReq.pin, PIN_CODE, DoorLockSetPinReq.pin_len);
   
   /* Send the request */ 
@@ -194,7 +194,7 @@ static void APP_ZIGBEE_DoorLock_Client_Send_Lock(void){
   /* Creating a request for the unlock cmd */ 
   memset(&ZbZclDoorLockLockDoorReq, 0, sizeof(ZbZclDoorLockLockDoorReq));
   ZbZclDoorLockLockDoorReq.pin_len = sizeof(PIN_CODE);
-  memset(ZbZclDoorLockLockDoorReq.pin, 0, DOORLOCK_MAX_PIN);
+  memset(ZbZclDoorLockLockDoorReq.pin, 0, ZCL_DRLK_MAX_PIN_LEN);
   memcpy(ZbZclDoorLockLockDoorReq.pin, PIN_CODE, ZbZclDoorLockLockDoorReq.pin_len);
   
   /* Send the request */ 
@@ -226,7 +226,7 @@ static void APP_ZIGBEE_DoorLock_Client_Send_Unlock(void){
   /* Creating a request for the unlock cmd */ 
   memset(&DoorLockUnlockDoorReq, 0, sizeof(DoorLockUnlockDoorReq));
   DoorLockUnlockDoorReq.pin_len = sizeof(PIN_CODE);
-  memset(DoorLockUnlockDoorReq.pin, 0, DOORLOCK_MAX_PIN);
+  memset(DoorLockUnlockDoorReq.pin, 0, ZCL_DRLK_MAX_PIN_LEN);
   memcpy(DoorLockUnlockDoorReq.pin, PIN_CODE, DoorLockUnlockDoorReq.pin_len);
   
   /* Send the request */ 
@@ -253,7 +253,7 @@ static void APP_ZIGBEE_DoorLock_Client_Send_UnlockWithWrongPIN(void){
   
   /* Creating a request for the unlock cmd  with a wrong pin (set to 0) */ 
   DoorLockUnlockDoorReq.pin_len = 1;
-  memset(DoorLockUnlockDoorReq.pin, 0, DOORLOCK_MAX_PIN);
+  memset(DoorLockUnlockDoorReq.pin, 0, ZCL_DRLK_MAX_PIN_LEN);
   memcpy(DoorLockUnlockDoorReq.pin, 0, 1);
   
   /* Send the request */ 
@@ -335,27 +335,27 @@ static void APP_ZIGBEE_DoorLock_Cmd_Rsp_Mgmt(struct ZbZclCommandRspT *zcl_rsp){
   
   memcpy(&rsp_status, zcl_rsp->payload, sizeof(rsp_status));
   switch(zcl_rsp->hdr.cmdId){
-    case ZCL_DOORLOCK_SVR_LOCK_RSP:
+    case ZCL_DRLK_SVR_LOCK_RSP:
       /* DoorLock lock cmd response */
-      if (rsp_status != DOORLOCK_STATUS_SUCCESS) {
+      if (rsp_status != ZCL_DRLK_STATUS_SUCCESS) {
         APP_DBG("[DOORLOCK] Lock response: the server returned an error: 0x%02x.\n", rsp_status);
       } else {
         APP_DBG("[DOORLOCK] Lock response: success!\n");
       }
       break;
       
-    case ZCL_DOORLOCK_SVR_UNLOCK_RSP:
+    case ZCL_DRLK_SVR_UNLOCK_RSP:
       /* DoorLock unlock cmd response */
-      if (rsp_status != DOORLOCK_STATUS_SUCCESS) {
+      if (rsp_status != ZCL_DRLK_STATUS_SUCCESS) {
         APP_DBG("[DOORLOCK] Unlock response: the server returned an error: 0x%02x.\n", rsp_status);
       } else {
         APP_DBG("[DOORLOCK] Unlock response: success!\n");
       }
       break;
       
-    case ZCL_DOORLOCK_SVR_SETPIN_RSP:
+    case ZCL_DRLK_SVR_SETPIN_RSP:
       /* DoorLock set_pin cmd response */
-      if (rsp_status != DOORLOCK_STATUS_SUCCESS) {
+      if (rsp_status != ZCL_DRLK_STATUS_SUCCESS) {
         APP_DBG("[DOORLOCK] set_pin response: the server returned an error: 0x%02x.\n", rsp_status);
       } else {
         APP_DBG("[DOORLOCK] set_pin response: success!\n");
@@ -436,7 +436,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
 
   /* Initialization Complete */

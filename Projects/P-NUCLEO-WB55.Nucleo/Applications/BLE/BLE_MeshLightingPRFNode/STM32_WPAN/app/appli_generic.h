@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -86,35 +86,72 @@ typedef struct
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 
-MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t*, MOBLEUINT8);
+MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t*, 
+                                     MOBLEUINT8,
+                                     MOBLEUINT16 dstPeer, 
+                                     MOBLEUINT8 elementIndex);
 MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status,
-                                               MOBLEUINT32 plength);
-MOBLE_RESULT Appli_Generic_Level_Set(Generic_LevelStatus_t*, MOBLEUINT8);
-MOBLE_RESULT Appli_Generic_Delta_Set(Generic_LevelStatus_t*, MOBLEUINT8 );
+                                        MOBLEUINT32 plength,
+                                        MOBLEUINT16 dstPeer, 
+                                        MOBLEUINT8 elementIndex);
+MOBLE_RESULT Appli_Generic_Level_Set(Generic_LevelStatus_t*, 
+                                     MOBLEUINT8,
+                                     MOBLEUINT16 dstPeer, 
+                                     MOBLEUINT8 elementIndex);
+MOBLE_RESULT Appli_Generic_Delta_Set(Generic_LevelStatus_t*, 
+                                     MOBLEUINT8,
+                                     MOBLEUINT16 dstPeer, 
+                                     MOBLEUINT8 elementIndex);
 MOBLE_RESULT Appli_Generic_Move_Set(Generic_LevelStatus_t* pdeltaMoveParam, 
-                                              MOBLEUINT8 OptionalValid);
+                                    MOBLEUINT8 OptionalValid,
+                                    MOBLEUINT16 dstPeer, 
+                                    MOBLEUINT8 elementIndex);
 MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8 const *plevel_status,
-                                               MOBLEUINT32 plength);
+                                        MOBLEUINT32 plength,
+                                        MOBLEUINT16 dstPeer, 
+                                        MOBLEUINT8 elementIndex);
 MOBLE_RESULT Appli_Generic_PowerOnOff_Set(Generic_PowerOnOffParam_t* pPowerOnOffParam, 
-                                                MOBLEUINT8 OptionalValid);  
+                                          MOBLEUINT8 OptionalValid,
+                                          MOBLEUINT16 dstPeer, 
+                                          MOBLEUINT8 elementIndex);  
 MOBLE_RESULT Appli_Generic_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , 
-                                               MOBLEUINT32 plength); 
+                                             MOBLEUINT32 plength,
+                                             MOBLEUINT16 dstPeer, 
+                                             MOBLEUINT8 elementIndex); 
 MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Set(Generic_DefaultTransitionParam_t* pDefaultTimeParam, 
-                                                MOBLEUINT8 OptionalValid);
+                                                     MOBLEUINT8 OptionalValid,
+                                                     MOBLEUINT16 dstPeer, 
+                                                     MOBLEUINT8 elementIndex);
 MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , 
-                                               MOBLEUINT32 plength); 
+                                                        MOBLEUINT32 plength,
+                                                        MOBLEUINT16 dstPeer, 
+                                                        MOBLEUINT8 elementIndex); 
 
-MOBLE_RESULT Appli_Generic_GetOnOffStatus(MOBLEUINT8* pOnOff_Status);
-MOBLE_RESULT Appli_Generic_GetOnOffValue(MOBLEUINT8* pOnOff_Value);
-MOBLE_RESULT Appli_Generic_GetLevelStatus(MOBLEUINT8* pLevel_Status);
-MOBLE_RESULT Appli_Generic_GetPowerOnOffStatus(MOBLEUINT8* pLevel_Status);
-void Appli_Generic_Restore_PowerOn_Value(MOBLEUINT8 restoreValue);
-MOBLE_RESULT Appli_Generic_GetDefaultTransitionStatus(MOBLEUINT8* pTransition_Status) ;
+MOBLE_RESULT Appli_Generic_GetOnOffStatus(MOBLEUINT8* pOnOff_Status,
+                                          MOBLEUINT16 dstPeer, 
+                                          MOBLEUINT8 elementIndex);
+MOBLE_RESULT Appli_Generic_GetOnOffValue(MOBLEUINT8* pOnOff_Value,
+                                         MOBLEUINT16 dstPeer, 
+                                         MOBLEUINT8 elementIndex);
+MOBLE_RESULT Appli_Generic_GetLevelStatus(MOBLEUINT8* pLevel_Status,
+                                          MOBLEUINT16 dstPeer, 
+                                          MOBLEUINT8 elementIndex);
+MOBLE_RESULT Appli_Generic_GetPowerOnOffStatus(MOBLEUINT8* pLevel_Status,
+                                               MOBLEUINT16 dstPeer, 
+                                               MOBLEUINT8 elementIndex);
+void Appli_Generic_Restore_PowerOn_Value(MOBLEUINT8 restoreValue,
+                                         MOBLEUINT16 dstPeer, 
+                                         MOBLEUINT8 elementIndex);
+MOBLE_RESULT Appli_Generic_GetDefaultTransitionStatus(MOBLEUINT8* pTransition_Status,
+                                                      MOBLEUINT16 dstPeer, 
+                                                      MOBLEUINT8 elementIndex);
 MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status,
-                                               MOBLEUINT32 plength);
+                                        MOBLEUINT32 plength,
+                                        MOBLEUINT16 dstPeer, 
+                                        MOBLEUINT8 elementIndex);
  
 
 #endif /* __APPLI_GENERIC_H */
 
-/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

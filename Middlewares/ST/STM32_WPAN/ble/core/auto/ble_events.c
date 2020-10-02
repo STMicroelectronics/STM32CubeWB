@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_events.c
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (event callbacks)
  *          Auto-generated file: do not edit!
  ******************************************************************************

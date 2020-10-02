@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -114,13 +114,15 @@ void SaveProvisionedNodeAddress(void);
 MOBLEUINT8* GetNewProvNodeDevKey(void);
 MOBLEUINT8* GetNewProvNodeAppKey(void);
 void IntensityPublish(void);
-MOBLE_RESULT BLEMesh_ScanDevices(neighbor_params_t *unprovDeviceArray, MOBLEUINT8 *noOfUnprovDevices);
-MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray, MOBLEUINT16 index);
 void Start_SelfConfiguration (void);
 void Appli_ProvisionerInit(void);
+void Appli_StartProvisionerMode(MOBLEUINT8 mode);
 
+void Appli_GetPublicationParamsCb(model_publicationparams_t*);
+MOBLE_RESULT BLEMesh_ScanDevices(neighbor_params_t *unprovDeviceArray, MOBLEUINT8 *noOfUnprovDevices);
+MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray, MOBLEUINT16 index);
 
 #endif /* __APPLI_MESH_H */
 
-/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

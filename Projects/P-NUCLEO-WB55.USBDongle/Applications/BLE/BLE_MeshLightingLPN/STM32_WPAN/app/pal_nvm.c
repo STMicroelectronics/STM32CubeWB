@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -30,7 +30,7 @@
 #include "hw_flash.h"
 
 /* Private define ------------------------------------------------------------*/
-#define FLASH_SECTOR_SIZE 0x1000
+#define FLASH_SECTOR_SIZE                                                 0x1000
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -121,10 +121,10 @@ MOBLEBOOL PalNvmIsWriteProtected(void)
 * @retval Result of read operation
 */
 MOBLE_RESULT PalNvmRead(MOBLEUINT32 address,
-                             MOBLEUINT32 offset, 
-                             void *buf, 
-                             MOBLEUINT32 size, 
-                             MOBLEBOOL backup)
+                        MOBLEUINT32 offset, 
+                        void *buf, 
+                        MOBLEUINT32 size, 
+                        MOBLEBOOL backup)
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
@@ -161,14 +161,14 @@ MOBLE_RESULT PalNvmRead(MOBLEUINT32 address,
 * @retval Result
 */
 MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
-                                MOBLEUINT32 offset, 
-                                void const *buf, 
-                                MOBLEUINT32 size, 
-                                MOBLE_NVM_COMPARE* comparison)
+                           MOBLEUINT32 offset, 
+                           void const *buf, 
+                           MOBLEUINT32 size, 
+                           MOBLE_NVM_COMPARE* comparison)
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   MOBLEUINT32 i;
-  
+
 #ifdef ENABLE_SAVE_MODEL_STATE_NVM
 //  printf("MoblePalNvmCompare >>>\r\n");
   
@@ -228,7 +228,7 @@ MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
 * @retval Result
 */
 MOBLE_RESULT PalNvmErase(MOBLEUINT32 address,
-                              MOBLEUINT32 offset)
+                         MOBLEUINT32 offset)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
@@ -272,9 +272,9 @@ MOBLE_RESULT PalNvmErase(MOBLEUINT32 address,
 * @retval Result
 */
 MOBLE_RESULT PalNvmWrite(MOBLEUINT32 address,
-                              MOBLEUINT32 offset, 
-                              void const *buf, 
-                              MOBLEUINT32 size)
+                          MOBLEUINT32 offset, 
+                          void const *buf, 
+                          MOBLEUINT32 size)
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
 
@@ -436,8 +436,8 @@ static MOBLE_RESULT PalNvmBackupProcess(void)
 */
 MOBLE_RESULT PalNvmProcess(void)
 {
-    /* do nothing */
-    return MOBLE_RESULT_SUCCESS;
+  /* do nothing */
+  return MOBLE_RESULT_SUCCESS;
 }
 
-/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

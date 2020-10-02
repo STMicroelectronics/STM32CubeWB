@@ -392,6 +392,44 @@ SHCI_CmdStatus_t SHCI_C2_CONCURRENT_SetMode( SHCI_C2_CONCURRENT_Mode_Param_t Mod
   return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
 }
 
+SHCI_CmdStatus_t SHCI_C2_CONCURRENT_GetNextBleEvtTime( SHCI_C2_CONCURRENT_GetNextBleEvtTime_Param_t *pParam )
+{
+  /**
+   * Buffer is large enough to hold command complete without payload
+   */
+  uint8_t local_buffer[TL_BLEEVT_CS_BUFFER_SIZE+4];
+  TL_EvtPacket_t * p_rsp;
+
+  p_rsp = (TL_EvtPacket_t *)local_buffer;
+
+  shci_send( SHCI_OPCODE_C2_CONCURRENT_GET_NEXT_BLE_EVT_TIME,
+             0,
+             0,
+             p_rsp );
+  
+  memcpy((void*)&(pParam->relative_time), (void*)&((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[1], sizeof(pParam->relative_time));
+
+  return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
+}
+  
+SHCI_CmdStatus_t SHCI_C2_CONCURRENT_EnableNext_802154_EvtNotification( void )
+{
+  /**
+   * Buffer is large enough to hold command complete without payload
+   */
+  uint8_t local_buffer[TL_BLEEVT_CS_BUFFER_SIZE];
+  TL_EvtPacket_t * p_rsp;
+
+  p_rsp = (TL_EvtPacket_t *)local_buffer;
+
+  shci_send( SHCI_OPCODE_C2_CONCURRENT_ENABLE_NEXT_802154_EVT_NOTIFICATION,
+             0,
+             0,
+             p_rsp );
+
+  return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
+}
+
 SHCI_CmdStatus_t SHCI_C2_FLASH_StoreData( SHCI_C2_FLASH_Ip_t Ip )
 {
   /**
@@ -562,46 +600,90 @@ SHCI_CmdStatus_t SHCI_GetWirelessFwInfo( WirelessFwInfo_t* pWirelessInfo )
 {
   uint32_t ipccdba = 0;
   MB_RefTable_t * p_RefTable = NULL;
-  uint32_t version = 0;
-  uint32_t memorySize = 0;
-  uint32_t infoStack = 0;
+  uint32_t wireless_firmware_version = 0;
+  uint32_t wireless_firmware_memorySize = 0;
+  uint32_t wireless_firmware_infoStack = 0;
+  MB_FUS_DeviceInfoTable_t * p_fus_device_info_table = NULL;
+  uint32_t fus_version = 0;
+  uint32_t fus_memorySize = 0;
 
   ipccdba = READ_BIT( FLASH->IPCCBR, FLASH_IPCCBR_IPCCDBA );
-  p_RefTable = (MB_RefTable_t*)((ipccdba<<2) + SRAM2A_BASE);
+
+  /**
+   * The Device Info Table mapping depends on which firmware is running on CPU2.
+   * If the FUS is running on CPU2, FUS_DEVICE_INFO_TABLE_VALIDITY_KEYWORD shall be written in the table.
+   * Otherwise, it means the Wireless Firmware is running on the CPU2
+   */
+  p_fus_device_info_table = (MB_FUS_DeviceInfoTable_t*)(*(uint32_t*)((ipccdba<<2) + SRAM2A_BASE));
+
+  if(p_fus_device_info_table->DeviceInfoTableState == FUS_DEVICE_INFO_TABLE_VALIDITY_KEYWORD)
+  {
+    /* The FUS is running on CPU2 */
+    /**
+     *  Retrieve the WirelessFwInfoTable
+     *  This table is stored in RAM at startup during the TL (transport layer) initialization
+     */
+    wireless_firmware_version =  p_fus_device_info_table->WirelessStackVersion;
+    wireless_firmware_memorySize =  p_fus_device_info_table->WirelessStackMemorySize;
+    wireless_firmware_infoStack =  p_fus_device_info_table->WirelessFirmwareBleInfo;
+
+    /**
+     *  Retrieve the FusInfoTable
+     *  This table is stored in RAM at startup during the TL (transport layer) initialization
+     */
+    fus_version =  p_fus_device_info_table->FusVersion;
+    fus_memorySize =  p_fus_device_info_table->FusMemorySize;
+  }
+  else
+  {
+    /* The Wireless Firmware is running on CPU2 */
+
+    p_RefTable = (MB_RefTable_t*)((ipccdba<<2) + SRAM2A_BASE);
+
+    /**
+     *  Retrieve the WirelessFwInfoTable
+     *  This table is stored in RAM at startup during the TL (transport layer) initialization
+     */
+    wireless_firmware_version =  p_RefTable->p_device_info_table->WirelessFwInfoTable.Version;
+    wireless_firmware_memorySize =  p_RefTable->p_device_info_table->WirelessFwInfoTable.MemorySize;
+    wireless_firmware_infoStack =  p_RefTable->p_device_info_table->WirelessFwInfoTable.InfoStack;
+
+    /**
+     *  Retrieve the FusInfoTable
+     *  This table is stored in RAM at startup during the TL (transport layer) initialization
+     */
+    fus_version =  p_RefTable->p_device_info_table->FusInfoTable.Version;
+    fus_memorySize =  p_RefTable->p_device_info_table->FusInfoTable.MemorySize;
+  }
 
   /**
    *  Retrieve the WirelessFwInfoTable
    *  This table is stored in RAM at startup during the TL (transport layer) initialization
    */
-  version =  p_RefTable->p_device_info_table->WirelessFwInfoTable.Version;
-  pWirelessInfo->VersionMajor       = ((version & INFO_VERSION_MAJOR_MASK) >> INFO_VERSION_MAJOR_OFFSET);
-  pWirelessInfo->VersionMinor       = ((version & INFO_VERSION_MINOR_MASK) >> INFO_VERSION_MINOR_OFFSET);
-  pWirelessInfo->VersionSub         = ((version & INFO_VERSION_SUB_MASK) >> INFO_VERSION_SUB_OFFSET);
-  pWirelessInfo->VersionBranch      = ((version & INFO_VERSION_BRANCH_MASK) >> INFO_VERSION_BRANCH_OFFSET);
-  pWirelessInfo->VersionReleaseType = ((version & INFO_VERSION_TYPE_MASK) >> INFO_VERSION_TYPE_OFFSET);
+  pWirelessInfo->VersionMajor       = ((wireless_firmware_version & INFO_VERSION_MAJOR_MASK) >> INFO_VERSION_MAJOR_OFFSET);
+  pWirelessInfo->VersionMinor       = ((wireless_firmware_version & INFO_VERSION_MINOR_MASK) >> INFO_VERSION_MINOR_OFFSET);
+  pWirelessInfo->VersionSub         = ((wireless_firmware_version & INFO_VERSION_SUB_MASK) >> INFO_VERSION_SUB_OFFSET);
+  pWirelessInfo->VersionBranch      = ((wireless_firmware_version & INFO_VERSION_BRANCH_MASK) >> INFO_VERSION_BRANCH_OFFSET);
+  pWirelessInfo->VersionReleaseType = ((wireless_firmware_version & INFO_VERSION_TYPE_MASK) >> INFO_VERSION_TYPE_OFFSET);
 
-  memorySize =  p_RefTable->p_device_info_table->WirelessFwInfoTable.MemorySize;
-  pWirelessInfo->MemorySizeSram2B   = ((memorySize & INFO_SIZE_SRAM2B_MASK) >> INFO_SIZE_SRAM2B_OFFSET);
-  pWirelessInfo->MemorySizeSram2A   = ((memorySize & INFO_SIZE_SRAM2A_MASK) >> INFO_SIZE_SRAM2A_OFFSET);
-  pWirelessInfo->MemorySizeSram1    = ((memorySize & INFO_SIZE_SRAM1_MASK) >> INFO_SIZE_SRAM1_OFFSET);
-  pWirelessInfo->MemorySizeFlash    = ((memorySize & INFO_SIZE_FLASH_MASK) >> INFO_SIZE_FLASH_OFFSET);
+  pWirelessInfo->MemorySizeSram2B   = ((wireless_firmware_memorySize & INFO_SIZE_SRAM2B_MASK) >> INFO_SIZE_SRAM2B_OFFSET);
+  pWirelessInfo->MemorySizeSram2A   = ((wireless_firmware_memorySize & INFO_SIZE_SRAM2A_MASK) >> INFO_SIZE_SRAM2A_OFFSET);
+  pWirelessInfo->MemorySizeSram1    = ((wireless_firmware_memorySize & INFO_SIZE_SRAM1_MASK) >> INFO_SIZE_SRAM1_OFFSET);
+  pWirelessInfo->MemorySizeFlash    = ((wireless_firmware_memorySize & INFO_SIZE_FLASH_MASK) >> INFO_SIZE_FLASH_OFFSET);
 
-  infoStack =  p_RefTable->p_device_info_table->WirelessFwInfoTable.InfoStack;
-  pWirelessInfo->StackType          = ((infoStack & INFO_STACK_TYPE_MASK) >> INFO_STACK_TYPE_OFFSET);
+  pWirelessInfo->StackType          = ((wireless_firmware_infoStack & INFO_STACK_TYPE_MASK) >> INFO_STACK_TYPE_OFFSET);
 
   /**
    *  Retrieve the FusInfoTable
    *  This table is stored in RAM at startup during the TL (transport layer) initialization
    */
-  version =  p_RefTable->p_device_info_table->FusInfoTable.Version;
-  pWirelessInfo->FusVersionMajor       = ((version & INFO_VERSION_MAJOR_MASK) >> INFO_VERSION_MAJOR_OFFSET);
-  pWirelessInfo->FusVersionMinor       = ((version & INFO_VERSION_MINOR_MASK) >> INFO_VERSION_MINOR_OFFSET);
-  pWirelessInfo->FusVersionSub         = ((version & INFO_VERSION_SUB_MASK) >> INFO_VERSION_SUB_OFFSET);
+  pWirelessInfo->FusVersionMajor       = ((fus_version & INFO_VERSION_MAJOR_MASK) >> INFO_VERSION_MAJOR_OFFSET);
+  pWirelessInfo->FusVersionMinor       = ((fus_version & INFO_VERSION_MINOR_MASK) >> INFO_VERSION_MINOR_OFFSET);
+  pWirelessInfo->FusVersionSub         = ((fus_version & INFO_VERSION_SUB_MASK) >> INFO_VERSION_SUB_OFFSET);
 
-  memorySize =  p_RefTable->p_device_info_table->FusInfoTable.MemorySize;
-  pWirelessInfo->FusMemorySizeSram2B   = ((memorySize & INFO_SIZE_SRAM2B_MASK) >> INFO_SIZE_SRAM2B_OFFSET);
-  pWirelessInfo->FusMemorySizeSram2A   = ((memorySize & INFO_SIZE_SRAM2A_MASK) >> INFO_SIZE_SRAM2A_OFFSET);
-  pWirelessInfo->FusMemorySizeFlash    = ((memorySize & INFO_SIZE_FLASH_MASK) >> INFO_SIZE_FLASH_OFFSET);
+  pWirelessInfo->FusMemorySizeSram2B   = ((fus_memorySize & INFO_SIZE_SRAM2B_MASK) >> INFO_SIZE_SRAM2B_OFFSET);
+  pWirelessInfo->FusMemorySizeSram2A   = ((fus_memorySize & INFO_SIZE_SRAM2A_MASK) >> INFO_SIZE_SRAM2A_OFFSET);
+  pWirelessInfo->FusMemorySizeFlash    = ((fus_memorySize & INFO_SIZE_FLASH_MASK) >> INFO_SIZE_FLASH_OFFSET);
 
   return (SHCI_Success);
 }

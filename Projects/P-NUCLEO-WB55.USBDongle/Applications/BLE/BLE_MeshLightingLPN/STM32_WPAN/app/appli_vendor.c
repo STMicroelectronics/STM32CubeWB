@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -30,23 +30,34 @@
 #include "mesh_cfg.h"
 #include <string.h>
 
-
-/** @addtogroup MODEL_VENDOR
+/** @addtogroup ST_BLE_Mesh
 *  @{
 */
 
-/** @addtogroup Vendor_Model_Callbacks
+/** @addtogroup Application_Mesh_Models
 *  @{
 */
 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
+typedef struct
+{
+  MOBLE_ADDRESS dst;
+  MOBLEUINT8 data[VENDOR_DATA_BUFFER_SIZE]; 
+  MOBLEUINT32 length;
+  MOBLEUINT8 elementIndex;
+} APPLI_SEND_BIG_DATA_PACKET;
+
 /* Private variables ---------------------------------------------------------*/
 
-MOBLEUINT8 ResponseBuffer[VENDOR_DATA_BYTE];
+MOBLEUINT8 ResponseBuffer[VENDOR_DATA_BUFFER_SIZE];
 MOBLEUINT16 BuffLength;
+APPLI_SEND_BIG_DATA_PACKET Appli_VendorBigData;
+
+/*Variable to enable OTA for received vendor command*/
 extern MOBLEUINT8 Appli_LedState;
 extern uint16_t DUTY;
+extern MOBLEUINT8 NumberOfElements;
 MOBLEUINT32 TestHitCounter = 0;
 extern Appli_LightPwmValue_t Appli_LightPwmValue;
 
@@ -268,18 +279,17 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
 * @brief  Process the Vendor LED Control Command
 * @param  data: Pointer to the data received from peer_addr
 * @param  length: Length of the data
-* @param  elementNumber : element selected for a node        
+* @param  elementIndex : selected element where '0' is first element       
 * @retval MOBLE_RESULT status of result
 */ 
 MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length,
-                                       MOBLEUINT8 elementNumber , MOBLE_ADDRESS dst_peer)
+                                       MOBLEUINT8 elementIndex , MOBLE_ADDRESS dst_peer)
 {
   MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;
   MOBLEUINT8 subCommand; 
   subCommand = data[0];
   MOBLEUINT16 duty;
   MOBLEUINT16 intensityValue = 0;
-/*  tClockTime delay_t = Clock_Time(); */
       
   TRACE_M(TF_VENDOR,"#03-%02hx!\n\r",data[0]);
   switch(subCommand)
@@ -291,139 +301,102 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
     */
   case APPLI_CMD_LED_BULB:
     {
-      if(elementNumber == FIRST_ELEMENT)
+      /*User Need to write the commands as per the element selected*/
+          
+      TRACE_M(TF_VENDOR,"Appli_LED_Control callback received for elementIndex %d \r\n", elementIndex);
+      Appli_LedState = *(data+1); /* Toggle the state of the Blue LED */
+      if( Appli_LedState == 1)
       {
-        Appli_LedState = *(data+1); /* Toggle the state of the Blue LED */
+        BSP_LED_On(LED_BLUE);
       }
-      else if(elementNumber == SECOND_ELEMENT)
+      else
       {
-        /* user application code */
-      }
-      else if(elementNumber == THIRD_ELEMENT)
-      {
-        /* user application code */
-      }
+        BSP_LED_Off(LED_BLUE);
+      }  
       break;
     }
     
     /* Toggle Command */  
   case APPLI_CMD_TOGGLE:
     {
-      if(elementNumber == FIRST_ELEMENT)
+      /*User Need to write the commands as per the element selected*/
+          
+      TRACE_M(TF_VENDOR,"Appli_LED_Toggle callback received for elementIndex %d \r\n", elementIndex);
+      if(Appli_LedState == 1)
       {
-        if(Appli_LedState == 1)
-        {
-          Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
+        Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
                                     
 #ifndef CUSTOM_BOARD_PWM_SELECTION            
-            Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
 #else
-          Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+        Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
 #endif            
-          Appli_LedState = 0;
-          BSP_LED_Off(LED_BLUE);
-        }
-        else
-        {
-          Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
-          Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
-          Appli_LedState = 1;
-          BSP_LED_On(LED_BLUE);
-        }
+        Appli_LedState = 0;
+        BSP_LED_Off(LED_BLUE);
+      }
+      else
+      {
+        Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+        Appli_LedState = 1;
+        BSP_LED_On(LED_BLUE);
+      }
               
-      }
-      else if(elementNumber == SECOND_ELEMENT)
-      {
-        /* user application code */
-      }
-      else if(elementNumber == THIRD_ELEMENT)
-      {
-        /* user application code */
-      }
       break;
     }
     /* On Command */  
   case APPLI_CMD_ON:
     {
-      if(elementNumber == FIRST_ELEMENT)
-      {
-        Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
-        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
-        BSP_LED_On(LED_BLUE);
-        Appli_LedState = 1;
-      }
-      else if(elementNumber == SECOND_ELEMENT)
-      {
-        Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
-        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue); /* PWM_ID = PWM3, mapped on PWM3_PIN (GPIO_2 in mapping) */
-        BSP_LED_On(LED_BLUE);
-        Appli_LedState = 1;
-      }
-      else if(elementNumber == THIRD_ELEMENT)
-      {
-        /* user application code */
-      }
+      /*User Need to write the commands as per the element selected*/
+          
+      TRACE_M(TF_VENDOR,"Appli_LED_ON callback received for elementIndex %d \r\n", elementIndex);     
+      Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
+      Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+      BSP_LED_On(LED_BLUE);
+      Appli_LedState = 1;
+          
       break;
     }
     /* Off Command */  
   case APPLI_CMD_OFF:
     {
-      if(elementNumber == FIRST_ELEMENT)
-      {
-        Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
+      /*User Need to write the commands as per the element selected*/
+          
+      TRACE_M(TF_VENDOR,"Appli_LED_OFF callback received for elementIndex %d \r\n", elementIndex);                   
+      Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
             
 #ifndef CUSTOM_BOARD_PWM_SELECTION            
-        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+      Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
 #else
-            Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
+      Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);   /* PWM_ID = PWM4, mapped on PWM4_PIN (GPIO_14 in mapping) */
 #endif            
-        Appli_LedState = 0;
-        BSP_LED_Off(LED_BLUE);
-      }
-      else if(elementNumber == SECOND_ELEMENT)
-      {        
-        Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
-        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue); /* PWM_ID = PWM3, mapped on PWM3_PIN (GPIO_2 in mapping) */
-        Appli_LedState = 0;
-        BSP_LED_Off(LED_BLUE);
-      }
-      else if(elementNumber == THIRD_ELEMENT)
-      {
-        /* user application code */
-      }
+      Appli_LedState = 0;
+      BSP_LED_Off(LED_BLUE);
           
       break;
     }
         /* intensity command */
     case APPLI_CMD_LED_INTENSITY:
       {
-        if(elementNumber == FIRST_ELEMENT)
-        {
-          intensityValue = data[2] << 8;
-          intensityValue |= data[1];
+        /*User Need to write the commands as per the element selected*/
+          
+        TRACE_M(TF_VENDOR,"Appli_LED_Intensity callback received for elementIndex %d \r\n", elementIndex);    
+        intensityValue = data[2] << 8;
+        intensityValue |= data[1];
                     
-          duty = PwmValueMapping(intensityValue , 0x7FFF ,0);                         
-          Appli_LightPwmValue.IntensityValue = duty;
-          Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);             
-          if(duty > 16000)
-          {
-            BSP_LED_On(LED_BLUE);
-          }
-          else
-          {
-            BSP_LED_Off(LED_BLUE);
-          }
-        }
-        else if(elementNumber == SECOND_ELEMENT)
+        duty = PwmValueMapping(intensityValue , 0x7FFF ,0);                         
+        Appli_LightPwmValue.IntensityValue = duty;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);             
+        if(duty > 16000)
         {
-           /* user application code */
+          BSP_LED_On(LED_BLUE);
         }
-        else if(elementNumber == THIRD_ELEMENT)
+        else
         {
-          /* user application code */
+          BSP_LED_Off(LED_BLUE);
         }
-      break;
-    }
+        break;
+      }
     /* Default case - Not valid command */
   default:
     {
@@ -457,26 +430,32 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
 */          
 MOBLE_RESULT Appli_Vendor_Data_write(MOBLEUINT8 const *data, MOBLEUINT32 length)
 {
-       MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;  
-       MOBLEUINT8 subCmd = data[0];
-       /*First Byte is sending the Sub Command*/      
-       ResponseBuffer[0]=subCmd;
-       TRACE_M(TF_VENDOR,"#0E-%02hx! \n\r",data[0]);
-       switch(subCmd)
-       {     
-         case APPLI_STRING_WRITE:
-           {            
-             memcpy(&ResponseBuffer,data,length);
-             BuffLength = length;
-             break;
-           }
-         default:
-          {
-            status = MOBLE_RESULT_FALSE;
-            break;
-          }
-       }
-      return status;        
+  MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;  
+  MOBLEUINT8 subCmd = data[0];
+  /*First Byte is sending the Sub Command*/      
+  ResponseBuffer[0]=subCmd;
+       
+  TRACE_M(TF_VENDOR, "#0E-%02hx %02lx! \n\r",data[0], length);
+  for(MOBLEUINT16 i=0; i<length; i++)
+  {
+    TRACE_I(TF_VENDOR,"%02hx ",data[i]);
+  }
+  TRACE_I(TF_VENDOR,"\n\r");
+  switch(subCmd)
+  {     
+    case APPLI_STRING_WRITE:
+    {            
+      memcpy(&ResponseBuffer,data,length);
+      BuffLength = length;
+      break;
+    }
+    default:
+    {
+      status = MOBLE_RESULT_FALSE;
+      break;
+    }
+  }
+  return status;        
 }
          
 /**
@@ -494,6 +473,58 @@ void Appli_GetTestValue (MOBLEUINT8 *responseValue)
   TestHitCounter = 0;
 }
 /**
+* @brief  Process the Vendor LED Control Command
+* @param  data: Pointer to the data received from peer_addr
+* @param  length: Length of the data
+* @param  elementIndex : selected element where '0' is first element       
+* @param  dst_peer : Destination address
+* @retval MOBLE_RESULT status of result
+*/ 
+MOBLE_RESULT Appli_Vendor_SetBigDataPacket(MOBLEUINT8 *data, MOBLEUINT32 length,
+                                       MOBLEUINT8 elementIndex , MOBLE_ADDRESS dst_peer)
+{
+  MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;
+  
+  if (length > VENDOR_DATA_BUFFER_SIZE)
+  {
+    status = MOBLE_RESULT_INVALIDARG;
+  }
+  memmove(Appli_VendorBigData.data, data, length);
+  Appli_VendorBigData.dst = dst_peer;
+  Appli_VendorBigData.length = length;
+  Appli_VendorBigData.elementIndex = elementIndex;
+  return status;
+}
+/**
+* @brief  Send Vendor big data packet
+* @param  void      
+* @retval MOBLE_RESULT status of result
+*/ 
+MOBLE_RESULT Appli_Vendor_SendBigDataPacket(void)
+{
+  MOBLE_RESULT status = MOBLE_RESULT_SUCCESS;
+  
+  if(BLEMesh_TrsptIsBusyState())
+  {
+    BSP_LED_On(LED_BLUE);
+    status = MOBLE_RESULT_FALSE;
+  }
+  else
+  {
+    BSP_LED_Off(LED_BLUE);
+    status = BLEMesh_SetRemoteData(Appli_VendorBigData.dst,
+                                       Appli_VendorBigData.elementIndex,
+                                       0x000E,                                   
+                                       Appli_VendorBigData.data, 
+                                       Appli_VendorBigData.length,
+                                       MOBLE_FALSE, 
+                                       MOBLE_TRUE);
+
+  }
+  return status;
+}
+
+/**
 * @}
 */
 
@@ -501,5 +532,5 @@ void Appli_GetTestValue (MOBLEUINT8 *responseValue)
 * @}
 */
 
-/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

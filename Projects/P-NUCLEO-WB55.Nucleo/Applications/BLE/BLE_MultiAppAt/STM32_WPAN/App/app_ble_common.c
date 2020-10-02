@@ -18,6 +18,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
@@ -35,7 +36,7 @@
 #include "stm32_lpm.h"
 #include "otp.h"
 
-extern APP_Mode_t APP_MODE;
+extern APP_Mode_t app_mode;
 /* Private includes ----------------------------------------------------------*/
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,7 +58,7 @@ void APP_BLE_Common_Init( void )
 
 SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 {
-  switch(APP_MODE){
+  switch(app_mode){
     case P2P_SERVER :
       SVCCTL_App_SV_Notification(pckt);
       break;
@@ -75,11 +76,20 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
 void SVCCTL_SvcInit(void)
 {
-  if(APP_MODE == HEART_RATE) DIS_Init();
+  if(app_mode == HEART_RATE)
+  {
+    DIS_Init();
+  }
 
-  if(APP_MODE == HEART_RATE) HRS_Init();
+  if(app_mode == HEART_RATE)
+  {
+    HRS_Init();
+  }
 
-  if(APP_MODE == P2P_SERVER || APP_MODE == P2P_CLIENT) P2PS_STM_Init();
+  if((app_mode == P2P_SERVER) || (app_mode == P2P_CLIENT))
+  {
+    P2PS_STM_Init();
+  }
   
   return;
 }

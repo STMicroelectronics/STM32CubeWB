@@ -87,6 +87,7 @@ void APPE_Init( void )
 
     HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
+/* USER CODE BEGIN APPE_Init_1 */
     Init_Debug();
     /**
      * The Standby mode should not be entered before the initialization is over
@@ -96,16 +97,20 @@ void APPE_Init( void )
     Led_Init();
     Button_Init();
     RxUART_Init();
-    appe_Tl_Init(); /* Initialize all transport layers */
+/* USER CODE END APPE_Init_1 */
+    appe_Tl_Init();	/* Initialize all transport layers */
 
     /**
      * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-     * received on the system channel before starting the Zigbee Stack
+     * received on the system channel before starting the Stack
      * This system event is received with APPE_SysUserEvtRx()
      */
+/* USER CODE BEGIN APPE_Init_2 */
 
+/* USER CODE END APPE_Init_2 */
     return;
 }
+
 
 /*************************************************************
  *
@@ -228,7 +233,7 @@ static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status)
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
  * When the system event is both :
  *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
- *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ *    - reported by the FUS (sysevt_ready_rsp == FUS_FW_RUNNING)
  * The buffer shall not be released
  * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
  * When the status is not filled, the buffer is released by default

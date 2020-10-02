@@ -39,18 +39,41 @@
 /* Private macro -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
-extern MOBLEUINT8 TidSend;
+extern Model_Tid_t Model_Tid;;
 const MODEL_OpcodeTableParam_t Generic_Client_Opcodes_Table[] = {
   /* Generic OnOff Client */
-  /*    MOBLEUINT32 opcode, MOBLEBOOL reliable, MOBLEUINT16 min_payload_size, 
-  MOBLEUINT16 max_payload_size;
-  Here in this array, Handler is not defined; */
+/* model_id                                         opcode,                                    reliable,    min_payload_size, max_payload_size, response_opcode,                        min_response_size, max_response_size
+    Here in this array, Handler is not defined; */
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_ONOFF  
-  {GENERIC_MODEL_CLIENT_ONOFF_MODEL_ID     ,GENERIC_ON_OFF_STATUS,                                 MOBLE_FALSE, 1, 3,              0 , 1, 3},
-#endif
-#ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL  
-  {GENERIC_MODEL_CLIENT_LEVEL_MODEL_ID     ,GENERIC_LEVEL_STATUS,                                  MOBLE_FALSE,  2, 5,             0 , 2 , 5},
-#endif  
+  {GENERIC_ONOFF_CLIENT_MODEL_ID,                   GENERIC_ON_OFF_GET,                        MOBLE_TRUE,  0,                0,                GENERIC_ON_OFF_STATUS,                  1,                 3},
+  {GENERIC_ONOFF_CLIENT_MODEL_ID,                   GENERIC_ON_OFF_SET_ACK,                    MOBLE_TRUE,  2,                4,                GENERIC_ON_OFF_STATUS,                  1,                 3},  
+  {GENERIC_ONOFF_CLIENT_MODEL_ID,                   GENERIC_ON_OFF_SET_UNACK,                  MOBLE_FALSE, 2,                4,                GENERIC_ON_OFF_STATUS,                  1,                 3}, 
+  {GENERIC_ONOFF_CLIENT_MODEL_ID,                   GENERIC_ON_OFF_STATUS,                     MOBLE_FALSE, 1,                3,                0,                                      1,                 3},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL                                                                                                                                                                         
+  /* Generic Level Server */                                                                                                                                                                                     
+  {GENERIC_LEVEL_CLIENT_MODEL_ID,                   GENERIC_LEVEL_GET,                         MOBLE_TRUE,   0,                0,               GENERIC_LEVEL_STATUS,                   2,                 5}, 
+  {GENERIC_LEVEL_CLIENT_MODEL_ID,                   GENERIC_LEVEL_SET_ACK,                     MOBLE_TRUE,   3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_LEVEL_CLIENT_MODEL_ID,                   GENERIC_LEVEL_SET_UNACK,                   MOBLE_FALSE,  3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5}, 
+  {GENERIC_LEVEL_CLIENT_MODEL_ID,                   GENERIC_DELTA_SET,                         MOBLE_TRUE,   5,                7,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_LEVEL_CLIENT_MODEL_ID,                   GENERIC_DELTA_SET_UNACK,                   MOBLE_FALSE,  5,                7,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_LEVEL_CLIENT_MODEL_ID,                   GENERIC_MOVE_SET,                          MOBLE_TRUE,   3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_LEVEL_CLIENT_MODEL_ID,                   GENERIC_MOVE_SET_UNACK,                    MOBLE_FALSE,  3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
+  {GENERIC_LEVEL_CLIENT_MODEL_ID,                   GENERIC_LEVEL_STATUS,                      MOBLE_FALSE,  2,                5,               0,                                      2,                 5},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF                                                                                                                                                                   
+  {GENERIC_POWER_ONOFF_CLIENT_MODEL_ID,             GENERIC_POWER_ON_OFF_GET ,                 MOBLE_TRUE,   0,                0,               GENERIC_POWER_ON_OFF_STATUS,            1,                 1},
+  {GENERIC_POWER_ONOFF_CLIENT_MODEL_ID,             GENERIC_POWER_ON_OFF_SET,                  MOBLE_TRUE,   1,                1,               GENERIC_POWER_ON_OFF_STATUS,            1,                 1},
+  {GENERIC_POWER_ONOFF_CLIENT_MODEL_ID,             GENERIC_POWER_ON_OFF_SET_UNACK,            MOBLE_FALSE,  1,                1,               0,                                      1,                 1},
+  {GENERIC_POWER_ONOFF_CLIENT_MODEL_ID,             GENERIC_POWER_ON_OFF_STATUS ,              MOBLE_FALSE,  1,                1,               0,                                      1,                 1},
+#endif                                                                                                                                                                                                           
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME                                                                                                                                                       
+  /* Generic Default Transition Time Server Model  */                                                                                                                                                            
+  {GENERIC_DEFAULT_TRANSITION_TIME_CLIENT_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_GET,       MOBLE_TRUE,  0,                0,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1,                 1}, 
+  {GENERIC_DEFAULT_TRANSITION_TIME_CLIENT_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_SET,       MOBLE_TRUE,  1,                1,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1,                 1},
+  {GENERIC_DEFAULT_TRANSITION_TIME_CLIENT_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_SET_UNACK, MOBLE_FALSE, 1,                1,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1 ,                1}, 
+  {GENERIC_DEFAULT_TRANSITION_TIME_CLIENT_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_STATUS,    MOBLE_FALSE, 1,                1,                0,                                      1,                 1},
+#endif                                                                                                                                                                                                           
   {0}
 };
 
@@ -71,14 +94,54 @@ WEAK_FUNCTION (void Appli_Generic_Restore_PowerOn_Value(MOBLEUINT8 restoreValue)
 
 /* Private functions ---------------------------------------------------------*/
 
+
+/******************************************************************************/
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_ONOFF  
+/******************************************************************************/
 /**
-* @brief  Generic_OnOff_Set: This function is called for Acknowledged message
+* @brief  GenericClient_OnOff_Get: This function is called to send Generic OnOff Get message
+* @param  elementIndex : Index of the element
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_OnOff_Get(MOBLEUINT8 elementIndex) 
+
+{
+  /* 3.2.1.1 Generic OnOff Get 
+  */
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT16 msg_opcode;
+  MOBLEUINT8 const *msg_buff = NULL; 
+  MOBLEBOOL ack_flag = MOBLE_FALSE;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_OnOff_Get Client Message \r\n");  
+  
+  msg_opcode = GENERIC_ON_OFF_GET;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_ONOFF_CLIENT_MODEL_ID, 
+                                            elementIndex ,
+                                            msg_opcode , 
+                                            msg_buff, 0,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+  
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+
+/**
+* @brief  GenericClient_OnOff_Set_Ack: This function is called to send Generic OnOff Set message Acknowledged
+* @param  elementIndex : Index of the element
 * @param  pOnOff_param: Pointer to the parameters received for message
 * @param  length: Length of the parameters received for message
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT GenericClient_OnOff_Set(MOBLE_ADDRESS element_number, 
-                                     _Generic_OnOffParam *pOnOff_param, 
+MOBLE_RESULT GenericClient_OnOff_Set_Ack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *pOnOff_param, 
                                      MOBLEUINT32 length) 
 
 {
@@ -94,22 +157,29 @@ MOBLE_RESULT GenericClient_OnOff_Set(MOBLE_ADDRESS element_number,
   MOBLEUINT16 msg_opcode;
   MOBLEBOOL ack_flag;
 
-  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_OnOff_Set Client Message \r\n");  
-  
-  msg_buff = pOnOff_param->a_OnOff_param;
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_OnOff_Set Client Message \r\n");  
+  pOnOff_param[1] = Model_Tid.TidSend;
+  msg_buff = pOnOff_param;
   ack_flag = MOBLE_TRUE;
   msg_opcode = GENERIC_ON_OFF_SET_ACK;
   
-  /* 
-     Manage the TID Here....
-  */
   
-  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_MODEL_SERVER_ONOFF_MODEL_ID, 
-                                            element_number ,
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_ONOFF_CLIENT_MODEL_ID, 
+                                           elementIndex ,
                                             msg_opcode , 
                                             msg_buff, length,
                                             ack_flag, 
                                             MOBLE_FALSE);
+  
+  /* 
+  Manage the TID 
+  */
+  Model_Tid.TidSend++;
+  if(Model_Tid.TidSend >= MAX_TID_VALUE)
+  {
+    Model_Tid.TidSend = 0;
+  }  
+  
   if(result)
   {
     TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
@@ -120,18 +190,19 @@ MOBLE_RESULT GenericClient_OnOff_Set(MOBLE_ADDRESS element_number,
 
 
 /**
-* @brief  GenericClient_OnOff_Set_Unack: This function is called for unacknowledged message
+* @brief  GenericClient_OnOff_Set_Unack: This function is called to send Generic OnOff Set message UnAcknowledged
+* @param  elementIndex : Index of the element
 * @param  pOnOff_param: Pointer to the parameters received for message
 * @param  length: Length of the parameters received for message
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT GenericClient_OnOff_Set_Unack(MOBLE_ADDRESS element_number, 
-                                     _Generic_OnOffParam *pOnOff_param, 
+MOBLE_RESULT GenericClient_OnOff_Set_Unack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *pOnOff_param, 
                                      MOBLEUINT32 length) 
 
 {
   
-  /* 3.2.1.2 Generic OnOff Set unack 
+  /* 3.2.1.3 Generic OnOff Set unack 
   OnOff: 1B The target value of the Generic OnOff state 
   TID :  1B Transaction Identifier
   Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
@@ -143,25 +214,26 @@ MOBLE_RESULT GenericClient_OnOff_Set_Unack(MOBLE_ADDRESS element_number,
   MOBLEBOOL ack_flag;
 
   TRACE_M(TF_GENERIC_CLIENT_M, "Generic_OnOff_Set Client Message \r\n");  
-  pOnOff_param->a_OnOff_param[1] = TidSend;
-  msg_buff = pOnOff_param->a_OnOff_param;
+  pOnOff_param[1] = Model_Tid.TidSend;
+  msg_buff = pOnOff_param;
   ack_flag = MOBLE_FALSE;
   msg_opcode = GENERIC_ON_OFF_SET_UNACK;
   
-  /* 
-     Manage the TID Here....
-  */
   
-  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_MODEL_CLIENT_ONOFF_MODEL_ID, 
-                                            element_number ,
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_ONOFF_CLIENT_MODEL_ID, 
+                                           elementIndex,
                                             msg_opcode , 
                                             msg_buff, length,
                                             ack_flag, 
                                             MOBLE_FALSE);
-  TidSend++;
-  if(TidSend >= MAX_TID_VALUE)
+  
+  /* 
+  Manage the TID
+  */
+  Model_Tid.TidSend++;
+  if(Model_Tid.TidSend >= MAX_TID_VALUE)
   {
-    TidSend = 0;
+    Model_Tid.TidSend = 0;
   }  
   
   if(result)
@@ -171,21 +243,63 @@ MOBLE_RESULT GenericClient_OnOff_Set_Unack(MOBLE_ADDRESS element_number,
   
   return result;
 }
+/******************************************************************************/
+#endif /// ENABLE_GENERIC_MODEL_CLIENT_ONOFF  
+/******************************************************************************/
 
+
+/******************************************************************************/
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL  
+/******************************************************************************/
+/**
+* @brief  GenericClient_Level_Get: This function is called to send Generic Level Get
+* @param  elementIndex : Index of the element
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_Level_Get(MOBLEUINT8 elementIndex) 
+
+{
+  /* 
+  3.2.2.1 Generic Level Get 
+  */
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT16 msg_opcode;
+  MOBLEUINT8 const *msg_buff = NULL; 
+  MOBLEBOOL ack_flag = MOBLE_FALSE;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_Level_Get Client Message \r\n");  
+  
+  msg_opcode = GENERIC_LEVEL_GET;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_LEVEL_CLIENT_MODEL_ID, 
+                                            elementIndex ,
+                                            msg_opcode , 
+                                            msg_buff, 0,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+  
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+
+  return result;
+}
 
 /**
-* @brief  GenericClient_Level_Set_unack: This function is called for Acknowledged 
-* @param  plevel_paramr: Pointer to the parameters received for message
+* @brief  GenericClient_Level_Set_Ack: This function is called to send Generic Level Set message Acknowledged
+* @param  elementIndex : Index of the element
+* @param  plevel_param: Pointer to the parameters received for message
 * @param  length: Length of the parameters received for message
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT GenericClient_Level_Set_Unack(MOBLE_ADDRESS element_number, 
-                                     _Generic_LevelParam *plevel_param, 
+MOBLE_RESULT GenericClient_Level_Set_Ack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *plevel_param, 
                                      MOBLEUINT32 length) 
 
 {
 /*  
-  3.2.2.2 Generic Level Set unack
+  3.2.2.2 Generic Level Set
   Level: 2B The target value of the Generic Level state
   TID :  1B Transaction Identifier
   Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
@@ -196,26 +310,25 @@ MOBLE_RESULT GenericClient_Level_Set_Unack(MOBLE_ADDRESS element_number,
   MOBLEUINT16 msg_opcode;
   MOBLEBOOL ack_flag;
 
-  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_Level_Set Client Message \r\n");  
-  plevel_param->a_Level_param[2] = TidSend;
-  msg_buff = plevel_param->a_Level_param;
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_Level_Set Client Message \r\n");  
+  plevel_param[2] = Model_Tid.TidSend;
+  msg_buff = plevel_param;
   ack_flag = MOBLE_TRUE;
-  msg_opcode = GENERIC_LEVEL_SET_UNACK;
+  msg_opcode = GENERIC_LEVEL_SET_ACK;
   
-  /* 
-     Manage the TID Here....
-  */
-  
-  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_MODEL_SERVER_LEVEL_MODEL_ID, 
-                                            element_number ,
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_LEVEL_CLIENT_MODEL_ID, 
+                                            elementIndex,
                                             msg_opcode , 
                                             msg_buff, length,
                                             ack_flag, 
                                             MOBLE_FALSE);
-  TidSend++;
-  if(TidSend >= MAX_TID_VALUE)
+  /* 
+  Manage the TID
+  */  
+  Model_Tid.TidSend++;
+  if(Model_Tid.TidSend >= MAX_TID_VALUE)
   {
-    TidSend = 0;
+    Model_Tid.TidSend = 0;
   }  
   if(result)
   {
@@ -224,6 +337,522 @@ MOBLE_RESULT GenericClient_Level_Set_Unack(MOBLE_ADDRESS element_number,
   
   return result;
 }
+
+/**
+* @brief  GenericClient_Level_Set_Unack: This function is called to send Generic Level Set message UnAcknowledged
+* @param  elementIndex:  Index of the element
+* @param  plevel_param: Pointer to the parameters received for message
+* @param  length: Length of the parameters received for message
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_Level_Set_Unack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8* plevel_param, 
+                                     MOBLEUINT32 length) 
+
+{
+/*  
+  3.2.2.3 Generic Level Set unack
+  Level: 2B The target value of the Generic Level state
+  TID :  1B Transaction Identifier
+  Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
+  Delay:1B Message execution delay in 5 milliseconds steps (C.1)
+*/   
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 const *msg_buff; 
+  MOBLEUINT16 msg_opcode;
+  MOBLEBOOL ack_flag;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_Level_Set Client Message \r\n");  
+  plevel_param[2] = Model_Tid.TidSend;
+  msg_buff = plevel_param;
+  ack_flag = MOBLE_FALSE;
+  msg_opcode = GENERIC_LEVEL_SET_UNACK;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_LEVEL_CLIENT_MODEL_ID, 
+                                           elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+  /* 
+  Manage the TID
+  */
+  Model_Tid.TidSend++;
+  if(Model_Tid.TidSend >= MAX_TID_VALUE)
+  {
+    Model_Tid.TidSend = 0;
+  }  
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+
+/**
+* @brief  GenericClient_Delta_Set_Ack: This function is called to send Generic Delta Level Set message UnAcknowledged
+* @param  elementIndex : Index of the element
+* @param  pdeltalevel_param: Pointer to the parameters message
+* @param  OptionalValid: Flag to inform about the validity of optional parameters 
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_Delta_Set_Ack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *pdeltalevel_param, 
+                                     MOBLEUINT32 length) 
+
+{
+/*  
+  3.2.2.4 Generic Delta Level Set
+  Delta Level: 4B The Delta change of the Generic Level state
+  TID :  1B Transaction Identifier
+  Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
+  Delay:1B Message execution delay in 5 milliseconds steps (C.1)
+*/   
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 const *msg_buff; 
+  MOBLEUINT16 msg_opcode;
+  MOBLEBOOL ack_flag;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_Delta_Set Client Message \r\n");  
+  pdeltalevel_param[4] = Model_Tid.TidSend;
+  msg_buff = pdeltalevel_param;
+  ack_flag = MOBLE_TRUE;
+  msg_opcode = GENERIC_DELTA_SET;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_LEVEL_CLIENT_MODEL_ID, 
+                                            elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+  /* 
+  Manage the TID
+  */
+  Model_Tid.TidSend++;
+  if(Model_Tid.TidSend >= MAX_TID_VALUE)
+  {
+    Model_Tid.TidSend = 0;
+  }  
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+/**
+* @brief  GenericClient_Delta_Set_Unack: This function is called to send Generic Delta Level Set message UnAcknowledged
+* @param  elementIndex : Index of the element
+* @param  pdeltalevel_param: Pointer to the parameters message
+* @param  OptionalValid: Flag to inform about the validity of optional parameters 
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_Delta_Set_Unack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *pdeltalevel_param, 
+                                     MOBLEUINT32 length) 
+
+{
+/*  
+  3.2.2.5 Generic Delta Level Set UnAcnowedged
+  Delta Level: 4B The Delta change of the Generic Level state
+  TID :  1B Transaction Identifier
+  Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
+  Delay:1B Message execution delay in 5 milliseconds steps (C.1)
+*/   
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 const *msg_buff; 
+  MOBLEUINT16 msg_opcode;
+  MOBLEBOOL ack_flag;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_Delta_Set Client Message \r\n");  
+  pdeltalevel_param[4] = Model_Tid.TidSend;
+  msg_buff = pdeltalevel_param;
+  ack_flag = MOBLE_FALSE;
+  msg_opcode = GENERIC_DELTA_SET_UNACK;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_LEVEL_CLIENT_MODEL_ID, 
+                                            elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+  /* 
+  Manage the TID
+  */
+  Model_Tid.TidSend++;
+  if(Model_Tid.TidSend >= MAX_TID_VALUE)
+  {
+    Model_Tid.TidSend = 0;
+  }  
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+/**
+* @brief  GenericClient_Move_Set_Ack: This function is called to send Generic Delta Level Set message UnAcknowledged
+* @param  elementIndex : Index of the element
+* @param  plevelmove_param: Pointer to the parameters message
+* @param  OptionalValid: Flag to inform about the validity of optional parameters 
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_Move_Set_Ack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *plevelmove_param, 
+                                     MOBLEUINT32 length) 
+
+{
+/*  
+  3.2.2.6 Generic Move Set
+  Delta Level: 2B The Delta Level step to calculate Move speed for the Generic Level state.
+  TID :  1B Transaction Identifier
+  Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
+  Delay:1B Message execution delay in 5 milliseconds steps (C.1)
+*/   
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 const *msg_buff; 
+  MOBLEUINT16 msg_opcode;
+  MOBLEBOOL ack_flag;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_Move_Set Client Message \r\n");  
+  plevelmove_param[2] = Model_Tid.TidSend;
+  msg_buff = plevelmove_param;
+  ack_flag = MOBLE_TRUE;
+  msg_opcode = GENERIC_MOVE_SET;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_LEVEL_CLIENT_MODEL_ID, 
+                                            elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+  /* 
+  Manage the TID
+  */
+  Model_Tid.TidSend++;
+  if(Model_Tid.TidSend >= MAX_TID_VALUE)
+  {
+    Model_Tid.TidSend = 0;
+  }  
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+/**
+* @brief  GenericClient_Move_Set_Unack: This function is called to send Generic Delta Level Set message UnAcknowledged
+* @param  elementIndex : Index of the element
+* @param  plevelmove_param: Pointer to the parameters message
+* @param  OptionalValid: Flag to inform about the validity of optional parameters 
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_Move_Set_Unack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *plevelmove_param, 
+                                     MOBLEUINT32 length) 
+
+{
+/*  
+  3.2.2.7 Generic Move Set UnAcnowedged
+  Delta Level: 2B The Delta Level step to calculate Move speed for the Generic Level state.
+  TID :  1B Transaction Identifier
+  Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
+  Delay:1B Message execution delay in 5 milliseconds steps (C.1)
+*/   
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 const *msg_buff; 
+  MOBLEUINT16 msg_opcode;
+  MOBLEBOOL ack_flag;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_Move_Set Client Message \r\n");  
+  plevelmove_param[2] = Model_Tid.TidSend;
+  msg_buff = plevelmove_param;
+  ack_flag = MOBLE_FALSE;
+  msg_opcode = GENERIC_MOVE_SET_UNACK;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_LEVEL_CLIENT_MODEL_ID, 
+                                            elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+  /* 
+  Manage the TID
+  */
+  Model_Tid.TidSend++;
+  if(Model_Tid.TidSend >= MAX_TID_VALUE)
+  {
+    Model_Tid.TidSend = 0;
+  }  
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+/******************************************************************************/
+#endif /// ENABLE_GENERIC_MODEL_CLIENT_LEVEL  
+/******************************************************************************/
+
+
+/******************************************************************************/
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF 
+/******************************************************************************/
+/**
+* @brief  GenericClient_PowerOnOff_Get: This function is called to send Generic Power On Off Get
+* @param  elementIndex : Index of the element
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_PowerOnOff_Get(MOBLEUINT8 elementIndex) 
+
+{
+  /* 
+3.2.4.1 Generic On Power Up Get 
+  */
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT16 msg_opcode;
+  MOBLEUINT8 const *msg_buff = NULL; 
+  MOBLEBOOL ack_flag = MOBLE_FALSE;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_PowerOnOff_Get Client Message \r\n");  
+  
+  msg_opcode = GENERIC_POWER_ON_OFF_GET;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_POWER_ONOFF_CLIENT_MODEL_ID, 
+                                            elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, 0,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+  
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+/**
+* @brief  GenericClient_PowerOnOff_Set_Ack: This function is called to send Generic Level Set message Acknowledged
+* @param  elementIndex : Index of the element
+* @param  plevel_param: Pointer to the parameters received for message
+* @param  length: Length of the parameters received for message
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_PowerOnOff_Set_Ack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *ppoweronoff_param, 
+                                     MOBLEUINT32 length) 
+
+{
+/*  
+  3.2.4.2 Generic On Power Up Set
+  OnPowerUp: 1B The value of the Generic OnPowerUp state.
+*/   
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 const *msg_buff; 
+  MOBLEUINT16 msg_opcode;
+  MOBLEBOOL ack_flag;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_PowerOnOff_Set Client Message \r\n");  
+  msg_buff = ppoweronoff_param;
+  ack_flag = MOBLE_TRUE;
+  msg_opcode = GENERIC_POWER_ON_OFF_SET;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_POWER_ONOFF_CLIENT_MODEL_ID, 
+                                            elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+/**
+* @brief  GenericClient_PowerOnOff_Set_Unack: This function is called to send Generic Level Set message UnAcknowledged
+* @param  elementIndex : Index of the element
+* @param  plevel_param: Pointer to the parameters received for message
+* @param  length: Length of the parameters received for message
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_PowerOnOff_Set_Unack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8* ppoweronoff_param, 
+                                     MOBLEUINT32 length) 
+
+{
+/*  
+  3.2.4.3 Generic On Power Up Set Unack
+  OnPowerUp: 1B The value of the Generic OnPowerUp state.
+*/    
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 const *msg_buff; 
+  MOBLEUINT16 msg_opcode;
+  MOBLEBOOL ack_flag;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_PowerOnOff_Set Client Message \r\n");  
+  msg_buff = ppoweronoff_param;
+  ack_flag = MOBLE_FALSE;
+  msg_opcode = GENERIC_POWER_ON_OFF_SET_UNACK;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_POWER_ONOFF_CLIENT_MODEL_ID, 
+                                            elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+ 
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+/******************************************************************************/
+#endif /// ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF 
+/******************************************************************************/
+
+
+/******************************************************************************/    
+#ifdef ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME 
+/******************************************************************************/
+/**
+* @brief  GenericClient_DefaultTransitionTime_Get: This function is called to send Generic Transition Time Get
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_DefaultTransitionTime_Get(MOBLEUINT8 elementIndex) 
+
+{
+  /* 
+3.2.3.1 Generic Default Transition Time Get 
+  */
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT16 msg_opcode;
+  MOBLEUINT8 const *msg_buff = NULL; 
+  MOBLEBOOL ack_flag = MOBLE_FALSE;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_DefaultTransitionTime Client Message \r\n");  
+  
+  msg_opcode = GENERIC_DEFAULT_TRANSITION_TIME_GET;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_DEFAULT_TRANSITION_TIME_CLIENT_MODEL_ID, 
+                                            elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, 0,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+  
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+/**
+* @brief  GenericClient_DefaultTransitionTime_Set_Ack: This function is called to send Generic Level Set message Acknowledged
+* @param  elementIndex : Index of the element
+* @param  plevel_param: Pointer to the parameters received for message
+* @param  length: Length of the parameters received for message
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_DefaultTransitionTime_Set_Ack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *pdefaulttransitiontime_param, 
+                                     MOBLEUINT32 length) 
+
+{
+/*  
+  3.2.3.2 Generic Default Transition Time Set
+  Transition Time: 1B The value of the Generic Default Transition Time state.
+*/   
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 const *msg_buff; 
+  MOBLEUINT16 msg_opcode;
+  MOBLEBOOL ack_flag;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_DefaultTransitionTime_Set_Ack Client Message \r\n");  
+  msg_buff = pdefaulttransitiontime_param;
+  ack_flag = MOBLE_TRUE;
+  msg_opcode = GENERIC_DEFAULT_TRANSITION_TIME_SET;
+  
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_DEFAULT_TRANSITION_TIME_CLIENT_MODEL_ID, 
+                                            elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+
+/**
+* @brief  GenericClient_DefaultTransitionTime_Set_Unack: This function is called to send Generic Level Set message UnAcknowledged
+* @param  elementIndex : Index of the element
+* @param  plevel_param: Pointer to the parameters received for message
+* @param  length: Length of the parameters received for message
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT GenericClient_DefaultTransitionTime_Set_Unack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8* pdefaulttransitiontime_param, 
+                                     MOBLEUINT32 length) 
+
+{
+/*  
+  3.2.3.3 Generic Default Transition Time Set Unack
+  Transition Time: 1B The value of the Generic Default Transition Time state.
+*/  
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 const *msg_buff; 
+  MOBLEUINT16 msg_opcode;
+  MOBLEBOOL ack_flag;
+
+  TRACE_M(TF_GENERIC_CLIENT_M, "GenericClient_DefaultTransitionTime_Set_Unack Client Message \r\n");  
+  msg_buff = pdefaulttransitiontime_param;
+  ack_flag = MOBLE_FALSE;
+  msg_opcode = GENERIC_DEFAULT_TRANSITION_TIME_SET_UNACK;
+  
+  result = MeshClient_SetRemotePublication((MOBLEUINT32) GENERIC_DEFAULT_TRANSITION_TIME_CLIENT_MODEL_ID, 
+                                           elementIndex,
+                                            msg_opcode , 
+                                            msg_buff, length,
+                                            ack_flag, 
+                                            MOBLE_FALSE);
+ 
+  if(result)
+  {
+    TRACE_M(TF_GENERIC_CLIENT_M, "Publication Error \r\n");
+  }  
+  
+  return result;
+}
+/******************************************************************************/    
+#endif /// ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME 
+/******************************************************************************/
+
+
 
 /**
 * @brief   GenericModelServer_GetOpcodeTableCb: This function is call-back 
@@ -241,12 +870,12 @@ MOBLE_RESULT GenericModelClient_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t 
   return MOBLE_RESULT_SUCCESS;
 }
 
+
 /**
 * @brief  GenericModelClient_GetStatusRequestCb : This function is call-back 
 *         from the library to send response to the message from peer
-* @param  peer_addr: Address of the peer
-* @param  dst_peer: destination send by peer for this node. It can be a
-*                                                     unicast or group address 
+* @param  *pmsgParam Pointer to structure of message header for parameters:
+*          elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * @param  opcode: Received opcode of the Status message callback
 * @param  pResponsedata: Pointer to the buffer to be updated with status
 * @param  plength: Pointer to the Length of the data, to be updated by application
@@ -255,8 +884,7 @@ MOBLE_RESULT GenericModelClient_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t 
 * @param  response: Value to indicate wheather message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT GenericModelClient_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
-                                                   MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT GenericModelClient_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam,
                                                    MOBLEUINT16 opcode, 
                                                    MOBLEUINT8 *pResponsedata, 
                                                    MOBLEUINT32 *plength, 
@@ -270,13 +898,11 @@ MOBLE_RESULT GenericModelClient_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
   return MOBLE_RESULT_SUCCESS;    
 }
 
-
 /**
 * @brief  GenericModelClient_ProcessMessageCb: This is a callback function from
 *         the library whenever a Generic Model message is received
-* @param  peer_addr: Address of the peer
-* @param  dst_peer: destination send by peer for this node. It can be a
-*                                                     unicast or group address 
+* @param  *pmsgParam Pointer to structure of message header for parameters:
+*          elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * @param  opcode: Received opcode of the Status message callback
 * @param  pData: Pointer to the buffer to be updated with status
 * @param  length: Length of the parameters received 
@@ -286,41 +912,43 @@ MOBLE_RESULT GenericModelClient_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
 * @param  response: Value to indicate wheather message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT GenericModelClient_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 
-                                                 MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT GenericModelClient_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParam,
                                                  MOBLEUINT16 opcode, 
                                                  MOBLEUINT8 const *pRxData, 
                                                  MOBLEUINT32 dataLength, 
-                                                 MOBLEBOOL response
-                                                   )
+                                                 MOBLEBOOL response)
 {
   
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
-  //tClockTime delay_t = Clock_Time();
   
-  TRACE_M(TF_GENERIC_CLIENT_M, "dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
-          dst_peer, peer_addr, opcode , response);
+  TRACE_M(TF_GENERIC_CLIENT_M, 
+          "elementIndex = %.2x, dst_peer = %.2X, peer_add = %.2X,opcode= %.2X ,response= %.2X\r\n", 
+          pmsgParam->elementIndex, 
+          pmsgParam->dst_peer,
+          pmsgParam->peer_addr, 
+          opcode, 
+          response);
   
   switch(opcode)
   { 
   case GENERIC_ON_OFF_STATUS:
     {     
-      Generic_Client_OnOff_Status(pRxData, dataLength);         
+      Generic_Client_OnOff_Status(pRxData, dataLength, pmsgParam->dst_peer, pmsgParam->elementIndex);          
       break;
     } 
   case GENERIC_LEVEL_STATUS:
     {     
-      Generic_Client_Level_Status(pRxData, dataLength);         
+      Generic_Client_Level_Status(pRxData, dataLength, pmsgParam->dst_peer, pmsgParam->elementIndex);          
       break;
     } 
   case GENERIC_DEFAULT_TRANSITION_TIME_STATUS:
     {     
-      Generic_Client_DefaultTransitionTime_Status(pRxData, dataLength);         
+      Generic_Client_DefaultTransitionTime_Status(pRxData, dataLength, pmsgParam->dst_peer, pmsgParam->elementIndex);         
       break;
     } 
   case GENERIC_POWER_ON_OFF_STATUS:
     {     
-      Generic_Client_PowerOnOff_Status(pRxData, dataLength);         
+      Generic_Client_PowerOnOff_Status(pRxData, dataLength, pmsgParam->dst_peer, pmsgParam->elementIndex);         
       break;
     } 
   default:
@@ -331,7 +959,7 @@ MOBLE_RESULT GenericModelClient_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   
   if((result == MOBLE_RESULT_SUCCESS) && (response == MOBLE_TRUE))
   {
-    Model_SendResponse(peer_addr,dst_peer,opcode,pRxData,dataLength);
+    Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
   }
   
   return MOBLE_RESULT_SUCCESS;
@@ -345,5 +973,5 @@ MOBLE_RESULT GenericModelClient_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
 * @}
 */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

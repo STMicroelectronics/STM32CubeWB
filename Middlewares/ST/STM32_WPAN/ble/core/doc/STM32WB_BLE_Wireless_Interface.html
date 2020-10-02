@@ -636,7 +636,7 @@ padding-right: 0px;
 }
 
 td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
-</style></head><body><font face="arial"><h1>STM32WB BLE Wireless Interface</h1><p>This document describes the STM32WB BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event</p><p>March 2020 - Rev 1.14 - Removed unused HCI_Data_Buffer_Overflow event; Fixed naming of FW_Error_Type possible values; Fixed pairing status possible values</p><p>March 2020 - Rev 1.15 - Added GAP scan timeout value</p><p>April 2020 - Rev 1.16 - Fixed various format issues; Added LO and SO columns for command and event tables.</p><p>May 2020 - Rev 1.17 - Updated "slave only" stack features; Added comment in HCI_LE_ADVERTISING_REPORT_EVENT description.</p><p>June 2020 - Rev 1.18 - Added BO column for command and event tables; Fixed advertising commands description; Fixed various format issues.</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><p>Note: in the command tables, a "Y" in the "LO" (resp. "SO" or "BO") column, means that the corresponding command applies to the "Link Layer Only" (resp. "Slave Only" or "Beacon Only") variant of the BLE stack.</p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h2></h2><table width="800" border="1" class="reference">
+</style></head><body><font face="arial"><h1>STM32WB BLE Wireless Interface</h1><p>This document describes the STM32WB BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event</p><p>March 2020 - Rev 1.14 - Removed unused HCI_Data_Buffer_Overflow event; Fixed naming of FW_Error_Type possible values; Fixed pairing status possible values</p><p>March 2020 - Rev 1.15 - Added GAP scan timeout value</p><p>April 2020 - Rev 1.16 - Fixed various format issues; Added LO and SO columns for command and event tables.</p><p>May 2020 - Rev 1.17 - Updated "slave only" stack features; Added comment in HCI_LE_ADVERTISING_REPORT_EVENT description.</p><p>June 2020 - Rev 1.18 - Added BO column for command and event tables; Fixed advertising commands description; Fixed various format issues.</p><p>June 2020 - Rev 1.19 - Completed interval possible values for ACI_GAP_SET_DIRECT_CONNECTABLE.</p><p>July 2020 - Rev 1.20 - Added HCI_LE_SET_PRIVACY_MODE.</p><p>July 2020 - Rev 1.21 - Updated "beacon only" stack features.</p><p>September 2020 - Rev 1.22 - Fixed various minor issues.</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><p>Note: in the command tables, a "Y" in the "LO" (resp. "SO" or "BO") column, means that the corresponding command applies to the "Link Layer Only" (resp. "Slave Only" or "Beacon Only") variant of the BLE stack.</p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h2></h2><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>Opcode</th><th>LO</th><th>SO</th><th>BO</th></tr>
 <tr><td><a href="#HCI_DISCONNECT_anchor">HCI_DISCONNECT</a></td><td><p>0x0406</p>
 </td><td><p>Y</p>
@@ -700,7 +700,8 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 </td></tr>
 <tr><td><a href="#HCI_LE_READ_BUFFER_SIZE_anchor">HCI_LE_READ_BUFFER_SIZE</a></td><td><p>0x2002</p>
 </td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td><p>Y</p>
+</td></tr>
 <tr><td><a href="#HCI_LE_READ_LOCAL_SUPPORTED_FEATURES_anchor">HCI_LE_READ_LOCAL_SUPPORTED_FEATURES</a></td><td><p>0x2003</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
@@ -853,11 +854,14 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 <tr><td><a href="#HCI_LE_SET_PHY_anchor">HCI_LE_SET_PHY</a></td><td><p>0x2032</p>
 </td><td><p>Y</p>
 </td><td></td><td></td></tr>
+<tr><td><a href="#HCI_LE_SET_PRIVACY_MODE_anchor">HCI_LE_SET_PRIVACY_MODE</a></td><td><p>0x204E</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 </table><h2><a name="HCI_DISCONNECT_anchor">HCI_DISCONNECT</a></h2><h3>Description</h3><p>The <a href="#HCI_DISCONNECT_anchor">HCI_DISCONNECT</a> is used to terminate an existing connection. The Connection_Handle command parameter indicates which connection is to be disconnected. The Reason command parameter indicates the reason for ending the connection. The remote Controller will receive the Reason command parameter in the <a href="#HCI_DISCONNECTION_COMPLETE_EVENT_anchor">HCI_DISCONNECTION_COMPLETE_EVENT</a> event. All synchronous connections on a physical link should be disconnected before the ACL connection on the same physical connection is disconnected.<br>(See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.1.6)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Reason</p>
 </td><td><p>1</p>
@@ -873,7 +877,7 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Specifies which Connection_Handle's version information to get.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -903,7 +907,7 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Specifies which Connection_Handle's Transmit Power Level setting to read.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Type</p>
 </td><td><p>1</p>
@@ -917,7 +921,7 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Transmit_Power_Level</p>
 </td><td><p>1</p>
@@ -1041,7 +1045,7 @@ Unsupported or undefined commands shall be set to 0.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1051,7 +1055,7 @@ Unsupported or undefined commands shall be set to 0.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>RSSI</p>
 </td><td><p>1</p>
@@ -1384,7 +1388,7 @@ Time = N * 0.625 msec.</p>
 </td><td><li>0x00: Public Device Address</li><li>0x01: Random Device Address</li></td></tr>
 <tr><td><p>Address</p>
 </td><td><p>6</p>
-</td><td><p>Public Device Address or Random Device Address of the device to be added to the white list.</p>
+</td><td><p>Public Device Address or Random Device Address.</p>
 </td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1400,7 +1404,7 @@ Time = N * 0.625 msec.</p>
 </td><td><li>0x00: Public Device Address</li><li>0x01: Random Device Address</li></td></tr>
 <tr><td><p>Address</p>
 </td><td><p>6</p>
-</td><td><p>Public Device Address or Random Device Address of the device to be removed from the white list.</p>
+</td><td><p>Public Device Address or Random Device Address.</p>
 </td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1412,7 +1416,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Conn_Interval_Min</p>
 </td><td><p>2</p>
@@ -1471,7 +1475,7 @@ At least one channel shall be marked as unknown.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1481,7 +1485,7 @@ At least one channel shall be marked as unknown.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>LE_Channel_Map</p>
 </td><td><p>5</p>
@@ -1496,7 +1500,7 @@ The most significant bits are reserved and shall be set to 0.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1538,7 +1542,7 @@ The most significant bits are reserved and shall be set to 0.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Random_Number</p>
 </td><td><p>8</p>
@@ -1562,7 +1566,7 @@ The most significant bits are reserved and shall be set to 0.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Long_Term_Key</p>
 </td><td><p>16</p>
@@ -1576,13 +1580,13 @@ The most significant bits are reserved and shall be set to 0.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_LONG_TERM_KEY_REQUESTED_NEGATIVE_REPLY_anchor">HCI_LE_LONG_TERM_KEY_REQUESTED_NEGATIVE_REPLY</a></h2><h3>Description</h3><p>The LE_Long_Term_Key_Request_Negative_Reply command is used to reply to an LE Long Term Key Request event from the Controller if the Host cannot provide a Long Term Key for this Connection_Handle.<br>(See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.26)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1592,7 +1596,7 @@ The most significant bits are reserved and shall be set to 0.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_SUPPORTED_STATES_anchor">HCI_LE_READ_SUPPORTED_STATES</a></h2><h3>Description</h3><p>The LE_Read_Supported_States command reads the states and state combinations that the link layer supports. See [Vol 6] Part B, Section 1.1.1.<br>LE_States is an 8-octet bit field. If a bit is set to 1 then this state or state combination is supported by the Controller. Multiple bits in LE_States may be set to 1 to indicate support for multiple state and state combinations.<br>All the Advertising type with the Initiate State combinations shall be set only if the corresponding Advertising types and Master Role combination are set.<br>All the Scanning types and the Initiate State combinations shall be set only if the corresponding Scanning types and Master Role combination are set.<br>(See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.27)</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1609,7 +1613,7 @@ See Core v5.0, Vol.2, part E, Ch. 7.8.27.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>TxOctets</p>
 </td><td><p>2</p>
@@ -1627,7 +1631,7 @@ See Core v5.0, Vol.2, part E, Ch. 7.8.27.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_SUGGESTED_DEFAULT_DATA_LENGTH_anchor">HCI_LE_READ_SUGGESTED_DEFAULT_DATA_LENGTH</a></h2><h3>Description</h3><p>The LE_Read_Suggested_Default_Data_Length command allows the Host to read the Host's suggested values (SuggestedMaxTxOctets and SuggestedMaxTxTime) for the Controller's maximum transmitted number of payload octets and maximum packet transmission time to be used for new connections (see Bluetooth Specification v5.0 [Vol 6] Part B, Section 4.5.10). </p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1776,7 +1780,7 @@ Little Endian Format</p>
 </td><td><p>6</p>
 </td><td><p>Resolvable Private Address being used by the local device</p>
 </td><td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_ADDRESS_RESOLUTION_ENABLE_anchor">HCI_LE_SET_ADDRESS_RESOLUTION_ENABLE</a></h2><h3>Description</h3><p>The LE_Set_Address_Resolution_Enable command is used to enable resolution of Resolvable Private Addresses in the Controller. This causes the Controller to use the resolving list whenever the Controller receives a local or peer Resolvable Private Address.<br>This command can be used at any time except when:<br>- Advertising is enabled<br>- Scanning is enabled<br>- Create connection command is outstanding<br>(See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.44)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_ADDRESS_RESOLUTION_ENABLE_anchor">HCI_LE_SET_ADDRESS_RESOLUTION_ENABLE</a></h2><h3>Description</h3><p>The LE_Set_Address_Resolution_Enable command is used to enable resolution of Resolvable Private Addresses in the Controller. This causes the Controller to use the resolving list whenever the Controller receives a local or peer Resolvable Private Address.<br>This command can be used at any time except when:<br>- Advertising is enabled<br>- Scanning is enabled<br>- Create connection command is outstanding<br>(See Bluetooth Specification v.5.0, Vol. 2, Part E, Section 7.8.44)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Address_Resolution_Enable</p>
 </td><td><p>1</p>
@@ -1790,7 +1794,7 @@ Little Endian Format</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_anchor">HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT</a></h2><h3>Description</h3><p>The LE_Set_Resolvable_Private_Address_Timeout command set the length of time the controller uses a Resolvable Private Address before a new resolvable private address is generated and starts being used. This timeout applies to all addresses generated by the controller.<br>(See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.45)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_anchor">HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT</a></h2><h3>Description</h3><p>The LE_Set_Resolvable_Private_Address_Timeout command set the length of time the controller uses a Resolvable Private Address before a new resolvable private address is generated and starts being used. This timeout applies to all addresses generated by the controller.<br>(See Bluetooth Specification v.5.0 [Vol 2] Part E, Section 7.8.45)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>RPA_Timeout</p>
 </td><td><p>2</p>
@@ -1826,11 +1830,11 @@ Default: N= 0x0384 (900 secs or 15 minutes)</p>
 </td><td><p>2</p>
 </td><td><p>Maximum time, in microseconds, that the local Controller supports for reception of a single Link Layer packet on a data connection.</p>
 </td><td><li>0x0148 ... 0x4290</li></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_PHY_anchor">HCI_LE_READ_PHY</a></h2><h3>Description</h3><p>The LE_Read_PHY command is used to read the current transmitter PHY and receiver PHY on the connection identified by the Connection_Handle. see Bluetooth Specification [vol2] part E Section 7.8.47</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_PHY_anchor">HCI_LE_READ_PHY</a></h2><h3>Description</h3><p>The LE_Read_PHY command is used to read the current transmitter PHY and receiver PHY on the connection identified by the Connection_Handle. see Bluetooth Specification [Vol 2] part E, Section 7.8.47</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1840,7 +1844,7 @@ Default: N= 0x0384 (900 secs or 15 minutes)</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>TX_PHY</p>
 </td><td><p>1</p>
@@ -1872,11 +1876,11 @@ Default: N= 0x0384 (900 secs or 15 minutes)</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_PHY_anchor">HCI_LE_SET_PHY</a></h2><h3>Description</h3><p>The LE_Set_PHY command is used to set the PHY preferences for the connection identified by the Connection_Handle. The Controller might not be able to make the change (e.g. because the peer does not support the requested PHY) or may decide that the current PHY is preferable.<br>The ALL_PHYS parameter is a bit field that allows the Host to specify, for each direction, whether it has no preference among the PHYs that the Controller supports in a given direction or whether it has specified particular PHYs that it prefers in the TX_PHYS or RX_PHYS parameter.<br>The TX_PHYS parameter is a bit field that indicates the transmitter PHYs that the Host prefers the Controller to use. If the ALL_PHYS parameter specifies that the Host has no preference, the TX_PHYS parameter is ignored; otherwise at least one bit shall be set to 1.<br>The RX_PHYS parameter is a bit field that indicates the receiver PHYs that the Host prefers the Controller to use. If the ALL_PHYS parameter specifies that the Host has no preference, the RX_PHYS parameter is ignored; otherwise at least one bit shall be set to 1.<br>If, for at least one direction, the Host has specified a preference and the current PHY is not one of those preferred, the Controller shall request a change. Otherwise the Controller may, but need not, request a change.<br>The PHY preferences provided by the LE Set PHY command override those provided via the LE Set Default PHY command (Section 7.8.48) or any preferences previously set using the LE Set PHY command on the same connection.<br>The PHY_options parameter is a bit field that allows the Host to specify options for PHYs. The default value for a new connection shall be all zero bits. The Controller may override any preferred coding for transmitting on the LE Coded PHY.<br>The Host may specify a preferred coding even if it prefers not to use the LE Coded transmitter PHY since the Controller may override the PHY preference.<br>see Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.49 </p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_PHY_anchor">HCI_LE_SET_PHY</a></h2><h3>Description</h3><p>The LE_Set_PHY command is used to set the PHY preferences for the connection identified by the Connection_Handle. The Controller might not be able to make the change (e.g. because the peer does not support the requested PHY) or may decide that the current PHY is preferable.<br>The ALL_PHYS parameter is a bit field that allows the Host to specify, for each direction, whether it has no preference among the PHYs that the Controller supports in a given direction or whether it has specified particular PHYs that it prefers in the TX_PHYS or RX_PHYS parameter.<br>The TX_PHYS parameter is a bit field that indicates the transmitter PHYs that the Host prefers the Controller to use. If the ALL_PHYS parameter specifies that the Host has no preference, the TX_PHYS parameter is ignored; otherwise at least one bit shall be set to 1.<br>The RX_PHYS parameter is a bit field that indicates the receiver PHYs that the Host prefers the Controller to use. If the ALL_PHYS parameter specifies that the Host has no preference, the RX_PHYS parameter is ignored; otherwise at least one bit shall be set to 1.<br>If, for at least one direction, the Host has specified a preference and the current PHY is not one of those preferred, the Controller shall request a change. Otherwise the Controller may, but need not, request a change.<br>The PHY preferences provided by the LE Set PHY command override those provided via the LE Set Default PHY command (Section 7.8.48) or any preferences previously set using the LE Set PHY command on the same connection.<br>The PHY_options parameter is a bit field that allows the Host to specify options for PHYs. The default value for a new connection shall be all zero bits. The Controller may override any preferred coding for transmitting on the LE Coded PHY.<br>The Host may specify a preferred coding even if it prefers not to use the LE Coded transmitter PHY since the Controller may override the PHY preference.<br>(See Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.49)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>ALL_PHYS</p>
 </td><td><p>1</p>
@@ -1892,7 +1896,7 @@ Default: N= 0x0384 (900 secs or 15 minutes)</p>
 </td><td><li>0x00 ... 0x03</li></td></tr>
 <tr><td><p>PHY_options</p>
 </td><td><p>2</p>
-</td><td><p>Not Supported by STM32WB</p>
+</td><td><p>Not supported</p>
 </td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -1900,20 +1904,43 @@ Default: N= 0x0384 (900 secs or 15 minutes)</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_PHY_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_PHY_UPDATE_COMPLETE_EVENT</a></li><h2><a name="HCI TESTING commands_anchor">HCI TESTING commands</a></h2><h2></h2><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_PHY_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_PHY_UPDATE_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_PRIVACY_MODE_anchor">HCI_LE_SET_PRIVACY_MODE</a></h2><h3>Description</h3><p>This command is used to allow the Host to specify the privacy mode to be used for a given entry on the resolving list.<br>(See Bluetooth Specification v.5.0 [Vol 2] Part E, Section 7.8.77)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Peer_Identity_Address_Type</p>
+</td><td><p>1</p>
+</td><td><p>Identity address type.</p>
+</td><td><li>0x00: Public Identity Address</li><li>0x01: Random (static) Identity Address</li></td></tr>
+<tr><td><p>Peer_Identity_Address</p>
+</td><td><p>6</p>
+</td><td><p>Public or Random (static) Identity address of the peer device</p>
+</td><td></tr>
+<tr><td><p>Privacy_Mode</p>
+</td><td><p>1</p>
+</td><td><p>Privacy Mode.</p>
+</td><td><li>0x00: Use Network Privacy Mode</li><li>0x01: Use Device Privacy Mode</li></td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI TESTING commands_anchor">HCI TESTING commands</a></h2><h2></h2><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>Opcode</th><th>LO</th><th>SO</th><th>BO</th></tr>
 <tr><td><a href="#HCI_LE_RECEIVER_TEST_anchor">HCI_LE_RECEIVER_TEST</a></td><td><p>0x201D</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td></tr>
 <tr><td><a href="#HCI_LE_TRANSMITTER_TEST_anchor">HCI_LE_TRANSMITTER_TEST</a></td><td><p>0x201E</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td></tr>
 <tr><td><a href="#HCI_LE_TEST_END_anchor">HCI_LE_TEST_END</a></td><td><p>0x201F</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td></tr>
 <tr><td><a href="#HCI_LE_ENHANCED_RECEIVER_TEST_anchor">HCI_LE_ENHANCED_RECEIVER_TEST</a></td><td><p>0x2033</p>
 </td><td><p>Y</p>
 </td><td></td><td></td></tr>
@@ -1964,7 +1991,7 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 </td><td><p>2</p>
 </td><td><p>Number of packets received</p>
 </td><td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ENHANCED_RECEIVER_TEST_anchor">HCI_LE_ENHANCED_RECEIVER_TEST</a></h2><h3>Description</h3><p>This command is used to start a test where the DUT receives test reference packets at a fixed interval. The tester generates the test reference packets.<br>see Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.50 </p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ENHANCED_RECEIVER_TEST_anchor">HCI_LE_ENHANCED_RECEIVER_TEST</a></h2><h3>Description</h3><p>This command is used to start a test where the DUT receives test reference packets at a fixed interval. The tester generates the test reference packets.<br>(See Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.50)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>RX_Frequency</p>
 </td><td><p>1</p>
@@ -1985,7 +2012,7 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ENHANCED_TRANSMITTER_TEST_anchor">HCI_LE_ENHANCED_TRANSMITTER_TEST</a></h2><h3>Description</h3><p>This command is used to start a test where the DUT generates test reference packets at a fixed interval. The Controller shall transmit at maximum power.<br>An LE Controller supporting the LE_Enhanced Transmitter_Test command shall support Packet_Payload values 0x00, 0x01 and 0x02. An LE Controller supporting the LE Coded PHY shall also support Packet_Payload value 0x04 (not supported by STM32WB). An LE Controller may support other values of Packet_Payload.<br>see Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.51</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_ENHANCED_TRANSMITTER_TEST_anchor">HCI_LE_ENHANCED_TRANSMITTER_TEST</a></h2><h3>Description</h3><p>This command is used to start a test where the DUT generates test reference packets at a fixed interval. The Controller shall transmit at maximum power.<br>An LE Controller supporting the LE_Enhanced Transmitter_Test command shall support Packet_Payload values 0x00, 0x01 and 0x02. An LE Controller supporting the LE Coded PHY shall also support Packet_Payload value 0x04 (not supported by STM32WB). An LE Controller may support other values of Packet_Payload.<br>(See Bluetooth Specification v5.0 [Vol 6] Part B, Section 7.8.51)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>TX_Frequency</p>
 </td><td><p>1</p>
@@ -2633,12 +2660,12 @@ connIntervalmax = Slave_Conn_Interval_Max x 1.25ms</p>
 </td><td><p>2</p>
 </td><td><p>Minimum advertising interval.
 Time = N * 0.625 msec.</p>
-</td><td><li>0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) </li></td></tr>
+</td><td><li>0x0006 (3.750 ms) : for High Duty Cycle Directed Advertising</li><li>0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) : for Low Duty Cycle Directed Advertising</li></td></tr>
 <tr><td><p>Advertising_Interval_Max</p>
 </td><td><p>2</p>
 </td><td><p>Maximum advertising interval.
 Time = N * 0.625 msec.</p>
-</td><td><li>0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) </li></td></tr>
+</td><td><li>0x0006 (3.750 ms) : for High Duty Cycle Directed Advertising</li><li>0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) : for Low Duty Cycle Directed Advertising</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -2708,7 +2735,7 @@ Any random value between 0 to 999999</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Authorization_Enable</p>
 </td><td><p>1</p>
@@ -2724,7 +2751,7 @@ Any random value between 0 to 999999</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Pass_Key</p>
 </td><td><p>4</p>
@@ -2741,7 +2768,7 @@ Must be a six-digit decimal number.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Authorize</p>
 </td><td><p>1</p>
@@ -2839,7 +2866,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -2879,7 +2906,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -2917,7 +2944,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Reason</p>
 </td><td><p>1</p>
@@ -2939,7 +2966,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -3131,7 +3158,7 @@ Time = N * 0.625 msec.</p>
 </td><td><li>0x00: Public Device Address</li><li>0x01: Random Device Address</li></td></tr>
 <tr><td><p>Peer_Address[i]</p>
 </td><td><p>6</p>
-</td><td><p>Public Device Address or Random Device Address of the device to be added to the white list.</p>
+</td><td><p>Public Device Address or Random Device Address.</p>
 </td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -3239,7 +3266,7 @@ Time = N * 0.625 msec.</p>
 </td><td><li>0x00: Public Device Address</li><li>0x01: Random Device Address</li></td></tr>
 <tr><td><p>Peer_Address[i]</p>
 </td><td><p>6</p>
-</td><td><p>Public Device Address or Random Device Address of the device to be added to the white list.</p>
+</td><td><p>Public Device Address or Random Device Address.</p>
 </td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -3311,7 +3338,7 @@ Time = N * 0.625 msec.</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_TERMINATE_GAP_PROC_anchor">ACI_GAP_TERMINATE_GAP_PROC</a></h2><h3>Description</h3><p>Terminate the specified GATT procedure. An <a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a> event is returned with the procedure code set to the corresponding procedure.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_TERMINATE_GAP_PROC_anchor">ACI_GAP_TERMINATE_GAP_PROC</a></h2><h3>Description</h3><p>Terminate the specified GAP procedure. An <a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a> event is returned with the procedure code set to the corresponding procedure.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Procedure_Code</p>
 </td><td><p>1</p>
@@ -3327,7 +3354,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Conn_Interval_Min</p>
 </td><td><p>2</p>
@@ -3369,7 +3396,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Force_Rebond</p>
 </td><td><p>1</p>
@@ -3439,7 +3466,7 @@ If Privacy is enabled, then the address can be a resolvable private address or a
 </td><td><li>0x00: Public Device Address</li><li>0x01: Random Device Address</li></td></tr>
 <tr><td><p>Peer_Address[i]</p>
 </td><td><p>6</p>
-</td><td><p>Public Device Address or Random Device Address of the device to be added to the white list.</p>
+</td><td><p>Public Device Address or Random Device Address.</p>
 </td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -3511,17 +3538,17 @@ Time = N * 0.625 msec.</p>
 </td><td><li>0x00: Public Device Address</li><li>0x01: Random Device Address</li></td></tr>
 <tr><td><p>Address[i]</p>
 </td><td><p>6</p>
-</td><td><p>Public Device Address or Random Device Address of the device to be added to the white list.</p>
+</td><td><p>Public Device Address or Random Device Address.</p>
 </td><td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_IS_DEVICE_BONDED_anchor">ACI_GAP_IS_DEVICE_BONDED</a></h2><h3>Description</h3><p>The command finds whether the device, whose address is specified in the command, is bonded. If the device is using a resolvable private address and it has been bonded, then the command will return BLE_STATUS_SUCCESS.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Peer_Address_Type</p>
 </td><td><p>1</p>
-</td><td><p>Address type.</p>
-</td><td><li>0x00: Public Device Address</li><li>0x01: Random Device Address</li></td></tr>
+</td><td><p>Identity address type.</p>
+</td><td><li>0x00: Public Identity Address</li><li>0x01: Random (static) Identity Address</li></td></tr>
 <tr><td><p>Peer_Address</p>
 </td><td><p>6</p>
-</td><td><p>Address used by the peer device while advertising</p>
+</td><td><p>Public or Random (static) Identity address of the peer device</p>
 </td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -3533,7 +3560,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Confirm_Yes_No</p>
 </td><td><p>1</p>
@@ -3550,7 +3577,7 @@ Time = N * 0.625 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Input_Type</p>
 </td><td><p>1</p>
@@ -4045,7 +4072,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4057,7 +4084,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Start_Handle</p>
 </td><td><p>2</p>
@@ -4077,7 +4104,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Start_Handle</p>
 </td><td><p>2</p>
@@ -4109,7 +4136,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Start_Handle</p>
 </td><td><p>2</p>
@@ -4137,7 +4164,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Start_Handle</p>
 </td><td><p>2</p>
@@ -4165,7 +4192,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4193,7 +4220,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Execute</p>
 </td><td><p>1</p>
@@ -4209,7 +4236,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4221,7 +4248,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>UUID_Type</p>
 </td><td><p>1</p>
@@ -4241,7 +4268,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Start_Handle</p>
 </td><td><p>2</p>
@@ -4261,7 +4288,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Start_Handle</p>
 </td><td><p>2</p>
@@ -4281,7 +4308,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Start_Handle</p>
 </td><td><p>2</p>
@@ -4309,7 +4336,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Char_Handle</p>
 </td><td><p>2</p>
@@ -4329,7 +4356,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4345,7 +4372,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Start_Handle</p>
 </td><td><p>2</p>
@@ -4373,7 +4400,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4393,7 +4420,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Number_of_Handles</p>
 </td><td><p>1</p>
@@ -4413,7 +4440,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4437,7 +4464,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4465,7 +4492,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4493,7 +4520,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4521,7 +4548,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4541,7 +4568,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4565,7 +4592,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4581,7 +4608,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4605,7 +4632,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4629,7 +4656,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4641,7 +4668,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
@@ -4673,7 +4700,7 @@ If the Val_Offset is set to a value greater than 0, then the length of the attri
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -4813,7 +4840,7 @@ In case of a variable size characteristic, this field specifies the new length o
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Error_Code</p>
 </td><td><p>1</p>
@@ -4856,7 +4883,7 @@ In case of a variable size characteristic, this field specifies the new length o
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Conn_Interval_Min</p>
 </td><td><p>2</p>
@@ -4886,7 +4913,7 @@ Time = N * 1.25 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Conn_Interval_Min</p>
 </td><td><p>2</p>
@@ -4988,7 +5015,7 @@ Time = N * 0.625 msec.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Encryption_Enabled</p>
 </td><td><p>1</p>
@@ -5002,7 +5029,7 @@ Time = N * 0.625 msec.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Version</p>
 </td><td><p>1</p>
@@ -5048,7 +5075,7 @@ Error code 3 is internal FIFO full.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle for which the command is given.</p>
+</td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h2><a name="HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></h2><h3>Description</h3><p>The Command Complete event is used by the Controller for most commands to transmit return status of a command and the other event parameters that are specified for the issued HCI command.<br>The Num_HCI_Command_Packets event parameter allows the Controller to indicate the number of HCI command packets the Host can send to the Controller.<br>If the Controller requires the Host to stop sending commands, the Num_HCI_Command_Packets event parameter will be set to zero. To indicate to the Host that the Controller is ready to receive HCI command packets, the Controller generates a Command Complete event with the Command_Opcode 0x0000, and the Num_HCI_Command_Packets event parameter is set to 1 or more. See each command for the parameters that are returned by this event.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -5131,7 +5158,7 @@ Error code 3 is internal FIFO full.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle to be used to identify the connection with the peer device.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Role</p>
 </td><td><p>1</p>
@@ -5213,7 +5240,7 @@ Units: dBm</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle to be used to identify the connection with the peer device.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Conn_Interval</p>
 </td><td><p>2</p>
@@ -5238,7 +5265,7 @@ Time = N * 10 msec.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle to be used to identify the connection with the peer device.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>LE_Features</p>
 </td><td><p>8</p>
@@ -5248,7 +5275,7 @@ Time = N * 10 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle to be used to identify the connection with the peer device.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Random_Number</p>
 </td><td><p>8</p>
@@ -5262,7 +5289,7 @@ Time = N * 10 msec.</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle to be used to identify the connection with the peer device.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>MaxTxOctets</p>
 </td><td><p>2</p>
@@ -5308,7 +5335,7 @@ Time = N * 10 msec.</p>
 </td><td></td></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle to be used to identify the connection with the peer device.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Role</p>
 </td><td><p>1</p>
@@ -5608,7 +5635,7 @@ Units: dBm</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Server_RX_MTU</p>
 </td><td><p>2</p>
@@ -5618,7 +5645,7 @@ Units: dBm</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Format</p>
 </td><td><p>1</p>
@@ -5636,7 +5663,7 @@ Units: dBm</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Num_of_Handle_Pair</p>
 </td><td><p>1</p>
@@ -5654,7 +5681,7 @@ Units: dBm</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Handle_Value_Pair_Length</p>
 </td><td><p>1</p>
@@ -5672,7 +5699,7 @@ Units: dBm</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Event_Data_Length</p>
 </td><td><p>1</p>
@@ -5686,7 +5713,7 @@ Units: dBm</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Event_Data_Length</p>
 </td><td><p>1</p>
@@ -5700,7 +5727,7 @@ Units: dBm</p>
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Event_Data_Length</p>
 </td><td><p>1</p>
@@ -5715,7 +5742,7 @@ A concatenation of attribute values for each of the attribute handles in the req
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Data_Length</p>
 </td><td><p>1</p>
@@ -5733,7 +5760,7 @@ A concatenation of attribute values for each of the attribute handles in the req
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Handle</p>
 </td><td><p>2</p>
@@ -5755,13 +5782,13 @@ A concatenation of attribute values for each of the attribute handles in the req
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h2><a name="ACI_GATT_INDICATION_EVENT_anchor">ACI_GATT_INDICATION_EVENT</a></h2><h3>Description</h3><p>This event is generated when an indication is received from the server.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Handle</p>
 </td><td><p>2</p>
@@ -5779,7 +5806,7 @@ A concatenation of attribute values for each of the attribute handles in the req
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Handle</p>
 </td><td><p>2</p>
@@ -5797,7 +5824,7 @@ A concatenation of attribute values for each of the attribute handles in the req
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Error_Code</p>
 </td><td><p>1</p>
@@ -5807,7 +5834,7 @@ A concatenation of attribute values for each of the attribute handles in the req
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Req_Opcode</p>
 </td><td><p>1</p>
@@ -5825,7 +5852,7 @@ A concatenation of attribute values for each of the attribute handles in the req
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Handle</p>
 </td><td><p>2</p>
@@ -5844,8 +5871,8 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Handle of the connection on which there was the request to write the attribute</p>
-</td><td></tr>
+</td><td><p>Connection handle for which the event applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Handle</p>
 </td><td><p>2</p>
 </td><td><p>The handle of the attribute</p>
@@ -5862,7 +5889,7 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Handle</p>
 </td><td><p>2</p>
@@ -5888,8 +5915,8 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the request</p>
-</td><td></tr>
+</td><td><p>Connection handle for which the event applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Available_Buffers</p>
 </td><td><p>2</p>
 </td><td><p>Number of buffers available</p>
@@ -5898,14 +5925,14 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the event</p>
-</td><td></tr>
+</td><td><p>Connection handle for which the event applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 </table><h2><a name="ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT</a></h2><h3>Description</h3><p>This event is given to the application when a prepare write request is received by the server from the client. This event will be given to the application only if the event bit for this event generation is set when the characteristic was added.<br>When this event is received, the application has to check whether the value being requested for write can be allowed to be written and respond with the command <a href="#ACI_GATT_WRITE_RESP_anchor">ACI_GATT_WRITE_RESP</a>. Based on the response from the application, the attribute value will be modified by the stack.<br>If the write is rejected by the application, then the value of the attribute will not be modified and an error response will be sent to the client, with the error code as specified by the application.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Handle of the connection on which there was the request to write the attribute</p>
-</td><td></tr>
+</td><td><p>Connection handle for which the event applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Handle</p>
 </td><td><p>2</p>
 </td><td><p>The handle of the attribute</p>
@@ -5926,7 +5953,7 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Offset</p>
 </td><td><p>2</p>
@@ -5944,7 +5971,7 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Handle</p>
 </td><td><p>2</p>
@@ -5966,7 +5993,7 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle related to the response.</p>
+</td><td><p>Connection handle for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Attribute_Handle</p>
 </td><td><p>2</p>

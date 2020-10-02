@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_gap_aci.c
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (gap_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************

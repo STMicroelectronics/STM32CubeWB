@@ -39,12 +39,13 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
 
 /* ALIGN(4) */
-__attribute__((aligned(4))) Composition_Data_Page0_t NodeCompositionPage0; /* Storage of the Node Page0 */
+__attribute__((aligned(4))) Composition_Header_Page0_t NodeCompositionPage0Header;
 
 /* ALIGN(4) */
-__attribute__((aligned(4)))Elements_Page0_t aNodeElements[MAX_ELEMENTS_PER_NODE];
+__attribute__((aligned(4)))Elements_Page0_t aNodeElements[CLIENT_MAX_ELEMENTS_PER_NODE];
 
 /* ALIGN(4)*/
 __attribute__((aligned(4)))NodeInfo_t NodeInfo;
@@ -235,6 +236,7 @@ MOBLE_RESULT ConfigClient_CompositionDataStatusResponse(MOBLEUINT8 const *pSrcCo
                                                         MOBLEUINT32 length)  
 {
   MOBLEUINT8 *pSrcElements;
+  MOBLEUINT32 parsedDataLength;
   MOBLEUINT8 elementIndex;
   MOBLEUINT8 numNodeSIGmodels;
   MOBLEUINT8 numNodeVendormodels;
@@ -244,94 +246,136 @@ MOBLE_RESULT ConfigClient_CompositionDataStatusResponse(MOBLEUINT8 const *pSrcCo
        
   TRACE_M(TF_CONFIG_CLIENT_M, "Composition Status Cb \r\n");  
 
+  parsedDataLength = 0; 
+ 
+  if (length >= DEVICE_COMPOSITION_HEADER_SIZE)
+  {
   /* Copy the header of the Composition page */ 
-  NodeCompositionPage0.sComposition_Data_Page0.sheader.DataPage = *pSrcComposition; 
-  NodeCompositionPage0.sComposition_Data_Page0.sheader.NodeCID = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+1));
-  NodeCompositionPage0.sComposition_Data_Page0.sheader.NodePID = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+3));
-  NodeCompositionPage0.sComposition_Data_Page0.sheader.NodeVID = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+5));
-  NodeCompositionPage0.sComposition_Data_Page0.sheader.NodeCRPL = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+7));
-  NodeCompositionPage0.sComposition_Data_Page0.sheader.NodeFeatures = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+9));
+    NodeCompositionPage0Header.DataPage = *pSrcComposition; 
+    NodeCompositionPage0Header.NodeCID = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+1));
+    NodeCompositionPage0Header.NodePID = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+3));
+    NodeCompositionPage0Header.NodeVID = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+5));
+    NodeCompositionPage0Header.NodeCRPL = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+7));
+    NodeCompositionPage0Header.NodeFeatures = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(pSrcComposition+9));
+  }
   
+  parsedDataLength += DEVICE_COMPOSITION_HEADER_SIZE; 
+  
+  if (length > parsedDataLength)
+  {
   /* Point to the Start of Elements data from source  */
   /* Point after the Header and Loc , NumS, NumV */
   pSrcElements = (MOBLEUINT8*)(pSrcComposition+11);
   
-  for (elementIndex =0; elementIndex < MAX_ELEMENTS_PER_NODE; elementIndex++ )
+  for (elementIndex =0; elementIndex < CLIENT_MAX_ELEMENTS_PER_NODE; elementIndex++ )
   { 
+      
+    NodeInfo.NbOfelements = elementIndex+1;   /* Save number of elements available in node for later use */
+      
     /* Point to the destination address in Global Variable */
     /* Copy Loc, NumSIGmodels, NumVendorModels in Composition page */
     aNodeElements[elementIndex].Loc = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)pSrcElements);
     
     pSrcElements += 2;
+    parsedDataLength += 2; 
+      
     aNodeElements[elementIndex].NumSIGmodels = *(pSrcElements);
     
     pSrcElements++;
+    parsedDataLength++;
+      
     aNodeElements[elementIndex].NumVendorModels = *(pSrcElements);
 
     pSrcElements++;
+    parsedDataLength++;
 
     /******************* Copy the SIG Models **********************************/    
     /* Prepare the variables to find the number of SIG Models, SInce header is already copied,
        it can use used directly for the comparision */
     /* This is to be used for running the loop for data copy */
-    numNodeSIGmodels = aNodeElements[elementIndex].NumSIGmodels;
-    varModels = numNodeSIGmodels;
+      
+    if (length >= (parsedDataLength+2))
+    { /* Still length of data received is more than parsed and the remaining 
+         data is >2Bytes for SIG Model ID */
+        
+      numNodeSIGmodels = aNodeElements[elementIndex].NumSIGmodels;
+      varModels = numNodeSIGmodels;
     
-    /* Point to the Elements array for the SIG Models  */
+      /* Point to the Elements array for the SIG Models  */
 
-    if (numNodeSIGmodels > MAX_SIG_MODELS_PER_ELEMENT)
-    { /* Number of models of Node is more than storage capacity */
-      varModels = MAX_SIG_MODELS_PER_ELEMENT;
-    }
- 
-    for (indexModels=0; indexModels< varModels; indexModels++)
-    {
-      aNodeElements[elementIndex].aSIGModels[indexModels] = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)pSrcElements);
-      pSrcElements +=2;  /* Increment by 2 Bytes for next Model */
-    }
-       
-    /* If the source has more SIG Model IDs, then keep reading them till next address */
-    if (numNodeSIGmodels > MAX_SIG_MODELS_PER_ELEMENT)
-    {
-      for (; indexModels< numNodeSIGmodels; indexModels++)
-      {
-        /* Increase the Source address pointer ONLY */
-        pSrcElements +=2;
+      if (numNodeSIGmodels > CLIENT_MAX_SIG_MODELS_PER_ELEMENT)
+      { /* Number of models of Node is more than storage capacity */
+          varModels = CLIENT_MAX_SIG_MODELS_PER_ELEMENT;
       }
+ 
+      for (indexModels=0; indexModels< varModels; indexModels++)
+      {
+        aNodeElements[elementIndex].aSIGModels[indexModels] = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)pSrcElements);
+        pSrcElements +=2;  /* Increment by 2 Bytes for next Model */
+        parsedDataLength += 2;
+      }
+       
+      /* If the source has more SIG Model IDs, then keep reading them till next address */
+      if (numNodeSIGmodels > CLIENT_MAX_SIG_MODELS_PER_ELEMENT)
+      {
+        for (; indexModels< numNodeSIGmodels; indexModels++)
+        {
+          /* Increase the Source address pointer ONLY */
+          pSrcElements +=2;
+          parsedDataLength += 2;
+        }
+      }
+    } /* if (length > parsedDataLength) */
+    else
+    {
+      break;
     }
     
     /******************* Copy the Vendor Models *******************************/
     numNodeVendormodels = aNodeElements[elementIndex].NumVendorModels;
     varModels = numNodeVendormodels;
     
-    /* Point to the destination address in Global Variable */
-    if (numNodeVendormodels > MAX_VENDOR_MODELS_PER_ELEMENT)
-    {
-      varModels = MAX_VENDOR_MODELS_PER_ELEMENT;
-    }
-
-    /* Start copying the Vendor Models */
-    for (indexModels=0; indexModels < varModels; indexModels++)
-    {
-      aNodeElements[elementIndex].aVendorModels[indexModels] = CopyU8LittleEndienArrayToU32word(pSrcElements);
-      pSrcElements +=4;
-    }
-       
-    /* If the source has more Vendor Model IDs, then keep reading them till next Element */
-    if (numNodeVendormodels > MAX_VENDOR_MODELS_PER_ELEMENT)
-    {
-      for (; indexModels< numNodeVendormodels; indexModels++)
+    if (length >= (parsedDataLength+4))
+    { /* Still length of data received is more than parsed and the remaining 
+         data is >4Bytes for Vendor Model ID */
+        
+      /* Point to the destination address in Global Variable */
+      if (numNodeVendormodels > CLIENT_MAX_VENDOR_MODELS_PER_ELEMENT)
       {
-        /* Increase the Source address pointer only */
-        pSrcElements +=4;
+        varModels = CLIENT_MAX_VENDOR_MODELS_PER_ELEMENT;
       }
+
+      /* Start copying the Vendor Models */
+      for (indexModels=0; indexModels < varModels; indexModels++)
+      {
+        aNodeElements[elementIndex].aVendorModels[indexModels] = CopyU8LittleEndienArrayToU32word(pSrcElements);
+        pSrcElements +=4;
+        parsedDataLength += 4;
+      }
+       
+      /* If the source has more Vendor Model IDs, then keep reading them till next Element */
+      if (numNodeVendormodels > CLIENT_MAX_VENDOR_MODELS_PER_ELEMENT)
+      {
+        for (; indexModels< numNodeVendormodels; indexModels++)
+        {
+          /* Increase the Source address pointer only */
+          pSrcElements +=4;
+        }
+      }
+    } /* if (length > (parsedDataLength+4)) */
+    else
+    {
+      break;
     }
       
-  } /*   for (elementIndex =0; elementIndex < MAX_ELEMENTS_PER_NODE; elementIndex++ ) */
+    if (length <= parsedDataLength)
+    { /* No more data to parse */
+      break;
+    }
   
+    } /*   for (elementIndex =0; elementIndex < CLIENT_MAX_ELEMENTS_PER_NODE; elementIndex++ ) */
+  } /* if (length > parsedDataLength) */
   
-  NodeInfo.NbOfelements = elementIndex;   /* Save number of elements available in node for later use */
-                                     /* Element index is already incremented by 1 after 'for' loop */ 
   Appli_CompositionDataStatusCb(result);
   return result;
   
@@ -391,46 +435,6 @@ MOBLEUINT16 GetSIGModelFromCompositionData(MOBLEUINT8 elementIdx, MOBLEUINT8 idx
 
 
 /**
-* @brief  SetSigModelsNodeElementAddress: This function gets the element address 
-          from last known address saved in the flash 
-* @param  None
-* @retval MOBLE_RESULT
-*/ 
-void SetSIGModelCountToConfigure(MOBLEUINT8 count)
-{
-  MOBLEUINT8 sigModelsCount;
-  
-  sigModelsCount = GetTotalSIGModelsCount(0);
-  if (count > sigModelsCount)
-  { /* if count required by application is more than Element's SIG Models, 
-       keep the low value  */
-    count = sigModelsCount;
-  }
- 
-  NodeInfo.NbOfSIGModelsToConfigure = count;
-}
-
-/**
-* @brief  SetVendorModelsNodeElementAddress: This function gets the element address 
-          from last known address saved in the flash 
-* @param  None
-* @retval MOBLE_RESULT
-*/ 
-void SetVendorModelCountToConfigure(MOBLEUINT8 count)
-{
-  MOBLEUINT8 vendorModelsCount;
-  
-  vendorModelsCount = GetTotalVendorModelsCount(0);
-  if (count > vendorModelsCount)
-  { /* if count required by application is more than Element's SIG Models, 
-       keep the low value  */
-    count = vendorModelsCount;
-  }
-  
-  NodeInfo.NbOfVendorModelsToConfigure = count;
-}
-
-/**
 * @brief  GetNodeElementAddress: This function gets the element address 
           from last known address saved in the flash 
 * @param  None
@@ -471,27 +475,6 @@ MOBLEUINT8 GetTotalVendorModelsCount(MOBLEUINT8 elementIdx)
   return aNodeElements[elementIdx].NumVendorModels ; 
 }
 
-/**
-* @brief  GetNodeElementAddress: This function gets the element address 
-          from last known address saved in the flash 
-* @param  None
-* @retval MOBLE_RESULT
-*/ 
-MOBLEUINT8 GetNumberofSIGModels(MOBLEUINT8 elementIdx)
-{
-    return NodeInfo.NbOfSIGModelsToConfigure;
-}
-
-/**
-* @brief  GetNodeElementAddress: This function gets the element address 
-          from last known address saved in the flash 
-* @param  None
-* @retval MOBLE_RESULT
-*/ 
-MOBLEUINT8 GetNumberofVendorModels(MOBLEUINT8 elementIdx)
-{
-  return NodeInfo.NbOfVendorModelsToConfigure; 
-}
   
 /**
 * @brief  PackNetkeyAppkeyInto3Bytes: This function is called to pack the 
@@ -524,6 +507,7 @@ void PackNetkeyAppkeyInto3Bytes (MOBLEUINT16 netKeyIndex,
   keysArray3B[2] = (MOBLEUINT8) ((appKeyIndex >>4) & 0xff);  /* Take 8MSb to a byte */
   
 }
+
 
 /**
 * @brief  PackNetkeyAppkeyInto3Bytes: This function is called to pack the 
@@ -740,16 +724,16 @@ MOBLE_RESULT ConfigClient_PublicationSet (MOBLEUINT16 elementAddress,
                                           MOBLEUINT8 publishRetransmitIntervalSteps,
                                           MOBLEUINT32 modelIdentifier)
 {
-  /* 
-4.3.2.16 Config Model Publication Set
-The Config Model Publication Set is an acknowledged message used to set the Model
-Publication state (see Section 4.2.2) of an outgoing message that originates 
-from a model.
+/* 
+  4.3.2.16 Config Model Publication Set
+  The Config Model Publication Set is an acknowledged message used to set the Model
+  Publication state (see Section 4.2.2) of an outgoing message that originates 
+  from a model.
 
-The response to a Config Model Publication Set message is a Config Model 
-Publication Status message.
-The Config Model Publication Set message uses a single octet opcode to 
-maximize the size of a payload.
+  The response to a Config Model Publication Set message is a Config Model 
+  Publication Status message.
+  The Config Model Publication Set message uses a single octet opcode to 
+  maximize the size of a payload.
 
   ElementAddress : 16b : Address of the element
   PublishAddress : 16b : Value of the publish address
@@ -761,7 +745,7 @@ maximize the size of a payload.
   PublishRetransmitCount : 3b : Number of retransmissions for each published message
   PublishRetransmitIntervalSteps : 5b: Number of 50-millisecond steps between retransmissions
   ModelIdentifier: 16 or 32b: SIG Model ID or Vendor Model ID
-  */
+*/
   
   MOBLEUINT16 msg_opcode;
   MOBLEUINT8* pConfigData;
@@ -775,24 +759,26 @@ maximize the size of a payload.
   dataLength = sizeof(configClientModelPublication_t);
 
   
-  if ( (ADDRESS_IS_GROUP(elementAddress)) || (ADDRESS_IS_UNASSIGNED(elementAddress)) )
+  if ( (ADDRESS_IS_GROUP(elementAddress)) || 
+      (ADDRESS_IS_UNASSIGNED(elementAddress)) )
   {
     /* The ElementAddress field is the unicast address of the element, 
        all other address types are Prohibited. */
     result = MOBLE_RESULT_INVALIDARG;
   }
-  else{
-    
-  configClientModelPublication.elementAddr = elementAddress;
-  configClientModelPublication.publishAddr = publishAddress;
-  configClientModelPublication.appKeyIndex = appKeyIndex;
-  configClientModelPublication.credentialFlag = credentialFlag;
-  configClientModelPublication.rfu = 0;
-  configClientModelPublication.publishTTL=publishTTL;
-  configClientModelPublication.publishPeriod=publishPeriod;
-  configClientModelPublication.publishRetransmitCount=publishRetransmitCount;
-  configClientModelPublication.publishRetransmitIntervalSteps=publishRetransmitIntervalSteps;
-  configClientModelPublication.modelIdentifier=modelIdentifier;
+  else
+  {
+      
+    configClientModelPublication.elementAddr = elementAddress;
+    configClientModelPublication.publishAddr = publishAddress;
+    configClientModelPublication.appKeyIndex = appKeyIndex;
+    configClientModelPublication.credentialFlag = credentialFlag;
+    configClientModelPublication.rfu = 0;
+    configClientModelPublication.publishTTL=publishTTL;
+    configClientModelPublication.publishPeriod=publishPeriod;
+    configClientModelPublication.publishRetransmitCount=publishRetransmitCount;
+    configClientModelPublication.publishRetransmitIntervalSteps=publishRetransmitIntervalSteps;
+    configClientModelPublication.modelIdentifier=modelIdentifier;
   
     
     if(CHKSIGMODEL(modelIdentifier))
@@ -809,7 +795,7 @@ maximize the size of a payload.
   TRACE_M(TF_CONFIG_CLIENT_M, "Config Client Publication Add  \r\n");  
   TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", elementAddress);  
   TRACE_M(TF_CONFIG_CLIENT_M, "publishAddress = [%04x]\r\n", publishAddress); 
-  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", modelIdentifier);
   
   TRACE_I(TF_CONFIG_CLIENT_M, "Publication Set buffer \r\n");
   
@@ -916,7 +902,7 @@ MOBLE_RESULT ConfigClient_PublicationStatus(MOBLEUINT8 const *pPublicationStatus
   }  
   TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", configClientPublicationStatus.elementAddr);  
   TRACE_M(TF_CONFIG_CLIENT_M, "publishAddress = [%04x]\r\n", configClientPublicationStatus.publishAddr); 
-  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", configClientPublicationStatus.modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", configClientPublicationStatus.modelIdentifier);
   TRACE_M(TF_CONFIG_CLIENT_M, "status = [%02x]\r\n", configClientPublicationStatus.Status);  
 
   Appli_PublicationStatusCb(configClientPublicationStatus.Status);
@@ -1006,7 +992,7 @@ Config Model Subscription Status message.
    
   TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", elementAddress);  
   TRACE_M(TF_CONFIG_CLIENT_M, "SubscriptionAddress = [%04x]\r\n", address); 
-  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", modelIdentifier);
    
   self_addr = BLEMesh_GetAddress();
 
@@ -1141,7 +1127,7 @@ MOBLE_RESULT ConfigClient_SubscriptionStatus(MOBLEUINT8 const *pSrcSubscriptionS
   
   TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", configClientSubscriptionStatus.elementAddress);  
   TRACE_M(TF_CONFIG_CLIENT_M, "SubscriptionAddress = [%04x]\r\n", configClientSubscriptionStatus.address); 
-  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", configClientSubscriptionStatus.modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", configClientSubscriptionStatus.modelIdentifier);
   TRACE_M(TF_CONFIG_CLIENT_M, "subscription status = [%02x]\r\n", configClientSubscriptionStatus.Status);
   
   Appli_SubscriptionAddStatusCb(configClientSubscriptionStatus.Status);
@@ -1234,7 +1220,8 @@ The response to a Config Model App Bind message is a Config Model App Status mes
   pConfigData = (MOBLEUINT8*) &(modelAppBind);
 
   TRACE_M(TF_CONFIG_CLIENT_M, "Config Client App Key Bind message  \r\n");   
-  TRACE_M(TF_CONFIG_CLIENT_M, "Model = 0x%8lx \r\n", modelIdentifier );
+  TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", elementAddress);  
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", modelIdentifier);
   
   if(ADDRESS_IS_UNASSIGNED(elementAddress))
   {
@@ -1376,7 +1363,7 @@ There are no Parameters for this message.
   else
   {
     /* Node address to be configured */
-    ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);
+    result = ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);
   }
   
   return result;
@@ -1405,55 +1392,6 @@ MOBLE_RESULT ConfigClient_NodeResetStatus(MOBLEUINT8 const *pStatus,
   return result;
 }
 
-void CopyU8LittleEndienArray_fromU16word (MOBLEUINT8* pArray, MOBLEUINT16 inputWord)
-{
-  *(pArray) = (MOBLEUINT8)(inputWord & 0x00ff);  /* Copy the LSB first */
-  *(pArray+1) = (MOBLEUINT8)((inputWord & 0xff00) >> 0x08); /* Copy the MSB later */
-}
-
-MOBLEUINT16 CopyU8LittleEndienArrayToU16word (MOBLEUINT8* pArray) 
-{
-  MOBLEUINT16 u16Word=0;
-  MOBLEUINT8 lsb_byte=0;
-  MOBLEUINT8 msb_byte=0;
-
-  lsb_byte = *pArray;
-  pArray++;
-  msb_byte = *pArray;
-  u16Word = (msb_byte<<8);
-  u16Word &= 0xFF00;
-  u16Word |= lsb_byte;
-
-  return u16Word;
-}
-
-MOBLEUINT32 CopyU8LittleEndienArrayToU32word (MOBLEUINT8* pArray) 
-{
-  MOBLEUINT32 u32Word=0;
-
-  u32Word = *(pArray+3); 
-  u32Word <<= 8;     
-  u32Word |= *(pArray+2); 
-  u32Word <<= 8;     
-  u32Word |= *(pArray+1); 
-  u32Word <<= 8;     
-  u32Word |= *pArray;
-  return u32Word;
-}
-
-void CopyU8LittleEndienArray_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputWord)
-{
-  *pArray = (MOBLEUINT8)(inputWord & 0x000000ff);  /* Copy the LSB first */
-  *(pArray+1) = (MOBLEUINT8)((inputWord & 0x0000ff00) >> 8); /* Copy the MSB later */
-  *(pArray+2) = (MOBLEUINT8)((inputWord & 0x00ff0000) >> 16); /* Copy the MSB later */
-  *(pArray+3) = (MOBLEUINT8)((inputWord & 0xff000000) >> 24); /* Copy the MSB later */
-}
-
-void CopyU8LittleEndienArray_2B_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputWord)
-{
-  *pArray = (MOBLEUINT8)(inputWord & 0x000000ff);  /* Copy the LSB first */
-  *(pArray+1) = (MOBLEUINT8)((inputWord & 0x0000ff00) >> 8); /* Copy the MSB later */
-}
 
 /**
 * @brief   GenericModelServer_GetOpcodeTableCb: This function is call-back 
@@ -1474,7 +1412,7 @@ MOBLE_RESULT ConfigClientModel_SendMessage(MOBLE_ADDRESS dst_peer ,
   
     pTargetDevKey = GetNewProvNodeDevKey();
     
-    ConfigModel_SendMessage(peer_addr, dst_peer, opcode, 
+  result = ConfigModel_SendMessage(peer_addr, dst_peer, opcode, 
                             pData, dataLength, pTargetDevKey); 
   return result;
 }
@@ -1626,9 +1564,8 @@ MOBLE_RESULT ConfigClientModel_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t *
 /**
 * @brief  ConfigClientModel_GetStatusRequestCb : This function is call-back 
 from the library to send response to the message from peer
-* @param  peer_addr: Address of the peer
-* @param  dst_peer: destination send by peer for this node. It can be a
-*                                                     unicast or group address 
+* @param  *pmsgParam Pointer to structure of message header for parameters:
+*          elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * @param  opcode: Received opcode of the Status message callback
 * @param  pResponsedata: Pointer to the buffer to be updated with status
 * @param  plength: Pointer to the Length of the data, to be updated by application
@@ -1637,8 +1574,7 @@ from the library to send response to the message from peer
 * @param  response: Value to indicate wheather message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT ConfigClientModel_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT ConfigClientModel_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam,
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 *pResponsedata, 
                                     MOBLEUINT32 *plength, 
@@ -1667,10 +1603,10 @@ MOBLE_RESULT ConfigClientModel_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
 /**
 * @brief  GenericModelServer_ProcessMessageCb: This is a callback function from
 the library whenever a Generic Model message is received
-* @param  peer_addr: Address of the peer
-* @param  dst_peer: destination send by peer for this node. It can be a
-*                                                     unicast or group address 
+* @param  *pmsgParam Pointer to structure of message header for parameters:
+*          elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * @param  opcode: Received opcode of the Status message callback
+* @param  modelID: Received modelID of the message callback
 * @param  pData: Pointer to the buffer to be updated with status
 * @param  length: Length of the parameters received 
 * @param  response: if TRUE, the message is an acknowledged message
@@ -1679,8 +1615,7 @@ the library whenever a Generic Model message is received
 * @param  response: Value to indicate wheather message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 
-                                                 MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParam, 
                                                  MOBLEUINT16 opcode, 
                                                  MOBLEUINT8 const *pRxData, 
                                                  MOBLEUINT32 dataLength, 
@@ -1691,8 +1626,8 @@ MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
 //  tClockTime delay_t = Clock_Time();
   
-  TRACE_M(TF_CONFIG_CLIENT_M, "dst_peer = %.2X , peer_add = %.2X, opcode= %.2X ,response= %.2X \r\n  ",
-                                                      dst_peer, peer_addr, opcode , response);
+  TRACE_M(TF_CONFIG_CLIENT_M, "dst_peer = [%04x] , peer_add = [%04x], opcode= [%.2X] ,response= [%.2X] \r\n  ",
+                                                      pmsgParam->dst_peer, pmsgParam->peer_addr, opcode , response);
 
   switch(opcode)
   {
@@ -1752,6 +1687,8 @@ MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MOBLE_ADDRESS peer_addr,
   return MOBLE_RESULT_SUCCESS;
 }
 
+#endif /* defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER) */
+
 WEAK_FUNCTION (MOBLEUINT8* GetNewProvNodeDevKey(void))
 {
   return 0;
@@ -1765,5 +1702,5 @@ WEAK_FUNCTION (MOBLEUINT8* GetNewProvNodeDevKey(void))
 * @}
 */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

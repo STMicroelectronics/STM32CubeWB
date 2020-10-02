@@ -613,7 +613,7 @@ ZbTrustCenterRejoin(struct ZigBeeT *zb, void (*callback)(enum ZbStatusCodeT stat
     ipcc_req->Size = 1;
     ipcc_req->Data[0] = (uint32_t)info;
     ZIGBEE_CmdTransfer();
-    return zb_ipc_m4_get_retval();
+    return (enum ZbStatusCodeT) zb_ipc_m4_get_retval();
     /* Followed up in MSG_M0TOM4_STARTUP_TC_REJOIN_CB handler */
 }
 
@@ -2062,7 +2062,7 @@ ZbZclCommandReq(struct ZigBeeT *zb, struct ZbZclCommandReqT *zclReq,
     if (callback != NULL) {
         info = zb_ipc_m4_cb_info_alloc((void *)callback, arg);
         if (info == NULL) {
-            return ZB_STATUS_ALLOC_FAIL;
+            return (enum ZclStatusCodeT) ZB_STATUS_ALLOC_FAIL;
         }
         if (ZbApsAddrIsBcast(&zclReq->dst)) {
             info->zcl_recv_multi_rsp = true; /* callback only freed on ZCL_STATUS_TIMEOUT */

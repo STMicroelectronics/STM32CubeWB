@@ -23,11 +23,11 @@
 
 #include "types.h"
 //#include "hal_types.h"
-#define BLE_MESH_APPLICATION_VERSION "1.12.008" 
+#define BLE_MESH_APPLICATION_VERSION "1.13.000" 
 /**
 * \mainpage ST BLE-Mesh Solutions Bluetooth LE Mesh Library
 *
-* \version 1.12.008
+* \version 1.13.000
 *
 * \subsection contents_sec Contents
 *
@@ -189,6 +189,7 @@ typedef struct
     uint8_t pubKeyTypeOob;  /* Used Public Key: OOB / No OOB */   
     const uint8_t *pubKey;    /* Pointer to array containing Public Key of the device */
     const uint8_t *privKey;   /* Pointer to array containing Private Key of the device*/ 
+    uint8_t noOobAuthEnable;  /* No OOB Authentication Enable */  
     uint8_t staticOobSize;  /* Size of Static OOB array */
     const uint8_t *staticOob; /* Pointer to array containing Static OOB info of the device */
     uint8_t OutputOobSize;    /* Size of Output OOB value */
@@ -223,6 +224,46 @@ typedef struct
   MOBLEUINT8 rssi;
 } neighbor_params_t;
 
+/**
+* Structure contains publication parameters of required model
+*/
+typedef struct
+{
+  MOBLEUINT8 elementAddress;
+  MOBLEUINT32 modelID;
+  MOBLEUINT16 publishAddress;
+  MOBLEUINT16 publishAppKeyIndex;
+  MOBLEUINT8 credentialFlag;
+  MOBLEUINT8 publishTTL;
+  MOBLEUINT8 publishPeriod;
+  MOBLEUINT8 publishRetransmitCount;
+  MOBLEUINT8 publishRetransmitIntervalSteps;    
+} model_publicationparams_t;
+/** \brief of Message Header structure.
+  * This is the structure of message header for elementIndex, src-dst addresses,
+  * TTL, RSSI, NetKey & AppKey Offset
+  * \param[in] elementIndex: index of the element received from peer which is 
+  *            elementNumber-1
+  * \param[in] peer_addr: peer Source network address.
+  * \param[in] dst_peer : Destination address set by peer.
+  * \param[in] ttl: ttl of the received message.
+  * \param[in] rssi: rssi of the received message.
+  * \param[in] rcvdAppKeyOffset: AppKey Offset corresponding to received index.
+  * \param[in] rcvdNetKeyOffset: NetKey Offset corresponding to received index.
+ **/
+typedef struct 
+{   
+    MOBLEUINT8 elementIndex;
+    MOBLEUINT8 reserved[3];
+    MOBLE_ADDRESS peer_addr;
+    MOBLE_ADDRESS dst_peer;
+    MOBLEUINT8 ttl;
+    MOBLEUINT8 rssi;
+    MOBLEUINT8 rcvdAppKeyOffset;
+    MOBLEUINT8 rcvdNetKeyOffset;
+} MODEL_MessageHeader_t;
+
+
 /** \brief Callback map */
 typedef struct
 {
@@ -231,15 +272,15 @@ typedef struct
   * made via a call to \a BluenrgMesh_SetRemotePublication
   * on a remote device.
   * User is responsible for deserializing the data.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
+  * \param[in] *pmsgParam Pointer to structure of message header for parameters:
+  *             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
   * \param[in] offset Address of data in the data map.
   * \param[in] data Data buffer. Contains vendor-specific representation of data.
   * \param[in] length Data buffer length in bytes.
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */
-  MOBLE_RESULT (*WriteLocalData)(MOBLE_ADDRESS peer, MOBLE_ADDRESS dst_peer, 
+  MOBLE_RESULT (*WriteLocalData)(MODEL_MessageHeader_t *pmsgParams,   
                                  MOBLEUINT8 offset, MOBLEUINT8 const *data, 
                                  MOBLEUINT32 length, MOBLEBOOL response);
   
@@ -248,13 +289,13 @@ typedef struct
   *         made via a call to \a _ReadRemoteData on a remote device.
   * User is responsible for serializing the data. After this callback 
   *              successfully returns, data is sent back to the requesting peer.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
+  * \param[in] *pmsgParam Pointer to structure of message header for parameters:
+  *             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
   * \param[in] offset Address of data in the data map.
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */
-  MOBLE_RESULT (*ReadLocalData)(MOBLE_ADDRESS peer, MOBLE_ADDRESS dst_peer, 
+  MOBLE_RESULT (*ReadLocalData)(MODEL_MessageHeader_t *pmsgParams,   
                                 MOBLEUINT8 offset, MOBLEUINT8 const *data, 
                                 MOBLEUINT32 length, MOBLEBOOL response);
   
@@ -263,13 +304,13 @@ typedef struct
   *         made via a call to \a Send response on a remote device.
   * User is responsible for serializing the data. After this callback 
   *              successfully returns, data is sent back to the requesting peer.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
+  * \param[in] *pmsgParam Pointer to structure of message header for parameters:
+  *             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
   * \param[in] offset Address of data in the data map.
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */
-  MOBLE_RESULT (*OnResponseData)(MOBLE_ADDRESS peer_addr, MOBLE_ADDRESS dst_peer,
+  MOBLE_RESULT (*OnResponseData)(MODEL_MessageHeader_t *pmsgParams,  
                                  MOBLEUINT8 command, MOBLEUINT8 const *pRxData, 
                                  MOBLEUINT32 dataLength, MOBLEBOOL response);
 
@@ -317,6 +358,15 @@ typedef struct
   
 } MOBLE_USER_INTF_CB_MAP;
 
+/** \brief Config Model function Callback map */
+typedef struct 
+{ 
+  /* Call back function to get the Publication Parameters when Publication Set
+     command received on Config Model*/
+  void (*GetPublicationParamsCb)(model_publicationparams_t*);  
+  
+} MOBLE_CONFIG_MODEL_CB_MAP;
+
 /** \brief of opcode table structure.
   * This is the structure of opcode of set, get and status message with the maximum 
   *              and maximum parameter value for set,get and status messages.
@@ -330,14 +380,14 @@ typedef struct
  **/
 typedef struct 
 {
-    MOBLEUINT32 model_id;
-    MOBLEUINT32 opcode;
+    MOBLEUINT16 model_id;
+    MOBLEUINT16 opcode;
     MOBLEBOOL reliable;
-    MOBLEUINT16 min_payload_size;
-    MOBLEUINT16 max_payload_size;
+    MOBLEUINT8 min_payload_size;
+    MOBLEUINT8 max_payload_size;
     MOBLEUINT16 response_opcode;
-    MOBLEUINT16 min_response_size;
-    MOBLEUINT16 max_response_size;    
+    MOBLEUINT8 min_response_size;
+    MOBLEUINT8 max_response_size;    
 } MODEL_OpcodeTableParam_t;
 
 /** \brief Callback map */
@@ -357,16 +407,16 @@ typedef struct
   /** \brief get message/status message process callback
   * This function called when there will acknowleged message received or Get message is
   * is received to get the status of the message.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
+  * \param[in] *pmsgParam Pointer to structure of message header for parameters:
+  *             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
   * \param[in] opcode to be processed
+  * \param[in] modelID to be processed
   * \param[in] data Data buffer. to be sent back in status
   * \param[in] length Data buffer length in bytes.
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */ 
-  MOBLE_RESULT (*ModelSIG_GetRequestCb)(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+  MOBLE_RESULT (*ModelSIG_GetRequestCb)(MODEL_MessageHeader_t *pmsgParams, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 *data, 
                                     MOBLEUINT32 *res_length,
@@ -376,16 +426,15 @@ typedef struct
   
   /** \brief set message process callback
   * This function called when there will set message is received.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
+  * \param[in] *pmsgParam Pointer to structure of message header for parameters:
+  *             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
   * \param[in] opcode to be processed
   * \param[in] data Data buffer. to be sent back in status
   * \param[in] length Data buffer length in bytes.
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */ 
-  MOBLE_RESULT (*ModelSIG_SetRequestCb)(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+  MOBLE_RESULT (*ModelSIG_SetRequestCb)(MODEL_MessageHeader_t *pmsgParams, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 const *data, 
                                     MOBLEUINT32 length, 
@@ -411,16 +460,15 @@ typedef struct
   /** \brief get message/status message process callback
   * This function called when there will acknowleged message received or Get message is
   * is received to get the status of the message.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
+  * \param[in] *pmsgParam Pointer to structure of message header for parameters:
+  *             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
   * \param[in] opcode to be processed
   * \param[in] data Data buffer. to be sent back in status
   * \param[in] length Data buffer length in bytes.
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */ 
-  MOBLE_RESULT (*ModelVendor_GetRequestCb)(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+  MOBLE_RESULT (*ModelVendor_GetRequestCb)(MODEL_MessageHeader_t *pmsgParams, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 *data, 
                                     MOBLEUINT32 *res_length,
@@ -430,16 +478,15 @@ typedef struct
   
   /** \brief set message process callback
   * This function called when there will set message is received.
-  * \param[in] peer Source network address.
-  * \param[in] dst_peer Destination address set by peer.
+  * \param[in] *pmsgParam Pointer to structure of message header for parameters:
+  *             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
   * \param[in] opcode to be processed
   * \param[in] data Data buffer. to be sent back in status
   * \param[in] length Data buffer length in bytes.
   * \param[in] response Flag if response is required.
   * \return MOBLE_RESULT_SUCCESS on success.
   */ 
-  MOBLE_RESULT (*ModelVendor_SetRequestCb)(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+  MOBLE_RESULT (*ModelVendor_SetRequestCb)(MODEL_MessageHeader_t *pmsgParams, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 const *data, 
                                     MOBLEUINT32 length, 
@@ -549,7 +596,7 @@ MOBLE_RESULT BLEMesh_SetRemoteData(MOBLE_ADDRESS peer,
                                    MOBLEUINT8 isVendor);
 
 
-/** \brief Set remote publication for the given Model ID & node Address
+/** \brief Set remote publication for the given Model ID to publish Address
 * User is responsible for serializing data into \a data buffer. Vendor_WriteLocalDataCb 
 *                                  callback will be called on the remote device.
 * \param[in] modelId ID of the model. 
@@ -567,6 +614,24 @@ MOBLE_RESULT BLEMesh_SetRemotePublication(MOBLEUINT32 modelId,
                                           MOBLEUINT32 length, 
                                           MOBLEBOOL response, 
                                           MOBLEUINT8 isVendor);
+
+/** \brief Send message for given Model ID & node Address
+* User is responsible for serializing data into \a data buffer
+* \param[in] srcAddress element Address of the Node
+* \param[in] peerAddress address of targeted node(s)
+* \param[in] opcode of message 
+* \param[in] modelId ID of the model. 
+* \param[in] data Data buffer.
+* \param[in] length Length of data in bytes.
+* \param[in] response If 'MOBLE_TRUE', used to get the response. If 'MOBLE_FALSE', no response 
+* \return MOBLE_RESULT_SUCCESS on success.
+*/
+MOBLE_RESULT BLEMesh_ModelSendMessage(MOBLE_ADDRESS srcAddress,
+                                      MOBLE_ADDRESS peerAddress,
+                                      MOBLEUINT32 modelId,
+                                      MOBLEUINT16 opcode, 
+                                      const MOBLEUINT8 *pData,
+                                      MOBLEUINT32 length);
 
 /** \brief Vendor Model Set remote data on the given peer.
 * User is responsible for serializing data into a data buffer. 
@@ -590,13 +655,12 @@ MOBLE_RESULT Vendor_WriteRemoteData (MOBLEUINT32 vendorModelId,
 * User is responsible for serializing data into \a data buffer. Vendor_ReadLocalDataCb 
 *                                  callback will be called on the remote device.
 *                                  It is reliable command
-* \param[in] peer Destination address. May be set to MOBLE_ADDRESS_ALL_NODES to broadcast data.
-* \param[in] elementIndex index of the element
+* \param[in] *pmsgParam Pointer to structure of message header for parameters:
+*             elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * \param[in] command vendor model commands 
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT BLEMesh_ReadRemoteData(MOBLE_ADDRESS peer,
-                                        MOBLEUINT8 elementIndex, 
+MOBLE_RESULT BLEMesh_ReadRemoteData(MODEL_MessageHeader_t *pmsgParam,
                                         MOBLEUINT16 command,
                                         MOBLEUINT8 const * data, 
                                         MOBLEUINT32 length);
@@ -617,8 +681,8 @@ MOBLE_RESULT BLEMesh_SendResponse(MOBLE_ADDRESS peer,
                                   MOBLEUINT32 length);
 
 /** \brief Send response on received packet.
-* \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
-* \param[in] dst Source Address of Node
+* \param[in] *pmsgParam Pointer to structure of message header for parameters:
+*             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
 * \param[in] status Status of response.
 * \param[in] data Data buffer.
 * \param[in] length Length of data in bytes. Maximum accepted length is 8. 
@@ -626,25 +690,24 @@ MOBLE_RESULT BLEMesh_SendResponse(MOBLE_ADDRESS peer,
 * \return MOBLE_RESULT_SUCCESS on success.
 */
 MOBLE_RESULT VendorModel_SendResponse(MOBLEUINT16 vendorModelId, 
-                                      MOBLE_ADDRESS peer, 
-                                      MOBLE_ADDRESS dst, 
+                                      MODEL_MessageHeader_t *pmsgParams,  
                                       MOBLEUINT8 status, 
                                       MOBLEUINT8 const * data, 
                                       MOBLEUINT32 length);
 
 /** \brief Sensor Send response on received packet.
-* \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
+* \param[in] *pmsgParam Pointer to structure of message header for parameters:
+*             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
+* \param[in] opcode to be send
 * \param[in] data Data buffer.
 * \param[in] length Length of data in bytes. Maximum accepted length is 8. 
 *             If length is zero, no associated data is sent with the report.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
-MOBLE_RESULT Model_SendResponse(MOBLE_ADDRESS src_peer,
-                                MOBLE_ADDRESS dst_peer ,
+MOBLE_RESULT Model_SendResponse(MODEL_MessageHeader_t *pmsgParams,
                                 MOBLEUINT16 opcode,
                                 MOBLEUINT8 const *pData,
                                 MOBLEUINT32 length); 
-
 
 /** \brief Config Model Send message to the remote
 * \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
@@ -726,6 +789,12 @@ MOBLE_RESULT BLEMesh_Unprovision(void);
 */
 MOBLE_RESULT BLEMesh_BleHardwareInitCallBack(MOBLE_USER_BLE_CB_MAP const * _cb);
 
+/** \brief Set Config Model init callback
+* \param _cb callback
+* \return MOBLE_RESULT_SUCCESS on success, MOBLE_RESULT_FAIL if failure code.
+*/
+MOBLE_RESULT BLEMesh_BleConfigModelInitCallBack(MOBLE_CONFIG_MODEL_CB_MAP const * _cb);
+
 /** \brief Get provisioning process state
 * \return 0,1,2,3,4,5,6 during provisioning, else 7.
 */
@@ -748,8 +817,18 @@ MOBLE_ADDRESS BLEMesh_GetAddress(void);
 * \return mesh address of a node.
 *
 */
-MOBLE_ADDRESS BLEMesh_GetPublishAddress(MOBLEUINT8 elementNumber, 
+MOBLE_ADDRESS BLEMesh_GetPublishAddress(MOBLEUINT8 elementIndex, 
                                         MOBLEUINT32 modelId);
+
+/** \brief Get Publish Parameters of a node
+*
+* This function gets publication parameters of required model of a element
+*
+* \return status of the command
+*
+*/
+MOBLE_RESULT BLEMesh_Get_PublicationParameters(model_publicationparams_t *pPublicationParams, 
+                                                   MOBLEUINT8 elementIndex, MOBLEUINT32 modelId);
 
 /** \brief Get Subscription address of a node
 *
@@ -760,8 +839,20 @@ MOBLE_ADDRESS BLEMesh_GetPublishAddress(MOBLEUINT8 elementNumber,
 */
 MOBLE_RESULT BLEMesh_GetSubscriptionAddress(MOBLE_ADDRESS *addressList, 
                                                      MOBLEUINT8 *sizeOfList, 
-                                                     MOBLEUINT8 elementNumber,
+                                                     MOBLEUINT8 elementIndex,
                                                      MOBLEUINT32 modelId);
+
+
+/** \brief Check Subscription address of a element for a model
+*
+* This function checks subscription of selected element. 
+*
+* \return MOBLE_RESULT_SUCCESS on success, MOBLE_RESULT_FAIL if failure code
+*
+*/
+MOBLE_RESULT BLEMesh_ModelsCheckSubscription(MOBLE_ADDRESS dst_peer,
+                                             MOBLEUINT32 modelID, 
+                                             MOBLEUINT8 elementIndex);
 
 /** \brief Set default TTL value.
 * When message is sent to mesh network, it contains TTL field. User shall call 
@@ -1001,6 +1092,14 @@ MOBLEBOOL BLEMesh_IsFlashReadyToErase(void);
 */
 void BLEMesh_StopAdvScan(void);
 
+/** \brief Stop ongoing scan (if in scan mode) and advertisement (if in adv mode).
+*/
+void BLEMesh_SuspendAdvScan(void);
+
+/** \brief Stop ongoing scan (if in scan mode) and advertisement (if in adv mode).
+*/
+void BLEMesh_ResumeAdvScan(void);
+
 /** \brief Set adv interval of provisioning service, 0 value results in stop.
 *          Default value: 1000 ms
 *          Actual value -> interval + random(16)
@@ -1088,7 +1187,7 @@ MOBLEUINT8 ApplicationGetCLIENTSigModelList(MOBLEUINT16* pModels_sig_ID,
 * @param elementIndex: Index of the element for Model List
 * retval Count of the SIG Model Servers enabled in the Application
 */
-MOBLE_RESULT BLEMeshSetSelfModelList(MOBLEUINT8 numberOfElements);
+MOBLEUINT8 BLEMeshSetSelfModelList(MOBLEUINT8 numberOfElements);
 
 /** 
 * @brief ApplicationGetVendorModelList: This function provides the list of the 
@@ -1180,6 +1279,36 @@ MOBLE_RESULT BLEMesh_SetFault(MOBLEUINT8 *pFaultArray,
 MOBLE_RESULT BLEMesh_ClearFault(MOBLEUINT8 *pFaultArray, 
                                 MOBLEUINT8 faultArraySize);
 
+/** \brief Get the Number Of Elements.  
+* \param[in] none
+* \return Number of Elements supported by Library
+*/
+MOBLEUINT8 BLEMesh_GetNumberOfElements(void);
+
+/** \brief Get the Models Count
+* \param[in] none
+* \return Number Of Models per element supported by Node
+*/
+MOBLEUINT8 BLEMesh_GetTotalModelsCount(void);
+
+/** \brief Get the Subscription Count per Model
+* \param[in] none
+* \return Number Of Subscription supported per Model of an Element
+*/
+MOBLEUINT8 BLEMesh_GetSubscriptionCount(void);
+
+/** \brief Get the App Keys Count  
+* \param[in] none
+* \return Number of App Keys supported by Node
+*/
+MOBLEUINT8 BLEMesh_GetAppKeysCount(void);
+
+/** \brief Get Net Keys Count  
+* \param[in] none
+* \return Number of Net Keys supported by Node
+*/
+MOBLEUINT8 BLEMesh_GetNetKeysCount(void);
+
 /** \brief Bluetooth LE Mesh Library shutdown
 *
 * This function should be called to shutdown Bluetooth LE Mesh Library
@@ -1235,5 +1364,5 @@ void* GetMemoryDataBuffer(MOBLEUINT8 type, MOBLEUINT32 len);
 
 #endif /* __BLE_MESH_ */
 
-/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

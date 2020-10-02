@@ -38,6 +38,8 @@
 
 
 /* Includes ------------------------------------------------------------------*/
+#include "main.h"
+   
 #include "app_common.h"
 
 #include "app_entry.h"
@@ -315,6 +317,14 @@ void HAL_Delay(uint32_t Delay)
 
     __WFI( );
   }
+}
+
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+ 
+  /* USER CODE END Error_Handler_Debug */
 }
 
 /******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/

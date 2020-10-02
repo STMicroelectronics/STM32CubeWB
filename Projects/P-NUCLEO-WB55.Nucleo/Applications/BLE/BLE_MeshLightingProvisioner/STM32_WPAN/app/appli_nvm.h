@@ -6,7 +6,7 @@
 ******************************************************************************
 * @attention
 *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
 *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -55,9 +55,9 @@ typedef struct
 MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size);
 MOBLE_RESULT AppliNvm_FactorySettingReset(void);
 //MOBLE_RESULT AppliNvm_FlashErase(uint16_t PageNumber);
-MOBLE_RESULT AppliNvm_SaveModelState(uint8_t* state, uint8_t size);
+MOBLE_RESULT AppliNvm_SaveModelState(uint8_t* state, uint16_t size);
 MOBLE_RESULT AppliNvm_ClearModelState(void);
-MOBLE_RESULT AppliNvm_LoadModelState(uint8_t state[], uint8_t* size);
+MOBLE_RESULT AppliNvm_LoadModelState(uint8_t state[], uint16_t* size);
 void AppliNvm_Process(void);
 void AppliNvm_SaveMessageParam (void);
 MOBLE_RESULT AppliNvm_FindFirstEmptyPage(MOBLEINT16* subPageIndex,
@@ -85,8 +85,13 @@ void AppliPrvnNvm_SaveProvisionerDevKey(MOBLEUINT8 *data ,
 
 void AppliPrvnNvm_SaveKeys (MOBLEUINT8 status);
 
+MOBLE_RESULT AppliNVM_Save_FlashTesting(MOBLEUINT8 *buffer,
+                                        MOBLEUINT16 buffer_size);
+MOBLE_RESULT AppliNVM_Retrieve_FlashTesting(MOBLEUINT8 *buffer,
+                                            MOBLEUINT16 buffer_size);
+
 
 #endif /* __APPLI_NVM_H */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

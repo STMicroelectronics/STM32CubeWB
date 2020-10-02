@@ -294,7 +294,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   
   /* NWK address attribute */
   APP_DBG("Modifying NKK address.");
-  RemoteWriteReq.attr[0].attrId = ZCL_COMMISSION_CLI_ATTR_SHORT_ADDR;
+  RemoteWriteReq.attr[0].attrId = ZCL_COMMISSION_SVR_ATTR_SHORT_ADDR;
   RemoteWriteReq.attr[0].type = ZCL_DATATYPE_UNSIGNED_16BIT;
   putle16((uint8_t*)&nwk_addr, params->nwk_addr);
   RemoteWriteReq.attr[0].value = (uint8_t const*)&nwk_addr;
@@ -302,7 +302,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   
   /* Extended PAN ID attribute */
   APP_DBG("Modifying extended PAN ID.");
-  RemoteWriteReq.attr[1].attrId = ZCL_COMMISSION_CLI_ATTR_EPID;
+  RemoteWriteReq.attr[1].attrId = ZCL_COMMISSION_SVR_ATTR_EPID;
   RemoteWriteReq.attr[1].type = ZCL_DATATYPE_BITMAP_64BIT;
   putle64((uint8_t*)&epid, params->extendedPanID);
   RemoteWriteReq.attr[1].value = (uint8_t const*)&epid;
@@ -310,14 +310,14 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   
   /* Stack profile attribute */
   APP_DBG("Modifying stack profile.");
-  RemoteWriteReq.attr[2].attrId = ZCL_COMMISSION_CLI_ATTR_STACKPROFILE;
+  RemoteWriteReq.attr[2].attrId = ZCL_COMMISSION_SVR_ATTR_STACKPROFILE;
   RemoteWriteReq.attr[2].type = ZCL_DATATYPE_UNSIGNED_8BIT;
   RemoteWriteReq.attr[2].value = (uint8_t const*)&params->stackProfile;
   RemoteWriteReq.attr[2].length = 1;
   
   /* Channel mask attribute */
   APP_DBG("Modifying channel mask.");
-  RemoteWriteReq.attr[3].attrId = ZCL_COMMISSION_CLI_ATTR_CHANNELMASK;
+  RemoteWriteReq.attr[3].attrId = ZCL_COMMISSION_SVR_ATTR_CHANNELMASK;
   RemoteWriteReq.attr[3].type = ZCL_DATATYPE_BITMAP_32BIT;
   putle32((uint8_t*)&channelMask, 1 << params->channelMask);
   RemoteWriteReq.attr[3].value = (uint8_t const*)&channelMask;
@@ -325,28 +325,28 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   
   /* Use Insecure Join attribute */
   APP_DBG("Modifying insecure join.");
-  RemoteWriteReq.attr[4].attrId = ZCL_COMMISSION_CLI_ATTR_USEINSECJOIN;
+  RemoteWriteReq.attr[4].attrId = ZCL_COMMISSION_SVR_ATTR_USEINSECJOIN;
   RemoteWriteReq.attr[4].type = ZCL_DATATYPE_BOOLEAN;
   RemoteWriteReq.attr[4].value = (uint8_t const*)&params->useInsecureJoin;
   RemoteWriteReq.attr[4].length = 1;
   
   /* Preconfigured Link Key attribute */
   APP_DBG("Modifying preconfigured link key.");
-  RemoteWriteReq.attr[5].attrId = ZCL_COMMISSION_CLI_ATTR_PRECONFLINKKEY;
+  RemoteWriteReq.attr[5].attrId = ZCL_COMMISSION_SVR_ATTR_PRECONFLINKKEY;
   RemoteWriteReq.attr[5].type = ZCL_DATATYPE_SECURITY_KEY128;
   RemoteWriteReq.attr[5].value = (uint8_t const*)&sec_key_ha;
   RemoteWriteReq.attr[5].length = 16;
   
   /* Network Key type attribute */
   APP_DBG("Modifying NWK key type.");
-  RemoteWriteReq.attr[6].attrId = ZCL_COMMISSION_CLI_ATTR_NWKKEYTYPE;
+  RemoteWriteReq.attr[6].attrId = ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE;
   RemoteWriteReq.attr[6].type = ZCL_DATATYPE_ENUMERATION_8BIT;
   RemoteWriteReq.attr[6].value = (uint8_t const*)&params->nwkKeyType;
   RemoteWriteReq.attr[6].length = 1;
   
   /* Startup Control attribute */
   APP_DBG("Modifying startup control.");
-  RemoteWriteReq.attr[7].attrId = ZCL_COMMISSION_CLI_ATTR_STARTUPCONTROL;
+  RemoteWriteReq.attr[7].attrId = ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL;
   RemoteWriteReq.attr[7].type = ZCL_DATATYPE_ENUMERATION_8BIT;
   RemoteWriteReq.attr[7].value = (uint8_t const*)&params->startupControl;
   RemoteWriteReq.attr[7].length = 1;
@@ -373,7 +373,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   
   /* Scan attemps attribute */
   APP_DBG("Modifying scan attemps.");
-  RemoteWriteReq.attr[0].attrId = ZCL_COMMISSION_CLI_ATTR_SCANATTEMPTS;
+  RemoteWriteReq.attr[0].attrId = ZCL_COMMISSION_SVR_ATTR_SCANATTEMPTS;
   RemoteWriteReq.attr[0].type = ZCL_DATATYPE_UNSIGNED_8BIT;
   RemoteWriteReq.attr[0].value = (uint8_t const*)&params->scan_count;
   RemoteWriteReq.attr[0].length = 1;
@@ -592,7 +592,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
   zigbee_app_info.startupControl = ZbStartTypeJoin;
 

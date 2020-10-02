@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -20,15 +20,18 @@
 #include "ble_common.h"
 #include "app_conf.h"
 #include "hal_common.h"
+#include "ble_mesh.h"
 #include "appli_mesh.h"
 #include "types.h"
-#include "ble_mesh.h"
 #include "ble_hal_aci.h"
 #include "ble_hci_le.h"
 #include <string.h>
 #include "models_if.h"
 #include "mesh_cfg.h"
 #include "generic.h"
+#include "light.h"
+#include "light_lc.h"
+#include "sensors.h"
 #include "common.h"
 #include "serial_if.h"
 #include "appli_nvm.h"
@@ -36,9 +39,16 @@
 #include "appli_config_client.h"
 #include "appli_generic_client.h"
 #include "appli_light_client.h"
+#if ((ENABLE_SENSOR_MODEL_SERVER != 0)||(ENABLE_SENSOR_MODEL_CLIENT != 0))
+#include "appli_sensor.h"
+#include "appli_sensors_client.h"
+#endif
 
 #include "stm32_seq.h"
+#if (( CFG_LPM_SUPPORTED == 0) && (ENABLE_PWM_SUPPORT == 1))
 #include "PWM_config.h"
+#include "PWM_handlers.h"
+#endif
 #include "mesh_cfg_usr.h"
 
 /** @addtogroup ST_BLE_Mesh
@@ -90,6 +100,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+
 enum ButtonState
 {
   BS_OFF,
@@ -100,12 +111,13 @@ enum ButtonState
 
 enum ButtonState buttonState = BS_OFF;
 tClockTime tBounce = 0;
+/*Will be an array aligned with number of elements*/
 MOBLEUINT8 Appli_LedState = 0;
 MOBLEUINT16 IntensityValue = INTENSITY_LEVEL_ZERO;
 MOBLEUINT8 IntensityFlag = FALSE;
 MOBLEUINT8 ProxyFlag = 0;
 MOBLEUINT8 ProvisionFlag = 0;
-
+MOBLEUINT8 UnprovisionInProgress = 0; 
 
 #ifdef ENABLE_AUTH_TYPE_OUTPUT_OOB
 static MOBLEUINT8 PrvngInProcess = 0;
@@ -123,7 +135,7 @@ MOBLEUINT8 NumberOfElements = APPLICATION_NUMBER_OF_ELEMENTS;
 
 #ifdef ENABLE_AUTH_TYPE_STATIC_OOB
 /* 16 octets Static OOB information to be input here. Used during provisioning by Library */
-const MOBLEUINT8 StaticOobBuff[STATIC_OOB_SIZE] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+const MOBLEUINT8 StaticOobBuff[SIZE_STATIC_OOB] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 #else
 const MOBLEUINT8 StaticOobBuff[] = {0};
@@ -182,6 +194,8 @@ volatile uint8_t BleProcessInit = 0;
 MOBLEUINT8 lowPowerNodeApiTimer_Id;
 #endif
 
+MOBLEUINT8 pPropertyId[4];
+
 /********************* Application configuration **************************/
 #if defined(__GNUC__) || defined(__IAR_SYSTEMS_ICC__) || defined(__CC_ARM)
 MOBLEUINT8 bdaddr[8];
@@ -198,7 +212,7 @@ const void *prvsnr_data;
 #endif /* __GNUC__ || defined(__IAR_SYSTEMS_ICC__) || defined(__CC_ARM) */
 
 /* Private function prototypes -----------------------------------------------*/
-//static void Appli_LongButtonPress(void);
+static void Appli_LongButtonPress(void);
 static void Appli_ShortButtonPress(void);
 #if USER_OUTPUT_OOB_APPLI_PROCESS
 void Appli_OobAuthenticationProcess(void);
@@ -208,6 +222,9 @@ void Appli_LowPowerProcess(void);
 #if (APPLI_OPTIM == 1)
 static void AppliMeshTask(void);
 #endif
+void Appli_GetPublicationParamsCb(model_publicationparams_t* pPubParameters);
+WEAK_FUNCTION (void SerialPrvn_ProvisioningStatusUpdateCb(uint8_t flagPrvningInProcess, 
+                                                          MOBLEUINT16 nodeAddress));
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -222,7 +239,7 @@ static void Appli_ShortButtonPress(void)
   BLEMesh_ModelsCommand();
 }
   
-#if 0
+
 /**
 * @brief  Function calls when a button is pressed for Long duration  
 * @param  void
@@ -230,9 +247,137 @@ static void Appli_ShortButtonPress(void)
 */ 
 static void Appli_LongButtonPress(void)
 {
-  /* User Implementation */
-}
+  /** GENERIC ONOFF **/  
+//  TRACE_M(TF_GENERIC_CLIENT_M, "----------- Generic API ONOFF GET ------------- \r\n");
+//  Appli_GenericClient_API(0, GENERIC_ON_OFF_GET, NULL);  
+  
+  /** GENERIC LEVEL **/  
+//  TRACE_M(TF_GENERIC_CLIENT_M, "----------- Generic API LEVEL GET ------------- \r\n");
+//  Appli_GenericClient_API(0, GENERIC_LEVEL_GET, NULL);  
+  
+  /** GENERIC POWER ONOFF **/  
+//  TRACE_M(TF_GENERIC_CLIENT_M, "----------- Generic API POWER ON OFF GET ------------- \r\n");
+//  Appli_GenericClient_API(0, GENERIC_POWER_ON_OFF_GET, NULL);  
+  
+  /** GENERIC TRANSITION TIME **/ 
+//  TRACE_M(TF_GENERIC_CLIENT_M, "----------- Generic API DEFAULT TRANSITION TIME GET ------------- \r\n");
+//  Appli_GenericClient_API(0, GENERIC_DEFAULT_TRANSITION_TIME_GET, NULL);  
+  
+  /** LIGHT LIGHTNESS **/   
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_LIGHTNESS_GET, NULL);  
+  
+  /** LIGHT LIGHTNESS LINEAR **/ 
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS LINEAR GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_LIGHTNESS_LINEAR_GET, NULL);  
+  
+  /** LIGHT LIGHTNESS DEFAULT **/ 
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS DEFAULT GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_LIGHTNESS_DEFAULT_GET, NULL);  
+  
+  /** LIGHT LIGHTNESS RANGE **/ 
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS RANGE GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_LIGHTNESS_RANGE_GET, NULL); 
+  
+  /** LIGHT LIGHTNESS CTL **/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_CTL_GET, NULL);  
+  
+  /** LIGHT LIGHTNESS CTL TEMPERATURE **/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL TEMPERATURE GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_CTL_TEMPERATURE_GET, NULL);  
+  
+  /** LIGHT LIGHTNESS CTL TEMPERATURE RANGE **/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL TEMPERATURE RANGE GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_CTL_TEMPERATURE_RANGE_GET, NULL);  
+  
+  /** LIGHT LIGHTNESS CTL DEFAULT **/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL DEFAULT GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_CTL_DEFAULT_GET, NULL);  
+  
+  /** LIGHT LIGHTNESS HSL **/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_HSL_GET, NULL);  
+
+  /** LIGHT LIGHTNESS HSL DEFAULT **/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL DEFAULT GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_HSL_DEFAULT_GET, NULL);  
+
+  /** LIGHT LIGHTNESS HSL RANGE**/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL RANGE GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_HSL_RANGE_GET, NULL);  
+  
+  /** LIGHT LIGHTNESS HSL HUE**/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL HUE GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_HSL_HUE_GET, NULL);
+  
+  /** LIGHT LIGHTNESS HSL SATURATION**/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL SATURATION GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_HSL_SATURATION_GET, NULL);
+
+  /** LIGHT LC MODE**/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC MODE GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_LC_MODE_GET, NULL);
+  
+  /** LIGHT LC OM**/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC OM GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_LC_OM_GET, NULL);
+  
+  /** LIGHT LC ON OFF**/
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC ON OFF GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_LC_ON_OFF_GET, NULL);
+  
+    /** LIGHT LC PROPERTY **/
+  //LIGHT_CONTROL_LUX_LEVEL_ON_ID : 0x202B
+  pPropertyId[0]= 0x2B;           // Property ID byte 0 : Property ID identifying a Light LC Property.
+  pPropertyId[1]= 0x00;           // Property ID byte 1 : Property ID identifying a Light LC Property.
+//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC PROPERTY GET ------------- \r\n");
+//  Appli_LightClient_API(0, LIGHT_LC_PROPERTY_GET, pPropertyId);
+  
+#if 1 /* Sensor APIs */
+  //PRESENT_AMBIENT_TEMPERATURE_PID : 0x004F
+  pPropertyId[0]= 0x4F;           // Property ID byte 0 : Property ID for the sensor
+  pPropertyId[1]= 0x00;           // Property ID byte 1 : Property ID for the sensor
+  
+  /** SENSOR DESCRIPTOR**/
+//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR DESCRIPTOR GET ------------- \r\n");
+//  Appli_SensorsClient_API(0, SENSOR_DESCRIPTOR_GET, pPropertyId);
+  
+  /** SENSOR CADENCE**/
+//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR CADENCE GET ------------- \r\n");
+//  Appli_SensorsClient_API(0, SENSOR_CADENCE_GET, pPropertyId);
+  
+    /** SENSOR SETTINGS **/
+//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR SETTINGS GET ------------- \r\n");
+//  Appli_SensorsClient_API(0, SENSOR_SETTINGS_GET, pPropertyId);
+  
+    /** SENSOR SETTING **/
+  pPropertyId[2]= 0xAD;           // Sensor Setting Property ID byte 0 : Property ID for the sensor setting
+  pPropertyId[3]= 0x00;           // Sensor Setting Property ID byte 1 : Property ID for the sensor setting
+  
+//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR SETTING GET ------------- \r\n");
+//  Appli_SensorsClient_API(0, SENSOR_SETTING_GET, pPropertyId);
+  
+  /** SENSOR GET **/
+//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR GET ------------- \r\n");
+//  Appli_SensorsClient_API(0, SENSOR_GET, pPropertyId);
+  
+  /** SENSOR COLUMN **/
+//  pPropertyId[2]= 0x01;           // Raw Value X byte 0 : Raw value identifying a column
+//  pPropertyId[3]= 0x00;           // Raw Value X byte 1 : Raw value identifying a column
+//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR COLUMN GET ------------- \r\n");
+//  Appli_SensorsClient_API(0, SENSOR_COLUMN_GET, pPropertyId);
+  
+  /** SENSOR SERIES **/
+//  pPropertyId[2]= 0x01;           // Raw Value X1 byte 0 : Raw value identifying a starting column.
+//  pPropertyId[3]= 0x02;           // Raw Value X2 byte 0 : Raw value identifying an ending column.
+//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR SERIES GET ------------- \r\n");
+//  Appli_SensorsClient_API(0, SENSOR_SERIES_GET, pPropertyId);
 #endif
+  
+  IntensityPublish();
+  
+}
 
 /**
 * @brief  Updates the button status  
@@ -250,7 +395,7 @@ static void Appli_UpdateButtonState(int isPressed)
   
   if((t1 - t0) > LONG_PRESS_THRESHOLD)
   {
-    IntensityPublish();
+    Appli_LongButtonPress();
   }
   else if((t1 - t0) > BOUNCE_THRESHOLD)
   {
@@ -269,6 +414,25 @@ static void Mesh_Task()
   BLEMesh_Process();
   BLEMesh_ModelsProcess(); /* Models Processing */
   
+  if((UnprovisionInProgress > 0) &&
+     (!LL_FLASH_IsActiveFlag_OperationSuspended()))
+  {
+    UnprovisionInProgress = 0;
+    AppliNvm_ClearModelState();
+    PalNvmErase(NVM_BASE, 0);      
+    PalNvmErase(NVM_BASE, 0x1000);
+    PalNvmErase(APP_NVM_BASE, 0);
+    PalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
+    TRACE_M(TF_PROVISION,"NVM erased\r\n");      
+    BLEMesh_Unprovision();
+    AppliNvm_ClearModelState();     
+    TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
+
+    BLEMesh_Process();
+
+    NVIC_SystemReset();
+  }
+    
 #if (APPLI_OPTIM == 0)
   /* Set the task in the scheduler for the next execution */
 #if (LOW_POWER_FEATURE == 0)
@@ -501,10 +665,10 @@ void Appli_BleUnprovisionedIdentifyCb(MOBLEUINT8 data)
 */ 
 MOBLEUINT8 Appli_BleSetNumberOfElementsCb(void)
 {
-  if(NumberOfElements > MAX_NUMB_ELEMENTS)
+  if(NumberOfElements > BLEMesh_GetNumberOfElements())
   {
-    TRACE_M(TF_MISC,"In version 1.11.00x one Element per node is supported!\r\n"); 
-    return MAX_NUMB_ELEMENTS;
+    TRACE_M(TF_MISC, "Number of Elements enabled in application exceeding from Library Capability!\r\n"); 
+    return BLEMesh_GetNumberOfElements();
   }
   
   else if(NumberOfElements == 0)
@@ -515,7 +679,7 @@ MOBLEUINT8 Appli_BleSetNumberOfElementsCb(void)
   
   else
   {
-  return NumberOfElements;
+    return NumberOfElements;
   }
 }
 
@@ -593,6 +757,8 @@ MOBLEUINT8* Appli_BleInputOOBAuthCb(MOBLEUINT8 size)
   while(1)
   {
       Serial_InterfaceProcess();
+      /* Enable Mesh process working in while loop */
+      BTLE_StackTick();
       /* Check if input is completed or timeout */
       if((inputOOBDataReady != 0x00) | (inputTimer > INPUT_OOB_TIMEOUT))
       {
@@ -715,7 +881,7 @@ void Appli_Unprovision(void)
   if(!ProxyFlag)
   {
     /* No GATT connection */
-    BLEMesh_Unprovision();
+    BLEMesh_StopAdvScan();
       
     PalNvmErase(NVM_BASE, 0);      
     PalNvmErase(NVM_BASE, 0x1000);
@@ -723,6 +889,7 @@ void Appli_Unprovision(void)
     PalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
+    BLEMesh_Unprovision();
     AppliNvm_ClearModelState();     
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
 
@@ -861,11 +1028,13 @@ SleepModes App_SleepMode_Check(SleepModes sleepMode)
 void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason)
 {
   ProvisionFlag = 0; 
+  
   TRACE_I(TF_PROVISION,"Device is unprovisioned by provisioner \n\r");
 #if PB_ADV_SUPPORTED
   BLEMesh_SetUnprovisionedDevBeaconInterval(PBADV_UNPROV_DEV_BEACON_INTERVAL);
 #endif
-  AppliNvm_ClearModelState();
+  BLEMesh_StopAdvScan();
+  UnprovisionInProgress = 1; /* Wait release on FLASH PESD bit */
 }
 
 /**
@@ -1233,28 +1402,19 @@ void BLEMesh_CustomBeaconReceivedCallback(const MOBLEUINT8* bdAddr,
   
   if (result == MOBLE_RESULT_SUCCESS)
   {
-    if ((length-1) < data[0])
+    if (data[1] == CUSTOM_BEACON_AD_TYPE)
     {
-      result = MOBLE_RESULT_FAIL;
-      TRACE_M(TF_BEACON, "Length field does not match with message length \r\n");
-    }    
-  }
+      TRACE_M(TF_BEACON, "Message length(%d), rssi(%d) \r\n", length, rssi);
   
-  if (result == MOBLE_RESULT_SUCCESS)
-  {
-    MOBLEUINT8 adType = data[1];
-    MOBLEUINT8 i;
-    
-    if (adType == CUSTOM_BEACON_AD_TYPE)
-    {
-      TRACE_M(TF_BEACON, "Message length(%d), ad type(0x%.2x), rssi(%d) \r\n", length-2, adType, rssi);        
-      TRACE_M(TF_BEACON, "Message:\r\n");        
-      for(i = 0; i < length-2; i++)
-        TRACE_M(TF_BEACON, "data[%d]= %d\r\n", i, data[2+i]);
-    }
-    else
-    {
-      /* Discard, Ad type mismatch */
+      if (TF_BEACON == 1)
+      {
+        TRACE_I(TF_BEACON, "Data: ");
+        for (MOBLEUINT8 count=0; count<length; count++)
+        {
+          TRACE_I(TF_BEACON, "%.2x ", data[count]);
+        }
+        TRACE_I(TF_BEACON, " \r\n");
+      }
     }
   }
 }
@@ -1367,12 +1527,22 @@ void IntensityPublish(void)
 {  
   
 #ifdef LIGHT_CLIENT_MODEL_PUBLISH 
-  Appli_LightClient_Lightness_Set();
+#ifdef ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS  
+  MOBLEUINT8 elementIndex = 0; 
+  MOBLEUINT8 pLightnessParam[3];
+  Appli_IntensityControlPublishing(pLightnessParam);
+  Appli_LightClient_API(elementIndex, LIGHT_LIGHTNESS_SET, pLightnessParam); 
 #endif
   
+#else  
 #ifdef GENERIC_CLIENT_MODEL_PUBLISH
-  Appli_GenericClient_Level_Set_Unack();
+  MOBLEUINT8 elementIndex = 0; 
+  MOBLEUINT8 pGeneric_LevelParam[3];
+  
+  Appli_IntensityControlPublishing(pGeneric_LevelParam);
+  Appli_GenericClient_API(elementIndex, GENERIC_LEVEL_SET_ACK, pGeneric_LevelParam); 
 #endif  
+#endif
 }
 
 /**
@@ -1387,7 +1557,6 @@ void Appli_Process(void)
   AppliNvm_Process();
 #endif
   
-  Appli_LowPowerProcess();
 #ifdef ENABLE_AUTH_TYPE_OUTPUT_OOB
   if(PrvngInProcess)
   {
@@ -1445,6 +1614,17 @@ static void AppliMeshSW1Task(void)
   return;
 }
 
+#if (ENABLE_SENSOR_MODEL_SERVER != 0)
+static void AppliMeshSW3Task(void)
+{
+  Sensor_UpdatePublishState(0, 1);
+  
+  Appli_Sensor_Update(0, 1);
+  
+  return;
+}
+#endif
+
 #if (LOW_POWER_FEATURE == 1)
 static void LowPowerNodeApiApp(void)
 {
@@ -1497,7 +1677,7 @@ void Appli_Init(MOBLEUINT8 *flag)
 {
 #if 0
 #ifdef ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE  
-  /* Hardware Factory Restore implementation */
+/* Hardware Factory Restore implementation */
   AppliNvm_FactorySettingReset();
 #endif
 #endif
@@ -1524,6 +1704,18 @@ void Appli_Init(MOBLEUINT8 *flag)
   __HAL_RCC_TIM1_CLK_ENABLE();
   __HAL_RCC_TIM2_CLK_ENABLE();
   PWM_Init();
+#ifdef USER_BOARD_1LED
+  Modify_PWM(SINGLE_LED, 1);     
+#endif
+#ifdef  USER_BOARD_COOL_WHITE_LED
+  Modify_PWM(COOL_LED, 0); 
+  Modify_PWM(WARM_LED, 0); 
+#endif
+#ifdef  USER_BOARD_RGB_LED
+  Modify_PWM(RED_LED, 1); 
+  Modify_PWM(GREEN_LED, 1); 
+  Modify_PWM(BLUE_LED, 1);
+#endif
 #endif
   
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SW1_REQ_ID, UTIL_SEQ_RFU, AppliMeshSW1Task );
@@ -1540,8 +1732,36 @@ void Appli_Init(MOBLEUINT8 *flag)
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_LPN_REQ_ID, UTIL_SEQ_RFU, LowPowerNodeApiApp );
   LPN_scan_enabled = MOBLE_FALSE;
 #endif
+#if (ENABLE_SENSOR_MODEL_SERVER != 0)
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SW3_REQ_ID, UTIL_SEQ_RFU, AppliMeshSW3Task );
+#endif
 }
 
+/*****************************Config Model Callbacks***************************/
+/**
+* @brief  Callback from Config Model to receive the Publication Parameters
+* @param  Structure Pointer having parameters - modelID, elementAddress,
+*         Publish Address, PublishPeriod, PublishTTL, Credential Flag, 
+*         Publish AppKeyIndex, Retransmit Count & Restransmit Interval Steps
+* @retval none
+*/ 
+void Appli_GetPublicationParamsCb(model_publicationparams_t* pPubParameters)
+{
+  if(pPubParameters->modelID == SENSOR_SERVER_MODEL_ID)
+  {
+    Sensor_ModelPublishSet(pPubParameters);
+  }
+}
+
+
+/************************************ Weak linking ***********************************
+If implemented in application, linker would replace weak linking in library */
+WEAK_FUNCTION (void SerialPrvn_ProvisioningStatusUpdateCb(uint8_t flagPrvningInProcess, MOBLEUINT16 nodeAddress))
+{
+    
+}
+
+
 /**
 * @}
 */
@@ -1549,4 +1769,4 @@ void Appli_Init(MOBLEUINT8 *flag)
 /**
 * @}
 */
-/******************* (C) COPYRIGHT 2019 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

@@ -72,8 +72,24 @@
 #define CFG_MITM_PROTECTION_NOT_REQUIRED      (0x00)
 #define CFG_MITM_PROTECTION_REQUIRED          (0x01)
 
-#define CFG_MITM_PROTECTION                   CFG_MITM_PROTECTION_REQUIRED
+#define CFG_MITM_PROTECTION                   CFG_MITM_PROTECTION_NOT_REQUIRED
 
+/**
+ * Define Secure Connections Support
+ */
+#define CFG_SECURE_NOT_SUPPORTED       (0x00)
+#define CFG_SECURE_OPTIONAL            (0x01)
+#define CFG_SECURE_MANDATORY           (0x02)
+
+#define CFG_SC_SUPPORT                 CFG_SECURE_NOT_SUPPORTED
+
+/**
+ * Define Keypress Notification Support
+ */
+#define CFG_KEYPRESS_NOT_SUPPORTED      (0x00)
+#define CFG_KEYPRESS_SUPPORTED          (0x01)
+
+#define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
 
 /**
  * Define PHY
@@ -140,7 +156,7 @@
  * Maximum number of simultaneous connections that the device will support.
  * Valid values are from 1 to 8
  */
-#define CFG_BLE_NUM_LINK            8
+#define CFG_BLE_NUM_LINK            2
 
 /**
  * Maximum number of Services that can be stored in the GATT database.
@@ -494,7 +510,7 @@ typedef enum
 typedef enum
 {
   CFG_FIRST_TASK_ID_WITH_NO_HCICMD = CFG_LAST_TASK_ID_WITH_HCICMD - 1, /**< Shall be FIRST in the list */
-
+  CFG_TASK_SW1_BUTTON_PUSHED_ID,
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
   CFG_TASK_VCP_SEND_DATA_ID,
   
@@ -509,8 +525,6 @@ typedef enum
 typedef enum
 {
   CFG_SCH_PRIO_0,
-  CFG_SCH_PRIO_1,
-
   CFG_PRIO_NBR,
 } CFG_SCH_Prio_Id_t;
 

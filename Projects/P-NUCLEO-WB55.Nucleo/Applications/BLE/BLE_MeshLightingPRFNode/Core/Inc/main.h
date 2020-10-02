@@ -31,6 +31,8 @@
 extern RTC_HandleTypeDef hrtc; /**< RTC handler declaration */
 
 /* Exported macro ------------------------------------------------------------*/
+/* Exported functions prototypes ---------------------------------------------*/
+void Error_Handler(void);
 /* Exported functions ------------------------------------------------------- */
 
 #endif /* __MAIN_H */

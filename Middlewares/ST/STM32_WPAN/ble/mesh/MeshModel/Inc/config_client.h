@@ -25,15 +25,11 @@
 #include "types.h"
 #include "ble_mesh.h"
 #include "mesh_cfg.h"
-
+#include "mesh_cfg_usr.h"
 
 /* Exported macro ------------------------------------------------------------*/
 
 #define CONFIG_CLIENT_UNICAST_ADDR   0x0001
-
-#define MAX_SIG_MODELS_PER_ELEMENT    12   
-#define MAX_VENDOR_MODELS_PER_ELEMENT  1   
-#define MAX_ELEMENTS_PER_NODE          APPLICATION_NUMBER_OF_ELEMENTS
 #define CONFIG_COMPOSITION_DATA_GET_PAGE_SIZE 1
 #define COMPOSITION_PAGE0              0
 
@@ -161,6 +157,8 @@
 
 /* Exported structure --------------------------------------------------------*/
 
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
+
 #pragma pack(1)
 typedef struct {
   MOBLEUINT16 nodePrimaryAddress;
@@ -168,16 +166,14 @@ typedef struct {
   MOBLEUINT8 numberOfAttemptsTx;  
   MOBLEUINT32 Initial_time; /* Initial time for the Message */
 
-  MOBLEUINT8 NbOfSIGModelsToConfigure;
-  MOBLEUINT8 NbOfVendorModelsToConfigure;
 } NodeInfo_t;
 
 typedef struct {
   MOBLEUINT16 Loc;    /* Contains a location descriptor */
   MOBLEUINT8  NumSIGmodels;   /* Contains a count of SIG Model IDs in this element */
   MOBLEUINT8  NumVendorModels;   /* Contains a count of Vendor Model IDs in this element */
-  MOBLEUINT16 aSIGModels[MAX_SIG_MODELS_PER_ELEMENT];
-  MOBLEUINT32 aVendorModels[MAX_VENDOR_MODELS_PER_ELEMENT];
+  MOBLEUINT16 aSIGModels[CLIENT_MAX_SIG_MODELS_PER_ELEMENT];
+  MOBLEUINT32 aVendorModels[CLIENT_MAX_VENDOR_MODELS_PER_ELEMENT];
 } Elements_Page0_t;
 
 typedef struct {
@@ -193,7 +189,8 @@ typedef struct {
 
 #define DEVICE_COMPOSITION_HEADER_SIZE   sizeof(Composition_Header_Page0_t)
 #define DEVICE_COMPOSITION_ELEMENTS_DESC sizeof(Elements_Page0_t)
-#define DEVICE_COMPOSITION_MAX_SIZE (DEVICE_COMPOSITION_HEADER_SIZE + (MAX_ELEMENTS_PER_NODE*DEVICE_COMPOSITION_ELEMENTS_DESC))
+#define DEVICE_COMPOSITION_MAX_SIZE (DEVICE_COMPOSITION_HEADER_SIZE) 
+//+ (MAX_ELEMENTS_PER_NODE*DEVICE_COMPOSITION_ELEMENTS_DESC))
 
 #pragma pack(1)
 typedef struct {
@@ -362,7 +359,7 @@ typedef struct
     const MOBLEUINT8 *pDefaultParam;
 } MODEL_CONFIG_CLIENT_OpcodeTableParam_t;
 
-extern Elements_Page0_t aNodeElements[MAX_ELEMENTS_PER_NODE];
+extern Elements_Page0_t aNodeElements[CLIENT_MAX_ELEMENTS_PER_NODE];
 
 /******************************************************************************/
 /********** Following Section defines the Opcodes for the Messages ************/
@@ -370,12 +367,10 @@ extern Elements_Page0_t aNodeElements[MAX_ELEMENTS_PER_NODE];
 
 extern NodeInfo_t NodeInfo;
 
+
+
 /* Exported Functions Prototypes ---------------------------------------------*/
-void CopyU8LittleEndienArray_fromU16word (MOBLEUINT8* pArray, MOBLEUINT16 inputWord);
-void CopyU8LittleEndienArray_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputWord);
-void CopyU8LittleEndienArray_2B_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputWord);
-MOBLEUINT16 CopyU8LittleEndienArrayToU16word (MOBLEUINT8* pArray);
-MOBLEUINT32 CopyU8LittleEndienArrayToU32word (MOBLEUINT8* pArray);
+
 
 MOBLE_RESULT ConfigClientModel_SendMessage(MOBLE_ADDRESS dst_peer ,
                                      MOBLEUINT16 opcode, MOBLEUINT8 *pData,
@@ -394,10 +389,6 @@ MOBLEUINT16 GetNodeElementAddress(void);
 MOBLEUINT16 GetServerElementAddress(MOBLEUINT8 elementIndex);
 MOBLEUINT8 GetTotalSIGModelsCount(MOBLEUINT8 elementIdx);
 MOBLEUINT8 GetTotalVendorModelsCount(MOBLEUINT8 elementIdx);
-MOBLEUINT8 GetNumberofSIGModels(MOBLEUINT8 elementIdx);
-MOBLEUINT8 GetNumberofVendorModels(MOBLEUINT8 elementIdx);
-void SetSIGModelCountToConfigure(MOBLEUINT8 count);
-void SetVendorModelCountToConfigure(MOBLEUINT8 count);
 MOBLEUINT8 ConfigClient_ChkRetrialState (eServerRespRecdState_t* eRespRecdState);
 MOBLEUINT8 ConfigClient_ChkRetries (void);
 void ConfigClient_SaveMsgSendingTime (void);
@@ -449,8 +440,7 @@ MOBLE_RESULT ConfigClient_PublicationStatus(MOBLEUINT8 const *pPublicationStatus
 MOBLE_RESULT ConfigClientModel_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
                                                  MOBLEUINT16 *length);
 
-MOBLE_RESULT ConfigClientModel_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
-                                    MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT ConfigClientModel_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam, 
                                     MOBLEUINT16 opcode, 
                                     MOBLEUINT8 *pResponsedata, 
                                     MOBLEUINT32 *plength, 
@@ -458,13 +448,15 @@ MOBLE_RESULT ConfigClientModel_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
                                     MOBLEUINT32 dataLength,
                                     MOBLEBOOL response);
                                     
-MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 
-                                                 MOBLE_ADDRESS dst_peer, 
+MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParam,
                                                  MOBLEUINT16 opcode, 
                                                  MOBLEUINT8 const *pRxData, 
                                                  MOBLEUINT32 dataLength, 
                                                  MOBLEBOOL response);                                    
+
+#endif /* defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER) */
+
 #endif /* __CONFIG_CLIENT_H */
 
-/******************* (C) COPYRIGHT 2017 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

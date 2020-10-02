@@ -59,7 +59,7 @@
 #include "zcl/zcl.h"
 
 /** Basic Cluster Attribute Ids */
-enum {
+enum ZbZclBasicSvrAttrT {
     ZCL_BASIC_ATTR_ZCL_VERSION = 0x0000, /**< ZCLVersion */
     ZCL_BASIC_ATTR_APP_VERSION, /**< ApplicationVersion */
     ZCL_BASIC_ATTR_STACK_VERSION, /**< StackVersion */
@@ -140,6 +140,6 @@ struct ZbZclClusterT * ZbZclBasicClientAlloc(struct ZigBeeT *zb, uint8_t endpoin
  * @param dst the destination address to the server to which the command is sent
  * @return ZCL_STATUS_SUCEESS if successful or other ZclStatusCodeT value on error
  */
-enum ZclStatusCodeT ZbZclBasicClientResetReq(struct ZbZclClusterT *clusterPtr, const struct ZbApsAddrT *dst);
+enum ZclStatusCodeT ZbZclBasicClientResetReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 
 #endif /* __ZCL_BASIC_H */

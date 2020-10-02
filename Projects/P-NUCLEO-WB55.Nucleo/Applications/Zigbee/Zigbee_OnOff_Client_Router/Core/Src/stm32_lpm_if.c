@@ -17,8 +17,8 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-  
-/* Includes ------------------------------------------------------------------*/  
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32_lpm_if.h"
 #include "stm32_lpm.h"
 #include "app_conf.h"
@@ -27,14 +27,14 @@
 /* USER CODE END include */
 
 /* Exported variables --------------------------------------------------------*/
-const struct UTIL_LPM_Driver_s UTIL_PowerDriver = 
+const struct UTIL_LPM_Driver_s UTIL_PowerDriver =
 {
   PWR_EnterSleepMode,
   PWR_ExitSleepMode,
-  
+
   PWR_EnterStopMode,
-  PWR_ExitStopMode, 
-  
+  PWR_ExitStopMode,
+
   PWR_EnterOffMode,
   PWR_ExitOffMode,
 };

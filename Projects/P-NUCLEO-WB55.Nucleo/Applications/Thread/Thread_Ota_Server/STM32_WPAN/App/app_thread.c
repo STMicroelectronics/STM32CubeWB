@@ -17,6 +17,7 @@
  ******************************************************************************
  */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "utilities_common.h"
@@ -80,7 +81,6 @@ typedef enum
 #define FUOTA_NUMBER_WORDS_64BITS                50
 #define FUOTA_PAYLOAD_SIZE                (FUOTA_NUMBER_WORDS_64BITS * 8)
 
-typedef void (*CoapRespHandlerCallback) (otCoapHeader * pHeader, otMessage * pMessage,const otMessageInfo * pMessageInfo,otError Result);
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/
@@ -124,31 +124,28 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
     APP_THREAD_CoapAddressTypeDef_t CoapAddressType,
     uint8_t* Payload,
     uint16_t Size,
-    CoapRespHandlerCallback RespHandlerCb);
-
-static void APP_THREAD_DummyReqHandler(void                * p_context,
+    otCoapResponseHandler RespHandlerCb);
+static void APP_THREAD_ProvisioningRespHandler(
+    void * pContext,
+    otCoapHeader  * pHeader,
+    otMessage * pMessage,
+    const otMessageInfo * pMessageInfo,
+    otError Result);
+static void APP_THREAD_CoapRespHandlerFuotaSend(
+    void                * pContext,
     otCoapHeader        * pHeader,
     otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo);
-static void APP_THREAD_ProvisioningRespHandler(otCoapHeader  * pHeader,
-    otMessage * pMessage,
     const otMessageInfo * pMessageInfo,
-    otError Result);
-static void APP_THREAD_CoapDummyRespHandler(void * p_context,
-    otCoapHeader * pHeader,
-    otMessage * pMessage,
-    const otMessageInfo * pMessageInfo,
-    otError Result);
-
-static void APP_THREAD_CoapRespHandlerFuotaSend(otCoapHeader        * pHeader,
+    otError             Result);
+static void APP_THREAD_CoapRespHandlerFuotaReboot(
+    void                * pContext,
+    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result);
-static void APP_THREAD_CoapRespHandlerFuotaReboot(otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo,
-    otError             Result);
-static void APP_THREAD_CoapRespHandlerFuotaParameters(otCoapHeader        * pHeader,
+static void APP_THREAD_CoapRespHandlerFuotaParameters(
+    void                * pContext,
+    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result);
@@ -190,10 +187,10 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[size
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
 
 /* USER CODE BEGIN PV */
-static otCoapResource OT_RessourceFuotaProvisioning = {C_RESSOURCE_FUOTA_PROVISIONING, APP_THREAD_DummyReqHandler, NULL, NULL};
-static otCoapResource OT_RessourceFuotaParameters = {C_RESSOURCE_FUOTA_PARAMETERS, APP_THREAD_DummyReqHandler, NULL, NULL};
-static otCoapResource OT_RessourceFuotaSend = {C_RESSOURCE_FUOTA_SEND, APP_THREAD_DummyReqHandler, NULL, NULL};
-static otCoapResource OT_RessourceFuotaReboot = {C_RESSOURCE_FUOTA_REBOOT, APP_THREAD_DummyReqHandler, NULL, NULL};
+static otCoapResource OT_RessourceFuotaProvisioning = {C_RESSOURCE_FUOTA_PROVISIONING, NULL, NULL, NULL};
+static otCoapResource OT_RessourceFuotaParameters = {C_RESSOURCE_FUOTA_PARAMETERS, NULL, NULL, NULL};
+static otCoapResource OT_RessourceFuotaSend = {C_RESSOURCE_FUOTA_SEND, NULL, NULL, NULL};
+static otCoapResource OT_RessourceFuotaReboot = {C_RESSOURCE_FUOTA_REBOOT, NULL, NULL, NULL};
 
 static uint8_t OT_Command = 0;
 static otMessageInfo  OT_MessageInfo = {0};
@@ -548,7 +545,7 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
     APP_THREAD_CoapAddressTypeDef_t CoapAddressType,
     uint8_t* Payload,
     uint16_t Size,
-    CoapRespHandlerCallback RespHandlerCb)
+    otCoapResponseHandler RespHandlerCb)
 {
   otError error = OT_ERROR_NONE;
   OT_BufferIdSend = 0;
@@ -607,8 +604,8 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
     error = otCoapSendRequest(NULL,
         pOT_Message,
         &OT_MessageInfo,
-        &APP_THREAD_CoapDummyRespHandler,
-        (void*)RespHandlerCb);
+        RespHandlerCb,
+        "myContext");
 
   }while(false);
   if (error != OT_ERROR_NONE && pOT_Message != NULL)
@@ -616,19 +613,6 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
     otMessageFree(pOT_Message);
     APP_THREAD_Error(ERR_THREAD_COAP_SEND_REQUEST,error);
   }
-}
-
-/**
- * @brief Dummy request handler
- *
- * @param None
- * @retval None
- */
-static void APP_THREAD_DummyReqHandler(void            * p_context,
-    otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo)
-{
 }
 
 /**
@@ -640,7 +624,9 @@ static void APP_THREAD_DummyReqHandler(void            * p_context,
  * @param Result error code
  * @retval None
  */
-static void APP_THREAD_ProvisioningRespHandler(otCoapHeader        * pHeader,
+static void APP_THREAD_ProvisioningRespHandler(
+    void                * pContext,
+    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)
@@ -678,7 +664,9 @@ static void APP_THREAD_ProvisioningRespHandler(otCoapHeader        * pHeader,
  * @param Result error code
  * @retval None
  */
-static void APP_THREAD_CoapRespHandlerFuotaSend(otCoapHeader        * pHeader,
+static void APP_THREAD_CoapRespHandlerFuotaSend(
+    void                * pContext,
+    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)
@@ -691,30 +679,6 @@ static void APP_THREAD_CoapRespHandlerFuotaSend(otCoapHeader        * pHeader,
   {
     APP_DBG("APP_THREAD_CoapRespHandlerFuotaSend : WARNING Result %d", Result);
   }
-}
-
-/**
- * @brief This function is used to handle a dummy response handler
- *
- * @param p_context  context
- * @param pHeader  coap header
- * @param pMessage message
- * @paramp pMessageInfo otMessage information
- * @param Result error status
- * @retval None
- */
-static void APP_THREAD_CoapDummyRespHandler(void                * p_context,
-    otCoapHeader        * pHeader,
-    otMessage           * pMessage,
-    const otMessageInfo * pMessageInfo,
-    otError             Result)
-{
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(p_context);
-  UNUSED(pHeader);
-  UNUSED(pMessage);
-  UNUSED(pMessageInfo);
-  UNUSED(Result);
 }
 
 /**
@@ -1071,13 +1035,16 @@ static void APP_THREAD_FuotaReboot(void)
 /**
  * @brief This function manages the response handler for the request of reboot on Thread_Ota.
  *
+ * @param pContext  context
  * @param pHeader  header
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code
  * @retval None
  */
-static void APP_THREAD_CoapRespHandlerFuotaReboot(otCoapHeader        * pHeader,
+static void APP_THREAD_CoapRespHandlerFuotaReboot(
+    void                * pContext,
+    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)
@@ -1095,13 +1062,16 @@ static void APP_THREAD_CoapRespHandlerFuotaReboot(otCoapHeader        * pHeader,
 /**
  * @brief This function manages the response handler for the request of reboot on Thread_Ota.
  *
+ * @param pContext context
  * @param pHeader  header
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code
  * @retval None
  */
-static void APP_THREAD_CoapRespHandlerFuotaParameters(otCoapHeader        * pHeader,
+static void APP_THREAD_CoapRespHandlerFuotaParameters(
+    void                * pContext,
+    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)

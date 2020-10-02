@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file    ble_hal_aci.h
- * @author  MCD Application Team
+ * @author  MCD
  * @brief   STM32WB BLE API (hal_aci)
  *          Auto-generated file: do not edit!
  ******************************************************************************

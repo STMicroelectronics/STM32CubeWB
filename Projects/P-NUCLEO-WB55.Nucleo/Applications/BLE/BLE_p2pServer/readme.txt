@@ -20,7 +20,7 @@
 
 @par Application Description
 
-This example is to demonstrate Point-to-Point communication using BLE component. 
+How to demonstrate Point-to-Point communication using BLE component (as GATT server). 
 
 Two STM32WB55xx boards are used, one acting as GATT client, and one as GATT server.
 For example, BLE_P2PClient application is downloaded in a USB DONGLE board (MB1293C) and BLE_p2pServer application in a Nucleo board (MB1355C).

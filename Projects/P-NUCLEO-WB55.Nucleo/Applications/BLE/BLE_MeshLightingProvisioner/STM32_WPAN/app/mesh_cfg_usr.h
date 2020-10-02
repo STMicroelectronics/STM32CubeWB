@@ -3,11 +3,11 @@
   ******************************************************************************
   * @file    mesh_cfg_usr.h
   * @author  BLE Mesh Team
-  * @brief   Header file for mesh_usr_cfg.c 
+  * @brief   user configurable settings 
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -38,6 +38,80 @@
 //#define ENABLE_PROVISIONER_FEATURE
 #define DYNAMIC_PROVISIONER
       
+/*
+*  Different provision bearer supported by BLE-Mesh. 
+*  Define according to application.
+*  Atleast one of PB-ADV and PB-GATT should be defined
+*/
+
+#define ENABLE_PB_ADV
+#define ENABLE_PB_GATT
+//#define ENABLE_PUB_KEY_TYPE_OOB
+#define ENABLE_AUTH_TYPE_NO_OOB
+//#define ENABLE_AUTH_TYPE_STATIC_OOB
+//#define ENABLE_AUTH_TYPE_OUTPUT_OOB
+//#define ENABLE_AUTH_TYPE_INPUT_OOB
+
+/* Static OOB Configurations */
+#define STATIC_OOB_SIZE                                                      16U 
+
+/* Output OOB Configurations */
+#define OUTPUT_OOB_SIZE                                                       1U 
+#define OUTPUT_OOB_ACTION                            OUTPUT_OOB_ACTION_BIT_BLINK 
+
+/* Input OOB Configurations */
+#define INPUT_OOB_SIZE                                                        1U 
+#define INPUT_OOB_ACTION                               INPUT_OOB_ACTION_BIT_PUSH 
+
+/******************************************************************************/      
+/* Note: Please use Full Library configuration in project options to use the full 
+         configuration of the C/C++ runtime library 
+         for printf and scanf functionality */
+
+/* Enables the serial interface using Uart */
+#define ENABLE_SERIAL_INTERFACE                                                1
+#define ENABLE_SIG_MODELS_AT_COMMANDS                                          1
+#define ENABLE_VENDOR_MODELS_AT_COMMANDS                                       0
+#define ENABLE_UT                                                              1
+      
+/* Provisioner feature related configuration */
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
+#define PROVISIONER_ROOT_ADDR_DEFAULT                                     0x0001
+
+/*      
+Define the following Macro to save the nodes data in provisioner in NVM
+This may result into excessive flash erase operations, this should be avoided to ensure flash longevity
+*/
+#define SAVE_EMBD_PROVISION_DATA                                               1
+
+/* Enables the UUID saving per Node - Currenly Not Supported */       
+#define ENABLE_SAVE_UUID_PER_NODE 0  
+
+#define ENABLE_SERIAL_PRVN                                                     1
+
+#define CLIENT_MAX_SIG_MODELS_PER_ELEMENT                                     12 /* Number of SIG Models for Node under provisioning */   
+#define CLIENT_MAX_VENDOR_MODELS_PER_ELEMENT                                   1  /* Number of Vendor Models for Node under provisioning */ 
+#define CLIENT_MAX_ELEMENTS_PER_NODE                                           1  /* Number of Elements per Node */
+
+/*
+*  Enable or disable neighbor table
+*  if defined -> enabled
+*    If MAC address of neighbor changes it appears as new neighbor
+*    Neighbor table update can be triggered (configurable) in following cases
+*      On receiving Unprovisioned device beacon
+*      On receiving Secure network beacon
+*      On receiving Mesh message
+*        Message with any TTL
+*        Message with TTL = 0
+*  if not defined -> disabled
+*/
+#define ENABLE_NEIGHBOR_TABLE
+
+#endif      
+
+/* Macro to test the Flash saving data and retrieval process */
+#define ENABLE_NVM_TEST
+
 /* Macros Used for user defined serial print data for models. 
 Either use 0 to disable or 1 to enable
 @  TF_GENERIC -> Generic server
@@ -81,20 +155,22 @@ Either use 0 to disable or 1 to enable
 #define TF_HANDLER                                                             1
 #define TF_INIT                                                                1
 #define TF_MISC                                                                1
+#define TF_SERIAL_CTRL                                                         1
 /* Disabled by default */
 #define TF_COMMON                                                              0
 #define TF_GENERIC_M                                                           0
-#define TF_GENERIC_CLIENT_M                                                    0
-#define TF_SENSOR_M                                                            0
+#define TF_GENERIC_CLIENT_M                                                    1
+#define TF_SENSOR_M                                                            1
+#define TF_SENSOR_CLIENT_M                                                     1
 #define TF_LIGHT_M                                                             0
-#define TF_LIGHT_CLIENT_M                                                      0
+#define TF_LIGHT_CLIENT_M                                                      1
 #define TF_LIGHT_LC_M                                                          0
 #define TF_VENDOR_M                                                            0
 #define TF_CONFIG_CLIENT_M                                                     0
 #define TF_NEIGHBOUR                                                           0
 #define TF_MEMORY                                                              0
 #define TF_BEACON                                                              0
-#define TF_SERIAL_CTRL                                                         1
+#define TF_VENDOR_APPLI_TEST                                                   0  /* Vendor commands testing */
 
 /*******************************************************************************
 *** Following section helps to define Device Name during Provisioning  *********
@@ -121,6 +197,11 @@ Either use 0 to disable or 1 to enable
 //#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF                              (1)
 //#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP                        (1)
 //#define ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME                  (1)
+
+//#define ENABLE_GENERIC_MODEL_CLIENT_ONOFF                                    (1)
+//#define ENABLE_GENERIC_MODEL_CLIENT_LEVEL                                    (1)
+//#define ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF                              (1)
+//#define ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME                  (1)
 
 /* The Following Models are not available in this version, will be developed in 
    next version.
@@ -156,11 +237,16 @@ Either use 0 to disable or 1 to enable
 //#define ENABLE_LIGHT_MODEL_SERVER_HSL_HUE                                    (1)
 //#define ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION                             (1)
 
+//#define ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS                                  (1)
+//#define ENABLE_LIGHT_MODEL_CLIENT_CTL                                        (1)
+//#define ENABLE_LIGHT_MODEL_CLIENT_HSL                                        (1)
+
 /* 
    The following Models are managed in different file light_lc.c in middleware
 */
 //#define ENABLE_LIGHT_MODEL_SERVER_LC                                         (1)
-//#define ENABLE_LIGHT_MODEL_SERVER_LC_SETUP                                   (1)
+
+//#define ENABLE_LIGHT_MODEL_CLIENT_LC                                         (1)
 
 /******************************************************************************/
 /* Define the following Macros to enable the usage of the Sensor Models       */
@@ -171,7 +257,8 @@ Either use 0 to disable or 1 to enable
 /******************************************************************************/
 
 //#define ENABLE_SENSOR_MODEL_SERVER                                           (1)
-//#define ENABLE_SENSOR_MODEL_SERVER_SETUP                                     (1)
+
+//#define ENABLE_SENSOR_MODEL_CLIENT                                           (1)
 
 /******************************************************************************/
 /* Define the following Macros to enable the usage of the time and            */
@@ -194,13 +281,10 @@ Either use 0 to disable or 1 to enable
 //#define ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP 
 
 /******* Define the following Macros to enable the vendor model  ******/
-//#define ENABLE_VENDOR_MODEL_SERVER                                           
+//#define ENABLE_VENDOR_MODEL_SERVER                                           (1)
 #define GENERIC_SERVER_MODEL_PUBLISH  
 
 /* Define the following Macros to enable the usage of the Client Generic Models  */
-#define ENABLE_GENERIC_MODEL_CLIENT_ONOFF                                    (1)
-//#define ENABLE_GENERIC_MODEL_CLIENT_LEVEL                                    (1)
-//#define ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS
 #define ENABLE_CONFIG_MODEL_CLIENT                                           (1)
 
 /******************************************************************************/
@@ -211,32 +295,12 @@ or by Vendor Model.
 @ Undefine or comment Macro for Generic On Off Publishing
 */
 //#define VENDOR_CLIENT_MODEL_PUBLISH
-#define GENERIC_CLIENT_MODEL_PUBLISH  
-#define LIGHT_CLIENT_MODEL_PUBLISH
- 
-#if defined (ENABLE_GENERIC_MODEL_CLIENT_ONOFF) \
-    || defined (ENABLE_GENERIC_MODEL_CLIENT_LEVEL) 
-      
- #define ENABLE_GENERIC_MODEL_CLIENT
-#endif
+//#define GENERIC_CLIENT_MODEL_PUBLISH  
+//#define LIGHT_CLIENT_MODEL_PUBLISH
 
-#if defined (ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS) 
-         
- #define ENABLE_LIGHT_MODEL_CLIENT
-#endif      
-      
-/******************************************************************************/
-/*
-Define the Macros for Enabling/disabling the binding of data between the Generic 
-and Light model.
-@ define the Macro for enabling the binding
-@ Undefine or comment the macro for disabling the binding.
-*/
-/******************************************************************************/
-#define ENABLE_MODEL_BINDING
 
 /* Define the macros for the numbers of sensor present.*/
-#define NUMBER_OF_SENSOR                                                       3
+//#define NUMBER_OF_SENSOR                                                       1
 //#define ENABLE_OCCUPANCY_SENSOR
 /*
 Macro is responsible for enabling and desabling the sensor publication.
@@ -277,18 +341,16 @@ this should be avoided to ensure flash longevity
 //#define SAVE_MODEL_STATE_FOR_ALL_MESSAGES         
 //#define SAVE_MODEL_STATE_POWER_FAILURE_DETECTION
 
-/*      
-Define the following Macro to save the nodes data in provisioner in NVM
-This may result into excessive flash erase operations, 
-this should be avoided to ensure flash longevity
-*/
-#define SAVE_EMBD_PROVISION_DATA                                               1
-/* Macros defined for the number of bytes saved, 
-   number of bytes dedicated for generic model and light model.
+
+/* Macros defined for the number of bytes saved, number of bytes dedicated for ganeric 
+  model and light model.
 */     
 #define APP_NVM_GENERIC_MODEL_SIZE                                           16U
-#define APP_NVM_LIGHT_MODEL_SIZE                                             32U
-#define APP_NVM_MODEL_SIZE                                                   50U
+#define APP_NVM_LIGHT_MODEL_SIZE                                             48U/*32U*/
+#define APP_NVM_MODELDATA_PER_ELEMENT_SIZE  (APP_NVM_GENERIC_MODEL_SIZE+APP_NVM_LIGHT_MODEL_SIZE)
+//#define APP_NVM_MODEL_SIZE                                                   50U
+#define APP_NVM_MODEL_SIZE   (APP_NVM_MODELDATA_PER_ELEMENT_SIZE * APPLICATION_NUMBER_OF_ELEMENTS)
+//#define APP_NVM_MODEL_ALL_ELEMENTS_SIZE 
 
       
 /*Macros are defined for the selection of the number of led and type of lighting 
@@ -310,24 +372,15 @@ this should be avoided to ensure flash longevity
 /* Pulse Width Modulation support for external LED control */
 #define ENABLE_PWM_SUPPORT                                                     0
 
-/* Note: Please use Full Library configuration in project options to use the full 
-         configuration of the C/C++ runtime library 
-         for printf and scanf functionality */
-
-/* Enables the serial interface using Uart */
-#define ENABLE_SERIAL_INTERFACE                                                1
-#define ENABLE_UT                                                              1
-#define ENABLE_SERIAL_CONTROL                                                  1
-#define ENABLE_APPLI_TEST                                                      0
-#define ENABLE_SERIAL_PRVN                                                     1
-      
 /*******************************************************************************
 *** Following section helps to configure the Application of Mesh     ***********
 *******************************************************************************/
 
 #define APPLICATION_NUMBER_OF_ELEMENTS                                         1
-#define APPLICATION_SIG_MODELS_MAX_COUNT                                      20
-#define APPLICATION_VENDOR_MODELS_MAX_COUNT                                    2
+/* Max SIG Models per element */
+#define USER_SIG_MODELS_MAX_COUNT                                             17
+/* Max Vendor Models per element */
+#define USER_VENDOR_MODELS_MAX_COUNT                                           1
 
 
 /* Contains a 16-bit company identifier assigned by the Bluetooth SIG
@@ -377,57 +430,6 @@ For STMicroelectronics : it is 0x0030 */
 #define TR_GAP_BETWEEN_TRANSMISSION                                          50U
 
 
-/*
-*  Different provision bearer supported by BLE-Mesh. 
-*  Define according to application.
-*  Atleast one of PB-ADV and PB-GATT should be defined
-*/
-#define ENABLE_PB_ADV
-#define ENABLE_PB_GATT
-//#define ENABLE_PUB_KEY_TYPE_OOB
-//#define ENABLE_AUTH_TYPE_STATIC_OOB
-//#define ENABLE_AUTH_TYPE_OUTPUT_OOB
-//#define ENABLE_AUTH_TYPE_INPUT_OOB
-
-/* Static OOB Configurations */
-#ifdef ENABLE_AUTH_TYPE_STATIC_OOB
-#define STATIC_OOB_SIZE                                                      16U 
-#else
-#define STATIC_OOB_SIZE                                                       0U 
-#endif
-/* Output OOB Configurations */
-#ifdef ENABLE_AUTH_TYPE_OUTPUT_OOB
-#define OUTPUT_OOB_SIZE                                                       1U 
-#define OUTPUT_OOB_ACTION                            OUTPUT_OOB_ACTION_BIT_BLINK 
-#else
-#define OUTPUT_OOB_SIZE                                                       0U 
-#define OUTPUT_OOB_ACTION                            OUTPUT_OOB_ACTION_BIT_BLINK 
-#endif
-
-/* Input OOB Configurations */
-#ifdef ENABLE_AUTH_TYPE_INPUT_OOB
-#define INPUT_OOB_SIZE                                                        1U 
-#define INPUT_OOB_ACTION                               INPUT_OOB_ACTION_BIT_PUSH 
-#else
-#define INPUT_OOB_SIZE                                                        0U 
-#define INPUT_OOB_ACTION                               INPUT_OOB_ACTION_BIT_PUSH 
-#endif
-
-#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
-  #define PROVISIONER_ROOT_ADDR_DEFAULT                                   0x0001
-  #define PRVN_ELEMENTS_PER_NODE_MAX                                      0x0003
-
-  /* Enables the UUID saving per Node - Currenly Not Supported */       
-  #define ENABLE_SAVE_UUID_PER_NODE                                            0  
-      
-/* Enables the Elements per Node info saving - Currenly Not Supported */       
-  /* #if (ELEMENTS_PER_NODE_MAX > 1)
-  #define ENABLE_SAVE_ELEMENTS_PER_NODE 1
-  #endif
-        */
-#endif      
-      
-      
 /*
 * Friend node receive window size is 50 ms
 */
@@ -608,91 +610,6 @@ For STMicroelectronics : it is 0x0030 */
   #define GREEN_LED                                                         PWM3
   #define BLUE_LED                                                          PWM4 
 #endif
-
-/* Following Macro helps to know if the Fixed functions are needed or not 
-   DO NOT change or add any space at the end of the file */
-#if defined (ENABLE_GENERIC_MODEL_SERVER_ONOFF) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_LEVEL) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_BATTERY) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_LOCATION) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_LOCATION_SETUP) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_ADMIN_PROPERTY) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_USER_PROPERTY) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_CLIENT_PROPERTY) \
-    && !defined (ENABLE_GENERIC_MODEL_SERVER)
- #define ENABLE_GENERIC_MODEL_SERVER                                         (1)
-#endif      
-
-#if defined (ENABLE_GENERIC_MODEL_SERVER_ONOFF) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_LEVEL) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_BATTERY) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_LOCATION) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_LOCATION_SETUP) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_ADMIN_PROPERTY) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_USER_PROPERTY) \
-    || defined (ENABLE_GENERIC_MODEL_SERVER_CLIENT_PROPERTY) \
-    && !defined (GENERIC_SERVER_MODEL_ADD_CONFIGURATION)
- #define GENERIC_SERVER_MODEL_ADD_CONFIGURATION                              (1)
-      
-#endif      
-
-/* Following Macro helps to know if the Fixed functions are needed or not 
-   DO NOT change or add any space at the end of the file */
-#if defined(ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_HUE) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LC) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LC_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_XYL) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP) \
-    && !defined (ENABLE_LIGHT_MODEL_SERVER)
-  #define  ENABLE_LIGHT_MODEL_SERVER                                         (1)
-#endif  
-
-/* Following Macro helps to know if the Fixed functions are needed or not 
-   DO NOT change or add any space at the end of the file */
-#if defined(ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_HUE) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LC) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_LC_SETUP) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_XYL) \
-    || defined(ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP) \
-    && !defined (LIGHT_SERVER_MODEL_ADD_CONFIGURATION)
-  #define LIGHT_SERVER_MODEL_ADD_CONFIGURATION    
-#endif  
-
-#if defined(ENABLE_TIME_MODEL_SERVER) \
-    || defined(ENABLE_TIME_MODEL_SERVER_SETUP)\
-    || defined(ENABLE_SCENE_MODEL_SERVER)\
-    || defined(ENABLE_SCENE_MODEL_SERVER_SETUP)
-    && !defined (ENABLE_TIME_SCENE_MODEL_SERVER)
-   #define ENABLE_TIME_SCENE_MODEL_SERVER                                    (1)
-#endif             
 
       
 /* Exported variables  -------------------------------------------------------*/
