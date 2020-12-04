@@ -18,8 +18,8 @@
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32_LPM_H
-#define __STM32_LPM_H
+#ifndef STM32_TINY_LPM_H
+#define STM32_TINY_LPM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,13 +28,32 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stdint.h"
 
+/** @defgroup TINY_LPM TINY LPM
+  * @{
+  */
+
+/* Exported typedef ---------------------------------------------------------*/
+/** @defgroup TINY_LPM_Exported_typedef TINY LPM exported typedef
+  * @{
+  */
+
+/**
+ * @brief type definition to represent the bit mask of an LPM mode
+ */
 typedef uint32_t  UTIL_LPM_bm_t;
 
+/**
+ * @brief type definition to represent value of an LPM mode
+ */
 typedef enum
 {
   UTIL_LPM_ENABLE=0,
   UTIL_LPM_DISABLE,
 } UTIL_LPM_State_t;
+
+/**
+ * @brief type definition to represent the different type of LPM mode
+ */
 
 typedef enum
 {
@@ -43,42 +62,63 @@ typedef enum
   UTIL_LPM_OFFMODE,
 } UTIL_LPM_Mode_t;
 
-/*!
- * \brief LPM driver definition
+/**
+ * @}
+ */
+
+/** @defgroup TINY_LPM_Exported_struct TINY LPM exported struct
+  * @{
+  */
+
+/**
+ * @brief LPM driver definition
  */
 struct UTIL_LPM_Driver_s
 {
-   void (* EnterSleepMode) ( void );
-   void (* ExitSleepMode) ( void );
-   void (* EnterStopMode) ( void );
-   void (* ExitStopMode) ( void );
-   void (* EnterOffMode) ( void );
-   void (* ExitOffMode) ( void );
+  void (*EnterSleepMode) ( void ); /*!<function to enter the sleep mode */
+  void (*ExitSleepMode) ( void );  /*!<function to exit the sleep mode  */
+  void (*EnterStopMode) ( void );  /*!<function to enter the stop mode  */
+  void (*ExitStopMode) ( void );   /*!<function to exit the stop mode   */
+  void (*EnterOffMode) ( void );   /*!<function to enter the off mode   */
+  void (*ExitOffMode) ( void );    /*!<function to exit the off mode    */
 };
 
-/*!
+/**
+ * @}
+ */
+
+/* External variables --------------------------------------------------------*/
+
+/** @defgroup TINY_LPM_Exported_struct TINY LPM exported struct
+  * @{
+  */
+
+/**
+ * @brief LPM driver
  *
- * \Remark : This structure is defined and initialized in the specific platform 
- *           power implementation
+ * @note This structure is defined and initialized in the specific platform
+ *       power implementation
  */
 extern const struct UTIL_LPM_Driver_s UTIL_PowerDriver;
 
-/* Exported constants --------------------------------------------------------*/
-/* External variables --------------------------------------------------------*/
+/**
+ * @}
+ */
+
 /* Exported macros -----------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
+/** @defgroup TINY_LPM_Exported_function TINY LPM exported functions
+ * @{
+ */
+
 /**
  * @brief  This API Initializes the LPM resources.
- * @param  None
- * @retval None
  */
 void UTIL_LPM_Init( void );
 
 /**
  * @brief  This API Un-Initializes the LPM resources.
- * @param  None
- * @retval None
  */
 void UTIL_LPM_DeInit( void );
 
@@ -86,8 +126,7 @@ void UTIL_LPM_DeInit( void );
  * @brief  This API returns the Low Power Mode selected that will be applied when the system will enter low power mode
  *         if there is no update between the time the mode is read with this API and the time the system enters
  *         low power mode.
- * @param  None
- * @retval UTIL_LPM_Mode_t
+ * @retval the LPM mode based on @ref UTIL_LPM_Mode_t
  */
 UTIL_LPM_Mode_t UTIL_LPM_GetMode( void );
 
@@ -96,7 +135,6 @@ UTIL_LPM_Mode_t UTIL_LPM_GetMode( void );
  *         The default mode selection for all users is Stop Mode enabled
  * @param  lpm_id_bm: identifier of the user ( 1 bit per user )
  * @param  state: Specify whether StopMode is allowed or not by this user
- * @retval None
  */
 void UTIL_LPM_SetStopMode( UTIL_LPM_bm_t lpm_id_bm, UTIL_LPM_State_t state );
 
@@ -105,22 +143,27 @@ void UTIL_LPM_SetStopMode( UTIL_LPM_bm_t lpm_id_bm, UTIL_LPM_State_t state );
  *         The default mode selection for all users is Off mode enabled
  * @param  lpm_id_bm: identifier of the user ( 1 bit per user )
  * @param  state: Specify whether OffMode is allowed or not by this user
- * @retval None
  */
 void UTIL_LPM_SetOffMode( UTIL_LPM_bm_t lpm_id_bm, UTIL_LPM_State_t state );
 
 /**
  * @brief  This API is called by the low power manager in a critical section (PRIMASK bit set) to allow the
  *         application to implement dedicated code before entering Low Power Mode
- * @param  None
- * @retval None
  */
 void UTIL_LPM_EnterLowPower( void );
+
+/**
+ *@}
+ */
+
+/**
+ *@}
+ */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__STM32_LPM_H */
+#endif /* STM32_TINY_LPM_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

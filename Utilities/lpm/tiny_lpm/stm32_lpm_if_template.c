@@ -19,11 +19,23 @@
 /* Includes ------------------------------------------------------------------*/  
 #include "stm32_lpm_if.h"
 #include "stm32_lpm.h"
+
+/** @addtogroup TINY_LPM_IF
+  * @{
+  */
+
 /* USER CODE BEGIN include */
 
 /* USER CODE END include */
 
 /* Exported variables --------------------------------------------------------*/
+/** @defgroup TINY_LPM_IF_Exported_varaibles TINY LPM IF exported variables
+  * @{
+  */
+
+/**
+ * @brief variable to provide all the functions corresponding to the different low power modes.
+ */
 const struct UTIL_LPM_Driver_s UTIL_PowerDriver = 
 {
   PWR_EnterSleepMode,
@@ -36,6 +48,9 @@ const struct UTIL_LPM_Driver_s UTIL_PowerDriver =
   PWR_ExitOffMode,
 };
 
+/**
+ * @}
+ */
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN Private_Function_Prototypes */
 
@@ -57,11 +72,10 @@ const struct UTIL_LPM_Driver_s UTIL_PowerDriver =
 
 /* USER CODE END Private_Variables */
 
-/**
-  * @brief Enters Low Power Off Mode
-  * @param none
-  * @retval none
-  */
+/** @addtogroup TINY_LPM_IF_Exported_functions
+ * @{
+ */
+
 void PWR_EnterOffMode( void )
 {
 /* USER CODE BEGIN PWR_EnterOffMode */
@@ -69,11 +83,6 @@ void PWR_EnterOffMode( void )
 /* USER CODE END PWR_EnterOffMode */
 }
 
-/**
-  * @brief Exits Low Power Off Mode
-  * @param none
-  * @retval none
-  */
 void PWR_ExitOffMode( void )
 {
 /* USER CODE BEGIN PWR_ExitOffMode */
@@ -81,12 +90,6 @@ void PWR_ExitOffMode( void )
 /* USER CODE END PWR_ExitOffMode */
 }
 
-/**
-  * @brief Enters Low Power Stop Mode
-  * @note ARM exists the function when waking up
-  * @param none
-  * @retval none
-  */
 void PWR_EnterStopMode( void )
 {
 /* USER CODE BEGIN PWR_EnterStopMode */
@@ -94,11 +97,6 @@ void PWR_EnterStopMode( void )
 /* USER CODE END PWR_EnterStopMode */
 }
 
-/**
-  * @brief Exits Low Power Stop Mode
-  * @param none
-  * @retval none
-  */
 void PWR_ExitStopMode( void )
 {
 /* USER CODE BEGIN PWR_ExitStopMode */
@@ -106,12 +104,6 @@ void PWR_ExitStopMode( void )
 /* USER CODE END PWR_ExitStopMode */
 }
 
-/**
-  * @brief Enters Low Power Sleep Mode
-  * @note ARM exits the function when waking up
-  * @param none
-  * @retval none
-  */
 void PWR_EnterSleepMode( void )
 {
 /* USER CODE BEGIN PWR_EnterSleepMode */
@@ -119,12 +111,6 @@ void PWR_EnterSleepMode( void )
 /* USER CODE END PWR_EnterSleepMode */
 }
 
-/**
-  * @brief Exits Low Power Sleep Mode
-  * @note ARM exits the function when waking up
-  * @param none
-  * @retval none
-  */
 void PWR_ExitSleepMode( void )
 {
 /* USER CODE BEGIN PWR_ExitSleepMode */
@@ -136,5 +122,12 @@ void PWR_ExitSleepMode( void )
 
 /* USER CODE END Private_Functions */
 
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

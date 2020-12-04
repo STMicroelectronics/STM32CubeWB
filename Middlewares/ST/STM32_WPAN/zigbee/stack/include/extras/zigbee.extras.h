@@ -29,32 +29,4 @@ void ZbZdoUnsolicitedEnhUpdateNotify(struct ZigBeeT *zb, uint16_t dstAddr);
 const char * ZbZdoNodeTypeToStr(const uint8_t type);
 void ZbZdoNodeBandsStr(const uint8_t band, char *buf, const unsigned int max_len);
 
-/*-----------------------------------------------------------------------------
- *  Blocking Functions (CONFIG_ZB_BLOCKING_CALLS)
- *-----------------------------------------------------------------------------
- */
-void ZbNldeDataReqWait(struct ZigBeeT *zb, struct ZbNldeDataReqT *req, struct ZbNldeDataConfT *conf);
-void ZbNldeFrameReqWait(struct ZigBeeT *zb, struct ZbNldeFrameReqT *req, ZbNldeFrameConfT *conf);
-void ZbNlmeNetDiscWait(struct ZigBeeT *zb, struct ZbNlmeNetDiscReqT *req, struct ZbNlmeNetDiscConfT *conf);
-void ZbNlmeNetFormWait(struct ZigBeeT *zb, struct ZbNlmeNetFormReqT *req, struct ZbNlmeNetFormConfT *conf);
-void ZbNlmeJoinWait(struct ZigBeeT *zb, struct ZbNlmeJoinReqT *req, struct ZbNlmeJoinConfT *conf);
-void ZbNlmeLeaveWait(struct ZigBeeT *zb, struct ZbNlmeLeaveReqT *leaveReqPtr, struct ZbNlmeLeaveConfT *leaveConfPtr);
-void ZbNlmeRouteDiscWait(struct ZigBeeT *zb, struct ZbNlmeRouteDiscReqT *req, struct ZbNlmeRouteDiscConfT *conf);
-
-void ZbZdoNwkAddrWait(struct ZigBeeT *zb, struct ZbZdoNwkAddrReqT *req, struct ZbZdoNwkAddrRspT *rsp);
-void ZbZdoIeeeAddrWait(struct ZigBeeT *zb, struct ZbZdoIeeeAddrReqT *req, struct ZbZdoIeeeAddrRspT *rsp);
-void ZbZdoNodeDescWait(struct ZigBeeT *zb, struct ZbZdoNodeDescReqT *req, struct ZbZdoNodeDescRspT *rsp);
-void ZbZdoPowerDescWait(struct ZigBeeT *zb, struct ZbZdoPowerDescReqT *req, struct ZbZdoPowerDescRspT *rsp);
-void ZbZdoSimpleDescWait(struct ZigBeeT *zb, struct ZbZdoSimpleDescReqT *req, struct ZbZdoSimpleDescRspT *rsp);
-void ZbZdoActiveEpWait(struct ZigBeeT *zb, struct ZbZdoActiveEpReqT *req, struct ZbZdoActiveEpRspT *rsp);
-void ZbZdoMatchDescWait(struct ZigBeeT *zb, struct ZbZdoMatchDescReqT *req, struct ZbZdoMatchDescRspT *rsp);
-void ZbZdoBindWait(struct ZigBeeT *zb, struct ZbZdoBindReqT *req, struct ZbZdoBindRspT *rsp);
-void ZbZdoUnbindWait(struct ZigBeeT *zb, struct ZbZdoBindReqT *req, struct ZbZdoBindRspT *rsp);
-void ZbZdoLqiWait(struct ZigBeeT *zb, struct ZbZdoLqiReqT *req, struct ZbZdoLqiRspT *rsp);
-void ZbZdoRtgWait(struct ZigBeeT *zb, struct ZbZdoRtgReqT *req, struct ZbZdoRtgRspT *rsp);
-void ZbZdoMgmtBindWait(struct ZigBeeT *zb, struct ZbZdoMgmtBindReqT *req, struct ZbZdoMgmtBindRspT *rsp);
-void ZbZdoPermitJoinWait(struct ZigBeeT *zb, struct ZbZdoPermitJoinReqT *req, struct ZbZdoPermitJoinRspT *rsp);
-void ZbZdoNwkUpdateWait(struct ZigBeeT *zb, struct ZbZdoNwkUpdateReqT *req, struct ZbZdoNwkUpdateNotifyT *rsp);
-void ZbZdoLeaveWait(struct ZigBeeT *zb, struct ZbZdoLeaveReqT *req, struct ZbZdoLeaveRspT *rsp);
-
 #endif

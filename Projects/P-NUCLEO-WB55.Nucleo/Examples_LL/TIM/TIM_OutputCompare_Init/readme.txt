@@ -63,6 +63,10 @@ User push-button (SW1) can be used to change the output compare mode:
     
 Initially the output channel is configured in output compare toggle mode.
 
+@par Keywords
+
+Timers, Output, signals, Outpur compare toggle, PWM, Oscilloscope
+
 @par Directory contents 
 
   - TIM/TIM_OutputCompare_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file

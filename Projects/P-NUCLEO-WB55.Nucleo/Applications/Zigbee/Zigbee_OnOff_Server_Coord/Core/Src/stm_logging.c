@@ -75,6 +75,9 @@ static inline uint16_t logRegion(char *aLogString, uint16_t aMaxSize,
     case APPLI_LOG_REGION_GENERAL:
       strcpy(logRegionString, "[M4 APPLICATION]");
       break;
+    case APPLI_LOG_REGION_ZIGBEE_API:
+      strcpy(logRegionString, "[M4 ZIGBEE API]");
+      break;
     default:
       strcpy(logRegionString, "[M4]");
       break;

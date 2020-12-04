@@ -1,4 +1,10 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.drlc.h
+ * @brief ZCL Demand Response and Load Control cluster header
+ * ZCL 7 Section 10.3
+ * ZCL 8 Section 10.3
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 /*--------------------------------------------------------------------------
  *  DESCRIPTION
@@ -34,15 +40,15 @@ enum {
 
 #define ZCL_DRLC_ISSUER_ID_INVALID              0xffffffffU
 
-/* DRLC Server attribute identifiers */
+/* DRLC Server Attribute IDs */
 /* none */
 
-/* DRLC Client attribute identifiers */
-enum {
-    ZCL_DRLC_CLI_ATTR_UTILITY_ENROL_GRP = 0x0000,
-    ZCL_DRLC_CLI_ATTR_START_RAND_MINS = 0x0001,
-    ZCL_DRLC_CLI_ATTR_STOP_RAND_MINS = 0x0002,
-    ZCL_DRLC_CLI_ATTR_DEVICE_CLASS = 0x0003
+/** DRLC Client Attribute IDs */
+enum ZbZclDrlcCliAttrT {
+    ZCL_DRLC_CLI_ATTR_UTILITY_ENROL_GRP = 0x0000, /**< UtilityEnrollmentGroup */
+    ZCL_DRLC_CLI_ATTR_START_RAND_MINS = 0x0001, /**< StartRandomizationMinutes */
+    ZCL_DRLC_CLI_ATTR_STOP_RAND_MINS = 0x0002, /**< DurationRandomizationMinutes */
+    ZCL_DRLC_CLI_ATTR_DEVICE_CLASS = 0x0003 /**< DeviceClassValue */
 };
 
 /* DRLC Device Class bitmaps */
@@ -118,82 +124,125 @@ enum ZbZclDrlcSignatureT {
  * Structures
  *---------------------------------------------------------------
  */
-/* Structure describing a load control event. */
+
+/** Load Control Event command structure */
 struct ZbZclDrlcEventT {
-    uint32_t issuer_id;
-    uint16_t device_class;
-    uint8_t util_enrol_group;
-    uint32_t start_time; /* UTC, or 0 = now */
-    uint16_t duration; /* minutes */
-    enum ZbZclDrlcCriticalityLevelT criticality;
-    uint8_t cool_offset;
-    uint8_t heat_offset;
-    int16_t cool_setpoint;
-    int16_t heat_setpoint;
-    int8_t avg_load_adj;
-    uint8_t dutycycle;
-    uint8_t event_control; /* e.g. ZCL_DRLC_EVENT_CTRL_RAND_START */
+    uint32_t issuer_id; /**< Issuer Event ID */
+    uint16_t device_class; /**< Device Class */
+    uint8_t util_enrol_group; /**< Utility Entrollment Group */
+    uint32_t start_time; /**< Start Time - UTC, or 0 = now */
+    uint16_t duration; /**< Duration in Minutes */
+    enum ZbZclDrlcCriticalityLevelT criticality; /**< Criticality Level */
+    uint8_t cool_offset; /**< Cooling Temperature Offset (Optional) */
+    uint8_t heat_offset; /**< Heating Temperature Offset (Optional) */
+    int16_t cool_setpoint; /**< Cooling Temperature Set Point (Optional) */
+    int16_t heat_setpoint; /**< Heating Temperature Set Point (Optional) */
+    int8_t avg_load_adj; /**< Average Load Adjustment Percentage (Optional) */
+    uint8_t dutycycle; /**< Duty Cycle (Optional) */
+    uint8_t event_control; /**< Event Control - e.g. ZCL_DRLC_EVENT_CTRL_RAND_START */
 };
 
-/* Structure describing a cancel event command. */
+/** Cancel Load Control Event command structure */
 struct ZbZclDrlcCancelT {
-    uint32_t issuer_id;
-    uint16_t device_class;
-    uint8_t util_enrol_group;
-    uint8_t cancel_control; /* e.g. ZCL_DRLC_CANCEL_CONTROL_GRACEFUL */
+    uint32_t issuer_id; /**< Issuer Event ID */
+    uint16_t device_class; /**< Device Class */
+    uint8_t util_enrol_group; /**< Utility Enrollment Group */
+    uint8_t cancel_control; /**< Cancel Control - e.g. ZCL_DRLC_CANCEL_CONTROL_GRACEFUL */
     /* effectiveTime is now deprecated - must be zero */
     /* uint32_t effectiveTime; */
 };
 
-/* Report Event Status Command data structure */
+/** Report Event Status command structure */
 struct ZbZclDrlcStatusT {
-    uint32_t issuer_id;
-    enum ZbZclDrlcEventStatusT status;
-    uint32_t status_time;
-    enum ZbZclDrlcCriticalityLevelT crit_level_applied;
-    uint16_t cool_setpoint_applied; /* Set to ZCL_DRLC_COOL_SETPOINT_IGNORED if not used */
-    uint16_t heat_setpoint_applied; /* Set to ZCL_DRLC_HEAT_SETPOINT_IGNORED if not used */
-    int8_t avg_load_adj_applied; /* Set to ZCL_DRLC_AVG_LOAD_ADJ_IGNORED if not used */
-    uint8_t dutycycle_applied; /* Set to ZCL_DRLC_DUTYCYCLE_IGNORED if not used */
-    uint8_t event_control;
-    enum ZbZclDrlcSignatureT sig_type;
-    uint8_t sig_data[ZCL_DRLC_SIGNATURE_LENGTH];
+    uint32_t issuer_id; /**< Issuer Event ID */
+    enum ZbZclDrlcEventStatusT status; /**< Event Status */
+    uint32_t status_time; /**< Event Status Time */
+    enum ZbZclDrlcCriticalityLevelT crit_level_applied; /**< Criticality Level Applied */
+    uint16_t cool_setpoint_applied; /**< Cooling Temperature Set Point Applied (Optional) - Set to ZCL_DRLC_COOL_SETPOINT_IGNORED if not
+    used */
+    uint16_t heat_setpoint_applied; /**< Heating Temperature Set Point Applied (Optional) - Set to ZCL_DRLC_HEAT_SETPOINT_IGNORED if not
+    used */
+    int8_t avg_load_adj_applied; /**< Average Load Adjustment Percentage Applied (Optional) - Set to ZCL_DRLC_AVG_LOAD_ADJ_IGNORED if not
+    used */
+    uint8_t dutycycle_applied; /**< Duty Cycle Applied (Optional) - Set to ZCL_DRLC_DUTYCYCLE_IGNORED if not used */
+    uint8_t event_control; /**< Event Control */
+    enum ZbZclDrlcSignatureT sig_type; /**< Signature Type */
+    uint8_t sig_data[ZCL_DRLC_SIGNATURE_LENGTH]; /**< Signature (Optional) */
 };
 
+/** Get Scheduled Events command structure */
 struct ZbZclDrlcGetEventsReqT {
-    uint32_t start_time;
-    uint8_t num_events;
-    uint32_t issuer_id;
+    uint32_t start_time; /**< Start Time */
+    uint8_t num_events; /**< Number of Events */
+    uint32_t issuer_id; /**< Issuer Event ID (Optional) */
 };
 
 /*---------------------------------------------------------------
  * DRLC Server Functions
  *---------------------------------------------------------------
  */
-struct ZbZclDrlcServerCallbacksT {
-    void (*report_status)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo,
-        struct ZbZclDrlcStatusT *status, void *arg);
 
-    /* The get_events callback handler in the application should return ZCL_STATUS_SUCCESS,
-     * or ZCL_STATUS_NOT_FOUND if no events are found. Events are re-issued by calling
-     * ZbZclDrlcServerCommandEventReq(). */
-    enum ZclStatusCodeT (*get_events)(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo,
+/** DRLC Server callbacks configuration */
+struct ZbZclDrlcServerCallbacksT {
+    void (*report_status)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo,
+        struct ZbZclDrlcStatusT *status, void *arg);
+    /**< Callback to application, invoked on receipt of Report Event Status command */
+
+    enum ZclStatusCodeT (*get_events)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo,
         struct ZbZclDrlcGetEventsReqT *req, void *arg);
+    /**< Callback to application, invoked on receipt of Get Scheduled Events command. The get_events callback handler in the application
+     * should return ZCL_STATUS_SUCCESS, or ZCL_STATUS_NOT_FOUND if no events are found. Events are re-issued by calling
+     * ZbZclDrlcServerCommandEventReq() */
 };
 
+/**
+ * Create a new instance of the DRLC Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param callbacks Structure containing any callback function pointers for this cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclDrlcServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclDrlcServerCallbacksT *callbacks, void *arg);
 
 /* Server Commands */
-enum ZclStatusCodeT ZbZclDrlcServerCommandEventReq(struct ZbZclClusterT *clusterPtr, struct ZbZclDrlcEventT *eventPtr,
+
+/**
+ * Send a Load Control Event command
+ * @param cluster Cluster instance from which to send this command
+ * @param eventPtr Load Control Event command request structure
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclDrlcServerCommandEventReq(struct ZbZclClusterT *cluster, struct ZbZclDrlcEventT *eventPtr,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclDrlcServerCommandCancelReq(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send a Cancel Load Control Event command
+ * @param cluster Cluster instance from which to send this command
+ * @param eventPtr Cancel Load Control Event command request structure
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclDrlcServerCommandCancelReq(struct ZbZclClusterT *cluster,
     struct ZbZclDrlcCancelT *cancelInfoPtr, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-/* ctrl ; e.g. ZCL_DRLC_CANCEL_CONTROL_GRACEFUL */
-enum ZclStatusCodeT ZbZclDrlcServerCommandCancelAllReq(struct ZbZclClusterT *clusterPtr, uint8_t ctrl,
+/**
+ * Send a Cancel All Load Control Event command
+ * @param cluster Cluster instance from which to send this command
+ * @param ctrl Cancel control bitmap, used to determine method of cancellation - e.g. ZCL_DRLC_CANCEL_CONTROL_GRACEFUL
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclDrlcServerCommandCancelAllReq(struct ZbZclClusterT *cluster, uint8_t ctrl,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
 /*---------------------------------------------------------------
@@ -201,25 +250,64 @@ enum ZclStatusCodeT ZbZclDrlcServerCommandCancelAllReq(struct ZbZclClusterT *clu
  *---------------------------------------------------------------
  */
 
+/** DRLC Client callbacks configuration */
 struct ZbZclDrlcClientCallbacksT {
     /* Should return true if started successfully, or false otherwise. */
+
     bool (*start)(void *arg, struct ZbZclDrlcEventT *event);
+    /**< Callback to application, invoked on the start of an event */
+
     void (*stop)(void *arg, struct ZbZclDrlcEventT *event);
+    /**< Callback to application, invoked on the end of an event */
 };
 
+/**
+ * Create a new instance of the DRLC Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param time_server Time server cluster instance used to retrieve timing information of events
+ * @param callbacks Structure containing any callback function pointers for this cluster
+ * @param cb_arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclDrlcClientAlloc(struct ZigBeeT *zb, uint8_t endpoint, struct ZbZclClusterT *time_server,
     struct ZbZclDrlcClientCallbacksT *callbacks, void *cb_arg);
 
-unsigned int ZbZclDrlcClientGetEventList(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send a Get Event List command
+ * @param cluster Cluster instance from which to send this command
+ * @param eventList Holds a pointer to the event list if successful
+ * @param maxEntries Max event list entries
+ * @return Event list size if successful, or 0 on error
+ */
+unsigned int ZbZclDrlcClientGetEventList(struct ZbZclClusterT *cluster,
     struct ZbZclDrlcEventT *eventList, unsigned int maxEntries);
 
 /* Client Commands */
-enum ZclStatusCodeT ZbZclDrlcClientCommandReportStatusReq(struct ZbZclClusterT *clusterPtr,
+
+/**
+ * Send a Report Event Status Command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param statusPtr Report Event Status command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclDrlcClientCommandReportStatusReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclDrlcStatusT *statusPtr,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-/* This command is used to request that Load Control Events are re-issued to the requesting device. */
-enum ZclStatusCodeT ZbZclDrlcClientCommandGetEventsReq(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send a Get Scheduled Events
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param cmd_req Get Scheduled Events command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclDrlcClientCommandGetEventsReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclDrlcGetEventsReqT *cmd_req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 

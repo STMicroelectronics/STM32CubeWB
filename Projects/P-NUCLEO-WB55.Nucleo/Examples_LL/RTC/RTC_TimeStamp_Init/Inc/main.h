@@ -98,7 +98,7 @@ void TimeStampEvent_Callback(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define USER_BUTTON_Pin LL_GPIO_PIN_13
+#define USER_BUTTON_Pin LL_GPIO_PIN_4
 #define USER_BUTTON_GPIO_Port GPIOC
 #define LED2_Pin LL_GPIO_PIN_0
 #define LED2_GPIO_Port GPIOB

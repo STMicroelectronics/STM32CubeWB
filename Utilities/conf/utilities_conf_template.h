@@ -76,7 +76,7 @@ extern "C" {
  * the define option 
  *    UTIL_ADV_TRACE_CONDITIONNAL shall be defined if you want use conditionnal function
  *    UTIL_ADV_TRACE_UNCHUNK_MODE shall be defined if you want use the unchunk mode
- *     
+ *    UTIL_ADV_TRACE_MEMLOCATION shall be defined if you want manage trace buffer location 
  ******************************************************************************/
 #define UTIL_ADV_TRACE_CONDITIONNAL
 #define UTIL_ADV_TRACE_UNCHUNK_MODE
@@ -89,6 +89,7 @@ extern "C" {
 #define UTIL_ADV_TRACE_FIFO_SIZE                   (512U)
 #define UTIL_ADV_TRACE_MEMSET8( dest, value, size) UTIL_MEM_set_8((dest),(value),(size))
 #define UTIL_ADV_TRACE_VSNPRINTF(...)              vsnprintf(__VA_ARGS__)
+#define UTIL_ADV_TRACE_MEMLOCATION
 
 /******************************************************************************
  * LCD trace Configuration
@@ -104,11 +105,11 @@ extern "C" {
 #define     LCD_TRACE_TEXT_FONT                  Font20
 
 /* Define the LCD TRACE Colors  */
-#define     LCD_TRACE_BACKGROUND_COLOR           GUI_COLOR_WHITE
-#define     LCD_TRACE_TEXT_COLOR                 GUI_COLOR_DARKBLUE
-#define     LCD_TRACE_SOLID_BACKGROUND_COLOR     GUI_COLOR_BLUE
-#define     LCD_TRACE_SOLID_TEXT_COLOR           GUI_COLOR_WHITE
-#define     LCD_TRACE_DEFAULT_COLOR              GUI_COLOR_WHITE
+#define     LCD_TRACE_BACKGROUND_COLOR           UTILS_LCD_COLOR_WHITE
+#define     LCD_TRACE_TEXT_COLOR                 UTILS_LCD_COLOR_DARKBLUE
+#define     LCD_TRACE_SOLID_BACKGROUND_COLOR     UTILS_LCD_COLOR_BLUE
+#define     LCD_TRACE_SOLID_TEXT_COLOR           UTILS_LCD_COLOR_WHITE
+#define     LCD_TRACE_DEFAULT_COLOR              UTILS_LCD_COLOR_WHITE
 
 /* Define the cache depth */
 #define     CACHE_SIZE                           100U

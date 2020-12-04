@@ -78,7 +78,6 @@ Wireless Coprocessor binary.
 In order to make the program work, you must do the following :
  - Open your preferred toolchain 
  - Rebuild all files and load the image into Target memory
- - Or use the BLE_Custom.hex from Binary directory
  - This must be done for BLE_Custom (MB1355C) 
 
  - On the smartphone, open ST BLE Sensor application,

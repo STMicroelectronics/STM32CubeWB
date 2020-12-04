@@ -1,4 +1,13 @@
-/* Copyright [2016 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * This cluster supports scenes functionality. When a scene is recalled that includes this cluster, the attributes listed in the Scenes
+ * Table Extensions for this cluster will be set to the value in the scene. ColorTemperatureMireds may also be coupled to the Level Control
+ * cluster's CurrentLevel, however, this feature is not implemented in the stack so additional code in the application will be needed
+ * @file zcl.color.h
+ * @brief ZCL Color Control cluster header
+ * ZCL 7 Section 5.2
+ * ZCL 8 Section 5.2
+ * @copyright Copyright [2016 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_COLOR_H
 #define ZCL_COLOR_H
@@ -132,60 +141,60 @@
 * CC.C.C4c.Tx | TRUE
 */
 
-/* Color Control Attributes */
+/** Color Control Server Attribute IDs */
 enum ZbZclColorSvrAttrT {
-    ZCL_COLOR_ATTR_CURRENT_HUE = 0x0000,
-    ZCL_COLOR_ATTR_CURRENT_SAT = 0x0001,
-    ZCL_COLOR_ATTR_REMAINING_TIME = 0x0002,
-    ZCL_COLOR_ATTR_CURRENT_X = 0x0003,
-    ZCL_COLOR_ATTR_CURRENT_Y = 0x0004,
-    ZCL_COLOR_ATTR_DRIFT_COMP = 0x0005,
-    ZCL_COLOR_ATTR_COMPENSATION_TEXT = 0x0006,
-    ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS = 0x0007,
-    ZCL_COLOR_ATTR_COLOR_MODE = 0x0008,
-    ZCL_COLOR_ATTR_OPTIONS = 0x000f,
-    ZCL_COLOR_ATTR_NUM_PRIMARIES = 0x0010,
-    ZCL_COLOR_ATTR_PRIMARY_1X = 0x0011,
-    ZCL_COLOR_ATTR_PRIMARY_1Y = 0x0012,
-    ZCL_COLOR_ATTR_PRIMARY_1_INTENS = 0x0013,
-    ZCL_COLOR_ATTR_PRIMARY_2X = 0x0015,
-    ZCL_COLOR_ATTR_PRIMARY_2Y = 0x0016,
-    ZCL_COLOR_ATTR_PRIMARY_2_INTENS = 0x0017,
-    ZCL_COLOR_ATTR_PRIMARY_3X = 0x0019,
-    ZCL_COLOR_ATTR_PRIMARY_3Y = 0x001a,
-    ZCL_COLOR_ATTR_PRIMARY_3_INTENS = 0x001b,
-    ZCL_COLOR_ATTR_PRIMARY_4X = 0x0020,
-    ZCL_COLOR_ATTR_PRIMARY_4Y = 0x0021,
-    ZCL_COLOR_ATTR_PRIMARY_4_INTENS = 0x0022,
-    ZCL_COLOR_ATTR_PRIMARY_5X = 0x0024,
-    ZCL_COLOR_ATTR_PRIMARY_5Y = 0x0025,
-    ZCL_COLOR_ATTR_PRIMARY_5_INTENS = 0x0026,
-    ZCL_COLOR_ATTR_PRIMARY_6X = 0x0028,
-    ZCL_COLOR_ATTR_PRIMARY_6Y = 0x0029,
-    ZCL_COLOR_ATTR_PRIMARY_6_INTENS = 0x002a,
-    ZCL_COLOR_ATTR_WHITE_POINT_X = 0x0030,
-    ZCL_COLOR_ATTR_WHITE_POINT_Y = 0x0031,
-    ZCL_COLOR_ATTR_COLOR_POINT_RX = 0x0032,
-    ZCL_COLOR_ATTR_COLOR_POINT_RY = 0x0033,
-    ZCL_COLOR_ATTR_COLOR_POINT_R_INTENS = 0x0034,
-    ZCL_COLOR_ATTR_COLOR_POINT_GX = 0x0036,
-    ZCL_COLOR_ATTR_COLOR_POINT_GY = 0x0037,
-    ZCL_COLOR_ATTR_COLOR_POINT_G_INTENS = 0x0038,
-    ZCL_COLOR_ATTR_COLOR_POINT_BX = 0x003a,
-    ZCL_COLOR_ATTR_COLOR_POINT_BY = 0x003b,
-    ZCL_COLOR_ATTR_COLOR_POINT_B_INTENS = 0x003c,
-    ZCL_COLOR_ATTR_ENH_CURR_HUE = 0x4000,
-    ZCL_COLOR_ATTR_ENH_COLOR_MODE = 0x4001,
-    ZCL_COLOR_ATTR_COLOR_LOOP_ACTIVE = 0x4002,
-    ZCL_COLOR_ATTR_COLOR_LOOP_DIR = 0x4003,
-    ZCL_COLOR_ATTR_COLOR_LOOP_TIME = 0x4004,
-    ZCL_COLOR_ATTR_COLOR_LOOP_START_HUE = 0x4005,
-    ZCL_COLOR_ATTR_COLOR_LOOP_STORE_HUE = 0x4006,
-    ZCL_COLOR_ATTR_COLOR_CAPABILITIES = 0x400A,
-    ZCL_COLOR_ATTR_COLOR_TEMP_MIN = 0x400B,
-    ZCL_COLOR_ATTR_COLOR_TEMP_MAX = 0x400C,
-    ZCL_COLOR_ATTR_COUPLE_COLOR_TL_MIN = 0x400d,
-    ZCL_COLOR_ATTR_STARTUP_COLOR_TEMP = 0x4010
+    ZCL_COLOR_ATTR_CURRENT_HUE = 0x0000, /**< CurrentHue */
+    ZCL_COLOR_ATTR_CURRENT_SAT = 0x0001, /**< CurrentSaturation */
+    ZCL_COLOR_ATTR_REMAINING_TIME = 0x0002, /**< RemainingTime (Optional but is used in mandatory commands) */
+    ZCL_COLOR_ATTR_CURRENT_X = 0x0003, /**< CurrentX */
+    ZCL_COLOR_ATTR_CURRENT_Y = 0x0004, /**< CurrentY */
+    ZCL_COLOR_ATTR_DRIFT_COMP = 0x0005, /**< DriftCompensation (Optional) */
+    ZCL_COLOR_ATTR_COMPENSATION_TEXT = 0x0006, /**< CompensationText (Optional) */
+    ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS = 0x0007, /**< ColorTemperatureMireds */
+    ZCL_COLOR_ATTR_COLOR_MODE = 0x0008, /**< ColorMode */
+    ZCL_COLOR_ATTR_OPTIONS = 0x000f, /**< Options */
+    ZCL_COLOR_ATTR_NUM_PRIMARIES = 0x0010, /**< NumberOfPrimaries */
+    ZCL_COLOR_ATTR_PRIMARY_1X = 0x0011, /**< Primary1X */
+    ZCL_COLOR_ATTR_PRIMARY_1Y = 0x0012, /**< Primary1Y */
+    ZCL_COLOR_ATTR_PRIMARY_1_INTENS = 0x0013, /**< Primary1Intensity */
+    ZCL_COLOR_ATTR_PRIMARY_2X = 0x0015, /**< Primary2X */
+    ZCL_COLOR_ATTR_PRIMARY_2Y = 0x0016, /**< Primary2Y */
+    ZCL_COLOR_ATTR_PRIMARY_2_INTENS = 0x0017, /**< Primary2Intensity */
+    ZCL_COLOR_ATTR_PRIMARY_3X = 0x0019, /**< Primary3X */
+    ZCL_COLOR_ATTR_PRIMARY_3Y = 0x001a, /**< Primary3Y */
+    ZCL_COLOR_ATTR_PRIMARY_3_INTENS = 0x001b, /**< Primary3Intensity */
+    ZCL_COLOR_ATTR_PRIMARY_4X = 0x0020, /**< Primary4X */
+    ZCL_COLOR_ATTR_PRIMARY_4Y = 0x0021, /**< Primary4Y */
+    ZCL_COLOR_ATTR_PRIMARY_4_INTENS = 0x0022, /**< Primary4Intensity */
+    ZCL_COLOR_ATTR_PRIMARY_5X = 0x0024, /**< Primary5X */
+    ZCL_COLOR_ATTR_PRIMARY_5Y = 0x0025, /**< Primary5Y */
+    ZCL_COLOR_ATTR_PRIMARY_5_INTENS = 0x0026, /**< Primary5Intensity */
+    ZCL_COLOR_ATTR_PRIMARY_6X = 0x0028, /**< Primary6X */
+    ZCL_COLOR_ATTR_PRIMARY_6Y = 0x0029, /**< Primary6Y */
+    ZCL_COLOR_ATTR_PRIMARY_6_INTENS = 0x002a, /**< Primary6Intensity */
+    ZCL_COLOR_ATTR_WHITE_POINT_X = 0x0030, /**< WhitePointX (Optional) */
+    ZCL_COLOR_ATTR_WHITE_POINT_Y = 0x0031, /**< WhitePointY (Optional) */
+    ZCL_COLOR_ATTR_COLOR_POINT_RX = 0x0032, /**< ColorPointRX (Optional) */
+    ZCL_COLOR_ATTR_COLOR_POINT_RY = 0x0033, /**< ColorPointRY (Optional) */
+    ZCL_COLOR_ATTR_COLOR_POINT_R_INTENS = 0x0034, /**< ColorPointRIntensity (Optional) */
+    ZCL_COLOR_ATTR_COLOR_POINT_GX = 0x0036, /**< ColorPointGX (Optional) */
+    ZCL_COLOR_ATTR_COLOR_POINT_GY = 0x0037, /**< ColorPointGY (Optional) */
+    ZCL_COLOR_ATTR_COLOR_POINT_G_INTENS = 0x0038, /**< ColorPointGIntensity (Optional) */
+    ZCL_COLOR_ATTR_COLOR_POINT_BX = 0x003a, /**< ColorPointBX (Optional) */
+    ZCL_COLOR_ATTR_COLOR_POINT_BY = 0x003b, /**< ColorPointBY (Optional) */
+    ZCL_COLOR_ATTR_COLOR_POINT_B_INTENS = 0x003c, /**< ColorPointBIntensity (Optional) */
+    ZCL_COLOR_ATTR_ENH_CURR_HUE = 0x4000, /**< EnhancedCurrentHue */
+    ZCL_COLOR_ATTR_ENH_COLOR_MODE = 0x4001, /**< EnhancedColorMode */
+    ZCL_COLOR_ATTR_COLOR_LOOP_ACTIVE = 0x4002, /**< ColorLoopActive */
+    ZCL_COLOR_ATTR_COLOR_LOOP_DIR = 0x4003, /**< ColorLoopDirection */
+    ZCL_COLOR_ATTR_COLOR_LOOP_TIME = 0x4004, /**< ColorLoopTime */
+    ZCL_COLOR_ATTR_COLOR_LOOP_START_HUE = 0x4005, /**< ColorLoopStartEnhancedHue */
+    ZCL_COLOR_ATTR_COLOR_LOOP_STORE_HUE = 0x4006, /**< ColorLoopStoredEnhancedHue */
+    ZCL_COLOR_ATTR_COLOR_CAPABILITIES = 0x400A, /**< ColorCapabilities */
+    ZCL_COLOR_ATTR_COLOR_TEMP_MIN = 0x400B, /**< ColorTempPhysicalMinMireds */
+    ZCL_COLOR_ATTR_COLOR_TEMP_MAX = 0x400C, /**< ColorTempPhysicalMaxMireds */
+    ZCL_COLOR_ATTR_COUPLE_COLOR_TL_MIN = 0x400d, /**< ColorTempPhysicalMaxMireds */
+    ZCL_COLOR_ATTR_STARTUP_COLOR_TEMP = 0x4010 /**< StartUpColorTemperatureMireds */
 };
 
 /* Color Control Command Identifiers  */
@@ -305,232 +314,222 @@ enum ZbZclColorLoopFlags {
  * Structures
  *-----------------------------------------------------------------------------
  */
+
+/** Move to Hue command structure */
 struct ZbZclColorClientMoveToHueReqT {
-    uint8_t hue;
-    uint8_t direction;
-    uint16_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t hue; /**< Hue */
+    uint8_t direction; /**< Direction */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Move Hue command structure */
 struct ZbZclColorClientMoveHueReqT {
-    uint8_t move_mode;
-    uint8_t rate;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t move_mode; /**< Move Mode */
+    uint8_t rate; /**< Rate */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Step Hue command structure */
 struct ZbZclColorClientStepHueReqT {
-    uint8_t step_mode;
-    uint8_t step_size;
-    uint8_t transition_time;
-    uint8_t mask; /* OptionsMask */
+    uint8_t step_mode; /**< Step Mode */
+    uint8_t step_size; /**< Step Size */
+    uint8_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
     uint8_t override; /* OptionsOverride */
 };
 
+/** Move to Saturation command structure */
 struct ZbZclColorClientMoveToSatReqT {
-    uint8_t sat;
-    uint16_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t sat; /**< Saturation */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Move Saturation command structure */
 struct ZbZclColorClientMoveSatReqT {
-    uint8_t move_mode;
-    uint8_t rate;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t move_mode; /**< Move Mode */
+    uint8_t rate; /**< Rate */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Step Saturation command structure */
 struct ZbZclColorClientStepSatReqT {
-    uint8_t step_mode;
-    uint8_t step_size;
-    uint8_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t step_mode; /**< Step Mode */
+    uint8_t step_size; /**< Step Size */
+    uint8_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Move to Hue and Saturation command structure */
 struct ZbZclColorClientMoveToHueSatReqT {
-    uint8_t hue;
-    uint8_t sat;
-    uint16_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t hue; /**< Hue */
+    uint8_t sat; /**< Saturation */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Move to Color command structure */
 struct ZbZclColorClientMoveToColorXYReqT {
-    uint16_t color_x;
-    uint16_t color_y;
-    uint16_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint16_t color_x; /**< ColorX */
+    uint16_t color_y; /**< ColorY */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Move Color command structure */
 struct ZbZclColorClientMoveColorXYReqT {
-    uint16_t rate_x;
-    uint16_t rate_y;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint16_t rate_x; /**< RateX */
+    uint16_t rate_y; /**< RateY */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Step Color command structure */
 struct ZbZclColorClientStepColorXYReqT {
-    uint16_t step_x;
-    uint16_t step_y;
-    uint16_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint16_t step_x; /**< StepX */
+    uint16_t step_y; /**< StepY */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Move to Color Temperature command structure */
 struct ZbZclColorClientMoveToColorTempReqT {
-    uint16_t color_temp;
-    uint16_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint16_t color_temp; /**< Color Temperature Mireds */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Enhanced Move to Hue command structure */
 struct ZbZclColorClientMoveToHueEnhReqT {
-    uint16_t enh_hue;
-    uint8_t direction;
-    uint16_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint16_t enh_hue; /**< Enhanced Hue */
+    uint8_t direction; /**< Direction */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Enhanced Move Hue command structure */
 struct ZbZclColorClientMoveHueEnhReqT {
-    uint8_t move_mode;
-    uint16_t rate;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t move_mode; /**< Move Mode */
+    uint16_t rate; /**< Rate */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Enhanced Step Hue command structure */
 struct ZbZclColorClientStepHueEnhReqT {
-    uint8_t step_mode;
-    uint16_t step_size;
-    uint16_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t step_mode; /**< Step Mode */
+    uint16_t step_size; /**< Step Size */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Enhanced Move to Hue and Saturation command structure */
 struct ZbZclColorClientMoveToHueSatEnhReqT {
-    uint16_t enh_hue;
-    uint8_t sat;
-    uint16_t transition_time;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint16_t enh_hue; /**< Enhanced Hue */
+    uint8_t sat; /**< Saturation */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Color Loop Set command structure */
 struct ZbZclColorClientColorLoopSetReqT {
-    uint8_t update_flags;
-    uint8_t action;
-    uint8_t direction;
-    uint16_t transition_time;
-    uint16_t start_hue; /* Enhanced Hue */
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t update_flags; /**< Update Flags */
+    uint8_t action; /**< Action */
+    uint8_t direction; /**< Direction  */
+    uint16_t transition_time; /**< Time */
+    uint16_t start_hue; /**< Start Hue */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Stop Move Step command structure */
 struct ZbZclColorClientStopMoveStepReqT {
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
+/** Move Color Temperature command structure */
 struct ZbZclColorClientMoveColorTempReqT {
-    uint8_t move_mode;
-    uint16_t rate;
-    uint16_t color_temp_min;
-    uint16_t color_temp_max;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t move_mode; /**< Move Mode */
+    uint16_t rate; /**< Rate */
+    uint16_t color_temp_min; /**< Color Temperature Minimum Mireds */
+    uint16_t color_temp_max; /**< Color Temperature Maximum Mireds */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
-/* The color_temp_min and color_temp_max fields need to be checked against in the application layer.
- * The current value (ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS) needs to be known and the step may need
- * to be clipped so that the final value of ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS satisfies:
- * ZCL_COLOR_ATTR_COLOR_TEMP_MIN <= Color Temperature Minimum Mireds field <= ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS
- * ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS  <= Color Temperature Maximum Mireds field <= ZCL_COLOR_ATTR_COLOR_TEMP_MAX */
+/** Step Color Temperature command structure */
 struct ZbZclColorClientStepColorTempReqT {
-    uint8_t step_mode;
-    uint16_t step_size;
-    uint16_t transition_time;
-    uint16_t color_temp_min;
-    uint16_t color_temp_max;
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    uint8_t step_mode; /**< Step Mode */
+    uint16_t step_size; /**< Step Size */
+    uint16_t transition_time; /**< Transition Time */
+    uint16_t color_temp_min; /**< Color Temperature Minimum Mireds */
+    uint16_t color_temp_max; /**< Color Temperature Maximum Mireds */
+    uint8_t mask; /**< OptionsMask */
+    uint8_t override; /**< OptionsOverride */
 };
 
 /*-----------------------------------------------------------------------------
  * Server
  *-----------------------------------------------------------------------------
  */
+
+/** Color Control Server callbacks configuration */
 struct ZbZclColorServerCallbacksT {
     /* Returns a ZCL Status code to send in the Default Response, or ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE
      * if no Default Response to be generated. */
 
-    enum ZclStatusCodeT (*move_to_hue)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveToHueReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*move_hue)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveHueReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*step_hue)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientStepHueReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-
-    enum ZclStatusCodeT (*move_to_sat)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveToSatReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*move_sat)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveSatReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*step_sat)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientStepSatReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-
-    enum ZclStatusCodeT (*move_to_hue_sat)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveToHueSatReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-
-    enum ZclStatusCodeT (*move_to_color_xy)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveToColorXYReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*move_color_xy)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveColorXYReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*step_color_xy)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientStepColorXYReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-
-    enum ZclStatusCodeT (*move_to_color_temp)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveToColorTempReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-
-    enum ZclStatusCodeT (*move_to_hue_enh)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveToHueEnhReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*move_hue_enh)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveHueEnhReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*step_hue_enh)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientStepHueEnhReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*move_to_hue_sat_enh)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveToHueSatEnhReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-
-    enum ZclStatusCodeT (*color_loop_set)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientColorLoopSetReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-
-    enum ZclStatusCodeT (*stop_move_step)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientStopMoveStepReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-
-    enum ZclStatusCodeT (*move_color_temp)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientMoveColorTempReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
-    enum ZclStatusCodeT (*step_color_temp)(struct ZbZclClusterT *cluster,
-        struct ZbZclColorClientStepColorTempReqT *req,
-        struct ZbZclAddrInfoT *srcInfo, void *arg);
+    enum ZclStatusCodeT (*move_to_hue)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveToHueReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move to Hue command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_HUE, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_hue)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveHueReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move Hue command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_HUE, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*step_hue)(struct ZbZclClusterT *cluster, struct ZbZclColorClientStepHueReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Step Hue command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_HUE, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_to_sat)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveToSatReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move to Saturation command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_SAT, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_sat)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveSatReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move Saturation command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_SAT, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*step_sat)(struct ZbZclClusterT *cluster, struct ZbZclColorClientStepSatReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Step Saturation command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_SAT, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_to_hue_sat)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveToHueSatReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move to Hue and Saturation command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_HUE, ZCL_COLOR_ATTR_CURRENT_SAT, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_to_color_xy)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveToColorXYReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move to Color command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_X, ZCL_COLOR_ATTR_CURRENT_Y, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_color_xy)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveColorXYReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move Color command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_X, ZCL_COLOR_ATTR_CURRENT_Y, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*step_color_xy)(struct ZbZclClusterT *cluster, struct ZbZclColorClientStepColorXYReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Step Color command. The application is expected to update ZCL_COLOR_ATTR_CURRENT_X, ZCL_COLOR_ATTR_CURRENT_Y, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_to_color_temp)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveToColorTempReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move to Color Temperature command. The application is expected to update ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_to_hue_enh)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveToHueEnhReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Enhanced Move to Hue command. The application is expected to update ZCL_COLOR_ATTR_ENH_CURR_HUE, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_hue_enh)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveHueEnhReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move Hue command. The application is expected to update ZCL_COLOR_ATTR_ENH_CURR_HUE, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*step_hue_enh)(struct ZbZclClusterT *cluster, struct ZbZclColorClientStepHueEnhReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Enhanced Step Hue command. The application is expected to update ZCL_COLOR_ATTR_ENH_CURR_HUE, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_to_hue_sat_enh)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveToHueSatEnhReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Enhanced Move to Hue and Saturation command. The application is expected to update ZCL_COLOR_ATTR_ENH_CURR_HUE, ZCL_COLOR_ATTR_CURRENT_SAT, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*color_loop_set)(struct ZbZclClusterT *cluster, struct ZbZclColorClientColorLoopSetReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Color Loop Set command. The application is expected to update the following attributes according to the update flags and action fields: ZCL_COLOR_ATTR_COLOR_LOOP_ACTIVE, ZCL_COLOR_ATTR_COLOR_LOOP_DIR, ZCL_COLOR_ATTR_COLOR_LOOP_TIME, ZCL_COLOR_ATTR_COLOR_LOOP_START_HUE, ZCL_COLOR_ATTR_ENH_CURR_HUE, ZCL_COLOR_ATTR_COLOR_LOOP_STORE_HUE, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*stop_move_step)(struct ZbZclClusterT *cluster, struct ZbZclColorClientStopMoveStepReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Stop Move Step command. The application is expected to update ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*move_color_temp)(struct ZbZclClusterT *cluster, struct ZbZclColorClientMoveColorTempReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Move Color Temperature command. The application is expected to update ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS, and ZCL_COLOR_ATTR_REMAINING_TIME */
+    enum ZclStatusCodeT (*step_color_temp)(struct ZbZclClusterT *cluster, struct ZbZclColorClientStepColorTempReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Step Color Temperature command. The application is expected to update ZCL_COLOR_ATTR_COLOR_TEMP_MIREDS, and ZCL_COLOR_ATTR_REMAINING_TIME */
 };
 
 struct ZbColorClusterConfig {
@@ -538,6 +537,17 @@ struct ZbColorClusterConfig {
     uint8_t capabilities; /* e.g. ZCL_COLOR_CAP_HS */
 };
 
+/**
+ * Instantiate a new instance of the Color Control server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param onoff_server OnOff Server cluster pointer for processing commands with the Options fields, may be NULL
+ * @param attribute_list List of application defined attributes to be appended, may be NULL
+ * @param num_attrs Number of application defined attributes to be added, may be 0 if attribute_list is NULL
+ * @param config Configuration containing Color Control capabilities and callbacks for handling requests
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclColorServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, struct ZbZclClusterT *onoff_server,
     const struct ZbZclAttrT *attribute_list, unsigned int num_attrs, struct ZbColorClusterConfig *config, void *arg);
 
@@ -545,80 +555,258 @@ struct ZbZclClusterT * ZbZclColorServerAlloc(struct ZigBeeT *zb, uint8_t endpoin
  * Client
  *-----------------------------------------------------------------------------
  */
+
+/**
+ * Instantiate a new instance of the Color Control client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclColorClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
+/**
+ * Send a Move to Hue command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move to Hue command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveToHueReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveToHueReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Move Hue command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move Hue command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveHueReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveHueReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Step Hue command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Step Hue command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientStepHueReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientStepHueReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Move to Saturation command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move to Saturation command command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveToSatReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveToSatReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Move Saturation command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move Saturation command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveSatReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveSatReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Step Saturation command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Step Saturation command command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientStepSatReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientStepSatReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Move to Hue and Saturation command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req  Move to Hue and Saturation command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveToHueSatReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveToHueSatReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Move to Color command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move to Color command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveToColorXYReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveToColorXYReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Move Color command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move Color command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveColorXYReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveColorXYReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Step Color command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Step Color command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientStepColorXYReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientStepColorXYReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Move to Color Temperature command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move to Color Temperature command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveToColorTempReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveToColorTempReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send an Enhanced Move to Hue command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Enhanced Move to Hue command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveToHueEnhReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveToHueEnhReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send an Enhanced Move Hue command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Enhanced Move Hue command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveHueEnhReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveHueEnhReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send an Enhanced Step Hue command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Enhanced Step Hue command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientStepHueEnhReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientStepHueEnhReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send an Enhanced Move to Hue and Saturation command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Enhanced Move to Hue and Saturation command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveToHueSatEnhReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveToHueSatEnhReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Color Loop Set command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Color Loop Set command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientColorLoopSetReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientColorLoopSetReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Stop Move Step command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Stop Move Step command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientStopMoveStepReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientStopMoveStepReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Move Color Temperature command
+ * @param clusterPtr Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move Color Temperature command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientMoveColorTempReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientMoveColorTempReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Step Color Temperature command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Step Color Temperature command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclColorClientStepColorTempReq(struct ZbZclClusterT *clusterPtr,
     const struct ZbApsAddrT *dst, struct ZbZclColorClientStepColorTempReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);

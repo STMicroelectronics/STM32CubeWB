@@ -51,6 +51,26 @@ typedef struct
  */
 
 /**
+ * @brief macro used to enter the critical section before calling the IDLE function
+ * @note  in a basic configuration shall be identical to the macro
+ *        UTIL_SEQ_ENTER_CRITICAL_SECTION. The redefinition of this macro will allow
+ *        to perform specific operation
+
+ */
+#ifndef UTIL_SEQ_ENTER_CRITICAL_SECTION_IDLE
+  #define UTIL_SEQ_ENTER_CRITICAL_SECTION_IDLE( )    UTIL_SEQ_ENTER_CRITICAL_SECTION( )
+#endif
+
+/**
+ * @brief macro used to exit the critical section when exiting the IDLE function
+ * @note  the behavior of the macro shall be symmetrical with the macro
+ *        UTIL_SEQ_ENTER_CRITICAL_SECTION_IDLE
+ */
+#ifndef UTIL_SEQ_EXIT_CRITICAL_SECTION_IDLE
+  #define UTIL_SEQ_EXIT_CRITICAL_SECTION_IDLE( )     UTIL_SEQ_EXIT_CRITICAL_SECTION( )
+#endif
+
+/**
  * @brief define to represent no task running
  */
 #define UTIL_SEQ_NOTASKRUNNING       (0xFFFFFFFFU)
@@ -131,7 +151,7 @@ static UTIL_SEQ_bm_t EvtWaited = UTIL_SEQ_NO_BIT_SET;
 static uint32_t CurrentTaskIdx = 0U;
 
 /**
- * @brief task function registred.
+ * @brief task function registered.
  */
 static void (*TaskCb[UTIL_SEQ_CONF_TASK_NBR])( void );
 
@@ -259,12 +279,12 @@ void UTIL_SEQ_Run( UTIL_SEQ_bm_t Mask_bm )
   CurrentTaskIdx = UTIL_SEQ_NOTASKRUNNING;
   UTIL_SEQ_PreIdle( );
   
-  UTIL_SEQ_ENTER_CRITICAL_SECTION( );
+  UTIL_SEQ_ENTER_CRITICAL_SECTION_IDLE( );
   if (!(((TaskSet & TaskMask & SuperMask) != 0U) || ((EvtSet & EvtWaited)!= 0U))) 
   {
 	UTIL_SEQ_Idle( );
   }
-  UTIL_SEQ_EXIT_CRITICAL_SECTION( );
+  UTIL_SEQ_EXIT_CRITICAL_SECTION_IDLE( );
   
   UTIL_SEQ_PostIdle( );
 

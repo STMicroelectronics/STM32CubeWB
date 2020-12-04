@@ -55,8 +55,6 @@
 #define RTT_COLOR_CODE_CYAN    ""
 #endif /* LOG_RTT_COLOR_ENABLE == 1 */
 
-#define LOG_MSG_SZ_MAX                      256
-
 #if (CFG_DEBUG_TRACE != 0)
 /**
  * Function for outputting code region string.
@@ -67,27 +65,26 @@
  *
  * @returns  String with a log level color value.
  */
-static inline uint16_t
-logRegion(char *aLogString, uint16_t aMaxSize,
-    appliLogRegion_t aLogRegion)
+static inline uint16_t logRegion(char *aLogString, uint16_t aMaxSize,
+        appliLogRegion_t aLogRegion)
 {
-    char logRegionString[30U];
+  char logRegionString[30U];
 
-    switch (aLogRegion) {
-        case APPLI_LOG_REGION_GENERAL:
-            strcpy(logRegionString, "[M4 APPLICATION]");
-            break;
-        case APPLI_LOG_REGION_ZIGBEE_API:
-            strcpy(logRegionString, "[M4 ZIGBEE API]");
-            break;
-        default:
-            strcpy(logRegionString, "[M4]");
-            break;
-    }
+  switch (aLogRegion)
+  {
+    case APPLI_LOG_REGION_GENERAL:
+      strcpy(logRegionString, "[M4 APPLICATION]");
+      break;
+    case APPLI_LOG_REGION_ZIGBEE_API:
+      strcpy(logRegionString, "[M4 ZIGBEE API]");
+      break;
+    default:
+      strcpy(logRegionString, "[M4]");
+      break;
+  }
 
-    return snprintf(aLogString, aMaxSize, "%s ", logRegionString);
+  return snprintf(aLogString, aMaxSize, "%s ", logRegionString);
 }
-
 #endif /* CFG_DEBUG_TRACE */
 
 #if (LOG_RTT_COLOR_ENABLE == 1U)
@@ -184,15 +181,15 @@ void logApplication(appliLogLevel_t aLogLevel, appliLogRegion_t aLogRegion, cons
       aLogRegion);
 #endif
 
-    /* Parse user string */
-    va_list paramList;
-    va_start(paramList, aFormat);
-    length += vsnprintf(&logString[length], (LOG_PARSE_BUFFER_SIZE - length),
-            aFormat, paramList);
-    logString[length++] = '\r';
-    logString[length++] = '\n';
-    logString[length++] = 0;
-    va_end(paramList);
+  /* Parse user string */
+  va_list paramList;
+  va_start(paramList, aFormat);
+  length += vsnprintf(&logString[length], (LOG_PARSE_BUFFER_SIZE - length),
+      aFormat, paramList);
+  logString[length++] = '\r';
+  logString[length++] = '\n';
+  logString[length++] = 0;
+  va_end(paramList);
 
   if (aLogLevel <= APPLI_CONFIG_LOG_LEVEL)
   {

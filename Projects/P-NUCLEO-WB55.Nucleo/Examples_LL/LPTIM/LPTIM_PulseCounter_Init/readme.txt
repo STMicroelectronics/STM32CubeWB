@@ -44,6 +44,11 @@ present example).
       In this example, CPU2 is not started-up and CPU1 configures the CPU2 stop mode.
       If this example would be ported to another application, user must manage CPU2 entering in stop mode.
 
+
+@par Keywords
+
+Timer, Low Power, Pulse Counter, Stop mode, Interrupt
+
 @par Directory contents 
 
   - LPTIM/LPTIM_PulseCounter_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file

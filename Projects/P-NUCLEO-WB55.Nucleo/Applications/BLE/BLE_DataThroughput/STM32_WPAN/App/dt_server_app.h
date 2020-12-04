@@ -27,6 +27,12 @@
 extern "C" {
 #endif
 
+#define BUTTON_PRESSED GPIO_PIN_RESET
+
+/* Exported typedefs ---------------------------------------------*/
+typedef GPIO_PinState BUTTON_STATE;
+typedef void (* IO_RECEIVE_DATA_USER_CALLBACK_TYPE) (uint8_t * rx_data, uint16_t data_size);
+
   /* Includes ------------------------------------------------------------------*/
   /* Exported types ------------------------------------------------------------*/
   /* Exported constants --------------------------------------------------------*/
@@ -36,6 +42,7 @@ extern "C" {
   void DTS_App_Init(void);
   void DTS_App_KeyButtonAction(void);
   void DTS_App_KeyButton2Action( void );
+  void DTS_App_KeyButton3Action( void );
   void DTS_App_TxPoolAvailableNotification(void);
 
 

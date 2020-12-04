@@ -51,6 +51,7 @@
 #define COL_NORM    "\x1b[0m"
 
 #define DELAY_5_MS                        (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */
+#define DELAY_10_MS                       (0.01*1000*1000/CFG_TS_TICK_VAL) /**< 20ms */
 #define DELAY_20_MS                       (0.02*1000*1000/CFG_TS_TICK_VAL) /**< 20ms */
 #define DELAY_40_MS                       (0.04*1000*1000/CFG_TS_TICK_VAL) /**< 40ms */
 #define DELAY_50_MS                       (0.05*1000*1000/CFG_TS_TICK_VAL) /**< 50ms */
@@ -87,7 +88,7 @@ static void APP_ZIGBEE_StackLayersInit(void);
 static void APP_ZIGBEE_ConfigEndpoints(void);
 static void APP_ZIGBEE_SW1_Process(void);
 static void APP_ZIGBEE_OnOff_Toggle(void);
-static void APP_ZIGBEE_Process_OnOff_Toggle();
+static void APP_ZIGBEE_Process_OnOff_Toggle(void);
 
 static void APP_ZIGBEE_DbgNwkStatus();
 static void APP_ZIGBEE_Status_Nnt(void);
@@ -141,8 +142,6 @@ static struct zigbee_app_info zigbee_app_info;
 
 static uint32_t join_start_time;
 static double join_time_duration;
-
-static bool ble_sync_request = FALSE;
 
 #ifdef  STRESS_TEST
 static uint32_t time_start;
@@ -212,7 +211,7 @@ UTIL_SEQ_RegTask(1U << CFG_TASK_DBG_NWK_STATUS, UTIL_SEQ_RFU, APP_ZIGBEE_Status_
   /**
     * Create timer for Network Status process
     */
-  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(Timer_DbgNwkStatus_Id), hw_ts_SingleShot, APP_ZIGBEE_DbgNwkStatus);
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(Timer_DbgNwkStatus_Id), hw_ts_Repeated, APP_ZIGBEE_DbgNwkStatus);
 
   /* Initialize Zigbee stack layers and launch network formation */
   APP_ZIGBEE_StackLayersInit();
@@ -387,6 +386,10 @@ static void APP_ZIGBEE_NwkForm(void)
     /* Do it only first time */
     if(APP_ZIGBEE_GetStartNb() == 1U)
     {
+#if (CFG_FULL_LOW_POWER == 1)
+      /* Enabling Stop mode */
+      UTIL_LPM_SetStopMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+#endif /* CFG_FULL_LOW_POWER */
       /* Assign ourselves to the group addresses */
       APP_ZIGBEE_ConfigGroupAddr();
 
@@ -788,10 +791,6 @@ static void APP_ZIGBEE_OnOff_Toggle(void)
 #endif  /* STRESS_TEST */
     /* Next toggle after TOGGLE_INTERVAL */
     HW_TS_Start(Timer_ToggleOnOff_Id, (uint32_t)TOGGLE_INTERVAL);
-    /* Enabling Stop mode */
-#if (CFG_FULL_LOW_POWER == 1)
-    UTIL_LPM_SetStopMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
-#endif /* CFG_FULL_LOW_POWER */
 }
 
 
@@ -961,20 +960,11 @@ static void APP_ZIGBEE_Status_Nnt(void)
         APP_DBG("%s", temp);
 #endif
 
-        if (neighbor.age == 4) { /* If AGE 4 twice in a row, force update BLE connection interval */
-          if (ble_sync_request) {
-            APP_BLE_Key_Button2_Action(); /* update BLE connection interval */
-            ble_sync_request = FALSE;
-          }
-          else ble_sync_request = TRUE;
-        }
-        else {
-          ble_sync_request = FALSE;
+        if (neighbor.age == 4) { /* If AGE 4, force update BLE connection interval */
+          APP_BLE_Key_Button2_Action(); /* update BLE connection interval */
         }
    } /* for */
 
-    /* Next network status after DBG_NWK_STATUS_INTERVAL */
-    HW_TS_Start(Timer_DbgNwkStatus_Id, (uint32_t)DBG_NWK_STATUS_INTERVAL);
 }
 
 

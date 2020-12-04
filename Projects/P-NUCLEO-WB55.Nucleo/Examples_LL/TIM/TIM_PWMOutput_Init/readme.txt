@@ -59,6 +59,10 @@ the debugger by watching the variable uwMeasuredDutyCycle.
 successively the user button, the TIM2_CH1 is ON and its luminosity rises as the dutycycle value keep 
 increasing.
 
+@par Keywords
+
+Timers, Output, signal, PWM, Oscilloscope, Frequency, Duty cycle, Waveform
+
 @par Directory contents 
 
   - TIM/TIM_PWMOutput_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file

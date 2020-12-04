@@ -55,29 +55,27 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 /* Variables for ADC conversion data */
 __IO   uint16_t   aADCxConvertedData[ADC_CONVERTED_DATA_BUFFER_SIZE]; /* ADC group regular conversion data (array of data) */
-/* ADC handler declaration */
-ADC_HandleTypeDef    AdcHandle;
 
 /* Variable to report ADC analog watchdog status:   */
 /*   RESET <=> voltage into AWD window   */
 /*   SET   <=> voltage out of AWD window */
 __IO   uint8_t         ubAnalogWatchdogStatus = RESET;  /* Set into analog watchdog interrupt callback */
 
-
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
+static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
-static void ADC_Config(void);
-
 
 /* USER CODE END PFP */
 
@@ -113,26 +111,23 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   /* Initialize LED on board */
   BSP_LED_Init(LED2);
   
-  
-/* Configure the ADCx peripheral */
-  ADC_Config();
-  
   /* Run the ADC calibration in single-ended mode */
-  if (HAL_ADCEx_Calibration_Start(&AdcHandle, ADC_SINGLE_ENDED) != HAL_OK)
+  if (HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED) != HAL_OK)
   {
     /* Calibration Error */
     Error_Handler();
   }
 
-
-  
   /*## Start ADC conversions ###############################################*/
   /* Start ADC group regular conversion with DMA */
-  if (HAL_ADC_Start_DMA(&AdcHandle,
+  if (HAL_ADC_Start_DMA(&hadc1,
                         (uint32_t *)aADCxConvertedData,
                         ADC_CONVERTED_DATA_BUFFER_SIZE
                        ) != HAL_OK)
@@ -165,7 +160,7 @@ int main(void)
     }
   
     /* For information: ADC conversion results are stored into array          */
-    /* "aADCxConvertedValues" (for debug: check into watch window)            */
+    /* "aADCxConvertedData" (for debug: check into watch window)              */
   
     /* Note: At this step, a voltage can be supplied to ADC channel input     */
     /*       (by connecting an external signal voltage generator to the       */
@@ -237,79 +232,105 @@ void SystemClock_Config(void)
   /* USER CODE END Smps */
 }
 
-/* USER CODE BEGIN 4 */
-
 /**
-  * @brief  ADC configuration
-  * @param  None
+  * @brief ADC1 Initialization Function
+  * @param None
   * @retval None
   */
-static void ADC_Config(void)
+static void MX_ADC1_Init(void)
 {
-  ADC_ChannelConfTypeDef   sConfig;
-  ADC_AnalogWDGConfTypeDef AnalogWDGConfig;
-  
-  /* Configuration of AdcHandle init structure: ADC parameters and regular group */
-  AdcHandle.Instance = ADCx;
-  
-  AdcHandle.Init.ClockPrescaler        = ADC_CLOCK_ASYNC_DIV4;          /* Asynchronous clock mode, input ADC clock prescaler 4 */
-  AdcHandle.Init.Resolution            = ADC_RESOLUTION_12B;            /* 12-bit resolution for converted data */
-  AdcHandle.Init.DataAlign             = ADC_DATAALIGN_RIGHT;           /* Right-alignment for converted data */
-  AdcHandle.Init.ScanConvMode          = ADC_SCAN_DISABLE;              /* Sequencer disabled (ADC conversion on only 1 channel: channel set on rank 1) */
-  AdcHandle.Init.EOCSelection          = ADC_EOC_SINGLE_CONV;           /* EOC flag picked-up to indicate conversion end */
-  AdcHandle.Init.LowPowerAutoWait      = DISABLE;                       /* Auto-delayed conversion feature disabled */
 
-  AdcHandle.Init.ContinuousConvMode    = ENABLE;                        /* Continuous mode to have maximum conversion speed (no delay between conversions) */
+  /* USER CODE BEGIN ADC1_Init 0 */
 
-  AdcHandle.Init.NbrOfConversion       = 1;                             /* Parameter discarded because sequencer is disabled */
-  AdcHandle.Init.DiscontinuousConvMode = DISABLE;                       /* Parameter discarded because sequencer is disabled */
-  AdcHandle.Init.NbrOfDiscConversion   = 1;                             /* Parameter discarded because sequencer is disabled */
+  /* USER CODE END ADC1_Init 0 */
 
-  AdcHandle.Init.ExternalTrigConv      = ADC_SOFTWARE_START;            /* Software start to trig the 1st conversion manually, without external event */
-  AdcHandle.Init.ExternalTrigConvEdge  = ADC_EXTERNALTRIGCONVEDGE_NONE; /* Parameter discarded because trig of conversion by software start (no external event) */
-  AdcHandle.Init.DMAContinuousRequests = ENABLE;                        /* ADC-DMA continuous requests to match with DMA configured in circular mode */
-  AdcHandle.Init.Overrun               = ADC_OVR_DATA_OVERWRITTEN;      /* DR register is overwritten with the last conversion result in case of overrun */
-  AdcHandle.Init.OversamplingMode      = DISABLE;                       /* No oversampling */
-  
-  if (HAL_ADC_Init(&AdcHandle) != HAL_OK)
+  ADC_AnalogWDGConfTypeDef AnalogWDGConfig = {0};
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+  /** Common config
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.LowPowerAutoWait = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.DMAContinuousRequests = ENABLE;
+  hadc1.Init.Overrun = ADC_OVR_DATA_OVERWRITTEN;
+  hadc1.Init.OversamplingMode = DISABLE;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
   {
-    /* ADC initialization error */
     Error_Handler();
   }
-  
-  /* Configuration of channel on ADCx regular group on sequencer rank 1 */
-  /* Note: Considering IT occurring after each ADC conversion if ADC          */
-  /*       conversion is out of the analog watchdog window selected (ADC IT   */
-  /*       enabled), select sampling time and ADC clock with sufficient       */
-  /*       duration to not create an overhead situation in IRQHandler.        */
-  sConfig.Channel      = ADCx_CHANNELa;               /* Sampled channel number */
-  sConfig.Rank         = ADC_REGULAR_RANK_1;          /* Rank of sampled channel number ADCx_CHANNEL */
-  sConfig.SamplingTime = ADC_SAMPLETIME_92CYCLES_5;   /* Sampling time (unit: ADC clock cycles) */
-  sConfig.SingleDiff   = ADC_SINGLE_ENDED;            /* Single-ended input channel */
-  sConfig.OffsetNumber = ADC_OFFSET_NONE;             /* No offset subtraction */ 
-  sConfig.Offset = 0;                                 /* Parameter discarded because offset correction is disabled */
-
-  if (HAL_ADC_ConfigChannel(&AdcHandle, &sConfig) != HAL_OK)
-  {
-    /* Channel Configuration Error */
-    Error_Handler();
-  }
-  
-  /* Analog watchdog 1 configuration */
+  /** Configure Analog WatchDog 1
+  */
   AnalogWDGConfig.WatchdogNumber = ADC_ANALOGWATCHDOG_1;
   AnalogWDGConfig.WatchdogMode = ADC_ANALOGWATCHDOG_ALL_REG;
-  AnalogWDGConfig.Channel = ADCx_CHANNELa;
   AnalogWDGConfig.ITMode = ENABLE;
   AnalogWDGConfig.HighThreshold = ADC_AWD_THRESHOLD_HIGH;
   AnalogWDGConfig.LowThreshold = ADC_AWD_THRESHOLD_LOW;
-  if (HAL_ADC_AnalogWDGConfig(&AdcHandle, &AnalogWDGConfig) != HAL_OK)
+  if (HAL_ADC_AnalogWDGConfig(&hadc1, &AnalogWDGConfig) != HAL_OK)
   {
-    /* Channel Configuration Error */
     Error_Handler();
   }
-  
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_92CYCLES_5;
+  sConfig.SingleDiff = ADC_SINGLE_ENDED;
+  sConfig.OffsetNumber = ADC_OFFSET_NONE;
+  sConfig.Offset = 0;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
 }
 
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMAMUX1_CLK_ENABLE();
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+
+}
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+}
+
+/* USER CODE BEGIN 4 */
 
 /**
   * @brief  Analog watchdog callback in non blocking mode. 
@@ -351,11 +372,7 @@ void Error_Handler(void)
     BSP_LED_Off(LED2);
     HAL_Delay(800);
     BSP_LED_On(LED2);
-    HAL_Delay(10);
-    BSP_LED_Off(LED2);
-    HAL_Delay(180);
-    BSP_LED_On(LED2);
-    HAL_Delay(10);
+    HAL_Delay(200);
   }
   /* USER CODE END Error_Handler_Debug */
 }

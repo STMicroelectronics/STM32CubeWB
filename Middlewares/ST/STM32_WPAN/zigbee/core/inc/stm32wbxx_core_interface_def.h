@@ -31,11 +31,12 @@ extern "C" {
 
 #include "zigbee_types.h"
 #include "stm32wbxx_hal.h"
+#include "stm32_wpan_common.h"
 
 /* Structure of the messages exchanged between M0 and M4 */
 #define OT_CMD_BUFFER_SIZE 20U
 
-typedef struct {
+typedef PACKED_STRUCT {
     uint32_t ID;
     uint32_t Size;
     uint32_t Data[OT_CMD_BUFFER_SIZE];

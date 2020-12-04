@@ -59,14 +59,7 @@
 #define DELAY_500_MS                      (0.5*1000*1000/CFG_TS_TICK_VAL)  /**< 500 ms */
 #define DELAY_1_S                         (1000*1000/CFG_TS_TICK_VAL)  /**< 1 s */
 
-#undef STRESS_TEST         /* undef or comment for public version */
-#ifdef  STRESS_TEST
-#define TOGGLE_INTERVAL DELAY_20_MS     /* 20 ms interval between 2 toggles */
-#else
-#define TOGGLE_INTERVAL DELAY_1_S       /* 1 sec interval between 2 toggles */
-#endif
-#define DBG_NWK_STATUS_INTERVAL (DELAY_1_S * 15)      /* 15 sec interval to display stats */
-
+#define TOGGLE_INTERVAL (1 * DELAY_1_S)       /* 1 sec interval between 2 toggles */
 
 #define OUTPUT_LINE_MAX_LEN             256
 
@@ -85,7 +78,7 @@ static void APP_ZIGBEE_StackLayersInit(void);
 static void APP_ZIGBEE_ConfigEndpoints(void);
 static void APP_ZIGBEE_SW1_Process(void);
 static void APP_ZIGBEE_OnOff_Toggle(void);
-static void APP_ZIGBEE_Process_OnOff_Toggle();
+static void APP_ZIGBEE_Process_OnOff_Toggle(void);
 static void APP_ZIGBEE_NwkForm(void);
 static void APP_ZIGBEE_ConfigGroupAddr(void);
 
@@ -135,10 +128,6 @@ static struct zigbee_app_info zigbee_app_info;
 
 static uint32_t join_start_time;
 static double join_time_duration;
-
-#ifdef  STRESS_TEST
-static uint32_t time_start;
-#endif
 
 /* Public variables -----------------------------------------------*/
 uint8_t ZbStackType;            /* ZB stack type, static or dynamic, FFD or RFD */
@@ -252,7 +241,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
   zigbee_app_info.startupControl = ZbStartTypeJoin;
 
@@ -379,6 +368,10 @@ static void APP_ZIGBEE_NwkForm(void)
     /* Do it only first time */
     if(APP_ZIGBEE_GetStartNb() == 1U)
     {
+#if (CFG_FULL_LOW_POWER == 1)
+      /* Enabling Stop mode */
+      UTIL_LPM_SetStopMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+#endif /* CFG_FULL_LOW_POWER */
       /* Assign ourselves to the group addresses */
       APP_ZIGBEE_ConfigGroupAddr();
 
@@ -387,9 +380,10 @@ static void APP_ZIGBEE_NwkForm(void)
       ZbNwkSet(zigbee_app_info.zb, ZB_NWK_NIB_ID_NetworkBroadcastDeliveryTime, &bcast_timeout, sizeof(bcast_timeout));
 
       APP_DBG("==> Start_ZB Task Toggle");
+      /* Start First Toggle */
+      APP_ZIGBEE_Process_OnOff_Toggle();
       /* Next toggle after TOGGLE_INTERVAL */
       HW_TS_Start(Timer_ToggleOnOff_Id, (uint32_t)TOGGLE_INTERVAL);
-
     }
   }
 }
@@ -737,38 +731,15 @@ static void APP_ZIGBEE_OnOff_Toggle(void)
   dst.mode = ZB_APSDE_ADDRMODE_SHORT;
   dst.endpoint = SW1_ENDPOINT;
   dst.nwkAddr = 0x0;
-#ifdef  STRESS_TEST
-  uint32_t time;
-  
-  if (toggle_cnt == 0) {
-    time_start = HAL_GetTick();
-  }
-#endif
 
-    if (ZbZclOnOffClientToggleReq(zigbee_app_info.onoff_client_1, &dst, toggle_cb, NULL) != ZCL_STATUS_SUCCESS)
-    {
-      APP_DBG("Error, ZbZclOnOffClientToggleReq failed (SW1_ENDPOINT)");
-    }
-#ifdef  STRESS_TEST
-    printf("T");
-    toggle_cnt++;
-    if ((toggle_cnt % 10) == 0) printf("\n");
-    UTIL_SEQ_WaitEvt(EVENT_ON_OFF_RSP);
-    if ((toggle_cnt % 200) == 0) {
-      time = HAL_GetTick() - time_start;
-      APP_DBG_FULL(LOG_LEVEL_INFO, APPLI_LOG_REGION_GENERAL, "\n==> Nb TOGGLE ON/OFF sent: %d (%d Fail - %.2f%%) - %d BLE Disc - Toggle freq = %.2f ms %s",
-          toggle_cnt, toggle_fail, (float)(toggle_fail * 100)/(float)toggle_cnt, disc_cnt, (float)time/(float)toggle_cnt, COLOR_DEFAULT);
-    }
-#else
-    toggle_cnt++;
-    UTIL_SEQ_WaitEvt(EVENT_ON_OFF_RSP);
-    APP_DBG_FULL(LOG_LEVEL_INFO, APPLI_LOG_REGION_GENERAL, "==> Nb TOGGLE ON/OFF sent: %d (%d Fail - %.2f%%) - %d BLE Disc %s",
-        toggle_cnt, toggle_fail, (float)(toggle_fail * 100)/(float)toggle_cnt, disc_cnt, COLOR_DEFAULT);
-#endif  /* STRESS_TEST */
-    /* Enabling Stop mode */
-#if (CFG_FULL_LOW_POWER == 1)
-    UTIL_LPM_SetStopMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
-#endif /* CFG_FULL_LOW_POWER */
+  if (ZbZclOnOffClientToggleReq(zigbee_app_info.onoff_client_1, &dst, toggle_cb, NULL) != ZCL_STATUS_SUCCESS)
+  {
+    APP_DBG("Error, ZbZclOnOffClientToggleReq failed (SW1_ENDPOINT)");
+  }
+  toggle_cnt++;
+  UTIL_SEQ_WaitEvt(EVENT_ON_OFF_RSP);
+  APP_DBG_FULL(LOG_LEVEL_INFO, APPLI_LOG_REGION_GENERAL, "==> Nb TOGGLE ON/OFF sent: %d (%d Fail - %.2f%%) - %d BLE Disc %s",
+      toggle_cnt, toggle_fail, (float)(toggle_fail * 100)/(float)toggle_cnt, disc_cnt, COLOR_DEFAULT);
 }
 
 
@@ -776,20 +747,12 @@ static void toggle_cb(struct ZbZclCommandRspT *rsp, void *arg)
 {
   if(rsp->status != ZCL_STATUS_SUCCESS)
   {
-#ifndef  STRESS_TEST
     APP_DBG("TOGGLE RSP FAIL status %d",rsp->status);
-#else
-    printf("-");
-#endif
     toggle_fail++;
   }
   else
   {
-#ifndef  STRESS_TEST
     APP_DBG("TOGGLE RSP SUCCESS from %#08llx",rsp->src.extAddr);
-#else
-    printf("+");
-#endif
   }
   UTIL_SEQ_SetEvt(EVENT_ON_OFF_RSP);
 }

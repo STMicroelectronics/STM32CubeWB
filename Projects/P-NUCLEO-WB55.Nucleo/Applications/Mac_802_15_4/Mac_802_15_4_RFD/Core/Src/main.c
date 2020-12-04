@@ -59,6 +59,11 @@ static void Init_Debug( void );
 
 int main(void)
 {
+  /**
+   * The OPTVERR flag is wrongly set at power on
+   * It shall be cleared before using any HAL_FLASH_xxx() api
+   */
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
 
   /* Initialize the HAL */
   HAL_Init();

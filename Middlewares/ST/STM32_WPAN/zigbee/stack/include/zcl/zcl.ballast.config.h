@@ -1,13 +1,14 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.ballast.config.h
+ * @brief ZCL Ballast Configuration cluster header
+ * ZCL 7 section 5.3
+ * ZCL 8 section 5.3
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_BALLAST_CONFIG_H
 # define ZCL_BALLAST_CONFIG_H
 
-/*--------------------------------------------------------------------------
- *  DESCRIPTION
- *      Interface definition for the ZCL Ballast Configuration cluster.
- *--------------------------------------------------------------------------
- */
 /* PICS.ZCL.Ballast_Config
  * BC.S | True
  * BC.C | True
@@ -38,36 +39,28 @@
 
 #include "zcl/zcl.h"
 
-/*---------------------------------------------------------------
- * Ballast Configuration Cluster Definitions
- *---------------------------------------------------------------
- */
+/** Ballast Configuration Server Attributes IDs */
 enum ZbZclBallastConfigSvrAttrT {
     /* Ballast Information Attribute Set */
-    ZCL_BALLAST_CONFIG_ATTR_PHY_MIN_LEVEL = 0x0000,
-    ZCL_BALLAST_CONFIG_ATTR_PHY_MAX_LEVEL = 0x0001,
-    ZCL_BALLAST_CONFIG_ATTR_BALLAST_STATUS = 0x0002,
-
+    ZCL_BALLAST_CONFIG_ATTR_PHY_MIN_LEVEL = 0x0000, /**< PhysicalMinLevel */
+    ZCL_BALLAST_CONFIG_ATTR_PHY_MAX_LEVEL = 0x0001, /**< PhysicalMaxLevel */
+    ZCL_BALLAST_CONFIG_ATTR_BALLAST_STATUS = 0x0002, /**< BallastStatus */
     /* Ballast Settings Attribute Set */
-    ZCL_BALLAST_CONFIG_ATTR_MIN_LEVEL = 0x0010,
-    ZCL_BALLAST_CONFIG_ATTR_MAX_LEVEL = 0x0011,
-    /* deprecated - PowerOnLevel */
-    ZCL_BALLAST_CONFIG_ATTR_POWER_ON_LEVEL = 0x0012,
-    /* deprecated - PowerOnFadeTime */
-    ZCL_BALLAST_CONFIG_ATTR_POWER_ON_FADE_TIME = 0x0013,
-    ZCL_BALLAST_CONFIG_ATTR_INTRINSIC_BALLAST_FACTOR = 0x0014,
-    ZCL_BALLAST_CONFIG_ATTR_BALLAST_FACTOR_ADJUSTMENT = 0x0015,
-
+    ZCL_BALLAST_CONFIG_ATTR_MIN_LEVEL = 0x0010, /**< MinLevel */
+    ZCL_BALLAST_CONFIG_ATTR_MAX_LEVEL = 0x0011, /**< MaxLevel */
+    ZCL_BALLAST_CONFIG_ATTR_POWER_ON_LEVEL = 0x0012, /**< PowerOnLevel (Deprecated) */
+    ZCL_BALLAST_CONFIG_ATTR_POWER_ON_FADE_TIME = 0x0013, /**< PowerOnFadeTime (Deprecated) */
+    ZCL_BALLAST_CONFIG_ATTR_INTRINSIC_BALLAST_FACTOR = 0x0014, /**< IntrinsicBallastFactor (Optional) */
+    ZCL_BALLAST_CONFIG_ATTR_BALLAST_FACTOR_ADJUSTMENT = 0x0015, /**< BallastFactorAdjustment (Optional) */
     /* Lamp Information Attribute Set */
-    ZCL_BALLAST_CONFIG_ATTR_LAMP_QUANTITY = 0x0020,
-
+    ZCL_BALLAST_CONFIG_ATTR_LAMP_QUANTITY = 0x0020, /**< LampQuantity (Optional) */
     /* Lamp Settings Attribute Set */
-    ZCL_BALLAST_CONFIG_ATTR_LAMP_TYPE = 0x0030,
-    ZCL_BALLAST_CONFIG_ATTR_LAMP_MANUFACTURER = 0x0031,
-    ZCL_BALLAST_CONFIG_ATTR_LAMP_RATED_HOURS = 0x0032,
-    ZCL_BALLAST_CONFIG_ATTR_LAMP_BURN_HOURS = 0x0033,
-    ZCL_BALLAST_CONFIG_ATTR_LAMP_ALARM_MODE = 0x0034,
-    ZCL_BALLAST_CONFIG_ATTR_LAMP_BURN_HOURS_TRIP_POINT = 0x0035,
+    ZCL_BALLAST_CONFIG_ATTR_LAMP_TYPE = 0x0030, /**< LampType (Optional) */
+    ZCL_BALLAST_CONFIG_ATTR_LAMP_MANUFACTURER = 0x0031, /**< LampManufacturer (Optional) */
+    ZCL_BALLAST_CONFIG_ATTR_LAMP_RATED_HOURS = 0x0032, /**< LampRatedHours (Optional) */
+    ZCL_BALLAST_CONFIG_ATTR_LAMP_BURN_HOURS = 0x0033, /**< LampBurnHours (Optional) */
+    ZCL_BALLAST_CONFIG_ATTR_LAMP_ALARM_MODE = 0x0034, /**< LampAlarmMode (Optional) */
+    ZCL_BALLAST_CONFIG_ATTR_LAMP_BURN_HOURS_TRIP_POINT = 0x0035, /**< LampBurnHoursTripPoint (Optional) */
 };
 
 /* Ballast Status (bit mask) defines */
@@ -134,12 +127,24 @@ enum ZbZclBallastConfigSvrAttrT {
 #define ZCL_BALLAST_CONFIG_LAMP_BURN_HOURS_TRIP_POINT_MIN        0x000000
 #define ZCL_BALLAST_CONFIG_LAMP_BURN_HOURS_MAX                   0xfffffe
 
-/*---------------------------------------------------------------
- * Ballast Configuration Cluster Definitions
- *---------------------------------------------------------------
+/* Ballast Configuration Client */
+/**
+ * Create a new instance of the Ballast Configuration Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclBallastConfigClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
+/* Ballast Configuration Server */
+/**
+ * Create a new instance of the Ballast Configuration Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param phyMin The default minimum light output
+ * @param phyMax The default maximum light output
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclBallastConfigServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, uint8_t phyMin, uint8_t phyMax);
 
 #endif

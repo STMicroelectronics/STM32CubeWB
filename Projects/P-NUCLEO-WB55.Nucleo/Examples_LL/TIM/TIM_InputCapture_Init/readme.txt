@@ -46,6 +46,10 @@ change the frequency of this signal from 2 kHz up to 20 kHz by steps of 2 kHz.
 It is then possible to run this example without a signal generator by connecting
 TIM2_CH1 to TIM1_CH1.
 
+@par Keywords
+
+Timers, Frequency, Input, Capture, External Signal, Measurement
+
 @par Directory contents 
 
   - TIM/TIM_InputCapture_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file

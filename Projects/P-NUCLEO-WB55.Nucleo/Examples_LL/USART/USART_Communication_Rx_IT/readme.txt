@@ -38,6 +38,10 @@ Received character is echoed on Tx line.
 On press on User push-button (SW1), LED2 is turned Off.
 In case of errors, LED2 is blinking.
 
+@par Keywords
+
+Connectivity, UART/USART, Asynchronous, RS-232, baud rate, Interrupt, HyperTerminal, Receiver
+
 @par Directory contents 
 
   - USART/USART_Communication_Rx_IT/Inc/stm32wbxx_it.h          Interrupt handlers header file

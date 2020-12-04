@@ -251,6 +251,7 @@ static void MX_LPUART1_UART_Init(void)
   LL_LPUART_Init(LPUART1, &LPUART_InitStruct);
   LL_LPUART_SetTXFIFOThreshold(LPUART1, LL_LPUART_FIFOTHRESHOLD_1_8);
   LL_LPUART_SetRXFIFOThreshold(LPUART1, LL_LPUART_FIFOTHRESHOLD_1_8);
+  LL_LPUART_DisableFIFO(LPUART1);
 
   /* USER CODE BEGIN WKUPType LPUART1 */
   /* Set the wake-up event type : specify wake-up on RXNE flag */

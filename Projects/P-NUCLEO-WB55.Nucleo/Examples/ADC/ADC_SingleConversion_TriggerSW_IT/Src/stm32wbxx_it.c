@@ -61,7 +61,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern ADC_HandleTypeDef hadc1;
 /* USER CODE BEGIN EV */
 extern ADC_HandleTypeDef    AdcHandle;
 /* USER CODE END EV */
@@ -116,18 +116,21 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32wbxx.s).                    */
 /******************************************************************************/
 
-/* USER CODE BEGIN 1 */
-
-
 /**
-  * @brief  This function handles ADC interrupt request.
-  * @param  None
-  * @retval None
+  * @brief This function handles ADC1 global interrupt.
   */
-void ADCx_IRQHandler(void)
+void ADC1_IRQHandler(void)
 {
-  HAL_ADC_IRQHandler(&AdcHandle);
+  /* USER CODE BEGIN ADC1_IRQn 0 */
+
+  /* USER CODE END ADC1_IRQn 0 */
+  HAL_ADC_IRQHandler(&hadc1);
+  /* USER CODE BEGIN ADC1_IRQn 1 */
+
+  /* USER CODE END ADC1_IRQn 1 */
 }
+
+/* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

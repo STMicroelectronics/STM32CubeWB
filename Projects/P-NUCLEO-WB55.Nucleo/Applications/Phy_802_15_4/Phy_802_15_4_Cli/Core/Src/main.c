@@ -112,6 +112,12 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+  /**
+   * The OPTVERR flag is wrongly set at power on
+   * It shall be cleared before using any HAL_FLASH_xxx() api
+   */
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

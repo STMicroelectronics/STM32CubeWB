@@ -41,12 +41,12 @@
       <li>A Template project is provided to allow user to quickly build any firmware application on a given board.</li>
     </ul>
 
-    <p>The examples are located under STM32Cube_FW_STM32CubeWB_VX.Y.Z\Projects\, and all of them have the same structure:</p>
+    <p>The examples are located under STM32Cube_FW_WB_VX.Y.Z\Projects\, and all of them have the same structure:</p>
 
     <ul>
       <li>\Inc folder that contains all header files.</li>
       <li>\Src folder for the sources code.</li>
-      <li>\EWARM and \MDK-ARM folders contain the preconfigured project for each toolchain.</li>
+      <li>\EWARM, \MDK-ARM and \STM32CubeIDE folders contain the preconfigured project for each toolchain.</li>
       <li>readme.txt describing the example behavior and the environment required to run the example.</li>
     </ul>
 
@@ -64,7 +64,7 @@
     <p>The provided examples can be tailored to run on any compatible hardware; user simply need to update the BSP drivers for his board, if it has the same hardware functions (LED, LCD display, pushbuttons...etc.). The BSP is based on a modular architecture that allows it to be ported easily to any hardware by just implementing the low level routines.</p>
 
     <p>
-      <div>The table below contains the list of examples provided within STM32CubeWB Firmware package.</div>
+      <div>The table below contains the list of examples provided within STM32Cube_FW_WB Firmware package.</div>
       <div>In this table, the label <b>CubeMX</b> means the projects have been created using <a href="https://www.st.com/en/development-tools/stm32cubemx.html" target="_blank">STM32CubeMX</a>, the STM32Cube initialization code generator. Those projects can be opened with this tools to modify the projects itself. The others projects are manually created to demonstrate the product features.</div>
     </p>
 
@@ -119,7 +119,7 @@ This projects provides a reference template through the LL API that can be used 
         <td>1</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=99><p id="Examples">Examples</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=101><p id="Examples">Examples</p></td>
         <td align=left rowspan=1><p id="-">-</p></td>
         <td align=left><p id="BSP">BSP</p></td>
         <td align=left>
@@ -384,7 +384,7 @@ How to enable, take then release semaphore using 2 different Process.
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=7><p id="I2C">I2C</p></td>
+        <td align=left rowspan=8><p id="I2C">I2C</p></td>
         <td align=left><p id="I2C_TwoBoards_AdvComIT">I2C_TwoBoards_AdvComIT</p></td>
         <td align=left>
 How to handle several I2C data buffer transmission/reception between
@@ -443,6 +443,15 @@ in interrupt mode and with restart condition.
         <td align=left>
 How to handle I2C data buffer transmission/reception between two boards, 
 using an interrupt when the device is in Stop mode.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="I2C_WakeUpFromStop2">I2C_WakeUpFromStop2</p></td>
+        <td align=left>
+How to handle I2C data buffer transmission/reception between two boards, 
+using an interrupt when the device is in Stop 2 mode.
 </td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -841,7 +850,7 @@ Data buffer transmission/reception between two boards via SPI using Polling mode
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=9><p id="TIM">TIM</p></td>
+        <td align=left rowspan=10><p id="TIM">TIM</p></td>
         <td align=left><p id="TIM_DMA">TIM_DMA</p></td>
         <td align=left>
 Use of the DMA with TIMER Update request 
@@ -854,6 +863,14 @@ to transfer data from memory to TIMER Capture Compare Register 3 (TIMx_CCR3).
         <td align=left><p id="TIM_DMABurst">TIM_DMABurst</p></td>
         <td align=left>
 How to update the TIMER channel 1 period and duty cycle using the TIMER DMA burst feature.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="TIM_InputCapture">TIM_InputCapture</p></td>
+        <td align=left>
+How to use the TIM peripheral to measure an external signal frequency.
 </td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -996,12 +1013,12 @@ generates an MCU WWDG reset when a predefined time period has elapsed.
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of examples: 98</b></td>
+        <td colspan="3"><b>Total number of examples: 100</b></td>
         <td>1</td>
-        <td>97</td>
+        <td>99</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=88><p id="Examples_LL">Examples_LL</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=93><p id="Examples_LL">Examples_LL</p></td>
         <td align=left rowspan=11><p id="ADC">ADC</p></td>
         <td align=left><p id="ADC_AnalogWatchdog_Init">ADC_AnalogWatchdog_Init</p></td>
         <td align=left>
@@ -1291,7 +1308,17 @@ semaphore in the context of two processes accessing the same resource.
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=8><p id="I2C">I2C</p></td>
+        <td align=left rowspan=10><p id="I2C">I2C</p></td>
+        <td align=left><p id="I2C_OneBoard_AdvCommunication_DMAAndIT_Init">I2C_OneBoard_AdvCommunication_DMAAndIT_Init</p></td>
+        <td align=left>
+How to exchange data between an I2C master device in DMA mode and an I2C slave 
+device in interrupt mode. The peripheral is initialized with LL unitary service 
+functions to optimize for performance and size.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="I2C_OneBoard_Communication_DMAAndIT_Init">I2C_OneBoard_Communication_DMAAndIT_Init</p></td>
         <td align=left>
 How to transmit data bytes from an I2C master device using DMA mode
@@ -1310,6 +1337,16 @@ with LL unitary service functions to  optimize for performance and size.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="I2C_OneBoard_Communication_IT_Init">I2C_OneBoard_Communication_IT_Init</p></td>
+        <td align=left>
+How to handle the reception of one data byte from an I2C slave device
+by an I2C master device. Both devices operate in interrupt mode. The peripheral is initialized
+with LL initialization function to demonstrate LL init usage.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="I2C_OneBoard_Communication_PollingAndIT_Init">I2C_OneBoard_Communication_PollingAndIT_Init</p></td>
@@ -1450,7 +1487,7 @@ How to use the low-layer PKA API to execute RSA modular exponentiation.
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=3><p id="PWR">PWR</p></td>
+        <td align=left rowspan=5><p id="PWR">PWR</p></td>
         <td align=left><p id="PWR_EnterStandbyMode">PWR_EnterStandbyMode</p></td>
         <td align=left>
 How to enter the Standby mode and wake up from this mode by using an external 
@@ -1472,6 +1509,24 @@ How to enter the Stop 2 mode.
         <td align=left>
 How to increase/decrease frequency and VCORE and how to enter/exit the
 Low-power run mode.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="PWR_SMPS_16MHZ_HSI">PWR_SMPS_16MHZ_HSI</p></td>
+        <td align=left>
+This example shows how to use power converters of STM32WB (SMPS, LDO and LP-LDO)
+depending on Vdd voltage and low-power mode.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="PWR_SMPS_64MHZ_MSI_PLL">PWR_SMPS_64MHZ_MSI_PLL</p></td>
+        <td align=left>
+This example shows how to use power converters of STM32WB (SMPS, LDO and LP-LDO)
+depending on Vdd voltage and low-power mode.
 </td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -1893,13 +1948,24 @@ them into a global information buffer.
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
+      <tr align=center>
+        <td align=left rowspan=1><p id="WWDG">WWDG</p></td>
+        <td align=left><p id="WWDG_RefreshUntilUserEvent_Init">WWDG_RefreshUntilUserEvent_Init</p></td>
+        <td align=left>
+Configuration of the WWDG to periodically update the counter and 
+generate an MCU WWDG reset when a user button is pressed. The peripheral initialization 
+uses the LL unitary service functions for optimization purposes (performance and size).
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of examples_ll: 87</b></td>
+        <td colspan="3"><b>Total number of examples_ll: 92</b></td>
         <td>0</td>
-        <td>87</td>
+        <td>92</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=10><p id="Examples_MIX">Examples_MIX</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=13><p id="Examples_MIX">Examples_MIX</p></td>
         <td align=left rowspan=1><p id="ADC">ADC</p></td>
         <td align=left><p id="ADC_SingleConversion_TriggerSW_IT">ADC_SingleConversion_TriggerSW_IT</p></td>
         <td align=left>
@@ -1945,7 +2011,34 @@ and an interrupt.
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=2><p id="SPI">SPI</p></td>
+        <td align=left rowspan=1><p id="PWR">PWR</p></td>
+        <td align=left><p id="PWR_STOP1">PWR_STOP1</p></td>
+        <td align=left> 
+How to enter the STOP 1 mode and wake up from this mode by using external 
+reset or wakeup interrupt (all the RCC function calls use RCC LL API 
+for minimizing footprint and maximizing performance).
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left rowspan=4><p id="SPI">SPI</p></td>
+        <td align=left><p id="SPI_FullDuplex_ComPolling_Master">SPI_FullDuplex_ComPolling_Master</p></td>
+        <td align=left>
+Data buffer transmission/reception between two boards via SPI using Polling mode.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="SPI_FullDuplex_ComPolling_Slave">SPI_FullDuplex_ComPolling_Slave</p></td>
+        <td align=left>
+Data buffer transmission/reception between two boards via SPI using Polling mode.
+</td>
+        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="SPI_HalfDuplex_ComPollingIT_Master">SPI_HalfDuplex_ComPollingIT_Master</p></td>
         <td align=left>
 Data buffer transmission/reception between 
@@ -1997,9 +2090,9 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of examples_mix: 9</b></td>
+        <td colspan="3"><b>Total number of examples_mix: 12</b></td>
         <td>0</td>
-        <td>9</td>
+        <td>12</td>
       </tr>
       <tr align=center>
         <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=101><p id="Applications">Applications</p></td>
@@ -2221,7 +2314,7 @@ How to use BLE application and Thread application in dynamic concurrent mode.
       <tr align=center>
         <td align=left><p id="Ble_Thread_Dyn_SED">Ble_Thread_Dyn_SED</p></td>
         <td align=left>
-How to use BLE application and Thread application in dynamic concurrent mode.
+How to use BLE application and Thread application (acting as sleep end device) in dynamic concurrent mode.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2238,7 +2331,7 @@ How to use BLE application and Thread application in static concurrent mode.
         <td align=left rowspan=4><p id="BLE_Zigbee">BLE_Zigbee</p></td>
         <td align=left><p id="BLE_Zigbee_Dyn">BLE_Zigbee_Dyn</p></td>
         <td align=left>
-How to use BLE application and Zigbee application in dynamic concurrent  mode.
+How to use BLE application and Zigbee application (acting as router) in dynamic concurrent mode.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2254,7 +2347,7 @@ How to use BLE application and Zigbee application in dynamic concurent mode with
       <tr align=center>
         <td align=left><p id="BLE_Zigbee_Dyn_SED">BLE_Zigbee_Dyn_SED</p></td>
         <td align=left>
-How to use BLE application and Zigbee application in dynamic concurrent  mode.
+How to use BLE application and Zigbee application (acting as sleep end device) in dynamic concurrent mode.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2662,7 +2755,7 @@ How to use IAS WD cluster as a server on a centralized Zigbee network.
 How to use Meter Identification cluster as a client on a centralized Zigbee network.
 </td>
         <td>-</td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Zigbee_MeterId_Server_Coord">Zigbee_MeterId_Server_Coord</p></td>
@@ -2670,7 +2763,7 @@ How to use Meter Identification cluster as a client on a centralized Zigbee netw
 How to use Meter Identification cluster as a server on a centralized Zigbee network.
 </td>
         <td><font size="5" color=green>X</font></td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Zigbee_OTA_Client_Router">Zigbee_OTA_Client_Router</p></td>
@@ -2694,7 +2787,7 @@ How to use OTA cluster as a server on a centralized Zigbee network.
 How to use OnOff cluster as a client on a distributed Zigbee network.
 </td>
         <td>-</td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Client_Router">Zigbee_OnOff_Client_Router</p></td>
@@ -2702,7 +2795,7 @@ How to use OnOff cluster as a client on a distributed Zigbee network.
 How to use OnOff cluster as a client on a centralized Zigbee network.
 </td>
         <td><font size="5" color=green>X</font></td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Client_Router_Ota">Zigbee_OnOff_Client_Router_Ota</p></td>
@@ -2718,7 +2811,7 @@ How to use OnOff cluster as a client on a centralized Zigbee network.
 How to use OnOff cluster as a client on a centralized Zigbee network.
 </td>
         <td>-</td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Coord_NVM">Zigbee_OnOff_Coord_NVM</p></td>
@@ -2742,7 +2835,7 @@ How to use OnOff cluster and the persistent data on a centralized Zigbee network
 How to use OnOff cluster as a server on a centralized Zigbee network.
 </td>
         <td><font size="5" color=green>X</font></td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Server_Distrib">Zigbee_OnOff_Server_Distrib</p></td>
@@ -2750,7 +2843,7 @@ How to use OnOff cluster as a server on a centralized Zigbee network.
 How to use OnOff cluster as a server on a distributed Zigbee network.
 </td>
         <td>-</td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="Zigbee_PollControl_Client_Coord">Zigbee_PollControl_Client_Coord</p></td>
@@ -2838,9 +2931,9 @@ Cortex-M devices that can be plugged on a STM32 Nucleo board.
         <td>1</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-      	<td colspan="4"><b>Total number of projects: 314</b></td>
+      	<td colspan="4"><b>Total number of projects: 324</b></td>
       	<td>19</td>
-      	<td>295</td>
+      	<td>305</td>
       </tr>
     </table>
   </body>

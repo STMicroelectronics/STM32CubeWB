@@ -1053,9 +1053,6 @@
                     <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\Core\Src\app_lld_ble_iar_asm.s</name>
-                </file>
-                <file>
                     <name>$PROJ_DIR$\..\Core\Src\gpio_lld.c</name>
                 </file>
                 <file>

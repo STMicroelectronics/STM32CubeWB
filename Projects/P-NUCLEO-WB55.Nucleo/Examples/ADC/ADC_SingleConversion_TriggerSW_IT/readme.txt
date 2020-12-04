@@ -61,7 +61,7 @@ P-NUCLEO-WB55 board LED is be used to monitor the program execution status:
    result.
     - "On" upon conversion completion
     - "Off" during conversion
- - Error: In case of error, LED2 is toggling twice at a frequency of 1Hz.
+ - Error: In case of error, LED2 is toggling at a frequency of 1Hz.
 
 @par Keywords
 

@@ -349,7 +349,6 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Device\ST\STM32WBxx\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo</state>
-                    
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities</state>
@@ -1047,10 +1046,10 @@
         <group>
             <name>Core</name>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\freertos_port.c</name>
@@ -1314,6 +1313,9 @@
                             </file>
                         </group>
                     </group>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\Third_Party\FreeRTOS\Source\event_groups.c</name>
+                    </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\Third_Party\FreeRTOS\Source\list.c</name>
                     </file>

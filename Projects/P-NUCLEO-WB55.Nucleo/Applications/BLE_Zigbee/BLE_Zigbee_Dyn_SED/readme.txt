@@ -1,12 +1,12 @@
 /**
-  @page BLE_Zigbee_Dynamic example
+  @page BLE_Zigbee_Dyn_SED example
   
   @verbatim
   ******************************************************************************
-  * @file    BLE_Zigbee/BLE_Zigbee_Dynamic/readme.txt 
+  * @file    BLE_Zigbee/BLE_Zigbee_Dyn_SED/readme.txt 
   * @author  MCD Application Team
-  * @brief   Example of application using BLE and Zigbee protocols in Static 
-  *          Concurrent mode.
+  * @brief   Example of application using BLE and Zigbee (acting as sleep end device) 
+  *          in dynamic concurrent mode.
   ******************************************************************************
   *
   * Copyright (c) 2020 STMicroelectronics. All rights reserved.
@@ -21,14 +21,14 @@
   
 @par Application Description
 
-How to use BLE application and Zigbee application in dynamic concurrent  mode.
+How to use BLE application and Zigbee application (acting as sleep end device) in dynamic concurrent mode.
 
 The idea is to present a demo with a Zigbee Network (at least 2 Nucleo Boards, Zb coordinator
-running Zigbee_OnOff_Server_Coord application[1] and Zb SED running Ble_Zigbee_Dynamic application[2]),
-and a BLE connection between 1 Nucleo board running Ble_Zigbee_Dynamic application [2] with either a 
+running Zigbee_OnOff_Server_Coord application[1] and Zb SED running BLE_Zigbee_Dyn_SED application[2]),
+and a BLE connection between 1 Nucleo board running BLE_Zigbee_Dyn_SED application [2] with either a 
 smartphone running "ST BLE Sensor" Application (available on App Store and Google Play), or another
 Nucleo board running a BLE_p2pClient application[3].
-The STM32WB55xx-Nucleo board running Ble_Zigbee_Dynamic application is capable of switching
+The STM32WB55xx-Nucleo board running BLE_Zigbee_Dyn_SED application is capable of switching
 dynamically and transparently from BLE network to Zigbee network and vice-versa.
 Please note that no LEDs or buttons are active on the SED device as it is configured in Low power mode (LPM).
 
@@ -77,7 +77,7 @@ Zigbee, BLE
 
 @par How to use it ? 
 
-This application requests having the STM32WB5x_BLE_Zigbee_dynamic_fw.bin binary flashed on the M0 Wireless Coprocessor.
+This application requests having the STM32WB5x_BLE_Zigbee_RFD_dynamic_fw.bin binary flashed on the M0 Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.

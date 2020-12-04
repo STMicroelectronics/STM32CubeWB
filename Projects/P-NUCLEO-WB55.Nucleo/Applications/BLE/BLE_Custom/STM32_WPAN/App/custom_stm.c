@@ -325,7 +325,7 @@ void SVCCTL_InitCustomSvc(void)
     /*
      *          My_P2P_Server
      *
-     * Max_Attribute_Records = 1 + 2*2 + 1*no_of_char_with_notify_or_indicate_property
+     * Max_Attribute_Records = 1 + 2*2 + 1*no_of_char_with_notify_or_indicate_property + 1*no_of_char_with_broadcast_property
      * service_max_attribute_record = 1 for My_P2P_Server +
      *                                2 for My_LED_Char +
      *                                2 for My_Switch_Char +
@@ -370,7 +370,7 @@ void SVCCTL_InitCustomSvc(void)
     /*
      *          My_Heart_Rate
      *
-     * Max_Attribute_Records = 1 + 2*3 + 1*no_of_char_with_notify_or_indicate_property
+     * Max_Attribute_Records = 1 + 2*3 + 1*no_of_char_with_notify_or_indicate_property + 1*no_of_char_with_broadcast_property
      * service_max_attribute_record = 1 for My_Heart_Rate +
      *                                2 for My_HRS_Meas +
      *                                2 for My_Sensor_Loc +

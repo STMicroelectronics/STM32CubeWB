@@ -378,7 +378,7 @@ this should be avoided to ensure flash longevity
 
 #define APPLICATION_NUMBER_OF_ELEMENTS                                         1
 /* Max SIG Models per element */
-#define USER_SIG_MODELS_MAX_COUNT                                             17
+#define USER_SIG_MODELS_MAX_COUNT                                              4
 /* Max Vendor Models per element */
 #define USER_VENDOR_MODELS_MAX_COUNT                                           1
 

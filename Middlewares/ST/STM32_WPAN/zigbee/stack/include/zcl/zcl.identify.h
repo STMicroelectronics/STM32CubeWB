@@ -47,9 +47,9 @@
 
 #include "zcl/zcl.h"
 
-/* Identify Server Attribute IDs */
+/** Identify Server Attribute IDs */
 enum ZbZclIdentifySvrAttrT {
-    ZCL_IDENTIFY_ATTR_TIME = 0x0000
+    ZCL_IDENTIFY_ATTR_TIME = 0x0000 /**< IdentifyTime */
 };
 
 /* Identify Command IDs  */
@@ -72,41 +72,48 @@ enum ZbZclIdentifyServerStateT {
     ZCL_IDENTIFY_STOP
 };
 
-/** Callback to receive events to "start" or "stop" identifying. */
+/**
+ * Callback to receive start and stop events
+ * @param cluster Cluster instance from which this callback will be invoked
+ * @param state Identification state: start or stop
+ * @param arg Pointer to application data provided in initiating API call
+ * @return Void
+ */
 typedef void (*ZbZclIdentifyCallbackT)(struct ZbZclClusterT *cluster,
     enum ZbZclIdentifyServerStateT state, void *arg);
 
 /**
- * Instantiate a new instance of the Identify server cluster.
- * @param zb Zigbee stack instance.
- * @param endpoint APS endpoint to create cluster on.
- * @param arg Application argument that gets assigned to ZbZclClusterSetCallbackArg.
- * @return Cluster pointer, or NULL if there as an error.
+ * Create a new instance of the Identify Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclIdentifyServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, void *arg);
 
 /**
- * Set the callback in the cluster private structure
- * @param cluster Cluster instance to send this command from
- * @param callback Callback function to call with command response
+ * Set the callback in the cluster private structure.
+ * @param cluster Cluster instance which will later invoke the callback
+ * @param callback Callback function that will be invoked later when the identification state changes
+ * @return Void
  */
 void ZbZclIdentifyServerSetCallback(struct ZbZclClusterT *cluster,
     ZbZclIdentifyCallbackT callback);
 
 /**
- * Set the local identify server time. Same as writing to the
- * ZCL_IDENTIFY_ATTR_TIME attribute.
+ * Set the local Identify Server time
  *
  * If BDB_COMMISSION_MODE_FIND_BIND is enabled and seconds > 0, seconds
- * is adjusted to be >= ZB_BDBC_MinCommissioningTime.
- * @param clusterPtr Zigbee cluster instance.
+ * is adjusted to be >= ZB_BDBC_MinCommissioningTime
+ * @param cluster Cluster instance with timer to set
  * @param seconds Seconds for updating the identify time counter
+ * @return Void
  */
 void ZbZclIdentifyServerSetTime(struct ZbZclClusterT *cluster, uint16_t seconds);
 
 /**
- * Get the local identify server time.
- * @param clusterPtr Zigbee cluster instance.
+ * Get the local Identify Server time
+ * @param cluster Cluster instance with timer to get
  * @return uint16_t Time remaining in zigbee timer
  */
 uint16_t ZbZclIdentifyServerGetTime(struct ZbZclClusterT *cluster);
@@ -117,31 +124,31 @@ uint16_t ZbZclIdentifyServerGetTime(struct ZbZclClusterT *cluster);
  */
 
 /**
- * Instantiate a new instance of the Identify client cluster.
- * @param zb Zigbee stack instance.
- * @param endpoint APS endpoint to create cluster on.
- * @return Cluster pointer, or NULL if there as an error.
+ * Create a new instance of the Identify Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclIdentifyClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 /**
- * Start or stop the receiving device identifying itself
- * @param cluster Cluster instance to send this command from
- * @param dst The destination address information
+ * Send an Identify command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
  * @param identify_time Time which will be used to set the IdentifyTime attribute
- * @param callback Callback function to call with command response
- * @param arg Application argument that will be included with the callback
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
 enum ZclStatusCodeT zcl_identify_identify_request(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     uint16_t identify_time, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /**
- * Request target(s) to respond if they are currently identifying themselves
- * @param cluster Cluster instance to send this command from
- * @param dst The destination address information
- * @param callback Callback function to call with command response
- * @param arg Application argument that will be included with the callback
+ * Send an Identify Query command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
 enum ZclStatusCodeT zcl_identify_query_request(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,

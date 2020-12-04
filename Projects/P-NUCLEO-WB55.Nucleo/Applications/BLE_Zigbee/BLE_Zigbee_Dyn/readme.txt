@@ -1,12 +1,12 @@
 /**
-  @page BLE_Zigbee_Dynamic example
+  @page BLE_Zigbee_Dyn example
   
   @verbatim
   ******************************************************************************
-  * @file    BLE_Zigbee/BLE_Zigbee_Dynamic/readme.txt 
+  * @file    BLE_Zigbee/BLE_Zigbee_Dyn/readme.txt 
   * @author  MCD Application Team
-  * @brief   Example of application using BLE and Zigbee protocols in dynamic 
-  *          concurrent mode.
+  * @brief   Example of application using BLE and Zigbee (acting as router) in 
+  *          dynamic concurrent mode.
   ******************************************************************************
   *
   * Copyright (c) 2020 STMicroelectronics. All rights reserved.
@@ -21,14 +21,14 @@
   
 @par Application Description
 
-How to use BLE application and Zigbee application in dynamic concurrent  mode.
+How to use BLE application and Zigbee application (acting as router) in dynamic concurrent mode.
 
 The idea is to present a demo with a Zigbee Network (at least 2 Nucleo Boards, Zb coordinator
-running Zigbee_OnOff_Server_Coord application[1] and router running Ble_Zigbee_Dynamic application[2]),
-and a BLE connection between 1 Nucleo board running Ble_Zigbee_Dynamic application [2] with either a 
+running Zigbee_OnOff_Server_Coord application[1] and router running BLE_Zigbee_Dyn application[2]),
+and a BLE connection between 1 Nucleo board running BLE_Zigbee_Dyn application [2] with either a 
 smartphone running "ST BLE Sensor" Application (available on App Store and Google Play), or another
 Nucleo board running a BLE_p2pClient application[3].
-The STM32WB55xx-Nucleo board running Ble_Zigbee_Dynamic application is capable of switching
+The STM32WB55xx-Nucleo board running BLE_Zigbee_Dyn application is capable of switching
 dynamically and transparently from BLE network to Zigbee network and vice-versa.
 
 The demo architecture is summarized in the following figure:
@@ -76,7 +76,7 @@ Zigbee, BLE
 
 @par How to use it ? 
 
-This application requests having the STM32WB5x_BLE_Zigbee_dynamic_fw.bin binary flashed on the M0 Wireless Coprocessor.
+This application requests having the STM32WB5x_BLE_Zigbee_FFD_dynamic_fw.bin binary flashed on the M0 Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -120,7 +120,7 @@ The blue led turns ON when the Zigbee join is successful.
 by selecting = "P2PZBSRV1" entry.
 -- Once connected, the application starts to search the P2P Services & Characteristics.
 -- Led Button service, Led Characteristic and Button Characteristic are discovered at this stage (this service is ST specific).
--- Pressing the LED button on the App will turn On or Off the BLUE Led on the ZB/BLE device [2]
+-- Pressing the LED button on the App will turn On or Off the RED Led on the ZB/BLE device [2]
 4.2 If using a 3rd Nucleo board (running a BLE_p2pClient application [3]), you can start scanning by pressing the SW1 button
 -- the BLUE LED will light up on [3]
 -- After scanning complete, the 3rd Nucleo board [3] connects to the P2P server on BLE/ZB [2] dynamic node, and sends a BLE toggle when pressing SW1.

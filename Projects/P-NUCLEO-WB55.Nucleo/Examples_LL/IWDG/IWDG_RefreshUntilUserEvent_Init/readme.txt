@@ -38,6 +38,10 @@ will be switch ON.
 
 Waiting a new User push-button (SW1) pressed to re-activate the IWDG
 
+@par Keywords
+
+System, IWDG, reload counter, MCU Reset
+
 @par Directory contents 
 
   - IWDG/IWDG_RefreshUntilUserEvent_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file

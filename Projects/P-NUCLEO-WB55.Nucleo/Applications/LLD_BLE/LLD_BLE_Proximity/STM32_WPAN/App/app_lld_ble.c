@@ -172,7 +172,7 @@ extern uint8_t  *txBuffer_Ptr;
 uint8_t  *rxBuffer_Ptr[8]; 
 uint32_t *rxStatus_Ptr[8]; 
 uint32_t *rxTimeStamp_Ptr[8];
-int      *rxRSSI_Ptr[8];
+int32_t  *rxRSSI_Ptr[8];
 
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_LLD_BLE_Config_t LldBleConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t LldBleM0CmdPacket;
@@ -303,7 +303,7 @@ void APP_LLD_BLE_Init( void )
   
   /* Create a task to manage commands from M0 */
   UTIL_SEQ_RegTask( 1<< CFG_TASK_CMD_FROM_M0_TO_M4, UTIL_SEQ_RFU, m0CmdProcess);
-  
+
   /* Create Task for Appli */
   Appli_RegTask();
 
@@ -386,7 +386,7 @@ void APP_LLD_BLE_Init( void )
   
   /* Activate UART RX buffer processing task to allow USER command comming from UART */
   UTIL_SEQ_SetTask(1U << CFG_TASK_PROCESS_UART_RX_BUFFER, CFG_SCH_PRIO_0);
-  
+
   Appli_Init();
   
 }
@@ -511,11 +511,13 @@ static void CheckWirelessFirmwareInfo(void)
 void APP_LLD_BLE_Init_UART_CLI(void)
 {
 #if (CFG_HW_USART1_ENABLED == 1)
+  #if (CFG_FULL_LOW_POWER == 0)
   MX_USART1_UART_Init();
   
   /* Put the UART device in reception mode and wait for interrupt */
   if (HW_UART_Receive_IT(CFG_CLI_UART, &rxBuffer_Tab[rxBuffer_wrPtr], 1, uartRxCpltCallback) != hw_uart_ok)
     APP_DBG((char *)"!! HAL_UART_Receive_IT error on M4 in APP_LLD_BLE_Init_UART_CLI !!");
+  #endif
 #endif
 }
 
@@ -868,11 +870,11 @@ static void m0RadioProcess(void)
     case CMD_FROM_M0_RADIO_RXOK :
       Appli_m0RadioProcess_RxOk();
       break;
-            
+       
    case CMD_FROM_M0_RADIO_RXACKEND :
       Appli_m0RadioProcess_RxAckEnd();
       break;  
-                
+               
     case CMD_FROM_M0_RADIO_RXOKEND :
       Appli_m0RadioProcess_RxOkEnd();
       break;
@@ -889,11 +891,11 @@ static void m0CmdProcess(void)
     case CMD_FROM_M0_RADIO_STOP :
       Appli_m0CmdProcess_RadioStop();
       break;
-
+      
     case CMD_FROM_M0_RADIO_END :
       Appli_m0CmdProcess_RadioEnd();
       break;
-     
+      
     case CMD_FROM_M0_RADIO_RXACK :
       Appli_m0CmdProcess_RxAck();
       break;
@@ -901,15 +903,15 @@ static void m0CmdProcess(void)
     case CMD_FROM_M0_RADIO_RXOK :
       Appli_m0CmdProcess_RxOk();
       break;
-     
+  
     case CMD_FROM_M0_RADIO_RXACKEND :
       Appli_m0CmdProcess_RxAckEnd();
       break;
-      
+
     case CMD_FROM_M0_RADIO_RXOKEND :
       Appli_m0CmdProcess_RxOkEnd();
       break;
-      
+    
     case CMD_FROM_M0_STOP0_ON :
       m0CmdStopRequired(0);
       break;
@@ -986,7 +988,7 @@ static void m0CmdStopRequired(uint32_t stopRequired)
   switch (stopRequired) {
     case 0:
       // flush IPC and trace before sleeping. Let time to M0 to set RF in sleep and to be in STOP if needed
-      us_delay(delayBeforeSleepOnM4);
+      HAL_Delay(delayBeforeSleepOnM4);
       
       // Stop UART and its GPIOs to reduce power consumption
       APP_LLD_BLE_DeInit_UART_CLI();
@@ -1009,7 +1011,9 @@ static void m0CmdStopRequired(uint32_t stopRequired)
       // Restart UART before to go out of critical area to not have to send trace from M0 before to restart it
       APP_LLD_BLE_Init_UART_CLI();
 #if (CFG_HW_LPUART1_ENABLED == 1)
+      #if(CFG_DEBUG_TRACE != 0)
       MX_LPUART1_UART_Init();
+      #endif
 #endif
       
       // trial for no IT (ex RF) at low speed
@@ -1020,7 +1024,7 @@ static void m0CmdStopRequired(uint32_t stopRequired)
     
     case 1:
       // flush IPC and trace before sleeping. Let time to M0 to set RF in sleep and to be in STOP if needed
-      us_delay(delayBeforeSleepOnM4);
+      HAL_Delay(delayBeforeSleepOnM4);
       
       // Stop UART and its GPIOs to reduce power consumption
       APP_LLD_BLE_DeInit_UART_CLI();
@@ -1043,7 +1047,9 @@ static void m0CmdStopRequired(uint32_t stopRequired)
       // Restart UART before to go out of critical area to not have to send trace from M0 before to restart it
       APP_LLD_BLE_Init_UART_CLI();
 #if (CFG_HW_LPUART1_ENABLED == 1)
+      #if(CFG_DEBUG_TRACE != 0)
       MX_LPUART1_UART_Init();
+      #endif
 #endif
       
       // trial for no IT (ex RF) at low speed
@@ -1054,7 +1060,7 @@ static void m0CmdStopRequired(uint32_t stopRequired)
     
     case 2:
       // flush IPC and trace before sleeping. Let time to M0 to set RF in sleep and to be in STOP if needed
-      us_delay(delayBeforeSleepOnM4);
+      HAL_Delay(delayBeforeSleepOnM4);
       
       // Stop UART and its GPIOs to reduce power consumption
       APP_LLD_BLE_DeInit_UART_CLI();
@@ -1077,7 +1083,9 @@ static void m0CmdStopRequired(uint32_t stopRequired)
       // Restart UART before to go out of critical area to not have to send trace from M0 before to restart it
       APP_LLD_BLE_Init_UART_CLI();
 #if (CFG_HW_LPUART1_ENABLED == 1)
+      #if(CFG_DEBUG_TRACE != 0)
       MX_LPUART1_UART_Init();
+      #endif
 #endif
       
       // trial for no IT (ex RF) at low speed
@@ -1088,7 +1096,7 @@ static void m0CmdStopRequired(uint32_t stopRequired)
     
     case 3:
       // flush IPC and trace before sleeping. Let time to M0 to set RF in sleep and to be in STOP if needed
-      us_delay(delayBeforeSleepOnM4);
+      HAL_Delay(delayBeforeSleepOnM4);
       
       // Stop UART and its GPIOs to reduce power consumption
       APP_LLD_BLE_DeInit_UART_CLI();
@@ -1103,7 +1111,9 @@ static void m0CmdStopRequired(uint32_t stopRequired)
       // Restart UART before to go out of critical area to not have to send trace from M0 before to restart it
       APP_LLD_BLE_Init_UART_CLI();
 #if (CFG_HW_LPUART1_ENABLED == 1)
+      #if(CFG_DEBUG_TRACE != 0)
       MX_LPUART1_UART_Init();
+      #endif
 #endif
       
       // trial for no IT (ex RF) at low speed
@@ -1223,9 +1233,9 @@ void TL_LLD_BLE_ReceiveM0Cmd( TL_CmdPacket_t * cmdBuffer )
 
       /* Action under Sequencer */
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
-
-    }    
-	else if (strncmp(bufferAddr, "Radio_RxAckEnd", 14) == 0)
+      
+    } 
+    else if (strncmp(bufferAddr, "Radio_RxAckEnd", 14) == 0)
     {
       m0Cmd = CMD_FROM_M0_RADIO_RXACKEND;
 
@@ -1235,18 +1245,18 @@ void TL_LLD_BLE_ReceiveM0Cmd( TL_CmdPacket_t * cmdBuffer )
       /* Action under Sequencer */
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
       
-    }
+    }    
     else if (strncmp(bufferAddr, "Radio_RxOkEnd", 13) == 0)
     {
       m0Cmd = CMD_FROM_M0_RADIO_RXOKEND;
 
       /* Action under IT */
       m0RadioProcess();
-      
+
       /* Action under Sequencer */
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
-	  
-    }     
+
+    }
     else if (strncmp(bufferAddr, "Radio_RxAck", 11) == 0)
     {
       m0Cmd = CMD_FROM_M0_RADIO_RXACK;
@@ -1257,14 +1267,14 @@ void TL_LLD_BLE_ReceiveM0Cmd( TL_CmdPacket_t * cmdBuffer )
       /* Action under Sequencer */
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
       
-    }
+    }    
     else if (strncmp(bufferAddr, "Radio_RxOk", 10) == 0)
     {
       m0Cmd = CMD_FROM_M0_RADIO_RXOK;
 
       /* Action under IT */
       m0RadioProcess();
-      
+
       /* Action under Sequencer */
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
 
@@ -1397,16 +1407,6 @@ uint8_t APP_LLD_BLE_SendCmdM0(uint8_t currentCmd , uint32_t* currentPt)
   //UTIL_SEQ_SetTask(1U << CFG_TASK_PROCESS_UART_RX_BUFFER, CFG_SCH_PRIO_0);
   return(((param_hal_BLE_t*)(currentPt))->return_value);
 
-}
-
-/**
- * @brief As the default systick is not used, declare here, at least, an empty function to 
- * over-write the default one as it declared as WEAK in HAL.
- */
-void HAL_Delay(__IO uint32_t Delay)
-{
-  us_delay(Delay*1000);
-  return;
 }
 
 /* USER CODE BEGIN FD */

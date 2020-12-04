@@ -311,7 +311,7 @@ void LED_Thread2(void const * argument)
   /* USER CODE END LED_Thread2 */
 }
 
-/**
+ /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM17 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment

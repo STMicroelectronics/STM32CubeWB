@@ -24,6 +24,7 @@
 #include "hw.h"
 #include "hw_conf.h"
 #include "hw_if.h"
+#include "ble_bufsize.h"
 
 /******************************************************************************
  * Application Config
@@ -124,10 +125,10 @@
 #define CFG_BLE_MASTER_SCA   0
 
 /**
- *  Source for the 32 kHz slow speed clock
- *  1 : internal RO
- *  0 : external crystal ( no calibration )
- */
+ *  Source for the low speed clock for RF wake-up
+ *  1 : external high speed crystal HSE/32/32 
+ *  0 : external low speed crystal ( no calibration )
+ */ 
 #define CFG_BLE_LSE_SOURCE  0
 
 /**

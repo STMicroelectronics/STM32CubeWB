@@ -1,8 +1,9 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : app_entry.c
-  * Description        : Entry application source file for STM32WPAN Middleware.
-  ******************************************************************************
+  * Description        : Entry application source file for STM32WPAN Middleware
+ ******************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
@@ -15,6 +16,7 @@
   *
  ******************************************************************************
  */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -31,29 +33,55 @@
 #include "shci.h"
 
 /* Private includes -----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
 
 /* Private defines -----------------------------------------------------------*/
-#define POOL_SIZE (CFG_TL_EVT_QUEUE_LENGTH * 4U * DIVC((sizeof(TL_PacketHeader_t) + TL_EVENT_FRAME_SIZE), 4U))
+/* POOL_SIZE = 2(TL_PacketHeader_t) + 258 (3(TL_EVT_HDR_SIZE) + 255(Payload size)) */
+#define POOL_SIZE (CFG_TL_EVT_QUEUE_LENGTH * 4U * DIVC(( sizeof(TL_PacketHeader_t) + TL_EVENT_FRAME_SIZE ), 4U))
+
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
+/* Private macros ------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
 /* Global function prototypes -----------------------------------------------*/
-size_t __write(int handle, const unsigned char *buf, size_t bufSize);
+#if(CFG_DEBUG_TRACE != 0)
+size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
+#endif
+
+/* USER CODE BEGIN GFP */
+
+/* USER CODE END GFP */
 
 /* Private functions prototypes-----------------------------------------------*/
-static void SystemPower_Config(void);
-static void Init_Debug(void);
-static void appe_Tl_Init(void);
-static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status);
-static void APPE_SysUserEvtRx(void *pPayload);
-static void APPE_SysEvtReadyProcessing(void);
-static void APPE_SysEvtError(SCHI_SystemErrCode_t ErrorCode);
+static void SystemPower_Config( void );
+static void Init_Debug( void );
+static void appe_Tl_Init( void );
+static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
+static void APPE_SysUserEvtRx( void * pPayload );
+static void APPE_SysEvtReadyProcessing( void );
+static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern void MX_LPUART1_UART_Init(void);
@@ -83,9 +111,9 @@ EXTI_HandleTypeDef exti_handle;
 /* Functions Definition ------------------------------------------------------*/
 void APPE_Init( void )
 {
-    SystemPower_Config(); /**< Configure the system Power Mode */
+  SystemPower_Config(); /**< Configure the system Power Mode */
 
-    HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
+  HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
 /* USER CODE BEGIN APPE_Init_1 */
     Init_Debug();
@@ -98,19 +126,21 @@ void APPE_Init( void )
     Button_Init();
     RxUART_Init();
 /* USER CODE END APPE_Init_1 */
-    appe_Tl_Init();	/* Initialize all transport layers */
+  appe_Tl_Init();	/* Initialize all transport layers */
 
-    /**
-     * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-     * received on the system channel before starting the Stack
-     * This system event is received with APPE_SysUserEvtRx()
-     */
+  /**
+   * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
+   * received on the system channel before starting the Stack
+   * This system event is received with APPE_SysUserEvtRx()
+   */
 /* USER CODE BEGIN APPE_Init_2 */
 
 /* USER CODE END APPE_Init_2 */
-    return;
+   return;
 }
+/* USER CODE BEGIN FD */
 
+/* USER CODE END FD */
 
 /*************************************************************
  *
@@ -169,7 +199,6 @@ static void Init_Debug( void )
  */
 static void SystemPower_Config(void)
 {
-
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -215,19 +244,11 @@ static void appe_Tl_Init( void )
   return;
 }
 
-
-static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status)
+static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
 {
-    UNUSED(status);
-    return;
+  UNUSED(status);
+  return;
 }
-
-/**
- * @brief Trap a notification coming from the M0 firmware
- * @param  pPayload  : payload associated to the notification
- *
- * @retval None
- */
 
 /**
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
@@ -265,26 +286,26 @@ static void APPE_SysUserEvtRx( void * pPayload )
  */
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
 {
-    switch (ErrorCode)
-	{
-        case ERR_ZIGBEE_UNKNOWN_CMD:
-            APP_DBG("** ERR_ZIGBEE : UNKNOWN_CMD \n");
-            break;
-        default:
-            APP_DBG("** ERR_ZIGBEE : ErroCode=%d \n", ErrorCode);
-            break;
-    }
-    return;
+  switch(ErrorCode)
+  {
+  case ERR_ZIGBEE_UNKNOWN_CMD:
+       APP_DBG("** ERR_ZIGBEE : UNKNOWN_CMD \n");
+       break;
+  default:
+       APP_DBG("** ERR_ZIGBEE : ErroCode=%d \n",ErrorCode);
+       break;
+  }
+  return;
 }
 
 static void APPE_SysEvtReadyProcessing( void )
 {
-    /* Traces channel initialization */
-    TL_TRACES_Init();
+  /* Traces channel initialization */
+  TL_TRACES_Init( );
 
-    APP_ZIGBEE_Init();
-    UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
-    return;
+  APP_ZIGBEE_Init();
+  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  return;
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
@@ -318,6 +339,8 @@ static void Button_Init( void )
     return;
 }
 
+/* USER CODE END FD_LOCAL_FUNCTIONS */
+
 /*************************************************************
  *
  * WRAP FUNCTIONS
@@ -341,25 +364,26 @@ void UTIL_SEQ_Idle( void )
   */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
-  switch (evt_waited_bm) {
-    case EVENT_ACK_FROM_M0_EVT:
-      /* Run only the task CFG_TASK_REQUEST_FROM_M0_TO_M4 to process
-      * direct requests from the M0 (e.g. ZbMalloc), but no stack notifications
-      * until we're done the request to the M0. */
-      UTIL_SEQ_Run((1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
-      break;
-
-    case EVENT_SYNCHRO_BYPASS_IDLE:
-      UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
-      /* Process notifications and requests from the M0 */
-      UTIL_SEQ_Run((1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4) | (1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
-      break;
-
-        default:
-            /* default case */
-            UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-            break;
-    }
+  switch(evt_waited_bm)
+  {
+  case EVENT_ACK_FROM_M0_EVT:
+    /**
+     * Run only the task CFG_TASK_REQUEST_FROM_M0_TO_M4 to process
+     * direct requests from the M0 (e.g. ZbMalloc), but no stack notifications
+     * until we're done the request to the M0.
+     */
+    UTIL_SEQ_Run((1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
+    break;
+  case EVENT_SYNCHRO_BYPASS_IDLE:
+    UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
+    /* Process notifications and requests from the M0 */
+    UTIL_SEQ_Run((1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4) | (1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
+    break;
+  default :
+    /* default case */
+  UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+    break;
+  }
 }
 
 void shci_notify_asynch_evt(void* pdata)
@@ -403,9 +427,10 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 #if(CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
-  MX_USART1_UART_Init(); 
-
+#ifdef CFG_DEBUG_TRACE_UART
+  MX_USART1_UART_Init();
   return;
+#endif
 }
 
 /**

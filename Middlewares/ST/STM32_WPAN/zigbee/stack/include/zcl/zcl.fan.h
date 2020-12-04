@@ -1,4 +1,10 @@
-/* Copyright [2017 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.fan.h
+ * @brief ZCL Fan Control cluster header
+ * ZCL 7 section 6.4
+ * ZCL 8 section 6.4
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_FAN_H
 #define ZCL_FAN_H
@@ -48,7 +54,22 @@ enum ZbZclFanSeqT {
     ZCL_FAN_SEQ_OA = 0x04 /**< On/Auto */
 };
 
+/* Fan Control Client */
+/**
+ * Create a new instance of the Fan Control Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclFanClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
+
+/* Fan Control Server */
+/**
+ * Create a new instance of the Fan Control Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclFanServerAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 #endif

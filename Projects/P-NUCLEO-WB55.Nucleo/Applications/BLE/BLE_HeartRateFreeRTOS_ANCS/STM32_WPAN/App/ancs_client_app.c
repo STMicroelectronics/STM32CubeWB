@@ -688,7 +688,7 @@ static void ANCS_Notification_Source_Received_event(
   ANCS_Show_EventFlag(evFlag);
   ANCS_Show_CategoryID(catID);
   printf("** CategoryCount: %d \r\n", catCount);
-  printf("** NotificationUID: 0x%08x \r\n", notifUID);
+  printf("** NotificationUID: 0x%08lx \r\n", notifUID);
 
   //ancs_context.notifyEntry = INVALID_NOTIFY_ENTRY;
   
@@ -1855,7 +1855,7 @@ static void AncsProcReq(AncsProcId_t AncsProcId)
       }
       else
       {
-        APP_DBG_MSG("ANCS_GET_NOTIFICATION_ATTRIBUTE interact with iOS NotificationID 0x%08x, retrieve more information\n\r",
+        APP_DBG_MSG("ANCS_GET_NOTIFICATION_ATTRIBUTE interact with iOS NotificationID 0x%08lx, retrieve more information\n\r",
         ancs_context.notifyList[ancs_context.notifyEntry].notifUID);
       }
       
@@ -1897,7 +1897,7 @@ static void AncsProcReq(AncsProcId_t AncsProcId)
       }
       else
       {
-        APP_DBG_MSG("ANCS_PERFORM_NOTIFICATION_ACTION notifyEntry=%d NotificationID 0x%08x actID=%d \n\r",
+        APP_DBG_MSG("ANCS_PERFORM_NOTIFICATION_ACTION notifyEntry=%d NotificationID 0x%08lx actID=%d \n\r",
         ancs_context.notifyEntry,ancs_context.notifyList[ancs_context.notifyEntry].notifUID,actID);
       }
       

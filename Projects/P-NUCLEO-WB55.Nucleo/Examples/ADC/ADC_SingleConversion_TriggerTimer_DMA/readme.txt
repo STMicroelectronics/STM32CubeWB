@@ -66,7 +66,7 @@ P-NUCLEO-WB55 board LED is be used to monitor the program execution status:
    result.
     - Toggling: "On" upon conversion completion (full DMA buffer filled)
                 "Off" upon half conversion completion (half DMA buffer filled)
- - Error: In case of error, LED2 is toggling twice at a frequency of 1Hz.
+ - Error: In case of error, LED2 is toggling at a frequency of 1Hz.
 
 @par Keywords
 

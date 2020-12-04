@@ -1,27 +1,27 @@
-/* Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.press.meas.h
+ * @brief ZCL Pressure Measurement cluster header
+ * ZCL 7 section 4.5
+ * ZCL 8 section 4.5
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_PRESS_MEAS_H
 #define ZCL_PRESS_MEAS_H
 
 #include "zcl/zcl.h"
 
-/*--------------------------------------------------------------------------
- *  DESCRIPTION
- *      Interface definition for the ZCL Pressure Measurement cluster.
- *--------------------------------------------------------------------------
- */
-
-/* Attribute Identifiers */
+/** Pressure Measurement Attribute IDs */
 enum ZbZclPressMeasSvrAttrT {
-    ZCL_PRESS_MEAS_ATTR_MEAS_VAL = 0x0000,
-    ZCL_PRESS_MEAS_ATTR_MIN_MEAS_VAL = 0x0001,
-    ZCL_PRESS_MEAS_ATTR_MAX_MEAS_VAL = 0x0002,
-    ZCL_PRESS_MEAS_ATTR_TOLERANCE = 0x0003,
-    ZCL_PRESS_MEAS_ATTR_SCALED_VAL = 0x0010,
-    ZCL_PRESS_MEAS_ATTR_MIN_SCALED_VAL = 0x0011,
-    ZCL_PRESS_MEAS_ATTR_MAX_SCALED_VAL = 0x0012,
-    ZCL_PRESS_MEAS_ATTR_SCALED_TOL = 0x0013,
-    ZCL_PRESS_MEAS_ATTR_SCALE = 0x0014
+    ZCL_PRESS_MEAS_ATTR_MEAS_VAL = 0x0000, /**< MeasuredValue */
+    ZCL_PRESS_MEAS_ATTR_MIN_MEAS_VAL = 0x0001, /**< MinMeasuredValue */
+    ZCL_PRESS_MEAS_ATTR_MAX_MEAS_VAL = 0x0002, /**< MaxMeasuredValue */
+    ZCL_PRESS_MEAS_ATTR_TOLERANCE = 0x0003, /**< Tolerance (Optional) */
+    ZCL_PRESS_MEAS_ATTR_SCALED_VAL = 0x0010, /**< ScaledValue (Optional) */
+    ZCL_PRESS_MEAS_ATTR_MIN_SCALED_VAL = 0x0011, /**< MinScaledValue (Optional) */
+    ZCL_PRESS_MEAS_ATTR_MAX_SCALED_VAL = 0x0012, /**< MaxScaledValue (Optional) */
+    ZCL_PRESS_MEAS_ATTR_SCALED_TOL = 0x0013, /**< ScaledTolerance (Optional) */
+    ZCL_PRESS_MEAS_ATTR_SCALE = 0x0014 /**< Scale (Optional) */
 };
 
 /* Pressure Measurement Defines */
@@ -34,11 +34,22 @@ enum ZbZclPressMeasSvrAttrT {
 #define ZCL_PRESS_MEAS_SCALE_MIN                        (int8_t)0x81
 #define ZCL_PRESS_MEAS_SCALE_MAX                        (int8_t)0x7f
 
-/*---------------------------------------------------------------
- * Pressure Measurement Cluster Definitions
- *---------------------------------------------------------------
+/**
+ * Create a new instance of the Pressure Measurement Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclPressMeasClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
+
+/**
+ * Create a new instance of the Pressure Measurement Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param min Default minimum measured value written to ZCL_PRESS_MEAS_ATTR_MIN_MEAS_VAL attribute during allocation
+ * @param max Default maximum measured value written to ZCL_PRESS_MEAS_ATTR_MAX_MEAS_VAL attribute during allocation
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclPressMeasServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, int16_t min, int16_t max);
 
-#endif /* __ZCL_PRESS_MEAS_H */
+#endif

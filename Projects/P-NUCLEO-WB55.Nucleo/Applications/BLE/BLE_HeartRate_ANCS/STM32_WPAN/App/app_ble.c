@@ -626,8 +626,8 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
        case (EVT_BLUE_GAP_NUMERIC_COMPARISON_VALUE):
       {
-        APP_DBG_MSG(" numeric_value = %d\n", ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
-        APP_DBG_MSG(" Hex_value = %x\n", ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
+        APP_DBG_MSG(" numeric_value = %ld\n", ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
+        APP_DBG_MSG(" Hex_value = %lx\n", ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
         APP_DBG_MSG("EVT_BLUE_GAP_NUMERIC_COMPARISON_VALUE ==> GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM \n\r");
         GapProcReq(GAP_PROC_NUMERIC_COMPARISON_VALUE_CONFIRM);
       }

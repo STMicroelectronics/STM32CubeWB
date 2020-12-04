@@ -384,6 +384,7 @@ void APP_BLE_Key_Button2_Action(void)
 
 void APP_BLE_Key_Button3_Action(void)
 {
+  DTS_App_KeyButton3Action();
 }
 
 /*************************************************************
@@ -563,7 +564,7 @@ static void LinkConfiguration(void)
 #endif
 
   APP_DBG_MSG("set data length \n");
-  status = hci_le_set_data_length(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,250,2112);
+  status = hci_le_set_data_length(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,251,2120);
   if (status != BLE_STATUS_SUCCESS)
   {
     APP_DBG_MSG("set data length command error \n");
@@ -585,12 +586,15 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
   hci_le_connection_complete_event_rp0 * connection_complete_event;
   hci_le_advertising_report_event_rp0 * le_advertising_event;
   hci_le_phy_update_complete_event_rp0 *evt_le_phy_update_complete;
+  hci_le_connection_update_complete_event_rp0 *connection_update_complete;
   evt_blue_aci * blue_evt;
   hci_event_pckt * event_pckt;
   uint8_t event_type, event_data_size;
   int k = 0;
   uint8_t adtype, adlength;
   uint8_t *adv_report_data;
+  float Connection_Interval;
+  float Supervision_Timeout;
 
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
 
@@ -629,18 +633,34 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           BleApplicationContext.BleApplicationContext_legacy.connectionHandle = connection_complete_event->Connection_Handle;
 #if(CFG_BLE_PERIPHERAL != 0)
-          APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_LE_CONN_COMPLETE connection as slave\n");
+          APP_DBG_MSG("EVT_LE_CONN_COMPLETE connection as slave\n");
 #endif
 
 #if(CFG_BLE_CENTRAL != 0)
-          APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_LE_CONN_COMPLETE connection as master\n");
+          APP_DBG_MSG("EVT_LE_CONN_COMPLETE connection as master\n");
 #endif
+          Connection_Interval = connection_complete_event->Conn_Interval * 1.25;
+          
+          APP_DBG_MSG("EVT_LE_CONN_COMPLETE connection as slave\n");
+          APP_DBG_MSG("interval= %.2f ms \n",Connection_Interval);
+          APP_DBG_MSG("latency= 0x%x \n",connection_complete_event->Conn_Latency);
+          Supervision_Timeout = connection_complete_event->Supervision_Timeout * 10;
+          APP_DBG_MSG("supervision_timeout= %.2f ms \n",Supervision_Timeout);
+          
           UTIL_SEQ_SetTask(1 << CFG_TASK_LINK_CONFIG_ID, CFG_SCH_PRIO_0);
           break; /* HCI_EVT_LE_CONN_COMPLETE */
 
         case EVT_LE_CONN_UPDATE_COMPLETE:
           mutex = 1;
-          APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_LE_CONN_UPDATE_COMPLETE \n");                  
+          connection_update_complete = (hci_le_connection_update_complete_event_rp0*)meta_evt->data;
+          
+          APP_DBG_MSG("EVT_LE_CONN_UPDATE_COMPLETE \n");
+          Connection_Interval = connection_update_complete->Conn_Interval * 1.25;
+          APP_DBG_MSG("interval= %.2f ms \n",Connection_Interval);
+          APP_DBG_MSG("latency= 0x%x \n",connection_update_complete->Conn_Latency);
+          Supervision_Timeout = connection_update_complete->Supervision_Timeout * 10;
+          APP_DBG_MSG("supervision_timeout= %.2f ms \n",Supervision_Timeout);
+                           
           break;
           
         case EVT_LE_ADVERTISING_REPORT:
@@ -760,7 +780,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         break;
         
         case (EVT_BLUE_GAP_NUMERIC_COMPARISON_VALUE):
-          APP_DBG_MSG("Hex_value = %lx\n",
+          APP_DBG_MSG("Hex_value = %ld\n",
                       ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
 
           aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 1); /* CONFIRM_YES = 1 */
@@ -1105,6 +1125,36 @@ void BLE_SVC_GAP_Change_PHY(void)
   }
   
   return;
+}
+
+void BLE_SVC_GAP_Security_Req(void)
+{
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
+  
+  ret = aci_gap_slave_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
+  if (ret == BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("slave req security cmd OK ok\n");
+  }
+  else 
+  {
+    APP_DBG_MSG("slave req security cmd NOK\n");
+  }
+}
+
+void BLE_SVC_GAP_Clear_DataBase(void)
+{
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
+  
+  ret = aci_gap_clear_security_db();
+  if (ret == BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("clear security db cmd OK ok\n");
+  }
+  else 
+  {
+    APP_DBG_MSG("clear security db  cmd NOK\n");
+  }
 }
 
 void SVCCTL_ResumeUserEventFlow( void )

@@ -113,6 +113,7 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
   evt_blue_aci * blue_evt;
   aci_gatt_attribute_modified_event_rp0 * attribute_modified;
   aci_att_exchange_mtu_resp_event_rp0 * exchange_mtu_resp;
+  aci_gatt_write_permit_req_event_rp0 * write_permit_req ;
 
   DTS_STM_App_Notification_evt_t Notification;
 
@@ -155,7 +156,8 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
               DTS_Notification(&Notification);
             }
           }
-          if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 2))
+          //if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 2))
+          if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 5))
           {
             /**
             * Notify to application to start measurement
@@ -177,7 +179,6 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
           {
             return_value = SVCCTL_EvtAckFlowEnable;
             
-            APP_DBG_MSG("length = %x, offset = %x\r\n", attribute_modified->Attr_Data_Length,attribute_modified->Offset);
             Notification.Evt_Opcode = DTS_STM_DATA_RECEIVED;
             Notification.DataTransfered.Length=attribute_modified->Attr_Data_Length;
             DTS_Notification(&Notification); 
@@ -187,6 +188,12 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
         case EVT_BLUE_GATT_TX_POOL_AVAILABLE:
           Resume_Notification();
           break; 
+          
+      case EVT_BLUE_GATT_WRITE_PERMIT_REQ:
+        APP_DBG_MSG("write permit req\r\n");
+        write_permit_req = (aci_gatt_write_permit_req_event_rp0 *) blue_evt->data;
+        aci_gatt_write_resp( write_permit_req->Connection_Handle, write_permit_req->Attribute_Handle, 0, 0, write_permit_req->Data_Length, write_permit_req->Data);        
+        break;
 
         default:
           break;
@@ -252,7 +259,7 @@ void DTS_STM_Init( void )
   /**
    *  Add Data Transfer TX Characteristic
    */
-  aci_gatt_add_char(aDataTransferContext.DataTransferSvcHdle,
+  hciCmdResult = aci_gatt_add_char(aDataTransferContext.DataTransferSvcHdle,
   DT_UUID_LENGTH,
                     (Char_UUID_t *) DT_REQ_CHAR_UUID,
                     DATA_TRANSFER_NOTIFICATION_LEN_MAX,
@@ -274,9 +281,9 @@ void DTS_STM_Init( void )
   DT_UUID_LENGTH,
                     (Char_UUID_t *) DT_REQ_CHAR2_UUID,
                     255, /* DATA_TRANSFER_NOTIFICATION_LEN_MAX, */
-                    CHAR_PROP_WRITE,
+                    CHAR_PROP_WRITE_WITHOUT_RESP,
                     ATTR_PERMISSION_NONE,
-                    GATT_NOTIFY_ATTRIBUTE_WRITE, /* gattEvtMask */
+                    GATT_NOTIFY_ATTRIBUTE_WRITE, //GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP, /* gattEvtMask */
                     10, /* encryKeySize */
                     1, /* isVariable */
                     &(aDataTransferContext.DataTransferRxCharHdle));

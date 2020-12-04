@@ -30,6 +30,10 @@ On P-NUCLEO-WB55 board this IO is connected to LED2.
 
 In this example, HCLK is configured at 16 MHz.
 
+@par Keywords
+
+System, GPIO, Output, No pull, Speed, Push-pull, Toggle
+
 
 @par Directory contents 
 

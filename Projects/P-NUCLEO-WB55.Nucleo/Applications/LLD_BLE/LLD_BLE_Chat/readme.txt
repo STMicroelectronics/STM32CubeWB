@@ -115,7 +115,7 @@ LLD_BLE_Chat used only HAL API for Send/Receive not LL
 
 In this order and described into main.c:
 
-After power On or Reset (ALL the LED are ON), Init is done
+After power On or Reset (ALL the LED are ON if into app_conf.h "CFG_FULL_LOW_POWER" is set to "0" => "#define CFG_FULL_LOW_POWER  0"), Init is done
   
  1) Open 2 terminal 1 per Board (reset if you want Info on Terminal and first "LLD BLE >" )
     Start to CHAT....

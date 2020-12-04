@@ -99,8 +99,8 @@
  ******************************************************************************/
 /**
  *  CFG_RTC_WUCKSEL_DIVIDER:  This sets the RTCCLK divider to the wakeup timer.
- *  The higher is the value, the better is the power consumption and the accuracy of the timerserver
- *  The lower is the value, the finest is the granularity
+ *  The lower is the value, the better is the power consumption and the accuracy of the timerserver
+ *  The higher is the value, the finest is the granularity
  *
  *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to ouput
  *  clock as low as possible) but the output clock should be equal or higher frequency compare to the clock feeding
@@ -172,6 +172,9 @@
 typedef enum
 {
   CFG_TIM_PROC_ID_ISR,
+  /* USER CODE BEGIN CFG_TimProcID_t */
+
+  /* USER CODE END CFG_TimProcID_t */
 } CFG_TimProcID_t;
 
 /******************************************************************************

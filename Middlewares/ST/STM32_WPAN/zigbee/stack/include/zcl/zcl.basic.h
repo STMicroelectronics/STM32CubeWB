@@ -1,18 +1,11 @@
 /**
+ * There is no public API to create a new Basic cluster server instance, i.e. ZbZclBasicServerAlloc does not exist. The stack automatically
+ * allocates a new instance of the server on every endpoint
  * @file zcl.basic.h
  * @brief ZCL Basic cluster header
  * ZCL 7 section 3.2
  * ZCL 8 section 3.2
  * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
- */
-
-/*
- * Client and Server support for the ZCL Basic Cluster
- *
- * The Basic cluster is unique amoung the ZCL clusters in ZSDK. There is no
- * public API to create a new instance, i.e. ZbZclBasicServerAlloc does not
- * exist. The stack automatically allocates a new instance of the Basic
- * server cluster on every endpoint ...MORE HERE
  */
 
 #ifndef ZCL_BASIC_H
@@ -58,24 +51,24 @@
 
 #include "zcl/zcl.h"
 
-/** Basic Cluster Attribute Ids */
+/** Basic Server Attribute IDs */
 enum ZbZclBasicSvrAttrT {
     ZCL_BASIC_ATTR_ZCL_VERSION = 0x0000, /**< ZCLVersion */
-    ZCL_BASIC_ATTR_APP_VERSION, /**< ApplicationVersion */
-    ZCL_BASIC_ATTR_STACK_VERSION, /**< StackVersion */
-    ZCL_BASIC_ATTR_HARDWARE_VERSION, /**< HWVersion */
-    ZCL_BASIC_ATTR_MFR_NAME, /**< ManufacturerName */
-    ZCL_BASIC_ATTR_MODEL_NAME, /**< ModelIdentifier */
-    ZCL_BASIC_ATTR_DATE_CODE, /**< DateCode */
+    ZCL_BASIC_ATTR_APP_VERSION, /**< ApplicationVersion (Optional) */
+    ZCL_BASIC_ATTR_STACK_VERSION, /**< StackVersion (Optional) */
+    ZCL_BASIC_ATTR_HARDWARE_VERSION, /**< HWVersion (Optional) */
+    ZCL_BASIC_ATTR_MFR_NAME, /**< ManufacturerName (Optional) */
+    ZCL_BASIC_ATTR_MODEL_NAME, /**< ModelIdentifier (Optional) */
+    ZCL_BASIC_ATTR_DATE_CODE, /**< DateCode (Optional) */
     ZCL_BASIC_ATTR_POWER_SOURCE, /**< PowerSource */
 
-    ZCL_BASIC_ATTR_LOCATION = 0x0010, /**< LocationDescription */
-    ZCL_BASIC_ATTR_ENVIRONMENT, /**< PhysicalEnvironment */
-    ZCL_BASIC_ATTR_ENABLED, /**< DeviceEnabled */
-    ZCL_BASIC_ATTR_ALARM_MASK, /**< AlarmMask */
-    ZCL_BASIC_ATTR_DISABLE_LOCAL_CONFIG, /**< DisableLocalConfig */
+    ZCL_BASIC_ATTR_LOCATION = 0x0010, /**< LocationDescription (Optional) */
+    ZCL_BASIC_ATTR_ENVIRONMENT, /**< PhysicalEnvironment (Optional) */
+    ZCL_BASIC_ATTR_ENABLED, /**< DeviceEnabled (Optional) */
+    ZCL_BASIC_ATTR_ALARM_MASK, /**< AlarmMask (Optional) */
+    ZCL_BASIC_ATTR_DISABLE_LOCAL_CONFIG, /**< DisableLocalConfig (Optional) */
 
-    ZCL_BASIC_ATTR_SW_BUILD_ID = 0x4000 /**< SWBuildID */
+    ZCL_BASIC_ATTR_SW_BUILD_ID = 0x4000 /**< SWBuildID (Optional) */
 };
 
 /* Power Source Enumerations */
@@ -102,8 +95,12 @@ enum ZbZclBasicSvrAttrT {
 #define ZCL_BASIC_ALARM_MASK_HARDWARE            0x01U
 #define ZCL_BASIC_ALARM_MASK_SOFTWARE            0x02U
 
-/* ZCL Version Identifier. */
-#define ZCL_BASIC_ZCL_VERSION                    0x02
+/* Only for the ZCL Basic 'ZCLVersion' attribute. This version attribute is unrelated to the ZCL Global Revision Attribute. */
+enum {
+    ZCL_BASIC_ZCL_VERSION_6 = 0x02U,
+    ZCL_BASIC_ZCL_VERSION_7 = 0x03U,
+    ZCL_BASIC_ZCL_VERSION_8 = 0x08U /* Starting from ZCL8, this number matches the revision of ZCL. */
+};
 
 /* Local Config */
 #define ZCL_BASIC_LOCAL_CONFIG_RESET_DISABLE     0x01U
@@ -114,31 +111,22 @@ enum {
     ZCL_BASIC_RESET_FACTORY = 0x00
 };
 
-/*---------------------------------------------------------------
- * Basic Server
- *---------------------------------------------------------------
- */
 /* The Basic Server is a special cluster that has global attributes and
  * behaviour. The API is found in zigbee.h. */
 
 /**
- * Creates a new instance of the Basic client cluster
- *
- * @param zb the ZSDK stack pointer
- * @param endpoint the endpoint on which the new cluster instance will reside
- * @return a new Basic client cluster or NULL on error
+ * Create a new instance of the Basic Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclBasicClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 /**
- * Send Basic Cluster Reset to Factory Defaults command to the server
- *
- * The reset to factory defaults commands instructs the server to resets all attributes
- * to their factory default values. Other functionality is not affected.
- *
- * @param clusterPtr the client cluster from which to send the command
- * @param dst the destination address to the server to which the command is sent
- * @return ZCL_STATUS_SUCEESS if successful or other ZclStatusCodeT value on error
+ * Send a Reset to Factory Defaults command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
 enum ZclStatusCodeT ZbZclBasicClientResetReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
 

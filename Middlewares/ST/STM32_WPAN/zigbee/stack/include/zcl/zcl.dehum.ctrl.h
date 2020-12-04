@@ -35,7 +35,7 @@ enum ZbZclDehumCtrlServerAttrT {
 /**
  * Instantiate a new instance of the Dehumidification Control client cluster
  * @param zb Zigbee stack instance
- * @param endpoint APS endpoint on which to create cluster
+ * @param endpoint Endpoint on which to create cluster
  * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclDehumCtrlClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
@@ -43,7 +43,7 @@ struct ZbZclClusterT * ZbZclDehumCtrlClientAlloc(struct ZigBeeT *zb, uint8_t end
 /**
  * Instantiate a new instance of the Dehumidification Control server cluster
  * @param zb Zigbee stack instance
- * @param endpoint APS endpoint on which to create cluster
+ * @param endpoint Endpoint on which to create cluster
  * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclDehumCtrlServerAlloc(struct ZigBeeT *zb, uint8_t endpoint);

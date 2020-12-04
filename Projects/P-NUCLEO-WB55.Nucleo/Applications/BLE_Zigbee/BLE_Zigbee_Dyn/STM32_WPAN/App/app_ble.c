@@ -722,7 +722,9 @@ void APP_BLE_Key_Button1_Action(void)
 void APP_BLE_Key_Button2_Action(void)
 {
 #if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
-  if (BleApplicationContext.Device_Connection_Status != APP_BLE_FAST_ADV && BleApplicationContext.Device_Connection_Status != APP_BLE_IDLE)
+  if (BleApplicationContext.Device_Connection_Status != APP_BLE_FAST_ADV &&
+      BleApplicationContext.Device_Connection_Status != APP_BLE_LP_ADV &&
+      BleApplicationContext.Device_Connection_Status != APP_BLE_IDLE)
   {
     c_int = BleApplicationContext.BleApplicationContext_legacy.connectionInterval;
     if (!first_update) {

@@ -125,7 +125,7 @@ static struct zigbee_nwk_config nwk_config = {
   .config[0].nwkKeyType = ZB_SEC_KEYTYPE_STANDARD_NWK,
   .config[0].stackProfile = ZB_NWK_STACK_PROFILE_PRO,
   .config[0].scan_count = ZR_NB_SCANS,
-  .config[0].startupControl = ZbStartTypePreconfigured,
+  .config[0].startupControl = ZbStartTypeJoin,
   .config[0].useInsecureJoin = true,
 };
 

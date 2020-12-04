@@ -37,6 +37,10 @@ In this example:
 On P-NUCLEO-WB55:
     - External line 4 is connected to User push-button (SW1)
 
+@par Keywords
+
+System, GPIO, Output, Alternate function, EXTI, Toggle
+
 
 @par Directory contents 
 

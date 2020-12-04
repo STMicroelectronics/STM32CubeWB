@@ -124,28 +124,30 @@ enum ZbZclWncvTypes {
 };
 
 /* Window Covering Commands */
-#define ZCL_WNCV_COMMAND_UP                      0x00
-#define ZCL_WNCV_COMMAND_DOWN                    0x01
-#define ZCL_WNCV_COMMAND_STOP                    0x02
-#define ZCL_WNCV_COMMAND_GOTO_LIFT_VALUE         0x04
-#define ZCL_WNCV_COMMAND_GOTO_LIFT_PERCENTAGE    0x05
-#define ZCL_WNCV_COMMAND_GOTO_TILT_VALUE         0x07
-#define ZCL_WNCV_COMMAND_GOTO_TILT_PERCENTAGE    0x08
+#define ZCL_WNCV_COMMAND_UP                         0x00
+#define ZCL_WNCV_COMMAND_DOWN                       0x01
+#define ZCL_WNCV_COMMAND_STOP                       0x02
+#define ZCL_WNCV_COMMAND_GOTO_LIFT_VALUE            0x04
+#define ZCL_WNCV_COMMAND_GOTO_LIFT_PERCENTAGE       0x05
+#define ZCL_WNCV_COMMAND_GOTO_TILT_VALUE            0x07
+#define ZCL_WNCV_COMMAND_GOTO_TILT_PERCENTAGE       0x08
 
 /* Window Covering Config/Status Bit Mask */
-#define ZCL_WNCV_STATUS_OPERATIONAL              0x01
-#define ZCL_WNCV_STATUS_ONLINE                   0x02
-#define ZCL_WNCV_STATUS_UP_REVERSED              0x04
-#define ZCL_WNCV_STATUS_LIFT_CLOSED_LOOP         0x08
-#define ZCL_WNCV_STATUS_TILT_CLOSED_LOOP         0x16
-#define ZCL_WNCV_STATUS_LIFT_ENCODER             0x32
-#define ZCL_WNCV_STATUS_TILT_ENCODER             0x64
+#define ZCL_WNCV_STATUS_OPERATIONAL                 0x01U
+#define ZCL_WNCV_STATUS_ONLINE                      0x02U
+#define ZCL_WNCV_STATUS_UP_REVERSED                 0x04U
+#define ZCL_WNCV_STATUS_LIFT_CLOSED_LOOP            0x08U
+#define ZCL_WNCV_STATUS_TILT_CLOSED_LOOP            0x10U
+#define ZCL_WNCV_STATUS_LIFT_ENCODER                0x20U
+#define ZCL_WNCV_STATUS_TILT_ENCODER                0x40U
+#define ZCL_WNCV_STATUS_MASK                        0x7fU
 
 /* Window Covering Mode Bit Mask */
-#define ZCL_WNCV_MODE_REVERSED                   0x01
-#define ZCL_WNCV_MODE_CALIBRATION                0x02
-#define ZCL_WNCV_MODE_MAINTENANCE                0x04
-#define ZCL_WNCV_MODE_LED_FEEDBACK               0x08
+#define ZCL_WNCV_MODE_REVERSED                      0x01U
+#define ZCL_WNCV_MODE_CALIBRATION                   0x02U
+#define ZCL_WNCV_MODE_MAINTENANCE                   0x04U
+#define ZCL_WNCV_MODE_LED_FEEDBACK                  0x08U
+#define ZCL_WNCV_MODE_MASK                          0x0fU
 
 /* Window Covering Server */
 /** Window Covering Server callbacks configuration */

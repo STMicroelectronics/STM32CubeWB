@@ -21,9 +21,10 @@
 	<natures>
 		<nature>com.st.stm32cube.ide.mcu.MCUProjectNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUCubeIdeServicesRevAev1ProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUCubeIdeServicesRevAev2ProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUNonUnderRootProjectNature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUCubeExampleProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUCubeProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUAdvancedStructureProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUEndUserDisabledTrustZoneProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUSingleCpuProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCURootProjectNature</nature>
@@ -32,9 +33,19 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Doc/readme.txt</name>
+			<name>Zigbee_OnOff_Server_Coord.ioc</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/DORRRYY/STM32Cube_FW_WB_V1.6.0/Projects/P-NUCLEO-WB55.Nucleo/Applications/Zigbee/Zigbee_OnOff_Server_Coord/readme.txt</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Zigbee_OnOff_Server_Coord.ioc</locationURI>
+		</link>
+		<link>
+			<name>Utilities/stm32_lpm.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Utilities/lpm/tiny_lpm/stm32_lpm.c</locationURI>
+		</link>
+		<link>
+			<name>Utilities/stm32_seq.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Utilities/sequencer/stm32_seq.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/CMSIS/system_stm32wbxx.c</name>
@@ -137,9 +148,64 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</locationURI>
 		</link>
 		<link>
-			<name>Utilities/sequencer/stm32_seq.c</name>
+			<name>Middlewares/STM32_WPAN/dbg_trace.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Utilities/sequencer/stm32_seq.c</locationURI>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/ee.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/zigbee/platform/ee.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/hw_flash.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/zigbee/platform/hw_flash.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/otp.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/otp.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/shci.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/shci_tl.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/shci_tl_if.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/stm_list.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/stm_list.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/stm_queue.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/tl_mbox.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/tl_zigbee_hci.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_zigbee_hci.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/zigbee_core_wb.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/zigbee/core/src/zigbee_core_wb.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/app_entry.c</name>
@@ -162,6 +228,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/main.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/Core/stm32_lpm_if.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32_lpm_if.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/Core/stm32wbxx_hal_msp.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32wbxx_hal_msp.c</locationURI>
@@ -179,32 +250,7 @@
 		<link>
 			<name>Drivers/BSP/STM32WBxx_Nucleo/stm32wbxx_nucleo.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/utilities/dbg_trace.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/utilities/otp.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/otp.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/utilities/stm_list.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/stm_list.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/utilities/stm_queue.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</locationURI>
-		</link>
-		<link>
-			<name>Utilities/lpm/tiny_lpm/stm32_lpm.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Utilities/lpm/tiny_lpm/stm32_lpm.c</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/STM32_WPAN/App/app_zigbee.c</name>
@@ -215,41 +261,6 @@
 			<name>Application/User/STM32_WPAN/Target/hw_ipcc.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/Target/hw_ipcc.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/zigbee/core/zigbee_core_wb.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/zigbee/core/src/zigbee_core_wb.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/interface/patterns/ble_thread/schi/shci.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/interface/patterns/ble_thread/tl/tl_zigbee_hci.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_zigbee_hci.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

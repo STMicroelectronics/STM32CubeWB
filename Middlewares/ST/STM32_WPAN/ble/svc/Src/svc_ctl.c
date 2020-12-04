@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "common_blesvc.h"
+#include "cmsis_compiler.h"
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct

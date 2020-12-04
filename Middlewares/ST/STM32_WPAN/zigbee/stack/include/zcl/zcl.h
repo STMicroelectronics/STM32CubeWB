@@ -17,8 +17,8 @@ struct ZbZclClusterT;
  * ZCL Debug Logging
  *---------------------------------------------------------------
  */
-/*lint -save -e762 [ Redundantly declared symbol ] */
-/*lint -save -e9004 [ previously declared - MISRA 2012 Rule 8.5, required ] */
+/*lint -save -e762 [ !MISRA - Redundantly declared symbol ] */
+/*lint -save -e9004 [ previously declared <Rule 8.5, REQUIRED> ] */
 extern void ZbLogPrintf(struct ZigBeeT *zb, uint32_t mask, const char *hdr, const char *fmt, ...);
 /*lint -restore */
 /*lint -restore */
@@ -28,10 +28,9 @@ extern void ZbLogPrintf(struct ZigBeeT *zb, uint32_t mask, const char *hdr, cons
 # define CONFIG_ZB_LOG_ALLOWED_MASK         ZB_LOG_MASK_LEVEL_0
 #endif
 
-/*lint -emacro(506,ZCL_LOG_PRINTF) */
-/* Info 774: Boolean within 'if' always evaluates to False */
-/*lint -emacro(774,ZCL_LOG_PRINTF) */
-/*lint -emacro(831,ZCL_LOG_PRINTF) */
+/*lint -emacro(506,ZCL_LOG_PRINTF) [ Constant value boolean <Rule 2.1, REQUIRED> ] */
+/*lint -emacro(774,ZCL_LOG_PRINTF) [ !MISRA Boolean within 'if' always evaluates to False ] */
+/*lint -emacro(831,ZCL_LOG_PRINTF) [ !MISRA right arg to | is certain to be 0 ] */
 
 #if ((ZB_LOG_MASK_ZCL & CONFIG_ZB_LOG_ALLOWED_MASK) != 0U)
 #define ZCL_LOG_PRINTF(zb, hdr, ...) \
@@ -174,7 +173,8 @@ enum {
 enum {
     ZCL_CLUSTER_REVISION_LEGACY = 0,
     ZCL_CLUSTER_REVISION_ZCL6 = 1,
-    ZCL_CLUSTER_REVISION_ZCL7 = 2
+    ZCL_CLUSTER_REVISION_ZCL7 = 2,
+    ZCL_CLUSTER_REVISION_ZCL8 = 3
 };
 
 /* ZCL Attribute Flags
@@ -731,6 +731,23 @@ enum ZclStatusCodeT ZbZclCommandReq(struct ZigBeeT *zb, struct ZbZclCommandReqT 
 
 #define ZCL_ATTRIBUTE_BUFFER_SIZE_MAX       256U
 
+/*** Reporting Intervals ***/
+/* If max interval == 0xffff, then reporting is disabled */
+#define ZCL_ATTR_REPORT_MAX_INTVL_DISABLE   0xffffU
+#define ZCL_ATTR_REPORT_MIN_INTVL_DISABLE   0x0000U /* doesn't really matter what this is */
+
+/* If max interval == 0x0000, then reporting is enabled, but only when attribute changes, no timer. */
+#define ZCL_ATTR_REPORT_MAX_INTVL_CHANGE    0x0000U
+#define ZCL_ATTR_REPORT_MIN_INTVL_CHANGE    0x0000U /* doesn't matter what this is */
+
+/* BDB Spec Section 6.7: Maximum reporting interval is either 0x0000 or in the range 0x003d to 0xfffe */
+#define ZCL_ATTR_REPORT_MAX_INTVL_MINIMUM   0x003dU /* 61 seconds */
+#define ZCL_ATTR_REPORT_MAX_INTVL_MAXIMUM   0xfffeU
+
+/* If max interval == 0x0000 and min interval == 0xffff, then reset reporting back to default. */
+#define ZCL_ATTR_REPORT_MAX_INTVL_DEFAULT   0x0000U
+#define ZCL_ATTR_REPORT_MIN_INTVL_DEFAULT   0xffffU
+
 struct ZbZclAttrCbInfoT;
 
 /**
@@ -773,10 +790,17 @@ struct ZbZclAttrT {
     /**< Optional integer attribute value range. If both are set to zero, range checking is disabled. */
 
     struct {
-        uint16_t interval_min; /* seconds */
-        uint16_t interval_max; /* seconds */
+        uint16_t interval_min; /**< Default minimum reporting interval in seconds. */
+        uint16_t interval_max; /**< Default maximum reporting interval in seconds. */
     } reporting;
-    /**< Default attribute minimum and maximum reporting intervals in seconds. */
+    /**< Default attribute minimum and maximum reporting intervals.
+     *
+     * See ZCL 7 sections 2.5.7.1.5 and 2.5.7.1.6 regarding the minimum and maximum
+     * reporting interval values and what they mean.
+     *
+     * From BDB section 6.7 (Default reporting configuration), the maximum reporting
+     * interval is either 0x0000 (on value change only) or between 0x003d and 0xfffe.
+     */
 };
 
 #define ZCL_ATTR_LIST_LEN(_list_)        (sizeof(_list_) / sizeof(struct ZbZclAttrT))

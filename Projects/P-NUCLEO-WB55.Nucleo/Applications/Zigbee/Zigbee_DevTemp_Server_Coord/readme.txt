@@ -47,7 +47,7 @@ PushB (SW1)=>|Client | -----------------------------------> |Server | <= PushB (
 
 This application requires at minimum two STM32WB55xx nucleo boards, but you can use up four boards. 
 
-This application requests having the stm32wb5x_Zigbee_FFD_fw.binbinary flashed on the wireless coprocessor 
+This application requests having the stm32wb5x_Zigbee_FFD_fw.bin binary flashed on the wireless coprocessor 
 and the correct binary flashed on the application processor.
 
 Important note :
@@ -117,9 +117,9 @@ Zigbee
 
 @par How to use it ? 
 
-=> Loading of the stm32wb5x_Zigbee_FFD_fw.binbinary
+=> Loading of the stm32wb5x_Zigbee_FFD_fw.bin binary
 
-  This application requests having the stm32wb5x_Zigbee_FFD_fw.binbinary flashed on the Wireless Coprocessor.
+  This application requests having the stm32wb5x_Zigbee_FFD_fw.bin binary flashed on the Wireless Coprocessor.
   If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
   All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
   Refer to UM2237 to learn how to use/install STM32CubeProgrammer.

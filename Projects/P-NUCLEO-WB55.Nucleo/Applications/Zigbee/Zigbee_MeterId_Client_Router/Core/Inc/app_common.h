@@ -1,9 +1,10 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : app_common.h
   * Description        : App Common application configuration file for STM32WPAN Middleware.
   *
- ******************************************************************************
+  ******************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
@@ -16,7 +17,7 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_COMMON_H
 #define APP_COMMON_H

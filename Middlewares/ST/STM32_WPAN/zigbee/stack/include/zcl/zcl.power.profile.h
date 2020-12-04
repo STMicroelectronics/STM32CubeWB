@@ -1,17 +1,23 @@
-/* Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.power.profile.h
+ * @brief ZCL Power Profile cluster header
+ * ZCL 7 section 3.17
+ * ZCL 8 section 3.17
+ * @copyright Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_PWR_PROF_H
 #define ZCL_PWR_PROF_H
 
 #include "zcl/zcl.h"
 
-/* Attribute Identifiers */
+/** Power Profile Server Attribute IDs */
 enum ZbZclPowerProfileSvrAttrT {
-    ZCL_POWER_PROF_SVR_ATTR_TOTAL_PROFILENUM = 0x0000,
-    ZCL_POWER_PROF_SVR_ATTR_MULTIPLE_SCHED = 0x0001,
-    ZCL_POWER_PROF_SVR_ATTR_ENERGY_FORMAT = 0x0002,
-    ZCL_POWER_PROF_SVR_ATTR_ENERGY_REMOTE = 0x0003,
-    ZCL_POWER_PROF_SVR_ATTR_SCHEDULE_MODE = 0x0004
+    ZCL_POWER_PROF_SVR_ATTR_TOTAL_PROFILENUM = 0x0000, /**< TotalProfileNum */
+    ZCL_POWER_PROF_SVR_ATTR_MULTIPLE_SCHED = 0x0001, /**< MultipleScheduling */
+    ZCL_POWER_PROF_SVR_ATTR_ENERGY_FORMAT = 0x0002, /**< EnergyFormatting */
+    ZCL_POWER_PROF_SVR_ATTR_ENERGY_REMOTE = 0x0003, /**< EnergyRemote */
+    ZCL_POWER_PROF_SVR_ATTR_SCHEDULE_MODE = 0x0004 /**< ScheduleMode */
 };
 
 /* Client Generated Commands */
@@ -68,260 +74,439 @@ enum ZbZclPowerProfState {
     ZCL_PWR_PROF_STATE_PROFILE_ENDED = 0x07
 };
 
+/** Phase structure */
 struct ZbZclPowerProfPhase {
-    uint8_t energy_phase_id;
-    uint8_t macro_phase_id;
-    uint16_t expect_duration;
-    uint16_t peak_power;
-    uint16_t energy;
-    uint16_t max_activation_delay;
+    uint8_t energy_phase_id; /**< Energy PhaseID */
+    uint8_t macro_phase_id; /**< Macro PhaseID */
+    uint16_t expect_duration; /**< ExpectedDuration */
+    uint16_t peak_power; /**< Peak Power */
+    uint16_t energy; /**< Energy */
+    uint16_t max_activation_delay; /**< MaxActivationDelay */
 };
 
-/* PowerProfileNotification and PowerProfileResponse share the same payload format. */
+/** PowerProfileNotification and PowerProfileResponse command structure */
 struct ZbZclPowerProfSvrProfileRsp {
-    uint8_t total_profile_num;
-    uint8_t profile_id;
-    uint8_t num_transferred_phases;
-    struct ZbZclPowerProfPhase phase_list[ZCL_PWR_PROF_MAX_ENERGY_PHASES];
+    uint8_t total_profile_num; /**< Total Profile Num */
+    uint8_t profile_id; /**< Power ProfileID */
+    uint8_t num_transferred_phases; /**< Num of Transferred Phases */
+    struct ZbZclPowerProfPhase phase_list[ZCL_PWR_PROF_MAX_ENERGY_PHASES]; /**< Phase List */
 };
 
+/** Record structure */
 struct ZbZclPowerProfileRecord {
-    uint8_t profile_id;
-    uint8_t energy_phase_id;
-    uint8_t remote_control;
-    enum ZbZclPowerProfState state;
+    uint8_t profile_id; /**< Power Profile ID */
+    uint8_t energy_phase_id; /**< Energy Phase ID */
+    uint8_t remote_control; /**< PowerProfileRemoteControl */
+    enum ZbZclPowerProfState state; /**< PowerProfile State */
 };
 
-/* PowerProfileStateResponse */
+/** PowerProfileStateResponse command structure */
 struct ZbZclPowerProfSvrStateRsp {
-    uint8_t profile_count;
-    struct ZbZclPowerProfileRecord record_list[ZCL_PWR_PROF_MAX_PROFILES];
+    uint8_t profile_count; /**< Power Profile Count */
+    struct ZbZclPowerProfileRecord record_list[ZCL_PWR_PROF_MAX_PROFILES]; /**< Record List */
 };
 
-/* PowerProfileRequest */
+/** PowerProfileRequest command structure */
 struct ZbZclPowerProfCliProfileReq {
-    uint8_t profile_id;
+    uint8_t profile_id; /**< PowerProfileID */
 };
 
+/** Schedule Phase structure */
 struct ZbZclPowerProfSchedPhase {
-    uint8_t energy_phase_id;
-    uint16_t sched_time;
+    uint8_t energy_phase_id; /**< Energy PhaseID */
+    uint16_t sched_time; /**< Scheduled Time */
 };
 
+/** Energy Phases Schedule Notification command structure */
 struct ZbZclPowerProfCliPhasesNotify {
-    uint8_t profile_id;
-    uint8_t num_phases;
-    struct ZbZclPowerProfSchedPhase sched_list[ZCL_PWR_PROF_MAX_ENERGY_PHASES];
+    uint8_t profile_id; /**< Power ProfileID */
+    uint8_t num_phases; /**< Num of Scheduled Phases */
+    struct ZbZclPowerProfSchedPhase sched_list[ZCL_PWR_PROF_MAX_ENERGY_PHASES]; /**< Schedule List */
 };
 
+/** GetPowerProfilePriceResponse command structure */
 struct ZbZclPowerProfCliPriceRsp {
-    uint8_t profile_id;
-    uint16_t currency;
-    uint32_t price;
-    uint8_t trailing_digit;
+    uint8_t profile_id; /**< Power Profile ID */
+    uint16_t currency; /**< Currency */
+    uint32_t price; /**< Price */
+    uint8_t trailing_digit; /**< Price Trailing Digit */
 };
 
+/** GetOverallSchedulePriceResponse command structure */
 struct ZbZclPowerProfCliSchedPriceRsp {
-    uint16_t currency;
-    uint32_t price;
-    uint8_t trailing_digit;
+    uint16_t currency; /**< Currency */
+    uint32_t price; /**< Price */
+    uint8_t trailing_digit; /**< Price Trailing Digit */
 };
 
-/* ZCL_PWR_PROF_SVR_PHASES_RSP / ZCL_PWR_PROF_SVR_PHASES_NOTIFY */
+/** Energy Phases Schedule Notification and EnergyPhasesScheduleResponse command structure */
 struct ZbZclPowerProfSvrPhasesRsp {
-    uint8_t profile_id;
-    uint8_t num_sched_energy_phases;
+    uint8_t profile_id; /**< Power ProfileID */
+    uint8_t num_sched_energy_phases; /**< Num of Scheduled Phases */
 };
 
-/* ZCL_PWR_PROF_SVR_CONSTRAINTS_NOTIFY */
+/** PowerProfileScheduleConstraintsNotification command structure */
 struct ZbZclPowerProfSvrConstraintsNotify {
-    uint8_t profile_id;
-    uint16_t start_after;
-    uint16_t stop_before;
+    uint8_t profile_id; /**< PowerProfileID */
+    uint16_t start_after; /**< Start After */
+    uint16_t stop_before; /**< Stop Before */
 };
 
 /* GetPowerProfilePriceExtended Command options field */
 #define ZCL_PWR_PROF_PRICE_EXT_OPT_START_TIME_PRESENT   0x01U
 #define ZCL_PWR_PROF_PRICE_EXT_OPT_EST_PRICE            0x02U
 
-/* ZCL_PWR_PROF_SVR_GET_PRICE_EXT */
+/** GetPowerProfilePriceExtended command structure */
 struct ZbZclPowerProfSvrGetPriceExtReq {
-    uint8_t options; /* e.g. ZCL_PWR_PROF_PRICE_EXT_OPT_START_TIME_PRESENT */
-    uint8_t profile_id;
-    uint16_t start_time; /* optional (ZCL_PWR_PROF_PRICE_EXT_OPT_START_TIME_PRESENT) */
+    uint8_t options; /**< Options - e.g. ZCL_PWR_PROF_PRICE_EXT_OPT_START_TIME_PRESENT */
+    uint8_t profile_id; /**< PowerProfileID */
+    uint16_t start_time; /**< PowerProfileStartTime - optional (ZCL_PWR_PROF_PRICE_EXT_OPT_START_TIME_PRESENT) */
 };
 
-/* Power Profile Client Callbacks
- * If application sends a response, the callback return code should be set to
- * ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE to prevent a Default Response from also being sent.
- */
+/** Power Profile Client callbacks configuration */
 struct ZbZclPowerProfClientCallbacks {
-    /* ZCL_PWR_PROF_SVR_PROFILE_NOTIFY */
     enum ZclStatusCodeT (*profile_notify)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfSvrProfileRsp *notify, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of PowerProfileNotification command */
 
-    /* ZCL_PWR_PROF_SVR_GET_PRICE */
     enum ZclStatusCodeT (*get_price)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfCliProfileReq *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of GetPowerProfilePrice command */
 
-    /* ZCL_PWR_PROF_SVR_STATE_NOTIFY */
     enum ZclStatusCodeT (*state_notify)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfSvrStateRsp *notify, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of PowerProfileStateNotification command */
 
-    /* ZCL_PWR_PROF_SVR_GET_SCHED_PRICE */
     enum ZclStatusCodeT (*get_sched_price)(struct ZbZclClusterT *cluster,
         struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of GetOverallSchedulePrice command */
 
-    /* ZCL_PWR_PROF_SVR_PHASES_REQ */
     enum ZclStatusCodeT (*phases_req)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfCliProfileReq *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of EnergyPhasesScheduleRequest command */
 
-    /* ZCL_PWR_PROF_SVR_PHASES_NOTIFY */
     enum ZclStatusCodeT (*phases_notify)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfSvrPhasesRsp *notify, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of EnergyPhasesScheduleStateNotification command */
 
-    /* ZCL_PWR_PROF_SVR_CONSTRAINTS_NOTIFY */
     enum ZclStatusCodeT (*constraints_notify)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfSvrConstraintsNotify *notify, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of PowerProfileScheduleConstraintsNotification command */
 
-    /* ZCL_PWR_PROF_SVR_GET_PRICE_EXT */
     enum ZclStatusCodeT (*get_price_ext)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfSvrGetPriceExtReq *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of GetPowerProfilePriceExtended command */
 };
 
+/**
+ * Create a new instance of the Power Profile Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param callbacks Structure containing any callback function pointers for this cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclPowerProfClientAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclPowerProfClientCallbacks *callbacks, void *arg);
 
-/* ZCL_PWR_PROF_CLI_PROFILE_REQ */
+/**
+ * Send a PowerProfileRequest command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req PowerProfileRequest command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfClientProfileReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_CLI_STATE_REQ */
+/**
+ * Send a PowerProfileStateRequest command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfClientStateReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_CLI_PRICE_RSP */
+/**
+ * Send a GetPowerProfilePriceResponse command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp GetPowerProfilePriceResponse command response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfClientPriceRsp(struct ZbZclClusterT *cluster,
     struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfCliPriceRsp *rsp,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_CLI_SCHED_PRICE_RSP */
+/**
+ * Send a GetOverallSchedulePriceResponse command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp GetOverallSchedulePriceResponse command response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfClientSchedPriceRsp(struct ZbZclClusterT *cluster,
     struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfCliSchedPriceRsp *rsp,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_CLI_PHASES_NOTIFY */
+/**
+ * Send an Energy Phases Schedule Notification command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param notify Energy Phases Schedule Notification command structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfClientPhasesNotify(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliPhasesNotify *notify,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_CLI_PHASES_RSP */
+/**
+ * Send a EnergyPhasesScheduleResponse command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp EnergyPhasesScheduleResponse command response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfClientPhasesResponse(struct ZbZclClusterT *cluster,
     struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfCliPhasesNotify *notify,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_CLI_SCHED_CONS_REQ */
+/**
+ * Send a PowerProfileScheduleConstraintsRequest command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req PowerProfileScheduleConstraintsRequest command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfClientSchedConsReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_CLI_PHASES_SCHED_STATE_REQ */
+/**
+ * Send a EnergyPhasesScheduleStateRequest command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req EnergyPhasesScheduleStateRequest command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfClientPhasesSchedStateReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_CLI_PRICE_EXT_RSP */
+/**
+ * Send a GetPowerProfilePriceExtendedResponse command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp GetPowerProfilePriceExtendedResponse command response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfClientPriceExtRsp(struct ZbZclClusterT *cluster,
     struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfCliPriceRsp *rsp,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
-/* Power Profile Server Callbacks
- * If application sends a response, the callback return code should be set to
- * ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE to prevent a Default Response from also being sent.
- */
+/** Power Profile Server callbacks configuration */
 struct ZbZclPowerProfServerCallbacks {
-    /* ZCL_PWR_PROF_CLI_PROFILE_REQ */
     enum ZclStatusCodeT (*profile_req)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfCliProfileReq *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of PowerProfileRequest command */
 
-    /* ZCL_PWR_PROF_CLI_STATE_REQ */
     enum ZclStatusCodeT (*state_req)(struct ZbZclClusterT *cluster,
         struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of PowerProfileStateRequest command */
 
-    /* ZCL_PWR_PROF_CLI_PHASES_NOTIFY */
     enum ZclStatusCodeT (*phases_notify)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfCliPhasesNotify *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Energy Phases Schedule Notification command */
 
-    /* ZCL_PWR_PROF_CLI_SCHED_CONS_REQ */
     enum ZclStatusCodeT (*sched_contraints_req)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfCliProfileReq *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of PowerProfileScheduleConstraintsRequest command */
 
-    /* ZCL_PWR_PROF_CLI_PHASES_SCHED_STATE_REQ */
     enum ZclStatusCodeT (*phases_sched_state_req)(struct ZbZclClusterT *cluster,
         struct ZbZclPowerProfCliProfileReq *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of EnergyPhasesScheduleStateRequest command */
 };
 
+/**
+ * Create a new instance of the Power Profile Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param callbacks Structure containing any callback function pointers for this cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclPowerProfServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclPowerProfServerCallbacks *callbacks, void *arg);
 
-/* Send a PowerProfileNotification Command. It is sent as a ZCL request with a unique
- * sequence number, and can receive a Default Response if applicable. */
+/** Send a PowerProfileNotification Command. It is sent as a ZCL request with a unique
+ * sequence number, and can receive a Default Response if applicable
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param notify PowerProfileNotification command structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerProfileNotify(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrProfileRsp *notify,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-/* Send a PowerProfileResponse Command. */
+/**
+ * Send a PowerProfileResponse command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp PowerProfileResponse command response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerProfileRsp(struct ZbZclClusterT *cluster,
     struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfSvrProfileRsp *rsp,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_STATE_RSP */
+/**
+ * Send a PowerProfileStateResponse command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp PowerProfileStateResponse command response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerStateRsp(struct ZbZclClusterT *cluster,
     struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfSvrStateRsp *rsp,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_GET_PRICE */
+/**
+ * Send a GetPowerProfilePrice command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req GetPowerProfilePrice command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerGetPriceReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_STATE_NOTIFY */
+/** Send a PowerProfileStateNotification Command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param notify PowerProfileStateNotification command structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerStateNotify(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrStateRsp *notify,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_GET_SCHED_PRICE */
+/**
+ * Send a GetOverallSchedulePrice command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req GetOverallSchedulePrice command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerGetSchedPriceReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_PHASES_REQ */
+/**
+ * Send a EnergyPhasesScheduleRequest command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req EnergyPhasesScheduleRequest command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerPhasesReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfCliProfileReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_PHASES_RSP */
+/**
+ * Send a EnergyPhasesScheduleStateResponse command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp EnergyPhasesScheduleStateResponse command response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerPhasesRsp(struct ZbZclClusterT *cluster,
     struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfSvrPhasesRsp *rsp,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_PHASES_NOTIFY */
+/** Send a EnergyPhasesScheduleStateNotification Command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param notify EnergyPhasesScheduleStateNotification command structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerPhasesNotify(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrPhasesRsp *notify,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_CONSTRAINTS_NOTIFY */
+/** Send a PowerProfileScheduleConstraintsNotification Command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param notify PowerProfileScheduleConstraintsNotification command structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerConstraintsNotify(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrConstraintsNotify *notify,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_CONSTRAINTS_RSP */
+/**
+ * Send a PowerProfileScheduleConstraintsResponse command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp PowerProfileScheduleConstraintsResponse command response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerConstraintsRsp(struct ZbZclClusterT *cluster,
     struct ZbZclAddrInfoT *dst, struct ZbZclPowerProfSvrConstraintsNotify *rsp,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
-/* ZCL_PWR_PROF_SVR_GET_PRICE_EXT */
+/**
+ * Send a GetPowerProfilePriceExtended command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req GetPowerProfilePriceExtended command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclPowerProfServerGetPriceReqExtReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclPowerProfSvrGetPriceExtReq *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);

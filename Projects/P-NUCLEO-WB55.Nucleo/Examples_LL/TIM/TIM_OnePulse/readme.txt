@@ -68,6 +68,10 @@ stops automatically at the next update event (UEV).
 Connecting TIM1 OC1 to TIM2 TI2 allows to trigger TIM2 counter by pressing
 the User push-button.
 
+@par Keywords
+
+Timers, Output, signals, One Pulse, PWM, Oscilloscope, External signal, Autoreload, Waveform
+
 @par Directory contents 
 
   - TIM/TIM_OnePulse/Inc/stm32wbxx_it.h          Interrupt handlers header file

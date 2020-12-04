@@ -99,6 +99,12 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+  /**
+   * The OPTVERR flag is wrongly set at power on
+   * It shall be cleared before using any HAL_FLASH_xxx() api
+   */
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -553,25 +559,35 @@ static void MX_TIM2_Init(void)
  * WRAP FUNCTIONS
  *
  *************************************************************/
-
-/**
- * @brief Declare here empty functions to over-write the default one as it declared as WEAK in HAL.
- * This is the way to avoid systick use which is initialized by default in HAL_Init() and suspended or resumed in LPM.
- *
- * @param None
- */
-HAL_StatusTypeDef HAL_InitTick( uint32_t TickPriority )
+void HAL_Delay(uint32_t Delay)
 {
-  return (HAL_OK);
-}
+  uint32_t tickstart = HAL_GetTick();
+  uint32_t wait = Delay;
 
-void HAL_SuspendTick(void)
-{
-}
+  /* Add a freq to guarantee minimum wait */
+  if (wait < HAL_MAX_DELAY)
+  {
+    wait += HAL_GetTickFreq();
+  }
 
-void HAL_ResumeTick(void)
-{
+  while ((HAL_GetTick() - tickstart) < wait)
+  {
+    /************************************************************************************
+     * ENTER SLEEP MODE
+     ***********************************************************************************/
+    LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
+
+    /**
+     * This option is used to ensure that store operations are completed
+     */
+  #if defined ( __CC_ARM)
+    __force_stores();
+  #endif
+
+    __WFI( );
+  }
 }
+/* USER CODE END 4 */
 
 /**
   * @brief  This function is executed in case of error occurrence.

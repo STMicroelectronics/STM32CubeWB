@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Production</name>
+        <name>CKS_Crypt</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -1350,27 +1350,6 @@
                 <option>
                     <name>CCXds100SWOPort</name>
                     <state>1</state>
-                </option>
-            </data>
-        </settings>
-        <settings>
-            <name>NULINK_ID</name>
-            <archiveVersion>2</archiveVersion>
-            <data>
-                <version>0</version>
-                <wantNonLocal>1</wantNonLocal>
-                <debug>1</debug>
-                <option>
-                    <name>OCDriverInfo</name>
-                    <state>1</state>
-                </option>
-                <option>
-                    <name>DoLogfile</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>LogFile</name>
-                    <state>$PROJ_DIR$\cspycomm.log</state>
                 </option>
             </data>
         </settings>

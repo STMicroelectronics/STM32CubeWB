@@ -194,7 +194,24 @@ static SVCCTL_EvtAckStatus_t OTAS_Event_Handler(void *Event)
           }
         }
         break;
-
+      
+        case EVT_BLUE_GATT_WRITE_PERMIT_REQ:
+          {
+            aci_gatt_write_permit_req_event_rp0 * write_perm_req;
+            write_perm_req = (aci_gatt_write_permit_req_event_rp0*)blue_evt->data;
+                if(write_perm_req->Attribute_Handle == (OTAS_Context.OTAS_Raw_Data_CharHdle  + 1)) 
+                {
+                  return_value = SVCCTL_EvtAckFlowEnable;          
+                  aci_gatt_write_resp(write_perm_req->Connection_Handle,
+                                          write_perm_req->Attribute_Handle,
+                                          0x00, /* write_status = 0 (no error))*/
+                                          0x00, /* err_code */
+                                          write_perm_req->Data_Length,
+                                          (uint8_t *)&(write_perm_req->Data[0]));
+                }
+          }
+          break;
+   
         default:
           break;
       }
@@ -266,7 +283,7 @@ void OTAS_STM_Init(void)
                     OTA_RAW_DATA_CHAR_SIZE,
                     CHAR_PROP_WRITE_WITHOUT_RESP,
                     ATTR_PERMISSION_NONE,
-                    GATT_NOTIFY_ATTRIBUTE_WRITE,
+                    GATT_NOTIFY_ATTRIBUTE_WRITE | GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP,
                     10,
                     1,
                     &(OTAS_Context.OTAS_Raw_Data_CharHdle));

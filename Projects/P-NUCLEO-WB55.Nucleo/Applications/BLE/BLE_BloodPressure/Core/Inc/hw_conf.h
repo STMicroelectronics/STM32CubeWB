@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
-  * File Name          : hw_conf.h
-  * Description        : Hardware configuration file for BLE 
-  *                      middleWare.
+ * @file    hw_conf.h
+ * @author  MCD Application Team
+ * @brief   Configuration of hardware interface
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+ * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license 
@@ -32,6 +32,8 @@
 *  The CPU1 shall not either write or erase in flash when this semaphore is taken by the CPU2
 *  When the CPU1 needs to either write or erase in flash, it shall first get the semaphore and release it just
 *  after writing a raw (64bits data) or erasing one sector.
+*  Once the Semaphore has been released, there shall be at least 1us before it can be taken again. This is required
+*  to give the opportunity to CPU2 to take it.
 *  On v1.4.0 and older CPU2 wireless firmware, this semaphore is unused and CPU2 is using PES bit.
 *  By default, CPU2 is using the PES bit to protect its timing. The CPU1 may request the CPU2 to use the semaphore
 *  instead of the PES bit by sending the system command SHCI_C2_SetFlashActivityControl()
@@ -132,12 +134,11 @@
 /******************************************************************************
  * HW UART
  *****************************************************************************/
-
 #define CFG_HW_LPUART1_ENABLED           1
 #define CFG_HW_LPUART1_DMA_TX_SUPPORTED  1
 
 #define CFG_HW_USART1_ENABLED           1
-#define CFG_HW_USART1_DMA_TX_SUPPORTED  0
+#define CFG_HW_USART1_DMA_TX_SUPPORTED  1
 
 /**
  * LPUART1
@@ -187,9 +188,9 @@
 #define CFG_HW_LPUART1_DMAMUX_CLK_ENABLE       __HAL_RCC_DMAMUX1_CLK_ENABLE
 #define CFG_HW_LPUART1_DMA_CLK_ENABLE          __HAL_RCC_DMA1_CLK_ENABLE
 #define CFG_HW_LPUART1_TX_DMA_REQ              DMA_REQUEST_LPUART1_TX
-#define CFG_HW_LPUART1_TX_DMA_CHANNEL          DMA1_CHANNEL_4
-#define CFG_HW_LPUART1_TX_DMA_IRQn             DMA1_CHANNEL_4_IRQn
-#define CFG_HW_LPUART1_DMA_TX_IRQHandler       DMA1_CHANNEL_4_IRQHandler
+#define CFG_HW_LPUART1_TX_DMA_CHANNEL          DMA1_Channel4
+#define CFG_HW_LPUART1_TX_DMA_IRQn             DMA1_Channel4_IRQn
+#define CFG_HW_LPUART1_DMA_TX_IRQHandler       DMA1_Channel4_IRQHandler
 
 /**
  * UART1
@@ -232,6 +233,16 @@
 #define CFG_HW_USART1_CTS_PULL                GPIO_PULLDOWN
 #define CFG_HW_USART1_CTS_SPEED               GPIO_SPEED_FREQ_VERY_HIGH
 #define CFG_HW_USART1_CTS_ALTERNATE           GPIO_AF7_USART1
+
+#define CFG_HW_USART1_DMA_TX_PREEMPTPRIORITY  0x0F
+#define CFG_HW_USART1_DMA_TX_SUBPRIORITY      0
+
+#define CFG_HW_USART1_DMAMUX_CLK_ENABLE       __HAL_RCC_DMAMUX1_CLK_ENABLE
+#define CFG_HW_USART1_DMA_CLK_ENABLE          __HAL_RCC_DMA2_CLK_ENABLE
+#define CFG_HW_USART1_TX_DMA_REQ			  DMA_REQUEST_USART1_TX
+#define CFG_HW_USART1_TX_DMA_CHANNEL          DMA2_Channel4
+#define CFG_HW_USART1_TX_DMA_IRQn             DMA2_Channel4_IRQn
+#define CFG_HW_USART1_DMA_TX_IRQHandler       DMA2_Channel4_IRQHandler
 
 #endif /*HW_CONF_H */
 

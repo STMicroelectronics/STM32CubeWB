@@ -34,6 +34,10 @@ When the button is pressed, the toggle frequency is changed.
 @note The application need to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
 
+@par Keywords
+
+System, Led, Button
+
 @par Directory contents 
 
   - BSP/BSP/Inc/stm32wbxx_hal_conf.h    HAL configuration file

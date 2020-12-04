@@ -79,6 +79,10 @@ STM32 board's LEDs can be used to monitor the transfer status:
 @note The application need to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
 
+@par Keywords
+
+Connectivity, SPI, Half-duplex, Transmission, Reception, Slave, MISO, MOSI, Polling, Interrupt
+
 @par Directory contents 
 
   - Examples_MIX/SPI/SPI_HalfDuplex_ComPollingIT_Slave/Inc/stm32wbxx_hal_conf.h    HAL configuration file

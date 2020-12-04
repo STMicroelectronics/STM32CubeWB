@@ -1,4 +1,10 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.occupancy.h
+ * @brief ZCL Occupancy Sensing cluster header
+ * ZCL 7 section 4.8
+ * ZCL 8 section 4.8
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_OCCUP_H
 # define ZCL_OCCUP_H
@@ -39,25 +45,38 @@
 
 /** Occupancy Sensing Server Attribute IDs */
 enum ZbZclOccupancySvrAttrT {
-    ZCL_OCC_ATTR_OCCUPANCY = 0x0000,
-    ZCL_OCC_ATTR_SENSORTYPE = 0x0001,
-    ZCL_OCC_ATTR_SENSORTYPE_BITMAP = 0x0002,
-    ZCL_OCC_ATTR_PIR_OU_DELAY = 0x0010,
-    ZCL_OCC_ATTR_PIR_UO_DELAY = 0x0011,
-    ZCL_OCC_ATTR_PIR_UO_THRESHOLD = 0x0012,
-    ZCL_OCC_ATTR_US_OU_DELAY = 0x0020,
-    ZCL_OCC_ATTR_US_UO_DELAY = 0x0021,
-    ZCL_OCC_ATTR_US_UO_THRESHOLD = 0x0022,
-    ZCL_OCC_ATTR_PHY_OU_DELAY = 0x0030,
-    ZCL_OCC_ATTR_PHY_UO_DELAY = 0x0031,
-    ZCL_OCC_ATTR_PHY_UO_THRESHOLD = 0x0032,
+    ZCL_OCC_ATTR_OCCUPANCY = 0x0000, /**< Occupancy */
+    ZCL_OCC_ATTR_SENSORTYPE = 0x0001, /**< OccupancySensorType */
+    ZCL_OCC_ATTR_SENSORTYPE_BITMAP = 0x0002, /**< OccupancySensorTypeBitmap */
+    ZCL_OCC_ATTR_PIR_OU_DELAY = 0x0010, /**< PIROccupiedToUnoccupiedDelay (Optional) */
+    ZCL_OCC_ATTR_PIR_UO_DELAY = 0x0011, /**< PIRUnoccupiedToOccupiedDelay (Optional) */
+    ZCL_OCC_ATTR_PIR_UO_THRESHOLD = 0x0012, /**< PIRUnoccupiedToOccupiedThreshold (Optional) */
+    ZCL_OCC_ATTR_US_OU_DELAY = 0x0020, /**< UltrasonicOccupiedToUnoccupiedDelay (Optional) */
+    ZCL_OCC_ATTR_US_UO_DELAY = 0x0021, /**< UltrasonicUnoccupiedToOccupiedDelay (Optional) */
+    ZCL_OCC_ATTR_US_UO_THRESHOLD = 0x0022, /**< UltrasonicUnoccupiedToOccupiedThreshold (Optional) */
+    ZCL_OCC_ATTR_PHY_OU_DELAY = 0x0030, /**< PhysicalContactOccupiedToUnoccupiedDelay (Optional) */
+    ZCL_OCC_ATTR_PHY_UO_DELAY = 0x0031, /**< PhysicalContactUnoccupiedToOccupiedDelay (Optional) */
+    ZCL_OCC_ATTR_PHY_UO_THRESHOLD = 0x0032, /**< PhysicalContactUnoccupiedToOccupiedThreshold (Optional) */
 };
 
 #define OCC_SENSOR_PIR                      0x00
 #define OCC_SENSOR_ULTRASONIC               0x01
 #define OCC_SENSOR_PIR_ULTRASONIC           0x02
 
+/**
+ * Create a new instance of the Occupancy Sensing Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclOccupancyClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
+
+/**
+ * Create a new instance of the Occupancy Sensing Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclOccupancyServerAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 #endif /* ZCL_OCCUP_H */

@@ -117,6 +117,10 @@ access to uSD card to parse bmp images:
 @note The application need to ensure that the SysTick time base is always set to
       1 millisecond to have correct HAL operation.
 
+@par Keywords
+
+System, TFT, SD Card, Joystick
+
 @par Directory contents
  
   - Adafruit_LCD_1_8_SD_Joystick/Inc/stm32wbxx_hal_conf.h    HAL configuration file

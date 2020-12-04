@@ -85,7 +85,10 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     __HAL_RCC_LPUART1_CLK_ENABLE();
     
     /* GPIOs configuration */
+    #if(CFG_DEBUG_TRACE != 0)
     gpio_lld_lpuart_init();
+    #endif
+
     
     /* LPUART1 DMA Init */
     /* LPUART1_TX Init */
@@ -137,7 +140,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     __HAL_RCC_USART1_CLK_ENABLE();
     
     /* GPIOs configuration */
+    #if(CFG_DEBUG_TRACE != 0)
     gpio_lld_usart_init();
+    #endif
     
     /* USART1 DMA Init */
     /* USART1_TX Init */

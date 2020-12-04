@@ -25,6 +25,7 @@
 #include "hw.h"
 #include "hw_conf.h"
 #include "hw_if.h"
+#include "ble_bufsize.h"
 
 /******************************************************************************
  * Application Config
@@ -49,7 +50,7 @@
 /**
  * Define IO Authentication
  */
-#define CFG_BONDING_MODE                 (0)
+#define CFG_BONDING_MODE                 (1)
 #define CFG_FIXED_PIN                    (111111)
 #define CFG_USED_FIXED_PIN               (0)
 #define CFG_ENCRYPTION_KEY_SIZE_MAX      (16)
@@ -64,7 +65,7 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY   (0x04)
 
-#define CFG_IO_CAPABILITY               CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT
+#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_DISPLAY_YES_NO
 
 /**
  * Define MITM modes
@@ -130,7 +131,7 @@
  * SMPS not used when Set to 0
  * SMPS used when Set to 1
  */
-#define CFG_USE_SMPS    1
+#define CFG_USE_SMPS    0
 /* USER CODE END Generic_Parameters */
 
 /**< specific parameters */
@@ -187,7 +188,7 @@
  * Maximum number of simultaneous connections that the device will support.
  * Valid values are from 1 to 8
  */
-#define CFG_BLE_NUM_LINK            8
+#define CFG_BLE_NUM_LINK            2
 
 /**
  * Maximum number of Services that can be stored in the GATT database.
@@ -255,9 +256,9 @@
 #define CFG_BLE_MASTER_SCA   0
 
 /**
- *  Source for the 32 kHz slow speed clock
- *  1 : internal RO
- *  0 : external crystal ( no calibration )
+ *  Source for the low speed clock for RF wake-up
+ *  1 : external high speed crystal HSE/32/32
+ *  0 : external low speed crystal ( no calibration )
  */
 #define CFG_BLE_LSE_SOURCE  0
 
@@ -306,9 +307,7 @@
  * allocated in the queue of received events and can be used to optimize the amount of RAM allocated by the Memory Manager.
  * It should not exceed 255 which is the maximum HCI packet payload size (a greater value is a lost of memory as it will
  * never be used)
- * It shall be at least 4 to receive the command status event in one frame.
- * The default value is set to 27 to allow receiving an event of MTU size in a single buffer. This value maybe reduced
- * further depending on the application.
+ * With the current wireless firmware implementation, this parameter shall be kept to 255
  *
  */
 #define CFG_TLBLE_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
@@ -346,8 +345,8 @@
  ******************************************************************************/
 /**
  *  CFG_RTC_WUCKSEL_DIVIDER:  This sets the RTCCLK divider to the wakeup timer.
- *  The higher is the value, the better is the power consumption and the accuracy of the timerserver
- *  The lower is the value, the finest is the granularity
+ *  The lower is the value, the better is the power consumption and the accuracy of the timerserver
+ *  The higher is the value, the finest is the granularity
  *
  *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to ouput
  *  clock as low as possible) but the output clock should be equal or higher frequency compare to the clock feeding
@@ -419,6 +418,9 @@
 typedef enum
 {
   CFG_TIM_PROC_ID_ISR,
+  /* USER CODE BEGIN CFG_TimProcID_t */
+
+  /* USER CODE END CFG_TimProcID_t */
 } CFG_TimProcID_t;
 
 /******************************************************************************

@@ -5,8 +5,8 @@
   ******************************************************************************
   * @file    BLE_Zigbee/BLE_Zigbee_Dyn_NVM/readme.txt 
   * @author  MCD Application Team
-  * @brief   Example of application using BLE and Zigbee protocols in Static 
-  *          Concurrent mode.
+  * @brief   Example of application using BLE and Zigbee protocols in dynamic 
+  *          concurrent mode with Zigbee persistent data feature.
   ******************************************************************************
   *
   * Copyright (c) 2020 STMicroelectronics. All rights reserved.

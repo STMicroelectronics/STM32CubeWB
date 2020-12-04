@@ -45,17 +45,17 @@
  *---------------------------------------------------------------
  */
 
-/** Device Temp Cluster Attribute Ids */
+/** Device Temperature Cluster Attribute Ids */
 enum ZbZclDeviceTempSvrAttrT {
     ZCL_DEV_TEMP_CURRENT = 0x0000, /**< CurrentTemperature */
-    ZCL_DEV_TEMP_MIN_TEMP = 0x0001, /**< MinTempExperienced */
-    ZCL_DEV_TEMP_MAX_TEMP = 0x0002, /**< MaxTempExperienced */
-    ZCL_DEV_TEMP_OVER_TEMP_DWELL = 0x0003, /**< OverTempTotalDwell */
-    ZCL_DEV_TEMP_ALARM_MASK = 0x0010, /**< DeviceTempAlarmMask */
-    ZCL_DEV_TEMP_LOW_THRESHOLD = 0x0011, /**< LowTempThreshold */
-    ZCL_DEV_TEMP_HIGH_THRESHOLD = 0x0012, /**< HighTempThreshold */
-    ZCL_DEV_TEMP_LOW_DWELL_TRIP = 0x0013, /**< LowTempDwellTripPoint */
-    ZCL_DEV_TEMP_HIGH_DWELL_TRIP = 0x0014, /**< HighTempDwellTripPoint */
+    ZCL_DEV_TEMP_MIN_TEMP = 0x0001, /**< MinTempExperienced (Optional) */
+    ZCL_DEV_TEMP_MAX_TEMP = 0x0002, /**< MaxTempExperienced (Optional) */
+    ZCL_DEV_TEMP_OVER_TEMP_DWELL = 0x0003, /**< OverTempTotalDwell (Optional) */
+    ZCL_DEV_TEMP_ALARM_MASK = 0x0010, /**< DeviceTempAlarmMask (Optional) */
+    ZCL_DEV_TEMP_LOW_THRESHOLD = 0x0011, /**< LowTempThreshold (Optional) */
+    ZCL_DEV_TEMP_HIGH_THRESHOLD = 0x0012, /**< HighTempThreshold (Optional) */
+    ZCL_DEV_TEMP_LOW_DWELL_TRIP = 0x0013, /**< LowTempDwellTripPoint (Optional) */
+    ZCL_DEV_TEMP_HIGH_DWELL_TRIP = 0x0014, /**< HighTempDwellTripPoint (Optional) */
 };
 
 #define ZCL_DEVICE_TEMP_MIN                         (-200)
@@ -65,33 +65,35 @@ enum ZbZclDeviceTempSvrAttrT {
  * the alarm for that threshold is disabled. */
 #define ZCL_DEVICE_TEMP_INVALID                     ((int16_t)0x8000)
 
-/* Alarm Mask */
+#define ZCL_DEVICE_TEMP_ALARM_MASK_ALL              0x03U
+
+/** Device Temperature Configuration Alarm Mask */
 enum ZbZclDeviceTempAlarmMask {
-    ZCL_DEV_TEMP_ALARM_MASK_CLEAR = 0x00,
-    ZCL_DEV_TEMP_ALARM_MASK_LOW = 0x01,
-    ZCL_DEV_TEMP_ALARM_MASK_HIGH = 0x02,
+    ZCL_DEV_TEMP_ALARM_MASK_CLEAR = 0x00, /**< Alarm mask clear */
+    ZCL_DEV_TEMP_ALARM_MASK_LOW = 0x01, /**< Alarm mask low */
+    ZCL_DEV_TEMP_ALARM_MASK_HIGH = 0x02, /**< Alarm mask high */
 };
 
-/* Alarms */
+/** Device Temperature Configuration Alarm Code */
 enum ZbZclDeviceTempAlarmCode {
-    ZCL_DEV_TEMP_ALARM_CODE_LOW = 0x00,
-    ZCL_DEV_TEMP_ALARM_CODE_HIGH = 0x01,
+    ZCL_DEV_TEMP_ALARM_CODE_LOW = 0x00, /**< Device Temperature too low */
+    ZCL_DEV_TEMP_ALARM_CODE_HIGH = 0x01, /**< Device Temperature too high */
 };
 
 /**
- * Instantiate a new instance of the Device Temp server cluster.
- * @param zb Zigbee stack instance.
- * @param endpoint APS endpoint to create cluster on.
- * @return Cluster pointer, or NULL if there as an error.
+ * Create a new instance of the Device Temperature Configuration Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclDevTempClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
 /**
  * Instantiate a new instance of the Device Temp client cluster.
- * @param zb Zigbee stack instance.
- * @param endpoint APS endpoint to create cluster on.
- * @return Cluster pointer, or NULL if there as an error.
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclDevTempServerAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
-#endif /* __ZCL_DEVICE_TEMP_H */
+#endif

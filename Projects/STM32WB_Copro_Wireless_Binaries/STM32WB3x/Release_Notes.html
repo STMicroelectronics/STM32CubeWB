@@ -342,9 +342,107 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.8.0 / 21-September-2020</label>
+<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.10.0 / 26-October-2020</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE:
+<ul>
+<li>ID 87954 : Minimal time to keep Sem7 released by CPU1 so CPU2 can take it</li>
+<li>ID 89925 : LLD_BLE_StopActivity does not stop BLE activity</li>
+<li>ID 91232 : aci_gap_start_general_discovery_proc stopped in scan only configuration<br />
+</li>
+<li>ID 93009 : The dyn_alloc_a (GAP) and dyn_alloc_gatt_a (GATT) shall have fixed size</li>
+<li>ID 93025 : The HSERDY bit stays high after CPU2 is started</li>
+</ul></li>
+</ul>
+<p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB3x(512K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb3x_FUS_fw_1_0_2.bin</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>v1.0.2</td>
+<td>04/10/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_FUS_fw.bin</td>
+<td>0x080<strong>7A</strong>000</td>
+<td><strong>v1.1.0</strong></td>
+<td>02/10/2020</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 7” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB3x(512K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb3x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x0806a000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/26/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_HCILayer_fw.bin</td>
+<td>0x08060000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/26/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_BLE_Stack_full_fw.bin</td>
+<td>0x0804b000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/26/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_Stack_light_fw.bin</td>
+<td>0x08056000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/26/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Mac_802_15_4_fw.bin</td>
+<td>0x08063000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/15/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_Thread_FTD_fw.bin</td>
+<td>0x0801B000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/15/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Thread_MTD_fw.bin</td>
+<td>0x08031000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/15/2020</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.9.0 / 21-September-2020</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Introducing following new binary:</li>
@@ -458,7 +556,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.8.0 / 22-June-2020</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -566,7 +664,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>MAC:
@@ -655,7 +753,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of Wireless Coprocessor Binary compatible with STM32WB3x.</li>

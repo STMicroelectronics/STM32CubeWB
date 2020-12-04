@@ -295,7 +295,17 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
 #endif
       while(1)
       {
-        HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+        /**
+         * Wait for the FUS to reboot the system when the upgrade is done
+         * In case an error is detected during the upgrade process, restart the device
+         * The BLE_Ota state machine will request a SHCI_C2_FUS_StartWs() on the next reboot.
+         */
+        HAL_Delay(10000);   /* Poll the FUS each 10s to make sure process is going fine */
+        fus_state_value = SHCI_C2_FUS_GetState( NULL );
+        if( (fus_state_value < 0x10) || (fus_state_value > 0x2F) )
+        {
+          NVIC_SystemReset();
+        }
       }
     }
     else
@@ -336,7 +346,17 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
   #endif
         while(1)
         {
-          HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+          /**
+           * Wait for the FUS to reboot the system when the upgrade is done
+           * In case an error is detected during the upgrade process, restart the device
+           * The BLE_Ota state machine will request a SHCI_C2_FUS_StartWs() on the next reboot.
+           */
+          HAL_Delay(10000);   /* Poll the FUS each 10s to make sure process is going fine */
+          fus_state_value = SHCI_C2_FUS_GetState( NULL );
+          if( (fus_state_value < 0x10) || (fus_state_value > 0x2F) )
+          {
+            NVIC_SystemReset();
+          }
         }
       }
     }

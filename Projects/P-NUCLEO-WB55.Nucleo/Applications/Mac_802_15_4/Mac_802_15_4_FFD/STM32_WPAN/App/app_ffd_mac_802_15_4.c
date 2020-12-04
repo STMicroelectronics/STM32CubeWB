@@ -148,6 +148,8 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
   uint16_t panId       = 0x1AAA;
   uint8_t channel      = DEMO_CHANNEL;
   uint8_t PIB_Value = 0x00;
+  
+  int8_t tx_power_pib_value = 0;
 
   APP_DBG("Run FFD MAC 802.15.4 - 2 - FFD Startup");
 
@@ -211,6 +213,22 @@ void APP_FFD_MAC_802_15_4_SetupTask(void)
 
 
 
+  /* Set Tx Power */
+
+  APP_DBG("FFD MAC APP - Set TX Power");
+  memset(&SetReq,0x00,sizeof(MAC_setReq_t));
+  SetReq.PIB_attribute = g_PHY_TRANSMIT_POWER_c;
+  tx_power_pib_value = 2;                       /* int8 dBm value in the range [-21;6] */
+  SetReq.PIB_attribute_valuePtr = (uint8_t *)&tx_power_pib_value;
+
+  MacStatus = MAC_MLMESetReq( &SetReq );
+  if ( MAC_SUCCESS != MacStatus ) {
+    APP_DBG("FFD MAC - Set Tx Power Fails");
+    return;
+  }
+  UTIL_SEQ_WaitEvt( 1U << CFG_EVT_SET_CNF );
+  
+  
   /* Start Device */
   APP_DBG("FFD MAC APP - Start FFD Device");
   memset(&StartReq,0x00,sizeof(MAC_startReq_t));

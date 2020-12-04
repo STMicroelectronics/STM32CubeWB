@@ -1,9 +1,9 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : app_conf.h
   * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -50,9 +51,7 @@
  * allocated in the queue of received events and can be used to optimize the amount of RAM allocated by the Memory Manager.
  * It should not exceed 255 which is the maximum HCI packet payload size (a greater value is a lost of memory as it will
  * never be used)
- * It shall be at least 4 to receive the command status event in one frame.
- * The default value is set to 27 to allow receiving an event of MTU size in a single buffer. This value maybe reduced
- * further depending on the application.
+ * With the current wireless firmware implementation, this parameter shall be kept to 255
  *
  */
 #define CFG_TL_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
@@ -65,9 +64,9 @@
 /**
  * Select UART interfaces
  */
-#define CFG_DEBUG_TRACE_UART   hw_uart1 
-#define CFG_CONSOLE_MENU      
-#define CFG_CLI_UART           hw_lpuart1
+#define CFG_DEBUG_TRACE_UART    hw_uart1
+#define CFG_CONSOLE_MENU
+#define CFG_CLI_UART    hw_lpuart1
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -100,8 +99,8 @@
  ******************************************************************************/
 /**
  *  CFG_RTC_WUCKSEL_DIVIDER:  This sets the RTCCLK divider to the wakeup timer.
- *  The higher is the value, the better is the power consumption and the accuracy of the timerserver
- *  The lower is the value, the finest is the granularity
+ *  The lower is the value, the better is the power consumption and the accuracy of the timerserver
+ *  The higher is the value, the finest is the granularity
  *
  *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to ouput
  *  clock as low as possible) but the output clock should be equal or higher frequency compare to the clock feeding
@@ -172,7 +171,10 @@
 
 typedef enum
 {
-    CFG_TIM_PROC_ID_ISR,
+  CFG_TIM_PROC_ID_ISR,
+  /* USER CODE BEGIN CFG_TimProcID_t */
+
+  /* USER CODE END CFG_TimProcID_t */
 } CFG_TimProcID_t;
 
 /******************************************************************************
@@ -273,28 +275,33 @@ typedef enum
 /******************************************************************************
  * Scheduler
  ******************************************************************************/
-/**
- * This is the list of task id required by the application
- * Each Id shall be in the range 0..31
- */
+  /**
+   * This is the list of task id required by the application
+   * Each Id shall be in the range 0..31
+   */
 
-typedef enum {
+typedef enum
+{
   CFG_TASK_NOTIFY_FROM_M0_TO_M4,
   CFG_TASK_REQUEST_FROM_M0_TO_M4,
-  CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
   CFG_TASK_ZIGBEE_NETWORK_FORM,
+  CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
-  CFG_TASK_NBR /**< Shall be last in the list */
+  /* USER CODE BEGIN CFG_IdleTask_Id_t */
+
+  /* USER CODE END CFG_IdleTask_Id_t */
+  CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
 
 /* Scheduler types and defines        */
 /*------------------------------------*/
-
-//#define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
 #define EVENT_ACK_FROM_M0_EVT        (1U << CFG_EVT_ACK_FROM_M0_EVT)
 #define EVENT_SYNCHRO_BYPASS_IDLE    (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
+/* USER CODE BEGIN DEFINE_TASK */
+
+/* USER CODE END DEFINE_TASK */
 
 /**
  * This is the list of priority required by the application
@@ -307,25 +314,26 @@ typedef enum
     CFG_PRIO_NBR,
 } CFG_SCH_Prio_Id_t;
 
-/**
- * This is a bit mapping over 32bits listing all events id supported in the application
- */
-typedef enum {
-    CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP,
-    CFG_EVT_ACK_FROM_M0_EVT,
-    CFG_EVT_SYNCHRO_BYPASS_IDLE,
-    CFG_EVT_ZIGBEE_STARTUP_ENDED,
+  /**
+   * This is a bit mapping over 32bits listing all events id supported in the application
+   */
+typedef enum
+{
+  CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP,
+  CFG_EVT_ACK_FROM_M0_EVT,
+  CFG_EVT_SYNCHRO_BYPASS_IDLE,
+  CFG_EVT_ZIGBEE_STARTUP_ENDED,
+  /* USER CODE BEGIN CFG_IdleEvt_Id_t */
+
+  /* USER CODE END CFG_IdleEvt_Id_t */
 } CFG_IdleEvt_Id_t;
 
 #define EVENT_ACK_FROM_M0_EVT           (1U << CFG_EVT_ACK_FROM_M0_EVT)
 #define EVENT_SYNCHRO_BYPASS_IDLE       (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
 #define EVENT_ZIGBEE_STARTUP_ENDED      (1U << CFG_EVT_ZIGBEE_STARTUP_ENDED)
+/* USER CODE BEGIN DEFINE_EVENT */
 
-/******************************************************************************
- * Configure Log level for Application
- ******************************************************************************/
-#define APPLI_CONFIG_LOG_LEVEL          LOG_LEVEL_INFO
-#define APPLI_PRINT_FILE_FUNC_LINE      0
+/* USER CODE END DEFINE_EVENT */
 
 /******************************************************************************
  * LOW POWER
@@ -334,8 +342,12 @@ typedef enum {
  * Supported requester to the MCU Low Power Manager - can be increased up  to 32
  * It lits a bit mapping of all user of the Low Power Manager
  */
-typedef enum {
+typedef enum
+{
     CFG_LPM_APP,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
+
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
 
 /******************************************************************************

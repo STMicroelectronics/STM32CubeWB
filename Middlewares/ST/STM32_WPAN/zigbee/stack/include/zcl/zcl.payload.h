@@ -5,8 +5,8 @@
 
 #include "zcl/zcl.h"
 
-/*lint -save -e9021 [ useof 'undef' is discouraged -  20.5 ADVISORY ] */
-/*lint -save -e9016 [ pointer  arithmetic - 18.4 ADVISORY] */
+/*lint -save -e9021 [ useof 'undef' is discouraged <Rule 20.5, ADVISORY> ] */
+/*lint -save -e9016 [ pointer  arithmetic <Rule 18.4, ADVISORY> ] */
 
 /*---------------------------------------------------------------
  * ZCL Payload Helpers

@@ -53,6 +53,10 @@ at each counter overflow (when the counter reaches the auto-reload value).
 Finally the timebase frequency is calculated as follows:
 timebase frequency = TIM1 counter clock /((PSC + 1)*(ARR + 1)*(RCR + 1))
 
+@par Keywords
+
+Timer, TIM, timebase, Interrupt, Clock source
+
 @par Directory contents 
 
   - TIM/TIM_TimeBase_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file

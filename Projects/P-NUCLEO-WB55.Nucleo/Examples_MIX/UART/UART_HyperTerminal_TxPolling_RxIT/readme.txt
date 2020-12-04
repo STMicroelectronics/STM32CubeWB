@@ -101,6 +101,11 @@ The UART is configured as follows:
       to have correct HAL operation.
 
 
+@par Keywords
+
+Connectivity, UART/USART, baud rate, RS-232, HyperTerminal, full-duplex, Interrupt, Polling,
+Transmitter, Receiver, Asynchronous
+
 @par Directory contents
 
   - UART/UART_HyperTerminal_TxPolling_RxIT/Inc/stm32wbxx_hal_conf.h    HAL configuration file

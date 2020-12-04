@@ -80,17 +80,17 @@ void SerialCtrlVendorRead_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   msgHdr.rcvdAppKeyOffset = 0;
   msgHdr.rcvdNetKeyOffset = 0;
   
-  sscanf(rcvdStringBuff+5, "%4hx %hx ", &msgHdr.peer_addr, &command); 
+  sscanf(rcvdStringBuff+5, "%4hx %hx ", &msgHdr.dst_peer, &command); 
   
-    for(int i = 0; i < 6 ; i++)
-    {
-      if(command == Vendor_Opcodes_Table[i])
-      {                 
-        result = MOBLE_RESULT_SUCCESS;
-        break;
-      }
-    
+  for(int i = 0; i < 6 ; i++)
+  {
+    if(command == Vendor_Opcodes_Table[i])
+    {                 
+      result = MOBLE_RESULT_SUCCESS;
+      break;
     }
+  
+  }
   
   datalength = SerialCtrl_GetData(rcvdStringBuff, rcvdStringSize, SERIAL_MODEL_DATA_OFFSET, data);
   
@@ -103,15 +103,16 @@ void SerialCtrlVendorRead_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   
  else
   {
-      result = BLEMesh_ReadRemoteData(&msgHdr,command, data, datalength);   
-      if(result == MOBLE_RESULT_SUCCESS)
-      {
-        TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
-      }
-      else
-      {
-        TRACE_I(TF_SERIAL_PRINTS,"Invalid Opcode Parameter\r\n");
-      }
+    msgHdr.peer_addr = BLEMesh_GetAddress();
+    result = BLEMesh_ReadRemoteData(&msgHdr,command, data, datalength);   
+    if(result == MOBLE_RESULT_SUCCESS)
+    {
+      TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
+    }
+    else
+    {
+      TRACE_I(TF_SERIAL_PRINTS,"Invalid Opcode Parameter\r\n");
+    }
   }
    
 }

@@ -57,17 +57,9 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-/* USER CODE BEGIN EFP */
-
-void EXTI4_IRQHandler(void);
-
-/* Note: Lines of code commented below correspond to the example using        */
-/*       HAL driver only.                                                     */
-/*       This example demonstrating a mix of HAL and LL drivers has replaced  */
-/*       these lines using LL driver.                                         */
-// void ADCx_IRQHandler(void);
-
 void ADC1_IRQHandler(void);
+/* USER CODE BEGIN EFP */
+void EXTI4_IRQHandler(void);
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

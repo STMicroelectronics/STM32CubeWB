@@ -1,4 +1,14 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * For many applications, this cluster has a close relationship with the OnOff cluster. See ZCL specification
+ *
+ * This cluster supports scenes functionality. When a scene is recalled that includes this cluster, the attributes listed in the Scenes
+ * Table Extensions for this cluster will be set to the value in the scene
+ * @file zcl.level.h
+ * @brief ZCL Level cluster header
+ * ZCL 7 section 3.10
+ * ZCL 8 section 3.10
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_LEVEL_H
 #define ZCL_LEVEL_H
@@ -56,22 +66,22 @@
  *---------------------------------------------------------------
  */
 
-/* Level Server Attribute IDs */
+/** Level Server Attribute IDs */
 enum ZbZclLevelSvrAttrT {
-    ZCL_LEVEL_ATTR_CURRLEVEL = 0x0000,
-    ZCL_LEVEL_ATTR_REMAINTIME = 0x0001,
-    ZCL_LEVEL_ATTR_MINLEVEL = 0x0002,
-    ZCL_LEVEL_ATTR_MAXLEVEL = 0x0003,
-    ZCL_LEVEL_ATTR_CURRFREQ = 0x0004,
-    ZCL_LEVEL_ATTR_MINFREQ = 0x0005,
-    ZCL_LEVEL_ATTR_MAXFREQ = 0x0006,
-    ZCL_LEVEL_ATTR_OPTIONS = 0x000f,
-    ZCL_LEVEL_ATTR_ONOFF_TRANS_TIME = 0x0010,
-    ZCL_LEVEL_ATTR_ONLEVEL = 0x0011,
-    ZCL_LEVEL_ATTR_ON_TRANS_TIME = 0x0012,
-    ZCL_LEVEL_ATTR_OFF_TRANS_TIME = 0x0013,
-    ZCL_LEVEL_ATTR_DEFAULT_MOVE_RATE = 0x0014,
-    ZCL_LEVEL_ATTR_STARTUP_CURRLEVEL = 0x4000
+    ZCL_LEVEL_ATTR_CURRLEVEL = 0x0000, /**< CurrentLevel */
+    ZCL_LEVEL_ATTR_REMAINTIME = 0x0001, /**< RemainingTime (Optional) */
+    ZCL_LEVEL_ATTR_MINLEVEL = 0x0002, /**< MinLevel (Optional) */
+    ZCL_LEVEL_ATTR_MAXLEVEL = 0x0003, /**< MaxLevel (Optional) */
+    ZCL_LEVEL_ATTR_CURRFREQ = 0x0004, /**< CurrentFrequency (Optional) */
+    ZCL_LEVEL_ATTR_MINFREQ = 0x0005, /**< MinFrequency (Optional) */
+    ZCL_LEVEL_ATTR_MAXFREQ = 0x0006, /**< MaxFrequency (Optional) */
+    ZCL_LEVEL_ATTR_OPTIONS = 0x000f, /**< OnOffTransitionTime (Optional) */
+    ZCL_LEVEL_ATTR_ONOFF_TRANS_TIME = 0x0010, /**< OnLevel (Optional) */
+    ZCL_LEVEL_ATTR_ONLEVEL = 0x0011, /**< OnTransitionTime (Optional) */
+    ZCL_LEVEL_ATTR_ON_TRANS_TIME = 0x0012, /**< OffTransitionTime (Optional) */
+    ZCL_LEVEL_ATTR_OFF_TRANS_TIME = 0x0013, /**< DefaultMoveRate (Optional) */
+    ZCL_LEVEL_ATTR_DEFAULT_MOVE_RATE = 0x0014, /**< Options (Optional) */
+    ZCL_LEVEL_ATTR_STARTUP_CURRLEVEL = 0x4000 /**< StartUpCurrentLevel (Optional) */
 };
 
 /* Level Command IDs  */
@@ -121,43 +131,40 @@ enum {
  * Structures
  *-----------------------------------------------------------------------------
  */
+
+/** Move To Level command structure */
 struct ZbZclLevelClientMoveToLevelReqT {
-    bool with_onoff; /* If true then cmd is ZCL_LEVEL_COMMAND_MOVELEVEL_ONOFF, else ZCL_LEVEL_COMMAND_MOVELEVEL */
-    uint8_t level;
-    uint16_t transition_time;
-    /* Note: OptionsMask and OptionsOverride are not included in the "With OnOff"
-     * version of this command */
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    bool with_onoff; /**< With Onoff - If true then cmd is ZCL_LEVEL_COMMAND_MOVELEVEL_ONOFF, else ZCL_LEVEL_COMMAND_MOVELEVEL*/
+    uint8_t level; /**< Level */
+    uint16_t transition_time; /**< Transition time */
+    uint8_t mask; /**< OptionsMask - Not included if with_onoff is true */
+    uint8_t override; /**< OptionsOverride - Not included if with_onoff is true */
 };
 
+/** Move command structure */
 struct ZbZclLevelClientMoveReqT {
-    bool with_onoff; /* If true then cmd is ZCL_LEVEL_COMMAND_MOVE_ONOFF, else ZCL_LEVEL_COMMAND_MOVE */
-    uint8_t mode;
-    uint8_t rate;
-    /* Note: OptionsMask and OptionsOverride are not included in the "With OnOff"
-     * version of this command */
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    bool with_onoff; /**< With Onoff - If true then cmd is ZCL_LEVEL_COMMAND_MOVE_ONOFF, else ZCL_LEVEL_COMMAND_MOVE */
+    uint8_t mode; /**< Mode */
+    uint8_t rate; /**< Rate */
+    uint8_t mask; /**< OptionsMask - Not included if with_onoff is true */
+    uint8_t override; /**< OptionsOverride - Not included if with_onoff is true */
 };
 
+/** Step command structure */
 struct ZbZclLevelClientStepReqT {
-    bool with_onoff; /* If true then cmd is ZCL_LEVEL_COMMAND_STEP_ONOFF, else ZCL_LEVEL_COMMAND_STEP */
-    uint8_t mode;
-    uint8_t size;
-    uint16_t transition_time;
-    /* Note: OptionsMask and OptionsOverride are not included in the "With OnOff"
-     * version of this command */
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    bool with_onoff; /**< With Onoff - If true then cmd is ZCL_LEVEL_COMMAND_STEP_ONOFF, else ZCL_LEVEL_COMMAND_STEP */
+    uint8_t mode; /**< Mode */
+    uint8_t size; /**< Size */
+    uint16_t transition_time; /**< Transition Time */
+    uint8_t mask; /**< OptionsMask - Not included if with_onoff is true */
+    uint8_t override; /**< OptionsOverride - Not included if with_onoff is true */
 };
 
+/** Stop command structure */
 struct ZbZclLevelClientStopReqT {
-    bool with_onoff; /* If true then cmd is ZCL_LEVEL_COMMAND_STOP_ONOFF, else ZCL_LEVEL_COMMAND_STOP */
-    /* Note: OptionsMask and OptionsOverride are not included in the "With OnOff"
-     * version of this command */
-    uint8_t mask; /* OptionsMask */
-    uint8_t override; /* OptionsOverride */
+    bool with_onoff; /**< With Onoff - If true then cmd is ZCL_LEVEL_COMMAND_STOP_ONOFF, else ZCL_LEVEL_COMMAND_STOP */
+    uint8_t mask; /**< OptionsMask - Not included if with_onoff is true */
+    uint8_t override; /**< OptionsOverride - Not included if with_onoff is true */
 };
 
 /*-----------------------------------------------------------------------------
@@ -165,32 +172,37 @@ struct ZbZclLevelClientStopReqT {
  *-----------------------------------------------------------------------------
  */
 
+/** Level Server callbacks configuration */
 struct ZbZclLevelServerCallbacksT {
     /* Returns a ZCL Status code to send in the Default Response, or ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE
      * if no Default Response to be generated. */
 
     enum ZclStatusCodeT (*move_to_level)(struct ZbZclClusterT *cluster,
         struct ZbZclLevelClientMoveToLevelReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
-
+    /**< Callback to application, invoked on receipt of Move To Level command. Set with_onoff to true in the req struct when utilizing the
+     * onoff cluster on the same endpoint. The application is expected to update ZCL_LEVEL_ATTR_CURRLEVEL */
     enum ZclStatusCodeT (*move)(struct ZbZclClusterT *cluster,
         struct ZbZclLevelClientMoveReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
-
+    /**< Callback to application, invoked on receipt of Move command. Set with_onoff to true in the req struct when utilizing the onoff
+     * cluster on the same endpoint. The application is expected to update ZCL_LEVEL_ATTR_CURRLEVEL */
     enum ZclStatusCodeT (*step)(struct ZbZclClusterT *cluster,
         struct ZbZclLevelClientStepReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
-
+    /**< Callback to application, invoked on receipt of Step command. Set with_onoff to true in the req struct when utilizing the onoff
+     * cluster on the same endpoint. The application is expected to update ZCL_LEVEL_ATTR_CURRLEVEL */
     enum ZclStatusCodeT (*stop)(struct ZbZclClusterT *cluster,
         struct ZbZclLevelClientStopReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to application, invoked on receipt of Stop command. Set with_onoff to true in the req struct when utilizing the onoff
+     * cluster on the same endpoint. The application is expected to update ZCL_LEVEL_ATTR_CURRLEVEL */
 };
 
 /**
- * Allocate the Level Server cluster.
- * @param zb
- * @param endpoint
- * @param onoff_server OnOff Server cluster pointer for processing commands with the Options
- * fields. May be NULL.
- * @param callback
- * @param arg
- * @return ZCL Status Code
+ * Create a new instance of the Level Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param onoff_server OnOff server cluster pointer for processing commands with the Options fields. May be NULL
+ * @param callbacks Structure containing any callback function pointers for this cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclLevelServerAlloc(struct ZigBeeT *zb,
     uint8_t endpoint, struct ZbZclClusterT *onoff_server,
@@ -200,20 +212,63 @@ struct ZbZclClusterT * ZbZclLevelServerAlloc(struct ZigBeeT *zb,
  * Client
  *-----------------------------------------------------------------------------
  */
+
+/**
+ * Create a new instance of the Level Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclLevelClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
+/**
+ * Send a Move to Level command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move To Level command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclLevelClientMoveToLevelReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclLevelClientMoveToLevelReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Move command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Move command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclLevelClientMoveReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclLevelClientMoveReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Step command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Step command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclLevelClientStepReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclLevelClientStepReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Send a Stop command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Stop command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclLevelClientStopReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclLevelClientStopReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);

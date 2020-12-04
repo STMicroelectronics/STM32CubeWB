@@ -34,6 +34,11 @@ A LED2 toggle of 1sec provides this information that system is well configured t
 Anyway, user can connect on oscilloscope to MCO pin (PA.08) to check requested frequency: 
  - SYSCLK frequency with frequency value around @64MHz.
 
+@par Keywords
+
+Utils, system, Clock, HSI, PLL, flash latency, SYSCLK, frequency Oscilloscope
+
+
 @par Directory contents 
 
   - UTILS/UTILS_ConfigureSystemClock/Inc/stm32wbxx_it.h          Interrupt handlers header file

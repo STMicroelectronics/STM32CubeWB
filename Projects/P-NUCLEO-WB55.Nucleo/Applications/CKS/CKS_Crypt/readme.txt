@@ -31,6 +31,10 @@ How to use CKS feature to store AES crypto keys in secure area.
 @note The application needs to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
 
+@par Keywords
+
+CKS
+
 @par Directory contents 
 
      

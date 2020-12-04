@@ -110,6 +110,8 @@ This board can be connected with a smartphone supporting ST BLE SENSOR applicati
 Start a scan and choose DT_SERVER board to connect.
 SW1 starts the notification data.
 SW2 changes the PHY (1M or 2M). 
+SW3 (short push) sends the slave pairing request (aci_gap_slave_security_req command)
+SW3 (long push) clears the security database (aci_gap_clear_security_db command)  
 
 In app_conf.h 
 if #define CFG_TX_PHY    2 and #define CFG_RX_PHY    2, link is set to 2M

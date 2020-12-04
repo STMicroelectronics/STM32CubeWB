@@ -197,7 +197,7 @@ static void (*zdo_match_multi_cb)(struct ZbZdoMatchDescRspT *ind, void *cb_arg) 
 static void *zdo_match_multi_arg;
 
 /* Some globals */
-struct zb_ipc_globals_t {
+PACKED_STRUCT zb_ipc_globals_t {
     struct ZigBeeT *zb;
     /* Stack logging callback */
     void (*log_cb)(struct ZigBeeT *zb, uint32_t mask, const char *hdr,
@@ -278,7 +278,7 @@ zb_ipc_m4_get_retval(void)
 
     ipcc_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
     assert(ipcc_req->Size == 1);
-    zb_ipc_m4_memcpy2(&retval, &ipcc_req->Data[0], 4);
+    zb_ipc_m4_memcpy2(&retval, (void*)&ipcc_req->Data[0], 4);
     return retval;
 }
 
@@ -300,7 +300,7 @@ ZbInit(uint64_t extAddr, struct ZbInitTblSizesT *tblSizes, struct ZbInitSetLoggi
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
     ipcc_req->ID = MSG_M4TOM0_ZB_INIT;
     ipcc_req->Size = 4;
-    zb_ipc_m4_memcpy2(&ipcc_req->Data[0], &extAddr, 8);
+    zb_ipc_m4_memcpy2((void*)&ipcc_req->Data[0], &extAddr, 8);
     ipcc_req->Data[2] = (uint32_t)tblSizes;
     ipcc_req->Data[3] = (uint32_t)setLogging;
     ZIGBEE_CmdTransfer();
@@ -398,7 +398,7 @@ ZbChangeExtAddr(struct ZigBeeT *zb, uint64_t extAddr)
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
     ipcc_req->ID = MSG_M4TOM0_EXTADDR_CHANGE;
     ipcc_req->Size = 2;
-    zb_ipc_m4_memcpy2(&ipcc_req->Data[0], &extAddr, 8);
+    zb_ipc_m4_memcpy2((void*)&ipcc_req->Data[0], &extAddr, 8);
     ZIGBEE_CmdTransfer();
 }
 
@@ -1195,7 +1195,7 @@ IPC_REQ_CONF_FUNC(ZbApsmeRemoveKeyReq, MSG_M4TOM0_APSME_REMOVE_KEY, ZbApsmeRemov
 * Zigbee Message Filters
 ******************************************************************************
 */
-struct zb_msg_filter_cb_info_t {
+PACKED_STRUCT zb_msg_filter_cb_info_t {
     struct ZbMsgFilterT *filter;
     enum zb_msg_filter_rc (*callback)(struct ZigBeeT *zb, uint32_t id, void *msg, void *cbarg);
     void *arg;
@@ -1507,7 +1507,7 @@ ZbNwkAddrLookupExt(struct ZigBeeT *zb, uint16_t nwkAddr)
     /* Parse return value */
     ipcc_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
     assert(ipcc_req->Size == 2);
-    zb_ipc_m4_memcpy2(&ext_addr, &ipcc_req->Data[0], 8);
+    zb_ipc_m4_memcpy2(&ext_addr, (void*)&ipcc_req->Data[0], 8);
     return ext_addr;
 }
 
@@ -1521,7 +1521,7 @@ ZbNwkAddrLookupNwk(struct ZigBeeT *zb, uint64_t extAddr)
     ipcc_req->ID = MSG_M4TOM0_NWK_ADDR_LOOKUP_NWK;
     /* Extended address is split across two args */
     ipcc_req->Size = 2;
-    zb_ipc_m4_memcpy2(ipcc_req->Data, &extAddr, 8);
+    zb_ipc_m4_memcpy2((void*)ipcc_req->Data, &extAddr, 8);
     ZIGBEE_CmdTransfer();
     return (uint16_t)zb_ipc_m4_get_retval();
 }
@@ -1621,7 +1621,7 @@ ZbNwkSetFrameCounter(struct ZigBeeT *zb, uint8_t keySeqno, uint64_t srcAddr, uin
     ipcc_req->ID = MSG_M4TOM0_NWK_SET_FRAME_COUNTER;
     ipcc_req->Size = 4;
     ipcc_req->Data[0] = (uint32_t)keySeqno;
-    zb_ipc_m4_memcpy2(&ipcc_req->Data[1], &srcAddr, 8);
+    zb_ipc_m4_memcpy2((void*)&ipcc_req->Data[1], &srcAddr, 8);
     ipcc_req->Data[3] = (uint32_t)newFrameCount;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
@@ -2356,7 +2356,7 @@ ZbZclKeWithDevice(struct ZigBeeT *zb, uint64_t partnerAddr, bool aps_req_key,
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
     ipcc_req->ID = MSG_M4TOM0_ZCL_KE_WITH_DEVICE;
     ipcc_req->Size = 4;
-    zb_ipc_m4_memcpy2(&ipcc_req->Data[0], &partnerAddr, 8);
+    zb_ipc_m4_memcpy2((void*)&ipcc_req->Data[0], &partnerAddr, 8);
     ipcc_req->Data[2] = (uint32_t)aps_req_key;
     ipcc_req->Data[3] = (uint32_t)info;
     ZIGBEE_CmdTransfer();
@@ -3153,7 +3153,7 @@ Zigbee_CallBackProcessing(void)
                 void (*callback)(uint64_t partnerAddr, uint16_t keSuite, enum ZbZclKeyStatusT key_status, void *arg);
                 uint64_t partnerAddr;
 
-                zb_ipc_m4_memcpy2(&partnerAddr, &p_notification->Data[0], 8);
+                zb_ipc_m4_memcpy2(&partnerAddr, (void*)&p_notification->Data[0], 8);
                 callback = (void (*)(uint64_t partnerAddr, uint16_t keSuite, enum ZbZclKeyStatusT key_status, void *arg))info->callback;
                 callback(partnerAddr, (uint16_t)p_notification->Data[2], (enum ZbZclKeyStatusT)p_notification->Data[3], info->arg);
             }

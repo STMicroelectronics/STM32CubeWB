@@ -88,6 +88,10 @@ LED2 is ON on Master side if the expected byte is well received.
 
 In case of errors, LED2 is blinking slowly (1s).
 
+@par Keywords
+
+Connectivity, I2C, Communication, Transmission, Reception, SCL, SDA, Wake up, Interrupt
+
 @par Directory contents
 
   - I2C/I2C_TwoBoards_WakeUpFromStop_IT_Init/Inc/stm32wbxx_it.h          Interrupt handlers header file

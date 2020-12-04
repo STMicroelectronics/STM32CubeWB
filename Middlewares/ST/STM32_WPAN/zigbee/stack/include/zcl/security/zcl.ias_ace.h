@@ -1,4 +1,10 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.ias_ace.h
+ * @brief ZCL Intruder Alarm Systems Ancillary Control Equipment cluster header
+ * ZCL 7 section 8.3
+ * ZCL 8 section 8.3
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 /*--------------------------------------------------------------------------
  *  DESCRIPTION
@@ -162,34 +168,34 @@ enum ZbZclIasAceBypassPermsT {
  * four and eight alphanumeric characters in length." */
 #define ZCL_IAS_ACE_ARM_CODE_STRING_MAX_LEN          32
 
+/** Arm command structure */
 struct ZbZclIasAceClientCommandArmT {
-    enum ZbZclIasAceArmModeT arm_mode;
-    char arm_code[ZCL_IAS_ACE_ARM_CODE_STRING_MAX_LEN + 1U];
-    /* EXEGIN - what is the Zone ID used for here?
-     * We're arming/disarming the entire system or set of zones.
-     * There's nothing to indicate an individual zone
-     * is useful here. */
-    uint8_t zone_id;
+    enum ZbZclIasAceArmModeT arm_mode; /**< Arm Mode */
+    char arm_code[ZCL_IAS_ACE_ARM_CODE_STRING_MAX_LEN + 1U]; /**< Arm/Disarm Code */
+    uint8_t zone_id; /**< Zone ID */
 };
 
 /* Arbitrary max. May want to convert to a list with a max of 255. */
 #define ZCL_IAS_ACE_BYPASS_MAX_ZONES                 32
 
+/** Bypass command structure */
 struct ZbZclIasAceClientCommandBypassT {
-    uint8_t num_zones;
-    uint8_t zone_id_list[ZCL_IAS_ACE_BYPASS_MAX_ZONES];
-    char arm_code[ZCL_IAS_ACE_ARM_CODE_STRING_MAX_LEN + 1U];
+    uint8_t num_zones; /**< Number of Zones */
+    uint8_t zone_id_list[ZCL_IAS_ACE_BYPASS_MAX_ZONES]; /**< Zone ID List */
+    char arm_code[ZCL_IAS_ACE_ARM_CODE_STRING_MAX_LEN + 1U]; /**< Arm/Disarm Code */
 };
 
+/** Get Zone Info command structure */
 struct ZbZclIasAceClientCommandGetZoneInfoT {
-    uint8_t zone_id;
+    uint8_t zone_id; /**< Zone ID */
 };
 
+/** Get Zone Status command structure */
 struct ZbZclIasAceClientCommandGetZoneStatusT {
-    uint8_t starting_zone_id;
-    uint8_t max_zone_ids;
-    uint8_t zone_status_mask_flag;
-    uint16_t zone_status_mask;
+    uint8_t starting_zone_id; /**< Starting Zone ID */
+    uint8_t max_zone_ids; /**< Max Number of Zone IDs */
+    uint8_t zone_status_mask_flag; /**< Zone Status Mask Flag */
+    uint16_t zone_status_mask; /**< Zone Status Mask */
 };
 
 /*---------------------------------------------------------------
@@ -197,14 +203,16 @@ struct ZbZclIasAceClientCommandGetZoneStatusT {
  *---------------------------------------------------------------
  */
 
+/** Arm response structure */
 struct ZbZclIasAceServerCommandArmRspT {
-    enum ZbZclIasAceArmNotifyT arm_notify;
+    enum ZbZclIasAceArmNotifyT arm_notify; /**< Arm Notification */
 };
 
 #define ZCL_IAS_ACE_ZONE_ID_MAP_NUM_SECTIONS         16
 
+/** Get Zone ID Map response structure */
 struct ZbZclIasAceServerCommandGetZoneIdMapRspT {
-    uint16_t zond_id_map_list[ZCL_IAS_ACE_ZONE_ID_MAP_NUM_SECTIONS];
+    uint16_t zond_id_map_list[ZCL_IAS_ACE_ZONE_ID_MAP_NUM_SECTIONS]; /**< Zone ID Map List */
 };
 
 /* Arbitrary max. "There is no minimum or maximum length to the Zone Label
@@ -212,46 +220,53 @@ struct ZbZclIasAceServerCommandGetZoneIdMapRspT {
  * characters in length." */
 #define ZCL_IAS_ACE_ZONE_LABEL_STRING_MAX_LEN        32
 
+/** Get Zone Info response structure */
 struct ZbZclIasAceServerCommandGetZoneInfoRspT {
-    uint8_t zone_id;
-    enum ZbZclIasZoneServerZoneTypeT zone_type;
-    uint64_t zone_addr;
-    char zone_label[ZCL_IAS_ACE_ZONE_LABEL_STRING_MAX_LEN + 1U];
+    uint8_t zone_id; /**< Zone ID */
+    enum ZbZclIasZoneServerZoneTypeT zone_type; /**< Zone Type */
+    uint64_t zone_addr; /**< IEEE Address */
+    char zone_label[ZCL_IAS_ACE_ZONE_LABEL_STRING_MAX_LEN + 1U]; /**< Zone Label */
 };
 
+/** Zone Status Changed command structure */
 struct ZbZclIasAceServerCommandZoneStatusChangedT {
-    uint8_t zone_id;
-    enum ZbZclIasZoneServerZoneStatusT zone_status;
-    enum ZbZclIasAceAudibleNotifyT audible_notify;
-    char zone_label[ZCL_IAS_ACE_ZONE_LABEL_STRING_MAX_LEN + 1U];
+    uint8_t zone_id; /**< Zone ID */
+    enum ZbZclIasZoneServerZoneStatusT zone_status; /**< Zone Status */
+    enum ZbZclIasAceAudibleNotifyT audible_notify; /**< Audible Notification */
+    char zone_label[ZCL_IAS_ACE_ZONE_LABEL_STRING_MAX_LEN + 1U]; /**< Zone Label */
 };
 
+/** Get Panel Status response structure */
 struct ZbZclIasAceServerCommandGetPanelStatusRspT {
-    enum ZbZclIasAcePanelStatusT panel_status;
-    uint8_t seconds_remain;
-    enum ZbZclIasAceAudibleNotifyT audible_notify;
-    enum ZbZclIasAceAlarmStatusT alarm_status;
+    enum ZbZclIasAcePanelStatusT panel_status; /**< Panel Status */
+    uint8_t seconds_remain; /**< Seconds Remaining */
+    enum ZbZclIasAceAudibleNotifyT audible_notify; /**< Audible Notification */
+    enum ZbZclIasAceAlarmStatusT alarm_status; /**< Alarm Status */
 };
 
+/** Set Bypassed Zone List command structure */
 struct ZbZclIasAceServerCommandSetBypassedZoneListT {
-    uint8_t num_zones;
-    uint8_t zone_id_list[ZCL_IAS_ACE_BYPASS_MAX_ZONES];
+    uint8_t num_zones; /**< Number of Zones */
+    uint8_t zone_id_list[ZCL_IAS_ACE_BYPASS_MAX_ZONES]; /**< Zone ID List */
 };
 
+/** Bypass Response response structure */
 struct ZbZclIasAceServerCommandBypassRspT {
-    uint8_t num_zones;
-    enum ZbZclIasAceBypassResultT bypass_result_list[ZCL_IAS_ACE_BYPASS_MAX_ZONES];
+    uint8_t num_zones; /**< Number of Zones */
+    enum ZbZclIasAceBypassResultT bypass_result_list[ZCL_IAS_ACE_BYPASS_MAX_ZONES]; /**< Bypass Result for Zone ID List */
 };
 
 #define ZCL_IAS_ACE_ZONE_STATUS_MAX_ZONES            10
 
+/** Get Zone Status response structure */
+/* ZCL_IAS_ACE_SVR_CMD_GET_ZONE_STATUS_RSP */
 struct ZbZclIasAceServerCommandGetZoneStatusRspT {
-    uint8_t zone_status_complete;
-    uint8_t num_zones;
+    uint8_t zone_status_complete; /**< Zone Status Complete */
+    uint8_t num_zones; /**< Number of Zones */
     struct {
-        uint8_t zone_id;
-        enum ZbZclIasZoneServerZoneStatusT zone_status;
-    } zone_list[ZCL_IAS_ACE_ZONE_STATUS_MAX_ZONES];
+        uint8_t zone_id; /**< Zone ID */
+        enum ZbZclIasZoneServerZoneStatusT zone_status; /**< Zone Status */
+    } zone_list[ZCL_IAS_ACE_ZONE_STATUS_MAX_ZONES]; /**< Zone List */
 };
 
 /*---------------------------------------------------------------
@@ -259,127 +274,312 @@ struct ZbZclIasAceServerCommandGetZoneStatusRspT {
  *---------------------------------------------------------------
  */
 
+/** IAS ACE Server callbacks configuration */
 struct ZbZclIasAceServerCallbacksT {
     /* The callback for Arming should handle arming the system and
-     * calling ZbZclIasAceServerPanelStatusConfig when the panel status changes. */
+     * calling ZbZclIasAceServerPanelStatusConfig when the panel status changes */
     bool (*arm_req)(struct ZbZclClusterT *clusterPtr, void *arg,
         struct ZbZclIasAceClientCommandArmT *arm_req,
         struct ZbZclIasAceServerCommandArmRspT *arm_rsp);
+    /**< Callback to application, invoked on receipt of Arm command */
 
     void (*bypass_req)(struct ZbZclClusterT *clusterPtr, void *arg,
         struct ZbZclIasAceClientCommandBypassT *bypass_req,
         struct ZbZclIasAceServerCommandBypassRspT *bypass_rsp);
+    /**< Callback to application, invoked on receipt of Bypass command */
 
     /* Emergency, Fire and Panic callbacks return a ZCL status to
-     * return in the Default Response (e.g. ZCL_STATUS_SUCCESS). */
+     * return in the Default Response (e.g. ZCL_STATUS_SUCCESS) */
     uint8_t (*emerg_req)(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclAddrInfoT *srcInfo);
+    /**< Callback to application, invoked on receipt of Emergency command */
     uint8_t (*fire_req)(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclAddrInfoT *srcInfo);
+    /**< Callback to application, invoked on receipt of Fire command */
     uint8_t (*panic_req)(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclAddrInfoT *srcInfo);
+    /**< Callback to application, invoked on receipt of Panic command */
 };
 
-/* Allocate the IAS ACE Server cluster.
+/**
+ * Create a new instance of the IAS ACE Server cluster
  *
  * If 'use_trip_pair' is true, application must call ZbZclIasAceServerEnrollRequest
  * to perform the 'trip-to-pair' process, unless the IAS CIE has sent us an
- * unsolicited Auto-Enroll-Response. */
+ * unsolicited Auto-Enroll-Response
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param callbacks Structure containing any callback function pointers for this cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclIasAceServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclIasAceServerCallbacksT *callbacks, void *arg);
 
-/* Change the Panel Arm/Disarm Code */
-bool ZbZclIasAceServerPanelCodeConfig(struct ZbZclClusterT *clusterPtr,
+/**
+ * Change the Panel Arm/Disarm Code
+ * @param cluster Cluster instance from which to send this command
+ * @param arm_code Arm code
+ * @return True on success, false otherwise
+ */
+bool ZbZclIasAceServerPanelCodeConfig(struct ZbZclClusterT *cluster,
     const char *arm_code);
 
-/* Update the Panel Status */
-bool ZbZclIasAceServerPanelStatusConfig(struct ZbZclClusterT *clusterPtr,
+/**
+ * Update the Panel Status
+ * @param cluster Cluster instance from which to send this command
+ * @param panel_status Panel Status enumeration
+ * @param seconds_remain Seconds remaining
+ * @return True on success, false otherwise
+ */
+bool ZbZclIasAceServerPanelStatusConfig(struct ZbZclClusterT *cluster,
     enum ZbZclIasAcePanelStatusT panel_status, uint8_t seconds_remain,
     enum ZbZclIasAceAudibleNotifyT audible_notify);
 
-/* Returns the first free Zone ID not already in the Zone Table. */
-bool ZbZclIasAceServerGetFreeZoneId(struct ZbZclClusterT *clusterPtr, uint8_t *zone_id_ptr);
+/**
+ * Returns the first free Zone ID not already in the Zone Table
+ * @param cluster Cluster instance from which to send this command
+ * @param zone_id_ptr Zone ID value
+ * @return True on success, false otherwise
+ */
+bool ZbZclIasAceServerGetFreeZoneId(struct ZbZclClusterT *cluster, uint8_t *zone_id_ptr);
 
-/* Adds a new zone. Returns true if successful, and the assigned Zone ID
- * is returned via zone_id. */
+/** Zone Table Add request structure */
 struct ZbZclIasAceServerZoneTableAddT {
-    enum ZbZclIasZoneServerZoneTypeT zone_type;
-    uint64_t zone_addr;
-    /* zone_label - optional, may be NULL.
-     * Max length = ZCL_IAS_ACE_ZONE_LABEL_STRING_MAX_LEN. */
-    const char *zone_label;
-    /* zone_id - can use ZbZclIasAceServerGetFreeZoneId */
-    uint8_t zone_id;
+    enum ZbZclIasZoneServerZoneTypeT zone_type; /**< Zone Type */
+    uint64_t zone_addr; /**< Zone Address */
+    const char *zone_label; /**< Zone Label - May be NULL, Max length = ZCL_IAS_ACE_ZONE_LABEL_STRING_MAX_LEN */
+    uint8_t zone_id; /**< Zone ID - can use ZbZclIasAceServerGetFreeZoneId */
 };
 
-bool ZbZclIasAceServerZoneTableAdd(struct ZbZclClusterT *clusterPtr,
+/**
+ * Add new zone entry
+ * @param cluster Cluster instance from which to send this command
+ * @param req Zone Table Add request structure
+ * @return True on success, false otherwise
+ */
+bool ZbZclIasAceServerZoneTableAdd(struct ZbZclClusterT *cluster,
     struct ZbZclIasAceServerZoneTableAddT *req);
 
-/* Delete a zone */
-bool ZbZclIasAceServerZoneTableDeleteById(struct ZbZclClusterT *clusterPtr, uint8_t zone_id);
-bool ZbZclIasAceServerZoneTableDeleteByAddr(struct ZbZclClusterT *clusterPtr, uint64_t addr);
+/**
+ * Delete a zone by zone ID
+ * @param cluster Cluster instance from which to send this command
+ * @param zone_id ID of zone to be deleted
+ * @return True on success, false otherwise
+ */
+bool ZbZclIasAceServerZoneTableDeleteById(struct ZbZclClusterT *cluster, uint8_t zone_id);
 
-/* Returns address of paired zone, or 0 if not found. */
-uint64_t ZbZclIasAceServerZoneTableAddrLookup(struct ZbZclClusterT *clusterPtr, uint8_t zone_id);
+/**
+ * Delete a zone by address
+ * @param cluster Cluster instance from which to send this command
+ * @param addr Address of zone to be deleted
+ * @return True on success, false otherwise
+ */
+bool ZbZclIasAceServerZoneTableDeleteByAddr(struct ZbZclClusterT *cluster, uint64_t addr);
 
-bool ZbZclIasAceServerZoneTableIdLookup(struct ZbZclClusterT *clusterPtr,
+/**
+ * Returns address of paired zone, or 0 if not found
+ * @param cluster Cluster instance from which to send this command
+ * @param zone_id ID of zone to be returned
+ * @return Address of zone if successful, 0 on error
+ */
+uint64_t ZbZclIasAceServerZoneTableAddrLookup(struct ZbZclClusterT *cluster, uint8_t zone_id);
+
+/**
+ * Attempts to find a zone based on extended address, and returns the zone Id if found
+ * @param cluster Cluster instance from which to send this command
+ * @param zone_addr Address of Zone being looked up
+ * @param zone_id_ptr If successful, points to zone ID that was looked up
+ * @return True on success, false otherwise
+ */
+bool ZbZclIasAceServerZoneTableIdLookup(struct ZbZclClusterT *cluster,
     uint64_t zone_addr, uint8_t *zone_id_ptr);
 
-bool ZbZclIasAceServerZoneStatusConfig(struct ZbZclClusterT *clusterPtr,
+/**
+ * Configure Zone Status
+ * @param cluster Cluster instance from which to send this command
+ * @param zone_id Zone ID of zone in question
+ * @param zone_status Desired zone status
+ * @param audible_notify Determines if zone notification is audible or not
+ * @return True on success, false otherwise
+ */
+bool ZbZclIasAceServerZoneStatusConfig(struct ZbZclClusterT *cluster,
     uint8_t zone_id, enum ZbZclIasZoneServerZoneStatusT zone_status,
     enum ZbZclIasAceAudibleNotifyT audible_notify);
 
-bool ZbZclIasAceServerZoneBypassPerms(struct ZbZclClusterT *clusterPtr,
+/**
+ * Configure Bypass Permissions
+ * @param cluster Cluster instance from which to send this command
+ * @param zone_id Zone ID of zone in question
+ * @param bypass_perms Desired bypass permissions
+ * @return True on success, false otherwise
+ */
+bool ZbZclIasAceServerZoneBypassPerms(struct ZbZclClusterT *cluster,
     uint8_t zone_id, enum ZbZclIasAceBypassPermsT bypass_perms);
 
-enum ZbZclIasAceBypassResultT ZbZclIasAceServerZoneBypassConfig(struct ZbZclClusterT *clusterPtr,
+/**
+ * Bypass zone if allowed
+ * @param cluster Cluster instance from which to send this command
+ * @param zone_id Zone ID of zone in question
+ * @param bypass True if zone will be bypassed, false if not
+ * @return Result of bypass config command
+ */
+enum ZbZclIasAceBypassResultT ZbZclIasAceServerZoneBypassConfig(struct ZbZclClusterT *cluster,
     uint8_t zone_id, bool bypass);
 
 /*---------------------------------------------------------------
  * Client API
  *---------------------------------------------------------------
  */
+
+/**
+ * Allocate the IAS ACE Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return Cluster pointer, or NULL if there is an error
+ */
 struct ZbZclClusterT * ZbZclIasAceClientAlloc(struct ZigBeeT *zb, uint8_t endpoint, void *arg);
 
 /* ARM */
-uint8_t ZbZclIasAceClientCommandArmReq(struct ZbZclClusterT *clusterPtr,
+
+/**
+ * Send an Arm command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param cmd_req Arm command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandArmReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclIasAceClientCommandArmT *cmd_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Parse an Arm Response command payload into a data structure
+ * @param buf Response buffer
+ * @param len Length of response buffer
+ * @param rsp Arm response structure
+ * @return True on success, false otherwise
+ */
 bool ZbZclIasAceClientParseArmRsp(const uint8_t *buf, unsigned int len,
     struct ZbZclIasAceServerCommandArmRspT *rsp);
 
 /* BYPASS */
-uint8_t ZbZclIasAceClientCommandBypassReq(struct ZbZclClusterT *clusterPtr,
+
+/**
+ * Send a Bypass command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param cmd_req Bypass command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandBypassReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclIasAceClientCommandBypassT *cmd_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Parse a Bypass Response command payload into a data structure
+ * @param buf Response buffer
+ * @param len Length of response buffer
+ * @param rsp Bypass Response structure
+ * @return True on success, false otherwise
+ */
 bool ZbZclIasAceClientParseBypassRsp(const uint8_t *buf, unsigned int len,
     struct ZbZclIasAceServerCommandBypassRspT *rsp);
 
 /* Emergency / Fire / Panic */
-uint8_t ZbZclIasAceClientCommandEmergencyReq(struct ZbZclClusterT *clusterPtr,
+
+/**
+ * Send an Emergency command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandEmergencyReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-uint8_t ZbZclIasAceClientCommandFireReq(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send a Fire command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandFireReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-uint8_t ZbZclIasAceClientCommandPanicReq(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send a Panic command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandPanicReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /* Get Zone Id Map */
-uint8_t ZbZclIasAceClientCommandGetZoneIdMapReq(struct ZbZclClusterT *clusterPtr,
+
+/**
+ * Send a Get Zone ID Map command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandGetZoneIdMapReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Parse a Get Zone ID Map Response command payload into a data structure
+ * @param buf Response buffer
+ * @param len Length of response buffer
+ * @param rsp Get Zone ID Map Response structure
+ * @return True on success, false otherwise
+ */
 bool ZbZclIasAceClientParseGetZoneIdMapRsp(const uint8_t *buf, unsigned int len,
     struct ZbZclIasAceServerCommandGetZoneIdMapRspT *rsp);
 
 /* Get Zone Info */
-uint8_t ZbZclIasAceClientCommandGetZoneInfoReq(struct ZbZclClusterT *clusterPtr,
+
+/**
+ * Send a Get Zone Info command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param cmd_req Get Zone Info command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandGetZoneInfoReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclIasAceClientCommandGetZoneInfoT *cmd_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Parse a Get Zone Info Response command payload into a data structure
+ * @param buf Response buffer
+ * @param len Length of response buffer
+ * @param rsp Get Zone Info Response structure
+ * @return True on success, false otherwise
+ */
 bool ZbZclIasAceClientParseGetZoneInfoRsp(const uint8_t *buf, unsigned int len,
     struct ZbZclIasAceServerCommandGetZoneInfoRspT *rsp);
 
 /* Zone / Panel Status Changed */
+
+/**
+ * Parse a Zone Status Changed Response command payload into a data structure
+ * @param buf Response buffer
+ * @param len Length of response buffer
+ * @param rsp Zone Status Changed Response structure
+ * @return True on success, false otherwise
+ */
 bool ZbZclIasAceClientParseZoneStatusChanged(const uint8_t *buf, unsigned int len,
     struct ZbZclIasAceServerCommandZoneStatusChangedT *rsp);
 
@@ -387,25 +587,74 @@ bool ZbZclIasAceClientParseZoneStatusChanged(const uint8_t *buf, unsigned int le
  * Use ZbZclIasAceClientParseGetPanelStatusRsp. */
 
 /* Get Panel Status */
-uint8_t ZbZclIasAceClientCommandGetPanelStatusReq(struct ZbZclClusterT *clusterPtr,
+
+/**
+ * Send a Get Panel Status changed request
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandGetPanelStatusReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Parse a Get Panel Status Response command payload into a data structure
+ * @param buf Response buffer
+ * @param len Length of response buffer
+ * @param rsp Zone Status Changed Response structure
+ * @return True on success, false otherwise
+ */
 bool ZbZclIasAceClientParseGetPanelStatusRsp(const uint8_t *buf, unsigned int len,
     struct ZbZclIasAceServerCommandGetPanelStatusRspT *rsp);
 
 /* Get Bypassed Zone List */
-uint8_t ZbZclIasAceClientCommandGetBypassedZoneListReq(struct ZbZclClusterT *clusterPtr,
+
+/**
+ * Send a Get Bypassed Zone List command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandGetBypassedZoneListReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Parse a Set Bypassed Zone List Response command payload into a data structure
+ * @param buf Response buffer
+ * @param len Length of response buffer
+ * @param rsp Set Bypassed Zone List Response structure
+ * @return True on success, false otherwise
+ */
 bool ZbZclIasAceClientParseSetBypassedZoneList(const uint8_t *buf, unsigned int len,
     struct ZbZclIasAceServerCommandSetBypassedZoneListT *rsp);
 
 /* Get Zone Status */
-uint8_t ZbZclIasAceClientCommandGetZoneStatusReq(struct ZbZclClusterT *clusterPtr,
+
+/**
+ * Send a Get Zone Status command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param cmd_req Get Zone Status command request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+uint8_t ZbZclIasAceClientCommandGetZoneStatusReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclIasAceClientCommandGetZoneStatusT *cmd_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/**
+ * Parse a Get Zone Status Response command payload into a data structure
+ * @param buf Response buffer
+ * @param len Length of response buffer
+ * @param rsp Get Zone Status Response structure
+ * @return True on success, false otherwise
+ */
 bool ZbZclIasAceClientParseGetZoneStatusRsp(const uint8_t *buf, unsigned int len,
     struct ZbZclIasAceServerCommandGetZoneStatusRspT *rsp);
 
-#endif /* __ZCL_IAS_ACE_H */
+#endif

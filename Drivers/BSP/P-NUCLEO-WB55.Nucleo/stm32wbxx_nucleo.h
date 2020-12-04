@@ -98,20 +98,20 @@ typedef enum
 #define LED1_PIN                                GPIO_PIN_5
 #define LED1_GPIO_PORT                          GPIOB
 #define LED1_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOB_CLK_ENABLE()
-#define LED1_GPIO_CLK_DISABLE()                 __HAL_RCC_GPIOB_CLK_ENABLE()
+#define LED1_GPIO_CLK_DISABLE()                 __HAL_RCC_GPIOB_CLK_DISABLE()
 
 #define LED2_PIN                                GPIO_PIN_0
 #define LED2_GPIO_PORT                          GPIOB
 #define LED2_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOB_CLK_ENABLE()
-#define LED2_GPIO_CLK_DISABLE()                 __HAL_RCC_GPIOB_CLK_ENABLE()
+#define LED2_GPIO_CLK_DISABLE()                 __HAL_RCC_GPIOB_CLK_DISABLE()
 
 #define LED3_PIN                                GPIO_PIN_1
 #define LED3_GPIO_PORT                          GPIOB
 #define LED3_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOB_CLK_ENABLE()
-#define LED3_GPIO_CLK_DISABLE()                 __HAL_RCC_GPIOB_CLK_ENABLE()
+#define LED3_GPIO_CLK_DISABLE()                 __HAL_RCC_GPIOB_CLK_DISABLE()
 
 #define LEDx_GPIO_CLK_ENABLE(__INDEX__)         __HAL_RCC_GPIOB_CLK_ENABLE() /* All Led on same port */
-#define LEDx_GPIO_CLK_DISABLE(__INDEX__)        __HAL_RCC_GPIOB_CLK_ENABLE() /* All Led on same port */
+#define LEDx_GPIO_CLK_DISABLE(__INDEX__)        __HAL_RCC_GPIOB_CLK_DISABLE() /* All Led on same port */
 /**
   * @}
   */ 
@@ -129,21 +129,33 @@ typedef enum
 #define BUTTON_SW1_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOC_CLK_ENABLE()
 #define BUTTON_SW1_GPIO_CLK_DISABLE()           __HAL_RCC_GPIOC_CLK_DISABLE()
 #define BUTTON_SW1_EXTI_LINE                    GPIO_PIN_4
+#ifdef CORE_CM0PLUS
+#define BUTTON_SW1_EXTI_IRQn                    EXTI15_4_IRQn
+#else
 #define BUTTON_SW1_EXTI_IRQn                    EXTI4_IRQn
+#endif
 
 #define BUTTON_SW2_PIN                          GPIO_PIN_0
 #define BUTTON_SW2_GPIO_PORT                    GPIOD
 #define BUTTON_SW2_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOD_CLK_ENABLE()
 #define BUTTON_SW2_GPIO_CLK_DISABLE()           __HAL_RCC_GPIOD_CLK_DISABLE()
 #define BUTTON_SW2_EXTI_LINE                    GPIO_PIN_0
+#ifdef CORE_CM0PLUS
+#define BUTTON_SW2_EXTI_IRQn                    EXTI1_0_IRQn
+#else
 #define BUTTON_SW2_EXTI_IRQn                    EXTI0_IRQn
+#endif
 
 #define BUTTON_SW3_PIN                          GPIO_PIN_1
 #define BUTTON_SW3_GPIO_PORT                    GPIOD
 #define BUTTON_SW3_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOD_CLK_ENABLE()
 #define BUTTON_SW3_GPIO_CLK_DISABLE()           __HAL_RCC_GPIOD_CLK_DISABLE()
 #define BUTTON_SW3_EXTI_LINE                    GPIO_PIN_1
+#ifdef CORE_CM0PLUS
+#define BUTTON_SW3_EXTI_IRQn                    EXTI1_0_IRQn
+#else
 #define BUTTON_SW3_EXTI_IRQn                    EXTI1_IRQn
+#endif
 
 #define BUTTONx_GPIO_CLK_ENABLE(__INDEX__)    do { if ((__INDEX__) == BUTTON_SW1) BUTTON_SW1_GPIO_CLK_ENABLE(); else \
                                               if ((__INDEX__) == BUTTON_SW2) BUTTON_SW2_GPIO_CLK_ENABLE(); else \

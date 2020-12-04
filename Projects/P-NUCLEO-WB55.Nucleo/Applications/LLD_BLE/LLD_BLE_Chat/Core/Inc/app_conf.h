@@ -253,10 +253,10 @@ typedef enum
  ******************************************************************************/
 #if (CFG_FULL_LOW_POWER == 1)
 #define CFG_LED_SUPPORTED         0
-#define CFG_BUTTON_SUPPORTED      1
+#define CFG_BUTTON_SUPPORTED      0
 #else
 #define CFG_LED_SUPPORTED         1
-#define CFG_BUTTON_SUPPORTED      0
+#define CFG_BUTTON_SUPPORTED      1
 #endif /* CFG_FULL_LOW_POWER */
 
 #ifdef STM32WB35xx

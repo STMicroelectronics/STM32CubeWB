@@ -74,6 +74,9 @@ In case of errors, LED2 is blinking Slowly (1s).
 @note You need to perform a reset on Master board, then perform it on Slave board
       to have the correct behaviour of this example.
 
+@par Keywords
+
+Connectivity, SPI, Full-duplex, Transmission, Reception, Master, MISO, MOSI, Interrupt
 
 @par Directory contents 
 

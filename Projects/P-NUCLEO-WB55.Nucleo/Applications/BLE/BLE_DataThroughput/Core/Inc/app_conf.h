@@ -25,6 +25,7 @@
 #include "hw.h"
 #include "hw_conf.h"
 #include "hw_if.h"
+#include "ble_bufsize.h"
 
 /******************************************************************************
  * Data Throughput Application Config
@@ -134,7 +135,7 @@
  * SMPS not used when Set to 0
  * SMPS used when Set to 1
  */
-#define CFG_USE_SMPS    1
+#define CFG_USE_SMPS    0
 /* USER CODE END Generic_Parameters */
 
 /**< specific parameters ********************************************************/
@@ -150,7 +151,7 @@
  * When set to 1, the device is central
  * When set to 0, the device is peripheral
  */
-#define CFG_BLE_CENTRAL     0
+#define CFG_BLE_CENTRAL     1
 
 #define CFG_SERVER_ONLY     0
 /**
@@ -168,7 +169,8 @@
 
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
 #define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
-
+#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
+   
 #define CONN_L(x) ((int)(((float)x)/0.625f))
 #define CONN_P(x) ((int)(((float)x)/1.25f))
 #define SCAN_P (0x320)
@@ -239,7 +241,7 @@
 /**
  * Maximum supported ATT_MTU size
  */
-#define CFG_BLE_MAX_ATT_MTU             (250)
+#define CFG_BLE_MAX_ATT_MTU             (251)
 
 /**
  * Size of the storage area for Attribute values
@@ -287,10 +289,10 @@
 #define CFG_BLE_MASTER_SCA   0
 
 /**
- *  Source for the 32 kHz slow speed clock
- *  1 : internal RO
- *  0 : external crystal ( no calibration )
- */
+ *  Source for the low speed clock for RF wake-up
+ *  1 : external high speed crystal HSE/32/32 
+ *  0 : external low speed crystal ( no calibration )
+ */ 
 #define CFG_BLE_LSE_SOURCE  0
 
 /**
@@ -384,8 +386,8 @@
  ******************************************************************************/
 /**
  *  CFG_RTC_WUCKSEL_DIVIDER:  This sets the RTCCLK divider to the wakeup timer.
- *  The higher is the value, the better is the power consumption and the accuracy of the timerserver
- *  The lower is the value, the finest is the granularity
+ *  The lower is the value, the better is the power consumption and the accuracy of the timerserver
+ *  The higher is the value, the finest is the granularity
  *
  *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to ouput
  *  clock as low as possible) but the output clock should be equal or higher frequency compare to the clock feeding
@@ -562,6 +564,7 @@ typedef enum
   CFG_TASK_CONN_DEV_1_ID,
   CFG_TASK_BUTTON_ID,
   CFG_TASK_SW2_BUTTON_PUSHED_ID,
+  CFG_TASK_SW3_BUTTON_PUSHED_ID,
   CFG_TASK_START_ADV_ID,
   CFG_TASK_START_SCAN_ID,
   CFG_TASK_LINK_CONFIG_ID,

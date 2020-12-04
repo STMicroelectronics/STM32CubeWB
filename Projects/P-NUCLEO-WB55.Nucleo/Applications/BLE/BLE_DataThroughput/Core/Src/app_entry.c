@@ -277,6 +277,7 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
       break; 
 
     case BUTTON_SW3_PIN:
+      UTIL_SEQ_SetTask( 1<<CFG_TASK_SW3_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
       APP_BLE_Key_Button3_Action();
       break;
 

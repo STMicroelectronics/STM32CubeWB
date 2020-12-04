@@ -165,11 +165,11 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of MailQueueProduc */
-  osThreadDef(MailQueueProduc, MailQueueProducer, osPriorityBelowNormal, 0, 128);
+  osThreadDef(MailQueueProduc, MailQueueProducer, osPriorityNormal, 0, 128);
   MailQueueProducHandle = osThreadCreate(osThread(MailQueueProduc), NULL);
 
   /* definition and creation of MailQueueConsum */
-  osThreadDef(MailQueueConsum, MailQueueConsumer, osPriorityBelowNormal, 0, 128);
+  osThreadDef(MailQueueConsum, MailQueueConsumer, osPriorityNormal, 0, 128);
   MailQueueConsumHandle = osThreadCreate(osThread(MailQueueConsum), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -338,7 +338,7 @@ void MailQueueConsumer(void const * argument)
   /* USER CODE END MailQueueConsumer */
 }
 
-/**
+ /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM17 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment

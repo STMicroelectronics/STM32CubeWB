@@ -157,11 +157,11 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of MessageQueuePro */
-  osThreadDef(MessageQueuePro, MessageQueueProducer, osPriorityBelowNormal, 0, 128);
+  osThreadDef(MessageQueuePro, MessageQueueProducer, osPriorityNormal, 0, 128);
   MessageQueueProHandle = osThreadCreate(osThread(MessageQueuePro), NULL);
 
   /* definition and creation of MessageQueueCon */
-  osThreadDef(MessageQueueCon, MessageQueueConsumer, osPriorityBelowNormal, 0, 128);
+  osThreadDef(MessageQueueCon, MessageQueueConsumer, osPriorityNormal, 0, 128);
   MessageQueueConHandle = osThreadCreate(osThread(MessageQueueCon), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -311,7 +311,7 @@ void MessageQueueConsumer(void const * argument)
   /* USER CODE END MessageQueueConsumer */
 }
 
-/**
+ /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM17 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment

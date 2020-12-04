@@ -155,11 +155,11 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of SEM_Thread1 */
-  osThreadDef(SEM_Thread1, SemaphoreThread1, osPriorityLow, 0, 128);
+  osThreadDef(SEM_Thread1, SemaphoreThread1, osPriorityNormal, 0, 128);
   SEM_Thread1Handle = osThreadCreate(osThread(SEM_Thread1), (void *) osSemaphoreHandle);
 
   /* definition and creation of SEM_Thread2 */
-  osThreadDef(SEM_Thread2, SemaphoreThread2, osPriorityIdle, 0, 128);
+  osThreadDef(SEM_Thread2, SemaphoreThread2, osPriorityNormal, 0, 128);
   SEM_Thread2Handle = osThreadCreate(osThread(SEM_Thread2), (void *) osSemaphoreHandle);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -326,7 +326,7 @@ void SemaphoreThread2(void const * argument)
   /* USER CODE END SemaphoreThread2 */
 }
 
-/**
+ /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM17 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment

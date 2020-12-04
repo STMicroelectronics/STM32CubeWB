@@ -408,7 +408,7 @@ static enum ZclStatusCodeT ZbZclCommissionServerSetStartup(struct ZbZclClusterT 
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE */
-    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE, (enum ZbSecKeyTypeT)config->security.networkKeySeqNum);
+    status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE, (enum ZbSecKeyTypeT)config->security.networkKeyType);
     if (status != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
     }

@@ -62,11 +62,11 @@ uint8_t  *txBuffer_Ptr;
 extern uint8_t  *rxBuffer_Ptr[8];
 extern uint32_t *rxStatus_Ptr[8];
 extern uint32_t *rxTimeStamp_Ptr[8];
-extern int      *rxRSSI_Ptr[8];
+extern int32_t  *rxRSSI_Ptr[8];
 /* for HAL */
 uint32_t hal_status;
 uint32_t hal_timestamp_receive;
-int hal_rssi;
+int32_t  hal_rssi;
 
 extern param_hal_BLE_t bleparam_hal_BLE_Packet;
 

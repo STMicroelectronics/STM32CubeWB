@@ -329,13 +329,16 @@ static void Led_Init( void )
 
 static void Button_Init( void )
 {
+#if (CFG_BUTTON_SUPPORTED == 1U)
   /**
    * Button Initialization
    */
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
   BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
   BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
-  
+
+#endif
+
   return;
 }
 

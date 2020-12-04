@@ -1,4 +1,8 @@
 /**
+ * This cluster may be required by other clusters. See ZCL specification
+ *
+ * This cluster supports scenes functionality. When a scene is recalled that includes this cluster, the attributes listed in the Scenes
+ * Table Extensions for this cluster will be set to the value in the scene
  * @file zcl.onoff.h
  * @brief ZCL OnOff cluster header
  * ZCL 7 section 3.8
@@ -60,10 +64,10 @@ extern "C" {
 
 /** OnOff Server Attribute IDs */
 enum ZbZclOnOffSvrAttrT {
-    ZCL_ONOFF_ATTR_ONOFF = 0x0000,
-    ZCL_ONOFF_ATTR_GLOBAL_SCENE_CONTROL = 0x4000,
-    ZCL_ONOFF_ATTR_ON_TIME,
-    ZCL_ONOFF_ATTR_OFF_WAIT_TIME,
+    ZCL_ONOFF_ATTR_ONOFF = 0x0000, /**< OnOff */
+    ZCL_ONOFF_ATTR_GLOBAL_SCENE_CONTROL = 0x4000, /**< GlobalSceneControl (Optional) */
+    ZCL_ONOFF_ATTR_ON_TIME, /**< OnTime (Optional) */
+    ZCL_ONOFF_ATTR_OFF_WAIT_TIME, /**< OffWaitTime (Optional) */
 };
 
 /* OnOff Command IDs (don't include in doxygen) */
@@ -104,8 +108,21 @@ struct ZbZclOnOffServerCallbacksT {
 struct ZbZclClusterT * ZbZclOnOffServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclOnOffServerCallbacksT *callbacks, void *arg);
 
-/* Allow the Level Control Cluster to be notified of OnOff commands */
+/**
+ * Callback to notify Level cluster when an OnOff command is recevied.
+ * @param level_cluster Level cluster instance to be notified
+ * @param on_off_command OnOff command ID that was received
+ * @return Void
+ */
 typedef void (*ZbZclLevelControlCallbackT)(struct ZbZclClusterT *level_cluster, uint8_t on_off_command);
+
+/**
+ * Set the Level control callback
+ * @param on_off_cluster OnOff cluster instance
+ * @param level_cluster Level cluster instance
+ * @param levelControlCallback Level control callback function
+ * @return Void
+ */
 void ZbZclOnOffServerSetLevelControlCallback(struct ZbZclClusterT *on_off_cluster,
     struct ZbZclClusterT *level_cluster, ZbZclLevelControlCallbackT levelControlCallback);
 

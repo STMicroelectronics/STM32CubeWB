@@ -1,4 +1,10 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.doorlock.h
+ * @brief ZCL Door Lock cluster header
+ * ZCL 7 section 7.3
+ * ZCL 8 section 7.3
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_DRLK_H
 #define ZCL_DRLK_H
@@ -415,6 +421,15 @@ struct ZbZclDoorLockLockDoorRspT {
     uint8_t status; /**< Status */
 };
 
+/**
+ * Send a Lock Door response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Lock Door response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendLockRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockLockDoorRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -442,6 +457,15 @@ struct ZbZclDoorLockUnlockDoorRspT {
     uint8_t status; /**< Status */
 };
 
+/**
+ * Send an Unlock Door response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Unlock Door response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendUnlockRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockUnlockDoorRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -469,6 +493,15 @@ struct ZbZclDoorLockToggleRspT {
     uint8_t status; /**< Status */
 };
 
+/**
+ * Send a Toggle response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Toggle response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendToggleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockToggleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -497,6 +530,15 @@ struct ZbZclDoorLockUnlockTimeoutRspT {
     uint8_t status; /**< Status */
 };
 
+/**
+ * Send an Unlock with Timeout response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Unlock with Timeout response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendUnlockTimeoutRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockUnlockTimeoutRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -504,10 +546,20 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendUnlockTimeoutRsp(struct ZbZclClusterT
  * Client Get Log Helper
  *---------------------------------------------------------------
  */
+/** Get Log Record request structure */
 struct ZbZclDoorLockGetLogReqT {
-    uint16_t log_index;
+    uint16_t log_index; /**< Log Index */
 };
 
+/**
+ * Send a Get Log Record request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Get Log Record request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientGetLogReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetLogReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -552,6 +604,7 @@ struct ZbZclDoorLockSetPinReqT {
 /**
  * Send a Set PIN Code request command
  * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
  * @param req Set PIN Code request structure
  * @param callback Callback function that will be invoked later when the response is received
  * @param arg Pointer to application data that will later be provided back to the callback function when invoked
@@ -566,6 +619,15 @@ struct ZbZclDoorLockSetPinRspT {
     uint8_t status; /**< Status */
 };
 
+/**
+ * Send a Set PIN Code response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Set PIN Code response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetPinRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetPinRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -573,10 +635,20 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetPinRsp(struct ZbZclClusterT *clust
  * Client Get Pin Helper
  *---------------------------------------------------------------
  */
+/** Get PIN Code request structure */
 struct ZbZclDoorLockGetPinReqT {
-    uint16_t user_id;
+    uint16_t user_id; /**< User ID */
 };
 
+/**
+ * Send a Get PIN Code request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Get PIN Code request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientGetPinReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetPinReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -606,10 +678,20 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetPinRsp(struct ZbZclClusterT *clust
  * Client Clear Pin Helper
  *---------------------------------------------------------------
  */
+/** Clear PIN Code request structure */
 struct ZbZclDoorLockClrPinReqT {
-    uint16_t user_id;
+    uint16_t user_id; /**< User ID */
 };
 
+/**
+ * Send a Clear PIN Code request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Clear PIN Code request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientClrPinReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrPinReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -619,6 +701,15 @@ struct ZbZclDoorLockClrPinRspT {
     uint8_t status; /**< Status */
 };
 
+/**
+ * Send a Clear PIN Code response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Clear PIN Code response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrPinRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrPinRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -626,13 +717,31 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrPinRsp(struct ZbZclClusterT *clust
  * Client Clear All Pin Helper
  *---------------------------------------------------------------
  */
+/**
+ * Send a Clear All PIN Codes request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientClrAllPinReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/** Clear All PIN Codes response structure */
 struct ZbZclDoorLockClrAllPinRspT {
-    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
+    uint8_t status; /**< Status */
 };
 
+/**
+ * Send a Clear All PIN Codes response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Clear All PIN Codes response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrAllPinRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrAllPinRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -640,11 +749,21 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrAllPinRsp(struct ZbZclClusterT *cl
  * Client Set User Status Helper
  *---------------------------------------------------------------
  */
+/** Set User Status request structure */
 struct ZbZclDoorLockSetUserStatusReqT {
     uint16_t user_id;
     uint8_t user_status;
 };
 
+/**
+ * Send a Set User Status request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Set User Status request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientSetUserStatusReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetUserStatusReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -654,6 +773,15 @@ struct ZbZclDoorLockSetUserStatusRspT {
     uint8_t status; /**< Status */
 };
 
+/**
+ * Send a Set User Status response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Set User Status response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetUserStatusRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetUserStatusRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -661,10 +789,20 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetUserStatusRsp(struct ZbZclClusterT
  * Client Get User Status Helper
  *---------------------------------------------------------------
  */
+/** Get User Status request structure */
 struct ZbZclDoorLockGetUserStatusReqT {
-    uint16_t user_id;
+    uint16_t user_id; /**< User ID */
 };
 
+/**
+ * Send a Get User Status request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Get User Status request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientGetUserStatusReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetUserStatusReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -675,6 +813,15 @@ struct ZbZclDoorLockGetUserStatusRspT {
     uint8_t user_status; /**< User Status */
 };
 
+/**
+ * Send a Get User Status response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Get User Status response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendGetUserStatusRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockGetUserStatusRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -682,15 +829,26 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetUserStatusRsp(struct ZbZclClusterT
  * Client Set WD Schedule Helper
  *---------------------------------------------------------------
  */
+/** Set Weekday Schedule request structure */
 struct ZbZclDoorLockSetWDScheduleReqT {
-    uint8_t schedule_id;
-    uint16_t user_id;
-    uint8_t days_mask;
-    uint8_t start_hour;
-    uint8_t start_minute;
-    uint8_t end_hour;
-    uint8_t end_minute;
+    uint8_t schedule_id; /**< ScheduleID # */
+    uint16_t user_id; /**< User ID */
+    uint8_t days_mask; /**< Days Mask */
+    uint8_t start_hour; /**< Start Hour */
+    uint8_t start_minute; /**< Start Minute */
+    uint8_t end_hour; /**< End Hour */
+    uint8_t end_minute; /**< End Minute */
 };
+
+/**
+ * Send a Set Weekday Schedule request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Set Weekday Schedule request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientSetWDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetWDScheduleReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -699,6 +857,16 @@ enum ZclStatusCodeT ZbZclDoorLockClientSetWDScheduleReq(struct ZbZclClusterT *cl
 struct ZbZclDoorLockSetWDScheduleRspT {
     uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Set Weekday Schedule response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Set Weekday Schedule response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetWDScheduleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetWDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -706,10 +874,21 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetWDScheduleRsp(struct ZbZclClusterT
  * Client Get WD Schedule Helper
  *---------------------------------------------------------------
  */
+/** Get Weekday Schedule request structure */
 struct ZbZclDoorLockGetWDScheduleReqT {
-    uint8_t schedule_id;
-    uint16_t user_id;
+    uint8_t schedule_id; /**< Schedule ID */
+    uint16_t user_id; /**< User ID */
 };
+
+/**
+ * Send a Get Weekday Schedule request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Get Weekday Schedule request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientGetWDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetWDScheduleReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -718,13 +897,23 @@ enum ZclStatusCodeT ZbZclDoorLockClientGetWDScheduleReq(struct ZbZclClusterT *cl
 struct ZbZclDoorLockGetWDScheduleRspT {
     uint8_t schedule_id; /**< Schedule ID */
     uint16_t user_id; /**< User ID */
-    uint8_t status; /* e.g. ZCL_STATUS_SUCCESS */
-    uint8_t days_mask;
-    uint8_t start_hour;
-    uint8_t start_minute;
-    uint8_t end_hour;
-    uint8_t end_minute;
+    uint8_t status; /**< Status */
+    uint8_t days_mask; /**< Days Mask */
+    uint8_t start_hour; /**< Start Hour */
+    uint8_t start_minute; /**< Start Minute */
+    uint8_t end_hour; /**< End Hour */
+    uint8_t end_minute; /**< End Minute */
 };
+
+/**
+ * Send a Get Weekday Schedule response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Get Weekday Schedule response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendGetWDScheduleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockGetWDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -732,10 +921,21 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetWDScheduleRsp(struct ZbZclClusterT
  * Client Clear WD Schedule Helper
  *---------------------------------------------------------------
  */
+/** Clear Weekday Schedule request structure */
 struct ZbZclDoorLockClrWDScheduleReqT {
-    uint8_t schedule_id;
-    uint16_t user_id;
+    uint8_t schedule_id; /**< Schedule ID */
+    uint16_t user_id; /**< User ID */
 };
+
+/**
+ * Send a Clear Weekday Schedule request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Clear Weekday Schedule request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientClrWDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrWDScheduleReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -744,6 +944,16 @@ enum ZclStatusCodeT ZbZclDoorLockClientClrWDScheduleReq(struct ZbZclClusterT *cl
 struct ZbZclDoorLockClrWDScheduleRspT {
     uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Clear Weekday Schedule response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Clear Weekday Schedule response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrWDScheduleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrWDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -751,12 +961,23 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrWDScheduleRsp(struct ZbZclClusterT
  * Client Set YD Schedule Helper
  *---------------------------------------------------------------
  */
+/** Set Year Day Schedule request structure */
 struct ZbZclDoorLockSetYDScheduleReqT {
-    uint8_t schedule_id;
-    uint16_t user_id;
-    uint32_t local_start_time;
-    uint32_t local_end_time;
+    uint8_t schedule_id; /**< Schedule ID */
+    uint16_t user_id; /**< User ID */
+    uint32_t local_start_time; /**< Local Start Time */
+    uint32_t local_end_time; /**< Local End Time */
 };
+
+/**
+ * Send a Set Year Day Schedule request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Set Year Day Schedule request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientSetYDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetYDScheduleReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -765,6 +986,16 @@ enum ZclStatusCodeT ZbZclDoorLockClientSetYDScheduleReq(struct ZbZclClusterT *cl
 struct ZbZclDoorLockSetYDScheduleRspT {
     uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Set Year Day Schedule response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Set Year Day Schedule response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetYDScheduleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetYDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -772,10 +1003,21 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetYDScheduleRsp(struct ZbZclClusterT
  * Client Get YD Schedule Helper
  *---------------------------------------------------------------
  */
+/** Get Year Day Schedule request structure */
 struct ZbZclDoorLockGetYDScheduleReqT {
-    uint8_t schedule_id;
-    uint16_t user_id;
+    uint8_t schedule_id; /**< Schedule ID */
+    uint16_t user_id; /**< User ID */
 };
+
+/**
+ * Send a Get Year Day Schedule request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Get Year Day Schedule request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientGetYDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetYDScheduleReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -784,10 +1026,20 @@ enum ZclStatusCodeT ZbZclDoorLockClientGetYDScheduleReq(struct ZbZclClusterT *cl
 struct ZbZclDoorLockGetYDScheduleRspT {
     uint8_t schedule_id; /**< Schedule ID */
     uint16_t user_id; /**< User ID */
-    uint8_t status; /* e.g. ZCL_STATUS_SUCCESS */
-    uint32_t local_start_time;
-    uint32_t local_end_time;
+    uint8_t status; /**< Status */
+    uint32_t local_start_time; /**< Local Start Time */
+    uint32_t local_end_time; /**< Local End Time */
 };
+
+/**
+ * Send a Get Year Day Schedule response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Get Year Day Schedule response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendGetYDScheduleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockGetYDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -795,10 +1047,21 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetYDScheduleRsp(struct ZbZclClusterT
  * Client Clear YD Schedule Helper
  *---------------------------------------------------------------
  */
+/** Clear Year Day Schedule request structure */
 struct ZbZclDoorLockClrYDScheduleReqT {
-    uint8_t schedule_id;
-    uint16_t user_id;
+    uint8_t schedule_id; /**< Schedule ID */
+    uint16_t user_id; /**< User ID */
 };
+
+/**
+ * Send a Clear Year Day Schedule request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Clear Year Day Schedule request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientClrYDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrYDScheduleReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -807,6 +1070,16 @@ enum ZclStatusCodeT ZbZclDoorLockClientClrYDScheduleReq(struct ZbZclClusterT *cl
 struct ZbZclDoorLockClrYDScheduleRspT {
     uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Clear Year Day Schedule response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Clear Year Day Schedule response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrYDScheduleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrYDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -814,12 +1087,23 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrYDScheduleRsp(struct ZbZclClusterT
  * Client Set HD Schedule Helper
  *---------------------------------------------------------------
  */
+/** Set Holiday Schedule request structure */
 struct ZbZclDoorLockSetHDScheduleReqT {
-    uint8_t schedule_id;
-    uint32_t local_start_time;
-    uint32_t local_end_time;
-    uint8_t operating_mode;
+    uint8_t schedule_id; /**< Holiday Schedule ID */
+    uint32_t local_start_time; /**< Local Start Time */
+    uint32_t local_end_time; /**< Local End Time */
+    uint8_t operating_mode; /**< Operating Mode During Holiday */
 };
+
+/**
+ * Send a Set Holiday Schedule request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Set Holiday Schedule request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientSetHDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetHDScheduleReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -828,6 +1112,16 @@ enum ZclStatusCodeT ZbZclDoorLockClientSetHDScheduleReq(struct ZbZclClusterT *cl
 struct ZbZclDoorLockSetHDScheduleRspT {
     uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Set Holiday Schedule response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Set Holiday Schedule response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetHDScheduleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetHDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -835,9 +1129,20 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetHDScheduleRsp(struct ZbZclClusterT
  * Client Get HD Schedule Helper
  *---------------------------------------------------------------
  */
+/** Get Holiday Schedule request structure */
 struct ZbZclDoorLockGetHDScheduleReqT {
-    uint8_t schedule_id;
+    uint8_t schedule_id; /**< Holiday Schedule ID */
 };
+
+/**
+ * Send a Get Holiday Schedule request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Get Holiday Schedule request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientGetHDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetHDScheduleReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -846,10 +1151,20 @@ enum ZclStatusCodeT ZbZclDoorLockClientGetHDScheduleReq(struct ZbZclClusterT *cl
 struct ZbZclDoorLockGetHDScheduleRspT {
     uint8_t schedule_id; /**< Holiday Schedule ID */
     uint8_t status; /**< Status */
-    uint32_t local_start_time;
-    uint32_t local_end_time;
-    uint8_t operating_mode;
+    uint32_t local_start_time; /**< Local Start Time */
+    uint32_t local_end_time; /**< Local End Time */
+    uint8_t operating_mode; /**< Operating Mode During Holiday */
 };
+
+/**
+ * Send a Get Holiday Schedule response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Get Holiday Schedule response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendGetHDScheduleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockGetHDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -857,9 +1172,20 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetHDScheduleRsp(struct ZbZclClusterT
  * Client Clear HD Schedule Helper
  *---------------------------------------------------------------
  */
+/** Clear Holiday Schedule request structure */
 struct ZbZclDoorLockClrHDScheduleReqT {
-    uint8_t schedule_id;
+    uint8_t schedule_id; /**< Holiday Schedule ID */
 };
+
+/**
+ * Send a Clear Holiday Schedule request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Clear Holiday Schedule request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientClrHDScheduleReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrHDScheduleReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -868,6 +1194,16 @@ enum ZclStatusCodeT ZbZclDoorLockClientClrHDScheduleReq(struct ZbZclClusterT *cl
 struct ZbZclDoorLockClrHDScheduleRspT {
     uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Clear Holiday Schedule response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Clear Holiday Schedule response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrHDScheduleRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrHDScheduleRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -875,10 +1211,21 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrHDScheduleRsp(struct ZbZclClusterT
  * Client Set User Type Helper
  *---------------------------------------------------------------
  */
+/** Set User Type request structure */
 struct ZbZclDoorLockSetUserTypeReqT {
-    uint16_t user_id;
-    uint8_t user_type;
+    uint16_t user_id; /**< User ID */
+    uint8_t user_type; /**< User Type */
 };
+
+/**
+ * Send a Set User Type request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Set User Type request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientSetUserTypeReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockSetUserTypeReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -887,6 +1234,16 @@ enum ZclStatusCodeT ZbZclDoorLockClientSetUserTypeReq(struct ZbZclClusterT *clus
 struct ZbZclDoorLockSetUserTypeRspT {
     uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Set User Type response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Set User Type response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetUserTypeRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetUserTypeRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -894,9 +1251,20 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetUserTypeRsp(struct ZbZclClusterT *
  * Client Get User Type Helper
  *---------------------------------------------------------------
  */
+/** Get User Type request structure */
 struct ZbZclDoorLockGetUserTypeReqT {
-    uint16_t user_id;
+    uint16_t user_id; /**< User ID */
 };
+
+/**
+ * Send a Get User Type request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Get User Type request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientGetUserTypeReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetUserTypeReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -906,6 +1274,16 @@ struct ZbZclDoorLockGetUserTypeRspT {
     uint16_t user_id; /**< User ID */
     uint8_t user_type; /**< User Type */
 };
+
+/**
+ * Send a Get User Type response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Get User Type response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendGetUserTypeRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockGetUserTypeRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -925,6 +1303,7 @@ struct ZbZclDoorLockSetRfidReqT {
 /**
  * Send a Set RFID Code request command
  * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
  * @param req Set RFID Code request structure
  * @param callback Callback function that will be invoked later when the response is received
  * @param arg Pointer to application data that will later be provided back to the callback function when invoked
@@ -938,6 +1317,16 @@ enum ZclStatusCodeT ZbZclDoorLockClientSetRfidReq(struct ZbZclClusterT *cluster,
 struct ZbZclDoorLockSetRfidRspT {
     uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Set RFID Code response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Set RFID Code response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendSetRfidRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockSetRfidRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -945,9 +1334,20 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendSetRfidRsp(struct ZbZclClusterT *clus
  * Client Get RFID Helper
  *---------------------------------------------------------------
  */
+/** Get RFID Code request structure */
 struct ZbZclDoorLockGetRfidReqT {
-    uint16_t user_id;
+    uint16_t user_id; /**< User ID */
 };
+
+/**
+ * Send a Get RFID Code request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Get RFID Code request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientGetRfidReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockGetRfidReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -977,9 +1377,20 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendGetRfidRsp(struct ZbZclClusterT *clus
  * Client Clear RFID Helper
  *---------------------------------------------------------------
  */
+/** Clear RFID Code request structure */
 struct ZbZclDoorLockClrRfidReqT {
-    uint16_t user_id;
+    uint16_t user_id; /**< User ID */
 };
+
+/**
+ * Send a Clear RFID Code request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param req Clear RFID Code request structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientClrRfidReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     struct ZbZclDoorLockClrRfidReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
@@ -988,6 +1399,16 @@ enum ZclStatusCodeT ZbZclDoorLockClientClrRfidReq(struct ZbZclClusterT *cluster,
 struct ZbZclDoorLockClrRfidRspT {
     uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Clear RFID Code response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Clear RFID Code response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrRfidRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrRfidRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 
@@ -995,12 +1416,32 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrRfidRsp(struct ZbZclClusterT *clus
  * Client Clear All RFID Helper
  *---------------------------------------------------------------
  */
+
+/**
+ * Send a Clear All RFID Codes request command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for request
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockClientClrAllRfidReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/** Clear All RFID Codes response structure */
 struct ZbZclDoorLockClrAllRfidRspT {
-    uint8_t status; /* e.g. DOORLOCK_STATUS_SUCCESS */
+    uint8_t status; /**< Status */
 };
+
+/**
+ * Send a Clear All RFID Codes response command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination address for response, including sequence number and tx options
+ * @param rsp Clear All RFID Codes response structure
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZclStatusCodeT ZbZclDoorLockServerSendClrAllRfidRsp(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dst,
     struct ZbZclDoorLockClrAllRfidRspT *rsp, void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
 

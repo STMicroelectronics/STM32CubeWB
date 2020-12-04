@@ -1,21 +1,22 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
-
-/*--------------------------------------------------------------------------
- *  DESCRIPTION
- *      Interface definition for the ZCL Tunneling cluster.
- *--------------------------------------------------------------------------
+/**
+ * @file zcl.tunnel.h
+ * @brief ZCL Tunneling cluster header
+ * ZCL 7 section 10.6
+ * ZCL 8 section 10.6
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
  */
+
 #ifndef ZCL_TUNNEL_H
 # define ZCL_TUNNEL_H
 
 #include "zcl/zcl.h"
 
-/* Tunneling cluster attributes */
-enum {
-    ZCL_TUNNEL_ATTR_TIMEOUT = 0x0000
+/** Tunneling Server Attribute IDs */
+enum ZbZclTunnelSvrAttrT {
+    ZCL_TUNNEL_ATTR_TIMEOUT = 0x0000 /**< CloseTunnelTimeout */
 };
 
-/* Client-to-Server commands */
+/* Tunneling Client commands */
 enum {
     ZCL_TUNNEL_SVR_CMD_REQUEST = 0x00,
     ZCL_TUNNEL_SVR_CMD_CLOSE = 0x01,
@@ -26,7 +27,7 @@ enum {
     ZCL_TUNNEL_SVR_CMD_SUPPORTED_REQ = 0x06
 };
 
-/* Server-to-Client commands. */
+/* Tunneling Server commands */
 enum {
     ZCL_TUNNEL_CLI_CMD_RESPONSE = 0x00,
     ZCL_TUNNEL_CLI_CMD_DATA = 0x01,
@@ -37,120 +38,209 @@ enum {
     ZCL_TUNNEL_CLI_CMD_CLOSE_NOTIFY = 0x06
 };
 
-/* Tunnel protocol ID enumerations */
+/** Tunneling Protocol ID enumerations */
 enum ZbZclTunnelProtocolT {
-    ZCL_TUNNEL_PROTO_DLMS_COSEM = 0,
-    ZCL_TUNNEL_PROTO_IEC_61107 = 1,
-    ZCL_TUNNEL_PROTO_ANSI_C12 = 2,
-    ZCL_TUNNEL_PROTO_M_BUS = 3,
-    ZCL_TUNNEL_PROTO_SML = 4,
-    ZCL_TUNNEL_PROTO_CLIMATE_TALK = 5,
-    ZCL_TUNNEL_PROTO_GB_HRGP = 6,
-    ZCL_TUNNEL_PROTO_IPV6 = 7,
-    ZCL_TUNNEL_PROTO_IPV4 = 8,
-    ZCL_TUNNEL_PROTO_NULL = 9,
-    ZCL_TUNNEL_PROTO_TEST = 199,
-    ZCL_TUNNEL_PROTO_MANUFACTURER = 200,
-    ZCL_TUNNEL_PROTO_RESERVED = 0xff
+    ZCL_TUNNEL_PROTO_DLMS_COSEM = 0, /**< DLMS/COSEM (IEC 62056) */
+    ZCL_TUNNEL_PROTO_IEC_61107 = 1, /**< IEC 61107 */
+    ZCL_TUNNEL_PROTO_ANSI_C12 = 2, /**< ANSI C12 */
+    ZCL_TUNNEL_PROTO_M_BUS = 3, /**< M-BUS */
+    ZCL_TUNNEL_PROTO_SML = 4, /**< SML */
+    ZCL_TUNNEL_PROTO_CLIMATE_TALK = 5, /**< ClimateTalk */
+    ZCL_TUNNEL_PROTO_GB_HRGP = 6, /**< GB-HRGP */
+    ZCL_TUNNEL_PROTO_IPV4 = 7, /**< IP v4 */
+    ZCL_TUNNEL_PROTO_IPV6 = 8, /**< IP v6 */
+    ZCL_TUNNEL_PROTO_MANUFACTURER = 200, /**< Manufacturer-defined protocols */
+    ZCL_TUNNEL_PROTO_RESERVED = 0xff /**< Reserved */
 };
 
-/* Tunnel Status Codes.
- * These are used with the RequestTunnelResponse
- * (ZCL_TUNNEL_CLI_CMD_RESPONSE). */
+/** Tunneling Status Values */
 enum ZbZclTunnelStatusT {
-    ZCL_TUNNEL_STATUS_SUCCESS = 0x00,
-    ZCL_TUNNEL_STATUS_BUSY = 0x01,
-    ZCL_TUNNEL_STATUS_NO_RESOURCES = 0x02,
-    ZCL_TUNNEL_STATUS_PROTO_UNSUPPORTED = 0x03,
-    ZCL_TUNNEL_STATUS_FLOW_UNSUPPORTED = 0x04
+    ZCL_TUNNEL_STATUS_SUCCESS = 0x00, /**< Success */
+    ZCL_TUNNEL_STATUS_BUSY = 0x01, /**< Busy */
+    ZCL_TUNNEL_STATUS_NO_RESOURCES = 0x02, /**< No more tunnel IDs */
+    ZCL_TUNNEL_STATUS_PROTO_UNSUPPORTED = 0x03, /**< Protocol not supported */
+    ZCL_TUNNEL_STATUS_FLOW_UNSUPPORTED = 0x04 /**< Flow control not supported */
 };
 
-/* Transfer Data Status codes.
- * These are used with the TransferDataError (ZCL_TUNNEL_SVR_CMD_ERROR and
- * ZCL_TUNNEL_CLI_CMD_ERROR) commands. */
+/** Tunneling Transfer Data Status Values */
 enum ZbZclTunnelXferStatusT {
-    /* ugh, why use 0x00 for an error code?
-     * And why couldn't these status codes be combined with the
-     * Tunnel Status Codes? */
-    ZCL_TUNNEL_XFER_STATUS_NO_TUNNEL = 0x00,
-    ZCL_TUNNEL_XFER_STATUS_WRONG_DEVICE = 0x01,
-    ZCL_TUNNEL_XFER_STATUS_OVERFLOW = 0x02,
-
-    /* Exegin add-on. If zcl_tunnel_handle_data returns
-     * ZCL_TUNNEL_XFER_STATUS_NO_RESPONSE, don't send a response. */
-    ZCL_TUNNEL_XFER_STATUS_NO_RESPONSE = 0xff
+    ZCL_TUNNEL_XFER_STATUS_NO_TUNNEL = 0x00, /**< No such tunnel */
+    ZCL_TUNNEL_XFER_STATUS_WRONG_DEVICE = 0x01, /**< Wrong device */
+    ZCL_TUNNEL_XFER_STATUS_OVERFLOW = 0x02, /**< Data overflow */
+    ZCL_TUNNEL_XFER_STATUS_NO_RESPONSE = 0xff /**< No Response - If zcl_tunnel_handle_data returns
+     * ZCL_TUNNEL_XFER_STATUS_NO_RESPONSE, don't send a response
+     */
 };
 
 struct ZbZclTunnelStateT;
 
-/*---------------------------------------------------------------
- * Server
- *---------------------------------------------------------------
+/** ZbZclTunnelServerAddProto and ZbZclTunnelClientAddProto callback data structure */
+struct ZbZclTunnelProtoCbT {
+    enum ZbZclTunnelStatusT (*request)(struct ZbZclClusterT *clusterPtr,
+        struct ZbZclTunnelStateT *statePtr, void *priv);
+    /**< Callback to the request handler. Only applicable for Tunnel Server cluster. */
+    void (*input)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv);
+    /**< Callback to the input handler */
+    void (*close)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv);
+    /**< Callback to the close handler (Optional). Required if the application needs to keep track of
+     * open tunnels, e.g., for persistence */
+    bool (*error)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv,
+        enum ZbZclTunnelXferStatusT status);
+    /**< Callback to the error handler (Optional). To handle ZCL_TUNNEL_SVR_CMD_ERROR.
+     * Return false if tunnel should be closed */
+    void *priv;
+    /**< Application private data pointer */
+};
+
+/* Tunneling Server */
+
+/**
+ * Create a new instance of the Tunneling Server cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclTunnelServerAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
-enum ZclStatusCodeT ZbZclTunnelServerAddProto(struct ZbZclClusterT *clusterPtr,
-    enum ZbZclTunnelProtocolT protocol, /* Protocol ID enumeration. */
-    uint16_t mfr, /* Manufacturer ID. */
-    uint16_t mtu, /* Protocol's MTU. */
-    /* request - mandatory */
-    enum ZbZclTunnelStatusT (*request)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv),
-    /* input - mandatory */
-    void (*input)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv),
-    /* close - optional (required if application needs to keep track of open tunnels, e.g. for persistence) */
-    void (*close)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv),
-    /* error - optional. To handle ZCL_TUNNEL_SVR_CMD_ERROR. Return false if tunnel should be closed */
-    bool (*error)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv, enum ZbZclTunnelXferStatusT status),
-    void *priv);
+/**
+ * Add a protocol tunnel to the server
+ * @param cluster Cluster instance from which to send this command
+ * @param protocol Protocol ID enumeration
+ * @param mfr Manufacturer ID
+ * @param mtu Protocol's MTU
+ * @param callbacks Protocol callbacks
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclTunnelServerAddProto(struct ZbZclClusterT *cluster, enum ZbZclTunnelProtocolT protocol,
+    uint16_t mfr, uint16_t mtu, struct ZbZclTunnelProtoCbT *callbacks);
 
-struct ZbZclTunnelStateT * ZbZclTunnelServerStateFindById(struct ZbZclClusterT *clusterPtr, uint16_t tunnel_id);
+/**
+ * Get tunnel server state by tunnel ID
+ * @param cluster Cluster instance from which to send this command
+ * @param tunnel_id Tunnel ID
+ * @return State of the tunnel
+ */
+struct ZbZclTunnelStateT * ZbZclTunnelServerStateFindById(struct ZbZclClusterT *cluster, uint16_t tunnel_id);
 
-enum ZclStatusCodeT ZbZclTunnelServerSendto(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send data via the tunnel
+ * @param cluster Cluster instance from which to send this command
+ * @param state State of the tunnel
+ * @param data Data to send
+ * @param len Length of data being sent
+ * @param direction Direction to send (ZCL_DIRECTION_TO_SERVER or ZCL_DIRECTION_TO_CLIENT)
+ * @param callback Callback function to handle response
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclTunnelServerSendto(struct ZbZclClusterT *cluster,
     struct ZbZclTunnelStateT *state, const uint8_t *data, unsigned int len, enum ZbZclDirectionT direction,
     void (*callback)(struct ZbZclCommandRspT *rspPtr, void *arg), void *arg);
 
-void ZbZclTunnelServerSendAllMatch(struct ZbZclClusterT *clusterPtr, uint64_t eui, void *data, unsigned int len);
+/**
+ * Send data to all tunnel clients with matching EUI
+ * @param cluster Cluster instance from which to send this command
+ * @param eui Extended Unique Identifier (EUI) address
+ * @param data Data to send
+ * @param len Length of data being sent
+ * @return Void
+ */
+void ZbZclTunnelServerSendAllMatch(struct ZbZclClusterT *cluster, uint64_t eui, void *data, unsigned int len);
 
-/*---------------------------------------------------------------
- * Client
- *---------------------------------------------------------------
+/* Tunneling Client */
+
+/**
+ * Create a new instance of the Tunneling Client cluster
+ * @param zb Zigbee stack instance
+ * @param endpoint Endpoint on which to create cluster
+ * @return Cluster pointer, or NULL if there is an error
  */
 struct ZbZclClusterT * ZbZclTunnelClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 
-enum ZclStatusCodeT ZbZclTunnelClientAddProto(struct ZbZclClusterT *clusterPtr,
-    enum ZbZclTunnelProtocolT protocol, /* Protocol ID enumeration. */
-    uint16_t mfr, /* Manufacturer ID. */
-    uint16_t mtu, /* Protocol's MTU. */
-    /* input - mandatory */
-    void (*input)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv),
-    /* close - optional */
-    void (*close)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv),
-    /* error - optional. To handle ZCL_TUNNEL_CLI_CMD_ERROR. Return false if tunnel should be closed */
-    bool (*error)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *statePtr, void *priv, enum ZbZclTunnelXferStatusT status),
-    void *priv);
+/**
+ * Add a protocol tunnel to the server
+ * @param cluster Cluster instance from which to send this command
+ * @param protocol Protocol ID enumeration
+ * @param mfr Manufacturer ID
+ * @param mtu Protocol's MTU
+ * @param callbacks Protocol callbacks
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclTunnelClientAddProto(struct ZbZclClusterT *cluster, enum ZbZclTunnelProtocolT protocol,
+    uint16_t mfr, uint16_t mtu, struct ZbZclTunnelProtoCbT *callbacks);
 
-enum ZclStatusCodeT ZbZclTunnelClientConnectReq(struct ZbZclClusterT *clusterPtr, uint64_t dst_addr, uint8_t dst_ep,
-    void (*callback)(struct ZbZclClusterT *clusterPtr, struct ZbZclTunnelStateT *state, enum ZbZclTunnelStatusT status, void *arg),
-    void *arg);
+/**
+ * Send a Request Tunnel command
+ * @param cluster Cluster instance from which to send this command
+ * @param dst_addr Destination address for connection request
+ * @param dst_endpoint Destination endpoint for connection request
+ * @param callback Callback function to handle response
+ * @param state Tunneling Cluster State structure
+ * @param status Status of the tunnel
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclTunnelClientConnectReq(struct ZbZclClusterT *cluster, uint64_t dst_addr, uint8_t dst_ep,
+    void (*callback)(struct ZbZclClusterT *cluster, struct ZbZclTunnelStateT *state,
+        enum ZbZclTunnelStatusT status, void *arg), void *arg);
 
-enum ZclStatusCodeT ZbZclTunnelClientCloseReq(struct ZbZclClusterT *clusterPtr,
+/**
+ * Send a Close Tunnel command
+ * @param cluster Cluster instance from which to send this command
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclTunnelClientCloseReq(struct ZbZclClusterT *cluster,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
 
-/* For testing only - close the tunnel without informing the server. */
-enum ZclStatusCodeT ZbZclTunnelClientCloseQuietReq(struct ZbZclClusterT *clusterPtr);
+/**
+ * Close the local tunnel without informing the server
+ * @param cluster Cluster instance from which to send this command
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclTunnelClientCloseQuietReq(struct ZbZclClusterT *cluster);
 
-enum ZclStatusCodeT ZbZclTunnelClientSendReq(struct ZbZclClusterT *clusterPtr, const uint8_t *data, uint16_t len,
+/**
+ * Send a Transfer Data command
+ * @param cluster Cluster instance from which to send this command
+ * @param data Data to send
+ * @param len Length of data being sent
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclTunnelClientSendReq(struct ZbZclClusterT *cluster, const uint8_t *data, uint16_t len,
     void (*callback)(struct ZbZclCommandRspT *rspPr, void *arg), void *arg);
 
-/*---------------------------------------------------------------
- * Misc Helpers
- *---------------------------------------------------------------
+/* Tunneling Helper Functions */
+
+/**
+ * Get ID using Tunneling Cluster State structure
+ * @param state Tunneling Cluster State structure
+ * @return Allocated tunnel ID
  */
 uint16_t ZbZclTunnelStateGetId(struct ZbZclTunnelStateT *state);
-enum ZbZclTunnelProtocolT ZbZclTunnelStateGetProtocol(struct ZbZclTunnelStateT *state);
-uint8_t * ZbZclTunnelStateGetDataPtr(struct ZbZclTunnelStateT *state);
-uint32_t ZbZclTunnelStateGetDataLen(struct ZbZclTunnelStateT *state, bool clear_data);
-/* For testing only - change the ID of the current tunnel. */
-bool zcl_tuncli_test_change_id(struct ZbZclClusterT *clusterPtr, uint16_t tunnel_id);
 
-#endif /* __ZCL_TUNNEL_H */
+/**
+ * Get Tunneling Protocol Instance using Tunneling Cluster State structure
+ * @param state Tunneling Cluster State structure
+ * @return Tunneling Protocol Instance structure
+ */
+enum ZbZclTunnelProtocolT ZbZclTunnelStateGetProtocol(struct ZbZclTunnelStateT *state);
+
+/**
+ * Get received data using Tunneling Cluster State structure
+ * @param state Tunneling Cluster State structure
+ * @return Data receive buffer
+ */
+uint8_t * ZbZclTunnelStateGetDataPtr(struct ZbZclTunnelStateT *state);
+
+/**
+ * Get received data length using Tunneling Cluster State structure
+ * @param state Tunneling Cluster State structure
+ * @return Length of data in the buffer
+ */
+uint32_t ZbZclTunnelStateGetDataLen(struct ZbZclTunnelStateT *state, bool clear_data);
+
+#endif

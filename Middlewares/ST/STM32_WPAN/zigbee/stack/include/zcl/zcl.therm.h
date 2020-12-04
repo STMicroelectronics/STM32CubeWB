@@ -1,13 +1,13 @@
-/* Copyright [2017 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.therm.h
+ * @brief ZCL Thermostat cluster header
+ * ZCL 7 section 6.3
+ * ZCL 8 section 6.3
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_THERM_H
 #define ZCL_THERM_H
-
-/*--------------------------------------------------------------------------
- *  DESCRIPTION
- *      ZCL Thermostat cluster definitions
- *--------------------------------------------------------------------------
- */
 
 /* PICS.ZCL.Thermostat
  * TSTAT.S | True
@@ -87,72 +87,68 @@
 
 #include "zcl/zcl.h"
 
-/*---------------------------------------------------------------
- * Definitions
- *---------------------------------------------------------------
- */
-/* Attribute Identifiers */
+/** Thermostat Attribute IDs */
 enum ZbZclThermAttrT {
     /* Thermostat Info - 0x000x */
-    ZCL_THERM_SVR_ATTR_LOCAL_TEMP = 0x0000, /* int16 [0x954d,0x7fff] - MANDATORY */
-    ZCL_THERM_SVR_ATTR_OUTDOOR_TEMP = 0x0001, /* int16 */
-    ZCL_THERM_SVR_ATTR_OCCUPANCY = 0x0002, /* map8 */
-    ZCL_THERM_SVR_ATTR_ABS_MIN_HEAT_SETPOINT_LIMIT = 0x0003, /* int16 [0x954d,0x7fff] */
-    ZCL_THERM_SVR_ATTR_ABS_MAX_HEAT_SETPOINT_LIMIT = 0x0004, /* int16 */
-    ZCL_THERM_SVR_ATTR_ABS_MIN_COOL_SETPOINT_LIMIT = 0x0005, /* int16 */
-    ZCL_THERM_SVR_ATTR_ABS_MAX_COOL_SETPOINT_LIMIT = 0x0006, /* int16 */
-    ZCL_THERM_SVR_ATTR_PI_COOLING_DEMAND = 0x0007, /* uint8 [0x00,0x64] */
-    ZCL_THERM_SVR_ATTR_PI_HEATING_DEMAND = 0x0008, /* uint8 [0x00,0x64] */
-    ZCL_THERM_SVR_ATTR_HVAC_SYSTYPE_CONFIG = 0x0009, /* map8 */
+    ZCL_THERM_SVR_ATTR_LOCAL_TEMP = 0x0000, /**< LocalTemperature */
+    ZCL_THERM_SVR_ATTR_OUTDOOR_TEMP = 0x0001, /**< OutdoorTemperature (Optional) */
+    ZCL_THERM_SVR_ATTR_OCCUPANCY = 0x0002, /**< Occupancy (Optional) */
+    ZCL_THERM_SVR_ATTR_ABS_MIN_HEAT_SETPOINT_LIMIT = 0x0003, /**< AbsMinHeatSetpointLimit (Optional) */
+    ZCL_THERM_SVR_ATTR_ABS_MAX_HEAT_SETPOINT_LIMIT = 0x0004, /**< AbsMaxHeatSetpointLimit (Optional) */
+    ZCL_THERM_SVR_ATTR_ABS_MIN_COOL_SETPOINT_LIMIT = 0x0005, /**< AbsMinCoolSetpointLimit (Optional) */
+    ZCL_THERM_SVR_ATTR_ABS_MAX_COOL_SETPOINT_LIMIT = 0x0006, /**< AbsMaxCoolSetpointLimit (Optional) */
+    ZCL_THERM_SVR_ATTR_PI_COOLING_DEMAND = 0x0007, /**< PICoolingDemand (Optional) */
+    ZCL_THERM_SVR_ATTR_PI_HEATING_DEMAND = 0x0008, /**< PIHeatingDemand (Optional) */
+    ZCL_THERM_SVR_ATTR_HVAC_SYSTYPE_CONFIG = 0x0009, /**< HVACSystemTypeConfiguration (Optional) */
 
     /* Thermostat Settings - 0x001x */
-    ZCL_THERM_SVR_ATTR_LOCAL_TEMP_CALIB = 0x0010, /* int8 [0xe7,0x19] */
-    ZCL_THERM_SVR_ATTR_OCCUP_COOL_SETPOINT = 0x0011, /* int16 - MANDATORY* */
-    ZCL_THERM_SVR_ATTR_OCCUP_HEAT_SETPOINT = 0x0012, /* int16 - MANDATORY* */
-    ZCL_THERM_SVR_ATTR_UNOCCUP_COOL_SETPOINT = 0x0013, /* int16 */
-    ZCL_THERM_SVR_ATTR_UNOCCUP_HEAT_SETPOINT = 0x0014, /* int16 */
-    ZCL_THERM_SVR_ATTR_MIN_HEAT_SETPOINT = 0x0015, /* int16 [0x954d,0x7fff] */
-    ZCL_THERM_SVR_ATTR_MAX_HEAT_SETPOINT = 0x0016, /* int16 [0x954d,0x7fff] */
-    ZCL_THERM_SVR_ATTR_MIN_COOL_SETPOINT = 0x0017, /* int16 [0x954d,0x7fff] */
-    ZCL_THERM_SVR_ATTR_MAX_COOL_SETPOINT = 0x0018, /* int16 [0x954d,0x7fff] */
-    ZCL_THERM_SVR_ATTR_MIN_SETPOINT_DEADBAND = 0x0019, /* int8 [0x0a,0x19] */
-    ZCL_THERM_SVR_ATTR_RMT_SENSE = 0x001A, /* map8 */
-    ZCL_THERM_SVR_ATTR_CONTROL_SEQ_OPER = 0x001B, /* enum8 [00,05] - MANDATORY */
-    ZCL_THERM_SVR_ATTR_SYSTEM_MODE = 0x001C, /* enum - MANDATORY */
-    ZCL_THERM_SVR_ATTR_ALARM_MASK = 0x001D, /* map8 */
-    ZCL_THERM_SVR_ATTR_RUNNING_MODE = 0x001E, /* enum [0,4] */
+    ZCL_THERM_SVR_ATTR_LOCAL_TEMP_CALIB = 0x0010, /**< LocalTemperatureCalibration (Optional) */
+    ZCL_THERM_SVR_ATTR_OCCUP_COOL_SETPOINT = 0x0011, /**< OccupiedCoolingSetpoint */
+    ZCL_THERM_SVR_ATTR_OCCUP_HEAT_SETPOINT = 0x0012, /**< OccupiedHeatingSetpoint */
+    ZCL_THERM_SVR_ATTR_UNOCCUP_COOL_SETPOINT = 0x0013, /**< UnoccupiedCoolingSetpoint (Optional) */
+    ZCL_THERM_SVR_ATTR_UNOCCUP_HEAT_SETPOINT = 0x0014, /**< UnoccupiedHeatingSetpoint (Optional) */
+    ZCL_THERM_SVR_ATTR_MIN_HEAT_SETPOINT = 0x0015, /**< MinHeatSetpointLimit (Optional) */
+    ZCL_THERM_SVR_ATTR_MAX_HEAT_SETPOINT = 0x0016, /**< MaxHeatSetpointLimit (Optional) */
+    ZCL_THERM_SVR_ATTR_MIN_COOL_SETPOINT = 0x0017, /**< MinCoolSetpointLimit (Optional) */
+    ZCL_THERM_SVR_ATTR_MAX_COOL_SETPOINT = 0x0018, /**< MaxCoolSetpointLimit (Optional) */
+    ZCL_THERM_SVR_ATTR_MIN_SETPOINT_DEADBAND = 0x0019, /**< MinSetpointDeadBand (Optional) */
+    ZCL_THERM_SVR_ATTR_RMT_SENSE = 0x001A, /**< RemoteSensing (Optional) */
+    ZCL_THERM_SVR_ATTR_CONTROL_SEQ_OPER = 0x001B, /**< ControlSequenceOfOperation */
+    ZCL_THERM_SVR_ATTR_SYSTEM_MODE = 0x001C, /**< SystemMode */
+    ZCL_THERM_SVR_ATTR_ALARM_MASK = 0x001D, /**< AlarmMask (Optional) */
+    ZCL_THERM_SVR_ATTR_RUNNING_MODE = 0x001E, /**< ThermostatRunningMode (Optional) */
 
     /* Thermostat Schedule - 0x002x */
-    ZCL_THERM_SVR_ATTR_START_OF_WEEK = 0x0020,
-    ZCL_THERM_SVR_ATTR_NUM_WEEKLY_TRANSITIONS = 0x0021,
-    ZCL_THERM_SVR_ATTR_NUM_DAILY_TRANSITIONS = 0x0022,
-    ZCL_THERM_SVR_ATTR_TEMP_SETPOINT_HOLD = 0x0023,
-    ZCL_THERM_SVR_ATTR_TEMP_SETPOINT_HOLD_DUR = 0x0024,
-    ZCL_THERM_SVR_ATTR_PROG_OPER_MODE = 0x0025,
-    ZCL_THERM_SVR_ATTR_RUNNING_STATE = 0x0029,
+    ZCL_THERM_SVR_ATTR_START_OF_WEEK = 0x0020, /**< StartOfWeek (Optional) */
+    ZCL_THERM_SVR_ATTR_NUM_WEEKLY_TRANSITIONS = 0x0021, /**< NumberOfWeeklyTransitions (Optional) */
+    ZCL_THERM_SVR_ATTR_NUM_DAILY_TRANSITIONS = 0x0022, /**< NumberOfDailyTransitions (Optional) */
+    ZCL_THERM_SVR_ATTR_TEMP_SETPOINT_HOLD = 0x0023, /**< TemperatureSetpointHold (Optional) */
+    ZCL_THERM_SVR_ATTR_TEMP_SETPOINT_HOLD_DUR = 0x0024, /**< TemperatureSetpointHoldDuration (Optional) */
+    ZCL_THERM_SVR_ATTR_PROG_OPER_MODE = 0x0025, /**< ThermostatProgrammingOperationMode (Optional) */
+    ZCL_THERM_SVR_ATTR_RUNNING_STATE = 0x0029, /**< ThermostatRunningState (Optional) */
 
     /* Thermostat Setpoint Change Tracking - 0x003x */
-    ZCL_THERM_SVR_ATTR_SETPOINT_CHANGE_SRC = 0x0030,
-    ZCL_THERM_SVR_ATTR_SETPOINT_CHANGE_AMT = 0x0031,
-    ZCL_THERM_SVR_ATTR_SETPOINT_CHANGE_TIMESTAMP = 0x0032,
+    ZCL_THERM_SVR_ATTR_SETPOINT_CHANGE_SRC = 0x0030, /**< SetpointChangeSource */
+    ZCL_THERM_SVR_ATTR_SETPOINT_CHANGE_AMT = 0x0031, /**< SetpointChangeAmount */
+    ZCL_THERM_SVR_ATTR_SETPOINT_CHANGE_TIMESTAMP = 0x0032, /**< SetpointChangeSourceTimestamp */
     /* Reserved - 0x0033 */
-    ZCL_THERM_SVR_ATTR_OCCUP_SETBACK = 0x0034,
-    ZCL_THERM_SVR_ATTR_OCCUP_SETBACK_MIN = 0x0035,
-    ZCL_THERM_SVR_ATTR_OCCUP_SETBACK_MAX = 0x0036,
-    ZCL_THERM_SVR_ATTR_UNOCCUP_SETBACK = 0x0037,
-    ZCL_THERM_SVR_ATTR_UNOCCUP_SETBACK_MIN = 0x0038,
-    ZCL_THERM_SVR_ATTR_UNOCCUP_SETBACK_MAX = 0x0039,
-    ZCL_THERM_SVR_ATTR_EMERGENCY_HEAT_DELTA = 0x003a,
+    ZCL_THERM_SVR_ATTR_OCCUP_SETBACK = 0x0034, /**< OccupiedSetback (Optional) */
+    ZCL_THERM_SVR_ATTR_OCCUP_SETBACK_MIN = 0x0035, /**< OccupiedSetbackMin (Optional) */
+    ZCL_THERM_SVR_ATTR_OCCUP_SETBACK_MAX = 0x0036, /**< OccupiedSetbackMax (Optional) */
+    ZCL_THERM_SVR_ATTR_UNOCCUP_SETBACK = 0x0037, /**< UnoccupiedSetback (Optional) */
+    ZCL_THERM_SVR_ATTR_UNOCCUP_SETBACK_MIN = 0x0038, /**< UnoccupiedSetbackMin (Optional) */
+    ZCL_THERM_SVR_ATTR_UNOCCUP_SETBACK_MAX = 0x0039, /**< UnoccupiedSetbackMax (Optional) */
+    ZCL_THERM_SVR_ATTR_EMERGENCY_HEAT_DELTA = 0x003a, /**< EmergencyHeatDelta (Optional) */
 
     /* AC Information - 0x004x */
-    ZCL_THERM_SVR_ATTR_AC_TYPE = 0x0040,
-    ZCL_THERM_SVR_ATTR_AC_CAPACITY = 0x0041,
-    ZCL_THERM_SVR_ATTR_AC_REFIGERANT_TYPE = 0x0042,
-    ZCL_THERM_SVR_ATTR_AC_COMPRESSOR_TYPE = 0x0043,
-    ZCL_THERM_SVR_ATTR_AC_ERROR_CODE = 0x0044,
-    ZCL_THERM_SVR_ATTR_AC_LOUVER_POSITION = 0x0045,
-    ZCL_THERM_SVR_ATTR_AC_COIL_TEMP = 0x0046,
-    ZCL_THERM_SVR_ATTR_AC_CAPACITY_FORMAT = 0x0047
+    ZCL_THERM_SVR_ATTR_AC_TYPE = 0x0040, /**< ACType */
+    ZCL_THERM_SVR_ATTR_AC_CAPACITY = 0x0041, /**< ACCapacity */
+    ZCL_THERM_SVR_ATTR_AC_REFIGERANT_TYPE = 0x0042, /**< ACRefrigerantType */
+    ZCL_THERM_SVR_ATTR_AC_COMPRESSOR_TYPE = 0x0043, /**< ACCompressorType */
+    ZCL_THERM_SVR_ATTR_AC_ERROR_CODE = 0x0044, /**< ACErrorCode */
+    ZCL_THERM_SVR_ATTR_AC_LOUVER_POSITION = 0x0045, /**< ACLouverPosition */
+    ZCL_THERM_SVR_ATTR_AC_COIL_TEMP = 0x0046, /**< ACCoilTemperature */
+    ZCL_THERM_SVR_ATTR_AC_CAPACITY_FORMAT = 0x0047 /**< ACCapacityFormat */
 };
 
 #define ZCL_THERM_TEMP_MIN                          (-27315) /* 0x954d = -27315 */
@@ -177,7 +173,7 @@ enum ZbZclThermAttrT {
 #define ZCL_THERM_SYSMODE_DRY                       0x08
 #define ZCL_THERM_SYSMODE_SLEEP                     0x09
 
-/* Client Generated Commands */
+/* Thermostat Client Commands */
 enum {
     ZCL_THERM_CLI_SETPOINT_RAISE_LOWER = 0x00, /* mandatory */
     ZCL_THERM_CLI_SET_WEEK_SCHED = 0x01,
@@ -186,7 +182,7 @@ enum {
     ZCL_THERM_CLI_GET_RELAY_LOG = 0x04
 };
 
-/* Server Generated Commands */
+/* Thermostat Server Commands */
 enum {
     ZCL_THERM_SVR_GET_WEEK_RSP = 0x00,
     ZCL_THERM_SVR_GET_RELAY_LOG_RSP = 0x01
@@ -244,10 +240,10 @@ struct ZbZclThermTransitionsT {
 
 /** Thermostat Weekly Schedule structure */
 struct ZbZclThermWeeklySchedT {
-    uint8_t num_transitions;
-    uint8_t day_of_week_seq; /* e.g. ZCL_THERM_DAY_OF_WEEK_SUNDAY */
-    uint8_t mode_for_seq; /* e.g. ZCL_THERM_MODE_HEAT_SETPOINT_PRESENT */
-    struct ZbZclThermTransitionsT transitions[ZCL_THERM_NUM_TRANSITIONS_MAX];
+    uint8_t num_transitions; /**< Number of Transitions for Sequence */
+    uint8_t day_of_week_seq; /**< Day of the Week for Sequence - e.g. ZCL_THERM_DAY_OF_WEEK_SUNDAY */
+    uint8_t mode_for_seq; /**< Mode for Sequence - e.g. ZCL_THERM_MODE_HEAT_SETPOINT_PRESENT */
+    struct ZbZclThermTransitionsT transitions[ZCL_THERM_NUM_TRANSITIONS_MAX]; /**< List of transitions */
 };
 
 /**
@@ -265,8 +261,8 @@ enum ZclStatusCodeT ZbZclThermClientSetWeeklySched(struct ZbZclClusterT *cluster
 
 /** Thermostat Get Weekly Schedule structure */
 struct ZbZclThermCliGetWeeklyT {
-    uint8_t days_to_return;
-    uint8_t mode_to_return;
+    uint8_t days_to_return; /**< Days to Return */
+    uint8_t mode_to_return; /**< Mode to Return */
 };
 
 /**

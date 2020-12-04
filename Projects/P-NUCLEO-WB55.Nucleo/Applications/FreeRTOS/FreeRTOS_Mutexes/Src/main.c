@@ -162,15 +162,15 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of MutHigh */
-  osThreadDef(MutHigh, MutexHighPriorityThreadr, osPriorityBelowNormal, 0, 128);
+  osThreadDef(MutHigh, MutexHighPriorityThreadr, osPriorityNormal, 0, 128);
   MutHighHandle = osThreadCreate(osThread(MutHigh), NULL);
 
   /* definition and creation of MutMedium */
-  osThreadDef(MutMedium, MutexMediumPriorityThread, osPriorityLow, 0, 128);
+  osThreadDef(MutMedium, MutexMediumPriorityThread, osPriorityNormal, 0, 128);
   MutMediumHandle = osThreadCreate(osThread(MutMedium), NULL);
 
   /* definition and creation of MutLow */
-  osThreadDef(MutLow, MutexLowPriorityThread, osPriorityIdle, 0, 128);
+  osThreadDef(MutLow, MutexLowPriorityThread, osPriorityNormal, 0, 128);
   MutLowHandle = osThreadCreate(osThread(MutLow), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -437,7 +437,7 @@ void MutexLowPriorityThread(void const * argument)
   /* USER CODE END MutexLowPriorityThread */
 }
 
-/**
+ /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM17 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment

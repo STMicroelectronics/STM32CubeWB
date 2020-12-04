@@ -3,7 +3,7 @@
  ******************************************************************************
   * File Name          : hw_conf.h
   * Description        : Hardware configuration file for STM32WPAN Middleware.
-  ******************************************************************************
+ ******************************************************************************
   * @attention
   *
   * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
@@ -23,14 +23,16 @@
 #define HW_CONF_H
 
 /******************************************************************************
-* Semaphores
-* THIS SHALL NO BE CHANGED AS THESE SEMAPHORES ARE USED AS WELL ON THE CM0+
-*****************************************************************************/
+ * Semaphores
+ * THIS SHALL NO BE CHANGED AS THESE SEMAPHORES ARE USED AS WELL ON THE CM0+
+ *****************************************************************************/
 /**
 *  Index of the semaphore used by CPU2 to prevent the CPU1 to either write or erase data in flash
 *  The CPU1 shall not either write or erase in flash when this semaphore is taken by the CPU2
 *  When the CPU1 needs to either write or erase in flash, it shall first get the semaphore and release it just
 *  after writing a raw (64bits data) or erasing one sector.
+*  Once the Semaphore has been released, there shall be at least 1us before it can be taken again. This is required
+*  to give the opportunity to CPU2 to take it.
 *  On v1.4.0 and older CPU2 wireless firmware, this semaphore is unused and CPU2 is using PES bit.
 *  By default, CPU2 is using the PES bit to protect its timing. The CPU1 may request the CPU2 to use the semaphore
 *  instead of the PES bit by sending the system command SHCI_C2_SetFlashActivityControl()
@@ -131,7 +133,6 @@
 /******************************************************************************
  * HW UART
  *****************************************************************************/
-
 #define CFG_HW_LPUART1_ENABLED           1
 #define CFG_HW_LPUART1_DMA_TX_SUPPORTED  1
 
@@ -172,23 +173,15 @@
 #define CFG_HW_LPUART1_RX_SPEED                GPIO_SPEED_FREQ_VERY_HIGH
 #define CFG_HW_LPUART1_RX_ALTERNATE            GPIO_AF8_LPUART1
 
-#define CFG_HW_LPUART1_CTS_PORT_CLK_ENABLE     __HAL_RCC_GPIOvalueNotSetted_CLK_ENABLE
-#define CFG_HW_LPUART1_CTS_PORT                GPIOvalueNotSetted
-#define CFG_HW_LPUART1_CTS_PIN                 GPIO_PIN_valueNotSetted
-#define CFG_HW_LPUART1_CTS_MODE                GPIO_MODE_AF_PP
-#define CFG_HW_LPUART1_CTS_PULL                GPIO_PULLDOWN
-#define CFG_HW_LPUART1_CTS_SPEED               GPIO_SPEED_FREQ_VERY_HIGH
-#define CFG_HW_LPUART1_CTS_ALTERNATE           GPIO_AFvalueNotSetted_LPUART1
-
 #define CFG_HW_LPUART1_DMA_TX_PREEMPTPRIORITY  0x0F
 #define CFG_HW_LPUART1_DMA_TX_SUBPRIORITY      0
 
 #define CFG_HW_LPUART1_DMAMUX_CLK_ENABLE       __HAL_RCC_DMAMUX1_CLK_ENABLE
 #define CFG_HW_LPUART1_DMA_CLK_ENABLE          __HAL_RCC_DMA1_CLK_ENABLE
 #define CFG_HW_LPUART1_TX_DMA_REQ              DMA_REQUEST_LPUART1_TX
-#define CFG_HW_LPUART1_TX_DMA_CHANNEL          DMA1_CHANNEL_1
-#define CFG_HW_LPUART1_TX_DMA_IRQn             DMA1_CHANNEL_1_IRQn
-#define CFG_HW_LPUART1_DMA_TX_IRQHandler       DMA1_CHANNEL_1_IRQHandler
+#define CFG_HW_LPUART1_TX_DMA_CHANNEL          DMA1_Channel1
+#define CFG_HW_LPUART1_TX_DMA_IRQn             DMA1_Channel1_IRQn
+#define CFG_HW_LPUART1_DMA_TX_IRQHandler       DMA1_Channel1_IRQHandler
 
 /**
  * UART1
@@ -238,9 +231,9 @@
 #define CFG_HW_USART1_DMAMUX_CLK_ENABLE       __HAL_RCC_DMAMUX1_CLK_ENABLE
 #define CFG_HW_USART1_DMA_CLK_ENABLE          __HAL_RCC_DMA1_CLK_ENABLE
 #define CFG_HW_USART1_TX_DMA_REQ			  DMA_REQUEST_USART1_TX
-#define CFG_HW_USART1_TX_DMA_CHANNEL          DMA1_CHANNEL_2
-#define CFG_HW_USART1_TX_DMA_IRQn             DMA1_CHANNEL_2_IRQn
-#define CFG_HW_USART1_DMA_TX_IRQHandler       DMA1_CHANNEL_2_IRQHandler
+#define CFG_HW_USART1_TX_DMA_CHANNEL          DMA1_Channel2
+#define CFG_HW_USART1_TX_DMA_IRQn             DMA1_Channel2_IRQn
+#define CFG_HW_USART1_DMA_TX_IRQHandler       DMA1_Channel2_IRQHandler
 
 #endif /*HW_CONF_H */
 

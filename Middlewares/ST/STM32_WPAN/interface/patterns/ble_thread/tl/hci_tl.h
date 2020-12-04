@@ -22,6 +22,10 @@
 #ifndef __HCI_TL_H_
 #define __HCI_TL_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "stm32_wpan_common.h"
 #include "tl.h"
 
@@ -185,5 +189,9 @@ void hci_init(void(* UserEvtRx)(void* pData), void* pConf);
  * END OF SECTION - INTERFACES USED BY THE BLE DRIVER
  *********************************************************************************************************************
  */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __TL_BLE_HCI_H_ */

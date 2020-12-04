@@ -42,6 +42,10 @@ which are demonstrating BSP_LED_Toggle.
 @note The application needs to ensure that the HAL time base is always set to 1 millisecond
       to have correct HAL operation.
 
+@par Keywords
+
+System, Led, Button
+
 @par Directory contents 
 
   - BSP/BSP/Inc/stm32wbxx_hal_conf.h    HAL configuration file

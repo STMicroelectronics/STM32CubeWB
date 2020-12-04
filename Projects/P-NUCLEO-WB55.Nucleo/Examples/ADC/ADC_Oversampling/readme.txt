@@ -31,7 +31,7 @@ Example execution:
 The ADC performs conversions of the selected channel in continuous mode from SW start
 trigger.
 Then, SW is waiting for conversion to complete. When done, it reads conversion data from
-ADC data register, stores it into a variable, and convert it into mVolt in another one?
+ADC data register, stores it into a variable, and convert it into mVolt in another one.
 
 For debug: variables to monitor with debugger watch window:
  - "uhADCxConvertedData": ADC group regular conversion data
@@ -58,8 +58,8 @@ To observe voltage level applied on ADC channel through GPIO, connect a voltmete
 pin PA1 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32).
 
 P-NUCLEO-WB55 board LED is be used to monitor the program execution status:
- - Normal operation: LED2 is toggling at each conversion.
- - Error: In case of error, LED2 is toggling twice at a frequency of 1Hz.
+ - Normal operation: LED2 is toggling at each conversion, at a frequency of 10Hz.
+ - Error: In case of error, LED2 is toggling at a frequency of 1Hz.
 
 @par Keywords
 

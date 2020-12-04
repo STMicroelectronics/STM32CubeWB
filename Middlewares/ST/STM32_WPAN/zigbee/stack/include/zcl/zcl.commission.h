@@ -1,4 +1,10 @@
-/* Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved. */
+/**
+ * @file zcl.commission.h
+ * @brief ZCL Commissioning cluster header
+ * ZCL 7 section 13.2
+ * ZCL 8 section 13.2
+ * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
 
 #ifndef ZCL_COMMISSION_H
 # define ZCL_COMMISSION_H
@@ -88,23 +94,36 @@ enum ZbZclCommissionClientCommandsT {
     ZCL_COMMISSION_CLI_CMD_RESET_STARTUP = 0x03
 };
 
+/** Commissioning Server Attribute IDs */
 enum ZbZclCommissionServerAttrT {
     /* Startup Parameters */
-    ZCL_COMMISSION_SVR_ATTR_SHORT_ADDR = 0x0000, /**< ShortAddress */
+    ZCL_COMMISSION_SVR_ATTR_SHORT_ADDR = 0x0000,
+    /**< ShortAddress. This should only be set if StartupControl is equal to 0x00 (ZbStartTypePreconfigured)
+     * or 0x02 (ZbStartTypeRejoin). */
     ZCL_COMMISSION_SVR_ATTR_EPID = 0x0001, /**< ExtendedPANId */
-    ZCL_COMMISSION_SVR_ATTR_PANID = 0x0002, /**< PANId */
+    ZCL_COMMISSION_SVR_ATTR_PANID = 0x0002,
+    /**< PANId. This should only be set if StartupControl is equal to 0x00 (ZbStartTypePreconfigured)
+     * or 0x02 (ZbStartTypeRejoin). */
     ZCL_COMMISSION_SVR_ATTR_CHANNELMASK = 0x0003, /**< Channelmask */
-    ZCL_COMMISSION_SVR_ATTR_PROTOCOLVER = 0x0004, /**< ProtocolVersion */
-    ZCL_COMMISSION_SVR_ATTR_STACKPROFILE = 0x0005, /**< StackProfile */
-    ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL = 0x0006, /**< StartupControl */
-    ZCL_COMMISSION_SVR_ATTR_TCADDR = 0x0010, /**< TrustCenterAddress */
+    ZCL_COMMISSION_SVR_ATTR_PROTOCOLVER = 0x0004, /**< ProtocolVersion. Default value is 0x0002 (ZB_PROTOCOL_VERSION_2007) */
+    ZCL_COMMISSION_SVR_ATTR_STACKPROFILE = 0x0005, /**< StackProfile. Default value is 0x02 (ZB_NWK_STACK_PROFILE_PRO) */
+    ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL = 0x0006,
+    /**< StartupControl. 0x00 = ZbStartTypePreconfigured, 0x01 = ZbStartTypeForm, 0x02 = ZbStartTypeRejoin, 0x03 = ZbStartTypeJoin. */
+    ZCL_COMMISSION_SVR_ATTR_TCADDR = 0x0010,
+    /**< TrustCenterAddress. This should only be set if StartupControl is equal to 0x00 (ZbStartTypePreconfigured).
+     * Otherwise it should be zero to allow the Transport Key to be decrypted and processed correctly during joining. */
     ZCL_COMMISSION_SVR_ATTR_TCMASTER = 0x0011, /**< TrustCenterMasterKey (Optional) */
-    ZCL_COMMISSION_SVR_ATTR_NWKKEY = 0x0012, /**< NetworkKey */
+    ZCL_COMMISSION_SVR_ATTR_NWKKEY = 0x0012,
+    /**< NetworkKey. This should only be set if StartupControl is equal to 0x00 (ZbStartTypePreconfigured). */
     ZCL_COMMISSION_SVR_ATTR_USEINSECJOIN = 0x0013, /**< UseInsecureJoin */
     ZCL_COMMISSION_SVR_ATTR_PRECONFLINKKEY = 0x0014, /**< PreconfiguredLinkKey */
-    ZCL_COMMISSION_SVR_ATTR_NWKKEYSEQNUM = 0x0015, /**< NetworkKeySeqNum */
-    ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE = 0x0016, /**< NetworkKeyType */
-    ZCL_COMMISSION_SVR_ATTR_NWKMGRADDR = 0x0017, /**< NetworkManagerAddress */
+    ZCL_COMMISSION_SVR_ATTR_NWKKEYSEQNUM = 0x0015,
+    /**< NetworkKeySeqNum. This should only be set if StartupControl is equal to 0x00 (ZbStartTypePreconfigured). */
+    ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE = 0x0016,
+    /**< NetworkKeyType. This should only be set if StartupControl is equal to 0x00 (ZbStartTypePreconfigured). */
+    ZCL_COMMISSION_SVR_ATTR_NWKMGRADDR = 0x0017,
+    /**< NetworkManagerAddress. This should only be set if StartupControl is equal to 0x00 (ZbStartTypePreconfigured)
+     * or 0x02 (ZbStartTypeRejoin). */
 
     /* Join Parameters */
     ZCL_COMMISSION_SVR_ATTR_SCANATTEMPTS = 0x0020, /**< ScanAttempts (Optional) */
@@ -122,7 +141,7 @@ enum ZbZclCommissionServerAttrT {
     ZCL_COMMISSION_SVR_ATTR_CONCDISCTIME = 0x0042 /**< ConcentratorDiscoveryTime (Optional) */
 };
 
-/*** Client Commands (Requests) */
+/* Client Commands */
 
 /* Restart Device Options Field */
 #define ZCL_COMMISS_RESTART_OPTS_MODE_MASK          0x07U
@@ -132,20 +151,23 @@ enum ZbZclCommissionServerAttrT {
 #define ZCL_COMMISS_RESTART_OPTS_IMMEDIATE          0x08U
 /* Reserved Options Field bits: 4..7 */
 
+/** Restart Device command structure */
 struct ZbZclCommissionClientRestartDev {
-    uint8_t options; /* e.g. ZCL_COMMISS_RESTART_OPTS_MODE_MASK */
-    uint8_t delay; /* seconds */
-    uint8_t jitter; /* RAND(jitter * 80) milliseconds */
+    uint8_t options; /**< Options - e.g. ZCL_COMMISS_RESTART_OPTS_MODE_MASK */
+    uint8_t delay; /**< Delay (seconds) */
+    uint8_t jitter; /**< Jitter - RAND(jitter * 80) milliseconds */
 };
 
+/** Save Startup Parameters command structure */
 struct ZbZclCommissionClientSaveStartup {
-    uint8_t options; /* all bits are reserved */
-    uint8_t index;
+    uint8_t options; /**< Options (Reserved) */
+    uint8_t index; /**< Index */
 };
 
+/** Restore Startup Parameters command structure */
 struct ZbZclCommissionClientRestoreStartup {
-    uint8_t options; /* all bits are reserved */
-    uint8_t index;
+    uint8_t options; /**< Options (Reserved) */
+    uint8_t index; /**< Index */
 };
 
 /* Reset Device Options Field */
@@ -154,39 +176,46 @@ struct ZbZclCommissionClientRestoreStartup {
 #define ZCL_COMMISS_RESET_OPTS_RESET_ERASE          0x04U
 /* Reserved Options Field bits: 3..7 */
 
+/** Reset Startup Parameters command structure */
 struct ZbZclCommissionClientResetStartup {
-    uint8_t options; /* e.g. ZCL_COMMISS_RESET_OPTS_RESET_CURR */
-    uint8_t index;
+    uint8_t options; /**< Options - e.g. ZCL_COMMISS_RESET_OPTS_RESET_CURR */
+    uint8_t index; /**< Index */
 };
 
-/*** Server Commands (Responses) */
+/* Server Commands */
+/** Restart Device Response command structure */
 struct ZbZclCommissionServerRestartDevRsp {
-    enum ZclStatusCodeT status;
+    enum ZclStatusCodeT status; /**< ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error. */
 };
 
+/** Save Startup Parameters Response command structure */
 struct ZbZclCommissionServerSaveStartupRsp {
-    enum ZclStatusCodeT status;
+    enum ZclStatusCodeT status; /**< ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error. */
 };
 
+/** Restore Startup Parameters Response command structure */
 struct ZbZclCommissionServerRestoreStartupRsp {
-    enum ZclStatusCodeT status;
+    enum ZclStatusCodeT status; /**< ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error. */
 };
 
+/** Reset Startup Parameters Response command structure */
 struct ZbZclCommissionServerResetStartupRsp {
-    enum ZclStatusCodeT status;
+    enum ZclStatusCodeT status; /**< ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error. */
 };
 
+/** Commissioning Server Enable Information structure */
 struct ZbZclCommissionServerEnableInfoT {
-    uint8_t page;
-    uint8_t channel;
+    uint8_t page; /**< Page */
+    uint8_t channel; /**< Channel */
 };
 
+/** Commissioning Client Enable Information structure */
 struct ZbZclCommissionClientEnableInfoT {
-    uint8_t page;
-    uint8_t channel;
+    uint8_t page; /**< Page */
+    uint8_t channel; /**< Channel */
 };
 
-/*** Server API ***/
+/* Commissioning Server */
 
 /** Commissioning Server callbacks configuration */
 struct ZbZclCommissionServerCallbacksT {
@@ -359,4 +388,4 @@ enum ZclStatusCodeT ZbZclCommissionClientSendResetStartup(struct ZbZclClusterT *
     struct ZbZclCommissionClientResetStartup *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-#endif /* ZCL_COMMISSION_H */
+#endif

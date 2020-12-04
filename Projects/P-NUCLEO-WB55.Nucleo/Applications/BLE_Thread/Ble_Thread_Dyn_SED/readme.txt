@@ -5,8 +5,8 @@
   ******************************************************************************
   * @file    BLE_Thread/Ble_Thread_Dyn_SED/readme.txt 
   * @author  MCD Application Team
-  * @brief   Example of application using BLE and Thread protocols in Dynamic
-  *          Concurrent mode.
+  * @brief   Example of application using BLE and Thread (acting as sleep end device) 
+  *          in dynamic concurrent mode.
   ******************************************************************************
   *
   * Copyright (c) 2020 STMicroelectronics. All rights reserved.
@@ -21,17 +21,19 @@
   
 @par Application Description
 
-How to use BLE application and Thread application in dynamic concurrent mode.
+How to use BLE application and Thread application (acting as sleep end device) in dynamic concurrent mode.
 
-This application requires 1 STM32WB55xx-Nucleo board with Dynamic Concurrent Mode Application and at least one STM32WB55xx-Nucleo with Thread FTP and Coap generic application.
+This application requires 1 STM32WB55xx-Nucleo board with Dynamic Concurrent Mode Application and at least one 
+STM32WB55xx-Nucleo with Thread FTD copro wireless and Thread_FTD_Coap_Multicast application.
+
 Dynamic means that application can perform at the same time BLE or Thread activities. 
 
 The idea is to present a demo with a Thread Network (1 Nucleo Boards
-running Ble_Thread_Dynamic application and at least 1 Nucleo Boards running Thread FTD COAP Generic Application),and a a BLE connection between a smartphone running "ST BLE Sensor" Application (available on App Store and Google Play), or another
-Nucleo board running a BLE_p2pClient application.
+running Ble_Thread_Dyn_SED application and at least 1 Nucleo Boards running Thread_FTD_Coap_Multicast Application),
+and a a BLE connection between a smartphone running "ST BLE Sensor" Application (available on App Store and Google Play), 
+or another Nucleo board running a BLE_p2pClient application.
 
-The STM32WB55xx-Nucleo board running Ble_Thread_Dynamic application is capable 
-of BLE and OpenThread activity at the same time.
+The STM32WB55xx-Nucleo board running Ble_Thread_Dyn_SED application is capable of BLE and OpenThread activity at the same time.
 
 @par Keywords
 
@@ -99,8 +101,10 @@ Wireless Coprocessor binary.
 
 
 Minimum requirements for the demo:
-- 1 STM32WB55xx-Nucleo board in BLE Thread Dynamic Concurrent mode 
+- 1 STM32WB55xx-Nucleo board in BLE Thread Dynamic Concurrent mode
+      (Copro wireless :stm32wb5x_BLE_Zigbee_RFD_dynamic_fw.bin + Ble_Thread_Dyn_SED application)  
 - 1 STM32WB55xx-Nucleo board running Thread FTD COAP Generic Application
+       (Copro wireless :stm32wb5x_Thread_FTD_fw.bin + Thread_FTD_Coap_Multicast application)  
 - 1 Smartphone (Android/IOS) with "ST BLE Sensor" Phone Application (available on App Store and Google Play)
   Install the "ST BLE Sensor" application on the ios/android device
   https://play.google.com/store/apps/details?id=com.st.bluems
@@ -127,8 +131,9 @@ In order to make the program work, you must do the following:
     - Flow control = none
 
 **** START DEMO ****
-First start the board running Thread FTD COAP Generic Application which will turn into a Leader role (RED LED)
-Then start the board with Ble_Thread_Dyn_SED, it'll join the Leader and receive child role. As soon as it receives child role it'll start SED features and start Low Power.
+First start the board running the Thread_FTD_Coap_Multicast Application which will turn into a Leader role (RED LED)
+Then start the board with Ble_Thread_Dyn_SED, it'll join the Leader and receive child role. As soon as it receives child role 
+it'll start SED features and start Low Power.
 This can be checked with a power shield or any power meter.
 By default, after a reset, the board will start both protocols BLE and OpenThread.
 So you BLE activity and OpenThread activity can be done in parallel :
@@ -146,7 +151,7 @@ Led Button service, Led Characteristic and Button Characteristic are discovered 
 
 **** THREAD ACTIVITY ****
 After reset, OpenThread is started and nodes tries to build up a Thread network or attach to a existing one
-(at least 1 boards running THREAD_FTD_Coap_Multicast application).
+(at least 1 boards running Thread_FTD_Coap_Multicast application).
 
 In a Thread network, nodes are split into two forwarding roles: Router or End Device.
 The Thread Leader is a Router that is responsible for managing the set of Routers in a 
@@ -156,7 +161,7 @@ In our Application which uses at least two devices, one device will act as a Lea
 and the other will act as child. 
 
 After the network building, one board will be in Leader mode the other one will be in Child mode.
-The SED will then start to send every seconds a multicast COAP Message which will toggle LED3 (Red) of the receivers.
+The SED will then start to send every seconds a multicast COAP Message which will toggle LED (Blue) of the receivers.
 
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>

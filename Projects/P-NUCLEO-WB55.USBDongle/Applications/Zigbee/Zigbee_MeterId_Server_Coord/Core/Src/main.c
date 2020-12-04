@@ -76,6 +76,12 @@ static void Config_HSE(void);
   */
 int main(void)
 {
+    /**
+     * The OPTVERR flag is wrongly set at power on
+     * It shall be cleared before using any HAL_FLASH_xxx() api
+     */
+    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
+
     /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
     HAL_Init();
 

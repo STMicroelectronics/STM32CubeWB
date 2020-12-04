@@ -59,17 +59,7 @@ void APP_LLD_BLE_ProcessMsgM0ToM4(void);
 void APP_LLD_BLE_Init_UART_CLI(void);
 void APP_LLD_BLE_DeInit_UART_CLI(void);
 void APP_LLD_BLE_Init_TL(void);
-/**
- * @brief Active polling for a given delay
- * @param microsec the delay in us unit
- **/
-void us_delay_16m(uint32_t microsec);
-void us_delay_32m(uint32_t microsec);
-#ifdef USE_SYS_CLOCK_DIV_2
-#define us_delay us_delay_16m
-#else
-#define us_delay us_delay_32m
-#endif
+
 
 #ifdef __cplusplus
 } /* extern "C" */

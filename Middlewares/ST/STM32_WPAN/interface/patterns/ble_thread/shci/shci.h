@@ -225,15 +225,36 @@ extern "C" {
 #define SHCI_OPCODE_C2_FUS_GET_STATE         (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_GET_STATE)
 /** No command parameters */
 /** Response parameters*/
+/** It responds a 1 byte value holding FUS State error code when the FUS State value is 0xFF (FUS_STATE_VALUE_ERROR) */
   typedef enum
   {
-    FUS_STATE_NO_ERROR =  0x00,
-    FUS_STATE_IMG_NOT_FOUND = 0x01,
-    FUS_STATE_IMG_CORRUPT = 0x02,
-    FUS_STATE_IMG_NOT_AUTHENTIC = 0x03,
-    FUS_STATE_IMG_NOT_ENOUGH_SPACE = 0x04,
-    FUS_STATE_ERR_UNKNOWN = 0xFF,
+    FUS_STATE_ERROR_NO_ERROR =  0x00,
+    FUS_STATE_ERROR_IMG_NOT_FOUND = 0x01,
+    FUS_STATE_ERROR_IMG_CORRUPT = 0x02,
+    FUS_STATE_ERROR_IMG_NOT_AUTHENTIC = 0x03,
+    FUS_STATE_ERROR_IMG_NOT_ENOUGH_SPACE = 0x04,
+    FUS_STATE_ERROR_IMAGE_USRABORT = 0x05,
+    FUS_STATE_ERROR_IMAGE_ERSERROR = 0x06,
+    FUS_STATE_ERROR_IMAGE_WRTERROR = 0x07,
+    FUS_STATE_ERROR_AUTH_TAG_ST_NOTFOUND = 0x08,
+    FUS_STATE_ERROR_AUTH_TAG_CUST_NOTFOUND = 0x09,
+    FUS_STATE_ERROR_AUTH_KEY_LOCKED = 0x0A,
+    FUS_STATE_ERROR_FW_ROLLBACK_ERROR = 0x11,
+    FUS_STATE_ERROR_STATE_NOT_RUNNING = 0xFE,
+    FUS_STATE_ERROR_ERR_UNKNOWN = 0xFF,
   } SHCI_FUS_GetState_ErrorCode_t;
+
+  enum
+  {
+    FUS_STATE_VALUE_IDLE =  0x00,
+    FUS_STATE_VALUE_FW_UPGRD_ONGOING =  0x10,
+    FUS_STATE_VALUE_FW_UPGRD_ONGOING_END = 0x1F,    /* All values between 0x10 and 0x1F has the same meaning */
+    FUS_STATE_VALUE_FUS_UPGRD_ONGOING =  0x20,
+    FUS_STATE_VALUE_FUS_UPGRD_ONGOING_END =  0x2F,  /* All values between 0x20 and 0x2F has the same meaning */
+    FUS_STATE_VALUE_SERVICE_ONGOING =  0x30,
+    FUS_STATE_VALUE_SERVICE_ONGOING_END =  0x3F,    /* All values between 0x30 and 0x3F has the same meaning */
+    FUS_STATE_VALUE_ERROR =  0xFF,
+  };
 
 #define SHCI_OPCODE_C2_FUS_RESERVED1         (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_RESERVED1)
 /** No command parameters */
@@ -345,23 +366,173 @@ extern "C" {
 #define SHCI_OPCODE_C2_BLE_INIT                 (( SHCI_OGF << 10) + SHCI_OCF_C2_BLE_INIT)
   /** THE ORDER SHALL NOT BE CHANGED    */
   typedef PACKED_STRUCT{
-  uint8_t* pBleBufferAddress;   /**< NOT USED CURRENTLY */
-  uint32_t BleBufferSize;       /**< Size of the Buffer allocated in pBleBufferAddress  */
+  uint8_t* pBleBufferAddress;   /**< NOT USED - shall be set to 0 */
+  uint32_t BleBufferSize;       /**< NOT USED - shall be set to 0 */
+
+  /**
+   * NumAttrRecord
+   * Maximum number of attribute records related to all the required characteristics (excluding the services)
+   * that can be stored in the GATT database, for the specific BLE user application.
+   * For each characteristic, the number of attribute records goes from two to five depending on the characteristic properties:
+   *    - minimum of two (one for declaration and one for the value)
+   *    - add one more record for each additional property: notify or indicate, broadcast, extended property.
+   * The total calculated value must be increased by 9, due to the records related to the standard attribute profile and
+   * GAP service characteristics, and automatically added when initializing GATT and GAP layers
+   *  - Min value: <number of user attributes> + 9
+   *  - Max value: depending on the GATT database defined by user application
+   */
   uint16_t NumAttrRecord;
+
+  /**
+   * NumAttrServ
+   * Defines the maximum number of services that can be stored in the GATT database. Note that the GAP and GATT services
+   * are automatically added at initialization so this parameter must be the number of user services increased by two.
+   *    - Min value: <number of user service> + 2
+   *    - Max value: depending GATT database defined by user application
+   */
   uint16_t NumAttrServ;
+
+  /**
+   * AttrValueArrSize
+   * NOTE: This parameter is ignored by the CPU2 when the parameter "Options" is set to "LL_only" ( see Options description in that structure )
+   *
+   * Size of the storage area for the attribute values.
+   * Each characteristic contributes to the attrValueArrSize value as follows:
+   *    - Characteristic value length plus:
+   *        + 5 bytes if characteristic UUID is 16 bits
+   *        + 19 bytes if characteristic UUID is 128 bits
+   *        + 2 bytes if characteristic has a server configuration descriptor
+   *        + 2 bytes * NumOfLinks if the characteristic has a client configuration descriptor
+   *        + 2 bytes if the characteristic has extended properties
+   * Each descriptor contributes to the attrValueArrSize value as follows:
+   *    - Descriptor length
+   */
   uint16_t AttrValueArrSize;
+
+  /**
+   * NumOfLinks
+   * Maximum number of BLE links supported
+   *    - Min value: 1
+   *    - Max value: 8
+   */
   uint8_t NumOfLinks;
+
+  /**
+   * ExtendedPacketLengthEnable
+   * Disable/enable the extended packet length BLE 5.0 feature
+   *    - Disable: 0
+   *    - Enable: 1
+   */
   uint8_t ExtendedPacketLengthEnable;
+
+  /**
+   * PrWriteListSize
+   * NOTE: This parameter is ignored by the CPU2 when the parameter "Options" is set to "LL_only" ( see Options description in that structure )
+   *
+   * Maximum number of supported “prepare write request”
+   *    - Min value: given by the macro DEFAULT_PREP_WRITE_LIST_SIZE
+   *    - Max value: a value higher than the minimum required can be specified, but it is not recommended
+   */
   uint8_t PrWriteListSize;
+
+  /**
+   * MblockCount
+   * NOTE: This parameter is overwritten by the CPU2 with an hardcoded optimal value when the parameter "Options" is set to "LL_only"
+   * ( see Options description in that structure )
+   *
+   * Number of allocated memory blocks for the BLE stack
+   *     - Min value: given by the macro MBLOCKS_CALC
+   *     - Max value: a higher value can improve data throughput performance, but uses more memory
+   */
   uint8_t MblockCount;
+
+  /**
+   * AttMtu
+   * NOTE: This parameter is ignored by the CPU2 when the parameter "Options" is set to "LL_only" ( see Options description in that structure )
+   *
+   * Maximum ATT MTU size supported
+   *     - Min value: 23
+   *     - Max value: 512
+   */
   uint16_t AttMtu;
+
+  /**
+   * SlaveSca
+   * The sleep clock accuracy (ppm value) that used in BLE connected slave mode to calculate the window widening
+   * (in combination with the sleep clock accuracy sent by master in CONNECT_REQ PDU),
+   * refer to BLE 5.0 specifications - Vol 6 - Part B - chap 4.5.7 and 4.2.2
+   *     - Min value: 0
+   *     - Max value: 500 (worst possible admitted by specification)
+   */
   uint16_t SlaveSca;
+
+  /**
+   * MasterSca
+   * The sleep clock accuracy handled in master mode. It is used to determine the connection and advertising events timing.
+   * It is transmitted to the slave in CONNEC_REQ PDU used by the slave to calculate the window widening,
+   * see SlaveSca and Bluetooth Core Specification v5.0 Vol 6 - Part B - chap 4.5.7 and 4.2.2
+   * Possible values:
+   *    - 251 ppm to 500 ppm: 0
+   *    - 151 ppm to 250 ppm: 1
+   *    - 101 ppm to 150 ppm: 2
+   *    - 76 ppm to 100 ppm: 3
+   *    - 51 ppm to 75 ppm: 4
+   *    - 31 ppm to 50 ppm: 5
+   *    - 21 ppm to 30 ppm: 6
+   *    - 0 ppm to 20 ppm: 7
+   */
   uint8_t MasterSca;
+
+  /**
+   * LsSource
+   * Source for the 32 kHz slow speed clock.
+   *    - External crystal LSE: 0 - No calibration
+   *    - Others:1 - As the accuracy of this oscillator can vary depending upon external conditions (temperature),
+   *      it is calibrated every second to ensure correct behavior of timing sensitive BLE operations
+   */
   uint8_t LsSource;
+
+  /**
+   * MaxConnEventLength
+   * This parameter determines the maximum duration of a slave connection event. When this duration is reached the slave closes
+   * the current connections event (whatever is the CE_length parameter specified by the master in HCI_CREATE_CONNECTION HCI command),
+   * expressed in units of 625/256 µs (~2.44 µs)
+   *    - Min value: 0 (if 0 is specified, the master and slave perform only a single TX-RX exchange per connection event)
+   *    - Max value: 1638400 (4000 ms). A higher value can be specified (max 0xFFFFFFFF) but results in a maximum connection time
+   *      of 4000 ms as specified. In this case the parameter is not applied, and the predicted CE length calculated on slave is not shortened
+   */
   uint32_t MaxConnEventLength;
+
+  /**
+   * HsStartupTime
+   * Startup time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 µs (~2.44 µs).
+   *    - Min value: 0
+   *    - Max value:  820 (~2 ms). A higher value can be specified, but the value that implemented in stack is forced to ~2 ms
+   */
   uint16_t HsStartupTime;
+
+  /**
+   * ViterbiEnable
+   * Viterbi implementation in BLE LL reception.
+   *    - 0: Enable
+   *    - 1: Disable
+   */
   uint8_t ViterbiEnable;
-  uint8_t LlOnly;
+
+  /**
+   * Options flags
+   * - bit 0:   1: LL only                   0: LL + host
+   * - bit 1:   1: no service change desc.   0: with service change desc.
+   * - bit 2:   1: device name Read-Only     0: device name R/W
+   * - bit 7:   1: LE Power Class 1          0: LE Power Classe 2-3
+   * - other bits: reserved ( shall be set to 0)
+   */
+  uint8_t Options;
+
+  /**
+   * HwVersion
+   * Reserved for future use - shall be set to 0
+   */
   uint8_t HwVersion;
   } SHCI_C2_Ble_Init_Cmd_Param_t;
 
@@ -370,7 +541,23 @@ extern "C" {
     SHCI_C2_Ble_Init_Cmd_Param_t Param;
   } SHCI_C2_Ble_Init_Cmd_Packet_t;
 
-  /** No response parameters*/
+  /**
+   * Options
+   * Each definition below may be added together to build the Options value
+   * WARNING : Only one definition per bit shall be added to build the Options value
+   */
+#define SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY                              (1<<0)
+#define SHCI_C2_BLE_INIT_OPTIONS_LL_HOST                              (0<<0)
+
+#define SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC                   (1<<1)
+#define SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC                 (0<<1)
+
+#define SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO                       (1<<2)
+#define SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW                       (0<<2)
+
+#define SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1                        (1<<7)
+#define SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3                      (0<<7)
+
 
 #define SHCI_OPCODE_C2_THREAD_INIT              (( SHCI_OGF << 10) + SHCI_OCF_C2_THREAD_INIT)
 /** No command parameters */
@@ -602,7 +789,7 @@ extern "C" {
 #define INFO_STACK_TYPE_MASK                        0x000000ff
 #define INFO_STACK_TYPE_NONE                        0
 
-#define INFO_STACK_TYPE_BLE_STANDARD                0x01
+#define INFO_STACK_TYPE_BLE_FULL                    0x01
 #define INFO_STACK_TYPE_BLE_HCI                     0x02
 #define INFO_STACK_TYPE_BLE_LIGHT                   0x03
 #define INFO_STACK_TYPE_BLE_BEACON                  0x04
@@ -749,7 +936,7 @@ typedef struct {
   * SHCI_C2_BLE_Init
   * @brief Provides parameters and starts the BLE Stack
   *
-  * @param  pCmdPacket : Parameters to be provided to the BLE Stack
+  * @param  pCmdPacket : Parameters are described SHCI_C2_Ble_Init_Cmd_Packet_t declaration
   * @retval Status
   */
   SHCI_CmdStatus_t SHCI_C2_BLE_Init( SHCI_C2_Ble_Init_Cmd_Packet_t *pCmdPacket );

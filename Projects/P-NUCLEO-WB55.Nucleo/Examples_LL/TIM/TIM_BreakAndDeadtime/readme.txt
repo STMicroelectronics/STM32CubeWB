@@ -52,6 +52,10 @@ The break Polarity is used at High level.
 
 The TIM1 waveforms can be displayed using an oscilloscope.
 
+@par Keywords
+
+Timer, TIM, PWM, Signal, Duty cycle, Dead-time, Break-time, Break polarity, Oscilloscope.
+
 @par Directory contents 
 
   - TIM/TIM_BreakAndDeadtime/Inc/stm32wbxx_it.h          Interrupt handlers header file

@@ -199,7 +199,6 @@ static void Init_Debug( void )
  */
 static void SystemPower_Config(void)
 {
-
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -250,13 +249,6 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
   UNUSED(status);
   return;
 }
-
-/**
- * @brief Trap a notification coming from the M0 firmware
- * @param  pPayload  : payload associated to the notification
- *
- * @retval None
- */
 
 /**
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam

@@ -129,9 +129,8 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_UniqueAddr = 0xa8,
     ZB_NWK_NIB_ID_AddressMap = 0xa9,
     /* ...continued in zigbee.aps.h with ZB_APS_IB_ID_DEVICE_KEY_PAIR_SET... */
-
-    /* R23+ attributes */
     ZB_NWK_NIB_ID_DiscoveryTable = 0xb4, /* ZbNwkDiscoveryInfoT - Get only. */
+
     /* 0x400 to 0x4ff reserved for custom NIBs. */
     ZB_NWK_NIB_ID_Depth = 0x0400,
     ZB_NWK_NIB_ID_FrameCounterSet,

@@ -64,7 +64,7 @@ P-NUCLEO-WB55 board LED is be used to monitor the program execution status:
    result.
     - Turned-off if voltage into of AWD window
     - Turned-on if voltage is out of AWD window
- - Error: In case of error, LED2 is toggling twice at a frequency of 1Hz.
+ - Error: In case of error, LED2 is toggling at a frequency of 1Hz.
 
 @par Keywords
 
