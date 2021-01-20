@@ -513,7 +513,11 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH CLIENT \n");
       }  
        /* restart advertising */
-       Adv_Request(APP_BLE_FAST_ADV);
+#ifndef DYNAMIC_MODE
+   Adv_Request(APP_BLE_FAST_ADV);
+#else
+   Adv_Request(APP_BLE_LP_ADV);
+#endif
  /*
 * SPECIFIC to P2P Server APP
 */     
