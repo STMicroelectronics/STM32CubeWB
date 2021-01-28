@@ -146,7 +146,7 @@
 <ul>
 <li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
 <li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using STEP 6.</strong></li>
-<li><em>0x20030030 : 01010000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
+<li><em>0x20030030 : 01010200</em> : FUSv1.1.2 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
 </ul></li>
 </ul></li>
 <li><p>STEP 5 : Download FUS 1.0.2 (stm32wb3x_FUS_fw_1_0_2.bin):</p>
@@ -197,7 +197,7 @@
 <ul>
 <li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
 <li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using STEP 6.</strong></li>
-<li><em>0x20030030 : 01010000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
+<li><em>0x20030030 : 01010200</em> : FUSv1.1.2 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
 </ul></li>
 </ul></li>
 <li><p>STEP 5 : Download FUS v1.0.2:</p>
@@ -205,7 +205,7 @@
 <li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -fwupgrade stm32wb3x_FUS_fw_1_0_2.bin [Install@] firstinstall=0</em></li>
 </ul>
 <p>Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</p></li>
-<li><p>STEP 6 :Download latest FUS v1.1.0:</p>
+<li><p>STEP 6 :Download latest FUS :</p>
 <ul>
 <li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -fwupgrade [FUS_Binary] [Install@] firstinstall=0</em></li>
 </ul>
@@ -257,7 +257,7 @@
 <ul>
 <li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
 <li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using STEP 6.</strong></li>
-<li><em>0x20030030 : 01010000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
+<li><em>0x20030030 : 01010200</em> : FUSv1.1.2 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
 </ul></li>
 </ul></li>
 <li><p>STEP 5 : Download FUS v1.0.2 :</p>
@@ -265,7 +265,7 @@
 <li>in Firmware Upgrade Service: (File Path: [stm32wb3x_FUS_fw_1_0_2.bin], Start Adress: [Install@])</li>
 <li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
 </ul></li>
-<li><p>STEP 6 :Download latest FUS v1.1.0 :</p>
+<li><p>STEP 6 :Download latest FUS :</p>
 <ul>
 <li>in Firmware Upgrade Service: (File Path: [FUS_Binary], Start Adress: [Install@])</li>
 <li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
@@ -310,7 +310,7 @@
 <ul>
 <li><em>0x20030030 : 00050300</em> : FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
 <li><em>0x20030030 : 01000100 or 01000200</em> : FUSv1.0.x =&gt; <strong>Must be updated using STEP 6.</strong></li>
-<li><em>0x20030030 : 01010000</em> : FUSv1.1.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
+<li><em>0x20030030 : 01010200</em> : FUSv1.1.2 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
 </ul></li>
 </ul></li>
 <li><p>STEP 5 : Download FUS v1.0.2 :</p>
@@ -318,7 +318,7 @@
 <li>in Firmware Upgrade Services: (File Path: [stm32wb3x_FUS_fw_1_0_2.bin], Start Adress: [Install@])</li>
 <li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
 </ul></li>
-<li><p>STEP 6 :Download latest FUS v1.1.0 :</p>
+<li><p>STEP 6 :Download latest FUS :</p>
 <ul>
 <li>in Firmware Upgrade Service: (File Path: [FUS_Binary], Start Adress: [Install@])</li>
 <li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
@@ -342,9 +342,105 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.10.0 / 26-October-2020</label>
+<input type="checkbox" id="collapse-section5" checked aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.10.1 / 15-January-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>New FUS version (v1.1.2):
+<ul>
+<li>Add protection from PKA attack</li>
+<li>Allow larger image upgrade with lower flash size</li>
+<li>Add protection from main attack</li>
+<li>Add backup user keys afer FUS upgrade</li>
+</ul></li>
+</ul>
+<p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB3x(512K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb3x_FUS_fw_1_0_2.bin</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>v1.0.2</td>
+<td>04/10/2019</td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_FUS_fw.bin</td>
+<td>0x080<strong>7A</strong>000</td>
+<td><strong>v1.1.2</strong></td>
+<td>01/15/2021</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 7” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB3x(512K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb3x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x0806a000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/26/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_HCILayer_fw.bin</td>
+<td>0x08060000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/26/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_BLE_Stack_full_fw.bin</td>
+<td>0x0804b000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/26/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_Stack_light_fw.bin</td>
+<td>0x08056000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/26/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Mac_802_15_4_fw.bin</td>
+<td>0x08063000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/15/2020</td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_Thread_FTD_fw.bin</td>
+<td>0x0801B000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/15/2020</td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Thread_MTD_fw.bin</td>
+<td>0x08031000</td>
+<td><strong>v1.10.0</strong></td>
+<td>10/15/2020</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.10.0 / 26-October-2020</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -442,7 +538,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.9.0 / 21-September-2020</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Introducing following new binary:</li>
@@ -556,7 +652,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.8.0 / 22-June-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -664,7 +760,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>MAC:
@@ -753,7 +849,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of Wireless Coprocessor Binary compatible with STM32WB3x.</li>
