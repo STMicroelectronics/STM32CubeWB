@@ -30,7 +30,7 @@
 #include "stm32_seq.h"
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.press.meas.h"
+#include "zcl/general/zcl.press.meas.h"
 
 
 /* Private defines -----------------------------------------------------------*/
@@ -61,7 +61,7 @@ static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
 static void press_meas_read_cb(const ZbZclReadRspT *readRsp, void *arg);
 static void report_cb(struct ZbZclCommandRspT *cmd_rsp,void *arg);
-static void zcl_press_meas_press_client_report(struct ZbZclClusterT *clusterPtr, ZbApsdeDataIndT *dataIndPtr, uint16_t attributeId,
+static void zcl_press_meas_press_client_report(struct ZbZclClusterT *clusterPtr, struct ZbApsdeDataIndT *dataIndPtr, uint16_t attributeId,
     enum ZclDataTypeT dataType, const uint8_t *in_payload, uint16_t in_len);
 /* Private variables -----------------------------------------------*/
 static TL_CmdPacket_t *p_ZIGBEE_otcmdbuffer;
@@ -156,8 +156,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
 
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;
@@ -178,7 +178,7 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
 
 /* report received from server*/
 static void
-zcl_press_meas_press_client_report(struct ZbZclClusterT *clusterPtr, ZbApsdeDataIndT *dataIndPtr, uint16_t attributeId,
+zcl_press_meas_press_client_report(struct ZbZclClusterT *clusterPtr, struct ZbApsdeDataIndT *dataIndPtr, uint16_t attributeId,
     enum ZclDataTypeT dataType, const uint8_t *in_payload, uint16_t in_len)
 {
     
@@ -292,8 +292,8 @@ static void APP_ZIGBEE_NwkForm(void)
  */
 static void APP_ZIGBEE_ConfigGroupAddr(void)
 {
-  ZbApsmeAddGroupReqT req;
-  ZbApsmeAddGroupConfT conf;
+  struct ZbApsmeAddGroupReqT req;
+  struct ZbApsmeAddGroupConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.endpt = SW1_ENDPOINT;

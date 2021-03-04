@@ -146,8 +146,8 @@ static void APP_ZIGBEE_InitMsg(void)
 
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_SMART_ENERGY;

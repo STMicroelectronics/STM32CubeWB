@@ -30,11 +30,14 @@
 
 #include "ip6.h"
 
-extern otIp6SlaacIidCreate aIidCreateCb;
+#if OPENTHREAD_CONFIG_IP6_SLAAC_ENABLE
+extern otIp6SlaacPrefixFilter otIp6SlaacPrefixFilterCb;
+#endif // OPENTHREAD_CONFIG_IP6_SLAAC_ENABLE
 extern otIp6ReceiveCallback otIp6ReceiveCb;
+extern otIp6AddressCallback otIp6AddressCb;
 
 
-OTAPI otError OTCALL otIp6SetEnabled(otInstance *aInstance, bool aEnabled)
+otError otIp6SetEnabled(otInstance *aInstance, bool aEnabled)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -51,7 +54,7 @@ OTAPI otError OTCALL otIp6SetEnabled(otInstance *aInstance, bool aEnabled)
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI bool OTCALL otIp6IsEnabled(otInstance *aInstance)
+bool otIp6IsEnabled(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -67,7 +70,7 @@ OTAPI bool OTCALL otIp6IsEnabled(otInstance *aInstance)
   return (bool)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otIp6AddUnicastAddress(otInstance *aInstance, const otNetifAddress *aAddress)
+otError otIp6AddUnicastAddress(otInstance *aInstance, const otNetifAddress *aAddress)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -84,7 +87,7 @@ OTAPI otError OTCALL otIp6AddUnicastAddress(otInstance *aInstance, const otNetif
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otIp6RemoveUnicastAddress(otInstance *aInstance, const otIp6Address *aAddress)
+otError otIp6RemoveUnicastAddress(otInstance *aInstance, const otIp6Address *aAddress)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -101,7 +104,7 @@ OTAPI otError OTCALL otIp6RemoveUnicastAddress(otInstance *aInstance, const otIp
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI const otNetifAddress *OTCALL otIp6GetUnicastAddresses(otInstance *aInstance)
+const otNetifAddress *otIp6GetUnicastAddresses(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -199,81 +202,7 @@ void otIp6SetMulticastPromiscuousEnabled(otInstance *aInstance, bool aEnabled)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-void otIp6SlaacUpdate(otInstance *aInstance, otNetifAddress *aAddresses, uint32_t aNumAddresses,
-    otIp6SlaacIidCreate aIidCreate, void *aContext)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  aIidCreateCb = aIidCreate;
-  p_ot_req->ID = MSG_M4TOM0_OT_IP6_SLAAC_UPDATE;
-
-  p_ot_req->Size=3;
-  p_ot_req->Data[0] = (uint32_t)aAddresses;
-  p_ot_req->Data[1] = (uint32_t)aNumAddresses;
-  p_ot_req->Data[2] = (uint32_t)aContext;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-}
-
-otError otIp6CreateRandomIid(otInstance *aInstance, otNetifAddress *aAddresses, void *aContext)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_IP6_CREATE_RANDOM_IID;
-
-  p_ot_req->Size=2;
-  p_ot_req->Data[0] = (uint32_t)aAddresses;
-  p_ot_req->Data[1] = (uint32_t)aContext;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
-}
-
-otError otIp6CreateMacIid(otInstance *aInstance, otNetifAddress *aAddresses, void *aContext)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_IP6_CREATE_MAC_IID;
-
-  p_ot_req->Size=2;
-  p_ot_req->Data[0] = (uint32_t)aAddresses;
-  p_ot_req->Data[1] = (uint32_t)aContext;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
-}
-
-otError otIp6CreateSemanticallyOpaqueIid(otInstance *aInstance, otNetifAddress *aAddresses, void *aContext)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_IP6_CREATE_SEMANTICALLY_OPAQUE_IID;
-
-  p_ot_req->Size=2;
-  p_ot_req->Data[0] = (uint32_t)aAddresses;
-  p_ot_req->Data[1] = (uint32_t)aContext;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
-}
-
-otMessage *otIp6NewMessage(otInstance *aInstance, bool aLinkSecurityEnabled)
+otMessage *otIp6NewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -282,7 +211,29 @@ otMessage *otIp6NewMessage(otInstance *aInstance, bool aLinkSecurityEnabled)
   p_ot_req->ID = MSG_M4TOM0_OT_IP6_NEW_MESSAGE;
 
   p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t)aLinkSecurityEnabled;
+  p_ot_req->Data[0] = (uint32_t)aSettings;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otMessage *)p_ot_req->Data[0];
+}
+
+otMessage *otIp6NewMessageFromBuffer(otInstance *             aInstance,
+                                     const uint8_t *          aData,
+                                     uint16_t                 aDataLength,
+                                     const otMessageSettings *aSettings)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_NEW_MESSAGE_FROM_BUFFER;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aData;
+  p_ot_req->Data[1] = (uint32_t)aDataLength;
+  p_ot_req->Data[2] = (uint32_t)aSettings;
 
   Ot_Cmd_Transfer();
 
@@ -294,6 +245,23 @@ void otIp6SetReceiveCallback(otInstance *aInstance, otIp6ReceiveCallback aCallba
 {
   Pre_OtCmdProcessing();
   otIp6ReceiveCb = aCallback;
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_SET_RECEIVE_CALLBACK;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aCallbackContext;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+void otIp6SetAddressCallback(otInstance *aInstance, otIp6AddressCallback aCallback, void *aCallbackContext)
+{
+  Pre_OtCmdProcessing();
+  otIp6AddressCb = aCallback;
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
@@ -418,7 +386,7 @@ const uint16_t *otIp6GetUnsecurePorts(otInstance *aInstance, uint8_t *aNumEntrie
   return (uint16_t *)p_ot_req->Data[0];
 }
 
-OTAPI bool OTCALL otIp6IsAddressEqual(const otIp6Address *a, const otIp6Address *b)
+bool otIp6IsAddressEqual(const otIp6Address *aFirst, const otIp6Address *aSecond)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -427,8 +395,8 @@ OTAPI bool OTCALL otIp6IsAddressEqual(const otIp6Address *a, const otIp6Address 
   p_ot_req->ID = MSG_M4TOM0_OT_IP6_IS_ADDRESS_EQUAL;
 
   p_ot_req->Size=2;
-  p_ot_req->Data[0] = (uint32_t)a;
-  p_ot_req->Data[1] = (uint32_t)b;
+  p_ot_req->Data[0] = (uint32_t)aFirst;
+  p_ot_req->Data[1] = (uint32_t)aSecond;
 
   Ot_Cmd_Transfer();
 
@@ -436,7 +404,7 @@ OTAPI bool OTCALL otIp6IsAddressEqual(const otIp6Address *a, const otIp6Address 
   return (bool)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otIp6AddressFromString(const char *aString, otIp6Address *aAddress)
+otError otIp6AddressFromString(const char *aString, otIp6Address *aAddress)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -454,7 +422,7 @@ OTAPI otError OTCALL otIp6AddressFromString(const char *aString, otIp6Address *a
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI uint8_t OTCALL otIp6PrefixMatch(const otIp6Address *aFirst, const otIp6Address *aSecond)
+uint8_t otIp6PrefixMatch(const otIp6Address *aFirst, const otIp6Address *aSecond)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -488,3 +456,70 @@ bool otIp6IsAddressUnspecified(const otIp6Address *aAddress)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (bool)p_ot_req->Data[0];
 }
+
+otError otIp6SelectSourceAddress(otInstance *aInstance, otMessageInfo *aMessageInfo)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_SELECT_SOURCE_ADDRESS;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aMessageInfo;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+#if OPENTHREAD_CONFIG_IP6_SLAAC_ENABLE
+bool otIp6IsSlaacEnabled(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_IS_SLAAC_ENABLED;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (bool)p_ot_req->Data[0];
+}
+
+void otIp6SetSlaacEnabled(otInstance *aInstance, bool aEnabled)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_SET_SLAAC_ENABLED;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aEnabled;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+void otIp6SetSlaacPrefixFilter(otInstance *aInstance, otIp6SlaacPrefixFilter aFilter)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  otIp6SlaacPrefixFilterCb = aFilter;
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_SET_SLAAC_PREFIX_FILTER;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+#endif // OPENTHREAD_CONFIG_IP6_SLAAC_ENABLE

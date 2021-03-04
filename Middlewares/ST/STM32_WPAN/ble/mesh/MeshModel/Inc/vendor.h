@@ -99,7 +99,7 @@
 #define PRESS_SENSOR        0X2U
 #define ACCEL_SENSOR        0X3U
 /******************************************************************************/
-#define VENDOR_DATA_BUFFER_SIZE           140
+#define VENDOR_DATA_BUFFER_SIZE           60 /* changed from 140 , as maximum packet size is 60 */
 #define R_ASCI_CODE            0X52
 
 #define DEFAULT_DELAY_PACKET_FROM         500U
@@ -113,7 +113,9 @@
 
 /* Exported variables  ------------------------------------------------------- */
 /** \brief Callback map */
-#pragma pack(1)
+
+#pragma pack(push, 1)
+
 typedef struct
 {
   MOBLE_RESULT (*LEDControlCommand_Cb)(MOBLEUINT8 const *, MOBLEUINT32, MOBLEUINT8,MOBLE_ADDRESS);
@@ -123,6 +125,8 @@ typedef struct
   void (*GetTestCount)(MOBLEUINT8*);
   MOBLE_RESULT (*DataControlCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);
 } Appli_Vendor_cb_t;
+
+#pragma pack(pop)
 
 extern const Appli_Vendor_cb_t VendorAppli_cb;
 

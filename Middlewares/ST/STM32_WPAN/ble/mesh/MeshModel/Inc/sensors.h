@@ -201,37 +201,8 @@ typedef struct
                                           status_trigger_type_e triggerType,
                                           void* pDeltaDown,
                                           void* pDeltaUp);
-  void (*Sensor_Descriptor_Status_cb)(const MOBLEUINT8 *pDescriptor,
-                                      MOBLEUINT32 length,
-                                      MOBLE_ADDRESS dstPeer,
-                                      MOBLEUINT8 elementIndex);
-  void (*Sensor_Cadence_Status_cb)(const MOBLEUINT8 *pCadence,
-                                   MOBLEUINT32 length,
-                                   MOBLE_ADDRESS dstPeer,
-                                   MOBLEUINT8 elementIndex);
-  void (*Sensor_Settings_Status_cb)(const MOBLEUINT8 *pSettings,
-                                    MOBLEUINT32 length,
-                                    MOBLE_ADDRESS dstPeer,
-                                    MOBLEUINT8 elementIndex);
-  void (*Sensor_Setting_Status_cb)(const MOBLEUINT8 *pSetting,
-                                   MOBLEUINT32 length,
-                                   MOBLE_ADDRESS dstPeer,
-                                   MOBLEUINT8 elementIndex);
-  void (*Sensor_Status_cb)(const MOBLEUINT8 *pStatus,
-                           MOBLEUINT32 length,
-                           MOBLE_ADDRESS dstPeer,
-                           MOBLEUINT8 elementIndex);
-  void (*Sensor_Column_Status_cb)(const MOBLEUINT8 *pColumn,
-                                  MOBLEUINT32 length,
-                                  MOBLE_ADDRESS dstPeer,
-                                  MOBLEUINT8 elementIndex);
-  void (*Sensor_Series_Status_cb)(const MOBLEUINT8 *pSeries,
-                                  MOBLEUINT32 length,
-                                  MOBLE_ADDRESS dstPeer,
-                                  MOBLEUINT8 elementIndex);  
 } sensor_server_cb_t;
   
-extern const sensor_server_cb_t SensorAppli_cb;
 
 /* Exported macro ------------------------------------------------------------*/
 #define SENSOR_POSITIVE_TOLERANCE_UNSPECIFIED                         0x000
@@ -264,8 +235,6 @@ extern const sensor_server_cb_t SensorAppli_cb;
 #define SENSOR_CADENCE_SUPPORTED                                          1
 #define SENSOR_PROPERTY_ID_LENGTH                                         2
                                                
-#define SENSOR_CLIENT_MODEL_ID                                     0x1102U
-
 /* Exported functions ------------------------------------------------------- */
 MOBLE_RESULT SensorModelServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
                                     MOBLEUINT16 *length);

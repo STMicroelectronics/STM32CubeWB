@@ -6,7 +6,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -25,7 +25,7 @@
 
 #define HCI_EVENT_TABLE_SIZE 6
 #define HCI_LE_EVENT_TABLE_SIZE 11
-#define HCI_VS_EVENT_TABLE_SIZE 43
+#define HCI_VS_EVENT_TABLE_SIZE 51
 
 typedef struct
 {
@@ -1276,8 +1276,9 @@ void aci_gatt_notification_ext_event( uint16_t Connection_Handle,
  * This event is generated when the master responds to the connection update
  * request packet with a connection update response packet.
  * 
- * @param Connection_Handle Connection handle referring to the COS Channel
- *        where the Disconnection has been received.
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @return None
  */
 void aci_l2cap_connection_update_resp_event( uint16_t Connection_Handle,
@@ -1289,8 +1290,9 @@ void aci_l2cap_connection_update_resp_event( uint16_t Connection_Handle,
  * update request packet with a connection update response packet or a command
  * reject packet within 30 seconds.
  * 
- * @param Connection_Handle Handle of the connection related to this L2CAP
- *        procedure.
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Data_Length Length of following data
  * @return None
  */
@@ -1304,8 +1306,9 @@ void aci_l2cap_proc_timeout_event( uint16_t Connection_Handle,
  * received from the slave. The upper layer which receives this event has to
  * respond by sending a ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP command.
  * 
- * @param Connection_Handle Handle of the connection related to this L2CAP
- *        procedure.
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Identifier This is the identifier which associate the request to the
  *        response.
  * @param L2CAP_Length Length of the L2CAP connection update request.
@@ -1337,11 +1340,13 @@ void aci_l2cap_connection_update_req_event( uint16_t Connection_Handle,
 
 /**
  * @brief ACI_L2CAP_COMMAND_REJECT_EVENT
- * This event is generated when the master responds to the connection update
- * request packet with a command reject packet.
+ * This event is generated upon receipt of a valid Command Reject packet (e.g.
+ * when the master responds to the Connection Update Request packet with a
+ * Command Reject packet).
  * 
- * @param Connection_Handle Connection handle referring to the COS Channel
- *        where the Disconnection has been received.
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Identifier This is the identifier which associate the request to the
  *        response.
  * @param Reason Reason
@@ -1354,6 +1359,186 @@ void aci_l2cap_command_reject_event( uint16_t Connection_Handle,
                                      uint16_t Reason,
                                      uint8_t Data_Length,
                                      const uint8_t* Data );
+
+/**
+ * @brief ACI_L2CAP_COC_CONNECT_EVENT
+ * This event is generated when receiving a valid Credit Based Connection
+ * Request packet. See Bluetooth Core specification Vol.3 Part A.
+ * 
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
+ * @param SPSM Simplified Protocol/Service Multiplexer.
+ *        Values:
+ *        - 0x0001 ... 0x00FF
+ * @param MTU Maximum Transmission Unit.
+ *        Values:
+ *        - 23 ... 65535
+ * @param MPS Maximum payload size (in octets).
+ *        Values:
+ *        - 23 ... 65533
+ * @param Initial_Credits Number of K-frames that can be received on the
+ *        created channel(s) by the L2CAP layer entity sending this packet.
+ *        Values:
+ *        - 0 ... 65535
+ * @param Channel_Number Number of channels to be created. If this parameter is
+ *        set to 0, it requests the creation of one LE credit based connection-
+ *        oriented channel. Otherwise, it requests the creation of one or more
+ *        enhanced credit based connection-oriented channels.
+ *        Values:
+ *        - 0 ... 5
+ * @return None
+ */
+void aci_l2cap_coc_connect_event( uint16_t Connection_Handle,
+                                  uint16_t SPSM,
+                                  uint16_t MTU,
+                                  uint16_t MPS,
+                                  uint16_t Initial_Credits,
+                                  uint8_t Channel_Number );
+
+/**
+ * @brief ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT
+ * This event is generated when receiving a valid Credit Based Connection
+ * Response packet. See Bluetooth Core specification Vol.3 Part A.
+ * 
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
+ * @param MTU Maximum Transmission Unit.
+ *        Values:
+ *        - 23 ... 65535
+ * @param MPS Maximum payload size (in octets).
+ *        Values:
+ *        - 23 ... 65533
+ * @param Initial_Credits Number of K-frames that can be received on the
+ *        created channel(s) by the L2CAP layer entity sending this packet.
+ *        Values:
+ *        - 0 ... 65535
+ * @param Result This parameter indicates the outcome of the request. A value
+ *        of 0x0000 indicates success while a non-zero value indicates the
+ *        request is refused.
+ *        Values:
+ *        - 0x0000 ... 0x000C
+ * @param Channel_Number Number of created channels. It is the length of
+ *        Channel_Index_List.
+ *        Values:
+ *        - 0 ... 5
+ * @param Channel_Index_List List of channel indexes for which the primitive
+ *        applies.
+ * @return None
+ */
+void aci_l2cap_coc_connect_confirm_event( uint16_t Connection_Handle,
+                                          uint16_t MTU,
+                                          uint16_t MPS,
+                                          uint16_t Initial_Credits,
+                                          uint16_t Result,
+                                          uint8_t Channel_Number,
+                                          const uint8_t* Channel_Index_List );
+
+/**
+ * @brief ACI_L2CAP_COC_RECONF_EVENT
+ * This event is generated when receiving a valid Credit Based Reconfigure
+ * Request packet. See Bluetooth Core specification Vol.3 Part A.
+ * 
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
+ * @param MTU Maximum Transmission Unit.
+ *        Values:
+ *        - 23 ... 65535
+ * @param MPS Maximum payload size (in octets).
+ *        Values:
+ *        - 23 ... 65533
+ * @param Channel_Number Number of created channels. It is the length of
+ *        Channel_Index_List.
+ *        Values:
+ *        - 1 ... 5
+ * @param Channel_Index_List List of channel indexes for which the primitive
+ *        applies.
+ * @return None
+ */
+void aci_l2cap_coc_reconf_event( uint16_t Connection_Handle,
+                                 uint16_t MTU,
+                                 uint16_t MPS,
+                                 uint8_t Channel_Number,
+                                 const uint8_t* Channel_Index_List );
+
+/**
+ * @brief ACI_L2CAP_COC_RECONF_CONFIRM_EVENT
+ * This event is generated when receiving a valid Credit Based Reconfigure
+ * Response packet. See Bluetooth Core specification Vol.3 Part A.
+ * 
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
+ * @param Result This parameter indicates the outcome of the request. A value
+ *        of 0x0000 indicates success while a non-zero value indicates the
+ *        request is refused.
+ *        Values:
+ *        - 0x0000 ... 0x000C
+ * @return None
+ */
+void aci_l2cap_coc_reconf_confirm_event( uint16_t Connection_Handle,
+                                         uint16_t Result );
+
+/**
+ * @brief ACI_L2CAP_COC_DISCONNECT_EVENT
+ * This event is generated when a connection-oriented channel is disconnected
+ * following an L2CAP channel termination procedure. See Bluetooth Core
+ * specification Vol.3 Part A.
+ * 
+ * @param Channel_Index Index of the connection-oriented channel for which the
+ *        primitive applies.
+ * @return None
+ */
+void aci_l2cap_coc_disconnect_event( uint8_t Channel_Index );
+
+/**
+ * @brief ACI_L2CAP_COC_FLOW_CONTROL_EVENT
+ * This event is generated when receiving a valid Flow Control Credit signaling
+ * packet. See Bluetooth Core specification Vol.3 Part A.
+ * 
+ * @param Channel_Index Index of the connection-oriented channel for which the
+ *        primitive applies.
+ * @param Credits Number of credits the receiving device can increment,
+ *        corresponding to the number of K-frames that can be sent to the peer
+ *        device sending the Flow Control Credit packet.
+ *        Values:
+ *        - 1 ... 65535
+ * @return None
+ */
+void aci_l2cap_coc_flow_control_event( uint8_t Channel_Index,
+                                       uint16_t Credits );
+
+/**
+ * @brief ACI_L2CAP_COC_RX_DATA_EVENT
+ * This event is generated when receiving a valid K-frame packet on a
+ * connection-oriented channel. See Bluetooth Core specification Vol.3 Part A.
+ * Note: for the first K-frame of the SDU, the Information data contains the
+ * L2CAP SDU Length coded on two octets followed by the K-frame information
+ * payload. For the next K-frames of the SDU, the Information data only
+ * contains the K-frame information payload.
+ * 
+ * @param Channel_Index Index of the connection-oriented channel for which the
+ *        primitive applies.
+ * @param Length Length of Data (in octets)
+ * @param Data Information data
+ * @return None
+ */
+void aci_l2cap_coc_rx_data_event( uint8_t Channel_Index,
+                                  uint16_t Length,
+                                  const uint8_t* Data );
+
+/**
+ * @brief ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT
+ * Each time ACI_L2CAP_COC_TX_DATA raises the error code
+ * BLE_STATUS_INSUFFICIENT_RESOURCES (0x64), the
+ * ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT event is generated as soon as there is
+ * a free buffer available for sending K-frames.
+ * 
+ * @return None
+ */
+void aci_l2cap_coc_tx_pool_available_event( void );
 
 /* ACI HAL events */
 
@@ -1441,6 +1626,7 @@ void aci_hal_scan_req_report_event( uint8_t RSSI,
  *        - 0x01: L2CAP recombination failure
  *        - 0x02: GATT unexpected peer message
  *        - 0x03: NVM level warning
+ *        - 0x04: COC RX data length too large
  * @param Data_Length Length of Data in octets
  * @param Data The error event info
  * @return None

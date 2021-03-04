@@ -32,6 +32,10 @@
 #include "stm32_lpm.h"
 #include "otp.h"
 
+#ifdef OTA_SBSFU
+#include "ota_sbsfu.h"
+#endif /* OTA_SBSFU */
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
 #define APPBLE_GAP_DEVICE_NAME_LENGTH 7
@@ -115,8 +119,11 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
-    CFG_BLE_LL_ONLY,
-    0}
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER}
   };
 
   /**
@@ -195,42 +202,42 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 {
   hci_event_pckt *event_pckt;
   evt_le_meta_event *meta_evt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
 
   
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
 
   switch (event_pckt->evt)
   {
-    case EVT_DISCONN_COMPLETE:
+    case HCI_DISCONNECTION_COMPLETE_EVT_CODE:
     {
       
       Adv_Request();
       
     }
-    break; /* EVT_DISCONN_COMPLETE */
+    break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
 
-    case EVT_LE_META_EVENT:
+    case HCI_LE_META_EVT_CODE:
       meta_evt = (evt_le_meta_event*) event_pckt->data;
 
       switch (meta_evt->subevent)
       {
-        case EVT_LE_CONN_COMPLETE:
-          break; /* HCI_EVT_LE_CONN_COMPLETE */
+        case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
+          break; /* HCI_HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
 
         default:
           break;
       }
-      break; /* HCI_EVT_LE_META_EVENT */
+      break; /* HCI_HCI_LE_META_EVT_CODE */
 
-        case EVT_VENDOR:
-          blue_evt = (evt_blue_aci*) event_pckt->data;
-          switch (blue_evt->ecode)
+        case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
+          blecore_evt = (evt_blecore_aci*) event_pckt->data;
+          switch (blecore_evt->ecode)
           {
-            case EVT_BLUE_GAP_PROCEDURE_COMPLETE:
-              break; /* EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+            case ACI_GAP_PROC_COMPLETE_VSEVT_CODE:
+              break; /* ACI_GAP_PROC_COMPLETE_VSEVT_CODE */
           }
-          break; /* EVT_VENDOR */
+          break; /* HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
 
             default:
               break;
@@ -397,6 +404,29 @@ static void Adv_Request(void){
 
 static void Delete_Sectors( void )
 {
+
+#ifdef OTA_SBSFU
+  uint32_t page_error;
+  FLASH_EraseInitTypeDef p_erase_init;
+
+  p_erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
+  p_erase_init.Page = (SLOT_ACTIVE_1_START&0x00FFF000)>>12;
+  p_erase_init.NbPages = (((SLOT_ACTIVE_1_END-SLOT_ACTIVE_1_START)&0x00FFF000)>>12)+1;
+   
+  HAL_FLASH_Unlock();
+  HAL_FLASHEx_Erase(&p_erase_init, &page_error);
+  HAL_FLASH_Lock();
+
+  p_erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
+  p_erase_init.Page = (SLOT_DWL_1_START&0x00FFF000)>>12;
+  p_erase_init.NbPages = (((SLOT_DWL_1_END-SLOT_DWL_1_START)&0x00FFF000)>>12)+1;
+   
+  HAL_FLASH_Unlock();
+  HAL_FLASHEx_Erase(&p_erase_init, &page_error);
+  HAL_FLASH_Lock();
+  
+  return;
+#else
   /**
    * The number of sectors to erase is read from SRAM1.
    * It shall be checked whether the number of sectors to erase does not overlap on the secured Flash
@@ -435,6 +465,7 @@ static void Delete_Sectors( void )
   HAL_FLASH_Lock();
 
   return;
+#endif /* OTA_SBSFU */
 }
 
 const uint8_t* BleGetBdAddress( void )
@@ -452,12 +483,20 @@ const uint8_t* BleGetBdAddress( void )
     company_id = LL_FLASH_GetSTCompanyID();
     device_id = LL_FLASH_GetDeviceID();
 
+/**
+ * Public Address with the ST company ID
+ * bit[47:24] : 24bits (OUI) equal to the company ID
+ * bit[23:16] : Device ID.
+ * bit[15:0] : The last 16bits from the UDN
+ * Note: In order to use the Public Address in a final product, a dedicated
+ * 24bits company ID (OUI) shall be bought.
+ */
     bd_addr_udn[0] = (uint8_t)(udn & 0x000000FF);
     bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_addr_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
-    bd_addr_udn[3] = (uint8_t)device_id;
-    bd_addr_udn[4] = (uint8_t)(company_id & 0x000000FF);;
-    bd_addr_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[2] = (uint8_t)device_id;
+    bd_addr_udn[3] = (uint8_t)(company_id & 0x000000FF);
+    bd_addr_udn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
 
     bd_addr = (const uint8_t *)bd_addr_udn;
   }
@@ -472,7 +511,6 @@ const uint8_t* BleGetBdAddress( void )
     {
       bd_addr = M_bd_addr;
     }
-
   }
 
   return bd_addr;

@@ -91,34 +91,41 @@ static void RxCpltCallback(void);
 /* USER CODE BEGIN PFP */
 static void APP_THREAD_CheckMsgValidity(void);
 static void APP_THREAD_SendNextBuffer(void);
+
 static void APP_THREAD_CoapDataReqHandler(void                * pContext,
-                                          otCoapHeader        * pHeader,
                                           otMessage           * pMessage,
                                           const otMessageInfo * pMessageInfo);
-static void APP_THREAD_SendDataResponse(otCoapHeader * pRequestHeader,
+static void APP_THREAD_SendDataResponse(otMessage * pMessage,
     const otMessageInfo * pMessageInfo);
+static void APP_THREAD_DataRespHandler(
+    void * pContext,
+    otMessage * pMessage,
+    const otMessageInfo * pMessageInfo,
+    otError Result);
+
+static void APP_THREAD_AskProvisioning(void);
 static void APP_THREAD_ProvisioningReqHandler(
     void * pContext,
-    otCoapHeader * pHeader,
     otMessage * pMessage,
     const otMessageInfo * pMessageInfo);
-static otError APP_THREAD_ProvisioningRespSend(otCoapHeader* pRequestHeader,
+static otError APP_THREAD_ProvisioningRespSend(otMessage * pMessage,
     const otMessageInfo * pMessageInfo);
 static void APP_THREAD_ProvisioningReqSend(void);
 static void APP_THREAD_ProvisioningRespHandler(
     void * pContext,
-    otCoapHeader * pHeader,
     otMessage * pMessage,
     const otMessageInfo * pMessageInfo,
     otError Result);
-static void APP_THREAD_SendCoapUnicastRequest(void);
-static void APP_THREAD_DataRespHandler(
-    void * pContext,
-    otCoapHeader  * pHeader,
-    otMessage * pMessage,
-    const otMessageInfo * pMessageInfo,
-    otError Result);
-static void APP_THREAD_AskProvisioning(void);
+
+static void APP_THREAD_CoapSendRequest(otCoapResource* aCoapRessource,
+    otCoapType aCoapType,
+    otCoapCode aCoapCode,
+    const char *aStringAddress,
+    const otIp6Address* aPeerAddress,
+    uint8_t* aPayload,
+    uint16_t Size,
+    otCoapResponseHandler aHandler,
+    void *aContext);
 /* USER CODE END PFP */
 
 /* Private variables -----------------------------------------------*/
@@ -145,18 +152,19 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
+extern uint8_t g_ot_notification_allowed;
 
 /* USER CODE BEGIN PV */
 static otCoapResource OT_RessourceDataTransfer = {C_RESSOURCE_DATA_TRANSFER, APP_THREAD_CoapDataReqHandler,"DataTransferCtx", NULL};
 static otCoapResource OT_RessourceProvisionning = {C_RESSOURCE_Provisioning, APP_THREAD_ProvisioningReqHandler,"ProvisioningCtx", NULL};
 static otMessageInfo OT_MessageInfo = {0};
-static otCoapHeader  OT_Header = {0};
 static uint8_t OT_Command = 0;
-static uint16_t OT_BufferIdRead = 1U;
-static uint16_t OT_BufferIdSend = 1U;
+static uint16_t OT_BufferIdRead = 0U;
+static uint16_t OT_BufferIdSend = 0U;
 static uint8_t OT_BufferSend[COAP_PAYLOAD_MAX_LENGTH] = {0};
 static uint8_t OT_BufferReceived[COAP_PAYLOAD_MAX_LENGTH] = {0};
 static otMessage   * pOT_Message = NULL;
+static otMessage   * pOT_MessageResponse = NULL;
 static otIp6Address   OT_PeerAddress = { .mFields.m8 = { 0 } };
 /* USER CODE END PV */
 
@@ -470,7 +478,7 @@ static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Thread
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -545,6 +553,7 @@ static void APP_THREAD_SendNextBuffer(void)
   uint16_t j;
   uint16_t mOffset;
 
+  APP_DBG("+++ APP_THREAD_SendNextBuffer ID : %d +++", OT_BufferIdSend);
   if (OT_BufferIdSend < 5U)
   {
     /* Prepare next buffers to be send */
@@ -558,13 +567,21 @@ static void APP_THREAD_SendNextBuffer(void)
     }
 
     /* Send the data in unicast mode */
-    APP_THREAD_SendCoapUnicastRequest();
+    APP_THREAD_CoapSendRequest(&OT_RessourceDataTransfer,
+        OT_COAP_TYPE_CONFIRMABLE,
+        OT_COAP_CODE_PUT,
+        NULL,
+        &OT_PeerAddress,
+        OT_BufferSend,
+        sizeof(OT_BufferSend),
+        &APP_THREAD_DataRespHandler,
+        NULL);
   }
   else
   {
     /* Buffer transfer has been successfully  transfered */
     BSP_LED_On(LED1);
-    APP_DBG(" ********* BUFFER HAS BEEN TRANFERED \r\n");
+    APP_DBG("********* BUFFER HAS BEEN TRANFERED *********");
   }
 }
 
@@ -577,21 +594,21 @@ static void APP_THREAD_SendNextBuffer(void)
  * @retval None
  */
 static void APP_THREAD_CoapDataReqHandler(void                * pContext,
-                                          otCoapHeader        * pHeader,
                                           otMessage           * pMessage,
                                           const otMessageInfo * pMessageInfo)
 {
+  static uint8_t l_id = 0;
   do
   {
-    APP_DBG(" ********* APP_THREAD_CoapDataReqHandler \r\n");
-    if (otCoapHeaderGetType(pHeader) != OT_COAP_TYPE_CONFIRMABLE &&
-        otCoapHeaderGetType(pHeader) != OT_COAP_TYPE_NON_CONFIRMABLE)
+    APP_DBG("--> APP_THREAD_CoapDataReqHandler : l_id = %d", l_id++);
+    if (otCoapMessageGetType(pMessage) != OT_COAP_TYPE_CONFIRMABLE &&
+        otCoapMessageGetType(pMessage) != OT_COAP_TYPE_NON_CONFIRMABLE)
     {
       APP_THREAD_Error(ERR_THREAD_COAP_ADD_RESSOURCE, 0);
       break;
     }
 
-    if (otCoapHeaderGetCode(pHeader) != OT_COAP_CODE_PUT)
+    if (otCoapMessageGetCode(pMessage) != OT_COAP_CODE_PUT)
     {
       APP_THREAD_Error(ERR_THREAD_COAP_ADD_RESSOURCE, 0);
       break;
@@ -601,13 +618,15 @@ static void APP_THREAD_CoapDataReqHandler(void                * pContext,
     {
       APP_THREAD_Error(ERR_THREAD_MESSAGE_READ, 0);
     }
-    OT_BufferIdRead=otCoapHeaderGetMessageId(pHeader);
+    //OT_BufferIdRead = otCoapMessageGetMessageId(pMessage);
+    //APP_DBG("OT_BufferIdRead = %d", OT_BufferIdRead);
+    OT_BufferIdRead++;
 
     APP_THREAD_CheckMsgValidity();
 
-    if (otCoapHeaderGetType(pHeader) == OT_COAP_TYPE_CONFIRMABLE)
+    if (otCoapMessageGetType(pMessage) == OT_COAP_TYPE_CONFIRMABLE)
     {
-      APP_THREAD_SendDataResponse(pHeader, pMessageInfo);
+      APP_THREAD_SendDataResponse(pMessage, pMessageInfo);
     }
   } while (false);
 }
@@ -619,32 +638,36 @@ static void APP_THREAD_CoapDataReqHandler(void                * pContext,
  * @param  pMessageInfo message info pointer
  * @retval None
  */
-static void APP_THREAD_SendDataResponse(otCoapHeader    * pRequestHeader,
+static void APP_THREAD_SendDataResponse(otMessage    * pMessage,
     const otMessageInfo * pMessageInfo)
 {
   otError  error = OT_ERROR_NONE;
 
-  APP_DBG(" ********* APP_THREAD_SendDataResponse \r\n");
-  otCoapHeaderInit(&OT_Header, OT_COAP_TYPE_ACKNOWLEDGMENT, OT_COAP_CODE_CHANGED);
-  otCoapHeaderSetMessageId(&OT_Header, otCoapHeaderGetMessageId(pRequestHeader));
-  otCoapHeaderSetToken(&OT_Header,
-      otCoapHeaderGetToken(pRequestHeader),
-      otCoapHeaderGetTokenLength(pRequestHeader));
-
-  pOT_Message = otCoapNewMessage(NULL, &OT_Header);
-  if (pOT_Message == NULL)
+  APP_DBG("APP_THREAD_SendDataResponse");
+  
+  pOT_MessageResponse = otCoapNewMessage(NULL, NULL);
+  if (pOT_MessageResponse == NULL)
   {
     APP_THREAD_Error(ERR_NEW_MSG_ALLOC,error);
   }
-  error = otCoapSendResponse(NULL, pOT_Message, pMessageInfo);
-  if (error != OT_ERROR_NONE && pOT_Message != NULL)
+  
+  error = otCoapMessageInitResponse(pOT_MessageResponse,
+      pMessage,
+      OT_COAP_TYPE_ACKNOWLEDGMENT,
+      OT_COAP_CODE_CHANGED);
+
+  if (error != OT_ERROR_NONE)
   {
-    otMessageFree(pOT_Message);
+    APP_THREAD_Error(ERR_THREAD_COAP_MESSAGE_INIT_RESPONSE,error);
+  }
+
+  error = otCoapSendResponse(NULL, pOT_MessageResponse, pMessageInfo);
+  if (error != OT_ERROR_NONE && pOT_MessageResponse != NULL)
+  {
+    otMessageFree(pOT_MessageResponse);
     APP_THREAD_Error(ERR_THREAD_DATA_RESPONSE,error);
   }
 }
-
-
 
 /**
  * @brief This function is used to handle the APP_THREAD_AskProvisioning handler
@@ -656,17 +679,13 @@ static void APP_THREAD_SendDataResponse(otCoapHeader    * pRequestHeader,
  * @retval None
  */
 static void APP_THREAD_ProvisioningReqHandler(void                * pContext,
-                                              otCoapHeader        * pHeader,
                                               otMessage           * pMessage,
                                               const otMessageInfo * pMessageInfo)
 {
-  (void)pMessage;
-
-  APP_DBG("**** Leader receives APP_THREAD_AskProvisioning_request *****\n\r");
-  if (otCoapHeaderGetType(pHeader) == OT_COAP_TYPE_NON_CONFIRMABLE &&
-      otCoapHeaderGetCode(pHeader) == OT_COAP_CODE_GET)
+  APP_DBG("**** STEP 2: Receives Provisioning request *****");
+  if (otCoapMessageGetType(pMessage) == OT_COAP_TYPE_CONFIRMABLE)
   {
-    if (APP_THREAD_ProvisioningRespSend(pHeader, pMessageInfo) != OT_ERROR_NONE)
+    if (APP_THREAD_ProvisioningRespSend(pMessage, pMessageInfo) != OT_ERROR_NONE)
     {
       APP_THREAD_Error(ERR_PROVISIONING_RESP, 0);
     }
@@ -680,45 +699,47 @@ static void APP_THREAD_ProvisioningReqHandler(void                * pContext,
  * @param pMessageInfo message info pointer
  * @retval error code
  */
-static otError APP_THREAD_ProvisioningRespSend(otCoapHeader    * pRequestHeader,
+static otError APP_THREAD_ProvisioningRespSend(otMessage    * pMessage,
     const otMessageInfo * pMessageInfo)
 {
-  otError  error = OT_ERROR_NO_BUFS;
+  otError  error = OT_ERROR_NONE;
+  do{
+    APP_DBG("********* STEP 3: Provisioning Send Response *********");
 
-  do
-  {
-    otCoapHeaderInit(&OT_Header, OT_COAP_TYPE_NON_CONFIRMABLE, OT_COAP_CODE_CONTENT);
-    otCoapHeaderSetToken(&OT_Header,
-        otCoapHeaderGetToken(pRequestHeader),
-        otCoapHeaderGetTokenLength(pRequestHeader));
-    otCoapHeaderSetPayloadMarker(&OT_Header);
-
-    pOT_Message = otCoapNewMessage(NULL, &OT_Header);
-    if (pOT_Message == NULL)
+    pOT_MessageResponse = otCoapNewMessage(NULL, NULL);
+    if (pOT_MessageResponse == NULL)
     {
-      APP_THREAD_Error(ERR_ALLOC_MSG, error);
+      APP_DBG("WARNING : pOT_MessageResponse = NULL ! -> exit now");
+      break;
     }
 
-    error = otMessageAppend(pOT_Message, &OT_Command, sizeof(OT_Command));
+    otCoapMessageInitResponse(pOT_MessageResponse,
+        pMessage,
+        OT_COAP_TYPE_ACKNOWLEDGMENT,
+        OT_COAP_CODE_CHANGED);
+
+    otCoapMessageSetPayloadMarker(pOT_MessageResponse);
+
+    error = otMessageAppend(pOT_MessageResponse, &OT_Command, sizeof(OT_Command));
     if (error != OT_ERROR_NONE)
     {
       APP_THREAD_Error(ERR_APPEND, error);
     }
 
-    error = otMessageAppend(pOT_Message, otThreadGetMeshLocalEid(NULL), sizeof(otIp6Address));
+    error = otMessageAppend(pOT_MessageResponse, otThreadGetMeshLocalEid(NULL), sizeof(otIp6Address));
     if (error != OT_ERROR_NONE)
     {
       break;
     }
-    APP_DBG("**** 2) APP_THREAD_ProvisioningRespSend *****\n\r");
-    error = otCoapSendResponse(NULL, pOT_Message, pMessageInfo);
 
-    if (error != OT_ERROR_NONE && pOT_Message != NULL)
+    error = otCoapSendResponse(NULL, pOT_MessageResponse, pMessageInfo);
+    if (error != OT_ERROR_NONE && pOT_MessageResponse != NULL)
     {
-      otMessageFree(pOT_Message);
-      APP_THREAD_Error(ERR_THREAD_COAP_SEND_RESP, error);
+      otMessageFree(pOT_MessageResponse);
+      APP_THREAD_Error(ERR_THREAD_COAP_SEND_RESP,error);
     }
-  } while (false);
+  }while(false);
+
 
   return error;
 }
@@ -731,43 +752,18 @@ static otError APP_THREAD_ProvisioningRespSend(otCoapHeader    * pRequestHeader,
  */
 static void APP_THREAD_ProvisioningReqSend()
 {
-  otError   error = OT_ERROR_NONE;
-
-  do
-  {
-    otCoapHeaderInit(&OT_Header, OT_COAP_TYPE_NON_CONFIRMABLE, OT_COAP_CODE_GET);
-
-    otCoapHeaderGenerateToken(&OT_Header, 2U);
-
-    error = otCoapHeaderAppendUriPathOptions(&OT_Header, C_RESSOURCE_Provisioning);
-    if (error != OT_ERROR_NONE)
-    {
-      APP_THREAD_Error(ERR_APEND_URI,error);
-    }
-
-    pOT_Message = otCoapNewMessage(NULL, &OT_Header);
-    if (pOT_Message == NULL)
-    {
-      APP_THREAD_Error(ERR_NEW_MSG_ALLOC,error);
-    }
-
-    memset(&OT_MessageInfo, 0, sizeof(OT_MessageInfo));
-    OT_MessageInfo.mInterfaceId = OT_NETIF_INTERFACE_ID_THREAD;
-    OT_MessageInfo.mPeerPort = OT_DEFAULT_COAP_PORT;
-    otIp6AddressFromString("FF03::1", &OT_MessageInfo.mPeerAddr);
-
-    APP_DBG("**** 1) APP_THREAD_ProvisioningReqSend *****\n\r");
-    error = otCoapSendRequest(NULL,
-        pOT_Message,
-        &OT_MessageInfo,
-        &APP_THREAD_ProvisioningRespHandler,
-        "myContextProvisioning");
-  } while (false);
-
-  if (error != OT_ERROR_NONE && pOT_Message != NULL)
-  {
-    otMessageFree(pOT_Message);
-  }
+  static uint8_t PayloadWrite = 1;
+  APP_DBG("********* STEP 1: APP_THREAD_ProvisioningReqSend : Send a CoAP CONFIRMABLE GET Request *********");
+  /* Send a CONFIRMABLE GET Request */
+  APP_THREAD_CoapSendRequest(&OT_RessourceProvisionning,
+      OT_COAP_TYPE_CONFIRMABLE,
+      OT_COAP_CODE_GET,
+      MULICAST_FTD_MED,
+      NULL,
+      &PayloadWrite,
+      sizeof(PayloadWrite),
+      &APP_THREAD_ProvisioningRespHandler,
+      NULL);
 }
 
 /**
@@ -775,7 +771,6 @@ static void APP_THREAD_ProvisioningReqSend()
  *    handler.
  *
  * @param pContext context
- * @param pHeader  header
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code if any
@@ -783,17 +778,21 @@ static void APP_THREAD_ProvisioningReqSend()
  */
 static void APP_THREAD_ProvisioningRespHandler(
     void                * pContext,
-    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)
 {
-  (void)pHeader;
+  static uint8_t resp_index = 0;
+
   if (Result == OT_ERROR_NONE)
   {
-    if ((otMessageRead(pMessage, otMessageGetOffset(pMessage), &OT_Command, sizeof(OT_Command)) == sizeof(OT_Command)))
+    APP_DBG("**** STEP 4: Response received *****");
+    uint16_t l_number_bytes_read = otMessageRead(pMessage, otMessageGetOffset(pMessage), &OT_Command, sizeof(OT_Command));
+    APP_DBG("l_number_bytes_read = %d", l_number_bytes_read);
+
+    if (l_number_bytes_read == sizeof(OT_Command))
     {
-      /* Retrieve the */
+      /* Retrieve the peer address */
       if (otMessageRead(pMessage,
           otMessageGetOffset(pMessage) + sizeof(OT_Command),
           &OT_PeerAddress,
@@ -801,14 +800,20 @@ static void APP_THREAD_ProvisioningRespHandler(
       {
         APP_THREAD_Error(ERR_READ, 0);
       }
-      APP_DBG("**** 3) APP_THREAD_ProvisioningRespHandler *****");
+      APP_DBG("resp_index = %d", resp_index);
+      resp_index++;
+      APP_DBG("--> READY to start Data Transfer");
       /* Ask to start the first transfer */
       UTIL_SEQ_SetTask(TASK_SEND_BUFFER, CFG_SCH_PRIO_1);
+    }
+    else
+    {
+      APP_DBG("**** WARNING: APP_THREAD_ProvisioningRespHandler read 0 byte ! *****");
     }
   }
   else
   {
-    APP_DBG("**** 3)APP_THREAD_AskProvisioning failed ***** with ERROR code = %d\n\r",Result);
+    APP_DBG("**** APP_THREAD_ProvisioningRespHandler failed ***** with ERROR code = %d ", Result);
   }
 }
 
@@ -824,59 +829,12 @@ static void APP_THREAD_AskProvisioning(void)
   HAL_Delay(1000U);
   APP_THREAD_ProvisioningReqSend();
 }
-/**
- * @brief This function is used to send the data via a Coap message in
- *    confirmable mode.
- *
- * @param None
- * @retval None
- */
-static void APP_THREAD_SendCoapUnicastRequest()
-{
-  otError   error = OT_ERROR_NONE;
-
-  otCoapHeaderInit(&OT_Header, OT_COAP_TYPE_CONFIRMABLE, OT_COAP_CODE_PUT);
-  otCoapHeaderSetMessageId(&OT_Header,OT_BufferIdSend);
-  otCoapHeaderGenerateToken(&OT_Header, 2U);
-
-  error = otCoapHeaderAppendUriPathOptions(&OT_Header,C_RESSOURCE_DATA_TRANSFER);
-  if (error != OT_ERROR_NONE)
-  {
-    APP_THREAD_Error(ERR_APEND_URI,error);
-  }
-  otCoapHeaderSetPayloadMarker(&OT_Header);
-  pOT_Message = otCoapNewMessage(NULL, &OT_Header);
-  if (pOT_Message == NULL)
-  {
-    APP_THREAD_Error(ERR_ALLOC_MSG,error);
-  }
-  error = otMessageAppend(pOT_Message, &OT_BufferSend, sizeof(OT_BufferSend));
-  if (error != OT_ERROR_NONE)
-  {
-    APP_THREAD_Error(ERR_THREAD_COAP_APPEND,error);
-  }
-  memset(&OT_MessageInfo, 0, sizeof(OT_MessageInfo));
-  OT_MessageInfo.mInterfaceId = OT_NETIF_INTERFACE_ID_THREAD;
-  OT_MessageInfo.mPeerPort = OT_DEFAULT_COAP_PORT;
-  memcpy(&OT_MessageInfo.mPeerAddr, &OT_PeerAddress, sizeof(OT_MessageInfo.mPeerAddr));
-  error = otCoapSendRequest(NULL,
-      pOT_Message,
-      &OT_MessageInfo,
-      &APP_THREAD_DataRespHandler,
-      "myContextUnicats");
-
-  if (error != OT_ERROR_NONE && pOT_Message != NULL)
-  {
-    otMessageFree(pOT_Message);
-  }
-}
 
 /**
  * @brief This function manages the data response handler
  *    and reschedules the sending of data.
  *
  * @param pContext context
- * @param pHeader  header
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code
@@ -884,17 +842,16 @@ static void APP_THREAD_SendCoapUnicastRequest()
  */
 static void APP_THREAD_DataRespHandler(
     void                * pContext,
-    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(pContext);
-  UNUSED(pHeader);
   UNUSED(pMessage);
   UNUSED(pMessageInfo);
 
+  APP_DBG("APP_THREAD_DataRespHandler: Received response from Data Transfer with Result %d", Result);
   if (Result == OT_ERROR_NONE)
   {
     /* Ask to perform a new transfer */
@@ -907,6 +864,103 @@ static void APP_THREAD_DataRespHandler(
   }
 }
 
+/**
+ * @brief Send a CoAP request with defined parameters.
+ *
+ * @param[in]  aCoapRessource   A pointer to a otCoapResource.
+ * @param[in]  aCoapType        otCoapType.
+ * @param[in]  aCoapCode        otCoapCode.
+ * @param[in]  aStringAddress   A pointer to a NULL-terminated string representing the address. Example: "FF03::1" for Multicast.
+ * @param[in]  aPeerAddress     A pointer to otIp6Address Peer Address.
+ * @param[in]  aPayload         A pointer to payload.
+ * @param[in]  aHandler         A pointer to CoAP response handler.
+ * @param[in]  aContext         A pointer to application specific context.
+ *
+ * @retval none.
+ */
+static void APP_THREAD_CoapSendRequest(otCoapResource* aCoapRessource,
+    otCoapType aCoapType,
+    otCoapCode aCoapCode,
+    const char *aStringAddress,
+    const otIp6Address* aPeerAddress,
+    uint8_t* aPayload,
+    uint16_t Size,
+    otCoapResponseHandler aHandler,
+    void* aContext)
+{
+  otError error = OT_ERROR_NONE;
+
+  do{
+    pOT_Message = otCoapNewMessage(NULL, NULL);
+    if (pOT_Message == NULL)
+    {
+      APP_THREAD_Error(ERR_THREAD_COAP_NEW_MSG,error);
+      break;
+    }
+
+    otCoapMessageInit(pOT_Message, aCoapType, aCoapCode);
+    otCoapMessageAppendUriPathOptions(pOT_Message, aCoapRessource->mUriPath);
+    otCoapMessageSetPayloadMarker(pOT_Message);
+
+    if((aPayload != NULL) && (Size > 0))
+    {
+      error = otMessageAppend(pOT_Message, aPayload, Size);
+      if (error != OT_ERROR_NONE)
+      {
+        APP_THREAD_Error(ERR_THREAD_COAP_APPEND,error);
+        break;
+      }
+    }
+    else
+    {
+      APP_DBG("APP_THREAD_CoapSendRequest: No payload passed");
+    }
+
+    memset(&OT_MessageInfo, 0, sizeof(OT_MessageInfo));
+    OT_MessageInfo.mPeerPort = OT_DEFAULT_COAP_PORT;
+
+    if((aPeerAddress == NULL) && (aStringAddress != NULL))
+    {
+      APP_DBG("Use String Address : %s ", aStringAddress);
+      otIp6AddressFromString(aStringAddress, &OT_MessageInfo.mPeerAddr);
+    }
+    else
+    if (aPeerAddress != NULL)
+    {
+      APP_DBG("Use Peer Address");
+      memcpy(&OT_MessageInfo.mPeerAddr, aPeerAddress, sizeof(OT_MessageInfo.mPeerAddr));
+    }
+    else
+    {
+      APP_DBG("ERROR: Address string and Peer Address not defined");
+      APP_THREAD_Error(ERR_THREAD_COAP_ADDRESS_NOT_DEFINED, 0);
+    }
+
+    if(aCoapType == OT_COAP_TYPE_NON_CONFIRMABLE)
+    {
+      APP_DBG("aCoapType == OT_COAP_TYPE_NON_CONFIRMABLE");
+      error = otCoapSendRequest(NULL,
+          pOT_Message,
+          &OT_MessageInfo,
+          NULL,
+          NULL);
+    }
+    if(aCoapType == OT_COAP_TYPE_CONFIRMABLE)
+    {
+      APP_DBG("aCoapType == OT_COAP_TYPE_CONFIRMABLE");
+      error = otCoapSendRequest(NULL,
+          pOT_Message,
+          &OT_MessageInfo,
+          aHandler,
+          aContext);
+    }
+  }while(false);
+  if (error != OT_ERROR_NONE && pOT_Message != NULL)
+  {
+    otMessageFree(pOT_Message);
+    APP_THREAD_Error(ERR_THREAD_COAP_SEND_REQUEST,error);
+  }
+}
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
@@ -935,14 +989,7 @@ Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void)
   return (Thread_OT_Cmd_Request_t*)(p_thread_notif_M0_to_M4)->evtserial.evt.payload;
 }
 
-/**
- * @brief  This function is used to transfer the Ot commands from the
- *         M4 to the M0.
- *
- * @param   None
- * @return  None
- */
-void Ot_Cmd_Transfer(void)
+static void Ot_Cmd_Transfer_Common(void)
 {
   /* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352 */
   p_thread_otcmdbuffer->cmdserial.cmd.cmdcode = 0x280U;
@@ -958,6 +1005,33 @@ void Ot_Cmd_Transfer(void)
 }
 
 /**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_Transfer(void)
+{
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0 with Notification M0 to M4 allowed.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_TransferWithNotif(void)
+{
+  /* Flag to specify to UTIL_SEQ_EvtIdle that M0 to M4 notifications are allowed */
+  g_ot_notification_allowed = 1U;
+
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
  * @brief  This function is called when acknowledge from OT command is received from the M0+.
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -969,6 +1043,9 @@ void TL_OT_CmdEvtReceived( TL_EvtPacket_t * Otbuffer )
   UNUSED(Otbuffer);
 
   Receive_Ack_From_M0();
+
+  /* Does not allow OpenThread M0 to M4 notification */
+  g_ot_notification_allowed = 0U;
 }
 
 /**
@@ -1241,7 +1318,7 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
   uint32_t char_remaining = 0;
   static uint32_t len_total = 0;
 
-  /* Copy the characteres in the temporary buffer */
+  /* Copy the characters in the temporary buffer */
   for (i = 0; i < *Len; i++)
   {
     TmpString[len_total++] = Buf[i];

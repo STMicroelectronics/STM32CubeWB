@@ -30,7 +30,7 @@ extern "C" {
 #include "tl_zigbee_hci.h"
 #include "stdbool.h"
 #include "zcl/zcl.h"
-#include "zcl/zcl.ota.h"
+#include "zcl/general/zcl.ota.h"
   
 /* FUOTA specific defines ----------------------------------------------------*/
 

@@ -20,6 +20,8 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
 #include "app_common.h"
 
 #include "dbg_trace.h"
@@ -37,7 +39,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "main.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -412,8 +414,11 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
-    CFG_BLE_LL_ONLY,
-    0}
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER}
   };
 
   /**
@@ -508,7 +513,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
   hci_event_pckt *event_pckt;
   evt_le_meta_event *meta_evt;
   hci_le_connection_complete_event_rp0 * connection_complete_event;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
   hci_le_advertising_report_event_rp0 * le_advertising_event;
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
   uint8_t result;
@@ -523,24 +528,24 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
     /* USER CODE BEGIN evt */
 
     /* USER CODE END evt */
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
       handleNotification.P2P_Evt_Opcode = P2P_SERVER1_DISCON_HANDLE_EVT;
-      blue_evt = (evt_blue_aci*) event_pckt->data;
+      blecore_evt = (evt_blecore_aci*) event_pckt->data;
       /* USER CODE BEGIN EVT_VENDOR */
 
       /* USER CODE END EVT_VENDOR */
-      switch (blue_evt->ecode)
+      switch (blecore_evt->ecode)
       {
       /* USER CODE BEGIN ecode */
 
       /* USER CODE END ecode */
-        case EVT_BLUE_GAP_PROCEDURE_COMPLETE:
+        case ACI_GAP_PROC_COMPLETE_VSEVT_CODE:
         {
           /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE */
 
           /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
-          aci_gap_proc_complete_event_rp0 *gap_evt_proc_complete = (void*) blue_evt->data;
+          aci_gap_proc_complete_event_rp0 *gap_evt_proc_complete = (void*) blecore_evt->data;
           /* CHECK GAP GENERAL DISCOVERY PROCEDURE COMPLETED & SUCCEED */
           if (gap_evt_proc_complete->Procedure_Code == GAP_GENERAL_DISCOVERY_PROC
               && gap_evt_proc_complete->Status == 0x00)
@@ -589,14 +594,14 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
           }
 
         }
-        break; /* EVT_BLUE_GAP_PAIRING_CMPLT */
+        break; /* ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE */
 
-        case EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ:
+        case ACI_L2CAP_CONNECTION_UPDATE_REQ_VSEVT_CODE:
         {
          /* USER CODE BEGIN EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ */
 
           /* USER CODE END EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ */
-          aci_l2cap_connection_update_req_event_rp0 *pr = (aci_l2cap_connection_update_req_event_rp0 *) blue_evt->data;
+          aci_l2cap_connection_update_req_event_rp0 *pr = (aci_l2cap_connection_update_req_event_rp0 *) blecore_evt->data;
           APP_BLE_p2p_Conn_Update_req.Connection_Handle = pr->Connection_Handle;
           APP_BLE_p2p_Conn_Update_req.Identifier = pr->Identifier;
           APP_BLE_p2p_Conn_Update_req.L2CAP_Length = pr->L2CAP_Length;
@@ -632,9 +637,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
           break;
       }
     }
-    break; /* EVT_VENDOR */
+    break; /* HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
 
-    case EVT_DISCONN_COMPLETE:
+    case HCI_DISCONNECTION_COMPLETE_EVT_CODE:
 
       /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
 
@@ -706,13 +711,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
         Evt_Notification(&handleNotification);
       }
 
-      
       /* USER CODE END EVT_DISCONN_COMPLETE_Multi */
 #endif
 
-      break; /* EVT_DISCONN_COMPLETE */
+      break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
 
-    case EVT_LE_META_EVENT:
+    case HCI_LE_META_EVT_CODE:
 
       /* USER CODE BEGIN EVT_LE_META_EVENT */
 
@@ -724,7 +728,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
       /* USER CODE BEGIN subevent */
 
       /* USER CODE END subevent */
-        case EVT_LE_CONN_COMPLETE:
+        case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
           /* USER CODE BEGIN EVT_LE_CONN_COMPLETE */
 
           /* USER CODE END EVT_LE_CONN_COMPLETE */
@@ -948,9 +952,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
             Evt_Notification(&handleNotification);
           }
 
-          break; /* HCI_EVT_LE_CONN_COMPLETE */
+          break; /* HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
 
-        case EVT_LE_ADVERTISING_REPORT:
+        case HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE:
 
           /* USER CODE BEGIN EVT_LE_ADVERTISING_REPORT */
 
@@ -964,7 +968,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
           /* WARNING: be careful when decoding advertising report as its raw format cannot be mapped on a C structure.
           The data and RSSI values could not be directly decoded from the RAM using the data and RSSI field from hci_le_advertising_report_event_rp0 structure.
           Instead they must be read by using offsets (please refer to BLE specification).
-          RSSI = *(uint8_t*) (adv_report_data + le_advertising_event->Advertising_Report[0].Length_Data);
+          RSSI = (int8_t)*(uint8_t*) (adv_report_data + le_advertising_event->Advertising_Report[0].Length_Data);
           */
           adv_report_data = (uint8_t*)(&le_advertising_event->Advertising_Report[0].Length_Data) + 1;
           k = 0;
@@ -1101,7 +1105,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
 
       }
 
-      break; /* HCI_EVT_LE_META_EVENT */
+      break; /* HCI_LE_META_EVT_CODE */
     }
   return (SVCCTL_UserEvtFlowEnable);
 }
@@ -1808,12 +1812,20 @@ const uint8_t* BleGetBdAddress( void )
     company_id = LL_FLASH_GetSTCompanyID();
     device_id = LL_FLASH_GetDeviceID();
 
+/**
+ * Public Address with the ST company ID
+ * bit[47:24] : 24bits (OUI) equal to the company ID
+ * bit[23:16] : Device ID.
+ * bit[15:0] : The last 16bits from the UDN
+ * Note: In order to use the Public Address in a final product, a dedicated
+ * 24bits company ID (OUI) shall be bought.
+ */
     bd_addr_udn[0] = (uint8_t)(udn & 0x000000FF);
     bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_addr_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
-    bd_addr_udn[3] = (uint8_t)device_id;
-    bd_addr_udn[4] = (uint8_t)(company_id & 0x000000FF);;
-    bd_addr_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[2] = (uint8_t)device_id;
+    bd_addr_udn[3] = (uint8_t)(company_id & 0x000000FF);
+    bd_addr_udn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
 
     bd_addr = (const uint8_t *)bd_addr_udn;
   }
@@ -1828,7 +1840,6 @@ const uint8_t* BleGetBdAddress( void )
     {
       bd_addr = M_bd_addr;
     }
-
   }
 
   return bd_addr;

@@ -48,7 +48,9 @@
 
 /* Exported variables  ------------------------------------------------------- */
 /* Application Variable-------------------------------------------------------*/
-#pragma pack(1)
+
+#pragma pack(push, 1)
+
 typedef struct
 {
   MOBLEUINT8 Present_OnOff;
@@ -82,7 +84,8 @@ typedef struct
   MOBLEUINT8 Is_Chargeable;
   MOBLEUINT8 Is_Serviceable;
 }Appli_BatteryUserflag_param_t;
-#pragma pack(4)
+
+#pragma pack(pop)
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 
@@ -122,6 +125,7 @@ MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Set(Generic_DefaultTransitionPa
                                                      MOBLEUINT8 OptionalValid,
                                                      MOBLEUINT16 dstPeer, 
                                                      MOBLEUINT8 elementIndex);
+
 MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , 
                                                         MOBLEUINT32 plength,
                                                         MOBLEUINT16 dstPeer, 
@@ -145,11 +149,8 @@ void Appli_Generic_Restore_PowerOn_Value(MOBLEUINT8 restoreValue,
 MOBLE_RESULT Appli_Generic_GetDefaultTransitionStatus(MOBLEUINT8* pTransition_Status,
                                                       MOBLEUINT16 dstPeer, 
                                                       MOBLEUINT8 elementIndex);
-MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status,
-                                        MOBLEUINT32 plength,
-                                        MOBLEUINT16 dstPeer, 
-                                        MOBLEUINT8 elementIndex);
  
+
 
 #endif /* __APPLI_GENERIC_H */
 

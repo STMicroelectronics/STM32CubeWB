@@ -63,7 +63,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
-
+uint8_t g_ot_notification_allowed = 0U;
 /* Global variables ----------------------------------------------------------*/
 
 /* Global function prototypes -----------------------------------------------*/
@@ -87,6 +87,9 @@ static void appe_Tl_Init( void );
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
 static void Button_Init( void );
+#if (CFG_HW_EXTPA_ENABLED == 1)
+static void ExtPA_Init( void );
+#endif
 /* USER CODE END PFP */
 
 static void displayConcurrentMode(void);
@@ -126,6 +129,9 @@ void APPE_Init( void )
    * This system event is received with APPE_SysUserEvtRx()
    */
 /* USER CODE BEGIN APPE_Init_2 */
+#if (CFG_HW_EXTPA_ENABLED == 1)
+  ExtPA_Init();
+#endif
 
 /* USER CODE END APPE_Init_2 */
    return;
@@ -380,6 +386,31 @@ static void Button_Init( void )
   return;
 }
 
+#if (CFG_HW_EXTPA_ENABLED == 1)
+static void ExtPA_Init( void )
+{
+  GPIO_InitTypeDef  GPIO_InitStruct;
+
+  // configure the GPIO PB0 in AF6 to be used as RF_TX_MOD_EXT_PA
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Alternate = GPIO_AF6_RF_DTB0;
+  GPIO_InitStruct.Pin = GPIO_EXT_PA_TX_PIN;
+  HAL_GPIO_Init(GPIO_EXT_PA_TX_PORT, &GPIO_InitStruct);
+
+  // configure the GPIO which will be managed by M0 stack to enable Ext PA
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  GPIO_InitStruct.Pin = GPIO_EXT_PA_EN_PIN;
+  HAL_GPIO_Init(GPIO_EXT_PA_EN_PORT, &GPIO_InitStruct);
+
+  // Indicate to M0 which GPIO must be managed
+  SHCI_C2_ExtpaConfig((uint32_t)GPIO_EXT_PA_EN_PORT, GPIO_EXT_PA_EN_PIN, EXT_PA_ENABLED_HIGH, EXT_PA_ENABLED);
+}
+#endif /* CFG_HW_EXTPA_ENABLED */
+
 /*************************************************************
  *
  * WRAP FUNCTIONS
@@ -406,16 +437,25 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
   switch(evt_waited_bm)
   {
   case EVENT_ACK_FROM_M0_EVT:
-    /* Block all tasks and wait until the event CFG_Evt_AckFromM0Evt is scheduled */
-    UTIL_SEQ_Run(0);
-  break;
+    if(g_ot_notification_allowed == 1U)
+    {
+      /* Some OT API send M0 to M4 notifications so allow notifications when waiting for OT Cmd response */
+      UTIL_SEQ_Run(TASK_MSG_FROM_M0_TO_M4);
+    }
+    else
+    {
+      /* Does not allow other tasks when waiting for OT Cmd response */
+      UTIL_SEQ_Run(0);
+    }
+    break;
   case EVENT_SYNCHRO_BYPASS_IDLE:
     UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
-    /* Run only the task CFG_Task_Msg_From_M0_To_M4 */
+    /* Run only the task CFG_TASK_MSG_FROM_M0_TO_M4 */
     UTIL_SEQ_Run(TASK_MSG_FROM_M0_TO_M4);
-  break;
+    break;
   default :
-    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+    /* default case */
+  UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
     break;
   }
 }

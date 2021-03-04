@@ -33,7 +33,7 @@
 
 #include "app_debug.h"
 
-//#include "appli_mesh.h"
+#include "appli_mesh.h"
 #include "appli_nvm.h"
 #include "pal_nvm.h"
 #include "lp_timer.h"

@@ -32,8 +32,8 @@ extern const void *prvsnr_data;
 /* offset defined for the embedded provisioner node */
 #define PRVN_NVM_PAGE_SIZE                                                 4096U
 #define PRVN_NVM_BASE_OFFSET                         ((unsigned int)prvsnr_data)
-#define PRVN_NVM_CHUNK_SIZE                               (sizeof(NvmPerNode_t)) /* Number of bytes saved per Element */
-#define PRVN_NVM_SUBPAGE_SIZE                              (sizeof(NvmPerNode_t)) /* Number of bytes saved per Element */
+#define PRVN_NVM_CHUNK_SIZE         (sizeof(NvmPerNode_t)) /* Number of bytes saved per Element */
+#define PRVN_NVM_SUBPAGE_SIZE       (sizeof(NvmPerNode_t)) /* Number of bytes saved per Element */
 #define PRVN_NVM_MAX_SUBPAGE        (unsigned int)(PRVN_NVM_PAGE_SIZE/PRVN_NVM_CHUNK_SIZE)
 #define PRVN_NVM_SUBPAGE_OFFSET(i)  (unsigned int)(PRVN_NVM_SUBPAGE_SIZE*(i))
 
@@ -54,7 +54,9 @@ typedef struct
 /* Exported Functions Prototypes ---------------------------------------------*/
 MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size);
 MOBLE_RESULT AppliNvm_FactorySettingReset(void);
-//MOBLE_RESULT AppliNvm_FlashErase(uint16_t PageNumber);
+#if 0 //#ifdef ENABLE_NVM_TEST
+MOBLE_RESULT AppliNvm_FlashErase(uint16_t PageNumber);
+#endif
 MOBLE_RESULT AppliNvm_SaveModelState(uint8_t* state, uint16_t size);
 MOBLE_RESULT AppliNvm_ClearModelState(void);
 MOBLE_RESULT AppliNvm_LoadModelState(uint8_t state[], uint16_t* size);

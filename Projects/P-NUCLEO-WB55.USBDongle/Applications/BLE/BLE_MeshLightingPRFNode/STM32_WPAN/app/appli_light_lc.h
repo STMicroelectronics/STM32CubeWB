@@ -39,6 +39,7 @@ void Appli_LightLCs_ModeStatus(MOBLEUINT8 const* pLightLCMode_status,
                                MOBLEUINT32 plength, 
                                MOBLEUINT16 dstPeer, 
                                MOBLEUINT8 elementIndex);
+
 void Appli_LightLCs_OmGet(MODEL_MessageHeader_t *pmsgParam);
 void Appli_LightLCs_OmSet(MOBLEUINT8 const* pRxData, 
                           MODEL_MessageHeader_t *pmsgParam);
@@ -50,6 +51,7 @@ void Appli_LightLCs_OmStatus(MOBLEUINT8 const* pLightLCOccupancyMode_status,
                              MOBLEUINT8 elementIndex);
 void Appli_LightLCs_OnOffGet(MODEL_MessageHeader_t *pmsgParam);
 void Appli_LightLCs_OnOffSet(MOBLEUINT8 const* pRxData, 
+
                              MODEL_MessageHeader_t *pmsgParam);
 void Appli_LightLCs_OnOffSetUnack(MOBLEUINT8 const* pRxData, 
                                   MODEL_MessageHeader_t *pmsgParam);

@@ -120,9 +120,9 @@ void SerialCtrlVendorRead_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 
 void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
-  MOBLE_ADDRESS peer = 0;                           /*node adderess of the destination node*/
-  MOBLEUINT16 command = 0;                          /*Opcode command to be executed by the destination node*/
-  MOBLEUINT8 elementIndex = 0;                  /*default element index*/  
+  MOBLE_ADDRESS peer = 0;                               /*node adderess of the destination node*/
+  MOBLEUINT16 command = 0;                              /*Opcode command to be executed by the destination node*/
+  MOBLEUINT8 elementIndex = 0;                          /*default element index*/  
   MOBLE_RESULT result = MOBLE_RESULT_FAIL;
   MOBLEBOOL response = MOBLE_FALSE;
   MOBLEUINT8 data_buff[VENDOR_DATA_BUFFER_SIZE];
@@ -144,7 +144,7 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
           data_buff[j] = i;
           j++;
         }
-        Appli_Vendor_SetBigDataPacket(data_buff, length, 0 , peer);
+        Appli_Vendor_SetBigDataPacket(data_buff, length, elementIndex , peer);
         Vendor_SendDataFreq(0xFF);
         TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
         return;
@@ -191,9 +191,14 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
   
  else
   {
-      result = BLEMesh_SetRemoteData(peer,elementIndex,command, 
-                                         data_buff, length,
-                                         response, MOBLE_TRUE);   
+      
+      BLEMesh_SetRemotePublication( VENDORMODEL_STMICRO_ID1, 
+                                          peer,
+                                          command, 
+                                          data_buff, 
+                                          length, 
+                                          response, 
+                                          MOBLE_TRUE);
       if(result == MOBLE_RESULT_SUCCESS)
       {
         TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
@@ -208,11 +213,11 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
 
 void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 {
-  MOBLE_ADDRESS peer = 0;                           /*node adderess of the destination node*/
-  MOBLEUINT16 command = 0;                          /*Opcode command to be executed by the destination node*/
-  MOBLEUINT8 minParamLength = 0;                /*minimum number of properties required by a specific command*/
-  MOBLEUINT8 elementIndex = 0;          /*default element index*/
-  MOBLEUINT8  data [10] = {0};        /*buffer to output property variables */
+  MOBLE_ADDRESS peer = 0;                               /*node adderess of the destination node*/
+  MOBLEUINT16 command = 0;                              /*Opcode command to be executed by the destination node*/
+  MOBLEUINT8 minParamLength = 0;                        /*minimum number of properties required by a specific command*/
+  MOBLEUINT8 elementIndex = 0;                          /*default element index*/
+  MOBLEUINT8  data [10] = {0};                          /*buffer to output property variables */
   MOBLE_RESULT result;
   MOBLEBOOL response = MOBLE_TRUE;
   

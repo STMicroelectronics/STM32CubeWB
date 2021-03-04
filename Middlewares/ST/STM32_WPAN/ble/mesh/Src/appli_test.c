@@ -243,15 +243,25 @@ MOBLE_RESULT Test_ApplicationTest_Set02(MOBLEUINT32 testCount ,MOBLE_ADDRESS src
 */
 MOBLE_RESULT Read_CommandCount(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst)
 {
-  MOBLEUINT8 elementIndex = 0;
   MOBLEUINT8 readData[2];
+  MODEL_MessageHeader_t msgParam;
+   
+  msgParam.elementIndex = 0;
+  msgParam.peer_addr = src;
+  msgParam.dst_peer = dst;
+  msgParam.ttl = 0;
+  msgParam.rssi = 0;
+  msgParam.rcvdAppKeyOffset = 0;
+  msgParam.rcvdNetKeyOffset = 0;
 
   readData[0] = APPLI_TEST_INC_COUNTER;
 
   if(processDelay(TEST_READ_PERIOD) == 0x01)
   {   
-    TRACE_I(TF_SERIAL_CTRL, " NUMBER OF COMMANDS SEND     %d \r\n",Totaltest); 
-//    BLEMesh_ReadRemoteData(dst,elementIndex,APPLI_TEST_CMD,readData,sizeof(readData));      
+    TRACE_I(TF_SERIAL_CTRL, " NUMBER OF COMMANDS SEND     %d \r\n",Totaltest);
+ 
+    BLEMesh_ReadRemoteData(&msgParam,APPLI_TEST_CMD,readData,sizeof(readData));
+      
     ReadFlag = 0;
   }     
 
@@ -314,9 +324,9 @@ MOBLE_RESULT Test_ApplicationTest_Set03(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst)
       }
 
   result = BLEMesh_SetRemoteData(dst, 0,
-                                               APPLI_TEST_CMD, txDataArray, 
-                                     sizeof(txDataArray), MOBLE_FALSE, 
-                                     MOBLE_TRUE);
+                                 APPLI_TEST_CMD, txDataArray, 
+                                 sizeof(txDataArray), MOBLE_TRUE, 
+                                 MOBLE_TRUE);
 
 
       if(result)

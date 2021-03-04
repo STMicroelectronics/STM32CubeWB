@@ -52,17 +52,8 @@
 #define SCENE_STORE_UNACK       0X8247
 #define SCENE_DELETE            0X829E
 #define SCENE_DELETE_UNACK      0X829F
-/******************************************************************************/
-/********** Following Section defines the SIG MODEL IDs            ************/
-/******************************************************************************/
-#define TIME_MODEL_SERVER_MODEL_ID             0X1200
-#define TIME_MODEL_SERVER_SETUP_MODEL_ID       0X1201
-#define SCENE_MODEL_SERVER_MODEL_ID            0X1203
-#define SCENE_MODEL_SERVER_SETUP_MODEL_ID      0X1204
 
-/******************************************************************************/
-/********** SIG MODEL IDs ends                                     ************/
-/******************************************************************************/ 
+
 MOBLE_RESULT Time_SceneModelServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
                                                         MOBLEUINT16 *length);
 

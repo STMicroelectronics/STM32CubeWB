@@ -1,22 +1,22 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    app_entry.c
- * @author  MCD Application Team
- * @brief   Entry point of the Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
+  * File Name          : app_entry.c
+  * Description        : Entry application source file for STM32WPAN Middleware.
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
  ******************************************************************************
  */
-
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -27,9 +27,9 @@
 #include "hw_conf.h"
 #include "stm32_seq.h"
 #include "stm_logging.h"
-#include "dbg_trace.h"
 #include "shci_tl.h"
 #include "stm32_lpm.h"
+#include "dbg_trace.h"
 #include "shci.h"
 
 /* Private includes -----------------------------------------------------------*/
@@ -45,17 +45,21 @@
 /* Private defines -----------------------------------------------------------*/
 /* POOL_SIZE = 2(TL_PacketHeader_t) + 258 (3(TL_EVT_HDR_SIZE) + 255(Payload size)) */
 #define POOL_SIZE (CFG_TL_EVT_QUEUE_LENGTH * 4U * DIVC(( sizeof(TL_PacketHeader_t) + TL_EVENT_FRAME_SIZE ), 4U))
+
 /* USER CODE BEGIN PD */
 
 /* USER CODE END PD */
+
 /* Private macros ------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
 /* USER CODE END PM */
-/* Private variables -------------------------------------------------*/
+
+/* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+uint8_t g_ot_notification_allowed = 0U;
 
 /* USER CODE BEGIN PV */
 
@@ -67,11 +71,12 @@ size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
 /* Private function prototypes -----------------------------------------------*/
 static void SystemPower_Config( void );
 static void Init_Debug( void );
+static void appe_Tl_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
 static void APPE_SysEvtReadyProcessing( void );
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
-static void appe_Tl_Init( void );
+
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
 static void Button_Init( void );
@@ -81,24 +86,17 @@ static void Button_Init( void );
 void APPE_Init( void )
 {
   SystemPower_Config(); /**< Configure the system Power Mode */
-  
+
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
-  Init_Debug();
 /* USER CODE BEGIN APPE_Init_1 */
-  /**
-   * The Standby mode should not be entered before the initialization is over
-   * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
-   */
+  Init_Debug();
+  
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
   Led_Init();
   Button_Init();
 /* USER CODE END APPE_Init_1 */
-  /**
-   * The Standby mode should not be entered before the initialization is over
-   * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
-   */
-  appe_Tl_Init(); /* Initialize all transport layers */
+  appe_Tl_Init();	/* Initialize all transport layers */
 
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
@@ -108,7 +106,7 @@ void APPE_Init( void )
 /* USER CODE BEGIN APPE_Init_2 */
 
 /* USER CODE END APPE_Init_2 */
-  return;
+   return;
 }
 /* USER CODE BEGIN FD */
 
@@ -126,8 +124,6 @@ static void Init_Debug( void )
    * Keep debugger enabled while in any low power mode
    */
   HAL_DBGMCU_EnableDBGSleepMode();
-  
-  
 
   /***************** ENABLE DEBUGGER *************************************/
   LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
@@ -173,7 +169,6 @@ static void Init_Debug( void )
  */
 static void SystemPower_Config(void)
 {
-
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -198,7 +193,6 @@ static void appe_Tl_Init( void )
 {
   TL_MM_Config_t tl_mm_config;
   SHCI_TL_HciInitConf_t SHci_Tl_Init_Conf;
-
   /**< Reference table initialization */
   TL_Init();
 
@@ -226,12 +220,6 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
   return;
 }
 
-/**
- * @brief Trap a notification coming from the M0 firmware
- * @param  pPayload  : payload associated to the notification
- *
- * @retval None
- */
 /**
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
  * When the system event is both :
@@ -352,8 +340,16 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
   switch(evt_waited_bm)
   {
   case EVENT_ACK_FROM_M0_EVT:
-    /* Does not allow other tasks when waiting for OT Cmd response */
-    UTIL_SEQ_Run(0);
+    if(g_ot_notification_allowed == 1U)
+    {
+      /* Some OT API send M0 to M4 notifications so allow notifications when waiting for OT Cmd response */
+      UTIL_SEQ_Run(TASK_MSG_FROM_M0_TO_M4);
+    }
+    else
+    {
+      /* Does not allow other tasks when waiting for OT Cmd response */
+      UTIL_SEQ_Run(0);
+    }
     break;
   case EVENT_SYNCHRO_BYPASS_IDLE:
     UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
@@ -362,7 +358,7 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
     break;
   default :
     /* default case */
-    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+  UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
     break;
   }
 }
@@ -429,21 +425,21 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 /**
- * @brief This function manage the Push button action
- * @param  GPIO_Pin : GPIO pin which has been activated
- * @retval None
- */
+  * @brief This function manage the Push button action
+  * @param  GPIO_Pin : GPIO pin which has been activated
+  * @retval None
+  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   APP_DBG("*** HAL_GPIO_EXTI_Callback  GPIO_Pin = %d ****", GPIO_Pin);
   switch(GPIO_Pin)
   {
-  case BUTTON_SW1_PIN:
-    UTIL_SEQ_SetTask(TASK_COAP_MSG_BUTTON,CFG_SCH_PRIO_1);
-    break;
+    case BUTTON_SW1_PIN:
+        UTIL_SEQ_SetTask(TASK_COAP_MSG_BUTTON,CFG_SCH_PRIO_1);
+        break;
 
-  default:
-    break;
+     default:
+        break;
   }
 }
 /* USER CODE END FD_WRAP_FUNCTIONS */

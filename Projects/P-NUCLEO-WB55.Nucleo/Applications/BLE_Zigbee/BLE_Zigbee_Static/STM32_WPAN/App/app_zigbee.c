@@ -31,8 +31,8 @@
 
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.onoff.h"
-#include "zcl/zcl.identify.h"
+#include "zcl/general/zcl.onoff.h"
+#include "zcl/general/zcl.identify.h"
 
 
 /* Private defines -----------------------------------------------------------*/
@@ -41,6 +41,10 @@
 #define SW1_GROUP_ADDR          0x0001
 #define CHANNEL                 13U
 
+#define HW_TS_SERVER_1S_NB_TICKS                    (1*1000*1000/CFG_TS_TICK_VAL) /* 1s */
+#define HW_TS_SERVER_10S_NB_TICKS                    (10*1000*1000/CFG_TS_TICK_VAL) /* 5s */
+
+
 /* external definition */
 extern const uint8_t sec_key_ha[ZB_SEC_KEYSIZE];
 extern SHCI_C2_CONCURRENT_Mode_Param_t APP_GetCurrentProtocolMode(void);
@@ -48,6 +52,7 @@ extern SHCI_C2_CONCURRENT_Mode_Param_t APP_GetCurrentProtocolMode(void);
 /* Private function prototypes -----------------------------------------------*/
 static void APP_ZIGBEE_StackLayersInit(void);
 static void APP_ZIGBEE_ConfigEndpoints(void);
+static void APP_ZIGBEE_FreeEndpoints(void);
 static void APP_ZIGBEE_SW1_Process(void);
 static void APP_ZIGBEE_NwkForm(void);
 static void APP_ZIGBEE_ConfigGroupAddr(void);
@@ -156,6 +161,10 @@ void APP_ZIGBEE_Stop(void)
   BSP_LED_Off(LED_GREEN);
   BSP_LED_Off(LED_BLUE);
 
+  /* Free endpoints */
+  APP_ZIGBEE_FreeEndpoints();
+
+
   UTIL_SEQ_PauseTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM);
 
   /* Save Persistent data */
@@ -211,8 +220,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
 
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;
@@ -229,6 +238,18 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
   ZbZclClusterEndpointRegister(zigbee_app_info.onoff_client_1);
 
 } /* config_endpoints */
+
+/**
+ * @brief  Release the end points
+ * @param  None
+ * @retval None
+ */
+
+static void APP_ZIGBEE_FreeEndpoints(void)
+{
+  /* Free OnOff Client */
+  ZbZclClusterFree(zigbee_app_info.onoff_client_1);
+} /* APP_ZIGBEE_FreeEndpoints */
 
 /**
  * @brief  Handle Zigbee network forming and joining
@@ -341,8 +362,8 @@ static void APP_ZIGBEE_NwkForm(void)
  */
 static void APP_ZIGBEE_ConfigGroupAddr(void)
 {
-  ZbApsmeAddGroupReqT req;
-  ZbApsmeAddGroupConfT conf;
+  struct ZbApsmeAddGroupReqT req;
+  struct ZbApsmeAddGroupConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.endpt = SW1_ENDPOINT;

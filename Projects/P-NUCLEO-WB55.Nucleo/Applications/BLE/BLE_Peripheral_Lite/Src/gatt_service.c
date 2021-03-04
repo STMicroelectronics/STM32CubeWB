@@ -89,20 +89,20 @@ static SVCCTL_EvtAckStatus_t MyVeryOwnService_EventHandler(void *Event)
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt *event_pckt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
   aci_gatt_attribute_modified_event_rp0 *attribute_modified;
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
   
   switch(event_pckt->evt)
   {
-  case EVT_VENDOR:
+  case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
-      blue_evt = (evt_blue_aci*)event_pckt->data;
-      switch(blue_evt->ecode)
+      blecore_evt = (evt_blecore_aci*)event_pckt->data;
+      switch(blecore_evt->ecode)
       {
-      case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
-        attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blue_evt->data;
+      case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
+        attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blecore_evt->data;
         if(attribute_modified->Attr_Handle == (myVeryOwnServiceContext.MyVeryOwnWriteCharacteristicHandle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))
         {
           if (attribute_modified->Attr_Data[1] == 0x01)
@@ -120,7 +120,7 @@ static SVCCTL_EvtAckStatus_t MyVeryOwnService_EventHandler(void *Event)
         break;
       }
     }
-    break; /* HCI_EVT_VENDOR_SPECIFIC */
+    break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
     
   default:
     break;

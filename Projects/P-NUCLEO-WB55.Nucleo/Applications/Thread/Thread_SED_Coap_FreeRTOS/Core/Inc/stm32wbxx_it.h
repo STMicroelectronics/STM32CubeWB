@@ -63,6 +63,8 @@ void TIM1_TRG_COM_TIM17_IRQHandler(void);
 void USART1_IRQHandler(void);
 void LPUART1_IRQHandler(void);
 void PWR_SOTF_BLEACT_802ACT_RFPHASE_IRQHandler(void);
+void IPCC_C1_RX_IRQHandler(void);
+void IPCC_C1_TX_IRQHandler(void);
 void HSEM_IRQHandler(void);
 void FPU_IRQHandler(void);
 /* USER CODE BEGIN EFP */

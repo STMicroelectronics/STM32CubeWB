@@ -124,97 +124,60 @@
 #define GENERIC_USER_PROPERTY_SET_UNACK                                     0X4D
 #define GENERIC_USER_PROPERTY_STATUS                                        0X4E
 
-/******************************************************************************/
-/********** Following Section defines the SERVER SIG MODEL IDs     ************/
-/******************************************************************************/
+#define MAXSTEPVALUE                                                        0X3E
+#define MINSTEPVALUE                                                        0X00
+#define UNDEFSTEPVAL                                                        0x3F
 
-#define GENERIC_MODEL_SERVER_ONOFF_MODEL_ID                               0x1000
-#define GENERIC_LEVEL_SERVER_MODEL_ID                               0x1002
-#define GENERIC_DEFAULT_TRANSITION_TIME_SERVER_MODEL_ID             0x1004
-#define GENERIC_SERVER_POWER_ONOFF_MODEL_ID                         0x1006
-#define GENERIC_POWER_ONOFF_SETUP_SERVER_MODEL_ID                   0x1007
-#define GENERIC_MODEL_SERVER_POWER_LEVEL_MODEL_ID                         0x1009
-#define GENERIC_MODEL_SERVER_POWER_LEVEL_SETUP_MODEL_ID                   0x100A
-#define GENERIC_MODEL_SERVER_BATTERY_MODEL_ID                             0x100C
-#define GENERIC_MODEL_SERVER_LOCATION_MODEL_ID                            0x100E
-#define GENERIC_MODEL_SERVER_LOCATION_SETUP_MODEL_ID                      0x100F
-#define GENERIC_MODEL_SERVER_ADMIN_PROPERTY_MODEL_ID                      0x1011
-#define GENERIC_MODEL_SERVER_MANUFACTURER_PROPERTY_MODEL_ID               0x1012
-#define GENERIC_MODEL_SERVER_USER_PROPERTY_MODEL_ID                       0x1013
-#define GENERIC_MODEL_SERVER_CLIENT_PROPERTY_MODEL_ID                     0x1014
-
-/******************************************************************************/
-/********** SIG MODEL IDs ends                                     ************/
-
-
-/******************************************************************************/
-/********** Following Section defines the CLIENT SIG MODEL IDs     ************/
-/******************************************************************************/
-
-#define GENERIC_ONOFF_CLIENT_MODEL_ID                               0x1001
-#define GENERIC_LEVEL_CLIENT_MODEL_ID                               0x1003
-#define GENERIC_DEFAULT_TRANSITION_TIME_CLIENT_MODEL_ID             0x1005
-#define GENERIC_POWER_ONOFF_CLIENT_MODEL_ID                         0x1008
-
-/******************************************************************************/
-/********** SIG MODEL IDs ends                                     ************/
-/******************************************************************************/
-
-
-#define MAXSTEPVALUE   0X3E
-#define MINSTEPVALUE   0X00
-#define UNDEFSTEPVAL   0x3F
-
-#define STEP_HEX_VALUE_0       0X00
-#define STEP_HEX_VALUE_1       0X01
-#define STEP_HEX_VALUE_2       0X02
-#define STEP_HEX_VALUE_3       0X03
+#define STEP_HEX_VALUE_0                                                    0X00
+#define STEP_HEX_VALUE_1                                                    0X01
+#define STEP_HEX_VALUE_2                                                    0X02
+#define STEP_HEX_VALUE_3                                                    0X03
 
 /****Generic Power on off states****/
-#define GENERIC_POWER_OFF_STATE          0X00
-#define GENERIC_POWER_ON_STATE           0X01
-#define GENERIC_POWER_RESTORE_STATE      0X02
+#define GENERIC_POWER_OFF_STATE                                             0X00
+#define GENERIC_POWER_ON_STATE                                              0X01
+#define GENERIC_POWER_RESTORE_STATE                                         0X02
 
-#define LEVEL_MIN_VALID_RANGE            0x0000
-#define LEVEL_MAX_VALID_RANGE            0x7FFF
+#define LEVEL_MIN_VALID_RANGE                                             0x8000
+#define LEVEL_MAX_VALID_RANGE                                             0x7FFF
 
-#define TRANSITION_MIN_VALID_RANGE       0x00
-#define TRANSITION_MAX_VALID_RANGE       0xFE   
+#define TRANSITION_MIN_VALID_RANGE                                          0x00
+#define TRANSITION_MAX_VALID_RANGE                                          0xFE   
 
-#define MAX_BATTERY_LEVEL      0X64
-#define PROHIBITED_MIN_BATTERY_LEVEL      0X65
-#define PROHIBITED_MAX_BATTERY_LEVEL      0XFE
-#define UNKNOWN_BATTERY_LEVEL             0XFF
+#define MAX_BATTERY_LEVEL                                                   0X64
+#define PROHIBITED_MIN_BATTERY_LEVEL                                        0X65
+#define PROHIBITED_MAX_BATTERY_LEVEL                                        0XFE
+#define UNKNOWN_BATTERY_LEVEL                                               0XFF
 
-#define BATTERY_VALID_CHARGE_TIME      0XFFFE
-#define BATTERY_UNKLNOWN_CHARGE_TIME   0XFFFF
+#define BATTERY_VALID_CHARGE_TIME                                         0XFFFE
+#define BATTERY_UNKLNOWN_CHARGE_TIME                                      0XFFFF
 
-#define BATTERY_VALID_DISCHARGE_TIME      0XFFFE
-#define BATTERY_UNKLNOWN_DISCHARGE_TIME   0XFFFF
+#define BATTERY_VALID_DISCHARGE_TIME                                      0XFFFE
+#define BATTERY_UNKLNOWN_DISCHARGE_TIME                                   0XFFFF
 
 /* Generic Client Property Server Model Opcode */
-#define GENERIC_CLIENT_PROPERTIES_GET    0X4F
-#define GENERIC_CLIENT_PROPERTIES_STATUS 0X50
+#define GENERIC_CLIENT_PROPERTIES_GET                                       0X4F
+#define GENERIC_CLIENT_PROPERTIES_STATUS                                    0X50
 
-#define APPLI_LED_OFF     0X00
-#define APPLI_LED_ON      0X01
+#define APPLI_LED_OFF                                                       0X00
+#define APPLI_LED_ON                                                        0X01
 
-#define NO_TRANSITION             0X01
-#define IN_TRANSITION             0X02
-#define DEFAULT_TRANSITION        0X03
+#define NO_TRANSITION                                                       0X01
+#define IN_TRANSITION                                                       0X02
+#define DEFAULT_TRANSITION                                                  0X03
 
-#define GENERIC_TRANSITION_STOP            0X00
-#define GENERIC_ON_OFF_TRANSITION_START    0X01
-#define GENERIC_LEVEL_TRANSITION_START     0X02
+#define GENERIC_ON_OFF_TRANSITION_START                                     0X01
+#define GENERIC_LEVEL_TRANSITION_START                                      0X02
 
-#define BINDING_GENERIC_ON_OFF_SET         0X00
-#define BINDING_GENERIC_LEVEL_SET          0X01
+#define BINDING_GENERIC_ON_OFF_SET                                          0X00
+#define BINDING_GENERIC_LEVEL_SET                                           0X01
 
-#define PACKET_CACHE_SIZE  2
-/* Exported variables  ------------------------------------------------------- */
+#define PACKET_CACHE_SIZE                                                      2
+/* Exported variables  ------------------------------------------------------ */
 
 /* Temporary  message to store the application vaiables*/
-#pragma pack(1)
+#pragma pack(push, 1)
+
 typedef struct
 {
   MOBLEUINT8  RemainingTime;
@@ -222,7 +185,6 @@ typedef struct
   MOBLEINT16 TargetValue16;
 } Generic_TemporaryStatus_t;
 
-/*****************************************************/
 /* Transition time variables */
 typedef struct
 {
@@ -348,6 +310,7 @@ typedef struct
   MOBLE_RESULT (*GenericPowerOnOff_cb)(Generic_PowerOnOffParam_t*, MOBLEUINT8, \
                                                           uint16_t, uint8_t);
   
+
   MOBLE_RESULT (*GenericPowerOnOff_Status_cb)(MOBLEUINT8 const *, MOBLEUINT32, \
                                                           uint16_t, uint8_t);
   
@@ -374,7 +337,8 @@ typedef struct
   MOBLE_RESULT (*GetDefaultTransitionStatus_cb)(MOBLEUINT8*, uint16_t, uint8_t);
   
 }Appli_Generic_State_cb_t;
-#pragma pack(4)
+
+#pragma pack(pop)
 
 extern const Appli_Generic_State_cb_t Appli_GenericState_cb;
 extern const Appli_Generic_cb_t GenericAppli_cb;
@@ -423,13 +387,13 @@ MOBLE_RESULT BLEMesh_AddGenericModels(void);
 
 void Generic_GetStepValue(MOBLEUINT8 stepParam, MOBLEUINT8 elementIndex);
 
-void GenericOnOff_LightActualBinding(Generic_OnOffStatus_t* onOff_param,MOBLEUINT8 elementIndex);
-void GenericLevel_LightBinding(Generic_LevelStatus_t* gLevel_param , MOBLEUINT8 flag,MOBLEUINT8 elementIndex);
+void GenericOnOff_LightActualBinding(Generic_OnOffStatus_t* onOff_param, MOBLEUINT8 elementIndex,
+                                     MOBLEUINT8 trnsnFlag,MOBLEUINT8 trnsnCmplt);
+void GenericLevel_LightBinding(Generic_LevelStatus_t* gLevel_param , MOBLEUINT8 flag, MOBLEUINT8 elementIndex,
+                                     MOBLEUINT8 trnsnFlag,MOBLEUINT8 trnsnCmplt);
 void GenericLevel_CtlTempBinding(Generic_LevelStatus_t * bLevelParam,MOBLEUINT8 elementIndex);
 void GenericLevel_HslHueBinding(Generic_LevelStatus_t * bLevelParam,MOBLEUINT8 elementIndex);
 void GenericLevel_HslSaturationBinding(Generic_LevelStatus_t * bLevelParam,MOBLEUINT8 elementIndex);
-void GenericOnOff_Light_LC_Binding(Generic_OnOffStatus_t* onOff_param,MOBLEUINT8 elementIndex);
-
 MOBLE_RESULT Generic_TransitionBehaviour(MOBLEUINT8 *GetValue, MOBLEUINT8 elementIndex);
 MOBLE_RESULT Generic_OnOffStateUpdate_Process(MOBLEUINT8 elementIndex);
 MOBLE_RESULT Generic_LevelStateUpdate_Process(MOBLEUINT8 elementIndex);
@@ -437,16 +401,11 @@ void Generic_OnOffDefaultTransitionValue(MOBLEUINT8 elementIndex);
 void Generic_LevelDefaultTransitionValue(MOBLEUINT8 elementIndex, MOBLEUINT16 levelValue); 
 void Generic_DeltaDefaultTransitionValue(MOBLEUINT8 elementIndex, MOBLEUINT32 deltaValue); 
 void Generic_OnOffUpdate(MOBLEUINT8 elementIndex, MOBLEUINT8 onOff);
-MOBLE_RESULT Generic_Client_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUINT32 plength,\
-                                                                uint16_t, uint8_t); 
-MOBLE_RESULT Generic_Client_Level_Status(MOBLEUINT8 const *plevel_status, MOBLEUINT32 plength,\
-                                                                uint16_t, uint8_t); 
-MOBLE_RESULT Generic_Client_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status , 
-                                                            MOBLEUINT32 plength,\
-                                                                uint16_t, uint8_t); 
-MOBLE_RESULT Generic_Client_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , 
-                                                            MOBLEUINT32 plength,\
-                                                                uint16_t, uint8_t); 
+
+void Generic_TransitionParameterReset(MOBLEUINT8 elementIndex);
+void Generic_RestoreModelStates(void *model_State,MOBLEUINT8 elementIndex);
+void Generic_SaveModelStates(void *model_State,MOBLEUINT8 elementIndex);
+
 #endif /* __GENERIC_H */
 
 /******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

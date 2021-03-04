@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -95,9 +95,11 @@
 #elif (LL_ONLY != 0)
 #define BLE_FIXED_BUFFER_SIZE_BYTES  6272   /* LL only */
 #elif (SLAVE_ONLY != 0)
-#define BLE_FIXED_BUFFER_SIZE_BYTES  6712   /* Slave only */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  6712   /* Peripheral only */
+#elif (BASIC_FEATURES != 0)
+#define BLE_FIXED_BUFFER_SIZE_BYTES  6972   /* Basic Features */
 #else
-#define BLE_FIXED_BUFFER_SIZE_BYTES  6976   /* Full stack */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  7240   /* Full stack */
 #endif
 
 /*
@@ -108,9 +110,11 @@
 #elif (LL_ONLY != 0)
 #define BLE_PER_LINK_SIZE_BYTES       196   /* LL only */
 #elif (SLAVE_ONLY != 0)
-#define BLE_PER_LINK_SIZE_BYTES       332   /* Slave only */
+#define BLE_PER_LINK_SIZE_BYTES       332   /* Peripheral only */
+#elif (BASIC_FEATURES != 0)
+#define BLE_PER_LINK_SIZE_BYTES       332   /* Basic Features */
 #else
-#define BLE_PER_LINK_SIZE_BYTES       380   /* Full stack */
+#define BLE_PER_LINK_SIZE_BYTES       384   /* Full stack */
 #endif
 
 /*
@@ -118,7 +122,7 @@
  * needed for the storage of data structures (except GATT database elements)
  * whose size depends on the number of supported connections.
  *
- * @param num_links: Maximum number of simultaneous connections that the device
+ * @param n_link: Maximum number of simultaneous connections that the device
  * will support. Valid values are from 1 to 8.
  *
  * @param mblocks_count: Number of memory blocks allocated for packets.

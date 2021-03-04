@@ -83,8 +83,10 @@ otError otIcmp6RegisterHandler(otInstance *aInstance, otIcmp6Handler *aHandler)
     return (otError)p_ot_req->Data[0];
 }
 
-otError otIcmp6SendEchoRequest(otInstance *aInstance, otMessage *aMessage,
-                               const otMessageInfo *aMessageInfo, uint16_t aIdentifier)
+otError otIcmp6SendEchoRequest(otInstance *         aInstance,
+                               otMessage *          aMessage,
+                               const otMessageInfo *aMessageInfo,
+                               uint16_t             aIdentifier)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */

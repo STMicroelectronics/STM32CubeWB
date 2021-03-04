@@ -10,15 +10,15 @@
       <TargetName>Zigbee_OnOff_Client_Distrib</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx_DFP.1.0.0</PackID>
+          <PackID>Keil.STM32WBxx_DFP.1.1.1</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002EC03) IRAM2(0x20030000-0x20030FFF) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
+          <Cpu>IRAM(0x20000000-0x2003FFFF) IROM(0x8000000-0x80FFFFF) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
           <FlashDriverDll></FlashDriverDll>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32WB55RGVx$CMSIS\SVD\STM32WBxx_CM4.svd</SFDFile>
+          <SFDFile>$$Device:STM32WB55RGVx$CMSIS\SVD\STM32WB55_CM4.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -48,11 +48,11 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>Zigbee_OnOff_Distrib\Exe\</OutputDirectory>
-          <OutputName>Zigbee_OnOff_Distrib</OutputName>
+          <OutputDirectory>Zigbee_OnOff_Client_Distrib\</OutputDirectory>
+          <OutputName>Zigbee_OnOff_Client_Distrib</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath></ListingPath>
@@ -80,9 +80,9 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>fromelf #L --bin --output=$L@L.bin</UserProg1Name>
+            <UserProg1Name></UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -185,7 +185,8 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
-            <hadIRAM2>1</hadIRAM2>
+            <RvdsCdeCp>0</RvdsCdeCp>
+            <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>1</useUlib>
@@ -210,7 +211,7 @@
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
             <Im1Chk>1</Im1Chk>
-            <Im2Chk>1</Im2Chk>
+            <Im2Chk>0</Im2Chk>
             <OnChipMemories>
               <Ocm1>
                 <Type>0</Type>
@@ -244,13 +245,13 @@
               </Ocm6>
               <IRAM>
                 <Type>0</Type>
-                <StartAddress>0x20000004</StartAddress>
-                <Size>0x2ec00</Size>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x40000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x100000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -275,7 +276,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x100000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -299,13 +300,13 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20000004</StartAddress>
-                <Size>0x2ec00</Size>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x40000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20030000</StartAddress>
-                <Size>0x1000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -329,16 +330,16 @@
             <useXO>0</useXO>
             <v6Lang>5</v6Lang>
             <v6LangP>3</v6LangP>
-            <vShortEn>0</vShortEn>
-            <vShortWch>0</vShortWch>
+            <vShortEn>1</vShortEn>
+            <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>--C99 --diag_suppress=188</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32WB55xx,USE_STM32WBXX_NUCLEO,ZIGBEE_WB</Define>
+              <MiscControls></MiscControls>
+              <Define>USE_STM32WBXX_NUCLEO,ZIGBEE_WB,USE_HAL_DRIVER,STM32WB55xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/core/Inc;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/mac;../../../../../../Drivers/CMSIS/Include;../../../../../../Utilities/sequencer;../../../../../../Utilities/lpm/tiny_lpm</IncludePath>
+              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/extras;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zgp;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/mac;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/key;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/se;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/security;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/general;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/platform;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/core/inc;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -351,7 +352,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -399,6 +400,21 @@
               <FilePath>../Core/Src/app_entry.c</FilePath>
             </File>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/main.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/stm32wbxx_hal_msp.c</FilePath>
+            </File>
+            <File>
               <FileName>hw_timerserver.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/hw_timerserver.c</FilePath>
@@ -409,29 +425,14 @@
               <FilePath>../Core/Src/hw_uart.c</FilePath>
             </File>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>stm32_lpm_if.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/main.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32wbxx_hal_msp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32wbxx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32wbxx_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
+              <FilePath>../Core/Src/stm32_lpm_if.c</FilePath>
             </File>
             <File>
               <FileName>stm_logging.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm_logging.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32_lpm_if.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Core\Src\stm32_lpm_if.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -456,7 +457,17 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/BSP/STM32WBxx_Nucleo</GroupName>
+          <GroupName>Doc</GroupName>
+          <Files>
+            <File>
+              <FileName>readme.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>../readme.txt</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/BSP/P-NUCLEO-WB55.Nucleo</GroupName>
           <Files>
             <File>
               <FileName>stm32wbxx_nucleo.c</FileName>
@@ -466,42 +477,27 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>system_stm32wbxx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/system_stm32wbxx.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Drivers/STM32WBxx_HAL_Driver</GroupName>
           <Files>
             <File>
-              <FileName>stm32wbxx_hal.c</FileName>
+              <FileName>stm32wbxx_hal_ipcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal.c</FilePath>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32wbxx_hal_cortex.c</FileName>
+              <FileName>stm32wbxx_hal_hsem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_cortex.c</FilePath>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</FilePath>
             </File>
             <File>
-              <FileName>stm32wbxx_hal_dma.c</FileName>
+              <FileName>stm32wbxx_hal_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma.c</FilePath>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32wbxx_hal_dma_ex.c</FileName>
+              <FileName>stm32wbxx_hal_rcc_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32wbxx_hal_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</FilePath>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_hal_flash.c</FileName>
@@ -519,9 +515,14 @@
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>stm32wbxx_hal_hsem.c</FileName>
+              <FileName>stm32wbxx_hal_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</FilePath>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_hal_pwr.c</FileName>
@@ -534,14 +535,29 @@
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pwr_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32wbxx_hal_rcc.c</FileName>
+              <FileName>stm32wbxx_hal_cortex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc.c</FilePath>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_cortex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32wbxx_hal_rcc_ex.c</FileName>
+              <FileName>stm32wbxx_hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc_ex.c</FilePath>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_hal_rtc.c</FileName>
@@ -563,45 +579,25 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/CMSIS</GroupName>
+          <Files>
             <File>
-              <FileName>stm32wbxx_hal_uart.c</FileName>
+              <FileName>system_stm32wbxx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32wbxx_hal_uart_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</FilePath>
+              <FilePath>../Core/Src/system_stm32wbxx.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/STM32_WPAN/interface/patterns/ble_thread/schi</GroupName>
+          <GroupName>Middlewares/STM32_WPAN</GroupName>
           <Files>
             <File>
-              <FileName>shci.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_WPAN/interface/patterns/ble_thread/tl</GroupName>
-          <Files>
-            <File>
-              <FileName>hci_tl_if.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c</FilePath>
-            </File>
-            <File>
-              <FileName>shci_tl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</FilePath>
-            </File>
-            <File>
-              <FileName>shci_tl_if.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</FilePath>
+              <FileName>stm32wb_zigbee_wb_lib_keil.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/zigbee/lib/stm32wb_zigbee_wb_lib_keil.lib</FilePath>
             </File>
             <File>
               <FileName>tl_mbox.c</FileName>
@@ -609,15 +605,10 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</FilePath>
             </File>
             <File>
-              <FileName>tl_zigbee_hci.c</FileName>
+              <FileName>shci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_zigbee_hci.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_WPAN/utilities</GroupName>
-          <Files>
             <File>
               <FileName>dbg_trace.c</FileName>
               <FileType>1</FileType>
@@ -638,11 +629,31 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Middlewares/STM32_WPAN/zigbee/core</GroupName>
-          <Files>
+            <File>
+              <FileName>tl_zigbee_hci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_zigbee_hci.c</FilePath>
+            </File>
+            <File>
+              <FileName>shci_tl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</FilePath>
+            </File>
+            <File>
+              <FileName>shci_tl_if.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</FilePath>
+            </File>
+            <File>
+              <FileName>ee.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/zigbee/platform/ee.c</FilePath>
+            </File>
+            <File>
+              <FileName>hw_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/zigbee/platform/hw_flash.c</FilePath>
+            </File>
             <File>
               <FileName>zigbee_core_wb.c</FileName>
               <FileType>1</FileType>
@@ -651,28 +662,13 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Middlewares/STM32_WPAN/zigbee/stack</GroupName>
-          <Files>
-            <File>
-              <FileName>stm32wb_zigbee_wb_lib_keil.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\zigbee\lib\stm32wb_zigbee_wb_lib_keil.lib</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Utilities/lpm/tiny_lpm</GroupName>
+          <GroupName>Utilities</GroupName>
           <Files>
             <File>
               <FileName>stm32_lpm.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Utilities/lpm/tiny_lpm/stm32_lpm.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Utilities/sequencer</GroupName>
-          <Files>
             <File>
               <FileName>stm32_seq.c</FileName>
               <FileType>1</FileType>
@@ -699,5 +695,20 @@
     </components>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>&lt;Project Info&gt;</LayName>
+        <LayDesc></LayDesc>
+        <LayUrl></LayUrl>
+        <LayKeys></LayKeys>
+        <LayCat></LayCat>
+        <LayLic></LayLic>
+        <LayTarg>0</LayTarg>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>

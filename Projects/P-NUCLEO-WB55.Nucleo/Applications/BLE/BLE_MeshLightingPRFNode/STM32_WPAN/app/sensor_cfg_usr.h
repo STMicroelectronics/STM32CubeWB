@@ -135,7 +135,18 @@ typedef struct
 
 /* Sensor 1 initialization */
 
+/**
+* Element index for SENSOR1
+* varies from 0 to n-1 (n = number of elements)
+*/
 #define SENSOR1_ELEMENT_IDX                                                  0
+
+/**
+* Property ID of sensor, identifies device characteristics and other features
+* Defined by Mesh Device Properties or a custom value
+* 16 bit value
+* 0x0000 - Prohibited
+*/
 #define SENSOR1_PROPERTY_ID                    PRESENT_AMBIENT_TEMPERATURE_PID
 #define SENSOR1_POSITIVE_TOLERANCE             SENSOR_POSITIVE_TOLERANCE_UNSPECIFIED
 #define SENSOR1_NEGATIVE_TOLERANCE             SENSOR_NEGATIVE_TOLERANCE_UNSPECIFIED
@@ -190,6 +201,7 @@ typedef struct
     {0}\
   }\
 }
+
 
 /* Sensor 2 initialization */
 

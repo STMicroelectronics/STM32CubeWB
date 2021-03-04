@@ -1,0 +1,8 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\NUCLEO-WB15CC
+[Others]
+Define=
+HALModule=TIM
+[Groups]
+Doc=../readme.txt;
+Drivers/BSP/NUCLEO-WB15CC=../../../../../../Drivers/BSP/NUCLEO-WB15CC/nucleo_wb15cc.c;

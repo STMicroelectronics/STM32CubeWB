@@ -48,7 +48,7 @@ void otMessageFree(otMessage *aMessage)
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-uint16_t otMessageGetLength(otMessage *aMessage)
+uint16_t otMessageGetLength(const otMessage *aMessage)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -83,7 +83,7 @@ otError otMessageSetLength(otMessage *aMessage, uint16_t aLength)
     return (otError)p_ot_req->Data[0];
 }
 
-uint16_t otMessageGetOffset(otMessage *aMessage)
+uint16_t otMessageGetOffset(const otMessage *aMessage)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -118,7 +118,7 @@ otError otMessageSetOffset(otMessage *aMessage, uint16_t aOffset)
     return (otError)p_ot_req->Data[0];
 }
 
-bool otMessageIsLinkSecurityEnabled(otMessage *aMessage)
+bool otMessageIsLinkSecurityEnabled(const otMessage *aMessage)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -152,7 +152,7 @@ void otMessageSetDirectTransmission(otMessage *aMessage, bool aEnabled)
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-int8_t otMessageGetRss(otMessage *aMessage)
+int8_t otMessageGetRss(const otMessage *aMessage)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -188,7 +188,7 @@ otError otMessageAppend(otMessage *aMessage, const void *aBuf, uint16_t aLength)
     return (otError)p_ot_req->Data[0];
 }
 
-int otMessageRead(otMessage *aMessage, uint16_t aOffset, void *aBuf, uint16_t aLength)
+uint16_t otMessageRead(const otMessage *aMessage, uint16_t aOffset, void *aBuf, uint16_t aLength)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -205,7 +205,7 @@ int otMessageRead(otMessage *aMessage, uint16_t aOffset, void *aBuf, uint16_t aL
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (int)p_ot_req->Data[0];
+    return (uint16_t)p_ot_req->Data[0];
 }
 
 int otMessageWrite(otMessage *aMessage, uint16_t aOffset, const void *aBuf, uint16_t aLength)
@@ -334,7 +334,7 @@ otMessage *otMessageQueueGetNext(otMessageQueue *aQueue, const otMessage *aMessa
     return (otMessage *)p_ot_req->Data[0];
 }
 
-OTAPI void OTCALL otMessageGetBufferInfo(otInstance *aInstance, otBufferInfo *aBufferInfo)
+void otMessageGetBufferInfo(otInstance *aInstance, otBufferInfo *aBufferInfo)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */

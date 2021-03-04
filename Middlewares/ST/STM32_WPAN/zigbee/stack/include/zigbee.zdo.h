@@ -1,12 +1,16 @@
 /**
  * @file zigbee.zdo.h
- * @brief ZDO header file
- * @author Exegin Technologies
+ * @brief Zigbee ZDO header file
+ * @author Exegin Technologies Limited
  * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ *
+ * This file provides the declaration of all the public API's and macros used by the ZDO layer.
  */
 
 #ifndef ZIGBEE_ZDO_H
 # define ZIGBEE_ZDO_H
+
+struct ZbZdoNwkUpdateNotifyFilterT;
 
 /*---------------------------------------------------------------
  * Misc. Definitions and Structures
@@ -19,10 +23,10 @@
 
 #define ZB_ZDO_ADDRRSP_DEVLIST_MAX                  32U
 
-/* NWK_addr_req / IEEE_addr_req definitions */
+/** NWK_addr_req / IEEE_addr_req definitions */
 enum ZbZdoAddrReqTypeT {
-    ZB_ZDO_ADDR_REQ_TYPE_SINGLE = 0x00,
-    ZB_ZDO_ADDR_REQ_TYPE_EXTENDED = 0x01
+    ZB_ZDO_ADDR_REQ_TYPE_SINGLE = 0x00, /**< Single address request - Returns the information requested only */
+    ZB_ZDO_ADDR_REQ_TYPE_EXTENDED = 0x01 /**< Extended address request - Returns the information requested and appends the devices in its network table */
 };
 
 /* NWK_Update_Req special duration values. */
@@ -223,165 +227,165 @@ enum ZbZdoAddrReqTypeT {
 #define ZB_ZDO_MGMT_IEEE_JOINING_LIST_REQ           0x003aU
 #define ZB_ZDO_MGMT_UNSOLICITED_UPDATE_NOTIFY       0x003bU
 
-/* ZigBee Node Descriptor - Section 2.3.2.3 */
-typedef struct ZbNodeDescriptorT {
-    uint8_t logicalType;
+/** ZigBee Node Descriptor */
+struct ZbNodeDescriptorT {
+    uint8_t logicalType; /**< Logical type */
     uint8_t complexDesc;
     uint8_t userDesc;
-    uint8_t apsFlags;
-    uint8_t freqBands;
-    uint8_t macCapability;
-    uint16_t mfrCode;
-    uint8_t maxBuffer;
-    uint16_t maxIncomingTransfer;
-    uint16_t serverMask;
-    uint16_t maxOutgoingTransfer;
-    uint8_t descCapability;
-} ZbNodeDescriptorT;
+    uint8_t apsFlags; /**< APS flags */
+    uint8_t freqBands; /**< Frequency band */
+    uint8_t macCapability; /**< MAC capability flags */
+    uint16_t mfrCode; /**< Manufacturer code */
+    uint8_t maxBuffer; /**< Maximum buffer size */
+    uint16_t maxIncomingTransfer; /**< Maximum incoming transfer size */
+    uint16_t serverMask; /**< Server mask */
+    uint16_t maxOutgoingTransfer; /**< Maximum outgoing transfer size */
+    uint8_t descCapability; /**< Descriptor capability field */
+};
 
-/* ZigBee Power Descriptor - Section 2.3.2.4. */
-typedef struct ZbPowerDescriptorT {
-    uint8_t currentMode;
-    uint8_t availableSources;
-    uint8_t currentSource;
-    uint8_t currentLevel;
-} ZbPowerDescriptorT;
+/** ZigBee Power Descriptor */
+struct ZbPowerDescriptorT {
+    uint8_t currentMode; /**< Current power mode */
+    uint8_t availableSources; /**< Available power sources */
+    uint8_t currentSource; /**< Current power source */
+    uint8_t currentLevel; /**< Current power source level */
+};
 
-/* ZigBee Simple (Application) Descriptor. */
-typedef struct ZbSimpleDescriptorT {
-    uint8_t endpoint;
-    uint16_t profileId;
-    uint16_t deviceId;
-    uint8_t version;
-    uint8_t inputClusterCount;
-    uint16_t inputClusterList[ZB_ZDO_CLUSTER_LIST_MAX_SZ];
-    uint8_t outputClusterCount;
-    uint16_t outputClusterList[ZB_ZDO_CLUSTER_LIST_MAX_SZ];
-} ZbSimpleDescriptorT;
+/** ZigBee Simple (Application) Descriptor. */
+struct ZbSimpleDescriptorT {
+    uint8_t endpoint; /**< Endpoint */
+    uint16_t profileId; /**< Application profile identifier */
+    uint16_t deviceId; /**< Application device identifier */
+    uint8_t version; /**< Application device version */
+    uint8_t inputClusterCount; /**< Application input cluster count */
+    uint16_t inputClusterList[ZB_ZDO_CLUSTER_LIST_MAX_SZ]; /**< Application input cluster list */
+    uint8_t outputClusterCount; /**< Application output cluster count */
+    uint16_t outputClusterList[ZB_ZDO_CLUSTER_LIST_MAX_SZ]; /**< Application output cluster list */
+};
 
-/* Network Descriptor */
-typedef struct ZbZdoNetworkDescT {
-    uint64_t epid;
-    uint8_t logicalChannel;
-    uint8_t version;
-    uint8_t stackProfile;
-    uint8_t superframeOrder;
-    uint8_t beaconOrder;
-    uint8_t permitJoin;
-} ZbZdoNetworkDescT;
+/** Network Descriptor */
+struct ZbZdoNetworkDescT {
+    uint64_t epid; /**< ExtendedPANId */
+    uint8_t logicalChannel; /**< LogicalChannel */
+    uint8_t version; /**< ZigBeeVersion */
+    uint8_t stackProfile; /**< StackProfile */
+    uint8_t superframeOrder; /**< SuperframeOrder */
+    uint8_t beaconOrder; /**< BeaconOrder */
+    uint8_t permitJoin; /**< PermitJoining */
+};
 
-/* Neighbor Descriptor */
-typedef struct ZbZdoNeighborDescT {
-    uint64_t epid;
-    uint64_t extAddr;
-    uint16_t nwkAddr;
-    uint8_t deviceType;
-    uint8_t rxOnWhenIdle;
-    uint8_t relationship;
-    uint8_t permitJoin;
-    uint8_t depth;
-    uint8_t lqi;
-} ZbZdoNeighborDescT;
+/** Neighbor Descriptor */
+struct ZbZdoNeighborDescT {
+    uint64_t epid; /**< Extended PAN ID */
+    uint64_t extAddr; /**< Extended address */
+    uint16_t nwkAddr; /**< Network address */
+    uint8_t deviceType; /**< Device type */
+    uint8_t rxOnWhenIdle; /**< RxOnWhenIdle */
+    uint8_t relationship; /**< Relationship */
+    uint8_t permitJoin; /**< Permit joining */
+    uint8_t depth; /**< Depth */
+    uint8_t lqi; /**< LQI */
+};
 
-/* Routing Descriptor */
-typedef struct ZbZdoRoutingDescT {
-    uint16_t destAddr;
-    uint8_t status; /* EXEGIN - convert to an enum type? */
-    uint8_t constrained;
-    uint8_t manyToOne;
-    uint8_t recordRequired;
-    uint16_t nextHopAddr;
-} ZbZdoRoutingDescT;
+/** Routing Descriptor */
+struct ZbZdoRoutingDescT {
+    uint16_t destAddr; /**< Destination address */
+    uint8_t status; /**< Status */ /* EXEGIN - convert to an enum type? */
+    uint8_t constrained; /**< Memory Constrained */
+    uint8_t manyToOne; /**< Many-to-one */
+    uint8_t recordRequired; /**< Route record required */
+    uint16_t nextHopAddr; /**< Next-hop address */
+};
 
-/* Binding Descriptor */
-typedef struct ZbZdoBindingDescT {
-    uint64_t srcAddr;
-    uint8_t srcEndpt;
-    uint16_t clusterId;
+/** Binding Descriptor */
+struct ZbZdoBindingDescT {
+    uint64_t srcAddr; /**< SrcAddr */
+    uint8_t srcEndpt; /**< SrcEndpoint */
+    uint16_t clusterId; /**< ClusterId */
     /* dst.panId not used, dst.nwkAddr is only for the group address,
      * and dst.endpoint only used if mode == ZB_APSDE_ADDRMODE_EXT */
-    struct ZbApsAddrT dst;
-} ZbZdoBindingDescT;
+    struct ZbApsAddrT dst; /**< DstAddr */
+};
 
 /*---------------------------------------------------------------
  * ZDP Discovery Requests
  *---------------------------------------------------------------
  */
-/* NWK_addr_req */
-typedef struct ZbZdoNwkAddrReqT {
-    uint16_t dstNwkAddr; /* typically set to ZB_NWK_ADDR_BCAST_RXON (0xfffd) */
-    uint64_t extAddr;
-    enum ZbZdoAddrReqTypeT reqType;
-    uint8_t startIndex;
-} ZbZdoNwkAddrReqT;
+/** NWK_addr_req */
+struct ZbZdoNwkAddrReqT {
+    uint16_t dstNwkAddr; /**<  Destination network address, not in spec */ /* typically set to ZB_NWK_ADDR_BCAST_RXON (0xfffd) */
+    uint64_t extAddr; /**< IEEEAddr */
+    enum ZbZdoAddrReqTypeT reqType; /**< RequestType */
+    uint8_t startIndex; /**< StartIndex */
+};
 
-/* NWK_addr_rsp */
-typedef struct ZbZdoNwkAddrRspT {
-    enum ZbStatusCodeT status;
-    uint64_t extAddr;
-    uint16_t nwkAddr;
-    uint8_t deviceCount;
-    uint8_t startIndex;
-    uint16_t deviceList[ZB_ZDO_ADDRRSP_DEVLIST_MAX];
-} ZbZdoNwkAddrRspT;
+/** NWK_addr_rsp */
+struct ZbZdoNwkAddrRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint64_t extAddr; /**< IEEEAddrRemoteDev */
+    uint16_t nwkAddr; /**< NWKAddrRemoteDev */
+    uint8_t deviceCount; /**< NumAssocDev */
+    uint8_t startIndex; /**< StartIndex */
+    uint16_t deviceList[ZB_ZDO_ADDRRSP_DEVLIST_MAX]; /**< NWKAddrAssocDevList */
+};
 
-/* IEEE_addr_req */
-typedef struct ZbZdoIeeeAddrReqT {
-    uint16_t dstNwkAddr;
-    uint16_t nwkAddrOfInterest;
-    enum ZbZdoAddrReqTypeT reqType;
-    uint8_t startIndex;
-} ZbZdoIeeeAddrReqT;
+/** IEEE_addr_req */
+struct ZbZdoIeeeAddrReqT {
+    uint16_t dstNwkAddr; /**< Destination network address */
+    uint16_t nwkAddrOfInterest; /**< NWKAddrOfInterest */
+    enum ZbZdoAddrReqTypeT reqType; /**< RequestType */
+    uint8_t startIndex; /**< StartIndex */
+};
 
-/* IEEE_addr_rsp */
-typedef struct ZbZdoIeeeAddrRspT {
-    enum ZbStatusCodeT status;
-    uint64_t extAddr;
-    uint16_t nwkAddr;
-    uint8_t deviceCount;
-    uint8_t startIndex;
-    uint16_t deviceList[ZB_ZDO_ADDRRSP_DEVLIST_MAX];
-} ZbZdoIeeeAddrRspT;
+/** IEEE_addr_rsp */
+struct ZbZdoIeeeAddrRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint64_t extAddr; /**< IEEEAddrRemoteDev */
+    uint16_t nwkAddr; /**< NWKAddrRemoteDev */
+    uint8_t deviceCount; /**< NumAssocDev */
+    uint8_t startIndex; /**< StartIndex */
+    uint16_t deviceList[ZB_ZDO_ADDRRSP_DEVLIST_MAX]; /**< NWKAddrAssocDevList */
+};
 
-/* Node_Desc_req */
-typedef struct ZbZdoNodeDescReqT {
-    uint16_t dstNwkAddr;
-    uint16_t nwkAddrOfInterest;
-} ZbZdoNodeDescReqT;
+/** Node_Desc_req */
+struct ZbZdoNodeDescReqT {
+    uint16_t dstNwkAddr; /**< Destination network address */
+    uint16_t nwkAddrOfInterest; /**< NWKAddrOfInterest */
+};
 
-/* Node_Desc_rsp */
-typedef struct ZbZdoNodeDescRspT {
-    enum ZbStatusCodeT status;
-    uint16_t nwkAddr;
-    struct ZbNodeDescriptorT nodeDesc;
-} ZbZdoNodeDescRspT;
+/** Node_Desc_rsp */
+struct ZbZdoNodeDescRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t nwkAddr; /**< NWKAddrOfInterest */
+    struct ZbNodeDescriptorT nodeDesc; /**< NodeDescriptor */
+};
 
-/* Power_Desc_req */
-typedef struct ZbZdoPowerDescReqT {
-    uint16_t dstNwkAddr;
-    uint16_t nwkAddrOfInterest;
-} ZbZdoPowerDescReqT;
+/** Power_Desc_req */
+struct ZbZdoPowerDescReqT {
+    uint16_t dstNwkAddr; /**< Destination network address */
+    uint16_t nwkAddrOfInterest; /**< NWKAddrOfInterest */
+};
 
-/* Power_Desc_rsp */
-typedef struct ZbZdoPowerDescRspT {
-    enum ZbStatusCodeT status;
-    uint16_t nwkAddr;
-    struct ZbPowerDescriptorT powerDesc;
-} ZbZdoPowerDescRspT;
+/** Power_Desc_rsp */
+struct ZbZdoPowerDescRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t nwkAddr; /**< NWKAddrOfInterest */
+    struct ZbPowerDescriptorT powerDesc; /**< PowerDescriptor */
+};
 
-/* Simple_Desc_req */
-typedef struct ZbZdoSimpleDescReqT {
-    uint16_t dstNwkAddr;
-    uint16_t nwkAddrOfInterest;
-    uint8_t endpt;
-} ZbZdoSimpleDescReqT;
+/** Simple_Desc_req */
+struct ZbZdoSimpleDescReqT {
+    uint16_t dstNwkAddr; /**< Destination network address */
+    uint16_t nwkAddrOfInterest; /**< NWKAddrOfInterest */
+    uint8_t endpt; /**< Endpoint */
+};
 
-/* Simple_Desc_rsp */
-typedef struct ZbZdoSimpleDescRspT {
-    enum ZbStatusCodeT status;
-    uint16_t nwkAddr;
-    struct ZbSimpleDescriptorT simpleDesc;
-} ZbZdoSimpleDescRspT;
+/** Simple_Desc_rsp */
+struct ZbZdoSimpleDescRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t nwkAddr; /**< NWKAddrOfInterest */
+    struct ZbSimpleDescriptorT simpleDesc; /**< SimpleDescriptor */
+};
 
 /* Discovery_Cache_rsp */
 typedef struct ZbZdoDiscCacheRspT {
@@ -390,243 +394,365 @@ typedef struct ZbZdoDiscCacheRspT {
     uint16_t nwkAddr;
 } ZbZdoDiscCacheRspT;
 
-/* Active_EP_req */
-typedef struct ZbZdoActiveEpReqT {
-    uint16_t dstNwkAddr;
-    uint16_t nwkAddrOfInterest;
-} ZbZdoActiveEpReqT;
+/** Active_EP_req */
+struct ZbZdoActiveEpReqT {
+    uint16_t dstNwkAddr; /**< Destination network address */
+    uint16_t nwkAddrOfInterest; /**< NWKAddrOfInterest */
+};
 
-/* Active_EP_rsp */
-typedef struct ZbZdoActiveEpRspT {
-    enum ZbStatusCodeT status;
-    uint16_t nwkAddr;
-    uint8_t activeEpCount;
-    uint8_t activeEpList[ZB_ZDO_ENDPOINT_LIST_MAXSZ];
-} ZbZdoActiveEpRspT;
+/** Active_EP_rsp */
+struct ZbZdoActiveEpRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t nwkAddr; /**< NWKAddrOfInterest */
+    uint8_t activeEpCount; /**< ActiveEPCount */
+    uint8_t activeEpList[ZB_ZDO_ENDPOINT_LIST_MAXSZ]; /**< ActiveEPList */
+};
 
-/* Match_Desc_req */
-typedef struct ZbZdoMatchDescReqT {
-    uint16_t dstNwkAddr;
-    uint16_t nwkAddrOfInterest;
-    uint16_t profileId;
-    uint8_t numInClusters;
-    uint16_t inClusterList[ZB_ZDO_CLUSTER_LIST_MAX_SZ];
-    uint8_t numOutClusters;
-    uint16_t outClusterList[ZB_ZDO_CLUSTER_LIST_MAX_SZ];
-} ZbZdoMatchDescReqT;
+/** Match_Desc_req */
+struct ZbZdoMatchDescReqT {
+    uint16_t dstNwkAddr; /**< Destination network address */
+    uint16_t nwkAddrOfInterest; /**< NWKAddrOfInterest */
+    uint16_t profileId; /**< ProfileID */
+    uint8_t numInClusters; /**< NumInClusters */
+    uint16_t inClusterList[ZB_ZDO_CLUSTER_LIST_MAX_SZ]; /**< InClusterList */
+    uint8_t numOutClusters; /**< NumOutClusters */
+    uint16_t outClusterList[ZB_ZDO_CLUSTER_LIST_MAX_SZ]; /**< OutClusterList */
+};
 
-/* Match_Desc_rsp */
-typedef struct ZbZdoMatchDescRspT {
-    enum ZbStatusCodeT status;
-    uint16_t nwkAddr;
-    uint8_t matchLength;
-    uint8_t matchList[ZB_ZDO_ENDPOINT_LIST_MAXSZ];
-} ZbZdoMatchDescRspT;
+/** Match_Desc_rsp */
+struct ZbZdoMatchDescRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t nwkAddr; /**< NWKAddrOfInterest */
+    uint8_t matchLength; /**< MatchLength */
+    uint8_t matchList[ZB_ZDO_ENDPOINT_LIST_MAXSZ]; /**< MatchList */
+};
 
-/* Device_annce (ZB_ZDO_DEVICE_ANNCE) */
-typedef struct ZbZdoDeviceAnnceT {
-    uint16_t nwkAddr;
-    uint64_t extAddr;
-    uint8_t capability;
-} ZbZdoDeviceAnnceT;
+/** Device_annce (ZB_ZDO_DEVICE_ANNCE) */
+struct ZbZdoDeviceAnnceT {
+    uint16_t nwkAddr; /**< NWKAddr */
+    uint64_t extAddr; /**< IEEEAddr */
+    uint8_t capability; /**< Capability */
+};
 
-/* Bind_req */
-typedef struct ZbZdoBindReqT {
-    /* Destination for the ZDO Bind Request message */
-    uint16_t target;
+/** Bind_req */
+struct ZbZdoBindReqT {
+    uint16_t target; /**< Destination for the ZDO Bind Request message */
     /* Binding Source */
-    uint64_t srcExtAddr;
-    uint8_t srcEndpt;
+    uint64_t srcExtAddr; /**< SrcAddress */
+    uint8_t srcEndpt; /**< SrcEndp */
     /* Binding Cluster ID */
-    uint16_t clusterId;
+    uint16_t clusterId; /**< ClusterID */
     /* Binding Destination (not the destination of the message)
      * dst.panId not used, dst.nwkAddr is only for the group address,
      * and dst.endpoint only used if mode == ZB_APSDE_ADDRMODE_EXT */
-    struct ZbApsAddrT dst;
-} ZbZdoBindReqT;
-
-/* Bind_rsp */
-typedef struct ZbZdoBindRspT {
-    enum ZbStatusCodeT status;
-} ZbZdoBindRspT;
-
-/* Mgmt_Lqi_req */
-typedef struct ZbZdoLqiReqT {
-    uint16_t destAddr;
-    uint8_t startIndex;
-} ZbZdoLqiReqT;
-
-/* Mgmt_Lqi_rsp */
-typedef struct ZbZdoLqiRspT {
-    enum ZbStatusCodeT status;
-    uint16_t respAddr;
-    uint8_t neighborTblSz;
-    uint8_t startIndex;
-    uint8_t neighborListSz;
-    struct ZbZdoNeighborDescT neighborList[ZB_ZDO_NEIGHBOR_LIST_MAX_SZ];
-} ZbZdoLqiRspT;
-
-/* Mgmt_Rtg_req */
-typedef struct ZbZdoRtgReqT {
-    uint16_t destAddr;
-    uint8_t startIndex;
-} ZbZdoRtgReqT;
-
-/* Mgmt_Rtg_rsp */
-typedef struct ZbZdoRtgRspT {
-    enum ZbStatusCodeT status;
-    uint16_t respAddr;
-    uint8_t routeTblSz;
-    uint8_t startIndex;
-    uint8_t routeListSz;
-    struct ZbZdoRoutingDescT routeList[ZB_ZDO_ROUTE_LIST_MAX_SZ];
-} ZbZdoRtgRspT;
-
-/* Mgmt_Bind_req */
-typedef struct ZbZdoMgmtBindReqT {
-    uint16_t destAddr;
-    uint8_t startIndex;
-} ZbZdoMgmtBindReqT;
-
-/* Mgmt_Bind_rsp */
-typedef struct ZbZdoMgmtBindRspT {
-    enum ZbStatusCodeT status;
-    uint8_t bindTblSz; /* Total number */
-    uint8_t startIndex; /* Starting index being reported here */
-    uint8_t bindListSz; /* Number reported here */
-    struct ZbZdoBindingDescT bindList[ZB_ZDO_BIND_LIST_MAX_SZ];
-} ZbZdoMgmtBindRspT;
-
-/* Mgmt_Permit_Join_req */
-typedef struct ZbZdoPermitJoinReqT {
-    uint16_t destAddr;
-    uint8_t duration;
-    uint8_t tcSignificance;
-} ZbZdoPermitJoinReqT;
-
-/* Mgmt_Permit_Join_rsp */
-typedef struct ZbZdoPermitJoinRspT {
-    enum ZbStatusCodeT status;
-} ZbZdoPermitJoinRspT;
-
-/* Mgmt_Nwk_Update_req */
-typedef struct ZbZdoNwkUpdateReqT {
-    uint16_t destAddr;
-    uint32_t channelMask;
-    uint8_t scanDuration; /* or ZB_ZDP_NWK_UPDATE_CHANNEL_SWITCH, or ZB_ZDP_NWK_UPDATE_MANAGER_PARAMETERS */
-    uint8_t scanCount;
-    uint8_t updateId; /* only for ZB_ZDP_NWK_UPDATE_CHANNEL_SWITCH or ZB_ZDP_NWK_UPDATE_MANAGER_PARAMETERS */
-    uint16_t managerAddr; /* only for ZB_ZDP_NWK_UPDATE_MANAGER_PARAMETERS */
-} ZbZdoNwkUpdateReqT;
-
-/* Mgmt_Nwk_Enhanced_Update_req */
-struct ZbZdoNwkEnhUpdateReqT {
-    uint16_t destAddr;
-    struct ZbChannelListT channelList;
-    uint8_t scanDuration;
-    uint8_t scanCount;
-    uint8_t updateId;
-    uint16_t managerAddr;
+    struct ZbApsAddrT dst; /**< DstAddrMode, DstAddress, DstEndp */
 };
 
-/* Mgmt_Nwk_Update_notify */
-typedef struct ZbZdoNwkUpdateNotifyT {
-    enum ZbStatusCodeT status;
-    uint32_t scannedChannels;
-    uint16_t txTotal;
-    uint16_t txFails;
-    uint8_t channelListSz;
-    uint8_t channelList[ZB_ZDO_CHANNEL_LIST_MAXSZ]; /* Channel energy list */
-} ZbZdoNwkUpdateNotifyT;
+/** Bind_rsp */
+struct ZbZdoBindRspT {
+    enum ZbStatusCodeT status; /**< Status */
+};
+
+/** Mgmt_Lqi_req */
+struct ZbZdoLqiReqT {
+    uint16_t destAddr; /**< Destination address */
+    uint8_t startIndex; /**< StartIndex */
+};
+
+/** Mgmt_Lqi_rsp */
+struct ZbZdoLqiRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t respAddr; /**< Response address */
+    uint8_t neighborTblSz; /**< NeighborTableEntries */
+    uint8_t startIndex; /**< StartIndex */
+    uint8_t neighborListSz; /**< NeighborTableListCount */
+    struct ZbZdoNeighborDescT neighborList[ZB_ZDO_NEIGHBOR_LIST_MAX_SZ]; /**< NeighborTableList */
+};
+
+/** Mgmt_Rtg_req */
+struct ZbZdoRtgReqT {
+    uint16_t destAddr; /**< Destination address */
+    uint8_t startIndex; /**< StartIndex */
+};
+
+/** Mgmt_Rtg_rsp */
+struct ZbZdoRtgRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t respAddr; /**< Response address */
+    uint8_t routeTblSz; /**< RoutingTableEntries */
+    uint8_t startIndex; /**< StartIndex */
+    uint8_t routeListSz; /**< RoutingTableListCount */
+    struct ZbZdoRoutingDescT routeList[ZB_ZDO_ROUTE_LIST_MAX_SZ]; /**< RoutingTableList */
+};
+
+/** Mgmt_Bind_req */
+struct ZbZdoMgmtBindReqT {
+    uint16_t destAddr; /**< Destination address */
+    uint8_t startIndex; /**< StartIndex */
+};
+
+/** Mgmt_Bind_rsp */
+struct ZbZdoMgmtBindRspT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint8_t bindTblSz; /**< BindingTableEntries */ /* Total number */
+    uint8_t startIndex; /**< StartIndex */ /* Starting index being reported here */
+    uint8_t bindListSz; /**< BindingTableListCount */ /* Number reported here */
+    struct ZbZdoBindingDescT bindList[ZB_ZDO_BIND_LIST_MAX_SZ]; /**< BindingTableList */
+};
+
+/** ZDO Mgmt_Permit_Join_req */
+struct ZbZdoPermitJoinReqT {
+    uint16_t destAddr; /**< Destination address */
+    uint8_t duration; /**< PermitDuration */
+    uint8_t tcSignificance; /**< TC_Significance */
+};
+
+/** ZDO Mgmt_Permit_Join_rsp */
+struct ZbZdoPermitJoinRspT {
+    enum ZbStatusCodeT status; /**< Status */
+};
+
+/** Mgmt_Nwk_Update_req */
+struct ZbZdoNwkUpdateReqT {
+    uint16_t destAddr; /**< Destination address */
+    uint32_t channelMask; /**< ScanChannels */
+    uint8_t scanDuration; /**< ScanDuration */ /* or ZB_ZDP_NWK_UPDATE_CHANNEL_SWITCH, or ZB_ZDP_NWK_UPDATE_MANAGER_PARAMETERS */
+    uint8_t scanCount; /**< ScanCount */
+    uint8_t updateId; /**< nwkUpdateId */ /* only for ZB_ZDP_NWK_UPDATE_CHANNEL_SWITCH or ZB_ZDP_NWK_UPDATE_MANAGER_PARAMETERS */
+    uint16_t managerAddr; /**< nwkManagerAddr */ /* only for ZB_ZDP_NWK_UPDATE_MANAGER_PARAMETERS */
+};
+
+/** Mgmt_Nwk_Enhanced_Update_req */
+struct ZbZdoNwkEnhUpdateReqT {
+    uint16_t destAddr; /**< Destination address */
+    struct ZbChannelListT channelList; /**< ScanChannelsListStructure */
+    uint8_t scanDuration; /**< ScanDuration */
+    uint8_t scanCount; /**< ScanCount */
+    uint8_t updateId; /**< nwkUpdateId */
+    uint16_t managerAddr; /**< nwkManagerAddr */
+};
+
+/** Mgmt_Nwk_Update_notify */
+struct ZbZdoNwkUpdateNotifyT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint32_t scannedChannels; /**< ScannedChannels */
+    uint16_t txTotal; /**< TotalTransmissions */
+    uint16_t txFails; /**< TransmissionFailures */
+    uint8_t channelListSz; /**< ScannedChannelsListCount */
+    uint8_t channelList[ZB_ZDO_CHANNEL_LIST_MAXSZ]; /**< Channel energy list */
+};
 
 #define ZB_ZDO_MGMT_NWK_LEAVE_FLAG_REJOIN                   0x80U
 #define ZB_ZDO_MGMT_NWK_LEAVE_FLAG_REMOVE_CHILDREN          0x40U
 
-/* Mgmt_Nwk_Leave_req */
-typedef struct ZbZdoLeaveReqT {
-    uint16_t destAddr;
-    uint64_t deviceAddr;
-    uint8_t flags;
-} ZbZdoLeaveReqT;
+/** Mgmt_Nwk_Leave_req */
+struct ZbZdoLeaveReqT {
+    uint16_t destAddr; /**< Destination address */
+    uint64_t deviceAddr; /**< Device address */
+    uint8_t flags; /**< Remove Children, Rejoin */
+};
 
-/* Mgmt_Nwk_Leave_rsp */
-typedef struct ZbZdoLeaveRspT {
-    enum ZbStatusCodeT status;
-} ZbZdoLeaveRspT;
+/** Mgmt_Nwk_Leave_rsp */
+struct ZbZdoLeaveRspT {
+    enum ZbStatusCodeT status; /**< Status */
+};
 
 #define ZDP_JOINING_LIST_MAX_LEN            9U
 
-/* Mgmt_Nwk_Ieee_Joining_List_req */
+/** Mgmt_Nwk_Ieee_Joining_List_req */
 struct ZbZdoNwkIeeeJoinListReqT {
-    uint16_t destAddr;
-    uint8_t startIndex;
+    uint16_t destAddr; /**< Destination address */
+    uint8_t startIndex; /**< StartIndex */
 };
 
-/* Mgmt_Nwk_Ieee_Joining_List_rsp */
+/** Mgmt_Nwk_Ieee_Joining_List_rsp */
 struct ZbZdoNwkIeeeJoinListRspT {
-    enum ZbStatusCodeT status;
-    uint16_t respAddr; /* not part of ZDP payload */
-    uint8_t updateId;
-    enum WpanJoinPolicyT joiningPolicy;
-    uint8_t ieeeJoiningListTotal;
-    uint8_t startIndex;
-    uint8_t ieeeJoiningListCount;
-    uint64_t ieeeJoiningList[ZDP_JOINING_LIST_MAX_LEN];
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t respAddr; /**< Response address */ /* not part of ZDP payload */
+    uint8_t updateId; /**< IeeeJoiningListUpdateID */
+    enum WpanJoinPolicyT joiningPolicy; /**< JoiningPolicy */
+    uint8_t ieeeJoiningListTotal; /**< IeeeJoiningListTotal */
+    uint8_t startIndex; /**< StartIndex */
+    uint8_t ieeeJoiningListCount; /**< IeeeJoiningCount */
+    uint64_t ieeeJoiningList[ZDP_JOINING_LIST_MAX_LEN]; /**< IeeeJoiningList */
 };
 
 /*---------------------------------------------------------------
  * ZDO
  *---------------------------------------------------------------
  */
-/* Get the next ZDO sequence number */
+
+/**
+ * Return and increment the next ZDO sequence number.
+ * @param zb Zigbee stack instance
+ * @return Returns ZDO sequence number.
+ */
 uint8_t ZbZdoGetNextSeqNum(struct ZigBeeT *zb);
 
+/**
+ * Retrive the 16-bit short address for a device if given an extended address.
+ * @param zb Zigbee stack instance
+ * @param req NWK_Addr_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkAddrReq(struct ZigBeeT *zb, struct ZbZdoNwkAddrReqT *req,
     void (*callback)(struct ZbZdoNwkAddrRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Retrive the 64-bit extended address for a device if given a short network address.
+ * @param zb Zigbee stack instance
+ * @param req IEEE_Addr_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoIeeeAddrReq(struct ZigBeeT *zb, struct ZbZdoIeeeAddrReqT *req,
     void (*callback)(struct ZbZdoIeeeAddrRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Retrieve the node descriptor for a device.
+ * @param zb Zigbee stack instance
+ * @param req Node_desc_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNodeDescReq(struct ZigBeeT *zb, struct ZbZdoNodeDescReqT *req,
     void (*callback)(struct ZbZdoNodeDescRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Retrieve the power descriptor for a device.
+ * @param zb Zigbee stack instance
+ * @param req Power_desc_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoPowerDescReq(struct ZigBeeT *zb, struct ZbZdoPowerDescReqT *req,
     void (*callback)(struct ZbZdoPowerDescRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Retrieve the simple descriptor for a device.
+ * @param zb Zigbee stack instance
+ * @param req Simple_desc_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoSimpleDescReq(struct ZigBeeT *zb, struct ZbZdoSimpleDescReqT *req,
     void (*callback)(struct ZbZdoSimpleDescRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Retrieve the active endpoint list for a device.
+ * @param zb Zigbee stack instance
+ * @param req Active_ep_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoActiveEpReq(struct ZigBeeT *zb, struct ZbZdoActiveEpReqT *req,
     void (*callback)(struct ZbZdoActiveEpRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Retrieve the mach descriptor for a device.
+ * @param zb Zigbee stack instance
+ * @param req Match_desc_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoMatchDescReq(struct ZigBeeT *zb, struct ZbZdoMatchDescReqT *req,
     void (*callback)(struct ZbZdoMatchDescRspT *rsp, void *cb_arg), void *arg);
 
-/* ZbZdoMatchDescMulti:
- * Returns ZB_ZDP_STATUS_SUCCESS for received responses.
- * Returns ZB_ZDP_STATUS_TABLE_FULL if there's a problem starting the request.
- * Returns ZB_ZDP_STATUS_TIMEOUT when the stack decides to stop receiving responses. */
+/**
+ * Send a ZDO Match-Desc request and receive multiple responses.
+ * The responses, if any, are received by the callback.
+ * Each callback contains the result of a callback from a single device.
+ * The callback will be called each time a response is received.
+ * After a timeout period, the callback is called with a status of ZB_ZDP_STATUS_TIMEOUT to indicate the internal response filter
+ * is removed and any additional responses for this request are not processed.
+ * @param zb Zigbee stack instance
+ * @param req Match_desc_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZB_ZDP_STATUS_SUCCESS for received responses, ZB_ZDP_STATUS_TABLE_FULL if there's a problem starting the request,
+ * ZB_ZDP_STATUS_TIMEOUT when the stack decides to stop receiving responses, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoMatchDescMulti(struct ZigBeeT *zb, struct ZbZdoMatchDescReqT *req,
     void (*callback)(struct ZbZdoMatchDescRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Send a Device_annce message to the network. Automatically called by the stack after joining.
+ * @param zb Zigbee stack instance
+ * @param deviceAnncePtr Pointer to Device_annce structure
+ * @return Returns void
+ */
 void ZbZdoDeviceAnnce(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceT *deviceAnncePtr);
+
+/**
+ * Send a Device_annce message to the network using aliasing.
+ * @param zb Zigbee stack instance
+ * @param deviceAnncePtr Pointer to Device_annce structure
+ * @return Returns void
+ */
 void ZbZdoDeviceAnnceAlias(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceT *deviceAnncePtr);
+
+/**
+ * Parse the device announce received.
+ * @param structPtr Pointer to structure
+ * @param buf Packet buffer
+ * @param len Packet length
+ * @return size of the device announce size, which will be 11, or other value on error
+ */
 int ZbZdoParseDeviceAnnce(struct ZbZdoDeviceAnnceT *structPtr, const uint8_t *buf, unsigned int len);
 
-/* API to register a filter in the ZDO for the application to
- * receive Device_Annce messages. */
+/** API to register a filter in the ZDO for the application to receive Device_Annce messages. */
 struct ZbZdoDeviceAnnceFilterT;
+
+/**
+ * Register a filter in the ZDO for the application to receive Device_Annce messages.
+ * @param zb Zigbee stack instance
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return Pointer to filter structure
+ */
 struct ZbZdoDeviceAnnceFilterT * ZbZdoDeviceAnnceFilterRegister(struct ZigBeeT *zb,
     void (*callback)(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceT *annce, uint8_t seqno, void *arg), void *arg);
+
+/**
+ * Remove a Device_annce filter description.
+ * @param zb Zigbee stack instance
+ * @param handler Device_annce filter handler
+ * @return Returns void
+ */
 void ZbZdoDeviceAnnceFilterRemove(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceFilterT *handler);
 
 /*---------------------------------------------------------------
  * ZDP Binding Requests
  *---------------------------------------------------------------
  */
+
+/**
+ * Perform a ZDO Bind operation.
+ * @param zb Zigbee stack instance
+ * @param req Bind_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoBindReq(struct ZigBeeT *zb, struct ZbZdoBindReqT *req,
     void (*callback)(struct ZbZdoBindRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Perform a ZDP Unbind Bind operation.
+ * @param zb Zigbee stack instance
+ * @param req Unbind_req
+ * @param Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoUnbindReq(struct ZigBeeT *zb, struct ZbZdoBindReqT *req,
     void (*callback)(struct ZbZdoBindRspT *rsp, void *cb_arg), void *arg);
 
@@ -634,26 +760,108 @@ enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoUnbindReq(struct ZigBeeT *zb, struct ZbZd
  * ZDP Management Requests
  *---------------------------------------------------------------
  */
+
+/**
+ * Perform a Mgmt_Lqi_req command.
+ * @param zb Zigbee stack instance
+ * @param req Mgmt_Lqi_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoLqiReq(struct ZigBeeT *zb, struct ZbZdoLqiReqT *req,
     void (*callback)(struct ZbZdoLqiRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Perform a Mgmt_Rtg_req command.
+ * @param zb Zigbee stack instance
+ * @param req Mgmt_Rtg_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoRtgReq(struct ZigBeeT *zb, struct ZbZdoRtgReqT *req,
     void (*callback)(struct ZbZdoRtgRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Perform a Mgmt_Bind_req command.
+ * @param zb Zigbee stack instance
+ * @param req Mgmt_bind_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoMgmtBindReq(struct ZigBeeT *zb, struct ZbZdoMgmtBindReqT *req,
     void (*callback)(struct ZbZdoMgmtBindRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Perform a Mgmt_permit_joining_req command.
+ * @param zb Zigbee stack instance
+ * @param req Mgmt_permit_joining_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoPermitJoinReq(struct ZigBeeT *zb, struct ZbZdoPermitJoinReqT *req,
     void (*callback)(struct ZbZdoPermitJoinRspT *rsp, void *cb_arg), void *arg);
 
+/**
+ * Perform a Mgmt_Nwk_update_req command.
+ * @param zb Zigbee stack instance
+ * @param req Mgmt_Nwk_update_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkUpdateReq(struct ZigBeeT *zb, struct ZbZdoNwkUpdateReqT *req,
     void (*callback)(struct ZbZdoNwkUpdateNotifyT *reqPtr, void *cb_arg), void *arg);
 
+/**
+ * Perform a Mgmt_Nwk_Enhanced_Update_req command.
+ * @param zb Zigbee stack instance
+ * @param req Mgmt_Nwk_Enhanced_Update_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkEnhUpdateReq(struct ZigBeeT *zb, struct ZbZdoNwkEnhUpdateReqT *req,
     void (*callback)(struct ZbZdoNwkUpdateNotifyT *reqPtr, void *cb_arg), void *arg);
 
+/**
+ * Send an unsolicited Mgmt_Nwk_Update_notify command to the network manager. Does not wait for any response.
+ * @param zb Zigbee stack instance
+ * @param reqPtr Mgmt_Nwk_Update_notify
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkUpdateNotify(struct ZigBeeT *zb, struct ZbZdoNwkUpdateNotifyT *reqPtr);
 
+/**
+ * Register a filter in the ZDO for the application to receive Mgmt_Nwk_Update_notify messages.
+ * @param zb Zigbee stack instance
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return Pointer to filter structure
+ */
+struct ZbZdoNwkUpdateNotifyFilterT * ZbZdoNwkUpdateNotifyFilterRegister(struct ZigBeeT *zb,
+    void (*callback)(struct ZigBeeT *zb, struct ZbZdoNwkUpdateNotifyT *msg,
+        uint8_t seqno, void *arg), void *arg);
+
+/**
+ * Remove a Mgmt_Nwk_Update_notify filter.
+ * @param zb Zigbee stack instance
+ * @param handler Mgmt_Nwk_Update_notify filter handle
+ * @return Returns void
+ */
+void ZbZdoNwkUpdateNotifyFilterRemove(struct ZigBeeT *zb, struct ZbZdoNwkUpdateNotifyFilterT *handle);
+
+/**
+ * Perform a Mgmt_leave_req command.
+ * @param zb Zigbee stack instance
+ * @param req Mgmt_Leave_req
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoLeaveReq(struct ZigBeeT *zb, struct ZbZdoLeaveReqT *req,
     void (*callback)(struct ZbZdoLeaveRspT *rsp, void *cb_arg), void *arg);
 
@@ -682,11 +890,38 @@ enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoSetComplexDesc(struct ZigBeeT *zb, struct
  * IEEE Joining List
  *---------------------------------------------------------------
  */
+
+/**
+ * Send an IEEE-Joining-List request.
+ * @param zb Zigbee stack instance
+ * @param IEEE-Joining-List.request Structure
+ * @param callback Function to call on completion
+ * @param arg Callback argument
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkIeeeJoinListReq(struct ZigBeeT *zb, struct ZbZdoNwkIeeeJoinListReqT *req,
     void (*callback)(struct ZbZdoNwkIeeeJoinListRspT *rsp, void *cb_arg), void *arg);
+
+/**
+ * Send an IEEE-Joining-List.response.
+ * Used primarily by GB868 applications.
+ * @param zb Zigbee stack instance
+ * @param dstNwkAddr Destination network address
+ * @param startIndex Start index
+ * @param seqnum Sequence number
+ * @param fromRequest Use start index from request
+ * @return Number of entries sent in response
+ */
 unsigned int ZbZdoNwkIeeeJoinListRsp(struct ZigBeeT *zb, uint16_t dstNwkAddr,
     uint8_t startIndex, uint8_t seqnum, bool fromRequest);
 /* Helper to broadcast the entire list to the network */
+
+/**
+ * Send an IEEE-Joining-List.response broadcast message for all entries in the IEEE Join List.
+ * Used primarily by GB868 applications.
+ * @param zb Zigbee stack instance
+ * @return Returns number of entries sent
+ */
 unsigned int ZbZdoNwkIeeeJoinListBcastAll(struct ZigBeeT *zb);
 
 #endif /* ZIGBEE_ZDO_H */

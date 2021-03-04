@@ -30,8 +30,8 @@
 #include "stm32_seq.h"
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.onoff.h"
-#include "zcl/zcl.identify.h"
+#include "zcl/general/zcl.onoff.h"
+#include "zcl/general/zcl.identify.h"
 #include "ee.h"
 #include "hw_flash.h"
 
@@ -229,19 +229,6 @@ static void APP_ZIGBEE_StackLayersInit(void)
      zigbee_app_info.fresh_startup = false; 
      APP_DBG("ZbStartupPersist: SUCCESS, restarted from persistence");
      BSP_LED_On(LED_GREEN);
-#if 0   
-     /* STEP 2 - Get the ZCL on off attribute restored from persistence */ 
-     /* start a timer to wait M0 to complete Cluster persitence*/ 
-     HW_TS_Create(CFG_TIM_WAIT_BEOFRE_READ_ATTR, &TS_ID1, hw_ts_SingleShot, APP_ZIGBEE_PersistCompleted_callback);
-     HW_TS_Start(TS_ID1, 1000);
-     
-     /* STEP3 - Activate back the persistent notification */
-     /* Register Persistent data change notification */
-     ZbPersistNotifyRegister(zigbee_app_info.zb,APP_ZIGBEE_persist_notify_cb,NULL);
-                                                         
-     /* Call the callback once here to save persistence data */
-     APP_ZIGBEE_persist_notify_cb(zigbee_app_info.zb,NULL);
-#endif
   }
   else
   {
@@ -263,10 +250,10 @@ static void APP_ZIGBEE_StackLayersInit(void)
  */
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
-  ZbApsmeAddEndpointReqT req2;
-  ZbApsmeAddEndpointConfT conf2;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req2;
+  struct ZbApsmeAddEndpointConfT conf2;
   struct ZbZclOnOffServerCallbacksT onoff_callbacks;
   
   memset(&req, 0, sizeof(req));
@@ -293,12 +280,12 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
   assert(conf2.status == ZB_STATUS_SUCCESS);
   
   /* OnOff Client */
-  zigbee_app_info.onoff_client_1 = ZbZclOnOffClientAlloc(zigbee_app_info.zb, SW1_ENDPOINT);
+  zigbee_app_info.onoff_client_1 = ZbZclOnOffClientAlloc(zigbee_app_info.zb, SW2_ENDPOINT);
   assert(zigbee_app_info.onoff_client_1 != NULL);
   ZbZclClusterEndpointRegister(zigbee_app_info.onoff_client_1);
   
   /* OnOff Server */
-  zigbee_app_info.onoff_server_1 = ZbZclOnOffServerAlloc(zigbee_app_info.zb, SW2_ENDPOINT,&onoff_callbacks,NULL);
+  zigbee_app_info.onoff_server_1 = ZbZclOnOffServerAlloc(zigbee_app_info.zb, SW1_ENDPOINT,&onoff_callbacks,NULL);
   assert(zigbee_app_info.onoff_server_1 != NULL);
   /* Allocate the attributes */
   if (ZbZclAttrAppendList(zigbee_app_info.onoff_server_1, zcl_onoff_server_attr_list, ZCL_ATTR_LIST_LEN(zcl_onoff_server_attr_list))) 
@@ -385,10 +372,10 @@ static void APP_ZIGBEE_NwkForm(void)
  */
 static void APP_ZIGBEE_ConfigGroupAddr(void)
 {
-  ZbApsmeAddGroupReqT req;
-  ZbApsmeAddGroupConfT conf;
-  ZbApsmeAddGroupReqT req2;
-  ZbApsmeAddGroupConfT conf2;
+  struct ZbApsmeAddGroupReqT req;
+  struct ZbApsmeAddGroupConfT conf;
+  struct ZbApsmeAddGroupReqT req2;
+  struct ZbApsmeAddGroupConfT conf2;
   
   memset(&req, 0, sizeof(req));
   req.endpt = SW1_ENDPOINT;
@@ -815,7 +802,7 @@ static enum ZclStatusCodeT onoff_server_off(struct ZbZclClusterT *clusterPtr,
     uint8_t endpoint;
 
     endpoint = ZbZclClusterGetEndpoint(clusterPtr);
-    if (endpoint == SW2_ENDPOINT)
+    if (endpoint == SW1_ENDPOINT)
     {
         APP_DBG("LED_RED OFF");
         BSP_LED_Off(LED_RED);
@@ -824,6 +811,7 @@ static enum ZclStatusCodeT onoff_server_off(struct ZbZclClusterT *clusterPtr,
     else
     {
         /* Unknown endpoint */
+        APP_DBG("Unknown Endpoint");
         return ZCL_STATUS_FAILURE;
     }
     return ZCL_STATUS_SUCCESS;
@@ -841,7 +829,7 @@ static enum ZclStatusCodeT onoff_server_on(struct ZbZclClusterT *clusterPtr,
     uint8_t endpoint;
 
     endpoint = ZbZclClusterGetEndpoint(clusterPtr);
-    if (endpoint == SW2_ENDPOINT) 
+    if (endpoint == SW1_ENDPOINT) 
     {
         APP_DBG("LED_RED ON");
         BSP_LED_On(LED_RED);
@@ -850,6 +838,7 @@ static enum ZclStatusCodeT onoff_server_on(struct ZbZclClusterT *clusterPtr,
     else
     {
         /* Unknown endpoint */
+        APP_DBG("Unknown Endpoint");
         return ZCL_STATUS_FAILURE;
     }
     return ZCL_STATUS_SUCCESS;
@@ -997,12 +986,12 @@ static void APP_ZIGBEE_SW1_Process()
 
   memset(&dst, 0, sizeof(dst));
   dst.mode = ZB_APSDE_ADDRMODE_GROUP;
-  dst.endpoint = SW1_ENDPOINT;
-  dst.nwkAddr = SW1_GROUP_ADDR;
+  dst.endpoint = SW2_ENDPOINT;
+  dst.nwkAddr = SW2_GROUP_ADDR;
 
-  APP_DBG("SW1 PUSHED (SENDING TOGGLE TO GROUP 0x0001)");
+  APP_DBG("SW1 PUSHED (SENDING TOGGLE TO GROUP 0x0002)");
   if (ZbZclOnOffClientToggleReq(zigbee_app_info.onoff_client_1, &dst, NULL, NULL) != ZCL_STATUS_SUCCESS) {
-    APP_DBG("Error, ZbZclOnOffClientToggleReq failed (SW1_ENDPOINT)");
+    APP_DBG("Error, ZbZclOnOffClientToggleReq failed (SW2_ENDPOINT)");
   }
 }
 

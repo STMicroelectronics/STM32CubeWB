@@ -31,8 +31,8 @@
 
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.onoff.h"
-#include "zcl/zcl.identify.h"
+#include "zcl/general/zcl.onoff.h"
+#include "zcl/general/zcl.identify.h"
 
 #include "ee.h"
 #include "hw_flash.h"
@@ -75,10 +75,10 @@ static uint32_t APP_ZIGBEE_GetStartNb(void);
 static void APP_ZIGBEE_IncrementStartNb(void);
 
 static bool APP_ZIGBEE_persist_load(void);
-static bool APP_ZIGBEE_persist_save(void);
+bool APP_ZIGBEE_persist_save(void);
 static void APP_ZIGBEE_persist_delete(void);
 static void APP_ZIGBEE_persist_notify_cb(struct ZigBeeT *zb, void *cbarg);
-static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT *zb);
+enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT *zb);
 static void APP_ZIGBEE_PersistCompleted_callback(enum ZbStatusCodeT status,void *arg);
 
 #ifdef CFG_NVM
@@ -277,8 +277,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
 
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;
@@ -400,8 +400,8 @@ static void APP_ZIGBEE_NwkForm(void)
  */
 static void APP_ZIGBEE_ConfigGroupAddr(void)
 {
-  ZbApsmeAddGroupReqT req;
-  ZbApsmeAddGroupConfT conf;
+  struct ZbApsmeAddGroupReqT req;
+  struct ZbApsmeAddGroupConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.endpt = SW1_ENDPOINT;
@@ -490,7 +490,7 @@ static void APP_ZIGBEE_persist_notify_cb(struct ZigBeeT *zb, void *cbarg)
  * @param  zb: Zigbee device object pointer
  * @retval Zigbee stack Status code
  */
-static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
+ enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
 {
    bool read_status;
    enum ZbStatusCodeT status = ZB_STATUS_SUCCESS;
@@ -584,7 +584,7 @@ static bool APP_ZIGBEE_persist_load(void)
  * @param  None
  * @retval true if success , false if fail
  */
-static bool APP_ZIGBEE_persist_save(void)
+ bool APP_ZIGBEE_persist_save(void)
 {
     uint32_t len;
 

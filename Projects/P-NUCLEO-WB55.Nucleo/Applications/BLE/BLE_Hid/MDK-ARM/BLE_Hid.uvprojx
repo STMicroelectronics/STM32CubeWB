@@ -442,6 +442,16 @@
               <FileType>1</FileType>
               <FilePath>../STM32_WPAN/App/hids_app.c</FilePath>
             </File>
+            <File>
+              <FileName>bas_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\App\bas_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>dis_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\App\dis_app.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -581,6 +591,16 @@
               <FileName>svc_ctl.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/svc_ctl.c</FilePath>
+            </File>
+            <File>
+              <FileName>bas.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\bas.c</FilePath>
+            </File>
+            <File>
+              <FileName>dis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\dis.c</FilePath>
             </File>
           </Files>
         </Group>

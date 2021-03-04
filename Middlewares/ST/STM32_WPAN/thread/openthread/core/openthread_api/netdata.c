@@ -31,7 +31,7 @@
 #include "netdata.h"
 
 
-OTAPI otError OTCALL otNetDataGet(otInstance *aInstance, bool aStable, uint8_t *aData,
+otError otNetDataGet(otInstance *aInstance, bool aStable, uint8_t *aData,
                                   uint8_t *aDataLength)
 {
     Pre_OtCmdProcessing();
@@ -51,7 +51,7 @@ OTAPI otError OTCALL otNetDataGet(otInstance *aInstance, bool aStable, uint8_t *
     return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otNetDataGetNextOnMeshPrefix(otInstance *aInstance, otNetworkDataIterator *aIterator,
+otError otNetDataGetNextOnMeshPrefix(otInstance *aInstance, otNetworkDataIterator *aIterator,
                                                   otBorderRouterConfig *aConfig)
 {
     Pre_OtCmdProcessing();
@@ -89,7 +89,7 @@ otError otNetDataGetNextRoute(otInstance *aInstance, otNetworkDataIterator *aIte
     return (otError)p_ot_req->Data[0];
 }
 
-OTAPI uint8_t OTCALL otNetDataGetVersion(otInstance *aInstance)
+uint8_t otNetDataGetVersion(otInstance *aInstance)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -105,7 +105,7 @@ OTAPI uint8_t OTCALL otNetDataGetVersion(otInstance *aInstance)
     return (uint8_t)p_ot_req->Data[0];
 }
 
-OTAPI uint8_t OTCALL otNetDataGetStableVersion(otInstance *aInstance)
+uint8_t otNetDataGetStableVersion(otInstance *aInstance)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */

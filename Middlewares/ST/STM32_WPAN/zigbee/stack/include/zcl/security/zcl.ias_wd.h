@@ -1,5 +1,6 @@
 /**
  * @file zcl.ias_wd.h
+ * @heading IAS WD
  * @brief ZCL Security IAS Warning Device cluster header
  * ZCL 7 section 8.4
  * ZCL 8 section 8.4
@@ -9,21 +10,27 @@
 #ifndef ZCL_IAS_WD_H
 #define ZCL_IAS_WD_H
 
-/* PICS.ZCL.IASWD
+/* @PICS.ZCL.IASWD
  *
- * IASWD.S | True
- * IASWD.C | True
+ * IASWD.S | Server | True
+ * IASWD.C | Client | True
  *
- * IASWD.S.A0000 | True
- * IASWD.S.Afffd | True
- * IASWD.S.Afffe | False
- * IASWD.S.C00.Rsp | True
- * IASWD.S.C01.Rsp | True
+ * Server Attributes
+ * IASWD.S.A0000 | MaxDuration | True
+ * IASWD.S.Afffd | ClusterRevision | True
+ * IASWD.S.Afffe | AttributeReportingStatus | False
  *
- * IASWD.C.Afffd | True
- * IASWD.C.Afffe | False
- * IASWD.C.C00.Tx | True
- * IASWD.C.C01.Tx | True
+ * Commands Received
+ * IASWD.S.C00.Rsp | Start warning | True
+ * IASWD.S.C01.Rsp | Squawk | True
+ *
+ * Client Attributes
+ * IASWD.C.Afffd | ClusterRevision | True
+ * IASWD.C.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Generated
+ * IASWD.C.C00.Tx | Start warning | True
+ * IASWD.C.C01.Tx | Squawk | True
  */
 
 #include "zcl/zcl.h"
@@ -118,7 +125,7 @@ struct ZbZclClusterT * ZbZclIasWdServerAlloc(struct ZigBeeT *zb, uint8_t endpoin
 /* IAS Warning Device Client */
 
 /**
- * Create a new instance of the IAS Warning Devie Client cluster
+ * Create a new instance of the IAS Warning Device Client cluster
  * @param zb Zigbee stack instance
  * @param endpoint Endpoint on which to create cluster
  * @param arg Pointer to application data that will later be provided back to the callback functions when invoked

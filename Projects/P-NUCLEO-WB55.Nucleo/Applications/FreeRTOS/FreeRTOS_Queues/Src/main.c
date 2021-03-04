@@ -157,11 +157,11 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of MessageQueuePro */
-  osThreadDef(MessageQueuePro, MessageQueueProducer, osPriorityNormal, 0, 128);
+  osThreadDef(MessageQueuePro, MessageQueueProducer, osPriorityBelowNormal, 0, 128);
   MessageQueueProHandle = osThreadCreate(osThread(MessageQueuePro), NULL);
 
   /* definition and creation of MessageQueueCon */
-  osThreadDef(MessageQueueCon, MessageQueueConsumer, osPriorityNormal, 0, 128);
+  osThreadDef(MessageQueueCon, MessageQueueConsumer, osPriorityBelowNormal, 0, 128);
   MessageQueueConHandle = osThreadCreate(osThread(MessageQueueCon), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */

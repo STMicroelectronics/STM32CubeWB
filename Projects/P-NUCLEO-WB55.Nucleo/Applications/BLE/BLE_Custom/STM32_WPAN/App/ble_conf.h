@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : App/ble_conf.h
@@ -16,6 +17,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef BLE_CONF_H
@@ -54,7 +56,7 @@
 #define BLE_CFG_CLT_MAX_NBR_CB                                                 0
 
 /******************************************************************************
- * GAP Service - Apprearance
+ * GAP Service - Appearance
  ******************************************************************************/
 
 #define BLE_CFG_UNKNOWN_APPEARANCE                  (0)

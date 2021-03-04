@@ -31,13 +31,14 @@
 
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.commission.h"
+#include "zcl/general/zcl.commission.h"
 
 /* Private defines -----------------------------------------------------------*/
 #define APP_ZIGBEE_STARTUP_FAIL_DELAY               500U
 #define SW1_ENDPOINT                                17
 #define CHANNEL                                     19
-#define NB_MAX_STRING                               10
+#define COMMISSIONING_DEST_ENDPOINT                 ZB_ENDPOINT_BCAST
+
 
 #define HW_TS_SERVER_1MS_NB_TICKS                   (1*1000/CFG_TS_TICK_VAL) /**< 1s */
 
@@ -304,7 +305,7 @@ static void APP_ZIGBEE_Commissioning_Server_Init(void){
   /* Enabling Commissioning client */
   info.page = 0;
   info.channel = 19;
-  status = ZbZclCommissionServerEnable(zigbee_app_info.commissioning_server, &info);
+  status = ZbZclCommissionServerEnable(zigbee_app_info.commissioning_server, TRUE,&info);
   if (status != ZCL_STATUS_SUCCESS){
     APP_DBG("ZbZclCommissionServerEnable failed."); 
     assert(0);
@@ -509,7 +510,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
   /* Commissioning Server */
-  zigbee_app_info.commissioning_server = ZbZclCommissionServerAlloc(zigbee_app_info.zb, ZCL_PROFILE_HOME_AUTOMATION, false, &CommissionServerCallbacks, NULL);
+  zigbee_app_info.commissioning_server = ZbZclCommissionServerAlloc(zigbee_app_info.zb, COMMISSIONING_DEST_ENDPOINT, ZCL_PROFILE_HOME_AUTOMATION,false, &CommissionServerCallbacks, NULL);
   assert(zigbee_app_info.commissioning_server != NULL);
   ZbZclClusterEndpointRegister(zigbee_app_info.commissioning_server); 
   

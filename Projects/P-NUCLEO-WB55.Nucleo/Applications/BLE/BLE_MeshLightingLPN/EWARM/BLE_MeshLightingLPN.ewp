@@ -1095,6 +1095,12 @@
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\app_ble.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\\appli_config.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config_client.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_generic.c</name>
                 </file>
                 <file>
@@ -1236,6 +1242,9 @@
                     <name>blesvc</name>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\common.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\config_client.c</name>
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\generic.c</name>

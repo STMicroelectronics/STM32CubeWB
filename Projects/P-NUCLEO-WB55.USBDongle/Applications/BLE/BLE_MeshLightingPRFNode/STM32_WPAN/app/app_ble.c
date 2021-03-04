@@ -268,8 +268,11 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
-    CFG_BLE_LL_ONLY,
-    0}
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER}
   };
 
   /**
@@ -484,6 +487,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    * Initialize authentication
    */
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;
+  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.OOB_Data_Present = 0;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = CFG_USED_FIXED_PIN;
@@ -529,12 +533,20 @@ const uint8_t* BleGetBdAddress( void )
     company_id = LL_FLASH_GetSTCompanyID();
     device_id = LL_FLASH_GetDeviceID();
 
+/**
+ * Public Address with the ST company ID
+ * bit[47:24] : 24bits (OUI) equal to the company ID
+ * bit[23:16] : Device ID.
+ * bit[15:0] : The last 16bits from the UDN
+ * Note: In order to use the Public Address in a final product, a dedicated
+ * 24bits company ID (OUI) shall be bought.
+ */
     bd_addr_udn[0] = (uint8_t)(udn & 0x000000FF);
     bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_addr_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
-    bd_addr_udn[3] = (uint8_t)device_id;
-    bd_addr_udn[4] = (uint8_t)(company_id & 0x000000FF);;
-    bd_addr_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[2] = (uint8_t)device_id;
+    bd_addr_udn[3] = (uint8_t)(company_id & 0x000000FF);
+    bd_addr_udn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
 
     bd_addr = (const uint8_t *)bd_addr_udn;
   }
@@ -549,7 +561,6 @@ const uint8_t* BleGetBdAddress( void )
     {
       bd_addr = M_bd_addr;
     }
-
   }
 
   return bd_addr;

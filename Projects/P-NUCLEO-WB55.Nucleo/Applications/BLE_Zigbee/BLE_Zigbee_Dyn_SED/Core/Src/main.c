@@ -270,11 +270,11 @@ void SystemClock_Config( void )
 	HAL_RCCEx_CRSConfig(&RCC_CRSInitStruct);
 #endif
 
-        /**
-         *  Write twice the value to flush the APB-AHB bridge to ensure the  bit is written
-         */
-        HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
-        HAL_PWR_EnableBkUpAccess();
+  /**
+   *  Write twice the value to flush the APB-AHB bridge to ensure the  bit is written
+   */
+  HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
+  HAL_PWR_EnableBkUpAccess();
 
 	/**
 	 * Select LSE clock
@@ -286,6 +286,28 @@ void SystemClock_Config( void )
 	 * Select wakeup source of BLE RF
 	 */
 	LL_RCC_SetRFWKPClockSource(LL_RCC_RFWKP_CLKSOURCE_LSE);
+
+  /* USER CODE BEGIN Smps */
+#if (CFG_USE_SMPS != 0)
+  /**
+   *  Configure and enable SMPS
+   *
+   *  The SMPS configuration is not yet supported by CubeMx
+   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
+   *  the SMPS output voltage shall be increased for higher RF output power
+   */
+  /* Set SMPS step down converter supply startup current selection */
+  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
+
+  /* Set SMPS step down converter output voltage scaling */
+  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
+
+  /* Set SMPS operating mode */
+  LL_PWR_SMPS_SetMode(LL_PWR_SMPS_STEP_DOWN);
+
+  LL_PWR_SMPS_Enable();
+#endif  /* CFG_USE_SMPS */
+  /* USER CODE END Smps */
 
 	return;
 }

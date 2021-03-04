@@ -29,6 +29,12 @@
 /* Custom Cluster ID */
 #define ZCL_CLUSTER_LS  0x80E1
 
+
+/* Custom response  */
+#define ZCL_CUSTOM_LS_MATCH     0x11
+#define ZCL_CUSTOM_LS_MISMATCH  0x00
+
+
 /* Attribute Identifiers */
 enum {
     ZCL_CUSTOM_LS_ATTR = 0x0000,
@@ -47,7 +53,7 @@ struct set_custom_ls_command_req_t {
 
 /* Response Structures */
 struct custom_ls_command_rsp_t {
-    uint16_t one;
+    uint8_t one;
 };
 
 

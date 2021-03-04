@@ -32,11 +32,16 @@
 
 extern otJoinerCallback otJoinerCb;
 
-
-OTAPI otError OTCALL otJoinerStart(otInstance *aInstance, const char *aPSKd, const char *aProvisioningUrl,
-                                   const char *aVendorName, const char *aVendorModel,
-                                   const char *aVendorSwVersion, const char *aVendorData,
-                                   otJoinerCallback aCallback, void *aContext)
+#if OPENTHREAD_CONFIG_JOINER_ENABLE
+otError otJoinerStart(otInstance *     aInstance,
+                      const char *     aPskd,
+                      const char *     aProvisioningUrl,
+                      const char *     aVendorName,
+                      const char *     aVendorModel,
+                      const char *     aVendorSwVersion,
+                      const char *     aVendorData,
+                      otJoinerCallback aCallback,
+                      void *           aContext)
 {
     Pre_OtCmdProcessing();
     otJoinerCb = aCallback;
@@ -46,7 +51,7 @@ OTAPI otError OTCALL otJoinerStart(otInstance *aInstance, const char *aPSKd, con
     p_ot_req->ID = MSG_M4TOM0_OT_JOINER_START;
 
     p_ot_req->Size=7;
-    p_ot_req->Data[0] = (uint32_t) aPSKd;
+    p_ot_req->Data[0] = (uint32_t) aPskd;
     p_ot_req->Data[1] = (uint32_t) aProvisioningUrl;
     p_ot_req->Data[2] = (uint32_t) aVendorName;
     p_ot_req->Data[3] = (uint32_t) aVendorModel;
@@ -60,7 +65,7 @@ OTAPI otError OTCALL otJoinerStart(otInstance *aInstance, const char *aPSKd, con
     return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otJoinerStop(otInstance *aInstance)
+void otJoinerStop(otInstance *aInstance)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -73,10 +78,9 @@ OTAPI otError OTCALL otJoinerStop(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otJoinerState OTCALL otJoinerGetState(otInstance *aInstance)
+otJoinerState otJoinerGetState(otInstance *aInstance)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -92,7 +96,7 @@ OTAPI otJoinerState OTCALL otJoinerGetState(otInstance *aInstance)
     return (otJoinerState)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otJoinerGetId(otInstance *aInstance, otExtAddress *aJoinerId)
+void otJoinerGetId(otInstance *aInstance, otExtAddress *aJoinerId)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -106,5 +110,5 @@ OTAPI otError OTCALL otJoinerGetId(otInstance *aInstance, otExtAddress *aJoinerI
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
 }
+#endif // OPENTHREAD_CONFIG_JOINER_ENABLE

@@ -114,9 +114,8 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
-  /* Configure LED1, LED2 and LED3 */
+  /* Configure LED1 and LED3 */
   BSP_LED_Init(LED1);
-  BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
 
   /* Configure User push-button (SW1) button */
@@ -257,7 +256,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi1.Init.CRCPolynomial = 7;
   hspi1.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
-  hspi1.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
+  hspi1.Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
   if (HAL_SPI_Init(&hspi1) != HAL_OK)
   {
     Error_Handler();

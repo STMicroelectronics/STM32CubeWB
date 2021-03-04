@@ -137,6 +137,23 @@ const MODEL_OpcodeTableParam_t Light_Client_Opcodes_Table[] =
 };
 
 /* Private function prototypes -----------------------------------------------*/
+MOBLE_RESULT LightClient_LC_Property_Get(MOBLEUINT8 elementIndex, 
+                                         MOBLEUINT8 *pPropertyID) ;
+MOBLE_RESULT LightClient_LC_Property_Set_Ack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *pLightLCProperty_param, 
+                                     MOBLEUINT32 length);
+MOBLE_RESULT LightClient_LC_Property_Set_Unack(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT8 *pLightLCProperty_param,
+                                     MOBLEUINT32 length);
+MOBLE_RESULT LightLC_Client_Mode_Status(MOBLEUINT8 const *pLCMode_status, 
+                                        MOBLEUINT32 plength, 
+                                        MOBLEUINT16 dstPeer, 
+                                        MOBLEUINT8 elementIndex);
+MOBLE_RESULT LightLC_Client_OM_Status(MOBLEUINT8 const *pLCOccupancyMode_status,
+                                      MOBLEUINT32 plength, 
+                                      MOBLEUINT16 dstPeer, 
+                                      MOBLEUINT8 elementIndex);
+
 /* Private functions ---------------------------------------------------------*/
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS  
@@ -279,8 +296,6 @@ MOBLE_RESULT LightClient_Lightness_Set_Unack(MOBLEUINT8 elementIndex,
   return result;
 }
 
-
-
 /**
 * @brief  LightClient_Lightness_Linear_Get: This function is called to send Light Lightness Get message
 * @param  elementIndex : Index of the element
@@ -314,8 +329,6 @@ MOBLE_RESULT LightClient_Lightness_Linear_Get(MOBLEUINT8 elementIndex)
   
   return result;
 }
-
-
 
 /**
 * @brief  LightClient_Lightness_Linear_Set_Ack: This function is called for Acknowledged message
@@ -1910,7 +1923,6 @@ MOBLE_RESULT LightClient_Hsl_Saturation_Set_Unack(MOBLEUINT8 elementIndex,
 #endif /* ENABLE_LIGHT_MODEL_CLIENT_HSL  */
 /******************************************************************************/
 
-
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_CLIENT_LC
 /******************************************************************************/
@@ -2297,6 +2309,533 @@ MOBLE_RESULT LightClient_LC_OnOff_Set_Unack(MOBLEUINT8 elementIndex,
 }
 
 /**
+* @brief LightLC_Client_Mode_Status: Function called when status of the model 
+*        received on the client.
+* @param pLCMode_status: pointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT LightLC_Client_Mode_Status(MOBLEUINT8 const *pLCMode_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Mode_Status received \r\n");
+  AppliLightLc_cb.LightLCs_ModeStatus_cb(pLCMode_status, plength, dstPeer, elementIndex);
+  
+  for(i = 0; i < plength; i++)
+  {
+    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Mode_Status: 0x%x\r\n",
+            pLCMode_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief LightLC_Client_OM_Status: Function called when status of the model 
+*        received on the client.
+* @param pLCOccupancyMode_status: pointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT LightLC_Client_OM_Status(MOBLEUINT8 const *pLCOccupancyMode_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OM_Status received \r\n");
+  AppliLightLc_cb.LightLCs_OmStatus_cb(pLCOccupancyMode_status, plength, dstPeer, elementIndex);
+  
+  for(i = 0; i < plength; i++)
+  {
+    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OM_Status: 0x%x\r\n",
+            pLCOccupancyMode_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief LightLC_Client_OnOff_Status: Function called when status of the model 
+*        received on the client.
+* @param pLCOnOff_status: pointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT LightLC_Client_OnOff_Status(MOBLEUINT8 const *pLCOnOff_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OnOff_Status received \r\n");
+  AppliLightLc_cb.LightLCs_OnOffStatus_cb(pLCOnOff_status, plength, dstPeer, elementIndex);
+  
+  for(i = 0; i < plength; i++)
+  {
+    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OnOff_Status: 0x%x\r\n",
+            pLCOnOff_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief LightLC_Client_Property_Status: Function called when status of the model 
+*        received on the client.
+* @param pLCOnOff_status: pointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT LightLC_Client_Property_Status(MOBLEUINT8 const *pLCProperty_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Property_Status received \r\n");
+  AppliLightLc_cb.LightLCs_PropertyStatus_cb(pLCProperty_status, plength, dstPeer, elementIndex);
+  
+  for(i = 0; i < plength; i++)
+  {
+    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Property_Status: 0x%x\r\n",
+            pLCProperty_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+/******************************************************************************/
+#endif /* ENABLE_LIGHT_MODEL_CLIENT_LC  */
+/******************************************************************************/
+
+/**
+* @brief Light_Client_Lightness_Status: Function called when status of the model 
+*        received on the client.
+* @param pLightness_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Lightness_Status(MOBLEUINT8 const *pLightness_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_CLIENT_M, "Light_Client_Lightness_Status received \r\n");
+  LightAppli_cb.Lightness_Status_cb(pLightness_status, plength, dstPeer, elementIndex);
+
+  for(i = 0; i < plength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_Lightness_Status: %d\r\n",
+            pLightness_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_Lightness_Linear_Status: Function called when status of the model 
+*        received on the client.
+* @param pLightnessLinear_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Lightness_Linear_Status(MOBLEUINT8 const *pLightnessLinear_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Light_LightnessLinear_Status received \r\n");
+  LightAppli_cb.Lightness_Linear_Status_cb(pLightnessLinear_status, pLength, dstPeer, elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_Client_Lightness_Linear_Status: %d\r\n",
+            pLightnessLinear_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_Lightness_Last_Status: Function called when status of the model 
+*        received on the client.
+* @param pLightnessLast_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Lightness_Last_Status(MOBLEUINT8 const *pLightnessLast_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Light_LightnessLast_Status received \r\n");
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_LightnessLast_Status: %d\r\n",
+            pLightnessLast_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_Lightness_Default_Status: Function called when status of the model 
+*        received on the client.
+* @param pLightnessDefault_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Lightness_Default_Status(MOBLEUINT8 const *pLightnessDefault_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Light_Client_Lightness_Default_Status received \r\n");
+  LightAppli_cb.Lightness_Default_Status_cb(pLightnessDefault_status, pLength,dstPeer, elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_Client_Lightness_Default_Status: %d\r\n",
+            pLightnessDefault_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_Lightness_Range_Status: Function called when status of the model 
+*        received on the client.
+* @param pLightnessRange_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Lightness_Range_Status(MOBLEUINT8 const *pLightnessRange_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Light_Lightness_Range_Status received \r\n");
+  LightAppli_cb.Lightness_Range_Status_cb(pLightnessRange_status, pLength,dstPeer,elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_Client_Lightness_Range_Status: %d\r\n",
+            pLightnessRange_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_Ctl_Status: Function called when status of the model 
+*        received on the client.
+* @param pLightCtl_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Ctl_Status(MOBLEUINT8 const *pLightCtl_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Light_Ctl_Status received \r\n");
+  LightAppli_cb.Light_Ctl_Status_cb(pLightCtl_status, pLength,dstPeer,elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_Ctl_Status: %d\r\n",
+            pLightCtl_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_CtlTemperature_Range_Status: Function called when status of the model 
+*        received on the client.
+* @param pCtlTempRange_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_CtlTemperature_Range_Status(MOBLEUINT8 const *pCtlTempRange_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Light_Client_CtlTemperature_Range_Status received \r\n");
+  LightAppli_cb.Light_CtlTemperature_Range_Status_cb(pCtlTempRange_status, pLength,dstPeer,elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_Client_CtlTemperature_Range_Status: %d\r\n",
+            pCtlTempRange_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_CtlDefault_Status: Function called when status of the model 
+*        received on the client.
+* @param pCtlDefault_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_CtlDefault_Status(MOBLEUINT8 const *pCtlDefault_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Light_Ctl_DefaultStatus received \r\n");
+  LightAppli_cb.Light_CtlDefault_Status_cb(pCtlDefault_status, pLength,dstPeer, elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_Ctl_DefaultStatus: %d\r\n",
+            pCtlDefault_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_CtlTemperature_Status: Function called when status of the model 
+*        received on the client.
+* @param pLightCtlTemp_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_CtlTemperature_Status(MOBLEUINT8 const *pLightCtlTemp_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  LightAppli_cb.Light_CtlTemperature_Status_cb(pLightCtlTemp_status, pLength,dstPeer,elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_CtlTemperature_Status: %d\r\n",
+            pLightCtlTemp_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_Hsl_Status: Function called when status of the model 
+*        received on the client.
+* @param pHsl_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_Hsl_Status(MOBLEUINT8 const *pHsl_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Status received \r\n");
+  
+  LightAppli_cb.Light_Hsl_Status_cb(pHsl_status, pLength,dstPeer,elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_Hsl_Status: %d\r\n", pHsl_status[i]);
+  }
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_HslDefault_Status: Function called when status of the model 
+*        received on the client.
+* @param pHslDefault_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslDefault_Status(MOBLEUINT8 const *pHslDefault_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Status received \r\n");
+  LightAppli_cb.Light_HslDefault_Status_cb(pHslDefault_status, pLength,dstPeer,elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_HslDefault_Status: %d\r\n",
+            pHslDefault_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_HslRange_Status: Function called when status of the model 
+*        received on the client.
+* @param pHslRange_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslRange_Status(MOBLEUINT8 const *pHslRange_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Status received \r\n");
+  LightAppli_cb.Light_HslRange_Status_cb(pHslRange_status, pLength,dstPeer,elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_HslRange_Status: %d\r\n",
+            pHslRange_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_HslTarget_Status: Function called when status of the model 
+*        received on the client.
+* @param pHslTarget_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslTarget_Status(MOBLEUINT8 const *pHslTarget_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Status received \r\n");
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_HslTarget_Status: %d\r\n",
+            pHslTarget_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_HslHue_Status: Function called when status of the model 
+*        received on the client.
+* @param pHslHue_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslHue_Status(MOBLEUINT8 const *pHslHue_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Status Received \r\n");
+  LightAppli_cb.Light_HslHue_Status_cb(pHslHue_status, pLength,dstPeer,elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_HslHue_Status: %d\r\n",
+            pHslHue_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Light_Client_HslSaturation_Status: Function called when status of the model 
+*        received on the client.
+* @param pHslSaturation_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Light_Client_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_status, MOBLEUINT32 pLength,MOBLEUINT16 dstPeer,MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT32 i;
+  
+  TRACE_M(TF_LIGHT_M, "Status Received \r\n");
+  LightAppli_cb.Light_HslSaturation_Status_cb(pHslSaturation_status, pLength,dstPeer,elementIndex);
+  
+  for(i = 0; i < pLength; i++)
+  {
+    TRACE_M(TF_LIGHT_M,"Light_HslSaturation_Status: %d\r\n",
+            pHslSaturation_status[i]);
+  }
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+/**
+* @brief   LightModelClient_GetOpcodeTableCb: This function is call-back 
+*          from the library to send Model Opcode Table info to library
+* @param  MODEL_OpcodeTableParam_t:  Pointer to the Generic Model opcode array 
+* @param  length: Pointer to the Length of Generic Model opcode array
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT LightModelClient_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
+                                                 MOBLEUINT16 *length)
+{
+  *data = Light_Client_Opcodes_Table;
+  *length = sizeof(Light_Client_Opcodes_Table)/sizeof(Light_Client_Opcodes_Table[0]);
+  
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
 * @brief  LightClient_LC_Property_Get: This function is called to send Light CTL Get message
 * @param  elementIndex : Index of the element
 * @param  pPropertyID : Property ID identifying a Light LC Property
@@ -2419,27 +2958,59 @@ MOBLE_RESULT LightClient_LC_Property_Set_Unack(MOBLEUINT8 elementIndex,
 }
 
 
+///**
+//* @brief LightLC_Client_Mode_Status: Function called when status of the model 
+//*        received on the client.
+//* @param pLCMode_status: pointer to the parameters received for message
+//* @param plength: Length of the parameters received for message
+//* @param  dstPeer: destination send by peer for this node. It can be a
+//*                     unicast or group address 
+//* @param  elementIndex: index of the element received from peer for this node which
+//*                     is elementNumber-1
+//* return MOBLE_RESULT_SUCCESS.
+//*/
+//MOBLE_RESULT LightLC_Client_Mode_Status(MOBLEUINT8 const *pLCMode_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
+//{
+//  MOBLEUINT32 i;
+//  
+//  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Mode_Status received \r\n");
+//  AppliLightLc_cb.LightLCs_ModeStatus_cb(pLCMode_status, plength, dstPeer, elementIndex);
+//  
+//  for(i = 0; i < plength; i++)
+//  {
+//    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Mode_Status: 0x%x\r\n",
+//            pLCMode_status[i]);
+//  }
+//  
+//  return MOBLE_RESULT_SUCCESS;
+//}
 
-/******************************************************************************/
-#endif /* ENABLE_LIGHT_MODEL_CLIENT_LC  */
-/******************************************************************************/
-
-
-/**
-* @brief   LightModelClient_GetOpcodeTableCb: This function is call-back 
-*          from the library to send Model Opcode Table info to library
-* @param  MODEL_OpcodeTableParam_t:  Pointer to the Generic Model opcode array 
-* @param  length: Pointer to the Length of Generic Model opcode array
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT LightModelClient_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
-                                                 MOBLEUINT16 *length)
-{
-  *data = Light_Client_Opcodes_Table;
-  *length = sizeof(Light_Client_Opcodes_Table)/sizeof(Light_Client_Opcodes_Table[0]);
-  
-  return MOBLE_RESULT_SUCCESS;
-}
+///**
+//* @brief LightLC_Client_OM_Status: Function called when status of the model 
+//*        received on the client.
+//* @param pLCOccupancyMode_status: pointer to the parameters received for message
+//* @param plength: Length of the parameters received for message
+//* @param  dstPeer: destination send by peer for this node. It can be a
+//*                     unicast or group address 
+//* @param  elementIndex: index of the element received from peer for this node which
+//*                     is elementNumber-1
+//* return MOBLE_RESULT_SUCCESS.
+//*/
+//MOBLE_RESULT LightLC_Client_OM_Status(MOBLEUINT8 const *pLCOccupancyMode_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
+//{
+//  MOBLEUINT32 i;
+//  
+//  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OM_Status received \r\n");
+//  AppliLightLc_cb.LightLCs_OmStatus_cb(pLCOccupancyMode_status, plength, dstPeer, elementIndex);
+//  
+//  for(i = 0; i < plength; i++)
+//  {
+//    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OM_Status: 0x%x\r\n",
+//            pLCOccupancyMode_status[i]);
+//  }
+//  
+//  return MOBLE_RESULT_SUCCESS;
+//}
 
 /**
 * @brief  LightModelClient_GetStatusRequestCb : This function is call-back 

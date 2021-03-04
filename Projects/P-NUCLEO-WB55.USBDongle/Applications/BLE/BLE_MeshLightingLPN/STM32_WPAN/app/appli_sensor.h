@@ -99,37 +99,8 @@ MOBLEUINT8 Appli_Sensor_IsStatusTrigger(MOBLEUINT8 sensorOffset,
                                         void* pDeltaDown,
                                         void* pDeltaUp);
 MOBLE_RESULT Appli_Sensor_Init(void); 
-//void Appli_Sensor_SerialCmd(char *rcvdStringBuff, uint16_t rcvdStringSize);
 MOBLE_RESULT Appli_Sensor_Update(MOBLEUINT8 sensorOffset, MOBLEUINT32 value);
 
-void Appli_Sensor_Descriptor_Status(const MOBLEUINT8 *pDescriptor,
-                                    MOBLEUINT32 length,
-                                    MOBLE_ADDRESS dstPeer,
-                                    MOBLEUINT8 elementIndex);
-void Appli_Sensor_Cadence_Status(const MOBLEUINT8 *pCadence,
-                                 MOBLEUINT32 length,
-                                 MOBLE_ADDRESS dstPeer,
-                                 MOBLEUINT8 elementIndex);
-void Appli_Sensor_Settings_Status(const MOBLEUINT8 *pSettings,
-                                 MOBLEUINT32 length,
-                                 MOBLE_ADDRESS dstPeer,
-                                 MOBLEUINT8 elementIndex);
-void Appli_Sensor_Setting_Status(const MOBLEUINT8 *pSetting,
-                                 MOBLEUINT32 length,
-                                 MOBLE_ADDRESS dstPeer,
-                                 MOBLEUINT8 elementIndex);
-void Appli_Sensor_Status(const MOBLEUINT8 *pStatus,
-                         MOBLEUINT32 length,
-                         MOBLE_ADDRESS dstPeer,
-                         MOBLEUINT8 elementIndex);
-void Appli_Sensor_Column_Status(const MOBLEUINT8 *pColumn,
-                                MOBLEUINT32 length,
-                                MOBLE_ADDRESS dstPeer,
-                                MOBLEUINT8 elementIndex);
-void Appli_Sensor_Series_Status(const MOBLEUINT8 *pSeries,
-                                MOBLEUINT32 length,
-                                MOBLE_ADDRESS dstPeer,
-                                MOBLEUINT8 elementIndex);  
 MOBLE_RESULT Appli_Sensor_Update(MOBLEUINT8 sensorOffset, 
                                  MOBLEUINT32 value);
 void Appli_Sensor_SerialCmd(char *rcvdStringBuff, 

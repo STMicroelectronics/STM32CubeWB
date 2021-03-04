@@ -525,6 +525,29 @@ MOBLE_RESULT Appli_Vendor_SendBigDataPacket(void)
 }
 
 /**
+* @brief  Publish Command for Vendor Model
+* @param  srcAddress: Source Address of Node 
+* @retval void
+*/          
+void Appli_Vendor_Publish(MOBLE_ADDRESS srcAddress)
+{
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 AppliBuff[1];
+  /* changes the LED status on other nodes in the network */
+    
+  AppliBuff[0] = APPLI_CMD_TOGGLE;
+    
+  result = BLEMesh_SetRemotePublication(VENDORMODEL_STMICRO_ID1, srcAddress,
+                                            APPLI_LED_CONTROL_STATUS_CMD, 
+                                            AppliBuff, sizeof(AppliBuff),
+                                            MOBLE_FALSE, MOBLE_TRUE);
+  
+  if(result)
+  {
+    TRACE_I(TF_VENDOR_M, "Publication Error \r\n");
+  }
+}
+/**
 * @}
 */
 

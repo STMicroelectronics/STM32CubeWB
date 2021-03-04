@@ -272,8 +272,11 @@ void APP_BLE_CL_Init( void )
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
-    CFG_BLE_LL_ONLY,
-    0}
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER}
   };
 
   /**
@@ -344,7 +347,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
   hci_event_pckt *event_pckt;
   evt_le_meta_event *meta_evt;
   hci_le_connection_complete_event_rp0 * connection_complete_event;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
   hci_le_advertising_report_event_rp0 * le_advertising_event;
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
   hci_disconnection_complete_event_rp0 *cc = (void *) event_pckt->data;
@@ -369,32 +372,32 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
     /* USER CODE BEGIN evt */
 
     /* USER CODE END evt */
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
       handleNotificationCL.P2P_Evt_Opcode = PEERC_DISCON_HANDLE_EVT;
-      blue_evt = (evt_blue_aci*) event_pckt->data;
-      /* USER CODE BEGIN EVT_VENDOR */
+      blecore_evt = (evt_blecore_aci*) event_pckt->data;
+      /* USER CODE BEGIN HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
 
-      /* USER CODE END EVT_VENDOR */
-      switch (blue_evt->ecode)
+      /* USER CODE END HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
+      switch (blecore_evt->ecode)
       {
       /* USER CODE BEGIN ecode */
-        case EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED:
+        case ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE:
 //          UTIL_SEQ_SetTask( 1<<CFG_TASK_REQUEST_PAIRING_ID, CFG_SCH_PRIO_0);
           break;
         
-      case EVT_BLUE_GAP_NUMERIC_COMPARISON_VALUE :
+      case ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE :
             UART_App_SendData("\r\n", 2);
             PairingContext.PairingConfirmRequested = 1;
-            evt_numeric_value = (aci_gap_numeric_comparison_value_event_rp0 *)blue_evt->data;
+            evt_numeric_value = (aci_gap_numeric_comparison_value_event_rp0 *)blecore_evt->data;
             numeric_value = evt_numeric_value->Numeric_Value;
             sprintf(numeric_value_str, "%d", (int)numeric_value);
             UART_App_SendData((char *)numeric_value_str, (uint8_t)(strlen(numeric_value_str)));
             UART_App_SendData(":PREQ?\r\n", 8);
         break;  
         
-      case EVT_BLUE_GAP_PAIRING_CMPLT :
-            pairing_complete = (aci_gap_pairing_complete_event_rp0*)blue_evt->data;
+      case ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE :
+            pairing_complete = (aci_gap_pairing_complete_event_rp0*)blecore_evt->data;
             if (pairing_complete->Status == 0)
             {
               UART_App_SendData("\r\nP\r\n", 5);
@@ -404,12 +407,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
         break;
       /* USER CODE END ecode */
 
-        case EVT_BLUE_GAP_PROCEDURE_COMPLETE:
+        case ACI_GAP_PROC_COMPLETE_VSEVT_CODE:
         {
-        /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+        /* USER CODE BEGIN ACI_GAP_PROC_COMPLETE_VSEVT_CODE */
 
-        /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
-          aci_gap_proc_complete_event_rp0 *gap_evt_proc_complete = (void*) blue_evt->data;
+        /* USER CODE END ACI_GAP_PROC_COMPLETE_VSEVT_CODE */
+          aci_gap_proc_complete_event_rp0 *gap_evt_proc_complete = (void*) blecore_evt->data;
           /* CHECK GAP GENERAL DISCOVERY PROCEDURE COMPLETED & SUCCEED */
           if (gap_evt_proc_complete->Procedure_Code == GAP_GENERAL_DISCOVERY_PROC
               && gap_evt_proc_complete->Status == 0x00)
@@ -435,8 +438,8 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
         }
         break;
               
-        case EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ :
-          l2cap_conn_upd_req_event = (aci_l2cap_connection_update_req_event_rp0 *) blue_evt->data;
+        case ACI_L2CAP_CONNECTION_UPDATE_REQ_VSEVT_CODE :
+          l2cap_conn_upd_req_event = (aci_l2cap_connection_update_req_event_rp0 *) blecore_evt->data;
           
           UTIL_SEQ_SetTask(1 << CFG_TASK_CL_L2CAP_CONN_UPDATE_RESP_ID, CFG_SCH_PRIO_0);          
           break;
@@ -450,11 +453,11 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
     }
     break; 
 
-    case EVT_DISCONN_COMPLETE:
+    case HCI_DISCONNECTION_COMPLETE_EVT_CODE:
     {
-      /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
+      /* USER CODE BEGIN HCI_DISCONNECTION_COMPLETE_EVT_CODE */
 
-      /* USER CODE END EVT_DISCONN_COMPLETE */
+      /* USER CODE END HCI_DISCONNECTION_COMPLETE_EVT_CODE */
       if (cc->Connection_Handle == BleApplicationContext.BleApplicationContext_legacy.connectionHandle)
       {
           BleApplicationContext.BleApplicationContext_legacy.connectionHandle = 0;
@@ -477,13 +480,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
           }
         }
      }
-     break; /* EVT_DISCONN_COMPLETE */
+     break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
 
-    case EVT_LE_META_EVENT:
+    case HCI_LE_META_EVT_CODE:
     {
-      /* USER CODE BEGIN EVT_LE_META_EVENT */
+      /* USER CODE BEGIN HCI_LE_META_EVT_CODE */
 
-      /* USER CODE END EVT_LE_META_EVENT */
+      /* USER CODE END HCI_LE_META_EVT_CODE */
       meta_evt = (evt_le_meta_event*) event_pckt->data;
 
       switch (meta_evt->subevent)
@@ -491,10 +494,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
       /* USER CODE BEGIN subevent */
 
       /* USER CODE END subevent */
-          case EVT_LE_CONN_COMPLETE:
-          /* USER CODE BEGIN EVT_LE_CONN_COMPLETE */
+          case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
+          /* USER CODE BEGIN HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
 
-          /* USER CODE END EVT_LE_CONN_COMPLETE */
+          /* USER CODE END HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
           /**
            * The connection is done, 
            */
@@ -526,14 +529,14 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
 #endif
           }
 
-          break; /* HCI_EVT_LE_CONN_COMPLETE */
+          break; /* HCI_HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
 
-        case EVT_LE_ADVERTISING_REPORT:
+        case HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE:
         {
           uint8_t *adv_report_data;
-          /* USER CODE BEGIN EVT_LE_ADVERTISING_REPORT */
+          /* USER CODE BEGIN HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE */
 
-          /* USER CODE END EVT_LE_ADVERTISING_REPORT */
+          /* USER CODE END HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE */
           le_advertising_event = (hci_le_advertising_report_event_rp0 *) meta_evt->data;
 
           event_type = le_advertising_event->Advertising_Report[0].Event_Type;
@@ -650,7 +653,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
 
       }
     }
-    break; /* HCI_EVT_LE_META_EVENT */
+    break; /* HCI_HCI_LE_META_EVT_CODE */
 
     default:
       /* USER CODE BEGIN evt_default */
@@ -961,12 +964,20 @@ const uint8_t* BleGetBdAddress( void )
     company_id = LL_FLASH_GetSTCompanyID();
     device_id = LL_FLASH_GetDeviceID();
 
+/**
+ * Public Address with the ST company ID
+ * bit[47:24] : 24bits (OUI) equal to the company ID
+ * bit[23:16] : Device ID.
+ * bit[15:0] : The last 16bits from the UDN
+ * Note: In order to use the Public Address in a final product, a dedicated
+ * 24bits company ID (OUI) shall be bought.
+ */
     bd_addr_udn[0] = (uint8_t)(udn & 0x000000FF);
     bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_addr_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
-    bd_addr_udn[3] = (uint8_t)device_id;
-    bd_addr_udn[4] = (uint8_t)(company_id & 0x000000FF);;
-    bd_addr_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[2] = (uint8_t)device_id;
+    bd_addr_udn[3] = (uint8_t)(company_id & 0x000000FF);
+    bd_addr_udn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
 
     bd_addr = (const uint8_t *)bd_addr_udn;
   }
@@ -981,7 +992,6 @@ const uint8_t* BleGetBdAddress( void )
     {
       bd_addr = M_bd_addr;
     }
-
   }
 
   return bd_addr;

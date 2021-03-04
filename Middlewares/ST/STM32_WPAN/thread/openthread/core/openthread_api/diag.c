@@ -1,11 +1,11 @@
 /**
-  ******************************************************************************
-  * @file    diag.c
-  * @author  MCD Application Team
-  * @brief   This file contains the diagnostic interface shared between M0 and
-  *          M4.
-  ******************************************************************************
-  * @attention
+ ******************************************************************************
+ * @file    diag.c
+ * @author  MCD Application Team
+ * @brief   This file contains the diagnostic interface shared between M0 and
+ *          M4.
+ ******************************************************************************
+ * @attention
  *
  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
  * All rights reserved.</center></h2>
@@ -30,66 +30,55 @@
 
 #include "diag.h"
 
+#if OPENTHREAD_CONFIG_DIAG_ENABLE
 
-void otDiagInit(otInstance *aInstance)
+void otDiagProcessCmd(otInstance *aInstance, int aArgCount, char *aArgVector[], char *aOutput, size_t aOutputMaxLen);
 {
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-    p_ot_req->ID = MSG_M4TOM0_OT_DIAG_INIT;
+  p_ot_req->ID = MSG_M4TOM0_OT_DIAG_PROCESS_CMD;
 
-    p_ot_req->Size=0;
+  p_ot_req->Size=4;
+  p_ot_req->Data[0] = (uint32_t) aArgCount;
+  p_ot_req->Data[1] = (uint32_t) aArgVector;
+  p_ot_req->Data[2] = (uint32_t) aOutput;
+  p_ot_req->Data[3] = (uint32_t) aOutputMaxLen;
 
-    Ot_Cmd_Transfer();
-
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Ot_Cmd_Transfer();
 }
 
-void otDiagProcessCmd(int aArgCount, char *aArgVector[], char *aOutput, size_t aOutputMaxLen)
+void otDiagProcessCmdLine(otInstance *aInstance, const char *aString, char *aOutput, size_t aOutputMaxLen)
 {
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-    p_ot_req->ID = MSG_M4TOM0_OT_DIAG_PROCESS_CMD;
+  p_ot_req->ID = MSG_M4TOM0_OT_DIAG_PROCESS_CMD_LINE;
 
-    p_ot_req->Size=3;
-    p_ot_req->Data[0] = (uint32_t) aArgCount;
-    p_ot_req->Data[1] = (uint32_t) aArgVector;
-    p_ot_req->Data[2] = (uint32_t) aOutputMaxLen;
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t) aString;
+  p_ot_req->Data[1] = (uint32_t) aOutput;
+  p_ot_req->Data[2] = (uint32_t) aOutputMaxLen;
 
-    Ot_Cmd_Transfer();
-}
-
-void otDiagProcessCmdLine(const char *aString, char *aOutput, size_t aOutputMaxLen)
-{
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-    p_ot_req->ID = MSG_M4TOM0_OT_DIAG_PROCESS_CMD_LINE;
-
-    p_ot_req->Size=3;
-    p_ot_req->Data[0] = (uint32_t) aString;
-    p_ot_req->Data[1] = (uint32_t) aOutput;
-    p_ot_req->Data[2] = (uint32_t) aOutputMaxLen;
-
-    Ot_Cmd_Transfer();
+  Ot_Cmd_Transfer();
 }
 
 bool otDiagIsEnabled(void)
 {
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-    p_ot_req->ID = MSG_M4TOM0_OT_DIAG_IS_ENABLED;
+  p_ot_req->ID = MSG_M4TOM0_OT_DIAG_IS_ENABLED;
 
-    p_ot_req->Size=0;
+  p_ot_req->Size=0;
 
-    Ot_Cmd_Transfer();
+  Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (bool)p_ot_req->Data[0];
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (bool)p_ot_req->Data[0];
 }
+
+#endif // OPENTHREAD_CONFIG_DIAG_ENABLE

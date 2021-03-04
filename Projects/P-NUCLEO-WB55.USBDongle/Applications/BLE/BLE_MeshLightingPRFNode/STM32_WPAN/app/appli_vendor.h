@@ -39,6 +39,7 @@ void Appli_GetTestValue (MOBLEUINT8 *responseValue);
 MOBLE_RESULT Appli_Vendor_SendBigDataPacket(void);
 MOBLE_RESULT Appli_Vendor_SetBigDataPacket(MOBLEUINT8 *data, MOBLEUINT32 length,
                                        MOBLEUINT8 elementIndex , MOBLE_ADDRESS dst_peer);
+void Appli_Vendor_Publish(MOBLE_ADDRESS srcAddress);
 #endif /* __APPLI_VENDOR_H */
 
 /******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

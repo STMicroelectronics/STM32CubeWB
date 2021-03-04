@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx_DFP.1.0.0</PackID>
+          <PackID>Keil.STM32WBxx_DFP.1.1.1</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002EC03) IRAM2(0x20030000-0x20030FFF) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32WB55RGVx$CMSIS\SVD\STM32WBxx_CM4.svd</SFDFile>
+          <SFDFile>$$Device:STM32WB55RGVx$CMSIS\SVD\STM32WB55_CM4.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -330,8 +330,8 @@
             <useXO>0</useXO>
             <v6Lang>5</v6Lang>
             <v6LangP>3</v6LangP>
-            <vShortEn>0</vShortEn>
-            <vShortWch>0</vShortWch>
+            <vShortEn>1</vShortEn>
+            <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
@@ -373,7 +373,8 @@
             <ScatterFile>stm32wb55xx_flash_cm4.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
+            <Misc>--diag_suppress L6314W
+--diag_suppress 1296</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -397,6 +398,16 @@
               <FileName>app_entry.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/app_entry.c</FilePath>
+            </File>
+            <File>
+              <FileName>ee.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/ee.c</FilePath>
+            </File>
+            <File>
+              <FileName>hw_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/hw_flash.c</FilePath>
             </File>
             <File>
               <FileName>hw_timerserver.c</FileName>
@@ -666,7 +677,7 @@
             <File>
               <FileName>stm32wb_zigbee_wb_lib_keil.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/zigbee/lib/stm32wb_zigbee_wb_lib_keil.lib</FilePath>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\zigbee\lib\stm32wb_zigbee_wb_lib_keil.lib</FilePath>
             </File>
           </Files>
         </Group>

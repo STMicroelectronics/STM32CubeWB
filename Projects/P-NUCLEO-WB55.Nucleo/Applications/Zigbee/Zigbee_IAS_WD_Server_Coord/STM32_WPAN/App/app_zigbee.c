@@ -218,7 +218,7 @@ static void APP_ZIGBEE_App_Init(void){
  * @retval None
  */
 static void APP_ZIGBEE_IAS_WD_Server_Init(void){
-  memcpy(&warningReq, 0, sizeof(warningReq));
+  memset(&warningReq, 0, sizeof(warningReq));
   APP_DBG("[IAS WD] IAS WD server init done!\n");  
 } /* APP_ZIGBEE_IAS_WD_Server_Init */
 
@@ -302,8 +302,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
  */
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;

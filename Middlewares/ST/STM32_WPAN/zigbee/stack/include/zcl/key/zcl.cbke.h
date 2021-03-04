@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2019] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 /*--------------------------------------------------------------------------
  * Copyright (c) 2013-2014, Exegin Technologies Limited
@@ -69,7 +69,7 @@
  * Structures
  *---------------------------------------------------------------
  */
-typedef struct {
+struct ZbZclCertificateT {
     uint8_t type;
     uint64_t serial;
     uint8_t curve;
@@ -81,7 +81,7 @@ typedef struct {
     uint8_t keyUsage;
     unsigned int publicLen;
     uint8_t publicKey[CBKE2_CERT_PUBLIC_KEY_SIZE];
-} ZbZclCertificateT;
+};
 
 struct ZbZclKeClusterT;
 
@@ -91,7 +91,7 @@ struct ZbZclKeClusterT;
  */
 enum ZclStatusCodeT ZbZclKeAddCbke(struct ZbZclClusterT *clusterPtr, const struct ZbZclCbkeInfoT *info);
 enum ZclStatusCodeT ZbZclKeAddCbke2(struct ZbZclClusterT *clusterPtr, const struct ZbZclCbke2InfoT *info);
-ZbZclCertificateT * ZbZclParseCertificate(ZbZclCertificateT *dst, const void *src, unsigned int len);
+struct ZbZclCertificateT * ZbZclParseCertificate(struct ZbZclCertificateT *dst, const void *src, unsigned int len);
 enum ZbZclKeyStatusT ZbZclCbke2ReconstPrivateKey(struct ZigBeeT *zb, const uint8_t *icu, const uint8_t *se, const uint8_t *du, uint8_t *wu);
 
 /* Helper function to reconstruct a private key. */

@@ -302,7 +302,7 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
          */
         HAL_Delay(10000);   /* Poll the FUS each 10s to make sure process is going fine */
         fus_state_value = SHCI_C2_FUS_GetState( NULL );
-        if( (fus_state_value < 0x10) || (fus_state_value > 0x2F) )
+        if( (fus_state_value < FUS_STATE_VALUE_FW_UPGRD_ONGOING) || (fus_state_value > FUS_STATE_VALUE_FUS_UPGRD_ONGOING_END) )
         {
           NVIC_SystemReset();
         }
@@ -353,7 +353,7 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
            */
           HAL_Delay(10000);   /* Poll the FUS each 10s to make sure process is going fine */
           fus_state_value = SHCI_C2_FUS_GetState( NULL );
-          if( (fus_state_value < 0x10) || (fus_state_value > 0x2F) )
+          if( (fus_state_value < FUS_STATE_VALUE_FW_UPGRD_ONGOING) || (fus_state_value > FUS_STATE_VALUE_FUS_UPGRD_ONGOING_END) )
           {
             NVIC_SystemReset();
           }
@@ -379,6 +379,16 @@ void UTIL_SEQ_Idle( void )
 #endif
   return;
 }
+
+#ifdef OTA_SBSFU
+void UTIL_SEQ_PostIdle( void )
+{
+  /* Loader must reload IWDG counter with value defined in the reload register by SBSFU */
+  WRITE_REG(IWDG->KR, IWDG_KEY_RELOAD);
+
+  return;
+}
+#endif /* OTA_SBSFU */
 
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {

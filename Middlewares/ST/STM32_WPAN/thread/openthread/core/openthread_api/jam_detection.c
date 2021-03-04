@@ -32,7 +32,7 @@
 
 extern otJamDetectionCallback otJamDetectionCallbackCb;
 
-#if OPENTHREAD_ENABLE_JAM_DETECTION
+#if OPENTHREAD_CONFIG_JAM_DETECTION_ENABLE
 otError otJamDetectionSetRssiThreshold(otInstance *aInstance, int8_t aRssiThreshold)
 {
     Pre_OtCmdProcessing();
@@ -217,4 +217,4 @@ uint64_t otJamDetectionGetHistoryBitmap(otInstance *aInstance)
     /* 64bit word is returned with two 32bits words (MSB are at offset 1 and LSB are offset 0) */
     return (uint64_t)((p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
 }
-#endif /* OPENTHREAD_ENABLE_JAM_DETECTION */
+#endif /* OPENTHREAD_CONFIG_JAM_DETECTION_ENABLE */

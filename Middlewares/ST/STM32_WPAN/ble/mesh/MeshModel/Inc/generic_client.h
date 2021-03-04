@@ -28,14 +28,14 @@
 
 /* Exported macro ------------------------------------------------------------*/
 /* Variable-------------------------------------------------------------------*/
-#pragma pack(1)
-typedef union  
-{
+#pragma pack(push, 1)
+
+typedef union  {
   Generic_OnOffParam_t sGeneric_OnOffParam;
   MOBLEUINT8 a_OnOff_param[sizeof(Generic_OnOffParam_t)]; 
 } _Generic_OnOffParam;
 
-
+#pragma pack(pop)
 /******************************************************************************/
 /********** Following Section defines the Opcodes for the Messages ************/
 /******************************************************************************/

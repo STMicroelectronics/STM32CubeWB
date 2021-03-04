@@ -147,6 +147,16 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_entry.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/Core/ee.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/ee.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/Core/hw_flash.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/hw_flash.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/Core/hw_timerserver.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/hw_timerserver.c</locationURI>

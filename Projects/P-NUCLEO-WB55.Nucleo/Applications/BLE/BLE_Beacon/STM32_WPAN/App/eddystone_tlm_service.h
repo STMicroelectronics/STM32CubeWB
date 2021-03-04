@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : App/eddystone_tlm_service.h
@@ -15,6 +16,7 @@
   *
  ******************************************************************************
  */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef EDDYSTONE_TLM_SERVICE_H

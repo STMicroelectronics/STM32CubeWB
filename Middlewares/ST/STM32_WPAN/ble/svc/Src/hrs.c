@@ -91,7 +91,7 @@ static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event)
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt *event_pckt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
   aci_gatt_attribute_modified_event_rp0    * attribute_modified;
   HRS_App_Notification_evt_t Notification;
   
@@ -100,18 +100,18 @@ static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event)
 
   switch(event_pckt->evt)
   {
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
-      blue_evt = (evt_blue_aci*)event_pckt->data;
-      switch(blue_evt->ecode)
+      blecore_evt = (evt_blecore_aci*)event_pckt->data;
+      switch(blecore_evt->ecode)
       {
 #if (BLE_CFG_HRS_ENERGY_EXPENDED_INFO_FLAG != 0)
-        case EVT_BLUE_GATT_WRITE_PERMIT_REQ:
+        case ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE:
         {
           aci_gatt_write_permit_req_event_rp0 * write_perm_req;
 
-          BLE_DBG_HRS_MSG("EVT_BLUE_GATT_WRITE_PERMIT_REQ\n");
-          write_perm_req = (aci_gatt_write_permit_req_event_rp0*)blue_evt->data;
+          BLE_DBG_HRS_MSG("ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE\n");
+          write_perm_req = (aci_gatt_write_permit_req_event_rp0*)blecore_evt->data;
 
           if(write_perm_req->Attribute_Handle == (HRS_Context.ControlPointCharHdle + 1))
           {
@@ -148,9 +148,9 @@ static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event)
         break;
 #endif
 
-        case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+        case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
         {
-          attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blue_evt->data;
+          attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blecore_evt->data;
           if(attribute_modified->Attr_Handle == (HRS_Context.HeartRatemeasurementCharHdle + 2))
           {
             return_value = SVCCTL_EvtAckFlowEnable;
@@ -160,13 +160,13 @@ static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event)
              */
             if(attribute_modified->Attr_Data[0] & COMSVC_Notification)
             {
-              BLE_DBG_HRS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED HRS_NOTIFICATION_ENABLED\n");
+              BLE_DBG_HRS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE HRS_NOTIFICATION_ENABLED\n");
               Notification.HRS_Evt_Opcode =HRS_NOTIFICATION_ENABLED;
               HRS_Notification(&Notification);
             }
             else
             {
-              BLE_DBG_HRS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED HRS_NOTIFICATION_DISABLED\n");
+              BLE_DBG_HRS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE HRS_NOTIFICATION_DISABLED\n");
               Notification.HRS_Evt_Opcode =HRS_NOTIFICATION_DISABLED;
               HRS_Notification(&Notification);
             }
@@ -174,7 +174,7 @@ static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event)
 #if (BLE_CFG_OTA_REBOOT_CHAR != 0)          
           else if(attribute_modified->Attr_Handle == (HRS_Context.RebootReqCharHdle + 1))
             {
-              BLE_DBG_HRS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED HRS_STM_BOOT_REQUEST_EVT\n");
+              BLE_DBG_HRS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE HRS_STM_BOOT_REQUEST_EVT\n");
               Notification.HRS_Evt_Opcode = HRS_STM_BOOT_REQUEST_EVT;
               Notification.DataTransfered.Length=attribute_modified->Attr_Data_Length;
               Notification.DataTransfered.pPayload=attribute_modified->Attr_Data;
@@ -188,7 +188,7 @@ static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event)
           break;
       }
     }
-    break; /* HCI_EVT_VENDOR_SPECIFIC */
+    break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
 
     default:
       break;

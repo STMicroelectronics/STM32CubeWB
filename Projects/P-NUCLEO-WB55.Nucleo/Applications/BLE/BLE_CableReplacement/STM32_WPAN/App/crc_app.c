@@ -290,25 +290,25 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt *event_pckt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
 
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
 
   switch(event_pckt->evt)
   {
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
       {
-        blue_evt = (evt_blue_aci*)event_pckt->data;
+        blecore_evt = (evt_blecore_aci*)event_pckt->data;
 
-        APP_DBG_MSG("EVT_VENDOR: 0x%x!\n",
-                    blue_evt->ecode);
+        APP_DBG_MSG("HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE: 0x%x!\n",
+                    blecore_evt->ecode);
         
-        switch(blue_evt->ecode)
+        switch(blecore_evt->ecode)
         {
-          case EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP:
+          case ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE:
             {
-              aci_att_read_by_group_type_resp_event_rp0 *pr = (void*)blue_evt->data;
+              aci_att_read_by_group_type_resp_event_rp0 *pr = (void*)blecore_evt->data;
               uint8_t numServ, i, idx;
               uint16_t handle;
               uint8_t index;
@@ -373,7 +373,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                     }
                     if(result == TRUE)
                     {
-                      APP_DBG_MSG("EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP, first index in CRC_IDLE state: %d\n", index);
+                      APP_DBG_MSG("ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE, first index in CRC_IDLE state: %d\n", index);
               
                       CRC_Context[index].ServiceHandle = 
                         UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx-16]);
@@ -392,14 +392,14 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
               }
               else
               {
-                APP_DBG_MSG("EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP, failed no free index in connection table !\n");
+                APP_DBG_MSG("ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE, failed no free index in connection table !\n");
               }
             }
-            break; /*EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP*/
+            break; /*ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE*/
             
-          case EVT_BLUE_ATT_READ_BY_TYPE_RESP:
+          case ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE:
             {
-              aci_att_read_by_type_resp_event_rp0 *pr = (void*)blue_evt->data;
+              aci_att_read_by_type_resp_event_rp0 *pr = (void*)blecore_evt->data;
               uint8_t idx;
               uint16_t handle;
               uint8_t index;
@@ -417,7 +417,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                    (handle <= CRC_Context[index].ServiceEndHandle))
                 {
                   /* Event for CRC Client */
-                  APP_DBG_MSG("EVT_BLUE_ATT_READ_BY_TYPE_RESP\n");
+                  APP_DBG_MSG("ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE\n");
 
                   /* the event data will be
                    * 2 bytes start handle
@@ -491,14 +491,14 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
               } /* if(index < CFG_MAX_CONNECTION) */
               else
               {
-                APP_DBG_MSG("EVT_BLUE_ATT_READ_BY_TYPE_RESP, failed handle not found in connection table !\n");
+                APP_DBG_MSG("ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE, failed handle not found in connection table !\n");
               }
             } 
-            break; /*EVT_BLUE_ATT_READ_BY_TYPE_RESP*/
+            break; /*ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE*/
             
-          case EVT_BLUE_ATT_FIND_INFORMATION_RESP:
+          case ACI_ATT_FIND_INFO_RESP_VSEVT_CODE:
             {
-              aci_att_find_info_resp_event_rp0 *pr = (void*)blue_evt->data;
+              aci_att_find_info_resp_event_rp0 *pr = (void*)blecore_evt->data;
               uint8_t numDesc, idx, i;
               uint16_t uuid, handle;
               uint8_t index;
@@ -516,7 +516,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                    (handle <= CRC_Context[index].ServiceEndHandle))
                 {
                   /* Event for CRC Client */
-                  APP_DBG_MSG("EVT_BLUE_ATT_FIND_INFORMATION_RESP\n");
+                  APP_DBG_MSG("ACI_ATT_FIND_INFO_RESP_VSEVT_CODE\n");
 
                   waitForComplete = 1;
                   /*
@@ -557,14 +557,14 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
               }
               else
               {
-                APP_DBG_MSG("EVT_BLUE_ATT_FIND_INFORMATION_RESP, failed handle not found in connection table !\n");
+                APP_DBG_MSG("ACI_ATT_FIND_INFO_RESP_VSEVT_CODE, failed handle not found in connection table !\n");
               }
             }
-            break; /*EVT_BLUE_ATT_FIND_INFORMATION_RESP*/
+            break; /*ACI_ATT_FIND_INFO_RESP_VSEVT_CODE*/
             
-          case EVT_BLUE_ATT_READ_RESP:
+          case ACI_ATT_READ_RESP_VSEVT_CODE:
             {
-              aci_att_read_resp_event_rp0 *pr = (void*)blue_evt->data;
+              aci_att_read_resp_event_rp0 *pr = (void*)blecore_evt->data;
               uint8_t index;
               
               index = 0;
@@ -577,7 +577,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                 if(CRC_Context[index].state == CRC_READ_TX)
                 {
                   /* Event for CR Client */
-                  APP_DBG_MSG("EVT_BLUE_ATT_READ_RESP\n");
+                  APP_DBG_MSG("ACI_ATT_READ_RESP_VSEVT_CODE\n");
                   waitForComplete = 1;
                   APP_DBG_MSG("*************************************************************************************************************************\n");
                   APP_DBG_MSG("CRC TX 0x%x:\n",
@@ -587,7 +587,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                 else if(CRC_Context[index].state == CRC_READ_RX)
                 {
                   /* Event for CR Client */
-                  APP_DBG_MSG("EVT_BLUE_ATT_READ_RESP\n");
+                  APP_DBG_MSG("ACI_ATT_READ_RESP_VSEVT_CODE\n");
                   waitForComplete = 1;
                   APP_DBG_MSG("*************************************************************************************************************************\n");
                   APP_DBG_MSG("CRC RX 0x%x:\n", 
@@ -597,7 +597,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                 else if(CRC_Context[index].state == CRC_READ_RX_CCC)
                 {
                   /* Event for CR Client */
-                  APP_DBG_MSG("EVT_BLUE_ATT_READ_RESP\n");
+                  APP_DBG_MSG("ACI_ATT_READ_RESP_VSEVT_CODE\n");
                   waitForComplete = 1;
                   APP_DBG_MSG("*************************************************************************************************************************\n");
                   APP_DBG_MSG("CRC RX CCC 0x%x: 0x%04x\n", 
@@ -608,14 +608,14 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
               }
               else
               {
-                APP_DBG_MSG("EVT_BLUE_ATT_READ_RESP, failed handle not found in connection table !\n");
+                APP_DBG_MSG("ACI_ATT_READ_RESP_VSEVT_CODE, failed handle not found in connection table !\n");
               }
             }
-            break; /*EVT_BLUE_ATT_READ_RESP*/
+            break; /*ACI_ATT_READ_RESP_VSEVT_CODE*/
             
-          case EVT_BLUE_GATT_NOTIFICATION:
+          case ACI_GATT_NOTIFICATION_VSEVT_CODE:
             {
-              aci_gatt_notification_event_rp0 *pr = (void*)blue_evt->data;
+              aci_gatt_notification_event_rp0 *pr = (void*)blecore_evt->data;
               uint8_t index;
               
               index = 0;
@@ -629,7 +629,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                    (pr->Attribute_Handle <= CRC_Context[index].ServiceEndHandle))
                 {
                   /* Event for CRC Client */
-                  APP_DBG_MSG("EVT_BLUE_GATT_NOTIFICATION on connection handle 0x%x\n",
+                  APP_DBG_MSG("ACI_GATT_NOTIFICATION_VSEVT_CODE on connection handle 0x%x\n",
                                   pr->Connection_Handle);
                   waitForComplete = 1;
                   if(pr->Attribute_Handle == CRC_Context[index].RXCharHdle)
@@ -666,14 +666,14 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
               }
               else
               {
-                APP_DBG_MSG("EVT_BLUE_GATT_NOTIFICATION, failed handle not found in connection table !\n");
+                APP_DBG_MSG("ACI_GATT_NOTIFICATION_VSEVT_CODE, failed handle not found in connection table !\n");
               }
             }
-            break; /*EVT_BLUE_GATT_INDICATION*/
+            break; /*ACI_GATT_INDICATION_VSEVT_CODE*/
             
-          case EVT_BLUE_GATT_PROCEDURE_COMPLETE:
+          case ACI_GATT_PROC_COMPLETE_VSEVT_CODE:
             {
-              aci_gatt_proc_complete_event_rp0 *pr = (void*)blue_evt->data;
+              aci_gatt_proc_complete_event_rp0 *pr = (void*)blecore_evt->data;
 
               if(waitForComplete != 0)
               {
@@ -688,7 +688,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                 {
                   waitForComplete = 0;
                   /* Event for CR Client */
-                  APP_DBG_MSG("EVT_BLUE_GATT_PROCEDURE_COMPLETE\n");
+                  APP_DBG_MSG("ACI_GATT_PROC_COMPLETE_VSEVT_CODE\n");
 
                   switch(CRC_Context[index].state)
                   {
@@ -776,15 +776,15 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                 }
                 else
                 {
-                  APP_DBG_MSG("EVT_BLUE_GATT_PROCEDURE_COMPLETE failed, not found handle in connection table !\n");
+                  APP_DBG_MSG("ACI_GATT_PROC_COMPLETE_VSEVT_CODE failed, not found handle in connection table !\n");
                 }
               }
             }
-            break; /*EVT_BLUE_GATT_PROCEDURE_COMPLETE*/
+            break; /*ACI_GATT_PROC_COMPLETE_VSEVT_CODE*/
             
-          case EVT_BLUE_GATT_ERROR_RESP:
+          case ACI_GATT_ERROR_RESP_VSEVT_CODE:
             {
-              aci_gatt_error_resp_event_rp0 *pr = (void*)blue_evt->data;
+              aci_gatt_error_resp_event_rp0 *pr = (void*)blecore_evt->data;
               uint8_t index;
               
               index = 0;
@@ -799,7 +799,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                    (pr->Attribute_Handle >= CRC_Context[index].ServiceHandle) &&
                    (pr->Attribute_Handle <= CRC_Context[index].ServiceEndHandle))
                 {
-                  APP_DBG_MSG("EVT_BLUE_GATT_ERROR_RESP\n");
+                  APP_DBG_MSG("ACI_GATT_ERROR_RESP_VSEVT_CODE\n");
                   waitForComplete = 1;
                 }
                 else if((CRC_Context[index].state == CRC_IDLE) &&
@@ -807,22 +807,22 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *Event)
                    (pr->Attribute_Handle >= CRC_Context[index].ServiceHandle) &&
                    (pr->Attribute_Handle <= CRC_Context[index].ServiceEndHandle))
                 {
-                  APP_DBG_MSG("EVT_BLUE_GATT_ERROR_RESP\n");
+                  APP_DBG_MSG("ACI_GATT_ERROR_RESP_VSEVT_CODE\n");
                   waitForComplete = 1;
                 }
               }
               else
               {
-                APP_DBG_MSG("EVT_BLUE_GATT_ERROR_RESP, not found handle in connection table !\n");
+                APP_DBG_MSG("ACI_GATT_ERROR_RESP_VSEVT_CODE, not found handle in connection table !\n");
               }
             }
-            break; /*EVT_BLUE_GATT_ERROR_RESP*/
+            break; /*ACI_GATT_ERROR_RESP_VSEVT_CODE*/
             
           default:
             break;
         }
       }
-      break; /* HCI_EVT_VENDOR_SPECIFIC */
+      break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
       
     default:
       break;

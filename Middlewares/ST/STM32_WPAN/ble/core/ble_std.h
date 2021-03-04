@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -43,31 +43,75 @@
 #define HCI_EVENT_PKT_MAX_SIZE \
             (HCI_EVENT_HDR_SIZE   + HCI_EVENT_MAX_PARAM_LEN)
 
-/* HCI event code */
-#define HCI_DISCONNECTION_COMPLETE_EVT_CODE                    0x05
-#define HCI_ENCRYPTION_CHANGE_EVT_CODE                         0x08
-#define HCI_READ_REMOTE_VERSION_INFORMATION_COMPLETE_EVT_CODE  0x0C
-#define HCI_COMMAND_COMPLETE_EVT_CODE                          0x0E
-#define HCI_COMMAND_STATUS_EVT_CODE                            0x0F
-#define HCI_HARDWARE_ERROR_EVT_CODE                            0x10
-#define HCI_NUMBER_OF_COMPLETED_PACKETS_EVT_CODE               0x13
-#define HCI_DATA_BUFFER_OVERFLOW_EVT_CODE                      0x1A
-#define HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVT_CODE           0x30
-#define HCI_LE_META_EVT_CODE                                   0x3E
-#define HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE                     0xFF
+/* HCI Event codes */
+                                                
+/* HCI_DISCONNECTION_COMPLETE_EVENT code: */
+#define HCI_DISCONNECTION_COMPLETE_EVT_CODE                    0x05 
+  
+/* HCI_ENCRYPTION_CHANGE_EVENT code: */
+#define HCI_ENCRYPTION_CHANGE_EVT_CODE                         0x08   
 
-/* HCI LE subevent code */
-#define HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE                 0x01
-#define HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE                  0x02
-#define HCI_LE_CONNECTION_UPDATE_COMPLETE_SUBEVT_CODE          0x03
-#define HCI_LE_READ_REMOTE_FEATURES_COMPLETE_SUBEVT_CODE       0x04
-#define HCI_LE_LONG_TERM_KEY_REQUEST_SUBEVT_CODE               0x05
-#define HCI_LE_DATA_LENGTH_CHANGE_SUBEVT_CODE                  0x07
-#define HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_SUBEVT_CODE 0x08
-#define HCI_LE_GENERATE_DHKEY_COMPLETE_SUBEVT_CODE             0x09
-#define HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE        0x0A
-#define HCI_LE_DIRECT_ADVERTISING_REPORT_SUBEVT_CODE           0x0B
-#define HCI_LE_PHY_UPDATE_COMPLETE_SUBEVT_CODE                 0x0C
+/* HCI_READ_REMOTE_VERSION_INFORMATION_COMPLETE EVENT code: */
+#define HCI_READ_REMOTE_VERSION_INFORMATION_COMPLETE_EVT_CODE  0x0C   
+
+/* HCI_COMMAND_COMPLETE_EVENT code: */
+   #define HCI_COMMAND_COMPLETE_EVT_CODE                       0x0E   
+   
+/* HCI_COMMAND_STATUS_EVENT code: */
+   #define HCI_COMMAND_STATUS_EVT_CODE                         0x0F   
+   
+/* HCI_HARDWARE_ERROR_EVENT code: */
+  #define HCI_HARDWARE_ERROR_EVT_CODE                          0x10   
+  
+/* HCI_NUMBER_OF_COMPLETED_PACKETS_EVENT code: */
+   #define HCI_NUMBER_OF_COMPLETED_PACKETS_EVT_CODE            0x13   
+   
+/* HCI_DATA_BUFFER_OVERFLOW_EVENT code: */
+   #define HCI_DATA_BUFFER_OVERFLOW_EVT_CODE                   0x1A   
+   
+/* HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT code: */
+#define HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVT_CODE           0x30   
+              
+/* */                                
+#define HCI_LE_META_EVT_CODE                                   0x3E 
+  
+/* */                  
+#define HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE                     0xFF   
+
+/* HCI LE SubEvent codes */
+
+ /* HCI_LE_CONNECTION_COMPLETE_EVENT code: */
+ #define HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE                 0x01
+ 
+ /* HCI_LE_ADVERTISING_REPORT_EVENT code: */
+ #define HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE                  0x02
+ 
+ /* HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT code: */
+ #define HCI_LE_CONNECTION_UPDATE_COMPLETE_SUBEVT_CODE          0x03 
+ 
+ /* HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT code: */
+ #define HCI_LE_READ_REMOTE_FEATURES_COMPLETE_SUBEVT_CODE       0x04
+ 
+ /* HCI_LE_LONG_TERM_KEY_REQUEST_EVENT code: */
+ #define HCI_LE_LONG_TERM_KEY_REQUEST_SUBEVT_CODE               0x05
+ 
+ /* HCI_LE_DATA_LENGTH_CHANGE_EVENT code: */
+ #define HCI_LE_DATA_LENGTH_CHANGE_SUBEVT_CODE                  0x07 
+ 
+ /* HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_EVENT code: */
+ #define HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_SUBEVT_CODE 0x08
+ 
+ /* HCI_LE_GENERATE_DHKEY_COMPLETE_EVENT code: */
+ #define HCI_LE_GENERATE_DHKEY_COMPLETE_SUBEVT_CODE             0x09
+ 
+ /* HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT code: */
+ #define HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE        0x0A
+ 
+ /* HCI_LE_DIRECT_ADVERTISING_REPORT_EVENT code: */
+ #define HCI_LE_DIRECT_ADVERTISING_REPORT_SUBEVT_CODE           0x0B 
+ 
+ /* HCI_LE_PHY_UPDATE_COMPLETE_EVENT code: */
+ #define HCI_LE_PHY_UPDATE_COMPLETE_SUBEVT_CODE                 0x0C   
 
 /* HCI error code */
 #define HCI_SUCCESS_ERR_CODE                                   0x00

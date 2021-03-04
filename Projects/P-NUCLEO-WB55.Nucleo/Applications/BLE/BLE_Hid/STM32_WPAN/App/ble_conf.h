@@ -55,6 +55,40 @@
 #define BLE_CFG_CLT_MAX_NBR_CB                                                 0
 
 /******************************************************************************
+ * Device Information Service (DIS)
+ ******************************************************************************/
+/**< Options: Supported(1) or Not Supported(0) */
+#define BLE_CFG_DIS_MANUFACTURER_NAME_STRING                                   1
+#define BLE_CFG_DIS_MODEL_NUMBER_STRING                                        0
+#define BLE_CFG_DIS_SERIAL_NUMBER_STRING                                       0
+#define BLE_CFG_DIS_HARDWARE_REVISION_STRING                                   0
+#define BLE_CFG_DIS_FIRMWARE_REVISION_STRING                                   0
+#define BLE_CFG_DIS_SOFTWARE_REVISION_STRING                                   0
+#define BLE_CFG_DIS_SYSTEM_ID                                                  0
+#define BLE_CFG_DIS_IEEE_CERTIFICATION                                         0
+#define BLE_CFG_DIS_PNP_ID                                                     0
+
+/**
+ * device information service characteristic lengths
+ */
+#define BLE_CFG_DIS_SYSTEM_ID_LEN_MAX                                        (8)
+#define BLE_CFG_DIS_MODEL_NUMBER_STRING_LEN_MAX                              (32)
+#define BLE_CFG_DIS_SERIAL_NUMBER_STRING_LEN_MAX                             (32)
+#define BLE_CFG_DIS_FIRMWARE_REVISION_STRING_LEN_MAX                         (32)
+#define BLE_CFG_DIS_HARDWARE_REVISION_STRING_LEN_MAX                         (32)
+#define BLE_CFG_DIS_SOFTWARE_REVISION_STRING_LEN_MAX                         (32)
+#define BLE_CFG_DIS_MANUFACTURER_NAME_STRING_LEN_MAX                         (32)
+#define BLE_CFG_DIS_IEEE_CERTIFICATION_LEN_MAX                               (32)
+#define BLE_CFG_DIS_PNP_ID_LEN_MAX                                           (7)
+
+/******************************************************************************
+ * Battery Service (BAS)
+ ******************************************************************************/
+#define BLE_CFG_BAS_NUMBER                                                     1
+#define BLE_CFG_BAS_LEVEL_NOT_PROP                                             1   /**< Battery Level characteristic Notification property*/
+
+
+/******************************************************************************
  * Human Interface Device Service (HIDS)
  ******************************************************************************/
 #define BLE_CFG_HIDS_NUMBER                                                    1
@@ -84,6 +118,13 @@
   BLE_CFG_HIDS_FEATURE_REPORT_NB
 #define BLE_CFG_HIDS_PROTOCOL_MODE                                             1 /**< Report Protocol Mode */
 
+/******************************************************************************
+ * GAP Service - Apprearance
+ ******************************************************************************/
+
+#define BLE_CFG_UNKNOWN_APPEARANCE                                           (0)
+#define BLE_CFG_HID_SENSOR_APPEARANCE                                      (962)
+#define BLE_CFG_GAP_APPEARANCE                   (BLE_CFG_HID_SENSOR_APPEARANCE)
 
 #endif /*__BLE_CONF_H */
 

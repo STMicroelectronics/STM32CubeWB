@@ -87,6 +87,10 @@
 #include "app_common.h"
 #include "otp.h"
 
+#ifdef OTA_SBSFU
+#include "ota_sbsfu.h"
+#endif /* OTA_SBSFU */
+
 #if !defined  (HSE_VALUE)
 #define HSE_VALUE    ((uint32_t)32000000) /*!< Value of the External oscillator in Hz */
 #endif /* HSE_VALUE */
@@ -129,7 +133,18 @@ typedef void (*fct_t)(void);
 /* #define VECT_TAB_SRAM */
 /*!< Vector Table base offset field. This value must be a multiple of 0x200. */
 /* #define VECT_TAB_OFFSET  0x0U*/
-
+#ifdef OTA_SBSFU
+#if defined(__ARMCC_VERSION)
+extern void * __Vectors;
+#define VECT_TAB_OFFSET ((uint32_t) & __Vectors)
+#elif defined(__ICCARM__)
+extern uint32_t __vector_table;
+#define VECT_TAB_OFFSET ((uint32_t)& __vector_table)
+#elif defined(__GNUC__)
+extern void * g_pfnVectors;
+#define VECT_TAB_OFFSET ((uint32_t)& g_pfnVectors)
+#endif
+#endif
 /**
  * @}
  */
@@ -182,7 +197,7 @@ const uint32_t SmpsPrescalerTable[4][6]={{1,3,2,2,1,2}, \
    /** @addtogroup STM32WBxx_System_Private_Functions
     * @{
     */
-
+#ifndef OTA_SBSFU
 /****************************/
 static void JumpFwApp( void );
 static void BootModeCheck( void );
@@ -369,6 +384,7 @@ static void JumpSelectionOnPowerUp( void )
   }
   return;
 }
+#endif /* OTA_SBSFU */
 
 /**
  * @brief  Setup the microcontroller system.
@@ -379,7 +395,15 @@ void SystemInit(void)
 {
   OTP_ID0_t * p_otp;
 
+#ifdef OTA_SBSFU
+  if (STANDALONE_LOADER_STATE == STANDALONE_LOADER_DWL_REQ)
+  {
+    /* Standard SBSFU start-up at next reset */
+    STANDALONE_LOADER_STATE = STANDALONE_LOADER_NO_REQ;
+  }      
+#else  
   BootModeCheck();
+#endif /* OTA_SBSFU */
 
   /* FPU settings ------------------------------------------------------------*/
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)

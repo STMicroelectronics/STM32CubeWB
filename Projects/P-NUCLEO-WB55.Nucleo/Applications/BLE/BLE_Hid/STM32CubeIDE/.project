@@ -172,6 +172,16 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/App/app_ble.c</locationURI>
 		</link>
 		<link>
+			<name>Application/STM32_WPAN/app/bas_app.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/App/bas_app.c</locationURI>
+		</link>
+		<link>
+			<name>Application/STM32_WPAN/app/dis_app.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/App/dis_app.c</locationURI>
+		</link>
+		<link>
 			<name>Application/STM32_WPAN/app/hids_app.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/App/hids_app.c</locationURI>
@@ -205,6 +215,16 @@
 			<name>Middlewares/STM32_WPAN/utilities/stm_queue.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/ble/blesvc/bas.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/svc/Src/bas.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/ble/blesvc/dis.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/svc/Src/dis.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/ble/blesvc/hids.c</name>

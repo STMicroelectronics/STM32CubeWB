@@ -57,6 +57,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern IPCC_HandleTypeDef hipcc;
 extern DMA_HandleTypeDef hdma_lpuart1_tx;
 extern DMA_HandleTypeDef hdma_usart1_tx;
 extern UART_HandleTypeDef hlpuart1;
@@ -325,6 +326,34 @@ void PWR_SOTF_BLEACT_802ACT_RFPHASE_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles IPCC RX occupied interrupt.
+  */
+void IPCC_C1_RX_IRQHandler(void)
+{
+  /* USER CODE BEGIN IPCC_C1_RX_IRQn 0 */
+
+  /* USER CODE END IPCC_C1_RX_IRQn 0 */
+  HAL_IPCC_RX_IRQHandler(&hipcc);
+  /* USER CODE BEGIN IPCC_C1_RX_IRQn 1 */
+
+  /* USER CODE END IPCC_C1_RX_IRQn 1 */
+}
+
+/**
+  * @brief This function handles IPCC TX free interrupt.
+  */
+void IPCC_C1_TX_IRQHandler(void)
+{
+  /* USER CODE BEGIN IPCC_C1_TX_IRQn 0 */
+
+  /* USER CODE END IPCC_C1_TX_IRQn 0 */
+  HAL_IPCC_TX_IRQHandler(&hipcc);
+  /* USER CODE BEGIN IPCC_C1_TX_IRQn 1 */
+
+  /* USER CODE END IPCC_C1_TX_IRQn 1 */
+}
+
+/**
   * @brief This function handles HSEM global interrupt.
   */
 void HSEM_IRQHandler(void)
@@ -367,17 +396,5 @@ void EXTI4_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW1_PIN);
 }
 
-
-void IPCC_C1_TX_IRQHandler(void)
-{
-  HW_IPCC_Tx_Handler();
-
-  return;
-}
-void IPCC_C1_RX_IRQHandler(void)
-{
-  HW_IPCC_Rx_Handler();
-  return;
-}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

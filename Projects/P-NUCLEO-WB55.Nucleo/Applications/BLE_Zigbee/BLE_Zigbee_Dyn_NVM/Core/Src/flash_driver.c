@@ -179,7 +179,7 @@ static SingleFlashOperationStatus_t ProcessSingleFlashOperation(FlashOperationTy
   SemStatus_t cpu2_sem_status;
   WaitedSemStatus_t waited_sem_status;
   SingleFlashOperationStatus_t return_status;
-
+  bool concurrent_mode_flash_operation_allowed = false;
   uint32_t page_error;
   FLASH_EraseInitTypeDef p_erase_init;
 
@@ -188,7 +188,6 @@ static SingleFlashOperationStatus_t ProcessSingleFlashOperation(FlashOperationTy
   p_erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
   p_erase_init.NbPages = 1;
   p_erase_init.Page = SectorNumberOrDestAddress;
-  bool concurrent_mode_flash_operation_allowed;
 
   do
   {
@@ -260,7 +259,9 @@ static SingleFlashOperationStatus_t ProcessSingleFlashOperation(FlashOperationTy
          *  This is why this code is protected by a critical section.
          */
         LL_HSEM_ReleaseLock(HSEM, CFG_HW_BLOCK_FLASH_REQ_BY_CPU2_SEMID, 0);
+        UTILS_EXIT_CRITICAL_SECTION(); 
       }
+  
     }
 
     UTILS_EXIT_CRITICAL_SECTION();

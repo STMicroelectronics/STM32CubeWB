@@ -39,6 +39,7 @@ extern "C" {
 #include "core/ble_std.h"
 
 /**< blesvc */
+#include "svc/Inc/bas.h"    
 #include "svc/Inc/bls.h"
 #include "svc/Inc/crs_stm.h"
 #include "svc/Inc/dis.h"

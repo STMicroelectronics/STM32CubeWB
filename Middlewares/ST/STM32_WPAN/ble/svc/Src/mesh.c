@@ -23,6 +23,7 @@
 #include "appli_mesh.h"
 #include "models_if.h"
 #include "mesh_cfg.h"
+#include "appli_config.h"
 #include "appli_config_client.h"
 #include "appli_nvm.h"
 #include "shci.h"
@@ -45,7 +46,21 @@ const MOBLE_USER_BLE_CB_MAP user_ble_cb =
 
 const MOBLE_CONFIG_MODEL_CB_MAP config_model_cb = 
 {
-  Appli_GetPublicationParamsCb
+  Appli_GetAppKeyAddParamsCb,
+  Appli_GetAppKeyDeleteParamsCb,
+  Appli_GetAppKeyListParamsCb,
+  Appli_GetAppKeyUpdateParamsCb,
+  Appli_GetNetKeyAddParamsCb,
+  Appli_GetNetKeyDeleteParamsCb,
+  Appli_GetNetKeyListParamsCb,
+  Appli_GetNetKeyUpdateParamsCb,
+  Appli_GetAppKeyBindingParamsCb,
+  Appli_GetAppKeyUnBindingParamsCb,
+  Appli_GetSubAddParamsCb,
+  Appli_GetSubDeleteParamsCb,
+  Appli_GetSubOverwriteParamsCb,
+  Appli_GetPublicationSetParamsCb,
+  Appli_GetPublicationGetParamsCb
 };
 
 /* Private macro -------------------------------------------------------------*/
@@ -354,6 +369,13 @@ void Appli_ConfigurationInfoDump(void)
     }
 #endif
 
+#ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP
+    if ((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP & (1 << elementCount)) == (1 << elementCount))
+    {
+      TRACE_I(TF_MISC,"Generic Power On Off Setup Server \r\n");
+    }
+#endif
+
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF
     if ((ENABLE_GENERIC_MODEL_CLIENT_POWER_ONOFF & (1 << elementCount)) == (1 << elementCount))
     {
@@ -410,6 +432,13 @@ void Appli_ConfigurationInfoDump(void)
     }
 #endif 
 
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP
+    if((ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP & (1 << elementCount)) == (1 << elementCount))
+    {
+      TRACE_I(TF_MISC,"Light Lightness Setup Server \r\n");       
+    }
+#endif 
+
 #ifdef ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS
     if((ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS & (1 << elementCount)) == (1 << elementCount))
     {
@@ -421,6 +450,13 @@ void Appli_ConfigurationInfoDump(void)
     if((ENABLE_LIGHT_MODEL_SERVER_CTL & (1 << elementCount)) == (1 << elementCount))
     {  
       TRACE_I(TF_MISC,"Light CTL Server \r\n");
+    }
+#endif 
+
+#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP
+    if((ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP & (1 << elementCount)) == (1 << elementCount))
+    {  
+      TRACE_I(TF_MISC,"Light CTL Setup Server \r\n");
     }
 #endif 
 
@@ -442,6 +478,13 @@ void Appli_ConfigurationInfoDump(void)
     if((ENABLE_LIGHT_MODEL_SERVER_HSL & (1 << elementCount)) == (1 << elementCount))
     {  
       TRACE_I(TF_MISC,"Light HSL Server \r\n");
+    }
+#endif 
+
+#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP
+    if((ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP & (1 << elementCount)) == (1 << elementCount))
+    {  
+      TRACE_I(TF_MISC,"Light HSL Setup Server \r\n");
     }
 #endif 
 

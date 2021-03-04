@@ -125,6 +125,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
+extern uint8_t g_ot_notification_allowed;
 
 /* USER CODE BEGIN PV */
 static APP_THREAD_LedTogglingMode_t   ToggleBlueLedMode = SLOW_TOGGLING;
@@ -370,7 +371,7 @@ static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Thread
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -435,6 +436,59 @@ static void APP_THREAD_TimingElapsed(void)
   }
 }
 
+static void CommissionerStateCallback(otCommissionerState aState, void *aContext)
+{
+  APP_DBG("otCommissionerStateCallback");
+
+  switch (aState)
+  {
+  case OT_COMMISSIONER_STATE_DISABLED:
+    APP_DBG("Commissioner : disabled\r\n");
+    break;
+  case OT_COMMISSIONER_STATE_PETITION:
+    APP_DBG("Commissioner : petitioning\r\n");
+    break;
+  case OT_COMMISSIONER_STATE_ACTIVE:
+    APP_DBG("Commissioner : active\r\n");
+    break;
+  }
+}
+
+static void OutputBytes(const uint8_t *aBytes, uint8_t aLength)
+{
+  for (int i = 0; i < aLength; i++)
+  {
+    APP_DBG("%02x", aBytes[i]);
+  }
+}
+
+static void CommissionerJoinerCallback(otCommissionerJoinerEvent aEvent, const otExtAddress *aJoinerId, void *aContext)
+{
+  APP_DBG("Commissioner: Joiner ");
+
+  switch (aEvent)
+  {
+  case OT_COMMISSIONER_JOINER_START:
+      APP_DBG("start ");
+      break;
+  case OT_COMMISSIONER_JOINER_CONNECTED:
+      APP_DBG("connect ");
+      break;
+  case OT_COMMISSIONER_JOINER_FINALIZE:
+      APP_DBG("finalize ");
+      break;
+  case OT_COMMISSIONER_JOINER_END:
+      APP_DBG("end ");
+      break;
+  case OT_COMMISSIONER_JOINER_REMOVED:
+      APP_DBG("remove ");
+      break;
+  }
+
+  OutputBytes(aJoinerId->m8, sizeof(*aJoinerId));
+}
+
+
 /**
  * @brief Commissioner configuration.
  *        This function starts and configure the commissioner.
@@ -448,7 +502,10 @@ static void APP_THREAD_StartCommissioner(void)
   HAL_Delay(1000U);
   APP_DBG("**** APP_THREAD_StartCommissioner");
   /* Start the commissioner */
-  error = otCommissionerStart(NULL);
+  error = otCommissionerStart(NULL,
+      CommissionerStateCallback,
+      CommissionerJoinerCallback,
+      NULL);
 
   if (error != OT_ERROR_NONE)
   {
@@ -456,7 +513,10 @@ static void APP_THREAD_StartCommissioner(void)
   }
 
   /* Authorize external devices to join */
-  error = otCommissionerAddJoiner(NULL, NULL, C_PASSWORD, 120U);
+  error = otCommissionerAddJoiner(NULL,  /* otInstance */
+      NULL,        /* aEui64 */
+      C_PASSWORD,  /* aPskd */
+      120U);       /* aTimeout */
   if (error != OT_ERROR_NONE)
   {
     APP_THREAD_Error(ERR_COMMISSIONER_CONFIG, error);
@@ -517,13 +577,15 @@ static void APP_THREAD_ConfigJoiner(void)
   }
 
   /* Start the commissioner */
-  error = otJoinerStart(NULL,
-      C_PASSWORD,
-      NULL,
-      "OT", /* PACKAGE_NAME */
-      "TestAppli",/* OPENTHREAD_CONFIG_PLATFORM_INFO */
-      "NA", /* PACKAGE_VERSION */
-      NULL, APP_THREAD_JoinerHandler, NULL);
+  error = otJoinerStart(NULL,   /* otInstance */
+      C_PASSWORD,               /* aPskd */
+      NULL,                     /* aProvisioningUrl */
+      "OT",                     /* aVendorName */
+      "TestAppli",              /* aVendorModel */
+      "NA",                     /* aVendorSwVersion */
+      NULL,                     /* aVendorData */
+      APP_THREAD_JoinerHandler, /* otJoinerCallback aCallback */
+      NULL);                    /* aContext */
 
   if (error != OT_ERROR_NONE)
   {
@@ -532,9 +594,8 @@ static void APP_THREAD_ConfigJoiner(void)
 }
 
 /**
- * @brief APP_THREAD_JoinerHandler
- * @param OtError
- * @param pContext
+ * @brief Dummy request handler
+ * @param
  * @retval None
  */
 static void APP_THREAD_JoinerHandler(otError OtError, void *pContext)
@@ -546,6 +607,7 @@ static void APP_THREAD_JoinerHandler(otError OtError, void *pContext)
     {
       APP_THREAD_Error(ERR_THREAD_START, OtError);
     }
+    APP_DBG("JOIN SUCCESS!");
   }
   else
     APP_THREAD_Error(ERR_THREAD_JOINER_CB, OtError);
@@ -578,14 +640,7 @@ Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void)
   return (Thread_OT_Cmd_Request_t*)(p_thread_notif_M0_to_M4)->evtserial.evt.payload;
 }
 
-/**
- * @brief  This function is used to transfer the Ot commands from the
- *         M4 to the M0.
- *
- * @param   None
- * @return  None
- */
-void Ot_Cmd_Transfer(void)
+static void Ot_Cmd_Transfer_Common(void)
 {
   /* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352 */
   p_thread_otcmdbuffer->cmdserial.cmd.cmdcode = 0x280U;
@@ -601,6 +656,33 @@ void Ot_Cmd_Transfer(void)
 }
 
 /**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_Transfer(void)
+{
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0 with Notification M0 to M4 allowed.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_TransferWithNotif(void)
+{
+  /* Flag to specify to UTIL_SEQ_EvtIdle that M0 to M4 notifications are allowed */
+  g_ot_notification_allowed = 1U;
+
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
  * @brief  This function is called when acknowledge from OT command is received from the M0+.
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -612,6 +694,9 @@ void TL_OT_CmdEvtReceived( TL_EvtPacket_t * Otbuffer )
   UNUSED(Otbuffer);
 
   Receive_Ack_From_M0();
+
+  /* Does not allow OpenThread M0 to M4 notification */
+  g_ot_notification_allowed = 0U;
 }
 
 /**
@@ -884,7 +969,7 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
   uint32_t char_remaining = 0;
   static uint32_t len_total = 0;
 
-  /* Copy the characteres in the temporary buffer */
+  /* Copy the characters in the temporary buffer */
   for (i = 0; i < *Len; i++)
   {
     TmpString[len_total++] = Buf[i];

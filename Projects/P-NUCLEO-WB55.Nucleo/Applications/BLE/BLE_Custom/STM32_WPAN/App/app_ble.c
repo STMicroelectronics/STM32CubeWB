@@ -1,8 +1,8 @@
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    app_ble.c
- * @author  MCD Application Team
+  * File Name          : App/app_ble.c
+  * Description        : Application file for BLE Middleware.
  * @brief   BLE Application
  ******************************************************************************
  * @attention
@@ -222,7 +222,6 @@ uint8_t ad_data[19] = {
     2, AD_TYPE_TX_POWER_LEVEL, 0 /* 0dBm */, /* Transmission Power */
     6, AD_TYPE_COMPLETE_LOCAL_NAME, 'M', 'y', 'C', 'S', 'T',  /* Complete name */
     3, AD_TYPE_16_BIT_SERV_UUID_CMPLT_LIST, 0x0D, 0x18,
-
     4, AD_TYPE_MANUFACTURER_SPECIFIC_DATA, 0x30, 0x00, 0x00 /*  */,
 };
 
@@ -272,8 +271,11 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
-    CFG_BLE_LL_ONLY,
-    0}
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER}
   };
 
   /**
@@ -355,7 +357,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 {
   hci_event_pckt *event_pckt;
   evt_le_meta_event *meta_evt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
 
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
 
@@ -371,7 +373,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
   switch (event_pckt->evt)
   {
-    case EVT_DISCONN_COMPLETE:
+    case HCI_DISCONNECTION_COMPLETE_EVT_CODE:
     {
       hci_disconnection_complete_event_rp0 *disconnection_complete_event;
       disconnection_complete_event = (hci_disconnection_complete_event_rp0 *) event_pckt->data;
@@ -398,9 +400,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       /* USER CODE END EVT_DISCONN_COMPLETE */
     }
 
-    break; /* EVT_DISCONN_COMPLETE */
+    break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
 
-    case EVT_LE_META_EVENT:
+    case HCI_LE_META_EVT_CODE:
     {
       meta_evt = (evt_le_meta_event*) event_pckt->data;
       /* USER CODE BEGIN EVT_LE_META_EVENT */
@@ -408,14 +410,14 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       /* USER CODE END EVT_LE_META_EVENT */
       switch (meta_evt->subevent)
       {
-        case EVT_LE_CONN_UPDATE_COMPLETE:
+        case HCI_LE_CONNECTION_UPDATE_COMPLETE_SUBEVT_CODE:
           APP_DBG_MSG("\r\n\r** CONNECTION UPDATE EVENT WITH CLIENT \n");
 
           /* USER CODE BEGIN EVT_LE_CONN_UPDATE_COMPLETE */
 
           /* USER CODE END EVT_LE_CONN_UPDATE_COMPLETE */
           break;
-        case EVT_LE_CONN_COMPLETE:
+        case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
         {
           hci_le_connection_complete_event_rp0 *connection_complete_event;
 
@@ -424,7 +426,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
            */
           connection_complete_event = (hci_le_connection_complete_event_rp0 *) meta_evt->data;
 
-          APP_DBG_MSG("EVT_LE_CONN_COMPLETE for connection handle 0x%x\n", connection_complete_event->Connection_Handle);
+          APP_DBG_MSG("HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE for connection handle 0x%x\n", connection_complete_event->Connection_Handle);
           if (BleApplicationContext.Device_Connection_Status == APP_BLE_LP_CONNECTING)
           {
             /* Connection as client */
@@ -446,7 +448,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           /* USER CODE END HCI_EVT_LE_CONN_COMPLETE */
         }
-        break; /* HCI_EVT_LE_CONN_COMPLETE */
+        break; /* HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
 
         /* USER CODE BEGIN META_EVT */
 
@@ -459,14 +461,14 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           break;
       }
     }
-    break; /* HCI_EVT_LE_META_EVENT */
+    break; /* HCI_LE_META_EVT_CODE */
 
-    case EVT_VENDOR:
-      blue_evt = (evt_blue_aci*) event_pckt->data;
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
+      blecore_evt = (evt_blecore_aci*) event_pckt->data;
       /* USER CODE BEGIN EVT_VENDOR */
 
       /* USER CODE END EVT_VENDOR */
-      switch (blue_evt->ecode)
+      switch (blecore_evt->ecode)
       {
       /* USER CODE BEGIN ecode */
 
@@ -474,7 +476,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       /**
        * SPECIFIC to Custom Template APP
        */
-        case EVT_BLUE_L2CAP_CONNECTION_UPDATE_RESP:
+        case ACI_L2CAP_CONNECTION_UPDATE_RESP_VSEVT_CODE:
 #if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
           mutex = 1;
 #endif
@@ -482,39 +484,39 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
       /* USER CODE END EVT_BLUE_L2CAP_CONNECTION_UPDATE_RESP */
       break;
-        case EVT_BLUE_GAP_PROCEDURE_COMPLETE:
-        APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_PROCEDURE_COMPLETE \n");
+        case ACI_GAP_PROC_COMPLETE_VSEVT_CODE:
+        APP_DBG_MSG("\r\n\r** ACI_GAP_PROC_COMPLETE_VSEVT_CODE \n");
         /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE */
 
         /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
-          break; /* EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+          break; /* ACI_GAP_PROC_COMPLETE_VSEVT_CODE */
 #if(RADIO_ACTIVITY_EVENT != 0)
         case ACI_HAL_END_OF_RADIO_ACTIVITY_VSEVT_CODE:
         /* USER CODE BEGIN RADIO_ACTIVITY_EVENT*/
 
         /* USER CODE END RADIO_ACTIVITY_EVENT*/
-          break; /* RADIO_ACTIVITY_EVENT */
+          break; /* ACI_HAL_END_OF_RADIO_ACTIVITY_VSEVT_CODE */
 #endif
 
         /* PAIRING */
-        case (EVT_BLUE_GAP_KEYPRESS_NOTIFICATION):
-         APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_KEYPRESS_NOTIFICATION \n");
-          break;
+        case (ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE):
+         APP_DBG_MSG("\r\n\r** ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE \n");
+        break;
 
-        case EVT_BLUE_GAP_PASS_KEY_REQUEST:
+        case ACI_GAP_PASS_KEY_REQ_VSEVT_CODE:
             aci_gap_pass_key_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, CFG_FIXED_PIN);
         break;
 
-        case EVT_BLUE_GAP_NUMERIC_COMPARISON_VALUE:
-            evt_numeric_value = (aci_gap_numeric_comparison_value_event_rp0 *)blue_evt->data;
+        case ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE:
+            evt_numeric_value = (aci_gap_numeric_comparison_value_event_rp0 *)blecore_evt->data;
             numeric_value = evt_numeric_value->Numeric_Value;
             APP_DBG_MSG("numeric_value = %lx\n", numeric_value);
             aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, YES);
         break;
 
-        case EVT_BLUE_GAP_PAIRING_CMPLT:
-            pairing_complete = (aci_gap_pairing_complete_event_rp0*)blue_evt->data;
-            APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_BLUE_GAP_PAIRING_CMPLT, pairing_complete->Status = %d\n",pairing_complete->Status);
+        case ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE:
+            pairing_complete = (aci_gap_pairing_complete_event_rp0*)blecore_evt->data;
+            APP_DBG_MSG("BLE_CTRL_App_Notification: ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE, pairing_complete->Status = %d\n",pairing_complete->Status);
         break;
         /* PAIRING */
 
@@ -522,7 +524,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
       /* USER CODE END BLUE_EVT */
       }
-      break; /* EVT_VENDOR */
+      break; /* HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
 
       /* USER CODE BEGIN EVENT_PCKT */
 
@@ -532,7 +534,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       /* USER CODE BEGIN ECODE_DEFAULT*/
 
       /* USER CODE END ECODE_DEFAULT*/
-        break;
+      break;
   }
 
   return (SVCCTL_UserEvtFlowEnable);
@@ -739,12 +741,20 @@ const uint8_t* BleGetBdAddress( void )
     company_id = LL_FLASH_GetSTCompanyID();
     device_id = LL_FLASH_GetDeviceID();
 
+/**
+ * Public Address with the ST company ID
+ * bit[47:24] : 24bits (OUI) equal to the company ID
+ * bit[23:16] : Device ID.
+ * bit[15:0] : The last 16bits from the UDN
+ * Note: In order to use the Public Address in a final product, a dedicated
+ * 24bits company ID (OUI) shall be bought.
+ */
     bd_addr_udn[0] = (uint8_t)(udn & 0x000000FF);
     bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_addr_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
-    bd_addr_udn[3] = (uint8_t)device_id;
-    bd_addr_udn[4] = (uint8_t)(company_id & 0x000000FF);;
-    bd_addr_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[2] = (uint8_t)device_id;
+    bd_addr_udn[3] = (uint8_t)(company_id & 0x000000FF);
+    bd_addr_udn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
 
     bd_addr = (const uint8_t *)bd_addr_udn;
   }
@@ -759,7 +769,6 @@ const uint8_t* BleGetBdAddress( void )
     {
       bd_addr = M_bd_addr;
     }
-
   }
 
   return bd_addr;

@@ -36,6 +36,7 @@
 #define OPENTHREAD_NETWORK_TIME_H_
 
 #include <openthread/error.h>
+#include <openthread/instance.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,14 +53,21 @@ extern "C" {
  */
 
 /**
- * This enum represents OpenThread time synchronization status.
+ * This enumeration represents OpenThread time synchronization status.
  *
  */
-typedef enum otNetworkTimeStatus {
+typedef enum otNetworkTimeStatus
+{
     OT_NETWORK_TIME_UNSYNCHRONIZED = -1, ///< The device hasn't attached to a network.
     OT_NETWORK_TIME_RESYNC_NEEDED  = 0,  ///< The device hasn’t received time sync for more than two periods time.
     OT_NETWORK_TIME_SYNCHRONIZED   = 1,  ///< The device network time is synchronized.
 } otNetworkTimeStatus;
+
+/**
+ * This function pointer is called when a network time sync or status change occurs.
+ *
+ */
+typedef void (*otNetworkTimeSyncCallbackFn)(void *aCallbackContext);
 
 /**
  * zero is considered as invalid time synchronization sequence.
@@ -76,7 +84,7 @@ typedef enum otNetworkTimeStatus {
  * @returns The time synchronization status.
  *
  */
-otNetworkTimeStatus otNetworkTimeGet(otInstance *aInstance, uint64_t &aNetworkTime);
+otNetworkTimeStatus otNetworkTimeGet(otInstance *aInstance, uint64_t *aNetworkTime);
 
 /**
  * Set the time synchronization period.
@@ -125,6 +133,21 @@ otError otNetworkTimeSetXtalThreshold(otInstance *aInstance, uint16_t aXTALThres
  *
  */
 uint16_t otNetworkTimeGetXtalThreshold(otInstance *aInstance);
+
+/**
+ * Set a callback to be called when a network time sync or status change occurs
+ *
+ * This callback shall be called only when the network time offset jumps by
+ * OPENTHREAD_CONFIG_TIME_SYNC_JUMP_NOTIF_MIN_US or when the status changes.
+ *
+ * @param[in] aInstance The OpenThread instance structure.
+ * @param[in] aCallbackFn The callback function to be called
+ * @param[in] aCallbackContext The context to be passed to the callback function upon invocation
+ *
+ */
+void otNetworkTimeSyncSetCallback(otInstance *                aInstance,
+                                  otNetworkTimeSyncCallbackFn aCallbackFn,
+                                  void *                      aCallbackContext);
 
 /**
  * @}

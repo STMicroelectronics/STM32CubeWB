@@ -83,65 +83,70 @@ MOBLE_RESULT Appli_Generic_LevelMove_Set(Generic_LevelStatus_t* pdeltaMoveParam,
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam, 
-                                     MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
+                                     MOBLEUINT8 OptionalValid,
+                                     MOBLEUINT16 dstPeer,
                                      MOBLEUINT8 elementIndex)
 {
-  /*User need to modify the parameters as per the number of elements per node*/
-  AppliOnOffSet[elementIndex].Present_OnOff = pGeneric_OnOffParam->Present_OnOff_State;
-  AppliOnOffSet[elementIndex].Present_OnOffValue = pGeneric_OnOffParam->Present_OnOff_Value; 
-
-  /* This condition is applicable when user want to on off the light with some 
-    default transition value, or optionalValid =IN_TRANSITION ,
-    transition is in progress.
-  */
-  if((OptionalValid == DEFAULT_TRANSITION) || (OptionalValid == IN_TRANSITION))
+  /* LED control only for main element */
+  if(elementIndex == GENERIC_SERVER_MAIN_ELEMENT_INDEX)
   {
-    Appli_LightPwmValue.IntensityValue = AppliOnOffSet[elementIndex].Present_OnOffValue;
-    Light_UpdateLedValue(LOAD_STATE ,Appli_LightPwmValue);
+    /*User need to modify the parameters as per the number of elements per node*/
+    AppliOnOffSet[elementIndex].Present_OnOff = pGeneric_OnOffParam->Present_OnOff_State;
+    AppliOnOffSet[elementIndex].Present_OnOffValue = pGeneric_OnOffParam->Present_OnOff_Value; 
+
+    /* This condition is applicable when user want to on off the light with some 
+      default transition value, or optionalValid =IN_TRANSITION ,
+      transition is in progress.
+    */
+    if((OptionalValid == DEFAULT_TRANSITION) || (OptionalValid == IN_TRANSITION))
+    {
+      Appli_LightPwmValue.IntensityValue = AppliOnOffSet[elementIndex].Present_OnOffValue;
+      Light_UpdateLedValue(LOAD_STATE ,Appli_LightPwmValue);
 
   #if 0 /* EME */
-    if(AppliOnOffSet[elementIndex].Present_OnOff == APPLI_LED_ON)
-    {
-      AppliOnOffSet[elementIndex].TargetValue = PWM_TIME_PERIOD;
-    }
-    else
-    {
-      AppliOnOffSet[elementIndex].TargetValue = APPLI_LED_OFF;
-    }
-  #else
-    AppliOnOffSet[elementIndex].TargetValue = pGeneric_OnOffParam->Target_OnOff; 
-  #endif /* EME */
-
-    if(AppliOnOffSet[elementIndex].Present_OnOffValue == AppliOnOffSet[elementIndex].TargetValue)
-    {
-      if(AppliOnOffSet[elementIndex].Present_OnOffValue > 0)
+      if(AppliOnOffSet[elementIndex].Present_OnOff == APPLI_LED_ON)
       {
-        BSP_LED_On(LED_BLUE);
+        AppliOnOffSet[elementIndex].TargetValue = PWM_TIME_PERIOD;
       }
       else
       {
+        AppliOnOffSet[elementIndex].TargetValue = APPLI_LED_OFF;
+      }
+  #else
+      AppliOnOffSet[elementIndex].TargetValue = pGeneric_OnOffParam->Target_OnOff; 
+  #endif /* EME */
+
+      if(AppliOnOffSet[elementIndex].Present_OnOffValue == AppliOnOffSet[elementIndex].TargetValue)
+      {
+        if(AppliOnOffSet[elementIndex].Present_OnOffValue > 0)
+        {
+          BSP_LED_On(LED_BLUE);
+        }
+        else
+        {
+          BSP_LED_Off(LED_BLUE);
+        }
+      }
+    }  
+    else
+    {
+      if((AppliOnOffSet[elementIndex].Present_OnOff == APPLI_LED_ON) && (OptionalValid == NO_TRANSITION))
+      { 
+        Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
+        Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+        BSP_LED_On(LED_BLUE);
+      }
+      else
+      {  
+        Appli_LightPwmValue.IntensityValue = PWM_VALUE_OFF;
+        Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);
         BSP_LED_Off(LED_BLUE);
       }
-    }
-  }  
-  else
-  {
-    if((AppliOnOffSet[elementIndex].Present_OnOff == APPLI_LED_ON) && (OptionalValid == NO_TRANSITION))
-    { 
-      Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
-      Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
-      BSP_LED_On(LED_BLUE);
-    }
-    else
-    {  
-      Appli_LightPwmValue.IntensityValue = PWM_VALUE_OFF;
-      Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);
-      BSP_LED_Off(LED_BLUE);
     } 
   }
   
-  TRACE_M(TF_GENERIC,"Generic_OnOff_Set callback received for element %d \r\n", elementIndex);           
-  TRACE_M(TF_SERIAL_CTRL,"#8202%02hx!\n\r",AppliOnOffSet[elementIndex].Present_OnOff);
+  TRACE_M(TF_GENERIC, "Appli_Generic_OnOff_Set callback received for elementIndex %d \r\n", elementIndex);           
+  TRACE_M(TF_SERIAL_CTRL, "#8202!for elementIndex %d \r\n", elementIndex);
 
   NvmStatePowerFlag_Set(GENERIC_ON_OFF_NVM_FLAG, elementIndex);
 
@@ -151,40 +156,6 @@ MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam,
 /******************************************************************************/
 #endif  /* #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF */
 /******************************************************************************/
-
-
-/**
-* @brief  Appli_Generic_OnOff_Status: This function is callback for Application
-*          when Generic OnOff message is received
-* @param  pOnOff_status: Pointer to the parameters received for message
-* @param  plength: length of the data 
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUINT32 plength, 
-                                        MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
-{
-  MOBLEUINT8 i;
-  
-  TRACE_M(TF_GENERIC,"Generic_OnOff_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8204!\r\n");
-  
-  for(i = 0; i < plength; i++)
-  {
-    if(i == 0)
-      TRACE_M(TF_SERIAL_CTRL,"Present OnOff value: %d\n\r", pOnOff_status[i]);
-    else if(i == 1)
-      TRACE_M(TF_SERIAL_CTRL,"Target OnOff value: %d\n\r", pOnOff_status[i]);
-    else if(i == 2)
-      TRACE_M(TF_SERIAL_CTRL,"Remaining Time value: %d\n\r", pOnOff_status[i]);
-  }
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 /******************************************************************************/
 #ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL
@@ -235,8 +206,8 @@ MOBLE_RESULT Appli_Generic_Level_Set(Generic_LevelStatus_t* plevelParam,
   Appli_LightPwmValue.IntensityValue = duty;
   Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
 
-  TRACE_M(TF_GENERIC,"Generic_Level_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8206!\r\n");
+  TRACE_M(TF_GENERIC,"Appli_Generic_Level_Set callback received for elementIndex %d \r\n", elementIndex);
+  TRACE_M(TF_SERIAL_CTRL,"#8206!for elementIndex %d \r\n", elementIndex);
   
   NvmStatePowerFlag_Set(GENERIC_LEVEL_NVM_FLAG, elementIndex);
     
@@ -255,7 +226,7 @@ MOBLE_RESULT Appli_Generic_Level_Set(Generic_LevelStatus_t* plevelParam,
 *                     is elementNumber-1
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Appli_Generic_LevelDelta_Set(Generic_LevelStatus_t* pdeltalevelParam, 
+MOBLE_RESULT Appli_Generic_Delta_Set(Generic_LevelStatus_t* pdeltalevelParam, 
                                           MOBLEUINT8 OptionalValid,MOBLEUINT16 dstPeer, 
                                               MOBLEUINT8 elementIndex)
 {
@@ -283,7 +254,7 @@ MOBLE_RESULT Appli_Generic_LevelDelta_Set(Generic_LevelStatus_t* pdeltalevelPara
 
 
 /**
-* @brief  Appli_Generic_LevelMove_Set: This function is callback for Application
+* @brief  Appli_Generic_Move_Set: This function is callback for Application
 *          when Generic Level Move message is received
 * @param  pdeltaMoveParam: Pointer to the parameters message
 * @param  OptionalValid: Flag to inform about the validity of optional parameters 
@@ -293,7 +264,7 @@ MOBLE_RESULT Appli_Generic_LevelDelta_Set(Generic_LevelStatus_t* pdeltalevelPara
 *                     is elementNumber-1
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Appli_Generic_LevelMove_Set(Generic_LevelStatus_t* pdeltaMoveParam, 
+MOBLE_RESULT Appli_Generic_Move_Set(Generic_LevelStatus_t* pdeltaMoveParam, 
                                          MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
                                          MOBLEUINT8 elementIndex)
 {
@@ -317,50 +288,6 @@ MOBLE_RESULT Appli_Generic_LevelMove_Set(Generic_LevelStatus_t* pdeltaMoveParam,
 #endif   /* ENABLE_GENERIC_MODEL_SERVER_LEVEL */
 /******************************************************************************/
 
-  /**
-* @brief  Appli_Generic_Level_Status: This function is callback for Application
-*          when Generic Level Move message is received
-* @param  plevel_status: Pointer to the parameters message
-* @param  plength: length of data 
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8 const *plevel_status, 
-                                        MOBLEUINT32 plength,
-                                        MOBLEUINT16 dstPeer, 
-                                        MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT8 i;
-  MOBLEUINT8 level = 0;
-#endif
-  
-  TRACE_M(TF_GENERIC,"Generic_Level_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8208! \r\n");
-      
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < plength; i++)
-  {
-    if((i == 0) || (i == 2))
-      level = plevel_status[i];
-    else if(i == 1)
-      TRACE_M(TF_SERIAL_CTRL,"Present Level value: %d\n\r", 
-              (plevel_status[i]<<8)|level);
-    else if(i == 3)
-      TRACE_M(TF_SERIAL_CTRL,"Target Level value: %d\n\r", 
-              (plevel_status[i]<<8)|level);
-    else if(i == 4)
-      TRACE_M(TF_SERIAL_CTRL,"Remaining Time value: %d\n\r", plevel_status[i]);
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
-
 /******************************************************************************/
 #ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF
 /******************************************************************************/
@@ -380,10 +307,10 @@ MOBLE_RESULT Appli_Generic_PowerOnOff_Set(Generic_PowerOnOffParam_t* pPowerOnOff
                                          MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
                                               MOBLEUINT8 elementIndex)
 { 
+  
   AppliPowerOnSet[elementIndex].PowerOnState = pPowerOnOffParam->PowerOnOffState;
-
-  TRACE_M(TF_GENERIC,"Generic_PowerOnOff_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8213!\r\n");
+  TRACE_M(TF_SERIAL_CTRL,"#8213! for elementIndex %d \r\n", elementIndex);
+  TRACE_M(TF_GENERIC,"Appli_Generic_PowerOnOff_Set callback received for elementIndex %d \r\n", elementIndex);
 
   if(AppliPowerOnSet[elementIndex].PowerOnState == GENERIC_POWER_ON_STATE)
   {
@@ -399,36 +326,6 @@ MOBLE_RESULT Appli_Generic_PowerOnOff_Set(Generic_PowerOnOffParam_t* pPowerOnOff
 /******************************************************************************/
 #endif  /* ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF */
 /******************************************************************************/
-
-/**
-* @brief  Appli_Generic_PowerOnOff_Set: This function is callback for Application
-*           when Generic Power on off set message is received
-* @param   powerOnOff_status: Pointer to the parameters message
-* @param  plength: length of data 
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT Appli_Generic_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status,\
-                 MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex) 
-{  
-  MOBLEUINT8 i;
-
-  TRACE_M(TF_GENERIC,"Generic_PowerOnOff_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8212!\r\n");
-  
-  for(i = 0; i < plength; i++)
-  {
-    if(i == 0)
-      TRACE_M(TF_SERIAL_CTRL,"On Power up value: %d\n\r", 
-              powerOnOff_status[i]);
-  }
-
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 /******************************************************************************/
 #ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME
@@ -456,30 +353,11 @@ MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Set(Generic_DefaultTransitionPa
   return MOBLE_RESULT_SUCCESS;
 }
 
+
+
 /******************************************************************************/
 #endif   /* ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME */
 /******************************************************************************/
-
-/**
-* @brief  Appli_Generic_DefaultTransitionTime_Status: This function is callback for Application
-*          when Generic Power on off set message is received
-* @param  pTransition_status: Pointer to the parameters message
-* @param  plength: length of data 
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , MOBLEUINT32 plength,MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex) 
-{  
-
-  TRACE_M(TF_GENERIC,"Generic_DefaultTransitionTime_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8210!\r\n");
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 
 /**
@@ -533,6 +411,7 @@ MOBLE_RESULT Appli_Generic_GetOnOffValue(MOBLEUINT8* pOnOff_Value, MOBLEUINT16 d
 */ 
 MOBLE_RESULT Appli_Generic_GetLevelStatus(MOBLEUINT8* pLevel_Status, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex) 
 { 
+
    *pLevel_Status = AppliLevelSet[elementIndex].Present_Level16;
    *(pLevel_Status+1) = AppliLevelSet[elementIndex].Present_Level16 >> 8;
    *(pLevel_Status+2) = AppliLevelSet[elementIndex].Target_Level16;

@@ -60,6 +60,7 @@ extern RTC_HandleTypeDef hrtc;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+uint8_t g_ot_notification_allowed = 0U;
 
 /* USER CODE BEGIN PV */
 
@@ -350,8 +351,16 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
   switch(evt_waited_bm)
   {
   case EVENT_ACK_FROM_M0_EVT:
-    /* Does not allow other tasks when waiting for OT Cmd response */
-    UTIL_SEQ_Run(0);
+    if(g_ot_notification_allowed == 1U)
+    {
+      /* Some OT API send M0 to M4 notifications so allow notifications when waiting for OT Cmd response */
+      UTIL_SEQ_Run(TASK_MSG_FROM_M0_TO_M4);
+    }
+    else
+    {
+      /* Does not allow other tasks when waiting for OT Cmd response */
+      UTIL_SEQ_Run(0);
+    }
     break;
   case EVENT_SYNCHRO_BYPASS_IDLE:
     UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);

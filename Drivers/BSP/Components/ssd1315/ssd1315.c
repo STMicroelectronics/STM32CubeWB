@@ -436,7 +436,7 @@ int32_t SSD1315_DrawBitmap(SSD1315_Object_t *pObj, uint32_t Xpos, uint32_t Ypos,
   /* Read bitmap height */
   height = pBmp[22] + (pBmp[23] << 8) + (pBmp[24] << 16)  + (pBmp[25] << 24);
 
-  /* Size converion */
+  /* Size conversion */
   size = (size - index)/2;
 
   /* Apply offset to bypass header */
@@ -550,7 +550,7 @@ int32_t SSD1315_ShiftBitmap(SSD1315_Object_t *pObj,uint16_t Xpos, uint16_t Ypos,
   }
   original_YposBMP = YposBMP;
   
-  /* Size converion */
+  /* Size conversion */
   size = (size - index)/2;
   size = size - ((Xshift*height/8)+(Yshift*width/8 ));
   

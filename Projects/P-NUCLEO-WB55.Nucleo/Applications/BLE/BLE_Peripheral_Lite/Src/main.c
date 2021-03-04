@@ -441,8 +441,11 @@ static void BLE_Init( void )
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
-    CFG_BLE_LL_ONLY,
-    0}
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER}
   };
   
   /**
@@ -698,7 +701,7 @@ const uint8_t* Ble_GetBdAddress(void)
     bd_address_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
     bd_address_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
     bd_address_udn[3] = (uint8_t)device_id;
-    bd_address_udn[4] = (uint8_t)(company_id & 0x000000FF);;
+    bd_address_udn[4] = (uint8_t)(company_id & 0x000000FF);
     bd_address_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
     
     bd_address = (const uint8_t *)bd_address_udn;
@@ -974,39 +977,39 @@ Please read AN5042 - HSE trimming for RF applications using the STM32WB series. 
 SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 {
   hci_event_pckt *event_pckt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
   evt_le_meta_event *le_meta_evt;
   
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
   
   switch (event_pckt->evt)
   {
-  case EVT_DISCONN_COMPLETE:
+  case HCI_DISCONNECTION_COMPLETE_EVT_CODE:
     APP_FLAG_RESET(APP_FLAG_BLE_CONNECTED);
     /* Start advertising */
     BLE_Advertising(SET);
-    break; /* EVT_DISCONN_COMPLETE */
-  case EVT_LE_META_EVENT:
+    break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
+  case HCI_LE_META_EVT_CODE:
     le_meta_evt = (evt_le_meta_event *)(event_pckt->data);
     switch (le_meta_evt->subevent)
     {
-    case EVT_LE_CONN_COMPLETE:
+    case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
       APP_FLAG_RESET(APP_FLAG_BLE_ADVERTISING);
       APP_FLAG_SET(APP_FLAG_BLE_CONNECTED);
-      break; /* EVT_LE_CONN_COMPLETE */
+      break; /* HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
     default:
       break;
     }
-    break; /* EVT_LE_CONN_COMPLETE */
-  case EVT_VENDOR:
-    blue_evt = (evt_blue_aci*) event_pckt->data;
-    switch (blue_evt->ecode)
+    break; /* HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
+  case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
+    blecore_evt = (evt_blecore_aci*) event_pckt->data;
+    switch (blecore_evt->ecode)
     {
     case EVT_END_OF_RADIO_ACTIVITY:
       BSP_LED_Toggle(LED_GREEN);
       break; /* EVT_END_OF_RADIO_ACTIVITY */
     }
-    break; /* EVT_VENDOR */
+    break; /* HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
     
   default:
     break;

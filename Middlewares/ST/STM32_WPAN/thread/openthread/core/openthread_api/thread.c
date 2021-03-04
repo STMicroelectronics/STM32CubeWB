@@ -31,9 +31,9 @@
 
 extern otHandleActiveScanResult otHandleActiveScanResultCb;
 extern otReceiveDiagnosticGetCallback otReceiveDiagnosticGetCb;
+extern otThreadParentResponseCallback otThreadParentResponseCb;
 
-
-OTAPI otError OTCALL otThreadSetEnabled(otInstance *aInstance, bool aEnabled)
+otError otThreadSetEnabled(otInstance *aInstance, bool aEnabled)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -50,40 +50,23 @@ OTAPI otError OTCALL otThreadSetEnabled(otInstance *aInstance, bool aEnabled)
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI bool OTCALL otThreadGetAutoStart(otInstance *aInstance)
+uint16_t otThreadGetVersion(void)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_AUTO_START;
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_VERSION;
 
   p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  return (uint16_t)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadSetAutoStart(otInstance *aInstance, bool aStartAutomatically)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_AUTO_START;
-
-  p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t)aStartAutomatically;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
-}
-
-OTAPI bool OTCALL otThreadIsSingleton(otInstance *aInstance)
+bool otThreadIsSingleton(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -99,9 +82,13 @@ OTAPI bool OTCALL otThreadIsSingleton(otInstance *aInstance)
   return (bool)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadDiscover(otInstance *aInstance, uint32_t aScanChannels, uint16_t aPanId, bool aJoiner,
-    bool aEnableEui64Filtering, otHandleActiveScanResult aCallback,
-    void *aCallbackContext)
+otError otThreadDiscover(otInstance *             aInstance,
+                         uint32_t                 aScanChannels,
+                         uint16_t                 aPanId,
+                         bool                     aJoiner,
+                         bool                     aEnableEui64Filtering,
+                         otHandleActiveScanResult aCallback,
+                         void *                   aCallbackContext)
 {
   Pre_OtCmdProcessing();
   otHandleActiveScanResultCb = aCallback;
@@ -123,7 +110,7 @@ OTAPI otError OTCALL otThreadDiscover(otInstance *aInstance, uint32_t aScanChann
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI bool OTCALL otThreadIsDiscoverInProgress(otInstance *aInstance)
+bool otThreadIsDiscoverInProgress(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -139,7 +126,7 @@ OTAPI bool OTCALL otThreadIsDiscoverInProgress(otInstance *aInstance)
   return (bool)p_ot_req->Data[0];
 }
 
-OTAPI uint32_t OTCALL otThreadGetChildTimeout(otInstance *aInstance)
+uint32_t otThreadGetChildTimeout(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -155,7 +142,7 @@ OTAPI uint32_t OTCALL otThreadGetChildTimeout(otInstance *aInstance)
   return (uint32_t)p_ot_req->Data[0];
 }
 
-OTAPI void OTCALL otThreadSetChildTimeout(otInstance *aInstance, uint32_t aTimeout)
+void otThreadSetChildTimeout(otInstance *aInstance, uint32_t aTimeout)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -171,7 +158,7 @@ OTAPI void OTCALL otThreadSetChildTimeout(otInstance *aInstance, uint32_t aTimeo
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-OTAPI const otExtendedPanId *OTCALL otThreadGetExtendedPanId(otInstance *aInstance)
+const otExtendedPanId *otThreadGetExtendedPanId(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -187,7 +174,7 @@ OTAPI const otExtendedPanId *OTCALL otThreadGetExtendedPanId(otInstance *aInstan
   return (otExtendedPanId *)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadSetExtendedPanId(otInstance *aInstance, const otExtendedPanId *aExtendedPanId)
+otError otThreadSetExtendedPanId(otInstance *aInstance, const otExtendedPanId *aExtendedPanId)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -204,7 +191,7 @@ OTAPI otError OTCALL otThreadSetExtendedPanId(otInstance *aInstance, const otExt
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadGetLeaderRloc(otInstance *aInstance, otIp6Address *aLeaderRloc)
+otError otThreadGetLeaderRloc(otInstance *aInstance, otIp6Address *aLeaderRloc)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -221,7 +208,7 @@ OTAPI otError OTCALL otThreadGetLeaderRloc(otInstance *aInstance, otIp6Address *
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otLinkModeConfig OTCALL otThreadGetLinkMode(otInstance *aInstance)
+otLinkModeConfig otThreadGetLinkMode(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -246,7 +233,7 @@ OTAPI otLinkModeConfig OTCALL otThreadGetLinkMode(otInstance *aInstance)
   return otLinkModeConfig_received;
 }
 
-OTAPI otError OTCALL otThreadSetLinkMode(otInstance *aInstance, otLinkModeConfig aConfig)
+otError otThreadSetLinkMode(otInstance *aInstance, otLinkModeConfig aConfig)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -268,7 +255,7 @@ OTAPI otError OTCALL otThreadSetLinkMode(otInstance *aInstance, otLinkModeConfig
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI const otMasterKey *OTCALL otThreadGetMasterKey(otInstance *aInstance)
+const otMasterKey *otThreadGetMasterKey(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -284,7 +271,7 @@ OTAPI const otMasterKey *OTCALL otThreadGetMasterKey(otInstance *aInstance)
   return (otMasterKey *)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadSetMasterKey(otInstance *aInstance, const otMasterKey *aKey)
+otError otThreadSetMasterKey(otInstance *aInstance, const otMasterKey *aKey)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -301,7 +288,23 @@ OTAPI otError OTCALL otThreadSetMasterKey(otInstance *aInstance, const otMasterK
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI const otIp6Address *OTCALL otThreadGetMeshLocalEid(otInstance *aInstance)
+const otIp6Address *otThreadGetRloc(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_RLOC;
+
+  p_ot_req->Size=0;;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otIp6Address *)p_ot_req->Data[0];
+}
+
+const otIp6Address *otThreadGetMeshLocalEid(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -317,7 +320,7 @@ OTAPI const otIp6Address *OTCALL otThreadGetMeshLocalEid(otInstance *aInstance)
   return (otIp6Address *)p_ot_req->Data[0];
 }
 
-OTAPI const otMeshLocalPrefix *OTCALL otThreadGetMeshLocalPrefix(otInstance *aInstance)
+const otMeshLocalPrefix *otThreadGetMeshLocalPrefix(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -333,7 +336,7 @@ OTAPI const otMeshLocalPrefix *OTCALL otThreadGetMeshLocalPrefix(otInstance *aIn
   return (otMeshLocalPrefix *)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadSetMeshLocalPrefix(otInstance *aInstance, const otMeshLocalPrefix *aMeshLocalPrefix)
+otError otThreadSetMeshLocalPrefix(otInstance *aInstance, const otMeshLocalPrefix *aMeshLocalPrefix)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -366,7 +369,7 @@ const otIp6Address *otThreadGetLinkLocalIp6Address(otInstance *aInstance)
   return (otIp6Address *)p_ot_req->Data[0];
 }
 
-OTAPI const char *OTCALL otThreadGetNetworkName(otInstance *aInstance)
+const char *otThreadGetNetworkName(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -382,7 +385,7 @@ OTAPI const char *OTCALL otThreadGetNetworkName(otInstance *aInstance)
   return (char *)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadSetNetworkName(otInstance *aInstance, const char *aNetworkName)
+otError otThreadSetNetworkName(otInstance *aInstance, const char *aNetworkName)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -399,7 +402,7 @@ OTAPI otError OTCALL otThreadSetNetworkName(otInstance *aInstance, const char *a
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI uint32_t OTCALL otThreadGetKeySequenceCounter(otInstance *aInstance)
+uint32_t otThreadGetKeySequenceCounter(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -415,7 +418,7 @@ OTAPI uint32_t OTCALL otThreadGetKeySequenceCounter(otInstance *aInstance)
   return (uint32_t)p_ot_req->Data[0];
 }
 
-OTAPI void OTCALL otThreadSetKeySequenceCounter(otInstance *aInstance, uint32_t aKeySequenceCounter)
+void otThreadSetKeySequenceCounter(otInstance *aInstance, uint32_t aKeySequenceCounter)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -431,7 +434,7 @@ OTAPI void OTCALL otThreadSetKeySequenceCounter(otInstance *aInstance, uint32_t 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-OTAPI uint32_t OTCALL otThreadGetKeySwitchGuardTime(otInstance *aInstance)
+uint32_t otThreadGetKeySwitchGuardTime(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -447,7 +450,7 @@ OTAPI uint32_t OTCALL otThreadGetKeySwitchGuardTime(otInstance *aInstance)
   return (uint32_t)p_ot_req->Data[0];
 }
 
-OTAPI void OTCALL otThreadSetKeySwitchGuardTime(otInstance *aInstance, uint32_t aKeySwitchGuardTime)
+void otThreadSetKeySwitchGuardTime(otInstance *aInstance, uint32_t aKeySwitchGuardTime)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -463,7 +466,7 @@ OTAPI void OTCALL otThreadSetKeySwitchGuardTime(otInstance *aInstance, uint32_t 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-OTAPI otError OTCALL otThreadBecomeDetached(otInstance *aInstance)
+otError otThreadBecomeDetached(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -479,7 +482,7 @@ OTAPI otError OTCALL otThreadBecomeDetached(otInstance *aInstance)
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadBecomeChild(otInstance *aInstance)
+otError otThreadBecomeChild(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -495,7 +498,7 @@ OTAPI otError OTCALL otThreadBecomeChild(otInstance *aInstance)
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadGetNextNeighborInfo(otInstance *aInstance, otNeighborInfoIterator *aIterator,
+otError otThreadGetNextNeighborInfo(otInstance *aInstance, otNeighborInfoIterator *aIterator,
     otNeighborInfo *aInfo)
 {
   Pre_OtCmdProcessing();
@@ -514,7 +517,7 @@ OTAPI otError OTCALL otThreadGetNextNeighborInfo(otInstance *aInstance, otNeighb
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otDeviceRole OTCALL otThreadGetDeviceRole(otInstance *aInstance)
+otDeviceRole otThreadGetDeviceRole(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -530,7 +533,7 @@ OTAPI otDeviceRole OTCALL otThreadGetDeviceRole(otInstance *aInstance)
   return (otDeviceRole)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadGetLeaderData(otInstance *aInstance, otLeaderData *aLeaderData)
+otError otThreadGetLeaderData(otInstance *aInstance, otLeaderData *aLeaderData)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -547,7 +550,7 @@ OTAPI otError OTCALL otThreadGetLeaderData(otInstance *aInstance, otLeaderData *
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI uint8_t OTCALL otThreadGetLeaderRouterId(otInstance *aInstance)
+uint8_t otThreadGetLeaderRouterId(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -563,7 +566,7 @@ OTAPI uint8_t OTCALL otThreadGetLeaderRouterId(otInstance *aInstance)
   return (uint8_t)p_ot_req->Data[0];
 }
 
-OTAPI uint8_t OTCALL otThreadGetLeaderWeight(otInstance *aInstance)
+uint8_t otThreadGetLeaderWeight(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -579,7 +582,7 @@ OTAPI uint8_t OTCALL otThreadGetLeaderWeight(otInstance *aInstance)
   return (uint8_t)p_ot_req->Data[0];
 }
 
-OTAPI uint32_t OTCALL otThreadGetPartitionId(otInstance *aInstance)
+uint32_t otThreadGetPartitionId(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -595,7 +598,7 @@ OTAPI uint32_t OTCALL otThreadGetPartitionId(otInstance *aInstance)
   return (uint32_t)p_ot_req->Data[0];
 }
 
-OTAPI uint16_t OTCALL otThreadGetRloc16(otInstance *aInstance)
+uint16_t otThreadGetRloc16(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -611,7 +614,7 @@ OTAPI uint16_t OTCALL otThreadGetRloc16(otInstance *aInstance)
   return (uint16_t)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadGetParentInfo(otInstance *aInstance, otRouterInfo *aParentInfo)
+otError otThreadGetParentInfo(otInstance *aInstance, otRouterInfo *aParentInfo)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -628,7 +631,7 @@ OTAPI otError OTCALL otThreadGetParentInfo(otInstance *aInstance, otRouterInfo *
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadGetParentAverageRssi(otInstance *aInstance, int8_t *aParentRssi)
+otError otThreadGetParentAverageRssi(otInstance *aInstance, int8_t *aParentRssi)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -645,7 +648,7 @@ OTAPI otError OTCALL otThreadGetParentAverageRssi(otInstance *aInstance, int8_t 
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadGetParentLastRssi(otInstance *aInstance, int8_t *aLastRssi)
+otError otThreadGetParentLastRssi(otInstance *aInstance, int8_t *aLastRssi)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -662,8 +665,9 @@ OTAPI otError OTCALL otThreadGetParentLastRssi(otInstance *aInstance, int8_t *aL
   return (otError)p_ot_req->Data[0];
 }
 
-void otThreadSetReceiveDiagnosticGetCallback(otInstance *aInstance, otReceiveDiagnosticGetCallback aCallback,
-    void *aCallbackContext)
+void otThreadSetReceiveDiagnosticGetCallback(otInstance *                   aInstance,
+                                             otReceiveDiagnosticGetCallback aCallback,
+                                             void *                         aCallbackContext)
 {
   Pre_OtCmdProcessing();
   otReceiveDiagnosticGetCb = aCallback;
@@ -680,8 +684,10 @@ void otThreadSetReceiveDiagnosticGetCallback(otInstance *aInstance, otReceiveDia
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-OTAPI otError OTCALL otThreadSendDiagnosticGet(otInstance *aInstance, const otIp6Address *aDestination,
-    const uint8_t aTlvTypes[], uint8_t aCount)
+otError otThreadSendDiagnosticGet(otInstance *        aInstance,
+                                  const otIp6Address *aDestination,
+                                  const uint8_t       aTlvTypes[],
+                                  uint8_t             aCount)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -700,8 +706,10 @@ OTAPI otError OTCALL otThreadSendDiagnosticGet(otInstance *aInstance, const otIp
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otThreadSendDiagnosticReset(otInstance *aInstance, const otIp6Address *aDestination,
-    const uint8_t aTlvTypes[], uint8_t aCount)
+otError otThreadSendDiagnosticReset(otInstance *        aInstance,
+                                    const otIp6Address *aDestination,
+                                    const uint8_t       aTlvTypes[],
+                                    uint8_t             aCount)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -720,7 +728,7 @@ OTAPI otError OTCALL otThreadSendDiagnosticReset(otInstance *aInstance, const ot
   return (otError)p_ot_req->Data[0];
 }
 
-OTAPI const otIpCounters *OTCALL otThreadGetIp6Counters(otInstance *aInstance)
+const otIpCounters *otThreadGetIp6Counters(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -734,6 +742,21 @@ OTAPI const otIpCounters *OTCALL otThreadGetIp6Counters(otInstance *aInstance)
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otIpCounters *)p_ot_req->Data[0];
+}
+
+void otThreadResetIp6Counters(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_RESET_IP6_COUNTERS;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
 const otMleCounters *otThreadGetMleCounters(otInstance *aInstance)
@@ -761,6 +784,24 @@ void otThreadResetMleCounters(otInstance *aInstance)
   p_ot_req->ID = MSG_M4TOM0_OT_THREAD_RESET_MLE_COUNTERS;
 
   p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+}
+
+void otThreadRegisterParentResponseCallback(otInstance *                   aInstance,
+                                            otThreadParentResponseCallback aCallback,
+                                            void *                         aContext)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  otThreadParentResponseCb = aCallback;
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_REGISTER_PARENT_RESPONSE_CALLBACK;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aContext;
 
   Ot_Cmd_Transfer();
 }

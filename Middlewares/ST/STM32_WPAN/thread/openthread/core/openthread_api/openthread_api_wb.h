@@ -45,6 +45,10 @@
 #include "jam_detection.h"
 #include "server.h"
 #include "thread_ftd.h"
+#include "network_time.h"
+#include "coap_secure.h"
+#include "sntp.h"
+#include "coap_secure.h"
 
 #include "stm32wbxx_core_interface_def.h"
 #include "stm32wbxx_hal.h"

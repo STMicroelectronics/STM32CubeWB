@@ -110,13 +110,14 @@ extern "C" {
  * This type represents the log level.
  *
  */
-typedef uint8_t otLogLevel;
+typedef int otLogLevel;
 
 /**
  * This enumeration represents log regions.
  *
  */
-typedef enum otLogRegion {
+typedef enum otLogRegion
+{
     OT_LOG_REGION_API      = 1,  ///< OpenThread API
     OT_LOG_REGION_MLE      = 2,  ///< MLE
     OT_LOG_REGION_ARP      = 3,  ///< EID-to-RLOC mapping.

@@ -35,6 +35,11 @@
 <p>You may obtain a copy of the License at: <a href="http://www.st.com/SLA0044">SLA0044</a></p>
 <h1 id="purpose">Purpose</h1>
 <p>This release covers the delivery of STM32WB Coprocessor binaries.</p>
+<p>Here is the list of references to user documents:</p>
+<ul>
+<li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/dm00513965.pdf">AN5185</a> : ST FW upgrade services for STM32WB</li>
+<li><a href="https://www.st.com/resource/en/user_manual/dm00403500-stm32cubeprogrammer-software-description-stmicroelectronics.pdf">UM2237</a> : STM32CubeProgrammer User Manual</li>
+</ul>
 <p>Here is the list of the supported binaries:</p>
 <ul>
 <li>stm32wb5x_BLE_HCI_AdvScan_fw.bin
@@ -43,10 +48,10 @@
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
 <li>To be used for advertising and scanning through HCI interface</li>
 </ul></li>
-<li>stm32wb5x_BLE_LLD_fw.bin
+<li>stm32wb3x_BLE_LLD_fw.bin
 <ul>
-<li>LLD BLE Radio Transparent firmware</li>
-<li>To be used for direct access on LLD BLE features and API</li>
+<li>BLE LLD (Low Level Driver) Radio Transparent firmware</li>
+<li>To be used for direct access on BLE LLD features and API</li>
 </ul></li>
 <li>stm32wb5x_BLE_Stack_full_fw.bin
 <ul>
@@ -77,7 +82,7 @@
 <li>GAP peripheral only (LL slave up to 2 links)</li>
 <li>GATT server</li>
 <li>Data length extension</li>
-<li>Legacy Pairing</li>
+<li>Legacy Pairing, LE secure connections</li>
 <li>HCI interface (reduced)</li>
 <li>Direct Test Mode</li>
 </ul></li>
@@ -88,7 +93,7 @@
 </ul></li>
 <li>stm32wb5x_BLE_HCILayer_fw.bin
 <ul>
-<li>HCI Layer only mode 5.0 certified : Link Layer, HCI</li>
+<li>HCI Layer only mode 5.0 certified : Link Layer, HCI with Direct Test Mode</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
 </ul></li>
 <li>stm32wb5x_Thread_FTD_fw.bin
@@ -133,6 +138,11 @@
 <li>Zigbee Reduced Function Device</li>
 <li>Zigbee Compliant Platform certified</li>
 <li>To be used for End Device Zigbee role</li>
+</ul></li>
+<li>stm32wb3x_BLE_Mac_802_15_4_fw.bin
+<ul>
+<li>Static Concurrent Mode BLE MAC 802.15.4.</li>
+<li>Supports Full BLE Stack 5.0 certified and MAC 802.15.4 API based on latest official <a href="http://grouper.ieee.org/groups/802/15/pub/Download.html">IEEE Std 802.15.4-2011</a></li>
 </ul></li>
 <li>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin
 <ul>
@@ -400,17 +410,52 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section14" checked aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.10.1 / 15-January-2021</label>
+<input type="checkbox" id="collapse-section14" checked aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.11.0 / 5-February-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
-<li>New FUS version (v1.1.2):
+<li>Support of new binary:
 <ul>
-<li>Add protection from PKA attack</li>
+<li>stm32wb5x_BLE_Mac_802_15_4_fw.bin : This binary supports static concurrency between BLE and MAC</li>
+</ul></li>
+<li>FUS:
+<ul>
+<li>General security enhancements</li>
 <li>Allow larger image upgrade with lower flash size</li>
-<li>Add protection from main attack</li>
-<li>Add backup user keys afer FUS upgrade</li>
+</ul></li>
+<li>802.15.4 General:
+<ul>
+<li>Support of external PA</li>
+</ul></li>
+<li>Phy 802.15.4:
+<ul>
+<li>New functions CW_start and CW_stop implemented. A pure signal (i.e. no modulation) is generated at a specific frequency.</li>
+</ul></li>
+<li>THREAD:
+<ul>
+<li>Updated OpenThread stack to <strong>SHA-1: 3dbd91aa2b70c7d5cc71b2c465ce3583a13dea79</strong> (tag thread-reference-20191113)</li>
+<li>ID 91270 : Add CoAP Secure support</li>
+</ul></li>
+<li>Zigbee:
+<ul>
+<li>ZDO permit join request rejected if duration is equal to 0xff</li>
+<li>Memory allocation improvement when closing a Zigbee session</li>
+<li>M0 heap size used by the stack updated in RFD configuration (8K instead of 32K)</li>
+<li>TouchLink feature improvement</li>
+</ul></li>
+<li>BLE:
+<ul>
+<li>ID 97211 : Continuous scan hangs without scan completion event, Fix an identified GAP advertising filtering issue</li>
+<li>ID 98174 : Update BLE interface documentation about ACI_HAL_GET_LINK_STATUS</li>
+<li>ID 97936 : L2CAP update to support IP over BLE (M.6874), SHCI_C2_BLE_init() updated parameters to be provided to CPU2 with new BLE stack Options flags to be configured as: - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1 - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3</li>
+<li>ID 94042, ID 97931 : STM32WB to handle certification BT5.2 (tcrl 2019-2)</li>
+<li>ID 94489 : Enhancement of BLE Device (MAC) Address from UID64</li>
+<li>ID 97789 : The memory manager shall be more efficient</li>
+</ul></li>
+<li>BLE Zigbee Static mode:
+<ul>
+<li>Fix memory leak: Clean stop of Zb timers and free all ZB heap, before a switch Zigbee to BLE</li>
 </ul></li>
 </ul>
 <p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
@@ -452,7 +497,7 @@
 <td>0x080<strong>7A</strong>000</td>
 <td>0x080<strong>3A</strong>000</td>
 <td><strong>v1.1.2</strong></td>
-<td>01/15/2021</td>
+<td>02/05/2021</td>
 </tr>
 </tbody>
 </table>
@@ -484,153 +529,162 @@
 <td>0x080E0000</td>
 <td>0x0808C000</td>
 <td>0x0806C000</td>
-<td>0x0802C000</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/26/2020</td>
+<td>0x802C000</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="even">
 <td>stm32wb5x_BLE_HCI_AdvScan_fw.bin</td>
 <td>0x080EA000</td>
 <td>0x08096000</td>
 <td>0x08076000</td>
-<td>0x08036000</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/26/2020</td>
+<td>0x8036000</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="odd">
 <td>stm32wb5x_BLE_LLD_fw.bin</td>
-<td>0x080EB000</td>
-<td>0x08097000</td>
-<td>0x08077000</td>
-<td>0x08037000</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td>0x080EC000</td>
+<td>0x08098000</td>
+<td>0x08078000</td>
+<td>0x08038000</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="even">
-<td>stm32wb5x_BLE_Stack_full_fw.bin</td>
-<td>0x080CB000</td>
-<td>0x08077000</td>
-<td>0x08057000</td>
-<td>0x08017000</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/26/2020</td>
+<td>stm32wb5x_BLE_Mac_802_15_4_fw.bin</td>
+<td>0x080B5000</td>
+<td>0x08061000</td>
+<td>0x08041000</td>
+<td>0x08001000</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="odd">
+<td>stm32wb5x_BLE_Stack_full_fw.bin</td>
+<td>0x080CA000</td>
+<td>0x08076000</td>
+<td>0x08056000</td>
+<td>0x8016000</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
+</tr>
+<tr class="even">
 <td>stm32wb5x_BLE_Stack_light_fw.bin</td>
 <td>0x080D6000</td>
 <td>0x08082000</td>
 <td>0x08062000</td>
-<td>0x08022000</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/26/2020</td>
-</tr>
-<tr class="even">
-<td>stm32wb5x_BLE_Thread_dynamic_fw.bin</td>
-<td>0x08075000</td>
-<td>0x08021000</td>
-<td>0x08001000</td>
-<td>0x00</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td>0x8022000</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="odd">
+<td>stm32wb5x_BLE_Thread_dynamic_fw.bin</td>
+<td>0x08070000</td>
+<td>0x0801C000</td>
+<td>0x00</td>
+<td>0x00</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
+</tr>
+<tr class="even">
 <td>stm32wb5x_BLE_Thread_static_fw.bin</td>
+<td>0x08072000</td>
+<td>0x0801E000</td>
+<td>0x00</td>
+<td>0x00</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Zigbee_FFD_dynamic_fw.bin</td>
 <td>0x08077000</td>
 <td>0x08023000</td>
 <td>0x08003000</td>
 <td>0x00</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="even">
-<td>stm32wb5x_BLE_Zigbee_FFD_dynamic_fw.bin</td>
+<td>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin</td>
 <td>0x08079000</td>
 <td>0x08025000</td>
 <td>0x08005000</td>
 <td>0x00</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="odd">
-<td>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin</td>
-<td>0x0807B000</td>
-<td>0x08027000</td>
-<td>0x08007000</td>
+<td>stm32wb5x_BLE_Zigbee_RFD_dynamic_fw.bin</td>
+<td>0x08086000</td>
+<td>0x08032000</td>
+<td>0x08012000</td>
 <td>0x00</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="even">
-<td>stm32wb5x_BLE_Zigbee_RFD_dynamic_fw.bin</td>
+<td>stm32wb5x_BLE_Zigbee_RFD_static_fw.bin</td>
 <td>0x08087000</td>
 <td>0x08033000</td>
 <td>0x08013000</td>
 <td>0x00</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="odd">
-<td>stm32wb5x_BLE_Zigbee_RFD_static_fw.bin</td>
-<td>0x08089000</td>
-<td>0x08035000</td>
-<td>0x08015000</td>
-<td>0x00</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
-</tr>
-<tr class="even">
 <td>stm32wb5x_Mac_802_15_4_fw.bin</td>
 <td>0x080E3000</td>
 <td>0x0808F000</td>
 <td>0x0806F000</td>
 <td>0x0802F000</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>stm32wb5x_Phy_802_15_4_fw.bin</td>
 <td>0x080DE000</td>
 <td>0x0808A000</td>
 <td>0x0806A000</td>
 <td>0x0802A000</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
-</tr>
-<tr class="even">
-<td>stm32wb5x_Thread_FTD_fw.bin</td>
-<td>0x0809B000</td>
-<td>0x08047000</td>
-<td>0x08027000</td>
-<td>0x00</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="odd">
-<td>stm32wb5x_Thread_MTD_fw.bin</td>
-<td>0x080B1000</td>
-<td>0x0805D000</td>
-<td>0x0803D000</td>
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x08098000</td>
+<td>0x08044000</td>
+<td>0x08024000</td>
 <td>0x00</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 <tr class="even">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x080AB000</td>
+<td>0x08057000</td>
+<td>0x08037000</td>
+<td>0x00</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
+</tr>
+<tr class="odd">
 <td>stm32wb5x_Zigbee_FFD_fw.bin</td>
 <td>0x080A7000</td>
 <td>0x08053000</td>
 <td>0x08033000</td>
 <td>0x00</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>stm32wb5x_Zigbee_RFD_fw.bin</td>
-<td>0x080B6000</td>
-<td>0x08062000</td>
-<td>0x08042000</td>
-<td>0x08002000</td>
-<td><strong>v1.10.0</strong></td>
-<td>10/15/2020</td>
+<td>0x080B5000</td>
+<td>0x08061000</td>
+<td>0x08041000</td>
+<td>0x08001000</td>
+<td><strong>v1.11.0</strong></td>
+<td>02/05/2021</td>
 </tr>
 </tbody>
 </table>

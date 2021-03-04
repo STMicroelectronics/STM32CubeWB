@@ -121,12 +121,6 @@ __weak MOBLE_RESULT Sensor_CadenceStatus(MOBLEUINT8 pidMatch,
                                          MOBLE_ADDRESS dstAddr,
                                          MOBLEUINT8 elementIdx,
                                          status_send_e statusSend);
-__weak MOBLE_RESULT Sensor_CadenceStatus(MOBLEUINT8 pidMatch,
-                                         sensor_params_t* pParams,
-                                         MOBLEUINT16 pidNotFound,
-                                         MOBLE_ADDRESS dstAddr,
-                                         MOBLEUINT8 elementIdx,
-                                         status_send_e statusSend);
 __weak MOBLE_RESULT Sensor_SettingsStatus(MOBLEUINT8* offsetBuff, 
                                           MOBLEUINT8 sensorCount,
                                           MOBLE_ADDRESS dstAddr,
@@ -3378,14 +3372,8 @@ __weak MOBLE_RESULT SensorModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pm
     case SENSOR_DESCRIPTOR_GET:
       result = Sensor_DescriptorGet(pRxData, dataLength, pmsgParams->peer_addr, pmsgParams->dst_peer, elementIndex);
       break;
-    case SENSOR_DESCRIPTOR_STATUS:
-      SensorAppli_cb.Sensor_Descriptor_Status_cb(pRxData, dataLength, pmsgParams->dst_peer, elementIndex);
-      break;
     case SENSOR_GET:
       result = Sensor_Get(pRxData, dataLength, pmsgParams->peer_addr, pmsgParams->dst_peer, elementIndex);
-      break;
-    case SENSOR_STATUS:
-      SensorAppli_cb.Sensor_Status_cb(pRxData, dataLength, pmsgParams->dst_peer, elementIndex);
       break;
     case SENSOR_CADENCE_GET:
       result = Sensor_CadenceGet(pRxData, dataLength, pmsgParams->peer_addr, pmsgParams->dst_peer, elementIndex);
@@ -3396,26 +3384,14 @@ __weak MOBLE_RESULT SensorModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pm
     case SENSOR_CADENCE_SET_UNACK:
       result = Sensor_CadenceSetUnack(pRxData,dataLength, pmsgParams->peer_addr, pmsgParams->dst_peer,elementIndex);
       break;
-    case SENSOR_CADENCE_STATUS:
-      SensorAppli_cb.Sensor_Cadence_Status_cb(pRxData, dataLength, pmsgParams->dst_peer, elementIndex);
-      break;
     case SENSOR_COLUMN_GET:
       result = Sensor_ColumnGet(pRxData,dataLength, pmsgParams->peer_addr, pmsgParams->dst_peer,elementIndex);
-      break;
-    case SENSOR_COLUMN_STATUS:
-      SensorAppli_cb.Sensor_Column_Status_cb(pRxData, dataLength, pmsgParams->dst_peer, elementIndex);
       break;
     case SENSOR_SERIES_GET:
       result = Sensor_SeriesGet(pRxData,dataLength, pmsgParams->peer_addr, pmsgParams->dst_peer,elementIndex);
       break;
-    case SENSOR_SERIES_STATUS:
-      SensorAppli_cb.Sensor_Series_Status_cb(pRxData, dataLength, pmsgParams->dst_peer, elementIndex);
-      break;
     case SENSOR_SETTINGS_GET:
       result = Sensor_SettingsGet(pRxData,dataLength, pmsgParams->peer_addr, pmsgParams->dst_peer,elementIndex);
-      break;
-    case SENSOR_SETTINGS_STATUS:
-      SensorAppli_cb.Sensor_Settings_Status_cb(pRxData, dataLength, pmsgParams->dst_peer, elementIndex);
       break;
     case SENSOR_SETTING_GET:
       result = Sensor_SettingGet(pRxData,dataLength, pmsgParams->peer_addr, pmsgParams->dst_peer,elementIndex);
@@ -3425,9 +3401,6 @@ __weak MOBLE_RESULT SensorModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pm
       break;
     case SENSOR_SETTING_SET_UNACK:
       result = Sensor_SettingSetUnack(pRxData,dataLength, pmsgParams->peer_addr, pmsgParams->dst_peer,elementIndex);
-      break;
-    case SENSOR_SETTING_STATUS:
-      SensorAppli_cb.Sensor_Setting_Status_cb(pRxData, dataLength, pmsgParams->dst_peer, elementIndex);
       break;
     default:
       {
@@ -3498,7 +3471,7 @@ __weak MOBLEUINT32 Sensor_SleepDurationMs_Get(void)
             }
             else
             {
-              timeRemaining = (0xFFFFFFFF - current) + pParams->timerEnd;
+              timeRemaining = (MAX_U32_VALUE - current) + pParams->timerEnd;
             }
           }
         }

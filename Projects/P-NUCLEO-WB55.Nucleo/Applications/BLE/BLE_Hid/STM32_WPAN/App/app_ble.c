@@ -28,6 +28,9 @@
 #include "tl.h"
 #include "app_ble.h"
 
+#include "dis_app.h"
+#include "hids_app.h"
+#include "bas_app.h"
 #include "hids_app.h"
 #include "DispTools.h"
 
@@ -222,8 +225,8 @@ void APP_BLE_Init( void )
   uint8_t index;
   SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
   {
-    {{0,0,0}},                              /**< Header unused */
-    {0,                                  /** pBleBufferAddress not used */
+    {{0,0,0}},                          /**< Header unused */
+    {0,                                 /** pBleBufferAddress not used */
     0,                                  /** BleBufferSize not used */
     CFG_BLE_NUM_GATT_ATTRIBUTES,
     CFG_BLE_NUM_GATT_SERVICES,
@@ -239,8 +242,11 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
-    CFG_BLE_LL_ONLY,
-    0},
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER}
   };
 
   /**
@@ -294,6 +300,16 @@ void APP_BLE_Init( void )
   ConsoleMenu_Init( );
 
   /**
+   * Initialize DIS Application
+   */
+  DISAPP_Init();
+
+  /**
+   * Initialize BAS Application
+   */
+  BASAPP_Init(0);
+
+  /**
    * Initialize Human Interface Device Service
    */
   HIDSAPP_Init();
@@ -309,6 +325,8 @@ void APP_BLE_Init( void )
   BleApplicationContext.BleApplicationContext_legacy.advtServUUID[0] = AD_TYPE_16_BIT_SERV_UUID;
   BleApplicationContext.BleApplicationContext_legacy.advtServUUIDlen = 1;
 
+  Add_Advertisment_Service_UUID(DEVICE_INFORMATION_SERVICE_UUID);
+  Add_Advertisment_Service_UUID(BATTERY_SERVICE_UUID);
   Add_Advertisment_Service_UUID(HUMAN_INTERFACE_DEVICE_SERVICE_UUID);
 
   /* Initialize intervals for reconnexion without intervals update */
@@ -330,13 +348,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
 
   switch(event_pckt->evt)
   {
-    case EVT_DISCONN_COMPLETE:
+    case HCI_DISCONNECTION_COMPLETE_EVT_CODE:
     {
       hci_disconnection_complete_event_rp0 * disconnection_complete_event;
 
       disconnection_complete_event = (hci_disconnection_complete_event_rp0 *)event_pckt->data;
 
-      APP_DBG_MSG("EVT_DISCONN_COMPLETE for connection handle 0x%x\n",
+      APP_DBG_MSG("HCI_DISCONNECTION_COMPLETE_EVT_CODE for connection handle 0x%x\n",
                   disconnection_complete_event->Connection_Handle);
       /* Find index of the handle deconnected */
       index = 0;
@@ -361,15 +379,15 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
       /* restart advertising */
       Adv_Request(HID_FAST_ADV);
     }
-    break; /* EVT_DISCONN_COMPLETE */
+    break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
 
-    case EVT_LE_META_EVENT:
+    case HCI_LE_META_EVT_CODE:
     {
       meta_evt = (evt_le_meta_event*)event_pckt->data;
 
       switch(meta_evt->subevent)
       {
-        case EVT_LE_CONN_COMPLETE:
+        case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
         {
           hci_le_connection_complete_event_rp0 * connection_complete_event;
 
@@ -379,7 +397,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
           connection_complete_event = (hci_le_connection_complete_event_rp0 *)meta_evt->data;
           HW_TS_Stop(BleApplicationContext.Connection_mgr_timer_Id);
 
-          APP_DBG_MSG("EVT_LE_CONN_COMPLETE for connection handle 0x%x\n",
+          APP_DBG_MSG("HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE for connection handle 0x%x\n",
                       connection_complete_event->Connection_Handle);
 
           /* Find index of a connection not in HID_IDLE, HID_CONNECTED_SERVER or HID_CONNECTED_CLIENT state */
@@ -410,13 +428,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
             APP_DBG_MSG("No stored connection in state different than HID_IDLE, HID_CONNECTED_CLIENT and HID_CONNECTED_SERVER!\n");
           }
         }
-        break; /* HCI_EVT_LE_CONN_COMPLETE */
+        break; /* HCI_HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
 
         default:
           break;
       }
     }
-    break; /* HCI_EVT_LE_META_EVENT */
+    break; /* HCI_HCI_LE_META_EVT_CODE */
 
     default:
       break;
@@ -448,7 +466,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
   uint32_t srd_bd_addr[2];
-  uint16_t appearance[1] = { CFG_GAP_APPEARANCE }; /* Generic Heart Rate Sensor */
+  uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
 
   /**
    * Initialize HCI layer
@@ -510,7 +528,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 
   if (role > 0)
   {
-    const char *name = "BLEcore";
+    const char *name = "HID";
 
     aci_gap_init(role, 0,
                  APPBLE_GAP_DEVICE_NAME_LENGTH,
@@ -748,12 +766,20 @@ const uint8_t* BleGetBdAddress( void )
     company_id = LL_FLASH_GetSTCompanyID();
     device_id = LL_FLASH_GetDeviceID();
 
+/**
+ * Public Address with the ST company ID
+ * bit[47:24] : 24bits (OUI) equal to the company ID
+ * bit[23:16] : Device ID.
+ * bit[15:0] : The last 16bits from the UDN
+ * Note: In order to use the Public Address in a final product, a dedicated
+ * 24bits company ID (OUI) shall be bought.
+ */
     bd_addr_udn[0] = (uint8_t)(udn & 0x000000FF);
     bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_addr_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
-    bd_addr_udn[3] = (uint8_t)device_id;
-    bd_addr_udn[4] = (uint8_t)(company_id & 0x000000FF);;
-    bd_addr_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[2] = (uint8_t)device_id;
+    bd_addr_udn[3] = (uint8_t)(company_id & 0x000000FF);
+    bd_addr_udn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
 
     bd_addr = (const uint8_t *)bd_addr_udn;
   }
@@ -768,7 +794,6 @@ const uint8_t* BleGetBdAddress( void )
     {
       bd_addr = M_bd_addr;
     }
-
   }
 
   return bd_addr;

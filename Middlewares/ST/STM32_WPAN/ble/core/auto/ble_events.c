@@ -6,7 +6,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -54,6 +54,14 @@ static void aci_l2cap_connection_update_resp_event_process( const uint8_t* in );
 static void aci_l2cap_proc_timeout_event_process( const uint8_t* in );
 static void aci_l2cap_connection_update_req_event_process( const uint8_t* in );
 static void aci_l2cap_command_reject_event_process( const uint8_t* in );
+static void aci_l2cap_coc_connect_event_process( const uint8_t* in );
+static void aci_l2cap_coc_connect_confirm_event_process( const uint8_t* in );
+static void aci_l2cap_coc_reconf_event_process( const uint8_t* in );
+static void aci_l2cap_coc_reconf_confirm_event_process( const uint8_t* in );
+static void aci_l2cap_coc_disconnect_event_process( const uint8_t* in );
+static void aci_l2cap_coc_flow_control_event_process( const uint8_t* in );
+static void aci_l2cap_coc_rx_data_event_process( const uint8_t* in );
+static void aci_l2cap_coc_tx_pool_available_event_process( const uint8_t* in );
 static void aci_gatt_attribute_modified_event_process( const uint8_t* in );
 static void aci_gatt_proc_timeout_event_process( const uint8_t* in );
 static void aci_att_exchange_mtu_resp_event_process( const uint8_t* in );
@@ -128,6 +136,14 @@ const hci_event_table_t hci_vs_event_table[HCI_VS_EVENT_TABLE_SIZE] =
   { 0x0801U, aci_l2cap_proc_timeout_event_process },
   { 0x0802U, aci_l2cap_connection_update_req_event_process },
   { 0x080AU, aci_l2cap_command_reject_event_process },
+  { 0x0810U, aci_l2cap_coc_connect_event_process },
+  { 0x0811U, aci_l2cap_coc_connect_confirm_event_process },
+  { 0x0812U, aci_l2cap_coc_reconf_event_process },
+  { 0x0813U, aci_l2cap_coc_reconf_confirm_event_process },
+  { 0x0814U, aci_l2cap_coc_disconnect_event_process },
+  { 0x0815U, aci_l2cap_coc_flow_control_event_process },
+  { 0x0816U, aci_l2cap_coc_rx_data_event_process },
+  { 0x0817U, aci_l2cap_coc_tx_pool_available_event_process },
   { 0x0C01U, aci_gatt_attribute_modified_event_process },
   { 0x0C02U, aci_gatt_proc_timeout_event_process },
   { 0x0C03U, aci_att_exchange_mtu_resp_event_process },
@@ -714,6 +730,139 @@ static void aci_l2cap_command_reject_event_process( const uint8_t* in )
                                   rp0->Reason,
                                   rp0->Data_Length,
                                   rp0->Data );
+}
+
+/* ACI_L2CAP_COC_CONNECT_EVENT callback function */
+__WEAK void aci_l2cap_coc_connect_event( uint16_t Connection_Handle,
+                                         uint16_t SPSM,
+                                         uint16_t MTU,
+                                         uint16_t MPS,
+                                         uint16_t Initial_Credits,
+                                         uint8_t Channel_Number )
+{
+}
+
+/* ACI_L2CAP_COC_CONNECT_EVENT process function */
+static void aci_l2cap_coc_connect_event_process( const uint8_t* in )
+{
+  aci_l2cap_coc_connect_event_rp0 *rp0 = (void*)in;
+  aci_l2cap_coc_connect_event( rp0->Connection_Handle,
+                               rp0->SPSM,
+                               rp0->MTU,
+                               rp0->MPS,
+                               rp0->Initial_Credits,
+                               rp0->Channel_Number );
+}
+
+/* ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT callback function */
+__WEAK void aci_l2cap_coc_connect_confirm_event( uint16_t Connection_Handle,
+                                                 uint16_t MTU,
+                                                 uint16_t MPS,
+                                                 uint16_t Initial_Credits,
+                                                 uint16_t Result,
+                                                 uint8_t Channel_Number,
+                                                 const uint8_t* Channel_Index_List )
+{
+}
+
+/* ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT process function */
+static void aci_l2cap_coc_connect_confirm_event_process( const uint8_t* in )
+{
+  aci_l2cap_coc_connect_confirm_event_rp0 *rp0 = (void*)in;
+  aci_l2cap_coc_connect_confirm_event( rp0->Connection_Handle,
+                                       rp0->MTU,
+                                       rp0->MPS,
+                                       rp0->Initial_Credits,
+                                       rp0->Result,
+                                       rp0->Channel_Number,
+                                       rp0->Channel_Index_List );
+}
+
+/* ACI_L2CAP_COC_RECONF_EVENT callback function */
+__WEAK void aci_l2cap_coc_reconf_event( uint16_t Connection_Handle,
+                                        uint16_t MTU,
+                                        uint16_t MPS,
+                                        uint8_t Channel_Number,
+                                        const uint8_t* Channel_Index_List )
+{
+}
+
+/* ACI_L2CAP_COC_RECONF_EVENT process function */
+static void aci_l2cap_coc_reconf_event_process( const uint8_t* in )
+{
+  aci_l2cap_coc_reconf_event_rp0 *rp0 = (void*)in;
+  aci_l2cap_coc_reconf_event( rp0->Connection_Handle,
+                              rp0->MTU,
+                              rp0->MPS,
+                              rp0->Channel_Number,
+                              rp0->Channel_Index_List );
+}
+
+/* ACI_L2CAP_COC_RECONF_CONFIRM_EVENT callback function */
+__WEAK void aci_l2cap_coc_reconf_confirm_event( uint16_t Connection_Handle,
+                                                uint16_t Result )
+{
+}
+
+/* ACI_L2CAP_COC_RECONF_CONFIRM_EVENT process function */
+static void aci_l2cap_coc_reconf_confirm_event_process( const uint8_t* in )
+{
+  aci_l2cap_coc_reconf_confirm_event_rp0 *rp0 = (void*)in;
+  aci_l2cap_coc_reconf_confirm_event( rp0->Connection_Handle,
+                                      rp0->Result );
+}
+
+/* ACI_L2CAP_COC_DISCONNECT_EVENT callback function */
+__WEAK void aci_l2cap_coc_disconnect_event( uint8_t Channel_Index )
+{
+}
+
+/* ACI_L2CAP_COC_DISCONNECT_EVENT process function */
+static void aci_l2cap_coc_disconnect_event_process( const uint8_t* in )
+{
+  aci_l2cap_coc_disconnect_event_rp0 *rp0 = (void*)in;
+  aci_l2cap_coc_disconnect_event( rp0->Channel_Index );
+}
+
+/* ACI_L2CAP_COC_FLOW_CONTROL_EVENT callback function */
+__WEAK void aci_l2cap_coc_flow_control_event( uint8_t Channel_Index,
+                                              uint16_t Credits )
+{
+}
+
+/* ACI_L2CAP_COC_FLOW_CONTROL_EVENT process function */
+static void aci_l2cap_coc_flow_control_event_process( const uint8_t* in )
+{
+  aci_l2cap_coc_flow_control_event_rp0 *rp0 = (void*)in;
+  aci_l2cap_coc_flow_control_event( rp0->Channel_Index,
+                                    rp0->Credits );
+}
+
+/* ACI_L2CAP_COC_RX_DATA_EVENT callback function */
+__WEAK void aci_l2cap_coc_rx_data_event( uint8_t Channel_Index,
+                                         uint16_t Length,
+                                         const uint8_t* Data )
+{
+}
+
+/* ACI_L2CAP_COC_RX_DATA_EVENT process function */
+static void aci_l2cap_coc_rx_data_event_process( const uint8_t* in )
+{
+  aci_l2cap_coc_rx_data_event_rp0 *rp0 = (void*)in;
+  aci_l2cap_coc_rx_data_event( rp0->Channel_Index,
+                               rp0->Length,
+                               rp0->Data );
+}
+
+/* ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT callback function */
+__WEAK void aci_l2cap_coc_tx_pool_available_event( void )
+{
+}
+
+/* ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT process function */
+static void aci_l2cap_coc_tx_pool_available_event_process( const uint8_t* in )
+{
+  aci_l2cap_coc_tx_pool_available_event( );
 }
 
 /* ACI_GATT_ATTRIBUTE_MODIFIED_EVENT callback function */

@@ -349,13 +349,11 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Device\ST\STM32WBxx\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo</state>
-                    
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Utilities\lpm\tiny_lpm</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer</state>
-                    
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\menu</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\shci</state>
@@ -1051,10 +1049,10 @@
         <group>
             <name>Core</name>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
@@ -1084,6 +1082,12 @@
                 <name>app</name>
                 <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\App\app_ble.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\bas_app.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\dis_app.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\App\hids_app.c</name>
@@ -1180,6 +1184,12 @@
                 <name>ble</name>
                 <group>
                     <name>blesvc</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\bas.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\dis.c</name>
+                    </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\hids.c</name>
                     </file>

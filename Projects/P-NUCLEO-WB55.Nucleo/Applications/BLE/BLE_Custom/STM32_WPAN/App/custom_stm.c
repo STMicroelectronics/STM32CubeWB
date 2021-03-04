@@ -133,12 +133,12 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt *event_pckt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
 /* USER CODE BEGIN Custom_STM_Event_Handler_1 */
   aci_gatt_attribute_modified_event_rp0 *attribute_modified;
   /* read_req is useful if Characteristic property = CHAR_PROP_READ 
                            Gatt Event Mask = GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP are defined, so:
-                           BLE core event EVT_BLUE_GATT_READ_PERMIT_REQ must be considered*/
+                           BLE core event ACI_GATT_READ_PERMIT_REQ_VSEVT_CODE must be considered*/
   /* aci_gatt_read_permit_req_event_rp0    *read_req; */ 
   Custom_STM_App_Notification_evt_t     Notification;
   aci_gatt_write_permit_req_event_rp0   *write_perm_req; 
@@ -149,17 +149,17 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
 
   switch(event_pckt->evt)
   {
-    case EVT_VENDOR:
-      blue_evt = (evt_blue_aci*)event_pckt->data;
-      switch(blue_evt->ecode)
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
+      blecore_evt = (evt_blecore_aci*)event_pckt->data;
+      switch(blecore_evt->ecode)
       {
 
-        case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+        case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
           /* USER CODE BEGIN EVT_BLUE_GATT_ATTRIBUTE_MODIFIED */
           /**
           *  Manage My_HRS_Meas Characteristic, Notify descriptor
           */
-          attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blue_evt->data;
+          attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blecore_evt->data;
           if(attribute_modified->Attr_Handle == (CustomContext.CustomHrs_MHdle + CHARACTERISTIC_DESCRIPTOR_ATTRIBUTE_OFFSET))
           {
             return_value = SVCCTL_EvtAckFlowEnable;
@@ -227,12 +227,12 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
             }
           /* USER CODE END EVT_BLUE_GATT_ATTRIBUTE_MODIFIED */
           break;
-        case EVT_BLUE_GATT_READ_PERMIT_REQ :
+        case ACI_GATT_READ_PERMIT_REQ_VSEVT_CODE :
           /* USER CODE BEGIN EVT_BLUE_GATT_READ_PERMIT_REQ */
 
           /* USER CODE END EVT_BLUE_GATT_READ_PERMIT_REQ */
           break;
-        case EVT_BLUE_GATT_WRITE_PERMIT_REQ:
+        case ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE:
           /* USER CODE BEGIN EVT_BLUE_GATT_WRITE_PERMIT_REQ */
           /**
           *  Manage My_HRS_CTRL_Point Characteristic Write
@@ -240,7 +240,7 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
           *  Support for this characteristic is mandatory if the Server supports the Energy Expended feature. 
           */
           
-          write_perm_req = (aci_gatt_write_permit_req_event_rp0*)blue_evt->data;
+          write_perm_req = (aci_gatt_write_permit_req_event_rp0*)blecore_evt->data;
 
           if(write_perm_req->Attribute_Handle == (CustomContext.CustomHrs_CtrlpHdle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))
           {
@@ -285,7 +285,7 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
       /* USER CODE BEGIN EVT_VENDOR*/
 
       /* USER CODE END EVT_VENDOR*/
-      break; /* EVT_VENDOR */
+      break; /* HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
 
     /* USER CODE BEGIN EVENT_PCKT_CASES*/
 

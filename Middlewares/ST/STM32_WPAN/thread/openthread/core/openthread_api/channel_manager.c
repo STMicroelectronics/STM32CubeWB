@@ -31,9 +31,9 @@
 #include "channel_manager.h"
 
 
-#if OPENTHREAD_ENABLE_CHANNEL_MANAGER && OPENTHREAD_FTD
+#if OPENTHREAD_CONFIG_CHANNEL_MANAGER_ENABLE && OPENTHREAD_FTD
 
-void otChannelManagerRequestChannelChange(otInstance *aInstance, uint8_t aChannel)
+void otChannelManagerRequestChannelChange(otInstance *aInstance, uint8_t aChannel);
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -238,5 +238,5 @@ void otChannelManagerSetFavoredChannels(otInstance *aInstance, uint32_t aChannel
   Ot_Cmd_Transfer();
 }
 
-#endif  /* OPENTHREAD_ENABLE_CHANNEL_MANAGER && OPENTHREAD_FTD */
+#endif  /* OPENTHREAD_CONFIG_CHANNEL_MANAGER_ENABLE && OPENTHREAD_FTD */
 

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for STM32WB Copro Wireless Binaries</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../../_htmresc/mini-st.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<div class="card fluid">
+<div class="sectione dark">
+<center>
+<h1 id="release-notes-for-stm32wb-copro-wireless-binaries"><small>Release Notes for</small> STM32WB Copro Wireless Binaries</h1>
+<p>Copyright © 2020 STMicroelectronics<br />
+</p>
+<a href="https://www.st.com" class="logo"><img src="../../../_htmresc/st_logo.png" alt="ST logo" /></a>
+</center>
+</div>
+</div>
+<h1 id="license">License</h1>
+<p>This software component is licensed by ST under Ultimate Liberty license SLA0044, the “License”;</p>
+<p>You may not use this file except in compliance with the License.</p>
+<p>You may obtain a copy of the License at: <a href="http://www.st.com/SLA0044">SLA0044</a></p>
+<h1 id="purpose">Purpose</h1>
+<p>This release covers the delivery of STM32WB Coprocessor binaries.</p>
+<p>Here is the list of references to user documents:</p>
+<ul>
+<li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/dm00513965.pdf">AN5185</a> : ST FW upgrade services for STM32WB</li>
+<li><a href="https://www.st.com/resource/en/user_manual/dm00403500-stm32cubeprogrammer-software-description-stmicroelectronics.pdf">UM2237</a> : STM32CubeProgrammer User Manual</li>
+</ul>
+<p>Here is the list of the supported binaries:</p>
+<ul>
+<li>stm32wb1x_BLE_Stack_full_fw.bin
+<ul>
+<li>Full BLE Stack 5.0 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a>
+<ul>
+<li>Following features are kept:
+<ul>
+<li>GAP peripheral, central (LL slave up to 2 links, LL master up to 6 links)</li>
+<li>GATT server, client</li>
+<li>Data length extension</li>
+<li>2Mbit PHY / PHY update</li>
+<li>Privacy / White list</li>
+<li>Legacy Pairing, LE secure connections</li>
+<li>HCI interface (full, like stm32wb5x_BLE_HCILayer_fw.bin)</li>
+<li>Direct Test Mode</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>stm32wb1x_BLE_Stack_light_fw.bin
+<ul>
+<li>Full BLE Stack 5.0 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a></li>
+<li>Wireless Ble stack Light configuration – Slave Only
+<ul>
+<li>Following features are kept:
+<ul>
+<li>GAP peripheral only (LL slave up to 2 links)</li>
+<li>GATT server</li>
+<li>Data length extension</li>
+<li>Legacy Pairing, LE secure connections</li>
+<li>HCI interface (reduced)</li>
+<li>Direct Test Mode</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>stm32wb1x_BLE_HCILayer_fw.bin
+<ul>
+<li>HCI Layer only mode 5.0 certified : Link Layer, HCI with Direct Test Mode</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
+</ul></li>
+<li>stm32wb1x_BLE_LLD_fw.bin
+<ul>
+<li>BLE LLD (Low Level Driver) Radio Transparent firmware</li>
+<li>To be used for direct access on BLE LLD features and API</li>
+</ul></li>
+</ul>
+<p><mark>How to flash the Wireless Coprocessor Binary via SWD/JTAG by ST-LINK (STM32CubeProgrammer GUI)</mark></p>
+<ul>
+<li><p><em>Inside the below procedure, the references to binaries name and install address are provided in the section <strong>Main Changes</strong> of this file.</em></p></li>
+<li><p>STEP 1: Use STM32CubeProgrammer GUI</p>
+<ul>
+<li><p>Version 2.5.0 or higher.</p></li>
+<li><p>It gives access to Firmware Upgrade Service (FUS) (<a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00513965.pdf">AN5185</a> : ST firmware upgrade services for STM32WB Series.) through Bootloader.</p></li>
+<li><p>It is currently available as Graphical User Interface (GUI) mode (or Command Line Interface (CLI) mode).</p></li>
+</ul></li>
+<li><p>STEP 2: Access to “Erasing &amp; Programming” in STM32CubeProgrammer GUI</p>
+<ul>
+<li>For NUCLEO-WB15 :
+<ul>
+<li>Power ON via ST-LINK and Jumper JP1(USB_STL)</li>
+</ul></li>
+<li>open STM32CubeProgrammer GUI and select “ST-LINK”</li>
+<li>in ST-LINK configuration: (Port: SWD) then select “Connect”</li>
+</ul></li>
+<li><p>STEP 3: Flash erase</p>
+<ul>
+<li>in Erase flash memory: select “Full chip erase”</li>
+</ul></li>
+<li><p>STEP 4 : Download new wireless stack :</p>
+<ul>
+<li>in Erasing &amp; Programming/Download: (File Path: [Wireless_Coprocessor_Binary], Start Adress: [Install@])</li>
+<li>then select “Start programming” with “Verify download” and “Run after programming”</li>
+</ul></li>
+</ul>
+<p><mark>How to compute available flash size </mark></p>
+<ul>
+<li><p>The default linker file is provided in [\Drivers\CMSIS\Device\ST32WBxx\Source\Templates].</p>
+<p>The maximum flash memory that can be used by the application is up to the Secure Flash Start Address (SFSA) that can be read from the option byte.</p>
+<p>The <strong>ICFEDIT_region_ROM_end</strong> in the linker can be modified with a value up to : (0x08000000 + (SFSA &lt;&lt; 11)) - 1 considering minimum CPU secure area size is one sector (2kBytes).</p></li>
+<li><p><strong>Example</strong>: When the SFSA option byte is set to 0x37, the maximum value to be used for __ICFEDIT_region_ROM_end is 0x0801B800 – which is 110kB of flash</p></li>
+<li><p><strong>Note</strong>: The SFSA option byte can only be set by the CPU2. The user cannot modify that value.</p></li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history">Update History</h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" checked aria-hidden="true"> <label for="collapse-section1" aria-hidden="false">V1.11.0 / 12-February-2021</label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>Initial version of the binaries.</li>
+</ul>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCILayer_fw.bin</td>
+<td>0x08032000</td>
+<td><strong>v1.11.0</strong></td>
+<td>12/02/2021</td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x0803B800</td>
+<td><strong>v1.11.0</strong></td>
+<td>12/02/2021</td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_LLD_fw.bin</td>
+<td>0x0803E000</td>
+<td><strong>v1.11.0</strong></td>
+<td>12/02/2021</td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_Stack_full_fw.bin</td>
+<td>0x0801B800</td>
+<td><strong>v1.11.0</strong></td>
+<td>12/02/2021</td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_light_fw.bin</td>
+<td>0x08027800</td>
+<td><strong>v1.11.0</strong></td>
+<td>12/02/2021</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+<p>For complete documentation on STM32WBxx, visit: [<a href="http://www.st.com/stm32wb">www.st.com/stm32wb</a>]</p>
+<em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em>
+</footer>
+</body>
+</html>

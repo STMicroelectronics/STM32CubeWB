@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
  * File Name          : App/eddystone_tlm_service.c
@@ -15,6 +16,7 @@
   *
  ******************************************************************************
  */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -256,8 +258,8 @@ static void EddystoneTLM(void)
       data_address += 8; /* 0x8006026 */
 
       EddystoneUID_Init(&EddystoneUID_InitStruct);
-      tlm_adv = TRUE;  /* Next TLM advertize */
-      /* 10s of UID advertize */
+      tlm_adv = TRUE;  /* Next TLM advertise */
+      /* 10s of UID advertise */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
     else if((*(uint8_t *)data_address) == 0x10)
@@ -280,22 +282,22 @@ static void EddystoneTLM(void)
       data_address += EddystoneURL_InitStruct.UrlLength - 6; /* 0x8006015 + EddystoneURL_InitStruct.UrlLength - 6 */
 
       EddystoneURL_Init(&EddystoneURL_InitStruct);
-      tlm_adv = TRUE;  /* Next TLM advertize */
-      /* 10s of URL advertize */
+      tlm_adv = TRUE;  /* Next TLM advertise */
+      /* 10s of URL advertise */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
     else
     {
       EddystoneURL_Init(&EddystoneURL_InitStruct);
       tlm_adv = TRUE;
-      /* 10s of URL advertize */
+      /* 10s of URL advertise */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
 #else
     /* No OTA */
     EddystoneURL_Init(&EddystoneURL_InitStruct);
     tlm_adv = TRUE;
-    /* 10s of URL advertize */
+    /* 10s of URL advertise */
     HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
 #endif
   }
@@ -360,7 +362,7 @@ void EddystoneTLM_Process(void)
 
       EddystoneUID_Init(&EddystoneUID_InitStruct);
       tlm_adv = TRUE;
-      /* 10s of UID advertize */
+      /* 10s of UID advertise */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
     else if((*(uint8_t *)data_address) == 0x10)
@@ -384,7 +386,7 @@ void EddystoneTLM_Process(void)
 
       EddystoneURL_Init(&EddystoneURL_InitStruct);
       tlm_adv = TRUE;
-      /* 10s of URL advertize */
+      /* 10s of URL advertise */
       HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
     }
   }
@@ -417,7 +419,7 @@ void EddystoneTLM_Process(void)
     EddystoneURL_Init(&EddystoneURL_InitStruct);
     tlm_adv = TRUE;
 
-    /* 10s of URL advertize */
+    /* 10s of URL advertise */
     HW_TS_Start(TimerTLM_Id, DEFAULT_BEACON_SEC * 10);
   }
 }

@@ -213,13 +213,7 @@ Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurr
      -Type: Confirmable/Unicast
      -Command: PUT
 
-  4)  Activate the traces if necessary: 
-  =====================================
-  If you want to get the traces in real time, you can connect an HyperTerminal 
-  via an UART RS232 cable using the following connections: 
-  RXD: CN10(Pin35)   
-  TXD: CN10(Pin37)
- 
+To get the traces in real time, you can connect an HyperTerminal to the STLink Virtual Com Port.
  
 For the traces, the UART must be configured as follows: 
     - BaudRate = 115200 baud  

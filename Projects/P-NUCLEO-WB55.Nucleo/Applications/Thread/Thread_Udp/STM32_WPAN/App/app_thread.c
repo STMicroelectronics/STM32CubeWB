@@ -151,6 +151,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
+extern uint8_t g_ot_notification_allowed;
 
 /* USER CODE BEGIN PV */
 otUdpSocket mSocket;
@@ -519,7 +520,6 @@ static otError UdpBind(uint16_t aPort)
     SuccessOrExit(error);
 
     sockaddr.mPort    = aPort;
-    sockaddr.mScopeId = OT_NETIF_INTERFACE_ID_THREAD;
 
     error = otUdpBind(&mSocket, &sockaddr);
 
@@ -530,8 +530,10 @@ exit:
 static void HandleUdpReceive(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo)
 {
   int     length;
+  static  uint32_t l_receive_count = 0;
   uint8_t udpBuffferReceived[256];
 
+  APP_DBG("l_receive_count = %d", l_receive_count++);
   APP_DBG("Received %d bytes from ", otMessageGetLength(aMessage) - otMessageGetOffset(aMessage));
   APP_DBG(
          "%x:%x:%x:%x:%x:%x:%x:%x %d ", HostSwap16(aMessageInfo->mPeerAddr.mFields.m16[0]),
@@ -548,7 +550,7 @@ static void HandleUdpReceive(void *aContext, otMessage *aMessage, const otMessag
   if(strcmp((char const*)udpBuffferReceived, (char const*)udpBufffer) == 0)
   {
     APP_DBG("Comparison OK!");
-    BSP_LED_On(LED_BLUE);
+    BSP_LED_Toggle(LED_BLUE);
   }
 }
 
@@ -578,9 +580,8 @@ static otError UdpSend(void)
     SuccessOrExit(error);
 
     messageInfo.mPeerPort    = udpPort;
-    messageInfo.mInterfaceId = OT_NETIF_INTERFACE_ID_THREAD;
 
-    message = otUdpNewMessage(NULL, true);
+    message = otUdpNewMessage(NULL, NULL);
     VerifyOrExit(message != NULL, error = OT_ERROR_NO_BUFS);
 
     error = otMessageAppend(message, udpBufffer, (uint16_t)strlen((const char*)udpBufffer));
@@ -628,14 +629,7 @@ Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void)
   return (Thread_OT_Cmd_Request_t*)(p_thread_notif_M0_to_M4)->evtserial.evt.payload;
 }
 
-/**
- * @brief  This function is used to transfer the Ot commands from the
- *         M4 to the M0.
- *
- * @param   None
- * @return  None
- */
-void Ot_Cmd_Transfer(void)
+static void Ot_Cmd_Transfer_Common(void)
 {
   /* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352 */
   p_thread_otcmdbuffer->cmdserial.cmd.cmdcode = 0x280U;
@@ -651,6 +645,33 @@ void Ot_Cmd_Transfer(void)
 }
 
 /**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_Transfer(void)
+{
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0 with Notification M0 to M4 allowed.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_TransferWithNotif(void)
+{
+  /* Flag to specify to UTIL_SEQ_EvtIdle that M0 to M4 notifications are allowed */
+  g_ot_notification_allowed = 1U;
+
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
  * @brief  This function is called when acknowledge from OT command is received from the M0+.
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -662,6 +683,9 @@ void TL_OT_CmdEvtReceived( TL_EvtPacket_t * Otbuffer )
   UNUSED(Otbuffer);
 
   Receive_Ack_From_M0();
+
+  /* Does not allow OpenThread M0 to M4 notification */
+  g_ot_notification_allowed = 0U;
 }
 
 /**

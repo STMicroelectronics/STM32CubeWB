@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : App/ble_conf.h
@@ -16,6 +17,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef BLE_CONF_H
@@ -69,10 +71,10 @@
 #define BLE_CFG_BLS_INTERMEDIATE_CUFF_PRESSURE              1/**< Intermediate Cuff Pressure characteristic */
 #define BLE_CFG_BLS_SUPPORTED_FEATURES                      1/**< Blood Pressure Feature characteristic */
 #define BLE_CFG_BLS_PULSE_RATE_LOWER_LIMIT                 40/**< Lower Pulse Rate supported */
-#define BLE_CFG_BLS_PULSE_RATE_UPPER_LIMIT                 180/**< Upper Pluse Rate supported */
+#define BLE_CFG_BLS_PULSE_RATE_UPPER_LIMIT                 180/**< Upper Pulse Rate supported */
 
 /******************************************************************************
- * GAP Service - Apprearance
+ * GAP Service - Appearance
  ******************************************************************************/
 
 #define BLE_CFG_UNKNOWN_APPEARANCE                  (0)

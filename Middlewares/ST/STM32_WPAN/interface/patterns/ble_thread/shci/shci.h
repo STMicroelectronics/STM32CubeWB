@@ -152,6 +152,11 @@ extern "C" {
   /* SYSTEM COMMAND */
   typedef PACKED_STRUCT
   {
+    /**
+     * MetaData holds :
+     * 2*32bits for chaining list
+     * 1*32bits with BLE header (type + Opcode + Length)
+     */
     uint32_t MetaData[3];
   } SHCI_Header_t;
 
@@ -194,8 +199,8 @@ extern "C" {
     SHCI_OCF_C2_FUS_RESERVED2,
     SHCI_OCF_C2_FUS_RESERVED3,
     SHCI_OCF_C2_FUS_LOCK_USR_KEY,
-    SHCI_OCF_C2_FUS_RESERVED5,
-    SHCI_OCF_C2_FUS_RESERVED6,
+    SHCI_OCF_C2_FUS_UNLOAD_USR_KEY,
+    SHCI_OCF_C2_FUS_ACTIVATE_ANTIROLLBACK,
     SHCI_OCF_C2_FUS_RESERVED7,
     SHCI_OCF_C2_FUS_RESERVED8,
     SHCI_OCF_C2_FUS_RESERVED9,
@@ -216,10 +221,11 @@ extern "C" {
     SHCI_OCF_C2_LLD_TESTS_INIT,
     SHCI_OCF_C2_EXTPA_CONFIG,
     SHCI_OCF_C2_SET_FLASH_ACTIVITY_CONTROL,
-    SHCI_OCF_C2_LLD_BLE_INIT,
+    SHCI_OCF_C2_BLE_LLD_INIT,
     SHCI_OCF_C2_CONFIG,
     SHCI_OCF_C2_CONCURRENT_GET_NEXT_BLE_EVT_TIME,
     SHCI_OCF_C2_CONCURRENT_ENABLE_NEXT_802154_EVT_NOTIFICATION,
+    SHCI_OCF_C2_802_15_4_DEINIT,
   } SHCI_OCF_t;
 
 #define SHCI_OPCODE_C2_FUS_GET_STATE         (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_GET_STATE)
@@ -331,11 +337,11 @@ extern "C" {
 
   /** No response parameters*/
 
-#define SHCI_OPCODE_C2_FUS_RESERVED5            (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_RESERVED5)
+#define SHCI_OPCODE_C2_FUS_UNLOAD_USR_KEY       (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_UNLOAD_USR_KEY)
 /** No command parameters */
-/** No response parameters*/
+/** 1 byte holding the key index value */
 
-#define SHCI_OPCODE_C2_FUS_RESERVED6            (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_RESERVED6)
+#define SHCI_OPCODE_C2_FUS_ACTIVATE_ANTIROLLBACK  (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_ACTIVATE_ANTIROLLBACK)
 /** No command parameters */
 /** No response parameters*/
 
@@ -534,6 +540,24 @@ extern "C" {
    * Reserved for future use - shall be set to 0
    */
   uint8_t HwVersion;
+
+  /**
+   * Maximum number of connection-oriented channels in initiator mode.
+   * Range: 0 .. 64
+   */
+  uint8_t max_coc_initiator_nbr;
+
+  /**
+   * Minimum transmit power in dBm supported by the Controller.
+   * Range: -127 .. 20
+   */
+  int8_t min_tx_power;
+
+  /**
+   * Maximum transmit power in dBm supported by the Controller.
+   * Range: -127 .. 20
+   */
+  int8_t max_tx_power;
   } SHCI_C2_Ble_Init_Cmd_Param_t;
 
   typedef PACKED_STRUCT{
@@ -611,6 +635,7 @@ extern "C" {
       BLE_ENABLE,
       THREAD_ENABLE,
       ZIGBEE_ENABLE,
+      MAC_ENABLE,
     } SHCI_C2_CONCURRENT_Mode_Param_t;
       /** No response parameters*/
     
@@ -647,7 +672,7 @@ extern "C" {
 
 #define SHCI_OPCODE_C2_LLD_TESTS_INIT           (( SHCI_OGF << 10) + SHCI_OCF_C2_LLD_TESTS_INIT)
 
-#define SHCI_OPCODE_C2_LLD_BLE_INIT             (( SHCI_OGF << 10) + SHCI_OCF_C2_LLD_BLE_INIT)
+#define SHCI_OPCODE_C2_BLE_LLD_INIT             (( SHCI_OGF << 10) + SHCI_OCF_C2_BLE_LLD_INIT)
 
 #define SHCI_OPCODE_C2_EXTPA_CONFIG             (( SHCI_OGF << 10) + SHCI_OCF_C2_EXTPA_CONFIG)
   /** Command parameters */
@@ -692,6 +717,8 @@ extern "C" {
       uint32_t BleNvmRamAddress;
       uint32_t ThreadNvmRamAddress;
     } SHCI_C2_CONFIG_Cmd_Param_t;
+
+#define SHCI_OPCODE_C2_802_15_4_DEINIT    (( SHCI_OGF << 10) + SHCI_OCF_C2_802_15_4_DEINIT)
 
 /**
  * PayloadCmdSize
@@ -811,6 +838,7 @@ extern "C" {
 #define INFO_STACK_TYPE_BLE_ZIGBEE_FFD_DYNAMIC      0x78
 #define INFO_STACK_TYPE_BLE_ZIGBEE_RFD_DYNAMIC      0x79
 #define INFO_STACK_TYPE_RLV                         0x80
+#define INFO_STACK_TYPE_BLE_MAC_STATIC              0x90
 
 typedef struct {
 /**
@@ -840,17 +868,15 @@ typedef struct {
 
 /* Exported functions ------------------------------------------------------- */
 
-/**
- * For all SHCI_C2_FUS_xxx() command:
- * When the wireless FW is running on the CPU2, the command returns SHCI_FUS_CMD_NOT_SUPPORTED
- * When any FUS command is sent after the SHCI_FUS_CMD_NOT_SUPPORTED has been received,
- * the CPU2 switches on the RSS ( This reboots automatically the device )
- */
   /**
   * SHCI_C2_FUS_GetState
   * @brief Read the FUS State
   *        If the user is not interested by the Error code response, a null value may
   *        be passed as parameter
+  *
+  *        Note:  This command is fully supported only by the FUS.
+  *               When the wireless firmware receives that command, it responds SHCI_FUS_CMD_NOT_SUPPORTED the first time.
+  *               When the wireless firmware receives that command a second time, it reboots the full device with the FUS running on CPU2
   *
   * @param  p_rsp : return the error code when the FUS State Value = 0xFF
   * @retval FUS State Values
@@ -860,6 +886,7 @@ typedef struct {
   /**
   * SHCI_C2_FUS_FwUpgrade
   * @brief Request the FUS to install the CPU2 firmware update
+  *        Note:  This command is only supported by the FUS.
   *
   * @param  fw_src_add: Address of the firmware image location
   * @param  fw_dest_add: Address of the firmware destination
@@ -870,6 +897,7 @@ typedef struct {
   /**
   * SHCI_C2_FUS_FwDelete
   * @brief Delete the wireless stack on CPU2
+  *        Note:  This command is only supported by the FUS.
   *
   * @param  None
   * @retval Status
@@ -879,6 +907,7 @@ typedef struct {
   /**
   * SHCI_C2_FUS_UpdateAuthKey
   * @brief Request the FUS to update the authentication key
+  *        Note:  This command is only supported by the FUS.
   *
   * @param  pCmdPacket
   * @retval Status
@@ -888,6 +917,7 @@ typedef struct {
   /**
   * SHCI_C2_FUS_LockAuthKey
   * @brief Request the FUS to prevent any future update of the authentication key
+  *        Note:  This command is only supported by the FUS.
   *
   * @param  None
   * @retval Status
@@ -897,6 +927,7 @@ typedef struct {
   /**
   * SHCI_C2_FUS_StoreUsrKey
   * @brief Request the FUS to store the user key
+  *        Note:  This command is supported by both the FUS and the wireless stack.
   *
   * @param  pParam : command parameter
   * @param  p_key_index : Index allocated by the FUS to the stored key
@@ -908,6 +939,7 @@ typedef struct {
   /**
   * SHCI_C2_FUS_LoadUsrKey
   * @brief Request the FUS to load the user key into the AES
+  *        Note:  This command is supported by both the FUS and the wireless stack.
   *
   * @param  key_index : index of the user key to load in AES1
   * @retval Status
@@ -917,6 +949,7 @@ typedef struct {
   /**
   * SHCI_C2_FUS_StartWs
   * @brief Request the FUS to reboot on the wireless stack
+  *        Note:  This command is only supported by the FUS.
   *
   * @param  None
   * @retval Status
@@ -926,11 +959,35 @@ typedef struct {
   /**
   * SHCI_C2_FUS_LockUsrKey
   * @brief Request the FUS to lock the user key so that it cannot be updated later on
+  *        Note:  This command is supported by both the FUS and the wireless stack.
   *
   * @param  key_index : index of the user key to lock
   * @retval Status
   */
   SHCI_CmdStatus_t SHCI_C2_FUS_LockUsrKey( uint8_t key_index );
+
+  /**
+  * SHCI_C2_FUS_UnloadUsrKey
+  * @brief Request the FUS to Unload the user key so that the CPU1 may use the AES with another Key
+  *        Note:  This command is supported by both the FUS and the wireless stack.
+  *
+  * @param  key_index : index of the user key to unload
+  * @retval Status
+  */
+  SHCI_CmdStatus_t SHCI_C2_FUS_UnloadUsrKey( uint8_t key_index );
+
+  /**
+  * SHCI_C2_FUS_ActivateAntiRollback
+  * @brief Request the FUS to enable the AntiRollback feature so that it is not possible to update the wireless firmware
+  *        with an older version than the current one.
+  *        Note:
+  *               - This command is only supported by the FUS.
+  *               - Once this feature is enabled, it is not possible anymore to disable it.
+  *
+  * @param  None
+  * @retval Status
+  */
+  SHCI_CmdStatus_t SHCI_C2_FUS_ActivateAntiRollback( void );
 
   /**
   * SHCI_C2_BLE_Init
@@ -961,14 +1018,14 @@ typedef struct {
   SHCI_CmdStatus_t SHCI_C2_LLDTESTS_Init( uint8_t param_size, uint8_t * p_param );
 
     /**
-  * SHCI_C2_LLD_BLE_Init
-  * @brief Starts the LLD tests CLI
+  * SHCI_C2_BLE_LLD_Init
+  * @brief Starts the LLD tests BLE
   *
   * @param  param_size : Nb of bytes
   * @param  p_param : pointeur with data to give from M4 to M0
   * @retval Status
   */
-  SHCI_CmdStatus_t SHCI_C2_LLD_BLE_Init( uint8_t param_size, uint8_t * p_param );
+  SHCI_CmdStatus_t SHCI_C2_BLE_LLD_Init( uint8_t param_size, uint8_t * p_param );
   
     /**
   * SHCI_C2_ZIGBEE_Init
@@ -1157,6 +1214,15 @@ typedef struct {
   * @retval Status
   */
   SHCI_CmdStatus_t SHCI_C2_Config(SHCI_C2_CONFIG_Cmd_Param_t *pCmdPacket);
+
+  /**
+   * SHCI_C2_802_15_4_DeInit
+   * @brief Deinit 802.15.4 layer (to be used before entering StandBy mode)
+   *
+   * @param  None
+   * @retval Status
+   */
+  SHCI_CmdStatus_t SHCI_C2_802_15_4_DeInit( void );
 
   #ifdef __cplusplus
 }

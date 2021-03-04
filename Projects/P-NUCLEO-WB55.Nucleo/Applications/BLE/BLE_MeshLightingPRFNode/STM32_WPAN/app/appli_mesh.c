@@ -39,10 +39,8 @@
 #include "appli_config_client.h"
 #include "appli_generic_client.h"
 #include "appli_light_client.h"
-#if ((ENABLE_SENSOR_MODEL_SERVER != 0)||(ENABLE_SENSOR_MODEL_CLIENT != 0))
 #include "appli_sensor.h"
 #include "appli_sensors_client.h"
-#endif
 
 #include "stm32_seq.h"
 #if (( CFG_LPM_SUPPORTED == 0) && (ENABLE_PWM_SUPPORT == 1))
@@ -327,14 +325,15 @@ static void Appli_LongButtonPress(void)
 //  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC ON OFF GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LC_ON_OFF_GET, NULL);
   
-    /** LIGHT LC PROPERTY **/
-  //LIGHT_CONTROL_LUX_LEVEL_ON_ID : 0x202B
+  /** LIGHT LC PROPERTY **/
+//LIGHT_CONTROL_AMBIENT_LUXLEVEL_ON_PID  : 0x002B
   pPropertyId[0]= 0x2B;           // Property ID byte 0 : Property ID identifying a Light LC Property.
   pPropertyId[1]= 0x00;           // Property ID byte 1 : Property ID identifying a Light LC Property.
 //  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC PROPERTY GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LC_PROPERTY_GET, pPropertyId);
   
-#if 1 /* Sensor APIs */
+
+  /* SENSOR APIs */
   //PRESENT_AMBIENT_TEMPERATURE_PID : 0x004F
   pPropertyId[0]= 0x4F;           // Property ID byte 0 : Property ID for the sensor
   pPropertyId[1]= 0x00;           // Property ID byte 1 : Property ID for the sensor
@@ -354,7 +353,7 @@ static void Appli_LongButtonPress(void)
     /** SENSOR SETTING **/
   pPropertyId[2]= 0xAD;           // Sensor Setting Property ID byte 0 : Property ID for the sensor setting
   pPropertyId[3]= 0x00;           // Sensor Setting Property ID byte 1 : Property ID for the sensor setting
-  
+ 
 //  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR SETTING GET ------------- \r\n");
 //  Appli_SensorsClient_API(0, SENSOR_SETTING_GET, pPropertyId);
   
@@ -373,7 +372,6 @@ static void Appli_LongButtonPress(void)
 //  pPropertyId[3]= 0x02;           // Raw Value X2 byte 0 : Raw value identifying an ending column.
 //  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR SERIES GET ------------- \r\n");
 //  Appli_SensorsClient_API(0, SENSOR_SERIES_GET, pPropertyId);
-#endif
   
   IntensityPublish();
   
@@ -424,13 +422,7 @@ static void Mesh_Task()
     PalNvmErase(APP_NVM_BASE, 0);
     PalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
-    BLEMesh_Unprovision();
-    AppliNvm_ClearModelState();     
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
-
-    BLEMesh_Process();
-
-    NVIC_SystemReset();
   }
     
 #if (APPLI_OPTIM == 0)
@@ -899,6 +891,7 @@ void Appli_Unprovision(void)
   }
 }
 
+
 /**
 * @brief  Checks and updates Mac address to generate MAC Address
 * @param  void
@@ -908,6 +901,7 @@ int Appli_CheckBdMacAddr(void)
 {
   MOBLEUINT8 sum = 239;
   MOBLEUINT8 result = 0;
+  tBleStatus status = BLE_STATUS_SUCCESS;
   
 #ifdef EXTERNAL_MAC_ADDR_MGMT
   memcpy(bdaddr, (MOBLEUINT8 *)CFG_ADV_BD_ADDRESS, 7);
@@ -915,7 +909,14 @@ int Appli_CheckBdMacAddr(void)
 #endif
   
 #ifdef INTERNAL_UNIQUE_NUMBER_MAC
-  aci_hal_read_config_data(0x00, &bdaddr[7], bdaddr); 
+  status = aci_hal_read_config_data(CONFIG_DATA_PUBADDR_OFFSET, 
+                                    &bdaddr[7],
+                                    bdaddr); 
+  if(status != BLE_STATUS_SUCCESS) 
+  {
+    TRACE_M(TF_PROVISION, "Failed to read Public Address %d", status);
+  }
+
   Appli_GetMACfromUniqueNumber();
   bdaddr[7] = INTERNAL_UNIQUE_NUMBER_MAC;
 #endif
@@ -937,6 +938,15 @@ int Appli_CheckBdMacAddr(void)
 #endif
   
 #ifdef GENERATE_STATIC_RANDOM_MAC
+  /* 6bytes of MAC will be filled, baddr_tmp[7] will contain the length  */
+  status = aci_hal_read_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET, 
+                                    &bdaddr[7], 
+                                    bdaddr); 
+  if(status != BLE_STATUS_SUCCESS) 
+  {
+    TRACE_M(TF_PROVISION, "Failed to read Random Address %d", status);
+  }
+
   bdaddr[7] = GENERATE_STATIC_RANDOM_MAC;   
                       /* Do nothing for bdaddr, just pass the identification */
   result = 1;         /* This will overwrite the above for loop result, 
@@ -1033,8 +1043,7 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason)
 #if PB_ADV_SUPPORTED
   BLEMesh_SetUnprovisionedDevBeaconInterval(PBADV_UNPROV_DEV_BEACON_INTERVAL);
 #endif
-  BLEMesh_StopAdvScan();
-  UnprovisionInProgress = 1; /* Wait release on FLASH PESD bit */
+  AppliNvm_ClearModelState();
 }
 
 /**
@@ -1751,6 +1760,130 @@ void Appli_GetPublicationParamsCb(model_publicationparams_t* pPubParameters)
   {
     Sensor_ModelPublishSet(pPubParameters);
   }
+}
+
+
+/**
+* @brief  PWM_CoolValue: This function is used to calculate the value for the 
+          cool temperature for the light.
+* @param  colourValue: Temperature value ratio
+* @param  brightValue: Lightness value ratio.
+* @retval duty: duty fot the PWM
+*/ 
+MOBLEUINT16 PWM_CoolValue(float colourValue ,float brightValue)
+{
+  float colourDuty; 
+  MOBLEUINT16 duty;
+  
+  colourDuty = colourValue * brightValue;    
+  duty = (MOBLEUINT16)(colourDuty * PWM_TIME_PERIOD);
+  
+  return duty;
+}
+
+
+/**
+* @brief  PWM_WarmValue: This function is used to calculate the value for the 
+          warm temperature for the light.
+* @param  colourValue: Temperature value ratio
+* @param  brightValue: Lightness value ratio.
+* @retval duty: duty fot the PWM
+*/ 
+MOBLEUINT16 PWM_WarmValue(float colourValue ,float brightValue)
+{
+  float warmDuty;    
+  MOBLEUINT16 duty;
+  
+  warmDuty = (1-colourValue)* brightValue;
+  duty = (MOBLEUINT16)(warmDuty * PWM_TIME_PERIOD);
+  
+  return duty;
+}
+
+/**
+* @brief  PwmValueMapping: This function takes the value as parameter from the 
+*         model and return the value according to .
+* @param  setValue: value to be set from model
+* @param  maxRange: Max range of the parameter
+* @param  minRange: Min range of the parameter
+* @retval MOBLEUINT8
+*/
+MOBLEUINT16 PwmValueMapping(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEINT16 minRange)
+{
+  MOBLEUINT16 percentValue;
+  MOBLEUINT16 duty;
+  
+#ifdef SMART_PLUG
+   percentValue =  (setValue * 100)/ (maxRange - minRange);
+        
+   if(percentValue < 2)
+   {
+     duty = 0;
+   }   
+   else if((percentValue > 2) && (percentValue <= 10))
+   {
+     duty = 1;
+   }
+   else if((percentValue > 10) && (percentValue <= 20))
+   {
+     duty = 2;
+   }
+   else if((percentValue > 20) && (percentValue <= 30))
+   {
+     duty = 3;
+   }
+   else if((percentValue > 30) && (percentValue <= 40))
+   {
+     duty = 4;
+   }
+   else if((percentValue > 40) && (percentValue <= 50))
+   {
+     duty = 5;
+   }
+   else if((percentValue > 50) && (percentValue <= 60))
+   {
+     duty = 6;
+   }
+   else if((percentValue > 60) && (percentValue <= 70))
+   {
+     duty = 7;
+   }
+   else if((percentValue > 70) && (percentValue <= 80))
+   {
+     duty = 8;
+   }
+   else if((percentValue > 80) && (percentValue <= 90))
+   {
+     duty = 9;
+   }
+   else if(percentValue > 90)
+   {
+     duty = 10;
+   }
+#else
+   if(minRange > 0x00)
+   {
+     percentValue =  (setValue - 800)/ (maxRange - minRange);
+     percentValue = (percentValue*100);
+   }
+   else
+   {
+     percentValue =  (setValue * 100)/ (maxRange - minRange);
+   }
+   
+   duty = percentValue*320 ;
+   
+   if(duty >= 32000)
+   {
+     duty = 31999;
+   }
+   if(duty == 0)
+   {
+     duty = 1;
+   }
+#endif
+     
+   return duty;
 }
 
 

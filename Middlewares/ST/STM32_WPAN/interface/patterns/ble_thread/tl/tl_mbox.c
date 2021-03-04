@@ -49,7 +49,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_DeviceInfoTable_t TL_DeviceInfoTa
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_BleTable_t TL_BleTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_ThreadTable_t TL_ThreadTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_LldTestsTable_t TL_LldTestsTable;
-PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_LldBleTable_t TL_LldBleTable;
+PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_BleLldTable_t TL_BleLldTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_SysTable_t TL_SysTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_MemManagerTable_t TL_MemManagerTable;
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static MB_TracesTable_t TL_TracesTable;
@@ -95,7 +95,7 @@ void TL_Init( void )
   TL_RefTable.p_ble_table = &TL_BleTable;
   TL_RefTable.p_thread_table = &TL_ThreadTable;
   TL_RefTable.p_lld_tests_table = &TL_LldTestsTable;
-  TL_RefTable.p_lld_ble_table = &TL_LldBleTable;
+  TL_RefTable.p_ble_lld_table = &TL_BleLldTable;
   TL_RefTable.p_sys_table = &TL_SysTable;
   TL_RefTable.p_mem_manager_table = &TL_MemManagerTable;
   TL_RefTable.p_traces_table = &TL_TracesTable;
@@ -383,75 +383,75 @@ __WEAK void TL_LLDTESTS_ReceiveM0Cmd( TL_CmdPacket_t * Notbuffer ){};
 #endif /* LLD_TESTS_WB */
 
 /******************************************************************************
- * LLD BLE
+ * BLE LLD
  ******************************************************************************/
-#ifdef LLD_BLE_WB 
-void TL_LLD_BLE_Init( TL_LLD_BLE_Config_t *p_Config )
+#ifdef BLE_LLD_WB
+void TL_BLE_LLD_Init( TL_BLE_LLD_Config_t *p_Config )
 {
-  MB_LldBleTable_t  * p_lld_ble_table;
+  MB_BleLldTable_t  * p_ble_lld_table;
 
-  p_lld_ble_table = TL_RefTable.p_lld_ble_table;
-  p_lld_ble_table->cmdrsp_buffer = p_Config->p_LldBleCmdRspBuffer;
-  p_lld_ble_table->m0cmd_buffer = p_Config->p_LldBleM0CmdBuffer;
-  HW_IPCC_LLD_BLE_Init();
+  p_ble_lld_table = TL_RefTable.p_ble_lld_table;
+  p_ble_lld_table->cmdrsp_buffer = p_Config->p_BleLldCmdRspBuffer;
+  p_ble_lld_table->m0cmd_buffer = p_Config->p_BleLldM0CmdBuffer;
+  HW_IPCC_BLE_LLD_Init();
   return;
 }
 
-void TL_LLD_BLE_SendCliCmd( void )
+void TL_BLE_LLD_SendCliCmd( void )
 {
-  ((TL_CmdPacket_t *)(TL_RefTable.p_lld_ble_table->cmdrsp_buffer))->cmdserial.type = TL_CLICMD_PKT_TYPE;
-  HW_IPCC_LLD_BLE_SendCliCmd();
+  ((TL_CmdPacket_t *)(TL_RefTable.p_ble_lld_table->cmdrsp_buffer))->cmdserial.type = TL_CLICMD_PKT_TYPE;
+  HW_IPCC_BLE_LLD_SendCliCmd();
   return;
 }
 
-void HW_IPCC_LLD_BLE_ReceiveCliRsp( void )
+void HW_IPCC_BLE_LLD_ReceiveCliRsp( void )
 {
-  TL_LLD_BLE_ReceiveCliRsp( (TL_CmdPacket_t*)(TL_RefTable.p_lld_ble_table->cmdrsp_buffer) );
+  TL_BLE_LLD_ReceiveCliRsp( (TL_CmdPacket_t*)(TL_RefTable.p_ble_lld_table->cmdrsp_buffer) );
   return;
 }
 
-void TL_LLD_BLE_SendCliRspAck( void )
+void TL_BLE_LLD_SendCliRspAck( void )
 {
-  HW_IPCC_LLD_BLE_SendCliRspAck();
+  HW_IPCC_BLE_LLD_SendCliRspAck();
   return;
 }
 
-void HW_IPCC_LLD_BLE_ReceiveM0Cmd( void )
+void HW_IPCC_BLE_LLD_ReceiveM0Cmd( void )
 {
-  TL_LLD_BLE_ReceiveM0Cmd( (TL_CmdPacket_t*)(TL_RefTable.p_lld_ble_table->m0cmd_buffer) );
+  TL_BLE_LLD_ReceiveM0Cmd( (TL_CmdPacket_t*)(TL_RefTable.p_ble_lld_table->m0cmd_buffer) );
   return;
 }
 
 
-void TL_LLD_BLE_SendM0CmdAck( void )
+void TL_BLE_LLD_SendM0CmdAck( void )
 {
-  HW_IPCC_LLD_BLE_SendM0CmdAck();
+  HW_IPCC_BLE_LLD_SendM0CmdAck();
   return;
 }
 
-__WEAK void TL_LLD_BLE_ReceiveCliRsp( TL_CmdPacket_t * Notbuffer ){};
-__WEAK void TL_LLD_BLE_ReceiveM0Cmd( TL_CmdPacket_t * Notbuffer ){};
+__WEAK void TL_BLE_LLD_ReceiveCliRsp( TL_CmdPacket_t * Notbuffer ){};
+__WEAK void TL_BLE_LLD_ReceiveM0Cmd( TL_CmdPacket_t * Notbuffer ){};
 
 /* Transparent Mode */
-void TL_LLD_BLE_SendCmd( void )
+void TL_BLE_LLD_SendCmd( void )
 {
-  ((TL_CmdPacket_t *)(TL_RefTable.p_lld_ble_table->cmdrsp_buffer))->cmdserial.type = TL_CLICMD_PKT_TYPE;
-  HW_IPCC_LLD_BLE_SendCmd();
+  ((TL_CmdPacket_t *)(TL_RefTable.p_ble_lld_table->cmdrsp_buffer))->cmdserial.type = TL_CLICMD_PKT_TYPE;
+  HW_IPCC_BLE_LLD_SendCmd();
   return;
 }
 
-void HW_IPCC_LLD_BLE_ReceiveRsp( void )
+void HW_IPCC_BLE_LLD_ReceiveRsp( void )
 {
-  TL_LLD_BLE_ReceiveRsp( (TL_CmdPacket_t*)(TL_RefTable.p_lld_ble_table->cmdrsp_buffer) );
+  TL_BLE_LLD_ReceiveRsp( (TL_CmdPacket_t*)(TL_RefTable.p_ble_lld_table->cmdrsp_buffer) );
   return;
 }
 
-void TL_LLD_BLE_SendRspAck( void )
+void TL_BLE_LLD_SendRspAck( void )
 {
-  HW_IPCC_LLD_BLE_SendRspAck();
+  HW_IPCC_BLE_LLD_SendRspAck();
   return;
 }
-#endif /* LLD_BLE_WB */
+#endif /* BLE_LLD_WB */
 
 #ifdef MAC_802_15_4_WB
 /******************************************************************************

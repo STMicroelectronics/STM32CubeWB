@@ -31,7 +31,7 @@
 #include <string.h>
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.press.meas.h"
+#include "zcl/general/zcl.press.meas.h"
 
 
 /* Private defines -----------------------------------------------------------*/
@@ -90,7 +90,7 @@ struct zigbee_app_info {
  };
 
 
-ZbApsdeDataIndT data_ind;
+struct ZbApsdeDataIndT data_ind;
 struct ZbZclHeaderT hdr;
 static struct zigbee_app_info zigbee_app_info;
 
@@ -175,8 +175,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
 
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;
@@ -263,8 +263,8 @@ static void APP_ZIGBEE_NwkForm(void)
  */
 static void APP_ZIGBEE_ConfigGroupAddr(void)
 {
-  ZbApsmeAddGroupReqT req;
-  ZbApsmeAddGroupConfT conf;
+  struct ZbApsmeAddGroupReqT req;
+  struct ZbApsmeAddGroupConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.endpt = SW1_ENDPOINT;

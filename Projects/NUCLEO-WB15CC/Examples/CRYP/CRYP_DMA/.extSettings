@@ -1,0 +1,8 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\NUCLEO-WB15CC
+[Others]
+Define=
+HALModule=UART
+[Groups]
+Doc=../readme.txt;../Expected_Results.txt;
+Drivers/BSP/NUCLEO-WB15CC=../../../../../../Drivers/BSP/NUCLEO-WB15CC/nucleo_wb15cc.c;

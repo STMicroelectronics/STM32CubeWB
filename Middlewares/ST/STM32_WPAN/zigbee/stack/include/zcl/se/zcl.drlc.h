@@ -1,9 +1,45 @@
 /**
  * @file zcl.drlc.h
+ * @heading Demand Response and Load Control
  * @brief ZCL Demand Response and Load Control cluster header
  * ZCL 7 Section 10.3
  * ZCL 8 Section 10.3
  * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
+
+/* @PICS.ZCL.DRLC
+ * DRLC.S | Server | True
+ * DRLC.C | Client | True
+ *
+ * Server Attributes
+ * DRLC.S.Afffd | ClusterRevision | True
+ * DRLC.S.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * DRLC.S.C00.Rsp | Report Event Status | True
+ * DRLC.S.C01.Rsp | Get Scheduled Events | True
+ *
+ * Commands Generated
+ * DRLC.S.C00.Tx | Load Control Event | True
+ * DRLC.S.C01.Tx | Cancel Load Control Event | True
+ * DRLC.S.C02.Tx | Cancel All Load Control Events | True
+ *
+ * Client Attributes
+ * DRLC.C.A0000 | UtilityEnrollmentGroup | True
+ * DRLC.C.A0001 | StartRandomizeMinutes | True
+ * DRLC.C.A0002 | StopRandomizeMinutes | True
+ * DRLC.C.A0003 | DeviceClassValue | True
+ * DRLC.C.Afffd | ClusterRevision | True
+ * DRLC.C.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * DRLC.C.C00.Rsp | Load Control Event | True
+ * DRLC.C.C01.Rsp | Cancel Load Control Event | True
+ * DRLC.C.C02.Rsp | Cancel All Load Control Events | True
+ *
+ * Commands Generated
+ * DRLC.C.C00.Tx | Report Event Status | True
+ * DRLC.C.C01.Tx | Get Scheduled Events | True
  */
 
 /*--------------------------------------------------------------------------
@@ -47,7 +83,7 @@ enum {
 enum ZbZclDrlcCliAttrT {
     ZCL_DRLC_CLI_ATTR_UTILITY_ENROL_GRP = 0x0000, /**< UtilityEnrollmentGroup */
     ZCL_DRLC_CLI_ATTR_START_RAND_MINS = 0x0001, /**< StartRandomizationMinutes */
-    ZCL_DRLC_CLI_ATTR_STOP_RAND_MINS = 0x0002, /**< DurationRandomizationMinutes */
+    ZCL_DRLC_CLI_ATTR_DURATION_RAND_MINS = 0x0002, /**< DurationRandomizationMinutes */
     ZCL_DRLC_CLI_ATTR_DEVICE_CLASS = 0x0003 /**< DeviceClassValue */
 };
 

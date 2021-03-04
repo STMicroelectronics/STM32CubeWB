@@ -61,6 +61,11 @@ PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") SVCCTL_CltHandler_t SVCCTL_CltHandler;
 /* Weak functions ----------------------------------------------------------*/
 void BVOPUS_STM_Init(void);
 
+__weak void BAS_Init( void )
+{
+  return;
+}
+
 __weak void BLS_Init( void )
 {
   return;
@@ -147,6 +152,8 @@ void SVCCTL_Init( void )
 
 __weak void SVCCTL_SvcInit(void)
 {
+  BAS_Init();
+
   BLS_Init();
 
   CRS_STM_Init();
@@ -219,7 +226,7 @@ void SVCCTL_RegisterCltHandler( SVC_CTL_p_EvtHandler_t pfBLE_SVC_Client_Event_Ha
 SVCCTL_UserEvtFlowStatus_t SVCCTL_UserEvtRx( void *pckt )
 {
   hci_event_pckt *event_pckt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
   SVCCTL_EvtAckStatus_t event_notification_status;
   SVCCTL_UserEvtFlowStatus_t return_status;
   uint8_t index;
@@ -229,11 +236,11 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_UserEvtRx( void *pckt )
 
   switch (event_pckt->evt)
   {
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
-      blue_evt = (evt_blue_aci*) event_pckt->data;
+      blecore_evt = (evt_blecore_aci*) event_pckt->data;
 
-      switch ((blue_evt->ecode) & SVCCTL_EGID_EVT_MASK)
+      switch ((blecore_evt->ecode) & SVCCTL_EGID_EVT_MASK)
       {
         case SVCCTL_GATT_EVT_TYPE:
 #if (BLE_CFG_SVC_MAX_NBR_CB > 0)
@@ -279,7 +286,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_UserEvtRx( void *pckt )
           break;
       }
     }
-      break; /* HCI_EVT_VENDOR_SPECIFIC */
+      break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
 
     default:
       break;

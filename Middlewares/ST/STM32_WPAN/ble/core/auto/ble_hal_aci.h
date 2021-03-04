@@ -6,7 +6,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -200,6 +200,15 @@ tBleStatus aci_hal_tone_stop( void );
  * 
  * @param[out] Link_Status Array of link status (8 links). Each link status is
  *        1 byte.
+ *        Values:
+ *        - 0x00: Idle
+ *        - 0x01: Advertising
+ *        - 0x02: Connected in slave role
+ *        - 0x03: Scanning
+ *        - 0x04: Reserved
+ *        - 0x05: Connected in master role
+ *        - 0x06: TX test mode
+ *        - 0x07: RX test mode
  * @param[out] Link_Connection_Handle Array of connection handles (2 bytes) for
  *        8 links.
  * @return Value indicating success or error code.

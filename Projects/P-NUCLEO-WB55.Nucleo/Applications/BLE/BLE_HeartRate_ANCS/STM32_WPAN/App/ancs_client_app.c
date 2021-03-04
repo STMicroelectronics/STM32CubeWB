@@ -825,12 +825,12 @@ static void gatt_cmd_resp_wait(uint32_t timeout)
 */
 static void GattParseServicesByUUID(aci_att_find_by_type_value_resp_event_rp0 *pr)
 {
-  APP_DBG_MSG("EVT_BLUE_ATT_FIND_BY_TYPE_VAL_RESP - Connection_Handle=0x%04X,Num_of_Handle_Pair=%d\n\r",
+  APP_DBG_MSG("ACI_ATT_FIND_BY_TYPE_VALUE_RESP_VSEVT_CODE - Connection_Handle=0x%04X,Num_of_Handle_Pair=%d\n\r",
 	  pr->Connection_Handle,
 	  pr->Num_of_Handle_Pair);
   for(uint8_t NumPair=0;NumPair<pr->Num_of_Handle_Pair;NumPair++)
   {
-    APP_DBG_MSG("EVT_BLUE_ATT_FIND_BY_TYPE_VAL_RESP - NumPair=%d Found_Attribute_Handle=0x%04X,Group_End_Handle=0x%04X\n\r",
+    APP_DBG_MSG("ACI_ATT_FIND_BY_TYPE_VALUE_RESP_VSEVT_CODE - NumPair=%d Found_Attribute_Handle=0x%04X,Group_End_Handle=0x%04X\n\r",
 		NumPair,
 		pr->Attribute_Group_Handle_Pair[NumPair].Found_Attribute_Handle,
 		pr->Attribute_Group_Handle_Pair[NumPair].Group_End_Handle);
@@ -840,7 +840,7 @@ static void GattParseServicesByUUID(aci_att_find_by_type_value_resp_event_rp0 *p
   {
     ancs_context.ANCSServiceStartHandle = pr->Attribute_Group_Handle_Pair[0].Found_Attribute_Handle;
     ancs_context.ANCSServiceEndHandle = pr->Attribute_Group_Handle_Pair[0].Group_End_Handle;
-    APP_DBG_MSG("EVT_BLUE_ATT_FIND_BY_TYPE_VAL_RESP - Found ANCSServiceStartHandle=0x%04X,ANCSServiceEndHandle=0x%04X\n\r",
+    APP_DBG_MSG("ACI_ATT_FIND_BY_TYPE_VALUE_RESP_VSEVT_CODE - Found ANCSServiceStartHandle=0x%04X,ANCSServiceEndHandle=0x%04X\n\r",
 	  ancs_context.ANCSServiceStartHandle,
 	  ancs_context.ANCSServiceEndHandle);
   }
@@ -856,7 +856,7 @@ static void GattParseServices(aci_att_read_by_group_type_resp_event_rp0 *pr)
   uint8_t uuid_offset,uuid_size,uuid_short_offset;
   uint8_t i,idx,numServ;
   
-  APP_DBG_MSG("EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP - Connection_Handle=0x%04X,Attribute_Data_Length=%d,Data_Length=%d !\n",
+  APP_DBG_MSG("ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE - Connection_Handle=0x%04X,Attribute_Data_Length=%d,Data_Length=%d !\n",
     pr->Connection_Handle,
     pr->Attribute_Data_Length,
     pr->Data_Length);
@@ -968,7 +968,7 @@ static void GattParseServices(aci_att_read_by_group_type_resp_event_rp0 *pr)
   }
   else
   {
-    APP_DBG_MSG("EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP, failed no free index in connection table !\n\r");
+    APP_DBG_MSG("ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE, failed no free index in connection table !\n\r");
   }
 }
 
@@ -982,7 +982,7 @@ static void GattParseChars(aci_att_read_by_type_resp_event_rp0 *pr)
   uint8_t i,idx,numHdleValuePair;
   uint8_t CharProperties;
 
-  APP_DBG_MSG("EVT_BLUE_ATT_READ_BY_TYPE_RESP - Connection_Handle=0x%x,Handle_Value_Pair_Length=%d,Data_Length=%d\n\r",
+  APP_DBG_MSG("ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE - Connection_Handle=0x%x,Handle_Value_Pair_Length=%d,Data_Length=%d\n\r",
 	  pr->Connection_Handle,
 	  pr->Handle_Value_Pair_Length,
 	  pr->Data_Length);
@@ -1096,7 +1096,7 @@ static void GattParseChars(aci_att_read_by_type_resp_event_rp0 *pr)
     }// numHdleValuePair
   }
   else
-    APP_DBG_MSG("EVT_BLUE_ATT_READ_BY_TYPE_RESP, failed handle not found in connection table !\n\r");
+    APP_DBG_MSG("ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE, failed handle not found in connection table !\n\r");
 }
 /**
 * function of GATT descriptor parse
@@ -1107,7 +1107,7 @@ static void GattParseDescs(aci_att_find_info_resp_event_rp0 *pr)
   uint8_t uuid_offset,uuid_size,uuid_short_offset;
   uint8_t i,numDesc,handle_uuid_pair_size;
 
-  APP_DBG_MSG("EVT_BLUE_ATT_FIND_INFORMATION_RESP - Connection_Handle=0x%x,Format=%d,Event_Data_Length=%d\n\r",
+  APP_DBG_MSG("ACI_ATT_FIND_INFO_RESP_VSEVT_CODE - Connection_Handle=0x%x,Format=%d,Event_Data_Length=%d\n\r",
 	  pr->Connection_Handle,
 	  pr->Format,
 	  pr->Event_Data_Length);
@@ -1236,12 +1236,12 @@ static void GattParseDescs(aci_att_find_info_resp_event_rp0 *pr)
     }
   }
   else
-    APP_DBG_MSG("EVT_BLUE_ATT_FIND_INFORMATION_RESP, failed handle not found in connection table !\n\r");
+    APP_DBG_MSG("ACI_ATT_FIND_INFO_RESP_VSEVT_CODE, failed handle not found in connection table !\n\r");
 }
 
 static void GattParseNotification(aci_gatt_notification_event_rp0 *pr)
 {
-  APP_DBG_MSG("EVT_BLUE_GATT_NOTIFICATION - Connection_Handle=0x%x,Attribute_Handle=0x%04X,Attribute_Value_Length=%d\n\r",
+  APP_DBG_MSG("ACI_GATT_NOTIFICATION_VSEVT_CODE - Connection_Handle=0x%x,Attribute_Handle=0x%04X,Attribute_Value_Length=%d\n\r",
 	  pr->Connection_Handle,
 	  pr->Attribute_Handle,
 	  pr->Attribute_Value_Length);
@@ -1312,7 +1312,7 @@ static void GattParseNotification(aci_gatt_notification_event_rp0 *pr)
     }/* ANCSDataSourceCharValueHdle */           
   }
   else
-    APP_DBG_MSG("EVT_BLUE_GATT_NOTIFICATION, failed handle not found in connection table !\n\r");
+    APP_DBG_MSG("ACI_GATT_NOTIFICATION_VSEVT_CODE, failed handle not found in connection table !\n\r");
 }
 
 /**
@@ -1324,7 +1324,7 @@ static SVCCTL_EvtAckStatus_t ANCS_Client_Event_Handler( void *Event )
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt * event_pckt;
-  evt_blue_aci * blue_evt;
+  evt_blecore_aci * blecore_evt;
   Connection_Context_t Notification;
 
   return_value = SVCCTL_EvtAckFlowEnable;
@@ -1332,70 +1332,70 @@ static SVCCTL_EvtAckStatus_t ANCS_Client_Event_Handler( void *Event )
 
   switch (event_pckt->evt)
   {
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
-      blue_evt = (evt_blue_aci*) event_pckt->data;
-      switch (blue_evt->ecode)
+      blecore_evt = (evt_blecore_aci*) event_pckt->data;
+      switch (blecore_evt->ecode)
       {  
-        case EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP:
+        case ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE:
         {
-          aci_att_read_by_group_type_resp_event_rp0 *pr = (void*) blue_evt->data;
+          aci_att_read_by_group_type_resp_event_rp0 *pr = (void*) blecore_evt->data;
           
-          APP_DBG_MSG(" EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP\n");
+          APP_DBG_MSG(" ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE\n");
           GattParseServices((aci_att_read_by_group_type_resp_event_rp0 *)pr);
         }
           break;
-        case EVT_BLUE_ATT_READ_BY_TYPE_RESP:
+        case ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE:
         {
-          aci_att_read_by_type_resp_event_rp0 *pr = (void*) blue_evt->data;
-          APP_DBG_MSG(" EVT_BLUE_ATT_READ_BY_TYPE_RESP\n");
+          aci_att_read_by_type_resp_event_rp0 *pr = (void*) blecore_evt->data;
+          APP_DBG_MSG(" ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE\n");
           GattParseChars((aci_att_read_by_type_resp_event_rp0 *)pr);
         }
           break;
-        case EVT_BLUE_ATT_FIND_INFORMATION_RESP:
+        case ACI_ATT_FIND_INFO_RESP_VSEVT_CODE:
         {
-          aci_att_find_info_resp_event_rp0 *pr = (void*) blue_evt->data;
-          APP_DBG_MSG(" EVT_BLUE_ATT_FIND_INFORMATION_RESP\n");
+          aci_att_find_info_resp_event_rp0 *pr = (void*) blecore_evt->data;
+          APP_DBG_MSG(" ACI_ATT_FIND_INFO_RESP_VSEVT_CODE\n");
           GattParseDescs((aci_att_find_info_resp_event_rp0 *)pr);
         }
-          break; /*EVT_BLUE_ATT_FIND_INFORMATION_RESP*/
+          break; /*ACI_ATT_FIND_INFO_RESP_VSEVT_CODE*/
 
-        case EVT_BLUE_GATT_DISC_READ_CHAR_BY_UUID_RESP:
+        case ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_VSEVT_CODE:
         {
-          APP_DBG_MSG(" EVT_BLUE_GATT_DISC_READ_CHAR_BY_UUID_RESP\n");
+          APP_DBG_MSG(" ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_VSEVT_CODE\n");
         }
         break;
 		
-        case EVT_BLUE_ATT_FIND_BY_TYPE_VAL_RESP:
+        case ACI_ATT_FIND_BY_TYPE_VALUE_RESP_VSEVT_CODE:
         {
-          aci_att_find_by_type_value_resp_event_rp0 *pr = (void*) blue_evt->data;
-          APP_DBG_MSG(" EVT_BLUE_ATT_FIND_BY_TYPE_VAL_RESP\n");
+          aci_att_find_by_type_value_resp_event_rp0 *pr = (void*) blecore_evt->data;
+          APP_DBG_MSG(" ACI_ATT_FIND_BY_TYPE_VALUE_RESP_VSEVT_CODE\n");
           GattParseServicesByUUID((aci_att_find_by_type_value_resp_event_rp0 *)pr); 
         }
         break;
 		
-        case EVT_BLUE_GATT_NOTIFICATION:
+        case ACI_GATT_NOTIFICATION_VSEVT_CODE:
         {
-          aci_gatt_notification_event_rp0 *pr = (void*) blue_evt->data;
+          aci_gatt_notification_event_rp0 *pr = (void*) blecore_evt->data;
           GattParseNotification((aci_gatt_notification_event_rp0 *)pr);
         }
-          break;/* end EVT_BLUE_GATT_NOTIFICATION */
+          break;/* end ACI_GATT_NOTIFICATION_VSEVT_CODE */
 
-        case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+        case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
         {
-          aci_gatt_attribute_modified_event_rp0 *attribute_modified = (aci_gatt_attribute_modified_event_rp0*) blue_evt->data;
-          APP_DBG_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED Attr_Handle=0x%04X Offset=0x%04X Attr_Data_Length=0x%04X \n\r",
+          aci_gatt_attribute_modified_event_rp0 *attribute_modified = (aci_gatt_attribute_modified_event_rp0*) blecore_evt->data;
+          APP_DBG_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE Attr_Handle=0x%04X Offset=0x%04X Attr_Data_Length=0x%04X \n\r",
 		  	attribute_modified->Attr_Handle,
 		  	attribute_modified->Offset,
 		  	attribute_modified->Attr_Data_Length);
-        }/* end EVT_BLUE_GATT_ATTRIBUTE_MODIFIED */
+        }/* end ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE */
         break;
 
-        case EVT_BLUE_ATT_EXCHANGE_MTU_RESP:
+        case ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE:
         {
           aci_att_exchange_mtu_resp_event_rp0 * exchange_mtu_resp;
-          exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blue_evt->data;
-          APP_DBG_MSG("EVT_BLUE_ATT_EXCHANGE_MTU_RESP Connection_Handle=0x%04X Server_RX_MTU = %d ==> ANCS_MTU_EXCHANGE_COMPLETE \n",
+          exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blecore_evt->data;
+          APP_DBG_MSG("ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE Connection_Handle=0x%04X Server_RX_MTU = %d ==> ANCS_MTU_EXCHANGE_COMPLETE \n",
           exchange_mtu_resp->Connection_Handle,
           exchange_mtu_resp->Server_RX_MTU );
           
@@ -1405,12 +1405,12 @@ static SVCCTL_EvtAckStatus_t ANCS_Client_Event_Handler( void *Event )
         }
         break;
 
-        case EVT_BLUE_GATT_PROCEDURE_COMPLETE:
+        case ACI_GATT_PROC_COMPLETE_VSEVT_CODE:
         {
-          aci_gatt_proc_complete_event_rp0 *pr = (void*) blue_evt->data;
+          aci_gatt_proc_complete_event_rp0 *pr = (void*) blecore_evt->data;
           if(pr->Error_Code != ERR_CMD_SUCCESS)
           {
-            APP_DBG_MSG("EVT_BLUE_GATT_PROCEDURE_COMPLETE - Connection_Handle=0x%04x,Error_Code=0x%02X (0x41: Failed)\n\r", pr->Connection_Handle,pr->Error_Code);
+            APP_DBG_MSG("ACI_GATT_PROC_COMPLETE_VSEVT_CODE - Connection_Handle=0x%04x,Error_Code=0x%02X (0x41: Failed)\n\r", pr->Connection_Handle,pr->Error_Code);
           }
           
           if (ancs_context.connection_handle == pr->Connection_Handle)
@@ -1418,24 +1418,24 @@ static SVCCTL_EvtAckStatus_t ANCS_Client_Event_Handler( void *Event )
             gatt_cmd_resp_release(0);
           }
           else
-            APP_DBG_MSG("EVT_BLUE_GATT_PROCEDURE_COMPLETE, failed handle not found in connection table !\n\r");
-        }/*EVT_BLUE_GATT_PROCEDURE_COMPLETE*/
+            APP_DBG_MSG("ACI_GATT_PROC_COMPLETE_VSEVT_CODE, failed handle not found in connection table !\n\r");
+        }/*ACI_GATT_PROC_COMPLETE_VSEVT_CODE*/
         break;
-        case EVT_BLUE_GATT_ERROR_RESP:
+        case ACI_GATT_ERROR_RESP_VSEVT_CODE:
         {
-          aci_gatt_error_resp_event_rp0 *error_resp= (void*) blue_evt->data;
-          APP_DBG_MSG("EVT_BLUE_GATT_ERROR_RESP Connection_Handle=0x%04X Req_Opcode=0x%02X Attribute_Handle=0x%04X Error_Code=0x%02X (0x05: Insufficient authentication,0x0A: Attribute not found)\n",
+          aci_gatt_error_resp_event_rp0 *error_resp= (void*) blecore_evt->data;
+          APP_DBG_MSG("ACI_GATT_ERROR_RESP_VSEVT_CODE Connection_Handle=0x%04X Req_Opcode=0x%02X Attribute_Handle=0x%04X Error_Code=0x%02X (0x05: Insufficient authentication,0x0A: Attribute not found)\n",
 		  	error_resp->Connection_Handle,error_resp->Req_Opcode,error_resp->Attribute_Handle,error_resp->Error_Code);
-        }/*EVT_BLUE_GATT_ERROR_RESP*/
+        }/*ACI_GATT_ERROR_RESP_VSEVT_CODE*/
         break;
 		  
         default:
-  	  	APP_DBG_MSG("invalid ecode 0x%04X\n",blue_evt->ecode);
+  	  	APP_DBG_MSG("invalid ecode 0x%04X\n",blecore_evt->ecode);
 		return_value = SVCCTL_EvtNotAck;
         break;
       }
     } 
-    break; /* EVT_VENDOR */
+    break; /* HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
 
     default:
       return_value = SVCCTL_EvtNotAck;

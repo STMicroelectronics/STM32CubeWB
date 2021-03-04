@@ -27,19 +27,38 @@
 
 
 /* Exported macro ------------------------------------------------------------*/
-#define LIGHT_LIGHTNESS_CLIENT_MODEL_ID         0x1302
-/* Variable ------------------------------------------------------------------*/
-#pragma pack(1)
-typedef union  {
-  Light_LightnessParam_t sLight_LightnessParam;
-  MOBLEUINT8 a_Lightness_param[sizeof(Light_LightnessParam_t)]; 
-} _Light_LightnessParam;
 
+/* Variable ------------------------------------------------------------------*/
   
 /******************************************************************************/
 /********** Following Section defines the Opcodes for the Messages ************/
 /******************************************************************************/
+/* Light Client Structures */
+/* Light Ctl Temperature parameters*/
+typedef struct
+{
+  MOBLEUINT16 CTL_Temperature;
+  MOBLEINT16 CTL_DeltaUv;
+  MOBLEUINT8  CTL_TID;
+  MOBLEUINT8  CTL_TransitionTime;
+  MOBLEUINT8  CTL_Delay;
+}Light_CtlTemperatureParam_t;
 
+typedef struct
+{
+  MOBLEUINT16 HslHueLightness16;
+  MOBLEUINT8  Hsl_TID;
+  MOBLEUINT8  Hsl_TransitionTime;
+  MOBLEUINT8  Hsl_Delay;
+}Light_HslHueParam_t;
+
+typedef struct
+{
+  MOBLEUINT16 HslSaturation16;
+  MOBLEUINT8  Hsl_TID;
+  MOBLEUINT8  Hsl_TransitionTime;
+  MOBLEUINT8  Hsl_Delay;
+}Light_HslSaturationParam_t;
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 MOBLE_RESULT LightModelClient_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
@@ -189,7 +208,8 @@ MOBLE_RESULT LightClient_LC_OnOff_Set_Unack(MOBLEUINT8 elementIndex,
                                             MOBLEUINT8 *pLightLCOnOff_param,
                                             MOBLEUINT32 length);
 
-MOBLE_RESULT LightClient_LC_Property_Get(MOBLEUINT8 elementIndex, MOBLEUINT8 *pPropertyID);
+MOBLE_RESULT LightClient_LC_Property_Get(MOBLEUINT8 elementIndex,
+                                         MOBLEUINT8 *pLightLCProperty_param);
 MOBLE_RESULT LightClient_LC_Property_Set_Ack(MOBLEUINT8 elementIndex, 
                                              MOBLEUINT8 *pLightLCProperty_param, 
                                              MOBLEUINT32 length); 
@@ -203,6 +223,7 @@ MOBLE_RESULT Light_Client_Lightness_Status(MOBLEUINT8 const *pLightness_status,
                                            MOBLEUINT32 plength, 
                                            MOBLEUINT16 dstPeer, 
                                            MOBLEUINT8 elementIndex);
+
 MOBLE_RESULT Light_Client_Lightness_Linear_Status(MOBLEUINT8 const *pLightnessLinear_status, 
                                                   MOBLEUINT32 pLength,
                                                   MOBLEUINT16 dstPeer,
@@ -259,7 +280,7 @@ MOBLE_RESULT Light_Client_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_
                                                MOBLEUINT32 pLength,
                                                MOBLEUINT16 dstPeer,
                                                MOBLEUINT8 elementIndex);
-
+#ifdef ENABLE_LIGHT_MODEL_CLIENT_LC  
 MOBLE_RESULT LightLC_Client_Mode_Status(MOBLEUINT8 const *pLCMode_status, 
                                         MOBLEUINT32 plength, 
                                         MOBLEUINT16 dstPeer, 
@@ -276,6 +297,8 @@ MOBLE_RESULT LightLC_Client_Property_Status(MOBLEUINT8 const *pLCProperty_status
                                             MOBLEUINT32 plength, 
                                             MOBLEUINT16 dstPeer, 
                                             MOBLEUINT8 elementIndex);
+#endif /* #ifdef ENABLE_LIGHT_MODEL_CLIENT_LC */
+
 #endif /* __LIGHT_CLIENT_H */
 
 /******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

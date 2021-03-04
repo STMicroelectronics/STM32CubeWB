@@ -40,8 +40,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "app_entry.h"
-#include "app_common.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -67,6 +65,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+IPCC_HandleTypeDef hipcc;
+
 UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_lpuart1_tx;
@@ -91,6 +91,7 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_RF_Init(void);
 static void MX_RTC_Init(void);
+static void MX_IPCC_Init(void);
 void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -135,6 +136,9 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
+
+  /* IPCC initialisation */
+   MX_IPCC_Init();
 
   /* USER CODE BEGIN SysInit */
   PeriphClock_Config();
@@ -263,6 +267,32 @@ void SystemClock_Config(void)
   /* USER CODE BEGIN Smps */
 
   /* USER CODE END Smps */
+}
+
+/**
+  * @brief IPCC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_IPCC_Init(void)
+{
+
+  /* USER CODE BEGIN IPCC_Init 0 */
+
+  /* USER CODE END IPCC_Init 0 */
+
+  /* USER CODE BEGIN IPCC_Init 1 */
+
+  /* USER CODE END IPCC_Init 1 */
+  hipcc.Instance = IPCC;
+  if (HAL_IPCC_Init(&hipcc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN IPCC_Init 2 */
+
+  /* USER CODE END IPCC_Init 2 */
+
 }
 
 /**

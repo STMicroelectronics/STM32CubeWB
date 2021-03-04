@@ -153,10 +153,7 @@ In order to make the program work, you must do the following:
  retrieve Cli commands connecting an HyperTerminal with the ST_Link cable.
  (Refer to the Thread_Cli_Cmd application for more details) 
     
- If you want to get the traces in real time, you can connect an HyperTerminal 
- via an UART RS232 cable using the following connections:
-  RXD : CN10(Pin35)   
-  TXD : CN10(Pin37)
+To get the traces in real time, you can connect an HyperTerminal to the STLink Virtual Com Port.
  
  For the Cli control and for the traces, the UART must be configured as follows:
     - BaudRate = 115200 baud  

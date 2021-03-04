@@ -31,7 +31,7 @@
 #include "channel_monitor.h"
 
 
-#if OPENTHREAD_ENABLE_CHANNEL_MONITOR
+#if OPENTHREAD_CONFIG_CHANNEL_MONITOR_ENABLE
 
 otError otChannelMonitorSetEnabled(otInstance *aInstance, bool aEnabled)
 {
@@ -147,5 +147,5 @@ uint16_t otChannelMonitorGetChannelOccupancy(otInstance *aInstance, uint8_t aCha
   return (uint16_t)p_ot_req->Data[0];
 }
 
-#endif /* OPENTHREAD_ENABLE_CHANNEL_MONITOR */
+#endif /* OPENTHREAD_CONFIG_CHANNEL_MONITOR_ENABLE */
 

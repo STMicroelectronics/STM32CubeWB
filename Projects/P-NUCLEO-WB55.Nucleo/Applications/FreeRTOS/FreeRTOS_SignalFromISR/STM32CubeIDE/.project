@@ -37,6 +37,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/FreeRTOS_SignalFromISR.ioc</locationURI>
 		</link>
 		<link>
+			<name>Doc/readme.txt</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/readme.txt</locationURI>
+		</link>
+		<link>
 			<name>Application/User/app_freertos.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Src/app_freertos.c</locationURI>

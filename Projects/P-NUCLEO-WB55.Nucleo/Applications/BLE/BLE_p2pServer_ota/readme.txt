@@ -26,6 +26,16 @@ Two STM32WB55xx boards are used, one acting as GATT client, and one as GATT serv
 For example, BLE P2P_Client application is downloaded in a USB DONGLE board (MB1293C) and BLE_p2pServer_ota application in a Nucleo board (MB1355C).
 The client could be located in a phone also, using the ST BLE Sensor application instead of the MB1293C board.
 
+@note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
+      based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
+      a peripheral ISR process, then the SysTick interrupt must have higher priority (numerically lower)
+      than the peripheral interrupt. Otherwise the caller ISR process will be blocked.
+      To change the SysTick interrupt priority you have to use HAL_NVIC_SetPriority() function.
+      
+@note The application needs to ensure that the SysTick time base is always set to 1 millisecond
+      to have correct HAL operation.
+	
+	
 @note This application is not supported by CubeMx but has been copied from the project BLE_p2pServer generated
       by CubeMx with some modifications in order to be able to download it with the BLE_Ota application.
 	  The steps to be done to move from the BLE_p2pServer application to the BLE_p2pServer_ota application are :
@@ -79,7 +89,7 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
+This application requires having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.

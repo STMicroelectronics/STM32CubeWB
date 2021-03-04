@@ -41,8 +41,42 @@ typedef union
   MOBLEUINT8 a_Setting_param[sizeof(sensor_SettingCbParams_t)]; 
 } _Sensor_SettingParam;
 
+/**
+*  structure of sensor server function pointers callback
+*/
+typedef struct
+{
+  void (*Sensor_Descriptor_Status_cb)(const MOBLEUINT8 *pDescriptor,
+                                      MOBLEUINT32 length,
+                                      MOBLE_ADDRESS dstPeer,
+                                      MOBLEUINT8 elementIndex);
+  void (*Sensor_Cadence_Status_cb)(const MOBLEUINT8 *pCadence,
+                                   MOBLEUINT32 length,
+                                   MOBLE_ADDRESS dstPeer,
+                                   MOBLEUINT8 elementIndex);
+  void (*Sensor_Settings_Status_cb)(const MOBLEUINT8 *pSettings,
+                                    MOBLEUINT32 length,
+                                    MOBLE_ADDRESS dstPeer,
+                                    MOBLEUINT8 elementIndex);
+  void (*Sensor_Setting_Status_cb)(const MOBLEUINT8 *pSetting,
+                                   MOBLEUINT32 length,
+                                   MOBLE_ADDRESS dstPeer,
+                                   MOBLEUINT8 elementIndex);
+  void (*Sensor_Status_cb)(const MOBLEUINT8 *pStatus,
+                           MOBLEUINT32 length,
+                           MOBLE_ADDRESS dstPeer,
+                           MOBLEUINT8 elementIndex);
+  void (*Sensor_Column_Status_cb)(const MOBLEUINT8 *pColumn,
+                                  MOBLEUINT32 length,
+                                  MOBLE_ADDRESS dstPeer,
+                                  MOBLEUINT8 elementIndex);
+  void (*Sensor_Series_Status_cb)(const MOBLEUINT8 *pSeries,
+                                  MOBLEUINT32 length,
+                                  MOBLE_ADDRESS dstPeer,
+                                  MOBLEUINT8 elementIndex);  
+} sensor_client_cb_t;
 
-extern const sensor_server_cb_t SensorAppli_cb;
+extern const sensor_client_cb_t SensorAppli_cb;
 
 /******************************************************************************/
 /********** Following Section defines the Opcodes for the Messages ************/

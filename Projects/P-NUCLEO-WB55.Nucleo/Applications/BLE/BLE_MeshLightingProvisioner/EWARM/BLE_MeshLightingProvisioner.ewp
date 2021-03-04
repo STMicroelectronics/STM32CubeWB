@@ -1096,6 +1096,9 @@
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\app_ble.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\\appli_config.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config_client.c</name>
                 </file>
                 <file>

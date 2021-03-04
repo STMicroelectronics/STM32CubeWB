@@ -369,8 +369,9 @@
           <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Class\CDC\Inc</state>
           <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Core\Inc</state>
           <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy</state>
-          <state>$PROJ_DIR$/../tiny_lpm</state>
           <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform</state>
+          <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include</state>
+          <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/mbedtls</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1067,9 +1068,6 @@
             <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
-          </file>
-          <file>
             <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
           </file>
           <file>
@@ -1077,6 +1075,9 @@
           </file>
           <file>
             <name>$PROJ_DIR$\..\Core\Src\main.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
           </file>
           <file>
             <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
@@ -1125,15 +1126,15 @@
           </file>
         </group>
         <group>
-          <name>target</name>
-          <file>
-            <name>$PROJ_DIR$\..\STM32_WPAN\Target\hw_ipcc.c</name>
-          </file>
-        </group>
-        <group>
           <name>App</name>
           <file>
             <name>$PROJ_DIR$/../STM32_WPAN/App/app_thread.c</name>
+          </file>
+        </group>
+        <group>
+          <name>target</name>
+          <file>
+            <name>$PROJ_DIR$\..\STM32_WPAN\Target\hw_ipcc.c</name>
           </file>
         </group>
         <group>
@@ -1210,7 +1211,7 @@
         <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr.c</name>
@@ -1225,7 +1226,7 @@
         <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_exti.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart.c</name>
@@ -1240,10 +1241,10 @@
         <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc_ex.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim_ex.c</name>
       </file>
     </group>
   </group>
@@ -1290,6 +1291,12 @@
             <group>
               <name>openthread_api</name>
               <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_agent.c</name>
+              </file>
+              <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_router.c</name>
+              </file>
+              <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\channel_manager.c</name>
               </file>
               <file>
@@ -1300,6 +1307,9 @@
               </file>
               <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\coap.c</name>
+              </file>
+              <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\coap_secure.c</name>
               </file>
               <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\commissioner.c</name>
@@ -1314,16 +1324,16 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\dataset_ftd.c</name>
               </file>
               <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\dhcp6_client.c</name>
-              </file>
-              <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\dhcp6_server.c</name>
-              </file>
-              <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\diag.c</name>
               </file>
               <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\dns.c</name>
+              </file>
+              <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\entropy.c</name>
+              </file>
+              <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\errors.c</name>
               </file>
               <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\icmp6.c</name>
@@ -1347,13 +1357,16 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\link_raw.c</name>
               </file>
               <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\logging.c</name>
+              </file>
+              <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\message.c</name>
               </file>
               <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\netdata.c</name>
               </file>
               <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\network_time.cpp</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\network_time.c</name>
               </file>
               <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\openthread.c</name>
@@ -1365,7 +1378,16 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\radio.c</name>
               </file>
               <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\random_crypto.c</name>
+              </file>
+              <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\random_noncrypto.c</name>
+              </file>
+              <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\server.c</name>
+              </file>
+              <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\sntp.c</name>
               </file>
               <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\tasklet.c</name>
@@ -1426,6 +1448,12 @@
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/border_agent.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/border_router.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/channel_manager.c</name>
       </file>
       <file>
@@ -1436,6 +1464,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap_secure.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/commissioner.c</name>
@@ -1450,16 +1481,16 @@
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dataset_ftd.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_client.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_server.c</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/diag.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dns.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/entropy.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/errors.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/icmp6.c</name>
@@ -1483,10 +1514,16 @@
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/link_raw.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/logging.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/message.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/netdata.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/network_time.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/openthread.c</name>
@@ -1498,7 +1535,16 @@
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/radio.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/random_crypto.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/random_noncrypto.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/server.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/sntp.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/tasklet.c</name>
@@ -1516,18 +1562,6 @@
   </group>
   <group>
     <name>Utilities</name>
-    <file>
-      <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/otp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_list.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</name>
-    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\lpm\tiny_lpm\stm32_lpm.c</name>
     </file>

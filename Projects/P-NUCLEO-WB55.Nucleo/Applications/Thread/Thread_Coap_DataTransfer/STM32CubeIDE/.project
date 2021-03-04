@@ -38,6 +38,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Thread_Coap_DataTransfer.ioc</locationURI>
 		</link>
 		<link>
+			<name>Doc/readme.txt</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/readme.txt</locationURI>
+		</link>
+		<link>
 			<name>Utilities/dbg_trace.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</locationURI>
@@ -158,6 +163,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_ipcc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_pwr.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pwr.c</locationURI>
@@ -208,6 +218,16 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/border_agent.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/border_agent.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/border_router.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/border_router.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/channel_manager.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/channel_manager.c</locationURI>
@@ -226,6 +246,11 @@
 			<name>Middlewares/STM32_WPAN/coap.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/coap_secure.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap_secure.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/commissioner.c</name>
@@ -248,16 +273,6 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dataset_ftd.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/STM32_WPAN/dhcp6_client.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_client.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/dhcp6_server.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_server.c</locationURI>
-		</link>
-		<link>
 			<name>Middlewares/STM32_WPAN/diag.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/diag.c</locationURI>
@@ -266,6 +281,16 @@
 			<name>Middlewares/STM32_WPAN/dns.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dns.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/entropy.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/entropy.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/errors.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/errors.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/icmp6.c</name>
@@ -303,6 +328,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/link_raw.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/logging.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/logging.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/message.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/message.c</locationURI>
@@ -311,6 +341,11 @@
 			<name>Middlewares/STM32_WPAN/netdata.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/netdata.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/network_time.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/network_time.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/openthread.c</name>
@@ -326,6 +361,16 @@
 			<name>Middlewares/STM32_WPAN/radio.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/radio.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/random_crypto.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/random_crypto.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/random_noncrypto.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/random_noncrypto.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/server.c</name>
@@ -346,6 +391,11 @@
 			<name>Middlewares/STM32_WPAN/shci_tl_if.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/sntp.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/sntp.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/tasklet.c</name>

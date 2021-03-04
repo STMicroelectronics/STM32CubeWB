@@ -247,11 +247,33 @@
 #define CFG_BLE_VITERBI_MODE  1
 
 /**
- *  LL Only Mode
- *  1 : LL Only
- *  0 : LL + Host
+ * BLE stack Options flags to be configured with:
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3
+ * which are used to set following configuration bits:
+ * (bit 0): 1: LL only
+ *          0: LL + host
+ * (bit 1): 1: no service change desc.
+ *          0: with service change desc.
+ * (bit 2): 1: device name Read-Only
+ *          0: device name R/W
+ * (bit 7): 1: LE Power Class 1
+ *          0: LE Power Classe 2-3
+ * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_LL_ONLY  0
+#define CFG_BLE_OPTIONS  SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+
+#define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
+
+#define CFG_BLE_MIN_TX_POWER            (0)
+
+#define CFG_BLE_MAX_TX_POWER            (0)
 /******************************************************************************
  * Transport Layer
  ******************************************************************************/

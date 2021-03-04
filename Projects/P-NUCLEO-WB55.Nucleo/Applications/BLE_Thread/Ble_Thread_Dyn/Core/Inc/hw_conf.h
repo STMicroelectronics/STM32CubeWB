@@ -244,6 +244,18 @@
 #define CFG_HW_USART1_TX_DMA_IRQn             DMA2_Channel4_IRQn
 #define CFG_HW_USART1_DMA_TX_IRQHandler       DMA2_Channel4_IRQHandler
 
+/******************************************************************************
+ * External PA
+ *****************************************************************************/
+#define CFG_HW_EXTPA_ENABLED           0
+
+// External PA enable pin is chosen by user
+#define GPIO_EXT_PA_EN_PIN     GPIO_PIN_9
+#define GPIO_EXT_PA_EN_PORT    GPIOB
+
+// External PA TX/RX pin is fixed by the chip
+#define GPIO_EXT_PA_TX_PIN     GPIO_PIN_0
+#define GPIO_EXT_PA_TX_PORT    GPIOB
 #endif /*__HW_CONF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

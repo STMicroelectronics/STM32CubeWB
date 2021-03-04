@@ -31,7 +31,7 @@
 
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.meter.id.h"
+#include "zcl/general/zcl.meter.id.h"
 
 /* Private defines -----------------------------------------------------------*/
 #define APP_ZIGBEE_STARTUP_FAIL_DELAY               500U
@@ -217,8 +217,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
  */
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;

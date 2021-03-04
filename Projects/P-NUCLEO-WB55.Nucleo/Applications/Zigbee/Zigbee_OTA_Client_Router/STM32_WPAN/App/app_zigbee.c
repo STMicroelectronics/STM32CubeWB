@@ -31,7 +31,7 @@
 
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.ota.h"
+#include "zcl/general/zcl.ota.h"
 
 #include "ee.h"
 #include "hw_flash.h"
@@ -1239,8 +1239,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
  */
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;

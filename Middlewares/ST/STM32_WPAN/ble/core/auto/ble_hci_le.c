@@ -6,7 +6,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -1516,6 +1516,26 @@ tBleStatus hci_le_enhanced_transmitter_test( uint8_t TX_Frequency,
   if ( hci_send_req(&rq, FALSE) < 0 )
     return BLE_STATUS_TIMEOUT;
   return status;
+}
+
+tBleStatus hci_le_read_transmit_power( uint8_t* Min_TX_Power,
+                                       uint8_t* Max_TX_Power )
+{
+  struct hci_request rq;
+  hci_le_read_transmit_power_rp0 resp;
+  Osal_MemSet( &resp, 0, sizeof(resp) );
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x08;
+  rq.ocf = 0x04b;
+  rq.rparam = &resp;
+  rq.rlen = sizeof(resp);
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  if ( resp.Status )
+    return resp.Status;
+  *Min_TX_Power = resp.Min_TX_Power;
+  *Max_TX_Power = resp.Max_TX_Power;
+  return BLE_STATUS_SUCCESS;
 }
 
 tBleStatus hci_le_set_privacy_mode( uint8_t Peer_Identity_Address_Type,

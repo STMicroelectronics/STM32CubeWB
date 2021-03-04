@@ -1,3 +1,4 @@
+
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
@@ -34,7 +35,7 @@
 /* Private includes -----------------------------------------------------------*/
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.onoff.h"
+#include "zcl/general/zcl.onoff.h"
 
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -104,9 +105,9 @@ struct zigbee_app_info {
 static struct zigbee_app_info zigbee_app_info;
 
 /* OnOff server 1 custom callbacks */
-static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg);
-static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg);
-static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg);
+static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
 
 static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 = {
   .off = onOff_server_1_off,
@@ -117,16 +118,17 @@ static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 = {
 /* USER CODE BEGIN PV */
 /* USER CODE END PV */
 /* Functions Definition ------------------------------------------------------*/
+
 /* OnOff server off 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg){
+static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
   /* USER CODE BEGIN 0 OnOff server 1 off 1 */
     uint8_t endpoint;
 
-    endpoint = ZbZclClusterGetEndpoint(clusterPtr);
+    endpoint = ZbZclClusterGetEndpoint(cluster);
     if (endpoint == SW1_ENDPOINT) {
         APP_DBG("LED_RED OFF");
         BSP_LED_Off(LED_RED);
-        (void)ZbZclAttrIntegerWrite(clusterPtr, ZCL_ONOFF_ATTR_ONOFF, 0);
+        (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 0);
     }
     else {
         /* Unknown endpoint */
@@ -137,15 +139,15 @@ static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *clusterPtr, 
 }
 
 /* OnOff server on 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg){
+static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
   /* USER CODE BEGIN 1 OnOff server 1 on 1 */
     uint8_t endpoint;
 
-    endpoint = ZbZclClusterGetEndpoint(clusterPtr);
+    endpoint = ZbZclClusterGetEndpoint(cluster);
     if (endpoint == SW1_ENDPOINT) {
         APP_DBG("LED_RED ON");
         BSP_LED_On(LED_RED);
-        (void)ZbZclAttrIntegerWrite(clusterPtr, ZCL_ONOFF_ATTR_ONOFF, 1);
+        (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 1);
     }
     else {
         /* Unknown endpoint */
@@ -156,19 +158,19 @@ static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *clusterPtr, s
 }
 
 /* OnOff server toggle 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg){
+static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
   /* USER CODE BEGIN 2 OnOff server 1 toggle 1 */
     uint8_t attrVal;
 
-    if (ZbZclAttrRead(clusterPtr, ZCL_ONOFF_ATTR_ONOFF, NULL,
+    if (ZbZclAttrRead(cluster, ZCL_ONOFF_ATTR_ONOFF, NULL,
             &attrVal, sizeof(attrVal), false) != ZCL_STATUS_SUCCESS) {
         return ZCL_STATUS_FAILURE;
     }
     if (attrVal != 0) {
-        return onOff_server_1_off(clusterPtr, srcInfo, arg);
+        return onOff_server_1_off(cluster, srcInfo, arg);
     }
     else {
-        return onOff_server_1_on(clusterPtr, srcInfo, arg);
+        return onOff_server_1_on(cluster, srcInfo, arg);
     }
   /* USER CODE END 2 OnOff server 1 toggle 1 */
 }
@@ -255,8 +257,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
  */
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
 
@@ -436,7 +438,7 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Zigbee
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -524,7 +526,7 @@ void ZIGBEE_CmdTransfer(void)
 } /* ZIGBEE_CmdTransfer */
 
 /**
- * @brief  This function is called when the M0+ acknoledge the fact that it has received a Cmd
+ * @brief  This function is called when the M0+ acknowledge the fact that it has received a Cmd
  *
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -667,8 +669,8 @@ void APP_ZIGBEE_ProcessRequestM0ToM4(void)
  */
 static void APP_ZIGBEE_ConfigGroupAddr(void)
 {
-  ZbApsmeAddGroupReqT req;
-  ZbApsmeAddGroupConfT conf;
+  struct ZbApsmeAddGroupReqT req;
+  struct ZbApsmeAddGroupConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.endpt = SW1_ENDPOINT;

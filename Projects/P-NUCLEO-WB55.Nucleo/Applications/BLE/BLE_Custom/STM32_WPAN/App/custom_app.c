@@ -114,14 +114,14 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
   /* My_P2P_Server */
     case CUSTOM_STM_LED_C_READ_EVT:
 /* USER CODE BEGIN CUSTOM_STM_LED_C_READ_EVT */
-       PRINT_MESG_DBG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED My_Led_Char Read\n");
+       PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Led_Char Read\n");
 
 /* USER CODE END CUSTOM_STM_LED_C_READ_EVT */
       break;
 
     case CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT:
 /* USER CODE BEGIN CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT */
-       PRINT_MESG_DBG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED My_Led_Char Write\n");
+       PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Led_Char Write\n");
 
 /* USER CODE END CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT */
       break;
@@ -134,7 +134,7 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
 
     case CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT:
 /* USER CODE BEGIN CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT */
-       PRINT_MESG_DBG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED My_Switch_Char NOTIFICATION_ENABLED\n");
+       PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Switch_Char NOTIFICATION_ENABLED\n");
        
        Custom_App_Context.Switch_c_Notification_Status = 1;        /* My_Switch_Char notification status has been enabled */
        Custom_Switch_c_Send_Notification();
@@ -143,7 +143,7 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
 
     case CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT:
 /* USER CODE BEGIN CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT */
-      PRINT_MESG_DBG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED My_Switch_Char NOTIFICATION_DISABLED\n");
+      PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Switch_Char NOTIFICATION_DISABLED\n");
       
       Custom_App_Context.Switch_c_Notification_Status = 0;         /* My_Switch_Char notification status has been disabled */
 /* USER CODE END CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT */
@@ -159,7 +159,7 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
     case CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT:
 /* USER CODE BEGIN CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT */
 
-       PRINT_MESG_DBG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED My_HRS_Meas NOTIFICATION_ENABLED\n");
+       PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_HRS_Meas NOTIFICATION_ENABLED\n");
 
        Custom_App_Context.Hrs_m_Notification_Status = 1;         /* Hrs_m notification status has been enabled */
 
@@ -199,7 +199,7 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
 
     case CUSTOM_STM_HRS_M_NOTIFY_DISABLED_EVT:
 /* USER CODE BEGIN CUSTOM_STM_HRS_M_NOTIFY_DISABLED_EVT */
-      PRINT_MESG_DBG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED My_HRS_Meas NOTIFICATION_DISABLED\n");
+      PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_HRS_Meas NOTIFICATION_DISABLED\n");
       
       Custom_App_Context.Hrs_m_Notification_Status = 0;         /* Hrs_m notification status has been disabled */
 /* USER CODE END CUSTOM_STM_HRS_M_NOTIFY_DISABLED_EVT */
@@ -219,7 +219,7 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
 
     case CUSTOM_STM_HRS_CTRLP_WRITE_EVT:
 /* USER CODE BEGIN CUSTOM_STM_HRS_CTRLP_WRITE_EVT */
-      PRINT_MESG_DBG("EVT_BLUE_GATT_WRITE_PERMIT_REQ My_HRS_CTRL_Point Write\n");
+      PRINT_MESG_DBG("ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE My_HRS_CTRL_Point Write\n");
       
       /* reset energy expended */
       hr_energy_reset = CUSTOM_STM_HRS_ENERGY_RESET;

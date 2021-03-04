@@ -99,6 +99,7 @@ Either use 0 to disable or 1 to enable
 @  TF_BEACON -> Beacons
 @  TF_SERIAL_CTRL
 */
+/* Enabled by default */
 #define TF_GENERIC                                                             1
 #define TF_GENERIC_CLIENT                                                      1
 #define TF_SENSOR                                                              1
@@ -107,6 +108,7 @@ Either use 0 to disable or 1 to enable
 #define TF_LIGHT_LC                                                            1
 #define TF_VENDOR                                                              1
 #define TF_CONFIG_CLIENT                                                       1
+#define TF_CONFIG_SERVER                                                       1
 #define TF_LPN_FRND                                                            1
 #define TF_PROVISION                                                           1
 #define TF_HANDLER                                                             1
@@ -117,7 +119,7 @@ Either use 0 to disable or 1 to enable
 #define TF_GENERIC_M                                                           0
 #define TF_GENERIC_CLIENT_M                                                    0
 #define TF_SENSOR_M                                                            0
-#define TF_SENSOR_CLIENT_M                                                     0 
+#define TF_SENSOR_CLIENT_M                                                     0
 #define TF_LIGHT_M                                                             0
 #define TF_LIGHT_CLIENT_M                                                      0
 #define TF_LIGHT_LC_M                                                          0
@@ -127,7 +129,8 @@ Either use 0 to disable or 1 to enable
 #define TF_MEMORY                                                              0
 #define TF_BEACON                                                              0
 #define TF_SERIAL_CTRL                                                         0
-#define TF_VENDOR_APPLI_TEST               0  /* Vendor commands testing */
+#define TF_VENDOR_APPLI_TEST                                                   0  /* Vendor commands testing */
+#define TF_NVM                                                                 0
 
 /*******************************************************************************
 *** Following section helps to define Device Name during Provisioning  *********
@@ -142,6 +145,7 @@ Either use 0 to disable or 1 to enable
 /******************************************************************************/
 /* Define the following Macros to enable the usage of the                     */
 /* Server Generic Models                                                      */
+/* For a choice of 3 elements (max is 8)                                      */ 
 /* Definition is a bitmap of 3 bits: bit 2 element 3                          */ 
 /*                                   bit 1 element 2                          */
 /*                                   bit 0 element 1                          */
@@ -150,9 +154,9 @@ Either use 0 to disable or 1 to enable
 
 /* Define the following Macros to enable the usage of the Server Generic Models  */
 #define ENABLE_GENERIC_MODEL_SERVER_ONOFF                                    (1)
-//#define ENABLE_GENERIC_MODEL_SERVER_LEVEL                                    (1)
-//#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF                              (1)
-//#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP                        (1)
+#define ENABLE_GENERIC_MODEL_SERVER_LEVEL                                    (1)
+#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF                              (1)
+#define ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP                        (1)
 //#define ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME                  (1)
 
 //#define ENABLE_GENERIC_MODEL_CLIENT_ONOFF                                    (1)
@@ -178,6 +182,7 @@ Either use 0 to disable or 1 to enable
 
 /******************************************************************************/
 /******* Define the following Macros to enable the usage of the Light Models  */
+/* For a choice of 3 elements (max is 8)                                      */ 
 /* Definition is a bitmap of 3 bits: bit 2 element 3                          */ 
 /*                                   bit 1 element 2                          */
 /*                                   bit 0 element 1                          */
@@ -185,7 +190,7 @@ Either use 0 to disable or 1 to enable
 /******************************************************************************/
 
 #define ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS                                  (1)
-//#define ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP                            (1)
+#define ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP                            (1)
 //#define ENABLE_LIGHT_MODEL_SERVER_CTL                                        (1)
 //#define ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP                                  (1)
 //#define ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE                            (1)
@@ -207,6 +212,7 @@ Either use 0 to disable or 1 to enable
 
 /******************************************************************************/
 /* Define the following Macros to enable the usage of the Sensor Models  */
+/* For a choice of 3 elements (max is 8)                                      */ 
 /* Definition is a bitmap of 3 bits: bit 2 element 3                          */ 
 /*                                   bit 1 element 2                          */
 /*                                   bit 0 element 1                          */
@@ -220,6 +226,7 @@ Either use 0 to disable or 1 to enable
 /******************************************************************************/
 /* Define the following Macros to enable the usage of the time and            */
 /* scene Models                                                               */
+/* For a choice of 3 elements (max is 8)                                      */ 
 /* Definition is a bitmap of 3 bits: bit 2 element 3                          */ 
 /*                                   bit 1 element 2                          */
 /*                                   bit 0 element 1                          */
@@ -330,9 +337,11 @@ this should be avoided to ensure flash longevity
 *** Following section helps to configure the Application of Mesh     ***********
 *******************************************************************************/
 
+/* Max elements: 5 */
 #define APPLICATION_NUMBER_OF_ELEMENTS                                         1
+/* Max total Models per element = (SIG + Vendor) = 11 */
 /* Max SIG Models per element */
-#define USER_SIG_MODELS_MAX_COUNT                                              4
+#define USER_SIG_MODELS_MAX_COUNT                                              6
 /* Max Vendor Models per element */
 #define USER_VENDOR_MODELS_MAX_COUNT                                           1
       
@@ -349,9 +358,9 @@ For STMicroelectronics : it is 0x0030 */
 /* Contains a 16-bit vendor-assigned product version ID */
 #define PRODUCT_VERSION_ID                                                0x010A   
 
-#define MAX_APPLICATION_PACKET_SIZE                                          160
+#define MAX_APPLICATION_PACKET_SIZE                                          160 /*Can go upto 160*/
 
-#define TPT_SEGMENT_COUNT                  (((MAX_APPLICATION_PACKET_SIZE)/12)+2)
+#define TPT_SEGMENT_COUNT                 (((MAX_APPLICATION_PACKET_SIZE)/12)+2)
 
 /*******************************************************************************
 ********** MAC Address Configuration *******************************************
@@ -463,7 +472,7 @@ For STMicroelectronics : it is 0x0030 */
 *  0x0A  ->  10ms
 *  0xFF  ->  255ms
 */
-#define LPN_RECEIVE_WINDOW_SIZE                                              255U/*55U*/
+#define LPN_RECEIVE_WINDOW_SIZE                                             255U/*55U*/
 
 /* 
 *  Minimum friend's subscription list size capability required by lpn
@@ -535,14 +544,14 @@ For STMicroelectronics : it is 0x0030 */
 *  0: Disable neighbor table update with unprovisioned device beacon
 *  1: Enable neighbor table update with unprovisioned device beacon
 */
-#define NEIGHBOR_UNPRVND_DEV_BEACON_NTU                                      1U
+#define NEIGHBOR_UNPRVND_DEV_BEACON_NTU                                       1U
 
 /* 
 *  Enable/disable neighbor table update with secure network beacon
 *  0: Disable neighbor table update with secure network beacon
 *  1: Enable neighbor table update with secure network beacon
 */
-#define NEIGHBOR_SECURE_NET_BEACON_NTU                                       0U
+#define NEIGHBOR_SECURE_NET_BEACON_NTU                                        0U
 
 /* 
 *  Enable/disable neighbor table update with TTL 0 message
@@ -550,19 +559,19 @@ For STMicroelectronics : it is 0x0030 */
 *  1: Enable neighbor table update with messages with 0 TTL
 *  2: Enable neighbor table update with messages with any TTL
 */
-#define NEIGHBOR_MSG_TTLX_NTU                                                0U
+#define NEIGHBOR_MSG_TTLX_NTU                                                 0U
 
 /*******************************************************************************
 *** Following section helps to configure the LEDs of Application of Mesh     ***
 *******************************************************************************/
 
 #if defined USE_STM32WBXX_NUCLEO || defined USE_STM32WBXX_USB_DONGLE
-  #define SINGLE_LED   PWM4    
-  #define COOL_LED     PWM0  
-  #define WARM_LED     PWM1
-  #define RED_LED      PWM2
-  #define GREEN_LED    PWM3
-  #define BLUE_LED     PWM4 
+  #define SINGLE_LED                                                        PWM4    
+  #define COOL_LED                                                          PWM0  
+  #define WARM_LED                                                          PWM1
+  #define RED_LED                                                           PWM2
+  #define GREEN_LED                                                         PWM3
+  #define BLUE_LED                                                          PWM4 
 #endif
 
       

@@ -83,27 +83,30 @@ void TM_Init( void  )
   TL_BLE_InitConf_t tl_ble_init_conf;
   uint32_t ipccdba;
   SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
-      {
-          {{0,0,0}},                              /**< Header unused */
-          {0,                                  /** pBleBufferAddress not used */
-          0,                                  /** BleBufferSize not used */
-          CFG_BLE_NUM_GATT_ATTRIBUTES,
-          CFG_BLE_NUM_GATT_SERVICES,
-          CFG_BLE_ATT_VALUE_ARRAY_SIZE,
-          CFG_BLE_NUM_LINK,
-          CFG_BLE_DATA_LENGTH_EXTENSION,
-          CFG_BLE_PREPARE_WRITE_LIST_SIZE,
-          CFG_BLE_MBLOCK_COUNT,
-          CFG_BLE_MAX_ATT_MTU,
-          CFG_BLE_SLAVE_SCA,
-          CFG_BLE_MASTER_SCA,
-          CFG_BLE_LSE_SOURCE,
-          CFG_BLE_MAX_CONN_EVENT_LENGTH,
-          CFG_BLE_HSE_STARTUP_TIME,
-          CFG_BLE_VITERBI_MODE,
-          CFG_BLE_LL_ONLY,
-          0},
-      };
+  {
+    {{0,0,0}},                          /**< Header unused */
+    {0,                                 /** pBleBufferAddress not used */
+    0,                                  /** BleBufferSize not used */
+    CFG_BLE_NUM_GATT_ATTRIBUTES,
+    CFG_BLE_NUM_GATT_SERVICES,
+    CFG_BLE_ATT_VALUE_ARRAY_SIZE,
+    CFG_BLE_NUM_LINK,
+    CFG_BLE_DATA_LENGTH_EXTENSION,
+    CFG_BLE_PREPARE_WRITE_LIST_SIZE,
+    CFG_BLE_MBLOCK_COUNT,
+    CFG_BLE_MAX_ATT_MTU,
+    CFG_BLE_SLAVE_SCA,
+    CFG_BLE_MASTER_SCA,
+    CFG_BLE_LSE_SOURCE,
+    CFG_BLE_MAX_CONN_EVENT_LENGTH,
+    CFG_BLE_HSE_STARTUP_TIME,
+    CFG_BLE_VITERBI_MODE,
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER}
+  };
 
   ipccdba = READ_BIT( FLASH->IPCCBR, FLASH_IPCCBR_IPCCDBA );
   p_RefTable = (MB_RefTable_t*)((ipccdba<<2) + SRAM2A_BASE);

@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -338,7 +338,7 @@
               <MiscControls>--diag_suppress 1296</MiscControls>
               <Define>OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_ftd.h&gt;,USE_HAL_DRIVER,STM32WB55xx,USE_STM32WBXX_NUCLEO,THREAD_WB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform;../../../../../../Drivers/CMSIS/Include</IncludePath>
+              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include;../../../../../../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -573,6 +573,11 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32wbxx_hal_ipcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_ipcc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -599,6 +604,11 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap.c</FilePath>
             </File>
             <File>
+              <FileName>coap_secure.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap_secure.c</FilePath>
+            </File>
+            <File>
               <FileName>commissioner.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/commissioner.c</FilePath>
@@ -622,16 +632,6 @@
               <FileName>dbg_trace.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</FilePath>
-            </File>
-            <File>
-              <FileName>dhcp6_client.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_client.c</FilePath>
-            </File>
-            <File>
-              <FileName>dhcp6_server.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_server.c</FilePath>
             </File>
             <File>
               <FileName>diag.c</FileName>
@@ -767,6 +767,51 @@
               <FileName>udp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/udp.c</FilePath>
+            </File>
+            <File>
+              <FileName>border_agent.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_agent.c</FilePath>
+            </File>
+            <File>
+              <FileName>border_router.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_router.c</FilePath>
+            </File>
+            <File>
+              <FileName>entropy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\entropy.c</FilePath>
+            </File>
+            <File>
+              <FileName>errors.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\errors.c</FilePath>
+            </File>
+            <File>
+              <FileName>logging.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\logging.c</FilePath>
+            </File>
+            <File>
+              <FileName>network_time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\network_time.c</FilePath>
+            </File>
+            <File>
+              <FileName>random_crypto.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\random_crypto.c</FilePath>
+            </File>
+            <File>
+              <FileName>random_noncrypto.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\random_noncrypto.c</FilePath>
+            </File>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\sntp.c</FilePath>
             </File>
           </Files>
         </Group>

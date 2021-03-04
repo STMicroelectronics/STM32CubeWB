@@ -62,6 +62,10 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+/* HSE trimming defines */
+volatile uint32_t * pHSETuningInfo;
+PLACE_IN_SECTION("HSE_TUNING_INFO_REQUEST") uint32_t HSETuningInfo = 0;
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -91,6 +95,7 @@ DMA_HandleTypeDef hdma_usart1_tx;
 void SystemClock_Config(void);
 static void MX_DMA_Init(void);
 /* USER CODE BEGIN PFP */
+static void EraseUserFlash(uint32_t address);
 static void PeriphClock_Config(void);
 static void Reset_Device( void );
 static void Reset_IPCC( void );
@@ -127,6 +132,11 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   Reset_Device();
+
+#if 0
+  // Remove tuning done to HSE, reset to default state (i.e. HSE tuning done from OTP)
+  Config_HSE_tuning(0xFFFFFFFF);
+#endif
   Config_HSE();
   /* USER CODE END Init */
 
@@ -534,6 +544,24 @@ static void MX_DMA_Init(void)
 #endif
 }
 
+static void EraseUserFlash(uint32_t address ) {
+  FLASH_EraseInitTypeDef EraseInit;
+  uint32_t page_error;
+
+  EraseInit.TypeErase = FLASH_TYPEERASE_PAGES;
+  EraseInit.Page      = (address- FLASH_BASE) / FLASH_PAGE_SIZE;
+  EraseInit.NbPages   = 1;
+
+  // Sometime it seems the erase fails retry once
+  if (HAL_FLASHEx_Erase(&EraseInit, &page_error) != HAL_OK)
+  {
+    if (HAL_FLASHEx_Erase(&EraseInit, &page_error) != HAL_OK)
+    {
+      APP_DBG("Flash erase operation failed, page error 0x%x", page_error);
+    }
+  }
+}
+
 /* USER CODE BEGIN 4 */
 static void PeriphClock_Config(void)
 {
@@ -576,15 +604,21 @@ static void PeriphClock_Config(void)
 
 static void Config_HSE(void)
 {
-    OTP_ID0_t * p_otp;
+  OTP_ID0_t * p_otp;
 
-  /**
-   * Read HSE_Tuning from OTP
-   */
-  p_otp = (OTP_ID0_t *) OTP_Read(0);
-  if (p_otp)
+  if ( (HSETuningInfo & HSE_TRIM_VALID_MSK) == HSE_TRIM_VALID)
   {
-    LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
+    /* Read HSE_Tuning from Flash */
+    LL_RCC_HSE_SetCapacitorTuning( (uint8_t) (HSETuningInfo & 0xFF));
+  } else {
+    /**
+     * Read HSE_Tuning from OTP
+     */
+    p_otp = (OTP_ID0_t *) OTP_Read(0);
+    if (p_otp)
+    {
+      LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
+    }
   }
 
   return;
@@ -731,4 +765,32 @@ void assert_failed(uint8_t *file, uint32_t line)
 }
 #endif /* USE_FULL_ASSERT */
 
+/**
+  * @brief  Update the default HSE tuning value. Doesn't require OTP memory,
+  *         instead uses RTC Backup register
+  * @param  hse_tuning: New HSE tuning value (0..63)
+  * @retval None
+  */
+void Config_HSE_tuning(const uint32_t hse_tuning)
+{
+  pHSETuningInfo = (volatile uint32_t*)&HSETuningInfo;
+
+  /* Unlock the Flash to enable the flash control register access *************/
+  if (HAL_FLASH_Unlock() != HAL_OK)
+  {
+    APP_DBG("Unlock of flash failed");
+    return;
+  }
+
+  /* Erase flash beforehand */
+  EraseUserFlash( (uint32_t) pHSETuningInfo);
+
+  /* Clear OPTVERR bit set on virgin samples */
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
+  if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (uint32_t)&HSETuningInfo,
+                        (uint64_t) hse_tuning) != HAL_OK)
+  {
+    APP_DBG("New HSE tuning operation failed");
+  }
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

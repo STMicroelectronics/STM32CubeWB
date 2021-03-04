@@ -159,7 +159,9 @@
 
 #if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
 
-#pragma pack(1)
+
+#pragma pack(push, 1)
+
 typedef struct {
   MOBLEUINT16 nodePrimaryAddress;
   MOBLEUINT8 NbOfelements;
@@ -167,6 +169,7 @@ typedef struct {
   MOBLEUINT32 Initial_time; /* Initial time for the Message */
 
 } NodeInfo_t;
+
 
 typedef struct {
   MOBLEUINT16 Loc;    /* Contains a location descriptor */
@@ -176,6 +179,7 @@ typedef struct {
   MOBLEUINT32 aVendorModels[CLIENT_MAX_VENDOR_MODELS_PER_ELEMENT];
 } Elements_Page0_t;
 
+
 typedef struct {
   MOBLEUINT8  DataPage;
   MOBLEUINT16 NodeCID;
@@ -184,7 +188,6 @@ typedef struct {
   MOBLEUINT16 NodeCRPL;
   MOBLEUINT16 NodeFeatures;
 } Composition_Header_Page0_t;
-#pragma pack(4)
 
 
 #define DEVICE_COMPOSITION_HEADER_SIZE   sizeof(Composition_Header_Page0_t)
@@ -192,11 +195,10 @@ typedef struct {
 #define DEVICE_COMPOSITION_MAX_SIZE (DEVICE_COMPOSITION_HEADER_SIZE) 
 //+ (MAX_ELEMENTS_PER_NODE*DEVICE_COMPOSITION_ELEMENTS_DESC))
 
-#pragma pack(1)
+
 typedef struct {
   Composition_Header_Page0_t sheader; 
 } _Composition_Data_Page0_t;
-#pragma pack(4)
 
 
 
@@ -205,7 +207,7 @@ typedef union {
   MOBLEUINT8 aComposition_Data_Page0[DEVICE_COMPOSITION_MAX_SIZE];
 } Composition_Data_Page0_t;
 
-#pragma pack(1)
+
 typedef struct {
   MOBLEUINT16 Opcode;
   MOBLEUINT8 page;
@@ -240,12 +242,12 @@ typedef struct {
   MOBLEUINT32 modelIdentifier;
 } configClientPublicationStatus_t;
 
+
 typedef struct {
   MOBLEUINT16 netKeyIndex:12;
   MOBLEUINT16 appKeyIndex:12;
   MOBLEUINT8 a_Appkeybuffer[APPKEY_SIZE];
 } configClientAppKeyAdd_t;
-#pragma pack(4)
 
 typedef struct {
   MOBLEUINT8 Status;
@@ -253,7 +255,7 @@ typedef struct {
   MOBLEUINT16 appKeyIndex:12;
 } configClientAppKeyStatus_t;
 
-#pragma pack(1)
+
 typedef struct {
   MOBLEUINT16 elementAddress;
   MOBLEUINT16 appKeyIndex;
@@ -261,6 +263,7 @@ typedef struct {
 } configClientModelAppBind_t;
 
 /* 4.3.2.48 Config Model App Status */
+
 typedef struct {
   MOBLEUINT8 Status;
   MOBLEUINT16 elementAddress;
@@ -281,7 +284,8 @@ typedef struct {
   MOBLEUINT16 address;
   MOBLEUINT32 modelIdentifier;
 } configClientSubscriptionStatus_t;
-#pragma pack(4)
+
+#pragma pack(pop)
 
 typedef union ConfigClientTxMsg_s {
   configClientAppKeyAdd_t sConfigClientAppKeyAdd;

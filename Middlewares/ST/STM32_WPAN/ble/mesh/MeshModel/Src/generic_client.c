@@ -94,7 +94,6 @@ WEAK_FUNCTION (void Appli_Generic_Restore_PowerOn_Value(MOBLEUINT8 restoreValue)
 
 /* Private functions ---------------------------------------------------------*/
 
-
 /******************************************************************************/
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_ONOFF  
 /******************************************************************************/
@@ -852,7 +851,98 @@ MOBLE_RESULT GenericClient_DefaultTransitionTime_Set_Unack(MOBLEUINT8 elementInd
 #endif /// ENABLE_GENERIC_MODEL_CLIENT_DEFAULT_TRANSITION_TIME 
 /******************************************************************************/
 
+  /**
+* @brief Generic_Client_OnOff_Status: Function called when status of the model 
+*        received on the client.
+* @param pOnOff_status: Pointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Generic_Client_OnOff_Status(MOBLEUINT8 const *pOnOff_status,\
+                                         MOBLEUINT32 plength, MOBLEUINT16 dstPeer,\
+                                              MOBLEUINT8 elementIndex)
+{
+  TRACE_M(TF_GENERIC_CLIENT_M, ">>>\r\n");
+  GenericAppli_cb.OnOff_Status_cb(pOnOff_status , plength, dstPeer, elementIndex);
+  return MOBLE_RESULT_SUCCESS;
+}
 
+/**
+* @brief  GenericClient_Level_Set_unack: This function is called for Acknowledged 
+* @param  elementIndex:  Index of the element
+* @param  plevel_paramr: Pointer to the parameters received for message
+* @param  length: Length of the parameters received for message
+* @retval MOBLE_RESULT
+*/ 
+
+/**
+* @brief Generic_Client_Level_Status: Function called when status of the model 
+*        received on the client.
+* @param plevel_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Generic_Client_Level_Status(MOBLEUINT8 const *plevel_status,\
+                                         MOBLEUINT32 plength, MOBLEUINT16 dstPeer,\
+                                              MOBLEUINT8 elementIndex)
+{
+  
+  TRACE_M(TF_GENERIC_CLIENT_M,"Generic_Level_Status received \r\n");
+  GenericAppli_cb.Level_Status_cb(plevel_status , plength, dstPeer, elementIndex);
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Generic_Client_DefaultTransitionTime_Status: Function called when status of the model 
+*        received on the client.
+* @param pTransition_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Generic_Client_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status,\
+                                                MOBLEUINT32 plength, MOBLEUINT16 dstPeer,\
+                                                MOBLEUINT8 elementIndex) 
+{  
+  
+  TRACE_M(TF_GENERIC_CLIENT_M,"Generic_DefaultTransitionTime_Status received \r\n");
+  GenericAppli_cb.GenericDefaultTransition_Status_cb(pTransition_status, plength, dstPeer,\
+                                                                    elementIndex); 
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief Generic_Client_PowerOnOff_Status: Function called when status of the model 
+*        received on the client.
+* @param powerOnOff_status: ointer to the parameters received for message
+* @param plength: Length of the parameters received for message
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* return MOBLE_RESULT_SUCCESS.
+*/
+MOBLE_RESULT Generic_Client_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status, \
+                                              MOBLEUINT32 plength, MOBLEUINT16 dstPeer,\
+                                              MOBLEUINT8 elementIndex) 
+{  
+
+  TRACE_M(TF_GENERIC_CLIENT_M,"Generic_PowerOnOff_Status received \r\n"); 
+  GenericAppli_cb.GenericPowerOnOff_Status_cb(powerOnOff_status, plength, dstPeer,\
+                                                                    elementIndex); 
+  return MOBLE_RESULT_SUCCESS;
+}
 
 /**
 * @brief   GenericModelServer_GetOpcodeTableCb: This function is call-back 
@@ -869,7 +959,6 @@ MOBLE_RESULT GenericModelClient_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t 
   
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 /**
 * @brief  GenericModelClient_GetStatusRequestCb : This function is call-back 

@@ -1,9 +1,245 @@
 /**
  * @file zcl.meter.h
+ * @heading Metering
  * @brief ZCL Metering cluster header
  * ZCL 7 section 10.4
  * ZCL 8 section 10.4
  * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
+
+/* @PICS.ZCL.Meter
+ * SEMT.S | Server | True
+ * SEMT.C | Client | True
+ *
+ * Server Attributes
+ * SEMT.S.A0000 | CurrentSummationDelivered | True
+ * SEMT.S.A0001 | CurrentSummationReceived | False | Optional
+ * SEMT.S.A0002 | CurrentMaxDemandDelivered | False | Optional
+ * SEMT.S.A0003 | CurrentMaxDemandReceived | False | Optional
+ * SEMT.S.A0004 | DFTSummation | False | Optional
+ * SEMT.S.A0005 | DailyFreezeTime | False | Optional
+ * SEMT.S.A0006 | PowerFactor | False| Optional
+ * SEMT.S.A0007 | ReadingSnapShotTime | False | Optional
+ * SEMT.S.A0008 | CurrentMaxDemandDeliveredTime | False | Optional
+ * SEMT.S.A0009 | CurrentMaxDemandReceivedTime | False | Optional
+ * SEMT.S.A000a | DefaultUpdatePeriod | False | Optional
+ * SEMT.S.A000b | FastPollUpdatePeriod | False | Optional
+ * SEMT.S.A000c | CurrentBlockPeriodConsumptionDelivered | False | Optional
+ * SEMT.S.A000d | DailyConsumptionTarget | False | Optional
+ * SEMT.S.A000e | CurrentBlock | False | Optional
+ * SEMT.S.A000f | ProfileIntervalPeriod | False | Optional
+ * SEMT.S.A0010 | Deprecated | False | Optional
+ * SEMT.S.A0011 | PresetReadingTime | False | Optional
+ * SEMT.S.A0012 | SummationDeliveredPerReport | False | Optional
+ * SEMT.S.A0013 | FlowRestriction | False | Optional
+ * SEMT.S.A0014 | Supply Status | False | Optional
+ * SEMT.S.A0015 | CurrentInletEnergyCarrierSummation | False | Optional
+ * SEMT.S.A0016 | CurrentOutletEnergyCarrierSummation | False | Optional
+ * SEMT.S.A0017 | InletTemperature | False | Optional
+ * SEMT.S.A0018 | OutletTemperature | False | Optional
+ * SEMT.S.A0019 | ControlTemperature | False | Optional
+ * SEMT.S.A001a | CurrentInletEnergyCarrierDemand | False | Optional
+ * SEMT.S.A001b | CurrentOutletEnergyCarrierDemand | False | Optional
+ * SEMT.S.A001c | PreviousBlockPeriodConsumptionDelivered | False | Optional
+ * SEMT.S.A001d | CurrentBlockPeriod ConsumptionReceived | False | Optional
+ * SEMT.S.A001e | CurrentBlockReceived | False | Optional
+ * SEMT.S.A001f | DFTSummation Received | False | Optional
+ * SEMT.S.A0020 | ActiveRegisterTier Delivered | False | Optional
+ * SEMT.S.A0021 | ActiveRegisterTier Received | False | Optional
+ * SEMT.S.A0022 | LastBlockSwitchTime | False | Optional
+ * SEMT.S.A0100 | CurrentTier(1-48)SummationDelivered | False | Optional
+ * SEMT.S.A0101 | CurrentTier(1-48)SummationReceived | False | Optional
+ * SEMT.S.A01fc | CPP1SummationDelivered | False | Optional
+ * SEMT.S.A01fe | CPP2SummationDelivered | False | Optional
+ * SEMT.S.A0200 | Status | True
+ * SEMT.S.A0201 | RemainingBatteryLife | False | Optional
+ * SEMT.S.A0202 | HoursInOperation | False | Optional
+ * SEMT.S.A0203 | HoursInFault | False | Optional
+ * SEMT.S.A0204 | Extended Status | False | Optional
+ * SEMT.S.A0205 | Remaining BatteryLife in Days | False | Optional
+ * SEMT.S.A0206 | CurrentMeterID | False | Optional
+ * SEMT.S.A0207 | AmbientConsumptionIndicator | False | Optional
+ * SEMT.S.A0300 | UnitofMeasure | True
+ * SEMT.S.A0301 | Multiplier | False| Optional
+ * SEMT.S.A0302 | Divisor | False | Optional
+ * SEMT.S.A0303 | SummationFormatting | True | Optional
+ * SEMT.S.A0304 | DemandFormatting | False | Optional
+ * SEMT.S.A0305 | HistoricalConsumptionFormatting | False | Optional
+ * SEMT.S.A0306 | MeteringDeviceType | True
+ * SEMT.S.A0307 | SiteID | False | Optional
+ * SEMT.S.A0308 | MeterSerialNumber | False | Optional
+ * SEMT.S.A0309 | EnergyCarrierUnitOfMeasure | False | Optional
+ * SEMT.S.A030a | EnergyCarrierSummationFormatting | False | Optional
+ * SEMT.S.A030b | EnergyCarrierDemandFormatting | False | Optional
+ * SEMT.S.A030c | TemperatureUnitOfMeasure | False | Optional
+ * SEMT.S.A030d | TemperatureFormatting | False | Optional
+ * SEMT.S.A030e | ModuleSerialNumber | False | Optional
+ * SEMT.S.A030f | OperatingTariffLabel Delivered | False | Optional
+ * SEMT.S.A0310 | OperatingTariffLabel Received | False | Optional
+ * SEMT.S.A0311 | CustomerIDNumber | False | Optional
+ * SEMT.S.A0312 | AlternativeUnitof Measure | False | Optional
+ * SEMT.S.A0313 | AlternativeDemandFormatting | False | Optional
+ * SEMT.S.A0314 | AlternativeDemandFormatting | False | Optional
+ * SEMT.S.A0400 | InstantaneousDemand | False | Optional
+ * SEMT.S.A0401 | CurrentDayConsumptionDelivered | False | Optional
+ * SEMT.S.A0402 | CurrentDayConsumptionReceived | False | Optional
+ * SEMT.S.A0403 | PreviousDayConsumptionDelivered | False | Optional
+ * SEMT.S.A0404 | PreviousDayConsumptionReceived | False | Optional
+ * SEMT.S.A0405 | CurrentPartialProfileIntervalStartTimeDelivered | False | Optional
+ * SEMT.S.A0406 | CurrentPartialProfileIntervalStartTimeReceived | False | Optional
+ * SEMT.S.A0407 | CurrentPartialProfileIntervalValueDelivered | False | Optional
+ * SEMT.S.A0408 | CurrentPartialProfileIntervalValueReceived | False | Optional
+ * SEMT.S.A0409 | CurrentDayMaxPressure | False | Optional
+ * SEMT.S.A040a | CurrentDayMinPressure | False | Optional
+ * SEMT.S.A040b | PreviousDayMaxPressure | False | Optional
+ * SEMT.S.A040c | PreviousDayMinPressure | False | Optional
+ * SEMT.S.A040d | CurrentDayMaxDemand | False | Optional
+ * SEMT.S.A040e | PreviousDayMaxDemand | False | Optional
+ * SEMT.S.A040f | CurrentMonthMaxDemand | False | Optional
+ * SEMT.S.A0410 | CurrentYearMaxDemand | False | Optional
+ * SEMT.S.A0411 | CurrentDayMaxEnergyCarrierDemand | False | Optional
+ * SEMT.S.A0412 | PreviousDayMaxEnergyCarrierDemand | False | Optional
+ * SEMT.S.A0413 | CurrentMonthMaxEnergyCarrierDemand | False | Optional
+ * SEMT.S.A0414 | CurrentMonthMinEnergyCarrierDemand | False | Optional
+ * SEMT.S.A0415 | CurrentYearMaxEnergyCarrierDemand | False | Optional
+ * SEMT.S.A0416 | CurrentYearMinEnergyCarrierDemand | False | Optional
+ * SEMT.S.A0420 | PreviousDay(2-8)ConsumptionDelivered | False | Optional
+ * SEMT.S.A0421 | PreviousDay(2-8)ConsumptionReceived | False | Optional
+ * SEMT.S.A0430 | CurrentWeekConsumptionDelivered | False | Optional
+ * SEMT.S.A0431 | CurrentWeekConsumptionReceived | False | Optional
+ * SEMT.S.A0432 | PreviousWeekConsumptionDelivered | False | Optional
+ * SEMT.S.A0433 | PreviousWeekConsumptionReceived | False | Optional
+ * SEMT.S.A0434 | PreviousWeek(2-5)ConsumptionDelivered | False | Optional
+ * SEMT.S.A0435 | PreviousWeek(2-5)ConsumptionReceived | False | Optional
+ * SEMT.S.A0440 | CurrentMonthConsumptionDelivered | False | Optional
+ * SEMT.S.A0441 | CurrentMonthConsumptionReceived | False | Optional
+ * SEMT.S.A0442 | PreviousMonthConsumptionDelivered | False | Optional
+ * SEMT.S.A0443 | PreviousMonthConsumptionReceived | False | Optional
+ * SEMT.S.A0444 | PreviousMonth(2-13)ConsumptionDelivered | False | Optional
+ * SEMT.S.A0445 | PreviousMonth(2-13)ConsumptionReceived | False | Optional
+ * SEMT.S.A045c | Historical Freeze Time | False | Optional
+ * SEMT.S.A0500 | MaxNumberOfPeriodsDelivered | False | Optional
+ * SEMT.S.A0600 | CurrentDemandDelivered | False | Optional
+ * SEMT.S.A0601 | DemandLimit | False | Optional
+ * SEMT.S.A0602 | DemandIntegrationPeriod | False | Optional
+ * SEMT.S.A0603 | NumberOfDemandSubintervals | False | Optional
+ * SEMT.S.A0604 | DemandLimitArmDuration | False | Optional
+ * SEMT.S.A0605 | LoadLimitSupplyState | False | Optional
+ * SEMT.S.A0606 | LoadLimitCounter | False | Optional
+ * SEMT.S.A0607 | SupplyTamperState | False | Optional
+ * SEMT.S.A0608 | SupplyDepletionState | False | Optional
+ * SEMT.S.A0609 | SupplyUncontrolled FlowState | False | Optional
+ * SEMT.S.A0700 | CurrentNoTierBlock(1-16)SummationDelivered | False | Optional
+ * SEMT.S.A0710 | CurrentTier(1-15)Block(1-16)SummationDelivered | False | Optional
+ * SEMT.S.A0800 | Generic Alarm Mask | False | Optional
+ * SEMT.S.A0801 | Electricity Alarm Mask | False | Optional
+ * SEMT.S.A0802 | Generic Flow/Pressure Alarm Mask | False | Optional
+ * SEMT.S.A0803 | Water Specific Alarm Mask | False |Optional
+ * SEMT.S.A0804 | Heat and Cooling Specific Alarm Mask | False | Optional
+ * SEMT.S.A0805 | Gas Specific AlarmMask | False | Optional
+ * SEMT.S.A0806 | ExtendedGenericAlarmMask | False | Optional
+ * SEMT.S.A0807 | ManufacturerAlarmMask | False | Optional
+ * SEMT.S.A0900 | CurrentNoTierBlock(1-16)SummationReceived | False | Optional
+ * SEMT.S.A0910 | CurrentTier(1-15)Block(1-16)SummationReceived | False | Optional
+ * SEMT.S.A0a00 | BillToDateDelivered | False | Optional
+ * SEMT.S.A0a01 | BillToDateTimeStampDelivered | False | Optional
+ * SEMT.S.A0a02 | ProjectedBillDelivered | False | Optional
+ * SEMT.S.A0a03 | ProjectedBillTimeStampDelivered | False | Optional
+ * SEMT.S.A0a04 | BillDeliveredTrailingDigit | False | Optional
+ * SEMT.S.A0a10 | BillToDateReceived | False | Optional
+ * SEMT.S.A0a11 | BillToDateTimeStampReceived | False | Optional
+ * SEMT.S.A0a12 | ProjectedBillReceived | False | Optional
+ * SEMT.S.A0a13 | ProjectedBillTimeStampReceived | False | Optional
+ * SEMT.S.A0a14 | BillReceivedTrailingDigit | False | Optional
+ * SEMT.S.A0b00 | ProposedChangeSupply ImplementationTime | False | Optional
+ * SEMT.S.A0b01 | ProposedChange SupplyStatus | False | Optional
+ * SEMT.S.A0b10 | Uncontrolled Flow Threshold | False | Optional
+ * SEMT.S.A0b11 | Uncontrolled Flow Threshold Unit of Measure | False | Optional
+ * SEMT.S.A0b12 | Uncontrolled Flow Multiplier | False | Optional
+ * SEMT.S.A0b13 | Uncontrolled Flow Divisor | False | Optional
+ * SEMT.S.A0b14 | Flow Stabilisation Period | False | Optional
+ * SEMT.S.A0b15 | Flow Measurement Period | False | Optional
+ * SEMT.S.A0c00 | AlternativeInstantaneousDemand | False | Optional
+ * SEMT.S.Afffd | ClusterRevision | True
+ * SEMT.S.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * SEMT.S.C00.Rsp | Get Profile | False
+ * SEMT.S.C01.Rsp | Request Mirror Response | False
+ * SEMT.S.C02.Rsp | Mirror Removed | False
+ * SEMT.S.C03.Rsp | Request Fast Poll Mode | False
+ * SEMT.S.C04.Rsp | ScheduleSnapshot | False
+ * SEMT.S.C05.Rsp | TakeSnapshot | False
+ * SEMT.S.C06.Rsp | GetSnapshot | False
+ * SEMT.S.C07.Rsp | StartSampling | False
+ * SEMT.S.C08.Rsp | GetSampledData | False
+ * SEMT.S.C09.Rsp | MirrorReport AttributeResponse | False
+ * SEMT.S.C0a.Rsp | ResetLoadLimit Counter | False
+ * SEMT.S.C0b.Rsp | Change Supply | False
+ * SEMT.S.C0c.Rsp | Local Change Supply | False
+ * SEMT.S.C0d.Rsp | SetSupplyStatus | False
+ * SEMT.S.C0e.Rsp | SetUncontrolledFlowThreshold | False
+ *
+ * Commands Generated
+ * SEMT.S.C00.Tx | Get Profile Response | True
+ * SEMT.S.C01.Tx | Request Mirror | False
+ * SEMT.S.C02.Tx | Remove Mirror | False
+ * SEMT.S.C03.Tx | Request Fast Poll Mode Response | False
+ * SEMT.S.C04.Tx | ScheduleSnapshot Response | False
+ * SEMT.S.C05.Tx | TakeSnapshotResponse | False
+ * SEMT.S.C06.Tx | Publish Snapshot | False
+ * SEMT.S.C07.Tx | GetSampledData Response | True
+ * SEMT.S.C08.Tx | ConfigureMirror | False
+ * SEMT.S.C09.Tx | ConfigureNotification Scheme | False
+ * SEMT.S.C0a.Tx | ConfigureNotification Flag | False
+ * SEMT.S.C0b.Tx | GetNotifiedMessage | False
+ * SEMT.S.C0c.Tx | Supply Status Response | False
+ * SEMT.S.C0d.Tx | StartSamplingResponse | False
+ *
+ * Client Attributes
+ * SEMT.C.A0000 | FunctionalNotificationFlags | False | Optional
+ * SEMT.C.A0001 | NotificationFlags2 | False | Optional
+ * SEMT.C.A0002 | NotificationFlags3 | False | Optional
+ * SEMT.C.A0003 | NotificationFlags4 | False | Optional
+ * SEMT.C.A0004 | NotificationFlags5 | False | Optional
+ * SEMT.C.A0005 | NotificationFlags6 | False | Optional
+ * SEMT.C.A0006 | NotificationFlags7 | False | Optional
+ * SEMT.C.A0007 | NotificationFlags8 | False | Optional
+ * SEMT.C.Afffd | ClusterRevision | True
+ * SEMT.C.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * SEMT.C.C00.Rsp | Get Profile Response | False
+ * SEMT.C.C01.Rsp | Request Mirror | False
+ * SEMT.C.C02.Rsp | Remove Mirror | False
+ * SEMT.C.C03.Rsp | Request Fast Poll Mode Response | False
+ * SEMT.C.C04.Rsp | ScheduleSnapshot Response | False
+ * SEMT.C.C05.Rsp | TakeSnapshotResponse | False
+ * SEMT.C.C06.Rsp | Publish Snapshot | False
+ * SEMT.C.C07.Rsp | GetSampledData Response | False
+ * SEMT.C.C08.Rsp | ConfigureMirror | False
+ * SEMT.C.C09.Rsp | ConfigureNotification Scheme | False
+ * SEMT.C.C0a.Rsp | ConfigureNotification Flag | False
+ * SEMT.C.C0b.Rsp | GetNotifiedMessage | False
+ * SEMT.C.C0c.Rsp | Supply Status Response | False
+ * SEMT.C.C0d.Rsp | StartSamplingResponse | False
+ *
+ * Commands Generated
+ * SEMT.C.C00.Tx | Get Profile | True
+ * SEMT.C.C01.Tx | Request Mirror Response | False
+ * SEMT.C.C02.Tx | Mirror Removed | False
+ * SEMT.C.C03.Tx | Request Fast Poll Mode | False
+ * SEMT.C.C04.Tx | ScheduleSnapshot | False
+ * SEMT.C.C05.Tx | TakeSnapshot | False
+ * SEMT.C.C06.Tx | GetSnapshot | False
+ * SEMT.C.C07.Tx | StartSampling | False
+ * SEMT.C.C08.Tx | GetSampledData | True
+ * SEMT.C.C09.Tx | MirrorReport AttributeResponse | False
+ * SEMT.C.C0a.Tx | ResetLoadLimit Counter | False
+ * SEMT.C.C0b.Tx | Change Supply | False
+ * SEMT.C.C0c.Tx | Local Change Supply | True
+ * SEMT.C.C0d.Tx | SetSupplyStatus | False
+ * SEMT.C.C0e.Tx | SetUncontrolledFlowThreshold | False
  */
 
 #ifndef ZCL_METER_H

@@ -112,7 +112,7 @@ struct otMeshLocalPrefix
 } OT_TOOL_PACKED_END;
 
 /**
- * This structure represents a Mesh Local Prefix
+ * This structure represents a Mesh Local Prefix.
  *
  */
 typedef struct otMeshLocalPrefix otMeshLocalPrefix;
@@ -123,10 +123,17 @@ typedef struct otMeshLocalPrefix otMeshLocalPrefix;
  * This structure represents PSKc.
  *
  */
-typedef struct otPSKc
+OT_TOOL_PACKED_BEGIN
+struct otPskc
 {
     uint8_t m8[OT_PSKC_MAX_SIZE]; ///< Byte values
-} otPSKc;
+} OT_TOOL_PACKED_END;
+
+/**
+ * This structure represents a PSKc.
+ *
+ */
+typedef struct otPskc otPskc;
 
 /**
  * This structure represent Security Policy.
@@ -152,11 +159,21 @@ enum
 };
 
 /**
- * This type represents Channel Mask Page 0.
+ * This type represents Channel Mask.
  *
  */
-typedef uint32_t otChannelMaskPage0;
+typedef uint32_t otChannelMask;
 
+#define OT_CHANNEL_1_MASK (1 << 1)   ///< Channel 1
+#define OT_CHANNEL_2_MASK (1 << 2)   ///< Channel 2
+#define OT_CHANNEL_3_MASK (1 << 3)   ///< Channel 3
+#define OT_CHANNEL_4_MASK (1 << 4)   ///< Channel 4
+#define OT_CHANNEL_5_MASK (1 << 5)   ///< Channel 5
+#define OT_CHANNEL_6_MASK (1 << 6)   ///< Channel 6
+#define OT_CHANNEL_7_MASK (1 << 7)   ///< Channel 7
+#define OT_CHANNEL_8_MASK (1 << 8)   ///< Channel 8
+#define OT_CHANNEL_9_MASK (1 << 9)   ///< Channel 9
+#define OT_CHANNEL_10_MASK (1 << 10) ///< Channel 10
 #define OT_CHANNEL_11_MASK (1 << 11) ///< Channel 11
 #define OT_CHANNEL_12_MASK (1 << 12) ///< Channel 12
 #define OT_CHANNEL_13_MASK (1 << 13) ///< Channel 13
@@ -174,8 +191,6 @@ typedef uint32_t otChannelMaskPage0;
 #define OT_CHANNEL_25_MASK (1 << 25) ///< Channel 25
 #define OT_CHANNEL_26_MASK (1 << 26) ///< Channel 26
 
-#define OT_CHANNEL_ALL 0xffffffff ///< All channels
-
 /**
  * This structure represents presence of different components in Active or Pending Operational Dataset.
  *
@@ -191,9 +206,9 @@ typedef struct otOperationalDatasetComponents
     bool mIsDelayPresent : 1;            ///< TRUE if Delay Timer is present, FALSE otherwise.
     bool mIsPanIdPresent : 1;            ///< TRUE if PAN ID is present, FALSE otherwise.
     bool mIsChannelPresent : 1;          ///< TRUE if Channel is present, FALSE otherwise.
-    bool mIsPSKcPresent : 1;             ///< TRUE if PSKc is present, FALSE otherwise.
+    bool mIsPskcPresent : 1;             ///< TRUE if PSKc is present, FALSE otherwise.
     bool mIsSecurityPolicyPresent : 1;   ///< TRUE if Security Policy is present, FALSE otherwise.
-    bool mIsChannelMaskPage0Present : 1; ///< TRUE if Channel Mask Page 0 is present, FALSE otherwise.
+    bool mIsChannelMaskPresent : 1;      ///< TRUE if Channel Mask is present, FALSE otherwise.
 } otOperationalDatasetComponents;
 
 /**
@@ -213,9 +228,9 @@ typedef struct otOperationalDataset
     uint32_t                       mDelay;            ///< Delay Timer
     otPanId                        mPanId;            ///< PAN ID
     uint16_t                       mChannel;          ///< Channel
-    otPSKc                         mPSKc;             ///< PSKc
+    otPskc                         mPskc;             ///< PSKc
     otSecurityPolicy               mSecurityPolicy;   ///< Security Policy
-    otChannelMaskPage0             mChannelMaskPage0; ///< Channel Mask Page 0
+    otChannelMask                  mChannelMask;      ///< Channel Mask
     otOperationalDatasetComponents mComponents;       ///< Specifies which components are set in the Dataset.
 } otOperationalDataset;
 
@@ -223,7 +238,8 @@ typedef struct otOperationalDataset
  * This enumeration represents meshcop TLV types.
  *
  */
-typedef enum otMeshcopTlvType {
+typedef enum otMeshcopTlvType
+{
     OT_MESHCOP_TLV_CHANNEL                  = 0,   ///< meshcop Channel TLV
     OT_MESHCOP_TLV_PANID                    = 1,   ///< meshcop Pan Id TLV
     OT_MESHCOP_TLV_EXTPANID                 = 2,   ///< meshcop Extended Pan Id TLV
@@ -239,6 +255,7 @@ typedef enum otMeshcopTlvType {
     OT_MESHCOP_TLV_SECURITYPOLICY           = 12,  ///< meshcop Security Policy TLV
     OT_MESHCOP_TLV_GET                      = 13,  ///< meshcop Get TLV
     OT_MESHCOP_TLV_ACTIVETIMESTAMP          = 14,  ///< meshcop Active Timestamp TLV
+    OT_MESHCOP_TLV_COMMISSIONER_UDP_PORT    = 15,  ///< meshcop Commissioner UDP Port TLV
     OT_MESHCOP_TLV_STATE                    = 16,  ///< meshcop State TLV
     OT_MESHCOP_TLV_JOINER_DTLS              = 17,  ///< meshcop Joiner DTLS Encapsulation TLV
     OT_MESHCOP_TLV_JOINER_UDP_PORT          = 18,  ///< meshcop Joiner UDP Port TLV
@@ -272,7 +289,7 @@ typedef enum otMeshcopTlvType {
  * @returns TRUE if a valid network is present in the Active Operational Dataset, FALSE otherwise.
  *
  */
-OTAPI bool OTCALL otDatasetIsCommissioned(otInstance *aInstance);
+bool otDatasetIsCommissioned(otInstance *aInstance);
 
 /**
  * This function gets the Active Operational Dataset.
@@ -284,10 +301,23 @@ OTAPI bool OTCALL otDatasetIsCommissioned(otInstance *aInstance);
  * @retval OT_ERROR_INVALID_ARGS  @p aDataset was NULL.
  *
  */
-OTAPI otError OTCALL otDatasetGetActive(otInstance *aInstance, otOperationalDataset *aDataset);
+otError otDatasetGetActive(otInstance *aInstance, otOperationalDataset *aDataset);
 
 /**
  * This function sets the Active Operational Dataset.
+ *
+ * If the dataset does not include an Active Timestamp, the dataset is only partially complete.
+ *
+ * If Thread is enabled on a device that has a partially complete Active Dataset, the device will attempt to attach to
+ * an existing Thread network using any existing information in the dataset. Only the Thread Master Key is needed to
+ * attach to a network.
+ *
+ * If channel is not included in the dataset, the device will send MLE Announce messages across different channels to
+ * find neighbors on other channels.
+ *
+ * If the device successfully attaches to a Thread network, the device will then retrieve the full Active Dataset from
+ * its Parent. Note that a router-capable device will not transition to the Router or Leader roles until it has a
+ * complete Active Dataset.
  *
  * @param[in]  aInstance A pointer to an OpenThread instance.
  * @param[in]  aDataset  A pointer to the Active Operational Dataset.
@@ -297,7 +327,7 @@ OTAPI otError OTCALL otDatasetGetActive(otInstance *aInstance, otOperationalData
  * @retval OT_ERROR_INVALID_ARGS  @p aDataset was NULL.
  *
  */
-OTAPI otError OTCALL otDatasetSetActive(otInstance *aInstance, const otOperationalDataset *aDataset);
+otError otDatasetSetActive(otInstance *aInstance, const otOperationalDataset *aDataset);
 
 /**
  * This function gets the Pending Operational Dataset.
@@ -309,7 +339,7 @@ OTAPI otError OTCALL otDatasetSetActive(otInstance *aInstance, const otOperation
  * @retval OT_ERROR_INVALID_ARGS  @p aDataset was NULL.
  *
  */
-OTAPI otError OTCALL otDatasetGetPending(otInstance *aInstance, otOperationalDataset *aDataset);
+otError otDatasetGetPending(otInstance *aInstance, otOperationalDataset *aDataset);
 
 /**
  * This function sets the Pending Operational Dataset.
@@ -322,7 +352,7 @@ OTAPI otError OTCALL otDatasetGetPending(otInstance *aInstance, otOperationalDat
  * @retval OT_ERROR_INVALID_ARGS  @p aDataset was NULL.
  *
  */
-OTAPI otError OTCALL otDatasetSetPending(otInstance *aInstance, const otOperationalDataset *aDataset);
+otError otDatasetSetPending(otInstance *aInstance, const otOperationalDataset *aDataset);
 
 /**
  * This function sends MGMT_ACTIVE_GET.
@@ -337,11 +367,11 @@ OTAPI otError OTCALL otDatasetSetPending(otInstance *aInstance, const otOperatio
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer space to send.
  *
  */
-OTAPI otError OTCALL otDatasetSendMgmtActiveGet(otInstance *                          aInstance,
-                                                const otOperationalDatasetComponents *aDatasetComponents,
-                                                const uint8_t *                       aTlvTypes,
-                                                uint8_t                               aLength,
-                                                const otIp6Address *                  aAddress);
+otError otDatasetSendMgmtActiveGet(otInstance *                          aInstance,
+                                   const otOperationalDatasetComponents *aDatasetComponents,
+                                   const uint8_t *                       aTlvTypes,
+                                   uint8_t                               aLength,
+                                   const otIp6Address *                  aAddress);
 
 /**
  * This function sends MGMT_ACTIVE_SET.
@@ -355,10 +385,10 @@ OTAPI otError OTCALL otDatasetSendMgmtActiveGet(otInstance *                    
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer space to send.
  *
  */
-OTAPI otError OTCALL otDatasetSendMgmtActiveSet(otInstance *                aInstance,
-                                                const otOperationalDataset *aDataset,
-                                                const uint8_t *             aTlvs,
-                                                uint8_t                     aLength);
+otError otDatasetSendMgmtActiveSet(otInstance *                aInstance,
+                                   const otOperationalDataset *aDataset,
+                                   const uint8_t *             aTlvs,
+                                   uint8_t                     aLength);
 
 /**
  * This function sends MGMT_PENDING_GET.
@@ -373,11 +403,11 @@ OTAPI otError OTCALL otDatasetSendMgmtActiveSet(otInstance *                aIns
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer space to send.
  *
  */
-OTAPI otError OTCALL otDatasetSendMgmtPendingGet(otInstance *                          aInstance,
-                                                 const otOperationalDatasetComponents *aDatasetComponents,
-                                                 const uint8_t *                       aTlvTypes,
-                                                 uint8_t                               aLength,
-                                                 const otIp6Address *                  aAddress);
+otError otDatasetSendMgmtPendingGet(otInstance *                          aInstance,
+                                    const otOperationalDatasetComponents *aDatasetComponents,
+                                    const uint8_t *                       aTlvTypes,
+                                    uint8_t                               aLength,
+                                    const otIp6Address *                  aAddress);
 
 /**
  * This function sends MGMT_PENDING_SET.
@@ -391,35 +421,10 @@ OTAPI otError OTCALL otDatasetSendMgmtPendingGet(otInstance *                   
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer space to send.
  *
  */
-OTAPI otError OTCALL otDatasetSendMgmtPendingSet(otInstance *                aInstance,
-                                                 const otOperationalDataset *aDataset,
-                                                 const uint8_t *             aTlvs,
-                                                 uint8_t                     aLength);
-
-/**
- * Get minimal delay timer.
- *
- * @param[in]  aInstance A pointer to an OpenThread instance.
- *
- * @retval the value of minimal delay timer (in ms).
- *
- */
-OTAPI uint32_t OTCALL otDatasetGetDelayTimerMinimal(otInstance *aInstance);
-
-/**
- * Set minimal delay timer.
- *
- * @note This API is reserved for testing and demo purposes only. Changing settings with
- * this API will render a production application non-compliant with the Thread Specification.
- *
- * @param[in]  aInstance           A pointer to an OpenThread instance.
- * @param[in]  aDelayTimerMinimal  The value of minimal delay timer (in ms).
- *
- * @retval  OT_ERROR_NONE          Successfully set minimal delay timer.
- * @retval  OT_ERROR_INVALID_ARGS  If @p aDelayTimerMinimal is not valid.
- *
- */
-OTAPI otError OTCALL otDatasetSetDelayTimerMinimal(otInstance *aInstance, uint32_t aDelayTimerMinimal);
+otError otDatasetSendMgmtPendingSet(otInstance *                aInstance,
+                                    const otOperationalDataset *aDataset,
+                                    const uint8_t *             aTlvs,
+                                    uint8_t                     aLength);
 
 /**
  * @}

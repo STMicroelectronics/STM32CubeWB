@@ -286,6 +286,24 @@ void SystemClock_Config( void )
    * Select wakeup source of BLE RF
    */
   LL_RCC_SetRFWKPClockSource(LL_RCC_RFWKP_CLKSOURCE_LSE);
+  
+  /* USER CODE BEGIN Smps */
+
+#if (CFG_USE_SMPS != 0)
+  /**
+   *  Configure and enable SMPS
+   *
+   *  The SMPS configuration is not yet supported by CubeMx
+   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
+   *  the SMPS output voltage shall be increased for higher RF output power
+   */
+  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
+  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
+  LL_PWR_SMPS_Enable();
+#endif
+
+  /* USER CODE END Smps */
+  
 
   return;
 }

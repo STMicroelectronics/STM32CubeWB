@@ -114,9 +114,8 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
-  /* Configure LED1, LED2 and LED3 */
+  /* Configure LED1 and LED3 */
   BSP_LED_Init(LED1);
-  BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
 
 

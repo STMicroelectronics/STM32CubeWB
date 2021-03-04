@@ -31,9 +31,9 @@
 
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.time.h"
-#include "zcl/zcl.alarm.h"
-#include "zcl/zcl.doorlock.h"
+#include "zcl/general/zcl.time.h"
+#include "zcl/general/zcl.alarm.h"
+#include "zcl/general/zcl.doorlock.h"
 
 /* Private defines -----------------------------------------------------------*/
 #define APP_ZIGBEE_STARTUP_FAIL_DELAY               500U
@@ -189,9 +189,9 @@ static uint8_t TS_ID1, TS_ID2;
  */
 static void APP_ZIGBEE_BINDING_TABLE_insert(uint16_t ntw_addr, uint8_t endpoint, uint16_t cluster_id){
   enum ZbStatusCodeT status;
-  ZbApsmeBindT current_bind;
-  ZbApsmeBindReqT bindreq;
-  ZbApsmeBindConfT bindconf;
+  struct ZbApsmeBindT current_bind;
+  struct ZbApsmeBindReqT bindreq;
+  struct ZbApsmeBindConfT bindconf;
   uint32_t bind_index = 0;
   bool insert_new = false;
   
@@ -201,7 +201,7 @@ static void APP_ZIGBEE_BINDING_TABLE_insert(uint16_t ntw_addr, uint8_t endpoint,
   for(bind_index=0;;bind_index++){
     
     /* Get the next entry in the binding table. */
-    status = ZbApsGetIndex(zigbee_app_info.zb, ZB_APS_IB_ID_BINDING_TABLE, &current_bind, sizeof(ZbApsmeBindT), bind_index);
+    status = ZbApsGetIndex(zigbee_app_info.zb, ZB_APS_IB_ID_BINDING_TABLE, &current_bind, sizeof(current_bind), bind_index);
     if (status != ZB_APS_STATUS_SUCCESS) {
          /* End of table, no matching found */
          insert_new = true;
@@ -957,8 +957,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
   enum ZclStatusCodeT status;
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;

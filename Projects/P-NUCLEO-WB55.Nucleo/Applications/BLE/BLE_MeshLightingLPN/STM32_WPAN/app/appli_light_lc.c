@@ -314,7 +314,7 @@ void Appli_LightLCs_PropertyStatus(MOBLEUINT8 const* pLightLCProperty_status,
   * @retval 
   */
 __weak MOBLE_RESULT Appli_Light_LCs_Init(void)
-    {
+{
   MOBLE_RESULT result = MOBLE_RESULT_FAIL;
   MOBLEUINT8 lcsElementIndex = 0;
   
@@ -349,9 +349,9 @@ __weak MOBLE_RESULT Appli_Light_LCs_Init(void)
 #endif
       
   if(MOBLE_SUCCEEDED(result))
-    {
+  {
     result = Light_LCs_Init(&BufferLcServer, lcsElementIndex, &AppliLightLc_cb, SIZE_OF_LC_SERVER_T);
-    }
+  }
   
   if(MOBLE_FAILED(result))
   {

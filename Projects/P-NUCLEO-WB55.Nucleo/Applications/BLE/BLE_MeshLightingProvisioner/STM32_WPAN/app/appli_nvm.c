@@ -124,7 +124,7 @@ MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUIN
 MOBLEUINT32* AppliPrvnNvm_GetSubPageData(MOBLE_ADDRESS addrss);
 MOBLE_RESULT AppliPrvnNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size);
 
-#if 0
+#if 0 //#ifdef ENABLE_NVM_TEST
 /**
 * @brief  This function erases a specified flash page
 * @param  Page Number
@@ -137,11 +137,11 @@ MOBLE_RESULT AppliNvm_FlashErase(uint16_t PageNumber)
 {
   MOBLE_RESULT result;
   
-  if (PageNumber < N_PAGES)
+  if (PageNumber < FLASH_PAGE_NB)
   {
     BLEMesh_StopAdvScan();
     ATOMIC_SECTION_BEGIN();
-    result =  MoblePalNvmErase(APP_NVM_BASE, 0);
+    result =  PalNvmErase(APP_NVM_BASE, 0);
     ATOMIC_SECTION_END();
   }
   else /* Invalid page no */
@@ -726,8 +726,7 @@ MOBLE_RESULT AppliNvm_FindFirstEmptyPage(MOBLEINT16* subPageIndex,
   return result;
 }
 
-
-#if 0
+#if 0 //#ifdef ENABLE_NVM_TEST
 MOBLE_RESULT AppliNVM_Save_FlashTesting(MOBLEUINT8 *buffer, 
                                         MOBLEUINT16 buffer_size)
 {

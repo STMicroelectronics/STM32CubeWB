@@ -42,6 +42,8 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+#define HSE_TRIM_VALID 0xACCE5500U
+#define HSE_TRIM_VALID_MSK 0xFFFFFF00U
 
 /* USER CODE END EC */
 
@@ -71,6 +73,7 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 void Error_Handler(void);
 void SystemClock_Config_HSE(uint32_t usePLL);
 void SystemClock_Config_MSI(uint32_t usePLL, uint32_t stopHSE);
+void Config_HSE_tuning(const uint32_t hse_tuning);
 #if (CFG_HW_LPUART1_ENABLED == 1)
 void MX_LPUART1_UART_Init(void);
 void MX_LPUART1_UART_DeInit(void);

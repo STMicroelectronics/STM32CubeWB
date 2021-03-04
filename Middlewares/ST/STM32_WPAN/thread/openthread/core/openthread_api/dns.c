@@ -31,12 +31,14 @@
 #include "dns.h"
 
 
-#if OPENTHREAD_ENABLE_DNS_CLIENT
+#if OPENTHREAD_CONFIG_DNS_CLIENT_ENABLE
 
 extern otDnsResponseHandler otDnsResponseHandlerCb;
 
-otError otDnsClientQuery(otInstance *aInstance, const otDnsQuery *aQuery, otDnsResponseHandler aHandler,
-                         void *aContext)
+otError otDnsClientQuery(otInstance *         aInstance,
+                         const otDnsQuery *   aQuery,
+                         otDnsResponseHandler aHandler,
+                         void *               aContext)
 {
     Pre_OtCmdProcessing();
     otDnsResponseHandlerCb = aHandler;
@@ -55,4 +57,4 @@ otError otDnsClientQuery(otInstance *aInstance, const otDnsQuery *aQuery, otDnsR
     return (otError)p_ot_req->Data[0];
 }
 
-#endif /* OPENTHREAD_ENABLE_DNS_CLIENT */
+#endif /* OPENTHREAD_CONFIG_DNS_CLIENT_ENABLE */

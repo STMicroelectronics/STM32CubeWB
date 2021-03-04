@@ -2,7 +2,7 @@
  * @file zigbee.h
  * @brief Zigbee header file.
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  *
  * This file groups global/external definitions from all the layer specific header files
  * e.g, aps, nwk, zdo etc... into a single place, so that one can just include zigbee.h for
@@ -25,23 +25,25 @@
 #include "zb_make_config.h"
 #endif
 
-#include <string.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <inttypes.h>
-
 /* stdarg is required for the logging (ZbSetLogging) */
-/*lint -save -e829 [ 'stdarg.h' usage should be deprecated - 17.1 REQUIRED] */
-/*lint -save -e451 [ header file included withoutstandard guard - 4.10 REQUIRED] */
+/*lint -save -e829 [ 'stdarg.h' usage should be deprecated - Rule 17.1 REQUIRED] */
+/*lint -save -e451 [ header file included withoutstandard guard - Dir 4.10 REQUIRED] */
 #include <stdarg.h>
 /*lint -restore */
 /*lint -restore */
 
-#include "llist.h"
+#include <stdint.h>
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stddef.h> /* NULL */
+#include "pletoh.h" /* Little endian conversion */
+#include "llist.h" /* Link list */
 #include "ieee802154_enums.h"
 
+/* Zigbee instance */
 struct ZigBeeT;
+
+/* MAC instance */
 struct WpanPublicT;
 
 /* ZigBee Protocol Versions as related to the spec version. */
@@ -254,9 +256,8 @@ void ZbGetLogging(struct ZigBeeT *zb, uint32_t *mask,
  * Channel List Structure
  *---------------------------------------------------------------
  */
-/* arbitrary maximum value - the most should ever 5 =>
- * one 2.4 GHz mask + four GB-868 masks */
-#define MAX_CHANNEL_LIST_ENTRIES        8U
+/* One 2.4 GHz mask + one North American mask + five EU masks + four GB-868 masks. */
+#define MAX_CHANNEL_LIST_ENTRIES        11U
 
 struct ZbChannelListT {
     /* Number of channel masks in 'list' */
@@ -283,32 +284,62 @@ unsigned int ZbTimeoutRemaining(ZbUptimeT now, ZbUptimeT expire_time);
 /* A pointer to this struct type is passed to ZbInit to define the various
  * ZigBee tables used in the stack. If the pointer to ZbInit is NULL, the
  * default sizes are used. */
-typedef struct ZbInitTblSizesT {
+struct ZbInitTblSizesT {
+    void *heapPtr;
+    /**< Pointer to memory to use for stack's run-time heap. Size equals heapSz bytes.
+     * If NULL, buffer will be allocated using ZbMalloc(). If stack built with
+     * CONFIG_ZB_ALLOC_STATIC, then ZbInit() will fail if either heapPtr is NULL
+     * or heapSz is zero.
+     */
+    unsigned int heapSz;
+    /**< Size of heapPtr, if not NULL, or size of memory to allocate using ZbMalloc().
+     * If heapSz is zero, default is 32 kB for FFD or 8 kB for RFD (if stack built
+     * with CONFIG_ZB_ENDNODE). */
+
     /* NWK Table Sizes */
-    unsigned int nwkNeighborTblSz; /* Default: 64 */
-    unsigned int nwkRouteTblSz; /* Default: 32 */
-    unsigned int nwkAddrMapTblSz; /* Default: 32 */
-    unsigned int nwkBttSz; /* Default is 32 */
-    unsigned int nwkRReqSz; /* default 16 */
-    /* unsigned int nwkRRecBits; not used */ /* default 10 */
+    unsigned int nwkNeighborTblSz;
+    /**< Network Neighbor Table (NNT) number of entries.
+     * Default is 64. */
+    unsigned int nwkRouteTblSz;
+    /**<
+     * Default is 32. */
+    unsigned int nwkAddrMapTblSz;
+    /**<
+     * Default is 32. */
+    unsigned int nwkBttSz;
+    /**<
+     * Default is 32. */
+    unsigned int nwkRReqSz;
+    /**<
+     * Default is 16. */
 
     /* APS Table Sizes */
     unsigned int apsPeerLinkKeyTblSz; /* Default: 32 */
-#if 0 /* EXEGIN? */
-    unsigned int aps_binding_table_size; /* Default: 64 */
-    unsigned int aps_group_table_size; /* Default: 16 */
-#endif
-} ZbInitTblSizesT;
+};
 
 /* Same parameters as ZbSetLogging takes. Allows debug log output
  * as stack is being initialized. */
-typedef struct ZbInitSetLoggingT {
-    uint32_t mask;
+struct ZbInitSetLoggingT {
+    uint32_t mask; /**< e.g. ZB_LOG_MASK_LEVEL_2 */
     void (*func)(struct ZigBeeT *zb, uint32_t mask, const char *hdr,
         const char *fmt, va_list argptr);
-} ZbInitSetLoggingT;
+    /**< Callback function to print log messages. */
+};
 
-/* Allocates a new Zigbee stack instance. */
+/**
+ * This is called to create a new Zigbee stack instance. One of the parameters provided
+ * is an optional pointer to a struct that defines the sizes of some of the tables
+ * within the stack (e.g. NNT, Routing Table, Security Keys Table). This lets the
+ * application developer tailor the memory usage depending on the type of device
+ * being developed.
+ * @param extAddr EUI to be assigned to this Zigbee stack instance.
+ * @param tblSizes Optional pointer to a 'struct ZbInitTblSizesT' data structure defining
+ * some of the table sizes to be allocated.
+ * @param setLogging Optional pointer to a 'struct ZbInitSetLoggingT' data structure
+ * defining the log mask and callback to call to print log messages.
+ * @return Pointer to Zigbee stack instance, or NULL if there was a problem
+ * (e.g. not enough memory)
+ */
 struct ZigBeeT * ZbInit(uint64_t extAddr, struct ZbInitTblSizesT *tblSizes, struct ZbInitSetLoggingT *setLogging);
 
 /* Deallocates a Zigbee stack instance. */
@@ -382,6 +413,7 @@ struct ZbZclBasicServerDefaults {
  * Configure the default ZCL Basic Server attribute values. The Basic Server
  * is integral to the stack in order for the attribute values to be made "global"
  * and shared between all Basic Server instances on all endpoints.
+ * This should be called after calling ZbInit and before creating any ZCL endpoints.
  * @param zb Zigbee instance
  * @param defaults Pointer to the default configuration data structure
  * @return None
@@ -390,8 +422,22 @@ void ZbZclBasicServerConfigDefaults(struct ZigBeeT *zb, const struct ZbZclBasicS
 
 /* Controls whether the Basic Server is allowed to process the ZCL_BASIC_RESET_FACTORY command. */
 void ZbZclBasicServerResetCmdConfig(struct ZigBeeT *zb, bool allow_reset);
+
 /* Write to the local attributes (e.g. ZCL_BASIC_ATTR_MFR_NAME) */
-enum ZclStatusCodeT ZbZclBasicWriteDirect(struct ZigBeeT *zb, uint8_t endpoint, uint16_t attributeId, const void *ptr, unsigned int len);
+/**
+ * Write to a Basic Server attribute
+ * @param zb Zigbee instance
+ * @param endpoint Specify the endpoint of the Basic Server, or use ZB_ENDPOINT_BCAST to find and use
+ * the first endpoint that contains a Basic Server. Since the attributes are shared between all
+ * instances of the Basic Server, it doesn't matter which endpoint is chosen.
+ * @param attributeId The attribute Id to modify
+ * @param ptr Pointer to the attribute data, in the ZCL defined format.
+ * @param len Maximum length of the attribute data. May exceed the length of the particular attribute.
+ * @return ZCL Status Code
+ */
+enum ZclStatusCodeT ZbZclBasicWriteDirect(struct ZigBeeT *zb, uint8_t endpoint, uint16_t attributeId,
+    const uint8_t *ptr, unsigned int len);
+
 /* Post an alarm code to the Basic Cluster */
 bool ZbZclBasicPostAlarm(struct ZigBeeT *zb, uint8_t endpoint, uint8_t alarm_code);
 
@@ -460,8 +506,6 @@ enum zb_msg_filter_rc {
     ZB_MSG_DISCARD /* Stop processing further filter callbacks. */
 };
 
-/* The APS Filter struct is opaque and cannot be accessed directly outside
- * of the stack. */
 struct ZbApsFilterT;
 
 struct ZbMsgFilterT * ZbMsgFilterRegister(struct ZigBeeT *zb, uint32_t mask, uint8_t prio,
@@ -486,33 +530,6 @@ bool ZbPersistNotifyRegister(struct ZigBeeT *zb, void (*callback)(struct ZigBeeT
  */
 /* This API moves the stack to shutdown mode, used in case of a sleepy end device to conserve power. */
 void ZbShutdown(struct ZigBeeT *zb);
-
-/*---------------------------------------------------------------
- * AES Hashing
- *---------------------------------------------------------------
- */
-#ifndef AES_BLOCK_SIZE
-# define AES_BLOCK_SIZE                     16U
-#endif
-
-struct ZbHash {
-    uint8_t m[AES_BLOCK_SIZE];
-    uint8_t hash[AES_BLOCK_SIZE];
-    uint8_t key[AES_BLOCK_SIZE];
-    uint8_t length;
-};
-
-/* Matyas-Meyer-Oseas hash function. */
-void ZbHashInit(struct ZbHash *h);
-void ZbHashAdd(struct ZbHash *h, const void *data, uint32_t len);
-void ZbHashByte(struct ZbHash *h, uint8_t data);
-void ZbHashDigest(struct ZbHash *h, void *digest);
-
-/* HMAC hash function (based on AES-MMO) */
-void ZbHmacInit(struct ZbHash *h, const void *key, uint32_t len);
-#define ZbHmacAdd(hash, data, len)   ZbHashAdd(hash, data, len)
-#define ZbHmacByte(hash, byte)         ZbHashByte(hash, byte)
-void ZbHmacDigest(struct ZbHash *h, void *digest);
 
 /*---------------------------------------------------------------
  * Test Case Hooks
@@ -574,10 +591,11 @@ unsigned int zb_hex_bin_to_str(const uint8_t *in_data, unsigned int in_len, char
  *---------------------------------------------------------------
  */
 #include "zigbee.security.h"
+#include "zigbee.hash.h"
 #include "zigbee.bdb.h"
 #include "zigbee.aps.h"
 #include "zigbee.nwk.h"
 #include "zigbee.startup.h"
 #include "zigbee.zdo.h"
 
-#endif /* ZIGBEE_H */
+#endif

@@ -31,9 +31,9 @@
 #include "server.h"
 
 
-#if OPENTHREAD_ENABLE_SERVICE
+#if OPENTHREAD_CONFIG_TMF_NETDATA_SERVICE_ENABLE
 
-OTAPI otError OTCALL otServerGetNetDataLocal(otInstance *aInstance, bool aStable, uint8_t *aData, uint8_t *aDataLength)
+otError otServerGetNetDataLocal(otInstance *aInstance, bool aStable, uint8_t *aData, uint8_t *aDataLength)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -69,7 +69,10 @@ otError otServerAddService(otInstance *aInstance, const otServiceConfig *aConfig
     return (otError)p_ot_req->Data[0];
 }
 
-otError otServerRemoveService(otInstance *aInstance, uint32_t aEnterpriseNumber, uint8_t * aServiceData, uint8_t aServiceDataLength)
+otError otServerRemoveService(otInstance *   aInstance,
+                              uint32_t       aEnterpriseNumber,
+                              const uint8_t *aServiceData,
+                              uint8_t        aServiceDataLength)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -124,7 +127,7 @@ otError otServerGetNextLeaderService(otInstance *aInstance, otNetworkDataIterato
     return (otError)p_ot_req->Data[0];
 }
 
-OTAPI otError OTCALL otServerRegister(otInstance *aInstance)
+otError otServerRegister(otInstance *aInstance)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -140,4 +143,4 @@ OTAPI otError OTCALL otServerRegister(otInstance *aInstance)
     return (otError)p_ot_req->Data[0];
 }
 
-#endif /* OPENTHREAD_ENABLE_SERVICE */
+#endif /* OPENTHREAD_CONFIG_TMF_NETDATA_SERVICE_ENABLE */

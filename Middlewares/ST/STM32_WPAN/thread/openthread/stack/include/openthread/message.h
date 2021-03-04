@@ -89,6 +89,27 @@ typedef struct otBufferInfo
 } otBufferInfo;
 
 /**
+ * This enumeration defines the OpenThread message priority levels.
+ *
+ */
+typedef enum otMessagePriority
+{
+    OT_MESSAGE_PRIORITY_LOW    = 0, ///< Low priority level.
+    OT_MESSAGE_PRIORITY_NORMAL = 1, ///< Normal priority level.
+    OT_MESSAGE_PRIORITY_HIGH   = 2, ///< High priority level.
+} otMessagePriority;
+
+/**
+ * This structure represents a message settings.
+ *
+ */
+typedef struct otMessageSettings
+{
+    bool              mLinkSecurityEnabled; ///< TRUE if the message should be secured at Layer 2.
+    otMessagePriority mPriority;            ///< The message priority level.
+} otMessageSettings;
+
+/**
  * Free an allocated message buffer.
  *
  * @param[in]  aMessage  A pointer to a message buffer.
@@ -121,7 +142,7 @@ void otMessageFree(otMessage *aMessage);
  * @sa otMessageSetLength
  *
  */
-uint16_t otMessageGetLength(otMessage *aMessage);
+uint16_t otMessageGetLength(const otMessage *aMessage);
 
 /**
  * Set the message length in bytes.
@@ -159,7 +180,7 @@ otError otMessageSetLength(otMessage *aMessage, uint16_t aLength);
  * @sa otMessageWrite
  *
  */
-uint16_t otMessageGetOffset(otMessage *aMessage);
+uint16_t otMessageGetOffset(const otMessage *aMessage);
 
 /**
  * Set the message offset in bytes.
@@ -190,7 +211,7 @@ otError otMessageSetOffset(otMessage *aMessage, uint16_t aOffset);
  * @retval FALSE  If link security is not enabled.
  *
  */
-bool otMessageIsLinkSecurityEnabled(otMessage *aMessage);
+bool otMessageIsLinkSecurityEnabled(const otMessage *aMessage);
 
 /**
  * This function sets/forces the message to be forwarded using direct transmission.
@@ -209,7 +230,7 @@ void otMessageSetDirectTransmission(otMessage *aMessage, bool aEnabled);
  * @returns The average RSS value (in dBm) or OT_RADIO_RSSI_INVALID if no average RSS is available.
  *
  */
-int8_t otMessageGetRss(otMessage *aMessage);
+int8_t otMessageGetRss(const otMessage *aMessage);
 
 /**
  * Append bytes to a message.
@@ -251,7 +272,7 @@ otError otMessageAppend(otMessage *aMessage, const void *aBuf, uint16_t aLength)
  * @sa otMessageWrite
  *
  */
-int otMessageRead(otMessage *aMessage, uint16_t aOffset, void *aBuf, uint16_t aLength);
+uint16_t otMessageRead(const otMessage *aMessage, uint16_t aOffset, void *aBuf, uint16_t aLength);
 
 /**
  * Write bytes to a message.
@@ -359,7 +380,7 @@ otMessage *otMessageQueueGetNext(otMessageQueue *aQueue, const otMessage *aMessa
  * @param[out]  aBufferInfo  A pointer where the message buffer information is written.
  *
  */
-OTAPI void OTCALL otMessageGetBufferInfo(otInstance *aInstance, otBufferInfo *aBufferInfo);
+void otMessageGetBufferInfo(otInstance *aInstance, otBufferInfo *aBufferInfo);
 
 /**
  * @}

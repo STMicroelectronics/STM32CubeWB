@@ -162,15 +162,15 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of MutHigh */
-  osThreadDef(MutHigh, MutexHighPriorityThreadr, osPriorityNormal, 0, 128);
+  osThreadDef(MutHigh, MutexHighPriorityThreadr, osPriorityBelowNormal, 0, 128);
   MutHighHandle = osThreadCreate(osThread(MutHigh), NULL);
 
   /* definition and creation of MutMedium */
-  osThreadDef(MutMedium, MutexMediumPriorityThread, osPriorityNormal, 0, 128);
+  osThreadDef(MutMedium, MutexMediumPriorityThread, osPriorityLow, 0, 128);
   MutMediumHandle = osThreadCreate(osThread(MutMedium), NULL);
 
   /* definition and creation of MutLow */
-  osThreadDef(MutLow, MutexLowPriorityThread, osPriorityNormal, 0, 128);
+  osThreadDef(MutLow, MutexLowPriorityThread, osPriorityIdle, 0, 128);
   MutLowHandle = osThreadCreate(osThread(MutLow), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */

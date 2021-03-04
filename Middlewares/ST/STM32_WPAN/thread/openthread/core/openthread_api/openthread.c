@@ -27,22 +27,3 @@
 
 /* Include definition of compilation flags requested for OpenThread configuration */
 #include OPENTHREAD_CONFIG_FILE
-
-#include "error.h"
-
-OTAPI const char *OTCALL otThreadErrorToString(otError aError)
-{
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-    p_ot_req->ID = MSG_M4TOM0_OT_OPENTHREAD_ERROR_TO_STRING;
-
-    p_ot_req->Size=1;
-    p_ot_req->Data[0] = (uint32_t) aError;
-
-    Ot_Cmd_Transfer();
-
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (char *)p_ot_req->Data[0];
-}

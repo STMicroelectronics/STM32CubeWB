@@ -1,46 +1,57 @@
 /**
  * @file zcl.ias_zone.h
+ * @heading IAS Zone
  * @brief ZCL Security IAS Zone cluster header
  * ZCL 7 section 8.2
  * ZCL 8 section 8.2
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_IAS_ZONE_H
 #define ZCL_IAS_ZONE_H
 
-/* PICS.ZCL.IASZ
+/* @PICS.ZCL.IASZ
  *
- * IASZ.S | True
- * IASZ.C | True
- * IASZ.TTP | True
- * IASZ.ARSP | True
- * IASZ.AREQ | True
- * IASZ.PIXIT01 | False (seems like it would require a more complete sensor application)
- * IASZ.PIXIT02 | False (seems like it would require a more complete sensor application)
+ * IASZ.S | Server |True
+ * IASZ.C | Clinet | True
+ * IASZ.TTP | Trip-to-Pair Enrollment | True
+ * IASZ.ARSP | Auto-Enroll-Response Enrollment |True
+ * IASZ.AREQ | Auto-Enroll-Request Enrollment | True
+ * IASZ.PIXIT01 | See Test Spec | False
+ * IASZ.PIXIT02 | See Text Spec | False
  *
- * IASZ.S.A0000 | True
- * IASZ.S.A0001 | True
- * IASZ.S.A0002 | True
- * IASZ.S.A0010 | True
- * IASZ.S.A0011 | True
- * IASZ.S.A0012 | False
- * IASZ.S.A0013 | False
- * IASZ.S.Afffd | True
- * IASZ.S.Afffe | False
- * IASZ.S.C00.Rsp | True
- * IASZ.S.C01.Rsp | True
- * IASZ.S.C02.Rsp | True
- * IASZ.S.C00.Tx | True
- * IASZ.S.C01.Tx | True
+ * Server Attributes
+ * IASZ.S.A0000 | ZoneState | True
+ * IASZ.S.A0001 | ZoneType | True
+ * IASZ.S.A0002 | ZoneStatus | True
+ * IASZ.S.A0010 | IAS_CIE_Address |True
+ * IASZ.S.A0011 | ZoneID | True
+ * IASZ.S.A0012 | NumberOfZoneSensitivityLevelsSupported | False | Optional
+ * IASZ.S.A0013 | CurrentZoneSensitivityLevel | False |  Optional
+ * IASZ.S.Afffd | ClusterRevision | True
+ * IASZ.S.Afffe | AttributeReportingStatus | False
  *
- * IASZ.C.Afffd | True
- * IASZ.C.Afffe | False
- * IASZ.C.C00.Rsp | True
- * IASZ.C.C01.Rsp | True
- * IASZ.C.C00.Tx | True
- * IASZ.C.C01.Tx | True
- * IASZ.C.C02.Tx | True
+ * Commands Received
+ * IASZ.S.C00.Rsp | Zone Enroll Response | True
+ * IASZ.S.C01.Rsp | Initiate Normal Operation Mode | True
+ * IASZ.S.C02.Rsp | Initiate Test Mode | True
+ *
+ * Commands Generated
+ * IASZ.S.C00.Tx | Zone Status Change Notification | True
+ * IASZ.S.C01.Tx | Zone Enroll Request | True
+ *
+ * Client Attributes
+ * IASZ.C.Afffd | ClusterRevision | True
+ * IASZ.C.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * IASZ.C.C00.Rsp | Zone Status Change Notification  | True
+ * IASZ.C.C01.Rsp | Zone Enroll Request | True
+ *
+ * Commands Generated
+ * IASZ.C.C00.Tx | Zone Enroll Response | True
+ * IASZ.C.C01.Tx | Initiate Normal Operation Mode | True
+ * IASZ.C.C02.Tx | Initiate Test Mode  | True
  */
 
 #include "zcl/zcl.h"
@@ -198,7 +209,7 @@ struct ZbZclClusterT * ZbZclIasZoneServerAlloc(struct ZigBeeT *zb, uint8_t endpo
  * @param arg Pointer to application data that will later be provided back to the callback function when invoked
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-uint8_t ZbZclIasZoneServerEnrollRequest(struct ZbZclClusterT *cluster,
+enum ZclStatusCodeT ZbZclIasZoneServerEnrollRequest(struct ZbZclClusterT *cluster,
     void (*callback)(struct ZbZclIasZoneClientEnrollResponseT *enrl_rsp, void *arg), void *arg);
 
 /** IAS Zone Client callbacks configuration */

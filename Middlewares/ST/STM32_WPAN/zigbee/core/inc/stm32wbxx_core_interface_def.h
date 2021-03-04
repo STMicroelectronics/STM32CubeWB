@@ -104,6 +104,14 @@ typedef enum {
     MSG_M4TOM0_ZB_HASH_DIGEST, /* ZbHashDigest */
     /* ECDSA Signature Validation */
     MSG_M4TOM0_ZB_SEC_ECDSA_VALIDATE, /* ZbSecEcdsaValidate */
+    /* Touchlink Utility Commands */
+    MSG_M4TOM0_ZCL_TL_GET_GRP_REQ, /* ZbZclTouchlinkInitiatorGetGrpIdReq */
+    MSG_M0TOM4_ZCL_TL_GET_GRP_CB,
+    MSG_M4TOM0_ZCL_TL_GET_EPLIST_REQ, /* ZbZclTouchlinkInitiatorGetEpListReq */
+    MSG_M0TOM4_ZCL_TL_GET_EPLIST_CB,
+    MSG_M4TOM0_ZCL_TL_SEND_EPINFO_REQ, /* ZbZclTouchlinkTargetSendEpInfoCmd */
+    MSG_M0TOM4_ZCL_TL_SEND_EPINFO_CB,
+    MSG_M0TOM4_ZCL_TL_EP_INFO_CB, /* ZbTouchlinkCallbacks.ep_info_cb() */
     /* Reserved to 0x00ff for Future Use */
 
     /* ZDO Commands */
@@ -150,6 +158,9 @@ typedef enum {
     MSG_M4TOM0_ZDO_MGMT_NWK_ENH_UPDATE_NOTIFY, /* ZbZdoUnsolicitedEnhUpdateNotify */
     MSG_M4TOM0_ZDO_MGMT_NWK_IEEE_JOIN_BCAST, /* ZbZdoNwkIeeeJoinListBcastAll */
 #endif
+    MSG_M4TOM0_ZDO_MGMT_NWK_UPDATE_FILTER_REGISTER, /* ZbZdoNwkUpdateNotifyFilterRegister */
+    MSG_M4TOM0_ZDO_MGMT_NWK_UPDATE_FILTER_REMOVE, /* ZbZdoNwkUpdateNotifyFilterRemove */
+    MSG_M0TOM4_ZDO_MGMT_NWK_UPDATE_FILTER_CB,
     /* Reserved to 0x01ff Future Use */
 
     /* BDB */

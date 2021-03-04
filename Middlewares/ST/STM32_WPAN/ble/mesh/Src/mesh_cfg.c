@@ -275,6 +275,12 @@ MOBLE_RESULT Sensor_CadenceParams_Get(MOBLEUINT8 elementIdx,
 //__weak void Appli_Light_LC_SerialCmd(char *rcvdStringBuff, 
 //                                     uint16_t rcvdStringSize);
 MOBLE_RESULT Appli_Light_LCs_Init(void);
+void Light_LC_NvmParams_Get(MOBLEUINT8 elementIndex,
+                            MOBLEUINT8* lightLcNvmParamsBuff, 
+                            MOBLEUINT8* lcNvmParamsSize);
+void LightLC_SaveModelStates(MOBLEUINT8 elementIndex,
+                             MOBLEUINT8* lightLcNvmParamsBuff, 
+                             MOBLEUINT8 lcNvmParamsSize);
 
 /* Private define ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -510,7 +516,7 @@ MOBLE_RESULT ApplicationInitSigModelList(void)
     
     if(((ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF & (1 << index)) == (1 << index)))
     {
-      Appli_SIG_Models[index][modelIndex++] = GENERIC_SERVER_POWER_ONOFF_MODEL_ID;
+      Appli_SIG_Models[index][modelIndex++] = GENERIC_POWER_ONOFF_SERVER_MODEL_ID;
       if(modelIndex < APPLICATION_SIG_MODELS_MAX_COUNT)
       {
         Appli_SIG_Models[index][modelIndex] = NO_MODEL_AVLBL;
@@ -1321,6 +1327,7 @@ MOBLEUINT8 ApplicationGetVendorModelList(MOBLEUINT32* pModels_vendor_ID, MOBLEUI
 #else
   uint8_t modelCount = 0;
   
+#ifdef ENABLE_VENDOR_MODEL_SERVER 
   /* Since the SIG Models are 2 bytes, copy 2*size for memcpy */
   while((modelCount < APPLICATION_VENDOR_MODELS_MAX_COUNT) &&
         (Appli_Vendor_Models[elementIndex][modelCount] != NO_MODEL_AVLBL))
@@ -1328,6 +1335,7 @@ MOBLEUINT8 ApplicationGetVendorModelList(MOBLEUINT32* pModels_vendor_ID, MOBLEUI
     modelCount++;
   }
   memcpy(pModels_vendor_ID, Appli_Vendor_Models+elementIndex, modelCount*4);
+#endif  
 #endif
   return modelCount; 
 }
@@ -1783,13 +1791,18 @@ void Light_LC_NvmParams_Get(MOBLEUINT8 elementIndex,
                             MOBLEUINT8* lightLcNvmParamsBuff, 
                             MOBLEUINT8* lcNvmParamsSize)
 {}
-void Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
-                        MOBLEUINT8 const *pModelValue_Load, 
-                        MOBLEUINT8 genericOnPowerUp,
-                        MOBLEUINT16 lightDefault,
-                        MOBLEUINT16 lightLast,
-                        MOBLEUINT16 lightActualLKV)
+void LightLC_SaveModelStates(MOBLEUINT8 elementIndex,
+                             MOBLEUINT8* lightLcNvmParamsBuff, 
+                             MOBLEUINT8 lcNvmParamsSize)
 {}
+MOBLEUINT8 Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
+                              MOBLEUINT8 const *pModelValue_Load, 
+                              MOBLEUINT8 genericOnPowerUp,
+                              MOBLEUINT16 lightDefault,
+                              MOBLEUINT16 lightLast,
+                              MOBLEUINT16 lightActualLKV,
+                              MOBLEUINT16* pLightActualToBeSet)
+{return 0;}
 MOBLE_RESULT Light_LC_SetTransitionTimeZero(MOBLEUINT8 elementIndex)
 {return MOBLE_RESULT_NOTIMPL;}
 MOBLE_RESULT Light_LC_SensorPropertyUpdate(MOBLEUINT8 lcsElementIndex,

@@ -26,7 +26,7 @@
 
 /* Exported macro ------------------------------------------------------------*/
 #define     TEST_1_WAIT_PERIOD          2000
-#define     TEST_2_WAIT_PERIOD          100
+#define     TEST_2_WAIT_PERIOD          300
 #define     TEST_3_WAIT_PERIOD          3000
 #define     TEST_READ_PERIOD            2000
 #define     CLOCK_FLAG_ENABLE           1 

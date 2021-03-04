@@ -8,20 +8,21 @@
 #ifndef ZIGBEE_BDB_H
 #define ZIGBEE_BDB_H
 
-/* Table 5 – Values of the bdbCommissioningStatus attribute.
+/* Values of the bdbCommissioningStatus attribute.
  * These are not interchangeable with Zigbee Status Codes. */
+/** bdbCommissioningStatus */
 enum ZbBdbCommissioningStatusT {
-    ZB_BDB_COMMISS_STATUS_SUCCESS = 0x00, /* The commissioning sub-procedure was successful. */
-    ZB_BDB_COMMISS_STATUS_IN_PROGRESS, /* One of the commissioning sub-procedures has started but is not yet complete. */
-    ZB_BDB_COMMISS_STATUS_NOT_AA_CAPABLE, /* The initiator is not address assignment capable during touchlink. */
-    ZB_BDB_COMMISS_STATUS_NO_NETWORK, /* A network has not been found during network steering or touchlink. */
-    ZB_BDB_COMMISS_STATUS_TARGET_FAILURE, /* A node has not joined a network when requested during touchlink. */
-    ZB_BDB_COMMISS_STATUS_FORMATION_FAILURE, /* A network could not be formed during network formation. */
-    ZB_BDB_COMMISS_STATUS_NO_IDENTIFY_QUERY_RESPONSE, /* No response to an identify query command has been received during finding & binding. */
-    ZB_BDB_COMMISS_STATUS_BINDING_TABLE_FULL, /* A binding table entry could not be created due to insufficient space in the binding table during finding & binding. */
-    ZB_BDB_COMMISS_STATUS_NO_SCAN_RESPONSE, /* No response to a scan request inter-PAN command has been received during touchlink. */
-    ZB_BDB_COMMISS_STATUS_NOT_PERMITTED, /* A touchlink (steal) attempt was made when a node is already connected to a centralized security network. */
-    ZB_BDB_COMMISS_STATUS_TCLK_EX_FAILURE /* The Trust Center link key exchange procedure has failed attempting to join a centralized security network. */
+    ZB_BDB_COMMISS_STATUS_SUCCESS = 0x00, /**< SUCCESS - The commissioning sub-procedure was successful */
+    ZB_BDB_COMMISS_STATUS_IN_PROGRESS, /**< IN_PROGRESS - One of the commissioning sub-procedures has started but is not yet complete */
+    ZB_BDB_COMMISS_STATUS_NOT_AA_CAPABLE, /**< NOT_AA_CAPABLE - The initiator is not address assignment capable during touchlink */
+    ZB_BDB_COMMISS_STATUS_NO_NETWORK, /**< NO_NETWORK - A network has not been found during network steering or touchlink*/
+    ZB_BDB_COMMISS_STATUS_TARGET_FAILURE, /**< TARGET_FAILURE - A node has not joined a network when requested during touchlink */
+    ZB_BDB_COMMISS_STATUS_FORMATION_FAILURE, /**< FORMATION_FAILURE - A network could not be formed during network formation */
+    ZB_BDB_COMMISS_STATUS_NO_IDENTIFY_QUERY_RESPONSE, /* NO_IDENTIFY_QUERY_RESPONSE - No response to an identify query command has been received during finding & binding */
+    ZB_BDB_COMMISS_STATUS_BINDING_TABLE_FULL, /**< BINDING_TABLE_FULL - A binding table entry could not be created due to insufficient space in the binding table during finding & binding */
+    ZB_BDB_COMMISS_STATUS_NO_SCAN_RESPONSE, /**< NO_SCAN_RESPONSE - No response to a scan request inter-PAN command has been received during touchlink */
+    ZB_BDB_COMMISS_STATUS_NOT_PERMITTED, /**< NOT_PERMITTED - A touchlink (steal) attempt was made when a node is already connected to a centralized security network */
+    ZB_BDB_COMMISS_STATUS_TCLK_EX_FAILURE /**< TCLK_EX_FAILURE - The Trust Center link key exchange procedure has failed attempting to join a centralized security network */
 };
 
 #define BDB_DEFAULT_TC_NODE_JOIN_TIMEOUT        15 /* seconds */
@@ -50,9 +51,10 @@ enum ZbBdbCommissioningStatusT {
 #define BDB_JOINLINK_KEYTYPE_TC                 0x08 /* touchlink preconfigured. */
 
 /* values for ZB_BDB_TCLinkKeyExchangeMethod / bdbTCLinkKeyExchangeMethod */
+/** bdbTCLinkKeyExchangeMethod */
 enum ZbBdbLinkKeyExchMethodT {
-    BDB_LINKKEY_EXCHANGE_METHOD_APS = 0x00,
-    BDB_LINKKEY_EXCHANGE_METHOD_CBKE = 0x01 /* cert. based key exchange.*/
+    BDB_LINKKEY_EXCHANGE_METHOD_APS = 0x00, /**< APS Request Key */
+    BDB_LINKKEY_EXCHANGE_METHOD_CBKE = 0x01 /**< Certificate Based Key Exchange (CBKE) */
 };
 
 /* Touchlink Default Primary Channel Set (2.4 GHz, Page 0, based on WPAN_CHANNELMASK_2400MHZ)
@@ -75,15 +77,17 @@ enum ZbBdbLinkKeyExchMethodT {
  *   4       production key        13.3.4.10.5    YES (same as certification)
  *  15       certification key     13.3.4.10.5    YES
  */
+
+/** ZbBdbTouchlinkKeyIndex */
 enum ZbBdbTouchlinkKeyIndexT {
-    TOUCHLINK_KEY_INDEX_DEVELOPMENT = 0,
-    TOUCHLINK_KEY_INDEX_PRODUCTION = 4,
-    TOUCHLINK_KEY_INDEX_CERTIFICATION = 15
+    TOUCHLINK_KEY_INDEX_DEVELOPMENT = 0, /**< Development key */
+    TOUCHLINK_KEY_INDEX_PRODUCTION = 4, /**< Production key */
+    TOUCHLINK_KEY_INDEX_CERTIFICATION = 15 /**< Certification key */
 };
 
 /* Touchlink Steal Flags */
-#define TOUCHLINK_STEAL_START               0x01 /* Target is allowed to process a Touchlink Network Start Request */
-#define TOUCHLINK_STEAL_JOIN                0x02 /* Target is allowed to process a Touchlink Join Request */
+#define TOUCHLINK_STEAL_START               0x01U /* Target is allowed to process a Touchlink Network Start Request */
+#define TOUCHLINK_STEAL_JOIN                0x02U /* Target is allowed to process a Touchlink Join Request */
 /* EXEGIN - Make ZB_BDB_TLDenyFactoryNew one of these flags */
 
 /* BDB IB attributes */
@@ -114,10 +118,9 @@ enum ZbBdbAttrIdT {
     ZB_BDB_FreeNetAddrBegin, /* 0x1102 */
     ZB_BDB_FreeNetAddrCurrent, /* 0x1103 */
     ZB_BDB_FreeNetAddrEnd, /* 0x1104 */
-    /* Group addresses - currently not being used by stack */
-    ZB_BDB_FreeGroupIDBegin, /* 0x1105 */
-    ZB_BDB_FreeGroupIDEnd, /* 0x1106 */
-    ZB_BDB_TLRssiMin, /* 0x1107 - RSSI threshold, int8_t value */
+    /* 0x1105 - was ZB_BDB_FreeGroupIDBegin */
+    /* 0x1106 - was ZB_BDB_FreeGroupIDEnd */
+    ZB_BDB_TLRssiMin = 0x1107, /* 0x1107 - RSSI threshold, int8_t value */
     ZB_BDB_TLTestFlags, /* 0x1108 - Touchlink test flags (enum ZbTlTestFlagsT) */
     ZB_BDB_UpdateDeviceKeyId, /* 0x1109 - enum ZbSecHdrKeyIdT (e.g. ZB_SEC_KEYID_NETWORK (default) or ZB_SEC_KEYID_LINK) */
     ZB_BDB_JoinScanType, /* 0x110a - MCP_SCAN_ACTIVE (default) or MCP_SCAN_ENHANCED */
@@ -151,42 +154,78 @@ enum ZbBdbAttrIdT {
     ZB_BDBC_TLScanTimeBaseDuration /* uint8_t - milliseconds */
 };
 
-/* BDB-GET.request */
-typedef struct ZbBdbGetReqT {
-    enum ZbBdbAttrIdT attrId;
-    void *attr;
-    unsigned int attrLength;
-    unsigned int attrIndex;
-} ZbBdbGetReqT;
+/** BDB-GET.request */
+struct ZbBdbGetReqT {
+    enum ZbBdbAttrIdT attrId; /**< Attribute ID */
+    void *attr; /**< Pointer to attribute */
+    unsigned int attrLength; /**< Attribute Length */
+    unsigned int attrIndex; /**< Attribute Index */
+};
 
-/* BDB-GET.confirm */
-typedef struct ZbBdbGetConfT {
-    enum ZbStatusCodeT status;
-    enum ZbBdbAttrIdT attrId;
-} ZbBdbGetConfT;
+/** BDB-GET.confirm */
+struct ZbBdbGetConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    enum ZbBdbAttrIdT attrId; /**< Attribute ID */
+};
 
-/* BDB-SET.request */
-typedef struct ZbBdbSetReqT {
-    enum ZbBdbAttrIdT attrId;
-    const void *attr;
-    unsigned int attrLength;
-    unsigned int attrIndex;
-} ZbBdbSetReqT;
+/** BDB-SET.request */
+struct ZbBdbSetReqT {
+    enum ZbBdbAttrIdT attrId; /**< Attribute ID */
+    const void *attr; /**< Pointer to attribute */
+    unsigned int attrLength; /**< Attribute Length */
+    unsigned int attrIndex; /**< Attribute Index */
+};
 
-/* BDB-SET.confirm */
-typedef struct ZbBdbSetConfT {
-    enum ZbStatusCodeT status;
-    enum ZbBdbAttrIdT attrId;
-} ZbBdbSetConfT;
+/** BDB-SET.confirm */
+struct ZbBdbSetConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    enum ZbBdbAttrIdT attrId; /**< Attribute ID */
+};
 
 #define ZbBdbGet(_zb_, _id_, _ptr_, _sz_) ZbBdbGetIndex(_zb_, _id_, _ptr_, _sz_, 0)
 #define ZbBdbSet(_zb_, _id_, _ptr_, _sz_) ZbBdbSetIndex(_zb_, _id_, _ptr_, _sz_, 0)
+
+/**
+ * Read a BDB IB attribute.
+ * @param zb Zigbee stack instance
+ * @param attrId Attribute ID
+ * @param attrPtr Pointer to the attribute
+ * @param attrSz Attribute size
+ * @param attrIndex Index attribute
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZbBdbGetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
+
+/**
+ * Write a BDB IB attribute.
+ * @param zb Zigbee stack instance
+ * @param attrId Attribute ID
+ * @param attrPtr Pointer to the attribute
+ * @param attrSz Attribute size
+ * @param attrIndex Index attribute
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZbBdbSetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, const void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
+
+/**
+ * Send a BDB-GET.request.
+ * @param zb Zigbee stack instance
+ * @param getReqPtr Pointer to BDB-GET.request
+ * @param getConfPtr Pointer to BDB-GET.confirm
+ * @return Returns void
+ */
 void ZbBdbGetReq(struct ZigBeeT *zb, struct ZbBdbGetReqT *getReqPtr, struct ZbBdbGetConfT *getConfPtr);
+
+/**
+ * Send a BDB-SET.request.
+ * @param zb Zigbee stack instance
+ * @param setReqPtr Pointer to BDB-SET.request
+ * @param setConfPtr Pointer to BDB-SET.confirm
+ * @return Returns void
+ */
 void ZbBdbSetReq(struct ZigBeeT *zb, struct ZbBdbSetReqT *setReqPtr, struct ZbBdbSetConfT *setConfPtr);
 
-/* Helpers for bdbCommissioningMode bits */
+/* Helpers for ZB_BDB_CommissioningMode bits */
 /* ZbBdbCommissionModeBitSupported - Check if a BDB_COMMISSION_MODE_ bit or mask is
  * supported by bdbNodeCommissioningCapability. */
 bool ZbBdbCommissionModeBitSupported(struct ZigBeeT *zb, uint8_t new_mode_bit);

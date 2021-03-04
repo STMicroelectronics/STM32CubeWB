@@ -201,7 +201,7 @@ static SVCCTL_EvtAckStatus_t BVOPUS_Event_Handler(void *Event)
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt *event_pckt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
 
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
@@ -210,14 +210,14 @@ static SVCCTL_EvtAckStatus_t BVOPUS_Event_Handler(void *Event)
     
   switch(event_pckt->evt)
   {
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
       {
-        blue_evt = (evt_blue_aci*)event_pckt->data;
-        switch(blue_evt->ecode)
+        blecore_evt = (evt_blecore_aci*)event_pckt->data;
+        switch(blecore_evt->ecode)
         {
-          case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+          case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
             {
-              aci_gatt_attribute_modified_event_rp0 *pr = (aci_gatt_attribute_modified_event_rp0*)blue_evt->data;
+              aci_gatt_attribute_modified_event_rp0 *pr = (aci_gatt_attribute_modified_event_rp0*)blecore_evt->data;
               Evt_code = BluevoiceOPUS_AttributeModified_CB(pr->Attr_Handle, pr->Attr_Data_Length, pr->Attr_Data); 
               if(Evt_code == BVOPUS_STM_START_STREAMING_EVT)
               {

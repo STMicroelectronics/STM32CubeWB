@@ -34,9 +34,6 @@
 MOBLE_RESULT Appli_ConfigClient_Set(void); 
 MOBLE_RESULT Appli_GenericClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opcode, MOBLEUINT8 *msg_params);
 
-
-
-
 #endif /* __APPLI_GENERIC_CLIENT_H */
 
 /******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/

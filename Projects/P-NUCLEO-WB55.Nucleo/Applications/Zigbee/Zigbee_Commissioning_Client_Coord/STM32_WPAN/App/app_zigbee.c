@@ -31,7 +31,7 @@
 
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.commission.h"
+#include "zcl/general/zcl.commission.h"
 
 /* Private defines -----------------------------------------------------------*/
 #define APP_ZIGBEE_STARTUP_FAIL_DELAY               500U
@@ -47,7 +47,7 @@
 #define CHANNEL_1                                    19
 #define EXT_PANID_1                                  0x1122334455667788
 #define ZR_COMMISSIONING_SERVER_INDEX_NWK_1          0
-
+#define COMMISSIONING_DEST_ENDPOINT                  ZB_ENDPOINT_BCAST 
 /* external definition */
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
 
@@ -270,7 +270,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   /* Reseting Commissioning client nwk configuration */
   APP_DBG("Sending ResetStartup request."); 
   memset(&ResetStartupReq, 0, sizeof(ResetStartupReq));
-  status = ZbZclCommissionClientSendResetStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, &ResetStartupReq,
+  status = ZbZclCommissionClientSendResetStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, COMMISSIONING_DEST_ENDPOINT ,&ResetStartupReq,
                                                  APP_ZIGBEE_Generic_Cmd_Rsp_cb, NULL);
   if (status != ZCL_STATUS_SUCCESS) {
     APP_DBG("Error, ZbZclCommissionClientSendResetStartup failed");
@@ -390,7 +390,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   APP_DBG("Sending SaveStartup request."); 
   memset(&SaveStartupReq, 0, sizeof(SaveStartupReq));
   SaveStartupReq.index = config_num;
-  status = ZbZclCommissionClientSendSaveStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, &SaveStartupReq,
+  status = ZbZclCommissionClientSendSaveStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, COMMISSIONING_DEST_ENDPOINT,&SaveStartupReq,
                                                 APP_ZIGBEE_Generic_Cmd_Rsp_cb, NULL);
   if (status != ZCL_STATUS_SUCCESS) {
     APP_DBG("Error, ZbZclCommissionClientSendSaveStartup failed");
@@ -403,7 +403,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   /* Reseting Commissioning client nwk configuration */
   APP_DBG("Sending ResetStartup request."); 
   memset(&ResetStartupReq, 0, sizeof(ResetStartupReq));
-  status = ZbZclCommissionClientSendResetStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, &ResetStartupReq, 
+  status = ZbZclCommissionClientSendResetStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, COMMISSIONING_DEST_ENDPOINT,&ResetStartupReq, 
                                                  APP_ZIGBEE_Generic_Cmd_Rsp_cb, NULL);
   if (status != ZCL_STATUS_SUCCESS) {
     APP_DBG("Error, ZbZclCommissionClientSendResetStartup failed");
@@ -417,7 +417,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   APP_DBG("Sending RestoreStartup request."); 
   memset(&RestoreStartup, 0, sizeof(RestoreStartup));
   RestoreStartup.index = config_num;
-  status = ZbZclCommissionClientSendRestoreStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, &RestoreStartup,
+  status = ZbZclCommissionClientSendRestoreStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, COMMISSIONING_DEST_ENDPOINT,&RestoreStartup,
                                                    APP_ZIGBEE_Generic_Cmd_Rsp_cb, NULL);
   if (status != ZCL_STATUS_SUCCESS) {
     APP_DBG("Error, ZbZclCommissionClientSendResetStartup failed");
@@ -434,7 +434,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   /* We want the receiver to install the current set of startup parameters before restarting */
   RestartDeviceReq.options = ZCL_COMMISS_RESTART_OPTS_MODE_USE_STARTUP;
   RestartDeviceReq.delay = ZR_RESTART_DEVICE_DELAY;
-  status = ZbZclCommissionClientSendRestart(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, &RestartDeviceReq,
+  status = ZbZclCommissionClientSendRestart(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, COMMISSIONING_DEST_ENDPOINT,&RestartDeviceReq,
                                             APP_ZIGBEE_Generic_Cmd_Rsp_cb, NULL);
   if (status != ZCL_STATUS_SUCCESS) {
     APP_DBG("Error, ZbZclCommissionClientSendRestart failed");
@@ -453,8 +453,8 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
  * @retval None
  */
 static void APP_ZIGBEE_NwkInfo(void){
-  ZbNlmeGetInterfaceReqT ZbNlmeReq;
-  ZbNlmeGetInterfaceConfT ZbNlmeConf;
+  struct ZbNlmeGetInterfaceReqT ZbNlmeReq;
+  struct ZbNlmeGetInterfaceConfT ZbNlmeConf;
   uint64_t epid = 0;
   uint32_t channelInUse = 0 ;
   
@@ -610,7 +610,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
   /* Commissioning Client */
-  zigbee_app_info.commissioning_client = ZbZclCommissionClientAlloc(zigbee_app_info.zb, ZCL_PROFILE_HOME_AUTOMATION, false);
+  zigbee_app_info.commissioning_client = ZbZclCommissionClientAlloc(zigbee_app_info.zb, COMMISSIONING_DEST_ENDPOINT,ZCL_PROFILE_HOME_AUTOMATION, false);
   assert(zigbee_app_info.commissioning_client != NULL);
   ZbZclClusterEndpointRegister(zigbee_app_info.commissioning_client);
 

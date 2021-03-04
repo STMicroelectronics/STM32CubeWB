@@ -143,7 +143,7 @@ static SVCCTL_EvtAckStatus_t Motenv_Event_Handler(void *Event)
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt *event_pckt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
   aci_gatt_attribute_modified_event_rp0    * attribute_modified;
   aci_gatt_read_permit_req_event_rp0 *read_permit_req;
   MOTENV_STM_App_Notification_evt_t Notification;
@@ -153,15 +153,15 @@ static SVCCTL_EvtAckStatus_t Motenv_Event_Handler(void *Event)
 
   switch(event_pckt->evt)
   {
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
-      blue_evt = (evt_blue_aci*)event_pckt->data;
-      switch(blue_evt->ecode)
+      blecore_evt = (evt_blecore_aci*)event_pckt->data;
+      switch(blecore_evt->ecode)
       {
         /* Handle Read request from GATT Client */
-        case EVT_BLUE_GATT_READ_PERMIT_REQ:
+        case ACI_GATT_READ_PERMIT_REQ_VSEVT_CODE:
         {
-          read_permit_req = (aci_gatt_read_permit_req_event_rp0*)blue_evt->data;
+          read_permit_req = (aci_gatt_read_permit_req_event_rp0*)blecore_evt->data;
           /* Env char */
           if(read_permit_req->Attribute_Handle == (aMotenvContext.HWEnvCharHdle + 1U))
           {
@@ -251,9 +251,9 @@ static SVCCTL_EvtAckStatus_t Motenv_Event_Handler(void *Event)
         }
 
         /* Handle Write request or Notification enabling from GATT Client */
-        case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+        case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
        {
-          attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blue_evt->data;
+          attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blecore_evt->data;
           /* Env char */
           if(attribute_modified->Attr_Handle == (aMotenvContext.HWEnvCharHdle + 2U))
           {
@@ -559,7 +559,7 @@ static SVCCTL_EvtAckStatus_t Motenv_Event_Handler(void *Event)
         default:
           break;
       }
-      break; /* HCI_EVT_VENDOR_SPECIFIC */
+      break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
     }
 
     default:

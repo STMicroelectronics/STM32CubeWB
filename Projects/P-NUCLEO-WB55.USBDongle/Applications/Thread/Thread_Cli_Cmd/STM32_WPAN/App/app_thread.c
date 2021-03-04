@@ -1,21 +1,22 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    app_thread.c
- * @author  MCD Application Team
- * @brief   Thread Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  * File Name          : App/app_thread.c
+  * Description        : Thread Application.
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -51,6 +52,7 @@
 /* USER CODE BEGIN PD */
 
 /* USER CODE END PD */
+
 /* Private macros ------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
@@ -69,6 +71,12 @@ static void HostTxCb( void );
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
+#if (CFG_HW_LPUART1_ENABLED == 1)
+extern void MX_LPUART1_UART_Init(void);
+#endif
+#if (CFG_HW_USART1_ENABLED == 1)
+extern void MX_USART1_UART_Init(void);
+#endif
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 static uint32_t ProcessCmdString(uint8_t* buf , uint32_t len);
 #else
@@ -105,18 +113,22 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
+extern uint8_t g_ot_notification_allowed;
 
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
+
 /* Functions Definition ------------------------------------------------------*/
+
 void APP_THREAD_Init( void )
 {
   /* USER CODE BEGIN APP_THREAD_INIT_1 */
 
   /* USER CODE END APP_THREAD_INIT_1 */
+
   SHCI_CmdStatus_t ThreadInitStatus;
-  
+
   /* Check the compatibility with the Coprocessor Wireless Firmware loaded */
   APP_THREAD_CheckWirelessFirmwareInfo();
 
@@ -140,7 +152,7 @@ void APP_THREAD_Init( void )
 
   /* Send Thread start system cmd to M0 */
   ThreadInitStatus = SHCI_C2_THREAD_Init();
-  
+
   /* Prevent unused argument(s) compilation warning */
   UNUSED(ThreadInitStatus);
 
@@ -151,10 +163,11 @@ void APP_THREAD_Init( void )
   /* USER CODE BEGIN INIT TASKS */
 
   /* USER CODE END INIT TASKS */
+
   /* Initialize and configure the Thread device*/
   APP_THREAD_DeviceConfig();
-  /* USER CODE BEGIN APP_THREAD_INIT_2 */
 
+  /* USER CODE BEGIN APP_THREAD_INIT_2 */
 
   /* USER CODE END APP_THREAD_INIT_2 */
 }
@@ -169,7 +182,7 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
 {
   /* USER CODE BEGIN APP_THREAD_Error_1 */
 
-  /* USER CODE APP_THREAD_Error_1 */
+  /* USER CODE END APP_THREAD_Error_1 */
   switch(ErrId)
   {
   case ERR_REC_MULTI_MSG_FROM_M0 :
@@ -201,35 +214,25 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
 
 /**
  * @brief Thread initialization.
- *        Through this initialization, the application will be notified
- *        each time the state of the Thread device is being modified.
- *        The states available are OT_DEVICE_ROLE_DISABLED,
- *        OT_DEVICE_ROLE_DETACHED, OT_DEVICE_ROLE_CHILD,
- *        OT_DEVICE_ROLE_ROUTER and OT_DEVICE_ROLE_LEADER.
- *
  * @param  None
  * @retval None
  */
 static void APP_THREAD_DeviceConfig(void)
 {
   otError error;
-
   error = otSetStateChangedCallback(NULL, APP_THREAD_StateNotif, NULL);
   if (error != OT_ERROR_NONE)
   {
     APP_THREAD_Error((uint32_t)ERR_THREAD_SET_STATE_CB, (uint32_t)ERR_INTERFACE_FATAL);
   }
+
+  /* USER CODE BEGIN DEVICECONFIG */
+
+  /* USER CODE END DEVICECONFIG */
 }
 
 /**
  * @brief Thread notification when the state changes.
- *        When the Thread device change state, a specific LED
- *        color is being displayed.
- *        LED2 On (Green) means that the device is in "Leader" mode.
- *        LED3 On (Red) means that the device is in "Child: mode or
- *             in "Router" mode.
- *        LED2 and LED3 off means that the device is in "Disabled"
- *             or "Detached" mode.
  * @param  aFlags  : Define the item that has been modified
  *         aContext: Context
  *
@@ -354,6 +357,7 @@ static void APP_THREAD_CheckWirelessFirmwareInfo(void)
   }
 }
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
+
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
@@ -382,14 +386,7 @@ Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void)
   return (Thread_OT_Cmd_Request_t*)(p_thread_notif_M0_to_M4)->evtserial.evt.payload;
 }
 
-/**
- * @brief  This function is used to transfer the Ot commands from the
- *         M4 to the M0.
- *
- * @param   None
- * @return  None
- */
-void Ot_Cmd_Transfer(void)
+static void Ot_Cmd_Transfer_Common(void)
 {
   /* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352 */
   p_thread_otcmdbuffer->cmdserial.cmd.cmdcode = 0x280U;
@@ -405,6 +402,33 @@ void Ot_Cmd_Transfer(void)
 }
 
 /**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_Transfer(void)
+{
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0 with Notification M0 to M4 allowed.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_TransferWithNotif(void)
+{
+  /* Flag to specify to UTIL_SEQ_EvtIdle that M0 to M4 notifications are allowed */
+  g_ot_notification_allowed = 1U;
+
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
  * @brief  This function is called when acknowledge from OT command is received from the M0+.
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -416,6 +440,9 @@ void TL_OT_CmdEvtReceived( TL_EvtPacket_t * Otbuffer )
   UNUSED(Otbuffer);
 
   Receive_Ack_From_M0();
+
+  /* Does not allow OpenThread M0 to M4 notification */
+  g_ot_notification_allowed = 0U;
 }
 
 /**
@@ -590,8 +617,10 @@ void APP_THREAD_Init_UART_CLI(void)
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
-  HW_UART_Init(CFG_CLI_UART);
+#if (CFG_FULL_LOW_POWER == 0)
+  MX_USART1_UART_Init();
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
+#endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 }
 

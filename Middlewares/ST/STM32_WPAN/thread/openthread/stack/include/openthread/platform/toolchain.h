@@ -63,15 +63,6 @@
 extern "C" {
 #endif
 
-#ifdef _WIN32
-#pragma warning(disable : 4214) // nonstandard extension used: bit field types other than int
-#ifdef _KERNEL_MODE
-#include <ntdef.h>
-#else
-#include <windows.h>
-#endif
-#endif /* _WIN32 */
-
 /**
  * @def OT_TOOL_PACKED_BEGIN
  *
@@ -108,20 +99,6 @@ extern "C" {
  *
  */
 
-/**
- * @def OT_CALL
- *
- * Compiler-specific function modifier, ie: Win DLL support
- *
- */
-
-/**
- * @def OT_CDECL
- *
- * Compiler-specific function modifier, ie: Win DLL support
- *
- */
-
 // =========== TOOLCHAIN SELECTION : START ===========
 
 #if defined(__GNUC__) || defined(__clang__) || defined(__CC_ARM) || defined(__TI_ARM__)
@@ -148,15 +125,6 @@ extern "C" {
 #define OT_TOOL_WEAK __weak
 
 #define OT_TOOL_ALIGN(X)
-
-#elif defined(_MSC_VER)
-
-#define OT_TOOL_PACKED_BEGIN __pragma(pack(push, 1))
-#define OT_TOOL_PACKED_FIELD
-#define OT_TOOL_PACKED_END __pragma(pack(pop))
-#define OT_TOOL_WEAK
-
-#define OT_TOOL_ALIGN(X) __declspec(align(4))
 
 #elif defined(__SDCC)
 
@@ -185,45 +153,6 @@ extern "C" {
 #endif
 
 // =========== TOOLCHAIN SELECTION : END ===========
-
-/**
- * @def OTAPI
- *
- * Compiler-specific modifier for public API declarations.
- *
- */
-
-/**
- * @def OTCALL
- *
- * Compiler-specific modifier to export functions in a DLL.
- *
- */
-
-#ifdef _MSC_VER
-
-#ifdef _WIN64
-#define OT_CDECL
-#else
-#define OT_CDECL __cdecl
-#endif
-
-#else
-
-#define OT_CALL
-#define OT_CDECL
-
-#endif
-
-#ifdef OTDLL
-#ifndef OTAPI
-#define OTAPI __declspec(dllimport)
-#endif
-#define OTCALL WINAPI
-#else
-#define OTAPI
-#define OTCALL
-#endif
 
 /**
  * @def OT_UNUSED_VARIABLE
@@ -298,6 +227,23 @@ extern "C" {
 
 #define OT_UNREACHABLE_CODE(CODE) CODE
 
+#endif
+
+/*
+ * Keil and IAR compiler doesn't provide type limits for C++.
+ */
+#ifdef __cplusplus
+#if defined(__CC_ARM) || defined(__ICCARM__)
+
+#ifndef UINT8_MAX
+#define UINT8_MAX 0xff
+#endif
+
+#ifndef UINT16_MAX
+#define UINT16_MAX 0xffff
+#endif
+
+#endif
 #endif
 
 /**

@@ -2,15 +2,11 @@
  * @file zigbee.aps.h
  * @brief APS header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_APS_H
 # define ZIGBEE_APS_H
-
-#if defined ( __CC_ARM   )
-#pragma anon_unions
-#endif
 
 /*---------------------------------------------------------------
  * Definitions
@@ -27,21 +23,21 @@
 #define ZB_APS_CONST_SECURITY_OVERHEAD              (5U + ZB_SEC_MIC_LENGTH_5)
 
 /* For embedded application using the zigbee mempool, the maximum size
- * we can allocate is slightly larger than 2000 bytes. */
+ * we can allocate is slightly larger than 2000 bytes */
 #define ZB_APS_CONST_MAX_FRAG_SIZE                  2000U
 
-/* Maximum APS payload size if no security at all. */
+/* Maximum APS payload size if no security at all */
 #define ZB_APS_CONST_MAX_UNSECURED_PAYLOAD_SIZE     (ZB_NWK_CONST_MAX_PAYLOAD_SIZE /* 108 */ - \
                                                      ZB_APS_CONST_MIN_HEADER_OVERHEAD /* 8 */) /* = 100 */
 
 /* Maximum (unfragmented) APS payload, assuming a NWK secured packet and no many-to-one source routing.
- * Note, if fragmentation is allowed, subtract 2 for the APS extended header, which gives a value of 80. */
+ * Note, if fragmentation is allowed, subtract 2 for the APS extended header, which gives a value of 80 */
 #define ZB_APS_CONST_MAX_PAYLOAD_SIZE               (ZB_NWK_CONST_MAX_PAYLOAD_SIZE /* 108 */ - \
                                                      ZB_NWK_CONST_SECURITY_OVERHEAD /* 18 */ - \
                                                      ZB_APS_CONST_MIN_HEADER_OVERHEAD /* 8 */) /* = 82 */
 
 /* Maximum (unfragmented) APS payload, assuming a NWK secured packet
- * with many-to-one source routing (source routing level = 6). */
+ * with many-to-one source routing (source routing level = 6) */
 #define ZB_APS_CONST_SAFE_NWKSEC_PAYLOAD_SIZE       (ZB_NWK_CONST_MAX_PAYLOAD_SIZE /* 108 */ - \
                                                      ZB_NWK_CONST_SECURITY_OVERHEAD /* 18 */ - \
                                                      4U /* source router header */ - \
@@ -50,7 +46,7 @@
                                                      ZB_APS_CONST_MIN_HEADER_OVERHEAD /* 8 */) /* = 66 */
 
 /* Maximum (unfragmented) APS payload, assuming an APS secured packet
- * with many-to-one source routing (source routing level = 6). */
+ * with many-to-one source routing (source routing level = 6) */
 #define ZB_APS_CONST_SAFE_APSSEC_PAYLOAD_SIZE       (ZB_NWK_CONST_MAX_PAYLOAD_SIZE /* 108 */ - \
                                                      ZB_NWK_CONST_SECURITY_OVERHEAD /* 18 */ - \
                                                      4U /* source router header */ - \
@@ -75,8 +71,9 @@
 #define ZB_ENDPOINT_MIN                             0x00U /*   0 */
 #define ZB_ENDPOINT_ZDO                             0x00U /*   0 */
 #define ZB_ENDPOINT_FINDBIND_MIN                    0x01U /*   1 */
-#define ZB_ENDPOINT_FINDBIND_MAX                    0xefU /* 239 */
-#define ZB_ENDPOINT_CBKE_DEFAULT                    0xf0U /* 240 */
+#define ZB_ENDPOINT_FINDBIND_MAX                    0xf0U /* 240 */
+#define ZB_ENDPOINT_CBKE_DEFAULT                    ZB_ENDPOINT_FINDBIND_MAX
+/* Endpoints 241 to 254 are assigned by the Zigbee Alliance */
 #define ZB_ENDPOINT_GREENPOWER                      0xf2U /* 242 */
 #define ZB_ENDPOINT_MAX                             0xfeU /* 254 */
 #define ZB_ENDPOINT_BCAST                           0xffU /* 255 */
@@ -86,24 +83,28 @@
 #define ZB_ENDPOINT_INTERPAN                        (ZB_ENDPOINT_INTERNAL + 0U)
 #define ZB_ENDPOINT_GROUP                           (ZB_ENDPOINT_INTERNAL + 1U)
 
-/* APS Command Frame Ids */
+/* Global Commissioning EPID (See ZCL 7 Spec section 13.2.4.1 Global Commissioning EPID)
+ * 00-50-C2-77-10-00-00-00 */
+#define ZB_EPID_GLOBAL_COMMISSIONING                0x0050c27710000000ULL
+
+/** APS Command Frame IDs */
 enum ZbApsCmdIdT {
     /* ZB_APS_CMD_SKKE_1 = 0x01, deprecated as of R21 */
     /* ZB_APS_CMD_SKKE_2 = 0x02, deprecated as of R21 */
     /* ZB_APS_CMD_SKKE_3 = 0x03, deprecated as of R21 */
     /* ZB_APS_CMD_SKKE_4 = 0x04, deprecated as of R21 */
-    ZB_APS_CMD_TRANSPORT_KEY = 0x05,
-    ZB_APS_CMD_UPDATE_DEVICE = 0x06,
-    ZB_APS_CMD_REMOVE_DEVICE = 0x07,
-    ZB_APS_CMD_REQUEST_KEY = 0x08,
-    ZB_APS_CMD_SWITCH_KEY = 0x09,
+    ZB_APS_CMD_TRANSPORT_KEY = 0x05, /**< Transport Key */
+    ZB_APS_CMD_UPDATE_DEVICE = 0x06, /**< Update Device */
+    ZB_APS_CMD_REMOVE_DEVICE = 0x07, /**< Remove Device */
+    ZB_APS_CMD_REQUEST_KEY = 0x08, /**< Request Key */
+    ZB_APS_CMD_SWITCH_KEY = 0x09, /**< Switch Key */
     /* ZB_APS_CMD_EA_INIT_CHLNG = 0x0a, deprecated as of R21 */
     /* ZB_APS_CMD_EA_RESP_CHLNG = 0x0b, deprecated as of R21 */
     /* ZB_APS_CMD_EA_INIT_DATA = 0x0c, deprecated as of R21 */
     /* ZB_APS_CMD_EA_RESP_DATA = 0x0d, deprecated as of R21 */
-    ZB_APS_CMD_TUNNEL = 0x0e,
-    ZB_APS_CMD_VERIFY_KEY = 0x0f,
-    ZB_APS_CMD_CONFIRM_KEY = 0x10
+    ZB_APS_CMD_TUNNEL = 0x0e, /**< Tunnel Data */
+    ZB_APS_CMD_VERIFY_KEY = 0x0f, /**< Verify-Key */
+    ZB_APS_CMD_CONFIRM_KEY = 0x10 /**< Confirm-Key */
 };
 
 /*---------------------------------------------------------------
@@ -112,10 +113,10 @@ enum ZbApsCmdIdT {
  */
 /** APSDE and Interpan Addressing Modes */
 enum ZbApsAddrModeT {
-    ZB_APSDE_ADDRMODE_NOTPRESENT = 0,
-    ZB_APSDE_ADDRMODE_GROUP,
-    ZB_APSDE_ADDRMODE_SHORT,
-    ZB_APSDE_ADDRMODE_EXT,
+    ZB_APSDE_ADDRMODE_NOTPRESENT = 0, /**< DstAddress and DstEndpoint not present */
+    ZB_APSDE_ADDRMODE_GROUP, /**< 16-bit group address for DstAddress; DstEndpoint not present */
+    ZB_APSDE_ADDRMODE_SHORT, /**< 16-bit address for DstAddress and DstEndpoint present */
+    ZB_APSDE_ADDRMODE_EXT, /**< 64-bit extended address for DstAddress and DstEndpoint present */
     ZB_APSDE_ADDRMODE_IPGROUP /**< InterPAN */
 };
 
@@ -125,135 +126,133 @@ struct ZbApsAddrT {
 
     uint16_t endpoint;
     /**< Destination endpoint. If set to ZB_ENDPOINT_INTERPAN, then packet is
-     * sent as an InterPAN packet. */
+     * sent as an InterPAN packet */
 
     uint16_t panId;
     /**< Destination PAN Id. This is for InterPAN packets, when the
-     * endpoint == ZB_ENDPOINT_INTERPAN. */
+     * endpoint == ZB_ENDPOINT_INTERPAN */
 
     uint16_t nwkAddr;
     /**< Destination network address when mode == ZB_APSDE_ADDRMODE_SHORT,
-     * ZB_APSDE_ADDRMODE_GROUP or ZB_APSDE_ADDRMODE_IPGROUP. */
+     * ZB_APSDE_ADDRMODE_GROUP or ZB_APSDE_ADDRMODE_IPGROUP */
 
-    uint64_t extAddr; /**< Destination extended address when mode == ZB_APSDE_ADDRMODE_EXT. */
+    uint64_t extAddr; /**< Destination extended address when mode == ZB_APSDE_ADDRMODE_EXT */
 };
 
-/* Helper struct to send using binding */
-extern const struct ZbApsAddrT *ZbApsAddrBinding;
+/** Helper struct to send using binding */
+extern const struct ZbApsAddrT *ZbApsAddrBinding; /**< Pointer to APS address binding */
 
-/**
+/*
  * @name APSDE.DATA.request (TxOptions)
  * APSDE Transmit Options
  */
-/**@{*/
-/** TxOptions (Security enabled transmission). If set, use payload security. */
+/*@{*/
+/* TxOptions (Security enabled transmission). If set, use payload security */
 #define ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY         0x0001U
-/** TxOptions (Use NWK key). If set and ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY is set, use NWK security only.
+/* TxOptions (Use NWK key). If set and ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY is set, use NWK security only.
  * If not set and ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY is set, use APS and NWK security. */
 /* Developer note: this flag used to mean that the APS payload would be separately
  * encrypted with the NWK key. However, since all NWK payloads are encrypted, this
  * process is a waste of time. */
 #define ZB_APSDE_DATAREQ_TXOPTIONS_NWKKEY           0x0002U
-/** TxOptions (Acknowledged transmission) */
+/* TxOptions (Acknowledged transmission) */
 #define ZB_APSDE_DATAREQ_TXOPTIONS_ACK              0x0004U
-/** TxOptions (Fragmentation permitted) */
+/* TxOptions (Fragmentation permitted) */
 #define ZB_APSDE_DATAREQ_TXOPTIONS_FRAG             0x0008U
-/** TxOptions (Include extended nonce in APS security frame)
+/* TxOptions (Include extended nonce in APS security frame)
  * Note, this will be ignored if ZB_APSDE_DATAREQ_TXOPTIONS_NWKKEY is set. */
 #define ZB_APSDE_DATAREQ_TXOPTIONS_NONCE            0x0010U
-/** TxOptions (ASDU is an array of struct ZbApsBufT structures)
+/* TxOptions (ASDU is an array of struct ZbApsBufT structures)
  * [Exegin Custom] When the VECTOR option is set, the ASDU points instead
  * to an array of struct ZbApsBufT structures that point to fragments of the
  * message to assemble into one ASDU, and the ASDU length is the number of
  * buffer structures. This is used for scatter-gather mode API calls to
  * reduce heap activity. */
 #define ZB_APSDE_DATAREQ_TXOPTIONS_VECTOR           0x0100U
-/** TxOptions (UseAlias)
+/* TxOptions (UseAlias)
  * [Exegin Custom] If set, request alias usage by NWK layer for the current frame.
  * This is used in place of the separate useAlias parameter defined in the spec. */
 #define ZB_APSDE_DATAREQ_TXOPTIONS_ALIAS            0x0200U
-/**@}*/
+/*@}*/
 
 /**
  * Buffer descriptor for vectored/scatter-gather API.
  * Used when ZB_APSDE_DATAREQ_TXOPTIONS_VECTOR TX Options bit is set.
  */
-typedef struct ZbApsBufT {
-    const uint8_t *data;
-    unsigned int len;
-} ZbApsBufT;
+struct ZbApsBufT {
+    const uint8_t *data; /**< Data */
+    unsigned int len; /**< Length */
+};
 
 /**
  * APSDE-DATA.request data structure
  */
-typedef struct ZbApsdeDataReqT {
-    struct ZbApsAddrT dst; /**< Destination address information, including address mode, address and endpoint. */
-    uint16_t profileId; /**< The profile for which this frame is intended. */
-    uint16_t clusterId; /**< The object for which this frame is intended. */
-    uint16_t srcEndpt; /**< The source endpoint. */
-    const void *asdu; /**< The set of octets comprising the ASDU to be transfered. */
-    uint16_t asduLength; /**< The number of octets comprising the ASDU. */
-    uint32_t asduHandle; /**< An optional handle Id to use in order to match up with the APSDE-DATA.confirm. */
-    uint16_t txOptions; /**< Transmit options bitmask (e.g. ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY) */
+struct ZbApsdeDataReqT {
+    struct ZbApsAddrT dst; /**< DstAddress - DstEndpoint Destination address information, including address mode, address and endpoint */
+    uint16_t profileId; /**< ProfileId - ProfileId The profile for which this frame is intended */
+    uint16_t clusterId; /**< ClusterId - The object for which this frame is intended */
+    uint16_t srcEndpt; /**< SrcEndpoint - The source endpoint */
+    const void *asdu; /**< ASDU - The set of octets comprising the ASDU to be transferred */
+    uint16_t asduLength; /**< ASDULength - The number of octets comprising the ASDU */
+    uint32_t asduHandle; /**< An optional handle ID to use in order to match up with the APSDE-DATA.confirm */
+    uint16_t txOptions; /**< TxOptions -Transmit options bitmask (e.g. ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY) */
     bool discoverRoute;
-    /**< If you perform route discovery separately using ZbNlmeRouteDiscReq(),
+    /**< discoverRoute - If you perform route discovery separately using ZbNlmeRouteDiscReq(),
      * then you can set discoverRoute to zero, decreasing the length of time
      * an APS data request may take if there is a problem sending the packet
-     * to the target. */
-    uint8_t radius; /**< Network radius. If 0, default value is used. */
-    uint16_t aliasAddr; /**< Requires ZB_APSDE_DATAREQ_TXOPTIONS_ALIAS to be enabled. */
-    uint8_t aliasSeqnum; /**< Requires ZB_APSDE_DATAREQ_TXOPTIONS_ALIAS to be enabled. */
-} ZbApsdeDataReqT;
+     * to the target */
+    uint8_t radius; /**< Radius - Network radius. If 0, default value is used */
+    uint16_t aliasAddr; /**< AliasSrcAddr - Requires ZB_APSDE_DATAREQ_TXOPTIONS_ALIAS to be enabled */
+    uint8_t aliasSeqnum; /**< AliasSeqNumb - Requires ZB_APSDE_DATAREQ_TXOPTIONS_ALIAS to be enabled */
+};
 
 /**
  * APSDE-DATA.confirm data structure
  */
-typedef struct ZbApsdeDataConfT {
-    struct ZbApsAddrT dst; /**< Destination address information of the APSDE-DATA.request */
-    uint8_t srcEndpt; /**< Source endpoint of the APSDE-DATA.request */
-    uint32_t asduHandle; /**< The optional handle Id from the APSDE-DATA.request */
+struct ZbApsdeDataConfT {
+    struct ZbApsAddrT dst; /**< DstAddrMode - Destination address information of the APSDE-DATA.request */
+    uint8_t srcEndpt; /**< SrcEndpoint - Source endpoint of the APSDE-DATA.request */
+    uint32_t asduHandle; /**< The optional handle ID from the APSDE-DATA.request */
     enum ZbStatusCodeT status; /**< Zigbee Status Code */
-} ZbApsdeDataConfT;
+};
 
 /**
  * APSDE-DATA.indication data structure.
  * These messages are received from the stack after setting up the proper message
  * filter using ZbApsFilterEndpointAdd or ZbApsFilterClusterAdd.
  */
-typedef struct ZbApsdeDataIndT {
-    struct ZbApsAddrT dst; /**< Destination address information of the incoming APS message. */
-    struct ZbApsAddrT src; /**< Source address information of the incoming APS message. */
-    uint16_t profileId; /**< The profile for which this frame is intended. */
-    uint16_t clusterId; /**< The object for which this frame is intended. */
-    uint8_t *asdu; /**< The set of octets comprising the ASDU that was received. */
-    uint16_t asduLength; /**< The number of octets comprising the ASDU. */
+struct ZbApsdeDataIndT {
+    struct ZbApsAddrT dst; /**< DstAddress - Destination address information of the incoming APS message */
+    struct ZbApsAddrT src; /**< SrcAddress - Source address information of the incoming APS message */
+    uint16_t profileId; /**< ProfileId - The profile for which this frame is intended */
+    uint16_t clusterId; /**< ClusterId - The object for which this frame is intended */
+    uint8_t *asdu; /**< asdu - The set of octets comprising the ASDU that was received */
+    uint16_t asduLength; /**< asduLength - The number of octets comprising the ASDU */
 
     enum ZbStatusCodeT securityStatus;
-    /**< The security level used to encrypt the incoming frame. One of:
-     *      ZB_APS_STATUS_UNSECURED             (no decryption necessary)
-     *      ZB_APS_STATUS_SECURED_NWK_KEY       (decrypted with the Network Key)
-     *      ZB_APS_STATUS_SECURED_LINK_KEY      (decrypted with a Link Key) */
+    /**< SecurityStatus - The security level used to encrypt the incoming frame. One of:
+     * ZB_APS_STATUS_UNSECURED (no decryption necessary),
+     * ZB_APS_STATUS_SECURED_NWK_KEY (decrypted with the Network Key),
+     * ZB_APS_STATUS_SECURED_LINK_KEY, (decrypted with a Link Key) */
 
     uint8_t linkQuality;
-    /**< The incoming Link Quality value, or set to 0 if not supported by
-     * lower layers. */
+    /**< LinkQuality - The incoming Link Quality value, or set to 0 if not supported by
+     * lower layers */
 
     int8_t rssi;
     /**< The incoming RSSI value, or set to PHY_RSSI_INVALID (-128) if not
-     * supported by lower layers. */
+     * supported by lower layers */
 
-    uint16_t linkAddr; /**< Exegin Addon for Inter-PAN portability. */
-} ZbApsdeDataIndT;
+    uint16_t linkAddr; /**< Exegin Addon for Inter-PAN portability */
+};
 
 /**
- * @brief Send an APSDE-DATA.request
- *
- * If the packet was queued, ZB_STATUS_SUCCESS is returned. Otherwise, an error status is returned.
+ * Send an APSDE-DATA.request.
  * @param zb Zigbee instance
  * @param req APSDE-DATA.request data structure
- * @param callback Application callback to call for APSDE-DATA.confirm. May be set to NULL.
- * @param arg Application callback argument, which will be passed to callback().
- * @return Zigbee Status Code
+ * @param callback Application callback to call for APSDE-DATA.confirm. May be set to NULL
+ * @param arg Application callback argument, which will be passed to callback()
+ * @return ZCL_STATUS_SUCCESS If the packet was queued, or other ZclStatusCodeT value on error
  */
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbApsdeDataReqCallback(struct ZigBeeT *zb, struct ZbApsdeDataReqT *req,
     void (*callback)(struct ZbApsdeDataConfT *conf, void *arg), void *arg);
@@ -262,256 +261,399 @@ enum ZbStatusCodeT ZB_WARN_UNUSED ZbApsdeDataReqCallback(struct ZigBeeT *zb, str
  * APSME
  *---------------------------------------------------------------
  */
-/* APS IB Attributes */
+/** APS IB Attributes */
 enum ZbApsmeIbAttrIdT {
-    ZB_APS_IB_ID_ADDRESS_MAP = 0xc0, /* 0xc0 Removed in ZigBee 2007 */
-    ZB_APS_IB_ID_BINDING_TABLE, /* 0xc1 (struct ZbApsmeBindT) */
-    ZB_APS_IB_ID_DESIGNATED_COORD, /* 0xc2 (uint8_t) */
-    ZB_APS_IB_ID_CHANNEL_MASK, /* 0xc3 (struct ZbChannelListT) Converted to a list in R22. */
-    ZB_APS_IB_ID_USE_EPID, /* 0xc4 (uint64_t) */
-    ZB_APS_IB_ID_GROUP_TABLE, /* 0xc5 (struct ZbApsmeGroupT) */
+    /* ZB_APS_IB_ID_ADDRESS_MAP = 0xc0, Removed in ZigBee 2007 */
+    ZB_APS_IB_ID_BINDING_TABLE = 0xc1, /**< apsBindingTable - 0xc1 (struct ZbApsmeBindT) */
+    ZB_APS_IB_ID_DESIGNATED_COORD, /**<0 apsDesignatedCoordinator - 0xc2 (uint8_t) */
+    ZB_APS_IB_ID_CHANNEL_MASK, /**< apsChannelMaskList - 0xc3 (struct ZbChannelListT) Converted to a list in R22 */
+    ZB_APS_IB_ID_USE_EPID, /**< apsUseExtendedPANID - 0xc4 (uint64_t) */
+    ZB_APS_IB_ID_GROUP_TABLE, /**< apsGroupTable - 0xc5 (struct ZbApsmeGroupT) */
     ZB_APS_IB_ID_NONMEMBER_RADIUS, /* 0xc6 (uint8_t) */
-    ZB_APS_IB_ID_USE_INSECURE_JOIN = 0xc8, /* 0xc8 (uint8_t) */
-    ZB_APS_IB_ID_INTERFRAME_DELAY, /* 0xc9 (uint8_t) */
-    ZB_APS_IB_ID_LAST_CHANNEL_ENERGY, /* 0xca (uint8_t) */
-    ZB_APS_IB_ID_LAST_CHANNEL_FAILRATE, /* 0xcb (uint8_t) */
-    ZB_APS_IB_ID_CHANNEL_TIMER, /* 0xcc (ZbUptimeT) */
-    ZB_APS_IB_ID_MAX_WINDOW_SIZE, /* 0xcd (uint8_t) */
+    ZB_APS_IB_ID_USE_INSECURE_JOIN = 0xc8, /**< apsUseInsecureJoin - 0xc8 (uint8_t) */
+    ZB_APS_IB_ID_INTERFRAME_DELAY, /**< apsInterframeDelay - 0xc9 (uint8_t) */
+    ZB_APS_IB_ID_LAST_CHANNEL_ENERGY, /**< apsLastChannelEnergy - 0xca (uint8_t) */
+    ZB_APS_IB_ID_LAST_CHANNEL_FAILRATE, /**< apsLastChannelFailureRate - 0xcb (uint8_t) */
+    ZB_APS_IB_ID_CHANNEL_TIMER, /**< apsChannelTimer - 0xcc (ZbUptimeT) */
+    ZB_APS_IB_ID_MAX_WINDOW_SIZE, /**< apsMaxWindow Size - 0xcd (uint8_t) */
 
     /*** Security attributes ***/
-    ZB_APS_IB_ID_DEVICE_KEY_PAIR_SET = 0xaa, /* 0xaa (struct ZbApsmeKeyPairT) */
-    ZB_APS_IB_ID_TRUST_CENTER_ADDRESS, /* 0xab (uint64_t) */
-    ZB_APS_IB_ID_SECURITY_TIMEOUT_PERIOD, /* 0xac (uint16_t) */
+    ZB_APS_IB_ID_DEVICE_KEY_PAIR_SET = 0xaa, /**< apsDeviceKeyPairSet - 0xaa (struct ZbApsmeKeyPairT) */
+    ZB_APS_IB_ID_TRUST_CENTER_ADDRESS, /**< apsTrustCenterAddress - 0xab (uint64_t) */
+    ZB_APS_IB_ID_SECURITY_TIMEOUT_PERIOD, /**< apsSecurityTimeOutPeriod - 0xac (uint16_t), milliseconds */
 
-    /* Trust center policy table bitmask (type = uint32_t, enum ZbApsmePolicyT).
+    ZB_APS_IB_ID_TRUST_CENTER_POLICY,
+    /**< trustCenterPolicies - Trust center policy table bitmask (type = uint32_t, enum ZbApsmePolicyT)
      * Represents the following AIBs:
-     *      allowJoins = 0xad
-     *      useWhiteList = 0xae
-     *      allowInstallCodes = 0xaf
-     *      updateTrustCenterLinkKeysRequired = 0xb3
-     *      allowRejoins = 0xb6
-     *      allowTrustCenterLinkKeyRequests = 0xb7
-     *      networkKeyUpdateMethod = 0xba
-     *      allowApplicationKeyRequests = 0xbb
-     *      allowRemoteTcPolicyChange = 0xbd */
-    ZB_APS_IB_ID_TRUST_CENTER_POLICY, /* 0xad (type = uint32_t, enum ZbApsmePolicyT) */
+     * allowJoins = 0xad,
+     * requireInstallCodesOrPresetPassphrase = 0xaf,
+     * updateTrustCenterLinkKeysRequired = 0xb3,
+     * allowRejoinsWithWellKnownKey = 0xb6,
+     * allowTrustCenterLinkKeyRequests = 0xb7,
+     * networkKeyUpdateMethod = 0xba,
+     * allowApplicationKeyRequests = 0xbb,
+     * allowRemoteTcPolicyChange = 0xbd */
 
-    /*** Exegin extensions (0x500 to 0x5ff reserved for custom AIBs) ***/
-    ZB_APS_IB_ID_SCAN_COUNT = 0x0500, /* (uint8_t) ZDO join parameter. Is not modified by ZbApsReset. */
-    ZB_APS_IB_ID_LEAVE_REMOVE_CHILDREN, /* (uint8_t) ZDO leave parameter */
-    /* apsPreconfiguredLinkKey -- Preconfigured Trust Center Link Key */
-    ZB_APS_IB_ID_PRECONFIGURED_LINK_KEY, /* (uint8_t[ZB_SEC_KEYSIZE]) */
-    /* apsDistributedGlobalKey */
-    ZB_APS_IB_ID_DISTRIBUTED_GLOBAL_KEY, /* (uint8_t[ZB_SEC_KEYSIZE]) */
-    /* KeyUpdatePeriod from the trust center policy table. */
-    ZB_APS_IB_ID_KEY_UPDATE_PERIOD, /* (uint32_t) */
-    ZB_APS_IB_ID_MANUFACTURER_ID, /* (uint16_t) Manufacturer ID */
-    ZB_APS_IB_ID_SEND_PKT_COOLDOWN, /* (uint16_t) milliseconds */
-    ZB_APS_IB_ID_BIND_ADDR_RESOLVE_PERIOD, /* (uint16_t) seconds, 0 = disabled */
-    ZB_APS_IB_ID_FRAGMENTATION_THRESH /* apsFragmentationThresh */
+    /* Exegin extensions (0x500 to 0x5ff reserved for custom AIBs) */
+    ZB_APS_IB_ID_SCAN_COUNT = 0x0500, /**<  ZDO join parameter - Is not modified by ZbApsReset (uint8_t) */
+    ZB_APS_IB_ID_LEAVE_REMOVE_CHILDREN, /**< ZDO leave parameter - (uint8_t) */
+    ZB_APS_IB_ID_PRECONFIGURED_LINK_KEY, /**< apsPreconfiguredLinkKey - Preconfigured Trust Center Link Key (uint8_t[ZB_SEC_KEYSIZE]) */
+    ZB_APS_IB_ID_DISTRIBUTED_GLOBAL_KEY, /**< apsDistributedGlobalKey - (uint8_t[ZB_SEC_KEYSIZE]) */
+    ZB_APS_IB_ID_KEY_UPDATE_PERIOD, /**< KeyUpdatePeriod - From the trust center policy table (uint32_t) */
+    ZB_APS_IB_ID_MANUFACTURER_ID, /**< Manufacturer ID - (uint16_t) */
+    ZB_APS_IB_ID_SEND_PKT_COOLDOWN, /**< Send packet cooldown - (uint16_t) milliseconds */
+    ZB_APS_IB_ID_BIND_ADDR_RESOLVE_PERIOD, /**< Bind address resolve period - (uint16_t) seconds, 0 = disabled */
+    ZB_APS_IB_ID_FRAGMENTATION_THRESH /**< apsFragmentationThresh - Fragmentation Threshold */
 };
 
-/* APSME-GET.request */
-typedef struct ZbApsmeGetReqT {
-    enum ZbApsmeIbAttrIdT attrId;
-    void *attr;
-    unsigned int attrLength;
-    unsigned int attrIndex;
-} ZbApsmeGetReqT;
+/** APSME-GET.request */
+struct ZbApsmeGetReqT {
+    enum ZbApsmeIbAttrIdT attrId; /**< AIBAttribute */
+    void *attr; /**< Pointer to attribute */
+    unsigned int attrLength; /**< AIBAttributeLength  */
+    unsigned int attrIndex; /** Index of the attribute */
+};
 
-/* APSME-GET.confirm */
-typedef struct ZbApsmeGetConfT {
-    enum ZbStatusCodeT status;
-    enum ZbApsmeIbAttrIdT attrId;
-} ZbApsmeGetConfT;
+/** APSME-GET.confirm */
+struct ZbApsmeGetConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    enum ZbApsmeIbAttrIdT attrId; /**< AIBAttribute */
+};
 
-/* APSME-SET.request */
-typedef struct ZbApsmeSetReqT {
-    enum ZbApsmeIbAttrIdT attrId;
-    const void *attr;
-    unsigned int attrLength;
-    unsigned int attrIndex;
-} ZbApsmeSetReqT;
+/** APSME-SET.request */
+struct ZbApsmeSetReqT {
+    enum ZbApsmeIbAttrIdT attrId; /**< AIBAttribute */
+    const void *attr; /**< Pointer to attribute */
+    unsigned int attrLength; /**< AIBAttributeLength */
+    unsigned int attrIndex; /**< AIBAttributeValue */
+};
 
-/* APSME-SET.confirm */
-typedef struct ZbApsmeSetConfT {
-    enum ZbStatusCodeT status;
-    enum ZbApsmeIbAttrIdT attrId;
-} ZbApsmeSetConfT;
+/** APSME-SET.confirm */
+struct ZbApsmeSetConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    enum ZbApsmeIbAttrIdT attrId; /**< AIBAttribute */
+};
 
-/* APSME-BIND.request */
-typedef struct ZbApsmeBindReqT {
-    uint64_t srcExtAddr;
-    uint8_t srcEndpt;
-    uint16_t clusterId;
+/** APSME-BIND.request */
+struct ZbApsmeBindReqT {
+    uint64_t srcExtAddr; /**< SrcAddr */
+    uint8_t srcEndpt; /**< SrcEndpoint */
+    uint16_t clusterId; /**< ClusterId */
     /* dst.panId not used, dst.nwkAddr is only for the group address,
      * and dst.endpoint only used if mode == ZB_APSDE_ADDRMODE_EXT */
-    struct ZbApsAddrT dst;
-} ZbApsmeBindReqT;
+    struct ZbApsAddrT dst; /**< APS address information data structure */
+};
 
-/* APSME-BIND.confirm */
-typedef struct ZbApsmeBindConfT {
-    enum ZbStatusCodeT status;
-    uint64_t srcExtAddr;
-    uint8_t srcEndpt;
-    uint16_t clusterId;
+/** APSME-BIND.confirm */
+struct ZbApsmeBindConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint64_t srcExtAddr; /**< SrcAddr */
+    uint8_t srcEndpt; /**< SrcEndpoint */
+    uint16_t clusterId; /**< ClusterId */
     /* dst.panId not used, dst.nwkAddr is only for the group address,
      * and dst.endpoint only used if mode == ZB_APSDE_ADDRMODE_EXT */
-    struct ZbApsAddrT dst;
-} ZbApsmeBindConfT;
+    struct ZbApsAddrT dst; /**< APS address information data structure */
+};
 
-/* APSME-UNBIND.request */
-typedef struct ZbApsmeUnbindReqT {
-    uint64_t srcExtAddr;
-    uint8_t srcEndpt;
-    uint16_t clusterId;
+/** APSME-UNBIND.request */
+struct ZbApsmeUnbindReqT {
+    uint64_t srcExtAddr; /**< SrcAddr */
+    uint8_t srcEndpt; /**< SrcEndpoint */
+    uint16_t clusterId; /**< ClusterId */
     /* dst.panId not used, dst.nwkAddr is only for the group address,
      * and dst.endpoint only used if mode == ZB_APSDE_ADDRMODE_EXT */
-    struct ZbApsAddrT dst;
-} ZbApsmeUnbindReqT;
+    struct ZbApsAddrT dst; /**< APS address information data structure */
+};
 
-/* APSME-UNBIND.confirm */
-typedef struct ZbApsmeUnbindConfT {
-    enum ZbStatusCodeT status;
-    uint64_t srcExtAddr;
-    uint8_t srcEndpt;
-    uint16_t clusterId;
+/** APSME-UNBIND.confirm */
+struct ZbApsmeUnbindConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint64_t srcExtAddr; /**< SrcAddr */
+    uint8_t srcEndpt; /**< SrcEndpoint */
+    uint16_t clusterId; /**< ClusterId */
     /* dst.panId not used, dst.nwkAddr is only for the group address,
      * and dst.endpoint only used if mode == ZB_APSDE_ADDRMODE_EXT */
-    struct ZbApsAddrT dst;
-} ZbApsmeUnbindConfT;
+    struct ZbApsAddrT dst; /**< APS address information data structure */
+};
 
-/* APSME-ADD-GROUP.request */
-typedef struct ZbApsmeAddGroupReqT {
-    uint16_t groupAddr;
-    uint8_t endpt;
-} ZbApsmeAddGroupReqT;
+/** APSME-ADD-GROUP.request */
+struct ZbApsmeAddGroupReqT {
+    uint16_t groupAddr; /**< GroupAddress */
+    uint8_t endpt; /**< Endpoint */
+};
 
-/* APSME-ADD-GROUP.confirm */
-typedef struct ZbApsmeAddGroupConfT {
-    enum ZbStatusCodeT status;
-    uint16_t groupAddr;
-    uint8_t endpt;
-} ZbApsmeAddGroupConfT;
+/** APSME-ADD-GROUP.confirm */
+struct ZbApsmeAddGroupConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t groupAddr; /**< GroupAddress */
+    uint8_t endpt; /**< Endpoint */
+};
 
-/* APSME-REMOVE-GROUP.request */
-typedef struct ZbApsmeRemoveGroupReqT {
-    uint16_t groupAddr;
-    uint8_t endpt;
-} ZbApsmeRemoveGroupReqT;
+/** APSME-REMOVE-GROUP.request */
+struct ZbApsmeRemoveGroupReqT {
+    uint16_t groupAddr; /**< GroupAddress */
+    uint8_t endpt; /**< Endpoint */
+};
 
-/* APSME-REMOVE-GROUP.confirm */
-typedef struct ZbApsmeRemoveGroupConfT {
-    enum ZbStatusCodeT status;
-    uint16_t groupAddr;
-    uint8_t endpt;
-} ZbApsmeRemoveGroupConfT;
+/** APSME-REMOVE-GROUP.confirm */
+struct ZbApsmeRemoveGroupConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint16_t groupAddr; /**< GroupAddress */
+    uint8_t endpt; /**< Endpoint */
+};
 
-/* APSME-REMOVE-ALL-GROUPS.request */
-typedef struct ZbApsmeRemoveAllGroupsReqT {
-    uint8_t endpt;
-} ZbApsmeRemoveAllGroupsReqT;
+/** APSME-REMOVE-ALL-GROUPS.request */
+struct ZbApsmeRemoveAllGroupsReqT {
+    uint8_t endpt; /**< Endpoint */
+};
 
-/* APSME-REMOVE-ALL-GROUPS.confirm */
-typedef struct ZbApsmeRemoveAllGroupsConfT {
-    enum ZbStatusCodeT status;
-    uint8_t endpt;
-} ZbApsmeRemoveAllGroupsConfT;
+/** APSME-REMOVE-ALL-GROUPS.confirm */
+struct ZbApsmeRemoveAllGroupsConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint8_t endpt; /**< Endpoint */
+};
 
-/* APSME-ADD-ENDPOINT.request - Exegin Custom */
-typedef struct ZbApsmeAddEndpointReqT {
+/** APSME-ADD-ENDPOINT.request - Exegin Custom */
+struct ZbApsmeAddEndpointReqT {
     /* Application Information */
-    uint8_t endpoint;
-    uint16_t profileId;
-    uint16_t deviceId;
-    uint8_t version;
-    uint8_t inputClusterCount; /* Supported Server Clusters */
-    const uint16_t *inputClusterList;
+    uint8_t endpoint; /**< Endpoint */
+    uint16_t profileId; /**< Profile Id */
+    uint16_t deviceId; /**< Device Id */
+    uint8_t version; /**< Version */
+    uint8_t inputClusterCount; /**< Supported Server Clusters */
+    const uint16_t *inputClusterList; /**< Pointer to the input cluster list */
     uint8_t outputClusterCount; /* Supported Client Clusters */
-    const uint16_t *outputClusterList;
-    uint16_t bdbCommissioningGroupID; /* e.g. DEFAULT_EP_BDB_COMMISSION_GRP_ID; */
-} ZbApsmeAddEndpointReqT;
+    const uint16_t *outputClusterList; /**< Pointer to the output cluster list */
+    uint16_t bdbCommissioningGroupID; /**< e.g. DEFAULT_EP_BDB_COMMISSION_GRP_ID; */
+};
 
-/* APSME-ADD-ENDPOINT.confirm - Exegin Custom */
-typedef struct ZbApsmeAddEndpointConfT {
-    enum ZbStatusCodeT status;
-} ZbApsmeAddEndpointConfT;
+/** APSME-ADD-ENDPOINT.confirm - Exegin Custom */
+struct ZbApsmeAddEndpointConfT {
+    enum ZbStatusCodeT status; /**< Status */
+};
 
-/* APSME-REMOVE-ENDPOINT.request - Exegin Custom */
-typedef struct ZbApsmeRemoveEndpointReqT {
-    uint8_t endpoint;
-} ZbApsmeRemoveEndpointReqT;
+/** APSME-REMOVE-ENDPOINT.request - Exegin Custom */
+struct ZbApsmeRemoveEndpointReqT {
+    uint8_t endpoint; /**< Endpoint */
+};
 
-/* APSME-REMOVE-ENDPOINT.confirm - Exegin Custom */
-typedef struct ZbApsmeRemoveEndpointConfT {
-    enum ZbStatusCodeT status;
-} ZbApsmeRemoveEndpointConfT;
+/** APSME-REMOVE-ENDPOINT.confirm - Exegin Custom */
+struct ZbApsmeRemoveEndpointConfT {
+    enum ZbStatusCodeT status; /**< Status */
+};
 
-/* APS Binding Table entry. */
-typedef struct ZbApsmeBindT {
+/** APS Binding Table entry */
+struct ZbApsmeBindT {
     /* Source */
-    uint64_t srcExtAddr; /* if zero, entry is invalid */
-    uint8_t srcEndpt;
+    uint64_t srcExtAddr; /**< SrcAddr - if zero, entry is invalid */
+    uint8_t srcEndpt; /**< SrcEndpoint */
     /* Cluster */
-    uint16_t clusterId;
+    uint16_t clusterId; /**< ClusterId */
     /* Destination */
     /* dst.panId not used, dst.nwkAddr is only for the group address,
      * and dst.endpoint only used if mode == ZB_APSDE_ADDRMODE_EXT */
-    struct ZbApsAddrT dst;
-} ZbApsmeBindT;
+    struct ZbApsAddrT dst; /**< APS address information data structure */
+};
 
-/* APS Group ID Table entry. */
-typedef struct ZbApsmeGroupT {
-    uint16_t groupAddr;
-    uint8_t endpoint;
-} ZbApsmeGroupT;
+/** APS Group ID Table entry */
+struct ZbApsmeGroupT {
+    uint16_t groupAddr; /**< GroupAddress */
+    uint8_t endpoint; /**< Endpoint */
+};
 
+/**
+ * Perform an APSME-GET.request.
+ * The confirm message is returned via the getConfPtr parameter.
+ * @param zb Zigbee stack instance
+ * @param getReqPtr APSME-GET.request
+ * @param getConfPtr APSME-GET.confirm
+ * @return Returns void
+ */
 void ZbApsmeGetReq(struct ZigBeeT *zb, struct ZbApsmeGetReqT *getReqPtr, struct ZbApsmeGetConfT *getConfPtr);
+
+/**
+ * Perform an APSME-SET.request.
+ * The confirm message is returned via the setConfPtr parameter.
+ * @param zb Zigbee stack instance
+ * @param setReqPtr APSME-SET.request
+ * @param setConfPtr APSME-SET.confirm
+ * @return Returns void
+ */
 void ZbApsmeSetReq(struct ZigBeeT *zb, struct ZbApsmeSetReqT *setReqPtr, struct ZbApsmeSetConfT *setConfPtr);
+
+/**
+ * Add an entry to the stack's binding table.
+ * The size of the binding table is determined in the tableSizes parameter to ZbInit().
+ * The binding table is maintained by the stack.
+ * @param zb Zigbee stack instance
+ * @param bindReqPtr APSME-BIND.request
+ * @param bindConfPtr
+ * @param APSME-BIND.confirm
+ * @return Returns void
+ */
 void ZbApsmeBindReq(struct ZigBeeT *zb, struct ZbApsmeBindReqT *bindReqPtr, struct ZbApsmeBindConfT *bindConfPtr);
+
+/**
+ * Remove an entry from the binding table.
+ * @param zb Zigbee stack instance
+ * @param unbindReqPtr APSME-UNBIND.request
+ * @param unbindConfPtr APSME-UNBIND.confirm
+ * @return Returns void
+ */
 void ZbApsmeUnbindReq(struct ZigBeeT *zb, struct ZbApsmeUnbindReqT *unbindReqPtr, struct ZbApsmeUnbindConfT *unbindConfPtr);
+
+/**
+ * Remove all entries from the binding table.
+ * @param zb Zigbee stack instance
+ * @return Returns void
+ */
 void ZbApsUnbindAllReq(struct ZigBeeT *zb);
+
+/**
+ * Add an entry to the group table.
+ * @param zb Zigbee stack instance
+ * @param r APSME-ADD-GROUP.request
+ * @param c APSME-ADD-GROUP.confirm
+ * @return Returns void
+ */
 void ZbApsmeAddGroupReq(struct ZigBeeT *zb, struct ZbApsmeAddGroupReqT *r, struct ZbApsmeAddGroupConfT *c);
+
+/**
+ * Remove an entry from the group table
+ * @param zb Zigbee stack instance
+ * @param r APSME-REMOVE-GROUP.request
+ * @param c APSME-REMOVE-GROUP.confirm
+ * @return Returns void
+ */
 void ZbApsmeRemoveGroupReq(struct ZigBeeT *zb, struct ZbApsmeRemoveGroupReqT *r, struct ZbApsmeRemoveGroupConfT *c);
+
+/**
+ * Remove all entries from the group table.
+ * @param zb Zigbee stack instance
+ * @param r APSME-REMOVE-ALL-GROUPS.request
+ * @param c APSME-REMOVE-ALL-GROUPS.confirm
+ * @return Returns void
+ */
 void ZbApsmeRemoveAllGroupsReq(struct ZigBeeT *zb, struct ZbApsmeRemoveAllGroupsReqT *r, struct ZbApsmeRemoveAllGroupsConfT *c);
 
+/**
+ * Retrieve the number of free entries in the group table.
+ * @param zb Zigbee stack instance
+ * @return Returns number of free entries in the group table
+ */
 uint8_t ZbApsGroupsGetCapacity(struct ZigBeeT *zb);
+
+/**
+ * Retrieve all group addresses on this endpoint.
+ * @param zb Zigbee stack instance
+ * @param endpoint endpoint
+ * @param group_list (OUT) list of groups on this endpoint
+ * @param max_len Maximum number of groups to be returned
+ * @return Returns number of group addresses
+ */
 uint8_t ZbApsGroupsGetMembership(struct ZigBeeT *zb, uint8_t endpoint, uint16_t *group_list,
     uint8_t max_len);
 
+/**
+ * Register an endpoint with the ZigBee stack.
+ * Typically called during initialization.
+ * Should be safe to call from an init function.
+ * @param zb Zigbee stack instance
+ * @param r APSME-ADD-ENDPOINT.request
+ * @param c APSME-ADD-ENDPOINT.confirm
+ * @return Returns void
+ */
 void ZbApsmeAddEndpoint(struct ZigBeeT *zb, struct ZbApsmeAddEndpointReqT *r, struct ZbApsmeAddEndpointConfT *c);
+
+/**
+ * Unregister and remove an endpoint from the APS endpoint table.
+ * Typically called when terminating an application.
+ * @param zb Zigbee stack instance
+ * @param r APSME-REMOVE-ENDPOINT.request
+ * @param c APSME-REMOVE-ENDPOINT.confirm
+ * @return Returns void
+ */
 void ZbApsmeRemoveEndpoint(struct ZigBeeT *zb, struct ZbApsmeRemoveEndpointReqT *r, struct ZbApsmeRemoveEndpointConfT *c);
 
-/* Add a cluster ID to the input cluster list of an existing endpoint */
+/**
+ * Add a cluster ID to the input cluster list of an existing endpoint.
+ * @param zb Zigbee stack instance
+ * @param endpoint endpoint
+ * @param cluster_id ID of cluster to be added
+ * @param is_input true if input cluster, false if output cluster
+ * @return Returns true on success, false otherwise
+ */
 bool ZbApsmeEndpointClusterListAppend(struct ZigBeeT *zb, uint8_t endpoint,
     uint16_t cluster_id, bool is_input);
+
+/**
+ * Remove a cluster from an endpoint’s cluster list.
+ * @param zb Zigbee stack instance
+ * @param endpoint endpoint
+ * @param cluster_id ID of cluster to be removed
+ * @param is_input true if input cluster, false if output cluster
+ * @return Returns true on success, false otherwise
+ */
 bool ZbApsmeEndpointClusterListRemove(struct ZigBeeT *zb, uint8_t endpoint,
     uint16_t cluster_id, bool is_input);
+
+/**
+ * Determine if a cluster is present on the specified endpoint
+ * @param zb Zigbee stack instance
+ * @param endpoint endpoint
+ * @param cluster_id ID of cluster to be checked
+ * @param is_input true if input cluster, false if output cluster
+ * @return Returns true on success, false otherwise
+ */
 bool ZbApsmeEndpointClusterPresent(struct ZigBeeT *zb, uint8_t endpoint,
     uint16_t cluster_id, bool is_input);
 
+/**
+ * Determine the number of input clusters.
+ * Typically used with server clusters.
+ * @param zb Zigbee stack instance
+ * @param endpoint endpoint
+ * @return Returns the number of input clusters
+ */
 uint8_t ZbApsmeEndpointClusterListInputNum(struct ZigBeeT *zb, uint8_t endpoint);
+
+/**
+ * Determine the number of output clusters.
+ * Typically client clusters.
+ * @param zb Zigbee stack instance
+ * @param endpoint endpoint
+ * @return Returns the number of output clusters
+ */
 uint8_t ZbApsmeEndpointClusterListOutputNum(struct ZigBeeT *zb, uint8_t endpoint);
 
-/* Check if an endpoint already exists */
+/**
+ * Determine if an endpoint currently exists.
+ * @param zb Zigbee stack instance
+ * @param endpoint endpoint
+ * @return Returns true if endpoint is found, false otherwise
+ */
 bool ZbApsEndpointExists(struct ZigBeeT *zb, uint8_t endpoint);
 /* Get the Profile ID for this endpoint */
+
+/**
+ * Retrieve the profile ID of an endpoint.
+ * @param zb Zigbee stack instance
+ * @param endpoint endpoint
+ * @return Returns profile ID, or ZCL_PROFILE_WILDCARD (0xffff) on error
+ */
 uint16_t ZbApsEndpointProfile(struct ZigBeeT *zb, uint8_t endpoint);
 
 /*---------------------------------------------------------------
  * APSME - Security
  *---------------------------------------------------------------
  */
-/* Device status values for APSME-UPDATE-DEVICE.request and indication. */
+/** Device status values for APSME-UPDATE-DEVICE.request and indication */
 enum ZbApsmeDeviceStatusT {
-    ZB_APSME_DEV_STD_SECURE_REJOIN = 0x00, /* 0x00 */
-    ZB_APSME_DEV_STD_INSECURE_JOIN, /* 0x01 */
-    ZB_APSME_DEV_LEFT, /* 0x02 */
-    ZB_APSME_DEV_STD_INSECURE_REJOIN, /* 0x03 */
-    ZB_APSME_DEV_HIGH_SECURE_REJOIN, /* HIGHSEC SECURE REJOIN 0x04 */
-    ZB_APSME_DEV_HIGH_INSECURE_JOIN, /* HIGHSEC JOIN 0x05 */
-    /* Discontinuity, 0x06 */
-    ZB_APSME_DEV_HIGH_INSECURE_REJOIN = 0x07 /* HIGHSEC INSECURE REJOIN 0x07 */
+    ZB_APSME_DEV_STD_SECURE_REJOIN = 0x00U, /**< Standard device secured rejoin */
+    ZB_APSME_DEV_STD_INSECURE_JOIN = 0x01U, /**< Standard device unsecured join */
+    ZB_APSME_DEV_LEFT = 0x02U, /**< Device left */
+    ZB_APSME_DEV_STD_INSECURE_REJOIN = 0x03U /**< Standard device trust center rejoin */
+        /* 0x04 - 0xff reserved */
 };
 
 /*---------------------------------------------------------------
@@ -523,11 +665,11 @@ enum ZbApsmeDeviceStatusT {
 /* Unique Link Key (e.g. Install Code Generated Key) */
 #define ZB_APSME_KEY_ATTR_VERIFIED          0x00U
 
-/* Shared key (value stored in apsPreconfiguredLinkKey). */
+/* Shared key (value stored in apsPreconfiguredLinkKey) */
 /* Global Link Key */
 #define ZB_APSME_KEY_ATTR_SHARED            0x01U
 
-#if 0 /* provisional key is not used by stack. */
+#if 0 /* provisional key is not used by stack */
 #define ZB_APSME_KEY_ATTR_PROVISIONAL       ZB_APSME_KEY_ATTR_SHARED
 #endif
 
@@ -541,7 +683,7 @@ enum ZbApsmeDeviceStatusT {
 
 /* TCLK update derived key. Set when we receive a APSME-REQUEST-KEY.indication
  * with key-type set to TCLK. ZB_APSME_KEY_ATTR_UNVERIFIED is set at the
- * same time. */
+ * same time */
 #define ZB_APSME_KEY_ATTR_TCLK_DERIVED      0x08U
 
 /* Distributed Security Global Key (value stored in apsDistributedGlobalKey) */
@@ -549,166 +691,139 @@ enum ZbApsmeDeviceStatusT {
 #define ZB_APSME_KEY_ATTR_DISTRIBUTED       0x10U
 /*-------------------------------------------------------------*/
 
-/* Trust Center Policy Flags (ZB_APS_IB_ID_TRUST_CENTER_POLICY)
- * See R22 section 4.7.3 Trust Center Policy Values */
+/* See R22 section 4.7.3 Trust Center Policy Values */
+/** Trust Center Policy Flags (ZB_APS_IB_ID_TRUST_CENTER_POLICY) */
 enum ZbApsmePolicyT {
-    /* allowJoins */
-    ZB_APSME_POLICY_ALLOW_JOIN = 0x00000001,
-    /* useWhiteList */
-    ZB_APSME_POLICY_WHITELIST = 0x00000002,
-
-    /* allowInstallCodes */
-    ZB_APSME_POLICY_IC_MASK = 0x0000000C,
-    /* 0x00 (do not support Install Codes) */
-    ZB_APSME_POLICY_IC_NOT_SUPPORTED = 0x00000000,
-    /* 0x01 (support but do not require Install Codes) */
-    ZB_APSME_POLICY_IC_SUPPORTED = 0x00000004,
-    /* 0x02 (require the use of Install Codes) */
-    ZB_APSME_POLICY_IC_REQUIRED = 0x00000008,
-
-    /* updateTrustCenterLinkKeysRequired */
-    ZB_APSME_POLICY_TCLK_UPDATE_REQUIRED = 0x00000010,
-
-    /* allowRejoins - "This value indicates if the trust center allows rejoins using well known
-     * or default keys. A setting of FALSE means rejoins are only allowed with trust center
+    ZB_APSME_POLICY_ALLOW_JOIN = 0x00000001, /**< allowJoins */
+    ZB_APSME_POLICY_WHITELIST = 0x00000002, /**< useWhiteList */ /* deprecated with R23  */
+    ZB_APSME_POLICY_IC_MASK = 0x0000000C, /**< allowInstallCodes */ /* requireInstallCodesOrPresetPassphrase */
+    ZB_APSME_POLICY_IC_NOT_SUPPORTED = 0x00000000, /**< 0x00 - Do not support Install Codes Or Preset Passphrase */
+    ZB_APSME_POLICY_IC_SUPPORTED = 0x00000004, /**< 0x01 - Support but do not require Install Codes Or Preset Passphrase */
+    ZB_APSME_POLICY_IC_REQUIRED = 0x00000008, /**< 0x02 - Require the use of Install Codes Or Preset Passphrase) */
+    ZB_APSME_POLICY_TCLK_UPDATE_REQUIRED = 0x00000010, /**< updateTrustCenterLinkKeysRequired */
+    /* allowRejoinsWithWellKnownKey - "This value indicates if the trust center allows rejoins using
+     * well known or default keys. A setting of FALSE means rejoins are only allowed with trust center
      * link keys where the KeyAttributes of the apsDeviceKeyPairSet entry indicates VERIFIED_KEY." */
-    ZB_APSME_POLICY_ALLOW_REJOIN = 0x00000020,
-
-    /* allowTrustCenterLinkKeyRequests */
-    ZB_APSME_POLICY_TC_KEY_REQ_MASK = 0x000000C0,
-    /* 0x01 (any) */
-    ZB_APSME_POLICY_TC_KEY_REQ_ANY = 0x00000040,
-    /* 0x02 (provisional) */
-    ZB_APSME_POLICY_TC_KEY_REQ_PROV = 0x00000080,
+    ZB_APSME_POLICY_ALLOW_REJOIN = 0x00000020, /**< allowRejoins */
+    ZB_APSME_POLICY_TC_KEY_REQ_MASK = 0x000000C0, /**< allowTrustCenterLinkKeyRequests */
+    ZB_APSME_POLICY_TC_KEY_REQ_ANY = 0x00000040, /**< 0x01 - Any device may request */
+    ZB_APSME_POLICY_TC_KEY_REQ_PROV = 0x00000080, /* 0x02 - Provisional */
 
 #if 0 /* not used and has no effect in stack */
       /* networkKeyUpdateMethod */
     ZB_APSME_POLICY_NWK_KEY_UNICAST = 0x00000100,
 #endif
 
-    /* allowApplicationKeyRequests */
-    ZB_APSME_POLICY_APP_KEY_REQ_MASK = 0x00000C00,
-    /* 0x00 (never) */
-    ZB_APSME_POLICY_APP_KEY_REQ_NEVER = ZB_APSME_POLICY_IC_NOT_SUPPORTED,
-    /* 0x01 (any) */
-    ZB_APSME_POLICY_APP_KEY_REQ_ANY = 0x00000400,
-    /* 0x02 (provisional) */
-    /* Provisional requires "applicationKeyRequestList" to be implemented. */
-    ZB_APSME_POLICY_APP_KEY_REQ_PROV = 0x00000800,
-
-    /* allowRemoteTcPolicyChange */
-    ZB_APSME_POLICY_TC_POLICY_CHANGE = 0x00001000,
+    ZB_APSME_POLICY_APP_KEY_REQ_MASK = 0x00000C00, /**< allowApplicationKeyRequests */
+    ZB_APSME_POLICY_APP_KEY_REQ_NEVER = ZB_APSME_POLICY_IC_NOT_SUPPORTED, /**< 0x00 - Never */
+    ZB_APSME_POLICY_APP_KEY_REQ_ANY = 0x00000400, /**< 0x01 - Any */
+    ZB_APSME_POLICY_APP_KEY_REQ_PROV = 0x00000800, /**< 0x02 - Provisional, requires "applicationKeyRequestList" to be implemented */
+    ZB_APSME_POLICY_TC_POLICY_CHANGE = 0x00001000, /**< allowRemoteTcPolicyChange */
 
     /* For certification testing only */
-    /* Authenticate using dummy keys only (preconfigured NWK key in use). */
+    /* Authenticate using dummy keys only (preconfigured NWK key in use) */
     ZB_APSME_POLICY_DUMMY_KEY = 0x10000000
 };
 
-/* APSME-TRANSPORT-KEY.request */
-typedef struct ZbApsmeTransportKeyReqT {
-    enum ZbApsAddrModeT dstAddrMode;
-    /*lint -e658 [ !MISRA - Anonymous union assumed. ] */
-    union {
-        uint16_t dstNwkAddr;
-        uint64_t dstExtAddr;
-    };
-    enum ZbSecKeyTypeT keyType;
+/** APSME-TRANSPORT-KEY.request */
+struct ZbApsmeTransportKeyReqT {
+    struct ZbApsAddrT dst; /**< APS address information data structure */
+    enum ZbSecKeyTypeT keyType; /**< StandardKeyType */
     union {
         struct {
-            uint64_t parentAddr;
-            uint8_t key[ZB_SEC_KEYSIZE];
-        } trustKey;
+            uint64_t parentAddr; /**< ParentAddress */
+            uint8_t key[ZB_SEC_KEYSIZE]; /**< Key */
+        } trustKey; /**< Trust Center Link Key */
         struct {
-            uint8_t keySeqNumber;
-            uint8_t key[ZB_SEC_KEYSIZE];
-            bool useParent;
-            uint64_t parentAddr;
-        } nwkKey;
+            uint8_t keySeqNumber; /**< KeySeqNumber */
+            uint8_t key[ZB_SEC_KEYSIZE]; /**< NetworkKey */
+            bool useParent; /**< UseParent */
+            uint64_t parentAddr; /**< ParentAddress */
+        } nwkKey; /**< Network Key */
         struct {
-            uint64_t partnerAddr;
-            bool initiator;
-            uint8_t key[ZB_SEC_KEYSIZE];
-        } linkKey;
-    };
-    /* Anonymous Union (keyData) */
-} ZbApsmeTransportKeyReqT;
-
-/* APSME-TRANSPORT-KEY.indication */
-typedef struct ZbApsmeTransKeyIndT {
-    uint64_t srcExtAddr;
-    enum ZbSecKeyTypeT keyType;
-    union {
-        struct {
-            uint8_t key[ZB_SEC_KEYSIZE];
-        } trustKey;
-        struct {
-            uint8_t keySeqNumber;
-            uint8_t key[ZB_SEC_KEYSIZE];
-        } nwkKey;
-        struct {
-            uint64_t partnerAddr;
-            bool initiator; /* initiator field is missing from spec. */
-            uint8_t key[ZB_SEC_KEYSIZE];
-        } linkKey;
-    };
-    /*lint -restore */
-    enum ZbSecEncryptT encryptKeyType; /* key used to encrypt the incoming command. */
-} ZbApsmeTransKeyIndT;
-
-/* APSME-UPDATE-DEVICE.request */
-typedef struct ZbApsmeUpdateDeviceReqT {
-    uint64_t dstExtAddr;
-    uint64_t devExtAddr;
-    enum ZbApsmeDeviceStatusT status;
-    uint16_t devShortAddr;
-} ZbApsmeUpdateDeviceReqT;
-
-/* APSME-UPDATE-DEVICE.indication */
-typedef struct ZbApsmeUpdateDeviceIndT {
-    uint64_t srcExtAddr;
-    uint64_t devExtAddr;
-    uint16_t devShortAddr;
-    enum ZbApsmeDeviceStatusT status;
-    enum ZbSecEncryptT encryptKeyType; /* key used to encrypt the incoming command. */
-} ZbApsmeUpdateDeviceIndT;
-
-/* APSME-REMOVE-DEVICE.request */
-typedef struct ZbApsmeRemoveDeviceReqT {
-    uint64_t dstExtAddr;
-    uint64_t targetAddr;
-} ZbApsmeRemoveDeviceReqT;
-
-/* APSME-REMOVE-DEVICE.indication */
-typedef struct ZbApsmeRemoveDeviceIndT {
-    uint64_t srcExtAddr;
-    uint64_t targetAddr;
-    enum ZbSecEncryptT encryptKeyType; /* key used to encrypt the incoming command. */
-} ZbApsmeRemoveDeviceIndT;
-
-/* R22 Table 4-19 RequestKeyType Values */
-/* This table is slightly different than the values from enum ZbSecKeyTypeT, which all the other commands use. */
-enum ZbApsRequestKeyTypeT {
-    ZB_APS_REQKEY_KEYTYPE_APP_LINK = 0x02,
-    ZB_APS_REQKEY_KEYTYPE_TC_LINK = 0x04
+            uint64_t partnerAddr; /**< PartnerAddress */
+            bool initiator; /**< Initiator */
+            uint8_t key[ZB_SEC_KEYSIZE]; /**< Key */
+        } linkKey; /**< Application Link Key */
+    } keyinfo; /**< TransportKeyData */
 };
 
-/* APSME-REQUEST-KEY.request */
-typedef struct ZbApsmeRequestKeyReqT {
-    uint64_t dstExtAddr;
-    enum ZbApsRequestKeyTypeT keyType;
-    uint64_t partnerAddr; /* only used with application keys. */
-} ZbApsmeRequestKeyReqT;
+/** APSME-TRANSPORT-KEY.indication */
+struct ZbApsmeTransKeyIndT {
+    uint64_t srcExtAddr; /**< SrcAddress */
+    enum ZbSecKeyTypeT keyType; /**< StandardKeyType */
+    union {
+        struct {
+            uint8_t key[ZB_SEC_KEYSIZE]; /**< Key */
+        } trustKey; /**< Trust Center Link Key */
+        struct {
+            uint8_t keySeqNumber; /**< KeySeqNumber */
+            uint8_t key[ZB_SEC_KEYSIZE]; /**< Key */
+        } nwkKey; /**< Network Key */
+        struct {
+            uint64_t partnerAddr; /**< PartnerAddress */
+            bool initiator; /**< Initiator */ /* initiator field is missing from spec */
+            uint8_t key[ZB_SEC_KEYSIZE]; /**< Key */
+        } linkKey; /**< Application Link Key */
+    } keyinfo; /**< TransportKeyData */
+    enum ZbSecEncryptT encryptKeyType; /* Key used to encrypt the incoming command */
+};
 
-/* APSME-REQUEST-KEY.indication */
-typedef struct ZbApsmeRequestKeyIndT {
-    uint64_t srcExtAddr;
-    enum ZbApsRequestKeyTypeT keyType;
-    uint64_t partnerAddr;
-    enum ZbSecEncryptT encryptKeyType; /* key used to encrypt the incoming command. */
-} ZbApsmeRequestKeyIndT;
+/** APSME-UPDATE-DEVICE.request */
+struct ZbApsmeUpdateDeviceReqT {
+    uint64_t dstExtAddr; /**< DestAddress */
+    uint64_t devExtAddr; /**< DeviceAddress */
+    enum ZbApsmeDeviceStatusT status; /**< Status - Device status values */
+    uint16_t devShortAddr; /**< DeviceShortAddress */
+};
 
-/* APSME-SWITCH-KEY.request */
-typedef struct ZbApsmeSwitchKeyReqT {
+/** APSME-UPDATE-DEVICE.indication */
+struct ZbApsmeUpdateDeviceIndT {
+    uint64_t srcExtAddr; /**< SrcAddress */
+    uint64_t devExtAddr; /**< DeviceAddress */
+    uint16_t devShortAddr; /**< DeviceShortAddress */
+    enum ZbApsmeDeviceStatusT status; /**< Status - Device status values */
+    enum ZbSecEncryptT encryptKeyType; /* key used to encrypt the incoming command */
+};
+
+/** APSME-REMOVE-DEVICE.request */
+struct ZbApsmeRemoveDeviceReqT {
+    uint64_t dstExtAddr; /**< ParentAddress */
+    uint64_t targetAddr; /**< TargetAddress */
+};
+
+/** APSME-REMOVE-DEVICE.indication */
+struct ZbApsmeRemoveDeviceIndT {
+    uint64_t srcExtAddr; /**< SrcAddress */
+    uint64_t targetAddr; /**< TargetAddress */
+    enum ZbSecEncryptT encryptKeyType; /* Key used to encrypt the incoming command */
+};
+
+/* R22 Table 4-19 RequestKeyType Values */
+/* This table is slightly different than the values from enum ZbSecKeyTypeT, which all the other commands use */
+/** RequestKeyType Values */
+enum ZbApsRequestKeyTypeT {
+    ZB_APS_REQKEY_KEYTYPE_APP_LINK = 0x02, /**< Application Link Key */
+    ZB_APS_REQKEY_KEYTYPE_TC_LINK = 0x04 /**< Trust Center Link Key */
+};
+
+/** APSME-REQUEST-KEY.request */
+struct ZbApsmeRequestKeyReqT {
+    uint64_t dstExtAddr; /**< DestAddress */
+    enum ZbApsRequestKeyTypeT keyType; /**< RequestKeyType */
+    uint64_t partnerAddr; /**< PartnerAddress - Only used with application keys */
+};
+
+/** APSME-REQUEST-KEY.indication */
+struct ZbApsmeRequestKeyIndT {
+    uint64_t srcExtAddr; /**< SrcAddress */
+    enum ZbApsRequestKeyTypeT keyType; /**< RequestKeyType */
+    uint64_t partnerAddr; /**< PartnerAddress */
+    enum ZbSecEncryptT encryptKeyType; /* Key used to encrypt the incoming command */
+};
+
+/** APSME-SWITCH-KEY.request */
+struct ZbApsmeSwitchKeyReqT {
     /*
      * Under normal stack operation, destination address mode must be
      * ZB_APSDE_ADDRMODE_EXT. If dstAddrMode == ZB_APSDE_ADDRMODE_EXT
@@ -719,67 +834,61 @@ typedef struct ZbApsmeSwitchKeyReqT {
      * broadcast address.  For test 14.24, we need to be able to
      * specify 0xffff as well as 0xfffd (rx-on only).
      */
-    enum ZbApsAddrModeT dstAddrMode;
-    /*lint -e658 [ !MISRA - Anonymous union assumed. ] */
-    union {
-        uint16_t dstNwkAddr;
-        uint64_t dstExtAddr;
-    };
-    /*lint -restore */
-    uint8_t keySeqNum;
-} ZbApsmeSwitchKeyReqT;
+    struct ZbApsAddrT dst; /**< APS address information data structure */
+    uint8_t keySeqNum; /**< KeySeqNumber */
+};
 
-/* APSME-SWITCH-KEY.indication */
-typedef struct ZbApsmeSwitchKeyIndT {
-    uint64_t srcExtAddr;
-    uint8_t keySeqNum;
-    enum ZbSecEncryptT encryptKeyType; /* key used to encrypt the incoming command. */
-} ZbApsmeSwitchKeyIndT;
+/** APSME-SWITCH-KEY.indication */
+struct ZbApsmeSwitchKeyIndT {
+    uint64_t srcExtAddr; /**< SrcAddress */
+    uint8_t keySeqNum; /**< KeySeqNumber */
+    enum ZbSecEncryptT encryptKeyType; /* Key used to encrypt the incoming command */
+};
 
-/* APSME-VERIFY-KEY.request */
-typedef struct ZbApsmeVerifyKeyReqT {
-    uint64_t dstExtAddr;
-    enum ZbSecKeyTypeT keyType;
-} ZbApsmeVerifyKeyReqT;
+/** APSME-VERIFY-KEY.request */
+struct ZbApsmeVerifyKeyReqT {
+    uint64_t dstExtAddr; /**< DestAddress */
+    enum ZbSecKeyTypeT keyType; /**< StandardKeyType */
+};
 
-/* APSME-VERIFY-KEY.indication */
-typedef struct ZbApsmeVerifyKeyIndT {
-    uint64_t srcExtAddr;
-    enum ZbSecKeyTypeT keyType;
-    uint8_t hash[ZB_SEC_KEYSIZE];
-    enum ZbSecEncryptT encryptKeyType; /* key used to encrypt the incoming command. */
-} ZbApsmeVerifyKeyIndT;
+/** APSME-VERIFY-KEY.indication */
+struct ZbApsmeVerifyKeyIndT {
+    uint64_t srcExtAddr; /**< SrcAddress */
+    enum ZbSecKeyTypeT keyType; /**< StandardKeyType */
+    uint8_t hash[ZB_SEC_KEYSIZE]; /**< ReceivedInitiatorHashValue */
+    enum ZbSecEncryptT encryptKeyType; /* Key used to encrypt the incoming command */
+};
 
-/* APSME-CONFIRM-KEY.request */
-typedef struct ZbApsmeConfirmKeyReqT {
-    enum ZbStatusCodeT status;
-    uint64_t dstExtAddr;
-    enum ZbSecKeyTypeT keyType;
-} ZbApsmeConfirmKeyReqT;
+/** APSME-CONFIRM-KEY.request */
+struct ZbApsmeConfirmKeyReqT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint64_t dstExtAddr; /**< DestAddress */
+    enum ZbSecKeyTypeT keyType; /**< StandardKeyType */
+};
 
-/* APSME-CONFIRM-KEY.indication */
-typedef struct ZbApsmeConfirmKeyIndT {
-    enum ZbStatusCodeT status;
-    uint64_t srcExtAddr;
-    enum ZbSecKeyTypeT keyType;
-    enum ZbSecEncryptT encryptKeyType; /* key used to encrypt the incoming command. */
-} ZbApsmeConfirmKeyIndT;
+/** APSME-CONFIRM-KEY.indication */
+struct ZbApsmeConfirmKeyIndT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint64_t srcExtAddr; /**< SrcAddress */
+    enum ZbSecKeyTypeT keyType; /**< StandardKeyType */
+    enum ZbSecEncryptT encryptKeyType; /* Key used to encrypt the incoming command */
+};
 
-/* APSME-ADD-KEY.request - Exegin Custom */
-typedef struct ZbApsmeAddKeyReqT {
-    enum ZbSecKeyTypeT keyType;
-    uint8_t key[ZB_SEC_KEYSIZE];
-    uint8_t keyAttribute;
-    uint8_t keySeqNumber;
-    uint64_t partnerAddr;
-    uint32_t outgoingCounter; /* For link keys only. */
-    uint32_t incomingCounter; /* For link keys only. */
-} ZbApsmeAddKeyReqT;
+/** APSME-ADD-KEY.request - Exegin Custom */
+struct ZbApsmeAddKeyReqT {
+    enum ZbSecKeyTypeT keyType; /**< StandardKeyType */
+    uint8_t key[ZB_SEC_KEYSIZE]; /**< Key */
+    uint8_t keyAttribute; /**< keyAttribute */
+    uint8_t keySeqNumber; /**< KeySeqNumber */
+    uint64_t partnerAddr; /**< PartnerAddress */
+    uint32_t outgoingCounter; /**< outgoingCounter - For link keys only */
+    uint32_t incomingCounter; /**< incomingCounter - For link keys only */
+};
 
 /** APSME-ADD-KEY.confirm - Exegin Custom */
-typedef struct ZbApsmeAddKeyConfT {
-    enum ZbStatusCodeT status;
-} ZbApsmeAddKeyConfT;
+struct ZbApsmeAddKeyConfT {
+    enum ZbStatusCodeT status; /**< Status */
+};
 
 /*STRUCTURE:-----------------------------------------------------
  *  NAME        struct ZbApsmeGetKeyReqT
@@ -792,78 +901,153 @@ typedef struct ZbApsmeAddKeyConfT {
  *      partnerAddr     ;
  *---------------------------------------------------------------
  */
-typedef struct ZbApsmeGetKeyReqT {
-    enum ZbSecKeyTypeT keyType;
-    uint8_t keySeqNumber;
-    uint64_t partnerAddr;
-} ZbApsmeGetKeyReqT;
+
+/** APSME-GET-KEY.request - Exegin Custom */
+struct ZbApsmeGetKeyReqT {
+    enum ZbSecKeyTypeT keyType; /**< StandardKeyType */
+    uint8_t keySeqNumber; /**< KeySeqNumber */
+    uint64_t partnerAddr; /**< PartnerAddress */
+};
 
 /* APSME-GET-KEY.confirm - Exegin Custom */
-typedef struct ZbApsmeGetKeyConfT {
-    enum ZbStatusCodeT status;
-    uint8_t key[ZB_SEC_KEYSIZE];
-    uint32_t outgoingCounter;
-    uint32_t incomingCounter;
-    uint8_t apsKeyAttribute; /* Only valid if req.keyType != ZB_SEC_KEYTYPE_STANDARD_NWK */
-} ZbApsmeGetKeyConfT;
+struct ZbApsmeGetKeyConfT {
+    enum ZbStatusCodeT status; /**< Status */
+    uint8_t key[ZB_SEC_KEYSIZE]; /**< Key */
+    uint32_t outgoingCounter; /**< outgoingCounter */
+    uint32_t incomingCounter; /**< incomingCounter */
+    uint8_t apsKeyAttribute; /**< apsKeyAttribute - Only valid if req.keyType != ZB_SEC_KEYTYPE_STANDARD_NWK */
+};
 
-/* APSME-REMOVE-KEY.request - Exegin Custom */
-typedef struct ZbApsmeRemoveKeyReqT {
-    enum ZbSecKeyTypeT keyType;
-    uint64_t partnerAddr;
-} ZbApsmeRemoveKeyReqT;
+/** APSME-REMOVE-KEY.request - Exegin Custom */
+struct ZbApsmeRemoveKeyReqT {
+    enum ZbSecKeyTypeT keyType; /**< StandardKeyType */
+    uint64_t partnerAddr; /**< PartnerAddress */
+};
 
-/* APSME-REMOVE-KEY.confirm - Exegin Custom */
-typedef struct ZbApsmeRemoveKeyConfT {
-    enum ZbStatusCodeT status;
-} ZbApsmeRemoveKeyConfT;
+/** APSME-REMOVE-KEY.confirm - Exegin Custom */
+struct ZbApsmeRemoveKeyConfT {
+    enum ZbStatusCodeT status; /**< Status */
+};
 
-/* APS Key/Pair Descriptor - used with ZB_APS_IB_ID_DEVICE_KEY_PAIR_SET */
-typedef struct ZbApsmeKeyPairT {
-    uint64_t deviceAddress;
-    uint8_t linkKey[ZB_SEC_KEYSIZE];
-    uint32_t outgoingFrameCounter;
-    uint32_t incomingFrameCounter;
-    uint32_t persistOutFrameCounter;
-    uint32_t persistInFrameCounter;
-    uint8_t keyAttribute;
-    ZbUptimeT cooldown;
-} ZbApsmeKeyPairT;
+/** APS Key/Pair Descriptor - used with ZB_APS_IB_ID_DEVICE_KEY_PAIR_SET */
+struct ZbApsmeKeyPairT {
+    uint64_t deviceAddress; /**< DeviceAddress */
+    uint8_t linkKey[ZB_SEC_KEYSIZE]; /**< LinkKey */
+    uint32_t outgoingFrameCounter; /**< OutgoingFrameCounter */
+    uint32_t incomingFrameCounter; /**< IncomingFrameCounter */
+    uint32_t persistOutFrameCounter; /**< persistOutFrameCounter - Exegin add-on */
+    uint32_t persistInFrameCounter; /**< persistOutFrameCounter - Exegin add-on  */
+    uint8_t keyAttribute; /**< KeyAttributes */
+    ZbUptimeT cooldown; /**< cooldown - Exegin add-on */
+};
 
+/**
+ * Perform an APSME-TRANSPORT-KEY.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-TRANSPORT-KEY.request
+ * @return Returns void
+ */
 void ZbApsmeTransportKeyReq(struct ZigBeeT *zb, struct ZbApsmeTransportKeyReqT *req);
+
+/**
+ * Perform an APSME-UPDATE-DEVICE.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-UPDATE-DEVICE.request
+ * @return Returns security key used to send Update Device
+ */
 enum ZbSecHdrKeyIdT ZbApsmeUpdateDeviceReq(struct ZigBeeT *zb, struct ZbApsmeUpdateDeviceReqT *req);
+
+/**
+ * Perform an APSME-REMOVE-DEVICE.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-REMOVE-DEVICE.request
+ * @return Returns void
+ */
 void ZbApsmeRemoveDeviceReq(struct ZigBeeT *zb, struct ZbApsmeRemoveDeviceReqT *req);
+
+/**
+ * Perform an APSME-REQUEST-KEY.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-REQUEST-KEY.request
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZbApsmeRequestKeyReq(struct ZigBeeT *zb, struct ZbApsmeRequestKeyReqT *req);
+
+/**
+ * Perform an APSME-SWITCH-KEY.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-SWITCH-KEY.request
+ * @return Returns void
+ */
 void ZbApsmeSwitchKeyReq(struct ZigBeeT *zb, struct ZbApsmeSwitchKeyReqT *req);
+
+/**
+ * Perform an APSME-VERIFY-KEY.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-VERIFY-KEY.request
+ * @return Returns void
+ */
 void ZbApsmeVerifyKeyReq(struct ZigBeeT *zb, struct ZbApsmeVerifyKeyReqT *req);
+
+/**
+ * Perform an APSME-CONFIRM-KEY.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-CONFIRM-KEY.request
+ * @return Returns void
+ */
 void ZbApsmeConfirmKeyReq(struct ZigBeeT *zb, struct ZbApsmeConfirmKeyReqT *req);
+
+/**
+ * Perform an APSME-ADD-KEY.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-ADD-KEY.request
+ * @param conf APSME-ADD-KEY.confirm
+ * @return Returns void
+ */
 void ZbApsmeAddKeyReq(struct ZigBeeT *zb, struct ZbApsmeAddKeyReqT *req, struct ZbApsmeAddKeyConfT *conf);
 /* For ZbApsmeGetKeyReq, key types ZB_SEC_KEYTYPE_TC_LINK and ZB_SEC_KEYTYPE_APP_LINK are treated
- * the same when searching, so  you can use either to get the link key for the requested EUI. */
+ * the same when searching, so you can use either to get the link key for the requested EUI. */
+
+/**
+ * Perform an APSME-GET-KEY.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-GET-KEY.request
+ * @param conf APSME-GET-KEY.confirm
+ * @return Returns void
+ */
 void ZbApsmeGetKeyReq(struct ZigBeeT *zb, struct ZbApsmeGetKeyReqT *req, struct ZbApsmeGetKeyConfT *conf);
+
+/**
+ * Perform an APSME-REMOVE-KEY.request.
+ * @param zb Zigbee stack instance
+ * @param req APSME-REMOVE-KEY.request
+ * @param conf APSME-REMOVE-KEY.confirm
+ * @return Returns void
+ */
 void ZbApsmeRemoveKeyReq(struct ZigBeeT *zb, struct ZbApsmeRemoveKeyReqT *req, struct ZbApsmeRemoveKeyConfT *conf);
 
 /*---------------------------------------------------------------
  * Filter API
  *---------------------------------------------------------------
  */
-/** @name Packet filter callback return values */
-/**@{*/
-/** Continue processing any further filter callbacks. */
+/* @name Packet filter callback return values */
+/*@{*/
+/* Continue processing any further filter callbacks */
 #define ZB_APS_FILTER_CONTINUE              0
-/** Packet filter return value: Stop processing further filter callbacks. */
+/* Packet filter return value: Stop processing further filter callbacks */
 #define ZB_APS_FILTER_DISCARD               1
-/**@}*/
+/*@}*/
 
 /**
  * Create an APSDE-DATA.indication filter for a specific endpoint, with no specific cluster
- * being filtered. For any incoming APS data packets that match this filter, the provided
+ * being filtered.
+ * For any incoming APS data packets that match this filter, the provided
  * 'callback' function will be called.
  * @param zb Zigbee instance
- * @param endpoint Endpoint Id to match with incoming packets.
- * @param profileId Profile Id to match with incoming packets.
+ * @param endpoint Endpoint Id to match with incoming packets
+ * @param profileId Profile Id to match with incoming packets
  * @param callback APSDE-DATA.indication callback if the filter matches the incoming packet.
- * @param arg Application callback argument, which will be passed to callback().
+ * @param arg Application callback argument, which will be passed to callback()
  * @return Filter pointer (handle)
  */
 struct ZbApsFilterT * ZbApsFilterEndpointAdd(struct ZigBeeT *zb, uint8_t endpoint, uint16_t profileId,
@@ -871,14 +1055,15 @@ struct ZbApsFilterT * ZbApsFilterEndpointAdd(struct ZigBeeT *zb, uint8_t endpoin
 
 /**
  * Create an APSDE-DATA.indication filter for a specific endpoint and cluster Id.
- * being filtered. For any incoming APS data packets that match this filter, the provided
+ * being filtered.
+ * For any incoming APS data packets that match this filter, the provided
  * 'callback' function will be called.
  * @param zb Zigbee instance
- * @param endpoint Endpoint Id to match with incoming packets.
- * @param clusterId Cluster Id to match with incoming packets.
- * @param profileId Profile Id to match with incoming packets.
- * @param callback APSDE-DATA.indication callback if the filter matches the incoming packet.
- * @param arg Application callback argument, which will be passed to callback().
+ * @param endpoint Endpoint Id to match with incoming packets
+ * @param clusterId Cluster Id to match with incoming packets
+ * @param profileId Profile Id to match with incoming packets
+ * @param callback APSDE-DATA.indication callback if the filter matches the incoming packet
+ * @param arg Application callback argument, which will be passed to callback()
  * @return Filter pointer (handle)
  */
 struct ZbApsFilterT * ZbApsFilterClusterAdd(struct ZigBeeT *zb, uint8_t endpoint,
@@ -886,10 +1071,10 @@ struct ZbApsFilterT * ZbApsFilterClusterAdd(struct ZigBeeT *zb, uint8_t endpoint
     int (*callback)(struct ZbApsdeDataIndT *dataInd, void *cb_arg), void *arg);
 
 /**
- * Remove a filter created by ZbApsFilterEndpointAdd or ZbApsFilterClusterAdd.
+ * Remove and free an APS indication filter.
  * @param zb Zigbee instance
- * @param filter Filter to remove
- * @return None
+ * @param filter Filter handle to remove and free
+ * @return Returns void
  */
 void ZbApsFilterEndpointFree(struct ZigBeeT *zb, struct ZbApsFilterT *filter);
 
@@ -897,25 +1082,103 @@ void ZbApsFilterEndpointFree(struct ZigBeeT *zb, struct ZbApsFilterT *filter);
  * Helper Functions
  *---------------------------------------------------------------
  */
+
 /* ZbApsGet and ZbApsSet return the confirm status byte (SUCCESS == 0x00) */
 #define ZbApsGet(_zb_, _id_, _ptr_, _sz_) ZbApsGetIndex(_zb_, _id_, _ptr_, _sz_, 0)
 #define ZbApsSet(_zb_, _id_, _ptr_, _sz_) ZbApsSetIndex(_zb_, _id_, _ptr_, _sz_, 0)
+
+/**
+ * Retrieve the value of the attribute corresponding to the supplied index.
+ * @param zb Zigbee stack instance
+ * @param attrId Attribute Id
+ * @param attrPtr Attribute pointer
+ * @param attrSz attribute size
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZbApsGetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId, void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
+
+/**
+ * Set the value of the attribute corresponding to the supplied index.
+ * @param zb Zigbee stack instance
+ * @param attrId Attribute Id
+ * @param attrPtr Attribute pointer
+ * @param attrSz attribute size
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
 enum ZbStatusCodeT ZbApsSetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId, const void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
 
+/**
+ * Check if the local device is a member of a specified group.
+ * @param zb Zigbee stack instance
+ * @param groupAddr Group address
+ * @param endpoint Endpoint of interest, or ZB_ENDPOINT_BCAST to determine if any endpoint is a member of the group
+ * @return Returns true if device is a member, false otherwise
+ */
 bool ZbApsGroupIsMember(struct ZigBeeT *zb, uint16_t groupAddr, uint8_t endpoint);
 
+/**
+ * Check if a link key exists in the AIB.
+ * @param zb Zigbee stack instance
+ * @param Partner address
+ * @return Returns true if key exists, false otherwise
+ */
 bool ZbApsLinkKeyExists(struct ZigBeeT *zb, uint64_t partner);
+
+/**
+ * Look up an APS key pair descriptor from the apsDeviceKeyPairSet AIB attribute/key table.
+ * @param zb Zigbee stack instance
+ * @param key (OUT) key pair descriptor
+ * @param addr Partner addresses
+ * @param idx (OUT) index value into Device Key Pair Set Table for the APS key returned, if successful
+ * @return Returns key pair on success, or NULL if no such entry was found
+ */
 struct ZbApsmeKeyPairT * ZbApsLookupKey(struct ZigBeeT *zb, struct ZbApsmeKeyPairT *key,
     uint64_t addr, unsigned int *idx);
 
+/**
+ * Check if an address is set to broadcast.
+ * @param addr Address to check
+ * @return Returns true if address is set to broadcast, false otherwise
+ */
 bool ZbApsAddrIsBcast(const struct ZbApsAddrT *addr);
+
+/**
+ * Check if an address is that of the provided Zigbee stack structure.
+ * @param zb Zigbee stack instance
+ * @param addr Address to check
+ * @return Returns true if address is local, false otherwise.
+ */
 bool ZbApsAddrIsLocal(struct ZigBeeT *zb, const struct ZbApsAddrT *addr);
 
+/**
+ * Check if an incoming command has the appropriate security level.
+ * @param zb Zigbee stack instance
+ * @param cmdId Command Id
+ * @param srcExtAddr Source extended address
+ * @param encryptKeyType Key type
+ * @return Returns true if the command is allowed, false otherwise
+ */
 bool ZbApsCommandSecurityCheck(struct ZigBeeT *zb, enum ZbApsCmdIdT cmdId, uint64_t srcExtAddr, enum ZbSecEncryptT encryptKeyType);
 
-/* Helpers for certification testing (TP/PRO/BV-43 and TP/PRO/BV-44) */
+/*
+ * Helpers for certification testing (TP/PRO/BV-43 and TP/PRO/BV-44)
+ * - For Internal use Only
+ * - Controls GU behaviour
+ */
+
+/*
+ *
+ * @param zb Zigbee stack instance
+ * @param blockNum
+ * @return
+ */
 bool ZbApsFragDropTxAdd(struct ZigBeeT *zb, uint8_t blockNum);
+
+/*
+ *
+ * @param zb Zigbee stack instance
+ * @return Returns void
+ */
 void ZbApsFragDropTxClear(struct ZigBeeT *zb);
 
 #endif /* ZIGBEE_APS_H */

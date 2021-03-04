@@ -223,7 +223,6 @@ SHCI_CmdStatus_t SHCI_C2_FUS_StartWs( void )
   return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
 }
 
-
 SHCI_CmdStatus_t SHCI_C2_FUS_LockUsrKey( uint8_t key_index )
 {
   /**
@@ -239,6 +238,44 @@ SHCI_CmdStatus_t SHCI_C2_FUS_LockUsrKey( uint8_t key_index )
   shci_send( SHCI_OPCODE_C2_FUS_LOCK_USR_KEY,
              1,
              local_buffer,
+             p_rsp );
+
+  return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
+}
+
+SHCI_CmdStatus_t SHCI_C2_FUS_UnloadUsrKey( uint8_t key_index )
+{
+  /**
+   * Buffer is large enough to hold command complete without payload
+   */
+  uint8_t local_buffer[TL_BLEEVT_CS_BUFFER_SIZE];
+  TL_EvtPacket_t * p_rsp;
+
+  p_rsp = (TL_EvtPacket_t *)local_buffer;
+
+  local_buffer[0] = key_index;
+
+  shci_send( SHCI_OPCODE_C2_FUS_UNLOAD_USR_KEY,
+             1,
+             local_buffer,
+             p_rsp );
+
+  return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
+}
+
+SHCI_CmdStatus_t SHCI_C2_FUS_ActivateAntiRollback( void )
+{
+  /**
+   * Buffer is large enough to hold command complete without payload
+   */
+  uint8_t local_buffer[TL_BLEEVT_CS_BUFFER_SIZE];
+  TL_EvtPacket_t * p_rsp;
+
+  p_rsp = (TL_EvtPacket_t *)local_buffer;
+
+  shci_send( SHCI_OPCODE_C2_FUS_ACTIVATE_ANTIROLLBACK,
+             0,
+             0,
              p_rsp );
 
   return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
@@ -298,7 +335,7 @@ SHCI_CmdStatus_t SHCI_C2_LLDTESTS_Init( uint8_t param_size, uint8_t * p_param )
   return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
 }
 
-SHCI_CmdStatus_t SHCI_C2_LLD_BLE_Init( uint8_t param_size, uint8_t * p_param )
+SHCI_CmdStatus_t SHCI_C2_BLE_LLD_Init( uint8_t param_size, uint8_t * p_param )
 {
   /**
    * Buffer is large enough to hold command complete without payload
@@ -308,7 +345,7 @@ SHCI_CmdStatus_t SHCI_C2_LLD_BLE_Init( uint8_t param_size, uint8_t * p_param )
 
   p_rsp = (TL_EvtPacket_t *)local_buffer;
 
-  shci_send( SHCI_OPCODE_C2_LLD_BLE_INIT,
+  shci_send( SHCI_OPCODE_C2_BLE_LLD_INIT,
              param_size,
              p_param,
              p_rsp );
@@ -590,6 +627,23 @@ SHCI_CmdStatus_t SHCI_C2_Config(SHCI_C2_CONFIG_Cmd_Param_t *pCmdPacket)
   return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
 }
 
+SHCI_CmdStatus_t SHCI_C2_802_15_4_DeInit( void )
+{
+  /**
+   * Buffer is large enough to hold command complete without payload
+   */
+  uint8_t local_buffer[TL_BLEEVT_CS_BUFFER_SIZE];
+  TL_EvtPacket_t * p_rsp;
+
+  p_rsp = (TL_EvtPacket_t *)local_buffer;
+
+  shci_send( SHCI_OPCODE_C2_802_15_4_DEINIT,
+             0,
+             0,
+             p_rsp );
+
+  return (SHCI_CmdStatus_t)(((TL_CcEvt_t*)(p_rsp->evtserial.evt.payload))->payload[0]);
+}
 
 /**
  *  Local System COMMAND
@@ -614,7 +668,12 @@ SHCI_CmdStatus_t SHCI_GetWirelessFwInfo( WirelessFwInfo_t* pWirelessInfo )
    * If the FUS is running on CPU2, FUS_DEVICE_INFO_TABLE_VALIDITY_KEYWORD shall be written in the table.
    * Otherwise, it means the Wireless Firmware is running on the CPU2
    */
+  
+#if(STM32WB15xx == 0)
+  p_fus_device_info_table = (MB_FUS_DeviceInfoTable_t*)(*(uint32_t*)((ipccdba<<2) + (SRAM_BASE + 0x00030000)));
+#else
   p_fus_device_info_table = (MB_FUS_DeviceInfoTable_t*)(*(uint32_t*)((ipccdba<<2) + SRAM2A_BASE));
+#endif
 
   if(p_fus_device_info_table->DeviceInfoTableState == FUS_DEVICE_INFO_TABLE_VALIDITY_KEYWORD)
   {
@@ -638,7 +697,11 @@ SHCI_CmdStatus_t SHCI_GetWirelessFwInfo( WirelessFwInfo_t* pWirelessInfo )
   {
     /* The Wireless Firmware is running on CPU2 */
 
+#if(STM32WB15xx == 0)
+    p_RefTable = (MB_RefTable_t*)((ipccdba<<2) + (SRAM_BASE + 0x00030000));
+#else
     p_RefTable = (MB_RefTable_t*)((ipccdba<<2) + SRAM2A_BASE);
+#endif
 
     /**
      *  Retrieve the WirelessFwInfoTable

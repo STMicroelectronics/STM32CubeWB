@@ -38,6 +38,7 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+extern RTC_HandleTypeDef hrtc;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -59,13 +60,16 @@
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+uint8_t g_ot_notification_allowed = 0U;
 
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
 
 /* Global function prototypes -----------------------------------------------*/
+#if(CFG_DEBUG_TRACE != 0)
 size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
+#endif
 
 /* USER CODE BEGIN GFP */
 
@@ -79,7 +83,14 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
 static void APPE_SysEvtReadyProcessing( void );
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
-static void appe_Tl_Init( void );
+
+#if (CFG_HW_LPUART1_ENABLED == 1)
+extern void MX_LPUART1_UART_Init(void);
+#endif
+#if (CFG_HW_USART1_ENABLED == 1)
+extern void MX_USART1_UART_Init(void);
+#endif
+
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
 static void Button_Init( void );
@@ -94,10 +105,7 @@ void APPE_Init( void )
 
 /* USER CODE BEGIN APPE_Init_1 */
   Init_Debug();
-  /**
-   * The Standby mode should not be entered before the initialization is over
-   * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
-   */
+  
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
   Led_Init();
   Button_Init();
@@ -130,8 +138,6 @@ static void Init_Debug( void )
    * Keep debugger enabled while in any low power mode
    */
   HAL_DBGMCU_EnableDBGSleepMode();
-  
-  
 
   /***************** ENABLE DEBUGGER *************************************/
   LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
@@ -177,7 +183,6 @@ static void Init_Debug( void )
  */
 static void SystemPower_Config(void)
 {
-
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -228,13 +233,6 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
   UNUSED(status);
   return;
 }
-
-/**
- * @brief Trap a notification coming from the M0 firmware
- * @param  pPayload  : payload associated to the notification
- *
- * @retval None
- */
 
 /**
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
@@ -304,9 +302,15 @@ static void Led_Init( void )
   /**
    * Leds Initialization
    */
-
+#if (CFG_HW_LPUART1_ENABLED != 1) || ! defined (STM32WB35xx)
+  // On Little DORY, LED_BLUE share the GPIO PB5 with LPUART
   BSP_LED_Init(LED_BLUE);
+#endif
+  
+#if (CFG_HW_EXTPA_ENABLED != 1)
   BSP_LED_Init(LED_GREEN);
+#endif
+  
   BSP_LED_Init(LED_RED);
 
 #endif
@@ -356,8 +360,16 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
   switch(evt_waited_bm)
   {
   case EVENT_ACK_FROM_M0_EVT:
-    /* Does not allow other tasks when waiting for OT Cmd response */
-    UTIL_SEQ_Run(0);
+    if(g_ot_notification_allowed == 1U)
+    {
+      /* Some OT API send M0 to M4 notifications so allow notifications when waiting for OT Cmd response */
+      UTIL_SEQ_Run(TASK_MSG_FROM_M0_TO_M4);
+    }
+    else
+    {
+      /* Does not allow other tasks when waiting for OT Cmd response */
+      UTIL_SEQ_Run(0);
+    }
     break;
   case EVENT_SYNCHRO_BYPASS_IDLE:
     UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
@@ -366,7 +378,7 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
     break;
   default :
     /* default case */
-    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+  UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
     break;
   }
 }
@@ -412,8 +424,10 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 #if(CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
-  HW_UART_Init(CFG_DEBUG_TRACE_UART);
+#ifdef CFG_DEBUG_TRACE_UART
+  MX_LPUART1_UART_Init();
   return;
+#endif
 }
 
 /**

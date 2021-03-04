@@ -1,0 +1,8 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\STM32WB5MM-DK
+[Others]
+Define=
+HALModule=TIM
+[Groups]
+Doc=../readme.txt;
+Drivers/BSP/STM32WB5MM-DK=../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk.c;

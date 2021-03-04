@@ -184,6 +184,9 @@ struct ZbStartupT {
         /**< Pointer to persistence data. Only applicable if ZCL_TL_ZBINFO_USE_PERSIST
          * flag is set in zb_info. */
         unsigned int persist_len; /**< Length of persistence data. */
+        struct ZbTouchlinkCallbacks callbacks;
+        /**< Callback functions for Touchlink Controller Device Utility commands. */
+        void *cb_arg; /**< Pointer to application data that will be used with Touchlink callbacks. */
     } touchlink; /**< Touchlink configuration. Only applicable if BDB_COMMISSION_MODE_TOUCHLINK. */
 };
 

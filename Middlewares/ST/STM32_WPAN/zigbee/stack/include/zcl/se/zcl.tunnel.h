@@ -1,9 +1,60 @@
 /**
  * @file zcl.tunnel.h
+ * @heading Tunneling
  * @brief ZCL Tunneling cluster header
  * ZCL 7 section 10.6
  * ZCL 8 section 10.6
  * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
+
+/* @PICS.ZCL.Tunnel
+ * SETUN.S | Server | True
+ * SETUN.C | Client | True
+ *
+ * Server Attributes
+ * SETUN.S.A0000 | CloseTunnelTimeout | True
+ * SETUN.S.Afffd | ClusterRevision | True
+ * SETUN.S.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * SETUN.S.C00.Rsp | RequestTunnel | True
+ * SETUN.S.C01.Rsp | CloseTunnel | True
+ * SETUN.S.C02.Rsp | TransferData | True
+ * SETUN.S.C03.Rsp | TransferDataError | True
+ * SETUN.S.C04.Rsp | AckTransferData | False | Optional
+ * SETUN.S.C05.Rsp | ReadyData | False | Optional
+ * SETUN.S.C06.Rsp | GetSupportedTunnelProtocols | False | Optional
+ *
+ * Commands Generated
+ * SETUN.S.C00.Tx | RequestTunnelResponse | True
+ * SETUN.S.C01.Tx | TransferData | True
+ * SETUN.S.C02.Tx | TransferDataError | True
+ * SETUN.S.C03.Tx | AckTransferData | True | Optional
+ * SETUN.S.C04.Tx | ReadyData | False | Optional
+ * SETUN.S.C05.Tx | Supported Tunnel Protocols Response | False | Optional
+ * SETUN.S.C06.Tx | TunnelClosureNotification | False | Optional
+ *
+ * Client Attributes
+ * SETUN.C.Afffd | ClusterRevision | True
+ * SETUN.C.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * SETUN.C.C00.Rsp | RequestTunnelResponse | True
+ * SETUN.C.C01.Rsp | TransferData | True
+ * SETUN.C.C02.Rsp | TransferDataError | True
+ * SETUN.C.C03.Rsp | AckTransferData | False | Optional
+ * SETUN.C.C04.Rsp | ReadyData | False | Optional
+ * SETUN.C.C05.Rsp | Supported Tunnel Protocols Response | False | Optional
+ * SETUN.C.C06.Rsp | TunnelClosureNotification | True | Optional
+ *
+ * Commands Generated
+ * SETUN.C.C00.Tx | RequestTunnel | True
+ * SETUN.C.C01.Tx | CloseTunnel | True
+ * SETUN.C.C02.Tx | TransferData | True
+ * SETUN.C.C03.Tx | TransferDataError | True
+ * SETUN.C.C04.Tx | AckTransferData | True | Optional
+ * SETUN.C.C05.Tx | ReadyData | False | Optional
+ * SETUN.C.C06.Tx | GetSupportedTunnelProtocols | False | Optional
  */
 
 #ifndef ZCL_TUNNEL_H

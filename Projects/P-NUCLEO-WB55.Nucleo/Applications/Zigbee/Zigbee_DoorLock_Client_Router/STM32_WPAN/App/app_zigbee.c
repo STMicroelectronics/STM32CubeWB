@@ -31,8 +31,8 @@
 
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.alarm.h"
-#include "zcl/zcl.doorlock.h"
+#include "zcl/general/zcl.alarm.h"
+#include "zcl/general/zcl.doorlock.h"
 
 /* Private defines -----------------------------------------------------------*/
 #define APP_ZIGBEE_STARTUP_FAIL_DELAY               500U
@@ -254,7 +254,6 @@ static void APP_ZIGBEE_DoorLock_Client_Send_UnlockWithWrongPIN(void){
   /* Creating a request for the unlock cmd  with a wrong pin (set to 0) */ 
   DoorLockUnlockDoorReq.pin_len = 1;
   memset(DoorLockUnlockDoorReq.pin, 0, ZCL_DRLK_MAX_PIN_LEN);
-  memcpy(DoorLockUnlockDoorReq.pin, 0, 1);
   
   /* Send the request */ 
   status = ZbZclDoorLockClientUnlockReq(zigbee_app_info.doorlock_client, &dst, &DoorLockUnlockDoorReq, &APP_ZIGBEE_Generic_Cmd_Rsp_cb, NULL);
@@ -452,8 +451,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
  */
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;

@@ -1,0 +1,7 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\NUCLEO-WB15CC
+[Others]
+Define=USE_STM32WBXX_NUCLEO
+[Groups]
+Drivers/BSP/NUCLEO-WB15CC=../../../../../../Drivers/BSP/NUCLEO-WB15CC/nucleo_wb15cc.c;
+Doc=../readme.txt;

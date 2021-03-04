@@ -1,15 +1,10 @@
-/**
- * @file zigbee.bdb.h
- * @brief BDB header file
- * @author Exegin Technologies
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
- */
+/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZIGBEE_ZGP_H
 # define ZIGBEE_ZGP_H
 
-/*lint -save -e621 [ identifier clash within 31 chars - 5.1 REQUIRED ] */
-/*lint -save -e955 [ param name missing from 'callback' prototype - 8.2 REQUIRED] */
+/*lint -save -e621 [ identifier clash within 31 chars <Rule 5.1, REQUIRED> ] */
+/*lint -save -e955 [ param name missing from 'callback' prototype <Rule 8.2, REQUIRED> ] */
 
 /* Identifier clash ('ZB_ZGP_COMMAND_MOVE_SATURATION_UP' <->'ZB_ZGP_COMMAND_MOVE_SATURATION_STOP' */
 
@@ -173,7 +168,7 @@ enum ZgpStatusCodeT {
 #define ZB_ZGP_TXOPTIONS_MAINTENANCE                (uint8_t)(ZB_ZGP_TYPE_MAINTENANCE << 3U)
 #define ZB_ZGP_TXOPTIONS_ENDPOINT                   (uint8_t)0x20U
 
-typedef struct ZbZgpDataReqT {
+struct ZbZgpDataReqT {
     uint8_t txOptions;
     uint8_t applicationId;
     uint32_t srcId;
@@ -184,16 +179,17 @@ typedef struct ZbZgpDataReqT {
     uint8_t asduLength;
     uint32_t handle;
     uint16_t lifetime;
-} ZbZgpDataReqT;
+};
 
-/* Same format as struct ZbNldeDataConfT */
-typedef struct ZbZgpDataConfT {
+/* Same format as ZbNldeDataConfT */
+struct ZbZgpDataConfT {
     uint32_t handle;
     enum ZgpStatusCodeT status;
-} ZbZgpDataConfT;
+};
 
 /* Add items to the gpTxQueue */
-void ZbZgpDataReqCallback(struct ZigBeeT *, ZbZgpDataReqT *, void (*callback)(ZbZgpDataConfT *, void *), void *arg);
+void ZbZgpDataReqCallback(struct ZigBeeT *, struct ZbZgpDataReqT *,
+    void (*callback)(struct ZbZgpDataConfT *, void *), void *arg);
 
 /* Remove items from the gpTxQueue */
 void ZbZgpDataPurge(struct ZigBeeT *zb, uint8_t appId, uint64_t gpdId, uint8_t endpoint);
@@ -202,7 +198,7 @@ void ZbZgpDataPurge(struct ZigBeeT *zb, uint8_t appId, uint64_t gpdId, uint8_t e
  * GP-DATA.indication
  *---------------------------------------------------------------
  */
-typedef struct ZbZgpDataIndT {
+struct ZbZgpDataIndT {
     enum ZgpStatusCodeT status;
     int8_t rssi;
     uint8_t linkQuality;
@@ -221,7 +217,7 @@ typedef struct ZbZgpDataIndT {
     uint8_t asduLength;
     uint8_t mic[4];
     uint8_t frameType;
-} ZbZgpDataIndT;
+};
 
 /*---------------------------------------------------------------
  * Proxy table hacks
@@ -231,12 +227,6 @@ int ZbZgpDecryptKey(struct ZigBeeT *zb, uint8_t appId, uint64_t gpdId, void *key
 
 uint8_t ZbZgpAddKey(struct ZigBeeT *zb, uint8_t applicationId, uint64_t gpdId, uint8_t endpoint,
     uint8_t level, uint8_t keytype, const void *key);
-
-#if 0 /* EXEGIN - NOT_INCLUDED */
-void ZbZgpRecvDataInd(struct ZbApsdeDataIndT *dataIndPtr, void *arg);
-bool ZbZgpHandleUnsolicited(struct ZbZgpT *zgp, struct ZbApsdeDataIndT *dataIndPtr, uint8_t seqnum);
-void ZbZgpHandleUnsupported(struct ZigBeeT *zb, struct ZbApsdeDataIndT *ind, uint8_t seqnum);
-#endif
 
 /* NOTE! This is only an empty server used for testing */
 struct ZbZclClusterT * ZbZgpDeviceServerAlloc(struct ZigBeeT *zb, uint8_t endpoint);

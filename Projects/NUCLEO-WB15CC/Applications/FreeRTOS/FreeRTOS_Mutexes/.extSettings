@@ -1,0 +1,9 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\NUCLEO-WB15CC
+[Others]
+Define=
+HALModule=TIM
+[Groups]
+Application/User=../Src/main.c;../Src/stm32wbxx_it.c;../Src/stm32wbxx_hal_timebase_tim.c;../Src/app_freertos.c;../Src/stm32wbxx_hal_msp.c;
+Doc=../readme.txt;
+Drivers/BSP/NUCLEO-WB15CC=../../../../../../Drivers/BSP/NUCLEO-WB15CC/nucleo_wb15cc.c;

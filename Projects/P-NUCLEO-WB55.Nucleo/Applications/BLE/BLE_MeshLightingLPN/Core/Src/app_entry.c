@@ -173,7 +173,7 @@ void APPE_Init( void )
  * @param  None
  * @retval None
  */
-static void SystemPower_Config(void)
+static void SystemPower_Config( void )
 {
 
   /**
@@ -182,7 +182,7 @@ static void SystemPower_Config(void)
   LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 
   /* Initialize low power manager */
-  UTIL_LPM_Init();
+  UTIL_LPM_Init( );
   /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
   LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
 

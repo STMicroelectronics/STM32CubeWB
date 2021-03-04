@@ -243,7 +243,7 @@ static void ButtonTriggerReceived( void )
 
 static void DT_App_Button2_Trigger_Received( void )
 {
-  APP_DBG_MSG("change PHY \n");
+  APP_DBG_MSG("**CHANGE PHY \n");
   BLE_SVC_GAP_Change_PHY();
   return;
 }

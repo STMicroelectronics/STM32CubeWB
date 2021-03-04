@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx.0.0.7</PackID>
+          <PackID>Keil.STM32WBxx_DFP.1.1.1</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x20000000-0x2003FFFF) IROM(0x8000000-0x80FFFFF) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -330,16 +330,16 @@
             <useXO>0</useXO>
             <v6Lang>5</v6Lang>
             <v6LangP>3</v6LangP>
-            <vShortEn>0</vShortEn>
-            <vShortWch>0</vShortWch>
+            <vShortEn>1</vShortEn>
+            <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>ZIGBEE_WB,USE_HAL_DRIVER,STM32WB55xx,STM32WB55xx,USE_STM32WBXX_NUCLEO</Define>
+              <Define>USE_HAL_DRIVER,STM32WB55xx,USE_STM32WBXX_NUCLEO,ZIGBEE_WB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/extras;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zgp;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/mac;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/key;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/se;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/security;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/platform;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/core/inc;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo</IncludePath>
+              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/extras;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zgp;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/mac;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/key;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/se;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/security;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/zcl/general;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/platform;../../../../../../Middlewares/ST/STM32_WPAN/zigbee/core/inc;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -400,6 +400,16 @@
               <FilePath>../Core/Src/main.c</FilePath>
             </File>
             <File>
+              <FileName>stm32wbxx_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/stm32wbxx_hal_msp.c</FilePath>
+            </File>
+            <File>
               <FileName>app_entry.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/app_entry.c</FilePath>
@@ -424,16 +434,6 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm_logging.c</FilePath>
             </File>
-            <File>
-              <FileName>stm32wbxx_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32wbxx_hal_msp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32wbxx_hal_msp.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -453,6 +453,26 @@
               <FileName>hw_ipcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>../STM32_WPAN/Target/hw_ipcc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Doc</GroupName>
+          <Files>
+            <File>
+              <FileName>readme.txt</FileName>
+              <FileType>5</FileType>
+              <FilePath>../readme.txt</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/BSP/P-NUCLEO-WB55-Nucleo</GroupName>
+          <Files>
+            <File>
+              <FileName>stm32wbxx_nucleo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -523,6 +543,11 @@
               <FileName>stm32wbxx_hal_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_ipcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_hal_uart.c</FileName>
@@ -648,26 +673,6 @@
               <FileName>stm32_seq.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Utilities/sequencer/stm32_seq.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Doc</GroupName>
-          <Files>
-            <File>
-              <FileName>readme.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\readme.txt</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers/BSP</GroupName>
-          <Files>
-            <File>
-              <FileName>stm32wbxx_nucleo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo\stm32wbxx_nucleo.c</FilePath>
             </File>
           </Files>
         </Group>

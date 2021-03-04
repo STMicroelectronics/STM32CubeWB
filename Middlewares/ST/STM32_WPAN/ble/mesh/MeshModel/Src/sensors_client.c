@@ -68,19 +68,12 @@ const MODEL_OpcodeTableParam_t Sensors_Client_Opcodes_Table[] = {
 };
 
 /* Private function prototypes -----------------------------------------------*/
-//WEAK_FUNCTION (MOBLE_RESULT Appli_Sensors_OnOff_Set(Sensors_OnOffStatus_t* pSensors_OnOffParam, 
-//                                                    MOBLEUINT8 OptionalValid));
-//WEAK_FUNCTION (MOBLE_RESULT Appli_Sensors_Level_Set(Sensors_LevelStatus_t* plevelParam, 
-//                                                    MOBLEUINT8 OptionalValid));
-//WEAK_FUNCTION (MOBLE_RESULT Appli_Sensors_LevelDelta_Set(Sensors_LevelStatus_t* pdeltalevelParam, 
-//                                                         MOBLEUINT8 OptionalValid));
-//WEAK_FUNCTION (MOBLE_RESULT Appli_Sensors_LevelMove_Set(Sensors_LevelStatus_t* pdeltaMoveParam, 
-//                                                        MOBLEUINT8 OptionalValid));
-//WEAK_FUNCTION (MOBLE_RESULT Appli_Sensors_PowerOnOff_Set(Sensors_PowerOnOffParam_t* pPowerOnOffParam, 
-//                                                        MOBLEUINT8 OptionalValid));
-//WEAK_FUNCTION (MOBLE_RESULT Appli_Sensors_DefaultTransitionTime_Set(Sensors_DefaultTransitionParam_t* pDefaultTimeParam, 
-//                                                                    MOBLEUINT8 OptionalValid));
-//WEAK_FUNCTION (void Appli_Sensors_Restore_PowerOn_Value(MOBLEUINT8 restoreValue));
+MOBLE_RESULT SensorsClient_Column_Get(MOBLEUINT8 elementIndex, 
+                                      MOBLEUINT8 * pparam,
+                                      MOBLEUINT8 length);
+MOBLE_RESULT SensorsClient_Series_Get(MOBLEUINT8 elementIndex, 
+                                      MOBLEUINT8 * pparam,
+                                      MOBLEUINT8 length);
 
 /* Private functions ---------------------------------------------------------*/
 

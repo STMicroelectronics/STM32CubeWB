@@ -253,8 +253,11 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
-    CFG_BLE_LL_ONLY,
-    0}
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER}
   };
 
   /**
@@ -340,7 +343,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 {
   hci_event_pckt *event_pckt;
   evt_le_meta_event *meta_evt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
   hci_le_phy_update_complete_event_rp0 *evt_le_phy_update_complete;
   uint8_t TX_PHY, RX_PHY;
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
@@ -353,7 +356,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
   switch (event_pckt->evt)
   {
-    case EVT_DISCONN_COMPLETE:
+    case HCI_DISCONNECTION_COMPLETE_EVT_CODE:
     {
       hci_disconnection_complete_event_rp0 *disconnection_complete_event;
       disconnection_complete_event = (hci_disconnection_complete_event_rp0 *) event_pckt->data;
@@ -374,9 +377,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       /* USER CODE END EVT_DISCONN_COMPLETE */
     }
 
-    break; /* EVT_DISCONN_COMPLETE */
+    break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
 
-    case EVT_LE_META_EVENT:
+    case HCI_LE_META_EVT_CODE:
     {
       meta_evt = (evt_le_meta_event*) event_pckt->data;
       /* USER CODE BEGIN EVT_LE_META_EVENT */
@@ -384,14 +387,14 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       /* USER CODE END EVT_LE_META_EVENT */
       switch (meta_evt->subevent)
       {
-        case EVT_LE_CONN_UPDATE_COMPLETE:
+        case HCI_LE_CONNECTION_UPDATE_COMPLETE_SUBEVT_CODE:
           APP_DBG_MSG("\r\n\r** CONNECTION UPDATE EVENT WITH CLIENT \n");
 
           /* USER CODE BEGIN EVT_LE_CONN_UPDATE_COMPLETE */
 
           /* USER CODE END EVT_LE_CONN_UPDATE_COMPLETE */
           break;
-        case EVT_LE_PHY_UPDATE_COMPLETE:
+        case HCI_LE_PHY_UPDATE_COMPLETE_SUBEVT_CODE:
           APP_DBG_MSG("EVT_UPDATE_PHY_COMPLETE \n");
           evt_le_phy_update_complete = (hci_le_phy_update_complete_event_rp0*)meta_evt->data;
           if (evt_le_phy_update_complete->Status == 0)
@@ -425,7 +428,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           /* USER CODE END EVT_LE_PHY_UPDATE_COMPLETE */
           break;
-        case EVT_LE_CONN_COMPLETE:
+        case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
         {
           hci_le_connection_complete_event_rp0 *connection_complete_event;
 
@@ -436,7 +439,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           HW_TS_Stop(BleApplicationContext.Advertising_mgr_timer_Id);
 
-          APP_DBG_MSG("EVT_LE_CONN_COMPLETE for connection handle 0x%x\n", connection_complete_event->Connection_Handle);
+          APP_DBG_MSG("HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE for connection handle 0x%x\n", connection_complete_event->Connection_Handle);
           if (BleApplicationContext.Device_Connection_Status == APP_BLE_LP_CONNECTING)
           {
             /* Connection as client */
@@ -452,7 +455,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
           /* USER CODE END HCI_EVT_LE_CONN_COMPLETE */
         }
-        break; /* HCI_EVT_LE_CONN_COMPLETE */
+        break; /* HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
 
         /* USER CODE BEGIN META_EVT */
 
@@ -465,58 +468,56 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           break;
       }
     }
-    break; /* HCI_EVT_LE_META_EVENT */
+    break; /* HCI_LE_META_EVT_CODE */
 
-    case EVT_VENDOR:
-      blue_evt = (evt_blue_aci*) event_pckt->data;
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
+      blecore_evt = (evt_blecore_aci*) event_pckt->data;
       /* USER CODE BEGIN EVT_VENDOR */
 
       /* USER CODE END EVT_VENDOR */
-      switch (blue_evt->ecode)
+      switch (blecore_evt->ecode)
       {
       /* USER CODE BEGIN ecode */
         aci_gap_pairing_complete_event_rp0 *pairing_complete;
 
-      case EVT_BLUE_GAP_LIMITED_DISCOVERABLE: 
-        APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_LIMITED_DISCOVERABLE \n");
-          break; /* EVT_BLUE_GAP_LIMITED_DISCOVERABLE */
-      case EVT_BLUE_GAP_PASS_KEY_REQUEST:  
-        APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_PASS_KEY_REQUEST \n");
+      case ACI_GAP_LIMITED_DISCOVERABLE_VSEVT_CODE: 
+        APP_DBG_MSG("\r\n\r** ACI_GAP_LIMITED_DISCOVERABLE_VSEVT_CODE \n");
+          break; /* ACI_GAP_LIMITED_DISCOVERABLE_VSEVT_CODE */
+      case ACI_GAP_PASS_KEY_REQ_VSEVT_CODE:  
+        APP_DBG_MSG("\r\n\r** ACI_GAP_PASS_KEY_REQ_VSEVT_CODE \n");
         aci_gap_pass_key_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,123456);
         APP_DBG_MSG("\r\n\r** aci_gap_pass_key_resp \n");
-          break; /* EVT_BLUE_GAP_PASS_KEY_REQUEST */
-      case EVT_BLUE_GAP_AUTHORIZATION_REQUEST:    
-        APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_AUTHORIZATION_REQUEST \n");
-          break; /* EVT_BLUE_GAP_AUTHORIZATION_REQUEST */
-      case EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED:   
-        APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED \n");
-          break; /* EVT_BLUE_GAP_SLAVE_SECURITY_INITIATED */
-      case EVT_BLUE_GAP_BOND_LOST:    
-        APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_BOND_LOST \n");
+          break; /* ACI_GAP_PASS_KEY_REQ_VSEVT_CODE */
+      case ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE:    
+        APP_DBG_MSG("\r\n\r** ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE \n");
+          break; /* ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE */
+      case ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE:   
+        APP_DBG_MSG("\r\n\r** ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE \n");
+          break; /* ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE */
+      case ACI_GAP_BOND_LOST_VSEVT_CODE:    
+        APP_DBG_MSG("\r\n\r** ACI_GAP_BOND_LOST_VSEVT_CODE \n");
           aci_gap_allow_rebond(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
         APP_DBG_MSG("\r\n\r** Send allow rebond \n");
-          break; /* EVT_BLUE_GAP_BOND_LOST */
-      case EVT_BLUE_GAP_DEVICE_FOUND:  
-        APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_DEVICE_FOUND \n");
-          break; /* EVT_BLUE_GAP_DEVICE_FOUND */
-      case EVT_BLUE_GAP_ADDR_NOT_RESOLVED:
-         APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_DEVICE_FOUND \n");
-          break; /* EVT_BLUE_GAP_DEVICE_FOUND */
-      case (EVT_BLUE_GAP_KEYPRESS_NOTIFICATION):
-         APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_KEYPRESS_NOTIFICATION \n");
-          break; /* EVT_BLUE_GAP_KEY_PRESS_NOTIFICATION */    
-       case (EVT_BLUE_GAP_NUMERIC_COMPARISON_VALUE):
+          break; /* ACI_GAP_BOND_LOST_VSEVT_CODE */
+
+      case ACI_GAP_ADDR_NOT_RESOLVED_VSEVT_CODE:
+         APP_DBG_MSG("\r\n\r** ACI_GAP_ADDR_NOT_RESOLVED_VSEVT_CODE \n");
+          break; /* ACI_GAP_ADDR_NOT_RESOLVED_VSEVT_CODE */
+      case (ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE):
+         APP_DBG_MSG("\r\n\r** ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE\n");
+          break; /* ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE */    
+       case (ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE):
           APP_DBG_MSG("numeric_value = %ld\n",
-                      ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
+                      ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
           APP_DBG_MSG("Hex_value = %lx\n",
-                      ((aci_gap_numeric_comparison_value_event_rp0 *)(blue_evt->data))->Numeric_Value);
+                      ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
           aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 1); /* CONFIRM_YES = 1 */
           APP_DBG_MSG("\r\n\r** aci_gap_numeric_comparison_value_confirm_yesno-->YES \n");
           break;
-          case (EVT_BLUE_GAP_PAIRING_CMPLT):
+          case (ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE):
           {
-            pairing_complete = (aci_gap_pairing_complete_event_rp0*)blue_evt->data;
-            APP_DBG_MSG("BLE_CTRL_App_Notification: EVT_BLUE_GAP_PAIRING_CMPLT, pairing_complete->Status = %d\n",pairing_complete->Status);
+            pairing_complete = (aci_gap_pairing_complete_event_rp0*)blecore_evt->data;
+            APP_DBG_MSG("BLE_CTRL_App_Notification: ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE, pairing_complete->Status = %d\n",pairing_complete->Status);
             if (pairing_complete->Status == 0)
             {
               APP_DBG_MSG("\r\n\r** Pairing OK \n");
@@ -528,18 +529,18 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           }
            break;    
       /* USER CODE END ecode */
-        case EVT_BLUE_GAP_PROCEDURE_COMPLETE:
-        APP_DBG_MSG("\r\n\r** EVT_BLUE_GAP_PROCEDURE_COMPLETE \n");
+        case ACI_GAP_PROC_COMPLETE_VSEVT_CODE:
+        APP_DBG_MSG("\r\n\r** ACI_GAP_PROC_COMPLETE_VSEVT_CODE \n");
         /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE */
 
         /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
-          break; /* EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+          break; /* ACI_GAP_PROC_COMPLETE_VSEVT_CODE */
 
       /* USER CODE BEGIN BLUE_EVT */
 
       /* USER CODE END BLUE_EVT */
       }
-      break; /* EVT_VENDOR */
+      break; /* HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
 
       /* USER CODE BEGIN EVENT_PCKT */
 
@@ -549,7 +550,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
       /* USER CODE BEGIN ECODE_DEFAULT*/
 
       /* USER CODE END ECODE_DEFAULT*/
-        break;
+      break;
   }
 
   return (SVCCTL_UserEvtFlowEnable);
@@ -813,12 +814,20 @@ const uint8_t* BleGetBdAddress( void )
     company_id = LL_FLASH_GetSTCompanyID();
     device_id = LL_FLASH_GetDeviceID();
 
+/**
+ * Public Address with the ST company ID
+ * bit[47:24] : 24bits (OUI) equal to the company ID
+ * bit[23:16] : Device ID.
+ * bit[15:0] : The last 16bits from the UDN
+ * Note: In order to use the Public Address in a final product, a dedicated
+ * 24bits company ID (OUI) shall be bought.
+ */
     bd_addr_udn[0] = (uint8_t)(udn & 0x000000FF);
     bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_addr_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
-    bd_addr_udn[3] = (uint8_t)device_id;
-    bd_addr_udn[4] = (uint8_t)(company_id & 0x000000FF);;
-    bd_addr_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[2] = (uint8_t)device_id;
+    bd_addr_udn[3] = (uint8_t)(company_id & 0x000000FF);
+    bd_addr_udn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    bd_addr_udn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
 
     bd_addr = (const uint8_t *)bd_addr_udn;
   }
@@ -833,7 +842,6 @@ const uint8_t* BleGetBdAddress( void )
     {
       bd_addr = M_bd_addr;
     }
-
   }
 
   return bd_addr;

@@ -487,7 +487,7 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
 {
     SVCCTL_EvtAckStatus_t return_value;
     hci_event_pckt *event_pckt;
-    evt_blue_aci *blue_evt;
+    evt_blecore_aci *blecore_evt;
 
     P2P_Client_App_Notification_evt_t Notification;
 
@@ -498,16 +498,16 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
 
     switch(event_pckt->evt)
     {
-        case EVT_VENDOR:
+        case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
         {
-            blue_evt = (evt_blue_aci*)event_pckt->data;
-            switch(blue_evt->ecode)
+            blecore_evt = (evt_blecore_aci*)event_pckt->data;
+            switch(blecore_evt->ecode)
             {
 
 
-                case EVT_BLUE_ATT_READ_BY_GROUP_TYPE_RESP:
+                case ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE:
                 {
-                    aci_att_read_by_group_type_resp_event_rp0 *pr = (void*)blue_evt->data;
+                    aci_att_read_by_group_type_resp_event_rp0 *pr = (void*)blecore_evt->data;
                     uint8_t numServ, i, idx;
                     uint16_t uuid, handle;
 
@@ -581,10 +581,10 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
                     break;
 
 
-                case EVT_BLUE_ATT_READ_BY_TYPE_RESP:
+                case ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE:
                 {
 
-                    aci_att_read_by_type_resp_event_rp0 *pr = (void*)blue_evt->data;
+                    aci_att_read_by_type_resp_event_rp0 *pr = (void*)blecore_evt->data;
 
                     uint8_t idx;
                     uint16_t uuid, handle;
@@ -643,8 +643,8 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
                                 pr->Data_Length -= 21;
                                 idx += 21;
 #else
-                                pr->Data_Length -= 7;;
-                                idx += 7;;
+                                pr->Data_Length -= 7;
+                                idx += 7;
 #endif
                             }
                         }
@@ -653,9 +653,9 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
                 break;
 
 
-                case EVT_BLUE_ATT_FIND_INFORMATION_RESP:
+                case ACI_ATT_FIND_INFO_RESP_VSEVT_CODE:
                 {
-                    aci_att_find_info_resp_event_rp0 *pr = (void*)blue_evt->data;
+                    aci_att_find_info_resp_event_rp0 *pr = (void*)blecore_evt->data;
 
                     uint8_t numDesc, idx, i;
                     uint16_t uuid, handle;
@@ -703,12 +703,12 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
                         }
                     }
                 }
-                break; /*EVT_BLUE_ATT_FIND_INFORMATION_RESP*/
+                break; /*ACI_ATT_FIND_INFO_RESP_VSEVT_CODE*/
 
 
-                case EVT_BLUE_GATT_NOTIFICATION:
+                case ACI_GATT_NOTIFICATION_VSEVT_CODE:
                 {
-                    aci_gatt_notification_event_rp0 *pr = (void*)blue_evt->data;
+                    aci_gatt_notification_event_rp0 *pr = (void*)blecore_evt->data;
                     uint8_t index;
 
                     index = 0;
@@ -734,12 +734,12 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
                         }
                     }
                 }
-                break;/* end EVT_BLUE_GATT_NOTIFICATION */
+                break;/* end ACI_GATT_NOTIFICATION_VSEVT_CODE */
 
-                case EVT_BLUE_GATT_PROCEDURE_COMPLETE:
+                case ACI_GATT_PROC_COMPLETE_VSEVT_CODE:
                 {
-                    aci_gatt_proc_complete_event_rp0 *pr = (void*)blue_evt->data;
-                    APP_DBG_MSG("-- GATT : EVT_BLUE_GATT_PROCEDURE_COMPLETE \n");
+                    aci_gatt_proc_complete_event_rp0 *pr = (void*)blecore_evt->data;
+                    APP_DBG_MSG("-- GATT : ACI_GATT_PROC_COMPLETE_VSEVT_CODE \n");
                     APP_DBG_MSG("\n");
           
 
@@ -755,13 +755,13 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
                         UTIL_SEQ_SetTask(  1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0 );
                     }
                 }
-                break; /*EVT_BLUE_GATT_PROCEDURE_COMPLETE*/
+                break; /*ACI_GATT_PROC_COMPLETE_VSEVT_CODE*/
                 default:
                     break;
                 }
             }
 
-            break; /* HCI_EVT_VENDOR_SPECIFIC */
+            break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
 
                 default:
                     break;

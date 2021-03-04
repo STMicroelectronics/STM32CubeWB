@@ -30,6 +30,32 @@
  * THIS SHALL NO BE CHANGED AS THESE SEMAPHORES ARE USED AS WELL ON THE CM0+
  *****************************************************************************/
 /**
+*  The CPU2 may be configured to store the Thread persistent data either in internal NVM storage on CPU2 or in
+*  SRAM2 buffer provided by the user application. This can be configured with the system command SHCI_C2_Config()
+*  When the CPU2 is requested to store persistent data in SRAM2, it can write data in this buffer at any time when needed.
+*  In order to read consistent data with the CPU1 from the SRAM2 buffer, the flow should be:
+*  + CPU1 takes CFG_HW_THREAD_NVM_SRAM_SEMID semaphore
+*  + CPU1 reads all persistent data from SRAM2 (most of the time, the goal is to write these data into an NVM managed by CPU1)
+*  + CPU1 releases CFG_HW_THREAD_NVM_SRAM_SEMID semaphore
+*  CFG_HW_THREAD_NVM_SRAM_SEMID semaphore makes sure CPU2 does not update the persistent data in SRAM2 at the same time CPU1 is reading them.
+*  There is no timing constraint on how long this semaphore can be kept.
+*/
+#define CFG_HW_THREAD_NVM_SRAM_SEMID                    9
+
+/**
+*  The CPU2 may be configured to store the BLE persistent data either in internal NVM storage on CPU2 or in
+*  SRAM2 buffer provided by the user application. This can be configured with the system command SHCI_C2_Config()
+*  When the CPU2 is requested to store persistent data in SRAM2, it can write data in this buffer at any time when needed.
+*  In order to read consistent data with the CPU1 from the SRAM2 buffer, the flow should be:
+*  + CPU1 takes CFG_HW_BLE_NVM_SRAM_SEMID semaphore
+*  + CPU1 reads all persistent data from SRAM2 (most of the time, the goal is to write these data into an NVM managed by CPU1)
+*  + CPU1 releases CFG_HW_BLE_NVM_SRAM_SEMID semaphore
+*  CFG_HW_BLE_NVM_SRAM_SEMID semaphore makes sure CPU2 does not update the persistent data in SRAM2 at the same time CPU1 is reading them.
+*  There is no timing constraint on how long this semaphore can be kept.
+*/
+#define CFG_HW_BLE_NVM_SRAM_SEMID                    8
+
+/**
 *  Index of the semaphore used by CPU2 to prevent the CPU1 to either write or erase data in flash
 *  The CPU1 shall not either write or erase in flash when this semaphore is taken by the CPU2
 *  When the CPU1 needs to either write or erase in flash, it shall first get the semaphore and release it just
@@ -175,14 +201,6 @@
 #define CFG_HW_USART1_RX_PULL                 GPIO_NOPULL
 #define CFG_HW_USART1_RX_SPEED                GPIO_SPEED_FREQ_VERY_HIGH
 #define CFG_HW_USART1_RX_ALTERNATE            GPIO_AF7_USART1
-
-#define CFG_HW_USART1_CTS_PORT_CLK_ENABLE     __HAL_RCC_GPIOA_CLK_ENABLE
-#define CFG_HW_USART1_CTS_PORT                GPIOA
-#define CFG_HW_USART1_CTS_PIN                 GPIO_PIN_11
-#define CFG_HW_USART1_CTS_MODE                GPIO_MODE_AF_PP
-#define CFG_HW_USART1_CTS_PULL                GPIO_PULLDOWN
-#define CFG_HW_USART1_CTS_SPEED               GPIO_SPEED_FREQ_VERY_HIGH
-#define CFG_HW_USART1_CTS_ALTERNATE           GPIO_AF7_USART1
 
 #define CFG_HW_USART1_DMA_TX_PREEMPTPRIORITY  0x0F
 #define CFG_HW_USART1_DMA_TX_SUBPRIORITY      0

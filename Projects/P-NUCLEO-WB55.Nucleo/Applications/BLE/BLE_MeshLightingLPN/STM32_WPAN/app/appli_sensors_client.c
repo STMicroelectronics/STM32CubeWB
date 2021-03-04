@@ -28,6 +28,7 @@
 #include "appli_mesh.h"
 #include "sensors_client.h"
 #include "appli_sensors_client.h"
+#include "appli_light_lc.h"
 
 /** @addtogroup ST_BLE_Mesh
 *  @{
@@ -71,7 +72,6 @@ MOBLE_RESULT Appli_SensorsClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_op
     }
   case SENSOR_CADENCE_SET:
     {
-      //TODO: Set dynamic data size depending on Sensor DATA LENTGH:  length = 4 + 4 + 2* SensorDataLength
       result = SensorsClient_Cadence_Set(elementIndex,
                               msg_params, 
                               10); //(sizeof(sensor_CadenceCbParam_t)-3)); 
@@ -79,7 +79,6 @@ MOBLE_RESULT Appli_SensorsClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_op
     }
   case SENSOR_CADENCE_SET_UNACK:
     {  
-      //TODO: Set dynamic data size depending on Sensor DATA LENTGH:  length = 4 + 4 + 2 * SensorDataLength
       result = SensorsClient_Cadence_Set_Unack(elementIndex,
                               msg_params, 
                               10); //(sizeof(sensor_CadenceCbParam_t)-3));
@@ -140,6 +139,186 @@ MOBLE_RESULT Appli_SensorsClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_op
   }
   return result;
 }
+
+/**
+  * @brief  Callback corresponding to Appli_Sensor_Cadence_Status
+  * @param  Descriptor parameters
+  * @param  
+* @retval None
+*/ 
+void Appli_Sensor_Cadence_Status(const MOBLEUINT8 *pCadence,
+                                 MOBLEUINT32 length,
+                                 MOBLE_ADDRESS dstPeer,
+                                 MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT8 i;
+  
+  TRACE_M(TF_SENSOR,"Appli_Sensor_Cadence_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#%d! for element %d \r\n", 
+          SENSOR_CADENCE_STATUS,
+          elementIndex);
+  for(i = 0; i < length; i++)
+  {
+    TRACE_M(TF_SERIAL_CTRL,"Cadence value: %d\n\r", pCadence[i]);
+  }
+}
+      
+      
+/**
+  * @brief  Callback corresponding to Appli_Sensor_Settings_Status
+  * @param  Descriptor parameters
+  * @param  
+* @retval None
+*/ 
+void Appli_Sensor_Settings_Status(const MOBLEUINT8 *pSettings,
+                                  MOBLEUINT32 length,
+                                  MOBLE_ADDRESS dstPeer,
+                                  MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT8 i;
+  
+  TRACE_M(TF_SENSOR,"Appli_Sensor_Settings_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#%d! for element %d \r\n", 
+          SENSOR_SETTINGS_STATUS,
+          elementIndex);
+  for(i = 0; i < length; i++)
+  {
+    TRACE_M(TF_SERIAL_CTRL,"Settings value: %d\n\r", pSettings[i]);
+  }
+}
+      
+      
+/**
+  * @brief  Callback corresponding to Appli_Sensor_Setting_Status
+  * @param  Descriptor parameters
+  * @param  
+* @retval None
+*/ 
+void Appli_Sensor_Setting_Status(const MOBLEUINT8 *pSetting,
+                                  MOBLEUINT32 length,
+                                  MOBLE_ADDRESS dstPeer,
+                                  MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT8 i;
+  
+  TRACE_M(TF_SENSOR,"Appli_Sensor_Setting_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#%d! for element %d \r\n", 
+          SENSOR_SETTING_STATUS,
+          elementIndex);
+  for(i = 0; i < length; i++)
+  {
+    TRACE_M(TF_SERIAL_CTRL,"Setting value: %d\n\r", pSetting[i]);
+  }
+}
+      
+      
+/**
+  * @brief  Callback corresponding to Appli_Sensor_Descriptor_Status
+  * @param  Descriptor parameters
+  * @param  
+* @retval None
+*/ 
+void Appli_Sensor_Descriptor_Status(const MOBLEUINT8 *pDescriptor,
+                                    MOBLEUINT32 length,
+                                    MOBLE_ADDRESS dstPeer,
+                                    MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT8 i;
+  
+  TRACE_M(TF_SENSOR,"Appli_Sensor_Descriptor_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#%d! for element %d \r\n", 
+          SENSOR_DESCRIPTOR_STATUS,
+          elementIndex);
+  for(i = 0; i < length; i++)
+  {
+    TRACE_M(TF_SERIAL_CTRL,"Descriptor value: %d\n\r", pDescriptor[i]);
+  }
+}
+      
+      
+/**
+  * @brief  Callback corresponding to Appli_Sensor_Status
+  * @param  Descriptor parameters
+  * @param  
+* @retval None
+*/ 
+void Appli_Sensor_Status(const MOBLEUINT8 *pStatus,
+                         MOBLEUINT32 length,
+                         MOBLE_ADDRESS dstPeer,
+                         MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT8 i;
+  
+  TRACE_M(TF_SENSOR,"Appli_Sensor_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#%d! for element %d \r\n", 
+          SENSOR_STATUS,
+          elementIndex);
+  for(i = 0; i < length; i++)
+  {
+    TRACE_M(TF_SERIAL_CTRL,"Status value: %d\n\r", pStatus[i]);
+  }
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC   
+  Appli_Light_LC_SensorPropertyUpdate(elementIndex,
+                                      PRESENCE_DETECTED_PID,
+                                      (MOBLEUINT32) pStatus[length-1]);
+#endif        
+}
+      
+      
+/**
+  * @brief  Callback corresponding to Appli_Sensor_Column_Status
+  * @param  Descriptor parameters
+  * @param  
+* @retval None
+*/ 
+void Appli_Sensor_Column_Status(const MOBLEUINT8 *pColumn,
+                                MOBLEUINT32 length,
+                                MOBLE_ADDRESS dstPeer,
+                                MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT8 i;
+  
+  TRACE_M(TF_SENSOR,"Appli_Sensor_Column_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#%d! for element %d \r\n", 
+          SENSOR_COLUMN_STATUS,
+          elementIndex);
+  for(i = 0; i < length; i++)
+  {
+    TRACE_M(TF_SERIAL_CTRL,"Column Status value: %d\n\r", pColumn[i]);
+  }
+}
+      
+      
+/**
+  * @brief  Callback corresponding to Appli_Sensor_Series_Status
+  * @param  Descriptor parameters
+  * @param  
+* @retval None
+*/ 
+void Appli_Sensor_Series_Status(const MOBLEUINT8 *pSeries,
+                                MOBLEUINT32 length,
+                                MOBLE_ADDRESS dstPeer,
+                                MOBLEUINT8 elementIndex)
+{
+  MOBLEUINT8 i;
+  
+  TRACE_M(TF_SENSOR,"Appli_Sensor_Series_Status callback received \r\n");
+  
+  TRACE_M(TF_SERIAL_CTRL,"#%d! for element %d \r\n", 
+          SENSOR_SERIES_STATUS,
+          elementIndex);
+  for(i = 0; i < length; i++)
+  {
+    TRACE_M(TF_SERIAL_CTRL,"Series Status value: %d\n\r", pSeries[i]);
+  }
+}
+
 
 /**
 * @}

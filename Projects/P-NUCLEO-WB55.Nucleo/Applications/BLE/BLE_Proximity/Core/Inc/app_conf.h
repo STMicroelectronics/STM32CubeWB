@@ -147,6 +147,7 @@
 
 /**
  * Maximum supported ATT_MTU size
+ * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS is set to 1"
  */
 #define CFG_BLE_MAX_ATT_MTU             (156)
 
@@ -159,6 +160,7 @@
  *  - 2*DTM_NUM_LINK, if client configuration descriptor is used
  *  - 2, if extended properties is used
  *  The total amount of memory needed is the sum of the above quantities for each attribute.
+ * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS is set to 1"
  */
 #define CFG_BLE_ATT_VALUE_ARRAY_SIZE    (1344)
 
@@ -169,6 +171,7 @@
 
 /**
  * Number of allocated memory blocks
+ * This parameter is overwritten by the CPU2 with an hardcoded optimal value when the parameter when CFG_BLE_OPTIONS is set to 1
  */
 #define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, CFG_BLE_MAX_ATT_MTU, CFG_BLE_NUM_LINK))
 
@@ -210,7 +213,7 @@
 /**
  * Maximum duration of the connection event when the device is in Slave mode in units of 625/256 us (~2.44 us)
  */
-#define CFG_BLE_MAX_CONN_EVENT_LENGTH  ( 0xFFFFFFFF )
+#define CFG_BLE_MAX_CONN_EVENT_LENGTH  (0xFFFF)
 
 /**
  * Viterbi Mode
@@ -220,11 +223,33 @@
 #define CFG_BLE_VITERBI_MODE  1
 
 /**
- *  LL Only Mode
- *  1 : LL Only
- *  0 : LL + Host
+ * BLE stack Options flags to be configured with:
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY                      
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST                        
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC           
+ * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC         
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO               
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW               
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1                
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 
+ * which are used to set following configuration bits:            
+ * (bit 0): 1: LL only                   
+ *          0: LL + host
+ * (bit 1): 1: no service change desc.   
+ *          0: with service change desc.
+ * (bit 2): 1: device name Read-Only     
+ *          0: device name R/W
+ * (bit 7): 1: LE Power Class 1          
+ *          0: LE Power Classe 2-3
+ * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_LL_ONLY  0
+#define CFG_BLE_OPTIONS  SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+
+#define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
+
+#define CFG_BLE_MIN_TX_POWER            (0)
+
+#define CFG_BLE_MAX_TX_POWER            (0)
 
 
 /******************************************************************************
@@ -296,7 +321,7 @@
  *  The lower is the value, the better is the power consumption and the accuracy of the timerserver
  *  The higher is the value, the finest is the granularity
  *
- *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to ouput
+ *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to output
  *  clock as low as possible) but the output clock should be equal or higher frequency compare to the clock feeding
  *  the wakeup timer. A lower clock speed would impact the accuracy of the timer server.
  *

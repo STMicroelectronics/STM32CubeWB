@@ -60,20 +60,20 @@ DMA_HandleTypeDef hdma_aes1_out;
 /* USER CODE BEGIN PV */
 #if (USE_VCP_CONNECTION == 1)
 /**
-  * @brief Defines related to Timeout to uart tranmission
+  * @brief Defines related to Timeout to uart transmission
   */
 #define UART_TIMEOUT_VALUE  1000 /* 1 Second */
 
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
-
+void BSP_COM_Init(UART_HandleTypeDef* huart);
 /**
   * @brief  Retargets the C library printf function to the USARTx.
   * @param  ch: character to send
   * @param  f: pointer to file (not used)
   * @retval The character transmitted
   */
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
 /* With GCC, small printf (option LD Linker->Libraries->Small printf
    set to 'Yes') calls __io_putchar() */
 int __io_putchar(int ch)
@@ -140,7 +140,6 @@ void BSP_COM_Init(UART_HandleTypeDef* huart)
   }  
 }
 #endif
-
 
 /* Key size 256 bits */
  uint32_t aAES256key[8] = {0x603DEB10, 0x15CA71BE, 0x2B73AEF0, 0x857D7781,
@@ -238,7 +237,7 @@ static void Display_DecryptedData(uint8_t mode, uint16_t keysize, uint32_t datal
 void SystemClock_Config(void);
 void data_cmp(uint32_t *EncryptedText, uint32_t *RefText, uint8_t Size);
 /* Private functions ---------------------------------------------------------*/
-#if defined(__GNUC__)
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
 extern void initialise_monitor_handles(void);
 #endif
 
@@ -256,7 +255,7 @@ extern void initialise_monitor_handles(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-#if defined(__GNUC__)
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
   initialise_monitor_handles(); 
 #endif
 
@@ -295,7 +294,6 @@ int main(void)
   /* Configure LEDs */
   BSP_LED_Init(LED1);
   BSP_LED_Init(LED3);
-
 #if (USE_VCP_CONNECTION == 1)
 	/* Configure the virtual com port */
   BSP_COM_Init(&UartHandle);
@@ -724,8 +722,8 @@ int main(void)
     
     
 
-  /* Provide some delay for Debug Viewer */
-  HAL_Delay(500);
+
+
   printf("===================================================\n ");
   printf("\n\r ECB, CBC and CTR encryptions/decryptions done.\n ");
   printf("No issue detected.\n ");
@@ -858,14 +856,11 @@ static void MX_DMA_Init(void)
   * @retval None
   */
 static void Display_PlainData_ECB(uint32_t datalength)
-{  
+{
   uint32_t BufferCounter = 0;
   uint32_t count = 0;
   uint8_t * ptr = (uint8_t *)aPlaintextECB;
-	
-  /* Provide some delay for Debug Viewer */
-  HAL_Delay(500);
-	
+
   printf("\n\r =============================================================\n\r");
   printf(" ================= Crypt Using HW Crypto  ====================\n\r");
   printf(" =============================================================\n\r");
@@ -881,7 +876,7 @@ static void Display_PlainData_ECB(uint32_t datalength)
     if (count == 16)
     {
       count = 0;
-      printf("  Block %lu \n\r", BufferCounter / 16);
+      printf("  Block %u \n\r", BufferCounter / 16);
     }
   }
 }
@@ -896,9 +891,7 @@ static void Display_PlainData_CBC(uint32_t datalength)
   uint32_t BufferCounter = 0;
   uint32_t count = 0;
   uint8_t * ptr = (uint8_t *)aPlaintextCBC;
- /* Provide some delay for Debug Viewer */
-  HAL_Delay(500);
-	
+
   printf("\n\r =============================================================\n\r");
   printf(" ================= Crypt Using HW Crypto  ====================\n\r");
   printf(" =============================================================\n\r");
@@ -914,7 +907,7 @@ static void Display_PlainData_CBC(uint32_t datalength)
     if (count == 16)
     {
       count = 0;
-      printf("  Block %lu \n\r", BufferCounter / 16);
+      printf("  Block %u \n\r", BufferCounter / 16);
     }
   }
 }
@@ -929,10 +922,7 @@ static void Display_PlainData_CTR(uint32_t datalength)
   uint32_t BufferCounter = 0;
   uint32_t count = 0;
   uint8_t * ptr = (uint8_t *)aPlaintextCTR;
-	
- /* Provide some delay for Debug Viewer */
-  HAL_Delay(500);
-	
+
   printf("\n\r =============================================================\n\r");
   printf(" ================= Crypt Using HW Crypto  ====================\n\r");
   printf(" =============================================================\n\r");
@@ -948,7 +938,7 @@ static void Display_PlainData_CTR(uint32_t datalength)
     if (count == 16)
     {
       count = 0;
-      printf("  Block %lu \n\r", BufferCounter / 16);
+      printf("  Block %u \n\r", BufferCounter / 16);
     }
   }
 }
@@ -964,10 +954,7 @@ static void Display_CypherData(uint32_t datalength)
   uint32_t BufferCounter = 0;
   uint32_t count = 0;
   uint8_t * ptr = (uint8_t *)aEncryptedtextECB128;
-	
-/* Provide some delay for Debug Viewer */
-  HAL_Delay(500);
-	
+
   printf("\n\r =============================================================\n\r");
   printf(" ------------------------------------------------\n\r");
   printf(" Cypher Data (Input data for AES 128 decryption):\n\r");
@@ -981,7 +968,7 @@ static void Display_CypherData(uint32_t datalength)
     if (count == 16)
     {
       count = 0;
-      printf("  Block %lu \n\r", BufferCounter / 16);
+      printf("  Block %u \n\r", BufferCounter / 16);
     }
   }
 }
@@ -998,10 +985,7 @@ static void Display_EncryptedData(uint8_t mode, uint16_t keysize, uint32_t datal
   uint32_t BufferCounter = 0;
   uint32_t count = 0;
   uint8_t * ptr = (uint8_t *)aEncryptedtext;
-	
-  /* Provide some delay for Debug Viewer */
-  HAL_Delay(500);
-	
+
   printf("\n\r =======================================\n\r");
   printf(" Encrypted Data with AES %d  Mode  ", keysize);
 
@@ -1028,7 +1012,7 @@ static void Display_EncryptedData(uint8_t mode, uint16_t keysize, uint32_t datal
     if (count == 16)
     {
       count = 0;
-      printf(" Block %lu \n\r", BufferCounter / 16);
+      printf(" Block %d \n\r", BufferCounter / 16);
     }
   }
 }
@@ -1041,15 +1025,11 @@ static void Display_EncryptedData(uint8_t mode, uint16_t keysize, uint32_t datal
   * @retval None
   */
 static void Display_DecryptedData(uint8_t mode, uint16_t keysize, uint32_t datalength)
-{ 
-	
+{
   uint32_t BufferCounter = 0;
   uint32_t count = 0;
   uint8_t * ptr = (uint8_t *)aDecryptedtext;
-	
-  /* Provide some delay for Debug Viewer */
-  HAL_Delay(500);
-	
+
   printf("\n\r =======================================\n\r");
   printf(" Decrypted Data with AES %d  Mode  ", keysize);
 
@@ -1076,7 +1056,7 @@ static void Display_DecryptedData(uint8_t mode, uint16_t keysize, uint32_t datal
     if (count == 16)
     {
       count = 0;
-      printf(" Block %lu \n\r", BufferCounter / 16);
+      printf(" Block %d \n\r", BufferCounter / 16);
     }
   }
 }

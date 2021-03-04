@@ -50,6 +50,18 @@ extern "C" {
  */
 
 /**
+ * This method creates a new Operational Dataset to use when forming a new network.
+ *
+ * @param[in]  aInstance  A pointer to an OpenThread instance.
+ * @param[out] aDataset   The Operational Dataset.
+ *
+ * @retval OT_ERROR_NONE    Successfully created a new Operational Dataset.
+ * @retval OT_ERROR_FAILED  Failed to generate random values for new parameters.
+ *
+ */
+otError otDatasetCreateNewNetwork(otInstance *aInstance, otOperationalDataset *aDataset);
+
+/**
  * Get minimal delay timer.
  *
  * @param[in]  aInstance A pointer to an OpenThread instance.
@@ -57,10 +69,13 @@ extern "C" {
  * @retval the value of minimal delay timer (in ms).
  *
  */
-OTAPI uint32_t OTCALL otDatasetGetDelayTimerMinimal(otInstance *aInstance);
+uint32_t otDatasetGetDelayTimerMinimal(otInstance *aInstance);
 
 /**
  * Set minimal delay timer.
+ *
+ * @note This API is reserved for testing and demo purposes only. Changing settings with
+ * this API will render a production application non-compliant with the Thread Specification.
  *
  * @param[in]  aInstance           A pointer to an OpenThread instance.
  * @param[in]  aDelayTimerMinimal  The value of minimal delay timer (in ms).
@@ -69,7 +84,7 @@ OTAPI uint32_t OTCALL otDatasetGetDelayTimerMinimal(otInstance *aInstance);
  * @retval  OT_ERROR_INVALID_ARGS  If @p aDelayTimerMinimal is not valid.
  *
  */
-OTAPI otError OTCALL otDatasetSetDelayTimerMinimal(otInstance *aInstance, uint32_t aDelayTimerMinimal);
+otError otDatasetSetDelayTimerMinimal(otInstance *aInstance, uint32_t aDelayTimerMinimal);
 
 /**
  * @}

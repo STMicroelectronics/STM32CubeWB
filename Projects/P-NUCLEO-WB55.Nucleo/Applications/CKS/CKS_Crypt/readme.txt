@@ -60,20 +60,33 @@ service with an index referencing the key and no more the key itself.
 
 Key provisioning:
 It can be done either in the application itself by calling RSS services through a dedicated API.
-Or it can be done by using STM32CubeProgrammer tool with a bootloader connection.
-
+Or it can be done by using STM32CubeProgrammer tool (Version 2.2 or higher) with bootloader USB connection.
 
 In order to make the program work, you must do the following:
  - Open your toolchain 
  - Rebuild all files with correct WRITE_KEYS define value
       - If WRITE_KEYS is defined, keys will be provisionned by the code itself.
-      - If WRITE_KEYS is not defined, keys shall be provisionned by STM32CubeProgrammer.
+      - If WRITE_KEYS is not defined, keys shall be provisionned by STM32CubeProgrammer with bootloader USB connection.
+	    [a batch script "Store_keys.bat" is available under /CKS_Crypt/Keys]
  - Flash the board with the executable file
  - Power on the Nucleo board with the CRYP_CKS application
  
 If all test are passed, LED1 is swithed On.
 It one test fails, LED3 is switched On
 
+note: Access to Bootloader USB Interface (system flash) with Boot mode selected by Boot0 pin set to VDD
+- For P-NUCLEO-WB55.Nucleo:
+	Jumper between CN7.5(VDD) and CN7.7(Boot0)
+	Power ON via USB_USER and Jumper JP1(USB_MCU)
+	
+- To get details on installed STM32_Programmer_CLI supported options use "--help"
+- for STM32_Programmer_CLI (Version 2.2 or higher) options used:
+  -wusrkey                : Write user key
+     <file_path>        : User key file path
+     <keytype=1|2|3>    : User key type, values : 1, 2 or 3.
+                        : 1 = simple key, 2 = master key, 3 = encrypted key.
+- remove option <keytype=xx> for STM32_Programmer_CLI (Version <= 2.1)
+						
 For more details refer to the Application Note: 
   AN5185 - ST firmware upgrade services for STM32WB Series
   UM2237 - STM32CubeProgrammer software description

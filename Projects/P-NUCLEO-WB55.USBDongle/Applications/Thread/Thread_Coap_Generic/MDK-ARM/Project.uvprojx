@@ -701,6 +701,11 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap.c</FilePath>
             </File>
             <File>
+              <FileName>coap_secure.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap_secure.c</FilePath>
+            </File>
+            <File>
               <FileName>commissioner.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/commissioner.c</FilePath>
@@ -719,16 +724,6 @@
               <FileName>dataset_ftd.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dataset_ftd.c</FilePath>
-            </File>
-            <File>
-              <FileName>dhcp6_client.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_client.c</FilePath>
-            </File>
-            <File>
-              <FileName>dhcp6_server.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_server.c</FilePath>
             </File>
             <File>
               <FileName>diag.c</FileName>
@@ -786,9 +781,9 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/netdata.c</FilePath>
             </File>
             <File>
-              <FileName>network_time.cpp</FileName>
+              <FileName>network_time.c</FileName>
               <FileType>8</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/network_time.cpp</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/network_time.c</FilePath>
             </File>
             <File>
               <FileName>openthread.c</FileName>

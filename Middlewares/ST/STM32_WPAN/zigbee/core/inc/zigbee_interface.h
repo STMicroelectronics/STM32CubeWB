@@ -42,7 +42,7 @@ extern const uint8_t sec_key_null[ZB_SEC_KEYSIZE];
 extern const uint8_t sec_key_ha[ZB_SEC_KEYSIZE];
 
 /* Uncertified Device's Distributed Link Key
- * d0:d1:d2:d3:d4:d5:d6:d7:d8:d9:da:db:dc:dd:dedf */
+ * d0:d1:d2:d3:d4:d5:d6:d7:d8:d9:da:db:dc:dd:de:df */
 extern const uint8_t sec_key_distrib_uncert[ZB_SEC_KEYSIZE];
 
 /* TOUCHLINK_KEY_INDEX_CERTIFICATION key

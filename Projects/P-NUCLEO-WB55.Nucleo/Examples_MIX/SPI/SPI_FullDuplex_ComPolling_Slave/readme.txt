@@ -65,10 +65,9 @@ check buffers correctness.
 
 STM32 board's LEDs can be used to monitor the transfer status:
  - LED1 toggles quickly on master board waiting User push-button (SW1) to be pressed.
- - LED1 turns ON when the transmission process is complete.
- - LED2 turns ON when the reception process is complete.
- - LED3 turns ON when there is an error in transmission/reception process. 
- - LED3 toggles when there is a timeout error in transmission/reception process. 
+ - LED1 turns ON if transmission/reception is complete and OK.
+ - LED3 turns ON when there is an error in transmission/reception process.  
+ - LED3 toggle when there is a timeout error in transmission/reception process.  
 
 @note You need to perform a reset on Slave board, then perform it on Master board
       to have the correct behaviour of this example.

@@ -517,6 +517,16 @@
               <FileType>1</FileType>
               <FilePath>..\STM32_WPAN\app\appli_sensors_client.c</FilePath>
             </File>
+            <File>
+              <FileName>appli_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\appli_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>appli_config_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\appli_config_client.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -721,6 +731,11 @@
               <FileName>sensors_client.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\sensors_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>config_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\config_client.c</FilePath>
             </File>
           </Files>
         </Group>

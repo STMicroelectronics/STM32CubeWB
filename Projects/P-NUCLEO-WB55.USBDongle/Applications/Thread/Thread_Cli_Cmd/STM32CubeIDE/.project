@@ -132,6 +132,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_hsem.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_ll_usb.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_ll_usb.c</locationURI>
@@ -217,6 +222,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/system_stm32wbxx.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/Core/src/stm32wbxx_hal_msp.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32wbxx_hal_msp.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/STM32_WPAN/app/app_thread.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/App/app_thread.c</locationURI>
@@ -292,6 +302,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/coap_secure.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/coap_secure.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/commissioner.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/commissioner.c</locationURI>
@@ -310,16 +325,6 @@
 			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/dataset_ftd.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dataset_ftd.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_client.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_client.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_server.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dhcp6_server.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/diag.c</name>
@@ -377,9 +382,9 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/netdata.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/network_time.cpp</name>
+			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/network_time.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/network_time.cpp</locationURI>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/network_time.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/core/openthread_api/openthread.c</name>

@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : App/ble_conf.h
@@ -16,6 +17,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef BLE_CONF_H
@@ -88,7 +90,7 @@
 #define BLE_CFG_HRS_ENERGY_RR_INTERVAL_FLAG                 1/**< Max number of RR interval values - Shall not be greater than 9 */
 
 /******************************************************************************
- * GAP Service - Apprearance
+ * GAP Service - Appearance
  ******************************************************************************/
 
 #define BLE_CFG_UNKNOWN_APPEARANCE                  (0)

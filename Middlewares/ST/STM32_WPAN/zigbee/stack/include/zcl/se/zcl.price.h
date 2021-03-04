@@ -1,9 +1,111 @@
 /**
  * @file zcl.price.h
+ * @heading Price
  * @brief ZCL Price cluster header
  * ZCL 7 section 10.2
  * ZCL 8 section 10.2
  * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
+
+/* @PICS.ZCL.Price
+ * SEPR.S | Server | True
+ * SEPR.C | Client | True
+ *
+ * Server Attributes
+ * SEPR.S.A0000 | Tier(1-48)PriceLabel | False | Optional
+ * SEPR.S.A0100 | Block(1-48)Threshold | False | Optional
+ * SEPR.S.A0200 | StartofBlockPeriod | False | Optional
+ * SEPR.S.A0201 | BlockPeriodDuration | False | Optional
+ * SEPR.S.A0300 | CommodityType | False | Optional
+ * SEPR.S.A0301 | StandingCharge | False | Optional
+ * SEPR.S.A0400 | NoTierBlock(1-6)Price | False | Optional
+ * SEPR.S.A0410 | Tier(1-15)Block(1-16)Price | False | Optional
+ * SEPR.S.A0700 | CurrentBillingPeriodStart | False | Optional
+ * SEPR.S.A0701 | CurrentBillingPeriodDuration | False | Optional
+ * SEPR.S.A0702 | LastBillingPeriodStart | False | Optional
+ * SEPR.S.A0703 | LastBillingPeriodDuration | False | Optional
+ * SEPR.S.A0704 | LastBillingPeriodConsolidatedBill | False | Optional
+ * SEPR.S.Afffd | ClusterRevision | True
+ * SEPR.S.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * SEPR.S.C00.Rsp | Get Current Price | False
+ * SEPR.S.C01.Rsp | Get Scheduled Prices | False
+ * SEPR.S.C02.Rsp | Price Acknowledgement | False
+ * SEPR.S.C03.Rsp | Get Block Period(s) | False
+ * SEPR.S.C04.Rsp | GetConversionFactor | False
+ * SEPR.S.C05.Rsp | GetCalorificValue | False
+ * SEPR.S.C06.Rsp | GetTariffInformation | False
+ * SEPR.S.C07.Rsp | GetPriceMatrix | False
+ * SEPR.S.C08.Rsp | GetBlockThresholds | False
+ * SEPR.S.C09.Rsp | GetCO2Value | False
+ * SEPR.S.C0a.Rsp | GetTierLabels | False
+ * SEPR.S.C0b.Rsp | GetBillingPeriod | False
+ * SEPR.S.C0c.Rsp | GetConsolidatedBill | False
+ * SEPR.S.C0d.Rsp | CPPEventResponse | False
+ * SEPR.S.C0e.Rsp | GetCreditPayment | False
+ * SEPR.S.C0f.Rsp | GetCurrencyConversion | False
+ * SEPR.S.C10.Rsp | GetTariffCancellation | False
+ *
+ * Commands Generated
+ * SEPR.S.C00.Tx | Publish Price | True
+ * SEPR.S.C01.Tx | Publish Block Period | False
+ * SEPR.S.C02.Tx | Publish Conversion Factor | False
+ * SEPR.S.C03.Tx | Publish Calorific Value | False
+ * SEPR.S.C04.Tx | PublishTariffInformation | True
+ * SEPR.S.C05.Tx | PublishPriceMatrix | True
+ * SEPR.S.C06.Tx | PublishBlockThresholds | True
+ * SEPR.S.C07.Tx | PublishCO2Value | False
+ * SEPR.S.C08.Tx | PublishTierLabels | False
+ * SEPR.S.C09.Tx | PublishBillingPeriod | False
+ * SEPR.S.C0a.Tx | PublishConsolidatedBill | False
+ * SEPR.S.C0b.Tx | PublishCPPEvent | False
+ * SEPR.S.C0c.Tx | PublishCreditPayment | False
+ * SEPR.S.C0d.Tx | PublishCurrencyConversion | False
+ * SEPR.S.C0e.Tx | CancelTariff | False
+ *
+ * Client Attributes
+ * SEPR.C.A0000 | PriceIncreaseRandomizeMinutes | False | Optional
+ * SEPR.C.A0001 | PriceDecreaseRandomizeMinutes | False | Optional
+ * SEPR.C.A0002 | CommodityType | False | Optional
+ * SEPR.C.Afffd | ClusterRevision | True
+ * SEPR.C.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * SEPR.C.C00.Rsp | Publish Price | False
+ * SEPR.C.C01.Rsp | Publish Block Period | False
+ * SEPR.C.C02.Rsp | Publish Conversion Factor | False
+ * SEPR.C.C03.Rsp | Publish Calorific Value | False
+ * SEPR.C.C04.Rsp | PublishTariffInformation | False
+ * SEPR.C.C05.Rsp | PublishPriceMatrix | False
+ * SEPR.C.C06.Rsp | PublishBlockThresholds | False
+ * SEPR.C.C07.Rsp | PublishCO2Value | False
+ * SEPR.C.C08.Rsp | PublishTierLabels | False
+ * SEPR.C.C09.Rsp | PublishBillingPeriod | False
+ * SEPR.C.C0a.Rsp | PublishConsolidatedBill | False
+ * SEPR.C.C0b.Rsp | PublishCPPEvent | False
+ * SEPR.C.C0c.Rsp | PublishCreditPayment | False
+ * SEPR.C.C0d.Rsp | PublishCurrencyConversion | False
+ * SEPR.C.C0e.Rsp | CancelTariff | False
+ *
+ * Commands Generated
+ * SEPR.C.C00.Tx | Get Current Price | True
+ * SEPR.C.C01.Tx | Get Scheduled Prices | True
+ * SEPR.C.C02.Tx | Price Acknowledgement | True
+ * SEPR.C.C03.Tx | Get Block Period(s) | False
+ * SEPR.C.C04.Tx | GetConversionFactor | False
+ * SEPR.C.C05.Tx | GetCalorificValue | False
+ * SEPR.C.C06.Tx | GetTariffInformation | True
+ * SEPR.C.C07.Tx | GetPriceMatrix | True
+ * SEPR.C.C08.Tx | GetBlockThresholds | True
+ * SEPR.C.C09.Tx | GetCO2Value | False
+ * SEPR.C.C0a.Tx | GetTierLabels | False
+ * SEPR.C.C0b.Tx | GetBillingPeriod | False
+ * SEPR.C.C0c.Tx | GetConsolidatedBill | False
+ * SEPR.C.C0d.Tx | CPPEventResponse | False
+ * SEPR.C.C0e.Tx | GetCreditPayment | False
+ * SEPR.C.C0f.Tx | GetCurrencyConversion | False
+ * SEPR.C.C10.Tx | GetTariffCancellation | False
  */
 
 #ifndef ZCL_PRICE_H

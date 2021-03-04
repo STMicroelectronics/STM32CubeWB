@@ -6,7 +6,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -1737,6 +1737,22 @@ tBleStatus hci_le_enhanced_transmitter_test( uint8_t TX_Frequency,
                                              uint8_t Length_Of_Test_Data,
                                              uint8_t Packet_Payload,
                                              uint8_t PHY );
+
+/**
+ * @brief HCI_LE_READ_TRANSMIT_POWER
+ * This command is used to read the minimum and maximum transmit powers
+ * supported by the Controller.
+ * 
+ * @param[out] Min_TX_Power Signed integer. Units: dBm
+ *        Values:
+ *        - -127 ... 20
+ * @param[out] Max_TX_Power Signed integer. Units: dBm
+ *        Values:
+ *        - -127 ... 20
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_read_transmit_power( uint8_t* Min_TX_Power,
+                                       uint8_t* Max_TX_Power );
 
 /**
  * @brief HCI_LE_SET_PRIVACY_MODE

@@ -35,8 +35,8 @@
 * Alternativ is the use of STM32CubeProgrammer -wusrkey option
 * CKS_LOCK_TEST show how to prevent the re-use key
 */
-// #define WRITE_KEYS
-// #define CKS_LOCK_TEST
+ #define WRITE_KEYS
+ //#define CKS_LOCK_TEST
 
 /* if WRITE_KEYS is enabled these indexes are overwritten */
 uint8_t key_simple_128_idx=KEY_SIMPLE_128_IDX;

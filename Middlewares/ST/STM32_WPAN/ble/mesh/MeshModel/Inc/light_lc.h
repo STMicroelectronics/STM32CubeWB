@@ -92,8 +92,6 @@ typedef struct
 } light_lc_cb_t;
 
 extern const light_lc_cb_t AppliLightLc_cb;
-
-
 /* Exported functions ------------------------------------------------------- */
 MOBLE_RESULT LightLcServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **data, 
                                             MOBLEUINT16 *length);
@@ -109,20 +107,21 @@ MOBLE_RESULT LightLcServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParam,
                                             MOBLEUINT8 const *pRxData, 
                                             MOBLEUINT32 dataLength, 
                                             MOBLEBOOL response);
-void Light_LC_NvmParams_Get(MOBLEUINT8 elementIndex, 
+void LightLC_SaveModelStates(MOBLEUINT8 elementIndex,
                             MOBLEUINT8* lightLcNvmParamsBuff, 
-                            MOBLEUINT8* lcNvmParamsSize);
-void Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
+                             MOBLEUINT8 lcNvmParamsSize);
+MOBLEUINT8 Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
                         MOBLEUINT8 const *pModelValue_Load,
                         MOBLEUINT8 genericOnPowerUp,
                         MOBLEUINT16 lightDefault,
                         MOBLEUINT16 lightLast,
-                        MOBLEUINT16 lightActualLKV);
+                              MOBLEUINT16 lightActualLKV,
+                              MOBLEUINT16* pLightActualToBeSet);
 MOBLE_RESULT Light_LC_SetTransitionTimeZero(MOBLEUINT8 elementIndex);
 MOBLE_RESULT Light_LC_SensorPropertyUpdate(MOBLEUINT8 lcsElementIndex,
                                            MOBLEUINT16 sensorPropertyId,
                                            MOBLEUINT32 value);
-void Light_LC_LigtnessLinearUnsolicitedChange(MOBLEUINT8 elementIndex);
+void Light_LC_LigtnessLinearUnsolicitedChange(MOBLEUINT8 lightnessLinearelementIndex);
 MOBLEUINT32 Light_LC_SleepDurationMs_Get(void);
 MOBLE_RESULT Light_LC_Send(MOBLEUINT8 elementIndex);
 MOBLE_RESULT Light_LC_LcOnOffUpdate(MOBLEUINT8 elementIndex, 
@@ -143,25 +142,6 @@ MOBLE_RESULT ExtractLcServerElementIndex(MOBLEUINT8* pLcsElementIndex,
                                          MOBLEUINT8 genericOnOffServer,
                                          MOBLEUINT8 genericPowerOnOffServer,
                                          MOBLEUINT8 lightLightnessServer);
-
-#ifdef ENABLE_LIGHT_MODEL_CLIENT_LC  
-MOBLE_RESULT LightLC_Client_Mode_Status(MOBLEUINT8 const *pLCMode_status, 
-                                        MOBLEUINT32 plength, 
-                                        MOBLEUINT16 dstPeer,
-                                        MOBLEUINT8 elementIndex);
-MOBLE_RESULT LightLC_Client_OM_Status(MOBLEUINT8 const *pLCOccupancyMode_status,
-                                      MOBLEUINT32 plength, 
-                                      MOBLEUINT16 dstPeer, 
-                                      MOBLEUINT8 elementIndex);
-MOBLE_RESULT LightLC_Client_OnOff_Status(MOBLEUINT8 const *pLCOnOff_status, 
-                                         MOBLEUINT32 plength, 
-                                         MOBLEUINT16 dstPeer, 
-                                         MOBLEUINT8 elementIndex);
-MOBLE_RESULT LightLC_Client_Property_Status(MOBLEUINT8 const *pLCProperty_status,
-                                            MOBLEUINT32 plength, 
-                                            MOBLEUINT16 dstPeer, 
-                                            MOBLEUINT8 elementIndex);
-#endif /* #ifdef ENABLE_LIGHT_MODEL_CLIENT_LC */
 
 #endif /* __LIGHT_LC_H */
 

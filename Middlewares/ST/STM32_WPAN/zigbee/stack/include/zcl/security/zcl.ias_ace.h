@@ -1,5 +1,6 @@
 /**
  * @file zcl.ias_ace.h
+ * @heading IAS ACE
  * @brief ZCL Intruder Alarm Systems Ancillary Control Equipment cluster header
  * ZCL 7 section 8.3
  * ZCL 8 section 8.3
@@ -15,54 +16,64 @@
 #ifndef ZCL_IAS_ACE_H
 #define ZCL_IAS_ACE_H
 
-/* PICS.ZCL.IASACE
+/* @PICS.ZCL.IASACE
  *
- * IASACE.S | True
- * IASACE.C | True
+ * IASACE.S | Server | True
+ * IASACE.C | Client | True
  *
- * IASACE.S.Afffd | True
- * IASACE.S.Afffe | False
- * IASACE.S.C00.Rsp | True
- * IASACE.S.C01.Rsp | True
- * IASACE.S.C02.Rsp | True
- * IASACE.S.C03.Rsp | True
- * IASACE.S.C04.Rsp | True
- * IASACE.S.C05.Rsp | True
- * IASACE.S.C06.Rsp | True
- * IASACE.S.C07.Rsp | True
- * IASACE.S.C08.Rsp | True
- * IASACE.S.C09.Rsp | True
- * IASACE.S.C00.Tx | True
- * IASACE.S.C01.Tx | True
- * IASACE.S.C02.Tx | True
- * IASACE.S.C03.Tx | True
- * IASACE.S.C04.Tx | True
- * IASACE.S.C05.Tx | True
- * IASACE.S.C06.Tx | True
- * IASACE.S.C07.Tx | True
- * IASACE.S.C08.Tx | True
+ * Server Attributes
+ * IASACE.S.Afffd | ClusterRevision | True
+ * IASACE.S.Afffe | AttributeReportingStatus | False
  *
- * IASACE.C.Afffd | True
- * IASACE.C.Afffe | False
- * IASACE.C.C00.Tx | True
- * IASACE.C.C01.Tx | True
- * IASACE.C.C02.Tx | True
- * IASACE.C.C03.Tx | True
- * IASACE.C.C04.Tx | True
- * IASACE.C.C05.Tx | True
- * IASACE.C.C06.Tx | True
- * IASACE.C.C07.Tx | True
- * IASACE.C.C08.Tx | True
- * IASACE.C.C09.Tx | True
- * IASACE.C.C00.Rsp | True
- * IASACE.C.C01.Rsp | True
- * IASACE.C.C02.Rsp | True
- * IASACE.C.C03.Rsp | True
- * IASACE.C.C04.Rsp | True
- * IASACE.C.C05.Rsp | True
- * IASACE.C.C06.Rsp | True
- * IASACE.C.C07.Rsp | True
- * IASACE.C.C08.Rsp | True
+ * Commands Received
+ * IASACE.S.C00.Rsp | Arm | True
+ * IASACE.S.C01.Rsp | Bypass | True
+ * IASACE.S.C02.Rsp | Emergency | True
+ * IASACE.S.C03.Rsp | Fire | True
+ * IASACE.S.C04.Rsp | Panic | True
+ * IASACE.S.C05.Rsp | Get Zone ID Map | True
+ * IASACE.S.C06.Rsp | Get Zone Information | True
+ * IASACE.S.C07.Rsp | Get Panel Status | True
+ * IASACE.S.C08.Rsp | Get Bypassed Zone List | True
+ * IASACE.S.C09.Rsp | Get Zone Status | True
+ *
+ * Commands Generated
+ * IASACE.S.C00.Tx | Arm Response | True
+ * IASACE.S.C01.Tx | Get Zone ID Map Response | True
+ * IASACE.S.C02.Tx | Get Zone Information Response | True
+ * IASACE.S.C03.Tx | Zone Status Changed | True
+ * IASACE.S.C04.Tx | Panel Status Changed | True
+ * IASACE.S.C05.Tx | Get Panel Status Response | True
+ * IASACE.S.C06.Tx | Set Bypassed Zone List | True
+ * IASACE.S.C07.Tx | Bypass Response | True
+ * IASACE.S.C08.Tx | Get Zone Status Response | True
+ *
+ * Client Attributes
+ * IASACE.C.Afffd | ClusterRevision | True
+ * IASACE.C.Afffe | AttributeReportingStatus | False
+ *
+ * Coomands Generated
+ * IASACE.C.C00.Tx | Arm | True
+ * IASACE.C.C01.Tx | Bypass | True
+ * IASACE.C.C02.Tx | Emergency | True
+ * IASACE.C.C03.Tx | Fire | True
+ * IASACE.C.C04.Tx | Panic | True
+ * IASACE.C.C05.Tx | Get Zone ID Map | True
+ * IASACE.C.C06.Tx | Get Zone Information | True
+ * IASACE.C.C07.Tx | Get Panel Status | True
+ * IASACE.C.C08.Tx | Get Bypassed Zone List | True
+ * IASACE.C.C09.Tx | Get Zone Status | True
+ *
+ * Commands Received
+ * IASACE.C.C00.Rsp | Arm Response | True
+ * IASACE.C.C01.Rsp | Get Zone ID Map Response | True
+ * IASACE.C.C02.Rsp | Get Zone Information Response | True
+ * IASACE.C.C03.Rsp | Zone Status Changed | True
+ * IASACE.C.C04.Rsp | Panel Status Changed | True
+ * IASACE.C.C05.Rsp | Get Panel Status Response | True
+ * IASACE.C.C06.Rsp | Set Bypassed Zone List | True
+ * IASACE.C.C07.Rsp | Bypass Response | True
+ * IASACE.C.C08.Rsp | Get Zone Status Response | True
  */
 
 #include "zcl/zcl.h"

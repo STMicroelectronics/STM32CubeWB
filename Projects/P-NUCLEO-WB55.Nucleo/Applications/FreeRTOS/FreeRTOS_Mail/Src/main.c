@@ -165,11 +165,11 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of MailQueueProduc */
-  osThreadDef(MailQueueProduc, MailQueueProducer, osPriorityNormal, 0, 128);
+  osThreadDef(MailQueueProduc, MailQueueProducer, osPriorityBelowNormal, 0, 128);
   MailQueueProducHandle = osThreadCreate(osThread(MailQueueProduc), NULL);
 
   /* definition and creation of MailQueueConsum */
-  osThreadDef(MailQueueConsum, MailQueueConsumer, osPriorityNormal, 0, 128);
+  osThreadDef(MailQueueConsum, MailQueueConsumer, osPriorityBelowNormal, 0, 128);
   MailQueueConsumHandle = osThreadCreate(osThread(MailQueueConsum), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */

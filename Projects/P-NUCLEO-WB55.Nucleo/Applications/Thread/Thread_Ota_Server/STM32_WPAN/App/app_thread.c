@@ -116,36 +116,33 @@ static void RxCpltCallback(void);
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN PFP */
-static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
-    otCoapType CoapType,
-    otCoapCode CoapCode,
-    otIp6Address* Ip6Address,
-    const char* StringAddress,
-    APP_THREAD_CoapAddressTypeDef_t CoapAddressType,
-    uint8_t* Payload,
+static void APP_THREAD_CoapSendRequest(otCoapResource* aCoapRessource,
+    otCoapType aCoapType,
+    otCoapCode aCoapCode,
+    const char *aStringAddress,
+    const otIp6Address* aPeerAddress,
+    uint8_t* aPayload,
     uint16_t Size,
-    otCoapResponseHandler RespHandlerCb);
+    otCoapResponseHandler aHandler,
+    void *aContext);
+
 static void APP_THREAD_ProvisioningRespHandler(
-    void * pContext,
-    otCoapHeader  * pHeader,
+    void* pContext,
     otMessage * pMessage,
     const otMessageInfo * pMessageInfo,
     otError Result);
 static void APP_THREAD_CoapRespHandlerFuotaSend(
-    void                * pContext,
-    otCoapHeader        * pHeader,
+    void * pContext,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result);
 static void APP_THREAD_CoapRespHandlerFuotaReboot(
-    void                * pContext,
-    otCoapHeader        * pHeader,
+    void * pContext,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result);
 static void APP_THREAD_CoapRespHandlerFuotaParameters(
-    void                * pContext,
-    otCoapHeader        * pHeader,
+    void * pContext,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result);
@@ -185,6 +182,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
+extern uint8_t g_ot_notification_allowed;
 
 /* USER CODE BEGIN PV */
 static otCoapResource OT_RessourceFuotaProvisioning = {C_RESSOURCE_FUOTA_PROVISIONING, NULL, NULL, NULL};
@@ -194,9 +192,7 @@ static otCoapResource OT_RessourceFuotaReboot = {C_RESSOURCE_FUOTA_REBOOT, NULL,
 
 static uint8_t OT_Command = 0;
 static otMessageInfo  OT_MessageInfo = {0};
-static otCoapHeader   OT_Header = {0};
 static otMessage*     pOT_Message = NULL;
-static uint16_t OT_BufferIdSend = 1U;
 
 static otIp6Address   OT_PeerAddress = { .mFields.m8 = { 0 } };
 
@@ -525,88 +521,93 @@ static void APP_THREAD_CheckWirelessFirmwareInfo(void)
 /**
  * @brief Send a CoAP request with defined parameters.
  *
- * @param[in]  pCoapRessource   A pointer to a otCoapResource.
- * @param[in]  CoapType         otCoapType.
- * @param[in]  otCoapCode       otCoapCode.
- * @param[in]  Ip6Address       A pointer to otIp6Address.
- * @param[in]  StringAddress    A pointer to a NULL-terminated string representing the address. Example: "FF03::1" for Multicast.
- * @param[in]  CoapAddressType  Decide to use IP6Address or StringAddress.
- * @param[in]  Payload          A pointer to payload.
- * @param[in]  Size             Size of the transfer in bytes.
- * @param[in]  RespHandlerCb    Callback function called in case of confirmable message.
+ * @param[in]  aCoapRessource   A pointer to a otCoapResource.
+ * @param[in]  aCoapType        otCoapType.
+ * @param[in]  aCoapCode        otCoapCode.
+ * @param[in]  aStringAddress   A pointer to a NULL-terminated string representing the address. Example: "FF03::1" for Multicast.
+ * @param[in]  aPeerAddress     A pointer to otIp6Address Peer Address.
+ * @param[in]  aPayload         A pointer to payload.
+ * @param[in]  aHandler         A pointer to CoAP response handler.
+ * @param[in]  aContext         A pointer to application specific context.
  *
  * @retval none.
  */
-static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
-    otCoapType CoapType,
-    otCoapCode CoapCode,
-    otIp6Address* Ip6Address,
-    const char* StringAddress,
-    APP_THREAD_CoapAddressTypeDef_t CoapAddressType,
-    uint8_t* Payload,
+static void APP_THREAD_CoapSendRequest(otCoapResource* aCoapRessource,
+    otCoapType aCoapType,
+    otCoapCode aCoapCode,
+    const char *aStringAddress,
+    const otIp6Address* aPeerAddress,
+    uint8_t* aPayload,
     uint16_t Size,
-    otCoapResponseHandler RespHandlerCb)
+    otCoapResponseHandler aHandler,
+    void* aContext)
 {
   otError error = OT_ERROR_NONE;
-  OT_BufferIdSend = 0;
 
   do{
-    otCoapHeaderInit(&OT_Header, CoapType, CoapCode);
-    otCoapHeaderSetMessageId(&OT_Header,OT_BufferIdSend);
-    otCoapHeaderGenerateToken(&OT_Header, 2U);
-
-    error = otCoapHeaderAppendUriPathOptions(&OT_Header, pCoapRessource->mUriPath);
-    if (error != OT_ERROR_NONE)
-    {
-      APP_THREAD_Error(ERR_THREAD_COAP_APEND_URI,error);
-    }
-
-    if(CoapCode != OT_COAP_CODE_GET)
-    {
-      otCoapHeaderSetPayloadMarker(&OT_Header);
-    }
-
-    pOT_Message = otCoapNewMessage(NULL, &OT_Header);
+    pOT_Message = otCoapNewMessage(NULL, NULL);
     if (pOT_Message == NULL)
     {
       APP_THREAD_Error(ERR_THREAD_COAP_NEW_MSG,error);
       break;
     }
 
-    if(CoapCode != OT_COAP_CODE_GET)
+    otCoapMessageInit(pOT_Message, aCoapType, aCoapCode);
+    otCoapMessageAppendUriPathOptions(pOT_Message, aCoapRessource->mUriPath);
+    otCoapMessageSetPayloadMarker(pOT_Message);
+
+    if((aPayload != NULL) && (Size > 0))
     {
-      error = otMessageAppend(pOT_Message, Payload, Size);
+      error = otMessageAppend(pOT_Message, aPayload, Size);
       if (error != OT_ERROR_NONE)
       {
         APP_THREAD_Error(ERR_THREAD_COAP_APPEND,error);
         break;
       }
     }
+    else
+    {
+      APP_DBG("APP_THREAD_CoapSendRequest: No payload passed");
+    }
 
     memset(&OT_MessageInfo, 0, sizeof(OT_MessageInfo));
-    OT_MessageInfo.mInterfaceId = OT_NETIF_INTERFACE_ID_THREAD;
     OT_MessageInfo.mPeerPort = OT_DEFAULT_COAP_PORT;
 
-    if(CoapAddressType == APP_THREAD_COAP_STRING_ADDRESS)
+    if((aPeerAddress == NULL) && (aStringAddress != NULL))
     {
-      otIp6AddressFromString(StringAddress, &OT_MessageInfo.mPeerAddr);
+      APP_DBG("Use String Address : %s ", aStringAddress);
+      otIp6AddressFromString(aStringAddress, &OT_MessageInfo.mPeerAddr);
     }
-    else if (CoapAddressType == APP_THREAD_COAP_IP6_ADDRESS)
+    else
+    if (aPeerAddress != NULL)
     {
-      memcpy(&OT_MessageInfo.mPeerAddr, Ip6Address, sizeof(OT_MessageInfo.mPeerAddr));
+      //APP_DBG("Use Peer Address");
+      memcpy(&OT_MessageInfo.mPeerAddr, aPeerAddress, sizeof(OT_MessageInfo.mPeerAddr));
     }
     else
     {
-      /* ERROR : should never be in a not defined address type */
-      APP_THREAD_Error(ERR_THREAD_BAD_ADDRESS_TYPE, 0);
+      APP_DBG("ERROR: Address string and Peer Address not defined");
+      APP_THREAD_Error(ERR_THREAD_COAP_ADDRESS_NOT_DEFINED, 0);
     }
 
-    error = otCoapSendRequest(NULL,
-        pOT_Message,
-        &OT_MessageInfo,
-        RespHandlerCb,
-        "myContext");
-
+    if(aCoapType == OT_COAP_TYPE_NON_CONFIRMABLE)
+    {
+      //APP_DBG("aCoapType == OT_COAP_TYPE_NON_CONFIRMABLE");
+      error = otCoapSendRequest(NULL,
+          pOT_Message,
+          &OT_MessageInfo,
+          NULL,
+          NULL);
+    }
+    if(aCoapType == OT_COAP_TYPE_CONFIRMABLE)
+    {
+      //APP_DBG("aCoapType == OT_COAP_TYPE_CONFIRMABLE");
+      error = otCoapSendRequest(NULL,
+          pOT_Message,
+          &OT_MessageInfo,
+          aHandler,
+          aContext);
+    }
   }while(false);
   if (error != OT_ERROR_NONE && pOT_Message != NULL)
   {
@@ -618,7 +619,7 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
 /**
  * @brief This function manages the response handler for provisioning.
  *
- * @param pHeader  header
+ * @param pContext  Context
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code
@@ -626,7 +627,6 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* pCoapRessource,
  */
 static void APP_THREAD_ProvisioningRespHandler(
     void                * pContext,
-    otCoapHeader        * pHeader,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)
@@ -658,15 +658,14 @@ static void APP_THREAD_ProvisioningRespHandler(
 /**
  * @brief This function manages the response handler for FUOTA binary datas.
  *
- * @param pHeader  header
+ * @param pContext  context
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code
  * @retval None
  */
 static void APP_THREAD_CoapRespHandlerFuotaSend(
-    void                * pContext,
-    otCoapHeader        * pHeader,
+    void * pContext,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)
@@ -770,14 +769,14 @@ static void APP_THREAD_FuotaProvisioning(void)
 
   /* Send a MULTICAST CONFIRMABLE GET Request */
   APP_THREAD_CoapSendRequest(&OT_RessourceFuotaProvisioning,
-      OT_COAP_TYPE_NON_CONFIRMABLE,
+      OT_COAP_TYPE_CONFIRMABLE,
       OT_COAP_CODE_GET,
-      NULL,
       MULICAST_FTD_MED,
-      APP_THREAD_COAP_STRING_ADDRESS,
+      NULL,
       &l_provisioning_data,
       sizeof(l_provisioning_data),
-      &APP_THREAD_ProvisioningRespHandler);
+      &APP_THREAD_ProvisioningRespHandler,
+      NULL);
 }
 
 static uint32_t APP_THREAD_GetBinSize(void)
@@ -895,12 +894,12 @@ static void APP_THREAD_FuotaParameters(void)
   APP_THREAD_CoapSendRequest(&OT_RessourceFuotaParameters,
       OT_COAP_TYPE_CONFIRMABLE,
       OT_COAP_CODE_PUT,
-      &OT_PeerAddress,
       NULL,
-      APP_THREAD_COAP_IP6_ADDRESS,
+      &OT_PeerAddress,
       (uint8_t*)&OtaContext,
       sizeof(OtaContext),
-      &APP_THREAD_CoapRespHandlerFuotaParameters);
+      &APP_THREAD_CoapRespHandlerFuotaParameters,
+      NULL);
 }
 
 /**
@@ -949,12 +948,12 @@ static void APP_THREAD_FuotaSend(void)
     APP_THREAD_CoapSendRequest(&OT_RessourceFuotaSend,
         OT_COAP_TYPE_CONFIRMABLE,
         OT_COAP_CODE_PUT,
-        &OT_PeerAddress,
         NULL,
-        APP_THREAD_COAP_IP6_ADDRESS,
+        &OT_PeerAddress,
         (uint8_t*)&FuotaTransferArray,
         FUOTA_PAYLOAD_SIZE,
-        &APP_THREAD_CoapRespHandlerFuotaSend);
+        &APP_THREAD_CoapRespHandlerFuotaSend,
+        NULL);
 
     UTIL_SEQ_WaitEvt(EVENT_TRANSFER_64BITS_DONE);
 
@@ -1020,12 +1019,12 @@ static void APP_THREAD_FuotaReboot(void)
   APP_THREAD_CoapSendRequest(&OT_RessourceFuotaReboot,
       OT_COAP_TYPE_CONFIRMABLE,
       OT_COAP_CODE_PUT,
-      NULL,
       MULICAST_FTD_MED,
-      APP_THREAD_COAP_STRING_ADDRESS,
+      NULL,
       (uint8_t*)&l_data,
       sizeof(l_data),
-      &APP_THREAD_CoapRespHandlerFuotaReboot);
+      &APP_THREAD_CoapRespHandlerFuotaReboot,
+      NULL);
 
   UTIL_SEQ_WaitEvt(EVENT_FUOTA_REBOOT_RESP_DONE);
 
@@ -1035,16 +1034,14 @@ static void APP_THREAD_FuotaReboot(void)
 /**
  * @brief This function manages the response handler for the request of reboot on Thread_Ota.
  *
- * @param pContext  context
- * @param pHeader  header
+ * @param pContext  Context
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code
  * @retval None
  */
 static void APP_THREAD_CoapRespHandlerFuotaReboot(
-    void                * pContext,
-    otCoapHeader        * pHeader,
+    void * pContext,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)
@@ -1062,16 +1059,14 @@ static void APP_THREAD_CoapRespHandlerFuotaReboot(
 /**
  * @brief This function manages the response handler for the request of reboot on Thread_Ota.
  *
- * @param pContext context
- * @param pHeader  header
+ * @param pContext  Context
  * @param pMessage message pointer
  * @param pMessageInfo message info pointer
  * @param Result error code
  * @retval None
  */
 static void APP_THREAD_CoapRespHandlerFuotaParameters(
-    void                * pContext,
-    otCoapHeader        * pHeader,
+    void * pContext,
     otMessage           * pMessage,
     const otMessageInfo * pMessageInfo,
     otError             Result)
@@ -1136,14 +1131,7 @@ Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void)
   return (Thread_OT_Cmd_Request_t*)(p_thread_notif_M0_to_M4)->evtserial.evt.payload;
 }
 
-/**
- * @brief  This function is used to transfer the Ot commands from the
- *         M4 to the M0.
- *
- * @param   None
- * @return  None
- */
-void Ot_Cmd_Transfer(void)
+static void Ot_Cmd_Transfer_Common(void)
 {
   /* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352 */
   p_thread_otcmdbuffer->cmdserial.cmd.cmdcode = 0x280U;
@@ -1159,6 +1147,33 @@ void Ot_Cmd_Transfer(void)
 }
 
 /**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_Transfer(void)
+{
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
+ * @brief  This function is used to transfer the Ot commands from the
+ *         M4 to the M0 with Notification M0 to M4 allowed.
+ *
+ * @param   None
+ * @return  None
+ */
+void Ot_Cmd_TransferWithNotif(void)
+{
+  /* Flag to specify to UTIL_SEQ_EvtIdle that M0 to M4 notifications are allowed */
+  g_ot_notification_allowed = 1U;
+
+  Ot_Cmd_Transfer_Common();
+}
+
+/**
  * @brief  This function is called when acknowledge from OT command is received from the M0+.
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -1170,6 +1185,9 @@ void TL_OT_CmdEvtReceived( TL_EvtPacket_t * Otbuffer )
   UNUSED(Otbuffer);
 
   Receive_Ack_From_M0();
+
+  /* Does not allow OpenThread M0 to M4 notification */
+  g_ot_notification_allowed = 0U;
 }
 
 /**

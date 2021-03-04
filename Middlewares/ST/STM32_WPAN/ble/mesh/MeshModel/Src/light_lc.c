@@ -193,7 +193,7 @@ MODEL_OpcodeTableParam_t Light_LC_Opcodes_Table[] = {
  {LIGHT_LC_SERVER_MODEL_ID,       LIGHT_LC_ON_OFF_SET,         MOBLE_TRUE,   2,               4,               LIGHT_LC_ON_OFF_STATUS,   1,                3},
  {LIGHT_LC_SERVER_MODEL_ID,       LIGHT_LC_ON_OFF_SET_UNACK,   MOBLE_FALSE,  2,               4,               LIGHT_LC_ON_OFF_STATUS,   1,                3},
  {LIGHT_LC_SERVER_MODEL_ID,       LIGHT_LC_ON_OFF_STATUS,      MOBLE_FALSE,  1,               3,               0                     ,   1,                3},
-                                                                                                                  
+ {LIGHT_LC_SERVER_MODEL_ID,       SENSOR_STATUS,               MOBLE_FALSE,  0,               65,              0                     ,   1,                1},                                                                                                 
  {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_GET,       MOBLE_TRUE,   2,               2,               LIGHT_LC_PROPERTY_STATUS, 2,                10},
  {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_SET,       MOBLE_TRUE,   2,               10,              LIGHT_LC_PROPERTY_STATUS, 2,                10},
  {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_SET_UNACK, MOBLE_FALSE,  2,               10,              LIGHT_LC_PROPERTY_STATUS, 2,                10},
@@ -406,8 +406,7 @@ MOBLE_RESULT LightLcServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **dat
                                             MOBLEUINT16 *length)
 {
   *data = Light_LC_Opcodes_Table;
-  *length = sizeof(Light_LC_Opcodes_Table)/sizeof(Light_LC_Opcodes_Table[0]);
-  
+  *length = sizeof(Light_LC_Opcodes_Table)/sizeof(MODEL_OpcodeTableParam_t);
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -512,6 +511,28 @@ MOBLE_RESULT LightLcServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParam,
     case LIGHT_LC_PROPERTY_SET_UNACK:
       Light_LC_PropertySetUnack(pLcParams, pRxData, dataLength, pmsgParam, 0);
       break;
+    case SENSOR_STATUS:
+      {
+        MOBLEUINT8 propertyID;
+        if((pRxData[0] & 0x1) == 0)
+        { 
+          /* Decode Format A */
+          propertyID = pRxData[0] >> 5;
+          propertyID |= pRxData[1] << 3;
+          
+          TRACE_M(TF_LIGHT_LC_M, "Decoded PropertyID: 0x%04x  \r\n", propertyID);
+          if(propertyID == PRESENCE_DETECTED_PID)
+          {
+            if(dataLength > 2)
+            {
+              Light_LC_SensorPropertyUpdate(pmsgParam->elementIndex,
+                                            PRESENCE_DETECTED_PID,
+                                            pRxData[2]);
+            }
+          }
+        }
+      }
+      break;
     default:
       break;
     }
@@ -591,8 +612,6 @@ MOBLE_RESULT Light_LC_ModeStatus(MODEL_MessageHeader_t *pmsgParam,
                                               dataBufLen,
                                               MOBLE_FALSE,
                                               MOBLE_FALSE);
-    result = MOBLE_RESULT_FALSE;
-    
     if (result == MOBLE_RESULT_SUCCESS)
     {
       TRACE_M(TF_LIGHT_LC_M, "Published\r\n");
@@ -650,8 +669,6 @@ MOBLE_RESULT Light_LC_OmStatus(MODEL_MessageHeader_t *pmsgParam,
                                             (MOBLEUINT16)LIGHT_LC_OM_STATUS,
                                             data,
                                             dataBufLen);
-      result = MOBLE_RESULT_FALSE;
-      
       if (result == MOBLE_RESULT_SUCCESS)
       {
         TRACE_M(TF_LIGHT_LC_M, "Reply sent\r\n");
@@ -678,8 +695,6 @@ MOBLE_RESULT Light_LC_OmStatus(MODEL_MessageHeader_t *pmsgParam,
                                               dataBufLen,
                                               MOBLE_FALSE,
                                               MOBLE_FALSE);
-    result = MOBLE_RESULT_FALSE;
-    
     if (result == MOBLE_RESULT_SUCCESS)
     {
       TRACE_M(TF_LIGHT_LC_M, "Published\r\n");
@@ -788,8 +803,6 @@ MOBLE_RESULT Light_LC_OnOffStatus(lc_param_t* pLcParams,
                                             (MOBLEUINT16)LIGHT_LC_ON_OFF_STATUS,
                                             data,
                                             dataBufLen);
-      result = MOBLE_RESULT_FALSE;
-      
       if (result == MOBLE_RESULT_SUCCESS)
       {
         TRACE_M(TF_LIGHT_LC_M, "Reply sent\r\n");
@@ -816,8 +829,6 @@ MOBLE_RESULT Light_LC_OnOffStatus(lc_param_t* pLcParams,
                                               dataBufLen,
                                               MOBLE_FALSE,
                                               MOBLE_FALSE);
-    result = MOBLE_RESULT_FALSE;
-    
     if (result == MOBLE_RESULT_SUCCESS)
     {
       TRACE_M(TF_LIGHT_LC_M, "Published\r\n");
@@ -890,8 +901,6 @@ MOBLE_RESULT Light_LC_PropertyStatus(MODEL_MessageHeader_t *pmsgParam,
                                               (MOBLEUINT16)LIGHT_LC_PROPERTY_STATUS, 
                                               data,
                                               dataBufLen);
-        result = MOBLE_RESULT_FALSE;
-        
         if (result == MOBLE_RESULT_SUCCESS)
         {
           TRACE_M(TF_LIGHT_LC_M, "Reply sent\r\n");
@@ -918,8 +927,6 @@ MOBLE_RESULT Light_LC_PropertyStatus(MODEL_MessageHeader_t *pmsgParam,
                                                 dataBufLen,
                                                 MOBLE_FALSE,
                                                 MOBLE_FALSE);
-      result = MOBLE_RESULT_FALSE;
-      
       if (result == MOBLE_RESULT_SUCCESS)
       {
         TRACE_M(TF_LIGHT_LC_M, "Published\r\n");
@@ -1997,7 +2004,7 @@ MOBLEUINT16 Light_LC_PIregulator(lc_param_t* pLcParams)
     }
     else
     {
-      summationIntervalMs  = Clock_Time() + (0xFFFFFFFF - pLcParams->piLightnessUpdateTick);
+      summationIntervalMs  = Clock_Time() + (MAX_U32_VALUE - pLcParams->piLightnessUpdateTick);
     }
     
     if(summationIntervalMs > 100)
@@ -2136,6 +2143,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
     Light_LC_TransitionUpdate(pLcParams, 1, 0, 0, 0, 0); /* transition event not updated */
     pLcParams->publish = 1;
     Binding_LightLcLightOnOff_GenericOnOff(pLcParams->elementIndex, 0);
+    
     /* Unidirectional binding between LC Linear out and Lightness Linear breaks 
        Lightness not to be updated */
     
@@ -2169,8 +2177,11 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         pLcParams->lcActualSmOut = pLcParams->targetLightnessOut;
         pLcParams->luxLevelOut = pLcParams->targetLightLuxOut;
         pLcParams->updateLcLinearOut = 1;
-        pLcParams->publish = 1;
         
+        /* sync Generic OnOff state with LC OnOff state */
+        Binding_LightLcLightOnOff_GenericOnOff(pLcParams->elementIndex, 0);
+        
+        /* Update LC mode in NVM */
         NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         pLcParams->state = STANDBY;
         TRACE_M(TF_LIGHT_LC_M, "OFF -> STANDBY\r\n");
@@ -2210,7 +2221,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
                                     &tempVal);
           
           transitionEvent = Light_LC_TransitionUpdate
-            (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
+            (pLcParams, 0, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         }
         
         NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
@@ -2234,13 +2245,12 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         
         Light_LC_PropertyValueGet(pLcParams->pPropertyId,
                                   pLcParams->propertyValue,
-                                  LIGHT_CONTROL_TIME_RUN_ON_PID,
-                                  LC_TIME_RUN_ON_PID_INDEX,
+                                  LIGHT_CONTROL_TIME_FADE_ON_PID,
+                                  LC_TIME_FADE_ON_PID_INDEX,
                                   &tempVal);
         
-        /* step resolution = run time to avoid intermediate triggers */
         transitionEvent = Light_LC_TransitionUpdate
-          (pLcParams, 1, 1, delayMsOOnOD, tempVal, tempVal);
+          (pLcParams, 0, 1, delayMsOOnOD, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         
         NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         pLcParams->state = POST_STANDBY;
@@ -2255,17 +2265,17 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
     case PRE_FADE_ON:
       if(event == TIMER_ON)
       {
-        pLcParams->publish = 1;
-        Binding_LightLcLightOnOff_GenericOnOff(pLcParams->elementIndex, 1);
-        pLcParams->state = FADE_ON;
         if(pLcParams->state == POST_STANDBY)
         {
+          Binding_LightLcLightOnOff_GenericOnOff(pLcParams->elementIndex, 1);
           TRACE_M(TF_LIGHT_LC_M, "POST STANDBY -> FADE ON\r\n");
         }
         else
         {
           TRACE_M(TF_LIGHT_LC_M, "PRE FADE ON -> FADE ON\r\n");
         }
+        
+        pLcParams->state = FADE_ON;
       }
       else if(event == TIMER_OFF)
       {
@@ -2282,6 +2292,8 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         transitionEvent = Light_LC_TransitionUpdate
           (pLcParams, 0, 1, 0, tempVal, tempVal);
         
+        pLcParams->publish = 1;
+        
         if(pLcParams->state == POST_STANDBY)
         {
           Binding_LightLcLightOnOff_GenericOnOff(pLcParams->elementIndex, 1);
@@ -2291,7 +2303,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         {
           TRACE_M(TF_LIGHT_LC_M, "PRE FADE ON -> RUN\r\n");
         }
-        pLcParams->publish = 1;
+        
         pLcParams->state = RUN;
       }
       else if(event == LIGHT_OFF)
@@ -2324,7 +2336,6 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
               (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
           }
           
-          NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
           TRACE_M(TF_LIGHT_LC_M, "PRE FADE ON -> PRE FADE STANDBY MANUAL\r\n");
           pLcParams->state = PRE_FADE_STANDBY_MANUAL;
         }
@@ -2333,13 +2344,12 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
           transitionEvent = Light_LC_TransitionUpdate
             (pLcParams, 1, 0, 0, 0, 0);
           NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
-          TRACE_M(TF_LIGHT_LC_M, "POST STANDBY -> STANDBY\r\n");
           pLcParams->state = STANDBY;
+          TRACE_M(TF_LIGHT_LC_M, "POST STANDBY -> STANDBY\r\n");
         }
       }
       else if(event == LIGHT_ON)
       {
-        /*
         if(optionalParamsOnOffMsg == 1)
         {
           transitionEvent = Light_LC_TransitionUpdate
@@ -2365,7 +2375,6 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         {
           TRACE_M(TF_LIGHT_LC_M, "PRE FADE ON -> PRE FADE ON light on\r\n");
         }
-        */
       }
       else
       {
@@ -2453,13 +2462,11 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
             (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         }
                 
-        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         TRACE_M(TF_LIGHT_LC_M, "FADE ON -> PRE FADE STANDBY MANUAL\r\n");
         pLcParams->state = PRE_FADE_STANDBY_MANUAL;
       }
       else if(event == LIGHT_ON)
       {
-        /*
         pLcParams->initialLightnessOut = (MOBLEUINT16)Transition_StateValueGet
           (pLcParams->targetLightnessOut, 
            pLcParams->initialLightnessOut,
@@ -2483,9 +2490,9 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
             (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         }
         
+        pLcParams->publish = 1;
         TRACE_M(TF_LIGHT_LC_M, "FADE ON -> PRE FADE ON\r\n");
         pLcParams->state = PRE_FADE_ON;
-        */
       }
       else
       {
@@ -2516,7 +2523,6 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         
         transitionEvent = Light_LC_TransitionUpdate
           (pLcParams, 0, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
-        pLcParams->publish = 1;
         
         TRACE_M(TF_LIGHT_LC_M, "RUN -> FADE\r\n");
         pLcParams->state = FADE;
@@ -2553,7 +2559,6 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
            LIGHT_CONTROL_AMBIENT_LUXLEVEL_STANDBY_PID,
            LC_AMBIENT_LUXLEVEL_STANDBY_PID_INDEX);
         
-        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         TRACE_M(TF_LIGHT_LC_M, "RUN -> PRE FADE STANDBY MANUAL\r\n");
         pLcParams->state = PRE_FADE_STANDBY_MANUAL;
       }
@@ -2671,7 +2676,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
             (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         }
         
-        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
+        pLcParams->publish = 1;
         TRACE_M(TF_LIGHT_LC_M, "FADE -> PRE FADE STANDBY MANUAL\r\n");
         pLcParams->state = PRE_FADE_STANDBY_MANUAL;
       }
@@ -2710,6 +2715,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
            Transition_TimerGet(pTrParams),
            pTrParams->trTimeMs);
         
+        pLcParams->publish = 1;
         TRACE_M(TF_LIGHT_LC_M, "FADE -> PRE FADE ON light on\r\n");
         pLcParams->state = PRE_FADE_ON;
       }
@@ -2740,6 +2746,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         transitionEvent = Light_LC_TransitionUpdate
           (pLcParams, 1, 1, delayMsOOnOD, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         
+        pLcParams->publish = 1;
         TRACE_M(TF_LIGHT_LC_M, "FADE -> PRE FADE ON occupancy on\r\n");
         pLcParams->state = PRE_FADE_ON;
       }
@@ -2772,9 +2779,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         
         transitionEvent = Light_LC_TransitionUpdate
           (pLcParams, 0, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
-        pLcParams->publish = 1;
         
-        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         TRACE_M(TF_LIGHT_LC_M, "PROLONG -> FADE STANDBY AUTO\r\n");
         pLcParams->state = FADE_STANDBY_AUTO;
       }
@@ -2810,7 +2815,6 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
             (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         }
         
-        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         TRACE_M(TF_LIGHT_LC_M, "PROLONG -> PRE FADE STANDBY MANUAL\r\n");
         pLcParams->state = PRE_FADE_STANDBY_MANUAL;
       }
@@ -2906,6 +2910,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         Binding_LightLcLightOnOff_GenericOnOff(pLcParams->elementIndex, 0);
         pLcParams->state = STANDBY;
         
+        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         TRACE_M(TF_LIGHT_LC_M, "FADE STANDBY AUTO -> STANDBY\r\n");
       }
       else if (event == LIGHT_OFF)
@@ -2943,6 +2948,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
             (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         }
         
+        pLcParams->publish = 1;
         TRACE_M(TF_LIGHT_LC_M, "FADE STANDBY AUTO ->PRE FADE STANDBY MANUAL\r\n");
         pLcParams->state = PRE_FADE_STANDBY_MANUAL;
       }
@@ -2981,7 +2987,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
             (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         }
         
-        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
+        pLcParams->publish = 1;
         TRACE_M(TF_LIGHT_LC_M, "FADE STANDBY AUTO -> PRE FADE ON light on\r\n");
         pLcParams->state = PRE_FADE_ON;
       }
@@ -3012,7 +3018,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         transitionEvent = Light_LC_TransitionUpdate
           (pLcParams, 1, 1, delayMsOOnOD, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         
-        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
+        pLcParams->publish = 1;
         TRACE_M(TF_LIGHT_LC_M, "FADE STANDBY AUTO -> PRE FADE ON occupancy on\r\n");
         pLcParams->state = PRE_FADE_ON;
       }
@@ -3024,15 +3030,26 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
     case PRE_FADE_STANDBY_MANUAL:
       if(event == TIMER_ON)
       {
-        pLcParams->publish = 1;
         TRACE_M(TF_LIGHT_LC_M, "PRE FADE STANDBY MANUAL -> FADE STANDBY MANUAL\r\n");
         pLcParams->state = FADE_STANDBY_MANUAL;
       }
       else if(event == TIMER_OFF)
       {
+        result = Light_LC_InitialTargetValueUpdatePid
+          (pLcParams, 
+           0, 0, 0, 0, 0,
+           1,
+           LIGHT_CONTROL_LIGHTNESS_STANDBY_PID,
+           LC_LIGHTNESS_STANDBY_PID_INDEX,
+           LIGHT_CONTROL_AMBIENT_LUXLEVEL_STANDBY_PID,
+           LC_AMBIENT_LUXLEVEL_STANDBY_PID_INDEX);
+        pLcParams->lcActualSmOut = pLcParams->targetLightnessOut;
+        pLcParams->luxLevelOut = pLcParams->targetLightLuxOut;
+        pLcParams->updateLcLinearOut = 1;
+        
         pLcParams->publish = 1;
         Binding_LightLcLightOnOff_GenericOnOff(pLcParams->elementIndex, 0);
-        
+        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         TRACE_M(TF_LIGHT_LC_M, "PRE FADE STANDBY MANUAL -> STANDBY\r\n");
         pLcParams->state = STANDBY;
       }
@@ -3063,7 +3080,6 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
             (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         }
         
-        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         TRACE_M(TF_LIGHT_LC_M, "PRE FADE STANDBY MANUAL -> PRE FADE ON\r\n");
         pLcParams->state = PRE_FADE_ON;
       }
@@ -3096,7 +3112,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
         pLcParams->updateLcLinearOut = 1;
         pLcParams->publish = 1;
         Binding_LightLcLightOnOff_GenericOnOff(pLcParams->elementIndex, 0);
-        
+        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
         TRACE_M(TF_LIGHT_LC_M, "FADE STANDBY MANUAL -> STANDBY\r\n");
         pLcParams->state = STANDBY;
       }
@@ -3135,7 +3151,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
             (pLcParams, 1, 1, 0, tempVal, LIGHT_LC_DEFAULT_TRANSITION_RES_MS);
         }
         
-        NvmStatePowerFlag_Set(LIGHT_LC_NVM_FLAG, pLcParams->elementIndex);
+        pLcParams->publish = 1;
         TRACE_M(TF_LIGHT_LC_M, "FADE STANDBY MANUAL -> PRE FADE ON\r\n");
         pLcParams->state = PRE_FADE_ON;
       }
@@ -3197,9 +3213,9 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
 static
 MOBLE_RESULT Light_LC_PropertyTableInit(lc_param_t* pLcParams)
 {
-  float temp = 0;
-  float* pFtemp;
-  MOBLEUINT32* pU32temp;
+  float tempFloat = 0;
+  const float* pFtemp = &tempFloat;
+  const MOBLEUINT32* pU32temp = (MOBLEUINT32*)pFtemp;
   
   MOBLE_RESULT result = MOBLE_RESULT_FAIL;
   
@@ -3210,9 +3226,7 @@ MOBLE_RESULT Light_LC_PropertyTableInit(lc_param_t* pLcParams)
                                      4); /* Default value 2.0, resolution 0.5 */
   if(result == MOBLE_RESULT_SUCCESS)
   {
-    temp = 25.0; /* Default value */
-    pFtemp = &temp;
-    pU32temp = (MOBLEUINT32*)pFtemp;
+    tempFloat = 25.0; /* Default value */
     result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
                                        pLcParams->propertyValue,
                                        LIGHT_CONTROL_REGULATOR_KID_PID,
@@ -3222,9 +3236,7 @@ MOBLE_RESULT Light_LC_PropertyTableInit(lc_param_t* pLcParams)
   
   if(result == MOBLE_RESULT_SUCCESS)
   {
-    temp = 250.0; /* Default value */
-    pFtemp = &temp;
-    pU32temp = (MOBLEUINT32*)pFtemp;
+    tempFloat = 250.0; /* Default value */
     result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
                                        pLcParams->propertyValue,
                                        LIGHT_CONTROL_REGULATOR_KIU_PID,
@@ -3234,9 +3246,7 @@ MOBLE_RESULT Light_LC_PropertyTableInit(lc_param_t* pLcParams)
   
   if(result == MOBLE_RESULT_SUCCESS)
   {
-    temp = 80.0; /* Default value */
-    pFtemp = &temp;
-    pU32temp = (MOBLEUINT32*)pFtemp;
+    tempFloat = 80.0; /* Default value */
     result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
                                        pLcParams->propertyValue,
                                        LIGHT_CONTROL_REGULATOR_KPD_PID,
@@ -3246,9 +3256,7 @@ MOBLE_RESULT Light_LC_PropertyTableInit(lc_param_t* pLcParams)
   
   if(result == MOBLE_RESULT_SUCCESS)
   {
-    temp = 80.0; /* Default value */
-    pFtemp = &temp;
-    pU32temp = (MOBLEUINT32*)pFtemp;
+    tempFloat = 80.0; /* Default value */
     result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
                                        pLcParams->propertyValue,
                                        LIGHT_CONTROL_REGULATOR_KPU_PID,
@@ -3258,12 +3266,91 @@ MOBLE_RESULT Light_LC_PropertyTableInit(lc_param_t* pLcParams)
   
   if(result == MOBLE_RESULT_SUCCESS)
   {
-    /* Lightnes On non-zero value required by PTS */
+    /* Lightness On non-zero value required by PTS */
     result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
                                        pLcParams->propertyValue,
                                        LIGHT_CONTROL_LIGHTNESS_ON_PID,
                                        LC_LIGHTNESS_ON_PID_SIZE,
-                                       0xFFFF);
+                                       0xffff);
+  }
+  
+  if(result == MOBLE_RESULT_SUCCESS)
+  {
+    result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
+                                       pLcParams->propertyValue,
+                                       LIGHT_CONTROL_LIGHTNESS_STANDBY_PID,
+                                       LC_LIGHTNESS_STANDBY_PID_SIZE,
+                                       0x0000);
+  }
+  
+  if(result == MOBLE_RESULT_SUCCESS)
+  {
+    /* Lightness Prolong non-zero value for init demo */
+    result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
+                                       pLcParams->propertyValue,
+                                       LIGHT_CONTROL_LIGHTNESS_PROLONG_PID,
+                                       LC_LIGHTNESS_PROLONG_PID_SIZE,
+                                       0x3fff);
+  }
+  
+  if(result == MOBLE_RESULT_SUCCESS)
+  {
+    /* Fade On non-zero value for init demo */
+    result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
+                                       pLcParams->propertyValue,
+                                       LIGHT_CONTROL_TIME_FADE_ON_PID,
+                                       LC_TIME_FADE_ON_PID_SIZE,
+                                       3000);
+  }
+  
+  if(result == MOBLE_RESULT_SUCCESS)
+  {
+    /* Run On non-zero value for init demo */
+    result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
+                                       pLcParams->propertyValue,
+                                       LIGHT_CONTROL_TIME_RUN_ON_PID,
+                                       LC_TIME_RUN_ON_PID_SIZE,
+                                       5000);
+  }
+  
+  if(result == MOBLE_RESULT_SUCCESS)
+  {
+    /* Fade non-zero value for init demo */
+    result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
+                                       pLcParams->propertyValue,
+                                       LIGHT_CONTROL_TIME_FADE_PID,
+                                       LC_TIME_FADE_PID_SIZE,
+                                       2000);
+  }
+  
+  if(result == MOBLE_RESULT_SUCCESS)
+  {
+    /* Prolong non-zero value for init demo */
+    result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
+                                       pLcParams->propertyValue,
+                                       LIGHT_CONTROL_TIME_PROLONG_PID,
+                                       LC_TIME_PROLONG_PID_SIZE,
+                                       2000);
+  }
+  
+  if(result == MOBLE_RESULT_SUCCESS)
+  {
+    /* Fade Standby Auto non-zero value for init demo */
+    result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
+                                       pLcParams->propertyValue,
+                                       LIGHT_CONTROL_TIME_FADE_STANDBY_AUTO_PID,
+                                       LC_TIME_FADE_STANDBY_AUTO_PID_SIZE,
+                                       1000);
+  }
+  
+  if(result == MOBLE_RESULT_SUCCESS)
+  {
+    /* Fade Standby Manual non-zero value for init demo */
+    result = Light_LC_PropertyValueSet(pLcParams->pPropertyId,
+                                       pLcParams->propertyValue,
+                                       LIGHT_CONTROL_TIME_FADE_STANDBY_MANUAL_PID,
+                                       LC_TIME_FADE_STANDBY_MANUAL_PID_SIZE,
+                                       1000);
   }
   
   return result;
@@ -3278,21 +3365,20 @@ MOBLE_RESULT Light_LC_PropertyTableInit(lc_param_t* pLcParams)
   * @retval None
   */
 __weak
-void Light_LC_NvmParams_Get(MOBLEUINT8 elementIndex,
+void LightLC_SaveModelStates(MOBLEUINT8 elementIndex,
                             MOBLEUINT8* lightLcNvmParamsBuff, 
-                            MOBLEUINT8* lcNvmParamsSize)
+                             MOBLEUINT8 lcNvmParamsSize)
 {
   MOBLEUINT8 mode = 0;
   MOBLEUINT8 onOff = 0;
-  lc_param_t* pLcParams = NULL;
   
   if(LcServerP != NULL)
   {
-//    if(elementIndex == LcServerP->elementIndex)
-//    {
-      pLcParams = LcServerP;
-      
-      if(pLcParams->state == OFF)
+    /* only for element index for which LC server is supported */
+    if(elementIndex == LcServerP->elementIndex
+       || lcNvmParamsSize >= 4)
+    {
+      if(LcServerP->state == OFF)
       {
         mode = 0;
       }
@@ -3301,11 +3387,11 @@ void Light_LC_NvmParams_Get(MOBLEUINT8 elementIndex,
         mode = 1;
       }
       
-      if(pLcParams->state == OFF ||
-         pLcParams->state == STANDBY ||
-         pLcParams->state == FADE_STANDBY_AUTO ||
-         pLcParams->state == PRE_FADE_STANDBY_MANUAL ||
-         pLcParams->state == FADE_STANDBY_MANUAL)
+      if(LcServerP->state == OFF ||
+         LcServerP->state == STANDBY ||
+         LcServerP->state == FADE_STANDBY_AUTO ||
+         LcServerP->state == PRE_FADE_STANDBY_MANUAL ||
+         LcServerP->state == FADE_STANDBY_MANUAL)
       {
         onOff = 0; /* off */
       }
@@ -3315,7 +3401,7 @@ void Light_LC_NvmParams_Get(MOBLEUINT8 elementIndex,
       }
 
       lightLcNvmParamsBuff[0] = mode;
-      lightLcNvmParamsBuff[1] = pLcParams->occupancyMode;
+      lightLcNvmParamsBuff[1] = LcServerP->occupancyMode;
       lightLcNvmParamsBuff[2] = onOff;
       
       /* 
@@ -3324,15 +3410,14 @@ void Light_LC_NvmParams_Get(MOBLEUINT8 elementIndex,
          lc on off 1 byte
          reserved 1 byte
       */
-      *lcNvmParamsSize = 4;
       
       TRACE_M(TF_LIGHT_LC_M, "mode %d occupancy mode %d light onOff %d\r\n",
               lightLcNvmParamsBuff[0], lightLcNvmParamsBuff[1], lightLcNvmParamsBuff[2]);
-//    }
-//    else
-//    {
-//      TRACE_M(TF_LIGHT_LC_M, "Element index %d not supported by LC Server\r\n", elementIndex);
-//    }
+    }
+    else
+    {
+      TRACE_M(TF_LIGHT_LC_M, "Element index %d not supported by LC Server\r\n", elementIndex);
+    }
   }
   else
   {
@@ -3350,15 +3435,17 @@ void Light_LC_NvmParams_Get(MOBLEUINT8 elementIndex,
   * @param  Binded Light Lightness Default
   * @param  Binded Light Lightness Last
   * @param  Binded Light Lightness Acutal last known value
-  * @retval None
+  * @param  Reference to Light Acutal to be set
+  * @retval If set Light Actual to be updated
   */
 __weak
-void Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
+MOBLEUINT8 Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
                         MOBLEUINT8 const *pModelValue_Load, 
                         MOBLEUINT8 genericOnPowerUp,
                         MOBLEUINT16 lightDefault,
                         MOBLEUINT16 lightLast,
-                        MOBLEUINT16 lightActualLKV)
+                              MOBLEUINT16 lightActualLKV,
+                              MOBLEUINT16* pLightActualToBeSet)
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   MOBLEUINT8 onOff = 0; /* target */
@@ -3372,8 +3459,8 @@ void Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
   
   if(LcServerP != NULL)
   {
-//    if(elementIndex == LcServerP->elementIndex)
-//    {
+    if(elementIndex == LcServerP->elementIndex)
+    {
       TRACE_M(TF_LIGHT_LC_M, "OnPowerUp %d Mode lkv %d OM lkv %d OnOff lkv %d\r\n",
                              genericOnPowerUp, lcModeLKV, lcOmLKV, lcOnOffLKV);
       
@@ -3459,12 +3546,12 @@ void Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
         result = MOBLE_RESULT_INVALIDARG;
         TRACE_M(TF_LIGHT_LC_M, "Generic OnPowerUp invalid %d\r\n", genericOnPowerUp);
       }
-//    }
-//    else
-//    {
-//      result = MOBLE_RESULT_INVALIDARG;
-//      TRACE_M(TF_LIGHT_LC_M, "Element index %d not supported by LC Server\r\n", elementIndex);
-//    }
+    }
+    else
+    {
+      result = MOBLE_RESULT_INVALIDARG;
+      TRACE_M(TF_LIGHT_LC_M, "Element index %d not supported by LC Server\r\n", elementIndex);
+    }
   }
   else
   {
@@ -3480,18 +3567,12 @@ void Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
     if(updateLightActual == 1)
     {
       /* Set Light Actual value */
-      //todo update actual light lightness
-      //dummy call
-      Light_LC_PropertyValueSet(pLcParams->pPropertyId,
-                                pLcParams->propertyValue,
-                                0,
-                                0,
-                                lightActual);
+      *pLightActualToBeSet = lightActual;
     }
     
     if(mode == 0)
     {
-      /* LC initialized in OFF */
+      TRACE_M(TF_LIGHT_LC_M, "LC initialized in OFF\r\n");
     }
     else
     {
@@ -3511,6 +3592,8 @@ void Light_LC_OnPowerUp(MOBLEUINT8 elementIndex,
   {
     /*  */
   }
+  
+  return updateLightActual;
 }
 
 
@@ -3695,8 +3778,9 @@ MOBLE_RESULT Light_LC_SensorPropertyUpdate(MOBLEUINT8 lcsElementIndex,
       
       result = Light_LC_Fsm(OCCUPANCY_ON,
                             pLcParams,
+                            0,
                             tempVal,/* delay in milliseconds for processing of occupancy on */
-                            0, 0, 0);
+                            0, 0);
       
       TRACE_M(TF_LIGHT_LC_M, "Occupancy detected\r\n");
     }
@@ -3714,19 +3798,17 @@ MOBLE_RESULT Light_LC_SensorPropertyUpdate(MOBLEUINT8 lcsElementIndex,
   * @brief  Unsolicited change in Light Lightness Linear disables binding
   *         between LC Linear Out and Light Lightness Linear and
   *         LC state machine mode = 0b0
-  * @param  element index
+  * @param  Binded Light Lightness Linear element index. It should be on main element
   * @retval None
   */
 __weak
-void Light_LC_LigtnessLinearUnsolicitedChange(MOBLEUINT8 elementIndex)
+void Light_LC_LigtnessLinearUnsolicitedChange(MOBLEUINT8 lightnessLinearelementIndex)
 {
+  TRACE_M(TF_LIGHT_LC_M, "Light Lightness Linear element index %d\r\n", lightnessLinearelementIndex);
+  
   if(LcServerP != NULL)
   {
-    if(elementIndex == LcServerP->elementIndex)
-    {
-      TRACE_M(TF_LIGHT_LC_M, ">>>\r\n");
-      Light_LC_Fsm(MODE_OFF, LcServerP, 0, 0, 0, 0);
-    }
+    Light_LC_Fsm(MODE_OFF, LcServerP, 0, 0, 0, 0);
   }
   else
   {
@@ -3745,7 +3827,7 @@ void Light_LC_LigtnessLinearUnsolicitedChange(MOBLEUINT8 elementIndex)
 __weak
 MOBLEUINT32 Light_LC_SleepDurationMs_Get(void)
 {
-  MOBLEUINT32 sleepDuration = 0xFFFFFFFF;
+  MOBLEUINT32 sleepDuration = MAX_U32_VALUE;
   lc_param_t* pLcParams = NULL;
   
   if(LcServerP != NULL)
@@ -3843,6 +3925,7 @@ MOBLE_RESULT Light_LC_LcOnOffUpdate(MOBLEUINT8 elementIndex,
     }
     else
     {
+      TRACE_M(TF_LIGHT_LC_M, "Element index mismatch %d/%d", elementIndex, LcServerP->elementIndex);
       result = MOBLE_RESULT_INVALIDARG;
     }
   }
@@ -4028,11 +4111,12 @@ MOBLE_RESULT ExtractLcServerElementIndex(MOBLEUINT8* pLcsElementIndex,
       {
         lcServerCount++;
         
+        /* Checks only for first instance of Light LC Server */
         if(lcServerCount == 1)
         {
           *pLcsElementIndex = count; /* First element index supporting LC server */
           
-          /* LC Setup Server may be supported on same element as of LC Server */
+          /* LC Setup Server should be supported on same element as of LC Server */
           if((lcSetupServer & (1 << count)) == (1 << count))
           {
             result = MOBLE_RESULT_SUCCESS;
@@ -4043,7 +4127,7 @@ MOBLE_RESULT ExtractLcServerElementIndex(MOBLEUINT8* pLcsElementIndex,
             result = MOBLE_RESULT_FAIL;
           }
           
-          /* Generic OnOff Server should be supported on same element as of LC Server */
+          /* Generic OnOff Server should be supported on LC Server element */
           if(result == MOBLE_RESULT_SUCCESS )
           {
             if((genericOnOffServer & (1 << count)) == (1 << count))
@@ -4057,26 +4141,22 @@ MOBLE_RESULT ExtractLcServerElementIndex(MOBLEUINT8* pLcsElementIndex,
             }
           }
           
-          /* Generic Power OnOff Server should be supported on same element as of LC Server */
-          if(result == MOBLE_RESULT_SUCCESS)
-          {
-            if((genericPowerOnOffServer & (1 << count)) == (1 << count))
-            {
-              result = MOBLE_RESULT_SUCCESS;
-            }
-            else
-            {
-              TRACE_M(TF_LIGHT_LC_M, "Generic Power OnOff Server not found, element index %d\r\n", count);
-              result = MOBLE_RESULT_FAIL;
-            }
-          }
-          
-          /* Light Lightness should be supported on different element as of LC Server  */
+          /* Light Lightness should be supported on main element (different from Light LC Server element) */
           if(result == MOBLE_RESULT_SUCCESS)
           {
             if((lightLightnessServer & (1 << count)) == (1 << count))
             {
-              TRACE_M(TF_LIGHT_LC_M, "Light Lightness Server found on same element, element index %d\r\n", count);
+              TRACE_M(TF_LIGHT_LC_M, "Light Lightness Server found on Light LC Server element, element index %d\r\n", count);
+              result = MOBLE_RESULT_FAIL;
+            }
+          }
+          
+          /* Light Lightness Server is expected on main element and not on Light LC element */
+          if(result == MOBLE_RESULT_SUCCESS)
+          {
+            if((lightLightnessServer & 1) != (LIGHT_LIGHTNESS_SERVER_MAIN_ELEMENT_INDEX+1))
+            {
+              TRACE_M(TF_LIGHT_LC_M, "Light Lightness Server not found on main element\r\n");
               result = MOBLE_RESULT_FAIL;
             }
           }
@@ -4084,7 +4164,7 @@ MOBLE_RESULT ExtractLcServerElementIndex(MOBLEUINT8* pLcsElementIndex,
       }
       else
       {
-        /* check for Light Lightness Server on different element */
+        /* Light LC Server not found on this element */
       }
     }
   }
@@ -4109,120 +4189,6 @@ MOBLE_RESULT ExtractLcServerElementIndex(MOBLEUINT8* pLcsElementIndex,
   
   return result;
 }
-
-/******************************************************************************/
-#ifdef ENABLE_LIGHT_MODEL_CLIENT_LC  
-/******************************************************************************/   
-/**
-* @brief LightLC_Client_Mode_Status: Function called when status of the model 
-*        received on the client.
-* @param pLCMode_status: pointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT LightLC_Client_Mode_Status(MOBLEUINT8 const *pLCMode_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
-{
-  MOBLEUINT32 i;
-  
-  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Mode_Status received \r\n");
-  AppliLightLc_cb.LightLCs_ModeStatus_cb(pLCMode_status, plength, dstPeer, elementIndex);
-  
-  for(i = 0; i < plength; i++)
-  {
-    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Mode_Status: 0x%x\r\n",
-            pLCMode_status[i]);
-  }
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
-/**
-* @brief LightLC_Client_OM_Status: Function called when status of the model 
-*        received on the client.
-* @param pLCOccupancyMode_status: pointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT LightLC_Client_OM_Status(MOBLEUINT8 const *pLCOccupancyMode_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
-{
-  MOBLEUINT32 i;
-  
-  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OM_Status received \r\n");
-  AppliLightLc_cb.LightLCs_OmStatus_cb(pLCOccupancyMode_status, plength, dstPeer, elementIndex);
-  
-  for(i = 0; i < plength; i++)
-  {
-    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OM_Status: 0x%x\r\n",
-            pLCOccupancyMode_status[i]);
-  }
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
-/**
-* @brief LightLC_Client_OnOff_Status: Function called when status of the model 
-*        received on the client.
-* @param pLCOnOff_status: pointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT LightLC_Client_OnOff_Status(MOBLEUINT8 const *pLCOnOff_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
-{
-  MOBLEUINT32 i;
-  
-  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OnOff_Status received \r\n");
-  AppliLightLc_cb.LightLCs_OnOffStatus_cb(pLCOnOff_status, plength, dstPeer, elementIndex);
-  
-  for(i = 0; i < plength; i++)
-  {
-    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_OnOff_Status: 0x%x\r\n",
-            pLCOnOff_status[i]);
-  }
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
-/**
-* @brief LightLC_Client_Property_Status: Function called when status of the model 
-*        received on the client.
-* @param pLCOnOff_status: pointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT LightLC_Client_Property_Status(MOBLEUINT8 const *pLCProperty_status, MOBLEUINT32 plength, MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex)
-{
-  MOBLEUINT32 i;
-  
-  TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Property_Status received \r\n");
-  AppliLightLc_cb.LightLCs_PropertyStatus_cb(pLCProperty_status, plength, dstPeer, elementIndex);
-  
-  for(i = 0; i < plength; i++)
-  {
-    TRACE_M(TF_LIGHT_CLIENT_M,"LightLC_Client_Property_Status: 0x%x\r\n",
-            pLCProperty_status[i]);
-  }
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-/******************************************************************************/
-#endif /* #ifdef ENABLE_LIGHT_MODEL_CLIENT_LC */
-/******************************************************************************/
 
 /**
 * @}

@@ -46,31 +46,17 @@
 
 static Generic_TemporaryStatus_t Generic_TemporaryStatus[APPLICATION_NUMBER_OF_ELEMENTS];
 static Generic_TimeParam_t Generic_TimeParam[APPLICATION_NUMBER_OF_ELEMENTS];
-
+extern Publication1SecFlag_t Publication1SecFlag;
 /* initialize the array with minimum level value and other parameter as zero */
-static Generic_LevelStatus_t Generic_LevelStatus[APPLICATION_NUMBER_OF_ELEMENTS] = 
-{
-  {
-    LEVEL_MIN_VALID_RANGE,
-    0x00,
-    0x00,
-    0x00,
-    0x00,
-    0x00
-  }
-};
-
+static Generic_LevelStatus_t Generic_LevelStatus[APPLICATION_NUMBER_OF_ELEMENTS];
 static Generic_OnOffStatus_t Generic_OnOffStatus[APPLICATION_NUMBER_OF_ELEMENTS];
  
-
-#ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME
 /* Initialize the default transition value 0x00 
    Default Transition Step Resolution is 100 milliseconds
    Generic Default Transition Time is immediate.
 */
 Generic_DefaultTransitionParam_t Generic_DefaultTransitionParam = {0x00};
-#endif
-static Generic_ModelFlag_t Generic_ModelFlag[APPLICATION_NUMBER_OF_ELEMENTS];
+Generic_ModelFlag_t Generic_ModelFlag[APPLICATION_NUMBER_OF_ELEMENTS];
 
 extern MOBLEUINT16 CommandStatus; /* Current on/off status, shared with Vendor model, used to publish status  */
 MOBLEUINT8 GenericUpdateFlag = 0;
@@ -89,7 +75,6 @@ const MODEL_OpcodeTableParam_t Generic_Opcodes_Table[] =
   {GENERIC_ONOFF_SERVER_MODEL_ID,                   GENERIC_ON_OFF_GET,                        MOBLE_TRUE,  0,                0,                GENERIC_ON_OFF_STATUS,                  1,                 3},
   {GENERIC_ONOFF_SERVER_MODEL_ID,                   GENERIC_ON_OFF_SET_ACK,                    MOBLE_TRUE,  2,                4,                GENERIC_ON_OFF_STATUS,                  1,                 3},  
   {GENERIC_ONOFF_SERVER_MODEL_ID,                   GENERIC_ON_OFF_SET_UNACK,                  MOBLE_FALSE, 2,                4,                GENERIC_ON_OFF_STATUS,                  1,                 3}, 
-  {GENERIC_ONOFF_SERVER_MODEL_ID,                   GENERIC_ON_OFF_STATUS,                     MOBLE_FALSE, 1,                3,                0,                                      1,                 3},
 #endif                                                                                                                                                                                                           
 #ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL                                                                                                                                                                         
   /* Generic Level Server */                                                                                                                                                                                     
@@ -100,20 +85,17 @@ const MODEL_OpcodeTableParam_t Generic_Opcodes_Table[] =
   {GENERIC_LEVEL_SERVER_MODEL_ID,                   GENERIC_DELTA_SET_UNACK,                   MOBLE_FALSE,  5,                7,               GENERIC_LEVEL_STATUS,                   2,                 5},
   {GENERIC_LEVEL_SERVER_MODEL_ID,                   GENERIC_MOVE_SET,                          MOBLE_TRUE,   3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
   {GENERIC_LEVEL_SERVER_MODEL_ID,                   GENERIC_MOVE_SET_UNACK,                    MOBLE_FALSE,  3,                5,               GENERIC_LEVEL_STATUS,                   2,                 5},
-  {GENERIC_LEVEL_SERVER_MODEL_ID,                   GENERIC_LEVEL_STATUS,                      MOBLE_FALSE,  2,                5,               0,                                      2,                 5},
 #endif                                                                                                                                                                                                           
 #ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF                                                                                                                                                                   
   {GENERIC_POWER_ONOFF_SETUP_SERVER_MODEL_ID,       GENERIC_POWER_ON_OFF_SET,                  MOBLE_TRUE,   1,                1,               GENERIC_POWER_ON_OFF_STATUS,            1,                 1},
   {GENERIC_POWER_ONOFF_SETUP_SERVER_MODEL_ID,       GENERIC_POWER_ON_OFF_SET_UNACK,            MOBLE_FALSE,  1,                1,               0,                                      1,                 1},
-  {GENERIC_SERVER_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_GET ,                 MOBLE_TRUE,   0,                0,               GENERIC_POWER_ON_OFF_STATUS,            1,                 1},
-  {GENERIC_SERVER_POWER_ONOFF_MODEL_ID,             GENERIC_POWER_ON_OFF_STATUS ,              MOBLE_FALSE,  1,                1,               0,                                      1,                 1},
+  {GENERIC_POWER_ONOFF_SERVER_MODEL_ID,             GENERIC_POWER_ON_OFF_GET ,                 MOBLE_TRUE,   0,                0,               GENERIC_POWER_ON_OFF_STATUS,            1,                 1},
 #endif                                                                                                                                                                                                           
 #ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME                                                                                                                                                       
   /* Generic Default Transition Time Server Model  */                                                                                                                                                            
   {GENERIC_DEFAULT_TRANSITION_TIME_SERVER_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_GET,       MOBLE_TRUE,  0,                0,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1,                 1}, 
   {GENERIC_DEFAULT_TRANSITION_TIME_SERVER_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_SET,       MOBLE_TRUE,  1,                1,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1,                 1},
   {GENERIC_DEFAULT_TRANSITION_TIME_SERVER_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_SET_UNACK, MOBLE_FALSE, 1,                1,                GENERIC_DEFAULT_TRANSITION_TIME_STATUS, 1 ,                1}, 
-  {GENERIC_DEFAULT_TRANSITION_TIME_SERVER_MODEL_ID, GENERIC_DEFAULT_TRANSITION_TIME_STATUS,    MOBLE_FALSE, 1,                1,                0,                                      1,                 1},
 #endif                                                                                                                                                                                                           
   
   {0}
@@ -208,10 +190,6 @@ MOBLE_RESULT Generic_OnOff_Set(MOBLEUINT8 const *pOnOff_param,
   Generic_OnOffParam_t Generic_OnOffParam; 
   Generic_OnOffParam.TargetOnOffState = pOnOff_param[0];
   Generic_OnOffParam.Generic_TID = pOnOff_param[1];
-  CommandStatus = pOnOff_param[0];
-
-  Generic_OnOffParam.Transition_Time = 0;
-
   /*  
   Checking for optional parameters
   length > 2 , 4 values  received(OnOff status, TID, Trasmisition time(optional),
@@ -251,8 +229,6 @@ MOBLE_RESULT Generic_OnOff_Set(MOBLEUINT8 const *pOnOff_param,
   } 
   else
   {
-   Generic_OnOffStatus[pmsgParam->elementIndex].Present_OnOff_State = Generic_OnOffParam.TargetOnOffState;
-   
     /* when default transition time enabled,and the target time is not given by client
        the transition time will be used from default value
       */
@@ -280,7 +256,7 @@ MOBLE_RESULT Generic_OnOff_Set(MOBLEUINT8 const *pOnOff_param,
        value in application.
     */  
     OptionalParam = NO_TRANSITION;
-    Generic_ModelFlag[pmsgParam->elementIndex].GenericTransitionFlag = GENERIC_TRANSITION_STOP;
+    Generic_TransitionParameterReset(pmsgParam->elementIndex);
 #endif       
     
     Generic_OnOffStatus[pmsgParam->elementIndex].Present_OnOff_State = Generic_OnOffParam.TargetOnOffState;
@@ -292,15 +268,14 @@ MOBLE_RESULT Generic_OnOff_Set(MOBLEUINT8 const *pOnOff_param,
 
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS  
   /* Binding of data b/w Generic on off and Light lightness Actual model */
-  GenericOnOff_LightActualBinding(&Generic_OnOffStatus[pmsgParam->elementIndex],pmsgParam->elementIndex);
+  GenericOnOff_LightActualBinding(&Generic_OnOffStatus[pmsgParam->elementIndex],pmsgParam->elementIndex,
+           Generic_ModelFlag[pmsgParam->elementIndex].GenericTransitionFlag,Generic_ModelFlag[pmsgParam->elementIndex].Generic_Trnsn_Cmplt);
 #endif
 
-#ifdef ENABLE_LIGHT_MODEL_SERVER_LC 
-  //todo
+  /* For corresponding element which supports Light LC Server */
   Binding_GenericOnOff_LightLcLightOnOff(pmsgParam->elementIndex,
                                          Generic_OnOffParam.TargetOnOffState,
-                                          0, 0, 0);//todo transition parameters
-#endif
+                                          0, 0, 0);
   
 #endif
   
@@ -356,7 +331,6 @@ MOBLE_RESULT Generic_OnOff_Status(MOBLEUINT8* pOnOff_status,
     TRACE_M(TF_GENERIC_M, "%d \r\n",*pOnOff_status);
     *plength = 1;
   }
-
   *pOnOff_status = Generic_OnOffStatus[pmsgParam->elementIndex].Present_OnOff_State; 
   return MOBLE_RESULT_SUCCESS;
 }
@@ -429,8 +403,9 @@ MOBLE_RESULT Generic_Level_Set(const MOBLEUINT8* plevel_param,
      /* When no optional parameter received, target value will
          be set as present value in application.
      */
-    Generic_ModelFlag[pmsgParam->elementIndex].GenericTransitionFlag = GENERIC_TRANSITION_STOP;
+    Generic_TransitionParameterReset(pmsgParam->elementIndex);
     Generic_LevelStatus[pmsgParam->elementIndex].Present_Level16= setValue;
+    Generic_TimeParam[pmsgParam->elementIndex].StepValue = 0;
 #endif    
   }  
   Generic_LevelStatus[pmsgParam->elementIndex].Last_Present_Level16 = Generic_LevelStatus[pmsgParam->elementIndex].Present_Level16;
@@ -438,14 +413,11 @@ MOBLE_RESULT Generic_Level_Set(const MOBLEUINT8* plevel_param,
   /* Application Callback */
   (GenericAppli_cb.Level_Set_cb)(&Generic_LevelStatus[pmsgParam->elementIndex], 0, pmsgParam->dst_peer, pmsgParam->elementIndex);
 #ifdef ENABLE_MODEL_BINDING       
-
-#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS  
   /* Binding of Generic level with light lightnes actual */
-  GenericLevel_LightBinding(&Generic_LevelStatus[pmsgParam->elementIndex],BINDING_GENERIC_LEVEL_SET, pmsgParam->elementIndex);
+  GenericLevel_LightBinding(&Generic_LevelStatus[pmsgParam->elementIndex],BINDING_GENERIC_LEVEL_SET, pmsgParam->elementIndex,
+        Generic_ModelFlag[pmsgParam->elementIndex].GenericTransitionFlag,Generic_ModelFlag[pmsgParam->elementIndex].Generic_Trnsn_Cmplt);
 #endif 
         
-#endif   /* ENABLE_MODEL_BINDING */
-  
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -482,7 +454,7 @@ MOBLE_RESULT Generic_Delta_Set(const MOBLEUINT8* plevel_param, MOBLEUINT32 lengt
   delta |= (plevel_param[0]);
   Generic_DeltaLevelParam.TargetDeltaLevel32 = delta;
   
-  TRACE_M(TF_GENERIC_M,"Generic Delta value %.2lx \r\n",
+  TRACE_M(TF_GENERIC_M,"Generic delta value %.2lx \r\n",
           Generic_DeltaLevelParam.TargetDeltaLevel32);
   
   Generic_DeltaLevelParam.Generic_TID = plevel_param[4];
@@ -521,6 +493,8 @@ MOBLE_RESULT Generic_Delta_Set(const MOBLEUINT8* plevel_param, MOBLEUINT32 lengt
   else
   {   
 		
+    Generic_TransitionParameterReset(pmsgParam->elementIndex);
+    
     if(Generic_LevelStatus[pmsgParam->elementIndex].Last_Level_TID == Generic_DeltaLevelParam.Generic_TID)
     {
         if(Generic_DeltaLevelParam.TargetDeltaLevel32 > Generic_LevelStatus[pmsgParam->elementIndex].Last_delta_level)
@@ -547,12 +521,11 @@ MOBLE_RESULT Generic_Delta_Set(const MOBLEUINT8* plevel_param, MOBLEUINT32 lengt
     /* When no optional parameter received, target value will
     be set as present value in application.
     */
-    Generic_ModelFlag[pmsgParam->elementIndex].GenericTransitionFlag = GENERIC_TRANSITION_STOP;
+	Generic_TransitionParameterReset(pmsgParam->elementIndex);
 #endif   
   }
   
-  TRACE_M(TF_GENERIC_M, "Generic Level value %.2x \r\n",
-          Generic_LevelStatus[pmsgParam->elementIndex].Present_Level16);
+  TRACE_M(TF_GENERIC_M, "Generic Level value %.2x \r\n" ,Generic_LevelStatus[pmsgParam->elementIndex].Present_Level16);
   
   Generic_LevelStatus[pmsgParam->elementIndex].Last_delta_level = Generic_DeltaLevelParam.TargetDeltaLevel32;
   Generic_LevelStatus[pmsgParam->elementIndex].Last_Level_TID = Generic_DeltaLevelParam.Generic_TID; 
@@ -562,7 +535,8 @@ MOBLE_RESULT Generic_Delta_Set(const MOBLEUINT8* plevel_param, MOBLEUINT32 lengt
 #ifdef ENABLE_MODEL_BINDING    
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS  
   /* Binding of Generic level with light lightnes actual */
-  GenericLevel_LightBinding(&Generic_LevelStatus[pmsgParam->elementIndex],BINDING_GENERIC_LEVEL_SET,pmsgParam->elementIndex);
+  GenericLevel_LightBinding(&Generic_LevelStatus[pmsgParam->elementIndex],BINDING_GENERIC_LEVEL_SET,pmsgParam->elementIndex,
+         Generic_ModelFlag[pmsgParam->elementIndex].GenericTransitionFlag,Generic_ModelFlag[pmsgParam->elementIndex].Generic_Trnsn_Cmplt);
 #endif  
 #endif  
   return MOBLE_RESULT_SUCCESS;
@@ -620,7 +594,8 @@ MOBLE_RESULT Generic_Move_Set(const MOBLEUINT8* plevel_param,
     {
         Generic_LevelStatus[pmsgParam->elementIndex].Target_Level16 = 0x8000;
     }
-
+    Generic_TemporaryStatus[pmsgParam->elementIndex].TargetValue16 = Generic_LevelStatus[pmsgParam->elementIndex].Target_Level16;
+    Generic_TemporaryStatus[pmsgParam->elementIndex].RemainingTime = UNDEFSTEPVAL;
     Generic_LevelStatus[pmsgParam->elementIndex].RemainingTime = UNDEFSTEPVAL;
     
     /* Function to calculate time parameters, step resolution
@@ -634,8 +609,8 @@ MOBLE_RESULT Generic_Move_Set(const MOBLEUINT8* plevel_param,
   }
   else
   {   
-    Generic_ModelFlag[pmsgParam->elementIndex].GenericTransitionFlag = GENERIC_TRANSITION_STOP;		
-    Generic_TimeParam[pmsgParam->elementIndex].StepValue = 0;
+    Generic_TransitionParameterReset(pmsgParam->elementIndex);
+    
     if(Generic_LevelStatus[pmsgParam->elementIndex].Last_Level_TID == Generic_LevelMoveParam.Generic_TID)
     {
       Generic_LevelStatus[pmsgParam->elementIndex].Present_Level16 =  Generic_LevelStatus[pmsgParam->elementIndex].Last_Present_Level16 
@@ -725,11 +700,13 @@ MOBLE_RESULT Generic_PowerOnOff_Set(const MOBLEUINT8 *powerOnOff_param , MOBLEUI
   */
   TRACE_M(TF_GENERIC_M, "Generic_PowerOnOff_Set callback received \r\n");
   TRACE_M(TF_GENERIC_M,"Generic_PowerOnOff_Set is %d\r\n", powerOnOff_param[0]);
-  Generic_PowerOnOffParam_t Generic_PowerOnOffParam;
-  Generic_PowerOnOffParam.PowerOnOffState = powerOnOff_param[0];
+  
+  Generic_PowerOnOffParam_t Generic_PowerOnOffParam[APPLICATION_NUMBER_OF_ELEMENTS];
+  
+  Generic_PowerOnOffParam[pmsgParam->elementIndex].PowerOnOffState = powerOnOff_param[0];
   
   /* Application Callback */
-  (GenericAppli_cb.GenericPowerOnOff_cb)(&Generic_PowerOnOffParam, length, pmsgParam->dst_peer,\
+  (GenericAppli_cb.GenericPowerOnOff_cb)(&Generic_PowerOnOffParam[pmsgParam->elementIndex], length, pmsgParam->dst_peer,\
                                                      pmsgParam->elementIndex);
   return MOBLE_RESULT_SUCCESS;
 }
@@ -766,7 +743,6 @@ MOBLE_RESULT Generic_PowerOnOff_Status(MOBLEUINT8 *powerOnOff_status ,
 }
 
 
-#ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME
 /**
 * @brief  Generic_DefaultTransitionTime_Set: This function is called for both 
 *         Acknowledged and unacknowledged message
@@ -828,7 +804,6 @@ MOBLE_RESULT Generic_DefaultTransitionTime_Status(MOBLEUINT8 *pTransition_status
  
   return MOBLE_RESULT_SUCCESS;
 }
-#endif
 
 
 /**
@@ -929,7 +904,7 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
                                                  MOBLEUINT32 dataLength, 
                                                  MOBLEBOOL response)
 {
-
+  Model_Binding_Var.Dst_Peer = pmsgParam->dst_peer;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   MOBLE_ADDRESS publishAddress;
   MOBLEUINT8 modelStateChangeFlag = MOBLE_FALSE; 
@@ -968,15 +943,10 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
           Model_Binding_Var.Model_ID = (MOBLEUINT16)GENERIC_ONOFF_SERVER_MODEL_ID;
           Model_Binding_Var.Model_Rx_Opcode = opcode;
           modelStateChangeFlag = MOBLE_TRUE;
-          Model_Binding_Var.Dst_Peer = pmsgParam->dst_peer;
+          Publication1SecFlag.count = 0;
         }
       }
         
-      break;
-    }
-    case GENERIC_ON_OFF_STATUS:
-    {
-      Generic_Client_OnOff_Status(pRxData,dataLength, pmsgParam->dst_peer, pmsgParam->elementIndex);  
       break;
     }
 #endif 
@@ -998,7 +968,7 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
           Model_Binding_Var.Model_ID = (MOBLEUINT16)GENERIC_LEVEL_SERVER_MODEL_ID;
           Model_Binding_Var.Model_Rx_Opcode = opcode;
           modelStateChangeFlag = MOBLE_TRUE;
-          Model_Binding_Var.Dst_Peer = pmsgParam->dst_peer;
+          Publication1SecFlag.count = 0;
         }
       }
        
@@ -1018,7 +988,7 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
       Model_Binding_Var.Model_ID = (MOBLEUINT16)GENERIC_LEVEL_SERVER_MODEL_ID;
       Model_Binding_Var.Model_Rx_Opcode = opcode;
       modelStateChangeFlag = MOBLE_TRUE;
-      Model_Binding_Var.Dst_Peer = pmsgParam->dst_peer;
+      Publication1SecFlag.count = 0;
       break;
     }
       
@@ -1034,14 +1004,8 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
                                                   pRxData[2])))
         {
           Generic_Move_Set(pRxData, dataLength, pmsgParam);  
-          Model_Binding_Var.Dst_Peer = pmsgParam->dst_peer;
         }
       }
-      break;
-    }
-    case GENERIC_LEVEL_STATUS:
-    {       
-      Generic_Client_Level_Status(pRxData,dataLength, pmsgParam->dst_peer, pmsgParam->elementIndex);  
       break;
     }
 #endif        
@@ -1055,15 +1019,11 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
       if(result == MOBLE_RESULT_SUCCESS)
       {
         Generic_PowerOnOff_Set(pRxData, dataLength, pmsgParam); 
-        Model_Binding_Var.Model_ID = (MOBLEUINT16)GENERIC_SERVER_POWER_ONOFF_MODEL_ID;
+        Model_Binding_Var.Model_ID = (MOBLEUINT16)GENERIC_POWER_ONOFF_SERVER_MODEL_ID;
         Model_Binding_Var.Model_Rx_Opcode = opcode;
         modelStateChangeFlag = MOBLE_TRUE;
+        Publication1SecFlag.count = 0;
       }
-      break;
-    }
-    case GENERIC_POWER_ON_OFF_STATUS:
-    {
-      Generic_Client_PowerOnOff_Status(pRxData, dataLength, pmsgParam->dst_peer, pmsgParam->elementIndex);  
       break;
     }
 #endif 
@@ -1082,11 +1042,7 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
       }
       break;
     }
-    case GENERIC_DEFAULT_TRANSITION_TIME_STATUS:
-    {
-      Generic_Client_DefaultTransitionTime_Status(pRxData, dataLength, pmsgParam->dst_peer, pmsgParam->elementIndex);  
-      break;
-    }
+  
 #endif    
     
     default:
@@ -1148,6 +1104,12 @@ MOBLE_RESULT Generic_TransitionBehaviour(MOBLEUINT8 *GetValue,
     Check_time = Clock_Time();
     Clockflag = 1;
   }
+  
+  /* Publication after 1 second if total transition time is greater than 2 sec.*/
+  if(Generic_TimeParam[elementIndex].TotalTime >2000)
+  {
+    Punblication_OneSecTimer();
+  }
   /* Values from application are copied into Temporary vaiables for processing */
   
   Generic_TemporaryStatus[elementIndex].PresentValue16  = GetValue[1] << 8;
@@ -1203,8 +1165,9 @@ MOBLE_RESULT Generic_TransitionBehaviour(MOBLEUINT8 *GetValue,
       {
         Generic_OnOffStatus[elementIndex].Present_OnOff_State=0;
       }
-      Generic_ModelFlag[elementIndex].GenericTransitionFlag = GENERIC_TRANSITION_STOP; 
+      Generic_ModelFlag[elementIndex].GenericTransitionFlag = MODEL_TRANSITION_STOP; 
       Generic_ModelFlag[elementIndex].Generic_Trnsn_Cmplt = MOBLE_TRUE;
+      Publication1SecFlag.TimeStampFlag = MOBLE_FALSE;  
     }
     TRACE_M(TF_GENERIC_M, "Inside virtual application at %d, Current state 0x%.2x, Target state 0x%.2x, Remaining Time 0x%.2x \n\r", 
             Clock_Time(), Generic_TemporaryStatus[elementIndex].PresentValue16,Generic_TemporaryStatus[elementIndex].TargetValue16,Generic_TemporaryStatus[elementIndex].RemainingTime);                     
@@ -1236,6 +1199,7 @@ void Generic_GetStepValue(MOBLEUINT8 stepParam,
   Generic_TimeParam[elementIndex].ResBitValue = stepParam >> 6 ;
   Generic_TimeParam[elementIndex].Res_Value = Get_StepResolutionValue(Generic_TimeParam[elementIndex].ResBitValue);
   Generic_TimeParam[elementIndex].StepValue = stepParam & 0x3F ;
+  Generic_TimeParam[elementIndex].TotalTime = (Generic_TimeParam[elementIndex].StepValue * Generic_TimeParam[elementIndex].Res_Value);
   
   if(Generic_TimeParam[elementIndex].Res_Value >= 100)
   {
@@ -1287,7 +1251,10 @@ void Generic_Process(void)
         /* Application callback */
         (GenericAppli_cb.OnOff_Set_cb)(&Generic_OnOffStatus[elementIndex], OptionalParam, my_Address, elementIndex);  
         /*binding of the generic on off with light model */
-        GenericOnOff_LightActualBinding(&Generic_OnOffStatus[elementIndex],elementIndex);
+        GenericOnOff_LightActualBinding(&Generic_OnOffStatus[elementIndex],
+                                        elementIndex,
+                                        Generic_ModelFlag[elementIndex].GenericTransitionFlag,
+                                        Generic_ModelFlag[elementIndex].Generic_Trnsn_Cmplt);
         GenericUpdateFlag = VALUE_UPDATE_RESET;     
       }
     }    
@@ -1307,7 +1274,10 @@ void Generic_Process(void)
         /* Application callback */
         (GenericAppli_cb.Level_Set_cb)(&Generic_LevelStatus[elementIndex], 0, my_Address, elementIndex);  
         /*binding of the generic Level with light model */
-        GenericLevel_LightBinding(&Generic_LevelStatus[elementIndex],BINDING_GENERIC_LEVEL_SET,elementIndex);
+        GenericLevel_LightBinding(&Generic_LevelStatus[elementIndex],BINDING_GENERIC_LEVEL_SET,
+                                  elementIndex,
+                                  Generic_ModelFlag[elementIndex].GenericTransitionFlag,
+                                  Generic_ModelFlag[elementIndex].Generic_Trnsn_Cmplt);
         GenericUpdateFlag = VALUE_UPDATE_RESET;
       }
       
@@ -1331,6 +1301,31 @@ void Generic_Process(void)
       Generic_ModelFlag[elementIndex].Generic_Trnsn_Cmplt = MOBLE_FALSE;
     }
   }
+}
+
+/**
+* @brief Generic_OnOffStateUpdate_Process:Function to update the parametes of 
+*        Generic On Off model in application file from Temporary parameter in model file.
+* @param void
+* return MOBLE_RESULT.
+*/
+MOBLE_RESULT Generic_OnOffStateUpdate_Process(MOBLEUINT8 elementIndex)
+{
+  Generic_OnOffStatus[elementIndex].Present_OnOff_Value = Generic_TemporaryStatus[elementIndex].PresentValue16;
+  if(Generic_TemporaryStatus[elementIndex].TargetValue16 == 0x01)
+  {
+    Generic_OnOffStatus[elementIndex].Present_OnOff_State = 0x01;
+  }
+  else
+  {
+    if(Generic_OnOffStatus[elementIndex].Present_OnOff_Value == 0x00)
+    {
+      Generic_OnOffStatus[elementIndex].Present_OnOff_State = 0x00;
+    }
+  }
+  Generic_OnOffStatus[elementIndex].RemainingTime = Generic_TemporaryStatus[elementIndex].RemainingTime;
+  
+  return MOBLE_RESULT_SUCCESS;
 }
 
 
@@ -1372,21 +1367,6 @@ void Generic_Publish(MOBLE_ADDRESS srcAddress)
   }
   
   CommandStatus = generic_Buff[0];
-}
-
-
-/**
-* @brief Generic_OnOffStateUpdate_Process:Function to update the parametes of 
-*        Generic On Off model in application file from Temporary parameter in model file.
-* @param void
-* return MOBLE_RESULT.
-*/
-MOBLE_RESULT Generic_OnOffStateUpdate_Process(MOBLEUINT8 elementIndex)
-{
-  Generic_OnOffStatus[elementIndex].Present_OnOff_Value = Generic_TemporaryStatus[elementIndex].PresentValue16;
-  Generic_OnOffStatus[elementIndex].RemainingTime = Generic_TemporaryStatus[elementIndex].RemainingTime;
-   
-  return MOBLE_RESULT_SUCCESS;
 }
 
 
@@ -1470,8 +1450,7 @@ void LightActual_GenericLevelBinding(Light_LightnessStatus_t* lightActual,
 * @param bCtlTempParam: Pointer to the data which needs to be checked.
 * return void.
 */
-void Light_CtlTemp_GenericLevelBinding(Light_CtlStatus_t* bCtlTempParam, 
-                                       MOBLEUINT8 elementIndex)
+void Light_CtlTemp_GenericLevelBinding(Light_CtlStatus_t* bCtlTempParam, MOBLEUINT8 elementIndex,MOBLEUINT8 trnsnFlag,MOBLEUINT8 trnsnCmplt)
 { 
   /* 6.1.3.1.1 Binding with the Generic Level state.
   Generic Level = (Light CTL Temperature - T _MIN) * 65535 / (T_MAX - T_MIN) - 32768
@@ -1485,7 +1464,8 @@ void Light_CtlTemp_GenericLevelBinding(Light_CtlStatus_t* bCtlTempParam,
  
   Generic_LevelStatus[elementIndex].Present_Level16 = (MOBLEINT16)(round((productValue / (float)(MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE))) - 32768);
   TRACE_M(TF_GENERIC_M, "\r\n ********, Present Level value %d ********\r\n\r\n" ,Generic_LevelStatus[elementIndex].Present_Level16); 
-  GenericLevel_LightBinding(&Generic_LevelStatus[elementIndex] , BINDING_LIGHT_CTL_TEMP_SET,elementIndex);
+  GenericLevel_LightBinding(&Generic_LevelStatus[elementIndex] , BINDING_LIGHT_CTL_TEMP_SET,elementIndex,
+                                                          trnsnFlag,trnsnCmplt);
 }
 
 /**
@@ -1503,7 +1483,8 @@ void Light_HslHue_GenericLevelBinding(Light_HslStatus_t* bHslHueParam,
   */
   Generic_LevelStatus[elementIndex].Present_Level16 = (MOBLEINT16)(bHslHueParam->PresentHslHueLightness16 - 32768);
  
-  GenericLevel_LightBinding(&Generic_LevelStatus[elementIndex], BINDING_LIGHT_HSL_HUE_SET, elementIndex);
+  GenericLevel_LightBinding(&Generic_LevelStatus[elementIndex], BINDING_LIGHT_HSL_HUE_SET, elementIndex,
+                            Generic_ModelFlag[elementIndex].GenericTransitionFlag,Generic_ModelFlag[elementIndex].Generic_Trnsn_Cmplt);
 }
 
 
@@ -1523,12 +1504,12 @@ void Light_HslSaturation_GenericLevelBinding(Light_HslStatus_t* bHslSatParam,
  
   Generic_LevelStatus[elementIndex].Present_Level16 = (MOBLEINT16)(bHslSatParam->PresentHslSaturation16 - 32768);
   
-  GenericLevel_LightBinding(&Generic_LevelStatus[elementIndex], BINDING_LIGHT_HSL_SATURATION_SET, elementIndex);
+  GenericLevel_LightBinding(&Generic_LevelStatus[elementIndex], BINDING_LIGHT_HSL_SATURATION_SET, elementIndex,
+                            Generic_ModelFlag[elementIndex].GenericTransitionFlag,Generic_ModelFlag[elementIndex].Generic_Trnsn_Cmplt);
  
 }
 
 
-#ifdef ENABLE_GENERIC_MODEL_SERVER_DEFAULT_TRANSITION_TIME
 /**
 * @brief function to assign the Pwm value to the target value of the generic on off 
 *        saved states.
@@ -1554,7 +1535,7 @@ void Generic_OnOffDefaultTransitionValue(MOBLEUINT8 elementIndex)
     Generic_TimeParam[elementIndex].StepValue = 0;
     Generic_ModelFlag[elementIndex].GenericOptionalParam = 0;
     OptionalParam = NO_TRANSITION;
-    Generic_ModelFlag[elementIndex].GenericTransitionFlag = GENERIC_TRANSITION_STOP;
+    Generic_ModelFlag[elementIndex].GenericTransitionFlag = MODEL_TRANSITION_STOP;
   }
 
 }
@@ -1582,7 +1563,7 @@ void Generic_LevelDefaultTransitionValue(MOBLEUINT8 elementIndex, MOBLEUINT16 le
     Generic_TimeParam[elementIndex].StepValue = 0;
     Generic_ModelFlag[elementIndex].GenericOptionalParam = 0;
     Generic_LevelStatus[elementIndex].Present_Level16= levelValue;
-    Generic_ModelFlag[elementIndex].GenericTransitionFlag = GENERIC_TRANSITION_STOP;
+    Generic_ModelFlag[elementIndex].GenericTransitionFlag = MODEL_TRANSITION_STOP;
   }
 }
 
@@ -1610,23 +1591,34 @@ void Generic_DeltaDefaultTransitionValue(MOBLEUINT8 elementIndex, MOBLEUINT32 de
   else{
     Generic_TimeParam[elementIndex].StepValue = 0;
     Generic_ModelFlag[elementIndex].GenericOptionalParam = 0;
-    Generic_ModelFlag[elementIndex].GenericTransitionFlag = GENERIC_TRANSITION_STOP;
+    Generic_ModelFlag[elementIndex].GenericTransitionFlag = MODEL_TRANSITION_STOP;
   }
 }
-#endif
-
 
 /**
-  * @brief  
-  * @param  
-  * @retval 
+* @brief Function called when message received without optonal parameter, stop the running transition.
+* @param void
+* @param void
+*/
+void Generic_TransitionParameterReset(MOBLEUINT8 elementIndex)
+{
+   Generic_ModelFlag[elementIndex].GenericTransitionFlag = MODEL_TRANSITION_STOP;
+   Generic_TimeParam[elementIndex].Res_Value = 0x00;
+   Generic_TimeParam[elementIndex].StepValue = 0X00;
+}
+
+/**
+  * @brief  Update Generic OnOff state of given element index
+  * @param  Element index
+  * @param  OnOff state
+  * @retval None
   */
 void Generic_OnOffUpdate(MOBLEUINT8 elementIndex, MOBLEUINT8 onOff)
 {
+  TRACE_M(TF_GENERIC_M, "Element index %d onOff %d", elementIndex, onOff);
+  
   Generic_OnOffStatus[elementIndex].Present_OnOff_State = onOff;
   
-  //status publish
-  //to review implementation
   BLEMesh_SetRemotePublication(GENERIC_ONOFF_SERVER_MODEL_ID,
                                    BLEMesh_GetAddress() + elementIndex,
                                    (MOBLEUINT16)GENERIC_ON_OFF_STATUS,
@@ -1636,105 +1628,62 @@ void Generic_OnOffUpdate(MOBLEUINT8 elementIndex, MOBLEUINT8 onOff)
                                    MOBLE_FALSE);
 }
 
-
-
-
 /**
-* @brief Generic_Client_OnOff_Status: Function called when status of the model 
-*        received on the client.
-* @param pOnOff_status: Pointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* return MOBLE_RESULT_SUCCESS.
+* @brief function used to restore the states of the generic model.
+* @param pointer to the array
+* return void.
 */
-MOBLE_RESULT Generic_Client_OnOff_Status(MOBLEUINT8 const *pOnOff_status,
-                                         MOBLEUINT32 plength, 
-                                         MOBLEUINT16 dstPeer,
-                                         MOBLEUINT8 elementIndex)
-{
-  TRACE_M(TF_GENERIC_CLIENT_M, ">>>\r\n");
-  GenericAppli_cb.OnOff_Status_cb(pOnOff_status , plength, dstPeer, elementIndex);
-  return MOBLE_RESULT_SUCCESS;
-}
-
-
-/**
-* @brief Generic_Client_Level_Status: Function called when status of the model 
-*        received on the client.
-* @param plevel_status: ointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT Generic_Client_Level_Status(MOBLEUINT8 const *plevel_status,
-                                         MOBLEUINT32 plength, 
-                                         MOBLEUINT16 dstPeer,
-                                         MOBLEUINT8 elementIndex)
+void Generic_RestoreModelStates(void *model_State , MOBLEUINT8 elementIndex)
 {
   
-  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_Client_Level_Status received \r\n");
-  GenericAppli_cb.Level_Status_cb(plevel_status , plength, dstPeer, elementIndex);
-  return MOBLE_RESULT_SUCCESS;
-}
+#ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF    
+  Generic_OnOffStatus[elementIndex].Present_OnOff_State = ((Models_ParamNvm_t *)model_State)->Generic_OnOff;
+  Generic_OnOffStatus[elementIndex].Target_OnOff = ((Models_ParamNvm_t *)model_State)->GenericTarget;
+#endif
+  
+#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL 
+  if(((Models_ParamNvm_t *)model_State)->Generic_Level == 0x00)
+  {
+    Generic_LevelStatus[elementIndex].Present_Level16 = LEVEL_MIN_VALID_RANGE;
+  }
+  else
+  {
+    Generic_LevelStatus[elementIndex].Present_Level16 = ((Models_ParamNvm_t *)model_State)->Generic_Level;
+  }
+#endif 
 
+#ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF  
+  Generic_PowerOnOffParam_t Generic_PowerOnOffParam[APPLICATION_NUMBER_OF_ELEMENTS];
+  Generic_PowerOnOffParam[elementIndex].PowerOnOffState = ((Models_ParamNvm_t *)model_State)->PowerOnOff;
+  (GenericAppli_cb.GenericPowerOnOff_cb)(&Generic_PowerOnOffParam[elementIndex], 1, 0,elementIndex);
+                                                     
+#endif  
+}
 
 /**
-* @brief Generic_Client_PowerOnOff_Status: Function called when status of the model 
-*        received on the client.
-* @param powerOnOff_status: ointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* return MOBLE_RESULT_SUCCESS.
+* @brief function used to save the states of the generic model.
+* @param pointer to the array
+* return void.
 */
-MOBLE_RESULT Generic_Client_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status,
-                                              MOBLEUINT32 plength, 
-                                              MOBLEUINT16 dstPeer,
-                                              MOBLEUINT8 elementIndex) 
-{  
+void Generic_SaveModelStates(void *model_State,MOBLEUINT8 elementIndex)
+{
+#ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF    
+  ((Models_ParamNvm_t *)model_State)->Generic_OnOff = Generic_OnOffStatus[elementIndex].Present_OnOff_State;
+  ((Models_ParamNvm_t *)model_State)->GenericTarget = Generic_OnOffStatus[elementIndex].Target_OnOff;
+#endif
   
-  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_PowerOnOff_Status received \r\n"); 
-  GenericAppli_cb.GenericPowerOnOff_Status_cb(powerOnOff_status,
-                                              plength, dstPeer,
-                                              elementIndex); 
-  return MOBLE_RESULT_SUCCESS;
-}
-
-
-/**
-* @brief Generic_Client_DefaultTransitionTime_Status: Function called when status of the model 
-*        received on the client.
-* @param pTransition_status: ointer to the parameters received for message
-* @param plength: Length of the parameters received for message
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* return MOBLE_RESULT_SUCCESS.
-*/
-MOBLE_RESULT Generic_Client_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status,
-                                                         MOBLEUINT32 plength, 
-                                                         MOBLEUINT16 dstPeer,
-                                                         MOBLEUINT8 elementIndex) 
-{  
+#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL  
+  ((Models_ParamNvm_t *)model_State)->Generic_Level = Generic_LevelStatus[elementIndex].Present_Level16;
+#endif 
   
-  TRACE_M(TF_GENERIC_CLIENT_M, "Generic_Client_DefaultTransitionTime_Status received \r\n");
-  GenericAppli_cb.GenericDefaultTransition_Status_cb(pTransition_status, 
-                                                     plength, 
-                                                     dstPeer,
-                                                     elementIndex); 
-  return MOBLE_RESULT_SUCCESS;
+#ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF  
+  MOBLEUINT8 powerOnOff_State[APPLICATION_NUMBER_OF_ELEMENTS];
+  (Appli_GenericState_cb.GetPowerOnOffStatus_cb)(&powerOnOff_State[elementIndex],0,elementIndex);
+  ((Models_ParamNvm_t *)model_State)->PowerOnOff = powerOnOff_State[elementIndex];
+#endif  
+  ((Models_ParamNvm_t *)model_State)->GenericTransitionStatus = Generic_ModelFlag[elementIndex].GenericTransitionFlag;
+  
 }
-
-
 /**
 * Weak function are defined to support the original function if they are not
    included in firmware.

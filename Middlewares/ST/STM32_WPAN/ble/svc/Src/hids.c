@@ -329,7 +329,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt *event_pckt;
-  evt_blue_aci *blue_evt;
+  evt_blecore_aci *blecore_evt;
   aci_gatt_attribute_modified_event_rp0    * attribute_modified;
   uint8_t service_instance;
 #if (BLE_CFG_HIDS_REPORT_CHAR != 0)
@@ -341,17 +341,17 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
 
   switch(event_pckt->evt)
   {
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
-      blue_evt = (evt_blue_aci*)event_pckt->data;
-      switch(blue_evt->ecode)
+      blecore_evt = (evt_blecore_aci*)event_pckt->data;
+      switch(blecore_evt->ecode)
       {        
 #if ((BLE_CFG_HIDS_REPORT_CHAR != 0) || (BLE_CFG_HIDS_KEYBOARD_DEVICE != 0) || (BLE_CFG_HIDS_MOUSE_DEVICE != 0))
-        case EVT_BLUE_GATT_WRITE_PERMIT_REQ:
+        case ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE:
         {
           aci_gatt_write_permit_req_event_rp0 * write_perm_req;
           
-          write_perm_req = (aci_gatt_write_permit_req_event_rp0*)blue_evt->data;
+          write_perm_req = (aci_gatt_write_permit_req_event_rp0*)blecore_evt->data;
 
 #if ((BLE_CFG_HIDS_REPORT_CHAR != 0) || (BLE_CFG_HIDS_KEYBOARD_DEVICE != 0) || ((BLE_CFG_HIDS_MOUSE_DEVICE != 0) && (BLE_CFG_HIDS_MOUSE_INPUT_WRITE != 0)))
           for(service_instance = 0; service_instance < BLE_CFG_HIDS_NUMBER ; service_instance++)
@@ -372,7 +372,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                                         0x00, /* err_code */
                                         write_perm_req->Data_Length,
                                         (uint8_t *)&(write_perm_req->Data[0]));
-                BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_WRITE_PERMIT_REQ, HidReportCharHdle[%d]: 0x%02X, Len: 0x%02X !!\n", 
+                BLE_DBG_HIDS_MSG("ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE, HidReportCharHdle[%d]: 0x%02X, Len: 0x%02X !!\n", 
                                     i, write_perm_req->Attribute_Handle, write_perm_req->Data_Length); 
                 HIDS_Handle_Report(service_instance, i, write_perm_req->Data);
               }
@@ -390,7 +390,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                                       (uint8_t)0, /* err_code  */
                                       write_perm_req->Data_Length,
                                       (uint8_t *)&(write_perm_req->Data[0]));
-              BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_WRITE_PERMIT_REQ, HidKeyboardReportInputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
+              BLE_DBG_HIDS_MSG("ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE, HidKeyboardReportInputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
                                   write_perm_req->Attribute_Handle, write_perm_req->Data_Length); 
               HIDS_Handle_Keyboard_Input_Write(service_instance, write_perm_req->Data);
             }
@@ -405,7 +405,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                                       (uint8_t)0, /* err_code  */
                                       write_perm_req->Data_Length,
                                       (uint8_t *)&(write_perm_req->Data[0]));
-              BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_WRITE_PERMIT_REQ, HidKeyboardReportOutputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
+              BLE_DBG_HIDS_MSG("ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE, HidKeyboardReportOutputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
                                   write_perm_req->Attribute_Handle, write_perm_req->Data_Length); 
               HIDS_Handle_Keyboard_Output_Write(service_instance, write_perm_req->Data);
             }
@@ -421,7 +421,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                                       (uint8_t)0, /* err_code */
                                       write_perm_req->Data_Length,
                                       (uint8_t *)&(write_perm_req->Data[0]));
-              BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_WRITE_PERMIT_REQ, HidMouseReportInputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
+              BLE_DBG_HIDS_MSG("ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE, HidMouseReportInputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
                                   write_perm_req->Attribute_Handle, write_perm_req->Data_Length); 
               HIDS_Handle_Mouse_Input_Write(service_instance, write_perm_req->Data);
             }
@@ -431,9 +431,9 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
         }
         break;
 #endif
-        case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+        case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
         {
-          attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blue_evt->data;
+          attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blecore_evt->data;
           for(service_instance = 0; service_instance < BLE_CFG_HIDS_NUMBER ; service_instance++)
           {
 #if (BLE_CFG_HIDS_PROTOCOL_MODE_CHAR != 0)
@@ -441,7 +441,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
             if(attribute_modified->Attr_Handle == (HIDS_Context[service_instance].HidProtocolModeCharHdle) + 1)
             {
               return_value = SVCCTL_EvtAckFlowEnable;
-              BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED, HidProtocolModeCharHdle: 0x%02X, Len: 0x%02X !!\n", 
+              BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE, HidProtocolModeCharHdle: 0x%02X, Len: 0x%02X !!\n", 
                                   attribute_modified->Attr_Handle, attribute_modified->Attr_Data_Length); 
               HIDS_Handle_Protocol_Mode(service_instance, attribute_modified->Attr_Data);
             }
@@ -462,7 +462,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                                           attribute_modified->Attr_Data_Length,
                                           (uint8_t *)&(attribute_modified->Attr_Data[0]));
                 }
-               BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED, HidReportCharHdle[%d]: 0x%02X, Len: 0x%02X !!\n", 
+               BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE, HidReportCharHdle[%d]: 0x%02X, Len: 0x%02X !!\n", 
                                    i, attribute_modified->Attr_Handle, attribute_modified->Attr_Data_Length); 
                HIDS_Handle_Report(service_instance, i, attribute_modified->Attr_Data);
               }
@@ -479,13 +479,13 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                 Notification.Index = i;
                 if(attribute_modified->Attr_Data[0] & COMSVC_Notification)
                 {
-                  BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED HIDS_REPORT_NOTIFICATION_ENABLED\n");
+                  BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE HIDS_REPORT_NOTIFICATION_ENABLED\n");
                   Notification.HIDS_Evt_Opcode = HIDS_REPORT_NOTIFICATION_ENABLED;
                   HIDS_Notification(&Notification);
                 }
                 else
                 {
-                  BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED HIDS_REPORT_NOTIFICATION_DISABLED\n");
+                  BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE HIDS_REPORT_NOTIFICATION_DISABLED\n");
                   Notification.HIDS_Evt_Opcode = HIDS_REPORT_NOTIFICATION_DISABLED;
                   HIDS_Notification(&Notification);
                 }
@@ -504,7 +504,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                                       0x00, /* err_code */
                                       attribute_modified->Attr_Data_Length,
                                       (uint8_t *)&(attribute_modified->Attr_Data[0]));
-              BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED, HidKeyboardReportInputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
+              BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE, HidKeyboardReportInputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
                                   attribute_modified->Attr_Handle, attribute_modified->Attr_Data_Length); 
               HIDS_Handle_Keyboard_Input_Write(service_instance, attribute_modified->Attr_Data);
             }
@@ -522,13 +522,13 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
               Notification.Index = 0;
               if(attribute_modified->Attr_Data[0] & COMSVC_Notification)
               {
-                BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED HIDS_KEYB_INPUT_NOTIFY_ENABLED\n");
+                BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE HIDS_KEYB_INPUT_NOTIFY_ENABLED\n");
                 Notification.HIDS_Evt_Opcode = HIDS_KEYB_INPUT_NOTIFY_ENABLED;
                 HIDS_Notification(&Notification);
               }
               else
               {
-                BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED HIDS_KEYB_INPUT_NOTIFY_DISABLED\n");
+                BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE HIDS_KEYB_INPUT_NOTIFY_DISABLED\n");
                 Notification.HIDS_Evt_Opcode = HIDS_KEYB_INPUT_NOTIFY_DISABLED;
                 HIDS_Notification(&Notification);
               }
@@ -537,7 +537,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
             if(attribute_modified->Attr_Handle == (HIDS_Context[service_instance].HidKeyboardReportOutputCharHdle) + 1)
             {
               return_value = SVCCTL_EvtAckFlowEnable;
-              BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED, HidKeyboardReportOutputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
+              BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE, HidKeyboardReportOutputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
                                   attribute_modified->Attr_Handle, attribute_modified->Attr_Data_Length); 
               HIDS_Handle_Keyboard_Output_Write(service_instance, attribute_modified->Attr_Data);
             }
@@ -554,7 +554,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                                       0x00, /* err_code */
                                       attribute_modified->Attr_Data_Length,
                                       (uint8_t *)&(attribute_modified->Attr_Data[0]));
-              BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED, HidMouseReportInputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
+              BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE, HidMouseReportInputCharHdle: 0x%02X, Len: 0x%02X !!\n", 
                                   attribute_modified->Attr_Handle, attribute_modified->Attr_Data_Length); 
               HIDS_Handle_Mouse_Input_Write(service_instance, attribute_modified->Attr_Data);
             }
@@ -572,13 +572,13 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
               Notification.Index = 0;
               if(attribute_modified->Attr_Data[0] & COMSVC_Notification)
               {
-                BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED HIDS_MOUSE_INPUT_NOTIFY_ENABLED\n");
+                BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE HIDS_MOUSE_INPUT_NOTIFY_ENABLED\n");
                 Notification.HIDS_Evt_Opcode = HIDS_MOUSE_INPUT_NOTIFY_ENABLED;
                 HIDS_Notification(&Notification);
               }
               else
               {
-                BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED HIDS_MOUSE_INPUT_NOTIFY_DISABLED\n");
+                BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE HIDS_MOUSE_INPUT_NOTIFY_DISABLED\n");
                 Notification.HIDS_Evt_Opcode = HIDS_MOUSE_INPUT_NOTIFY_DISABLED;
                 HIDS_Notification(&Notification);
               }
@@ -588,7 +588,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
             if(attribute_modified->Attr_Handle == (HIDS_Context[service_instance].HidControlPointCharHdle) + 1)
             {
               return_value = SVCCTL_EvtAckFlowEnable;
-              BLE_DBG_HIDS_MSG("EVT_BLUE_GATT_ATTRIBUTE_MODIFIED, HidControlPointCharHdle: 0x%02X, Len: 0x%02X !!\n", 
+              BLE_DBG_HIDS_MSG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE, HidControlPointCharHdle: 0x%02X, Len: 0x%02X !!\n", 
                                   attribute_modified->Attr_Handle, attribute_modified->Attr_Data_Length); 
               HIDS_Handle_Control_Point_Write(0/*service_instance*/, attribute_modified->Attr_Data);
             }
@@ -600,7 +600,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
           break;
       }
     }
-    break; /* HCI_EVT_VENDOR_SPECIFIC */
+    break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
 
     default:
       break;

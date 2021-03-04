@@ -1,3 +1,4 @@
+
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
@@ -34,7 +35,7 @@
 /* Private includes -----------------------------------------------------------*/
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.onoff.h"
+#include "zcl/general/zcl.onoff.h"
 
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -192,8 +193,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
  */
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
 
@@ -373,7 +374,7 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Zigbee
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -461,7 +462,7 @@ void ZIGBEE_CmdTransfer(void)
 } /* ZIGBEE_CmdTransfer */
 
 /**
- * @brief  This function is called when the M0+ acknoledge the fact that it has received a Cmd
+ * @brief  This function is called when the M0+ acknowledge the fact that it has received a Cmd
  *
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -604,8 +605,8 @@ void APP_ZIGBEE_ProcessRequestM0ToM4(void)
  */
 static void APP_ZIGBEE_ConfigGroupAddr(void)
 {
-  ZbApsmeAddGroupReqT req;
-  ZbApsmeAddGroupConfT conf;
+  struct ZbApsmeAddGroupReqT req;
+  struct ZbApsmeAddGroupConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.endpt = SW1_ENDPOINT;

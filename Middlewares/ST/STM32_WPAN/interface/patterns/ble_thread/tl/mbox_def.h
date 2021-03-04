@@ -104,7 +104,7 @@ extern "C" {
   {
     uint8_t   *cmdrsp_buffer;
     uint8_t   *m0cmd_buffer;
-  } MB_LldBleTable_t;
+  } MB_BleLldTable_t;
 
   typedef struct
   {
@@ -157,7 +157,7 @@ extern "C" {
     MB_Mac_802_15_4_t       *p_mac_802_15_4_table;
     MB_ZigbeeTable_t        *p_zigbee_table;
     MB_LldTestsTable_t      *p_lld_tests_table;
-    MB_LldBleTable_t        *p_lld_ble_table;
+    MB_BleLldTable_t        *p_ble_lld_table;
 } MB_RefTable_t;
 
 /**
@@ -224,12 +224,12 @@ typedef struct
  *   |                                                 |
  *   |<---HW_IPCC_BLE_EVENT_CHANNEL--------------------|
  *   |                                                 |
- *   |             (LLD BLE)                           |
- *   |----HW_IPCC_LLD_BLE_CMD_CHANNEL----------------->|
+ *   |             (BLE LLD)                           |
+ *   |----HW_IPCC_BLE_LLD_CMD_CHANNEL----------------->|
  *   |                                                 |
- *   |<---HW_IPCC_LLD_BLE_RSP_CHANNEL------------------|
+ *   |<---HW_IPCC_BLE_LLD_RSP_CHANNEL------------------|
  *   |                                                 |
- *   |<---HW_IPCC_LLD_BLE_M0_CMD_CHANNEL---------------|
+ *   |<---HW_IPCC_BLE_LLD_M0_CMD_CHANNEL---------------|
  *   |                                                 |
  *   |             (MAC)                               |
  *   |----HW_IPCC_MAC_802_15_4_CMD_RSP_CHANNEL-------->|
@@ -258,8 +258,8 @@ typedef struct
 #define HW_IPCC_MM_RELEASE_BUFFER_CHANNEL               LL_IPCC_CHANNEL_4
 #define HW_IPCC_THREAD_CLI_CMD_CHANNEL                  LL_IPCC_CHANNEL_5
 #define HW_IPCC_LLDTESTS_CLI_CMD_CHANNEL                LL_IPCC_CHANNEL_5
-#define HW_IPCC_LLD_BLE_CLI_CMD_CHANNEL                 LL_IPCC_CHANNEL_5
-#define HW_IPCC_LLD_BLE_CMD_CHANNEL                     LL_IPCC_CHANNEL_5
+#define HW_IPCC_BLE_LLD_CLI_CMD_CHANNEL                 LL_IPCC_CHANNEL_5
+#define HW_IPCC_BLE_LLD_CMD_CHANNEL                     LL_IPCC_CHANNEL_5
 #define HW_IPCC_HCI_ACL_DATA_CHANNEL                    LL_IPCC_CHANNEL_6
 
 /** CPU2 */
@@ -269,12 +269,12 @@ typedef struct
 #define HW_IPCC_ZIGBEE_APPLI_NOTIF_ACK_CHANNEL          LL_IPCC_CHANNEL_3
 #define HW_IPCC_MAC_802_15_4_NOTIFICATION_ACK_CHANNEL   LL_IPCC_CHANNEL_3
 #define HW_IPCC_LLDTESTS_M0_CMD_CHANNEL                 LL_IPCC_CHANNEL_3
-#define HW_IPCC_LLD_BLE_M0_CMD_CHANNEL                  LL_IPCC_CHANNEL_3
+#define HW_IPCC_BLE_LLD_M0_CMD_CHANNEL                  LL_IPCC_CHANNEL_3
 #define HW_IPCC_TRACES_CHANNEL                          LL_IPCC_CHANNEL_4
 #define HW_IPCC_THREAD_CLI_NOTIFICATION_ACK_CHANNEL     LL_IPCC_CHANNEL_5
 #define HW_IPCC_LLDTESTS_CLI_RSP_CHANNEL                LL_IPCC_CHANNEL_5
-#define HW_IPCC_LLD_BLE_CLI_RSP_CHANNEL                 LL_IPCC_CHANNEL_5
-#define HW_IPCC_LLD_BLE_RSP_CHANNEL                     LL_IPCC_CHANNEL_5
+#define HW_IPCC_BLE_LLD_CLI_RSP_CHANNEL                 LL_IPCC_CHANNEL_5
+#define HW_IPCC_BLE_LLD_RSP_CHANNEL                     LL_IPCC_CHANNEL_5
 #define HW_IPCC_ZIGBEE_M0_REQUEST_CHANNEL               LL_IPCC_CHANNEL_5
 #endif /*__MBOX_H */
 

@@ -25,6 +25,9 @@
 #include "ble.h"
 #include "shci.h"
 
+#ifdef OTA_SBSFU
+#include "ota_sbsfu.h"
+#endif /* OTA_SBSFU */
 
 /* Private typedef -----------------------------------------------------------*/
 typedef enum
@@ -193,10 +196,22 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
            * Reboot on FW Application
            */
           CFG_OTA_REBOOT_VAL_MSG = CFG_REBOOT_ON_FW_APP;
+ 
+#ifdef OTA_SBSFU
+          /* Comunication with SBSFU : FW application installation by SBSFU requested */
+          STANDALONE_LOADER_STATE = STANDALONE_LOADER_INSTALL_REQ;
+#endif /* OTA_SBSFU */
+
           NVIC_SystemReset(); /* it waits until reset */
           break;
 
         case Wireless_Fw:
+#ifdef OTA_SBSFU
+          /* Comunication with SBSFU : by-pass mode requested for Wireless stack installation by FUS */
+          STANDALONE_LOADER_STATE = STANDALONE_LOADER_BYPASS_REQ;
+          
+          NVIC_SystemReset(); /* it waits until reset */
+#else
           /**
            * Wireless firmware update is requested
            * Request CPU2 to reboot on FUS by sending two FUS command
@@ -207,6 +222,7 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
           {
             HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
           }
+#endif /* OTA_SBSFU */
           break;
 
         default:

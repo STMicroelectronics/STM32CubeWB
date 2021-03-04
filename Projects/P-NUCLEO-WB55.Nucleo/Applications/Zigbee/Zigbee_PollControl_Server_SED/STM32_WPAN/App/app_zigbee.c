@@ -31,7 +31,7 @@
 
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.poll.control.h"
+#include "zcl/general/zcl.poll.control.h"
 
 /* Private defines -----------------------------------------------------------*/
 #define APP_ZIGBEE_STARTUP_FAIL_DELAY               500U
@@ -186,8 +186,8 @@ static void APP_ZIGBEE_PollControl_Server_ShowAttr(void){
  * @retval None
  */
 static void APP_ZIGBEE_PollControl_Server_FillingBindingTable(void){
-  ZbApsmeBindReqT bindreq;
-  ZbApsmeBindConfT bindconf;
+  struct ZbApsmeBindReqT bindreq;
+  struct ZbApsmeBindConfT bindconf;
   uint64_t ext_addr;
   
   APP_DBG("[POLL CONTROL] Adding Poll Control client in the binding table.");
@@ -340,8 +340,8 @@ static void APP_ZIGBEE_StackLayersInit(void)
  */
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
 
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;

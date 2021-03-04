@@ -377,7 +377,7 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MODEL_MessageHeader_t *pmsgParam,
    MOBLEUINT8 subCmd = pRxData[0];
    MOBLEUINT16 hitcmdcount = 0;
    MOBLEUINT8 increment = 1;
-  
+   MOBLEUINT8 idx;
   /* Traces for the Data */
   TRACE_I(TF_VENDOR_M,
           "Vendor_OnResponseDataCb: elementIndex=[%02x], peer_addr=[%02x], dst_peer_addr=[%02x], command=[%02x], Response=[%02x]\n\r", 
@@ -397,9 +397,13 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MODEL_MessageHeader_t *pmsgParam,
          {             
              case APPLI_TEST_ECHO: 
                { 
-        /* this case is responsible for printing of the received back data byte from 
-           receiver node.
-        */
+                 /* this case is responsible for printing of the received back data byte from 
+                    receiver node.
+                 */       
+                 for(idx =1;idx<dataLength;idx++)
+                 {
+                   TRACE_I(TF_VENDOR_M,"Response data %d\n\r", pRxData[idx]);
+                 }
                  break;
                }
              case APPLI_TEST_RANDOMIZATION_RANGE:  
@@ -568,11 +572,11 @@ void Vendor_TestRemoteData(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elem
   /* changes the LED status on other nodes in the network */
     MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
     AppliBuffer[0] = APPLI_TEST_COUNTER;
- 
-    result = BLEMesh_SetRemoteData(dst, 0,
-                                       APPLI_TEST_CMD, AppliBuffer, 
-                                       sizeof(AppliBuffer), MOBLE_TRUE, 
-                                       MOBLE_TRUE);
+   
+    result = BLEMesh_SetRemotePublication(VENDORMODEL_STMICRO_ID1, src,
+                                          APPLI_TEST_CMD, 
+                                          AppliBuffer, sizeof(AppliBuffer),
+                                          MOBLE_TRUE, MOBLE_TRUE);
 
      if(result)
      {
@@ -595,11 +599,11 @@ void Vendor_TestCounterInc(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elem
   /* changes the LED status on other nodes in the network */
     MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
     AppliBuffer[0] = APPLI_TEST_INC_COUNTER;
-
-    result = BLEMesh_SetRemoteData(dst, 0,
-                                   APPLI_TEST_CMD, AppliBuffer, 
-                                   sizeof(AppliBuffer), MOBLE_FALSE, 
-                                   MOBLE_TRUE);
+  
+    result = BLEMesh_SetRemotePublication(VENDORMODEL_STMICRO_ID1, src,
+                                          APPLI_TEST_CMD, 
+                                          AppliBuffer, sizeof(AppliBuffer),
+                                          MOBLE_FALSE, MOBLE_TRUE);
 
     if(result)
     {

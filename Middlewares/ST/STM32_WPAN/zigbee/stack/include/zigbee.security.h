@@ -13,10 +13,6 @@
 
 struct ZigBeeT;
 
-/*---------------------------------------------------------------
- * Misc. Definitions and Structures
- *---------------------------------------------------------------
- */
 /* Security Install Code Max Length (including CRC) */
 #define ZB_SEC_INSTALL_CODE_MAX_LENGTH      18U
 
@@ -28,10 +24,6 @@ struct ZigBeeT;
  * for ascii string buffer. */
 #define ZB_SEC_KEYSTR_SIZE      ((ZB_SEC_KEYSIZE * 2U) + ZB_SEC_KEYSIZE /* separators */ + 1U /* NULL */)
 
-/*---------------------------------------------------------------
- * Security Level
- *---------------------------------------------------------------
- */
 /*
  * +-----------------------------------------------------------------------------+
  * | Security      Security       Security       Data         Frame Integrity    |
@@ -194,25 +186,25 @@ enum ZbSecEncryptT {
 #define CBKE2_CERTIFICATE_SIZE              (CBKE2_CERT_PUBLIC_KEY_OFFSET + CBKE2_CERT_PUBLIC_KEY_SIZE)
 
 struct ZbZclCbkePrivateT {
-    unsigned char privateKey[CBKE_PRIVATE_KEY_SIZE];
-    unsigned char publicCaKey[CBKE_COMPRESSED_PUBLIC_KEY_SIZE];
+    uint8_t privateKey[CBKE_PRIVATE_KEY_SIZE];
+    uint8_t publicCaKey[CBKE_COMPRESSED_PUBLIC_KEY_SIZE];
 };
 
 struct ZbZclCbkeInfoT {
     struct ZbZclCbkePrivateT keys;
-    unsigned char cert[CBKE_CERTIFICATE_SIZE];
+    uint8_t cert[CBKE_CERTIFICATE_SIZE];
     uint8_t ephemeralTime; /* In seconds. If 0, CBKE_V1_EPHEMERAL_DEFAULT_TIME is used */
     uint8_t confirmTime; /* In seconds. If 0, CBKE_V1_CONFIRM_DEFAULT_TIME is used */
 };
 
 struct ZbZclCbke2PrivateT {
-    unsigned char privateKey[CBKE2_PRIVATE_KEY_SIZE];
-    unsigned char publicCaKey[CBKE2_COMPRESSED_PUBLIC_KEY_SIZE];
+    uint8_t privateKey[CBKE2_PRIVATE_KEY_SIZE];
+    uint8_t publicCaKey[CBKE2_COMPRESSED_PUBLIC_KEY_SIZE];
 };
 
 struct ZbZclCbke2InfoT {
     struct ZbZclCbke2PrivateT keys;
-    unsigned char cert[CBKE2_CERTIFICATE_SIZE];
+    uint8_t cert[CBKE2_CERTIFICATE_SIZE];
     uint8_t ephemeralTime; /* In seconds. If 0, CBKE_V2_EPHEMERAL_DEFAULT_TIME is used */
     uint8_t confirmTime; /* In seconds. If 0, CBKE_V2_CONFIRM_DEFAULT_TIME is used */
 };
@@ -236,18 +228,62 @@ struct ZbSecAuxHdrT {
     uint8_t keySeqno; /* Present if securityCtrl.keyId = 1 (Network Key) */
 };
 
+/**
+ * Parses the auxiliary header into the provided structure.
+ * @param data Packet buffer
+ * @param dataLen Packet length
+ * @param auxHdrPtr Pointer to ZbSecAuxHdrT structure to parse data into.
+ * @return Number of bytes in the header, or <0 on error.
+ */
 int ZbSecParseAuxHdr(const uint8_t *data, unsigned int dataLen, struct ZbSecAuxHdrT *auxHdrPtr);
+
+/**
+ * Append an auxillary security header to a packet
+ * @param data Packet buffer
+ * @param dataLen Packet length
+ * @param auxHdrPtr auxillary header struct to use
+ * @return Number of bytes written, or <0 on error.
+ */
 int ZbSecAppendAuxHdr(uint8_t *data, unsigned int dataLen, struct ZbSecAuxHdrT *auxHdrPtr);
+
+/**
+ * Builds the CCM* nonce from the source address, frame counter and security control bits.
+ * The nonce buffer must be at least ZB_SEC_NONCE_LENGTH in size.
+ * @param nonce Nonce buffer (output)
+ * @param extAddr Source extended addres
+ * @param frameCounter Frame counter
+ * @param secCtrl Security control field
+ * @return None
+ */
 void ZbSecMakeNonce(uint8_t *nonce, uint64_t extAddr, uint32_t frameCounter, uint8_t secCtrl);
 
 /*---------------------------------------------------------------
  * Security Transformations
  *---------------------------------------------------------------
  */
+
+/**
+ * Performs an AES MMO hash on the selected data
+ * @param zb Zigbee stack instance
+ * @param data data to hash
+ * @param length length of data to hash
+ * @param digest hash must be AES_BLOCK_SIZE in size!
+ * @return
+ */
 bool ZbAesMmoHash(struct ZigBeeT *zb, uint8_t const *data, const unsigned int length, uint8_t *digest);
+
+/**
+ * Performs the Keyed Hash function for Message Authentication. The HMAC operation described
+ * in section B.1.4, and specified by FIPS pub 198. This is used to trasmute the link keys into
+ * key-load and key-transport keys.
+ * @param key encryption key to use
+ * @param input input data
+ * @param keyOut output buffer
+ * @return
+ */
 void ZbSecKeyTransform(uint8_t *key, uint8_t input, uint8_t *keyOut);
 
-/* Add a device-key-pair */
+/* Add a device-key-pair. NOTE: May not be supported by all platforms. */
 uint8_t ZbSecAddDeviceLinkKeyByKey(struct ZigBeeT *zb, uint64_t extAddr, uint8_t *key);
 uint8_t ZbSecAddDeviceLinkKeyByKeyStr(struct ZigBeeT *zb, uint64_t extAddr, char *str);
 
@@ -255,12 +291,9 @@ uint8_t ZbSecAddDeviceLinkKeyByKeyStr(struct ZigBeeT *zb, uint64_t extAddr, char
  * Extras: Install Code Helpers (Optional, may not be included in all builds)
  *---------------------------------------------------------------
  */
-/* Produces an install code with CRC. */
-bool ZbSecInstallCodeCreate(struct ZigBeeT *zb, const void *inputCode, void *outputCode, unsigned int codeLen);
-
 /* Performs redundancy checks on a ZSE installation code and optionally converts the code
  * into an application link key. */
-bool ZbSecInstallCodeCheck(const void *installCode, unsigned int codeLen, void *keyOut);
+bool ZbSecInstallCodeCheck(struct ZigBeeT *zb, const void *installCode, unsigned int codeLen, void *keyOut);
 
 /* Computes the 2-byte CRC of the input Install Code */
 void ZbSecInstallCodeCrc(const uint8_t *ic_in, uint8_t ic_len, uint8_t *crc_out);
@@ -296,13 +329,5 @@ enum ZbStatusCodeT ZbSecEcdsaValidate(struct ZigBeeT *zb, enum ZbSecEcdsaSigType
     const uint8_t *ca_pub_key_array, unsigned int ca_pub_key_len,
     const uint8_t *certificate, const uint8_t *signature,
     const uint8_t *image_digest, const uint8_t *cert_digest);
-
-/*---------------------------------------------------------------
- * Misc. Helper Functions
- *---------------------------------------------------------------
- */
-bool ZbSecValidKey(uint8_t *key);
-void ZbSecResetCounters(struct ZigBeeT *zb, uint64_t addr);
-bool ZbSecHaveActiveKey(struct ZigBeeT *zb);
 
 #endif /* ZIGBEE_SECURITY_H */

@@ -1,5 +1,6 @@
 /**
  * @file zcl.keepalive.h
+ * @heading Keep Alive
  * @brief ZCL Keep Alive cluster header
  * ZCL 8 Section 3.18
  * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.

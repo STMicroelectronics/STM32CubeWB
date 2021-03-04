@@ -85,6 +85,59 @@ void HAL_MspInit(void)
 }
 
 /**
+* @brief IPCC MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hipcc: IPCC handle pointer
+* @retval None
+*/
+void HAL_IPCC_MspInit(IPCC_HandleTypeDef* hipcc)
+{
+  if(hipcc->Instance==IPCC)
+  {
+  /* USER CODE BEGIN IPCC_MspInit 0 */
+
+  /* USER CODE END IPCC_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_IPCC_CLK_ENABLE();
+    /* IPCC interrupt Init */
+    HAL_NVIC_SetPriority(IPCC_C1_RX_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(IPCC_C1_RX_IRQn);
+    HAL_NVIC_SetPriority(IPCC_C1_TX_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(IPCC_C1_TX_IRQn);
+  /* USER CODE BEGIN IPCC_MspInit 1 */
+
+  /* USER CODE END IPCC_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief IPCC MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hipcc: IPCC handle pointer
+* @retval None
+*/
+void HAL_IPCC_MspDeInit(IPCC_HandleTypeDef* hipcc)
+{
+  if(hipcc->Instance==IPCC)
+  {
+  /* USER CODE BEGIN IPCC_MspDeInit 0 */
+
+  /* USER CODE END IPCC_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_IPCC_CLK_DISABLE();
+
+    /* IPCC interrupt DeInit */
+    HAL_NVIC_DisableIRQ(IPCC_C1_RX_IRQn);
+    HAL_NVIC_DisableIRQ(IPCC_C1_TX_IRQn);
+  /* USER CODE BEGIN IPCC_MspDeInit 1 */
+
+  /* USER CODE END IPCC_MspDeInit 1 */
+  }
+
+}
+
+/**
 * @brief UART MSP Initialization
 * This function configures the hardware resources used in this example
 * @param huart: UART handle pointer
@@ -106,19 +159,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     /**LPUART1 GPIO Configuration
     PA2     ------> LPUART1_TX
     PA3     ------> LPUART1_RX
-    PA6     ------> LPUART1_CTS
     */
     GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF8_LPUART1;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = GPIO_PIN_6;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF8_LPUART1;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -165,20 +210,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     /* Peripheral clock enable */
     __HAL_RCC_USART1_CLK_ENABLE();
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**USART1 GPIO Configuration
-    PA11     ------> USART1_CTS
     PB6     ------> USART1_TX
     PB7     ------> USART1_RX
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_11;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
@@ -233,9 +269,8 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
     /**LPUART1 GPIO Configuration
     PA2     ------> LPUART1_TX
     PA3     ------> LPUART1_RX
-    PA6     ------> LPUART1_CTS
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_6);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2|GPIO_PIN_3);
 
     /* LPUART1 DMA DeInit */
     HAL_DMA_DeInit(huart->hdmatx);
@@ -255,12 +290,9 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
     __HAL_RCC_USART1_CLK_DISABLE();
 
     /**USART1 GPIO Configuration
-    PA11     ------> USART1_CTS
     PB6     ------> USART1_TX
     PB7     ------> USART1_RX
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11);
-
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_6|GPIO_PIN_7);
 
     /* USART1 DMA DeInit */

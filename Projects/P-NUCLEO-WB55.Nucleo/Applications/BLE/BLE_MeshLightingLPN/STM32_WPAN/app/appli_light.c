@@ -41,9 +41,7 @@
 *  @{
 */
 
-MOBLE_RESULT Appli_Light_GetLightnessLastStatus(MOBLEUINT8* lLastState,
-                                                MOBLEUINT16 dstPeer, 
-                                                MOBLEUINT8 elementIndex);
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -69,7 +67,8 @@ Following Variables are used for the LIGHTING CTL MODEL
 *******************************************************************************/
 
 /******************************************************************************/
-#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL
+#if defined (ENABLE_LIGHT_MODEL_SERVER_CTL) || defined (ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP) \
+       || defined (ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE)
 /******************************************************************************/
   Appli_Light_CtlSet AppliCtlSet[APPLICATION_NUMBER_OF_ELEMENTS];
   Appli_Light_CtlTemperatureRangeSet AppliCtlTemperatureRangeSet[APPLICATION_NUMBER_OF_ELEMENTS];
@@ -83,7 +82,9 @@ Following Variables are used for the LIGHTING CTL MODEL
 Following Variables are used for the LIGHTING HSL MODEL 
 *******************************************************************************/
 
-#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
+#if defined (ENABLE_LIGHT_MODEL_SERVER_HSL) || defined (ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP) \
+     || defined (ENABLE_LIGHT_MODEL_SERVER_HSL_HUE) || defined (ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION)
+/******************************************************************************/       
   Appli_Light_HslSet AppliHslSet[APPLICATION_NUMBER_OF_ELEMENTS];
   Appli_Light_HslDefaultSet Appli_HslDefaultSet[APPLICATION_NUMBER_OF_ELEMENTS] = {{0x7FFF,0x7FFF,0x7FFF}};
   Appli_Light_RGBSet Appli_RGBParam[APPLICATION_NUMBER_OF_ELEMENTS];
@@ -121,14 +122,18 @@ extern MOBLEUINT16 IntensityValue;
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT Appli_Light_Lightness_Set(Light_LightnessStatus_t* pLight_LightnessParam,
-                                       MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
+                                       MOBLEUINT8 OptionalValid,
+                                       MOBLEUINT16 dstPeer,
+                                       MOBLEUINT8 elementIndex)
 {
   MOBLEUINT16 duty;
   static MOBLEUINT16 previousIntensity = 0;
   
-  TRACE_M(TF_LIGHT,"Light_Lightness_Set callback received for element %d \r\n", elementIndex);
-    TRACE_M(TF_SERIAL_CTRL,"#824C!\r\n");
+  TRACE_M(TF_SERIAL_CTRL, "#824C!\n\r");
+  TRACE_M(TF_LIGHT, "Element index %d present 0x%.2x last 0x%.2x\r\n", 
+          elementIndex,
+          pLight_LightnessParam->LightnessPresentValue16,
+          pLight_LightnessParam->LightnessLastStatus);  
   
   ApplilightnessSet[elementIndex].PresentState16 = pLight_LightnessParam->LightnessPresentValue16;
   ApplilightnessSet[elementIndex].LastLightness16 = pLight_LightnessParam->LightnessLastStatus;
@@ -161,9 +166,6 @@ MOBLE_RESULT Appli_Light_Lightness_Set(Light_LightnessStatus_t* pLight_Lightness
   }
 #endif
 
-  TRACE_M(TF_SERIAL_CTRL,"#8206%04hx!\n\r",
-          ApplilightnessSet[elementIndex].PresentState16);
-
   duty = PwmValueMapping(ApplilightnessSet[elementIndex].PresentState16 , 0xfFFF ,0); 
   Appli_LightPwmValue.IntensityValue = duty;
   Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
@@ -178,56 +180,6 @@ MOBLE_RESULT Appli_Light_Lightness_Set(Light_LightnessStatus_t* pLight_Lightness
 /******************************************************************************/
 #endif /* #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS */
 /******************************************************************************/
-
-/**
-* @brief  Appli_Light_Lightness_Status: This function is callback for Application
-*           when Light Lightness status message is received
-* @param  pLightness_status: Pointer to the parameters received for message
-* @param  pLength: length of data 
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT Appli_Light_Lightness_Status(MOBLEUINT8 const *pLightness_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_Lightness_Status callback received for element %d \r\n", elementIndex);
-    TRACE_M(TF_SERIAL_CTRL,"#824E!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if((i == 0) || (i == 2))
-    {
-      value = pLightness_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Present Lightness: 0x%x (%d)\r\n",
-              value | pLightness_status[i] << 8,
-              value | pLightness_status[i] << 8);
-    }
-    else if(i == 3)
-    {
-      TRACE_M(TF_LIGHT,"Target Lightness: 0x%x (%d)\r\n",
-              value | pLightness_status[i] << 8,
-              value | pLightness_status[i] << 8);
-    }
-    else if(i == 4)
-    {
-      TRACE_M(TF_LIGHT,"Remaining Time: 0x%x (%d)\r\n",
-              pLightness_status[i],
-              pLightness_status[i]);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS 
@@ -246,8 +198,8 @@ MOBLE_RESULT Appli_Light_Lightness_Linear_Set(Light_LightnessStatus_t* pLight_Li
 {
   ApplilightnessLinearSet[elementIndex].PresentState16 = pLight_LightnessLinearParam->LinearPresentValue16; 
   
-  TRACE_M(TF_LIGHT,"Light_Lightness_Linear_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8250!\r\n");
+  TRACE_M(TF_LIGHT,"Light_LightnessLinear_Set callback received for elementIndex %d \r\n", elementIndex);
+  TRACE_M(TF_SERIAL_CTRL,"#8250!\n\r");
   
   return MOBLE_RESULT_SUCCESS;
 }
@@ -255,60 +207,6 @@ MOBLE_RESULT Appli_Light_Lightness_Linear_Set(Light_LightnessStatus_t* pLight_Li
 /******************************************************************************/
 #endif /* #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS  */
 /******************************************************************************/
-
-/**
-* @brief  Appli_Light_Lightness_Linear_Status: This function is callback for Application
-*         when Light Lightness Linear status message is received
-* @param  pLightnessLinear_status: Pointer to the parameters received for message
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @param  pLength: length of data
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Light_Lightness_Linear_Status(MOBLEUINT8 const *pLightnessLinear_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_Lightness_Linear_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8252!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if((i == 0) || (i == 2))
-    {
-      value = pLightnessLinear_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Present Lightness: 0x%x (%d)\r\n",
-              value | pLightnessLinear_status[i] << 8,
-              value | pLightnessLinear_status[i] << 8);
-    }
-    else if(i == 3)
-    {
-      TRACE_M(TF_LIGHT,"Target Lightness: 0x%x (%d)\r\n",
-              value | pLightnessLinear_status[i] << 8,
-              value | pLightnessLinear_status[i] << 8);
-    }
-    else if(i == 4)
-    {
-      TRACE_M(TF_LIGHT,"Remaining Time: 0x%x (%d)\r\n",
-              pLightnessLinear_status[i],
-              pLightnessLinear_status[i]);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP
@@ -329,7 +227,6 @@ MOBLE_RESULT Appli_Light_Lightness_Default_Set(Light_LightnessDefaultParam_t* pL
                                                MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
                                               MOBLEUINT8 elementIndex)
 {
-#if 0
   if(pLight_LightnessDefaultParam->LightnessDefaultStatus > 0)
   {
     BSP_LED_On(LED_BLUE);
@@ -338,16 +235,38 @@ MOBLE_RESULT Appli_Light_Lightness_Default_Set(Light_LightnessDefaultParam_t* pL
   {
     BSP_LED_Off(LED_BLUE);
   }
-#endif
   
   ApplilightnessSet[elementIndex].LightnessDefault = 
     pLight_LightnessDefaultParam->LightnessDefaultStatus;
   
-  TRACE_M(TF_LIGHT,"Light_Lightness_Default_Set callback received for element %d \r\n", elementIndex);
-    TRACE_M(TF_SERIAL_CTRL,"#8259! \r\n");
-  
-  /* set the flag value for NVM store */
+  TRACE_M(TF_SERIAL_CTRL,"#8259! \r\n");
+  TRACE_M(TF_LIGHT,"Appli_Light_Lightness_Default_Set callback received for elementIndex %d \r\n", elementIndex);
+	
   NvmStatePowerFlag_Set(LIGHT_LIGHTNESS_NVM_FLAG,elementIndex);
+   
+  return MOBLE_RESULT_SUCCESS;
+}
+
+/**
+* @brief  Appli_Light_Lightness_Last_Set: This function is callback for Application
+*         when Light Lightness Default Set message is received
+* @param  pLight_LightnessDefaultParam: Pointer to the parameters received for message
+* @param  OptionalValid: Flag to inform about the validity of optional parameters 
+* @param  dstPeer: destination send by peer for this node. It can be a
+*                     unicast or group address 
+* @param  elementIndex: index of the element received from peer for this node which
+*                     is elementNumber-1
+* @retval MOBLE_RESULT
+*/ 
+MOBLE_RESULT Appli_Light_Lightness_Last_Set(Light_LightnessStatus_t* pLight_LightnessParam,                                             
+                                              MOBLEUINT8 elementIndex)
+{
+  ApplilightnessSet[elementIndex].LastLightness16 = pLight_LightnessParam->LightnessLastStatus;
+  
+  TRACE_M(TF_SERIAL_CTRL,"#8259!\n\r");
+  TRACE_M(TF_LIGHT,
+          "Appli_Light_Lightness_Last_Set Light Last Value 0x%.2x \r\n", 
+          ApplilightnessSet[elementIndex].LastLightness16);
    
   return MOBLE_RESULT_SUCCESS;
 }
@@ -355,92 +274,6 @@ MOBLE_RESULT Appli_Light_Lightness_Default_Set(Light_LightnessDefaultParam_t* pL
 /******************************************************************************/
 #endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP */
 /******************************************************************************/
-
-/**
-* @brief  Appli_Light_Lightness_Default_Status: This function is callback for Application
-*         when Light Lightness Default status message is received
-* @param  pLightnessDefault_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Light_Lightness_Default_Status(MOBLEUINT8 const *pLightnessDefault_status, MOBLEUINT32 pLength
-                                                  , MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_Lightness_Default_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8256!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if(i == 0)
-    {
-      value = pLightnessDefault_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Lightness Default: 0x%x (%d)\r\n",
-              value | pLightnessDefault_status[i] << 8,
-              value | pLightnessDefault_status[i] << 8);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
-
-/**
-* @brief  Appli_Light_Lightness_Last_Status: This function is callback for Application
-*         when Light Lightness Last status message is received
-* @param  pLightnessDefault_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Light_Lightness_Last_Status(MOBLEUINT8 const *pLightnessLast_status, 
-                                               MOBLEUINT32 pLength, 
-                                               MOBLEUINT16 dstPeer, 
-                                               MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value;
-#endif
- 
-  TRACE_M(TF_LIGHT,"Light_Lightness_Last_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8256!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if(i == 0)
-    {
-      value = pLightnessLast_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Lightness Last: 0x%x (%d)\r\n",
-              value | pLightnessLast_status[i] << 8,
-              value | pLightnessLast_status[i] << 8);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
 
 
 /******************************************************************************/
@@ -466,8 +299,8 @@ MOBLE_RESULT Appli_Light_Lightness_Range_Set(Light_LightnessRangeParam_t* pLight
   ApplilightnessSet[elementIndex].RangeMin = pLight_LightnessRangeParam->MinRangeStatus; 
   ApplilightnessSet[elementIndex].RangeMax = pLight_LightnessRangeParam->MaxRangeStatus;
   
-  TRACE_M(TF_LIGHT,"Light_Lightness_Range_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#825B!\r\n");
+  TRACE_M(TF_SERIAL_CTRL,"#825B! \n\r");
+  TRACE_M(TF_LIGHT,"Appli_Light_Lightness_Range_Set callback received for elementIndex %d \r\n", elementIndex);
   
   return MOBLE_RESULT_SUCCESS;
 }
@@ -475,61 +308,6 @@ MOBLE_RESULT Appli_Light_Lightness_Range_Set(Light_LightnessRangeParam_t* pLight
 /******************************************************************************/
 #endif  /* #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP */
 /******************************************************************************/
-
-/**
-* @brief  Appli_Light_Lightness_Range_Status: This function is callback for Application
-*         when Light Lightness range ststus message is received
-* @param  pLightnessRange_status: Pointer to the parameters received for message
-* @param  pLength: length of data 
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Light_Lightness_Range_Status(MOBLEUINT8 const *pLightnessRange_status, MOBLEUINT32 pLength
-                                                , MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_Lightness_Range_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8258!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if(i == 0)
-    {
-      TRACE_M(TF_LIGHT,"Status Code: 0x%x (%d)\r\n",
-              pLightnessRange_status[i],
-              pLightnessRange_status[i]);
-    }
-    else if((i == 1) || (i == 3))
-    {
-      value = pLightnessRange_status[i];
-    }
-    else if(i == 2)
-    {
-      TRACE_M(TF_LIGHT,"Range Min: 0x%x (%d)\r\n",
-              value | pLightnessRange_status[i] << 8,
-              value | pLightnessRange_status[i] << 8);
-    }
-    else if(i == 4)
-    {
-      TRACE_M(TF_LIGHT,"Range Max: 0x%x (%d)\r\n",
-              value | pLightnessRange_status[i] << 8,
-              value | pLightnessRange_status[i] << 8);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL
@@ -553,8 +331,7 @@ MOBLE_RESULT Appli_Light_Ctl_Set(Light_CtlStatus_t* pLight_CtlParam,
   float colourRatio;
   float brightRatio;
   
-  TRACE_M(TF_LIGHT,"Appli_Light_Ctl_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#825E!\r\n");
+  TRACE_M(TF_SERIAL_CTRL,"#825E! \n\r");
   
   AppliCtlSet[elementIndex].PresentLightness16  = pLight_CtlParam->PresentCtlLightness16;
   AppliCtlSet[elementIndex].PresentTemperature16 = pLight_CtlParam->PresentCtlTemperature16;
@@ -576,8 +353,10 @@ MOBLE_RESULT Appli_Light_Ctl_Set(Light_CtlStatus_t* pLight_CtlParam,
   
   Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
   
-  /* set the flag value for NVM store */
   NvmStatePowerFlag_Set(LIGHT_CTL_NVM_FLAG, elementIndex);
+    
+  TRACE_M(TF_LIGHT,"Appli_Light_Ctl_Set callback received for elementIndex %d \r\n", elementIndex); 
+	                              
     
   return MOBLE_RESULT_SUCCESS;
 }
@@ -585,68 +364,6 @@ MOBLE_RESULT Appli_Light_Ctl_Set(Light_CtlStatus_t* pLight_CtlParam,
 /******************************************************************************/
 #endif  /* #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL */
 /******************************************************************************/
-
-/**
-* @brief  Appli_Light_Ctl_Status: This function is callback for Application
-*         when Light CTL status message is received
-* @param  pLightCtl_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT Appli_Light_Ctl_Status(MOBLEUINT8 const *pLightCtl_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-
-  TRACE_M(TF_LIGHT,"Light_Ctl_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8260!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if((i == 0) || (i == 2) || (i == 4) || (i == 6))
-    {
-      value = pLightCtl_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Present CTL Lightness: 0x%x (%d)\r\n",
-              value | pLightCtl_status[i] << 8,
-              value | pLightCtl_status[i] << 8);
-    }
-    else if(i == 3)
-    {
-      TRACE_M(TF_LIGHT,"Present CTL Temperature: 0x%x (%d)\r\n",
-              value | pLightCtl_status[i] << 8,
-              value | pLightCtl_status[i] << 8);
-    }
-    else if(i == 5)
-    {
-      TRACE_M(TF_LIGHT,"Target CTL Lightness: 0x%x (%d)\r\n",
-              value | pLightCtl_status[i] << 8,
-              value | pLightCtl_status[i] << 8);
-    }
-    else if(i == 7)
-    {
-      TRACE_M(TF_LIGHT,"Target CTL Temperature: 0x%x (%d)\r\n",
-              value | pLightCtl_status[i] << 8,
-              value | pLightCtl_status[i] << 8);
-    }
-    else if(i == 8)
-    {
-      TRACE_M(TF_LIGHT,"Remaining Time:0x%x (%d)\r\n",
-              pLightCtl_status[i],
-              pLightCtl_status[i]);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE 
@@ -669,9 +386,7 @@ MOBLE_RESULT Appli_Light_CtlTemperature_Set(Light_CtlStatus_t* pLight_CtltempPar
 {
   float colourRatio;
   float brightRatio;
-  
-  TRACE_M(TF_LIGHT,"Appli_Light_CtlTemperature_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8264!\r\n");
+  TRACE_M(TF_SERIAL_CTRL,"#8264!\n\r");
   
   AppliCtlSet[elementIndex].PresentTemperature16 = pLight_CtltempParam->PresentCtlTemperature16;
   AppliCtlSet[elementIndex].PresentCtlDelta16 = pLight_CtltempParam->PresentCtlDelta16;
@@ -690,83 +405,17 @@ MOBLE_RESULT Appli_Light_CtlTemperature_Set(Light_CtlStatus_t* pLight_CtltempPar
   Rgb_LedOffState();
 
   Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
-  /* set the flag value for NVM store */
+	
   NvmStatePowerFlag_Set(LIGHT_CTL_NVM_FLAG, elementIndex);
     
+  TRACE_M(TF_LIGHT,"Appli_Light_CtlTemperature_Set callback received for elementIndex %d \r\n", elementIndex); 
+  
   return MOBLE_RESULT_SUCCESS;
 }
 
 /******************************************************************************/
 #endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_TEMPERATURE */
 /******************************************************************************/
-
-/**                                                  
-* @brief  Appli_Light_CtlTemperature_Status: This function is callback for Application
-*         when Light CTL temperature status message is received
-* @param  pLightCtlTemp_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT Appli_Light_CtlTemperature_Status(MOBLEUINT8 const *pLightCtlTemp_status, MOBLEUINT32 pLength
-                                               , MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_CtlTemperature_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8266!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if((i == 0) || (i == 2) || (i == 4) || (i == 6))
-    {
-      value = pLightCtlTemp_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Present CTL Temperature: 0x%x (%d)\r\n",
-              value | pLightCtlTemp_status[i] << 8,
-              value | pLightCtlTemp_status[i] << 8);
-    }
-    else if(i == 3)
-    {
-      TRACE_M(TF_LIGHT,"Present CTL Delta UV: 0x%x (%d)\r\n",
-              value | pLightCtlTemp_status[i] << 8,
-              value | pLightCtlTemp_status[i] << 8);
-    }
-    else if(i == 5)
-    {
-      TRACE_M(TF_LIGHT,"Target CTL Temperature: 0x%x (%d)\r\n",
-              value | pLightCtlTemp_status[i] << 8,
-              value | pLightCtlTemp_status[i] << 8);
-    }
-    else if(i == 7)
-    {
-      TRACE_M(TF_LIGHT,"Target CTL Delta UV: 0x%x (%d)\r\n",
-              value | pLightCtlTemp_status[i] << 8,
-              value | pLightCtlTemp_status[i] << 8);
-    }
-    else if(i == 8)
-    {
-      TRACE_M(TF_LIGHT,"Remaining Time: 0x%x (%d)\r\n",
-              pLightCtlTemp_status[i],
-              pLightCtlTemp_status[i]);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP
@@ -791,74 +440,14 @@ MOBLE_RESULT Appli_Light_CtlTemperature_Range_Set(Light_CtlTemperatureRangeParam
   AppliCtlTemperatureRangeSet[elementIndex].RangeMax = pLight_CtlTempRangeParam->MaxRangeStatus;
   AppliCtlTemperatureRangeSet[elementIndex].StatusCode = pLight_CtlTempRangeParam->StatusCode;
 
-  TRACE_M(TF_LIGHT,"Light_CtlTemperature_Range_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#826B!\r\n");
-  
+  TRACE_M(TF_SERIAL_CTRL,"#826B!\n\r");
+  TRACE_M(TF_LIGHT,"Light_CtlTemperature_Range_Set callback received for elementIndex %d \r\n", elementIndex);
   return MOBLE_RESULT_SUCCESS;
 }
-
 
 /******************************************************************************/
 #endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP */
 /******************************************************************************/
-
-/**                                                  
-* @brief  Appli_Light_CtlTemperature_Range_Set: This function is callback for Application
-*         when Light CTL temperature range status message is received
-* @param  pCtlTempRange_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT Appli_Light_CtlTemperature_Range_Status(MOBLEUINT8 const *pCtlTempRange_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_CtlTemperature_Range_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8263!\r\n");
-  
-  
-  RestoreFlag = LIGHT_CTL_NVM_FLAG;
-  AppliNvm_SaveMessageParam();
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if(i == 0)
-    {
-      TRACE_M(TF_LIGHT,"Status Code: 0x%x (%d)\r\n",
-              pCtlTempRange_status[i],
-              pCtlTempRange_status[i]);
-    }
-    else if((i == 1) || (i == 3))
-    {
-      value = pCtlTempRange_status[i];
-    }
-    else if(i == 2)
-    {
-      TRACE_M(TF_LIGHT,"Range Min: 0x%x (%d)\r\n",
-              value | pCtlTempRange_status[i] << 8,
-              value | pCtlTempRange_status[i] << 8 );
-    }
-    else if(i == 4)
-    {
-      TRACE_M(TF_LIGHT,"Range Max: 0x%x (%d)\r\n",
-              value | pCtlTempRange_status[i] << 8,
-              value | pCtlTempRange_status[i] << 8 );
-    }
-  }
-#endif
-
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP
@@ -883,69 +472,14 @@ MOBLE_RESULT Appli_Light_CtlDefault_Set(Light_CtlDefaultParam_t* pLight_CtlDefau
   AppliCtlDefaultSet[elementIndex].CtlDefaultTemperature16 = pLight_CtlDefaultParam->CtlDefaultTemperature16;
   AppliCtlDefaultSet[elementIndex].CtlDefaultDeltaUv = pLight_CtlDefaultParam->CtlDefaultDeltaUv;
   
-  TRACE_M(TF_LIGHT,"Light_CtlDefault_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8269!\r\n");
-  
+  TRACE_M(TF_SERIAL_CTRL,"#8269!\n\r");
+  TRACE_M(TF_LIGHT,"Light_CtlDefault_Set callback received for elementIndex %d \r\n", elementIndex);
   return MOBLE_RESULT_SUCCESS;
 } 
 
 /******************************************************************************/
 #endif   /* #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL_SETUP */
 /******************************************************************************/
-
-/**                                                  
-* @brief  Appli_Light_CtlDefault_Status: This function is callback for Application
-*         when Light CTL Default status message is received
-* @param  pCtlDefault_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/ 
-MOBLE_RESULT Appli_Light_CtlDefault_Status(MOBLEUINT8 const *pCtlDefault_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_Ctl_DefaultStatus callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8268!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if((i == 0) || (i == 2) || (i == 4))
-    {
-      value = pCtlDefault_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Lightness: 0x%x (%d)\n\r",
-              value | pCtlDefault_status[i] << 8,
-              value | pCtlDefault_status[i] << 8);
-    }
-    else if(i == 3)
-    {
-      TRACE_M(TF_LIGHT,"Temperature: 0x%x (%d)\n\r",
-              value | pCtlDefault_status[i] << 8,
-              value | pCtlDefault_status[i] << 8);
-    }
-    else if(i == 5)
-    {
-      TRACE_M(TF_LIGHT,"Delta UV: 0x%x (%d)\n\r",
-              value | pCtlDefault_status[i] << 8,
-              value | pCtlDefault_status[i] << 8);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-} 
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
@@ -966,8 +500,7 @@ MOBLE_RESULT Appli_Light_Hsl_Set(Light_HslStatus_t* pLight_HslParam,
                                  MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
                                               MOBLEUINT8 elementIndex)
 { 
-  TRACE_M(TF_LIGHT,"Appli_Light_Hsl_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8276!\r\n");
+  TRACE_M(TF_SERIAL_CTRL,"#8276!\n\r");
   
   AppliHslSet[elementIndex].HslLightness16 = pLight_HslParam->PresentHslLightness16;
   AppliHslSet[elementIndex].HslHueLightness16 = pLight_HslParam->PresentHslHueLightness16;
@@ -985,12 +518,18 @@ MOBLE_RESULT Appli_Light_Hsl_Set(Light_HslStatus_t* pLight_HslParam,
   Appli_LightPwmValue.PwmGreenValue = PwmValueMapping(Appli_RGBParam[elementIndex].Green_Value ,0xFFFF ,0x00); 
   Appli_LightPwmValue.PwmBlueValue = PwmValueMapping(Appli_RGBParam[elementIndex].Blue_Value ,0xFFFF ,0x00); 
   
-  /* when HSL is set, make CTL pwm will bw zero */
+  TRACE_M(TF_SERIAL_CTRL,"Red Value: %04hx\n\r",Appli_LightPwmValue.PwmRedValue);
+  TRACE_M(TF_SERIAL_CTRL,"Green Value: %04hx\n\r",Appli_LightPwmValue.PwmGreenValue);
+  TRACE_M(TF_SERIAL_CTRL,"Blue Value: %04hx\n\r",Appli_LightPwmValue.PwmBlueValue);
+  
+/* when HSL is set, make CTL pwm will bw zero */
   Ctl_LedOffState();
   
   Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
-  /* set the flag value for NVM store */
+	
   NvmStatePowerFlag_Set(LIGHT_HSL_NVM_FLAG, elementIndex);
+    
+  TRACE_M(TF_LIGHT,"Appli_Light_Hsl_Set callback received for elementIndex %d \r\n", elementIndex); 
     
   return MOBLE_RESULT_SUCCESS;
 } 
@@ -998,66 +537,6 @@ MOBLE_RESULT Appli_Light_Hsl_Set(Light_HslStatus_t* pLight_HslParam,
 /******************************************************************************/
 #endif     /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL */
 /******************************************************************************/
-
-/**                                                  
-* @brief  Appli_Light_Hsl_Status: This function is callback for Application
-*         when Light HSL status message is received
-* @param  pHsl_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Light_Hsl_Status(MOBLEUINT8 const *pHsl_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-
-  TRACE_M(TF_LIGHT,"Light_Hsl_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8278!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if((i == 0) || (i == 2) || (i == 4))
-    {
-      value = pHsl_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"HSL Lightness: 0x%x (%d)\n\r",
-              value | pHsl_status[i] << 8,
-              value | pHsl_status[i] << 8);
-    }
-    else if(i == 3)
-    {
-      TRACE_M(TF_LIGHT,"HSL Hue: 0x%x (%d)\n\r",
-              value | pHsl_status[i] << 8,
-              value | pHsl_status[i] << 8);
-    }
-    else if(i == 5)
-    {
-      TRACE_M(TF_LIGHT,"HSL Saturation: 0x%x (%d)\n\r",
-              value | pHsl_status[i] << 8,
-              value | pHsl_status[i] << 8);
-    }
-    else if(i == 6)
-    {
-      TRACE_M(TF_LIGHT,"Remaining Time: 0x%x (%d)\n\r",
-              pHsl_status[i],
-              pHsl_status[i]);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE
@@ -1078,8 +557,7 @@ MOBLE_RESULT Appli_Light_HslHue_Set(Light_HslStatus_t* pLight_HslHueParam,
                                     MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
                                               MOBLEUINT8 elementIndex)
 {
-  TRACE_M(TF_LIGHT,"Light_HslHue_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#826F!\r\n");	
+  TRACE_M(TF_SERIAL_CTRL, "#826F! \n\r");
   
   AppliHslSet[elementIndex].HslHueLightness16 = pLight_HslHueParam->PresentHslHueLightness16; 
   
@@ -1092,9 +570,11 @@ MOBLE_RESULT Appli_Light_HslHue_Set(Light_HslStatus_t* pLight_HslHueParam,
   Ctl_LedOffState();
 
   Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
-  /* set the flag value for NVM store */
+	
   NvmStatePowerFlag_Set(LIGHT_HSL_NVM_FLAG, elementIndex);
     
+  TRACE_M(TF_LIGHT,"Appli_Light_HslHue_Set callback received for elementIndex %d \r\n", elementIndex);
+  
   return MOBLE_RESULT_SUCCESS;
    
 }
@@ -1102,60 +582,6 @@ MOBLE_RESULT Appli_Light_HslHue_Set(Light_HslStatus_t* pLight_HslHueParam,
 /******************************************************************************/
 #endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_HUE */
 /******************************************************************************/
-
-/**                                                  
-* @brief  Appli_Light_HslHue_Status: This function is callback for Application
-*         when Light HSL HUE status message is received
-* @param  pHslHue_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Light_HslHue_Status(MOBLEUINT8 const *pHslHue_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_HslHue_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8271!\r\n");
-    
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if((i == 0) || (i == 2))
-    {
-      value = pHslHue_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Present Hue: 0x%x (%d)\n\r",
-              value | pHslHue_status[i] << 8,
-              value | pHslHue_status[i] << 8);
-    }
-    else if(i == 3)
-    {
-      TRACE_M(TF_LIGHT,"Target Hue: 0x%x (%d)\n\r",
-              value | pHslHue_status[i] << 8,
-              value | pHslHue_status[i] << 8);
-    }
-    else if(i == 4)
-    {
-      TRACE_M(TF_LIGHT,"Remaining Time: 0x%x (%d)\n\r",
-              pHslHue_status[i],
-              pHslHue_status[i]);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-} 
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION
@@ -1176,8 +602,7 @@ MOBLE_RESULT Appli_Light_HslSaturation_Set(Light_HslStatus_t* pLight_HslSaturati
                                            MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
                                               MOBLEUINT8 elementIndex)
 {
-  TRACE_M(TF_LIGHT,"Appli_Light_HslSaturation_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8273!\r\n");	
+  TRACE_M(TF_SERIAL_CTRL,"#8273! \n\r");
   
   AppliHslSet[elementIndex].HslSaturation16 = pLight_HslSaturationParam->PresentHslSaturation16;
   
@@ -1190,8 +615,10 @@ MOBLE_RESULT Appli_Light_HslSaturation_Set(Light_HslStatus_t* pLight_HslSaturati
   Ctl_LedOffState();
 
   Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
-  /* set the flag value for NVM store */
+	
   NvmStatePowerFlag_Set(LIGHT_HSL_NVM_FLAG, elementIndex);
+    
+  TRACE_M(TF_LIGHT,"Appli_Light_HslSaturation_Set callback received for elementIndex %d \r\n", elementIndex);
     
   return MOBLE_RESULT_SUCCESS;
 } 
@@ -1199,60 +626,6 @@ MOBLE_RESULT Appli_Light_HslSaturation_Set(Light_HslStatus_t* pLight_HslSaturati
 /******************************************************************************/
 #endif   /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SATURATION */
 /******************************************************************************/
-
-/**                                                  
-* @brief  Appli_Light_HslSaturation_Status: This function is callback for Application
-*         when Light HSL Saturation status message is received
-* @param  pHslSaturation_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Light_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_HslSaturation_Status callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#8275!\r\n");
-  
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if((i == 0) || (i == 2))
-    {
-      value = pHslSaturation_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Present Saturation: 0x%x (%d)\n\r",
-              value | pHslSaturation_status[i] << 8,
-              value | pHslSaturation_status[i] << 8);
-    }
-    else if(i == 3)
-    {
-      TRACE_M(TF_LIGHT,"Target Saturation: 0x%x (%d)\n\r",
-              value | pHslSaturation_status[i] << 8,
-              value | pHslSaturation_status[i] << 8);
-    }
-    else if(i == 4)
-    {
-      TRACE_M(TF_LIGHT,"Remaining Time: 0x%x (%d)\n\r",
-              pHslSaturation_status[i],
-              pHslSaturation_status[i]);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP
@@ -1269,16 +642,15 @@ MOBLE_RESULT Appli_Light_HslSaturation_Status(MOBLEUINT8 const *pHslSaturation_s
 *                     is elementNumber-1
 * @retval MOBLE_RESULT
 */ 
-MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslStatus_t* pLight_HslDefaultParam,
+MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslDefaultParam_t* pLight_HslDefaultParam,
                                         MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
+                                        MOBLEUINT8 elementIndex)
 {
-  TRACE_M(TF_LIGHT,"Appli_Light_HslDefault_Set callback received for element %d \r\n", elementIndex);
-  TRACE_M(TF_SERIAL_CTRL,"#827F!\r\n");	
+  TRACE_M(TF_SERIAL_CTRL,"#827F! \n\r");
   
-  Appli_HslDefaultSet[elementIndex].HslDefaultLightness16 = pLight_HslDefaultParam->PresentHslLightness16;
-  Appli_HslDefaultSet[elementIndex].HslDefaultHueLightness16 = pLight_HslDefaultParam->PresentHslHueLightness16;
-  Appli_HslDefaultSet[elementIndex].HslDefaultSaturation16 = pLight_HslDefaultParam->PresentHslSaturation16;  
+  Appli_HslDefaultSet[elementIndex].HslDefaultLightness16 = pLight_HslDefaultParam->HslLightnessDefault16;
+  Appli_HslDefaultSet[elementIndex].HslDefaultHueLightness16 = pLight_HslDefaultParam->HslHueDefault16;
+  Appli_HslDefaultSet[elementIndex].HslDefaultSaturation16 = pLight_HslDefaultParam->HslSaturationDefault16;
   
   AppliHslSet[elementIndex].HslLightness16 = Appli_HslDefaultSet[elementIndex].HslDefaultLightness16;
   AppliHslSet[elementIndex].HslHueLightness16 = Appli_HslDefaultSet[elementIndex].HslDefaultHueLightness16;
@@ -1293,8 +665,10 @@ MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslStatus_t* pLight_HslDefaultPara
   Ctl_LedOffState();
 
   Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
-  /* set the flag value for NVM store */
+	
   NvmStatePowerFlag_Set(LIGHT_HSL_NVM_FLAG, elementIndex);
+    
+  TRACE_M(TF_LIGHT,"Appli_Light_HslDefault_Set callback received for elementIndex %d \r\n", elementIndex);
     
   return MOBLE_RESULT_SUCCESS;
 } 
@@ -1302,56 +676,6 @@ MOBLE_RESULT Appli_Light_HslDefault_Set(Light_HslStatus_t* pLight_HslDefaultPara
 /******************************************************************************/
 #endif    /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP */
 /******************************************************************************/
-              
-/**                                                  
-* @brief  Appli_Light_HslDefault_Status: This function is callback for Application
-*          when Light HSL Default status  message is received
-* @param  pHslDefault_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Light_HslDefault_Status(MOBLEUINT8 const *pHslDefault_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_HslDefault_Status callback received for element %d \r\n", elementIndex);  
-  TRACE_M(TF_SERIAL_CTRL,"#827C!\r\n");
-
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if((i == 0) || (i == 2) || (i == 4))
-    {
-      value = pHslDefault_status[i];
-    }
-    else if(i == 1)
-    {
-      TRACE_M(TF_LIGHT,"Lightness: 0x%x (%d)\n\r",
-              value | pHslDefault_status[i] << 8,
-              value | pHslDefault_status[i] << 8);
-    }
-    else if(i == 3)
-    {
-      TRACE_M(TF_LIGHT,"Hue: 0x%x (%d)\n\r",
-              value | pHslDefault_status[i] << 8,
-              value | pHslDefault_status[i] << 8);
-    }
-    else if(i == 5)
-    {
-      TRACE_M(TF_LIGHT,"Saturation: 0x%x (%d)\n\r",
-              value | pHslDefault_status[i] << 8,
-              value | pHslDefault_status[i] << 8);
-    }
-  }
-#endif
-  
-  return MOBLE_RESULT_SUCCESS;
-}
-
               
 /******************************************************************************/
 #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP
@@ -1368,13 +692,14 @@ MOBLE_RESULT Appli_Light_HslRange_Set(Light_HslRangeParam_t* pLight_HslRangePara
                                       MOBLEUINT8 OptionalValid, MOBLEUINT16 dstPeer, 
                                               MOBLEUINT8 elementIndex)
 {
-  TRACE_M(TF_LIGHT,"Light_HslRange_Set callback received for element %d \r\n", elementIndex);  
-  TRACE_M(TF_SERIAL_CTRL,"#8281!\r\n"); 	
+  TRACE_M(TF_SERIAL_CTRL,"#8281! \n\r");
   
   AppliHslRangeSet[elementIndex].HslHueMinRange16 = pLight_HslRangeParam->HslHueMinRange16;
   AppliHslRangeSet[elementIndex].HslHueMaxRange16 = pLight_HslRangeParam->HslHueMaxRange16;
   AppliHslRangeSet[elementIndex].HslMinSaturation16 = pLight_HslRangeParam->HslMinSaturation16;
   AppliHslRangeSet[elementIndex].HslMaxSaturation16 = pLight_HslRangeParam->HslMaxSaturation16;
+   
+  TRACE_M(TF_LIGHT,"Appli_Light_HslRange_Set callback received for elementIndex %d \r\n", elementIndex);
    
    return MOBLE_RESULT_SUCCESS;
 } 
@@ -1382,73 +707,6 @@ MOBLE_RESULT Appli_Light_HslRange_Set(Light_HslRangeParam_t* pLight_HslRangePara
 /******************************************************************************/
 #endif               /* #ifdef ENABLE_LIGHT_MODEL_SERVER_HSL_SETUP */
 /******************************************************************************/
-
-/**                                                  
-* @brief  Appli_Light_HslRange_Status: This function is callback for Application
-*         when Light HSL range status message is received
-* @param  pHslRange_status: Pointer to the parameters received for message
-* @param  pLength: length of data
-* @param  dstPeer: destination send by peer for this node. It can be a
-*                     unicast or group address 
-* @param  elementIndex: index of the element received from peer for this node which
-*                     is elementNumber-1
-* @retval MOBLE_RESULT
-*/
-MOBLE_RESULT Appli_Light_HslRange_Status(MOBLEUINT8 const *pHslRange_status, MOBLEUINT32 pLength, MOBLEUINT16 dstPeer, 
-                                              MOBLEUINT8 elementIndex)
-{
-#if ( CFG_DEBUG_TRACE != 0 )
-  MOBLEUINT32 i;
-  MOBLEUINT16 value = 0;
-#endif
-  
-  TRACE_M(TF_LIGHT,"Light_HslRange_Status callback received for element %d \r\n", elementIndex); 
-  TRACE_M(TF_SERIAL_CTRL,"#827E!\r\n");
-  
-    
-#if ( CFG_DEBUG_TRACE != 0 )
-  for(i = 0; i < pLength; i++)
-  {
-    if(i == 0)
-    {
-      TRACE_M(TF_LIGHT,"Status Code: 0x%x (%d)\n\r",
-              pHslRange_status[i],
-              pHslRange_status[i]);
-    }
-    else if((i == 1) || (i == 3) || (i == 5) || (i == 7))
-    {
-      value = pHslRange_status[i];
-    }
-    else if(i == 2)
-    {
-      TRACE_M(TF_LIGHT,"Hue Range Min: 0x%x (%d)\n\r",
-              value | pHslRange_status[i] << 8,
-              value | pHslRange_status[i] << 8);
-    }
-    else if(i == 4)
-    {
-      TRACE_M(TF_LIGHT,"Hue Range Max: 0x%x (%d)\n\r",
-              value | pHslRange_status[i] << 8,
-              value | pHslRange_status[i] << 8);
-    }
-    else if(i == 6)
-    {
-      TRACE_M(TF_LIGHT,"Saturation Range Min: 0x%x (%d)\n\r",
-              value | pHslRange_status[i] << 8,
-              value | pHslRange_status[i] << 8);
-    }
-    else if(i == 8)
-    {
-      TRACE_M(TF_LIGHT,"Saturation Range Max: 0x%x (%d)\n\r",
-              value | pHslRange_status[i] << 8,
-              value | pHslRange_status[i] << 8);
-    }
-  }
-#endif
-
-  return MOBLE_RESULT_SUCCESS;
-}
-
 
 
 /*******************************************************************************
@@ -1595,7 +853,6 @@ MOBLE_RESULT Appli_Light_GetCtlLightStatus(MOBLEUINT8* lCtlLightState, MOBLEUINT
   return MOBLE_RESULT_SUCCESS;
 }  
 
-
 /**
 * @brief  Appli_Light_GetCtlTargetStatus: This function is callback for Application
 *         to get the application values in middleware used for target state.
@@ -1618,8 +875,6 @@ MOBLE_RESULT Appli_Light_GetCtlTargetStatus(MOBLEUINT8* lCtlLightState, MOBLEUIN
 
   return MOBLE_RESULT_SUCCESS;
 }  
-
-
 /**
 * @brief  Appli_Light_GetCtlTeperatureStatus: This function is callback for Application
 * to get the application values in middleware used for transition change.
@@ -1722,8 +977,6 @@ MOBLE_RESULT Appli_Light_GetHslStatus(MOBLEUINT8* lHslState, MOBLEUINT16 dstPeer
     
     return MOBLE_RESULT_SUCCESS;
 }  
-  
-
 /**
 * @brief  Appli_Light_GetHslTargetStatus: This function is callback for Application
 *         to get the application values in middleware used for target state.
@@ -1746,8 +999,6 @@ MOBLE_RESULT Appli_Light_GetHslTargetStatus(MOBLEUINT8* lHslState, MOBLEUINT16 d
   
   return MOBLE_RESULT_SUCCESS;
 }  
-
-
 /**
 * @brief  Appli_Light_GetHslHueStatus: This function is callback for Application
 * to get the application values in middleware used for transition change.
@@ -2032,7 +1283,6 @@ void Light_UpdateLedValue(MOBLEUINT8 state ,Appli_LightPwmValue_t light_state)
 #endif
 
 #ifdef USER_BOARD_RGB_LED
-
     Modify_PWM(RED_LED, light_state.PwmRedValue); 
     Modify_PWM(GREEN_LED, light_state.PwmGreenValue); 
     Modify_PWM(BLUE_LED, light_state.PwmBlueValue);  

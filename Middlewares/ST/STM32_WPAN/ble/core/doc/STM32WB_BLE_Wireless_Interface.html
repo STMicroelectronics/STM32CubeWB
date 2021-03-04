@@ -636,16 +636,18 @@ padding-right: 0px;
 }
 
 td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
-</style></head><body><font face="arial"><h1>STM32WB BLE Wireless Interface</h1><p>This document describes the STM32WB BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event</p><p>March 2020 - Rev 1.14 - Removed unused HCI_Data_Buffer_Overflow event; Fixed naming of FW_Error_Type possible values; Fixed pairing status possible values</p><p>March 2020 - Rev 1.15 - Added GAP scan timeout value</p><p>April 2020 - Rev 1.16 - Fixed various format issues; Added LO and SO columns for command and event tables.</p><p>May 2020 - Rev 1.17 - Updated "slave only" stack features; Added comment in HCI_LE_ADVERTISING_REPORT_EVENT description.</p><p>June 2020 - Rev 1.18 - Added BO column for command and event tables; Fixed advertising commands description; Fixed various format issues.</p><p>June 2020 - Rev 1.19 - Completed interval possible values for ACI_GAP_SET_DIRECT_CONNECTABLE.</p><p>July 2020 - Rev 1.20 - Added HCI_LE_SET_PRIVACY_MODE.</p><p>July 2020 - Rev 1.21 - Updated "beacon only" stack features.</p><p>September 2020 - Rev 1.22 - Fixed various minor issues.</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><p>Note: in the command tables, a "Y" in the "LO" (resp. "SO" or "BO") column, means that the corresponding command applies to the "Link Layer Only" (resp. "Slave Only" or "Beacon Only") variant of the BLE stack.</p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Command</th><th>Opcode</th><th>LO</th><th>SO</th><th>BO</th></tr>
+</style></head><body><font face="arial"><h1>STM32WB BLE Wireless Interface</h1><p>This document describes the STM32WB BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event</p><p>March 2020 - Rev 1.14 - Removed unused HCI_Data_Buffer_Overflow event; Fixed naming of FW_Error_Type possible values; Fixed pairing status possible values</p><p>March 2020 - Rev 1.15 - Added GAP scan timeout value</p><p>April 2020 - Rev 1.16 - Fixed various format issues; Added LO and PO columns for command and event tables.</p><p>May 2020 - Rev 1.17 - Updated PO stack features; Added comment in HCI_LE_ADVERTISING_REPORT_EVENT description.</p><p>June 2020 - Rev 1.18 - Added BO column for command and event tables; Fixed advertising commands description; Fixed various format issues.</p><p>June 2020 - Rev 1.19 - Completed interval possible values for ACI_GAP_SET_DIRECT_CONNECTABLE.</p><p>July 2020 - Rev 1.20 - Added HCI_LE_SET_PRIVACY_MODE.</p><p>July 2020 - Rev 1.21 - Updated "beacon only" stack features.</p><p>September 2020 - Rev 1.22 - Fixed various minor issues.</p><p>November 2020 - Rev 1.23 - Added connection-oriented channels feature; Added HCI_LE_READ_TRANSMIT_POWER; Updated PO variant.</p><p>December 2020 - Rev 1.24 - Added BF column for command and event tables.</p><p>January 2021 - Rev 1.25 - Added Link_Status possible values.</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><p>Note: in the command tables, a "Y" in the "BF", "PO", "LO" or "BO" column, means that the corresponding command applies to the "Basic Features", "Peripheral Only", "Link Layer Only" or "Beacon Only" variant of the BLE stack, respectively.</p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h2></h2><table width="800" border="1" class="reference">
+<tr><th>Command</th><th>Opcode</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#HCI_DISCONNECT_anchor">HCI_DISCONNECT</a></td><td><p>0x0406</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_READ_REMOTE_VERSION_INFORMATION_anchor">HCI_READ_REMOTE_VERSION_INFORMATION</a></td><td><p>0x041D</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_SET_EVENT_MASK_anchor">HCI_SET_EVENT_MASK</a></td><td><p>0x0C01</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
@@ -654,36 +656,38 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_READ_TRANSMIT_POWER_LEVEL_anchor">HCI_READ_TRANSMIT_POWER_LEVEL</a></td><td><p>0x0C2D</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL_anchor">HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL</a></td><td><p>0x0C31</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_HOST_BUFFER_SIZE_anchor">HCI_HOST_BUFFER_SIZE</a></td><td><p>0x0C33</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_HOST_NUMBER_OF_COMPLETED_PACKETS_anchor">HCI_HOST_NUMBER_OF_COMPLETED_PACKETS</a></td><td><p>0x0C35</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_READ_LOCAL_VERSION_INFORMATION_anchor">HCI_READ_LOCAL_VERSION_INFORMATION</a></td><td><p>0x1001</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_READ_LOCAL_SUPPORTED_COMMANDS_anchor">HCI_READ_LOCAL_SUPPORTED_COMMANDS</a></td><td><p>0x1002</p>
-</td><td><p>Y</p>
-</td><td><p>Y</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_READ_LOCAL_SUPPORTED_FEATURES_anchor">HCI_READ_LOCAL_SUPPORTED_FEATURES</a></td><td><p>0x1003</p>
-</td><td><p>Y</p>
-</td><td><p>Y</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_READ_BD_ADDR_anchor">HCI_READ_BD_ADDR</a></td><td><p>0x1009</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
@@ -692,171 +696,184 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_EVENT_MASK_anchor">HCI_LE_SET_EVENT_MASK</a></td><td><p>0x2001</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_READ_BUFFER_SIZE_anchor">HCI_LE_READ_BUFFER_SIZE</a></td><td><p>0x2002</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_READ_LOCAL_SUPPORTED_FEATURES_anchor">HCI_LE_READ_LOCAL_SUPPORTED_FEATURES</a></td><td><p>0x2003</p>
-</td><td><p>Y</p>
-</td><td><p>Y</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_RANDOM_ADDRESS_anchor">HCI_LE_SET_RANDOM_ADDRESS</a></td><td><p>0x2005</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_ADVERTISING_PARAMETERS_anchor">HCI_LE_SET_ADVERTISING_PARAMETERS</a></td><td><p>0x2006</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_READ_ADVERTISING_CHANNEL_TX_POWER_anchor">HCI_LE_READ_ADVERTISING_CHANNEL_TX_POWER</a></td><td><p>0x2007</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_ADVERTISING_DATA_anchor">HCI_LE_SET_ADVERTISING_DATA</a></td><td><p>0x2008</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_SCAN_RESPONSE_DATA_anchor">HCI_LE_SET_SCAN_RESPONSE_DATA</a></td><td><p>0x2009</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_ADVERTISE_ENABLE_anchor">HCI_LE_SET_ADVERTISE_ENABLE</a></td><td><p>0x200A</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_SCAN_PARAMETERS_anchor">HCI_LE_SET_SCAN_PARAMETERS</a></td><td><p>0x200B</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_SCAN_ENABLE_anchor">HCI_LE_SET_SCAN_ENABLE</a></td><td><p>0x200C</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_CREATE_CONNECTION_anchor">HCI_LE_CREATE_CONNECTION</a></td><td><p>0x200D</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_CREATE_CONNECTION_CANCEL_anchor">HCI_LE_CREATE_CONNECTION_CANCEL</a></td><td><p>0x200E</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_WHITE_LIST_SIZE_anchor">HCI_LE_READ_WHITE_LIST_SIZE</a></td><td><p>0x200F</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_CLEAR_WHITE_LIST_anchor">HCI_LE_CLEAR_WHITE_LIST</a></td><td><p>0x2010</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_ADD_DEVICE_TO_WHITE_LIST_anchor">HCI_LE_ADD_DEVICE_TO_WHITE_LIST</a></td><td><p>0x2011</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_REMOVE_DEVICE_FROM_WHITE_LIST_anchor">HCI_LE_REMOVE_DEVICE_FROM_WHITE_LIST</a></td><td><p>0x2012</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_CONNECTION_UPDATE_anchor">HCI_LE_CONNECTION_UPDATE</a></td><td><p>0x2013</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_SET_HOST_CHANNEL_CLASSIFICATION_anchor">HCI_LE_SET_HOST_CHANNEL_CLASSIFICATION</a></td><td><p>0x2014</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_CHANNEL_MAP_anchor">HCI_LE_READ_CHANNEL_MAP</a></td><td><p>0x2015</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_REMOTE_FEATURES_anchor">HCI_LE_READ_REMOTE_FEATURES</a></td><td><p>0x2016</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_ENCRYPT_anchor">HCI_LE_ENCRYPT</a></td><td><p>0x2017</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_RAND_anchor">HCI_LE_RAND</a></td><td><p>0x2018</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_START_ENCRYPTION_anchor">HCI_LE_START_ENCRYPTION</a></td><td><p>0x2019</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_LONG_TERM_KEY_REQUEST_REPLY_anchor">HCI_LE_LONG_TERM_KEY_REQUEST_REPLY</a></td><td><p>0x201A</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_LONG_TERM_KEY_REQUESTED_NEGATIVE_REPLY_anchor">HCI_LE_LONG_TERM_KEY_REQUESTED_NEGATIVE_REPLY</a></td><td><p>0x201B</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_SUPPORTED_STATES_anchor">HCI_LE_READ_SUPPORTED_STATES</a></td><td><p>0x201C</p>
-</td><td><p>Y</p>
-</td><td><p>Y</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_DATA_LENGTH_anchor">HCI_LE_SET_DATA_LENGTH</a></td><td><p>0x2022</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_SUGGESTED_DEFAULT_DATA_LENGTH_anchor">HCI_LE_READ_SUGGESTED_DEFAULT_DATA_LENGTH</a></td><td><p>0x2023</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_WRITE_SUGGESTED_DEFAULT_DATA_LENGTH_anchor">HCI_LE_WRITE_SUGGESTED_DEFAULT_DATA_LENGTH</a></td><td><p>0x2024</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_anchor">HCI_LE_READ_LOCAL_P256_PUBLIC_KEY</a></td><td><p>0x2025</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_GENERATE_DHKEY_anchor">HCI_LE_GENERATE_DHKEY</a></td><td><p>0x2026</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_ADD_DEVICE_TO_RESOLVING_LIST_anchor">HCI_LE_ADD_DEVICE_TO_RESOLVING_LIST</a></td><td><p>0x2027</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_REMOVE_DEVICE_FROM_RESOLVING_LIST_anchor">HCI_LE_REMOVE_DEVICE_FROM_RESOLVING_LIST</a></td><td><p>0x2028</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_CLEAR_RESOLVING_LIST_anchor">HCI_LE_CLEAR_RESOLVING_LIST</a></td><td><p>0x2029</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_RESOLVING_LIST_SIZE_anchor">HCI_LE_READ_RESOLVING_LIST_SIZE</a></td><td><p>0x202A</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_PEER_RESOLVABLE_ADDRESS_anchor">HCI_LE_READ_PEER_RESOLVABLE_ADDRESS</a></td><td><p>0x202B</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_LOCAL_RESOLVABLE_ADDRESS_anchor">HCI_LE_READ_LOCAL_RESOLVABLE_ADDRESS</a></td><td><p>0x202C</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_SET_ADDRESS_RESOLUTION_ENABLE_anchor">HCI_LE_SET_ADDRESS_RESOLUTION_ENABLE</a></td><td><p>0x202D</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_anchor">HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT</a></td><td><p>0x202E</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_MAXIMUM_DATA_LENGTH_anchor">HCI_LE_READ_MAXIMUM_DATA_LENGTH</a></td><td><p>0x202F</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_PHY_anchor">HCI_LE_READ_PHY</a></td><td><p>0x2030</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_SET_DEFAULT_PHY_anchor">HCI_LE_SET_DEFAULT_PHY</a></td><td><p>0x2031</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_SET_PHY_anchor">HCI_LE_SET_PHY</a></td><td><p>0x2032</p>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
+<tr><td><a href="#HCI_LE_READ_TRANSMIT_POWER_anchor">HCI_LE_READ_TRANSMIT_POWER</a></td><td><p>0x204B</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td></tr>
 <tr><td><a href="#HCI_LE_SET_PRIVACY_MODE_anchor">HCI_LE_SET_PRIVACY_MODE</a></td><td><p>0x204E</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 </table><h2><a name="HCI_DISCONNECT_anchor">HCI_DISCONNECT</a></h2><h3>Description</h3><p>The <a href="#HCI_DISCONNECT_anchor">HCI_DISCONNECT</a> is used to terminate an existing connection. The Connection_Handle command parameter indicates which connection is to be disconnected. The Reason command parameter indicates the reason for ending the connection. The remote Controller will receive the Reason command parameter in the <a href="#HCI_DISCONNECTION_COMPLETE_EVENT_anchor">HCI_DISCONNECTION_COMPLETE_EVENT</a> event. All synchronous connections on a physical link should be disconnected before the ACL connection on the same physical connection is disconnected.<br>(See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.1.6)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
@@ -1904,7 +1921,21 @@ Default: N= 0x0384 (900 secs or 15 minutes)</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_PHY_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_PHY_UPDATE_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_PRIVACY_MODE_anchor">HCI_LE_SET_PRIVACY_MODE</a></h2><h3>Description</h3><p>This command is used to allow the Host to specify the privacy mode to be used for a given entry on the resolving list.<br>(See Bluetooth Specification v.5.0 [Vol 2] Part E, Section 7.8.77)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#HCI_LE_PHY_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_PHY_UPDATE_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_READ_TRANSMIT_POWER_anchor">HCI_LE_READ_TRANSMIT_POWER</a></h2><h3>Description</h3><p>This command is used to read the minimum and maximum transmit powers supported by the Controller.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+<tr><td><p>Min_TX_Power</p>
+</td><td><p>1</p>
+</td><td><p>Signed integer. Units: dBm</p>
+</td><td><li>-127 ... 20</li></td></tr>
+<tr><td><p>Max_TX_Power</p>
+</td><td><p>1</p>
+</td><td><p>Signed integer. Units: dBm</p>
+</td><td><li>-127 ... 20</li></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_LE_SET_PRIVACY_MODE_anchor">HCI_LE_SET_PRIVACY_MODE</a></h2><h3>Description</h3><p>This command is used to allow the Host to specify the privacy mode to be used for a given entry on the resolving list.<br>(See Bluetooth Specification v.5.0 [Vol 2] Part E, Section 7.8.77)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Peer_Identity_Address_Type</p>
 </td><td><p>1</p>
@@ -1925,28 +1956,28 @@ Default: N= 0x0384 (900 secs or 15 minutes)</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI TESTING commands_anchor">HCI TESTING commands</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Command</th><th>Opcode</th><th>LO</th><th>SO</th><th>BO</th></tr>
+<tr><th>Command</th><th>Opcode</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#HCI_LE_RECEIVER_TEST_anchor">HCI_LE_RECEIVER_TEST</a></td><td><p>0x201D</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_TRANSMITTER_TEST_anchor">HCI_LE_TRANSMITTER_TEST</a></td><td><p>0x201E</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_TEST_END_anchor">HCI_LE_TEST_END</a></td><td><p>0x201F</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_ENHANCED_RECEIVER_TEST_anchor">HCI_LE_ENHANCED_RECEIVER_TEST</a></td><td><p>0x2033</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#HCI_LE_ENHANCED_TRANSMITTER_TEST_anchor">HCI_LE_ENHANCED_TRANSMITTER_TEST</a></td><td><p>0x2034</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 </table><h2><a name="HCI_LE_RECEIVER_TEST_anchor">HCI_LE_RECEIVER_TEST</a></h2><h3>Description</h3><p>This command is used to start a test where the DUT receives test reference packets at a fixed interval. The tester generates the test reference packets.<br>(See Bluetooth Specification v.5.0, Vol. 2, Part E, 7.8.28)</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>RX_Frequency</p>
@@ -2038,8 +2069,9 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI HAL commands_anchor">ACI HAL commands</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Command</th><th>Opcode</th><th>LO</th><th>SO</th><th>BO</th></tr>
+<tr><th>Command</th><th>Opcode</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#ACI_HAL_GET_FW_BUILD_NUMBER_anchor">ACI_HAL_GET_FW_BUILD_NUMBER</a></td><td><p>0xFC00</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
@@ -2048,8 +2080,10 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#ACI_HAL_READ_CONFIG_DATA_anchor">ACI_HAL_READ_CONFIG_DATA</a></td><td><p>0xFC0D</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
@@ -2058,59 +2092,61 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#ACI_HAL_LE_TX_TEST_PACKET_NUMBER_anchor">ACI_HAL_LE_TX_TEST_PACKET_NUMBER</a></td><td><p>0xFC14</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#ACI_HAL_TONE_START_anchor">ACI_HAL_TONE_START</a></td><td><p>0xFC15</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#ACI_HAL_TONE_STOP_anchor">ACI_HAL_TONE_STOP</a></td><td><p>0xFC16</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#ACI_HAL_GET_LINK_STATUS_anchor">ACI_HAL_GET_LINK_STATUS</a></td><td><p>0xFC17</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#ACI_HAL_SET_RADIO_ACTIVITY_MASK_anchor">ACI_HAL_SET_RADIO_ACTIVITY_MASK</a></td><td><p>0xFC18</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#ACI_HAL_GET_ANCHOR_PERIOD_anchor">ACI_HAL_GET_ANCHOR_PERIOD</a></td><td><p>0xFC19</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
-<tr><td><a href="#ACI_HAL_SET_EVENT_MASK_anchor">ACI_HAL_SET_EVENT_MASK</a></td><td><p>0xFC1A</p>
-</td><td></td><td></td><td></td></tr>
-<tr><td><a href="#ACI_HAL_SET_SMP_ENG_CONFIG_anchor">ACI_HAL_SET_SMP_ENG_CONFIG</a></td><td><p>0xFC1B</p>
-</td><td></td><td><p>Y</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td></td></tr>
+<tr><td><a href="#ACI_HAL_SET_EVENT_MASK_anchor">ACI_HAL_SET_EVENT_MASK</a></td><td><p>0xFC1A</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_HAL_SET_SMP_ENG_CONFIG_anchor">ACI_HAL_SET_SMP_ENG_CONFIG</a></td><td><p>0xFC1B</p>
+</td><td></td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_HAL_GET_PM_DEBUG_INFO_anchor">ACI_HAL_GET_PM_DEBUG_INFO</a></td><td><p>0xFC1C</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#ACI_HAL_READ_RADIO_REG_anchor">ACI_HAL_READ_RADIO_REG</a></td><td><p>0xFC30</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#ACI_HAL_WRITE_RADIO_REG_anchor">ACI_HAL_WRITE_RADIO_REG</a></td><td><p>0xFC31</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#ACI_HAL_READ_RAW_RSSI_anchor">ACI_HAL_READ_RAW_RSSI</a></td><td><p>0xFC32</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#ACI_HAL_RX_START_anchor">ACI_HAL_RX_START</a></td><td><p>0xFC33</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#ACI_HAL_RX_STOP_anchor">ACI_HAL_RX_STOP</a></td><td><p>0xFC34</p>
-</td><td><p>Y</p>
+</td><td></td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#ACI_HAL_STACK_RESET_anchor">ACI_HAL_STACK_RESET</a></td><td><p>0xFC3B</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
@@ -2236,7 +2272,7 @@ frequency deviation (250kHz).</p>
 <tr><td><p>Link_Status</p>
 </td><td><p>8</p>
 </td><td><p>Array of link status (8 links). Each link status is 1 byte.</p>
-</td><td></tr>
+</td><td><li>0x00: Idle</li><li>0x01: Advertising</li><li>0x02: Connected in slave role</li><li>0x03: Scanning</li><li>0x04: Reserved</li><li>0x05: Connected in master role</li><li>0x06: TX test mode</li><li>0x07: RX test mode</li></td></tr>
 <tr><td><p>Link_Connection_Handle</p>
 </td><td><p>16</p>
 </td><td><p>Array of connection handles (2 bytes) for 8 links.</p>
@@ -2381,120 +2417,162 @@ frequency deviation (250kHz).</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI GAP commands_anchor">ACI GAP commands</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Command</th><th>Opcode</th><th>LO</th><th>SO</th><th>BO</th></tr>
+<tr><th>Command</th><th>Opcode</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#ACI_GAP_SET_NON_DISCOVERABLE_anchor">ACI_GAP_SET_NON_DISCOVERABLE</a></td><td><p>0xFC81</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_LIMITED_DISCOVERABLE_anchor">ACI_GAP_SET_LIMITED_DISCOVERABLE</a></td><td><p>0xFC82</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_DISCOVERABLE_anchor">ACI_GAP_SET_DISCOVERABLE</a></td><td><p>0xFC83</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_DIRECT_CONNECTABLE_anchor">ACI_GAP_SET_DIRECT_CONNECTABLE</a></td><td><p>0xFC84</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_IO_CAPABILITY_anchor">ACI_GAP_SET_IO_CAPABILITY</a></td><td><p>0xFC85</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_AUTHENTICATION_REQUIREMENT_anchor">ACI_GAP_SET_AUTHENTICATION_REQUIREMENT</a></td><td><p>0xFC86</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_AUTHORIZATION_REQUIREMENT_anchor">ACI_GAP_SET_AUTHORIZATION_REQUIREMENT</a></td><td><p>0xFC87</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_PASS_KEY_RESP_anchor">ACI_GAP_PASS_KEY_RESP</a></td><td><p>0xFC88</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_AUTHORIZATION_RESP_anchor">ACI_GAP_AUTHORIZATION_RESP</a></td><td><p>0xFC89</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_INIT_anchor">ACI_GAP_INIT</a></td><td><p>0xFC8A</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_NON_CONNECTABLE_anchor">ACI_GAP_SET_NON_CONNECTABLE</a></td><td><p>0xFC8B</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_UNDIRECTED_CONNECTABLE_anchor">ACI_GAP_SET_UNDIRECTED_CONNECTABLE</a></td><td><p>0xFC8C</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SLAVE_SECURITY_REQ_anchor">ACI_GAP_SLAVE_SECURITY_REQ</a></td><td><p>0xFC8D</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_UPDATE_ADV_DATA_anchor">ACI_GAP_UPDATE_ADV_DATA</a></td><td><p>0xFC8E</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_DELETE_AD_TYPE_anchor">ACI_GAP_DELETE_AD_TYPE</a></td><td><p>0xFC8F</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_GET_SECURITY_LEVEL_anchor">ACI_GAP_GET_SECURITY_LEVEL</a></td><td><p>0xFC90</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_EVENT_MASK_anchor">ACI_GAP_SET_EVENT_MASK</a></td><td><p>0xFC91</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_CONFIGURE_WHITELIST_anchor">ACI_GAP_CONFIGURE_WHITELIST</a></td><td><p>0xFC92</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_TERMINATE_anchor">ACI_GAP_TERMINATE</a></td><td><p>0xFC93</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_CLEAR_SECURITY_DB_anchor">ACI_GAP_CLEAR_SECURITY_DB</a></td><td><p>0xFC94</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_ALLOW_REBOND_anchor">ACI_GAP_ALLOW_REBOND</a></td><td><p>0xFC95</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_START_LIMITED_DISCOVERY_PROC_anchor">ACI_GAP_START_LIMITED_DISCOVERY_PROC</a></td><td><p>0xFC96</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_START_GENERAL_DISCOVERY_PROC_anchor">ACI_GAP_START_GENERAL_DISCOVERY_PROC</a></td><td><p>0xFC97</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_START_NAME_DISCOVERY_PROC_anchor">ACI_GAP_START_NAME_DISCOVERY_PROC</a></td><td><p>0xFC98</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_START_AUTO_CONNECTION_ESTABLISH_PROC_anchor">ACI_GAP_START_AUTO_CONNECTION_ESTABLISH_PROC</a></td><td><p>0xFC99</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_START_GENERAL_CONNECTION_ESTABLISH_PROC_anchor">ACI_GAP_START_GENERAL_CONNECTION_ESTABLISH_PROC</a></td><td><p>0xFC9A</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_START_SELECTIVE_CONNECTION_ESTABLISH_PROC_anchor">ACI_GAP_START_SELECTIVE_CONNECTION_ESTABLISH_PROC</a></td><td><p>0xFC9B</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_CREATE_CONNECTION_anchor">ACI_GAP_CREATE_CONNECTION</a></td><td><p>0xFC9C</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_TERMINATE_GAP_PROC_anchor">ACI_GAP_TERMINATE_GAP_PROC</a></td><td><p>0xFC9D</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_START_CONNECTION_UPDATE_anchor">ACI_GAP_START_CONNECTION_UPDATE</a></td><td><p>0xFC9E</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SEND_PAIRING_REQ_anchor">ACI_GAP_SEND_PAIRING_REQ</a></td><td><p>0xFC9F</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_RESOLVE_PRIVATE_ADDR_anchor">ACI_GAP_RESOLVE_PRIVATE_ADDR</a></td><td><p>0xFCA0</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_BROADCAST_MODE_anchor">ACI_GAP_SET_BROADCAST_MODE</a></td><td><p>0xFCA1</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_START_OBSERVATION_PROC_anchor">ACI_GAP_START_OBSERVATION_PROC</a></td><td><p>0xFCA2</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_GET_BONDED_DEVICES_anchor">ACI_GAP_GET_BONDED_DEVICES</a></td><td><p>0xFCA3</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_IS_DEVICE_BONDED_anchor">ACI_GAP_IS_DEVICE_BONDED</a></td><td><p>0xFCA4</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_NUMERIC_COMPARISON_VALUE_CONFIRM_YESNO_anchor">ACI_GAP_NUMERIC_COMPARISON_VALUE_CONFIRM_YESNO</a></td><td><p>0xFCA5</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_PASSKEY_INPUT_anchor">ACI_GAP_PASSKEY_INPUT</a></td><td><p>0xFCA6</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_GET_OOB_DATA_anchor">ACI_GAP_GET_OOB_DATA</a></td><td><p>0xFCA7</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SET_OOB_DATA_anchor">ACI_GAP_SET_OOB_DATA</a></td><td><p>0xFCA8</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_ADD_DEVICES_TO_RESOLVING_LIST_anchor">ACI_GAP_ADD_DEVICES_TO_RESOLVING_LIST</a></td><td><p>0xFCA9</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_REMOVE_BONDED_DEVICE_anchor">ACI_GAP_REMOVE_BONDED_DEVICE</a></td><td><p>0xFCAA</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 </table><h2><a name="ACI_GAP_SET_NON_DISCOVERABLE_anchor">ACI_GAP_SET_NON_DISCOVERABLE</a></h2><h3>Description</h3><p>Put the device in non-discoverable mode. This command disables the LL advertising.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -3694,115 +3772,160 @@ Time = N * 0.625 msec.</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Command</th><th>Opcode</th><th>LO</th><th>SO</th><th>BO</th></tr>
+<tr><th>Command</th><th>Opcode</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#ACI_GATT_INIT_anchor">ACI_GATT_INIT</a></td><td><p>0xFD01</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_ADD_SERVICE_anchor">ACI_GATT_ADD_SERVICE</a></td><td><p>0xFD02</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_INCLUDE_SERVICE_anchor">ACI_GATT_INCLUDE_SERVICE</a></td><td><p>0xFD03</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_ADD_CHAR_anchor">ACI_GATT_ADD_CHAR</a></td><td><p>0xFD04</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_ADD_CHAR_DESC_anchor">ACI_GATT_ADD_CHAR_DESC</a></td><td><p>0xFD05</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_UPDATE_CHAR_VALUE_anchor">ACI_GATT_UPDATE_CHAR_VALUE</a></td><td><p>0xFD06</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DEL_CHAR_anchor">ACI_GATT_DEL_CHAR</a></td><td><p>0xFD07</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DEL_SERVICE_anchor">ACI_GATT_DEL_SERVICE</a></td><td><p>0xFD08</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DEL_INCLUDE_SERVICE_anchor">ACI_GATT_DEL_INCLUDE_SERVICE</a></td><td><p>0xFD09</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_SET_EVENT_MASK_anchor">ACI_GATT_SET_EVENT_MASK</a></td><td><p>0xFD0A</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_EXCHANGE_CONFIG_anchor">ACI_GATT_EXCHANGE_CONFIG</a></td><td><p>0xFD0B</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_FIND_INFO_REQ_anchor">ACI_ATT_FIND_INFO_REQ</a></td><td><p>0xFD0C</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_FIND_BY_TYPE_VALUE_REQ_anchor">ACI_ATT_FIND_BY_TYPE_VALUE_REQ</a></td><td><p>0xFD0D</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_READ_BY_TYPE_REQ_anchor">ACI_ATT_READ_BY_TYPE_REQ</a></td><td><p>0xFD0E</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_READ_BY_GROUP_TYPE_REQ_anchor">ACI_ATT_READ_BY_GROUP_TYPE_REQ</a></td><td><p>0xFD0F</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_PREPARE_WRITE_REQ_anchor">ACI_ATT_PREPARE_WRITE_REQ</a></td><td><p>0xFD10</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_EXECUTE_WRITE_REQ_anchor">ACI_ATT_EXECUTE_WRITE_REQ</a></td><td><p>0xFD11</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DISC_ALL_PRIMARY_SERVICES_anchor">ACI_GATT_DISC_ALL_PRIMARY_SERVICES</a></td><td><p>0xFD12</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DISC_PRIMARY_SERVICE_BY_UUID_anchor">ACI_GATT_DISC_PRIMARY_SERVICE_BY_UUID</a></td><td><p>0xFD13</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_FIND_INCLUDED_SERVICES_anchor">ACI_GATT_FIND_INCLUDED_SERVICES</a></td><td><p>0xFD14</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DISC_ALL_CHAR_OF_SERVICE_anchor">ACI_GATT_DISC_ALL_CHAR_OF_SERVICE</a></td><td><p>0xFD15</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DISC_CHAR_BY_UUID_anchor">ACI_GATT_DISC_CHAR_BY_UUID</a></td><td><p>0xFD16</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DISC_ALL_CHAR_DESC_anchor">ACI_GATT_DISC_ALL_CHAR_DESC</a></td><td><p>0xFD17</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_CHAR_VALUE_anchor">ACI_GATT_READ_CHAR_VALUE</a></td><td><p>0xFD18</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_USING_CHAR_UUID_anchor">ACI_GATT_READ_USING_CHAR_UUID</a></td><td><p>0xFD19</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_LONG_CHAR_VALUE_anchor">ACI_GATT_READ_LONG_CHAR_VALUE</a></td><td><p>0xFD1A</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_MULTIPLE_CHAR_VALUE_anchor">ACI_GATT_READ_MULTIPLE_CHAR_VALUE</a></td><td><p>0xFD1B</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_WRITE_CHAR_VALUE_anchor">ACI_GATT_WRITE_CHAR_VALUE</a></td><td><p>0xFD1C</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_WRITE_LONG_CHAR_VALUE_anchor">ACI_GATT_WRITE_LONG_CHAR_VALUE</a></td><td><p>0xFD1D</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_WRITE_CHAR_RELIABLE_anchor">ACI_GATT_WRITE_CHAR_RELIABLE</a></td><td><p>0xFD1E</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_WRITE_LONG_CHAR_DESC_anchor">ACI_GATT_WRITE_LONG_CHAR_DESC</a></td><td><p>0xFD1F</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_LONG_CHAR_DESC_anchor">ACI_GATT_READ_LONG_CHAR_DESC</a></td><td><p>0xFD20</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_WRITE_CHAR_DESC_anchor">ACI_GATT_WRITE_CHAR_DESC</a></td><td><p>0xFD21</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_CHAR_DESC_anchor">ACI_GATT_READ_CHAR_DESC</a></td><td><p>0xFD22</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_WRITE_WITHOUT_RESP_anchor">ACI_GATT_WRITE_WITHOUT_RESP</a></td><td><p>0xFD23</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_SIGNED_WRITE_WITHOUT_RESP_anchor">ACI_GATT_SIGNED_WRITE_WITHOUT_RESP</a></td><td><p>0xFD24</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_CONFIRM_INDICATION_anchor">ACI_GATT_CONFIRM_INDICATION</a></td><td><p>0xFD25</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_WRITE_RESP_anchor">ACI_GATT_WRITE_RESP</a></td><td><p>0xFD26</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_ALLOW_READ_anchor">ACI_GATT_ALLOW_READ</a></td><td><p>0xFD27</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_SET_SECURITY_PERMISSION_anchor">ACI_GATT_SET_SECURITY_PERMISSION</a></td><td><p>0xFD28</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_SET_DESC_VALUE_anchor">ACI_GATT_SET_DESC_VALUE</a></td><td><p>0xFD29</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_HANDLE_VALUE_anchor">ACI_GATT_READ_HANDLE_VALUE</a></td><td><p>0xFD2A</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_UPDATE_CHAR_VALUE_EXT_anchor">ACI_GATT_UPDATE_CHAR_VALUE_EXT</a></td><td><p>0xFD2C</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DENY_READ_anchor">ACI_GATT_DENY_READ</a></td><td><p>0xFD2D</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_SET_ACCESS_PERMISSION_anchor">ACI_GATT_SET_ACCESS_PERMISSION</a></td><td><p>0xFD2E</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 </table><h2><a name="ACI_GATT_INIT_anchor">ACI_GATT_INIT</a></h2><h3>Description</h3><p>Initialize the GATT layer for server and client roles. It adds also the GATT service with Service Changed Characteristic. <br>Until this command is issued the GATT channel does not process any commands even if the connection is opened. This command has to be given before using any of the GAP features.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -4873,12 +4996,28 @@ In case of a variable size characteristic, this field specifies the new length o
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI L2CAP commands_anchor">ACI L2CAP commands</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Command</th><th>Opcode</th><th>LO</th><th>SO</th><th>BO</th></tr>
+<tr><th>Command</th><th>Opcode</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ_anchor">ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ</a></td><td><p>0xFD81</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP_anchor">ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP</a></td><td><p>0xFD82</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_CONNECT_anchor">ACI_L2CAP_COC_CONNECT</a></td><td><p>0xFD88</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_CONNECT_CONFIRM_anchor">ACI_L2CAP_COC_CONNECT_CONFIRM</a></td><td><p>0xFD89</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_RECONF_anchor">ACI_L2CAP_COC_RECONF</a></td><td><p>0xFD8A</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_RECONF_CONFIRM_anchor">ACI_L2CAP_COC_RECONF_CONFIRM</a></td><td><p>0xFD8B</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_DISCONNECT_anchor">ACI_L2CAP_COC_DISCONNECT</a></td><td><p>0xFD8C</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_FLOW_CONTROL_anchor">ACI_L2CAP_COC_FLOW_CONTROL</a></td><td><p>0xFD8D</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_TX_DATA_anchor">ACI_L2CAP_COC_TX_DATA</a></td><td><p>0xFD8E</p>
+</td><td></td><td></td><td></td><td></td></tr>
 </table><h2><a name="ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ_anchor">ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ</a></h2><h3>Description</h3><p>Send an L2CAP connection parameter update request from the slave to the master.<br>An <a href="#ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT</a> event is raised when the master responds to the request (accepts or rejects).</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
@@ -4909,7 +5048,7 @@ Time = N * 1.25 msec.</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT</a></li><h2><a name="ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP_anchor">ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP</a></h2><h3>Description</h3><p>Accept or reject a connection update. This command should be sent in response to a <a href="#ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT</a> event from the controller. The accept parameter has to be set if the connection parameters given in the event are acceptable.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT</a></li><li><a href="#ACI_L2CAP_PROC_TIMEOUT_EVENT_anchor">ACI_L2CAP_PROC_TIMEOUT_EVENT</a></li><li><a href="#ACI_L2CAP_COMMAND_REJECT_EVENT_anchor">ACI_L2CAP_COMMAND_REJECT_EVENT</a></li><h2><a name="ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP_anchor">ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP</a></h2><h3>Description</h3><p>Accept or reject a connection update. This command should be sent in response to an <a href="#ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT</a> event from the controller. The accept parameter has to be set if the connection parameters given in the event are acceptable.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -4957,33 +5096,185 @@ Time = N * 0.625 msec.</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h1><a name="HCI/ACI events_anchor">HCI/ACI events</a></h1><p><a href="#HCI events_anchor">HCI events</a></p><p><a href="#HCI LE meta events_anchor">HCI LE meta events</a></p><p><a href="#ACI GAP events_anchor">ACI GAP events</a></p><p><a href="#ACI GATT/ATT events_anchor">ACI GATT/ATT events</a></p><p><a href="#ACI L2CAP events_anchor">ACI L2CAP events</a></p><p><a href="#ACI HAL events_anchor">ACI HAL events</a></p><p>Note: in the event tables, a "Y" in the "LO" (resp. "SO" or "BO") column, means that the corresponding event applies to the "Link Layer Only" (resp. "Slave Only" or "Beacon Only") variant of the BLE stack.</p><h2><a name="HCI events_anchor">HCI events</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Event name</th><th>Event code</th><th>LO</th><th>SO</th><th>BO</th></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_L2CAP_COC_CONNECT_anchor">ACI_L2CAP_COC_CONNECT</a></h2><h3>Description</h3><p>This command sends a Credit Based Connection Request packet on the specified connection. See Bluetooth Core specification Vol.3 Part A.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Connection handle for which the command applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>SPSM</p>
+</td><td><p>2</p>
+</td><td><p>Simplified Protocol/Service Multiplexer.</p>
+</td><td><li>0x0001 ... 0x00FF</li></td></tr>
+<tr><td><p>MTU</p>
+</td><td><p>2</p>
+</td><td><p>Maximum Transmission Unit.</p>
+</td><td><li>23 ... 65535</li></td></tr>
+<tr><td><p>MPS</p>
+</td><td><p>2</p>
+</td><td><p>Maximum payload size (in octets).</p>
+</td><td><li>23 ... 65533</li></td></tr>
+<tr><td><p>Initial_Credits</p>
+</td><td><p>2</p>
+</td><td><p>Number of K-frames that can be received on the created channel(s) by the L2CAP layer entity sending this packet.</p>
+</td><td><li>0 ... 65535</li></td></tr>
+<tr><td><p>Channel_Number</p>
+</td><td><p>1</p>
+</td><td><p>Number of channels to be created. If this parameter is set to 0, it requests the creation of one LE credit based connection-oriented channel. Otherwise, it requests the creation of one or more enhanced credit based connection-oriented channels.</p>
+</td><td><li>0 ... 5</li></td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT_anchor">ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT</a></li><li><a href="#ACI_L2CAP_PROC_TIMEOUT_EVENT_anchor">ACI_L2CAP_PROC_TIMEOUT_EVENT</a></li><li><a href="#ACI_L2CAP_COMMAND_REJECT_EVENT_anchor">ACI_L2CAP_COMMAND_REJECT_EVENT</a></li><h2><a name="ACI_L2CAP_COC_CONNECT_CONFIRM_anchor">ACI_L2CAP_COC_CONNECT_CONFIRM</a></h2><h3>Description</h3><p>This command sends a Credit Based Connection Response packet. It must be used upon receipt of a connection request through an <a href="#ACI_L2CAP_COC_CONNECT_EVENT_anchor">ACI_L2CAP_COC_CONNECT_EVENT</a> event. See Bluetooth Core specification Vol.3 Part A.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Connection handle for which the command applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>MTU</p>
+</td><td><p>2</p>
+</td><td><p>Maximum Transmission Unit.</p>
+</td><td><li>23 ... 65535</li></td></tr>
+<tr><td><p>MPS</p>
+</td><td><p>2</p>
+</td><td><p>Maximum payload size (in octets).</p>
+</td><td><li>23 ... 65533</li></td></tr>
+<tr><td><p>Initial_Credits</p>
+</td><td><p>2</p>
+</td><td><p>Number of K-frames that can be received on the created channel(s) by the L2CAP layer entity sending this packet.</p>
+</td><td><li>0 ... 65535</li></td></tr>
+<tr><td><p>Result</p>
+</td><td><p>2</p>
+</td><td><p>This parameter indicates the outcome of the request. A value of 0x0000 indicates success while a non-zero value indicates the request is refused.</p>
+</td><td><li>0x0000 ... 0x000C</li></td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+<tr><td><p>Channel_Number</p>
+</td><td><p>1</p>
+</td><td><p>Number of created channels. It is the length of Channel_Index_List.</p>
+</td><td><li>0 ... 5</li></td></tr>
+<tr><td><p>Channel_Index_List</p>
+</td><td><p>Channel_Number</p>
+</td><td><p>List of channel indexes for which the primitive applies.</p>
+</td><td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_L2CAP_COC_RECONF_anchor">ACI_L2CAP_COC_RECONF</a></h2><h3>Description</h3><p>This command sends a Credit Based Reconfigure Request packet on the specified connection. See Bluetooth Core specification Vol.3 Part A.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Connection handle for which the command applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>MTU</p>
+</td><td><p>2</p>
+</td><td><p>Maximum Transmission Unit.</p>
+</td><td><li>23 ... 65535</li></td></tr>
+<tr><td><p>MPS</p>
+</td><td><p>2</p>
+</td><td><p>Maximum payload size (in octets).</p>
+</td><td><li>23 ... 65533</li></td></tr>
+<tr><td><p>Channel_Number</p>
+</td><td><p>1</p>
+</td><td><p>Number of created channels. It is the length of Channel_Index_List.</p>
+</td><td><li>1 ... 5</li></td></tr>
+<tr><td><p>Channel_Index_List</p>
+</td><td><p>Channel_Number</p>
+</td><td><p>List of channel indexes for which the primitive applies.</p>
+</td><td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#ACI_L2CAP_COC_RECONF_CONFIRM_EVENT_anchor">ACI_L2CAP_COC_RECONF_CONFIRM_EVENT</a></li><li><a href="#ACI_L2CAP_PROC_TIMEOUT_EVENT_anchor">ACI_L2CAP_PROC_TIMEOUT_EVENT</a></li><li><a href="#ACI_L2CAP_COMMAND_REJECT_EVENT_anchor">ACI_L2CAP_COMMAND_REJECT_EVENT</a></li><h2><a name="ACI_L2CAP_COC_RECONF_CONFIRM_anchor">ACI_L2CAP_COC_RECONF_CONFIRM</a></h2><h3>Description</h3><p>This command sends a Credit Based Reconfigure Response packet. It must be used upon receipt of a Credit Based Reconfigure Request through an <a href="#ACI_L2CAP_COC_RECONF_EVENT_anchor">ACI_L2CAP_COC_RECONF_EVENT</a> event. See Bluetooth Core specification Vol.3 Part A.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Connection handle for which the command applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>Result</p>
+</td><td><p>2</p>
+</td><td><p>This parameter indicates the outcome of the request. A value of 0x0000 indicates success while a non-zero value indicates the request is refused.</p>
+</td><td><li>0x0000 ... 0x000C</li></td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_L2CAP_COC_DISCONNECT_anchor">ACI_L2CAP_COC_DISCONNECT</a></h2><h3>Description</h3><p>This command sends a Disconnection Request signaling packet on the specified connection-oriented channel. See Bluetooth Core specification Vol.3 Part A.<br>The <a href="#ACI_L2CAP_COC_DISCONNECT_EVENT_anchor">ACI_L2CAP_COC_DISCONNECT_EVENT</a> event is received when the disconnection of the channel is effective.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Channel_Index</p>
+</td><td><p>1</p>
+</td><td><p>Index of the connection-oriented channel for which the primitive applies.</p>
+</td><td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#ACI_L2CAP_COC_DISCONNECT_EVENT_anchor">ACI_L2CAP_COC_DISCONNECT_EVENT</a></li><li><a href="#ACI_L2CAP_PROC_TIMEOUT_EVENT_anchor">ACI_L2CAP_PROC_TIMEOUT_EVENT</a></li><li><a href="#ACI_L2CAP_COMMAND_REJECT_EVENT_anchor">ACI_L2CAP_COMMAND_REJECT_EVENT</a></li><h2><a name="ACI_L2CAP_COC_FLOW_CONTROL_anchor">ACI_L2CAP_COC_FLOW_CONTROL</a></h2><h3>Description</h3><p>This command sends a Flow Control Credit signaling packet on the specified connection-oriented channel. See Bluetooth Core specification Vol.3 Part A.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Channel_Index</p>
+</td><td><p>1</p>
+</td><td><p>Index of the connection-oriented channel for which the primitive applies.</p>
+</td><td></tr>
+<tr><td><p>Credits</p>
+</td><td><p>2</p>
+</td><td><p>Number of credits the receiving device can increment, corresponding to the number of K-frames that can be sent to the peer device sending the Flow Control Credit packet.</p>
+</td><td><li>1 ... 65535</li></td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_L2CAP_COC_TX_DATA_anchor">ACI_L2CAP_COC_TX_DATA</a></h2><h3>Description</h3><p>This command sends a K-frame packet on the specified connection-oriented channel. See Bluetooth Core specification Vol.3 Part A.<br>Note: for the first K-frame of the SDU, the Information data shall contain the L2CAP SDU Length coded on two octets followed by the K-frame information payload. For the next K-frames of the SDU, the Information data shall only contain the K-frame information payload.<br>The Length value must not exceed (BLE_CMD_MAX_PARAM_LEN - 3) i.e. 252 for BLE_CMD_MAX_PARAM_LEN default value.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Channel_Index</p>
+</td><td><p>1</p>
+</td><td><p>Index of the connection-oriented channel for which the primitive applies.</p>
+</td><td></tr>
+<tr><td><p>Length</p>
+</td><td><p>2</p>
+</td><td><p>Length of Data (in octets)</p>
+</td><td></tr>
+<tr><td><p>Data</p>
+</td><td><p>Length</p>
+</td><td><p>Information data</p>
+</td><td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h1><a name="HCI/ACI events_anchor">HCI/ACI events</a></h1><p><a href="#HCI events_anchor">HCI events</a></p><p><a href="#HCI LE meta events_anchor">HCI LE meta events</a></p><p><a href="#ACI GAP events_anchor">ACI GAP events</a></p><p><a href="#ACI GATT/ATT events_anchor">ACI GATT/ATT events</a></p><p><a href="#ACI L2CAP events_anchor">ACI L2CAP events</a></p><p><a href="#ACI HAL events_anchor">ACI HAL events</a></p><p>Note: in the event tables, a "Y" in the "BF", "PO", "LO" or "BO" column, means that the corresponding event applies to the "Basic Features", "Peripheral Only", "Link Layer Only" or "Beacon Only" variant of the BLE stack, respectively.</p><h2><a name="HCI events_anchor">HCI events</a></h2><h2></h2><table width="800" border="1" class="reference">
+<tr><th>Event name</th><th>Event code</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#HCI_DISCONNECTION_COMPLETE_EVENT_anchor">HCI_DISCONNECTION_COMPLETE_EVENT</a></td><td><p>0x05</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_ENCRYPTION_CHANGE_EVENT_anchor">HCI_ENCRYPTION_CHANGE_EVENT</a></td><td><p>0x08</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_READ_REMOTE_VERSION_INFORMATION_COMPLETE_EVENT_anchor">HCI_READ_REMOTE_VERSION_INFORMATION_COMPLETE_EVENT</a></td><td><p>0x0C</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
-</td><td></td></tr>
-<tr><td><a href="#HCI_HARDWARE_ERROR_EVENT_anchor">HCI_HARDWARE_ERROR_EVENT</a></td><td><p>0x10</p>
-</td><td><p>Y</p>
-</td><td><p>Y</p>
-</td><td><p>Y</p>
-</td></tr>
-<tr><td><a href="#HCI_NUMBER_OF_COMPLETED_PACKETS_EVENT_anchor">HCI_NUMBER_OF_COMPLETED_PACKETS_EVENT</a></td><td><p>0x13</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
-<tr><td><a href="#HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT_anchor">HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT</a></td><td><p>0x30</p>
-</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></td><td><p>0x0E</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
@@ -4992,7 +5283,22 @@ Time = N * 0.625 msec.</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td></tr>
+<tr><td><a href="#HCI_HARDWARE_ERROR_EVENT_anchor">HCI_HARDWARE_ERROR_EVENT</a></td><td><p>0x10</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td></tr>
+<tr><td><a href="#HCI_NUMBER_OF_COMPLETED_PACKETS_EVENT_anchor">HCI_NUMBER_OF_COMPLETED_PACKETS_EVENT</a></td><td><p>0x13</p>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
+<tr><td><a href="#HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT_anchor">HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT</a></td><td><p>0x30</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td></tr>
 </table><h2><a name="HCI_DISCONNECTION_COMPLETE_EVENT_anchor">HCI_DISCONNECTION_COMPLETE_EVENT</a></h2><h3>Description</h3><p>The Disconnection Complete event occurs when a connection is terminated.<br>The status parameter indicates if the disconnection was successful or not. The reason parameter indicates the reason for the disconnection if the disconnection was successful. If the disconnection was not successful, the value of the reason parameter can be ignored by the Host. For example, this can be the case if the Host has issued the Disconnect command and there was a parameter error, or the command was not presently allowed, or a Connection_Handle that didn't correspond to a connection was given.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -5043,6 +5349,34 @@ Time = N * 0.625 msec.</p>
 </td><td><p>2</p>
 </td><td><p>Subversion of the LMP in the remote Controller</p>
 </td><td></tr>
+</table><h2><a name="HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></h2><h3>Description</h3><p>The Command Complete event is used by the Controller for most commands to transmit return status of a command and the other event parameters that are specified for the issued HCI command.<br>The Num_HCI_Command_Packets event parameter allows the Controller to indicate the number of HCI command packets the Host can send to the Controller.<br>If the Controller requires the Host to stop sending commands, the Num_HCI_Command_Packets event parameter will be set to zero. To indicate to the Host that the Controller is ready to receive HCI command packets, the Controller generates a Command Complete event with the Command_Opcode 0x0000, and the Num_HCI_Command_Packets event parameter is set to 1 or more. See each command for the parameters that are returned by this event.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Num_HCI_Command_Packets</p>
+</td><td><p>1</p>
+</td><td><p>The Number of HCI command packets which are allowed to be sent to the Controller from the Host.</p>
+</td><td></tr>
+<tr><td><p>Command_Opcode</p>
+</td><td><p>2</p>
+</td><td><p>Opcode of the command which caused this event.</p>
+</td><td></tr>
+<tr><td><p>Return_Parameters</p>
+</td><td><p>variable</p>
+</td><td><p>This is the return parameter(s) for the command specified in the Command_Opcode event parameter. See each command's definition for the list of return parameters associated with that command.</p>
+</td><td></tr>
+</table><h2><a name="HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></h2><h3>Description</h3><p>The Command Status event is used to indicate that the command described by the Command_Opcode parameter has been received, and that the Controller is currently performing the task for this command. This event is needed to provide mechanisms for asynchronous operation, which makes it possible to prevent the Host from waiting for a command to finish. If the command cannot begin to execute (a parameter error may have occurred, or the command may currently not be allowed), the Status event parameter will contain the corresponding error code, and no complete event will follow since the command was not started. The Num_HCI_Command_Packets event parameter allows the Controller to indicate the number of HCI command packets the Host can send to the Controller. If the Controller requires the Host to stop sending commands, the Num_HCI_Command_Packets event parameter will be set to zero. To indicate to the Host that the Controller is ready to receive HCI command packets, the Controller generates a Command Status event with Status 0x00 and Command_Opcode 0x0000, and the Num_HCI_Command_Packets event parameter is set to 1 or more.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+<tr><td><p>Num_HCI_Command_Packets</p>
+</td><td><p>1</p>
+</td><td><p>The Number of HCI command packets which are allowed to be sent to the Controller from the Host.</p>
+</td><td></tr>
+<tr><td><p>Command_Opcode</p>
+</td><td><p>2</p>
+</td><td><p>Opcode of the command which caused this event.</p>
+</td><td></tr>
 </table><h2><a name="HCI_HARDWARE_ERROR_EVENT_anchor">HCI_HARDWARE_ERROR_EVENT</a></h2><h3>Description</h3><p>The Hardware Error event is used to indicate some implementation specific type of hardware failure for the controller. This event is used to notify the Host that a hardware failure has occurred in the Controller.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Hardware_Code</p>
@@ -5077,79 +5411,57 @@ Error code 3 is internal FIFO full.</p>
 </td><td><p>2</p>
 </td><td><p>Connection handle for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF</li></td></tr>
-</table><h2><a name="HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></h2><h3>Description</h3><p>The Command Complete event is used by the Controller for most commands to transmit return status of a command and the other event parameters that are specified for the issued HCI command.<br>The Num_HCI_Command_Packets event parameter allows the Controller to indicate the number of HCI command packets the Host can send to the Controller.<br>If the Controller requires the Host to stop sending commands, the Num_HCI_Command_Packets event parameter will be set to zero. To indicate to the Host that the Controller is ready to receive HCI command packets, the Controller generates a Command Complete event with the Command_Opcode 0x0000, and the Num_HCI_Command_Packets event parameter is set to 1 or more. See each command for the parameters that are returned by this event.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Num_HCI_Command_Packets</p>
-</td><td><p>1</p>
-</td><td><p>The Number of HCI command packets which are allowed to be sent to the Controller from the Host.</p>
-</td><td></tr>
-<tr><td><p>Command_Opcode</p>
-</td><td><p>2</p>
-</td><td><p>Opcode of the command which caused this event.</p>
-</td><td></tr>
-<tr><td><p>Return_Parameters</p>
-</td><td><p>variable</p>
-</td><td><p>This is the return parameter(s) for the command specified in the Command_Opcode event parameter. See each command's definition for the list of return parameters associated with that command.</p>
-</td><td></tr>
-</table><h2><a name="HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></h2><h3>Description</h3><p>The Command Status event is used to indicate that the command described by the Command_Opcode parameter has been received, and that the Controller is currently performing the task for this command. This event is needed to provide mechanisms for asynchronous operation, which makes it possible to prevent the Host from waiting for a command to finish. If the command cannot begin to execute (a parameter error may have occurred, or the command may currently not be allowed), the Status event parameter will contain the corresponding error code, and no complete event will follow since the command was not started. The Num_HCI_Command_Packets event parameter allows the Controller to indicate the number of HCI command packets the Host can send to the Controller. If the Controller requires the Host to stop sending commands, the Num_HCI_Command_Packets event parameter will be set to zero. To indicate to the Host that the Controller is ready to receive HCI command packets, the Controller generates a Command Status event with Status 0x00 and Command_Opcode 0x0000, and the Num_HCI_Command_Packets event parameter is set to 1 or more.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Status</p>
-</td><td><p>1</p>
-</td><td><p>Status error code.</p>
-</td><td></td></tr>
-<tr><td><p>Num_HCI_Command_Packets</p>
-</td><td><p>1</p>
-</td><td><p>The Number of HCI command packets which are allowed to be sent to the Controller from the Host.</p>
-</td><td></tr>
-<tr><td><p>Command_Opcode</p>
-</td><td><p>2</p>
-</td><td><p>Opcode of the command which caused this event.</p>
-</td><td></tr>
 </table><h2><a name="HCI LE meta events_anchor">HCI LE meta events</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Event name</th><th>LE subevent code</th><th>LO</th><th>SO</th><th>BO</th></tr>
+<tr><th>Event name</th><th>LE subevent code</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#HCI_LE_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_COMPLETE_EVENT</a></td><td><p>0x01</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_ADVERTISING_REPORT_EVENT_anchor">HCI_LE_ADVERTISING_REPORT_EVENT</a></td><td><p>0x02</p>
 </td><td><p>Y</p>
 </td><td></td><td><p>Y</p>
+</td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_UPDATE_COMPLETE_EVENT</a></td><td><p>0x03</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT_anchor">HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT</a></td><td><p>0x04</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_LONG_TERM_KEY_REQUEST_EVENT_anchor">HCI_LE_LONG_TERM_KEY_REQUEST_EVENT</a></td><td><p>0x05</p>
-</td><td><p>Y</p>
-</td><td><p>Y</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_DATA_LENGTH_CHANGE_EVENT_anchor">HCI_LE_DATA_LENGTH_CHANGE_EVENT</a></td><td><p>0x07</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_EVENT_anchor">HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_EVENT</a></td><td><p>0x08</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
+</td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_GENERATE_DHKEY_COMPLETE_EVENT_anchor">HCI_LE_GENERATE_DHKEY_COMPLETE_EVENT</a></td><td><p>0x09</p>
-</td><td><p>Y</p>
-</td><td><p>Y</p>
+</td><td></td><td></td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT</a></td><td><p>0x0A</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td></tr>
 <tr><td><a href="#HCI_LE_DIRECT_ADVERTISING_REPORT_EVENT_anchor">HCI_LE_DIRECT_ADVERTISING_REPORT_EVENT</a></td><td><p>0x0B</p>
 </td><td><p>Y</p>
 </td><td></td><td><p>Y</p>
+</td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_PHY_UPDATE_COMPLETE_EVENT_anchor">HCI_LE_PHY_UPDATE_COMPLETE_EVENT</a></td><td><p>0x0C</p>
-</td><td><p>Y</p>
-</td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td></tr>
 </table><h2><a name="HCI_LE_CONNECTION_COMPLETE_EVENT_anchor">HCI_LE_CONNECTION_COMPLETE_EVENT</a></h2><h3>Description</h3><p>The LE Connection Complete event indicates to both of the Hosts forming the connection that a new connection has been created. Upon the creation of the connection a Connection_Handle shall be assigned by the Controller, and passed to the Host in this event. If the connection establishment fails this event shall be provided to the Host that had issued the LE_Create_Connection command.<br>This event indicates to the Host which issued a LE_Create_Connection command and received a Command Status event if the connection establishment failed or was successful.<br>The Master_Clock_Accuracy parameter is only valid for a slave. On a master, this parameter shall be set to 0x00. See Bluetooth spec 5.0 vol 2 [part E] 7.7.65.1</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -5438,37 +5750,47 @@ Units: dBm</p>
 </td><td><li>0x01: The receiver PHY for the connection is LE 1M</li><li>0x02: The receiver PHY for the connection is LE 2M</li><li>0x03: The receiver PHY for the connection is LE Coded
 (Not supported by STM32WB)</li></td></tr>
 </table><h2><a name="ACI GAP events_anchor">ACI GAP events</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Event name</th><th>Vendor specific subevent code</th><th>LO</th><th>SO</th><th>BO</th></tr>
+<tr><th>Event name</th><th>Vendor specific subevent code</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#ACI_GAP_LIMITED_DISCOVERABLE_EVENT_anchor">ACI_GAP_LIMITED_DISCOVERABLE_EVENT</a></td><td><p>0x0400</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_PAIRING_COMPLETE_EVENT_anchor">ACI_GAP_PAIRING_COMPLETE_EVENT</a></td><td><p>0x0401</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_PASS_KEY_REQ_EVENT_anchor">ACI_GAP_PASS_KEY_REQ_EVENT</a></td><td><p>0x0402</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_AUTHORIZATION_REQ_EVENT_anchor">ACI_GAP_AUTHORIZATION_REQ_EVENT</a></td><td><p>0x0403</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT_anchor">ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT</a></td><td><p>0x0404</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_BOND_LOST_EVENT_anchor">ACI_GAP_BOND_LOST_EVENT</a></td><td><p>0x0405</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_PROC_COMPLETE_EVENT_anchor">ACI_GAP_PROC_COMPLETE_EVENT</a></td><td><p>0x0407</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_ADDR_NOT_RESOLVED_EVENT_anchor">ACI_GAP_ADDR_NOT_RESOLVED_EVENT</a></td><td><p>0x0408</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_NUMERIC_COMPARISON_VALUE_EVENT_anchor">ACI_GAP_NUMERIC_COMPARISON_VALUE_EVENT</a></td><td><p>0x0409</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GAP_KEYPRESS_NOTIFICATION_EVENT_anchor">ACI_GAP_KEYPRESS_NOTIFICATION_EVENT</a></td><td><p>0x040A</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 </table><h2><a name="ACI_GAP_LIMITED_DISCOVERABLE_EVENT_anchor">ACI_GAP_LIMITED_DISCOVERABLE_EVENT</a></h2><h3>Description</h3><p>This event is generated by the controller when the limited discoverable mode ends due to timeout. The timeout is 180 seconds.</p><h3>Event parameters</h3><p>None</p><h2><a name="ACI_GAP_PAIRING_COMPLETE_EVENT_anchor">ACI_GAP_PAIRING_COMPLETE_EVENT</a></h2><h3>Description</h3><p>This event is generated when the pairing process has completed successfully or a pairing procedure timeout has occurred or the pairing has failed. This is to notify the application that we have paired with a remote device so that it can take further actions or to notify that a timeout has occurred so that the upper layer can decide to disconnect the link.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
@@ -5540,68 +5862,94 @@ Units: dBm</p>
 </td><td><p>Type of Keypress input notified/signaled by peer device (having Keyboard only I/O capabilities</p>
 </td><td></tr>
 </table><h2><a name="ACI GATT/ATT events_anchor">ACI GATT/ATT events</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Event name</th><th>Vendor specific subevent code</th><th>LO</th><th>SO</th><th>BO</th></tr>
+<tr><th>Event name</th><th>Vendor specific subevent code</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#ACI_GATT_ATTRIBUTE_MODIFIED_EVENT_anchor">ACI_GATT_ATTRIBUTE_MODIFIED_EVENT</a></td><td><p>0x0C01</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_PROC_TIMEOUT_EVENT_anchor">ACI_GATT_PROC_TIMEOUT_EVENT</a></td><td><p>0x0C02</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_EXCHANGE_MTU_RESP_EVENT_anchor">ACI_ATT_EXCHANGE_MTU_RESP_EVENT</a></td><td><p>0x0C03</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_FIND_INFO_RESP_EVENT_anchor">ACI_ATT_FIND_INFO_RESP_EVENT</a></td><td><p>0x0C04</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT_anchor">ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT</a></td><td><p>0x0C05</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_READ_BY_TYPE_RESP_EVENT_anchor">ACI_ATT_READ_BY_TYPE_RESP_EVENT</a></td><td><p>0x0C06</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_READ_RESP_EVENT_anchor">ACI_ATT_READ_RESP_EVENT</a></td><td><p>0x0C07</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_READ_BLOB_RESP_EVENT_anchor">ACI_ATT_READ_BLOB_RESP_EVENT</a></td><td><p>0x0C08</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_READ_MULTIPLE_RESP_EVENT_anchor">ACI_ATT_READ_MULTIPLE_RESP_EVENT</a></td><td><p>0x0C09</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT_anchor">ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT</a></td><td><p>0x0C0A</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a></td><td><p>0x0C0C</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a></td><td><p>0x0C0D</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_INDICATION_EVENT_anchor">ACI_GATT_INDICATION_EVENT</a></td><td><p>0x0C0E</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_NOTIFICATION_EVENT_anchor">ACI_GATT_NOTIFICATION_EVENT</a></td><td><p>0x0C0F</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></td><td><p>0x0C10</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></td><td><p>0x0C11</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT_anchor">ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT</a></td><td><p>0x0C12</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_WRITE_PERMIT_REQ_EVENT</a></td><td><p>0x0C13</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EVENT</a></td><td><p>0x0C14</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT</a></td><td><p>0x0C15</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_TX_POOL_AVAILABLE_EVENT_anchor">ACI_GATT_TX_POOL_AVAILABLE_EVENT</a></td><td><p>0x0C16</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_SERVER_CONFIRMATION_EVENT_anchor">ACI_GATT_SERVER_CONFIRMATION_EVENT</a></td><td><p>0x0C17</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT</a></td><td><p>0x0C18</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_EXT_EVENT_anchor">ACI_GATT_READ_EXT_EVENT</a></td><td><p>0x0C1D</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_INDICATION_EXT_EVENT_anchor">ACI_GATT_INDICATION_EXT_EVENT</a></td><td><p>0x0C1E</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_NOTIFICATION_EXT_EVENT_anchor">ACI_GATT_NOTIFICATION_EXT_EVENT</a></td><td><p>0x0C1F</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 </table><h2><a name="ACI_GATT_ATTRIBUTE_MODIFIED_EVENT_anchor">ACI_GATT_ATTRIBUTE_MODIFIED_EVENT</a></h2><h3>Description</h3><p>This event is generated to the application by the GATT server when a client modifies any attribute on the server, as consequence of one of the following GATT procedures:<br>- write without response<br>- signed write without response<br>- write characteristic value<br>- write long characteristic value<br>- reliable write.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -6012,24 +6360,44 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 </td><td><p>The current value of the attribute</p>
 </td><td></tr>
 </table><h2><a name="ACI L2CAP events_anchor">ACI L2CAP events</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Event name</th><th>Vendor specific subevent code</th><th>LO</th><th>SO</th><th>BO</th></tr>
+<tr><th>Event name</th><th>Vendor specific subevent code</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT</a></td><td><p>0x0800</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_L2CAP_PROC_TIMEOUT_EVENT_anchor">ACI_L2CAP_PROC_TIMEOUT_EVENT</a></td><td><p>0x0801</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT</a></td><td><p>0x0802</p>
+</td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_L2CAP_COMMAND_REJECT_EVENT_anchor">ACI_L2CAP_COMMAND_REJECT_EVENT</a></td><td><p>0x080A</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_CONNECT_EVENT_anchor">ACI_L2CAP_COC_CONNECT_EVENT</a></td><td><p>0x0810</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT_anchor">ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT</a></td><td><p>0x0811</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_RECONF_EVENT_anchor">ACI_L2CAP_COC_RECONF_EVENT</a></td><td><p>0x0812</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_RECONF_CONFIRM_EVENT_anchor">ACI_L2CAP_COC_RECONF_CONFIRM_EVENT</a></td><td><p>0x0813</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_DISCONNECT_EVENT_anchor">ACI_L2CAP_COC_DISCONNECT_EVENT</a></td><td><p>0x0814</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_FLOW_CONTROL_EVENT_anchor">ACI_L2CAP_COC_FLOW_CONTROL_EVENT</a></td><td><p>0x0815</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_RX_DATA_EVENT_anchor">ACI_L2CAP_COC_RX_DATA_EVENT</a></td><td><p>0x0816</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT_anchor">ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT</a></td><td><p>0x0817</p>
+</td><td></td><td></td><td></td><td></td></tr>
 </table><h2><a name="ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT_anchor">ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT</a></h2><h3>Description</h3><p>This event is generated when the master responds to the connection update request packet with a connection update response packet.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle referring to the COS Channel where the Disconnection has been received.</p>
-</td><td></tr>
+</td><td><p>Handle of the connection where this event occurred.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Result</p>
 </td><td><p>2</p>
 </td><td></td><td></tr>
@@ -6037,8 +6405,8 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Handle of the connection related to this L2CAP procedure.</p>
-</td><td></tr>
+</td><td><p>Handle of the connection where this event occurred.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Data_Length</p>
 </td><td><p>1</p>
 </td><td><p>Length of following data</p>
@@ -6050,8 +6418,8 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Handle of the connection related to this L2CAP procedure.</p>
-</td><td></tr>
+</td><td><p>Handle of the connection where this event occurred.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Identifier</p>
 </td><td><p>1</p>
 </td><td><p>This is the identifier which associate the request to the response.</p>
@@ -6078,12 +6446,12 @@ Time = N * 1.25 msec.</p>
 </td><td><p>2</p>
 </td><td><p>Defines connection timeout parameter in the following manner: Timeout Multiplier * 10ms.</p>
 </td><td></tr>
-</table><h2><a name="ACI_L2CAP_COMMAND_REJECT_EVENT_anchor">ACI_L2CAP_COMMAND_REJECT_EVENT</a></h2><h3>Description</h3><p>This event is generated when the master responds to the connection update request packet with a command reject packet.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+</table><h2><a name="ACI_L2CAP_COMMAND_REJECT_EVENT_anchor">ACI_L2CAP_COMMAND_REJECT_EVENT</a></h2><h3>Description</h3><p>This event is generated upon receipt of a valid Command Reject packet (e.g. when the master responds to the Connection Update Request packet with a Command Reject packet).</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Connection handle referring to the COS Channel where the Disconnection has been received.</p>
-</td><td></tr>
+</td><td><p>Handle of the connection where this event occurred.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
 <tr><td><p>Identifier</p>
 </td><td><p>1</p>
 </td><td><p>This is the identifier which associate the request to the response.</p>
@@ -6100,18 +6468,138 @@ Time = N * 1.25 msec.</p>
 </td><td><p>Data_Length</p>
 </td><td><p>Data field associated with Reason</p>
 </td><td></tr>
-</table><h2><a name="ACI HAL events_anchor">ACI HAL events</a></h2><h2></h2><table width="800" border="1" class="reference">
-<tr><th>Event name</th><th>Vendor specific subevent code</th><th>LO</th><th>SO</th><th>BO</th></tr>
+</table><h2><a name="ACI_L2CAP_COC_CONNECT_EVENT_anchor">ACI_L2CAP_COC_CONNECT_EVENT</a></h2><h3>Description</h3><p>This event is generated when receiving a valid Credit Based Connection Request packet. See Bluetooth Core specification Vol.3 Part A.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Handle of the connection where this event occurred.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>SPSM</p>
+</td><td><p>2</p>
+</td><td><p>Simplified Protocol/Service Multiplexer.</p>
+</td><td><li>0x0001 ... 0x00FF</li></td></tr>
+<tr><td><p>MTU</p>
+</td><td><p>2</p>
+</td><td><p>Maximum Transmission Unit.</p>
+</td><td><li>23 ... 65535</li></td></tr>
+<tr><td><p>MPS</p>
+</td><td><p>2</p>
+</td><td><p>Maximum payload size (in octets).</p>
+</td><td><li>23 ... 65533</li></td></tr>
+<tr><td><p>Initial_Credits</p>
+</td><td><p>2</p>
+</td><td><p>Number of K-frames that can be received on the created channel(s) by the L2CAP layer entity sending this packet.</p>
+</td><td><li>0 ... 65535</li></td></tr>
+<tr><td><p>Channel_Number</p>
+</td><td><p>1</p>
+</td><td><p>Number of channels to be created. If this parameter is set to 0, it requests the creation of one LE credit based connection-oriented channel. Otherwise, it requests the creation of one or more enhanced credit based connection-oriented channels.</p>
+</td><td><li>0 ... 5</li></td></tr>
+</table><h2><a name="ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT_anchor">ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT</a></h2><h3>Description</h3><p>This event is generated when receiving a valid Credit Based Connection Response packet. See Bluetooth Core specification Vol.3 Part A.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Handle of the connection where this event occurred.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>MTU</p>
+</td><td><p>2</p>
+</td><td><p>Maximum Transmission Unit.</p>
+</td><td><li>23 ... 65535</li></td></tr>
+<tr><td><p>MPS</p>
+</td><td><p>2</p>
+</td><td><p>Maximum payload size (in octets).</p>
+</td><td><li>23 ... 65533</li></td></tr>
+<tr><td><p>Initial_Credits</p>
+</td><td><p>2</p>
+</td><td><p>Number of K-frames that can be received on the created channel(s) by the L2CAP layer entity sending this packet.</p>
+</td><td><li>0 ... 65535</li></td></tr>
+<tr><td><p>Result</p>
+</td><td><p>2</p>
+</td><td><p>This parameter indicates the outcome of the request. A value of 0x0000 indicates success while a non-zero value indicates the request is refused.</p>
+</td><td><li>0x0000 ... 0x000C</li></td></tr>
+<tr><td><p>Channel_Number</p>
+</td><td><p>1</p>
+</td><td><p>Number of created channels. It is the length of Channel_Index_List.</p>
+</td><td><li>0 ... 5</li></td></tr>
+<tr><td><p>Channel_Index_List</p>
+</td><td><p>Channel_Number</p>
+</td><td><p>List of channel indexes for which the primitive applies.</p>
+</td><td></tr>
+</table><h2><a name="ACI_L2CAP_COC_RECONF_EVENT_anchor">ACI_L2CAP_COC_RECONF_EVENT</a></h2><h3>Description</h3><p>This event is generated when receiving a valid Credit Based Reconfigure Request packet. See Bluetooth Core specification Vol.3 Part A.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Handle of the connection where this event occurred.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>MTU</p>
+</td><td><p>2</p>
+</td><td><p>Maximum Transmission Unit.</p>
+</td><td><li>23 ... 65535</li></td></tr>
+<tr><td><p>MPS</p>
+</td><td><p>2</p>
+</td><td><p>Maximum payload size (in octets).</p>
+</td><td><li>23 ... 65533</li></td></tr>
+<tr><td><p>Channel_Number</p>
+</td><td><p>1</p>
+</td><td><p>Number of created channels. It is the length of Channel_Index_List.</p>
+</td><td><li>1 ... 5</li></td></tr>
+<tr><td><p>Channel_Index_List</p>
+</td><td><p>Channel_Number</p>
+</td><td><p>List of channel indexes for which the primitive applies.</p>
+</td><td></tr>
+</table><h2><a name="ACI_L2CAP_COC_RECONF_CONFIRM_EVENT_anchor">ACI_L2CAP_COC_RECONF_CONFIRM_EVENT</a></h2><h3>Description</h3><p>This event is generated when receiving a valid Credit Based Reconfigure Response packet. See Bluetooth Core specification Vol.3 Part A.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Handle of the connection where this event occurred.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>Result</p>
+</td><td><p>2</p>
+</td><td><p>This parameter indicates the outcome of the request. A value of 0x0000 indicates success while a non-zero value indicates the request is refused.</p>
+</td><td><li>0x0000 ... 0x000C</li></td></tr>
+</table><h2><a name="ACI_L2CAP_COC_DISCONNECT_EVENT_anchor">ACI_L2CAP_COC_DISCONNECT_EVENT</a></h2><h3>Description</h3><p>This event is generated when a connection-oriented channel is disconnected following an L2CAP channel termination procedure. See Bluetooth Core specification Vol.3 Part A.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Channel_Index</p>
+</td><td><p>1</p>
+</td><td><p>Index of the connection-oriented channel for which the primitive applies.</p>
+</td><td></tr>
+</table><h2><a name="ACI_L2CAP_COC_FLOW_CONTROL_EVENT_anchor">ACI_L2CAP_COC_FLOW_CONTROL_EVENT</a></h2><h3>Description</h3><p>This event is generated when receiving a valid Flow Control Credit signaling packet. See Bluetooth Core specification Vol.3 Part A.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Channel_Index</p>
+</td><td><p>1</p>
+</td><td><p>Index of the connection-oriented channel for which the primitive applies.</p>
+</td><td></tr>
+<tr><td><p>Credits</p>
+</td><td><p>2</p>
+</td><td><p>Number of credits the receiving device can increment, corresponding to the number of K-frames that can be sent to the peer device sending the Flow Control Credit packet.</p>
+</td><td><li>1 ... 65535</li></td></tr>
+</table><h2><a name="ACI_L2CAP_COC_RX_DATA_EVENT_anchor">ACI_L2CAP_COC_RX_DATA_EVENT</a></h2><h3>Description</h3><p>This event is generated when receiving a valid K-frame packet on a connection-oriented channel. See Bluetooth Core specification Vol.3 Part A.<br>Note: for the first K-frame of the SDU, the Information data contains the L2CAP SDU Length coded on two octets followed by the K-frame information payload. For the next K-frames of the SDU, the Information data only contains the K-frame information payload.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Channel_Index</p>
+</td><td><p>1</p>
+</td><td><p>Index of the connection-oriented channel for which the primitive applies.</p>
+</td><td></tr>
+<tr><td><p>Length</p>
+</td><td><p>2</p>
+</td><td><p>Length of Data (in octets)</p>
+</td><td></tr>
+<tr><td><p>Data</p>
+</td><td><p>Length</p>
+</td><td><p>Information data</p>
+</td><td></tr>
+</table><h2><a name="ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT_anchor">ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT</a></h2><h3>Description</h3><p>Each time ACI_L2CAP_COC_TX_DATA raises the error code BLE_STATUS_INSUFFICIENT_RESOURCES (0x64), the ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT event is generated as soon as there is a free buffer available for sending K-frames.</p><h3>Event parameters</h3><p>None</p><h2><a name="ACI HAL events_anchor">ACI HAL events</a></h2><h2></h2><table width="800" border="1" class="reference">
+<tr><th>Event name</th><th>Vendor specific subevent code</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT_anchor">ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT</a></td><td><p>0x0004</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#ACI_HAL_SCAN_REQ_REPORT_EVENT_anchor">ACI_HAL_SCAN_REQ_REPORT_EVENT</a></td><td><p>0x0005</p>
-</td><td></td><td></td><td></td></tr>
+</td><td></td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_HAL_FW_ERROR_EVENT_anchor">ACI_HAL_FW_ERROR_EVENT</a></td><td><p>0x0006</p>
-</td><td></td><td><p>Y</p>
-</td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td><td></td></tr>
 </table><h2><a name="ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT_anchor">ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT</a></h2><h3>Description</h3><p>This event is generated when the device completes a radio activity and provide information when a new radio acitivity will be performed.<br>Informtation provided includes type of radio activity and absolute time in system ticks when a new radio acitivity is schedule, if any. Application can use this information to schedule user activities synchronous to selected radio activitities. A command <a href="#ACI_HAL_SET_RADIO_ACTIVITY_MASK_anchor">ACI_HAL_SET_RADIO_ACTIVITY_MASK</a> is provided to enable radio activity events of user interests, by default no events are enabled.<br>User should take into account that enablinng radio events in application with intense radio activity could lead to a fairly high rate of events generated.<br>Application use cases includes synchronizing notification with connection interval, switiching antenna at the end of advertising or performing flash erase operation while radio is idle.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Last_State</p>
@@ -6150,7 +6638,7 @@ Units: dBm</p>
 <tr><td><p>FW_Error_Type</p>
 </td><td><p>1</p>
 </td><td><p>FW Error type</p>
-</td><td><li>0x01: L2CAP recombination failure</li><li>0x02: GATT unexpected peer message</li><li>0x03: NVM level warning</li></td></tr>
+</td><td><li>0x01: L2CAP recombination failure</li><li>0x02: GATT unexpected peer message</li><li>0x03: NVM level warning</li><li>0x04: COC RX data length too large</li></td></tr>
 <tr><td><p>Data_Length</p>
 </td><td><p>1</p>
 </td><td><p>Length of Data in octets</p>

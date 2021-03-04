@@ -58,6 +58,44 @@
 #define CFG_TL_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 
 #define TL_EVENT_FRAME_SIZE ( TL_EVT_HDR_SIZE + CFG_TL_MOST_EVENT_PAYLOAD_SIZE )
+
+/******************************************************************************
+ * NVM
+ ******************************************************************************/
+  /**
+   NVM DEFINES
+   */
+/* CFG_EE_BANK0_SIZE is the size allocated for the EE bank0 it should be
+   the considered as the max Flash size for all computation and <= of the
+   allocated size within the scatterfile in bytes
+   
+   CFG_NVM_BASE_ADDRESS : offset to add to the base flash address to get the 
+   beginning of the NVM (shall be withon allocation range of scatterfile)
+ 
+   ST_PERSIST_MAX_ALLOC_SZ : max size of the RAM cache in bytes
+                             either an abitrary choice or the CFG_NVM_MAX_SIZE
+
+   ST_PERSIST_FLASH_DATA_OFFSET : offset in bytes of zigbee data
+   (U8[4] for lenght - 1st data[]...)
+   CFG_NB_OF_PAGE : Number of page of flash to use
+   
+   CFG_NVM_MAX_SIZE : Max allocable size in byte for NVM
+                   Flash size/8 * (number of element by page in byte)
+   ZIGBEE_DB_START_ADDR: beginning of zigbee NVM
+
+   CFG_EE_AUTO_CLEAN : Clean the flash automatically when needed
+*/ 
+    
+#define CFG_NB_OF_PAGE                          (16U)
+#define CFG_EE_BANK0_SIZE                       (CFG_NB_OF_PAGE * HW_FLASH_PAGE_SIZE) 
+#define CFG_NVM_BASE_ADDRESS                    ( 0x70000U )
+#define CFG_EE_BANK0_MAX_NB                     (1000U)                  // In U32 words
+#define ST_PERSIST_MAX_ALLOC_SZ                 (4U*CFG_EE_BANK0_MAX_NB) // Max data in bytes
+#define ST_PERSIST_FLASH_DATA_OFFSET            (4U)
+#define ZIGBEE_DB_START_ADDR                    (0U)
+#define CFG_EE_AUTO_CLEAN                       (1U)
+
+
 /******************************************************************************
  * UART interfaces
  ******************************************************************************/
@@ -173,6 +211,7 @@
 typedef enum
 {
     CFG_TIM_PROC_ID_ISR,
+    CFG_TIM_WAIT_BEOFRE_READ_ATTR,
 } CFG_TimProcID_t;
 
 /******************************************************************************
@@ -283,7 +322,10 @@ typedef enum {
   CFG_TASK_REQUEST_FROM_M0_TO_M4,
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
   CFG_TASK_ZIGBEE_NETWORK_FORM,
+  CFG_TASK_ZIGBEE_RECOVER_PERSIST,
   CFG_TASK_BUTTON_SW1,
+  CFG_TASK_BUTTON_SW2,
+  CFG_TASK_BUTTON_SW3,
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
@@ -327,6 +369,8 @@ typedef enum {
  ******************************************************************************/
 #define APPLI_CONFIG_LOG_LEVEL          LOG_LEVEL_INFO
 #define APPLI_PRINT_FILE_FUNC_LINE      0
+
+
 
 /******************************************************************************
  * LOW POWER

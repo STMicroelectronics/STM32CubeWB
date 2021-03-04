@@ -32,7 +32,37 @@
 /* Application Variable-------------------------------------------------------*/
 /* Exported Functions Prototypes ---------------------------------------------*/
 MOBLE_RESULT Appli_ConfigClient_Set(void); 
-MOBLE_RESULT Appli_SensorsClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opcode, MOBLEUINT8 *msg_params);
+MOBLE_RESULT Appli_SensorsClient_API(MOBLEUINT8 elementIndex, 
+                                     MOBLEUINT16 msg_opcode, 
+                                     MOBLEUINT8 *msg_params);
+void Appli_Sensor_Descriptor_Status(const MOBLEUINT8 *pDescriptor,
+                                    MOBLEUINT32 length,
+                                    MOBLE_ADDRESS dstPeer,
+                                    MOBLEUINT8 elementIndex);
+void Appli_Sensor_Cadence_Status(const MOBLEUINT8 *pCadence,
+                                 MOBLEUINT32 length,
+                                 MOBLE_ADDRESS dstPeer,
+                                 MOBLEUINT8 elementIndex);
+void Appli_Sensor_Settings_Status(const MOBLEUINT8 *pSettings,
+                                 MOBLEUINT32 length,
+                                 MOBLE_ADDRESS dstPeer,
+                                 MOBLEUINT8 elementIndex);
+void Appli_Sensor_Setting_Status(const MOBLEUINT8 *pSetting,
+                                 MOBLEUINT32 length,
+                                 MOBLE_ADDRESS dstPeer,
+                                 MOBLEUINT8 elementIndex);
+void Appli_Sensor_Status(const MOBLEUINT8 *pStatus,
+                         MOBLEUINT32 length,
+                         MOBLE_ADDRESS dstPeer,
+                         MOBLEUINT8 elementIndex);
+void Appli_Sensor_Column_Status(const MOBLEUINT8 *pColumn,
+                                MOBLEUINT32 length,
+                                MOBLE_ADDRESS dstPeer,
+                                MOBLEUINT8 elementIndex);
+void Appli_Sensor_Series_Status(const MOBLEUINT8 *pSeries,
+                                MOBLEUINT32 length,
+                                MOBLE_ADDRESS dstPeer,
+                                MOBLEUINT8 elementIndex);  
 
 
 

@@ -29,7 +29,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wbxx_ll_dma.h"
-#include "stm32wbxx.h"
 #include "stm32wbxx_ll_i2c.h"
 #include "stm32wbxx_ll_crs.h"
 #include "stm32wbxx_ll_rcc.h"

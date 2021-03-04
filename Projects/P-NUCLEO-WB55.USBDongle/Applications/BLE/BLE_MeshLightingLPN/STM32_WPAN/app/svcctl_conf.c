@@ -56,7 +56,7 @@ const uint8_t* SVCCTL_GetBdAddress( void )
     bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
     bd_addr_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
     bd_addr_udn[3] = (uint8_t)device_id;
-    bd_addr_udn[4] = (uint8_t)(company_id & 0x000000FF);;
+    bd_addr_udn[4] = (uint8_t)(company_id & 0x000000FF);
     bd_addr_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
     
     bd_addr = (const uint8_t *)bd_addr_udn;

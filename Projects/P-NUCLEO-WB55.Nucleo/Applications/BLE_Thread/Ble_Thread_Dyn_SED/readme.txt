@@ -120,8 +120,10 @@ In order to make the program work, you must do the following:
  retrieve OpenThread Cli commands connecting an HyperTerminal via an UART RS232 cable using 
  the following connections :
   RXD : CN10(Pin35)   
-  TXD : CN10(Pin37)with the ST_Link cable.
+  TXD : CN10(Pin37)
  (Refer to the THREAD_Cli_Cmd application for more details) 
+
+To get the traces in real time, you can connect an HyperTerminal to the STLink Virtual Com Port.
     
  For the Cli control and for the traces, the UART must be configured as follows:
     - BaudRate = 115200 baud  
@@ -163,6 +165,45 @@ and the other will act as child.
 After the network building, one board will be in Leader mode the other one will be in Child mode.
 The SED will then start to send every seconds a multicast COAP Message which will toggle LED (Blue) of the receivers.
 
+**** EXTPA ****
+
+The Dory is not able to transmit with a power higher than 5 dbm (TBC). As such it is
+possible to use the EXT PA as an additional supply source.
+
+Signals:
+The EXTPA consists of three signals.
+
+- Analogic signal : power supply, constant value.
+- Enable/Disable: 0 when the RF is in Sleep/not initialized, 1 otherwise.
+- RX/TX : 1 during a transmission, 0 otherwise.
+___________________________________________________
+|   RF status:    | Sleep mode | RX mode | TX mode |
+|_________________|____________|_________|_________|
+| Enable/Disable: |     0      |    1    |    1    |
+|_________________|____________|_________|_________|
+|    RX/TX:	      |    N/A     |    0    |    1    |
+|_________________|____________|_________|_________|
+|Analogic signal: |	             N/A               |
+|_________________|________________________________|
+
+NOTE: The RX/TX signal must be wired on the PB0 I/O (C10-22 on Nucleo).
+
+The Enable/Disable signal by default is mapped on PB9 (C10-5 on Nucleo).
+You can change this setting in app_conf.h, by editing GPIO_EXT_PA_EN_PIN and GPIO_EXT_PA_EN_PORT.
+
+Power setting:
+The firmware is not aware of the power brought by the ExtPA. It is up to the system integrator to
+configure the application to get the desired power.
+
+For instance, if the ExtPA provides an additional power of 10dbm and the desired power for a TX is 12dbm.
+The application must be configured to set the power at 2dbm.
+
+M0 firmware:
+The M0 firmware remains unchanged. It has been tested with the binary listed above.
+
+EXTPA enabling:
+The EXTPA support is not enabled by default.
+In hw_conf.h, set CFG_HW_EXTPA_ENABLED to 1.
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

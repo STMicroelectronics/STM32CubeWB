@@ -99,6 +99,8 @@ typedef enum
   CMD_FROM_M0_EXT_PA_EN          = 12,
   CMD_FROM_M0_EXT_PA_DIS         = 13,
   CMD_FROM_M0_GENE_HARD_FAULT    = 14,
+  CMD_FROM_M0_HSE_TUNE           = 15,
+  CMD_FROM_M0_HSE_TUNE_DEF       = 16,
 } cmdFromM0_t;
 static cmdFromM0_t m0Cmd = CMD_FROM_M0_STOP_OFF;
 
@@ -125,6 +127,7 @@ static uint8_t  commandHistory[CLI_CMD_HISTORY_LENGTH][CLI_CMD_BUFFER_SIZE];
 static int      commandHistoryIdx;
 static int      commandHistoryIdxSav;
 static char     cliPrompt[30] = "Unknown M0 appli > ";
+static char *   CmdFromM0Array[2];
 
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_LLD_tests_Config_t LldTestsConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t LldTestsM0CmdPacket;
@@ -678,6 +681,8 @@ void APP_LLDTESTS_Init_TL(void)
 
 static void m0CmdProcess(void)
 {
+  int8_t result, delta;
+
   switch (m0Cmd) {
     case CMD_FROM_M0_STOP0_ON :
       m0CmdStopRequired(0);
@@ -751,7 +756,27 @@ static void m0CmdProcess(void)
         *badAddrPointer = 0xF;
       }
       break;
-    
+    case CMD_FROM_M0_HSE_TUNE :
+      // Get current tuning value and delta
+      delta = (int8_t)atol(CmdFromM0Array[1]);
+      result = LL_RCC_HSE_GetCapacitorTuning() + delta;
+
+      // Check out of range
+      if (result > 63) {
+        result = 63;
+      } else if (result < 0) {
+        result = 0;
+      }
+
+      LL_RCC_HSE_SetCapacitorTuning(result);
+      break;
+
+    case CMD_FROM_M0_HSE_TUNE_DEF:
+      // 7:0 contains the tuning value, bit 31 is flag for valid value
+      Config_HSE_tuning( (uint32_t) (HSE_TRIM_VALID |
+                                     (uint8_t) LL_RCC_HSE_GetCapacitorTuning() ));
+      break;
+
     default:
       break;
   }
@@ -933,114 +958,135 @@ static void SendM0CmdAckToM0(void)
 void TL_LLDTESTS_ReceiveM0Cmd( TL_CmdPacket_t * cmdBuffer )
 {
   uint8_t bufferSize = cmdBuffer->cmdserial.cmd.plen;
-  char *  bufferAddr = (char *)cmdBuffer->cmdserial.cmd.payload;
+  char *cmdToken = strtok((char *)cmdBuffer->cmdserial.cmd.payload, " ");
+  uint8_t cmdToken_index = 0;
   
+  while (cmdToken != NULL) {
+    CmdFromM0Array[cmdToken_index++] = cmdToken;
+    cmdToken = strtok(NULL, " ");
+  }
+
   if (bufferSize > 0)
   {
-    if (strncmp(bufferAddr, "stop0_on", 8) == 0)
+    if (strncmp(CmdFromM0Array[0], "stop0_on", 8) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_STOP0_ON;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "stop1_on", 8) == 0)
+    else if (strncmp(CmdFromM0Array[0], "stop1_on", 8) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_STOP1_ON;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "stop2_on", 8) == 0)
+    else if (strncmp(CmdFromM0Array[0], "stop2_on", 8) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_STOP2_ON;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "stop_off", 8) == 0)
+    else if (strncmp(CmdFromM0Array[0], "stop_off", 8) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_STOP_OFF;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "go_in_wfi", 9) == 0)
+    else if (strncmp(CmdFromM0Array[0], "go_in_wfi", 9) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_GO_IN_WFI;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "go_directly_in_wfi", 18) == 0)
+    else if (strncmp(CmdFromM0Array[0], "go_directly_in_wfi", 18) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_GO_DIRECTLY_IN_WFI;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "use_msi_no_pll_hse_off", 22) == 0)
+    else if (strncmp(CmdFromM0Array[0], "use_msi_no_pll_hse_off", 22) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_USE_MSI;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "use_msi_no_pll_hse_on", 21) == 0)
+    else if (strncmp(CmdFromM0Array[0], "use_msi_no_pll_hse_on", 21) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_USE_MSI_HSE;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "use_msi_pll_hse_off", 19) == 0)
+    else if (strncmp(CmdFromM0Array[0], "use_msi_pll_hse_off", 19) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_USE_MSI_PLL;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "use_msi_pll_hse_on", 18) == 0)
+    else if (strncmp(CmdFromM0Array[0], "use_msi_pll_hse_on", 18) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_USE_MSI_PLL_HSE;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "use_hse_no_pll", 14) == 0)
+    else if (strncmp(CmdFromM0Array[0], "use_hse_no_pll", 14) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_USE_HSE;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "use_hse_pll", 11) == 0)
+    else if (strncmp(CmdFromM0Array[0], "use_hse_pll", 11) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_USE_HSE_PLL;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "ext_pa_enable", 13) == 0)
+    else if (strncmp(CmdFromM0Array[0], "ext_pa_enable", 13) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_EXT_PA_EN;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "ext_pa_disable", 14) == 0)
+    else if (strncmp(CmdFromM0Array[0], "ext_pa_disable", 14) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_EXT_PA_DIS;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
     }
-    else if (strncmp(bufferAddr, "generate_hard_fault", 19) == 0)
+    else if (strncmp(CmdFromM0Array[0], "generate_hard_fault", 19) == 0)
     {
       // Save the command
       m0Cmd = CMD_FROM_M0_GENE_HARD_FAULT;
       // Set the task to process the command
       UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
+    }
+    else if (strncmp(CmdFromM0Array[0], "hse_tune_def", 12) == 0)
+    {
+      m0Cmd = CMD_FROM_M0_HSE_TUNE_DEF;
+      // Set the task to process the command
+      UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
+    }
+    else if (strncmp(CmdFromM0Array[0], "hse_tune", 8) == 0)
+    {
+      // Save the command
+      m0Cmd = CMD_FROM_M0_HSE_TUNE;
+      // Set the task to process the command, if all parameters have been given
+      if (cmdToken_index == 2) {
+          UTIL_SEQ_SetTask(1U << CFG_TASK_CMD_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
+      }
     }
     else
     {

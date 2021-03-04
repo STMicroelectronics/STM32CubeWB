@@ -30,8 +30,8 @@
 #include "stm32_seq.h"
 #include <assert.h>
 #include "zcl/zcl.h"
-#include "zcl/zcl.onoff.h"
-#include "zcl/zcl.identify.h"
+#include "zcl/general/zcl.onoff.h"
+#include "zcl/general/zcl.identify.h"
 #include "ee.h"
 #include "hw_flash.h"
 
@@ -261,10 +261,10 @@ static void APP_ZIGBEE_StackLayersInit(void)
  */
 static void APP_ZIGBEE_ConfigEndpoints(void)
 {
-  ZbApsmeAddEndpointReqT req;
-  ZbApsmeAddEndpointConfT conf;
-  ZbApsmeAddEndpointReqT req2;
-  ZbApsmeAddEndpointConfT conf2;
+  struct ZbApsmeAddEndpointReqT req;
+  struct ZbApsmeAddEndpointConfT conf;
+  struct ZbApsmeAddEndpointReqT req2;
+  struct ZbApsmeAddEndpointConfT conf2;
   struct ZbZclOnOffServerCallbacksT onoff_callbacks;
   
   memset(&req, 0, sizeof(req));
@@ -372,10 +372,10 @@ static void APP_ZIGBEE_NwkForm(void)
  */
 static void APP_ZIGBEE_ConfigGroupAddr(void)
 {
-  ZbApsmeAddGroupReqT req;
-  ZbApsmeAddGroupConfT conf;
-  ZbApsmeAddGroupReqT req2;
-  ZbApsmeAddGroupConfT conf2;
+  struct ZbApsmeAddGroupReqT req;
+  struct ZbApsmeAddGroupConfT conf;
+  struct ZbApsmeAddGroupReqT req2;
+  struct ZbApsmeAddGroupConfT conf2;
   
   memset(&req, 0, sizeof(req));
   req.endpt = SW1_ENDPOINT;

@@ -1,9 +1,45 @@
 /**
  * @file zcl.message.h
+ * @heading Messaging
  * @brief ZCL Messaging cluster header
  * ZCL 7 Section 10.5
  * ZCL 8 Section 10.5
  * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ */
+
+/* @PICS.ZCL.Message
+ * SEMS.S | Server | True
+ * SEMS.C | Client | True
+ *
+ * Server Attributes
+ * SEMS.S.Afffd | ClusterRevision | True
+ * SEMS.S.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * SEMS.S.C00.Rsp | Get Last Message | False
+ * SEMS.S.C01.Rsp | Message Confirmation | False
+ * SEMS.S.C02.Rsp | GetMessageCancellation | False
+ *
+ * Commands Generated
+ * SEMS.S.C00.Tx | Display Message | True
+ * SEMS.S.C01.Tx | Cancel Message | True
+ * SEMS.S.C02.Tx | Display Protected Message | True
+ * SEMS.S.C03.Tx | Cancel All Messages | True
+ *
+ * Client Atributes
+ * SEMS.C.Afffd | ClusterRevision | True
+ * SEMS.C.Afffe | AttributeReportingStatus | False
+ *
+ * Commands Received
+ * SEMS.C.C00.Rsp | Display Message | False
+ * SEMS.C.C01.Rsp | Cancel Message | False
+ * SEMS.C.C02.Rsp | Display Protected Message | False
+ * SEMS.C.C03.Rsp | Cancel All Messages | False
+ *
+ * Commands Generated
+ * SEMS.C.C00.Tx | Get Last Message | True
+ * SEMS.C.C01.Tx | Message Confirmation | True
+ * SEMS.C.C02.Tx | GetMessageCancellation | True
  */
 
 /*--------------------------------------------------------------------------

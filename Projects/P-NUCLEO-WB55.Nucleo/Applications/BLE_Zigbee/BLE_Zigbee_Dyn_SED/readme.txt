@@ -102,10 +102,7 @@ In order to make the program work, you must do the following:
  - Rebuild all files and load your image into target memory
  - Run the example
     
- if you want to get the traces in real time, you can connects an HyperTerminal 
- via an UART RS232 cable using the following connections :
-  RXD : CN10(Pin35)   
-  TXD : CN10(Pin37)
+To get the traces in real time, you can connect an HyperTerminal to the STLink Virtual Com Port.
 
 **** START DEMO ****
 By default, after a reset, the ZB/BLE board [2] will start with both BLE and Zigbee modes activated.

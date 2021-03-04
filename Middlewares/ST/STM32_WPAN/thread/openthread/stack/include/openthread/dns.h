@@ -54,8 +54,8 @@ extern "C" {
 
 #define OT_DNS_MAX_HOSTNAME_LENGTH 62 ///< Maximum allowed hostname length (maximum label size - 1 for compression).
 
-#define OT_DNS_DEFAULT_DNS_SERVER_IP "2001:4860:4860::8888" ///< Defines default DNS Server address - Google DNS.
-#define OT_DNS_DEFAULT_DNS_SERVER_PORT 53                   ///< Defines default DNS Server port.
+#define OT_DNS_DEFAULT_SERVER_IP "2001:4860:4860::8888" ///< Defines default DNS Server address - Google DNS.
+#define OT_DNS_DEFAULT_SERVER_PORT 53                   ///< Defines default DNS Server port.
 
 /**
  * This structure implements DNS Query parameters.
@@ -94,7 +94,7 @@ typedef void (*otDnsResponseHandler)(void *        aContext,
 /**
  * This function sends a DNS query for AAAA (IPv6) record.
  *
- * This function is available only if feature `OPENTHREAD_ENABLE_DNS_CLIENT` is enabled.
+ * This function is available only if feature `OPENTHREAD_CONFIG_DNS_CLIENT_ENABLE` is enabled.
  *
  * @param[in]  aInstance   A pointer to an OpenThread instance.
  * @param[in]  aQuery      A pointer to specify DNS query parameters.

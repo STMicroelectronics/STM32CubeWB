@@ -41,29 +41,29 @@ enum  nwkAddrAllocMethod {
 
 /* Status codes for network status indications. */
 enum ZbNwkNetworkStatusCodeT {
-    ZB_NWK_STATUS_CODE_NO_ROUTE_AVAILABLE = 0x00, /* No route available */
-    ZB_NWK_STATUS_CODE_TREE_LINK_FAILURE = 0x01, /* Tree link failure */
-    ZB_NWK_STATUS_CODE_NON_TREE_LINK_FAILURE = 0x02, /* Non-tree link failure */
-    ZB_NWK_STATUS_CODE_LOW_BATTERY = 0x03, /* Low battery level */
-    ZB_NWK_STATUS_CODE_NO_ROUTING_CAPACITY = 0x04, /* No routing capacity */
-    ZB_NWK_STATUS_CODE_NO_INDIRECT_CAPACITY = 0x05, /* No indirect capacity */
-    ZB_NWK_STATUS_CODE_INDIRECT_EXPIRY = 0x06, /* Indirect transaction expiry */
-    ZB_NWK_STATUS_CODE_TARGET_UNAVAILABLE = 0x07, /* Target device unavailable */
-    ZB_NWK_STATUS_CODE_TARGET_UNALLOCATED = 0x08, /* Target address unallocated */
-    ZB_NWK_STATUS_CODE_PARENT_LINK_FAILURE = 0x09, /* Parent link failure */
-    ZB_NWK_STATUS_CODE_VALIDATE_ROUTE = 0x0a, /* Validate route */
-    ZB_NWK_STATUS_CODE_SOURCE_ROUTE_FAILURE = 0x0b, /* Source route failure */
-    ZB_NWK_STATUS_CODE_MANY_TO_ONE_FAILURE = 0x0c, /* Many-to-one route failure */
-    ZB_NWK_STATUS_CODE_ADDRESS_CONFLICT = 0x0d, /* Address conflict */
-    ZB_NWK_STATUS_CODE_VERIFY_ADDRESS = 0x0e, /* Verify address */
-    ZB_NWK_STATUS_CODE_PANID_UPDATE = 0x0f, /* PAN identifier update */
-    ZB_NWK_STATUS_CODE_ADDRESS_UPDATE = 0x10, /* Network address update */
-    ZB_NWK_STATUS_CODE_BAD_FRAME_COUNTER = 0x11, /* Bad frame counter */
-    ZB_NWK_STATUS_CODE_BAD_KEY_SEQNUM = 0x12, /* Bad key sequence number */
-    ZB_NWK_STATUS_CODE_UNKNOWN_COMMAND = 0x13, /* Unknown Command */
+    ZB_NWK_STATUS_CODE_NO_ROUTE_AVAILABLE = 0x00, /**< No route available */
+    ZB_NWK_STATUS_CODE_TREE_LINK_FAILURE = 0x01, /**< Tree link failure */
+    ZB_NWK_STATUS_CODE_NON_TREE_LINK_FAILURE = 0x02, /**< Non-tree link failure */
+    ZB_NWK_STATUS_CODE_LOW_BATTERY = 0x03, /**< Low battery level */
+    ZB_NWK_STATUS_CODE_NO_ROUTING_CAPACITY = 0x04, /**< No routing capacity */
+    ZB_NWK_STATUS_CODE_NO_INDIRECT_CAPACITY = 0x05, /**< No indirect capacity */
+    ZB_NWK_STATUS_CODE_INDIRECT_EXPIRY = 0x06, /**< Indirect transaction expiry */
+    ZB_NWK_STATUS_CODE_TARGET_UNAVAILABLE = 0x07, /**< Target device unavailable */
+    ZB_NWK_STATUS_CODE_TARGET_UNALLOCATED = 0x08, /**< Target address unallocated */
+    ZB_NWK_STATUS_CODE_PARENT_LINK_FAILURE = 0x09, /**< Parent link failure */
+    ZB_NWK_STATUS_CODE_VALIDATE_ROUTE = 0x0a, /**< Validate route */
+    ZB_NWK_STATUS_CODE_SOURCE_ROUTE_FAILURE = 0x0b, /**< Source route failure */
+    ZB_NWK_STATUS_CODE_MANY_TO_ONE_FAILURE = 0x0c, /**< Many-to-one route failure */
+    ZB_NWK_STATUS_CODE_ADDRESS_CONFLICT = 0x0d, /**< Address conflict */
+    ZB_NWK_STATUS_CODE_VERIFY_ADDRESS = 0x0e, /**< Verify address */
+    ZB_NWK_STATUS_CODE_PANID_UPDATE = 0x0f, /**< PAN identifier update */
+    ZB_NWK_STATUS_CODE_ADDRESS_UPDATE = 0x10, /**< Network address update */
+    ZB_NWK_STATUS_CODE_BAD_FRAME_COUNTER = 0x11, /**< Bad frame counter */
+    ZB_NWK_STATUS_CODE_BAD_KEY_SEQNUM = 0x12, /**< Bad key sequence number */
+    ZB_NWK_STATUS_CODE_UNKNOWN_COMMAND = 0x13, /**< Unknown Command */
     /* 0x14 - 0xff  =  Reserved */
     /* Custom Exegin status codes */
-    ZB_NWK_STATUS_CODE_INCOMING_FRAME_COUNTER = 0xff /* An incoming frame counter is greater than 0x80000000 */
+    ZB_NWK_STATUS_CODE_INCOMING_FRAME_COUNTER = 0xff /**< (Exegin custom) An incoming frame counter is greater than 0x80000000 */
 };
 
 /* NWK DstAddrMode values */
@@ -230,29 +230,29 @@ enum WpanJoinPolicyT {
 #define ZB_NWK_CONST_ENDDEV_TIMEOUT_DISABLED        0xffU
 
 /* NWK Security Material Set (ZB_NWK_NIB_ID_SecurityMaterialSet) */
-typedef struct ZbNwkSecMaterialT {
+struct ZbNwkSecMaterialT {
     bool valid;
     uint8_t keySeqNumber;
     uint8_t key[ZB_SEC_KEYSIZE];
     enum ZbSecKeyTypeT keyType;
-} ZbNwkSecMaterialT;
+};
 
 /* Frame Counter Attribute Set (ZB_NWK_NIB_ID_FrameCounterSet) */
-typedef struct ZbNwkFrameCounterT {
+struct ZbNwkFrameCounterT {
     uint8_t keySeqNumber;
     uint64_t senderAddr;
     uint32_t counter;
     ZbUptimeT cooldown; /* Cooldown timer for counter resets. */
     ZbUptimeT lastUsed; /* Timer for LRU evictions. */
     uint32_t persistCounter; /* Last saved counter value */
-} ZbNwkFrameCounterT;
+};
 
-typedef struct ZbNwkRouteRecordInfoT {
+struct ZbNwkRouteRecordInfoT {
     unsigned int recordsSent;
     bool doSendNext; /* Send Route Record before next tx */
     bool doRenew; /* Whether to renew sending a Route Record after renewTime. */
     ZbUptimeT renewTime;
-} ZbNwkRouteRecordInfoT;
+};
 
 /* NNT Discovery Parameters (ZB_NWK_NIB_ID_DiscoveryTable) */
 struct ZbNwkDiscoveryInfoT {
@@ -323,7 +323,7 @@ enum ZbNwkNeighborRelT {
 
 #define ZB_NWK_NEIGHBOR_IFINDEX_UNKNOWN             0xffU
 
-typedef struct ZbNwkNeighborT {
+struct ZbNwkNeighborT {
     /*** Mandatory Neighbor Table Entries */
     uint64_t extAddr;
     uint16_t nwkAddr; /* Set to ZB_NWK_ADDR_UNDEFINED to invalidate entry */
@@ -339,7 +339,7 @@ typedef struct ZbNwkNeighborT {
     uint8_t interval; /* R21 draft. */
     ZbUptimeT timeout; /* R21 draft. Disabled if zero. */
     uint8_t ifc_index; /* R22 - set to ZB_NWK_NEIGHBOR_IFINDEX_UNKNOWN if not known (e.g. after persistence) */
-} ZbNwkNeighborT;
+};
 
 /*
  * Routing Table Entry
@@ -356,7 +356,7 @@ enum ZbNwkRouteStatusT {
 #define ZB_NWK_ROUTE_RECORD_RENEWAL_TIMEOUT         (60U * 1000U) /* ms */
 #define ZB_NWK_ROUTE_RECORD_POST_SLEEP              (20U) /* ms */
 
-typedef struct ZbNwkRouteEntryT {
+struct ZbNwkRouteEntryT {
     enum ZbNwkRouteStatusT status;
     bool noCache; /* flag indicating destination doesn't store source routes. */
     bool isManyToOne; /* flag indicating if destination is a concentrator */
@@ -365,14 +365,14 @@ typedef struct ZbNwkRouteEntryT {
     uint16_t nextAddr;
     ZbUptimeT lastUsed; /* Used to measure route table ageing. */
     uint8_t cost; /* Currently not being used. */
-} ZbNwkRouteEntryT;
+};
 
 /*---------------------------------------------------------------
  * NLDE
  *---------------------------------------------------------------
  */
 /* NLDE-DATA.request */
-typedef struct ZbNldeDataReqT {
+struct ZbNldeDataReqT {
     enum ZbNwkAddrModeT dstAddrMode;
     uint8_t nonMemberRadius;
     uint16_t dstAddr;
@@ -386,16 +386,16 @@ typedef struct ZbNldeDataReqT {
     bool useAlias;
     uint16_t aliasAddr;
     uint8_t aliasSeqnum;
-} ZbNldeDataReqT;
+};
 
 /* NLDE-DATA.confirm */
-typedef struct ZbNldeDataConfT {
+struct ZbNldeDataConfT {
     uint32_t handle;
     enum ZbStatusCodeT status;
-} ZbNldeDataConfT;
+};
 
 /* NLDE-DATA.indication */
-typedef struct ZbNldeDataIndT {
+struct ZbNldeDataIndT {
     enum ZbNwkAddrModeT dstAddrMode;
     uint16_t dstAddr;
     uint16_t srcAddr;
@@ -405,14 +405,14 @@ typedef struct ZbNldeDataIndT {
     uint8_t linkQuality;
     int8_t rssi;
     bool useSecurity;
-} ZbNldeDataIndT;
+};
 
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbNldeDataReqCallback(struct ZigBeeT *zb, struct ZbNldeDataReqT *req,
     void (*callback)(struct ZbNldeDataConfT *dataConf, void *cb_arg), void *arg);
 
 /* NLDE-FRAME.request */
 /* Exegin addon for RAW MAC frame transmission. */
-typedef struct ZbNldeFrameReqT {
+struct ZbNldeFrameReqT {
     enum ZbNwkAddrModeT dstAddrMode;
     enum ZbNwkAddrModeT srcAddrMode;
     uint16_t dstAddr16;
@@ -422,161 +422,161 @@ typedef struct ZbNldeFrameReqT {
     const void *msdu;
     uint8_t msduLength;
     uint32_t handle;
-} ZbNldeFrameReqT;
-
-typedef struct ZbNldeDataConfT ZbNldeFrameConfT;
+};
 
 enum ZbStatusCodeT ZB_WARN_UNUSED ZbNldeFrameReqCallback(struct ZigBeeT *zb, struct ZbNldeFrameReqT *req,
-    void (*callback)(ZbNldeFrameConfT *FrameConf, void *cb_arg), void *arg);
+    void (*callback)(struct ZbNldeDataConfT *conf, void *arg), void *arg);
 
 /*---------------------------------------------------------------
  * NLME
  *---------------------------------------------------------------
  */
 /* NLME-GET.request */
-typedef struct ZbNlmeGetReqT {
+struct ZbNlmeGetReqT {
     enum ZbNwkNibAttrIdT attrId;
     void *attr; /* Buffer for attribute data */
     unsigned int attrLength; /* Max length of input, actual length returned */
     unsigned int attrIndex;
-} ZbNlmeGetReqT;
+};
 
 /* NLME-GET.confirm */
-typedef struct ZbNlmeGetConfT {
+struct ZbNlmeGetConfT {
     enum ZbStatusCodeT status;
     enum ZbNwkNibAttrIdT attrId;
-} ZbNlmeGetConfT;
+};
 
 /* NLME-SET.request */
-typedef struct ZbNlmeSetReqT {
+struct ZbNlmeSetReqT {
     enum ZbNwkNibAttrIdT attrId;
     const void *attr;
     unsigned int attrLength;
     unsigned int attrIndex;
-} ZbNlmeSetReqT;
+};
 
 /* NLME-SET.confirm */
-typedef struct ZbNlmeSetConfT {
+struct ZbNlmeSetConfT {
     enum ZbStatusCodeT status;
     enum ZbNwkNibAttrIdT attrId;
-} ZbNlmeSetConfT;
+};
 
 /* NLME-RESET.request */
-typedef struct ZbNlmeResetReqT {
+struct ZbNlmeResetReqT {
     bool warmStart;
-} ZbNlmeResetReqT;
+};
 
 /* NLME-RESET.confirm */
-typedef struct ZbNlmeResetConfT {
+struct ZbNlmeResetConfT {
     enum ZbStatusCodeT status;
-} ZbNlmeResetConfT;
+};
 
 /* NLME-SYNC.request */
-typedef struct ZbNlmeSyncReqT {
+struct ZbNlmeSyncReqT {
     bool track;
-} ZbNlmeSyncReqT;
+};
 
 /* NLME-SYNC.confirm */
-typedef struct ZbNlmeSyncConfT {
+struct ZbNlmeSyncConfT {
     enum ZbStatusCodeT status;
-} ZbNlmeSyncConfT;
+};
 
 /* NLME-SYNC.indication */
-typedef struct ZbNlmeSyncIndT {
+struct ZbNlmeSyncIndT {
     void *voidPtr; /* empty */
-} ZbNlmeSyncIndT;
+};
 
 /* NLME-NETWORK-FORMATION.request */
-typedef struct ZbNlmeNetFormReqT {
+struct ZbNlmeNetFormReqT {
+    /* A network form always uses the standard MCP_SCAN_ACTIVE scan type
+     * in order to elicit all Beacons to check for existing PAN Ids. */
     struct ZbChannelListT scanChannels;
     uint8_t scanDuration;
     uint8_t beaconOrder;
     uint8_t superframeOrder;
     uint8_t batteryLifeExtension;
     bool distributed;
-} ZbNlmeNetFormReqT;
+};
 
 /* NLME-NETWORK-FORMATION.confirm */
-typedef struct ZbNlmeNetFormConfT {
+struct ZbNlmeNetFormConfT {
     enum ZbStatusCodeT status;
-} ZbNlmeNetFormConfT;
+};
 
 /* NLME-NETWORK-DISCOVERY.request */
-typedef struct ZbNlmeNetDiscReqT {
+struct ZbNlmeNetDiscReqT {
     struct ZbChannelListT scanChannels;
     uint8_t scanDuration;
-} ZbNlmeNetDiscReqT;
+};
 
 /* NLME-NETWORK-DISCOVERY.confirm */
-typedef struct ZbNlmeNetDiscConfT {
+struct ZbNlmeNetDiscConfT {
     enum ZbStatusCodeT status;
     /* Use ZB_NWK_NIB_ID_DiscoveryTable to retrieve the discovery table entries. */
-} ZbNlmeNetDiscConfT;
+};
 
 /* NLME-PERMIT-JOIN.request */
-typedef struct ZbNlmePermitJoinReqT {
+struct ZbNlmePermitJoinReqT {
     uint8_t permitDuration;
-} ZbNlmePermitJoinReqT;
+};
 
 /* NLME-PERMIT-JOIN.confirm */
-typedef struct ZbNlmePermitJoinConfT {
+struct ZbNlmePermitJoinConfT {
     enum ZbStatusCodeT status;
-} ZbNlmePermitJoinConfT;
+};
 
 /* NLME-JOIN.request */
-typedef struct ZbNlmeJoinReqT {
+struct ZbNlmeJoinReqT {
     uint64_t epid;
     enum ZbNwkRejoinTypeT rejoinNetwork;
     struct ZbChannelListT scanChannels;
     uint8_t scanDuration;
     uint8_t capabilityInformation; /* e.g. MCP_ASSOC_CAP_DEV_TYPE */
     bool securityEnable;
-} ZbNlmeJoinReqT;
+};
 
 /* NLME-JOIN.confirm */
-typedef struct ZbNlmeJoinConfT {
+struct ZbNlmeJoinConfT {
     enum ZbStatusCodeT status;
     uint16_t nwkAddr;
-} ZbNlmeJoinConfT;
+};
 
 /* NLME-JOIN.indication */
-typedef struct ZbNlmeJoinIndT {
+struct ZbNlmeJoinIndT {
     uint16_t nwkAddr;
     uint64_t extAddr;
     uint8_t capabilityInfo;
     enum ZbNwkRejoinTypeT rejoinNetwork;
     bool secureRejoin;
-} ZbNlmeJoinIndT;
+};
 
 /* NLME-DIRECT-JOIN.request */
-typedef struct ZbNlmeDirectJoinReqT {
+struct ZbNlmeDirectJoinReqT {
     uint64_t deviceAddr;
     uint16_t nwkAddr; /* Exegin addon - set to ZB_NWK_ADDR_UNDEFINED if not used. */
     uint8_t capabilityInfo;
     uint8_t interval;
-} ZbNlmeDirectJoinReqT;
+};
 
 /* NLME-DIRECT-JOIN.confirm */
-typedef struct ZbNlmeDirectJoinConfT {
+struct ZbNlmeDirectJoinConfT {
     uint64_t deviceAddr;
     enum ZbStatusCodeT status;
-} ZbNlmeDirectJoinConfT;
+};
 
 /* NLME-LEAVE.request */
-typedef struct ZbNlmeLeaveReqT {
+struct ZbNlmeLeaveReqT {
     uint64_t deviceAddr;
     bool removeChildren;
     bool rejoin;
-} ZbNlmeLeaveReqT;
+};
 
 /* NLME-LEAVE.confirm */
-typedef struct ZbNlmeLeaveConfT {
+struct ZbNlmeLeaveConfT {
     uint64_t deviceAddr;
     enum ZbStatusCodeT status;
-} ZbNlmeLeaveConfT;
+};
 
 /* NLME-LEAVE.indication */
-typedef struct ZbNlmeLeaveIndT {
+struct ZbNlmeLeaveIndT {
     uint64_t deviceAddr;
     bool rejoin;
     /* Exegin extension */
@@ -584,72 +584,72 @@ typedef struct ZbNlmeLeaveIndT {
     /* Is one of our children leaving? By the time the NHLE has received this, the device
      * has likely been removed as one of our children from the NNT. */
     enum ZbNwkNeighborRelT relationship;
-} ZbNlmeLeaveIndT;
+};
 
 /* NLME-START-ROUTER.request */
-typedef struct ZbNlmeStartRouterReqT {
+struct ZbNlmeStartRouterReqT {
     uint8_t beaconOrder;
     uint8_t superframeOrder;
     uint8_t battLifeExtension;
     struct ZbChannelListT scanChannels;
-} ZbNlmeStartRouterReqT;
+};
 
 /* NLME-START-ROUTER.confirm */
-typedef struct ZbNlmeStartRouterConfT {
+struct ZbNlmeStartRouterConfT {
     enum ZbStatusCodeT status;
-} ZbNlmeStartRouterConfT;
+};
 
 /* NLME-ED-SCAN.request */
-typedef struct ZbNlmeEdScanReqT {
+struct ZbNlmeEdScanReqT {
     uint32_t channelMask; /* Channel Page Structure [PAGE|MASK] */
     uint8_t scanDuration;
-} ZbNlmeEdScanReqT;
+};
 
 /* NLME-ED-SCAN.confirm */
-typedef struct ZbNlmeEdScanConfT {
+struct ZbNlmeEdScanConfT {
     uint32_t unscannedChannels;
     uint8_t energyDetectList[WPAN_PAGE_CHANNELS_MAX];
     enum ZbStatusCodeT status;
-} ZbNlmeEdScanConfT;
+};
 
 /* NLME-ROUTE-DISCOVERY.request */
-typedef struct ZbNlmeRouteDiscReqT {
+struct ZbNlmeRouteDiscReqT {
     enum ZbNwkAddrModeT dstAddrMode;
     uint16_t dstAddr;
     uint8_t radius;
     uint8_t noRouteCache;
-} ZbNlmeRouteDiscReqT;
+};
 
 /* NLME-ROUTE-DISCOVERY.confirm */
-typedef struct ZbNlmeRouteDiscConfT {
+struct ZbNlmeRouteDiscConfT {
     enum ZbStatusCodeT status;
-} ZbNlmeRouteDiscConfT;
+};
 
 /* NLME-NETWORK-STATUS.indication */
-typedef struct ZbNlmeNetworkStatusIndT {
+struct ZbNlmeNetworkStatusIndT {
     uint16_t shortAddr;
     enum ZbNwkNetworkStatusCodeT status;
-} ZbNlmeNetworkStatusIndT;
+};
 
 /* NLME-SET-INTERFACE.request */
-typedef struct ZbNlmeSetInterfaceReqT {
+struct ZbNlmeSetInterfaceReqT {
     uint8_t ifcIndex;
     uint8_t state;
     uint32_t channelInUse;
     struct ZbChannelListT supportedChannels;
     bool routersAllowed;
-} ZbNlmeSetInterfaceReqT;
+};
 
-typedef struct ZbNlmeSetInterfaceConfT {
+struct ZbNlmeSetInterfaceConfT {
     enum ZbStatusCodeT status;
-} ZbNlmeSetInterfaceConfT;
+};
 
 /* NLME-GET-INTERFACE.request */
-typedef struct ZbNlmeGetInterfaceReqT {
+struct ZbNlmeGetInterfaceReqT {
     uint8_t ifcIndex;
-} ZbNlmeGetInterfaceReqT;
+};
 
-typedef struct ZbNlmeGetInterfaceConfT {
+struct ZbNlmeGetInterfaceConfT {
     enum ZbStatusCodeT status;
     uint8_t ifcIndex;
     uint8_t state;
@@ -659,16 +659,16 @@ typedef struct ZbNlmeGetInterfaceConfT {
     bool powerNegotSupported;
     /* Exegin add-on */
     struct WpanPublicT *mac;
-} ZbNlmeGetInterfaceConfT;
+};
 
 /* Broadcast transaction table entry */
-typedef struct ZbNwkBttEntryT {
+struct ZbNwkBttEntryT {
     uint16_t srcAddr;
     uint8_t seqnum;
     /* EXEGIN - replace pAckCount with a list of router neighbors */
     uint8_t pAckCount; /* passive ack count for flood limiting. */
     ZbUptimeT expireTime; /* expiration time relative to ZbUptime. */
-} ZbNwkBttEntryT;
+};
 
 /** Commissioning configuration. */
 struct ZbNwkCommissioningInfo {

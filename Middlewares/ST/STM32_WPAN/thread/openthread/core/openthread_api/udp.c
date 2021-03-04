@@ -1,11 +1,11 @@
 /**
-  ******************************************************************************
-  * @file    udp.c
-  * @author  MCD Application Team
-  * @brief   This file contains the UDP interface shared between M0 and
-  *          M4.
-  ******************************************************************************
-  * @attention
+ ******************************************************************************
+ * @file    udp.c
+ * @author  MCD Application Team
+ * @brief   This file contains the UDP interface shared between M0 and
+ *          M4.
+ ******************************************************************************
+ * @attention
  *
  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
  * All rights reserved.</center></h2>
@@ -33,140 +33,196 @@
 extern otUdpReceive otUdpReceiveCb;
 
 
-otMessage *otUdpNewMessage(otInstance *aInstance, bool aLinkSecurityEnabled)
+otError otUdpAddReceiver(otInstance *aInstance, otUdpReceiver *aUdpReceiver)
 {
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-    p_ot_req->ID = MSG_M4TOM0_OT_UDP_NEW_MESSAGE;
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_ADD_RECEIVER;
 
-    p_ot_req->Size=1;
-    p_ot_req->Data[0] = (uint32_t)aLinkSecurityEnabled;
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aUdpReceiver;
 
-    Ot_Cmd_Transfer();
+  Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otMessage*)p_ot_req->Data[0];
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otUdpRemoveReceiver(otInstance *aInstance, otUdpReceiver *aUdpReceiver)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_REMOVE_RECEIVER;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aUdpReceiver;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otUdpSendDatagram(otInstance *aInstance, otMessage *aMessage, otMessageInfo *aMessageInfo)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_SEND_DATAGRAM;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t)aMessage;
+  p_ot_req->Data[1] = (uint32_t)aMessageInfo;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otMessage *otUdpNewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_NEW_MESSAGE;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aSettings;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otMessage*)p_ot_req->Data[0];
 }
 
 otError otUdpOpen(otInstance *aInstance, otUdpSocket *aSocket, otUdpReceive aCallback, void *aContext)
 {
-    Pre_OtCmdProcessing();
-    otUdpReceiveCb = aCallback;
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  Pre_OtCmdProcessing();
+  otUdpReceiveCb = aCallback;
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-    p_ot_req->ID = MSG_M4TOM0_OT_UDP_OPEN;
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_OPEN;
 
-    p_ot_req->Size=2;
-    p_ot_req->Data[0] = (uint32_t)aSocket;
-    p_ot_req->Data[1] = (uint32_t)aContext;
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t)aSocket;
+  p_ot_req->Data[1] = (uint32_t)aContext;
 
-    Ot_Cmd_Transfer();
+  Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
 }
 
 otError otUdpClose(otUdpSocket *aSocket)
 {
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-    p_ot_req->ID = MSG_M4TOM0_OT_UDP_CLOSE;
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_CLOSE;
 
-    p_ot_req->Size=1;
-    p_ot_req->Data[0] = (uint32_t)aSocket;
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aSocket;
 
-    Ot_Cmd_Transfer();
+  Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
 }
 
 otError otUdpBind(otUdpSocket *aSocket, otSockAddr *aSockName)
 {
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-    p_ot_req->ID = MSG_M4TOM0_OT_UDP_BIND;
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_BIND;
 
-    p_ot_req->Size=2;
-    p_ot_req->Data[0] = (uint32_t)aSocket;
-    p_ot_req->Data[1] = (uint32_t)aSockName;
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t)aSocket;
+  p_ot_req->Data[1] = (uint32_t)aSockName;
 
-    Ot_Cmd_Transfer();
+  Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
 }
 
 otError otUdpConnect(otUdpSocket *aSocket, otSockAddr *aSockName)
 {
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-    p_ot_req->ID = MSG_M4TOM0_OT_UDP_CONNECT;
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_CONNECT;
 
-    p_ot_req->Size=2;
-    p_ot_req->Data[0] = (uint32_t)aSocket;
-    p_ot_req->Data[1] = (uint32_t)aSockName;
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t)aSocket;
+  p_ot_req->Data[1] = (uint32_t)aSockName;
 
-    Ot_Cmd_Transfer();
+  Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
 }
 
 otError otUdpSend(otUdpSocket *aSocket, otMessage *aMessage, const otMessageInfo *aMessageInfo)
 {
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-    p_ot_req->ID = MSG_M4TOM0_OT_UDP_SEND;
-
-    p_ot_req->Size=3;
-    p_ot_req->Data[0] = (uint32_t)aSocket;
-    p_ot_req->Data[1] = (uint32_t)aMessage;
-    p_ot_req->Data[2] = (uint32_t)aMessageInfo;
-
-    Ot_Cmd_Transfer();
-
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
-}
-
-void otUdpProxySetSender(otInstance *aInstance, otUdpProxySender aSender, void *aContext)
-{
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_UDP_PROXY_SET_SENDER;
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_SEND;
 
-  p_ot_req->Size=2;
-  p_ot_req->Data[0] = (uint32_t)aSender;
-  p_ot_req->Data[1] = (uint32_t)aContext;
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aSocket;
+  p_ot_req->Data[1] = (uint32_t)aMessage;
+  p_ot_req->Data[2] = (uint32_t)aMessageInfo;
 
   Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
 }
 
-void otUdpProxyReceive(otInstance *        aInstance,
-                       otMessage *         aMessage,
-                       uint16_t            aPeerPort,
-                       const otIp6Address *aPeerAddr,
-                       uint16_t            aSockPort)
+#if OPENTHREAD_CONFIG_UDP_FORWARD_ENABLE
+void otUdpForwardSetForwarder(otInstance *aInstance, otUdpForwarder aForwarder, void *aContext)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_UDP_PROXY_RECEIVE;
+  otUdpForwardSetForwarderCb = aForwarder;
+
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_FORWARD_SET_FORWARDER;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aContext;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+void otUdpForwardReceive(otInstance *        aInstance,
+                         otMessage *         aMessage,
+                         uint16_t            aPeerPort,
+                         const otIp6Address *aPeerAddr,
+                         uint16_t            aSockPort)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M0TOM4_UDP_FORWARD_RECEIVE;
 
   p_ot_req->Size=4;
   p_ot_req->Data[0] = (uint32_t)aMessage;
@@ -175,4 +231,25 @@ void otUdpProxyReceive(otInstance *        aInstance,
   p_ot_req->Data[3] = (uint32_t)aSockPort;
 
   Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
+#endif /* OPENTHREAD_CONFIG_UDP_FORWARD_ENABLE */
+
+#if OPENTHREAD_CONFIG_PLATFORM_UDP_ENABLE
+otUdpSocket *otUdpGetSockets(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M0TOM4_UDP_GET_SOCKETS;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otUdpSocket *)p_ot_req->Data[0];
+}
+#endif /* OPENTHREAD_CONFIG_PLATFORM_UDP_ENABLE */

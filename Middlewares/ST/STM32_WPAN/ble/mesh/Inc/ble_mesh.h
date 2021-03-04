@@ -23,11 +23,11 @@
 
 #include "types.h"
 //#include "hal_types.h"
-#define BLE_MESH_APPLICATION_VERSION "1.13.001" 
+#define BLE_MESH_APPLICATION_VERSION "1.13.002" 
 /**
 * \mainpage ST BLE-Mesh Solutions Bluetooth LE Mesh Library
 *
-* \version 1.13.001
+* \version 1.13.002
 *
 * \subsection contents_sec Contents
 *
@@ -225,6 +225,71 @@ typedef struct
 } neighbor_params_t;
 
 /**
+* Structure contains NetKey List
+*/
+typedef struct
+{
+  MOBLEUINT16 *netKeyIndexList;
+  MOBLEUINT16 netKeyIndexList_size;
+  MOBLEUINT8 status; 
+  MOBLEUINT8 reserved[3];
+  
+}model_netKeyListParams_t;
+
+/**
+* Structure contains AppKey & NetKey Add/Delete & Update parameters
+*/
+typedef struct
+{
+ MOBLEUINT16 netKeyIndex;
+ MOBLEUINT16 appKeyIndex;
+ MOBLEUINT8 *netKey;
+ MOBLEUINT8 *appKey;
+ MOBLEUINT8 keySize;
+ MOBLEUINT8 status;
+ 
+}model_securityKeyParams_t;
+
+/**
+* Structure contains AppKey List
+*/
+typedef struct
+{
+  MOBLEUINT16 netKeyIndex;
+  MOBLEUINT16 *appKeyIndexList;
+  MOBLEUINT16 appKeyIndexList_size;
+  MOBLEUINT8 status; 
+  MOBLEUINT8 reserved;
+  
+}model_appKeyListParams_t;
+
+/**
+* Structure contains AppKey Bind/Unbind parameters
+*/
+typedef struct
+{
+ MOBLEUINT8 elementIndex;
+ MOBLEUINT16 appKeyIndex;
+ MOBLEUINT32 modelID;
+ MOBLEUINT8 status;
+  
+}model_appKeyBindingParams_t;
+
+/**
+* Structure contains Subscription related parameters
+*/
+typedef struct
+{
+ MOBLEUINT8 elementIndex;
+ MOBLEUINT32 modelID;
+ MOBLE_ADDRESS subAddress;
+ MOBLEUINT8 status;
+ MOBLEBOOL isVirtual;
+ MOBLEBOOL allSubDeleted;
+ MOBLEUINT8 reserved[2]; 
+}model_subParams_t;
+
+/**
 * Structure contains publication parameters of required model
 */
 typedef struct
@@ -238,7 +303,10 @@ typedef struct
   MOBLEUINT8 publishPeriod;
   MOBLEUINT8 publishRetransmitCount;
   MOBLEUINT8 publishRetransmitIntervalSteps;    
+  MOBLEUINT8 status;
+  MOBLEUINT8 reserved;
 } model_publicationparams_t;
+
 /** \brief of Message Header structure.
   * This is the structure of message header for elementIndex, src-dst addresses,
   * TTL, RSSI, NetKey & AppKey Offset
@@ -361,9 +429,38 @@ typedef struct
 /** \brief Config Model function Callback map */
 typedef struct 
 { 
+   /* Call back function to get the AppKey Add command received on Config Model*/
+  void(*GetAppKeyAddParamsCb)(model_securityKeyParams_t*);
+   /* Call back function to get the AppKey Delete command received on Config Model*/
+  void(*GetAppKeyDeleteParamsCb)(model_securityKeyParams_t*);
+   /* Call back function to get the AppKey List from Config Model*/
+  void(*GetAppKeyListParamsCb)(model_appKeyListParams_t*);
+   /* Call back function to get the updated AppKey from Config Model*/
+  void(*GetAppKeyUpdateParamsCb)(model_securityKeyParams_t*);
+  /* Call back function to get the NetKey Add command received on Config Model*/
+  void(*GetNetKeyAddParamsCb)(model_securityKeyParams_t*);
+  /* Call back function to get the NetKey Delete command received on Config Model*/
+  void(*GetNetKeyDeleteParamsCb)(model_securityKeyParams_t*);
+   /* Call back function to get the NetKey List from Config Model*/
+  void(*GetNetKeyListParamsCb)(model_netKeyListParams_t*);
+   /* Call back function to get the updated NetKey from Config Model*/
+  void(*GetNetKeyUpdateParamsCb)(model_securityKeyParams_t*);
+  /* Call back function to get the appKey binding parameters*/
+  void(*GetAppKeyBindingParamsCb)(model_appKeyBindingParams_t*);
+    /* Call back function to get the appKey Unbinding parameters*/
+  void(*GetAppKeyUnBindingParamsCb)(model_appKeyBindingParams_t*);
+    /* Call back function to get the subscription add parameters*/
+  void(*GetSubAddParamsCb)(model_subParams_t*);
+    /* Call back function to get the subscription delete parameters*/
+  void(*GetSubDeleteParamsCb)(model_subParams_t*);
+    /* Call back function to get the subscription overwrite parameters*/
+  void(*GetSubOverwriteParamsCb)(model_subParams_t*);
   /* Call back function to get the Publication Parameters when Publication Set
      command received on Config Model*/
-  void (*GetPublicationParamsCb)(model_publicationparams_t*);  
+  void (*GetPublicationSetParamsCb)(model_publicationparams_t*);  
+  /* Call back function to get the Publication Parameters when Publication Get
+     command received on Config Model*/
+  void (*GetPublicationGetParamsCb)(model_publicationparams_t*);
   
 } MOBLE_CONFIG_MODEL_CB_MAP;
 
@@ -897,6 +994,7 @@ MOBLEUINT8 BLEMesh_GetRelayRetransmitCount(void);
 
 /** \brief Enable or disable relay feature. Feature can be changed only if it is supported 
 *          0 - disable, 1 - enable
+*          Results in state disparity between Server and Client
 * \return MOBLE_RESULT_FALSE if no change occur
 *         MOBLE_RESULT_SUCCESS on success
 */
@@ -904,6 +1002,7 @@ MOBLE_RESULT BLEMesh_SetRelayFeatureState(MOBLEUINT8 state);
 
 /** \brief Enable or disable proxy feature. Feature can be changed only if it is supported 
 *          0 - disable, 1 - enable
+*          Results in state disparity between Server and Client
 * \return MOBLE_RESULT_FALSE if no change occur
 *         MOBLE_RESULT_SUCCESS on success
 */
@@ -911,6 +1010,7 @@ MOBLE_RESULT BLEMesh_SetProxyFeatureState(MOBLEUINT8 state);
 
 /** \brief Enable or disable friend feature. Feature can be changed only if it is supported 
 *          0 - disable, 1 - enable
+*          Results in state disparity between Server and Client
 * \return MOBLE_RESULT_FALSE if no change occur
 *         MOBLE_RESULT_SUCCESS on success
 */
@@ -918,6 +1018,7 @@ MOBLE_RESULT BLEMesh_SetFriendFeatureState(MOBLEUINT8 state);
 
 /** \brief Disable low power feature only if it is supported and enabled
 *          0 - disable, low power feature can't be enabled using BluenrgMesh_SetLowPowerFeatureState
+*          Results in state disparity between Server and Client
 * \return MOBLE_RESULT_FALSE if no change occur
 *         MOBLE_RESULT_SUCCESS on success
 */

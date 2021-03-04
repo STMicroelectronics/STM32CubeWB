@@ -52,7 +52,6 @@
  * It should not exceed 255 which is the maximum HCI packet payload size (a greater value is a lost of memory as it will
  * never be used)
  * With the current wireless firmware implementation, this parameter shall be kept to 255
- *
  */
 #define CFG_TL_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 
@@ -77,6 +76,18 @@
 #define CFG_USB_INTERFACE_ENABLE    0
 
 /******************************************************************************
+ * IPCC interface
+ ******************************************************************************/
+
+/**
+ * The IPCC is dedicated to the communication between the CPU2 and the CPU1
+ * and shall not be modified by the application
+ * The two following definitions shall not be modified
+ */
+#define HAL_IPCC_TX_IRQHandler(...)  HW_IPCC_Tx_Handler( )
+#define HAL_IPCC_RX_IRQHandler(...)  HW_IPCC_Rx_Handler( )
+
+/******************************************************************************
  * Low Power
  *
  *  When CFG_FULL_LOW_POWER is set to 1, the system is configured in full
@@ -93,7 +104,6 @@
 #undef CFG_LPM_SUPPORTED
 #define CFG_LPM_SUPPORTED   1
 #endif /* CFG_FULL_LOW_POWER */
-
 /******************************************************************************
  * Timer Server
  ******************************************************************************/
@@ -102,7 +112,7 @@
  *  The lower is the value, the better is the power consumption and the accuracy of the timerserver
  *  The higher is the value, the finest is the granularity
  *
- *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to ouput
+ *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to output
  *  clock as low as possible) but the output clock should be equal or higher frequency compare to the clock feeding
  *  the wakeup timer. A lower clock speed would impact the accuracy of the timer server.
  *
@@ -117,6 +127,7 @@
  *
  *  The following settings are computed with LSI as input to the RTC
  */
+
 #define CFG_RTCCLK_DIVIDER_CONF 0
 
 #if (CFG_RTCCLK_DIVIDER_CONF == 0)
@@ -125,9 +136,10 @@
  * It does not support 1Hz calendar
  * It divides the RTC CLK by 16
  */
+
 #define CFG_RTCCLK_DIV  (16)
 #define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (CFG_RTCCLK_DIV - 1)
+#define CFG_RTC_ASYNCH_PRESCALER (0x0F)
 #define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
 
 #else
@@ -336,7 +348,7 @@ typedef enum
  ******************************************************************************/
 /**
  * Supported requester to the MCU Low Power Manager - can be increased up  to 32
- * It lits a bit mapping of all user of the Low Power Manager
+ * It list a bit mapping of all user of the Low Power Manager
  */
 typedef enum
 {

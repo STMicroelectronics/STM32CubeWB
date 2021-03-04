@@ -18,12 +18,12 @@
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32WBxx_DFP.1.0.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
+          <Cpu>IRAM(0x20000000,0x000040000) IROM(0x08000000,0x001000000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll></FlashDriverDll>
-          <DeviceId></DeviceId>
-          <RegisterFile></RegisterFile>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32WB_M4 -FS08000000 -FL01000000 -FP0($$Device:STM32WB55RGVx$CMSIS\Flash\STM32WB_M4.FLM))</FlashDriverDll>
+          <DeviceId>0</DeviceId>
+          <RegisterFile>$$Device:STM32WB55RGVx$Drivers\CMSIS\Device\ST\STM32WBxx\Include\stm32wbxx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -189,7 +189,7 @@
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>1</useUlib>
-            <EndSel>0</EndSel>
+            <EndSel>1</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
@@ -244,13 +244,13 @@
               </Ocm6>
               <IRAM>
                 <Type>0</Type>
-                <StartAddress>0x20000004</StartAddress>
-                <Size>0x2fc00</Size>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x40000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x1000000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -521,6 +521,11 @@
               <FileName>appli_sensors_client.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\STM32_WPAN\app\appli_sensors_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>appli_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32_WPAN\app\appli_config.c</FilePath>
             </File>
           </Files>
         </Group>

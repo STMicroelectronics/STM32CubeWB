@@ -37,6 +37,8 @@
 
 #define NO_MODEL_AVLBL                       0xFFFF
 
+#define MAX_U32_VALUE                           0xFFFFFFFF        
+
 /*
 * TRACE_M includes function name and clock
 */
@@ -102,21 +104,64 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size);
 #define ENABLE_SENSOR_MODEL_SERVER_SETUP              ENABLE_SENSOR_MODEL_SERVER
 #endif
 
+#ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF
+  #ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP
+    #if (ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP != ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF)
+      #error "Generic Power OnOff Setup Server should be supported with Generic Power OnOff Server"
+    #endif
+  #else
+    #error "Generic Power OnOff Setup Server should be supported with Generic Power OnOff Server"
+  #endif
+
+  #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF
+    #if (ENABLE_GENERIC_MODEL_SERVER_ONOFF == 0)
+      #error "Generic OnOff Server should be supported with Generic Power OnOff Server"
+    #endif
+  #else
+    #error "Generic OnOff Server should be supported with Generic Power OnOff Server"
+  #endif
+#endif
+
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
+  #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP
+    #if (ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP != ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS)
+      #error "Light Lightness Setup Server should be supported with Light Lightness Server"
+    #endif
+  #else
+    #error "Light Lightness Setup Server should be supported with Light Lightness Server"
+  #endif
+
+  #ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF
+    #if (ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF == 0)
+      #error "Generic Power OnOff Server should be supported with Light Lightness Server"
+    #endif
+  #else
+    #error "Generic Power OnOff Server should be supported with Light Lightness Server"
+  #endif
+
+  #ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL
+    #if (ENABLE_GENERIC_MODEL_SERVER_LEVEL == 0)
+      #error "Generic Level Server should be supported with Light Lightness Server"
+    #endif
+  #else
+    #error "Generic Level Server should be supported with Light Lightness Server"
+  #endif
+#endif
+
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC
   #define ENABLE_LIGHT_MODEL_SERVER_LC_SETUP          ENABLE_LIGHT_MODEL_SERVER_LC
 
   #if (APPLICATION_NUMBER_OF_ELEMENTS < 2)
-    #error "Number of elements should be >= 2 with LC Server model"
+    #error "Number of elements should be >= 2 with Light LC Server"
   #endif
 
   #ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
     #if (ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS == 0)
-      #error "Light model server should be present on at least 1 element"
+      #error "Light Lightness Server should be supported with Light LC Server (on main element)"
     #endif
   #else
-    #error "Light model server should be present"
+    #error "Light Lightness Server should be supported with Light LC Server (on main element)"
 #endif
-
 #endif
 
 #ifdef EXTERNAL_MAC_ADDR_MGMT
@@ -327,7 +372,8 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size);
 
 #if defined (ENABLE_LIGHT_MODEL_CLIENT_LIGHTNESS) \
     || defined (ENABLE_LIGHT_MODEL_CLIENT_CTL)  \
-    || defined (ENABLE_LIGHT_MODEL_CLIENT_HSL) 
+    || defined (ENABLE_LIGHT_MODEL_CLIENT_HSL)  \
+    || defined (ENABLE_LIGHT_MODEL_CLIENT_LC) 
          
  #define ENABLE_LIGHT_MODEL_CLIENT
 #endif
@@ -529,4 +575,5 @@ MOBLEUINT8 ApplicationSetNodeSigModelList(void);
 MOBLE_RESULT ApplicationInitSigModelList(void);
 MOBLE_RESULT ApplicationInitVendorModelList(void);
 MOBLE_RESULT AppliCheck_EnabledModelsList(void);
+MOBLE_RESULT Appli_Light_LCs_Init(void);
 #endif /* __MESH_CFG_H */

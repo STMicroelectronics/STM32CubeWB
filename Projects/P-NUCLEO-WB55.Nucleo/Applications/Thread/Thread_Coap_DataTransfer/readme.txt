@@ -208,10 +208,7 @@ In order to make the program work, you must do the following:
 
 Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
   
-If you want to get the traces in real time, you can connect an HyperTerminal 
-via an UART RS232 cable using the following connections: 
-  RXD: CN10(Pin35)   
-  TXD: CN10(Pin37)
+To get the traces in real time, you can connect an HyperTerminal to the STLink Virtual Com Port.
  
  
 For the traces, the UART must be configured as follows: 

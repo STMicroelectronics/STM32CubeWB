@@ -1,4 +1,4 @@
-/* USER CODE BEGIN */
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
  * File Name          : App/custom_app.h

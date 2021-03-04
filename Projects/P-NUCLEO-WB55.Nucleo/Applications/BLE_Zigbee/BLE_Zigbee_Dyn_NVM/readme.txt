@@ -38,7 +38,7 @@ The demo architecture is summarized in the following figure:
   |              |             |              |             |              |
   |              |  BLE Toggle | Dynamic mode |  ZB Toggle  |              |
   |   BLE App    |<===========>|  BLE/ZB App  |<===========>|    ZB App    |
-  |              |             |              |             |              |
+  |              |             |              |             |   (Coord)    |
   |              |             |              |             |              |
   \______________/             \______________/             \______________/
         [3]                          [2]                          [1]  
@@ -91,7 +91,7 @@ Zigbee, BLE
 
 @par How to use it ? 
 
-This application requests having the STM32WB5x_BLE_Zigbee_dynamic_fw.bin binary flashed on the M0 Wireless Coprocessor.
+This application requests having the STM32WB5x_BLE_Zigbee_FFD_dynamic_fw.bin binary flashed on the M0 Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -116,10 +116,7 @@ In order to make the program work, you must do the following:
  - Rebuild all files and load your image into target memory
  - Run the example
     
- if you want to get the traces in real time, you can connects an HyperTerminal 
- via an UART RS232 cable using the following connections :
-  RXD : CN10(Pin35)   
-  TXD : CN10(Pin37)
+To get the traces in real time, you can connect an HyperTerminal to the STLink Virtual Com Port.
 
 **** START DEMO ****
 By default, after a reset, the ZB/BLE board [2] will start with both BLE and Zigbee modes activated.
@@ -133,13 +130,14 @@ The blue led turns ON when the Zigbee join is successful.
 by selecting = "P2PZBSRV1" entry.
 -- Once connected, the application starts to search the P2P Services & Characteristics.
 -- Led Button service, Led Characteristic and Button Characteristic are discovered at this stage (this service is ST specific).
--- Pressing the LED button on the App will turn On or Off the BLUE Led on the ZB/BLE device [2]
+-- Pressing the LED button on the App will turn On or Off the Red Led on the ZB/BLE device [2]
 3.2 If using a 3rd Nucleo board (running a BLE_p2pClient application [3]), you can start scanning by pressing the SW1 button
--- the BLUE LED will light up on [3]
--- After scanning complete, the 3rd Nucleo board [3] connects to the P2P server on BLE/ZB [2] dynamic node, and sends a toggle every 50ms.
--- As a result the BLUE LED starts toggling on the BLE/ZB device [2], every 50 ms
+-- the Blue LED will light up on [3]
+-- As a result the Green LED starts toggling on the BLE/ZB device [2], every 50 ms
+-- After scanning complete, the 3rd Nucleo board [3] connects to the P2P server on BLE/ZB [2] dynamic node. At this stage, it can 
+   sends a toggle request to the BLE/ZB device via the SW1 push button. This will make the Red LED on the BLE/ZB device toggling.
 4- When the BLE connection is detected by the BLE/ZB device [2], it sends continuously a ZB ON_OFF toggle on the ZB coordinator [1]
--- The RED Led toogles on the coordinator [1] (at an approx rate of 70 ms)
+-- The Red Led toggles on the coordinator [1] (at an approx rate of 70 ms)
 
    ______________               ______________               ______________ 
   /              \             /              \             /              \
@@ -151,7 +149,8 @@ by selecting = "P2PZBSRV1" entry.
   \______________/             \______________/             \______________/
         [3]                          [2]                          [1]  
 
-This Demo illustates the simultaneous BLE and ZB connections, with the BLUE Led toggling on ZB/BLE device [2], reflecting BLE activity, and the RED Led toggling on the ZB coordinator[1], reflecting ZB activity.
+This Demo illustates the simultaneous BLE and ZB connections, with the red Led toggling on ZB/BLE device [2], reflecting BLE activity, and 
+the Red Led toggling on the ZB coordinator[1], reflecting ZB activity.
 
 On BLE Disconnection, The STM32WB55xx-Nucleo board [3] will restart advertising. 
 

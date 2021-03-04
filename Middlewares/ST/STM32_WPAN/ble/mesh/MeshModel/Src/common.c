@@ -24,6 +24,7 @@
 #include "common.h"
 #include "vendor.h"
 #include "light_lc.h"
+#include "ble_hci_le.h"
 #include <string.h>
 #include "appli_nvm.h"
 #include "compiler.h"
@@ -47,7 +48,6 @@ extern const APPLI_SAVE_MODEL_STATE_CB SaveModelState_cb;
 extern const APPLI_SAVE_MODEL_TEST_STATE_CB SaveModelTestState_cb;
 extern const APPLI_RETRIEVE_MODEL_TEST_STATE_CB RetrieveModelTestState_cb;
 #endif
-extern Light_ModelFlag_t Light_ModelFlag[APPLICATION_NUMBER_OF_ELEMENTS];
 extern MOBLEUINT8 NumberOfElements;
 MOBLEUINT8 PowerOnOff_flag = FLAG_RESET;
 MOBLEUINT8 RestoreFlag[APPLICATION_NUMBER_OF_ELEMENTS];
@@ -464,94 +464,6 @@ MOBLEUINT32 Get_StepResolutionValue(MOBLEUINT8 time_param)
   return stepResolution;  
 }
 
-
-/**
-* @brief PwmValueMapping: This function takes the value as parameter from the 
-*        model and return the value according to .
-*@param  setValue: value to be set from model
-*@param  maxRange: Max range of the parameter
-*@param  minRange: Min range of the parameter
-* @retval MOBLEUINT8
-*/
-MOBLEUINT16 PwmValueMapping(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEINT16 minRange)
-{
-  MOBLEUINT16 percentValue;
-  MOBLEUINT16 duty;
-  
-#ifdef SMART_PLUG
-   percentValue =  (setValue * 100)/ (maxRange - minRange);
-        
-   if(percentValue < 2)
-   {
-     duty = 0;
-   }   
-   else if((percentValue > 2) && (percentValue <= 10))
-   {
-     duty = 1;
-   }
-   else if((percentValue > 10) && (percentValue <= 20))
-   {
-     duty = 2;
-   }
-   else if((percentValue > 20) && (percentValue <= 30))
-   {
-     duty = 3;
-   }
-   else if((percentValue > 30) && (percentValue <= 40))
-   {
-     duty = 4;
-   }
-   else if((percentValue > 40) && (percentValue <= 50))
-   {
-     duty = 5;
-   }
-   else if((percentValue > 50) && (percentValue <= 60))
-   {
-     duty = 6;
-   }
-   else if((percentValue > 60) && (percentValue <= 70))
-   {
-     duty = 7;
-   }
-   else if((percentValue > 70) && (percentValue <= 80))
-   {
-     duty = 8;
-   }
-   else if((percentValue > 80) && (percentValue <= 90))
-   {
-     duty = 9;
-   }
-   else if(percentValue > 90)
-   {
-     duty = 10;
-   }
-#else
-      if(minRange > 0x00)
-      {
-        percentValue =  (setValue - 800)/ (maxRange - minRange);
-        percentValue = (percentValue*100);
-      }
-      else
-      {
-      percentValue =  (setValue * 100)/ (maxRange - minRange);
-      }
-      
-      duty = percentValue*320 ;
-       
-      if(duty >= 32000)
-   {
-        duty = 31999;
-   }   
-      if(duty == 0)
-      {
-        duty = 1;
-      }
-#endif
-     
-   return duty;
-}
-
-
 /**
 * @brief  Ratio_CalculateValue: This function is used to calculate the ratio of
           set value to the maximum value.
@@ -576,45 +488,6 @@ float Ratio_CalculateValue(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEIN
       return Ratio;
 }
   
-
-/**
-* @brief  PWM_CoolValue: This function is used to calculate the value for the 
-          cool temperature for the light.
-* @param  colourValue: Temperature value ratio
-* @param  brightValue: Lightness value ratio.
-* @retval duty: duty fot the PWM
-*/ 
-MOBLEUINT16 PWM_CoolValue(float colourValue ,float brightValue)
-   {
-    float colourDuty; 
-    MOBLEUINT16 duty;
-     
-    colourDuty = colourValue * brightValue;    
-    duty = (MOBLEUINT16)(colourDuty * PWM_TIME_PERIOD);
-    
-    return duty;
-   } 
-
-
-/**
-* @brief  PWM_WarmValue: This function is used to calculate the value for the 
-          warm temperature for the light.
-* @param  colourValue: Temperature value ratio
-* @param  brightValue: Lightness value ratio.
-* @retval duty: duty fot the PWM
-*/ 
-MOBLEUINT16 PWM_WarmValue(float colourValue ,float brightValue)
-   {
-    float warmDuty;    
-    MOBLEUINT16 duty;
-   
-    warmDuty = (1-colourValue)* brightValue;
-    duty = (MOBLEUINT16)(warmDuty * PWM_TIME_PERIOD);
-     
-   return duty;
-}
-
-
 /**
 * @brief  TraceHeader: This function is used print the timestamp , function name
 *         depends on the flag.
@@ -665,199 +538,38 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size)
 MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8* flag)
 {
   MOBLE_RESULT result = MOBLE_RESULT_FAIL;
-  MOBLEUINT16 saveBuffSize = APP_NVM_MODEL_SIZE;
-  MOBLEUINT8 Model_GetBuff[APP_NVM_MODEL_SIZE];
-//  uint16_t my_Address;
-//  MOBLEUINT16 dstPeer;
-  MOBLEUINT16 elementParamOffset;
-//  MOBLEUINT16 PresentLightness;
-//  MOBLEUINT16 TargetLightness;
-//  MODEL_MessageHeader_t msgParam;
+  Models_ParamNvm_t Models_ParamNvm[APPLICATION_NUMBER_OF_ELEMENTS];
+  MOBLEUINT8 Model_GetBuff[sizeof(Models_ParamNvm)]; 
+  MOBLEUINT16 saveBuffSize = sizeof(Models_ParamNvm);
   
-//  my_Address = BLEMesh_GetAddress(); /* Get the Primary address */
-  memset(Model_GetBuff, 0x00, saveBuffSize);  /* Initialize the buffer to 0 */
+  memset((void*)&Models_ParamNvm, 0x00, saveBuffSize);  /* Initialize the buffer to 0 */
   
   for(uint8_t elementIndex = 0; elementIndex < APPLICATION_NUMBER_OF_ELEMENTS; elementIndex++)
   {
-//    dstPeer = my_Address+elementIndex;
-    elementParamOffset =  elementIndex * APP_NVM_MODELDATA_PER_ELEMENT_SIZE; 
-	
-    Model_GetBuff[elementParamOffset+GENERIC_VALID_FLAG_OFFSET] = flag[elementIndex];
-    
-#ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF   
-    (Appli_GenericState_cb.GetOnOffStatus_cb)(&Model_GetBuff[elementParamOffset+GENERIC_ON_OFF_NVM_OFFSET],
-//                                              dstPeer,
-                                              BLEMesh_GetAddress() + elementIndex,
-                                              elementIndex);
-#endif  
-  
-#ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL	
-    (Appli_GenericState_cb.GetLevelStatus_cb)(&Model_GetBuff[elementParamOffset+GENERIC_LEVEL_NVM_OFFSET],
-//                                              dstPeer,
-                                              BLEMesh_GetAddress() + elementIndex,
-                                              elementIndex);
-#endif 
-  
-#ifdef ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF   
-    (Appli_GenericState_cb.GetPowerOnOffStatus_cb)(&Model_GetBuff[elementParamOffset+GENERIC_POWER_ON_OFF_NVM_OFFSET],
-//                                                 dstPeer,
-                                                   BLEMesh_GetAddress() + elementIndex,
-                                                   elementIndex);
-#endif  
-  
-
-#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS	
-        
-    if(Light_ModelFlag[elementIndex].LightTransitionFlag)
-    {
-      MODEL_MessageHeader_t msgParam;
-      MOBLEUINT32 dataLength; 
-//      MOBLEUINT16 PresentLightness;
-//      MOBLEUINT16 TargetLightness;
-      uint16_t my_Address = BLEMesh_GetAddress(); /* Get the Primary address */;
-      
-      /* Initialize the messageParam*/
-      msgParam.dst_peer = my_Address+elementIndex;
-      msgParam.peer_addr = my_Address;
-      msgParam.elementIndex = elementIndex;
-      msgParam.rcvdAppKeyOffset = 0;
-      msgParam.rcvdNetKeyOffset = 0;
-      msgParam.rssi = 0;
-      msgParam.ttl = 0;
-  
-      Light_Lightness_Status(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET],
-                             &dataLength, &msgParam); 
-//      PresentLightness = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET]));
-//      TargetLightness = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_TARGET_NVM_OFFSET]));
-      TRACE_M(TF_COMMON,"PresentLightness = 0x%.2x, TrgtLightness = 0x%.2x \r\n", 
-              CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET])), 
-              CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_TARGET_NVM_OFFSET])));
-    }
-    
-    else
-    {
-//      MOBLEUINT16 PresentLightness;
-
-      (Appli_Light_GetStatus_cb.GetLightLightness_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET],
-//                                                    dstPeer,
-                                                      BLEMesh_GetAddress() + elementIndex,
-                                                      elementIndex);
-//       PresentLightness = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET]));
-       TRACE_M(TF_COMMON,"PresentLightness = 0x%.2x \r\n", 
-               CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET])));
-    }
-    
-    
-    
-    (Appli_Light_GetStatus_cb.GetLightLightnessDefault_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_DEFAULT_NVM_OFFSET],
-//                                                         dstPeer,
-                                                           BLEMesh_GetAddress() + elementIndex,
-                                                           elementIndex);
-    
-    (Appli_Light_GetStatus_cb.GetLightLightnessLast_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_LAST_NVM_OFFSET],
-//                                                      dstPeer,
-                                                        BLEMesh_GetAddress() + elementIndex,
-                                                        elementIndex);
-     
-     /*3.1.4 : If a transition was in progress when powered down, the element restores the 
-     target state when powered up. Otherwise the element restores the state it was in when 
-     powered down. Saving the Transition Flag Status*/
-     Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_TRANSITION_STATUS] = Light_ModelFlag[elementIndex].LightTransitionFlag;
-     TRACE_M(TF_COMMON,"Transition Flag is = %.2x \r\n", Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_TRANSITION_STATUS]);
- 
-#endif
-  
-#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL    
-         
-    /* Check if the transition is in process - Save the target value to Restore from the Target value */
-    if(Light_ModelFlag[elementIndex].LightTransitionFlag)
-    {
-      MOBLEUINT16 dstPeer = BLEMesh_GetAddress() + elementIndex;
-
-      /* Getting Target paramters to save in NVM for the PowerUp state handing */
-      (Appli_Light_GetStatus_cb.GetLightCtlTrgt_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_CTL_NVM_OFFSET],
-                                                    dstPeer, 
-                                                    elementIndex);
-       (Appli_Light_GetStatus_cb.GetLightCtlDefault_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_CTL_DEFAULT_NVM_OFFSET],
-                                                        dstPeer, 
-                                                        elementIndex);
-    }
-    else
-    {
-      MOBLEUINT16 dstPeer = BLEMesh_GetAddress() + elementIndex;
-
-      /* Getting set paramters to save in NVM for the PowerUp state handing */
-      (Appli_Light_GetStatus_cb.GetLightCtl_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_CTL_NVM_OFFSET],
-                                                dstPeer, 
-                                                elementIndex);
-       (Appli_Light_GetStatus_cb.GetLightCtlDefault_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_CTL_DEFAULT_NVM_OFFSET],
-                                                        dstPeer, 
-                                                        elementIndex);   
-    }
-    
-#endif
-  
-#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL  
-         
-   /* Check if the transition is in process - Save the target value to Restore from the Target value */
-   if(Light_ModelFlag[elementIndex].LightTransitionFlag)
-   {
-      MOBLEUINT16 dstPeer = BLEMesh_GetAddress() + elementIndex;
-
-     /* Getting Target paramters to save in NVM for the PowerUp state handing */
-     (Appli_Light_GetStatus_cb.GetLightHslTrgt_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_HSL_NVM_OFFSET],
-                                                   dstPeer, 
-                                                   elementIndex);
-      
-      (Appli_Light_GetStatus_cb.GetLightHslDefault_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_HSL_DEFAULT_NVM_OFFSET],
-                                                       dstPeer, 
-                                                       elementIndex);
-   }
-   else
-   {
-      MOBLEUINT16 dstPeer = BLEMesh_GetAddress() + elementIndex;
-
-     /* Getting set paramters to save in NVM for the PowerUp state handing */
-     (Appli_Light_GetStatus_cb.GetLightHsl_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_HSL_NVM_OFFSET],
-                                               dstPeer, 
-                                               elementIndex);
-      
-      (Appli_Light_GetStatus_cb.GetLightHslDefault_cb)(&Model_GetBuff[elementParamOffset+GENERIC_DATA_LIMIT+LIGHT_HSL_DEFAULT_NVM_OFFSET],
-                                                       dstPeer, 
-                                                       elementIndex);   
-   }
-  
-#endif  
+    /* the restore flag value assigned to the structure variable for ech element */
+    Models_ParamNvm[elementIndex].Restore_Flag = flag[elementIndex];
+    /* Generic model middle layer variable value is assigned to the structure variable */
+    Generic_SaveModelStates(&Models_ParamNvm[elementIndex],elementIndex);
+    /* Light model middle layer variable value is assigned to the structure variable */
+    Light_SaveModelStates(&Models_ParamNvm[elementIndex],elementIndex);
+    /* copy structure data to the buffer */
+    memcpy(Model_GetBuff,(void*)&Models_ParamNvm,sizeof(Models_ParamNvm));
          
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC
-         
-    MOBLEUINT8 lightLcNvmParamsBuff[APP_NVM_LIGHT_LC_MODEL_SIZE];
-    MOBLEUINT8 lcNvmParamsSize;
-    
-    /* only for element index for which LC is supported */
-//    if((ENABLE_LIGHT_MODEL_SERVER_LC & (1 << elementIndex)) == (1 << elementIndex))
-    {
-    Light_LC_NvmParams_Get(elementIndex, lightLcNvmParamsBuff, &lcNvmParamsSize);
-    
-    if (lcNvmParamsSize <= APP_NVM_LIGHT_LC_MODEL_SIZE)
-    {
-      memcpy(&Model_GetBuff[elementParamOffset+LIGHT_LC_MODE_NVM_OFFSET],
-             lightLcNvmParamsBuff,
-             lcNvmParamsSize);
-    }
-    else
-    {
-      /* length mismatch */
-  }
-    }
-    
-    break; /* Only for element index 0 */
+    LightLC_SaveModelStates(elementIndex, Models_ParamNvm[elementIndex].LightLCBuff, APP_NVM_LIGHT_LC_MODEL_SIZE);
+    /* Only for element index 1 */
 #endif /* ENABLE_LIGHT_MODEL_SERVER_LC */
   } /* for */
   
   if (SaveModelState_cb != NULL)
   {
-    result = SaveModelState_cb(Model_GetBuff, saveBuffSize);
+    TRACE_I(TF_NVM,"Data to be saved in flash \r\n");
+    for(MOBLEUINT8 count=0;count<saveBuffSize;count++)
+    {
+      TRACE_I(TF_NVM,"%.2x %c",Model_GetBuff[count],' ');
+    }
+    TRACE_I(TF_NVM,"\r\n");
+    result = SaveModelState_cb((void*)Models_ParamNvm, saveBuffSize);
   }
   
   if (MOBLE_FAILED(result))
@@ -873,7 +585,12 @@ MOBLE_RESULT SaveModelsStateNvm(MOBLEUINT8* flag)
 }
 #endif
 
-#if 0
+#if 0 //#ifdef ENABLE_NVM_TEST
+/**
+* @brief  Function is used to test the NVM for saved and retrieved data
+* @param  void
+* @retval void
+*/
 void Device_FlashTesting(void)
 {
   MOBLEUINT8 SaveBuffer[TESTING_BYTE];	
@@ -907,23 +624,40 @@ void Device_FlashTesting(void)
 */
 void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
 { 
-  MOBLEUINT8 pData[2];
+  MOBLEUINT8 setData[4];
   MOBLE_ADDRESS publishAddress;
   MOBLEUINT16 model_ID = 0;
   MOBLEUINT16 opcode = 0;
   MOBLEUINT32 length = 0;
   MOBLE_ADDRESS my_Address;
   MOBLEUINT16 dstPeer;
-  MOBLEUINT16 elementParamOffset;
-  MOBLEUINT16 powerOnOffOffset;
   MODEL_MessageHeader_t msgParam;
   
+  MOBLEUINT16 saveBuffSize;
+  
   my_Address = BLEMesh_GetAddress(); /* Get the Primary address */
+  
+  Models_ParamNvm_t Models_ParamNvm[APPLICATION_NUMBER_OF_ELEMENTS];
+  
+  saveBuffSize = sizeof(Models_ParamNvm);
+  
+  TRACE_I(TF_NVM,"Retrieved data from flash \r\n");
+  for(MOBLEUINT8 count=0;count<saveBuffSize;count++)
+  {
+    TRACE_I(TF_NVM,"%.2x %c",pModelState_Load[count],' ');
+  }
+  TRACE_I(TF_NVM,"\r\n");
   
   if (size > 0)
   {
     for(uint8_t elementIndex = 0; elementIndex < APPLICATION_NUMBER_OF_ELEMENTS; elementIndex++)
     {
+      
+      memcpy((void*)&Models_ParamNvm,pModelState_Load,sizeof(Models_ParamNvm));
+      
+      Generic_RestoreModelStates(&Models_ParamNvm[elementIndex] , elementIndex);
+      Light_RestoreModelStates(&Models_ParamNvm[elementIndex] , elementIndex);
+      
       dstPeer = my_Address+elementIndex;
     
       /* Initialize the messageParam */
@@ -935,11 +669,7 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
       msgParam.rssi = 0;
       msgParam.ttl = 0;
       
-      elementParamOffset =  elementIndex * APP_NVM_MODELDATA_PER_ELEMENT_SIZE; 
-      
-      powerOnOffOffset = (elementIndex * APP_NVM_MODELDATA_PER_ELEMENT_SIZE)+ GENERIC_POWER_ON_OFF_NVM_OFFSET;
-			    
-      switch(pModelState_Load[elementParamOffset + GENERIC_VALID_FLAG_OFFSET])
+      switch(Models_ParamNvm[elementIndex].Restore_Flag)  
       { 
         
 #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF      
@@ -948,27 +678,7 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
           /* checking the Power on off retrieved value according to the given
              in standered and taking decision for Generic on off.
           */
-             
-          if(pModelState_Load[powerOnOffOffset] == GENERIC_POWER_OFF_STATE)
-          {
-            pData[0] = APPLI_LED_OFF;
-            Generic_OnOff_Set(pData,1,&msgParam);
-          }
-          else if(pModelState_Load[powerOnOffOffset] == GENERIC_POWER_ON_STATE)
-          {
-            pData[0] = APPLI_LED_ON;
-            Generic_OnOff_Set(pData,1,&msgParam);
-              
-          }
-          else if(pModelState_Load[powerOnOffOffset] == GENERIC_POWER_RESTORE_STATE)
-          {
-            Generic_OnOff_Set(pModelState_Load+GENERIC_ON_OFF_NVM_OFFSET+elementParamOffset, 1,&msgParam);
-          }
-          else
-          {
-            TRACE_M(TF_GENERIC_M, "Power On Off value invalid %d \r\n", pModelState_Load[0]);
-          }         
-                                          
+          Generic_OnOffPowerOnValue(&Models_ParamNvm[elementIndex], &msgParam);				
           opcode = GENERIC_ON_OFF_SET_UNACK;
           model_ID = GENERIC_ONOFF_SERVER_MODEL_ID;
           break;
@@ -978,7 +688,8 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
 #ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL        
         case GENERIC_LEVEL_NVM_FLAG:
         {
-          Generic_Level_Set(pModelState_Load+GENERIC_LEVEL_NVM_OFFSET,2, &msgParam);
+          CopyU8LittleEndienArray_fromU16word (setData, Models_ParamNvm[elementIndex].Generic_Level);
+          Generic_Level_Set(setData,2, &msgParam);
           break;
         }
 #endif
@@ -987,10 +698,9 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
         case LIGHT_LIGHTNESS_NVM_FLAG:
         { 
           MOBLEUINT16 light_LightnessValue;
-          light_LightnessValue = Light_lightnessPowerOnValue(pModelState_Load, &msgParam);
-          *pData = light_LightnessValue;
-          *(pData+1) = light_LightnessValue >> 8;
-          Light_Lightness_Set(pData, 2, &msgParam);
+          light_LightnessValue = Light_lightnessPowerOnValue(&Models_ParamNvm[elementIndex], &msgParam);
+          CopyU8LittleEndienArray_fromU16word (setData, light_LightnessValue);
+          Light_Lightness_Set(setData, 2, &msgParam);
 
           opcode = LIGHT_LIGHTNESS_SET_UNACK;
           model_ID = LIGHT_LIGHTNESS_SERVER_MODEL_ID;
@@ -1001,7 +711,7 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
 #ifdef ENABLE_LIGHT_MODEL_SERVER_CTL         
         case LIGHT_CTL_NVM_FLAG:
         {  
-          Light_CtlPowerOnValue(pModelState_Load, &msgParam);
+          Light_CtlPowerOnValue(&Models_ParamNvm[elementIndex], &msgParam);
           opcode = LIGHT_CTL_TEMPERATURE_SET_UNACK;
           model_ID = LIGHT_CTL_TEMPERATURE_SERVER_MODEL_ID;
           break;
@@ -1012,7 +722,7 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
         case LIGHT_HSL_NVM_FLAG:
         {  
           /* restore the light HSL with respect to Power on off value */
-          Light_HslPowerOnValue(pModelState_Load, &msgParam);
+          Light_HslPowerOnValue(&Models_ParamNvm[elementIndex], &msgParam);
           opcode = LIGHT_HSL_SET_UNACK;
           model_ID = LIGHT_HSL_SERVER_MODEL_ID;
           break;
@@ -1021,45 +731,59 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
         
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC        
         case LIGHT_LC_NVM_FLAG:
-//        if((ENABLE_LIGHT_MODEL_SERVER_LC & (1 << elementIndex)) == (1 << elementIndex))
+        /* In case of LC server, 
+             Light Lightness Server (on main element) case statement should be skipped
+             Generic OnOff Power Server (on main element) case statement should be skipped */
+        if((ENABLE_LIGHT_MODEL_SERVER_LC & (1 << elementIndex)) == (1 << elementIndex))
         {         
           MOBLEUINT8 genericOnPowerUp;
           MOBLEUINT16 lightDefault;
           MOBLEUINT16 lightLast;
           MOBLEUINT16 lightActualLKV;
+          MOBLEUINT16 lightActualToBeSet;
           MOBLEUINT8 transitionStatus;
           MOBLEUINT16 temp;
           
-          genericOnPowerUp = pModelState_Load[GENERIC_POWER_ON_OFF_NVM_OFFSET];
+          /* Light Lightness Server on main element extended by 
+             Light LC Server on LC server element */
+          genericOnPowerUp = Models_ParamNvm[LIGHT_LIGHTNESS_SERVER_MAIN_ELEMENT_INDEX].PowerOnOff;
+          lightDefault = Models_ParamNvm[LIGHT_LIGHTNESS_SERVER_MAIN_ELEMENT_INDEX].LightDefault;
+          lightLast = Models_ParamNvm[LIGHT_LIGHTNESS_SERVER_MAIN_ELEMENT_INDEX].LightLast;
+          transitionStatus = Models_ParamNvm[LIGHT_LIGHTNESS_SERVER_MAIN_ELEMENT_INDEX].LightTransitionStatus;
           
-          lightDefault = pModelState_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_DEFAULT_NVM_OFFSET+1]<<8;
-          lightDefault |= pModelState_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_DEFAULT_NVM_OFFSET];
+          TRACE_M(TF_COMMON, "Transition Flag %.2x\r\n", transitionStatus);
           
-          lightLast = pModelState_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_LAST_NVM_OFFSET+1]<<8; 
-          lightLast |= pModelState_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_LAST_NVM_OFFSET]; 
-          
-          transitionStatus = pModelState_Load[GENERIC_DATA_LIMIT+LIGHT_TRANSITION_STATUS];
           if(transitionStatus)
           {
-            temp = pModelState_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_TARGET_NVM_OFFSET+1]<<8;  
-            temp |= pModelState_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_TARGET_NVM_OFFSET];   
+            temp = Models_ParamNvm[0].LightTarget;  
             lightActualLKV = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&temp));
           }
           else
           {
-            temp = pModelState_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET+1]<<8;  
-            temp |= pModelState_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET];
+            temp = Models_ParamNvm[0].LightLightness;            
             lightActualLKV = CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&temp));
           }                   
          
-          TRACE_M(TF_COMMON, "Transition Flag %.2x\r\n", transitionStatus);
-          
-          Light_LC_OnPowerUp(elementIndex,
-                             pModelState_Load+elementParamOffset+LIGHT_LC_MODE_NVM_OFFSET, 
+          if(Light_LC_OnPowerUp(elementIndex,
+                                Models_ParamNvm[elementIndex].LightLCBuff, 
                              genericOnPowerUp, 
                              lightDefault, 
                              lightLast, 
-                             lightActualLKV);
+                                lightActualLKV,
+                                &lightActualToBeSet) == 1)
+          {
+            msgParam.dst_peer = my_Address; /* Element index 0 */
+            msgParam.peer_addr = dstPeer;
+
+            CopyU8LittleEndienArray_fromU16word (setData, lightActualToBeSet);
+            Light_Lightness_Set(setData, 2, &msgParam);
+            opcode = LIGHT_LIGHTNESS_SET_UNACK;
+            model_ID = LIGHT_LIGHTNESS_SERVER_MODEL_ID;
+          }
+          else
+          {
+            /* do nothing */
+          }
         }
           
         break;
@@ -1079,9 +803,6 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
         
       } /* switch(pModelState_Load[GENERIC_VALID_FLAG_OFFSET]) */    
     
-      pData[0] = pModelState_Load[powerOnOffOffset];
-      Generic_PowerOnOff_Set(pData,1,&msgParam);
-     
       my_Address = BLEMesh_GetAddress();
       publishAddress = BLEMesh_GetPublishAddress(elementIndex, model_ID);
       
@@ -1090,85 +811,125 @@ void Model_RestoreStates(MOBLEUINT8 const *pModelState_Load, MOBLEUINT8 size)
         msgParam.peer_addr = publishAddress;
         msgParam.dst_peer = dstPeer;
       
-        Model_SendResponse(&msgParam, opcode, pData,length);
+        Model_SendResponse(&msgParam, opcode, setData,length);
         TRACE_I(TF_COMMON,"Publishing the Power on state to address %.2X \r\n",publishAddress);
       } /* if(publishAddress != 0x0000) */
      
-      break; /* Run only once for element index 0 */
+     // break; /* Run only once for element index 0 */
     } /* for(uint8_t elementIndex = 0; elementIndex < APPLICATION_NUMBER_OF_ELEMENTS; elementIndex++) */
   } /* if (size > 0) */
 }
   
-
+#ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF
 /**
-* @brief  Function used to restore the light lighness with respect to Power on off
+* @brief  Function used to restore the light Generic on off with respect to Power on off
 *         value .
-* @param  pModelValue_Load:array of saved data
+* @param  state_Value:pointer to the structure
 * @param  *pmsgParam: Pointer to structure of message header for parameters:
 *          elementIndex, src, dst addresses, TTL, RSSI, NetKey & ApkmpKey Offset
 * @retval MOBLEUINT16
 */
-MOBLEUINT16 Light_lightnessPowerOnValue(MOBLEUINT8 const *pModelValue_Load, MODEL_MessageHeader_t *pmsgParam)
+void Generic_OnOffPowerOnValue(Models_ParamNvm_t *state_Value, MODEL_MessageHeader_t *pmsgParam)
 {
-  MOBLEUINT16 light_DefaultValue;
-  MOBLEUINT16 light_LastValue;
-  MOBLEUINT8 powerOn_Value;
-  MOBLEUINT16 light_Actual = 0;
-  MOBLEUINT16 last_Known_Value;
   MOBLEUINT8 transitionStatus;
+  MOBLEUINT8 setData[2]; 
   
-  transitionStatus = pModelValue_Load[GENERIC_DATA_LIMIT+LIGHT_TRANSITION_STATUS];
-  
-  light_DefaultValue = pModelValue_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_DEFAULT_NVM_OFFSET+1]<<8;
-  light_DefaultValue |= pModelValue_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_DEFAULT_NVM_OFFSET];
-  
-  light_LastValue = pModelValue_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_LAST_NVM_OFFSET+1]<<8; 
-  light_LastValue |= pModelValue_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_LAST_NVM_OFFSET]; 
+  transitionStatus = state_Value->GenericTransitionStatus;
   
   if(transitionStatus)
   {
-    last_Known_Value = pModelValue_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_TARGET_NVM_OFFSET+1]<<8;  
-    last_Known_Value |= pModelValue_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_TARGET_NVM_OFFSET];   
-    TRACE_M(TF_COMMON,"Transition Flag is = %.2x, Last_Known Value = 0x%.2x \r\n",
-            transitionStatus, 
-            CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&last_Known_Value)));
+    setData[0] = state_Value->GenericTarget;
   }
   else
   {
-    last_Known_Value = pModelValue_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET+1]<<8;  
-    last_Known_Value |= pModelValue_Load[GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_PRESENT_NVM_OFFSET];
-    TRACE_M(TF_COMMON,"Transition Flag is = %.2x, Last_Known Value = 0x%.2x \r\n",
-            transitionStatus, 
-            CopyU8LittleEndienArrayToU16word((MOBLEUINT8*)(&last_Known_Value)));
+    setData[0] = state_Value->Generic_OnOff;
   }
   
-  powerOn_Value = *(pModelValue_Load+GENERIC_POWER_ON_OFF_NVM_OFFSET);
+  if(state_Value->PowerOnOff == GENERIC_POWER_OFF_STATE)
+  {
+    setData[0] = APPLI_LED_OFF;
+    Generic_OnOff_Set(setData,1,pmsgParam); 
+  }
+  else if(state_Value->PowerOnOff == GENERIC_POWER_ON_STATE)
+  {
+    setData[0] = APPLI_LED_ON;
+    Generic_OnOff_Set(setData,1,pmsgParam);
+    
+  }
+  else if(state_Value->PowerOnOff == GENERIC_POWER_RESTORE_STATE)
+  {
+    Generic_OnOff_Set(setData, 1,pmsgParam);
+  }
+  else
+  {
+    
+  }           
+}
+#endif
+
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
+/**
+* @brief  Function used to restore the light lighness with respect to Power on off
+*         value .
+* @param  state_Value:pointer to the structure
+* @param  *pmsgParam: Pointer to structure of message header for parameters:
+*          elementIndex, src, dst addresses, TTL, RSSI, NetKey & ApkmpKey Offset
+* @retval MOBLEUINT16
+*/
+MOBLEUINT16 Light_lightnessPowerOnValue(Models_ParamNvm_t *state_Value, MODEL_MessageHeader_t *pmsgParam)
+{
+  MOBLEUINT8 powerOn_Value;
+  MOBLEUINT16 light_Actual = 0;
+  MOBLEUINT16 last_KnownValue;
+  MOBLEUINT8 transitionStatus;
+  MOBLEUINT8 setData[4];
+  transitionStatus = state_Value->LightTransitionStatus;
   
-  Light_LightnessLast_Set((pModelValue_Load+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_LAST_NVM_OFFSET),2, pmsgParam);
-  Light_LightnessDefault_Set((pModelValue_Load+GENERIC_DATA_LIMIT+LIGHT_LIGHTNESS_DEFAULT_NVM_OFFSET),2, pmsgParam);
+  if(transitionStatus)
+  {
+    last_KnownValue = state_Value->LightTarget;
+    
+    TRACE_M(TF_COMMON,"Transition Flag is = %.2x, Last_Known Value = 0x%.2x \r\n",\
+            transitionStatus, last_KnownValue);
+  }
+  else
+  {
+    last_KnownValue = state_Value->LightLightness;
+    
+    TRACE_M(TF_COMMON,"Transition Flag is = %.2x, Last_Known Value = 0x%.2x \r\n",\
+            transitionStatus, last_KnownValue);
+  }
+  
+  powerOn_Value = state_Value->PowerOnOff;
+  
+  CopyU8LittleEndienArray_fromU16word (setData, state_Value->LightLast);
+  
+  Light_LightnessLast_Set(setData,2, pmsgParam);
+  
+  CopyU8LittleEndienArray_fromU16word (setData, state_Value->LightDefault);
+  Light_LightnessDefault_Set(setData,2, pmsgParam);
    
   if(powerOn_Value == GENERIC_POWER_OFF_STATE)
-  { 
-    /* Light Lightness Actual = 0 for value of the Generic OnPowerUp state equal 
+  { /* Light Lightness Actual = 0 for value of the Generic OnPowerUp state equal 
        to 0x00 */
     light_Actual = 0x00;
   }
-  else if((powerOn_Value == GENERIC_POWER_ON_STATE) && (light_DefaultValue != 0x00))
+  else if((powerOn_Value == GENERIC_POWER_ON_STATE) && (state_Value->LightDefault != 0x00))
   {
     /* Light Lightness Actual = Light Lightness Default for value of the Generic 
         OnPowerUp state equal to 0x01 and Light Lightness Default not equal to zero, */
-    light_Actual = light_DefaultValue;
+    light_Actual = state_Value->LightDefault;
   }
-  else if((powerOn_Value == GENERIC_POWER_ON_STATE) && (light_DefaultValue == 0x00))
+  else if((powerOn_Value == GENERIC_POWER_ON_STATE) && (state_Value->LightDefault == 0x00))
   {
     /* Light Lightness Actual = Light Lightness Last (see Section 6.1.2.3)
        for value of the Generic OnPowerUp state equal to 0x01 and 
        Light Lightness Default equal to zero */
-    light_Actual = light_LastValue;
+    light_Actual = state_Value->LightLast;
   }
   else if(powerOn_Value == GENERIC_POWER_RESTORE_STATE)
   {
-    light_Actual = last_Known_Value;
+    light_Actual = last_KnownValue;
   }
   else
   {
@@ -1178,36 +939,57 @@ MOBLEUINT16 Light_lightnessPowerOnValue(MOBLEUINT8 const *pModelValue_Load, MODE
   TRACE_I(TF_COMMON, "LIGHT LIGHTNESS VALUE ON POWER UP %.2x \r\n",light_Actual);
   return light_Actual;
 }  
+#endif
 
-
+#ifdef ENABLE_LIGHT_MODEL_SERVER_CTL
 /**
 * @brief  Function used to restore the light CTL with respect to Power on off
 *         value .
-* @param  pModelValue_Load:array of saved data
+* @param  state_Value:pointer to the structure
 * @param  *pmsgParam: Pointer to structure of message header for parameters:
 *          elementIndex, src, dst addresses, TTL, RSSI, NetKey & ApkmpKey Offset
 * @retval MOBLEUINT16
 */
-void Light_CtlPowerOnValue(MOBLEUINT8 const *pModelValue_Load, MODEL_MessageHeader_t *pmsgParam)
+void Light_CtlPowerOnValue(Models_ParamNvm_t *state_Value,MODEL_MessageHeader_t *pmsgParam)
 { 
   MOBLEUINT8 powerOn_Value;
-  MOBLEUINT8 pData[12];
+  MOBLEUINT8 setData[6];    
+  MOBLEUINT8 transitionStatus;
+  
+  powerOn_Value = state_Value->PowerOnOff;
+  
+  transitionStatus = state_Value->LightTransitionStatus;
           
-  memcpy((void*)pData, (void*)(pModelValue_Load+GENERIC_DATA_LIMIT+LIGHT_CTL_NVM_OFFSET), 12);         
-  powerOn_Value = *(pModelValue_Load+GENERIC_POWER_ON_OFF_NVM_OFFSET);
+  if(transitionStatus)
+  {
+    CopyU8LittleEndienArray_fromU16word (setData, state_Value->CtlTempTarget);
+    CopyU8LittleEndienArray_fromU16word (&setData[2], state_Value->CtlDeltaTarget);
+  }
+  else
+  {
+    CopyU8LittleEndienArray_fromU16word (setData, state_Value->CtlTemperature);
+    CopyU8LittleEndienArray_fromU16word (&setData[2], state_Value->CtlDelta);
+  }
   
   if((powerOn_Value == GENERIC_POWER_OFF_STATE) || (powerOn_Value == GENERIC_POWER_ON_STATE))
   {
-    /* pData has first 6 byte for ctl set including 2 byte for lightness, 2 bytes for
-       temperature , 2 bytes for delta uv.
-       next 6 byte for Ctl default set
-    */
-    Light_CtlDefault_Set((pData+LIGHT_DEFAULT_OFFSET), 6,0); 
-    Light_CtlTemperature_Set((pData+8), 4, pmsgParam);
+   
+    CopyU8LittleEndienArray_fromU16word (setData, state_Value->CtlDefaultLightness);
+    CopyU8LittleEndienArray_fromU16word (&setData[2], state_Value->CtlDefaultTemperature);
+    CopyU8LittleEndienArray_fromU16word (&setData[4], state_Value->CtlDefaultDelta);
+    
+    Light_CtlDefault_Set(setData, 6,pmsgParam);    
+    
+    CopyU8LittleEndienArray_fromU16word (setData, state_Value->CtlDefaultTemperature);
+    CopyU8LittleEndienArray_fromU16word (&setData[2], state_Value->CtlDefaultDelta);
+    
+    Light_CtlTemperature_Set(setData, 4, pmsgParam);
+    
   }
   else if(powerOn_Value == GENERIC_POWER_RESTORE_STATE)
   {
-    Light_CtlTemperature_Set((pData+2), 4, pmsgParam);
+    /* Using the temperature value of CTL set from the local buffer */
+    Light_CtlTemperature_Set(setData, 4, pmsgParam);
   }
   else
   {
@@ -1215,40 +997,58 @@ void Light_CtlPowerOnValue(MOBLEUINT8 const *pModelValue_Load, MODEL_MessageHead
   }
 }
   
+#endif
 
+#ifdef ENABLE_LIGHT_MODEL_SERVER_HSL
 /**
 * @brief  Function used to restore the light HSL with respect to Power on off
 *         value .
-* @param  pModelValue_Load:array of saved data
+* @param  state_Value:pointer to the structure
 * @param  *pmsgParam: Pointer to structure of message header for parameters:
 *          elementIndex, src, dst addresses, TTL, RSSI, NetKey & ApkmpKey Offset
 * @retval MOBLEUINT16
 */
-void Light_HslPowerOnValue(MOBLEUINT8 const *pModelValue_Load, MODEL_MessageHeader_t *pmsgParam)
+void Light_HslPowerOnValue(Models_ParamNvm_t *state_Value, MODEL_MessageHeader_t *pmsgParam)
 { 
   MOBLEUINT8 powerOn_Value;
-  MOBLEUINT8 pData[12];
+  MOBLEUINT8 setData[6];
+  MOBLEUINT8 transitionStatus;
+                
+  powerOn_Value = state_Value->PowerOnOff;
           
-  memcpy((void*)pData, (void*)(pModelValue_Load+GENERIC_DATA_LIMIT+LIGHT_HSL_NVM_OFFSET), 12);         
-  powerOn_Value = *(pModelValue_Load+GENERIC_POWER_ON_OFF_NVM_OFFSET);
+  transitionStatus = state_Value->LightTransitionStatus;
+  
+  if(transitionStatus)
+  {
+    CopyU8LittleEndienArray_fromU16word (setData, state_Value->HslLightTarget);
+    CopyU8LittleEndienArray_fromU16word (&setData[2], state_Value->HslHueTarget);
+    CopyU8LittleEndienArray_fromU16word (&setData[4], state_Value->HslSatTarget);
+  }
+  else
+  {
+    CopyU8LittleEndienArray_fromU16word (setData, state_Value->HslLightness);
+    CopyU8LittleEndienArray_fromU16word (&setData[2], state_Value->HslHue);
+    CopyU8LittleEndienArray_fromU16word (&setData[4], state_Value->HslSaturation);
+  }
   
   if((powerOn_Value == GENERIC_POWER_OFF_STATE) || (powerOn_Value == GENERIC_POWER_ON_STATE))
   {
-    /* pData has first 6 byte for ctl set including 2 byte for lightness, 2 bytes for
-       Hue , 2 bytes for Saturation.
-       next 6 byte for Ctl default set
-    */
-    Light_HslDefault_Set((pData+LIGHT_DEFAULT_OFFSET), 6, 0);
+    CopyU8LittleEndienArray_fromU16word (setData, state_Value->HslLightnessDefault);
+    CopyU8LittleEndienArray_fromU16word (&setData[2], state_Value->HslHueDefault);
+    CopyU8LittleEndienArray_fromU16word (&setData[4], state_Value->HslLightnessDefault);
+    
+    Light_HslDefault_Set(setData, 6, pmsgParam);
+    
     if(powerOn_Value == GENERIC_POWER_OFF_STATE)
     {
-        memset((void*)(pData+LIGHT_DEFAULT_OFFSET), 0x00, 2);
+       memset((void*)(setData), 0x00, 2);
   }
-    Light_Hsl_Set((pData+LIGHT_DEFAULT_OFFSET), 6, 0);
+    Light_Hsl_Set(setData, 6, pmsgParam);
   }
   /* Check to restore the state during Power Up */
   else if(powerOn_Value == GENERIC_POWER_RESTORE_STATE)
   {
-    Light_Hsl_Set(pData, 6, 0);
+    Light_Hsl_Set(setData, 6, pmsgParam);
   }
   else
   {
@@ -1256,7 +1056,7 @@ void Light_HslPowerOnValue(MOBLEUINT8 const *pModelValue_Load, MODEL_MessageHead
   }
 }
   
-
+#endif 
 /**
 * @brief  Function used to select the element number
 * @param  void
@@ -1264,8 +1064,7 @@ void Light_HslPowerOnValue(MOBLEUINT8 const *pModelValue_Load, MODEL_MessageHead
 */
 MOBLEUINT8 BLE_GetElementNumber(void)
 {
-
-  MOBLEUINT8 elementNumber = 0;
+  MOBLEUINT8 elementNumber = 1;
   
   /*Select the Element Number for which publication address is required*/
   
@@ -1284,7 +1083,6 @@ MOBLEUINT8 BLE_GetElementNumber(void)
   
   return elementNumber;
 }  
-
 
 #ifdef ENABLE_SAVE_MODEL_STATE_NVM
 /**
@@ -1400,9 +1198,10 @@ MOBLEUINT8 Tid_CheckAndUpdate(MOBLEUINT8 currentMsgTid,
 
 
 /**
-  * @brief  
-  * @param  
-  * @retval 
+  * @brief Function is used to retrieve the byte by byte values from 16 bit variable
+  * and copy in one byte size array.  
+  * @param pArray: pointer too the input array
+  * @param inputWord: 16 bit varibale  
 */
 void CopyU8LittleEndienArray_fromU16word (MOBLEUINT8* pArray, MOBLEUINT16 inputWord)
 {
@@ -1412,9 +1211,10 @@ void CopyU8LittleEndienArray_fromU16word (MOBLEUINT8* pArray, MOBLEUINT16 inputW
 
 
 /**
-  * @brief  
-  * @param  
-  * @retval 
+  * @brief Function is to copy byte by byte from the 1 byte size array to the 16 
+  * bit variable
+  * @param pArray: pointer too the input array
+  * @retval u16Word : 16 bit value. 
 */
 MOBLEUINT16 CopyU8LittleEndienArrayToU16word (MOBLEUINT8* pArray) 
 {
@@ -1434,9 +1234,10 @@ MOBLEUINT16 CopyU8LittleEndienArrayToU16word (MOBLEUINT8* pArray)
 
 
 /**
-  * @brief  
-  * @param  
-  * @retval 
+  * @brief Function is to copy byte by byte from the 1 byte size array to the 32 
+  * bit variable
+  * @param pArray: pointer too the input array
+  * @retval u32Word : 32 bit value. 
   */
 MOBLEUINT32 CopyU8LittleEndienArrayToU32word (MOBLEUINT8* pArray) 
 {
@@ -1454,9 +1255,10 @@ MOBLEUINT32 CopyU8LittleEndienArrayToU32word (MOBLEUINT8* pArray)
 
 
 /**
-  * @brief  
-  * @param  
-  * @retval 
+  * @brief Function is used to retrieve the byte by byte values from 32 bit variable
+  * and copy in one byte size array.  
+  * @param pArray: pointer too the input array
+  * @param inputWord: 32 bit varibale  
 */
 void CopyU8LittleEndienArray_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputWord)
 {
@@ -1468,9 +1270,10 @@ void CopyU8LittleEndienArray_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputW
 
 
 /**
-  * @brief  
-  * @param  
-  * @retval 
+  * @brief Function is used to retrieve only two last byte values from 32 bit variable
+  * and copy in one byte size array.  
+  * @param pArray: pointer too the input array
+  * @param inputWord: 16 bit varibale  
 */
 void CopyU8LittleEndienArray_2B_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputWord)
 {
@@ -1684,7 +1487,7 @@ transition_event_e Transition_Sm(transition_params_t* pTrParams,
       }
       else
       {
-        triggerStatus = Clock_Time() >= ((0xFFFFFFFF-(pTrParams->trTimeMs-1000))+pTrParams->trEndTick) ||
+        triggerStatus = Clock_Time() >= ((MAX_U32_VALUE-(pTrParams->trTimeMs-1000))+pTrParams->trEndTick) ||
                       Clock_Time() < pTrParams->trBeginTick;
       }
     }
@@ -1771,7 +1574,7 @@ MOBLEUINT32 Transition_RemainingTimeGet(transition_params_t* pTrParams)
         }
         else
         {
-          remainingTimeMs = pTrParams->trEndTick + (0xFFFFFFFF - Clock_Time());
+          remainingTimeMs = pTrParams->trEndTick + (MAX_U32_VALUE - Clock_Time());
         }
       }
     }
@@ -1828,7 +1631,7 @@ MOBLEUINT32 Transition_TimerGet(transition_params_t* pTrParams)
         }
         else
         {
-          timerMs = pTrParams->trEndTick + (0xFFFFFFFF - Clock_Time());
+          timerMs = pTrParams->trEndTick + (MAX_U32_VALUE - Clock_Time());
         }
       }
     }
@@ -1847,7 +1650,7 @@ MOBLEUINT32 Transition_TimerGet(transition_params_t* pTrParams)
   **/
 MOBLEUINT32 Transition_TimeToNextActionGet(transition_params_t* pTrParams)
 {
-  MOBLEUINT32 timerMs = 0xFFFFFFFF;
+  MOBLEUINT32 timerMs = MAX_U32_VALUE;
   
   if (pTrParams->trStatus == TRANSITION_STATUS_STOP)
   {
@@ -1882,7 +1685,7 @@ MOBLEUINT32 Transition_TimeToNextActionGet(transition_params_t* pTrParams)
         }
         else
         {
-          timerMs = pTrParams->trNextActionTick + (0xFFFFFFFF - Clock_Time());
+          timerMs = pTrParams->trNextActionTick + (MAX_U32_VALUE - Clock_Time());
         }
       }
     }
@@ -1957,9 +1760,13 @@ MOBLE_RESULT ExtractPropertyId(const MOBLEUINT8* data,
 
 
 /**
-  * @brief  
-  * @param  
-  * @retval 
+  * @brief  Update Light LC OnOff state binded with Generic OnOff state
+  * @param  Generic OnOff element index
+  * @param  Generic OnOff state value
+  * @param  optional transition parameters flag
+  * @param  delay in milliseconds
+  * @param  transition parameters
+  * @retval MOBLE_RESULT_SUCCESS
   */
 MOBLE_RESULT Binding_GenericOnOff_LightLcLightOnOff(MOBLEUINT8 genericElementIndex, 
                                                     MOBLEUINT8 genericOnOff,
@@ -1977,9 +1784,10 @@ MOBLE_RESULT Binding_GenericOnOff_LightLcLightOnOff(MOBLEUINT8 genericElementInd
 
 
 /**
-  * @brief  
-  * @param  
-  * @retval 
+  * @brief  Update Generic OnOff state binded with Light LC OnOff state
+  * @param  Light LC OnOff element index
+  * @param  Light LC OnOff state value
+  * @retval MOBLE_RESULT_SUCCESS
   */
 MOBLE_RESULT Binding_LightLcLightOnOff_GenericOnOff(MOBLEUINT8 lcElementIndex, MOBLEUINT8 lcOnOff)
 {
@@ -1992,17 +1800,19 @@ MOBLE_RESULT Binding_LightLcLightOnOff_GenericOnOff(MOBLEUINT8 lcElementIndex, M
 
 
 /**
-  * @brief  
-  * @param  
-  * @retval 
+  * @brief  Update Light Lightness Linear state binded with Light LC Linear Out
+  * @param  Light LC Linear Out element index
+  * @param  Light LC Linear Out state value
+  * @retval MOBLE_RESULT_SUCCESS
   */
 MOBLE_RESULT Binding_LcLinearOut_LightLightnessLinear(MOBLEUINT8 lcElementIndex, MOBLEUINT16 lcLinearOut)
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
-  /* Extract element index of target light lightness linear
-     should not be same element index as of lcElementIndex */
-  MOBLEUINT8 targetElementIndex = 0;
+  /* Extract element index of main element (with Light Lightness Server)
+     Should not be same element index as of lcElementIndex
+     Hard coded as element index 0 */
+  MOBLEUINT8 targetElementIndex = LIGHT_LIGHTNESS_SERVER_MAIN_ELEMENT_INDEX;
   
   if(lcElementIndex == targetElementIndex)
   {
@@ -2024,8 +1834,10 @@ MOBLE_RESULT Binding_LcLinearOut_LightLightnessLinear(MOBLEUINT8 lcElementIndex,
   */
 void BindingDisable_LcLinearOut_LightLightnessLinear(MOBLEUINT8 lightnessLinearElementIndex)
 {
-  MOBLEUINT8 targetElementIndex = 1; /* Element index of targeted LC server */
-  Light_LC_LigtnessLinearUnsolicitedChange(targetElementIndex);
+  if(lightnessLinearElementIndex == LIGHT_LIGHTNESS_SERVER_MAIN_ELEMENT_INDEX)
+  {
+    Light_LC_LigtnessLinearUnsolicitedChange(lightnessLinearElementIndex);
+  }
 }
 
 
@@ -2035,6 +1847,37 @@ WEAK_FUNCTION ( MOBLE_RESULT ApplicationGetConfigServerDeviceKey(MOBLE_ADDRESS s
   return MOBLE_RESULT_SUCCESS;
 }
 
+/**
+* @brief  Function used to calculate the delay with random time..
+* @param  MOBLEUINT16
+* @retval MOBLEUINT8
+*/
+MOBLEBOOL Wait_RandomTime(void)
+{
+   static MOBLEUINT8 Clockflag = 0;
+   static MOBLEUINT32 wait_Time;
+   static MOBLEUINT32 check_Time;
+   MOBLEUINT8 random_time[8];
+ 
+   if(Clockflag == 0)
+   {   
+    hci_le_rand(random_time);
+    check_Time = Clock_Time();
+    wait_Time = DEFAULT_RANDOM_DELAY_VALUE + 
+                                     (random_time[0] + random_time[1]*256)\
+                                         %DEFAULT_RANDOM_DELAY_VALUE; 
+                                        
+     Clockflag = 1;
+   } 
+/* The function will called untill the testcount will not become zero */     
+
+     if((Clock_Time() - check_Time) >=  wait_Time)
+     {
+        Clockflag = 0;
+        return MOBLE_TRUE;
+
+       }
+   return MOBLE_FALSE;
+}
 
 /******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
-

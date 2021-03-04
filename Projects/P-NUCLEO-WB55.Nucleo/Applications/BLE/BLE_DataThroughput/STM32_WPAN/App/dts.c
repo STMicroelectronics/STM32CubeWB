@@ -97,6 +97,7 @@ static tBleStatus TX_Update_Char( DTS_STM_Payload_t *pDataValue );
 static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *pckt );
 static DataTransferSvcContext_t aDataTransferContext;
 extern uint16_t Att_Mtu_Exchanged;
+extern void BLE_SVC_L2CAP_Conn_Update_7_5(void);
 
 /* Functions Definition ------------------------------------------------------*/
 /* Private functions ----------------------------------------------------------*/
@@ -110,7 +111,7 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt * event_pckt;
-  evt_blue_aci * blue_evt;
+  evt_blecore_aci * blecore_evt;
   aci_gatt_attribute_modified_event_rp0 * attribute_modified;
   aci_att_exchange_mtu_resp_event_rp0 * exchange_mtu_resp;
   aci_gatt_write_permit_req_event_rp0 * write_permit_req ;
@@ -122,22 +123,22 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
 
   switch (event_pckt->evt)
   {
-    case EVT_VENDOR:
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
-      blue_evt = (evt_blue_aci*) event_pckt->data;
+      blecore_evt = (evt_blecore_aci*) event_pckt->data;
 
-      switch (blue_evt->ecode)
+      switch (blecore_evt->ecode)
       {
-        case EVT_BLUE_ATT_EXCHANGE_MTU_RESP:
-          APP_DBG_MSG("EVT_BLUE_ATT_EXCHANGE_MTU_RESP \n");					
-          exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blue_evt->data;
-          APP_DBG_MSG("MTU_size = %d \n",exchange_mtu_resp->Server_RX_MTU );
+        case ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE:					
+          exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blecore_evt->data;
+          APP_DBG_MSG("**MTU_size = %d \n",exchange_mtu_resp->Server_RX_MTU );
+          APP_DBG_MSG("\r\n\r");
           Att_Mtu_Exchanged = exchange_mtu_resp->Server_RX_MTU;
           break;
         /* server */
-        case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+        case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
         {
-          attribute_modified = (aci_gatt_attribute_modified_event_rp0*) blue_evt->data;
+          attribute_modified = (aci_gatt_attribute_modified_event_rp0*) blecore_evt->data;
           if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxCharHdle + 2))
           {
             /**
@@ -145,32 +146,37 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
              */
             if (attribute_modified->Attr_Data[0] & DTS_STM_NOTIFICATION_MASK)
             {
-              APP_DBG_MSG("notification enabled\n");
+              APP_DBG_MSG("**NOTIFICATION ENABLED \n");
+              APP_DBG_MSG("\r\n\r");
               Notification.Evt_Opcode = DTS_STM__NOTIFICATION_ENABLED;
               DTS_Notification(&Notification);
             }
             else
             {
-              APP_DBG_MSG("notification disabled\n");
+              APP_DBG_MSG("**NOTIFICATION DISABLED \n");
+              APP_DBG_MSG("\r\n\r");
               Notification.Evt_Opcode = DTS_STM_NOTIFICATION_DISABLED;
               DTS_Notification(&Notification);
             }
           }
-          //if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 2))
-          if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 5))
+          if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 2))
+          //if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 5))
           {
             /**
             * Notify to application to start measurement
             */
             if (attribute_modified->Attr_Data[0] & DTS_STM_NOTIFICATION_MASK)
             {
-              APP_DBG_MSG("notification enabled\n");
+              APP_DBG_MSG("**WRITE RESULT NOTIFICATION ENABLED \n");
+              APP_DBG_MSG("\r\n\r");
+              BLE_SVC_L2CAP_Conn_Update_7_5();
               Notification.Evt_Opcode = DTC_NOTIFICATION_ENABLED;
               DTS_Notification(&Notification);
             }
             else
             {
-              APP_DBG_MSG("notification disabled\n");
+              APP_DBG_MSG("**WRITE RESULT NOTIFICATION DISABLED \n");
+              APP_DBG_MSG("\r\n\r");
               Notification.Evt_Opcode = DTC_NOTIFICATION_DISABLED;
               DTS_Notification(&Notification);
             }
@@ -185,13 +191,13 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
           }
           }
           break;
-        case EVT_BLUE_GATT_TX_POOL_AVAILABLE:
+        case ACI_GATT_TX_POOL_AVAILABLE_VSEVT_CODE:
           Resume_Notification();
           break; 
           
-      case EVT_BLUE_GATT_WRITE_PERMIT_REQ:
-        APP_DBG_MSG("write permit req\r\n");
-        write_permit_req = (aci_gatt_write_permit_req_event_rp0 *) blue_evt->data;
+      case ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE:
+        //APP_DBG_MSG("WRITE PERMIT RESP \r\n");
+        write_permit_req = (aci_gatt_write_permit_req_event_rp0 *) blecore_evt->data;
         aci_gatt_write_resp( write_permit_req->Connection_Handle, write_permit_req->Attribute_Handle, 0, 0, write_permit_req->Data_Length, write_permit_req->Data);        
         break;
 
@@ -199,7 +205,7 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
           break;
       }
     }
-      break; /* HCI_EVT_VENDOR_SPECIFIC */
+      break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
 
     default:
       break;
@@ -283,7 +289,7 @@ void DTS_STM_Init( void )
                     255, /* DATA_TRANSFER_NOTIFICATION_LEN_MAX, */
                     CHAR_PROP_WRITE_WITHOUT_RESP,
                     ATTR_PERMISSION_NONE,
-                    GATT_NOTIFY_ATTRIBUTE_WRITE, //GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP, /* gattEvtMask */
+                    GATT_NOTIFY_ATTRIBUTE_WRITE, //GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP,/* gattEvtMask */
                     10, /* encryKeySize */
                     1, /* isVariable */
                     &(aDataTransferContext.DataTransferRxCharHdle));

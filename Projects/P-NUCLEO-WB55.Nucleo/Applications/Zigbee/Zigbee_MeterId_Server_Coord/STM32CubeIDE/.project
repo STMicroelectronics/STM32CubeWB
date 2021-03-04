@@ -38,6 +38,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Zigbee_MeterId_Server_Coord.ioc</locationURI>
 		</link>
 		<link>
+			<name>Doc/readme.txt</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/readme.txt</locationURI>
+		</link>
+		<link>
 			<name>Utilities/stm32_lpm.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Utilities/lpm/tiny_lpm/stm32_lpm.c</locationURI>
@@ -96,6 +101,11 @@
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_hsem.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_ipcc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_pwr.c</name>
