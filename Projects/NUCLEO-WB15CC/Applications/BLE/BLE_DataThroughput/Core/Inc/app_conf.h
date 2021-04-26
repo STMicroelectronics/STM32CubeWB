@@ -40,8 +40,8 @@
 /**
  * Define Advertising parameters
  */
-#define CFG_ADV_BD_ADDRESS                (0)
-#define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)   /**< 80ms */
+#define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
+#define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)  /**< 80ms */
 #define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)  /**< 100ms */
 #define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x640) /**< 1s */
 #define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xFA0) /**< 2.5s */
@@ -126,9 +126,9 @@
  * When set to 1, the device is central
  * When set to 0, the device is peripheral
  */
-#define CFG_BLE_CENTRAL     1
+#define CFG_BLE_CENTRAL     0
 
-#define CFG_SERVER_ONLY     0
+#define CFG_SERVER_ONLY     1
 /**
  * in this specific application, the device is either central
  * or peripheral but cannot be both
@@ -284,7 +284,7 @@
 /**
  * Maximum duration of the connection event when the device is in Slave mode in units of 625/256 us (~2.44 us)
  */
-#define CFG_BLE_MAX_CONN_EVENT_LENGTH  (0xFFFF)
+#define CFG_BLE_MAX_CONN_EVENT_LENGTH  (0xFFFFFFFF)
 
 /**
  * Viterbi Mode
@@ -423,7 +423,7 @@
 
 #define CFG_RTCCLK_DIV  (16)
 #define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (0x0F)
+#define CFG_RTC_ASYNCH_PRESCALER (CFG_RTCCLK_DIV - 1)
 #define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
 
 #else

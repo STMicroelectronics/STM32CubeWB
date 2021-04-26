@@ -668,12 +668,7 @@ SHCI_CmdStatus_t SHCI_GetWirelessFwInfo( WirelessFwInfo_t* pWirelessInfo )
    * If the FUS is running on CPU2, FUS_DEVICE_INFO_TABLE_VALIDITY_KEYWORD shall be written in the table.
    * Otherwise, it means the Wireless Firmware is running on the CPU2
    */
-  
-#if(STM32WB15xx == 0)
-  p_fus_device_info_table = (MB_FUS_DeviceInfoTable_t*)(*(uint32_t*)((ipccdba<<2) + (SRAM_BASE + 0x00030000)));
-#else
   p_fus_device_info_table = (MB_FUS_DeviceInfoTable_t*)(*(uint32_t*)((ipccdba<<2) + SRAM2A_BASE));
-#endif
 
   if(p_fus_device_info_table->DeviceInfoTableState == FUS_DEVICE_INFO_TABLE_VALIDITY_KEYWORD)
   {
@@ -696,12 +691,7 @@ SHCI_CmdStatus_t SHCI_GetWirelessFwInfo( WirelessFwInfo_t* pWirelessInfo )
   else
   {
     /* The Wireless Firmware is running on CPU2 */
-
-#if(STM32WB15xx == 0)
-    p_RefTable = (MB_RefTable_t*)((ipccdba<<2) + (SRAM_BASE + 0x00030000));
-#else
     p_RefTable = (MB_RefTable_t*)((ipccdba<<2) + SRAM2A_BASE);
-#endif
 
     /**
      *  Retrieve the WirelessFwInfoTable

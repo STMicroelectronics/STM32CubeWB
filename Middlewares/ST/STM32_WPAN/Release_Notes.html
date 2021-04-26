@@ -11,7 +11,7 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="../../../_htmresc/mini-st.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -56,13 +56,35 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section13" checked aria-hidden="true"> <label for="collapse-section13" aria-hidden="false">V1.11.0 / 5-February-2021</label>
+<input type="checkbox" id="collapse-section14" checked aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.11.1 / 19-March-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
 <ul>
+<li>BLE WPAN updates:
+<ul>
+<li><strong>ID 101921</strong> - PTS issue ticket CASE0070853</li>
+<li><strong>ID 99680 </strong> - 2nd link secure fail if master database is clear during 1st link connection</li>
+<li><strong>ID 101052</strong> - HCI_LE_READ_LOCAL_P256 event happen after ending 3 success pairing</li>
+<li><strong>ID 83778 </strong> - add slave latency enable/disable command</li>
+<li><strong>ID 101346</strong> - ACI_GAP_BOND_LOST_Event timeout does not work if ALLOW rebond not sent</li>
+<li><strong>ID 100904</strong> - ACI_HAL_READ_CONFIG_DATA of CONFIG_DATA_RANDOM_ADDRESS</li>
+</ul></li>
+<li>BLE :
+<ul>
+<li>ID 101598: Incorrect #elif usage in stm32_wpan_common.h</li>
+<li>ID 94289 ,ID 102395 ,ID 100425: BLE_Ota improvments (SBSFU ready, Flash driver use, SEM7 flash activity control)</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="false">V1.11.0 / 5-February-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<ul>
 <li>BLE-Mesh library version 1.13.002
 <ul>
-<li>Updated max number of element to 5 and max number of Model per element to 11:       To support lighting control system with occupancy sensing.  </li>
+<li>Updated max number of element to 5 and max number of Model per element to 11: To support lighting control system with occupancy sensing.  </li>
 <li>Bug fix: Client API, Light LC model and sensor status, modify Light LC FSM default Lightness values</li>
 <li>Sensor &amp; Light LC Server Models updated</li>
 <li>Client Models updated</li>
@@ -70,9 +92,10 @@
 <li>Save &amp; Restore APIs for Models parameters in Flash updated</li>
 <li>Publication enabled for multiple elements</li>
 <li>Remove double disconnection to accelerate provisioning with IOS ST BLE Mesh App version 1.08.001</li>
-<li>Bug correction during unprovisioning with ST BLE Mesh App of non GATT connected Nodes.       </li>
+<li>Bug correction during unprovisioning with ST BLE Mesh App of non GATT connected Nodes.</li>
+<li>Bug correction for loss of Vendor model publication: fix on dynamic memory allocation leak when publishing vendor command into group      </li>
 </ul></li>
-<li>BLE:
+<li>BLE is Compliant BT5.2:
 <ul>
 <li>HID: added: Battery Service and Device Information Service, connection and disconnection events - ID 97936 :  L2CAP update to support IP over BLE (M.6874), SHCI_C2_BLE_init() updated parameters to be provided to CPU2 with new BLE stack Options flags to be configured as:
 <ul>
@@ -86,6 +109,7 @@
 <li>SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3</li>
 </ul></li>
 <li>ID 95186 :  SHCI_C2_FUS_GetState fixed to identify when wireless stack running (with correct error code)</li>
+<li>ID 94042, ID 97931 : STM32WB to handle certification BT5.2 (tcrl 2019-2)</li>
 </ul></li>
 <li>THREAD:
 <ul>
@@ -109,7 +133,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="false">V1.10.0 / 26-October-2020</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <ul>
 <li>General:
 <ul>
@@ -145,7 +169,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="false">V1.9.0 / 21-September-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <ul>
 <li>BLE-Mesh library version 1.13.000
 <ul>
@@ -207,7 +231,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.8.0 / 22-June-2020</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <ul>
 <li>BLE-Mesh library version 1.12.008
 <ul>
@@ -243,7 +267,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.7.0 / 11-May-2020</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p>BLE-Mesh:</p>
 <ul>
 <li>BLE Mesh Models Fixe/Update</li>
@@ -253,7 +277,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p>BLE-Mesh:</p>
 <ul>
 <li>BLE-Mesh library version 1.12.007
@@ -525,7 +549,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 22-January-2020</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_SetFlashActivityControl() to configure BLE timing protection</li>
@@ -568,7 +592,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_ExtpaConfig() to support external PA</li>
@@ -584,7 +608,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 4-September-2019</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Introducing support of Zigbee</li>
@@ -622,7 +646,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 27-June-2019</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Following utilities : Scheduler and Low Power Manager reworked and moved to “Utilities” directory</li>
@@ -648,7 +672,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <p>BLE:</p>
 <ul>
 <li>Fix race condition in transport layer when an operating system is used.</li>
@@ -694,7 +718,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 29-March-2019</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Licenses in utilities and patterns moved from sla0044 to 3-clauses BSD</li>
@@ -720,7 +744,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 31-January-2019</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <p>First release</p>
 </div>
 </div>

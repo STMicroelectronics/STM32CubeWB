@@ -50,10 +50,40 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section11" checked aria-hidden="true"> <label for="collapse-section11" aria-hidden="true">V1.11.0 / 12-February-2021</label>
+<input type="checkbox" id="collapse-section12" checked aria-hidden="true"> <label for="collapse-section12" aria-hidden="true">V1.11.1 / 02-April-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
 <h3 id="maintenance">Maintenance</h3>
+<ul>
+<li>Update BLE applications:
+<ul>
+<li>Default CFG_BLE_MAX_CONN_EVENT_LENGTH value updated for all BLE examples</li>
+<li>BLE_Ota use improved flash driver</li>
+<li>BLE_DataThroughput displayed float values correction with CubeIDE project</li>
+<li>BLE_p2pServer and BLE_p2pServer_ota code duplication removed</li>
+</ul></li>
+<li>Zigbee:
+<ul>
+<li>Support of FreeRTOS example applications:
+<ul>
+<li>Zigbee_OnOff_Client_Router_FreeRTOS</li>
+<li>Zigbee_OnOff_Server_Coord_FreeRTOS</li>
+</ul></li>
+</ul></li>
+<li>BLE_Mac:
+<ul>
+<li>ID 103245: Correct MAC stop procedure</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="true">V1.11.0 / 12-February-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<h3 id="maintenance-1">Maintenance</h3>
 <ul>
 <li>Ensure the option “required prototype” is enabled in all IAR projects.</li>
 <li>Following deprecation of Adafruit shield, the following projects are removed:
@@ -71,8 +101,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section10"  aria-hidden="true"> <label for="collapse-section10" aria-hidden="true">V1.10.0 / 30-October-2020</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
-<h3 id="maintenance-1">Maintenance</h3>
+<h2 id="main-changes-2">Main Changes</h2>
+<h3 id="maintenance-2">Maintenance</h3>
 <ul>
 <li>Ensure compatibility with STM32CubeMX 6.1.0</li>
 </ul>
@@ -81,7 +111,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">V1.9.0 / 24-September-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <h3 id="introduce-blethread-and-blezigbee-dynamic-concurrent-mode-the-support-of-lld-ble-and-phy_802.15.4-cli-application">Introduce BLE/Thread and BLE/Zigbee dynamic concurrent mode, the support of LLD BLE and PHY_802.15.4 CLI application</h3>
 <ul>
 <li>Update Thread, BLE, BLE Mesh, LLD BLE, MAC 802.15.4and zigbee application.</li>
@@ -101,7 +131,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8"  aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">V1.8.0 / 19-June-2020</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <h3 id="replace-sw4stm32-by-stm32cubeide-projects-files-for-all-examples-and-application">Replace SW4STM32 by STM32CubeIDE projects files for all examples and application</h3>
 <ul>
 <li>Add new application “BLE_custom” to demonstrate how to create a BLE_Custom application using STM32CubeMX 6.0.0</li>
@@ -112,7 +142,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.6.0 / 26-March-2020</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <h3 id="ble">BLE</h3>
 <ul>
 <li><strong>Add BLE Mesh split of BLE_MeshLightingDemo project in</strong>:
@@ -161,7 +191,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <h3 id="add-blezigbee-static-concurrent-mode-support-and-additionnal-zigbee-applications">Add BLE/Zigbee static concurrent mode support and additionnal zigbee applications</h3>
 <ul>
 <li><strong>Add BLE/Zigbee static concurrent mode support</strong>
@@ -196,8 +226,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.4.0 / 06-December-2019</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
-<h3 id="maintenance-2">Maintenance</h3>
+<h2 id="main-changes-7">Main Changes</h2>
+<h3 id="maintenance-3">Maintenance</h3>
 <ul>
 <li>Add SW4STM32 and MDK-ARM IDE files for:
 <ul>
@@ -210,7 +240,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.3.0 / 11-September-2019</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <h3 id="introduction-of-zigbee-support">Introduction of ZIGBEE support</h3>
 <ul>
 <li>Ensure compatibility with <strong>STM32CubeMX V5.4</strong>.</li>
@@ -240,7 +270,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.2.0 / 26-June-2019</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <h3 id="addition-of-new-application">Addition of new application</h3>
 <p><strong>Add CKS (Customer Key Storage) application</strong></p>
 <ul>
@@ -255,7 +285,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2"  aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <h3 id="remove-binaries-addition-of-new-examples">Remove binaries, Addition of new examples</h3>
 <p>Change directory name to reflect board RPN: <a href="https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/stm32-nucleo-expansion-boards/p-nucleo-wb55.html">P-NUCLEO-WB55</a></p>
 <p>Add QSPI examples:</p>
@@ -278,7 +308,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 </div>

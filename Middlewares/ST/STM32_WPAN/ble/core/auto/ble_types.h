@@ -1076,6 +1076,16 @@ typedef PACKED(struct)
 
 typedef PACKED(struct)
 {
+  uint8_t Enable;
+} aci_hal_set_slave_latency_cp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Status;
+} aci_hal_set_slave_latency_rp0;
+
+typedef PACKED(struct)
+{
   uint8_t Register_Address;
 } aci_hal_read_radio_reg_cp0;
 

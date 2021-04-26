@@ -876,7 +876,7 @@ static void Display_PlainData_ECB(uint32_t datalength)
     if (count == 16)
     {
       count = 0;
-      printf("  Block %u \n\r", BufferCounter / 16);
+      printf("  Block %lu \n\r", BufferCounter / 16);
     }
   }
 }
@@ -907,7 +907,7 @@ static void Display_PlainData_CBC(uint32_t datalength)
     if (count == 16)
     {
       count = 0;
-      printf("  Block %u \n\r", BufferCounter / 16);
+      printf("  Block %lu \n\r", BufferCounter / 16);
     }
   }
 }
@@ -938,7 +938,7 @@ static void Display_PlainData_CTR(uint32_t datalength)
     if (count == 16)
     {
       count = 0;
-      printf("  Block %u \n\r", BufferCounter / 16);
+      printf("  Block %lu \n\r", BufferCounter / 16);
     }
   }
 }
@@ -968,7 +968,7 @@ static void Display_CypherData(uint32_t datalength)
     if (count == 16)
     {
       count = 0;
-      printf("  Block %u \n\r", BufferCounter / 16);
+      printf("  Block %lu \n\r", BufferCounter / 16);
     }
   }
 }
@@ -1012,7 +1012,7 @@ static void Display_EncryptedData(uint8_t mode, uint16_t keysize, uint32_t datal
     if (count == 16)
     {
       count = 0;
-      printf(" Block %d \n\r", BufferCounter / 16);
+      printf(" Block %ld \n\r", BufferCounter / 16);
     }
   }
 }
@@ -1056,7 +1056,7 @@ static void Display_DecryptedData(uint8_t mode, uint16_t keysize, uint32_t datal
     if (count == 16)
     {
       count = 0;
-      printf(" Block %d \n\r", BufferCounter / 16);
+      printf(" Block %ld \n\r", BufferCounter / 16);
     }
   }
 }

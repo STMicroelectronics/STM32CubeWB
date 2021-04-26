@@ -32,7 +32,7 @@ The SystemClock_Config() function is used to configure the system clock for STM3
 LEDs on P-NUCLEO-WB55 can be used to monitor the voltage level compared to comparators thresholds:
 
 - LED1 blinks slowly (period 1 s) if input voltage is under the lower threshold.
-- LED2 blinks slowly (period 1 s) if input voltage is under the higher threshold.
+- LED2 blinks slowly (period 1 s) if input voltage is above the higher threshold.
 - If the input voltage is within the thresholds, the MCU is set in STOP mode, LEDs are turned off.
 
 NB: The MCU wakes up from STOP mode when the input voltage is out of the thresholds window.

@@ -130,11 +130,8 @@ void LHCI_C1_Read_Device_Information( TL_CmdPacket_t *pcmd )
   MB_RefTable_t * p_ref_table;
 
   ipccdba = READ_BIT(FLASH->IPCCBR, FLASH_IPCCBR_IPCCDBA);
-#if(STM32WB15xx == 0)
-  p_ref_table = (MB_RefTable_t*)((ipccdba<<2) + (SRAM_BASE + 0x00030000));  
-#else
   p_ref_table = (MB_RefTable_t*)((ipccdba<<2) + SRAM2A_BASE);
-#endif
+
 	((TL_EvtPacket_t*) pcmd)->evtserial.type = TL_LOCRSP_PKT_TYPE;
 	((TL_EvtPacket_t*) pcmd)->evtserial.evt.evtcode = TL_BLEEVT_CC_OPCODE;
 	((TL_EvtPacket_t*) pcmd)->evtserial.evt.plen = TL_EVT_HDR_SIZE + sizeof(LHCI_C1_Device_Information_ccrp_t);

@@ -84,6 +84,14 @@ void APP_FFD_MAC_802_15_4_Init( APP_MAC_802_15_4_InitMode_t InitMode, TL_CmdPack
 
 void APP_FFD_MAC_802_15_4_Stop()
 {
+  MAC_resetReq_t ResetReq;
+
+  memset(&ResetReq,0x00,sizeof(MAC_resetReq_t));
+  ResetReq.set_default_PIB = TRUE;
+
+  MAC_MLMEResetReq( &ResetReq );
+  UTIL_SEQ_WaitEvt(EVENT_DEVICE_RESET_CNF);
+
   /* Pause  the different MAC tasks */
   UTIL_SEQ_PauseTask( 1<<CFG_TASK_MSG_FROM_RF_CORE);
   UTIL_SEQ_PauseTask( 1<<CFG_TASK_FFD);

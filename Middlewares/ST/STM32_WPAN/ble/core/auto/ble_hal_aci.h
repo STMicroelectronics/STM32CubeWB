@@ -35,9 +35,10 @@ tBleStatus aci_hal_get_fw_build_number( uint16_t* Build_Number );
 
 /**
  * @brief ACI_HAL_WRITE_CONFIG_DATA
- * This command writes a value to a low level configure data structure. It is
- * useful to setup directly some low level parameters for the system in the
- * runtime.
+ * This command writes a value to a configure data structure. It is useful to
+ * setup directly some parameters for the system in the runtime.
+ * Note: the static random address set by this command is taken into account by
+ * the GAP only when it receives the ACI_GAP_INIT command.
  * 
  * @param Offset Offset of the element in the configuration data structure
  *        which has to be written.
@@ -60,8 +61,8 @@ tBleStatus aci_hal_write_config_data( uint8_t Offset,
 
 /**
  * @brief ACI_HAL_READ_CONFIG_DATA
- * This command requests the value in the low level configure data structure.
- * The number of read bytes changes for different Offset.
+ * This command requests the value in the configure data structure. The number
+ * of read bytes changes for different Offset.
  * 
  * @param Offset Offset of the element in the configuration data structure
  *        which has to be read.
@@ -72,8 +73,8 @@ tBleStatus aci_hal_write_config_data( uint8_t Offset,
  *          Encryption root key used to derive LTK and CSRK; 16 bytes
  *        - 0x18: CONFIG_DATA_IR_OFFSET
  *          Identity root key used to derive LTK and CSRK; 16 bytes
- *        - 0x80: CONFIG_DATA_RANDOM_ADDRESS
- *          Static random address; 6 bytes (read-only)
+ *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_WR;
+ *          Static Random Address; 6 bytes
  * @param[out] Data_Length Length of Data in octets
  * @param[out] Data Data field associated with Offset parameter
  * @return Value indicating success or error code.
@@ -300,6 +301,20 @@ tBleStatus aci_hal_set_smp_eng_config( uint32_t SMP_Config );
 tBleStatus aci_hal_get_pm_debug_info( uint8_t* Allocated_For_TX,
                                       uint8_t* Allocated_For_RX,
                                       uint8_t* Allocated_MBlocks );
+
+/**
+ * @brief ACI_HAL_SET_SLAVE_LATENCY
+ * This command is used to disable/enable the slave latency feature during a
+ * connection. Note that, by default, the slave latency is enabled at
+ * connection time.
+ * 
+ * @param Enable Enable/disable slave latency.
+ *        Values:
+ *        - 0x00: Slave latency is disabled
+ *        - 0x01: Slave latency is enabled
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_hal_set_slave_latency( uint8_t Enable );
 
 /**
  * @brief ACI_HAL_READ_RADIO_REG

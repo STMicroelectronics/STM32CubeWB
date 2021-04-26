@@ -74,9 +74,6 @@ void FPU_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 void RTC_WKUP_IRQHandler(void);
 void EXTI4_IRQHandler(void);
-void IPCC_C1_TX_IRQHandler(void);
-void IPCC_C1_RX_IRQHandler(void);
-
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 void USB_LP_IRQHandler(void);
 void USB_HP_IRQHandler(void);

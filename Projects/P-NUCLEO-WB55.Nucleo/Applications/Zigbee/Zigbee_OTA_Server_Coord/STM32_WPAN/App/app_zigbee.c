@@ -1074,7 +1074,7 @@ static void APP_ZIGBEE_SW1_Process(void)
   APP_DBG("[OTA] M4 application firmware upgrade available.\n");
   
   /*  Update OTA server context file type */
-  OTA_server_info.ctx.file_type =  IMAGE_TYPE_FW_APP;
+  OTA_server_info.ctx.file_type =  fileType_APP ;
   OTA_server_info.ctx.base_address = FUOTA_APP_FW_BINARY_ADDRESS;
   OTA_server_info.ctx.magic_keyword = FUOTA_MAGIC_KEYWORD_APP;
   OTA_server_info.ctx.file_version = FILE_VERSION_FW_APP;
@@ -1110,7 +1110,7 @@ static void APP_ZIGBEE_SW2_Process(void)
   APP_DBG("[OTA] M0 wireless coprocessor firmware upgrade available.\n");
   
   /*  Update OTA server context file type */
-  OTA_server_info.ctx.file_type = IMAGE_TYPE_FW_COPRO_WIRELESS;
+  OTA_server_info.ctx.file_type = fileType_COPRO_WIRELESS;
   OTA_server_info.ctx.base_address = FUOTA_COPRO_FW_BINARY_ADDRESS;
   OTA_server_info.ctx.magic_keyword = FUOTA_MAGIC_KEYWORD_COPRO_WIRELESS;
   OTA_server_info.ctx.file_version = FILE_VERSION_FW_COPRO_WIRELESS;

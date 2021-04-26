@@ -157,7 +157,7 @@ extern "C" {
   #define PACKED_STRUCT struct PACKED__
 #elif defined (__ICCARM__)
   #define PACKED_STRUCT __packed struct
-#elif
+#else
   #define PACKED_STRUCT __packed struct
 #endif
 

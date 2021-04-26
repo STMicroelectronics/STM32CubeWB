@@ -923,8 +923,8 @@ static void Connect_Request( void )
                                      SCAN_L,
                                      PUBLIC_ADDR, SERVER_REMOTE_BDADDR,
                                      PUBLIC_ADDR,
-                                     CONN_P1_400, //CONN_P1_7_5, 
-                                     CONN_P2_400, //CONN_P2_7_5,
+                                     CONN_P1_7_5, 
+                                     CONN_P2_7_5,
                                      0, 0x3e8, 0x0000, 0x3E8);
 
   if (result != BLE_STATUS_SUCCESS)

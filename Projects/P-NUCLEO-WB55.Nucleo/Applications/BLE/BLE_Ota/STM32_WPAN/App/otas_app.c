@@ -29,6 +29,8 @@
 #include "ota_sbsfu.h"
 #endif /* OTA_SBSFU */
 
+#include "flash_driver.h"
+
 /* Private typedef -----------------------------------------------------------*/
 typedef enum
 {
@@ -111,21 +113,21 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
       count = 0;
       size_left = p_notification->ValueLength;
 
-      while( LL_HSEM_1StepLock( HSEM, CFG_HW_FLASH_SEMID ) );
-      HAL_FLASH_Unlock();
       /**
        * The flash is written by bunch of DOUBLEWORD_SIZE_FOR_FLASH_PROGRAMMING bytes
        * Data are written in flash as long as there are at least DOUBLEWORD_SIZE_FOR_FLASH_PROGRAMMING bytes
        */
       while( size_left >= (DOUBLEWORD_SIZE_FOR_FLASH_PROGRAMMING - OTAS_APP_Context.write_value_index) )
       {
+        uint32_t NbrOfDataToBeWritten = 1;
+        
         memcpy( (uint8_t*)&OTAS_APP_Context.write_value + OTAS_APP_Context.write_value_index,
                 ((OTA_STM_Raw_Data_Event_Format_t*)(p_notification->pPayload))->Raw_Data + count,
                 DOUBLEWORD_SIZE_FOR_FLASH_PROGRAMMING - OTAS_APP_Context.write_value_index );
-        while(LL_FLASH_IsActiveFlag_OperationSuspended());
-        HAL_FLASH_Program( FLASH_TYPEPROGRAM_DOUBLEWORD,
-                           OTAS_APP_Context.base_address,
-                           OTAS_APP_Context.write_value);
+        while(NbrOfDataToBeWritten > 0)
+          NbrOfDataToBeWritten = FD_WriteData(OTAS_APP_Context.base_address,
+                                              &(OTAS_APP_Context.write_value),
+                                              1);
         if(*(uint64_t*)(OTAS_APP_Context.base_address)==OTAS_APP_Context.write_value)
         {
           OTAS_APP_Context.base_address += DOUBLEWORD_SIZE_FOR_FLASH_PROGRAMMING;
@@ -134,8 +136,6 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
           OTAS_APP_Context.write_value_index = 0;
         }
       }
-      HAL_FLASH_Lock();
-      LL_HSEM_ReleaseLock( HSEM, CFG_HW_FLASH_SEMID, 0 );
 
       /**
        * The Flash shall be written by DOUBLEWORD_SIZE_FOR_FLASH_PROGRAMMING number of bytes.
@@ -173,17 +173,15 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
                 0xFF,
                 DOUBLEWORD_SIZE_FOR_FLASH_PROGRAMMING - OTAS_APP_Context.write_value_index  );
 
-        while( LL_HSEM_1StepLock( HSEM, CFG_HW_FLASH_SEMID ) );
-        HAL_FLASH_Unlock();
         while(*(uint64_t*)(OTAS_APP_Context.base_address) != OTAS_APP_Context.write_value)
         {
-          while(LL_FLASH_IsActiveFlag_OperationSuspended());
-          HAL_FLASH_Program( FLASH_TYPEPROGRAM_DOUBLEWORD,
-                             OTAS_APP_Context.base_address,
-                             OTAS_APP_Context.write_value);
+          uint32_t NbrOfDataToBeWritten = 1;
+
+          while(NbrOfDataToBeWritten > 0)
+            NbrOfDataToBeWritten = FD_WriteData(OTAS_APP_Context.base_address,
+                                                &(OTAS_APP_Context.write_value),
+                                                1);
         }
-        HAL_FLASH_Lock();
-        LL_HSEM_ReleaseLock( HSEM, CFG_HW_FLASH_SEMID, 0 );
       }
 
       /**

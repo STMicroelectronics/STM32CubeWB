@@ -846,13 +846,15 @@ MOBLE_RESULT AppliPrvnNvm_SaveData(uint8_t* devkey,
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS; /* if save model state not defined, return MOBLE_RESULT_FAIL */
   uint8_t *pNodeInfo;
   MOBLEUINT16 sizeTosave=0;
+  uint16_t numOfElements = 0;
       
   pNodeInfo = PrvnNvm_Reqs.prvnData;
 
   /* Copy the Address and Number of Elements */
   memcpy(pNodeInfo, &address, 2);
   pNodeInfo += 2;
-  memcpy(pNodeInfo, &numElements, 2); 
+  numOfElements = numElements;
+  memcpy(pNodeInfo, &numOfElements, 2); 
   
   pNodeInfo += 2;
   sizeTosave += 4;

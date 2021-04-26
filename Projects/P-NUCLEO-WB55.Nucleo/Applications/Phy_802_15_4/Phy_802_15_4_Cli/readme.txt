@@ -34,6 +34,7 @@ How to create a "PHY_802.15.4 command line interface" application on STM32WB55xx
   The commands are sent via an UART from an HyperTerminal (PC) to the STM32WB55RG_Nucleo Board.
   At startup. after typing return on the HyperTerminal, a prompt '802.15.4 valid cli >' should
   be displayed on the Hyperterminal.
+  The red LED (LED3) is on.
   The Hyperterminal must be configured as follow :
   
       - BaudRate = 115200 baud  

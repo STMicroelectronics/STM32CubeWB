@@ -200,7 +200,7 @@ void APP_LLDTESTS_Init( void )
 #else
 #error Unnknown target
 #endif
-  sprintf(traceBuff, "%s RF 802_15_4 LLDs test\r\n", traceBuff);
+  sprintf(traceBuff, "%s RF 802_15_4 LLDs test\r\n", strtok(traceBuff, "\0"));
   uartTxBufferAdd(traceBuff);
   uartTxBufferAdd("=================================\r\n");
   

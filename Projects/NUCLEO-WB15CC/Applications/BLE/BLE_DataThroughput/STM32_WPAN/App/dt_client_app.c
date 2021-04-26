@@ -159,9 +159,9 @@ void DTC_App_LinkReadyNotification(uint16_t ConnectionHandle)
   }
 #endif
   
-//#if(CFG_BLE_CENTRAL != 0)
-//    UTIL_SEQ_SetTask(1<<CFG_TASK_CONN_UPDATE_ID, CFG_SCH_PRIO_0); 
-//#endif
+#if(CFG_BLE_CENTRAL != 0)
+    UTIL_SEQ_SetTask(1<<CFG_TASK_CONN_UPDATE_ID, CFG_SCH_PRIO_0); 
+#endif
   return;
 }
 

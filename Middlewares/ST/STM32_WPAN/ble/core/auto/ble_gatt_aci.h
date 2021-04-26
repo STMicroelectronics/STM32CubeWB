@@ -107,7 +107,7 @@ tBleStatus aci_gatt_include_service( uint16_t Service_Handle,
  * @param Char_UUID See @ref Char_UUID_t
  * @param Char_Value_Length Maximum length of the characteristic value.
  * @param Char_Properties Characteristic Properties (Volume 3, Part G, section
- *        3.3.1.1 of Bluetooth Specification 5.0)
+ *        3.3.1.1 of Bluetooth Core Specification)
  *        Flags:
  *        - 0x00: CHAR_PROP_NONE
  *        - 0x01: CHAR_PROP_BROADCAST (Broadcast)
@@ -238,7 +238,7 @@ tBleStatus aci_gatt_add_char_desc( uint16_t Service_Handle,
  * parameters (decided by the master, see
  * aci_l2cap_connection_parameter_update_request() for more info on how to
  * suggest new connection parameters from a slave). If the application does not
- * want to lose notifications because STM32WB buffer becomes full, it has to
+ * want to lose notifications because STM32WB buffer becomes full, it must
  * retry again till the function returns BLE_STATUS_SUCCESS or any other error
  * code.
  * 
@@ -914,7 +914,7 @@ tBleStatus aci_gatt_write_resp( uint16_t Connection_Handle,
  * ACI_GATT_READ_PERMIT_REQ_EVENT or ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT. This
  * command indicates to the stack that the response can be sent to the client.
  * So if the application wishes to update any of the attributes before they are
- * read by the client, it has to update the characteristic values using the
+ * read by the client, it must update the characteristic values using the
  * ACI_GATT_UPDATE_CHAR_VALUE and then give this command. The application
  * should perform the required operations within 30 seconds. Otherwise the GATT
  * procedure will be timeout.

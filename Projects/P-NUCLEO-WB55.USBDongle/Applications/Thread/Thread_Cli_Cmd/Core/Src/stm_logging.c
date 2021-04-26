@@ -61,7 +61,7 @@
 /**
  * Function for outputting code region string.
  *
- * @param[inout]  aLogString  Pointer to log buffer.
+ * @param[input]  aLogString  Pointer to log buffer.
  * @param[in]     aMaxSize    Maximum size of log buffer.
  * @param[in]     otLogRegion The region ID.
  *
@@ -131,7 +131,7 @@ static inline const char *levelToString(appliLogLevel_t aLogLevel)
 /**
  * Function for printing log level.
  *
- * @param[inout]  aLogString  Pointer to log buffer.
+ * @param[input]  aLogString  Pointer to log buffer.
  * @param[in]     aMaxSize    Maximum size of log buffer.
  * @param[in]     aLogLevel   Log level.
  *
@@ -149,7 +149,7 @@ static inline uint16_t logLevel(char *aLogString, uint16_t aMaxSize,
 /**
  * Function for printing actual timestamp.
  *
- * @param[inout]  aLogString Pointer to the log buffer.
+ * @param[input]  aLogString Pointer to the log buffer.
  * @param[in]     aMaxSize   Maximum size of the log buffer.
  *
  * @returns  Number of bytes successfully written to the log buffer.

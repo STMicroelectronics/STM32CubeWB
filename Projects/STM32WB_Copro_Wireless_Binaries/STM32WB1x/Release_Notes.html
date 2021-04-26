@@ -33,6 +33,8 @@
 <p>This software component is licensed by ST under Ultimate Liberty license SLA0044, the “License”;</p>
 <p>You may not use this file except in compliance with the License.</p>
 <p>You may obtain a copy of the License at: <a href="http://www.st.com/SLA0044">SLA0044</a></p>
+<h1 id="known-limitations">Known Limitations</h1>
+<p><strong>If Anti-Rollback needs to be activated</strong>, please make sure to activate it only after installing the latest FUS version (&gt;= V1.2.0) and after successfully installing a wireless stack (without deleting it). <strong>Otherwise, further wireless stack installation will be blocked.</strong></p>
 <h1 id="purpose">Purpose</h1>
 <p>This release covers the delivery of STM32WB Coprocessor binaries.</p>
 <p>Here is the list of references to user documents:</p>
@@ -42,6 +44,17 @@
 </ul>
 <p>Here is the list of the supported binaries:</p>
 <ul>
+<li>stm32wb1x_BLE_HCI_AdvScan_fw.bin
+<ul>
+<li>HCI Layer only mode 5.0 certified : Link Layer, HCI</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
+<li>To be used for advertising and scanning through HCI interface</li>
+</ul></li>
+<li>stm32wb1x_BLE_LLD_fw.bin
+<ul>
+<li>BLE LLD (Low Level Driver) Radio Transparent firmware</li>
+<li>To be used for direct access on BLE LLD features and API</li>
+</ul></li>
 <li>stm32wb1x_BLE_Stack_full_fw.bin
 <ul>
 <li>Full BLE Stack 5.0 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
@@ -53,7 +66,8 @@
 <li>GATT server, client</li>
 <li>Data length extension</li>
 <li>2Mbit PHY / PHY update</li>
-<li>Privacy / White list</li>
+<li>Privacy</li>
+<li>White list</li>
 <li>Legacy Pairing, LE secure connections</li>
 <li>HCI interface (full, like stm32wb5x_BLE_HCILayer_fw.bin)</li>
 <li>Direct Test Mode</li>
@@ -71,10 +85,15 @@
 <li>GAP peripheral only (LL slave up to 2 links)</li>
 <li>GATT server</li>
 <li>Data length extension</li>
+<li>Privacy</li>
+<li>White list</li>
 <li>Legacy Pairing, LE secure connections</li>
 <li>HCI interface (reduced)</li>
 <li>Direct Test Mode</li>
 </ul></li>
+<li>BLE “Slave Only” stack implies that with this stack configuration, STM32WB is not able to scan and request a BLE connection.</li>
+<li>It will just advertise, and accept incoming connection request from other master devices.</li>
+<li>While with the “full feature” BLE stack, STM32WB1xx is able to support both master and slave roles on different links.</li>
 </ul></li>
 </ul></li>
 <li>stm32wb1x_BLE_HCILayer_fw.bin
@@ -82,22 +101,17 @@
 <li>HCI Layer only mode 5.0 certified : Link Layer, HCI with Direct Test Mode</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
 </ul></li>
-<li>stm32wb1x_BLE_LLD_fw.bin
-<ul>
-<li>BLE LLD (Low Level Driver) Radio Transparent firmware</li>
-<li>To be used for direct access on BLE LLD features and API</li>
-</ul></li>
 </ul>
 <p><mark>How to flash the Wireless Coprocessor Binary via SWD/JTAG by ST-LINK (STM32CubeProgrammer GUI)</mark></p>
 <ul>
 <li><p><em>Inside the below procedure, the references to binaries name and install address are provided in the section <strong>Main Changes</strong> of this file.</em></p></li>
 <li><p>STEP 1: Use STM32CubeProgrammer GUI</p>
 <ul>
-<li><p>Version 2.5.0 or higher.</p></li>
+<li><p>Version 2.7.0 or higher.</p></li>
 <li><p>It gives access to Firmware Upgrade Service (FUS) (<a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00513965.pdf">AN5185</a> : ST firmware upgrade services for STM32WB Series.) through Bootloader.</p></li>
 <li><p>It is currently available as Graphical User Interface (GUI) mode (or Command Line Interface (CLI) mode).</p></li>
 </ul></li>
-<li><p>STEP 2: Access to “Erasing &amp; Programming” in STM32CubeProgrammer GUI</p>
+<li><p>STEP 2: Access to SWD Interface (system flash)</p>
 <ul>
 <li>For NUCLEO-WB15 :
 <ul>
@@ -106,14 +120,11 @@
 <li>open STM32CubeProgrammer GUI and select “ST-LINK”</li>
 <li>in ST-LINK configuration: (Port: SWD) then select “Connect”</li>
 </ul></li>
-<li><p>STEP 3: Flash erase</p>
+<li><p>STEP 3: select “Start FUS” in Firmware Upgrade Services</p></li>
+<li><p>STEP 4: Download new wireless stack (after “FW Delete” if requested)</p>
 <ul>
-<li>in Erase flash memory: select “Full chip erase”</li>
-</ul></li>
-<li><p>STEP 4 : Download new wireless stack :</p>
-<ul>
-<li>in Erasing &amp; Programming/Download: (File Path: [Wireless_Coprocessor_Binary], Start Adress: [Install@])</li>
-<li>then select “Start programming” with “Verify download” and “Run after programming”</li>
+<li>in Firmware Upgrade Service: (File Path: [Wireless_Coprocessor_Binary], Start Adress: [Install@])</li>
+<li>then select “Firmware Upgrade” (with “Verify download” and “Start stack after upgrade”) Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary. (<strong>optional</strong>: activate “Anti-Rollback” on downloaded binary) If you need to perform FUS related manipulations, you always need to START the FUS in case the FUS is not running.</li>
 </ul></li>
 </ul>
 <p><mark>How to compute available flash size </mark></p>
@@ -128,9 +139,71 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section1" checked aria-hidden="true"> <label for="collapse-section1" aria-hidden="false">V1.11.0 / 12-February-2021</label>
+<input type="checkbox" id="collapse-section2" checked aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.11.1 / 23-March-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE :
+<ul>
+<li>ID 102917 : Apply “VCO patch” for all packages [STM32WB15/STM32WB10] to solve “RX path issue” at low temperatures on Slow corners</li>
+<li>ID 102000 : [STM32WB55/STM32WB15]: Default CFG_BLE_MAX_CONN_EVENT_LENGTH value updated for all BLE examples</li>
+<li>ID 99680 : 2nd link secure fail if master database is clear during 1st link connection</li>
+<li>ID 101346 : ACI_GAP_BOND_LOST_Event timeout does not work if ALLOW rebond not sent</li>
+<li>ID 101921 : PTS issue ticket done CASE0070853: destination channel ID value above 1000 should be allowed and test passed</li>
+<li>ID 94289 ,ID 102395 ,ID 100425 : BLE_Ota application improvments (SBSFU ready, Flash driver use, SEM7 flash activity control)</li>
+</ul></li>
+<li>install address updated</li>
+</ul>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCILayer_fw.bin</td>
+<td>0x08032800</td>
+<td><strong>v1.11.1</strong></td>
+<td>03/22/2021</td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x0803C000</td>
+<td><strong>v1.11.1</strong></td>
+<td>03/22/2021</td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_LLD_fw.bin</td>
+<td>0x0803E800</td>
+<td><strong>v1.11.1</strong></td>
+<td>03/22/2021</td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_Stack_full_fw.bin</td>
+<td>0x0801C000</td>
+<td><strong>v1.11.1</strong></td>
+<td>03/22/2021</td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_light_fw.bin</td>
+<td>0x08028000</td>
+<td><strong>v1.11.1</strong></td>
+<td>03/22/2021</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="false">V1.11.0 / 12-February-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of the binaries.</li>
@@ -153,7 +226,7 @@
 <td>12/02/2021</td>
 </tr>
 <tr class="even">
-<td>stm32wb5x_BLE_HCI_AdvScan_fw.bin</td>
+<td>stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
 <td>0x0803B800</td>
 <td><strong>v1.11.0</strong></td>
 <td>12/02/2021</td>

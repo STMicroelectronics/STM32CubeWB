@@ -1040,6 +1040,9 @@
         <group>
             <name>EWARM</name>
             <file>
+                <name>$PROJ_DIR$\app_lld_tests_iar_asm.s</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\startup_stm32wb55xx_cm4.s</name>
             </file>
         </group>
@@ -1052,9 +1055,6 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Core\Src\app_lld_tests.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\Core\Src\app_lld_tests_iar_asm.s</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Core\Src\gpio_lld.c</name>
@@ -1082,6 +1082,12 @@
                 </file>
             </group>
         </group>
+    </group>
+    <group>
+        <name>Doc</name>
+        <file>
+            <name>$PROJ_DIR$\..\readme.txt</name>
+        </file>
     </group>
     <group>
         <name>Drivers</name>

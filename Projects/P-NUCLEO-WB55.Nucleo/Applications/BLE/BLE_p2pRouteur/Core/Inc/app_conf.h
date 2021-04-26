@@ -245,7 +245,7 @@
 /**
  * Maximum duration of the connection event when the device is in Slave mode in units of 625/256 us (~2.44 us)
  */
-#define CFG_BLE_MAX_CONN_EVENT_LENGTH  (0xFFFF)
+#define CFG_BLE_MAX_CONN_EVENT_LENGTH  (0xFFFFFFFF)
 
 /**
  * Viterbi Mode

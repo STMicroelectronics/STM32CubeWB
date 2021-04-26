@@ -410,6 +410,28 @@ void SystemInit(void)
   SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
 #endif
 
+/**
+ * When out of the SBSFU, the system configuration is
+ *            System Clock source            = PLL (MSI)
+ *            SYSCLK(Hz)                     = 64000000
+ *            HCLK(Hz)                       = 64000000
+ *            HCLK1 Prescaler                = 1
+ *            HCKL2 Prescaler                = 2
+ *            HCKLS Prescaler                = 1
+ *            APB1 Prescaler                 = 1
+ *            APB2 Prescaler                 = 1
+ *            MSI Frequency(Hz)              = 4000000
+ *            PLL_M                          = 1
+ *            PLL_N                          = 32
+ *            PLL_P                          = 5
+ *            PLL_Q                          = 4
+ *            PLL_R                          = 2
+ *            Flash Latency(WS)              = 3
+ *
+ * The new system configuration shall be applied in a different way when SBSFU is used versus
+ * the case when the device is out of reset
+ */
+
   /**
    * Read HSE_Tuning from OTP
    */
@@ -421,11 +443,13 @@ void SystemInit(void)
 
   LL_RCC_HSE_Enable();
 
+#ifndef OTA_SBSFU
   /**
    * Set FLASH latency to 1WS
    */
   LL_FLASH_SetLatency( LL_FLASH_LATENCY_1 );
   while( LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1 );
+#endif
 
   /**
    * Switch to HSE
@@ -435,11 +459,28 @@ void SystemInit(void)
   LL_RCC_SetSysClkSource( LL_RCC_SYS_CLKSOURCE_HSE );
   while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);
 
+#ifdef OTA_SBSFU
+  /**
+   * Switch OFF the PLL to save power
+   */
+  LL_RCC_PLL_Disable();
+
+  /**
+   * Set FLASH latency to 1WS
+   */
+  LL_FLASH_SetLatency( LL_FLASH_LATENCY_1 );
+  while( LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1 );
+
+  /**
+   * Set AHB2 prescaler so that CPU is clocked by 32 MHz
+   */
+  LL_C2_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
+#endif
+
   /**
    * Switch OFF MSI
    */
   LL_RCC_MSI_Disable();
-
 
   /* Configure the Vector Table location add offset address ------------------*/
 #if defined(VECT_TAB_SRAM)
