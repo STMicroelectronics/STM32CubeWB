@@ -392,16 +392,14 @@ void EXTI1_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW3_PIN);
 }
 
-void
-IPCC_C1_TX_IRQHandler(void)
+void IPCC_C1_TX_IRQHandler(void)
 {
     HW_IPCC_Tx_Handler();
 
     return;
 }
 
-void
-IPCC_C1_RX_IRQHandler(void)
+void IPCC_C1_RX_IRQHandler(void)
 {
     HW_IPCC_Rx_Handler();
     return;

@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
  * @file    app_ble.c
@@ -16,10 +17,10 @@
  *
  ******************************************************************************
  */
-
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h" 
+#include "main.h"
 
 #include "app_common.h"
 
@@ -36,7 +37,15 @@
 
 #include "p2p_routeur_app.h"
 
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
 /* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
 
 /**
  * security parameters structure
@@ -150,6 +159,7 @@ typedef struct
    * used to identify the GAP State
    */
   APP_BLE_ConnStatus_t SmartPhone_Connection_Status;
+
   /**
    * used to identify the GAP State
    */
@@ -165,7 +175,8 @@ typedef struct
    */
   uint16_t connectionHandleEndDevice1;
 
-#if (CFG_P2P_DEMO_MULTI != 0)  
+#if (CFG_P2P_DEMO_MULTI != 0)
+/* USER CODE BEGIN connectionHandleEndDevice_Multi */
   /**
    * connection handle with the Server 2 connection (End Device 2)
    * When not in connection, the handle is set to 0xFFFF
@@ -191,6 +202,7 @@ typedef struct
    * When not in connection, the handle is set to 0xFFFF
    */
   uint16_t connectionHandleEndDevice6;
+/* USER CODE END connectionHandleEndDevice_Multi */
 #endif
 
   /**
@@ -198,7 +210,8 @@ typedef struct
    */
   uint8_t EndDevice1Found;
 
-#if (CFG_P2P_DEMO_MULTI != 0)  
+#if (CFG_P2P_DEMO_MULTI != 0)
+/* USER CODE BEGIN EndDeviceFound_Multi */
   /**
    * used when doing advertising to find end device 2
    */
@@ -219,6 +232,7 @@ typedef struct
    * used when doing advertising to find end device 6
    */
   uint8_t EndDevice6Found;
+/* USER CODE END EndDeviceFound_Multi */
 #endif
 
 } BleApplicationContext_t;
@@ -240,19 +254,22 @@ typedef enum
   P2P_SERVER1_DISCON_HANDLE_EVT,
   SMART_PHONE1_CONN_HANDLE_EVT,
   SMART_PHONE1_DISCON_HANDLE_EVT,
-#if (CFG_P2P_DEMO_MULTI != 0)      
+#if (CFG_P2P_DEMO_MULTI != 0)
+/* USER CODE BEGIN P2P_SERVER_CONN_HANDLE_EVT_Multi */
   P2P_SERVER2_CONN_HANDLE_EVT,
   P2P_SERVER3_CONN_HANDLE_EVT,
   P2P_SERVER4_CONN_HANDLE_EVT,
   P2P_SERVER5_CONN_HANDLE_EVT,
   P2P_SERVER6_CONN_HANDLE_EVT,
-
+/* USER CODE END P2P_SERVER_CONN_HANDLE_EVT_Multi */
+/* USER CODE BEGIN P2P_SERVER_DISCON_HANDLE_EVT_Multi */
   P2P_SERVER2_DISCON_HANDLE_EVT,
   P2P_SERVER3_DISCON_HANDLE_EVT,
   P2P_SERVER4_DISCON_HANDLE_EVT,
   P2P_SERVER5_DISCON_HANDLE_EVT,
   P2P_SERVER6_DISCON_HANDLE_EVT,
-#endif    
+/* USER CODE END P2P_SERVER_DISCON_HANDLE_EVT_Multi */
+#endif
 
 } P2P_Opcode_Notification_evt_t;
 
@@ -262,13 +279,24 @@ typedef struct
   uint16_t ConnectionHandle;
 
 } P2P_ConnHandle_Not_evt_t;
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
 
 /* Private defines -----------------------------------------------------------*/
 #define APPBLE_GAP_DEVICE_NAME_LENGTH 7
 
 #define BD_ADDR_SIZE_LOCAL    6
 
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
 /* Private macros ------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_CmdPacket_t BleCmdBuffer;
 
@@ -285,7 +313,7 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
 
 /**
-*   Identity root key used to derive LTK and CSRK 
+*   Identity root key used to derive LTK and CSRK
 */
 static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
 
@@ -298,28 +326,30 @@ static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
  * BD Address of SERVER1 & SERVER 2 - to be connected once discovered
  */
 tBDAddr P2P_SERVER1_BDADDR;
-#if (CFG_P2P_DEMO_MULTI != 0) 
+#if (CFG_P2P_DEMO_MULTI != 0)
+/* USER CODE BEGIN P2P_SERVER_BDADDR_Multi */
 tBDAddr P2P_SERVER2_BDADDR;
 tBDAddr P2P_SERVER3_BDADDR;
 tBDAddr P2P_SERVER4_BDADDR;
 tBDAddr P2P_SERVER5_BDADDR;
 tBDAddr P2P_SERVER6_BDADDR;
+/* USER CODE END P2P_SERVER_BDADDR_Multi */
 #endif
 tBDAddr SERVER_REMOTE_BDADDR;
 
 /**
  * Advertising Data
  */
-static char local_name[] = { AD_TYPE_COMPLETE_LOCAL_NAME, 'P', '2', 'P', 'R', 'O','U', 'T' };
+static char local_name[] = { AD_TYPE_COMPLETE_LOCAL_NAME,'P','2','P','R','O','U','T'};
 uint8_t manuf_data[14] = {
-    sizeof(manuf_data)-1, AD_TYPE_MANUFACTURER_SPECIFIC_DATA, 
+    sizeof(manuf_data)-1, AD_TYPE_MANUFACTURER_SPECIFIC_DATA,
     0x01/*SKD version */,
     CFG_DEV_ID_P2P_ROUTER /* STM32WB - P2P Router*/,
-    0x00 /* GROUP A Feature  */, 
+    0x00 /* GROUP A Feature  */,
     0x00 /* GROUP A Feature */,
     0x00 /* GROUP B Feature */,
     0x00 /* GROUP B Feature */,
-    0x00,/* BLE MAC start -MSB */
+    0x00, /* BLE MAC start -MSB */
     0x00,
     0x00,
     0x00,
@@ -332,9 +362,11 @@ P2P_ConnHandle_Not_evt_t handleNotification;
 PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
 PLACE_IN_SECTION("BLE_APP_CONTEXT") APP_BLE_p2p_Conn_Update_req_t APP_BLE_p2p_Conn_Update_req;
 
-
-
 uint16_t connection_handle;
+
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
 
 /* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -346,6 +378,8 @@ static const uint8_t* BleGetBdAddress( void );
 static void Scan_Request( void );
 static void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification );
 static void ConnReq1( void );
+static void Adv_Request( void );
+/* USER CODE BEGIN PFP */
 #if (CFG_P2P_DEMO_MULTI != 0)  
 static void ConnReq2( void );
 static void ConnReq3( void );
@@ -353,11 +387,14 @@ static void ConnReq4( void );
 static void ConnReq5( void );
 static void ConnReq6( void );
 #endif
-static void Adv_Request( void );
+/* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
 void APP_BLE_Init( void )
 {
+/* USER CODE BEGIN APP_BLE_Init_1 */
+
+/* USER CODE END APP_BLE_Init_1 */
   SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
   {
     {{0,0,0}},                          /**< Header unused */
@@ -394,10 +431,10 @@ void APP_BLE_Init( void )
    */
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
 
-  /**
+/**
    * Register the hci transport layer to handle BLE User Asynchronous Events
    */
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
+ UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
 
   /**
    * Starts the BLE Stack on CPU2
@@ -423,13 +460,15 @@ void APP_BLE_Init( void )
   UTIL_SEQ_RegTask( 1<<CFG_TASK_START_SCAN_ID, UTIL_SEQ_RFU, Scan_Request);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_1_ID, UTIL_SEQ_RFU, ConnReq1);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_START_ADV_ID, UTIL_SEQ_RFU, Adv_Request);
-#if (CFG_P2P_DEMO_MULTI != 0)      
+#if (CFG_P2P_DEMO_MULTI != 0)
+/* USER CODE BEGIN SCH_RegTask_Multi */
   UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_2_ID, UTIL_SEQ_RFU, ConnReq2);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_3_ID, UTIL_SEQ_RFU, ConnReq3);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_4_ID, UTIL_SEQ_RFU, ConnReq4);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_5_ID, UTIL_SEQ_RFU, ConnReq5);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_DEV_6_ID, UTIL_SEQ_RFU, ConnReq6);
-#endif    
+/* USER CODE END SCH_RegTask_Multi */
+#endif
 
   /**
    * Initialization of the BLE App Context
@@ -437,18 +476,22 @@ void APP_BLE_Init( void )
   BleApplicationContext.SmartPhone_Connection_Status = APP_BLE_IDLE;
   BleApplicationContext.EndDevice_Connection_Status[0] = APP_BLE_IDLE;
   BleApplicationContext.EndDevice1Found = 0x00;
+
 #if (CFG_P2P_DEMO_MULTI != 0)
+/* USER CODE BEGIN Connection_Status_Multi */
   BleApplicationContext.EndDevice_Connection_Status[1] = APP_BLE_IDLE;
   BleApplicationContext.EndDevice_Connection_Status[2] = APP_BLE_IDLE;
   BleApplicationContext.EndDevice_Connection_Status[3] = APP_BLE_IDLE;
   BleApplicationContext.EndDevice_Connection_Status[4] = APP_BLE_IDLE;
   BleApplicationContext.EndDevice_Connection_Status[5] = APP_BLE_IDLE;
-
+/* USER CODE END Connection_Status_Multi */
+/* USER CODE BEGIN EndDeviceFound_Multi_Init */
   BleApplicationContext.EndDevice2Found = 0x00;
   BleApplicationContext.EndDevice3Found = 0x00;
   BleApplicationContext.EndDevice4Found = 0x00;
   BleApplicationContext.EndDevice5Found = 0x00;
   BleApplicationContext.EndDevice6Found = 0x00;
+/* USER CODE END EndDeviceFound_Multi_Init */
 #endif
 /**
  * Initialize P2P Routeur Application
@@ -459,7 +502,9 @@ void APP_BLE_Init( void )
    * Start scanning
    */
   UTIL_SEQ_SetTask(1 << CFG_TASK_START_ADV_ID, CFG_SCH_PRIO_0);
+/* USER CODE BEGIN APP_BLE_Init_2 */
 
+/* USER CODE END APP_BLE_Init_2 */
   return;
 }
 
@@ -471,40 +516,53 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
   evt_blecore_aci *blecore_evt;
   hci_le_advertising_report_event_rp0 * le_advertising_event;
   event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
-
   uint8_t result;
   uint8_t role, event_type, event_data_size;
   int k = 0;
-  uint8_t adtype, adlength;
   uint8_t *adv_report_data;
+  uint8_t adtype, adlength;
   hci_disconnection_complete_event_rp0 *cc = (void *) event_pckt->data;
 
   switch (event_pckt->evt)
   {
+    /* USER CODE BEGIN evt */
+
+    /* USER CODE END evt */
     case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
     {
       handleNotification.P2P_Evt_Opcode = P2P_SERVER1_DISCON_HANDLE_EVT;
       blecore_evt = (evt_blecore_aci*) event_pckt->data;
+      /* USER CODE BEGIN EVT_VENDOR */
 
+      /* USER CODE END EVT_VENDOR */
       switch (blecore_evt->ecode)
       {
+      /* USER CODE BEGIN ecode */
+
+      /* USER CODE END ecode */
         case ACI_GAP_PROC_COMPLETE_VSEVT_CODE:
         {
+          /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+
+          /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
           aci_gap_proc_complete_event_rp0 *gap_evt_proc_complete = (void*) blecore_evt->data;
           /* CHECK GAP GENERAL DISCOVERY PROCEDURE COMPLETED & SUCCEED */
           if (gap_evt_proc_complete->Procedure_Code == GAP_GENERAL_DISCOVERY_PROC
               && gap_evt_proc_complete->Status == 0x00)
           {
+            /* USER CODE BEGIN GAP_GENERAL_DISCOVERY_PROC */
             BSP_LED_Off(LED_BLUE);
-            APP_DBG_MSG("-- GAP GENERAL DISCOVERY PROCEDURE_COMPLETED\n");
+            /* USER CODE END GAP_GENERAL_DISCOVERY_PROC */
 
+            APP_DBG_MSG("-- GAP GENERAL DISCOVERY PROCEDURE_COMPLETED\n");
             /*if a device found, connect to it, device 1 being chosen first if both found*/
             if (BleApplicationContext.EndDevice1Found == 0x01
                 && BleApplicationContext.EndDevice_Connection_Status[0] != APP_BLE_CONNECTED)
             {
               UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
             }
-#if (CFG_P2P_DEMO_MULTI != 0)                        
+#if (CFG_P2P_DEMO_MULTI != 0)
+          /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE_Multi */
             else if (BleApplicationContext.EndDevice2Found == 0x01
                 && BleApplicationContext.EndDevice_Connection_Status[1] != APP_BLE_CONNECTED)
             {
@@ -530,6 +588,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
             {
               UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_6_ID, CFG_SCH_PRIO_0);
             }
+          /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE_Multi */
 #endif
 
           }
@@ -539,6 +598,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
 
         case ACI_L2CAP_CONNECTION_UPDATE_REQ_VSEVT_CODE:
         {
+         /* USER CODE BEGIN EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ */
+
+          /* USER CODE END EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ */
           aci_l2cap_connection_update_req_event_rp0 *pr = (aci_l2cap_connection_update_req_event_rp0 *) blecore_evt->data;
           APP_BLE_p2p_Conn_Update_req.Connection_Handle = pr->Connection_Handle;
           APP_BLE_p2p_Conn_Update_req.Identifier = pr->Identifier;
@@ -559,7 +621,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                                                               0x00);
           APP_DBG_MSG("\r\n\r** NO UPDATE \n");
           if(result != BLE_STATUS_SUCCESS) {
-            BSP_LED_On(LED_RED);
+              /* USER CODE BEGIN BLE_STATUS_SUCCESS */
+              BSP_LED_On(LED_RED);
+              /* USER CODE END BLE_STATUS_SUCCESS */
           }
 
         }
@@ -567,6 +631,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
         break;
 
         default:
+          /* USER CODE BEGIN ecode_default */
+
+          /* USER CODE END ecode_default */
           break;
       }
     }
@@ -574,6 +641,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
 
     case HCI_DISCONNECTION_COMPLETE_EVT_CODE:
 
+      /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
+
+      /* USER CODE END EVT_DISCONN_COMPLETE */
       if (cc->Connection_Handle == BleApplicationContext.connectionHandleEndDevice1)
       {
         APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF END DEVICE 1 \n");
@@ -583,7 +653,18 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
         handleNotification.ConnectionHandle = connection_handle;
         Evt_Notification(&handleNotification);
       }
+
+      if (cc->Connection_Handle == BleApplicationContext.connectionHandleCentral)
+      {
+        APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF SMART PHONE \n");
+        BleApplicationContext.connectionHandleCentral = APP_BLE_IDLE;
+        handleNotification.P2P_Evt_Opcode = SMART_PHONE1_DISCON_HANDLE_EVT;
+        handleNotification.ConnectionHandle = 0xFFFF;
+        Evt_Notification(&handleNotification);
+      }
+
 #if (CFG_P2P_DEMO_MULTI != 0)
+      /* USER CODE BEGIN EVT_DISCONN_COMPLETE_Multi */
       if (cc->Connection_Handle == BleApplicationContext.connectionHandleEndDevice2)
       {
         APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF END DEVICE 2 \n");
@@ -630,27 +711,27 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
         Evt_Notification(&handleNotification);
       }
 
-      if (cc->Connection_Handle == BleApplicationContext.connectionHandleCentral)
-      {
-        APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT OF SMART PHONE \n");
-        BleApplicationContext.connectionHandleCentral = APP_BLE_IDLE;
-        handleNotification.P2P_Evt_Opcode = SMART_PHONE1_DISCON_HANDLE_EVT;
-        handleNotification.ConnectionHandle = 0xFFFF;
-        Evt_Notification(&handleNotification);
-
-      }
-#endif           
+      /* USER CODE END EVT_DISCONN_COMPLETE_Multi */
+#endif
 
       break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
 
     case HCI_LE_META_EVT_CODE:
 
+      /* USER CODE BEGIN EVT_LE_META_EVENT */
+
+      /* USER CODE END EVT_LE_META_EVENT */
       meta_evt = (evt_le_meta_event*) event_pckt->data;
 
       switch (meta_evt->subevent)
       {
+      /* USER CODE BEGIN subevent */
 
+      /* USER CODE END subevent */
         case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
+          /* USER CODE BEGIN EVT_LE_CONN_COMPLETE */
+
+          /* USER CODE END EVT_LE_CONN_COMPLETE */
           /**
            * The connection is done, there is no need anymore to schedule the LP ADV
            */
@@ -663,20 +744,24 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
 
             uint8_t dev1 = 1
 #if (CFG_P2P_DEMO_MULTI != 0)
-                , dev2 = 1,dev3 = 1,dev4 = 1,dev5 = 1,dev6 = 1
-#endif                            
+          /* USER CODE BEGIN EVT_LE_CONN_COMPLETE_Multi */
+           , dev2 = 1,dev3 = 1,dev4 = 1,dev5 = 1,dev6 = 1
+          /* USER CODE END EVT_LE_CONN_COMPLETE_Multi */
+#endif
                 ;
 
             for (int i = 0; i < 6; i++)
             {
               dev1 &= (P2P_SERVER1_BDADDR[i] == connection_complete_event->Peer_Address[i]);
-#if (CFG_P2P_DEMO_MULTI != 0)                            
+#if (CFG_P2P_DEMO_MULTI != 0)
+          /* USER CODE BEGIN EVT_LE_CONN_COMPLETE_Multi_2 */
               dev2 &= (P2P_SERVER2_BDADDR[i] == connection_complete_event->Peer_Address[i]);
               dev3 &= (P2P_SERVER3_BDADDR[i] == connection_complete_event->Peer_Address[i]);
               dev4 &= (P2P_SERVER4_BDADDR[i] == connection_complete_event->Peer_Address[i]);
               dev5 &= (P2P_SERVER5_BDADDR[i] == connection_complete_event->Peer_Address[i]);
               dev6 &= (P2P_SERVER6_BDADDR[i] == connection_complete_event->Peer_Address[i]);
-#endif                            
+          /* USER CODE END EVT_LE_CONN_COMPLETE_Multi_2 */
+#endif
             }
 
             if (dev1 == 1)
@@ -692,24 +777,28 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
               result = aci_gatt_disc_all_primary_services(BleApplicationContext.connectionHandleEndDevice1);
               if (result == BLE_STATUS_SUCCESS)
               {
-                APP_DBG_MSG("\r\n\r** GATT SERVICES & CHARACTERISTICS DISCOVERY  \n");APP_DBG_MSG("* GATT :  Start Searching Primary Services \r\n\r");
+                APP_DBG_MSG("\r\n\r** GATT SERVICES & CHARACTERISTICS DISCOVERY  \n");
+                APP_DBG_MSG("* GATT :  Start Searching Primary Services \r\n\r");
               }
               else
               {
                 APP_DBG_MSG("BLE_CTRL_App_Notification(), All services discovery Failed \r\n\r");
               }
-#if (CFG_P2P_DEMO_MULTI != 0)                            
-              /* now try to connect to device 2 */
+#if (CFG_P2P_DEMO_MULTI != 0)
+          /* USER CODE BEGIN EVT_LE_CONN_COMPLETE_Multi_3 */
+          /* Now try to connect to device 2 */
               if ((BleApplicationContext.EndDevice_Connection_Status[1] != APP_BLE_CONNECTED)
                   && (BleApplicationContext.EndDevice2Found == 0x01))
               {
                 UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_2_ID, CFG_SCH_PRIO_0);
               }
-#endif                            
+          /* USER CODE END EVT_LE_CONN_COMPLETE_Multi_3 */
+#endif
 
             }
 #if (CFG_P2P_DEMO_MULTI != 0)
-            if (dev2 == 1)
+          /* USER CODE BEGIN EVT_LE_CONN_COMPLETE_Multi_4 */
+          if (dev2 == 1)
             {
               /* Inform Application it is End Device 2 */
               APP_DBG_MSG("-- CONNECTION SUCCESS WITH END DEVICE 2\n");
@@ -729,7 +818,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
               {
                 APP_DBG_MSG("BLE_CTRL_App_Notification(), All services discovery Failed \r\n\r");
               }
-              /* now try to connect to device 1 */
+              /* Now try to connect to device 1 */
               if ((BleApplicationContext.EndDevice_Connection_Status[0] != APP_BLE_CONNECTED)
                   && (BleApplicationContext.EndDevice1Found == 0x01))
               {
@@ -757,7 +846,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
               {
                 APP_DBG_MSG("BLE_CTRL_App_Notification(), All services discovery Failed \r\n\r");
               }
-              /* now try to connect to device 4 */
+              /* Now try to connect to device 4 */
               if ((BleApplicationContext.EndDevice_Connection_Status[3] != APP_BLE_CONNECTED)
                   && (BleApplicationContext.EndDevice4Found == 0x01))
               {
@@ -785,7 +874,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
               {
                 APP_DBG_MSG("BLE_CTRL_App_Notification(), All services discovery Failed \r\n\r");
               }
-              /* now try to connect to device 3 */
+              /* Now try to connect to device 3 */
               if ((BleApplicationContext.EndDevice_Connection_Status[2] != APP_BLE_CONNECTED)
                   && (BleApplicationContext.EndDevice3Found == 0x01))
               {
@@ -813,7 +902,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
               {
                 APP_DBG_MSG("BLE_CTRL_App_Notification(), All services discovery Failed \r\n\r");
               }
-              /* now try to connect to device 6 */
+              /* Now try to connect to device 6 */
               if ((BleApplicationContext.EndDevice_Connection_Status[5] != APP_BLE_CONNECTED)
                   && (BleApplicationContext.EndDevice6Found == 0x01))
               {
@@ -841,7 +930,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
               {
                 APP_DBG_MSG("BLE_CTRL_App_Notification(), All services discovery Failed \r\n\r");
               }
-              /*  now try to connect to device 5 */
+              /* Now try to connect to device 5 */
               if ((BleApplicationContext.EndDevice_Connection_Status[4] != APP_BLE_CONNECTED)
                   && (BleApplicationContext.EndDevice5Found == 0x01))
               {
@@ -849,12 +938,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                 UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_5_ID, CFG_SCH_PRIO_0);
               }
             }
-#endif                        
+
+          /* USER CODE END EVT_LE_CONN_COMPLETE_Multi_4 */
+#endif
           }
 
           else
-          { /* ROLE SLAVE */
-            /* CONNECTION WITH SMART PHONE 1 */
+          {
             APP_DBG_MSG("-- CONNECTION SUCCESS WITH SMART PHONE\n");
             BleApplicationContext.connectionHandleCentral = connection_handle;
             handleNotification.P2P_Evt_Opcode = SMART_PHONE1_CONN_HANDLE_EVT;
@@ -862,17 +952,20 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
             Evt_Notification(&handleNotification);
           }
 
-          break; /* HCI_HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
+          break; /* HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
 
         case HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE:
 
+          /* USER CODE BEGIN EVT_LE_ADVERTISING_REPORT */
+
+          /* USER CODE END EVT_LE_ADVERTISING_REPORT */
           le_advertising_event = (hci_le_advertising_report_event_rp0 *) meta_evt->data;
 
           event_type = le_advertising_event->Advertising_Report[0].Event_Type;
 
           event_data_size = le_advertising_event->Advertising_Report[0].Length_Data;
-          
-          /* WARNING: be careful when decoding advertising report as its raw format cannot be mapped on a C structure. 
+
+          /* WARNING: be careful when decoding advertising report as its raw format cannot be mapped on a C structure.
           The data and RSSI values could not be directly decoded from the RAM using the data and RSSI field from hci_le_advertising_report_event_rp0 structure.
           Instead they must be read by using offsets (please refer to BLE specification).
           RSSI = (int8_t)*(uint8_t*) (adv_report_data + le_advertising_event->Advertising_Report[0].Length_Data);
@@ -885,9 +978,8 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
           if (event_type == ADV_IND)
           {
 
-            /*ISOLATION OF BD ADDRESS AND LOCAL NAME*/
+            /* ISOLATION OF BD ADDRESS AND LOCAL NAME */
 
-            
             while(k < event_data_size)
             {
               adlength = adv_report_data[k];
@@ -895,19 +987,34 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
               switch (adtype)
               {
                 case 0x01: /* now get flags */
+                /* USER CODE BEGIN get_flags */
+
+                /* USER CODE END get_flags */
                 break;
                 case 0x09: /* now get local name */
+                /* USER CODE BEGIN get_local_name */
+
+                /* USER CODE END get_local_name */
                   break;
                 case 0x02: /* now get UID */
+                /* USER CODE BEGIN get_UID */
+
+                /* USER CODE END get_UID */
                   break;
                 case 0x0A: /* Tx power level */
+                /* USER CODE BEGIN Tx_power_level */
+
+                /* USER CODE END Tx_power_level */
                   break;
-                case 0xFF: /* Manufactureur Specific */
+                case 0xFF: /* Manufacturer Specific */
+                /* USER CODE BEGIN Manufactureur_Specific */
+
+                /* USER CODE END Manufactureur_Specific */
                   if (adlength >= 7 && adv_report_data[k + 2] == 0x01)
                   { /* ST VERSION ID 01 */
                     APP_DBG_MSG("--- ST MANUFACTURER ID --- \n");
                     switch (adv_report_data[k + 3])
-                    {   /* Demo ID */
+                    {
                       case CFG_DEV_ID_P2P_SERVER1:
                         APP_DBG_MSG("-- P2P SERVER 1 DETECTED -- VIA MAN ID\n");
                         BleApplicationContext.EndDevice1Found = 0x01;
@@ -918,7 +1025,8 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                         P2P_SERVER1_BDADDR[4] = le_advertising_event->Advertising_Report[0].Address[4];
                         P2P_SERVER1_BDADDR[5] = le_advertising_event->Advertising_Report[0].Address[5];
                         break;
-#if (CFG_P2P_DEMO_MULTI != 0)                                                     
+#if (CFG_P2P_DEMO_MULTI != 0)
+                    /* USER CODE BEGIN CFG_DEV_ID_P2P_SERVER_Multi */
                       case CFG_DEV_ID_P2P_SERVER2:
                         BleApplicationContext.EndDevice2Found = 0x01;
                         APP_DBG_MSG("-- P2P SERVER 2 DETECTED -- VIA MAN ID\n");
@@ -969,49 +1077,58 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                         P2P_SERVER6_BDADDR[4] = le_advertising_event->Advertising_Report[0].Address[4];
                         P2P_SERVER6_BDADDR[5] = le_advertising_event->Advertising_Report[0].Address[5];
                         break;
-#endif                                                
+                    /* USER CODE END CFG_DEV_ID_P2P_SERVER_Multi */
+#endif
                       default:
-                        break;
+                    break;
                     }
 
                   }
                   break;
-                case 0x16: /* service data 16 bits */
+                case 0x16:
+                  /* USER CODE BEGIN AD_TYPE_SERVICE_DATA */
+
+                  /* USER CODE END AD_TYPE_SERVICE_DATA */
                   break;
                 default:
-                  break;
-              } /* end switch Data[k+adlength] */
-              k += adlength + 1;
-            } /* end while */
+                  /* USER CODE BEGIN adtype_default */
 
-          } /* end if ADV_IND */
+                  /* USER CODE END adtype_default */
+                  break;
+              }
+              k += adlength + 1;
+            }
+
+          }
 
           break;
 
-      } /* end switch meta_event ... */
+      }
 
-      break; /* HCI_HCI_LE_META_EVT_CODE */
-
-  }
-
+      break; /* HCI_LE_META_EVT_CODE */
+    }
   return (SVCCTL_UserEvtFlowEnable);
 }
-
 
 /*************************************************************
  *
  * PUBLIC FUNCTIONS
  *
  *************************************************************/
+
 APP_BLE_ConnStatus_t APP_BLE_Get_Client_Connection_Status( uint16_t Connection_Handle )
 {
+  /* USER CODE BEGIN APP_BLE_Get_Client_Connection_Status_1 */
+
+  /* USER CODE END APP_BLE_Get_Client_Connection_Status_1 */
   APP_BLE_ConnStatus_t return_value;
 
   if (BleApplicationContext.connectionHandleEndDevice1 == Connection_Handle)
   {
     return_value = BleApplicationContext.EndDevice_Connection_Status[0];
   }
-#if (CFG_P2P_DEMO_MULTI != 0)      
+#if (CFG_P2P_DEMO_MULTI != 0)
+/* USER CODE BEGIN APP_BLE_Get_Client_Connection_Status_Multi */
   else if (BleApplicationContext.connectionHandleEndDevice2 == Connection_Handle)
   {
     return_value = BleApplicationContext.EndDevice_Connection_Status[1];
@@ -1032,20 +1149,25 @@ APP_BLE_ConnStatus_t APP_BLE_Get_Client_Connection_Status( uint16_t Connection_H
   {
     return_value = BleApplicationContext.EndDevice_Connection_Status[5];
   }
-#endif    
-else
-{
-  return_value = APP_BLE_IDLE;
-}
+/* USER CODE END APP_BLE_Get_Client_Connection_Status_Multi */
+#endif
+  else
+  {
+    return_value = APP_BLE_IDLE;
+  }
+  /* USER CODE BEGIN APP_BLE_Get_Client_Connection_Status_2 */
 
+  /* USER CODE END APP_BLE_Get_Client_Connection_Status_2 */
   return (return_value);
 }
 
+/* USER CODE BEGIN FD */
 void APP_BLE_Key_Button1_Action(void)
 {
   UTIL_SEQ_SetTask(1 << CFG_TASK_START_SCAN_ID, CFG_SCH_PRIO_0);
 }
 
+/* USER CODE END FD */
 /*************************************************************
  *
  * LOCAL FUNCTIONS
@@ -1084,7 +1206,6 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                             CONFIG_DATA_PUBADDR_LEN,
                             (uint8_t*) bd_addr);
-
   /* BLE MAC in ADV Packet */
   manuf_data[ sizeof(manuf_data)-6] = bd_addr[5];
   manuf_data[ sizeof(manuf_data)-5] = bd_addr[4];
@@ -1092,21 +1213,20 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   manuf_data[ sizeof(manuf_data)-3] = bd_addr[2];
   manuf_data[ sizeof(manuf_data)-2] = bd_addr[1];
   manuf_data[ sizeof(manuf_data)-1] = bd_addr[0];
-  
-  
+
   /**
-   * Write Identity root key used to derive LTK and CSRK 
+   * Write Identity root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data(CONFIG_DATA_IR_OFFSET,
     CONFIG_DATA_IR_LEN,
                             (uint8_t*) BLE_CFG_IR_VALUE);
-    
+
    /**
    * Write Encryption root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data(CONFIG_DATA_ER_OFFSET,
     CONFIG_DATA_ER_LEN,
-                            (uint8_t*) BLE_CFG_ER_VALUE);  
+                            (uint8_t*) BLE_CFG_ER_VALUE);
 
   /**
    * Static random Address
@@ -1119,15 +1239,15 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
 
   /**
-   * Write Identity root key used to derive LTK and CSRK 
+   * Write Identity root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
-    
+
    /**
    * Write Encryption root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
-  
+
   /**
    * Set TX Power to 0dBm.
    */
@@ -1153,7 +1273,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 
   if (role > 0)
   {
-    const char *name = "STM32WB";
+    const char *name = "P2PROUT";
 
     aci_gap_init(role, 0,
                  APPBLE_GAP_DEVICE_NAME_LENGTH,
@@ -1173,8 +1293,6 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   {
     BLE_DBG_SVCCTL_MSG("Appearance aci_gatt_update_char_value failed.\n");
   }
-
-
 
   /**
    * Initialize IO capability
@@ -1201,7 +1319,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
                                          PUBLIC_ADDR
-  );
+                                         );
 
   /**
    * Initialize whitelist
@@ -1220,27 +1338,41 @@ static void Ble_Hci_Gap_Gatt_Init(void){
  */
 static void Scan_Request( void )
 {
+  /* USER CODE BEGIN Scan_Request_1 */
+
+  /* USER CODE END Scan_Request_1 */
   tBleStatus result;
 
   if (BleApplicationContext.EndDevice_Connection_Status[0] != APP_BLE_CONNECTED
-#if (CFG_P2P_DEMO_MULTI != 0)        
+
+#if (CFG_P2P_DEMO_MULTI != 0)
       || BleApplicationContext.EndDevice_Connection_Status[1] != APP_BLE_CONNECTED || BleApplicationContext.EndDevice_Connection_Status[2] != APP_BLE_CONNECTED
       || BleApplicationContext.EndDevice_Connection_Status[3] != APP_BLE_CONNECTED|| BleApplicationContext.EndDevice_Connection_Status[4] != APP_BLE_CONNECTED || BleApplicationContext.EndDevice_Connection_Status[5] != APP_BLE_CONNECTED
-#endif              
+#endif
   )
   {
+    /* USER CODE BEGIN APP_BLE_CONNECTED */
     BSP_LED_On(LED_BLUE);
+    /* USER CODE END APP_BLE_CONNECTED */
     result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, PUBLIC_ADDR, 1);
     if (result == BLE_STATUS_SUCCESS)
     {
+    /* USER CODE BEGIN BLE_SCAN_SUCCESS */
+
+    /* USER CODE END BLE_SCAN_SUCCESS */
       APP_DBG_MSG(" \r\n\r** START GENERAL DISCOVERY (SCAN) **  \r\n\r");
     }
     else
     {
-      APP_DBG_MSG("-- BLE_App_Start_Limited_Disc_Req, Failed \r\n\r");
+    /* USER CODE BEGIN BLE_SCAN_FAILED */
       BSP_LED_On(LED_RED);
+    /* USER CODE END BLE_SCAN_FAILED */
+      APP_DBG_MSG("-- BLE_App_Start_Limited_Disc_Req, Failed \r\n\r");
     }
   }
+  /* USER CODE BEGIN Scan_Request_2 */
+
+  /* USER CODE END Scan_Request_2 */
   return;
 }
 
@@ -1251,7 +1383,9 @@ static void Scan_Request( void )
  */
 static void Adv_Request( void )
 {
-  
+  /* USER CODE BEGIN Connect_Request_1 */
+
+  /* USER CODE END Connect_Request_1 */
   if (BleApplicationContext.SmartPhone_Connection_Status != APP_BLE_CONNECTED)
   {
     tBleStatus result = 0x00;
@@ -1273,16 +1407,23 @@ static void Adv_Request( void )
     BleApplicationContext.SmartPhone_Connection_Status = APP_BLE_FAST_ADV;
     if (result == BLE_STATUS_SUCCESS)
     {
+    /* USER CODE BEGIN BLE_CONNECT_SUCCESS */
+
+    /* USER CODE END BLE_CONNECT_SUCCESS */
       APP_DBG_MSG("  \r\n\r");
       APP_DBG_MSG("** START ADVERTISING **  \r\n\r");
     }
     else
     {
+    /* USER CODE BEGIN BLE_CONNECT_FAILED */
       BSP_LED_On(LED_RED);
+    /* USER CODE END BLE_CONNECT_FAILED */
       APP_DBG_MSG("BLE_APP_Adv_Request(), Failed \r\n\r");
     }
   }
+  /* USER CODE BEGIN Connect_Request_2 */
 
+  /* USER CODE END Connect_Request_2 */
   return;
 }
 
@@ -1297,7 +1438,10 @@ static void ConnReq1( void )
   APP_DBG_MSG("\r\n\r** CREATE CONNECTION TO END DEVICE 1 **  \r\n\r");
   if (BleApplicationContext.EndDevice_Connection_Status[0] != APP_BLE_CONNECTED)
   {
-    result = aci_gap_create_connection(
+    /* USER CODE BEGIN APP_BLE_CONNECTED_SUCCESS_END_DEVICE_1 */
+
+    /* USER CODE END APP_BLE_CONNECTED_SUCCESS_END_DEVICE_1 */
+        result = aci_gap_create_connection(
         SCAN_P,
         SCAN_L,
         PUBLIC_ADDR,
@@ -1312,22 +1456,25 @@ static void ConnReq1( void )
 
     if (result == BLE_STATUS_SUCCESS)
     {
-      BleApplicationContext.EndDevice_Connection_Status[0] = APP_BLE_CONNECTING;
+    /* USER CODE BEGIN BLE_STATUS_END_DEVICE_1_SUCCESS */
 
+    /* USER CODE END BLE_STATUS_END_DEVICE_1_SUCCESS */
+    BleApplicationContext.EndDevice_Connection_Status[0] = APP_BLE_CONNECTING;
     }
     else
     {
+    /* USER CODE BEGIN BLE_STATUS_END_DEVICE_1_FAILED */
       BSP_LED_On(LED_RED);
+    /* USER CODE END BLE_STATUS_END_DEVICE_1_FAILED */
       BleApplicationContext.EndDevice_Connection_Status[0] = APP_BLE_IDLE;
-
     }
   }
 
   return;
 }
 
-
-#if (CFG_P2P_DEMO_MULTI != 0)  
+#if (CFG_P2P_DEMO_MULTI != 0)
+    /* USER CODE BEGIN ConnReq1_Multi */
 /**
  * @brief  Connection Establishement on SERVER 2
  * @param  None
@@ -1528,8 +1675,8 @@ static void ConnReq6( void )
   return;
 }
 
+    /* USER CODE END ConnReq1_Multi */
 #endif
-
 
 /**
  * @brief  P2P GAP Notification
@@ -1538,16 +1685,22 @@ static void ConnReq6( void )
  */
 void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification )
 {
+/* USER CODE BEGIN Evt_Notification_1 */
+
+/* USER CODE END Evt_Notification_1 */
   P2PR_APP_Device_Status_t device_status = { 0 };
 
   switch (pNotification->P2P_Evt_Opcode)
   {
+    /* USER CODE BEGIN P2P_Evt_Opcode */
+
+    /* USER CODE END P2P_Evt_Opcode */
     case SMART_PHONE1_CONN_HANDLE_EVT:
 
       break;
 
     case P2P_SERVER1_CONN_HANDLE_EVT:
-      device_status.Device1_Status = 0x81; /* connected */
+      device_status.Device1_Status = 0x81; /* Connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       break;
 
@@ -1563,8 +1716,9 @@ void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification )
       break;
 
 #if (CFG_P2P_DEMO_MULTI != 0)
+    /* USER CODE BEGIN P2P_SERVER_CONN_HANDLE_EVT_Multi_Notification */
     case P2P_SERVER2_CONN_HANDLE_EVT:
-      device_status.Device2_Status = 0x81; /* connected */
+      device_status.Device2_Status = 0x81; /* Connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       break;
 
@@ -1574,20 +1728,21 @@ void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification )
       break;
 
     case P2P_SERVER4_CONN_HANDLE_EVT:
-      device_status.Device4_Status = 0x81; /* connected */
+      device_status.Device4_Status = 0x81; /* Connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       break;
 
     case P2P_SERVER5_CONN_HANDLE_EVT:
-      device_status.Device5_Status = 0x81; /* connected */
+      device_status.Device5_Status = 0x81; /* Connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       break;
 
     case P2P_SERVER6_CONN_HANDLE_EVT:
-      device_status.Device6_Status = 0x81; /* connected */
+      device_status.Device6_Status = 0x81; /* Connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       break;
-
+    /* USER CODE END P2P_SERVER_CONN_HANDLE_EVT_Multi_Notification */
+    /* USER CODE BEGIN P2P_SERVER_DISCON_HANDLE_EVT_Multi_Notification */
     case P2P_SERVER2_DISCON_HANDLE_EVT:
       device_status.Device2_Status = 0x80; /* Not connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
@@ -1597,7 +1752,7 @@ void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification )
     case P2P_SERVER3_DISCON_HANDLE_EVT:
       device_status.Device3_Status = 0x80; /* Not connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
-      /* restart Create Connection */
+      /* Restart Create Connection */
       UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_3_ID, CFG_SCH_PRIO_0);
       break;
 
@@ -1610,7 +1765,7 @@ void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification )
     case P2P_SERVER5_DISCON_HANDLE_EVT:
       device_status.Device5_Status = 0x80; /* Not connected */
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
-      /* restart Create Connection */
+      /* Restart Create Connection */
       UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_5_ID, CFG_SCH_PRIO_0);
       break;
 
@@ -1619,12 +1774,18 @@ void Evt_Notification( P2P_ConnHandle_Not_evt_t *pNotification )
       P2PR_APP_End_Device_Mgt_Connection_Update(&device_status);
       UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_DEV_6_ID, CFG_SCH_PRIO_0);
       break;
+    /* USER CODE END P2P_SERVER_DISCON_HANDLE_EVT_Multi_Notification */
 #endif
 
     default:
-      break;
-  }
+    /* USER CODE BEGIN P2P_Evt_Opcode_Default */
 
+    /* USER CODE END P2P_Evt_Opcode_Default */
+    break;
+  }
+/* USER CODE BEGIN Evt_Notification_2 */
+
+/* USER CODE END Evt_Notification_2 */
   return;
 }
 
@@ -1675,7 +1836,9 @@ const uint8_t* BleGetBdAddress( void )
 
   return bd_addr;
 }
+/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 
+/* USER CODE END FD_LOCAL_FUNCTIONS */
 /*************************************************************
  *
  * WRAP FUNCTIONS
@@ -1704,7 +1867,7 @@ static void BLE_UserEvtRx( void * pPayload )
   SVCCTL_UserEvtFlowStatus_t svctl_return_status;
   tHCI_UserEvtRxParam *pParam;
 
-  pParam = (tHCI_UserEvtRxParam *)pPayload; 
+  pParam = (tHCI_UserEvtRxParam *)pPayload;
 
   svctl_return_status = SVCCTL_UserEvtRx((void *)&(pParam->pckt->evtserial));
   if (svctl_return_status != SVCCTL_UserEvtFlowDisable)
@@ -1754,4 +1917,7 @@ void SVCCTL_ResumeUserEventFlow( void )
   return;
 }
 
+/* USER CODE BEGIN FD_WRAP_FUNCTIONS */
+
+/* USER CODE END FD_WRAP_FUNCTIONS */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

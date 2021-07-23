@@ -18,16 +18,16 @@
 
     <h1>STM32CubeWB Firmware Examples for STM32WBxx Series</h1>
 
-    <p class="copyright">Copyright 2019 STMicroelectronics</p>
+    <p class="copyright">Copyright 2021 STMicroelectronics</p>
 
     <div class="picture">
-      <img alt="" id="_x0000_i1025" src="../_htmresc/st_logo.png" style="border: 0px solid ; width: 104px; height: 77px;"/>
+      <img alt="" id="_x0000_i1025" src="../_htmresc/st_logo_2020.png" style="border: 0px solid ; width: 104px; height: 77px;"/>
     </div>
 
     <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 
     <div class="picture">
-      <img alt="" src="../_htmresc/STM32Cube.bmp"/>
+      <img alt="" src="../_htmresc/STM32Cube_2020.bmp"/>
     </div>
 
     <p>The examples are classified depending on the STM32Cube level they apply to, and are named as follows:</p>
@@ -46,7 +46,7 @@
       <li>\Inc folder that contains all header files.</li>
       <li>\Src folder for the sources code.</li>
       <li>\EWARM, \MDK-ARM and \STM32CubeIDE folders contain the preconfigured project for each toolchain.</li>
-      <li>readme.txt describing the example behavior and the environment required to run the example.</li>
+      <li>A readme describing the example behavior and the environment required to run the example.</li>
     </ul>
 
     <p>To run the example, you have to do the following:</p>
@@ -54,9 +54,9 @@
     <ul>
       <li>Open the example using your preferred toolchain.</li>
       <li>Rebuild all files and load the image into target memory.</li>
-      <li>Run the example by following the readme.txt instructions.</li>
+      <li>Run the example by following the readme instructions.</li>
       <li>
-        <i><u>Note</u>: refer to section "Development Toolchains and Compilers" and "Supported Devices and EVAL boards" of the Firmware package release notes to know about the SW/HW environment used for the Firmware development and validation. The correct operation of the provided examples is not guaranteed on some environments, for example when using different compiler or board versions.</i>
+        <i><u>Note</u>: refer to section "Development Toolchains and Compilers" and "Supported Devices and EVAL, Nucleo and Discovery boards" of the Firmware package release notes to know about the SW/HW environment used for the Firmware development and validation. The correct operation of the provided examples is not guaranteed on some environments, for example when using different compiler or board versions.</i>
       </li>
     </ul>
 
@@ -883,15 +883,8 @@ Configuration of the clock recovery service (CRS) in Polling mode, using the RCC
       <tr align=center>
         <td align=left><p id="RCC_ClockConfig">RCC_ClockConfig</p></td>
         <td align=left>
-Configuration of the system clock (SYSCLK) and selection of the clock source of 
-the following peripherals:
-
-  - RTC: clocked by LSE
-  - LPUART1: clocked by PCLK1
-  - USART1: clocked by PCLK2
-  - RFWKP: clocked by LSE
-
-HSE is selected as system clock source, i.e. the system clock is running at MHz.
+The main purpose of this example is to serve as a reference for clock configuration
+operation needed by most of the BLE applications.
 </td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
@@ -2569,8 +2562,8 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td>6</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=108><p id="Applications">Applications</p></td>
-        <td align=left rowspan=26><p id="BLE">BLE</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=116><p id="Applications">Applications</p></td>
+        <td align=left rowspan=29><p id="BLE">BLE</p></td>
         <td align=left><p id="BLE_Beacon">BLE_Beacon</p></td>
         <td align=left>
 How to advertize 3 types of beacon ( tlm, uuid, url ).
@@ -2635,7 +2628,7 @@ How to use the Health Thermometer profile as specified by the BLE SIG.
         <td align=left>
 How to use the Heart Rate profile as specified by the BLE SIG.
 </td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -2720,6 +2713,15 @@ How to use the Human Interface Device profile as specified by the BLE SIG.
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_Mesh_ThermometerSensor">BLE_Mesh_ThermometerSensor</p></td>
+        <td align=left>This is the implementation of a BLE Mesh Vendor profile as specified by the BLE SIG.
+</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_MultiAppAt">BLE_MultiAppAt</p></td>
         <td align=left>
 How to use multi BLE applications using a network processor architecture.
@@ -2750,6 +2752,16 @@ How to communicate with simple BLE peripheral with minimum activated features.
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_Peripheral_Lite_EventCallbacks">BLE_Peripheral_Lite_EventCallbacks</p></td>
+        <td align=left>
+How to communicate with simple BLE peripheral with minimum activated features.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_Proximity">BLE_Proximity</p></td>
         <td align=left>
 How to use the Proximity profile as specified by the BLE SIG.
@@ -2770,11 +2782,21 @@ How to demonstrate the capability to erase/write the flash while a Point-to-Poin
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_Sensor">BLE_Sensor</p></td>
+        <td align=left>
+This example is to demonstrate capabilities of STM32WB5MM Discovery Kit with the use of board sensors. 
+</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_TransparentMode">BLE_TransparentMode</p></td>
         <td align=left>
 How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
 </td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -2813,7 +2835,7 @@ How to demonstrate Point-to-Point communication using BLE component (as GATT cli
         <td align=left>
 How to demonstrate Point-to-Point communication using BLE component (as GATT server). 
 </td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -2829,25 +2851,48 @@ How to demonstrate Point-to-Point communication using BLE component (peripherica
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=2><p id="BLE_LLD">BLE_LLD</p></td>
+        <td align=left rowspan=4><p id="BLE_LLD">BLE_LLD</p></td>
+        <td align=left><p id="BLE_LLD_Chat">BLE_LLD_Chat</p></td>
+        <td align=left>
+How to create a "Chat" talk between 2 boards using terminals.
+</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td><font size="5" color=red>New</font></td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_LLD_Lowpower">BLE_LLD_Lowpower</p></td>
         <td align=left>
-How to to Send and Receive Automatically a STM32WB55xx board.
+How to send BLE LLD packets while using low power mode.
 </td>
         <td>-</td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="BLE_LLD_Pressbutton">BLE_LLD_Pressbutton</p></td>
         <td align=left>
-How to make blinking LED between 2 STM32WB55xx boards by pressing buttons.
+How to control remote LEDs with BLE LLD.
 </td>
         <td>-</td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_LLD_Proximity">BLE_LLD_Proximity</p></td>
+        <td align=left>
+How to use BLE LLD to detect nearby boards?
+
+This solution can be used in contact tracing for Covid-19 since it provides an
+estimation of the distance with other boards.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
       </tr>
       <tr align=center>
         <td align=left rowspan=1><p id="BLE_Mac">BLE_Mac</p></td>
@@ -2892,20 +2937,10 @@ How to use BLE application and Thread application in static concurrent mode.
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=4><p id="BLE_Zigbee">BLE_Zigbee</p></td>
+        <td align=left rowspan=3><p id="BLE_Zigbee">BLE_Zigbee</p></td>
         <td align=left><p id="BLE_Zigbee_Dyn">BLE_Zigbee_Dyn</p></td>
         <td align=left>
 How to use BLE application and Zigbee application (acting as router) in dynamic concurrent mode.
-</td>
-        <td>-</td>
-        <td>-</td>
-        <td><font size="5" color=green>X</font></td>
-        <td>-</td>
-      </tr>
-      <tr align=center>
-        <td align=left><p id="BLE_Zigbee_Dyn_NVM">BLE_Zigbee_Dyn_NVM</p></td>
-        <td align=left>
-How to use BLE application and Zigbee application in dynamic concurent mode with Zigbee persistent data feature.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2941,6 +2976,18 @@ How to use CKS feature to store AES crypto keys in secure area.
         <td>-</td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left rowspan=1><p id="Demontrations">Demontrations</p></td>
+        <td align=left><p id="Audio_BVLINKWB">Audio_BVLINKWB</p></td>
+        <td align=left>
+This demonstration firmware is based on STM32Cube Function pack for STM32wb MCU 
+featuring full-duplex audio streaming over Bluetooth 5.0 using Opus codec.
+</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+        <td>-</td>
         <td>-</td>
       </tr>
       <tr align=center>
@@ -3077,7 +3124,7 @@ How to create a "PHY_802.15.4 command line interface" application on STM32WB55xx
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=13><p id="Thread">Thread</p></td>
+        <td align=left rowspan=14><p id="Thread">Thread</p></td>
         <td align=left><p id="Thread_Cli_Cmd">Thread_Cli_Cmd</p></td>
         <td align=left>
 How to control the Thread stack via Cli commands.
@@ -3102,7 +3149,7 @@ How to transfer large blocks of data through the CoAP messaging protocol.
         <td align=left>
 How to build Thread application based on Coap messages.
 </td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
@@ -3175,6 +3222,17 @@ How to update Over The Air (OTA) FW application and Copro Wireless binary using 
         <td>-</td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Thread_RCP">Thread_RCP</p></td>
+        <td align=left>
+
+This application is used to demonstrate the OpenThread Border router feature using an STM32WB device.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td>-</td>
       </tr>
       <tr align=center>
@@ -3261,7 +3319,7 @@ Use of the USB device application based on the Human Interface (HID).
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=39><p id="Zigbee">Zigbee</p></td>
+        <td align=left rowspan=41><p id="Zigbee">Zigbee</p></td>
         <td align=left><p id="Zigbee_APS_Coord">Zigbee_APS_Coord</p></td>
         <td align=left>
 How to use the APS layer in an application with a centralized Zigbee network.
@@ -3466,7 +3524,7 @@ How to use OnOff cluster as a client on a distributed Zigbee network.
         <td align=left>
 How to use OnOff cluster as a client on a centralized Zigbee network.
 </td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
@@ -3526,7 +3584,7 @@ How to use OnOff cluster with persistent data on a centralized Zigbee network.
         <td align=left>
 How to use OnOff cluster as a server on a centralized Zigbee network.
 </td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
@@ -3632,6 +3690,26 @@ How to use SE Messaging cluster on a Centralized Zigbee network with device acti
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="Zigbee_TempMeas_Client_Router">Zigbee_TempMeas_Client_Router</p></td>
+        <td align=left>
+How to use TempMeas as a client on a centralized Zigbee network.
+</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_TempMeas_Server_Coord">Zigbee_TempMeas_Server_Coord</p></td>
+        <td align=left>
+How to use Temperature Measurement cluster as a server on a centralized Zigbee network.
+</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="Zigbee_custom_ls_Client_Router">Zigbee_custom_ls_Client_Router</p></td>
         <td align=left>
 How to use Custom long string cluster on a Centralized Zigbee network with device 
@@ -3662,18 +3740,18 @@ user can send requests to the different boards through the push buttons in order
         <td>-</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of applications: 134</b></td>
-        <td>1</td>
+        <td colspan="3"><b>Total number of applications: 151</b></td>
+        <td>13</td>
         <td>18</td>
-        <td>105</td>
-        <td>10</td>
+        <td>108</td>
+        <td>12</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-      	<td colspan="4"><b>Total number of projects: 425</b></td>
-      	<td>11</td>
+      	<td colspan="4"><b>Total number of projects: 442</b></td>
+      	<td>23</td>
       	<td>19</td>
-      	<td>311</td>
-      	<td>84</td>
+      	<td>314</td>
+      	<td>86</td>
       </tr>
     </table>
   </body>

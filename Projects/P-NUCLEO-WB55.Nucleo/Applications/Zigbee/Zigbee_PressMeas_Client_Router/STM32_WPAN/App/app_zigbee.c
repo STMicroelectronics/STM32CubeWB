@@ -314,7 +314,7 @@ static void APP_ZIGBEE_ReportConfig(void)
   report.max = ZCL_MAX_REPORT;
   report.attr_id = ZCL_PRESS_MEAS_ATTR_MEAS_VAL;
   report.attr_type = ZCL_DATATYPE_SIGNED_16BIT;
-  report.change = 0;
+  report.change.epsilon.integer = 0;
   
   ZbZclAttrReportConfigReq(zigbee_app_info.press_meas_client,&report,&report_cb,(void*)&rep_change);
 }

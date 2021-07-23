@@ -4,7 +4,7 @@
  * @brief ZCL Demand Response and Load Control cluster header
  * ZCL 7 Section 10.3
  * ZCL 8 Section 10.3
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 /* @PICS.ZCL.DRLC

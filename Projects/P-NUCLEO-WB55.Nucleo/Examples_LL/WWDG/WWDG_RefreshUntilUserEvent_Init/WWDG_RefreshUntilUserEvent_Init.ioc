@@ -131,3 +131,5 @@ WWDG.IPParameters=Prescaler,Window,Counter,EWIMode
 WWDG.Prescaler=WWDG_PRESCALER_8
 WWDG.Window=126
 board=custom
+ProjectManager.Example=WWDG_RefreshUntilUserEvent_Init
+ProjectManager.ExampleSource=CubeFw

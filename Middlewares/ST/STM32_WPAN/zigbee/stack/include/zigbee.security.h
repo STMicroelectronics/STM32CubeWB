@@ -2,7 +2,7 @@
  * @file zigbee.security.h
  * @brief Zigbee security header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_SECURITY_H
@@ -273,33 +273,30 @@ void ZbSecMakeNonce(uint8_t *nonce, uint64_t extAddr, uint32_t frameCounter, uin
 bool ZbAesMmoHash(struct ZigBeeT *zb, uint8_t const *data, const unsigned int length, uint8_t *digest);
 
 /**
- * Performs the Keyed Hash function for Message Authentication. The HMAC operation described
- * in section B.1.4, and specified by FIPS pub 198. This is used to trasmute the link keys into
- * key-load and key-transport keys.
- * @param key encryption key to use
- * @param input input data
- * @param keyOut output buffer
- * @return
+ * Adds a device key-pair to the stack as a Trust Center Link Key type.
+ * This API is typically used to add link keys to the TC for devices
+ * that need to join the network.
+ * @param zb Zigbee stack instance
+ * @param extAddr The EUI64 address of the device matching the link key
+ * @param key The link key, of length ZB_SEC_KEYSIZE, to add
+ * @return Zigbee Status Code
  */
-void ZbSecKeyTransform(uint8_t *key, uint8_t input, uint8_t *keyOut);
+enum ZbStatusCodeT ZbSecAddDeviceLinkKeyByKey(struct ZigBeeT *zb, uint64_t extAddr,
+    uint8_t *key);
 
-/* Add a device-key-pair. NOTE: May not be supported by all platforms. */
-uint8_t ZbSecAddDeviceLinkKeyByKey(struct ZigBeeT *zb, uint64_t extAddr, uint8_t *key);
-uint8_t ZbSecAddDeviceLinkKeyByKeyStr(struct ZigBeeT *zb, uint64_t extAddr, char *str);
-
-/*---------------------------------------------------------------
- * Extras: Install Code Helpers (Optional, may not be included in all builds)
- *---------------------------------------------------------------
+/**
+ * Adds a device key-pair to the stack as a Trust Center Link Key type.
+ * The key being added is defined by the Install Code provided to this function.
+ * This API is typically used to add link keys to the TC for devices
+ * that need to join the network.
+ * @param zb Zigbee stack instance
+ * @param extAddr The EUI64 address of the device matching the link key
+ * @param ic The install code, including the trailing 2-octet CRC.
+ * @param len Length of the Install Code in bytes
+ * @return Zigbee Status Code
  */
-/* Performs redundancy checks on a ZSE installation code and optionally converts the code
- * into an application link key. */
-bool ZbSecInstallCodeCheck(struct ZigBeeT *zb, const void *installCode, unsigned int codeLen, void *keyOut);
-
-/* Computes the 2-byte CRC of the input Install Code */
-void ZbSecInstallCodeCrc(const uint8_t *ic_in, uint8_t ic_len, uint8_t *crc_out);
-
-/* Add a device-key-pair using an Install Code (includes trailing 2-octet CRC). */
-uint8_t ZbSecAddDeviceLinkKeyByInstallCode(struct ZigBeeT *zb, uint64_t extAddr, uint8_t *ic, unsigned int len);
+enum ZbStatusCodeT ZbSecAddDeviceLinkKeyByInstallCode(struct ZigBeeT *zb, uint64_t extAddr,
+    uint8_t *ic, unsigned int len);
 
 /*---------------------------------------------------------------
  * ECDSA Signature Validation
@@ -323,7 +320,7 @@ enum ZbSecEcdsaSigType {
  * @param signature Length must be ZB_SEC_CRYPTO_SUITE_V2_SIG_LEN (80 bytes)
  * @param image_digest Length is AES_BLOCK_SIZE (16 bytes)
  * @param cert_digest Length is AES_BLOCK_SIZE (16 bytes)
- * @return
+ * @return Zigbee Status Code
  */
 enum ZbStatusCodeT ZbSecEcdsaValidate(struct ZigBeeT *zb, enum ZbSecEcdsaSigType sig_type,
     const uint8_t *ca_pub_key_array, unsigned int ca_pub_key_len,

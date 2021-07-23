@@ -114,3 +114,5 @@ VP_HSEM_VS_HSEM.Signal=HSEM_VS_HSEM
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=HSEM_ProcessSync
+ProjectManager.ExampleSource=CubeFw

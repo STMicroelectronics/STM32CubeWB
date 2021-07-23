@@ -52,9 +52,15 @@ extern const intvec_elem __vector_table[];
 void CPUcontextSave(void); /* this function is implemented in startup assembly file */
 void standby_hw_save(void);
 void standby_hw_restore(void);
+void SystemClock_Config(void);
 
 /* Private function prototypes -----------------------------------------------*/
 static void Switch_On_HSI( void );
+static void EnterLowPower( void );
+static void ExitLowPower( void );
+#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
+static void ExitLowPower_standby( void );
+#endif
 /* USER CODE BEGIN Private_Function_Prototypes */
 
 /* USER CODE END Private_Function_Prototypes */
@@ -83,42 +89,16 @@ static void Switch_On_HSI( void );
   */
 void PWR_EnterOffMode( void )
 {
-/* USER CODE BEGIN PWR_EnterOffMode */
-#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
+/* USER CODE BEGIN PWR_EnterOffMode_1 */
+
+/* USER CODE END PWR_EnterOffMode_1 */
   /**
    * The systick should be disabled for the same reason than when the device enters stop mode because
    * at this time, the device may enter either OffMode or StopMode.
    */
   HAL_SuspendTick();
 
-  /**
-   * This function is called from CRITICAL SECTION
-   */
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
-
-  if ( ! LL_HSEM_1StepLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID ) )
-  {
-    if( LL_PWR_IsActiveFlag_C2DS( ) )
-    {
-      /* Release ENTRY_STOP_MODE semaphore */
-      LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
-
-      /**
-       * The switch on HSI before entering Stop Mode is required 
-       */
-      Switch_On_HSI( );
-    }
-  }
-  else
-  {
-    /**
-     * The switch on HSI before entering Stop Mode is required 
-     */
-    Switch_On_HSI( );
-  }
-
-  /* Release RCC semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+  EnterLowPower();
 
   /************************************************************************************
    * ENTER OFF MODE
@@ -143,8 +123,9 @@ void PWR_EnterOffMode( void )
   __force_stores( );
 #endif
 
+#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
   /* This part of code must not put in a function as it deals with C stack calls.
-   * A function call will push data in C stack and impact algorithm. 
+   * A function call will push data in C stack and impact algorithm.
    */
   /* local variable are here for better view */
   uint8_t i = 0;
@@ -156,17 +137,20 @@ void PWR_EnterOffMode( void )
     cStackPreamble[i] = *ptr;
     i++;
     ptr++;
-  } while (i < CSTACK_PREAMBLE_NUMBER); 
-     
+  } while (i < CSTACK_PREAMBLE_NUMBER);
+
   LL_EXTI_EnableEvent_32_63( LL_EXTI_LINE_40 );
   LL_EXTI_EnableRisingTrig_32_63( LL_EXTI_LINE_40 );
-  
+
   standby_hw_save();
 
   CPUcontextSave();/* this function will call WFI instruction */
-#endif  
-  return;  
-/* USER CODE END PWR_EnterOffMode */
+#endif
+
+/* USER CODE BEGIN PWR_EnterOffMode_2 */
+
+/* USER CODE END PWR_EnterOffMode_2 */
+  return;
 }
 
 /**
@@ -176,14 +160,16 @@ void PWR_EnterOffMode( void )
   */
 void PWR_ExitOffMode( void )
 {
-/* USER CODE BEGIN PWR_ExitOffMode */
+/* USER CODE BEGIN PWR_ExitOffMode_1 */
+
+/* USER CODE END PWR_ExitOffMode_1 */
 #if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
   /* This part of code must not put in a function as it deals with C stack calls.
-   * A function call will push data in C stack and impact algorithm. 
-   */  
+   * A function call will push data in C stack and impact algorithm.
+   */
   if(boot_after_standby != 0)
   {
-    boot_after_standby = 0;    
+    boot_after_standby = 0;
     /* local variable are here for better view */
     uint8_t i = 0;
     uint32_t* ptr;
@@ -194,37 +180,23 @@ void PWR_ExitOffMode( void )
       *ptr = cStackPreamble[i];
       i++;
       ptr++;
-    } while (i < CSTACK_PREAMBLE_NUMBER);     
-        
+    } while (i < CSTACK_PREAMBLE_NUMBER);
+
     standby_hw_restore();
-  }
- 
-  /* Release ENTRY_STOP_MODE semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
 
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
-
-  if(LL_RCC_GetSysClkSource( ) == LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
-  {
-    LL_RCC_HSE_Enable( );
-    while(!LL_RCC_HSE_IsReady( ));
-    LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSE);
-    while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);
+    ExitLowPower_standby();
   }
   else
   {
-    /**
-     * As long as the current application is fine with HSE as system clock source,
-     * there is nothing to do here
-     */
+    ExitLowPower();
   }
 
-  /* Release RCC semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
-
   HAL_ResumeTick();
-#endif 
-/* USER CODE END PWR_ExitOffMode */
+#endif
+/* USER CODE BEGIN PWR_ExitOffMode_2 */
+
+/* USER CODE END PWR_ExitOffMode_2 */
+  return;
 }
 
 /**
@@ -235,7 +207,9 @@ void PWR_ExitOffMode( void )
   */
 void PWR_EnterStopMode( void )
 {
-/* USER CODE BEGIN PWR_EnterStopMode */
+/* USER CODE BEGIN PWR_EnterStopMode_1 */
+
+/* USER CODE END PWR_EnterStopMode_1 */
   /**
    * When HAL_DBGMCU_EnableDBGStopMode() is called to keep the debugger active in Stop Mode,
    * the systick shall be disabled otherwise the cpu may crash when moving out from stop mode
@@ -249,40 +223,12 @@ void PWR_EnterStopMode( void )
   /**
    * This function is called from CRITICAL SECTION
    */
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
-
-  if ( ! LL_HSEM_1StepLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID ) )
-  {
-    if( LL_PWR_IsActiveFlag_C2DS( ) )
-    {
-      /* Release ENTRY_STOP_MODE semaphore */
-      LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
-
-      /**
-       * The switch on HSI before entering Stop Mode is required 
-       */
-      Switch_On_HSI( );
-    }
-  }
-  else
-  {
-    /**
-     * The switch on HSI before entering Stop Mode is required 
-     */
-    Switch_On_HSI( );
-  }
-
-  /* Release RCC semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+  EnterLowPower();
 
   /************************************************************************************
    * ENTER STOP MODE
    ***********************************************************************************/
-#if(STM32WB15xx != 0)
   LL_PWR_SetPowerMode( LL_PWR_MODE_STOP1 );
-#else
-  LL_PWR_SetPowerMode( LL_PWR_MODE_STOP2 );
-#endif
 
   LL_LPM_EnableDeepSleep( ); /**< Set SLEEPDEEP bit of Cortex System Control Register */
 
@@ -294,7 +240,11 @@ void PWR_EnterStopMode( void )
 #endif
 
   __WFI();
-/* USER CODE END PWR_EnterStopMode */
+
+/* USER CODE BEGIN PWR_EnterStopMode_2 */
+
+/* USER CODE END PWR_EnterStopMode_2 */
+  return;
 }
 
 /**
@@ -305,37 +255,19 @@ void PWR_EnterStopMode( void )
   */
 void PWR_ExitStopMode( void )
 {
-/* USER CODE BEGIN PWR_ExitStopMode */
+/* USER CODE BEGIN PWR_ExitStopMode_1 */
+
+/* USER CODE END PWR_ExitStopMode_1 */
   /**
    * This function is called from CRITICAL SECTION
    */
-
-  /* Release ENTRY_STOP_MODE semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
-
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
-
-  if(LL_RCC_GetSysClkSource( ) == LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
-  {
-    LL_RCC_HSE_Enable( );
-    while(!LL_RCC_HSE_IsReady( ));
-    LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSE);
-    while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);
-  }
-  else
-  {
-    /**
-     * As long as the current application is fine with HSE as system clock source,
-     * there is nothing to do here
-     */
-  }
-
-  /* Release RCC semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+  ExitLowPower();
 
   HAL_ResumeTick();
+/* USER CODE BEGIN PWR_ExitStopMode_2 */
 
-/* USER CODE END PWR_ExitStopMode */
+/* USER CODE END PWR_ExitStopMode_2 */
+  return;
 }
 
 /**
@@ -346,7 +278,9 @@ void PWR_ExitStopMode( void )
   */
 void PWR_EnterSleepMode( void )
 {
-/* USER CODE BEGIN PWR_EnterSleepMode */
+/* USER CODE BEGIN PWR_EnterSleepMode_1 */
+
+/* USER CODE END PWR_EnterSleepMode_1 */
 
   HAL_SuspendTick();
 
@@ -363,7 +297,10 @@ void PWR_EnterSleepMode( void )
 #endif
 
   __WFI( );
-/* USER CODE END PWR_EnterSleepMode */
+/* USER CODE BEGIN PWR_EnterSleepMode_2 */
+
+/* USER CODE END PWR_EnterSleepMode_2 */
+  return;
 }
 
 /**
@@ -374,11 +311,14 @@ void PWR_EnterSleepMode( void )
   */
 void PWR_ExitSleepMode( void )
 {
-/* USER CODE BEGIN PWR_ExitSleepMode */
+/* USER CODE BEGIN PWR_ExitSleepMode_1 */
 
+/* USER CODE END PWR_ExitSleepMode_1 */
   HAL_ResumeTick();
+/* USER CODE BEGIN PWR_ExitSleepMode_2 */
 
-/* USER CODE END PWR_ExitSleepMode */
+/* USER CODE END PWR_ExitSleepMode_2 */
+  return;
 }
 
 /*************************************************************
@@ -386,6 +326,113 @@ void PWR_ExitSleepMode( void )
  * LOCAL FUNCTIONS
  *
  *************************************************************/
+/**
+  * @brief Setup the system to enter either stop or off mode
+  * @param none
+  * @retval none
+  */
+static void EnterLowPower( void )
+{
+  /**
+   * This function is called from CRITICAL SECTION
+   */
+
+  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
+
+  if ( ! LL_HSEM_1StepLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID ) )
+  {
+    if( LL_PWR_IsActiveFlag_C2DS() || LL_PWR_IsActiveFlag_C2SB() )
+    {
+      /* Release ENTRY_STOP_MODE semaphore */
+      LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
+
+      /**
+       * The switch on HSI before entering Stop Mode is required on Cut2.0
+       * It is useless from Cut2.1
+       */
+      Switch_On_HSI( );
+    }
+  }
+  else
+  {
+    /**
+     * The switch on HSI before entering Stop Mode is required on Cut2.0
+     * It is useless from Cut2.1
+     */
+    Switch_On_HSI( );
+  }
+
+  /* Release RCC semaphore */
+  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+
+  return;
+}
+
+/**
+  * @brief Restore the system to exit stop mode
+  * @param none
+  * @retval none
+  */
+static void ExitLowPower( void )
+{
+  /* Release ENTRY_STOP_MODE semaphore */
+  LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
+
+  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
+
+  if(LL_RCC_GetSysClkSource( ) == LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
+  {
+/* Restore the clock configuration of the application in this user section */
+/* USER CODE BEGIN ExitLowPower_1 */
+    LL_RCC_HSE_Enable( );
+    __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_1);
+    while(!LL_RCC_HSE_IsReady( ));
+    LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSE);
+    while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);
+/* USER CODE END ExitLowPower_1 */
+  }
+  else
+  {
+/* If the application is not running on HSE restore the clock configuration in this user section */
+/* USER CODE BEGIN ExitLowPower_2 */
+
+/* USER CODE END ExitLowPower_2 */
+  }
+#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
+
+  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+#endif
+
+  /* Release RCC semaphore */
+  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+
+  return;
+}
+
+#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
+/**
+  * @brief Restore the system to exit standby mode
+  * @param none
+  * @retval none
+  */
+static void ExitLowPower_standby( void )
+{
+/* Release ENTRY_STOP_MODE semaphore */
+  LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
+
+  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
+/* USER CODE BEGIN ExitLowPower_standby */
+  SystemClock_Config();
+/* USER CODE END ExitLowPower_standby */
+  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+
+  /* Release RCC semaphore */
+  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+
+  return;
+}
+#endif
+
 /**
   * @brief Switch the system clock on HSI
   * @param none
@@ -398,6 +445,7 @@ static void Switch_On_HSI( void )
   LL_RCC_SetSysClkSource( LL_RCC_SYS_CLKSOURCE_HSI );
   LL_RCC_SetSMPSClockSource(LL_RCC_SMPS_CLKSOURCE_HSI);
   while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSI);
+  return;
 }
 
 /* USER CODE BEGIN Private_Functions */

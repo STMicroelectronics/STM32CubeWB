@@ -85,13 +85,6 @@ static void appe_Tl_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
 
-#if (CFG_HW_LPUART1_ENABLED == 1)
-extern void MX_LPUART1_UART_Init(void);
-#endif
-#if (CFG_HW_USART1_ENABLED == 1)
-extern void MX_USART1_UART_Init(void);
-#endif
-
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
 static void Button_Init( void );
@@ -149,7 +142,6 @@ void APPE_Init( void )
  */
 static void SystemPower_Config(void)
 {
-
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */

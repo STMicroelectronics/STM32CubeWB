@@ -285,9 +285,10 @@ static void APP_ZIGBEE_NwkJoin(void)
 
         APP_DBG("No bindings, ensure that the coordinator was on identify mode or that there are bindable clusters.");
         memset(&req, 0, sizeof(struct ZbNlmeLeaveReqT));
-        ZbNlmeLeaveReq(zigbee_app_info.zb,&req, NULL, NULL);
+        if (ZbNlmeLeaveReq(zigbee_app_info.zb,&req, NULL, NULL) != ZB_STATUS_SUCCESS)
+            APP_DBG("ZbNlmeLeaveReq returning an error");
         APP_DBG("Attempting again after a short delay (%d ms)", APP_ZIGBEE_STARTUP_FAIL_DELAY);
-        zigbee_app_info.join_status = ZB_BDB_COMMISS_STATUS_FORMATION_FAILURE;
+        zigbee_app_info.join_status = ZB_NWK_STATUS_STARTUP_FAILURE;
         zigbee_app_info.join_delay = HAL_GetTick() + APP_ZIGBEE_STARTUP_FAIL_DELAY;
       }
     }
@@ -775,3 +776,5 @@ static int numOfBindings()
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+

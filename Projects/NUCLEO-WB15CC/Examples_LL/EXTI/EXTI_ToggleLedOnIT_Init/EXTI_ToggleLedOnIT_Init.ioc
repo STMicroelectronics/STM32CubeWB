@@ -111,3 +111,5 @@ SH.GPXTI0.ConfNb=1
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=EXTI_ToggleLedOnIT_Init
+ProjectManager.ExampleSource=CubeFw

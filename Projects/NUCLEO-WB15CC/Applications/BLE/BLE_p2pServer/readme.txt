@@ -43,18 +43,18 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
   - BLE/BLE_p2pServer/STM32_WPAN/App/ble_conf.h            	BLE Services configuration
   - BLE/BLE_p2pServer/STM32_WPAN/App/ble_dbg_conf.h        	BLE Traces configuration of the BLE services
   - BLE/BLE_p2pServer/STM32_WPAN/App/p2p_server_app.h      	Header for p2p_server_app.c module
-  - BLE/BLE_p2pServer/Core/Inc/hw_conf.h           		Configuration file of the HW
-  - BLE/BLE_p2pServer/Core/Inc/utilities_conf.h    		Configuration file of the utilities
+  - BLE/BLE_p2pServer/Core/Inc/hw_conf.h           		    Configuration file of the HW
+  - BLE/BLE_p2pServer/Core/Inc/utilities_conf.h    		    Configuration file of the utilities
   - BLE/BLE_p2pServer/Core/Src/stm32wbxx_it.c          		Interrupt handlers
   - BLE/BLE_p2pServer/Core/Src/main.c                  		Main program
   - BLE/BLE_p2pServer/Core/Src/system_stm32wbxx.c      		stm32wbxx system source file
   - BLE/BLE_p2pServer/STM32_WPAN/App/app_ble.c      		BLE Profile implementation
-  - BLE/BLE_p2pServer/Core/Src/app_entry.c      		Initialization of the application
+  - BLE/BLE_p2pServer/Core/Src/app_entry.c      		    Initialization of the application
   - BLE/BLE_p2pServer/STM32_WPAN/App/p2p_server_app.c   	P2P Server application
   - BLE/BLE_p2pServer/STM32_WPAN/Target/hw_ipcc.c      		IPCC Driver
-  - BLE/BLE_p2pServer/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
-  - BLE/BLE_p2pServer/Core/Src/hw_timerserver.c 		Timer Server based on RTC
-  - BLE/BLE_p2pServer/Core/Src/hw_uart.c 			UART Driver
+  - BLE/BLE_p2pServer/Core/Src/stm32_lpm_if.c			    Low Power Manager Interface
+  - BLE/BLE_p2pServer/Core/Src/hw_timerserver.c 		    Timer Server based on RTC
+  - BLE/BLE_p2pServer/Core/Src/hw_uart.c 		            UART Driver
   
 @par Hardware and Software environment
 
@@ -104,7 +104,7 @@ Second demonstration
  - Once the code (BLE_p2pServer & BLE_p2pClient) is downloaded into the two STM32WB15xx boards and executed, the modules are initialized. 
 
  - The Peripheral device (BLE_p2pServer) starts advertising (during 1 minute), the green led blinks for each advertising event.
- - The Central device (BLE_p2pClient) starts scanning when pressing the User button (SW1). 
+ - The Central device (BLE_p2pClient) starts scanning when pressing the User button (SW1) 
    - BLE_p2pClient blue led becomes on. 
    - Scan req takes about 5 seconds.
    - Make sure BLE_p2pServer advertises, if not press reset button or switch off/on to restart advertising.
@@ -118,7 +118,7 @@ Second demonstration
  - The SW1 event, switch on/off blue led, depends on the connection Interval event. 
    - So the delay from SW1 action and blue led change is more or less fast.
 
-   For more details refer to the Application Note: 
+For more details refer to the Application Note: 
   AN5289 - Building a Wireless application  
  
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>

@@ -107,3 +107,5 @@ WWDG.IPParametersWithoutCheck=Window,Counter
 WWDG.Prescaler=WWDG_PRESCALER_8
 WWDG.Window=WWDG_WINDOW
 board=custom
+ProjectManager.Example=WWDG_Example
+ProjectManager.ExampleSource=CubeFw

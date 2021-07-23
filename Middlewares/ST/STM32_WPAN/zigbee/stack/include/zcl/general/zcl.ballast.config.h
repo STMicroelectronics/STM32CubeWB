@@ -4,7 +4,7 @@
  * @brief ZCL Ballast Configuration cluster header
  * ZCL 7 section 5.3
  * ZCL 8 section 5.3
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_BALLAST_CONFIG_H
@@ -17,7 +17,7 @@
  * Server Attributes
  * BC.S.A0000 | PhysicalMinLevel | True
  * BC.S.A0001 | PhysicalMaxLevel | True
- * BC.S.A0002 | BallastStatus | True
+ * BC.S.A0002 | BallastStatus | True | Optional
  * BC.S.A0010 | MinLevel | True
  * BC.S.A0011 | MaxLevel | True
  * BC.S.A0014 | IntrinsicBallastFactor | False | Optional

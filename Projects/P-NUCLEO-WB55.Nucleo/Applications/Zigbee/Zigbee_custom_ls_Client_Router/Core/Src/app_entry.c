@@ -5,7 +5,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -65,6 +65,19 @@ extern void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 static void Led_Init(void);
 static void Button_Init(void);
+
+/* Section specific to button management using UART */
+static void RxUART_Init(void);
+static void RxCpltCallback(void);
+static void UartCmdExecute(void);
+
+#define C_SIZE_CMD_STRING       256U
+#define RX_BUFFER_SIZE          8U
+
+static uint8_t aRxBuffer[RX_BUFFER_SIZE];
+static uint8_t CommandString[C_SIZE_CMD_STRING];
+static uint16_t indexReceiveChar = 0;
+EXTI_HandleTypeDef exti_handle;
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -74,6 +87,7 @@ void APPE_Init( void )
 
     HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
+/* USER CODE BEGIN APPE_Init_1 */
     Init_Debug();
     /**
      * The Standby mode should not be entered before the initialization is over
@@ -82,16 +96,21 @@ void APPE_Init( void )
     UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
     Led_Init();
     Button_Init();
-    appe_Tl_Init(); /* Initialize all transport layers */
+    RxUART_Init();
+/* USER CODE END APPE_Init_1 */
+    appe_Tl_Init();	/* Initialize all transport layers */
 
     /**
      * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-     * received on the system channel before starting the Zigbee Stack
+     * received on the system channel before starting the Stack
      * This system event is received with APPE_SysUserEvtRx()
      */
+/* USER CODE BEGIN APPE_Init_2 */
 
+/* USER CODE END APPE_Init_2 */
     return;
 }
+
 
 /*************************************************************
  *
@@ -148,7 +167,7 @@ static void Init_Debug( void )
  * @param  None
  * @retval None
  */
-static void SystemPower_Config( void )
+static void SystemPower_Config(void)
 {
 
   /**
@@ -157,7 +176,9 @@ static void SystemPower_Config( void )
   LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
 
   /* Initialize low power manager */
-  UTIL_LPM_Init( );
+  UTIL_LPM_Init();
+  /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
+  LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   /**
@@ -212,7 +233,7 @@ static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status)
  * The type of the payload for a system user event is tSHCI_UserEvtRxParam
  * When the system event is both :
  *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
- *    - reported by the FUS (sysevt_ready_rsp == RSS_FW_RUNNING)
+ *    - reported by the FUS (sysevt_ready_rsp == FUS_FW_RUNNING)
  * The buffer shall not be released
  * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
  * When the status is not filled, the buffer is released by default
@@ -424,6 +445,63 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
   default:
     break;
+  }
+}
+
+static void RxUART_Init(void)
+{
+  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void RxCpltCallback(void)
+{
+  /* Filling buffer and wait for '\r' char */
+  if (indexReceiveChar < C_SIZE_CMD_STRING)
+  {
+    if (aRxBuffer[0] == '\r')
+    {
+      APP_DBG("received %s", CommandString);
+
+      UartCmdExecute();
+
+      /* Clear receive buffer and character counter*/
+      indexReceiveChar = 0;
+      memset(CommandString, 0, C_SIZE_CMD_STRING);
+    }
+    else
+    {
+      CommandString[indexReceiveChar++] = aRxBuffer[0];
+    }
+  }
+
+  /* Once a character has been sent, put back the device in reception mode */
+  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void UartCmdExecute(void)
+{
+  /* Parse received CommandString */
+  if(strcmp((char const*)CommandString, "SW1") == 0)
+  {
+    APP_DBG("SW1 OK");
+    exti_handle.Line = EXTI_LINE_4;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW2") == 0)
+  {
+    APP_DBG("SW2 OK");
+    exti_handle.Line = EXTI_LINE_0;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW3") == 0)
+  {
+    APP_DBG("SW3 OK");
+    exti_handle.Line = EXTI_LINE_1;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else
+  {
+    APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
   }
 }
 /* USER CODE END FD_WRAP_FUNCTIONS */

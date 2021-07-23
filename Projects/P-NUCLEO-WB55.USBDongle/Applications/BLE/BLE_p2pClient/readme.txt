@@ -1,5 +1,5 @@
 /**
-  @page BLE_p2pClient Application 
+  @page BLE_p2pClient Application
 
   @verbatim
   ******************************************************************************
@@ -34,27 +34,27 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
 @par Directory contents 
   
   - BLE/BLE_p2pClient/Core/Inc/stm32wbxx_hal_conf.h		HAL configuration file
-  - BLE/BLE_p2pClient/Core/Inc/stm32wbxx_it.h          		Interrupt handlers header file
-  - BLE/BLE_p2pClient/Core/Inc/main.h                  		Header for main.c module
-  - BLE/BLE_p2pClient/STM32_WPAN/App/app_ble.h          	Header for app_ble.c module
-  - BLE/BLE_p2pClient/Core/Inc/app_common.h            		Header for all modules with common definition
-  - BLE/BLE_p2pClient/Core/Inc/app_conf.h              		Parameters configuration file of the application
-  - BLE/BLE_p2pClient/Core/Inc/app_entry.h            		Parameters configuration file of the application
-  - BLE/BLE_p2pClient/STM32_WPAN/App/ble_conf.h         	BLE Services configuration
-  - BLE/BLE_p2pClient/STM32_WPAN/App/ble_dbg_conf.h     	BLE Traces configuration of the BLE services
-  - BLE/BLE_p2pClient/STM32_WPAN/App/p2p_client_app.h   	Header for p2p_lcient_app.c module
+  - BLE/BLE_p2pClient/Core/Inc/stm32wbxx_it.h          	Interrupt handlers header file
+  - BLE/BLE_p2pClient/Core/Inc/main.h                  	Header for main.c module
+  - BLE/BLE_p2pClient/STM32_WPAN/App/app_ble.h          Header for app_ble.c module
+  - BLE/BLE_p2pClient/Core/Inc/app_common.h            	Header for all modules with common definition
+  - BLE/BLE_p2pClient/Core/Inc/app_conf.h              	Parameters configuration file of the application
+  - BLE/BLE_p2pClient/Core/Inc/app_entry.h            	Parameters configuration file of the application
+  - BLE/BLE_p2pClient/STM32_WPAN/App/ble_conf.h         BLE Services configuration
+  - BLE/BLE_p2pClient/STM32_WPAN/App/ble_dbg_conf.h     BLE Traces configuration of the BLE services
+  - BLE/BLE_p2pClient/STM32_WPAN/App/p2p_client_app.h   Header for p2p_lcient_app.c module
   - BLE/BLE_p2pClient/Core/Inc/hw_conf.h           		Configuration file of the HW
   - BLE/BLE_p2pClient/Core/Inc/utilities_conf.h    		Configuration file of the utilities
-  - BLE/BLE_p2pClient/Core/Src/stm32wbxx_it.c          		Interrupt handlers
-  - BLE/BLE_p2pClient/Core/Src/main.c                  		Main program
-  - BLE/BLE_p2pClient/Core/Src/system_stm32wbxx.c      		stm32wbxx system source file
-  - BLE/BLE_p2pClient/STM32_WPAN/App/app_ble.c      		BLE Profile implementation
+  - BLE/BLE_p2pClient/Core/Src/stm32wbxx_it.c          	Interrupt handlers
+  - BLE/BLE_p2pClient/Core/Src/main.c                  	Main program
+  - BLE/BLE_p2pClient/Core/Src/system_stm32wbxx.c      	stm32wbxx system source file
+  - BLE/BLE_p2pClient/STM32_WPAN/App/app_ble.c      	BLE Profile implementation
   - BLE/BLE_p2pClient/Core/Src/app_entry.c      		Initialization of the application
-  - BLE/BLE_p2pClient/STM32_WPAN/App/p2p_client_app.c   	P2P Client Application Implementation
-  - BLE/BLE_p2pClient/STM32_WPAN/Target/hw_ipcc.c      		IPCC Driver
+  - BLE/BLE_p2pClient/STM32_WPAN/App/p2p_client_app.c   P2P Client Application Implementation
+  - BLE/BLE_p2pClient/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
   - BLE/BLE_p2pClient/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
   - BLE/BLE_p2pClient/Core/Src/hw_timerserver.c 		Timer Server based on RTC
-  - BLE/BLE_p2pClient/Core/Src/hw_uart.c 			UART Driver
+  - BLE/BLE_p2pClient/Core/Src/hw_uart.c 				UART Driver
   
 @par Hardware and Software environment
 
@@ -63,7 +63,6 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
     - USB DONGLE board (MB1293C) Set-up    
        - Connect the USB DONGLE boards to your PC 
        - Connect external ST-LINK to dedicated ST LINK Pin
-    
 
 @par How to use it ? 
 

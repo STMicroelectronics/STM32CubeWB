@@ -158,3 +158,5 @@ VP_AES1_VS_AES.Signal=AES1_VS_AES
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=CRYP_AESModes
+ProjectManager.ExampleSource=CubeFw

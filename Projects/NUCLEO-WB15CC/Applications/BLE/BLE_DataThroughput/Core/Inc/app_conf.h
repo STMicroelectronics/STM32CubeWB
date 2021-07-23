@@ -25,9 +25,10 @@
 #include "hw.h"
 #include "hw_conf.h"
 #include "hw_if.h"
+#include "ble_bufsize.h"
 
 /******************************************************************************
- * Data Throughput Application Config
+ * Application Config
  ******************************************************************************/
 
 /**< generic parameters ******************************************************/
@@ -41,17 +42,13 @@
  * Define Advertising parameters
  */
 #define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
-#define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)  /**< 80ms */
-#define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)  /**< 100ms */
-#define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x640) /**< 1s */
-#define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xFA0) /**< 2.5s */
 
 /**
  * Define IO Authentication
  */
 #define CFG_BONDING_MODE                 (1)
 #define CFG_FIXED_PIN                    (111111)
-#define CFG_USED_FIXED_PIN               (0)
+#define CFG_USED_FIXED_PIN               (1)
 #define CFG_ENCRYPTION_KEY_SIZE_MAX      (16)
 #define CFG_ENCRYPTION_KEY_SIZE_MIN      (8)
 
@@ -64,7 +61,8 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY   (0x04)
 
-#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_DISPLAY_ONLY
+#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_DISPLAY_YES_NO
+
 /**
  * Define MITM modes
  */
@@ -74,10 +72,53 @@
 #define CFG_MITM_PROTECTION             CFG_MITM_PROTECTION_REQUIRED
 
 /**
- * Generic Access Appearance
+ * Define Secure Connections Support
  */
-#define CFG_UNKNOWN_APPEARANCE                  (0)
-#define CFG_GAP_APPEARANCE                      (832)
+#define CFG_SECURE_NOT_SUPPORTED       (0x00)
+#define CFG_SECURE_OPTIONAL            (0x01)
+#define CFG_SECURE_MANDATORY           (0x02)
+
+#define CFG_SC_SUPPORT                 CFG_SECURE_OPTIONAL
+
+/**
+ * Define Keypress Notification Support
+ */
+#define CFG_KEYPRESS_NOT_SUPPORTED      (0x00)
+#define CFG_KEYPRESS_SUPPORTED          (0x01)
+
+#define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
+
+/**
+ * Numeric Comparison Answers
+ */
+#define YES (0x01)
+#define NO  (0x00)
+
+/**
+ * Device name configuration for Generic Access Service
+ */
+#define CFG_GAP_DEVICE_NAME             "TEMPLATE"
+#define CFG_GAP_DEVICE_NAME_LENGTH      (8)
+
+/**
+*   Identity root key used to derive LTK and CSRK
+*/
+#define CFG_BLE_IRK     {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0}
+
+/**
+* Encryption root key used to derive LTK and CSRK
+*/
+#define CFG_BLE_ERK     {0xFE, 0xDC, 0xBA, 0x09, 0x87, 0x65, 0x43, 0x21, 0xFE, 0xDC, 0xBA, 0x09, 0x87, 0x65, 0x43, 0x21}
+
+/**
+ * SMPS supply
+ * SMPS not used when Set to 0
+ * SMPS used when Set to 1
+ */
+#define CFG_USE_SMPS    0
+
+/* USER CODE BEGIN Generic_Parameters */
+
  
 /**
  * Define PHY
@@ -92,28 +133,26 @@
 #define TX_1M                                           0x01
 #define TX_2M                                           0x02
 #define RX_1M                                           0x01
-#define RX_2M                                           0x02
-
-/**
-*   Identity root key used to derive LTK and CSRK
-*/
-#define CFG_BLE_IRK     {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0}
-
-/**
-* Encryption root key used to derive LTK and CSRK
-*/
-#define CFG_BLE_ERK     {0xFE, 0xDC, 0xBA, 0x09, 0x87, 0x65, 0x43, 0x21, 0xFE, 0xDC, 0xBA, 0x09, 0x87, 0x65, 0x43, 0x21}
-
-/* USER CODE BEGIN Generic_Parameters */
-/**
- * SMPS supply
- * SMPS not used when Set to 0
- * SMPS used when Set to 1
- */
-#define CFG_USE_SMPS    0
+#define RX_2M                                           0x02 
+   
 /* USER CODE END Generic_Parameters */
 
-/**< specific parameters ********************************************************/
+/**< specific parameters */
+/*****************************************************/
+
+#define CFG_MAX_CONNECTION                      1
+#define UUID_128BIT_FORMAT                      1
+
+
+#define CONN_L(x) ((int)(((float)x)/0.625f))
+#define CONN_P(x) ((int)(((float)x)/1.25f))
+#define SCAN_P (0x320)
+#define SCAN_L (0x320)
+
+
+
+/* USER CODE BEGIN Specific_Parameters */
+
 /**
  * Encryption enable when set to 1
  * Encryption disabe when set to 0
@@ -141,15 +180,7 @@
 #define CFG_ADV_BD_ADDRESS 0x222222333333
 #define CFG_BLE_PERIPHERAL  1
 #endif
-
-#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI0_IRQHandler
-#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI4_IRQHandler
-#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI9_5_IRQHandler
-
-#define CONN_L(x) ((int)(((float)x)/0.625f))
-#define CONN_P(x) ((int)(((float)x)/1.25f))
-#define SCAN_P (0x320)
-#define SCAN_L (0x320)
+   
 
 #define CFG_DEV_ID_PERIPH_SERVER                    (0x88)
 #define CFG_FEATURE_DT                              (0x70)
@@ -183,14 +214,15 @@
  */
 #define CFG_RX_PHY    1
 
-#define NO_BUTTON     0
-
 /**
  * ALL PHYS configuration
  */
 #define CFG_ALL_PHYS    ((!CFG_TX_PHY) + ((!CFG_RX_PHY)*2))
 #define L2CAP_SLAVE_LATENCY             0x0000
 #define L2CAP_TIMEOUT_MULTIPLIER        0x1F4
+
+/* USER CODE END Specific_Parameters */
+
 /******************************************************************************
  * BLE Stack
  ******************************************************************************/
@@ -314,14 +346,13 @@
  *          0: LE Power Class 2-3
  * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_OPTIONS  SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 
 #define CFG_BLE_MIN_TX_POWER            (0)
 
 #define CFG_BLE_MAX_TX_POWER            (0)
-
 
 /******************************************************************************
  * Transport Layer
@@ -345,7 +376,9 @@
  * allocated in the queue of received events and can be used to optimize the amount of RAM allocated by the Memory Manager.
  * It should not exceed 255 which is the maximum HCI packet payload size (a greater value is a lost of memory as it will
  * never be used)
- * With the current wireless firmware implementation, this parameter shall be kept to 255
+ * It shall be at least 4 to receive the command status event in one frame.
+ * The default value is set to 27 to allow receiving an event of MTU size in a single buffer. This value maybe reduced
+ * further depending on the application.
  */
 #define CFG_TLBLE_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 
@@ -357,9 +390,8 @@
 /**
  * Select UART interfaces
  */
-#define CFG_UART_GUI            
-#define CFG_DEBUG_TRACE_UART		hw_uart1
-#define CFG_CONSOLE_MENU		hw_lpuart1
+#define CFG_DEBUG_TRACE_UART    hw_uart1
+#define CFG_CONSOLE_MENU        hw_lpuart1
 
 /******************************************************************************
  * USB interface
@@ -369,6 +401,18 @@
  * Enable/Disable USB interface
  */
 #define CFG_USB_INTERFACE_ENABLE    0
+
+/******************************************************************************
+ * IPCC interface
+ ******************************************************************************/
+
+/**
+ * The IPCC is dedicated to the communication between the CPU2 and the CPU1
+ * and shall not be modified by the application
+ * The two following definitions shall not be modified
+ */
+#define HAL_IPCC_TX_IRQHandler(...)  HW_IPCC_Tx_Handler( )
+#define HAL_IPCC_RX_IRQHandler(...)  HW_IPCC_Rx_Handler( )
 
 /******************************************************************************
  * Low Power
@@ -423,7 +467,7 @@
 
 #define CFG_RTCCLK_DIV  (16)
 #define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (CFG_RTCCLK_DIV - 1)
+#define CFG_RTC_ASYNCH_PRESCALER (0x0F)
 #define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
 
 #else
@@ -464,7 +508,7 @@
 
 /** tick timer value in us */
 #define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), HSE_VALUE/32 )
-//#define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE )
+
 typedef enum
 {
   CFG_TIM_PROC_ID_ISR,
@@ -557,6 +601,10 @@ typedef enum
 /* USER CODE BEGIN Defines */
 #define CFG_LED_SUPPORTED         1
 #define CFG_BUTTON_SUPPORTED      1
+
+#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI0_IRQHandler
+#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI4_IRQHandler
+#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI9_5_IRQHandler
 /* USER CODE END Defines */
 
 /******************************************************************************
@@ -573,19 +621,23 @@ typedef enum
 /**< Add in that list all tasks that may send a ACI/HCI command */
 typedef enum
 {
+    CFG_TASK_START_SCAN_ID,
+    CFG_TASK_CONN_DEV_1_ID,
+    CFG_TASK_SEARCH_SERVICE_ID,
+    CFG_TASK_SW1_BUTTON_PUSHED_ID,
+    CFG_TASK_CONN_UPDATE_ID,
+    CFG_TASK_HCI_ASYNCH_EVT_ID,
+/* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
   CFG_TASK_DATA_TRANSFER_UPDATE_ID,
   CFG_TASK_DATA_WRITE_ID,
-  CFG_TASK_CONN_DEV_1_ID,
   CFG_TASK_BUTTON_ID,
   CFG_TASK_SW2_BUTTON_PUSHED_ID,
   CFG_TASK_SW3_BUTTON_PUSHED_ID,
   CFG_TASK_START_ADV_ID,
-  CFG_TASK_START_SCAN_ID,
   CFG_TASK_LINK_CONFIG_ID,
   CFG_TASK_APP_DATA_THROUGHPUT_ID,
-  CFG_TASK_CONN_UPDATE_ID,
-  CFG_TASK_HCI_ASYNCH_EVT_ID,
 
+/* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
     CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;
 

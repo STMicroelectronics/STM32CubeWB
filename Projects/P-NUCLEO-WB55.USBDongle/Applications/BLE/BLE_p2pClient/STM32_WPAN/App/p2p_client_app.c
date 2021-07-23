@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
  * @file    p2p_server_app.c
@@ -16,11 +17,11 @@
  *
  ******************************************************************************
  */
-
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 
-
+#include "main.h"
 #include "app_common.h"
 
 #include "dbg_trace.h"
@@ -31,17 +32,11 @@
 #include "stm32_seq.h"
 #include "app_ble.h"
 
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
 /* Private typedef -----------------------------------------------------------*/
-
-typedef struct{
-  uint8_t                                     Device_Led_Selection;
-  uint8_t                                     Led1;
-}P2P_LedCharValue_t;
-
-typedef struct{
-  uint8_t                                     Device_Button_Selection;
-  uint8_t                                     Button1;
-}P2P_ButtonCharValue_t;
 
 typedef enum
 {
@@ -55,7 +50,6 @@ typedef struct
   uint8_t * pPayload;
   uint8_t     Length;
 }P2P_Client_Data_t;
-
 
 typedef struct
 {
@@ -112,6 +106,17 @@ typedef struct
 
 }P2P_ClientContext_t;
 
+/* USER CODE BEGIN PTD */
+typedef struct{
+  uint8_t                                     Device_Led_Selection;
+  uint8_t                                     Led1;
+}P2P_LedCharValue_t;
+
+typedef struct{
+  uint8_t                                     Device_Button_Selection;
+  uint8_t                                     Button1;
+}P2P_ButtonCharValue_t;
+
 typedef struct
 {
 
@@ -125,40 +130,45 @@ typedef struct
 
 } P2P_Client_App_Context_t;
 
-/* Private defines -----------------------------------------------------------*/
-/* Private macros ------------------------------------------------------------*/
+/* USER CODE END PTD */
+
+/* Private defines ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
+/* Private macros -------------------------------------------------------------*/
 #define UNPACK_2_BYTE_PARAMETER(ptr)  \
         (uint16_t)((uint16_t)(*((uint8_t *)ptr))) |   \
         (uint16_t)((((uint16_t)(*((uint8_t *)ptr + 1))) << 8))
+/* USER CODE BEGIN PM */
 
+/* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
 /**
  * START of Section BLE_APP_CONTEXT
  */
-
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static P2P_Client_App_Context_t P2P_Client_App_Context;
 
 PLACE_IN_SECTION("BLE_APP_CONTEXT") static P2P_ClientContext_t aP2PClientContext[BLE_CFG_CLT_MAX_NBR_CB];
 
 /**
  * END of Section BLE_APP_CONTEXT
  */
+/* USER CODE BEGIN PV */
+PLACE_IN_SECTION("BLE_APP_CONTEXT") static P2P_Client_App_Context_t P2P_Client_App_Context;
+/* USER CODE END PV */
 
-
-/* Global variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
-/* Functions Definition ------------------------------------------------------*/
-/* Private functions ----------------------------------------------------------*/
 static void Gatt_Notification(P2P_Client_App_Notification_evt_t *pNotification);
+static SVCCTL_EvtAckStatus_t Event_Handler(void *Event);
+/* USER CODE BEGIN PFP */
 static tBleStatus Write_Char(uint16_t UUID, uint8_t Service_Instance, uint8_t *pPayload);
 static void Button_Trigger_Received( void );
 static void Update_Service( void );
-static SVCCTL_EvtAckStatus_t Event_Handler(void *Event);
+/* USER CODE END PFP */
 
-/* Public functions ----------------------------------------------------------*/
-
+/* Functions Definition ------------------------------------------------------*/
 /**
  * @brief  Service initialization
  * @param  None
@@ -167,7 +177,7 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event);
 void P2PC_APP_Init(void)
 {
   uint8_t index =0;
-
+/* USER CODE BEGIN P2PC_APP_Init_1 */
   UTIL_SEQ_RegTask( 1<< CFG_TASK_SEARCH_SERVICE_ID, UTIL_SEQ_RFU, Update_Service );
   UTIL_SEQ_RegTask( 1<< CFG_TASK_SW1_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, Button_Trigger_Received );
 
@@ -181,8 +191,7 @@ void P2PC_APP_Init(void)
   P2P_Client_App_Context.LedControl.Led1=0x00; /* led OFF */
   P2P_Client_App_Context.ButtonStatus.Device_Button_Selection=0x01;/* Device1 */
   P2P_Client_App_Context.ButtonStatus.Button1=0x00;
-
-
+/* USER CODE END P2PC_APP_Init_1 */
   for(index = 0; index < BLE_CFG_CLT_MAX_NBR_CB; index++)
   {
     aP2PClientContext[index].state= APP_BLE_IDLE;
@@ -193,21 +202,35 @@ void P2PC_APP_Init(void)
    */
   SVCCTL_RegisterCltHandler(Event_Handler);
 
+#if(CFG_DEBUG_APP_TRACE != 0)
   APP_DBG_MSG("-- P2P CLIENT INITIALIZED \n");
+#endif
 
+/* USER CODE BEGIN P2PC_APP_Init_2 */
+
+/* USER CODE END P2PC_APP_Init_2 */
   return;
 }
 
-
 void P2PC_APP_Notification(P2PC_APP_ConnHandle_Not_evt_t *pNotification)
 {
+/* USER CODE BEGIN P2PC_APP_Notification_1 */
+
+/* USER CODE END P2PC_APP_Notification_1 */
   switch(pNotification->P2P_Evt_Opcode)
   {
-    case PEER_CONN_HANDLE_EVT :
-      P2P_Client_App_Context.ConnectionHandle = pNotification->ConnectionHandle;
+/* USER CODE BEGIN P2P_Evt_Opcode */
+
+/* USER CODE END P2P_Evt_Opcode */
+
+  case PEER_CONN_HANDLE_EVT :
+/* USER CODE BEGIN PEER_CONN_HANDLE_EVT */
+    P2P_Client_App_Context.ConnectionHandle = pNotification->ConnectionHandle;
+/* USER CODE END PEER_CONN_HANDLE_EVT */
       break;
 
     case PEER_DISCON_HANDLE_EVT :
+/* USER CODE BEGIN PEER_DISCON_HANDLE_EVT */
       {
       uint8_t index = 0;
       P2P_Client_App_Context.ConnectionHandle =  0x00;
@@ -222,21 +245,28 @@ void P2PC_APP_Notification(P2PC_APP_ConnHandle_Not_evt_t *pNotification)
       UTIL_SEQ_SetTask(1<<CFG_TASK_CONN_DEV_1_ID, CFG_SCH_PRIO_0);
 #endif 
       }
+/* USER CODE END PEER_DISCON_HANDLE_EVT */
       break;
 
     default:
+/* USER CODE BEGIN P2P_Evt_Opcode_Default */
+
+/* USER CODE END P2P_Evt_Opcode_Default */
       break;
   }
+/* USER CODE BEGIN P2PC_APP_Notification_2 */
 
+/* USER CODE END P2PC_APP_Notification_2 */
   return;
 }
-
+/* USER CODE BEGIN FD */
 void P2PC_APP_SW1_Button_Action(void)
 {
 
   UTIL_SEQ_SetTask(1<<CFG_TASK_SW1_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
 
 }
+/* USER CODE END FD */
 
 /*************************************************************
  *
@@ -260,8 +290,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
 
-
-
   switch(event_pckt->evt)
   {
     case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
@@ -269,7 +297,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
       blecore_evt = (evt_blecore_aci*)event_pckt->data;
       switch(blecore_evt->ecode)
       {
-
 
         case ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE:
         {
@@ -303,17 +330,16 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           {
             aP2PClientContext[index].connHandle= handle;
 
-
             numServ = (pr->Data_Length) / pr->Attribute_Data_Length;
 
             /* the event data will be
              * 2bytes start handle
              * 2bytes end handle
              * 2 or 16 bytes data
-             * we are intersted only if the UUID is 16 bit.
+             * we are interested only if the UUID is 16 bit.
              * So check if the data length is 6
              */
-#if (UUID_128BIT_FORMAT==1)           
+#if (UUID_128BIT_FORMAT==1)
           if (pr->Attribute_Data_Length == 20)
           {
             idx = 16;
@@ -321,20 +347,22 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           if (pr->Attribute_Data_Length == 6)
           {
             idx = 4;
-#endif             
+#endif
               for (i=0; i<numServ; i++)
               {
                 uuid = UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx]);
                 if(uuid == P2P_SERVICE_UUID)
                 {
+#if(CFG_DEBUG_APP_TRACE != 0)
                   APP_DBG_MSG("-- GATT : P2P_SERVICE_UUID FOUND - connection handle 0x%x \n", aP2PClientContext[index].connHandle);
-#if (UUID_128BIT_FORMAT==1)                     
+#endif
+#if (UUID_128BIT_FORMAT==1)
                 aP2PClientContext[index].P2PServiceHandle = UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx-16]);
                 aP2PClientContext[index].P2PServiceEndHandle = UNPACK_2_BYTE_PARAMETER (&pr->Attribute_Data_List[idx-14]);
-#else   
+#else
                 aP2PClientContext[index].P2PServiceHandle = UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx-4]);
                 aP2PClientContext[index].P2PServiceEndHandle = UNPACK_2_BYTE_PARAMETER (&pr->Attribute_Data_List[idx-2]);
-#endif                  
+#endif
                   aP2PClientContext[index].state = APP_BLE_DISCOVER_CHARACS ;
                 }
                 idx += 6;
@@ -343,7 +371,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           }
         }
         break;
-
 
         case ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE:
         {
@@ -369,7 +396,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           if(index < BLE_CFG_CLT_MAX_NBR_CB)
           {
 
-
             /* we are interested in only 16 bit UUIDs */
 #if (UUID_128BIT_FORMAT==1)
             idx = 17;
@@ -391,14 +417,18 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
 #endif
                 if(uuid == P2P_WRITE_CHAR_UUID)
                 {
+#if(CFG_DEBUG_APP_TRACE != 0)
                   APP_DBG_MSG("-- GATT : WRITE_UUID FOUND - connection handle 0x%x\n", aP2PClientContext[index].connHandle);
+#endif
                   aP2PClientContext[index].state = APP_BLE_DISCOVER_WRITE_DESC;
                   aP2PClientContext[index].P2PWriteToServerCharHdle = handle;
                 }
 
                 else if(uuid == P2P_NOTIFY_CHAR_UUID)
                 {
+#if(CFG_DEBUG_APP_TRACE != 0)
                   APP_DBG_MSG("-- GATT : NOTIFICATION_CHAR_UUID FOUND  - connection handle 0x%x\n", aP2PClientContext[index].connHandle);
+#endif
                   aP2PClientContext[index].state = APP_BLE_DISCOVER_NOTIFICATION_CHAR_DESC;
                   aP2PClientContext[index].P2PNotificationCharHdle = handle;
                 }
@@ -414,7 +444,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           }
         }
         break;
-
 
         case ACI_ATT_FIND_INFO_RESP_VSEVT_CODE:
         {
@@ -452,7 +481,9 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
 
                 if(uuid == CLIENT_CHAR_CONFIG_DESCRIPTOR_UUID)
                 {
+#if(CFG_DEBUG_APP_TRACE != 0)
                   APP_DBG_MSG("-- GATT : CLIENT_CHAR_CONFIG_DESCRIPTOR_UUID- connection handle 0x%x\n", aP2PClientContext[index].connHandle);
+#endif
                   if( aP2PClientContext[index].state == APP_BLE_DISCOVER_NOTIFICATION_CHAR_DESC)
                   {
 
@@ -467,7 +498,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           }
         }
         break; /*ACI_ATT_FIND_INFO_RESP_VSEVT_CODE*/
-
 
         case ACI_GATT_NOTIFICATION_VSEVT_CODE:
         {
@@ -502,9 +532,10 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
         case ACI_GATT_PROC_COMPLETE_VSEVT_CODE:
         {
           aci_gatt_proc_complete_event_rp0 *pr = (void*)blecore_evt->data;
+#if(CFG_DEBUG_APP_TRACE != 0)
           APP_DBG_MSG("-- GATT : ACI_GATT_PROC_COMPLETE_VSEVT_CODE \n");
           APP_DBG_MSG("\n");
-
+#endif
 
           uint8_t index;
 
@@ -516,7 +547,6 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
           if(index < BLE_CFG_CLT_MAX_NBR_CB)
           {
 
-
             UTIL_SEQ_SetTask( 1<<CFG_TASK_SEARCH_SERVICE_ID, CFG_SCH_PRIO_0);
 
           }
@@ -527,7 +557,7 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
       }
     }
 
-    break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
+    break; /* HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
 
     default:
       break;
@@ -538,12 +568,18 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
 
 void Gatt_Notification(P2P_Client_App_Notification_evt_t *pNotification)
 {
+/* USER CODE BEGIN Gatt_Notification_1*/
 
+/* USER CODE END Gatt_Notification_1 */
   switch(pNotification->P2P_Client_Evt_Opcode)
   {
-    case P2P_NOTIFICATION_INFO_RECEIVED_EVT:
-    {
+/* USER CODE BEGIN P2P_Client_Evt_Opcode */
 
+/* USER CODE END P2P_Client_Evt_Opcode */
+
+    case P2P_NOTIFICATION_INFO_RECEIVED_EVT:
+/* USER CODE BEGIN P2P_NOTIFICATION_INFO_RECEIVED_EVT */
+    {
       P2P_Client_App_Context.LedControl.Device_Led_Selection=pNotification->DataTransfered.pPayload[0];
       switch(P2P_Client_App_Context.LedControl.Device_Led_Selection) {
 
@@ -567,16 +603,25 @@ void Gatt_Notification(P2P_Client_App_Notification_evt_t *pNotification)
       }
 
     }
-    break;
-
-    default:
+/* USER CODE END P2P_NOTIFICATION_INFO_RECEIVED_EVT */
       break;
 
+    default:
+/* USER CODE BEGIN P2P_Client_Evt_Opcode_Default */
+
+/* USER CODE END P2P_Client_Evt_Opcode_Default */
+      break;
   }
+/* USER CODE BEGIN Gatt_Notification_2*/
+
+/* USER CODE END Gatt_Notification_2 */
   return;
 }
 
-
+uint8_t P2P_Client_APP_Get_State( void ) {
+  return aP2PClientContext[0].state;
+}
+/* USER CODE BEGIN LF */
 /**
  * @brief  Feature Characteristic update
  * @param  pFeatureValue: The address of the new value to be written
@@ -697,9 +742,6 @@ void Update_Service()
   }
   return;
 }
-
-uint8_t P2P_Client_APP_Get_State( void ) {
-  return aP2PClientContext[0].state;
-}
+/* USER CODE END LF */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

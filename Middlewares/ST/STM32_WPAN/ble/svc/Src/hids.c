@@ -119,7 +119,7 @@ static void HIDS_Handle_Mouse_Input_Write(uint8_t service_instance, uint8_t *att
 {
   tBleStatus hciCmdResult;
   uint16_t length;
-  uint8_t *data = 0;
+  uint8_t data[BLE_CFG_HIDS_BOOT_MOUSE_INPUT_REPORT_MAX_LEN];
   HIDS_App_Notification_evt_t Notification;
   
   hciCmdResult = aci_gatt_read_handle_value(HIDS_Context[service_instance].HidMouseReportInputCharHdle + 1,
@@ -163,7 +163,7 @@ static void HIDS_Handle_Keyboard_Output_Write(uint8_t service_instance, uint8_t 
 {
   tBleStatus hciCmdResult;
   uint16_t length;
-  uint8_t *data = 0;
+  uint8_t data[BLE_CFG_HIDS_BOOT_KEYBOARD_OUTPUT_REPORT_MAX_LEN];
   HIDS_App_Notification_evt_t Notification;
   
   hciCmdResult = aci_gatt_read_handle_value(HIDS_Context[service_instance].HidKeyboardReportOutputCharHdle + 1, 
@@ -206,7 +206,7 @@ static void HIDS_Handle_Keyboard_Output_Write(uint8_t service_instance, uint8_t 
 static void HIDS_Handle_Keyboard_Input_Write(uint8_t service_instance, uint8_t *attVal)
 {
   tBleStatus hciCmdResult;
-  uint8_t *data = 0;
+  uint8_t data[BLE_CFG_HIDS_BOOT_KEYBOARD_INPUT_REPORT_MAX_LEN];
   uint16_t length;
   HIDS_App_Notification_evt_t Notification;
   
@@ -250,7 +250,7 @@ static void HIDS_Handle_Keyboard_Input_Write(uint8_t service_instance, uint8_t *
 static void HIDS_Handle_Report(uint8_t service_instance, uint8_t report_index, uint8_t *attVal)
 {
   tBleStatus hciCmdResult;
-  uint8_t *data = 0;
+  uint8_t data[BLE_CFG_HIDS_REPORT_MAX_LEN];
   uint16_t length;
   HIDS_App_Notification_evt_t Notification;
 
@@ -1121,10 +1121,10 @@ void HIDS_Init(void)
  * @retval BodySensorLocationValue: The new value to be written
  */
 tBleStatus HIDS_Update_Char(uint16_t UUID, 
-                                   uint8_t service_instance, 
-                                   uint8_t Report_Index, 
-                                   uint8_t report_size,
-                                   uint8_t *pPayload)
+                            uint8_t service_instance, 
+                            uint8_t Report_Index, 
+                            uint8_t report_size,
+                            uint8_t *pPayload)
 {
   tBleStatus return_value = BLE_STATUS_FAILED;
   switch(UUID)

@@ -313,7 +313,7 @@
                 </option>
                 <option>
                     <name>CCRequirePrototypes</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCDiagWarnAreErr</name>
@@ -352,7 +352,7 @@
                     <state>$PROJ_DIR$\..\Core\Inc</state>
                     <state>$PROJ_DIR$\..\STM32_WPAN\app</state>
                     <state>$PROJ_DIR$\..\STM32_WPAN\Target</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares/ST/STM32_WPAN/zigbee/core/Inc</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares/ST/STM32_WPAN/zigbee/core/inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares/ST/STM32_WPAN/zigbee/stack</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares/ST/STM32_WPAN/zigbee/stack/include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares/ST/STM32_WPAN/zigbee/stack/include/mac</state>

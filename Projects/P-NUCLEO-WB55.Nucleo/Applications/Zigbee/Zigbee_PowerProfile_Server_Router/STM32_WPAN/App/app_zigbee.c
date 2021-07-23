@@ -207,6 +207,8 @@ static void APP_ZIGBEE_PowerProfile_Program_Step(void){
   
   APP_DBG("[POWER PROFILE] Sending Power Profile profile notification.");   
   APP_ZIGBEE_PowerProfile_Send_ProfileNotification(&dst, &profile_notify);
+  UTIL_SEQ_WaitEvt(EVENT_ZIGBEE_APP_POWER_PROFILE_NOTIFY_RSP_RECEIVED);
+  UTIL_SEQ_ClrEvt(EVENT_ZIGBEE_APP_POWER_PROFILE_NOTIFY_RSP_RECEIVED);
   
   /* Point 3: Power Profile State Notification (Programmed, no remote control) is sent by Server */
   state_notify.record_list[0].state = ZCL_PWR_PROF_STATE_PROFILE_PROGRAMMED;

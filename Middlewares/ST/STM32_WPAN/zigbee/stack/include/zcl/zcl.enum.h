@@ -2,7 +2,7 @@
  * @file zcl.enum.h
  * @brief Zigbee ZCL Enumerations header file.
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ENUM_H
@@ -55,7 +55,6 @@ enum ZbZclNoDefaultResponseT {
 #define ZCL_HEADER_MAX_SIZE                      5U /* with 2-byte manufacturer code */
 
 /* Max safe ZCL payload size (with APS security and no fragmentation)
- * This value will be less with application security.
  * Assumes not manufacturer specific command. */
 #define ZCL_PAYLOAD_UNFRAG_SAFE_SIZE             (ZB_APS_CONST_SAFE_APSSEC_PAYLOAD_SIZE - ZCL_HEADER_MIN_SIZE) /* 54 */
 
@@ -140,14 +139,24 @@ enum {
 /* Global Attributes */
 enum {
     ZCL_GLOBAL_ATTR_CLUSTER_REV = 0xfffd,
-    /**^ ClusterRevision. Mandatory. This attribute is automatically allocated and initialized
+    /**< ClusterRevision. Mandatory. This attribute is automatically allocated and initialized
      * by a cluster's allocation function when it calls ZbZclClusterAlloc. It does not need to
      * be included in the cluster's attribute list during initialization. The value may be
      * modified by the cluster or application after initialization (ZbZclAttrIntegerWrite).
      * The default value is 1. All clusters starting with ZCL Spec Revision 6, have their
      * revision start at 1. */
 
-    ZCL_GLOBAL_ATTR_REPORTING_STATUS = 0xfffe /**^ AttributeReportingStatus. Optional. */
+    ZCL_GLOBAL_ATTR_REPORTING_STATUS = 0xfffe
+        /**< AttributeReportingStatus. Optional. This is a dummy attribute that can go at the end
+         * of each ZCL Report Command to indicate whether additional report commands are being
+         * sent shortly after, or if this is the last report command in a series of reports.
+         * This is currently not being used when sending reports, because it's not very useful. */
+};
+
+/* AttributeReportingStatus (ZCL_GLOBAL_ATTR_REPORTING_STATUS) values. */
+enum {
+    ZCL_ATTR_REPORTING_STATUS_PENDING = 0x00, /**< Pending */
+    ZCL_ATTR_REPORTING_STATUS_COMPLETE = 0x01 /**< Attribute Reporting Complete */
 };
 
 /* ZCL Attribute Flags
@@ -164,8 +173,10 @@ typedef uint16_t ZclAttrFlagT;
 #define ZCL_ATTR_FLAG_PERSISTABLE           (ZclAttrFlagT)0x0004U
 /* Which callbacks does the application support */
 #define ZCL_ATTR_FLAG_CB_MASK               0x00f0U
-#define ZCL_ATTR_FLAG_CB_READ               (ZclAttrFlagT)0x0010U /* ZCL_ATTR_CB_TYPE_READ */
-#define ZCL_ATTR_FLAG_CB_WRITE              (ZclAttrFlagT)0x0020U /* ZCL_ATTR_CB_TYPE_WRITE */
+/* Enables ZCL_ATTR_CB_TYPE_READ for this attribute */
+#define ZCL_ATTR_FLAG_CB_READ               (ZclAttrFlagT)0x0010U
+/* Enables ZCL_ATTR_CB_TYPE_WRITE for this attribute */
+#define ZCL_ATTR_FLAG_CB_WRITE              (ZclAttrFlagT)0x0020U
 #define ZCL_ATTR_FLAG_CB_NOTIFY             (ZclAttrFlagT)0x0040U /* ZCL_ATTR_CB_TYPE_NOTIFY */
 /* This flag means the attribute is for internal use only. Not discoverable. */
 #define ZCL_ATTR_FLAG_INTERNAL              (ZclAttrFlagT)0x8000U
@@ -260,7 +271,9 @@ enum ZclDataTypeT {
 #define ZCL_INVALID_SIGNED_40BIT                 -549755813888LL /* 0x8000000000 */
 #define ZCL_INVALID_SIGNED_48BIT                 -140737488355328LL /* 0x800000000000 */
 #define ZCL_INVALID_SIGNED_56BIT                 -36028797018963968LL /* 0x80000000000000 */
+/*lint -e9048 [ unsigned integer literal without a 'U' suffix <Rule 7.2 REQUIRED> ]*/
 #define ZCL_INVALID_SIGNED_64BIT                 0x8000000000000000 /* integer constant is so large that it is unsigned  */
+/*lint -restore */
 
 #define ZCL_INVALID_ENUMERATION_8BIT             0xffU
 #define ZCL_INVALID_ENUMERATION_16BIT            0xffffU
@@ -374,11 +387,6 @@ enum ZclStatusCodeT {
     ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE = 0xff
         /* zcl_attr_integer.c relies on these enum constants to be =< 0xff since they're cast as uint8_t */
 };
-
-/* For SE 1.2a Attribute Reporting Status for Sleepy Devices */
-#define ZCL_ATTR_REPORTING_STATUS               0xfffeU
-#define ZCL_ATTR_REPORTING_STATUS_PENDING       0x00U
-#define ZCL_ATTR_REPORTING_STATUS_COMPLETE      0x01U
 
 /* Device IDs */
 enum ZbZclDeviceIdT {
@@ -576,6 +584,10 @@ enum ZbZclClusterIdT {
 
     /* TOUCHLINK */
     ZCL_CLUSTER_TOUCHLINK = 0x1000,
+
+    /* MANUFACTURER CUSTOM CLUSTER */
+    ZCL_CLUSTER_CUSTOM_LS = 0xfc01,      /* Long string custom cluster */
+    ZCL_CLUSTER_CUSTOM_MATRIX = 0xfc02,  /* Matrix custom cluster      */
 
     /* Custom, internal use only, for handling cluster persistence.
      * Used with ZCL_MANUF_CODE_INTERNAL. */

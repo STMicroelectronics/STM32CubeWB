@@ -30,6 +30,7 @@
 #include "shci_tl.h"
 #include "stm32_lpm.h"
 #include "app_debug.h"
+#include "otp.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -65,10 +66,18 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t BleSpareEvtBuffer[sizeof(TL_
 /* USER CODE END PV */
 
 /* Private functions prototypes-----------------------------------------------*/
+static void Config_HSE(void);
+static void Reset_Device( void );
+#if ( CFG_HW_RESET_BY_FW == 1 )
+static void Reset_IPCC( void );
+static void Reset_BackupDomain( void );
+#endif /* CFG_HW_RESET_BY_FW */
+static void System_Init( void );
 static void SystemPower_Config( void );
 static void appe_Tl_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
+static void Init_Rtc( void );
 
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
@@ -76,8 +85,30 @@ static void Button_Init( void );
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
-void APPE_Init( void )
+void MX_APPE_Config( void )
 {
+  /**
+   * The OPTVERR flag is wrongly set at power on
+   * It shall be cleared before using any HAL_FLASH_xxx() api
+   */
+  __HAL_FLASH_CLEAR_FLAG( FLASH_FLAG_OPTVERR );
+
+  /**
+   * Reset some configurations so that the system behave in the same way
+   * when either out of nReset or Power On
+   */
+  Reset_Device( );
+
+  /* Configure HSE Tuning */
+  Config_HSE();
+
+  return;
+}
+
+void MX_APPE_Init( void )
+{
+  System_Init( );       /**< System initialization */
+
   SystemPower_Config(); /**< Configure the system Power Mode */
 
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
@@ -107,6 +138,34 @@ void APPE_Init( void )
 /* USER CODE END APPE_Init_2 */
    return;
 }
+
+void Init_Smps( void )
+{
+#if (CFG_USE_SMPS != 0)
+  /**
+   *  Configure and enable SMPS
+   *
+   *  The SMPS configuration is not yet supported by CubeMx
+   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
+   *  the SMPS output voltage shall be increased for higher RF output power
+   */
+  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
+  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
+  LL_PWR_SMPS_Enable();
+#endif
+
+  return;
+}
+
+void Init_Exti( void )
+{
+  /**< Disable all wakeup interrupt on CPU1  except IPCC(36), HSEM(38) */
+  LL_EXTI_DisableIT_0_31(~0);
+  LL_EXTI_DisableIT_32_63( (~0) & (~(LL_EXTI_LINE_36 | LL_EXTI_LINE_38)) );
+
+  return;
+}
+
 /* USER CODE BEGIN FD */
 
 /* USER CODE END FD */
@@ -116,6 +175,114 @@ void APPE_Init( void )
  * LOCAL FUNCTIONS
  *
  *************************************************************/
+static void Reset_Device( void )
+{
+#if ( CFG_HW_RESET_BY_FW == 1 )
+  Reset_BackupDomain();
+
+  Reset_IPCC();
+#endif /* CFG_HW_RESET_BY_FW */
+
+  return;
+}
+
+#if ( CFG_HW_RESET_BY_FW == 1 )
+static void Reset_BackupDomain( void )
+{
+  if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
+  {
+    HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
+
+    /**
+     *  Write twice the value to flush the APB-AHB bridge
+     *  This bit shall be written in the register before writing the next one
+     */
+    HAL_PWR_EnableBkUpAccess();
+
+    __HAL_RCC_BACKUPRESET_FORCE();
+    __HAL_RCC_BACKUPRESET_RELEASE();
+  }
+
+  return;
+}
+
+static void Reset_IPCC( void )
+{
+  LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_IPCC);
+
+  LL_C1_IPCC_ClearFlag_CHx(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C2_IPCC_ClearFlag_CHx(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C1_IPCC_DisableTransmitChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C2_IPCC_DisableTransmitChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C1_IPCC_DisableReceiveChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C2_IPCC_DisableReceiveChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  return;
+}
+#endif /* CFG_HW_RESET_BY_FW */
+
+static void Config_HSE(void)
+{
+    OTP_ID0_t * p_otp;
+
+  /**
+   * Read HSE_Tuning from OTP
+   */
+  p_otp = (OTP_ID0_t *) OTP_Read(0);
+  if (p_otp)
+  {
+    LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
+  }
+
+  return;
+}
+
+static void System_Init( void )
+{
+  Init_Smps( );
+
+  Init_Exti( );
+
+  Init_Rtc( );
+
+  return;
+}
+
+static void Init_Rtc( void )
+{
+  /* Disable RTC registers write protection */
+  LL_RTC_DisableWriteProtection(RTC);
+
+  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
+
+  /* Enable RTC registers write protection */
+  LL_RTC_EnableWriteProtection(RTC);
+
+  return;
+}
 
 /**
  * @brief  Configure the system for power optimization
@@ -225,6 +392,7 @@ static void Button_Init( void )
 
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
   BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
 #endif
 
   return;
@@ -236,6 +404,45 @@ static void Button_Init( void )
  * WRAP FUNCTIONS
  *
  *************************************************************/
+void HAL_Delay(uint32_t Delay)
+{
+  uint32_t tickstart = HAL_GetTick();
+  uint32_t wait = Delay;
+
+  /* Add a freq to guarantee minimum wait */
+  if (wait < HAL_MAX_DELAY)
+  {
+    wait += HAL_GetTickFreq();
+  }
+
+  while ((HAL_GetTick() - tickstart) < wait)
+  {
+    /************************************************************************************
+     * ENTER SLEEP MODE
+     ***********************************************************************************/
+    LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
+
+    /**
+     * This option is used to ensure that store operations are completed
+     */
+  #if defined ( __CC_ARM)
+    __force_stores();
+  #endif
+
+    __WFI( );
+  }
+}
+
+void MX_APPE_Process(void)
+{
+  /* USER CODE BEGIN MX_APPE_Process_1 */
+
+  /* USER CODE END MX_APPE_Process_1 */
+  UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
+  /* USER CODE BEGIN MX_APPE_Process_2 */
+
+  /* USER CODE END MX_APPE_Process_2 */
+}
 
 void UTIL_SEQ_Idle( void )
 {

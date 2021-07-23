@@ -159,7 +159,7 @@ For this application it is requested to have:
              |                                 SW2 =>|---------------------------->|
              |                                       |                             |Red LED
              |                                       |                             |goes on 
-             |                                       |                             |for 10 sec
+             |                                       |                             |for 3 sec
              |                                       |                             |
        SW3 =>|---------------------------------------------------onOff togle------>|Green LED
              |                                       |                             |toggles

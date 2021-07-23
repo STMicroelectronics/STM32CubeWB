@@ -57,7 +57,7 @@ MEMORY
 {
 FLASH (rx)                 : ORIGIN = 0x08000000, LENGTH = 512K
 QSPI (rx)                  : ORIGIN = 0x90000000, LENGTH = 1024K
-RAM1 (xrw)                 : ORIGIN = 0x20000004, LENGTH = 0x2FFFC
+RAM1 (xrw)                 : ORIGIN = 0x20000008, LENGTH = 0x2FFF8
 RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K
 }
 

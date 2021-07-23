@@ -44,13 +44,19 @@ extern "C" {
 #ifdef  USE_STM32WBXX_USB_DONGLE
 #include "stm32wbxx_usb_dongle.h"
 #endif
+
 #ifdef  USE_STM32WBXX_NUCLEO
+
 #ifdef STM32WB35xx
 #include "nucleo_wb35ce.h"
-#else
+#endif
+
+#ifdef STM32WB55xx
 #include "stm32wbxx_nucleo.h"
 #endif
+
 #endif
+
 #ifdef  USE_X_NUCLEO_EPD
 #include "x_nucleo_epd.h"
 #endif
@@ -97,14 +103,8 @@ void HW_UART_Interrupt_Handler(hw_uart_id_t hw_uart_id);
 void HW_UART_DMA_Interrupt_Handler(hw_uart_id_t hw_uart_id);
 #endif
 
-#if (CFG_HW_LPUART1_ENABLED == 1)
-void MX_LPUART1_UART_Init(void);
-void MX_LPUART1_UART_DeInit(void);
-#endif
-#if (CFG_HW_USART1_ENABLED == 1)
-void MX_USART1_UART_Init(void);
-void MX_USART1_UART_DeInit(void);
-#endif
+void MX_UART_Init(hw_uart_id_t uart);
+void MX_UART_Deinit(hw_uart_id_t uart);
 
   /******************************************************************************
    * HW TimerServer

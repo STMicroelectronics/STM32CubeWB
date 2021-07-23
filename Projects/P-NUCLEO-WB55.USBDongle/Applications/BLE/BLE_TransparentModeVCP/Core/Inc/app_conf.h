@@ -1,26 +1,26 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    app_conf.h
- * @author  MCD Application Team
- * @brief   Application configuration file
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
-
+  * File Name          : app_conf.h
+  * Description        : Application configuration file for STM32WPAN Middleware.
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APP_CONFIG_H
-#define __APP_CONFIG_H
+#ifndef APP_CONF_H
+#define APP_CONF_H
 
 #include "hw.h"
 #include "hw_conf.h"
@@ -28,29 +28,65 @@
 #include "ble_bufsize.h"
 
 /******************************************************************************
- * Transparent Mode Config
+ * Application Config
  ******************************************************************************/
+
+/**
+ * Define Secure Connections Support
+ */
+#define CFG_SECURE_NOT_SUPPORTED       (0x00)
+#define CFG_SECURE_OPTIONAL            (0x01)
+#define CFG_SECURE_MANDATORY           (0x02)
+
+#define CFG_SC_SUPPORT                 CFG_SECURE_OPTIONAL
+
+/**
+ * Define Keypress Notification Support
+ */
+#define CFG_KEYPRESS_NOT_SUPPORTED      (0x00)
+#define CFG_KEYPRESS_SUPPORTED          (0x01)
+
+#define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
+
+/**
+ * Numeric Comparison Answers
+ */
+#define YES (0x01)
+#define NO  (0x00)
+
+/**
+ * Device name configuration for Generic Access Service
+ */
+#define CFG_GAP_DEVICE_NAME             "TEMPLATE"
+#define CFG_GAP_DEVICE_NAME_LENGTH      (8)
 
 /**
 *   Identity root key used to derive LTK and CSRK
 */
-#define CFG_BLE_IRK     {0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0,0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0}
+#define CFG_BLE_IRK     {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0}
 
 /**
 * Encryption root key used to derive LTK and CSRK
 */
-#define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
+#define CFG_BLE_ERK     {0xFE, 0xDC, 0xBA, 0x09, 0x87, 0x65, 0x43, 0x21, 0xFE, 0xDC, 0xBA, 0x09, 0x87, 0x65, 0x43, 0x21}
 
-/* USER CODE BEGIN Generic_Parameters */
 /**
  * SMPS supply
  * SMPS not used when Set to 0
  * SMPS used when Set to 1
  */
-#define CFG_USE_SMPS    1
+#define CFG_USE_SMPS    0
+
+/* USER CODE BEGIN Generic_Parameters */
 /* USER CODE END Generic_Parameters */
 
-/**< specific parameters ********************************************************/
+/**< specific parameters */
+/*****************************************************/
+
+/* USER CODE BEGIN Specific_Parameters */
+
+/* USER CODE END Specific_Parameters */
+
 /******************************************************************************
  * Information Table
  *
@@ -67,7 +103,6 @@
 #define CFG_FW_SUBVERSION         (1)
 #define CFG_FW_BRANCH             (0)
 #define CFG_FW_BUILD              (0)
-
 
 /******************************************************************************
  * BLE Stack
@@ -149,9 +184,9 @@
 
 /**
  *  Source for the low speed clock for RF wake-up
- *  1 : external high speed crystal HSE/32/32 
+ *  1 : external high speed crystal HSE/32/32
  *  0 : external low speed crystal ( no calibration )
- */ 
+ */
 #define CFG_BLE_LSE_SOURCE  0
 
 /**
@@ -173,33 +208,32 @@
 
 /**
  * BLE stack Options flags to be configured with:
- * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY                      
- * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST                        
- * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC           
- * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC         
- * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO               
- * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW               
- * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1                
- * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 
- * which are used to set following configuration bits:            
- * (bit 0): 1: LL only                   
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3
+ * which are used to set following configuration bits:
+ * (bit 0): 1: LL only
  *          0: LL + host
- * (bit 1): 1: no service change desc.   
+ * (bit 1): 1: no service change desc.
  *          0: with service change desc.
- * (bit 2): 1: device name Read-Only     
+ * (bit 2): 1: device name Read-Only
  *          0: device name R/W
- * (bit 7): 1: LE Power Class 1          
- *          0: LE Power Classe 2-3
+ * (bit 7): 1: LE Power Class 1
+ *          0: LE Power Class 2-3
  * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_OPTIONS  SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 
 #define CFG_BLE_MIN_TX_POWER            (0)
 
 #define CFG_BLE_MAX_TX_POWER            (0)
-
 
 /******************************************************************************
  * Transport Layer
@@ -241,8 +275,8 @@
  * Select UART interfaces
  */
 #define CFG_UART_GUI            hw_uart1
-#define CFG_DEBUG_TRACE_UART      hw_lpuart1
-#define CFG_CONSOLE_MENU
+#define CFG_DEBUG_TRACE_UART    hw_lpuart1
+#define CFG_CONSOLE_MENU        hw_uart1
 
 /******************************************************************************
  * USB interface
@@ -252,6 +286,18 @@
  * Enable/Disable USB interface
  */
 #define CFG_USB_INTERFACE_ENABLE        1
+
+/******************************************************************************
+ * IPCC interface
+ ******************************************************************************/
+
+/**
+ * The IPCC is dedicated to the communication between the CPU2 and the CPU1
+ * and shall not be modified by the application
+ * The two following definitions shall not be modified
+ */
+#define HAL_IPCC_TX_IRQHandler(...)  HW_IPCC_Tx_Handler( )
+#define HAL_IPCC_RX_IRQHandler(...)  HW_IPCC_Rx_Handler( )
 
 /******************************************************************************
  * Low Power
@@ -285,6 +331,7 @@
  *
  *  The following settings are computed with LSI as input to the RTC
  */
+
 #define CFG_RTCCLK_DIVIDER_CONF 0
 
 #if (CFG_RTCCLK_DIVIDER_CONF == 0)
@@ -293,9 +340,10 @@
  * It does not support 1Hz calendar
  * It divides the RTC CLK by 16
  */
+
 #define CFG_RTCCLK_DIV  (16)
 #define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (CFG_RTCCLK_DIV - 1)
+#define CFG_RTC_ASYNCH_PRESCALER (0x0F)
 #define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
 
 #else
@@ -339,7 +387,10 @@
 
 typedef enum
 {
-    CFG_TIM_PROC_ID_ISR,
+  CFG_TIM_PROC_ID_ISR,
+  /* USER CODE BEGIN CFG_TimProcID_t */
+
+  /* USER CODE END CFG_TimProcID_t */
 } CFG_TimProcID_t;
 
 /******************************************************************************
@@ -352,10 +403,7 @@ typedef enum
  * This shall be set to 0 in a final product
  *
  */
-#define CFG_HW_RESET_BY_FW        1
-
-#define CFG_LED_SUPPORTED         1
-#define CFG_BUTTON_SUPPORTED      1
+#define CFG_HW_RESET_BY_FW         1
 
 /**
  * keep debugger enabled while in any low power mode when set to 1
@@ -379,7 +427,6 @@ typedef enum
 #define APP_DBG_MSG                 PRINT_NO_MESG
 #endif
 
-
 #if ( (CFG_DEBUG_BLE_TRACE != 0) || (CFG_DEBUG_APP_TRACE != 0) )
 #define CFG_DEBUG_TRACE             1
 #endif
@@ -390,6 +437,7 @@ typedef enum
 #define CFG_LPM_SUPPORTED         0
 #define CFG_DEBUGGER_SUPPORTED      1
 #endif
+
 /**
  * When CFG_DEBUG_TRACE_FULL is set to 1, the trace are output with the API name, the file name and the line number
  * When CFG_DEBUG_TRACE_LIGHT is set to 1, only the debug message is output
@@ -426,6 +474,17 @@ typedef enum
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
 #define MAX_DBG_TRACE_MSG_SIZE 1024
 
+/* USER CODE BEGIN Defines */
+#define CFG_LED_SUPPORTED         1
+#define CFG_BUTTON_SUPPORTED      1
+
+#if defined (USE_STM32WBXX_USB_DONGLE_REVA)
+#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI9_5_IRQHandler
+#else
+#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI15_10_IRQHandler
+#endif
+/* USER CODE END Defines */
+
 /******************************************************************************
  * Scheduler
  ******************************************************************************/
@@ -440,12 +499,14 @@ typedef enum
 /**< Add in that list all tasks that may send a ACI/HCI command */
 typedef enum
 {
-  CFG_TASK_BLE_HCI_CMD_ID,
-  CFG_TASK_SYS_HCI_CMD_ID,
-  CFG_TASK_HCI_ACL_DATA_ID,
-  CFG_TASK_SYS_LOCAL_CMD_ID,
-  CFG_TASK_TX_TO_HOST_ID,
+    CFG_TASK_BLE_HCI_CMD_ID,
+    CFG_TASK_SYS_HCI_CMD_ID,
+    CFG_TASK_HCI_ACL_DATA_ID,
+    CFG_TASK_SYS_LOCAL_CMD_ID,
+    CFG_TASK_TX_TO_HOST_ID,
+/* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
 
+/* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
     CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;
 
@@ -453,10 +514,11 @@ typedef enum
 typedef enum
 {
     CFG_FIRST_TASK_ID_WITH_NO_HCICMD = CFG_LAST_TASK_ID_WITH_HCICMD - 1,        /**< Shall be FIRST in the list */
+    CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
+/* USER CODE BEGIN CFG_Task_Id_With_NO_HCI_Cmd_t */
+    CFG_TASK_VCP_SEND_DATA_ID,
 
-  CFG_TASK_VCP_SEND_DATA_ID,
-  CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
-
+/* USER CODE END CFG_Task_Id_With_NO_HCI_Cmd_t */
     CFG_LAST_TASK_ID_WITHO_NO_HCICMD                                            /**< Shall be LAST in the list */
 } CFG_Task_Id_With_NO_HCI_Cmd_t;
 #define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITHO_NO_HCICMD
@@ -469,6 +531,7 @@ typedef enum
 {
     CFG_SCH_PRIO_0,
   CFG_SCH_PRIO_1,
+
     CFG_PRIO_NBR,
 } CFG_SCH_Prio_Id_t;
 
@@ -485,7 +548,7 @@ typedef enum
  ******************************************************************************/
 /**
  * Supported requester to the MCU Low Power Manager - can be increased up  to 32
- * It lits a bit mapping of all user of the Low Power Manager
+ * It list a bit mapping of all user of the Low Power Manager
  */
 typedef enum
 {
@@ -503,6 +566,6 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
-#endif /*__APP_CONFIG_H */
+#endif /*APP_CONF_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,11 +1,12 @@
- /*******************************************************************************
-  * @file    stm32_lpm_if.c
-  * @author  MCD Application Team
-  * @brief   Low layer function to enter/exit low power modes (stop, sleep)
-  ******************************************************************************
+/* USER CODE BEGIN Header */
+/**
+ ***************************************************************************************
+  * File Name          : stm32_lpm_if.c
+  * Description        : Low layer function to enter/exit low power modes (stop, sleep).
+ ***************************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -15,8 +16,9 @@
   *
   ******************************************************************************
   */
-  
-/* Includes ------------------------------------------------------------------*/  
+/* USER CODE END Header */
+
+/* Includes ------------------------------------------------------------------*/
 #include "stm32_lpm_if.h"
 #include "stm32_lpm.h"
 #include "app_conf.h"
@@ -25,21 +27,23 @@
 /* USER CODE END include */
 
 /* Exported variables --------------------------------------------------------*/
-const struct UTIL_LPM_Driver_s UTIL_PowerDriver = 
+const struct UTIL_LPM_Driver_s UTIL_PowerDriver =
 {
   PWR_EnterSleepMode,
   PWR_ExitSleepMode,
-  
+
   PWR_EnterStopMode,
-  PWR_ExitStopMode, 
-  
+  PWR_ExitStopMode,
+
   PWR_EnterOffMode,
   PWR_ExitOffMode,
 };
 
 /* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN Private_Function_Prototypes */
 static void Switch_On_HSI( void );
+static void EnterLowPower( void );
+static void ExitLowPower( void );
+/* USER CODE BEGIN Private_Function_Prototypes */
 
 /* USER CODE END Private_Function_Prototypes */
 /* Private typedef -----------------------------------------------------------*/
@@ -59,6 +63,7 @@ static void Switch_On_HSI( void );
 
 /* USER CODE END Private_Variables */
 
+/* Functions Definition ------------------------------------------------------*/
 /**
   * @brief Enters Low Power Off Mode
   * @param none
@@ -66,13 +71,16 @@ static void Switch_On_HSI( void );
   */
 void PWR_EnterOffMode( void )
 {
-/* USER CODE BEGIN PWR_EnterOffMode */
+/* USER CODE BEGIN PWR_EnterOffMode_1 */
 
+/* USER CODE END PWR_EnterOffMode_1 */
   /**
    * The systick should be disabled for the same reason than when the device enters stop mode because
    * at this time, the device may enter either OffMode or StopMode.
    */
   HAL_SuspendTick();
+
+  EnterLowPower();
 
   /************************************************************************************
    * ENTER OFF MODE
@@ -97,8 +105,12 @@ void PWR_EnterOffMode( void )
   __force_stores( );
 #endif
 
-  __WFI( );
-/* USER CODE END PWR_EnterOffMode */
+  __WFI();
+
+/* USER CODE BEGIN PWR_EnterOffMode_2 */
+
+/* USER CODE END PWR_EnterOffMode_2 */
+  return;
 }
 
 /**
@@ -108,11 +120,14 @@ void PWR_EnterOffMode( void )
   */
 void PWR_ExitOffMode( void )
 {
-/* USER CODE BEGIN PWR_ExitOffMode */
+/* USER CODE BEGIN PWR_ExitOffMode_1 */
 
+/* USER CODE END PWR_ExitOffMode_1 */
   HAL_ResumeTick();
+/* USER CODE BEGIN PWR_ExitOffMode_2 */
 
-/* USER CODE END PWR_ExitOffMode */
+/* USER CODE END PWR_ExitOffMode_2 */
+  return;
 }
 
 /**
@@ -123,7 +138,9 @@ void PWR_ExitOffMode( void )
   */
 void PWR_EnterStopMode( void )
 {
-/* USER CODE BEGIN PWR_EnterStopMode */
+/* USER CODE BEGIN PWR_EnterStopMode_1 */
+
+/* USER CODE END PWR_EnterStopMode_1 */
   /**
    * When HAL_DBGMCU_EnableDBGStopMode() is called to keep the debugger active in Stop Mode,
    * the systick shall be disabled otherwise the cpu may crash when moving out from stop mode
@@ -137,11 +154,125 @@ void PWR_EnterStopMode( void )
   /**
    * This function is called from CRITICAL SECTION
    */
+  EnterLowPower();
+
+  /************************************************************************************
+   * ENTER STOP MODE
+   ***********************************************************************************/
+  LL_PWR_SetPowerMode( LL_PWR_MODE_STOP2 );
+
+  LL_LPM_EnableDeepSleep( ); /**< Set SLEEPDEEP bit of Cortex System Control Register */
+
+  /**
+   * This option is used to ensure that store operations are completed
+   */
+#if defined ( __CC_ARM)
+  __force_stores( );
+#endif
+
+  __WFI();
+
+/* USER CODE BEGIN PWR_EnterStopMode_2 */
+
+/* USER CODE END PWR_EnterStopMode_2 */
+  return;
+}
+
+/**
+  * @brief Exits Low Power Stop Mode
+  * @note Enable the pll at 32MHz
+  * @param none
+  * @retval none
+  */
+void PWR_ExitStopMode( void )
+{
+/* USER CODE BEGIN PWR_ExitStopMode_1 */
+
+/* USER CODE END PWR_ExitStopMode_1 */
+  /**
+   * This function is called from CRITICAL SECTION
+   */
+  ExitLowPower();
+
+  HAL_ResumeTick();
+/* USER CODE BEGIN PWR_ExitStopMode_2 */
+
+/* USER CODE END PWR_ExitStopMode_2 */
+  return;
+}
+
+/**
+  * @brief Enters Low Power Sleep Mode
+  * @note ARM exits the function when waking up
+  * @param none
+  * @retval none
+  */
+void PWR_EnterSleepMode( void )
+{
+/* USER CODE BEGIN PWR_EnterSleepMode_1 */
+
+/* USER CODE END PWR_EnterSleepMode_1 */
+
+  HAL_SuspendTick();
+
+  /************************************************************************************
+   * ENTER SLEEP MODE
+   ***********************************************************************************/
+  LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
+
+  /**
+   * This option is used to ensure that store operations are completed
+   */
+#if defined ( __CC_ARM)
+  __force_stores();
+#endif
+
+  __WFI( );
+/* USER CODE BEGIN PWR_EnterSleepMode_2 */
+
+/* USER CODE END PWR_EnterSleepMode_2 */
+  return;
+}
+
+/**
+  * @brief Exits Low Power Sleep Mode
+  * @note ARM exits the function when waking up
+  * @param none
+  * @retval none
+  */
+void PWR_ExitSleepMode( void )
+{
+/* USER CODE BEGIN PWR_ExitSleepMode_1 */
+
+/* USER CODE END PWR_ExitSleepMode_1 */
+  HAL_ResumeTick();
+/* USER CODE BEGIN PWR_ExitSleepMode_2 */
+
+/* USER CODE END PWR_ExitSleepMode_2 */
+  return;
+}
+
+/*************************************************************
+ *
+ * LOCAL FUNCTIONS
+ *
+ *************************************************************/
+/**
+  * @brief Setup the system to enter either stop or off mode
+  * @param none
+  * @retval none
+  */
+static void EnterLowPower( void )
+{
+  /**
+   * This function is called from CRITICAL SECTION
+   */
+
   while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
 
   if ( ! LL_HSEM_1StepLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID ) )
   {
-    if( LL_PWR_IsActiveFlag_C2DS( ) )
+    if( LL_PWR_IsActiveFlag_C2DS() || LL_PWR_IsActiveFlag_C2SB() )
     {
       /* Release ENTRY_STOP_MODE semaphore */
       LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
@@ -165,109 +296,46 @@ void PWR_EnterStopMode( void )
   /* Release RCC semaphore */
   LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
 
-  /************************************************************************************
-   * ENTER STOP MODE
-   ***********************************************************************************/
-  LL_PWR_SetPowerMode( LL_PWR_MODE_STOP2 );
-
-  LL_LPM_EnableDeepSleep( ); /**< Set SLEEPDEEP bit of Cortex System Control Register */
-
-  /**
-   * This option is used to ensure that store operations are completed
-   */
-#if defined ( __CC_ARM)
-  __force_stores( );
-#endif
-
-  __WFI();
-/* USER CODE END PWR_EnterStopMode */
+  return;
 }
 
 /**
-  * @brief Exits Low Power Stop Mode
+  * @brief Restore the system to exit stop mode
   * @param none
   * @retval none
   */
-void PWR_ExitStopMode( void )
+static void ExitLowPower( void )
 {
-/* USER CODE BEGIN PWR_ExitStopMode */
-  /**
-   * This function is called from CRITICAL SECTION
-   */
-
   /* Release ENTRY_STOP_MODE semaphore */
   LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
 
   while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
-// CCO : Taken from MAC project already validated in low-power
-//  if(LL_RCC_GetSysClkSource( ) == LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
-  if(LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSE)
+
+  if(LL_RCC_GetSysClkSource( ) == LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
   {
+/* Restore the clock configuration of the application in this user section */
+/* USER CODE BEGIN ExitLowPower_1 */
     LL_RCC_HSE_Enable( );
+    __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_1);
     while(!LL_RCC_HSE_IsReady( ));
     LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSE);
     while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);
+/* USER CODE END ExitLowPower_1 */
   }
   else
   {
-    /**
-     * As long as the current application is fine with HSE as system clock source,
-     * there is nothing to do here
-     */
+/* If the application is not running on HSE restore the clock configuration in this user section */
+/* USER CODE BEGIN ExitLowPower_2 */
+
+/* USER CODE END ExitLowPower_2 */
   }
 
   /* Release RCC semaphore */
   LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
 
-  HAL_ResumeTick();
-
-/* USER CODE END PWR_ExitStopMode */
+  return;
 }
 
-/**
-  * @brief Enters Low Power Sleep Mode
-  * @note ARM exits the function when waking up
-  * @param none
-  * @retval none
-  */
-void PWR_EnterSleepMode( void )
-{
-/* USER CODE BEGIN PWR_EnterSleepMode */
-
-  HAL_SuspendTick();
-
-  /************************************************************************************
-   * ENTER SLEEP MODE
-   ***********************************************************************************/
-  LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
-
-  /**
-   * This option is used to ensure that store operations are completed
-   */
-#if defined ( __CC_ARM)
-  __force_stores();
-#endif
-
-  __WFI( );
-/* USER CODE END PWR_EnterSleepMode */
-}
-
-/**
-  * @brief Exits Low Power Sleep Mode
-  * @note ARM exits the function when waking up
-  * @param none
-  * @retval none
-  */
-void PWR_ExitSleepMode( void )
-{
-/* USER CODE BEGIN PWR_ExitSleepMode */
-
-  HAL_ResumeTick();
-
-/* USER CODE END PWR_ExitSleepMode */
-}
-
-/* USER CODE BEGIN Private_Functions */
 /**
   * @brief Switch the system clock on HSI
   * @param none
@@ -280,7 +348,10 @@ static void Switch_On_HSI( void )
   LL_RCC_SetSysClkSource( LL_RCC_SYS_CLKSOURCE_HSI );
   LL_RCC_SetSMPSClockSource(LL_RCC_SMPS_CLKSOURCE_HSI);
   while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSI);
+  return;
 }
+
+/* USER CODE BEGIN Private_Functions */
 
 /* USER CODE END Private_Functions */
 

@@ -31,6 +31,7 @@
  * blesvc
  *
  ******************************************************************************/
+
 /**
  * There is one handler per service enabled
  * Note: There is no handler for the Device Information Service
@@ -40,7 +41,7 @@
  */
 #define BLE_CFG_SVC_MAX_NBR_CB                                                 7
 
-#define BLE_CFG_CLT_MAX_NBR_CB                                                 3
+#define BLE_CFG_CLT_MAX_NBR_CB                                                 1
 
 /******************************************************************************
  * Device Information Service (DIS)
@@ -59,15 +60,15 @@
 /**
  * device information service characteristic lengths
  */
-#define BLE_CFG_DIS_SYSTEM_ID_LEN_MAX                                        (8)
-#define BLE_CFG_DIS_MODEL_NUMBER_STRING_LEN_MAX                              (32)
-#define BLE_CFG_DIS_SERIAL_NUMBER_STRING_LEN_MAX                             (32)
-#define BLE_CFG_DIS_FIRMWARE_REVISION_STRING_LEN_MAX                         (32)
-#define BLE_CFG_DIS_HARDWARE_REVISION_STRING_LEN_MAX                         (32)
-#define BLE_CFG_DIS_SOFTWARE_REVISION_STRING_LEN_MAX                         (32)
-#define BLE_CFG_DIS_MANUFACTURER_NAME_STRING_LEN_MAX                         (32)
-#define BLE_CFG_DIS_IEEE_CERTIFICATION_LEN_MAX                               (32)
-#define BLE_CFG_DIS_PNP_ID_LEN_MAX                                           (7)
+#define BLE_CFG_DIS_SYSTEM_ID_LEN_MAX                                       (8)
+#define BLE_CFG_DIS_MODEL_NUMBER_STRING_LEN_MAX                             (32)
+#define BLE_CFG_DIS_SERIAL_NUMBER_STRING_LEN_MAX                            (32)
+#define BLE_CFG_DIS_FIRMWARE_REVISION_STRING_LEN_MAX                        (32)
+#define BLE_CFG_DIS_HARDWARE_REVISION_STRING_LEN_MAX                        (32)
+#define BLE_CFG_DIS_SOFTWARE_REVISION_STRING_LEN_MAX                        (32)
+#define BLE_CFG_DIS_MANUFACTURER_NAME_STRING_LEN_MAX                        (32)
+#define BLE_CFG_DIS_IEEE_CERTIFICATION_LEN_MAX                              (32)
+#define BLE_CFG_DIS_PNP_ID_LEN_MAX                                          (7)
 
 /******************************************************************************
  * Heart Rate Service (HRS)
@@ -75,6 +76,14 @@
 #define BLE_CFG_HRS_BODY_SENSOR_LOCATION_CHAR           1 /**< BODY SENSOR LOCATION CHARACTERISTIC */
 #define BLE_CFG_HRS_ENERGY_EXPENDED_INFO_FLAG           1 /**< ENERGY EXTENDED INFO FLAG */
 #define BLE_CFG_HRS_ENERGY_RR_INTERVAL_FLAG             1 /**< Max number of RR interval values - Shall not be greater than 9 */
+
+/******************************************************************************
+ * GAP Service - Appearance
+ ******************************************************************************/
+
+#define BLE_CFG_UNKNOWN_APPEARANCE                  (0)
+#define BLE_CFG_HR_SENSOR_APPEARANCE                (832)
+#define BLE_CFG_GAP_APPEARANCE                      (BLE_CFG_HR_SENSOR_APPEARANCE)
 
 #endif /*BLE_CONF_H */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

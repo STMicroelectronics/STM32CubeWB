@@ -66,6 +66,19 @@ typedef PACKED_STRUCT
  * THIS SHALL BE SET TO A VALUE DIFFERENT FROM 0 ONLY ON REQUEST FROM ST SUPPORT
  */
 #define BLE_DTB_CFG     0
+
+/**
+ * System Debug Options flags to be configured with:
+ * - SHCI_C2_DEBUG_OPTIONS_IPCORE_LP
+ * - SHCI_C2_DEBUG_OPTIONS_IPCORE_NO_LP
+ * - SHCI_C2_DEBUG_OPTIONS_CPU2_STOP_EN
+ * - SHCI_C2_DEBUG_OPTIONS_CPU2_STOP_DIS
+ * which are used to set following configuration bits:
+   * - bit 0:   0: IP BLE core in LP mode    1: IP BLE core in run mode (no LP supported)
+   * - bit 1:   0: CPU2 STOP mode Enable     1: CPU2 STOP mode Disable 
+   * - bit [2-7]: bits reserved ( shall be set to 0)
+ */
+#define SYS_DBG_CFG1  (SHCI_C2_DEBUG_OPTIONS_IPCORE_LP | SHCI_C2_DEBUG_OPTIONS_CPU2_STOP_EN) 
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/
@@ -74,8 +87,17 @@ typedef PACKED_STRUCT
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static APPD_TracesConfig_t APPD_TracesConfig={0, 0, 0, 0};
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static APPD_GeneralConfig_t APPD_GeneralConfig={BLE_DTB_CFG, {0, 0, 0}};
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_TracesConfig_t APPD_TracesConfig={0, 0, 0, 0};
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_GeneralConfig_t APPD_GeneralConfig={BLE_DTB_CFG, SYS_DBG_CFG1, {0, 0}};
+
+#ifdef CFG_DEBUG_TRACE_UART
+#if(CFG_HW_LPUART1_ENABLED == 1)
+extern void MX_LPUART1_UART_Init(void);
+#endif
+#if(CFG_HW_USART1_ENABLED == 1)
+extern void MX_USART1_UART_Init(void);
+#endif
+#endif
 
 /**
  * THE DEBUG ON GPIO FOR CPU2 IS INTENDED TO BE USED ONLY ON REQUEST FROM ST SUPPORT
@@ -161,8 +183,6 @@ static const APPD_GpioConfig_t aRfConfigList[GPIO_NBR_OF_RF_SIGNALS] =
 /* USER CODE BEGIN PFP */
 static void APPD_SetCPU2GpioConfig( void );
 static void APPD_BleDtbCfg( void );
-extern void MX_USART1_UART_Init(void);
-
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/

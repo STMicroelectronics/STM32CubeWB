@@ -175,3 +175,5 @@ SPI1.VirtualType=VM_MASTER
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=SPI_FullDuplex_ComDMA_Master
+ProjectManager.ExampleSource=CubeFw

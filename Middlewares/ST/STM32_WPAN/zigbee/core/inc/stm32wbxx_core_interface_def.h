@@ -48,6 +48,7 @@ typedef enum {
     MSG_M0TOM4_UNKNOWN,
     /* Query M0 to get secured memory information */
     MSG_M4TOM0_GET_SECURED_MEM_INFO,
+    MSG_M4TOM0_GET_ZB_HEAP_AVAILABLE, /* ZbHeapAvailable */
     /* WPAN Interface (Virtual Testing Only) */
     MSG_M4TOM0_WPAN_INIT,
     MSG_M4TOM0_WPAN_DESTROY,
@@ -59,6 +60,8 @@ typedef enum {
     /* Stack Init / Destroy */
     MSG_M4TOM0_ZB_INIT, /* ZbInit */
     MSG_M4TOM0_ZB_DESTROY, /* ZbDestroy */
+    MSG_M4TOM0_ZB_DESTROY_WITH_CB, /* ZbDestroyWithCb */
+    MSG_M0TOM4_ZB_DESTROY_CB,
     /* Stack Misc */
     MSG_M4TOM0_EXTADDR_GET, /* ZbExtendedAddress */
     MSG_M4TOM0_EXTADDR_CHANGE, /* ZbChangeExtAddr */
@@ -95,10 +98,16 @@ typedef enum {
     MSG_M4TOM0_PERSIST_ENABLE, /* ZbPersistNotifyRegister */
     MSG_M0TOM4_PERSIST_CB, /* Persistent data update notification callback */
     MSG_M4TOM0_PERSIST_GET, /* ZbPersistGet */
+    MSG_M4TOM0_STATE_GET, /* ZbStateGet */
     /* ZbLeave / ZbReset */
     MSG_M4TOM0_ZB_LEAVE_REQ, /* ZbLeaveReq */
     MSG_M0TOM4_ZB_LEAVE_CB, /* Callback for ZbLeaveReq */
     MSG_M4TOM0_ZB_RESET_REQ, /* ZbReset */
+    /* Shutdown, Pause, Resume */
+    MSG_M4TOM0_ZB_SHUTDOWN, /* ZbShutdown */
+    MSG_M4TOM0_ZB_STATE_PAUSE, /* ZbStatePause */
+    MSG_M0TOM4_ZB_STATE_PAUSE_CB,
+    MSG_M4TOM0_ZB_STATE_RESUME, /* ZbStateResume */
     /* AES Hashing Functions */
     MSG_M4TOM0_ZB_HASH_ADD, /* ZbHashAdd */
     MSG_M4TOM0_ZB_HASH_DIGEST, /* ZbHashDigest */
@@ -134,7 +143,6 @@ typedef enum {
     MSG_M4TOM0_ZDO_DEVICE_ANNCE, /* ZbZdoDeviceAnnce */
     MSG_M4TOM0_ZDO_DEVICE_ANNCE_ALIAS, /* ZbZdoDeviceAnnceAlias (reusing a reserved ZDO cluster ID) */
     MSG_M4TOM0_ZDO_DEVICE_ANNCE_FILTER_REG, /* ZbZdoDeviceAnnceFilterRegister */
-    MSG_M4TOM0_ZDO_DEVICE_ANNCE_FILTER_DEL, /* ZbZdoDeviceAnnceFilterRemove */
     MSG_M0TOM4_ZDO_DEVICE_ANNCE_FILTER_CB,
     MSG_M4TOM0_ZDO_BIND, /* ZbZdoBindReq */
     MSG_M0TOM4_ZDO_BIND_CB,
@@ -159,8 +167,8 @@ typedef enum {
     MSG_M4TOM0_ZDO_MGMT_NWK_IEEE_JOIN_BCAST, /* ZbZdoNwkIeeeJoinListBcastAll */
 #endif
     MSG_M4TOM0_ZDO_MGMT_NWK_UPDATE_FILTER_REGISTER, /* ZbZdoNwkUpdateNotifyFilterRegister */
-    MSG_M4TOM0_ZDO_MGMT_NWK_UPDATE_FILTER_REMOVE, /* ZbZdoNwkUpdateNotifyFilterRemove */
     MSG_M0TOM4_ZDO_MGMT_NWK_UPDATE_FILTER_CB,
+    MSG_M4TOM0_ZDO_FILTER_DEL, /* ZbZdoFilterRemove */
     /* Reserved to 0x01ff Future Use */
 
     /* BDB */

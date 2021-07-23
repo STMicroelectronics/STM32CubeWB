@@ -29,6 +29,9 @@
 /******************************************************************************
  * Application Config
  ******************************************************************************/
+#define CFG_HS_STARTUP_TIME 0x0099 /* Start up time of the high speed oscillator in system time units (625/256us) */
+
+#define CFG_BACK2BACK_TIME 200 /* Back to back time (us) */
 
 /******************************************************************************
  * Transport Layer
@@ -56,7 +59,7 @@
  * Select UART interfaces
  */
 #define CFG_DEBUG_TRACE_UART    hw_lpuart1
-#define CFG_CLI_UART    hw_uart1
+#define CFG_UART    hw_uart1
 
 /******************************************************************************
  * USB interface
@@ -77,11 +80,13 @@
  *
  ******************************************************************************/
 #define CFG_LPM_SUPPORTED   0
-   
+
 #ifdef BLE_LLD_LP
 #undef CFG_LPM_SUPPORTED
 #define CFG_LPM_SUPPORTED   1
 #endif
+
+#define CFG_PWR_MODE_STOP      LL_PWR_MODE_STOP2
 
 /******************************************************************************
  * Timer Server
@@ -258,15 +263,6 @@ typedef enum
 #endif
 
 
-#ifdef STM32WB35xx
-#define PUSH_BUTTON_SW1_EXTI_IRQHandler                         EXTI0_IRQHandler
-#define PUSH_BUTTON_SW2_EXTI_IRQHandler                         EXTI4_IRQHandler
-#define PUSH_BUTTON_SW3_EXTI_IRQHandler                         EXTI9_5_IRQHandler
-#else
-#define PUSH_BUTTON_SW1_EXTI_IRQHandler                         EXTI4_IRQHandler
-#define PUSH_BUTTON_SW2_EXTI_IRQHandler                         EXTI0_IRQHandler
-#define PUSH_BUTTON_SW3_EXTI_IRQHandler                         EXTI1_IRQHandler
-#endif
 /* USER CODE END Defines */
 
 /******************************************************************************
@@ -282,10 +278,8 @@ typedef enum
   CFG_TASK_CMD_FROM_M0_TO_M4,
   CFG_TASK_SEND_CLI_TO_M0,
   CFG_TASK_SEND_TO_M0,
-  CFG_TASK_HAL_BLE_INIT,
 /* USER CODE BEGIN IdleTask */
-     CFG_TASK_HAL_BLE_SENDPACKET,
-     CFG_TASK_HAL_BLE_RECEIVEPACKET,
+     CFG_TASK_TIMER,
 /* USER CODE END IdleTask */
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
   CFG_TASK_PROCESS_UART_RX_BUFFER,

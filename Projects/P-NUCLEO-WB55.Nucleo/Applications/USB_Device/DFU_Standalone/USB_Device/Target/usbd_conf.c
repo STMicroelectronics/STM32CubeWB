@@ -37,7 +37,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
 
 /* USER CODE END PV */
 
@@ -58,6 +57,7 @@ void Error_Handler(void);
 /* Private functions ---------------------------------------------------------*/
 static USBD_StatusTypeDef USBD_Get_USB_Status(HAL_StatusTypeDef hal_status);
 /* USER CODE BEGIN 1 */
+static void SystemClockConfig_Resume(void);
 
 /* USER CODE END 1 */
 extern void SystemClock_Config(void);
@@ -264,6 +264,11 @@ void HAL_PCD_SuspendCallback(PCD_HandleTypeDef *hpcd)
   USBD_LL_Suspend((USBD_HandleTypeDef*)hpcd->pData);
   /* Enter in STOP mode. */
   /* USER CODE BEGIN 2 */
+  if (hpcd->Init.low_power_enable)
+  {
+    /* Set SLEEPDEEP bit and SleepOnExit of Cortex System Control Register. */
+    SCB->SCR |= (uint32_t)((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
+  }
   /* USER CODE END 2 */
   /* USER CODE BEGIN HAL_PCD_SuspendCallback_PostTreatment */
 
@@ -287,6 +292,12 @@ void HAL_PCD_ResumeCallback(PCD_HandleTypeDef *hpcd)
   /* USER CODE END HAL_PCD_ResumeCallback_PreTreatment */
 
   /* USER CODE BEGIN 3 */
+  if (hpcd->Init.low_power_enable)
+  {
+    /* Reset SLEEPDEEP bit of Cortex System Control Register. */
+    SCB->SCR &= (uint32_t)~((uint32_t)(SCB_SCR_SLEEPDEEP_Msk | SCB_SCR_SLEEPONEXIT_Msk));
+    SystemClockConfig_Resume();
+  }
   /* USER CODE END 3 */
 
   USBD_LL_Resume((USBD_HandleTypeDef*)hpcd->pData);
@@ -668,10 +679,10 @@ USBD_StatusTypeDef USBD_LL_PrepareReceive(USBD_HandleTypeDef *pdev, uint8_t ep_a
 }
 
 /**
-  * @brief  Returns the last transfered packet size.
+  * @brief  Returns the last transferred packet size.
   * @param  pdev: Device handle
   * @param  ep_addr: Endpoint number
-  * @retval Recived Data Size
+  * @retval Received Data Size
   */
 uint32_t USBD_LL_GetRxDataSize(USBD_HandleTypeDef *pdev, uint8_t ep_addr)
 {
@@ -710,11 +721,19 @@ void USBD_static_free(void *p)
 }
 
 /* USER CODE BEGIN 5 */
-
+/**
+  * @brief  Configures system clock after wake-up from USB resume callBack:
+  *         enable HSI, PLL and select PLL as system clock source.
+  * @retval None
+  */
+static void SystemClockConfig_Resume(void)
+{
+  SystemClock_Config();
+}
 /* USER CODE END 5 */
 
 /**
-  * @brief  Retuns the USB status depending on the HAL status:
+  * @brief  Returns the USB status depending on the HAL status:
   * @param  hal_status: HAL status
   * @retval USB status
   */

@@ -1058,16 +1058,6 @@ typedef PACKED(struct)
 
 typedef PACKED(struct)
 {
-  uint32_t SMP_Config;
-} aci_hal_set_smp_eng_config_cp0;
-
-typedef PACKED(struct)
-{
-  uint8_t Status;
-} aci_hal_set_smp_eng_config_rp0;
-
-typedef PACKED(struct)
-{
   uint8_t Status;
   uint8_t Allocated_For_TX;
   uint8_t Allocated_For_RX;
@@ -1690,6 +1680,37 @@ typedef PACKED(struct)
 {
   uint8_t Status;
 } aci_gap_remove_bonded_device_rp0;
+
+typedef PACKED(struct)
+{
+  uint16_t Adv_Interval_Min;
+  uint16_t Adv_Interval_Max;
+  uint8_t Adv_Channel_Map;
+  uint8_t Own_Address_Type;
+  uint8_t Own_Address[6];
+  uint8_t PA_Level;
+} aci_gap_additional_beacon_start_cp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Status;
+} aci_gap_additional_beacon_start_rp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Status;
+} aci_gap_additional_beacon_stop_rp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Adv_Data_Length;
+  uint8_t Adv_Data[BLE_CMD_MAX_PARAM_LEN - 1];
+} aci_gap_additional_beacon_set_data_cp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Status;
+} aci_gap_additional_beacon_set_data_rp0;
 
 typedef PACKED(struct)
 {

@@ -33,6 +33,12 @@ How to use OnOff cluster as a client on a centralized Zigbee network.
         and shall not be changed to a different value).
       - SW3 is mapped. When pushed forces a reboot on Zigbee_OTA_Client_Router application (so that a new FW OTA update can be done).
 
+
+This application is to be used when playing with the Zigbee_OTA_Client_Router and Zigbee_OTA_Server_Coord applications.
+When running the OTA example (based on Zigbee_OTA_Client_Router and Zigbee_OTA_Server_Coord applications), this application
+is the one that can be transfered from the Coordinator to the Router. 
+
+
 The purpose of this application is to show how to create a Zigbee centralized network, and 
 how to communicate from one node to another one using the OnOff cluster. Once the Zigbee mesh 
 network is created, the user can send requests from the client to the server through the push button 
@@ -50,7 +56,7 @@ For this application it is requested to have:
     
 
 In order for the OTA application to be able to reconnect to the coordinator network after an upgrade, the stack parameters 
-have to be persisted. This is why Zigbee_OnOff_Client_Router_Ota is using data persitence mechanism 
+have to be persisted. This is why Zigbee_OnOff_Client_Router_Ota is using data persistence mechanism 
 (with both Flash storage and RAM cache). Stack parameters are saved with the Zigbee_OTA_Client_Router application 
 (its using persistence too) while processing to the update. 
 
@@ -73,7 +79,7 @@ As with the persistent data demo applications set, the NVM can be cleared by pre
              |       |---                                   |       |
              ---------                                      ---------
   
-To setup the application :
+ To setup the application :
 
   a)  Open the project, build it and load your generated application on your STM32WB devices.
   

@@ -163,3 +163,5 @@ VP_FREERTOS_VS_CMSIS_V1.Signal=FREERTOS_VS_CMSIS_V1
 VP_SYS_VS_tim2.Mode=TIM2
 VP_SYS_VS_tim2.Signal=SYS_VS_tim2
 board=custom
+ProjectManager.Example=FreeRTOS_Mutexes
+ProjectManager.ExampleSource=CubeFw

@@ -105,7 +105,7 @@
  * The user may define the maximum number of virtual timers supported.
  * It shall not exceed 255
  */
-#define CFG_HW_TS_MAX_NBR_CONCURRENT_TIMER  7
+#define CFG_HW_TS_MAX_NBR_CONCURRENT_TIMER  6
 
 /**
  * The user may define the priority in the NVIC of the RTC_WKUP interrupt handler that is used to manage the
@@ -160,8 +160,8 @@
 /******************************************************************************
  * HW UART
  *****************************************************************************/
-#define CFG_HW_LPUART1_ENABLED           0
-#define CFG_HW_LPUART1_DMA_TX_SUPPORTED  0
+#define CFG_HW_LPUART1_ENABLED                 1
+#define CFG_HW_LPUART1_DMA_TX_SUPPORTED        1
 
 #define CFG_HW_USART1_ENABLED                  0
 #define CFG_HW_USART1_DMA_TX_SUPPORTED         0

@@ -2,7 +2,7 @@
  * @file zigbee.zdo.h
  * @brief Zigbee ZDO header file
  * @author Exegin Technologies Limited
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  *
  * This file provides the declaration of all the public API's and macros used by the ZDO layer.
  */
@@ -10,7 +10,7 @@
 #ifndef ZIGBEE_ZDO_H
 # define ZIGBEE_ZDO_H
 
-struct ZbZdoNwkUpdateNotifyFilterT;
+struct ZbZdoFilterT;
 
 /*---------------------------------------------------------------
  * Misc. Definitions and Structures
@@ -35,7 +35,7 @@ enum ZbZdoAddrReqTypeT {
 #define ZB_ZDP_NWK_UPDATE_MANAGER_PARAMETERS        0xffU
 
 /* Maximum Response Sizes */
-/* EXEGIN (sal) was 64, but end up allocating too much on the stack */
+/* NOTE was 64, but end up allocating too much on the stack */
 #define ZB_ZDO_CLUSTER_LIST_MAX_SZ                  16U
 #define ZB_ZDO_NETWORK_LIST_MAX_SZ                  8U
 #define ZB_ZDO_NEIGHBOR_LIST_MAX_SZ                 4U
@@ -708,26 +708,18 @@ void ZbZdoDeviceAnnceAlias(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceT *deviceA
  */
 int ZbZdoParseDeviceAnnce(struct ZbZdoDeviceAnnceT *structPtr, const uint8_t *buf, unsigned int len);
 
-/** API to register a filter in the ZDO for the application to receive Device_Annce messages. */
-struct ZbZdoDeviceAnnceFilterT;
-
 /**
  * Register a filter in the ZDO for the application to receive Device_Annce messages.
+ * Freed by calling ZbZdoFilterRemove.
  * @param zb Zigbee stack instance
- * @param callback Function to call on completion
+ * @param callback Function to call upon reception of a valid ZDO Device-Annce message.
+ * Callback can return ZB_APS_FILTER_CONTINUE to process other filters,
+ * or ZB_APS_FILTER_DISCARD if all processing of this message should stop.
  * @param arg Callback argument
  * @return Pointer to filter structure
  */
-struct ZbZdoDeviceAnnceFilterT * ZbZdoDeviceAnnceFilterRegister(struct ZigBeeT *zb,
-    void (*callback)(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceT *annce, uint8_t seqno, void *arg), void *arg);
-
-/**
- * Remove a Device_annce filter description.
- * @param zb Zigbee stack instance
- * @param handler Device_annce filter handler
- * @return Returns void
- */
-void ZbZdoDeviceAnnceFilterRemove(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceFilterT *handler);
+struct ZbZdoFilterT * ZbZdoDeviceAnnceFilterRegister(struct ZigBeeT *zb,
+    int (*callback)(struct ZigBeeT *zb, struct ZbZdoDeviceAnnceT *annce, uint8_t seqno, void *arg), void *arg);
 
 /*---------------------------------------------------------------
  * ZDP Binding Requests
@@ -837,22 +829,17 @@ enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkUpdateNotify(struct ZigBeeT *zb, struc
 
 /**
  * Register a filter in the ZDO for the application to receive Mgmt_Nwk_Update_notify messages.
+ * Freed by calling ZbZdoFilterRemove.
  * @param zb Zigbee stack instance
- * @param callback Function to call on completion
+ * @param callback Function to call upon reception of a valid ZDO NWK-Update-Notify message.
+ * Callback can return ZB_APS_FILTER_CONTINUE to process other filters,
+ * or ZB_APS_FILTER_DISCARD if all processing of this message should stop.
  * @param arg Callback argument
  * @return Pointer to filter structure
  */
-struct ZbZdoNwkUpdateNotifyFilterT * ZbZdoNwkUpdateNotifyFilterRegister(struct ZigBeeT *zb,
-    void (*callback)(struct ZigBeeT *zb, struct ZbZdoNwkUpdateNotifyT *msg,
+struct ZbZdoFilterT * ZbZdoNwkUpdateNotifyFilterRegister(struct ZigBeeT *zb,
+    int (*callback)(struct ZigBeeT *zb, struct ZbZdoNwkUpdateNotifyT *msg,
         uint8_t seqno, void *arg), void *arg);
-
-/**
- * Remove a Mgmt_Nwk_Update_notify filter.
- * @param zb Zigbee stack instance
- * @param handler Mgmt_Nwk_Update_notify filter handle
- * @return Returns void
- */
-void ZbZdoNwkUpdateNotifyFilterRemove(struct ZigBeeT *zb, struct ZbZdoNwkUpdateNotifyFilterT *handle);
 
 /**
  * Perform a Mgmt_leave_req command.
@@ -924,4 +911,12 @@ unsigned int ZbZdoNwkIeeeJoinListRsp(struct ZigBeeT *zb, uint16_t dstNwkAddr,
  */
 unsigned int ZbZdoNwkIeeeJoinListBcastAll(struct ZigBeeT *zb);
 
-#endif /* ZIGBEE_ZDO_H */
+/**
+ * Remove a ZDO filter.
+ * @param zb Zigbee stack instance
+ * @param filter Filter instance to remove and free
+ * @return Returns void
+ */
+void ZbZdoFilterRemove(struct ZigBeeT *zb, struct ZbZdoFilterT *filter);
+
+#endif

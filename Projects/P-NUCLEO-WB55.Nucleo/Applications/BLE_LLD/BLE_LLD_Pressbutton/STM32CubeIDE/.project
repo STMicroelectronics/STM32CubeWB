@@ -141,6 +141,16 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/ble_hal.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/ble_lld/hal/ble_hal.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/ble_lld.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/ble_lld/lld/ble_lld.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/dbg_trace.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</locationURI>
@@ -201,11 +211,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/main.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/Core/pressbutton_app.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/pressbutton_app.c</locationURI>
-		</link>
-		<link>
 			<name>Application/User/Core/stm32_lpm_if.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/stm32_lpm_if.c</locationURI>
@@ -231,14 +236,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/STM32_WPAN/App/app_ble_lld.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/STM32_WPAN/App/ble_lld.c</name>
+			<name>Application/User/STM32_WPAN/App/pressbutton_app.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/STM32_WPAN/App/ble_lld.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/STM32_WPAN/App/ring_buffer.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/STM32_WPAN/App/ring_buffer.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/STM32_WPAN/App/pressbutton_app.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/STM32_WPAN/Target/hw_ipcc.c</name>

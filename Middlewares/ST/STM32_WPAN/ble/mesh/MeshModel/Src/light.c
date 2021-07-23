@@ -2169,9 +2169,17 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MODEL_MessageHeader_t* pmsgParam,
     }    
   } /* Switch ends */
   
-    if((result == MOBLE_RESULT_SUCCESS) && (response == MOBLE_TRUE) && (ADDRESS_IS_UNICAST(pmsgParam->dst_peer)))
-              {
+  if((result == MOBLE_RESULT_SUCCESS) && (response == MOBLE_TRUE))
+  {
+    if(ADDRESS_IS_UNICAST(pmsgParam->dst_peer))
+    {
       Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);                                           
+    }
+    else{
+
+      pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for respons
+      Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);   
+    }
   }
   
   /*
@@ -2180,16 +2188,23 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MODEL_MessageHeader_t* pmsgParam,
      for publication is full filled as per specification then the status will be 
      published.
   */
-    publishAddress = BLEMesh_GetPublishAddress(pmsgParam->elementIndex, Model_Binding_Var.Model_ID);
+  publishAddress = BLEMesh_GetPublishAddress(pmsgParam->elementIndex, Model_Binding_Var.Model_ID);
   
-    if((result == MOBLE_RESULT_SUCCESS) && (publishAddress != 0x0000) && (modelStateChangeFlag == MOBLE_TRUE)
-       && (ADDRESS_IS_UNICAST(pmsgParam->dst_peer)))
+  if((result == MOBLE_RESULT_SUCCESS) && (publishAddress != 0x0000) && (modelStateChangeFlag == MOBLE_TRUE))
   {
+    if(ADDRESS_IS_UNICAST(pmsgParam->dst_peer))
+    {
       pmsgParam->peer_addr = publishAddress;
       Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
+    }
+    else{
+
+      pmsgParam->peer_addr = publishAddress;
+      pmsgParam->dst_peer = BLEMesh_GetAddress(); // Replace group address by the single node address for response
+      Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
+    }
     
     modelStateChangeFlag = MOBLE_FALSE;  
-    
     TRACE_I(TF_LIGHT_M,"Publishing state to the address  %.2X \r\n",publishAddress);
   }
 

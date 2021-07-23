@@ -331,6 +331,10 @@ void APP_BLE_Init( void )
    */
   P2PC_APP_Init();
 
+/* USER CODE BEGIN APP_BLE_Init_3 */
+
+/* USER CODE END APP_BLE_Init_3 */
+
 #if (OOB_DEMO != 0)
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(BleApplicationContext.SwitchOffGPIO_timer_Id), hw_ts_SingleShot, Switch_OFF_GPIO);
 #endif

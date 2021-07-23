@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : Target/hw_ipcc.c
@@ -16,6 +17,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -470,7 +472,6 @@ static void HW_IPCC_LLDTESTS_ReceiveM0CmdHandler( void )
   return;
 }
 
-
 void HW_IPCC_LLDTESTS_SendM0CmdAck( void )
 {
   LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_LLDTESTS_M0_CMD_CHANNEL );
@@ -518,7 +519,6 @@ static void HW_IPCC_LLD_BLE_ReceiveM0CmdHandler( void )
   HW_IPCC_LLD_BLE_ReceiveM0Cmd();
   return;
 }
-
 
 void HW_IPCC_LLD_BLE_SendM0CmdAck( void )
 {

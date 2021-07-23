@@ -57,6 +57,7 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 void PVD_PVM_IRQHandler(void);
+void RTC_WKUP_IRQHandler(void);
 void FLASH_IRQHandler(void);
 void RCC_IRQHandler(void);
 void DMA1_Channel1_IRQHandler(void);
@@ -70,7 +71,8 @@ void IPCC_C1_TX_IRQHandler(void);
 void HSEM_IRQHandler(void);
 void FPU_IRQHandler(void);
 /* USER CODE BEGIN EFP */
-void RTC_WKUP_IRQHandler(void);
+void EXTI0_IRQHandler(void);
+void EXTI1_IRQHandler(void);
 void EXTI4_IRQHandler(void);
 /* USER CODE END EFP */
 

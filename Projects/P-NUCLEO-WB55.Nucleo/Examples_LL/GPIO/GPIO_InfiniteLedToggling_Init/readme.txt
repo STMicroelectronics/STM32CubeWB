@@ -49,10 +49,6 @@ System, GPIO, Output, No pull, Speed, Push-pull, Toggle
     
   - This example has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.
-    
-@par Keywords
-
-System, GPIO, Output, No pull, Speed, Push-pull, Toggle
 
 
 @par How to use it ? 

@@ -172,3 +172,5 @@ TIM1.TIM_MasterSlaveMode=TIM_MASTERSLAVEMODE_DISABLE
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=TIM_DMA
+ProjectManager.ExampleSource=CubeFw

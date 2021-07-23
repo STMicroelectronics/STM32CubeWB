@@ -240,7 +240,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 /**
-  * @brief  Display sensors information on LEDs and LCD
+  * @brief  Display sensors information on LED
   * @param  status TSL user status
   * @retval None
   */

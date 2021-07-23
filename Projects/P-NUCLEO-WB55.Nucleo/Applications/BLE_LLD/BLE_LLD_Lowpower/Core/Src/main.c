@@ -68,20 +68,13 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-TIM_HandleTypeDef htim2;
 RTC_HandleTypeDef hrtc;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 static void MX_DMA_Init(void);
-
-#if (CFG_LPM_SUPPORTED == 1U)
   static void MX_RTC_Init(void);
-#else
-  static void MX_TIM2_Init(void);
-#endif
-
 
 /* USER CODE BEGIN PFP */
 static void SystemClock_Config(void);
@@ -124,35 +117,23 @@ int main(void)
   Reset_Device();
   Config_HSE();
   /* USER CODE END Init */
-  
+
   /* Configure the system clock on HSE without using PLL and the periph clock needed by this application */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
   PeriphClock_Config();
   Init_Exti();
-  
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_DMA_Init();
-  
-  #if (CFG_LPM_SUPPORTED == 1U)
-    MX_RTC_Init();
-  #else
-    MX_TIM2_Init();
-  #endif
+  MX_RTC_Init();
     
-  /* USER CODE BEGIN 2 */
-  if (HAL_TIM_Base_Start(&htim2) != HAL_OK)
-  {
-        Error_Handler();
-  }
-  /* USER CODE END 2 */
-  
   /* Init code for STM32_WPAN */
   APPE_Init();
-  
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -177,7 +158,7 @@ void SystemClock_Config_HSE(uint32_t usePLL)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  
+
   /* First, just set MSI ON (with the 32Mhz range) in case it was OFF, without any update on PLL */
   RCC_OscInitStruct.OscillatorType      = RCC_OSCILLATORTYPE_MSI;
   RCC_OscInitStruct.MSIState            = RCC_MSI_ON;
@@ -197,7 +178,7 @@ void SystemClock_Config_HSE(uint32_t usePLL)
     /* Initialization Error */
     Error_Handler();
   }
-  
+
   /* Configure HSE and PLL if needed*/
   RCC_OscInitStruct.OscillatorType       = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState             = RCC_HSE_ON;
@@ -215,9 +196,9 @@ void SystemClock_Config_HSE(uint32_t usePLL)
   {
     Error_Handler();
   }
-  
+
   /* Configure the system clock source and the dividers according to the fact that system clock source is 32Mhz */
-  RCC_ClkInitStruct.ClockType      = RCC_CLOCKTYPE_HCLK4 | RCC_CLOCKTYPE_HCLK2 | RCC_CLOCKTYPE_HCLK | 
+  RCC_ClkInitStruct.ClockType      = RCC_CLOCKTYPE_HCLK4 | RCC_CLOCKTYPE_HCLK2 | RCC_CLOCKTYPE_HCLK |
                                      RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   if (usePLL == 1)
     RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -232,10 +213,10 @@ void SystemClock_Config_HSE(uint32_t usePLL)
   {
     Error_Handler();
   }
-  
+
   // Note that function UTILS_SetFlashLatency() could be used to set the correct Flash latency
   // (with 32Mhz, 2WS are needed if the range is changed to 1V instead of 1.2V)
-  
+
   /* Disable MSI Oscillator as the MSI is no more needed by the application */
   RCC_OscInitStruct.OscillatorType  = RCC_OSCILLATORTYPE_MSI;
   RCC_OscInitStruct.MSIState        = RCC_MSI_OFF;
@@ -257,7 +238,7 @@ void SystemClock_Config_MSI(uint32_t usePLL)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  
+
   /* First, just set HSE ON (with the 32Mhz range) in case it was OFF, without any update on PLL */
   RCC_OscInitStruct.OscillatorType  = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState        = RCC_HSE_ON;
@@ -275,7 +256,7 @@ void SystemClock_Config_MSI(uint32_t usePLL)
     /* Initialization Error */
     Error_Handler();
   }
-  
+
   /* Configure MSI and PLL if needed*/
   RCC_OscInitStruct.OscillatorType      = RCC_OSCILLATORTYPE_MSI;
   RCC_OscInitStruct.MSIState            = RCC_MSI_ON;
@@ -296,9 +277,9 @@ void SystemClock_Config_MSI(uint32_t usePLL)
     /* Initialization Error */
     Error_Handler();
   }
-  
+
   /* Configure the system clock source and the dividers according to the fact that system clock source is 32Mhz */
-  RCC_ClkInitStruct.ClockType      = RCC_CLOCKTYPE_HCLK4 | RCC_CLOCKTYPE_HCLK2 | RCC_CLOCKTYPE_HCLK | 
+  RCC_ClkInitStruct.ClockType      = RCC_CLOCKTYPE_HCLK4 | RCC_CLOCKTYPE_HCLK2 | RCC_CLOCKTYPE_HCLK |
                                      RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   if (usePLL == 1)
     RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -313,7 +294,7 @@ void SystemClock_Config_MSI(uint32_t usePLL)
   {
     Error_Handler();
   }
-  
+
 /* HSE cannot be stopped while using RF */
 #if 0
   /* Disable HSE Oscillator as the HSE is no more needed by the application */
@@ -334,31 +315,38 @@ void SystemClock_Config_MSI(uint32_t usePLL)
  *
  *************************************************************/
 /**
-  * @brief System Clock Configuration : must be called during application start-up 
+  * @brief System Clock Configuration : must be called during application start-up
   * @retval None
   */
 static void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  
+
   /* Configure LSE Drive Capability */
   __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
-  
+  #ifdef STM32WB15xx
+  #else
   /* Configure the main internal regulator output voltage */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  #endif
   
   /* Assuming that MSI is enabled by default after boot, lets go to HSE without using PLL */
   SystemClock_Config_HSE(0);
-  
+
   /* Configure Others clock */
+  #ifdef STM32WB15xx
+  RCC_OscInitStruct.OscillatorType       = RCC_OSCILLATORTYPE_HSI |  
+                                           RCC_OSCILLATORTYPE_LSE | RCC_OSCILLATORTYPE_LSI2;
+  #else
   RCC_OscInitStruct.OscillatorType       = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSI48 | 
                                            RCC_OSCILLATORTYPE_LSE | RCC_OSCILLATORTYPE_LSI2;
+  RCC_OscInitStruct.HSI48State           = RCC_HSI48_OFF;
+  #endif
   RCC_OscInitStruct.LSEState             = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState             = RCC_HSI_OFF;
   RCC_OscInitStruct.HSICalibrationValue  = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.LSIState             = RCC_LSI_OFF;
   RCC_OscInitStruct.LSI2CalibrationValue = 0;
-  RCC_OscInitStruct.HSI48State           = RCC_HSI48_OFF;
   RCC_OscInitStruct.PLL.PLLState         = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -366,40 +354,28 @@ static void SystemClock_Config(void)
   }
 }
 
-/** 
+/**
   * Enable DMA controller clock
   */
-static void MX_DMA_Init(void) 
+static void MX_DMA_Init(void)
 {
   /* DMA controller clock enable */
   __HAL_RCC_DMAMUX1_CLK_ENABLE();
   __HAL_RCC_DMA1_CLK_ENABLE();
-#ifdef STM32WB35xx
-  __HAL_RCC_DMA2_CLK_ENABLE();
-#endif
-  
+
   /* DMA interrupt init */
-#ifdef STM32WB35xx
   /* DMA1_Channel4_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
-  /* DMA2_Channel4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Channel4_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA2_Channel4_IRQn);
-#else
-  /* DMA1_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
-  /* DMA1_Channel2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
-#endif
+  /* DMA1_Channel5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 }
 
 static void PeriphClock_Config(void)
 {
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
-  
+
 #if USE_SMPS_ENABLED_BY_DEFAULT
   PeriphClkInitStruct.PeriphClockSelection   = RCC_PERIPHCLK_SMPS | RCC_PERIPHCLK_RFWAKEUP | RCC_PERIPHCLK_USART1 | RCC_PERIPHCLK_LPUART1;
   PeriphClkInitStruct.Usart1ClockSelection   = RCC_USART1CLKSOURCE_PCLK2;
@@ -411,7 +387,7 @@ static void PeriphClock_Config(void)
   {
     Error_Handler();
   }
-  
+
   /* Initialize SMPS here like in BLE applis */
   LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
   LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
@@ -426,7 +402,7 @@ static void PeriphClock_Config(void)
     Error_Handler();
   }
 #endif
-  
+
   return;
 }
 
@@ -451,10 +427,10 @@ static void Reset_Device( void )
 {
 #if ( CFG_HW_RESET_BY_FW == 1 )
   Reset_BackupDomain();
-  
+
   Reset_IPCC();
 #endif
-  
+
   return;
 }
 
@@ -500,17 +476,17 @@ static void Reset_BackupDomain( void )
   if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
   {
     HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
-    
+
     /**
      *  Write twice the value to flush the APB-AHB bridge
      *  This bit shall be written in the register before writing the next one
      */
     HAL_PWR_EnableBkUpAccess();
-    
+
     __HAL_RCC_BACKUPRESET_FORCE();
     __HAL_RCC_BACKUPRESET_RELEASE();
   }
-  
+
   return;
 }
 
@@ -519,11 +495,10 @@ static void Init_Exti( void )
   /**< Disable all wakeup interrupt on CPU1  except LPUART(25), IPCC(36), HSEM(38) */
   LL_EXTI_DisableIT_0_31( (~0) & (~(LL_EXTI_LINE_25)) );
   LL_EXTI_DisableIT_32_63( (~0) & (~(LL_EXTI_LINE_36 | LL_EXTI_LINE_38)) );
-  
+
   return;
 }
 
-#if (CFG_LPM_SUPPORTED == 1U)
 /**
   * @brief RTC Initialization Function
   * @param None
@@ -564,54 +539,6 @@ static void MX_RTC_Init(void)
   /* USER CODE END RTC_Init 2 */
 
 }
-
-#else 
-/**
-  * @brief TIM2 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM2_Init(void)
-{
-
-  /* USER CODE BEGIN TIM2_Init 0 */
-
-  /* USER CODE END TIM2_Init 0 */
-
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-
-  /* USER CODE BEGIN TIM2_Init 1 */
-
-  /* USER CODE END TIM2_Init 1 */
-  htim2.Instance = TIM2;
-  htim2.Init.Prescaler = PRESCALER_VALUE;
-  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = PERIOD_VALUE;
-  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM2_Init 2 */
-
-  /* USER CODE END TIM2_Init 2 */
-
-}
-#endif
-
 
 /*************************************************************
  *
@@ -669,7 +596,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN assert_failed */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

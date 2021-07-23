@@ -139,3 +139,5 @@ VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 VP_TOUCHSENSING_VS_TOUCHSENSING.Mode=TouchSensing_Enabled
 VP_TOUCHSENSING_VS_TOUCHSENSING.Signal=TOUCHSENSING_VS_TOUCHSENSING
 board=custom
+ProjectManager.Example=TouchSensing_1touchkey
+ProjectManager.ExampleSource=CubeFw

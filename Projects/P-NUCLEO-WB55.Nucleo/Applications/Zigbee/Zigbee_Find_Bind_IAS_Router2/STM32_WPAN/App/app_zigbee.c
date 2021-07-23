@@ -79,13 +79,14 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void);
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
+static void check_bindings(void);
 
 /* USER CODE BEGIN PFP */
 static void APP_ZIGBEE_SW1_Process(void);
 static void APP_ZIGBEE_SW2_Process(void);
 static void APP_ZIGBEE_SW3_Process(void);
 static void APP_ZIGBEE_ConfigGroupAddr(void);
-static void check_bindings();
+static void check_bindings(void);
 static int numOfBindings(void);
 static enum ZclStatusCodeT msg_client_display_msg_cb(struct ZbZclClusterT *cluster, void *arg,
     struct ZbZclMsgMessageT *msg, struct ZbZclAddrInfoT *srcInfo);
@@ -733,7 +734,7 @@ static void APP_ZIGBEE_SW3_Process()
     APP_DBG(" Error, cannot start Finding & Binding, status = 0x%02x", status);
   }
   else {
-    zigbee_app_info.fb_delay = HAL_GetTick() + 5000U;
+    zigbee_app_info.fb_delay = HAL_GetTick() + 12000U;
     UTIL_SEQ_SetTask(1U << CFG_TASK_ZIGBEE_APP_CHECK_BINDINGS, CFG_SCH_PRIO_0);
   }
 }
@@ -745,8 +746,7 @@ static void APP_ZIGBEE_SW3_Process()
  * @param  None
  * @retval None
  */
-static void
-check_bindings()
+static void check_bindings()
 {
   if (HAL_GetTick() < zigbee_app_info.fb_delay) {
     /* Reschedule task until FB delay timeout */
@@ -833,3 +833,4 @@ allocate_IAS_client()
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

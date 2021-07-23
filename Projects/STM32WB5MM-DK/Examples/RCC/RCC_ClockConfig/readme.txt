@@ -20,15 +20,22 @@
 
 @par Example Description
 
-Configuration of the system clock (SYSCLK) and selection of the clock source of 
-the following peripherals:
+The main purpose of this example is to serve as a reference for clock configuration
+operation needed by most of the BLE applications.
+
+Thus it is just illustrating how to configure the system clock 
+and also how to configure the source clock of some other peripherals used
+by BLE applications:
 
   - RTC: clocked by LSE
   - LPUART1: clocked by PCLK1
   - USART1: clocked by PCLK2
   - RFWKP: clocked by LSE
 
-HSE is selected as system clock source, i.e. the system clock is running at MHz.
+HSE is selected as system clock source, i.e. the system clock is running at 32 MHz.
+
+@note On the STM32WB5MM-DK board, MCO pins aren't output to the STMOD+ connectors
+      thus generated system clock signal cannot be observed whith an oscilloscope.
 
 @note The application need to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.

@@ -4,7 +4,7 @@
  * @brief ZCL Door Lock cluster header
  * ZCL 7 section 7.3
  * ZCL 8 section 7.3
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_DRLK_H
@@ -20,17 +20,17 @@
  * DRLK.S.A0000 | LockState | True
  * DRLK.S.A0001 | LockType | True
  * DRLK.S.A0002 | ActuatorEnabled | True
- * DRLK.S.A0003 | DoorState | False | Optional
- * DRLK.S.A0004 | DoorOpenEvents | False | Optional
- * DRLK.S.A0005 | DoorClosedEvents | False | Optional
- * DRLK.S.A0006 | OpenPeriod | False | Optional
- * DRLK.S.A0010 | NumberOfLogRecordsSupported | False | Optional
- * DRLK.S.A0011 | NumberOfTotalUsersSupported | False | Optional
- * DRLK.S.A0012 | NumberOfPINUsersSupported | False | Optional
- * DRLK.S.A0013 | NumberOfRFIDUsersSupported | False | Optional
- * DRLK.S.A0014 | NumberOfWeekDaySchedulesSupportedPerUser | False | Optional
- * DRLK.S.A0015 | NumberOfYearDaySchedulesSupportedPerUser | False | Optional
- * DRLK.S.A0016 | NumberOfHolidaySchedulesSupported | False | Optional
+ * DRLK.S.A0003 | DoorState | True | Optional
+ * DRLK.S.A0004 | DoorOpenEvents | True | Optional
+ * DRLK.S.A0005 | DoorClosedEvents | True | Optional
+ * DRLK.S.A0006 | OpenPeriod | True | Optional
+ * DRLK.S.A0010 | NumberOfLogRecordsSupported | True | Optional
+ * DRLK.S.A0011 | NumberOfTotalUsersSupported | True | Optional
+ * DRLK.S.A0012 | NumberOfPINUsersSupported | True | Optional
+ * DRLK.S.A0013 | NumberOfRFIDUsersSupported | True | Optional
+ * DRLK.S.A0014 | NumberOfWeekDaySchedulesSupportedPerUser | True | Optional
+ * DRLK.S.A0015 | NumberOfYearDaySchedulesSupportedPerUser | True | Optional
+ * DRLK.S.A0016 | NumberOfHolidaySchedulesSupported | True | Optional
  * DRLK.S.A0017 | MaxPINCodeLength | True | Optional
  * DRLK.S.A0018 | MinPINCodeLength | True | Optional
  * DRLK.S.A0019 | MaxRFIDCodeLength | True | Optional
@@ -38,21 +38,21 @@
  * DRLK.S.A0020 | EnableLogging | False | Optional
  * DRLK.S.A0021 | Language | True | Optional
  * DRLK.S.A0022 | LEDSettings | False | Optional
- * DRLK.S.A0023 | AutoRelockTime | False | Optional
+ * DRLK.S.A0023 | AutoRelockTime | True | Optional
  * DRLK.S.A0024 | SoundVolume | False | Optional
- * DRLK.S.A0025 | OperatingMode | False | Optional
+ * DRLK.S.A0025 | OperatingMode | True | Optional
  * DRLK.S.A0026 | SupportedOperatingModes | True | Optional
  * DRLK.S.A0027 | DefaultConfigurationRegister | False | Optional
  * DRLK.S.A0028 | EnableLocalProgramming | True | Optional
  * DRLK.S.A0029 | EnableOneTouchLocking | False | Optional
  * DRLK.S.A002a | EnableInsideStatusLED | False | Optional
  * DRLK.S.A002b | EnablePrivacyModeButton | False | Optional
- * DRLK.S.A0030 | WrongCodeEntryLimit | False | Optional
- * DRLK.S.A0031 | UserCodeTemporaryDisableTime | False | Optional
+ * DRLK.S.A0030 | WrongCodeEntryLimit | True | Optional
+ * DRLK.S.A0031 | UserCodeTemporaryDisableTime | True | Optional
  * DRLK.S.A0032 | SendPINOverTheAir | False | Optional
- * DRLK.S.A0033 | RequirePINforRFOperation | False | Optional
- * DRLK.S.A0034 | SecurityLevel | False | Optional
- * DRLK.S.A0040 | AlarmMask | False | Optional
+ * DRLK.S.A0033 | RequirePINforRFOperation | True | Optional
+ * DRLK.S.A0034 | SecurityLevel | True | Optional
+ * DRLK.S.A0040 | AlarmMask | True | Optional
  * DRLK.S.A0041 | KeypadOperationEventMask | False | Optional
  * DRLK.S.A0042 | RFOperationEventMask | False | Optional
  * DRLK.S.A0043 | ManualOperationEventMask | False | Optional

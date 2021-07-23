@@ -65,7 +65,7 @@ Initially the output channel is configured in output compare toggle mode.
 
 @par Keywords
 
-Timers, Output, signals, Outpur compare toggle, PWM, Oscilloscope
+Timers, Output, signals, Output compare toggle, PWM, Oscilloscope
 
 @par Directory contents 
 

@@ -114,3 +114,5 @@ VP_RNG_VS_RNG.Signal=RNG_VS_RNG
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=RNG_MultiRNG_IT
+ProjectManager.ExampleSource=CubeFw

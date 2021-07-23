@@ -264,3 +264,5 @@ USB.Sof_enable=DISABLE
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=P-NUCLEO-WB55.Nucleo
+ProjectManager.Example=QSPI_ExecuteInPlace
+ProjectManager.ExampleSource=CubeFw

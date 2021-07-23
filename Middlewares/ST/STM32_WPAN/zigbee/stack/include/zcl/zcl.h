@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_H
 # define ZCL_H
@@ -322,11 +322,18 @@ struct ZbZclClusterT {
      *-------------------------------------------
      */
     struct ZbApsFilterT *dataind_filter;
-    struct ZbApsFilterT *alarm_reset_filter;
-    enum ZclStatusCodeT (*alarm_reset_callback)(struct ZbZclClusterT *cluster, uint8_t alarm_code,
-        uint16_t cluster_id, struct ZbApsdeDataIndT *data_ind, struct ZbZclHeaderT *hdr);
     struct LinkListT attributeList;
-    struct LinkListT reports;
+    struct {
+        struct LinkListT list; /* struct ZbZclReportT */
+        struct ZbTimerT *timer;
+        bool kicked;
+        struct ZbMsgFilterT *reset_filter;
+    } reports;
+    struct {
+        struct ZbApsFilterT *reset_filter;
+        enum ZclStatusCodeT (*reset_callback)(struct ZbZclClusterT *cluster, uint8_t alarm_code,
+            uint16_t cluster_id, struct ZbApsdeDataIndT *data_ind, struct ZbZclHeaderT *hdr);
+    } alarm;
     struct ZbTimerT *persist_timer;
 
     /*-------------------------------------------
@@ -365,7 +372,7 @@ struct ZbZclClusterT {
             if (_payload_) {                                             \
                 (_payload_)[_index_] = _arg_;                            \
             }                                                            \
-            _index_ += sizeof(uint8_t);                                  \
+            _index_ += 1U;                                  \
      * extData has the format: [attribute data (N octets)]
      * extLen is the length of extData
      * transition_tenths ; transition time in tenths of a second.
@@ -374,7 +381,8 @@ struct ZbZclClusterT {
     enum ZclStatusCodeT (*set_scene_data)(struct ZbZclClusterT *cluster, uint8_t *extData, uint8_t extLen, uint16_t transition_tenths);
 
     /* cleanup() is called to free any cluster-specific data.
-     * ZbZclClusterFree will already free any attributes and APS filter. */
+     * ZbZclClusterFree will already free any attributes and APS filter allocated by
+     * ZbZclClusterAlloc and ZbZclAttrAppendList. */
     void (*cleanup)(struct ZbZclClusterT *cluster);
 };
 
@@ -508,13 +516,21 @@ extern const uint8_t zcl_attr_str_long_zero[2]; /* i.e. {0x00, 0x00} */
  * Configure Reporting
  *---------------------------------------------------------------
  */
+struct ZbZclAttrReportableChangeT {
+    union {
+        long long integer; /* If ZbZclAttrIsAnalog */
+        double floating; /* If ZCL_DATATYPE_FLOATING_xxx */
+        /* All other types send report on any change of value. */
+    } epsilon;
+};
+
 struct ZbZclAttrReportConfigT {
     struct ZbApsAddrT dst;
     uint16_t min;
     uint16_t max;
     uint16_t attr_id;
     uint8_t attr_type;
-    uint64_t change;
+    struct ZbZclAttrReportableChangeT change;
 };
 
 enum ZclStatusCodeT ZbZclAttrReportConfigReq(struct ZbZclClusterT *cluster, struct ZbZclAttrReportConfigT *report,
@@ -527,6 +543,21 @@ struct ZbZclAttrReportReadT {
 
 enum ZclStatusCodeT ZbZclAttrReportReadReq(struct ZbZclClusterT *cluster, struct ZbZclAttrReportReadT *report,
     void (*callback)(struct ZbZclCommandRspT *cmd_rsp, void *arg), void *arg);
+
+/**
+ * Configure an attribute's default reporting intervals. It will also set the
+ * active reporting intervals to these values and reset the reporting timer.
+ * The Reportable Change value will also be reset back to defaults (value = 1).
+ * @param clusterPtr Cluster instance
+ * @param attrId Attribute Id of the attribute to modify
+ * @param default_min New default minimum reporting interval in seconds.
+ * @param default_max New default maximum reporting interval in seconds.
+ * @param default_change (Optional) New default reportable change value.
+ * @return ZCL Status Code
+ */
+enum ZclStatusCodeT ZbZclAttrReportConfigDefault(struct ZbZclClusterT *clusterPtr,
+    uint16_t attrId, uint16_t default_min, uint16_t default_max,
+    struct ZbZclAttrReportableChangeT *default_change);
 
 /*---------------------------------------------------------------
  * Remote Reading and Writing of Attributes
@@ -778,6 +809,9 @@ enum ZclStatusCodeT ZbZclStateBegin(struct ZigBeeT *zb, struct ZbApsdeDataReqT *
  * Helper Functions
  *---------------------------------------------------------------
  */
+/* Get the current uptime from ZB_APS_IB_ID_CHANNEL_TIMER (ZbUptime) */
+ZbUptimeT ZbZclUptime(struct ZigBeeT *zb);
+
 /* Get the next ZCL sequence number to use in a request/notify message. */
 uint8_t ZbZclGetNextSeqnum(void);
 
@@ -821,7 +855,9 @@ void ZbZclClusterReportCallbackAttach(struct ZbZclClusterT *cluster,
 static inline bool
 ZbZclIsDefaultRsp(struct ZbZclHeaderT *hdr)
 {
+    /*lint -e9029 [ Mismatched essential type categories for binary operator <Rule 10.4 REQUIRED> ] */
     return (hdr->frameCtrl.frameType == ZCL_FRAMETYPE_PROFILE) && (hdr->cmdId == ZCL_COMMAND_DEFAULT_RESPONSE);
+    /*lint -restore */
 }
 
 /*---------------------------------------------------------------

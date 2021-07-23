@@ -240,3 +240,5 @@ VP_LCD_LCD_mux.Signal=LCD_LCD_mux
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=P-NUCLEO-WB55.Nucleo
+ProjectManager.Example=LCD_SegmentsDrive
+ProjectManager.ExampleSource=CubeFw

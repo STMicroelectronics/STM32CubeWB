@@ -137,12 +137,12 @@ struct ZbStartupT {
 
         uint8_t networkKey[ZB_SEC_KEYSIZE];
         /**< Configures the Network Key with key type set to ZB_SEC_KEYTYPE_STANDARD_NWK.
-         * Only applicable if startupControl is ZbStartTypePreconfigured. */
+         * Only applicable if startupControl is ZbStartTypeForm or ZbStartTypePreconfigured. */
 
         uint8_t networkKeySeqNum;
         /**< Configures the Network Key Sequence Number for the Network Key.
          * Also sets ZB_NWK_NIB_ID_ActiveKeySeqNumber to this value.
-         * Only applicable if startupControl is ZbStartTypePreconfigured.
+         * Only applicable if startupControl is ZbStartTypeForm or ZbStartTypePreconfigured.
          */
 
         enum ZbSecKeyTypeT networkKeyType; /**< Deprecated and not used. */

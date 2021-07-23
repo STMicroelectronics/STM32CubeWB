@@ -1324,3 +1324,77 @@ tBleStatus aci_gap_remove_bonded_device( uint8_t Peer_Identity_Address_Type,
   return status;
 }
 
+tBleStatus aci_gap_additional_beacon_start( uint16_t Adv_Interval_Min,
+                                            uint16_t Adv_Interval_Max,
+                                            uint8_t Adv_Channel_Map,
+                                            uint8_t Own_Address_Type,
+                                            const uint8_t* Own_Address,
+                                            uint8_t PA_Level )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_gap_additional_beacon_start_cp0 *cp0 = (aci_gap_additional_beacon_start_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Adv_Interval_Min = Adv_Interval_Min;
+  index_input += 2;
+  cp0->Adv_Interval_Max = Adv_Interval_Max;
+  index_input += 2;
+  cp0->Adv_Channel_Map = Adv_Channel_Map;
+  index_input += 1;
+  cp0->Own_Address_Type = Own_Address_Type;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Own_Address, (const void*)Own_Address, 6 );
+  index_input += 6;
+  cp0->PA_Level = PA_Level;
+  index_input += 1;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x0b0;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus aci_gap_additional_beacon_stop( void )
+{
+  struct hci_request rq;
+  tBleStatus status = 0;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x0b1;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus aci_gap_additional_beacon_set_data( uint8_t Adv_Data_Length,
+                                               const uint8_t* Adv_Data )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_gap_additional_beacon_set_data_cp0 *cp0 = (aci_gap_additional_beacon_set_data_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Adv_Data_Length = Adv_Data_Length;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Adv_Data, (const void*)Adv_Data, Adv_Data_Length );
+  index_input += Adv_Data_Length;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x0b2;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+

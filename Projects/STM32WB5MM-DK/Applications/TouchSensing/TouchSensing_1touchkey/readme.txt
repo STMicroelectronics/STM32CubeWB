@@ -31,10 +31,6 @@ Observed behaviour:
 - The LD4 is BLUE each time the ECS process is finished.
 - The LD4 is RED in case of error.
 
-- On the LCD are also displayed:
-  * The ECS state (ON/OFF).
-  * The TS1 touchkey sensor state (RELEASE, DETECT, ...) and the delta value.
-
 - The ECS is ON when no touch is detected (sensor is in the RELEASE state).
   The ECS is always present but its behaviour can be modified using some parameters in
   the tsl_conf.h file.

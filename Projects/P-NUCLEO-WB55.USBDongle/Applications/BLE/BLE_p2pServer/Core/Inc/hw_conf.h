@@ -1,17 +1,16 @@
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    hw_conf.h
- * @author  MCD Application Team
- * @brief   Configuration of hardware interface
-  ******************************************************************************
+  * File Name          : hw_conf.h
+  * Description        : Hardware configuration file for STM32WPAN Middleware.
+ ******************************************************************************
   * @attention
   *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
   * the License. You may obtain a copy of the License at:
   *                             www.st.com/SLA0044
   *
@@ -160,11 +159,11 @@
 /******************************************************************************
  * HW UART
  *****************************************************************************/
-#define CFG_HW_LPUART1_ENABLED           0
-#define CFG_HW_LPUART1_DMA_TX_SUPPORTED  0
+#define CFG_HW_LPUART1_ENABLED           1
+#define CFG_HW_LPUART1_DMA_TX_SUPPORTED  1
 
-#define CFG_HW_USART1_ENABLED                  0
-#define CFG_HW_USART1_DMA_TX_SUPPORTED         0
+#define CFG_HW_USART1_ENABLED           0
+#define CFG_HW_USART1_DMA_TX_SUPPORTED  0
 
 /**
  * LPUART1

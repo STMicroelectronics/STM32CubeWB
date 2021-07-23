@@ -97,7 +97,7 @@ MOBLE_RESULT Appli_SensorsClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_op
     }
   case SENSOR_SETTING_SET:
     {
-      //TODO: Set dynamic data size depending on Sensor DATA LENTGH:  length = 4 + SensorDataLength
+
       result = SensorsClient_Setting_Set(elementIndex,
                               msg_params, 
                               6);
@@ -105,7 +105,7 @@ MOBLE_RESULT Appli_SensorsClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_op
     }
   case SENSOR_SETTING_SET_UNACK:
     {  
-      //TODO: Set dynamic data size depending on Sensor DATA LENTGH:  length = 4 + SensorDataLength
+
       result = SensorsClient_Setting_Set_Unack(elementIndex,
                               msg_params, 
                               6);

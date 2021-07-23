@@ -30,7 +30,7 @@ Then the SystemClock_Config() function is used to configure the system clock
 This example shows how to use the different functionalities of components
 available on the board by switching between all tests using User Button1 push-button.
 
- ** Push the Tamper push-button to start first Test.
+ ** Push the User B1 push-button to start first Test.
 
 ### LCD ###
 This example shows how to use the different LCD features to display string
@@ -60,7 +60,7 @@ PDM to PCM decimation and streaming towards a host PC via a dedicated USB Audio 
 
 @par Keywords
 
-BSP, DMA, Audio record, Microphone, LCD, QSPI, QUADSPI, Humidity, Display, Button, Tempearture, Sensor,
+BSP, DMA, Audio record, Microphone, LCD, QSPI, QUADSPI, Humidity, Display, Button, Temperature, Sensor,
 Accelerometer, Distance, STTS22H, ISM330DHCX, VL53L0X, PDM, PCM, USB.
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)

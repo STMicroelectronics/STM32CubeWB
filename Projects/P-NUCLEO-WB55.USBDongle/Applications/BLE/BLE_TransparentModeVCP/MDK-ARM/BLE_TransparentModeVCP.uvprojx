@@ -416,6 +416,16 @@
               <FilePath>../Core/Src/stm32_lpm_if.c</FilePath>
             </File>
             <File>
+              <FileName>stm32wbxx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/stm32wbxx_hal_msp.c</FilePath>
+            </File> 
+            <File>
+              <FileName>hw_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/hw_uart.c</FilePath>
+            </File>                         
+            <File>
               <FileName>hw_timerserver.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/hw_timerserver.c</FilePath>
@@ -515,6 +525,21 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32wbxx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_hsem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_ipcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</FilePath>
+            </File> 
             <File>
               <FileName>stm32wbxx_hal_gpio.c</FileName>
               <FileType>1</FileType>

@@ -208,7 +208,6 @@ static int8_t CDC_Init_FS(void)
   /*##-5- Set Application Buffers ############################################*/
   USBD_CDC_SetTxBuffer(&hUsbDeviceFS, UserTxBufferFS, 0);
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, UserRxBufferFS);
-
   return (USBD_OK);
   /* USER CODE END 3 */
 }
@@ -240,29 +239,29 @@ static int8_t CDC_DeInit_FS(void)
 static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 {
   /* USER CODE BEGIN 5 */
-  switch (cmd)
+  switch(cmd)
   {
-  case CDC_SEND_ENCAPSULATED_COMMAND:
+    case CDC_SEND_ENCAPSULATED_COMMAND:
     /* Add your code here */
     break;
 
-  case CDC_GET_ENCAPSULATED_RESPONSE:
+    case CDC_GET_ENCAPSULATED_RESPONSE:
     /* Add your code here */
     break;
 
-  case CDC_SET_COMM_FEATURE:
+    case CDC_SET_COMM_FEATURE:
     /* Add your code here */
     break;
 
-  case CDC_GET_COMM_FEATURE:
+    case CDC_GET_COMM_FEATURE:
     /* Add your code here */
     break;
 
-  case CDC_CLEAR_COMM_FEATURE:
+    case CDC_CLEAR_COMM_FEATURE:
     /* Add your code here */
     break;
 
-  case CDC_SET_LINE_CODING:
+  	case CDC_SET_LINE_CODING:
     LineCoding.bitrate    = (uint32_t)(pbuf[0] | (pbuf[1] << 8) |\
                             (pbuf[2] << 16) | (pbuf[3] << 24));
     LineCoding.format     = pbuf[4];
@@ -273,7 +272,7 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
     ComPort_Config();
     break;
 
-  case CDC_GET_LINE_CODING:
+    case CDC_GET_LINE_CODING:
     pbuf[0] = (uint8_t)(LineCoding.bitrate);
     pbuf[1] = (uint8_t)(LineCoding.bitrate >> 8);
     pbuf[2] = (uint8_t)(LineCoding.bitrate >> 16);
@@ -283,12 +282,13 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
     pbuf[6] = LineCoding.datatype;
     break;
 
-  case CDC_SET_CONTROL_LINE_STATE:
+    case CDC_SET_CONTROL_LINE_STATE:
     /* Add your code here */
+
     break;
 
-  case CDC_SEND_BREAK:
-     /* Add your code here */
+    case CDC_SEND_BREAK:
+    /* Add your code here */
     break;
 
   default:
@@ -339,7 +339,7 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
   /* USER CODE BEGIN 7 */
   USBD_CDC_HandleTypeDef *hcdc = (USBD_CDC_HandleTypeDef*)hUsbDeviceFS.pClassData;
   if (hcdc->TxState != 0){
-  return USBD_BUSY;
+    return USBD_BUSY;
   }
   USBD_CDC_SetTxBuffer(&hUsbDeviceFS, Buf, Len);
   result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
@@ -349,7 +349,7 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 
 /**
   * @brief  CDC_TransmitCplt_FS
-  *         Data transmited callback
+  *         Data transmitted callback
   *
   *         @note
   *         This function is IN transfer complete callback used to inform user that

@@ -34,7 +34,7 @@ ZbZcl_custom_ls_ClientAlloc(struct ZigBeeT *zb, uint8_t endpoint)
     struct zcl_custom_ls_client_cluster_t *clusterPtr;
 
     clusterPtr = ZbZclClusterAlloc(zb, sizeof(struct zcl_custom_ls_client_cluster_t),\
-              ZCL_CLUSTER_LS, endpoint, ZCL_DIRECTION_TO_CLIENT);
+              ZCL_CLUSTER_CUSTOM_LS, endpoint, ZCL_DIRECTION_TO_CLIENT);
     if (clusterPtr == NULL) {
         return NULL;
     }

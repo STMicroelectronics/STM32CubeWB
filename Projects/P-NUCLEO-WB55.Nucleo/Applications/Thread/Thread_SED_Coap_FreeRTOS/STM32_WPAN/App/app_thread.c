@@ -77,7 +77,7 @@ const osThreadAttr_t ThreadCliProcess_attr = {
 
 #define COAP_SEND_TIMEOUT               (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
 #define THREAD_CHANGE_MODE_TIMEOUT      (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
-#define THREAD_LINK_POLL_PERIOD         (5*1000*1000/CFG_TS_TICK_VAL) /**< 5s */
+#define THREAD_LINK_POLL_PERIOD_MS      (5000)                        /**< 5s */
 
 /* FreeRtos stacks attributes */
 const osThreadAttr_t ThreadSendCoapMsgProcess_attr = {
@@ -710,7 +710,7 @@ static void APP_THREAD_SetSleepyEndDeviceMode(void)
    * in 'sleepy end device' mode, it will send an ACK_Request every 5 sec.
    * This message will act as keep alive message.
    */
-  otLinkSetPollPeriod(NULL, THREAD_LINK_POLL_PERIOD);
+  otLinkSetPollPeriod(NULL, THREAD_LINK_POLL_PERIOD_MS);
 
   /* Set the sleepy end device mode */
   OT_LinkMode.mRxOnWhenIdle = 0;

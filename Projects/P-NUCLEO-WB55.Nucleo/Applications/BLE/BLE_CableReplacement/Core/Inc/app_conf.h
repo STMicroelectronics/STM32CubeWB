@@ -145,10 +145,6 @@
 #define CONN_L1                                                     (CONN_L(10))
 #define CONN_L2                                                     (CONN_L(10))
 
-/* EXTI External Interrupt for user button */
-#define PUSH_BUTTON_SW1_EXTI_IRQHandler                         EXTI4_IRQHandler
-#define PUSH_BUTTON_SW2_EXTI_IRQHandler                         EXTI0_IRQHandler
-#define PUSH_BUTTON_SW3_EXTI_IRQHandler                         EXTI1_IRQHandler
 
 /******************************************************************************
  * BLE Stack
@@ -433,9 +429,6 @@ typedef enum
  */
 #define CFG_HW_RESET_BY_FW        1
 
-#define CFG_LED_SUPPORTED         1
-#define CFG_BUTTON_SUPPORTED      1
-
 /**
  * keep debugger enabled while in any low power mode when set to 1
  * should be set to 0 in production
@@ -506,6 +499,15 @@ typedef enum
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
 #define MAX_DBG_TRACE_MSG_SIZE 1024
 
+/* USER CODE BEGIN Defines */
+#define CFG_LED_SUPPORTED         1
+#define CFG_BUTTON_SUPPORTED      1
+
+#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
+#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
+#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
+/* USER CODE END Defines */
+
 /******************************************************************************
  * Scheduler
  ******************************************************************************/
@@ -520,12 +522,15 @@ typedef enum
 /**< Add in that list all tasks that may send a ACI/HCI command */
 typedef enum
 {
-  CFG_TASK_CONN_MGR_ID,
-  CFG_TASK_CRC_DISCOVERY_REQ_ID,
-  CFG_TASK_SCAN_REQ_ID,
-  CFG_TASK_CONN_REQ_ID,
-  CFG_TASK_CRS_UPDATE_REQ_ID,
-  CFG_TASK_HCI_ASYNCH_EVT_ID,
+    CFG_TASK_CONN_MGR_ID,
+    CFG_TASK_CRC_DISCOVERY_REQ_ID,
+    CFG_TASK_SCAN_REQ_ID,
+    CFG_TASK_CONN_REQ_ID,
+    CFG_TASK_SW1_BUTTON_PUSHED_ID,
+    CFG_TASK_SW2_BUTTON_PUSHED_ID,
+    CFG_TASK_SW3_BUTTON_PUSHED_ID,
+    CFG_TASK_CRS_UPDATE_REQ_ID,
+    CFG_TASK_HCI_ASYNCH_EVT_ID,
 
   CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;

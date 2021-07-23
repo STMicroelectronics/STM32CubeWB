@@ -11,28 +11,22 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="../../../_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="../../../_htmresc/mini-st_2020.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <link rel="icon" type="image/x-icon" href="../../../_htmresc/favicon.png" />
 </head>
 <body>
 <div class="row">
 <div class="col-sm-12 col-lg-4">
-<div class="card fluid">
-<div class="sectione dark">
 <center>
-<h1 id="release-notes-for-stm32wb-copro-wireless-binaries"><small>Release Notes for</small> STM32WB Copro Wireless Binaries</h1>
+<h1 id="release-notes-for">Release Notes for</h1>
+<h1 id="stm32wb-copro-wireless-binaries"><mark>STM32WB Copro Wireless Binaries</mark></h1>
 <p>Copyright © 2020 STMicroelectronics<br />
 </p>
-<a href="https://www.st.com" class="logo"><img src="../../../_htmresc/st_logo.png" alt="ST logo" /></a>
+<a href="https://www.st.com" class="logo"><img src="../../../_htmresc/st_logo_2020.png" alt="ST logo" /></a>
 </center>
-</div>
-</div>
-<h1 id="license">License</h1>
-<p>This software component is licensed by ST under Ultimate Liberty license SLA0044, the “License”;</p>
-<p>You may not use this file except in compliance with the License.</p>
-<p>You may obtain a copy of the License at: <a href="http://www.st.com/SLA0044">SLA0044</a></p>
 <h1 id="known-limitations">Known Limitations</h1>
 <p><strong>If Anti-Rollback needs to be activated</strong>, please make sure to activate it only after installing the latest FUS version (&gt;= V1.2.0) and after successfully installing a wireless stack (without deleting it). <strong>Otherwise, further wireless stack installation will be blocked.</strong></p>
 <h1 id="purpose">Purpose</h1>
@@ -46,7 +40,7 @@
 <ul>
 <li>stm32wb3x_BLE_HCI_AdvScan_fw.bin
 <ul>
-<li>HCI Layer only mode 5.0 certified : Link Layer, HCI</li>
+<li>HCI Layer only mode 5.2 certified : Link Layer, HCI</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
 <li>To be used for advertising and scanning through HCI interface</li>
 </ul></li>
@@ -57,12 +51,12 @@
 </ul></li>
 <li>stm32wb3x_BLE_Stack_full_fw.bin
 <ul>
-<li>Full BLE Stack 5.0 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>Full BLE Stack 5.2 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a>
 <ul>
 <li>Following features are kept:
 <ul>
-<li>GAP peripheral, central (LL slave up to 2 links, LL master up to 6 links)</li>
+<li>GAP peripheral, central (LL Master up to 6 links with Slave up to 2 links/ Master up to 7 links with Slave up to 1 links/ Master up to 8 links )</li>
 <li>GATT server, client</li>
 <li>Data length extension</li>
 <li>2Mbit PHY / PHY update</li>
@@ -76,13 +70,13 @@
 </ul></li>
 <li>stm32wb3x_BLE_Stack_light_fw.bin
 <ul>
-<li>Full BLE Stack 5.0 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>Full BLE Stack 5.2 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a></li>
 <li>Wireless Ble stack Light configuration – Slave Only
 <ul>
 <li>Following features are kept:
 <ul>
-<li>GAP peripheral only (LL slave up to 2 links)</li>
+<li>GAP peripheral only (LL Slave up to 2 links)</li>
 <li>GATT server</li>
 <li>Data length extension</li>
 <li>Privacy</li>
@@ -92,13 +86,39 @@
 <li>Direct Test Mode</li>
 </ul></li>
 <li>BLE “Slave Only” stack implies that with this stack configuration, STM32WB is not able to scan and request a BLE connection.</li>
-<li>It will just advertise, and accept incoming connection request from other master devices (e.g. Smartphone).</li>
+<li>It will just advertise, and accept incoming connection request from other master devices (e.g. Smartphone) (Slave up to 2 links).</li>
 <li>While with the “full feature” BLE stack, STM32WB3xx is able to support both master and slave roles on different links.</li>
+</ul></li>
+</ul></li>
+<li>stm32wb3x_BLE_Stack_basic_fw.bin
+<ul>
+<li>Full BLE Stack 5.2 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a></li>
+<li>Wireless Ble stack Basic configuration
+<ul>
+<li>Following features are kept:
+<ul>
+<li>GAP peripheral &amp; Central (8 links - LL slave up to 2 links)</li>
+<li>GATT server, client</li>
+<li>Data length extension</li>
+<li>Privacy</li>
+<li>White list</li>
+<li>Legacy Pairing, LE secure connections</li>
+<li>HCI interface (reduced)</li>
+</ul></li>
+<li>Following features are removed from Full BLE Stack:
+<ul>
+<li>L2Cap Connection - oriented channel (Chip/ Ip over BLE,…)</li>
+<li>Additional beacon</li>
+<li>Some HCI interface features (won’t be able to process through HCI interface)</li>
+<li>Phy update (2Mb/s)</li>
+<li>Direct test mode</li>
+</ul></li>
 </ul></li>
 </ul></li>
 <li>stm32wb3x_BLE_HCILayer_fw.bin
 <ul>
-<li>HCI Layer only mode 5.0 certified : Link Layer, HCI with Direct Test Mode</li>
+<li>HCI Layer only mode 5.2 certified : Link Layer, HCI with Direct Test Mode</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
 </ul></li>
 <li>stm32wb3x_Thread_FTD_fw.bin
@@ -110,6 +130,13 @@
 <ul>
 <li>Minimal Thread Device certified v1.1</li>
 <li>To be used for End Device and Sleepy End Device Thread role</li>
+</ul></li>
+<li>stm32wb3x_Thread_RCP_fw.bin
+<ul>
+<li>OpenThread Radio Co-Processor (RCP)</li>
+<li>To be used for Thread Border Router setup.</li>
+<li>Application layer and OpenThread core on the host processor, minimal OpenThread MAC on the 802.15.4 SoC.</li>
+<li>Communication between the RCP and the host processor is managed by OpenThread Daemon through an SPI interface over the Spinel protocol.</li>
 </ul></li>
 <li>stm32wb3x_Mac_802_15_4_fw.bin
 <ul>
@@ -137,7 +164,7 @@
 <li>stm32wb3x_BLE_Mac_802_15_4_fw.bin
 <ul>
 <li>Static Concurrent Mode BLE MAC 802.15.4.</li>
-<li>Supports Full BLE Stack 5.0 certified and MAC 802.15.4 API based on latest official <a href="http://grouper.ieee.org/groups/802/15/pub/Download.html">IEEE Std 802.15.4-2011</a></li>
+<li>Supports Full BLE Stack 5.2 certified and MAC 802.15.4 API based on latest official <a href="http://grouper.ieee.org/groups/802/15/pub/Download.html">IEEE Std 802.15.4-2011</a></li>
 </ul></li>
 <li>stm32wb3x_FUS_fw_1_0_2.bin
 <ul>
@@ -273,12 +300,13 @@
 </ul></li>
 <li><p>STEP 4: Read and upgrade FUS Version</p>
 <ul>
-<li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -r32 0x20010010 1</em>
+<li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -r32 0x20030030 1</em>
 <ul>
-<li><em><span class="citation" data-cites="0x20010010">@0x20010010</span>: 00050300</em>: FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
-<li><em><span class="citation" data-cites="0x20010010">@0x20010010</span>: 010X0Y00</em>: FUSv1.<strong>x</strong>.y =&gt; <strong>Must be updated using STEP 6 (when x &lt; 2).</strong></li>
-<li><em><span class="citation" data-cites="0x20010010">@0x20010010</span>: 01020X00</em>: FUSv1.2.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
+<li><em><span class="citation" data-cites="0x20030030">@0x20030030</span>: 00050300</em>: FUSv0.5.3 =&gt; <strong>Must be updated using STEP 5.</strong></li>
+<li><em><span class="citation" data-cites="0x20030030">@0x20030030</span>: 010X0Y00</em>: FUSv1.<strong>x</strong>.y =&gt; <strong>Must be updated using STEP 6 (when x &lt; 2).</strong></li>
+<li><em><span class="citation" data-cites="0x20030030">@0x20030030</span>: 01020X00</em>: FUSv1.2.0 =&gt; <strong>Up to date, you can download the new wireless stack using STEP 7.</strong></li>
 </ul></li>
+<li>Note: when FUS is not running but FUS operator used, you can read FUS version <span class="citation" data-cites="0x20010010">@0x20010010</span></li>
 </ul></li>
 <li><p>STEP 5: Download latest FUS for only FUSv0.5.3 upgrade</p>
 <ul>
@@ -358,9 +386,175 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section6" checked aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.11.1 / 23-March-2021</label>
+<input type="checkbox" id="collapse-section7" checked aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.12.0 / 17-June-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>Thread:
+<ul>
+<li>Introducing following new binary: <strong>stm32wb3x_Thread_RCP_fw.bin</strong></li>
+<li>ID 105050 : Correct issue avoiding the Application to run at 64Mhz</li>
+</ul></li>
+<li>Zigbee:
+<ul>
+<li>zb_destroy_process improvement correcting some potential memory issues.</li>
+<li>Memory allocation improvement </li>
+<li>Code cleanup (MISRA rules compliancy)</li>
+<li>Power consumption improvement when using fragmentation for a sleepy end device (transfer of payload &gt; 50 bytes)</li>
+<li>ID 105050 : Correct issue avoiding the Application to run at 64Mhz</li>
+</ul></li>
+<li>BLE:
+<ul>
+<li>Introducing following new binary: <strong>stm32wb3x_BLE_Stack_basic_fw.bin</strong></li>
+<li>The command “ACI_GAP_START_NAME_DISCOVERY_PROC” will be deprecated on next STM32Cube_FW_WB release v1.13.0</li>
+<li>ID 73463 : Additional Beacon Feature support<br />
+</li>
+<li>ID 98146 : The Command SHCI_C2_DEBUG_Init() is updated to disable low power mode on CPU2 if necessary</li>
+<li>ID 100904 : Remove ability to read the initial static random address<br />
+</li>
+<li>ID 102435 : Add BLE Basic stack support. New M0 binary (removal of following features are removed from Full BLE Stack: “L2Cap Connection - oriented channel, Additional beacon, Some HCI interface features, Phy update (2Mb/s), Direct test mode” )</li>
+<li>ID 104807 : Fix issue after the white list clearing for device also in resolving list. The device was seen as it was still in the white list.</li>
+<li>ID 104813 : Deliberately corrupted scanning PDU makes the STM32WB crash: fix consists in filtering the parameters whose value can exceed the allowed range</li>
+<li>ID 105676 : Critical code optimized in timing during execution<br />
+</li>
+<li>ID 106277 : Support of HCI_LE_SET_ADVERTISING_DATA command on Basic Stack</li>
+<li>ID 106287 : HCI_HOST_BUFFER_SIZE returns Command Complete. Previous release, it was HCI command status event</li>
+<li>ID 106290 : Enabling the GAP privacy enables the following events:
+<ul>
+<li>LE Data Length Change Event</li>
+<li>LE PHY Update Complete Event</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB3x(512K)</th>
+<th>STM32WB3x(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb3x_FUS_fw_for_fus_0_5_3.bin</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>V1.2.0</td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_FUS_fw.bin</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>V1.2.0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 7” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB3x(512K)</th>
+<th>STM32WB3x(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb3x_BLE_HCILayer_fw.bin</td>
+<td>0x0806D000</td>
+<td>0x0802D000</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x08076000</td>
+<td>0x08036000</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_BLE_LLD_fw.bin</td>
+<td>0x08078000</td>
+<td>0x08038000</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_Mac_802_15_4_fw.bin</td>
+<td>0x08040000</td>
+<td>0x00</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_BLE_Stack_basic_fw.bin</td>
+<td>0x0805B000</td>
+<td>0x0801B000</td>
+<td>V1.12.0<span class="icon-st-add"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_Stack_full_fw.bin</td>
+<td>0x08056000</td>
+<td>0x08016000</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_BLE_Stack_light_fw.bin</td>
+<td>0x08062000</td>
+<td>0x08022000</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_Mac_802_15_4_fw.bin</td>
+<td>0x0806F000</td>
+<td>0x0802F000</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Phy_802_15_4_fw.bin</td>
+<td>0x0806A000</td>
+<td>0x0802A000</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_Thread_FTD_fw.bin</td>
+<td>0x08023000</td>
+<td>0x00</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Thread_MTD_fw.bin</td>
+<td>0x08037000</td>
+<td>0x00</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_Thread_RCP_fw.bin</td>
+<td>0x08066000</td>
+<td>0x08026000</td>
+<td>V1.12.0<span class="icon-st-add"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Zigbee_FFD_fw.bin</td>
+<td>0x08030000</td>
+<td>0x00</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_Zigbee_RFD_fw.bin</td>
+<td>0x0803F000</td>
+<td>0x00</td>
+<td>V1.12.0<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.11.1 / 23-March-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li><p>Install address for STM32WB3x(256K) provided</p></li>
@@ -522,7 +716,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.11.0 / 5-February-2021</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Support of new binary:
@@ -679,7 +873,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.10.0 / 26-October-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -777,7 +971,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.9.0 / 21-September-2020</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Introducing following new binary:</li>
@@ -891,7 +1085,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.8.0 / 22-June-2020</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -999,7 +1193,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>MAC:
@@ -1088,7 +1282,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of Wireless Coprocessor Binary compatible with STM32WB3x.</li>

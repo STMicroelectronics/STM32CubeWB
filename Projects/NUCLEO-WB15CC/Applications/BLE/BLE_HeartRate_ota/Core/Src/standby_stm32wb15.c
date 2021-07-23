@@ -58,7 +58,7 @@ uint32_t standby_boot_mng(void);
 void standby_hw_save(void);
 void standby_hw_restore(void);
 /* USER CODE BEGIN PFP */
-extern void SystemClock_Config(void); 
+ 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -97,22 +97,26 @@ void standby_hw_restore(void)
   /* USER CODE END standby_hw_restore_1 */
 
   APPD_Init();
-
-  SystemClock_Config();
-
-  HAL_Init();
-
-  /* In this user section add MX init functions present in main.c , except MX_RTC_Init() */
-  /* USER CODE BEGIN standby_hw_restore_2 */
-  
   Init_Exti();
-  MX_GPIO_Init();
-  
-  /* USER CODE END standby_hw_restore_2 */
+  HAL_Init();
 
   HW_IPCC_Init();
   HW_IPCC_Enable();
   WRITE_REG(IPCC->C1MR, backup_IPCC_C1MR);
+
+  if( !LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) )
+  {
+    LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
+    LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+  }
+  LL_HSEM_ReleaseLock( HSEM, CFG_HW_PWR_STANDBY_SEMID, 0 );
+
+  /* In this user section add MX init functions present in main.c , except MX_RTC_Init() */
+  /* USER CODE BEGIN standby_hw_restore_2 */
+  
+  MX_GPIO_Init();
+  
+  /* USER CODE END standby_hw_restore_2 */
 
   HW_TS_Init(hw_ts_InitMode_Limited, &hrtc);
 
@@ -138,14 +142,18 @@ void standby_hw_restore(void)
 uint32_t standby_boot_mng(void)
 {
 #if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
+  __HAL_RCC_HSEM_CLK_ENABLE();
+  while( LL_HSEM_1StepLock( HSEM, CFG_HW_PWR_STANDBY_SEMID ) );
+
   if( __HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET )
   {
     __disable_irq( );
 
     boot_after_standby = 1;
-    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
   }else{
     boot_after_standby = 0;
+
+    LL_HSEM_ReleaseLock( HSEM, CFG_HW_PWR_STANDBY_SEMID, 0 );
   }
 #else
   boot_after_standby = 0;

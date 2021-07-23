@@ -56,6 +56,7 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void);
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
+static void custom_ls_client_cb (struct ZbZclCommandRspT *rsp, void *arg);
 
 /* Private variables -----------------------------------------------*/
 static TL_CmdPacket_t *p_ZIGBEE_otcmdbuffer;
@@ -158,7 +159,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
   BSP_LED_Off(LED_BLUE);
 
   /* Configure the joining parameters */
-  zigbee_app_info.join_status = 0x01; /* init to error status */
+  zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
   zigbee_app_info.startupControl = ZbStartTypeJoin;
 
@@ -282,7 +283,7 @@ static void APP_ZIGBEE_ConfigGroupAddr(void)
  * @param  command response,arg
  * @retval None
  */
-void custom_ls_client_cb (struct ZbZclCommandRspT *rsp, void *arg)
+static void custom_ls_client_cb (struct ZbZclCommandRspT *rsp, void *arg)
 {
 
       if(rsp->payload[0] == ZCL_CUSTOM_LS_MATCH)

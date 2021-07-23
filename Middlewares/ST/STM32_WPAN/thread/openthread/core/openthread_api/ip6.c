@@ -265,7 +265,7 @@ void otIp6SetAddressCallback(otInstance *aInstance, otIp6AddressCallback aCallba
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_IP6_SET_RECEIVE_CALLBACK;
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_SET_ADDRESS_CALLBACK;
 
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t)aCallbackContext;

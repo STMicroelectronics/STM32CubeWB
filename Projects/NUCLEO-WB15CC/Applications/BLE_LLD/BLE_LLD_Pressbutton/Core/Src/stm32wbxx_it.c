@@ -35,7 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
- 
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -60,12 +60,11 @@
 
 /* External variables --------------------------------------------------------*/
 /* USER CODE BEGIN EV */
-extern TIM_HandleTypeDef htim2;
 
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex Processor Interruption and Exception Handlers          */ 
+/*           Cortex Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.
@@ -188,9 +187,7 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
-#if 0 /* no systick used */
   HAL_IncTick();
-#endif
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
@@ -202,8 +199,6 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32wbxx.s).                    */
 /******************************************************************************/
-
-#ifdef STM32WB35xx
 /**
   * @brief This function handles DMA1 channel4 global interrupt.
   */
@@ -225,58 +220,20 @@ void DMA1_Channel4_IRQHandler(void)
 /**
   * @brief This function handles DMA2 channel4 global interrupt.
   */
-void DMA2_Channel4_IRQHandler(void)
+void DMA1_Channel5_IRQHandler(void)
 {
-  /* USER CODE BEGIN DMA2_Channel4_IRQn 0 */
+  /* USER CODE BEGIN DMA1_Channel5_IRQn 0 */
 
-  /* USER CODE END DMA2_Channel4_IRQn 0 */
+  /* USER CODE END DMA1_Channel5_IRQn 0 */
 #if (CFG_HW_USART1_ENABLED == 1)
 #if (CFG_HW_USART1_DMA_TX_SUPPORTED == 1)
   HAL_DMA_IRQHandler(&hdma_usart1_tx);
 #endif
 #endif
-  /* USER CODE BEGIN DMA2_Channel4_IRQn 1 */
+  /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
 
-  /* USER CODE END DMA2_Channel4_IRQn 1 */
+  /* USER CODE END DMA1_Channel5_IRQn 1 */
 }
-
-#else
-/**
-  * @brief This function handles DMA1 channel1 global interrupt.
-  */
-void DMA1_Channel1_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 0 */
-#if (CFG_HW_LPUART1_ENABLED == 1)
-#if (CFG_HW_LPUART1_DMA_TX_SUPPORTED == 1)
-  HAL_DMA_IRQHandler(&hdma_lpuart1_tx);
-#endif
-#endif
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 1 */
-}
-
-/**
-  * @brief This function handles DMA1 channel2 global interrupt.
-  */
-void DMA1_Channel2_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel2_IRQn 0 */
-#if (CFG_HW_USART1_ENABLED == 1)
-#if (CFG_HW_USART1_DMA_TX_SUPPORTED == 1)
-  HAL_DMA_IRQHandler(&hdma_usart1_tx);
-#endif
-#endif
-  /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel2_IRQn 1 */
-}
-#endif
 
 /**
   * @brief This function handles USART1 global interrupt.
@@ -317,7 +274,7 @@ void LPUART1_IRQHandler(void)
  * @param  None
  * @retval None
  */
-void PUSH_BUTTON_SW1_EXTI_IRQHandler(void)
+void BUTTON_SW1_EXTI_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW1_PIN);
 }
@@ -328,7 +285,7 @@ void PUSH_BUTTON_SW1_EXTI_IRQHandler(void)
  * @param  None
  * @retval None
  */
-void PUSH_BUTTON_SW2_EXTI_IRQHandler(void)
+void BUTTON_SW2_EXTI_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW2_PIN);
 }
@@ -339,24 +296,18 @@ void PUSH_BUTTON_SW2_EXTI_IRQHandler(void)
  * @param  None
  * @retval None
  */
-void PUSH_BUTTON_SW3_EXTI_IRQHandler(void)
+void BUTTON_SW3_EXTI_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW3_PIN);
 }
 
 
-void TIM2_IRQHandler(void)
-{
-  HAL_TIM_IRQHandler(&htim2);
-}
-
-
-#if 0 /* Not needed for LLD tests : removed to use less power */
+#if (CFG_LPM_SUPPORTED == 1U)
 void RTC_WKUP_IRQHandler(void)
 {
   HW_TS_RTC_Wakeup_Handler();
 }
-#endif /* Not needed for LLD tests : removed to use less power */
+#endif
 
 void IPCC_C1_TX_IRQHandler(void)
 {

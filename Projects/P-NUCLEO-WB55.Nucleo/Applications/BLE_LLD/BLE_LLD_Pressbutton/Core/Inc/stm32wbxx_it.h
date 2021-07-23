@@ -29,6 +29,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app_common.h"
+#include "gpio_lld.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -56,13 +57,8 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-#ifdef STM32WB35xx
 void DMA1_Channel4_IRQHandler(void);
-void DMA2_Channel4_IRQHandler(void);
-#else
-void DMA1_Channel1_IRQHandler(void);
-void DMA1_Channel2_IRQHandler(void);
-#endif
+void DMA1_Channel5_IRQHandler(void);
 void USART1_IRQHandler(void);
 void LPUART1_IRQHandler(void);
 /* USER CODE BEGIN EFP */
@@ -71,12 +67,12 @@ void RTC_WKUP_IRQHandler(void);
 #endif
 void IPCC_C1_TX_IRQHandler(void);
 void IPCC_C1_RX_IRQHandler(void);
-#if 1 // Not needed for LLD tests : remove to use less power
-void PUSH_BUTTON_SW1_EXTI_IRQHandler(void);
-void PUSH_BUTTON_SW2_EXTI_IRQHandler(void);
-void PUSH_BUTTON_SW3_EXTI_IRQHandler(void);
+
+void BUTTON_SW1_EXTI_IRQHandler(void);
+void BUTTON_SW2_EXTI_IRQHandler(void);
+void BUTTON_SW3_EXTI_IRQHandler(void);
 void TIM2_IRQHandler(void);
-#endif
+
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

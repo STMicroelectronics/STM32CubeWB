@@ -410,7 +410,7 @@ MOBLE_RESULT Appli_LightClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opco
       }
     case LIGHT_LC_PROPERTY_SET:
       {
-        //TODO: Set dynamic data size depending on Property DATA LENTGH:  length = 2 + PropertyDataLength
+
         result = LightClient_LC_Property_Set_Ack(elementIndex,
                                               msg_params, 
                                               5);
@@ -418,7 +418,7 @@ MOBLE_RESULT Appli_LightClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opco
       }
   case LIGHT_LC_PROPERTY_SET_UNACK:
     {  
-      //TODO: Set dynamic data size depending on Property DATA LENTGH:  length = 2 + PropertyDataLength
+
       result = LightClient_LC_Property_Set_Unack(elementIndex,
                                               msg_params, 
                                               5);

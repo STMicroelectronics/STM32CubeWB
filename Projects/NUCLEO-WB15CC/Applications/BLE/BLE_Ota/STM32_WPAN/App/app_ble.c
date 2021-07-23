@@ -38,6 +38,8 @@
 #include "ota_sbsfu.h"
 #endif /* OTA_SBSFU */
 
+#include "flash_driver.h"
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
 #define APPBLE_GAP_DEVICE_NAME_LENGTH 7
@@ -411,25 +413,17 @@ static void Delete_Sectors( void )
 {
 
 #ifdef OTA_SBSFU
-  uint32_t page_error;
-  FLASH_EraseInitTypeDef p_erase_init;
+  uint32_t NbrOfSectorToBeErased;
 
-  p_erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
-  p_erase_init.Page = (SLOT_ACTIVE_1_START&0x00FFF000)>>12;
-  p_erase_init.NbPages = (((SLOT_ACTIVE_1_END-SLOT_ACTIVE_1_START)&0x00FFF000)>>12)+1;
-   
-  HAL_FLASH_Unlock();
-  HAL_FLASHEx_Erase(&p_erase_init, &page_error);
-  HAL_FLASH_Lock();
-
-  p_erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
-  p_erase_init.Page = (SLOT_DWL_1_START&0x00FFF000)>>12;
-  p_erase_init.NbPages = (((SLOT_DWL_1_END-SLOT_DWL_1_START)&0x00FFF000)>>12)+1;
-   
-  HAL_FLASH_Unlock();
-  HAL_FLASHEx_Erase(&p_erase_init, &page_error);
-  HAL_FLASH_Lock();
+  NbrOfSectorToBeErased = (((SLOT_ACTIVE_1_END-SLOT_ACTIVE_1_START)&0x00FFF000)>>12)+1;
   
+  FD_EraseSectors((SLOT_ACTIVE_1_START&0x00FFF000)>>12, 
+                  NbrOfSectorToBeErased);
+
+  NbrOfSectorToBeErased = (((SLOT_DWL_1_END-SLOT_DWL_1_START)&0x00FFF000)>>12)+1;
+  
+  FD_EraseSectors((SLOT_DWL_1_START&0x00FFF000)>>12, 
+                  NbrOfSectorToBeErased);
   return;
 #else
   /**
@@ -438,15 +432,12 @@ static void Delete_Sectors( void )
    * The limit can be read from the SFSA option byte which provides the first secured sector address.
    */
 
-  uint32_t page_error;
-  FLASH_EraseInitTypeDef p_erase_init;
   uint32_t first_secure_sector_idx;
+  uint32_t NbrOfSectorToBeErased;
 
   first_secure_sector_idx = (READ_BIT(FLASH->SFR, FLASH_SFR_SFSA) >> FLASH_SFR_SFSA_Pos);
-  p_erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
 
-  p_erase_init.Page = CFG_OTA_START_SECTOR_IDX_VAL_MSG;
-  if(p_erase_init.Page < (CFG_APP_START_SECTOR_INDEX - 1))
+  if(CFG_OTA_START_SECTOR_IDX_VAL_MSG < (CFG_APP_START_SECTOR_INDEX - 1))
   {
     /**
      * Something has been wrong as there is no case we should delete the BLE_Ota application
@@ -455,19 +446,16 @@ static void Delete_Sectors( void )
     CFG_OTA_REBOOT_VAL_MSG = CFG_REBOOT_ON_FW_APP;
     NVIC_SystemReset(); /* it waits until reset */
   }
-  p_erase_init.NbPages = CFG_OTA_NBR_OF_SECTOR_VAL_MSG;
 
-  if ((p_erase_init.Page + p_erase_init.NbPages) > first_secure_sector_idx)
+  NbrOfSectorToBeErased = CFG_OTA_NBR_OF_SECTOR_VAL_MSG;
+
+  if ((CFG_OTA_START_SECTOR_IDX_VAL_MSG + NbrOfSectorToBeErased) > first_secure_sector_idx)
   {
-    p_erase_init.NbPages = first_secure_sector_idx - p_erase_init.Page;
+    NbrOfSectorToBeErased = first_secure_sector_idx - CFG_OTA_START_SECTOR_IDX_VAL_MSG;
   }
 
-  HAL_FLASH_Unlock();
-
-  HAL_FLASHEx_Erase(&p_erase_init, &page_error);
-
-  HAL_FLASH_Lock();
-
+  FD_EraseSectors(CFG_OTA_START_SECTOR_IDX_VAL_MSG, 
+                  NbrOfSectorToBeErased);
   return;
 #endif /* OTA_SBSFU */
 }

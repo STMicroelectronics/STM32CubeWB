@@ -23,7 +23,7 @@
 This projects provides a reference template that can be used to build any firmware application.
 
 This directory provides a reference template project that can be used to build any firmware application for
-STM32WB55xx devices using STM32CubeWB HAL and running on STM32WB5MM-DK board from STMicroelectronics. 
+STM32WB5MMxx devices using STM32CubeWB HAL and running on STM32WB5MM-DK board from STMicroelectronics. 
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
@@ -47,7 +47,7 @@ STM32WB55xx devices using STM32CubeWB HAL and running on STM32WB5MM-DK board fro
         
 @par Hardware and Software environment  
 
-  - This example runs on STM32WB55xx devices.
+  - This example runs on STM32WB5MMxx devices.
     
   - This example has been tested with STMicroelectronics STM32WB5MM-DK
     boards and can be easily tailored to any other supported device 

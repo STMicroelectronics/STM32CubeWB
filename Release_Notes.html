@@ -11,27 +11,22 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="_htmresc/mini-st_2020.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <link rel="icon" type="image/x-icon" href="_htmresc/favicon.png" />
 </head>
 <body>
 <div class="row">
 <div class="col-sm-12 col-lg-4">
-<div class="card fluid">
-<div class="sectione dark">
 <center>
-<h1 id="release-notes-for-stm32cubewb-firmware-package"><small>Release Notes for</small> STM32CubeWB Firmware Package</h1>
+<h1 id="release-notes-for">Release Notes for</h1>
+<h1 id="stm32cubewb-firmware-package"><mark>STM32CubeWB Firmware Package</mark></h1>
 <p>Copyright © 2019 STMicroelectronics<br />
 </p>
-<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo.png" alt="ST logo" /></a>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo_2020.png" alt="ST logo" /></a>
 </center>
-</div>
-</div>
-<h1 id="license">License</h1>
-<p>This software package is licensed by ST under ST license SLA0048, the “License”; You may not use this package except in compliance with the License. You may obtain a copy of the License at:</p>
-<p><a href="http://www.st.com/SLA0048">http://www.st.com/SLA0048</a></p>
 <h1 id="purpose">Purpose</h1>
 <p><strong>STM32Cube is an STMicroelectronics original initiative to ease developers life by reducing development efforts, time and cost.</mark></strong></p>
 <p>STM32Cube covers STM32 portfolio.</p>
@@ -46,9 +41,7 @@
 </ul>
 <p>All embedded software utilities come with a full set of examples.</p>
 <p>The STM32Cube firmware solution offers a straightforward API with a modular architecture, making it simple to fine tune custom applications and scalable to fit most requirements.</p>
-<figure>
-<img src="_htmresc/STM32Cube.bmp" alt="STM32Cube" /><figcaption>STM32Cube</figcaption>
-</figure>
+<p><img src="_htmresc/STM32Cube_2020.bmp" /></p>
 <p>The HAL (Hardware Abstraction Layer) &amp; LL (Low Layers) drivers provided within this package supports the following STM32WBxx product:</p>
 <ul>
 <li>STM32WB55xx</li>
@@ -66,6 +59,7 @@
 <li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/dm00513965.pdf">AN5185</a> : ST FW upgrade services for STM32WB</li>
 <li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/dm00556294.pdf">AN5247</a> : Over the air application and wireless firmware update</li>
 <li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00571230.pdf">AN5270</a> : STM32WB BLE wireless Interface</li>
+<li><a href="https://www.st.com/resource/en/application_note/dm00765305-stm32wb-series-ble-interoperability-report-stmicroelectronics.pdf">AN5604</a> : STM32WB Series BLE interoperability report</li>
 <li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00598033.pdf">AN5289</a> : Building wireless applications with STM32WB Series microcontrollers</li>
 <li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00600575.pdf">AN5292</a> : How to build a Bluetooth® Low Energy mesh application for STM32WBx5 microcontrollers</li>
 <li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/DM00643581.pdf">AN5379</a> : Examples of AT commands on STM32WB Series microcontrollers</li>
@@ -87,9 +81,636 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section14" checked aria-hidden="true"> <label for="collapse-section14" aria-hidden="true">V1.11.1 / 02-April-2021</label>
+<input type="checkbox" id="collapse-section15" checked aria-hidden="true"> <label for="collapse-section15" aria-hidden="true">V1.12.0 / 24-June-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<h3 id="maintenance-release-for-ble-thread-and-zigbee-updates">Maintenance Release for BLE, Thread and Zigbee updates</h3>
+<ul>
+<li><strong>Thread</strong> updates
+<ul>
+<li>Introducing following new binary: <strong>stm32wb5x_Thread_RCP_fw.bin</strong> to support Thread Border Router Setup</li>
+</ul></li>
+<li><strong>BLE</strong> updates
+<ul>
+<li>Introducing <strong>BLE Basic stack</strong> with reduced features keeping following configuration:
+<ul>
+<li>GAP peripheral &amp; Central (8 links - LL slave up to 2 links)</li>
+<li>GATT server, client</li>
+<li>Data length extension</li>
+<li>Privacy</li>
+<li>White list</li>
+<li>Legacy Pairing, LE secure connections</li>
+<li>HCI interface (reduced)</li>
+</ul></li>
+<li>Additional beacon feature support</li>
+<li>Critical code optimized in timing during execution</li>
+<li>The command “ACI_GAP_START_NAME_DISCOVERY_PROC” will be deprecated on next STM32Cube_FW_WB release v1.13.0</li>
+</ul></li>
+<li><strong>Zigbee</strong> updates
+<ul>
+<li>zb_destroy_process improvement correcting some potential memory issues</li>
+<li>Memory allocation improvement </li>
+<li>Power consumption improvement when using fragmentation for a sleepy end device (transfer of payload &gt; 50 bytes)</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<h3 id="maintenance-release-for-cmsis-halll-drivers-and-projects-updates">Maintenance Release for CMSIS, HAL/LL Drivers and Projects updates</h3>
+<ul>
+<li><strong>CMSIS Device</strong> updates
+<ul>
+<li>Update CMSIS device to include latest corrections</li>
+<li>Add atomic register access services:
+<ul>
+<li>32-bit register access: ATOMIC_SET_BIT(), ATOMIC_CLEAR_BIT(), ATOMIC_MODIFY_REG()</li>
+<li>16-bit register access: ATOMIC_SETH_BIT(), ATOMIC_CLEARH_BIT(), ATOMIC_MODIFYH_BIT()</li>
+</ul></li>
+<li>Update linker files templates for all IDE (.icf/.sct/.ld)
+<ul>
+<li>RAM start address has been updated from 0x20000000/0x20000004 to 0x20000008 to be aligned on a 8 byte boundary, and be compatible with ARM Compiler 6 (Keil MDK-ARM)</li>
+</ul></li>
+<li>Refer to <a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release notes</a> for further details</li>
+</ul></li>
+<li><strong>HAL/LL Drivers</strong> updates
+<ul>
+<li>Update HAL/LL drivers to include latest corrections
+<ul>
+<li>Update of HAL CORTEX, CRYP, EXTI, FLASH, GPIO, I2C, IWDG, RCC, RTC, RNG, SMBUS, SPI, UART, USB and LL DMA, RTC, SPI, LPUART, USART drivers</li>
+<li>Update of HAL SMBUS driver to introduce fast mode and fast mode plus
+<ul>
+<li>New extension files: stm32wbxx_hal_smbus_ex.h/.c for new APIs</li>
+</ul></li>
+</ul></li>
+<li>Refer to <a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details</li>
+</ul></li>
+<li><strong>Projects</strong> updates
+<ul>
+<li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
+<li>Templates MDK-ARM projects migrated to ARM Compiler 6 (AC-5 like warnings)</li>
+<li>Update linker files templates for all IDE (.icf/.sct/.ld)
+<ul>
+<li>RAM start address has been updated from 0x20000000/0x20000004 to 0x20000008 to be aligned on a 8 byte boundary</li>
+</ul></li>
+<li>Add support of new applications:
+<ul>
+<li>/NUCLEO-WB15CC/Applications/BLE_LLD/BLE_LLD_Chat</li>
+<li>/NUCLEO-WB15CC/Applications/BLE_LLD/BLE_LLD_Lowpower</li>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/BLE_LLD/BLE_LLD_Chat</li>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/BLE_LLD/BLE_LLD_Proximity</li>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/Thread/Thread_RCP</li>
+<li>/STM32WB5MM-DK/Applications/Demontrations/Audio_BVLINKWB</li>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_HeartRate</li>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_Mesh_ThermometerSensor</li>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_Sensor</li>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_TransparentMode</li>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_p2pServer</li>
+<li>/STM32WB5MM-DK/Applications/BLE_LLD/BLE_LLD_Chat</li>
+<li>/STM32WB5MM-DK/Applications/Thread/Thread_Coap_Generic</li>
+<li>/STM32WB5MM-DK/Applications/Zigbee/Zigbee_TempMeas_Client_Router</li>
+<li>/STM32WB5MM-DK/Applications/Zigbee/Zigbee_TempMeas_Server_Coord</li>
+<li>/STM32WB5MM-DK/Applications/Zigbee/Zigbee_OnOff_Client_Router</li>
+<li>/STM32WB5MM-DK/Applications/Zigbee/Zigbee_OnOff_Server_Coord</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<h2 id="contents">Contents</h2>
+<p><small>The components flagged by “<span class="icon-st-update"></span>” have changed since the previous release. “<span class="icon-st-add"></span>” are new.</small></p>
+<p><br />
+</p>
+<h3 id="projects">Projects</h3>
+<p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
+<p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th>Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Projects/P-NUCLEO-WB55.Nucleo</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Projects/P-NUCLEO-WB55.USBDongle</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Projects/STM32WB5MM-DK</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB5MM-DK/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Projects/NUCLEO-WB15CC</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/NUCLEO-WB15CC/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<h3 id="components">Components</h3>
+<p><strong>STM32WBx Firmware Upgrade Services Binary</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th>Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_FUS_fw.bin</td>
+<td style="text-align: left;">V1.2.0</td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_FUS_fw_for_fus_0_5_3.bin</td>
+<td style="text-align: left;">V1.2.0</td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb3x_FUS_fw.bin</td>
+<td style="text-align: left;">V1.2.0</td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb3x_FUS_fw_for_fus_0_5_3.bin</td>
+<td style="text-align: left;">V1.2.0</td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>STM32WBxx Coprocessor Wireless Binaries</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th>Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_BLE_HCILayer_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_BLE_HCI_AdvScan_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_BLE_LLD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_BLE_Mac_802_15_4_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_BLE_Stack_basic_fw.bin <span class="icon-st-add"></span></td>
+<td style="text-align: left;">V1.12.0</td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_BLE_Stack_full_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_BLE_Stack_light_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_BLE_Thread_dynamic_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_BLE_Thread_static_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_BLE_Zigbee_FFD_dynamic_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_BLE_Zigbee_FFD_static_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_BLE_Zigbee_RFD_dynamic_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_BLE_Zigbee_RFD_static_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_Phy_802_15_4_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_Thread_FTD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_Thread_MTD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_Thread_RCP_fw.bin <span class="icon-st-add"></span></td>
+<td style="text-align: left;">V1.12.0</td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb5x_Zigbee_FFD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb5x_Zigbee_RFD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb3x_BLE_HCI_AdvScan_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb3x_BLE_HCILayer_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb3x_BLE_LLD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb3x_BLE_Mac_802_15_4_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb3x_BLE_Stack_basic_fw.bin <span class="icon-st-add"></span></td>
+<td style="text-align: left;">V1.12.0</td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb3x_BLE_Stack_full_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb3x_BLE_Stack_light_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb3x_Mac_802_15_4_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb3x_Phy_802_15_4_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb3x_Thread_FTD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb3x_Thread_MTD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb3x_Thread_RCP_fw.bin <span class="icon-st-add"></span></td>
+<td style="text-align: left;">V1.12.0</td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb3x_Zigbee_FFD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb3x_Zigbee_RFD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb1x_BLE_Stack_basic_fw.bin <span class="icon-st-add"></span></td>
+<td style="text-align: left;">V1.12.0</td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb1x_BLE_Stack_full_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb1x_BLE_Stack_light_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb1x_BLE_HCILayer_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">stm32wb1x_BLE_LLD_fw.bin</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th>Version</th>
+<th>Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cortex-M CMSIS</td>
+<td>V5.6.0</td>
+<td><a href="Drivers/CMSIS/README.md">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WB CMSIS</td>
+<td>V1.9.0 <span class="icon-st-update"></span></td>
+<td><a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBxx_HAL_Driver</td>
+<td>V1.9.0 <span class="icon-st-update"></span></td>
+<td><a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P-NUCLEO-WB55.USBDongle</td>
+<td>V1.0.3 <span class="icon-st-update"></span></td>
+<td><a href="Drivers/BSP/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P-NUCLEO-WB55.Nucleo</td>
+<td>V1.0.3 <span class="icon-st-update"></span></td>
+<td><a href="Drivers/BSP/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WB5MM-DK</td>
+<td>V1.0.1 <span class="icon-st-update"></span></td>
+<td><a href="Drivers/BSP/STM32WB5MM-DK/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WB15CC</td>
+<td>V1.0.1 <span class="icon-st-update"></span></td>
+<td><a href="Drivers/BSP/NUCLEO-WB15CC/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP Common</td>
+<td>V7.0.0</td>
+<td><a href="Drivers/BSP/Components/Common/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP stts22h</td>
+<td>V1.1.1</td>
+<td><a href="Drivers/BSP/Components/stts22h/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP ism330dhcx</td>
+<td>V1.0.2</td>
+<td><a href="Drivers/BSP/Components/ism330dhcx/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP ssd1315</td>
+<td>V2.0.0</td>
+<td><a href="Drivers/BSP/Components/ssd1315/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP s25fl128s</td>
+<td>V1.0.0</td>
+<td><a href="Drivers/BSP/Components/s25fl128s/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th>Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">FatFS</td>
+<td style="text-align: left;">R0.12c</td>
+<td><a href="Middlewares/Third_Party/FatFs/doc/updates.txt">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">ST modified 20191011</td>
+<td><a href="Middlewares/Third_Party/FatFs/src/st_readme.txt">release notes ST</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">FreeRTOS</td>
+<td style="text-align: left;">V10.3.1</td>
+<td><a href="Middlewares/Third_Party/FreeRTOS/Source/readme.txt">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">ST modified 20200831</td>
+<td><a href="Middlewares/Third_Party/FreeRTOS/Source/st_readme.txt">release notes ST</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32 USB Device Library</td>
+<td style="text-align: left;">V2.7.1</td>
+<td><a href="Middlewares/ST/STM32_USB_Device_Library/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32 TouchSensing Library</td>
+<td style="text-align: left;">V2.2.5</td>
+<td><a href="Middlewares/ST/STM32_TouchSensing_Library/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32 WPAN</td>
+<td style="text-align: left;">V1.12.0 <span class="icon-st-update"></span></td>
+<td><a href="Middlewares/ST/STM32_WPAN/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32 Audio PDM</td>
+<td style="text-align: left;">V3.3.0</td>
+<td><a href="Middlewares/ST/STM32_Audio/Addons/PDM/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Utilities</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th>Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CPU</td>
+<td style="text-align: left;">V1.1.0</td>
+<td><a href="Utilities/CPU/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fonts</td>
+<td style="text-align: left;">V2.0.2</td>
+<td><a href="Utilities/Fonts/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Log</td>
+<td style="text-align: left;">V1.0.0</td>
+<td><a href="Utilities/Log/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">conf</td>
+<td style="text-align: left;">V1.4.1</td>
+<td><a href="Utilities/conf/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">lpm</td>
+<td style="text-align: left;">V1.3.1</td>
+<td><a href="Utilities/lpm/tiny_lpm/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sequencer</td>
+<td style="text-align: left;">V1.5.1</td>
+<td><a href="Utilities/sequencer/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LCD</td>
+<td style="text-align: left;">V2.0.0</td>
+<td><a href="Utilities/Log/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>FUS upgrade:
+<ul>
+<li><strong>If Anti-Rollback needs to be activated, please make sure to activate it only after installing the latest FUS version (&gt;= V1.2.0)</strong> <strong>and after successfully installing a wireless stack (without deleting it).</strong> <strong>Otherwise, further wireless stack installation will be blocked.</strong></li>
+</ul></li>
+<li>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin and stm32wb5x_BLE_Zigbee_RFD_static_fw.bin:
+<ul>
+<li>When using the static concurrent mode BLE/Zigbee binaries, due to a memory leak inside Zigbee shutdown procedure, the number of transitions from Zigbee to BLE is limited. This number depends on the available memory for the application. For instance, the BLE_Zigbee_Static application, available inside this package, faces this limitation after 10 transition average.</li>
+<li>The workaround is to rely on the dynamic concurrent mode provided by stm32wb5x_BLE_Zigbee_FFD_dynamic_fw.bin which is not facing this limitation.</li>
+<li>This limitation will be corrected inside a future release and is referenced under ID95417.</li>
+</ul></li>
+<li>Application Zigbee_Commissioning_Server_Router:
+<ul>
+<li>For STM32CubeIDE project, some elements inside the traces are not correctly displayed (uint64_t formatting only). Not observable on IAR and MDK-ARM project.</li>
+</ul></li>
+<li><p>The stm32wb5x_BLE_Zigbee_RFD_dynamic_fw coprocessor wireless binary must be flashed only using the USB interface (as defined in the release note located in the STM32WB_Copro_Wireless_Binaries folder). It is not possible to flash this binary via ST-LINK.</p></li>
+<li>The STM32CubeIDE/MDK-ARM projects are not available for the following applications and examples:
+<ul>
+<li>/NUCLEO-WB15CC/Applications/BLE/BLE_DataThroughput/STM32CubeIDE</li>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_p2pServer/MDK-ARM</li>
+<li>/STM32WB5MM-DK/Examples/BSP/STM32CubeIDE</li>
+</ul></li>
+<li>The Debug configuration is not available with STM32CubeIDE projects for the following applications:
+<ul>
+<li>/NUCLEO-WB15CC/Applications/BLE/BLE_Ota/STM32CubeIDE/</li>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_Ota/STM32CubeIDE/</li>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_Mesh_ThermometerSensor/STM32CubeIDE/</li>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_Sensor/STM32CubeIDE/</li>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_p2pServer/STM32CubeIDE/</li>
+<li>/STM32WB5MM-DK/Applications/BLE_LLD/BLE_LLD_Chat/STM32CubeIDE/</li>
+<li>/STM32WB5MM-DK/Applications/Zigbee/Zigbee_TempMeas_Client_Router/STM32CubeIDE/</li>
+<li>/STM32WB5MM-DK/Applications/Zigbee/Zigbee_TempMeas_Server_Coord/STM32CubeIDE/</li>
+</ul></li>
+</ul>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<ul>
+<li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
+<li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.31 + ST-Link</li>
+<li>STM32CubeIDE toolchain V1.7.0 + ST-Link</li>
+</ul>
+<h2 id="supported-devices-and-boards">Supported Devices and boards</h2>
+<ul>
+<li>STM32WB55xx, STM32WB50xx, STM32WB35xx, STM32WB30xx, STM32WB15xx and STM32WB10xx devices.</li>
+<li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle.</li>
+<li>STM32WB5MM-DK board</li>
+<li>NUCLEO-WB15CC board</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<p>This software release is compatible with:</p>
+<ul>
+<li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
+</ul>
+<p>Several applications (BLE (Bluetooth low energy), Thread or Mac 802-15-4) are available under:</p>
+<ul>
+<li>Projects/P-NUCLEO-WB55.Nucleo/Applications</li>
+<li>Projects/P-NUCLEO-WB55.USBDongle/Applications</li>
+<li>Projects/NUCLEO-WB15CC/Applications</li>
+</ul>
+<p>All of them are provided in source code and some of them are also available in binary format directly for ready to use usage:</p>
+<ul>
+<li>Projects/P-NUCLEO-WB55.Nucleo/Applications/xxx/Binary/<projectName>.hex</li>
+<li>Projects/P-NUCLEO-WB55.USBDongle/Applications/xxx/Binary/<projectName>.hex</li>
+<li>Projects/NUCLEO-WB15CC/Applications/xxx/Binary/<projectName>.hex</li>
+</ul>
+<p>Each of them require a different coprocessor binary in order to behave correctly. This is documented inside each readme.txt of those applications.</p>
+<p>For a detailed explanation on how to use and how to flash them, you can refer to:</p>
+<ul>
+<li><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB5x/Release_Notes.html">release note for STM32WB5x</a></li>
+<li><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note for STM32WB3x</a></li>
+<li><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note for STM32WB1x</a></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="true">V1.11.1 / 02-April-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <h3 id="patch-release-for-fus-security-update-and-wireless-protocols-corrections">Patch Release for FUS security update and Wireless protocols corrections</h3>
 <ul>
 <li>FUS:
@@ -125,8 +746,8 @@
 </ul>
 <p><br />
 </p>
-<h2 id="contents">Contents</h2>
-<h3 id="projects">Projects</h3>
+<h2 id="contents-1">Contents</h2>
+<h3 id="projects-1">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
@@ -137,9 +758,9 @@
 </ul>
 <p><br />
 </p>
-<h3 id="components">Components</h3>
+<h3 id="components-1">Components</h3>
+<p><strong>STM32WBx Firmware Upgrade Services Binary</strong></p>
 <table>
-<caption>STM32WBx Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -174,6 +795,12 @@
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">stm32wb3x_FUS_fw_for_fus_0_5_3.bin</td>
+<td style="text-align: left;"><strong>V1.2.0</strong></td>
+<td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
+<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">stm32wb3x_FUS_fw_1_0_2.bin</td>
 <td style="text-align: left;">Obsolete</td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
@@ -181,8 +808,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WBxx Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WBxx Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -314,7 +941,7 @@
 </tr>
 <tr class="odd">
 <td style="text-align: left;">stm32wb3x_BLE_LLD_fw.bin</td>
-<td style="text-align: left;">V1.11.0</td>
+<td style="text-align: left;"><strong>V1.11.1</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
 </tr>
@@ -373,57 +1000,39 @@
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">stm32wb1x_BLE_HCILayer_fw.bin</td>
-<td style="text-align: left;"><strong>V1.11.1</strong></td>
-<td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
-<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">stm32wb1x_BLE_Stack_full_fw.bin</td>
 <td style="text-align: left;"><strong>V1.11.1</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">stm32wb1x_BLE_Stack_light_fw.bin</td>
 <td style="text-align: left;"><strong>V1.11.1</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">stm32wb1x_BLE_HCILayer_fw.bin</td>
-<td style="text-align: left;">V1.11.0</td>
+<td style="text-align: left;"><strong>V1.11.1</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
 <td style="text-align: left;"><strong>V1.11.1</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">stm32wb1x_BLE_LLD_fw.bin</td>
 <td style="text-align: left;"><strong>V1.11.1</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">stm32wb1x_BLE_Stack_full_fw.bin</td>
-<td style="text-align: left;">V1.11.0</td>
-<td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
-<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">stm32wb1x_BLE_Stack_light_fw.bin</td>
-<td style="text-align: left;">V1.11.0</td>
-<td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
-<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
-</tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -485,13 +1094,13 @@
 <td style="text-align: left;">BSP stts22h</td>
 <td>V1.1.1</td>
 <td><a href="https://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause</a></td>
-<td><a href="Drivers/BSP/Components/hts221/Release_Notes.html">release notes</a></td>
+<td><a href="Drivers/BSP/Components/stts22h/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BSP ism330dhcx</td>
 <td>V1.0.2</td>
 <td><a href="https://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause</a></td>
-<td><a href="Drivers/BSP/Components/ism330dlc/Release_Notes.html">release notes</a></td>
+<td><a href="Drivers/BSP/Components/ism330dhcx/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BSP ssd1315</td>
@@ -507,8 +1116,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -544,7 +1153,7 @@
 </tr>
 <tr class="odd">
 <td style="text-align: left;">FreeRTOS</td>
-<td style="text-align: left;">V10.2.1</td>
+<td style="text-align: left;">V10.3.1</td>
 <td><a href="Middlewares/Third_Party/FreeRTOS/License/license.txt">MIT</a></td>
 <td><a href="Middlewares/Third_Party/FreeRTOS/Source/readme.txt">release notes</a></td>
 </tr>
@@ -568,8 +1177,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -623,7 +1232,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-1">Known Limitations</h2>
 <ul>
 <li>FUS upgrade:
 <ul>
@@ -642,20 +1253,20 @@
 <li>The stm32wb5x_BLE_Zigbee_RFD_dynamic_fw coprocessor wireless binary must be flashed only using the USB interface (as defined in the release note located in the STM32WB_Copro_Wireless_Binaries folder). It is not possible to flash this binary via ST-LINK.</li>
 <li><p>BLE_DataThroughput known throughput limitation at 2M PHY with Cube IDE project in debug configuration</p></li>
 </ul>
-<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>STM32CubeIDE toolchain V1.4.0 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-1">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx, STM32WB50xx, STM32WB35xx, STM32WB30xx, STM32WB15xx and STM32WB10xx devices.</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle.</li>
 <li>STM32WB5MM-DK board</li>
 <li>NUCLEO-WB15CC board</li>
 </ul>
-<h2 id="dependencies">Dependencies</h2>
+<h2 id="dependencies-1">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -684,7 +1295,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="true">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <h3 id="add-new-devices-stm32wb15xx-stm32wb10xx-and-new-boards-stm32wb5mm-dk-and-nucleo-wb15cc">Add new devices STM32WB15xx, STM32WB10xx and new boards STM32WB5MM-DK and NUCLEO-WB15CC</h3>
 <ul>
 <li>Introduce HAL, LL and STM32WPAN support for stm32wb15xx and stm32wb10xx</li>
@@ -741,8 +1352,8 @@
 <li>Minor fixes in DRLC, Voice over Zigbee &amp; RSSI location Clusters</li>
 </ul></li>
 </ul>
-<h2 id="contents-1">Contents</h2>
-<h3 id="projects-1">Projects</h3>
+<h2 id="contents-2">Contents</h2>
+<h3 id="projects-2">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
@@ -751,9 +1362,9 @@
 <li><strong>STM32WB5MM-DK</strong> (<a href="Projects/STM32WB5MM-DK/Release_Notes.html">release notes</a>)</li>
 <li><strong>NUCLEO-WB15CC</strong> (<a href="Projects/NUCLEO-WB15CC/Release_Notes.html">release notes</a>)</li>
 </ul>
-<h3 id="components-1">Components</h3>
+<h3 id="components-2">Components</h3>
+<p><strong>STM32WBx Firmware Upgrade Services Binary</strong></p>
 <table>
-<caption>STM32WBx Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -789,8 +1400,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WBxx Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WBxx Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -981,57 +1592,39 @@
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB3x/Release_Notes.html">release note</a></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">stm32wb1x_BLE_HCILayer_fw.bin</td>
-<td style="text-align: left;"><strong>V1.11.0</strong></td>
-<td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
-<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">stm32wb1x_BLE_Stack_full_fw.bin</td>
 <td style="text-align: left;"><strong>V1.11.0</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">stm32wb1x_BLE_Stack_light_fw.bin</td>
 <td style="text-align: left;"><strong>V1.11.0</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">stm32wb1x_BLE_HCILayer_fw.bin</td>
 <td style="text-align: left;"><strong>V1.11.0</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">stm32wb5x_BLE_HCI_AdvScan_fw.bin</td>
+<tr class="even">
+<td style="text-align: left;">stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
 <td style="text-align: left;"><strong>V1.11.0</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">stm32wb1x_BLE_LLD_fw.bin</td>
-<td style="text-align: left;"><strong>V1.11.0</strong></td>
-<td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
-<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">stm32wb1x_BLE_Stack_full_fw.bin</td>
-<td style="text-align: left;"><strong>V1.11.0</strong></td>
-<td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
-<td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">stm32wb1x_BLE_Stack_light_fw.bin</td>
 <td style="text-align: left;"><strong>V1.11.0</strong></td>
 <td><a href="http://www.st.com/SLA0044">SLA0044 (binary release)</a></td>
 <td><a href="Projects/STM32WB_Copro_Wireless_Binaries/STM32WB1x/Release_Notes.html">release note</a></td>
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1093,13 +1686,13 @@
 <td style="text-align: left;">BSP stts22h</td>
 <td><strong>V1.1.1</strong></td>
 <td><a href="https://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause</a></td>
-<td><a href="Drivers/BSP/Components/hts221/Release_Notes.html">release notes</a></td>
+<td><a href="Drivers/BSP/Components/stts22h/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">BSP ism330dhcx</td>
 <td><strong>V1.0.2</strong></td>
 <td><a href="https://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause</a></td>
-<td><a href="Drivers/BSP/Components/ism330dlc/Release_Notes.html">release notes</a></td>
+<td><a href="Drivers/BSP/Components/ism330dhcx/Release_Notes.html">release notes</a></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">BSP ssd1315</td>
@@ -1115,8 +1708,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1152,7 +1745,7 @@
 </tr>
 <tr class="odd">
 <td style="text-align: left;">FreeRTOS</td>
-<td style="text-align: left;">V10.2.1</td>
+<td style="text-align: left;"><strong>V10.3.1</strong></td>
 <td><a href="Middlewares/Third_Party/FreeRTOS/License/license.txt">MIT</a></td>
 <td><a href="Middlewares/Third_Party/FreeRTOS/Source/readme.txt">release notes</a></td>
 </tr>
@@ -1176,8 +1769,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1231,7 +1824,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-1">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-2">Known Limitations</h2>
 <ul>
 <li><p>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin and stm32wb5x_BLE_Zigbee_RFD_static_fw.bin:</p>
 <ul>
@@ -1245,20 +1840,20 @@
 </ul></li>
 <li><p>The stm32wb5x_BLE_Zigbee_RFD_dynamic_fw coprocessor wireless binary must be flashed only using the USB interface (as defined in the release note located in the STM32WB_Copro_Wireless_Binaries folder). It is not possible to flash this binary via ST-LINK.</p></li>
 </ul>
-<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-2">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>STM32CubeIDE toolchain V1.4.0 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-1">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-2">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx, STM32WB50xx, STM32WB35xx, STM32WB30xx, STM32WB15xx and STM32WB10xx devices.</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle.</li>
 <li>STM32WB5MM-DK board</li>
 <li>NUCLEO-WB15CC board</li>
 </ul>
-<h2 id="dependencies-1">Dependencies</h2>
+<h2 id="dependencies-2">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -1287,7 +1882,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section12"  aria-hidden="true"> <label for="collapse-section12" aria-hidden="true">V1.10.0 / 30-October-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <h3 id="introduce-zigbee-applications-compatible-with-stm32cubemx-6.1.0">Introduce Zigbee applications compatible with STM32CubeMX 6.1.0</h3>
 <ul>
 <li><p>BLE-Mesh library version 1.13.001:</p>
@@ -1310,17 +1905,17 @@
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="contents-2">Contents</h2>
-<h3 id="projects-2">Projects</h3>
+<h2 id="contents-3">Contents</h2>
+<h3 id="projects-3">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
 <li><strong>P-NUCLEO-WB55.Nucleo</strong> (<a href="Projects/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release notes</a>)</li>
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>)</li>
 </ul>
-<h3 id="components-2">Components</h3>
+<h3 id="components-3">Components</h3>
+<p><strong>STM32WB5x Firmware Upgrade Services Binary</strong></p>
 <table>
-<caption>STM32WB5x Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1344,8 +1939,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WB5x Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WB5x Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1459,8 +2054,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1520,8 +2115,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1575,8 +2170,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1624,7 +2219,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-2">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-3">Known Limitations</h2>
 <ul>
 <li><p>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin and stm32wb5x_BLE_Zigbee_RFD_static_fw.bin:</p>
 <ul>
@@ -1638,18 +2235,18 @@
 </ul></li>
 <li><p>The stm32wb5x_BLE_Zigbee_RFD_dynamic_fw coprocessor wireless binary must be flashed only using the USB interface (as defined in the release note located in the STM32WB_Copro_Wireless_Binaries folder). It is not possible to flash this binary via ST-LINK.</p></li>
 </ul>
-<h2 id="development-toolchains-and-compilers-2">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-3">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>STM32CubeIDE toolchain V1.4.0 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-2">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-3">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx, STM32WB50xx, STM32WB35xx and STM32WB30xx devices.</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 </ul>
-<h2 id="dependencies-2">Dependencies</h2>
+<h2 id="dependencies-3">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -1671,7 +2268,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section11"  aria-hidden="true"> <label for="collapse-section11" aria-hidden="true">V1.9.0 / 25-September-2020</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <h3 id="introduce-blethread-and-blezigbee-dynamic-concurrent-mode-the-support-of-lld-ble-and-phy_802.15.4-cli-application">Introduce BLE/Thread and BLE/Zigbee dynamic concurrent mode, the support of LLD BLE and PHY_802.15.4 CLI application</h3>
 <ul>
 <li><strong>Dynamic Concurrent mode support between BLE and Zigbee</strong>
@@ -1737,17 +2334,17 @@
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="contents-3">Contents</h2>
-<h3 id="projects-3">Projects</h3>
+<h2 id="contents-4">Contents</h2>
+<h3 id="projects-4">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
 <li><strong>P-NUCLEO-WB55.Nucleo</strong> (<a href="Projects/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release notes</a>)</li>
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>)</li>
 </ul>
-<h3 id="components-3">Components</h3>
+<h3 id="components-4">Components</h3>
+<p><strong>STM32WB5x Firmware Upgrade Services Binary </strong></p>
 <table>
-<caption>STM32WB5x Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1771,8 +2368,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WB5x Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WB5x Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1886,8 +2483,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1947,8 +2544,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2002,8 +2599,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2051,25 +2648,27 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-3">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-4">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
 <li>Moving from stm32wb5x_BLE_Stack_fw.bin to stm32wb5x_BLE_Thread_fw.bin</li>
 </ul></li>
 </ul>
-<h2 id="development-toolchains-and-compilers-3">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-4">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>STM32CubeIDE toolchain V1.4.0 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-3">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-4">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx, STM32WB50xx, STM32WB35xx and STM32WB30xx devices.</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 </ul>
-<h2 id="dependencies-3">Dependencies</h2>
+<h2 id="dependencies-4">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -2091,7 +2690,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="true">V1.8.0 / 23-June-2020</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <h3 id="add-zigbee-low-power-mode-support-and-firmware-and-wireless-stack-upgrade-over-the-air">Add Zigbee low power mode support and firmware and wireless stack upgrade over the air</h3>
 <ul>
 <li><strong>Zigbee</strong>
@@ -2155,17 +2754,17 @@
 <li>Replace SW4STM32 by STM32CubeIDE projects files for all examples and application</li>
 </ul></li>
 </ul>
-<h2 id="contents-4">Contents</h2>
-<h3 id="projects-4">Projects</h3>
+<h2 id="contents-5">Contents</h2>
+<h3 id="projects-5">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
 <li><strong>P-NUCLEO-WB55.Nucleo</strong> (<a href="Projects/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release notes</a>)</li>
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>)</li>
 </ul>
-<h3 id="components-4">Components</h3>
+<h3 id="components-5">Components</h3>
+<p><strong>STM32WB5x Firmware Upgrade Services Binary </strong></p>
 <table>
-<caption>STM32WB5x Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2189,8 +2788,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WB5x Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WB5x Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2268,8 +2867,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2329,8 +2928,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2384,8 +2983,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2433,25 +3032,27 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-4">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-5">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
 <li>Moving from stm32wb5x_BLE_Stack_fw.bin to stm32wb5x_BLE_Thread_fw.bin</li>
 </ul></li>
 </ul>
-<h2 id="development-toolchains-and-compilers-4">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-5">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>STM32CubeIDE toolchain V1.4.0 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-4">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-5">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx, STM32WB50xx, STM32WB35xx and STM32WB30xx devices.</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 </ul>
-<h2 id="dependencies-4">Dependencies</h2>
+<h2 id="dependencies-5">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -2473,10 +3074,10 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">V1.7.0 / 11-May-2020</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <h3 id="correct-install-address-for-stm32wb5x_thread_ftd_fw.bin">Correct install address for stm32wb5x_Thread_FTD_fw.bin</h3>
-<h2 id="contents-5">Contents</h2>
-<h3 id="projects-5">Projects</h3>
+<h2 id="contents-6">Contents</h2>
+<h3 id="projects-6">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
@@ -2484,9 +3085,9 @@
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>)</li>
 <li><strong>NUCLEO-WB35CE</strong> (<a href="Projects/NUCLEO-WB35CE/Release_Notes.html">release notes</a>) (<a href="Projects/NUCLEO-WB35CE/Applications/BLE/BLE_p2pClient/readme.txt">default application</a>)</li>
 </ul>
-<h3 id="components-5">Components</h3>
+<h3 id="components-6">Components</h3>
+<p><strong>STM32WB5x Firmware Upgrade Services Binary </strong></p>
 <table>
-<caption>STM32WB5x Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2510,8 +3111,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WB5x Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WB5x Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2589,8 +3190,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WB3x Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WB3x Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2638,8 +3239,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2705,8 +3306,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2760,8 +3361,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2809,26 +3410,28 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-5">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-6">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
 <li>Moving from stm32wb5x_BLE_Stack_fw.bin to stm32wb5x_BLE_Thread_fw.bin</li>
 </ul></li>
 </ul>
-<h2 id="development-toolchains-and-compilers-5">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-6">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>STM32CubeIDE toolchain V1.2.0 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-5">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-6">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx, STM32WB50xx, STM32WB35xx and STM32WB30xx devices.</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 <li>NUCLEO-WB35CE board.</li>
 </ul>
-<h2 id="dependencies-5">Dependencies</h2>
+<h2 id="dependencies-6">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -2851,7 +3454,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">V1.6.0 / 3-April-2020</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <h3 id="add-the-support-of-several-additional-zigbee-clusters">Add the support of several additional Zigbee clusters</h3>
 <ul>
 <li><strong>Zigbee</strong>
@@ -2952,8 +3555,8 @@
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="contents-6">Contents</h2>
-<h3 id="projects-6">Projects</h3>
+<h2 id="contents-7">Contents</h2>
+<h3 id="projects-7">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
@@ -2961,9 +3564,9 @@
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>)</li>
 <li><strong>NUCLEO-WB35CE</strong> (<a href="Projects/NUCLEO-WB35CE/Release_Notes.html">release notes</a>) (<a href="Projects/NUCLEO-WB35CE/Applications/BLE/BLE_p2pClient/readme.txt">default application</a>)</li>
 </ul>
-<h3 id="components-6">Components</h3>
+<h3 id="components-7">Components</h3>
+<p><strong>STM32WB5x Firmware Upgrade Services Binary </strong></p>
 <table>
-<caption>STM32WB5x Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -2987,8 +3590,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WB5x Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WB5x Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3066,8 +3669,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WB3x Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WB3x Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3115,8 +3718,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3182,8 +3785,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3237,8 +3840,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3286,27 +3889,29 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-6">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-7">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
 <li>Moving from stm32wb5x_BLE_Stack_fw.bin to stm32wb5x_BLE_Thread_fw.bin</li>
 </ul></li>
 </ul>
-<h2 id="development-toolchains-and-compilers-6">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-7">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>System Workbench for STM32 (SW4STM32) toolchain V2.7 + ST-Link</li>
 <li>STM32CubeIDE toolchain V1.2.0 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-6">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-7">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx, STM32WB50xx, STM32WB35xx and STM32WB30xx devices.</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 <li>NUCLEO-WB35CE board.</li>
 </ul>
-<h2 id="dependencies-6">Dependencies</h2>
+<h2 id="dependencies-7">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -3329,7 +3934,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7"  aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <h3 id="introduction-of-stm32wb5mxx-stm32wb35xx-stm32wb30xx-product-and-blezigbee-static-concurrent-mode">Introduction of STM32WB5Mxx, STM32WB35xx, STM32WB30xx product and BLE/Zigbee static concurrent mode</h3>
 <ul>
 <li><strong>STM32WB35xx</strong>:
@@ -3391,10 +3996,10 @@
 <li>stm32wb3x_Mac_802_15_4_fw.bin
 <ul>
 <li>MAC API is based on latest official <a href="http://grouper.ieee.org/groups/802/15/pub/Download.html">IEEE Std 802.15.4-2011</a></li>
+</ul></li>
 <li>Support of <strong>low power on MAC_802_15_4 standalone</strong> protocol</li>
 </ul></li>
-<li>Support of <strong>External PA on all 802_15_4</strong> supported protocol stacks</li>
-</ul></li>
+<li><p>Support of <strong>External PA on all 802_15_4</strong> supported protocol stacks</p></li>
 <li>Introduction of <strong>STM32CubeIDE, an all-in-one multi-OS development tool</strong>, which is part of the STM32Cube software ecosystem.
 <ul>
 <li>The STM32CubeIDE file for all STM32WB35xx examples are provided ready to use.</li>
@@ -3442,8 +4047,8 @@
 <li>Introduce the support od STM32WB5Mxx inside the cmsis device, the HAL and the LL library.</li>
 </ul></li>
 </ul>
-<h2 id="contents-7">Contents</h2>
-<h3 id="projects-7">Projects</h3>
+<h2 id="contents-8">Contents</h2>
+<h3 id="projects-8">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
@@ -3451,9 +4056,9 @@
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>)</li>
 <li><strong>NUCLEO-WB35CE</strong> (<a href="Projects/NUCLEO-WB35CE/Release_Notes.html">release notes</a>) (<a href="Projects/NUCLEO-WB35CE/Applications/BLE/BLE_p2pClient/readme.txt">default application</a>)</li>
 </ul>
-<h3 id="components-7">Components</h3>
+<h3 id="components-8">Components</h3>
+<p><strong>STM32WB5x Firmware Upgrade Services Binary</strong></p>
 <table>
-<caption>STM32WB5x Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3471,8 +4076,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WB5x Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WB5x Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3544,8 +4149,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>STM32WB3x Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>STM32WB3x Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3593,8 +4198,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3660,8 +4265,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3715,8 +4320,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3764,7 +4369,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-7">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-8">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
@@ -3772,20 +4379,20 @@
 </ul></li>
 <li>The example RCC/RCC_ClockConfig encounter a hard fault after few keypressed. This will be corrected inside the next release.</li>
 </ul>
-<h2 id="development-toolchains-and-compilers-7">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-8">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>System Workbench for STM32 (SW4STM32) toolchain V2.7 + ST-Link</li>
 <li>STM32CubeIDE toolchain V1.2.0 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-7">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-8">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx, STM32WB50xx, STM32WB35xx and STM32WB30xx devices.</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 <li>NUCLEO-WB35CE board.</li>
 </ul>
-<h2 id="dependencies-7">Dependencies</h2>
+<h2 id="dependencies-8">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -3808,7 +4415,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6"  aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.4.0 / 06-December-2019</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <h3 id="maintenance-release">Maintenance Release</h3>
 <ul>
 <li><strong>BLE</strong>:
@@ -3833,17 +4440,17 @@
 </ul></li>
 <li>Maintenance release for HAL and LL drivers.</li>
 </ul>
-<h2 id="contents-8">Contents</h2>
-<h3 id="projects-8">Projects</h3>
+<h2 id="contents-9">Contents</h2>
+<h3 id="projects-9">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
 <li><strong>P-NUCLEO-WB55.Nucleo</strong> (<a href="Projects/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_p2pServer/readme.txt">default application</a>)</li>
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.USBDongle/Applications/BLE/BLE_p2pClient/readme.txt">default application</a>)</li>
 </ul>
-<h3 id="components-8">Components</h3>
+<h3 id="components-9">Components</h3>
+<p><strong>Firmware Upgrade Services Binary</strong></p>
 <table>
-<caption>Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3861,8 +4468,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3922,8 +4529,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -3983,8 +4590,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4038,8 +4645,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4087,7 +4694,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-8">Known Limitations</h2>
+<h2 id="known-limitations-9">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
@@ -4095,18 +4702,18 @@
 </ul></li>
 <li>BLE_MeshLightingDemo application is not functionnal under Linux platform.</li>
 </ul>
-<h2 id="development-toolchains-and-compilers-8">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-9">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>System Workbench for STM32 (SW4STM32) toolchain V2.7 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-8">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-9">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx and STM32WB50xx devices</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 </ul>
-<h2 id="dependencies-8">Dependencies</h2>
+<h2 id="dependencies-9">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -4128,7 +4735,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 11-September-2019</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <h3 id="introduction-of-zigbee-support">Introduction of ZIGBEE support</h3>
 <p>STM32WB ecosystem keeps growing, now with the introduction of ZigBee protocol support as <strong>certified compliant platform</strong>, running on <strong>certified 802.15.4 2015 LLD MAC and PHY</strong>.</p>
 <p>The wireless stack is based on <strong>ZigBee pro 2017, R22 release version</strong> in order to propose a ZigBee 3.0 solution. First ON/OFF cluster is coming in this STM32CubeWB Firmware Package delivery release.</p>
@@ -4157,17 +4764,17 @@
 <li>Integration of BLE Mesh library v1.10.004</li>
 <li>Maintenance release for CMSIS, HAL and LL drivers.</li>
 </ul>
-<h2 id="contents-9">Contents</h2>
-<h3 id="projects-9">Projects</h3>
+<h2 id="contents-10">Contents</h2>
+<h3 id="projects-10">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
 <li><strong>P-NUCLEO-WB55.Nucleo</strong> (<a href="Projects/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_p2pServer/readme.txt">default application</a>)</li>
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.USBDongle/Applications/BLE/BLE_p2pClient/readme.txt">default application</a>)</li>
 </ul>
-<h3 id="components-9">Components</h3>
+<h3 id="components-10">Components</h3>
+<p><strong>Firmware Upgrade Services Binary </strong></p>
 <table>
-<caption>Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4185,8 +4792,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4240,8 +4847,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4301,8 +4908,8 @@
 </tr>
 </tbody>
 </table>
+<p>:<strong>iddlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4356,8 +4963,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4405,7 +5012,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-9">Known Limitations</h2>
+<h2 id="known-limitations-10">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
@@ -4414,18 +5021,18 @@
 <li>Mac 802-15-4 applications are provided with EWARM IDE. MDK-ARM and SW4STM32 IDE are planned for a future release.</li>
 <li>BLE_MeshLightingDemo application is not functionnal under Linux platform.</li>
 </ul>
-<h2 id="development-toolchains-and-compilers-9">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-10">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>System Workbench for STM32 (SW4STM32) toolchain V2.7 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-9">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-10">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx and STM32WB50xx devices</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 </ul>
-<h2 id="dependencies-9">Dependencies</h2>
+<h2 id="dependencies-10">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -4447,7 +5054,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 3rd-July-2019</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <h3 id="stm32wb50xx-introduction-and-new-features-addition">STM32WB50xx introduction and new features addition</h3>
 <p>This release introduces the following feature:</p>
 <ul>
@@ -4474,17 +5081,17 @@
 <li>Mesh Library V1.10.000</li>
 </ul></li>
 </ul>
-<h2 id="contents-10">Contents</h2>
-<h3 id="projects-10">Projects</h3>
+<h2 id="contents-11">Contents</h2>
+<h3 id="projects-11">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
 <li><strong>P-NUCLEO-WB55.Nucleo</strong> (<a href="Projects/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_p2pServer/readme.txt">default application</a>)</li>
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.USBDongle/Applications/BLE/BLE_p2pClient/readme.txt">default application</a>)</li>
 </ul>
-<h3 id="components-10">Components</h3>
+<h3 id="components-11">Components</h3>
+<p><strong>Firmware Upgrade Services Binary</strong></p>
 <table>
-<caption>Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4502,8 +5109,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4557,8 +5164,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4618,8 +5225,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4673,8 +5280,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4722,7 +5329,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-10">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-11">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
@@ -4732,18 +5341,18 @@
 <li>BLE_MeshLightingDemo application is not functionnal under Linux platform.</li>
 <li>Zigbee supports only OnOff cluster.</li>
 </ul>
-<h2 id="development-toolchains-and-compilers-10">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-11">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>System Workbench for STM32 (SW4STM32) toolchain V2.7 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-10">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-11">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx and STM32WB50xx devices</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 </ul>
-<h2 id="dependencies-10">Dependencies</h2>
+<h2 id="dependencies-11">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -4765,7 +5374,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 17-May-2019</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <h3 id="patch-release-for-fus-v1.0.2wireless-coprocessor-binary-bug-fix-and-ble-mesh-library-improvements">Patch release for FUS V1.0.2,Wireless Coprocessor Binary bug fix and BLE Mesh Library improvements</h3>
 <p>This release introduces the following feature:</p>
 <ul>
@@ -4791,8 +5400,8 @@
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="contents-11">Contents</h2>
-<h3 id="projects-11">Projects</h3>
+<h2 id="contents-12">Contents</h2>
+<h3 id="projects-12">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
@@ -4800,9 +5409,9 @@
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.USBDongle/Applications/BLE/BLE_p2pClient/readme.txt">default application</a>)</li>
 </ul>
 <p><em>Please note that the path of the example projects have been change to P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle.</em></p>
-<h3 id="components-11">Components</h3>
+<h3 id="components-12">Components</h3>
+<p><strong>Firmware Upgrade Services Binary</strong></p>
 <table>
-<caption>Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4820,8 +5429,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4875,8 +5484,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4936,8 +5545,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -4991,8 +5600,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5022,7 +5631,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-11">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-12">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
@@ -5040,18 +5651,18 @@
 <li>SW4STM32 project is compiled without optimisation. (With optimised size compilation, the virtual com port required for the application is not functionnal)</li>
 </ul></li>
 </ul>
-<h2 id="development-toolchains-and-compilers-11">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-12">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>System Workbench for STM32 (SW4STM32) toolchain V2.7 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-11">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-12">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx devices</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 </ul>
-<h2 id="dependencies-11">Dependencies</h2>
+<h2 id="dependencies-12">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -5073,7 +5684,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <h3 id="new-features-introduction-and-maintenance-release">New features introduction and maintenance release</h3>
 <p>This release introduces the following feature:</p>
 <ul>
@@ -5135,8 +5746,8 @@
 <li>Projects\P-NUCLEO-WB55.USBDongle\Applications\BLE</li>
 <li>Projects\P-NUCLEO-WB55.USBDongle\Applications\Thread</li>
 </ul>
-<h2 id="contents-12">Contents</h2>
-<h3 id="projects-12">Projects</h3>
+<h2 id="contents-13">Contents</h2>
+<h3 id="projects-13">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
@@ -5144,9 +5755,9 @@
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.USBDongle/Applications/BLE/BLE_p2pClient/readme.txt">default application</a>)</li>
 </ul>
 <p><em>Please note that the path of the example projects have been change to P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle.</em></p>
-<h3 id="components-12">Components</h3>
+<h3 id="components-13">Components</h3>
+<p><strong>Firmware Upgrade Services Binary </strong></p>
 <table>
-<caption>Firmware Upgrade Services Binary</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5164,8 +5775,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5219,8 +5830,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5280,8 +5891,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5335,8 +5946,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5366,7 +5977,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-12">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-13">Known Limitations</h2>
 <ul>
 <li>With the ability to change the Coprocessor Wireless Binaries Over The Air (OTA), it is possible to switch from one binary to another. Only, the following case is not possible due to available memory size:
 <ul>
@@ -5384,18 +5997,18 @@
 <li>SW4STM32 project is compiled without optimisation. (With optimised size compilation, the virtual com port required for the application is not functionnal)</li>
 </ul></li>
 </ul>
-<h2 id="development-toolchains-and-compilers-12">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-13">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>System Workbench for STM32 (SW4STM32) toolchain V2.7 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-12">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-13">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx devices</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 </ul>
-<h2 id="dependencies-12">Dependencies</h2>
+<h2 id="dependencies-13">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>
@@ -5417,7 +6030,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First release of STM32CubeWB (STM32Cube for STM32WB Series) supporting STM32WB55xx devices.</p>
 <p>In the STM32CubeWB MCU Package, most of the examples and applications projects are generated with the STM32CubeMX tool to initialize the system, peripherals and middleware stacks.</p>
@@ -5433,17 +6046,17 @@
 <li>Projects\P-NUCLEO-WB55.USBDongle\Applications\BLE</li>
 <li>Projects\P-NUCLEO-WB55.USBDongle\Applications\Thread</li>
 </ul>
-<h2 id="contents-13">Contents</h2>
-<h3 id="projects-13">Projects</h3>
+<h2 id="contents-14">Contents</h2>
+<h3 id="projects-14">Projects</h3>
 <p>The STM32CubeWB Firmware package comes with a rich set of examples running on STMicroelectronics boards, organized by board and provided with preconfigured projects for the main supported toolchains.</p>
 <p>The exhaustive list of projects and their short description is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
 <ul>
 <li><strong>P-NUCLEO-WB55.Nucleo</strong> (<a href="Projects/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_p2pServer/readme.txt">default application</a>)</li>
 <li><strong>P-NUCLEO-WB55.USBDongle</strong> (<a href="Projects/P-NUCLEO-WB55.USBDongle/Release_Notes.html">release notes</a>) (<a href="Projects/P-NUCLEO-WB55.USBDongle/Applications/BLE/BLE_p2pClient/readme.txt">default application</a>)</li>
 </ul>
-<h3 id="components-13">Components</h3>
+<h3 id="components-14">Components</h3>
+<p><strong>Coprocessor Wireless Binaries</strong></p>
 <table>
-<caption>Coprocessor Wireless Binaries</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5491,8 +6104,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Drivers</strong></p>
 <table>
-<caption>Drivers</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5552,8 +6165,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Middlewares</strong></p>
 <table>
-<caption>Middleware</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5601,8 +6214,8 @@
 </tr>
 </tbody>
 </table>
+<p><strong>Utilities</strong></p>
 <table>
-<caption>Utilities</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -5632,7 +6245,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="known-limitations-13">Known Limitations</h2>
+<p><br />
+</p>
+<h2 id="known-limitations-14">Known Limitations</h2>
 <ul>
 <li>BLE\BLE_p2pClient is provided with EWARM and MDK-ARM IDE. A connection issue with BLE_p2pServer is encounter with SW4STM32.</li>
 <li>BLE\BLE_p2pRouter is provided with EWARM and MDK-ARM IDE. A connection issue with BLE_p2pServer is encounter with SW4STM32.</li>
@@ -5662,18 +6277,18 @@
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="development-toolchains-and-compilers-13">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-14">Development Toolchains and Compilers</h2>
 <ul>
 <li>IAR Embedded Workbench for ARM (EWARM) toolchain V8.20.2 + ST-Link</li>
 <li>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.25 + ST-Link</li>
 <li>System Workbench for STM32 (SW4STM32) toolchain V2.7 + ST-Link</li>
 </ul>
-<h2 id="supported-devices-and-boards-13">Supported Devices and boards</h2>
+<h2 id="supported-devices-and-boards-14">Supported Devices and boards</h2>
 <ul>
 <li>STM32WB55xx devices</li>
 <li>P-NUCLEO-WB55 kit composed of P-NUCLEO-WB55.Nucleo and P-NUCLEO-WB55.USBDongle</li>
 </ul>
-<h2 id="dependencies-13">Dependencies</h2>
+<h2 id="dependencies-14">Dependencies</h2>
 <p>This software release is compatible with:</p>
 <ul>
 <li>STM32WB_Copro_Wireless_Binaries available under Projects/STM32WB_Copro_Wireless_Binaries</li>

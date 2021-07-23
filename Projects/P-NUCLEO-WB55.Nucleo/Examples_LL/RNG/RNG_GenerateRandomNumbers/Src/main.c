@@ -214,6 +214,7 @@ static void MX_RNG_Init(void)
   LL_RCC_SetRNGClockSource(LL_RCC_RNG_CLKSOURCE_CLK48);
   /* USER CODE END RNG_Init 1 */
   LL_RNG_Enable(RNG);
+  LL_RNG_EnableClkErrorDetect(RNG);
   /* USER CODE BEGIN RNG_Init 2 */
 
   /* USER CODE END RNG_Init 2 */

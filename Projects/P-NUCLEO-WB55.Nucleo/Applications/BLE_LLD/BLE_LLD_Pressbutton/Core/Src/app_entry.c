@@ -155,11 +155,7 @@ static void Init_Debug( void )
   
   /* Send a first trace to debug trace port to see that M4 is alive */
   APP_DBG("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-#ifdef STM32WB35xx
-  APP_DBG("traces init done on Little DORY M4");
-#else
-  APP_DBG("traces init done on DORY M4");
-#endif
+  APP_DBG("traces init done on M4");
   APP_DBG("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
   
   return;
@@ -311,18 +307,11 @@ static void Led_Init( void )
    * Leds Initialization
    */
 #if (CFG_HW_LPUART1_ENABLED != 1) || ! defined (STM32WB35xx)
-  // On Little DORY, LED_BLUE share the GPIO PB5 with LPUART
+  // On WB35, LED_BLUE share the GPIO PB5 with LPUART
   BSP_LED_Init(LED_BLUE);
-  //BSP_LED_On(LED_BLUE);
 #endif
-  
-//#if (CFG_HW_EXTPA_ENABLED != 1)
   BSP_LED_Init(LED_GREEN);
-  //BSP_LED_On(LED_GREEN);
-//#endif
-  
   BSP_LED_Init(LED_RED);
-  //BSP_LED_On(LED_RED);
 #endif
   
   return;
@@ -358,24 +347,6 @@ void UTIL_SEQ_Idle( void )
   UTIL_LPM_EnterLowPower( );
 #endif
   return;
-}
-
-/**
-  * @brief  This function is called by the scheduler each time an event
-  *         is pending.
-  *
-  * @param  evt_waited_bm : Event pending.
-  * @retval None
-  */
-void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
-{
-  switch(evt_waited_bm)
-  {
-    default :
-      /* default case : schedule all tasks */
-      UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-      break;
-  }
 }
 
 void shci_notify_asynch_evt(void* pdata)
@@ -419,10 +390,10 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 #if(CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
-#if (CFG_HW_LPUART1_ENABLED == 1)
-  MX_LPUART1_UART_Init();
+/* USER CODE BEGIN DbgOutputInit */
+#ifdef CFG_DEBUG_TRACE_UART
+  MX_UART_Init(CFG_DEBUG_TRACE_UART);
 #endif
-  
   return;
 }
 
@@ -442,39 +413,6 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 #endif
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
-void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
-{
-  switch (GPIO_Pin)
-  {
-    case BUTTON_SW1_PIN:
-      Appli_GPIO_EXTI_Callback(BUTTON_SW1_PIN);
-      break; 
-
-    case BUTTON_SW2_PIN:
-      Appli_GPIO_EXTI_Callback(BUTTON_SW2_PIN);
-      break; 
-
-    case BUTTON_SW3_PIN:
-      Appli_GPIO_EXTI_Callback(BUTTON_SW3_PIN);
-      break;
-
-    default:
-      break;
-
-  }
-  return;
-}
-
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
-{
-    Appli_TIM_IC_CaptureCallback();
-}
-
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-    Appli_TIM_PeriodElapsedCallback();
-}
-
 
 /* USER CODE END FD_WRAP_FUNCTIONS */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

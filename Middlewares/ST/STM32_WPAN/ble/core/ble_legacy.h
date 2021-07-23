@@ -177,6 +177,15 @@ typedef	uint8_t	tBDAddr[6];
 #define ACTIVE_SCAN                            0x01U
 
 
+/* Advertising Types
+ */
+#define GAP_ADV_IND                                  0x00U
+#define GAP_ADV_HIGH_DC_DIRECT_IND                   0x01U
+#define GAP_ADV_SCAN_IND                             0x02U
+#define GAP_ADV_NONCONN_IND                          0x03U
+#define GAP_ADV_LOW_DC_DIRECT_IND                    0x04U
+
+
 /* ------------------------------------------------------------------------- */
 
 

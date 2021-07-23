@@ -4,7 +4,7 @@
  * @brief ZCL Electrical Measurement cluster header
  * ZCL 7 section 4.9
  * ZCL 8 section 4.9
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ELEC_MEAS_H
@@ -18,17 +18,17 @@
  *
  * Server Attributes
  * EMR.S.A0000 | MeasurementType | True
- * EMR.S.A0100 | DCVoltage | False | Optional
- * EMR.S.A0101 | DCVoltageMin | False | Optional
- * EMR.S.A0102 | DCVoltageMax | False | Optional
+ * EMR.S.A0100 | DCVoltage | True | Optional
+ * EMR.S.A0101 | DCVoltageMin | True | Optional
+ * EMR.S.A0102 | DCVoltageMax | True | Optional
  * EMR.S.A0103 | DCCurrent | False | Optional
  * EMR.S.A0104 | DCCurrentMin | False | Optional
  * EMR.S.A0105 | DCCurrentMax | False | Optional
  * EMR.S.A0106 | DCPower | False | Optional
  * EMR.S.A0107 | DCPowerMin | False | Optional
  * EMR.S.A0108 | DCPowerMax | False | Optional
- * EMR.S.A0200 | DCVoltageMultiplier | False | Optional
- * EMR.S.A0201 | DCVoltageDivisor | False | Optional
+ * EMR.S.A0200 | DCVoltageMultiplier | True | Optional
+ * EMR.S.A0201 | DCVoltageDivisor | True | Optional
  * EMR.S.A0202 | DCCurrentMultiplier | False | Optional
  * EMR.S.A0203 | DCCurrentDivisor | False | Optional
  * EMR.S.A0204 | DCPowerMultiplier | False | Optional
@@ -86,8 +86,8 @@
  * EMR.S.A0603 | ACCurrentDivisor | False | Optional
  * EMR.S.A0604 | ACPowerMultiplier | False | Optional
  * EMR.S.A0605 | ACPowerDivisor | False | Optional
- * EMR.S.A0700 | DCOverloadAlarmsMask | False | Optional
- * EMR.S.A0701 | DCVoltageOverload | False | Optional
+ * EMR.S.A0700 | DCOverloadAlarmsMask | True | Optional
+ * EMR.S.A0701 | DCVoltageOverload | True | Optional
  * EMR.S.A0702 | DCCurrentOverload | False | Optional
  * EMR.S.A0800 | ACAlarmsMask | False | Optional
  * EMR.S.A0801 | ACVoltageOverload | False | Optional

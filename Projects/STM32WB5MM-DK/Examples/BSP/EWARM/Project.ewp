@@ -662,7 +662,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>RCC_ClockConfig.hex</state>
+                    <state>BSP.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>

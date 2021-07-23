@@ -311,7 +311,7 @@ static void at_cmd_analysing( void )
         { //The format of the command is correct and the length of the parameter as well
           char ConnUpdStr[5];          
           for(i = 0; i < lenConnUpdStr; i++) ConnUpdStr[i] = pDataRx[15+i];
-          /* TODO : Verify that the entered values are correct. Ex: Discard a value like .1#2 */
+
           Connection_Update_Interval = (uint16_t) atoi(ConnUpdStr);
           if(Connection_Update_Interval <= 4000 && Connection_Update_Interval >= 10)
           {

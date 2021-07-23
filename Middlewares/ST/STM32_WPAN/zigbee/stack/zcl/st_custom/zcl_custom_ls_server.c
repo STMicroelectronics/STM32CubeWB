@@ -37,7 +37,7 @@ ZbZcl_custom_ls_ServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,\
     struct zcl_custom_ls_server_cluster_t *clusterPtr;
 
     clusterPtr = ZbZclClusterAlloc(zb, sizeof(struct zcl_custom_ls_server_cluster_t),\
-            ZCL_CLUSTER_LS, endpoint, ZCL_DIRECTION_TO_SERVER);
+            ZCL_CLUSTER_CUSTOM_LS, endpoint, ZCL_DIRECTION_TO_SERVER);
     if (clusterPtr == NULL) {
         return NULL;
     }

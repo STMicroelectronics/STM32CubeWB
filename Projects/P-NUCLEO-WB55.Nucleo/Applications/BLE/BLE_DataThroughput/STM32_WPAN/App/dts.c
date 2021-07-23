@@ -129,7 +129,7 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
 
       switch (blecore_evt->ecode)
       {
-        case ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE:					
+        case ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE:
           exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blecore_evt->data;
           APP_DBG_MSG("**MTU_size = %d \n",exchange_mtu_resp->Server_RX_MTU );
           APP_DBG_MSG("\r\n\r");
@@ -160,7 +160,6 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
             }
           }
           if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 2))
-          //if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 5))
           {
             /**
             * Notify to application to start measurement

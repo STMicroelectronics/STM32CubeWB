@@ -151,3 +151,5 @@ VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 VP_USB_DEVICE_VS_USB_DEVICE_HID_FS.Mode=HID_FS
 VP_USB_DEVICE_VS_USB_DEVICE_HID_FS.Signal=USB_DEVICE_VS_USB_DEVICE_HID_FS
 board=P-NUCLEO-WB55.USBDongle
+ProjectManager.Example=HID_Standalone
+ProjectManager.ExampleSource=CubeFw

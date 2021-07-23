@@ -1,9 +1,13 @@
-The STM32WB55xx multiprotocol wireless devices embed a BLE and an 802.15.4 RF subsystem that interfaces with a generic microcontroller subsystem using an Arm® Cortex®-M4 CPU (called CPU1) on which the host application resides.
+The STM32WBxx multiprotocol wireless devices embed a BLE and an 802.15.4 RF subsystem that interfaces with a generic microcontroller subsystem using an Arm® Cortex®-M4 CPU (called CPU1) on which the host application resides.
 The RF subsystem embeds an Arm® Cortex®-M0+ core (CPU2 or Coprocessor) used to run the Bluetooth® Low Energy (BLE) stack and 802.15.4 Low Level layer.
-Several wireless stack binaries are provided within the STM32CubeWB package to be programmed in the RF subsystem prior to the use of any BLE, Thread or Mac 802.15.4 applications.
+Several wireless stack binaries are provided within the STM32CubeWB package to be programmed in the RF subsystem prior to the use of any BLE, Thread, Zigbee or Mac 802.15.4 applications.
 
-To program a wireless stack inside stm32wb55xx devices, you need to refer to the following release note:
-- Projects\STM32WB_Copro_Wireless_Binaries\Release_Notes.html. 
-  This Release_Notes.html file uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.)
+To program a wireless stack inside STM32WBxx devices, you need to refer to the following release notes:
+
+- For STM32WB5x devices: Projects\STM32WB_Copro_Wireless_Binaries\STM32WB5x\Release_Notes.html. 
+- For STM32WB3x devices: Projects\STM32WB_Copro_Wireless_Binaries\STM32WB3x\Release_Notes.html.
+- For STM32WB1x devices: Projects\STM32WB_Copro_Wireless_Binaries\STM32WB1x\Release_Notes.html.  
+  
+Those Release_Notes.html files use up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.)
 
 You can refer to the readme.txt of each application to know the required wireless stack binary to be programmed.

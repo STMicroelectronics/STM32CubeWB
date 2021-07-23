@@ -154,3 +154,5 @@ VP_ADC1_Vref_Input.Signal=ADC1_Vref_Input
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=ADC_MultiChannelSingleConversion
+ProjectManager.ExampleSource=CubeFw

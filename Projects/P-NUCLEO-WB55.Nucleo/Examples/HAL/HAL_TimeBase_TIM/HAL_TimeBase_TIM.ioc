@@ -112,3 +112,5 @@ RCC.VCOSAI1OutputFreq_Value=32000000
 VP_SYS_VS_tim17.Mode=TIM17
 VP_SYS_VS_tim17.Signal=SYS_VS_tim17
 board=custom
+ProjectManager.Example=HAL_TimeBase_TIM
+ProjectManager.ExampleSource=CubeFw

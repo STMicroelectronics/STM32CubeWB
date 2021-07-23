@@ -1448,6 +1448,9 @@
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/CMakeLists.txt</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/border_agent.c</name>
       </file>
       <file>

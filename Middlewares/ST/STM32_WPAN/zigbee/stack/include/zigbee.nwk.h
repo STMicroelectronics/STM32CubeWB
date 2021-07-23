@@ -2,7 +2,7 @@
  * @file zigbee.nwk.h
  * @brief NWK header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_NWK_H
@@ -154,9 +154,15 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_LeaveRequestAllowed,
     ZB_NWK_NIB_ID_ParentInformation,
     ZB_NWK_NIB_ID_EndDeviceTimeoutDefault,
-    ZB_NWK_NIB_ID_EdkaFailThreshold, /* Number of consecutive EDKA request failures before triggering a PARENT_LINK_FAILURE. Valid range is 1 to 4. Default is 1. */
+    ZB_NWK_NIB_ID_EdkaFailThreshold,
+    /**< Number of consecutive EDKA request failures before triggering a PARENT_LINK_FAILURE.
+     * Valid range is 1 to 4. Default is 1. */
     ZB_NWK_NIB_ID_LeaveRequestWithoutRejoinAllowed,
-    ZB_NWK_NIB_ID_DisablePeriodicTimers, /* If set, NWK layer disables edka & link power timers. Default is 0 (enabled). */
+    ZB_NWK_NIB_ID_DisablePeriodicTimers,
+    /**< If set, NWK layer disables automatic EDKA and Link Power Negotiation timers.
+     * Default is 0 (automatic timers are enabled). If automatic EDKA is disabled,
+     * the application can call ZbNwkSendEdkaReq() periodically itself to refresh
+     * the timeout on its Parent. */
 
     /* R22+ attributes */
     /* EXEGIN - nwkIeeeAddress (should be 0xae, but already being used by APS security) */
@@ -318,7 +324,6 @@ enum ZbNwkNeighborRelT {
 /* Exegin add-on to track a manual EDKA request. */
 #define ZB_NWK_PARENT_INFO_MANUAL_EDKA_REQ          0x0200U
 
-#define ZB_NWK_NEIGHBOR_TIMEOUT_SECONDS(_x_)        ((_x_ != 0U) ? ((ZbUptimeT)60U << (_x_)) : (ZbUptimeT)10U)
 #define ZB_NWK_NEIGHBOR_TIMEOUT_MAX                 14U
 
 #define ZB_NWK_NEIGHBOR_IFINDEX_UNKNOWN             0xffU
@@ -765,7 +770,8 @@ bool ZbNwkIfGetTxPower(struct ZigBeeT *zb, const char *name, int8_t *tx_power);
  * which configures TX Power Control in the NWK and MAC. */
 bool ZbNwkToggleDutyCycle(struct ZigBeeT *zb, bool enable);
 
-/* Network end device keep alive request command. */
+/* Network end device keep alive request command. Can only be used if
+ * ZB_NWK_NIB_ID_DisablePeriodicTimers is set to 1 (automatic EDKA is disabled). */
 bool ZbNwkSendEdkaReq(struct ZigBeeT *zb);
 
 /* Network Link power delta request & notify commands. */
@@ -825,6 +831,10 @@ void ZbNwkNeighborClearAll(struct ZigBeeT *zb, bool keep_parent, bool keep_child
  * Fast Polling
  *---------------------------------------------------------------
  */
+
+/* The default delay before sending the first NLME-SYNC */
+#define ZB_NWK_SYNC_DEFAULT_DELAY_MS        50U
+
 /* NLME-SYNC.request parent polling */
 bool ZB_WARN_UNUSED ZbNwkFastPollRequest(struct ZigBeeT *zb);
 bool ZbNwkFastPollRelease(struct ZigBeeT *zb);

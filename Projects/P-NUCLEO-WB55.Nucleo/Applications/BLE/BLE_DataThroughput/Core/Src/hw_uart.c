@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : Src/hw_uart.c
@@ -6,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -16,6 +17,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -28,20 +30,6 @@ extern UART_HandleTypeDef huart1;
 #endif
 
 /* Macros --------------------------------------------------------------------*/
-#define HW_UART_INIT(__HANDLE__, __USART_BASE__)                                                    \
-        do{                                                                                         \
-            (__HANDLE__).Instance = (__USART_BASE__);                                               \
-            (__HANDLE__).Init.BaudRate  = CFG_HW_##__USART_BASE__##_BAUDRATE;                       \
-            (__HANDLE__).Init.WordLength = CFG_HW_##__USART_BASE__##_WORDLENGTH;                    \
-            (__HANDLE__).Init.StopBits = CFG_HW_##__USART_BASE__##_STOPBITS;                        \
-            (__HANDLE__).Init.Parity = CFG_HW_##__USART_BASE__##_PARITY;                            \
-            (__HANDLE__).Init.HwFlowCtl = CFG_HW_##__USART_BASE__##_HWFLOWCTL;                      \
-            (__HANDLE__).Init.Mode = CFG_HW_##__USART_BASE__##_MODE;                                \
-            (__HANDLE__).Init.OverSampling = CFG_HW_##__USART_BASE__##_OVERSAMPLING;                \
-            (__HANDLE__).AdvancedInit.AdvFeatureInit = CFG_HW_##__USART_BASE__##_ADVFEATUREINIT;    \
-            HAL_UART_Init(&(__HANDLE__));                                                           \
-        } while(0)
-          
 #define HW_UART_RX_IT(__HANDLE__, __USART_BASE__)                                                   \
         do{                                                                                         \
             HW_##__HANDLE__##RxCb = cb;                                                             \
@@ -79,29 +67,6 @@ extern UART_HandleTypeDef huart1;
     void (*HW_hlpuart1TxCb)(void);
 #endif
 
-    void HW_UART_Init(hw_uart_id_t hw_uart_id)
-    {
-        switch (hw_uart_id)
-        {
-#if (CFG_HW_USART1_ENABLED == 1)
-            case hw_uart1:
-                HW_UART_INIT(huart1, USART1);
-                break;
-#endif
-
-#if (CFG_HW_LPUART1_ENABLED == 1)
-            case hw_lpuart1:
-                HW_UART_INIT(lpuart1, LPUART1);
-                break;
-#endif
-
-            default:
-                break;
-        }
-
-        return;
-    }
-    
 void HW_UART_Receive_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size, void (*cb)(void))
 {
     switch (hw_uart_id)

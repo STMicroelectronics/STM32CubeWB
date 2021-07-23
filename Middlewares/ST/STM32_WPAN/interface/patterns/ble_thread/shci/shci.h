@@ -600,7 +600,14 @@ extern "C" {
     typedef PACKED_STRUCT
     {
       uint8_t ble_dtb_cfg;
-      uint8_t reserved[3];
+  /**
+   * sys_dbg_cfg1 options flag
+   * - bit 0:   0: IP BLE core in LP mode    1: IP BLE core in run mode (no LP supported)
+   * - bit 1:   0: CPU2 STOP mode Enable     1: CPU2 STOP mode Disable 
+   * - bit [2-7]: bits reserved ( shall be set to 0)
+   */      
+      uint8_t sys_dbg_cfg1;
+      uint8_t reserved[2];
     } SHCI_C2_DEBUG_GeneralConfig_t;
 
     typedef PACKED_STRUCT{
@@ -618,6 +625,18 @@ extern "C" {
     } SHCI_C2_DEBUG_Init_Cmd_Packet_t;
     /** No response parameters*/
 
+    /**
+   * Options
+   * Each definition below may be added together to build the Options value
+   * WARNING : Only one definition per bit shall be added to build the Options value
+   */
+#define SHCI_C2_DEBUG_OPTIONS_IPCORE_LP                              (0<<0)
+#define SHCI_C2_DEBUG_OPTIONS_IPCORE_NO_LP                           (1<<0)
+
+#define SHCI_C2_DEBUG_OPTIONS_CPU2_STOP_EN                           (0<<1)
+#define SHCI_C2_DEBUG_OPTIONS_CPU2_STOP_DIS                          (1<<1)
+    
+    
 #define SHCI_OPCODE_C2_FLASH_ERASE_ACTIVITY     (( SHCI_OGF << 10) + SHCI_OCF_C2_FLASH_ERASE_ACTIVITY)
   /** Command parameters */
     typedef enum

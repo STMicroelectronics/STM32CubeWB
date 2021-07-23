@@ -7,7 +7,7 @@ LR_IROM1 0x08010000 0x254 {    ; load region size_region
  *.o(RESET, +First)
  *.o (TAG_OTA_START) 
   }
-  RW_IRAM1 0x20000004 0x0002FFFC  {  ; RW data
+  RW_IRAM1 0x20000008 0x0002FFF8  {  ; RW data
     .ANY (+RW +ZI)
   }
   RW_RAM2aRet_SHARED 0x20030000 0x2800  {  ; RW data

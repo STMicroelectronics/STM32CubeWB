@@ -47,9 +47,10 @@
 /******************************************************************************/
 
 /****************Data Received from Android/iOS. B0 = SubCommand***************/
-/********************* Sub Commands for APPLI_DATA_WRITE*************************/
+/********************* Sub Commands for APPLI_DATA_CNTRL_CMD*************************/
 #define APPLI_STRING_WRITE                     0X01
 #define APPLI_STRING_READ                      0X02
+#define APPLI_DATA_READ                        0x03
 
 /****************Data Received from Android/iOS. B0 = SubCommand***************/
 /********************* Sub Commands for APPLI_TEST_CMD*************************/
@@ -80,12 +81,13 @@
 /******************************************************************************/
 
 /****************Data Received from Android/IoS. B0 = SubCommand***************/
-/*********************Sub Commands for APPLI_LED_CONTROL_CMD*******************/
+/*********************Sub Commands for APPLI_LED_CONTROL_STATUS_CMD*******************/
 #define APPLI_CMD_ON                    0x01U
 #define APPLI_CMD_OFF                   0x02U
 #define APPLI_CMD_TOGGLE                0x03U
 #define APPLI_CMD_LED_BULB              0x05U
 #define APPLI_CMD_LED_INTENSITY         0X06U
+#define APPLI_CMD_LED_THERMOMETER       0X07U
 /******************************************************************************/
 
 /*****************Sub Commands for APPLI_ELEMENT_TYPE_CMD**********************/
@@ -106,7 +108,7 @@
 #define DEFAULT_DELAY_PACKET_RANDOM_TIME  500U
 
 #define MAX_PENDING_PACKETS_QUE_SIZE    2
-#define DATA_BUFFER_LENGTH              8
+#define DATA_BUFFER_LENGTH              16
 
 #define BOUNCE_THRESHOLD                20U
 #define LONG_PRESS_THRESHOLD            1000U
@@ -118,12 +120,12 @@
 
 typedef struct
 {
-  MOBLE_RESULT (*LEDControlCommand_Cb)(MOBLEUINT8 const *, MOBLEUINT32, MOBLEUINT8,MOBLE_ADDRESS);
-  MOBLE_RESULT (*DeviceInfoCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);
-  MOBLE_RESULT (*TestCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);
-  void (*LEDControl_cb)(void);
-  void (*GetTestCount)(MOBLEUINT8*);
-  MOBLE_RESULT (*DataControlCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);
+  MOBLE_RESULT (*LEDControlCommand_Cb)(MOBLEUINT8 const *, MOBLEUINT32, MOBLEUINT8,MOBLE_ADDRESS);      /// Vendor_WriteLocalDataCb with command = APPLI_LED_CONTROL_STATUS_CMD 
+  MOBLE_RESULT (*DeviceInfoCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);                                /// Vendor_WriteLocalDataCb with command = APPLI_DEVICE_INFO_CMD
+  MOBLE_RESULT (*TestCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);                                      /// Vendor_WriteLocalDataCb with command = APPLI_TEST_CMD
+  void (*LEDControl_cb)(void);                                                                          /// Vendor_ReadLocalDataCb with command  = APPLI_LED_CONTROL_STATUS_CMD
+  void (*GetTestCount)(MOBLEUINT8*);                                                                    /// Vendor_ReadLocalDataCb with command  = APPLI_TEST_CMD
+  MOBLE_RESULT (*DataControlCommand_cb)(MOBLEUINT8 const *, MOBLEUINT32);                               /// Vendor_WriteLocalDataCb with command = APPLI_DATA_CNTRL_CMD 
 } Appli_Vendor_cb_t;
 
 #pragma pack(pop)

@@ -36,29 +36,55 @@ extern "C" {
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
+
+    typedef enum
+    {
+      APP_BLE_IDLE,
+      APP_BLE_FAST_ADV,
+      APP_BLE_LP_ADV,
+      APP_BLE_SCAN,
+      APP_BLE_LP_CONNECTING,
+      APP_BLE_CONNECTED_SERVER,
+      APP_BLE_CONNECTED_CLIENT,
+
+      APP_BLE_DISCOVER_SERVICES,
+      APP_BLE_DISCOVER_CHARACS,
+      APP_BLE_DISCOVER_WRITE_DESC,
+      APP_BLE_DISCOVER_NOTIFICATION_CHAR_DESC,
+      APP_BLE_ENABLE_NOTIFICATION_DESC,
+      APP_BLE_DISABLE_NOTIFICATION_DESC
+    } APP_BLE_ConnStatus_t;
+
 /* USER CODE BEGIN ET */
 
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
+
+/* USER CODE END EC */
+
 /* External variables --------------------------------------------------------*/
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
 
-/* Exported macro -----------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 
 /* USER CODE END EM */
 
-/* Exported functions ------------------------------------------------------- */
+/* Exported functions ---------------------------------------------*/
 void APP_BLE_Init( void );
 uint8_t APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen );
 void BLE_SVC_L2CAP_Conn_Update_7_5(void);
-/* USER CODE BEGIN EF */
 void APP_BLE_Key_Button1_Action(void);
 void APP_BLE_Key_Button2_Action(void);
 void APP_BLE_Key_Button3_Action(void);
+
+  APP_BLE_ConnStatus_t APP_BLE_Get_Client_Connection_Status( uint16_t Connection_Handle );
+
+/* USER CODE BEGIN EF */
 
 /* USER CODE END EF */
 

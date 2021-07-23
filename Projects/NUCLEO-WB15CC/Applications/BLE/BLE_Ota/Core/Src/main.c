@@ -70,6 +70,7 @@ RTC_HandleTypeDef hrtc;
 
 /* USER CODE END PV */
 /* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 static void Reset_BackupDomain( void );
 static void Init_RTC( void );
@@ -235,7 +236,7 @@ static void Init_RTC( void )
  * @param  None
  * @retval None
  */
-void SystemClock_Config( void )
+void SystemClock_Config(void)
 {
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = { 0 };

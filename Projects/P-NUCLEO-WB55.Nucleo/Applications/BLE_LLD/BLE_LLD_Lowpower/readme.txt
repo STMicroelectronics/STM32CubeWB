@@ -20,12 +20,12 @@
 
 @par Example Description
 
-How to to Send and Receive Automatically a STM32WB55xx board.
+How to send BLE LLD packets while using low power mode.
 
 @note The objectives are to communicate using BLE_LLD between 2 boards,
       in BLE Radio format not BLE Stack protocol.
-      BLE_LLD_Lowpower must be used with BLE_LLD_Pressbutton.
-      Appli is based on LP and a programmed TIMER alternatively Send or Receive Packet:
+      BLE_LLD_Lowpower must be used with another board flashed with a Reception mode (Pressbutton)
+      Appli is based on LP and a programmed TIMER that send a payload that contains info to Toggle LED
       It is launched after reset.
  
 @note BLE_LLD is a 2-level stack implemented just over the Hardware and Radio layer.
@@ -35,7 +35,7 @@ How to to Send and Receive Automatically a STM32WB55xx board.
       Over LL layer there is HAL level
 	It contains a reduced number of API to Send/Receive BLE Radio format packet with predefined parameters
 	It works by calling a set of LL API
-	It make simple and fast to Send/receive Packet
+	It make simple and fast to Send/Receive Packet
 	But It does allow the user to change all the Radio parameters
 		
 @note LL is for user that want to customize the Radio and BLE parameters, it is more complex to implement
@@ -50,13 +50,10 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
 @par Directory contents 
     
   - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/app_ble_lld.h     Header for app_ble_lld.c module
-  - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/ble_lld.h         Header for ble_lld.c module
-  - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/ble_lld_private.h Header for ble_lld private module
+  - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/lowpower_app.h    Header for Lowpower Application lowpower_app.c module
   - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/tl_dbg_conf.h     Header for ble_lld debug module
-  - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/ring_buffer.h     Header for ring buffer.c module
   - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/app_ble_lld.c     contains TL management and Buffer for BLE LLD Application
-  - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/ble_lld.c         contains LL and HAL API
-  - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/ring_buffer.c     contains ring buffer API
+  - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/App/lowpower_app.c    Lowpower program
   - BLE_LLD/BLE_LLD_Lowpower/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
   - BLE_LLD/BLE_LLD_Lowpower/Core/Inc/app_common.h            Header for all modules with common definition
   - BLE_LLD/BLE_LLD_Lowpower/Core/Inc/app_conf.h              Parameters configuration file of the application
@@ -64,7 +61,6 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
   - BLE_LLD/BLE_LLD_Lowpower/Core/Inc/gpio_lld.h              Parameters for gpio configuration file of the application
   - BLE_LLD/BLE_LLD_Lowpower/Core/Inc/hw_conf.h               Configuration file of the HW
   - BLE_LLD/BLE_LLD_Lowpower/Core/Inc/hw_if.h                 Configuration file of the HW
-  - BLE_LLD/BLE_LLD_Lowpower/Core/Inc/lowpower_app.h          Header for Lowpower Application lowpower_app.c module
   - BLE_LLD/BLE_LLD_Lowpower/Core/Inc/main.h                  Header for main.c module
   - BLE_LLD/BLE_LLD_Lowpower/Core/Inc/stm_logging.h           Header for stm_logging.c module
   - BLE_LLD/BLE_LLD_Lowpower/Core/Inc/stm32_lpm_if.h          Header for stm32_lpm_if.c module
@@ -75,7 +71,6 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
   - BLE_LLD/BLE_LLD_Lowpower/Core/Src/gpio_lld.c              GPIO for application
   - BLE_LLD/BLE_LLD_Lowpower/Core/Src/hw_timerserver.c        TIMERSERVER for Lowpower application
   - BLE_LLD/BLE_LLD_Lowpower/Core/Src/hw_uart.c               UART Driver
-  - BLE_LLD/BLE_LLD_Lowpower/Core/Src/lowpower_app.c          Lowpower program
   - BLE_LLD/BLE_LLD_Lowpower/Core/Src/main.c                  Main program
   - BLE_LLD/BLE_LLD_Lowpower/Core/Src/stm_logging.c           Logging for application
   - BLE_LLD/BLE_LLD_Lowpower/Core/Src/stm32_lpm_if.c          Low Power Manager Interface
@@ -110,50 +105,32 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
 @par How to use it ? 
 
 In order to make the program work, you must do the following: 
- - Connect First STM32WB55xx-Nucleo boards to your PC 
+ - Connect 1 STM32WB55xx-Nucleo board to your PC
  - Open your preferred toolchain 
  - Rebuild all files and load your image into one target memory
  - Rebuild all files of BLE_LLD/BLE_LLD_Lowpower application 
    and load your image into the other target memory
    + load stm32wb5x_BLE_LLD_fw.bin
-
- - Connect a second STM32WB55xx-Nucleo boards to your PC with BLE_LLD_Pressbutoon
  - Run the application
  
-BLE_LLD_Lowpower used only LL API for Send/receive
+BLE_LLD_Lowpower used only LL API for Send
 
-You can not control this application, after power and reset Send and Received Packet are automatically done 
+3 consecutive TX ActionPackets are chained:
+ - 1st TX ActionPacket send LED1 Toggling payload command
+ - 2nd TX ActionPacket send LED2 Toggling payload command
+ - 3rd TX ActionPacket send LED3 Toggling payload command
+
+
+You can not control this application, after power and reset Send Packet are automatically done 
 A loop configuration has been developed.
 In this order and described into main.c:
  
-After power On or Reset  (ALL the LED are OFF)
-   
-Activating LED can be done by setting on into app_conf.h 
-    #define CFG_LED_SUPPORTED 1 (default is 0)
-
-If CFG_LED_SUPPORTED 1
- 1) Init is done RED and GREEN LED are ON
- 2) TIMERSERVER is launched
- 3) TIMEOUT of TIMERSERVER interrupts 
-    TIMERSERVER is stopped
-    BLUE LED is ON
-    it starts the Radio in Receive mode and 
-    RED LED is OFF and GREEN LED is ON
- 4) At the end of Radio Receive mode BLUE LED is OFF
-    TIMER SERVER is re-started
- 5) TIMEOUT of TIMERSERVER interrupts 
-    TIMERSERVER is stopped
-    BLUE LED is ON
-    it starts the Radio in Send mode and 
-    RED LED is ON and GREEN LED is OFF
- 6) At the end of Radio Send mode BLUE LED is OFF
-    TIMER SERVER is re-started
- 7) next step is 3) (loop)
-
-   
-When one board Send :    BLUE and RED LED are ON
-When one board Receive:  BLUE and RED LED are ON
-
+After power On or Reset (ALL the LED are OFF):
+ 1) Radio Init is done and the 3 consecutive ActionPackets are configured, Low-Power is not yet activated
+ 2) The TIMER SERVER is launched
+ 3) First TX ActionPacket is launched at the TIMER SERVER Timeout
+ 4) At the end of the 3 consecutive TX ActionPackets TIMER SERVER is launched, Low-Power is activated
+ 5) loop on step 3
 
 Serial Port Setup TERMINAL
 Baud Rate:115200 / Data:8 bits / Parity:none / Stop:1bit / Flow Control:none 

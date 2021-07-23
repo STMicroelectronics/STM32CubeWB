@@ -51,7 +51,9 @@
  * allocated in the queue of received events and can be used to optimize the amount of RAM allocated by the Memory Manager.
  * It should not exceed 255 which is the maximum HCI packet payload size (a greater value is a lost of memory as it will
  * never be used)
- * With the current wireless firmware implementation, this parameter shall be kept to 255
+ * It shall be at least 4 to receive the command status event in one frame.
+ * The default value is set to 27 to allow receiving an event of MTU size in a single buffer. This value maybe reduced
+ * further depending on the application.
  */
 #define CFG_TL_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 

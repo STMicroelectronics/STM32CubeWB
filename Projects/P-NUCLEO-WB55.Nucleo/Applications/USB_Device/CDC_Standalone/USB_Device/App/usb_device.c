@@ -33,11 +33,9 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
 __IO uint32_t remotewakeupon = 0;
 uint8_t HID_Buffer[4];
 extern PCD_HandleTypeDef hpcd_USB_FS;
-
 /* USER CODE END PV */
 
 /* USER CODE BEGIN PFP */

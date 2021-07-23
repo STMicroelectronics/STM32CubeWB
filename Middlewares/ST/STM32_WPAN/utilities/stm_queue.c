@@ -254,7 +254,7 @@ uint8_t* CircularQueue_Remove_Copy(queue_t *q, uint16_t* elementSize, uint8_t* b
   * @brief  Remove element from  the queue.
   * @note   This function is used to remove and element from  the Circular Queue .  
   * @param  q: pointer on queue structure  to be handled
-  * @param  elementSize: Pointer to return Size of element to be removed  
+  * @param  elementSize: Pointer to return Size of element to be removed (ignored if NULL)
   * @retval Pointer on removed element. NULL if queue was empty
   */
 uint8_t* CircularQueue_Remove(queue_t *q, uint16_t* elementSize)
@@ -262,15 +262,15 @@ uint8_t* CircularQueue_Remove(queue_t *q, uint16_t* elementSize)
   uint8_t  elemSizeStorageRoom = 0;
   uint8_t* ptr= NULL;
   elemSizeStorageRoom = (q->elementSize == 0) ? 2 : 0;
-  *elementSize = 0;
+  uint16_t eltSize = 0;
   if (q->byteCount > 0) 
   {
     /* retreive element Size */
-    *elementSize = (q->elementSize == 0) ? q->qBuff[q->first] + ((q->qBuff[MOD((q->first+1), q->queueMaxSize)])<<8) : q->elementSize;
+    eltSize = (q->elementSize == 0) ? q->qBuff[q->first] + ((q->qBuff[MOD((q->first+1), q->queueMaxSize)])<<8) : q->elementSize;
 
      if ((q->optionFlags & CIRCULAR_QUEUE_NO_WRAP_FLAG) && !(q->optionFlags & CIRCULAR_QUEUE_SPLIT_IF_WRAPPING_FLAG))
      {
-       if (((*elementSize == 0xFFFF) && q->elementSize == 0 ) || 
+       if (((eltSize == 0xFFFF) && q->elementSize == 0 ) ||
            ((q->first > q->last) && q->elementSize && ((q->queueMaxSize - q->first) < q->elementSize))) 
        {
           /* all data from current position up to the end of buffer are invalid */
@@ -278,7 +278,7 @@ uint8_t* CircularQueue_Remove(queue_t *q, uint16_t* elementSize)
           /* Adjust first element pos */
           q->first = 0;
           /* retrieve the rigth size after the wrap [if varaible size element] */
-          *elementSize = (q->elementSize == 0) ? q->qBuff[q->first] + ((q->qBuff[MOD((q->first+1), q->queueMaxSize)])<<8) : q->elementSize;
+          eltSize = (q->elementSize == 0) ? q->qBuff[q->first] + ((q->qBuff[MOD((q->first+1), q->queueMaxSize)])<<8) : q->elementSize;
        }
      }
 
@@ -286,15 +286,19 @@ uint8_t* CircularQueue_Remove(queue_t *q, uint16_t* elementSize)
     ptr = q->qBuff + (MOD((q->first + elemSizeStorageRoom), q->queueMaxSize));
 
     /* adjust byte count */
-    q->byteCount -= (*elementSize + elemSizeStorageRoom) ;
+    q->byteCount -= (eltSize + elemSizeStorageRoom) ;
     
     /* Adjust q->first */
     if (q->byteCount > 0)
     {
-      q->first = MOD((q->first+ *elementSize + elemSizeStorageRoom ), q->queueMaxSize);
+      q->first = MOD((q->first+ eltSize + elemSizeStorageRoom ), q->queueMaxSize);
     }    
     /* adjust element count */    
     --q->elementCount;    
+  }
+  if (elementSize != NULL)
+  {
+    *elementSize = eltSize;
   }
   return ptr;
 }
@@ -319,7 +323,7 @@ uint8_t* CircularQueue_Sense_Copy(queue_t *q, uint16_t* elementSize, uint8_t* bu
   * @brief  "Sense" first element of the queue, without removing it.
   * @note   This function is used to return a pointer on the first element of the queue without removing it.  
   * @param  q: pointer on queue structure  to be handled
-  * @param  elementSize:  Pointer to return Size of element to be removed  
+  * @param  elementSize:  Pointer to return Size of element to be removed (ignored if NULL)
   * @retval Pointer on sensed element. NULL if queue was empty
   */
 uint8_t* CircularQueue_Sense(queue_t *q, uint16_t* elementSize)
@@ -327,17 +331,17 @@ uint8_t* CircularQueue_Sense(queue_t *q, uint16_t* elementSize)
   uint8_t  elemSizeStorageRoom = 0;
   uint8_t* x= NULL;
   elemSizeStorageRoom = (q->elementSize == 0) ? 2 : 0;
-  *elementSize = 0;
+  uint16_t eltSize = 0;
   uint32_t FirstElemetPos = 0;
     
   if (q->byteCount > 0) 
   {
     FirstElemetPos = q->first;
-    *elementSize = (q->elementSize == 0) ? q->qBuff[q->first] + ((q->qBuff[MOD((q->first+1), q->queueMaxSize)])<<8) : q->elementSize;
+    eltSize = (q->elementSize == 0) ? q->qBuff[q->first] + ((q->qBuff[MOD((q->first+1), q->queueMaxSize)])<<8) : q->elementSize;
     
     if ((q->optionFlags & CIRCULAR_QUEUE_NO_WRAP_FLAG) && !(q->optionFlags & CIRCULAR_QUEUE_SPLIT_IF_WRAPPING_FLAG))
     { 
-      if (((*elementSize == 0xFFFF) && q->elementSize == 0 ) || 
+      if (((eltSize == 0xFFFF) && q->elementSize == 0 ) ||
           ((q->first > q->last) && q->elementSize && ((q->queueMaxSize - q->first) < q->elementSize))) 
 
       {
@@ -345,11 +349,15 @@ uint8_t* CircularQueue_Sense(queue_t *q, uint16_t* elementSize)
         FirstElemetPos = 0; /* wrap to the begiining of buffer */
 
         /* retrieve the rigth size after the wrap [if varaible size element] */
-        *elementSize = (q->elementSize == 0) ? q->qBuff[FirstElemetPos]+ ((q->qBuff[MOD((FirstElemetPos+1), q->queueMaxSize)])<<8) : q->elementSize;
+        eltSize = (q->elementSize == 0) ? q->qBuff[FirstElemetPos]+ ((q->qBuff[MOD((FirstElemetPos+1), q->queueMaxSize)])<<8) : q->elementSize;
       }
    }
    /* retrieve element */
     x = q->qBuff + (MOD((FirstElemetPos + elemSizeStorageRoom), q->queueMaxSize));
+  }
+  if (elementSize != NULL)
+  {
+    *elementSize = eltSize;
   }
   return x;
 }

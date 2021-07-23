@@ -33,6 +33,7 @@
 #include "stm32_lpm.h"
 
 #include "ble_common.h"
+#include "ble_clock.h"
 
 typedef enum
 {
@@ -75,6 +76,9 @@ extern uint8_t TimerDataThroughputWrite_Id;
 #define DEFAULT_TS_MEASUREMENT_INTERVAL   (1000000/CFG_TS_TICK_VAL)  /**< 1s */
 #define DELAY_1s  (1*DEFAULT_TS_MEASUREMENT_INTERVAL)
 #define TIMEUNIT  1
+
+#define BOUNCE_THRESHOLD                20U
+#define LONG_PRESS_THRESHOLD            1000U
 /*************************************************************
  *
  * PUBLIC FUNCTIONS
@@ -137,12 +141,6 @@ void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification )
   {
     case DTS_STM__NOTIFICATION_ENABLED:
       DataTransferServerContext.NotificationTransferReq = DTS_APP_TRANSFER_REQ_ON;
-      #if (NO_BUTTON != 0)
-//#if (((DATA_M2S != 0) && (CFG_BLE_CENTRAL != 0)) || ((DATA_M2S == 0) && (CFG_BLE_CENTRAL == 0)))
-      BSP_LED_On(LED_BLUE);
-      DataTransferServerContext.ButtonTransferReq = DTS_APP_TRANSFER_REQ_ON;
-//#endif
-#endif
       UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
       break;
 
@@ -207,7 +205,7 @@ static void SendData( void )
 
     DataTransferServerContext.TxData.pPayload = Notification_Data_Buffer;
     //DataTransferServerContext.TxData.Length = DATA_NOTIFICATION_MAX_PACKET_SIZE; /* DATA_NOTIFICATION_MAX_PACKET_SIZE */
-    DataTransferServerContext.TxData.Length = Att_Mtu_Exchanged-10;
+    DataTransferServerContext.TxData.Length =  DATA_NOTIFICATION_MAX_PACKET_SIZE; //Att_Mtu_Exchanged-10;
 
     status = DTS_STM_UpdateChar(DATA_TRANSFER_TX_CHAR_UUID, (uint8_t *) &DataTransferServerContext.TxData);
     if (status == BLE_STATUS_INSUFFICIENT_RESOURCES)
@@ -245,14 +243,37 @@ static void ButtonTriggerReceived( void )
 
 static void DT_App_Button2_Trigger_Received( void )
 {
-  APP_DBG_MSG("change PHY \n");
+  APP_DBG_MSG("**CHANGE PHY \n");
   BLE_SVC_GAP_Change_PHY();
   return;
 }
 
+static void Appli_UpdateButtonState(int isPressed)
+{
+  uint32_t t0 = 0,t1 = 1;
+
+  t0 = Clock_Time(); /* SW3 press timing */
+  
+  while(BSP_PB_GetState(BUTTON_SW3) == BUTTON_PRESSED);
+  t1 = Clock_Time(); /* SW3 release timing */
+  
+  if((t1 - t0) > LONG_PRESS_THRESHOLD)
+  {
+    /* Button 3 long press action */
+    APP_DBG_MSG("clear database \n");
+    BLE_SVC_GAP_Clear_DataBase();
+  }
+  else if((t1 - t0) > BOUNCE_THRESHOLD)
+  {
+    /* Button 3 short press action */
+    APP_DBG_MSG("slave security request \n");
+    BLE_SVC_GAP_Security_Req();
+  }
+}
+
 static void DT_App_Button3_Trigger_Received(void)
 {
-  //Appli_UpdateButtonState(BSP_PB_GetState(BUTTON_SW3) == BUTTON_PRESSED);
+  Appli_UpdateButtonState(BSP_PB_GetState(BUTTON_SW3) == BUTTON_PRESSED);
   APP_DBG_MSG("SW3 \n");
   return;
 }

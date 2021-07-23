@@ -41,7 +41,9 @@
 /**
  * Define Advertising parameters
  */
-#define CFG_ADV_BD_ADDRESS                (0)
+#define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
+#define CFG_BLE_ADDRESS_TYPE              PUBLIC_ADDR /**< Bluetooth address types defined in ble_legacy.h */
+
 #define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)   /**< 80ms */
 #define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)  /**< 100ms */
 #define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x640) /**< 1s */
@@ -130,7 +132,7 @@
  * SMPS not used when Set to 0
  * SMPS used when Set to 1
  */
-#define CFG_USE_SMPS    1
+#define CFG_USE_SMPS    0
 
 /* USER CODE BEGIN Generic_Parameters */
 
@@ -169,7 +171,7 @@
 #define CONN_P(x) ((int)((x)/1.25f))
 
   /*  L2CAP Connection Update request parameters used for test only with smart Phone */
-#define L2CAP_REQUEST_NEW_CONN_PARAM             0
+#define L2CAP_REQUEST_NEW_CONN_PARAM             1
 
 #define L2CAP_INTERVAL_MIN              CONN_P(1000) /* 1s */
 #define L2CAP_INTERVAL_MAX              CONN_P(1000) /* 1s */
@@ -333,7 +335,9 @@
  * allocated in the queue of received events and can be used to optimize the amount of RAM allocated by the Memory Manager.
  * It should not exceed 255 which is the maximum HCI packet payload size (a greater value is a lost of memory as it will
  * never be used)
- * With the current wireless firmware implementation, this parameter shall be kept to 255
+ * It shall be at least 4 to receive the command status event in one frame.
+ * The default value is set to 27 to allow receiving an event of MTU size in a single buffer. This value maybe reduced
+ * further depending on the application.
  */
 #define CFG_TLBLE_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 
@@ -385,6 +389,11 @@
  * Note that keeping that setting to 1 when standby is not supported does not hurt
  */
 #define CFG_LPM_STANDBY_SUPPORTED    0
+
+/******************************************************************************
+ * RTC interface
+ ******************************************************************************/
+#define HAL_RTCEx_WakeUpTimerIRQHandler(...)  HW_TS_RTC_Wakeup_Handler( )
 
 /******************************************************************************
  * Timer Server
@@ -576,13 +585,14 @@ typedef enum
 typedef enum
 {
     CFG_TASK_ADV_CANCEL_ID,
-    CFG_TASK_SW1_BUTTON_PUSHED_ID,
 #if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
     CFG_TASK_CONN_UPDATE_REG_ID,
 #endif
     CFG_TASK_HCI_ASYNCH_EVT_ID,
 /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
-
+    CFG_TASK_SW1_BUTTON_PUSHED_ID,
+    CFG_TASK_SW2_BUTTON_PUSHED_ID,
+    CFG_TASK_SW3_BUTTON_PUSHED_ID,
 /* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
     CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;

@@ -21,7 +21,7 @@ LR_IROM3 0x08007144 0x146BC{
 	*.o (TAG_OTA_END)	
   }
     
-  RW_IRAM1 0x20000004 0x2FFC  {  ; RW data
+  RW_IRAM1 0x20000008 0x2FF8  {  ; RW data
   .ANY (+RW +ZI)
   }
   

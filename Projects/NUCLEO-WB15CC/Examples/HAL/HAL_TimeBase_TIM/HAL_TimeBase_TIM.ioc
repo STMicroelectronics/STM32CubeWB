@@ -101,3 +101,5 @@ RCC.VCOOutputFreq_Value=128000000
 VP_SYS_VS_tim2.Mode=TIM2
 VP_SYS_VS_tim2.Signal=SYS_VS_tim2
 board=custom
+ProjectManager.Example=HAL_TimeBase_TIM
+ProjectManager.ExampleSource=CubeFw

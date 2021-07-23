@@ -952,3 +952,4 @@ static void APP_ZIGBEE_SW2_Process()
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

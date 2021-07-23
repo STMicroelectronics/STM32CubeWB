@@ -97,7 +97,7 @@ void HRS_Notification(HRS_App_Notification_evt_t *pNotification)
 /* USER CODE END HRS_RESET_ENERGY_EXPENDED_EVT */
       break;
 #endif
-      
+
     case HRS_NOTIFICATION_ENABLED:
 /* USER CODE BEGIN HRS_NOTIFICATION_ENABLED */
       /**
@@ -113,7 +113,7 @@ void HRS_Notification(HRS_App_Notification_evt_t *pNotification)
       HW_TS_Stop(HRSAPP_Context.TimerMeasurement_Id);
 /* USER CODE END HRS_NOTIFICATION_DISABLED */
       break;
-      
+
 #if (BLE_CFG_OTA_REBOOT_CHAR != 0)
     case HRS_STM_BOOT_REQUEST_EVT:
 /* USER CODE BEGIN HRS_STM_BOOT_REQUEST_EVT */
@@ -122,7 +122,7 @@ void HRS_Notification(HRS_App_Notification_evt_t *pNotification)
 /* USER CODE END HRS_STM_BOOT_REQUEST_EVT */
       break;
 #endif
-      
+
    default:
 /* USER CODE BEGIN HRS_Notification_Default */
 

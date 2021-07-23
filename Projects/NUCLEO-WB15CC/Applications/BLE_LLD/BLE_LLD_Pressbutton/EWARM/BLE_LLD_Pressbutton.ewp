@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32WB15CC_M4	ST STM32WB15CC_M4</state>
+                    <state>STM32WB15CC	ST STM32WB15CC</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -138,7 +138,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32WB15CC_M4	ST STM32WB15CC_M4</state>
+                    <state>STM32WB15CC	ST STM32WB15CC</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -351,21 +351,23 @@
                     <state>$PROJ_DIR$/../Core/Inc</state>
                     <state>$PROJ_DIR$/../STM32_WPAN/App</state>
                     <state>$PROJ_DIR$/../STM32_WPAN/Target</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/NUCLEO-WB15CC</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble_lld/hal</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble_lld/lld</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities</state>
-                    <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
-                    <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core</state>
-                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include</state>
-                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
-                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/NUCLEO-WB15CC</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1065,9 +1067,6 @@
                     <name>$PROJ_DIR$\..\Core\Src\main.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\Core\Src\pressbutton_app.c</name>
-                </file>
-                <file>
                     <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
                 </file>
                 <file>
@@ -1088,10 +1087,7 @@
                         <name>$PROJ_DIR$\..\STM32_WPAN\App\app_ble_lld.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\App\ble_lld.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\App\ring_buffer.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\pressbutton_app.c</name>
                     </file>
                 </group>
                 <group>
@@ -1185,6 +1181,12 @@
         <name>Middlewares</name>
         <group>
             <name>STM32_WPAN</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble_lld\hal\ble_hal.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble_lld\lld\ble_lld.c</name>
+            </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\dbg_trace.c</name>
             </file>

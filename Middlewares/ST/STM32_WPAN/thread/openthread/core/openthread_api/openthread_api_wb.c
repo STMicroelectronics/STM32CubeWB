@@ -143,6 +143,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
       otThreadParentResponseCb((otThreadParentResponseInfo *) p_notification->Data[0],
           (void *) p_notification->Data[1]);
     }
+    break;
   case MSG_M0TOM4_COAP_REQUEST_HANDLER:
     mySTCoapRequestContext = (STCoapRequestContextType*) p_notification->Data[0];
 

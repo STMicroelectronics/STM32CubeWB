@@ -160,7 +160,7 @@ typedef struct
 
 }BleApplicationContext_t;
 /* USER CODE BEGIN PTD */
-  
+
 /* USER CODE END PTD */
 
 /* Private defines -----------------------------------------------------------*/
@@ -252,6 +252,12 @@ static void Adv_Update( void );
 
 /* USER CODE END PFP */
 
+/* External variables --------------------------------------------------------*/
+
+/* USER CODE BEGIN EV */
+
+/* USER CODE END EV */
+
 /* Functions Definition ------------------------------------------------------*/
 void APP_BLE_Init( void )
 {
@@ -342,6 +348,10 @@ void APP_BLE_Init( void )
    * Initialize HRS Application
    */
   HRSAPP_Init();
+
+/* USER CODE BEGIN APP_BLE_Init_3 */
+
+/* USER CODE END APP_BLE_Init_3 */
 
   /**
    * Create timer to handle the connection state machine
@@ -548,12 +558,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
        case (ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE):
           APP_DBG_MSG("numeric_value = %ld\n",
                       ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
-
           APP_DBG_MSG("Hex_value = %lx\n",
                       ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
-
-          aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 1); /* CONFIRM_YES = 1 */
-
+          aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, YES); /* CONFIRM_YES = 1 */
           APP_DBG_MSG("\r\n\r** aci_gap_numeric_comparison_value_confirm_yesno-->YES \n");
           break;
 
@@ -692,7 +699,6 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   uint8_t role;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
-  uint32_t srd_bd_addr[2];
   uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
 
   /**
@@ -710,6 +716,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
                             CONFIG_DATA_PUBADDR_LEN,
                             (uint8_t*) bd_addr);
 
+#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
   manuf_data[ sizeof(manuf_data)-6] = bd_addr[5];
   manuf_data[ sizeof(manuf_data)-5] = bd_addr[4];
@@ -717,6 +724,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   manuf_data[ sizeof(manuf_data)-3] = bd_addr[2];
   manuf_data[ sizeof(manuf_data)-2] = bd_addr[1];
   manuf_data[ sizeof(manuf_data)-1] = bd_addr[0];
+#endif
 
   /**
    * Write Identity root key used to derive LTK and CSRK
@@ -725,21 +733,12 @@ static void Ble_Hci_Gap_Gatt_Init(void){
     CONFIG_DATA_IR_LEN,
                             (uint8_t*) BLE_CFG_IR_VALUE);
 
-   /**
+  /**
    * Write Encryption root key used to derive LTK and CSRK
    */
     aci_hal_write_config_data(CONFIG_DATA_ER_OFFSET,
-    CONFIG_DATA_ER_LEN,
-                            (uint8_t*) BLE_CFG_ER_VALUE);
-
-   /**
-   * Write random bd_address
-   */
-   /* random_bd_address = R_bd_address;
-    aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_WR,
-    CONFIG_DATA_RANDOM_ADDRESS_LEN,
-                            (uint8_t*) random_bd_address);
-  */
+                              CONFIG_DATA_ER_LEN,
+                              (uint8_t*) BLE_CFG_ER_VALUE);
 
   /**
    * Static random Address
@@ -747,19 +746,65 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    * The lowest 32bits is read from the UDN to differentiate between devices
    * The RNG may be used to provide a random number on each power on
    */
-  srd_bd_addr[1] =  0x0000ED6E;
-  srd_bd_addr[0] =  LL_FLASH_GetUDN( );
+#if defined(CFG_STATIC_RANDOM_ADDRESS)
+  srd_bd_addr[0] = CFG_STATIC_RANDOM_ADDRESS & 0xFFFFFFFF;
+  srd_bd_addr[1] = (uint32_t)((uint64_t)CFG_STATIC_RANDOM_ADDRESS >> 32);
+  srd_bd_addr[1] |= 0xC000; /* The two upper bits shall be set to 1 */
+#elif (CFG_BLE_ADDRESS_TYPE == RANDOM_ADDR)
+  /* Get RNG semaphore */
+  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RNG_SEMID ) );
+
+  /* Enable RNG */
+  __HAL_RNG_ENABLE(&hrng);
+
+  /* Enable HSI48 oscillator */
+  LL_RCC_HSI48_Enable();
+  /* Wait until HSI48 is ready */
+  while( ! LL_RCC_HSI48_IsReady( ) );
+
+  if (HAL_RNG_GenerateRandomNumber(&hrng, &srd_bd_addr[1]) != HAL_OK)
+  {
+    /* Random number generation error */
+    Error_Handler();
+  }
+  if (HAL_RNG_GenerateRandomNumber(&hrng, &srd_bd_addr[0]) != HAL_OK)
+  {
+    /* Random number generation error */
+    Error_Handler();
+  }
+  srd_bd_addr[1] |= 0xC000; /* The two upper bits shall be set to 1 */
+
+  /* Disable HSI48 oscillator */
+  LL_RCC_HSI48_Disable();
+
+  /* Disable RNG */
+  __HAL_RNG_DISABLE(&hrng);
+
+  /* Release RNG semaphore */
+  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RNG_SEMID, 0 );
+#endif
+
+#if (CFG_BLE_ADDRESS_TYPE == STATIC_RANDOM_ADDR)
+  /* BLE MAC in ADV Packet */
+  manuf_data[ sizeof(manuf_data)-6] = srd_bd_addr[1] >> 8 ;
+  manuf_data[ sizeof(manuf_data)-5] = srd_bd_addr[1];
+  manuf_data[ sizeof(manuf_data)-4] = srd_bd_addr[0] >> 24;
+  manuf_data[ sizeof(manuf_data)-3] = srd_bd_addr[0] >> 16;
+  manuf_data[ sizeof(manuf_data)-2] = srd_bd_addr[0] >> 8;
+  manuf_data[ sizeof(manuf_data)-1] = srd_bd_addr[0];
+
   aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
+#endif
 
   /**
    * Write Identity root key used to derive LTK and CSRK
    */
-    aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
+  aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
 
-   /**
+  /**
    * Write Encryption root key used to derive LTK and CSRK
    */
-    aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
+  aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
 
   /**
    * Set TX Power to 0dBm.
@@ -787,9 +832,16 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   if (role > 0)
   {
     const char *name = "HRSTM";
-    aci_gap_init(role, 0,
+    aci_gap_init(role,
+#if ((CFG_BLE_ADDRESS_TYPE == RESOLVABLE_PRIVATE_ADDR) || (CFG_BLE_ADDRESS_TYPE == NON_RESOLVABLE_PRIVATE_ADDR))
+                 2,
+#else
+                 0,
+#endif
                  APPBLE_GAP_DEVICE_NAME_LENGTH,
-                 &gap_service_handle, &gap_dev_name_char_handle, &gap_appearance_char_handle);
+                 &gap_service_handle,
+                 &gap_dev_name_char_handle,
+                 &gap_appearance_char_handle);
 
     if (aci_gatt_update_char_value(gap_service_handle, gap_dev_name_char_handle, 0, strlen(name), (uint8_t *) name))
     {
@@ -834,7 +886,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                         PUBLIC_ADDR
+                                         CFG_BLE_ADDRESS_TYPE
                                          );
 
   /**
@@ -892,7 +944,7 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
         ADV_IND,
         Min_Inter,
         Max_Inter,
-        PUBLIC_ADDR,
+        CFG_BLE_ADDRESS_TYPE,
         NO_WHITE_LIST_USE, /* use white list */
         sizeof(local_name),
         (uint8_t*) &local_name,

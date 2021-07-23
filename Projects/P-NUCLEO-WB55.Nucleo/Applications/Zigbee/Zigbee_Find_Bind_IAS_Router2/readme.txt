@@ -1,4 +1,4 @@
-/* Copyright [2020 - 2020] Exegin Technologies Limited. All rights reserved. */
+﻿/* Copyright [2020 - 2020] Exegin Technologies Limited. All rights reserved. */
 
 /**
   @page Zigbee_Find_Bind_IAS_Router2 application
@@ -159,7 +159,7 @@ For this application it is requested to have:
              |                                 SW2 =>|---------------------------->|
              |                                       |                             |Red LED
              |                                       |                             |goes on 
-             |                                       |                             |for 10 sec
+             |                                       |                             |for 3 sec
              |                                       |                             |
        SW3 =>|---------------------------------------------------onOff togle------>|Green LED
              |                                       |                             |toggles

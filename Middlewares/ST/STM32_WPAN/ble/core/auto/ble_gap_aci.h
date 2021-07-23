@@ -1542,5 +1542,98 @@ tBleStatus aci_gap_add_devices_to_resolving_list( uint8_t Num_of_Resolving_list_
 tBleStatus aci_gap_remove_bonded_device( uint8_t Peer_Identity_Address_Type,
                                          const uint8_t* Peer_Identity_Address );
 
+/**
+ * @brief ACI_GAP_ADDITIONAL_BEACON_START
+ * This command starts an advertising beacon. It allows additional advertising
+ * packets to be transmitted independently of the packets transmitted with GAP
+ * advertising commands such as ACI_GAP_SET_DISCOVERABLE or
+ * ACI_GAP_SET_LIMITED_DISCOVERABLE.
+ * 
+ * @param Adv_Interval_Min Minimum advertising interval.
+ *        Time = N * 0.625 msec.
+ *        Values:
+ *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
+ * @param Adv_Interval_Max Maximum advertising interval.
+ *        Time = N * 0.625 msec.
+ *        Values:
+ *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
+ * @param Adv_Channel_Map Advertising channel map.
+ *        Default: 00000111b (all channels enabled).
+ *        Flags:
+ *        - 0x01: ch 37
+ *        - 0x02: ch 38
+ *        - 0x04: ch 39
+ * @param Own_Address_Type Own address type: public or static random.
+ *        Values:
+ *        - 0x00: Public Device Address
+ *        - 0x01: Random Device Address
+ * @param Own_Address Public Device Address or Random Device Address.
+ * @param PA_Level Power amplifier output level. Output power is indicative and
+ *        depends on the PCB layout and associated components. Here the values
+ *        are given at the STM32WB output.
+ *        Values:
+ *        - 0x00: -40 dBm
+ *        - 0x01: -20.85 dBm
+ *        - 0x02: -19.75 dBm
+ *        - 0x03: -18.85 dBm
+ *        - 0x04: -17.6 dBm
+ *        - 0x05: -16.5 dBm
+ *        - 0x06: -15.25 dBm
+ *        - 0x07: -14.1 dBm
+ *        - 0x08: -13.15 dBm
+ *        - 0x09: -12.05 dBm
+ *        - 0x0A: -10.9 dBm
+ *        - 0x0B: -9.9 dBm
+ *        - 0x0C: -8.85 dBm
+ *        - 0x0D: -7.8 dBm
+ *        - 0x0E: -6.9 dBm
+ *        - 0x0F: -5.9 dBm
+ *        - 0x10: -4.95 dBm
+ *        - 0x11: -4 dBm
+ *        - 0x12: -3.15 dBm
+ *        - 0x13: -2.45 dBm
+ *        - 0x14: -1.8 dBm
+ *        - 0x15: -1.3 dBm
+ *        - 0x16: -0.85 dBm
+ *        - 0x17: -0.5 dBm
+ *        - 0x18: -0.15 dBm
+ *        - 0x19: 0 dBm
+ *        - 0x1A: +1 dBm
+ *        - 0x1B: +2 dBm
+ *        - 0x1C: +3 dBm
+ *        - 0x1D: +4 dBm
+ *        - 0x1E: +5 dBm
+ *        - 0x1F: +6 dBm
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_additional_beacon_start( uint16_t Adv_Interval_Min,
+                                            uint16_t Adv_Interval_Max,
+                                            uint8_t Adv_Channel_Map,
+                                            uint8_t Own_Address_Type,
+                                            const uint8_t* Own_Address,
+                                            uint8_t PA_Level );
+
+/**
+ * @brief ACI_GAP_ADDITIONAL_BEACON_STOP
+ * This command stops the advertising beacon started with
+ * ACI_GAP_ADDITIONAL_BEACON_START.
+ * 
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_additional_beacon_stop( void );
+
+/**
+ * @brief ACI_GAP_ADDITIONAL_BEACON_SET_DATA
+ * This command sets the data transmitted by the advertising beacon started
+ * with ACI_GAP_ADDITIONAL_BEACON_START. If the advertising beacon is already
+ * started, the new data is used in subsequent beacon advertising events.
+ * 
+ * @param Adv_Data_Length Length of Adv_Data in octets
+ * @param Adv_Data Advertising data used by the device while advertising.
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_additional_beacon_set_data( uint8_t Adv_Data_Length,
+                                               const uint8_t* Adv_Data );
+
 
 #endif /* BLE_GAP_ACI_H__ */

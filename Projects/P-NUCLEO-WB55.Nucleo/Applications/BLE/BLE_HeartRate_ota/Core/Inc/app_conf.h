@@ -35,8 +35,8 @@
 
 /**
  * Define Tx Power
- */   
-#define CFG_TX_POWER                      (0x18) /**< 0dbm */
+ */
+#define CFG_TX_POWER                      (0x18) /* -0.15dBm */
 
 /**
  * Define Advertising parameters
@@ -131,7 +131,7 @@
  * SMPS not used when Set to 0
  * SMPS used when Set to 1
  */
-#define CFG_USE_SMPS    1
+#define CFG_USE_SMPS    0
 /* USER CODE END Generic_Parameters */
 
 /**< specific parameters */
@@ -222,9 +222,9 @@
 
 /**
  *  Source for the low speed clock for RF wake-up
- *  1 : external high speed crystal HSE/32/32 
+ *  1 : external high speed crystal HSE/32/32
  *  0 : external low speed crystal ( no calibration )
- */ 
+ */
 #define CFG_BLE_LSE_SOURCE  0
 
 /**
@@ -246,32 +246,33 @@
 
 /**
  * BLE stack Options flags to be configured with:
- * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY                      
- * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST                        
- * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC           
- * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC         
- * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO               
- * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW               
- * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1                
- * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 
- * which are used to set following configuration bits:            
- * (bit 0): 1: LL only                   
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3
+ * which are used to set following configuration bits:
+ * (bit 0): 1: LL only
  *          0: LL + host
- * (bit 1): 1: no service change desc.   
+ * (bit 1): 1: no service change desc.
  *          0: with service change desc.
- * (bit 2): 1: device name Read-Only     
+ * (bit 2): 1: device name Read-Only
  *          0: device name R/W
- * (bit 7): 1: LE Power Class 1          
- *          0: LE Power Classe 2-3
+ * (bit 7): 1: LE Power Class 1
+ *          0: LE Power Class 2-3
  * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_OPTIONS  SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 
 #define CFG_BLE_MIN_TX_POWER            (0)
 
 #define CFG_BLE_MAX_TX_POWER            (0)
+
 /******************************************************************************
  * Transport Layer
  ******************************************************************************/
@@ -321,6 +322,18 @@
 #define CFG_USB_INTERFACE_ENABLE    0
 
 /******************************************************************************
+ * IPCC interface
+ ******************************************************************************/
+
+/**
+ * The IPCC is dedicated to the communication between the CPU2 and the CPU1
+ * and shall not be modified by the application
+ * The two following definitions shall not be modified
+ */
+#define HAL_IPCC_TX_IRQHandler(...)  HW_IPCC_Tx_Handler( )
+#define HAL_IPCC_RX_IRQHandler(...)  HW_IPCC_Rx_Handler( )
+
+/******************************************************************************
  * Low Power
  ******************************************************************************/
 /**
@@ -360,9 +373,10 @@
  * It does not support 1Hz calendar
  * It divides the RTC CLK by 16
  */
+
 #define CFG_RTCCLK_DIV  (16)
 #define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (CFG_RTCCLK_DIV - 1)
+#define CFG_RTC_ASYNCH_PRESCALER (0x0F)
 #define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
 
 #else
@@ -407,6 +421,9 @@
 typedef enum
 {
   CFG_TIM_PROC_ID_ISR,
+  /* USER CODE BEGIN CFG_TimProcID_t */
+
+  /* USER CODE END CFG_TimProcID_t */
 } CFG_TimProcID_t;
 
 /******************************************************************************
@@ -515,6 +532,9 @@ typedef enum
 {
     CFG_TASK_ADV_UPDATE_ID,
     CFG_TASK_MEAS_REQ_ID,
+    CFG_TASK_SW1_BUTTON_PUSHED_ID,
+    CFG_TASK_SW2_BUTTON_PUSHED_ID,
+    CFG_TASK_SW3_BUTTON_PUSHED_ID,
     CFG_TASK_HCI_ASYNCH_EVT_ID,
 /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
 

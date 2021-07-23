@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics. 
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
+  * the "License"; You may not use this file except in compliance with the 
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -33,56 +33,59 @@
   * @brief This is the list of modules to be used in the HAL driver
   */
 #define HAL_MODULE_ENABLED
-#define HAL_ADC_MODULE_ENABLED
-#define HAL_COMP_MODULE_ENABLED
+/*#define HAL_ADC_MODULE_ENABLED   */
+/*#define HAL_CRYP_MODULE_ENABLED   */
+/*#define HAL_COMP_MODULE_ENABLED   */
+/*#define HAL_CRC_MODULE_ENABLED   */
+#define HAL_HSEM_MODULE_ENABLED
+/*#define HAL_I2C_MODULE_ENABLED   */
+#define HAL_IPCC_MODULE_ENABLED
+/*#define HAL_IRDA_MODULE_ENABLED   */
+/*#define HAL_IWDG_MODULE_ENABLED   */
+/*#define HAL_LCD_MODULE_ENABLED   */
+/*#define HAL_LPTIM_MODULE_ENABLED   */
+/*#define HAL_PCD_MODULE_ENABLED   */
+/*#define HAL_PKA_MODULE_ENABLED   */
+/*#define HAL_QSPI_MODULE_ENABLED   */
+/*#define HAL_RNG_MODULE_ENABLED   */
+#define HAL_RTC_MODULE_ENABLED
+/*#define HAL_SAI_MODULE_ENABLED   */
+/*#define HAL_SMBUS_MODULE_ENABLED   */
+/*#define HAL_SMARTCARD_MODULE_ENABLED   */
+/*#define HAL_SPI_MODULE_ENABLED   */
+/*#define HAL_TIM_MODULE_ENABLED   */
+/*#define HAL_TSC_MODULE_ENABLED   */
+#define HAL_UART_MODULE_ENABLED
+/*#define HAL_USART_MODULE_ENABLED   */
+/*#define HAL_WWDG_MODULE_ENABLED   */
+#define HAL_EXTI_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
-#define HAL_CRC_MODULE_ENABLED
-#define HAL_CRYP_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_FLASH_MODULE_ENABLED
 #define HAL_GPIO_MODULE_ENABLED
-#define HAL_HSEM_MODULE_ENABLED
-#define HAL_I2C_MODULE_ENABLED
-#define HAL_IPCC_MODULE_ENABLED
-#define HAL_IRDA_MODULE_ENABLED
-#define HAL_IWDG_MODULE_ENABLED
-#define HAL_LCD_MODULE_ENABLED
-#define HAL_LPTIM_MODULE_ENABLED
-#define HAL_PCD_MODULE_ENABLED
-#define HAL_PKA_MODULE_ENABLED
 #define HAL_PWR_MODULE_ENABLED
-#define HAL_QSPI_MODULE_ENABLED
 #define HAL_RCC_MODULE_ENABLED
-#define HAL_RNG_MODULE_ENABLED
-#define HAL_RTC_MODULE_ENABLED
-#define HAL_SAI_MODULE_ENABLED
-#define HAL_SMARTCARD_MODULE_ENABLED
-#define HAL_SMBUS_MODULE_ENABLED
-#define HAL_SPI_MODULE_ENABLED
-#define HAL_TIM_MODULE_ENABLED
-#define HAL_TSC_MODULE_ENABLED
-#define HAL_UART_MODULE_ENABLED
-#define HAL_USART_MODULE_ENABLED
-#define HAL_WWDG_MODULE_ENABLED
-#define HAL_EXTI_MODULE_ENABLED
 
-#define USE_HAL_ADC_REGISTER_CALLBACKS    0u
-#define USE_HAL_COMP_REGISTER_CALLBACKS   0u
-#define USE_HAL_I2C_REGISTER_CALLBACKS    0u
-#define USE_HAL_IRDA_REGISTER_CALLBACKS   0u
-#define USE_HAL_LPTIM_REGISTER_CALLBACKS  0u
-#define USE_HAL_PKA_REGISTER_CALLBACKS    0u
-#define USE_HAL_QSPI_REGISTER_CALLBACKS   0u
-#define USE_HAL_RNG_REGISTER_CALLBACKS    0u
-#define USE_HAL_RTC_REGISTER_CALLBACKS    0u
-#define USE_HAL_SAI_REGISTER_CALLBACKS    0u
-#define USE_HAL_SMBUS_REGISTER_CALLBACKS  0u
-#define USE_HAL_SPI_REGISTER_CALLBACKS    0u
-#define USE_HAL_TIM_REGISTER_CALLBACKS    0u
-#define USE_HAL_TSC_REGISTER_CALLBACKS    0u
-#define USE_HAL_UART_REGISTER_CALLBACKS   0u
-#define USE_HAL_USART_REGISTER_CALLBACKS  0u
-#define USE_HAL_WWDG_REGISTER_CALLBACKS   0u
+#define USE_HAL_ADC_REGISTER_CALLBACKS       0u
+#define USE_HAL_COMP_REGISTER_CALLBACKS      0u
+#define USE_HAL_CRYP_REGISTER_CALLBACKS      0u
+#define USE_HAL_I2C_REGISTER_CALLBACKS       0u
+#define USE_HAL_IRDA_REGISTER_CALLBACKS      0u
+#define USE_HAL_LPTIM_REGISTER_CALLBACKS     0u
+#define USE_HAL_PCD_REGISTER_CALLBACKS       0u
+#define USE_HAL_PKA_REGISTER_CALLBACKS       0u
+#define USE_HAL_QSPI_REGISTER_CALLBACKS      0u
+#define USE_HAL_RNG_REGISTER_CALLBACKS       0u
+#define USE_HAL_RTC_REGISTER_CALLBACKS       0u
+#define USE_HAL_SAI_REGISTER_CALLBACKS       0u
+#define USE_HAL_SMARTCARD_REGISTER_CALLBACKS 0u
+#define USE_HAL_SMBUS_REGISTER_CALLBACKS     0u
+#define USE_HAL_SPI_REGISTER_CALLBACKS       0u
+#define USE_HAL_TIM_REGISTER_CALLBACKS       0u
+#define USE_HAL_TSC_REGISTER_CALLBACKS       0u
+#define USE_HAL_UART_REGISTER_CALLBACKS      0u
+#define USE_HAL_USART_REGISTER_CALLBACKS     0u
+#define USE_HAL_WWDG_REGISTER_CALLBACKS      0u
 
 /* ########################## Oscillator Values adaptation ####################*/
 /**
@@ -169,8 +172,8 @@
   * @brief This is the HAL system configuration section
   */
 
-#define  VDD_VALUE                    ((uint32_t)3300) /*!< Value of VDD in mv */
-#define  TICK_INT_PRIORITY            ((uint32_t)(1<<__NVIC_PRIO_BITS) - 1) /*!< tick interrupt priority (lowest by default) */
+#define  VDD_VALUE                    3300U             /*!< Value of VDD in mv */
+#define  TICK_INT_PRIORITY            0U                /*!< tick interrupt priority */
 #define  USE_RTOS                     0U
 #define  PREFETCH_ENABLE              1U
 #define  INSTRUCTION_CACHE_ENABLE     1U

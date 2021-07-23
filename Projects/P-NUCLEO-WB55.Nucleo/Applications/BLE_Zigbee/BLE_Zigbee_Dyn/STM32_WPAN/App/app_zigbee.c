@@ -102,6 +102,7 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void);
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
+static void APP_ZIGBEE_DbgNwkStatus(void);
 
 
 #ifdef WITH_PERSISTANT

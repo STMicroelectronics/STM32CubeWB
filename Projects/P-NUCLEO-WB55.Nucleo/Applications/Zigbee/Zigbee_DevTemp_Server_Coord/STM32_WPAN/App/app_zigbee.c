@@ -60,6 +60,7 @@ static void APP_ZIGBEE_InitDevTemp(void);
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
+static void APP_ZIGBEE_ParseTempValue(void);
 
 /* Private variables -----------------------------------------------*/
 static TL_CmdPacket_t *p_ZIGBEE_otcmdbuffer;

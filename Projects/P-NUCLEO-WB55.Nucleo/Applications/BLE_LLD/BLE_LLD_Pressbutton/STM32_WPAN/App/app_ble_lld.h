@@ -24,18 +24,11 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "ble_lld.h"
+#include "ble_lld_transport.h"
 
 /* Private includes ----------------------------------------------------------*/
 
 /* Exported types ------------------------------------------------------------*/
-
-/* Layer of indirection for command to M0 */
-typedef PACKED_STRUCT
-{
-  void *command;
-  uint32_t length;
-} bleCmdIndirect_t;
 
 /* Exported constants --------------------------------------------------------*/
 
@@ -44,15 +37,17 @@ typedef PACKED_STRUCT
 /* Exported macros ------------------------------------------------------------*/
 
 /* Exported functions ------------------------------------------------------- */
-void APP_BLE_LLD_Init( void );
+void APP_BLE_LLD_Init(void);
 void APP_BLE_LLD_Error(uint32_t ErrId, uint32_t ErrCode);
-void APP_BLE_LLD_Init_UART_CLI(void);
-void APP_BLE_LLD_DeInit_UART_CLI(void);
+void APP_BLE_LLD_Init_UART(void);
+void APP_BLE_LLD_DeInit_UART(void);
+
+void APP_BLE_LLD_uartRxStart(void(*cb)(char));
 
 void CheckWirelessFirmwareInfo(void);
-void logUart(const char *format, ...);
-void logUartRaw(const char *str);
-void APP_BLE_LLD_SendCmdM0(void *command);
+void uartWrite(const char *format, ...);
+void uartWriteRaw(const char *str);
+uint8_t APP_BLE_LLD_SendCmdM0(BLE_LLD_Code_t bleCmd);
 
 /**
  * @brief Active polling for a given delay
@@ -70,12 +65,6 @@ void us_delay_32m(uint32_t microsec);
 } /* extern "C" */
 #endif
 
-
-
-/* USER CODE BEGIN FD_WRAP_FUNCTIONS */
-void Appli_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
-void Appli_TIM_IC_CaptureCallback(void);
-/* USER CODE END FD_WRAP_FUNCTIONS */
 
 #endif /* APP_BLE_LLD_H */
 

@@ -736,15 +736,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
                              APP_DBG_MSG("\r\n\r** ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE\n");
         break; /* ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE */
         case (ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE):
-                              APP_DBG_MSG("numeric_value = %ld\n",
-                                          ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
-
-        APP_DBG_MSG("Hex_value = %lx\n",
-                    ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
-
-        aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 1); /* CONFIRM_YES = 1 */
-
-        APP_DBG_MSG("\r\n\r** aci_gap_numeric_comparison_value_confirm_yesno-->YES \n");
+          APP_DBG_MSG("numeric_value = %ld\n",
+                      ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
+          APP_DBG_MSG("Hex_value = %lx\n",
+                      ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
+          aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, YES); /* CONFIRM_YES = 1 */
+          APP_DBG_MSG("\r\n\r** aci_gap_numeric_comparison_value_confirm_yesno-->YES \n");
         break;
         case (ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE):
                     {

@@ -134,7 +134,6 @@ void APPE_Init( void )
  */
 static void SystemPower_Config(void)
 {
-
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -233,6 +232,7 @@ static void Button_Init( void )
 
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
   BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
 #endif
 
   return;

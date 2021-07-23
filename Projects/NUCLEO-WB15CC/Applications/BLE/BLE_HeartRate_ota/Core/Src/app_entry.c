@@ -258,8 +258,6 @@ void UTIL_SEQ_Idle( void )
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
   UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-
-  return;
 }
 
 void shci_notify_asynch_evt(void* pdata)
@@ -286,7 +284,7 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
   switch (GPIO_Pin)
   {
     case BUTTON_SW1_PIN:
-      APP_BLE_Key_Button1_Action();
+     APP_BLE_Key_Button1_Action();
       break; 
 
     case BUTTON_SW2_PIN:

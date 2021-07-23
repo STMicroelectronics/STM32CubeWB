@@ -261,3 +261,5 @@ USART1.WordLength=WORDLENGTH_7B
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=P-NUCLEO-WB55.Nucleo
+ProjectManager.Example=QSPI_ReadWrite_DMA
+ProjectManager.ExampleSource=CubeFw

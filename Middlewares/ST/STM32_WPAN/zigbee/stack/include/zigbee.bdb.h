@@ -2,7 +2,7 @@
  * @file zigbee.bdb.h
  * @brief BDB header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_BDB_H
@@ -142,16 +142,16 @@ enum ZbBdbAttrIdT {
     ZB_BDB_DisablePersistRejoin, /* 0x111a - boolean */
     ZB_BDB_ZdoBindCheckCluster, /* boolean */
     ZB_BDB_ApsInterpanDisabled, /* boolean */
+    ZB_BDB_Uptime, /* Returns the current stack uptime in milliseconds (ZbUptime) */
 
     /* Constants which are accessible through a BDB GET IB request. */
     ZB_BDBC_MaxSameNetworkRetryAttempts = 0x1200,
-    ZB_BDBC_MinCommissioningTime, /* seconds */
+    ZB_BDBC_MinCommissioningTime, /**< Seconds */
     ZB_BDBC_RecSameNetworkRetryAttempts,
-    ZB_BDBC_TCLinkKeyExchangeTimeout, /* seconds */
-    ZB_BDBC_TLInterPANTransIdLifetime, /* seconds */
-    ZB_BDBC_TLMinStartupDelayTime, /* seconds */
-    ZB_BDBC_TLRxWindowDuration, /* seconds */
-    ZB_BDBC_TLScanTimeBaseDuration /* uint8_t - milliseconds */
+    ZB_BDBC_TLInterPANTransIdLifetime, /**< Seconds */
+    ZB_BDBC_TLMinStartupDelayTime, /**< Seconds */
+    ZB_BDBC_TLRxWindowDuration, /**< Seconds */
+    ZB_BDBC_TLScanTimeBaseDuration /**< Milliseconds */ /* uint8_t  */
 };
 
 /** BDB-GET.request */

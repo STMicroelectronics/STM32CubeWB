@@ -78,7 +78,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32WB55VG	ST STM32WB55VG</state>
+          <state>STM32WB5MMG	ST STM32WB5MMG</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -138,7 +138,7 @@
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>STM32WB55VG	ST STM32WB55VG</state>
+          <state>STM32WB5MMG	ST STM32WB5MMG</state>
         </option>
         <option>
           <name>FPU2</name>

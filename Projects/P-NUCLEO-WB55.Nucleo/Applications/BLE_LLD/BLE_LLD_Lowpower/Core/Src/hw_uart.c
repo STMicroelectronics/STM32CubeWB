@@ -61,123 +61,81 @@ void (*HW_hlpuart1TxCb)(void);
 #endif
 
 /* Functions Definition ------------------------------------------------------*/
-#if (CFG_HW_LPUART1_ENABLED == 1)
-/**
-  * @brief LPUART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-void MX_LPUART1_UART_Init(void)
-{
-  hlpuart1.Instance = LPUART1;
-  hlpuart1.Init.BaudRate = 115200;
-  hlpuart1.Init.WordLength = UART_WORDLENGTH_8B;
-  hlpuart1.Init.StopBits = UART_STOPBITS_1;
-  hlpuart1.Init.Parity = UART_PARITY_NONE;
-  hlpuart1.Init.Mode = UART_MODE_TX_RX;
-  hlpuart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  hlpuart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  hlpuart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  hlpuart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  hlpuart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  hlpuart1.FifoMode = UART_FIFOMODE_DISABLE;
-  if (HAL_UART_Init(&hlpuart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetTxFifoThreshold(&hlpuart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(&hlpuart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_DisableFifoMode(&hlpuart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-}
 
-void MX_LPUART1_UART_DeInit(void)
+void MX_UART_Init(hw_uart_id_t uart)
 {
-  hlpuart1.Instance = LPUART1;
-  hlpuart1.Init.BaudRate = 115200;
-  hlpuart1.Init.WordLength = UART_WORDLENGTH_8B;
-  hlpuart1.Init.StopBits = UART_STOPBITS_1;
-  hlpuart1.Init.Parity = UART_PARITY_NONE;
-  hlpuart1.Init.Mode = UART_MODE_TX_RX;
-  hlpuart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  hlpuart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  hlpuart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  hlpuart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  hlpuart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  hlpuart1.FifoMode = UART_FIFOMODE_DISABLE;
-  if (HAL_UART_DeInit(&hlpuart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-}
+  UART_HandleTypeDef *handle = NULL;
+  USART_TypeDef *instance = NULL;
+  switch(uart){
+    case hw_uart1:
+#if (CFG_HW_USART1_ENABLED != 1)
+      return;
 #endif
-
-#if (CFG_HW_USART1_ENABLED == 1)
-/**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-void MX_USART1_UART_Init(void)
-{
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  huart1.FifoMode = UART_FIFOMODE_DISABLE;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_DisableFifoMode(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-}
-
-void MX_USART1_UART_DeInit(void)
-{
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  huart1.FifoMode = UART_FIFOMODE_DISABLE;
-  if (HAL_UART_DeInit(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-}
+      handle = &huart1;
+      instance = USART1;
+      break;
+    case hw_lpuart1:
+#if (CFG_HW_LPUART1_ENABLED != 1)
+      return;
 #endif
+      handle = &hlpuart1;
+      instance = LPUART1;
+      break;
+    default: Error_Handler();
+  }
+  handle->Instance = instance;
+  handle->Init.BaudRate = 115200;
+  handle->Init.WordLength = UART_WORDLENGTH_8B;
+  handle->Init.StopBits = UART_STOPBITS_1;
+  handle->Init.Parity = UART_PARITY_NONE;
+  handle->Init.Mode = UART_MODE_TX_RX;
+  handle->Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  handle->Init.OverSampling = UART_OVERSAMPLING_16;
+  handle->Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  handle->Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  handle->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  handle->FifoMode = UART_FIFOMODE_DISABLE;
+  if (HAL_UART_Init(handle) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(handle, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(handle, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_DisableFifoMode(handle) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+void MX_UART_Deinit(hw_uart_id_t uart)
+{
+  UART_HandleTypeDef *handle = NULL;
+  switch(uart){
+    case hw_uart1:
+#if (CFG_HW_USART1_ENABLED != 1)
+      return;
+#endif
+      handle = &huart1;
+      break;
+    case hw_lpuart1:
+#if (CFG_HW_LPUART1_ENABLED != 1)
+      return;
+#endif
+      handle = &hlpuart1;
+      break;
+    default: Error_Handler();
+  }
+  if (HAL_UART_DeInit(handle) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
 
 hw_status_t HW_UART_Receive_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size, void (*cb)(void))
 {

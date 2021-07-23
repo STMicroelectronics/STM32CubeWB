@@ -4,7 +4,7 @@
  * @brief ZCL Over-The-Air (OTA) Upgrade cluster header
  * ZCL 7 section 11
  * ZCL 8 section 11
- * @copyright Copyright [2014 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2014 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 /* @PICS.ZCL.OTA
@@ -87,7 +87,6 @@
  * OUPC3 | See Test Spec | True
  * OUPC4 | See Test Spec | True
  * OUPC5 | See Test Spec | False
- * OUPC6 | See Test Spec | False
  * OUPC6 | See Test Spec | False
  * OUPC7 | See Test Spec | True
  * OUPC8 | See Test Spec | True

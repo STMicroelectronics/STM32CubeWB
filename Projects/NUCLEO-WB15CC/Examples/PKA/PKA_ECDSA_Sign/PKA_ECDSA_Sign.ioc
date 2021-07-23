@@ -101,3 +101,5 @@ VP_PKA_VS_PKA.Signal=PKA_VS_PKA
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=PKA_ECDSA_Sign
+ProjectManager.ExampleSource=CubeFw

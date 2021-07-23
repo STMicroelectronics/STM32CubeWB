@@ -39,9 +39,9 @@ typedef struct
   uint8_t               Switch_c_Notification_Status;
   /* My_Heart_Rate */
   uint8_t               Hrs_m_Notification_Status;
-/* USER CODE BEGIN CUSTOM_APP_Context_t */
+  /* USER CODE BEGIN CUSTOM_APP_Context_t */
 
-/* USER CODE END CUSTOM_APP_Context_t */
+  /* USER CODE END CUSTOM_APP_Context_t */
 
   uint16_t              ConnectionHandle;
 } Custom_App_Context_t;
@@ -101,63 +101,51 @@ static void Custom_Hrs_m_Send_Notification(void);
 /* Functions Definition ------------------------------------------------------*/
 void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotification)
 {
-/* USER CODE BEGIN CUSTOM_STM_App_Notification_1 */
+  /* USER CODE BEGIN CUSTOM_STM_App_Notification_1 */
   static uint16_t hr_value, hr_energy;
     
-/* USER CODE END CUSTOM_STM_App_Notification_1 */
+  /* USER CODE END CUSTOM_STM_App_Notification_1 */
   switch(pNotification->Custom_Evt_Opcode)
   {
-/* USER CODE BEGIN CUSTOM_STM_App_Notification_Custom_Evt_Opcode */
+    /* USER CODE BEGIN CUSTOM_STM_App_Notification_Custom_Evt_Opcode */
 
-/* USER CODE END CUSTOM_STM_App_Notification_Custom_Evt_Opcode */
+    /* USER CODE END CUSTOM_STM_App_Notification_Custom_Evt_Opcode */
 
   /* My_P2P_Server */
     case CUSTOM_STM_LED_C_READ_EVT:
-/* USER CODE BEGIN CUSTOM_STM_LED_C_READ_EVT */
+      /* USER CODE BEGIN CUSTOM_STM_LED_C_READ_EVT */
        PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Led_Char Read\n");
 
-/* USER CODE END CUSTOM_STM_LED_C_READ_EVT */
+      /* USER CODE END CUSTOM_STM_LED_C_READ_EVT */
       break;
 
     case CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT:
-/* USER CODE BEGIN CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT */
+      /* USER CODE BEGIN CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT */
        PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Led_Char Write\n");
 
-/* USER CODE END CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT */
-      break;
-
-    case CUSTOM_STM_SWITCH_C_READ_EVT:
-/* USER CODE BEGIN CUSTOM_STM_SWITCH_C_READ_EVT */
-
-/* USER CODE END CUSTOM_STM_SWITCH_C_READ_EVT */
+      /* USER CODE END CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT */
       break;
 
     case CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT:
-/* USER CODE BEGIN CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT */
+      /* USER CODE BEGIN CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT */
        PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Switch_Char NOTIFICATION_ENABLED\n");
        
        Custom_App_Context.Switch_c_Notification_Status = 1;        /* My_Switch_Char notification status has been enabled */
        Custom_Switch_c_Send_Notification();
-/* USER CODE END CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT */
+      /* USER CODE END CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT */
       break;
 
     case CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT:
-/* USER CODE BEGIN CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT */
+      /* USER CODE BEGIN CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT */
       PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Switch_Char NOTIFICATION_DISABLED\n");
       
       Custom_App_Context.Switch_c_Notification_Status = 0;         /* My_Switch_Char notification status has been disabled */
-/* USER CODE END CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT */
+      /* USER CODE END CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT */
       break;
 
   /* My_Heart_Rate */
-    case CUSTOM_STM_HRS_M_READ_EVT:
-/* USER CODE BEGIN CUSTOM_STM_HRS_M_READ_EVT */
-
-/* USER CODE END CUSTOM_STM_HRS_M_READ_EVT */
-      break;
-
     case CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT:
-/* USER CODE BEGIN CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT */
+      /* USER CODE BEGIN CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT */
 
        PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_HRS_Meas NOTIFICATION_ENABLED\n");
 
@@ -194,90 +182,84 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
        NotifyCharData[4] = (uint8_t)(hr_energy >> 8);   /* Energy Expended MSB*/
        
        Custom_Hrs_m_Send_Notification();                       
-/* USER CODE END CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT */
+      /* USER CODE END CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT */
       break;
 
     case CUSTOM_STM_HRS_M_NOTIFY_DISABLED_EVT:
-/* USER CODE BEGIN CUSTOM_STM_HRS_M_NOTIFY_DISABLED_EVT */
+      /* USER CODE BEGIN CUSTOM_STM_HRS_M_NOTIFY_DISABLED_EVT */
       PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_HRS_Meas NOTIFICATION_DISABLED\n");
       
       Custom_App_Context.Hrs_m_Notification_Status = 0;         /* Hrs_m notification status has been disabled */
-/* USER CODE END CUSTOM_STM_HRS_M_NOTIFY_DISABLED_EVT */
+      /* USER CODE END CUSTOM_STM_HRS_M_NOTIFY_DISABLED_EVT */
       break;
 
     case CUSTOM_STM_HRS_SL_READ_EVT:
-/* USER CODE BEGIN CUSTOM_STM_HRS_SL_READ_EVT */
+      /* USER CODE BEGIN CUSTOM_STM_HRS_SL_READ_EVT */
 
-/* USER CODE END CUSTOM_STM_HRS_SL_READ_EVT */
-      break;
-
-    case CUSTOM_STM_HRS_CTRLP_READ_EVT:
-/* USER CODE BEGIN CUSTOM_STM_HRS_CTRLP_READ_EVT */
-
-/* USER CODE END CUSTOM_STM_HRS_CTRLP_READ_EVT */
+      /* USER CODE END CUSTOM_STM_HRS_SL_READ_EVT */
       break;
 
     case CUSTOM_STM_HRS_CTRLP_WRITE_EVT:
-/* USER CODE BEGIN CUSTOM_STM_HRS_CTRLP_WRITE_EVT */
+      /* USER CODE BEGIN CUSTOM_STM_HRS_CTRLP_WRITE_EVT */
       PRINT_MESG_DBG("ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE My_HRS_CTRL_Point Write\n");
       
       /* reset energy expended */
       hr_energy_reset = CUSTOM_STM_HRS_ENERGY_RESET;
-/* USER CODE END CUSTOM_STM_HRS_CTRLP_WRITE_EVT */
+      /* USER CODE END CUSTOM_STM_HRS_CTRLP_WRITE_EVT */
       break;
 
     default:
-/* USER CODE BEGIN CUSTOM_STM_App_Notification_default */
+      /* USER CODE BEGIN CUSTOM_STM_App_Notification_default */
 
-/* USER CODE END CUSTOM_STM_App_Notification_default */
+      /* USER CODE END CUSTOM_STM_App_Notification_default */
       break;
   }
-/* USER CODE BEGIN CUSTOM_STM_App_Notification_2 */
+  /* USER CODE BEGIN CUSTOM_STM_App_Notification_2 */
 
-/* USER CODE END CUSTOM_STM_App_Notification_2 */
+  /* USER CODE END CUSTOM_STM_App_Notification_2 */
   return;
 }
 
 void Custom_APP_Notification(Custom_App_ConnHandle_Not_evt_t *pNotification)
 {
-/* USER CODE BEGIN CUSTOM_APP_Notification_1 */
+  /* USER CODE BEGIN CUSTOM_APP_Notification_1 */
 
-/* USER CODE END CUSTOM_APP_Notification_1 */
+  /* USER CODE END CUSTOM_APP_Notification_1 */
 
   switch(pNotification->Custom_Evt_Opcode)
   {
-/* USER CODE BEGIN CUSTOM_APP_Notification_Custom_Evt_Opcode */
+    /* USER CODE BEGIN CUSTOM_APP_Notification_Custom_Evt_Opcode */
 
-/* USER CODE END P2PS_CUSTOM_Notification_Custom_Evt_Opcode */
-  case CUSTOM_CONN_HANDLE_EVT :
-/* USER CODE BEGIN CUSTOM_CONN_HANDLE_EVT */
+    /* USER CODE END P2PS_CUSTOM_Notification_Custom_Evt_Opcode */
+    case CUSTOM_CONN_HANDLE_EVT :
+      /* USER CODE BEGIN CUSTOM_CONN_HANDLE_EVT */
           
-/* USER CODE END CUSTOM_CONN_HANDLE_EVT */
-    break;
+      /* USER CODE END CUSTOM_CONN_HANDLE_EVT */
+      break;
 
     case CUSTOM_DISCON_HANDLE_EVT :
-/* USER CODE BEGIN CUSTOM_DISCON_HANDLE_EVT */
+      /* USER CODE BEGIN CUSTOM_DISCON_HANDLE_EVT */
       
-/* USER CODE END CUSTOM_DISCON_HANDLE_EVT */
-    break;
+      /* USER CODE END CUSTOM_DISCON_HANDLE_EVT */
+      break;
 
     default:
-/* USER CODE BEGIN CUSTOM_APP_Notification_default */
+      /* USER CODE BEGIN CUSTOM_APP_Notification_default */
 
-/* USER CODE END CUSTOM_APP_Notification_default */
+      /* USER CODE END CUSTOM_APP_Notification_default */
       break;
   }
 
-/* USER CODE BEGIN CUSTOM_APP_Notification_2 */
+  /* USER CODE BEGIN CUSTOM_APP_Notification_2 */
 
-/* USER CODE END CUSTOM_APP_Notification_2 */
+  /* USER CODE END CUSTOM_APP_Notification_2 */
 
   return;
 }
 
 void Custom_APP_Init(void)
 {
-/* USER CODE BEGIN CUSTOM_APP_Init */
+  /* USER CODE BEGIN CUSTOM_APP_Init */
   uint8_t sensor_loc;
 
   sensor_loc = CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_WRIST;
@@ -285,7 +267,7 @@ void Custom_APP_Init(void)
   
   Custom_Switch_c_Update_Char();
   Custom_Hrs_m_Update_Char();
-/* USER CODE END CUSTOM_APP_Init */
+  /* USER CODE END CUSTOM_APP_Init */
   return;
 }
 

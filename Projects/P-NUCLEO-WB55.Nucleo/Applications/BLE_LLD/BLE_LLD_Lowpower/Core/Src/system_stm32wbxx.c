@@ -60,11 +60,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Apache License, Version 2.0,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/Apache-2.0
   *
@@ -97,9 +97,9 @@
   #define HSI_VALUE    (16000000UL) /*!< Value of the Internal oscillator in Hz*/
 #endif /* HSI_VALUE */
 
-#if !defined  (LSI_VALUE) 
+#if !defined  (LSI_VALUE)
  #define LSI_VALUE  (32000UL)       /*!< Value of LSI in Hz*/
-#endif /* LSI_VALUE */ 
+#endif /* LSI_VALUE */
 
 #if !defined  (LSE_VALUE)
   #define LSE_VALUE    (32768UL)    /*!< Value of LSE in Hz*/
@@ -161,12 +161,10 @@
   const uint32_t MSIRangeTable[16UL] = {100000UL, 200000UL, 400000UL, 800000UL, 1000000UL, 2000000UL, \
                                       4000000UL, 8000000UL, 16000000UL, 24000000UL, 32000000UL, 48000000UL, 0UL, 0UL, 0UL, 0UL}; /* 0UL values are incorrect cases */
 
-#if defined(STM32WB55xx) || defined(STM32WB35xx)
   const uint32_t SmpsPrescalerTable[4UL][6UL]={{1UL,3UL,2UL,2UL,1UL,2UL}, \
                                         {2UL,6UL,4UL,3UL,2UL,4UL}, \
                                         {4UL,12UL,8UL,6UL,4UL,8UL}, \
                                         {4UL,12UL,8UL,6UL,4UL,8UL}};
-#endif
 
 /**
   * @}
@@ -192,7 +190,7 @@
 void SystemInit(void)
 {
   /* Configure the Vector Table location add offset address ------------------*/
-#if defined(VECT_TAB_SRAM) && defined(VECT_TAB_BASE_ADDRESS)  
+#if defined(VECT_TAB_SRAM) && defined(VECT_TAB_BASE_ADDRESS)
   /* program in SRAMx */
   SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET;  /* Vector Table Relocation in Internal SRAMx for CPU1 */
 #else    /* program in FLASH */
@@ -203,7 +201,7 @@ void SystemInit(void)
   #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
     SCB->CPACR |= ((3UL << (10UL*2UL))|(3UL << (11UL*2UL)));  /* set CP10 and CP11 Full Access */
   #endif
-  
+
   /* Reset the RCC clock configuration to the default reset state ------------*/
   /* Set MSION bit */
   RCC->CR |= RCC_CR_MSION;
@@ -216,10 +214,10 @@ void SystemInit(void)
 
   /*!< Reset LSI1 and LSI2 bits */
   RCC->CSR &= (uint32_t)0xFFFFFFFAU;
-  
+
   /*!< Reset HSI48ON  bit */
   RCC->CRRCR &= (uint32_t)0xFFFFFFFEU;
-    
+
   /* Reset PLLCFGR register */
   RCC->PLLCFGR = 0x22041000U;
 
@@ -227,7 +225,7 @@ void SystemInit(void)
   /* Reset PLLSAI1CFGR register */
   RCC->PLLSAI1CFGR = 0x22041000U;
 #endif
-  
+
   /* Reset HSEBYP bit */
   RCC->CR &= 0xFFFBFFFFU;
 
@@ -321,10 +319,10 @@ void SystemCoreClockUpdate(void)
       {
         pllvco = (msirange / pllm);
       }
-      
+
       pllvco = pllvco * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos);
       pllr = (((RCC->PLLCFGR & RCC_PLLCFGR_PLLR) >> RCC_PLLCFGR_PLLR_Pos) + 1UL);
-      
+
       SystemCoreClock = pllvco/pllr;
       break;
 
@@ -332,7 +330,7 @@ void SystemCoreClockUpdate(void)
       SystemCoreClock = msirange;
       break;
   }
-  
+
   /* Compute HCLK clock frequency --------------------------------------------*/
   /* Get HCLK1 prescaler */
   tmp = AHBPrescTable[((RCC->CFGR & RCC_CFGR_HPRE) >> RCC_CFGR_HPRE_Pos)];

@@ -85,6 +85,11 @@
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/stm32wbxx_it.c</locationURI>
 		</link>
+        <link>
+			<name>Application/Core/flash_driver.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/flash_driver.c</locationURI>
+		</link>
 		<link>
 			<name>Drivers/CMSIS/system_stm32wbxx.c</name>
 			<type>1</type>

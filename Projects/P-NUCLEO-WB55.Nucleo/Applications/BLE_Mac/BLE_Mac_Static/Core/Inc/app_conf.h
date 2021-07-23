@@ -558,7 +558,7 @@ typedef enum
   /* BLE */
   CFG_TASK_ADV_CANCEL_ID,
   CFG_TASK_HCI_ASYNCH_EVT_ID,
-  CFG_TASK_SW1_BUTTON_PUSHED_ID, //TODO NEED TO CHANGE THE NAME !
+  CFG_TASK_SW1_BUTTON_PUSHED_ID,
 
   /* MAC */
   CFG_TASK_FFD,              /* Init FFD Task - mainly handling FFD Setup */

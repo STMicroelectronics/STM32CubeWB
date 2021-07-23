@@ -359,6 +359,8 @@
                     <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble_lld/hal</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble_lld/lld</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci</state>
@@ -1062,9 +1064,6 @@
                     <name>$PROJ_DIR$\..\Core\Src\main.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\Core\Src\pressbutton_app.c</name>
-                </file>
-                <file>
                     <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
                 </file>
                 <file>
@@ -1085,10 +1084,7 @@
                         <name>$PROJ_DIR$\..\STM32_WPAN\App\app_ble_lld.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\App\ble_lld.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\App\ring_buffer.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\pressbutton_app.c</name>
                     </file>
                 </group>
                 <group>
@@ -1179,6 +1175,12 @@
         <name>Middlewares</name>
         <group>
             <name>STM32_WPAN</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble_lld\hal\ble_hal.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble_lld\lld\ble_lld.c</name>
+            </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\dbg_trace.c</name>
             </file>

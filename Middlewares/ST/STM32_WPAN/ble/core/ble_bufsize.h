@@ -91,15 +91,15 @@
  *   mentioned parameters.
 */
 #if (BEACON_ONLY != 0)
-#define BLE_FIXED_BUFFER_SIZE_BYTES  6212   /* Beacon only */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  4204   /* Beacon only */
 #elif (LL_ONLY != 0)
-#define BLE_FIXED_BUFFER_SIZE_BYTES  6272   /* LL only */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  5824   /* LL only */
 #elif (SLAVE_ONLY != 0)
-#define BLE_FIXED_BUFFER_SIZE_BYTES  6712   /* Peripheral only */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  6400   /* Peripheral only */
 #elif (BASIC_FEATURES != 0)
-#define BLE_FIXED_BUFFER_SIZE_BYTES  6972   /* Basic Features */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  6688   /* Basic Features */
 #else
-#define BLE_FIXED_BUFFER_SIZE_BYTES  7240   /* Full stack */
+#define BLE_FIXED_BUFFER_SIZE_BYTES  7168   /* Full stack */
 #endif
 
 /*
@@ -110,11 +110,11 @@
 #elif (LL_ONLY != 0)
 #define BLE_PER_LINK_SIZE_BYTES       196   /* LL only */
 #elif (SLAVE_ONLY != 0)
-#define BLE_PER_LINK_SIZE_BYTES       332   /* Peripheral only */
+#define BLE_PER_LINK_SIZE_BYTES       328   /* Peripheral only */
 #elif (BASIC_FEATURES != 0)
-#define BLE_PER_LINK_SIZE_BYTES       332   /* Basic Features */
+#define BLE_PER_LINK_SIZE_BYTES       328   /* Basic Features */
 #else
-#define BLE_PER_LINK_SIZE_BYTES       384   /* Full stack */
+#define BLE_PER_LINK_SIZE_BYTES       380   /* Full stack */
 #endif
 
 /*
@@ -128,7 +128,7 @@
  * @param mblocks_count: Number of memory blocks allocated for packets.
  */
 #define BLE_TOTAL_BUFFER_SIZE(n_link, mblocks_count) \
-          (BLE_FIXED_BUFFER_SIZE_BYTES + \
+          (16 + BLE_FIXED_BUFFER_SIZE_BYTES + \
            (BLE_PER_LINK_SIZE_BYTES * (n_link)) + \
            ((BLE_MEM_BLOCK_SIZE + 12) * (mblocks_count)))
 

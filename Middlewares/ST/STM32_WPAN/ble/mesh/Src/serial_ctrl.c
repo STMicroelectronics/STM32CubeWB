@@ -152,10 +152,14 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
     /* Check parameter if continuously data send operation need to stop  */
     else if (idx == 0x00)
     {
-        BSP_LED_Off(LED_BLUE);
-        Vendor_SendDataFreq(0x00);
-        TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
-        return;
+#if USE_STM32WB5M_DK
+      LED_Off();
+#else
+      BSP_LED_Off(LED_BLUE); 
+#endif
+      Vendor_SendDataFreq(0x00);
+      TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
+      return;
     }
     /* Data will be sent only once */
     else

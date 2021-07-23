@@ -240,6 +240,9 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
 
       /* Enable CPU2 debug feature*/
       APPD_EnableCPU2( );
+      
+      /* Select which mechanism is used by CPU2 to protect its timing versus flash operation */
+      SHCI_C2_SetFlashActivityControl(FLASH_ACTIVITY_CONTROL_SEM7);
 
       UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_ENABLE);
 

@@ -26,8 +26,8 @@
 #endif
 
 /* stdarg is required for the logging (ZbSetLogging) */
-/*lint -save -e829 [ 'stdarg.h' usage should be deprecated - Rule 17.1 REQUIRED] */
-/*lint -save -e451 [ header file included withoutstandard guard - Dir 4.10 REQUIRED] */
+/*lint -save -e829 [ 'stdarg.h' usage should be deprecated <Rule 17.1, REQUIRED> ] */
+/*lint -save -e451 [ header file included withoutstandard guard <Dir 4.10, REQUIRED> ] */
 #include <stdarg.h>
 /*lint -restore */
 /*lint -restore */
@@ -223,7 +223,10 @@ enum ZbTcsoStatusT {
 #define ZB_LOG_MASK_GREENPOWER          0x00004000U
 /* Diagnostics */
 #define ZB_LOG_MASK_DIAG                0x00008000U
-/* Reserved                             0x0fff0000U */
+/* ZbHeapAlloc / ZbHeapFree debugging */
+#define ZB_LOG_MASK_HEAP                0x00010000U
+/* ZbTimer */
+#define ZB_LOG_MASK_TIMER               0x00020000U
 /* MAC */
 #define ZB_LOG_MASK_MAC_RSSI            0x10000000U /* Print debug message per MCPS-DATA.indication showing RSSI */
 
@@ -287,14 +290,15 @@ unsigned int ZbTimeoutRemaining(ZbUptimeT now, ZbUptimeT expire_time);
 struct ZbInitTblSizesT {
     void *heapPtr;
     /**< Pointer to memory to use for stack's run-time heap. Size equals heapSz bytes.
-     * If NULL, buffer will be allocated using ZbMalloc(). If stack built with
-     * CONFIG_ZB_ALLOC_STATIC, then ZbInit() will fail if either heapPtr is NULL
-     * or heapSz is zero.
+     * If heapSz is zero, set this to NULL and the buffer will be allocated using ZbMalloc().
+     * If the stack is built with CONFIG_ZB_ALLOC_STATIC, then heapPtr and heapSz must be non-zero
+     * and provided by the application.
      */
     unsigned int heapSz;
-    /**< Size of heapPtr, if not NULL, or size of memory to allocate using ZbMalloc().
-     * If heapSz is zero, default is 32 kB for FFD or 8 kB for RFD (if stack built
-     * with CONFIG_ZB_ENDNODE). */
+    /**< Size of memory buffer provided by heapPtr.
+     * If heapSz is zero, then a default value of 32 kB for FFD or 16 kB for RFD is chosen,
+     * and memory will be allocated through ZbMalloc().
+     * An FFD vs RFD type of stack is controlled by the CONFIG_ZB_ENDNODE when the stack is built. */
 
     /* NWK Table Sizes */
     unsigned int nwkNeighborTblSz;
@@ -344,6 +348,7 @@ struct ZigBeeT * ZbInit(uint64_t extAddr, struct ZbInitTblSizesT *tblSizes, stru
 
 /* Deallocates a Zigbee stack instance. */
 void ZbDestroy(struct ZigBeeT *zb);
+enum ZbStatusCodeT ZbDestroyWithCb(struct ZigBeeT *zb, void (*callback)(void *arg), void *arg);
 
 /* Help seed the stack's PRNG. If the data has real entropy, set the has_entropy flag to true. */
 void ZbSeedRand(struct ZigBeeT *zb, uint8_t *randBuf, unsigned int len, bool has_entropy);
@@ -435,8 +440,8 @@ void ZbZclBasicServerResetCmdConfig(struct ZigBeeT *zb, bool allow_reset);
  * @param len Maximum length of the attribute data. May exceed the length of the particular attribute.
  * @return ZCL Status Code
  */
-enum ZclStatusCodeT ZbZclBasicWriteDirect(struct ZigBeeT *zb, uint8_t endpoint, uint16_t attributeId,
-    const uint8_t *ptr, unsigned int len);
+enum ZclStatusCodeT ZbZclBasicWriteDirect(struct ZigBeeT *zb, uint8_t endpoint,
+    uint16_t attributeId, const uint8_t *ptr, unsigned int len);
 
 /* Post an alarm code to the Basic Cluster */
 bool ZbZclBasicPostAlarm(struct ZigBeeT *zb, uint8_t endpoint, uint8_t alarm_code);
@@ -521,15 +526,34 @@ struct ZbMsgStartupInd {
  * Persistence
  *---------------------------------------------------------
  */
-unsigned int ZbPersistGet(struct ZigBeeT *zb, uint8_t *buf, unsigned int maxlen);
+/* Configure the persistence callback that tells the application when important
+ * stack parameters have changed and should be saved. */
 bool ZbPersistNotifyRegister(struct ZigBeeT *zb, void (*callback)(struct ZigBeeT *zb, void *cbarg), void *cbarg);
 
+/* Get the stack persistence data and write it to the buffer provided by buf.
+ * If buf is NULL and maxlen is zero, this function determines the buffer size
+ * required to save the persistence data.
+ * Use ZbStartupPersist to restore the persistence data to the stack and restart
+ * the zigbee stack. */
+unsigned int ZbPersistGet(struct ZigBeeT *zb, uint8_t *buf, unsigned int maxlen);
+
+/* Same as ZbPersistGet, but saves additional more dynamic data such as routing tables.
+ * Use the same ZbStartupPersist to restore the persistence data to the stack and
+ * to restart the zigbee stack. */
+unsigned int ZbStateGet(struct ZigBeeT *zb, uint8_t *buf, unsigned int maxlen);
+
 /*---------------------------------------------------------
- * ZED Shutdown
+ * Shutdown
  *---------------------------------------------------------
  */
 /* This API moves the stack to shutdown mode, used in case of a sleepy end device to conserve power. */
 void ZbShutdown(struct ZigBeeT *zb);
+
+/* The following APIs are to pause the stack and allow another service to use the
+ * MAC layer. Upon resume, the MAC interface(s) are reconfigured to work with the
+ * Zigbee stack again. */
+enum ZbStatusCodeT ZbStatePause(struct ZigBeeT *zb, void (*callback)(void *arg), void *arg);
+enum ZbStatusCodeT ZbStateResume(struct ZigBeeT *zb);
 
 /*---------------------------------------------------------------
  * Test Case Hooks
@@ -578,6 +602,8 @@ unsigned int ZbMallocTotalSz(void);
 
 /* Memory allocated from the internal ZigBee heap. */
 unsigned long ZbHeapUsed(struct ZigBeeT *zb);
+/* Returns the amount of memory available in the Zigbee heap. May be zero if unknown. */
+unsigned long ZbHeapAvailable(struct ZigBeeT *zb);
 
 unsigned long ZbHeapHighWaterMark(struct ZigBeeT *zb);
 

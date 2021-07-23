@@ -173,3 +173,5 @@ VP_FREERTOS_VS_CMSIS_V1.Signal=FREERTOS_VS_CMSIS_V1
 VP_SYS_VS_tim17.Mode=TIM17
 VP_SYS_VS_tim17.Signal=SYS_VS_tim17
 board=custom
+ProjectManager.Example=FreeRTOS_SemaphoreFromISR
+ProjectManager.ExampleSource=CubeFw

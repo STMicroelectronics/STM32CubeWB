@@ -44,9 +44,15 @@ extern "C" {
 #ifdef  USE_STM32WBXX_USB_DONGLE
 #include "stm32wbxx_usb_dongle.h"
 #endif
+
 #ifdef  USE_STM32WBXX_NUCLEO
+
+#ifdef STM32WB15xx
 #include "nucleo_wb15cc.h"
 #endif
+
+#endif
+
 #ifdef  USE_X_NUCLEO_EPD
 #include "x_nucleo_epd.h"
 #endif
@@ -261,6 +267,8 @@ void MX_USART1_UART_DeInit(void);
    */
   void HW_TS_RTC_CountUpdated_AppNot(void);
 
+void MX_UART_Init(hw_uart_id_t uart);
+void MX_UART_Deinit(hw_uart_id_t uart);
 
 #ifdef __cplusplus
 }

@@ -48,9 +48,10 @@
   * @brief Defines.
   * @{
   */
-/* USER CODE BEGIN EXPORTED_DEFINES */
+/* Define size for the receive and transmit buffer over CDC */
 #define APP_RX_DATA_SIZE  2048
 #define APP_TX_DATA_SIZE  2048
+/* USER CODE BEGIN EXPORTED_DEFINES */
 
 #define USARTx                           USART1
 #define USARTx_CLK_ENABLE()              __HAL_RCC_USART1_CLK_ENABLE()

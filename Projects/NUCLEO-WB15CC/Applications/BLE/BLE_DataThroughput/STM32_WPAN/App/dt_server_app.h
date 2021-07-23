@@ -27,6 +27,12 @@
 extern "C" {
 #endif
 
+#define BUTTON_PRESSED GPIO_PIN_RESET
+
+/* Exported typedefs ---------------------------------------------*/
+typedef GPIO_PinState BUTTON_STATE;
+typedef void (* IO_RECEIVE_DATA_USER_CALLBACK_TYPE) (uint8_t * rx_data, uint16_t data_size);
+
   /* Includes ------------------------------------------------------------------*/
   /* Exported types ------------------------------------------------------------*/
   /* Exported constants --------------------------------------------------------*/

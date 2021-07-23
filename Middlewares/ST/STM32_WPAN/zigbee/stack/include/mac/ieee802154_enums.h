@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef IEEE802154_ENUMS_H
 #define IEEE802154_ENUMS_H
@@ -71,15 +71,5 @@
 #define WPAN_CHANNELMASK_VIRTUAL                WPAN_PAGE_CHANNELMASK_ALL /* Channels 0 to 26 */
 
 #define WPAN_CHANNELPAGE_SUN                    9U
-
-/*----------------------------------------------------------------------------
- * CRC
- *----------------------------------------------------------------------------
- */
-#define WPAN_CRC_POLYNOMIAL                     0x1021U
-#define WPAN_CRC_INITIAL                        0x0000U
-#define WPAN_CRC_XOROUT                         0x0000U
-
-uint16_t WpanCrc(uint16_t crc, const void *dataPtr, unsigned int dataLen);
 
 #endif

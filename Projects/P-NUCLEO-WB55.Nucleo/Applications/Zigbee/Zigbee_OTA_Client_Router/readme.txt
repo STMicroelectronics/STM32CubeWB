@@ -29,12 +29,12 @@ the user can start an OTA upgrade from server to client through push buttons
 SW1 (M0 wireless coprocessor firmware) and SW2 (M4 application firmware).
 
 In order for the client to persist its stack parameters data, Zigbee persistence data mechamisim
-is used on the Zigbee_OTA_Client_Router appilcation. This allows the client to reconnect to the 
+is used on the Zigbee_OTA_Client_Router application. This allows the client to reconnect to the 
 coordinator network after the upgrade procedure.
 
 For this application it is requested to have:
 
-- 1 STM32WB55xx (Nucleo or USB dongle) board loaded with: 
+- 1 STM32WB55xx (Nucleo) board loaded with: 
     - wireless coprocessor : stm32wb5x_Zigbee_FFD_fw.bin
     - application : Zigbee_OTA_Server_Coord
     
@@ -46,7 +46,7 @@ For this application it is requested to have:
 IMPORTANT PREREQUISITES:
 On Zigbee_OTA_Server_Coord a binary image has to be loaded at @0x08030000 before starting the process.
 It can be FW application example (compatible with Ota settings, see Zigbee_OnOff_Client_Router_Ota for details)
-or encrypted Copro Wireless binary.
+or encrypted Copro Wireless binary (for example stm32wb5x_Zigbee_RFD_fw.bin).
     
     
 Demo use case :
@@ -74,8 +74,8 @@ The STM32WB55xx internal Flash division on the OTA client side is set as follow:
 
 2. OTA file format used by the server
 
-The OTA upgrade process relies on OTA file format comaptible files.
-As a result, the OTA file format used for STM32WB55xx upgrade is as folow:
+The OTA upgrade process relies on OTA file format compatible files.
+As a result, the OTA file format used for STM32WB55xx upgrade is as follow
 
    +----------------------------+   
    |       ZCL OTA Header       |
@@ -87,7 +87,7 @@ As a result, the OTA file format used for STM32WB55xx upgrade is as folow:
 
 3. Generation of the OTA file from raw firmware
 
-If the OTA file format discribed above is used in the data exchange between 
+If the OTA file format described above is used in the data exchange between 
 the OTA client and server, the OTA server stored the raw binary in Flash.
 The OTA file format exchanged during the upgrade process is dynamically generated
 at running time during the data transfer (ZCL OTA block request/response sequence).
@@ -99,7 +99,7 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
    +---------------------------------+                                            +---------------------------------+                                                                               
    | Device 1                        |                                            | Device 2                        |                                                                                                               
    | Zigbee OTA server               |                                            | Zigbee OTA client               |                                  
-   |                                 |                                            |                                 |    
+   | (Coordinator)                   |                                            | (Router)                        |    
    +---------------------------------+                                            +---------------------------------+
    |                                 |          /* Initalisation phase */         |                                 |
    | Before starting FW for update   |                                            |                                 |
@@ -112,14 +112,14 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
    |                                 |                                            | Application performs a delete   |      
    |                                 |                                            | of FLASH memory sectors         |                                
    |                                 |                                            | starting from @ = 0x08030000 to |                                         
-   |                                 |                                            | SFSA (Option Byte) limit        |=> BLUE LED ON                                         
-   |                                 |             /* Upgrade phase */            |                                 |   
-   |                                 |                                            |                                 |  
-   |                                 |          /* Image Notify request */        |                                 |  
-   |                                 |                                            |                                 |            
-   | Push Button                     |         ZbZclOtaServerImageNotifyReq       |                                 |               
-   |  - SW1 (OTA for APP Update)     | -----------------------------------------> |                                 |
-   |  - SW2 (OTA for Copro Update)   | <----------------------------------------- |                                 |
+   |                                 |                                            | SFSA (Option Byte) limit        |=> BLUE LED ON (when starting                                         
+   |                                 |             /* Upgrade phase */            |                                 |  from scratch) 
+   |                                 |                                            |                                 |  Note : If the Client start
+   |                                 |          /* Image Notify request */        |                                 |  from persistent, the green LED
+   |                                 |                                            |                                 |  will be on. At any time,          
+   | Push Button                     |         ZbZclOtaServerImageNotifyReq       |                                 |  it is possible to clear the              
+   |  - SW1 (OTA for APP Update)     | -----------------------------------------> |                                 |  NVM by pressing on SW2 and
+   |  - SW2 (OTA for Copro Update)   | <----------------------------------------- |                                 |  so, restart from scratch.
    |                                 |                                            |                                 |   
    |                                 |       /* Query Next Image request */       |                                 |
    |                                 |                                            |                                 |
@@ -167,7 +167,7 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
    |                                 |                                         ---|                                 |  
    |                                 |                                            | If File_Type is FW_APP, boot on |
    |                                 |                                            | Zigbee_OnOff_Client_Router_Ota  |     
-   |                                 |                                            | or any appilcation supporting   |     
+   |                                 |                                            | or any application supporting   |     
    |                                 |                                            | OTA at @ 0x30000                |     
    |                                 |                                            | (Zigbee_OnOff_Client_Router_Ota)|  
    |                                 |                                            |                                 |  
@@ -185,35 +185,50 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
    +---------------------------------+                                            +---------------------------------+ 
              
              
-To setup the application :
+ To setup the application :
 
   a)  Open the project, build it and load your generated application on your STM32WB devices.
   
  To run the application :
 
-  a)  Start the first board. It must be the coordinator of the Zigbee network so in this demo application it is
-      the device running Zigbee_OTA_Server_Coord application (Device1 in the above diagram). 
-      Wait for the Blue LED (LED1) ON. 
+  a) On the coordinator, load the image you want to transfer to the router. This image can be loaded via Cube Programmer.
+     This image must be stored at address 0x08030000.
+     It can be either: 
+        - An Application image (For example : binary generated using the Zigbee_OnOff_Client_Router_Ota project)
+        or
+        - An Encrypted Coprocessor Wireless binary (For example : stm32wb5x_Zigbee_RFD_fw.bin)
+
+  b)  Start the first board. It must be the coordinator of the Zigbee network so in this demo application it is
+      the device running Zigbee_OTA_Server_Coord application (Device 1 in the above diagram). 
       
-  b)  Start the second board. This board is configured as Zigbee router and will be attached to the network created 
+  c)  Start the second board. This board is configured as Zigbee router and will be attached to the network created 
       by the coordinator. Do the same for the other boards if applicable.
       
       At this stage the second board tries to start from persistence this leads to two choices:
-        - Persistence Data read from NVM are valid -> the router takes back is role in the network. 
-          GREEN LED2 is ON indicating a restart form persistence.
+        - Persistence Data read from NVM are valid -> the router takes back his role in the network. 
+          GREEN LED is ON indicating a restart form persistence.
           
-        - No persitence data found or wrong data,a fresh start is perfomed, the Zigbee network is automatically created 
-          and BLUE LED (LED1) is ON on all devices.
+        - No persistent data found or wrong data. A fresh start is performed, and the Zigbee network is automatically created 
+          and BLUE LED is ON on all devices.
       
- Note: On the Zigbee OTA client routers, the Blue LED is ON when the initialisation process 
-      (see detailled procedure diagram above) is successfully done.
+       Note: On the Zigbee OTA client router, it is possible to clean the NVM via the SW2 push button and in this case no persistent 
+             data will be found. A fresh start will be performed on next start up.
  
-     
-   c)  If the user power cycle the Device 2, Persistence Data are read back and cluster attribute (LED3 state) restored.
-       The device start from persistence and GREEN LED LED2 is on.
-   
-   d)  Push Button SW2 is used to delete NVM (fresh start will be done on next start up ,reproduce a)
-   
+  d)  Start the data transfer from the Coordinator to the Router by pressing on the appropriate push button.
+        Press on SW1 for the OTA for Application update
+        Press on SW2 for the OTA Coprocessor Wireless update
+
+  e)  The download can take several seconds. The transfer rate can be followed looking to the traces.
+
+  f)  When the transfer is completed, reboot the router and check that the new binary has been correctly downloaded.
+      If you have for instance downloaded the stm32wb5x_Zigbee_RFD_fw.bin, you should see in the traces the fact that it
+      is now an RFD which is running and no more an FFD.
+      If you have downloaded the new application (Zigbee_OnOff_Client_Router_Ota), you should see in the traces the message :
+      "New M4 OTA firmware successfully running" being displayed.
+
+   g) To play again with this use case and load a new image,  perform a full cleanup of the Flash of the OTA Client device using 
+      Cube Programmer and reload the Zigbee_OTA_Client_Router associated with the stm32wb5x_Zigbee_FFD_fw binary.
+        
       
  Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
 
@@ -224,9 +239,7 @@ Zigbee
 @par Hardware and Software environment
 
   - This example runs on STM32WB55xx devices.
-  
-  - For the Zigbee_OTA_Server_Coord application, a STM32WB55xx USB dongle can be used.
-  
+    
   - This example has been tested with an STMicroelectronics STM32WB55RG_Nucleo 
     board and can be easily tailored to any other supported device 
     and development board.

@@ -831,4 +831,28 @@ enum ZclStatusCodeT ZbZclColorClientStepColorTempReq(struct ZbZclClusterT *clust
     const struct ZbApsAddrT *dst, struct ZbZclColorClientStepColorTempReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
+/*-----------------------------------------------------------------------------
+ * Color Client Payload helper functions
+ *-----------------------------------------------------------------------------
+ */
+int ZbZclColorClientMoveToHueBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveToHueReqT *req);
+int ZbZclColorClientMoveHueBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveHueReqT *req);
+int ZbZclColorClientStepHueBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientStepHueReqT *req);
+int ZbZclColorClientMoveToSatBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveToSatReqT *req);
+int ZbZclColorClientMoveSatBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveSatReqT *req);
+int ZbZclColorClientStepSatBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientStepSatReqT *req);
+int ZbZclColorClientMoveToHueSatBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveToHueSatReqT *req);
+int ZbZclColorClientMoveToColorXYBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveToColorXYReqT *req);
+int ZbZclColorClientMoveColorXYBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveColorXYReqT *req);
+int ZbZclColorClientStepColorXYBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientStepColorXYReqT *req);
+int ZbZclColorClientMoveToColorTempBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveToColorTempReqT *req);
+int ZbZclColorClientMoveToHueEnhBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveToHueEnhReqT *req);
+int ZbZclColorClientMoveHueEnhBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveHueEnhReqT *req);
+int ZbZclColorClientStepHueEnhBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientStepHueEnhReqT *req);
+int ZbZclColorClientMoveToHueSatEnhBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveToHueSatEnhReqT *req);
+int ZbZclColorClientColorLoopSetBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientColorLoopSetReqT *req);
+int ZbZclColorClientStopMoveStepBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientStopMoveStepReqT *req);
+int ZbZclColorClientMoveColorTempBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientMoveColorTempReqT *req);
+int ZbZclColorClientStepColorTempBuild(uint8_t *payload, unsigned int length, struct ZbZclColorClientStepColorTempReqT *req);
+
 #endif /* ZCL_COLOR_H */

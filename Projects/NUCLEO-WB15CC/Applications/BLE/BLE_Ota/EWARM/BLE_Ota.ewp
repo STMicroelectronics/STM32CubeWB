@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32WB15CC_M4	ST STM32WB15CC_M4</state>
+                    <state>STM32WB15CC	ST STM32WB15CC</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -138,7 +138,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32WB15CC_M4	ST STM32WB15CC_M4</state>
+                    <state>STM32WB15CC	ST STM32WB15CC</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -1047,6 +1047,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\flash_driver.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>

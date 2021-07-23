@@ -1,25 +1,27 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    app_ble.c
- * @author  MCD Application Team
- * @brief   BLE Application
+  * File Name          : App/app_ble.c
+  * Description        : Application file for BLE Middleware.
+  *
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
-
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 #include "app_common.h"
 
 #include "dbg_trace.h"
@@ -28,16 +30,17 @@
 #include "tl.h"
 #include "app_ble.h"
 
-#include "dt_client_app.h"
-#include "dt_server_app.h"
-#include "dts.h"
-
 #include "stm32_seq.h"
 #include "shci.h"
 #include "stm32_lpm.h"
 #include "otp.h"
 
-/* Private defines -----------------------------------------------------------*/
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+#include "dt_client_app.h"
+#include "dt_server_app.h"
+#include "dts.h"
+
 #define APPBLE_GAP_DEVICE_NAME_LENGTH 7
 #define LP_CONN_ADV_INTERVAL_MIN          (0x640) /**< 1s */
 #define LP_CONN_ADV_INTERVAL_MAX          (0xFA0) /**< 2.5s */
@@ -52,94 +55,97 @@
 #define CONN_P1_400                       (CONN_P(400))
 #define CONN_P2_400                       (CONN_P(400))
 
-#define BD_ADDR_SIZE_LOCAL    6
+
+/* USER CODE END Includes */
+
 /* Private typedef -----------------------------------------------------------*/
+
 /**
  * security parameters structure
  */
 typedef struct _tSecurityParams
 {
-  /**
-   * IO capability of the device
-   */
-  uint8_t ioCapability;
+/**
+ * IO capability of the device
+ */
+uint8_t ioCapability;
 
-  /**
-   * Authentication requirement of the device
-   * Man In the Middle protection required?
-   */
-  uint8_t mitm_mode;
+/**
+ * Authentication requirement of the device
+ * Man In the Middle protection required?
+ */
+uint8_t mitm_mode;
 
-  /**
-   * bonding mode of the device
-   */
-  uint8_t bonding_mode;
+/**
+ * bonding mode of the device
+ */
+uint8_t bonding_mode;
 
-  /**
-   * this variable indicates whether to use a fixed pin
-   * during the pairing process or a passkey has to be
-   * requested to the application during the pairing process
-   * 0 implies use fixed pin and 1 implies request for passkey
-   */
-  uint8_t Use_Fixed_Pin;
+/**
+ * this variable indicates whether to use a fixed pin
+ * during the pairing process or a passkey has to be
+ * requested to the application during the pairing process
+ * 0 implies use fixed pin and 1 implies request for passkey
+ */
+uint8_t Use_Fixed_Pin;
 
-  /**
-   * minimum encryption key size requirement
-   */
-  uint8_t encryptionKeySizeMin;
+/**
+ * minimum encryption key size requirement
+ */
+uint8_t encryptionKeySizeMin;
 
-  /**
-   * maximum encryption key size requirement
-   */
-  uint8_t encryptionKeySizeMax;
+/**
+ * maximum encryption key size requirement
+ */
+uint8_t encryptionKeySizeMax;
 
-  /**
-   * fixed pin to be used in the pairing process if
-   * Use_Fixed_Pin is set to 1
-   */
-  uint32_t Fixed_Pin;
+/**
+ * fixed pin to be used in the pairing process if
+ * Use_Fixed_Pin is set to 1
+ */
+uint32_t Fixed_Pin;
 
-  /**
-   * this flag indicates whether the host has to initiate
-   * the security, wait for pairing or does not have any security
-   * requirements.\n
-   * 0x00 : no security required
-   * 0x01 : host should initiate security by sending the slave security
-   *        request command
-   * 0x02 : host need not send the clave security request but it
-   * has to wait for paiirng to complete before doing any other
-   * processing
-   */
-  uint8_t initiateSecurity;
+/**
+ * this flag indicates whether the host has to initiate
+ * the security, wait for pairing or does not have any security
+ * requirements.\n
+ * 0x00 : no security required
+ * 0x01 : host should initiate security by sending the slave security
+ *        request command
+ * 0x02 : host need not send the clave security request but it
+ * has to wait for paiirng to complete before doing any other
+ * processing
+ */
+uint8_t initiateSecurity;
 } tSecurityParams;
 
 /**
- * global profile context
+ * global context
  * contains the variables common to all
- * profiles
+ * services
  */
 typedef struct _tBLEProfileGlobalContext
 {
 
-  /**
-   * security requirements of the host
-   */
-  tSecurityParams bleSecurityParam;
+/**
+ * security requirements of the host
+ */
+tSecurityParams bleSecurityParam;
 
-  /**
-   * gap service handle
-   */
-  uint16_t gapServiceHandle;
+/**
+ * gap service handle
+ */
+uint16_t gapServiceHandle;
 
-  /**
-   * device name characteristic handle
-   */
-  uint16_t devNameCharHandle;
+/**
+ * device name characteristic handle
+ */
+uint16_t devNameCharHandle;
 
-  /**
-   * appearance characteristic handle
-   */
-  uint16_t appearanceCharHandle;
+/**
+ * appearance characteristic handle
+ */
+uint16_t appearanceCharHandle;
 
   /**
    * connection handle of the current active connection
@@ -147,15 +153,15 @@ typedef struct _tBLEProfileGlobalContext
    */
   uint16_t connectionHandle;
 
-  /**
-   * length of the UUID list to be used while advertising
-   */
-  uint8_t advtServUUIDlen;
+/**
+ * length of the UUID list to be used while advertising
+ */
+uint8_t advtServUUIDlen;
 
-  /**
-   * the UUID list to be used while advertising
-   */
-  uint8_t advtServUUID[100];
+/**
+ * the UUID list to be used while advertising
+ */
+uint8_t advtServUUID[100];
 
 } BleGlobalContext_t;
 
@@ -177,7 +183,23 @@ typedef struct
   uint8_t DeviceServerFound;
 } BleApplicationContext_t;
 
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private defines -----------------------------------------------------------*/
+#define APPBLE_GAP_DEVICE_NAME_LENGTH 7
+#define BD_ADDR_SIZE_LOCAL    6
+
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
 /* Private macros ------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_CmdPacket_t BleCmdBuffer;
 
@@ -194,13 +216,13 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
 
 /**
- *   Identity root key used to derive LTK and CSRK
- */
+*   Identity root key used to derive LTK and CSRK
+*/
 static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
 
 /**
- * Encryption root key used to derive LTK and CSRK
- */
+* Encryption root key used to derive LTK and CSRK
+*/
 static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
 
 #if (CFG_BLE_PERIPHERAL != 0)
@@ -221,12 +243,18 @@ uint8_t const manuf_data[22] = { 2, AD_TYPE_TX_POWER_LEVEL, 0x00 /* 0 dBm */, /*
 static BleApplicationContext_t BleApplicationContext;
 tBDAddr SERVER_REMOTE_BDADDR;
 
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
 /* Private function prototypes -----------------------------------------------*/
-static void BLE_UserEvtRx(void * pPayload);
-static void BLE_StatusNot(HCI_TL_CmdStatus_t status);
-static void Ble_Tl_Init(void);
+static void BLE_UserEvtRx( void * pPayload );
+static void BLE_StatusNot( HCI_TL_CmdStatus_t status );
+static void Ble_Tl_Init( void );
 static void Ble_Hci_Gap_Gatt_Init(void);
-static const uint8_t* BleGetBdAddress(void);
+static const uint8_t* BleGetBdAddress( void );
+
+/* USER CODE BEGIN PFP */
 static void LinkConfiguration(void);
 uint8_t TimerDataThroughputWrite_Id;
 
@@ -243,11 +271,19 @@ static void Connection_Update(void);
 static void Adv_Request(void);
 static void DataThroughput_proc(void);
 #endif
+/* USER CODE END PFP */
 
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
 
 /* Functions Definition ------------------------------------------------------*/
 void APP_BLE_Init( void )
 {
+/* USER CODE BEGIN APP_BLE_Init_1 */
+
+/* USER CODE END APP_BLE_Init_1 */
   SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
   {
     {{0,0,0}},                          /**< Header unused */
@@ -274,7 +310,6 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_TX_POWER}
   };
 
-
   /**
    * Initialize Ble Transport Layer
    */
@@ -285,7 +320,7 @@ void APP_BLE_Init( void )
    */
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
 
-  /**
+/**
    * Register the hci transport layer to handle BLE User Asynchronous Events
    */
   UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
@@ -392,6 +427,7 @@ void APP_BLE_Key_Button3_Action(void)
   DTS_App_KeyButton3Action();
 }
 
+/* USER CODE END FD */
 /*************************************************************
  *
  * LOCAL FUNCTIONS
@@ -408,21 +444,21 @@ static void Ble_Tl_Init( void )
   return;
 }
 
-static void Ble_Hci_Gap_Gatt_Init(void){
+ static void Ble_Hci_Gap_Gatt_Init(void){
 
   uint8_t role;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
   uint32_t srd_bd_addr[2];
-  uint16_t appearance[1] = { CFG_GAP_APPEARANCE };
+  uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
 
   /**
    * Initialize HCI layer
    */
   /*HCI Reset to synchronise BLE Stack*/
-  hci_reset();
+   hci_reset();
 
-  /**
+   /**
    * Write the BD Address
    */
 
@@ -442,21 +478,21 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
 
   /**
-   * Write Identity root key used to derive LTK and CSRK 
+   * Write Identity root key used to derive LTK and CSRK
    */
-  aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
+    aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
 
-  /**
+   /**
    * Write Encryption root key used to derive LTK and CSRK
    */
-  aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
+    aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
 
   /**
-   * Set TX Power to 0dBm.
-   */
-  aci_hal_set_tx_power_level(1, CFG_TX_POWER);
+     * Set TX Power to 0dBm.
+     */
+    aci_hal_set_tx_power_level(1, CFG_TX_POWER);
 
-  /**
+/**
    * Initialize GATT interface
    */
   aci_gatt_init();
@@ -488,51 +524,49 @@ static void Ble_Hci_Gap_Gatt_Init(void){
     }
   }
 
-  if(aci_gatt_update_char_value(gap_service_handle,
-                                gap_appearance_char_handle,
-                                0,
-                                2,
-                                (uint8_t *)&appearance))
-  {
-    BLE_DBG_SVCCTL_MSG("Appearance aci_gatt_update_char_value failed.\n");
-  }
+    if(aci_gatt_update_char_value(gap_service_handle,
+                                  gap_appearance_char_handle,
+                                  0,
+                                  2,
+                                 (uint8_t *)&appearance))
+    {
+      BLE_DBG_SVCCTL_MSG("Appearance aci_gatt_update_char_value failed.\n");
+    }
+  /**   * Initialize IO capability   */  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.ioCapability = CFG_IO_CAPABILITY;  aci_gap_set_io_capability(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.ioCapability);  /**   * Initialize authentication   */  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = CFG_USED_FIXED_PIN;  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = CFG_FIXED_PIN;  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = CFG_BONDING_MODE;  aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,                                         CFG_SC_SUPPORT,                                         CFG_KEYPRESS_NOTIFICATION_SUPPORT,                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,                                         PUBLIC_ADDR  );
+    /**
+     * Initialize IO capability
+     */
+    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.ioCapability = CFG_IO_CAPABILITY;
+    aci_gap_set_io_capability(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.ioCapability);
 
+    /**
+     * Initialize authentication
+     */
+    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;
+    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;
+    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;
+    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = CFG_USED_FIXED_PIN;
+    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = CFG_FIXED_PIN;
+    BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = CFG_BONDING_MODE;
 
+    aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
+                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,
+                                           CFG_SC_SUPPORT,
+                                           CFG_KEYPRESS_NOTIFICATION_SUPPORT,
+                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
+                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
+                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
+                                           BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
+                                           PUBLIC_ADDR
+                                           );
 
-  /**
-   * Initialize IO capability
-   */
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.ioCapability = CFG_IO_CAPABILITY;
-  aci_gap_set_io_capability(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.ioCapability);
-
-  /**
-   * Initialize authentication
-   */
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = CFG_USED_FIXED_PIN;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = CFG_FIXED_PIN;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = CFG_BONDING_MODE;
-
-  aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
-                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,
-                                         CFG_SC_SUPPORT,
-                                         CFG_KEYPRESS_NOTIFICATION_SUPPORT,
-                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
-                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
-                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
-                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                         PUBLIC_ADDR
-  );
-
-  /**
-   * Initialize whitelist
-   */
-  if (BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode)
-  {
-    aci_gap_configure_whitelist();
-  }
+    /**
+     * Initialize whitelist
+     */
+    if (BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode)
+    {
+      aci_gap_configure_whitelist();
+    }
 
 }
 
@@ -788,10 +822,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         
         case (ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE):
           APP_DBG_MSG("PAIRING PHASE - NUMERIC COMPARISON \r\n");
-          APP_DBG_MSG("Hex_value = %ld\n",
+          APP_DBG_MSG("numeric_value = %ld\n",
+                      ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
+          APP_DBG_MSG("Hex_value = %lx\n",
                       ((aci_gap_numeric_comparison_value_event_rp0 *)(blecore_evt->data))->Numeric_Value);
 
-          aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 1); /* CONFIRM_YES = 1 */
+          aci_gap_numeric_comparison_value_confirm_yesno(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, YES); /* CONFIRM_YES = 1 */
 
           APP_DBG_MSG("\r\n\r** CONFIRM YES \n");
           break;
@@ -809,6 +845,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
   }
   return (SVCCTL_UserEvtFlowEnable);
 }
+
+/* USER CODE BEGIN Switch_OFF_GPIO */
+
+/* USER CODE END Switch_OFF_GPIO */
 
 const uint8_t* BleGetBdAddress( void )
 {
@@ -857,6 +897,7 @@ const uint8_t* BleGetBdAddress( void )
 
   return bd_addr;
 }
+/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 
 #if (CFG_BLE_CENTRAL != 0)
 #if (((CFG_TX_PHY == 2) || (CFG_RX_PHY == 2)) || (CFG_ENCRYPTION_ENABLE != 0))
@@ -995,7 +1036,7 @@ static void DataThroughput_proc(){
   UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_WRITE_ID, CFG_SCH_PRIO_0);
 }
 #endif
-
+/* USER CODE END FD_LOCAL_FUNCTIONS */
 /*************************************************************
  *
  * WRAP FUNCTIONS
@@ -1028,11 +1069,11 @@ static void BLE_UserEvtRx( void * pPayload )
 
   svctl_return_status = SVCCTL_UserEvtRx((void *)&(pParam->pckt->evtserial));
   if (svctl_return_status != SVCCTL_UserEvtFlowDisable)
-  {
+{
     pParam->status = HCI_TL_UserEventFlow_Enable;
-  }
+}
   else
-  {
+{
     pParam->status = HCI_TL_UserEventFlow_Disable;
   }
 }
@@ -1067,6 +1108,9 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
   }
   return;
 }
+
+
+/* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 
 void BLE_SVC_L2CAP_Conn_Update_7_5(void)
 {
@@ -1171,5 +1215,6 @@ void SVCCTL_InitCustomSvc( void )
 {
   DTS_STM_Init();
 }
+/* USER CODE END FD_WRAP_FUNCTIONS */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

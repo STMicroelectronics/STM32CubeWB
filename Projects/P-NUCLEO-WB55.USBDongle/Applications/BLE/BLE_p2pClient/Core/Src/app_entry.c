@@ -1,68 +1,86 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
- * @file    app_entry.c
- * @author  MCD Application Team
- * @brief   Entry point of the Application
+  * File Name          : app_entry.c
+  * Description        : Entry application source file for STM32WPAN Middleware
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under Ultimate Liberty license
+  * SLA0044, the "License"; You may not use this file except in compliance with
+  * the License. You may obtain a copy of the License at:
+  *                             www.st.com/SLA0044
+  *
  ******************************************************************************
  */
-
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
-
 #include "main.h"
 #include "app_entry.h"
 #include "app_ble.h"
-
 #include "ble.h"
 #include "tl.h"
-
 #include "stm32_seq.h"
 #include "shci_tl.h"
 #include "stm32_lpm.h"
-
-
 #include "app_debug.h"
 
+/* Private includes -----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
 /* Private typedef -----------------------------------------------------------*/
+extern RTC_HandleTypeDef hrtc;
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
 /* Private defines -----------------------------------------------------------*/
-#define POOL_SIZE (CFG_TLBLE_EVT_QUEUE_LENGTH*4*DIVC(( sizeof(TL_PacketHeader_t) + TL_BLE_EVENT_FRAME_SIZE ), 4))
+#define POOL_SIZE (CFG_TLBLE_EVT_QUEUE_LENGTH*4U*DIVC(( sizeof(TL_PacketHeader_t) + TL_BLE_EVENT_FRAME_SIZE ), 4U))
+
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 
+/* USER CODE BEGIN PV */
 
-/* Global variables ----------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
+/* USER CODE END PV */
+
+/* Private functions prototypes-----------------------------------------------*/
 static void SystemPower_Config( void );
 static void appe_Tl_Init( void );
-static void Led_Init( void );
-static void Button_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
+
+/* USER CODE BEGIN PFP */
+
+/* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
 void APPE_Init( void )
 {
   SystemPower_Config(); /**< Configure the system Power Mode */
-  
+
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
+/* USER CODE BEGIN APPE_Init_1 */
   APPD_Init();
 
   /**
@@ -71,26 +89,32 @@ void APPE_Init( void )
    */
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
 
-  Led_Init();
+  APPE_Led_Init();
 
-  Button_Init();
-
-  appe_Tl_Init();	/**< Initialize all transport layers */
+  APPE_Button_Init();
+/* USER CODE END APPE_Init_1 */
+  appe_Tl_Init();	/* Initialize all transport layers */
 
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
    * received on the system channel before starting the Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
+/* USER CODE BEGIN APPE_Init_2 */
 
-  return;
+/* USER CODE END APPE_Init_2 */
+   return;
 }
+/* USER CODE BEGIN FD */
+
+/* USER CODE END FD */
 
 /*************************************************************
  *
  * LOCAL FUNCTIONS
  *
  *************************************************************/
+
 /**
  * @brief  Configure the system for power optimization
  *
@@ -101,7 +125,6 @@ void APPE_Init( void )
  */
 static void SystemPower_Config(void)
 {
-
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -126,7 +149,6 @@ static void appe_Tl_Init( void )
 {
   TL_MM_Config_t tl_mm_config;
   SHCI_TL_HciInitConf_t SHci_Tl_Init_Conf;
-
   /**< Reference table initialization */
   TL_Init();
 
@@ -148,7 +170,34 @@ static void appe_Tl_Init( void )
   return;
 }
 
-static void Led_Init( void )
+static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
+{
+  UNUSED(status);
+  return;
+}
+
+/**
+ * The type of the payload for a system user event is tSHCI_UserEvtRxParam
+ * When the system event is both :
+ *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
+ *    - reported by the FUS (sysevt_ready_rsp == FUS_FW_RUNNING)
+ * The buffer shall not be released
+ * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
+ * When the status is not filled, the buffer is released by default
+ */
+static void APPE_SysUserEvtRx( void * pPayload )
+{
+  UNUSED(pPayload);
+  /* Traces channel initialization */
+  APPD_EnableCPU2( );
+
+  APP_BLE_Init( );
+  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  return;
+}
+
+/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
+void APPE_Led_Init( void )
 {
 #if (CFG_LED_SUPPORTED == 1)
   /**
@@ -165,7 +214,7 @@ static void Led_Init( void )
   return;
 }
 
-static void Button_Init( void )
+void APPE_Button_Init( void )
 {
 #if (CFG_BUTTON_SUPPORTED == 1)
   /**
@@ -173,38 +222,12 @@ static void Button_Init( void )
    */
 
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+
 #endif
 
   return;
 }
-
-
-
-static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
-{
-  return;
-}
-
-/**
- * The type of the payload for a system user event is tSHCI_UserEvtRxParam
- * When the system event is both :
- *    - a ready event (subevtcode = SHCI_SUB_EVT_CODE_READY)
- *    - reported by the FUS (sysevt_ready_rsp == FUS_FW_RUNNING)
- * The buffer shall not be released
- * ( eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable )
- * When the status is not filled, the buffer is released by default
- */
-static void APPE_SysUserEvtRx( void * pPayload )
-{
-  /**< Traces channel initialization */
-  APPD_EnableCPU2();
-
-  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_ENABLE);
-
-  APP_BLE_Init( );
-  return;
-}
-
+/* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
  *
@@ -220,11 +243,16 @@ void UTIL_SEQ_Idle( void )
   return;
 }
 
+/**
+  * @brief  This function is called by the scheduler each time an event
+  *         is pending.
+  *
+  * @param  evt_waited_bm : Event pending.
+  * @retval None
+  */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
   UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-
-  return;
 }
 
 void shci_notify_asynch_evt(void* pdata)
@@ -245,6 +273,7 @@ void shci_cmd_resp_wait(uint32_t timeout)
   return;
 }
 
+/* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 {
   switch (GPIO_Pin)
@@ -255,8 +284,9 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 
     default:
       break;
+
   }
   return;
 }
-
+/* USER CODE END FD_WRAP_FUNCTIONS */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

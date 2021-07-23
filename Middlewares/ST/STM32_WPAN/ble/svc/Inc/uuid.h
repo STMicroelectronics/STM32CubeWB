@@ -277,6 +277,9 @@
 #define OBJECT_ACTION_CONTROL_POINT_CHAR_UUID                          (0x2AC5)
 #define OBJECT_LIST_CONTROL_POINT_CHAR_UUID                            (0x2AC6)
    
+/* UUIDs for Zigbee Direct Service */
+#define ZIGBEE_DIRECT_COMM_SERVICE_UUID                                (0xFFF7)
+
 /* Custom Services*/
 /* UUIDs for data transfer service */
 #define DATA_TRANSFER_SERVICE_UUID                                     (0xFE80)

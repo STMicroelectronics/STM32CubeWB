@@ -31,7 +31,9 @@ void Ot_Cmd_TransferWithNotif(void);
 Thread_OT_Cmd_Request_t* THREAD_Get_OTCmdPayloadBuffer(void);
 Thread_OT_Cmd_Request_t* THREAD_Get_OTCmdRspPayloadBuffer(void);
 Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void);
-
+#ifdef OPENTHREAD_RCP 
+RCP_Packet_t* THREAD_Get_RCPPayloadBuffer(void);
+#endif
 /* Exported defines -----------------------------------------------------------*/
 
 

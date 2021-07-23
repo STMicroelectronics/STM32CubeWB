@@ -11,24 +11,22 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="../../../_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="_htmresc/mini-st_2020.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <link rel="icon" type="image/x-icon" href="./_htmresc/favicon.png" />
 </head>
 <body>
 <div class="row">
 <div class="col-sm-12 col-lg-4">
-<div class="card fluid">
-<div class="sectione dark">
 <center>
-<h1 id="release-notes-for-stm32-middleware-wpan"><small>Release Notes for</small> STM32 Middleware WPAN</h1>
+<h1 id="release-notes-for">Release Notes for</h1>
+<h1 id="stm32-middleware-wpan"><mark>STM32 Middleware WPAN</mark></h1>
 <p>Copyright © 2020 STMicroelectronics<br />
 </p>
-<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo.png" alt="ST logo" /></a>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo_2020.png" alt="ST logo" /></a>
 </center>
-</div>
-</div>
 <h1 id="license">License</h1>
 <p>This software component is licensed by ST under Ultimate Liberty license SLA0044, the “License”;</p>
 <p>You may not use this file except in compliance with the License.</p>
@@ -56,23 +54,24 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section14" checked aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.11.1 / 19-March-2021</label>
+<input type="checkbox" id="collapse-section14" checked aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
 <ul>
-<li>BLE WPAN updates:
+<li>Zigbee:
 <ul>
-<li><strong>ID 101921</strong> - PTS issue ticket CASE0070853</li>
-<li><strong>ID 99680 </strong> - 2nd link secure fail if master database is clear during 1st link connection</li>
-<li><strong>ID 101052</strong> - HCI_LE_READ_LOCAL_P256 event happen after ending 3 success pairing</li>
-<li><strong>ID 83778 </strong> - add slave latency enable/disable command</li>
-<li><strong>ID 101346</strong> - ACI_GAP_BOND_LOST_Event timeout does not work if ALLOW rebond not sent</li>
-<li><strong>ID 100904</strong> - ACI_HAL_READ_CONFIG_DATA of CONFIG_DATA_RANDOM_ADDRESS</li>
+<li>ZCL Reporting improvement in order to eliminate an unused 1 second timer handler processing</li>
+<li>Comments improvements in the API descriptions associated to the clusters (header files)</li>
+<li>Code cleanup (MISRA rules compliancy)</li>
+<li>Adding of a function requested by the Scene Cluster which was missing on the previous stm32wb_zigbee_wb_lib library</li>
+<li>Security API cleanup + install code management</li>
 </ul></li>
-<li>BLE :
+<li>BLE updates:
 <ul>
-<li>ID 101598: Incorrect #elif usage in stm32_wpan_common.h</li>
-<li>ID 94289 ,ID 102395 ,ID 100425: BLE_Ota improvments (SBSFU ready, Flash driver use, SEM7 flash activity control)</li>
+<li>Remove completely ACI_HAL_SET_SMP_ENG_CONFIG command</li>
+<li>GATT_Check_For_Service_Change: add check of GATT database minimum length<br />
+</li>
+<li>ID 104796 : HIDS_Handle_Mouse_Input_Write/HIDS_Handle_Keyboard_Output_Write : Null pointer used</li>
 </ul></li>
 </ul>
 </div>
@@ -84,7 +83,7 @@
 <ul>
 <li>BLE-Mesh library version 1.13.002
 <ul>
-<li>Updated max number of element to 5 and max number of Model per element to 11: To support lighting control system with occupancy sensing.  </li>
+<li>Updated max number of element to 5 and max number of Model per element to 11:       To support lighting control system with occupancy sensing.  </li>
 <li>Bug fix: Client API, Light LC model and sensor status, modify Light LC FSM default Lightness values</li>
 <li>Sensor &amp; Light LC Server Models updated</li>
 <li>Client Models updated</li>

@@ -107,3 +107,5 @@ VP_CRC_VS_CRC.Signal=CRC_VS_CRC
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=CRC_Example
+ProjectManager.ExampleSource=CubeFw

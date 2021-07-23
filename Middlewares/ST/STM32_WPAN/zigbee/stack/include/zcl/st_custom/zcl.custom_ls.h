@@ -26,10 +26,6 @@
  *--------------------------------------------------------------------------
  */
 
-/* Custom Cluster ID */
-#define ZCL_CLUSTER_LS  0x80E1
-
-
 /* Custom response  */
 #define ZCL_CUSTOM_LS_MATCH     0x11
 #define ZCL_CUSTOM_LS_MISMATCH  0x00
@@ -65,13 +61,21 @@ ZbZclSet_custom_ls_ClientCommand(struct ZbZclClusterT *cluster, struct ZbApsAddr
 struct zcl_custom_ls_server_callbacks_t {
     enum ZclStatusCodeT (*set_custom_ls_command)(struct ZbZclClusterT *clusterPtr, \
         struct set_custom_ls_command_req_t *cmd_req, struct ZbZclAddrInfoT *src_info, void *arg);
-//    enum ZclStatusCodeT (*get_custom_ls_command)(struct ZbZclClusterT *clusterPtr, \
-//        struct set_custom_ls_command_req_t *cmd_req, struct ZbZclAddrInfoT *src_info, void *arg);
 };
-
+enum ZclStatusCodeT
+ZbZcl_custom_ls_ServerSendCommandRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
+    struct custom_ls_command_rsp_t *rsp);
+enum ZclStatusCodeT ZbZcl_custom_ls_ServerSendCommandRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
+    struct custom_ls_command_rsp_t *rsp);
+enum ZclStatusCodeT
+ZbZcl_custom_ls_ServerSendCommandRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
+    struct custom_ls_command_rsp_t *rsp);
+enum ZclStatusCodeT
+ZbZcl_custom_ls_ServerSendCommandRsp(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *dst_info,
+    struct custom_ls_command_rsp_t *rsp);
 /* Allocation Functions */
 struct ZbZclClusterT * ZbZcl_custom_ls_ClientAlloc(struct ZigBeeT *zb, uint8_t endpoint);
 struct ZbZclClusterT * ZbZcl_custom_ls_ServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, \
-          struct zcl_custom_ls_server_callbacks_t *callbacks, void *arg);
+struct zcl_custom_ls_server_callbacks_t *callbacks, void *arg);
 
 #endif /* ZCL_CUSTOM_LS_H */

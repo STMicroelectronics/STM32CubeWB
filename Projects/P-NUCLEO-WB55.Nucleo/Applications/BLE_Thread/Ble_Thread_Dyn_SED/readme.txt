@@ -167,7 +167,7 @@ The SED will then start to send every seconds a multicast COAP Message which wil
 
 **** EXTPA ****
 
-The Dory is not able to transmit with a power higher than 5 dbm (TBC). As such it is
+The STM32WB is not able to transmit with a power higher than 5 dbm. As such it is
 possible to use the EXT PA as an additional supply source.
 
 Signals:

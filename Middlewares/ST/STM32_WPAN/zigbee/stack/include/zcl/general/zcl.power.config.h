@@ -4,7 +4,7 @@
  * @brief ZCL Power Configuration cluster header
  * ZCL 7 section 3.3
  * ZCL 8 section 3.3
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_POWER_H
@@ -17,7 +17,7 @@
  * Server Attributes
  * PC.S.A0000 | MainsVoltage | True | Optional
  * PC.S.A0001 | MainsFrequency | True | Optional
- * PC.S.A0010 | MainsAlarmMask | False | Optional
+ * PC.S.A0010 | MainsAlarmMask | True | Optional
  * PC.S.A0011 | MainsVoltageMinThreshold | True | Optional
  * PC.S.A0012 | MainsVoltageMaxThreshold | True | Optional
  * PC.S.A0013 | MainsVoltageDwellTripPoint | False | Optional

@@ -487,14 +487,14 @@ enum {
 #define MCP_ASSOC_CAP_ALLOC_ADDR    0x80U /* 1 = coordinator (i.e. parent) allocates short address, 0 = otherwise */
 
 /* Macro to compute the usage bit for security keys and levels. */
-#define MCP_KEY_USAGE(_type_, _cmd_)   (1ULL << (((_type_) == mcp_802154_FRAME_TYPE_CMD) ? ((_cmd_) + mcp_802154_FRAME_TYPE_CMD) : (_type_)))
+#define MCP_KEY_USAGE(_type_, _cmd_)   (1ULL << (((_type_) == (uint8_t)mcp_802154_FRAME_TYPE_CMD) ? ((_cmd_) + (uint8_t)mcp_802154_FRAME_TYPE_CMD) : (_type_)))
 #define MCP_KEY_USAGE_ALL              ((1ULL << (mcp_802154_FRAME_TYPE_CMD + mcp_802154_CMD_TYPE_VENDOR + 1)) - 1)
 
 /* Vendor-specific IE has different ID for HIE, PIE, MIE types. */
 #define MCP_TLV_IE_IS_VENDOR(type, id)     \
-    ((((type) == MCP_TLV_HIE) && ((id) == mcp_IEEE802154_HIE_VENDOR_SPECIFIC)) \
-    || (((type) == MCP_TLV_PIE) && ((id) == mcp_IEEE802154_PIE_VENDOR_SPECIFIC)) \
-    || (((type) == MCP_TLV_MIE) && ((id) == mcp_IEEE802154_MIE_VENDOR_SPECIFIC)))
+    ((((type) == MCP_TLV_HIE) && ((id) == (uint8_t)mcp_IEEE802154_HIE_VENDOR_SPECIFIC)) \
+    || (((type) == MCP_TLV_PIE) && ((id) == (uint8_t)mcp_IEEE802154_PIE_VENDOR_SPECIFIC)) \
+    || (((type) == MCP_TLV_MIE) && ((id) == (uint8_t)mcp_IEEE802154_MIE_VENDOR_SPECIFIC)))
 
 /*lint -restore */
 

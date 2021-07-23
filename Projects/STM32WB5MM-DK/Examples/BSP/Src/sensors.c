@@ -95,9 +95,9 @@ void Accelero_Test(void)
     BSP_LCD_Refresh(0);
     memset(&acceleration, 0, sizeof(MOTION_SENSOR_Axes_t));
     (void)BSP_MOTION_SENSOR_GetAxes(MOTION_SENSOR_ISM330DHCX_0, MOTION_ACCELERO, &acceleration);
-    sprintf(acc_x," ACC_X = %d", acceleration.x);
-    sprintf(acc_y," ACC_Y = %d", acceleration.y);
-    sprintf(acc_z," ACC_Z = %d", acceleration.z);
+    sprintf(acc_x," ACC_X = %ld", acceleration.x);
+    sprintf(acc_y," ACC_Y = %ld", acceleration.y);
+    sprintf(acc_z," ACC_Z = %ld", acceleration.z);
     UTIL_LCD_DisplayStringAt(0, 25, (uint8_t *)acc_x, LEFT_MODE);
     UTIL_LCD_DisplayStringAt(0, 37, (uint8_t *)acc_y, LEFT_MODE);
     UTIL_LCD_DisplayStringAt(0, 49, (uint8_t *)acc_z, LEFT_MODE);
@@ -136,9 +136,9 @@ void Gyro_Test(void)
     BSP_LCD_Refresh(0);
     memset(&angular_velocity, 0, sizeof(MOTION_SENSOR_Axes_t));
     (void)BSP_MOTION_SENSOR_GetAxes(MOTION_SENSOR_ISM330DHCX_0, MOTION_GYRO, &angular_velocity);
-    sprintf(gyr_x," GYRO_X = %d", angular_velocity.x);
-    sprintf(gyr_y," GYRO_Y = %d", angular_velocity.y);
-    sprintf(gyr_z," GYRO_Z = %d", angular_velocity.z);
+    sprintf(gyr_x," GYRO_X = %ld", angular_velocity.x);
+    sprintf(gyr_y," GYRO_Y = %ld", angular_velocity.y);
+    sprintf(gyr_z," GYRO_Z = %ld", angular_velocity.z);
     UTIL_LCD_DisplayStringAt(0, 25, (uint8_t *)gyr_x, LEFT_MODE);
     UTIL_LCD_DisplayStringAt(0, 37, (uint8_t *)gyr_y, LEFT_MODE);
     UTIL_LCD_DisplayStringAt(0, 49, (uint8_t *)gyr_z, LEFT_MODE);

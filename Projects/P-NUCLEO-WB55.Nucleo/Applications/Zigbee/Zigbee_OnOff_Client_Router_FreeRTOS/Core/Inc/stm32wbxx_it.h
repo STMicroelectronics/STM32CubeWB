@@ -69,6 +69,8 @@ void FPU_IRQHandler(void);
 void TIM1_TRG_COM_TIM17_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 void RTC_WKUP_IRQHandler(void);
+void EXTI0_IRQHandler(void);
+void EXTI1_IRQHandler(void);
 void EXTI4_IRQHandler(void);
 /* USER CODE END EFP */
 

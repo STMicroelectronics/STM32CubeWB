@@ -155,3 +155,5 @@ VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 VP_USB_DEVICE_VS_USB_DEVICE_DFU_FS.Mode=DFU_FS
 VP_USB_DEVICE_VS_USB_DEVICE_DFU_FS.Signal=USB_DEVICE_VS_USB_DEVICE_DFU_FS
 board=P-NUCLEO-WB55.USBDongle
+ProjectManager.Example=DFU_Standalone
+ProjectManager.ExampleSource=CubeFw

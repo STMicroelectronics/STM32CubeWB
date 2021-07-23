@@ -24,8 +24,8 @@ UART transmission (printf/getchar) via console with user interaction.
 The UART outputs a message on the HyperTerminal and receives some characters.
 
 Board: STM32WB5MM-DK
-Tx Pin: PB.06 (Pin 34 in CN10)
-Rx Pin: PB.07 (Pin 6 in CN10)
+Tx Pin: PB.06
+Rx Pin: PB.07
    _________________________
   |           ______________|                       _______________
   |          |USART         |                      | HyperTerminal |

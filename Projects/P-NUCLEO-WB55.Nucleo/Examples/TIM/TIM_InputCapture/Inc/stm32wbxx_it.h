@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    TIM/TIM_InputCapture/Inc/stm32g0xx_it.h
+  * @file    TIM/TIM_InputCapture/Inc/stm32wbxx_it.h
   * @author  MCD Application Team
   * @brief   This file contains the headers of the interrupt handlers.
   ******************************************************************************

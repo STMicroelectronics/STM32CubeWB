@@ -155,3 +155,5 @@ USART1.WordLength=WORDLENGTH_8B
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=USART_Communication_Rx_IT_VCP_Init
+ProjectManager.ExampleSource=CubeFw

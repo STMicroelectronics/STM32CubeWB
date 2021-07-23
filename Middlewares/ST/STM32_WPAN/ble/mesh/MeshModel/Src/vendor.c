@@ -135,8 +135,8 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MODEL_MessageHeader_t *pmsgParams,
                B0 - Sub-Cmd LED
                B1-B7 - Data Bytes       
                */          
-      VendorAppli_cb.LEDControlCommand_Cb(data, length, pmsgParams->elementIndex,\
-                                                           pmsgParams->dst_peer);
+               VendorAppli_cb.LEDControlCommand_Cb(data, length, pmsgParams->elementIndex,\
+                 pmsgParams->dst_peer);
                break;
              }
            case APPLI_DATA_CNTRL_CMD:
@@ -146,7 +146,7 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MODEL_MessageHeader_t *pmsgParams,
                */          
                VendorAppli_cb.DataControlCommand_cb(data,length);    
                break;       
-             }            
+             } 
              /* Default case - Not valid command */
            default:
              {
@@ -294,10 +294,11 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MODEL_MessageHeader_t *pmsgParams,
             }
           case APPLI_DATA_CNTRL_CMD:
             {
-              /*This is callback when ever command is coming for test of response
-                time,command reached count, data byte sent
-              */          
-           
+              /* 
+              Message Received with Command APPLI_DATA_CNTRL_CMD
+              Call the Data Read Callback to fill Response Buffer with local datas
+              */ 
+              status =  VendorAppli_cb.DataControlCommand_cb(data, length);
               break;       
             }  
             
@@ -494,9 +495,10 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MODEL_MessageHeader_t *pmsgParam,
      }
     case APPLI_DATA_CNTRL_CMD:  
       {
+        /** Displays data received **/
         for (MOBLEUINT8 idx=0; idx<dataLength; idx++)
         {
-          TRACE_I(TF_VENDOR_M,"data[%d]= %d",idx,pRxData[idx]); 
+          TRACE_I(TF_VENDOR_M,"data[%d]= 0x%x",idx,pRxData[idx]); 
           TRACE_I(TF_VENDOR_M,"\n\r");
         }
         break;
@@ -644,7 +646,7 @@ MOBLE_RESULT VendorModel_PID1_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **
 
 
 /**
-* @brief  GenericModelServer_GetStatusRequestCb : This function is call-back 
+* @brief  VendorModel_PID1_GetStatusRequestCb : This function is call-back 
 from the library to send response to the message from peer
 * @param *pmsgParam Pointer to structure of message header for parameters:
 *         elementIndex, src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
@@ -725,8 +727,6 @@ MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParams
   {
     cmd_response = MOBLE_FALSE;
   }
-         
-      
   
     /* Parse the command */
     if( (cmd_response == MOBLE_FALSE) && (opcode & VENDOR_CMD_READ_nWRITE))

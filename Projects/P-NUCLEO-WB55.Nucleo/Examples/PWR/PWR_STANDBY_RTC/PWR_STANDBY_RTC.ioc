@@ -118,3 +118,5 @@ VP_RTC_VS_RTC_Activate.Signal=RTC_VS_RTC_Activate
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=PWR_STANDBY_RTC
+ProjectManager.ExampleSource=CubeFw

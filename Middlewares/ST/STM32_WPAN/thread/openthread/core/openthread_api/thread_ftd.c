@@ -488,7 +488,7 @@ otError otThreadGetChildNextIp6Address(otInstance *               aInstance,
   p_ot_req->Size=3;
   p_ot_req->Data[0] = (uint32_t)aChildIndex;
   p_ot_req->Data[1] = (uint32_t)aIterator;
-  p_ot_req->Data[1] = (uint32_t)aAddress;
+  p_ot_req->Data[2] = (uint32_t)aAddress;
 
   Ot_Cmd_Transfer();
 

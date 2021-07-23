@@ -63,7 +63,7 @@
   * @{
   */
 
-#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/5*04Ka,251*04Kg"
+#define FLASH_DESC_STR      "@Internal Flash   /0x08000000/6*04Ka,197*04Kg"
 
 /* USER CODE BEGIN PRIVATE_DEFINES */
 #define FLASH_ERASE_TIME    (uint16_t)50
@@ -287,14 +287,14 @@ uint16_t FLASH_If_GetStatus(uint32_t Add, uint8_t Cmd, uint8_t *buffer)
   /* USER CODE BEGIN 5 */
   switch (Cmd)
   {
-  case DFU_MEDIA_PROGRAM:
+    case DFU_MEDIA_PROGRAM:
     buffer[1] = (uint8_t)FLASH_PROGRAM_TIME;
     buffer[2] = (uint8_t)(FLASH_PROGRAM_TIME << 8);
     buffer[3] = 0;
     break;
 
-  case DFU_MEDIA_ERASE:
-  default:
+    case DFU_MEDIA_ERASE:
+    default:
     buffer[1] = (uint8_t)FLASH_ERASE_TIME;
     buffer[2] = (uint8_t)(FLASH_ERASE_TIME << 8);
     buffer[3] = 0;

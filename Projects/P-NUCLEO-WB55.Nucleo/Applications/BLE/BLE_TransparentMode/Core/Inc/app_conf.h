@@ -258,7 +258,9 @@
  * allocated in the queue of received events and can be used to optimize the amount of RAM allocated by the Memory Manager.
  * It should not exceed 255 which is the maximum HCI packet payload size (a greater value is a lost of memory as it will
  * never be used)
- * With the current wireless firmware implementation, this parameter shall be kept to 255
+ * It shall be at least 4 to receive the command status event in one frame.
+ * The default value is set to 27 to allow receiving an event of MTU size in a single buffer. This value maybe reduced
+ * further depending on the application.
  */
 #define CFG_TLBLE_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 
@@ -301,6 +303,11 @@
  *  When set to 0, the device stays in RUN mode
  */
 #define CFG_LPM_SUPPORTED    1
+
+/******************************************************************************
+ * RTC interface
+ ******************************************************************************/
+#define HAL_RTCEx_WakeUpTimerIRQHandler(...)  HW_TS_RTC_Wakeup_Handler( )
 
 /******************************************************************************
  * Timer Server
@@ -471,6 +478,10 @@ typedef enum
 /* USER CODE BEGIN Defines */
 #define CFG_LED_SUPPORTED         1
 #define CFG_BUTTON_SUPPORTED      1
+
+#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
+#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
+#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
 /* USER CODE END Defines */
 
 /******************************************************************************
@@ -493,7 +504,9 @@ typedef enum
     CFG_TASK_SYS_LOCAL_CMD_ID,
     CFG_TASK_TX_TO_HOST_ID,
 /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
-
+    CFG_TASK_SW1_BUTTON_PUSHED_ID,
+    CFG_TASK_SW2_BUTTON_PUSHED_ID,
+    CFG_TASK_SW3_BUTTON_PUSHED_ID,
 /* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
     CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;

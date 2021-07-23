@@ -137,10 +137,6 @@
 /**< specific parameters */
 /*****************************************************/
 
-#define PUSH_BUTTON_SW1_EXTI_IRQHandler                         EXTI4_IRQHandler
-#define PUSH_BUTTON_SW2_EXTI_IRQHandler                         EXTI0_IRQHandler
-#define PUSH_BUTTON_SW3_EXTI_IRQHandler                         EXTI1_IRQHandler
-
 #define P2P_SERVER1    1    /*1 = Device is Peripherique*/
 #define P2P_SERVER2    0
 #define P2P_SERVER3    0
@@ -550,6 +546,10 @@ typedef enum
 /* USER CODE BEGIN Defines */
 #define CFG_LED_SUPPORTED         1
 #define CFG_BUTTON_SUPPORTED      1
+
+#define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI4_IRQHandler
+#define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
+#define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
 /* USER CODE END Defines */
 
 /******************************************************************************
@@ -568,6 +568,8 @@ typedef enum
 {
     CFG_TASK_ADV_CANCEL_ID,
     CFG_TASK_SW1_BUTTON_PUSHED_ID,
+    CFG_TASK_SW2_BUTTON_PUSHED_ID,
+    CFG_TASK_SW3_BUTTON_PUSHED_ID,
 #if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
     CFG_TASK_CONN_UPDATE_REG_ID,
 #endif

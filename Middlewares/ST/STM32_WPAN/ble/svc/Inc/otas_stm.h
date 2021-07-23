@@ -31,7 +31,7 @@ extern "C" {
 #include "stm32_wpan_common.h"
 
   /* Exported defines -----------------------------------------------------------*/
-#define OTAS_STM_RAW_DATA_SIZE    (20)
+#define OTAS_STM_RAW_DATA_SIZE    (248)
 
   /* Exported types ------------------------------------------------------------*/
   typedef enum

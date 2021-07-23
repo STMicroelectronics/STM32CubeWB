@@ -1051,13 +1051,19 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
     }          
   } /* Switch ends */
           
-  if((result == MOBLE_RESULT_SUCCESS) && 
-      (response == MOBLE_TRUE) &&
-      (ADDRESS_IS_UNICAST(pmsgParam->dst_peer)))
+  if((result == MOBLE_RESULT_SUCCESS) && (response == MOBLE_TRUE))
   {
-    Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
+    if(ADDRESS_IS_UNICAST(pmsgParam->dst_peer))
+    {
+      Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
+    }
+    else
+    {
+
+      pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for respons
+      Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
+    }
   }
-  
   /*
      Publish the status to publish address if the publication is set by client 
      publication is independent of the response of the message.if thek condition 
@@ -1068,14 +1074,23 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
     
   if((result == MOBLE_RESULT_SUCCESS) && 
      (publishAddress != 0x0000) && 
-     (modelStateChangeFlag == MOBLE_TRUE) && 
-     (ADDRESS_IS_UNICAST(pmsgParam->dst_peer)))
+       (modelStateChangeFlag == MOBLE_TRUE))
   {
-    pmsgParam->peer_addr = publishAddress;
-    Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
-    
-    modelStateChangeFlag = MOBLE_FALSE;   
-    TRACE_I(TF_GENERIC_M,"Publishing state when change to the address %.2X \r\n",publishAddress);
+    if(ADDRESS_IS_UNICAST(pmsgParam->dst_peer))
+    {
+      pmsgParam->peer_addr = publishAddress;
+      Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
+    }
+        else
+    {
+
+      pmsgParam->peer_addr = publishAddress;
+      pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for respons
+      Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
+    }
+                
+      modelStateChangeFlag = MOBLE_FALSE;   
+      TRACE_I(TF_GENERIC_M,"Publishing state when change to the address %.2X \r\n",publishAddress);
   }
   return MOBLE_RESULT_SUCCESS;
 }

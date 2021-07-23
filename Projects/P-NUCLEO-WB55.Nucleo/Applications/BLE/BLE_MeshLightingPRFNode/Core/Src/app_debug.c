@@ -47,10 +47,23 @@ typedef PACKED_STRUCT
  */
 #define BLE_DTB_CFG     0
 
+/**
+ * System Debug Options flags to be configured with:
+ * - SHCI_C2_DEBUG_OPTIONS_IPCORE_LP
+ * - SHCI_C2_DEBUG_OPTIONS_IPCORE_NO_LP
+ * - SHCI_C2_DEBUG_OPTIONS_CPU2_STOP_EN
+ * - SHCI_C2_DEBUG_OPTIONS_CPU2_STOP_DIS
+ * which are used to set following configuration bits:
+   * - bit 0:   0: IP BLE core in LP mode    1: IP BLE core in run mode (no LP supported)
+   * - bit 1:   0: CPU2 STOP mode Enable     1: CPU2 STOP mode Disable 
+   * - bit [2-7]: bits reserved ( shall be set to 0)
+ */
+#define SYS_DBG_CFG1  (SHCI_C2_DEBUG_OPTIONS_IPCORE_LP | SHCI_C2_DEBUG_OPTIONS_CPU2_STOP_EN) 
+
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_TracesConfig_t APPD_TracesConfig={0, 0, 0, 0};
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_GeneralConfig_t APPD_GeneralConfig={BLE_DTB_CFG, {0, 0, 0}};
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_GeneralConfig_t APPD_GeneralConfig={BLE_DTB_CFG, SYS_DBG_CFG1, {0, 0}};
 
 /**
  * THE DEBUG ON GPIO FOR CPU2 IS INTENDED TO BE USED ONLY ON REQUEST FROM ST SUPPORT

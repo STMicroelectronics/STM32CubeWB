@@ -123,6 +123,12 @@ static void Beacon_Update( void );
 
 /* USER CODE END PFP */
 
+/* External variables --------------------------------------------------------*/
+
+/* USER CODE BEGIN EV */
+
+/* USER CODE END EV */
+
 /* Functions Definition ------------------------------------------------------*/
 void APP_BLE_Init( void )
 {
@@ -192,6 +198,9 @@ void APP_BLE_Init( void )
    * From here, all initialization are BLE application specific
    */
   UTIL_SEQ_RegTask( 1<<CFG_TASK_BEACON_UPDATE_REQ_ID, UTIL_SEQ_RFU, Beacon_Update);
+/* USER CODE BEGIN APP_BLE_Init_3 */
+
+/* USER CODE END APP_BLE_Init_3 */
 
   /**
    * Make device discoverable
@@ -335,7 +344,6 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   uint8_t role;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
-  uint32_t srd_bd_addr[2];
   uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
 
   /**
@@ -354,24 +362,14 @@ static void Ble_Hci_Gap_Gatt_Init(void){
                             (uint8_t*) bd_addr);
 
   /**
-   * Static random Address
-   * The two upper bits shall be set to 1
-   * The lowest 32bits is read from the UDN to differentiate between devices
-   * The RNG may be used to provide a random number on each power on
-   */
-  srd_bd_addr[1] =  0x0000ED6E;
-  srd_bd_addr[0] =  LL_FLASH_GetUDN( );
-  aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
-
-  /**
    * Write Identity root key used to derive LTK and CSRK
    */
-    aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
+  aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
 
-   /**
+  /**
    * Write Encryption root key used to derive LTK and CSRK
    */
-    aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
+  aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
 
   /**
    * Set TX Power to 0dBm.
@@ -399,9 +397,12 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   if (role > 0)
   {
     const char *name = "BEACON";
-    aci_gap_init(role, 0,
+    aci_gap_init(role,
+                 0,
                  APPBLE_GAP_DEVICE_NAME_LENGTH,
-                 &gap_service_handle, &gap_dev_name_char_handle, &gap_appearance_char_handle);
+                 &gap_service_handle,
+                 &gap_dev_name_char_handle,
+                 &gap_appearance_char_handle);
 
     if (aci_gatt_update_char_value(gap_service_handle, gap_dev_name_char_handle, 0, strlen(name), (uint8_t *) name))
     {

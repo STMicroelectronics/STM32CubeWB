@@ -103,8 +103,8 @@ tBleStatus aci_hal_read_config_data( uint8_t Offset,
  *        - 0x00: Standard Power
  *        - 0x01: High Power
  * @param PA_Level Power amplifier output level. Output power is indicative and
- *        it depends on the PCB layout and associated
- *        components.Here the values are given at the IC pin
+ *        depends on the PCB layout and associated components. Here the values
+ *        are given at the STM32WB output.
  *        Values:
  *        - 0x00: -40 dBm
  *        - 0x01: -20.85 dBm
@@ -264,29 +264,6 @@ tBleStatus aci_hal_get_anchor_period( uint32_t* Anchor_Period,
  * @return Value indicating success or error code.
  */
 tBleStatus aci_hal_set_event_mask( uint32_t Event_Mask );
-
-/**
- * @brief ACI_HAL_SET_SMP_ENG_CONFIG
- * This command is used to provide a specific engineering setup to the Security
- * Manager Protocol Layer. It may be used during development/debug only!
- * 
- * @param SMP_Config Mask to configure SMP engineering knobs
- *        Flags:
- *        - 0x00000000: Default config (all reset)
- *        - 0x00000001: Cheat Level 1 ON
- *        - 0x00000002: RFU
- *        - 0x00000003: Cheat Level 3 ON
- *        - 0x00000004: RFU
- *        - 0x00000005: Cheat Level 5 ON
- *        - 0x00000006: Cheat Level 6 ON
- *        - 0x00000007: Cheat Level 7 ON
- *        - 0x00000010: DBG messages ON
- *        - 0x00000100: Debug Public Key ON
- *        - 0x00000107: Debug KEY On + DBG msg Off + CL=7
- *        - 0x00000117: Debug KEY On + DBG msg On + CL=7
- * @return Value indicating success or error code.
- */
-tBleStatus aci_hal_set_smp_eng_config( uint32_t SMP_Config );
 
 /**
  * @brief ACI_HAL_GET_PM_DEBUG_INFO

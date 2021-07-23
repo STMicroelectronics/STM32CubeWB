@@ -118,3 +118,5 @@ WWDG.Prescaler=WWDG_PRESCALER_64
 WWDG.Window=126
 board=custom
 boardIOC=true
+ProjectManager.Example=WWDG_RefreshUntilUserEvent_Init
+ProjectManager.ExampleSource=CubeFw

@@ -636,7 +636,7 @@ padding-right: 0px;
 }
 
 td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
-</style></head><body><font face="arial"><h1>STM32WB BLE Wireless Interface</h1><p>This document describes the STM32WB BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event</p><p>March 2020 - Rev 1.14 - Removed unused HCI_Data_Buffer_Overflow event; Fixed naming of FW_Error_Type possible values; Fixed pairing status possible values</p><p>March 2020 - Rev 1.15 - Added GAP scan timeout value</p><p>April 2020 - Rev 1.16 - Fixed various format issues; Added LO and PO columns for command and event tables.</p><p>May 2020 - Rev 1.17 - Updated PO stack features; Added comment in HCI_LE_ADVERTISING_REPORT_EVENT description.</p><p>June 2020 - Rev 1.18 - Added BO column for command and event tables; Fixed advertising commands description; Fixed various format issues.</p><p>June 2020 - Rev 1.19 - Completed interval possible values for ACI_GAP_SET_DIRECT_CONNECTABLE.</p><p>July 2020 - Rev 1.20 - Added HCI_LE_SET_PRIVACY_MODE.</p><p>July 2020 - Rev 1.21 - Updated "beacon only" stack features.</p><p>September 2020 - Rev 1.22 - Fixed various minor issues.</p><p>November 2020 - Rev 1.23 - Added connection-oriented channels feature; Added HCI_LE_READ_TRANSMIT_POWER; Updated PO variant.</p><p>December 2020 - Rev 1.24 - Added BF column for command and event tables.</p><p>January 2021 - Rev 1.25 - Added Link_Status possible values.</p><p>January 2021 - Rev 1.26 - Fixed some specification references.</p><p>February 2021 - Rev 1.27 - Added ACI_HAL_SET_SLAVE_LATENCY; Updated comments of ACI_HAL_WRITE_CONFIG_DATA and ACI_HAL_READ_CONFIG_DATA.</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><p>Note: in the command tables, a "Y" in the "BF", "PO", "LO" or "BO" column, means that the corresponding command applies to the "Basic Features", "Peripheral Only", "Link Layer Only" or "Beacon Only" variant of the BLE stack, respectively.</p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h2></h2><table width="800" border="1" class="reference">
+</style></head><body><font face="arial"><h1>STM32WB BLE Wireless Interface</h1><p>This document describes the STM32WB BLE Application Commands Interface (ACI) and Host Commands Interface (HCI).</p><p><a href="https://www.st.com/en/microcontrollers/stm32wb-series.html">STM32WB Series website</a></p><h2>Revision history</h2><p>December 2018 - Rev 1.0 - First release for interface 1.0 </p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment</p><p>March 2019 - Rev 1.2 - Removed unused event documentation </p><p>March 2019 - Rev 1.3 - Modification ACI_HAL_FW_ERROR_EVENT error code</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK </p><p>May 2019 - Rev 1.5 - ACI_GATT_NOTIFICATION_EXT_EVENT added</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions</p><p>November 2019 - Rev 1.12 - Fixed status error codes</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event</p><p>March 2020 - Rev 1.14 - Removed unused HCI_Data_Buffer_Overflow event; Fixed naming of FW_Error_Type possible values; Fixed pairing status possible values</p><p>March 2020 - Rev 1.15 - Added GAP scan timeout value</p><p>April 2020 - Rev 1.16 - Fixed various format issues; Added LO and PO columns for command and event tables.</p><p>May 2020 - Rev 1.17 - Updated PO stack features; Added comment in HCI_LE_ADVERTISING_REPORT_EVENT description.</p><p>June 2020 - Rev 1.18 - Added BO column for command and event tables; Fixed advertising commands description; Fixed various format issues.</p><p>June 2020 - Rev 1.19 - Completed interval possible values for ACI_GAP_SET_DIRECT_CONNECTABLE.</p><p>July 2020 - Rev 1.20 - Added HCI_LE_SET_PRIVACY_MODE.</p><p>July 2020 - Rev 1.21 - Updated BO stack features.</p><p>September 2020 - Rev 1.22 - Fixed various minor issues.</p><p>November 2020 - Rev 1.23 - Added connection-oriented channels feature; Added HCI_LE_READ_TRANSMIT_POWER; Updated PO variant.</p><p>December 2020 - Rev 1.24 - Added BF column for command and event tables.</p><p>January 2021 - Rev 1.25 - Added Link_Status possible values.</p><p>January 2021 - Rev 1.26 - Fixed some specification references.</p><p>February 2021 - Rev 1.27 - Added ACI_HAL_SET_SLAVE_LATENCY; Updated comments of ACI_HAL_WRITE_CONFIG_DATA and ACI_HAL_READ_CONFIG_DATA.</p><p>March 2021 - Rev 1.28 - Added additional beacon feature.</p><p>April 2021 - Rev 1.29 - Removed unused ACI_HAL_SET_SMP_ENG_CONFIG.</p><p>May 2021 - Rev 1.30 - Fixed event generated by HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL and HCI_HOST_BUFFER_SIZE.</p><p>May 2021 - Rev 1.31 - Added HCI_LE_SET_ADVERTISING_DATA in BF and PO variants.</p><h2>Contents</h2><p><a href="#HCI/ACI commands_anchor">HCI/ACI commands</a></p><p><a href="#HCI/ACI events_anchor">HCI/ACI events</a></p><p><a href="#Status error codes_anchor">Status error codes</a></p><h1><a name="HCI/ACI commands_anchor">HCI/ACI commands</a></h1><p><a href="#HCI commands_anchor">HCI commands</a></p><p><a href="#HCI TESTING commands_anchor">HCI TESTING commands</a></p><p><a href="#ACI HAL commands_anchor">ACI HAL commands</a></p><p><a href="#ACI GAP commands_anchor">ACI GAP commands</a></p><p><a href="#ACI GATT/ATT commands_anchor">ACI GATT/ATT commands</a></p><p><a href="#ACI L2CAP commands_anchor">ACI L2CAP commands</a></p><p>Note: in the command tables, a "Y" in the "BF", "PO", "LO" or "BO" column, means that the corresponding command applies to the "Basic Features", "Peripheral Only", "Link Layer Only" or "Beacon Only" variant of the BLE stack, respectively.</p><h2><a name="HCI commands_anchor">HCI commands</a></h2><h2></h2><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>Opcode</th><th>BF</th><th>PO</th><th>LO</th><th>BO</th></tr>
 <tr><td><a href="#HCI_DISCONNECT_anchor">HCI_DISCONNECT</a></td><td><p>0x0406</p>
 </td><td></td><td></td><td><p>Y</p>
@@ -725,7 +725,9 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_ADVERTISING_DATA_anchor">HCI_LE_SET_ADVERTISING_DATA</a></td><td><p>0x2008</p>
-</td><td></td><td></td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#HCI_LE_SET_SCAN_RESPONSE_DATA_anchor">HCI_LE_SET_SCAN_RESPONSE_DATA</a></td><td><p>0x2009</p>
@@ -957,7 +959,7 @@ Units: dBm</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><h2><a name="HCI_HOST_BUFFER_SIZE_anchor">HCI_HOST_BUFFER_SIZE</a></h2><h3>Description</h3><p>The Host_Buffer_Size command is used by the Host to notify the Controller about the maximum size of the data portion of HCI ACL and synchronous Data Packets sent from the Controller to the Host. The Controller shall segment the data to be transmitted from the Controller to the Host according to these sizes, so that the HCI Data Packets will contain data with up to these sizes. The Host_Buffer_Size command also notifies the Controller about the total number of HCI ACL and synchronous Data Packets that can be stored in the data buffers of the Host. If flow control from the Controller to the Host is turned off, and the Host_Buffer_Size command has not been issued by the Host, this means that the Controller will send HCI Data Packets to the Host with any lengths the Controller wants to use, and it is assumed that the data buffer sizes of the Host are unlimited. If flow control from the Controller to the Host is turned on, the Host_Buffer_Size command shall after a power-on or a reset always be sent by the Host before the first Host_Number_Of_Completed_Packets command is sent.<br>The Set Controller To Host Flow Control Command is used to turn flow control on or off.<br>The Host_ACL_Data_Packet_Length command parameter will be used to determine the size of the L2CAP segments contained in ACL Data Packets, which are transferred from the Controller to the Host.<br>The Host_Synchronous_Data_Packet_Length command parameter is used to determine the maximum size of HCI synchronous Data Packets. Both the Host and the Controller shall support command and event packets, where the data portion (excluding header) contained in the packets is 255 octets in size.<br>The Host_Total_Num_ACL_Data_Packets command parameter contains the total number of HCI ACL Data Packets that can be stored in the data buffers of the Host. The Controller will determine how the buffers are to be divided between different Connection_Handles.<br>The Host_Total_Num_Synchronous_Data_Packets command parameter gives the same information for HCI synchronous Data Packets.<br>Note: The Host_ACL_Data_Packet_Length and Host_Synchronous_Data_Packet_Length command parameters do not include the length of the HCI Data Packet header.<br>See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.3.39].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_HOST_BUFFER_SIZE_anchor">HCI_HOST_BUFFER_SIZE</a></h2><h3>Description</h3><p>The Host_Buffer_Size command is used by the Host to notify the Controller about the maximum size of the data portion of HCI ACL and synchronous Data Packets sent from the Controller to the Host. The Controller shall segment the data to be transmitted from the Controller to the Host according to these sizes, so that the HCI Data Packets will contain data with up to these sizes. The Host_Buffer_Size command also notifies the Controller about the total number of HCI ACL and synchronous Data Packets that can be stored in the data buffers of the Host. If flow control from the Controller to the Host is turned off, and the Host_Buffer_Size command has not been issued by the Host, this means that the Controller will send HCI Data Packets to the Host with any lengths the Controller wants to use, and it is assumed that the data buffer sizes of the Host are unlimited. If flow control from the Controller to the Host is turned on, the Host_Buffer_Size command shall after a power-on or a reset always be sent by the Host before the first Host_Number_Of_Completed_Packets command is sent.<br>The Set Controller To Host Flow Control Command is used to turn flow control on or off.<br>The Host_ACL_Data_Packet_Length command parameter will be used to determine the size of the L2CAP segments contained in ACL Data Packets, which are transferred from the Controller to the Host.<br>The Host_Synchronous_Data_Packet_Length command parameter is used to determine the maximum size of HCI synchronous Data Packets. Both the Host and the Controller shall support command and event packets, where the data portion (excluding header) contained in the packets is 255 octets in size.<br>The Host_Total_Num_ACL_Data_Packets command parameter contains the total number of HCI ACL Data Packets that can be stored in the data buffers of the Host. The Controller will determine how the buffers are to be divided between different Connection_Handles.<br>The Host_Total_Num_Synchronous_Data_Packets command parameter gives the same information for HCI synchronous Data Packets.<br>Note: The Host_ACL_Data_Packet_Length and Host_Synchronous_Data_Packet_Length command parameters do not include the length of the HCI Data Packet header.<br>See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.3.39].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Host_ACL_Data_Packet_Length</p>
 </td><td><p>2</p>
@@ -981,7 +983,7 @@ Units: dBm</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><h2><a name="HCI_HOST_NUMBER_OF_COMPLETED_PACKETS_anchor">HCI_HOST_NUMBER_OF_COMPLETED_PACKETS</a></h2><h3>Description</h3><p>The Host_Number_Of_Completed_Packets command is used by the Host to indicate to the Controller the number of HCI Data Packets that have been completed for each Connection_Handle since the previous Host_Number_Of_Completed_Packets command was sent to the Controller. This means that the corresponding buffer space has been freed in the Host. Based on this information, and the Host_Total_Num_ACL_Data_Packets and Host_Total_Num_Synchronous_Data_Packets command parameters of the Host_Buffer_Size command, the Controller can determine for which Connection_Handles the following HCI Data Packets should be sent to the Host. The command should only be issued by the Host if flow control in the direction from the Controller to the Host is on and there is at least one connection, or if the Controller is in local loopback mode. Otherwise, the command will be ignored by the Controller. When the Host has completed one or more HCI Data Packet(s) it shall send a Host_Number_Of_Completed_Packets command to the Controller, until it finally reports that all pending HCI Data Packets have been completed. The frequency at which this command is sent is manufacturer specific.<br>The Set Controller To Host Flow Control Command is used to turn flow control on or off. If flow control from the Controller to the Host is turned on, the Host_Buffer_Size command shall always be sent by the Host after a power-on or a reset before the first Host_Number_Of_Completed_Packets command is sent.<br>Note: The Host_Number_Of_Completed_Packets command is a special command in the sense that no event is normally generated after the command has completed. The command may be sent at any time by the Host when there is at least one connection, or if the Controller is in local loopback mode independent of other commands. The normal flow control for commands is not used for the Host_Number_Of_Completed_Packets command.<br>See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.3.40].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_HOST_NUMBER_OF_COMPLETED_PACKETS_anchor">HCI_HOST_NUMBER_OF_COMPLETED_PACKETS</a></h2><h3>Description</h3><p>The Host_Number_Of_Completed_Packets command is used by the Host to indicate to the Controller the number of HCI Data Packets that have been completed for each Connection_Handle since the previous Host_Number_Of_Completed_Packets command was sent to the Controller. This means that the corresponding buffer space has been freed in the Host. Based on this information, and the Host_Total_Num_ACL_Data_Packets and Host_Total_Num_Synchronous_Data_Packets command parameters of the Host_Buffer_Size command, the Controller can determine for which Connection_Handles the following HCI Data Packets should be sent to the Host. The command should only be issued by the Host if flow control in the direction from the Controller to the Host is on and there is at least one connection, or if the Controller is in local loopback mode. Otherwise, the command will be ignored by the Controller. When the Host has completed one or more HCI Data Packet(s) it shall send a Host_Number_Of_Completed_Packets command to the Controller, until it finally reports that all pending HCI Data Packets have been completed. The frequency at which this command is sent is manufacturer specific.<br>The Set Controller To Host Flow Control Command is used to turn flow control on or off. If flow control from the Controller to the Host is turned on, the Host_Buffer_Size command shall always be sent by the Host after a power-on or a reset before the first Host_Number_Of_Completed_Packets command is sent.<br>Note: The Host_Number_Of_Completed_Packets command is a special command in the sense that no event is normally generated after the command has completed. The command may be sent at any time by the Host when there is at least one connection, or if the Controller is in local loopback mode independent of other commands. The normal flow control for commands is not used for the Host_Number_Of_Completed_Packets command.<br>See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.3.40].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Number_Of_Handles</p>
 </td><td><p>1</p>
@@ -2119,8 +2121,6 @@ Frequency Range : 2402 MHz to 2480 MHz</p>
 </td><td></td></tr>
 <tr><td><a href="#ACI_HAL_SET_EVENT_MASK_anchor">ACI_HAL_SET_EVENT_MASK</a></td><td><p>0xFC1A</p>
 </td><td></td><td></td><td></td><td></td></tr>
-<tr><td><a href="#ACI_HAL_SET_SMP_ENG_CONFIG_anchor">ACI_HAL_SET_SMP_ENG_CONFIG</a></td><td><p>0xFC1B</p>
-</td><td></td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_HAL_GET_PM_DEBUG_INFO_anchor">ACI_HAL_GET_PM_DEBUG_INFO</a></td><td><p>0xFC1C</p>
 </td><td></td><td></td><td><p>Y</p>
 </td><td></td></tr>
@@ -2220,8 +2220,7 @@ Static Random Address; 6 bytes</li></td></tr>
 </td><td><li>0x00: Standard Power</li><li>0x01: High Power</li></td></tr>
 <tr><td><p>PA_Level</p>
 </td><td><p>1</p>
-</td><td><p>Power amplifier output level. Output power is indicative and it depends on the PCB layout and associated
-components.Here the values are given at the IC pin</p>
+</td><td><p>Power amplifier output level. Output power is indicative and depends on the PCB layout and associated components. Here the values are given at the STM32WB output.</p>
 </td><td><li>0x00: -40 dBm</li><li>0x01: -20.85 dBm</li><li>0x02: -19.75 dBm</li><li>0x03: -18.85 dBm</li><li>0x04: -17.6 dBm</li><li>0x05: -16.5 dBm</li><li>0x06: -15.25 dBm</li><li>0x07: -14.1 dBm</li><li>0x08: -13.15 dBm</li><li>0x09: -12.05 dBm</li><li>0x0A: -10.9 dBm</li><li>0x0B: -9.9 dBm</li><li>0x0C: -8.85 dBm</li><li>0x0D: -7.8 dBm</li><li>0x0E: -6.9 dBm</li><li>0x0F: -5.9 dBm</li><li>0x10: -4.95 dBm</li><li>0x11: -4 dBm</li><li>0x12: -3.15 dBm</li><li>0x13: -2.45 dBm</li><li>0x14: -1.8 dBm</li><li>0x15: -1.3 dBm</li><li>0x16: -0.85 dBm</li><li>0x17: -0.5 dBm</li><li>0x18: -0.15 dBm</li><li>0x19: 0 dBm</li><li>0x1A: +1 dBm</li><li>0x1B: +2 dBm</li><li>0x1C: +3 dBm</li><li>0x1D: +4 dBm</li><li>0x1E: +5 dBm</li><li>0x1F: +6 dBm</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -2312,18 +2311,6 @@ T = N * 0.625 ms.</p>
 </td><td><p>4</p>
 </td><td><p>Mask to enable/disable generation of HAL events</p>
 </td><td><p>Bitmask of:</p><li>0x00000000: No events specified (Default)</li><li>0x00000001: ACI_HAL_SCAN_REQ_REPORT_EVENT</li></td></tr>
-</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Status</p>
-</td><td><p>1</p>
-</td><td><p>Status error code.</p>
-</td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_HAL_SET_SMP_ENG_CONFIG_anchor">ACI_HAL_SET_SMP_ENG_CONFIG</a></h2><h3>Description</h3><p>This command is used to provide a specific engineering setup to the Security Manager Protocol Layer. It may be used during development/debug only!</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>SMP_Config</p>
-</td><td><p>4</p>
-</td><td><p>Mask to configure SMP engineering knobs</p>
-</td><td><p>Bitmask of:</p><li>0x00000000: Default config (all reset)</li><li>0x00000001: Cheat Level 1 ON</li><li>0x00000002: RFU</li><li>0x00000003: Cheat Level 3 ON</li><li>0x00000004: RFU</li><li>0x00000005: Cheat Level 5 ON</li><li>0x00000006: Cheat Level 6 ON</li><li>0x00000007: Cheat Level 7 ON</li><li>0x00000010: DBG messages ON</li><li>0x00000100: Debug Public Key ON</li><li>0x00000107: Debug KEY On + DBG msg Off + CL=7</li><li>0x00000117: Debug KEY On + DBG msg On + CL=7</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -2586,6 +2573,12 @@ frequency deviation (250kHz).</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td><td></td></tr>
+<tr><td><a href="#ACI_GAP_ADDITIONAL_BEACON_START_anchor">ACI_GAP_ADDITIONAL_BEACON_START</a></td><td><p>0xFCB0</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_GAP_ADDITIONAL_BEACON_STOP_anchor">ACI_GAP_ADDITIONAL_BEACON_STOP</a></td><td><p>0xFCB1</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_GAP_ADDITIONAL_BEACON_SET_DATA_anchor">ACI_GAP_ADDITIONAL_BEACON_SET_DATA</a></td><td><p>0xFCB2</p>
+</td><td></td><td></td><td></td><td></td></tr>
 </table><h2><a name="ACI_GAP_SET_NON_DISCOVERABLE_anchor">ACI_GAP_SET_NON_DISCOVERABLE</a></h2><h3>Description</h3><p>Put the device in non-discoverable mode. This command disables the LL advertising.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -3775,6 +3768,63 @@ Time = N * 0.625 msec.</p>
 <tr><td><p>Peer_Identity_Address</p>
 </td><td><p>6</p>
 </td><td><p>Public or Random (static) Identity address of the peer device</p>
+</td><td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_ADDITIONAL_BEACON_START_anchor">ACI_GAP_ADDITIONAL_BEACON_START</a></h2><h3>Description</h3><p>This command starts an advertising beacon. It allows additional advertising packets to be transmitted independently of the packets transmitted with GAP advertising commands such as <a href="#ACI_GAP_SET_DISCOVERABLE_anchor">ACI_GAP_SET_DISCOVERABLE</a> or <a href="#ACI_GAP_SET_LIMITED_DISCOVERABLE_anchor">ACI_GAP_SET_LIMITED_DISCOVERABLE</a>.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Adv_Interval_Min</p>
+</td><td><p>2</p>
+</td><td><p>Minimum advertising interval.
+Time = N * 0.625 msec.</p>
+</td><td><li>0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) </li></td></tr>
+<tr><td><p>Adv_Interval_Max</p>
+</td><td><p>2</p>
+</td><td><p>Maximum advertising interval.
+Time = N * 0.625 msec.</p>
+</td><td><li>0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) </li></td></tr>
+<tr><td><p>Adv_Channel_Map</p>
+</td><td><p>1</p>
+</td><td><p>Advertising channel map.
+Default: 00000111b (all channels enabled).</p>
+</td><td><p>Bitmask of:</p><li>0x01: ch 37</li><li>0x02: ch 38</li><li>0x04: ch 39</li></td></tr>
+<tr><td><p>Own_Address_Type</p>
+</td><td><p>1</p>
+</td><td><p>Own address type: public or static random.</p>
+</td><td><li>0x00: Public Device Address</li><li>0x01: Random Device Address</li></td></tr>
+<tr><td><p>Own_Address</p>
+</td><td><p>6</p>
+</td><td><p>Public Device Address or Random Device Address.</p>
+</td><td></tr>
+<tr><td><p>PA_Level</p>
+</td><td><p>1</p>
+</td><td><p>Power amplifier output level. Output power is indicative and depends on the PCB layout and associated components. Here the values are given at the STM32WB output.</p>
+</td><td><li>0x00: -40 dBm</li><li>0x01: -20.85 dBm</li><li>0x02: -19.75 dBm</li><li>0x03: -18.85 dBm</li><li>0x04: -17.6 dBm</li><li>0x05: -16.5 dBm</li><li>0x06: -15.25 dBm</li><li>0x07: -14.1 dBm</li><li>0x08: -13.15 dBm</li><li>0x09: -12.05 dBm</li><li>0x0A: -10.9 dBm</li><li>0x0B: -9.9 dBm</li><li>0x0C: -8.85 dBm</li><li>0x0D: -7.8 dBm</li><li>0x0E: -6.9 dBm</li><li>0x0F: -5.9 dBm</li><li>0x10: -4.95 dBm</li><li>0x11: -4 dBm</li><li>0x12: -3.15 dBm</li><li>0x13: -2.45 dBm</li><li>0x14: -1.8 dBm</li><li>0x15: -1.3 dBm</li><li>0x16: -0.85 dBm</li><li>0x17: -0.5 dBm</li><li>0x18: -0.15 dBm</li><li>0x19: 0 dBm</li><li>0x1A: +1 dBm</li><li>0x1B: +2 dBm</li><li>0x1C: +3 dBm</li><li>0x1D: +4 dBm</li><li>0x1E: +5 dBm</li><li>0x1F: +6 dBm</li></td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_ADDITIONAL_BEACON_STOP_anchor">ACI_GAP_ADDITIONAL_BEACON_STOP</a></h2><h3>Description</h3><p>This command stops the advertising beacon started with <a href="#ACI_GAP_ADDITIONAL_BEACON_START_anchor">ACI_GAP_ADDITIONAL_BEACON_START</a>.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GAP_ADDITIONAL_BEACON_SET_DATA_anchor">ACI_GAP_ADDITIONAL_BEACON_SET_DATA</a></h2><h3>Description</h3><p>This command sets the data transmitted by the advertising beacon started with <a href="#ACI_GAP_ADDITIONAL_BEACON_START_anchor">ACI_GAP_ADDITIONAL_BEACON_START</a>. If the advertising beacon is already started, the new data is used in subsequent beacon advertising events.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Adv_Data_Length</p>
+</td><td><p>1</p>
+</td><td><p>Length of Adv_Data in octets</p>
+</td><td></tr>
+<tr><td><p>Adv_Data</p>
+</td><td><p>Adv_Data_Length</p>
+</td><td><p>Advertising data used by the device while advertising.</p>
 </td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>

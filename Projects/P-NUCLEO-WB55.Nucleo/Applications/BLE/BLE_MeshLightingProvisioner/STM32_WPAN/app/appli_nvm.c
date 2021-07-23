@@ -1072,7 +1072,7 @@ MOBLE_RESULT AppliPrvnNvm_FactorySettingReset(MOBLEUINT8 *flag)
      
       /* Load last Provisioner data saved from nvm */       
       memcpy((void*)PrvnNvm_Reqs.prvnData, 
-             (void*)(PRVN_NVM_BASE_OFFSET + PRVN_NVM_SUBPAGE_OFFSET(currSubPageIdx)),
+             (void*)(PRVN_NVM_BASE_OFFSET + PRVN_NVM_SUBPAGE_OFFSET(currSubPageIdx-1)),
               PRVN_NVM_CHUNK_SIZE);    
 
       NodeUnderProvisionParam.nodeAddress = CopyU8LittleEndienArrayToU16word (&PrvnNvm_Reqs.prvnData[0]);  

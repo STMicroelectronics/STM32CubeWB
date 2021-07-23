@@ -172,3 +172,5 @@ SPI1.VirtualType=VM_SLAVE
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=SPI_FullDuplex_ComDMA_Slave
+ProjectManager.ExampleSource=CubeFw

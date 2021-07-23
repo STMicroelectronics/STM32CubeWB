@@ -123,12 +123,12 @@ typedef struct
 /**
  * @brief task set.
  */
-static UTIL_SEQ_bm_t TaskSet;
+static volatile UTIL_SEQ_bm_t TaskSet;
 
 /**
  * @brief task mask.
  */
-static UTIL_SEQ_bm_t TaskMask = UTIL_SEQ_ALL_BIT_SET;
+static volatile UTIL_SEQ_bm_t TaskMask = UTIL_SEQ_ALL_BIT_SET;
 
 /**
  * @brief super mask.
@@ -138,7 +138,7 @@ static UTIL_SEQ_bm_t SuperMask = UTIL_SEQ_ALL_BIT_SET;
 /**
  * @brief evt set mask.
  */
-static UTIL_SEQ_bm_t EvtSet = UTIL_SEQ_NO_BIT_SET;
+static volatile UTIL_SEQ_bm_t EvtSet = UTIL_SEQ_NO_BIT_SET;
 
 /**
  * @brief evt expected mask.
@@ -206,6 +206,7 @@ void UTIL_SEQ_Run( UTIL_SEQ_bm_t Mask_bm )
   uint32_t counter;
   UTIL_SEQ_bm_t current_task_set;
   UTIL_SEQ_bm_t super_mask_backup;
+  UTIL_SEQ_bm_t local_taskset;
 
   /**
    *  When this function is nested, the mask to be applied cannot be larger than the first call
@@ -222,7 +223,8 @@ void UTIL_SEQ_Run( UTIL_SEQ_bm_t Mask_bm )
    * If the waited event is there, exit from  UTIL_SEQ_Run() to return to the
    * waiting task
    */
-  while(((TaskSet & TaskMask & SuperMask) != 0U) && ((EvtSet & EvtWaited)==0U))
+  local_taskset = TaskSet;
+  while(((local_taskset & TaskMask & SuperMask) != 0U) && ((EvtSet & EvtWaited)==0U))
   {
     counter = 0U;
     /**
@@ -273,6 +275,8 @@ void UTIL_SEQ_Run( UTIL_SEQ_bm_t Mask_bm )
     UTIL_SEQ_EXIT_CRITICAL_SECTION( );
     /** Execute the task */
     TaskCb[CurrentTaskIdx]( );
+    
+    local_taskset = TaskSet;
   }
 
   /* the set of CurrentTaskIdx to no task running allows to call WaitEvt in the Pre/Post ilde context */
@@ -280,7 +284,8 @@ void UTIL_SEQ_Run( UTIL_SEQ_bm_t Mask_bm )
   UTIL_SEQ_PreIdle( );
   
   UTIL_SEQ_ENTER_CRITICAL_SECTION_IDLE( );
-  if (!(((TaskSet & TaskMask & SuperMask) != 0U) || ((EvtSet & EvtWaited)!= 0U))) 
+  local_taskset = TaskSet;
+  if (!(((local_taskset & TaskMask & SuperMask) != 0U) || ((EvtSet & EvtWaited)!= 0U))) 
   {
 	UTIL_SEQ_Idle( );
   }
@@ -320,9 +325,12 @@ void UTIL_SEQ_SetTask( UTIL_SEQ_bm_t TaskId_bm , uint32_t Task_Prio )
 uint32_t UTIL_SEQ_IsSchedulableTask( UTIL_SEQ_bm_t TaskId_bm)
 {
   uint32_t _status;
+  UTIL_SEQ_bm_t local_taskset;
+  
   UTIL_SEQ_ENTER_CRITICAL_SECTION();
 
-  _status = ((TaskSet & TaskMask & SuperMask & TaskId_bm) == TaskId_bm)? 1U: 0U;
+  local_taskset = TaskSet;
+  _status = ((local_taskset & TaskMask & SuperMask & TaskId_bm) == TaskId_bm)? 1U: 0U;
 
   UTIL_SEQ_EXIT_CRITICAL_SECTION();
   return _status;
@@ -424,7 +432,12 @@ void UTIL_SEQ_WaitEvt(UTIL_SEQ_bm_t EvtId_bm)
    */
   CurrentTaskIdx = current_task_idx;
 
+  UTIL_SEQ_ENTER_CRITICAL_SECTION( );
+
   EvtSet &= (~EvtWaited);
+
+  UTIL_SEQ_EXIT_CRITICAL_SECTION( );
+
   EvtWaited = event_waited_id_backup;
 
   return;

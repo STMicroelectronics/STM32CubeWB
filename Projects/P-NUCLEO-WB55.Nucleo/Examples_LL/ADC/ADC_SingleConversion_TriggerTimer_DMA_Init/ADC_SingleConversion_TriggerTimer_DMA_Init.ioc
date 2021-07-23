@@ -159,3 +159,5 @@ VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 VP_TIM2_VS_ClockSourceITR.Mode=TriggerSource_ITR0
 VP_TIM2_VS_ClockSourceITR.Signal=TIM2_VS_ClockSourceITR
 board=custom
+ProjectManager.Example=ADC_SingleConversion_TriggerTimer_DMA_Init
+ProjectManager.ExampleSource=CubeFw

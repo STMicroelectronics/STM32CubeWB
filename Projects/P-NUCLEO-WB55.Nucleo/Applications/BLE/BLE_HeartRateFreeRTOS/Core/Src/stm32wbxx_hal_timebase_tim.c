@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    stm32g0xx_hal_timebase_tim.c
+  * @file    stm32wbxx_hal_timebase_tim.c
   * @author  MCD Application Team
   * @brief   HAL time base based on the hardware TIM.
   *
@@ -16,9 +16,9 @@
   ==============================================================================
     [..]
     This file must be copied to the application folder and modified as follows:
-    (#) Rename it to 'stm32g0xx_hal_timebase_tim.c'
+    (#) Rename it to 'stm32wbxx_hal_timebase_tim.c'
     (#) Add this file and the TIM HAL driver files to your project and make sure
-       HAL_TIM_MODULE_ENABLED is defined in stm32l4xx_hal_conf.h
+       HAL_TIM_MODULE_ENABLED is defined in stm32wbxx_hal_conf.h
 
     [..]
     (@) The application needs to ensure that the time base is always set to 1 millisecond
@@ -88,6 +88,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 
   /* Enable the TIM17 global Interrupt */
   HAL_NVIC_EnableIRQ(TIM1_TRG_COM_TIM17_IRQn);
+
   /* Enable TIM17 clock */
   __HAL_RCC_TIM17_CLK_ENABLE();
 
@@ -112,6 +113,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   htim17.Init.Prescaler = uwPrescalerValue;
   htim17.Init.ClockDivision = 0;
   htim17.Init.CounterMode = TIM_COUNTERMODE_UP;
+
   if(HAL_TIM_Base_Init(&htim17) == HAL_OK)
   {
     /* Start the TIM time Base generation in interrupt mode */

@@ -163,7 +163,7 @@ To get the traces in real time, you can connect an HyperTerminal to the STLink V
 
 **** EXTPA ****
 
-The Dory is not able to transmit with a power higher than 5 dbm (TBC). As such it is
+The STM32WB is not able to transmit with a power higher than 5 dbm. As such it is
 possible to use the EXT PA as an additional supply source.
 
 Signals:

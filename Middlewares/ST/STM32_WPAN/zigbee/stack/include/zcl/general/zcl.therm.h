@@ -4,7 +4,7 @@
  * @brief ZCL Thermostat cluster header
  * ZCL 7 section 6.3
  * ZCL 8 section 6.3
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_THERM_H
@@ -17,7 +17,7 @@
  * Server Attributes
  * TSTAT.S.A0000 | LocalTemperature | True
  * TSTAT.S.A0000.Report.Tx | LocalTemperature | True
- * TSTAT.S.A0001 | OutdoorTemperature | False | Optional
+ * TSTAT.S.A0001 | OutdoorTemperature | True | Optional
  * TSTAT.S.A0002 | Occupancy | False | Optional
  * TSTAT.S.A0003 | AbsMinHeatSetpointLimit | False | Optional
  * TSTAT.S.A0004 | AbsMaxHeatSetpointLimit | False | Optional

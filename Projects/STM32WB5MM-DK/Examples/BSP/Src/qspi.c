@@ -55,7 +55,7 @@ void QSPI_demo (void)
   BSP_QSPI_Info_t pQSPI_Info;
   uint8_t status;
   S25FL128S_Interface_t Tab[3]={S25FL128S_SPI_MODE, S25FL128S_DPI_MODE, S25FL128S_QPI_MODE};
-  uint8_t* Tab1[3]={"SPI MODE", "DPI MODE", "QPI MODE"};
+  char* Tab1[3]={"SPI MODE", "DPI MODE", "QPI MODE"};
   
   /*##-1- Configure the QSPI device ##########################################*/
   /* QSPI device configuration */

@@ -142,7 +142,6 @@ tBleStatus hci_set_controller_to_host_flow_control( uint8_t Flow_Control_Enable 
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x03;
   rq.ocf = 0x031;
-  rq.event = 0x0F;
   rq.cparam = cmd_buffer;
   rq.clen = index_input;
   rq.rparam = &status;
@@ -173,7 +172,6 @@ tBleStatus hci_host_buffer_size( uint16_t Host_ACL_Data_Packet_Length,
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x03;
   rq.ocf = 0x033;
-  rq.event = 0x0F;
   rq.cparam = cmd_buffer;
   rq.clen = index_input;
   rq.rparam = &status;
@@ -198,7 +196,6 @@ tBleStatus hci_host_number_of_completed_packets( uint8_t Number_Of_Handles,
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x03;
   rq.ocf = 0x035;
-  rq.event = 0x0F;
   rq.cparam = cmd_buffer;
   rq.clen = index_input;
   rq.rparam = &status;

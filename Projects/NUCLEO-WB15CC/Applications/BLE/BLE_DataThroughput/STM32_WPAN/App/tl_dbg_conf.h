@@ -48,7 +48,7 @@ extern "C" {
 #define TL_HCI_EVT_DBG_EN       0   /* Reports BLE Asynchronous Events received from CPU2 */
 #define TL_HCI_EVT_DBG_RAW_EN   0   /* Reports raw data BLE Asynchronous Events received from CPU2 */
 
-#define TL_MM_DBG_EN            0   /* Reports the information of the buffer released to CPU2 */
+#define TL_MM_DBG_EN            0   /* Reports the informations of the buffer released to CPU2 */
 
 /**
  * Macro definition

@@ -237,8 +237,13 @@ static void LpTimerStart( uint32_t time_to_sleep )
 
   /* Converts the number of FreeRTOS ticks into hw timer tick */
 
-  time = (time_to_sleep * 1000 * 1000 );
+  time = (time_to_sleep * 1000LL * 1000LL );
   time = time / ( CFG_TS_TICK_VAL * configTICK_RATE_HZ );
+
+  if(time > 0xFFFF0000)
+  {
+    time = 0xFFFF0000; /* maximum value */
+  }
 
   HW_TS_Start(LpTimerContext.LpTimerFreeRTOS_Id, (uint32_t)time);
 
@@ -280,7 +285,7 @@ static void LpEnter( void )
 static uint32_t LpGetElapsedTime( void )
 {
   uint64_t val_ticks, time_us, diff_ps;
-  uint32_t LpTimeLeftOnExit;
+  uint32_t LpTimeLeftOnExit, time2_us;
 
   LpTimeLeftOnExit = HW_TS_RTC_ReadLeftTicksToCount();
   time_us = (CFG_TS_TICK_VAL) * (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - LpTimeLeftOnExit);
@@ -296,12 +301,10 @@ static uint32_t LpGetElapsedTime( void )
   /* Save the time shift for next time */
   LpTimerContext.LpTimeDiffVal += diff_ps;
 
-  while(LpTimerContext.LpTimeDiffVal >= (uint64_t)(1000 * 1000))
-  {
-    /* Reports the time difference into returned time elapsed value */
-    time_us++;
-    LpTimerContext.LpTimeDiffVal -= (uint64_t)(1000 * 1000);
-  }
+  /* Reports the time difference into returned time elapsed value */
+  time2_us = LpTimerContext.LpTimeDiffVal / (1000ULL * 1000ULL);
+  LpTimerContext.LpTimeDiffVal = LpTimerContext.LpTimeDiffVal - time2_us * (1000ULL * 1000ULL);
+  time_us += time2_us;
 
   /* Convert uS time into OS ticks */
   val_ticks = time_us * configTICK_RATE_HZ;

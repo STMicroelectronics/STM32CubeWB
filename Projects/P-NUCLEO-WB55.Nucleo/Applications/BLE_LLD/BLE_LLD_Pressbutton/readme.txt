@@ -20,12 +20,12 @@
 
 @par Example Description
 
-How to make blinking LED between 2 STM32WB55xx boards by pressing buttons.
+How to control remote LEDs with BLE LLD.
 
 @note The objectives are to communicate using BLE_LLD between 2 boards,
       in BLE Radio format not BLE Stack protocol.
-      BLE_LLD_Pressbutton can use 2 terminal to display communication between 2 boards.
-      BLE_LLD_Pressbutton can be alos used with BLE_LLD_Lowpower.
+      BLE_LLD_Pressbutton can use 2 terminals to display communication between 2 boards.
+      BLE_LLD_Pressbutton can be used with BLE_LLD_Lowpower.
       But Appli is based to show in a very simple way a communication between 2 boards:
       It is based on pressing button and blinking answer
  
@@ -36,11 +36,11 @@ How to make blinking LED between 2 STM32WB55xx boards by pressing buttons.
       Over LL layer there is HAL level
 	It contains a reduced number of API to Send/Receive BLE Radio format packet with predefined parameters
 	It works by calling a set of LL API
-	It make simple and fast to Send/receive Packet
+	It make simple and fast to Send/Receive Packet
 	But It does allow the user to change all the Radio parameters
 		
 @note LL is for user that want to customize the Radio and BLE parameters, it is more complex to implement
-      HAL is for user that want to Send/Receive in a very simple way less complex, without configuring LL 
+      HAL is for user that want to Send/Receive in a very simple way less complex, without configuring LL
       ble_lld module contains LLD API HAL and LL API
       app_ble_lld module contains Transport Layer Command call from CPU1 to CPU2 + Buffer management + IT Radio management from CPU2
 
@@ -51,13 +51,10 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
 @par Directory contents 
     
   - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/app_ble_lld.h     Header for app_ble_lld.c module
-  - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/ble_lld.h         Header for ble_lld.c module
-  - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/ble_lld_private.h Header for ble_lld private module
+  - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/pressbutton_app.h Header for Pressbutton Application pressbutton_app.c module
   - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/tl_dbg_conf.h     Header for ble_lld debug module
-  - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/ring_buffer.h     Header for ring buffer.c module
   - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/app_ble_lld.c     contains TL management and Buffer for BLE LLD Application
-  - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/ble_lld.c         contains LL and HAL API
-  - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/ring_buffer.c     contains ring buffer API
+  - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/App/pressbutton_app.c Pressbutton program
   - BLE_LLD/BLE_LLD_Pressbutton/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Inc/app_common.h            Header for all modules with common definition
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Inc/app_conf.h              Parameters configuration file of the application
@@ -65,7 +62,6 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Inc/gpio_lld.h              Parameters for gpio configuration file of the application
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Inc/hw_conf.h               Configuration file of the HW
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Inc/hw_if.h                 Configuration file of the HW
-  - BLE_LLD/BLE_LLD_Pressbutton/Core/Inc/pressbutton_app.h       Header for Pressbutton Application pressbutton_app.c module
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Inc/main.h                  Header for main.c module
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Inc/stm_logging.h	         Header for stm_logging.c module
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Inc/stm32_lpm_if.h          Header for stm32_lpm_if.c module
@@ -75,7 +71,6 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Src/app_entry.c             Initialization of the application
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Src/gpio_lld.c              GPIO for application
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Src/hw_uart.c               UART Driver
-  - BLE_LLD/BLE_LLD_Pressbutton/Core/Src/pressbutton_app.c       Pressbutton program
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Src/main.c                  Main program
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Src/stm_logging.c           Logging for application
   - BLE_LLD/BLE_LLD_Pressbutton/Core/Src/stm32_lpm_if.c          Low Power Manager Interface
@@ -110,7 +105,7 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
 @par How to use it ? 
 
 In order to make the program work, you must do the following: 
- - Connect 2 STM32WB55xx-Nucleo boards to your PC 
+ - Connect 2 STM32WB55xx-Nucleo boards to your PC
  - Open your preferred toolchain 
  - Rebuild all files and load your image into one target memory
  - Rebuild all files of BLE_LLD/BLE_LLD_Pressbutton application 
@@ -118,60 +113,27 @@ In order to make the program work, you must do the following:
    + load stm32wb5x_BLE_LLD_fw.bin
  - Run the application
  
-BLE_LLD_Pressbutton used alternatively LL API and HAL API for Send/receive by pressing SW1
+BLE_LLD_Pressbutton used only HAL API for Send/Receive
 
-If you want to control this application, you can directly press buttons 
+If you want to control this application, you can press buttons 
 In this order and described into main.c:
  
-After power On or Reset  (ALL the LED are OFF)
+After power On or Reset  (ALL the LED are OFF) all the Boards are in Received mode
    
- 1) Press SW2 or SW3 to Init =>  GREEN and RED LED becomes ON after Init
-    LL API : BLUE LED is OFF
-    -   BLE_LLD_Init(HS_STARTUP_TIME, 1, BLE_LLD_hot_ana_config_table, ENABLE); 
-    ...
-    HAL API: BLUE LED is ON
-    -   HAL_BLE_Init();
+ 1) Press button SW on first board to interrupt Received mode and Send LED number to second board:
+      -SW Number 1 (SW1) for LED Number 1 (LED1)
+      -SW Number 2 (SW2) for LED Number 2 (LED2)
+      -SW Number 3 (SW3) for LED Number 3 (LED3)
 
-    To send    a Packet go to 2)
-    or
-    To receive a Packet go to 3)
- 
- 2) Press SW2 for Send 500 Chained Packets                             ===>    GREEN is switched off during TX
-    LL API : BLUE LED is OFF
-    -   BLE_LLD_MakeActionPacketPending(); // after setting Packet is pending and start TX after TIMEOUT IT
-    ...
-    HAL API: BLUE LED is ON
-    -   HAL_BLE_SendPacketWithAck();  // send is done using HAL API
+ 2) When Second board Receive LED number:
+      -LED1 : LED1 is Toggling
+             "Led 1 is Toggling" is print
+      -LED2 : LED2 is Toggling
+             "Led 2 is Toggling" is print
+      -LED3 : LED3 is Toggling
+             "Led 3 is Toggling" is print
 
-    or
- 
- 3) Press SW3 for receiving 400 Packets (HAL) and 500 Packets (LL)     ===>    RED is switched off during RX
-    LL API : BLUE LED is OFF
-    -   BLE_LLD_MakeActionPacketPending(); // after setting Packet is pending and start RX after TIMEOUT IT
-    ...
-    HAL API: BLUE LED is ON
-    -   HAL_BLE_ReceivePacketWithAck();  // receive is done using HAL API
-    
-      
- 4) Press SW1 (switch API and AccessAddress)
-    using LL API is default => BLUE LED is OFF (if SW1 has not been pressed)
-    using HAL API           => BLUE LED is ON 
-    press SW1 switch from one API to another
-   
-   
-When one board Send :    RED LED is ON
-When one board Receive:  GREEN LED is ON
-
-When one board Send and other Receive and communicates with ACK, 
-Sending board GREEN LED toggle (Terminal shows the TX with RX Ack communication)
-Receiving board RED LED toggle (Terminal shows the RX with TX Ack communication)
- 
-At the END GREEN and RED LED are ON (Terminal shows the final number of TX/RX)
-
-BLE_LLD_Pressbutton can be used wit BLE_LLD_Lowpower.
-Instead of configuring the second board with Send or Receive mode.
-BLE_LLD_Lowpower automatically and alternatively Send and Receive Packets, nothing to do
-Then, Only first board with BLE_LLD_Pressbutton is managed with button 
+ 3) To Switch off the LED press Reset or press the SW Number corresponding of the LED that is ON
 
 
 Serial Port Setup TERMINAL

@@ -68,6 +68,16 @@ typedef PACKED_STRUCT
   uint32_t  Data[OT_CMD_BUFFER_SIZE];
 }Thread_OT_Cmd_Request_t;
 
+/* Structure of the messages exchanged between M0 and M4 in RCP case */
+#ifdef OPENTHREAD_RCP
+#define RCP_PACKET_BUFFER_SIZE 256
+typedef PACKED_STRUCT
+{
+  uint32_t  RCP_packetCnt;
+  uint32_t  RCP_packetLength;
+  uint8_t  RCP_packetPayload[RCP_PACKET_BUFFER_SIZE];
+} RCP_Packet_t;
+#endif
 
 /* List of messages sent by the M4 to the M0 */
 typedef enum

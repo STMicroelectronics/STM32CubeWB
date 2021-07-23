@@ -123,3 +123,5 @@ VP_LPTIM1_VS_LPTIM_counterModeInternalClock.Signal=LPTIM1_VS_LPTIM_counterModeIn
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=LPTIM_Timeout
+ProjectManager.ExampleSource=CubeFw

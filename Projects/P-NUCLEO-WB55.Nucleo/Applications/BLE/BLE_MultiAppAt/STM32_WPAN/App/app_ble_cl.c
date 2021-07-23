@@ -393,7 +393,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_CL_Notification( void *pckt )
             numeric_value = evt_numeric_value->Numeric_Value;
             sprintf(numeric_value_str, "%d", (int)numeric_value);
             UART_App_SendData((char *)numeric_value_str, (uint8_t)(strlen(numeric_value_str)));
-            UART_App_SendData(":PREQ?\r\n", 8);
+            UART_App_SendData(":PREQ?\r\n", 8);								
         break;  
         
       case ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE :

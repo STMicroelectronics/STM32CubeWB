@@ -224,6 +224,7 @@ static void MX_RNG_Init(void)
 
   /* USER CODE END RNG_Init 1 */
   LL_RNG_Enable(RNG);
+  LL_RNG_EnableClkErrorDetect(RNG);
   /* USER CODE BEGIN RNG_Init 2 */
 
   /* USER CODE END RNG_Init 2 */

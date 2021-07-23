@@ -1,0 +1,13 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\STM32WB5MM-DK;..\..\..\..\..\..\Drivers\BSP\Components\ssd1315;..\..\..\..\..\..\Drivers\BSP\Components\Common;..\..\..\..\..\..\Utilities\Fonts;..\..\..\..\..\..\Utilities\LCD;..\..\..\..\..\..\Drivers\BSP\Components\ism330dhcx;..\..\..\..\..\..\Middlewares\ST\STM32_Audio\Addons\PDM\Inc;..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Class\AUDIO\Inc;..\..\..\..\..\..\Drivers\CMSIS\DSP\Source\FilteringFunctions;..\..\..\..\..\..\Drivers\CMSIS\DSP\Include;..\..\..\..\..\..\Drivers\BSP\Components\stts22h;..\..\..\..\..\..\Drivers\BSP\Components\s25fl128s;/../Core/Src/vl53l0x;
+[Others]
+Define=STM32WL55MM_DK
+HALModule=SAI;IPCC;
+[Groups]
+Drivers/BSP/STM32WB5MM-DK=../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk.c;../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_audio.c;../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_bus.c;../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_env_sensors.c;../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_env_sensors_ex.c;../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_lcd.c;../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_motion_sensors.c;../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_motion_sensors_ex.c;../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_qspi.c;
+Drivers/BSP/Components=../../../../../../Drivers/BSP/Components/ism330dhcx/ism330dhcx.c;../../../../../../Drivers/BSP/Components/ism330dhcx/ism330dhcx_reg.c;../../../../../../Drivers/BSP/Components/s25fl128s/s25fl128s.c;../../../../../../Drivers/BSP/Components/ssd1315/ssd1315.c;../../../../../../Drivers/BSP/Components/ssd1315/ssd1315_reg.c;../../../../../../Drivers/BSP/Components/stts22h/stts22h.c;../../../../../../Drivers/BSP/Components/stts22h/stts22h_reg.c
+Doc=../readme.txt;
+Utilities=../../../../../../Utilities/LCD/stm32_lcd.c
+Application/User/STM32_WPAN/App=../STM32_WPAN/App/env_server_app.c;../STM32_WPAN/App/motenv_server_app.c;../STM32_WPAN/App/wb5m_sensor_stm.c;../STM32_WPAN/App/motion_server_app.c
+Application/User/Core=../Core/Src/app_vl53l0x.c
+Application/User/Core/vl53l0x=../Core/Src/vl53l0x/vl53l0x_api.c;../Core/Src/vl53l0x/vl53l0x_api_calibration.c;../Core/Src/vl53l0x/vl53l0x_api_core.c;../Core/Src/vl53l0x/vl53l0x_api_ranging.c;../Core/Src/vl53l0x/vl53l0x_api_strings.c;../Core/Src/vl53l0x/vl53l0x_platform_log.c;../Core/Src/vl53l0x/vl53l0x_tof.c;

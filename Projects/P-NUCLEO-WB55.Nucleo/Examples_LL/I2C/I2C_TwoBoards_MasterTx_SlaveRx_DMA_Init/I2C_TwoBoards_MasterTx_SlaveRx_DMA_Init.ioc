@@ -185,3 +185,5 @@ SH.GPXTI4.ConfNb=1
 VP_SYS_VS_Systick.Mode=SysTick
 VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 board=custom
+ProjectManager.Example=I2C_TwoBoards_MasterTx_SlaveRx_DMA_Init
+ProjectManager.ExampleSource=CubeFw

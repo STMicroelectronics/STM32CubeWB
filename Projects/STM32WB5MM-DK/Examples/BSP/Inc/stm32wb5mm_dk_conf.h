@@ -32,11 +32,11 @@ extern "C" {
 
 /* Environmental Sensors usage */
 #define USE_ENV_SENSOR_STTS22H_0             1U
-#define USE_ENV_SENSOR_LPS22HH_0             1U
+#define USE_ENV_SENSOR_LPS22HH_0             0U
 
 /* Motion Sensors usage */
 #define USE_MOTION_SENSOR_ISM330DHCX_0       1U
-#define USE_MOTION_SENSOR_IIS2MDC_0          1U
+#define USE_MOTION_SENSOR_IIS2MDC_0          0U
 
 /* COM  port usage */
 #define USE_BSP_COM_FEATURE                  1U

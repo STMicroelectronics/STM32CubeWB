@@ -1,12 +1,12 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : app_conf.h
   * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -30,12 +31,12 @@
  * Application Config
  ******************************************************************************/
 
-/**< generic parameters ********************************************************/
+/**< generic parameters ******************************************************/
 
 /**
  * Define Tx Power
- */   
-#define CFG_TX_POWER                      (0x18) /**< 0dbm */
+ */
+#define CFG_TX_POWER                      (0x18) /* -0.15dBm */
 
 /**
  * Radio activity event
@@ -94,7 +95,8 @@
 #define CFG_BLE_ATT_VALUE_ARRAY_SIZE    (1344)
 
 /**
- * Prepare Write List size in terms of number of packet with ATT_MTU=23 bytes
+ * Prepare Write List size in terms of number of packet
+ * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS is set to 1"
  */
 #define CFG_BLE_PREPARE_WRITE_LIST_SIZE         BLE_PREP_WRITE_X_ATT(CFG_BLE_MAX_ATT_MTU)
 
@@ -129,9 +131,9 @@
 
 /**
  *  Source for the low speed clock for RF wake-up
- *  1 : external high speed crystal HSE/32/32 
+ *  1 : external high speed crystal HSE/32/32
  *  0 : external low speed crystal ( no calibration )
- */ 
+ */
 #define CFG_BLE_LSE_SOURCE  0
 
 /**
@@ -153,32 +155,33 @@
 
 /**
  * BLE stack Options flags to be configured with:
- * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY                      
- * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST                        
- * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC           
- * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC         
- * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO               
- * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW               
- * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1                
- * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 
- * which are used to set following configuration bits:            
- * (bit 0): 1: LL only                   
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3
+ * which are used to set following configuration bits:
+ * (bit 0): 1: LL only
  *          0: LL + host
- * (bit 1): 1: no service change desc.   
+ * (bit 1): 1: no service change desc.
  *          0: with service change desc.
- * (bit 2): 1: device name Read-Only     
+ * (bit 2): 1: device name Read-Only
  *          0: device name R/W
- * (bit 7): 1: LE Power Class 1          
- *          0: LE Power Classe 2-3
+ * (bit 7): 1: LE Power Class 1
+ *          0: LE Power Class 2-3
  * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_OPTIONS  SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 
 #define CFG_BLE_MIN_TX_POWER            (0)
 
 #define CFG_BLE_MAX_TX_POWER            (0)
+
 /******************************************************************************
  * Transport Layer
  ******************************************************************************/

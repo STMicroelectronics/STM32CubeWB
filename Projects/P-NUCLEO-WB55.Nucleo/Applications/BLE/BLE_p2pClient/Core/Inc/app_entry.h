@@ -55,9 +55,15 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void APPE_Init( void );
-/* USER CODE BEGIN EF */
+  void MX_APPE_Config( void );
+  void MX_APPE_Init( void );
+  void MX_APPE_Process( void );
+  void Init_Exti( void );
+  void Init_Smps( void );
 
+/* USER CODE BEGIN EF */
+  void APPE_Led_Init( void );
+  void APPE_Button_Init( void );
 /* USER CODE END EF */
 
 #ifdef __cplusplus

@@ -44,7 +44,18 @@ The demo architecture is summarized in the following figure:
   \______________/             \______________/             \______________/
         [3]                          [2]                          [1]  
  
- @par Keywords
+ 
+
+
+(*)Note:
+  BLE_Zigbee_Dyn_SED application is compiled with by default the define CFG_FULL_LOW_POWER set to 1.
+  (in app_conf.h) 
+  The define CFG_FULL_LOW_POWER when set to 1 will not configure resources that have impact on consumption 
+  (LED, Traces, Access to Debugger, etc...). If you want to use and see the LEDs, the define CFG_FULL_LOW_POWER 
+  must be set to 0.
+
+
+@par Keywords
 
 Zigbee, BLE
 
@@ -121,7 +132,10 @@ by selecting = "P2PZBSRV1" entry.
 -- the BLUE LED will light up on [3]
 -- After scanning complete, the 3rd Nucleo board [3] connects to the P2P server on BLE/ZB [2] dynamic node, and sends a BLE toggle when pressing SW1.
 
-Please note that no LEDs or buttons are active on the SED device as it is configured in Low power mode (LPM).
+NOTE : Please note that no LEDs or buttons are active on the SED device by default as it is configured in Low power mode (LPM).
+       BLE_Zigbee_Dyn_SED application is compiled with by default the define CFG_FULL_LOW_POWER set to 1 (in app_conf.h) 
+       If you want to use and see the LEDs, the define CFG_FULL_LOW_POWER must be set to 0.
+       
 
    ______________               ______________               ______________ 
   /              \             /              \             /              \

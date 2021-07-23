@@ -146,3 +146,5 @@ VP_SYS_VS_Systick.Signal=SYS_VS_Systick
 VP_TIM16_VS_ClockSourceINT.Mode=Enable_Timer
 VP_TIM16_VS_ClockSourceINT.Signal=TIM16_VS_ClockSourceINT
 board=custom
+ProjectManager.Example=RTC_LSI
+ProjectManager.ExampleSource=CubeFw
