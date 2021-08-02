@@ -65,7 +65,7 @@ extern "C" {
 #else
 #define RCC_PERIPHCLOCK_ALL             (RCC_PERIPHCLK_USART1 | RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_LPTIM1 | \
                                          RCC_PERIPHCLK_LPTIM2 | RCC_PERIPHCLK_RNG | RCC_PERIPHCLK_ADC | \
-                                         RCC_PERIPHCLK_RTC | RCC_PERIPHCLK_RFWAKEUP)
+                                         RCC_PERIPHCLK_RTC | RCC_PERIPHCLK_RFWAKEUP | RCC_PERIPHCLK_CLK48SEL)
 #endif
 
 /**
