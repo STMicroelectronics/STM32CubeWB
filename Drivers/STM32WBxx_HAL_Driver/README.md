@@ -58,4 +58,4 @@ The full **STM32CubeWB** MCU package is available [here](https://github.com/STMi
 
 If you have any issue with the **software content** of this repository, you can file an issue [here](https://github.com/STMicroelectronics/stm32wbxx_hal_driver/issues/new/choose).
 
-For any other question related to the product, the tools, the environment, you can submit a topic on the [ST Community/STM32 MCUs forum](https://community.st.com/s/topic/0TO0X000000BSqSWAW/stm32-mcus).
+For any other question related to the product, the tools, the environment, you can submit a topic on the [ST Community/STM32 MCUs forum](https://community.st.com/s/group/0F90X000000AXsASAW/stm32-mcus).
