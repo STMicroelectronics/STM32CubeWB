@@ -297,6 +297,7 @@ void APP_BLE_Init( void )
    */
   if (SHCI_C2_BLE_Init( &ble_init_cmd_packet ) != SHCI_Success)
   {
+	/* if you are here may be CPU2 doesn't contain STM32WB_Copro_Wireless_Binaries see Release_Notes.html */
     Error_Handler();
   }
 
