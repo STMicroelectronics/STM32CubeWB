@@ -49,7 +49,7 @@
 #define USE_COM_LOG                         0U
 
 /* IRQ priorities */
-#define BSP_BUTTON_SWx_IT_PRIORITY         15U
+#define BSP_BUTTON_USER_IT_PRIORITY         15U
 
 /**
   * @}
@@ -72,5 +72,3 @@
 #endif
 
 #endif /* NUCLEO_WB15CC_CONF_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

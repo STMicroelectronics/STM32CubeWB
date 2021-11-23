@@ -6,16 +6,15 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
- */
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "s25fl128s.h"
@@ -31,6 +30,21 @@
 /** @defgroup S25FL128S S25FL128S
   * @{
   */
+
+/** @defgroup S25FL128S_Private_Define S25FL128S Private Define
+ * @{
+ */
+/* To avoid compiling issues for projects using previous version */
+#ifndef S25FL128S_DUMMY_CYCLES_READ_DUAL_INOUT
+#define S25FL128S_DUMMY_CYCLES_READ_DUAL_INOUT 4U
+#endif
+
+#ifndef S25FL128S_DUMMY_CYCLES_READ_QUAD_INOUT
+#define S25FL128S_DUMMY_CYCLES_READ_QUAD_INOUT 6U
+#endif
+/**
+ * @}
+ */
 
 /** @defgroup S25FL128S_Exported_Functions S25FL128S Exported Functions
   * @{
@@ -64,8 +78,10 @@ int32_t S25FL128S_WriteEnable(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mod
   QSPI_CommandTypeDef     s_command;
   QSPI_AutoPollingTypeDef s_config;
 
+  UNUSED(Mode); /* The command Write Enable is always 1-0-0 */
+
   /* Enable write operations */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.Instruction       = S25FL128S_WRITE_ENABLE_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
@@ -107,8 +123,10 @@ int32_t S25FL128S_WriteDisable(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mo
 {
   QSPI_CommandTypeDef     s_command;
 
+  UNUSED(Mode); /* The command Write Disable is always 1-0-0 */
+
   /* Initialize the read ID command */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.Instruction       = S25FL128S_WRITE_DISABLE_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
@@ -128,7 +146,7 @@ int32_t S25FL128S_WriteDisable(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mo
 
 /**
   * @brief  Writes an amount of data to the QSPI memory.
-  *         SPI/DPI/QPI; 1-1-1/1-2-2/1-1-4/1-4-4/2-2-2/4-4-4
+  *         SPI/QPI; 1-1-1/1-1-4
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @param  pData Pointer to data to be written
@@ -143,31 +161,16 @@ int32_t S25FL128S_PageProgram(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mod
   /* Setup program command */
   switch(Mode)
   {
-
   case S25FL128S_SPI_1I4O_MODE :              /* 1-1-4 program commands */
-    s_command.Instruction     = S25FL128S_QUAD_IN_FAST_PROG_CMD;
+    s_command.Instruction     = S25FL128S_QUAD_IN_FAST_PROG_4_BYTE_ADDR_CMD;
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
     s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
     s_command.DataMode        = QSPI_DATA_4_LINES;
     break;
 
-  case S25FL128S_SPI_4IO_MODE :               /* 1-4-4 program commands */
-    s_command.Instruction     = S25FL128S_QUAD_IN_FAST_PROG_ALTERNATE_CMD;
-    s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.AddressMode     = QSPI_ADDRESS_4_LINES;
-    s_command.DataMode        = QSPI_DATA_4_LINES;
-    break;
-
-  case S25FL128S_QPI_MODE :                   /* 4-4-4 commands */
-    s_command.Instruction     = S25FL128S_QUAD_IN_FAST_PROG_CMD;
-    s_command.InstructionMode = QSPI_INSTRUCTION_4_LINES;
-    s_command.AddressMode     = QSPI_ADDRESS_4_LINES;
-    s_command.DataMode        = QSPI_DATA_4_LINES;
-    break;
-
   case S25FL128S_SPI_MODE :                   /* 1-1-1 commands, Power on H/W default setting */
   default :
-    s_command.Instruction     = S25FL128S_PAGE_PROG_CMD;
+    s_command.Instruction     = S25FL128S_PAGE_PROG_4_BYTE_ADDR_CMD;
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
     s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
     s_command.DataMode        = QSPI_DATA_1_LINE;
@@ -208,8 +211,10 @@ int32_t S25FL128S_AutoPollingMemReady(QSPI_HandleTypeDef *Ctx, S25FL128S_Interfa
   QSPI_CommandTypeDef     s_command;
   QSPI_AutoPollingTypeDef s_config;
 
+  UNUSED(Mode); /* The command Read Status Register-1 is always 1-0-1 */
+
   /* Configure automatic polling mode to wait for memory ready */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.Instruction       = S25FL128S_READ_STATUS_REG1_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
@@ -244,57 +249,57 @@ int32_t S25FL128S_Enter4BytesAddressMode(QSPI_HandleTypeDef *Ctx, S25FL128S_Inte
   QSPI_CommandTypeDef s_command;
   uint8_t reg1;
 
-    /* Initialize the read bank register command */
-    s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction       = S25FL128S_READ_BANK_REG_CMD;
-    s_command.AddressMode       = QSPI_ADDRESS_NONE;
-    s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
-    s_command.DataMode          = QSPI_DATA_1_LINE;
-    s_command.DummyCycles       = 0;
-    s_command.NbData            = 1;
-    s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
-    s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
+  /* Initialize the read bank register command */
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
+  s_command.Instruction       = S25FL128S_READ_BANK_REG_CMD;
+  s_command.AddressMode       = QSPI_ADDRESS_NONE;
+  s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+  s_command.DataMode          = QSPI_DATA_1_LINE;
+  s_command.DummyCycles       = 0;
+  s_command.NbData            = 1;
+  s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
+  s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
-    /* Configure the command */
-    if (HAL_QSPI_Command(Ctx, &s_command, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-    {
-      return S25FL128S_ERROR;
-    }
+  /* Configure the command */
+  if (HAL_QSPI_Command(Ctx, &s_command, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return S25FL128S_ERROR;
+  }
 
-    /* Reception of the data */
-    if (HAL_QSPI_Receive(Ctx, &reg1, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-    {
-      return S25FL128S_ERROR;
-    }
+  /* Reception of the data */
+  if (HAL_QSPI_Receive(Ctx, &reg1, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return S25FL128S_ERROR;
+  }
 
-    /* Enable write operations */
+  /* Enable write operations */
   if( S25FL128S_WriteEnable(Ctx,Mode)!=S25FL128S_OK)
   {
     return S25FL128S_ERROR;
   }
 
-    /* Update Bank address register (with 4byte addressing bit) */
-    s_command.Instruction = S25FL128S_WRITE_BANK_REG_CMD;
-    MODIFY_REG(reg1, S25FL128S_BA_EXTADD, S25FL128S_BA_EXTADD);
+  /* Update Bank address register (with 4byte addressing bit) */
+  s_command.Instruction = S25FL128S_WRITE_BANK_REG_CMD;
+  MODIFY_REG(reg1, S25FL128S_BA_EXTADD, S25FL128S_BA_EXTADD);
 
-    /* Configure the write volatile configuration register command */
-    if (HAL_QSPI_Command(Ctx, &s_command, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-    {
-      return S25FL128S_ERROR;
-    }
+  /* Configure the write volatile configuration register command */
+  if (HAL_QSPI_Command(Ctx, &s_command, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return S25FL128S_ERROR;
+  }
 
-    /* Transmission of the data Status Register 1 */
-    if (HAL_QSPI_Transmit(Ctx, &reg1, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-    {
-      return S25FL128S_ERROR;
-    }
+  /* Transmission of the data Status Register 1 */
+  if (HAL_QSPI_Transmit(Ctx, &reg1, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return S25FL128S_ERROR;
+  }
 
   return S25FL128S_OK;
 }
 
 /**
   * @brief  Reads an amount of data from the QSPI memory in STR mode.
-  *         SPI/DPI/QPI; 1-1-1/1-2-2/1-1-4/1-4-4/2-2-2/4-4-4
+  *         SPI/DPI/QPI; 1-1-1/1-1-2/1-2-2/1-1-4/1-4-4
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @param  pData Pointer to data to be read
@@ -310,57 +315,47 @@ int32_t S25FL128S_ReadSTR(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode, u
   {
   case S25FL128S_SPI_1I2O_MODE :           /* 1-1-2 read commands */
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_DUAL_OUT_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_DUAL_OUT_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
     s_command.DataMode        = QSPI_DATA_2_LINES;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ;
     break;
 
   case S25FL128S_SPI_2IO_MODE :           /* 1-2-2 read commands */
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_DUAL_INOUT_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_DUAL_INOUT_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_2_LINES;
     s_command.DataMode        = QSPI_DATA_2_LINES;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ_DUAL_INOUT;
     break;
 
   case S25FL128S_SPI_1I4O_MODE :           /* 1-1-4 read commands */
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_QUAD_OUT_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_QUAD_OUT_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
     s_command.DataMode        = QSPI_DATA_4_LINES;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ;
     break;
 
   case S25FL128S_SPI_4IO_MODE :           /* 1-4-4 read commands */
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_QUAD_INOUT_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_QUAD_INOUT_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_4_LINES;
     s_command.DataMode        = QSPI_DATA_4_LINES;
-    break;
-
-  case S25FL128S_DPI_MODE :               /* 2-2-2 commands */
-    s_command.InstructionMode = QSPI_INSTRUCTION_2_LINES;
-    s_command.Instruction     = S25FL128S_DUAL_OUT_FAST_READ_CMD;
-    s_command.AddressMode     = QSPI_ADDRESS_2_LINES;
-    s_command.DataMode        = QSPI_DATA_2_LINES;
-    break;
-
-  case S25FL128S_QPI_MODE :               /* 4-4-4 commands */
-    s_command.InstructionMode = QSPI_INSTRUCTION_4_LINES;
-    s_command.Instruction     = S25FL128S_QUAD_INOUT_FAST_READ_CMD;
-    s_command.AddressMode     = QSPI_ADDRESS_4_LINES;
-    s_command.DataMode        = QSPI_DATA_4_LINES;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ_QUAD_INOUT;
     break;
 
   case S25FL128S_SPI_MODE :               /* 1-1-1 commands, Power on H/W default setting */
   default:
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
     s_command.DataMode        = QSPI_DATA_1_LINE;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ;
     break;
   }
 
   /* Initialize the read command */
-  s_command.DummyCycles       = S25FL128S_DUMMY_CYCLES_READ;
   s_command.AddressSize       = QSPI_ADDRESS_32_BITS;
   s_command.Address           = ReadAddr;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
@@ -386,7 +381,7 @@ int32_t S25FL128S_ReadSTR(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode, u
 /**
   * @brief  Erases the specified block of the QSPI memory.
   *         S25FL128S support 4K, 64K size block erase commands.
-  *         SPI/DPI/QPI; 1-1-1/1-2-2/1-1-4/1-4-4/2-2-2/4-4-4
+  *         SPI; 1-0-0/1-1-0
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @param  BlockAddress Block address to erase
@@ -397,28 +392,34 @@ int32_t S25FL128S_BlockErase(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode
 {
   QSPI_CommandTypeDef s_command;
 
+  UNUSED(Mode); /* The Erase commands are always 1-1-0 or 1-0-0 */
+
   /* Setup erase command */
   switch(BlockSize)
   {
   case S25FL128S_ERASE_64K :
-    s_command.Instruction     = S25FL128S_SECTOR_ERASE_CMD;
+    s_command.Instruction     = S25FL128S_SECTOR_ERASE_4_BYTE_ADDR_CMD;
+    s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
+    s_command.AddressSize     = QSPI_ADDRESS_32_BITS;
+    s_command.Address         = BlockAddress;
     break;
 
   case S25FL128S_ERASE_CHIP :
     s_command.Instruction     = S25FL128S_BULK_ERASE_ALTERNATE_CMD;
-    break;
+    s_command.AddressMode     = QSPI_ADDRESS_NONE;
+  break;
 
   case S25FL128S_ERASE_4K :
   default :
-    s_command.Instruction     = S25FL128S_SUBSECTOR_ERASE_CMD_4K;
+    s_command.Instruction     = S25FL128S_SUBSECTOR_ERASE_4_BYTE_ADDR_CMD_4K;
+    s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
+    s_command.AddressSize     = QSPI_ADDRESS_32_BITS;
+    s_command.Address         = BlockAddress;
     break;
   }
 
   /* Initialize the erase command */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
-  s_command.AddressMode       = (Mode == S25FL128S_QPI_MODE) ? QSPI_ADDRESS_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_ADDRESS_2_LINES : QSPI_ADDRESS_1_LINE;
-  s_command.AddressSize       = QSPI_ADDRESS_32_BITS;
-  s_command.Address           = BlockAddress;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
   s_command.DummyCycles       = 0;
   s_command.DataMode          = QSPI_DATA_NONE;
@@ -436,7 +437,7 @@ int32_t S25FL128S_BlockErase(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode
 
 /**
   * @brief  Whole chip erase.
-  *         SPI/DPI/QPI; 1-1-0/2-2-0/4-4-0
+  *         SPI; 1-0-0
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @retval QSPI memory status
@@ -445,9 +446,11 @@ int32_t S25FL128S_ChipErase(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode)
 {
   QSPI_CommandTypeDef s_command;
 
+  UNUSED(Mode); /* The command Chip Erase is always 1-0-0 */
+
   /* Initialize the erase command */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
-  s_command.AddressMode       = (Mode == S25FL128S_QPI_MODE) ? QSPI_ADDRESS_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_ADDRESS_2_LINES : QSPI_ADDRESS_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
+  s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.Instruction       = S25FL128S_BULK_ERASE_ALTERNATE_CMD;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
   s_command.DummyCycles       = 0;
@@ -466,7 +469,7 @@ int32_t S25FL128S_ChipErase(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode)
 
 /**
   * @brief  Reads an amount of data from the QSPI memory on STR mode.
-  *         SPI/DPI/QPI; 1-1-1/1-2-2/1-1-4/1-4-4/2-2-2/4-4-4
+  *         SPI/DPI/QPI; 1-1-1/1-1-2/1-2-2/1-1-4/1-4-4
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @retval QSPI memory status
@@ -480,52 +483,43 @@ int32_t S25FL128S_EnableMemoryMappedModeSTR(QSPI_HandleTypeDef *Ctx, S25FL128S_I
   {
   case S25FL128S_SPI_1I2O_MODE :           /* 1-1-2 read commands */
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_DUAL_OUT_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_DUAL_OUT_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
     s_command.DataMode        = QSPI_DATA_2_LINES;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ;
     break;
 
   case S25FL128S_SPI_2IO_MODE :           /* 1-2-2 read commands */
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_DUAL_INOUT_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_DUAL_INOUT_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_2_LINES;
     s_command.DataMode        = QSPI_DATA_2_LINES;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ_DUAL_INOUT;
     break;
 
   case S25FL128S_SPI_1I4O_MODE :           /* 1-1-4 read commands */
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_QUAD_OUT_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_QUAD_OUT_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
     s_command.DataMode        = QSPI_DATA_4_LINES;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ;
     break;
 
   case S25FL128S_SPI_4IO_MODE :           /* 1-4-4 read commands */
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_QUAD_INOUT_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_QUAD_INOUT_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_4_LINES;
     s_command.DataMode        = QSPI_DATA_4_LINES;
-    break;
-
-  case S25FL128S_DPI_MODE :               /* 2-2-2 commands */
-    s_command.InstructionMode = QSPI_INSTRUCTION_2_LINES;
-    s_command.Instruction     = S25FL128S_DUAL_OUT_FAST_READ_CMD;
-    s_command.AddressMode     = QSPI_ADDRESS_2_LINES;
-    s_command.DataMode        = QSPI_DATA_2_LINES;
-    break;
-
-  case S25FL128S_QPI_MODE :               /* 4-4-4 commands */
-    s_command.InstructionMode = QSPI_INSTRUCTION_4_LINES;
-    s_command.Instruction     = S25FL128S_QUAD_INOUT_FAST_READ_CMD;
-    s_command.AddressMode     = QSPI_ADDRESS_4_LINES;
-    s_command.DataMode        = QSPI_DATA_4_LINES;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ_QUAD_INOUT;
     break;
 
   case S25FL128S_SPI_MODE :               /* 1-1-1 commands, Power on H/W default setting */
   default:
     s_command.InstructionMode = QSPI_INSTRUCTION_1_LINE;
-    s_command.Instruction     = S25FL128S_FAST_READ_CMD;
+    s_command.Instruction     = S25FL128S_FAST_READ_4_BYTE_ADDR_CMD;
     s_command.AddressMode     = QSPI_ADDRESS_1_LINE;
     s_command.DataMode        = QSPI_DATA_1_LINE;
+    s_command.DummyCycles     = S25FL128S_DUMMY_CYCLES_READ;
     break;
   }
 
@@ -549,7 +543,7 @@ int32_t S25FL128S_EnableMemoryMappedModeSTR(QSPI_HandleTypeDef *Ctx, S25FL128S_I
 
 /**
   * @brief  Read Flash Status register value
-  *         SPI/DPI/QPI; 1-0-0/2-0-0/4-0-0
+  *         SPI; 1-0-1
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @param  Value to read from status register
@@ -558,12 +552,15 @@ int32_t S25FL128S_ReadStatusRegister(QSPI_HandleTypeDef *Ctx, S25FL128S_Interfac
 {
   QSPI_CommandTypeDef s_command;
 
+  UNUSED(Mode); /* The command Read Status Register-1 is always 1-0-1 */
+
   /* Initialize the reading of status register */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.Instruction       = S25FL128S_READ_STATUS_REG1_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
   s_command.DummyCycles       = 0;
+  s_command.DataMode          = QSPI_DATA_1_LINE;
   s_command.NbData            = 1;
   s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
   s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
@@ -585,6 +582,7 @@ int32_t S25FL128S_ReadStatusRegister(QSPI_HandleTypeDef *Ctx, S25FL128S_Interfac
 
 /**
   * @brief  Flash reset enable command
+  *         SPI; 1-0-0
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @retval QSPI memory status
@@ -593,8 +591,10 @@ int32_t S25FL128S_ResetEnable(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mod
 {
   QSPI_CommandTypeDef s_command;
 
+  UNUSED(Mode); /* The command Software Reset is always 1-0-0 */
+
   /* Initialize the reset enable command */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.Instruction       = S25FL128S_SOFTWARE_RESET_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
@@ -614,6 +614,7 @@ int32_t S25FL128S_ResetEnable(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mod
 
 /**
   * @brief  Flash reset memory command
+  *         SPI; 1-0-0
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @retval QSPI memory status
@@ -622,8 +623,10 @@ int32_t S25FL128S_ResetMemory(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mod
 {
   QSPI_CommandTypeDef s_command;
 
+  UNUSED(Mode); /* The command Software Reset is always 1-0-0 */
+
   /* Initialize the reset enable command */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.Instruction       = S25FL128S_SOFTWARE_RESET_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
@@ -644,7 +647,7 @@ int32_t S25FL128S_ResetMemory(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mod
 /**
   * @brief  Read Flash 3 Byte IDs.
   *         Manufacturer ID, Memory type, Memory density
-  *         SPI/DPI/QPI; 1-1-1/2-2-2/4-4-4
+  *         SPI; 1-0-1
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @param  ID  Flash ID
@@ -654,13 +657,15 @@ int32_t S25FL128S_ReadID(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode, ui
 {
   QSPI_CommandTypeDef s_command;
 
+  UNUSED(Mode); /* The command Read Identification is always 1-0-1 */
+
   /* Initialize the read ID command */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.Instruction       = S25FL128S_READ_ID_CMD2;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
   s_command.DataMode          = QSPI_DATA_1_LINE;
-  s_command.NbData            = 6;
+  s_command.NbData            = 3;
   s_command.DummyCycles       = 0;
   s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
   s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
@@ -684,7 +689,7 @@ int32_t S25FL128S_ReadID(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode, ui
   * @brief  Program/Erases suspend. Interruption Program/Erase operations.
   *         After the device has entered Erase-Suspended mode,
   *         system can read any address except the block/sector being Program/Erased.
-  *         SPI/DPI/QPI; 1-0-0/2-0-0/4-0-0
+  *         SPI; 1-0-0
   * @param  Ctx QSPI handle
   * @param  Mode Flash moder
   * @retval QSPI memory status
@@ -693,8 +698,10 @@ int32_t S25FL128S_ProgEraseSuspend(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_
 {
   QSPI_CommandTypeDef s_command;
 
+  UNUSED(Mode); /* The command Program Erase Suspend is always 1-0-0 */
+
   /* Initialize the S25FL128S_PROG_ERASE_SUSPEND_CMD command */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.Instruction       = S25FL128S_PROG_ERASE_SUSPEND_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
@@ -714,7 +721,7 @@ int32_t S25FL128S_ProgEraseSuspend(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_
 
 /**
   * @brief  Program/Erases resume.
-  *         SPI/DPI/QPI; 1-0-0/2-0-0/4-0-0
+  *         SPI; 1-0-0
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @retval QSPI memory status
@@ -723,8 +730,10 @@ int32_t S25FL128S_ProgEraseResume(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t
 {
   QSPI_CommandTypeDef s_command;
 
+  UNUSED(Mode); /* The command Program Erase Resume is always 1-0-0 */
+
   /* Initialize the S25FL128S_PROG_ERASE_RESUME_CMD command */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
+  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
   s_command.Instruction       = S25FL128S_PROG_ERASE_RESUME_CMD;
   s_command.AddressMode       = QSPI_ADDRESS_NONE;
   s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
@@ -744,38 +753,22 @@ int32_t S25FL128S_ProgEraseResume(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t
 
 /**
   * @brief  Enter deep sleep
-  *         SPI/DPI/QPI; 1-0-0/2-0-0/4-0-0
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @retval QSPI memory status
   */
 int32_t S25FL128S_EnterDeepPowerDown(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode)
 {
-  QSPI_CommandTypeDef s_command;
+  UNUSED(Ctx);
+  UNUSED(Mode);
 
-  /* Initialize Write Protect Selection command */
-  s_command.InstructionMode   = (Mode == S25FL128S_QPI_MODE) ? QSPI_INSTRUCTION_4_LINES : (Mode == S25FL128S_DPI_MODE) ? QSPI_INSTRUCTION_2_LINES : QSPI_INSTRUCTION_1_LINE;
-  s_command.Instruction       = S25FL128S_ENTER_DEEP_POWER_DOWN;
-  s_command.AddressMode       = QSPI_ADDRESS_NONE;
-  s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
-  s_command.DummyCycles       = 0;
-  s_command.DataMode          = QSPI_DATA_NONE;
-  s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
-  s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
-
-  /* Configure the command */
-  if (HAL_QSPI_Command(Ctx, &s_command, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    return S25FL128S_ERROR;
-  }
-
-  return S25FL128S_OK;
+  /* No Deep Power Down command for this memory */
+  return S25FL128S_ERROR;
 }
 
 /**
   * @brief  Reads an amount of SFDP data from the QSPI memory.
   *         SFDP : Serial Flash Discoverable Parameter
-  *         SPI; 1-1-1
   * @param  Ctx QSPI handle
   * @param  Mode Flash mode
   * @param  pData Pointer to data to be read
@@ -785,35 +778,15 @@ int32_t S25FL128S_EnterDeepPowerDown(QSPI_HandleTypeDef *Ctx, S25FL128S_Interfac
   */
 int32_t S25FL128S_ReadSFDP(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode, uint8_t *pData, uint32_t ReadAddr, uint32_t Size)
 {
-  QSPI_CommandTypeDef s_command;
+  UNUSED(Ctx);
+  UNUSED(Mode);
+  UNUSED(pData);
+  UNUSED(ReadAddr);
+  UNUSED(Size);
 
-  /* Initialize the read SFDP command */
-  s_command.InstructionMode   = QSPI_INSTRUCTION_1_LINE;
-  s_command.Instruction       = S25FL128S_READ_SERIAL_FLASH_DISCO_PARAM_CMD;
-  s_command.AddressMode       = QSPI_ADDRESS_1_LINE;
-  s_command.AddressSize       = QSPI_ADDRESS_32_BITS;
-  s_command.Address           = ReadAddr;
-  s_command.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
-  s_command.DummyCycles       = S25FL128S_DUMMY_CYCLES_READ;
-  s_command.DataMode          = QSPI_DATA_1_LINE;
-  s_command.NbData            = Size;
-  s_command.DdrMode           = QSPI_DDR_MODE_DISABLE;
-  s_command.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
-
-  /* Configure the command */
-  if (HAL_QSPI_Command(Ctx, &s_command, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    return S25FL128S_ERROR;
-  }
-
-  /* Reception of the data */
-  if (HAL_QSPI_Receive(Ctx, pData, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
-  {
-    return S25FL128S_ERROR;
-  }
-
-  return S25FL128S_OK;
-}
+  /* No Serial Flash Discoverable Parameter command for this memory */
+  return S25FL128S_ERROR;
+ }
 
 /**
   * @}
@@ -830,6 +803,4 @@ int32_t S25FL128S_ReadSFDP(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode, 
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

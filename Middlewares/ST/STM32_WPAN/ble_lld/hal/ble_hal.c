@@ -1,26 +1,22 @@
 /**
- ******************************************************************************
-  * File Name          : ble_hal.c
-  * Description        : BLE HAL based on LLD
+  ******************************************************************************
+  * @file    ble_hal.c
+  * @author  MCD Application Team
+  * @brief   HAL based on BLE LLD
+  *          This file provides functions for a simpler access to radio than LLD
+  *          HAL relies on the LLD API.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
-
-/**
- * This file provides functions for a simpler access to radio than LLD.
- * It relies on the LLD API running on application MCU, and so does not depend
- * on an HAL API provided by radio MCU.
- */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stdint.h"
@@ -47,8 +43,8 @@ static ActionPacket actPack[ACTION_PACKET_NB];
 /**
  * @brief Initializes the radio
  *
+ * Whithening is forced.
  * Before actual use, radio must be configured with HAL_BLE_LLD_Configure().
- * This function enables whitening.
  *
  * @param[in] hsStartupTime Startup time (system time unit)
  * @param[in] lsOscInternal Use internal RO for the 32 kHz slow speed clock
@@ -64,18 +60,16 @@ uint8_t HAL_BLE_LLD_Init(uint16_t hsStartupTime, bool lsOscInternal)
  * @brief Configures the radio
  *
  * @param[in] txPower Transmit power for outgoing packets
- * @param[in] channel Radio channel
+ * @param[in] channel Radio channel (0 - 39)
  * @param[in] phy2mbps Use 2Mb/s PHY speed (else 1Mb/s)
  * @param[in] b2bTimeUs Back to back time (us), delay between packet and ACK
  * @param[in] networkId Network ID (access address)
  */
-
 uint8_t HAL_BLE_LLD_Configure(txPower_t txPower,
                               uint8_t channel,
                               bool phy2mbps,
                               uint32_t b2bTimeUs,
                               uint32_t networkId)
-
 {
   BLE_LLD_SetTxPower(txPower);
   BLE_LLD_SetChannel(STATE_MACHINE_0, channel);
@@ -90,14 +84,15 @@ uint8_t HAL_BLE_LLD_Configure(txPower_t txPower,
 /**
  * @brief Sends one packet without listening for an acknowledge.
  *
- * @param[in] txBuffer Data to transmit (header+length+payload) 
+ * @param[in] data Data to transmit
+ * @param[in] size Size of data to transmit
  * @param[in] callback Function that will be called once radio operation is done
  *
  * @retval SUCCESS_0 if success
  * @retval INVALID_PARAMETER_C0 if invalid parameters
  * @retval RADIO_BUSY_C4 if radio is busy
  */
-uint8_t HAL_BLE_LLD_SendPacket(void *txBuffer,
+uint8_t HAL_BLE_LLD_SendPacket(void *data,
                            uint8_t size,
                            lldCallback_t *callback)
 {
@@ -109,7 +104,7 @@ uint8_t HAL_BLE_LLD_SendPacket(void *txBuffer,
   ap->StateMachineNo = STATE_MACHINE_0;
   ap->ActionTag = TXRX | TIMER_WAKEUP;
   ap->WakeupTime = WAKEUP_TIME_US;
-  ap->data = txBuffer;
+  ap->data = data;
   ap->dataSize = size;
   ap->nextTrue = APACKET_STOP;
   ap->nextFalse = APACKET_STOP;
@@ -120,12 +115,11 @@ uint8_t HAL_BLE_LLD_SendPacket(void *txBuffer,
   return SUCCESS_0;
 }
 
-
-
 /**
  * @brief Sends one packet and listen for an acknowledge.
  *
- * @param[in] txBuffer Data to transmit (header+length+payload)
+ * @param[in] data Data to transmit
+ * @param[in] size Size of data to transmit
  * @param[in] receiveTimeout Timeout for ACK reception (us)
  * @param[in] callback Function that will be called once radio operation is done
  *
@@ -133,7 +127,7 @@ uint8_t HAL_BLE_LLD_SendPacket(void *txBuffer,
  * @retval INVALID_PARAMETER_C0 if invalid parameters
  * @retval RADIO_BUSY_C4 if radio is busy
  */
-uint8_t HAL_BLE_LLD_SendPacketWithAck(void *txBuffer,
+uint8_t HAL_BLE_LLD_SendPacketWithAck(void *data,
                                   uint8_t size,
                                   uint32_t receiveTimeout,
                                   lldCallback_t *callback)
@@ -146,7 +140,7 @@ uint8_t HAL_BLE_LLD_SendPacketWithAck(void *txBuffer,
   ap->StateMachineNo = STATE_MACHINE_0;
   ap->ActionTag = TXRX | TIMER_WAKEUP;
   ap->WakeupTime = WAKEUP_TIME_US;
-  ap->data = txBuffer;
+  ap->data = data;
   ap->dataSize = size;
   ap->nextTrue = APACKET_1;
   ap->nextFalse = APACKET_STOP;
@@ -200,9 +194,10 @@ uint8_t HAL_BLE_LLD_ReceivePacket(uint32_t receiveTimeout,
 }
 
 /**
- * @brief Receives one packet and transmit an acknowledge.
+ * @brief Receives one packet and transmits an acknowledge.
  *
- * @param[in] txBuffer Acknowledge to transmit
+ * @param[in] ack Acknowledge to transmit
+ * @param[in] size Size of acknowledge to transmit
  * @param[in] receiveTimeout Timeout for data reception (us)
  * @param[in] callback Function that will be called once radio operation is done
  *
@@ -210,7 +205,7 @@ uint8_t HAL_BLE_LLD_ReceivePacket(uint32_t receiveTimeout,
  * @retval INVALID_PARAMETER_C0 if invalid parameters
  * @retval RADIO_BUSY_C4 if radio is busy
  */
-uint8_t HAL_BLE_LLD_ReceivePacketWithAck(void *txBuffer,
+uint8_t HAL_BLE_LLD_ReceivePacketWithAck(void *ack,
                                      uint8_t size,
                                      uint32_t receiveTimeout,
                                      lldCallback_t *callback)
@@ -234,7 +229,7 @@ uint8_t HAL_BLE_LLD_ReceivePacketWithAck(void *txBuffer,
   ap->actionPacketNb = APACKET_3;
   ap->StateMachineNo = STATE_MACHINE_0;
   ap->ActionTag = TXRX;
-  ap->data = txBuffer;
+  ap->data = ack;
   ap->dataSize = size;
   ap->nextTrue = APACKET_STOP;
   ap->nextFalse = APACKET_STOP;
@@ -244,5 +239,3 @@ uint8_t HAL_BLE_LLD_ReceivePacketWithAck(void *txBuffer,
   BLE_LLD_MakeActionPacketPending(&actPack[APACKET_2]);
   return SUCCESS_0;
 }
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

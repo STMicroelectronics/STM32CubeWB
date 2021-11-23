@@ -4,18 +4,17 @@
  * File Name          : app_lld_tests.c
  * Description        : RF LLDs tests Application.
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -46,7 +45,7 @@
 #define CLI_CMD_BUFFER_SIZE     1024U
 #define CLI_CMD_HISTORY_LENGTH  10U
 #define UART_TX_BUFFER_SIZE     4096U
-// Delay to let M4 flushing traces or CLI printf : a delay is already set on M0 side and seems enougth
+// Delay to let M4 flushing traces or CLI printf : a delay is already set on M0 side and seems enough
 #define DELAY_BEFORE_WFI_ON_M4  10U
 
 /* USER CODE BEGIN PD */
@@ -262,7 +261,7 @@ void APP_LLDTESTS_Init( void )
   /* Set corresponding task to send this command to M0 */
   UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
   
-  /* Activate UART RX buffer processing task to allow USER command comming from UART */
+  /* Activate UART RX buffer processing task to allow USER command coming from UART */
   UTIL_SEQ_SetTask(1U << CFG_TASK_PROCESS_UART_RX_BUFFER, CFG_SCH_PRIO_0);
   
   /* USER CODE BEGIN APP_LLDTESTS_INIT_2 */
@@ -337,7 +336,7 @@ static void APP_LLDTESTS_TraceError(const char * pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Thread
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -433,7 +432,7 @@ static void uartRxCpltCallback(void)
   /* This callback is called :
        - during RX isr (huart->RxISR)
        - after bytes copy in buffer specified in last call to HW_UART_Receive_IT()
-       - when number of bytes specified in last call to HW_UART_Receive_IT() is acheived */
+       - when number of bytes specified in last call to HW_UART_Receive_IT() is achieved */
   
   /* Prepare buffer to receive next character */
   if ( rxCmdAllowed ) {
@@ -471,7 +470,7 @@ static void uartRxBufferProcess( void )
   static int8_t escape = -1;
   static uint8_t escape_seq[3] = {0};
   
-  /* Ensure that last_char buffer contains a string with the char and a \0 (usefull to send echo or CHAR_DEL to UART) */
+  /* Ensure that last_char buffer contains a string with the char and a \0 (useful to send echo or CHAR_DEL to UART) */
   last_char[1] = 0;
   
   /* Interpret the character reception from UART (only if rxCmdAllowed is activated and read pointer reached write one)*/
@@ -580,7 +579,7 @@ static void uartTxBufferAdd(const char * str)
       
       while ((remainingBytesToWrite > 0) && (txBufferFull == 0)) {
         if ((txBuffer_rdPtr == (currentWrPtr + 1)) || ((txBuffer_rdPtr == 0) && (currentWrPtr == (UART_TX_BUFFER_SIZE - 1)))) {
-          /* If there is not enougth place (i.e. write pointer is just behind read pointer in the circular buffer), 
+          /* If there is not enough place (i.e. write pointer is just behind read pointer in the circular buffer), 
              buffer is full, so do not consider new string */
           /* !! No trace here as it is under CRITICAL section */
           txBufferFull = 1;
@@ -1103,4 +1102,3 @@ void TL_LLDTESTS_ReceiveM0Cmd( TL_CmdPacket_t * cmdBuffer )
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 
 /* USER CODE END FD_WRAP_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

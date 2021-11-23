@@ -4,7 +4,7 @@
  * @brief ZCL Alarms cluster header
  * ZCL 7 section 3.11
  * ZCL 8 section 3.11
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ALARM_H
@@ -23,7 +23,7 @@
  * Server Attributes
  * ALM.S.A0000 | AlarmCount | True | Optional
  * ALM.S.Afffd | ClusterRevision | True
- * ALM.S.Afffe | AttributeReportingStatus | False
+ * ALM.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * ALM.S.C00.Rsp | Reset Alarm | True
@@ -37,7 +37,7 @@
  *
  * Client Attributes
  * ALM.C.Afffd | ClusterRevision | True
- * ALM.C.Afffe | AttributeReportingStatus | False
+ * ALM.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * ALM.C.C00.Rsp | Alarm | True

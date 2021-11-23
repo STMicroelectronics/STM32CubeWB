@@ -8,18 +8,19 @@
   * @brief   Description of the BLE Mesh Lighting Low Power Node demo example.
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
 
 @par Example Description 
-This is the implementation of the BLE Mesh Low Power Node profile as specified by the BLE SIG.
+This is the implementation of the BLE Mesh Low Power Node profile as specified by the BLE SIG,
+a Low Power Node with the capacity to be associated to a Proxy-Relay-Friend Node for Friendship.
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
@@ -42,7 +43,7 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE mesh, Dual core
   - BLE/BLE_MeshLightingLPN/Core/Inc/app_entry.h                   Parameters configuration file of the application
   - BLE/BLE_MeshLightingLPN/Core/Inc/hw_conf.h                     Configuration file of the HW
   - BLE/BLE_MeshLightingLPN/Core/Inc/hw_flash.h                    Configuration file of the FLASH driver needed by EE module
-  - BLE/BLE_MeshLightingLPN/Core/Inc/hw_if.h                       Configuration file of the Hardware Iterface
+  - BLE/BLE_MeshLightingLPN/Core/Inc/hw_if.h                       Configuration file of the Hardware Interface
   - BLE/BLE_MeshLightingLPN/Core/Inc/lp_timer.h                    Configuration file of the Low power timer to be used within Mesh Application.
   - BLE/BLE_MeshLightingLPN/Core/Inc/main.h                        Header for main.c module
   - BLE/BLE_MeshLightingLPN/Core/Inc/stm32wbxx_hal_conf.h          HAL configuration file
@@ -62,18 +63,28 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE mesh, Dual core
   - BLE/BLE_MeshLightingLPN/Core/Src/system_stm32wbxx.c            stm32wbxx system source file
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/app_ble.c               BLE Profile implementation
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/app_ble.h               Header of BLE Profile implementation 
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_config.c          Application interface for Config Server Mesh Model
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_config.h          Header of Application interface for Config Server Mesh Model 
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_config_client.c   Application interface for Config CLient Mesh Model
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_config_client.h   Header of Application interface for Config CLient Mesh Model 
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_generic.c         Application interface for Generic Mesh Models
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_generic.h         Header of Application interface for Generic Mesh Models 
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_generic_client.c  Application interface for Client Generic Mesh Models
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_generic_client.h  Header of Application interface for Client Generic Mesh Models 
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_light.c           BLE Mesh Light Profile implementation
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_light.h           Header of BLE Mesh Light Profile implementation 
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_light_client.c    Application interface for Client Light Mesh Models
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_light_client.h    Header of Application interface for Client Light Mesh Models 
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_light_lc.c        BLE Mesh Light Lightness Controller Profile implementation
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_light_lc.h        Header of BLE Mesh Light Lightness Controller Profile implementation 
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_mesh.c            BLE Mesh application implementation
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_mesh.h            Header of BLE Mesh application implementation 
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_nvm.c             BLE Mesh NVM application implementation
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_nvm.h             Header of BLE Mesh NVM application implementation 
-  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_sensor.c          BLE Mesh Sensor Profile implementation
-  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_sensor.h          Header of BLE Mesh Sensor Profile implementation 
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_sensor.c          BLE Mesh Server Sensor Profile implementation
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_sensor.h          Header of BLE Mesh Server Sensor Profile implementation 
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_sensor_client.c   BLE Mesh Client Sensor Profile implementation
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_sensor_client.h   Header of BLE Mesh Client Sensor Profile implementation 
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_vendor.c          BLE Mesh Vendor Profile implementation
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/appli_vendor.h          Header of BLE Mesh Vendor Profile implementation 
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/ble_conf.h              BLE Services configuration
@@ -89,8 +100,10 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE mesh, Dual core
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/PWM_config.h            Header of Pulse Width Modulation configuration 
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/PWM_handlers.c          Pulse Width Modulation handlers
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/PWM_handlers.h          Header of Pulse Width Modulation handlers 
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/sensor_cfg_usr.c        Header for user Mesh Sensor Model configuration
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/svcctl_conf.c           Service Controller configuration API
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/tl_conf.h               Configuration file of the Transport layer
+  - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/tl_dbg_conf.h           Debug configuration file for stm32wpan transport layer interface.
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/tl_if.c                 Transport Layer interface
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/user_if.h               Header file for User interface file
   - BLE/BLE_MeshLightingLPN/STM32_WPAN/App/user_if.c               User interface file
@@ -143,7 +156,7 @@ one FN must be in the direct radio range of an LPN to establish Friendship.
 @Configuration
 
 Low Power Node
-Low Power feature support is defined in mesh_cfg_usr.h by hte predefinition of ENABLE_LOW_POWER_FEATURE.
+Low Power feature support is defined in mesh_cfg_usr.h by the predefinition of ENABLE_LOW_POWER_FEATURE.
 Note: A Low Power feature-enabled node does not support any other feature: all the other features should be
 undefined.
 
@@ -151,9 +164,15 @@ undefined.
 
 General default setting defined in mesh_cfg_usr.h:
         ENABLE_GENERIC_MODEL_SERVER_ONOFF                                    (1) /* GENERIC SERVER ONOFF MODEL ON FIRST ELEMENT */
+        ENABLE_GENERIC_MODEL_SERVER_LEVEL                                    (1) /* GENERIC SERVER LEVEL MODEL ON FIRST ELEMENT */
+        ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF                              (1) /* GENERIC SERVER POWER ONOFF MODEL ON FIRST ELEMENT */
+        ENABLE_GENERIC_MODEL_SERVER_POWER_ONOFF_SETUP                        (1) /* GENERIC SERVER POWER ONOFF SETUP MODEL ON FIRST ELEMENT */
+        ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS                                  (1) /* LIGHT LIGHTNESS SERVER MODEL ON FIRST ELEMENT */
+        ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS_SETUP                            (1) /* LIGHT LIGHTNESS SETUP SERVER MODEL ON FIRST ELEMENT */
         APPLICATION_NUMBER_OF_ELEMENTS                                         1 /* NUMBER OF ELEMENT SUPPORTED */ 
-        APPLICATION_SIG_MODELS_MAX_COUNT                                      20 /* TOTAL NUMBER OF MODELS SUPPORTED */
-        APPLICATION_VENDOR_MODELS_MAX_COUNT                                    2 /* TOTAL NIMBER OF VENDOR MODELS SUPPORTED */
+        APPLICATION_SIG_MODELS_MAX_COUNT                                       6 /* TOTAL NUMBER OF MODELS SUPPORTED */
+        APPLICATION_VENDOR_MODELS_MAX_COUNT                                    1 /* TOTAL NIMBER OF VENDOR MODELS SUPPORTED */
+        ENABLE_LOW_POWER_FEATURE                                                 /* LOW POWER SUPPORT */ 
         ENABLE_PB_ADV                                                            /* Provisioning Bearer over advertising channels support */
         ENABLE_PB_GATT                                                           /* Provisioning Bearer over GATT proxy support */ 
 
@@ -162,7 +181,7 @@ boards as Low Power nodes.
 
 Low Power node setup:
 Step 1. Configure LPN parameters.
-        Change only if required ohterwise skip this step (use example parameters defined in mesh_cfg_usr.h)
+        Change only if required otherwise skip this step (use example parameters defined in mesh_cfg_usr.h)
         LPN_RSSI_FACTOR_LEVEL             1
         LPN_RECIVE_WINDOW_FACTOR_LEVEL    1
         LPN_MINIMUM_QUEUE_SIZE_LOG        2

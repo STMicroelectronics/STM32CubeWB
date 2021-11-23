@@ -6,13 +6,12 @@
  *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
  */
@@ -33,15 +32,15 @@ ZbZcl_custom_ls_ClientAlloc(struct ZigBeeT *zb, uint8_t endpoint)
 {
     struct zcl_custom_ls_client_cluster_t *clusterPtr;
 
-    clusterPtr = ZbZclClusterAlloc(zb, sizeof(struct zcl_custom_ls_client_cluster_t),\
+    clusterPtr = ZbZclClusterAlloc(zb, sizeof(struct zcl_custom_ls_client_cluster_t),
               ZCL_CLUSTER_CUSTOM_LS, endpoint, ZCL_DIRECTION_TO_CLIENT);
     if (clusterPtr == NULL) {
         return NULL;
     }
-    
+
     /* This is the flags for Fragmentation */
     clusterPtr->cluster.txOptions |= (uint16_t)(ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY | ZB_APSDE_DATAREQ_TXOPTIONS_ACK | ZB_APSDE_DATAREQ_TXOPTIONS_FRAG);
-    //ZbZclClusterSetTxOptions(&clusterPtr->cluster, ZB_APSDE_DATAREQ_TXOPTIONS_FRAG); 
+    //ZbZclClusterSetTxOptions(&clusterPtr->cluster, ZB_APSDE_DATAREQ_TXOPTIONS_FRAG);
     (void)ZbZclAttrIntegerWrite(&clusterPtr->cluster, ZCL_GLOBAL_ATTR_CLUSTER_REV, 1);
 
     ZbZclClusterAttach(&clusterPtr->cluster);
@@ -56,15 +55,15 @@ ZbZclSet_custom_ls_ClientCommand(struct ZbZclClusterT *cluster, struct ZbApsAddr
     struct ZbZclClusterCommandReqT req;
     uint8_t payload[2050];
     uint16_t len;
-    
+
     len = (uint16_t)strlen(string);
     if (len > 2048) {
       return ZCL_STATUS_INVALID_VALUE;
     }
-    
+
     putle16(&payload[0], len);
     memcpy(&payload[2], string, len);
-    
+
     (void)memset(&req, 0, sizeof(req));
     req.dst = *dst;
     req.cmdId = ZCL_SET_CUSTOM_LS_COMMAND_REQ;

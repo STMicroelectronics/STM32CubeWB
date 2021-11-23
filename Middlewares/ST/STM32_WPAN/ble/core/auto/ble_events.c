@@ -1,20 +1,19 @@
-/******************************************************************************
+/*****************************************************************************
  * @file    ble_events.c
  * @author  MCD
  * @brief   STM32WB BLE API (event callbacks)
  *          Auto-generated file: do not edit!
- ******************************************************************************
+ *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
- ******************************************************************************
+ *****************************************************************************
  */
 
 #include "ble_events.h"
@@ -37,6 +36,11 @@ static void hci_le_generate_dhkey_complete_event_process( const uint8_t* in );
 static void hci_le_enhanced_connection_complete_event_process( const uint8_t* in );
 static void hci_le_direct_advertising_report_event_process( const uint8_t* in );
 static void hci_le_phy_update_complete_event_process( const uint8_t* in );
+static void hci_le_extended_advertising_report_event_process( const uint8_t* in );
+static void hci_le_scan_timeout_event_process( const uint8_t* in );
+static void hci_le_advertising_set_terminated_event_process( const uint8_t* in );
+static void hci_le_scan_request_received_event_process( const uint8_t* in );
+static void hci_le_channel_selection_algorithm_event_process( const uint8_t* in );
 static void aci_hal_end_of_radio_activity_event_process( const uint8_t* in );
 static void aci_hal_scan_req_report_event_process( const uint8_t* in );
 static void aci_hal_fw_error_event_process( const uint8_t* in );
@@ -114,6 +118,11 @@ const hci_event_table_t hci_le_event_table[HCI_LE_EVENT_TABLE_SIZE] =
   { 0x000AU, hci_le_enhanced_connection_complete_event_process },
   { 0x000BU, hci_le_direct_advertising_report_event_process },
   { 0x000CU, hci_le_phy_update_complete_event_process },
+  { 0x000DU, hci_le_extended_advertising_report_event_process },
+  { 0x0011U, hci_le_scan_timeout_event_process },
+  { 0x0012U, hci_le_advertising_set_terminated_event_process },
+  { 0x0013U, hci_le_scan_request_received_event_process },
+  { 0x0014U, hci_le_channel_selection_algorithm_event_process },
 };
 
 /* HCI VS event process functions table */
@@ -477,6 +486,103 @@ static void hci_le_phy_update_complete_event_process( const uint8_t* in )
                                     rp0->Connection_Handle,
                                     rp0->TX_PHY,
                                     rp0->RX_PHY );
+}
+
+/* HCI_LE_EXTENDED_ADVERTISING_REPORT_EVENT callback function */
+__WEAK void hci_le_extended_advertising_report_event( uint8_t Num_Reports,
+                                                      uint16_t Event_Type,
+                                                      uint8_t Address_Type,
+                                                      const uint8_t* Address,
+                                                      uint8_t Primary_PHY,
+                                                      uint8_t Secondary_PHY,
+                                                      uint8_t Advertising_SID,
+                                                      uint8_t TX_Power,
+                                                      uint8_t RSSI,
+                                                      uint16_t Periodic_Adv_Interval,
+                                                      uint8_t Direct_Address_Type,
+                                                      const uint8_t* Direct_Address,
+                                                      uint8_t Data_Length,
+                                                      const uint8_t* Data )
+{
+}
+
+/* HCI_LE_EXTENDED_ADVERTISING_REPORT_EVENT process function */
+static void hci_le_extended_advertising_report_event_process( const uint8_t* in )
+{
+  hci_le_extended_advertising_report_event_rp0 *rp0 = (void*)in;
+  hci_le_extended_advertising_report_event( rp0->Num_Reports,
+                                            rp0->Event_Type,
+                                            rp0->Address_Type,
+                                            rp0->Address,
+                                            rp0->Primary_PHY,
+                                            rp0->Secondary_PHY,
+                                            rp0->Advertising_SID,
+                                            rp0->TX_Power,
+                                            rp0->RSSI,
+                                            rp0->Periodic_Adv_Interval,
+                                            rp0->Direct_Address_Type,
+                                            rp0->Direct_Address,
+                                            rp0->Data_Length,
+                                            rp0->Data );
+}
+
+/* HCI_LE_SCAN_TIMEOUT_EVENT callback function */
+__WEAK void hci_le_scan_timeout_event( void )
+{
+}
+
+/* HCI_LE_SCAN_TIMEOUT_EVENT process function */
+static void hci_le_scan_timeout_event_process( const uint8_t* in )
+{
+  hci_le_scan_timeout_event( );
+}
+
+/* HCI_LE_ADVERTISING_SET_TERMINATED_EVENT callback function */
+__WEAK void hci_le_advertising_set_terminated_event( uint8_t Status,
+                                                     uint8_t Advertising_Handle,
+                                                     uint16_t Connection_Handle,
+                                                     uint8_t Num_Completed_Ext_Adv_Events )
+{
+}
+
+/* HCI_LE_ADVERTISING_SET_TERMINATED_EVENT process function */
+static void hci_le_advertising_set_terminated_event_process( const uint8_t* in )
+{
+  hci_le_advertising_set_terminated_event_rp0 *rp0 = (void*)in;
+  hci_le_advertising_set_terminated_event( rp0->Status,
+                                           rp0->Advertising_Handle,
+                                           rp0->Connection_Handle,
+                                           rp0->Num_Completed_Ext_Adv_Events );
+}
+
+/* HCI_LE_SCAN_REQUEST_RECEIVED_EVENT callback function */
+__WEAK void hci_le_scan_request_received_event( uint8_t Advertising_Handle,
+                                                uint8_t Scanner_Address_Type,
+                                                const uint8_t* Scanner_Address )
+{
+}
+
+/* HCI_LE_SCAN_REQUEST_RECEIVED_EVENT process function */
+static void hci_le_scan_request_received_event_process( const uint8_t* in )
+{
+  hci_le_scan_request_received_event_rp0 *rp0 = (void*)in;
+  hci_le_scan_request_received_event( rp0->Advertising_Handle,
+                                      rp0->Scanner_Address_Type,
+                                      rp0->Scanner_Address );
+}
+
+/* HCI_LE_CHANNEL_SELECTION_ALGORITHM_EVENT callback function */
+__WEAK void hci_le_channel_selection_algorithm_event( uint16_t Connection_Handle,
+                                                      uint8_t Channel_Selection_Algorithm )
+{
+}
+
+/* HCI_LE_CHANNEL_SELECTION_ALGORITHM_EVENT process function */
+static void hci_le_channel_selection_algorithm_event_process( const uint8_t* in )
+{
+  hci_le_channel_selection_algorithm_event_rp0 *rp0 = (void*)in;
+  hci_le_channel_selection_algorithm_event( rp0->Connection_Handle,
+                                            rp0->Channel_Selection_Algorithm );
 }
 
 /* ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT callback function */

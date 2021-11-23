@@ -1,24 +1,27 @@
 /**
- ******************************************************************************
-  * File Name          : ble_lld_transport.h
-  * Description        : Header shared between M0 and M4 for BLE LLD
-  *                      It contains commands id definitions and structures for
-  *                      parameters for each command
+  ******************************************************************************
+  * @file    ble_lld_transport.h
+  * @author  MCD Application Team
+  * @brief   Definitions of command id and structures for transport
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2012 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
- */
+  */
+
 #ifndef BLE_LLD_TRANSPORT_H
 #define BLE_LLD_TRANSPORT_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "stm32_wpan_common.h"
 #include "ipBLE_lld_public.h"
@@ -190,6 +193,8 @@ typedef PACKED_STRUCT
   msg_BLE_LLD_t *msg;
 } payload_BLE_LLD_t;
 
-#endif /* BLE_LLD_TRANSPORT_H */
+#ifdef __cplusplus
+}
+#endif
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#endif /* BLE_LLD_TRANSPORT_H */

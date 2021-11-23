@@ -18,7 +18,7 @@
 
     <h1>STM32CubeWB Firmware Examples for STM32WBxx Series</h1>
 
-    <p class="copyright">Copyright 2021 STMicroelectronics</p>
+    <p class="copyright">Copyright 2019 STMicroelectronics</p>
 
     <div class="picture">
       <img alt="" id="_x0000_i1025" src="../_htmresc/st_logo_2020.png" style="border: 0px solid ; width: 104px; height: 77px;"/>
@@ -118,14 +118,14 @@ This projects provides a reference template through the LL API that can be used 
         <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
-        <td>-</td>
+        <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of templates_ll: 2</b></td>
+        <td colspan="3"><b>Total number of templates_ll: 3</b></td>
         <td>1</td>
         <td>0</td>
         <td>1</td>
-        <td>0</td>
+        <td>1</td>
       </tr>
       <tr align=center>
         <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=104><p id="Examples">Examples</p></td>
@@ -2562,11 +2562,21 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td>6</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=116><p id="Applications">Applications</p></td>
-        <td align=left rowspan=29><p id="BLE">BLE</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=119><p id="Applications">Applications</p></td>
+        <td align=left rowspan=31><p id="BLE">BLE</p></td>
+        <td align=left><p id="BLE_AT_Server">BLE_AT_Server</p></td>
+        <td align=left>
+How to demonstrate Point-to-Point communication using BLE component (as GATT server). 
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_Beacon">BLE_Beacon</p></td>
         <td align=left>
-How to advertize 3 types of beacon ( tlm, uuid, url ).
+How to advertise 3 types of beacon ( tlm, uuid, url ).
 </td>
         <td>-</td>
         <td>-</td>
@@ -2628,7 +2638,7 @@ How to use the Health Thermometer profile as specified by the BLE SIG.
         <td align=left>
 How to use the Heart Rate profile as specified by the BLE SIG.
 </td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -2692,7 +2702,7 @@ How to use the Human Interface Device profile as specified by the BLE SIG.
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>X</font></td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="BLE_MeshLightingPRFNode">BLE_MeshLightingPRFNode</p></td>
@@ -2701,11 +2711,13 @@ How to use the Human Interface Device profile as specified by the BLE SIG.
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>X</font></td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
       </tr>
       <tr align=center>
         <td align=left><p id="BLE_MeshLightingProvisioner">BLE_MeshLightingProvisioner</p></td>
-        <td align=left>This is the implementation of the BLE Mesh Lighting profile as specified by the BLE SIG.
+        <td align=left>This is the implementation of the BLE Mesh Lighting Embedded Provisioner as specified by the BLE SIG,
+a Node with the capacity of creating MESH network from unprovisionned Nodes, like Proxy-Relay-Friend Nodes or
+Low Power Nodes.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2713,8 +2725,17 @@ How to use the Human Interface Device profile as specified by the BLE SIG.
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_Mesh_Model_Sensor">BLE_Mesh_Model_Sensor</p></td>
+        <td align=left>This is the implementation of a BLE Mesh Sensor Model  (Client and Server) as specified by the BLE SIG.
+</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_Mesh_ThermometerSensor">BLE_Mesh_ThermometerSensor</p></td>
-        <td align=left>This is the implementation of a BLE Mesh Vendor profile as specified by the BLE SIG.
+        <td align=left>This is the implementation of a BLE Mesh Vendor model as specified by the BLE SIG.
 </td>
         <td><font size="5" color=green>X</font></td>
         <td>-</td>
@@ -2754,7 +2775,7 @@ How to communicate with simple BLE peripheral with minimum activated features.
       <tr align=center>
         <td align=left><p id="BLE_Peripheral_Lite_EventCallbacks">BLE_Peripheral_Lite_EventCallbacks</p></td>
         <td align=left>
-How to communicate with simple BLE peripheral with minimum activated features.
+How to communicate with simple BLE peripheral with minimum activated features with implemented BLE API event callbacks functions.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2784,9 +2805,9 @@ How to demonstrate the capability to erase/write the flash while a Point-to-Poin
       <tr align=center>
         <td align=left><p id="BLE_Sensor">BLE_Sensor</p></td>
         <td align=left>
-This example is to demonstrate capabilities of STM32WB5MM Discovery Kit with the use of board sensors. 
+This example is to demonstrate capabilities of STM32WB5MM Discovery Kit with the use of board sensors.
 </td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
         <td>-</td>
         <td>-</td>
@@ -2796,7 +2817,7 @@ This example is to demonstrate capabilities of STM32WB5MM Discovery Kit with the
         <td align=left>
 How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
 </td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -2804,7 +2825,7 @@ How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
       <tr align=center>
         <td align=left><p id="BLE_TransparentModeVCP">BLE_TransparentModeVCP</p></td>
         <td align=left>
-How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
+How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode through USB Virtual COM Port.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2835,7 +2856,7 @@ How to demonstrate Point-to-Point communication using BLE component (as GATT cli
         <td align=left>
 How to demonstrate Point-to-Point communication using BLE component (as GATT server). 
 </td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
@@ -2851,7 +2872,7 @@ How to demonstrate Point-to-Point communication using BLE component (peripherica
         <td><font size="5" color=green>X</font></td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=4><p id="BLE_LLD">BLE_LLD</p></td>
+        <td align=left rowspan=5><p id="BLE_LLD">BLE_LLD</p></td>
         <td align=left><p id="BLE_LLD_Chat">BLE_LLD_Chat</p></td>
         <td align=left>
 How to create a "Chat" talk between 2 boards using terminals.
@@ -2860,6 +2881,16 @@ How to create a "Chat" talk between 2 boards using terminals.
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>X</font></td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_LLD_Datarate">BLE_LLD_Datarate</p></td>
+        <td align=left>
+How to send BLE LLD packets in high data rate.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
       </tr>
       <tr align=center>
         <td align=left><p id="BLE_LLD_Lowpower">BLE_LLD_Lowpower</p></td>
@@ -2937,7 +2968,7 @@ How to use BLE application and Thread application in static concurrent mode.
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=3><p id="BLE_Zigbee">BLE_Zigbee</p></td>
+        <td align=left rowspan=2><p id="BLE_Zigbee">BLE_Zigbee</p></td>
         <td align=left><p id="BLE_Zigbee_Dyn">BLE_Zigbee_Dyn</p></td>
         <td align=left>
 How to use BLE application and Zigbee application (acting as router) in dynamic concurrent mode.
@@ -2951,16 +2982,6 @@ How to use BLE application and Zigbee application (acting as router) in dynamic 
         <td align=left><p id="BLE_Zigbee_Dyn_SED">BLE_Zigbee_Dyn_SED</p></td>
         <td align=left>
 How to use BLE application and Zigbee application (acting as sleep end device) in dynamic concurrent mode.
-</td>
-        <td>-</td>
-        <td>-</td>
-        <td><font size="5" color=green>X</font></td>
-        <td>-</td>
-      </tr>
-      <tr align=center>
-        <td align=left><p id="BLE_Zigbee_Static">BLE_Zigbee_Static</p></td>
-        <td align=left>
-How to use BLE application and Zigbee application in static concurrent mode.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3124,7 +3145,7 @@ How to create a "PHY_802.15.4 command line interface" application on STM32WB55xx
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=14><p id="Thread">Thread</p></td>
+        <td align=left rowspan=15><p id="Thread">Thread</p></td>
         <td align=left><p id="Thread_Cli_Cmd">Thread_Cli_Cmd</p></td>
         <td align=left>
 How to control the Thread stack via Cli commands.
@@ -3157,7 +3178,7 @@ How to build Thread application based on Coap messages.
       <tr align=center>
         <td align=left><p id="Thread_Coap_Generic_Ota">Thread_Coap_Generic_Ota</p></td>
         <td align=left>
-How to build Thread application based on Coap messages.
+How to build Thread application based on Coap messages (OTA mode).
 </td>
         <td>-</td>
         <td>-</td>
@@ -3207,7 +3228,7 @@ How to exchange multicast Coap messages.
       <tr align=center>
         <td align=left><p id="Thread_Ota">Thread_Ota</p></td>
         <td align=left>
-How to update Over The Air (OTA) FW application and Copro Wireless binary using Thread.
+How to update Over The Air (OTA) FW application and Copro Wireless binary using Thread (Client side).
 </td>
         <td>-</td>
         <td>-</td>
@@ -3217,7 +3238,7 @@ How to update Over The Air (OTA) FW application and Copro Wireless binary using 
       <tr align=center>
         <td align=left><p id="Thread_Ota_Server">Thread_Ota_Server</p></td>
         <td align=left>
-How to update Over The Air (OTA) FW application and Copro Wireless binary using Thread.
+How to update Over The Air (OTA) FW application and Copro Wireless binary using Thread (Server side).
 </td>
         <td>-</td>
         <td>-</td>
@@ -3227,12 +3248,21 @@ How to update Over The Air (OTA) FW application and Copro Wireless binary using 
       <tr align=center>
         <td align=left><p id="Thread_RCP">Thread_RCP</p></td>
         <td align=left>
-
 This application is used to demonstrate the OpenThread Border router feature using an STM32WB device.
 </td>
         <td>-</td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Thread_RCP_Cli_Cmd">Thread_RCP_Cli_Cmd</p></td>
+        <td align=left>
+How to control the Thread stack via Cli commands and trigger an automatic commissioning joiner sequence from a press button.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td>-</td>
       </tr>
       <tr align=center>
@@ -3322,7 +3352,7 @@ Use of the USB device application based on the Human Interface (HID).
         <td align=left rowspan=41><p id="Zigbee">Zigbee</p></td>
         <td align=left><p id="Zigbee_APS_Coord">Zigbee_APS_Coord</p></td>
         <td align=left>
-How to use the APS layer in an application with a centralized Zigbee network.
+How to use the APS layer in an application acting as a Zigbee Coordinator within a centralized network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3332,7 +3362,7 @@ How to use the APS layer in an application with a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_APS_Router">Zigbee_APS_Router</p></td>
         <td align=left>
-How to use the APS layer in an application with a centralized Zigbee network.
+How to use the APS layer in an application acting as a Router within a centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3342,7 +3372,7 @@ How to use the APS layer in an application with a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_Commissioning_Client_Coord">Zigbee_Commissioning_Client_Coord</p></td>
         <td align=left>
-How to use Commissioning cluster as a client on a centralized Zigbee network.
+How to use the Commissioning cluster on a device acting as a Client with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3352,7 +3382,7 @@ How to use Commissioning cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_Commissioning_Server_Router">Zigbee_Commissioning_Server_Router</p></td>
         <td align=left>
-How to use Commissioning cluster as a client on a centralized Zigbee network.
+How to use the Commissioning cluster on a device acting as a Server with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3362,7 +3392,7 @@ How to use Commissioning cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_DevTemp_Client_Router">Zigbee_DevTemp_Client_Router</p></td>
         <td align=left>
-How to use DevTemp cluster on a Centralized Zigbee network with device acting as router.
+How to use the Device Temperature cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3372,7 +3402,7 @@ How to use DevTemp cluster on a Centralized Zigbee network with device acting as
       <tr align=center>
         <td align=left><p id="Zigbee_DevTemp_Server_Coord">Zigbee_DevTemp_Server_Coord</p></td>
         <td align=left>
-How to use DevTemp cluster on a Centralized Zigbee network with device acting as server.
+How to use the Device Temperature cluster on a device acting as a Server with Coordinator role on a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3382,7 +3412,7 @@ How to use DevTemp cluster on a Centralized Zigbee network with device acting as
       <tr align=center>
         <td align=left><p id="Zigbee_Diagnostic_Client_Router">Zigbee_Diagnostic_Client_Router</p></td>
         <td align=left>
-How to use Diagnostic cluster as a client on a centralized Zigbee network.
+How to use the Diagnostic cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3392,7 +3422,7 @@ How to use Diagnostic cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_Diagnostic_Server_Coord">Zigbee_Diagnostic_Server_Coord</p></td>
         <td align=left>
-How to use Diagnostic cluster as a server on a centralized Zigbee network.
+How to use the Diagnostic cluster as a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3402,7 +3432,7 @@ How to use Diagnostic cluster as a server on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_DoorLock_Client_Router">Zigbee_DoorLock_Client_Router</p></td>
         <td align=left>
-How to use Door Lock cluster as a client on a centralized Zigbee network.
+How to use the Door Lock cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3412,7 +3442,7 @@ How to use Door Lock cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_DoorLock_Server_Coord">Zigbee_DoorLock_Server_Coord</p></td>
         <td align=left>
-How to use Door Lock cluster as a client on a centralized Zigbee network.
+ow to use the Door Lock cluster on a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3422,7 +3452,7 @@ How to use Door Lock cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_Find_Bind_Coord">Zigbee_Find_Bind_Coord</p></td>
         <td align=left>
-How to use Finding and Binding on a centralized Zigbee network.
+How to use the Finding and Binding feature on a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3432,7 +3462,7 @@ How to use Finding and Binding on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_Find_Bind_IAS_Router2">Zigbee_Find_Bind_IAS_Router2</p></td>
         <td align=left>
-How to use Finding and Binding on a centralized Zigbee network.
+How to use the Finding and Binding feature on a device using IAS cluster, acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3442,7 +3472,7 @@ How to use Finding and Binding on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_Find_Bind_OnOff_Router1">Zigbee_Find_Bind_OnOff_Router1</p></td>
         <td align=left>
-How to use Finding and Binding on a centralized Zigbee network.
+How to use the Finding and Binding feature on a device using OnOff cluster, acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3452,7 +3482,7 @@ How to use Finding and Binding on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_IAS_WD_Client_Router">Zigbee_IAS_WD_Client_Router</p></td>
         <td align=left>
-How to use IAS WD cluster as a client on a centralized Zigbee network.
+How to use the IAS WD (Intruder Alarm System Warning Device) cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3462,7 +3492,7 @@ How to use IAS WD cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_IAS_WD_Server_Coord">Zigbee_IAS_WD_Server_Coord</p></td>
         <td align=left>
-How to use IAS WD cluster as a server on a centralized Zigbee network.
+How to use the IAS WD (Intruder Alarm System Warning Device) cluster on a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3472,7 +3502,7 @@ How to use IAS WD cluster as a server on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_MeterId_Client_Router">Zigbee_MeterId_Client_Router</p></td>
         <td align=left>
-How to use Meter Identification cluster as a client on a centralized Zigbee network.
+How to use the Meter Identification cluster on a device acting as a client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3482,7 +3512,7 @@ How to use Meter Identification cluster as a client on a centralized Zigbee netw
       <tr align=center>
         <td align=left><p id="Zigbee_MeterId_Server_Coord">Zigbee_MeterId_Server_Coord</p></td>
         <td align=left>
-How to use Meter Identification cluster as a server on a centralized Zigbee network.
+How to use the Meter Identification cluster on a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -3492,7 +3522,7 @@ How to use Meter Identification cluster as a server on a centralized Zigbee netw
       <tr align=center>
         <td align=left><p id="Zigbee_OTA_Client_Router">Zigbee_OTA_Client_Router</p></td>
         <td align=left>
-How to use OTA cluster as a client on a centralized Zigbee network.
+How to use the OTA cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3502,7 +3532,7 @@ How to use OTA cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OTA_Server_Coord">Zigbee_OTA_Server_Coord</p></td>
         <td align=left>
-How to use OTA cluster as a server on a centralized Zigbee network.
+How to use the OTA cluster on a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3512,7 +3542,7 @@ How to use OTA cluster as a server on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Client_Distrib">Zigbee_OnOff_Client_Distrib</p></td>
         <td align=left>
-How to use OnOff cluster as a client on a distributed Zigbee network.
+How to use the OnOff cluster on a device acting as a Client within a distributed Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3522,7 +3552,7 @@ How to use OnOff cluster as a client on a distributed Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Client_Router">Zigbee_OnOff_Client_Router</p></td>
         <td align=left>
-How to use OnOff cluster as a client on a centralized Zigbee network.
+How to use the OnOff cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>X</font></td>
@@ -3532,7 +3562,7 @@ How to use OnOff cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Client_Router_FreeRTOS">Zigbee_OnOff_Client_Router_FreeRTOS</p></td>
         <td align=left>
-How to use OnOff cluster as a client on a centralized Zigbee network.
+How to use the OnOff cluster on a device acting as a Client with Router role within a Centralized Zigbee network using FreeRTOS.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3542,7 +3572,7 @@ How to use OnOff cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Client_Router_Ota">Zigbee_OnOff_Client_Router_Ota</p></td>
         <td align=left>
-How to use OnOff cluster as a client on a centralized Zigbee network.
+How to use an updated OnOff cluster Zigbee application previously downloaded via OTA.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3551,8 +3581,8 @@ How to use OnOff cluster as a client on a centralized Zigbee network.
       </tr>
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Client_SED">Zigbee_OnOff_Client_SED</p></td>
-        <td align=left>
-How to use OnOff cluster as a client on a centralized Zigbee network.
+        <td align=left> 
+How to use the OnOff cluster on a Sleepy End Device acting as a Client within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3562,7 +3592,7 @@ How to use OnOff cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Coord_NVM">Zigbee_OnOff_Coord_NVM</p></td>
         <td align=left>
-How to use OnOff cluster with persistent data on a centralized Zigbee network.
+How to use the OnOff cluster with persistent data activated on a device acting as Coordinator within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3572,7 +3602,7 @@ How to use OnOff cluster with persistent data on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Router_NVM">Zigbee_OnOff_Router_NVM</p></td>
         <td align=left>
-How to use OnOff cluster with persistent data on a centralized Zigbee network.
+How to use the OnOff cluster with persistent data activated on a device acting as Router within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3582,7 +3612,7 @@ How to use OnOff cluster with persistent data on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Server_Coord">Zigbee_OnOff_Server_Coord</p></td>
         <td align=left>
-How to use OnOff cluster as a server on a centralized Zigbee network.
+How to use the OnOff cluster on a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 </td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>X</font></td>
@@ -3592,7 +3622,7 @@ How to use OnOff cluster as a server on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Server_Coord_FreeRTOS">Zigbee_OnOff_Server_Coord_FreeRTOS</p></td>
         <td align=left>
-How to use OnOff cluster as a server on a centralized Zigbee network.
+How to use the OnOff cluster on a device acting as a Server with Coordinator role within a Centralized Zigbee network using FreeRTOS.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3602,7 +3632,7 @@ How to use OnOff cluster as a server on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Server_Distrib">Zigbee_OnOff_Server_Distrib</p></td>
         <td align=left>
-How to use OnOff cluster as a server on a distributed Zigbee network.
+How to use the OnOff cluster on a device acting as a Server within a distributed Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3612,7 +3642,7 @@ How to use OnOff cluster as a server on a distributed Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_PollControl_Client_Coord">Zigbee_PollControl_Client_Coord</p></td>
         <td align=left>
-How to use Poll Control cluster as a client on a centralized Zigbee network.
+How to use the Poll Control cluster on a device acting as a client with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3622,7 +3652,7 @@ How to use Poll Control cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_PollControl_Server_SED">Zigbee_PollControl_Server_SED</p></td>
         <td align=left>
-How to use Poll Control cluster as a server on a centralized Zigbee network.
+How to use the Poll Control cluster on a Sleepy End Device (SED) acting as a Server within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3632,7 +3662,7 @@ How to use Poll Control cluster as a server on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_PowerProfile_Client_Coord">Zigbee_PowerProfile_Client_Coord</p></td>
         <td align=left>
-How to use Power Profile cluster as a client on a centralized Zigbee network.
+How to use the Power Profile cluster on a device acting as a Client with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3642,7 +3672,7 @@ How to use Power Profile cluster as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_PowerProfile_Server_Router">Zigbee_PowerProfile_Server_Router</p></td>
         <td align=left>
-How to use Power Profile cluster as a server on a centralized Zigbee network.
+How to use the Power Profile cluster on a device acting as a Server with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -3652,7 +3682,7 @@ How to use Power Profile cluster as a server on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_PressMeas_Client_Router">Zigbee_PressMeas_Client_Router</p></td>
         <td align=left>
-How to use Pressure Measurement cluster on a Centralized Zigbee network with device acting as router.
+How to use the Pressure Measurement cluster on a device acting as a client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3662,7 +3692,7 @@ How to use Pressure Measurement cluster on a Centralized Zigbee network with dev
       <tr align=center>
         <td align=left><p id="Zigbee_PressMeas_Server_Coord">Zigbee_PressMeas_Server_Coord</p></td>
         <td align=left>
-How to use Pressure Measurement cluster on a Centralized Zigbee network with device acting as server.
+How to use the Pressure Measurement cluster on a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3672,7 +3702,7 @@ How to use Pressure Measurement cluster on a Centralized Zigbee network with dev
       <tr align=center>
         <td align=left><p id="Zigbee_SE_Msg_Client_Coord">Zigbee_SE_Msg_Client_Coord</p></td>
         <td align=left>
-How to use SE Messaging cluster on a Centralized Zigbee network with device acting as coordinator (Client).
+How to use the Smart Energy Messaging cluster on a device acting as a client with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3682,7 +3712,7 @@ How to use SE Messaging cluster on a Centralized Zigbee network with device acti
       <tr align=center>
         <td align=left><p id="Zigbee_SE_Msg_Server_Router">Zigbee_SE_Msg_Server_Router</p></td>
         <td align=left>
-How to use SE Messaging cluster on a Centralized Zigbee network with device acting as router (Server).
+How to use the Smart Energy Messaging cluster on a device acting as a Server with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3692,7 +3722,7 @@ How to use SE Messaging cluster on a Centralized Zigbee network with device acti
       <tr align=center>
         <td align=left><p id="Zigbee_TempMeas_Client_Router">Zigbee_TempMeas_Client_Router</p></td>
         <td align=left>
-How to use TempMeas as a client on a centralized Zigbee network.
+How to use the Device Temperature cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td><font size="5" color=green>X</font></td>
         <td>-</td>
@@ -3702,7 +3732,7 @@ How to use TempMeas as a client on a centralized Zigbee network.
       <tr align=center>
         <td align=left><p id="Zigbee_TempMeas_Server_Coord">Zigbee_TempMeas_Server_Coord</p></td>
         <td align=left>
-How to use Temperature Measurement cluster as a server on a centralized Zigbee network.
+How to use the Device Temperature cluster on a device acting as a Server with Coordinator role on a Centralized Zigbee network.
 </td>
         <td><font size="5" color=green>X</font></td>
         <td>-</td>
@@ -3712,12 +3742,7 @@ How to use Temperature Measurement cluster as a server on a centralized Zigbee n
       <tr align=center>
         <td align=left><p id="Zigbee_custom_ls_Client_Router">Zigbee_custom_ls_Client_Router</p></td>
         <td align=left>
-How to use Custom long string cluster on a Centralized Zigbee network with device 
-acting as coordinator (Server)
-
-The purpose of this application is to show how to create a centralized Zigbee network, and how to communicate
-from one node to another one using the custom long string cluster. Once the Zigbee mesh network is created, the 
-user can send requests to the different boards through the push buttons in order to make the LED toggling.
+How to use the Custom long string cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3727,12 +3752,7 @@ user can send requests to the different boards through the push buttons in order
       <tr align=center>
         <td align=left><p id="Zigbee_custom_ls_Server_Coord">Zigbee_custom_ls_Server_Coord</p></td>
         <td align=left>
-How to use Custom long string cluster on a Centralized Zigbee network with device 
-acting as coordinator (Server)
-
-The purpose of this application is to show how to create a centralized Zigbee network, and how to communicate
-from one node to another one using the custom long string cluster. Once the Zigbee mesh network is created, the 
-user can send requests to the different boards through the push buttons in order to make the LED toggling.
+How to use the Custom long string cluster on a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3740,18 +3760,18 @@ user can send requests to the different boards through the push buttons in order
         <td>-</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of applications: 151</b></td>
-        <td>13</td>
+        <td colspan="3"><b>Total number of applications: 156</b></td>
+        <td>14</td>
         <td>18</td>
-        <td>108</td>
-        <td>12</td>
+        <td>110</td>
+        <td>14</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-      	<td colspan="4"><b>Total number of projects: 443</b></td>
-      	<td>23</td>
+      	<td colspan="4"><b>Total number of projects: 449</b></td>
+      	<td>24</td>
       	<td>19</td>
-      	<td>314</td>
-      	<td>87</td>
+      	<td>316</td>
+      	<td>90</td>
       </tr>
     </table>
   </body>

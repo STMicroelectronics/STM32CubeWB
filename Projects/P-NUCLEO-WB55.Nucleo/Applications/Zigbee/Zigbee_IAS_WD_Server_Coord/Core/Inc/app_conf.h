@@ -6,13 +6,12 @@
  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -103,7 +102,7 @@
  *  The higher is the value, the better is the power consumption and the accuracy of the timerserver
  *  The lower is the value, the finest is the granularity
  *
- *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to ouput
+ *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to output
  *  clock as low as possible) but the output clock should be equal or higher frequency compare to the clock feeding
  *  the wakeup timer. A lower clock speed would impact the accuracy of the timer server.
  *
@@ -335,7 +334,7 @@ typedef enum {
  ******************************************************************************/
 /**
  * Supported requester to the MCU Low Power Manager - can be increased up  to 32
- * It lits a bit mapping of all user of the Low Power Manager
+ * It lists a bit mapping of all user of the Low Power Manager
  */
 typedef enum {
     CFG_LPM_APP,
@@ -350,4 +349,3 @@ typedef enum {
 
 #endif /*APP_CONF_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

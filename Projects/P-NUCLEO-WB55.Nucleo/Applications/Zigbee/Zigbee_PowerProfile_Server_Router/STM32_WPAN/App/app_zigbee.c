@@ -1,20 +1,19 @@
 /**
- ******************************************************************************
- * File Name          : App/app_zigbee.c
- * Description        : Zigbee Application.
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * File Name          : App/app_zigbee.c
+  * Description        : Zigbee Application.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -38,6 +37,7 @@
 #define SW1_ENDPOINT                                17
 #define CHANNEL                                     19
 #define HW_TS_SERVER_1S_NB_TICKS                    (1*1000*1000/CFG_TS_TICK_VAL) /* 1s */
+#define APP_LED_STROKE_CNT                          20 /* 10 seconds */
 
 /* Power Profile specific defines -------------------------------------------------*/
 #define TOTAL_PROFILENUM                            0x01
@@ -48,6 +48,8 @@
 
 /* external definition */
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
+
+static uint8_t app_led_sw_cnt = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 static void APP_ZIGBEE_StackLayersInit(void);
@@ -131,7 +133,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Total Profile Number attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_TOTAL_PROFILENUM, TOTAL_PROFILENUM);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -139,7 +141,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Multiple Scheduling attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_MULTIPLE_SCHED, MULTIPLE_SCHEDULING);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -147,7 +149,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Energy Formating attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_ENERGY_FORMAT, ENERGY_FORMATING);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -155,7 +157,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Energy Remote attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_ENERGY_REMOTE, ENERGY_REMOTE);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -163,7 +165,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Schedule Mode attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_SCHEDULE_MODE, SCHEDULE_MODE);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -316,34 +318,46 @@ static void APP_ZIGBEE_PowerProfile_Processing(void){
   struct ZbApsAddrT dst;
   struct ZbZclPowerProfSvrStateRsp state_notify;
   
-  /* Setting up the addressing mode */ 
-  memset(&dst, 0, sizeof(dst));
-  dst.mode = ZB_APSDE_ADDRMODE_SHORT;
-  dst.endpoint = SW1_ENDPOINT;
-  dst.nwkAddr = 0x0;
-  
-  /* Point 8: Wait 10 seconds while LED_GREEN is blinking */
-  for(unsigned int cpt=0 ; cpt<10 ; cpt++){
-    BSP_LED_On(LED_GREEN);
-    HAL_Delay(500);
+  /* Point 8: Wait 10 seconds while LED_GREEN is blinking */  
+  if(app_led_sw_cnt % 2)
+  {
     BSP_LED_Off(LED_GREEN);
-    HAL_Delay(500);
   }
+  else
+  {
+    BSP_LED_On(LED_GREEN);
+  }
+
+  app_led_sw_cnt++;
   
-  /* Point 9: Power Profile State Notification (Ended, no remote control) is sent by Server */ 
-  memset(&state_notify, 0, sizeof(state_notify));
-  state_notify.profile_count = TOTAL_PROFILENUM;
-  state_notify.record_list[0].remote_control = ENERGY_REMOTE; /* no remote control */
-  state_notify.record_list[0].state = ZCL_PWR_PROF_STATE_PROFILE_ENDED;
-  
-  APP_DBG("[POWER PROFILE] Sending Power Profile state notification: Ended.\n");    
-  APP_ZIGBEE_PowerProfile_Send_StateNotification(&dst, &state_notify);
-  UTIL_SEQ_WaitEvt(EVENT_ZIGBEE_APP_POWER_PROFILE_NOTIFY_RSP_RECEIVED);
-  UTIL_SEQ_ClrEvt(EVENT_ZIGBEE_APP_POWER_PROFILE_NOTIFY_RSP_RECEIVED);
-  
-  HW_TS_Stop(TS_ID1);
-  HW_TS_Stop(TS_ID2);
-  pending_operation = false;
+  if(app_led_sw_cnt < APP_LED_STROKE_CNT)
+  {
+    /* Toggle Green LED every 500 ms */
+    HW_TS_Start(TS_ID2, HW_TS_SERVER_1S_NB_TICKS/2);  
+  }
+  else
+  {
+    /* Setting up the addressing mode */ 
+    memset(&dst, 0, sizeof(dst));
+    dst.mode = ZB_APSDE_ADDRMODE_SHORT;
+    dst.endpoint = SW1_ENDPOINT;
+    dst.nwkAddr = 0x0;
+
+    /* Point 9: Power Profile State Notification (Ended, no remote control) is sent by Server */ 
+    memset(&state_notify, 0, sizeof(state_notify));
+    state_notify.profile_count = TOTAL_PROFILENUM;
+    state_notify.record_list[0].remote_control = ENERGY_REMOTE; /* no remote control */
+    state_notify.record_list[0].state = ZCL_PWR_PROF_STATE_PROFILE_ENDED;
+
+    APP_DBG("[POWER PROFILE] Sending Power Profile state notification: Ended.\n");    
+    APP_ZIGBEE_PowerProfile_Send_StateNotification(&dst, &state_notify);
+    UTIL_SEQ_WaitEvt(EVENT_ZIGBEE_APP_POWER_PROFILE_NOTIFY_RSP_RECEIVED);
+    UTIL_SEQ_ClrEvt(EVENT_ZIGBEE_APP_POWER_PROFILE_NOTIFY_RSP_RECEIVED);
+
+    HW_TS_Stop(TS_ID1);
+    HW_TS_Stop(TS_ID2);
+    pending_operation = false;
+  }
 }
 
 /**
@@ -688,7 +702,7 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Zigbee
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -803,7 +817,7 @@ void ZIGBEE_CmdTransfer(void)
 } /* ZIGBEE_CmdTransfer */
 
 /**
- * @brief  This function is called when the M0+ acknoledge the fact that it has received a Cmd
+ * @brief  This function is called when the M0+ acknowledge  the fact that it has received a Cmd
  *
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -938,4 +952,3 @@ void APP_ZIGBEE_ProcessRequestM0ToM4(void)
     }
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

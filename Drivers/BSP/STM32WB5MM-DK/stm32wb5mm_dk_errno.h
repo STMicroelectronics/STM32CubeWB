@@ -45,5 +45,3 @@
 #define BSP_ERROR_BUS_PROTOCOL_FAILURE       -103
 
 #endif /* STM32WB5MM_DK_ERRNO_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -8,12 +8,12 @@
   * @brief   Description of the LCD Glass example
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -36,7 +36,7 @@ It is a LCD with 24 segments and 4 commons able to display 14-segments digits an
 
 The following manual connections are required:
   (refer to P-NUCLEO-WB55 schematics (MB1355) for STM32WB55RGVx GPIOs physical connections on Morpho connector)
-  (refer to 32L152CDISCOVERY (UM1079) for LCDGlass connections and for more informations on each segment and common usage)
+  (refer to 32L152CDISCOVERY (UM1079) for LCDGlass connections and for more information on each segment and common usage)
   
   STM32WB55RGVx   LCDGlass
   GPIO AF11       PIN  FUNCTION

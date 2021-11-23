@@ -135,18 +135,18 @@ typedef enum
 }Presence_TypeDef;
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup NUCLEO_WB15CC_LOW_LEVEL_Exported_Constants LOW LEVEL Exported Constants
   * @{
-  */ 
+  */
 
 /**
   * @brief NUCLEO-WB15CC BSP Driver version number
   */
 #define __NUCLEO_WB15CC_BSP_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define __NUCLEO_WB15CC_BSP_VERSION_SUB1   (0x00U) /*!< [23:16] sub1 version */
-#define __NUCLEO_WB15CC_BSP_VERSION_SUB2   (0x01U) /*!< [15:8]  sub2 version */
+#define __NUCLEO_WB15CC_BSP_VERSION_SUB2   (0x02U) /*!< [15:8]  sub2 version */
 #define __NUCLEO_WB15CC_BSP_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */ 
 #define __NUCLEO_WB15CC_BSP_VERSION        ((__NUCLEO_WB15CC_BSP_VERSION_MAIN << 24)\
                                               |(__NUCLEO_WB15CC_BSP_VERSION_SUB1 << 16)\
@@ -155,7 +155,7 @@ typedef enum
 
 /** 
   * @brief Define for NUCLEO-WB15CC board  
-  */ 
+  */
 #if !defined (USE_NUCLEO_WB15CC)
  #define USE_NUCLEO_WB15CC
 #endif
@@ -184,11 +184,11 @@ typedef enum
 #define LEDx_GPIO_CLK_DISABLE(__INDEX__)        __HAL_RCC_GPIOB_CLK_DISABLE() /* All Led on same port */
 /**
   * @}
-  */ 
+  */
   
 /** @defgroup NUCLEO_WB15CC_LOW_LEVEL_BUTTON LOW LEVEL BUTTON Constants
   * @{
-  */  
+  */
 #define BUTTONn                                 3
 
 /**
@@ -242,7 +242,7 @@ typedef enum
 #if (USE_BSP_COM_FEATURE > 0)
 /** @defgroup NUCLEO_WB15CC_LOW_LEVEL_COM LOW LEVEL COM Port Constants
   * @{
-  */  
+  */
 #define COM1_UART                             USART1
 #define COM1_CLK_ENABLE()                     __HAL_RCC_LPUART1_CLK_ENABLE()
 #define COM1_CLK_DISABLE()                    __HAL_RCC_LPUART1_CLK_DISABLE()
@@ -351,6 +351,3 @@ HAL_StatusTypeDef MX_LPUART1_Init(UART_HandleTypeDef *huart, MX_UART_InitTypeDef
 #endif
 
 #endif /* NUCLEO_WB15CC_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

@@ -4,7 +4,7 @@
  * @brief Illuminance Level Sensing cluster header
  * ZCL 7 section 4.3
  * ZCL 8 section 4.3
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ILLUM_LEVEL_H
@@ -32,11 +32,11 @@
  * ILLVL.S.A0001 | LightSensorType | False | Optional
  * ILLVL.S.A0010 | IlluminanceTargetLevel | True
  * ILLVL.S.Afffd | ClusterRevision | True
- * ILLVL.S.Afffe | AttributeReportingStatus | False
+ * ILLVL.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * ILLVL.C.Afffd | ClusterRevision | True
- * ILLVL.C.Afffe | AttributeReportingStatus | False
+ * ILLVL.C.Afffe | AttributeReportingStatus | True
  */
 
 /** Attribute Identifiers */

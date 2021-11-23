@@ -1,22 +1,21 @@
 /**
- ******************************************************************************
+  ******************************************************************************
  * @file    app_lpm_transmit_mac_802_15_4.c
  * @author  MCD Application Connectivity Team
  * @brief   Application implementing periodic data transmission using the
  *          Proxy MAC interfacing 802.15.4 RF core.
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 
 /* Includes ------------------------------------------------------------------*/
@@ -192,7 +191,7 @@ void APP_LPM_TRANSMIT_MAC_802_15_4_SendData(const char * data)
 
   memcpy(&rfBuffer,data,strlen(data));
 
-  /* Xor Data to potentialy verified data paylaod on receiver side */
+  /* Xor Data to potentially verified data paylaod on receiver side */
   rfBuffer[strlen(data)] = xorSign(data,strlen(data));
 
 
@@ -356,7 +355,7 @@ void HAL_LPTIM_CompareMatchCallback(LPTIM_HandleTypeDef *hlptim)
 
 
 /**
-  * @brief  comptue simple xor signature of the data to transmit
+  * @brief  compute  simple xor signature of the data to transmit
   *
   * @param  pmessage   : Message to sign.
   * @param  message_len: Message Len
@@ -395,5 +394,3 @@ uint8_t xorSign( const char * pmessage, uint8_t message_len)
  */
 
 
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

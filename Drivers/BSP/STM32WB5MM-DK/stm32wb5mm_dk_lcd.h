@@ -194,5 +194,3 @@ int32_t  BSP_LCD_SendData(uint8_t *pData, uint16_t Length);
 #endif
 
 #endif /* STM32WB5MM_DK_LCD_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

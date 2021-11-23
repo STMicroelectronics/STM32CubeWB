@@ -337,9 +337,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--diag_suppress 1296</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32WB5Mxx,STM32WL55MM_DK</Define>
+              <Define>USE_HAL_DRIVER,STM32WB5Mxx,USE_STM32WB5M_DK</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Middlewares/ST/STM32_WPAN/ble/core;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Inc;../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/ble;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/BSP/STM32WB5MM-DK;../../../../../../Drivers/BSP/Components/ssd1315;../../../../../../Drivers/BSP/Components/Common;../../../../../../Utilities/Fonts;../../../../../../Utilities/LCD;../../../../../../Drivers/BSP/Components/ism330dhcx;../../../../../../Middlewares/ST/STM32_Audio/Addons/PDM/Inc;../../../../../../Middlewares/ST/STM32_USB_Device_Library/Class/AUDIO/Inc;../../../../../../Drivers/CMSIS/DSP/Source/FilteringFunctions;../../../../../../Drivers/CMSIS/DSP/Include;../../../../../../Drivers/BSP/Components/stts22h;../../../../../../Drivers/BSP/Components/s25fl128s;../Core/Src/vl53l0x</IncludePath>
+              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Middlewares/ST/STM32_WPAN/ble/core;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Inc;../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/ble;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/BSP/STM32WB5MM-DK;../../../../../../Drivers/BSP/Components/ssd1315;../../../../../../Drivers/BSP/Components/Common;../../../../../../Utilities/Fonts;../../../../../../Utilities/LCD;../../../../../../Drivers/BSP/Components/ism330dhcx;../../../../../../Middlewares/ST/STM32_Audio/Addons/PDM/Inc;../../../../../../Middlewares/ST/STM32_USB_Device_Library/Class/AUDIO/Inc;../../../../../../Drivers/CMSIS/DSP/Source/FilteringFunctions;../../../../../../Drivers/CMSIS/DSP/Include;../../../../../../Drivers/BSP/Components/stts22h;../Core/Src/vl53l0x</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -399,6 +399,11 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/app_debug.c</FilePath>
             </File>
+            <File>
+              <FileName>hw_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/hw_uart.c</FilePath>
+            </File>            
             <File>
               <FileName>app_entry.c</FileName>
               <FileType>1</FileType>
@@ -545,11 +550,6 @@
               <FilePath>../../../../../../Drivers/BSP/Components/ism330dhcx/ism330dhcx_reg.c</FilePath>
             </File>
             <File>
-              <FileName>s25fl128s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/BSP/Components/s25fl128s/s25fl128s.c</FilePath>
-            </File>
-            <File>
               <FileName>ssd1315.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/BSP/Components/ssd1315/ssd1315.c</FilePath>
@@ -608,11 +608,6 @@
               <FileName>stm32wb5mm_dk_motion_sensors_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_motion_sensors_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32wb5mm_dk_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_qspi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -698,11 +693,6 @@
               <FileName>stm32wbxx_hal_pwr_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pwr_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32wbxx_hal_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_qspi.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_hal_rcc.c</FileName>

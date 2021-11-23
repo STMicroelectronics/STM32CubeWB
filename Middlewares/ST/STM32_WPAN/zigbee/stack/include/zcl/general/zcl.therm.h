@@ -72,7 +72,7 @@
  * TSTAT.S.A0046 | ACCoilTemperature | False | Optional
  * TSTAT.S.A0047 | ACCapacityFormat | False | Optional
  * TSTAT.S.Afffd | ClusterRevision | True
- * TSTAT.S.Afffe | AttributeReportingStatus | False
+ * TSTAT.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * TSTAT.S.C00.Rsp | Setpoint Raise/Lower | True
@@ -90,7 +90,7 @@
  * TSTAT.C.A0007.Report.Rsp | False
  * TSTAT.C.A0008.Report.Rsp | False
  * TSTAT.C.Afffd | ClusterRevision | True
- * TSTAT.C.Afffd | AttributeReportingStatus | False
+ * TSTAT.C.Afffd | AttributeReportingStatus | True
  *
  * Commands Received
  * TSTAT.C.C00.Rsp | Get Weekly Schedule Response | True

@@ -7,9 +7,20 @@
   *
   *          This file overrides the native HAL time base functions (defined as weak)
   *          the TIM time base:
-  *           + Intializes the TIM peripheral to generate a Period elapsed Event each 1ms
+  *           + Initializes the TIM peripheral to generate a Period elapsed Event each 1ms
   *           + HAL_IncTick is called inside HAL_TIM_PeriodElapsedCallback ie each 1ms
   *
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
  @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -25,17 +36,6 @@
        to have correct HAL operation.
 
   @endverbatim
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
-  *
   ******************************************************************************
   */
 /* USER CODE END Header */
@@ -72,6 +72,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 
   /* Enable the TIM2 global Interrupt */
   HAL_NVIC_EnableIRQ(TIM2_IRQn);
+
   /* Enable TIM2 clock */
   __HAL_RCC_TIM2_CLK_ENABLE();
 
@@ -96,6 +97,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   htim2.Init.Prescaler = uwPrescalerValue;
   htim2.Init.ClockDivision = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+
   if(HAL_TIM_Base_Init(&htim2) == HAL_OK)
   {
     /* Start the TIM time Base generation in interrupt mode */
@@ -129,5 +131,3 @@ void HAL_ResumeTick(void)
   /* Enable TIM2 Update interrupt */
   __HAL_TIM_ENABLE_IT(&htim2, TIM_IT_UPDATE);
 }
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

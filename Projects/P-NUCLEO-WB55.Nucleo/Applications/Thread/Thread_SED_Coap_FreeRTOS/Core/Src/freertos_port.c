@@ -1,19 +1,18 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
- * File Name          : freertos_port.c
- * Description        : Custom porting of FreeRTOS functionalities
- *
- ******************************************************************************
+  ******************************************************************************
+  * File Name          : freertos_port.c
+  * Description        : Custom porting of FreeRTOS functionalities
+  *
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -25,11 +24,11 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "stm32_lpm.h"
+#include <limits.h>
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct
 {
-  uint64_t LpTimeDiffVal;
   uint32_t LpTimeLeftOnEntry;
   uint8_t LpTimerFreeRTOS_Id;
 } LpTimerContext_t;
@@ -201,7 +200,6 @@ void vPortSetupTimerInterrupt( void )
 static void LpTimerInit( void )
 {
   ( void ) HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(LpTimerContext.LpTimerFreeRTOS_Id), hw_ts_SingleShot, LpTimerCb);
-  LpTimerContext.LpTimeDiffVal = 0;
 
   return;
 }
@@ -236,13 +234,15 @@ static void LpTimerStart( uint32_t time_to_sleep )
   uint64_t time;
 
   /* Converts the number of FreeRTOS ticks into hw timer tick */
-
-  time = (time_to_sleep * 1000LL * 1000LL );
-  time = time / ( CFG_TS_TICK_VAL * configTICK_RATE_HZ );
-
-  if(time > 0xFFFF0000)
+  if (time_to_sleep > (ULLONG_MAX / 1e12)) /* Prevent overflow in else statement */
   {
-    time = 0xFFFF0000; /* maximum value */
+    time = 0xFFFF0000; /* Maximum value equal to 24 days */
+  }
+  else
+  {
+    /* The result always fits in uint32_t and is always less than 0xFFFF0000 */
+    time = time_to_sleep * 1000000000000ULL;
+    time = (uint64_t)( time /  ( CFG_TS_TICK_VAL_PS * configTICK_RATE_HZ ));
   }
 
   HW_TS_Start(LpTimerContext.LpTimerFreeRTOS_Id, (uint32_t)time);
@@ -284,31 +284,30 @@ static void LpEnter( void )
 #if ( CFG_LPM_SUPPORTED != 0)
 static uint32_t LpGetElapsedTime( void )
 {
-  uint64_t val_ticks, time_us, diff_ps;
-  uint32_t LpTimeLeftOnExit, time2_us;
+  uint64_t val_ticks, time_ps;
+  uint32_t LpTimeLeftOnExit;
 
   LpTimeLeftOnExit = HW_TS_RTC_ReadLeftTicksToCount();
-  time_us = (CFG_TS_TICK_VAL) * (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - LpTimeLeftOnExit);
+  /* This cannot overflow. Max result is ~ 1.6e13 */
+  time_ps = (uint64_t)((CFG_TS_TICK_VAL_PS) * (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - LpTimeLeftOnExit));
 
-  /* Corrects the time precision lost in CFG_TS_TICK_VAL computation */
-
-  /* Compute the amount of pico seconds lost at each TS ticks */
-  diff_ps = DIVR( ((uint64_t)CFG_RTCCLK_DIV * 1000000 * 1000000), (uint64_t)LSE_VALUE );
-  diff_ps -= DIVF( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE ) * 1000000;
-  /* Compute the total amount of time shift */
-  diff_ps *= (uint64_t)(LpTimerContext.LpTimeLeftOnEntry - LpTimeLeftOnExit);
-
-  /* Save the time shift for next time */
-  LpTimerContext.LpTimeDiffVal += diff_ps;
-
-  /* Reports the time difference into returned time elapsed value */
-  time2_us = LpTimerContext.LpTimeDiffVal / (1000ULL * 1000ULL);
-  LpTimerContext.LpTimeDiffVal = LpTimerContext.LpTimeDiffVal - time2_us * (1000ULL * 1000ULL);
-  time_us += time2_us;
-
-  /* Convert uS time into OS ticks */
-  val_ticks = time_us * configTICK_RATE_HZ;
-  val_ticks = val_ticks / (1000 * 1000);
+  /* time_ps can be less than 1 RTOS tick in following situations
+   * a) MCU didn't go to STOP2 due to wake-up unrelated to Timer Server or woke up from STOP2 very shortly after.
+   *    Advancing RTOS clock by 1 FreeRTOS tick doesn't hurt in this case.
+   * b) vPortSuppressTicksAndSleep(xExpectedIdleTime) was called with xExpectedIdleTime = 2 which is minimum value defined by configEXPECTED_IDLE_TIME_BEFORE_SLEEP.
+   *    The xExpectedIdleTime is decremented by one RTOS tick to wake-up in advance.
+   *    Ex: RTOS tick is 1ms, the timer Server wakes the MCU in ~977 us. RTOS clock should be advanced by 1 ms.
+   * */
+  if(time_ps <= (1e12 / configTICK_RATE_HZ)) /* time_ps < RTOS tick */
+  {
+    val_ticks = 1;
+  }
+  else
+  {
+    /* Convert pS time into OS ticks */
+    val_ticks = time_ps * configTICK_RATE_HZ; /* This cannot overflow. Max result is ~ 1.6e16 */
+    val_ticks = (uint64_t)(val_ticks / (1e12)); /* The result always fits in uint32_t */
+  }
 
   /**
    * The system may have been out from another reason than the timer
@@ -321,5 +320,3 @@ static uint32_t LpGetElapsedTime( void )
   return (uint32_t)val_ticks;
 }
 #endif
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

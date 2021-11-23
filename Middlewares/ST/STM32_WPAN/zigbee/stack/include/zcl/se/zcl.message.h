@@ -4,7 +4,7 @@
  * @brief ZCL Messaging cluster header
  * ZCL 7 Section 10.5
  * ZCL 8 Section 10.5
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 /* @PICS.ZCL.Message
@@ -13,7 +13,7 @@
  *
  * Server Attributes
  * SEMS.S.Afffd | ClusterRevision | True
- * SEMS.S.Afffe | AttributeReportingStatus | False
+ * SEMS.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * SEMS.S.C00.Rsp | Get Last Message | False
@@ -28,7 +28,7 @@
  *
  * Client Atributes
  * SEMS.C.Afffd | ClusterRevision | True
- * SEMS.C.Afffe | AttributeReportingStatus | False
+ * SEMS.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * SEMS.C.C00.Rsp | Display Message | False

@@ -26,8 +26,8 @@
 #endif
 
 /* stdarg is required for the logging (ZbSetLogging) */
-/*lint -save -e829 [ 'stdarg.h' usage should be deprecated <Rule 17.1, REQUIRED> ] */
-/*lint -save -e451 [ header file included withoutstandard guard <Dir 4.10, REQUIRED> ] */
+/*lint -save -e829 "'stdarg.h' usage should be deprecated [MISRA Rule 17.1 (REQUIRED)]" */
+/*lint -save -e451 "header file included withoutstandard guard [Dir 4.10 (REQUIRED)]" */
 #include <stdarg.h>
 /*lint -restore */
 /*lint -restore */
@@ -566,19 +566,31 @@ enum ZbTestcaseT {
     ZB_TESTCASE_SE1X_15_48, /* Client sends a truncated EPHEMERAL_DATA request */
     ZB_TESTCASE_CBKE_DELAY_EPH_DATA, /* e.g. SE 1.4 test case 15.25 */
     ZB_TESTCASE_CBKE_DELAY_RESPONSE, /* e.g. SE 1.4 test case 15.26 */
-    ZB_TESTCASE_GB868_EBR_06, /* Bogus EBR */
+    ZB_TESTCASE_NWK_ENH_BEACON_REQ_06, /* Bogus EBR */
     /* Override tx power management in the MAC and always set a minimum
      * power level. Useful for co-ax testing to prevent cross-talk. */
-    ZB_TESTCASE_GB868_MIN_TX_POWER,
-    ZB_TESTCASE_LINKPOWER_DROP_NOTIFY,
-    ZB_TESTCASE_LINKPOWER_DROP_REQUEST,
-    ZB_TESTCASE_REJOIN_DROP_RSP,
-    ZB_TESTCASE_REJOIN_RETURN_FULL,
-    ZB_TESTCASE_EDKA_DROP_REQUEST,
-    ZB_TESTCASE_ASSOC_RSP_FULL,
+    ZB_TESTCASE_NWK_ENH_BEACON_MIN_TX_POWER,
+    ZB_TESTCASE_NWK_ENH_BEACON_REQ_DROP,
+    ZB_TESTCASE_NWK_STD_BEACON_REQ_DROP,
+    ZB_TESTCASE_NWK_LINKPOWER_DROP_NOTIFY,
+    ZB_TESTCASE_NWK_LINKPOWER_DROP_REQUEST,
+    ZB_TESTCASE_NWK_REJOIN_DROP_RSP,
+    ZB_TESTCASE_NWK_REJOIN_RETURN_FULL,
+    ZB_TESTCASE_NWK_EDKA_DROP_REQUEST,
+    ZB_TESTCASE_NWK_ASSOC_RSP_FULL,
+    ZB_TESTCASE_NWK_ROUTE_THRU_NNT_IGNORE_COST, /*  */
+    ZB_TESTCASE_NWK_FC_MAX_ALLOW,
+    ZB_TESTCASE_DLK_NOT_ALLOWED,
+    ZB_TESTCASE_DLK_INVALID_KEY_NEGO_STATE,
+    ZB_TESTCASE_DLK_INVALID_TLV,
+    ZB_TESTCASE_DLK_MISSING_TLV,
+    ZB_TESTCASE_DLK_NO_TLV,
+    ZB_TESTCASE_DLK_OUT_OF_ORDER_TLVS,
+    ZB_TESTCASE_APS_REQUEST_KEY_DROP,
+    ZB_TESTCASE_APS_DISABLE_FC_SYNC,
+    ZB_TESTCASE_ZDO_SEC_CHLNG_WITH_EXTRA_TLVS,
     ZB_TESTCASE_TOUCHLINK_DEBUG_KEY,
-    ZB_TESTCASE_ZED_STACK_SHUTDOWN,
-    ZB_TESTCASE_REQUEST_KEY_DROP
+    ZB_TESTCASE_ZED_STACK_SHUTDOWN
 };
 
 /* External API */

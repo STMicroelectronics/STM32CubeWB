@@ -13,7 +13,7 @@
  *
  * Server Attributes
  * DRLC.S.Afffd | ClusterRevision | True
- * DRLC.S.Afffe | AttributeReportingStatus | False
+ * DRLC.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * DRLC.S.C00.Rsp | Report Event Status | True
@@ -30,7 +30,7 @@
  * DRLC.C.A0002 | StopRandomizeMinutes | True
  * DRLC.C.A0003 | DeviceClassValue | True
  * DRLC.C.Afffd | ClusterRevision | True
- * DRLC.C.Afffe | AttributeReportingStatus | False
+ * DRLC.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * DRLC.C.C00.Rsp | Load Control Event | True

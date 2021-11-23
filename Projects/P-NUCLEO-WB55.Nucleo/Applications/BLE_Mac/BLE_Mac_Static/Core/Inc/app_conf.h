@@ -5,13 +5,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -266,7 +265,7 @@
  * (bit 2): 1: device name Read-Only
  *          0: device name R/W
  * (bit 7): 1: LE Power Class 1
- *          0: LE Power Classe 2-3
+ *          0: LE Power Class  2-3
  * other bits: reserved (shall be set to 0)
  */
 #define CFG_BLE_OPTIONS  SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
@@ -352,7 +351,7 @@
  *  The higher is the value, the better is the power consumption and the accuracy of the timerserver
  *  The lower is the value, the finest is the granularity
  *
- *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to ouput
+ *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to output
  *  clock as low as possible) but the output clock should be equal or higher frequency compare to the clock feeding
  *  the wakeup timer. A lower clock speed would impact the accuracy of the timer server.
  *
@@ -648,7 +647,7 @@ typedef enum
  ******************************************************************************/
 /**
  * Supported requester to the MCU Low Power Manager - can be increased up  to 32
- * It lits a bit mapping of all user of the Low Power Manager
+ * It lists a bit mapping of all user of the Low Power Manager
  */
 typedef enum
 {
@@ -683,13 +682,13 @@ typedef enum
    allocated size within the scatterfile in bytes
 
    CFG_NVM_BASE_ADDRESS : offset to add to the base flash address to get the
-   beginning of the NVM (shall be withon allocation range of scatterfile)
+   beginning of the NVM (shall be within  allocation range of scatterfile)
 
    ST_PERSIST_MAX_ALLOC_SZ : max size of the RAM cache in bytes
                              either an abitrary choice or the CFG_NVM_MAX_SIZE
 
    ST_PERSIST_FLASH_DATA_OFFSET : offset in bytes of zigbee data
-   (U8[4] for lenght - 1st data[]...)
+   (U8[4] for length  - 1st data[]...)
    CFG_NB_OF_PAGE : Number of page of flash to use
 
    CFG_NVM_MAX_SIZE : Max allocable size in byte for NVM
@@ -742,4 +741,3 @@ typedef enum
 
 #endif /* APP_CONF_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

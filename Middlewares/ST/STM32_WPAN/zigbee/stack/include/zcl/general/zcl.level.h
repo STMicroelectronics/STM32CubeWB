@@ -274,13 +274,4 @@ enum ZclStatusCodeT ZbZclLevelClientStopReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclLevelClientStopReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
-/*-----------------------------------------------------------------------------
- * Level Client Payload helper functions
- *-----------------------------------------------------------------------------
- */
-int ZbZclLevelClientMoveToLevelBuild(uint8_t *payload, unsigned int length, struct ZbZclLevelClientMoveToLevelReqT *req);
-int ZbZclLevelClientMoveBuild(uint8_t *payload, unsigned int length, struct ZbZclLevelClientMoveReqT *req);
-int ZbZclLevelClientStepBuild(uint8_t *payload, unsigned int length, struct ZbZclLevelClientStepReqT *req);
-int ZbZclLevelClientStopBuild(uint8_t *payload, unsigned int length, struct ZbZclLevelClientStopReqT *req);
-
 #endif /* ZCL_LEVEL_H */

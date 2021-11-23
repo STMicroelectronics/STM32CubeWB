@@ -8,12 +8,12 @@
   * @brief   Description of the HSEM_DualProcess_IT example.
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -40,15 +40,15 @@ PROCESS_B releases the semaphore with success.
 After successful sequence, LED2 is turned On. 
 In case of errors, LED2 is slowly blinking (1sec period).
 
-Additionnaly, this example demonstrate how to:
-  Retreive the current process locking a semaphore.
-  Retreive the current core locking a semaphore.
+Additionally, this example demonstrate how to:
+  Retrieve the current process locking a semaphore.
+  Retrieve the current core locking a semaphore.
 
 Remarks:
   As this example uses two processes to demonstrate the lock/unlock mechanism, it is not
   possible to use the function LL_HSEM_1StepLock which does not use process identifier. Those
   identifier are set to 0. This function is only interesting in the context of multicore where
-  the core identifers are used to determine the owner of the semaphore.
+  the core identifiers are used to determine the owner of the semaphore.
 
 @par Keywords
 

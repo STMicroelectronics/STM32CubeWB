@@ -14,21 +14,23 @@ LR_IROM2 0x08007140 0x4{    ; load region size_region
   }  
  }
  
-LR_IROM3 0x08007144 0x146BC{
-  ER_IROM1_HIGH 0x08007144 0x146BC {  ; load address = execution address	
-	*(InRoot$$Sections)
-	.ANY (+RO)  
-	*.o (TAG_OTA_END)	
+LR_IROM3 0x08007144 0x116BC{
+  ER_IROM1_HIGH 0x08007144 0x116BC {  ; load address = execution address	
+  *(InRoot$$Sections)
+  .ANY (+RO)  
+  *.o (TAG_OTA_END)	
   }
-    
+  
   RW_IRAM1 0x20000008 0x2FF8  {  ; RW data
+  ANY (+RW +ZI)
+  }
+
+  RW_RAM_SHARED1 0x20030000 0x28  {  ; RW data 
+  *(MAPPING_TABLE)
+  }
+  RW_RAM_SHARED2 0x20030028 0x27D8  { ; RW data      
+  *(MB_MEM1)
+  *(MB_MEM2)
   .ANY (+RW +ZI)
   }
-  
-  RW_RAM2aRet_SHARED 0x20030000 0x2800  {  ; RW data
-  *(MAPPING_TABLE)
-    *(MB_MEM1)
-    *(MB_MEM2)
-  } 
  }
-  

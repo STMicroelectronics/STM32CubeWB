@@ -3,20 +3,19 @@
   * @file    stm32wbxx_core_interface_def.h
   * @author  MCD Application Team
   * @brief   This file contains all the defines and structures used for the
-  *          communication between the two core M0 and M4.
+  *          communication between the two core M0 and M4 when using zigbee.
   *          This file is shared between the code running on M4 and the code
   *          running on M0.
   *
   ******************************************************************************
   * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
  */
@@ -110,6 +109,9 @@ typedef enum {
     MSG_M4TOM0_ZB_STATE_RESUME, /* ZbStateResume */
     /* AES Hashing Functions */
     MSG_M4TOM0_ZB_HASH_ADD, /* ZbHashAdd */
+#ifdef ZIGBEE_DIRECT_ACTIVATED 
+    MSG_M4TOM0_ZB_HASH_BYTE, /* ZbHashByte */
+#endif /* ZIGBEE_DIRECT_ACTIVATED */
     MSG_M4TOM0_ZB_HASH_DIGEST, /* ZbHashDigest */
     /* ECDSA Signature Validation */
     MSG_M4TOM0_ZB_SEC_ECDSA_VALIDATE, /* ZbSecEcdsaValidate */
@@ -121,6 +123,22 @@ typedef enum {
     MSG_M4TOM0_ZCL_TL_SEND_EPINFO_REQ, /* ZbZclTouchlinkTargetSendEpInfoCmd */
     MSG_M0TOM4_ZCL_TL_SEND_EPINFO_CB,
     MSG_M0TOM4_ZCL_TL_EP_INFO_CB, /* ZbTouchlinkCallbacks.ep_info_cb() */
+    /* AES CCM* mode functions for private use */
+#ifdef ZIGBEE_DIRECT_ACTIVATED
+    MSG_M4TOM0_AES_CCM_TRANSFORM,
+    MSG_M4TOM0_AES_CCM_AUTHENTICATE,
+    /* Eliptic Curve (semi-private use) */
+    MSG_M4TOM0_EC_MUL_X25519, /* ec_mul_x25519 */
+    MSG_M4TOM0_EC_MUL_P256, /* ec_mul_p256 */
+    /* SHA-256 functions (semi-private use) */
+    MSG_M4TOM0_SHA256_RESET, /* SHA256Reset */
+    MSG_M4TOM0_SHA256_INPUT, /* SHA256Input */
+    MSG_M4TOM0_SHA256_RESULT, /* SHA256Result */
+    /* HMAC SHA-256 functions (semi-private use) */
+    MSG_M4TOM0_SHA256_HMAC_RESET, /* hmacReset */
+    MSG_M4TOM0_SHA256_HMAC_INPUT, /* hmacInput */
+    MSG_M4TOM0_SHA256_HMAC_RESULT, /* hmacResult */
+#endif /* ZIGBEE_DIRECT_ACTIVATED */
     /* Reserved to 0x00ff for Future Use */
 
     /* ZDO Commands */

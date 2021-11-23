@@ -4,7 +4,7 @@
  * @brief ZCL Device Temperature Configuration cluster header
  * ZCL 7 section 3.4
  * ZCL 8 section 3.4
- * @copyright Copyright [2017 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2017 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_DEVICE_TEMP_H
@@ -31,11 +31,11 @@
  * DTMP.S.A0013 | LowTempDwellTripPoint | True | Optional
  * DTMP.S.A0014 | HighTempDwellTripPoint | True | Optional
  * DTMP.S.Afffd | ClusterRevision | True
- * DTMP.S.Afffe | AttributeReportingStatus | False
+ * DTMP.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * DTMP.C.Afffd | ClusterRevision | True
- * DTMP.C.Afffe | AttributeReportingStatus | False
+ * DTMP.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

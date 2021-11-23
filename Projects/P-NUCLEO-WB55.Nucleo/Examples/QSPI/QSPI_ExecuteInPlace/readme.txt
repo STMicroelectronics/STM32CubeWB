@@ -8,12 +8,12 @@
   * @brief   Description of the code execution from QSPI memory example.
   ******************************************************************************
   *
-  * Copyright (c) 2018 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -44,7 +44,7 @@ QSPI prescaler is set to 2, so QSPI frequency is = HCLK/(QSPI_Prescaler+1) = 64 
 
 @par Keywords
 
-Memory, QSPI, Erase, Write, Execute, Mapped
+Memory, QUADSPI, Erase, Write, Execute, Mapped
 
 @par Directory contents 
 
@@ -71,7 +71,7 @@ Memory, QSPI, Erase, Write, Execute, Mapped
     - Connect PB9 to DQ0 (Serial Data)
     - Connect PB8 to DQ1 (Serial Data)
     - Connect PA7 to DQ2 (DQ2)
-    - Connect PA8 to DQ3 (DQ3)
+    - Connect PA6 to DQ3 (DQ3)
     - Connect NRST to RESET# (Reset)
 
   - A specific region for the QSPI memory has been added in the scatter file 

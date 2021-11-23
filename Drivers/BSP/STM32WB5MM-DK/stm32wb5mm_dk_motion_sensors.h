@@ -160,5 +160,3 @@ int32_t BSP_MOTION_SENSOR_SetFullScale(uint32_t Instance, uint32_t Function, int
 #endif
 
 #endif /* STM32WB5MM_DK_MOTION_SENSORS_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

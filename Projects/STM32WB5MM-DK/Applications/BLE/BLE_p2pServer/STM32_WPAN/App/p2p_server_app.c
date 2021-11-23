@@ -1,18 +1,17 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
- * File Name          : App/p2p_server_app.c
- * Description        : P2P Server Application
- ******************************************************************************
+  ******************************************************************************
+  * File Name          : App/p2p_server_app.c
+  * Description        : P2P Server Application
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -45,7 +44,7 @@
 
 typedef struct
 {
-  uint8_t               Notification_Status; /* used to chek if P2P Server is enabled to Notify */
+  uint8_t               Notification_Status; /* used to check if P2P Server is enabled to Notify */
   P2P_LedCharValue_t    LedControl;
   P2P_ButtonCharValue_t ButtonControl;
   uint16_t              ConnectionHandle;
@@ -410,4 +409,3 @@ void P2PS_Send_Notification(void)
 
 /* USER CODE END FD_LOCAL_FUNCTIONS*/
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

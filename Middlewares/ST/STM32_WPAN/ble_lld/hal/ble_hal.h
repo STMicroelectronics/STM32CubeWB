@@ -1,20 +1,21 @@
-/**
- ******************************************************************************
-  * File Name          : ble_hal.h
-  * Description        : Header for HAL based on LLD
+  /**
+  ******************************************************************************
+  * @file    ble_hal.h
+  * @author  MCD Application Team
+  * @brief   Header for ble_hal.c module
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
- */
+  */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef BLE_HAL_H
 #define BLE_HAL_H
@@ -44,20 +45,22 @@ uint8_t HAL_BLE_LLD_Configure(txPower_t txPower,
                               bool phy2mbps,
                               uint32_t b2bTimeUs,
                               uint32_t networkId);
-uint8_t HAL_BLE_LLD_SendPacket(void *txBuffer,
+uint8_t HAL_BLE_LLD_SendPacket(void *data,
                            uint8_t size,
                            lldCallback_t *callback);
-uint8_t HAL_BLE_LLD_SendPacketWithAck(void *txBuffer,
+uint8_t HAL_BLE_LLD_SendPacketWithAck(void *data,
                                   uint8_t size,
                                   uint32_t receiveTimeout,
                                   lldCallback_t *callback);
 uint8_t HAL_BLE_LLD_ReceivePacket(uint32_t receiveTimeout,
                                   lldCallback_t *callback);
-uint8_t HAL_BLE_LLD_ReceivePacketWithAck(void *txBuffer,
+uint8_t HAL_BLE_LLD_ReceivePacketWithAck(void *ack,
                                      uint8_t size,
                                      uint32_t receiveTimeout,
                                      lldCallback_t *callback);
 
+#ifdef __cplusplus
+} /* extern "C" */
 #endif
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#endif /* BLE_HAL_H */

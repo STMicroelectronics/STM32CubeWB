@@ -10,13 +10,12 @@
   ******************************************************************************
   * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
  */
@@ -29,6 +28,7 @@
 #include "stm32_wpan_common.h"
 #include "coap.h"
 #include "coap_secure.h"
+#include "udp.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,7 +45,7 @@ typedef struct  {
 } STCoapResponseContextType;
 
 typedef struct  {
-  const char *           mUriPath; /* The URI Path string */
+  otCoapResource *          mResource;
   STCoapRequestContextType  mSpecificContext; /* Contains context and handler */
 } STCoapResourceType;
 
@@ -58,6 +58,16 @@ typedef struct  {
   const otSockAddr *               mSocketAddr;         /* The Socket Addr pointer */
   STCoapSecureSpecificContextType  mSpecificContext;    /* Contains context and handler */
 } STCoapSecureConnectType;
+
+typedef struct  {
+  void * mContext;
+  otUdpHandler mHandler;
+} STUdpHandlerContextType;
+
+typedef struct  {
+  otUdpReceiver *           mReceiver;
+  STUdpHandlerContextType   mSpecificContext; /* Contains context and handler */
+} STUdpReceiverType;
 
 /* Structure of the messages exchanged between M0 and M4 */
 #define OT_CMD_BUFFER_SIZE 20U
@@ -548,6 +558,7 @@ typedef enum
   MSG_M0TOM4_COAP_SECURE_CLIENT_CONNECT,
   MSG_M0TOM4_COAP_SECURE_SET_CLIENT_CONNECT,
   MSG_M0TOM4_COAP_SECURE_DEFAULT_REQUEST_HANDLER,
+  MSG_M0TOM4_UDP_HANDLER,
   MSG_M0TOM4_NETWORK_TIME_SYNC_CALLBACK_FN,
   MSG_M0TOM4_SNTP_RESPONSE_HANDLER,
   MSG_M0TOM4_THREAD_PARENT_RESPONSE_HANDLER
@@ -590,4 +601,3 @@ typedef enum
 #endif /* STM32WBxx_CORE_INTERFACE_DEF_H */
 
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

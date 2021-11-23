@@ -99,12 +99,9 @@ enum ZclStatusCodeT ZbZclCommandReq(struct ZigBeeT *zb, struct ZbZclCommandReqT 
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /*---------------------------------------------------------------
- * Cluster Attributes
+ * Attribute Reporting Intervals
  *---------------------------------------------------------------
  */
-
-#define ZCL_ATTRIBUTE_BUFFER_SIZE_MAX       256U
-
 /*** Reporting Intervals ***/
 /* If max interval == 0xffff, then reporting is disabled */
 #define ZCL_ATTR_REPORT_MAX_INTVL_DISABLE   0xffffU
@@ -112,15 +109,21 @@ enum ZclStatusCodeT ZbZclCommandReq(struct ZigBeeT *zb, struct ZbZclCommandReqT 
 
 /* If max interval == 0x0000, then reporting is enabled, but only when attribute changes, no timer. */
 #define ZCL_ATTR_REPORT_MAX_INTVL_CHANGE    0x0000U
-#define ZCL_ATTR_REPORT_MIN_INTVL_CHANGE    0x0000U /* doesn't matter what this is */
 
 /* BDB Spec Section 6.7: Maximum reporting interval is either 0x0000 or in the range 0x003d to 0xfffe */
 #define ZCL_ATTR_REPORT_MAX_INTVL_MINIMUM   0x003dU /* 61 seconds */
-#define ZCL_ATTR_REPORT_MAX_INTVL_MAXIMUM   0xfffeU
+#define ZCL_ATTR_REPORT_MAX_INTVL_MAXIMUM   0xfffeU /* 18 hours, 12 minutes, 14 seconds */
 
 /* If max interval == 0x0000 and min interval == 0xffff, then reset reporting back to default. */
 #define ZCL_ATTR_REPORT_MAX_INTVL_DEFAULT   0x0000U
 #define ZCL_ATTR_REPORT_MIN_INTVL_DEFAULT   0xffffU
+
+/*---------------------------------------------------------------
+ * Cluster Attributes
+ *---------------------------------------------------------------
+ */
+
+#define ZCL_ATTRIBUTE_BUFFER_SIZE_MAX       256U
 
 struct ZbZclAttrCbInfoT;
 
@@ -158,9 +161,9 @@ struct ZbZclAttrT {
      * this callback is called for attribute read or write commands. */
 
     struct {
-        long long min;
-        long long max;
-    } integer_range;
+        double min;
+        double max;
+    } range;
     /**< Optional integer attribute value range. If both are set to zero, range checking is disabled. */
 
     struct {
@@ -252,14 +255,14 @@ int ZbZclAttrDefaultValue(enum ZclDataTypeT type, uint8_t *buf, unsigned int max
 /**
  * ZbZclClusterReverseBind is used by the Alarms Server so it can receive loopback
  * messages sent in the direction of the client (i.e. reverse).
- * @param cluster
+ * @param cluster Cluster instance
  * @return Filter pointer (handle)
  */
 struct ZbApsFilterT * ZbZclClusterReverseBind(struct ZbZclClusterT *cluster);
 
 /**
  * Remove the reverse (loopback) filter and free it.
- * @param cluster
+ * @param cluster Cluster instance
  * @param filter Filter to remove and free
  * @return None
  */
@@ -271,7 +274,7 @@ void ZbZclClusterReverseUnbind(struct ZbZclClusterT *cluster, struct ZbApsFilter
  * If the cluster appears on multiple endpoints (e.g. Basic Cluster), the src_endpoint
  * is required to know which one to actually send the Alarm Command from.
  * The alarm message is sent via APS binding(s).
- * @param cluster
+ * @param cluster Cluster instance
  * @param src_endpoint
  * @param alarm_code
  * @return None
@@ -324,10 +327,14 @@ struct ZbZclClusterT {
     struct ZbApsFilterT *dataind_filter;
     struct LinkListT attributeList;
     struct {
-        struct LinkListT list; /* struct ZbZclReportT */
-        struct ZbTimerT *timer;
-        bool kicked;
         struct ZbMsgFilterT *reset_filter;
+        struct LinkListT list; /* List of "struct ZbZclReportT" reports */
+        struct ZbTimerT *timer; /* Report timer */
+        bool send_all;
+        bool kicked;
+        /* Callback for ZbZclAttrReportKick when done sending reports */
+        void (*callback)(struct ZbZclClusterT *cluster, unsigned int next_timeout, void *arg);
+        void *arg;
     } reports;
     struct {
         struct ZbApsFilterT *reset_filter;
@@ -349,10 +356,9 @@ struct ZbZclClusterT {
     enum ZclStatusCodeT (*command)(struct ZbZclClusterT *cluster, struct ZbZclHeaderT *zclHdrPtr,
         struct ZbApsdeDataIndT *dataIndPtr);
 
-    /* Configure reporting */
-    void (*config)(struct ZbZclClusterT *cluster, struct ZbApsdeDataIndT *dataIndPtr, uint16_t attributeId,
-        enum ZclStatusCodeT status, uint8_t direction);
-
+    /* Callback to receive ZCL Report Commands. Configured by calling ZbZclClusterReportCallbackAttach.
+     * Attribute reporting can be configured on the remote device by calling ZbZclAttrReportConfigReq.
+     * When the remote device sends reports, those reports can be received through this callback. */
     void (*report)(struct ZbZclClusterT *cluster, struct ZbApsdeDataIndT *dataIndPtr, uint16_t attributeId,
         enum ZclDataTypeT dataType, const uint8_t *in_payload, uint16_t in_len);
 
@@ -433,14 +439,17 @@ int ZbZclPrependHeader(struct ZbZclHeaderT *zclHdrPtr, uint8_t *data, unsigned i
 int ZbZclAppendHeader(struct ZbZclHeaderT *zclHdrPtr, uint8_t *data, unsigned int max_len);
 
 /*---------------------------------------------------------------
- * Generic Attribute Functions
+ * Cluster Attributes
  *---------------------------------------------------------------
  */
-int ZbZclAttrParseLength(enum ZclDataTypeT type, const uint8_t *ptr, unsigned int max_len, uint8_t recurs_depth);
-
+bool ZbZclAttrIsInteger(enum ZclDataTypeT dataType);
 bool ZbZclAttrIsFloat(enum ZclDataTypeT dataType);
 bool ZbZclAttrIsAnalog(enum ZclDataTypeT dataType);
-bool ZbZclAttrIsInteger(enum ZclDataTypeT dataType);
+
+/* Based on attribute data type and attribute data (if necessary), determine the
+ * length of the attribute. */
+int ZbZclAttrParseLength(enum ZclDataTypeT type, const uint8_t *ptr,
+    unsigned int max_len, uint8_t recurs_depth);
 
 int ZbZclAppendInteger(unsigned long long value, enum ZclDataTypeT dataType, uint8_t *data, unsigned int len);
 
@@ -456,36 +465,36 @@ int ZbZclAppendInteger(unsigned long long value, enum ZclDataTypeT dataType, uin
  */
 long long ZbZclParseInteger(enum ZclDataTypeT dataType, const uint8_t *data, enum ZclStatusCodeT *statusPtr);
 
-int ZbZclAppendFloat(double value, enum ZclDataTypeT dataType, uint8_t *data, unsigned int len);
-double ZbZclParseFloat(enum ZclDataTypeT dataType, const uint8_t *data);
+/* Write a float value to the output 'data' pointer in ZCL format based on the attribute data type. */
+int ZbZclAppendFloat(double value, enum ZclDataTypeT dataType, uint8_t *data, unsigned int maxlen);
+double ZbZclParseFloat(enum ZclDataTypeT dataType, const uint8_t *data, enum ZclStatusCodeT *statusPtr);
 
-/*---------------------------------------------------------------
- * Local Reading and Writing of Attributes
- *---------------------------------------------------------------
- */
-
-/*FUNCTION
- *  ZbZclAttrRead
- *PARAMETERS
- *  cluster      ; IN: Cluster Structure Pointer
- *  attrId          ; IN: Cluster's Attribute ID
- *  attrType        ; OUT (optional): Attribute Data Type
- *  outputBuf       ; OUT: Attribute data in ZCL format (i.e. same as what is sent over-the-air)
- *  max_len         ; IN: Maximum length that can be written to outputBuf.
- *  isReporting     ; IN: This read is from ZCL reporting. If the attribute does not support reporting, the read request will fail.
+/**
+ * Reads a local cluster's attribute value. Returns the attribute type if provided as
+ * a pointer through 'attrType'.
+ * @param cluster Cluster instance
+ * @param attrId Attribute Id of the attribute to read
+ * @param attrType Pointer to the attribute type. If not NULL and this function returns
+ * ZCL_STATUS_SUCCESS, the type value of the attribute is returned in this parameter.
+ * @param outputBuf Buffer to write attribute value data to.
+ * @param max_len Maximum length of 'outputBuf'.
+ * @param isReporting If true and this attribute is being read for generating a report,
+ * the attribute's flag is checked for ZCL_ATTR_FLAG_REPORTABLE and if not set, a status
+ * of ZCL_STATUS_UNREPORTABLE_ATTRIBUTE is returned.
+ * @return ZCL Status Code
  */
 enum ZclStatusCodeT ZbZclAttrRead(struct ZbZclClusterT *cluster, uint16_t attrId, enum ZclDataTypeT *attrType,
     void *outputBuf, unsigned int max_len, bool isReporting);
 
-/*FUNCTION
- *  ZbZclAttrWrite
- *PARAMETERS
- *  cluster      ; IN: Cluster Structure Pointer
- *  src             ; IN: Source address of this command. May be NULL if generated locally.
- *  attr_id         ; IN: Cluster's Attribute ID
- *  attr_data       ; IN: Attribute data in ZCL format (i.e. same as what is sent over-the-air)
- *  max_len         ; IN: Length of attribute data
- *  mode            ; IN: Write mode
+/**
+ * Writes a local cluster's attribute value.
+ * @param cluster Cluster instance
+ * @param src Source address of this command. May be NULL if generated locally.
+ * @param attr_id Attribute Id of the attribute to write
+ * @param attr_data Attribute data in ZCL format (i.e. same as what is sent over-the-air)
+ * @param max_len Maximum length of attribute data (attr_data) buffer.
+ * @param mode Write mode
+ * @return ZCL Status Code
  */
 enum ZclStatusCodeT ZbZclAttrWrite(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *src, uint16_t attr_id,
     const uint8_t *attr_data, unsigned int max_len, ZclWriteModeT mode);
@@ -513,32 +522,73 @@ extern const uint8_t zcl_attr_str_short_zero[1]; /* i.e. {0x00} */
 extern const uint8_t zcl_attr_str_long_zero[2]; /* i.e. {0x00, 0x00} */
 
 /*---------------------------------------------------------------
- * Configure Reporting
+ * Attribute Reporting
  *---------------------------------------------------------------
  */
-struct ZbZclAttrReportableChangeT {
-    union {
-        long long integer; /* If ZbZclAttrIsAnalog */
-        double floating; /* If ZCL_DATATYPE_FLOATING_xxx */
-        /* All other types send report on any change of value. */
-    } epsilon;
+enum ZbZclReportDirectionT {
+    /* For Configure Reporting: receiver configures attribute to send
+     * reports via binding table.
+     *
+     * For Read Reporting: specifies whether values of the attribute are reported */
+    ZCL_REPORT_DIRECTION_NORMAL = 0x00,
+
+    /* For Configure Reporting: sender is sending reports to the receiver,
+     * based on the state of the sender's bindings. Tells receiver how / when
+     * it should expect reports.
+     *
+     * For Read Reporting: specifies whether reports of the attribute are received. */
+    ZCL_REPORT_DIRECTION_REVERSE = 0x01
+};
+
+/*---------------------------------------------------------------
+ * Attribute Reporting
+ *---------------------------------------------------------------
+ */
+/* Maximum number of Attribute reporting configuration records. */
+#define ZCL_ATTR_REPORT_CONFIG_NUM_MAX          6U
+
+/* Attribute reporting configuration record. Max size is 16 */
+struct ZbZclAttrReportConfigRecordT {
+    enum ZbZclReportDirectionT direction; /* e.g. ZCL_REPORT_DIRECTION_NORMAL. */
+    uint16_t attr_id;
+    uint8_t attr_type; /* Only if ZCL_REPORT_DIRECTION_NORMAL. */
+    uint16_t min; /* Only if ZCL_REPORT_DIRECTION_NORMAL. */
+    uint16_t max; /* Only if ZCL_REPORT_DIRECTION_NORMAL. */
+    double change; /**< Reportable change. Only if ZCL_REPORT_DIRECTION_NORMAL. */
+    uint16_t timeout_period; /* Only if ZCL_REPORT_DIRECTION_REVERSE. */
 };
 
 struct ZbZclAttrReportConfigT {
     struct ZbApsAddrT dst;
-    uint16_t min;
-    uint16_t max;
-    uint16_t attr_id;
-    uint8_t attr_type;
-    struct ZbZclAttrReportableChangeT change;
+    uint8_t num_records;
+    struct ZbZclAttrReportConfigRecordT record_list[ZCL_ATTR_REPORT_CONFIG_NUM_MAX];
 };
 
-enum ZclStatusCodeT ZbZclAttrReportConfigReq(struct ZbZclClusterT *cluster, struct ZbZclAttrReportConfigT *report,
+/**
+ * Configure an attribute's default reporting intervals. It will also set the
+ * active reporting intervals to these values and reset the reporting timer.
+ * The Reportable Change value will also be reset back to defaults (value = 1).
+ * @param cluster Cluster instance
+ * @param config SAL
+ * @param callback Callback function
+ * @param arg Callback argument
+ * @return ZCL Status Code
+ */
+enum ZclStatusCodeT ZbZclAttrReportConfigReq(struct ZbZclClusterT *cluster, struct ZbZclAttrReportConfigT *config,
     void (*callback)(struct ZbZclCommandRspT *cmd_rsp, void *arg), void *arg);
+
+/* Attribute reporting configuration record. Max size is 16 */
+struct ZbZclAttrReportReadRecordT {
+    enum ZbZclReportDirectionT direction; /* e.g. ZCL_REPORT_DIRECTION_NORMAL. */
+    uint16_t attr_id;
+};
+
+#define ZCL_ATTR_REPORT_READ_NUM_MAX        ZCL_ATTR_REPORT_CONFIG_NUM_MAX
 
 struct ZbZclAttrReportReadT {
     struct ZbApsAddrT dst;
-    uint16_t attr_id;
+    uint8_t num_records;
+    struct ZbZclAttrReportConfigRecordT record_list[ZCL_ATTR_REPORT_READ_NUM_MAX];
 };
 
 enum ZclStatusCodeT ZbZclAttrReportReadReq(struct ZbZclClusterT *cluster, struct ZbZclAttrReportReadT *report,
@@ -556,8 +606,20 @@ enum ZclStatusCodeT ZbZclAttrReportReadReq(struct ZbZclClusterT *cluster, struct
  * @return ZCL Status Code
  */
 enum ZclStatusCodeT ZbZclAttrReportConfigDefault(struct ZbZclClusterT *clusterPtr,
-    uint16_t attrId, uint16_t default_min, uint16_t default_max,
-    struct ZbZclAttrReportableChangeT *default_change);
+    uint16_t attrId, uint16_t default_min, uint16_t default_max, double *default_change);
+
+/**
+ * This function is called to manually drive the attribute reporting mechanism.
+ * The application may disable the automatic periodic reporting by setting the Network
+ * Attribute 'ZB_NWK_NIB_ID_DisablePeriodicTimers' to 1.
+ * @param cluster Cluster instance
+ * @param callback Callback that is called once all reports have been sent. The 'next_timeout'
+ * parameter is the time until the next scheduled report, in milliseconds.
+ * @param arg Callback argument
+ * @return ZCL Status Code. If not ZCL_STATUS_SUCCESS, then callback will not be called.
+ */
+enum ZclStatusCodeT ZbZclAttrReportKick(struct ZbZclClusterT *cluster, bool send_all,
+    void (*callback)(struct ZbZclClusterT *cluster, unsigned int next_timeout, void *arg), void *arg);
 
 /*---------------------------------------------------------------
  * Remote Reading and Writing of Attributes
@@ -652,43 +714,6 @@ enum ZclStatusCodeT ZbZclDiscoverAttrReq(struct ZbZclClusterT *cluster, struct Z
     void (*callback)(const struct ZbZclDiscoverAttrRspT *discRsp, void *cb_arg), void *arg);
 
 /*---------------------------------------------------------------
- * Attribute Reporting
- *---------------------------------------------------------------
- */
-enum ZbZclReportDirectionT {
-    /* For Configure Reporting: receiver configures attribute to send
-     * reports via binding table.
-     *
-     * For Read Reporting: specifies whether values of the attribute are reported */
-    ZCL_REPORT_DIRECTION_NORMAL = 0x00,
-
-    /* For Configure Reporting: sender is sending reports to the receiver,
-     * based on the state of the sender's bindings. Tells receiver how / when
-     * it should expect reports.
-     *
-     * For Read Reporting: specifies whether reports of the attribute are received. */
-    ZCL_REPORT_DIRECTION_REVERSE = 0x01
-};
-
-/* ZCL Reporting Configuration Record Structure. */
-struct ZbZclReportConfigT {
-    enum ZbZclReportDirectionT direction;
-    uint16_t attributeId;
-    enum ZclDataTypeT dataType;
-    uint16_t minInterval;
-    uint16_t maxInterval;
-    union {
-        long long integer;
-        double floating;
-    } minChange;
-    uint16_t reportTimeout;
-};
-
-/* Appends a Reporting configuration record to the end of the provided buffer.
- * Returns Length of data written, or negative value (-1) on error. */
-int ZbZclAppendReportConfig(struct ZbZclReportConfigT *configPtr, uint8_t *payload, unsigned int max_len);
-
-/*---------------------------------------------------------------
  * Attribute Persistence
  *---------------------------------------------------------------
  */
@@ -719,8 +744,6 @@ struct ZbZclClusterCommandReqT {
  * "callback" may be NULL */
 enum ZclStatusCodeT ZbZclClusterCommandReq(struct ZbZclClusterT *cluster, struct ZbZclClusterCommandReqT *req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
-
-#define ZCL_REQ_DELAY_DEFAULT               200U /* ms */
 
 /**
  * Same as ZbZclClusterCommandReq, except the message is delayed by 'delay' parameter milliseconds.
@@ -803,7 +826,7 @@ enum ZclStateReqReturn {
 typedef enum ZclStateReqReturn (*ZbZclHandlerFuncT)(struct ZigBeeT *zb, struct ZbZclCommandRspT *cmdRsp, void *callback, void *arg);
 
 enum ZclStatusCodeT ZbZclStateBegin(struct ZigBeeT *zb, struct ZbApsdeDataReqT *apsReq, struct ZbZclHeaderT *zclHdr,
-    unsigned int timeout, ZbZclHandlerFuncT handler, void *callback, void *arg);
+    ZbZclHandlerFuncT handler, void *callback, void *arg);
 
 /*---------------------------------------------------------------
  * Helper Functions
@@ -848,10 +871,22 @@ const char * ZbZclClusterGetDirectionStr(struct ZbZclClusterT *cluster);
 uint8_t ZbZclClusterGetRadius(struct ZbZclClusterT *cluster);
 unsigned int ZbZclClusterGetMaxAsduLength(struct ZbZclClusterT *cluster);
 
+/**
+ * Attach a callback function to receive ZCL Attribute Report Commands.
+ * @param cluster Cluster instance
+ * @param callback Application callback to handle Report commands.
+ * @return None
+ */
 void ZbZclClusterReportCallbackAttach(struct ZbZclClusterT *cluster,
     void (*callback)(struct ZbZclClusterT *cluster, struct ZbApsdeDataIndT *dataIndPtr,
         uint16_t attr_id, enum ZclDataTypeT data_type, const uint8_t *in_payload, uint16_t in_len));
 
+/**
+ * An inline helper function that inspects a ZCL header struct and returns true if
+ * it's for a ZCL Default Response command, or false otherwise.
+ * @param hdr ZCL Header struct
+ * @return true if ZCL header indicates it's for a ZCL Default Response command, or false otherwise.
+ */
 static inline bool
 ZbZclIsDefaultRsp(struct ZbZclHeaderT *hdr)
 {
@@ -881,7 +916,7 @@ enum {
 };
 
 #ifdef __cplusplus
-} /* extern "C" */
+}
 #endif
 
 #endif /* ZCL_H */

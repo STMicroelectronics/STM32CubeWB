@@ -1,20 +1,19 @@
-/******************************************************************************
+/*****************************************************************************
  * @file    ble_gap_aci.h
  * @author  MCD
  * @brief   STM32WB BLE API (gap_aci)
  *          Auto-generated file: do not edit!
- ******************************************************************************
+ *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
- ******************************************************************************
+ *****************************************************************************
  */
 
 #ifndef BLE_GAP_ACI_H__
@@ -61,23 +60,21 @@ tBleStatus aci_gap_set_non_discoverable( void );
  *        - 0x02: ADV_SCAN_IND (Scannable undirected advertising)
  *        - 0x03: ADV_NONCONN_IND (Non connectable undirected advertising)
  * @param Advertising_Interval_Min Minimum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
  * @param Advertising_Interval_Max Maximum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
+ *        - 0x03: Non-resolvable private address
  * @param Advertising_Filter_Policy Advertising filter policy: not applicable
  *        (the value of Advertising_Filter_Policy parameter is not used inside
  *        the Stack)
@@ -158,23 +155,21 @@ tBleStatus aci_gap_set_limited_discoverable( uint8_t Advertising_Type,
  *        - 0x02: ADV_SCAN_IND (Scannable undirected advertising)
  *        - 0x03: ADV_NONCONN_IND (Non connectable undirected advertising)
  * @param Advertising_Interval_Min Minimum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
  * @param Advertising_Interval_Max Maximum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
+ *        - 0x03: Non-resolvable private address
  * @param Advertising_Filter_Policy Advertising filter policy: not applicable
  *        (the value of Advertising_Filter_Policy parameter is not used inside
  *        the Stack)
@@ -241,16 +236,14 @@ tBleStatus aci_gap_set_discoverable( uint8_t Advertising_Type,
  * status set to HCI_ADVERTISING_TIMEOUT_ERR_CODE if the connection was not
  * established and BLE_STATUS_SUCCESS (0x00) if the connection was successfully
  * established.
- * If Host privacy is enabled this command returns BLE_STATUS_INVALID_PARAMS.
  * 
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
  * @param Directed_Advertising_Type Advertising type
  *        Values:
  *        - 0x01: High Duty Cycle Directed Advertising
@@ -259,15 +252,15 @@ tBleStatus aci_gap_set_discoverable( uint8_t Advertising_Type,
  *        Values:
  *        - 0x00: Public Device Address
  *        - 0x01: Random Device Address
- * @param Direct_Address Initiator Bluetooth address
+ * @param Direct_Address Initiator address
  * @param Advertising_Interval_Min Minimum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0006 (3.750 ms) : for High Duty Cycle Directed Advertising
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) : for Low Duty Cycle
  *          Directed Advertising
  * @param Advertising_Interval_Max Maximum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0006 (3.750 ms) : for High Duty Cycle Directed Advertising
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms) : for Low Duty Cycle
@@ -431,11 +424,11 @@ tBleStatus aci_gap_authorization_resp( uint16_t Connection_Handle,
  *        - 0x02: Broadcaster
  *        - 0x04: Central
  *        - 0x08: Observer
- * @param privacy_enabled Specify if privacy is enabled or not and which one .
+ * @param privacy_enabled This paremeter specifies if Privacy is enabled or
+ *        not. N.B.: only Controller Privacy is supported.
  *        Values:
  *        - 0x00: Privacy disabled
- *        - 0x01: Privacy host enabled
- *        - 0x02: Privacy controller enabled
+ *        - 0x02: Privacy enabled
  * @param device_name_char_len Length of the device name characteristic
  * @param[out] Service_Handle Handle of the GAP service
  * @param[out] Dev_Name_Char_Handle Device Name Characteristic handle
@@ -460,16 +453,14 @@ tBleStatus aci_gap_init( uint8_t Role,
  *        Values:
  *        - 0x02: ADV_SCAN_IND (Scannable undirected advertising)
  *        - 0x03: ADV_NONCONN_IND (Non connectable undirected advertising)
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
+ *        - 0x03: Non-resolvable private address
  * @return Value indicating success or error code.
  */
 tBleStatus aci_gap_set_non_connectable( uint8_t Advertising_Event_Type,
@@ -483,23 +474,20 @@ tBleStatus aci_gap_set_non_connectable( uint8_t Advertising_Event_Type,
  * type specified in own_addr_type is used for advertising.
  * 
  * @param Advertising_Interval_Min Minimum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
  * @param Advertising_Interval_Max Maximum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if Host privacy (i.e. privacy 1.1) is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
  * @param Adv_Filter_Policy Advertising filter policy.
  *        Values:
  *        - 0x00: Allow Scan Request from Any, Allow Connect Request from Any
@@ -671,24 +659,22 @@ tBleStatus aci_gap_allow_rebond( uint16_t Connection_Handle );
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
+ *        - 0x03: Non-resolvable private address
  * @param Filter_Duplicates Enable/disable duplicate filtering.
  *        Values:
  *        - 0x00: Duplicate filtering disabled
@@ -714,24 +700,22 @@ tBleStatus aci_gap_start_limited_discovery_proc( uint16_t LE_Scan_Interval,
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
+ *        - 0x03: Non-resolvable private address
  * @param Filter_Duplicates Enable/disable duplicate filtering.
  *        Values:
  *        - 0x00: Duplicate filtering disabled
@@ -742,88 +726,6 @@ tBleStatus aci_gap_start_general_discovery_proc( uint16_t LE_Scan_Interval,
                                                  uint16_t LE_Scan_Window,
                                                  uint8_t Own_Address_Type,
                                                  uint8_t Filter_Duplicates );
-
-/**
- * @brief ACI_GAP_START_NAME_DISCOVERY_PROC
- * Start the name discovery procedure. A LE_Create_Connection call will be made
- * to the controller by GAP with the initiator filter policy set to "ignore
- * whitelist and process connectable advertising packets only for the specified
- * device". Once a connection is established, GATT procedure is started to read
- * the device name characteristic. When the read is completed (successfully or
- * unsuccessfully), a ACI_GAP_PROC_COMPLETE_EVENT event is given to the upper
- * layer. The event also contains the name of the device if the device name was
- * read successfully.
- * 
- * @param LE_Scan_Interval This is defined as the time interval from when the
- *        Controller started its last LE scan until it begins the subsequent LE
- *        scan.
- *        Time = N * 0.625 msec.
- *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
- * @param LE_Scan_Window Amount of time for the duration of the LE scan.
- *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
- *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
- * @param Peer_Address_Type Address type.
- *        Values:
- *        - 0x00: Public Device Address
- *        - 0x01: Random Device Address
- * @param Peer_Address Public Device Address or Random Device Address of the
- *        device to be connected.
- * @param Own_Address_Type Own address type
- *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
- * @param Conn_Interval_Min Minimum value for the connection event interval.
- *        This shall be less than or equal to Conn_Interval_Max.
- *        Time = N * 1.25 msec.
- *        Values:
- *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Conn_Interval_Max Maximum value for the connection event interval.
- *        This shall be greater than or equal to Conn_Interval_Min.
- *        Time = N * 1.25 msec.
- *        Values:
- *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Conn_Latency Slave latency for the connection in number of connection
- *        events.
- *        Values:
- *        - 0x0000 ... 0x01F3
- * @param Supervision_Timeout Supervision timeout for the LE Link.
- *        It shall be a multiple of 10 ms and larger than (1 +
- *        connSlaveLatency) * connInterval * 2.
- *        Time = N * 10 msec.
- *        Values:
- *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
- * @param Minimum_CE_Length Information parameter about the minimum length of
- *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
- *        Values:
- *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
- * @param Maximum_CE_Length Information parameter about the maximum length of
- *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
- *        Values:
- *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
- * @return Value indicating success or error code.
- */
-tBleStatus aci_gap_start_name_discovery_proc( uint16_t LE_Scan_Interval,
-                                              uint16_t LE_Scan_Window,
-                                              uint8_t Peer_Address_Type,
-                                              const uint8_t* Peer_Address,
-                                              uint8_t Own_Address_Type,
-                                              uint16_t Conn_Interval_Min,
-                                              uint16_t Conn_Interval_Max,
-                                              uint16_t Conn_Latency,
-                                              uint16_t Supervision_Timeout,
-                                              uint16_t Minimum_CE_Length,
-                                              uint16_t Maximum_CE_Length );
 
 /**
  * @brief ACI_GAP_START_AUTO_CONNECTION_ESTABLISH_PROC
@@ -839,39 +741,36 @@ tBleStatus aci_gap_start_name_discovery_proc( uint16_t LE_Scan_Interval,
  * ACI_GAP_TERMINATE_GAP_PROC with the procedure code set to 0x08. A
  * ACI_GAP_PROC_COMPLETE_EVENT event is returned with the procedure code set to
  * 0x08.
- * If controller privacy is enabled and the peer device (advertiser) is in the
- * resolving list then the link layer will generate a RPA, if it is not then
- * the RPA/NRPA generated by the Host will be used.
+ * If privacy is enabled and the peer device (advertiser) is in the resolving
+ * list then the link layer generates a RPA, if it is not then the RPA
+ * generated by the Host is used.
  * 
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
  * @param Conn_Interval_Min Minimum value for the connection event interval.
  *        This shall be less than or equal to Conn_Interval_Max.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
  *        This shall be greater than or equal to Conn_Interval_Min.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Latency Slave latency for the connection in number of connection
@@ -881,17 +780,17 @@ tBleStatus aci_gap_start_name_discovery_proc( uint16_t LE_Scan_Interval,
  * @param Supervision_Timeout Supervision timeout for the LE Link.
  *        It shall be a multiple of 10 ms and larger than (1 +
  *        connSlaveLatency) * connInterval * 2.
- *        Time = N * 10 msec.
+ *        Time = N * 10 ms.
  *        Values:
  *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
  * @param Minimum_CE_Length Information parameter about the minimum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @param Maximum_CE_Length Information parameter about the maximum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @param Num_of_Whitelist_Entries Number of devices that have to be added to
@@ -928,36 +827,34 @@ tBleStatus aci_gap_start_auto_connection_establish_proc( uint16_t LE_Scan_Interv
  * ACI_GAP_TERMINATE_GAP_PROC with the procedure code set to 0x10. On
  * completion of the procedure a ACI_GAP_PROC_COMPLETE_EVENT event is generated
  * with the procedure code set to 0x10.
- * If controller privacy is enabled and the peer device (advertiser) is in the
- * resolving list then the link layer will generate a RPA, if it is not then
- * the RPA/NRPA generated by the Host will be used.
+ * If privacy is enabled and the peer device (advertiser) is in the resolving
+ * list then the link layer will generate a RPA, if it is not then the RPA/NRPA
+ * generated by the Host will be used.
  * 
- * @param LE_Scan_Type Passive or active scanning. With active scanning
- *        SCAN_REQ packets are sent.
+ * @param LE_Scan_Type Passive or active scanning. With passive scanning, no
+ *        scan request PDUs are sent.
  *        Values:
- *        - 0x00: Passive Scanning
+ *        - 0x00: Passive scanning
  *        - 0x01: Active scanning
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
+ *        - 0x03: Non-resolvable private address
  * @param Scanning_Filter_Policy Scanning filter policy:
  *         - 0x00 Accept all advertisement packets.Directed advertising packets
  *        which are not addressed for this device shall be ignored.
@@ -965,16 +862,15 @@ tBleStatus aci_gap_start_auto_connection_establish_proc( uint16_t LE_Scan_Interv
  *        List Only.Directed advertising packets which are not addressed for
  *        this device shall be ignored.
  *         - 0x02 Accept all undirected advertisement packets (it is allowed
- *        only if controller privacy or host privacy is enabled).Directed
- *        advertisement packets where initiator address is a RPA and Directed
- *        advertisement packets addressed to this device shall be accepted.
+ *        only if privacy is enabled). Directed advertisement packets where
+ *        initiator address is a RPA and Directed advertisement packets
+ *        addressed to this device shall be accepted.
  *         - 0x03 Accept all undirected advertisement packets from devices that
  *        are in the White List.Directed advertisement packets where initiator
  *        address is RPA and Directed advertisement packets addressed to this
  *        device shall be accepted.
- *         - NOTE: if controller privacy is enabled Scanning_Filter_Policy can
- *        only assume values 0x00 or 0x02; if Host privacy is enabled
- *        Scanning_Filter_Policy can only assume value 0x00.
+ *         - NOTE: if privacy is enabled Scanning_Filter_Policy can only assume
+ *        values 0x00 or 0x02.
  *        Values:
  *        - 0x00: Accept all
  *        - 0x01: Ignore devices not in the White List
@@ -1007,36 +903,34 @@ tBleStatus aci_gap_start_general_connection_establish_proc( uint8_t LE_Scan_Type
  * when a connection is established or the upper layer terminates the procedure
  * by issuing the command ACI_GAP_TERMINATE_GAP_PROC with the procedure code
  * set to 0x20.
- * If controller privacy is enabled and the peer device (advertiser) is in the
- * resolving list then the link layer will generate a RPA, if it is not then
- * the RPA/NRPA generated by the Host will be used.
+ * If privacy is enabled and the peer device (advertiser) is in the resolving
+ * list then the link layer will generate a RPA, if it is not then the RPA/NRPA
+ * generated by the Host will be used.
  * 
- * @param LE_Scan_Type Passive or active scanning. With active scanning
- *        SCAN_REQ packets are sent.
+ * @param LE_Scan_Type Passive or active scanning. With passive scanning, no
+ *        scan request PDUs are sent.
  *        Values:
- *        - 0x00: Passive Scanning
+ *        - 0x00: Passive scanning
  *        - 0x01: Active scanning
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
+ *        - 0x03: Non-resolvable private address
  * @param Scanning_Filter_Policy Scanning filter policy:
  *         - 0x00 Accept all advertisement packets.Directed advertising packets
  *        which are not addressed for this device shall be ignored.
@@ -1044,16 +938,15 @@ tBleStatus aci_gap_start_general_connection_establish_proc( uint8_t LE_Scan_Type
  *        List Only.Directed advertising packets which are not addressed for
  *        this device shall be ignored.
  *         - 0x02 Accept all undirected advertisement packets (it is allowed
- *        only if controller privacy or host privacy is enabled).Directed
- *        advertisement packets where initiator address is a RPA and Directed
- *        advertisement packets addressed to this device shall be accepted.
+ *        only if privacy is enabled). Directed advertisement packets where
+ *        initiator address is a RPA and Directed advertisement packets
+ *        addressed to this device shall be accepted.
  *         - 0x03 Accept all undirected advertisement packets from devices that
  *        are in the White List.Directed advertisement packets where initiator
  *        address is RPA and Directed advertisement packets addressed to this
  *        device shall be accepted.
- *         - NOTE: if controller privacy is enabled Scanning_Filter_Policy can
- *        only assume values 0x01 or 0x03; if Host privacy is enabled
- *        Scanning_Filter_Policy can only assume value 0x01.
+ *         - NOTE: if privacy is enabled Scanning_Filter_Policy can only assume
+ *        values 0x01 or 0x03.
  *        Values:
  *        - 0x00: Accept all
  *        - 0x01: Ignore devices not in the White List
@@ -1090,19 +983,19 @@ tBleStatus aci_gap_start_selective_connection_establish_proc( uint8_t LE_Scan_Ty
  * returned. The procedure can be explicitly terminated by the upper layer by
  * issuing the command ACI_GAP_TERMINATE_GAP_PROC with the procedure_code set
  * to 0x40.
- * If controller privacy is enabled and the peer device (advertiser) is in the
- * resolving list then the link layer will generate a RPA, if it is not then
- * the RPA/NRPA generated by the Host will be used.
+ * If privacy is enabled and the peer device (advertiser) is in the resolving
+ * list then the link layer will generate a RPA, if it is not then the RPA
+ * generated by the Host will be used.
  * 
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param Peer_Address_Type The address type of the peer device.
@@ -1111,24 +1004,21 @@ tBleStatus aci_gap_start_selective_connection_establish_proc( uint8_t LE_Scan_Ty
  *        - 0x01: Random Device Address
  * @param Peer_Address Public Device Address or Random Device Address of the
  *        device to be connected.
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
  * @param Conn_Interval_Min Minimum value for the connection event interval.
  *        This shall be less than or equal to Conn_Interval_Max.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
  *        This shall be greater than or equal to Conn_Interval_Min.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Latency Slave latency for the connection in number of connection
@@ -1138,17 +1028,17 @@ tBleStatus aci_gap_start_selective_connection_establish_proc( uint8_t LE_Scan_Ty
  * @param Supervision_Timeout Supervision timeout for the LE Link.
  *        It shall be a multiple of 10 ms and larger than (1 +
  *        connSlaveLatency) * connInterval * 2.
- *        Time = N * 10 msec.
+ *        Time = N * 10 ms.
  *        Values:
  *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
  * @param Minimum_CE_Length Information parameter about the minimum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @param Maximum_CE_Length Information parameter about the maximum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @return Value indicating success or error code.
@@ -1175,7 +1065,6 @@ tBleStatus aci_gap_create_connection( uint16_t LE_Scan_Interval,
  *        - 0x00: No events
  *        - 0x01: GAP_LIMITED_DISCOVERY_PROC
  *        - 0x02: GAP_GENERAL_DISCOVERY_PROC
- *        - 0x04: GAP_NAME_DISCOVERY_PROC
  *        - 0x08: GAP_AUTO_CONNECTION_ESTABLISHMENT_PROC
  *        - 0x10: GAP_GENERAL_CONNECTION_ESTABLISHMENT_PROC
  *        - 0x20: GAP_SELECTIVE_CONNECTION_ESTABLISHMENT_PROC
@@ -1197,12 +1086,12 @@ tBleStatus aci_gap_terminate_gap_proc( uint8_t Procedure_Code );
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
  *        This shall be less than or equal to Conn_Interval_Max.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
  *        This shall be greater than or equal to Conn_Interval_Min.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Latency Slave latency for the connection in number of connection
@@ -1212,17 +1101,17 @@ tBleStatus aci_gap_terminate_gap_proc( uint8_t Procedure_Code );
  * @param Supervision_Timeout Supervision timeout for the LE Link.
  *        It shall be a multiple of 10 ms and larger than (1 +
  *        connSlaveLatency) * connInterval * 2.
- *        Time = N * 10 msec.
+ *        Time = N * 10 ms.
  *        Values:
  *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
  * @param Minimum_CE_Length Information parameter about the minimum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @param Maximum_CE_Length Information parameter about the maximum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @return Value indicating success or error code.
@@ -1280,21 +1169,20 @@ tBleStatus aci_gap_resolve_private_addr( const uint8_t* Address,
  * as specified in the Own_Addr_Type parameter of the command.
  * 
  * @param Advertising_Interval_Min Minimum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
  * @param Advertising_Interval_Max Maximum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
  * @param Advertising_Type Advertising type
  *        Values:
  *        - 0x02: ADV_SCAN_IND (Scannable undirected advertising)
  *        - 0x03: ADV_NONCONN_IND (Non connectable undirected advertising)
- * @param Own_Address_Type If Privacy is disabled, then the address can be
- *        public or static random.
- *        If Privacy is enabled, then the address can be a resolvable private
- *        address or a non-resolvable private address.
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
  *        Values:
  *        - 0x00: Public address
  *        - 0x01: Static random address
@@ -1322,57 +1210,53 @@ tBleStatus aci_gap_set_broadcast_mode( uint16_t Advertising_Interval_Min,
  * Starts an Observation procedure, when the device is in Observer Role. The
  * host enables scanning in the controller. The advertising reports are sent to
  * the upper layer using standard LE Advertising Report Event.
- * If controller privacy is enabled and the peer device (advertiser) is in the
- * resolving list then the link layer will generate a RPA, if it is not then
- * the RPA/NRPA generated by the Host will be used.
+ * If privacy is enabled and the peer device (advertiser) is in the resolving
+ * list then the link layer will generate a RPA, if it is not then the RPA/NRPA
+ * generated by the Host will be used.
  * 
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
- * @param LE_Scan_Type Passive or active scanning. With active scanning
- *        SCAN_REQ packets are sent.
+ * @param LE_Scan_Type Passive or active scanning. With passive scanning, no
+ *        scan request PDUs are sent.
  *        Values:
- *        - 0x00: Passive Scanning
+ *        - 0x00: Passive scanning
  *        - 0x01: Active scanning
- * @param Own_Address_Type Own address type
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
  *        Values:
- *        - 0x00: Public Device Address
- *          (only if privacy is disabled)
- *        - 0x01: Random Device Address
- *          (only if privacy is disabled)
- *        - 0x02: Resolvable Private Address
- *          (only if privacy is enabled)
- *        - 0x03: Non Resolvable Private Address
- *          (only if privacy is enabled)
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
+ *        - 0x03: Non-resolvable private address
  * @param Filter_Duplicates Enable/disable duplicate filtering.
  *        Values:
  *        - 0x00: Duplicate filtering disabled
  *        - 0x01: Duplicate filtering enabled
  * @param Scanning_Filter_Policy Scanning filter policy:
  *         - 0x00 Accept all advertisement packets (it is allowed only if
- *        controller privacy is enabled).Directed advertising packets which are
- *        not addressed for this device shall be ignored.
+ *        privacy is enabled). Directed advertising packets which are not
+ *        addressed for this device shall be ignored.
  *         - 0x01 Ignore advertisement packets from devices not in the White
- *        List Only.Directed advertising packets which are not addressed for
+ *        List Only. Directed advertising packets which are not addressed for
  *        this device shall be ignored.
  *         - 0x02 Accept all undirected advertisement packets (it is allowed
- *        only if controller privacy or host privacy is enabled).Directed
- *        advertisement packets where initiator address is a RPA and Directed
- *        advertisement packets addressed to this device shall be accepted.
+ *        only if privacy is enabled). Directed advertisement packets where
+ *        initiator address is a RPA and Directed advertisement packets
+ *        addressed to this device shall be accepted.
  *         - 0x03 Accept all undirected advertisement packets from devices that
- *        are in the White List.Directed advertisement packets where initiator
+ *        are in the White List. Directed advertisement packets where initiator
  *        address is RPA and Directed advertisement packets addressed to this
  *        device shall be accepted.
- *         - NOTE: If Host privacy is enabled Scanning_Filter_Policy can only
- *        take values 0x00 or 0x01;
  *        Values:
  *        - 0x00: Accept all
  *        - 0x01: Ignore devices not in the White List
@@ -1430,7 +1314,7 @@ tBleStatus aci_gap_is_device_bonded( uint8_t Peer_Address_Type,
  *        equal!
  *        Values:
  *        - 0x00: No
- *        - 0x01: YES
+ *        - 0x01: Yes
  * @return Value indicating success or error code.
  */
 tBleStatus aci_gap_numeric_comparison_value_confirm_yesno( uint16_t Connection_Handle,
@@ -1514,13 +1398,16 @@ tBleStatus aci_gap_set_oob_data( uint8_t Device_Type,
 
 /**
  * @brief ACI_GAP_ADD_DEVICES_TO_RESOLVING_LIST
- * This  command is used to add one device to the list of address translations
+ * This  command is used to add devices to the list of address translations
  * used to resolve Resolvable Private Addresses in the Controller.
  * 
  * @param Num_of_Resolving_list_Entries Number of devices that have to be added
- *        to the resolving list.
+ *        to the list.
  * @param Whitelist_Identity_Entry See @ref Whitelist_Identity_Entry_t
  * @param Clear_Resolving_List Clear the resolving list
+ *        Values:
+ *        - 0x00: Do not clear
+ *        - 0x01: Clear before adding
  * @return Value indicating success or error code.
  */
 tBleStatus aci_gap_add_devices_to_resolving_list( uint8_t Num_of_Resolving_list_Entries,
@@ -1543,6 +1430,28 @@ tBleStatus aci_gap_remove_bonded_device( uint8_t Peer_Identity_Address_Type,
                                          const uint8_t* Peer_Identity_Address );
 
 /**
+ * @brief ACI_GAP_ADD_DEVICES_TO_LIST
+ * This  command is used to add specific device addresses to the white and/or
+ * resolving list.
+ * 
+ * @param Num_of_List_Entries Number of devices that have to be added to the
+ *        list.
+ * @param List_Entry See @ref List_Entry_t
+ * @param Mode Mode used for adding devices in the lists.
+ *        Values:
+ *        - 0x00: Append to the resolving list only
+ *        - 0x01: Clear and set the resolving list only
+ *        - 0x02: Append to the white list only
+ *        - 0x03: Clear and set the white list only
+ *        - 0x04: Append to both resolving and white lists
+ *        - 0x05: Clear and set both resolving and white lists
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_add_devices_to_list( uint8_t Num_of_List_Entries,
+                                        const List_Entry_t* List_Entry,
+                                        uint8_t Mode );
+
+/**
  * @brief ACI_GAP_ADDITIONAL_BEACON_START
  * This command starts an advertising beacon. It allows additional advertising
  * packets to be transmitted independently of the packets transmitted with GAP
@@ -1550,19 +1459,18 @@ tBleStatus aci_gap_remove_bonded_device( uint8_t Peer_Identity_Address_Type,
  * ACI_GAP_SET_LIMITED_DISCOVERABLE.
  * 
  * @param Adv_Interval_Min Minimum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
  * @param Adv_Interval_Max Maximum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
  * @param Adv_Channel_Map Advertising channel map.
- *        Default: 00000111b (all channels enabled).
  *        Flags:
- *        - 0x01: ch 37
- *        - 0x02: ch 38
- *        - 0x04: ch 39
+ *        - 0x01: Channel 37 shall be used
+ *        - 0x02: Channel 38 shall be used
+ *        - 0x04: Channel 39 shall be used
  * @param Own_Address_Type Own address type: public or static random.
  *        Values:
  *        - 0x00: Public Device Address
@@ -1634,6 +1542,202 @@ tBleStatus aci_gap_additional_beacon_stop( void );
  */
 tBleStatus aci_gap_additional_beacon_set_data( uint8_t Adv_Data_Length,
                                                const uint8_t* Adv_Data );
+
+/**
+ * @brief ACI_GAP_ADV_SET_CONFIGURATION
+ * This command is used to set the extended advertising configration.
+ * 
+ * @param Adv_Mode Not used. Shall be set to 0.
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Adv_Event_Properties Type of advertising event.
+ *        Flags:
+ *        - 0x0001: Connectable advertising
+ *        - 0x0002: Scannable advertising
+ *        - 0x0004: Directed advertising
+ *        - 0x0008: High Duty Cycle Directed Connectable advertising
+ *        - 0x0010: Use legacy advertising PDUs
+ *        - 0x0020: Anonymous advertising
+ *        - 0x0040: Include TxPower in at least one advertising PDU
+ * @param Primary_Adv_Interval_Min Minimum advertising interval.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x00000020 (20.000 ms)  ... 0x00FFFFFF (10485759.375 ms)
+ * @param Primary_Adv_Interval_Max Maximum advertising interval.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x00000020 (20.000 ms)  ... 0x00FFFFFF (10485759.375 ms)
+ * @param Primary_Adv_Channel_Map Advertising channel map.
+ *        Flags:
+ *        - 0x01: Channel 37 shall be used
+ *        - 0x02: Channel 38 shall be used
+ *        - 0x04: Channel 39 shall be used
+ * @param Own_Address_Type Own address type: if Privacy is disabled, the
+ *        address can be public or static random; otherwise, it can be a
+ *        resolvable private address or a non-resolvable private address.
+ *        Values:
+ *        - 0x00: Public address
+ *        - 0x01: Static random address
+ *        - 0x02: Resolvable private address
+ *        - 0x03: Non-resolvable private address
+ * @param Peer_Address_Type Address type of the peer device.
+ *        Values:
+ *        - 0x00: Public Device Address or Public Identity Address
+ *        - 0x01: Random Device Address or Random (static) Identity Address
+ * @param Peer_Address Public Device Address, Random Device Address, Public
+ *        Identity Address, or Random (static) Identity Address of the device
+ *        to be connected.
+ * @param Adv_Filter_Policy Advertising filter policy
+ *        Values:
+ *        - 0x00: Process scan and connection requests from all devices (i.e.,
+ *          the White List is not in use)
+ *        - 0x01: Process connection requests from all devices and scan
+ *          requests only from devices that are in the White List.
+ *        - 0x02: Process scan requests from all devices and connection
+ *          requests only from devices that are in the White List.
+ *        - 0x03: Process scan and connection requests only from devices in the
+ *          White  List.
+ * @param Adv_TX_Power Advertising TX power. Units: dBm.
+ *        Values:
+ *        - -127 ... 20
+ * @param Secondary_Adv_Max_Skip Secondary advertising maximum skip.
+ *        Values:
+ *        - 0x00: AUX_ADV_IND shall be sent prior to the next advertising event
+ *        - 0x01 ... 0xFF: Maximum advertising events the Controller can skip
+ *          before sending the AUX_ADV_IND packets on the secondary advertising
+ *          physical channel
+ * @param Secondary_Adv_PHY Secondary advertising PHY.
+ *        Values:
+ *        - 0x01: Secondary advertisement PHY is LE 1M
+ *        - 0x02: Secondary advertisement PHY is LE 2M
+ *        - 0x03: Secondary advertisement PHY is LE Coded (not supported)
+ * @param Adv_SID Value of the Advertising SID subfield in the ADI field of the
+ *        PDU.
+ *        Values:
+ *        - 0x00 ... 0x0F
+ * @param Scan_Req_Notification_Enable Scan request notifications.
+ *        Values:
+ *        - 0x00: Scan request notifications disabled
+ *        - 0x01: Scan request notifications enabled
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_adv_set_configuration( uint8_t Adv_Mode,
+                                          uint8_t Advertising_Handle,
+                                          uint16_t Adv_Event_Properties,
+                                          uint32_t Primary_Adv_Interval_Min,
+                                          uint32_t Primary_Adv_Interval_Max,
+                                          uint8_t Primary_Adv_Channel_Map,
+                                          uint8_t Own_Address_Type,
+                                          uint8_t Peer_Address_Type,
+                                          const uint8_t* Peer_Address,
+                                          uint8_t Adv_Filter_Policy,
+                                          uint8_t Adv_TX_Power,
+                                          uint8_t Secondary_Adv_Max_Skip,
+                                          uint8_t Secondary_Adv_PHY,
+                                          uint8_t Adv_SID,
+                                          uint8_t Scan_Req_Notification_Enable );
+
+/**
+ * @brief ACI_GAP_ADV_SET_ENABLE
+ * This command is used to request the Controller to enable or disable one or
+ * more extended advertising sets.
+ * 
+ * @param Enable Enable/disable advertising.
+ *        Values:
+ *        - 0x00: Advertising is disabled
+ *        - 0x01: Advertising is enabled
+ * @param Num_Sets Number of advertising sets.
+ *        Values:
+ *        - 0x00: Disable all advertising sets
+ *        - 0x01 ... 0x3F: Number of advertising sets to enable or disable
+ * @param Adv_Set See @ref Adv_Set_t
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_adv_set_enable( uint8_t Enable,
+                                   uint8_t Num_Sets,
+                                   const Adv_Set_t* Adv_Set );
+
+/**
+ * @brief ACI_GAP_ADV_SET_ADV_DATA
+ * This command is used to set the data used in extended advertising PDUs that
+ * have a data field.
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Operation Advertising operation.
+ *        Values:
+ *        - 0x00: Intermediate fragment of fragmented extended advertising data
+ *        - 0x01: First fragment of fragmented extended advertising data
+ *        - 0x02: Last fragment of fragmented extended advertising data
+ *        - 0x03: Complete extended advertising data
+ *        - 0x04: Unchanged data (just update the Advertising DID)
+ * @param Fragment_Preference Fragment preference.
+ *        Values:
+ *        - 0x00: The Controller may fragment all data
+ *        - 0x01: The Controller should not fragment or should minimize
+ *          fragmentation of data
+ * @param Advertising_Data_Length Length of Advertising_Data in octets
+ * @param Advertising_Data Data formatted as defined in Bluetooth spec. v.5.2
+ *        [Vol 3, Part C, 11].
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_adv_set_adv_data( uint8_t Advertising_Handle,
+                                     uint8_t Operation,
+                                     uint8_t Fragment_Preference,
+                                     uint8_t Advertising_Data_Length,
+                                     const uint8_t* Advertising_Data );
+
+/**
+ * @brief ACI_GAP_ADV_SET_SCAN_RESP_DATA
+ * This command is used to provide scan response data used during extended
+ * advertising.
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Operation Scan response operation.
+ *        Values:
+ *        - 0x00: Intermediate fragment of fragmented scan response data
+ *        - 0x01: First fragment of fragmented scan response data
+ *        - 0x02: Last fragment of fragmented scan response data
+ *        - 0x03: Complete scan response data
+ * @param Fragment_Preference Fragment preference.
+ *        Values:
+ *        - 0x00: The Controller may fragment all data
+ *        - 0x01: The Controller should not fragment or should minimize
+ *          fragmentation of data
+ * @param Scan_Response_Data_Length Length of Scan_Response_Data in octets
+ * @param Scan_Response_Data Data formatted as defined in Bluetooth spec. v.5.2
+ *        [Vol 3, Part C, 11].
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_adv_set_scan_resp_data( uint8_t Advertising_Handle,
+                                           uint8_t Operation,
+                                           uint8_t Fragment_Preference,
+                                           uint8_t Scan_Response_Data_Length,
+                                           const uint8_t* Scan_Response_Data );
+
+/**
+ * @brief ACI_GAP_ADV_REMOVE_SET
+ * This command is used to remove an advertising set from the Controller.
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_adv_remove_set( uint8_t Advertising_Handle );
+
+/**
+ * @brief ACI_GAP_ADV_CLEAR_SETS
+ * This command is used to remove all existing advertising sets from the
+ * Controller.
+ * 
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_adv_clear_sets( void );
 
 
 #endif /* BLE_GAP_ACI_H__ */

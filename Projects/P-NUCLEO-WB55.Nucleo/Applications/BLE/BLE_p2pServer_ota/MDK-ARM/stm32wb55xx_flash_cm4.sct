@@ -11,11 +11,15 @@ LR_IROM1 0x08007000 0x260 {    ; load region size_region
   RW_IRAM1 0x20000008 0x0002FFF8  {  ; RW data
     .ANY (+RW +ZI)
   }
-  RW_RAM2aRet_SHARED 0x20030000 0x2800  {  ; RW data
-  *(MAPPING_TABLE)
+
+   RW_RAM2aRet_SHARED1 0x20030000 0x28  {  ; RW data 
+      *(MAPPING_TABLE)
+   }
+   RW_RAM2aRet_SHARED2 0x20030028 0x27D8  { ; RW data      
     *(MB_MEM1)
     *(MB_MEM2)
-  } 
+    .ANY (+RW +ZI)
+   }
 }
 
 LR_IROM3 0x08007260 0x78DA0 {

@@ -8,12 +8,12 @@
   * @brief   Description of the I2C_TwoBoards_MasterTx_SlaveRx_DMA_Init I2C example (DMA Mode).
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -45,7 +45,7 @@ SDA Pin: PB.9 (CN10, pin 5)
   |        USER       GND|_____________________|GND         USER      |
   |___P-NUCLEO-WB55.Nucleo___|                     |___P-NUCLEO-WB55.Nucleo___|
 
-The project is splitted in two parts the Master Board and the Slave Board
+The project is split in two parts the Master Board and the Slave Board
 - Master Board
   I2C1 Peripheral is configured in Master mode with DMA (Clock 400Khz).
   And GPIO associated to User push-button (SW1) is linked with EXTI.

@@ -8,12 +8,12 @@
   * @brief   Description of the TouchSensing 1 touchkey sensor example.
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -44,6 +44,10 @@ The required adaptation from STM32L476G-EVAL project, given as information:
   Copy the stm32wbxx_hal_conf_template.h from Drivers\STM32WBxx_HAL_Driver\Inc to Inc\stm32wbxx_hal_conf.h.
   Adapt the main.c/SystemClock_Config(void) function to your board.
   Adapt the GPIO initialization to your board.
+ 
+@par Keywords
+
+  Touch sensing, TouchSensing, TSC
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

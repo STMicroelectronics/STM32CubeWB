@@ -146,11 +146,13 @@ enum {
      * The default value is 1. All clusters starting with ZCL Spec Revision 6, have their
      * revision start at 1. */
 
-    ZCL_GLOBAL_ATTR_REPORTING_STATUS = 0xfffe
-        /**< AttributeReportingStatus. Optional. This is a dummy attribute that can go at the end
-         * of each ZCL Report Command to indicate whether additional report commands are being
-         * sent shortly after, or if this is the last report command in a series of reports.
-         * This is currently not being used when sending reports, because it's not very useful. */
+    ZCL_GLOBAL_ATTR_REPORTING_STATUS = 0xfffe,
+    /**< AttributeReportingStatus. Optional. This is a dummy attribute that can go at the end
+     * of each ZCL Report Command to indicate whether additional report commands are being
+     * sent shortly after, or if this is the last report command in a series of reports.
+     * This is currently not being used when sending reports, because it's not very useful. */
+
+    ZCL_GLOBAL_ATTR_UNDEFINED = 0xffff /**< Not defined in Spec. Internal use only. */
 };
 
 /* AttributeReportingStatus (ZCL_GLOBAL_ATTR_REPORTING_STATUS) values. */
@@ -177,7 +179,7 @@ typedef uint16_t ZclAttrFlagT;
 #define ZCL_ATTR_FLAG_CB_READ               (ZclAttrFlagT)0x0010U
 /* Enables ZCL_ATTR_CB_TYPE_WRITE for this attribute */
 #define ZCL_ATTR_FLAG_CB_WRITE              (ZclAttrFlagT)0x0020U
-#define ZCL_ATTR_FLAG_CB_NOTIFY             (ZclAttrFlagT)0x0040U /* ZCL_ATTR_CB_TYPE_NOTIFY */
+#define ZCL_ATTR_FLAG_CB_NOTIFY             (ZclAttrFlagT)0x0040U
 /* This flag means the attribute is for internal use only. Not discoverable. */
 #define ZCL_ATTR_FLAG_INTERNAL              (ZclAttrFlagT)0x8000U
 
@@ -254,91 +256,83 @@ enum ZclDataTypeT {
 };
 
 /* ZCL Invalid Data Values */
-#define ZCL_INVALID_BOOLEAN                      0xffU
-#define ZCL_INVALID_UNSIGNED_8BIT                0xffU
-#define ZCL_INVALID_UNSIGNED_16BIT               0xffffU
-#define ZCL_INVALID_UNSIGNED_24BIT               0xffffffU
-#define ZCL_INVALID_UNSIGNED_32BIT               0xffffffffU
-#define ZCL_INVALID_UNSIGNED_40BIT               0xffffffffffULL
-#define ZCL_INVALID_UNSIGNED_48BIT               0xffffffffffffULL
-#define ZCL_INVALID_UNSIGNED_56BIT               0xffffffffffffffULL
-#define ZCL_INVALID_UNSIGNED_64BIT               0xffffffffffffffffULL
+#define ZCL_INVALID_BOOLEAN                     0xffU
+#define ZCL_INVALID_UNSIGNED_8BIT               0xffU
+#define ZCL_INVALID_UNSIGNED_16BIT              0xffffU
+#define ZCL_INVALID_UNSIGNED_24BIT              0xffffffU
+#define ZCL_INVALID_UNSIGNED_32BIT              0xffffffffU
+#define ZCL_INVALID_UNSIGNED_40BIT              0xffffffffffULL
+#define ZCL_INVALID_UNSIGNED_48BIT              0xffffffffffffULL
+#define ZCL_INVALID_UNSIGNED_56BIT              0xffffffffffffffULL
+#define ZCL_INVALID_UNSIGNED_64BIT              0xffffffffffffffffULL
 
-#define ZCL_INVALID_SIGNED_8BIT                  -128 /* 0x80 */
-#define ZCL_INVALID_SIGNED_16BIT                 -32768 /* 0x8000 */
-#define ZCL_INVALID_SIGNED_24BIT                 -8388608 /* 0x800000 */
-#define ZCL_INVALID_SIGNED_32BIT                 -2147483648 /* 0x80000000 */
-#define ZCL_INVALID_SIGNED_40BIT                 -549755813888LL /* 0x8000000000 */
-#define ZCL_INVALID_SIGNED_48BIT                 -140737488355328LL /* 0x800000000000 */
-#define ZCL_INVALID_SIGNED_56BIT                 -36028797018963968LL /* 0x80000000000000 */
+#define ZCL_INVALID_SIGNED_8BIT                 (-128) /* 0x80 */
+#define ZCL_INVALID_SIGNED_16BIT                (-32768) /* 0x8000 */
+#define ZCL_INVALID_SIGNED_24BIT                (-8388608) /* 0x800000 */
+#define ZCL_INVALID_SIGNED_32BIT                (-2147483648) /* 0x80000000 */
+#define ZCL_INVALID_SIGNED_40BIT                (-549755813888LL) /* 0x8000000000 */
+#define ZCL_INVALID_SIGNED_48BIT                (-140737488355328LL) /* 0x800000000000 */
+#define ZCL_INVALID_SIGNED_56BIT                (-36028797018963968LL) /* 0x80000000000000 */
 /*lint -e9048 [ unsigned integer literal without a 'U' suffix <Rule 7.2 REQUIRED> ]*/
-#define ZCL_INVALID_SIGNED_64BIT                 0x8000000000000000 /* integer constant is so large that it is unsigned  */
+#define ZCL_INVALID_SIGNED_64BIT                0x8000000000000000 /* integer constant is so large that it is unsigned  */
 /*lint -restore */
 
-#define ZCL_INVALID_ENUMERATION_8BIT             0xffU
-#define ZCL_INVALID_ENUMERATION_16BIT            0xffffU
+#define ZCL_INVALID_ENUMERATION_8BIT            0xffU
+#define ZCL_INVALID_ENUMERATION_16BIT           0xffffU
 
-#define ZCL_INVALID_FLOATING                     (0.0 / 0.0)
+#define ZCL_INVALID_FLOATING                    (0.0 / 0.0)
 /* Note, can't bit-or signed values (MISRA rule 10.1) */
-#define ZCL_INVALID_FLOATING_SEMI                (ZCL_FLOAT_SEMI_MANTISSA + ZCL_FLOAT_SEMI_EXPONENT)
-#define ZCL_INVALID_FLOATING_SINGLE              (ZCL_FLOAT_SINGLE_MANTISSA + ZCL_FLOAT_SINGLE_MANTISSA)
-#define ZCL_INVALID_FLOATING_DOUBLE              (ZCL_FLOAT_DOUBLE_MANTISSA + ZCL_FLOAT_DOUBLE_MANTISSA)
+#define ZCL_INVALID_FLOATING_SEMI               (ZCL_FLOAT_SEMI_MANTISSA + ZCL_FLOAT_SEMI_EXPONENT)
+#define ZCL_INVALID_FLOATING_SINGLE             (ZCL_FLOAT_SINGLE_MANTISSA + ZCL_FLOAT_SINGLE_MANTISSA)
+#define ZCL_INVALID_FLOATING_DOUBLE             (ZCL_FLOAT_DOUBLE_MANTISSA + ZCL_FLOAT_DOUBLE_MANTISSA)
 
-#define ZCL_INVALID_STRING_OCTET                 0xffU
-#define ZCL_INVALID_STRING_CHARACTER             0xffU
-#define ZCL_INVALID_STRING_LONG_OCTET            0xffffU
-#define ZCL_INVALID_STRING_LONG_CHARACTER        0xffffU
+#define ZCL_INVALID_STRING_OCTET                0xffU
+#define ZCL_INVALID_STRING_CHARACTER            0xffU
+#define ZCL_INVALID_STRING_LONG_OCTET           0xffffU
+#define ZCL_INVALID_STRING_LONG_CHARACTER       0xffffU
 
-#define ZCL_INVALID_ARRAY                        0xffffU
-#define ZCL_INVALID_STRUCT                       0xffffU
-#define ZCL_INVALID_SET                          0xffffU
-#define ZCL_INVALID_BAG                          0xffffU
-#define ZCL_INVALID_TIME_OF_DAY                  0xffffffffU
-#define ZCL_INVALID_DATE                         0xffffffffU
-#define ZCL_INVALID_TIME_UTC                     0xffffffffU
-#define ZCL_INVALID_CLUSTER_ID                   0xffffU
-#define ZCL_INVALID_ATTRIBUTE_ID                 0xffffU
-#define ZCL_INVALID_BACNET_OID                   0xffffffffU
-#define ZCL_INVALID_EUI64                        0xffffffffffffffffULL
+#define ZCL_INVALID_ARRAY                       0xffffU
+#define ZCL_INVALID_STRUCT                      0xffffU
+#define ZCL_INVALID_SET                         0xffffU
+#define ZCL_INVALID_BAG                         0xffffU
+#define ZCL_INVALID_TIME_OF_DAY                 0xffffffffU
+#define ZCL_INVALID_DATE                        0xffffffffU
+#define ZCL_INVALID_TIME_UTC                    0xffffffffU
+#define ZCL_INVALID_CLUSTER_ID                  0xffffU
+#define ZCL_INVALID_ATTRIBUTE_ID                0xffffU
+#define ZCL_INVALID_BACNET_OID                  0xffffffffU
+#define ZCL_INVALID_EUI64                       0xffffffffffffffffULL
 
 /* ZCL Valid Ranges */
-#define ZCL_MIN_SIGNED_8BIT                      (-(ZCL_INVALID_SIGNED_8BIT - 1))
-#define ZCL_MIN_SIGNED_16BIT                     (-(ZCL_INVALID_SIGNED_16BIT - 1))
-#define ZCL_MIN_SIGNED_24BIT                     (-(ZCL_INVALID_SIGNED_24BIT - 1))
-#define ZCL_MIN_SIGNED_32BIT                     (-(ZCL_INVALID_SIGNED_32BIT - 1))
-#define ZCL_MIN_SIGNED_40BIT                     (-(ZCL_INVALID_SIGNED_40BIT - 1))
-#define ZCL_MIN_SIGNED_48BIT                     (-(ZCL_INVALID_SIGNED_48BIT - 1))
-#define ZCL_MIN_SIGNED_56BIT                     (-(ZCL_INVALID_SIGNED_56BIT - 1))
-#define ZCL_MIN_SIGNED_64BIT                     (-(ZCL_INVALID_SIGNED_64BIT - 1))
+#define ZCL_MIN_SIGNED_8BIT                     (-(ZCL_INVALID_SIGNED_8BIT - 1))
+#define ZCL_MIN_SIGNED_16BIT                    (-(ZCL_INVALID_SIGNED_16BIT - 1))
+#define ZCL_MIN_SIGNED_24BIT                    (-(ZCL_INVALID_SIGNED_24BIT - 1))
+#define ZCL_MIN_SIGNED_32BIT                    (-(ZCL_INVALID_SIGNED_32BIT - 1))
+#define ZCL_MIN_SIGNED_40BIT                    (-(ZCL_INVALID_SIGNED_40BIT - 1))
+#define ZCL_MIN_SIGNED_48BIT                    (-(ZCL_INVALID_SIGNED_48BIT - 1))
+#define ZCL_MIN_SIGNED_56BIT                    (-(ZCL_INVALID_SIGNED_56BIT - 1))
+#define ZCL_MIN_SIGNED_64BIT                    (-(ZCL_INVALID_SIGNED_64BIT - 1))
 
-#define ZCL_MAX_SIGNED_8BIT                      0x7f
-#define ZCL_MAX_SIGNED_16BIT                     0x7fff
-#define ZCL_MAX_SIGNED_24BIT                     0x7fffff
-#define ZCL_MAX_SIGNED_32BIT                     0x7fffffff
-#define ZCL_MAX_SIGNED_40BIT                     0x7fffffffffULL
-#define ZCL_MAX_SIGNED_48BIT                     0x7fffffffffffULL
-#define ZCL_MAX_SIGNED_56BIT                     0x7fffffffffffffULL
-#define ZCL_MAX_SIGNED_64BIT                     0x7fffffffffffffffULL
+#define ZCL_MAX_SIGNED_8BIT                     0x7f
+#define ZCL_MAX_SIGNED_16BIT                    0x7fff
+#define ZCL_MAX_SIGNED_24BIT                    0x7fffff
+#define ZCL_MAX_SIGNED_32BIT                    0x7fffffff
+#define ZCL_MAX_SIGNED_40BIT                    0x7fffffffffULL
+#define ZCL_MAX_SIGNED_48BIT                    0x7fffffffffffULL
+#define ZCL_MAX_SIGNED_56BIT                    0x7fffffffffffffULL
+#define ZCL_MAX_SIGNED_64BIT                    0x7fffffffffffffffULL
 
-#define ZCL_MAX_UNSIGNED_8BIT                    (ZCL_INVALID_UNSIGNED_8BIT - 1U)
-#define ZCL_MAX_UNSIGNED_16BIT                   (ZCL_INVALID_UNSIGNED_16BIT - 1U)
-#define ZCL_MAX_UNSIGNED_24BIT                   (ZCL_INVALID_UNSIGNED_24BIT - 1U)
-#define ZCL_MAX_UNSIGNED_32BIT                   (ZCL_INVALID_UNSIGNED_32BIT - 1U)
-#define ZCL_MAX_UNSIGNED_40BIT                   (ZCL_INVALID_UNSIGNED_40BIT - 1U)
-#define ZCL_MAX_UNSIGNED_48BIT                   (ZCL_INVALID_UNSIGNED_48BIT - 1U)
-#define ZCL_MAX_UNSIGNED_56BIT                   (ZCL_INVALID_UNSIGNED_56BIT - 1U)
-#define ZCL_MAX_UNSIGNED_64BIT                   (ZCL_INVALID_UNSIGNED_64BIT - 1U)
+#define ZCL_MAX_UNSIGNED_8BIT                   (ZCL_INVALID_UNSIGNED_8BIT - 1U)
+#define ZCL_MAX_UNSIGNED_16BIT                  (ZCL_INVALID_UNSIGNED_16BIT - 1U)
+#define ZCL_MAX_UNSIGNED_24BIT                  (ZCL_INVALID_UNSIGNED_24BIT - 1U)
+#define ZCL_MAX_UNSIGNED_32BIT                  (ZCL_INVALID_UNSIGNED_32BIT - 1U)
+#define ZCL_MAX_UNSIGNED_40BIT                  (ZCL_INVALID_UNSIGNED_40BIT - 1U)
+#define ZCL_MAX_UNSIGNED_48BIT                  (ZCL_INVALID_UNSIGNED_48BIT - 1U)
+#define ZCL_MAX_UNSIGNED_56BIT                  (ZCL_INVALID_UNSIGNED_56BIT - 1U)
+#define ZCL_MAX_UNSIGNED_64BIT                  (ZCL_INVALID_UNSIGNED_64BIT - 1U)
 
-/* Type sizes */
-#define ZCL_SIZEOF_8BIT                          1U
-#define ZCL_SIZEOF_16BIT                         2U
-#define ZCL_SIZEOF_24BIT                         3U
-#define ZCL_SIZEOF_32BIT                         4U
-#define ZCL_SIZEOF_40BIT                         5U
-#define ZCL_SIZEOF_48BIT                         6U
-#define ZCL_SIZEOF_56BIT                         7U
-#define ZCL_SIZEOF_64BIT                         8U
-#define ZCL_SIZEOF_128BIT                        16U
+#define ZCL_MIN_FLOAT_SEMI                      (-65504)
+#define ZCL_MAX_FLOAT_SEMI                      (65504)
 
 /* ZCL Status Codes */
 enum ZclStatusCodeT {
@@ -437,7 +431,47 @@ enum ZbZclDeviceIdT {
     ZCL_DEVICE_ONOFF_COLOR_DIMMER_SWITCH = 0x0105,
     ZCL_DEVICE_ONOFF_LIGHT_SENSOR = 0x0106,
     ZCL_DEVICE_ONOFF_OCCUPANCY_SENSOR = 0x0107,
-    /* EXEGIN - add more from Lighting and Occupancy Device Spec */
+    ZCL_DEVICE_ONOFF_BALLAST = 0x0108,
+    ZCL_DEVICE_DIMMABLE_BALLAST = 0x0109,
+    ZCL_DEVICE_ONOFF_PLUGIN_UNIT = 0x010a,
+    ZCL_DEVICE_DIMMABLE_PLUGIN_UNIT = 0x010b,
+    ZCL_DEVICE_COLOR_TEMPERATURE_LIGHT = 0x010c,
+    ZCL_DEVICE_EXTENDED_COLOR_LIGHT = 0x010d,
+    ZCL_DEVICE_LIGHT_LEVEL_SENSOR = 0x010e,
+
+    /* Information (0x0120) */
+    ZCL_DEVICE_ZIGBEE_ACCESS_POINT = 0x0120,
+    ZCL_DEVICE_ZIGBEE_INFORMATION_NODE = 0x0121,
+    ZCL_DEVICE_ZIGBEE_INFORMATION_TERMINAL = 0x0122,
+
+    /* Closures (0x0200) */
+    ZCL_DEVICE_SHADE = 0x0200,
+    ZCL_DEVICE_SHADE_CONTROLLER = 0x0201,
+    ZCL_DEVICE_WINDOW_COVERING_DEVICE = 0x0202,
+    ZCL_DEVICE_WINDOW_COVERING_CONTROLLER = 0x0203,
+    ZCL_DEVICE_BARRIER_DEVICE = 0x0204,
+    ZCL_DEVICE_BARRIER_DEVICE_CONTROLLER = 0x0205,
+
+    /* Payments (0x0220) */
+    ZCL_DEVICE_POINT_OF_SALE = 0x0220,
+    ZCL_DEVICE_TICKETING_MACHINE = 0x0221,
+    ZCL_DEVICE_PAY_CONTROLLER = 0x0222,
+    ZCL_DEVICE_BILLING_UNIT = 0x0223,
+    ZCL_DEVICE_CHARGING_UNIT = 0x0224,
+
+    /* HVAC (0x0300) */
+    ZCL_DEVICE_HEATING_COOLING_UNIT = 0x0300,
+    ZCL_DEVICE_THERMOSTAT = 0x0301,
+    ZCL_DEVICE_TEMPERATURE_SENSOR = 0x0302,
+    ZCL_DEVICE_PUMP = 0x0303,
+    ZCL_DEVICE_PUMP_CONTROLLER = 0x0304,
+    ZCL_DEVICE_PRESSURE_SENSOR = 0x0305,
+    ZCL_DEVICE_FLOW_SENSOR = 0x0306,
+    ZCL_DEVICE_HUMIDITY_SENSOR = 0x0307,
+
+    /* Cards (0x0320) */
+    ZCL_DEVICE_FLASH_CARD = 0x0320,
+    ZCL_DEVICE_PC_SMART_CARD_READER = 0x0321,
 
     /* IAS (0x0400) */
     ZCL_DEVICE_IAS_CONTROL_AND_INDICATING_EQUIPMENT = 0x0400,
@@ -445,7 +479,10 @@ enum ZbZclDeviceIdT {
     ZCL_DEVICE_IAS_ZONE = 0x0402,
     ZCL_DEVICE_IAS_WARNING_DEVICE = 0x0403,
 
-    /* Smart Energy device identifiers. (0x0500) */
+    /* Security (0x0445) */
+    ZCL_DEVICE_GLASS_BREAK_SENSOR = 0x0445,
+
+    /* Smart Energy device identifiers (0x0500) */
     ZCL_DEVICE_ESP = 0x0500,
     ZCL_DEVICE_METER = 0x0501,
     ZCL_DEVICE_IN_HOME_DISPLAY = 0x0502,
@@ -456,6 +493,7 @@ enum ZbZclDeviceIdT {
     ZCL_DEVICE_PHYSICAL_DEVICE = 0x0507,
     ZCL_DEVICE_REMOTE_COMMUNICATIONS_DEVICE = 0x0508,
     ZCL_DEVICE_ERL_INTERFACE = 0x0509,
+    ZCL_DEVICE_ELECTRIC_VEHICLE_STATION_EQUIPMENT = 0x050a,
 
     /* Lighting and Occupancy Continued (0x0800) */
     ZCL_DEVICE_COLOR_CONTROLLER = 0x0800,
@@ -463,7 +501,43 @@ enum ZbZclDeviceIdT {
     ZCL_DEVICE_NON_COLOR_CONTROLLER = 0x0820,
     ZCL_DEVICE_NON_COLOR_SCENE_CONTROLLER = 0x0830,
     ZCL_DEVICE_CONTROL_BRIDGE = 0x0840,
-    ZCL_DEVICE_ONOFF_SENSOR = 0x0850 /* aka Door Sensor? */
+    ZCL_DEVICE_ONOFF_SENSOR = 0x0850, /* aka Door Sensor? */
+
+    /* Multifunction (0x0f00) */
+    ZCL_DEVICE_GENERIC_MULTIFUNCTION_HEALTHCARE_DEVICE = 0x0f00,
+
+    /* Health and Fitness (0x1004) */
+    ZCL_DEVICE_PULSE_OXIMETER = 0x1004,
+    ZCL_DEVICE_ECG = 0x1006,
+    ZCL_DEVICE_BLOOD_PRESSURE_MONITOR = 0x1007,
+    ZCL_DEVICE_THERMOMETER = 0x1008,
+    ZCL_DEVICE_WEIGHT_SCALE = 0x100f,
+    ZCL_DEVICE_GLUCOSE_METER = 0x1011,
+    ZCL_DEVICE_INTERNATIONAL_NORMALIZED_RATIO = 0x1012,
+    ZCL_DEVICE_INSULIN_PUMP = 0x1013,
+    ZCL_DEVICE_PEAK_FLOW_MONITOR = 0x1015,
+    ZCL_DEVICE_CARDIOVASCULAR_FITNESS_AND_ACTIVITY_MONITOR = 0x1029,
+    ZCL_DEVICE_STRENGTH_FITNESS_EQUIPMENT = 0x102a,
+    ZCL_DEVICE_PHYSICAL_ACTIVITY_MONITOR = 0x102b,
+    ZCL_DEVICE_INDEPENDENT_LIVING_ACTIVITY_HUB = 0x1047,
+    ZCL_DEVICE_ADHERENCE_MONITOR = 0x1048,
+    ZCL_DEVICE_STEP_COUNTER = 0x1068,
+    ZCL_DEVICE_FALL_SENSOR = 0x1075,
+    ZCL_DEVICE_PERS_SENSOR = 0x1076,
+    ZCL_DEVICE_SMOKE_SENSOR = 0x1077,
+    ZCL_DEVICE_CO_SENSOR = 0x1078,
+    ZCL_DEVICE_WATER_SENSOR = 0x1079,
+    ZCL_DEVICE_GAS_SENSOR = 0x107a,
+    ZCL_DEVICE_MOTION_SENSOR = 0x107b,
+    ZCL_DEVICE_PROPERTY_EXIT_SENSOR = 0x107c,
+    ZCL_DEVICE_ENURESIS_SENSOR = 0x107d,
+    ZCL_DEVICE_CONTACT_CLOSURE_SENSOR = 0x107e,
+    ZCL_DEVICE_USAGE_SENSOR = 0x107f,
+    ZCL_DEVICE_SWITCH_USE_SENSOR = 0x1080,
+    ZCL_DEVICE_DOSAGE_SENSOR = 0x1081,
+    ZCL_DEVICE_BODY_TEMPERATURE_SENSOR = 0x1082
+
+    /* ZCL_DEVICE_GREEN_POWER_DEVICES = 0x20xx */
 };
 
 /* Cluster ID Ranges */
@@ -585,7 +659,9 @@ enum ZbZclClusterIdT {
     /* TOUCHLINK */
     ZCL_CLUSTER_TOUCHLINK = 0x1000,
 
+
     /* MANUFACTURER CUSTOM CLUSTER */
+    /* Note :These are just example of custom clusters provided by ST */
     ZCL_CLUSTER_CUSTOM_LS = 0xfc01,      /* Long string custom cluster */
     ZCL_CLUSTER_CUSTOM_MATRIX = 0xfc02,  /* Matrix custom cluster      */
 

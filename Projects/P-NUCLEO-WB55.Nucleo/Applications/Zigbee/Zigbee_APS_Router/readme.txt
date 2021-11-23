@@ -6,22 +6,22 @@
   * @file    Zigbee/Zigbee_APS_Router/readme.txt 
   * @author  MCD Application Team
   * @brief   Description of the Zigbee APS application using a
-  *          centralized network. 
+  *          centralized network and acting as a Router. 
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
 
 @par Application Description 
 
-How to use the APS layer in an application with a centralized Zigbee network.
+How to use the APS layer in an application acting as a Router within a centralized Zigbee network.
 
 The purpose of this application is to show how to create a Zigbee centralized network, and 
 how use the APSDE interface to the Zigbee stack directly, to send and receive raw 
@@ -81,8 +81,7 @@ To setup the application :
 
   a)  Start the first board. It must be the coordinator of the Zigbee network so in this demo application it is
       the device running Zigbee_APS_Coord application (Device2 in the above diagram). 
-      Wait for the Blue LED (LED1) ON. 
-      Start the second board. This board is configured as Zigbee router and will attached to the network created 
+      Start immediately after, the second board. This board is configured as Zigbee router and will attached to the network created 
       by the coordinator. Do the same for the other boards if applicable.
       
   b)  At this stage, the Zigbee network is automatically created and BLUE LED (LED1) is ON on all devices. 

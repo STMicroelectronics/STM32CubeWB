@@ -222,7 +222,7 @@
                     <state>STM32WB5Mxx</state>
                     <state>STM32WB55xx</state>
                     <state>USE_HAL_DRIVER</state>
-                    <state>STM32WL55MM_DK </state>
+                    <state>USE_STM32WB5M_DK</state>
                     <state>CORE_CM4</state>
                     <state>ARM_MATH_CM4</state>
                     <state>USE_USB_FS</state>

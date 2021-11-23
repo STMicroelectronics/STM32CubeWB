@@ -1,22 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
- * @file    app_ble.c
- * @author  MCD Application Team
- * @brief   BLE Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    app_ble.c
+  * @author  MCD Application Team
+  * @brief   BLE Application
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -345,7 +344,8 @@ void APP_BLE_Init( void )
     0,
     CFG_BLE_MAX_COC_INITIATOR_NBR,
     CFG_BLE_MIN_TX_POWER,
-    CFG_BLE_MAX_TX_POWER}
+    CFG_BLE_MAX_TX_POWER,
+    CFG_BLE_RX_MODEL_CONFIG}
   };
 
   /**
@@ -468,7 +468,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         BleApplicationContext.Device_Connection_Status = APP_BLE_IDLE;
 
         if(disconnection_complete_event->Reason == ERR_CMD_SUCCESS){
-          APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH CLIENT disconnection Reason=0x%02X sucess \n\r",disconnection_complete_event->Reason);
+          APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH CLIENT disconnection Reason=0x%02X success \n\r",disconnection_complete_event->Reason);
         }else if(disconnection_complete_event->Reason == HCI_CONNECTION_TERMINATED_BY_LOCAL_HOST_ERR_CODE){
           APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH CLIENT disconnection Reason=0x%02X Connection terminated by local host \n\r",disconnection_complete_event->Reason);
         }else if(disconnection_complete_event->Reason == HCI_CONNECTION_TERMINATED_DUE_TO_MIC_FAILURE_ERR_CODE){
@@ -689,7 +689,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
               if (Peer_Bonded == 0x00)/* only for the first paring complete*/
               {
-                APP_DBG_MSG("Term Connection for the first pairing complete to save bonding infomation !!! \n\r");
+                APP_DBG_MSG("Term Connection for the first pairing complete to save bonding information !!! \n\r");
 
                 for (int loop=0;loop<10;loop++) /* */
                 {
@@ -1362,4 +1362,3 @@ void SVCCTL_ResumeUserEventFlow( void )
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 
 /* USER CODE END FD_WRAP_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

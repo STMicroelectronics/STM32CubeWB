@@ -6,13 +6,12 @@
  *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
  */
@@ -43,7 +42,7 @@ ZbZcl_custom_ls_ServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,\
     }
 
     clusterPtr->cluster.txOptions |= ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY;
-    
+
     memset(&clusterPtr->callbacks, 0, sizeof(clusterPtr->callbacks));
     if (callbacks != NULL) {
         memcpy(&clusterPtr->callbacks, callbacks, sizeof(clusterPtr->callbacks));
@@ -59,7 +58,7 @@ ZbZcl_custom_ls_ServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,\
         return NULL;
     }
 #endif
-    
+
     (void)ZbZclAttrIntegerWrite(&clusterPtr->cluster, ZCL_GLOBAL_ATTR_CLUSTER_REV, 1);
 
     ZbZclClusterSetCallbackArg(&clusterPtr->cluster, arg);
@@ -120,7 +119,7 @@ ZbZcl_custom_ls_ServerSendCommandRsp(struct ZbZclClusterT *clusterPtr, struct Zb
     uint8_t rsp_payload[2];
     unsigned int length = 0U;
     struct ZbApsBufT bufv[1];
-    dst_info->tx_options = ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY;   
+    dst_info->tx_options = ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY;
     /* Form the payload */
     putle16(&rsp_payload[length], rsp->one);
     length += 2U;

@@ -4,18 +4,17 @@
  * File Name          : App/app_thread.c
  * Description        : Thread Application.
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -63,7 +62,7 @@ typedef enum
 #define C_RESSOURCE_FUOTA_PARAMETERS       "FUOTA_PARAMETERS"
 #define C_RESSOURCE_FUOTA_SEND             "FUOTA_SEND"
 
-/* Following CoAP ressource is requested to reboot on Thread_Ota application */
+/* Following CoAP resource is requested to reboot on Thread_Ota application */
 #define C_RESSOURCE_FUOTA_REBOOT           "FUOTA_REBOOT"
 
 /* Keyword found at the end of Thread Ota compatible application binaries */
@@ -478,7 +477,7 @@ static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Thread
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -643,7 +642,7 @@ static void APP_THREAD_ProvisioningRespHandler(
       {
         APP_THREAD_Error(ERR_THREAD_MESSAGE_READ, 0);
       }
-      APP_DBG("\r -> Succesfully retrieved Remote device address \n");
+      APP_DBG("\r -> Successfully retrieved Remote device address \n");
 
       /* Notify provisioning OK */
       UTIL_SEQ_SetTask(TASK_FUOTA_PARAMETERS, CFG_SCH_PRIO_1);
@@ -1460,7 +1459,7 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
   uint32_t char_remaining = 0;
   static uint32_t len_total = 0;
 
-  /* Copy the characteres in the temporary buffer */
+  /* Copy the characters  in the temporary buffer */
   for (i = 0; i < *Len; i++)
   {
     TmpString[len_total++] = Buf[i];
@@ -1488,4 +1487,3 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 
 /* USER CODE END FD_WRAP_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

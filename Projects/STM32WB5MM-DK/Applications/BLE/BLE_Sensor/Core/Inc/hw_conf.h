@@ -1,18 +1,18 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : hw_conf.h
-  * Description        : Hardware configuration file for STM32WPAN Middleware.
- ******************************************************************************
+  ******************************************************************************
+  * @file    hw_conf.h
+  * @author  MCD Application Team
+  * @brief   Configuration of hardware interface
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -162,9 +162,51 @@
 #define CFG_HW_LPUART1_ENABLED           0
 #define CFG_HW_LPUART1_DMA_TX_SUPPORTED  0
 
-#define CFG_HW_USART1_ENABLED           0
-#define CFG_HW_USART1_DMA_TX_SUPPORTED  0
+#define CFG_HW_USART1_ENABLED           1
+#define CFG_HW_USART1_DMA_TX_SUPPORTED  1
+
+/**
+ * UART1
+ */
+#define CFG_HW_USART1_PREEMPTPRIORITY         0x0F
+#define CFG_HW_USART1_SUBPRIORITY             0
+
+/** < The application shall check the selected source clock is enable */
+#define CFG_HW_USART1_SOURCE_CLOCK              RCC_USART1CLKSOURCE_SYSCLK
+
+#define CFG_HW_USART1_BAUDRATE                115200
+#define CFG_HW_USART1_WORDLENGTH              UART_WORDLENGTH_8B
+#define CFG_HW_USART1_STOPBITS                UART_STOPBITS_1
+#define CFG_HW_USART1_PARITY                  UART_PARITY_NONE
+#define CFG_HW_USART1_HWFLOWCTL               UART_HWCONTROL_NONE
+#define CFG_HW_USART1_MODE                    UART_MODE_TX_RX
+#define CFG_HW_USART1_ADVFEATUREINIT          UART_ADVFEATURE_NO_INIT
+#define CFG_HW_USART1_OVERSAMPLING            UART_OVERSAMPLING_8
+
+#define CFG_HW_USART1_TX_PORT_CLK_ENABLE      __HAL_RCC_GPIOB_CLK_ENABLE
+#define CFG_HW_USART1_TX_PORT                 GPIOB
+#define CFG_HW_USART1_TX_PIN                  GPIO_PIN_6
+#define CFG_HW_USART1_TX_MODE                 GPIO_MODE_AF_PP
+#define CFG_HW_USART1_TX_PULL                 GPIO_NOPULL
+#define CFG_HW_USART1_TX_SPEED                GPIO_SPEED_FREQ_VERY_HIGH
+#define CFG_HW_USART1_TX_ALTERNATE            GPIO_AF7_USART1
+
+#define CFG_HW_USART1_RX_PORT_CLK_ENABLE      __HAL_RCC_GPIOB_CLK_ENABLE
+#define CFG_HW_USART1_RX_PORT                 GPIOB
+#define CFG_HW_USART1_RX_PIN                  GPIO_PIN_7
+#define CFG_HW_USART1_RX_MODE                 GPIO_MODE_AF_PP
+#define CFG_HW_USART1_RX_PULL                 GPIO_NOPULL
+#define CFG_HW_USART1_RX_SPEED                GPIO_SPEED_FREQ_VERY_HIGH
+#define CFG_HW_USART1_RX_ALTERNATE            GPIO_AF7_USART1
+
+#define CFG_HW_USART1_DMA_TX_PREEMPTPRIORITY  0x0F
+#define CFG_HW_USART1_DMA_TX_SUBPRIORITY      0
+
+#define CFG_HW_USART1_DMAMUX_CLK_ENABLE       __HAL_RCC_DMAMUX1_CLK_ENABLE
+#define CFG_HW_USART1_DMA_CLK_ENABLE          __HAL_RCC_DMA2_CLK_ENABLE
+#define CFG_HW_USART1_TX_DMA_REQ			  DMA_REQUEST_USART1_TX
+#define CFG_HW_USART1_TX_DMA_CHANNEL          DMA2_Channel4
+#define CFG_HW_USART1_TX_DMA_IRQn             DMA2_Channel4_IRQn
+#define CFG_HW_USART1_DMA_TX_IRQHandler       DMA2_Channel4_IRQHandler
 
 #endif /*HW_CONF_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

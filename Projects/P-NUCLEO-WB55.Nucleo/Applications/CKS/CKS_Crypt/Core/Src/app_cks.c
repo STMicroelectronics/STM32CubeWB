@@ -1,25 +1,24 @@
 /* USER CODE BEGIN Header */
 /**
-******************************************************************************
+  ******************************************************************************
 * @file   CRYP_CKS/src/app_cks.c
 * @author  MCD Application Team
 * @brief   This example provides an example of CKS feature.
 *          This feature allows to store AES keys in CPU2 area.
            Keys cannot be accessed by user application running on CPU1
            They are loaded when requested by CPU2 in the unreadable key register of AES1 IP
-******************************************************************************
-* @attention
-*
-* <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
-* All rights reserved.</center></h2>
-*
-* This software component is licensed by ST under BSD 3-Clause license,
-* the "License"; You may not use this file except in compliance with the 
-* License. You may obtain a copy of the License at:
-*                        opensource.org/licenses/BSD-3-Clause
-*
-******************************************************************************
-*/
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -204,7 +203,7 @@ static HAL_StatusTypeDef CKS_SimpleKeys(void)
 #endif /* CKS_LOCK_TEST */
   
   /* Decryption */
-  /* Start decrypting aCyphertext, the decrypted data is available in aDecryptedtext */
+  /* Start decrypting aCiphertext, the decrypted data is available in aDecryptedtext */
   if (HAL_CRYP_Decrypt(&hcryp1, aEncryptedtextCBC128, AES_TEXT_SIZE, aDecryptedtext, TIMEOUT_VALUE) != HAL_OK)
   {
     /* Processing Error */
@@ -253,7 +252,7 @@ static HAL_StatusTypeDef CKS_SimpleKeys(void)
       return HAL_ERROR;
     }
   }
-  /* Start decrypting aCyphertext, the decrypted data is available in aDecryptedtext */
+  /* Start decrypting aCiphertext, the decrypted data is available in aDecryptedtext */
   if (HAL_CRYP_Decrypt(&hcryp1, aEncryptedtextCBC256, AES_TEXT_SIZE, aDecryptedtext, TIMEOUT_VALUE) != HAL_OK)
   {
     /* Processing Error */
@@ -350,7 +349,7 @@ static HAL_StatusTypeDef CKS_EncryptedKeys(void)
     }
   }
   /* Decryption */
-  /* Start decrypting aCyphertext, the decrypted data is available in aDecryptedtext */
+  /* Start decrypting aCiphertext, the decrypted data is available in aDecryptedtext */
   if (HAL_CRYP_Decrypt(&hcryp1, aEncryptedtextCBC128, AES_TEXT_SIZE, aDecryptedtext, TIMEOUT_VALUE) != HAL_OK)
   {
     /* Processing Error */
@@ -403,7 +402,7 @@ static HAL_StatusTypeDef CKS_EncryptedKeys(void)
       return HAL_ERROR;
     }
   }
-  /* Start decrypting aCyphertext, the decrypted data is available in aDecryptedtext */
+  /* Start decrypting aCiphertext, the decrypted data is available in aDecryptedtext */
   if (HAL_CRYP_Decrypt(&hcryp1, aEncryptedtextCBC256, AES_TEXT_SIZE, aDecryptedtext, TIMEOUT_VALUE) != HAL_OK)
   {
     /* Processing Error */
@@ -448,5 +447,3 @@ static int data_cmp(uint32_t *EncryptedText, uint32_t *RefText, uint8_t Size)
 }
 
 
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

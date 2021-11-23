@@ -8,12 +8,12 @@
   * @brief   Example of CKS feature usage.
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -71,7 +71,7 @@ In order to make the program work, you must do the following:
  - Flash the board with the executable file
  - Power on the Nucleo board with the CRYP_CKS application
  
-If all test are passed, LED1 is swithed On.
+If all test are passed, LED1 is switched On.
 It one test fails, LED3 is switched On
 
 note: Access to Bootloader USB Interface (system flash) with Boot mode selected by Boot0 pin set to VDD

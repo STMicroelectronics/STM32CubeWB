@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -42,7 +41,7 @@
 /*
 *  Different provision bearer supported by BLE-Mesh. 
 *  Define according to application.
-*      Atleast one of PB-ADV and PB-GATT should be defined
+*      At least one of PB-ADV and PB-GATT should be defined
 */
 
 #define ENABLE_PB_ADV
@@ -85,7 +84,7 @@ This may result into excessive flash erase operations, this should be avoided to
 */
 #define SAVE_EMBD_PROVISION_DATA                                               1
 
-/* Enables the UUID saving per Node - Currenly Not Supported */       
+/* Enables the UUID saving per Node - Currently Not Supported */       
 #define ENABLE_SAVE_UUID_PER_NODE 0  
 
 //#define ENABLE_SERIAL_PRVN                                                     1
@@ -326,7 +325,7 @@ Comment this macro to disable the publication
 
 /*
 Define the following Macro to check the Power-OnOff Cycles
-5 Continous cycles of OnOff with Ontime <2 sec will cause unprovisioning
+5 Continuous cycles of OnOff with Ontime <2 sec will cause unprovisioning
 */
 //#define ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE
 

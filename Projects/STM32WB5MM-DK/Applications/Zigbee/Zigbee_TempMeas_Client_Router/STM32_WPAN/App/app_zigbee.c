@@ -1,19 +1,18 @@
 
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
+  ******************************************************************************
   * File Name          : App/app_zigbee.c
   * Description        : Zigbee Application.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -887,15 +886,14 @@ static void APP_ZIGBEE_ReportConfig(void)
   uint16_t rep_change = (uint16_t) ZCL_REPORT_CHANGE;
   struct ZbZclAttrReportConfigT report;
   report.dst.endpoint = SW1_ENDPOINT;
-  //report.dst.mode = ZB_APSDE_ADDRMODE_NOTPRESENT;//ZB_APSDE_ADDRMODE_EXT; //
   report.dst.mode = ZB_APSDE_ADDRMODE_SHORT;
   report.dst.nwkAddr = 0x0000;
-  report.min = ZCL_MIN_REPORT;
-  report.max = ZCL_MAX_REPORT;
-  report.change.epsilon.integer = 0;
-   
-  report.attr_id = ZCL_TEMP_MEAS_ATTR_MEAS_VAL;
-  report.attr_type = ZCL_DATATYPE_SIGNED_16BIT;
+  report.num_records = 1;
+  report.record_list[0].min = ZCL_MIN_REPORT;
+  report.record_list[0].max = ZCL_MAX_REPORT;
+  report.record_list[0].change = 0;
+  report.record_list[0].attr_id = ZCL_TEMP_MEAS_ATTR_MEAS_VAL;
+  report.record_list[0].attr_type = ZCL_DATATYPE_SIGNED_16BIT;
   ZbZclAttrReportConfigReq(zigbee_app_info.temp_meas_client,&report,&APP_ZIGBEE_Report_cb,(void*)&rep_change);
 }/*APP_ZIGBEE_ReportConfig*/
 
@@ -914,7 +912,7 @@ static void APP_ZIGBEE_Report_cb(struct ZbZclCommandRspT *cmd_rsp,void *arg)
   }
   else
   {
-    APP_DBG("[TEMP MEAS] Report Config set with sucess");
+    APP_DBG("[TEMP MEAS] Report Config set with success");
   }
 }/*APP_ZIGBEE_Report_cb*/
 
@@ -986,5 +984,4 @@ static void LED_Toggle(aPwmLedGsData_TypeDef aPwmLedGsData)
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

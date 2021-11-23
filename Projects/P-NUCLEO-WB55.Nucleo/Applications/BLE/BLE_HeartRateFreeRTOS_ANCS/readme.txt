@@ -8,12 +8,12 @@
   * @brief   Description of the BLE_HeartRateFreeRTOS_ANCS example.
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -122,7 +122,7 @@ Considering connection with ios device:
  - connect to a device
  - select the HRanc in the device list
  - call your ios device by using another smartphone, the call will be answered automatically. or, send message to your ios device,the message can be displayed on terminal. 
-   Warning: if the HRanc has already been bonded or pairing timeout, you should erase it from bluetooth connected ios device list and press SW3 stored bonded infomation.
+   Warning: if the HRanc has already been bonded or pairing timeout, you should erase it from bluetooth connected ios device list and press SW3 stored bonded information.
             (in ios device settings: select bluetooth icon, then select my device and forget or ignore it).  
  The Heart Rate is displayed each second on the ios device.
  Moreover to display ANCS notifications messages, please open an hyper-terminal on PC 

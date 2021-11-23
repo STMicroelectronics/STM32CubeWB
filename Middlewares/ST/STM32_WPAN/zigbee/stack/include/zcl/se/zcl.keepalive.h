@@ -3,7 +3,7 @@
  * @heading Keep Alive
  * @brief ZCL Keep Alive cluster header
  * ZCL 8 Section 3.18
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 /*--------------------------------------------------------------------------
@@ -56,16 +56,16 @@ struct ZbZclClusterT * ZbZclKeepAliveClientAlloc(struct ZigBeeT *zb, uint8_t end
 
 /**
  * Start Keep Alive
- * @param cluster Cluster instance from which to send this command
+ * @param zb Zigbee stack instance
  * @return Void
  */
-void ZbZclKeepAliveClientStart(struct ZbZclClusterT *cluster);
+void ZbZclKeepAliveClientStart(struct ZigBeeT *zb);
 
 /**
  * Stop Keep Alive and abort the TCSO
- * @param cluster Cluster instance from which to send this command
+ * @param zb Zigbee stack instance
  * @return Void
  */
-void ZbZclKeepAliveClientStop(struct ZbZclClusterT *cluster);
+void ZbZclKeepAliveClientStop(struct ZigBeeT *zb);
 
 #endif /* __ZCL_KEEPALIVE_H */

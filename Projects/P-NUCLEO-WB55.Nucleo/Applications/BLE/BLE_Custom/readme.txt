@@ -8,12 +8,12 @@
   * @brief   Description of the BLE_Custom application
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -22,7 +22,7 @@
 
 This example is to demonstrate that a BLE_Custom application can be created using CubeMX.
 This application includes two BLE services, the first one is a BLE_P2P_Server like, including two characteristics; the second one is a BLE_Heart_Rate like with three characteristics.
-All the application behavior must be developped by the user.
+All the application behavior must be developed by the user.
 A display terminal can be used to display application messages.
 This application is able to advertise, to be connected by a Smart phone (ST BLE Sensor application) and to manage the BLE events according to each characteristic. 
 This example is done to be used with a Nucleo board (MB1355C) only.

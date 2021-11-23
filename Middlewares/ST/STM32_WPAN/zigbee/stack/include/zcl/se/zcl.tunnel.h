@@ -4,7 +4,7 @@
  * @brief ZCL Tunneling cluster header
  * ZCL 7 section 10.6
  * ZCL 8 section 10.6
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 /* @PICS.ZCL.Tunnel
@@ -14,7 +14,7 @@
  * Server Attributes
  * SETUN.S.A0000 | CloseTunnelTimeout | True
  * SETUN.S.Afffd | ClusterRevision | True
- * SETUN.S.Afffe | AttributeReportingStatus | False
+ * SETUN.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * SETUN.S.C00.Rsp | RequestTunnel | True
@@ -36,7 +36,7 @@
  *
  * Client Attributes
  * SETUN.C.Afffd | ClusterRevision | True
- * SETUN.C.Afffe | AttributeReportingStatus | False
+ * SETUN.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * SETUN.C.C00.Rsp | RequestTunnelResponse | True

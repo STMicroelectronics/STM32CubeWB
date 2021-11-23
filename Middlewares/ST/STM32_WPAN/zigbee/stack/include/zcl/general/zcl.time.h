@@ -4,7 +4,7 @@
  * @brief ZCL Time cluster header
  * ZCL 7 section 3.12
  * ZCL 8 section 3.12
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_TIME_H
@@ -32,11 +32,11 @@
  * T.S.A0008 | LastSetTime | True | Optional
  * T.S.A0009 | ValidUntilTime | True | Optional
  * T.S.Afffd | ClusterRevision | True
- * T.S.Afffe | AttributeReportingStatus | False
+ * T.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * T.C.Afffd | ClusterRevision | True
- * T.C.Afffe | AttributeReportingStatus | False
+ * T.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

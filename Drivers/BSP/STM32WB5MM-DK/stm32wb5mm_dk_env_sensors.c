@@ -514,5 +514,3 @@ static int32_t STTS22H_0_Probe(uint32_t Functions)
 /**
  * @}
  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

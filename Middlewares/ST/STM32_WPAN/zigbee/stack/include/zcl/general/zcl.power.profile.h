@@ -4,7 +4,7 @@
  * @brief ZCL Power Profile cluster header
  * ZCL 7 section 3.17
  * ZCL 8 section 3.17
- * @copyright Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_PWR_PROF_H
@@ -23,7 +23,7 @@
  * PWR.S.A0004 | ScheduleMode | True
  * PWR.S.A0004.Report.Tx  | ScheduleMode | True
  * PWR.S.Afffd | ClusterRevision | True
- * PWR.S.Afffe | AttributeReportingStatus | False
+ * PWR.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * PWR.S.C00.Rsp | PowerProfileRequest | True
@@ -53,7 +53,7 @@
  * Client Attributes
  * PWR.C.A0004.Report.Rsp | ScheduleMode | False
  * PWR.C.Afffd | ClusterRevision | True
- * PWR.C.Afffe | AttributeReportingStatus | False
+ * PWR.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * PWR.C.C00.Rsp | PowerProfileNotification | True

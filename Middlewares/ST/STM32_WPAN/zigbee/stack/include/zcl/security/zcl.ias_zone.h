@@ -29,7 +29,7 @@
  * IASZ.S.A0012 | NumberOfZoneSensitivityLevelsSupported | False | Optional
  * IASZ.S.A0013 | CurrentZoneSensitivityLevel | False |  Optional
  * IASZ.S.Afffd | ClusterRevision | True
- * IASZ.S.Afffe | AttributeReportingStatus | False
+ * IASZ.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * IASZ.S.C00.Rsp | Zone Enroll Response | True
@@ -42,7 +42,7 @@
  *
  * Client Attributes
  * IASZ.C.Afffd | ClusterRevision | True
- * IASZ.C.Afffe | AttributeReportingStatus | False
+ * IASZ.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * IASZ.C.C00.Rsp | Zone Status Change Notification  | True

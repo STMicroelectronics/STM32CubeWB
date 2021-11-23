@@ -1,19 +1,18 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
+  ******************************************************************************
   * File Name          : App/app_ble.c
   * Description        : Application file for BLE Middleware.
   *
- ******************************************************************************
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -231,7 +230,7 @@ static const char local_name[] = { AD_TYPE_COMPLETE_LOCAL_NAME, 'D', 'T', '_', '
 
 uint8_t index_con_int, mutex; 
 
-uint8_t const manuf_data[22] = { 2, AD_TYPE_TX_POWER_LEVEL, 0x00 /* 0 dBm */, /* Trasmission Power */
+uint8_t const manuf_data[22] = { 2, AD_TYPE_TX_POWER_LEVEL, 0x00 /* 0 dBm */, /* Transmission Power */
     10, AD_TYPE_COMPLETE_LOCAL_NAME, 'D', 'T', '_', 'S', 'E', 'R', 'V', 'E', 'R', /* Complete Name */
     7, AD_TYPE_MANUFACTURER_SPECIFIC_DATA, 0x01/*SKD version */,
     CFG_DEV_ID_PERIPH_SERVER, /* NUCLEO-Board WB - DT Periph Server*/
@@ -307,7 +306,8 @@ void APP_BLE_Init( void )
     0,
     CFG_BLE_MAX_COC_INITIATOR_NBR,
     CFG_BLE_MIN_TX_POWER,
-    CFG_BLE_MAX_TX_POWER}
+    CFG_BLE_MAX_TX_POWER,
+    CFG_BLE_RX_MODEL_CONFIG}
   };
 
   /**
@@ -1219,4 +1219,3 @@ void SVCCTL_InitCustomSvc( void )
 }
 /* USER CODE END FD_WRAP_FUNCTIONS */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

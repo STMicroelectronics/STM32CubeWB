@@ -16,13 +16,12 @@
 ;******************************************************************************
 ;* @attention
 ;*
-;* <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
-;* All rights reserved.</center></h2>
+;* Copyright (c) 2019 STMicroelectronics.
+;* All rights reserved.
 ;*
-;* This software component is licensed by ST under Apache License, Version 2.0,
-;* the "License"; You may not use this file except in compliance with the 
-;* License. You may obtain a copy of the License at:
-;*                        opensource.org/licenses/Apache-2.0
+;* This software is licensed under terms that can be found in the LICENSE file
+;* in the root directory of this software component.
+;* If no LICENSE file comes with this software, it is provided AS-IS.
 ;*
 ;******************************************************************************
 ;
@@ -84,7 +83,7 @@ __vector_table
         DCD     EXTI0_IRQHandler                  ; EXTI Line 0 Interrupt
         DCD     EXTI1_IRQHandler                  ; EXTI Line 1 Interrupt
         DCD     EXTI2_IRQHandler                  ; EXTI Line 2 Interrupt
-        DCD     EXTI3_IRQHandler                  ; EXTI Line 3 Interrup
+        DCD     EXTI3_IRQHandler                  ; EXTI Line 3 Interrupt
         DCD     EXTI4_IRQHandler                  ; EXTI Line 4 Interrupt
         DCD     DMA1_Channel1_IRQHandler          ; DMA1 Channel 1 Interrupt
         DCD     DMA1_Channel2_IRQHandler          ; DMA1 Channel 2 Interrupt
@@ -468,4 +467,3 @@ DMAMUX1_OVR_IRQHandler
 
         END
 
-;************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE*****

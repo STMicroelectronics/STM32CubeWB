@@ -1,18 +1,17 @@
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
-  * File Name          : App/app_thread.c
-  * Description        : Thread Application.
-  ******************************************************************************
+ * File Name          : App/app_thread.c
+ * Description        : Thread Application.
+ ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -99,10 +98,13 @@ static uint8_t VcpTxBuffer[sizeof(TL_EvtPacket_t) + 254U]; /* Transmit buffer ov
 static uint8_t aRxBuffer[C_SIZE_CMD_STRING];
 #define HDLC_MAX_RECEIVED_FRAME_LENGTH 	128
 #define HDLC_MAX_APPENDED_FRAME_NUMBER	8
+#define HDLC_FRAMING_CHECK 0 /* Set to 1 to enable M4 HDLC Framing check before sending it over uart */
+#if HDLC_FRAMING_CHECK
 static uint8_t HdlcAppendBuffer[HDLC_MAX_RECEIVED_FRAME_LENGTH * HDLC_MAX_APPENDED_FRAME_NUMBER];
 uint16_t HdlcAppendBufferLength = 0;
 static bool HdlcFrameReadyToBeSent = TRUE;
 static uint8_t HdlcFrameCounter = 0;
+#endif
 bool hdlc_Flag = FALSE;
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
@@ -761,7 +763,7 @@ void RCP_PacketFromM0_Processing() {
 		switch (p_RCPPacket->RCP_packetPayload[0]) {
 		  case 'R' :
 			  APP_DBG("[M4 SPINEL] : Received a Reset Command from M0...");
-			  /* Perform an NVIC Reset in order to reinitalize the device */
+			  /* Perform an NVIC Reset in order to reinitialize the device */
 			  HAL_NVIC_SystemReset();
 			  break;
                 default:
@@ -770,6 +772,11 @@ void RCP_PacketFromM0_Processing() {
 		}
 	}
 
+#if !HDLC_FRAMING_CHECK
+	// Just send received buffer on UART without checking HDLC framing
+	HW_UART_Transmit_IT(CFG_CLI_UART, p_RCPPacket->RCP_packetPayload, p_RCPPacket->RCP_packetLength, TL_THREAD_SendAck);
+	APP_DBG("<-M4(%d)\n\r", p_RCPPacket->RCP_packetLength);
+#else
 	// First copy received HDLC frame at its right place
 	if (HdlcFrameCounter < HDLC_MAX_APPENDED_FRAME_NUMBER)
 	{
@@ -777,7 +784,7 @@ void RCP_PacketFromM0_Processing() {
 		HdlcAppendBufferLength += p_RCPPacket->RCP_packetLength;
 
 		if (p_RCPPacket->RCP_packetLength == 128) {
-			// In that case, wether we have a well formated HDLC frame of 128 bytes, so ending with a 0x7E,
+			// In that case, whether we have a well formatted HDLC frame of 128 bytes, so ending with a 0x7E,
 			// or we are in the middle os a HDLC frame and we need to append it with the coming buffer...
 			// buffer is coming...
 			if (p_RCPPacket->RCP_packetPayload[127] == 0x7E) {
@@ -789,7 +796,7 @@ void RCP_PacketFromM0_Processing() {
 				// Need to append to save part of HDLC frame into a buffer
 				HdlcFrameCounter++;
 				HdlcFrameReadyToBeSent = FALSE;
-				APP_DBG("%d-M4(%03d)", HdlcFrameCounter, HdlcAppendBufferLength);
+				APP_DBG("%d-M4 ", HdlcFrameCounter);
 			}
 		} else
 		{
@@ -799,10 +806,13 @@ void RCP_PacketFromM0_Processing() {
 		// Send to LPUART
 		if (HdlcAppendBufferLength && HdlcFrameReadyToBeSent)
 		{
-		  APP_DBG("<-M4(%03d)", HdlcAppendBufferLength);
-		  HW_UART_Transmit_IT(CFG_CLI_UART, HdlcAppendBuffer, HdlcAppendBufferLength, HostTxCb);
-		  HdlcFrameCounter = 0;
-		  HdlcAppendBufferLength = 0;
+			APP_DBG("<-M4\n\r");
+			HW_UART_Transmit_IT(CFG_CLI_UART, HdlcAppendBuffer, HdlcAppendBufferLength, /*HostTxCb*/TL_THREAD_SendAck);
+			HdlcFrameCounter = 0;
+			HdlcAppendBufferLength = 0;
+		} else {
+			// bytes copied into HdlcAppendBuffer, ready to receive more...
+			TL_THREAD_SendAck();
 		}
 
 	} else  {
@@ -811,7 +821,8 @@ void RCP_PacketFromM0_Processing() {
 	    HdlcAppendBufferLength = 0;
 	    HdlcFrameReadyToBeSent = TRUE;
 	}
-	TL_THREAD_SendAck();
+#endif
+
 }
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -858,4 +869,3 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 
 /* USER CODE END FD_WRAP_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,22 +1,21 @@
 
 /**
- ******************************************************************************
+  ******************************************************************************
  * @file    ancs_client_app.h
  * @author  MCD Application Team
  * @brief   Header for ancs_client_app.c module
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2018(-2021) STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -177,7 +176,7 @@ typedef struct notificationAttrS {
    *  iOS notification.
    */
   uint32_t UID;
-  /** App Identifer flag, if TRUE this attribute is requested from the Get Notification Attributes command */
+  /** App Identifier flag, if TRUE this attribute is requested from the Get Notification Attributes command */
   uint8_t  appID_flag;
   /** Title flag, if TRUE this attribute is requested from the Get Notification Attributes command */
   uint8_t  title_flag;
@@ -185,7 +184,7 @@ typedef struct notificationAttrS {
   uint16_t title_max_size;
   /** Subtitle flag, if TRUE this attribute is requested from the Get Notification Attributes command */
   uint8_t  subtitle_flag;
-  /** Max Subtitle length paramter */
+  /** Max Subtitle length parameter */
   uint16_t subtitle_max_size;
   /** Message flag, if TRUE this attribute is requested from the Get Notification Attributes command */
   uint8_t  message_flag;
@@ -270,5 +269,3 @@ void ANCS_App_Notification( Connection_Context_t *pNotification );
 #endif
 
 #endif /*__ANCS_APPLICATION_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

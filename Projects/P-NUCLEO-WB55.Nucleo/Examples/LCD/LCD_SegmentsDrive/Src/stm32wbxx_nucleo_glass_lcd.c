@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -60,7 +59,7 @@
 ================================================================================
                               GLASS LCD MAPPING
 ================================================================================
-LCD allows to display informations on six 14-segment digits and 4 bars:
+LCD allows to display information on six 14-segment digits and 4 bars:
 
   1       2       3       4       5       6
 -----   -----   -----   -----   -----   -----
@@ -613,5 +612,3 @@ static void WriteChar(LCD_HandleTypeDef *hlcd, uint8_t *ch, Point_Typedef Point,
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

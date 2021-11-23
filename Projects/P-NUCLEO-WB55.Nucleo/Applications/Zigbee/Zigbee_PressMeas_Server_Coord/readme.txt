@@ -10,19 +10,19 @@
   *          router role.
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
 
 @par Application Description 
 
-How to use Pressure Measurement cluster on a Centralized Zigbee network with device acting as server.
+How to use the Pressure Measurement cluster on a device acting as a Server with Coordinator role within a Centralized Zigbee network.
 
 The purpose of this application is to show how to create a centralized Zigbee network, and how to communicate
 from one node to another one using the Pressure Measurement cluster. Once the Zigbee mesh network is created, the 
@@ -74,8 +74,8 @@ To run the application :
   b)  Wait for a few seconds (around 5 sec), in order to let the zigbee mesh network being created. 
         
   c)  At this stage, a Zigbee network is automatically created and an initial pressure is set and GREEN LED is ON.
-      pressing on the SW1 push button increase the pressure by 2C.
-      pressing on the SW2 push button decrease the pressure by 2C. 
+      pressing on the SW1 push button increase the pressure.
+      pressing on the SW2 push button decrease the pressure. 
       
       Once pressure is above a limit, GREEN LED is OFF and RED LED is ON.
       If pressure is set back under the limit GREEN LED is ON and RED LED is OFF.

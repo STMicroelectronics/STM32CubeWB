@@ -4,7 +4,7 @@
  * @brief ZCL OnOff Switch Configuration cluster header
  * ZCL 7 section 3.9
  * ZCL 8 section 3.9
- * @copyright Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ONOFF_SWCONFIG_H
@@ -19,11 +19,11 @@
  * OOSC.S.A0000 | SwitchType | True
  * OOSC.S.A0010 | SwitchActions | True
  * OOSC.S.Afffd | ClusterRevision | True
- * OOSC.S.Afffe | AttributeReportingStatus | False
+ * OOSC.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * OOSC.S.Afffd | ClusterRevision | True
- * OOSC.S.Afffe | AttributeReportingStatus | False
+ * OOSC.S.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

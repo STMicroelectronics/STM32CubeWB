@@ -212,5 +212,3 @@ HAL_StatusTypeDef MX_QSPI_Init(QSPI_HandleTypeDef *hQspi, MX_QSPI_Init_t *Config
 #endif
 
 #endif /* STM32WB5MM_DK_QSPI_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

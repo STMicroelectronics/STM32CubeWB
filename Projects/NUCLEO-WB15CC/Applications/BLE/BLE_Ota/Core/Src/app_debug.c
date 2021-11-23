@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_debug.c
-  * Description        : Debug capabilities source file for STM32WPAN Middleware
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_debug.c
+  * @author  MCD Application Team
+  * @brief   Debug capabilities source file for STM32WPAN Middleware
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
- ******************************************************************************
- */
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -43,7 +43,7 @@ typedef PACKED_STRUCT
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define GPIO_NBR_OF_RF_SIGNALS                  9
-#define GPIO_CFG_NBR_OF_FEATURES                34
+#define GPIO_CFG_NBR_OF_FEATURES                38
 #define NBR_OF_TRACES_CONFIG_PARAMETERS         4
 #define NBR_OF_GENERAL_CONFIG_PARAMETERS        4
 
@@ -119,8 +119,16 @@ static const APPD_GpioConfig_t aGpioConfigList[GPIO_CFG_NBR_OF_FEATURES] =
 /* From v1.4.0 */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_START - Set on Entry / Reset on Exit */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_EOP - Set on Entry / Reset on Exit */
+/* From v1.5.0 */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_WRITE - Set on Entry / Reset on Exit */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_ERASE - Set on Entry / Reset on Exit */
+/* From v1.6.0 */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* BLE_RESCHEDULE_EVENT - Set on Entry / Reset on Exit */
+/* From v1.8.0 */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_BLE_LLD_CMD_RX - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* IPCC_BLE_LLD_ACK_TX - Set on Entry / Reset on Exit */
+/* From v1.9.0 */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* BLE_ASYNCH_EVENT_NACKED - Set on Entry / Reset on Exit */
 };
 
 /**
@@ -388,5 +396,3 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
   return;
 }
 #endif
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

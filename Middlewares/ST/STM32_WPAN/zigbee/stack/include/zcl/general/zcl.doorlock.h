@@ -61,7 +61,7 @@
  * DRLK.S.A0046 | RFProgrammingEventMask | False | Optional
  * DRLK.S.A0047 | RFIDProgrammingEventMask | False | Optional
  * DRLK.S.Afffd | ClusterRevision | True
- * DRLK.S.Afffe | AttributeReportingStatus | False
+ * DRLK.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * DRLK.S.C00.Rsp | Lock Door | True
@@ -124,7 +124,7 @@
  *
  * Client Attributes
  * DRLK.C.Afffd | ClusterRevision | True
- * DRLK.C.Afffe | AttributeReportingStatus | False
+ * DRLK.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * DRLK.C.C00.Rsp | Lock Door Response | True

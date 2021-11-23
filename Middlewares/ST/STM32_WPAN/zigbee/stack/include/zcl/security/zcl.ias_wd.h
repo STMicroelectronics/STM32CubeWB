@@ -4,7 +4,7 @@
  * @brief ZCL Security IAS Warning Device cluster header
  * ZCL 7 section 8.4
  * ZCL 8 section 8.4
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_IAS_WD_H
@@ -18,7 +18,7 @@
  * Server Attributes
  * IASWD.S.A0000 | MaxDuration | True
  * IASWD.S.Afffd | ClusterRevision | True
- * IASWD.S.Afffe | AttributeReportingStatus | False
+ * IASWD.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * IASWD.S.C00.Rsp | Start warning | True
@@ -26,7 +26,7 @@
  *
  * Client Attributes
  * IASWD.C.Afffd | ClusterRevision | True
- * IASWD.C.Afffe | AttributeReportingStatus | False
+ * IASWD.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Generated
  * IASWD.C.C00.Tx | Start warning | True

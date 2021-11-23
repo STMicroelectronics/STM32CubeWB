@@ -2,7 +2,7 @@
  * @file zigbee.startup.h
  * @brief Zigbee startup header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_STARTUP_H
@@ -47,7 +47,8 @@ struct ZbStartupCbkeT {
     /* Keep Alive Server or Client */
     bool tc_keepalive_server_enable;
     /**< If CBKE is enabled (suite_mask != 0), this flag determines whether to allocate the
-     * Trust Center Keep Alive Server (true) or Client (false). */
+     * Trust Center Keep Alive Server (true) or Client (false). The Trust Center should
+     * set this flag to true, and all other joiners should set this flag to false. */
 
     /* Keep Alive Server attributes */
     uint8_t tc_keepalive_base;
@@ -137,24 +138,18 @@ struct ZbStartupT {
 
         uint8_t networkKey[ZB_SEC_KEYSIZE];
         /**< Configures the Network Key with key type set to ZB_SEC_KEYTYPE_STANDARD_NWK.
-         * Only applicable if startupControl is ZbStartTypeForm or ZbStartTypePreconfigured. */
+         * Only applicable if startupControl is ZbStartTypePreconfigured. */
 
         uint8_t networkKeySeqNum;
         /**< Configures the Network Key Sequence Number for the Network Key.
          * Also sets ZB_NWK_NIB_ID_ActiveKeySeqNumber to this value.
-         * Only applicable if startupControl is ZbStartTypeForm or ZbStartTypePreconfigured.
+         * Only applicable if startupControl is ZbStartTypePreconfigured.
          */
 
         enum ZbSecKeyTypeT networkKeyType; /**< Deprecated and not used. */
 
         struct ZbStartupCbkeT cbke; /**< CBKE certificate configuration */
     } security;
-
-    struct {
-        uint16_t timeBetweenScans; /**< Deprecated and not used. */
-        uint16_t rejoinInterval; /**< Deprecated and not used. */
-        uint16_t maxRejoinInterval; /**< Deprecated and not used. */
-    } join;
 
     uint8_t capability;
     /**< Device capability mask. Default value includes:

@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -305,7 +304,7 @@ void Appli_Sensor_SeriesGet(sensor_SeriesCbParams_t* pSeriesParam,
   *         Read from application to optimize RAM
   * @param  Sensor offset in sensor init structure
   * @param  descriptor parameters
-  * @retval Fail if sensor doesn't exist or property ID mismatch occurrs
+  * @retval Fail if sensor doesn't exist or property ID mismatch occurs
   *         else Success
   */
 MOBLE_RESULT Appli_Sensor_ReadDescriptor(MOBLEUINT8 sensorOffset,
@@ -355,7 +354,7 @@ MOBLE_RESULT Appli_Sensor_ReadDescriptor(MOBLEUINT8 sensorOffset,
   *         Read sensor value and update buffer
   *         data length <= 128
   *         PreviousTemperatureValue, PresentTemperatureValue  to be updated 
-  *         everytime sensor value is changed and call to Sensor_UpdateCadence
+  *         every time sensor value is changed and call to Sensor_UpdateCadence
   * @param  Sensor offset in sensor init structure
   * @param  Value parameters
   * @retval Fail if sensor doesn't exist
@@ -601,7 +600,7 @@ MOBLEUINT8 Appli_Sensor_IsFastCadence(MOBLEUINT8 sensorOffset,
 }
   else
   {
-    /* Implmented only for sensor at offset 0 */
+    /* Implemented only for sensor at offset 0 */
   }
   
   return fastCadenceStatus;
@@ -862,5 +861,4 @@ void Appli_Sensor_SerialCmd(char *rcvdStringBuff, uint16_t rcvdStringSize)
  * @}
  */
 
-/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

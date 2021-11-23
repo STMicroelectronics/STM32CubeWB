@@ -1,22 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
+  ******************************************************************************
  * @file    p2p_routeur_app.c
  * @author  MCD Application Team
  * @brief   P2P Routeur Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -93,15 +92,15 @@ typedef struct{
 typedef struct
 {
     /**
-     * used to chek if Client (Smart Phone) can receive push button information
+     * used to check if Client (Smart Phone) can receive push button information
      */
     uint8_t       Notification_Button_Status;
     /**
-     * used to chek if Client (Smart Phone) can receive end device connection information
+     * used to check if Client (Smart Phone) can receive end device connection information
      */
     uint8_t       Notification_EndDevice_Status;
     /**
-     * provide end device Managment information
+     * provide end device Management  information
      */
     EDS_STM_Status_t EndDeviceStatus;
 /**
@@ -480,7 +479,7 @@ static void Client_Update_Service( void )
         switch(aP2PClientContext[index].state)
         {
             /* USER CODE BEGIN aP2PClientContext */
-            case APP_BLE_DISCOVER_LED_CHAR_DESC: /* Not Used - No decriptor */
+            case APP_BLE_DISCOVER_LED_CHAR_DESC: /* Not Used - No descriptor */
                 APP_DBG_MSG("* GATT : Discover Descriptor of Led Characteritic\n");
                 aci_gatt_disc_all_char_desc(aP2PClientContext[index].connHandle,
                         aP2PClientContext[index].P2PLedCharHdle,
@@ -917,4 +916,3 @@ static SVCCTL_EvtAckStatus_t Client_Event_Handler(void *Event)
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

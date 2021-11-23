@@ -1,20 +1,19 @@
 /**
- ******************************************************************************
- * File Name          : App/app_zigbee.c
- * Description        : Zigbee Application.
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * File Name          : App/app_zigbee.c
+  * Description        : Zigbee Application.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -134,7 +133,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Total Profile Number attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_TOTAL_PROFILENUM, TOTAL_PROFILENUM);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -142,7 +141,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Multiple Scheduling attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_MULTIPLE_SCHED, MULTIPLE_SCHEDULING);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -150,7 +149,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Energy Formating attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_ENERGY_FORMAT, ENERGY_FORMATING);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -158,7 +157,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Energy Remote attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_ENERGY_REMOTE, ENERGY_REMOTE);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -166,7 +165,7 @@ static void APP_ZIGBEE_PowerProfile_Server_Init(void){
   APP_DBG("[POWER PROFILE] Writing Schedule Mode attribute.");
   status = ZbZclAttrIntegerWrite(zigbee_app_info.powerprofile_server_1, ZCL_POWER_PROF_SVR_ATTR_SCHEDULE_MODE, SCHEDULE_MODE);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("[POWER PROFILE] Error writting local attribute.");
+    APP_DBG("[POWER PROFILE] Error writing local attribute.");
     assert(0);
   }
   
@@ -688,7 +687,7 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Zigbee
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -789,7 +788,7 @@ void ZIGBEE_CmdTransfer(void)
 } /* ZIGBEE_CmdTransfer */
 
 /**
- * @brief  This function is called when the M0+ acknoledge the fact that it has received a Cmd
+ * @brief  This function is called when the M0+ acknowledge  the fact that it has received a Cmd
  *
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -924,4 +923,3 @@ void APP_ZIGBEE_ProcessRequestM0ToM4(void)
     }
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

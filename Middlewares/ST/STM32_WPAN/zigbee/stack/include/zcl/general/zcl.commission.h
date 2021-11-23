@@ -42,7 +42,7 @@
  * CS.S.A0041 | ConcentratorRadius | False | Optional
  * CS.S.A0042 | ConcentratorDiscoveryTime | False | Optional
  * CS.S.Afffd | ClusterRevision | True
- * CS.S.Afffe | AttributeReportingStatus | False
+ * CS.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * CS.S.C00.Rsp | Restart Device | Depends on customer application
@@ -58,7 +58,7 @@
  *
  * Client Attributes
  * CS.C.Afffd | ClusterRevision | True
- * CS.C.Afffe | AttributeReportingStatus | False
+ * CS.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * CS.C.C00.Rsp | Restart Device Response | Depends on customer application
@@ -109,7 +109,11 @@ enum ZbZclCommissionServerAttrT {
     ZCL_COMMISSION_SVR_ATTR_PROTOCOLVER = 0x0004, /**< ProtocolVersion. Default value is 0x0002 (ZB_PROTOCOL_VERSION_2007) */
     ZCL_COMMISSION_SVR_ATTR_STACKPROFILE = 0x0005, /**< StackProfile. Default value is 0x02 (ZB_NWK_STACK_PROFILE_PRO) */
     ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL = 0x0006,
-    /**< StartupControl. 0x00 = ZbStartTypePreconfigured, 0x01 = ZbStartTypeForm, 0x02 = ZbStartTypeRejoin, 0x03 = ZbStartTypeJoin. */
+    /**< StartupControl.
+     * ZbStartTypePreconfigured = 0x00,
+     * ZbStartTypeForm = 0x01,
+     * ZbStartTypeRejoin = 0x02,
+     * ZbStartTypeJoin = 0x03 */
     ZCL_COMMISSION_SVR_ATTR_TCADDR = 0x0010,
     /**< TrustCenterAddress. This should only be set if StartupControl is equal to 0x00 (ZbStartTypePreconfigured).
      * Otherwise it should be zero to allow the Transport Key to be decrypted and processed correctly during joining. */

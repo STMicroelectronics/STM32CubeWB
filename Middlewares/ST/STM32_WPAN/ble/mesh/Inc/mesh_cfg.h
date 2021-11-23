@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2018-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -27,7 +26,12 @@
 
 /* Exported macro ------------------------------------------------------------*/
 /* Flash parameters */
+#if defined(STM32WB55xx)
 #define PAGE_SIZE                          4096
+#endif
+#if defined(STM32WB15xx)
+#define PAGE_SIZE                          2048
+#endif
 #define RESET_MANAGER_FLASH_BASE_ADDRESS   (0x10040000)
 
 
@@ -70,9 +74,9 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size);
 
 /* No OOB Type Authentication Configuration */
 #ifdef ENABLE_AUTH_TYPE_NO_OOB
-#define AUTH_TYPE_NO_OOB_ENABLE_STATE   TRUE 
+#define AUTH_TYPE_NO_OOB_ENABLE_STATE   MOBLE_TRUE
 #else
-#define AUTH_TYPE_NO_OOB_ENABLE_STATE   FALSE 
+#define AUTH_TYPE_NO_OOB_ENABLE_STATE   MOBLE_FALSE
 #endif
 
 /* Static OOB Configurations */

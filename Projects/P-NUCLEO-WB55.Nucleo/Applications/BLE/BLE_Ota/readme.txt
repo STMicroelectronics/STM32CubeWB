@@ -8,12 +8,12 @@
   * @brief   OTA implementation
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -57,7 +57,7 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, Dual core
   - BLE/BLE_Ota/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
   - BLE/BLE_Ota/Core/Src/hw_timerserver.c 			Timer Server based on RTC
   - BLE/BLE_Ota/Core/Src/hw_uart.c 					UART Driver
-  - BLE/BLE_Ota/STM32_WPAN/App/otas_app.c 			The OTA service mangement
+  - BLE/BLE_Ota/STM32_WPAN/App/otas_app.c 			The OTA service management
 
      
 @par Hardware and Software environment

@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_PAYLOAD_H
 # define ZCL_PAYLOAD_H
@@ -91,7 +91,7 @@ zb_zcl_append_uint8_array(uint8_t *payload, const unsigned int capacity, unsigne
     unsigned i;
 
     ZCL_BUILDER_CHECK_LEN(value_length);
-    /* ZbMemCpy is not portable (internal stack use only) */
+    /* ZbMemCpy is not portable (internal stack use only), so do a manual copy here. */
     for (i = 0; i < value_length; i++) {
         payload[*index + i] = value[i];
     }

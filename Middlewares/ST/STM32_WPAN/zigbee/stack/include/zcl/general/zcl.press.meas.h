@@ -4,7 +4,7 @@
  * @brief ZCL Pressure Measurement cluster header
  * ZCL 7 section 4.5
  * ZCL 8 section 4.5
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_PRESS_MEAS_H
@@ -27,12 +27,12 @@
  * PRS.S.A0013 | ScaledTolerance | False | Optional
  * PRS.S.A0014 | Scale | False | Optional
  * PRS.S.Afffd | ClusterRevision | True
- * PRS.S.Afffe | AttributeReportingStatus | False
+ * PRS.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * PRS.C.A0000.Report.Rsp | MeasuredValue | False
  * PRS.C.Afffd | ClusterRevision | True
- * PRS.C.Afffe | AttributeReportingStatus | False
+ * PRS.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

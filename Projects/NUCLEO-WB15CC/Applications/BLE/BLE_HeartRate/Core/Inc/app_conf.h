@@ -1,18 +1,18 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_conf.h
-  * Description        : Application configuration file for STM32WPAN Middleware.
+  ******************************************************************************
+  * @file    app_conf.h
+  * @author  MCD Application Team
+  * @brief   Application configuration file for STM32WPAN Middleware.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -260,6 +260,10 @@
  * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC
  * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO
  * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW
+ * - SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV
+ * - SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2
  * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
  * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3
  * which are used to set following configuration bits:
@@ -269,17 +273,33 @@
  *          0: with service change desc.
  * (bit 2): 1: device name Read-Only
  *          0: device name R/W
+ * (bit 3): 1: extended advertizing supported       [NOT SUPPORTED]
+ *          0: extended advertizing not supported   [NOT SUPPORTED]
+ * (bit 4): 1: CS Algo #2 supported
+ *          0: CS Algo #2 not supported
  * (bit 7): 1: LE Power Class 1
  *          0: LE Power Class 2-3
  * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV | SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2 | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 
 #define CFG_BLE_MIN_TX_POWER            (0)
 
 #define CFG_BLE_MAX_TX_POWER            (0)
+
+/**
+ * BLE Rx model configuration flags to be configured with:
+ * - SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
+ * - SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_BLOCKER
+ * which are used to set following configuration bits:
+ * (bit 0): 1: agc_rssi model improved vs RF blockers
+ *          0: Legacy agc_rssi model
+ * other bits: reserved (shall be set to 0)
+ */
+
+#define CFG_BLE_RX_MODEL_CONFIG         SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
 
 /******************************************************************************
  * Transport Layer
@@ -437,8 +457,9 @@
 
 #endif
 
-/** tick timer value in us */
+/** tick timer values */
 #define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE )
+#define CFG_TS_TICK_VAL_PS        DIVR( ((uint64_t)CFG_RTCCLK_DIV * 1e12), (uint64_t)LSE_VALUE )
 
 typedef enum
 {
@@ -555,9 +576,9 @@ typedef enum
     CFG_TASK_ADV_UPDATE_ID,
     CFG_TASK_MEAS_REQ_ID,
     CFG_TASK_HCI_ASYNCH_EVT_ID,
-/* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
+    /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
 
-/* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
+    /* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
     CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;
 
@@ -566,11 +587,12 @@ typedef enum
 {
     CFG_FIRST_TASK_ID_WITH_NO_HCICMD = CFG_LAST_TASK_ID_WITH_HCICMD - 1,        /**< Shall be FIRST in the list */
     CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
-/* USER CODE BEGIN CFG_Task_Id_With_NO_HCI_Cmd_t */
+    /* USER CODE BEGIN CFG_Task_Id_With_NO_HCI_Cmd_t */
 
-/* USER CODE END CFG_Task_Id_With_NO_HCI_Cmd_t */
+    /* USER CODE END CFG_Task_Id_With_NO_HCI_Cmd_t */
     CFG_LAST_TASK_ID_WITHO_NO_HCICMD                                            /**< Shall be LAST in the list */
 } CFG_Task_Id_With_NO_HCI_Cmd_t;
+
 #define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITHO_NO_HCICMD
 
 /**
@@ -603,9 +625,9 @@ typedef enum
 {
     CFG_LPM_APP,
     CFG_LPM_APP_BLE,
-  /* USER CODE BEGIN CFG_LPM_Id_t */
+    /* USER CODE BEGIN CFG_LPM_Id_t */
 
-  /* USER CODE END CFG_LPM_Id_t */
+    /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
 
 /******************************************************************************
@@ -616,5 +638,3 @@ typedef enum
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 #endif /*APP_CONF_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

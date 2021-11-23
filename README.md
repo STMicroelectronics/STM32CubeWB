@@ -13,6 +13,10 @@
 
 The **STM32CubeWB MCU Package** projects are directly running on the STM32WB series boards. You can find in each Projects/*Board name* directories a set of software projects (Applications/Demonstration/Examples).
 
+In this FW Package, the module(s) listed below are not directly accessible as they are subject to some restrictive license terms requiring user's approval via a "click thu" procedure.
+They have to be downloaded from the [www.st.com](https://www.st.com/content/st_com/en.html) website. The respective URL to download each one of these modules are available in a readme.txt file at the root of each folder.
+* *Middlewares/ST/STM32_Audio*
+
 ## Release note
 
 Details about the content of this release are available in the release note [here](https://htmlpreview.github.io/?https://github.com/STMicroelectronics/STM32CubeWB/blob/master/Release_Notes.html).

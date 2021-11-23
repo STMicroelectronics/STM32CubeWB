@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -1181,7 +1180,7 @@ void HSL2RGB_Conversion(MOBLEUINT8 elementIndex)
     mValue = (MOBLEUINT16)((lightnessvalue * 1000) -  (cValue/2));
     xValue = (MOBLEUINT16)(cValue * (1 - fabs(fmod(hueValue / 60.0, 2.0) - 1)));
     
-    /* Conditons applied for the different angle of hue value */
+    /* Conditions applied for the different angle of hue value */
     if (hueValue > 0 && hueValue < (HUE_UPPER_LIMIT / 6))
     {
        RgbF_Create(cValue + mValue, xValue + mValue, mValue, elementIndex);
@@ -1347,5 +1346,4 @@ void Light_UpdateLedValue(MOBLEUINT8 state ,Appli_LightPwmValue_t light_state)
 /**
 * @}
 */
-/******************* (C) COPYRIGHT 2020 STMicroelectronics *****END OF FILE****/
 

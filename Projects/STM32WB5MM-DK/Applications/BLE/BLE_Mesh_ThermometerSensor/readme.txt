@@ -2,27 +2,30 @@
   @page BLE_Mesh_ThermometerSensor example
   
   @verbatim
-  ******************** (C) COPYRIGHT 2021 STMicroelectronics *******************
+  ******************************************************************************
   * @file    BLE/BLE_Mesh_ThermometerSensor/readme.txt 
   * @author  MCD Application Team
-  * @brief   Description of the BLE Mesh Thermometer Sensor Node demo example.
+  * @brief   Description of the BLE Mesh Thermometer Vendor Node demo example.
   ******************************************************************************
   *
-  * Copyright (c) 2021 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   
   @par Application Description
-This is the implementation of a BLE Mesh Vendor profile as specified by the BLE SIG.
+This is the implementation of a BLE Mesh Vendor model as specified by the BLE SIG.
 
-This example is to demonstrate the BLE Mesh Vendor profile by using a STM32WB5MM Discovery Kit as BLE Mesh Vendor Node 
+This example is to demonstrate the BLE Mesh Vendor model by using a STM32WB5MM Discovery Kit as BLE Mesh Vendor Node 
 in order to send measured temperature over BLE Mesh Network through vendor command.
 
+@par Keywords
+
+Connectivity, BLE, Mesh, Thermometer, Vendor, BLE protocol, BLE profile, Dual core
 
 @par Directory contents 
   
@@ -115,7 +118,7 @@ in order to send measured temperature over BLE Mesh Network through vendor comma
 
 @par How to use it ? 
 
-This application requests having the stm32wb5x_BLE_Stack_fw.bin binary flashed on the Wireless Coprocessor.
+This application requests having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
@@ -180,23 +183,70 @@ Step 2. Generate and flash binary in the other boards.
 	Once flashed the distance measured by the board is displayed on the LCD screen.
 
 Demo operation
-Step 3. Verify your boards are correctly unprovisioned, by keeping pressed User Button 1 (B1) and Reset button, 
-        releasing the reset while keeping B1 pressed until the Blue LED is blinking.
+Step 3. Connect an HyperTerminal to each board (e.g Tera Term):
+		- Setup the Serial port as follow:
+			Speed: 			115 200
+			Data:  			8 bit
+			Parity:			none
+			Stop bits:		1 bits
+			Flow Control: 	none
+		- Select the Serial Port corresponding to your first board
+		- Repeat the operation for the second board	
+		Note: 	You can identify which board is connected to which HyperTerminal window by pushing reset button on one board. 
+				The associated Terminal windows displays reset logs.
 
-Step 4. Provision all the flashed and unprovisioned boards with the default parameters (Fast povisioning -> Quick configuration), 
-        using BLE-Mesh Android (https://play.google.com/store/apps/details?id=com.st.bluenrgmesh&hl=en) or 
-        BLE-Mesh iOS (https://apps.apple.com/us/app/st-ble-mesh/id1348645067) smartphone application (subscribe and publish to default group).
+Step 4. Verify the boards are correctly unprovisioned, by keeping pressed User Button 1 (B1) and Reset button, 
+        releasing the Reset button while keeping B1 pressed until the Blue LED is blinking.
+		You can see "Unprovisioned device" message on the HyperTerminal logs of the board.
 
-Step 5. Modify publication address of your Thermometer Node to publish his vendor commands to the Indicator Nodes (directly to the Node r using Group definitions).
+Step 5. Setup the BLE-mesh network using the ST BLE-Mesh Android (https://play.google.com/store/apps/details?id=com.st.bluenrgmesh&hl=en) or 
+        iOS (https://apps.apple.com/us/app/st-ble-mesh/id1348645067) smartphone application.
+		The following instructions are based on the Android version of the application, buttons and menus may differ in the iOS version. 
+		In case of doubts or for further information, you can refer to:
+			Android User Manual: UM2180 (https://www.st.com/content/ccc/resource/technical/document/user_manual/group0/7e/bb/bd/40/66/0f/46/54/DM00369109/files/DM00369109.pdf/jcr:content/translations/en.DM00369109.pdf)
+			iOS User Manual : UM2361 https://www.st.com/content/ccc/resource/technical/document/user_manual/group0/7e/ea/19/73/31/3e/43/1a/DM00477323/files/DM00477323.pdf/jcr:content/translations/en.DM00477323.pdf
+			
+		- Launch the application and select the "device" interface in the top left corner.
+		
+		- Your devices should be visible in this interface, click on the (+) button next to one of the devices to begin the provisioning and configuration process of this device.
+		  If your Unpvorisioned devices are not visible from this interface, try to reproduce the Step 4.
+		
+		- Select "Fast Provisioning" button. 
+		  The green LED of your board switches ON to indicate the board is currently used as Proxy by smartphone, this means the smartphone use this board to setup and communicate with the BLE mesh Network.
+		
+		- Click on "Go with Quick Configuration" button.
+		  In the pop-up, check the circle in front of "App Key 0", the AppKey binding is now done.
+	    
+		- Let Default Group Subscription and Publish Target selection and click on "Add Configuration" button.
+		  The application is now on the Node interface.  (click on "Nodes" button in bottom menu).
+		
+		- You can rename your node by clicking on the setting button next to (P)(R)(F) icons.
+		  Click on the Pen icon in Node Name line and rename your Node: 
+			"Thermometer Node"
+			"Indicator Node"
+		  Depending on your node.
+		
+		- Come back to the "Devices" interface (on bottom bar menu) and reproduce previous steps for your second board.
+		
+Step 6. Modify publication address of your Thermometer Node to publish his vendor commands to the Indicator Node:
+		- Go to the "Nodes" interface (on bottom bar menu)
+		- Open Element 1 settings of the Thermometer Node. The Settings button is situated on the right of Element 1 line of the Thermometer Node.
+		- Select Indicator Node/Element 1 in "Set Publish Address" list.
+		- Save settings
+		Now the Thermometer Node publish to the Indicator Node.
 
-The Thermometer will send Vendor command to change the RGB LED color of the Indicator Node depending on the temperature he is measuring.
-Blue = low temperature
-Green = medium temperature
-Red = High temperature
+Step 7. Once the Thermometer and Indicator Nodes are provisioned, you can close the smartphone application.
+		The Green LED of your Proxy node should switch OFF as it is no longer connected to the Smartphone.
+		
+Step 8.	The Thermometer send Vendor command to change the RGB LED color of the Indicator Node depending on the temperature he is measuring.
+		Blue = low temperature
+		Green = medium temperature
+		Red = High temperature
 
 NOTE: The actual code manage temperature between 20 and 30 degrees Celsius.
       You can change it by modifying min_temp, max_temp.
 	  into PublishTemp_Task() function
+
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

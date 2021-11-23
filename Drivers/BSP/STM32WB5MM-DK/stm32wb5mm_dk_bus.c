@@ -1047,7 +1047,7 @@ static uint32_t I2C_Compute_SCLL_SCLH (uint32_t clock_src_freq, uint32_t I2C_spe
   * @brief  Convert the SPI baudfreq into tpresc.
   * @param  clock_src_freq : SPI source clock in HZ.
   * @param  baudfreq_mbps : SPI baud freq in mbps.
-  * @retval Prescaler dividor
+  * @retval Prescaler divisor
   */
 static uint32_t SPI_GetPrescaler( uint32_t clock_src_freq, uint32_t baudfreq_mbps )
 {
@@ -1094,5 +1094,3 @@ static uint32_t SPI_GetPrescaler( uint32_t clock_src_freq, uint32_t baudfreq_mbp
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

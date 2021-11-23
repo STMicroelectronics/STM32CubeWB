@@ -1,21 +1,20 @@
 /**
- ******************************************************************************
+  ******************************************************************************
  * @file    otas_app.c
  * @author  MCD Application Team
  * @brief   OTA Service Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 
 
@@ -196,7 +195,7 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
           CFG_OTA_REBOOT_VAL_MSG = CFG_REBOOT_ON_FW_APP;
  
 #ifdef OTA_SBSFU
-          /* Comunication with SBSFU : FW application installation by SBSFU requested */
+          /* Communication with SBSFU : FW application installation by SBSFU requested */
           STANDALONE_LOADER_STATE = STANDALONE_LOADER_INSTALL_REQ;
 #endif /* OTA_SBSFU */
 
@@ -205,7 +204,7 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
 
         case Wireless_Fw:
 #ifdef OTA_SBSFU
-          /* Comunication with SBSFU : by-pass mode requested for Wireless stack installation by FUS */
+          /* Communication with SBSFU : by-pass mode requested for Wireless stack installation by FUS */
           STANDALONE_LOADER_STATE = STANDALONE_LOADER_BYPASS_REQ;
           
           NVIC_SystemReset(); /* it waits until reset */
@@ -235,5 +234,3 @@ void OTAS_STM_Notification( OTA_STM_Notification_t *p_notification )
 
   return;
 }
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

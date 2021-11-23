@@ -1,21 +1,20 @@
 /**
- ******************************************************************************
- * File Name          : flash_driver.c
- * Description        : Dual core Flash driver
- *
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * File Name          : flash_driver.c
+  * Description        : Dual core Flash driver
+  *
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -82,7 +81,8 @@ uint32_t FD_EraseSectors(uint32_t FirstSector, uint32_t NbrOfSectors)
   {
     /**
      *  Notify the CPU2 there will be no request anymore to erase the flash
-     *  On reception of this command, the CPU2 disables the BLE timing protection versus flash erase processing
+     *  On reception of this command, the CPU2 will disables the BLE timing protection versus flash erase processing
+     *  The protection is active until next end of radio event.
      */
     SHCI_C2_FLASH_EraseActivity(ERASE_ACTIVITY_OFF);
 
@@ -142,6 +142,9 @@ SingleFlashOperationStatus_t FD_EraseSingleSector(uint32_t SectorNumber)
 {
   SingleFlashOperationStatus_t return_value;
 
+   /* Add at least 5us (CPU1 up to 64MHz) to guarantee that CPU2 can take SEM7 to protect BLE timing */ 
+   for (volatile uint32_t i = 0; i < 35; i++);
+   
   /* The last parameter is unused in that case and set to 0 */
   return_value =  ProcessSingleFlashOperation(FLASH_ERASE, SectorNumber, 0);
 
@@ -308,10 +311,10 @@ __WEAK WaitedSemStatus_t FD_WaitForSemAvailable(WaitedSemId_t WaitedSemId)
 {
   /**
    * The timing protection is enabled by either CPU1 or CPU2. It should be decided here if the driver shall
-   * keep trying to erase/write the flash until successful or if it shall exit ans report to the user that the action
+   * keep trying to erase/write the flash until successful or if it shall exit and report to the user that the action
    * has not been executed.
    * WAITED_SEM_BUSY returns to the user
-   * WAITED_SEM_FREE keep looping in the driver until the action is executed. This will result in the current tack looping
+   * WAITED_SEM_FREE keep looping in the driver until the action is executed. This will result in the current stack looping
    * until this is done. In a bare metal implementation, only the code within interrupt handler can be executed. With an OS,
    * only task with higher priority can be processed
    *
@@ -319,4 +322,3 @@ __WEAK WaitedSemStatus_t FD_WaitForSemAvailable(WaitedSemId_t WaitedSemId)
   return WAITED_SEM_BUSY;
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

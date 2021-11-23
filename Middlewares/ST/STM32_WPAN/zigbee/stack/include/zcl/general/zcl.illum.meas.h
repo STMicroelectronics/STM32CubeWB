@@ -4,7 +4,7 @@
  * @brief ZCL Illuminance Measurement cluster header
  * ZCL 7 section 4.2
  * ZCL 8 section 4.2
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ILLUM_MEAS_H
@@ -22,13 +22,13 @@
  * IM.S.A0003 | Tolerance | False | Optional
  * IM.S.A0004 | LightSensorType | False | Optional
  * IM.S.Afffd | ClusterRevision | True
- * IM.S.Afffe | AttributeReportingStatus | False
+ * IM.S.Afffe | AttributeReportingStatus | True
  *
  *
  * Client Attributes
  * IM.C.A0000.Report.Rsp | MeasuredValue | False
  * IM.C.Afffd | ClusterRevision | True
- * IM.C.Afffe | AttributeReportingStatus | False
+ * IM.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

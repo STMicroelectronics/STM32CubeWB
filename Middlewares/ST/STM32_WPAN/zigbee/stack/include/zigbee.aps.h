@@ -510,6 +510,16 @@ void ZbApsmeUnbindReq(struct ZigBeeT *zb, struct ZbApsmeUnbindReqT *unbindReqPtr
 void ZbApsUnbindAllReq(struct ZigBeeT *zb);
 
 /**
+ * Returns true if there's a binding entry in the Binding Table that matches the
+ * local device as the source address, and a matching source endpoint and cluster Id.
+ * @param zb Zigbee stack instance
+ * @param endpoint Source endpoint
+ * @param clusterId Cluster Id
+ * @return Returns true if binding exists, false otherwise.
+ */
+bool ZbApsBindSrcExists(struct ZigBeeT *zb, uint8_t endpoint, uint16_t clusterId);
+
+/**
  * Add an entry to the group table.
  * @param zb Zigbee stack instance
  * @param r APSME-ADD-GROUP.request

@@ -11,7 +11,7 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="_htmresc/mini-st_2020.css" />
+  <link rel="stylesheet" href="./_htmresc/mini-st_2020.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -43,10 +43,10 @@
 <ul>
 <li><strong>Zigbee</strong> clusters are provided as a library.
 <ul>
-<li>Available on <strong>IAR/SW4STM32</strong>(<strong>stm32wb_zigbee_wb_lib.a</strong>) and <strong>Keil</strong>(<strong>stm32wb_zigbee_wb_lib_keil.lib</strong>) under Middlewares/ST/STM32_WPAN/zigbee/lib.</li>
+<li>Available on <strong>IAR/SW4STM32</strong> (<strong>stm32wb_zigbee_wb_lib.a</strong>) and <strong>Keil</strong> (<strong>stm32wb_zigbee_wb_lib_keil.lib</strong>) under Middlewares/ST/STM32_WPAN/zigbee/lib.</li>
 <li>To get access to Zigbee clusters source code, please contact ST local office.</li>
 </ul></li>
-<li><p>All available binaries are located under/Projects/STM32_Copro_Wireless_Binaries directory.</p></li>
+<li><p>All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.</p></li>
 <li><p>Refer to UM2237 to learn how to use/install STM32CubeProgrammer.</p></li>
 <li>Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the detailed procedure to change the Coprocessor binary.</li>
 </ul>
@@ -54,9 +54,65 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section14" checked aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.12.0 / 17-June-2021</label>
+<input type="checkbox" id="collapse-section15" checked aria-hidden="true"> <label for="collapse-section15" aria-hidden="false">V1.13.0 / 3-November-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>BLE:
+<ul>
+<li>BLE Multi link support</li>
+<li>ID 108789 : ACI_GAP_START_NAME_DISCOVERY_PROC command is deprecated<br />
+</li>
+<li>ID 109815 : IP over BLE enablement by default<br />
+</li>
+<li>ID 109676 : New HCI error status overlap with ACI error status</li>
+<li>New HCI errors are added (from BLE spec. v5.2):
+<ul>
+<li>HCI_UNKNOWN_ADVERTISING_IDENTIFIER_ERR_CODE: 0x42</li>
+<li>HCI_PACKET_TOO_LONG_ERR_CODE: 0x45</li>
+</ul></li>
+<li>Following ACI errors(already supported by BLE Host) are remapped to HCI errors:
+<ul>
+<li>BLE_STATUS_UNKNOWN_CONNECTION_ID: 0x40 -&gt; 0x02 (HCI_UNKNOWN_CONNECTION_IDENTIFIER_ERR_CODE)</li>
+<li>BLE_STATUS_NOT_ALLOWED: 0x46 -&gt; 0x0C (HCI_COMMAND_DISALLOWED_ERR_CODE)</li>
+</ul></li>
+<li>Following ACI errors (already supported by BLE Host) are renumbered:
+<ul>
+<li>BLE_STATUS_FAILED: 0x41 -&gt; 0x91</li>
+<li>BLE_STATUS_INVALID_PARAMS: 0x42 -&gt; 0x92</li>
+<li>BLE_STATUS_BUSY: 0x43 -&gt; 0x93</li>
+<li>BLE_STATUS_PENDING: 0x45 -&gt; 0x95</li>
+<li>BLE_STATUS_ERROR: 0x47 -&gt; 0x97</li>
+<li>BLE_STATUS_OUT_OF_MEMORY: 0x48 -&gt; 0x98</li>
+</ul></li>
+<li>ID 111208 : Support Dory Cut2.1 in parallel to Cut2.2 with new SHCI_C2_CONFIG parameter.<br />
+</li>
+<li>ID 112402 : Implement SMP bypass controlled via config data command</li>
+<li>ID 113007 : add new parameter “rx_model_config” used for RSSI/AGC-LUT selection in SHCI_C2_Ble_Init() interface</li>
+<li>ID 114031 : Some BLE HCI command names are not aligned with Bluetooth standard 5.2</li>
+</ul></li>
+<li>BLE Mesh lib:
+<ul>
+<li>Added BLE MESH libraries for lighting projects (LP Node and PRF Node) on STM32 WB15.</li>
+</ul></li>
+<li>Zigbee:
+<ul>
+<li>Alignment of Zigbee Clusters PICS regarding mainly the attribute reporting status.</li>
+<li>API changes inside the Metering cluster. The ZbZclMeterClientCallbacksT and ZbZclMeterServerCallbacksT structures have been modified.For instance the previous request_mirror(..) and remove_mirror(..) functions inside the ZbZclMeterServerCallbacksT have been replaced by one single function. Refer to zcl.meter.h file for more details.</li>
+<li>The ZbZclAttrReportConfigT structure has been updated in order to manage in parallel several attribute reports. An array of fixed size (ZCL_ATTR_REPORT_CONFIG_NUM_MAX) is now used to handle multiple reporting. Refer to zcl.h file to see the new structure ZbZclAttrReportConfigT. You can also refer yourself to the Zigbee_PressMeas_Client_router Application to see how to use this new structure.</li>
+<li>The ZbNwkFastPollRequest(..) API has been updated and contains additional parameters to tune the delay and the timeout . The Delay in used to postpone the sending of the first NLME-SYNC. The Timeout is used for setting the fast pool interval value. Refer to Zigbee.nwk.h file for more details.</li>
+<li>The types of several fields inside the ZbZclPriseServerPublishPriceT structure have been updated. Refer to zcl.price.h file for more details.</li>
+<li>The ZbZclKeepAliveClient(..) API prototype has been updated. This function is now using the stack instance instead of the cluster instance as input parameter. Refer to zcl.keepalive.h file for more details.</li>
+<li>The ZbZclClutsterT structure has been reworked after code cleanup and factorization. In particular, the field handling the reporting has been re-architectured. Refer to zcl.h file for more details.</li>
+<li>A new API named ZbApsBindSrcExists(…) has been added in order to check if a binding exist.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.12.0 / 17-June-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <ul>
 <li>Zigbee:
 <ul>
@@ -79,7 +135,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="false">V1.11.0 / 5-February-2021</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <ul>
 <li>BLE-Mesh library version 1.13.002
 <ul>
@@ -132,7 +188,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="false">V1.10.0 / 26-October-2020</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <ul>
 <li>General:
 <ul>
@@ -168,7 +224,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="false">V1.9.0 / 21-September-2020</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <ul>
 <li>BLE-Mesh library version 1.13.000
 <ul>
@@ -230,7 +286,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.8.0 / 22-June-2020</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <ul>
 <li>BLE-Mesh library version 1.12.008
 <ul>
@@ -266,7 +322,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.7.0 / 11-May-2020</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p>BLE-Mesh:</p>
 <ul>
 <li>BLE Mesh Models Fixe/Update</li>
@@ -276,7 +332,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p>BLE-Mesh:</p>
 <ul>
 <li>BLE-Mesh library version 1.12.007
@@ -548,7 +604,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 22-January-2020</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_SetFlashActivityControl() to configure BLE timing protection</li>
@@ -591,7 +647,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p>Interface:</p>
 <ul>
 <li>Added new commmand SHCI_C2_ExtpaConfig() to support external PA</li>
@@ -607,7 +663,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 4-September-2019</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Introducing support of Zigbee</li>
@@ -645,7 +701,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 27-June-2019</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Following utilities : Scheduler and Low Power Manager reworked and moved to “Utilities” directory</li>
@@ -671,7 +727,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <p>BLE:</p>
 <ul>
 <li>Fix race condition in transport layer when an operating system is used.</li>
@@ -717,7 +773,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 29-March-2019</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <p>General:</p>
 <ul>
 <li>Licenses in utilities and patterns moved from sla0044 to 3-clauses BSD</li>
@@ -743,7 +799,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 31-January-2019</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <p>First release</p>
 </div>
 </div>

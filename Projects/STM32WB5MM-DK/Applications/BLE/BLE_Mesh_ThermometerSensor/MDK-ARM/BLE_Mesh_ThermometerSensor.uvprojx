@@ -10,7 +10,7 @@
       <TargetName>BLE_Mesh_ThermometerSensor</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -336,7 +336,7 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>--wchar32</MiscControls>
+              <MiscControls></MiscControls>
               <Define>USE_STM32WB5M_DK,STM32WB55xx,USE_HAL_DRIVER,CORE_CM4,STM32,ENABLE_USART,TRACE_ENABLE_NO_FUNCTION,SERVER,THERMOMETER_NODE</Define>
               <Undefine></Undefine>
               <IncludePath>../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/Inc;../Core/Inc;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Inc;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../STM32_WPAN/app;../../../../../../Middlewares/ST/STM32_WPAN/ble;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/BSP/Components/ssd1315;../Core/Src/vl53l0x;../../../../../../Drivers/BSP/Components/stts22h;../../../../../../Drivers/BSP/STM32WB5MM-DK;../../../../../../Drivers/BSP/Components/Common;../../../../../../Utilities/LCD;../../../../../../Utilities/Fonts;../../../../../../Drivers/BSP/Components/ism330dhcx</IncludePath>
@@ -963,6 +963,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Middlewares/ST/STM32_WPAN/ble/mesh/Library</GroupName>
+          <Files>
+            <File>
+              <FileName>libBle_Mesh_CM4_Keil.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\Library\libBle_Mesh_CM4_Keil.lib</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
@@ -986,11 +996,6 @@
     <Layers>
       <Layer>
         <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc></LayDesc>
-        <LayUrl></LayUrl>
-        <LayKeys></LayKeys>
-        <LayCat></LayCat>
-        <LayLic></LayLic>
         <LayTarg>0</LayTarg>
         <LayPrjMark>1</LayPrjMark>
       </Layer>

@@ -9,19 +9,19 @@
   *          using a centralized network. 
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
 
 @par Application Description 
 
-How to use OTA cluster as a client on a centralized Zigbee network.
+How to use the OTA cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
 
 The purpose of this application is to show how to create a Zigbee centralized network, 
 and how to operate a firmware upgrade using the OTA cluster. Once the Zigbee mesh network is created, 
@@ -197,6 +197,11 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
         - An Application image (For example : binary generated using the Zigbee_OnOff_Client_Router_Ota project)
         or
         - An Encrypted Coprocessor Wireless binary (For example : stm32wb5x_Zigbee_RFD_fw.bin)
+
+      Note : To ensure a correct match between the Coprocessor Wireless and the Application, both binaries must be based 
+             on the same firmware package release. It is not possible to use an Application based on a firmware package version N
+             with a Coprocessor Wireless binary based on firmware package version N+1 or N-1.
+
 
   b)  Start the first board. It must be the coordinator of the Zigbee network so in this demo application it is
       the device running Zigbee_OTA_Server_Coord application (Device 1 in the above diagram). 

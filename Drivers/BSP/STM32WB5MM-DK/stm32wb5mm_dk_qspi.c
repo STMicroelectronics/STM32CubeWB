@@ -4,6 +4,17 @@
   * @author  MCD Application Team
   * @brief   This file includes a standard driver for the S25FL128S QSPI
   *          memory mounted on STM32WB5MM-DK board.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
   @verbatim
   ==============================================================================
                      ##### How to use this driver #####
@@ -36,16 +47,6 @@
        (++) The function BSP_QSPI_ReadID() returns 3 bytes memory IDs: Manufacturer ID,
              Memory type, Memory density.
   @endverbatim
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
   ******************************************************************************
   */
 
@@ -919,6 +920,3 @@ static int32_t QSPI_DummyCyclesCfg(uint32_t Instance)
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

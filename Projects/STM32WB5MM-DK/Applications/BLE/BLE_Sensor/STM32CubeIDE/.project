@@ -31,6 +31,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>BLE_Sensor.ioc</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/BLE_Sensor.ioc</locationURI>
+		</link>
+		<link>
 			<name>Doc/readme.txt</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/readme.txt</locationURI>
@@ -124,11 +129,6 @@
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_pwr_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pwr_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_qspi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_qspi.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rcc.c</name>
@@ -301,6 +301,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/hw_timerserver.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/Core/hw_uart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/hw_uart.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/Core/main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/main.c</locationURI>
@@ -331,11 +336,6 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/ism330dhcx/ism330dhcx_reg.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/BSP/Components/s25fl128s.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/s25fl128s/s25fl128s.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/BSP/Components/ssd1315.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/Components/ssd1315/ssd1315.c</locationURI>
@@ -359,11 +359,6 @@
 			<name>Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_audio.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_audio.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_bus.c</name>
@@ -394,11 +389,6 @@
 			<name>Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_motion_sensors_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_motion_sensors_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_qspi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_qspi.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/vl53l0x/vl53l0x_api.c</name>

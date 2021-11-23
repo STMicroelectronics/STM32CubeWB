@@ -16,20 +16,20 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  */ 
-  
+  */
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wbxx_usb_dongle.h"
 
 /** @addtogroup BSP
   * @{
-  */ 
+  */
 
 /** @defgroup STM32WBXX_USB_DONGLE STM32WBxx Usb Dongle
   * @brief This file provides set of firmware functions to manage Leds and push-button
   *        available on STM32WBxx Usb Dongle Kit from STMicroelectronics.
   * @{
-  */ 
+  */
 
 /** @defgroup STM32WBXX_USB_DONGLE_Private_Defines Private Defines
   * @{
@@ -40,7 +40,7 @@
   */
 #define __STM32WBxx_USB_DONGLE_BSP_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define __STM32WBxx_USB_DONGLE_BSP_VERSION_SUB1   (0x00U) /*!< [23:16] sub1 version */
-#define __STM32WBxx_USB_DONGLE_BSP_VERSION_SUB2   (0x03U) /*!< [15:8]  sub2 version */
+#define __STM32WBxx_USB_DONGLE_BSP_VERSION_SUB2   (0x04U) /*!< [15:8]  sub2 version */
 #define __STM32WBxx_USB_DONGLE_BSP_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */ 
 #define __STM32WBxx_USB_DONGLE_BSP_VERSION        ((__STM32WBxx_USB_DONGLE_BSP_VERSION_MAIN << 24)\
                                              |(__STM32WBxx_USB_DONGLE_BSP_VERSION_SUB1 << 16)\
@@ -55,11 +55,11 @@
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup STM32WBXX_USB_DONGLE_LOW_LEVEL_Private_Variables Private Variables
   * @{
-  */ 
+  */
 GPIO_TypeDef* GPIO_PORT[LEDn] = {LED1_GPIO_PORT, LED2_GPIO_PORT, LED3_GPIO_PORT};
 const uint16_t GPIO_PIN[LEDn] = {LED1_PIN, LED2_PIN, LED3_PIN};
 
@@ -69,11 +69,11 @@ const uint8_t BUTTON_IRQn[BUTTONn] = {BUTTON_SW1_EXTI_IRQn};
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup STM32WBXX_USB_DONGLE_Exported_Functions Exported Functions
   * @{
-  */ 
+  */
 
 /**
   * @brief  This method returns the STM32WBxx usb dongle BSP Driver revision
@@ -86,7 +86,7 @@ uint32_t BSP_GetVersion(void)
 
 /** @defgroup STM32WBXX_USB_DONGLE_LED_Functions LED Functions
   * @{
-  */ 
+  */
 
 /**
   * @brief  Configures LED GPIO.
@@ -98,18 +98,18 @@ uint32_t BSP_GetVersion(void)
 void BSP_LED_Init(Led_TypeDef Led)
 {
   GPIO_InitTypeDef  gpioinitstruct = {0};
-  
+
   /* Enable the GPIO_LED Clock */
   LEDx_GPIO_CLK_ENABLE(Led);
-  
+
   /* Configure the GPIO_LED pin */
   gpioinitstruct.Pin = GPIO_PIN[Led];
   gpioinitstruct.Mode = GPIO_MODE_OUTPUT_PP;
   gpioinitstruct.Pull = GPIO_NOPULL;
   gpioinitstruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  
+
   HAL_GPIO_Init(GPIO_PORT[Led], &gpioinitstruct);
-  
+
   HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_RESET); 
 }
 
@@ -170,7 +170,7 @@ void BSP_LED_Toggle(Led_TypeDef Led)
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup STM32WBXX_USB_DONGLE_BUTTON_Functions BUTTON Functions
   * @{
@@ -190,10 +190,10 @@ void BSP_LED_Toggle(Led_TypeDef Led)
 void BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef ButtonMode)
 {
   GPIO_InitTypeDef gpioinitstruct = {0};
-  
+
   /* Enable the BUTTON Clock */
   BUTTONx_GPIO_CLK_ENABLE(Button);
-  
+
   if(ButtonMode == BUTTON_MODE_GPIO)
   {
     /* Configure Button pin as input */
@@ -203,7 +203,7 @@ void BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef ButtonMode)
     gpioinitstruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(BUTTON_PORT[Button], &gpioinitstruct);
   }
-  
+
   if(ButtonMode == BUTTON_MODE_EXTI)
   {
     /* Configure Button pin as input with External interrupt */
@@ -247,7 +247,7 @@ uint32_t BSP_PB_GetState(Button_TypeDef Button)
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
@@ -255,10 +255,8 @@ uint32_t BSP_PB_GetState(Button_TypeDef Button)
 
 /**
   * @}
-  */    
+  */
 
 /**
   * @}
-  */ 
-    
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+  */

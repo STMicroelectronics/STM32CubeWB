@@ -4,7 +4,7 @@
  * @brief ZCL Voice Over Zigbee cluster header
  * ZCL 7 section 12.4
  * ZCL 8 section 12.3
- * @copyright Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_VOICE_H
@@ -28,7 +28,7 @@
  * Voice.S.A0009 | OptionFlags | False | Optional
  * Voice.S.A000a | Threshold | False | Optional
  * Voice.S.Afffd | ClusterRevision | True
- * Voice.S.Afffe | AttributeReportingStatus | False
+ * Voice.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * Voice.S.C00.Rsp | Establishment Request | True
@@ -43,7 +43,7 @@
  *
  * Client Attributes
  * Voice.C.Afffd | ClusterRevision | True
- * Voice.C.Afffe | AttributeReportingStatus | False
+ * Voice.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * Voice.C.C00.Rsp | Establishment Response | True

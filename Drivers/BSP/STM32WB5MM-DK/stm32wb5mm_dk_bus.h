@@ -173,5 +173,3 @@ int32_t BSP_GetTick(void);
 #endif
 
 #endif /* STM32WB5MM_DK_BUS_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

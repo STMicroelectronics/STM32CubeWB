@@ -1121,6 +1121,12 @@
       </group>
     </group>
     <group>
+      <name>CMSIS</name>
+      <file>
+        <name>$PROJ_DIR$/../Core/Src/system_stm32wbxx.c</name>
+      </file>
+    </group>
+    <group>
       <name>STM32WBxx_HAL_Driver</name>
       <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</name>
@@ -1183,12 +1189,6 @@
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</name>
       </file>
     </group>
-    <group>
-      <name>CMSIS</name>
-      <file>
-        <name>$PROJ_DIR$/../Core/Src/system_stm32wbxx.c</name>
-      </file>
-    </group>
   </group>
   <group>
     <name>Middlewares</name>
@@ -1216,9 +1216,6 @@
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template/osal.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/svc_ctl.c</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c</name>
       </file>
       <file>
@@ -1244,6 +1241,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/svc_ctl.c</name>
       </file>
     </group>
   </group>

@@ -270,7 +270,18 @@ void ZbSecMakeNonce(uint8_t *nonce, uint64_t extAddr, uint32_t frameCounter, uin
  * @param digest hash must be AES_BLOCK_SIZE in size!
  * @return
  */
-bool ZbAesMmoHash(struct ZigBeeT *zb, uint8_t const *data, const unsigned int length, uint8_t *digest);
+bool ZbAesMmoHash(uint8_t const *data, const unsigned int length, uint8_t *digest);
+
+/**
+ * Performs the Keyed Hash function for Message Authentication. The HMAC operation described
+ * in section B.1.4, and specified by FIPS pub 198. This is used to trasmute the link keys into
+ * key-load and key-transport keys.
+ * @param key The encryption key to use
+ * @param input The input data byte
+ * @param keyOut The resultant tranformed key
+ * @return None
+ */
+void ZbSecKeyTransform(uint8_t *key, uint8_t input, uint8_t *keyOut);
 
 /**
  * Adds a device key-pair to the stack as a Trust Center Link Key type.

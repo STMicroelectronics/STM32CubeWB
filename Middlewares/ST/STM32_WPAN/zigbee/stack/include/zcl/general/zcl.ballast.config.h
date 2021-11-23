@@ -30,11 +30,11 @@
  * BC.S.A0034 | LampAlarmMode | False | Optional
  * BC.S.A0035 | LampBurnHoursTripPoint | False | Optional
  * BC.S.Afffd | ClusterRevision | True
- * BC.S.Afffe | AttributeReportingStatus | False
+ * BC.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * BC.C.Afffd | ClusterRevision | True
- * BC.C.Afffe | AttributeReportingStatus | False
+ * BC.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

@@ -176,17 +176,6 @@
 <li>Static Concurrent Mode BLE MAC 802.15.4.</li>
 <li>Supports Full BLE Stack 5.2 certified and MAC 802.15.4 API based on latest official <a href="http://grouper.ieee.org/groups/802/15/pub/Download.html">IEEE Std 802.15.4-2011</a></li>
 </ul></li>
-<li>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin
-<ul>
-<li>Static Concurrent Mode BLE Zigbee FFD</li>
-<li>Supports Full BLE Stack 5.2 certified and Zigbee FFD(Full Function Device) Compliant Platform certified</li>
-</ul></li>
-<li>stm32wb5x_BLE_Zigbee_RFD_static_fw.bin
-<ul>
-<li>Static Concurrent Mode BLE Zigbee RFD</li>
-<li>Supports Full BLE Stack 5.2 certified and Zigbee RFD(Reduced Function Device) Compliant Platform certified</li>
-<li>Optimized for Power consumption.</li>
-</ul></li>
 <li>stm32wb5x_BLE_Zigbee_FFD_dynamic_fw.bin
 <ul>
 <li>Dynamic Concurrent Mode BLE Zigbee FFD.</li>
@@ -213,6 +202,14 @@
 <li>Firmware Upgrade Services (FUS)</li>
 <li>This binary is the utility to flash the Wireless Coprocessor Binaries.</li>
 <li>Latest version of the FUS</li>
+</ul></li>
+<li>stm32wb5x_Safeboot_fw.bin
+<ul>
+<li>Safeboot is an independent part of the FUS that manages specifically one case: option bytes corruption.</li>
+<li>When option bytes are corrupted, the STM32WB hardware forces the boot to safeboot whatever the running firmware.</li>
+<li>The safeboot performs a factory reset (on FUS versions V1.1.0 and higher) which means the wireless stack is removed if any and the Cortex®-M4 code is erased and boot is reset to FUS (virgin part state).</li>
+<li>This operation is also not reversible. In order to activate the Safeboot, the user must activate Cortex®-M0+ by writing the value 0x00008000 at the address 0x5800040C using the SWD interface.</li>
+<li>If a FUS version lower than V1.1.0 is running, then, no recovery is possible at this point.</li>
 </ul></li>
 </ul>
 <p><mark>How to flash the Wireless Coprocessor Binary via SWD/JTAG by ST-LINK (STM32CubeProgrammer GUI)</mark></p>
@@ -254,17 +251,17 @@
 </ul></li>
 <li><p>STEP 5: Download latest FUS for only FUSv0.5.3 upgrade</p>
 <ul>
-<li>in Firmware Upgrade Services: (File Path: [stm32wb5x_FUS_fw_for_fus_0_5_3.bin], Start Adress: [Install@])</li>
+<li>in Firmware Upgrade Services: (File Path: [stm32wb5x_FUS_fw_for_fus_0_5_3.bin], Start Address: [Install@])</li>
 <li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
 </ul></li>
-<li><p>STEP 6: Download latest FUS</p>
+<li><p>STEP 6: Download latest FUS or Safeboot</p>
 <ul>
-<li>in Firmware Upgrade Service: (File Path: [FUS_Binary], Start Adress: [Install@])</li>
+<li>in Firmware Upgrade Service: (File Path: [FUS_Binary], Start Address: [Install@])</li>
 <li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
 </ul></li>
 <li><p>STEP 7: Download new wireless stack (after “FW Delete” if requested)</p>
 <ul>
-<li>in Firmware Upgrade Service: (File Path: [Wireless_Coprocessor_Binary], Start Adress: [Install@])</li>
+<li>in Firmware Upgrade Service: (File Path: [Wireless_Coprocessor_Binary], Start Address: [Install@])</li>
 <li>then select “Firmware Upgrade” (with “Verify download” and “Start stack after upgrade”) Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary. (<strong>optional</strong>: activate “Anti-Rollback” on downloaded binary) If you need to perform FUS related manipulations, you always need to START the FUS in case the FUS is not running.</li>
 </ul></li>
 <li><p>STEP 8: Revert to default configuration: in Option Bytes menu for User Configuration set: nSWboot0=1 (checked) nboot1=1 nboot0=1</p></li>
@@ -313,17 +310,17 @@
 </ul></li>
 <li><p>STEP 5: Download latest FUS for only FUSv0.5.3 upgrade</p>
 <ul>
-<li>in Firmware Upgrade Service: (File Path: [stm32wb5x_FUS_fw_for_fus_0_5_3.bin], Start Adress: [Install@])</li>
+<li>in Firmware Upgrade Service: (File Path: [stm32wb5x_FUS_fw_for_fus_0_5_3.bin], Start Address: [Install@])</li>
 <li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
 </ul></li>
-<li><p>STEP 6: Download latest FUS</p>
+<li><p>STEP 6: Download latest FUS or Safeboot</p>
 <ul>
-<li>in Firmware Upgrade Service: (File Path: [FUS_Binary], Start Adress: [Install@])</li>
+<li>in Firmware Upgrade Service: (File Path: [FUS_Binary], Start Address: [Install@])</li>
 <li>then select “Firmware Upgrade” Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
 </ul></li>
 <li><p>STEP 7: Download new wireless stack (after “FW Delete” if requested)</p>
 <ul>
-<li>in Firmware Upgrade Service: (File Path: [Wireless_Coprocessor_Binary], Start Adress: [Install@])</li>
+<li>in Firmware Upgrade Service: (File Path: [Wireless_Coprocessor_Binary], Start Address: [Install@])</li>
 <li>then select “Firmware Upgrade” (with “Verify download” and “Start stack after upgrade”) Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
 </ul></li>
 <li><p>STEP 8: Revert STEP 2 procedure to put back device in normal mode.</p></li>
@@ -372,7 +369,7 @@
 <li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -fwupgrade stm32wb5x_FUS_fw_for_fus_0_5_3.bin [Install@] firstinstall=0</em></li>
 </ul>
 <p>Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</p></li>
-<li><p>STEP 6: Download latest FUS</p>
+<li><p>STEP 6: Download latest FUS or Safeboot</p>
 <ul>
 <li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -fwupgrade [FUS_Binary] [Install@] firstinstall=0</em></li>
 </ul>
@@ -433,7 +430,7 @@
 <li><em>STM32_Programmer_CLI.exe -c port=usb1 -fwupgrade stm32wb5x_FUS_fw_for_fus_0_5_3.bin [Install@] firstinstall=0</em></li>
 </ul>
 <p>Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</p></li>
-<li><p>STEP 6: Download latest FUS</p>
+<li><p>STEP 6: Download latest FUS or Safeboot</p>
 <ul>
 <li><em>STM32_Programmer_CLI.exe -c port=usb1 -fwupgrade [FUS_Binary] [Install@] firstinstall=0</em> Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary.</li>
 </ul></li>
@@ -455,9 +452,314 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section17" checked aria-hidden="true"> <label for="collapse-section17" aria-hidden="false">V1.12.1 / 12-July-2021</label>
+<input type="checkbox" id="collapse-section18" checked aria-hidden="true"> <label for="collapse-section18" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE:
+<ul>
+<li>BLE Multi link connection</li>
+<li>The command “ACI_GAP_START_NAME_DISCOVERY_PROC” is deprecated</li>
+<li>Configurable RX AGC settings</li>
+<li>ID 97519 : When SRAM2 parity check is enabled, the NMI is triggered as soon as BLE is started</li>
+<li>ID 108789 : ACI_GAP_START_NAME_DISCOVERY_PROC command is deprecated</li>
+<li>ID 109676 : New HCI error status overlap with ACI error status<br />
+</li>
+<li>ID 111208 : Support Dory Cut2.1 in parallel to Cut2.2 with new SHCI_C2_CONFIG parameter.</li>
+<li>ID 111218 : STM32WB: potential issue with NVM RAM data not properly bounded<br />
+</li>
+<li>ID 111277 : SHCI event parsing function improved in WPAN examples  <br />
+</li>
+<li>ID 111509 : HCI/CCO/BI-40-C [LE Set Data Length, Invalid Parameters]</li>
+<li>ID 111513 : HCI/CCO/BI-43-C [LE Read Channel Map – Reject Invalid Handle]</li>
+<li>ID 111516 : LL/CON/ADV/BI-02 - LL/CON/INI/BI-03 FAIL no duplicate connection allowed</li>
+<li>ID 111522 : LL/CON/PER/BI-18 - LL_PHY_UPDATE_IND from remote with coded_phy</li>
+<li>ID 111749 : LL/DDI/ADV/BI_07 Connection request invalid Hop increment</li>
+<li>ID 111756 : LL/CON/CEN/BI_11 FAIL should not respond twice to LL_VERSION_IND</li>
+<li>ID 112402 : Implement SMP bypass controlled vis config data command</li>
+<li>ID 112560 : STM32WB-BLE: potential issue in SMP process handling RX data</li>
+<li>ID 113007 : add new parameter “rx_model_config” used for RSSI/AGC-LUT selection in SHCI_C2_Ble_Init() interface</li>
+<li>ID 113942 : SMP PTS test SM_CEN_JW_BV-05 no more passing due to blacklist device</li>
+<li>ID 114233 : Low power issue correction after stopping Advertising</li>
+<li>ID 115162 : OTA procedure not completed properly</li>
+</ul></li>
+<li>802.15.4 general updates (Zigbee, Thread, MAC, PHY)
+<ul>
+<li>CCA (Clear Channel Assessment) Threshold has been increased</li>
+</ul></li>
+<li>Thread:
+<ul>
+<li>Fix wrapper issue with UDP receivers</li>
+<li>RCP: improved commissioning process robustness</li>
+</ul></li>
+<li>Zigbee:
+<ul>
+<li>The handling of the internal 802_15_4 timer has been improved in order to solve several issues relative to the wraparound of this timer.</li>
+</ul></li>
+<li>Mac 802.15.4:
+<ul>
+<li>ID 108754: On restart from persistence, device short address is not set to stored value</li>
+<li>ID 111291: Fcf’s PANID compression bit wrongly filled in Beacon Request command</li>
+<li>ID 111294: CSMA-CA - MaxBe low level threshold wrongly set</li>
+</ul></li>
+<li>Phy 802.15.4:
+<ul>
+<li>New command SetGpioTX added. Control a debug GPIO raised during TX transmission (more detail in help command).</li>
+</ul></li>
+<li>Safeboot:
+<ul>
+<li>Adding new binary: stm32wb5x_Safeboot_fw.bin
+<ul>
+<li>This binary is intended to be installed in order to update the safeboot part.</li>
+<li>This binary is intended only for FUS versions V1.1.0 and higher.</li>
+<li>Safeboot upgrade is optional.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640k)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw_for_fus_0_5_3.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>9A</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>V1.2.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>9A</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>V1.2.0<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 7” via USB or via SWD/JTAG.</p>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 14%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640k)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_BLE_HCILayer_fw.bin</td>
+<td>0x080DC000</td>
+<td>0x08088000</td>
+<td>0x08068000</td>
+<td>0x08028000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x080EB000</td>
+<td>0x08097000</td>
+<td>0x08077000</td>
+<td>0x08037000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_LLD_fw.bin</td>
+<td>0x080ED000</td>
+<td>0x08099000</td>
+<td>0x08079000</td>
+<td>0x08039000</td>
+<td>V1.12.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Mac_802_15_4_fw.bin</td>
+<td>0x080B1000</td>
+<td>0x0805D000</td>
+<td>0x0803D000</td>
+<td>0x00</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Stack_basic_fw.bin</td>
+<td>0x080D1000</td>
+<td>0x0807D000</td>
+<td>0x0805D000</td>
+<td>0x0801D000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Stack_full_fw.bin</td>
+<td>0x080C7000</td>
+<td>0x08073000</td>
+<td>0x08053000</td>
+<td>0x08013000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Stack_light_fw.bin</td>
+<td>0x080D7000</td>
+<td>0x08083000</td>
+<td>0x08063000</td>
+<td>0x08023000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Thread_dynamic_fw.bin</td>
+<td>0x0806D000</td>
+<td>0x08019000</td>
+<td>0x00</td>
+<td>0x00</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Thread_static_fw.bin</td>
+<td>0x0806F000</td>
+<td>0x0801B000</td>
+<td>0x00</td>
+<td>0x00</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Zigbee_FFD_dynamic_fw.bin</td>
+<td>0x08071000</td>
+<td>0x0801D000</td>
+<td>0x00</td>
+<td>0x00</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Zigbee_RFD_dynamic_fw.bin</td>
+<td>0x08080000</td>
+<td>0x0802C000</td>
+<td>0x0800C000</td>
+<td>0x00</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td>0x080E3000</td>
+<td>0x0808F000</td>
+<td>0x0806F000</td>
+<td>0x0802F000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Phy_802_15_4_fw.bin</td>
+<td>0x080DE000</td>
+<td>0x0808A000</td>
+<td>0x0806A000</td>
+<td>0x0802A000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x08097000</td>
+<td>0x08043000</td>
+<td>0x08023000</td>
+<td>0x00</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x080AA000</td>
+<td>0x08056000</td>
+<td>0x08036000</td>
+<td>0x00</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_RCP_fw.bin</td>
+<td>0x080DA000</td>
+<td>0x08086000</td>
+<td>0x08066000</td>
+<td>0x08026000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Zigbee_FFD_fw.bin</td>
+<td>0x080A4000</td>
+<td>0x08050000</td>
+<td>0x08030000</td>
+<td>0x00</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Zigbee_RFD_fw.bin</td>
+<td>0x080B3000</td>
+<td>0x0805F000</td>
+<td>0x0803F000</td>
+<td>0x00</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Firmware Safeboot Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640k)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_Safeboot_fw.bin</td>
+<td>0x080<strong>F0</strong>000</td>
+<td>0x080<strong>9F</strong>000</td>
+<td>0x080<strong>7F</strong>000</td>
+<td>0x080<strong>3F</strong>000</td>
+<td>V2.0.0<span class="icon-st-add"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section17" aria-hidden="true"> <label for="collapse-section17" aria-hidden="false">V1.12.1 / 12-July-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -692,7 +994,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section16" aria-hidden="true"> <label for="collapse-section16" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <ul>
 <li>Thread:
 <ul>
@@ -703,7 +1005,7 @@
 <ul>
 <li>zb_destroy_process improvement correcting some potential memory issues.</li>
 <li>Memory allocation improvement </li>
-<li>Code cleanup (MISRA rules compliancy)</li>
+<li>Code cleanup (MISRA rules compliance)</li>
 <li>Power consumption improvement when using fragmentation for a sleepy end device (transfer of payload &gt; 50 bytes)</li>
 <li>ID 105050 : Correct issue avoiding the Application to run at 64Mhz</li>
 </ul></li>
@@ -957,7 +1259,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section15" aria-hidden="true"> <label for="collapse-section15" aria-hidden="false">V1.11.1 / 23-March-2021</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <ul>
 <li>BLE:
 <ul>
@@ -965,7 +1267,7 @@
 <li>ID 99680 : 2nd link secure fail if master database is clear during 1st link connection</li>
 <li>ID 101346 : ACI_GAP_BOND_LOST_Event timeout does not work if ALLOW rebond not sent</li>
 <li>ID 101921 : PTS issue ticket done CASE0070853: destination channel ID value above 1000 should be allowed and test passed</li>
-<li>ID 94289 ,ID 102395 ,ID 100425 : BLE_Ota application improvments (SBSFU ready, Flash driver use, SEM7 flash activity control)</li>
+<li>ID 94289 ,ID 102395 ,ID 100425 : BLE_Ota application improvements (SBSFU ready, Flash driver use, SEM7 flash activity control)</li>
 </ul></li>
 <li>Thread:
 <ul>
@@ -1221,7 +1523,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.11.0 / 5-February-2021</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Support of new binary:
@@ -1502,7 +1804,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="false">V1.10.0 / 26-October-2020</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1745,7 +2047,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="false">V1.9.0 / 21-September-2020</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Introducing following new binaries:
@@ -1778,12 +2080,12 @@
 <li>ID 89456 : ERR_BLE_INIT event is enum listed, kept but not really supported as not reported</li>
 <li>ID 90095 : Device Privacy Mode is now mandatory for BLE 5.0 and implemented to handle command HCI_LE_SET_PRIVACY_MODE command</li>
 <li>ID 90607 : Beacon Only certification needs LE Test commands and LE Read Buffer Size command as: <br/> HCI_LE_RECEIVER_TEST, HCI_LE_TEST_END,HCI_LE_TRANSMITTER_TEST and LE_READ_BUFFER_SIZE integrated commands</li>
-<li>ID 90891 : DEEPSLEEP mode on CPU2 not applied after aci_hal_stack_reset or hci_reset command is executed. <br/> A fix is to enable back the Stop Mode when the hci_reset() command is executed, included in all regenrated M0 firmware binaries</li>
+<li>ID 90891 : DEEPSLEEP mode on CPU2 not applied after aci_hal_stack_reset or hci_reset command is executed. <br/> A fix is to enable back the Stop Mode when the hci_reset() command is executed, included in all regenerated M0 firmware binaries</li>
 <li>ID 91134 : SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE not implemented on the stack side. <br/> A fix has been implemented on CPU2 to receive expected events on CPU1</li>
 <li>ID 91157 : FLASH_SR_EOP flag remains set after the bonding info stored in NVM. <br/> A fix has been implemented to clear EOP flag after flash processing on CPU2</li>
 <li>ID 91309 : A bug identified in the Link Layer which not de-allocate the memory it has allocated for ACL packets <br/> to be sent to the upper layer memory used for previous ACL packets. <br/> A fix implemented to de-allocate packet not yet sent to upper layers at the disconnection time<br />
 </li>
-<li>ID 91351 : CPU2 gets stuck when EOP and EOPIE both set in CPU1 FLASH interface prior CPU2 booting. <br/> A fix in NVM arbitrer implemented as enable SYSCFG only when EOPIE is enabled</li>
+<li>ID 91351 : CPU2 gets stuck when EOP and EOPIE both set in CPU1 FLASH interface prior CPU2 booting. <br/> A fix in NVM arbiter implemented as enable SYSCFG only when EOPIE is enabled</li>
 <li>ID 92458 : Replace the EOP polling by CFGBSY polling in CPU2 M0 firmware to get confirmation flash operation is completed <br/> to avoid unexpected interrupt on CPU1 side when its EOPIE bit is set</li>
 <li>ID 91576 : The feature flag LE Power Class 1 shall be set when the ExtPa is used</li>
 </ul></li>
@@ -2034,7 +2336,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.8.0 / 19-June-2020</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -2230,7 +2532,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>MAC:
@@ -2426,7 +2728,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>FUS:
@@ -2618,7 +2920,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -2763,7 +3065,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 09-September-2019</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -2903,7 +3205,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 3rd-July-2019</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE Link layer : fix issues with pairing</li>
@@ -3016,7 +3318,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <p><strong>Associated changes in Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>Add support for STM32WB5xE(512K) and STM32WB5xC(256K) devices.</li>
@@ -3122,7 +3424,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <p><strong>Introduction of the Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>This feature is embedded inside stm32wb5x_FUS_fw.bin.</li>
@@ -3231,7 +3533,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-14">Main Changes</h2>
+<h2 id="main-changes-15">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 <p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 6” of flash procedure.</p>

@@ -13,13 +13,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -116,6 +115,7 @@ __IO uint8_t ubDmaTransferStatus = 2U; /* Variable set into DMA interruption cal
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
@@ -165,6 +165,9 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
+
+/* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
@@ -299,7 +302,14 @@ void SystemClock_Config(void)
 
   /* Update CMSIS variable (which can be updated also through SystemCoreClockUpdate function) */
   LL_SetSystemCoreClock(64000000);
-  LL_RCC_SetADCClockSource(LL_RCC_ADC_CLKSOURCE_HSI);
+}
+
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
+{
   LL_RCC_SetSMPSClockSource(LL_RCC_SMPS_CLKSOURCE_HSI);
   LL_RCC_SetSMPSPrescaler(LL_RCC_SMPS_DIV_1);
   LL_RCC_SetRFWKPClockSource(LL_RCC_RFWKP_CLKSOURCE_NONE);
@@ -325,6 +335,8 @@ static void MX_ADC1_Init(void)
   LL_ADC_REG_InitTypeDef ADC_REG_InitStruct = {0};
 
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  LL_RCC_SetADCClockSource(LL_RCC_ADC_CLKSOURCE_HSI);
 
   /* Peripheral clock enable */
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_ADC);
@@ -759,7 +771,7 @@ void AdcDmaTransferComplete_Callback()
     /* Note: For debug purpose, if program is halted with a breakpoint then
              this error will be raised (due to ADC and DMA continuing to operate 
              in background).
-             To not block debug of this exemple, replace error handler by
+             To not block debug of this example, replace error handler by
              dummy LED toggle. */
     /* Error_Handler(); */
     LED_Toggle();
@@ -799,7 +811,7 @@ void AdcDmaTransferHalf_Callback()
     /* Note: For debug purpose, if program is halted with a breakpoint then
              this error will be raised (due to ADC and DMA continuing to operate 
              in background).
-             To not block debug of this exemple, replace error handler by
+             To not block debug of this example, replace error handler by
              dummy LED toggle. */
     /* Error_Handler(); */
     LED_Toggle();
@@ -897,5 +909,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1,20 +1,19 @@
-/******************************************************************************
+/*****************************************************************************
  * @file    ble_l2cap_aci.h
  * @author  MCD
  * @brief   STM32WB BLE API (l2cap_aci)
  *          Auto-generated file: do not edit!
- ******************************************************************************
+ *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
- ******************************************************************************
+ *****************************************************************************
  */
 
 #ifndef BLE_L2CAP_ACI_H__
@@ -35,12 +34,12 @@
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
  *        This shall be less than or equal to Conn_Interval_Max.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
  *        This shall be greater than or equal to Conn_Interval_Min.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Slave_latency Slave latency for the connection in number of
@@ -69,12 +68,12 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
  *        This shall be less than or equal to Conn_Interval_Max.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
  *        This shall be greater than or equal to Conn_Interval_Min.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Slave_latency Slave latency for the connection in number of
@@ -85,12 +84,12 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
  *        following manner: Timeout Multiplier * 10ms.
  * @param Minimum_CE_Length Information parameter about the minimum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @param Maximum_CE_Length Information parameter about the maximum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @param Identifier Identifier received in ACI_L2CAP_Connection_Update_Req

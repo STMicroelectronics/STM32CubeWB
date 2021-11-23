@@ -4,7 +4,7 @@
  * @brief ZCL Metering cluster header
  * ZCL 7 section 10.4
  * ZCL 8 section 10.4
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 /* @PICS.ZCL.Meter
@@ -161,7 +161,7 @@
  * SEMT.S.A0b15 | Flow Measurement Period | False | Optional
  * SEMT.S.A0c00 | AlternativeInstantaneousDemand | False | Optional
  * SEMT.S.Afffd | ClusterRevision | True
- * SEMT.S.Afffe | AttributeReportingStatus | False
+ * SEMT.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * SEMT.S.C00.Rsp | Get Profile | False
@@ -206,7 +206,7 @@
  * SEMT.C.A0006 | NotificationFlags7 | False | Optional
  * SEMT.C.A0007 | NotificationFlags8 | False | Optional
  * SEMT.C.Afffd | ClusterRevision | True
- * SEMT.C.Afffe | AttributeReportingStatus | False
+ * SEMT.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * SEMT.C.C00.Rsp | Get Profile Response | False
@@ -500,45 +500,96 @@ enum ZbZclMeteringSvrAttrT {
 #define ZCL_METER_SVR_ATTR_MONTH_N_CONSUMP_DELIV(prev_month)        (0x0440U + (2U * (prev_month)))
 #define ZCL_METER_SVR_ATTR_MONTH_N_CONSUMP_RECV(prev_month)         (0x0441U + (2U * (prev_month)))
 
+/** Metering Client Attribute IDs */
 enum ZbZclMeterCliAttrT {
     /* Notification Set (0x00) */
-    /* Notification Flags (ZCL_METER_CLI_NOTIF_FLG_) */
-    ZCL_METER_CLI_ATTR_NOTIF_FLG_1 = 0x0000,
-    ZCL_METER_CLI_ATTR_NOTIF_FLG_2, /* 0x0001 */
-    ZCL_METER_CLI_ATTR_NOTIF_FLG_3, /* 0x0002 */
-    ZCL_METER_CLI_ATTR_NOTIF_FLG_4, /* 0x0003 */
-    ZCL_METER_CLI_ATTR_NOTIF_FLG_5, /* 0x0004 */
-    ZCL_METER_CLI_ATTR_NOTIF_FLG_6, /* 0x0005 */
-    ZCL_METER_CLI_ATTR_NOTIF_FLG_7, /* 0x0006 */
-    ZCL_METER_CLI_ATTR_NOTIF_FLG_8 /* 0x0007 */
+    ZCL_METER_CLI_ATTR_FUNC_NOTIF_FLAGS = 0x0000, /**< FunctionalNotificationFlags */
+    ZCL_METER_CLI_ATTR_NOTIF_FLAGS_2 = 0x0001, /**< NotificationFlags2 (Price) */
+    ZCL_METER_CLI_ATTR_NOTIF_FLAGS_3 = 0x0002, /**< NotificationFlags3 (Calendar) */
+    ZCL_METER_CLI_ATTR_NOTIF_FLAGS_4 = 0x0003, /**< NotificationFlags4 (Prepayment) */
+    ZCL_METER_CLI_ATTR_NOTIF_FLAGS_5 = 0x0004, /**< NotificationFlags5 (Device Management) */
+    ZCL_METER_CLI_ATTR_NOTIF_FLAGS_6 = 0x0005, /**< NotificationFlags6 (Not supported) */
+    ZCL_METER_CLI_ATTR_NOTIF_FLAGS_7 = 0x0006, /**< NotificationFlags7 (Not supported) */
+    ZCL_METER_CLI_ATTR_NOTIF_FLAGS_8 = 0x0007, /**< NotificationFlags8 (Not supported) */
 };
 
-/* ZCL_METER_CLI_ATTR_NOTIF_FLG_ */
-#define ZCL_METER_CLI_NOTIF_FLG_NEW_OTA_FW                      0x00000001U /* bit  0 */
-#define ZCL_METER_CLI_NOTIF_FLG_CBKE_UPDATE_REQ                 0x00000002U /* bit  1 */
-#define ZCL_METER_CLI_NOTIF_FLG_TIME_SYNC                       0x00000004U /* bit  2 */
+/* Functional Notification Flags (ZCL_METER_CLI_ATTR_FUNC_NOTIF_FLAGS) */
+#define ZCL_METER_FUNC_NOTIF_FLAG_NEW_OTA_FW                        0x00000001U /* bit  0 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_CBKE_UPDATE_REQ                   0x00000002U /* bit  1 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_TIME_SYNC                         0x00000004U /* bit  2 */
 /* Reserved - 0x00000008U */
-#define ZCL_METER_CLI_NOTIF_FLG_STAY_AWAKE_HAN                  0x00000010U /* bit  4 */
-#define ZCL_METER_CLI_NOTIF_FLG_STAY_AWAKE_WAN                  0x00000020U /* bit  5 */
-#define ZCL_METER_CLI_NOTIF_FLG_PUSH_HIST_METER_MASK            0x000001C0U /* bits 6-8 */
-#define ZCL_METER_CLI_NOTIF_FLG_PUSH_HIST_PREPAY_SET            0x00000E00U /* bits 9-11 */
-#define ZCL_METER_CLI_NOTIF_FLG_PUSH_STATIC_BASIC               0x00001000U /* bit 12 */
-#define ZCL_METER_CLI_NOTIF_FLG_PUSH_STATIC_METER               0x00002000U /* bit 13 */
-#define ZCL_METER_CLI_NOTIF_FLG_PUSH_STATIC_PREPAY              0x00004000U /* bit 14 */
-#define ZCL_METER_CLI_NOTIF_FLG_NETWORK_KEY_ACTIVE              0x00008000U /* bit 15 */
-#define ZCL_METER_CLI_NOTIF_FLG_DISPLAY_MESSAGE                 0x00010000U /* bit 16 */
-#define ZCL_METER_CLI_NOTIF_FLG_CANCEL_ALL_MESSAGES             0x00020000U /* bit 17 */
-#define ZCL_METER_CLI_NOTIF_FLG_CHANGE_SUPPLY                   0x00040000U /* bit 18 */
-#define ZCL_METER_CLI_NOTIF_FLG_LOCAL_CHANGE_SUPPLY             0x00080000U /* bit 19 */
-#define ZCL_METER_CLI_NOTIF_FLG_SET_UNCONTROLLED_FLOW_THRESH    0x00100000U /* bit 20 */
-#define ZCL_METER_CLI_NOTIF_FLG_TUNNEL_MESSAGE_PEND             0x00200000U /* bit 21 */
-#define ZCL_METER_CLI_NOTIF_FLG_GET_SNAPSHOT                    0x00400000U /* bit 22 */
-#define ZCL_METER_CLI_NOTIF_FLG_GET_SAMPLED_DATA                0x00800000U /* bit 23 */
-#define ZCL_METER_CLI_NOTIF_FLG_NEW_SUBGHZ_CHANNEL_MASKS        0x01000000U /* bit 24 */
-#define ZCL_METER_CLI_NOTIF_FLG_ENERGY_SCAN_PEND                0x02000000U /* bit 25 */
-#define ZCL_METER_CLI_NOTIF_FLG_CHANNEL_CHANGE_PEND             0x04000000U /* bit 26 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_STAY_AWAKE_HAN                    0x00000010U /* bit  4 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_STAY_AWAKE_WAN                    0x00000020U /* bit  5 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_PUSH_HIST_METER_MASK              0x000001C0U /* bits 6-8 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_PUSH_HIST_PREPAY_SET              0x00000E00U /* bits 9-11 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_PUSH_STATIC_BASIC                 0x00001000U /* bit 12 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_PUSH_STATIC_METER                 0x00002000U /* bit 13 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_PUSH_STATIC_PREPAY                0x00004000U /* bit 14 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_NETWORK_KEY_ACTIVE                0x00008000U /* bit 15 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_DISPLAY_MESSAGE                   0x00010000U /* bit 16 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_CANCEL_ALL_MESSAGES               0x00020000U /* bit 17 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_CHANGE_SUPPLY                     0x00040000U /* bit 18 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_LOCAL_CHANGE_SUPPLY               0x00080000U /* bit 19 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_SET_UNCONTROLLED_FLOW_THRESH      0x00100000U /* bit 20 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_TUNNEL_MESSAGE_PEND               0x00200000U /* bit 21 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_GET_SNAPSHOT                      0x00400000U /* bit 22 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_GET_SAMPLED_DATA                  0x00800000U /* bit 23 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_NEW_SUBGHZ_CHANNEL_MASKS          0x01000000U /* bit 24 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_ENERGY_SCAN_PEND                  0x02000000U /* bit 25 */
+#define ZCL_METER_FUNC_NOTIF_FLAG_CHANNEL_CHANGE_PEND               0x04000000U /* bit 26 */
 
-/* Metering Status flags */
+/* NotificationFlags2 (ZCL_METER_CLI_ATTR_NOTIF_FLAGS_2, Price) */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_PRICE                        0x00000001U /* bit  0 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_BLOCK_PERIOD                 0x00000002U /* bit  1 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_TARIFF_INFO                  0x00000004U /* bit  2 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CONV_FACTOR                  0x00000008U /* bit  3 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CAL_VAL                      0x00000010U /* bit  4 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CO2_VAL                      0x00000020U /* bit  5 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_BILL_PERIOD                  0x00000040U /* bit  6 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CONS_BILL                    0x00000080U /* bit  7 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_PRICE_MATRIX                 0x00000100U /* bit  8 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_BLOCK_THRESH                 0x00000200U /* bit  9 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CURRENCY_CONV                0x00000400U /* bit 10 */
+/* Reserverd */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CREDIT_PAY_INFO              0x00001000U /* bit 12 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CPP_EVENT                    0x00002000U /* bit 13 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_TIER_LABELS                  0x00004000U /* bit 14 */
+#define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CANCEL_TARIFF                0x00008000U /* bit 15 */
+
+/* NotificationFlags3 (ZCL_METER_CLI_ATTR_NOTIF_FLAGS_3, Calendar) */
+#define ZCL_METER_NOTIF_FLAG_3_PUBLISH_CALENDAR                     0x00000001U /* bit  0 */
+#define ZCL_METER_NOTIF_FLAG_3_PUBLISH_SPECIAL_DAYS                 0x00000002U /* bit  1 */
+#define ZCL_METER_NOTIF_FLAG_3_PUBLISH_SEASONS                      0x00000004U /* bit  2 */
+#define ZCL_METER_NOTIF_FLAG_3_PUBLISH_WEEK                         0x00000008U /* bit  3 */
+#define ZCL_METER_NOTIF_FLAG_3_PUBLISH_DAY                          0x00000010U /* bit  4 */
+#define ZCL_METER_NOTIF_FLAG_3_PUBLISH_CANCEL_CALENDAR              0x00000020U /* bit  5 */
+
+/* NotificationFlags4 (ZCL_METER_CLI_ATTR_NOTIF_FLAGS_4, Prepayment) */
+#define ZCL_METER_NOTIF_FLAG_4_SELECT_AVAIL_EMERG_CREDIT            0x00000001U /* bit  0 */
+#define ZCL_METER_NOTIF_FLAG_4_CHANGE_DEBT                          0x00000002U /* bit  1 */
+#define ZCL_METER_NOTIF_FLAG_4_EMERG_CREDIT_SETUP                   0x00000004U /* bit  2 */
+#define ZCL_METER_NOTIF_FLAG_4_CONSUMER_TOP_UP                      0x00000008U /* bit  3 */
+#define ZCL_METER_NOTIF_FLAG_4_CREDIT_ADJUST                        0x00000010U /* bit  4 */
+#define ZCL_METER_NOTIF_FLAG_4_CHANGE_PAY_MODE                      0x00000020U /* bit  5 */
+#define ZCL_METER_NOTIF_FLAG_4_GET_PREPAY_SNAPSHOT                  0x00000040U /* bit  6 */
+#define ZCL_METER_NOTIF_FLAG_4_GET_TOP_UP_LOG                       0x00000080U /* bit  7 */
+#define ZCL_METER_NOTIF_FLAG_4_SET_LOW_CREDIT_WARN_LEVEL            0x00000100U /* bit  8 */
+#define ZCL_METER_NOTIF_FLAG_4_GET_DEBT_REPAY_LOG                   0x00000200U /* bit  9 */
+#define ZCL_METER_NOTIF_FLAG_4_SET_MAX_CREDIT_LIMIT                 0x00000400U /* bit 10 */
+#define ZCL_METER_NOTIF_FLAG_4_SET_OVERALL_DEBT_CAP                 0x00000800U /* bit 11 */
+
+/* NotificationFlags5 (ZCL_METER_CLI_ATTR_NOTIF_FLAGS_5, Device Management) */
+#define ZCL_METER_NOTIF_FLAG_5_PUBLISH_CHANGE_TENANCY               0x00000001U /* bit  0 */
+#define ZCL_METER_NOTIF_FLAG_5_PUBLISH_CHANGE_SUPPLIER              0x00000002U /* bit  1 */
+#define ZCL_METER_NOTIF_FLAG_5_REQUEST_NEW_PW_1_RSP                 0x00000004U /* bit  2 */
+#define ZCL_METER_NOTIF_FLAG_5_REQUEST_NEW_PW_2_RSP                 0x00000008U /* bit  3 */
+#define ZCL_METER_NOTIF_FLAG_5_REQUEST_NEW_PW_3_RSP                 0x00000010U /* bit  4 */
+#define ZCL_METER_NOTIF_FLAG_5_REQUEST_NEW_PW_4_RSP                 0x00000020U /* bit  5 */
+#define ZCL_METER_NOTIF_FLAG_5_UPDATE_SITE_ID                       0x00000040U /* bit  6 */
+#define ZCL_METER_NOTIF_FLAG_5_RESET_BATTERY_COUNTER                0x00000080U /* bit  7 */
+#define ZCL_METER_NOTIF_FLAG_5_UPDATE_CIN                           0x00000100U /* bit  8 */
+
+/* Metering Status flags (ZCL_METER_SVR_ATTR_METER_STATUS) */
 #define ZCL_METER_STATUS_CHECK_METER                0x01U
 #define ZCL_METER_STATUS_LOW_BATTERY                0x02U
 #define ZCL_METER_STATUS_TAMPER_DETECT              0x04U
@@ -559,7 +610,7 @@ enum ZbZclMeterCliAttrT {
 #define ZCL_METER_FORMAT_OFFSET_FRACTIONAL          0U
 #define ZCL_METER_FORMAT_OFFSET_INTEGER             3U
 
-/* Metering Units of Measure enumeration */
+/* Metering Units of Measure enumeration (ZCL_METER_SVR_ATTR_UNIT_OF_MEASURE / UnitofMeasure) */
 enum ZbZclMeterUnitsT {
     ZCL_METER_UNITS_BINARY_KWH = 0x00,
     ZCL_METER_UNITS_BINARY_CUBIC_METERS = 0x01,
@@ -597,9 +648,7 @@ enum ZbZclMeterTypeT {
     ZCL_METER_TYPE_ELECTRIC = 0x00,
     ZCL_METER_TYPE_GAS = 0x01,
     ZCL_METER_TYPE_WATER = 0x02,
-#if 0 /* Deprecated as of SE 1.1 */
-    ZCL_METER_TYPE_THERMAL = 0x03,
-#endif
+    /* ZCL_METER_TYPE_THERMAL = 0x03, Deprecated as of SE 1.1 */
     ZCL_METER_TYPE_PRESSURE = 0x04,
     ZCL_METER_TYPE_HEAT = 0x05,
     ZCL_METER_TYPE_COOLING = 0x06,
@@ -614,25 +663,23 @@ enum ZbZclMeterTypeT {
     ZCL_METER_TYPE_ELECTRIC_PHASE_2 = 0x0e, /* SE 1.1b */
     ZCL_METER_TYPE_ELECTRIC_PHASE_3 = 0x0f, /* SE 1.1b */
 
-    ZCL_METER_TYPE_MIRR_ELECTRIC = 0x7f,
-    ZCL_METER_TYPE_MIRR_GAS = 0x80,
-    ZCL_METER_TYPE_MIRR_WATER = 0x81,
-#if 0 /* Deprecated as of SE 1.1 */
-    ZCL_METER_TYPE_MIRR_THERMAL = 0x82,
-#endif
-    ZCL_METER_TYPE_MIRR_PRESSURE = 0x83,
-    ZCL_METER_TYPE_MIRR_HEAT = 0x84,
-    ZCL_METER_TYPE_MIRR_COOLING = 0x85,
+    ZCL_METER_TYPE_MIRROR_ELECTRIC = 0x7f, /**< Mirrored Electric Metering */
+    ZCL_METER_TYPE_MIRROR_GAS = 0x80,
+    ZCL_METER_TYPE_MIRROR_WATER = 0x81,
+    /* ZCL_METER_TYPE_MIRROR_THERMAL = 0x82, Deprecated as of SE 1.1 */
+    ZCL_METER_TYPE_MIRROR_PRESSURE = 0x83,
+    ZCL_METER_TYPE_MIRROR_HEAT = 0x84,
+    ZCL_METER_TYPE_MIRROR_COOLING = 0x85,
 
-    ZCL_METER_TYPE_MIRR_END_USE_METER = 0x86, /* SE 1.1b */
-    ZCL_METER_TYPE_MIRR_PV_GEN = 0x87, /* SE 1.1b */
-    ZCL_METER_TYPE_MIRR_WIND_GEN = 0x88, /* SE 1.1b */
-    ZCL_METER_TYPE_MIRR_WATER_GEN = 0x89, /* SE 1.1b */
-    ZCL_METER_TYPE_MIRR_MICRO_GEN = 0x8a, /* SE 1.1b */
-    ZCL_METER_TYPE_MIRR_SOLAR_HW = 0x8b, /* SE 1.1b */
-    ZCL_METER_TYPE_MIRR_ELECPHS_1 = 0x8c, /* SE 1.1b */
-    ZCL_METER_TYPE_MIRR_ELECPHS_2 = 0x8d, /* SE 1.1b */
-    ZCL_METER_TYPE_MIRR_ELECPHS_3 = 0x8e /* SE 1.1b */
+    ZCL_METER_TYPE_MIRROR_END_USE_METER = 0x86, /* SE 1.1b */
+    ZCL_METER_TYPE_MIRROR_PV_GEN = 0x87, /* SE 1.1b */
+    ZCL_METER_TYPE_MIRROR_WIND_GEN = 0x88, /* SE 1.1b */
+    ZCL_METER_TYPE_MIRROR_WATER_GEN = 0x89, /* SE 1.1b */
+    ZCL_METER_TYPE_MIRROR_MICRO_GEN = 0x8a, /* SE 1.1b */
+    ZCL_METER_TYPE_MIRROR_SOLAR_HW = 0x8b, /* SE 1.1b */
+    ZCL_METER_TYPE_MIRROR_ELECPHS_1 = 0x8c, /* SE 1.1b */
+    ZCL_METER_TYPE_MIRROR_ELECPHS_2 = 0x8d, /* SE 1.1b */
+    ZCL_METER_TYPE_MIRROR_ELECPHS_3 = 0x8e /* SE 1.1b */
 };
 
 /*lint -save -e849 [ !MISRA - multiple string with same enum value. ] */
@@ -716,40 +763,42 @@ enum ZbZclMeterGetProfileStatusT {
 
 /* Metering Server Generated Commands */
 enum ZbZclMeterServerCommandsT {
-    ZCL_METER_SVR_CMD_GET_PROFILE_RESPONSE = 0x00,
-    ZCL_METER_SVR_CMD_REQUEST_MIRROR = 0x01,
-    ZCL_METER_SVR_CMD_REMOVE_MIRROR = 0x02,
-    ZCL_METER_SVR_CMD_FAST_POLL_RESPONSE = 0x03,
-    ZCL_METER_SVR_CMD_SCHEDULE_SNAPSHOT_RESPONSE = 0x04,
-    ZCL_METER_SVR_CMD_TAKE_SNAPSHOT_RESPONSE = 0x05,
-    ZCL_METER_SVR_CMD_PUBLISH_SNAPSHOT = 0x06,
-    ZCL_METER_SVR_CMD_GET_SAMPLED_DATA_RESPONSE = 0x07,
-    ZCL_METER_SVR_CMD_CONFIGURE_MIRROR = 0x08,
-    ZCL_METER_SVR_CMD_CONFIGURE_NOTIFICATION_SCHEME = 0x09,
-    ZCL_METER_SVR_CMD_CONFIGURE_NOTIFICATION_FLAG = 0x0a,
-    ZCL_METER_SVR_CMD_GET_NOTIFIED_MESSAGE = 0x0b,
-    ZCL_METER_SVR_CMD_SUPPLY_STATUS_RESPONSE = 0x0c,
-    ZCL_METER_SVR_CMD_START_SAMPLING_RESPONSE_RESERVED = 0x0d
+    ZCL_METER_SVR_CMD_GET_PROFILE_RESPONSE = 0x00, /**< Get Profile Response */
+    ZCL_METER_SVR_CMD_REQUEST_MIRROR = 0x01, /**< Request Mirror */
+    ZCL_METER_SVR_CMD_REMOVE_MIRROR = 0x02, /**< Remove Mirror */
+    ZCL_METER_SVR_CMD_FAST_POLL_RESPONSE = 0x03, /**< Request Fast Poll Mode Response */
+    ZCL_METER_SVR_CMD_SCHEDULE_SNAPSHOT_RESPONSE = 0x04, /**< ScheduleSnapshot Response */
+    ZCL_METER_SVR_CMD_TAKE_SNAPSHOT_RESPONSE = 0x05, /**<  TakeSnapshotResponse*/
+    ZCL_METER_SVR_CMD_PUBLISH_SNAPSHOT = 0x06, /**< Publish Snapshot */
+    ZCL_METER_SVR_CMD_GET_SAMPLED_DATA_RESPONSE = 0x07, /**< GetSampledData Response */
+    ZCL_METER_SVR_CMD_CONFIGURE_MIRROR = 0x08, /**< ConfigureMirror */
+    ZCL_METER_SVR_CMD_CONFIGURE_NOTIFICATION_SCHEME = 0x09, /**< ConfigureNotification Scheme */
+    ZCL_METER_SVR_CMD_CONFIGURE_NOTIFICATION_FLAG = 0x0a, /**< ConfigureNotification Flag */
+    ZCL_METER_SVR_CMD_GET_NOTIFIED_MESSAGE = 0x0b, /**< GetNotifiedMessage */
+    ZCL_METER_SVR_CMD_SUPPLY_STATUS_RESPONSE = 0x0c, /**< Supply Status Response */
+    ZCL_METER_SVR_CMD_START_SAMPLING_RESPONSE_RESERVED = 0x0d /**< StartSamplingResponse */
 };
 
 /* Metering Client Generated Commands */
 enum ZbZclMeterClientCommandsT {
-    ZCL_METER_CLI_CMD_GET_PROFILE = 0x00,
-    ZCL_METER_CLI_CMD_REQUEST_MIRROR_RESPONSE = 0x01,
-    ZCL_METER_CLI_CMD_MIRROR_REMOVED = 0x02,
-    ZCL_METER_CLI_CMD_REQUEST_FAST_POLL_MODE = 0x03,
-    ZCL_METER_CLI_CMD_SCHEDULE_SNAPSHOT = 0x04,
-    ZCL_METER_CLI_CMD_TAKE_SNAPSHOT = 0x05,
-    ZCL_METER_CLI_CMD_GET_SNAPSHOT = 0x06,
-    ZCL_METER_CLI_CMD_START_SAMPLING = 0x07,
-    ZCL_METER_CLI_CMD_GET_SAMPLED_DATA = 0x08,
-    ZCL_METER_CLI_CMD_MIRROR_REPORT_ATTRIBUTE_RESPONSE = 0x09,
-    ZCL_METER_CLI_CMD_RESET_LOADLIMIT_COUNTER = 0x0a,
-    ZCL_METER_CLI_CMD_CHANGE_SUPPLY = 0x0b,
-    ZCL_METER_CLI_CMD_LOCAL_CHANGE_SUPPLY = 0x0c,
-    ZCL_METER_CLI_CMD_SET_SUPPLY_STATUS = 0x0d,
-    ZCL_METER_CLI_CMD_SET_UNCONTROLLED_FLOW_THRESHOLD = 0x0e
+    ZCL_METER_CLI_CMD_GET_PROFILE = 0x00, /**< Get Profile */
+    ZCL_METER_CLI_CMD_REQUEST_MIRROR_RESPONSE = 0x01, /**< Request Mirror Response */
+    ZCL_METER_CLI_CMD_MIRROR_REMOVED = 0x02, /**< Mirror Removed */
+    ZCL_METER_CLI_CMD_REQUEST_FAST_POLL_MODE = 0x03, /**< Request Fast Poll Mode */
+    ZCL_METER_CLI_CMD_SCHEDULE_SNAPSHOT = 0x04, /**< ScheduleSnapshot */
+    ZCL_METER_CLI_CMD_TAKE_SNAPSHOT = 0x05, /**< TakeSnapshot */
+    ZCL_METER_CLI_CMD_GET_SNAPSHOT = 0x06, /**< GetSnapshot */
+    ZCL_METER_CLI_CMD_START_SAMPLING = 0x07, /**< StartSampling */
+    ZCL_METER_CLI_CMD_GET_SAMPLED_DATA = 0x08, /**< GetSampledData */
+    ZCL_METER_CLI_CMD_MIRROR_REPORT_ATTRIBUTE_RESPONSE = 0x09, /**< MirrorReport AttributeResponse */
+    ZCL_METER_CLI_CMD_RESET_LOADLIMIT_COUNTER = 0x0a, /**< ResetLoadLimit Counter */
+    ZCL_METER_CLI_CMD_CHANGE_SUPPLY = 0x0b, /**< Change Supply */
+    ZCL_METER_CLI_CMD_LOCAL_CHANGE_SUPPLY = 0x0c, /**< Local Change Supply */
+    ZCL_METER_CLI_CMD_SET_SUPPLY_STATUS = 0x0d, /**< SetSupplyStatus */
+    ZCL_METER_CLI_CMD_SET_UNCONTROLLED_FLOW_THRESHOLD = 0x0e /**< SetUncontrolledFlowThreshold */
 };
+
+#define ZCL_METER_MIRROR_INVALID_ENDPOINT           0xffffU
 
 /* Metering Sample Type Enumerations. These are the same as Interval Channel Values */
 enum ZbZclMeterSampleTypeT {
@@ -771,6 +820,81 @@ struct ZbZclMeterSampleT {
     int currentBlock;
 };
 #endif
+
+/**< NotificationScheme Enumerations */
+enum ZbZclMeterNotifSchemesT {
+    ZCL_METER_NOTIF_SCHEME_NONE = 0x00,
+    /**< No Notification Scheme Defined */
+
+    ZCL_METER_NOTIF_SCHEME_PREDEF_A = 0x01,
+    /**< Predefined Notification Scheme A. The notification flags equal 0x0FFFFFFF,
+     * meaning that only the FunctionalNotificationFlags is included in the
+     * MirrorReportAttributeResponse command. */
+
+    ZCL_METER_NOTIF_SCHEME_PREDEF_B = 0x02,
+    /**< Predefined Notification Scheme B. The notification flags equal 0x01234FFF,
+     * meaning that the first notification flag included in the list will be the
+     * FunctionalNotificationFlags followed by NotificationFlags2 to NotificationFlags5. */
+
+    /* 0x03 to 0x80 is Reserved */
+    /* 0x81 to 0xfe is For MSP Requirements */
+    /* 0xff is Reserved */
+};
+
+/**< Notification Flags Order Enumerations. These are the nibble values within
+ * the 32-bit Notification Flag Order field. There are 8 nibbles in total. */
+enum ZbZclMeterNotifFlagsOrderT {
+    ZCL_METER_NOTIF_FO_1 = 0x00, /**< NotificationFlag1 */
+    ZCL_METER_NOTIF_FO_2 = 0x01, /**< NotificationFlag2 */
+    ZCL_METER_NOTIF_FO_3 = 0x02, /**< NotificationFlag3 */
+    ZCL_METER_NOTIF_FO_4 = 0x03, /**< NotificationFlag4 */
+    ZCL_METER_NOTIF_FO_5 = 0x04, /**< NotificationFlag5 */
+    ZCL_METER_NOTIF_FO_6 = 0x05, /**< NotificationFlag6 */
+    ZCL_METER_NOTIF_FO_7 = 0x06, /**< NotificationFlag7 */
+    ZCL_METER_NOTIF_FO_8 = 0x07, /**< NotificationFlag8 */
+    /* 0x08 to 0x0e is Reserved */
+    ZCL_METER_NOTIF_NONE = 0x0f, /**< Blank / No Notification Flag */
+};
+
+/* There can be a maximum of 8 notification flags (NotificationFlag1-8) */
+#define ZCL_METER_NOTIF_FLAGS_MAX                   8U
+
+#define ZCL_METER_BIT_FIELD_ALLOC_MAX_COMMANDS      32U
+
+/**< Bit Field Allocation Command Sub Payload */
+struct ZbZclMeterBitFieldAllocT {
+    uint16_t cluster_id;
+    uint16_t manuf_id;
+    uint8_t num_commands;
+    uint8_t command_ids[ZCL_METER_BIT_FIELD_ALLOC_MAX_COMMANDS];
+};
+
+/** ConfigureMirror command structure (ZCL_METER_SVR_CMD_CONFIGURE_MIRROR) */
+struct ZbZclMeterServerConfigMirrorT {
+    uint32_t issuer_event_id;
+    /**< Issuer Event ID. This should be a UTC Time Stamp value of when the command
+     * was issued. */
+    uint32_t reporting_interval; /**< Reporting Interval */
+    bool mirror_notif_reporting; /**< Mirror Notification Reporting */
+    enum ZbZclMeterNotifSchemesT notif_scheme; /**< Notification Scheme */
+};
+
+/** ConfigureNotificationScheme command structure (ZCL_METER_SVR_CMD_CONFIGURE_NOTIFICATION_SCHEME) */
+struct ZbZclMeterServerConfigNotifSchemeT {
+    uint32_t issuer_event_id; /**< Issuer Event ID */
+    enum ZbZclMeterNotifSchemesT notif_scheme; /**< Notification Scheme */
+    enum ZbZclMeterNotifFlagsOrderT notif_flag_order[8U];
+    /**< Notification Flag Order. This is presented to the application as a list of nibbles,
+     * where the first item in the list is the most-significant nibble of the 32-bit value. */
+};
+
+/** ConfigureNotificationFlags command structure (ZCL_METER_SVR_CMD_CONFIGURE_NOTIFICATION_FLAG) */
+struct ZbZclMeterServerConfigNotifFlagsT {
+    uint32_t issuer_event_id; /**< Issuer Event ID */
+    enum ZbZclMeterNotifSchemesT notif_scheme; /**< Notification Scheme */
+    uint16_t notif_flag_attrid; /**< Notification Flag Attribute ID */
+    struct ZbZclMeterBitFieldAllocT bit_field_alloc; /**< Bit Field Allocation. */
+};
 
 /** Get Profile command structure */
 struct ZbZclMeterClientGetProfileReqT {
@@ -819,6 +943,13 @@ struct ZbZclMeterClientLocalChangeSupplyReqT {
     enum ZbZclMeterSupplyStatusT prop_supply_status; /**< Proposed Supply Status */
 };
 
+/** MirrorReportAttributeResponse Command */
+struct ZbZclMeterClientMirrorReportAttrRspT {
+    enum ZbZclMeterNotifSchemesT notif_scheme; /**< Notification Scheme */
+    uint8_t num_flags;
+    uint32_t notif_flags[ZCL_METER_NOTIF_FLAGS_MAX]; /**< Notification Flags */
+};
+
 /** Metering Server callbacks configuration */
 struct ZbZclMeterServerCallbacksT {
     enum ZclStatusCodeT (*get_profile)(struct ZbZclClusterT *cluster, void *arg,
@@ -826,7 +957,7 @@ struct ZbZclMeterServerCallbacksT {
     /**< Configure callback to handle ZCL_METER_CLI_CMD_GET_PROFILE.
      * In handling of get_profile(), the application should call
      * ZbZclMeterServerSendGetProfileRsp to send the response if successful.
-     * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
+     * Return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
      */
 
     enum ZclStatusCodeT (*get_sampled_data)(struct ZbZclClusterT *cluster, void *arg,
@@ -834,28 +965,19 @@ struct ZbZclMeterServerCallbacksT {
     /**< Configure callback to handle ZCL_METER_CLI_CMD_GET_SAMPLED_DATA.
      * In handling of get_sampled_data(), the application should call
      * ZbZclMeterServerSendGetSampledDataRsp to send the response if successful.
-     * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
+     * Return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
      */
 
     enum ZclStatusCodeT (*local_change_supply)(struct ZbZclClusterT *cluster, void *arg,
         struct ZbZclMeterClientLocalChangeSupplyReqT *req, struct ZbZclAddrInfoT *srcInfo);
     /**< Configure callback to handle ZCL_METER_CLI_CMD_LOCAL_CHANGE_SUPPLY.
-     * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
+     * Return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
      */
 
-    uint16_t (*request_mirror)(void *arg, struct ZbZclClusterT *cluster,
-        struct ZbZclAddrInfoT *srcInfo, struct ZbApsdeDataIndT *dataIndPtr);
-    /**< Configure callback to handle ZCL_METER_CLI_CMD_REQUEST_MIRROR_RESPONSE command.
-     * Callback will register an endpoint for the mirrored metering cluster,
-     * and return the endpoint ID or 0xFFFF on error.
-     */
-
-    uint16_t (*remove_mirror)(void *arg, struct ZbZclClusterT *cluster,
-        struct ZbZclAddrInfoT *srcInfo, struct ZbApsdeDataIndT *dataIndPtr);
-    /**< Configure callback to handle ZCL_METER_CLI_CMD_MIRROR_REMOVED command.
-     * Callback will register an endpoint for the mirrored metering cluster,
-     * and return the endpoint ID or 0xFFFF on error.
-     */
+    enum ZclStatusCodeT (*mirror_report_attr_rsp)(struct ZbZclClusterT *cluster, void *arg,
+        struct ZbZclMeterClientMirrorReportAttrRspT *notify, struct ZbZclAddrInfoT *srcInfo);
+    /**< Configure callback to handle ZCL_METER_CLI_CMD_MIRROR_REPORT_ATTRIBUTE_RESPONSE.
+     * Return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error. */
 
     enum ZclStatusCodeT (*optional)(struct ZbZclClusterT *cluster,
         struct ZbZclHeaderT *zclHdrPtr, struct ZbApsdeDataIndT *dataIndPtr);
@@ -876,6 +998,41 @@ struct ZbZclMeterServerCallbacksT {
  */
 struct ZbZclClusterT * ZbZclMeterServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     struct ZbZclMeterServerCallbacksT *callbacks, void *arg);
+
+/**
+ * Send a Request Mirror Command (ZCL_METER_SVR_CMD_REQUEST_MIRROR)
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination of command. Should be the Coordinator / TC / Comms Hub in this case.
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclMeterServerSendRequestMirror(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
+
+/**
+ * Send a Remove Mirror Command (ZCL_METER_SVR_CMD_REMOVE_MIRROR)
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination of command. Should be the Coordinator / TC / Comms Hub in this case.
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclMeterServerSendRemoveMirror(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
+
+/**
+ * Send a ConfigureMirror Command (ZCL_METER_SVR_CMD_CONFIGURE_MIRROR)
+ * @param cluster Cluster instance from which to send this command
+ * @param dst Destination of command. Should be the Coordinator / TC / Comms Hub in this case.
+ * @param req ConfigureMirror parameters
+ * @param callback Callback function that will be invoked later when the response is received
+ * @param arg Pointer to application data that will later be provided back to the callback function when invoked
+ * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+ */
+enum ZclStatusCodeT ZbZclMeterServerSendConfigMirror(struct ZbZclClusterT *cluster, struct ZbApsAddrT *dst,
+    struct ZbZclMeterServerConfigMirrorT *req,
+    void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
 /**
  * Convert the profile interval period enumerated value to a time in seconds
@@ -927,19 +1084,48 @@ enum ZclStatusCodeT ZbZclMeterServerSendGetSampledDataRsp(struct ZbZclClusterT *
 struct ZbZclClusterT * ZbZclMeterServerMirrorAlloc(struct ZigBeeT *zb, uint8_t endpoint,
     uint64_t mirrorAddr, uint8_t mirrorEndpt);
 
-/**
- * Configure an endpoint to mirror to a destination endpoint
- * @param cluster Cluster instance from which to send this command
- * @param srcExtAddr Source address from where reports originate
- * @param dstEndpoint Destination endpoint to where the report is mirrored
- * @return Void
- */
-void ZbZclMeterServerMirrorConfig(struct ZbZclClusterT *cluster, uint64_t srcExtAddr, uint8_t dstEndpoint);
-
 /* Metering Client */
 
 /** Metering Client callbacks configuration */
 struct ZbZclMeterClientCallbacksT {
+    uint16_t (*request_mirror)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to handle a ZCL_METER_SVR_CMD_REQUEST_MIRROR command.
+     * Callback will create a Meter Server cluster to act as the mirror (ZbZclMeterServerAlloc).
+     * It should also call ZbZclMeterClientMirrorRegister to register the Meter Server with the
+     * client so any ZCL Reports received from the meter will automatically update the local
+     * Meter Server mirror.
+     *
+     * Return value is the endpoint ID, which is typically the same endpoint this local
+     * Meter Client cluster is operating on (ZbZclClusterGetEndpoint), or
+     * ZCL_METER_MIRROR_INVALID_ENDPOINT (0xffff) on error.
+     */
+
+    uint16_t (*remove_mirror)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to handle a ZCL_METER_SVR_CMD_REMOVE_MIRROR command.
+     * Callback will delete the Meter Server cluster that is acting as a mirror (ZbZclClusterFree).
+     * If the Meter Server was previously registered through ZbZclMeterClientMirrorRegister,
+     * this registration will be removed if a valid endpoint ID is returned.
+     *
+     * Return value is the endpoint ID the Mete Server was operating on, or
+     * ZCL_METER_MIRROR_INVALID_ENDPOINT (0xffff) on error.
+     */
+
+    enum ZclStatusCodeT (*config_mirror)(struct ZbZclClusterT *cluster,
+        struct ZbZclMeterServerConfigMirrorT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
+    /**< Callback to handle a ZCL_METER_SVR_CMD_CONFIGURE_MIRROR command. */
+
+#if 0
+    /* Not certifiable (and not supported) */
+    /* enum ZclStatusCodeT (*config_notif_scheme)(struct ZbZclClusterT *cluster,
+          struct ZbZclMeterServerConfigNotifSchemeT *req,
+          struct ZbZclAddrInfoT *srcInfo, void *arg); */
+
+    /* enum ZclStatusCodeT (*config_notif_flags)(struct ZbZclClusterT *cluster,
+        struct ZbZclMeterServerConfigNotifFlagsT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg); */
+#endif
+
     enum ZclStatusCodeT (*optional)(struct ZbZclClusterT *cluster,
         struct ZbZclHeaderT *zclHdrPtr, struct ZbApsdeDataIndT *dataIndPtr);
     /**< Optional commands not parsed into a struct or specific callback. If this is NULL,
@@ -960,6 +1146,18 @@ struct ZbZclClusterT * ZbZclMeterClientAlloc(struct ZigBeeT *zb, uint8_t endpoin
     struct ZbZclMeterClientCallbacksT *callbacks, void *arg);
 
 /**
+ * Register a Meter Server (Mirror) with this client, so any ZCL Attribute Report commands
+ * will update our local Meter Server.
+ * @param cluster Meter Client instance
+ * @param server Meter Server (Mirror) instance
+ * @param rmt_addr The extended address of the remote Meter Server (real meter)
+ * @param rmt_endpoint The source endpoint of the remote Meter Server (real meter)
+ * @return None
+ */
+void ZbZclMeterClientMirrorRegister(struct ZbZclClusterT *cluster, struct ZbZclClusterT *server,
+    uint64_t rmt_addr, uint8_t rmt_endpoint);
+
+/**
  * Send a Get Profile command
  * @param cluster Cluster instance from which to send this command
  * @param dst Destination address for response, including sequence number and tx options
@@ -968,7 +1166,7 @@ struct ZbZclClusterT * ZbZclMeterClientAlloc(struct ZigBeeT *zb, uint8_t endpoin
  * @param arg Pointer to application data that will later be provided back to the callback function when invoked
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-uint8_t ZbZclMeterClientCommandGetProfileReq(struct ZbZclClusterT *cluster,
+enum ZclStatusCodeT ZbZclMeterClientCommandGetProfileReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclMeterClientGetProfileReqT *cmd_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
@@ -981,7 +1179,7 @@ uint8_t ZbZclMeterClientCommandGetProfileReq(struct ZbZclClusterT *cluster,
  * @param arg Pointer to application data that will later be provided back to the callback function when invoked
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-uint8_t ZbZclMeterClientCommandGetSampledDataReq(struct ZbZclClusterT *cluster,
+enum ZclStatusCodeT ZbZclMeterClientCommandGetSampledDataReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclMeterClientGetSampledDataReqT *cmd_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 
@@ -994,7 +1192,7 @@ uint8_t ZbZclMeterClientCommandGetSampledDataReq(struct ZbZclClusterT *cluster,
  * @param arg Pointer to application data that will later be provided back to the callback function when invoked
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-uint8_t ZbZclMeterClientCommandLocalChangeSupplyReq(struct ZbZclClusterT *cluster,
+enum ZclStatusCodeT ZbZclMeterClientCommandLocalChangeSupplyReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclMeterClientLocalChangeSupplyReqT *cmd_req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
 

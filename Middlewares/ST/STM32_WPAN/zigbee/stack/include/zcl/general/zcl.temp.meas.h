@@ -4,7 +4,7 @@
  * @brief ZCL Temperature Measurement cluster header
  * ZCL 7 section 4.4
  * ZCL 8 section 4.4
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_MEASURE_H
@@ -21,12 +21,12 @@
  * TM.S.A0002 | MaxMeasuredValue | True
  * TM.S.A0003 | Tolerance | True | Optional
  * TM.S.Afffd | ClusterRevision | True
- * TM.S.Afffe | AttributeReportingStatus | False
+ * TM.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * TM.C.A0000.Report.Rsp | MeasuredValue | False
  * TM.C.Afffd | ClusterRevision | True
- * TM.C.Afffe | AttributeReportingStatus | False
+ * TM.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

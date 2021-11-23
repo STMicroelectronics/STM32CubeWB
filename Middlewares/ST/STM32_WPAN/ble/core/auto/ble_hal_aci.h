@@ -1,20 +1,19 @@
-/******************************************************************************
+/*****************************************************************************
  * @file    ble_hal_aci.h
  * @author  MCD
  * @brief   STM32WB BLE API (hal_aci)
  *          Auto-generated file: do not edit!
- ******************************************************************************
+ *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
- ******************************************************************************
+ *****************************************************************************
  */
 
 #ifndef BLE_HAL_ACI_H__
@@ -49,8 +48,10 @@ tBleStatus aci_hal_get_fw_build_number( uint16_t* Build_Number );
  *          Encryption root key used to derive LTK and CSRK; 16 bytes
  *        - 0x18: CONFIG_DATA_IR_OFFSET;
  *          Identity root key used to derive LTK and CSRK; 16 bytes
- *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_WR;
+ *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_OFFSET;
  *          Static Random Address; 6 bytes
+ *        - 0xB0: CONFIG_DATA_SMP_MODE_OFFSET;
+ *          SMP mode (0: normal, 1:bypass); 1 byte
  * @param Length Length of data to be written
  * @param Value Data to be written
  * @return Value indicating success or error code.
@@ -73,7 +74,7 @@ tBleStatus aci_hal_write_config_data( uint8_t Offset,
  *          Encryption root key used to derive LTK and CSRK; 16 bytes
  *        - 0x18: CONFIG_DATA_IR_OFFSET
  *          Identity root key used to derive LTK and CSRK; 16 bytes
- *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_WR;
+ *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_OFFSET;
  *          Static Random Address; 6 bytes
  * @param[out] Data_Length Length of Data in octets
  * @param[out] Data Data field associated with Offset parameter

@@ -11,19 +11,19 @@
   *          using a centralized network.
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
 
 @par Application Description
 
-How to use Finding and Binding on a centralized Zigbee network.
+How to use the Finding and Binding feature on a device using IAS cluster, acting as a Client with Router role within a Centralized Zigbee network.
 
 The purpose of this application is to show how Finding and Binding (F&B) works on a Zigbee centralized network.
 This will demonstrate how F&B initiator will automatically create bindings to bindable clusters on the
@@ -242,7 +242,7 @@ On ZC, the user can press the following button at any time after successful netw
 NOTE: This command will fail unless the messaging server is bound to a client.
 
 *Step 6*
-Via application specific means, ZR2 will â€œknowâ€� that it has successfully performed F&B from previous steps.
+Via application specific means, ZR2 will â€œknowâ€? that it has successfully performed F&B from previous steps.
 Pressing BUTTON 3 again will allocate the ZCL IAS Warning Device Server cluster on endpoint 12, and will re-perform Finding and Binding as an Initiator.
 The GREEN LED will stay on if the F&B procedure is successful.
 Otherwise the GREEN LED will turn off, and the user can press BUTTON 3 again to reattempt F&B.

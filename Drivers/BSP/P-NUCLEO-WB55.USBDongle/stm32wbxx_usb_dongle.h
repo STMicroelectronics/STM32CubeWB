@@ -16,8 +16,8 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  */ 
-  
+  */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32WBXX_USB_DONGLE_H
 #define __STM32WBXX_USB_DONGLE_H
@@ -53,27 +53,27 @@ typedef enum
 }Led_TypeDef;
 
 typedef enum 
-{  
+{
   BUTTON_SW1 = 0
 }Button_TypeDef;
 
 typedef enum 
-{  
+{
   BUTTON_MODE_GPIO = 0,
   BUTTON_MODE_EXTI = 1
 }ButtonMode_TypeDef;
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup STM32WBXX_USB_DONGLE_Exported_Constants Exported Constants
   * @{
   */ 
 
-/** 
+/**
   * @brief Define for STM32WBXX_USB_DONGLE board  
-  */ 
+  */
 #if !defined (USE_STM32WBXX_USB_DONGLE)
  #define USE_STM32WBXX_USB_DONGLE
 #endif
@@ -107,11 +107,11 @@ typedef enum
                                                 if ((__INDEX__) == LED3) LED3_GPIO_CLK_DISABLE();} while(0)
 /**
   * @}
-  */ 
-  
+  */
+
 /** @defgroup STM32WBXX_USB_DONGLE_BUTTON BUTTON Constants
   * @{
-  */  
+  */
 #define BUTTONn                                 1
 
 /**
@@ -142,7 +142,7 @@ typedef enum
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
@@ -151,7 +151,7 @@ typedef enum
 
 /** @addtogroup STM32WBXX_USB_DONGLE_Exported_Functions
   * @{
-  */  
+  */
 uint32_t         BSP_GetVersion(void);  
 
 /** @addtogroup STM32WBXX_USB_DONGLE_LED_Functions
@@ -174,11 +174,11 @@ void             BSP_PB_DeInit(Button_TypeDef Button);
 uint32_t         BSP_PB_GetState(Button_TypeDef Button);
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
@@ -193,5 +193,3 @@ uint32_t         BSP_PB_GetState(Button_TypeDef Button);
 #endif
 
 #endif /* __STM32WBXX_USB_DONGLE_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -8,6 +8,8 @@
 #ifndef ZIGBEE_NWK_H
 # define ZIGBEE_NWK_H
 
+/*lint -e621 "Identifier clash [MISRA Rule 5.1 (REQUIRED), MISRA Rule 5.2 (REQUIRED), MISRA Rule 5.4 (REQUIRED), MISRA Rule 5.5 (REQUIRED)]" */
+
 /*---------------------------------------------------------------
  * Misc. Definitions and Structures
  *---------------------------------------------------------------
@@ -23,6 +25,11 @@
 #define ZB_NWK_ADDR_USE_EXT                         (uint16_t)0xfffeU /* IEEE802154_ADDR_SHORT_NONE */
 #define ZB_NWK_ADDR_BCAST_ALL                       (uint16_t)0xffffU /* IEEE802154_ADDR_SHORT_BCAST */
 #define ZB_NWK_ADDR_UNDEFINED                       (uint16_t)0xffffU /* IEEE802154_ADDR_SHORT_BCAST */
+
+/* Default delay to wait before generating a response or performing some other
+ * task to allow the stack to send an APS ACK first, if required, or prevent
+ * other contention on the RF due to simultaneous bi-directional Zigbee traffic. */
+#define ZB_NWK_RSP_DELAY_DEFAULT                    200U /* ms */
 
 /* ZigBee Stack Profiles (StackProfile or nwkStackProfile) */
 enum {
@@ -141,7 +148,6 @@ enum ZbNwkNibAttrIdT {
      * subsequent packets will use the better route. */
     ZB_NWK_NIB_ID_RouteDiscoverySendDelay,
     ZB_NWK_NIB_ID_FastPollPeriod, /* Only used as sleepy end devices to set the fast polling inverval. */
-    ZB_NWK_NIB_ID_SlowPollPeriod,
     ZB_NWK_NIB_ID_FrameCounterCooldown, /* Cooldown timer (in seconds) to apply to frame counter resets. */
     ZB_NWK_NIB_ID_OutgoingCounter, /* Global outgoing frame counter. */
     ZB_NWK_NIB_ID_PersistCounter, /* Persisted outgoing frame counter. */
@@ -200,9 +206,6 @@ enum WpanJoinPolicyT {
 #define ZB_NWK_LINK_COST_MAX                        7U
 
 /* NWK Constants */
-#if 0 /* not used */
-#define ZB_NWK_CONST_COORDINATOR_CAPABLE            true
-#endif
 #define ZB_NWK_CONST_SECURITY_LEVEL                 0x05U
 #define ZB_NWK_CONST_DISCOVERY_RETRY_LIMIT          0x03U
 #define ZB_NWK_CONST_MAX_DEPTH                      0x0fU
@@ -334,7 +337,6 @@ struct ZbNwkNeighborT {
     uint16_t nwkAddr; /* Set to ZB_NWK_ADDR_UNDEFINED to invalidate entry */
     uint8_t capability;
     enum ZbNwkNeighborTypeT deviceType;
-    bool rxOnWhenIdle; /* EXEGIN - why not just use capability? */
     enum ZbNwkNeighborRelT relationship;
     uint8_t txFailure;
     uint8_t lqi; /* Average LQI. */
@@ -342,7 +344,7 @@ struct ZbNwkNeighborT {
     uint8_t outgoingCost; /* ZigBee 2007. */
     uint8_t age; /* ZigBee 2007. */
     uint8_t interval; /* R21 draft. */
-    ZbUptimeT timeout; /* R21 draft. Disabled if zero. */
+    ZbUptimeT timeout; /* R21 draft. End-device keep-alive timeout. Disabled if zero. */
     uint8_t ifc_index; /* R22 - set to ZB_NWK_NEIGHBOR_IFINDEX_UNKNOWN if not known (e.g. after persistence) */
 };
 
@@ -794,12 +796,13 @@ enum ZbStatusCodeT ZbNwkSetIndex(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId
  *---------------------------------------------------------------
  */
 unsigned int ZbNwkAddrMapFreeSpace(struct ZigBeeT *zb);
-bool ZbNwkAddrStoreMap(struct ZigBeeT *zb, uint16_t nwkAddr, uint64_t extAddr, bool resolve_conflict);
+bool ZbNwkAddrStoreMap(struct ZigBeeT *zb, uint16_t nwkAddr, uint64_t extAddr, bool resolve_now);
 void ZbNwkAddrClearMap(struct ZigBeeT *zb, bool isShortAddr, uint64_t addr);
 
 /* Returns the network address that corresponds to the extended address
  * if known, otherwise returns ZB_NWK_ADDR_UNDEFINED. */
 uint16_t ZbNwkAddrLookupNwk(struct ZigBeeT *zb, uint64_t extAddr);
+
 /* Returns the extended address that corresponds to the network address
  * if known, otherwise returns 0. */
 uint64_t ZbNwkAddrLookupExt(struct ZigBeeT *zb, uint16_t nwkAddr);
@@ -831,13 +834,38 @@ void ZbNwkNeighborClearAll(struct ZigBeeT *zb, bool keep_parent, bool keep_child
  * Fast Polling
  *---------------------------------------------------------------
  */
+/* NLME-SYNC.request parent polling */
 
 /* The default delay before sending the first NLME-SYNC */
 #define ZB_NWK_SYNC_DEFAULT_DELAY_MS        50U
 
-/* NLME-SYNC.request parent polling */
-bool ZB_WARN_UNUSED ZbNwkFastPollRequest(struct ZigBeeT *zb);
-bool ZbNwkFastPollRelease(struct ZigBeeT *zb);
+/**
+ * Make the stack begin (or continue) fast polling. Fast polling period is defined by
+ * ZB_NWK_NIB_ID_FastPollPeriod.
+ * @param zb Zigbee instance
+ * @param delay Delay in milliseconds before sending the first NLME-SYNC
+ * (e.g. ZB_NWK_SYNC_DEFAULT_DELAY_MS)
+ * @param timeout Timeout in milliseconds for this fast polling interval. If 0,
+ * then interval is indefinite and only stopped by calling ZbNwkFastPollRelease
+ * @return Fast polling entry pointer, to be used as a handle to track this polling request.
+ */
+struct nwk_fastpoll_entry_t * ZbNwkFastPollRequest(struct ZigBeeT *zb,
+    unsigned int delay, unsigned int timeout);
+
+/**
+ * Release a fast polling request. If this is the last fast polling request, then
+ * fast polling will be stopped.
+ * @param zb Zigbee instance
+ * @param entry Fast polling entry pointer (handle) returned by ZbNwkFastPollRequest
+ * @return True if found and removed, false otherwise.
+ */
+bool ZbNwkFastPollRelease(struct ZigBeeT *zb, struct nwk_fastpoll_entry_t *handle);
+
+/**
+ * Get the current number of fast polling requests to the stack.
+ * @param zb Zigbee instance
+ * @return Number of outstanding fast polling requests.
+ */
 unsigned int ZbNwkFastPollResourceCount(struct ZigBeeT *zb);
 
 /*---------------------------------------------------------------

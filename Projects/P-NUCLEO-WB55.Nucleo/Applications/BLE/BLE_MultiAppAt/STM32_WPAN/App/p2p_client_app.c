@@ -1,22 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
+  ******************************************************************************
  * @file    p2p_server_app.c
  * @author  MCD Application Team
  * @brief   peer to peer Server Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -125,7 +124,7 @@ typedef struct{
 typedef struct
 {
 
-  uint8_t       Notification_Status; /* used to chek if P2P Server is enabled to Notify */
+  uint8_t       Notification_Status; /* used to check if P2P Server is enabled to Notify */
 
   P2P_LedCharValue_t         LedControl;
   P2P_ButtonCharValue_t      ButtonStatus;
@@ -360,7 +359,7 @@ static SVCCTL_EvtAckStatus_t Event_Handler(void *Event)
              * 2bytes start handle
              * 2bytes end handle
              * 2 or 16 bytes data
-             * we are intersted only if the UUID is 16 bit.
+             * we are interested only if the UUID is 16 bit.
              * So check if the data length is 6
              */
 #if (UUID_128BIT_FORMAT==1)           
@@ -758,7 +757,7 @@ void Update_Service()
                                           aP2PClientContext[index].P2PServiceEndHandle);
 
         break;
-      case APP_BLE_DISCOVER_WRITE_DESC: /* Not Used - No decriptor */
+      case APP_BLE_DISCOVER_WRITE_DESC: /* Not Used - No descriptor */
         APP_DBG_MSG("* GATT : Discover Descriptor of TX - Write Characteritic\n");
         aci_gatt_disc_all_char_desc(aP2PClientContext[index].connHandle,
                                     aP2PClientContext[index].P2PWriteToServerCharHdle,
@@ -802,5 +801,3 @@ void Update_Service()
   return;
 }
 /* USER CODE END LF */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

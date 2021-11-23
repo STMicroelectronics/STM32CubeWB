@@ -144,7 +144,7 @@ typedef struct
   */
 #define STM32WB5MM_DK_BSP_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define STM32WB5MM_DK_BSP_VERSION_SUB1   (0x00U) /*!< [23:16] sub1 version */
-#define STM32WB5MM_DK_BSP_VERSION_SUB2   (0x01U) /*!< [15:8]  sub2 version */
+#define STM32WB5MM_DK_BSP_VERSION_SUB2   (0x02U) /*!< [15:8]  sub2 version */
 #define STM32WB5MM_DK_BSP_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define STM32WB5MM_DK_BSP_VERSION    ((STM32WB5MM_DK_BSP_VERSION_MAIN << 24U)\
                                             |(STM32WB5MM_DK_BSP_VERSION_SUB1 << 16U)\
@@ -248,21 +248,21 @@ typedef struct
   */
 #define COMn                              1U
 
-#define COM1_UART                             LPUART1
-#define COM1_CLK_ENABLE()                     __HAL_RCC_LPUART1_CLK_ENABLE()
-#define COM1_CLK_DISABLE()                    __HAL_RCC_LPUART1_CLK_DISABLE()
+#define COM1_UART                             USART1
+#define COM1_CLK_ENABLE()                     __HAL_RCC_USART1_CLK_ENABLE()
+#define COM1_CLK_DISABLE()                    __HAL_RCC_USART1_CLK_DISABLE()
 
-#define COM1_TX_PIN                           GPIO_PIN_2
-#define COM1_TX_GPIO_PORT                     GPIOA
-#define COM1_TX_GPIO_CLK_ENABLE()             __HAL_RCC_GPIOA_CLK_ENABLE()
-#define COM1_TX_GPIO_CLK_DISABLE()            __HAL_RCC_GPIOA_CLK_DISABLE()
-#define COM1_TX_AF                            GPIO_AF8_LPUART1
+#define COM1_TX_PIN                           GPIO_PIN_6
+#define COM1_TX_GPIO_PORT                     GPIOB
+#define COM1_TX_GPIO_CLK_ENABLE()             __HAL_RCC_GPIOB_CLK_ENABLE()
+#define COM1_TX_GPIO_CLK_DISABLE()            __HAL_RCC_GPIOB_CLK_DISABLE()
+#define COM1_TX_AF                            GPIO_AF7_USART1
 
-#define COM1_RX_PIN                           GPIO_PIN_3
-#define COM1_RX_GPIO_PORT                     GPIOA
-#define COM1_RX_GPIO_CLK_ENABLE()             __HAL_RCC_GPIOA_CLK_ENABLE()
-#define COM1_RX_GPIO_CLK_DISABLE()            __HAL_RCC_GPIOA_CLK_DISABLE()
-#define COM1_RX_AF                            GPIO_AF8_LPUART1
+#define COM1_RX_PIN                           GPIO_PIN_7
+#define COM1_RX_GPIO_PORT                     GPIOB
+#define COM1_RX_GPIO_CLK_ENABLE()             __HAL_RCC_GPIOB_CLK_ENABLE()
+#define COM1_RX_GPIO_CLK_DISABLE()            __HAL_RCC_GPIOB_CLK_DISABLE()
+#define COM1_RX_AF                            GPIO_AF7_USART1
 #define COM_POLL_TIMEOUT                      1000
 
 #define MX_UART_InitTypeDef COM_InitTypeDef
@@ -366,5 +366,3 @@ HAL_StatusTypeDef MX_LPUART1_Init(UART_HandleTypeDef *huart, MX_UART_InitTypeDef
 #endif
 
 #endif /* STM32WB5MM_DK_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

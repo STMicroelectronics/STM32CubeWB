@@ -4,7 +4,7 @@
  * @brief ZCL Poll Control cluster header
  * ZCL 7 section 3.16
  * ZCL 8 section 3.16
- * @copyright Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_POLL_CONTROL_H
@@ -23,7 +23,7 @@
  * POLL.S.A0005 | LongPollIntervalMin | True | Optional
  * POLL.S.A0006 | FastPollTimeoutMax | True | Optional
  * POLL.S.AFFFD | ClusterRevision | True
- * POLL.S.AFFFE | AttributeReportingStatus | False
+ * POLL.S.AFFFE | AttributeReportingStatus | True
  *
  * Commands Received
  * POLL.S.C00.Rsp | Check-in Response | True
@@ -36,7 +36,7 @@
  *
  * Client Attributes
  * POLL.C.AFFFD | ClusterRevision | True
- * POLL.C.AFFFE | AttributeReportingStatus | False
+ * POLL.C.AFFFE | AttributeReportingStatus | True
  *
  * Commands Received
  * POLL.C.C00.Rsp | Check-in | True

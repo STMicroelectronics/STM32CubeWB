@@ -1,22 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
+  ******************************************************************************
  * @file    app_vl53l0x.c
  * @author  MCD Application Team
  * @brief   Proximity Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -32,10 +31,6 @@
 #define DISTANCE_MAX_PROXIMITY        2000  /* 2m */
 
 #define PROXIMITY_I2C_ADDRESS            0x53U
-#define VL53L0X_XSHUT_PIN                GPIO_PIN_6
-#define VL53L0X_XSHUT_GPIO_PORT          GPIOB
-#define VL53L0X_XSHUT_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOB_CLK_ENABLE()
-#define VL53L0X_XSHUT_GPIO_CLK_DISABLE() __HAL_RCC_GPIOB_CLK_DISABLE()
 
 /* Private variables ---------------------------------------------------------*/   
 
@@ -50,7 +45,6 @@ uint8_t VL53L0X_PROXIMITY_Update_Timer_Id;
 
 /* Private function prototypes -----------------------------------------------*/
 static void VL53L0X_PROXIMITY_Update_Timer_Callback(void);
-static void VL53L0X_PROXIMITY_MspInit(void);
 
 /**
   * @brief  VL53L0X proximity sensor Initialization.
@@ -62,7 +56,6 @@ void VL53L0X_PROXIMITY_Init(void)
   
   /* Initialize IO interface */
   STM32WB5MM_DK_I2C_Init();
-  VL53L0X_PROXIMITY_MspInit();
   
   memset(&VL53L0X_DeviceInfo, 0, sizeof(VL53L0X_DeviceInfo_t));
   
@@ -157,26 +150,5 @@ void VL53L0X_PROXIMITY_PrintValue(void){
         UTIL_LCD_DisplayStringAtLine(2,(uint8_t*)"Distance > 200 cm");
       }
       BSP_LCD_Refresh(0);
-}
-
-/**
-  * @brief  VL53L0X proximity sensor Msp Initialization.
-  */
-static void VL53L0X_PROXIMITY_MspInit(void)
-{
-  GPIO_InitTypeDef gpio_config = {0};
-  
-  VL53L0X_XSHUT_GPIO_CLK_ENABLE();
-  
-  /* Configure GPIO pin : VL53L0X_XSHUT_PIN */
-  gpio_config.Pin   = VL53L0X_XSHUT_PIN;
-  gpio_config.Mode  = GPIO_MODE_OUTPUT_PP;
-  gpio_config.Pull  = GPIO_PULLUP;
-  gpio_config.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(VL53L0X_XSHUT_GPIO_PORT, &gpio_config);
-  
-  HAL_GPIO_WritePin(VL53L0X_XSHUT_GPIO_PORT, VL53L0X_XSHUT_PIN, GPIO_PIN_SET);
-  
-  HAL_Delay(1000);  
 }
 

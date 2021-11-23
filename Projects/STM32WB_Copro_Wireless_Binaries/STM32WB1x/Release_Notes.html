@@ -121,6 +121,14 @@
 <li>HCI Layer only mode 5.2 certified : Link Layer, HCI with Direct Test Mode</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
 </ul></li>
+<li>stm32wb1x_Safeboot_fw.bin
+<ul>
+<li>Safeboot is an independent part of the FUS that manages specifically one case: option bytes corruption.</li>
+<li>When option bytes are corrupted, the STM32WB hardware forces the boot to safeboot whatever the running firmware.</li>
+<li>The safeboot performs a factory reset (on FUS versions V1.1.0 and higher) which means the wireless stack is removed if any and the Cortex®-M4 code is erased and boot is reset to FUS (virgin part state).</li>
+<li>This operation is also not reversible. In order to activate the Safeboot, the user must activate Cortex®-M0+ by writing the value 0x00008000 at the address 0x5800040C using the SWD interface.</li>
+<li>If a FUS version lower than V1.1.0 is running, then, no recovery is possible at this point.</li>
+</ul></li>
 </ul>
 <p><mark>How to flash the Wireless Coprocessor Binary via SWD/JTAG by ST-LINK (STM32CubeProgrammer GUI)</mark></p>
 <ul>
@@ -141,9 +149,14 @@
 <li>in ST-LINK configuration: (Port: SWD) then select “Connect”</li>
 </ul></li>
 <li><p>STEP 3: select “Start FUS” in Firmware Upgrade Services</p></li>
-<li><p>STEP 4: Download new wireless stack (after “FW Delete” if requested)</p>
+<li><p>STEP 4: Download latest Safeboot (Optional)</p>
 <ul>
-<li>in Firmware Upgrade Service: (File Path: [Wireless_Coprocessor_Binary], Start Adress: [Install@])</li>
+<li>in Firmware Upgrade Service: (File Path: [Safeboot_Binary], Start Address: [Install@])</li>
+<li>then select “Firmware Upgrade” Please check <strong>Firmware Safeboot Binary Table</strong> for Install@ parameter depending of the binary.</li>
+</ul></li>
+<li><p>STEP 5: Download new wireless stack (after “FW Delete” if requested)</p>
+<ul>
+<li>in Firmware Upgrade Service: (File Path: [Wireless_Coprocessor_Binary], Start Address: [Install@])</li>
 <li>then select “Firmware Upgrade” (with “Verify download” and “Start stack after upgrade”) Please check <strong>Firmware Upgrade Services Binary Table</strong> for Install@ parameter depending of the binary. (<strong>optional</strong>: activate “Anti-Rollback” on downloaded binary) If you need to perform FUS related manipulations, you always need to START the FUS in case the FUS is not running.</li>
 </ul></li>
 </ul>
@@ -159,9 +172,118 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="false">V1.12.1 / 12-July-2021</label>
+<input type="checkbox" id="collapse-section5" checked aria-hidden="true"> <label for="collapse-section5" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE:
+<ul>
+<li>BLE Multi link connection</li>
+<li>The command “ACI_GAP_START_NAME_DISCOVERY_PROC” is deprecated</li>
+<li>Configurable RX AGC settings</li>
+<li>ID 97519 : When SRAM2 parity check is enabled, the NMI is triggered as soon as BLE is started</li>
+<li>ID 108789 : ACI_GAP_START_NAME_DISCOVERY_PROC command is deprecated</li>
+<li>ID 109676 : New HCI error status overlap with ACI error status<br />
+</li>
+<li>ID 111208 : Support Dory Cut2.1 in parallel to Cut2.2 with new SHCI_C2_CONFIG parameter.</li>
+<li>ID 111218 : STM32WB: potential issue with NVM RAM data not properly bounded<br />
+</li>
+<li>ID 111277 : SHCI event parsing function improved in WPAN examples  <br />
+</li>
+<li>ID 111509 : HCI/CCO/BI-40-C [LE Set Data Length, Invalid Parameters]</li>
+<li>ID 111513 : HCI/CCO/BI-43-C [LE Read Channel Map – Reject Invalid Handle]</li>
+<li>ID 111516 : LL/CON/ADV/BI-02 - LL/CON/INI/BI-03 FAIL no duplicate connection allowed</li>
+<li>ID 111522 : LL/CON/PER/BI-18 - LL_PHY_UPDATE_IND from remote with coded_phy</li>
+<li>ID 111749 : LL/DDI/ADV/BI_07 Connection request invalid Hop increment</li>
+<li>ID 111756 : LL/CON/CEN/BI_11 FAIL should not respond twice to LL_VERSION_IND</li>
+<li>ID 112402 : Implement SMP bypass controlled vis config data command</li>
+<li>ID 112560 : STM32WB-BLE: potential issue in SMP process handling RX data</li>
+<li>ID 113007 : add new parameter “rx_model_config” used for RSSI/AGC-LUT selection in SHCI_C2_Ble_Init() interface</li>
+<li>ID 113942 : SMP PTS test SM_CEN_JW_BV-05 no more passing due to blacklist device</li>
+<li>ID 114233 : Low power issue correction after stopping Advertising</li>
+<li>ID 115162 : OTA procedure not completed properly</li>
+</ul>
+[specific WB1xx]
+<ul>
+<li>ID 108966 : The CKS support shall be removed on STM32wb15xx with compilation flag: NO_CKS_LIB</li>
+<li>ID 114647 : BLE MESH crashes when using AES HW IP [only for STM32 WB15]</li>
+</ul></li>
+<li>Safeboot:
+<ul>
+<li>Adding new binary: stm32wb1x_Safeboot_fw.bin
+<ul>
+<li>This binary is intended to be installed in order to update the safeboot part.</li>
+<li>This binary is intended only for FUS versions V1.1.0 and higher.</li>
+<li>Safeboot upgrade is optional.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCILayer_fw.bin</td>
+<td>0x0802F000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x0803E000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_LLD_fw.bin</td>
+<td>0x0803F800</td>
+<td>V1.12.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_Stack_basic_fw.bin</td>
+<td>0x08023000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_full_fw.bin</td>
+<td>0x08019000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_Stack_light_fw.bin</td>
+<td>0x08029000</td>
+<td>V1.13.0<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Firmware Safeboot Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 4” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_Safeboot_fw.bin</td>
+<td>0x080<strong>44</strong>000</td>
+<td>V2.0.0<span class="icon-st-add"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="false">V1.12.1 / 12-July-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -223,7 +345,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -303,7 +425,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="false">V1.11.1 / 23-March-2021</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -313,7 +435,7 @@
 <li>ID 99680 : 2nd link secure fail if master database is clear during 1st link connection</li>
 <li>ID 101346 : ACI_GAP_BOND_LOST_Event timeout does not work if ALLOW rebond not sent</li>
 <li>ID 101921 : PTS issue ticket done CASE0070853: destination channel ID value above 1000 should be allowed and test passed</li>
-<li>ID 94289 ,ID 102395 ,ID 100425 : BLE_Ota application improvments (SBSFU ready, Flash driver use, SEM7 flash activity control)</li>
+<li>ID 94289 ,ID 102395 ,ID 100425 : BLE_Ota application improvements (SBSFU ready, Flash driver use, SEM7 flash activity control)</li>
 </ul></li>
 <li>install address updated</li>
 </ul>
@@ -365,7 +487,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="false">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of the binaries.</li>

@@ -68,7 +68,7 @@ typedef struct
   uint32_t                    Size;                /* Audio IN record buffer size    */
   uint32_t                    Volume;              /* Audio IN volume                */
   uint32_t                    State;               /* Audio IN State                 */
-  uint32_t                    IsMspCallbacksValid; /* Is Msp Callbacks registred     */
+  uint32_t                    IsMspCallbacksValid; /* Is Msp Callbacks registered     */
   uint32_t DecimationFactor;
 }AUDIO_IN_Ctx_t;
 
@@ -82,7 +82,7 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup STM32WB5MM_DK_AUDIO_Exported_Constants STM32WB5MM_DK AUDIO Exported Constants
   * @{
@@ -261,5 +261,3 @@ HAL_StatusTypeDef MX_SAI1_Block_A_Init(SAI_HandleTypeDef* hsai,uint32_t PDM_FREQ
 #endif
 
 #endif /* STM32WB5MM_DK_AUDIO_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

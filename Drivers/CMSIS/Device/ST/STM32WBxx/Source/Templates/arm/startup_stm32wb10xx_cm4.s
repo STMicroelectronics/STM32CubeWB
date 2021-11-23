@@ -84,7 +84,7 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
         DCD     EXTI0_IRQHandler                  ; EXTI Line 0 Interrupt
         DCD     EXTI1_IRQHandler                  ; EXTI Line 1 Interrupt
         DCD     EXTI2_IRQHandler                  ; EXTI Line 2 Interrupt
-        DCD     EXTI3_IRQHandler                  ; EXTI Line 3 Interrup
+        DCD     EXTI3_IRQHandler                  ; EXTI Line 3 Interrupt
         DCD     EXTI4_IRQHandler                  ; EXTI Line 4 Interrupt
         DCD     DMA1_Channel1_IRQHandler          ; DMA1 Channel 1 Interrupt
         DCD     DMA1_Channel2_IRQHandler          ; DMA1 Channel 2 Interrupt
@@ -329,4 +329,3 @@ __user_initial_stackheap
 
                  END
 
-;************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE*****

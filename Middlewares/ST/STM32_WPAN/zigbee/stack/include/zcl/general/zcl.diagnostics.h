@@ -4,7 +4,7 @@
  * @brief ZCL Diagnostics cluster header
  * ZCL 7 section 3.15
  * ZCL 8 section 3.15
- * @copyright Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_DIAGNOSTICS_H
@@ -56,13 +56,14 @@
  * DIAG.S.A011c | LastMessageLQI | True | Optional
  * DIAG.S.A011d | LastMessageRSSI | True | Optional
  * DIAG.S.Afffd | ClusterRevision | True
- * DIAG.S.Afffe | AttributeReportingStatus | False
+ * DIAG.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * DIAG.C.Afffd | ClusterRevision | True
- * DIAG.C.Afffe | AttributeReportingStatus | False
+ * DIAG.C.Afffe | AttributeReportingStatus | True
  */
 
+/*lint -save -e621 "Identifier clash (symbol 'ZCL_DIAG_SVR_ATTR_APS_TX_UCAST_FAIL' [MISRA Rule 5.1 REQUIRED, MISRA Rule 5.2 REQUIRED, MISRA Rule 5.4 REQUIRED, MISRA Rule 5.5 REQUIRED]" */
 /** Diagnostics Server Attribute IDs */
 enum ZbZclDiagSvrAttrT {
     ZCL_DIAG_SVR_ATTR_RESETS = 0x0000, /**< NumberOfResets (Optional) */
@@ -96,8 +97,9 @@ enum ZbZclDiagSvrAttrT {
     ZCL_DIAG_SVR_ATTR_PACKET_VAL_DROP_COUNT = 0x011a, /**< PacketValidatedropcount (Optional) */
     ZCL_DIAG_SVR_ATTR_AVG_MAC_RETRY_PER_APS_MSG = 0x011b, /**< AverageMACRetryPerAPSMessageSent (Optional) */
     ZCL_DIAG_SVR_ATTR_LAST_MSG_LQI = 0x011c, /**< LastMessageLQI (Optional) */
-    ZCL_DIAG_SVR_ATTR_LAST_MSG_RSSI = 0x011d, /**< LastMessageRSSI (Optional) */
+    ZCL_DIAG_SVR_ATTR_LAST_MSG_RSSI = 0x011d /**< LastMessageRSSI (Optional) */
 };
+/*lint -restore */
 
 /*---------------------------------------------------------------
  * Diagnostics Client

@@ -4,7 +4,7 @@
  * @brief ZCL Dehumidification Control cluster header
  * ZCL 7 section 6.5
  * ZCL 8 section 6.5
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_DEHUM_CTRL_H
@@ -26,12 +26,12 @@
  * DHUM.S.A0014 | DehumidificationMaxCool | True
  * DHUM.S.A0015 | RelativeHumidityDisplay | False | Optional
  * DHUM.S.Afffd | ClusterRevision | True
- * DHUM.S.Afffe | AttributeReportingStatus | False
+ * DHUM.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * DHUM.C.A0001.Report.Tx | DehumidificationCooling | False
  * DHUM.C.Afffd | ClusterRevision | True
- * DHUM.C.Afffe | AttributeReportingStatus | False
+ * DHUM.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

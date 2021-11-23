@@ -4,7 +4,7 @@
  * @brief ZCL Nearest Gateway cluster header
  * ZCL 7 section 14.5
  * ZCL 8 section 14.5
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_NEAREST_GW_H
@@ -19,11 +19,11 @@
  * NEARGW.S.A0000 | Nearest Gateway | True
  * NEARGW.S.A0001 | New Mobile Node | True
  * NEARGW.S.Afffd | ClusterRevision | True
- * NEARGW.S.Afffe | AttributeReportingStatus | False
+ * NEARGW.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * NEARGW.C.Afffd | ClusterRevision | True
- * NEARGW.C.Afffe | AttributeReportingStatus | False
+ * NEARGW.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

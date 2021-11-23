@@ -5,15 +5,14 @@
  *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
- ******************************************************************************
+ *****************************************************************************
  */
 
 #ifndef BLE_DEFS_H__
@@ -195,49 +194,6 @@
  */
 #define BLE_STATUS_SUCCESS                              0x00U
 
-/* The Connection Identifier does not exist at SMP level.
- */
-#define BLE_STATUS_UNKNOWN_CONNECTION_ID                0x40U
-
-/* The Host failed while performing the requested operation.
- */
-#define BLE_STATUS_FAILED                               0x41U
-
-/* Invalid parameters in Host commands
- */
-#define BLE_STATUS_INVALID_PARAMS                       0x42U
-
-/* The Host is already processing another request received in advance.
- */
-#define BLE_STATUS_BUSY                                 0x43U
-
-/* The operation requested cannot be completed immediately by the Host
- * (usually because of lack of resources). 
- * The operation is generally put on hold by the caller and it's usually 
- * retried on later time.
- */
-#define BLE_STATUS_PENDING                              0x45U
-
-/* The requested operation cannot be performed by the Host in the current
- * status.
- */
-#define BLE_STATUS_NOT_ALLOWED                          0x46U
-
-/* The requested operation violates the logic of the called layer/function or
- * the format of the data to be processed during the operation.
- */
-#define BLE_STATUS_ERROR                                0x47U
-
-/* The requested operation failed because of lack of memory.
- * Out of memory shall be returned for situations where memory will never 
- * become available again (e.g. ATT database)
- */
-#define BLE_STATUS_OUT_OF_MEMORY                        0x48U
-
-/* An invalid L2CAP CID/channel has been selected to send data over.
- */
-#define BLE_STATUS_INVALID_CID                          0x50U
-
 /* The remote device in in the Blacklist and the pairing operation it requested
  * cannot be performed.
  */
@@ -333,6 +289,36 @@
  * requested slot length.
  */
 #define BLE_STATUS_LENGTH_FAILED                        0x86U
+
+/* The Host failed while performing the requested operation.
+ */
+#define BLE_STATUS_FAILED                               0x91U
+
+/* Invalid parameters in Host commands
+ */
+#define BLE_STATUS_INVALID_PARAMS                       0x92U
+
+/* The Host is already processing another request received in advance.
+ */
+#define BLE_STATUS_BUSY                                 0x93U
+
+/* The operation requested cannot be completed immediately by the Host
+ * (usually because of lack of resources). 
+ * The operation is generally put on hold by the caller and it's usually 
+ * retried on later time.
+ */
+#define BLE_STATUS_PENDING                              0x95U
+
+/* The requested operation violates the logic of the called layer/function or
+ * the format of the data to be processed during the operation.
+ */
+#define BLE_STATUS_ERROR                                0x97U
+
+/* The requested operation failed because of lack of memory.
+ * Out of memory shall be returned for situations where memory will never 
+ * become available again (e.g. ATT database)
+ */
+#define BLE_STATUS_OUT_OF_MEMORY                        0x98U
 
 /* Returned when a timeout occurs at BLE application interface
  */
@@ -694,6 +680,7 @@
 #define CONFIG_DATA_ER_OFFSET                  0x08U
 #define CONFIG_DATA_IR_OFFSET                  0x18U
 #define CONFIG_DATA_RANDOM_ADDRESS_OFFSET      0x2EU
+#define CONFIG_DATA_SMP_MODE_OFFSET            0xB0U
 
 /* Length for configuration values (see ACI_HAL_WRITE_CONFIG_DATA)
  */
@@ -701,6 +688,7 @@
 #define CONFIG_DATA_ER_LEN                    16
 #define CONFIG_DATA_IR_LEN                    16
 #define CONFIG_DATA_RANDOM_ADDRESS_LEN         6
+#define CONFIG_DATA_SMP_MODE_LEN               1
 
 /* ------------------------------------------------------------------------- */
 

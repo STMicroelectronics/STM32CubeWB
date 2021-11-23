@@ -1196,5 +1196,3 @@ static int32_t LCD_IO_DeInit(void)
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

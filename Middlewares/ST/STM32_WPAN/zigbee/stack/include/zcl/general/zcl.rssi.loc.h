@@ -4,7 +4,7 @@
  * @brief ZCL RSSI Location cluster header
  * ZCL 7 section 3.13
  * ZCL 8 section 3.13
- * @copyright Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_RSSI_LOC_H
@@ -30,7 +30,7 @@
  * RSSI.S.A0016 | CalculationPeriod | True | Optional
  * RSSI.S.A0017 | NumberRSSIMeasurements | True
  * RSSI.S.Afffd | ClusterRevision | True
- * RSSI.S.Afffe | AttributeReportingStatus | False
+ * RSSI.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * RSSI.S.C00.Rsp | Set Absolute Location | True
@@ -53,7 +53,7 @@
  *
  * Client Attributes
  * RSSI.C.Afffd | ClusterRevision | True
- * RSSI.C.Afffe | AttributeReportingStatus | False
+ * RSSI.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * RSSI.C.C00.Rsp | Device configuration response | True

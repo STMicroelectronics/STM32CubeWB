@@ -4,7 +4,7 @@
  * @brief ZCL Price cluster header
  * ZCL 7 section 10.2
  * ZCL 8 section 10.2
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 /* @PICS.ZCL.Price
@@ -26,7 +26,7 @@
  * SEPR.S.A0703 | LastBillingPeriodDuration | False | Optional
  * SEPR.S.A0704 | LastBillingPeriodConsolidatedBill | False | Optional
  * SEPR.S.Afffd | ClusterRevision | True
- * SEPR.S.Afffe | AttributeReportingStatus | False
+ * SEPR.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * SEPR.S.C00.Rsp | Get Current Price | False
@@ -69,7 +69,7 @@
  * SEPR.C.A0001 | PriceDecreaseRandomizeMinutes | False | Optional
  * SEPR.C.A0002 | CommodityType | False | Optional
  * SEPR.C.Afffd | ClusterRevision | True
- * SEPR.C.Afffe | AttributeReportingStatus | False
+ * SEPR.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * SEPR.C.C00.Rsp | Publish Price | False
@@ -112,10 +112,10 @@
 # define ZCL_PRICE_H
 
 #include "zcl/zcl.h"
+#include "zcl/se/zcl.meter.h" /* ZbZclMeterUnitsT */
 
 /** Price Server Attribute IDs */
 enum ZbZclPriceSvrAttrT {
-
     /* Tier Label (Delivered) Set (0x00) */
     ZCL_PRICE_SVR_ATTR_TIER1_LABEL = 0x0000,
     /**< Tier1PriceLabel (Optional)
@@ -141,6 +141,7 @@ enum ZbZclPriceSvrAttrT {
     /**< NoTierBlock1Price (Optional)
      * ZCL_PRICE_SVR_ATTR_NO_TIER_BLOCKN_PRICE(1)
      * For all the blocks, use the ZCL_PRICE_SVR_ATTR_NO_TIER_BLOCKN_PRICE(block) macro. */
+
     ZCL_PRICE_SVR_ATTR_TIER1_BLOCK1_PRICE = 0x0401,
     /**< Tier1Block1Price (Optional)
      * ZCL_PRICE_SVR_ATTR_TIERN_BLOCKN_PRICE(1,1)
@@ -228,6 +229,21 @@ enum ZbZclPriceClientCommandsT {
 /* Alternate Cost units. */
 #define ZCL_PRICE_ALTERNATE_KG_CO2               0x01
 
+/* Currency, from ISO 4217 */
+enum ZbZclPriceCurrencyCodeT {
+    ZCL_PRICE_CURRENCY_CODE_AUD = 36, /* Australian dollar */
+    ZCL_PRICE_CURRENCY_CODE_CAD = 124, /* Canadian dollar */
+    ZCL_PRICE_CURRENCY_CODE_CNY = 156, /* Chinese yuan */
+    ZCL_PRICE_CURRENCY_CODE_EUR = 978, /* Euro */
+    ZCL_PRICE_CURRENCY_CODE_GBP = 826, /* Pound sterling */
+    ZCL_PRICE_CURRENCY_CODE_HKD = 344, /* Hong Kong dollar */
+    ZCL_PRICE_CURRENCY_CODE_INR = 356, /* Indian rupee */
+    ZCL_PRICE_CURRENCY_CODE_RUB = 643, /* Russian ruble */
+    ZCL_PRICE_CURRENCY_CODE_USD = 840, /* United States dollar */
+    ZCL_PRICE_CURRENCY_CODE_XTS = 963, /* Code reserved for testing */
+    ZCL_PRICE_CURRENCY_CODE_XXX = 999 /* No currency */
+};
+
 /* Price Cluster Structures */
 
 /* ZCL_PRICE_SVR_CMD_PUB_PRICE */
@@ -244,8 +260,8 @@ struct ZbZclPriceServerPublishPriceT {
     char rate_lable[ZCL_PRICE_LABEL_MAX_LENGTH + 1U]; /**< Rate Label array */
     uint32_t issuer_event_id; /**< Issuer Event ID */
     uint32_t current_Time; /**< Current Time - UTC Time */
-    uint8_t unit_of_measure; /**< Unit of Measure */
-    uint16_t currency; /**< Currency */
+    enum ZbZclMeterUnitsT unit_of_measure; /**< Unit of Measure */
+    enum ZbZclPriceCurrencyCodeT currency; /**< Currency */
     uint8_t trailing_digit_and_price_tier; /**< Price Trailing Digit & Price Tier */
     uint8_t num_price_tiers; /**< Number of Price Tiers & Register Tier */
     uint32_t start_time; /**< Start Time - UTC Time */

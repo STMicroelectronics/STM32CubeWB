@@ -337,7 +337,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--diag_suppress 1296</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32WB5Mxx,STM32WL55MM_DK</Define>
+              <Define>USE_HAL_DRIVER,STM32WB5Mxx,USE_STM32WB5M_DK</Define>
               <Undefine></Undefine>
               <IncludePath>../Core/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/CMSIS/Include;../STM32_WPAN/App;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Middlewares/ST/STM32_WPAN/ble/core;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Inc;../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/ble;../../../../../../Drivers/BSP/STM32WB5MM-DK;../../../../../../Drivers/BSP/Components/ssd1315;../../../../../../Drivers/BSP/Components/Common;../../../../../../Utilities/Fonts;../../../../../../Utilities/LCD</IncludePath>
             </VariousControls>

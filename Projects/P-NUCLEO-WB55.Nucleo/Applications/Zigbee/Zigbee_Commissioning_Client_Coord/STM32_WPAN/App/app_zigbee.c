@@ -1,20 +1,19 @@
 /**
- ******************************************************************************
- * File Name          : App/app_zigbee.c
- * Description        : Zigbee Application.
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * File Name          : App/app_zigbee.c
+  * Description        : Zigbee Application.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -207,7 +206,7 @@ static void APP_ZIGBEE_Commissioning_Cmd_Rsp_Mgmt(struct ZbZclCommandRspT *zcl_r
       /* Commissioning restart device cmd response */
       APP_DBG("RestartDevice response received from server.");
       if(rsp_status != ZCL_STATUS_SUCCESS){
-        APP_DBG("Error, server did not handle the request successfuly. Error code 0x%2x", rsp_status);
+        APP_DBG("Error, server did not handle the request successfully. Error code 0x%2x", rsp_status);
         return;
       }
       break;
@@ -216,7 +215,7 @@ static void APP_ZIGBEE_Commissioning_Cmd_Rsp_Mgmt(struct ZbZclCommandRspT *zcl_r
       /* Commissioning save startup cmd response */
       APP_DBG("SaveStartup response received from server.");
       if(rsp_status != ZCL_STATUS_SUCCESS){
-        APP_DBG("Error, server did not handle the request successfuly. Error code 0x%2x", rsp_status);
+        APP_DBG("Error, server did not handle the request successfully. Error code 0x%2x", rsp_status);
         return;
       }
       break;
@@ -225,7 +224,7 @@ static void APP_ZIGBEE_Commissioning_Cmd_Rsp_Mgmt(struct ZbZclCommandRspT *zcl_r
       /* Commissioning restore startup cmd response */
       APP_DBG("RestoreStartup response received from server.");
       if(rsp_status != ZCL_STATUS_SUCCESS){
-        APP_DBG("Error, server did not handle the request successfuly. Error code 0x%2x", rsp_status);
+        APP_DBG("Error, server did not handle the request successfully. Error code 0x%2x", rsp_status);
         return;
       }
       break;
@@ -234,7 +233,7 @@ static void APP_ZIGBEE_Commissioning_Cmd_Rsp_Mgmt(struct ZbZclCommandRspT *zcl_r
       /* Commissioning reset startup cmd response */
       APP_DBG("ResetStartup response received from server.");
       if(rsp_status != ZCL_STATUS_SUCCESS){
-        APP_DBG("Error, server did not handle the request successfuly. Error code 0x%2x", rsp_status);
+        APP_DBG("Error, server did not handle the request successfully. Error code 0x%2x", rsp_status);
         return;
       }
       break;
@@ -267,7 +266,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   uint32_t channelMask;
   uint16_t nwk_addr;
   
-  /* Reseting Commissioning client nwk configuration */
+  /* Resetting Commissioning client nwk configuration */
   APP_DBG("Sending ResetStartup request."); 
   memset(&ResetStartupReq, 0, sizeof(ResetStartupReq));
   status = ZbZclCommissionClientSendResetStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, COMMISSIONING_DEST_ENDPOINT ,&ResetStartupReq,
@@ -290,7 +289,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   RemoteWriteReq.dst.endpoint = ZB_ENDPOINT_INTERPAN;
   RemoteWriteReq.count = 8;
   
-  APP_DBG("Remotely writting Commissioning server attributes.");
+  APP_DBG("Remotely writing Commissioning server attributes.");
   
   /* NWK address attribute */
   APP_DBG("Modifying NKK address.");
@@ -369,10 +368,10 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   RemoteWriteReq.dst.endpoint = ZB_ENDPOINT_INTERPAN;
   RemoteWriteReq.count = 1;
   
-  APP_DBG("Remotely writting Commissioning server attributes.");
+  APP_DBG("Remotely writing Commissioning server attributes.");
   
-  /* Scan attemps attribute */
-  APP_DBG("Modifying scan attemps.");
+  /* Scan attempts attribute */
+  APP_DBG("Modifying scan attempts.");
   RemoteWriteReq.attr[0].attrId = ZCL_COMMISSION_SVR_ATTR_SCANATTEMPTS;
   RemoteWriteReq.attr[0].type = ZCL_DATATYPE_UNSIGNED_8BIT;
   RemoteWriteReq.attr[0].value = (uint8_t const*)&params->scan_count;
@@ -400,7 +399,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   /* Waiting the successful server response */
   UTIL_SEQ_WaitEvt(EVENT_ZIGBEE_CONTINUE_INIT);
   
-  /* Reseting Commissioning client nwk configuration */
+  /* Resetting Commissioning client nwk configuration */
   APP_DBG("Sending ResetStartup request."); 
   memset(&ResetStartupReq, 0, sizeof(ResetStartupReq));
   status = ZbZclCommissionClientSendResetStartup(zigbee_app_info.commissioning_client, ZR_EXT_ADDR, COMMISSIONING_DEST_ENDPOINT,&ResetStartupReq, 
@@ -480,7 +479,7 @@ static void APP_ZIGBEE_NwkInfo(void){
   
   /* Current channel */
   while (!(ZbNlmeConf.channelInUse & 1)) {  
-    /* Iterate through bits untill we find the only set bit */
+    /* Iterate through bits until we find the only set bit */
     ZbNlmeConf.channelInUse = ZbNlmeConf.channelInUse >> 1;
     ++channelInUse; 
   } 
@@ -758,7 +757,7 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Zigbee
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -872,7 +871,7 @@ void ZIGBEE_CmdTransfer(void)
 } /* ZIGBEE_CmdTransfer */
 
 /**
- * @brief  This function is called when the M0+ acknoledge the fact that it has received a Cmd
+ * @brief  This function is called when the M0+ acknowledge  the fact that it has received a Cmd
  *
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -1007,4 +1006,3 @@ void APP_ZIGBEE_ProcessRequestM0ToM4(void)
     }
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

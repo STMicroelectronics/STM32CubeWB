@@ -1,12 +1,17 @@
 ;/**
 ;  ******************************************************************************
 ;  * @file    app_lld_tests_iar_asm.s
-;  * @brief   Common functionnalities for RF LLD tests that must be writen
+;  * @brief   Common functionalities for RF LLD tests that must be written
 ;  *          in assembler for IAR compilator
 ;  ******************************************************************************
 ;  * @attention
 ;  *
-;  * <h2><center>&copy; COPYRIGHT 2018 STMicroelectronics</center></h2>
+;  * Copyright (c) 2019 STMicroelectronics.
+;  * All rights reserved.
+;  *
+;  * This software is licensed under terms that can be found in the LICENSE file
+;  * in the root directory of this software component.
+;  * If no LICENSE file comes with this software, it is provided AS-IS.
 ;  *
 ;  ******************************************************************************
 ;  */
@@ -19,7 +24,7 @@
 ; *   - This function has been implemented for system clock set to 16MHz. It must
 ; *     be rewiewed (twice more NOP) for 32Mhz config.
 ; *   - This function can be interrupted if used in interruptible part of code.
-; *   - Be carefull with the use of critical section that can interrupt the reel
+; *   - Be careful with the use of critical section that can interrupt the reel
 ; *     time during input microsec value.
 ; *   - If 0 is given as input
 ; */

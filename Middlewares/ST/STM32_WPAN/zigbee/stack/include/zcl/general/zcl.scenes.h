@@ -4,7 +4,7 @@
  * @brief ZCL Scenes cluster header
  * ZCL 7 section 3.7
  * ZCL 8 section 3.7
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_SCENES_H
@@ -25,7 +25,7 @@
  * S.S.A0004 | NameSupport | True
  * S.S.A0005 | LastConfiguredBy | True | Optional
  * S.S.Afffd | ClusterRevision | True
- * S.S.Afffe | AttributeReportingStatus | False
+ * S.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * S.S.C00.Rsp | Add Scene | True
@@ -52,7 +52,7 @@
  *
  * Client Attributes
  * S.C.Afffd | ClusterRevision | True
- * S.C.Afffe | AttributeReportingStatus | False
+ * S.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * S.C.C00.Rsp | Add Scene Response | True

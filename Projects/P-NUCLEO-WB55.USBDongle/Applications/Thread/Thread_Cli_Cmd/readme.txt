@@ -8,12 +8,12 @@
   * @brief   Description of the Thread Cli command application
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -128,7 +128,7 @@ Wireless Coprocessor binary.
 
 In order to make the program work, you must do the following: 
  - Plug your STM32WB55xx_Usb_Dongle board to your PC 
- - Rebuild all files and load your image OR use the Thread_Cli_Cmd_reference.hex from Binary directory
+ - Rebuild all files and load your image
  - Run the example and use the HyperTerminal to interact with the Board via the Cli commands
 
 Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.

@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -37,7 +36,7 @@
 /*
 *  Different provision bearer supported by BLE-Mesh. 
 *  Define according to application.
-*      Atleast one of PB-ADV and PB-GATT should be defined
+*      At least one of PB-ADV and PB-GATT should be defined
 */
 
 #define ENABLE_PB_ADV
@@ -281,7 +280,7 @@ Comment this macro to disable the publication
 
 /*
 Define the following Macro to check the Power-OnOff Cycles
-5 Continous cycles of OnOff with Ontime <2 sec will cause unprovisioning
+5 Continuous cycles of OnOff with Ontime <2 sec will cause unprovisioning
 */
 //#define ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE
 
@@ -358,7 +357,7 @@ For STMicroelectronics : it is 0x0030 */
 /* Contains a 16-bit vendor-assigned product version ID */
 #define PRODUCT_VERSION_ID                                                0x010A   
 
-#define MAX_APPLICATION_PACKET_SIZE                                          160 /*Can go upto 160*/
+#define MAX_APPLICATION_PACKET_SIZE                                          160 /*Can go up to 160*/
 
 #define TPT_SEGMENT_COUNT                 (((MAX_APPLICATION_PACKET_SIZE)/12)+2)
 

@@ -4,18 +4,17 @@
  * File Name          : App/app_thread.c
  * Description        : Thread Application.
  ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -51,6 +50,8 @@
 #define C_PANID                 0x2222U
 #define C_CHANNEL_NB            12U
 
+osMutexId_t MtxOtCmdId;
+
 /* FreeRtos stacks attributes */
 const osThreadAttr_t ThreadMsgM0ToM4Process_attr = {
     .name = CFG_THREAD_MSG_M0_TO_M4_PROCESS_NAME,
@@ -71,6 +72,12 @@ const osThreadAttr_t ThreadCliProcess_attr = {
      .priority = CFG_THREAD_CLI_PROCESS_PRIORITY,
      .stack_size = CFG_THREAD_CLI_PROCESS_STACK_SIZE
  };
+
+typedef enum
+{
+  ot_TL_CmdBusy,
+  ot_TL_CmdAvailable
+} ot_TL_CmdStatus_t;
 
 /* USER CODE BEGIN PD */
 #define C_RESSOURCE                     "light"
@@ -119,6 +126,7 @@ static void HostTxCb( void );
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
+static void ot_StatusNot(ot_TL_CmdStatus_t status);
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern void MX_LPUART1_UART_Init(void);
 #endif
@@ -895,6 +903,8 @@ Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void)
 
 static void Ot_Cmd_Transfer_Common(void)
 {
+  ot_StatusNot(ot_TL_CmdBusy);
+
   /* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352 */
   p_thread_otcmdbuffer->cmdserial.cmd.cmdcode = 0x280U;
   /* Size = otCmdBuffer->Size (Number of OT cmd arguments : 1 arg = 32bits so multiply by 4 to get size in bytes)
@@ -906,6 +916,8 @@ static void Ot_Cmd_Transfer_Common(void)
 
   /* Wait completion of cmd */
   Wait_Getting_Ack_From_M0();
+
+  ot_StatusNot(ot_TL_CmdAvailable);
 }
 
 /**
@@ -1014,6 +1026,24 @@ static void Receive_Notification_From_M0(void)
 {
   CptReceiveMsgFromM0++;
   osThreadFlagsSet(OsTaskMsgM0ToM4Id,1);
+}
+
+static void ot_StatusNot( ot_TL_CmdStatus_t status )
+{
+  switch (status)
+  {
+    case ot_TL_CmdBusy:
+      osMutexAcquire( MtxOtCmdId, osWaitForever );
+      break;
+
+    case ot_TL_CmdAvailable:
+      osMutexRelease( MtxOtCmdId );
+      break;
+
+    default:
+      break;
+  }
+  return;
 }
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -1253,4 +1283,3 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 
 /* USER CODE END FD_WRAP_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

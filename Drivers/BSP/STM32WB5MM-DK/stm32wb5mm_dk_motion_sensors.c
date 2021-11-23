@@ -677,5 +677,3 @@ static int32_t ISM330DHCX_0_Probe(uint32_t Functions)
 /**
  * @}
  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

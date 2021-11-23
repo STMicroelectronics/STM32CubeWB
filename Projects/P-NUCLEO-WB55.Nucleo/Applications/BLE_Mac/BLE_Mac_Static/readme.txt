@@ -9,12 +9,12 @@
   *          concurrent mode.
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -27,7 +27,7 @@ This use case requires one STM32WB55xx-Nucleo board with Static Concurrent Mode
 application running on it.Static mode means this application can perform alternatively 
 BLE or Mac activities. 
 
-The idea is to present a demo with a device running the BLE/MAC concurent mode
+The idea is to present a demo with a device running the BLE/MAC concurrent mode
 able to interact with a Phone (or the BLE p2p client application) and a device 
 running the MAC RFD application.
 
@@ -173,7 +173,7 @@ To get the traces in real time, you can connect an HyperTerminal to the STLink V
 ********************
 **** START DEMO ****
 ********************
-By default, after a reset, the board [2] running the static concurent mode will start in BLE mode.
+By default, after a reset, the board [2] running the static concurrent mode will start in BLE mode.
 This device will start advertising (during 1 minute) and the green led will blinks for each advertising event.
 
 * BLE mode

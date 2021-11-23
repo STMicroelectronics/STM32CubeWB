@@ -8,19 +8,19 @@
   * @brief   add here the very short description of the example (the name ?).
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
 
 @par Example Description
 
-How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
+How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode through USB Virtual COM Port.
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
@@ -79,7 +79,7 @@ Wireless Coprocessor binary.
 In order to make the program work, you must do the following:
  - Open your preferred toolchain 
  - Rebuild all files and load your image into Target memory
- - OR use the BLE_TransparentModeVCPVCP_reference.hex from Binary directory
+ - OR use the BLE_TransparentModeVCP_reference.hex from Binary directory
  - to test the BLE Transparent Mode application, use the STM32CubeMonitor RF tool
  - make the connection between STM32CubeMonitor RF tool and BLE_TransparentModeVCP application
  - send some ACI commands from STM32CubeMonitor RF tool as HCI_RESET, HCI_LE_RECEIVER_TEST, HCI_LE_TRANSMITTER_TEST, ...

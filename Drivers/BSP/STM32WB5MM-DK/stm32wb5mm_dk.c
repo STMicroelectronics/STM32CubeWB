@@ -928,5 +928,3 @@ void TIM17_MspDeInit(TIM_HandleTypeDef *htim)
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

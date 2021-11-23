@@ -1,20 +1,19 @@
-/******************************************************************************
+/*****************************************************************************
  * @file    ble_hci_le.h
  * @author  MCD
  * @brief   STM32WB BLE API (hci_le)
  *          Auto-generated file: do not edit!
- ******************************************************************************
+ *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
- ******************************************************************************
+ *****************************************************************************
  */
 
 #ifndef BLE_HCI_LE_H__
@@ -349,8 +348,8 @@ tBleStatus hci_read_bd_addr( uint8_t* BD_ADDR );
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
- * @param[out] RSSI N Size: 1 Octet (signed integer)
- *        Units: dBm
+ * @param[out] RSSI RSSI (signed integer).
+ *        Units: dBm.
  *        Values:
  *        - 127: RSSI not available
  *        - -127 ... 20
@@ -495,14 +494,14 @@ tBleStatus hci_le_set_random_address( const uint8_t* Random_Address );
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.5].
  * 
  * @param Advertising_Interval_Min Minimum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
  * @param Advertising_Interval_Max Maximum advertising interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0020 (20.000 ms)  ... 0x4000 (10240.000 ms)
- * @param Advertising_Type Advertising type
+ * @param Advertising_Type Advertising type.
  *        Values:
  *        - 0x00: ADV_IND (Connectable undirected advertising)
  *        - 0x01: ADV_DIRECT_IND, high duty cycle (Connectable high duty cycle
@@ -512,32 +511,25 @@ tBleStatus hci_le_set_random_address( const uint8_t* Random_Address );
  *        - 0x04: ADV_DIRECT_IND_LDC, low duty cycle (Connectable low duty
  *          cycle directed advertising)
  * @param Own_Address_Type Own address type.
- *         - 0x00: Public Device Address
- *         - 0x01 Random Device Address
- *         - 0x02: Controller generates Resolvable Private Address based on the
- *        local IRK from resolving list. If resolving list contains no matching
- *        entry, use public address.
- *         - 0x03: Controller generates Resolvable Private Address based on the
- *        local IRK from resolving list. If resolving list contains no matching
- *        entry, use random address from LE_Set_Random_Address.
  *        Values:
  *        - 0x00: Public Device Address
  *        - 0x01: Random Device Address
- *        - 0x02: Resolvable Private Address or Public Address
- *        - 0x03: Resolvable Private Address or Random Address
- * @param Peer_Address_Type The address type of the peer device.
+ *        - 0x02: Resolvable Private Address if available, otherwise Public
+ *          Address
+ *        - 0x03: Resolvable Private Address if available, otherwise Random
+ *          Address
+ * @param Peer_Address_Type Address type of the peer device.
  *        Values:
- *        - 0x00: Public Device Address
- *        - 0x01: Random Device Address
+ *        - 0x00: Public Device Address or Public Identity Address
+ *        - 0x01: Random Device Address or Random (static) Identity Address
  * @param Peer_Address Public Device Address, Random Device Address, Public
- *        Identity Address or Random (static) Identity Address of the device to
- *        be connected.
+ *        Identity Address, or Random (static) Identity Address of the device
+ *        to be connected.
  * @param Advertising_Channel_Map Advertising channel map.
- *        Default: 00000111b (all channels enabled).
  *        Flags:
- *        - 0x01: ch 37
- *        - 0x02: ch 38
- *        - 0x04: ch 39
+ *        - 0x01: Channel 37 shall be used
+ *        - 0x02: Channel 38 shall be used
+ *        - 0x04: Channel 39 shall be used
  * @param Advertising_Filter_Policy Advertising filter policy.
  *        Values:
  *        - 0x00: Allow Scan Request from Any, Allow Connect Request from Any
@@ -559,9 +551,10 @@ tBleStatus hci_le_set_advertising_parameters( uint16_t Advertising_Interval_Min,
                                               uint8_t Advertising_Filter_Policy );
 
 /**
- * @brief HCI_LE_READ_ADVERTISING_CHANNEL_TX_POWER
- * The LE_Read_Advertising_Channel_Tx_Power command is used by the Host to read
- * the transmit power level used for LE advertising channel packets.
+ * @brief HCI_LE_READ_ADVERTISING_PHYSICAL_CHANNEL_TX_POWER
+ * The LE_Read_Advertising_Physical_Channel_Tx_Power command is used by the
+ * Host to read the transmit power level used for LE advertising physical
+ * channel packets.
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.6].
  * 
  * @param[out] Transmit_Power_Level Size: 1 Octet (signed integer)
@@ -571,7 +564,7 @@ tBleStatus hci_le_set_advertising_parameters( uint16_t Advertising_Interval_Min,
  *        - -20 ... 10
  * @return Value indicating success or error code.
  */
-tBleStatus hci_le_read_advertising_channel_tx_power( uint8_t* Transmit_Power_Level );
+tBleStatus hci_le_read_advertising_physical_channel_tx_power( uint8_t* Transmit_Power_Level );
 
 /**
  * @brief HCI_LE_SET_ADVERTISING_DATA
@@ -608,25 +601,25 @@ tBleStatus hci_le_set_scan_response_data( uint8_t Scan_Response_Data_Length,
                                           const uint8_t* Scan_Response_Data );
 
 /**
- * @brief HCI_LE_SET_ADVERTISE_ENABLE
- * The LE_Set_Advertise_Enable command is used to request the Controller to
+ * @brief HCI_LE_SET_ADVERTISING_ENABLE
+ * The LE_Set_Advertising_Enable command is used to request the Controller to
  * start or stop advertising. The Controller manages the timing of
  * advertisements as per the advertising parameters given in the
  * LE_Set_Advertising_Parameters command.
  * The Controller shall continue advertising until the Host issues an
- * LE_Set_Advertise_Enable command with Advertising_Enable set to 0x00
+ * LE_Set_Advertising_Enable command with Advertising_Enable set to 0x00
  * (Advertising is disabled) or until a connection is created or until the
  * Advertising is timed out due to high duty cycle Directed Advertising. In
  * these cases, advertising is then disabled.
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.9].
  * 
- * @param Advertising_Enable Enable/disable advertise. Default is 0 (disabled).
+ * @param Advertising_Enable Enable/disable advertising.
  *        Values:
  *        - 0x00: Advertising is disabled
  *        - 0x01: Advertising is enabled
  * @return Value indicating success or error code.
  */
-tBleStatus hci_le_set_advertise_enable( uint8_t Advertising_Enable );
+tBleStatus hci_le_set_advertising_enable( uint8_t Advertising_Enable );
 
 /**
  * @brief HCI_LE_SET_SCAN_PARAMETERS
@@ -644,36 +637,30 @@ tBleStatus hci_le_set_advertise_enable( uint8_t Advertising_Enable );
  * Controller; if it is the Command Disallowed error code shall be used.
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.10].
  * 
- * @param LE_Scan_Type Passive or active scanning. With active scanning
- *        SCAN_REQ packets are sent.
+ * @param LE_Scan_Type Passive or active scanning. With passive scanning, no
+ *        scan request PDUs are sent.
  *        Values:
- *        - 0x00: Passive Scanning
+ *        - 0x00: Passive scanning
  *        - 0x01: Active scanning
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param Own_Address_Type Own address type.
- *         - 0x00: Public Device Address
- *         - 0x01 Random Device Address
- *         - 0x02: Controller generates Resolvable Private Address based on the
- *        local IRK from resolving list. If resolving list contains no matching
- *        entry, use public address.
- *         - 0x03: Controller generates Resolvable Private Address based on the
- *        local IRK from resolving list. If resolving list contains no matching
- *        entry, use random address from LE_Set_Random_Address.
  *        Values:
  *        - 0x00: Public Device Address
  *        - 0x01: Random Device Address
- *        - 0x02: Resolvable Private Address or Public Address
- *        - 0x03: Resolvable Private Address or Random Address
+ *        - 0x02: Resolvable Private Address if available, otherwise Public
+ *          Address
+ *        - 0x03: Resolvable Private Address if available, otherwise Random
+ *          Address
  * @param Scanning_Filter_Policy 0x00 Accept all advertisement packets.
  *        Directed advertising packets which are not addressed for this device
  *        shall be ignored.
@@ -709,7 +696,7 @@ tBleStatus hci_le_set_scan_parameters( uint8_t LE_Scan_Type,
  * generate advertising reports for each packet received.
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.11].
  * 
- * @param LE_Scan_Enable Enable/disable scan. Default is 0 (disabled).
+ * @param LE_Scan_Enable Enable/disable scan.
  *        Values:
  *        - 0x00: Scanning disabled
  *        - 0x01: Scanning enabled
@@ -759,22 +746,18 @@ tBleStatus hci_le_set_scan_enable( uint8_t LE_Scan_Enable,
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
- * @param Initiator_Filter_Policy 0x00 White list is not used to determine
- *        which advertiser to connect to.
- *        Peer_Address_Type and Peer_Address shall be used.
- *        0x01 White list is used to determine which advertiser to connect to.
- *        Peer_Address_Type and Peer_Address shall be ignored.
+ * @param Initiator_Filter_Policy Initiator filter policy.
  *        Values:
- *        - 0x00: White list not used
- *        - 0x01: White list used
+ *        - 0x00: White list is not used
+ *        - 0x01: White list is used
  * @param Peer_Address_Type Address type
  *        0x00 Public Device Address
  *        0x01 Random Device Address
@@ -790,27 +773,21 @@ tBleStatus hci_le_set_scan_enable( uint8_t LE_Scan_Enable,
  * @param Peer_Address Public Device Address or Random Device Address of the
  *        device to be connected.
  * @param Own_Address_Type Own address type.
- *         - 0x00: Public Device Address
- *         - 0x01 Random Device Address
- *         - 0x02: Controller generates Resolvable Private Address based on the
- *        local IRK from resolving list. If resolving list contains no matching
- *        entry, use public address.
- *         - 0x03: Controller generates Resolvable Private Address based on the
- *        local IRK from resolving list. If resolving list contains no matching
- *        entry, use random address from LE_Set_Random_Address.
  *        Values:
  *        - 0x00: Public Device Address
  *        - 0x01: Random Device Address
- *        - 0x02: Resolvable Private Address or Public Address
- *        - 0x03: Resolvable Private Address or Random Address
+ *        - 0x02: Resolvable Private Address if available, otherwise Public
+ *          Address
+ *        - 0x03: Resolvable Private Address if available, otherwise Random
+ *          Address
  * @param Conn_Interval_Min Minimum value for the connection event interval.
  *        This shall be less than or equal to Conn_Interval_Max.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
  *        This shall be greater than or equal to Conn_Interval_Min.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Latency Slave latency for the connection in number of connection
@@ -820,17 +797,17 @@ tBleStatus hci_le_set_scan_enable( uint8_t LE_Scan_Enable,
  * @param Supervision_Timeout Supervision timeout for the LE Link.
  *        It shall be a multiple of 10 ms and larger than (1 +
  *        connSlaveLatency) * connInterval * 2.
- *        Time = N * 10 msec.
+ *        Time = N * 10 ms.
  *        Values:
  *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
  * @param Minimum_CE_Length Information parameter about the minimum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @param Maximum_CE_Length Information parameter about the maximum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @return Value indicating success or error code.
@@ -959,12 +936,12 @@ tBleStatus hci_le_remove_device_from_white_list( uint8_t Address_Type,
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
  *        This shall be less than or equal to Conn_Interval_Max.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
  *        This shall be greater than or equal to Conn_Interval_Min.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Latency Slave latency for the connection in number of connection
@@ -974,17 +951,17 @@ tBleStatus hci_le_remove_device_from_white_list( uint8_t Address_Type,
  * @param Supervision_Timeout Supervision timeout for the LE Link.
  *        It shall be a multiple of 10 ms and larger than (1 +
  *        connSlaveLatency) * connInterval * 2.
- *        Time = N * 10 msec.
+ *        Time = N * 10 ms.
  *        Values:
  *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
  * @param Minimum_CE_Length Information parameter about the minimum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @param Maximum_CE_Length Information parameter about the maximum length of
  *        connection needed for this LE connection.
- *        Time = N * 0.625 msec.
+ *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
  * @return Value indicating success or error code.
@@ -1093,11 +1070,11 @@ tBleStatus hci_le_encrypt( const uint8_t* Key,
 tBleStatus hci_le_rand( uint8_t* Random_Number );
 
 /**
- * @brief HCI_LE_START_ENCRYPTION
- * The LE_Start_Encryption command is used to authenticate the given encryption
- * key associated with the remote device specified by the connection handle,
- * and once authenticated will encrypt the connection. The parameters are as
- * defined in [Vol 3] Part H, Section 2.4.4.
+ * @brief HCI_LE_ENABLE_ENCRYPTION
+ * The LE_Enable_Encryption command is used to authenticate the given
+ * encryption key associated with the remote device specified by the connection
+ * handle, and once authenticated will encrypt the connection. The parameters
+ * are as defined in [Vol 3] Part H, Section 2.4.4.
  * If the connection is already encrypted then the Controller shall pause
  * connection encryption before attempting to authenticate the given encryption
  * key, and then re-encrypt the connection. While encryption is paused no user
@@ -1116,10 +1093,10 @@ tBleStatus hci_le_rand( uint8_t* Random_Number );
  * @param Long_Term_Key 128 bit long term key.
  * @return Value indicating success or error code.
  */
-tBleStatus hci_le_start_encryption( uint16_t Connection_Handle,
-                                    const uint8_t* Random_Number,
-                                    uint16_t Encrypted_Diversifier,
-                                    const uint8_t* Long_Term_Key );
+tBleStatus hci_le_enable_encryption( uint16_t Connection_Handle,
+                                     const uint8_t* Random_Number,
+                                     uint16_t Encrypted_Diversifier,
+                                     const uint8_t* Long_Term_Key );
 
 /**
  * @brief HCI_LE_LONG_TERM_KEY_REQUEST_REPLY
@@ -1139,7 +1116,7 @@ tBleStatus hci_le_long_term_key_request_reply( uint16_t Connection_Handle,
                                                const uint8_t* Long_Term_Key );
 
 /**
- * @brief HCI_LE_LONG_TERM_KEY_REQUESTED_NEGATIVE_REPLY
+ * @brief HCI_LE_LONG_TERM_KEY_REQUEST_NEGATIVE_REPLY
  * The LE_Long_Term_Key_Request_Negative_Reply command is used to reply to an
  * LE Long Term Key Request event from the Controller if the Host cannot
  * provide a Long Term Key for this Connection_Handle.
@@ -1150,7 +1127,7 @@ tBleStatus hci_le_long_term_key_request_reply( uint16_t Connection_Handle,
  *        - 0x0000 ... 0x0EFF
  * @return Value indicating success or error code.
  */
-tBleStatus hci_le_long_term_key_requested_negative_reply( uint16_t Connection_Handle );
+tBleStatus hci_le_long_term_key_request_negative_reply( uint16_t Connection_Handle );
 
 /**
  * @brief HCI_LE_READ_SUPPORTED_STATES
@@ -1563,14 +1540,14 @@ tBleStatus hci_le_read_maximum_data_length( uint16_t* supportedMaxTxOctets,
  *        Values:
  *        - 0x01: The transmitter PHY for the connection is LE 1M
  *        - 0x02: The transmitter PHY for the connection is LE 2M
- *        - 0x03: The transmitter PHY for the connection is LE Coded
- *          (Not supported by STM32WB)
+ *        - 0x03: The transmitter PHY for the connection is LE Coded (not
+ *          supported)
  * @param[out] RX_PHY Receiver PHY in use
  *        Values:
  *        - 0x01: The receiver PHY for the connection is LE 1M
  *        - 0x02: The receiver PHY for the connection is LE 2M
- *        - 0x03: The receiver PHY for the connection is LE Coded
- *          (Not supported by STM32WB)
+ *        - 0x03: The receiver PHY for the connection is LE Coded (not
+ *          supported)
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_read_phy( uint16_t Connection_Handle,
@@ -1667,7 +1644,7 @@ tBleStatus hci_le_set_phy( uint16_t Connection_Handle,
                            uint16_t PHY_options );
 
 /**
- * @brief HCI_LE_ENHANCED_RECEIVER_TEST
+ * @brief HCI_LE_RECEIVER_TEST_V2
  * This command is used to start a test where the DUT receives test reference
  * packets at a fixed interval. The tester generates the test reference
  * packets.
@@ -1690,19 +1667,18 @@ tBleStatus hci_le_set_phy( uint16_t Connection_Handle,
  *        - 0x01: Assume transmitter will have a stable modulation index
  * @return Value indicating success or error code.
  */
-tBleStatus hci_le_enhanced_receiver_test( uint8_t RX_Frequency,
-                                          uint8_t PHY,
-                                          uint8_t Modulation_Index );
+tBleStatus hci_le_receiver_test_v2( uint8_t RX_Frequency,
+                                    uint8_t PHY,
+                                    uint8_t Modulation_Index );
 
 /**
- * @brief HCI_LE_ENHANCED_TRANSMITTER_TEST
+ * @brief HCI_LE_TRANSMITTER_TEST_V2
  * This command is used to start a test where the DUT generates test reference
  * packets at a fixed interval. The Controller shall transmit at maximum power.
- * An LE Controller supporting the LE_Enhanced Transmitter_Test command shall
- * support Packet_Payload values 0x00, 0x01 and 0x02. An LE Controller
- * supporting the LE Coded PHY shall also support Packet_Payload value 0x04
- * (not supported by STM32WB). An LE Controller may support other values of
- * Packet_Payload.
+ * An LE Controller supporting this command shall support Packet_Payload values
+ * 0x00, 0x01 and 0x02. An LE Controller supporting the LE Coded PHY shall also
+ * support Packet_Payload value 0x04 (not supported by STM32WB). An LE
+ * Controller may support other values of Packet_Payload.
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.51].
  * 
  * @param TX_Frequency N = (F - 2402) / 2
@@ -1731,10 +1707,446 @@ tBleStatus hci_le_enhanced_receiver_test( uint8_t RX_Frequency,
  *        - 0x04: Transmitter set to use the LE Coded PHY with S=2 data coding
  * @return Value indicating success or error code.
  */
-tBleStatus hci_le_enhanced_transmitter_test( uint8_t TX_Frequency,
-                                             uint8_t Length_Of_Test_Data,
-                                             uint8_t Packet_Payload,
-                                             uint8_t PHY );
+tBleStatus hci_le_transmitter_test_v2( uint8_t TX_Frequency,
+                                       uint8_t Length_Of_Test_Data,
+                                       uint8_t Packet_Payload,
+                                       uint8_t PHY );
+
+/**
+ * @brief HCI_LE_SET_ADVERTISING_SET_RANDOM_ADDRESS
+ * This command is used by the Host to set the random device address specified
+ * by the Random_Address parameter.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.52].
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Random_Address Random Device Address.
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_set_advertising_set_random_address( uint8_t Advertising_Handle,
+                                                      const uint8_t* Random_Address );
+
+/**
+ * @brief HCI_LE_SET_EXTENDED_ADVERTISING_PARAMETERS
+ * This command is used by the Host to set the extended advertising parameters.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.53].
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Adv_Event_Properties Type of advertising event.
+ *        Flags:
+ *        - 0x0001: Connectable advertising
+ *        - 0x0002: Scannable advertising
+ *        - 0x0004: Directed advertising
+ *        - 0x0008: High Duty Cycle Directed Connectable advertising
+ *        - 0x0010: Use legacy advertising PDUs
+ *        - 0x0020: Anonymous advertising
+ *        - 0x0040: Include TxPower in at least one advertising PDU
+ * @param Primary_Adv_Interval_Min Minimum advertising interval.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x000020 (20.000 ms)  ... 0xFFFFFF (10485759.375 ms)
+ * @param Primary_Adv_Interval_Max Maximum advertising interval.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x000020 (20.000 ms)  ... 0xFFFFFF (10485759.375 ms)
+ * @param Primary_Adv_Channel_Map Advertising channel map.
+ *        Flags:
+ *        - 0x01: Channel 37 shall be used
+ *        - 0x02: Channel 38 shall be used
+ *        - 0x04: Channel 39 shall be used
+ * @param Own_Address_Type Own address type.
+ *        Values:
+ *        - 0x00: Public Device Address
+ *        - 0x01: Random Device Address
+ *        - 0x02: Resolvable Private Address if available, otherwise Public
+ *          Address
+ *        - 0x03: Resolvable Private Address if available, otherwise Random
+ *          Address
+ * @param Peer_Address_Type Address type of the peer device.
+ *        Values:
+ *        - 0x00: Public Device Address or Public Identity Address
+ *        - 0x01: Random Device Address or Random (static) Identity Address
+ * @param Peer_Address Public Device Address, Random Device Address, Public
+ *        Identity Address, or Random (static) Identity Address of the device
+ *        to be connected.
+ * @param Adv_Filter_Policy Advertising filter policy
+ *        Values:
+ *        - 0x00: Process scan and connection requests from all devices (i.e.,
+ *          the White List is not in use)
+ *        - 0x01: Process connection requests from all devices and scan
+ *          requests only from devices that are in the White List.
+ *        - 0x02: Process scan requests from all devices and connection
+ *          requests only from devices that are in the White List.
+ *        - 0x03: Process scan and connection requests only from devices in the
+ *          White  List.
+ * @param Adv_TX_Power Advertising TX power. Units: dBm.
+ *        Values:
+ *        - -127 ... 20
+ * @param Primary_Adv_PHY Primary advertising PHY.
+ *        Values:
+ *        - 0x01: Primary advertisement PHY is LE 1M
+ *        - 0x03: Primary advertisement PHY is LE Coded (not supported)
+ * @param Secondary_Adv_Max_Skip Secondary advertising maximum skip.
+ *        Values:
+ *        - 0x00: AUX_ADV_IND shall be sent prior to the next advertising event
+ *        - 0x01 ... 0xFF: Maximum advertising events the Controller can skip
+ *          before sending the AUX_ADV_IND packets on the secondary advertising
+ *          physical channel
+ * @param Secondary_Adv_PHY Secondary advertising PHY.
+ *        Values:
+ *        - 0x01: Secondary advertisement PHY is LE 1M
+ *        - 0x02: Secondary advertisement PHY is LE 2M
+ *        - 0x03: Secondary advertisement PHY is LE Coded (not supported)
+ * @param Adv_SID Value of the Advertising SID subfield in the ADI field of the
+ *        PDU.
+ *        Values:
+ *        - 0x00 ... 0x0F
+ * @param Scan_Req_Notification_Enable Scan request notifications.
+ *        Values:
+ *        - 0x00: Scan request notifications disabled
+ *        - 0x01: Scan request notifications enabled
+ * @param[out] Selected_TX_Power Power level selected by the Controller. Units:
+ *        dBm.
+ *        Values:
+ *        - -127 ... 20
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_set_extended_advertising_parameters( uint8_t Advertising_Handle,
+                                                       uint16_t Adv_Event_Properties,
+                                                       const uint8_t* Primary_Adv_Interval_Min,
+                                                       const uint8_t* Primary_Adv_Interval_Max,
+                                                       uint8_t Primary_Adv_Channel_Map,
+                                                       uint8_t Own_Address_Type,
+                                                       uint8_t Peer_Address_Type,
+                                                       const uint8_t* Peer_Address,
+                                                       uint8_t Adv_Filter_Policy,
+                                                       uint8_t Adv_TX_Power,
+                                                       uint8_t Primary_Adv_PHY,
+                                                       uint8_t Secondary_Adv_Max_Skip,
+                                                       uint8_t Secondary_Adv_PHY,
+                                                       uint8_t Adv_SID,
+                                                       uint8_t Scan_Req_Notification_Enable,
+                                                       uint8_t* Selected_TX_Power );
+
+/**
+ * @brief HCI_LE_SET_EXTENDED_ADVERTISING_DATA
+ * This command is used to set the data used in extended advertising PDUs that
+ * have a data field.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.54].
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Operation Advertising operation.
+ *        Values:
+ *        - 0x00: Intermediate fragment of fragmented extended advertising data
+ *        - 0x01: First fragment of fragmented extended advertising data
+ *        - 0x02: Last fragment of fragmented extended advertising data
+ *        - 0x03: Complete extended advertising data
+ *        - 0x04: Unchanged data (just update the Advertising DID)
+ * @param Fragment_Preference Fragment preference.
+ *        Values:
+ *        - 0x00: The Controller may fragment all data
+ *        - 0x01: The Controller should not fragment or should minimize
+ *          fragmentation of data
+ * @param Advertising_Data_Length Length of Advertising_Data in octets
+ * @param Advertising_Data Data formatted as defined in Bluetooth spec. v.5.2
+ *        [Vol 3, Part C, 11].
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_set_extended_advertising_data( uint8_t Advertising_Handle,
+                                                 uint8_t Operation,
+                                                 uint8_t Fragment_Preference,
+                                                 uint8_t Advertising_Data_Length,
+                                                 const uint8_t* Advertising_Data );
+
+/**
+ * @brief HCI_LE_SET_EXTENDED_SCAN_RESPONSE_DATA
+ * This command is used to provide scan response data used in scanning response
+ * PDUs during extended advertising.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.55].
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Operation Scan response operation.
+ *        Values:
+ *        - 0x00: Intermediate fragment of fragmented scan response data
+ *        - 0x01: First fragment of fragmented scan response data
+ *        - 0x02: Last fragment of fragmented scan response data
+ *        - 0x03: Complete scan response data
+ * @param Fragment_Preference Fragment preference.
+ *        Values:
+ *        - 0x00: The Controller may fragment all data
+ *        - 0x01: The Controller should not fragment or should minimize
+ *          fragmentation of data
+ * @param Scan_Response_Data_Length Length of Scan_Response_Data in octets
+ * @param Scan_Response_Data Data formatted as defined in Bluetooth spec. v.5.2
+ *        [Vol 3, Part C, 11].
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_set_extended_scan_response_data( uint8_t Advertising_Handle,
+                                                   uint8_t Operation,
+                                                   uint8_t Fragment_Preference,
+                                                   uint8_t Scan_Response_Data_Length,
+                                                   const uint8_t* Scan_Response_Data );
+
+/**
+ * @brief HCI_LE_SET_EXTENDED_ADVERTISING_ENABLE
+ * This command is used to request the Controller to enable or disable one or
+ * more advertising sets using the advertising sets identified by the
+ * Advertising_Handle[i] parameter.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.56].
+ * 
+ * @param Enable Enable/disable advertising.
+ *        Values:
+ *        - 0x00: Advertising is disabled
+ *        - 0x01: Advertising is enabled
+ * @param Num_Sets Number of advertising sets.
+ *        Values:
+ *        - 0x00: Disable all advertising sets
+ *        - 0x01 ... 0x3F: Number of advertising sets to enable or disable
+ * @param Adv_Set See @ref Adv_Set_t
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_set_extended_advertising_enable( uint8_t Enable,
+                                                   uint8_t Num_Sets,
+                                                   const Adv_Set_t* Adv_Set );
+
+/**
+ * @brief HCI_LE_READ_MAXIMUM_ADVERTISING_DATA_LENGTH
+ * This command is used to read the maximum length of data supported by the
+ * Controller for use as advertisement data or scan response data in an
+ * extended advertising event.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.57].
+ * 
+ * @param[out] Max_Advertising_Data_Length Maximum supported advertising data
+ *        length.
+ *        Values:
+ *        - 0x001F ... 0x0672
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_read_maximum_advertising_data_length( uint16_t* Max_Advertising_Data_Length );
+
+/**
+ * @brief HCI_LE_READ_NUMBER_OF_SUPPORTED_ADVERTISING_SETS
+ * This command is used to read the maximum number of advertising sets
+ * supported by the Controller at the same time during extended advertising.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.58].
+ * 
+ * @param[out] Num_Supported_Advertising_Sets Number of advertising sets
+ *        supported at the same time.
+ *        Values:
+ *        - 0x01 ... 0xF0
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_read_number_of_supported_advertising_sets( uint8_t* Num_Supported_Advertising_Sets );
+
+/**
+ * @brief HCI_LE_REMOVE_ADVERTISING_SET
+ * This command is used to remove an advertising set from the Controller.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.59].
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_remove_advertising_set( uint8_t Advertising_Handle );
+
+/**
+ * @brief HCI_LE_CLEAR_ADVERTISING_SETS
+ * This command is used to remove all existing advertising sets from the
+ * Controller.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.60].
+ * 
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_clear_advertising_sets( void );
+
+/**
+ * @brief HCI_LE_SET_EXTENDED_SCAN_PARAMETERS
+ * This command is used to set the extended scan parameters to be used on the
+ * advertising physical channels.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.64].
+ * 
+ * @param Own_Address_Type Own address type.
+ *        Values:
+ *        - 0x00: Public Device Address
+ *        - 0x01: Random Device Address
+ *        - 0x02: Resolvable Private Address if available, otherwise Public
+ *          Address
+ *        - 0x03: Resolvable Private Address if available, otherwise Random
+ *          Address
+ * @param Scanning_Filter_Policy Scan filter policy.
+ *        Values:
+ *        - 0x00: Accept all advertising and scan response PDUs except directed
+ *          advertising PDUs not addressed to this device
+ *        - 0x01: Accept only advertising and scan response PDUs from devices
+ *          where the advertiser's address is in the White List. Directed
+ *          advertising PDUs which are not addressed to this device shall be
+ *          ignored.
+ *        - 0x02: Accept all advertising and scan response PDUs except directed
+ *          advertising PDUs where the identity address corresponding to
+ *          TargetA does not address this device.
+ *        - 0x03: Accept all advertising and scan response PDUs except
+ *          advertising and scan response PDUs where the advertiser's identity
+ *          address is not in the White List; and directed advertising PDUs
+ *          where the identity address corresponding to TargetA does not
+ *          address this device.
+ * @param Scanning_PHYs Scan PHYs.
+ *        Flags:
+ *        - 0x01: Scan advertisements on the LE 1M PHY
+ *        - 0x04: Scan advertisements on the LE Coded PHY (not supported)
+ * @param Scan_Type Passive or active scanning. With passive scanning, no scan
+ *        request PDUs are sent.
+ *        Values:
+ *        - 0x00: Passive scanning
+ *        - 0x01: Active scanning
+ * @param Scan_Interval Time interval from when the Controller started its last
+ *        scan until it begins the subsequent scan on the primary advertising
+ *        physical channel.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+ * @param Scan_Window Duration of the scan on the primary advertising physical
+ *        channel.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_set_extended_scan_parameters( uint8_t Own_Address_Type,
+                                                uint8_t Scanning_Filter_Policy,
+                                                uint8_t Scanning_PHYs,
+                                                uint8_t Scan_Type,
+                                                uint16_t Scan_Interval,
+                                                uint16_t Scan_Window );
+
+/**
+ * @brief HCI_LE_SET_EXTENDED_SCAN_ENABLE
+ * This command is used to enable or disable extended scanning.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.65].
+ * 
+ * @param Enable Enable/disable scan.
+ *        Values:
+ *        - 0x00: Scanning disabled
+ *        - 0x01: Scanning enabled
+ * @param Filter_Duplicates Duplicate filtering.
+ *        Values:
+ *        - 0x00: Duplicate filtering disabled
+ *        - 0x01: Duplicate filtering enabled
+ *        - 0x02: Duplicate filtering enabled, reset for each scan period
+ * @param Duration Scan duration.
+ *        Time = N * 10 ms.
+ *        Values:
+ *        - 0x0000 (0 ms) : Scan continuously until explicitly disable
+ *        - 0x0001 (10 ms)  ... 0xFFFF (655350 ms) : Scan duration
+ * @param Period Scan period.
+ *        Time = N * 1.28 s.
+ *        Values:
+ *        - 0x0000 (0 ms) : Scan continuously
+ *        - 0x0001 (1280 ms)  ... 0xFFFF (83884800 ms) : Time interval from
+ *          when the Controller started its last Scan_Duration until it begins
+ *          the subsequent Scan_Duration
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_set_extended_scan_enable( uint8_t Enable,
+                                            uint8_t Filter_Duplicates,
+                                            uint16_t Duration,
+                                            uint16_t Period );
+
+/**
+ * @brief HCI_LE_EXTENDED_CREATE_CONNECTION
+ * This command is used to create an ACL connection to a connectable advertiser
+ * by means of extended scanning.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.66].
+ * 
+ * @param Initiator_Filter_Policy Initiator filter policy.
+ *        Values:
+ *        - 0x00: White list is not used
+ *        - 0x01: White list is used
+ * @param Own_Address_Type Own address type.
+ *        Values:
+ *        - 0x00: Public Device Address
+ *        - 0x01: Random Device Address
+ *        - 0x02: Resolvable Private Address if available, otherwise Public
+ *          Address
+ *        - 0x03: Resolvable Private Address if available, otherwise Random
+ *          Address
+ * @param Peer_Address_Type Address type of the peer device.
+ *        Values:
+ *        - 0x00: Public Device Address or Public Identity Address
+ *        - 0x01: Random Device Address or Random (static) Identity Address
+ * @param Peer_Address Public Device Address, Random Device Address, Public
+ *        Identity Address, or Random (static) Identity Address of the device
+ *        to be connected.
+ * @param Initiating_PHYs Initiating PHYs.
+ *        Values:
+ *        - 0: Scan connectable advertisements on the LE 1M PHY- Connection
+ *          parameters for the LE 1M PHY
+ *        - 1: Connection parameters for the LE 2M PHY
+ *        - 2: Scan connectable advertisements on the LE Coded PHY (not
+ *          supported)
+ * @param Scan_Interval Time interval from when the Controller started its last
+ *        scan until it begins the subsequent scan on the primary advertising
+ *        physical channel.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+ * @param Scan_Window Duration of the scan on the primary advertising physical
+ *        channel.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+ * @param Conn_Interval_Min Minimum value for the connection event interval.
+ *        This shall be less than or equal to Conn_Interval_Max.
+ *        Time = N * 1.25 ms.
+ *        Values:
+ *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
+ * @param Conn_Interval_Max Maximum value for the connection event interval.
+ *        This shall be greater than or equal to Conn_Interval_Min.
+ *        Time = N * 1.25 ms.
+ *        Values:
+ *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
+ * @param Conn_Latency Slave latency for the connection in number of connection
+ *        events.
+ *        Values:
+ *        - 0x0000 ... 0x01F3
+ * @param Supervision_Timeout Supervision timeout for the LE Link.
+ *        It shall be a multiple of 10 ms and larger than (1 +
+ *        connSlaveLatency) * connInterval * 2.
+ *        Time = N * 10 ms.
+ *        Values:
+ *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
+ * @param Min_CE_Length Information parameter about the minimum length of
+ *        connection needed for this LE connection.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
+ * @param Max_CE_Length Information parameter about the maximum length of
+ *        connection needed for this LE connection.
+ *        Time = N * 0.625 ms.
+ *        Values:
+ *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_extended_create_connection( uint8_t Initiator_Filter_Policy,
+                                              uint8_t Own_Address_Type,
+                                              uint8_t Peer_Address_Type,
+                                              const uint8_t* Peer_Address,
+                                              uint8_t Initiating_PHYs,
+                                              uint16_t Scan_Interval,
+                                              uint16_t Scan_Window,
+                                              uint16_t Conn_Interval_Min,
+                                              uint16_t Conn_Interval_Max,
+                                              uint16_t Conn_Latency,
+                                              uint16_t Supervision_Timeout,
+                                              uint16_t Min_CE_Length,
+                                              uint16_t Max_CE_Length );
 
 /**
  * @brief HCI_LE_READ_TRANSMIT_POWER

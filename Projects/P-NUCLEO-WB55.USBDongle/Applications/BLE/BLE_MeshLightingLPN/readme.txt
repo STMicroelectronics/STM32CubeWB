@@ -8,12 +8,12 @@
   * @brief   Description of the BLE Mesh Lighting Low Power Node demo example.
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -42,7 +42,7 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE mesh, Dual core
   - BLE/BLE_MeshLightingLPN/Core/Inc/app_entry.h                   Parameters configuration file of the application
   - BLE/BLE_MeshLightingLPN/Core/Inc/hw_conf.h                     Configuration file of the HW
   - BLE/BLE_MeshLightingLPN/Core/Inc/hw_flash.h                    Configuration file of the FLASH driver needed by EE module
-  - BLE/BLE_MeshLightingLPN/Core/Inc/hw_if.h                       Configuration file of the Hardware Iterface
+  - BLE/BLE_MeshLightingLPN/Core/Inc/hw_if.h                       Configuration file of the Hardware Interface
   - BLE/BLE_MeshLightingLPN/Core/Inc/lp_timer.h                    Configuration file of the Low power timer to be used within Mesh Application.
   - BLE/BLE_MeshLightingLPN/Core/Inc/main.h                        Header for main.c module
   - BLE/BLE_MeshLightingLPN/Core/Inc/stm32wbxx_hal_conf.h          HAL configuration file
@@ -142,7 +142,7 @@ one FN must be in the direct radio range of an LPN to establish Friendship.
 @Configuration
 
 Low Power Node
-Low Power feature support is defined in mesh_cfg_usr.h by hte predefinition of ENABLE_LOW_POWER_FEATURE.
+Low Power feature support is defined in mesh_cfg_usr.h by the predefinition of ENABLE_LOW_POWER_FEATURE.
 Note: A Low Power feature-enabled node does not support any other feature: all the other features should be
 undefined.
 
@@ -161,7 +161,7 @@ boards as Low Power nodes.
 
 Low Power node setup:
 Step 1. Configure LPN parameters.
-        Change only if required ohterwise skip this step (use example parameters defined in mesh_cfg_usr.h)
+        Change only if required otherwise skip this step (use example parameters defined in mesh_cfg_usr.h)
         LPN_RSSI_FACTOR_LEVEL             1
         LPN_RECIVE_WINDOW_FACTOR_LEVEL    1
         LPN_MINIMUM_QUEUE_SIZE_LOG        2

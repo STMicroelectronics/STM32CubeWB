@@ -337,7 +337,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>STM32WB5Mxx,STM32WB55xx,USE_HAL_DRIVER,STM32WL55MM_DK ,CORE_CM4,ARM_MATH_CM4,USE_USB_FS</Define>
+              <Define>STM32WB5Mxx,STM32WB55xx,USE_HAL_DRIVER,USE_STM32WB5M_DK,CORE_CM4,ARM_MATH_CM4,USE_USB_FS</Define>
               <Undefine></Undefine>
               <IncludePath>../Inc;../Src/vl53l0x;../../../../../Drivers/CMSIS/Include;../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../Drivers/BSP/STM32WB5MM-DK;../../../../../Drivers/BSP/Components/Common;../../../../../Drivers/BSP/Components/ism330dhcx;../../../../../Drivers/BSP/Components/s25fl128s;../../../../../Utilities/LCD;../../../../../Middlewares/ST/STM32_Audio/Addons/PDM/Inc;../Inc/usb;../../../../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;../../../../../Drivers/CMSIS/DSP/Source/FilteringFunctions;../../../../../Middlewares/ST/STM32_USB_Device_Library/Class/AUDIO/Inc;../../../../../Drivers/CMSIS/DSP/Include;../../../../../Drivers/BSP/Components/stts22h</IncludePath>
             </VariousControls>

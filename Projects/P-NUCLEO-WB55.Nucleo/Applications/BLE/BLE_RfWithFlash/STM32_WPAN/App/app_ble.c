@@ -1,22 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
- * @file    app_ble.c
- * @author  MCD Application Team
- * @brief   BLE Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    app_ble.c
+  * @author  MCD Application Team
+  * @brief   BLE Application
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -436,7 +435,8 @@ void APP_BLE_Init( void )
     0,
     CFG_BLE_MAX_COC_INITIATOR_NBR,
     CFG_BLE_MIN_TX_POWER,
-    CFG_BLE_MAX_TX_POWER}
+    CFG_BLE_MAX_TX_POWER,
+    CFG_BLE_RX_MODEL_CONFIG}
   };
 
   /**
@@ -1408,6 +1408,8 @@ static void BLE_UserEvtRx( void * pPayload )
   {
     pParam->status = HCI_TL_UserEventFlow_Disable;
   }
+  
+  return;
 }
 
 static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
@@ -1457,7 +1459,7 @@ WaitedSemStatus_t FD_WaitForSemAvailable(WaitedSemId_t WaitedSemId)
     LL_HSEM_ClearFlag_C1ICR(HSEM, __HAL_HSEM_SEMID_TO_MASK(CFG_HW_BLOCK_FLASH_REQ_BY_CPU1_SEMID)); /* There is a bug in __HAL_HSEM_CLEAR_FLAG() */
     if(LL_HSEM_GetStatus(HSEM, CFG_HW_BLOCK_FLASH_REQ_BY_CPU1_SEMID))
     {
-      APP_DBG_MSG("\r\n\rWAIT UNTILL CPU1 ALLOWS FLASH OPERATION\n");
+      APP_DBG_MSG("\r\n\rWAIT UNTIL CPU1 ALLOWS FLASH OPERATION\n");
 
       HAL_HSEM_ActivateNotification(__HAL_HSEM_SEMID_TO_MASK(CFG_HW_BLOCK_FLASH_REQ_BY_CPU1_SEMID));
       UTIL_SEQ_WaitEvt( 1<< CFG_IDLEEVT_FLASH_OPER_ALLOWED);
@@ -1470,7 +1472,7 @@ WaitedSemStatus_t FD_WaitForSemAvailable(WaitedSemId_t WaitedSemId)
     LL_HSEM_ClearFlag_C1ICR(HSEM, __HAL_HSEM_SEMID_TO_MASK(CFG_HW_BLOCK_FLASH_REQ_BY_CPU2_SEMID)); /* There is a bug in __HAL_HSEM_CLEAR_FLAG() */
     if(LL_HSEM_GetStatus(HSEM, CFG_HW_BLOCK_FLASH_REQ_BY_CPU2_SEMID))
     {
-      APP_DBG_MSG("\r\n\rWAIT UNTILL CPU2 ALLOWS FLASH OPERATION\n");
+      APP_DBG_MSG("\r\n\rWAIT UNTIL CPU2 ALLOWS FLASH OPERATION\n");
 
       HAL_HSEM_ActivateNotification(__HAL_HSEM_SEMID_TO_MASK(CFG_HW_BLOCK_FLASH_REQ_BY_CPU2_SEMID));
       UTIL_SEQ_WaitEvt( 1<< CFG_IDLEEVT_FLASH_OPER_ALLOWED);
@@ -1496,4 +1498,3 @@ void HAL_HSEM_FreeCallback(uint32_t SemMask)
 }
 
 /* USER CODE END FD_WRAP_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -43,5 +43,3 @@
 #endif
 
 #endif /* NUCLEO_WB15CC_ERRNO_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

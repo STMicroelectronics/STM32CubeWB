@@ -4,7 +4,7 @@
  * @brief ZCL Water Content Measurement cluster header
  * ZCL 7 section 4.7
  * ZCL 8 section 4.7
- * @copyright Copyright [2019 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 #ifndef ZCL_WATER_CONTENT_MEAS_H
 # define ZCL_WATER_CONTENT_MEAS_H
@@ -26,12 +26,12 @@
  * WCM.S.A0002 | MaxMeasuredValue | True
  * WCM.S.A0003 | Tolerance | False | Optional
  * WCM.S.Afffd | ClusterRevision | True
- * WCM.S.Afffe | AttributeReportingStatus | False
+ * WCM.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * WCM.C.A0000.Report.Rsp | MeasuredValue | False
  * WCM.C.Afffd | ClusterRevision | True
- * WCM.C.Afffe | AttributeReportingStatus | False
+ * WCM.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

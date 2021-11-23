@@ -139,5 +139,3 @@ int32_t BSP_ENV_SENSOR_GetValue(uint32_t Instance, uint32_t Function, float *Val
 #endif
 
 #endif /* STM32WB5MM_DK_ENV_SENSORS_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

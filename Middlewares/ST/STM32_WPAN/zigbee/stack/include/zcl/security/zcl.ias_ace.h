@@ -4,7 +4,7 @@
  * @brief ZCL Intruder Alarm Systems Ancillary Control Equipment cluster header
  * ZCL 7 section 8.3
  * ZCL 8 section 8.3
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 /*--------------------------------------------------------------------------
@@ -23,7 +23,7 @@
  *
  * Server Attributes
  * IASACE.S.Afffd | ClusterRevision | True
- * IASACE.S.Afffe | AttributeReportingStatus | False
+ * IASACE.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * IASACE.S.C00.Rsp | Arm | True
@@ -50,7 +50,7 @@
  *
  * Client Attributes
  * IASACE.C.Afffd | ClusterRevision | True
- * IASACE.C.Afffe | AttributeReportingStatus | False
+ * IASACE.C.Afffe | AttributeReportingStatus | True
  *
  * Coomands Generated
  * IASACE.C.C00.Tx | Arm | True

@@ -2,18 +2,18 @@
  ******************************************************************************
  * @file    zigbee_core_wb.c
  * @author  MCD Application Team
- * @brief   Contains STM32WB specificities requested to control the Zigbee stack
+ * @brief   Contains STM32WB specificities requested to control the zigbee stack
+ *          from the M4 core.
  *
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
  */
@@ -23,9 +23,7 @@
 #include <limits.h> /* ULONG_MAX */
 #include <assert.h>
 
-#include "zigbee_errors.h"
 #include "zigbee_types.h"
-
 #include "zigbee_interface.h" /* zigbee.h, etc */
 #include "zcl/zcl.h"
 #include "zcl/key/zcl.key.h" /* ZbZclKeWithDevice */
@@ -33,6 +31,11 @@
 #include "zcl/zcl.touchlink.h"
 #include "extras/zigbee.extras.h"
 #include "ieee802154_crc.h"
+
+#ifdef ZIGBEE_DIRECT_ACTIVATED
+/* SHA-256 */
+#include "sha.h"
+#endif /* ZIGBEE_DIRECT_ACTIVATED */
 
 #include "zigbee_core.h"
 #include "tl_zigbee_hci.h"
@@ -55,6 +58,19 @@ bool zb_ipc_get_secured_mem_info(uint32_t *unsec_sram2a_sz, uint32_t *unsec_sram
 unsigned int zb_malloc_current_sz(void);
 bool ZbZclDeviceLogCheckAllow(struct ZigBeeT *zb, struct ZbApsdeDataIndT *dataIndPtr, struct ZbZclHeaderT *zclHdrPtr);
 
+#ifdef ZIGBEE_DIRECT_ACTIVATED
+extern void ZbCcmTransform(const void *key, const void *nonce, uint32_t nonce_len, void *m, uint32_t m_len, void *mic);
+extern void ZbCcmAuthenticate(const void *key, const void *nonce, uint32_t nonce_len, const void *a, uint32_t a_len,
+  const void *m, uint32_t m_len, void *mic, uint32_t mic_len);
+int ec_mul_x25519(const void *private, const void *base, void *result);
+int ec_mul_p256(const void *priv, const void *pub_x, const void *pub_y, void *result_x, void *result_y);
+enum sha_status_t SHA256Reset(SHA256Context *context);
+enum sha_status_t SHA256Input(SHA256Context *context, const uint8_t *bytes, unsigned int bytecount);
+enum sha_status_t SHA256Result(SHA256Context * context, uint8_t Message_Digest[SHA256HashSize]);
+int hmacReset(HMACContext *context, enum SHAversion whichSha, const unsigned char *key, int key_len);
+int hmacInput(HMACContext *context, const unsigned char *text, int text_len);
+int hmacResult(HMACContext * context, uint8_t digest[USHAMaxHashSize]);
+#endif /* ZIGBEE_DIRECT_ACTIVATED */
 /* Touchlink callbacks */
 static struct ZbTouchlinkCallbacks zigbee_m4_tl_callbacks;
 
@@ -1328,6 +1344,39 @@ ZbApsUnbindAllReq(struct ZigBeeT *zb)
     ZIGBEE_CmdTransfer();
 }
 
+bool
+ZbApsBindSrcExists(struct ZigBeeT *zb, uint8_t endpoint, uint16_t clusterId)
+{
+    struct ZbApsmeBindT entry;
+    enum ZbStatusCodeT status;
+    unsigned int i;
+    uint64_t local_ext = ZbExtendedAddress(zb);
+
+    ZbEnterCritical(zb);
+    for (i = 0; ; i++) {
+        status = ZbApsGetIndex(zb, ZB_APS_IB_ID_BINDING_TABLE, &entry, sizeof(entry), i);
+        if (status != ZB_APS_STATUS_SUCCESS) {
+            break;
+        }
+        if (entry.srcExtAddr == 0ULL) {
+            continue;
+        }
+        if (entry.srcExtAddr != local_ext) {
+            continue;
+        }
+        if (entry.srcEndpt != endpoint) {
+            continue;
+        }
+        if (entry.clusterId != clusterId) {
+            continue;
+        }
+        ZbExitCritical(zb);
+        return true;
+    }
+    ZbExitCritical(zb);
+    return false;
+}
+
 IPC_REQ_FUNC(ZbApsmeTransportKeyReq, MSG_M4TOM0_APSME_TRANSPORT_KEY, struct ZbApsmeTransportKeyReqT);
 IPC_REQ_FUNC(ZbApsmeRemoveDeviceReq, MSG_M4TOM0_APSME_REMOVE_DEVICE, struct ZbApsmeRemoveDeviceReqT);
 
@@ -1805,28 +1854,31 @@ ZbNwkSetFrameCounter(struct ZigBeeT *zb, uint8_t keySeqno, uint64_t srcAddr, uin
     return zb_ipc_m4_get_retval() != 0U ? true : false;
 }
 
-bool
-ZbNwkFastPollRequest(struct ZigBeeT *zb)
+struct nwk_fastpoll_entry_t *
+ZbNwkFastPollRequest(struct ZigBeeT *zb, unsigned int delay, unsigned int timeout)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
 
     Pre_ZigbeeCmdProcessing();
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
     ipcc_req->ID = MSG_M4TOM0_NWK_FAST_POLL_REQUEST;
-    ipcc_req->Size = 0;
+    ipcc_req->Size = 2;
+    ipcc_req->Data[0] = (uint32_t)delay;
+    ipcc_req->Data[1] = (uint32_t)timeout;
     ZIGBEE_CmdTransfer();
-    return zb_ipc_m4_get_retval() != 0U ? true : false;
+    return (struct nwk_fastpoll_entry_t *)zb_ipc_m4_get_retval();
 }
 
 bool
-ZbNwkFastPollRelease(struct ZigBeeT *zb)
+ZbNwkFastPollRelease(struct ZigBeeT *zb, struct nwk_fastpoll_entry_t *handle)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
 
     Pre_ZigbeeCmdProcessing();
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
     ipcc_req->ID = MSG_M4TOM0_NWK_FAST_POLL_RELEASE;
-    ipcc_req->Size = 0;
+    ipcc_req->Size = 1;
+    ipcc_req->Data[0] = (uint32_t)handle;
     ZIGBEE_CmdTransfer();
     return zb_ipc_m4_get_retval() != 0U ? true : false;
 }
@@ -2733,19 +2785,14 @@ ZbApsFragDropTxClear(struct ZigBeeT *zb)
  ******************************************************************************
  */
 bool
-ZbAesMmoHash(struct ZigBeeT *zb, uint8_t const *data, const unsigned int length, uint8_t *digest)
+ZbAesMmoHash(uint8_t const *data, const unsigned int length, uint8_t *digest)
 {
-    struct ZbHash *hash;
+    struct ZbHash hash;
 
-    hash = ZbHeapAlloc(zb, sizeof(struct ZbHash));
-    if (hash == NULL) {
-        return false;
-    }
-    memset(hash, 0, sizeof(struct ZbHash));
-    ZbHashInit(hash);
-    ZbHashAdd(hash, data, length);
-    ZbHashDigest(hash, digest);
-    ZbHeapFree(zb, hash);
+    memset(&hash, 0, sizeof(struct ZbHash));
+    ZbHashInit(&hash);
+    ZbHashAdd(&hash, data, length);
+    ZbHashDigest(&hash, digest);
     return true;
 }
 
@@ -2772,6 +2819,21 @@ ZbHashAdd(struct ZbHash *h, const void *data, uint32_t len)
     ipcc_req->Data[2] = (uint32_t)len;
     ZIGBEE_CmdTransfer();
 }
+#ifdef ZIGBEE_DIRECT_ACTIVATED
+void
+ZbHashByte(struct ZbHash *h, uint8_t data)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_ZB_HASH_BYTE;
+    ipcc_req->Size = 2;
+    ipcc_req->Data[0] = (uint32_t)h;
+    ipcc_req->Data[1] = (uint32_t)data;
+    ZIGBEE_CmdTransfer();
+}
+#endif /*ZIGBEE_DIRECT_ACTIVATED */
 
 void
 ZbHashDigest(struct ZbHash *h, void *digest)
@@ -2785,6 +2847,50 @@ ZbHashDigest(struct ZbHash *h, void *digest)
     ipcc_req->Data[0] = (uint32_t)h;
     ipcc_req->Data[1] = (uint32_t)digest;
     ZIGBEE_CmdTransfer();
+}
+
+void
+ZbHmacInit(struct ZbHash *h, const void *key, uint32_t len)
+{
+    const unsigned char ipad = 0x36;
+    const unsigned char opad = 0x5c;
+    unsigned int i;
+
+    /* Initialize the hash data. */
+    ZbHashInit(h);
+    /* If the key is longer than the digest size, hash it into something smaller. */
+    if (len > AES_BLOCK_SIZE) {
+        ZbHashAdd(h, key, len);
+        ZbHashDigest(h, h->key);
+        ZbHashInit(h);
+    }
+    else {
+        (void)memcpy(h->key, key, AES_BLOCK_SIZE);
+    }
+
+    /* Apply the inner padding and input the key to the hash function. */
+    for (i = 0; i < AES_BLOCK_SIZE; i++) {
+        h->key[i] ^= ipad;
+    }
+    ZbHashAdd(h, h->key, AES_BLOCK_SIZE);
+
+    /* Undo the inner padding, and save the outer-padded key for later. */
+    for (i = 0; i < AES_BLOCK_SIZE; i++) {
+        h->key[i] ^= (ipad ^ opad);
+    }
+}
+
+void
+ZbHmacDigest(struct ZbHash *h, void *digest)
+{
+    /* Compute the inner digest of the inner-padded key and the message. */
+    ZbHashDigest(h, digest);
+
+    /* Reset the hash, and compute the digest of the outer-padded key and the inner digest. */
+    ZbHashInit(h);
+    ZbHashAdd(h, h->key, AES_BLOCK_SIZE);
+    ZbHashAdd(h, digest, AES_BLOCK_SIZE);
+    ZbHashDigest(h, digest);
 }
 
 /******************************************************************************
@@ -2812,11 +2918,191 @@ ZbSecAddDeviceLinkKeyByInstallCode(struct ZigBeeT *zb, uint64_t extAddr, uint8_t
 {
     uint8_t key[ZB_SEC_KEYSIZE];
 
-    if (!ZbAesMmoHash(zb, ic, len, key)) {
+    if (!ZbAesMmoHash(ic, len, key)) {
         return ZB_APS_STATUS_INVALID_PARAMETER;
     }
     return ZbSecAddDeviceLinkKeyByKey(zb, extAddr, key);
 }
+
+void
+ZbSecKeyTransform(uint8_t *key, uint8_t input, uint8_t *keyOut)
+{
+    struct ZbHash hash;
+
+    ZbHmacInit(&hash, key, ZB_SEC_KEYSIZE);
+    ZbHmacAdd(&hash, &input, sizeof(input));
+    ZbHmacDigest(&hash, keyOut);
+}
+
+#ifdef ZIGBEE_DIRECT_ACTIVATED
+void
+ZbCcmTransform(const void *key, const void *nonce, uint32_t nonce_len, void *m, uint32_t m_len, void *mic)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_AES_CCM_TRANSFORM;
+    ipcc_req->Size = 6;
+    ipcc_req->Data[0] = (uint32_t)key;
+    ipcc_req->Data[1] = (uint32_t)nonce;
+    ipcc_req->Data[2] = (uint32_t)nonce_len;
+    ipcc_req->Data[3] = (uint32_t)m;
+    ipcc_req->Data[4] = (uint32_t)m_len;
+    ipcc_req->Data[5] = (uint32_t)mic;
+    ZIGBEE_CmdTransfer();
+}
+
+void
+ZbCcmAuthenticate(const void *key, const void *nonce, uint32_t nonce_len, const void *a, uint32_t a_len,
+    const void *m, uint32_t m_len, void *mic, uint32_t mic_len)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_AES_CCM_AUTHENTICATE;
+    ipcc_req->Size = 9;
+    ipcc_req->Data[0] = (uint32_t)key;
+    ipcc_req->Data[1] = (uint32_t)nonce;
+    ipcc_req->Data[2] = (uint32_t)nonce_len;
+    ipcc_req->Data[3] = (uint32_t)a;
+    ipcc_req->Data[4] = (uint32_t)a_len;
+    ipcc_req->Data[5] = (uint32_t)m;
+    ipcc_req->Data[6] = (uint32_t)m_len;
+    ipcc_req->Data[7] = (uint32_t)mic;
+    ipcc_req->Data[8] = (uint32_t)mic_len;
+    ZIGBEE_CmdTransfer();
+}
+
+int
+ec_mul_x25519(const void *private, const void *base, void *result)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_EC_MUL_X25519;
+    ipcc_req->Size = 3;
+    ipcc_req->Data[0] = (uint32_t)private;
+    ipcc_req->Data[1] = (uint32_t)base;
+    ipcc_req->Data[2] = (uint32_t)result;
+    ZIGBEE_CmdTransfer();
+    return (int)zb_ipc_m4_get_retval();
+}
+
+int
+ec_mul_p256(const void *priv, const void *pub_x, const void *pub_y, void *result_x, void *result_y)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_EC_MUL_P256;
+    ipcc_req->Size = 5;
+    ipcc_req->Data[0] = (uint32_t)priv;
+    ipcc_req->Data[1] = (uint32_t)pub_x;
+    ipcc_req->Data[2] = (uint32_t)pub_y;
+    ipcc_req->Data[3] = (uint32_t)result_x;
+    ipcc_req->Data[4] = (uint32_t)result_y;
+    ZIGBEE_CmdTransfer();
+    return (int)zb_ipc_m4_get_retval();
+}
+
+enum sha_status_t
+SHA256Reset(SHA256Context *context)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_SHA256_RESET;
+    ipcc_req->Size = 1;
+    ipcc_req->Data[0] = (uint32_t)context;
+    ZIGBEE_CmdTransfer();
+    return (enum sha_status_t)zb_ipc_m4_get_retval();
+}
+
+enum sha_status_t
+SHA256Input(SHA256Context *context, const uint8_t *bytes, unsigned int bytecount)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_SHA256_INPUT;
+    ipcc_req->Size = 3;
+    ipcc_req->Data[0] = (uint32_t)context;
+    ipcc_req->Data[1] = (uint32_t)bytes;
+    ipcc_req->Data[2] = (uint32_t)bytecount;
+    ZIGBEE_CmdTransfer();
+    return (enum sha_status_t)zb_ipc_m4_get_retval();
+}
+
+enum sha_status_t
+SHA256Result(SHA256Context * context, uint8_t Message_Digest[SHA256HashSize])
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_SHA256_RESULT;
+    ipcc_req->Size = 2;
+    ipcc_req->Data[0] = (uint32_t)context;
+    ipcc_req->Data[1] = (uint32_t)Message_Digest;
+    ZIGBEE_CmdTransfer();
+    return (enum sha_status_t)zb_ipc_m4_get_retval();
+}
+
+int
+hmacReset(HMACContext *context, enum SHAversion whichSha,
+    const unsigned char *key, int key_len)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_SHA256_HMAC_RESET;
+    ipcc_req->Size = 4;
+    ipcc_req->Data[0] = (uint32_t)context;
+    ipcc_req->Data[1] = (uint32_t)whichSha;
+    ipcc_req->Data[2] = (uint32_t)key;
+    ipcc_req->Data[3] = (uint32_t)key_len;
+    ZIGBEE_CmdTransfer();
+    return (int)zb_ipc_m4_get_retval();
+}
+
+int
+hmacInput(HMACContext *context, const unsigned char *text, int text_len)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_SHA256_HMAC_INPUT;
+    ipcc_req->Size = 3;
+    ipcc_req->Data[0] = (uint32_t)context;
+    ipcc_req->Data[1] = (uint32_t)text;
+    ipcc_req->Data[2] = (uint32_t)text_len;
+    ZIGBEE_CmdTransfer();
+    return (int)zb_ipc_m4_get_retval();
+}
+
+int
+hmacResult(HMACContext * context, uint8_t digest[USHAMaxHashSize])
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_SHA256_HMAC_RESULT;
+    ipcc_req->Size = 2;
+    ipcc_req->Data[0] = (uint32_t)context;
+    ipcc_req->Data[1] = (uint32_t)digest;
+    ZIGBEE_CmdTransfer();
+    return (int)zb_ipc_m4_get_retval();
+}
+#endif /* ZIGBEE_DIRECT_ACTIVATED */
 
 /******************************************************************************
  * Memory Helpers

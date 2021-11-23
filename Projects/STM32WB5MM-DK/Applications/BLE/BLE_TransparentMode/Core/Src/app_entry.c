@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_entry.c
-  * Description        : Entry application source file for STM32WPAN Middleware
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_entry.c
+  * @author  MCD Application Team
+  * @brief   Entry point of the Application
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
- ******************************************************************************
- */
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -73,16 +73,16 @@ static tListNode  SysEvtQueue;
 /* Private functions prototypes-----------------------------------------------*/
 static void Config_HSE(void);
 static void Reset_Device( void );
+#if ( CFG_HW_RESET_BY_FW == 1 )
 static void Reset_IPCC( void );
 static void Reset_BackupDomain( void );
+#endif /* CFG_HW_RESET_BY_FW */
 static void System_Init( void );
 static void SystemPower_Config( void );
 static void appe_Tl_Init( void );
 static void APPE_SysUserEvtRx( TL_EvtPacket_t * p_evt_rx );
 static void shci_user_evt_proc( void );
-static void Init_Exti( void );
 static void Init_Rtc( void );
-static void Init_Smps( void );
 
 /* USER CODE BEGIN PFP */
 static void Button_Init( void );
@@ -159,6 +159,33 @@ void MX_APPE_Init( void )
 /* USER CODE END APPE_Init_2 */
    return;
 }
+
+void Init_Smps( void )
+{
+#if (CFG_USE_SMPS != 0)
+  /**
+   *  Configure and enable SMPS
+   *
+   *  The SMPS configuration is not yet supported by CubeMx
+   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
+   *  the SMPS output voltage shall be increased for higher RF output power
+   */
+  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
+  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
+  LL_PWR_SMPS_Enable();
+#endif
+
+  return;
+}
+
+void Init_Exti( void )
+{
+  /* Enable IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
+  LL_EXTI_EnableIT_32_63( LL_EXTI_LINE_36 & LL_EXTI_LINE_38 );
+
+  return;
+}
+
 /* USER CODE BEGIN FD */
 
 void LED_Deinit(void)
@@ -204,11 +231,12 @@ static void Reset_Device( void )
   Reset_BackupDomain();
 
   Reset_IPCC();
-#endif
+#endif /* CFG_HW_RESET_BY_FW */
 
   return;
 }
 
+#if ( CFG_HW_RESET_BY_FW == 1 )
 static void Reset_BackupDomain( void )
 {
   if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
@@ -264,6 +292,7 @@ static void Reset_IPCC( void )
 
   return;
 }
+#endif /* CFG_HW_RESET_BY_FW */
 
 static void Config_HSE(void)
 {
@@ -292,33 +321,6 @@ static void System_Init( void )
   return;
 }
 
-static void Init_Smps( void )
-{
-#if (CFG_USE_SMPS != 0)
-  /**
-   *  Configure and enable SMPS
-   *
-   *  The SMPS configuration is not yet supported by CubeMx
-   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
-   *  the SMPS output voltage shall be increased for higher RF output power
-   */
-  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
-  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
-  LL_PWR_SMPS_Enable();
-#endif
-
-  return;
-}
-
-static void Init_Exti( void )
-{
-  /**< Disable all wakeup interrupt on CPU1  except IPCC(36), HSEM(38) */
-  LL_EXTI_DisableIT_0_31(~0);
-  LL_EXTI_DisableIT_32_63( (~0) & (~(LL_EXTI_LINE_36 | LL_EXTI_LINE_38)) );
-
-  return;
-}
-
 static void Init_Rtc( void )
 {
   /* Disable RTC registers write protection */
@@ -331,6 +333,7 @@ static void Init_Rtc( void )
 
   return;
 }
+
 /**
  * @brief  Configure the system for power optimization
  *
@@ -413,6 +416,8 @@ static void shci_user_evt_proc ( void )
   TL_MM_EvtDone( p_evt_rx );
 
   TM_Init( );
+
+  return;
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
@@ -497,6 +502,8 @@ void UTIL_SEQ_Idle( void )
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
   UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+
+  return;
 }
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
@@ -519,4 +526,3 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
   return;
 }
 /* USER CODE END FD_WRAP_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

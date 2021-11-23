@@ -5,21 +5,21 @@
   * @brief   ZDD Service for Zigbee Direct (Custom STM)
   ******************************************************************************
   * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  *
+  * Copyright (c) 2018-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 
 /* Includes ------------------------------------------------------------------*/
 #include "common_blesvc.h"
+#include "ble_events.h"
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct{
@@ -68,7 +68,7 @@ PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static ZDDContext_t aZDDContext;
  * END of Section BLE_DRIVER_CONTEXT
  */
 /* Private function prototypes -----------------------------------------------*/
-static SVCCTL_EvtAckStatus_t ZDD_Event_Handler(void *pckt);
+static SVCCTL_EvtAckStatus_t ZDD_Event_Handler(void *Event);
 static void ZDD_SECURITY_STM_Init(void);
 static void ZDD_COMMISSIONING_STM_Init(void);
 static void ZDD_TUNNELING_STM_Init(void);
@@ -221,6 +221,8 @@ static SVCCTL_EvtAckStatus_t ZDD_Event_Handler(void *Event)
   hci_event_pckt *event_pckt;
   evt_blecore_aci *blecore_evt;
   aci_gatt_attribute_modified_event_rp0    * attribute_modified;
+  aci_gatt_read_permit_req_event_rp0 *attribute_read;
+  ZDD_STM_App_Notification_evt_t Notification;
 
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
@@ -232,32 +234,37 @@ static SVCCTL_EvtAckStatus_t ZDD_Event_Handler(void *Event)
     blecore_evt = (evt_blecore_aci*)event_pckt->data;
     switch(blecore_evt->ecode)
     {
+    /****************************************/
+    /* Handle Read request from GATT Client */
+    /****************************************/
+    case ACI_GATT_READ_PERMIT_REQ_VSEVT_CODE:
+    {
+      attribute_read = (aci_gatt_read_permit_req_event_rp0*)blecore_evt->data;
+      /* Env char */
+      if(attribute_read->Attribute_Handle == (aZDDContext.ZddCommStatusCharHdle + 1U))
+      {
+        BLE_DBG_ZDD_STM_MSG("\n-- GATT : READ COMM STATUS CHAR INFO RECEIVED\n");
+        /* Notify to application */
+        Notification.ZDD_Evt_Opcode = ZDD_COMM_STATUS_READ_EVT;
+        ZDD_STM_App_Notification(&Notification);
+      }
+      aci_gatt_allow_read(attribute_read->Connection_Handle);
+    }
+    break;
+
+    /******************************************************************/
     /* Handle Write request or Notification enabling from GATT Client */
+    /******************************************************************/
     case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
     {
       attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blecore_evt->data;
-
-      /***********************************/
-      /* Handle P2P Characteristics      */
-      /***********************************/
-
-      if(attribute_modified->Attr_Handle == (aZDDContext.ZddP2pNotifyServerToClientCharHdle + 2))
-      {
-        return_value = SVCCTL_EvtAckFlowEnable;
-        ZDD_Event_Notify_Handler(attribute_modified, ZDD_P2P_STM__NOTIFY_ENABLED_EVT, ZDD_P2P_STM_NOTIFY_DISABLED_EVT);
-      }
-
-      else if(attribute_modified->Attr_Handle == (aZDDContext.ZddP2pWriteClientToServerCharHdle + 1))
-      {
-        ZDD_Event_Write_Handler(attribute_modified, ZDD_P2P_STM_WRITE_EVT, "LED CONFIG");
-      }
 
       /***********************************/
       /* Handle SECURITY Characteristics */
       /***********************************/
 
       /* Write Security P_256 char */
-      else if(attribute_modified->Attr_Handle == (aZDDContext.ZddSecP256CharHdle + 1))
+      if(attribute_modified->Attr_Handle == (aZDDContext.ZddSecP256CharHdle + 1))
       {
         ZDD_Event_Write_Handler(attribute_modified, ZDD_SEC_P_256_WRITE_EVT, "P_256");
       }
@@ -333,33 +340,6 @@ static SVCCTL_EvtAckStatus_t ZDD_Event_Handler(void *Event)
         return_value = SVCCTL_EvtAckFlowEnable;
         ZDD_Event_Indicate_Handler(attribute_modified, ZDD_TUNN_ZDTS_NPDU_INDICATE_ENABLED_EVT, ZDD_TUNN_ZDTS_NPDU_INDICATE_DISABLED_EVT);
       }
-
-    }
-    break;
-
-    /* Handle Read request from GATT Client */
-    case ACI_GATT_READ_PERMIT_REQ_VSEVT_CODE:
-    {
-      aci_gatt_read_permit_req_event_rp0 *read_permit_req;
-      ZDD_STM_App_Notification_evt_t Notification;
-
-      read_permit_req = (aci_gatt_read_permit_req_event_rp0*)blecore_evt->data;
-      /* Env char */
-      if(read_permit_req->Attribute_Handle == (aZDDContext.ZddCommStatusCharHdle + 1U))
-      {
-        /* Notify to application */
-        BLE_DBG_ZDD_STM_MSG("\n-- GATT : READ COMM STATUS CHAR INFO RECEIVED\n");
-        Notification.ZDD_Evt_Opcode = ZDD_COMM_STATUS_READ_EVT;
-        ZDD_STM_App_Notification(&Notification);
-      }
-      else if(read_permit_req->Attribute_Handle == (aZDDContext.ZddP2pWriteClientToServerCharHdle + 1))
-      {
-        /* Notify to application */
-        BLE_DBG_ZDD_STM_MSG("\n-- GATT : READ LED CONFIG CHAR INFO RECEIVED\n");
-        Notification.ZDD_Evt_Opcode = ZDD_P2P_STM_READ_EVT;
-        ZDD_STM_App_Notification(&Notification);
-      }
-      (void)aci_gatt_allow_read(read_permit_req->Connection_Handle);
 
     }
     break;
@@ -540,13 +520,13 @@ static void ZDD_COMMISSIONING_STM_Init(void)
   COPY_ZDD_COMM_STATUS_CHAR_UUID(uuid_com.Char_UUID_128);
   aci_gatt_add_char(aZDDContext.ZddCommSvcHdle,
       UUID_TYPE_128, &uuid_com,
-      90,
+      85,
       CHAR_PROP_READ|CHAR_PROP_NOTIFY,
 //      ATTR_PERMISSION_NONE,
       ATTR_PERMISSION_AUTHEN_READ,
       GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, /* gattEvtMask */
       10, /* encryKeySize */
-      1, /* isVariable */
+      1, /* isVariable: 1 */
       &(aZDDContext.ZddCommStatusCharHdle));
 
   return;
@@ -579,8 +559,8 @@ static void ZDD_TUNNELING_STM_Init(void)
       UUID_TYPE_128, &uuid_tun,
       250,
       CHAR_PROP_WRITE|CHAR_PROP_INDICATE,
-      ATTR_PERMISSION_NONE,
-//      ATTR_PERMISSION_AUTHEN_WRITE|ATTR_PERMISSION_ENCRY_WRITE,
+//      ATTR_PERMISSION_NONE,
+      ATTR_PERMISSION_AUTHEN_WRITE|ATTR_PERMISSION_ENCRY_WRITE,
       GATT_NOTIFY_ATTRIBUTE_WRITE, /* gattEvtMask */
       10, /* encryKeySize */
       1, /* isVariable */
@@ -602,14 +582,6 @@ tBleStatus ZDD_STM_App_Update_Char(uint16_t UUID, uint8_t payloadLen, uint8_t *p
   tBleStatus result = BLE_STATUS_INVALID_PARAMS;
   switch(UUID)
   {
-  case ZDD_P2P_NOTIFY_CHAR_UUID:
-    result = aci_gatt_update_char_value(aZDDContext.ZddP2pSvcHdle,
-        aZDDContext.ZddP2pNotifyServerToClientCharHdle,
-        0, /* charValOffset */
-        payloadLen, /* charValueLen */
-        pPayload);
-    break;
-
   case ZDD_SEC_P_256_CHAR_UUID:
     result = aci_gatt_update_char_value(aZDDContext.ZddSecSvcHdle,
         aZDDContext.ZddSecP256CharHdle,
@@ -649,4 +621,4 @@ tBleStatus ZDD_STM_App_Update_Char(uint16_t UUID, uint8_t payloadLen, uint8_t *p
   return result;
 }/* end ZDD_STM_Init() */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+

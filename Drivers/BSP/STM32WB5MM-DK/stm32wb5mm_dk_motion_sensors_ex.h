@@ -69,5 +69,3 @@ int32_t BSP_MOTION_SENSOR_Write_Register(uint32_t Instance, uint8_t Reg, uint8_t
 #endif
 
 #endif /* BSP_MOTION_SENSOR_EX_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

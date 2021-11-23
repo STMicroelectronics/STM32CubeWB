@@ -5,17 +5,16 @@
   * @brief   This file contains reference buffers containing the description of
   *          nist P-256 (ECDSA-256) published by NIST in Federal Information 
   *          Processing Standards Publication FIPS PUB 186-4.
-  *          Additionnal buffer are provided to be used with PKA like abs(A)
+  *          Additional buffer are provided to be used with PKA like abs(A)
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -92,5 +91,3 @@ const uint8_t prime256v1_Seed[] = {
     0xb7, 0x81, 0x9f, 0x7e, 0x90
 };
 const uint32_t prime256v1_Seed_len = 20;
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

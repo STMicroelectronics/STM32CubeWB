@@ -2,20 +2,19 @@
 /**
  ******************************************************************************
   * File Name          : app_entry.c
-  * Description        : Entry application source file for STM32WPAN Middleware
- ******************************************************************************
+  * Description        : Entry application source file for STM32WPAN Middleware.
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
- ******************************************************************************
- */
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -190,9 +189,8 @@ void Init_Smps( void )
 
 void Init_Exti( void )
 {
-  /**< Disable all wakeup interrupt on CPU1  except IPCC(36), HSEM(38) */
-  LL_EXTI_DisableIT_0_31(~0);
-  LL_EXTI_DisableIT_32_63( (~0) & (~(LL_EXTI_LINE_36 | LL_EXTI_LINE_38)) );
+  /* Enable IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
+  LL_EXTI_EnableIT_32_63( LL_EXTI_LINE_36 & LL_EXTI_LINE_38 );
 
   return;
 }
@@ -742,4 +740,3 @@ static void UartCmdExecute(void)
   }
 }
 /* USER CODE END FD_WRAP_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

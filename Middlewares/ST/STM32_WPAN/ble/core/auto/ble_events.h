@@ -1,20 +1,19 @@
-/******************************************************************************
+/*****************************************************************************
  * @file    ble_events.h
  * @author  MCD
  * @brief   STM32WB BLE API (event callbacks)
  *          Auto-generated file: do not edit!
- ******************************************************************************
+ *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
- ******************************************************************************
+ *****************************************************************************
  */
 
 #ifndef BLE_EVENTS_H__
@@ -24,13 +23,13 @@
 #include "ble_types.h"
 
 #define HCI_EVENT_TABLE_SIZE 6
-#define HCI_LE_EVENT_TABLE_SIZE 11
+#define HCI_LE_EVENT_TABLE_SIZE 16
 #define HCI_VS_EVENT_TABLE_SIZE 51
 
 typedef struct
 {
   uint16_t evt_code;
-  void (*process)(const uint8_t* in);
+  void (*process)( const uint8_t* in );
 } hci_event_table_t;
 
 extern const hci_event_table_t hci_event_table[HCI_EVENT_TABLE_SIZE];
@@ -51,7 +50,7 @@ extern const hci_event_table_t hci_vs_event_table[HCI_VS_EVENT_TABLE_SIZE];
  * Connection_Handle that didn't correspond to a connection was given.
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection_Handle which was disconnected.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Reason Reason for disconnection (see Bluetooth spec. [Vol 1, Part F]
@@ -82,7 +81,7 @@ void hci_disconnection_complete_event( uint8_t Status,
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.8].
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle for which the command applies.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Encryption_Enabled Link Level Encryption.
@@ -117,7 +116,7 @@ void hci_encryption_change_event( uint8_t Status,
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.12].
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle for which the command applies.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Version Version of the Current LMP in the remote Controller
@@ -190,7 +189,7 @@ void hci_number_of_completed_packets_event( uint8_t Number_of_Handles,
  * the Role Change event.
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle for which the command applies.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @return None
@@ -230,7 +229,7 @@ void hci_encryption_key_refresh_complete_event( uint8_t Status,
  * @param Peer_Address Public Device Address or Random Device Address of the
  *        peer device
  * @param Conn_Interval Connection interval used on this connection.
- *        Time = N * 1.25 msec
+ *        Time = N * 1.25 ms
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Latency Slave latency for the connection in number of connection
@@ -240,7 +239,7 @@ void hci_encryption_key_refresh_complete_event( uint8_t Status,
  * @param Supervision_Timeout Supervision timeout for the LE Link.
  *        It shall be a multiple of 10 ms and larger than (1 +
  *        connSlaveLatency) * connInterval * 2.
- *        Time = N * 10 msec.
+ *        Time = N * 10 ms.
  *        Values:
  *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
  * @param Master_Clock_Accuracy Master clock accuracy. Only valid for a slave.
@@ -299,7 +298,7 @@ void hci_le_advertising_report_event( uint8_t Num_Reports,
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval Connection interval used on this connection.
- *        Time = N * 1.25 msec
+ *        Time = N * 1.25 ms
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Latency Slave latency for the connection in number of connection
@@ -309,7 +308,7 @@ void hci_le_advertising_report_event( uint8_t Num_Reports,
  * @param Supervision_Timeout Supervision timeout for the LE Link.
  *        It shall be a multiple of 10 ms and larger than (1 +
  *        connSlaveLatency) * connInterval * 2.
- *        Time = N * 10 msec.
+ *        Time = N * 10 ms.
  *        Values:
  *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
  * @return None
@@ -367,30 +366,29 @@ void hci_le_long_term_key_request_event( uint16_t Connection_Handle,
  * the connection following the change, except that on the LE Coded PHY a
  * packet taking up to 2704 us to transmit may be sent even though the
  * corresponding parameter has a lower value.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.7].
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.7] and [Vol 6, Part B,
+ * 4.5.10].
  * 
  * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param MaxTxOctets The maximum number of payload octets in a Link Layer
  *        packet that the local Controller will send on this connection
- *        (connEffectiveMaxTxOctets defined in [Vol 6] Part B, Section 4.5.10).
+ *        (connEffectiveMaxTxOctets).
  *        Values:
  *        - 0x001B ... 0x00FB
  * @param MaxTxTime The maximum time that the local Controller will take to
- *        send a Link Layer packet on this connection (connEffectiveMaxTxTime
- *        defined in [Vol 6] Part B, Section 4.5.10).
+ *        send a Link Layer packet on this connection (connEffectiveMaxTxTime).
  *        Values:
  *        - 0x0148 ... 0x4290
  * @param MaxRxOctets The maximum number of payload octets in a Link Layer
  *        packet that the local Controller expects to receive on this
- *        connection (connEffectiveMaxRxOctets defined in [Vol 6] Part B,
- *        Section 4.5.10).
+ *        connection (connEffectiveMaxRxOctets).
  *        Values:
  *        - 0x001B ... 0x00FB
  * @param MaxRxTime The maximum time that the local Controller expects to take
  *        to receive a Link Layer packet on this connection
- *        (connEffectiveMaxRxTime defined in [Vol 6] Part B, Section 4.5.10).
+ *        (connEffectiveMaxRxTime).
  *        Values:
  *        - 0x0148 ... 0x4290
  * @return None
@@ -477,7 +475,7 @@ void hci_le_generate_dhkey_complete_event( uint8_t Status,
  *        This is only valid for Peer_Address_Type 0x02 and 0x03. For other
  *        Peer_Address_Type values, the Controller shall return all zeros.
  * @param Conn_Interval Connection interval used on this connection.
- *        Time = N * 1.25 msec
+ *        Time = N * 1.25 ms
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Latency Slave latency for the connection in number of connection
@@ -487,7 +485,7 @@ void hci_le_generate_dhkey_complete_event( uint8_t Status,
  * @param Supervision_Timeout Supervision timeout for the LE Link.
  *        It shall be a multiple of 10 ms and larger than (1 +
  *        connSlaveLatency) * connInterval * 2.
- *        Time = N * 10 msec.
+ *        Time = N * 10 ms.
  *        Values:
  *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
  * @param Master_Clock_Accuracy Master clock accuracy. Only valid for a slave.
@@ -546,28 +544,199 @@ void hci_le_direct_advertising_report_event( uint8_t Num_Reports,
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.12].
  * 
  * @param Status Status error code.
- * @param Connection_Handle Connection handle to be used to identify the
- *        connection with the peer device.
+ * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param TX_PHY Transmitter PHY in use
  *        Values:
  *        - 0x01: The transmitter PHY for the connection is LE 1M
  *        - 0x02: The transmitter PHY for the connection is LE 2M
- *        - 0x03: The transmitter PHY for the connection is LE Coded
- *          (Not supported by STM32WB)
+ *        - 0x03: The transmitter PHY for the connection is LE Coded (not
+ *          supported)
  * @param RX_PHY Receiver PHY in use
  *        Values:
  *        - 0x01: The receiver PHY for the connection is LE 1M
  *        - 0x02: The receiver PHY for the connection is LE 2M
- *        - 0x03: The receiver PHY for the connection is LE Coded
- *          (Not supported by STM32WB)
+ *        - 0x03: The receiver PHY for the connection is LE Coded (not
+ *          supported)
  * @return None
  */
 void hci_le_phy_update_complete_event( uint8_t Status,
                                        uint16_t Connection_Handle,
                                        uint8_t TX_PHY,
                                        uint8_t RX_PHY );
+
+/**
+ * @brief HCI_LE_EXTENDED_ADVERTISING_REPORT_EVENT
+ * The HCI_LE_Extended_Advertising_Report event indicates that a Bluetooth
+ * device has responded to an active scan or has broadcast advertisements that
+ * were received during a passive scan.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.13].
+ * 
+ * @param Num_Reports Number of responses in this event.
+ *        Values:
+ *        - 0x01
+ * @param Event_Type Event type.
+ *        Flags:
+ *        - 0x0001: Connectable advertising
+ *        - 0x0002: Scannable advertising
+ *        - 0x0004: Directed advertising
+ *        - 0x0008: Scan response
+ *        - 0x0010: Legacy advertising PDUs used
+ *        - 0x0020: Incomplete, more data to come
+ *        - 0x0040: Incomplete, data truncated, no more to come
+ * @param Address_Type Address type of the advertising device.
+ *        Values:
+ *        - 0x00: Public Device Address
+ *        - 0x01: Random Device Address
+ *        - 0x02: Public Identity Address (corresponds to Resolved Private
+ *          Address)
+ *        - 0x03: Random (static) Identity Address (corresponds to Resolved
+ *          Private Address)
+ *        - 0xFF: No address provided (anonymous advertisement)
+ * @param Address Public Device Address, Random Device Address, Public Identity
+ *        Address, or Random (static) Identity Address of the advertising
+ *        device.
+ * @param Primary_PHY Primary advetising PHY.
+ *        Values:
+ *        - 0x01: Advertiser PHY is LE 1M
+ * @param Secondary_PHY Secondary advetising PHY.
+ *        Values:
+ *        - 0x00: No packets on the secondary advertising physical channel
+ *        - 0x01: Advertiser PHY is LE 1M
+ *        - 0x02: Advertiser PHY is LE 2M
+ *        - 0x03: Advertiser PHY is LE Coded
+ * @param Advertising_SID Value of the Advertising SID subfield in the ADI
+ *        field of the PDU or, for scan responses, in the ADI field of the
+ *        original scannable.
+ *        Values:
+ *        - 0xFF: No ADI field provided
+ *        - 0x00 ... 0x0F: Advertising SID subfield
+ * @param TX_Power Tx Power (signed integer).
+ *        Units: dBm.
+ *        Values:
+ *        - 127: Tx power information not available
+ *        - -127 ... 20: Tx power
+ * @param RSSI RSSI (signed integer).
+ *        Units: dBm.
+ *        Values:
+ *        - 127: RSSI not available
+ *        - -127 ... 20
+ * @param Periodic_Adv_Interval Interval of the periodic advertising.
+ *        Values:
+ *        - 0x0000: No periodic advertising
+ * @param Direct_Address_Type Target device address type.
+ *        Values:
+ *        - 0x00: Public Device Address
+ *        - 0x01: Random Device Address
+ *        - 0x02: Public Identity Address (Corresponds to Resolved Private
+ *          Address)
+ *        - 0x03: Random (static) Identity Address (Corresponds to Resolved
+ *          Private Address)
+ *        - 0xFE: Random Device Address (Controller unable to resolve)
+ * @param Direct_Address Public Device Address, Random Device Address, Public
+ *        Identity Address, or Random (static) Identity Address of the target
+ *        device.
+ * @param Data_Length Length of Data
+ * @param Data Octets of advertising or scan response data formatted as defined
+ *        in Bluetooth spec. v.5.2 [Vol 3, Part C, 11].
+ * @return None
+ */
+void hci_le_extended_advertising_report_event( uint8_t Num_Reports,
+                                               uint16_t Event_Type,
+                                               uint8_t Address_Type,
+                                               const uint8_t* Address,
+                                               uint8_t Primary_PHY,
+                                               uint8_t Secondary_PHY,
+                                               uint8_t Advertising_SID,
+                                               uint8_t TX_Power,
+                                               uint8_t RSSI,
+                                               uint16_t Periodic_Adv_Interval,
+                                               uint8_t Direct_Address_Type,
+                                               const uint8_t* Direct_Address,
+                                               uint8_t Data_Length,
+                                               const uint8_t* Data );
+
+/**
+ * @brief HCI_LE_SCAN_TIMEOUT_EVENT
+ * The HCI_LE_Scan_Timeout event indicates that scanning has ended because the
+ * duration has expired.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.17].
+ * 
+ * @return None
+ */
+void hci_le_scan_timeout_event( void );
+
+/**
+ * @brief HCI_LE_ADVERTISING_SET_TERMINATED_EVENT
+ * The HCI_LE_Advertising_Set_Terminated event indicates that the Controller
+ * has terminated advertising in the advertising sets specified by the
+ * Advertising_Handle parameter.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.18].
+ * 
+ * @param Status Status error code.
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Connection_Handle Connection handle for which the event applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
+ * @param Num_Completed_Ext_Adv_Events Number of completed extended advertising
+ *        events transmitted by the Controller.
+ *        Values:
+ *        - 0x00 ... 0xFF
+ * @return None
+ */
+void hci_le_advertising_set_terminated_event( uint8_t Status,
+                                              uint8_t Advertising_Handle,
+                                              uint16_t Connection_Handle,
+                                              uint8_t Num_Completed_Ext_Adv_Events );
+
+/**
+ * @brief HCI_LE_SCAN_REQUEST_RECEIVED_EVENT
+ * The HCI_LE_Scan_Request_Received event indicates that a SCAN_REQ PDU or an
+ * AUX_SCAN_REQ PDU has been received by the advertiser. The request contains a
+ * device address from a scanner that is allowed by the advertising filter
+ * policy. The advertising set is identified by Advertising_Handle.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.19].
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Scanner_Address_Type Scanner address type.
+ *        Values:
+ *        - 0x00: Public Device Address
+ *        - 0x01: Random Device Address
+ *        - 0x02: Public Identity Address (corresponds to Resolved Private
+ *          Address)
+ *        - 0x03: Random (static) Identity Address (corresponds to Resolved
+ *          Private Address)
+ * @param Scanner_Address Public Device Address, Random Device Address, Public
+ *        Identity Address, or Random (static) Identity Address of the scanner
+ *        device.
+ * @return None
+ */
+void hci_le_scan_request_received_event( uint8_t Advertising_Handle,
+                                         uint8_t Scanner_Address_Type,
+                                         const uint8_t* Scanner_Address );
+
+/**
+ * @brief HCI_LE_CHANNEL_SELECTION_ALGORITHM_EVENT
+ * The HCI_LE_Channel_Selection_Algorithm event indicates which channel
+ * selection algorithm is used on a data physical channel connection.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.20].
+ * 
+ * @param Connection_Handle Connection handle for which the event applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
+ * @param Channel_Selection_Algorithm LE Channel Selection Algorithm.
+ *        Values:
+ *        - 0x00: Algorithm #1 is used
+ *        - 0x01: Algorithm #2 is used
+ * @return None
+ */
+void hci_le_channel_selection_algorithm_event( uint16_t Connection_Handle,
+                                               uint8_t Channel_Selection_Algorithm );
 
 /* ACI GAP events */
 
@@ -588,8 +757,9 @@ void aci_gap_limited_discoverable_event( void );
  * that it can take further actions or to notify that a timeout has occurred so
  * that the upper layer can decide to disconnect the link.
  * 
- * @param Connection_Handle Connection handle on which the pairing procedure
- *        completed
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Status Pairing status
  *        Values:
  *        - 0x00: Success
@@ -622,8 +792,9 @@ void aci_gap_pairing_complete_event( uint16_t Connection_Handle,
  * passkey is required for pairing. When this event is received, the
  * application has to respond with the ACI_GAP_PASS_KEY_RESP command.
  * 
- * @param Connection_Handle Connection handle for which the passkey has been
- *        requested.
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @return None
  */
 void aci_gap_pass_key_req_event( uint16_t Connection_Handle );
@@ -636,8 +807,9 @@ void aci_gap_pass_key_req_event( uint16_t Connection_Handle );
  * When this event is received, ACI_GAP_AUTHORIZATION_RESP command should be
  * used to respond by the application.
  * 
- * @param Connection_Handle Connection handle for which authorization has been
- *        requested.
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @return None
  */
 void aci_gap_authorization_req_event( uint16_t Connection_Handle );
@@ -673,7 +845,6 @@ void aci_gap_bond_lost_event( void );
  *        Values:
  *        - 0x01: GAP_LIMITED_DISCOVERY_PROC
  *        - 0x02: GAP_GENERAL_DISCOVERY_PROC
- *        - 0x04: GAP_NAME_DISCOVERY_PROC
  *        - 0x08: GAP_AUTO_CONNECTION_ESTABLISHMENT_PROC
  *        - 0x10: GAP_GENERAL_CONNECTION_ESTABLISHMENT_PROC
  *        - 0x20: GAP_SELECTIVE_CONNECTION_ESTABLISHMENT_PROC
@@ -697,8 +868,9 @@ void aci_gap_proc_complete_event( uint8_t Procedure_Code,
  * to the upper layers when the peripheral is unsuccessful in resolving the
  * resolvable address of the peer device after connecting to it.
  * 
- * @param Connection_Handle Connection handle for which the private address
- *        could not be resolved with any of the stored IRK's.
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @return None
  */
 void aci_gap_addr_not_resolved_event( uint16_t Connection_Handle );
@@ -710,7 +882,10 @@ void aci_gap_addr_not_resolved_event( uint16_t Connection_Handle );
  * and to ask for Confirmation to the User. When this event is received, the
  * application has to respond with the ACI_GAP_NUMERIC_COMPARISON_RESP command.
  * 
- * @param Connection_Handle Connection handle related to the underlying Pairing
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
+ * @param Numeric_Value Generated numeric value.
  * @return None
  */
 void aci_gap_numeric_comparison_value_event( uint16_t Connection_Handle,
@@ -723,9 +898,11 @@ void aci_gap_numeric_comparison_value_event( uint16_t Connection_Handle,
  * having Keyboard only I/O capabilities. When this event is received, no
  * action is required to the User.
  * 
- * @param Connection_Handle Connection handle related to the underlying Pairing
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Notification_Type Type of Keypress input notified/signaled by peer
- *        device (having Keyboard only I/O capabilities
+ *        device (having Keyboard only I/O capabilities.
  * @return None
  */
 void aci_gap_keypress_notification_event( uint16_t Connection_Handle,
@@ -744,7 +921,9 @@ void aci_gap_keypress_notification_event( uint16_t Connection_Handle,
  * - write long characteristic value
  * - reliable write.
  * 
- * @param Connection_Handle The connection handle which modified the attribute.
+ * @param Connection_Handle Connection handle for which the event applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Attr_Handle Handle of the attribute that was modified.
  * @param Offset Bits 14-0: offset from which the write has been performed by
  *        the peer device. Bit 15 is used as flag: when set to 1 it indicates
@@ -773,8 +952,9 @@ void aci_gatt_attribute_modified_event( uint16_t Connection_Handle,
  * sending the ACI_GAP_TERMINATE, since immediately after this event, system
  * could save important information in non volatile memory.
  * 
- * @param Connection_Handle Connection handle on which the GATT procedure has
- *        timed out
+ * @param Connection_Handle Connection handle for which the event applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @return None
  */
 void aci_gatt_proc_timeout_event( uint16_t Connection_Handle );
@@ -1127,8 +1307,9 @@ void aci_gatt_read_permit_req_event( uint16_t Connection_Handle,
  * command to indicate to the stack that it can send the response to the
  * client.
  * 
- * @param Connection_Handle Handle of the connection which requested to read
- *        the attribute
+ * @param Connection_Handle Connection handle for which the event applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @param Handle_Item See @ref Handle_Item_t
  * @return None
  */
@@ -1279,6 +1460,10 @@ void aci_gatt_notification_ext_event( uint16_t Connection_Handle,
  * @param Connection_Handle Handle of the connection where this event occurred.
  *        Values:
  *        - 0x0000 ... 0x0EFF
+ * @param Result Result field from the response packet.
+ *        Values:
+ *        - 0x0000: Connection Parameters accepted
+ *        - 0x0001: Connection Parameters rejected
  * @return None
  */
 void aci_l2cap_connection_update_resp_event( uint16_t Connection_Handle,
@@ -1314,12 +1499,12 @@ void aci_l2cap_proc_timeout_event( uint16_t Connection_Handle,
  * @param L2CAP_Length Length of the L2CAP connection update request.
  * @param Interval_Min Minimum value for the connection event interval. This
  *        shall be less than or equal to Conn_Interval_Max.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Interval_Max Maximum value for the connection event interval. This
  *        shall be greater than or equal to Conn_Interval_Min.
- *        Time = N * 1.25 msec.
+ *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Slave_Latency Slave latency for the connection in number of
@@ -1597,8 +1782,8 @@ void aci_hal_end_of_radio_activity_event( uint8_t Last_State,
  * This event is reported to the application after a scan request is received
  * and a scan response is scheduled to be transmitted.
  * 
- * @param RSSI N Size: 1 Octet (signed integer)
- *        Units: dBm
+ * @param RSSI RSSI (signed integer).
+ *        Units: dBm.
  *        Values:
  *        - 127: RSSI not available
  *        - -127 ... 20

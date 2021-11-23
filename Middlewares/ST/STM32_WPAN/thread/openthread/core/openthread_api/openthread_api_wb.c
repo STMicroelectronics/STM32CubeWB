@@ -7,13 +7,12 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
  */
@@ -78,6 +77,8 @@ otLinkRawEnergyScanDone otLinkRawEnergyScanDoneCb = NULL;
 
 /* UDP */
 otUdpReceive otUdpReceiveCb = NULL;
+otUdpHandler otUdpHandlerCb = NULL;
+STUdpHandlerContextType* mySTUdpHandlerContext = NULL;
 #if OPENTHREAD_CONFIG_UDP_FORWARD_ENABLE
 otUdpForwardSetForwarder otUdpForwardSetForwarderCb = NULL;
 #endif /* OPENTHREAD_CONFIG_UDP_FORWARD_ENABLE */
@@ -176,14 +177,10 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     }
     break;
   case MSG_M0TOM4_COAP_SECURE_CLIENT_CONNECT:
-    mySTCoapSecureContext = (STCoapSecureSpecificContextType*) p_notification->Data[1];
-
-    l_coapSecureClientConnectCb = mySTCoapSecureContext->mHandler;
-
-    if (l_coapSecureClientConnectCb != NULL)
+    if (coapSecureClientConnectCb != NULL)
     {
-      l_coapSecureClientConnectCb((bool) p_notification->Data[0],
-          mySTCoapSecureContext->mContext);
+      coapSecureClientConnectCb((bool) p_notification->Data[0],
+          (void *) p_notification->Data[1]);
     }
     break;
   case MSG_M0TOM4_COAP_SECURE_SET_CLIENT_CONNECT:
@@ -281,6 +278,14 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
           (void*) p_notification->Data[3]);
     }
     break;
+  case MSG_M0TOM4_COMMISSIONER_PANID_CONFLICT_CALLBACK:
+    if (otCommissionerPanIdConflictCb != NULL)
+    {
+      otCommissionerPanIdConflictCb((uint16_t) p_notification->Data[0],
+          (uint32_t) p_notification->Data[1],
+          (void*) p_notification->Data[2]);
+    }
+    break;
   case MSG_M0TOM4_COMMISSIONER_STATE_CALLBACK:
     if (otCommissionerStateCb != NULL)
     {
@@ -354,6 +359,18 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
           (otMessageInfo*) p_notification->Data[2]);
     }
     break;
+  case MSG_M0TOM4_UDP_HANDLER:
+      mySTUdpHandlerContext = (STUdpHandlerContextType*) p_notification->Data[0];
+
+      otUdpHandlerCb = mySTUdpHandlerContext->mHandler;
+
+      if (otUdpHandlerCb != NULL)
+      {
+        p_notification->Data[0] = otUdpHandlerCb(mySTUdpHandlerContext->mContext,
+            (otMessage *) p_notification->Data[1],
+            (otMessageInfo *) p_notification->Data[2]);
+      }
+      break;
 #if OPENTHREAD_CONFIG_UDP_FORWARD_ENABLE
   case MSG_M0TOM4_UDP_FORWARDER:
     if (otUdpForwardSetForwarderCb != NULL)

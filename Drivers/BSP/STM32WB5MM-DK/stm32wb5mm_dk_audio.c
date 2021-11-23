@@ -4,6 +4,17 @@
   * @author  MCD Application Team
   * @brief   This file provides the Audio driver for the STM32WB5MM-DK
   *          discovery board.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
   @verbatim
   How To use this driver:
   -----------------------
@@ -52,16 +63,6 @@
 
   @endverbatim
   ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -88,7 +89,7 @@
 
 /**
   * @}
-  */ 
+  */
   
 /** @defgroup STM32WB5MM_DK_AUDIO_Exported_Variables STM32WB5MM_DK AUDIO Exported Variables
   * @{
@@ -618,7 +619,7 @@ int32_t BSP_AUDIO_IN_GetChannelsNbr(uint32_t Instance, uint32_t *ChannelNbr)
 /**
   * @brief  Set the current audio in volume level.
   * @param  Instance  AUDIO IN Instance.
-  * @param  Volume    Volume level to be returnd
+  * @param  Volume    Volume level to be returned
   * @retval BSP status
   */
 int32_t BSP_AUDIO_IN_SetVolume(uint32_t Instance, uint32_t Volume)
@@ -660,7 +661,7 @@ int32_t BSP_AUDIO_IN_SetVolume(uint32_t Instance, uint32_t Volume)
 /**
   * @brief  Get the current audio in volume level.
   * @param  Instance  AUDIO IN Instance.
-  * @param  Volume    Volume level to be returnd
+  * @param  Volume    Volume level to be returned
   * @retval BSP status
   */
 int32_t BSP_AUDIO_IN_GetVolume(uint32_t Instance, uint32_t *Volume)
@@ -785,11 +786,11 @@ __weak void BSP_AUDIO_IN_Error_CallBack(uint32_t Instance)
 
 /**
   * @}
-  */ 
+  */
   
 /** @defgroup BSP_AUDIO_IN_Private_Functions STM32WB5MM_DK AUDIO IN Private Functions
   * @{
-  */ 
+  */
 
 /*******************************************************************************
 Static Functions
@@ -938,10 +939,6 @@ __weak HAL_StatusTypeDef MX_SAI1_Block_A_Init(SAI_HandleTypeDef* hsai,uint32_t P
 
 /**
   * @}
-  */ 
-
-/**
-  * @}
   */
 
 /**
@@ -950,6 +947,8 @@ __weak HAL_StatusTypeDef MX_SAI1_Block_A_Init(SAI_HandleTypeDef* hsai,uint32_t P
 
 /**
   * @}
-  */ 
+  */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/**
+  * @}
+  */

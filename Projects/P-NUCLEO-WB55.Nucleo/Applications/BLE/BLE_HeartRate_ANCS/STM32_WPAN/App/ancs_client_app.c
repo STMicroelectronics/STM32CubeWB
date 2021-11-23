@@ -1,21 +1,20 @@
 /**
- ******************************************************************************
+  ******************************************************************************
  * @file    ancs_client_app.c
  * @author  MCD Application Team
  * @brief   ANCS client Application
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2018(-2021) STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 
 /* Includes ------------------------------------------------------------------*/
@@ -85,7 +84,7 @@ typedef enum
 } AncsProcId_t;
 
 /**
-   * structure of fields for GATT notication source characteristic
+   * structure of fields for GATT notification source characteristic
    */
 typedef struct notifyListS {
   uint8_t    used;           /*flag to indicate notification processed or not*/
@@ -321,7 +320,7 @@ static void ANCS_Show_Attr(NotificationAttributeID attrID)
    */
 static void ANCS_Show_AppAttr(AppAttributeID appAttrID)
 {
-  printf("\r\n*************** App Attribute Infomation Received **********************\r\n");
+  printf("\r\n*************** App Attribute Information Received **********************\r\n");
   switch (appAttrID) {
   case AppAttributeIDDisplayName:
     printf("** DisplayName: ");
@@ -330,11 +329,11 @@ static void ANCS_Show_AppAttr(AppAttributeID appAttrID)
 }
 
 /**
-   * Display different fields for GATT notication source characteristic received
+   * Display different fields for GATT notification source characteristic received
    */
 static void ANCS_Show_Notification(uint16_t index)
 {
-  printf("\r\n*************** Data Source Detail Infomation Received **********************\r\n");
+  printf("\r\n*************** Data Source Detail Information Received **********************\r\n");
   ANCS_Show_EventID((EventID)ancs_context.notifyList[index].evID);
   ANCS_Show_EventFlag((EventFlags)ancs_context.notifyList[index].evFlag);
   ANCS_Show_CategoryID((CategoryID)ancs_context.notifyList[index].catID);
@@ -557,7 +556,7 @@ static void ANCS_Parse_GetNotificationAttr_Resp(uint8_t  commandID, uint16_t att
             ancs_context.AppIdentifierLength = MAX_DISPLAY_NAME_LEN;
           }
 		  
-          ancs_context.state = ANCS_GET_APP_ATTRIBUTE;  /* 3.2 Get APP Attributes (Detail Infomation about the App, Now only support to Get Name of App) */
+          ancs_context.state = ANCS_GET_APP_ATTRIBUTE;  /* 3.2 Get APP Attributes (Detail Information about the App, Now only support to Get Name of App) */
           appId = FALSE;
         }
         
@@ -568,11 +567,11 @@ static void ANCS_Parse_GetNotificationAttr_Resp(uint8_t  commandID, uint16_t att
 
     if(ancs_context.state == ANCS_GET_APP_ATTRIBUTE)
     {
-      APP_DBG_MSG(" 3.2 Get APP Attributes (Detail Infomation about the App, Now only support to Get Name of App) => ANCS_GET_APP_ATTRIBUTE \n\r"); 
+      APP_DBG_MSG(" 3.2 Get APP Attributes (Detail Information about the App, Now only support to Get Name of App) => ANCS_GET_APP_ATTRIBUTE \n\r"); 
     }
     else
     {
-      /* Note, there is no  AppIdentifier, so we only perform active action, but you also can perform negtive action */
+      /* Note, there is no  AppIdentifier, so we only perform active action, but you also can perform negative action */
       if( (PositiveActionLabel == TRUE) || (NegativeActionLabel == TRUE) )
       {
         ancs_context.state = ANCS_PERFORM_NOTIFICATION_ACTION;  /* 3.2 Perform Notification Action */
@@ -681,7 +680,7 @@ static void ANCS_Notification_Source_Received_event(
 {
   uint16_t i;
   
-  printf("*************** Notification Source Basic Infomation Received **********************\r\n");
+  printf("*************** Notification Source Basic Information Received **********************\r\n");
   ANCS_Show_EventID(evID);
   ANCS_Show_EventFlag(evFlag);
   ANCS_Show_CategoryID(catID);
@@ -738,7 +737,7 @@ void ANCS_Notification_Check(EventFlags EventFlagMask)
         ancs_context.notifyEntry = idx;
         ancs_context.notifyShowed = FALSE;
         ancs_context.state = ANCS_GET_NOTIFICATION_ATTRIBUTE;
-        APP_DBG_MSG("2. Get More Detail Infomations  notifyEntry=%d ==> ANCS_GET_NOTIFICATION_ATTRIBUTE \n\r",ancs_context.notifyEntry);
+        APP_DBG_MSG("2. Get More Detail Information  notifyEntry=%d ==> ANCS_GET_NOTIFICATION_ATTRIBUTE \n\r",ancs_context.notifyEntry);
         break;
       }
     }
@@ -941,9 +940,9 @@ static void GattParseServices(aci_att_read_by_group_type_resp_event_rp0 *pr)
       } else if (uuid == DEVICE_INFORMATION_SERVICE_UUID) /* 0x180A */ {
         APP_DBG_MSG("DEVICE_INFORMATION_SERVICE_UUID=0x%04X found [%04X %04X]!\n",uuid,ServiceStartHandle,ServiceEndHandle);
       } else if (uuid == 0x180B) /* 0x180B */ {
-        APP_DBG_MSG("Unkown UUID=0x%04X found [%04X %04X]!\n",uuid,ServiceStartHandle,ServiceEndHandle);
+        APP_DBG_MSG("Unknown UUID=0x%04X found [%04X %04X]!\n",uuid,ServiceStartHandle,ServiceEndHandle);
       } else if (uuid == 0x180C) /* 0x180C */ {
-        APP_DBG_MSG("Unkown UUID=0x%04X found [%04X %04X]!\n",uuid,ServiceStartHandle,ServiceEndHandle);
+        APP_DBG_MSG("Unknown UUID=0x%04X found [%04X %04X]!\n",uuid,ServiceStartHandle,ServiceEndHandle);
       } else if (uuid == HEART_RATE_SERVICE_UUID) /* 0x180D */ {
         APP_DBG_MSG("AMS_SERVICE_UUID=0x%04X found [%04X %04X]!\n",uuid,ServiceStartHandle,ServiceEndHandle);
       } else if (uuid == PHONE_ALERT_SERVICE_UUID) /* 0x180E */ {
@@ -1142,11 +1141,11 @@ static void GattParseDescs(aci_att_find_info_resp_event_rp0 *pr)
       handle = UNPACK_2_BYTE_PARAMETER(&pr->Handle_UUID_Pair[uuid_offset-2]);
       uuid = UNPACK_2_BYTE_PARAMETER(&pr->Handle_UUID_Pair[uuid_offset+uuid_short_offset]);
       
-      /* 1. primary serice handle + primary serice UUID */
+      /* 1. primary service handle + primary service UUID */
       if(uuid == PRIMARY_SERVICE_UUID)
       {
       APP_DBG_MSG("PRIMARY_SERVICE_UUID=0x%04X handle=0x%04X\n\r",uuid,handle);
-      }/* 1. primary serice handle + primary serice UUID */
+      }/* 1. primary service handle + primary service UUID */
     
       /* 2. char handle + char UUID */
       else if(uuid == CHARACTERISTIC_UUID)
@@ -1248,10 +1247,10 @@ static void GattParseNotification(aci_gatt_notification_event_rp0 *pr)
 
   if (ancs_context.connection_handle == pr->Connection_Handle)
   {
-	// 1. Incomming Nofification
+	// 1. Incoming Nofification
     if (pr->Attribute_Handle == ancs_context.ANCSNotificationSourceCharValueHdle) 
     {
-      APP_DBG_MSG("1. Incomming Nofification received BASIC information : \n\r");
+      APP_DBG_MSG("1. Incoming Nofification received BASIC information : \n\r");
       EventID evID       = (EventID)pr->Attribute_Value[0];
       EventFlags evFlag = (EventFlags)pr->Attribute_Value[1];
       CategoryID catID  = (CategoryID)pr->Attribute_Value[2];
@@ -1259,7 +1258,7 @@ static void GattParseNotification(aci_gatt_notification_event_rp0 *pr)
       uint32_t notifUID   = (uint32_t)(*((uint32_t *)&pr->Attribute_Value[4]));
       ANCS_Notification_Source_Received_event(evID, evFlag, catID, catCount, notifUID);
     
-      // 2. Get More Detail Infomations
+      // 2. Get More Detail Information
       if( (evID == EventIDNotificationAdded) )
       {
         if((evFlag & EventFlagSilent) != EventFlagSilent)
@@ -1270,7 +1269,7 @@ static void GattParseNotification(aci_gatt_notification_event_rp0 *pr)
       }
     }// ANCSNotificationSourceCharValueHdle
 
-    // 3. Parse Detail Infomations, Perform Notification Action or Get APP Attributes
+    // 3. Parse Detail Information, Perform Notification Action or Get APP Attributes
     if (pr->Attribute_Handle == ancs_context.ANCSDataSourceCharValueHdle) 
     { 
       CommandID cmdID	= (CommandID)pr->Attribute_Value[0];
@@ -1285,25 +1284,25 @@ static void GattParseNotification(aci_gatt_notification_event_rp0 *pr)
       /***********************************************************************************/
       if (cmdID == CommandIDGetNotificationAttributes)
       {
-        APP_DBG_MSG("3.1 Parse Detail Infomation of Notification Attribute, CommandIDGetNotificationAttributes Response: \n\r");
+        APP_DBG_MSG("3.1 Parse Detail Information of Notification Attribute, CommandIDGetNotificationAttributes Response: \n\r");
         notifUID = (uint32_t)(*((uint32_t *)&pr->Attribute_Value[1]));
         AttributeLength = pr->Attribute_Value_Length - (1+4);
         AttributeList = (uint8_t *)&pr->Attribute_Value[1+4];
         
-        // 3.1 Parse Detail Infomation of Notification Attribute
+        // 3.1 Parse Detail Information of Notification Attribute
         ANCS_Parse_GetNotificationAttr_Resp(cmdID,AttributeLength,AttributeList);
       }
       UNUSED(notifUID);
 	  
       if (cmdID == CommandIDGetAppAttributes)
       {
-        APP_DBG_MSG("3.3 Parse Detail Infomation of APP Attribute, CommandIDGetAppAttributes Response: \n\r");
+        APP_DBG_MSG("3.3 Parse Detail Information of APP Attribute, CommandIDGetAppAttributes Response: \n\r");
         strcpy(AppIdentifier,(char *)&pr->Attribute_Value[1]);
         AppIdentifierLength = strlen((char *)&pr->Attribute_Value[1]);
         AttributeLength = pr->Attribute_Value_Length - (1+AppIdentifierLength+1);
         AttributeList = (uint8_t *)&pr->Attribute_Value[1+AppIdentifierLength+1];
         
-        // 3.3 Parse Detail Infomation of App Attribute
+        // 3.3 Parse Detail Information of App Attribute
         ANCS_Parse_GetAppAttr_Resp(cmdID,AttributeLength,AttributeList);
       }
       
@@ -1964,5 +1963,3 @@ void ANCS_App_Notification( Connection_Context_t *pNotification )
 
 
 
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

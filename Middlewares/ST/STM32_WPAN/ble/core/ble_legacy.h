@@ -5,15 +5,14 @@
  *****************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
- * All rights reserved.</center></h2>
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
  *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
- ******************************************************************************
+ *****************************************************************************
  */
 
 #ifndef BLE_LEGACY_H__
@@ -195,11 +194,14 @@ typedef	uint8_t	tBDAddr[6];
 #define LIM_DISC_MODE_TIMEOUT                      180000 /* 180 seconds */
 #define PRIVATE_ADDR_INT_TIMEOUT                   900000 /* 15 minutes */
 
+#define BLE_STATUS_UNKNOWN_CONNECTION_ID             0x02
+#define BLE_STATUS_NOT_ALLOWED                       0x0C
 #define BLE_STATUS_SEC_UNKNOWN_CONNECTION_ID         0x40
 #define BLE_STATUS_INVALID_LEN_PDU                   0x44
 #define FLASH_READ_FAILED                            0x49
 #define FLASH_WRITE_FAILED                           0x4A
 #define FLASH_ERASE_FAILED                           0x4B
+#define BLE_STATUS_INVALID_CID                       0x50
 #define TIMER_NOT_VALID_LAYER                        0x54
 #define TIMER_INSUFFICIENT_RESOURCES                 0x55
 #define BLE_STATUS_DEV_NOT_FOUND_IN_DB               0x5C
@@ -263,11 +265,24 @@ typedef	uint8_t	tBDAddr[6];
 /* ------------------------------------------------------------------------- */
 
 
-/* Deprecative name for LE Read Remote Features command
+/* Deprecated names for HCI commands and events
  */
-#define hci_le_read_remote_used_features hci_le_read_remote_features
+#define hci_le_read_remote_used_features \
+        hci_le_read_remote_features
 #define hci_le_read_remote_used_features_complete_event_rp0 \
-          hci_le_read_remote_features_complete_event_rp0
+        hci_le_read_remote_features_complete_event_rp0
+#define hci_le_read_advertising_channel_tx_power \
+        hci_le_read_advertising_physical_channel_tx_power
+#define hci_le_start_encryption \
+        hci_le_enable_encryption
+#define hci_le_long_term_key_requested_negative_reply \
+        hci_le_long_term_key_request_negative_reply
+#define hci_le_set_advertise_enable \
+        hci_le_set_advertising_enable
+#define hci_le_enhanced_receiver_test \
+        hci_le_receiver_test_v2
+#define hci_le_enhanced_transmitter_test \
+        hci_le_transmitter_test_v2
 
 
 /* ------------------------------------------------------------------------- */

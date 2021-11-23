@@ -1,21 +1,28 @@
 /**
   ******************************************************************************
   * @file    ipBLE_lld_public.h
-  * @author  MCD / MCU EmbSW / RF
-  * @version V0.3.0
-  * @date    3-Feb-2021
+  * @author  MCD Application Team
   * @brief   Public structures and definitions for BLE radio low level driver
-  *          This header is shared between radio and application MCUs
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT 2017 STMicroelectronics</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
 
-#ifndef __IP_BLE_LLD_PUBLIC_H_
-#define __IP_BLE_LLD_PUBLIC_H_
+#ifndef IPBLE_LLD_PUBLIC_H
+#define IPBLE_LLD_PUBLIC_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* ---------------------------------------------------------------------------*/
 /* ----------------------------- Includes ------------------------------------*/
 /* ---------------------------------------------------------------------------*/
@@ -210,4 +217,8 @@ typedef enum{
   TX_POW_PLUS_6_DB
 } txPower_t;
 
+#ifdef __cplusplus
+}
 #endif
+
+#endif /* IPBLE_LLD_PUBLIC_H */

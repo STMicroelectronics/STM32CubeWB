@@ -8,12 +8,12 @@
   * @brief   Description of the BLE Proximity example.
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -107,7 +107,7 @@ With the Smart Phone application:
  - The Proximity Service Set an RSSI threshold 
    - The red led is switched ON (green led switched OFF) if the Path loss value exceeds the threshold
    - The green led is switched ON red led switched OFF) if the Path loss is under the threshold.
-   - The path loss value varies with the distance beetween the phone and the nucleo board.
+   - The path loss value varies with the distance between the phone and the nucleo board.
 + Warning: the led status in Proximity Service is notified (by BLE profile application) only when
   the threshold is updated by user.
  

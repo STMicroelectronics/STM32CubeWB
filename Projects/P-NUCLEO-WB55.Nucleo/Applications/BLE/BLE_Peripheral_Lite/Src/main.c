@@ -1,10 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
-******************************************************************************
+  ******************************************************************************
 * @file    main.c
 * @author  MCD Application Team
 * @brief   BLE application with BLE core
 *
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
 @verbatim
 ==============================================================================
 ##### IMPORTANT NOTE #####
@@ -23,19 +34,8 @@ Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the
 detailed procedure to change the Wireless Coprocessor binary.
 
 @endverbatim
-******************************************************************************
-* @attention
-*
-* <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
-* All rights reserved.</center></h2>
-*
-* This software component is licensed by ST under Ultimate Liberty license 
-* SLA0044, the "License"; You may not use this file except in compliance with 
-* the License. You may obtain a copy of the License at:
-*                             www.st.com/SLA0044
-*
-******************************************************************************
-*/
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -445,7 +445,8 @@ static void BLE_Init( void )
     0,
     CFG_BLE_MAX_COC_INITIATOR_NBR,
     CFG_BLE_MIN_TX_POWER,
-    CFG_BLE_MAX_TX_POWER}
+    CFG_BLE_MAX_TX_POWER,
+    CFG_BLE_RX_MODEL_CONFIG}
   };
   
   /**
@@ -663,7 +664,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   }
   
   /**
-  * Update GAP Service Appearence characteristic value
+  * Update GAP Service Appearance  characteristic value
   */
   ret = aci_gatt_update_char_value(gap_service_handle,
                                 gap_appearance_char_handle,
@@ -1054,5 +1055,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

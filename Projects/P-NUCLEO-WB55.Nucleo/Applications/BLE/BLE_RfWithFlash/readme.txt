@@ -8,12 +8,12 @@
   * @brief   Description of the BLE_RfWithFlash example
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -100,7 +100,7 @@ On the android/ios device, enable the Bluetooth communications, and if not done 
  - The blue led on the board can be switched ON/OFF from the phone.
 
   Specific implementation for the test flash procedure
-  The descritpions above are taken from the BLE_p2pServer and are still valid as the BLE_RfWithFlash application is built on top of the
+  The descriptions above are taken from the BLE_p2pServer and are still valid as the BLE_RfWithFlash application is built on top of the
   BLE_p2pServer application.
   The BLE_RfWithFlash application is working in the same way than BLE_p2pServer application with additional features :
   - Each time SW3 is pressed, the application alternatively :
@@ -116,7 +116,7 @@ On the android/ios device, enable the Bluetooth communications, and if not done 
   - When SW3 is pressed while the CPU1 timing protection has been enabled with SW1, the CPU1 loops into the FlashOperationProc() until the CPU1
     timing protection is disabled. Over all the time, the RF link activity is maintained.
 
-Second demonstration - The phone may be replaced by the BLE_p2pClient application dowloaded on a STM32WB55xx board
+Second demonstration - The phone may be replaced by the BLE_p2pClient application downloaded on a STM32WB55xx board
  - BLE_RfWithFlash may be connected by BLE_p2pClient.
  - Once the code (BLE_RfWithFlash & BLE_p2pClient) is downloaded into the two STM32WB55xx boards and executed, the modules are initialized. 
 

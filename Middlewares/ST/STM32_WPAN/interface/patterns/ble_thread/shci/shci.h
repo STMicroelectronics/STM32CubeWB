@@ -4,17 +4,16 @@
  * @author  MCD Application Team
  * @brief   HCI command for the system channel
  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
  */
 
 
@@ -527,10 +526,12 @@ extern "C" {
 
   /**
    * Options flags
-   * - bit 0:   1: LL only                   0: LL + host
-   * - bit 1:   1: no service change desc.   0: with service change desc.
-   * - bit 2:   1: device name Read-Only     0: device name R/W
-   * - bit 7:   1: LE Power Class 1          0: LE Power Classe 2-3
+   * - bit 0:   1: LL only                          0: LL + host
+   * - bit 1:   1: no service change desc.          0: with service change desc.
+   * - bit 2:   1: device name Read-Only            0: device name R/W
+   * - bit 3:   1: extended advertizing supported   0: extended advertizing not supported   [NOT SUPPORTED]
+   * - bit 4:   1: CS Algo #2 supported             0: CS Algo #2 not supported
+   * - bit 7:   1: LE Power Class 1                 0: LE Power Classe 2-3
    * - other bits: reserved ( shall be set to 0)
    */
   uint8_t Options;
@@ -558,7 +559,15 @@ extern "C" {
    * Range: -127 .. 20
    */
   int8_t max_tx_power;
-  } SHCI_C2_Ble_Init_Cmd_Param_t;
+  
+   /**
+   * RX model configuration
+   * - bit 0:   1: agc_rssi model improved vs RF blockers    0: Legacy agc_rssi model
+   * - other bits: reserved ( shall be set to 0)
+   */
+  uint8_t rx_model_config;
+ 
+      } SHCI_C2_Ble_Init_Cmd_Param_t;
 
   typedef PACKED_STRUCT{
     SHCI_Header_t Header;       /** Does not need to be initialized by the user */
@@ -579,9 +588,21 @@ extern "C" {
 #define SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO                       (1<<2)
 #define SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW                       (0<<2)
 
+#define SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV                              (1<<3)   /*NOT SUPPORTED*/        
+#define SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV                           (0<<3)   /*NOT SUPPORTED*/
+  
+#define SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2                             (1<<4)       
+#define SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2                          (0<<4) 
+  
 #define SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1                        (1<<7)
 #define SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3                      (0<<7)
 
+    /**
+   * RX models configuration
+   */
+#define SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY                     (0<<0)
+#define SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_BLOCKER                    (1<<0)
+ 
 
 #define SHCI_OPCODE_C2_THREAD_INIT              (( SHCI_OGF << 10) + SHCI_OCF_C2_THREAD_INIT)
 /** No command parameters */
@@ -735,6 +756,7 @@ extern "C" {
       uint8_t Spare1;
       uint32_t BleNvmRamAddress;
       uint32_t ThreadNvmRamAddress;
+      uint16_t RevisionID;
     } SHCI_C2_CONFIG_Cmd_Param_t;
 
 #define SHCI_OPCODE_C2_802_15_4_DEINIT    (( SHCI_OGF << 10) + SHCI_OCF_C2_802_15_4_DEINIT)
@@ -745,6 +767,13 @@ extern "C" {
  */
 #define SHCI_C2_CONFIG_PAYLOAD_CMD_SIZE   (sizeof(SHCI_C2_CONFIG_Cmd_Param_t) - 1)
 
+/**
+ * Device revision ID
+ */
+#define SHCI_C2_CONFIG_CUT2_0                        (0x2000)
+#define SHCI_C2_CONFIG_CUT2_1                        (0x2001)
+#define SHCI_C2_CONFIG_CUT2_2                        (0x2003)
+    
 /**
  * Config1
  * Each definition below may be added together to build the Config1 value
@@ -1067,6 +1096,7 @@ typedef struct {
   /**
   * SHCI_C2_FLASH_EraseActivity
   * @brief Provides the information of the start and the end of a flash erase window on the CPU1
+  *        The protection will be active until next end of radio event.
   *
   * @param  erase_activity: Start/End of erase activity
   * @retval Status
@@ -1249,4 +1279,3 @@ typedef struct {
 
 #endif /*__SHCI_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

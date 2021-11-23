@@ -8,12 +8,12 @@
   * @brief   Description of the BSP example.
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -58,11 +58,6 @@ This document provides a description of the microphone streaming application bas
 on STM32WB5MM-DK board. It allows acquisition of  a digital MEMS microphones,
 PDM to PCM decimation and streaming towards a host PC via a dedicated USB Audio Input driver.
 
-@par Keywords
-
-BSP, DMA, Audio record, Microphone, LCD, QSPI, QUADSPI, Humidity, Display, Button, Temperature, Sensor,
-Accelerometer, Distance, STTS22H, ISM330DHCX, VL53L0X, PDM, PCM, USB.
-
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
       a peripheral ISR process, then the SysTick interrupt must have higher priority (numerically lower)
@@ -71,6 +66,11 @@ Accelerometer, Distance, STTS22H, ISM330DHCX, VL53L0X, PDM, PCM, USB.
       
 @note The application need to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
+
+@par Keywords
+
+BSP, DMA, Audio record, Microphone, LCD, QSPI, QUADSPI, Humidity, Display, Button, Temperature, Sensor,
+Accelerometer, Distance, STTS22H, ISM330DHCX, VL53L0X, PDM, PCM, USB.
 
 @par Directory contents 
 
@@ -87,11 +87,10 @@ Accelerometer, Distance, STTS22H, ISM330DHCX, VL53L0X, PDM, PCM, USB.
   - BSP/Inc/stm32wbxx_it.h                Interrupt handlers header file
   - BSP/Inc/stm32wb5mm_dk_conf.h          STM32WB5MM-DK board configuration file
 
-        
 @par Hardware and Software environment  
 
   - This example runs on STM32WB5MMxx devices.
-    
+
   - This example has been tested with STMicroelectronics STM32WB5MM-DK
     boards.
 

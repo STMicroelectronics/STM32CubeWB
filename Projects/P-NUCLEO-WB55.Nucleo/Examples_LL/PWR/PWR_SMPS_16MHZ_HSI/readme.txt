@@ -8,12 +8,12 @@
   * @brief   Description of the PWR SMPS example.
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -30,7 +30,7 @@ User can act on 2 parameters to use power converters of STM32WB:
             The recommended BOR level is level 1: BOR1 voltage rising edge 2.1V, falling edge 2.0V (refer to device datasheet for more information).
             To change BOR level, use tool ST-Link utility to update option bytes.
    User must apply a variation of Vdd: Remove jumper JP2 and supply JP2 pin "VDD" by an external voltage.
-   This is the use case, for exemple, of a battery voltage variation depending on lifetime or current load.
+   This is the use case, for example , of a battery voltage variation depending on lifetime or current load.
    - If Vdd > BOR level: Vcore is supplied by SMPS + LDO
      SMPS is in mode step-down and is converting power for the main LDO.
      The transition of SMPS mode bypass to step-down is not done automatically by HW. This example performs it by SW.

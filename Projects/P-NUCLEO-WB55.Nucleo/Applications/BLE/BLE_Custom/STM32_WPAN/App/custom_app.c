@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
- * File Name          : App/custom_app.c
- * Description        : Custom Example Application (Server)
- ******************************************************************************
+  ******************************************************************************
+  * @file    custom_app.c
+  * @author  MCD Application Team
+  * @brief   Custom Example Application (Server)
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
- ******************************************************************************
- */
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -151,7 +151,7 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
 
        Custom_App_Context.Hrs_m_Notification_Status = 1;         /* Hrs_m notification status has been enabled */
 
-       /* Set Heart Rate Measurment value */
+       /* Set Heart Rate Measurement value */
        if ((hr_value >= CUSTOM_STM_HRS_VALUE_MIN) && (hr_value <= CUSTOM_STM_HRS_VALUE_MAX))
        {
          hr_value += 1;
@@ -336,5 +336,3 @@ void Custom_Hrs_m_Send_Notification(void) /* Property Notification */
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS*/
 
 /* USER CODE END FD_LOCAL_FUNCTIONS*/
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

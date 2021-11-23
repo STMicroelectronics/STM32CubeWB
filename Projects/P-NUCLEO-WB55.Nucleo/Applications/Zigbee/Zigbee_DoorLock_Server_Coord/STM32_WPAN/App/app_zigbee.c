@@ -1,20 +1,19 @@
 /**
- ******************************************************************************
- * File Name          : App/app_zigbee.c
- * Description        : Zigbee Application.
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * File Name          : App/app_zigbee.c
+  * Description        : Zigbee Application.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -309,7 +308,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_AttrNotify_cb(struct ZbZcl
       /* setting door state to closed */
       status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_CLOSE);
       if(status != ZCL_STATUS_SUCCESS){
-        APP_DBG("Error writting local attribute.");
+        APP_DBG("Error writing local attribute.");
         assert(0);
       }
       return ZCL_STATUS_SUCCESS;
@@ -323,7 +322,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_AttrNotify_cb(struct ZbZcl
  * @brief  DoorLock server lock command callback
  * @param  clusterPtr: ZCL cluster pointer
  * @param  cmd_req: ZCL DoorLock cluster Lock Door request
- * @param  srcInfo: Src address informations
+ * @param  srcInfo: Src address information
  * @param  arg: passed arguments
  * @retval ZCL status code
  */
@@ -369,7 +368,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
     /* Lock is unlocked -> locked it  */
     status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_LOCKED);
     if(status != ZCL_STATUS_SUCCESS){
-      APP_DBG("Error writting local attribute: cannot set lock state to 'locked'.\n");
+      APP_DBG("Error writing local attribute: cannot set lock state to 'locked'.\n");
       (void) ZbZclDoorLockServerSendLockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
       return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
     }
@@ -404,7 +403,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
   /* Lock is unlocked -> locked it  */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_LOCKED);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set lock state to 'unlocked'.\n");
+    APP_DBG("Error writing local attribute: cannot set lock state to 'unlocked'.\n");
     (void) ZbZclDoorLockServerSendLockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
     return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
   }
@@ -426,7 +425,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Lock_cb(struct ZbZclCluste
  * @brief  DoorLock server lock command callback
  * @param  clusterPtr: ZCL cluster pointer
  * @param  cmd_req: ZCL DoorLock cluster Unlock Door request
- * @param  srcInfo: Src address informations
+ * @param  srcInfo: Src address information
  * @param  arg: passed arguments
  * @retval ZCL status code
  */
@@ -473,7 +472,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
   /* Lock is locked -> unlocked it  */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_UNLOCKED);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set lock state to 'unlocked'.\n");
+    APP_DBG("Error writing local attribute: cannot set lock state to 'unlocked'.\n");
     (void) ZbZclDoorLockServerSendUnlockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
     return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
   }
@@ -508,7 +507,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
   /* Lock is locked -> unlocked it  */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_UNLOCKED);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set lock state to 'unlocked'.\n");
+    APP_DBG("Error writing local attribute: cannot set lock state to 'unlocked'.\n");
     (void) ZbZclDoorLockServerSendUnlockRsp(clusterPtr, srcInfo, &rsp, NULL, NULL);
     return ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
   }
@@ -538,7 +537,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_DoorLock_Server_Unlock_cb(struct ZbZclClus
  * @brief  DoorLock server set pin command callback
  * @param  clusterPtr: ZCL cluster pointer
  * @param  cmd_req: ZCL DoorLock cluster Unlock Door request
- * @param  srcInfo: Src address informations
+ * @param  srcInfo: Src address information
  * @param  arg: passed arguments
  * @retval ZCL status code
  */
@@ -640,7 +639,7 @@ static void APP_ZIGBEE_DoorLock_Server_PassageMode(void){
   /* Activate passage mode */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_MODE, DOORLOCK_PASSAGE_MODE);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set operating mode.");
+    APP_DBG("Error writing local attribute: cannot set operating mode.");
   }
   
   /* Start passage mode duration timer */
@@ -672,7 +671,7 @@ static void APP_ZIGBEE_DoorLock_Server_PassageMode_Ended(void){
   /* Operating mode set to normal */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_MODE, DOORLOCK_NORMAL_MODE);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set operating mode.");
+    APP_DBG("Error writing local attribute: cannot set operating mode.");
   }
   
   APP_DBG("Passage mode ended.");
@@ -703,7 +702,7 @@ static void APP_ZIGBEE_DoorLock_Server_AutoRelockTime(void){
   /* Lock the door */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_LOCKED);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set lock state to 'unlocked'.\n");
+    APP_DBG("Error writing local attribute: cannot set lock state to 'unlocked'.\n");
     return;
   }
   
@@ -826,14 +825,14 @@ static void APP_ZIGBEE_DoorLock_Server_Init(void){
   /* At startup, the lock is locked */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_LOCKSTATE, ZCL_DRLK_LOCKSTATE_LOCKED);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set lock state to 'locked'.");
+    APP_DBG("Error writing local attribute: cannot set lock state to 'locked'.");
     assert(0);
   }
   
   /* Door state is closed */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_CLOSE);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute.");
+    APP_DBG("Error writing local attribute.");
     assert(0);
   }
   
@@ -841,28 +840,28 @@ static void APP_ZIGBEE_DoorLock_Server_Init(void){
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_SUPPORTED_MODES, 
                                  (uint16_t)DOORLOCK_NORMAL_MODE_SUPPORTED|DOORLOCK_PASSAGE_MODE_SUPPORTED);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set supported mode.");
+    APP_DBG("Error writing local attribute: cannot set supported mode.");
     assert(0);
   }
   
   /* Setting up operating mode attribute */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_MODE, DOORLOCK_NORMAL_MODE);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set operating mode.");
+    APP_DBG("Error writing local attribute: cannot set operating mode.");
     assert(0);
   }
   
   /* Setting up auto relock time attribute */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_AUTO_RELOCK, DOORLOCK_AUTO_RELOCK_TIME);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set operating mode.");
+    APP_DBG("Error writing local attribute: cannot set operating mode.");
     assert(0);
   }
   
   /* Setting up alarm bitmap */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_ALARM_MASK, 1<<DOORLOCK_ALARM_FORCED_DOOR);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute: cannot set operating mode.");
+    APP_DBG("Error writing local attribute: cannot set operating mode.");
     assert(0);
   }
  
@@ -1138,7 +1137,7 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Zigbee
- *        and display associated informations
+ *        and display associated information
  * @param  None
  * @retval None
  */
@@ -1196,7 +1195,7 @@ static void APP_ZIGBEE_SW1_Process(void){
   /* Door state is forced opened */
   status = ZbZclAttrIntegerWrite(zigbee_app_info.doorlock_server, ZCL_DRLK_ATTR_DOORSTATE, DOORLOCK_DOORSTATE_ERROR_FORCED_OPEN);
   if(status != ZCL_STATUS_SUCCESS){
-    APP_DBG("Error writting local attribute.");
+    APP_DBG("Error writing local attribute.");
     assert(0);
   }
 } /* APP_ZIGBEE_SW1_Process */
@@ -1281,7 +1280,7 @@ void ZIGBEE_CmdTransfer(void)
 } /* ZIGBEE_CmdTransfer */
 
 /**
- * @brief  This function is called when the M0+ acknoledge the fact that it has received a Cmd
+ * @brief  This function is called when the M0+ acknowledge  the fact that it has received a Cmd
  *
  *
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
@@ -1416,4 +1415,3 @@ void APP_ZIGBEE_ProcessRequestM0ToM4(void)
     }
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

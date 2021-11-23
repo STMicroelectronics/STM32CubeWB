@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -32,12 +31,14 @@
   * @{
   */
 
-#define CONF_S25FL128S_READ_ENHANCE           0          /* MMP performance enhance read enable/disable */
-#define CONF_QSPI_DUMMY_CLOCK                 8U
+#define CONF_S25FL128S_READ_ENHANCE            0  /* MMP performance enhance read enable/disable */
+#define CONF_QSPI_DUMMY_CLOCK                  8U
 
 /* Dummy cycles for STR read mode */
-#define S25FL128S_DUMMY_CYCLES_READ_QUAD      8U
-#define S25FL128S_DUMMY_CYCLES_READ           8U
+#define S25FL128S_DUMMY_CYCLES_READ_QUAD       8U
+#define S25FL128S_DUMMY_CYCLES_READ            8U
+#define S25FL128S_DUMMY_CYCLES_READ_DUAL_INOUT 4U
+#define S25FL128S_DUMMY_CYCLES_READ_QUAD_INOUT 6U
 
 #ifdef __cplusplus
 }
@@ -48,5 +49,3 @@
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

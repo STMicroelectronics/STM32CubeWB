@@ -1,20 +1,21 @@
-/**
- ******************************************************************************
-  * File Name          : ble_lld.h
-  * Description        : Header for BLE LLD application.
+ /**
+  ******************************************************************************
+  * @file    ble_lld.h
+  * @author  MCD Application Team
+  * @brief   Header for ble_lld.c module
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
- */
+  */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef BLE_LLD_H
 #define BLE_LLD_H
@@ -45,26 +46,28 @@ extern "C" {
 /* ---------------------------------------------------------------------------*/
 /* ------------------------------- BLE LLD -----------------------------------*/
 /* ---------------------------------------------------------------------------*/
+/** Parameters for an action packet */
 typedef struct ActPac_s {
-  uint8_t StateMachineNo ;      /* This parameter indicates the state machine number for this action. From 0 to 7. */
-  uint8_t ActionTag;            /* The configuration of the current action.
-                                 * Action Tag: TXRX, TIMER_WAKEUP, INC_CHAN, TIMESTAMP_POSITION */
-  uint32_t WakeupTime;          /* Contains the wakeup time in microsecond.
-                                 * It only applies if TIMER_WAKEUP flag is set in ActionTag. */
-  uint32_t ReceiveWindowLength; /* Sets RX window size in microsecond. Applicable only for RX actions. */
-  void *   data;                /* Pointer to the array with the data to send (header, length and data field), for TX. */
-  uint8_t dataSize;             /* Size of payload for Tx */
-  uint32_t status;              /* The Status Register with the information on the action. */
-  int32_t rssi;                 /* The rssi of the packet was received with. RX only. */
-  uint8_t nextTrue;            /* Pointer to next ActionPacket if success */
-  uint8_t nextFalse;           /* Pointer to next ActionPacket if failure */
-  uint8_t actionPacketNb;       /* User callback for managing data. */
-  void (*callback)(radioEventType ,   /* Callback to run when action packet has finished */
+  uint8_t StateMachineNo ;      /* State machine number (0 - 7) */
+  uint8_t ActionTag;            /* Bitfield for configuration of the action packet
+                                 * TXRX, TIMER_WAKEUP, TIMESTAMP_POSITION */
+  uint32_t WakeupTime;          /* Time before runing the action packet (us) */
+                                /* Applicable only if TIMER_WAKEUP flag is set in ActionTag */
+  uint32_t ReceiveWindowLength; /* Rx window size in (us). Applicable only for Rx */
+  void * data;                  /* Payload to send. Applicable only for Tx */
+  uint8_t dataSize;             /* Size of payload. Applicable only for Tx */
+  uint32_t status;              /* Interrupt status register from the hardware */
+  int32_t rssi;                 /* RSSI of the received packet. Applicable only for Rx */
+  uint8_t nextTrue;             /* Next action packet to run if success */
+  uint8_t nextFalse;            /* Next action packet to run if failure */
+  uint8_t actionPacketNb;       /* Action packet number (0 - 7) */
+  void (*callback)(radioEventType,    /* Function to run when action packet has finished */
                    struct ActPac_s *, /* If not used, it must be set to NULL */
                    void *,
                    uint8_t);
 } ActionPacket;
 
+/** Callback type for end of action packets */
 typedef void (lldCallback_t)(radioEventType, ActionPacket *, void *, uint8_t);
 
 /* Exported functions ------------------------------------------------------- */
@@ -107,6 +110,9 @@ uint8_t BLE_LLD_packetGetSize(const ipBLE_lld_txrxdata_Type *packet,
                               bool encrypt);
 
 const char *eventToString(radioEventType evt);
-#endif /* BLE_LLD_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif /* BLE_LLD_H */

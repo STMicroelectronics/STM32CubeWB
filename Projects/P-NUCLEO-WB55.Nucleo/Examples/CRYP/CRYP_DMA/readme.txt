@@ -9,12 +9,12 @@
   * @brief   Description of the CRYP AES Algorithm in ECB mode with DMA Example
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -46,12 +46,6 @@ data are displayed on debugger as follows:  View --> Serial Viewer --> Debug (pr
 When all ciphering and deciphering operations are successful, LED2 is turned on.
 In case of ciphering or deciphering issue, LED3 toggle each 200ms. 
 
-
-@par Keywords
-
-Security, Cryptography, CRYPT, AES, ECB, DMA, cipher, UART
-
-
 @note Care must be taken when using HAL_Delay(), this function provides accurate
       delay (in milliseconds) based on variable incremented in SysTick ISR. This
       implies that if HAL_Delay() is called from a peripheral ISR process, then 
@@ -61,6 +55,10 @@ Security, Cryptography, CRYPT, AES, ECB, DMA, cipher, UART
       
 @note The application need to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.
+
+@par Keywords
+
+Security, Cryptography, CRYPT, AES, ECB, DMA, cipher, UART
 
 @par Directory contents 
 

@@ -2,7 +2,7 @@
  * @file zcl.touchlink.h
  * @heading Touchlink
  * @brief  Touchlink API
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_TOUCHLINK_H

@@ -81,5 +81,3 @@ int32_t BSP_ENV_SENSOR_Get_One_Shot_Status(uint32_t Instance, uint8_t *Status);
 #endif
 
 #endif /* BSP_ENV_SENSOR_EX_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

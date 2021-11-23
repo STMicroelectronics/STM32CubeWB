@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_entry.c
-  * Description        : Entry application source file for STM32WPAN Middleware
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_entry.c
+  * @author  MCD Application Team
+  * @brief   Entry point of the Application
+  ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
- ******************************************************************************
- */
+  ******************************************************************************
+  */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -163,9 +163,8 @@ void Init_Smps( void )
 
 void Init_Exti( void )
 {
-  /**< Disable all wakeup interrupt on CPU1  except IPCC(36), HSEM(38) */
-  LL_EXTI_DisableIT_0_31(~0);
-  LL_EXTI_DisableIT_32_63( (~0) & (~(LL_EXTI_LINE_36 | LL_EXTI_LINE_38)) );
+  /* Enable IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
+  LL_EXTI_EnableIT_32_63( LL_EXTI_LINE_36 & LL_EXTI_LINE_38 );
 
   return;
 }
@@ -374,6 +373,8 @@ static void shci_user_evt_proc ( void )
   TL_MM_EvtDone( p_evt_rx );
 
   TM_Init( );
+
+  return;
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
@@ -473,6 +474,8 @@ void UTIL_SEQ_Idle( void )
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
   UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+
+  return;
 }
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
@@ -490,4 +493,3 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
   return;
 }
 /* USER CODE END FD_WRAP_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

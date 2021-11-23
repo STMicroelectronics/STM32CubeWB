@@ -9,19 +9,19 @@
   *          using a centralized network. 
   ******************************************************************************
   *
-  * Copyright (c) 2020 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2020-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license 
-  * SLA0044, the "License"; You may not use this file except in compliance with 
-  * the License. You may obtain a copy of the License at:
-  *                               www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
 
-@par Application Description 
-
-How to use OnOff cluster as a client on a centralized Zigbee network.
+@par Application Description
+ 
+How to use the OnOff cluster on a Sleepy End Device acting as a Client within a Centralized Zigbee network.
 
 The purpose of this application is to show how to create a Zigbee centralized network, and 
 how to communicate from one node to another one using the OnOff cluster. Once the Zigbee mesh 
@@ -30,7 +30,7 @@ OnOff server (1 second delay).
 
 Zigbee_OnOff_Client_SED application is configured to enter Stop mode 2 on IDLE state.
 When coupled to a Zigbee RFD wireless coprocessor binary, the board is able to reach 
-a 3μA consuption when IDLE.
+a 3uA consuption when IDLE.
 
 Important note: In order to use low power mode with Zigbee on STM32WB only wireless 
                 coprocessor binary stm32wb5x_Zigbee_RFD_fw.bin can be used.

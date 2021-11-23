@@ -145,7 +145,7 @@
  * EMR.S.A0a16 | RMSVoltageSagPeriodPhC | False | Optional
  * EMR.S.A0a17 | RMSVoltageSwellPeriodPhC | False | Optional
  * EMR.S.Afffd | ClusterRevision | True
- * EMR.S.Afffe | AttributeReportingStatus | False
+ * EMR.S.Afffe | AttributeReportingStatus | True
 
  * Commands Received
  * EMR.S.C00.Rsp | Get Profile Info Command | Depends on customer application
@@ -157,7 +157,7 @@
  *
  * Client Attributes
  * DRLK.C.Afffd | ClusterRevision | True
- * DRLK.C.Afffe | AttributeReportingStatus | False
+ * DRLK.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * EMR.C.C00.Rsp | Get Profile Info Response Command | Depends on customer application

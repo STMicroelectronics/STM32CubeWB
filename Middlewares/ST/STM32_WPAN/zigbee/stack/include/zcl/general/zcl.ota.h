@@ -19,7 +19,7 @@
  *
  * Server Attributes
  * OTA.S.Afffd | ClusterRevision | True
- * OTA.S.Afffe | AttributeReportingStatus | False
+ * OTA.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * OTA.S.C01.Rsp | Query Next Image Request | True
@@ -63,7 +63,7 @@
  * OTA.C.A000b | UpgradeActivationPolicy | True | Optional
  * OTA.C.A000c | UpgradeTimeoutPolicy | True | Optional
  * OTA.C.Afffd | ClusterRevision | True
- * OTA.C.Afffe | AttributeReportingStatus | False
+ * OTA.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * OTA.C.C00.Rsp | Image Notify | True

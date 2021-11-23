@@ -134,7 +134,7 @@
                 <option>
                     <name>CoreVariant</name>
                     <version>26</version>
-                    <state>39</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
@@ -143,12 +143,12 @@
                 <option>
                     <name>FPU2</name>
                     <version>0</version>
-                    <state>4</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>NrRegs</name>
                     <version>0</version>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>NEON</name>
@@ -157,7 +157,7 @@
                 <option>
                     <name>GFPUCoreSlave2</name>
                     <version>26</version>
-                    <state>39</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OGCMSISPackSelectDevice</name>
@@ -198,7 +198,7 @@
                 </option>
                 <option>
                     <name>DSPExtension</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>TrustZone</name>
@@ -288,7 +288,7 @@
                 </option>
                 <option>
                     <name>CCDebugInfo</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IEndianMode</name>
@@ -372,7 +372,7 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\STM32WB5MM-DK</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\Components\Common</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Utilities\LCD</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Utilities\fonts</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\Utilities\Fonts</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\Components\ism330dhcx</state>
                 </option>
                 <option>
@@ -792,7 +792,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$PROJ_DIR$\stm32wb55xx_flash_cm4.icf</state>
+                    <state>$PROJ_DIR$\stm32wb5mxx_flash_cm4.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

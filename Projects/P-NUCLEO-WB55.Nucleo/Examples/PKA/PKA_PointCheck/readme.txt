@@ -8,12 +8,12 @@
   * @brief   Description of the modular exponentiation example
   ******************************************************************************
   *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   @endverbatim
@@ -28,9 +28,9 @@ For this example, 2 test vector have been extracted from National Institute of S
 Those reference files can be found under:
 "http://csrc.nist.gov/groups/STM/cavp/documents/dss/186-3ecdsatestvectors.zip (ZIP PKV.rsp)"
 
-Those two test vectors have been choosen to demonstrate the behavior in a case where the input point validates
+Those two test vectors have been chosen to demonstrate the behavior in a case where the input point validates
 the curve equation and in a case where the input point does not verify the curve equation. Their definition
-is included in PKV.c. You can refer to this file for more informations.
+is included in PKV.c. You can refer to this file for more information.
 
 The selected curve for this example is P-256 (ECDSA-256) published by NIST in 
 Federal Information Processing Standards Publication FIPS PUB 186-4. The description

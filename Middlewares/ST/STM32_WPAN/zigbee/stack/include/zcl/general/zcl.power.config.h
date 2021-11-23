@@ -73,11 +73,11 @@
  * PC.S.A007d | BatteryPercentageThreshold3 - Third Battery | False | Optional
  * PC.S.A007e | BatteryAlarmState - Third Battery | False | Optional
  * PC.S.Afffd | ClusterRevision | True
- * PC.S.Afffe | AttributeReportingStatus | False
+ * PC.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * PC.C.Afffd | ClusterRevision | True
- * PC.C.Afffe | AttributeReportingStatus | False
+ * PC.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

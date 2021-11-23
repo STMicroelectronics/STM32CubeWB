@@ -1,21 +1,20 @@
 /**
- ******************************************************************************
+  ******************************************************************************
  * @file    app_conf.h
  * @author  MCD Application Team
  * @brief   Application configuration file
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -258,32 +257,52 @@
 
 /**
  * BLE stack Options flags to be configured with:
- * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY                      
- * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST                        
- * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC           
- * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC         
- * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO               
- * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW               
- * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1                
- * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 
- * which are used to set following configuration bits:            
- * (bit 0): 1: LL only                   
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY
+ * - SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RO
+ * - SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW
+ * - SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV
+ * - SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2
+ * - SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 * which are used to set following configuration bits:
+ * (bit 0): 1: LL only
  *          0: LL + host
- * (bit 1): 1: no service change desc.   
+ * (bit 1): 1: no service change desc.
  *          0: with service change desc.
- * (bit 2): 1: device name Read-Only     
+ * (bit 2): 1: device name Read-Only
  *          0: device name R/W
- * (bit 7): 1: LE Power Class 1          
- *          0: LE Power Classe 2-3
+ * (bit 3): 1: extended advertizing supported       [NOT SUPPORTED]
+ *          0: extended advertizing not supported   [NOT SUPPORTED]
+ * (bit 4): 1: CS Algo #2 supported
+ *          0: CS Algo #2 not supported
+ * (bit 7): 1: LE Power Class 1
+ *          0: LE Power Class 2-3
  * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_OPTIONS  SHCI_C2_BLE_INIT_OPTIONS_LL_HOST
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV | SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2 | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 
 #define CFG_BLE_MIN_TX_POWER            (0)
 
 #define CFG_BLE_MAX_TX_POWER            (0)
+
+
+/**
+ * BLE Rx model configuration flags to be configured with:
+ * - SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
+ * - SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_BLOCKER 
+* which are used to set following configuration bits:
+ * (bit 0): 1: agc_rssi model improved vs RF blockers
+ *          0: Legacy agc_rssi model
+ * other bits: reserved (shall be set to 0)
+ */
+
+#define CFG_BLE_RX_MODEL_CONFIG         SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
 
 
 /******************************************************************************
@@ -575,7 +594,7 @@ typedef enum
  ******************************************************************************/
 /**
  * Supported requester to the MCU Low Power Manager - can be increased up  to 32
- * It lits a bit mapping of all user of the Low Power Manager
+ * It lists a bit mapping of all user of the Low Power Manager
  */
 typedef enum
 {
@@ -591,5 +610,3 @@ typedef enum
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 #endif /*__APP_CONFIG_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

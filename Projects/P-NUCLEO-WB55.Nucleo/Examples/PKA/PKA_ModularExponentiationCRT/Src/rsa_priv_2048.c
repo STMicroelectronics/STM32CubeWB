@@ -4,17 +4,16 @@
   * @author  MCD Application Team
   * @brief   This file contains buffers reflecting the content of the file
   *          rsa_priv_2048.pem provided as an example of private key to 
-  *          demonstrate functionnality of PKA.
+  *          demonstrate functionality of PKA.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -238,5 +237,3 @@ const uint8_t rsa_priv_2048_coefficient[] = {
     0x36, 0x4f, 0x36, 0x76, 0xbe, 0x3d, 0xc6, 0x50, 0x7a
 };
 const uint32_t rsa_priv_2048_coefficient_len = 128;
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

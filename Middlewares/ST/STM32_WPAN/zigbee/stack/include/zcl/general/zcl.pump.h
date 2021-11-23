@@ -4,7 +4,7 @@
  * @brief ZCL Pump Configuration and Control cluster header
  * ZCL 7 section 6.2
  * ZCL 8 section 6.2
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_PUMP_H
@@ -43,13 +43,13 @@
  * PCC.S.A0021 | ControlMode | False | Optional
  * PCC.S.A0022 | AlarmMask | False | Optional
  * PCC.S.Afffd | ClusterRevision | True
- * PCC.S.Afffe | AttributeReportingStatus | False
+ * PCC.S.Afffe | AttributeReportingStatus | True
 
  * Client Attributes
  * PCC.C.A0010.Report.Rsp | PumpStatus | False
  * PCC.S.A0013.Report.Rsp | Capacity | False
  * PCC.C.Afffd | ClusterRevision | True
- * PCC.C.Afffe | AttributeReportingStatus | False
+ * PCC.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

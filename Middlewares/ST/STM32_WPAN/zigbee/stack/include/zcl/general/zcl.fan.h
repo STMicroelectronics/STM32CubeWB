@@ -4,7 +4,7 @@
  * @brief ZCL Fan Control cluster header
  * ZCL 7 section 6.4
  * ZCL 8 section 6.4
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_FAN_H
@@ -19,11 +19,11 @@
  * FAN.S.A0000 | FanMode | True
  * FAN.S.A0001 | FanModeSequence | True
  * FAN.S.Afffd | ClusterRevision | True
- * FAN.S.Afffe | AttributeReportingStatus | False
+ * FAN.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * FAN.C.Afffd | ClusterRevision | True
- * FAN.C.Afffe | AttributeReportingStatus | False
+ * FAN.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

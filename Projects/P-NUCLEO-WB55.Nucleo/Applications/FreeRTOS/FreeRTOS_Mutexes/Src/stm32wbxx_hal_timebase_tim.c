@@ -7,9 +7,21 @@
   *
   *          This file overrides the native HAL time base functions (defined as weak)
   *          the TIM time base:
-  *           + Intializes the TIM peripheral to generate a Period elapsed Event each 1ms
+  *           + Initializes the TIM peripheral to generate a Period elapsed Event each 1ms
   *           + HAL_IncTick is called inside HAL_TIM_PeriodElapsedCallback ie each 1ms
   *
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) STMicroelectronics</center></h2>
+(-2021) STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
  @verbatim
   ==============================================================================
                         ##### How to use this driver #####
@@ -26,17 +38,6 @@
 
   @endverbatim
   ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT(c) 2019 STMicroelectronics</center></h2>
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
   *   3. Neither the name of STMicroelectronics nor the names of its contributors
   *      may be used to endorse or promote products derived from this software
   *      without specific prior written permission.
@@ -88,6 +89,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 
   /* Enable the TIM17 global Interrupt */
   HAL_NVIC_EnableIRQ(TIM1_TRG_COM_TIM17_IRQn);
+
   /* Enable TIM17 clock */
   __HAL_RCC_TIM17_CLK_ENABLE();
 
@@ -112,6 +114,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   htim17.Init.Prescaler = uwPrescalerValue;
   htim17.Init.ClockDivision = 0;
   htim17.Init.CounterMode = TIM_COUNTERMODE_UP;
+
   if(HAL_TIM_Base_Init(&htim17) == HAL_OK)
   {
     /* Start the TIM time Base generation in interrupt mode */
@@ -146,4 +149,3 @@ void HAL_ResumeTick(void)
   __HAL_TIM_ENABLE_IT(&htim17, TIM_IT_UPDATE);
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

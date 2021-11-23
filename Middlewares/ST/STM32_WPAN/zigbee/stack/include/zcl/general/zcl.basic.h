@@ -6,7 +6,7 @@
  * @brief ZCL Basic cluster header
  * ZCL 7 section 3.2
  * ZCL 8 section 3.2
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_BASIC_H
@@ -36,14 +36,14 @@
  * B.S.A0014 | DisableLocalConfig | True | Optional
  * B.S.A4000 | SWBuildID | True | Optional
  * B.S.Afffd | ClusterRevision | True
- * B.S.Afffe | AttributeReportingStatus | False
+ * B.S.Afffe | AttributeReportingStatus | True
  *
  * Commands Received
  * B.S.C00.Rsp | Reset to Factory Defaults | True
  *
  * Client Attributes
  * B.C.Afffd | ClusterRevision | True
- * B.C.Afffe | AttributeReportingStatus | False
+ * B.C.Afffe | AttributeReportingStatus | True
  *
  * Commands Generated
  * B.C.C00.Tx | Reset to Factory Defaults | True

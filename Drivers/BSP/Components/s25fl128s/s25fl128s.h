@@ -6,20 +6,19 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __S25FL128S_H
-#define __S25FL128S_H
+#ifndef S25FL128S_H
+#define S25FL128S_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,14 +39,6 @@ extern "C" {
   * @brief     This file provides a set of definitions for the Spansion
   *            S25FL128S memory (configuration, commands, registers).
   * @{
-  */
-
-/** @defgroup S25FL128S_Exported_Types
-  * @{
-  */
-
-/**
-  * @}
   */
 
 /** @defgroup S25FL128S_Exported_Constants
@@ -254,6 +245,9 @@ typedef enum
   S25FL128S_ERASE_CHIP                    /*!< Whole chip erase     */
 } S25FL128S_Erase_t;
 
+/**
+  * @}
+  */
 
 /** @defgroup S25FL128S_Exported_Functions
   * @{
@@ -278,6 +272,19 @@ int32_t S25FL128S_EnterDeepPowerDown(QSPI_HandleTypeDef *Ctx, S25FL128S_Interfac
 int32_t S25FL128S_ProgEraseResume(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode);
 int32_t S25FL128S_ProgEraseSuspend(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode);
 int32_t S25FL128S_ReadSFDP(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode, uint8_t *pData, uint32_t ReadAddr, uint32_t Size);
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
 /**
   * @}
   */
@@ -286,18 +293,4 @@ int32_t S25FL128S_ReadSFDP(QSPI_HandleTypeDef *Ctx, S25FL128S_Interface_t Mode, 
 }
 #endif
 
-#endif /* __S25FL128S_H */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#endif /* S25FL128S_H */

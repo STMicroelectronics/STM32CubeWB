@@ -302,6 +302,3 @@ JOYState_TypeDef BSP_JOY_GetState(void);
 #endif
 
 #endif /* __STM32WBXX_NUCLEO_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

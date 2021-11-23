@@ -4,7 +4,7 @@
  * @brief ZCL Occupancy Sensing cluster header
  * ZCL 7 section 4.8
  * ZCL 8 section 4.8
- * @copyright Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_OCCUP_H
@@ -34,12 +34,12 @@
  * OS.S.A0031 | PhysicalContactUnoccupiedToOccupiedDelay | False | Optional
  * OS.S.A0032 | PhysicalContactUnoccupiedToOccupiedThreshold | False | Optional
  * OS.S.Afffd | ClusterRevision | True
- * OS.S.Afffe | AttributeReportingStatus | False
+ * OS.S.Afffe | AttributeReportingStatus | True
  *
  * Client Attributes
  * OS.C.A0000.Report.Rsp | Occupancy | False
  * OS.C.Afffd | ClusterRevision | True
- * OS.C.Afffe | AttributeReportingStatus | False
+ * OS.C.Afffe | AttributeReportingStatus | True
  */
 
 #include "zcl/zcl.h"

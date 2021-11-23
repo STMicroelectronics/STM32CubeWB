@@ -1,26 +1,22 @@
 /**
- ******************************************************************************
-  * File Name          : ble_lld.c
-  * Description        : LLD messages management.
+  ******************************************************************************
+  * @file    ble_lld.c
+  * @author  MCD Application Team
+  * @brief   BLE LLD messages management
+  *          This file is responsible for command packing and response unpacking
+  *          following ABI defined in ble_lld_transport.h
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
-
-/**
- * This file is responsible for command packing and response unpacking
- * following ABI defined in ble_lld_transport.h
- * Actual transmission and reception of messages is delagated to other functions
- */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -54,27 +50,31 @@ static radioEventType radioEvent;
 static ActionPacket *radioEventAp;
 
 // Parameters stored by init
+
+/** Parameters for command and response to/from radio core */
 static param_BLE_LLD_t *params = NULL;
+
+/** Buffer for packet to send */
 static ipBLE_lld_txrxdata_Type *txBuffer = NULL;
+
+/** Buffer for packet received */
 static ipBLE_lld_txrxdata_Type *rxBuffer = NULL;
-/** Callback to send commands to M0 */
+
+/** Callback to actually send commands to M0 */
 static uint8_t (*CB_sendCommand)(BLE_LLD_Code_t bleCmd) = NULL;
 
 /* Functions Definition ------------------------------------------------------*/
 
 /**
- * @brief Initializes BLE LLD proxy.
+ * @brief Initializes BLE LLD proxy parameters.
  *
  * This function must be called before any BLE LLD function.
  *
- * @param[in] callbackSendCmdM0 Function to send commands to M0
+ * @param[in] parameters Parameters for command and response to/from M0
+ * @param[in] transmitBuffer Buffer for packet to send
+ * @param[in] receiveBuffer Buffer for packet received
+ * @param[in] callbackSend Function to send commands to M0
  */
-/* Parameters ble_lld.c needs:
-    - param_BLE_LLD_t
-    - Tx buffer
-    - Rx buffer
-    - function to send message
-*/
 void BLE_LLD_PRX_Init(param_BLE_LLD_t *parameters,
                       ipBLE_lld_txrxdata_Type *transmitBuffer,
                       ipBLE_lld_txrxdata_Type *receiveBuffer,
@@ -86,30 +86,22 @@ void BLE_LLD_PRX_Init(param_BLE_LLD_t *parameters,
   CB_sendCommand = callbackSend;
 }
 
-// DONE: Julien: hs_startup_time documentation is something that even BLE team is not very confident as Hardware Designer  have implemented this offset low documentation
-//       => To understand, this is a global delay that includes:
-//              the cpu Wake up from Stop mode Low-Power
-//              the Radio Wake up
-//              The PLL setting
-//              The cold config table and hot config table SPI
-//       => This point is mentionned during CCB BLE
-// or a reference to the relevant doc
 /**
  * @brief Initializes the radio
  *
  * Whitening improves receiver lock, disabling it is only intended for test mode.
  * When whitening is disabled, data payload is limited to 45 bytes (including header).
  *
- * @param[in] hs_startup_time Startup time (system time unit)
- * @param[in] low_speed_osc Source for the 32 kHz slow speed clock:
+ * @param[in] hsStartupTime Startup time (system time unit)
+ * @param[in] lowSpeedOsc Source for the 32 kHz slow speed clock:
  *                            1: internal RO
  *                            0: external crystal
-  * @param[in] whitening ENABLE or DISABLE whitening for transmission and reception
+ * @param[in] whitening ENABLE or DISABLE whitening for transmission and reception
  */
-void BLE_LLD_Init(uint16_t hs_startup_time, uint8_t low_speed_osc, FunctionalState whitening)
+void BLE_LLD_Init(uint16_t hsStartupTime, uint8_t lowSpeedOsc, FunctionalState whitening)
 {
-  params->init.startupTime = (uint32_t)(hs_startup_time);
-  params->init.lowSpeedOsc = low_speed_osc;
+  params->init.startupTime = (uint32_t)(hsStartupTime);
+  params->init.lowSpeedOsc = lowSpeedOsc;
   params->init.whitening = (uint8_t)whitening;
   sendCommand(BLE_LLD_INIT_CMDCODE);
 }
@@ -120,8 +112,8 @@ void BLE_LLD_Init(uint16_t hs_startup_time, uint8_t low_speed_osc, FunctionalSta
  * @retval BLUE_IDLE_0 Radio is not busy
  * @retval BLUE_BUSY_NOWAKEUP_T2 Radio is busy, but there is no wakeup timer on the schedule but timer2 is
  * @retval BLUE_BUSY_WAKEUP Radio is busy and wakeup timer is on the schedule
- * @retval BLUE_BUSY_TONE. Radio is in Tone
- * @retval BLUE_TONE_DESTROY. Radio Tone has destroyed BLE: need an Init
+ * @retval BLUE_BUSY_TONE Radio is in Tone
+ * @retval BLUE_TONE_DESTROY Radio Tone has destroyed BLE: need an Init
  */
 uint8_t BLE_LLD_GetStatus(void)
 {
@@ -134,7 +126,7 @@ uint8_t BLE_LLD_GetStatus(void)
  * Both set the 39-bit count + 1 bit MSB as defined in the Bluetooth Low Energy specifications
  * for encryption nonce calculation.
  *
- * @param [in] StateMachineNo	State machine number in multistate (between 0 and 7)
+ * @param [in] StateMachineNo State machine (0 - 7)
  * @param [in] countTx 40-bit transmit packet count
  * @param [in] countRx 40-bit receive packet count
  */
@@ -147,9 +139,9 @@ void BLE_LLD_SetEncryptionCount(uint8_t StateMachineNo, const uint8_t (*countTx)
 }
 
 /**
- * @brief Set the 8-byte encryption initialization vector and the 16-byte encryption key.
+ * @brief Sets the encryption initialization vector and the encryption key.
  *
- * @param[in] StateMachineNo State machine number in multistate (between 0 and 7)
+ * @param[in] StateMachineNo State machine (0 - 7)
  * @param[in] encIv 8-byte encryption initialization vector
  * @param[in] encKey 16-byte encryption key
  */
@@ -164,14 +156,10 @@ void BLE_LLD_SetEncryptionAttributes(uint8_t StateMachineNo, const uint8_t (*enc
 /**
  * @brief Enables or disables encryption.
  *
- * Another point is that, when encryption is enabled the hardware will add
- * 4 bytes at the end of the packet as MAC (Message Authentication Code).
- * So, the user needs to add 4 to the length of packet when encryption is ON.
- *
- * @param[in] StateMachineNo State Number in multistate (between 0 and 7)
- * @param[in] EncryptFlag Encryption Flag:
- *                              0: Encryption is turned off
- *                              1: encryption is turned on
+ * @param[in] StateMachineNo State machine (0 - 7)
+ * @param[in] EncryptFlag Encryption state:
+ *                              0: disable
+ *                              1: enable
  */
 void BLE_LLD_SetEncryptFlags(uint8_t StateMachineNo, FunctionalState EncryptFlag)
 {
@@ -182,10 +170,10 @@ void BLE_LLD_SetEncryptFlags(uint8_t StateMachineNo, FunctionalState EncryptFlag
 }
 
 /**
- * @brief Sets the channel.
+ * @brief Sets the radio channel.
  *
- * @param[in] StateMachineNo State machine number in multistate (between 0 and 7)
- * @param[in] channel Frequency channel (between 0 and 39)
+ * @param[in] StateMachineNo State machine (0 - 7)
+ * @param[in] channel Radio channel (0 - 39)
  */
 void BLE_LLD_SetChannel(uint8_t StateMachineNo, uint8_t channel)
 {
@@ -194,15 +182,14 @@ void BLE_LLD_SetChannel(uint8_t StateMachineNo, uint8_t channel)
   sendCommand(BLE_LLD_SETCHANNEL_CMDCODE);
 }
 
-/* handle network IDs which may lead to bad radio behavior with one of the following options:
- - just document which network IDs are safe to use and why (those conforming to BLE spec)
- - add a flag like "rejectNonBle" to the function responsible for network ID setting
- - add a function to check for BLE conformance of network ID */
 /**
- * @brief Sets the access address (AccessAddress), the CRC initialization value and the Slow Clock Accuracy (SCA).
+ * @brief Sets the network ID (access address).
  *
- * @param[in] StateMachineNo State machine number in multistate (between 0 and 7)
- * @param[in] NetworkID BLE NetworkID
+ * Network ID is not constrained, but some values might lead to bad radio behavior (whitening).
+ * See BLE specs for safer values.
+ *
+ * @param[in] StateMachineNo State machine (0 - 7)
+ * @param[in] NetworkID Network ID
  */
 void BLE_LLD_SetTxAttributes(uint8_t StateMachineNo, uint32_t NetworkID)
 {
@@ -212,11 +199,13 @@ void BLE_LLD_SetTxAttributes(uint8_t StateMachineNo, uint32_t NetworkID)
 }
 
 /**
- * @brief Sets the time between back-to-back radio transmissions.
+ * @brief Sets the back-to-back time.
  *
- * A minimum value of 50us must be set.
+ * Back-to-back is a mode where two packets are chained with a short pause between them.
+ * The back-to-back time is a global parameter.
+ * Back-to-back time must be at least 50us.
  *
- * @param[in] backToBackTime Time between two frames in back to back mode (us)
+ * @param[in] backToBackTime Time between two packets in back-to-back mode (us)
  */
 void BLE_LLD_SetBackToBackTime(uint32_t backToBackTime)
 {
@@ -227,7 +216,9 @@ void BLE_LLD_SetBackToBackTime(uint32_t backToBackTime)
 /**
  * @brief Sets the transmit power level.
  *
- * @param[in] powerLevel Transmit power level (between 0 and 31)
+ * See txPower_t for actual power output.
+ *
+ * @param[in] powerLevel Transmit power level (0 - 31)
  */
 void BLE_LLD_SetTxPower(txPower_t powerLevel)
 {
@@ -236,11 +227,11 @@ void BLE_LLD_SetTxPower(txPower_t powerLevel)
 }
 
 /**
- * @brief Sets the data speed for transmission and reception.
+ * @brief Sets the bitrate for transmission and reception.
  *
- * @param[in] StateMachineNo State machine number in multistate (between 0 and 7)
+ * @param[in] StateMachineNo State machine (0 - 7)
  * @param[in] txPhy Speed for transmission: TX_PHY_1MBPS / TX_PHY_2MBPS
- * @param[in] rxPhy Speed for reception RX_PHY_1MBPS / RX_PHY_2MBPS
+ * @param[in] rxPhy Speed for reception: RX_PHY_1MBPS / RX_PHY_2MBPS
  */
 void BLE_LLD_SetTx_Rx_Phy(uint8_t StateMachineNo, uint8_t txPhy, uint8_t rxPhy)
 {
@@ -251,9 +242,9 @@ void BLE_LLD_SetTx_Rx_Phy(uint8_t StateMachineNo, uint8_t txPhy, uint8_t rxPhy)
 }
 
 /**
- * @brief Prepares an action packet for execution.
+ * @brief Configures an action packet.
  *
- * This function must be called after the action packet fields are set.
+ * This function must be called after the relevant ActionPacket fields are set.
  *
  * @param[in] p Action packet to prepare, memory lifetime must extend until response processing
  */
@@ -279,8 +270,9 @@ void BLE_LLD_SetReservedArea(ActionPacket *p)
 }
 
 /**
- * @brief Schedules an action packet for execution on the radio.
+ * @brief Starts the radio FSM.
  *
+ * This function schedules an action packet to be the first executed by the radio FSM.
  * BLE_LLD_SetReservedArea() must have been called first to prepare the action packet.
  *
  * @param[in] p Action packet to schedule, memory lifetime must extend until response processing
@@ -295,7 +287,7 @@ uint8_t BLE_LLD_MakeActionPacketPending(const ActionPacket *p)
 }
 
 /**
- * @brief Stops the radio
+ * @brief Stops the radio FSM.
  *
  * After a call to this function ISR will not be triggered, unless
  * MakeActionPacketPending() is called again.
@@ -309,17 +301,17 @@ uint8_t BLE_LLD_StopActivity(void)
 }
 
 /**
- * @brief Starts tone transmission on selected channel.
+ * @brief Starts tone transmission.
  *
  * This function is dedicated to tests and destroys context and multistate.
  * So, after calling this function the radio must be re-initialized.
  *
- * @param[in] RF_channel Radio frequency channel (between 0 and 39)
- * @param[in] PowerLevel Output power level (between 0 and 31)
+ * @param[in] rfChannel Radio channel (0 - 39)
+ * @param[in] PowerLevel Output power level (0 - 31)
  */
-void BLE_LLD_StartTone(uint8_t RF_channel, uint8_t powerLevel)
+void BLE_LLD_StartTone(uint8_t rfChannel, uint8_t powerLevel)
 {
-  params->toneStart.channel = RF_channel;
+  params->toneStart.channel = rfChannel;
   params->toneStart.power = powerLevel;
   sendCommand(BLE_LLD_STARTTONE_CMDCODE);
 }
@@ -337,11 +329,13 @@ void BLE_LLD_StopTone(void)
 
 
 /**
- * @brief Processes received event from radio MCU during interruption.
+ * @brief Processes received event from radio core during interruption.
  *
- * Stores event data for further processing out of interruption.
+ * Must be called during the interruption triggered when a radio event is
+ * received from radio core.
+ * Stores event data for further processing after interruption.
  *
- * @param[in] 
+ * @param[in] event Radio core event type
  *
  */
 void BLE_LLD_PRX_EventProcessInter(radioEventType event)
@@ -357,11 +351,11 @@ void BLE_LLD_PRX_EventProcessInter(radioEventType event)
 }
 
 /**
- * @brief Processes received event from radio MCU after interruption.
+ * @brief Processes received event from radio core after interruption.
  *
- * Run the callback corresponding to the received event.
- *
- * @param[in] 
+ * Must be called after the interruption triggered when a radio event is
+ * received from radio core, i.e. in a task.
+ * Runs the callback registered for the received event.
  *
  */
 void BLE_LLD_PRX_EventProcessTask(void)
@@ -377,10 +371,11 @@ void BLE_LLD_PRX_EventProcessTask(void)
   }
 }
 
+// Utility functions
+
 static uint8_t sendCommand(BLE_LLD_Code_t bleCmd){
   return CB_sendCommand(bleCmd);
 }
-
 
 const char *eventToString(radioEventType evt){
   switch(evt){
@@ -400,13 +395,10 @@ const char *eventToString(radioEventType evt){
   }
 }
 
-// Utility functions
-
 /* Header field is interpreted by hardware and has an impact on some flags, so
    user should not change it. This is a default safe value */
 #define LLD_HEADER 0x55
 
-// Data copy
 uint8_t BLE_LLD_packetPrepareCopy(ipBLE_lld_txrxdata_Type *packet,
                                   const void *data,
                                   uint8_t size,
@@ -424,7 +416,6 @@ uint8_t BLE_LLD_packetPrepareCopy(ipBLE_lld_txrxdata_Type *packet,
   return (uint8_t)actual_size; // Max value has been checked
 }
 
-// No copy
 uint8_t BLE_LLD_packetPrepareInPlace(ipBLE_lld_txrxdata_Type *packet,
                                      bool encrypt)
 {
@@ -474,6 +465,3 @@ uint8_t BLE_LLD_packetGetSize(const ipBLE_lld_txrxdata_Type *packet,
   }
   return actual_size;
 }
-
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

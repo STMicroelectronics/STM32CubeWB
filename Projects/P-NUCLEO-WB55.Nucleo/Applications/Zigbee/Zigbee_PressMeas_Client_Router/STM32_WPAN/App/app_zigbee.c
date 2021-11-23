@@ -1,20 +1,19 @@
 /**
- ******************************************************************************
- * File Name          : App/app_zigbee.c
- * Description        : Zigbee Application.
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * File Name          : App/app_zigbee.c
+  * Description        : Zigbee Application.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -181,12 +180,12 @@ static void
 zcl_press_meas_press_client_report(struct ZbZclClusterT *clusterPtr, struct ZbApsdeDataIndT *dataIndPtr, uint16_t attributeId,
     enum ZclDataTypeT dataType, const uint8_t *in_payload, uint16_t in_len)
 {
-    
-    APP_DBG("[PRESS MEAS] Received a report from Server");
       
     int attrLen;
     int16_t attr_val;
     float pressure;
+
+
     /* Verify the source of the reported attribute. */
     if(dataIndPtr->src.nwkAddr!=0x0000) 
     {
@@ -198,20 +197,24 @@ zcl_press_meas_press_client_report(struct ZbZclClusterT *clusterPtr, struct ZbAp
         APP_DBG("[PRESS MEAS] Report error wrong endpoint");
         return;
     }
+    if (attributeId == ZCL_PRESS_MEAS_ATTR_MEAS_VAL)
+    {
 
-    attrLen = ZbZclAttrParseLength(dataType, in_payload, dataIndPtr->asduLength, 0);
-    if (attrLen < 0) {
-        return;
-    }
-    if (attrLen > (int)in_len) {
-        return;
-    }
+        APP_DBG("[PRESS MEAS] Received a report from Server");
+        attrLen = ZbZclAttrParseLength(dataType, in_payload, dataIndPtr->asduLength, 0);
+        if (attrLen < 0) {
+            return;
+        }
+        if (attrLen > (int)in_len) {
+           return;
+        }
     
-    attr_val= pletoh16(in_payload);
-    pressure = (float)attr_val/10;
+        attr_val= pletoh16(in_payload);
+        pressure = (float)attr_val/10;
    
-    APP_DBG("[PRESS MEAS] Reported pressure from server %.1f kPa",pressure);
-    APP_DBG("");
+        APP_DBG("[PRESS MEAS] Reported pressure from server %.1f kPa",pressure);
+        APP_DBG("");
+    }
 
    
 } /* zcl_press_meas_client_report */
@@ -310,11 +313,12 @@ static void APP_ZIGBEE_ReportConfig(void)
   report.dst.endpoint = SW1_ENDPOINT;
   report.dst.mode = ZB_APSDE_ADDRMODE_SHORT;
   report.dst.nwkAddr = 0x0000;
-  report.min = ZCL_MIN_REPORT;
-  report.max = ZCL_MAX_REPORT;
-  report.attr_id = ZCL_PRESS_MEAS_ATTR_MEAS_VAL;
-  report.attr_type = ZCL_DATATYPE_SIGNED_16BIT;
-  report.change.epsilon.integer = 0;
+  report.num_records = 1;
+  report.record_list[0].min = ZCL_MIN_REPORT;    
+  report.record_list[0].max = ZCL_MAX_REPORT;
+  report.record_list[0].attr_id = ZCL_PRESS_MEAS_ATTR_MEAS_VAL;
+  report.record_list[0].attr_type = ZCL_DATATYPE_SIGNED_16BIT;
+  report.record_list[0].change = 0;
   
   ZbZclAttrReportConfigReq(zigbee_app_info.press_meas_client,&report,&report_cb,(void*)&rep_change);
 }
@@ -328,7 +332,7 @@ static void report_cb(struct ZbZclCommandRspT *cmd_rsp,void *arg)
   }
   else
   {
-    APP_DBG("[PRESS MEAS] Report Config set with sucess");
+    APP_DBG("[PRESS MEAS] Report Config set with success");
   }
 }
 /*************************************************************
@@ -715,4 +719,3 @@ void APP_ZIGBEE_ProcessRequestM0ToM4(void)
     }
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
