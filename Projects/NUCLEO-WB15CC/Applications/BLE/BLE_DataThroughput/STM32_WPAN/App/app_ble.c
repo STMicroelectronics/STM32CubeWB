@@ -390,7 +390,11 @@ void APP_BLE_Init( void )
   return;
 }
 
+#if defined(__GNUC__)
+uint8_t __attribute__((optimize("Os"))) APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen )
+#else
 uint8_t APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen )
+#endif
 {
   uint8_t i, j;
   const uint8_t PolynomeCRC = 0x97;

@@ -343,5 +343,3 @@ HAL_StatusTypeDef Zigbee_M0RequestProcessing(void);
 #endif
 
 #endif /* STM32WBxx_CORE_INTERFACE_DEF_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

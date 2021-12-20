@@ -65,6 +65,30 @@
 <li>Legacy Pairing, LE secure connections</li>
 <li>HCI interface (full, like stm32wb3x_BLE_HCILayer_fw.bin)</li>
 <li>Direct Test Mode</li>
+<li>L2CAP connection oriented channels support (IP over BLE enabler)</li>
+<li>Channel selection #2 (under application flag selection)</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>stm32wb3x_BLE_Stack_full_extended_fw.bin
+<ul>
+<li>Full BLE Stack 5.2 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a>
+<ul>
+<li>Following features are kept:
+<ul>
+<li>GAP peripheral, central (LL Master up to 6 links with Slave up to 2 links/ Master up to 7 links with Slave up to 1 links/ Master up to 8 links )</li>
+<li>GATT server, client</li>
+<li>Data length extension</li>
+<li>2Mbit PHY / PHY update</li>
+<li>Privacy</li>
+<li>White list</li>
+<li>Legacy Pairing, LE secure connections</li>
+<li>HCI interface (full, like stm32wb3x_BLE_HCILayer_fw.bin)</li>
+<li>Direct Test Mode</li>
+<li>L2CAP connection oriented channels support (IP over BLE enabler)</li>
+<li>Channel selection #2 (under application flag selection)</li>
+<li>BLE Extended advertizing (under application flag selection with predefined fixed configuration: 2 sets maximum number, 1650 bytes maximum advertizing data length)</li>
 </ul></li>
 </ul></li>
 </ul></li>
@@ -184,11 +208,15 @@
 </ul></li>
 <li>stm32wb3x_Safeboot_fw.bin
 <ul>
-<li>Safeboot is an independent part of the FUS that manages specifically one case: option bytes corruption.</li>
+<li>This Safeboot binary provides only optional security enhancements. It can be installed on STM32WB devices where FUS V1.1.0 or FUS V1.1.1 is present. No need to use it on parts where FUS V1.2.0 is present (as these parts already have the latest Safeboot version).</li>
+<li>When Safeboot update is performed, a factory reset of the device will be done, so FUS_UFB_CORRUPT message will be displayed which means that the Safeboot upgrade was correctly done and the device is back to factory state. If you reset the device and ping again for FUS state you have FUS_NO_ERROR message.</li>
+<li>Safeboot is an independent part of the FUS that manages specifically one case: the option bytes corruption:
+<ul>
 <li>When option bytes are corrupted, the STM32WB hardware forces the boot to safeboot whatever the running firmware.</li>
-<li>The safeboot performs a factory reset (on FUS versions V1.1.0 and higher) which means the wireless stack is removed if any and the Cortex®-M4 code is erased and boot is reset to FUS (virgin part state).</li>
+<li>The Safeboot performs a factory reset (on FUS versions V1.1.0 and higher) which means the wireless stack is removed if any and the Cortex®-M4 code is erased and boot is reset to FUS (virgin part state).</li>
 <li>This operation is also not reversible. In order to activate the Safeboot, the user must activate Cortex®-M0+ by writing the value 0x00008000 at the address 0x5800040C using the SWD interface.</li>
-<li>If a FUS version lower than V1.1.0 is running, then, no recovery is possible at this point.</li>
+<li>Please note that if a part has FUS version strictly lower than V1.1.0 and gets option bytes corruption case, then, no recovery is possible.</li>
+</ul></li>
 </ul></li>
 </ul>
 <p><mark>How to flash the Wireless Coprocessor Binary via SWD/JTAG by ST-LINK (STM32CubeProgrammer GUI)</mark></p>
@@ -394,9 +422,180 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section9" checked aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
+<input type="checkbox" id="collapse-section10" checked aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.13.1 / 06-Dec-2021</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE updates:
+<ul>
+<li>BLE Multi link support</li>
+<li>L2CAP connection oriented channels support (IP over BLE enabler)</li>
+<li>ACI_GAP_START_NAME_DISCOVERY_PROC command is deprecated</li>
+<li>Configurable RX AGC settings</li>
+<li>Channel selection #2 (under application flag selection)</li>
+<li>BLE Extended advertizing (under application flag selection)<br />
+</li>
+<li>Introducing following new binary: <strong>stm32wb3x_BLE_Stack_full_extended_fw.bin</strong> for BLE extended advertizing features (with predefined fixed configuration: 2 sets maximum number, 1650 bytes maximum advertizing data length) under application flag selection</li>
+</ul></li>
+<li>Zigbee updates:
+<ul>
+<li>Zigbee stack patches in order to solve R22 security vulnerability reported by the CSA (Security Incident Number: 2021-ZP-0401)</li>
+</ul></li>
+</ul>
+<p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB3x(512K)</th>
+<th>STM32WB3x(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb3x_FUS_fw_for_fus_0_5_3.bin</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>V1.2.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_FUS_fw.bin</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>V1.2.0<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 7” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB3x(512K)</th>
+<th>STM32WB3x(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb3x_BLE_HCILayer_fw.bin</td>
+<td>0x08068000</td>
+<td>0x08028000</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x08077000</td>
+<td>0x08037000</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_BLE_LLD_fw.bin</td>
+<td>0x08078000</td>
+<td>0x08038000</td>
+<td>V1.12.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_Mac_802_15_4_fw.bin</td>
+<td>0x08040000</td>
+<td>NA</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_BLE_Stack_basic_fw.bin</td>
+<td>0x0805D000</td>
+<td>0x0801D000</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_Stack_full_extended_fw.bin</td>
+<td>0x08053000</td>
+<td>0x08013000</td>
+<td>V1.13.1<span class="icon-st-add"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_BLE_Stack_full_fw.bin</td>
+<td>0x08053000</td>
+<td>0x08013000</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_BLE_Stack_light_fw.bin</td>
+<td>0x08063000</td>
+<td>0x08023000</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Mac_802_15_4_fw.bin</td>
+<td>0x0806F000</td>
+<td>0x0802F000</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_Phy_802_15_4_fw.bin</td>
+<td>0x0806A000</td>
+<td>0x0802A000</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Thread_FTD_fw.bin</td>
+<td>0x08023000</td>
+<td>NA</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_Thread_MTD_fw.bin</td>
+<td>0x08036000</td>
+<td>NA</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Thread_RCP_fw.bin</td>
+<td>0x08066000</td>
+<td>0x08026000</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb3x_Zigbee_FFD_fw.bin</td>
+<td>0x08030000</td>
+<td>NA</td>
+<td>V1.13.1<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb3x_Zigbee_RFD_fw.bin</td>
+<td>0x0803F000</td>
+<td>NA</td>
+<td>V1.13.1<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Firmware Safeboot Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB3x(512K)</th>
+<th>STM32WB3x(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb3x_Safeboot_fw.bin</td>
+<td>0x080<strong>7E</strong>000</td>
+<td>0x080<strong>3E</strong>000</td>
+<td>V2.0.0<span class="icon-st-add"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section9" checked aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -516,7 +715,7 @@
 <tr class="even">
 <td>stm32wb3x_BLE_Mac_802_15_4_fw.bin</td>
 <td>0x08040000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.13.0<span class="icon-st-update"></span></td>
 </tr>
 <tr class="odd">
@@ -552,13 +751,13 @@
 <tr class="even">
 <td>stm32wb3x_Thread_FTD_fw.bin</td>
 <td>0x08023000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.13.0<span class="icon-st-update"></span></td>
 </tr>
 <tr class="odd">
 <td>stm32wb3x_Thread_MTD_fw.bin</td>
 <td>0x08036000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.13.0<span class="icon-st-update"></span></td>
 </tr>
 <tr class="even">
@@ -570,13 +769,13 @@
 <tr class="odd">
 <td>stm32wb3x_Zigbee_FFD_fw.bin</td>
 <td>0x08030000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.13.0<span class="icon-st-update"></span></td>
 </tr>
 <tr class="even">
 <td>stm32wb3x_Zigbee_RFD_fw.bin</td>
 <td>0x0803F000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.13.0<span class="icon-st-update"></span></td>
 </tr>
 </tbody>
@@ -605,7 +804,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.12.1 / 12-July-2021</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -670,7 +869,7 @@
 <tr class="even">
 <td>stm32wb3x_BLE_Mac_802_15_4_fw.bin</td>
 <td>0x08040000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.1<span class="icon-st-update"></span></td>
 </tr>
 <tr class="odd">
@@ -706,13 +905,13 @@
 <tr class="even">
 <td>stm32wb3x_Thread_FTD_fw.bin</td>
 <td>0x08023000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.0<span class="icon-st-unchanged"></span></td>
 </tr>
 <tr class="odd">
 <td>stm32wb3x_Thread_MTD_fw.bin</td>
 <td>0x08037000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.0<span class="icon-st-unchanged"></span></td>
 </tr>
 <tr class="even">
@@ -724,13 +923,13 @@
 <tr class="odd">
 <td>stm32wb3x_Zigbee_FFD_fw.bin</td>
 <td>0x08030000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.0<span class="icon-st-unchanged"></span></td>
 </tr>
 <tr class="even">
 <td>stm32wb3x_Zigbee_RFD_fw.bin</td>
 <td>0x0803F000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.0<span class="icon-st-unchanged"></span></td>
 </tr>
 </tbody>
@@ -740,7 +939,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Thread:
@@ -836,7 +1035,7 @@
 <tr class="even">
 <td>stm32wb3x_BLE_Mac_802_15_4_fw.bin</td>
 <td>0x08040000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.0<span class="icon-st-update"></span></td>
 </tr>
 <tr class="odd">
@@ -872,13 +1071,13 @@
 <tr class="even">
 <td>stm32wb3x_Thread_FTD_fw.bin</td>
 <td>0x08023000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.0<span class="icon-st-update"></span></td>
 </tr>
 <tr class="odd">
 <td>stm32wb3x_Thread_MTD_fw.bin</td>
 <td>0x08037000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.0<span class="icon-st-update"></span></td>
 </tr>
 <tr class="even">
@@ -890,13 +1089,13 @@
 <tr class="odd">
 <td>stm32wb3x_Zigbee_FFD_fw.bin</td>
 <td>0x08030000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.0<span class="icon-st-update"></span></td>
 </tr>
 <tr class="even">
 <td>stm32wb3x_Zigbee_RFD_fw.bin</td>
 <td>0x0803F000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>V1.12.0<span class="icon-st-update"></span></td>
 </tr>
 </tbody>
@@ -906,7 +1105,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.11.1 / 23-March-2021</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li><p>Install address for STM32WB3x(256K) provided</p></li>
@@ -1001,7 +1200,7 @@
 <tr class="even">
 <td>stm32wb3x_BLE_Mac_802_15_4_fw.bin</td>
 <td>0x08041000</td>
-<td>0x00</td>
+<td>NA</td>
 <td>v1.11.0</td>
 <td>02/05/2021</td>
 </tr>
@@ -1036,28 +1235,28 @@
 <tr class="odd">
 <td>stm32wb3x_Thread_FTD_fw.bin</td>
 <td>0x08024000</td>
-<td>0x00</td>
+<td>NA</td>
 <td><strong>v1.11.1</strong></td>
 <td>03/23/2021</td>
 </tr>
 <tr class="even">
 <td>stm32wb3x_Thread_MTD_fw.bin</td>
 <td>0x08037000</td>
-<td>0x00</td>
+<td>NA</td>
 <td><strong>v1.11.1</strong></td>
 <td>03/23/2021</td>
 </tr>
 <tr class="odd">
 <td>stm32wb3x_Zigbee_FFD_fw.bin</td>
 <td>0x08033000</td>
-<td>0x00</td>
+<td>NA</td>
 <td><strong>v1.11.1</strong></td>
 <td>03/23/2021</td>
 </tr>
 <tr class="even">
 <td>stm32wb3x_Zigbee_RFD_fw.bin</td>
 <td>0x08041000</td>
-<td>0x00</td>
+<td>NA</td>
 <td><strong>v1.11.1</strong></td>
 <td>03/23/2021</td>
 </tr>
@@ -1068,7 +1267,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="false">V1.11.0 / 5-February-2021</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Support of new binary:
@@ -1225,7 +1424,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="false">V1.10.0 / 26-October-2020</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1323,7 +1522,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="false">V1.9.0 / 21-September-2020</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Introducing following new binary:</li>
@@ -1437,7 +1636,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="false">V1.8.0 / 22-June-2020</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1545,7 +1744,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>MAC:
@@ -1634,7 +1833,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="false">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of Wireless Coprocessor Binary compatible with STM32WB3x.</li>

@@ -123,11 +123,15 @@
 </ul></li>
 <li>stm32wb1x_Safeboot_fw.bin
 <ul>
-<li>Safeboot is an independent part of the FUS that manages specifically one case: option bytes corruption.</li>
+<li>This Safeboot binary provides only optional security enhancements. It can be installed on STM32WB devices where FUS V1.1.0 or FUS V1.1.1 is present. No need to use it on parts where FUS V1.2.0 is present (as these parts already have the latest Safeboot version).</li>
+<li>When Safeboot update is performed, a factory reset of the device will be done, so FUS_UFB_CORRUPT message will be displayed which means that the Safeboot upgrade was correctly done and the device is back to factory state. If you reset the device and ping again for FUS state you have FUS_NO_ERROR message.</li>
+<li>Safeboot is an independent part of the FUS that manages specifically one case: the option bytes corruption:
+<ul>
 <li>When option bytes are corrupted, the STM32WB hardware forces the boot to safeboot whatever the running firmware.</li>
-<li>The safeboot performs a factory reset (on FUS versions V1.1.0 and higher) which means the wireless stack is removed if any and the Cortex®-M4 code is erased and boot is reset to FUS (virgin part state).</li>
+<li>The Safeboot performs a factory reset (on FUS versions V1.1.0 and higher) which means the wireless stack is removed if any and the Cortex®-M4 code is erased and boot is reset to FUS (virgin part state).</li>
 <li>This operation is also not reversible. In order to activate the Safeboot, the user must activate Cortex®-M0+ by writing the value 0x00008000 at the address 0x5800040C using the SWD interface.</li>
-<li>If a FUS version lower than V1.1.0 is running, then, no recovery is possible at this point.</li>
+<li>Please note that if a part has FUS version strictly lower than V1.1.0 and gets option bytes corruption case, then, no recovery is possible.</li>
+</ul></li>
 </ul></li>
 </ul>
 <p><mark>How to flash the Wireless Coprocessor Binary via SWD/JTAG by ST-LINK (STM32CubeProgrammer GUI)</mark></p>

@@ -42,4 +42,3 @@ typedef enum {
 #endif
 
 #endif /* _ZIGBEE_CORE_H_ */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

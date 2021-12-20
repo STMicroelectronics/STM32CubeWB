@@ -180,4 +180,3 @@ HAL_StatusTypeDef MAC_802_15_4_CallBack_Processing(void);
 #endif
 
 #endif /* _INC_802_15_4_MAC_CORE_H_ */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

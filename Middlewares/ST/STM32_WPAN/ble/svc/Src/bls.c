@@ -181,6 +181,12 @@ static void BLS_Update_Char_Value(uint16_t CharHandle,
 #if (BLE_CFG_BLS_MEASUREMENT_STATUS_FLAG == 0)
                     2 +
 #endif
+#if (BLE_CFG_BLS_PULSE_RATE_FLAG == 0)
+                    2 +
+#endif
+#if (BLE_CFG_BLS_USER_ID_FLAG == 0)
+                    1 +
+#endif
                     1 + 6
                     ];
   uint8_t bpm_char_length = 0;

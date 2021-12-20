@@ -336,7 +336,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_WriteImage_cb(struct ZbZclClust
   
   if(client_info->write_info.buffer_full){
     /* Display Transfer Progress */
-    APP_DBG("[OTA] FUOTA Transfer %.2f %.", ((float)current_offset/header->total_image_size)*100);
+    APP_DBG("[OTA] FUOTA Transfer (current_offset = %d)",current_offset);
   
     /* Write to Flash Memory */
     if(APP_ZIGBEE_OTA_Client_WriteFirmwareData(client_info) != APP_ZIGBEE_OK){

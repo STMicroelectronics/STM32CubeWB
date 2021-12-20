@@ -100,5 +100,3 @@ uint32_t HW_FLASH_OB_GetSNBRSA(void);
 #endif
 
 #endif /*__HW_FLASH_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

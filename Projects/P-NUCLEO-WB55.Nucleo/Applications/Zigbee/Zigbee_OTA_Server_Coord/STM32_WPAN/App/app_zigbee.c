@@ -272,8 +272,8 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_ImageBlock_cb(struct ZbZclOtaIm
     server_info->block_transfer.max_buffer_offset += sizeof(server_info->block_transfer.firmware_buffer);
     
     /* Display Transfer Progress */
-    APP_DBG("[OTA] FUOTA Transfer %.2f %.", 
-            ((float)image_data->file_offset/server_info->requested_image_header.total_image_size)*100);
+    APP_DBG("[OTA] FUOTA Transfer at adress %x",server_info->block_transfer.flash_addr);
+
   }
   
   /* Write OTA firmware data to destination buffer */

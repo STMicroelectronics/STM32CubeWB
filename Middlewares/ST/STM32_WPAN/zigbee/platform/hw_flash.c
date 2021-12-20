@@ -120,5 +120,3 @@ static void HW_FLASH_PageErase(uint32_t Page)
  
 //  DBG_GPIO_Gr2Set(DBG_GPIO_GR2_FLASH_ERASE);
 }
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE***/
