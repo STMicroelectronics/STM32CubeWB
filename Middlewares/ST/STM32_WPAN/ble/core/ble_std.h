@@ -1,11 +1,11 @@
 /******************************************************************************
  * @file    ble_std.h
- * @author  MCD
+ * @author  MDG
  * @brief   BLE standard definitions
  ******************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2021 STMicroelectronics.
+ * Copyright (c) 2018-2022 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -112,11 +112,25 @@
 #define HCI_ADV_TYPE_ADV_NONCONN_IND                   0x03U
 #define HCI_ADV_TYPE_ADV_DIRECT_IND_LDC                0x04U
 
+/* HCI_LE_Set_[Advertising/Scan]_Parameters: Own_Address_Type */
+#define HCI_OWN_ADDR_TYPE_PUBLIC                       0x00U
+#define HCI_OWN_ADDR_TYPE_RANDOM                       0x01U
+#define HCI_OWN_ADDR_TYPE_RP_OR_PUBLIC                 0x02U
+#define HCI_OWN_ADDR_TYPE_RP_OR_RANDOM                 0x03U
+
+/* HCI_LE_Set_Scan_Parameters: LE_Scan_Type */
+#define HCI_SCAN_TYPE_PASSIVE                          0x00U
+#define HCI_SCAN_TYPE_ACTIVE                           0x01U
+
 /* HCI_LE_Set_Scan_Parameters: Scanning_Filter_Policy */
 #define HCI_SCAN_FILTER_NO                             0x00U
 #define HCI_SCAN_FILTER_WHITELIST                      0x01U
 #define HCI_SCAN_FILTER_NO_EVEN_RPA                    0x02U
 #define HCI_SCAN_FILTER_WHITELIST_BUT_RPA              0x03U
+
+/* HCI_LE_Create_Connection: Initiator_Filter_Policy */
+#define HCI_INIT_FILTER_NO                             0x00U
+#define HCI_INIT_FILTER_WHITELIST                      0x01U
 
 /* HCI_LE_Read_PHY: TX_PHY */
 #define HCI_TX_PHY_LE_1M                               0x01U
@@ -172,6 +186,14 @@
 /* HCI_LE_Set_Extended_Scan_Parameters: Scanning_PHYs */
 #define HCI_SCANNING_PHYS_LE_1M                        0x01U
 #define HCI_SCANNING_PHYS_LE_CODED                     0x04U
+
+/* HCI_LE_Receiver_Test/HCI_LE_Transmitter_Test [v2]: PHY */
+#define HCI_TEST_PHY_LE_1M                             0x01U
+#define HCI_TEST_PHY_LE_2M                             0x02U
+
+/* HCI_LE_Connection_Complete/HCI_LE_Enhanced_Connection_Complete: Role */
+#define HCI_ROLE_CENTRAL                               0x00U
+#define HCI_ROLE_PERIPHERAL                            0x01U
 
 
 #endif /* BLE_STD_H__ */

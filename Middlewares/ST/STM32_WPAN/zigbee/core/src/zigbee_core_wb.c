@@ -1409,7 +1409,7 @@ PACKED_STRUCT zb_msg_filter_cb_info_t {
     void *arg;
 };
 
-#define ZB_IPC_MSG_FILTER_CB_LIST_MAX               4
+#define ZB_IPC_MSG_FILTER_CB_LIST_MAX               32
 static struct zb_msg_filter_cb_info_t zb_msg_filter_cb_list[ZB_IPC_MSG_FILTER_CB_LIST_MAX];
 
 struct ZbMsgFilterT *

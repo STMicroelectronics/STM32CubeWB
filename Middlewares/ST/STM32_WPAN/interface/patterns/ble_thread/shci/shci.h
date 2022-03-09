@@ -868,6 +868,9 @@ extern "C" {
 #define INFO_STACK_TYPE_BLE_HCI                     0x02
 #define INFO_STACK_TYPE_BLE_LIGHT                   0x03
 #define INFO_STACK_TYPE_BLE_BEACON                  0x04
+#define INFO_STACK_TYPE_BLE_BASIC                   0x05
+#define INFO_STACK_TYPE_BLE_FULL_EXT_ADV            0x06
+#define INFO_STACK_TYPE_BLE_HCI_EXT_ADV             0x07
 #define INFO_STACK_TYPE_THREAD_FTD                  0x10
 #define INFO_STACK_TYPE_THREAD_MTD                  0x11
 #define INFO_STACK_TYPE_ZIGBEE_FFD                  0x30

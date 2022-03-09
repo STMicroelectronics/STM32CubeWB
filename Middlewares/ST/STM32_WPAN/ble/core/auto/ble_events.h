@@ -1,12 +1,12 @@
 /*****************************************************************************
  * @file    ble_events.h
- * @author  MCD
+ * @author  MDG
  * @brief   STM32WB BLE API (event callbacks)
  *          Auto-generated file: do not edit!
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2021 STMicroelectronics.
+ * Copyright (c) 2018-2022 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -1781,6 +1781,7 @@ void aci_hal_end_of_radio_activity_event( uint8_t Last_State,
  * @brief ACI_HAL_SCAN_REQ_REPORT_EVENT
  * This event is reported to the application after a scan request is received
  * and a scan response is scheduled to be transmitted.
+ * Note: RSSI in this event is valid only when privacy is not used.
  * 
  * @param RSSI RSSI (signed integer).
  *        Units: dBm.

@@ -1,12 +1,12 @@
 /*****************************************************************************
  * @file    ble_gap_aci.h
- * @author  MCD
+ * @author  MDG
  * @brief   STM32WB BLE API (gap_aci)
  *          Auto-generated file: do not edit!
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2021 STMicroelectronics.
+ * Copyright (c) 2018-2022 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -694,20 +694,25 @@ tBleStatus aci_gap_start_limited_discovery_proc( uint16_t LE_Scan_Interval,
  * ACI_GAP_TERMINATE_GAP_PROC with the procedure code set to 0x02 or a timeout
  * happens (the timeout value is fixed at 10.24 s.). When the procedure is
  * terminated due to any of the above reasons, ACI_GAP_PROC_COMPLETE_EVENT
- * event is returned with the procedure code set to 0x02. The device found when
- * the procedure is ongoing is returned to HCI_LE_ADVERTISING_REPORT_EVENT.
+ * event is returned with the procedure code set to 0x02.
+ * The devices found when the procedure is ongoing are returned via
+ * HCI_LE_ADVERTISING_REPORT_EVENT (or via
+ * HCI_LE_EXTENDED_ADVERTISING_REPORT_EVENT when the extended advertising
+ * feature is supported).
  * 
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param Own_Address_Type Own address type: if Privacy is disabled, the
  *        address can be public or static random; otherwise, it can be a
  *        resolvable private address or a non-resolvable private address.
@@ -750,12 +755,14 @@ tBleStatus aci_gap_start_general_discovery_proc( uint16_t LE_Scan_Interval,
  *        scan.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param Own_Address_Type Own address type: if Privacy is disabled, the
  *        address can be public or static random; otherwise, it can be a
  *        resolvable private address.
@@ -841,12 +848,14 @@ tBleStatus aci_gap_start_auto_connection_establish_proc( uint16_t LE_Scan_Interv
  *        scan.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param Own_Address_Type Own address type: if Privacy is disabled, the
  *        address can be public or static random; otherwise, it can be a
  *        resolvable private address or a non-resolvable private address.
@@ -895,9 +904,11 @@ tBleStatus aci_gap_start_general_connection_establish_proc( uint8_t LE_Scan_Type
  * specified device addresses into whitelist and enables scanning in the
  * controller with the scanner filter policy set to "accept packets only from
  * devices in whitelist". All the devices found are sent to the upper layer by
- * the event HCI_LE_ADVERTISING_REPORT_EVENT. The upper layer then has to
- * select one of the devices to which it wants to connect by issuing the
- * command ACI_GAP_CREATE_CONNECTION.
+ * the event HCI_LE_ADVERTISING_REPORT_EVENT (or by the event
+ * HCI_LE_EXTENDED_ADVERTISING_REPORT_EVENT when the extended advertising
+ * feature is supported). The upper layer then has to select one of the devices
+ * to which it wants to connect by issuing the command
+ * ACI_GAP_CREATE_CONNECTION.
  * On completion of the procedure a ACI_GAP_PROC_COMPLETE_EVENT event is
  * generated with the procedure code set to 0x20. The procedure is terminated
  * when a connection is established or the upper layer terminates the procedure
@@ -917,12 +928,14 @@ tBleStatus aci_gap_start_general_connection_establish_proc( uint8_t LE_Scan_Type
  *        scan.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param Own_Address_Type Own address type: if Privacy is disabled, the
  *        address can be public or static random; otherwise, it can be a
  *        resolvable private address or a non-resolvable private address.
@@ -992,12 +1005,14 @@ tBleStatus aci_gap_start_selective_connection_establish_proc( uint8_t LE_Scan_Ty
  *        scan.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param Peer_Address_Type The address type of the peer device.
  *        Values:
  *        - 0x00: Public Device Address
@@ -1219,12 +1234,14 @@ tBleStatus aci_gap_set_broadcast_mode( uint16_t Advertising_Interval_Min,
  *        scan.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
- *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms)
+ *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
  * @param LE_Scan_Type Passive or active scanning. With passive scanning, no
  *        scan request PDUs are sent.
  *        Values:
@@ -1545,9 +1562,22 @@ tBleStatus aci_gap_additional_beacon_set_data( uint8_t Adv_Data_Length,
 
 /**
  * @brief ACI_GAP_ADV_SET_CONFIGURATION
- * This command is used to set the extended advertising configration.
+ * This command is used to set the extended advertising configration for one
+ * advertising set.
+ * This command, in association with ACI_GAP_ADV_SET_SCAN_RESP_DATA,
+ * ACI_GAP_ADV_SET_ADV_DATA and ACI_GAP_ADV_SET_ENABLE, enables to start
+ * extended advertising. These commands must be used in replacement of
+ * ACI_GAP_SET_DISCOVERABLE, ACI_GAP_SET_LIMITED_DISCOVERABLE,
+ * ACI_GAP_SET_DIRECT_CONNECTABLE, ACI_GAP_SET_NON_CONNECTABLE,
+ * ACI_GAP_SET_UNDIRECTED_CONNECTABLE and ACI_GAP_SET_BROADCAST_MODE that only
+ * support legacy advertising.
+ * If bit 0 of Adv_Mode is set, the Own_Address_Type parameter is ignored and
+ * the own address shall be set with the ACI_GAP_ADV_SET_RANDOM_ADDRESS
+ * command. This mode is only valid for non-connectable advertising.
  * 
- * @param Adv_Mode Not used. Shall be set to 0.
+ * @param Adv_Mode Bitmap of extended advertising modes
+ *        Flags:
+ *        - 0x01: Use specific random address
  * @param Advertising_Handle Used to identify an advertising set.
  *        Values:
  *        - 0x00 ... 0xEF
@@ -1738,6 +1768,20 @@ tBleStatus aci_gap_adv_remove_set( uint8_t Advertising_Handle );
  * @return Value indicating success or error code.
  */
 tBleStatus aci_gap_adv_clear_sets( void );
+
+/**
+ * @brief ACI_GAP_ADV_SET_RANDOM_ADDRESS
+ * This command is used to set the random device address of an advertising set
+ * configured to use specific random address.
+ * 
+ * @param Advertising_Handle Used to identify an advertising set.
+ *        Values:
+ *        - 0x00 ... 0xEF
+ * @param Random_Address Random Device Address.
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gap_adv_set_random_address( uint8_t Advertising_Handle,
+                                           const uint8_t* Random_Address );
 
 
 #endif /* BLE_GAP_ACI_H__ */

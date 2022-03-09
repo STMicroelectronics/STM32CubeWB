@@ -1,12 +1,12 @@
 /*****************************************************************************
  * @file    ble_gap_aci.c
- * @author  MCD
+ * @author  MDG
  * @brief   STM32WB BLE API (gap_aci)
  *          Auto-generated file: do not edit!
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2021 STMicroelectronics.
+ * Copyright (c) 2018-2022 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -1562,6 +1562,30 @@ tBleStatus aci_gap_adv_clear_sets( void )
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x3f;
   rq.ocf = 0x0c5;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus aci_gap_adv_set_random_address( uint8_t Advertising_Handle,
+                                           const uint8_t* Random_Address )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_gap_adv_set_random_address_cp0 *cp0 = (aci_gap_adv_set_random_address_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Advertising_Handle = Advertising_Handle;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Random_Address, (const void*)Random_Address, 6 );
+  index_input += 6;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x0c6;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
   rq.rparam = &status;
   rq.rlen = 1;
   if ( hci_send_req(&rq, FALSE) < 0 )

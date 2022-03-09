@@ -75,7 +75,7 @@ PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static HRS_Context_t HRS_Context;
 static tBleStatus Update_Char_BodySensorLocation( HRS_BodySensorLocation_t *pBodySensorLocationValue );
 #endif
 static tBleStatus Update_Char_Measurement(HRS_MeasVal_t *pMeasurement );
-static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event);
+static SVCCTL_EvtAckStatus_t HeartRate_Event_Handler(void *Event);
 
 
 /* Functions Definition ------------------------------------------------------*/
@@ -86,7 +86,7 @@ static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event);
  * @param  Event: Address of the buffer holding the Event
  * @retval Ack: Return whether the Event has been managed or not
  */
-static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event)
+static SVCCTL_EvtAckStatus_t HeartRate_Event_Handler(void *Event)
 {
   SVCCTL_EvtAckStatus_t return_value;
   hci_event_pckt *event_pckt;
@@ -194,7 +194,7 @@ static SVCCTL_EvtAckStatus_t HearRate_Event_Handler(void *Event)
   }
 
   return(return_value);
-}/* end HearRate_Event_Handler */
+}/* end HeartRate_Event_Handler */
 
 #if (BLE_CFG_HRS_BODY_SENSOR_LOCATION_CHAR != 0)
 /**
@@ -400,7 +400,7 @@ void HRS_Init(void)
   /**
    *	Register the event handler to the BLE controller
    */
-  SVCCTL_RegisterSvcHandler(HearRate_Event_Handler);
+  SVCCTL_RegisterSvcHandler(HeartRate_Event_Handler);
 
   /**
    *  Add Heart Rate Service

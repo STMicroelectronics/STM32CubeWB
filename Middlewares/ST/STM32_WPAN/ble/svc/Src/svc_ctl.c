@@ -60,76 +60,76 @@ PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") SVCCTL_CltHandler_t SVCCTL_CltHandler;
 /* Weak functions ----------------------------------------------------------*/
 void BVOPUS_STM_Init(void);
 
-__weak void BAS_Init( void )
+__WEAK void BAS_Init( void )
 {
   return;
 }
 
-__weak void BLS_Init( void )
+__WEAK void BLS_Init( void )
 {
   return;
 }
-__weak void CRS_STM_Init( void )
+__WEAK void CRS_STM_Init( void )
 {
   return;
 }
-__weak void DIS_Init( void )
+__WEAK void DIS_Init( void )
 {
   return;
 }
-__weak void EDS_STM_Init( void )
+__WEAK void EDS_STM_Init( void )
 {
   return;
 }
-__weak void HIDS_Init( void )
+__WEAK void HIDS_Init( void )
 {
   return;
 }
-__weak void HRS_Init( void )
+__WEAK void HRS_Init( void )
 {
   return;
 }
-__weak void HTS_Init( void )
+__WEAK void HTS_Init( void )
 {
   return;
 }
-__weak void IAS_Init( void )
+__WEAK void IAS_Init( void )
 {
   return;
 }
-__weak void LLS_Init( void )
+__WEAK void LLS_Init( void )
 {
   return;
 }
-__weak void TPS_Init( void )
+__WEAK void TPS_Init( void )
 {
   return;
 }
-__weak void MOTENV_STM_Init( void )
+__WEAK void MOTENV_STM_Init( void )
 {
   return;
 }
-__weak void P2PS_STM_Init( void )
+__WEAK void P2PS_STM_Init( void )
 {
   return;
 }
-__weak void ZDD_STM_Init( void )
+__WEAK void ZDD_STM_Init( void )
 {
   return;
 }
-__weak void OTAS_STM_Init( void )
+__WEAK void OTAS_STM_Init( void )
 {
   return;
 }
-__weak void MESH_Init( void )
+__WEAK void MESH_Init( void )
 {
   return;
 }
-__weak void BVOPUS_STM_Init( void )
+__WEAK void BVOPUS_STM_Init( void )
 {
   return;
 }
-__weak void SVCCTL_InitCustomSvc( void )
+__WEAK void SVCCTL_InitCustomSvc( void )
 {
   return;
 }
@@ -153,7 +153,7 @@ void SVCCTL_Init( void )
   return;
 }
 
-__weak void SVCCTL_SvcInit(void)
+__WEAK void SVCCTL_SvcInit(void)
 {
   BAS_Init();
 
@@ -228,7 +228,7 @@ void SVCCTL_RegisterCltHandler( SVC_CTL_p_EvtHandler_t pfBLE_SVC_Client_Event_Ha
   return;
 }
 
-SVCCTL_UserEvtFlowStatus_t SVCCTL_UserEvtRx( void *pckt )
+__WEAK SVCCTL_UserEvtFlowStatus_t SVCCTL_UserEvtRx( void *pckt )
 {
   hci_event_pckt *event_pckt;
   evt_blecore_aci *blecore_evt;

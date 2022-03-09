@@ -1,12 +1,12 @@
 /*****************************************************************************
  * @file    ble_types.h
- * @author  MCD
+ * @author  MDG
  * @brief   STM32WB BLE command/event types
  *          Auto-generated file: do not edit!
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2021 STMicroelectronics.
+ * Copyright (c) 2018-2022 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -1982,6 +1982,17 @@ typedef PACKED(struct)
 {
   uint8_t Status;
 } aci_gap_adv_clear_sets_rp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Advertising_Handle;
+  uint8_t Random_Address[6];
+} aci_gap_adv_set_random_address_cp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Status;
+} aci_gap_adv_set_random_address_rp0;
 
 typedef PACKED(struct)
 {

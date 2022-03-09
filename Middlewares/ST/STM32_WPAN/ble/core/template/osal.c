@@ -1,12 +1,12 @@
 /*****************************************************************************
  * @file    osal.c
- * @author  MCD
+ * @author  MDG
  * @brief   Implements the interface defined in "osal.h" needed by the stack.
  *          Actually, only memset, memcpy and memcmp wrappers are implemented.
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2021 STMicroelectronics.
+ * Copyright (c) 2018-2022 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file

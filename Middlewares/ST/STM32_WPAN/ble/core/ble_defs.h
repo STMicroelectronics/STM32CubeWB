@@ -1,11 +1,11 @@
 /*****************************************************************************
  * @file    ble_defs.h
- * @author  MCD
+ * @author  MDG
  * @brief   This file contains definitions used for BLE Stack interface.
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2021 STMicroelectronics.
+ * Copyright (c) 2018-2022 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -461,6 +461,13 @@
 #define GAP_SELECTIVE_CONNECTION_ESTABLISHMENT_PROC  0x20U
 #define GAP_DIRECT_CONNECTION_ESTABLISHMENT_PROC     0x40U
 #define GAP_OBSERVATION_PROC                         0x80U
+
+/* GAP Address Type
+ */
+#define GAP_PUBLIC_ADDR                              0x00U
+#define GAP_STATIC_RANDOM_ADDR                       0x01U
+#define GAP_RESOLVABLE_PRIVATE_ADDR                  0x02U
+#define GAP_NON_RESOLVABLE_PRIVATE_ADDR              0x03U
 
 /* ------------------------------------------------------------------------- */
 

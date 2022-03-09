@@ -1,12 +1,12 @@
 /*****************************************************************************
  * @file    ble_hci_le.h
- * @author  MCD
+ * @author  MDG
  * @brief   STM32WB BLE API (hci_le)
  *          Auto-generated file: do not edit!
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2021 STMicroelectronics.
+ * Copyright (c) 2018-2022 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
