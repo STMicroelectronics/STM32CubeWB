@@ -1145,6 +1145,24 @@ typedef PACKED(struct)
 
 typedef PACKED(struct)
 {
+  uint8_t Status;
+  uint16_t RF_TX_Path_Compensation;
+  uint16_t RF_RX_Path_Compensation;
+} hci_le_read_rf_path_compensation_rp0;
+
+typedef PACKED(struct)
+{
+  uint16_t RF_TX_Path_Compensation;
+  uint16_t RF_RX_Path_Compensation;
+} hci_le_write_rf_path_compensation_cp0;
+
+typedef PACKED(struct)
+{
+  uint8_t Status;
+} hci_le_write_rf_path_compensation_rp0;
+
+typedef PACKED(struct)
+{
   uint8_t Peer_Identity_Address_Type;
   uint8_t Peer_Identity_Address[6];
   uint8_t Privacy_Mode;

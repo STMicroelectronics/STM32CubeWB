@@ -1914,6 +1914,50 @@ tBleStatus hci_le_read_transmit_power( uint8_t* Min_TX_Power,
   return BLE_STATUS_SUCCESS;
 }
 
+tBleStatus hci_le_read_rf_path_compensation( uint16_t* RF_TX_Path_Compensation,
+                                             uint16_t* RF_RX_Path_Compensation )
+{
+  struct hci_request rq;
+  hci_le_read_rf_path_compensation_rp0 resp;
+  Osal_MemSet( &resp, 0, sizeof(resp) );
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x08;
+  rq.ocf = 0x04c;
+  rq.rparam = &resp;
+  rq.rlen = sizeof(resp);
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  if ( resp.Status )
+    return resp.Status;
+  *RF_TX_Path_Compensation = resp.RF_TX_Path_Compensation;
+  *RF_RX_Path_Compensation = resp.RF_RX_Path_Compensation;
+  return BLE_STATUS_SUCCESS;
+}
+
+tBleStatus hci_le_write_rf_path_compensation( uint16_t RF_TX_Path_Compensation,
+                                              uint16_t RF_RX_Path_Compensation )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  hci_le_write_rf_path_compensation_cp0 *cp0 = (hci_le_write_rf_path_compensation_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->RF_TX_Path_Compensation = RF_TX_Path_Compensation;
+  index_input += 2;
+  cp0->RF_RX_Path_Compensation = RF_RX_Path_Compensation;
+  index_input += 2;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x08;
+  rq.ocf = 0x04d;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
 tBleStatus hci_le_set_privacy_mode( uint8_t Peer_Identity_Address_Type,
                                     const uint8_t* Peer_Identity_Address,
                                     uint8_t Privacy_Mode )

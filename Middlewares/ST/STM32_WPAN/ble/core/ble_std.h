@@ -112,6 +112,12 @@
 #define HCI_ADV_TYPE_ADV_NONCONN_IND                   0x03U
 #define HCI_ADV_TYPE_ADV_DIRECT_IND_LDC                0x04U
 
+/* HCI_LE_Set_Advertising_Parameters: Advertising_Filter_Policy */
+#define HCI_ADV_FILTER_NO                              0x00U
+#define HCI_ADV_FILTER_WHITELIST_SCAN                  0x01U
+#define HCI_ADV_FILTER_WHITELIST_CONNECT               0x02U
+#define HCI_ADV_FILTER_WHITELIST_SCAN_CONNECT          0x03U
+
 /* HCI_LE_Set_[Advertising/Scan]_Parameters: Own_Address_Type */
 #define HCI_OWN_ADDR_TYPE_PUBLIC                       0x00U
 #define HCI_OWN_ADDR_TYPE_RANDOM                       0x01U
@@ -194,6 +200,10 @@
 /* HCI_LE_Connection_Complete/HCI_LE_Enhanced_Connection_Complete: Role */
 #define HCI_ROLE_CENTRAL                               0x00U
 #define HCI_ROLE_PERIPHERAL                            0x01U
+
+/* HCI_LE_Set_Privacy_Mode: Privacy_Mode */
+#define HCI_PRIV_MODE_NETWORK                          0x00U
+#define HCI_PRIV_MODE_DEVICE                           0x01U
 
 
 #endif /* BLE_STD_H__ */

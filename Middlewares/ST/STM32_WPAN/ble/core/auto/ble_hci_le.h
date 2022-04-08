@@ -370,7 +370,7 @@ tBleStatus hci_read_rssi( uint16_t Connection_Handle,
  * regardless of how the LE_Event_Mask is set.
  * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.1].
  * 
- * @param LE_Event_Mask LE event mask. Default: 0x00000000000FFFFF.
+ * @param LE_Event_Mask LE event mask. Default: 0x0000000000031A5F.
  *        Flags:
  *        - 0x0000000000000000: No LE events specified
  *        - 0x0000000000000001: LE Connection Complete Event
@@ -1180,7 +1180,8 @@ tBleStatus hci_le_receiver_test( uint8_t RX_Frequency );
  *        - 0x00 ... 0x27
  * @param Length_Of_Test_Data Length in bytes of payload data in each packet.
  *        Values:
- *        - 0x00 ... 0x25
+ *        - 0x00 ... 0x25: for BO variant
+ *        - 0x00 ... 0xFF: otherwise
  * @param Packet_Payload Type of packet payload.
  *        Values:
  *        - 0x00: Pseudo-Random bit sequence 9
@@ -1687,7 +1688,8 @@ tBleStatus hci_le_receiver_test_v2( uint8_t RX_Frequency,
  *        - 0x00 ... 0x27
  * @param Length_Of_Test_Data Length in bytes of payload data in each packet.
  *        Values:
- *        - 0x00 ... 0x25
+ *        - 0x00 ... 0x25: for BO variant
+ *        - 0x00 ... 0xFF: otherwise
  * @param Packet_Payload Type of packet payload.
  *        Values:
  *        - 0x00: Pseudo-Random bit sequence 9
@@ -2164,6 +2166,50 @@ tBleStatus hci_le_extended_create_connection( uint8_t Initiator_Filter_Policy,
  */
 tBleStatus hci_le_read_transmit_power( uint8_t* Min_TX_Power,
                                        uint8_t* Max_TX_Power );
+
+/**
+ * @brief HCI_LE_READ_RF_PATH_COMPENSATION
+ * This command is used to read the RF path compensation value parameters used
+ * in the Tx power level and RSSI calculation.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.75].
+ * 
+ * @param[out] RF_TX_Path_Compensation RF TX Path Compensation Value (16-bit
+ *        signed integer).
+ *        Units: 0.1 dB.
+ *        Values:
+ *        - -1280 ... 1280
+ * @param[out] RF_RX_Path_Compensation RF RX Path Compensation Value (16-bit
+ *        signed integer).
+ *        Units: 0.1 dB.
+ *        Values:
+ *        - -1280 ... 1280
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_read_rf_path_compensation( uint16_t* RF_TX_Path_Compensation,
+                                             uint16_t* RF_RX_Path_Compensation );
+
+/**
+ * @brief HCI_LE_WRITE_RF_PATH_COMPENSATION
+ * This command is used to indicate the RF path gain or loss between the RF
+ * transceiver and the antenna contributed by intermediate components. A
+ * positive value means a net RF path gain and a negative value means a net RF
+ * path loss.
+ * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.8.76].
+ * 
+ * @param RF_TX_Path_Compensation RF TX Path Compensation Value (16-bit signed
+ *        integer).
+ *        Units: 0.1 dB.
+ *        Values:
+ *        - -1280 ... 1280
+ * @param RF_RX_Path_Compensation RF RX Path Compensation Value (16-bit signed
+ *        integer).
+ *        Units: 0.1 dB.
+ *        Values:
+ *        - -1280 ... 1280
+ * @return Value indicating success or error code.
+ */
+tBleStatus hci_le_write_rf_path_compensation( uint16_t RF_TX_Path_Compensation,
+                                              uint16_t RF_RX_Path_Compensation );
 
 /**
  * @brief HCI_LE_SET_PRIVACY_MODE

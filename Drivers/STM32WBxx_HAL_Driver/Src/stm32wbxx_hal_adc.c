@@ -1014,10 +1014,10 @@ HAL_StatusTypeDef HAL_ADC_DeInit(ADC_HandleTypeDef *hadc)
   
   /* Reset register CFGR1 */
   hadc->Instance->CFGR1 &= ~(ADC_CFGR1_AWD1CH   | ADC_CFGR1_AWD1EN  | ADC_CFGR1_AWD1SGL | ADC_CFGR1_DISCEN |
-                             ADC_CFGR1_AUTOFF  | ADC_CFGR1_WAIT   | ADC_CFGR1_CONT   | ADC_CFGR1_OVRMOD |     
+                             ADC_CFGR1_AUTOFF  | ADC_CFGR1_WAIT   | ADC_CFGR1_CONT   | ADC_CFGR1_OVRMOD |
                              ADC_CFGR1_EXTEN   | ADC_CFGR1_EXTSEL | ADC_CFGR1_ALIGN  | ADC_CFGR1_RES    |
                              ADC_CFGR1_SCANDIR | ADC_CFGR1_DMACFG | ADC_CFGR1_DMAEN                      );
-  
+
   /* Reset register CFGR2 */
   /* Note: Update of ADC clock mode is conditioned to ADC state disabled:   */
   /*       already done above.                                              */
@@ -1025,13 +1025,13 @@ HAL_StatusTypeDef HAL_ADC_DeInit(ADC_HandleTypeDef *hadc)
   
   /* Reset register SMPR */
   hadc->Instance->SMPR &= ~ADC_SMPR_SMP1;
-  
-  /* Reset register TR1 */
-  hadc->Instance->TR1 &= ~(ADC_TR1_HT1 | ADC_TR1_LT1);
-  
+
+  /* Reset register TR */
+  hadc->Instance->TR &= ~(ADC_TR_HT | ADC_TR_LT);
+
   /* Reset register CHSELR */
   hadc->Instance->CHSELR &= ~(ADC_CHSELR_SQ_ALL);
-  
+
   /* Reset register DR */
   /* bits in access mode read only, no direct reset applicable */
 
@@ -1043,7 +1043,7 @@ HAL_StatusTypeDef HAL_ADC_DeInit(ADC_HandleTypeDef *hadc)
                               ADC_IT_EOCAL | ADC_IT_CCRDY |
 #else
                               ADC_IT_AWD3  | ADC_IT_AWD2 | ADC_IT_AWD1 |
-                              ADC_IT_JEOS  | ADC_IT_JEOC | ADC_IT_JQOVF | 
+                              ADC_IT_JEOS  | ADC_IT_JEOC | ADC_IT_JQOVF |
 #endif
                               ADC_IT_EOS   | ADC_IT_EOC  | ADC_IT_OVR   |
                               ADC_IT_EOSMP | ADC_IT_RDY));
