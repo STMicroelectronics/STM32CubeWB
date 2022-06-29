@@ -4,7 +4,7 @@
  * @brief ZCL Thermostat cluster header
  * ZCL 7 section 6.3
  * ZCL 8 section 6.3
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_THERM_H
@@ -172,6 +172,7 @@ enum ZbZclThermAttrT {
 
 #define ZCL_THERM_TEMP_MIN                          (-27315) /* 0x954d = -27315 */
 #define ZCL_THERM_TEMP_MAX                          (32767) /* 0x7fff = 32797 */
+#define ZCL_THERM_TEMP_LOCAL_DEFAULT                0x00ff /* 0x00ff = 2.55 deg C */
 
 /* Meaning for CNTRL_SEQ */
 #define ZCL_THERM_CONTROL_OPERCOOL_ONLY             0x00

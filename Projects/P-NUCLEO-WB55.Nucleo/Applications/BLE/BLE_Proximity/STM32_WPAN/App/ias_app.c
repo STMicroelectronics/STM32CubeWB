@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    ias_app.c
@@ -15,8 +16,7 @@
   *
   ******************************************************************************
   */
-
-
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -27,11 +27,26 @@
 #include "stm32_seq.h"
 #include "app_ble.h"
 
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 
+/* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
 /* Private defines -----------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
 /* Private macros ------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
 /**
  * START of Section BLE_APP_CONTEXT
@@ -41,15 +56,21 @@
  * END of Section BLE_APP_CONTEXT
  */
 
-/* Global variables ----------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
+/* External variables --------------------------------------------------------*/
+
+/* USER CODE BEGIN EV */
+
+/* USER CODE END EV */
+
 /* Functions Definition ------------------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
-/* Public functions ----------------------------------------------------------*/
 void IASAPP_Init(void)
 {
-}
 
+}
 
 void IAS_App_Notification(IAS_App_Notification_evt_t *pNotification)
 {
@@ -66,7 +87,7 @@ void IAS_App_Notification(IAS_App_Notification_evt_t *pNotification)
 
     case IAS_MID_ALERT_EVT:
       {
-        BLE_DBG_APP_MSG("MID ALERT\n");
+        BLE_DBG_APP_MSG("MILD ALERT\n");
         BSP_LED_Off(LED_GREEN);
         BSP_LED_Off(LED_RED);
         BSP_LED_On(LED_BLUE);
@@ -89,3 +110,6 @@ void IAS_App_Notification(IAS_App_Notification_evt_t *pNotification)
   return;
 }
 
+/* USER CODE BEGIN FD */
+
+/* USER CODE END FD */

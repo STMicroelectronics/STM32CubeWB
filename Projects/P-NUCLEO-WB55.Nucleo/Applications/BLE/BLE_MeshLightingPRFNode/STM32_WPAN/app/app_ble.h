@@ -73,4 +73,4 @@ void APP_BLE_Init( void );
 }
 #endif
 
-#endif /*APP_BLE_H */
+#endif /* APP_BLE_H */

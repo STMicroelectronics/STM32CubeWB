@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef MAIN_H
+#define MAIN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,6 +60,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+void   MX_LPUART1_UART_Init(void);
+void   MX_USART1_UART_Init(void);
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
@@ -68,4 +70,4 @@ void Error_Handler(void);
 }
 #endif
 
-#endif /* __MAIN_H */
+#endif /* MAIN_H */

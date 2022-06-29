@@ -1,8 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : App/dis_app.c
-  * Description        : Device Information Service Application
+  * @file    dis_app.c
+  * @author  MCD Application Team
+  * @brief   Device Information Service Application
   ******************************************************************************
   * @attention
   *
@@ -215,4 +216,3 @@ void DISAPP_Init(void)
 /* USER CODE BEGIN FD */
 
 /* USER CODE END FD */
-

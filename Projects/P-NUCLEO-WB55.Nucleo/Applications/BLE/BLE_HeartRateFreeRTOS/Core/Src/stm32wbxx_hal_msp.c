@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : stm32wbxx_hal_msp.c
-  * Description        : This file provides code for the MSP Initialization 
-  *                      and de-Initialization codes.
+  * @file          : stm32wbxx_hal_msp.c
+  * @brief         : This file provides code for the MSP Initialization 
+  *                  and de-Initialization codes.
   ******************************************************************************
   * @attention
   *
@@ -154,6 +154,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
   /* USER CODE BEGIN LPUART1_MspInit 0 */
 
   /* USER CODE END LPUART1_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LPUART1;
@@ -342,6 +343,7 @@ void HAL_RNG_MspInit(RNG_HandleTypeDef* hrng)
   /* USER CODE BEGIN RNG_MspInit 0 */
 
   /* USER CODE END RNG_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RNG;
@@ -396,6 +398,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE BEGIN RTC_MspInit 0 */
 
   /* USER CODE END RTC_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
@@ -447,4 +450,3 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

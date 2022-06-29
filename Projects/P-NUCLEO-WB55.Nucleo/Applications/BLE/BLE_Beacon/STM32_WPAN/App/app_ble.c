@@ -32,6 +32,7 @@
 #include "shci.h"
 #include "stm32_lpm.h"
 #include "otp.h"
+
 #include "eddystone_beacon.h"
 #include "eddystone_uid_service.h"
 #include "eddystone_url_service.h"
@@ -75,27 +76,27 @@
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_CmdPacket_t BleCmdBuffer;
 
-static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
-    {
-        (uint8_t)((CFG_ADV_BD_ADDRESS & 0x0000000000FF)),
-        (uint8_t)((CFG_ADV_BD_ADDRESS & 0x00000000FF00) >> 8),
-        (uint8_t)((CFG_ADV_BD_ADDRESS & 0x000000FF0000) >> 16),
-        (uint8_t)((CFG_ADV_BD_ADDRESS & 0x0000FF000000) >> 24),
-        (uint8_t)((CFG_ADV_BD_ADDRESS & 0x00FF00000000) >> 32),
-        (uint8_t)((CFG_ADV_BD_ADDRESS & 0xFF0000000000) >> 40)
-    };
+static const uint8_t a_MBdAddr[BD_ADDR_SIZE_LOCAL] =
+{
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x0000000000FF)),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x00000000FF00) >> 8),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x000000FF0000) >> 16),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x0000FF000000) >> 24),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x00FF00000000) >> 32),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0xFF0000000000) >> 40)
+};
 
-static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
-
-/**
-*   Identity root key used to derive LTK and CSRK
-*/
-static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
+static uint8_t a_BdAddrUdn[BD_ADDR_SIZE_LOCAL];
 
 /**
-* Encryption root key used to derive LTK and CSRK
-*/
-static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
+ *   Identity root key used to derive LTK and CSRK
+ */
+static const uint8_t a_BLE_CfgIrValue[16] = CFG_BLE_IRK;
+
+/**
+ * Encryption root key used to derive LTK and CSRK
+ */
+static const uint8_t a_BLE_CfgErValue[16] = CFG_BLE_ERK;
 
 static uint8_t sector_type;
 /**
@@ -111,12 +112,12 @@ PLACE_IN_SECTION("TAG_OTA_START") const uint32_t MagicKeywordAddress = (uint32_t
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-static void BLE_UserEvtRx( void * pPayload );
-static void BLE_StatusNot( HCI_TL_CmdStatus_t status );
-static void Ble_Tl_Init( void );
+static void BLE_UserEvtRx(void *p_Payload);
+static void BLE_StatusNot(HCI_TL_CmdStatus_t Status);
+static void Ble_Tl_Init(void);
 static void Ble_Hci_Gap_Gatt_Init(void);
-static const uint8_t* BleGetBdAddress( void );
-static void Beacon_Update( void );
+static const uint8_t* BleGetBdAddress(void);
+static void Beacon_Update(void);
 
 /* USER CODE BEGIN PFP */
 
@@ -129,11 +130,12 @@ static void Beacon_Update( void );
 /* USER CODE END EV */
 
 /* Functions Definition ------------------------------------------------------*/
-void APP_BLE_Init( void )
+void APP_BLE_Init(void)
 {
-/* USER CODE BEGIN APP_BLE_Init_1 */
+  SHCI_CmdStatus_t status;
+  /* USER CODE BEGIN APP_BLE_Init_1 */
 
-/* USER CODE END APP_BLE_Init_1 */
+  /* USER CODE END APP_BLE_Init_1 */
   SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
   {
     {{0,0,0}},                          /**< Header unused */
@@ -158,13 +160,18 @@ void APP_BLE_Init( void )
      CFG_BLE_MAX_COC_INITIATOR_NBR,
      CFG_BLE_MIN_TX_POWER,
      CFG_BLE_MAX_TX_POWER,
-     CFG_BLE_RX_MODEL_CONFIG}
+     CFG_BLE_RX_MODEL_CONFIG,
+     CFG_BLE_MAX_ADV_SET_NBR,
+     CFG_BLE_MAX_ADV_DATA_LEN,
+     CFG_BLE_TX_PATH_COMPENS,
+     CFG_BLE_RX_PATH_COMPENS
+    }
   };
 
   /**
    * Initialize Ble Transport Layer
    */
-  Ble_Tl_Init( );
+  Ble_Tl_Init();
 
   /**
    * Do not allow standby in the application
@@ -174,14 +181,21 @@ void APP_BLE_Init( void )
   /**
    * Register the hci transport layer to handle BLE User Asynchronous Events
    */
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
+  UTIL_SEQ_RegTask(1<<CFG_TASK_HCI_ASYNCH_EVT_ID, UTIL_SEQ_RFU, hci_user_evt_proc);
 
   /**
    * Starts the BLE Stack on CPU2
    */
-  if (SHCI_C2_BLE_Init( &ble_init_cmd_packet ) != SHCI_Success)
+  status = SHCI_C2_BLE_Init(&ble_init_cmd_packet);
+  if (status != SHCI_Success)
   {
+    APP_DBG_MSG("  Fail   : SHCI_C2_BLE_Init command, result: 0x%02x\n\r", status);
+    /* if you are here, maybe CPU2 doesn't contain STM32WB_Copro_Wireless_Binaries, see Release_Notes.html */
     Error_Handler();
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: SHCI_C2_BLE_Init command\n\r");
   }
 
   /**
@@ -197,99 +211,107 @@ void APP_BLE_Init( void )
   /**
    * From here, all initialization are BLE application specific
    */
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_BEACON_UPDATE_REQ_ID, UTIL_SEQ_RFU, Beacon_Update);
-/* USER CODE BEGIN APP_BLE_Init_3 */
+  UTIL_SEQ_RegTask(1<<CFG_TASK_BEACON_UPDATE_REQ_ID, UTIL_SEQ_RFU, Beacon_Update);
 
-/* USER CODE END APP_BLE_Init_3 */
+  /* USER CODE BEGIN APP_BLE_Init_3 */
+
+  /* USER CODE END APP_BLE_Init_3 */
 
   /**
    * Make device discoverable
    */
   if (CFG_BEACON_TYPE & CFG_EDDYSTONE_UID_BEACON_TYPE)
   {
-    APP_DBG_MSG("Eddystone UID beacon advertise\n");
+    APP_DBG_MSG("Eddystone UID beacon advertise\n\r");
     EddystoneUID_Process();
   }
   else if (CFG_BEACON_TYPE & CFG_EDDYSTONE_URL_BEACON_TYPE)
   {
-    APP_DBG_MSG("Eddystone URL beacon advertise\n");
+    APP_DBG_MSG("Eddystone URL beacon advertise\n\r");
     EddystoneURL_Process();
   }
   else if (CFG_BEACON_TYPE & CFG_EDDYSTONE_TLM_BEACON_TYPE)
   {
-    APP_DBG_MSG("Eddystone TLM beacon advertise\n");
+    APP_DBG_MSG("Eddystone TLM beacon advertise\n\r");
     EddystoneTLM_Process();
   }
   else if (CFG_BEACON_TYPE & CFG_IBEACON)
   {
-    APP_DBG_MSG("Ibeacon advertise\n");
+    APP_DBG_MSG("Ibeacon advertise\n\r");
     IBeacon_Process();
   }
-/* USER CODE BEGIN APP_BLE_Init_2 */
+  /* USER CODE BEGIN APP_BLE_Init_2 */
 
-/* USER CODE END APP_BLE_Init_2 */
+  /* USER CODE END APP_BLE_Init_2 */
+
   return;
 }
 
-SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
+SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
 {
-  hci_event_pckt *event_pckt;
-  evt_le_meta_event *meta_evt;
-  evt_blecore_aci *blecore_evt;
-
-  event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) pckt)->data;
+  hci_event_pckt    *p_event_pckt;
+  evt_le_meta_event *p_meta_evt;
+  evt_blecore_aci   *p_blecore_evt;
 
   /* USER CODE BEGIN SVCCTL_App_Notification */
 
   /* USER CODE END SVCCTL_App_Notification */
 
-  switch (event_pckt->evt)
+  p_event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) p_Pckt)->data;
+
+  switch (p_event_pckt->evt)
   {
     case HCI_DISCONNECTION_COMPLETE_EVT_CODE:
+      /* USER CODE BEGIN EVT_DISCONN_COMPLETE */
 
-    break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
+      /* USER CODE END EVT_DISCONN_COMPLETE */
+      break; /* HCI_DISCONNECTION_COMPLETE_EVT_CODE */
 
     case HCI_LE_META_EVT_CODE:
-      meta_evt = (evt_le_meta_event*) event_pckt->data;
+      p_meta_evt = (evt_le_meta_event*) p_event_pckt->data;
       /* USER CODE BEGIN EVT_LE_META_EVENT */
 
       /* USER CODE END EVT_LE_META_EVENT */
-      switch (meta_evt->subevent)
+      switch (p_meta_evt->subevent)
       {
         case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
-        break; /* HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
+          /* USER CODE BEGIN SUBEVENT_DEFAULT */
 
-        /* USER CODE BEGIN META_EVT */
-
-        /* USER CODE END META_EVT */
+          /* USER CODE END SUBEVENT_DEFAULT */
+          break;
 
         default:
           /* USER CODE BEGIN SUBEVENT_DEFAULT */
 
           /* USER CODE END SUBEVENT_DEFAULT */
           break;
-    }
-    break; /* HCI_LE_META_EVT_CODE */
+      }
+
+      /* USER CODE BEGIN META_EVT */
+
+      /* USER CODE END META_EVT */
+      break; /* HCI_LE_META_EVT_CODE */
 
     case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
-      blecore_evt = (evt_blecore_aci*) event_pckt->data;
+      p_blecore_evt = (evt_blecore_aci*) p_event_pckt->data;
       /* USER CODE BEGIN EVT_VENDOR */
 
       /* USER CODE END EVT_VENDOR */
-      switch (blecore_evt->ecode)
+      switch (p_blecore_evt->ecode)
       {
-      /* USER CODE BEGIN ecode */
+        /* USER CODE BEGIN ecode */
 
-      /* USER CODE END ecode */
+        /* USER CODE END ecode */
+
         case ACI_GAP_PROC_COMPLETE_VSEVT_CODE:
-        /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+          /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE */
 
-        /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
+          /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
           break; /* ACI_GAP_PROC_COMPLETE_VSEVT_CODE */
 
-      /* USER CODE BEGIN BLUE_EVT */
+        /* USER CODE BEGIN BLUE_EVT */
 
-      /* USER CODE END BLUE_EVT */
+        /* USER CODE END BLUE_EVT */
       }
       break; /* HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE */
 
@@ -297,7 +319,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
 
       /* USER CODE END EVENT_PCKT */
 
-      default:
+    default:
       /* USER CODE BEGIN ECODE_DEFAULT*/
 
       /* USER CODE END ECODE_DEFAULT*/
@@ -320,15 +342,17 @@ void APP_BLE_Key_Button2_Action(void)
 
 void APP_BLE_Key_Button3_Action(void)
 {
+  
 }
 
 /* USER CODE END FD*/
+
 /*************************************************************
  *
  * LOCAL FUNCTIONS
  *
  *************************************************************/
-static void Ble_Tl_Init( void )
+static void Ble_Tl_Init(void)
 {
   HCI_TL_HciInitConf_t Hci_Tl_Init_Conf;
 
@@ -339,47 +363,99 @@ static void Ble_Tl_Init( void )
   return;
 }
 
-static void Ble_Hci_Gap_Gatt_Init(void){
-
+static void Ble_Hci_Gap_Gatt_Init(void)
+{
   uint8_t role;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
-  const uint8_t *bd_addr;
-  uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
+  const uint8_t *p_bd_addr;
+  uint16_t a_appearance[1] = {BLE_CFG_GAP_APPEARANCE};
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
+  /* USER CODE BEGIN Ble_Hci_Gap_Gatt_Init*/
+
+  /* USER CODE END Ble_Hci_Gap_Gatt_Init*/
+
+  APP_DBG_MSG("==>> Start Ble_Hci_Gap_Gatt_Init function\n");
 
   /**
    * Initialize HCI layer
    */
   /*HCI Reset to synchronise BLE Stack*/
-  hci_reset();
+  ret = hci_reset();
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : hci_reset command, result: 0x%x \n", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: hci_reset command\n");
+  }
 
   /**
    * Write the BD Address
    */
-
-  bd_addr = BleGetBdAddress();
-  aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
-                            CONFIG_DATA_PUBADDR_LEN,
-                            (uint8_t*) bd_addr);
+  p_bd_addr = BleGetBdAddress();
+  ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET, CONFIG_DATA_PUBADDR_LEN, (uint8_t*) p_bd_addr);
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_PUBADDR_OFFSET, result: 0x%x \n", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_hal_write_config_data command - CONFIG_DATA_PUBADDR_OFFSET\n");
+    APP_DBG_MSG("  Public Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n",p_bd_addr[5],p_bd_addr[4],p_bd_addr[3],p_bd_addr[2],p_bd_addr[1],p_bd_addr[0]);
+  }
 
   /**
    * Write Identity root key used to derive LTK and CSRK
    */
-  aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
+  ret = aci_hal_write_config_data(CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)a_BLE_CfgIrValue);
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_IR_OFFSET, result: 0x%x \n", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_hal_write_config_data command - CONFIG_DATA_IR_OFFSET\n");
+  }
 
   /**
    * Write Encryption root key used to derive LTK and CSRK
    */
-  aci_hal_write_config_data( CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE );
+  ret = aci_hal_write_config_data(CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)a_BLE_CfgErValue);
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_ER_OFFSET, result: 0x%x \n", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_hal_write_config_data command - CONFIG_DATA_ER_OFFSET\n");
+  }
 
   /**
-   * Set TX Power to 0dBm.
+   * Set TX Power.
    */
-  aci_hal_set_tx_power_level(1, CFG_TX_POWER);
+  ret = aci_hal_set_tx_power_level(1, CFG_TX_POWER);
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_hal_set_tx_power_level command, result: 0x%x \n", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_hal_set_tx_power_level command\n");
+  }
 
   /**
    * Initialize GATT interface
    */
-  aci_gatt_init();
+  ret = aci_gatt_init();
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_gatt_init command, result: 0x%x \n", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_gatt_init command\n");
+  }
 
   /**
    * Initialize GAP interface
@@ -388,47 +464,67 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 
 #if (BLE_CFG_PERIPHERAL == 1)
   role |= GAP_PERIPHERAL_ROLE;
-#endif
+#endif /* BLE_CFG_PERIPHERAL == 1 */
 
 #if (BLE_CFG_CENTRAL == 1)
   role |= GAP_CENTRAL_ROLE;
-#endif
+#endif /* BLE_CFG_CENTRAL == 1 */
 
   if (role > 0)
   {
     const char *name = "BEACON";
-    aci_gap_init(role,
-                 0,
-                 APPBLE_GAP_DEVICE_NAME_LENGTH,
-                 &gap_service_handle,
-                 &gap_dev_name_char_handle,
-                 &gap_appearance_char_handle);
+    ret = aci_gap_init(role,
+                       0,
+                       APPBLE_GAP_DEVICE_NAME_LENGTH,
+                       &gap_service_handle,
+                       &gap_dev_name_char_handle,
+                       &gap_appearance_char_handle);
 
-    if (aci_gatt_update_char_value(gap_service_handle, gap_dev_name_char_handle, 0, strlen(name), (uint8_t *) name))
+    if (ret != BLE_STATUS_SUCCESS)
     {
-      BLE_DBG_SVCCTL_MSG("Device Name aci_gatt_update_char_value failed.\n");
+      APP_DBG_MSG("  Fail   : aci_gap_init command, result: 0x%x \n", ret);
+    }
+    else
+    {
+      APP_DBG_MSG("  Success: aci_gap_init command\n");
+    }
+
+    ret = aci_gatt_update_char_value(gap_service_handle, gap_dev_name_char_handle, 0, strlen(name), (uint8_t *) name);
+    if (ret != BLE_STATUS_SUCCESS)
+    {
+      BLE_DBG_SVCCTL_MSG("  Fail   : aci_gatt_update_char_value - Device Name\n");
+    }
+    else
+    {
+      BLE_DBG_SVCCTL_MSG("  Success: aci_gatt_update_char_value - Device Name\n");
     }
   }
 
-  if(aci_gatt_update_char_value(gap_service_handle,
-                                gap_appearance_char_handle,
-                                0,
-                                2,
-                                (uint8_t *)&appearance))
+  ret = aci_gatt_update_char_value(gap_service_handle,
+                                   gap_appearance_char_handle,
+                                   0,
+                                   2,
+                                   (uint8_t *)&a_appearance);
+  if (ret != BLE_STATUS_SUCCESS)
   {
-    BLE_DBG_SVCCTL_MSG("Appearance aci_gatt_update_char_value failed.\n");
+    BLE_DBG_SVCCTL_MSG("  Fail   : aci_gatt_update_char_value - Appearance\n");
   }
+  else
+  {
+    BLE_DBG_SVCCTL_MSG("  Success: aci_gatt_update_char_value - Appearance\n");
+  }
+
 }
-static void Beacon_Update( void )
+static void Beacon_Update(void)
 {
   FLASH_EraseInitTypeDef erase;
   uint32_t pageError = 0;
 
-  if(sector_type != 0)
+  if (sector_type != 0)
   {
     erase.TypeErase = FLASH_TYPEERASE_PAGES;
     erase.Page      = sector_type;
-    if(sector_type == APP_SECTORS)
+    if (sector_type == APP_SECTORS)
     {
       erase.NbPages = 2;  /* 2 sectors for beacon application */
     }
@@ -454,52 +550,52 @@ static void Beacon_Update( void )
   NVIC_SystemReset();
 }
 
-const uint8_t* BleGetBdAddress( void )
+const uint8_t* BleGetBdAddress(void)
 {
-  uint8_t *otp_addr;
-  const uint8_t *bd_addr;
+  uint8_t *p_otp_addr;
+  const uint8_t *p_bd_addr;
   uint32_t udn;
   uint32_t company_id;
   uint32_t device_id;
 
   udn = LL_FLASH_GetUDN();
 
-  if(udn != 0xFFFFFFFF)
+  if (udn != 0xFFFFFFFF)
   {
     company_id = LL_FLASH_GetSTCompanyID();
     device_id = LL_FLASH_GetDeviceID();
 
-/**
- * Public Address with the ST company ID
- * bit[47:24] : 24bits (OUI) equal to the company ID
- * bit[23:16] : Device ID.
- * bit[15:0] : The last 16bits from the UDN
- * Note: In order to use the Public Address in a final product, a dedicated
- * 24bits company ID (OUI) shall be bought.
- */
-    bd_addr_udn[0] = (uint8_t)(udn & 0x000000FF);
-    bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_addr_udn[2] = (uint8_t)device_id;
-    bd_addr_udn[3] = (uint8_t)(company_id & 0x000000FF);
-    bd_addr_udn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
-    bd_addr_udn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
+    /**
+     * Public Address with the ST company ID
+     * bit[47:24] : 24bits (OUI) equal to the company ID
+     * bit[23:16] : Device ID.
+     * bit[15:0] : The last 16bits from the UDN
+     * Note: In order to use the Public Address in a final product, a dedicated
+     * 24bits company ID (OUI) shall be bought.
+     */
+    a_BdAddrUdn[0] = (uint8_t)(udn & 0x000000FF);
+    a_BdAddrUdn[1] = (uint8_t)((udn & 0x0000FF00) >> 8);
+    a_BdAddrUdn[2] = (uint8_t)device_id;
+    a_BdAddrUdn[3] = (uint8_t)(company_id & 0x000000FF);
+    a_BdAddrUdn[4] = (uint8_t)((company_id & 0x0000FF00) >> 8);
+    a_BdAddrUdn[5] = (uint8_t)((company_id & 0x00FF0000) >> 16);
 
-    bd_addr = (const uint8_t *)bd_addr_udn;
+    p_bd_addr = (const uint8_t *)a_BdAddrUdn;
   }
   else
   {
-    otp_addr = OTP_Read(0);
-    if(otp_addr)
+    p_otp_addr = OTP_Read(0);
+    if (p_otp_addr)
     {
-      bd_addr = ((OTP_ID0_t*)otp_addr)->bd_address;
+      p_bd_addr = ((OTP_ID0_t*)p_otp_addr)->bd_address;
     }
     else
     {
-      bd_addr = M_bd_addr;
+      p_bd_addr = a_MBdAddr;
     }
   }
 
-  return bd_addr;
+  return p_bd_addr;
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTION */
@@ -514,48 +610,51 @@ const uint8_t* BleGetBdAddress( void )
  * WRAP FUNCTIONS
  *
  *************************************************************/
-void hci_notify_asynch_evt(void* pdata)
+void hci_notify_asynch_evt(void* p_Data)
 {
   UTIL_SEQ_SetTask(1 << CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
+
   return;
 }
 
-void hci_cmd_resp_release(uint32_t flag)
+void hci_cmd_resp_release(uint32_t Flag)
 {
   UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
+
   return;
 }
 
-void hci_cmd_resp_wait(uint32_t timeout)
+void hci_cmd_resp_wait(uint32_t Timeout)
 {
   UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
+
   return;
 }
 
-static void BLE_UserEvtRx( void * pPayload )
+static void BLE_UserEvtRx(void *p_Payload)
 {
   SVCCTL_UserEvtFlowStatus_t svctl_return_status;
-  tHCI_UserEvtRxParam *pParam;
+  tHCI_UserEvtRxParam *p_param;
 
-  pParam = (tHCI_UserEvtRxParam *)pPayload;
+  p_param = (tHCI_UserEvtRxParam *)p_Payload;
 
-  svctl_return_status = SVCCTL_UserEvtRx((void *)&(pParam->pckt->evtserial));
+  svctl_return_status = SVCCTL_UserEvtRx((void *)&(p_param->pckt->evtserial));
   if (svctl_return_status != SVCCTL_UserEvtFlowDisable)
   {
-    pParam->status = HCI_TL_UserEventFlow_Enable;
+    p_param->status = HCI_TL_UserEventFlow_Enable;
   }
   else
   {
-    pParam->status = HCI_TL_UserEventFlow_Disable;
+    p_param->status = HCI_TL_UserEventFlow_Disable;
   }
 
   return;
 }
 
-static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
+static void BLE_StatusNot(HCI_TL_CmdStatus_t Status)
 {
   uint32_t task_id_list;
-  switch (status)
+  switch (Status)
   {
     case HCI_TL_CmdBusy:
       /**
@@ -564,7 +663,9 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
       UTIL_SEQ_PauseTask(task_id_list);
+      /* USER CODE BEGIN HCI_TL_CmdBusy */
 
+      /* USER CODE END HCI_TL_CmdBusy */
       break;
 
     case HCI_TL_CmdAvailable:
@@ -574,18 +675,25 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
       UTIL_SEQ_ResumeTask(task_id_list);
+      /* USER CODE BEGIN HCI_TL_CmdAvailable */
 
+      /* USER CODE END HCI_TL_CmdAvailable */
       break;
 
     default:
+      /* USER CODE BEGIN Status */
+
+      /* USER CODE END Status */
       break;
   }
+
   return;
 }
 
-void SVCCTL_ResumeUserEventFlow( void )
+void SVCCTL_ResumeUserEventFlow(void)
 {
   hci_resume_flow();
+
   return;
 }
 

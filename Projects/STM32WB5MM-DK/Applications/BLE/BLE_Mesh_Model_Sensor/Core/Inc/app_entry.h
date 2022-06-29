@@ -20,8 +20,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APP_ENTRY_H
-#define __APP_ENTRY_H
+#ifndef APP_ENTRY_H
+#define APP_ENTRY_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,4 +39,4 @@ extern "C" {
 }
 #endif
 
-#endif /*__APP_ENTRY_H */
+#endif /* APP_ENTRY_H */

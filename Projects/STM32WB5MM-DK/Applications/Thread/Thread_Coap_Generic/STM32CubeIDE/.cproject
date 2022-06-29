@@ -60,6 +60,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/BSP/Components/Common"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/mbedtls"/>
@@ -150,6 +151,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/BSP/Components/Common"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/mbedtls"/>

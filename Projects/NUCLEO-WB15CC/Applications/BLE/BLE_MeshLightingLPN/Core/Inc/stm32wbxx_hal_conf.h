@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32WBxx_HAL_CONF_H
-#define __STM32WBxx_HAL_CONF_H
+#ifndef STM32WBxx_HAL_CONF_H
+#define STM32WBxx_HAL_CONF_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -349,4 +349,4 @@
 }
 #endif
 
-#endif /* __STM32WBxx_HAL_CONF_H */
+#endif /* STM32WBxx_HAL_CONF_H */

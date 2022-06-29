@@ -38,6 +38,7 @@ typedef PACKED_STRUCT
 
 /* Private defines -----------------------------------------------------------*/
 #define CHANNEL           8 // radio channel
+#define CHANNEL_HOP       19 // radio channel hop
 #define POWER             TX_POW_PLUS_6_DB // Transmit power
 #define NET_ID            0x5A964129 // network ID, both devices must use the same
 #define WAKEUP_US         10000 // delay before starting radio operation
@@ -86,8 +87,18 @@ void DATARATE_APP_Init(void)
 static void radioInit(void)
 {
   HAL_BLE_LLD_Init(CFG_HS_STARTUP_TIME, true);
-  HAL_BLE_LLD_Configure(POWER, CHANNEL, true, CFG_BACK2BACK_TIME, NET_ID);
 
+  BLE_LLD_SetTxPower(POWER);
+  BLE_LLD_SetBackToBackTime(CFG_BACK2BACK_TIME);
+
+  BLE_LLD_SetChannel(STATE_MACHINE_0, CHANNEL);
+  BLE_LLD_SetTx_Rx_Phy(STATE_MACHINE_0,TX_PHY_2MBPS,RX_PHY_2MBPS);
+  BLE_LLD_SetTxAttributes(STATE_MACHINE_0, NET_ID);
+ 
+  BLE_LLD_SetChannel(STATE_MACHINE_1, CHANNEL_HOP);
+  BLE_LLD_SetTx_Rx_Phy(STATE_MACHINE_1,TX_PHY_2MBPS,RX_PHY_2MBPS);
+  BLE_LLD_SetTxAttributes(STATE_MACHINE_1, ~NET_ID);
+  
   uint32_t wakeup_time = WAKEUP_US;
 
   uint32_t window_time1 = RX_TIMEOUT_US;
@@ -96,45 +107,34 @@ static void radioInit(void)
 
     // RECEPTION    
     ActionPacket *ap1;
-    // Packet to send
     ap1 = &apReceiver[APACKET_1];
     ap1->actionPacketNb = APACKET_1;
     ap1->StateMachineNo = STATE_MACHINE_0;
     ap1->ActionTag =  TIMER_WAKEUP;
     ap1->WakeupTime = wakeup_time;
     ap1->ReceiveWindowLength = window_time1;
-//    ap1->data = &payload1;
-//    ap1->dataSize = sizeof(payload1);
     ap1->nextTrue = APACKET_2;
     ap1->nextFalse = APACKET_1;
     ap1->callback = receiveCb;
     BLE_LLD_SetReservedArea(ap1);
 
     ActionPacket *ap2;
-    // Packet to send
     ap2 = &apReceiver[APACKET_2];
     ap2->actionPacketNb = APACKET_2;
     ap2->StateMachineNo = STATE_MACHINE_0;
-    ap2->ActionTag =  0x0; //TIMER_WAKEUP;
-    ap2->WakeupTime = wakeup_time;
+    ap2->ActionTag =  PLL_TRIG;
     ap2->ReceiveWindowLength = window_time2;
-//    ap2->data = &payload2;
-//    ap2->dataSize = sizeof(payload2);
     ap2->nextTrue = APACKET_3;
     ap2->nextFalse = APACKET_3;
     ap2->callback = receiveCb;
     BLE_LLD_SetReservedArea(ap2);
 
     ActionPacket *ap3;
-    // Packet to send
     ap3 = &apReceiver[APACKET_3];
     ap3->actionPacketNb = APACKET_3;
-    ap3->StateMachineNo = STATE_MACHINE_0;
-    ap3->ActionTag =  0x0; //TIMER_WAKEUP;
-    ap3->WakeupTime = wakeup_time;
+    ap3->StateMachineNo = STATE_MACHINE_1;
+    ap3->ActionTag =  PLL_TRIG;
     ap3->ReceiveWindowLength = window_time2;
-//    ap3->data = &payload3;
-//    ap3->dataSize = sizeof(payload3);
     ap3->nextTrue = APACKET_2;
     ap3->nextFalse = APACKET_2;
     ap3->callback = receiveCb;
@@ -142,15 +142,12 @@ static void radioInit(void)
 
     // TRANSMISSION
     ActionPacket *ap0;
-    // Packet to send
     ap0 = &apTransmit[APACKET_0];
     ap0->actionPacketNb = APACKET_0;
     ap0->StateMachineNo = STATE_MACHINE_0;
     ap0->ActionTag =  TIMER_WAKEUP;
     ap0->WakeupTime = wakeup_time;
     ap0->ReceiveWindowLength = window_time1;
-//    ap0->data = &payload0;
-//    ap0->dataSize = sizeof(payload0);
     ap0->nextTrue = APACKET_4;
     ap0->nextFalse = APACKET_6;
     ap0->callback = transmitCbMaster;
@@ -163,9 +160,8 @@ static void radioInit(void)
     // Packet to transmit
     ap4 = &apTransmit[APACKET_4];
     ap4->actionPacketNb = APACKET_4;
-    ap4->StateMachineNo = STATE_MACHINE_0;
-    ap4->ActionTag =  TXRX ; //| TIMER_WAKEUP;
-    ap4->WakeupTime = (2*wakeup_time);
+    ap4->StateMachineNo = STATE_MACHINE_1;
+    ap4->ActionTag =  TXRX | PLL_TRIG;
     ap4->data = &payload4;
     ap4->dataSize = sizeof(payload4);
     ap4->nextTrue = APACKET_5;
@@ -174,15 +170,11 @@ static void radioInit(void)
     BLE_LLD_SetReservedArea(ap4);
     
     ActionPacket *ap5;
-    // Packet to transmit
     ap5 = &apTransmit[APACKET_5];
     ap5->actionPacketNb = APACKET_5;
     ap5->StateMachineNo = STATE_MACHINE_0;
-    ap5->ActionTag =  0x0; //TIMER_WAKEUP;
-    ap5->WakeupTime = wakeup_time;
+    ap5->ActionTag =  PLL_TRIG;
     ap5->ReceiveWindowLength = window_time3;
-//    ap5->data = &payload5;
-//    ap5->dataSize = sizeof(payload5);
     ap5->nextTrue = APACKET_4;
     ap5->nextFalse = APACKET_4;
     ap5->callback = transmitCbSlave;
@@ -190,15 +182,11 @@ static void radioInit(void)
     
     // Master LED2
     ActionPacket *ap6;
-    // Packet to send
     ap6 = &apTransmit[APACKET_6];
     ap6->actionPacketNb = APACKET_6;
-    ap6->StateMachineNo = STATE_MACHINE_0;
-    ap6->ActionTag =  0x0; //TIMER_WAKEUP;
-    ap6->WakeupTime = wakeup_time;
+    ap6->StateMachineNo = STATE_MACHINE_1;
+    ap6->ActionTag =  PLL_TRIG;
     ap6->ReceiveWindowLength = window_time3;
-//    ap6->data = &payload6;
-//    ap6->dataSize = sizeof(payload6);
     ap6->nextTrue = APACKET_7;
     ap6->nextFalse = APACKET_7;
     ap6->callback = transmitCbMaster;
@@ -207,12 +195,11 @@ static void radioInit(void)
     ActionPacket *ap7;
     userPayload payload7;
     payload7.led = LED2;
-    // Packet to send
+    // Packet to transmit
     ap7 = &apTransmit[APACKET_7];
     ap7->actionPacketNb = APACKET_7;
     ap7->StateMachineNo = STATE_MACHINE_0;
-    ap7->ActionTag =  TXRX; //| TIMER_WAKEUP;
-    ap7->WakeupTime = (2*wakeup_time);
+    ap7->ActionTag =  TXRX | PLL_TRIG;
     ap7->data = &payload7;
     ap7->dataSize = sizeof(payload7);
     ap7->nextTrue = APACKET_6;

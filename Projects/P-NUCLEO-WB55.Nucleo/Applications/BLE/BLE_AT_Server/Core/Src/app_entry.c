@@ -477,7 +477,7 @@ static void APPE_SysEvtReadyProcessing( void * pPayload )
     
   } else {
     
-    APP_DBG_MSG("SHCI_SUB_EVT_CODE_READY – UNEXPECTED CASE \n");
+    APP_DBG_MSG("SHCI_SUB_EVT_CODE_READY - UNEXPECTED CASE \n");
   }
   return;
 }
@@ -497,9 +497,9 @@ static void APPE_SysEvtError( void * pPayload)
   
   if ((*p_sys_error_code) == ERR_BLE_INIT) {
     /* Error during BLE stack initialization */
-    APP_DBG_MSG("SHCI_SUB_EVT_ERROR_NOTIF WITH REASON – ERR_BLE_INIT \n");
+    APP_DBG_MSG("SHCI_SUB_EVT_ERROR_NOTIF WITH REASON - ERR_BLE_INIT \n");
   } else {
-    APP_DBG_MSG("SHCI_SUB_EVT_ERROR_NOTIF WITH REASON – BLE ERROR \n");    
+    APP_DBG_MSG("SHCI_SUB_EVT_ERROR_NOTIF WITH REASON - BLE ERROR \n");    
   }
   return;
 }

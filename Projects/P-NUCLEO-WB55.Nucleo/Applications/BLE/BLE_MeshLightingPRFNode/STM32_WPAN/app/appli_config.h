@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    appli_config.h
-* @author  BLE Mesh Team
-* @brief   Header file for the application config file 
+  * @file    appli_config.h
+  * @author  MCD Application Team
+  * @brief   Header file for the application config file 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_CONFIG_H
-#define __APPLI_CONFIG_H
+#ifndef APPLI_CONFIG_H
+#define APPLI_CONFIG_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -46,5 +48,5 @@ void Appli_GetSubOverwriteParamsCb(model_subParams_t*);
 void Appli_GetPublicationSetParamsCb(model_publicationparams_t*);
 void Appli_GetPublicationGetParamsCb(model_publicationparams_t*);
 
-#endif /* __APPLI_CONFIG_H */
+#endif /* APPLI_CONFIG_H */
 

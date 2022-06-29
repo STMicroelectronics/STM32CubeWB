@@ -22,6 +22,8 @@
 #include "stm32_lpm_if.h"
 #include "stm32_lpm.h"
 #include "app_conf.h"
+#include "main.h"
+#include "standby.h"
 /* USER CODE BEGIN include */
 
 /* USER CODE END include */
@@ -39,27 +41,18 @@ const struct UTIL_LPM_Driver_s UTIL_PowerDriver =
   PWR_ExitOffMode,
 };
 
-extern uint32_t boot_after_standby;
 extern RTC_HandleTypeDef hrtc;
 
-#define CSTACK_PREAMBLE_NUMBER 16
-uint32_t cStackPreamble[CSTACK_PREAMBLE_NUMBER];
-
-typedef void( *intfunc )( void );
-typedef union { intfunc __fun; void * __ptr; } intvec_elem;
-extern const intvec_elem __vector_table[];
-
 void CPUcontextSave(void); /* this function is implemented in startup assembly file */
-void standby_hw_save(void);
-void standby_hw_restore(void);
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 
 /* Private function prototypes -----------------------------------------------*/
-static void Switch_On_HSI( void );
-static void EnterLowPower( void );
-static void ExitLowPower( void );
-#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
-static void ExitLowPower_standby( void );
+static void Switch_On_HSI(void);
+static void EnterLowPower(void);
+static void ExitLowPower(void);
+#if (CFG_LPM_STANDBY_SUPPORTED != 0)
+static void ExitLowPower_standby(void);
 #endif
 /* USER CODE BEGIN Private_Function_Prototypes */
 
@@ -87,7 +80,7 @@ static void ExitLowPower_standby( void );
   * @param none
   * @retval none
   */
-void PWR_EnterOffMode( void )
+void PWR_EnterOffMode(void)
 {
 /* USER CODE BEGIN PWR_EnterOffMode_1 */
 
@@ -97,6 +90,7 @@ void PWR_EnterOffMode( void )
    * at this time, the device may enter either OffMode or StopMode.
    */
   HAL_SuspendTick();
+  __HAL_RCC_CLEAR_RESET_FLAGS();
 
   EnterLowPower();
 
@@ -110,39 +104,25 @@ void PWR_EnterOffMode( void )
    * because an interrupt is pending in the NVIC. The ISR will be executed when moving out
    * of this critical section
    */
-  LL_PWR_ClearFlag_WU( );
+  LL_PWR_ClearFlag_WU();
 
-  LL_PWR_SetPowerMode( LL_PWR_MODE_STANDBY );
+  LL_PWR_SetPowerMode(LL_PWR_MODE_STANDBY);
 
-  LL_LPM_EnableDeepSleep( ); /**< Set SLEEPDEEP bit of Cortex System Control Register */
+  LL_LPM_EnableDeepSleep(); /**< Set SLEEPDEEP bit of Cortex System Control Register */
 
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined ( __CC_ARM)
-  __force_stores( );
+#if defined (__CC_ARM)
+  __force_stores();
 #endif
 
-#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
-  /* This part of code must not put in a function as it deals with C stack calls.
-   * A function call will push data in C stack and impact algorithm.
-   */
-  /* local variable are here for better view */
-  uint8_t i = 0;
-  uint32_t* ptr;
-  /* Save part of the stack that will be restored at wakeup */
-  ptr = __vector_table[0].__ptr ;
-  ptr -= CSTACK_PREAMBLE_NUMBER;
-  do {
-    cStackPreamble[i] = *ptr;
-    i++;
-    ptr++;
-  } while (i < CSTACK_PREAMBLE_NUMBER);
+#if (CFG_LPM_STANDBY_SUPPORTED != 0)
+  LL_EXTI_EnableRisingTrig_32_63(LL_EXTI_LINE_40);
+  LL_EXTI_EnableEvent_32_63(LL_EXTI_LINE_40);
 
-  LL_EXTI_EnableEvent_32_63( LL_EXTI_LINE_40 );
-  LL_EXTI_EnableRisingTrig_32_63( LL_EXTI_LINE_40 );
-
-  standby_hw_save();
+  STBY_AppHwSave();
+  STBY_SysHwSave();
 
   CPUcontextSave();/* this function will call WFI instruction */
 #endif
@@ -158,40 +138,22 @@ void PWR_EnterOffMode( void )
   * @param none
   * @retval none
   */
-void PWR_ExitOffMode( void )
+void PWR_ExitOffMode(void)
 {
 /* USER CODE BEGIN PWR_ExitOffMode_1 */
 
 /* USER CODE END PWR_ExitOffMode_1 */
-#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
-  /* This part of code must not put in a function as it deals with C stack calls.
-   * A function call will push data in C stack and impact algorithm.
-   */
-  if(boot_after_standby != 0)
+#if (CFG_LPM_STANDBY_SUPPORTED != 0)
+  if(STBY_BootStatus != 0)
   {
-    boot_after_standby = 0;
-    /* local variable are here for better view */
-    uint8_t i = 0;
-    uint32_t* ptr;
-    /* Restore the part of stack that has been saved before the sleep */
-    ptr = __vector_table[0].__ptr ;
-    ptr -= CSTACK_PREAMBLE_NUMBER;
-    do {
-      *ptr = cStackPreamble[i];
-      i++;
-      ptr++;
-    } while (i < CSTACK_PREAMBLE_NUMBER);
-
-    standby_hw_restore();
-
+    STBY_SysHwRestore();
     ExitLowPower_standby();
+    STBY_AppHwRestore();
   }
   else
   {
     ExitLowPower();
   }
-
-  HAL_ResumeTick();
 #endif
 /* USER CODE BEGIN PWR_ExitOffMode_2 */
 
@@ -205,7 +167,7 @@ void PWR_ExitOffMode( void )
   * @param none
   * @retval none
   */
-void PWR_EnterStopMode( void )
+void PWR_EnterStopMode(void)
 {
 /* USER CODE BEGIN PWR_EnterStopMode_1 */
 
@@ -216,7 +178,7 @@ void PWR_EnterStopMode( void )
    *
    * When in production, the HAL_DBGMCU_EnableDBGStopMode() is not called so that the device can reach best power consumption
    * However, the systick should be disabled anyway to avoid the case when it is about to expire at the same time the device enters
-   * stop mode ( this will abort the Stop Mode entry ).
+   * stop mode (this will abort the Stop Mode entry).
    */
   HAL_SuspendTick();
 
@@ -228,15 +190,15 @@ void PWR_EnterStopMode( void )
   /************************************************************************************
    * ENTER STOP MODE
    ***********************************************************************************/
-  LL_PWR_SetPowerMode( LL_PWR_MODE_STOP1 );
+  LL_PWR_SetPowerMode(LL_PWR_MODE_STOP1);
 
-  LL_LPM_EnableDeepSleep( ); /**< Set SLEEPDEEP bit of Cortex System Control Register */
+  LL_LPM_EnableDeepSleep(); /**< Set SLEEPDEEP bit of Cortex System Control Register */
 
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined ( __CC_ARM)
-  __force_stores( );
+#if defined (__CC_ARM)
+  __force_stores();
 #endif
 
   __WFI();
@@ -253,7 +215,7 @@ void PWR_EnterStopMode( void )
   * @param none
   * @retval none
   */
-void PWR_ExitStopMode( void )
+void PWR_ExitStopMode(void)
 {
 /* USER CODE BEGIN PWR_ExitStopMode_1 */
 
@@ -276,7 +238,7 @@ void PWR_ExitStopMode( void )
   * @param none
   * @retval none
   */
-void PWR_EnterSleepMode( void )
+void PWR_EnterSleepMode(void)
 {
 /* USER CODE BEGIN PWR_EnterSleepMode_1 */
 
@@ -287,16 +249,16 @@ void PWR_EnterSleepMode( void )
   /************************************************************************************
    * ENTER SLEEP MODE
    ***********************************************************************************/
-  LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
+  LL_LPM_EnableSleep(); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
 
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined ( __CC_ARM)
+#if defined (__CC_ARM)
   __force_stores();
 #endif
 
-  __WFI( );
+  __WFI();
 /* USER CODE BEGIN PWR_EnterSleepMode_2 */
 
 /* USER CODE END PWR_EnterSleepMode_2 */
@@ -309,7 +271,7 @@ void PWR_EnterSleepMode( void )
   * @param none
   * @retval none
   */
-void PWR_ExitSleepMode( void )
+void PWR_ExitSleepMode(void)
 {
 /* USER CODE BEGIN PWR_ExitSleepMode_1 */
 
@@ -318,6 +280,25 @@ void PWR_ExitSleepMode( void )
 /* USER CODE BEGIN PWR_ExitSleepMode_2 */
 
 /* USER CODE END PWR_ExitSleepMode_2 */
+  return;
+}
+
+/**
+* @brief Weak CPUcontextSave function definition to implement in startup file.
+* @param none
+* @retval none
+*/
+__WEAK void CPUcontextSave(void)
+{
+#if (CFG_LPM_STANDBY_SUPPORTED != 0)
+  /*
+   * If you are here, you have to update your startup_stm32wb15xx_cm4.s file to
+   * implement CPUcontextSave function like done in latest STM32CubeWB package
+   * into STM32WB15 BLE applications.
+   */
+  Error_Handler();
+#endif
+
   return;
 }
 
@@ -331,31 +312,33 @@ void PWR_ExitSleepMode( void )
   * @param none
   * @retval none
   */
-static void EnterLowPower( void )
+static void EnterLowPower(void)
 {
   /**
    * This function is called from CRITICAL SECTION
    */
 
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
+  while(LL_HSEM_1StepLock(HSEM, CFG_HW_RCC_SEMID));
 
-  if ( ! LL_HSEM_1StepLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID ) )
+  if (! LL_HSEM_1StepLock(HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID))
   {
-    if( LL_PWR_IsActiveFlag_C2DS() || LL_PWR_IsActiveFlag_C2SB() )
+    if(LL_PWR_IsActiveFlag_C2DS() || LL_PWR_IsActiveFlag_C2SB())
     {
       /* Release ENTRY_STOP_MODE semaphore */
-      LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
+      LL_HSEM_ReleaseLock(HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0);
 
-      Switch_On_HSI( );
+      Switch_On_HSI();
+      __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_0);
     }
   }
   else
   {
-    Switch_On_HSI( );
+    Switch_On_HSI();
+    __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_0);
   }
 
   /* Release RCC semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+  LL_HSEM_ReleaseLock(HSEM, CFG_HW_RCC_SEMID, 0);
 
   return;
 }
@@ -365,14 +348,14 @@ static void EnterLowPower( void )
   * @param none
   * @retval none
   */
-static void ExitLowPower( void )
+static void ExitLowPower(void)
 {
   /* Release ENTRY_STOP_MODE semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
+  LL_HSEM_ReleaseLock(HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0);
 
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
+  while(LL_HSEM_1StepLock(HSEM, CFG_HW_RCC_SEMID));
 
-  if(LL_RCC_GetSysClkSource( ) == LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
+  if(LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_HSI)
   {
 /* Restore the clock configuration of the application in this user section */
 /* USER CODE BEGIN ExitLowPower_1 */
@@ -390,36 +373,36 @@ static void ExitLowPower( void )
 
 /* USER CODE END ExitLowPower_2 */
   }
-#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
+#if (CFG_LPM_STANDBY_SUPPORTED != 0)
 
   __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
 #endif
 
   /* Release RCC semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+  LL_HSEM_ReleaseLock(HSEM, CFG_HW_RCC_SEMID, 0);
 
   return;
 }
 
-#if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
+#if (CFG_LPM_STANDBY_SUPPORTED != 0)
 /**
   * @brief Restore the system to exit standby mode
   * @param none
   * @retval none
   */
-static void ExitLowPower_standby( void )
+static void ExitLowPower_standby(void)
 {
 /* Release ENTRY_STOP_MODE semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
+  LL_HSEM_ReleaseLock(HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0);
 
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
+  while(LL_HSEM_1StepLock(HSEM, CFG_HW_RCC_SEMID));
 /* USER CODE BEGIN ExitLowPower_standby */
   SystemClock_Config();
 /* USER CODE END ExitLowPower_standby */
   __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
 
   /* Release RCC semaphore */
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_RCC_SEMID, 0 );
+  LL_HSEM_ReleaseLock(HSEM, CFG_HW_RCC_SEMID, 0);
 
   return;
 }
@@ -430,13 +413,13 @@ static void ExitLowPower_standby( void )
   * @param none
   * @retval none
   */
-static void Switch_On_HSI( void )
+static void Switch_On_HSI(void)
 {
-  LL_RCC_HSI_Enable( );
-  while(!LL_RCC_HSI_IsReady( ));
-  LL_RCC_SetSysClkSource( LL_RCC_SYS_CLKSOURCE_HSI );
+  LL_RCC_HSI_Enable();
+  while(!LL_RCC_HSI_IsReady());
+  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSI);
   LL_RCC_SetSMPSClockSource(LL_RCC_SMPS_CLKSOURCE_HSI);
-  while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSI);
+  while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSI);
   return;
 }
 

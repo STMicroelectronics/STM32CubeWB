@@ -2,7 +2,7 @@
  * @file zigbee.bdb.h
  * @brief BDB header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_BDB_H
@@ -21,8 +21,10 @@ enum ZbBdbCommissioningStatusT {
     ZB_BDB_COMMISS_STATUS_NO_IDENTIFY_QUERY_RESPONSE, /* NO_IDENTIFY_QUERY_RESPONSE - No response to an identify query command has been received during finding & binding */
     ZB_BDB_COMMISS_STATUS_BINDING_TABLE_FULL, /**< BINDING_TABLE_FULL - A binding table entry could not be created due to insufficient space in the binding table during finding & binding */
     ZB_BDB_COMMISS_STATUS_NO_SCAN_RESPONSE, /**< NO_SCAN_RESPONSE - No response to a scan request inter-PAN command has been received during touchlink */
-    ZB_BDB_COMMISS_STATUS_NOT_PERMITTED, /**< NOT_PERMITTED - A touchlink (steal) attempt was made when a node is already connected to a centralized security network */
-    ZB_BDB_COMMISS_STATUS_TCLK_EX_FAILURE /**< TCLK_EX_FAILURE - The Trust Center link key exchange procedure has failed attempting to join a centralized security network */
+    ZB_BDB_COMMISS_STATUS_NOT_PERMITTED, /**< NOT_PERMITTED - A touchlink (steal) attempt was made when a node is already connected to a centralized security network or when end node attempts to form network */
+    ZB_BDB_COMMISS_STATUS_TCLK_EX_FAILURE, /**< TCLK_EX_FAILURE - The Trust Center link key exchange procedure has failed attempting to join a centralized security network */
+    ZB_BDB_COMMISS_STATUS_NOT_ON_A_NETWORK, /**< NOT_ON_A_NETWORK - A commissioning procedure was forbidden since the node was not currently on a network. */
+    ZB_BDB_COMMISS_STATUS_ON_A_NETWORK /**< ON_A_NETWORK - A commissioning procedure was forbidden since the node was currently on a network. */
 };
 
 #define BDB_DEFAULT_TC_NODE_JOIN_TIMEOUT        15 /* seconds */
@@ -85,73 +87,130 @@ enum ZbBdbTouchlinkKeyIndexT {
     TOUCHLINK_KEY_INDEX_CERTIFICATION = 15 /**< Certification key */
 };
 
-/* Touchlink Steal Flags */
-#define TOUCHLINK_STEAL_START               0x01U /* Target is allowed to process a Touchlink Network Start Request */
-#define TOUCHLINK_STEAL_JOIN                0x02U /* Target is allowed to process a Touchlink Join Request */
-/* EXEGIN - Make ZB_BDB_TLDenyFactoryNew one of these flags */
+/*** Touchlink Steal Flags (ZB_BDB_TLStealFlags) ***/
+/* Target is allowed to process a Touchlink Network Start Request */
+#define TOUCHLINK_STEAL_START               0x01U
+/* Target is allowed to process a Touchlink Join Request */
+#define TOUCHLINK_STEAL_JOIN                0x02U
+/* Target is allowed to process a Touchlink Network Start Request if already joined to network. */
+#define TOUCHLINK_STEAL_ONNET_START         0x04U
+/* Target is allowed to process a Touchlink Network Join Request if already joined to network. */
+#define TOUCHLINK_STEAL_ONNET_JOIN          0x08U
+/* Target is allowed to process a Touchlink Factory New (Reset) Request */
+#define TOUCHLINK_STEAL_RESET               0x10U
+/* Target is allowed to process a Touchlink Factory New (Reset) Request if currently acting as Coordinator. */
+#define TOUCHLINK_STEAL_COORD_RESET         0x20U
+/* Default is all flags enabled */
+#define TOUCHLINK_STEAL_DEFAULT             0x3fU
 
-/* BDB IB attributes */
+/*** ZB_BDB_Flags ***/
+/* A Zigbee device is supposed to only select potential parents with a cost of 3 or lower.
+ * This flag disables that check and allows potential parents with higher cost. */
+#define ZB_BDB_FLAG_IGNORE_COST_DURING_JOIN             0x00000001U
+
+/* By default, a Zigbee device is supposed to send a ZDO Permit-Join broadcast to the
+ * network after it joins, to keep the network open for other devices to join.
+ * This flag disables that behaviour. */
+#define ZB_BDB_FLAG_DISABLE_ZDO_PJOIN_AFTER_JOIN        0x00000002U
+
+/* By default, the stack will perform a network rejoin after starting from persistence,
+ * if it's an end-device. This flag disables that. */
+#define ZB_BDB_FLAG_DISABLE_REJOIN_AFTER_PERSIST        0x00000004U
+
+/* By default, a Zigbee device is supposed to send a ZDO Device-Annce broadcast to the
+ * network after it joins and whenever it changes short addresses.
+ * This flag disables that behaviour. */
+#define ZB_BDB_FLAG_DISABLE_DEVICE_ANNCE                0x00000008U
+
+/* Controls whether we allow the local device acting as a Router to perform a
+ * Network Rejoin after receiving a Network Leave with the Rejoin flag set.
+ * It normally doesn't make sense for this type of behaviour with a Router, only
+ * an End-Device. */
+#define ZB_BDB_FLAG_ALLOW_ROUTER_LEAVE_REJOIN           0x00000010U
+
+/* ZDO Binding, ignore check if endpoint and cluster exist */
+/* NOTE: removed. Checking was added as Z3.0, but since removed due to CCB 2126 */
+/* #define ZB_BDB_FLAG_ZDO_BIND_IGNORE_CHECKS              0x00000020U */
+
+/* Disable the reception and processing of APS InterPAN messages */
+#define ZB_BDB_FLAG_APS_INTERPAN_DISABLE                0x00000040U
+
+/* If set and (ZB_BDB_JoinScanType == MCP_SCAN_ENHANCED), don't try to do a standard
+ * beacon request when trying to scan for a network to join. If cleared and
+ * (ZB_BDB_JoinScanType == MCP_SCAN_ENHANCED), the startup joining process
+ * will fallback to attempt MCP_SCAN_ACTIVE if no networks are found. */
+#define ZB_BDB_FLAG_JOIN_SCAN_FALLBACK_DISABLE          0x00000080U
+
+/* If set, disable the ZDO from periodically querying the NNT for TX failures and
+ * starting an ED scan if it encounters a high failure rate. If the Coordinator
+ * does not support or provide frequency agility to the network, this is a waste of
+ * time. The ED scan also causes the device to go offline for a period of time,
+ * which can cause further network problems. */
+#define ZB_BDB_FLAG_ZDO_NWK_UPDATE_SCAN_DISABLE         0x00000100U
+
+/** BDB IB Attributes */
 enum ZbBdbAttrIdT {
     /* EXEGIN ZB_BDB_CommissioningGroupID ? = 0x1000 */
-    ZB_BDB_CommissioningMode = 0x1001, /* bdbCommissioningMode - e.g. BDB_COMMISSION_MODE_MASK */
-    ZB_BDB_JoiningNodeEui64 = 0x1002, /* for internal use only */
-    ZB_BDB_JoiningNodeNewTCLinkKey = 0x1003, /* for internal use only */
-    ZB_BDB_JoinUsesInstallCodeKey = 0x1004,
-    ZB_BDB_NodeCommissioningCapability = 0x1005, /* bdbNodeCommissioningCapability - e.g. BDB_COMMISSION_CAP_MASK */
-    ZB_BDB_NodeIsOnANetwork = 0x1006, /* Just checks nwkExtendedPanId if non-zero */
-    ZB_BDB_NodeJoinLinkKeyType = 0x1007, /* e.g. BDB_JOINLINK_KEYTYPE_FLAG - Link key with which the node was able to decrypt the network key */
-    ZB_BDB_PrimaryChannelSet = 0x1008,
-    ZB_BDB_ScanDuration = 0x1009,
-    ZB_BDB_SecondaryChannelSet = 0x100a,
-    ZB_BDB_TCLK_ExchangeAttempts = 0x100b, /* TC link key   */
-    ZB_BDB_TCLK_ExchangeAttemptsMax = 0x100c,
-    ZB_BDB_TCLinkKeyExchangeMethod = 0x100d, /* enum ZbBdbLinkKeyExchMethodT */
-    ZB_BDB_TrustCenterNodeJoinTimeout = 0x100e,
-    ZB_BDB_TrustCenterRequiresKeyExchange = 0x100f, /* Modifies ZB_APSME_POLICY_TCLK_UPDATE_REQUIRED bit in ZB_APS_IB_ID_TRUST_CENTER_POLICY */
-    ZB_BDB_AcceptNewUnsolicitedTCLinkKey = 0x1010, /* uint8_t */
-    ZB_BDB_AcceptNewUnsolicitedApplicationLinkKey = 0x1011, /* uint8_t */
+    ZB_BDB_CommissioningMode = 0x1001, /**< bdbCommissioningMode - BDB_COMMISSION_MODE_MASK */
+    ZB_BDB_JoiningNodeEui64 = 0x1002,
+    ZB_BDB_JoiningNodeNewTCLinkKey = 0x1003,
+    ZB_BDB_JoinUsesInstallCodeKey = 0x1004, /**< bdbJoinUsesInstallCodeKey */
+    ZB_BDB_NodeCommissioningCapability = 0x1005, /**< bdbNodeCommissioningCapability - BDB_COMMISSION_CAP_MASK */
+    ZB_BDB_NodeIsOnANetwork = 0x1006, /* bdbNodeIsOnANetwork - Checks nwkExtendedPanId if non-zero */
+    ZB_BDB_NodeJoinLinkKeyType = 0x1007, /* bdbNodeJoinLinkKeyType - BDB_JOINLINK_KEYTYPE_FLAG, Link key with which the node was able to decrypt the network key */
+    ZB_BDB_PrimaryChannelSet = 0x1008, /**< bdbPrimaryChannelSet */
+    ZB_BDB_ScanDuration = 0x1009, /**< bdbScanDuration */
+    ZB_BDB_SecondaryChannelSet = 0x100a, /**< bdbSecondaryChannelSet */
+    ZB_BDB_TCLK_ExchangeAttempts = 0x100b, /**< bdbTCLinkKeyExchangeAttempts */
+    ZB_BDB_TCLK_ExchangeAttemptsMax = 0x100c, /**< bdbTCLinkKeyExchangeAttemptsMax */
+    ZB_BDB_TCLinkKeyExchangeMethod = 0x100d, /**< bdbTCLinkKeyExchangeMethod - enum ZbBdbLinkKeyExchMethodT */
+    ZB_BDB_TrustCenterNodeJoinTimeout = 0x100e, /**< bdbTrustCenterNodeJoinTimeout */
+    ZB_BDB_TrustCenterRequiresKeyExchange = 0x100f, /**< bdbTrustCenterRequireKey-Exchange - Modifies ZB_APSME_POLICY_TCLK_UPDATE_REQUIRED bit in ZB_APS_IB_ID_TRUST_CENTER_POLICY */
+    ZB_BDB_AcceptNewUnsolicitedTCLinkKey = 0x1010, /**< acceptNewUnsolicitedTrustCenterLinkKey */ /* uint8_t */
+    ZB_BDB_AcceptNewUnsolicitedApplicationLinkKey = 0x1011, /**< acceptNewUnsolicitedApplicationLinkKey */ /* uint8_t*/
 
     /* Extra stuff not explicitly covered by the BDB spec. */
     ZB_BDB_JoiningNodeParent = 0x1100, /* EUI of parent of joining device (where to send APS Remove Request if necessary) */
-    ZB_BDB_vDoPrimaryScan, /* 0x1101 - internal use only - boolean whether to use ZB_BDB_PrimaryChannelSet or ZB_BDB_SecondaryChannelSet */
+    ZB_BDB_vDoPrimaryScan = 0x1101, /* boolean whether to use ZB_BDB_PrimaryChannelSet or ZB_BDB_SecondaryChannelSet */
     /* Address assignment */
-    ZB_BDB_FreeNetAddrBegin, /* 0x1102 */
-    ZB_BDB_FreeNetAddrCurrent, /* 0x1103 */
-    ZB_BDB_FreeNetAddrEnd, /* 0x1104 */
-    /* 0x1105 - was ZB_BDB_FreeGroupIDBegin */
-    /* 0x1106 - was ZB_BDB_FreeGroupIDEnd */
-    ZB_BDB_TLRssiMin = 0x1107, /* 0x1107 - RSSI threshold, int8_t value */
-    ZB_BDB_TLTestFlags, /* 0x1108 - Touchlink test flags (enum ZbTlTestFlagsT) */
-    ZB_BDB_UpdateDeviceKeyId, /* 0x1109 - enum ZbSecHdrKeyIdT (e.g. ZB_SEC_KEYID_NETWORK (default) or ZB_SEC_KEYID_LINK) */
-    ZB_BDB_JoinScanType, /* 0x110a - MCP_SCAN_ACTIVE (default) or MCP_SCAN_ENHANCED */
-    ZB_BDB_JoinIgnoreLqi, /* 0x110b - bool - Ignore LQI (link cost <= 3) of potential parent's beacon  */
-    ZB_BDB_NlmeSyncFailNumBeforeError, /* 0x110c - uint8_t - Number of consecutive NLME-SYNC failures before reporting ZB_NWK_STATUS_CODE_PARENT_LINK_FAILURE */
-    ZB_BDB_ZdoTimeout, /* 0x110d - ZDO response wait timeout in milliseconds - default is 6000 mS */
-    ZB_BDB_TLStealFlags, /* 0x110e */
-    ZB_BDB_JoinTclkNodeDescReqDelay, /* 0x110f */
-    ZB_BDB_JoinTclkRequestKeyDelay, /* 0x1110 */
-    ZB_BDB_TLDenyFactoryNew, /* 0x1111 */
-    ZB_BDB_TLKey, /* 0x1112 */
-    ZB_BDB_TLKeyIndex, /* 0x1113 - enum ZbBdbTouchlinkKeyIndexT */
-    ZB_BDB_ZdoPermitJoinAfterJoin, /* 0x1114 - Default is enabled. */
-    ZB_BDB_ZdoZigbeeProtocolRevision, /* 0x1115 - Default 22 (R22) - was ZB_PROTOCOL_REVISION. */
-    ZB_BDB_NwkAllowRouterLeaveRejoin, /* 0x1116 - Default is disabled. */
-    ZB_BDB_PersistTimeoutMs, /* 0x1117 */
-    ZB_BDB_JoinAttemptsMax, /* 0x1118 - uint8_t - maximum number attempts to join a network. If an attempt fails, the EPID is added to a blacklist before the next attempt. */
-    ZB_BDB_MaxConcurrentJoiners, /* 0x1119 - uint8_t - maximum number of concurrent joiners the coordinator supports */
-    ZB_BDB_DisablePersistRejoin, /* 0x111a - boolean */
-    ZB_BDB_ZdoBindCheckCluster, /* boolean */
-    ZB_BDB_ApsInterpanDisabled, /* boolean */
-    ZB_BDB_Uptime, /* Returns the current stack uptime in milliseconds (ZbUptime) */
+    ZB_BDB_FreeNetAddrBegin = 0x1102,
+    ZB_BDB_FreeNetAddrCurrent = 0x1103,
+    ZB_BDB_FreeNetAddrEnd = 0x1104,
+    /* discontinuity */
+    ZB_BDB_TLRssiMin = 0x1107, /**< Minimum RSSI threshold for Touchlink commissioning */ /* int8_t value */
+    ZB_BDB_TLTestFlags = 0x1108, /* Touchlink test flags, enum ZbTlTestFlagsT) */
+    ZB_BDB_UpdateDeviceKeyId = 0x1109, /**< enum ZbSecHdrKeyIdT (e.g. ZB_SEC_KEYID_NETWORK (default) or ZB_SEC_KEYID_LINK) */
+    ZB_BDB_JoinScanType = 0x110a, /**< MCP_SCAN_ACTIVE (default) or MCP_SCAN_ENHANCED */ /* uint8_t */
+    /* discontinuity */
+    ZB_BDB_NlmeSyncFailNumBeforeError = 0x110c,
+    /**< Number of consecutive NLME-SYNC failures before reporting ZB_NWK_STATUS_CODE_PARENT_LINK_FAILURE */ /* uint8_t */
+    ZB_BDB_ZdoTimeout = 0x110d, /**< ZDO response wait timeout in milliseconds - default is 6000 mS */
+    ZB_BDB_TLStealFlags = 0x110e, /**< Touchlink Stealing Flags (TOUCHLINK_STEAL_* defines) */
+    ZB_BDB_JoinTclkNodeDescReqDelay = 0x110f, /* mS */
+    ZB_BDB_JoinTclkRequestKeyDelay = 0x1110, /* mS */
+    /* discontinuity */
+    ZB_BDB_TLKey = 0x1112, /**< Touchlink preconfigured link key */
+    ZB_BDB_TLKeyIndex = 0x1113, /**< enum ZbBdbTouchlinkKeyIndexT - Touchlink key encryption algorithm key index */
+    /* discontinuity */
+    ZB_BDB_ZdoZigbeeProtocolRevision = 0x1115, /**< Default 23 (R23) */
+    /* discontinuity */
+    ZB_BDB_PersistTimeoutMs = 0x1117, /**< Minimum delay between persistence updates */ /* uint32_t */
+    ZB_BDB_JoinAttemptsMax = 0x1118,
+    /**< Maximum number attempts to join a network. If an attempt fails,
+     * the EPID is added to a blacklist before the next attempt */ /* uint8_t */
+    ZB_BDB_MaxConcurrentJoiners = 0x1119, /**< Maximum number of concurrent joiners the coordinator supports */ /* uint8_t  */
+    /* discontinuity */
+    ZB_BDB_Uptime = 0x111d, /**< Returns the current stack uptime in milliseconds (ZbUptime) */
+    ZB_BDB_Flags = 0x111e, /**< e.g. ZB_BDB_FLAG_IGNORE_COST_DURING_JOIN */ /* uint32_t  */
 
     /* Constants which are accessible through a BDB GET IB request. */
     ZB_BDBC_MaxSameNetworkRetryAttempts = 0x1200,
-    ZB_BDBC_MinCommissioningTime, /**< Seconds */
-    ZB_BDBC_RecSameNetworkRetryAttempts,
-    ZB_BDBC_TLInterPANTransIdLifetime, /**< Seconds */
-    ZB_BDBC_TLMinStartupDelayTime, /**< Seconds */
-    ZB_BDBC_TLRxWindowDuration, /**< Seconds */
-    ZB_BDBC_TLScanTimeBaseDuration /**< Milliseconds */ /* uint8_t  */
+    ZB_BDBC_MinCommissioningTime = 0x1201, /**< Seconds */
+    ZB_BDBC_RecSameNetworkRetryAttempts = 0x1202,
+    ZB_BDBC_TLInterPANTransIdLifetime = 0x1203, /**< Seconds */
+    ZB_BDBC_TLMinStartupDelayTime = 0x1204, /**< Seconds */
+    ZB_BDBC_TLRxWindowDuration = 0x1205, /**< Seconds */
+    ZB_BDBC_TLScanTimeBaseDuration = 0x1206 /**< Milliseconds */ /* uint8_t  */
 };
 
 /** BDB-GET.request */
@@ -224,16 +283,6 @@ void ZbBdbGetReq(struct ZigBeeT *zb, struct ZbBdbGetReqT *getReqPtr, struct ZbBd
  * @return Returns void
  */
 void ZbBdbSetReq(struct ZigBeeT *zb, struct ZbBdbSetReqT *setReqPtr, struct ZbBdbSetConfT *setConfPtr);
-
-/* Helpers for ZB_BDB_CommissioningMode bits */
-/* ZbBdbCommissionModeBitSupported - Check if a BDB_COMMISSION_MODE_ bit or mask is
- * supported by bdbNodeCommissioningCapability. */
-bool ZbBdbCommissionModeBitSupported(struct ZigBeeT *zb, uint8_t new_mode_bit);
-enum ZbStatusCodeT ZbBdbCommissionModeBitSet(struct ZigBeeT *zb, uint8_t new_mode_bit);
-enum ZbStatusCodeT ZbBdbCommissionModeBitClear(struct ZigBeeT *zb, uint8_t new_mode_bit);
-
-enum ZbBdbCommissioningStatusT ZbBdbNwkStatusToBdbStatus(enum ZbStatusCodeT status);
-enum ZbStatusCodeT ZbBdbStatusToNwkStatus(enum ZbBdbCommissioningStatusT status);
 
 /* Returns the commissioning status for the given endpoint (same for all endpoints?).
  * If endpoint = ZB_ENDPOINT_BCAST, returns the status for the first endpoint found. */

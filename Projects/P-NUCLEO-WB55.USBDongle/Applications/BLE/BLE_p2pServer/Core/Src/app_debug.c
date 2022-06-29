@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -80,15 +80,6 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_GeneralConfig_t APPD_G
 static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
 #endif
 
-#ifdef CFG_DEBUG_TRACE_UART
-#if(CFG_HW_LPUART1_ENABLED == 1)
-extern void MX_LPUART1_UART_Init(void);
-#endif
-#if(CFG_HW_USART1_ENABLED == 1)
-extern void MX_USART1_UART_Init(void);
-#endif
-#endif
-
 /**
  * THE DEBUG ON GPIO FOR CPU2 IS INTENDED TO BE USED ONLY ON REQUEST FROM ST SUPPORT
  * It provides timing information on the CPU2 activity.
@@ -132,7 +123,7 @@ static const APPD_GpioConfig_t aGpioConfigList[GPIO_CFG_NBR_OF_FEATURES] =
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_CLEANUP - Set on Entry / Reset on Exit */
 /* From v1.4.0 */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_START - Set on Entry / Reset on Exit */
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_EOP - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_EOP - Set on Entry / Reset on Exit */   /* The FLASH_EOP Debug GPIO trace is not supported since v1.5.0 */
 /* From v1.5.0 */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_WRITE - Set on Entry / Reset on Exit */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_ERASE - Set on Entry / Reset on Exit */
@@ -395,21 +386,6 @@ void DbgOutputInit( void )
 /* USER CODE BEGIN DbgOutputInit */
 
   VCP_Init( &VcpTxBuffer[0], 0 );
-  
-#ifdef CFG_DEBUG_TRACE_UART
-if (CFG_DEBUG_TRACE_UART == hw_lpuart1)
-{
-#if(CFG_HW_LPUART1_ENABLED == 1)
-    MX_LPUART1_UART_Init();
-#endif
-}
-else if (CFG_DEBUG_TRACE_UART == hw_uart1)
-{
-#if(CFG_HW_USART1_ENABLED == 1)
-    MX_USART1_UART_Init();
-#endif
-}
-#endif
 
 /* USER CODE END DbgOutputInit */
   return;
@@ -421,6 +397,7 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
   VCP_SendData ( p_data , size , cb );
   
   HW_UART_Transmit_DMA(CFG_DEBUG_TRACE_UART, p_data, size, cb);
+  
 /* USER CODE END DbgOutputTraces */
   return;
 }

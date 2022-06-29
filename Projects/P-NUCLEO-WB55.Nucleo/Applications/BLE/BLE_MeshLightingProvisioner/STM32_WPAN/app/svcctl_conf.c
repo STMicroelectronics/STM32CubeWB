@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    svctl_conf.c
@@ -6,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 #include "app_common.h"
 

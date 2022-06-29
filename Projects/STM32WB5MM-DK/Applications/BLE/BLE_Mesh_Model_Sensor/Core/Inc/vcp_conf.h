@@ -18,8 +18,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __VCP_CONF_H
-#define __VCP_CONF_H
+#ifndef VCP_CONF_H
+#define VCP_CONF_H
 
 #ifdef __cplusplus
 extern "C"
@@ -47,4 +47,4 @@ extern "C"
 }
 #endif
 
-#endif /*__VCP_CONF_H */
+#endif /* VCP_CONF_H */

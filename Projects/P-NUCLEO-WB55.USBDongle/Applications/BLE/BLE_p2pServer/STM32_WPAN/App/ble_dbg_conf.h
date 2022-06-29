@@ -17,11 +17,10 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __BLE_DBG_CONF_H
-#define __BLE_DBG_CONF_H
+#ifndef BLE_DBG_CONF_H
+#define BLE_DBG_CONF_H
 
 /**
  * Enable or Disable traces from BLE
@@ -56,31 +55,31 @@
 /**
  * Macro definition
  */
-#if ( BLE_DBG_APP_EN != 0 )
+#if (BLE_DBG_APP_EN != 0)
 #define BLE_DBG_APP_MSG             PRINT_MESG_DBG
 #else
 #define BLE_DBG_APP_MSG             PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_DIS_EN != 0 )
+#if (BLE_DBG_DIS_EN != 0)
 #define BLE_DBG_DIS_MSG             PRINT_MESG_DBG
 #else
 #define BLE_DBG_DIS_MSG             PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_HRS_EN != 0 )
+#if (BLE_DBG_HRS_EN != 0)
 #define BLE_DBG_HRS_MSG             PRINT_MESG_DBG
 #else
 #define BLE_DBG_HRS_MSG             PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_P2P_STM_EN != 0 )
+#if (BLE_DBG_P2P_STM_EN != 0)
 #define BLE_DBG_P2P_STM_MSG         PRINT_MESG_DBG
 #else
 #define BLE_DBG_P2P_STM_MSG         PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_TEMPLATE_STM_EN != 0 )
+#if (BLE_DBG_TEMPLATE_STM_EN != 0)
 #define BLE_DBG_TEMPLATE_STM_MSG         PRINT_MESG_DBG
 #else
 #define BLE_DBG_TEMPLATE_STM_MSG         PRINT_NO_MESG
@@ -214,4 +213,4 @@
 #define BLE_DBG_DTS_BUF             PRINT_NO_MESG
 #endif
 
-#endif /*__BLE_DBG_CONF_H */
+#endif /* BLE_DBG_CONF_H */

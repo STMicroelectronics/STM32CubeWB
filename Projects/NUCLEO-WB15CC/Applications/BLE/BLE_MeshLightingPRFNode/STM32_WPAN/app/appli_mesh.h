@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_MESH_H
-#define __APPLI_MESH_H
+#ifndef APPLI_MESH_H
+#define APPLI_MESH_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -130,6 +130,6 @@ MOBLEUINT16 PwmValueMapping(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEI
 MOBLE_RESULT BLEMesh_ScanDevices(neighbor_params_t *unprovDeviceArray, MOBLEUINT8 *noOfUnprovDevices);
 MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray, MOBLEUINT16 index);
 
-#endif /* __APPLI_MESH_H */
+#endif /* APPLI_MESH_H */
 
 

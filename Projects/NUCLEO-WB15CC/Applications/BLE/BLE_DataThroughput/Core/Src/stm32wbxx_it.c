@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -56,8 +56,11 @@
 
 /* External variables --------------------------------------------------------*/
 extern IPCC_HandleTypeDef hipcc;
+extern DMA_HandleTypeDef hdma_lpuart1_tx;
 extern DMA_HandleTypeDef hdma_usart1_tx;
+extern UART_HandleTypeDef hlpuart1;
 extern UART_HandleTypeDef huart1;
+extern RTC_HandleTypeDef hrtc;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -74,9 +77,7 @@ void NMI_Handler(void)
 
   /* USER CODE END NonMaskableInt_IRQn 0 */
   /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
-  while (1)
-  {
-  }
+
   /* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
@@ -201,6 +202,20 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles RTC wake-up interrupt through EXTI line 19.
+  */
+void RTC_WKUP_IRQHandler(void)
+{
+  /* USER CODE BEGIN RTC_WKUP_IRQn 0 */
+
+  /* USER CODE END RTC_WKUP_IRQn 0 */
+  HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
+  /* USER CODE BEGIN RTC_WKUP_IRQn 1 */
+
+  /* USER CODE END RTC_WKUP_IRQn 1 */
+}
+
+/**
   * @brief This function handles DMA1 channel4 global interrupt.
   */
 void DMA1_Channel4_IRQHandler(void)
@@ -226,6 +241,20 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 1 */
 
   /* USER CODE END USART1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles LPUART1 global interrupt.
+  */
+void LPUART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN LPUART1_IRQn 0 */
+
+  /* USER CODE END LPUART1_IRQn 0 */
+  HAL_UART_IRQHandler(&hlpuart1);
+  /* USER CODE BEGIN LPUART1_IRQn 1 */
+
+  /* USER CODE END LPUART1_IRQn 1 */
 }
 
 /**
@@ -302,11 +331,6 @@ void PUSH_BUTTON_SW2_EXTI_IRQHandler(void)
 void PUSH_BUTTON_SW3_EXTI_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW3_PIN);
-}
-
-void RTC_WKUP_IRQHandler(void)
-{
-  HW_TS_RTC_Wakeup_Handler();
 }
 
 /* USER CODE END 1 */

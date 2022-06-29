@@ -16,8 +16,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __LP_TIMER_H
-#define __LP_TIMER_H
+#ifndef LP_TIMER_H
+#define LP_TIMER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,4 +54,4 @@ extern "C" {
 }
 #endif
 
-#endif /*__LP_TIMER_H */
+#endif /* LP_TIMER_H */

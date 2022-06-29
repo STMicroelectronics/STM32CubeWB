@@ -92,7 +92,7 @@ typedef struct _tSecurityParams
   /**
   * this flag indicates whether the host has to initiate
   * the security, wait for pairing or does not have any security
-  * requirements.\n
+   * requirements.
   * 0x00 : no security required
   * 0x01 : host should initiate security by sending the slave security
   *        request command
@@ -101,6 +101,9 @@ typedef struct _tSecurityParams
   * processing
   */
   uint8_t initiateSecurity;
+  /* USER CODE BEGIN tSecurityParams*/
+
+  /* USER CODE END tSecurityParams */
 }tSecurityParams;
 
 /**
@@ -110,7 +113,6 @@ typedef struct _tSecurityParams
  */
 typedef struct _tBLEProfileGlobalContext
 {
-
   /**
    * security requirements of the host
    */
@@ -146,7 +148,9 @@ typedef struct _tBLEProfileGlobalContext
    * the UUID list to be used while advertising
    */
     uint8_t advtServUUID[100];
+  /* USER CODE BEGIN BleGlobalContext_t*/
 
+  /* USER CODE END BleGlobalContext_t */
 }BleGlobalContext_t;
 
 typedef struct
@@ -158,8 +162,11 @@ typedef struct
    * ID of the Advertising Timeout
    */ 
   uint8_t Advertising_mgr_timer_Id;
+  /* USER CODE BEGIN PTD_1*/
 
+  /* USER CODE END PTD_1 */
 } BleApplicationContext_t;
+
 /* USER CODE BEGIN PTD */
   
 /* USER CODE END PTD */
@@ -185,7 +192,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_CmdPacket_t BleCmdBuffer;
 
 uint8_t Test_Status =0x00;
 
-static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
+static const uint8_t a_MBdAddr[BD_ADDR_SIZE_LOCAL] =
 {
   (uint8_t)((CFG_ADV_BD_ADDRESS & 0x0000000000FF)),
   (uint8_t)((CFG_ADV_BD_ADDRESS & 0x00000000FF00) >> 8),
@@ -195,7 +202,7 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
   (uint8_t)((CFG_ADV_BD_ADDRESS & 0xFF0000000000) >> 40)
 };
 
-static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
+static uint8_t a_BdAddrUdn[BD_ADDR_SIZE_LOCAL];
 
 PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
 
@@ -204,14 +211,14 @@ PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicatio
 /* USER CODE END PV */
 
 /* Extern function prototypes -----------------------------------------------*/
-extern void HCI_Event_CB(void *pckt);
+extern void HCI_Event_CB(void *p_Pckt);
 
 /* Global variables ----------------------------------------------------------*/
-const uint8_t *bd_addr;
+const uint8_t *p_BdAddr;
 
 /* Private function prototypes -----------------------------------------------*/
-static void BLE_UserEvtRx( void * pPayload );
-static void BLE_StatusNot( HCI_TL_CmdStatus_t status );
+static void BLE_UserEvtRx( void * p_Payload );
+static void BLE_StatusNot( HCI_TL_CmdStatus_t Status );
 static void Ble_Tl_Init( void );
 static const uint8_t* BleGetBdAddress( void );
 
@@ -228,6 +235,7 @@ static const uint8_t* BleGetBdAddress( void );
 /* Functions Definition ------------------------------------------------------*/
 void APP_BLE_Init( void )
 {
+  SHCI_CmdStatus_t status;
 /* USER CODE BEGIN APP_BLE_Init_1 */
 
 /* USER CODE END APP_BLE_Init_1 */
@@ -255,7 +263,12 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_COC_INITIATOR_NBR,
     CFG_BLE_MIN_TX_POWER,
     CFG_BLE_MAX_TX_POWER,
-    CFG_BLE_RX_MODEL_CONFIG}
+    CFG_BLE_RX_MODEL_CONFIG,
+    CFG_BLE_MAX_ADV_SET_NBR, 
+     CFG_BLE_MAX_ADV_DATA_LEN,
+     CFG_BLE_TX_PATH_COMPENS,
+     CFG_BLE_RX_PATH_COMPENS
+    }
   };
 
   /**
@@ -265,7 +278,7 @@ void APP_BLE_Init( void )
 
 #if (CFG_LPM_STANDBY_SUPPORTED == 0)
   UTIL_LPM_SetOffMode(1U << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
-#endif
+#endif /* CFG_LPM_STANDBY_SUPPORTED == 0 */
 
   /**
    * Do not allow stop mode in the application
@@ -282,24 +295,31 @@ void APP_BLE_Init( void )
   /**
    * Starts the BLE Stack on CPU2
    */
-  if (SHCI_C2_BLE_Init( &ble_init_cmd_packet ) != SHCI_Success)
+  status = SHCI_C2_BLE_Init(&ble_init_cmd_packet);
+  if (status != SHCI_Success)
   {
+    APP_DBG_MSG("  Fail   : SHCI_C2_BLE_Init command, result: 0x%02x\n\r", status);
+    /* if you are here, maybe CPU2 doesn't contain STM32WB_Copro_Wireless_Binaries, see Release_Notes.html */
     Error_Handler();
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: SHCI_C2_BLE_Init command\n\r");
   }
 
   /**
    * Initialization of HCI & GATT & GAP layer
    */
   {
-    const uint8_t *bd_addr;
+    const uint8_t *p_BdAddr;
     /**
      * Write the BD Address
      */
 
-    bd_addr = BleGetBdAddress();
+    p_BdAddr = BleGetBdAddress();
     aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                               CONFIG_DATA_PUBADDR_LEN,
-                              (uint8_t*) bd_addr);
+                              (uint8_t*) p_BdAddr);
   }
   /**
    * Initialization of the BLE Services
@@ -322,13 +342,14 @@ void APP_BLE_Init( void )
 /* USER CODE BEGIN APP_BLE_Init_2 */
 
 /* USER CODE END APP_BLE_Init_2 */
+
   return;
 }
 
-SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
+SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *p_Pckt )
 {
   /* callback of mesh Library to receive all GAP/GATT events*/  
-  HCI_Event_CB(pckt);
+  HCI_Event_CB(p_Pckt);
 
 #if (LOW_POWER_FEATURE == 1)
   UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
@@ -355,8 +376,8 @@ static void Ble_Tl_Init( void )
 
 const uint8_t* BleGetBdAddress( void )
 {
-  uint8_t *otp_addr;
-  const uint8_t *bd_addr;
+  uint8_t *p_otp_addr;
+  const uint8_t *p_bd_addr;
   uint32_t udn;
   uint32_t company_id;
   uint32_t device_id;
@@ -376,29 +397,29 @@ const uint8_t* BleGetBdAddress( void )
  * Note: In order to use the Public Address in a final product, a dedicated
  * 24bits company ID (OUI) shall be bought.
  */
-    bd_addr_udn[0] = (uint8_t)(udn & 0x000000FF);
-    bd_addr_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_addr_udn[2] = (uint8_t)device_id;
-    bd_addr_udn[3] = (uint8_t)(company_id & 0x000000FF);
-    bd_addr_udn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
-    bd_addr_udn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
+    a_BdAddrUdn[0] = (uint8_t)(udn & 0x000000FF);
+    a_BdAddrUdn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
+    a_BdAddrUdn[2] = (uint8_t)device_id;
+    a_BdAddrUdn[3] = (uint8_t)(company_id & 0x000000FF);
+    a_BdAddrUdn[4] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
+    a_BdAddrUdn[5] = (uint8_t)( (company_id & 0x00FF0000) >> 16 );
 
-    bd_addr = (const uint8_t *)bd_addr_udn;
+    p_bd_addr = (const uint8_t *)a_BdAddrUdn;
   }
   else
   {
-    otp_addr = OTP_Read(0);
-    if(otp_addr)
+    p_otp_addr = OTP_Read(0);
+    if (p_otp_addr)
     {
-      bd_addr = ((OTP_ID0_t*)otp_addr)->bd_address;
+      p_bd_addr = ((OTP_ID0_t*)p_otp_addr)->bd_address;
     }
     else
     {
-      bd_addr = M_bd_addr;
+      p_bd_addr = a_MBdAddr;
     }
   }
 
-  return bd_addr;
+  return p_bd_addr;
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTION */
@@ -418,9 +439,10 @@ const uint8_t* BleGetBdAddress( void )
  * WRAP FUNCTIONS
  *
  *************************************************************/
-void hci_notify_asynch_evt(void* pdata)
+void hci_notify_asynch_evt(void* p_Data)
 {
   UTIL_SEQ_SetTask( 1<<CFG_TASK_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);
+
   return;
 }
 
@@ -428,7 +450,7 @@ void hci_notify_asynch_evt(void* pdata)
 static volatile uint8_t HciResponse = 0;
 #endif
 
-void hci_cmd_resp_release(uint32_t flag)
+void hci_cmd_resp_release(uint32_t Flag)
 {
 #if (LOW_POWER_FEATURE == 0)
   UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
@@ -438,7 +460,7 @@ void hci_cmd_resp_release(uint32_t flag)
   return;
 }
 
-void hci_cmd_resp_wait(uint32_t timeout)
+void hci_cmd_resp_wait(uint32_t Timeout)
 {
 #if (LOW_POWER_FEATURE == 0)
   UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID);
@@ -449,28 +471,30 @@ void hci_cmd_resp_wait(uint32_t timeout)
   return;
 }
 
-static void BLE_UserEvtRx( void * pPayload )
+static void BLE_UserEvtRx( void * p_Payload )
 {
   SVCCTL_UserEvtFlowStatus_t svctl_return_status;
-  tHCI_UserEvtRxParam *pParam;
+  tHCI_UserEvtRxParam *p_param;
 
-  pParam = (tHCI_UserEvtRxParam *)pPayload; 
+  p_param = (tHCI_UserEvtRxParam *)p_Payload;
   
-  svctl_return_status = SVCCTL_UserEvtRx((void *)&(pParam->pckt->evtserial));
+  svctl_return_status = SVCCTL_UserEvtRx((void *)&(p_param->pckt->evtserial));
   if (svctl_return_status != SVCCTL_UserEvtFlowDisable)
   {
-    pParam->status = HCI_TL_UserEventFlow_Enable;
+    p_param->status = HCI_TL_UserEventFlow_Enable;
   }
   else
   {
-    pParam->status = HCI_TL_UserEventFlow_Disable;
+    p_param->status = HCI_TL_UserEventFlow_Disable;
   }
+
+  return;
 }
 
-static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
+static void BLE_StatusNot( HCI_TL_CmdStatus_t Status )
 {
   uint32_t task_id_list;
-  switch (status)
+  switch (Status)
   {
     case HCI_TL_CmdBusy:
       /**
@@ -479,7 +503,9 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
       UTIL_SEQ_PauseTask(task_id_list);
+      /* USER CODE BEGIN HCI_TL_CmdBusy */
 
+      /* USER CODE END HCI_TL_CmdBusy */
       break;
 
     case HCI_TL_CmdAvailable:
@@ -489,18 +515,25 @@ static void BLE_StatusNot( HCI_TL_CmdStatus_t status )
        */
       task_id_list = (1 << CFG_LAST_TASK_ID_WITH_HCICMD) - 1;
       UTIL_SEQ_ResumeTask(task_id_list);
+      /* USER CODE BEGIN HCI_TL_CmdAvailable */
 
+      /* USER CODE END HCI_TL_CmdAvailable */
       break;
 
     default:
+      /* USER CODE BEGIN Status */
+
+      /* USER CODE END Status */
       break;
   }
+
   return;
 }
 
 void SVCCTL_ResumeUserEventFlow( void )
 {
   hci_resume_flow();
+
   return;
 }
 

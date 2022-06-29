@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -127,7 +127,7 @@ static const APPD_GpioConfig_t aGpioConfigList[GPIO_CFG_NBR_OF_FEATURES] =
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_CLEANUP - Set on Entry / Reset on Exit */
 /* From v1.4.0 */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_START - Set on Entry / Reset on Exit */
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_EOP - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_EOP - Set on Entry / Reset on Exit */   /* The FLASH_EOP Debug GPIO trace is not supported since v1.5.0 */
 /* From v1.5.0 */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_WRITE - Set on Entry / Reset on Exit */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_ERASE - Set on Entry / Reset on Exit */

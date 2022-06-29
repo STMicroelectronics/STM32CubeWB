@@ -170,4 +170,4 @@
 #define CFG_HW_USART1_ENABLED           0
 #define CFG_HW_USART1_DMA_TX_SUPPORTED  0
 
-#endif /*HW_CONF_H */
+#endif /* HW_CONF_H */

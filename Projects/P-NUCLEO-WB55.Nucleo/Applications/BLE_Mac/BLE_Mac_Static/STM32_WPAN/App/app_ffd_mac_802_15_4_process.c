@@ -36,6 +36,7 @@
 #endif
 /* Global variables ----------------------------------------------------------*/
 
+int volatile FrameOnGoing = FALSE;
 
 /* Private defines -----------------------------------------------------------*/
 #define MAX_PIB_ATTRIBUTE_VALUE_LENGTH 52
@@ -56,8 +57,6 @@ uint8_t checkMsgXorSignature(const char * pMessage, uint8_t message_len,
 
 extern MAC_associateInd_t g_MAC_associateInd;
 MAC_dataInd_t      g_DataInd;
-
-
 
 /**
 * Init
@@ -178,27 +177,36 @@ MAC_Status_t APP_MAC_mlmeStartCnfCb( const  MAC_startCnf_t * pStartCnf )
 
 }
 
-MAC_Status_t APP_MAC_mcpsDataIndCb( const  MAC_dataInd_t * pDataInd )
+void APP_MAC_ReceiveData(void)
 {
-  memcpy(&g_DataInd,pDataInd,sizeof(MAC_dataInd_t));
+  static int cpt = 0;
   // Check validity of the received Message extracting associated 
   // simple xor signature
-  if (!checkMsgXorSignature((char const *)(pDataInd->msduPtr),
-                           pDataInd->msdu_length-1,
-                           pDataInd->msduPtr[pDataInd->msdu_length-1],
-                           0x00))
+  if (!checkMsgXorSignature((char const *) (g_DataInd.msduPtr),
+                             g_DataInd.msdu_length-1,
+                             g_DataInd.msduPtr[g_DataInd.msdu_length-1],
+                             0x00))
   {
-    APP_DBG("FFD MAC APP - ERROR : CORRUPTED RECEIVED DATA ");
+     APP_DBG("FFD MAC APP - ERROR : CORRUPTED RECEIVED DATA ");
   }
   else
   {
-    pDataInd->msduPtr[pDataInd->msdu_length-1] = '\0';//erase signature with EOS
-    APP_DBG("FFD MAC APP - RECEIVE DATA : %s", (char const *) pDataInd->msduPtr);
-    BSP_LED_On(LED_RED);
-    HAL_Delay(300);
-    BSP_LED_Off(LED_RED);
+    g_DataInd.msduPtr[g_DataInd.msdu_length-1] = '\0';//erase signature with EOS
+    APP_DBG("FFD MAC APP - RECEIVE DATA(%d) : %s ",cpt++,(char const *) g_DataInd.msduPtr);
+    BSP_LED_Toggle(LED_RED);
   }
-  return MAC_SUCCESS;
+  FrameOnGoing = FALSE;
+}
+
+MAC_Status_t APP_MAC_mcpsDataIndCb( const  MAC_dataInd_t * pDataInd )
+{
+    if (FrameOnGoing == FALSE)
+    {
+        FrameOnGoing = TRUE;
+        memcpy(&g_DataInd,pDataInd,sizeof(MAC_dataInd_t));
+        UTIL_SEQ_SetTask(1<< CFG_TASK_RECEIVE_DATA,CFG_SCH_PRIO_0);
+    }
+    return MAC_SUCCESS;
 }
 
 MAC_Status_t APP_MAC_mcpsDataCnfCb( const  MAC_dataCnf_t * pDataCnf )
@@ -210,7 +218,6 @@ MAC_Status_t APP_MAC_mcpsDataCnfCb( const  MAC_dataCnf_t * pDataCnf )
 MAC_Status_t APP_MAC_mcpsPurgeCnfCb( const  MAC_purgeCnf_t * pPurgeCnf )
 {
   return MAC_NOT_IMPLEMENTED_STATUS;
-
 }
 
 MAC_Status_t APP_MAC_mlmeSyncLossIndCb( const MAC_syncLoss_t * syncLossPtr )
@@ -218,25 +225,20 @@ MAC_Status_t APP_MAC_mlmeSyncLossIndCb( const MAC_syncLoss_t * syncLossPtr )
   return MAC_NOT_IMPLEMENTED_STATUS;
 }
 
-
 MAC_Status_t APP_MAC_mlmeCalibrateCnfCb( const MAC_calibrateCnf_t * pCallibrateCnf)
 {
   return MAC_NOT_IMPLEMENTED_STATUS;
 }
-
-
 
 MAC_Status_t APP_MAC_mlmeDpsCnfCb( const MAC_dpsCnf_t * pDpsCnf  )
 {
   return MAC_NOT_IMPLEMENTED_STATUS;
 }
 
-
 MAC_Status_t APP_MAC_mlmeDpsIndCb( const MAC_dpsInd_t * pDpsInd )
 {
   return MAC_NOT_IMPLEMENTED_STATUS;
 }
-
 
 MAC_Status_t APP_MAC_mlmeSoundingCnfCb( const MAC_soundingCnf_t * pSoudingCnf)
 {
@@ -247,7 +249,6 @@ MAC_Status_t APP_MAC_mlmeGtsCnfCb( const MAC_gtsCnf_t * pGtsCnf)
 {
   return MAC_NOT_IMPLEMENTED_STATUS;
 }
-
 
 MAC_Status_t APP_MAC_mlmeGtsIndCb( const MAC_GtsInd_t * pGtsInd )
 {

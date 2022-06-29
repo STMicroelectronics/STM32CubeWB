@@ -35,6 +35,8 @@
 #ifndef OPENTHREAD_PLATFORM_UDP_H_
 #define OPENTHREAD_PLATFORM_UDP_H_
 
+#include <openthread/udp.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -73,6 +75,20 @@ otError otPlatUdpClose(otUdpSocket *aUdpSocket);
 otError otPlatUdpBind(otUdpSocket *aUdpSocket);
 
 /**
+ * This function binds the UDP socket to a platform network interface.
+ *
+ * Note: only available when `OPENTHREAD_CONFIG_PLATFORM_UDP_ENABLE` is used.
+ *
+ * @param[in]   aUdpSocket          A pointer to the UDP socket.
+ * @param[in]   aNetifIdentifier    The network interface identifier.
+ *
+ * @retval  OT_ERROR_NONE   Successfully bound UDP socket.
+ * @retval  OT_ERROR_FAILED Failed to bind UDP.
+ *
+ */
+otError otPlatUdpBindToNetif(otUdpSocket *aUdpSocket, otNetifIdentifier aNetifIdentifier);
+
+/**
  * This function connects UDP socket by platform.
  *
  * @param[in]   aUdpSocket  A pointer to the UDP socket.
@@ -95,6 +111,40 @@ otError otPlatUdpConnect(otUdpSocket *aUdpSocket);
  *
  */
 otError otPlatUdpSend(otUdpSocket *aUdpSocket, otMessage *aMessage, const otMessageInfo *aMessageInfo);
+
+/**
+ * This function configures the UDP socket to join a UDP multicast group.
+ *
+ * Note: only available when `OPENTHREAD_CONFIG_PLATFORM_UDP_ENABLE` is used.
+ *
+ * @param[in]   aUdpSocket          A pointer to the UDP socket.
+ * @param[in]   aNetifIdentifier    The network interface identifier.
+ * @param[in]   aAddress            The UDP multicast group address.
+ *
+ * @retval  OT_ERROR_NONE   Successfully joined the multicast group.
+ * @retval  OT_ERROR_FAILED Failed to join the multicast group.
+ *
+ */
+otError otPlatUdpJoinMulticastGroup(otUdpSocket *       aUdpSocket,
+                                    otNetifIdentifier   aNetifIdentifier,
+                                    const otIp6Address *aAddress);
+
+/**
+ * This function configures the UDP socket to leave a UDP multicast group.
+ *
+ * Note: only available when `OPENTHREAD_CONFIG_PLATFORM_UDP_ENABLE` is used.
+ *
+ * @param[in]   aUdpSocket          A pointer to the UDP socket.
+ * @param[in]   aNetifIdentifier    The network interface identifier.
+ * @param[in]   aAddress            The UDP multicast group address.
+ *
+ * @retval  OT_ERROR_NONE   Successfully left the multicast group.
+ * @retval  OT_ERROR_FAILED Failed to leave the multicast group.
+ *
+ */
+otError otPlatUdpLeaveMulticastGroup(otUdpSocket *       aUdpSocket,
+                                     otNetifIdentifier   aNetifIdentifier,
+                                     const otIp6Address *aAddress);
 
 #ifdef __cplusplus
 } // extern "C"

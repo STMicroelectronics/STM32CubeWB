@@ -109,7 +109,7 @@ static void AUDIO_REQ_GetResolution(USBD_HandleTypeDef *pdev, USBD_SetupReqTyped
 /** @defgroup USBD_AUDIO_Private_Variables
   * @{
   */ 
-/* This dummy buffer with 0 values will be sent when there is no availble data */
+/* This dummy buffer with 0 values will be sent when there is no available data */
 static uint8_t IsocInBuffDummy[48*4*2]; 
 static  int16_t VOL_CUR;
 static USBD_AUDIO_HandleTypeDef haudioInstance;
@@ -590,7 +590,7 @@ static void AUDIO_REQ_SetCurrent(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef 
   *         Fills the USB internal buffer with audio data from user
   * @param pdev: device instance
   * @param audioData: audio data to be sent via USB
-  * @param dataAmount: number of PCM samples to be copyed
+  * @param dataAmount: number of PCM samples to be copied
   * @note Depending on the calling frequency, a coherent amount of samples must be passed to 
   *       the function. E.g.: assuming a Sampling frequency of 16 KHz and 1 channel, 
   *       you can pass 16 PCM samples if the function is called each millisecond, 
@@ -670,7 +670,7 @@ uint8_t  USBD_AUDIO_RegisterInterface  (USBD_HandleTypeDef   *pdev,
 /**
   * @brief  Configures the microphone descriptor on the base of the frequency 
   *         and channels number information. These parameters will be used to
-  *         init the audio engine, trough the USB interface functions.
+  *         init the audio engine, through the USB interface functions.
   * @param  samplingFrequency: sampling frequency
   * @param  Channels: number of channels
   * @retval status
@@ -793,7 +793,7 @@ void USBD_AUDIO_Init_Microphone_Descriptor(USBD_HandleTypeDef   *pdev, uint32_t 
   USBD_AUDIO_CfgDesc[index++] = 0x00;
   USBD_AUDIO_CfgDesc[index++] = 0x02;
   USBD_AUDIO_CfgDesc[index++] = 0x00;   
-  /* USB Microphone Standard AS Interface Descriptor - Audio Streaming Zero Bandwith */
+  /* USB Microphone Standard AS Interface Descriptor - Audio Streaming Zero Bandwidth */
   /* Interface 1, Alternate Setting 0                                             */
   USBD_AUDIO_CfgDesc[index++] = 9;                                             /* bLength */
   USBD_AUDIO_CfgDesc[index++] = USB_INTERFACE_DESCRIPTOR_TYPE;                 /* bDescriptorType */

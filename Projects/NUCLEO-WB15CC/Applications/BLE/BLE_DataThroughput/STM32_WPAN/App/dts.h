@@ -18,18 +18,18 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DTS_STM_H
-#define __DTS_STM_H
+#ifndef DTS_STM_H
+#define DTS_STM_H
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
+/* Includes ------------------------------------------------------------------*/
 #include "ble_types.h"
 #include "ble_conf.h"
 
-/* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 /* Exported types LBR Client Implementation-----------------------------------*/
 typedef struct
@@ -43,12 +43,12 @@ typedef struct
 
 typedef enum
 {
-  DTS_STM__NOTIFICATION_ENABLED,
-  DTS_STM_NOTIFICATION_DISABLED,
+  DTS_TX_NOTIFICATION_ENABLED,
+  DTS_TX_NOTIFICATION_DISABLED,
   DTS_STM_GATT_TX_POOL_AVAILABLE,
-  DTC_NOTIFICATION_ENABLED,
-  DTC_NOTIFICATION_DISABLED,
-  DTS_STM_DATA_RECEIVED,
+  DTS_THROUGHPUT_NOTIFICATION_ENABLED,
+  DTS_THROUGHPUT_NOTIFICATION_DISABLED,
+  DTS_DATA_RECEIVED,
   DTS_MTU_EXCHANGED,
 } DTS_STM_NotCode_t;
 
@@ -59,7 +59,6 @@ typedef struct
   DTS_STM_Payload_t DataTransfered;
 } DTS_STM_App_Notification_evt_t;
 
-/* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/
@@ -71,10 +70,10 @@ void BLE_SVC_GAP_Change_PHY(void);
 void BLE_SVC_GAP_Security_Req(void);
 void BLE_SVC_GAP_Clear_DataBase(void);
 void Resume_Notification(void);
-tBleStatus DTS_STM_UpdateCharThroughput(DTS_STM_Payload_t *pDataValue );
+//tBleStatus DTS_STM_UpdateCharThroughput(DTS_STM_Payload_t *pDataValue );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__DTS_STM_H */
+#endif /* DTS_STM_H */

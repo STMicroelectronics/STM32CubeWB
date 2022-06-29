@@ -43,7 +43,7 @@ ZbZcl_custom_matrix_ServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,\
     }
 
     clusterPtr->cluster.txOptions |= ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY;
-    
+
     memset(&clusterPtr->callbacks, 0, sizeof(clusterPtr->callbacks));
     if (callbacks != NULL) {
         memcpy(&clusterPtr->callbacks, callbacks, sizeof(clusterPtr->callbacks));
@@ -53,7 +53,7 @@ ZbZcl_custom_matrix_ServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,\
 
     /* not used in our case */
 
-    
+
  //   (void)ZbZclAttrIntegerWrite(&clusterPtr->cluster, ZCL_GLOBAL_ATTR_CLUSTER_REV, ZCL_CLUSTER_REVISION_ZCL6);
 
     ZbZclClusterSetCallbackArg(&clusterPtr->cluster, arg);
@@ -70,7 +70,7 @@ custom_matrix_command_handler(struct ZbZclClusterT *clusterPtr, struct ZbZclHead
     struct ZbZclAddrInfoT src_info;
     uint8_t cmd_id = zclHdrPtr->cmdId;
     enum ZclStatusCodeT return_status = ZCL_STATUS_SUCCESS_NO_DEFAULT_RESPONSE;
-   
+
     (void)memset(&src_info, 0, sizeof(src_info));
     src_info.addr = dataIndPtr->src;
     src_info.seqnum = zclHdrPtr->seqNum;
@@ -83,7 +83,7 @@ custom_matrix_command_handler(struct ZbZclClusterT *clusterPtr, struct ZbZclHead
             memset(&req, 0, sizeof(req));
 
             if (custom_matrix_cluster->callbacks.set_custom_matrix_command == NULL) {
-                return_status = ZCL_STATUS_UNSUPP_CLUSTER_COMMAND;
+                return_status = ZCL_STATUS_UNSUPP_COMMAND;
                 break;
             }
             req.pattern_code = dataIndPtr->asdu[2];
@@ -96,7 +96,7 @@ custom_matrix_command_handler(struct ZbZclClusterT *clusterPtr, struct ZbZclHead
             break;
         }
         default:
-            return_status = ZCL_STATUS_UNSUPP_CLUSTER_COMMAND;
+            return_status = ZCL_STATUS_UNSUPP_COMMAND;
             break;
     }
     return return_status;
@@ -113,7 +113,7 @@ ZbZcl_custom_matrix_ServerSendCommandRsp(struct ZbZclClusterT *clusterPtr, struc
     uint8_t rsp_payload[2];
     unsigned int length = 0U;
     struct ZbApsBufT bufv[1];
-    dst_info->tx_options = ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY;   
+    dst_info->tx_options = ZB_APSDE_DATAREQ_TXOPTIONS_SECURITY;
     /* Form the payload */
     putle16(&rsp_payload[length], rsp->one);
     length += 2U;
@@ -123,5 +123,5 @@ ZbZcl_custom_matrix_ServerSendCommandRsp(struct ZbZclClusterT *clusterPtr, struc
 
     return ZbZclClusterCommandRsp(clusterPtr, dst_info, ZCL_CUSTOM_MATRIX_COMMAND_RSP, bufv, 1U);
 
-  
+
 }

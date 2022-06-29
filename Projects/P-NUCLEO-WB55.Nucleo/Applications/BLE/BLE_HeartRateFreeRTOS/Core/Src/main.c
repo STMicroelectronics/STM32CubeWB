@@ -62,7 +62,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-IPCC_HandleTypeDef hipcc;
+ IPCC_HandleTypeDef hipcc;
 
 UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart1;
@@ -181,6 +181,7 @@ int main(void)
 
   /* Init code for STM32_WPAN */
   MX_APPE_Init();
+
   /* Start scheduler */
   osKernelStart();
 
@@ -209,9 +210,11 @@ void SystemClock_Config(void)
   */
   HAL_PWR_EnableBkUpAccess();
   __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -227,6 +230,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -454,6 +458,7 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
+
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
@@ -468,6 +473,7 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
+
   /** Enable the WakeUp
   */
   if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
@@ -523,7 +529,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN Header_StartDefaultTask */
 /**
   * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used 
+  * @param  argument: Not used
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */

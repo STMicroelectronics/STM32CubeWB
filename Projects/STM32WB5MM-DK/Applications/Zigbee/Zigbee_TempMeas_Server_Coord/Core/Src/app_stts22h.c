@@ -95,7 +95,7 @@ int32_t STTS22H_Init_Sensor(void){
   
     UTIL_SEQ_RegTask( 1 << CFG_TASK_GET_MEASURE_ENV_ID, UTIL_SEQ_RFU, STTS22H_PrintValues);
     
-    /* Create timer to get the measure of environement data */
+    /* Create timer to get the measure of environment data */
     HW_TS_Create(CFG_TIM_PROC_ID_ISR,
         &STTS22H_Update_Timer_Id,
         hw_ts_Repeated,

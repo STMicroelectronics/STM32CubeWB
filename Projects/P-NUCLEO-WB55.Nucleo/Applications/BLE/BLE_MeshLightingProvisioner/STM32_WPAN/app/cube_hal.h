@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    cube_hal.h
-  * @author  AMS VMA RF Application team
+  * @author  MCD Application Team
   * @brief   
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 #ifndef _CUBE_HAL_H_
 #define _CUBE_HAL_H_

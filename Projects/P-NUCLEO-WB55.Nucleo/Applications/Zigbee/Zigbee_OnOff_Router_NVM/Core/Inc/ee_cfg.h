@@ -21,6 +21,7 @@
 
 #include "utilities_common.h"
 #include "hw_flash.h"
+#include "flash_driver.h"
 
 
 #endif /* EE_CFG_H__ */

@@ -56,15 +56,12 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern IPCC_HandleTypeDef hipcc;
 extern DMA_HandleTypeDef hdma_lpuart1_tx;
-
 extern DMA_HandleTypeDef hdma_usart1_tx;
-
 extern UART_HandleTypeDef hlpuart1;
-
 extern UART_HandleTypeDef huart1;
-
+extern RTC_HandleTypeDef hrtc;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -220,6 +217,20 @@ void PVD_PVM_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles RTC wake-up interrupt through EXTI line 19.
+  */
+void RTC_WKUP_IRQHandler(void)
+{
+  /* USER CODE BEGIN RTC_WKUP_IRQn 0 */
+
+  /* USER CODE END RTC_WKUP_IRQn 0 */
+  HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
+  /* USER CODE BEGIN RTC_WKUP_IRQn 1 */
+
+  /* USER CODE END RTC_WKUP_IRQn 1 */
+}
+
+/**
   * @brief This function handles Flash global interrupt.
   */
 void FLASH_IRQHandler(void)
@@ -329,6 +340,34 @@ void PWR_SOTF_BLEACT_802ACT_RFPHASE_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles IPCC RX occupied interrupt.
+  */
+void IPCC_C1_RX_IRQHandler(void)
+{
+  /* USER CODE BEGIN IPCC_C1_RX_IRQn 0 */
+
+  /* USER CODE END IPCC_C1_RX_IRQn 0 */
+  HAL_IPCC_RX_IRQHandler(&hipcc);
+  /* USER CODE BEGIN IPCC_C1_RX_IRQn 1 */
+
+  /* USER CODE END IPCC_C1_RX_IRQn 1 */
+}
+
+/**
+  * @brief This function handles IPCC TX free interrupt.
+  */
+void IPCC_C1_TX_IRQHandler(void)
+{
+  /* USER CODE BEGIN IPCC_C1_TX_IRQn 0 */
+
+  /* USER CODE END IPCC_C1_TX_IRQn 0 */
+  HAL_IPCC_TX_IRQHandler(&hipcc);
+  /* USER CODE BEGIN IPCC_C1_TX_IRQn 1 */
+
+  /* USER CODE END IPCC_C1_TX_IRQn 1 */
+}
+
+/**
   * @brief This function handles HSEM global interrupt.
   */
 void HSEM_IRQHandler(void)
@@ -356,10 +395,7 @@ void FPU_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-void RTC_WKUP_IRQHandler(void)
-{
-  HW_TS_RTC_Wakeup_Handler();
-}
+
 
 /**
   * @brief  This function handles External External line 4 interrupt request.
@@ -389,21 +425,6 @@ void EXTI0_IRQHandler(void)
 void EXTI1_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW3_PIN);
-}
-
-void
-IPCC_C1_TX_IRQHandler(void)
-{
-    HW_IPCC_Tx_Handler();
-
-    return;
-}
-
-void
-IPCC_C1_RX_IRQHandler(void)
-{
-    HW_IPCC_Rx_Handler();
-    return;
 }
 
 /* USER CODE END 1 */

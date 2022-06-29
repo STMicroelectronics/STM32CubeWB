@@ -260,6 +260,7 @@ void TL_THREAD_Init( TL_TH_Config_t *p_Config )
   p_thread_table->clicmdrsp_buffer = p_Config->p_ThreadCliRspBuffer;
   p_thread_table->otcmdrsp_buffer = p_Config->p_ThreadOtCmdRspBuffer;
   p_thread_table->notack_buffer = p_Config->p_ThreadNotAckBuffer;
+  p_thread_table->clinot_buffer = p_Config->p_ThreadCliNotBuffer;
 
   HW_IPCC_THREAD_Init();
 
@@ -318,7 +319,7 @@ void HW_IPCC_THREAD_EvtNot( void )
 
 void HW_IPCC_THREAD_CliEvtNot( void )
 {
-  TL_THREAD_CliNotReceived( (TL_EvtPacket_t*)(TL_RefTable.p_thread_table->clicmdrsp_buffer) );
+  TL_THREAD_CliNotReceived( (TL_EvtPacket_t*)(TL_RefTable.p_thread_table->clinot_buffer) );
 
   return;
 }

@@ -2286,7 +2286,7 @@ MOBLE_RESULT Light_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue,
      
     }
     
- TRACE_M(TF_LIGHT_M, "Inside light lightness transition time at %d, Current state 0x%.2x ,target state 0x%.2x , Remaining Time 0x%.2x\n\r", 
+ TRACE_M(TF_LIGHT_M, "Inside light lightness transition time at %ld, Current state 0x%.2x ,target state 0x%.2x , Remaining Time 0x%.2x\n\r",
             Clock_Time(),Light_TemporaryStatus[elementIndex].PresentParam_1,Light_TemporaryStatus[elementIndex].TargetParam_1,\
                                                                 Light_TemporaryStatus[elementIndex].RemainingTime);
     
@@ -2412,7 +2412,7 @@ MOBLE_RESULT Light_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue ,
       Light_ModelFlag[elementIndex].LightTransitionFlag = MODEL_TRANSITION_STOP;  
       Light_ModelFlag[elementIndex].Light_Trnsn_Cmplt = 1;      
     }   
-    TRACE_M(TF_LIGHT_M, "Inside light transition %d,PV1 0x%.2x ,TV1 0x%.2x ,PV2 0x%.2x , TV2 0x%.2x,PV3 0x%.2x ,TV3 0x%.2x, RT 0x%.2x \n\r",
+    TRACE_M(TF_LIGHT_M, "Inside light transition %ld,PV1 0x%.2x ,TV1 0x%.2x ,PV2 0x%.2x , TV2 0x%.2x,PV3 0x%.2x ,TV3 0x%.2x, RT 0x%.2x \n\r",
             Clock_Time(),Light_TemporaryStatus[elementIndex].PresentParam_1,Light_TemporaryStatus[elementIndex].TargetParam_1, 
                 Light_TemporaryStatus[elementIndex].PresentParam_2,Light_TemporaryStatus[elementIndex].TargetParam_2,
                  Light_TemporaryStatus[elementIndex].PresentParam_3, Light_TemporaryStatus[elementIndex].TargetParam_3,
@@ -2531,7 +2531,7 @@ void Light_GetStepValue(MOBLEUINT8 stepParam,MOBLEUINT8 elementIndex)
     Light_TimeParam[elementIndex].StepValue = (Light_TimeParam[elementIndex].StepValue * TRANSITION_SCALER);
   }
   
-  TRACE_M(TF_LIGHT_M, "step resolution 0x%.2x, number of step 0x%.2x \r\n",Light_TimeParam[elementIndex].Res_Value , 
+  TRACE_M(TF_LIGHT_M, "step resolution 0x%.2lx, number of step 0x%.2x \r\n",Light_TimeParam[elementIndex].Res_Value ,
           Light_TimeParam[elementIndex].StepValue  );   
 }
 
@@ -3550,7 +3550,7 @@ void GenericLevel_CtlTempBinding(Generic_LevelStatus_t * bLevelParam, MOBLEUINT8
   productValue = (bLevelParam->Present_Level16 + 32768) * (MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE) ;
   Light_CtlStatus[elementIndex].PresentCtlTemperature16 = (MOBLEUINT16)(MIN_CTL_TEMP_RANGE + round(((productValue) / (float)65535)));
   
-  TRACE_M(TF_LIGHT_M, "PresentGeneric = %ld,\r\n", bLevelParam->Present_Level16);
+  TRACE_M(TF_LIGHT_M, "PresentGeneric = %d,\r\n", bLevelParam->Present_Level16);
   TRACE_M(TF_LIGHT_M, "Present Level value %d\r\n", Light_CtlStatus[elementIndex].PresentCtlTemperature16); 
 }
 

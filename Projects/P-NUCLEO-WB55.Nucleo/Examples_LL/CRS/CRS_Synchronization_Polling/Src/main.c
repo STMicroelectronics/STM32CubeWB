@@ -104,9 +104,8 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
   /* System interrupt init*/
+  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* USER CODE BEGIN Init */
 
@@ -306,7 +305,7 @@ static void MX_GPIO_Init(void)
   */
 void Enable_Sync_Reference_Clock(void)
 {
-  /* To enable LSE, before it is neccessary to:
+  /* To enable LSE, before it is necessary to:
      - Reset the Back up Domain */
   LL_PWR_EnableBkUpAccess();
   

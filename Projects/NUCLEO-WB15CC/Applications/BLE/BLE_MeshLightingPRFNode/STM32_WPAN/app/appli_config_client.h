@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_CONFIG_CLIENT_H
-#define __APPLI_CONFIG_CLIENT_H
+#ifndef APPLI_CONFIG_CLIENT_H
+#define APPLI_CONFIG_CLIENT_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -86,8 +86,8 @@ MOBLEUINT8 GetCountSIGModelToPublish(MOBLEUINT8 elementIdx);
 
 MOBLEUINT8 GetCountVendorModelToPublish(MOBLEUINT8 elementIdx);
 
-#endif /*defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER) */
+#endif /* defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER) */
 
-#endif /* __APPLI_CONFIG_CLIENT_H */
+#endif /* APPLI_CONFIG_CLIENT_H */
 
 

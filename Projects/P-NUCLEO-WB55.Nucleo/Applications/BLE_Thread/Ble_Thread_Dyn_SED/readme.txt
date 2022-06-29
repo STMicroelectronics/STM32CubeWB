@@ -102,7 +102,7 @@ Wireless Coprocessor binary.
 
 Minimum requirements for the demo:
 - 1 STM32WB55xx-Nucleo board in BLE Thread Dynamic Concurrent mode
-      (Copro wireless :stm32wb5x_BLE_Zigbee_RFD_dynamic_fw.bin + Ble_Thread_Dyn_SED application)  
+      (Copro wireless :stm32wb5x_BLE_Thread_dynamic_fw.bin + Ble_Thread_Dyn_SED application)  
 - 1 STM32WB55xx-Nucleo board running Thread FTD COAP Generic Application
        (Copro wireless :stm32wb5x_Thread_FTD_fw.bin + Thread_FTD_Coap_Multicast application)  
 - 1 Smartphone (Android/IOS) with "ST BLE Sensor" Phone Application (available on App Store and Google Play)

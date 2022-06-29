@@ -10,14 +10,14 @@
       <TargetName>Lighting_PRFNode</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx_DFP.1.0.0</PackID>
-          <PackURL>http://www.keil.com/pack</PackURL>
+          <PackID>Keil.STM32WBxx_DFP.1.2.0</PackID>
+          <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x000040000) IROM(0x08000000,0x001000000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -185,6 +185,7 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -336,7 +337,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STM32WBXX_NUCLEO,STM32WB55xx,USE_HAL_DRIVER,CORE_CM4,STM32,ENABLE_USART,TRACE_ENABLE_NO_FUNCTION,SERVER</Define>
+              <Define>USE_STM32WBXX_NUCLEO,USE_HAL_DRIVER,STM32WB55xx,ENABLE_USART</Define>
               <Undefine></Undefine>
               <IncludePath>../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/Inc;../Core/Inc;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Inc;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../STM32_WPAN/app;../../../../../../Middlewares/ST/STM32_WPAN/ble</IncludePath>
             </VariousControls>
@@ -351,7 +352,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -393,11 +394,6 @@
               <FilePath>../Core/Src/app_entry.c</FilePath>
             </File>
             <File>
-              <FileName>hw_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/hw_flash.c</FilePath>
-            </File>
-            <File>
               <FileName>hw_timerserver.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/hw_timerserver.c</FilePath>
@@ -426,6 +422,16 @@
               <FileName>stm32wbxx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\flash_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\stm32wbxx_hal_msp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -491,16 +497,6 @@
               <FileName>pal_nvm.c</FileName>
               <FileType>1</FileType>
               <FilePath>../STM32_WPAN/app/pal_nvm.c</FilePath>
-            </File>
-            <File>
-              <FileName>PWM_config.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../STM32_WPAN/app/PWM_config.c</FilePath>
-            </File>
-            <File>
-              <FileName>PWM_handlers.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../STM32_WPAN/app/PWM_handlers.c</FilePath>
             </File>
             <File>
               <FileName>appli_generic_client.c</FileName>
@@ -661,6 +657,26 @@
               <FileName>stm32wbxx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_hsem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_ipcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_ipcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_rng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</FilePath>
             </File>
           </Files>
         </Group>

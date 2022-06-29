@@ -29,12 +29,7 @@
 
 #include "crypto.h"
 
-
-void otCryptoHmacSha256(const uint8_t *aKey,
-                        uint16_t       aKeyLength,
-                        const uint8_t *aBuf,
-                        uint16_t       aBufLength,
-                        uint8_t *      aHash)
+void otCryptoHmacSha256(const otCryptoKey *aKey, const uint8_t *aBuf, uint16_t aBufLength, otCryptoSha256Hash *aHash)
 {
 
     Pre_OtCmdProcessing();
@@ -43,12 +38,11 @@ void otCryptoHmacSha256(const uint8_t *aKey,
 
     p_ot_req->ID = MSG_M4TOM0_OT_CRYPTO_HMAC_SHA256;
 
-    p_ot_req->Size=5;
+    p_ot_req->Size=4;
     p_ot_req->Data[0] = (uint32_t) aKey;
-    p_ot_req->Data[1] = (uint32_t) aKeyLength;
-    p_ot_req->Data[2] = (uint32_t) aBuf;
-    p_ot_req->Data[3] = (uint32_t) aBufLength;
-    p_ot_req->Data[4] = (uint32_t) aHash;
+    p_ot_req->Data[1] = (uint32_t) aBuf;
+    p_ot_req->Data[2] = (uint32_t) aBufLength;
+    p_ot_req->Data[3] = (uint32_t) aHash;
 
     Ot_Cmd_Transfer();
 
@@ -56,18 +50,17 @@ void otCryptoHmacSha256(const uint8_t *aKey,
 }
 
 
-void otCryptoAesCcm(const uint8_t *aKey,
-                    uint16_t       aKeyLength,
-                    uint8_t        aTagLength,
-                    const void *   aNonce,
-                    uint8_t        aNonceLength,
-                    const void *   aHeader,
-                    uint32_t       aHeaderLength,
-                    void *         aPlainText,
-                    void *         aCipherText,
-                    uint32_t       aLength,
-                    bool           aEncrypt,
-                    void *         aTag)
+void otCryptoAesCcm(const otCryptoKey *aKey,
+                    uint8_t            aTagLength,
+                    const void *       aNonce,
+                    uint8_t            aNonceLength,
+                    const void *       aHeader,
+                    uint32_t           aHeaderLength,
+                    void *             aPlainText,
+                    void *             aCipherText,
+                    uint32_t           aLength,
+                    bool               aEncrypt,
+                    void *             aTag)
 {
     Pre_OtCmdProcessing();
     /* prepare buffer */
@@ -75,19 +68,18 @@ void otCryptoAesCcm(const uint8_t *aKey,
 
     p_ot_req->ID = MSG_M4TOM0_OT_CRYPTO_AES_CCM;
 
-    p_ot_req->Size=12;
+    p_ot_req->Size=11;
     p_ot_req->Data[0]  = (uint32_t) aKey;
-    p_ot_req->Data[1]  = (uint32_t) aKeyLength;
-    p_ot_req->Data[2]  = (uint32_t) aTagLength;
-    p_ot_req->Data[3]  = (uint32_t) aNonce;
-    p_ot_req->Data[4]  = (uint32_t) aNonceLength;
-    p_ot_req->Data[5]  = (uint32_t) aHeader;
-    p_ot_req->Data[6]  = aHeaderLength;
-    p_ot_req->Data[7]  = (uint32_t) aPlainText;
-    p_ot_req->Data[8]  = (uint32_t) aCipherText;
-    p_ot_req->Data[9]  = (uint32_t) aLength;
-    p_ot_req->Data[10] = (uint32_t) aEncrypt;
-    p_ot_req->Data[11] = (uint32_t) aTag;
+    p_ot_req->Data[1]  = (uint32_t) aTagLength;
+    p_ot_req->Data[2]  = (uint32_t) aNonce;
+    p_ot_req->Data[3]  = (uint32_t) aNonceLength;
+    p_ot_req->Data[4]  = (uint32_t) aHeader;
+    p_ot_req->Data[5]  = aHeaderLength;
+    p_ot_req->Data[6]  = (uint32_t) aPlainText;
+    p_ot_req->Data[7]  = (uint32_t) aCipherText;
+    p_ot_req->Data[8]  = (uint32_t) aLength;
+    p_ot_req->Data[9]  = (uint32_t) aEncrypt;
+    p_ot_req->Data[10] = (uint32_t) aTag;
 
     Ot_Cmd_Transfer();
 

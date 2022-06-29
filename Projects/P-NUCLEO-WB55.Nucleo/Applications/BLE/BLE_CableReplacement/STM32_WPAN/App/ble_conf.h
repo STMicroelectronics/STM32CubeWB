@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
  * @file    ble_conf.h
  * @author  MCD Application Team
- * @brief   BLE configuration file
+  * @brief   Configuration file for BLE Middleware.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,11 +16,11 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __BLE_CONF_H
-#define __BLE_CONF_H
+#ifndef BLE_CONF_H
+#define BLE_CONF_H
 
 #include "app_conf.h"
 
@@ -40,6 +41,7 @@
 #define BLE_CFG_PERIPHERAL                                                     1
 #endif 
 
+
 /**
  * This setting shall be set to '1' if the device needs to support the Central Role
  * In the MS configuration, both BLE_CFG_PERIPHERAL and BLE_CFG_CENTRAL shall be set to '1'
@@ -49,8 +51,6 @@
 #else 
 #define BLE_CFG_CENTRAL                                                        0
 #endif
-
-
 
 /**
  * There is one handler per service enabled
@@ -71,5 +71,12 @@
 #define CRS_STM_TX_UUID128 0x00, 0x00, 0xfe, 0x61, 0x8e, 0x22, 0x45, 0x41, 0x9d, 0x4c, 0x21, 0xed, 0xae, 0x82, 0xed, 0x19
 #define CRS_STM_RX_UUID128 0x00, 0x00, 0xfe, 0x62, 0x8e, 0x22, 0x45, 0x41, 0x9d, 0x4c, 0x21, 0xed, 0xae, 0x82, 0xed, 0x19
 
+/******************************************************************************
+ * GAP Service - Appearance
+ ******************************************************************************/
 
-#endif /*__BLE_CONF_H */
+#define BLE_CFG_UNKNOWN_APPEARANCE                  (0)
+#define BLE_CFG_HR_SENSOR_APPEARANCE                (832)
+#define BLE_CFG_GAP_APPEARANCE                      (BLE_CFG_UNKNOWN_APPEARANCE)
+
+#endif /* BLE_CONF_H */

@@ -27,6 +27,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -58,6 +59,9 @@ extern "C" {
 uint8_t stm32wb_at_Init(uint8_t *buff_rx, uint8_t buff_rx_size);
 uint8_t stm32wb_at_Received(uint8_t byte);
 uint8_t stm32wb_at_Process_rx_frame(char * str);
+uint8_t str_to_byte_tab(char *str_in, uint8_t *tab, uint8_t* tab_len);
+
+extern float tab_conv_tx_power[32];
 
 #ifdef __cplusplus
 }

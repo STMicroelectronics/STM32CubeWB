@@ -334,31 +334,31 @@ static enum ZclStatusCodeT ZbZclCommissionServerSetStartup(struct ZbZclClusterT 
     /* ZCL_COMMISSION_SVR_ATTR_SHORT_ADDR */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_SHORT_ADDR, (uint16_t)config->shortAddress);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_EPID */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_EPID, (uint64_t)config->extendedPanId);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_PANID */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_PANID, (uint16_t)config->panId);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_CHANNELMASK */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_CHANNELMASK, (config->channelList.list[0].channelMask & WPAN_PAGE_CHANNELMASK_ALL));
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_STACKPROFILE */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_STACKPROFILE, (uint8_t)config->stackProfile);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL */
@@ -370,60 +370,60 @@ static enum ZclStatusCodeT ZbZclCommissionServerSetStartup(struct ZbZclClusterT 
             break;
 
         default:
-            return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+            return ZCL_STATUS_FAILURE;
     }
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL, (enum ZbStartType)config->startupControl);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_TCADDR */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_TCADDR, (uint64_t)config->security.trustCenterAddress);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_NWKKEY */
     status = ZbZclAttrWrite(clusterPtr, NULL, ZCL_COMMISSION_SVR_ATTR_NWKKEY, (const uint8_t*)&(config->security.networkKey), ZB_SEC_KEYSIZE, ZCL_ATTR_WRITE_FLAG_NORMAL);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_USEINSECJOIN */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_USEINSECJOIN, (bool)config->security.useInsecureRejoin);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_PRECONFLINKKEY */
     status = ZbZclAttrWrite(clusterPtr, NULL, ZCL_COMMISSION_SVR_ATTR_PRECONFLINKKEY, (const uint8_t*)&(config->security.preconfiguredLinkKey), ZB_SEC_KEYSIZE, ZCL_ATTR_WRITE_FLAG_NORMAL);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_NWKKEYSEQNUM */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_NWKKEYSEQNUM, (uint8_t)config->security.networkKeySeqNum);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE, (enum ZbSecKeyTypeT)config->security.networkKeyType);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_NWKMGRADDR */
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_NWKMGRADDR, (uint16_t)config->networkManagerAddress);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     /* ZCL_COMMISSION_SVR_ATTR_SCANATTEMPTS */
     ZbApsGet(clusterPtr->zb, ZB_APS_IB_ID_SCAN_COUNT, &scan_count, sizeof(scan_count));
     status = ZbZclAttrIntegerWrite(clusterPtr, ZCL_COMMISSION_SVR_ATTR_SCANATTEMPTS, (uint8_t)scan_count);
     if (status != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_INCONSISTENT_STARTUP_STATE;
+        return ZCL_STATUS_FAILURE;
     }
 
     return ZCL_STATUS_SUCCESS;
@@ -685,6 +685,33 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
       APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
       break;
     }
+    // print the application name
+    char* __PathProject__ =(strstr(__FILE__, "Zigbee") ? strstr(__FILE__, "Zigbee") + 7 : __FILE__);
+    char *del;
+    if ( (strchr(__FILE__, '/')) == NULL)
+        {del = strchr(__PathProject__, '\\');}
+    else 
+        {del = strchr(__PathProject__, '/');}
+    
+        int index = (int) (del - __PathProject__);
+        APP_DBG("Application flashed: %*.*s",index,index,__PathProject__);
+    
+    //print channel
+    APP_DBG("Channel used: %d", CHANNEL);
+    //print Link Key
+    APP_DBG("Link Key: %.16s", sec_key_ha);
+    //print Link Key value hex   
+    char Z09_LL_string[ZB_SEC_KEYSIZE*3+1];
+    Z09_LL_string[0]=0;
+    for(int str_index=0; str_index < ZB_SEC_KEYSIZE; str_index++)
+      {           
+        sprintf(&Z09_LL_string[str_index*3],"%02x ",sec_key_ha[str_index]);
+      }
+  
+    APP_DBG("Link Key value: %s",Z09_LL_string);
+    //print clusters allocated
+    APP_DBG("Clusters allocated are:");  
+    APP_DBG("Commissioning Server on Endpoint %d",COMMISSIONING_DEST_ENDPOINT);
     APP_DBG("**********************************************************");
   }
 } /* APP_ZIGBEE_CheckWirelessFirmwareInfo */

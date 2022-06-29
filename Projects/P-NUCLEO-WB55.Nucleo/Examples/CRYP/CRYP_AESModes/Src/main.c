@@ -1067,7 +1067,7 @@ static void Display_DecryptedData(uint8_t mode, uint16_t keysize, uint32_t datal
 void data_cmp(uint32_t *EncryptedText, uint32_t *RefText, uint8_t Size)
 {
   /*  Before starting a new process, you need to check the current state of the peripheral;
-      if its busy you need to wait for the end of current transfer before starting a new one.
+      if it's busy you need to wait for the end of current transfer before starting a new one.
       For simplicity reasons, this example is just waiting till the end of the
       process, but application may perform other tasks while transfer operation
       is ongoing. */

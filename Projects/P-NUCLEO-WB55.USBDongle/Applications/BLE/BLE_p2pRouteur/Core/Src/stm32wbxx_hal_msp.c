@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : stm32wbxx_hal_msp.c
-  * Description        : This file provides code for the MSP Initialization 
-  *                      and de-Initialization codes.
+  * @file          : stm32wbxx_hal_msp.c
+  * @brief         : This file provides code for the MSP Initialization 
+  *                  and de-Initialization codes.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -76,6 +76,7 @@ void HAL_MspInit(void)
   /* Peripheral interrupt init */
   /* HSEM_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(HSEM_IRQn, 0, 0);
+  /* HSEM_IRQn interrupt configuration */
   HAL_NVIC_EnableIRQ(HSEM_IRQn);
 
   /* USER CODE BEGIN MspInit 1 */
@@ -146,11 +147,22 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   HAL_DMA_MuxSyncConfigTypeDef pSyncConfig;
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   if(huart->Instance==LPUART1)
   {
   /* USER CODE BEGIN LPUART1_MspInit 0 */
 
   /* USER CODE END LPUART1_MspInit 0 */
+
+  /** Initializes the peripherals clock
+  */
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LPUART1;
+    PeriphClkInitStruct.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_PCLK1;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
     /* Peripheral clock enable */
     __HAL_RCC_LPUART1_CLK_ENABLE();
 
@@ -206,6 +218,16 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
   /* USER CODE BEGIN USART1_MspInit 0 */
 
   /* USER CODE END USART1_MspInit 0 */
+
+  /** Initializes the peripherals clock
+  */
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART1;
+    PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
     /* Peripheral clock enable */
     __HAL_RCC_USART1_CLK_ENABLE();
 
@@ -302,6 +324,61 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
   /* USER CODE BEGIN USART1_MspDeInit 1 */
 
   /* USER CODE END USART1_MspDeInit 1 */
+  }
+
+}
+
+/**
+* @brief RNG MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hrng: RNG handle pointer
+* @retval None
+*/
+void HAL_RNG_MspInit(RNG_HandleTypeDef* hrng)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+  if(hrng->Instance==RNG)
+  {
+  /* USER CODE BEGIN RNG_MspInit 0 */
+
+  /* USER CODE END RNG_MspInit 0 */
+
+  /** Initializes the peripherals clock
+  */
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RNG;
+    PeriphClkInitStruct.RngClockSelection = RCC_RNGCLKSOURCE_HSI48;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    /* Peripheral clock enable */
+    __HAL_RCC_RNG_CLK_ENABLE();
+  /* USER CODE BEGIN RNG_MspInit 1 */
+
+  /* USER CODE END RNG_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief RNG MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hrng: RNG handle pointer
+* @retval None
+*/
+void HAL_RNG_MspDeInit(RNG_HandleTypeDef* hrng)
+{
+  if(hrng->Instance==RNG)
+  {
+  /* USER CODE BEGIN RNG_MspDeInit 0 */
+
+  /* USER CODE END RNG_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_RNG_CLK_DISABLE();
+  /* USER CODE BEGIN RNG_MspDeInit 1 */
+
+  /* USER CODE END RNG_MspDeInit 1 */
   }
 
 }

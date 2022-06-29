@@ -645,10 +645,10 @@ tBleStatus hci_le_create_connection_cancel( void )
   return status;
 }
 
-tBleStatus hci_le_read_white_list_size( uint8_t* White_List_Size )
+tBleStatus hci_le_read_filter_accept_list_size( uint8_t* White_List_Size )
 {
   struct hci_request rq;
-  hci_le_read_white_list_size_rp0 resp;
+  hci_le_read_filter_accept_list_size_rp0 resp;
   Osal_MemSet( &resp, 0, sizeof(resp) );
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x08;
@@ -663,7 +663,7 @@ tBleStatus hci_le_read_white_list_size( uint8_t* White_List_Size )
   return BLE_STATUS_SUCCESS;
 }
 
-tBleStatus hci_le_clear_white_list( void )
+tBleStatus hci_le_clear_filter_accept_list( void )
 {
   struct hci_request rq;
   tBleStatus status = 0;
@@ -677,12 +677,12 @@ tBleStatus hci_le_clear_white_list( void )
   return status;
 }
 
-tBleStatus hci_le_add_device_to_white_list( uint8_t Address_Type,
-                                            const uint8_t* Address )
+tBleStatus hci_le_add_device_to_filter_accept_list( uint8_t Address_Type,
+                                                    const uint8_t* Address )
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  hci_le_add_device_to_white_list_cp0 *cp0 = (hci_le_add_device_to_white_list_cp0*)(cmd_buffer);
+  hci_le_add_device_to_filter_accept_list_cp0 *cp0 = (hci_le_add_device_to_filter_accept_list_cp0*)(cmd_buffer);
   tBleStatus status = 0;
   int index_input = 0;
   cp0->Address_Type = Address_Type;
@@ -701,12 +701,12 @@ tBleStatus hci_le_add_device_to_white_list( uint8_t Address_Type,
   return status;
 }
 
-tBleStatus hci_le_remove_device_from_white_list( uint8_t Address_Type,
-                                                 const uint8_t* Address )
+tBleStatus hci_le_remove_device_from_filter_accept_list( uint8_t Address_Type,
+                                                         const uint8_t* Address )
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  hci_le_remove_device_from_white_list_cp0 *cp0 = (hci_le_remove_device_from_white_list_cp0*)(cmd_buffer);
+  hci_le_remove_device_from_filter_accept_list_cp0 *cp0 = (hci_le_remove_device_from_filter_accept_list_cp0*)(cmd_buffer);
   tBleStatus status = 0;
   int index_input = 0;
   cp0->Address_Type = Address_Type;
@@ -1773,9 +1773,7 @@ tBleStatus hci_le_clear_advertising_sets( void )
 tBleStatus hci_le_set_extended_scan_parameters( uint8_t Own_Address_Type,
                                                 uint8_t Scanning_Filter_Policy,
                                                 uint8_t Scanning_PHYs,
-                                                uint8_t Scan_Type,
-                                                uint16_t Scan_Interval,
-                                                uint16_t Scan_Window )
+                                                const Scan_Param_Phy_t* Scan_Param_Phy )
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
@@ -1788,12 +1786,8 @@ tBleStatus hci_le_set_extended_scan_parameters( uint8_t Own_Address_Type,
   index_input += 1;
   cp0->Scanning_PHYs = Scanning_PHYs;
   index_input += 1;
-  cp0->Scan_Type = Scan_Type;
-  index_input += 1;
-  cp0->Scan_Interval = Scan_Interval;
-  index_input += 2;
-  cp0->Scan_Window = Scan_Window;
-  index_input += 2;
+  Osal_MemCpy( (void*)&cp0->Scan_Param_Phy, (const void*)Scan_Param_Phy, 10 );
+  index_input += 10;
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x08;
   rq.ocf = 0x041;
@@ -1841,14 +1835,7 @@ tBleStatus hci_le_extended_create_connection( uint8_t Initiator_Filter_Policy,
                                               uint8_t Peer_Address_Type,
                                               const uint8_t* Peer_Address,
                                               uint8_t Initiating_PHYs,
-                                              uint16_t Scan_Interval,
-                                              uint16_t Scan_Window,
-                                              uint16_t Conn_Interval_Min,
-                                              uint16_t Conn_Interval_Max,
-                                              uint16_t Conn_Latency,
-                                              uint16_t Supervision_Timeout,
-                                              uint16_t Min_CE_Length,
-                                              uint16_t Max_CE_Length )
+                                              const Init_Param_Phy_t* Init_Param_Phy )
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
@@ -1865,22 +1852,8 @@ tBleStatus hci_le_extended_create_connection( uint8_t Initiator_Filter_Policy,
   index_input += 6;
   cp0->Initiating_PHYs = Initiating_PHYs;
   index_input += 1;
-  cp0->Scan_Interval = Scan_Interval;
-  index_input += 2;
-  cp0->Scan_Window = Scan_Window;
-  index_input += 2;
-  cp0->Conn_Interval_Min = Conn_Interval_Min;
-  index_input += 2;
-  cp0->Conn_Interval_Max = Conn_Interval_Max;
-  index_input += 2;
-  cp0->Conn_Latency = Conn_Latency;
-  index_input += 2;
-  cp0->Supervision_Timeout = Supervision_Timeout;
-  index_input += 2;
-  cp0->Min_CE_Length = Min_CE_Length;
-  index_input += 2;
-  cp0->Max_CE_Length = Max_CE_Length;
-  index_input += 2;
+  Osal_MemCpy( (void*)&cp0->Init_Param_Phy, (const void*)Init_Param_Phy, 48 );
+  index_input += 48;
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x08;
   rq.ocf = 0x043;

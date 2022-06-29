@@ -276,16 +276,16 @@ typedef struct
 } stm32wb_at_BLE_EVT_NONE_t;
 
 /* Exported constants --------------------------------------------------------*/
-typedef enum AT_BLE_CMD_ENUM {
+typedef enum {
   FOREACH_AT_BLE_CMD(GENERATE_ENUM)
 }stm32wb_at_BLE_CMD_t;
 
-typedef enum AT_BLE_EVT_ENUM {
+typedef enum {
   FOREACH_AT_BLE_EVT(GENERATE_ENUM)
 }stm32wb_at_BLE_EVT_t;
 
-extern const char* AT_BLE_CMD_STRING[];
-extern const char* AT_BLE_EVT_STRING[];
+extern const char *AT_BLE_CMD_STRING[BLE_NONE+1];
+extern const char *AT_BLE_EVT_STRING[BLE_EVT_NONE+1];
 
 /* Exported macros -----------------------------------------------------------*/
 

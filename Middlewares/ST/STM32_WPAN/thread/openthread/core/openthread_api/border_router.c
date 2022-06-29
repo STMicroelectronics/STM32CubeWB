@@ -29,8 +29,97 @@
 
 #include "border_router.h"
 
-
 #if OPENTHREAD_CONFIG_BORDER_ROUTER_ENABLE
+
+#if OPENTHREAD_CONFIG_BORDER_ROUTING_ENABLE
+otError otBorderRoutingInit(otInstance *aInstance, uint32_t aInfraIfIndex, bool aInfraIfIsRunning)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_BORDER_ROUTING_INIT;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t) aInfraIfIndex;
+  p_ot_req->Data[1] = (uint32_t) aInfraIfIsRunning;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otBorderRoutingSetEnabled(otInstance *aInstance, bool aEnabled)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_BORDER_ROUTING_SET_ENABLED;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aEnabled;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otBorderRoutingGetOmrPrefix(otInstance *aInstance, otIp6Prefix *aPrefix)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_BORDER_ROUTING_GET_OMR_PREFIX;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aPrefix;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otBorderRoutingGetOnLinkPrefix(otInstance *aInstance, otIp6Prefix *aPrefix)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_BORDER_ROUTING_GET_ONLINK_PREFIX;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aPrefix;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+#if OPENTHREAD_CONFIG_BORDER_ROUTING_NAT64_ENABLE
+otError otBorderRoutingGetNat64Prefix(otInstance *aInstance, otIp6Prefix *aPrefix)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_BORDER_ROUTING_GET_NAT64_PREFIX;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aPrefix;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+#endif // OPENTHREAD_CONFIG_BORDER_ROUTING_NAT64_ENABLE
+#endif //OPENTHREAD_CONFIG_BORDER_ROUTING_ENABLE
 
 otError otBorderRouterGetNetData(otInstance *aInstance, bool aStable, uint8_t *aData, uint8_t *aDataLength)
 {

@@ -9,10 +9,9 @@
  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
  */
@@ -28,7 +27,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stdint.h"
-  
+
 /** @defgroup SEQUENCER sequencer utilities
   * @{
   */
@@ -81,6 +80,52 @@ typedef uint32_t UTIL_SEQ_bm_t;
 
 /* External variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/
+
+/** @defgroup SEQUENCER_Exported_macro SEQUENCER exported macros
+ *  @{
+ */
+
+/**
+ * @brief  This macro can be used to define a task with one parameter
+ *
+ * @note   this is an example of using this macro
+ *
+ *         task prototype definition
+ *         void FUNCTION_NAME(void *Instance)
+ *         {
+ *             uint8_t _instance = *(uint8_t*) Instance;
+ *         }
+ *
+ *         task declaration in the application for two instances
+ *         const uint8_t instance1 = 1;
+ *         const uint8_t instance2 = 2;
+ *         UTIL_SEQ_TaskParamDef(FUNCTION_NAME, instance1)
+ *         UTIL_SEQ_TaskParamDef(FUNCTION_NAME, instance2)
+ *
+ *         task initialization
+ *         UTIL_SEQ_RegTask(1 << 1,  0, UTIL_SEQ_TaskFunction(FUNCTION_NAME,instance2));
+ *         UTIL_SEQ_RegTask(1 << 10, 0, UTIL_SEQ_TaskFunction(FUNCTION_NAME,instance3));
+ *
+ *         Then no change on the management of the task within the application, the instance being managed within the overloaded function
+ *
+ */
+#define UTIL_SEQ_TaskParamDef(_FUNC_,_PARAM_VAL_)                \
+         static void SEQ_FUNC_##_FUNC_##_PARAM_VAL_(void);       \
+         static void SEQ_FUNC_##_FUNC_##_PARAM_VAL_(void)        \
+         {                                                       \
+           static void *SEQ_PARAM_##_FUNC_ = (void*)&_PARAM_VAL_;\
+           _FUNC_(SEQ_PARAM_##_FUNC_);                           \
+         }
+
+/**
+ * @brief  This macro is used to retrieve the function name of the task
+ */
+#define UTIL_SEQ_TaskFunction(_FUNC_,_PARAM_VAL_)  SEQ_FUNC_##_FUNC_##_PARAM_VAL_
+
+/**
+  * @}
+ */
+
 /* Exported functions ------------------------------------------------------- */
 
 /** @defgroup SEQUENCER_Exported_function SEQUENCER exported functions
@@ -146,7 +191,10 @@ void UTIL_SEQ_PostIdle( void );
  *
  * @param Mask_bm list of task (bit mapping) that is be kept in the sequencer list.
  *
- * @note   It shall not be called from an ISR.
+ * @note  It shall not be called from an ISR.
+ * @note  The construction of the task must take into account the fact that there is no counting / protection
+ *        on the activation of the task. Thus, when the task is running, it must perform all the operations
+ *        in progress programmed before its call or manage a reprogramming of the task.
  *
  */
 void UTIL_SEQ_Run( UTIL_SEQ_bm_t Mask_bm );
@@ -261,7 +309,9 @@ void UTIL_SEQ_ClrEvt( UTIL_SEQ_bm_t EvtId_bm );
  *        It shall be a bit mapping where only 1 bit is set
  *
  * @note  It shall not be called from an ISR.
- *
+ * @note  The construction of the task must take into account the fact that there is no counting / protection on the
+ *        event. Thus, when the task is running, it must perform all the operations in progress programmed before its call
+ *        or manage a reprogramming of the task.
  */
 void UTIL_SEQ_WaitEvt( UTIL_SEQ_bm_t EvtId_bm );
 
@@ -308,4 +358,3 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t TaskId_bm, UTIL_SEQ_bm_t EvtWaited_bm );
 
 #endif /*__STM32_SEQ_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

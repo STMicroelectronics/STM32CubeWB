@@ -535,6 +535,11 @@
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</FilePath>
             </File>
             <File>
+              <FileName>stm32wbxx_hal_ipcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</FilePath>
+            </File>            
+            <File>
               <FileName>stm32wbxx_hal_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pwr.c</FilePath>

@@ -10,13 +10,13 @@
       <TargetName>Zigbee_OnOff_Coord_NVM</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx_DFP.1.1.1</PackID>
+          <PackID>Keil.STM32WBxx_DFP.1.0.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002EC03) IRAM2(0x20030000-0x20030FFF) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -185,7 +185,6 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
-            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -352,7 +351,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -405,9 +404,9 @@
               <FilePath>../Core/Src/ee.c</FilePath>
             </File>
             <File>
-              <FileName>hw_flash.c</FileName>
+              <FileName>flash_driver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/hw_flash.c</FilePath>
+              <FilePath>../Core/Src/flash_driver.c</FilePath>
             </File>
             <File>
               <FileName>hw_timerserver.c</FileName>
@@ -720,20 +719,5 @@
     </components>
     <files/>
   </RTE>
-
-  <LayerInfo>
-    <Layers>
-      <Layer>
-        <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc></LayDesc>
-        <LayUrl></LayUrl>
-        <LayKeys></LayKeys>
-        <LayCat></LayCat>
-        <LayLic></LayLic>
-        <LayTarg>0</LayTarg>
-        <LayPrjMark>1</LayPrjMark>
-      </Layer>
-    </Layers>
-  </LayerInfo>
 
 </Project>

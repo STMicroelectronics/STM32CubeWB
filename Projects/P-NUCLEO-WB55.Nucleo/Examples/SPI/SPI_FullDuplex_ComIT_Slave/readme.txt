@@ -20,7 +20,8 @@
 
 @par Example Description 
 
-Data buffer transmission/reception between two boards via SPI using Interrupt mode.
+Data buffer transmission/reception between two boards via SPI using Interrupt mode. This 
+example is for the Slave board.
 
 Board: P-NUCLEO-WB55 (embeds a STM32WB55RG device)
 CLK Pin: PA5 (CN10, pin 11)

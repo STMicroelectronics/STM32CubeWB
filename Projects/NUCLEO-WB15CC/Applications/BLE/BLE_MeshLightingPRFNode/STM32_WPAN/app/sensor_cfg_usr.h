@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __SENSOR_USR_CFG_H
-#define __SENSOR_USR_CFG_H
+#ifndef SENSOR_USR_CFG_H
+#define SENSOR_USR_CFG_H
 
 /**
 * Maximum count of settings that can be supported by a sensor
@@ -274,7 +274,7 @@ typedef struct
     SENSOR2_INIT_PARAMS,\
   }\
 }
-#endif /* __SENSOR_USR_CFG_H */
+#endif /* SENSOR_USR_CFG_H */
 
 /*
 

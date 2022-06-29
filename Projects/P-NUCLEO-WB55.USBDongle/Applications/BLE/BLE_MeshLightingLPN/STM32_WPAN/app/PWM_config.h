@@ -1,17 +1,22 @@
-/******************** (C) COPYRIGHT 2015 STMicroelectronics ********************
-* File Name          : PWM/PWM_config.c
-* Author             : SNM Application Team
-* Version            : V1.0.0
-* Date               : September-2015
-* Description        : Configuration file for PWM
-********************************************************************************
-* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE TIME.
-* AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
-* INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE
-* CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING
-* INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-*******************************************************************************/
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file    PWM_config.h
+  * @author  MCD Application Team
+  * @brief   Header Configuration file for PWM.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
 
 #include "mesh_cfg_usr.h"
 

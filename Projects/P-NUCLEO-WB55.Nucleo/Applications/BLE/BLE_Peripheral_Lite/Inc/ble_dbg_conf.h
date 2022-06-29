@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __BLE_DBG_CONF_H
-#define __BLE_DBG_CONF_H
+#ifndef BLE_DBG_CONF_H
+#define BLE_DBG_CONF_H
 
 /**
  * Enable or Disable traces from BLE
@@ -193,5 +193,5 @@
 #define BLE_DBG_DTS_BUF             PRINT_NO_MESG
 #endif
 
-#endif /*__BLE_DBG_CONF_H */
+#endif /* BLE_DBG_CONF_H */
 

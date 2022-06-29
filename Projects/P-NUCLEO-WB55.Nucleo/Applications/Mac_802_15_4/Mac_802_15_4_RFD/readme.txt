@@ -130,7 +130,7 @@ To get the traces in real time, you can connect an HyperTerminal to the STLink V
     - Parity = none
     - Flow control = none
 
-  You can also use an MAC 802.15.4 over the air sniffer on channel 21 to spy 
+  You can also use an MAC 802.15.4 over the air sniffer on channel 16 to spy 
  MAC 802.15.4 frames exchanged between the devices.
   
 **** START DEMO ****
@@ -149,7 +149,7 @@ MAC PIB is then configured as follow :
     Coordinator Extended Address : 0xACDE480000000001
     Coordinator Short Address    : 0x1122
 
-Once MAC PIB is initialized, FFD is started on channel 21 as an association capable coordinator.
+Once MAC PIB is initialized, FFD is started on channel 16 as an association capable coordinator.
 At this stage the COORDINATOR is waiting for an association request and blue LED (ID 1) is switch on.
 
 On NODE side, the MAC layer is initialized on startup and blue LED (ID 1) is switch on.

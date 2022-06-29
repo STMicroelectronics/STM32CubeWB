@@ -19,8 +19,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HIDS_APP_H
-#define __HIDS_APP_H
+#ifndef HIDS_APP_H
+#define HIDS_APP_H
 
 #ifdef __cplusplus
 extern "C" 
@@ -41,4 +41,4 @@ extern "C"
 }
 #endif
 
-#endif /* __HIDS_APP_H */
+#endif /* HIDS_APP_H */

@@ -134,7 +134,7 @@
                 <option>
                     <name>CoreVariant</name>
                     <version>26</version>
-                    <state>0</state>
+                    <state>39</state>
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
@@ -157,7 +157,7 @@
                 <option>
                     <name>GFPUCoreSlave2</name>
                     <version>26</version>
-                    <state>0</state>
+                    <state>39</state>
                 </option>
                 <option>
                     <name>OGCMSISPackSelectDevice</name>
@@ -198,7 +198,7 @@
                 </option>
                 <option>
                     <name>DSPExtension</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>TrustZone</name>
@@ -1075,7 +1075,7 @@
                 <name>$PROJ_DIR$\..\Core\Src\app_vl53l0x.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\hw_flash.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\flash_driver.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>

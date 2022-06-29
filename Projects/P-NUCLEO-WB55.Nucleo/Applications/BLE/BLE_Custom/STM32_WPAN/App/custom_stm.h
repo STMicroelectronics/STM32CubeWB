@@ -77,29 +77,35 @@ typedef struct
 } Custom_STM_App_Notification_evt_t;
 
 /* USER CODE BEGIN ET */
-  typedef enum
-  {
-    CUSTOM_STM_HRS_HRM_VALUE_FORMAT_UINT16       = 1,
-    CUSTOM_STM_HRS_HRM_SENSOR_CONTACTS_PRESENT   = 2,
-    CUSTOM_STM_HRS_HRM_SENSOR_CONTACTS_SUPPORTED = 4,
-    CUSTOM_STM_HRS_HRM_ENERGY_EXPENDED_PRESENT   = 8,
-    CUSTOM_STM_HRS_HRM_RR_INTERVAL_PRESENT       = 0x10
-  } Custom_STM_HRS_HrmFlags_t;
+typedef enum
+{
+  CUSTOM_STM_HRS_HRM_VALUE_FORMAT_UINT16       = 1,
+  CUSTOM_STM_HRS_HRM_SENSOR_CONTACTS_PRESENT   = 2,
+  CUSTOM_STM_HRS_HRM_SENSOR_CONTACTS_SUPPORTED = 4,
+  CUSTOM_STM_HRS_HRM_ENERGY_EXPENDED_PRESENT   = 8,
+  CUSTOM_STM_HRS_HRM_RR_INTERVAL_PRESENT       = 0x10
+} Custom_STM_HRS_HrmFlags_t;
 
-  typedef enum
-  {
-    CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_OTHER    = 0,
-    CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_CHEST    = 1,
-    CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_WRIST    = 2,
-    CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_FINGER   = 3,
-    CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_HAND     = 4,
-    CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_EAR_LOBE = 5,
-    CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_FOOT     = 6
-  } Custom_STM_HRS_BodySensorLocation_t;
+typedef enum
+{
+  CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_OTHER    = 0,
+  CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_CHEST    = 1,
+  CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_WRIST    = 2,
+  CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_FINGER   = 3,
+  CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_HAND     = 4,
+  CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_EAR_LOBE = 5,
+  CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_FOOT     = 6
+} Custom_STM_HRS_BodySensorLocation_t;
 
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
+extern uint8_t SizeLed_C;
+extern uint8_t SizeSwitch_C;
+extern uint8_t SizeHrs_M;
+extern uint8_t SizeHrs_Sl;
+extern uint8_t SizeHrs_Ctrlp;
+
 /* USER CODE BEGIN EC */
 
 /* USER CODE END EC */
@@ -115,7 +121,7 @@ typedef struct
 /* USER CODE END EM */
 
 /* Exported functions ------------------------------------------------------- */
-void SVCCTL_InitCustomSvc( void );
+void SVCCTL_InitCustomSvc(void);
 void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotification);
 tBleStatus Custom_STM_App_Update_Char(Custom_STM_Char_Opcode_t CharOpcode,  uint8_t *pPayload);
 /* USER CODE BEGIN EF */

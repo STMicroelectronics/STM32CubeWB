@@ -42,7 +42,7 @@ MEMORY
 FLASH (rx)                 : ORIGIN = 0x08000000, LENGTH = 512K
 RAM1 (xrw)                 : ORIGIN = 0x20000008, LENGTH = 0x2FFF8
 RAM_SHARED1 (xrw)          : ORIGIN = 0x20030000, LENGTH = 0x28
-RAM_SHARED2 (xrw)           : ORIGIN = 0x20030028, LENGTH = 10K
+RAM_SHARED2 (xrw)          : ORIGIN = 0x20030028, LENGTH = 0x27D8
 }
 
 /* Define output sections */

@@ -189,6 +189,9 @@ MOBLE_RESULT Generic_OnOff_Set(MOBLEUINT8 const *pOnOff_param,
   Generic_OnOffParam_t Generic_OnOffParam; 
   Generic_OnOffParam.TargetOnOffState = pOnOff_param[0];
   Generic_OnOffParam.Generic_TID = pOnOff_param[1];
+  Generic_OnOffParam.Transition_Time = 0;
+  Generic_OnOffParam.Delay_Time = 0;
+
   /*  
   Checking for optional parameters
   length > 2 , 4 values  received(OnOff status, TID, Trasmisition time(optional),
@@ -1183,7 +1186,7 @@ MOBLE_RESULT Generic_TransitionBehaviour(MOBLEUINT8 *GetValue,
       Generic_ModelFlag[elementIndex].Generic_Trnsn_Cmplt = MOBLE_TRUE;
       Publication1SecFlag.TimeStampFlag = MOBLE_FALSE;  
     }
-    TRACE_M(TF_GENERIC_M, "Inside virtual application at %d, Current state 0x%.2x, Target state 0x%.2x, Remaining Time 0x%.2x \n\r", 
+    TRACE_M(TF_GENERIC_M, "Inside virtual application at %ld, Current state 0x%.2x, Target state 0x%.2x, Remaining Time 0x%.2x \n\r",
             Clock_Time(), Generic_TemporaryStatus[elementIndex].PresentValue16,Generic_TemporaryStatus[elementIndex].TargetValue16,Generic_TemporaryStatus[elementIndex].RemainingTime);                     
   }
   return MOBLE_RESULT_SUCCESS;       
@@ -1221,7 +1224,7 @@ void Generic_GetStepValue(MOBLEUINT8 stepParam,
     Generic_TimeParam[elementIndex].StepValue = (Generic_TimeParam[elementIndex].StepValue * TRANSITION_SCALER);
   }
   
-  TRACE_M(TF_GENERIC_M," step resolution 0x%.2x, number of step 0x%.2x \r\n",
+  TRACE_M(TF_GENERIC_M," step resolution 0x%.2lx, number of step 0x%.2x \r\n",
           Generic_TimeParam[elementIndex].Res_Value , Generic_TimeParam[elementIndex].StepValue );   
 }
 
@@ -1473,7 +1476,7 @@ void Light_CtlTemp_GenericLevelBinding(Light_CtlStatus_t* bCtlTempParam, MOBLEUI
   */
   MOBLEUINT32 productValue;
   productValue = (bCtlTempParam->PresentCtlTemperature16 - MIN_CTL_TEMP_RANGE) * 65535;
-  TRACE_M(TF_GENERIC_M, "\r\n ******** PresentCtlTemperature16 = %ld,  ********\r\n\r\n", bCtlTempParam->PresentCtlTemperature16);
+  TRACE_M(TF_GENERIC_M, "\r\n ******** PresentCtlTemperature16 = %d,  ********\r\n\r\n", bCtlTempParam->PresentCtlTemperature16);
   TRACE_M(TF_GENERIC_M, "\r\n ******** productValue = %ld,  ********\r\n\r\n", productValue); 
  
   Generic_LevelStatus[elementIndex].Present_Level16 = (MOBLEINT16)(round((productValue / (float)(MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE))) - 32768);
@@ -1493,7 +1496,7 @@ void Light_HslHue_GenericLevelBinding(Light_HslStatus_t* bHslHueParam,
                                       MOBLEUINT8 elementIndex)
 { 
   /*  6.1.4.1.1 Binding with the Generic Level state
-  Generic Level = Light HSL Hue – 32768
+  Generic Level = Light HSL Hue ï¿½ 32768
   */
   Generic_LevelStatus[elementIndex].Present_Level16 = (MOBLEINT16)(bHslHueParam->PresentHslHueLightness16 - 32768);
  

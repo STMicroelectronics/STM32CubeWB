@@ -1,11 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
 * @file    lp_timer.h
+  * @author  MCD Application Team
 * @brief   Header for lp_timer.c module
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -14,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __LP_TIMER_H
-#define __LP_TIMER_H
+#ifndef LP_TIMER_H
+#define LP_TIMER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,4 +57,4 @@ extern "C" {
 }
 #endif
 
-#endif /*__LP_TIMER_H */
+#endif /* LP_TIMER_H */

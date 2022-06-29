@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TL_DBG_CONF_H
-#define __TL_DBG_CONF_H
+#ifndef TL_DBG_CONF_H
+#define TL_DBG_CONF_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -130,5 +130,5 @@ extern "C" {
 }
 #endif
 
-#endif /*__TL_DBG_CONF_H */
+#endif /* TL_DBG_CONF_H */
 

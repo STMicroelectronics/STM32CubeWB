@@ -50,7 +50,7 @@
 
         EXTERN  __iar_program_start
         EXTERN  SystemInit
-        EXTERN  standby_boot_mng
+        EXTERN  STBY_BootManager
         PUBLIC  __vector_table
 
         DATA
@@ -144,15 +144,17 @@ __vector_table
 ;;
         THUMB
 
-        IMPORT  backup_MSP
+        IMPORT  STBY_BackupMSP
         EXPORT  CPUcontextSave
         PUBWEAK Reset_Handler
         SECTION .text:CODE:NOROOT:REORDER(2)
 Reset_Handler
 /* If we exit from standby mode, restore CPU context and jump to asleep point. */
-        BL      standby_boot_mng
+        BL      STBY_BootManager
         CMP     R0, #1
         BEQ     CPUcontextRestore
+/* buffer for local variables (up to 10)from STBY_BootManager*/
+        SUB     SP, SP, #0x28
 /* end of specific code section for standby */
         LDR     R0, =SystemInit
         BLX     R0
@@ -160,16 +162,10 @@ Reset_Handler
         BX      R0
 /* These 2 functions are designed to save and then restore CPU context. */        
 CPUcontextSave
-        PUSH   { r4 - r7, lr }       /* store R4-R7 and LR (5 words) onto the stack */
-        MOV    R3, R8                /* mov thread {r8 - r12} to {r3 - r7} */
-        MOV    R4, R9
-        MOV    R5, R10
-        MOV    R6, R11        
-        MOV    R7, R12        
-        PUSH   {R3-R7}                 /* store R8-R12 (5 words) onto the stack */
-        LDR    R4, =backup_MSP         /* load address of backup_MSP into R4 */
+        PUSH   { R4 - R12, LR }        /* store R4 to R12 and LR (10 words) onto the stack */
+        LDR    R4, =STBY_BackupMSP     /* load address of STBY_BackupMSP into R4 */
         MOV    R3, SP                  /* load the stack pointer into R3 */
-        STR    R3, [R4]                /* store the MSP into backup_MSP */              
+        STR    R3, [R4]                /* store the MSP into STBY_BackupMSP */              
         DSB
         WFI                            /* all saved, trigger deep sleep */
 
@@ -178,16 +174,10 @@ CPUcontextRestore
    * execute a context restore and end up where we left off with no
    * ill effects.  Normally at this point the core will either be
    * powered off or reset (depending on the deep sleep level). */
-        LDR    R4, =backup_MSP       /* load address of backup_MSP into R4 */
-        LDR    R4, [R4]              /* load the SP from backup_MSP */
-        MOV    SP, R4                /* restore the SP from R4 */
-        POP   {R3-R7}                /* load R8-R12 (5 words) from the stack */
-        MOV    R8, R3                /* mov {r3 - r7} to {r8 - r12} */
-        MOV    R9, R4
-        MOV    R10, R5
-        MOV    R11, R6
-        MOV    R12, R7
-        POP   { R4 - R7, PC }        /*load R4-R7 and PC (5 words) from the stack */
+        LDR    R4, =STBY_BackupMSP     /* load address of STBY_BackupMSP into R4 */
+        LDR    R4, [R4]                /* load the SP from STBY_BackupMSP */
+        MOV    SP, R4                  /* restore the SP from R4 */
+        POP    { R4 - R12, PC }        /* load R4 to R12 and PC (10 words) from the stack */
 /* end of specific code section for standby */
 
         PUBWEAK NMI_Handler

@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    appli_mesh.h
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Header file for the user application file 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_MESH_H
-#define __APPLI_MESH_H
+#ifndef APPLI_MESH_H
+#define APPLI_MESH_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -79,7 +81,9 @@ typedef struct
 
 extern NodeUnderProvisionParam_t NodeUnderProvisionParam;
 extern MOBLEUINT16 Appli_SIG_Models[APPLICATION_NUMBER_OF_ELEMENTS][APPLICATION_SIG_MODELS_MAX_COUNT];
+#ifdef ENABLE_VENDOR_MODEL_SERVER  
 extern MOBLEUINT32 Appli_Vendor_Models[APPLICATION_NUMBER_OF_ELEMENTS][APPLICATION_VENDOR_MODELS_MAX_COUNT];
+#endif
 /* Exported Functions Prototypes ---------------------------------------------*/
 MOBLE_RESULT Appli_BleStackInitCb(void);
 MOBLE_RESULT Appli_BleSetTxPowerCb(void);
@@ -126,6 +130,6 @@ MOBLEUINT16 PwmValueMapping(MOBLEUINT16 setValue , MOBLEUINT16 maxRange , MOBLEI
 MOBLE_RESULT BLEMesh_ScanDevices(neighbor_params_t *unprovDeviceArray, MOBLEUINT8 *noOfUnprovDevices);
 MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray, MOBLEUINT16 index);
 
-#endif /* __APPLI_MESH_H */
+#endif /* APPLI_MESH_H */
 
 

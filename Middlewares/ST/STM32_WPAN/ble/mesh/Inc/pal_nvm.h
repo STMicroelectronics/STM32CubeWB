@@ -48,7 +48,6 @@ typedef enum
 
 /* Exported Functions Prototypes ---------------------------------------------*/
 MOBLE_RESULT PalNvmRead(MOBLEUINT32 address,
-                        MOBLEUINT32 offset,
                         void *buf, 
                         MOBLEUINT32 size, 
                         MOBLEBOOL backup);
@@ -56,17 +55,15 @@ MOBLE_RESULT PalNvmBackupRead(MOBLEUINT32 address,
                               void *buf, 
                               MOBLEUINT32 size);
 MOBLE_RESULT PalNvmWrite(MOBLEUINT32 address,
-                         MOBLEUINT32 offset,
                          void const *buf, 
                          MOBLEUINT32 size);
 MOBLEBOOL    PalNvmIsWriteProtected(void);
 MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
-                           MOBLEUINT32 offset,
                            void const *buf, 
                            MOBLEUINT32 size, 
                            MOBLE_NVM_COMPARE* result);
 MOBLE_RESULT PalNvmErase(MOBLEUINT32 address,
-                         MOBLEUINT32 offset);
+                         MOBLEUINT8 nb_pages);
 MOBLE_RESULT PalNvmProcess(void);
 
 #endif /* __PAL_NVM_H */

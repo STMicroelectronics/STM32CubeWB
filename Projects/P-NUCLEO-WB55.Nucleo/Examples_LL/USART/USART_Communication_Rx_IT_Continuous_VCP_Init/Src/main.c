@@ -82,7 +82,7 @@ void     LED_Blinking(uint32_t Period);
 void     WaitForUserButtonPress(void);
 void     PrintInfo(uint8_t *String, uint32_t Size);
 void     UserDataTreatment(uint8_t *DataBuffer, uint32_t Size);
-void   StartReception(void);
+void     StartReception(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -103,9 +103,8 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
   /* System interrupt init*/
+  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* USER CODE BEGIN Init */
 

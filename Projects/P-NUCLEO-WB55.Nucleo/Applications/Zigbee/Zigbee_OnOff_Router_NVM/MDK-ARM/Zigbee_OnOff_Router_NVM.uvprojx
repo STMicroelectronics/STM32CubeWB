@@ -404,9 +404,9 @@
               <FilePath>../Core/Src/ee.c</FilePath>
             </File>
             <File>
-              <FileName>hw_flash.c</FileName>
+              <FileName>flash_driver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/hw_flash.c</FilePath>
+              <FilePath>../Core/Src/flash_driver.c</FilePath>
             </File>
             <File>
               <FileName>hw_timerserver.c</FileName>

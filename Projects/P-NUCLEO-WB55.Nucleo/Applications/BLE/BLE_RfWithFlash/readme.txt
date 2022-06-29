@@ -1,11 +1,11 @@
 /**
-  @page BLE_RfWithFlash example
+  @page BLE_RfWithFlash application
   
   @verbatim
   ******************************************************************************
   * @file    BLE/BLE_RfWithFlash/readme.txt 
   * @author  MCD Application Team
-  * @brief   Description of the BLE_RfWithFlash example
+  * @brief   Description of the BLE_RfWithFlash application
   ******************************************************************************
   *
   * Copyright (c) 2020-2021 STMicroelectronics.
@@ -18,15 +18,14 @@
   ******************************************************************************
   @endverbatim
 
-@par Example Description
+@par application Description
 
 How to demonstrate the capability to erase/write the flash while a Point-to-Point communication using BLE component is active. 
 
-This project is built on top of BLE_p2pServer where SW3 has been added to erase/write in flash and SW1 has been modified to enable/disable
-timing protection versus flash activity from CPU1.
-The flash driver implements the algorithm described in AN5289 - Building a Wireless application.
-The BLE_RfWithFlash shall be downloaded in a STM32WB55xx board acting as a GATT server.
-The client could be either a phone with the ST BLE Sensor application or the BLE_P2PClient application downloaded on a STM32WB55xx board.
+@note The flash driver implements the algorithm described in AN5289 - Building a Wireless application.
+      The BLE_RfWithFlash shall be downloaded in a STM32WB55xx board acting as a GATT server.
+      
+@note The client could be either a phone with the ST BLE Sensor application or the BLE_P2PClient application downloaded on a STM32WB55xx board.
 
 @par Keywords
 
@@ -34,62 +33,65 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, Dual core
 
 @par Directory contents 
   
-  - BLE/BLE_RfWithFlash/Core/Inc/stm32wbxx_hal_conf.h	        HAL configuration file
-  - BLE/BLE_RfWithFlash/Core/Inc/stm32wbxx_it.h          		Interrupt handlers header file
-  - BLE/BLE_RfWithFlash/Core/Inc/main.h                  		Header for main.c module
-  - BLE/BLE_RfWithFlash/STM32_WPAN/App/app_ble.h           		Header for app_ble.c module
-  - BLE/BLE_RfWithFlash/Core/Inc/app_common.h            		Header for all modules with common definition
-  - BLE/BLE_RfWithFlash/Core/Inc/app_conf.h              		Parameters configuration file of the application
-  - BLE/BLE_RfWithFlash/Core/Inc/app_entry.h            		Parameters configuration file of the application
-  - BLE/BLE_RfWithFlash/STM32_WPAN/App/ble_conf.h            	BLE Services configuration
-  - BLE/BLE_RfWithFlash/STM32_WPAN/App/ble_dbg_conf.h        	BLE Traces configuration of the BLE services
-  - BLE/BLE_RfWithFlash/STM32_WPAN/App/p2p_server_app.h      	Header for p2p_server_app.c module
-  - BLE/BLE_RfWithFlash/Core/Inc/hw_conf.h           			Configuration file of the HW
-  - BLE/BLE_RfWithFlash/Core/Inc/utilities_conf.h    			Configuration file of the utilities
-  - BLE/BLE_RfWithFlash/Core/Src/stm32wbxx_it.c          		Interrupt handlers
-  - BLE/BLE_RfWithFlash/Core/Src/main.c                  		Main program
-  - BLE/BLE_RfWithFlash/Core/Src/system_stm32wbxx.c      		stm32wbxx system source file
-  - BLE/BLE_RfWithFlash/STM32_WPAN/App/app_ble.c      			BLE Profile implementation
-  - BLE/BLE_RfWithFlash/Core/Src/app_entry.c      				Initialization of the application
-  - BLE/BLE_RfWithFlash/STM32_WPAN/App/p2p_server_app.c   		P2P Server application
-  - BLE/BLE_RfWithFlash/STM32_WPAN/Target/hw_ipcc.c      		IPCC Driver
-  - BLE/BLE_RfWithFlash/Core/Src/stm32_lpm_if.c					Low Power Manager Interface
-  - BLE/BLE_RfWithFlash/Core/Src/hw_timerserver.c 				Timer Server based on RTC
-  - BLE/BLE_RfWithFlash/Core/Src/hw_uart.c 						UART Driver
-  - BLE/BLE_RfWithFlash/Core/Src/flash_driver.c 				Flash Driver (implements the algorithm from AN5289)
-  - BLE/BLE_RfWithFlash/Core/Inc/flash_driver.h 				Interface to be used to erase/write in Flash
-  
+  - BLE/BLE_RfWithFlash/Core/Inc/app_common.h                Header for all modules with common definition
+  - BLE/BLE_RfWithFlash/Core/Inc/app_conf.h                  Application configuration file for STM32WPAN Middleware
+  - BLE/BLE_RfWithFlash/Core/Inc/app_debug.h                 Header for app_debug.c module
+  - BLE/BLE_RfWithFlash/Core/Inc/app_entry.h                 Interface to the application
+  - BLE/BLE_RfWithFlash/Core/Inc/flash_driver.h              Dual core Flash driver interface
+  - BLE/BLE_RfWithFlash/Core/Inc/hw_conf.h                   Configuration file of the HW
+  - BLE/BLE_RfWithFlash/Core/Inc/hw_if.h                     Hardware Interface
+  - BLE/BLE_RfWithFlash/Core/Inc/main.h                      Header for main.c module
+  - BLE/BLE_RfWithFlash/Core/Inc/stm32wbxx_hal_conf.h        HAL configuration file
+  - BLE/BLE_RfWithFlash/Core/Inc/stm32wbxx_it.h              Interrupt handlers header file
+  - BLE/BLE_RfWithFlash/Core/Inc/stm32_lpm_if.h              Header for stm32_lpm_if.c module (device specific LP management)
+  - BLE/BLE_RfWithFlash/Core/Inc/utilities_conf.h            Configuration file of the utilities
+  - BLE/BLE_RfWithFlash/STM32_WPAN/App/app_ble.h             Header for app_ble.c module
+  - BLE/BLE_RfWithFlash/STM32_WPAN/App/ble_conf.h            BLE Services configuration
+  - BLE/BLE_RfWithFlash/STM32_WPAN/App/ble_dbg_conf.h        BLE Traces configuration of the BLE services
+  - BLE/BLE_RfWithFlash/STM32_WPAN/App/p2p_server_app.h      Header for p2p_server_app.c module
+  - BLE/BLE_RfWithFlash/STM32_WPAN/App/tl_dbg_conf.h         Debug configuration file for stm32wpan transport layer interface
+  - BLE/BLE_RfWithFlash/Core/Src/app_debug.c                 Debug capabilities source file for STM32WPAN Middleware
+  - BLE/BLE_RfWithFlash/Core/Src/app_entry.c                 Initialization of the application
+  - BLE/BLE_RfWithFlash/Core/Inc/flash_driver.c              Dual core Flash driver interface
+  - BLE/BLE_RfWithFlash/Core/Src/hw_timerserver.c            Timer Server based on RTC
+  - BLE/BLE_RfWithFlash/Core/Src/hw_uart.c                   UART Driver
+  - BLE/BLE_RfWithFlash/Core/Src/main.c                      Main program
+  - BLE/BLE_RfWithFlash/Core/Src/stm32wbxx_hal_msp.c         This file provides code for the MSP Initialization and de-Initialization
+  - BLE/BLE_RfWithFlash/Core/Src/stm32wbxx_it.c              Interrupt handlers
+  - BLE/BLE_RfWithFlash/Core/Src/stm32_lpm_if.c              Low Power Manager Interface
+  - BLE/BLE_RfWithFlash/Core/Src/system_stm32wbxx.c          stm32wbxx system source file
+  - BLE/BLE_RfWithFlash/STM32_WPAN/App/app_ble.c             BLE Profile implementation
+  - BLE/BLE_RfWithFlash/STM32_WPAN/App/p2p_server_app.c      Peer to peer Server Application
+  - BLE/BLE_RfWithFlash/STM32_WPAN/Target/hw_ipcc.c          IPCC Driver
+
 @par Hardware and Software environment
 
-    - This application runs on STM32WB55xx devices.
+  - This application runs on STM32WB55xx devices.
     
-    - Nucleo board (MB1355C) Set-up    
-       - Connect the Nucleo Board to your PC with a USB cable type A to mini-B to ST-LINK connector (USB_STLINK).
-       - Please ensure that the ST-LINK connectors and jumpers are fitted.
+  - This application has been tested with an STMicroelectronics P-NUCLEO-WB55
+    board and can be easily tailored to any other supported device 
+    and development board.
 
 @par How to use it ? 
 
 This application requires having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
-Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
 Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the detailed procedure to change the
-Wireless Coprocessor binary.  
+Wireless Coprocessor binary or see following wiki for Hardware setup:
+https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_BLE_Hardware_Setup
    
 In order to make the program work, you must do the following :
- - Open your preferred toolchain 
- - Rebuild all files and load the image into Target memory
+ - Open your toolchain 
+ - Rebuild all files and flash the board with the executable file
  - OR use the BLE_RfWithFlash_reference.hex from Binary directory
+ - Run the application
 
 First demonstration
-On the android/ios device, enable the Bluetooth communications, and if not done before,
- - Install the ST BLE Profile application on the android device
-	https://play.google.com/store/apps/details?id=com.stm.bluetoothlevalidation&hl=en
-    https://itunes.apple.com/fr/App/st-ble-profile/id1081331769?mt=8
-
+On the android/ios device, enable the Bluetooth communication, and if not done before,
  - Install the ST BLE Sensor application on the ios/android device
-	https://play.google.com/store/apps/details?id=com.st.bluems
-	https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
+      https://play.google.com/store/apps/details?id=com.st.bluems
+      https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
 
  - Power on the Nucleo board with the BLE_RfWithFlash application
  - The Peripheral device (BLE_RfWithFlash) starts advertising (during 1 minute), the green led blinks for each advertising event.
@@ -137,8 +139,9 @@ Second demonstration - The phone may be replaced by the BLE_p2pClient applicatio
 
    For more details refer to the Application Note: 
   AN5289 - Building a Wireless application
-  
 	
+Available Wiki pages:
+  - https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_overview
  
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

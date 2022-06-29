@@ -152,9 +152,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/ee.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/Core/hw_flash.c</name>
+			<name>Application/User/Core/flash_driver.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/hw_flash.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/flash_driver.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/hw_timerserver.c</name>

@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
- * @file    appli_config_client.c
- * @author  BLE Mesh Team
- * @brief   Application interface for Config CLient Mesh Model
+  * @file    appli_config_client.c
+  * @author  MCD Application Team
+  * @brief   Application interface for Config CLient Mesh Model
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"
@@ -22,8 +24,8 @@
 #include "appli_generic.h"
 #include "appli_light.h"
 #include "common.h"
-#include "mesh_cfg.h"
 #include "mesh_cfg_usr.h"
+#include "mesh_cfg.h"
 #include "appli_nvm.h"
 #include "config_client.h"
 #include "appli_config_client.h"
@@ -780,14 +782,14 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
   {
     /* Waiting for the Provisioning to be done before to Start the 
        node configuration procedure */
-    return result;
+      return result;
   }
   
   if (eServerRespRecdState == NodeNoResponse_State) 
   {
     /* No Response received from Node under Provisioning for some config 
        messages. So, no need to do the trials  */
-    return MOBLE_RESULT_FAIL;
+      return MOBLE_RESULT_FAIL;
   }
   
   if (eClientSendMsgState == ProvisioningDone_State) 
@@ -799,12 +801,12 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
   
   else if (eClientSendMsgState == CompositionGet_State)
   {
-    nowClockTime = Clock_Time();
-    if( (nowClockTime - NodeInfo.Initial_time) < CONFIGURATION_START_DELAY)
-    {
-      return result;
-    }
-    /*------------- Add the delay before to start the configuration messages */
+     nowClockTime = Clock_Time();
+     if( (nowClockTime - NodeInfo.Initial_time) < CONFIGURATION_START_DELAY)
+     {
+       return result;
+     }
+     /*------------- Add the delay before to start the configuration messages */
     
     if (eServerRespRecdState == CompositionRecdCompleted_State)
     {
@@ -828,8 +830,8 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
     else
     {
       /* Continue the AppKeyAdd servicing */
-      Appli_ConfigClient_DefaultAppKeyAdd();
-    }
+    Appli_ConfigClient_DefaultAppKeyAdd();
+  }
   }  
   
   else if (eClientSendMsgState == AppBindModel_State)
@@ -841,9 +843,9 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
     }
     else
     {
-      /* Continue the AppKeyBIND servicing */
-      Appli_ConfigClient_DefaultAppKeyBind();
-    }
+       /* Continue the AppKeyBIND servicing */
+    Appli_ConfigClient_DefaultAppKeyBind();
+  }
   }
   
   else if (eClientSendMsgState == AddSubscription_State)
@@ -856,7 +858,7 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
     else 
     {
       /* Continue the Subscription add servicing */
-      AppliConfigClient_SubscriptionAddDefault();
+    AppliConfigClient_SubscriptionAddDefault();
     }    
   }
 
@@ -871,7 +873,7 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
     else 
     {
       /* Continue the Publication add servicing */
-      AppliConfigClient_PublicationSetDefault();
+    AppliConfigClient_PublicationSetDefault();
     }
   }
   
@@ -1038,16 +1040,16 @@ MOBLE_RESULT Appli_ConfigClient_DefaultAppKeyBind (void)
                                                &indexSIGmodels, 
                                                numSIGmodels);
         
-      /* Switch to NodeSendMessage_State */
+        /* Switch to NodeSendMessage_State */
         eServerRespRecdState = NodeSendMessage_State;
       break;
 
     case NodeNextVendorModel_State:
         modelIdentifier = GetVendorModelToBindApp(elementIndex,indexVendormodels );
-        /* Switch to NodeSendMessage_State */
+      /* Switch to NodeSendMessage_State */
         eServerRespRecdState = NodeSendMessage_State;
       break;
-
+      
      case NodeSendMessage_State:
       /* Start the AppBindModel_State message  */
         elementAddress = GetServerElementAddress(elementIndex);
@@ -1145,62 +1147,62 @@ MOBLE_RESULT Appli_ConfigClient_DefaultAppKeyBind (void)
 */ 
 MOBLE_RESULT AppliConfigClient_SubscriptionAddDefault (void) 
 {
-  static MOBLEUINT32 modelIdentifier;
-  static MOBLEUINT16 elementAddress;
-  static MOBLEUINT8 elementIndex;
-  static MOBLEUINT8  indexSIGmodels;
-  static MOBLEUINT8  indexVendormodels;
-  MOBLEUINT8  numSIGmodels;
-  MOBLEUINT8  numVendorModels;
-  MOBLEUINT8  numofElements;        
-  MOBLEUINT16 address = DEFAULT_GROUP_ADDR;
-  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
-  MOBLEUINT8 retry; 
+   static MOBLEUINT32 modelIdentifier;
+   static MOBLEUINT16 elementAddress;
+   static MOBLEUINT8 elementIndex;
+   static MOBLEUINT8  indexSIGmodels;
+   static MOBLEUINT8  indexVendormodels;
+   MOBLEUINT8  numSIGmodels;
+   MOBLEUINT8  numVendorModels;
+   MOBLEUINT8  numofElements;        
+   MOBLEUINT16 address = DEFAULT_GROUP_ADDR;
+   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+   MOBLEUINT8 retry; 
       
-  switch(eServerRespRecdState)
-  {
+    switch(eServerRespRecdState)
+    {
     case NodeIdle_State:
       /* Start the SubscriptionAdd message  */
 
-      elementIndex = 0; /* Initialize it for the complete loop */
-      indexSIGmodels = 0; /* Initialize it for the complete loop */
-      indexVendormodels = 0;
+        elementIndex = 0; /* Initialize it for the complete loop */
+        indexSIGmodels = 0; /* Initialize it for the complete loop */
+        indexVendormodels = 0;
 
     case NodeNextSigModel_State:
-      numSIGmodels = GetCountSIGModelToSubscribe(elementIndex);
-      modelIdentifier = GetSIGModelToSubscribe(elementIndex,
+        numSIGmodels = GetCountSIGModelToSubscribe(elementIndex);
+        modelIdentifier = GetSIGModelToSubscribe(elementIndex,
                                                &indexSIGmodels, 
                                                numSIGmodels);
 
-      /* Switch to NodeSendMessage_State */
-      eServerRespRecdState = NodeSendMessage_State;
+        /* Switch to NodeSendMessage_State */
+        eServerRespRecdState = NodeSendMessage_State;
       break;
 
     case NodeNextVendorModel_State:
-      modelIdentifier = GetVendorModelToSubscribe(elementIndex,indexVendormodels );
+        modelIdentifier = GetVendorModelToSubscribe(elementIndex,indexVendormodels );
       /* Switch to NodeSendMessage_State */
-      eServerRespRecdState = NodeSendMessage_State;
+        eServerRespRecdState = NodeSendMessage_State;
       break;
-
+      
     case NodeSendMessage_State:
-      elementAddress = GetServerElementAddress(elementIndex);
-      ConfigClient_SaveMsgSendingTime();
+        elementAddress = GetServerElementAddress(elementIndex);
+        ConfigClient_SaveMsgSendingTime();
 
-      /* Switch to InProgress_State */
-      eServerRespRecdState = InProgress_State;        
-      ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
-
+         /* Switch to InProgress_State */
+        eServerRespRecdState = InProgress_State;        
+        ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
+      
       break;
 
        
     case SubscriptionAck_State:
-      /* Need to check if all SIG Models are subscribed ? */
+       /* Need to check if all SIG Models are subscribed ? */
       ConfigClient_ResetTrials();
 
       numSIGmodels = GetCountSIGModelToSubscribe(elementIndex);
       numVendorModels = GetCountVendorModelToSubscribe(elementIndex);
       elementAddress = GetServerElementAddress(elementIndex);
-
+      
       if (indexSIGmodels < numSIGmodels )
       { /* Even when all SIG Models are serviced, we need to start for Vendor Models */
         indexSIGmodels++; 
@@ -1211,16 +1213,16 @@ MOBLE_RESULT AppliConfigClient_SubscriptionAddDefault (void)
         indexVendormodels++; /* When SIG Models and Vendor Models are processed
                                 the loop condition will become true */
       }
-
+      
       if (indexSIGmodels < numSIGmodels )
       {/* if index is still less, then we have scope of reading 1 more index */
-
+       
         /* Get the Next Model and Bind it again till all SIG Models are binded */
         eServerRespRecdState = NodeNextSigModel_State;
-
+        
       }
       else if (indexVendormodels < numVendorModels)
-      {
+{
         eServerRespRecdState = NodeNextVendorModel_State;
       }
       else
@@ -1239,8 +1241,8 @@ MOBLE_RESULT AppliConfigClient_SubscriptionAddDefault (void)
         
           eServerRespRecdState = NodeNextSigModel_State; 
           indexSIGmodels =0; /* Reset the variable again for the next element */
-          indexVendormodels = 0;
-        }
+        indexVendormodels = 0;
+      }
       }
       break;
       
@@ -1248,7 +1250,7 @@ MOBLE_RESULT AppliConfigClient_SubscriptionAddDefault (void)
       /* Just wait and let the messages be completed 
          or look for timeout */
       retry = ConfigClient_ChkRetries();
-
+      
       if (retry == CLIENT_TX_RETRY_ENDS)
       {
         eServerRespRecdState = NodeNoResponse_State;
@@ -1262,8 +1264,8 @@ MOBLE_RESULT AppliConfigClient_SubscriptionAddDefault (void)
     default:
       /* Error State */
       break;
-  }
-
+    }
+    
   return result;
 }
 
@@ -1439,15 +1441,15 @@ MOBLE_RESULT AppliConfigClient_SelfPublicationSetDefault (void)
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   
   for (elementIndex=0; elementIndex < APPLICATION_NUMBER_OF_ELEMENTS; elementIndex++ )
-  {  
+  { 
     /*Checking for SIG Models*/
     for (MOBLEUINT8 index=0; index < APPLICATION_SIG_MODELS_MAX_COUNT;  index++)
     {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
 
-      modelIdentifier = (MOBLEUINT16) Appli_SIG_Models[elementIndex][index];  
-    
+      modelIdentifier = (MOBLEUINT16) Appli_SIG_Models[elementIndex][index]; 
+  
       if(modelIdentifier == NO_MODEL_AVLBL)
       {
         break;
@@ -1474,31 +1476,33 @@ MOBLE_RESULT AppliConfigClient_SelfPublicationSetDefault (void)
       }
     }
     
+#ifdef ENABLE_VENDOR_MODEL_SERVER  
     /*Checking for VENDOR Models*/
     for (MOBLEUINT8 index=0; index < APPLICATION_VENDOR_MODELS_MAX_COUNT;  index++)
-    {
+  {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
 
       modelIdentifier = (MOBLEUINT32) Appli_Vendor_Models[elementIndex][index]; 
-      
+    
       if(modelIdentifier == NO_MODEL_AVLBL)
       {
         break;
       }
       else
       {
-        ConfigClient_PublicationSet(elementAddress,
-                                    publishAddress,
-                                    appKeyIndex,
-                                    credentialFlag,
-                                    publishTTL,
-                                    publishPeriod,
-                                    publishRetransmitCount,
-                                    publishRetransmitIntervalSteps,
-                                    modelIdentifier);
-      }
+    ConfigClient_PublicationSet(elementAddress,
+                                publishAddress,
+                                appKeyIndex,
+                                credentialFlag,
+                                publishTTL,
+                                publishPeriod,
+                                publishRetransmitCount,
+                                publishRetransmitIntervalSteps,
+                                modelIdentifier);
+  }
     }
+#endif  
   }
   return result;
 }
@@ -1526,8 +1530,8 @@ MOBLE_RESULT AppliConfigClient_SelfSubscriptionSetDefault (void)
     {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
-        
-      modelIdentifier = (MOBLEUINT16) Appli_SIG_Models[elementIndex][index];  
+
+      modelIdentifier = (MOBLEUINT16) Appli_SIG_Models[elementIndex][index]; 
       
       /*If limit is reaching to no models*/
       if(modelIdentifier == NO_MODEL_AVLBL)
@@ -1546,13 +1550,14 @@ MOBLE_RESULT AppliConfigClient_SelfSubscriptionSetDefault (void)
         ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
       }
     }
-    
+  
+#ifdef ENABLE_VENDOR_MODEL_SERVER  
     /*Checking for Vendor Models*/
     for (MOBLEUINT8 index=0; index < APPLICATION_VENDOR_MODELS_MAX_COUNT;  index++)
-    {
+  {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
-
+    
       modelIdentifier = (MOBLEUINT32) Appli_Vendor_Models[elementIndex][index]; 
       if(modelIdentifier == NO_MODEL_AVLBL)
       {
@@ -1560,10 +1565,10 @@ MOBLE_RESULT AppliConfigClient_SelfSubscriptionSetDefault (void)
       }
       else
       {
-      ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
-    }
+    ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
   }
-    
+    }
+#endif  
   }
   return result; 
 }
@@ -1594,7 +1599,7 @@ MOBLE_RESULT Appli_ConfigClient_SelfDefaultAppKeyBind (void)
       elementAddress += elementIndex;
       
       modelIdentifier = (MOBLEUINT16) Appli_SIG_Models[elementIndex][index];  
-        
+ 
       if(modelIdentifier == NO_MODEL_AVLBL)
       {
         break;
@@ -1607,11 +1612,12 @@ MOBLE_RESULT Appli_ConfigClient_SelfDefaultAppKeyBind (void)
         /* Do NOTHING, let the next Model be picked */
       }
       else
-      {
+  {
         ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
       }
     }
   
+#ifdef ENABLE_VENDOR_MODEL_SERVER  
     /*Checking for VENDOR Models*/
     for (MOBLEUINT8 index=0; index < APPLICATION_VENDOR_MODELS_MAX_COUNT;  index++)
   {
@@ -1626,10 +1632,10 @@ MOBLE_RESULT Appli_ConfigClient_SelfDefaultAppKeyBind (void)
       }
       else
       {
-        ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
-      }      
-    }
-  
+    ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
+  }      
+  }
+#endif    
   }
   return result;
 }
@@ -1642,7 +1648,7 @@ MOBLE_RESULT Appli_ConfigClient_SelfDefaultAppKeyBind (void)
 */ 
 void Appli_CompositionDataStatusCb(MOBLE_RESULT status)
 {
-  eServerRespRecdState = CompositionRecd_State;
+   eServerRespRecdState = CompositionRecd_State;
 }
 
 
@@ -1654,8 +1660,8 @@ void Appli_CompositionDataStatusCb(MOBLE_RESULT status)
 */ 
 void Appli_AppKeyStatusCb(MOBLEUINT8 status)
 {
-  /* Change the received state for application  */
-  eServerRespRecdState = AppkeyAck_State;
+   /* Change the received state for application  */
+   eServerRespRecdState = AppkeyAck_State;
 }
 
 
@@ -1667,8 +1673,8 @@ void Appli_AppKeyStatusCb(MOBLEUINT8 status)
 */ 
 void Appli_AppBindModelStatusCb(MOBLEUINT8 status)
 {
-  /* Change the received state for application  */
-  eServerRespRecdState = AppBindModelAck_State;
+   /* Change the received state for application  */
+   eServerRespRecdState = AppBindModelAck_State;
 }
 
 
@@ -1680,8 +1686,8 @@ void Appli_AppBindModelStatusCb(MOBLEUINT8 status)
 */ 
 void Appli_SubscriptionAddStatusCb(MOBLEUINT8 status)
 {
-  /* Change the received state for application  */
-  eServerRespRecdState = SubscriptionAck_State;
+   /* Change the received state for application  */
+   eServerRespRecdState = SubscriptionAck_State;
 }
 
 
@@ -1693,8 +1699,8 @@ void Appli_SubscriptionAddStatusCb(MOBLEUINT8 status)
 */ 
 void Appli_PublicationStatusCb(MOBLEUINT8 status)
 {
-  /* Change the received state for application  */
-  eServerRespRecdState = PublicationStatus_State;
+   /* Change the received state for application  */
+   eServerRespRecdState = PublicationStatus_State;
 }
 
 
@@ -1706,8 +1712,8 @@ void Appli_PublicationStatusCb(MOBLEUINT8 status)
 */ 
 void Appli_NodeResetStatusCb(void)
 {
-  /* Change the received state for application  */
-  eServerRespRecdState = NodeResetStatus_State;
+   /* Change the received state for application  */
+   eServerRespRecdState = NodeResetStatus_State;
 }
 
 

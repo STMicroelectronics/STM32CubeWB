@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MESH_CFG_USR_H
-#define __MESH_CFG_USR_H
+#ifndef MESH_CFG_USR_H
+#define MESH_CFG_USR_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "ble_mesh.h"
@@ -340,7 +340,7 @@ Define the following Macro to save Generic and Light Model states in NVM
 This may result into excessive flash erase operations, 
 this should be avoided to ensure flash longevity
 */
-#define ENABLE_SAVE_MODEL_STATE_NVM
+//#define ENABLE_SAVE_MODEL_STATE_NVM
 
 /* Only one Macro will be enable at one time */
 //#define SAVE_MODEL_STATE_FOR_ALL_MESSAGES         
@@ -620,4 +620,4 @@ For STMicroelectronics : it is 0x0030 */
 /* Exported variables  -------------------------------------------------------*/
 /* Exported Functions Prototypes ---------------------------------------------*/
 
-#endif /* __MESH_CFG_USR_H */
+#endif /* MESH_CFG_USR_H */

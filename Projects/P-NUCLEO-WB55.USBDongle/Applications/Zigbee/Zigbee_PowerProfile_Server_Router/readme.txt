@@ -42,7 +42,7 @@ Demo use case :
 
 This demo shows how to use Power Profile cluster in a Appliance/Home Gateway configuration by simulating a White Good generic behaviour.
 The Power Profile Server (e.g the appliance) is not remotly controllable. Therefore, attributes 
-are initalized locally on server side.
+are initialized locally on server side.
 The Power Profile Server start the demo (SW1 pushed) and notifications are sent on the client (e.g the Home Gateway).
 The following state machine is simulated on the server : Idle -> Programmed -> Waiting to start -> Running -> Ended. 
 

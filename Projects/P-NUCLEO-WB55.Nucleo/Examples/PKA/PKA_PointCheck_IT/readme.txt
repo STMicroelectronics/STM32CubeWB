@@ -8,7 +8,7 @@
   * @brief   Description of the modular exponentiation example
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -20,7 +20,7 @@
 
 @par Example Description 
 
-How to use the PKA peripheral to determine if a point is on a curve. This 
+How to use the PKA peripheral using interrupt mode to determine if a point is on a curve. This 
 allows validating an external public key.
 
 For this example, 2 test vector have been extracted from National Institute of Standards and Technology (NIST)

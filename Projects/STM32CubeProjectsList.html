@@ -752,7 +752,7 @@ allows validating an external public key.
       <tr align=center>
         <td align=left><p id="PKA_PointCheck_IT">PKA_PointCheck_IT</p></td>
         <td align=left>
-How to use the PKA peripheral to determine if a point is on a curve. This 
+How to use the PKA peripheral using interrupt mode to determine if a point is on a curve. This 
 allows validating an external public key.
 </td>
         <td>-</td>
@@ -978,7 +978,8 @@ update. Refer to Projects\STM32WB5MM-DK\Examples\BSP.
         <td align=left rowspan=6><p id="SPI">SPI</p></td>
         <td align=left><p id="SPI_FullDuplex_ComDMA_Master">SPI_FullDuplex_ComDMA_Master</p></td>
         <td align=left>
-Data buffer transmission/reception between two boards via SPI using DMA.
+Data buffer transmission/reception between two boards via SPI using DMA. This 
+example is for the Master board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -988,7 +989,8 @@ Data buffer transmission/reception between two boards via SPI using DMA.
       <tr align=center>
         <td align=left><p id="SPI_FullDuplex_ComDMA_Slave">SPI_FullDuplex_ComDMA_Slave</p></td>
         <td align=left>
-Data buffer transmission/reception between two boards via SPI using DMA.
+Data buffer transmission/reception between two boards via SPI using DMA. This 
+example is for the Slave board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -998,7 +1000,8 @@ Data buffer transmission/reception between two boards via SPI using DMA.
       <tr align=center>
         <td align=left><p id="SPI_FullDuplex_ComIT_Master">SPI_FullDuplex_ComIT_Master</p></td>
         <td align=left>
-Data buffer transmission/reception between two boards via SPI using Interrupt mode.
+Data buffer transmission/reception between two boards via SPI using Interrupt mode. This 
+example is for the Master board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -1008,7 +1011,8 @@ Data buffer transmission/reception between two boards via SPI using Interrupt mo
       <tr align=center>
         <td align=left><p id="SPI_FullDuplex_ComIT_Slave">SPI_FullDuplex_ComIT_Slave</p></td>
         <td align=left>
-Data buffer transmission/reception between two boards via SPI using Interrupt mode.
+Data buffer transmission/reception between two boards via SPI using Interrupt mode. This 
+example is for the Slave board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -1018,7 +1022,8 @@ Data buffer transmission/reception between two boards via SPI using Interrupt mo
       <tr align=center>
         <td align=left><p id="SPI_FullDuplex_ComPolling_Master">SPI_FullDuplex_ComPolling_Master</p></td>
         <td align=left>
-Data buffer transmission/reception between two boards via SPI using Polling mode.
+Data buffer transmission/reception between two boards via SPI using Polling mode. This 
+example is for the Master board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -1028,7 +1033,8 @@ Data buffer transmission/reception between two boards via SPI using Polling mode
       <tr align=center>
         <td align=left><p id="SPI_FullDuplex_ComPolling_Slave">SPI_FullDuplex_ComPolling_Slave</p></td>
         <td align=left>
-Data buffer transmission/reception between two boards via SPI using Polling mode.
+Data buffer transmission/reception between two boards via SPI using Polling mode. This 
+example is for the Slave board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -1278,8 +1284,10 @@ thresholds.
       <tr align=center>
         <td align=left><p id="ADC_ContinuousConversion_TriggerSW">ADC_ContinuousConversion_TriggerSW</p></td>
         <td align=left>
-How to use an ADC peripheral to perform continuous ADC conversions on a 
-channel, from a software start.
+How to use an ADC peripheral to perform continuous ADC conversions on a channel, 
+from a software start. This example is based on the STM32WBxx ADC LL API. The 
+peripheral initialization is done using LL unitary service functions
+for optimization purposes (performance and size).
 </td>
         <td>-</td>
         <td>-</td>
@@ -1289,8 +1297,10 @@ channel, from a software start.
       <tr align=center>
         <td align=left><p id="ADC_ContinuousConversion_TriggerSW_Init">ADC_ContinuousConversion_TriggerSW_Init</p></td>
         <td align=left>
-How to use an ADC peripheral to perform continuous ADC conversions on a 
-channel, from a software start.
+How to use an ADC peripheral to perform continuous ADC conversions on a channel, 
+from a software start. This example is based on the STM32WBxx ADC LL API. The 
+peripheral initialization is done using LL initialization function 
+to demonstrate LL init usage. 
 </td>
         <td>-</td>
         <td>-</td>
@@ -1300,7 +1310,9 @@ channel, from a software start.
       <tr align=center>
         <td align=left><p id="ADC_ContinuousConversion_TriggerSW_LowPower_Init">ADC_ContinuousConversion_TriggerSW_LowPower_Init</p></td>
         <td align=left>
-How to use an ADC peripheral with ADC low-power features.
+How to use an ADC peripheral with ADC low-power features. This example is based on
+the STM32WBxx ADC LL API. The peripheral initialization is done using LL unitary service functions 
+for optimization purposes (performance and size).
 </td>
         <td>-</td>
         <td>-</td>
@@ -1611,7 +1623,9 @@ semaphore in the context of two processes accessing the same resource.
         <td align=left><p id="HSEM_DualProcess_IT">HSEM_DualProcess_IT</p></td>
         <td align=left>
 How to use the low-layer HSEM API to initialize, lock, and unlock hardware 
-semaphore in the context of two processes accessing the same resource.
+semaphore in the context of two processes accessing the same resource. This 
+example configures HSEM in interrupt mode to trigger an interrupt when a 
+process takes the semaphore.
 </td>
         <td>-</td>
         <td>-</td>
@@ -1788,7 +1802,7 @@ function to demonstrate LL init usage.
         <td align=left><p id="LPUART_WakeUpFromStop2_Init">LPUART_WakeUpFromStop2_Init</p></td>
         <td align=left>  
 Configuration of GPIO and LPUART peripherals to allow characters 
-received on LPUART_RX pin to wake up the MCU from low-power mode. This example is based 
+received on LPUART_RX pin to wake up the MCU from low-power "STOP2" mode. This example is based 
 on the LPUART LL API. The peripheral initialization uses LL 
 initialization function to demonstrate LL init usage.
 </td>
@@ -1801,7 +1815,7 @@ initialization function to demonstrate LL init usage.
         <td align=left><p id="LPUART_WakeUpFromStop_Init">LPUART_WakeUpFromStop_Init</p></td>
         <td align=left>  
 Configuration of GPIO and LPUART peripherals to allow characters 
-received on LPUART_RX pin to wake up the MCU from low-power mode. This example is based 
+received on LPUART_RX pin to wake up the MCU from low-power "STOP0" mode. This example is based 
 on the LPUART LL API. The peripheral initialization uses LL 
 initialization function to demonstrate LL init usage.
 </td>
@@ -1868,7 +1882,8 @@ Low-power run mode.
         <td align=left><p id="PWR_SMPS_16MHZ_HSI">PWR_SMPS_16MHZ_HSI</p></td>
         <td align=left>
 This example shows how to use power converters of STM32WB (SMPS, LDO and LP-LDO)
-depending on Vdd voltage and low-power mode.
+depending on Vdd voltage and low-power mode. In this example, 
+the system clock source is the HSI at 16MHz.
 </td>
         <td>-</td>
         <td>-</td>
@@ -1879,7 +1894,8 @@ depending on Vdd voltage and low-power mode.
         <td align=left><p id="PWR_SMPS_64MHZ_MSI_PLL">PWR_SMPS_64MHZ_MSI_PLL</p></td>
         <td align=left>
 This example shows how to use power converters of STM32WB (SMPS, LDO and LP-LDO)
-depending on Vdd voltage and low-power mode.
+depending on Vdd voltage and low-power mode. In this example, 
+the system clock source is the MSI PLL at 64MHz.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2061,9 +2077,10 @@ LL unitary service functions for optimization purposes (performance and size).
       <tr align=center>
         <td align=left><p id="SPI_TwoBoards_FullDuplex_DMA_Master_Init">SPI_TwoBoards_FullDuplex_DMA_Master_Init</p></td>
         <td align=left>
-Data buffer transmission and receptionvia SPI using DMA mode. This example is 
+Data buffer transmission and reception via SPI using DMA mode. This example is 
 based on the STM32WBxx SPI LL API. The peripheral initialization uses 
-LL unitary service functions for optimization purposes (performance and size).
+LL unitary service functions for optimization purposes (performance and size). This
+example is for the Master board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2073,9 +2090,10 @@ LL unitary service functions for optimization purposes (performance and size).
       <tr align=center>
         <td align=left><p id="SPI_TwoBoards_FullDuplex_DMA_Slave_Init">SPI_TwoBoards_FullDuplex_DMA_Slave_Init</p></td>
         <td align=left>
-Data buffer transmission and receptionvia SPI using DMA mode. This example is 
+Data buffer transmission and reception via SPI using DMA mode. This example is 
 based on the STM32WBxx SPI LL API. The peripheral initialization uses 
-LL unitary service functions for optimization purposes (performance and size).
+LL unitary service functions for optimization purposes (performance and size). This
+example is for the Slave board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2085,9 +2103,10 @@ LL unitary service functions for optimization purposes (performance and size).
       <tr align=center>
         <td align=left><p id="SPI_TwoBoards_FullDuplex_IT_Master_Init">SPI_TwoBoards_FullDuplex_IT_Master_Init</p></td>
         <td align=left>
-Data buffer transmission and receptionvia SPI using Interrupt mode. This 
-example is based on the STM32WBxx SPI LL API. The peripheral 
-initialization uses LL unitary service functions for optimization purposes (performance and size).
+Data buffer transmission and reception via SPI using Interrupt mode. This 
+example is based on the STM32WBxx SPI LL API. The peripheral initialization 
+uses LL unitary service functions for optimization purposes (performance and size). This
+example is for the Master board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2097,9 +2116,10 @@ initialization uses LL unitary service functions for optimization purposes (perf
       <tr align=center>
         <td align=left><p id="SPI_TwoBoards_FullDuplex_IT_Slave_Init">SPI_TwoBoards_FullDuplex_IT_Slave_Init</p></td>
         <td align=left>
-Data buffer transmission and receptionvia SPI using Interrupt mode. This 
-example is based on the STM32WBxx SPI LL API. The peripheral 
-initialization uses LL unitary service functions for optimization purposes (performance and size).
+Data buffer transmission and reception via SPI using Interrupt mode. This 
+example is based on the STM32WBxx SPI LL API. The peripheral initialization 
+uses LL unitary service functions for optimization purposes (performance and size). This
+example is for the Slave board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2242,7 +2262,8 @@ done using LL unitary services functions for optimization purpose (performance a
         <td align=left>
 This example shows how to configure GPIO and USART peripheral for continuously receiving characters
 from HyperTerminal (PC) in Asynchronous mode using Interrupt mode. Peripheral initialization is 
-done using LL unitary services functions for optimization purpose (performance and size).
+done using LL unitary services functions for optimization purpose (performance and size). Virtual Com Port
+feature of STLINK is used for UART communication between board and PC.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2266,7 +2287,8 @@ using LL initialization function to demonstrate LL init usage.
         <td align=left>
 This example shows how to configure GPIO and USART peripheral for receiving characters
 from HyperTerminal (PC) in Asynchronous mode using Interrupt mode. Peripheral initialization is done
-using LL initialization function to demonstrate LL init usage.
+using LL initialization function to demonstrate LL init usage. Virtual Com Port (VCP) feature of STLINK 
+is used for UART communication between board and PC.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2306,7 +2328,8 @@ functions for optimization purpose (performance and size).
 This example shows how to configure GPIO and USART peripheral to send characters
 asynchronously to HyperTerminal (PC) in Interrupt mode. This example is based on
 STM32WBxx USART LL API. Peripheral initialization is done using LL unitary services
-functions for optimization purpose (performance and size).
+functions for optimization purpose (performance and size). Virtual Com Port (VCP) feature of STLINK
+is used for UART communication between board and PC.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2336,7 +2359,8 @@ asynchronously to an HyperTerminal (PC) in Polling mode. If the transfer could n
 be completed within the allocated time, a timeout allows to exit from the sequence
 with a Timeout error code. This example is based on STM32WBxx USART LL API. Peripheral
 initialization is done using LL unitary services functions for optimization purpose
-(performance and size).
+(performance and size). Virtual Com Port (VCP) feature of STLINK is used 
+for UART communication between board and PC.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2345,8 +2369,9 @@ initialization is done using LL unitary services functions for optimization purp
       </tr>
       <tr align=center>
         <td align=left><p id="USART_WakeUpFromStop1_Init">USART_WakeUpFromStop1_Init</p></td>
-        <td align=left>  
-Configuration of GPIO and USART1 peripherals to allow the characters received on USART_RX pin to wake up the MCU from low-power mode. 
+        <td align=left>
+Configuration of GPIO and USART1 peripherals to allow the characters received on
+USART_RX pin to wake up the MCU from low-power "STOP1" mode.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2356,7 +2381,8 @@ Configuration of GPIO and USART1 peripherals to allow the characters received on
       <tr align=center>
         <td align=left><p id="USART_WakeUpFromStop_Init">USART_WakeUpFromStop_Init</p></td>
         <td align=left>  
-Configuration of GPIO and USART1 peripherals to allow the characters received on USART_RX pin to wake up the MCU from low-power mode. 
+Configuration of GPIO and USART1 peripherals to allow the characters received on
+USART_RX pin to wake up the MCU from low-power "STOP0" mode.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2476,7 +2502,8 @@ for minimizing footprint and maximizing performance).
         <td align=left rowspan=4><p id="SPI">SPI</p></td>
         <td align=left><p id="SPI_FullDuplex_ComPolling_Master">SPI_FullDuplex_ComPolling_Master</p></td>
         <td align=left>
-Data buffer transmission/reception between two boards via SPI using Polling mode.
+Data buffer transmission/reception between two boards via SPI using Polling mode. This
+example is for the Master board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2486,7 +2513,8 @@ Data buffer transmission/reception between two boards via SPI using Polling mode
       <tr align=center>
         <td align=left><p id="SPI_FullDuplex_ComPolling_Slave">SPI_FullDuplex_ComPolling_Slave</p></td>
         <td align=left>
-Data buffer transmission/reception between two boards via SPI using Polling mode.
+Data buffer transmission/reception between two boards via SPI using Polling mode. This
+example is for the Slave board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2497,7 +2525,8 @@ Data buffer transmission/reception between two boards via SPI using Polling mode
         <td align=left><p id="SPI_HalfDuplex_ComPollingIT_Master">SPI_HalfDuplex_ComPollingIT_Master</p></td>
         <td align=left>
 Data buffer transmission/reception between 
-two boards via SPI using Polling (LL driver) and Interrupt modes (HAL driver).
+two boards via SPI using Polling (LL driver) and Interrupt modes (HAL driver). This
+example is for the Master board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2508,7 +2537,8 @@ two boards via SPI using Polling (LL driver) and Interrupt modes (HAL driver).
         <td align=left><p id="SPI_HalfDuplex_ComPollingIT_Slave">SPI_HalfDuplex_ComPollingIT_Slave</p></td>
         <td align=left>
 Data buffer transmission/reception between 
-two boards via SPI using Polling (LL driver) and Interrupt modes (HAL driver).
+two boards via SPI using Polling (LL driver) and Interrupt modes (HAL driver). This
+example is for the Slave board.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2562,11 +2592,11 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td>6</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=120><p id="Applications">Applications</p></td>
-        <td align=left rowspan=31><p id="BLE">BLE</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=127><p id="Applications">Applications</p></td>
+        <td align=left rowspan=34><p id="BLE">BLE</p></td>
         <td align=left><p id="BLE_AT_Server">BLE_AT_Server</p></td>
         <td align=left>
-How to demonstrate Point-to-Point communication using BLE component (as GATT server). 
+How to demonstrate Point-to-Point communication using BLE component (as GATT server).
 </td>
         <td>-</td>
         <td>-</td>
@@ -2606,7 +2636,8 @@ How to use the Point-to-Point communication using BLE component.
       <tr align=center>
         <td align=left><p id="BLE_Custom">BLE_Custom</p></td>
         <td align=left>
-This example is to demonstrate that a BLE_Custom application can be created using CubeMX.
+
+@note This application is to demonstrate that a BLE_Custom application can be created using CubeMX.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2665,6 +2696,16 @@ and use the Heart Rate profile as specified by the BLE SIG with FreeRTOS.
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_HeartRateThreadX">BLE_HeartRateThreadX</p></td>
+        <td align=left>
+How to use the Heart Rate profile as specified by the BLE SIG using ThreadX OS.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_HeartRate_ANCS">BLE_HeartRate_ANCS</p></td>
         <td align=left>
 How to read notifications from Apple Notification Center Service (ANCS) as specified by Apple specification
@@ -2697,7 +2738,8 @@ How to use the Human Interface Device profile as specified by the BLE SIG.
       </tr>
       <tr align=center>
         <td align=left><p id="BLE_MeshLightingLPN">BLE_MeshLightingLPN</p></td>
-        <td align=left>This is the implementation of the BLE Mesh Low Power Node profile as specified by the BLE SIG.
+        <td align=left>This is the implementation of the BLE Mesh Low Power Node profile as specified by the BLE SIG,
+a Low Power Node with the capacity to be associated to a Proxy-Relay-Friend Node for Friendship.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2706,7 +2748,8 @@ How to use the Human Interface Device profile as specified by the BLE SIG.
       </tr>
       <tr align=center>
         <td align=left><p id="BLE_MeshLightingPRFNode">BLE_MeshLightingPRFNode</p></td>
-        <td align=left>This is the implementation of the BLE Mesh Lighting profile as specified by the BLE SIG.
+        <td align=left>This is the implementation of the BLE Mesh Lighting profile as specified by the BLE SIG,
+a Proxy-Relay-Friend Node with the capacity to handle a Friendship with a Low Power Node.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
@@ -2740,16 +2783,6 @@ Low Power Nodes.
         <td><font size="5" color=green>X</font></td>
         <td>-</td>
         <td>-</td>
-        <td>-</td>
-      </tr>
-      <tr align=center>
-        <td align=left><p id="BLE_MultiAppAt">BLE_MultiAppAt</p></td>
-        <td align=left>
-How to use multi BLE applications using a network processor architecture.
-</td>
-        <td>-</td>
-        <td>-</td>
-        <td><font size="5" color=green>X</font></td>
         <td>-</td>
       </tr>
       <tr align=center>
@@ -2843,6 +2876,18 @@ How to demonstrate Point-to-Point communication using BLE component (as GATT cli
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_p2pClient_Ext">BLE_p2pClient_Ext</p></td>
+        <td align=left>
+Demontrates a BLE scanner with connections from an extended and a legacy advertising
+
+Two Nucleo STM32WB55xx boards (MB1355C) are used, one acting as GATT client, and one as GATT server.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td><font size="5" color=red>New</font></td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_p2pRouteur">BLE_p2pRouteur</p></td>
         <td align=left>This example is to demonstrate Multipoint communication using BLE component.
 </td>
@@ -2854,7 +2899,7 @@ How to demonstrate Point-to-Point communication using BLE component (as GATT cli
       <tr align=center>
         <td align=left><p id="BLE_p2pServer">BLE_p2pServer</p></td>
         <td align=left>
-How to demonstrate Point-to-Point communication using BLE component (as GATT server). 
+How to demonstrate Point-to-Point communication using BLE (as GATT server).
 </td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td><font size="5" color=green>X</font></td>
@@ -2862,9 +2907,29 @@ How to demonstrate Point-to-Point communication using BLE component (as GATT ser
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_p2pServerThreadX">BLE_p2pServerThreadX</p></td>
+        <td align=left>
+How to demonstrate Point-to-Point communication using BLE component (as GATT server). 
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_p2pServer_Ext">BLE_p2pServer_Ext</p></td>
+        <td align=left>
+Demonstrate multiple extended advertising sets.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td><font size="5" color=red>New</font></td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_p2pServer_ota">BLE_p2pServer_ota</p></td>
         <td align=left>
-How to demonstrate Point-to-Point communication using BLE component (peripherical as GATT server) to be downloaded with BLE OTA application. 
+How to demonstrate Point-to-Point communication using BLE component (peripherical as GATT server) to be downloaded with BLE OTA application.
 </td>
         <td>-</td>
         <td>-</td>
@@ -2888,7 +2953,7 @@ How to create a "Chat" talk between 2 boards using terminals.
 How to send BLE LLD packets in high data rate.
 </td>
         <td>-</td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td><font size="5" color=green>X</font></td>
         <td>-</td>
       </tr>
@@ -2995,7 +3060,7 @@ How to use BLE application and Zigbee application in static concurrent mode.
 </td>
         <td>-</td>
         <td>-</td>
-        <td><font size="5" color=red>New</font></td>
+        <td><font size="5" color=green>X</font></td>
         <td>-</td>
       </tr>
       <tr align=center>
@@ -3113,20 +3178,10 @@ How to use timers of CMSIS RTOS API.
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=3><p id="Mac_802_15_4">Mac_802_15_4</p></td>
+        <td align=left rowspan=2><p id="Mac_802_15_4">Mac_802_15_4</p></td>
         <td align=left><p id="Mac_802_15_4_FFD">Mac_802_15_4_FFD</p></td>
         <td align=left>
 How to use MAC 802.15.4 Association and Data exchange.
-</td>
-        <td>-</td>
-        <td>-</td>
-        <td><font size="5" color=green>X</font></td>
-        <td>-</td>
-      </tr>
-      <tr align=center>
-        <td align=left><p id="Mac_802_15_4_LPM_Periodic_Transmit">Mac_802_15_4_LPM_Periodic_Transmit</p></td>
-        <td align=left>
-How to use MAC 802.15.4 data transmission with STOP1 low power mode enabled.
 </td>
         <td>-</td>
         <td>-</td>
@@ -3155,7 +3210,7 @@ How to create a "PHY_802.15.4 command line interface" application on STM32WB55xx
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=15><p id="Thread">Thread</p></td>
+        <td align=left rowspan=17><p id="Thread">Thread</p></td>
         <td align=left><p id="Thread_Cli_Cmd">Thread_Cli_Cmd</p></td>
         <td align=left>
 How to control the Thread stack via Cli commands.
@@ -3196,6 +3251,18 @@ How to build Thread application based on Coap messages (OTA mode).
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="Thread_Coap_Generic_ThreadX">Thread_Coap_Generic_ThreadX</p></td>
+        <td align=left>
+How to build Thread application based on Coap messages. (using ThreadX)
+
+This application requires two STM32WB55xx boards.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="Thread_Coap_MultiBoard">Thread_Coap_MultiBoard</p></td>
         <td align=left>
 How to use Coap for sending message to multiple boards.
@@ -3233,6 +3300,16 @@ How to exchange multicast Coap messages.
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
         <td><font size="5" color=green>CubeMx</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Thread_NVM">Thread_NVM</p></td>
+        <td align=left>
+How to configure NVM for Thread applications.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td>-</td>
       </tr>
       <tr align=center>
@@ -3278,7 +3355,7 @@ How to control the Thread stack via Cli commands and trigger an automatic commis
       <tr align=center>
         <td align=left><p id="Thread_SED_Coap_FreeRTOS">Thread_SED_Coap_FreeRTOS</p></td>
         <td align=left>
-How to exchange a Coap message using the Thread protocol.
+How to exchange a Coap message using the Thread protocol (using FreeRTOS porting).
 </td>
         <td>-</td>
         <td>-</td>
@@ -3306,24 +3383,14 @@ How to transfer data using UDP.
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=2><p id="TouchSensing">TouchSensing</p></td>
-        <td align=left><p id="TouchSensing_1touchKey">TouchSensing_1touchKey</p></td>
-        <td align=left>
-Use of the STMTouch driver with 1 touchkey sensor.
-</td>
-        <td>-</td>
-        <td>-</td>
-        <td><font size="5" color=green>X</font></td>
-        <td>-</td>
-      </tr>
-      <tr align=center>
+        <td align=left rowspan=1><p id="TouchSensing">TouchSensing</p></td>
         <td align=left><p id="TouchSensing_1touchkey">TouchSensing_1touchkey</p></td>
         <td align=left>
 Use of the STMTouch driver with 1 touchkey sensor.
 </td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
-        <td>-</td>
+        <td><font size="5" color=green>X</font></td>
         <td>-</td>
       </tr>
       <tr align=center>
@@ -3359,7 +3426,7 @@ Use of the USB device application based on the Human Interface (HID).
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=41><p id="Zigbee">Zigbee</p></td>
+        <td align=left rowspan=45><p id="Zigbee">Zigbee</p></td>
         <td align=left><p id="Zigbee_APS_Coord">Zigbee_APS_Coord</p></td>
         <td align=left>
 How to use the APS layer in an application acting as a Zigbee Coordinator within a centralized network.
@@ -3550,6 +3617,36 @@ How to use the OTA cluster on a device acting as a Server with Coordinator role 
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="Zigbee_OnOff_ChannelsAgility_SED">Zigbee_OnOff_ChannelsAgility_SED</p></td>
+        <td align=left>
+How to use the OnOff cluster on a device on a Sleepy End Device (SED) acting as a Server within a Centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_OnOff_ChannelsAgility_ZC">Zigbee_OnOff_ChannelsAgility_ZC</p></td>
+        <td align=left>
+How to use the OnOff cluster on a device acting acting as a Server with Coordinator role within a Centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_OnOff_ChannelsAgility_ZR">Zigbee_OnOff_ChannelsAgility_ZR</p></td>
+        <td align=left>
+How to use the OnOff cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="Zigbee_OnOff_Client_Distrib">Zigbee_OnOff_Client_Distrib</p></td>
         <td align=left>
 How to use the OnOff cluster on a device acting as a Client within a distributed Zigbee network.
@@ -3587,6 +3684,16 @@ How to use an updated OnOff cluster Zigbee application previously downloaded via
         <td>-</td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="Zigbee_OnOff_Client_Router_ThreadX">Zigbee_OnOff_Client_Router_ThreadX</p></td>
+        <td align=left>
+How to use the OnOff cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td>-</td>
       </tr>
       <tr align=center>
@@ -3770,18 +3877,18 @@ How to use the Custom long string cluster on a device acting as a Server with Co
         <td>-</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of applications: 157</b></td>
+        <td colspan="3"><b>Total number of applications: 168</b></td>
         <td>14</td>
-        <td>18</td>
-        <td>111</td>
-        <td>14</td>
+        <td>19</td>
+        <td>119</td>
+        <td>16</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-      	<td colspan="4"><b>Total number of projects: 450</b></td>
+      	<td colspan="4"><b>Total number of projects: 461</b></td>
       	<td>24</td>
-      	<td>19</td>
-      	<td>317</td>
-      	<td>90</td>
+      	<td>20</td>
+      	<td>325</td>
+      	<td>92</td>
       </tr>
     </table>
   </body>

@@ -10,14 +10,14 @@
       <TargetName>BLE_DataThroughput</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32WB15CCUx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WB1x_DFP.0.0.1</PackID>
-          <PackURL>http://www.keil.com/pack</PackURL>
+          <PackID>Keil.STM32WBxx_DFP.1.2.0</PackID>
+          <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00003000) IROM(0x08000000,0x00050000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -184,6 +184,8 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
+            <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -334,7 +336,7 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>--diag_suppress L6329W</MiscControls>
               <Define>USE_STM32WBXX_NUCLEO,USE_HAL_DRIVER,STM32WB15xx</Define>
               <Undefine></Undefine>
               <IncludePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Drivers/CMSIS/Include;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/ble;../Core/Inc;../STM32_WPAN/App;../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/Inc;../../../../../../Drivers/BSP/NUCLEO-WB15CC</IncludePath>
@@ -350,7 +352,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -372,7 +374,8 @@
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc>--diag_suppress L6314W
---diag_suppress 1296</Misc>
+--diag_suppress 1296
+--diag_suppress L6329W</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -408,9 +411,9 @@
               <FilePath>../Core/Src/main.c</FilePath>
             </File>
             <File>
-              <FileName>standby_stm32wb15.c</FileName>
+              <FileName>standby.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/standby_stm32wb15.c</FilePath>
+              <FilePath>../Core/Src/standby.c</FilePath>
             </File>
             <File>
               <FileName>stm32_lpm_if.c</FileName>
@@ -606,6 +609,11 @@
               <FileName>stm32wbxx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_rng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</FilePath>
             </File>
           </Files>
         </Group>

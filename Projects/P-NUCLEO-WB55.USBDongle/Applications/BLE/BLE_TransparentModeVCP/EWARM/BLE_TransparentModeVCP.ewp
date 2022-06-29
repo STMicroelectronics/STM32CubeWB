@@ -1065,7 +1065,7 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
-            </file>             
+            </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
             </file>
@@ -1155,6 +1155,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc.c</name>

@@ -66,11 +66,12 @@ typedef struct{
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-static const uint8_t SizeLed_C=2;
-static const uint8_t SizeSwitch_C=2;
-static const uint8_t SizeHrs_M=5;
-static const uint8_t SizeHrs_Sl=1;
-static const uint8_t SizeHrs_Ctrlp=1;
+uint8_t SizeLed_C = 2;
+uint8_t SizeSwitch_C = 2;
+uint8_t SizeHrs_M = 5;
+uint8_t SizeHrs_Sl = 1;
+uint8_t SizeHrs_Ctrlp = 1;
+
 /**
  * START of Section BLE_DRIVER_CONTEXT
  */
@@ -101,9 +102,9 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *pckt);
 #define COPY_UUID_128(uuid_struct, uuid_15, uuid_14, uuid_13, uuid_12, uuid_11, uuid_10, uuid_9, uuid_8, uuid_7, uuid_6, uuid_5, uuid_4, uuid_3, uuid_2, uuid_1, uuid_0) \
 do {\
     uuid_struct[0] = uuid_0; uuid_struct[1] = uuid_1; uuid_struct[2] = uuid_2; uuid_struct[3] = uuid_3; \
-        uuid_struct[4] = uuid_4; uuid_struct[5] = uuid_5; uuid_struct[6] = uuid_6; uuid_struct[7] = uuid_7; \
-            uuid_struct[8] = uuid_8; uuid_struct[9] = uuid_9; uuid_struct[10] = uuid_10; uuid_struct[11] = uuid_11; \
-                uuid_struct[12] = uuid_12; uuid_struct[13] = uuid_13; uuid_struct[14] = uuid_14; uuid_struct[15] = uuid_15; \
+    uuid_struct[4] = uuid_4; uuid_struct[5] = uuid_5; uuid_struct[6] = uuid_6; uuid_struct[7] = uuid_7; \
+    uuid_struct[8] = uuid_8; uuid_struct[9] = uuid_9; uuid_struct[10] = uuid_10; uuid_struct[11] = uuid_11; \
+    uuid_struct[12] = uuid_12; uuid_struct[13] = uuid_13; uuid_struct[14] = uuid_14; uuid_struct[15] = uuid_15; \
 }while(0)
 
 /* Hardware Characteristics Service */
@@ -145,18 +146,18 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
 
-  switch(event_pckt->evt)
+  switch (event_pckt->evt)
   {
     case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
       blecore_evt = (evt_blecore_aci*)event_pckt->data;
-      switch(blecore_evt->ecode)
+      switch (blecore_evt->ecode)
       {
         case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
           /* USER CODE BEGIN EVT_BLUE_GATT_ATTRIBUTE_MODIFIED_BEGIN */
 
           /* USER CODE END EVT_BLUE_GATT_ATTRIBUTE_MODIFIED_BEGIN */
           attribute_modified = (aci_gatt_attribute_modified_event_rp0*)blecore_evt->data;
-          if(attribute_modified->Attr_Handle == (CustomContext.CustomSwitch_CHdle + CHARACTERISTIC_DESCRIPTOR_ATTRIBUTE_OFFSET))
+          if (attribute_modified->Attr_Handle == (CustomContext.CustomSwitch_CHdle + CHARACTERISTIC_DESCRIPTOR_ATTRIBUTE_OFFSET))
           {
             return_value = SVCCTL_EvtAckFlowEnable;
             /* USER CODE BEGIN CUSTOM_STM_Service_1_Char_2 */
@@ -164,7 +165,7 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
             *  Manage My_Switch_Char Characteristic, Notify descriptor
             */
             /* USER CODE END CUSTOM_STM_Service_1_Char_2 */
-            switch(attribute_modified->Attr_Data[0])
+            switch (attribute_modified->Attr_Data[0])
             {
               /* USER CODE BEGIN CUSTOM_STM_Service_1_Char_2_attribute_modified */
 
@@ -200,9 +201,9 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
                 /* USER CODE END CUSTOM_STM_Service_1_Char_2_default */
               break;
             }
-          }  /* if(attribute_modified->Attr_Handle == (CustomContext.CustomSwitch_CHdle + CHARACTERISTIC_DESCRIPTOR_ATTRIBUTE_OFFSET))*/
+          }  /* if (attribute_modified->Attr_Handle == (CustomContext.CustomSwitch_CHdle + CHARACTERISTIC_DESCRIPTOR_ATTRIBUTE_OFFSET))*/
 
-          else if(attribute_modified->Attr_Handle == (CustomContext.CustomHrs_MHdle + CHARACTERISTIC_DESCRIPTOR_ATTRIBUTE_OFFSET))
+          else if (attribute_modified->Attr_Handle == (CustomContext.CustomHrs_MHdle + CHARACTERISTIC_DESCRIPTOR_ATTRIBUTE_OFFSET))
           {
             return_value = SVCCTL_EvtAckFlowEnable;
             /* USER CODE BEGIN CUSTOM_STM_Service_2_Char_1 */
@@ -210,7 +211,7 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
              *  Manage My_HRS_Meas Characteristic, Notify descriptor
             */
             /* USER CODE END CUSTOM_STM_Service_2_Char_1 */
-            switch(attribute_modified->Attr_Data[0])
+            switch (attribute_modified->Attr_Data[0])
             {
               /* USER CODE BEGIN CUSTOM_STM_Service_2_Char_1_attribute_modified */
 
@@ -246,9 +247,9 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
                 /* USER CODE END CUSTOM_STM_Service_2_Char_1_default */
               break;
             }
-          }  /* if(attribute_modified->Attr_Handle == (CustomContext.CustomHrs_MHdle + CHARACTERISTIC_DESCRIPTOR_ATTRIBUTE_OFFSET))*/
+          }  /* if (attribute_modified->Attr_Handle == (CustomContext.CustomHrs_MHdle + CHARACTERISTIC_DESCRIPTOR_ATTRIBUTE_OFFSET))*/
 
-          else if(attribute_modified->Attr_Handle == (CustomContext.CustomLed_CHdle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))
+          else if (attribute_modified->Attr_Handle == (CustomContext.CustomLed_CHdle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))
           {
             return_value = SVCCTL_EvtAckFlowEnable;
             /* USER CODE BEGIN CUSTOM_STM_Service_1_Char_1_ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE */
@@ -258,9 +259,9 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
             Notification.Custom_Evt_Opcode = CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT;
             Notification.DataTransfered.Length=attribute_modified->Attr_Data_Length;
             Notification.DataTransfered.pPayload=attribute_modified->Attr_Data;
-            Custom_STM_App_Notification(&Notification);  
+            Custom_STM_App_Notification(&Notification);
             /* USER CODE END CUSTOM_STM_Service_1_Char_1_ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE */
-          } /* if(attribute_modified->Attr_Handle == (CustomContext.CustomLed_CHdle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))*/
+          } /* if (attribute_modified->Attr_Handle == (CustomContext.CustomLed_CHdle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))*/
           /* USER CODE BEGIN EVT_BLUE_GATT_ATTRIBUTE_MODIFIED_END */
 
           /* USER CODE END EVT_BLUE_GATT_ATTRIBUTE_MODIFIED_END */
@@ -280,7 +281,7 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
 
           /* USER CODE END EVT_BLUE_GATT_WRITE_PERMIT_REQ_BEGIN */
           write_perm_req = (aci_gatt_write_permit_req_event_rp0*)blecore_evt->data;
-          if(write_perm_req->Attribute_Handle == (CustomContext.CustomHrs_CtrlpHdle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))
+          if (write_perm_req->Attribute_Handle == (CustomContext.CustomHrs_CtrlpHdle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))
           {
             return_value = SVCCTL_EvtAckFlowEnable;
             /* Allow or reject a write request from a client using aci_gatt_write_resp(...) function */
@@ -319,7 +320,7 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
             }
             
             /*USER CODE END CUSTOM_STM_Service_2_Char_3_ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE*/
-          } /*if(write_perm_req->Attribute_Handle == (CustomContext.CustomHrs_CtrlpHdle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))*/
+          } /*if (write_perm_req->Attribute_Handle == (CustomContext.CustomHrs_CtrlpHdle + CHARACTERISTIC_VALUE_ATTRIBUTE_OFFSET))*/
 
           /* USER CODE BEGIN EVT_BLUE_GATT_WRITE_PERMIT_REQ_END */
 
@@ -368,6 +369,7 @@ void SVCCTL_InitCustomSvc(void)
 {
 
   Char_UUID_t  uuid;
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
   /* USER CODE BEGIN SVCCTL_InitCustomSvc_1 */
 
   /* USER CODE END SVCCTL_InitCustomSvc_1 */
@@ -377,7 +379,7 @@ void SVCCTL_InitCustomSvc(void)
    */
   SVCCTL_RegisterSvcHandler(Custom_STM_Event_Handler);
 
-  /*
+  /**
    *          My_P2P_Server
    *
    * Max_Attribute_Records = 1 + 2*2 + 1*no_of_char_with_notify_or_indicate_property + 1*no_of_char_with_broadcast_property
@@ -389,40 +391,64 @@ void SVCCTL_InitCustomSvc(void)
    */
 
   COPY_MY_P2P_SERVER_UUID(uuid.Char_UUID_128);
-  aci_gatt_add_service(UUID_TYPE_128,
-                       (Service_UUID_t *) &uuid,
-                       PRIMARY_SERVICE,
-                       6,
-                       &(CustomContext.CustomMy_P2PsHdle));
+  ret = aci_gatt_add_service(UUID_TYPE_128,
+                             (Service_UUID_t *) &uuid,
+                             PRIMARY_SERVICE,
+                             6,
+                             &(CustomContext.CustomMy_P2PsHdle));
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_gatt_add_service command: My_P2PS, error code: 0x%x \n\r", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_gatt_add_service command: My_P2PS \n\r");
+  }
 
   /**
    *  My_LED_Char
    */
   COPY_MY_LED_CHAR_UUID(uuid.Char_UUID_128);
-  aci_gatt_add_char(CustomContext.CustomMy_P2PsHdle,
-                    UUID_TYPE_128, &uuid,
-                    SizeLed_C,
-                    CHAR_PROP_READ | CHAR_PROP_WRITE_WITHOUT_RESP,
-                    ATTR_PERMISSION_NONE,
-                    GATT_NOTIFY_ATTRIBUTE_WRITE,
-                    0x10,
-                    CHAR_VALUE_LEN_VARIABLE,
-                    &(CustomContext.CustomLed_CHdle));
+  ret = aci_gatt_add_char(CustomContext.CustomMy_P2PsHdle,
+                          UUID_TYPE_128, &uuid,
+                          SizeLed_C,
+                          CHAR_PROP_READ | CHAR_PROP_WRITE_WITHOUT_RESP,
+                          ATTR_PERMISSION_NONE,
+                          GATT_NOTIFY_ATTRIBUTE_WRITE,
+                          0x10,
+                          CHAR_VALUE_LEN_VARIABLE,
+                          &(CustomContext.CustomLed_CHdle));
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_gatt_add_char command   : LED_C, error code: 0x%x \n\r", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : LED_C \n\r");
+  }
   /**
    *  My_Switch_Char
    */
   COPY_MY_SWITCH_CHAR_UUID(uuid.Char_UUID_128);
-  aci_gatt_add_char(CustomContext.CustomMy_P2PsHdle,
-                    UUID_TYPE_128, &uuid,
-                    SizeSwitch_C,
-                    CHAR_PROP_NOTIFY,
-                    ATTR_PERMISSION_NONE,
-                    GATT_NOTIFY_ATTRIBUTE_WRITE,
-                    0x10,
-                    CHAR_VALUE_LEN_VARIABLE,
-                    &(CustomContext.CustomSwitch_CHdle));
+  ret = aci_gatt_add_char(CustomContext.CustomMy_P2PsHdle,
+                          UUID_TYPE_128, &uuid,
+                          SizeSwitch_C,
+                          CHAR_PROP_NOTIFY,
+                          ATTR_PERMISSION_NONE,
+                          GATT_NOTIFY_ATTRIBUTE_WRITE,
+                          0x10,
+                          CHAR_VALUE_LEN_VARIABLE,
+                          &(CustomContext.CustomSwitch_CHdle));
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_gatt_add_char command   : SWITCH_C, error code: 0x%x \n\r", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : SWITCH_C \n\r");
+  }
 
-  /*
+  /**
    *          My_Heart_Rate
    *
    * Max_Attribute_Records = 1 + 2*3 + 1*no_of_char_with_notify_or_indicate_property + 1*no_of_char_with_broadcast_property
@@ -435,51 +461,83 @@ void SVCCTL_InitCustomSvc(void)
    */
 
   uuid.Char_UUID_16 = 0x180d;
-  aci_gatt_add_service(UUID_TYPE_16,
-                       (Service_UUID_t *) &uuid,
-                       PRIMARY_SERVICE,
-                       8,
-                       &(CustomContext.CustomMy_HrsHdle));
+  ret = aci_gatt_add_service(UUID_TYPE_16,
+                             (Service_UUID_t *) &uuid,
+                             PRIMARY_SERVICE,
+                             8,
+                             &(CustomContext.CustomMy_HrsHdle));
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_gatt_add_service command: My_HRS, error code: 0x%x \n\r", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_gatt_add_service command: My_HRS \n\r");
+  }
 
   /**
    *  My_HRS_Meas
    */
   uuid.Char_UUID_16 = 0x2a37;
-  aci_gatt_add_char(CustomContext.CustomMy_HrsHdle,
-                    UUID_TYPE_16, &uuid,
-                    SizeHrs_M,
-                    CHAR_PROP_NOTIFY,
-                    ATTR_PERMISSION_NONE,
-                    GATT_DONT_NOTIFY_EVENTS,
-                    0x10,
-                    CHAR_VALUE_LEN_VARIABLE,
-                    &(CustomContext.CustomHrs_MHdle));
+  ret = aci_gatt_add_char(CustomContext.CustomMy_HrsHdle,
+                          UUID_TYPE_16, &uuid,
+                          SizeHrs_M,
+                          CHAR_PROP_NOTIFY,
+                          ATTR_PERMISSION_NONE,
+                          GATT_DONT_NOTIFY_EVENTS,
+                          0x10,
+                          CHAR_VALUE_LEN_VARIABLE,
+                          &(CustomContext.CustomHrs_MHdle));
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_gatt_add_char command   : HRS_M, error code: 0x%x \n\r", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_M \n\r");
+  }
   /**
    *  My_Sensor_Loc
    */
   uuid.Char_UUID_16 = 0x2a38;
-  aci_gatt_add_char(CustomContext.CustomMy_HrsHdle,
-                    UUID_TYPE_16, &uuid,
-                    SizeHrs_Sl,
-                    CHAR_PROP_READ,
-                    ATTR_PERMISSION_NONE,
-                    GATT_DONT_NOTIFY_EVENTS,
-                    0x10,
-                    CHAR_VALUE_LEN_CONSTANT,
-                    &(CustomContext.CustomHrs_SlHdle));
+  ret = aci_gatt_add_char(CustomContext.CustomMy_HrsHdle,
+                          UUID_TYPE_16, &uuid,
+                          SizeHrs_Sl,
+                          CHAR_PROP_READ,
+                          ATTR_PERMISSION_NONE,
+                          GATT_DONT_NOTIFY_EVENTS,
+                          0x10,
+                          CHAR_VALUE_LEN_CONSTANT,
+                          &(CustomContext.CustomHrs_SlHdle));
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_gatt_add_char command   : HRS_SL, error code: 0x%x \n\r", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_SL \n\r");
+  }
   /**
    *  My_HRS_CTRL_Point
    */
   uuid.Char_UUID_16 = 0x2a39;
-  aci_gatt_add_char(CustomContext.CustomMy_HrsHdle,
-                    UUID_TYPE_16, &uuid,
-                    SizeHrs_Ctrlp,
-                    CHAR_PROP_WRITE,
-                    ATTR_PERMISSION_NONE,
-                    GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP,
-                    0x10,
-                    CHAR_VALUE_LEN_CONSTANT,
-                    &(CustomContext.CustomHrs_CtrlpHdle));
+  ret = aci_gatt_add_char(CustomContext.CustomMy_HrsHdle,
+                          UUID_TYPE_16, &uuid,
+                          SizeHrs_Ctrlp,
+                          CHAR_PROP_WRITE,
+                          ATTR_PERMISSION_NONE,
+                          GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP,
+                          0x10,
+                          CHAR_VALUE_LEN_CONSTANT,
+                          &(CustomContext.CustomHrs_CtrlpHdle));
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_gatt_add_char command   : HRS_CTRLP, error code: 0x%x \n\r", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_CTRLP \n\r");
+  }
 
   /* USER CODE BEGIN SVCCTL_InitCustomSvc_2 */
 
@@ -496,71 +554,111 @@ void SVCCTL_InitCustomSvc(void)
  */
 tBleStatus Custom_STM_App_Update_Char(Custom_STM_Char_Opcode_t CharOpcode, uint8_t *pPayload)
 {
-  tBleStatus result = BLE_STATUS_INVALID_PARAMS;
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
   /* USER CODE BEGIN Custom_STM_App_Update_Char_1 */
 
   /* USER CODE END Custom_STM_App_Update_Char_1 */
 
-  switch(CharOpcode)
+  switch (CharOpcode)
   {
 
     case CUSTOM_STM_LED_C:
-      result = aci_gatt_update_char_value(CustomContext.CustomMy_P2PsHdle,
-                                          CustomContext.CustomLed_CHdle,
-                                          0, /* charValOffset */
-                                          SizeLed_C, /* charValueLen */
-                                          (uint8_t *)  pPayload);
-      /* USER CODE BEGIN CUSTOM_STM_Service_1_Char_1*/
+      ret = aci_gatt_update_char_value(CustomContext.CustomMy_P2PsHdle,
+                                       CustomContext.CustomLed_CHdle,
+                                       0, /* charValOffset */
+                                       SizeLed_C, /* charValueLen */
+                                       (uint8_t *)  pPayload);
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : aci_gatt_update_char_value LED_C command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: aci_gatt_update_char_value LED_C command\n\r");
+      }
+      /* USER CODE BEGIN CUSTOM_STM_App_Update_Service_1_Char_1*/
 
-      /* USER CODE END CUSTOM_STM_Service_1_Char_1*/
+      /* USER CODE END CUSTOM_STM_App_Update_Service_1_Char_1*/
       break;
 
     case CUSTOM_STM_SWITCH_C:
-      result = aci_gatt_update_char_value(CustomContext.CustomMy_P2PsHdle,
-                                          CustomContext.CustomSwitch_CHdle,
-                                          0, /* charValOffset */
-                                          SizeSwitch_C, /* charValueLen */
-                                          (uint8_t *)  pPayload);
-      /* USER CODE BEGIN CUSTOM_STM_Service_1_Char_2*/
-            /**
-            *  Manage My_Switch_Char Characteristic, Notify descriptor
-            */
-      /* USER CODE END CUSTOM_STM_Service_1_Char_2*/
+      ret = aci_gatt_update_char_value(CustomContext.CustomMy_P2PsHdle,
+                                       CustomContext.CustomSwitch_CHdle,
+                                       0, /* charValOffset */
+                                       SizeSwitch_C, /* charValueLen */
+                                       (uint8_t *)  pPayload);
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : aci_gatt_update_char_value SWITCH_C command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: aci_gatt_update_char_value SWITCH_C command\n\r");
+      }
+      /* USER CODE BEGIN CUSTOM_STM_App_Update_Service_1_Char_2*/
+      /**
+       *  Manage My_Switch_Char Characteristic, Notify descriptor
+       */
+      /* USER CODE END CUSTOM_STM_App_Update_Service_1_Char_2*/
       break;
 
     case CUSTOM_STM_HRS_M:
-      result = aci_gatt_update_char_value(CustomContext.CustomMy_HrsHdle,
-                                          CustomContext.CustomHrs_MHdle,
-                                          0, /* charValOffset */
-                                          SizeHrs_M, /* charValueLen */
-                                          (uint8_t *)  pPayload);
-      /* USER CODE BEGIN CUSTOM_STM_Service_2_Char_1*/
-            /**
-             *  Manage My_HRS_Meas Characteristic, Notify descriptor
-            */
-      /* USER CODE END CUSTOM_STM_Service_2_Char_1*/
+      ret = aci_gatt_update_char_value(CustomContext.CustomMy_HrsHdle,
+                                       CustomContext.CustomHrs_MHdle,
+                                       0, /* charValOffset */
+                                       SizeHrs_M, /* charValueLen */
+                                       (uint8_t *)  pPayload);
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : aci_gatt_update_char_value HRS_M command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: aci_gatt_update_char_value HRS_M command\n\r");
+      }
+      /* USER CODE BEGIN CUSTOM_STM_App_Update_Service_2_Char_1*/
+      /**
+       *  Manage My_HRS_Meas Characteristic, Notify descriptor
+       */
+      /* USER CODE END CUSTOM_STM_App_Update_Service_2_Char_1*/
       break;
 
     case CUSTOM_STM_HRS_SL:
-      result = aci_gatt_update_char_value(CustomContext.CustomMy_HrsHdle,
-                                          CustomContext.CustomHrs_SlHdle,
-                                          0, /* charValOffset */
-                                          SizeHrs_Sl, /* charValueLen */
-                                          (uint8_t *)  pPayload);
-      /* USER CODE BEGIN CUSTOM_STM_Service_2_Char_2*/
+      ret = aci_gatt_update_char_value(CustomContext.CustomMy_HrsHdle,
+                                       CustomContext.CustomHrs_SlHdle,
+                                       0, /* charValOffset */
+                                       SizeHrs_Sl, /* charValueLen */
+                                       (uint8_t *)  pPayload);
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : aci_gatt_update_char_value HRS_SL command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: aci_gatt_update_char_value HRS_SL command\n\r");
+      }
+      /* USER CODE BEGIN CUSTOM_STM_App_Update_Service_2_Char_2*/
 
-      /* USER CODE END CUSTOM_STM_Service_2_Char_2*/
+      /* USER CODE END CUSTOM_STM_App_Update_Service_2_Char_2*/
       break;
 
     case CUSTOM_STM_HRS_CTRLP:
-      result = aci_gatt_update_char_value(CustomContext.CustomMy_HrsHdle,
-                                          CustomContext.CustomHrs_CtrlpHdle,
-                                          0, /* charValOffset */
-                                          SizeHrs_Ctrlp, /* charValueLen */
-                                          (uint8_t *)  pPayload);
-      /* USER CODE BEGIN CUSTOM_STM_Service_2_Char_3*/
+      ret = aci_gatt_update_char_value(CustomContext.CustomMy_HrsHdle,
+                                       CustomContext.CustomHrs_CtrlpHdle,
+                                       0, /* charValOffset */
+                                       SizeHrs_Ctrlp, /* charValueLen */
+                                       (uint8_t *)  pPayload);
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : aci_gatt_update_char_value HRS_CTRLP command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: aci_gatt_update_char_value HRS_CTRLP command\n\r");
+      }
+      /* USER CODE BEGIN CUSTOM_STM_App_Update_Service_2_Char_3*/
 
-      /* USER CODE END CUSTOM_STM_Service_2_Char_3*/
+      /* USER CODE END CUSTOM_STM_App_Update_Service_2_Char_3*/
       break;
 
     default:
@@ -571,5 +669,5 @@ tBleStatus Custom_STM_App_Update_Char(Custom_STM_Char_Opcode_t CharOpcode, uint8
 
   /* USER CODE END Custom_STM_App_Update_Char_2 */
 
-  return result;
+  return ret;
 }

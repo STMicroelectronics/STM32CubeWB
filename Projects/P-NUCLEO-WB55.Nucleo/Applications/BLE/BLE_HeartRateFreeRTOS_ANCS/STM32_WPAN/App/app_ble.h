@@ -86,4 +86,4 @@ void APP_BLE_Remove_Bonding_Info(void);
 }
 #endif
 
-#endif /*APP_BLE_H */
+#endif /* APP_BLE_H */

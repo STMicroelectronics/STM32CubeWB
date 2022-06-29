@@ -9,7 +9,7 @@
  * @brief ZCL Color Control cluster header
  * ZCL 7 Section 5.2
  * ZCL 8 Section 5.2
- * @copyright Copyright [2016 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2016 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_COLOR_H
@@ -328,7 +328,7 @@ enum ZbZclColorLoopFlags {
 #define ZCL_COLOR_TEMP_MAX                          0xFEFF
 #define ZCL_COLOR_LOOP_TIME_DEFAULT                 0x0019
 #define ZCL_COLOR_LOOP_START_HUE_DEFAULT            0x2300
-#define ZCL_COLOR_STARTUP_COLOR_TEMP_MAX            0xFFFF
+#define ZCL_COLOR_STARTUP_COLOR_TEMP_MAX            0xFEFF
 
 /*-----------------------------------------------------------------------------
  * Structures

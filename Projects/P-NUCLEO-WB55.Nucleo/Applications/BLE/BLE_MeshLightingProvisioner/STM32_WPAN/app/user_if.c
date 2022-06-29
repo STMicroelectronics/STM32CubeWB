@@ -1,13 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    user_if.c
-* @author  BLE Mesh Team
-* @brief   User interface file 
+  * @file    user_if.c
+  * @author  MCD Application Team
+  * @brief   User interface file 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) STMicroelectronics</center></h2>
-(-2021) STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -16,6 +16,8 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "cube_hal.h"
 #include "ble_clock.h" 

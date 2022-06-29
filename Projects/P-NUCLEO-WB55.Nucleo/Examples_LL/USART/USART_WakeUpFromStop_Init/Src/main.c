@@ -48,7 +48,7 @@
 /* USER CODE BEGIN PV */
 
 /**
-  * @brief Variables used for charcater reception from PC Com port
+  * @brief Variables used for character reception from PC Com port
   */
 __IO uint8_t      ubFinalCharReceived = 0;
 __IO uint32_t     ubReceivedChar;
@@ -97,9 +97,8 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
   /* System interrupt init*/
+  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* USER CODE BEGIN Init */
 

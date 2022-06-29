@@ -247,8 +247,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>../Core/Src/standby_stm32wb15.c</PathWithFileName>
-      <FilenameWithoutPath>standby_stm32wb15.c</FilenameWithoutPath>
+      <PathWithFileName>../Core/Src/standby.c</PathWithFileName>
+      <FilenameWithoutPath>standby.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -653,6 +653,30 @@
       <bDave2>0</bDave2>
       <PathWithFileName>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</PathWithFileName>
       <FilenameWithoutPath>stm32wbxx_hal_uart_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>36</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rng.c</PathWithFileName>
+      <FilenameWithoutPath>stm32wbxx_hal_uart_ex.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>8</GroupNumber>
+      <FileNumber>37</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32wbxx_hal_ipcc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

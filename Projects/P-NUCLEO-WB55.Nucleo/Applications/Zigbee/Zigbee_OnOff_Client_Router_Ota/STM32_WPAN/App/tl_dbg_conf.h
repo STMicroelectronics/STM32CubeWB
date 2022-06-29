@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
   * File Name          : tl_dbg_conf.h
@@ -15,10 +16,15 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TL_DBG_CONF_H
-#define __TL_DBG_CONF_H
+#ifndef TL_DBG_CONF_H
+#define TL_DBG_CONF_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* USER CODE BEGIN Tl_Conf */
 
@@ -120,5 +126,8 @@
 
 /* USER CODE END Tl_Conf */
 
-#endif /*__TL_DBG_CONF_H */
+#ifdef __cplusplus
+}
+#endif
 
+#endif /*TL_DBG_CONF_H */

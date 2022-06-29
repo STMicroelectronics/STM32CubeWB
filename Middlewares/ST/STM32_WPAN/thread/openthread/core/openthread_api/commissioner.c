@@ -30,18 +30,17 @@
 #include "thread.h"
 #include "commissioner.h"
 
+#if OPENTHREAD_FTD && OPENTHREAD_CONFIG_COMMISSIONER_ENABLE
+
 extern otCommissionerStateCallback otCommissionerStateCb;
 extern otCommissionerJoinerCallback otCommissionerJoinerCb;
 extern otCommissionerEnergyReportCallback otCommissionerEnergyReportCb;
 extern otCommissionerPanIdConflictCallback otCommissionerPanIdConflictCb;
 
-
-#if OPENTHREAD_FTD && OPENTHREAD_CONFIG_COMMISSIONER_ENABLE
-
 otError otCommissionerStart(otInstance *                 aInstance,
-    otCommissionerStateCallback  aStateCallback,
-    otCommissionerJoinerCallback aJoinerCallback,
-    void *                       aCallbackContext)
+                            otCommissionerStateCallback  aStateCallback,
+                            otCommissionerJoinerCallback aJoinerCallback,
+                            void *                       aCallbackContext)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -71,7 +70,7 @@ otError otCommissionerStop(otInstance *aInstance)
 
   p_ot_req->Size=0;
 
-  Ot_Cmd_TransferWithNotif();
+  Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
@@ -90,6 +89,28 @@ otError otCommissionerAddJoiner(otInstance *        aInstance,
 
   p_ot_req->Size=3;
   p_ot_req->Data[0] = (uint32_t) aEui64;
+  p_ot_req->Data[1] = (uint32_t) aPskd;
+  p_ot_req->Data[2] = (uint32_t) aTimeout;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otCommissionerAddJoinerWithDiscerner(otInstance *             aInstance,
+                                             const otJoinerDiscerner *aDiscerner,
+                                             const char *             aPskd,
+                                             uint32_t                 aTimeout)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COMMISSIONER_ADD_JOINER_WITH_DISCERNER;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t) aDiscerner;
   p_ot_req->Data[1] = (uint32_t) aPskd;
   p_ot_req->Data[2] = (uint32_t) aTimeout;
 
@@ -128,7 +149,24 @@ otError otCommissionerRemoveJoiner(otInstance *aInstance, const otExtAddress *aE
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t) aEui64;
 
-  Ot_Cmd_TransferWithNotif();
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otCommissionerRemoveJoinerWithDiscerner(otInstance *aInstance, const otJoinerDiscerner *aDiscerner)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COMMISSIONER_REMOVE_JOINER_WITH_DISCERNER;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aDiscerner;
+
+  Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
@@ -318,29 +356,6 @@ otCommissionerState otCommissionerGetState(otInstance *aInstance)
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otCommissionerState) p_ot_req->Data[0];
-}
-
-otError otCommissionerGeneratePskc(const char *           aPassPhrase,
-                                   const char *           aNetworkName,
-                                   const otExtendedPanId *aExtPanId,
-                                   otPskc *               aPskc)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_COMMISSIONER_GENERATE_PSKC;
-
-  p_ot_req->Size=4;
-  p_ot_req->Data[0] = (uint32_t) aPassPhrase;
-  p_ot_req->Data[1] = (uint32_t) aNetworkName;
-  p_ot_req->Data[2] = (uint32_t) aExtPanId;
-  p_ot_req->Data[3] = (uint32_t) aPskc;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
 }
 
 #endif /* OPENTHREAD_FTD && OPENTHREAD_CONFIG_COMMISSIONER_ENABLE */

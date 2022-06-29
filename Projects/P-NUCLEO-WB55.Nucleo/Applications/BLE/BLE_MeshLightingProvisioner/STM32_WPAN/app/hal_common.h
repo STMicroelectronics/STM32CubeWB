@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    hal_common.h
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Common functions of HAL file 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _HAL_H_

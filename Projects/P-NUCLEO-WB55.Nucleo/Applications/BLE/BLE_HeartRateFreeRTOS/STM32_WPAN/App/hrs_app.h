@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HRS_APP_H
-#define __HRS_APP_H
+#ifndef HRS_APP_H
+#define HRS_APP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,4 +63,4 @@ void HRSAPP_Init( void );
 }
 #endif
 
-#endif /*__HRS_APP_H */
+#endif /*HRS_APP_H */

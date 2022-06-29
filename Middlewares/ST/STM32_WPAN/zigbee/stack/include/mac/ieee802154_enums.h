@@ -58,21 +58,11 @@
 #define WPAN_CHANNELMASK_915MHZ                 0x000007FEU /* Channels 1-10 */
 #define WPAN_CHANNELMASK_2400MHZ                0x07FFF800U /* Channels 11-26 */
 
-/* NA sub-ghz channel mask */
-#define WPAN_CHANNELMASK_PAGE23                 0x01ffffffU /* Channels 0-24 (25) */
-
-/* EU sub-ghz channel masks */
-#define WPAN_CHANNELMASK_PAGE24                 0x001fffffU /* Channels 56-76 (21) */
-#define WPAN_CHANNELMASK_PAGE25                 WPAN_PAGE_CHANNELMASK_ALL /* Channels 0-26 (27) */
-#define WPAN_CHANNELMASK_PAGE26                 0x000000ffU /* Channels 27-34 (8) */
-#define WPAN_CHANNELMASK_PAGE27                 0x001fffffU /* Channels 35-55 (21) */
-
 /* GB-868 channel masks (863 to 876 MHz) */
 #define WPAN_CHANNELMASK_PAGE28                 0x07FFFFFFU /* Channels 0 to 26 */
 #define WPAN_CHANNELMASK_PAGE29                 0x000000FFU /* Channels 27 to 34  (0 to 7) */
 #define WPAN_CHANNELMASK_PAGE30                 0x00003FFFU /* Channels 35 to 48  (0 to 13) */
 /* GB-868 channel masks (915 to 921 MHz) */
-#define WPAN_CHANNELMASK_PAGE31                 0x00001FFFU /* Channels 0 to 12 */
 #define WPAN_CHANNELMASK_PAGE31                 0x00001FFFU /* Channels 0 to 12 */
 
 /* Virtual channel page (BDL/SCoP). Arbitrarily chosen. */

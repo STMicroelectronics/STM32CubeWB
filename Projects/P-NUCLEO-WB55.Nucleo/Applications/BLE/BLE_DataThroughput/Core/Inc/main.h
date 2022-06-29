@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : main.h
-  * @brief          : Header for main.c file.
-  *                   This file contains the common defines of the application.
+  * @file    main.h
+  * @author  MCD Application Team
+  * @brief   Header for main.c module
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef MAIN_H
+#define MAIN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,7 +34,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stm32wbxx_nucleo.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -60,12 +60,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-void   MX_GPIO_Init(void);
-void   MX_DMA_Init(void);
-void   MX_IPCC_Init(void);
-void   MX_RF_Init(void);
-void   MX_RTC_Init(void);
-
 void   MX_LPUART1_UART_Init(void);
 void   MX_USART1_UART_Init(void);
 /* USER CODE BEGIN Private defines */
@@ -76,4 +70,4 @@ void   MX_USART1_UART_Init(void);
 }
 #endif
 
-#endif /* __MAIN_H */
+#endif /* MAIN_H */

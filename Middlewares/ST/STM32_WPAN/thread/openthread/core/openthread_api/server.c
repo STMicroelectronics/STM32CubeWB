@@ -108,24 +108,6 @@ otError otServerGetNextService(otInstance *aInstance, otNetworkDataIterator *aIt
     return (otError)p_ot_req->Data[0];
 }
 
-otError otServerGetNextLeaderService(otInstance *aInstance, otNetworkDataIterator *aIterator, otServiceConfig *aConfig)
-{
-    Pre_OtCmdProcessing();
-    /* prepare buffer */
-    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-    p_ot_req->ID = MSG_M4TOM0_OT_SERVER_GET_NEXT_LEADER_SERVICE;
-
-    p_ot_req->Size=2;
-    p_ot_req->Data[0] = (uint32_t)aIterator;
-    p_ot_req->Data[1] = (uint32_t)aConfig;
-
-    Ot_Cmd_Transfer();
-
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
-}
-
 otError otServerRegister(otInstance *aInstance)
 {
     Pre_OtCmdProcessing();

@@ -172,7 +172,6 @@ void HW_IPCC_Tx_Handler( void )
       HW_IPCC_ZIGBEE_CmdEvtHandler();
   }
 #endif /* ZIGBEE_WB */
-
   else if (HW_IPCC_TX_PENDING( HW_IPCC_MM_RELEASE_BUFFER_CHANNEL ))
   {
     HW_IPCC_MM_FreeBufHandler();
@@ -191,15 +190,16 @@ void HW_IPCC_Enable( void )
 {
   /**
   * Such as IPCC IP available to the CPU2, it is required to keep the IPCC clock running
-    when FUS is running on CPU2 and CPU1 enters deep sleep mode
+  * when FUS is running on CPU2 and CPU1 enters deep sleep mode
   */
   LL_C2_AHB3_GRP1_EnableClock(LL_C2_AHB3_GRP1_PERIPH_IPCC);
 
-   /**
-   * When the device is out of standby, it is required to use the EXTI mechanism to wakeup CPU2
-   */
-  LL_C2_EXTI_EnableEvent_32_63( LL_EXTI_LINE_41 );
+  /**
+  * When the device is out of standby, it is required to use the EXTI mechanism to wakeup CPU2
+  */
   LL_EXTI_EnableRisingTrig_32_63( LL_EXTI_LINE_41 );
+  /* It is required to have at least a system clock cycle before a SEV after LL_EXTI_EnableRisingTrig_32_63() */
+  LL_C2_EXTI_EnableEvent_32_63( LL_EXTI_LINE_41 );
 
   /**
    * In case the SBSFU is implemented, it may have already set the C2BOOT bit to startup the CPU2.
@@ -233,12 +233,12 @@ void HW_IPCC_Init( void )
 #if(CFG_LPM_STANDBY_SUPPORTED != 0)
 static void IPCC_Wakeup_CPU2(void)
 {
-
   /**
    * When the device is out of standby, it is required to use the EXTI mechanism to wakeup CPU2
    */
-  LL_C2_EXTI_EnableEvent_32_63( LL_EXTI_LINE_41 );
   LL_EXTI_EnableRisingTrig_32_63( LL_EXTI_LINE_41 );
+  /* It is required to have at least a system clock cycle before a SEV after LL_EXTI_EnableRisingTrig_32_63() */
+  LL_C2_EXTI_EnableEvent_32_63( LL_EXTI_LINE_41 );
 
   __SEV( );       /* Set the internal event flag and send an event to the CPU2 */
   __WFE( );       /* Clear the internal event flag */
@@ -700,4 +700,3 @@ static void HW_IPCC_TRACES_EvtHandler( void )
 }
 
 __weak void HW_IPCC_TRACES_EvtNot( void ){};
-

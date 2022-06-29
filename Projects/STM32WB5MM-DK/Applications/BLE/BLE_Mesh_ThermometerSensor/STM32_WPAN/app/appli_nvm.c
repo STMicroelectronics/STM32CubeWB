@@ -117,7 +117,7 @@ MOBLE_RESULT AppliNvm_FlashErase(uint16_t PageNumber)
   {
     BLEMesh_StopAdvScan();
     ATOMIC_SECTION_BEGIN();
-    result =  PalNvmErase(APP_NVM_BASE, 0);
+    result =  PalNvmErase(APP_NVM_BASE, 1);
     ATOMIC_SECTION_END();
   }
   else /* Invalid page no */
@@ -164,8 +164,7 @@ MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset,
   }
   else
   {
-    result = PalNvmWrite(APP_NVM_BASE, 
-                         offset, 
+    result = PalNvmWrite(APP_NVM_BASE + offset, 
                          buf, 
                          size);
   }
@@ -320,8 +319,8 @@ MOBLE_RESULT AppliNvm_FactorySettingReset(void)
       BLEMesh_Unprovision();
       
       /* Clear lib data, primary and backup nvm used by BLE-Mesh lib */
-      PalNvmErase(NVM_BASE, 0);      
-      PalNvmErase(NVM_BASE, 0x1000);
+      PalNvmErase(NVM_BASE, 1);      
+      PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
       
       AppliNvm_ClearModelState();
       
@@ -512,7 +511,7 @@ void AppliNvm_Process(void)
              APP_NVM_RESERVED_SIZE);
     
       TRACE_M(TF_PROVISION,"Erase flash page\r\n");
-      result = PalNvmErase(APP_NVM_BASE, 0);
+      result = PalNvmErase(APP_NVM_BASE, 1);
 
       if(result == MOBLE_RESULT_OUTOFMEMORY)
       {

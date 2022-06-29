@@ -371,6 +371,8 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\include\openthread</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\include</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>

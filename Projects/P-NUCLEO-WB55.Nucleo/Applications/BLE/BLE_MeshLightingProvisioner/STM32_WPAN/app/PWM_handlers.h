@@ -1,13 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    PWM/PWM_handlers.c
-* @author  SNM Application Team
-  * @brief   Handlers for PWM and other support functions.
+  * @file    PWM_handlers.h
+  * @author  MCD Application Team
+  * @brief   Header Handlers for PWM and other support functions.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) STMicroelectronics</center></h2>
-(-2021) STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 	
 #include "PWM_config.h"
 //#include "SDK_EVAL_Config.h"	

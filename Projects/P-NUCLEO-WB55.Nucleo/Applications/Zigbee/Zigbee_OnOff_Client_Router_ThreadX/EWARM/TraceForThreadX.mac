@@ -1,0 +1,12 @@
+__var start;
+__var end;
+
+
+save_tracex()
+{
+  start = __smessage "Memory:0x",&cDebugTraceX:%x;
+  end = __smessage "Memory:0x",(cDebugTraceX+sizeof(cDebugTraceX)-1):%x;
+
+  __memorySave(start, end, "intel-extended", "$PROJ_DIR$\\Trace_xx.trx");
+  return 0;
+}

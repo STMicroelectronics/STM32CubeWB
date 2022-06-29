@@ -136,17 +136,17 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
     /* Check parameter if data to be send continuously */
     if (idx == 0xFF)
     {
-        data_buff[0] = 0x01;     /*  data write sub command; */
-        length = sizeof(data_buff)-1;
-        for(MOBLEUINT8 i=1;i <sizeof(data_buff);i++)
-        {
-          data_buff[j] = i;
-          j++;
-        }
-        Appli_Vendor_SetBigDataPacket(data_buff, length, elementIndex , peer);
-        Vendor_SendDataFreq(0xFF);
-        TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
-        return;
+      data_buff[0] = 0x01;     /*  data write sub command; */
+      length = sizeof(data_buff)-1;
+      for(MOBLEUINT8 i=1;i <sizeof(data_buff);i++)
+      {
+        data_buff[j] = i;
+        j++;
+      }
+      Appli_Vendor_SetBigDataPacket(data_buff, length, elementIndex , peer);
+      Vendor_SendDataFreq(0xFF);
+      TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
+      return;
     }
     /* Check parameter if continuously data send operation need to stop  */
     else if (idx == 0x00)
@@ -163,15 +163,15 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
     /* Data will be sent only once */
     else
     {
-    data_buff[0] = 0x01;     /*  data write sub command; */
-    length = sizeof(data_buff)-idx;
-        Vendor_SendDataFreq(0x00); /* To stop sending packets periodically */
-    for(MOBLEUINT8 i=idx;i <sizeof(data_buff);i++)
-    {
-      data_buff[j] = i;
-      j++;
+      data_buff[0] = 0x01;     /*  data write sub command; */
+      length = sizeof(data_buff)-idx;
+      Vendor_SendDataFreq(0x00); /* To stop sending packets periodically */
+      for(MOBLEUINT8 i=idx;i <sizeof(data_buff);i++)
+      {
+        data_buff[j] = i;
+        j++;
+      }
     }
-  }
   }
   else
   {
@@ -179,37 +179,39 @@ void SerialCtrlVendorWrite_Process(char *rcvdStringBuff, uint16_t rcvdStringSize
   }
   
   for(int i = 0; i < 6 ; i++)
-    {
-      if(command == Vendor_Opcodes_Table[i])
-      {                 
-        result = MOBLE_RESULT_SUCCESS;
-        break;
-      }
+  {
+    if(command == Vendor_Opcodes_Table[i])
+    {                 
+      result = MOBLE_RESULT_SUCCESS;
+      break;
     }
+  }
   if(result)
   {
     TRACE_I(TF_SERIAL_PRINTS,"Invalid Command\r\n");
     return;
   }
   
- else
+  else
   {
       
-      BLEMesh_SetRemotePublication( VENDORMODEL_STMICRO_ID1, 
-                                          peer,
-                                          command, 
-                                          data_buff, 
-                                          length, 
-                                          response, 
-                                          MOBLE_TRUE);
-      if(result == MOBLE_RESULT_SUCCESS)
-      {
-        TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
-      }
-      else
-      {
-        TRACE_I(TF_SERIAL_PRINTS,"Invalid Opcode Parameter\r\n");
-      }
+    /* Publish to the peer address, that can be a group address */
+    result = BLEMesh_SetRemoteData(peer,
+                                   elementIndex,
+                                   command, 
+                                   data_buff, 
+                                   length,
+                                   response, 
+                                   MOBLE_TRUE);   
+
+    if(result == MOBLE_RESULT_SUCCESS)
+    {
+      TRACE_I(TF_SERIAL_PRINTS,"Command Executed Successfully\r\n");
+    }
+    else
+    {
+      TRACE_I(TF_SERIAL_PRINTS,"Invalid Opcode Parameter\r\n");
+    }
   }
 }
   
@@ -268,10 +270,10 @@ void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
       Start finding for opcode in Light LC Table*/
   if (minParamLength == 0xff)
   {
-     minParamLength = SerialCtrl_GetMinParamLength(command,
-                                                   LightLC_OpcodeTable,
-                                                   LightLC_OpcodeTableLength);
-     
+    minParamLength = SerialCtrl_GetMinParamLength(command,
+                                                 LightLC_OpcodeTable,
+                                                 LightLC_OpcodeTableLength);
+
   }
   /* Opcode not found in Light LC opcode table 
       Start finding for opcode in Sensor Table*/
@@ -287,25 +289,25 @@ void SerialCtrl_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   
   if (minParamLength != 0xff) /* Opcode found in one of the models */ 
   {
-      minParamLength = SerialCtrl_GetData(rcvdStringBuff, 
-                                          rcvdStringSize, 
-                                          SERIAL_MODEL_DATA_OFFSET, 
-                                          data);
+    minParamLength = SerialCtrl_GetData(rcvdStringBuff, 
+                                        rcvdStringSize, 
+                                        SERIAL_MODEL_DATA_OFFSET, 
+                                        data);
 
-      result = BLEMesh_SetRemoteData(peer,
-                                     elementIndex,
-                                     command, 
-                                     data, 
-                                     minParamLength,
-                                     response, 
-                                     MOBLE_FALSE);   
+    result = BLEMesh_SetRemoteData(peer,
+                                   elementIndex,
+                                   command, 
+                                   data, 
+                                   minParamLength,
+                                   response, 
+                                   MOBLE_FALSE);   
     if(result == MOBLE_RESULT_SUCCESS)
     {
-        TRACE_I(TF_SERIAL_PRINTS, "Command Executed Successfully\r\n");
+      TRACE_I(TF_SERIAL_PRINTS, "Command Executed Successfully\r\n");
     }
     else
     {
-        TRACE_I(TF_SERIAL_PRINTS, "Invalid Opcode Parameter\r\n");
+      TRACE_I(TF_SERIAL_PRINTS, "Invalid Opcode Parameter\r\n");
     }
   }
   else
@@ -351,31 +353,30 @@ MOBLEUINT8 SerialCtrl_GetData(char *rcvdStringBuff, uint16_t rcvdStringSize, MOB
   MOBLEUINT8 dataIndex = 0;
   int msb, lsb, byteCounter=0;           
 
-    for(int i=dataOffset ; i<=(rcvdStringSize) ; i++)
+  for(int i=dataOffset ; i<=(rcvdStringSize) ; i++)
+  {
+    /* check if space or NULL found */
+    if(rcvdStringBuff[i] == ' '||rcvdStringBuff[i] == '\0' )
     {
-      /* check if space or NULL found */
-      if(rcvdStringBuff[i] == ' '||rcvdStringBuff[i] == '\0' )
+      /*if number of bytes is one*/
+      while(byteCounter > 0)
       {
-        /*if number of bytes is one*/
-        while(byteCounter > 0)
-        {
-          data[dataIndex++] = byteBuff[--byteCounter];
-            
-        }
-      }
-      else
-      {
-        /* take two consecutive ascii characters from the rcvdStringBuff and convert to hex values */  
-        msb = Serial_CharToHexConvert(rcvdStringBuff[i]);        
-        lsb = Serial_CharToHexConvert(rcvdStringBuff[i + 1 ]);
-        /*join two hex values to make one hex value*/
-        byteBuff[byteCounter]  = msb << 4;
-        byteBuff[byteCounter] |= lsb;
-        
-        i++;      /*increament for loop counter as two values are used */
-        byteCounter++;   /*increament byteCounter counter*/
+        data[dataIndex++] = byteBuff[--byteCounter];
       }
     }
+    else
+    {
+      /* take two consecutive ascii characters from the rcvdStringBuff and convert to hex values */  
+      msb = Serial_CharToHexConvert(rcvdStringBuff[i]);        
+      lsb = Serial_CharToHexConvert(rcvdStringBuff[i + 1 ]);
+      /*join two hex values to make one hex value*/
+      byteBuff[byteCounter]  = msb << 4;
+      byteBuff[byteCounter] |= lsb;
+      
+      i++;      /*increament for loop counter as two values are used */
+      byteCounter++;   /*increament byteCounter counter*/
+    }
+  }
         
   return dataIndex;
 

@@ -45,7 +45,7 @@ extern "C" {
 #define BSP_BUTTON_USERx_IT_PRIORITY         0x0FUL
 #define PWM_LED_CLOCK_IT_PRIORITY            0x03UL
 
-/* I2C3 Frequeny in Hz  */
+/* I2C3 Frequency in Hz  */
 #define BUS_I2C3_FREQUENCY                   100000UL /* Frequency of I2C3 = 100 KHz*/
 
 /* Indicates whether or not TCXO is supported by the board

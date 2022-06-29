@@ -1,11 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
- * @file    hw_flash.c
- * @author  MCD Application Team
+  * @file    hw_flash.c
+  * @author  MCD Application Team
+  * @brief   This file contains the FLASH driver needed by EE module
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -14,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 #include "common.h"
 #include "stm32_seq.h"

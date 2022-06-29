@@ -19,8 +19,8 @@
 /* This file brings SBSFU functions and constants that are needed by ble_ota project*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __OTA_SBSFU_H
-#define __OTA_SBSFU_H
+#ifndef OTA_SBSFU_H
+#define OTA_SBSFU_H
 
 
 #ifdef __cplusplus
@@ -44,4 +44,4 @@ extern "C" {
 }
 #endif
 
-#endif /*__OTA_SBSFU_H */
+#endif /* OTA_SBSFU_H */

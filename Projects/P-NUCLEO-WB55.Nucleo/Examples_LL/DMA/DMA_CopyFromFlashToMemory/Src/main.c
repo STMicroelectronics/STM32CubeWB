@@ -74,7 +74,7 @@ int main(void)
 
   /* Configure DMA1 Channel 1                                    */
   /* Enable DMA1 clock                                           */
-  /* Configure the DMA functionnal parameters :                  */
+  /* Configure the DMA functional parameters :                   */
   /*        - Transfer memory word to memory word in normal mode */
   /*        - Memory and Periph increment mode                   */
   /* Configure NVIC for DMA transfer complete/error interrupts   */
@@ -95,7 +95,7 @@ int main(void)
   *         Flash memory(aSRC_Const_Buffer) to Internal SRAM(aDST_Buffer).
   * @note   This function is used to :
   *         -1- Enable DMA1 clock
-  *         -2- Configure the DMA functionnal parameters
+  *         -2- Configure the DMA functional parameters
   *         -3- Configure NVIC for DMA transfer complete/error interrupts
   * @note   Peripheral configuration is minimal configuration from reset values.
   *         Thus, some useless LL unitary functions calls below are provided as
@@ -108,7 +108,7 @@ void Configure_DMA(void)
   /* (1) Enable the clock of DMA1 */
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
 
-  /* (2) Configure the DMA functionnal parameters */
+  /* (2) Configure the DMA functional parameters */
   /* Configuration of the DMA parameters can be done using unitary functions or using the specific configure function */ 
   /* Unitary Functions */
 

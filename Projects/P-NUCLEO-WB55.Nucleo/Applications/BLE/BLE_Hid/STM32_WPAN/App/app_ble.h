@@ -1,4 +1,4 @@
-
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    app_ble.h
@@ -16,11 +16,11 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APP_BLE_H
-#define __APP_BLE_H
+#ifndef APP_BLE_H
+#define APP_BLE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,26 +28,52 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "hci_tl.h"
-  
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
 /* Exported types ------------------------------------------------------------*/
+
 typedef enum
 {
   APP_BLE_Limited,
   APP_BLE_Full,
 } APP_BLE_InitMode_t;
 
+/* USER CODE BEGIN ET */
+
+/* USER CODE END ET */
+
 /* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
+
+/* USER CODE END EC */
+
 /* External variables --------------------------------------------------------*/
-/* Exported macros -----------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-void APP_BLE_Init( void );
-    
+/* USER CODE BEGIN EV */
+
+/* USER CODE END EV */
+
+/* Exported macro ------------------------------------------------------------*/
+/* USER CODE BEGIN EM */
+
+/* USER CODE END EM */
+
+/* Exported functions ---------------------------------------------*/
+void APP_BLE_Init(void);
+
+
+/* USER CODE BEGIN EF */
 void APP_BLE_Key_Button1_Action(void);
 void APP_BLE_Key_Button2_Action(void);
 void APP_BLE_Key_Button3_Action(void);
+
+/* USER CODE END EF */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__APP_BLE_H */
+#endif /* APP_BLE_H */

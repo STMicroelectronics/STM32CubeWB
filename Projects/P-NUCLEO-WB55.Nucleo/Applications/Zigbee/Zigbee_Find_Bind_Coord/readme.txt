@@ -28,7 +28,7 @@ How to use the Finding and Binding feature on a device acting as a Server with C
 The purpose of this application is to show how Finding and Binding (F&B) works on a Zigbee centralized network.
 This will demonstrate how F&B initiator will automatically create bindings to bindable clusters on the
 F&B target.
-Once clusters are bound, they will be able to communicate through bindings which will toggle LEDs and ouput
+Once clusters are bound, they will be able to communicate through bindings which will toggle LEDs and output
 messages through the serial interface.
 
 For this specific application:
@@ -127,7 +127,7 @@ For this application it is requested to have:
              |(Binding entries created = 3)          |                             |
              |                                       |                             | 
              |(Note : On ZR1, the find and bind is   |                             |
-             |initated automatically)                |                             |
+             |initiated automatically)               |                             |
              |                                       |                             |
              |                                       |                             |
              |                                 SW3=> |Initiate the                 |
@@ -242,7 +242,7 @@ On ZC, the user can press the following button at any time after successful netw
 NOTE: This command will fail unless the messaging server is bound to a client.
 
 *Step 6*
-Via application specific means, ZR2 will â€œknowâ€? that it has successfully performed F&B from previous steps.
+Via application specific means, ZR2 will acknowledge that it has successfully performed F&B from previous steps.
 Pressing BUTTON 3 again will allocate the ZCL IAS Warning Device Server cluster on endpoint 12, and will re-perform Finding and Binding as an Initiator.
 The GREEN LED will stay on if the F&B procedure is successful.
 Otherwise the GREEN LED will turn off, and the user can press BUTTON 3 again to reattempt F&B.

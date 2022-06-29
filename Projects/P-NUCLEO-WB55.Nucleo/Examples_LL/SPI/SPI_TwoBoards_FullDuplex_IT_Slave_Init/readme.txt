@@ -8,7 +8,7 @@
   * @brief   Description of the SPI_TwoBoards_FullDuplex_IT_Slave_Init example.
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -20,9 +20,10 @@
 
 @par Example Description 
 
-Data buffer transmission and receptionvia SPI using Interrupt mode. This 
-example is based on the STM32WBxx SPI LL API. The peripheral 
-initialization uses LL unitary service functions for optimization purposes (performance and size).
+Data buffer transmission and reception via SPI using Interrupt mode. This 
+example is based on the STM32WBxx SPI LL API. The peripheral initialization 
+uses LL unitary service functions for optimization purposes (performance and size). This
+example is for the Slave board.
 
 The communication is done with 2 boards through SPI.
    _________________________                        _________________________

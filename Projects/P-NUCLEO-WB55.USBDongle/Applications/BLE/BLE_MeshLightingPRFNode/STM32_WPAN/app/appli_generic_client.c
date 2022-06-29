@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    appli_generic_client.c
-* @author  BLE Mesh Team
-* @brief   Application interface for Generic Mesh Models 
+  * @file    appli_generic_client.c
+  * @author  MCD Application Team
+  * @brief   Application interface for Generic Mesh Models 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"
@@ -71,7 +73,7 @@ MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUI
     else if(i == 2)
       TRACE_M(TF_SERIAL_CTRL,"Remaining Time value: %d\n\r", pOnOff_status[i]);
   }
-
+  
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -79,7 +81,7 @@ MOBLE_RESULT Appli_Generic_OnOff_Status(MOBLEUINT8 const *pOnOff_status, MOBLEUI
 #ifdef ENABLE_GENERIC_MODEL_CLIENT_LEVEL
 /******************************************************************************/
 
-/**
+  /**
 * @brief  Appli_Generic_Level_Status: This function is callback for Application
 *          when Generic Level Move message is received
 * @param  plevel_status: Pointer to the parameters message
@@ -99,10 +101,10 @@ MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8 const *plevel_status,
   MOBLEUINT8 i;
   MOBLEUINT8 level = 0;
 #endif
-
+  
   TRACE_M(TF_GENERIC,"Generic_Level_Status callback received for element %d \r\n", elementIndex);
   TRACE_M(TF_SERIAL_CTRL,"#8208! \r\n");
-
+      
 #if ( CFG_DEBUG_TRACE != 0 )
   for(i = 0; i < plength; i++)
   {
@@ -118,7 +120,7 @@ MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8 const *plevel_status,
       TRACE_M(TF_SERIAL_CTRL,"Remaining Time value: %d\n\r", plevel_status[i]);
   }
 #endif
-
+  
   return MOBLE_RESULT_SUCCESS;
 }
 
@@ -138,8 +140,8 @@ MOBLE_RESULT Appli_Generic_Level_Status(MOBLEUINT8 const *plevel_status,
 * @retval MOBLE_RESULT
 */
 MOBLE_RESULT Appli_Generic_DefaultTransitionTime_Status(MOBLEUINT8 const *pTransition_status , MOBLEUINT32 plength,MOBLEUINT16 dstPeer, MOBLEUINT8 elementIndex) 
-{ 
-  
+{  
+
   TRACE_M(TF_GENERIC,"Generic_DefaultTransitionTime_Status callback received for element %d \r\n", elementIndex);
   TRACE_M(TF_SERIAL_CTRL,"#8210!\r\n");
   
@@ -164,7 +166,7 @@ MOBLE_RESULT Appli_Generic_PowerOnOff_Status(MOBLEUINT8 const *powerOnOff_status
 
   TRACE_M(TF_GENERIC,"Generic_PowerOnOff_Status callback received for element %d \r\n", elementIndex);
   TRACE_M(TF_SERIAL_CTRL,"#8212!\r\n");
-
+  
   for(i = 0; i < plength; i++)
   {
     if(i == 0)

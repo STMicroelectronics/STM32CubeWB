@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_H
 # define ZCL_H
@@ -52,6 +52,10 @@ struct ZbZclAddrInfoT {
  * Cluster Commands
  *---------------------------------------------------------------
  */
+
+/* Group ID limit for Scene and Group Cluster Commands */
+#define ZCL_GROUPS_ID_MAX                   0xfff7U
+
 struct ZbZclCommandReqT {
     /* From APSDE-DATA.request */
     struct ZbApsAddrT dst;
@@ -551,7 +555,7 @@ enum ZbZclReportDirectionT {
 struct ZbZclAttrReportConfigRecordT {
     enum ZbZclReportDirectionT direction; /* e.g. ZCL_REPORT_DIRECTION_NORMAL. */
     uint16_t attr_id;
-    uint8_t attr_type; /* Only if ZCL_REPORT_DIRECTION_NORMAL. */
+    enum ZclDataTypeT attr_type; /* Only if ZCL_REPORT_DIRECTION_NORMAL. */
     uint16_t min; /* Only if ZCL_REPORT_DIRECTION_NORMAL. */
     uint16_t max; /* Only if ZCL_REPORT_DIRECTION_NORMAL. */
     double change; /**< Reportable change. Only if ZCL_REPORT_DIRECTION_NORMAL. */
@@ -738,7 +742,7 @@ struct ZbZclClusterCommandReqT {
     unsigned int length;
 };
 
-/* ZbZclClusterCommandReq and ZbZclClusterCommandWait are wrappers to ZbZclCommandReq. */
+/* ZbZclClusterCommandReq is a helper wrapper to ZbZclCommandReq. */
 /* cluster = The cluster that is originating this message. Information from the cluster is used when
  * sending the command (source addressing, APS TX Options).
  * "callback" may be NULL */
@@ -782,7 +786,7 @@ enum ZclStatusCodeT ZbZclClusterCommandRspWithCb(struct ZbZclClusterT *cluster, 
  * to make these checks. */
 enum ZclStatusCodeT ZbZclSendClusterStatusResponse(struct ZbZclClusterT *cluster,
     struct ZbApsdeDataIndT *dataIndPtr, struct ZbZclHeaderT *zclHdrPtr, uint8_t cmdId,
-    uint8_t *zclPayload, uint8_t zclPaylen);
+    uint8_t *zclPayload, uint8_t zclPaylen, bool allow_bcast);
 
 /* Send a Default Response. */
 void ZbZclSendDefaultResponse(struct ZbZclClusterT *cluster, struct ZbApsdeDataIndT *dataIndPtr,

@@ -694,10 +694,9 @@ static void Reset_BackupDomain( void )
 
 static void Init_Exti( void )
 {
-  /**< Disable all wakeup interrupt on CPU1  except LPUART(25), IPCC(36), HSEM(38) */
-  LL_EXTI_DisableIT_0_31( (~0) & (~(LL_EXTI_LINE_25)) );
-  LL_EXTI_DisableIT_32_63( (~0) & (~(LL_EXTI_LINE_36 | LL_EXTI_LINE_38)) );
-  
+  /* Enable LPUART(25), IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
+  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_25 | LL_EXTI_LINE_36 | LL_EXTI_LINE_38);
+
   return;
 }
 

@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HTS_APP_H
-#define __HTS_APP_H
+#ifndef HTS_APP_H
+#define HTS_APP_H
 
 #ifdef __cplusplus
 extern "C"
@@ -68,4 +68,4 @@ void HTSAPP_Profile_UpdateChar(void);
 }
 #endif
 
-#endif /*__HTS_APP_H */
+#endif /*HTS_APP_H */

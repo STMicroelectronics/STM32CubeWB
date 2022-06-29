@@ -72,6 +72,8 @@ UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_lpuart1_tx;
 DMA_HandleTypeDef hdma_usart1_tx;
 
+RNG_HandleTypeDef hrng;
+
 RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN PV */
@@ -80,18 +82,15 @@ RTC_HandleTypeDef hrtc;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_RF_Init(void);
 static void MX_RTC_Init(void);
 static void MX_IPCC_Init(void);
+static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
-void PeriphClock_Config(void);
-static void Reset_Device( void );
-static void Reset_IPCC( void );
-static void Reset_BackupDomain( void );
-static void Init_Exti( void );
-static void Config_HSE(void);
+void PeriphUsbClock_Config(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -107,33 +106,30 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-  /**
-   * The OPTVERR flag is wrongly set at power on
-   * It shall be cleared before using any HAL_FLASH_xxx() api
-   */
-  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+  /* Config code for STM32_WPAN (HSE Tuning must be done before system clock configuration) */
+  MX_APPE_Config();
 
   /* USER CODE BEGIN Init */
-  Reset_Device();
-  Config_HSE();
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
+/* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
+
   /* IPCC initialisation */
    MX_IPCC_Init();
 
   /* USER CODE BEGIN SysInit */
-  PeriphClock_Config();
-  Init_Exti(); /**< Configure the system Power Mode */
+  PeriphUsbClock_Config();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -141,18 +137,20 @@ int main(void)
   MX_DMA_Init();
   MX_RF_Init();
   MX_RTC_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Init code for STM32_WPAN */
-  APPE_Init();
+  MX_APPE_Init();
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	while(1)
-	{
-		UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+  while(1)
+  {
     /* USER CODE END WHILE */
+    MX_APPE_Process();
 
     /* USER CODE BEGIN 3 */
   }
@@ -167,15 +165,16 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure LSE Drive Capability
   */
   HAL_PWR_EnableBkUpAccess();
   __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -206,7 +205,17 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the peripherals clocks
+}
+
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Initializes the peripherals clock
   */
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SMPS|RCC_PERIPHCLK_RFWAKEUP
                               |RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART1
@@ -217,24 +226,12 @@ void SystemClock_Config(void)
   PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSE;
   PeriphClkInitStruct.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSE;
   PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE1;
+
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN Smps */
-
-#if (CFG_USE_SMPS != 0)
-  /**
-   *  Configure and enable SMPS
-   *
-   *  The SMPS configuration is not yet supported by CubeMx
-   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
-   *  the SMPS output voltage shall be increased for higher RF output power
-   */
-  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
-  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
-  LL_PWR_SMPS_Enable();
-#endif
 
   /* USER CODE END Smps */
 }
@@ -383,6 +380,33 @@ static void MX_RF_Init(void)
 }
 
 /**
+  * @brief RNG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RNG_Init(void)
+{
+
+  /* USER CODE BEGIN RNG_Init 0 */
+
+  /* USER CODE END RNG_Init 0 */
+
+  /* USER CODE BEGIN RNG_Init 1 */
+
+  /* USER CODE END RNG_Init 1 */
+  hrng.Instance = RNG;
+  hrng.Init.ClockErrorDetection = RNG_CED_ENABLE;
+  if (HAL_RNG_Init(&hrng) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RNG_Init 2 */
+
+  /* USER CODE END RNG_Init 2 */
+
+}
+
+/**
   * @brief RTC Initialization Function
   * @param None
   * @retval None
@@ -397,6 +421,7 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
+
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
@@ -411,14 +436,15 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
+
+  /** Enable the WakeUp
+  */
+  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN RTC_Init 2 */
-  /* Disable RTC registers write protection */
-  LL_RTC_DisableWriteProtection(RTC);
 
-  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
-
-  /* Enable RTC registers write protection */
-  LL_RTC_EnableWriteProtection(RTC);
   /* USER CODE END RTC_Init 2 */
 
 }
@@ -431,8 +457,8 @@ static void MX_DMA_Init(void)
 
   /* DMA controller clock enable */
   __HAL_RCC_DMAMUX1_CLK_ENABLE();
-  __HAL_RCC_DMA2_CLK_ENABLE();
   __HAL_RCC_DMA1_CLK_ENABLE();
+  __HAL_RCC_DMA2_CLK_ENABLE();
 
   /* DMA interrupt init */
   /* DMA1_Channel4_IRQn interrupt configuration */
@@ -461,7 +487,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void PeriphClock_Config(void)
+void PeriphUsbClock_Config(void)
 {
   #if (CFG_USB_INTERFACE_ENABLE != 0)
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = { 0 };
@@ -508,138 +534,6 @@ void PeriphClock_Config(void)
 
 	return;
 }
-/*************************************************************
- *
- * LOCAL FUNCTIONS
- *
- *************************************************************/
-
-static void Config_HSE(void)
-{
-    OTP_ID0_t * p_otp;
-
-  /**
-   * Read HSE_Tuning from OTP
-   */
-  p_otp = (OTP_ID0_t *) OTP_Read(0);
-  if (p_otp)
-  {
-    LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
-  }
-
-  return;
-}  
-
-
-static void Reset_Device( void )
-{
-#if ( CFG_HW_RESET_BY_FW == 1 )
-	Reset_BackupDomain();
-
-	Reset_IPCC();
-#endif
-
-	return;
-}
-
-static void Reset_IPCC( void )
-{
-	LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_IPCC);
-
-	LL_C1_IPCC_ClearFlag_CHx(
-			IPCC,
-			LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-			| LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-	LL_C2_IPCC_ClearFlag_CHx(
-			IPCC,
-			LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-			| LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-	LL_C1_IPCC_DisableTransmitChannel(
-			IPCC,
-			LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-			| LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-	LL_C2_IPCC_DisableTransmitChannel(
-			IPCC,
-			LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-			| LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-	LL_C1_IPCC_DisableReceiveChannel(
-			IPCC,
-			LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-			| LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-	LL_C2_IPCC_DisableReceiveChannel(
-			IPCC,
-			LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-			| LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-	return;
-}
-
-static void Reset_BackupDomain( void )
-{
-	if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
-	{
-		HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
-
-		/**
-		 *  Write twice the value to flush the APB-AHB bridge
-		 *  This bit shall be written in the register before writing the next one
-		 */
-		HAL_PWR_EnableBkUpAccess();
-
-		__HAL_RCC_BACKUPRESET_FORCE();
-		__HAL_RCC_BACKUPRESET_RELEASE();
-	}
-
-	return;
-}
-
-static void Init_Exti( void )
-{
-  /**< Disable all wakeup interrupt on CPU1  except IPCC(36), HSEM(38) */
-  LL_EXTI_DisableIT_0_31(~0);
-  LL_EXTI_DisableIT_32_63( (~0) & (~(LL_EXTI_LINE_36 | LL_EXTI_LINE_38)) );
-
-  return;
-}
-
-/*************************************************************
- *
- * WRAP FUNCTIONS
- *
- *************************************************************/
-void HAL_Delay(uint32_t Delay)
-{
-  uint32_t tickstart = HAL_GetTick();
-  uint32_t wait = Delay;
-
-  /* Add a freq to guarantee minimum wait */
-  if (wait < HAL_MAX_DELAY)
-  {
-    wait += HAL_GetTickFreq();
-  }
-
-  while ((HAL_GetTick() - tickstart) < wait)
-  {
-    /************************************************************************************
-     * ENTER SLEEP MODE
-     ***********************************************************************************/
-    LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
-
-    /**
-     * This option is used to ensure that store operations are completed
-     */
-  #if defined ( __CC_ARM)
-    __force_stores();
-  #endif
-
-    __WFI( );
-  }
-}
 /* USER CODE END 4 */
 
 /**
@@ -650,7 +544,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
- 
+
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -666,7 +560,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

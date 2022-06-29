@@ -82,13 +82,9 @@ In order to make the program work, you must do the following :
 
 First demonstration
 On the android/ios device, enable the Bluetooth communications, and if not done before,
- - Install the ST BLE Profile application on the android device
-   https://play.google.com/store/apps/details?id=com.stm.bluetoothlevalidation&hl=en
-   https://itunes.apple.com/fr/App/st-ble-profile/id1081331769?mt=8
-
  - Install the ST BLE Sensor application on the ios/android device
-   https://play.google.com/store/apps/details?id=com.st.bluems
-   https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
+      https://play.google.com/store/apps/details?id=com.st.bluems
+      https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
 
  - Power on the Nucleo board with the BLE_Peripheral_Lite_EventCallbacks application
  - Then, click on the App icon, ST BLE Sensor (android device)

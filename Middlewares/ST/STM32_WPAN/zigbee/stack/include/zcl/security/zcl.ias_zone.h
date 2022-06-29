@@ -114,6 +114,7 @@ enum ZbZclIasZoneServerZoneTypeT {
 
 /** IAS Zone ZoneStatus Attribute */
 enum ZbZclIasZoneServerZoneStatusT {
+    ZCL_IAS_ZONE_SVR_ZONE_STATUS_NONE = 0,
     ZCL_IAS_ZONE_SVR_ZONE_STATUS_ALARM1 = 1 << 0, /**< Alarm1 */
     ZCL_IAS_ZONE_SVR_ZONE_STATUS_ALARM2 = 1 << 1, /**< Alarm2 */
     ZCL_IAS_ZONE_SVR_ZONE_STATUS_TAMPER = 1 << 2, /**< Tamper */
@@ -151,13 +152,13 @@ struct ZbZclIasZoneServerStatusChangeNotifyT {
 
 /** Zone Enroll request structure */
 struct ZbZclIasZoneServerEnrollRequestT {
-    uint16_t zone_type; /**< Zone Type */
+    enum ZbZclIasZoneServerZoneTypeT zone_type; /**< Zone Type */
     uint16_t manuf_code; /**< Manufacturer Code */
 };
 
 /** Zone Enroll response structure */
 struct ZbZclIasZoneClientEnrollResponseT {
-    uint8_t zcl_status; /**< Response status */
+    enum ZclStatusCodeT zcl_status; /**< Response status */
     enum ZbZclIasZoneClientResponseCodeT enroll_status; /**< Enroll response code */
     uint8_t zone_id; /**< Zone ID */
 };
@@ -175,7 +176,7 @@ struct ZbZclIasZoneServerCallbacksT {
      * 'req' is only valid if mode == ZCL_IAS_ZONE_SVR_MODE_TEST.
      * Return value is a ZCL Status. If status indicates an error,
      * it sent in a Default Response back to the originator. */
-    uint8_t (*mode_change)(struct ZbZclClusterT *cluster,
+    enum ZclStatusCodeT (*mode_change)(struct ZbZclClusterT *cluster,
         void *arg, /* ZbZclClusterSetCallbackArg */
         enum ZbZclIasZoneServerModeT mode,
         struct ZbZclIasZoneClientTestModeReqT *req);
@@ -226,7 +227,7 @@ struct ZbZclIasZoneClientCallbacksT {
      * Returns a ZCL Status Code. If not SUCCESS, a Default Response is
      * sent with the status code. If ZCL_STATUS_SUCCESS, the
      * Zone Enroll Response command is sent.*/
-    uint8_t (*zone_enroll_req)(
+    enum ZclStatusCodeT (*zone_enroll_req)(
         struct ZbZclClusterT *cluster,
         void *arg, /* ZbZclClusterSetCallbackArg */
         struct ZbZclIasZoneServerEnrollRequestT *req,

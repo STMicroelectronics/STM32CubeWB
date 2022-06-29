@@ -279,9 +279,10 @@
 
 /* Custom Services*/
 /* UUIDs for data transfer service */
-#define DATA_TRANSFER_SERVICE_UUID                                     (0xFE80)
-#define DATA_TRANSFER_TX_CHAR_UUID                                     (0xFE81)
-#define DATA_TRANSFER_RX_CHAR_UUID                                     (0xFE82)    
+#define DT_SERVICE_UUID                                               (0xFE80)
+#define DT_TX_CHAR_UUID                                               (0xFE81)
+#define DT_RX_CHAR_UUID                                               (0xFE82)
+#define DT_THROUGHPUT_CHAR_UUID                                       (0xFE83)
 
 /* UUIDs for custom battery service */ 
 #define CUSTOM_BATTERY_SERVICE_UUID                                    (0xF2F0)

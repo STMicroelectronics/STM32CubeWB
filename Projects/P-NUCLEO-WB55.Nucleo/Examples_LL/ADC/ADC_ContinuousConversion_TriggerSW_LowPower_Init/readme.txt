@@ -8,7 +8,7 @@
   * @brief   Description of the ADC_ContinuousConversion_TriggerSW_LowPower_Init example.
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -20,9 +20,8 @@
 
 @par Example Description
 
-How to use an ADC peripheral with ADC low-power features.
-This example is based on the STM32WBxx ADC LL API.
-The peripheral initialization is done using LL unitary service functions
+How to use an ADC peripheral with ADC low-power features. This example is based on
+the STM32WBxx ADC LL API. The peripheral initialization is done using LL unitary service functions 
 for optimization purposes (performance and size).
 
 Description of ADC low power features:

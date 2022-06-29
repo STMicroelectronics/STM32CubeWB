@@ -269,4 +269,4 @@
 #define CFG_HW_USART1_TX_DMA_IRQn             DMA2_Channel4_IRQn
 #define CFG_HW_USART1_DMA_TX_IRQHandler       DMA2_Channel4_IRQHandler
 
-#endif /*HW_CONF_H */
+#endif /* HW_CONF_H */

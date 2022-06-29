@@ -36,10 +36,10 @@ extern otLinkPcapCallback otLinkPcapCb;
 
 
 otError otLinkActiveScan(otInstance *             aInstance,
-                         uint32_t                 aScanChannels,
-                         uint16_t                 aScanDuration,
-                         otHandleActiveScanResult aCallback,
-                         void *                   aCallbackContext)
+    uint32_t                 aScanChannels,
+    uint16_t                 aScanDuration,
+    otHandleActiveScanResult aCallback,
+    void *                   aCallbackContext)
 {
   Pre_OtCmdProcessing();
   /* Save Callback to global variable */
@@ -78,10 +78,10 @@ bool otLinkIsActiveScanInProgress(otInstance *aInstance)
 }
 
 otError otLinkEnergyScan(otInstance *             aInstance,
-                         uint32_t                 aScanChannels,
-                         uint16_t                 aScanDuration,
-                         otHandleEnergyScanResult aCallback,
-                         void *                   aCallbackContext)
+    uint32_t                 aScanChannels,
+    uint16_t                 aScanDuration,
+    otHandleEnergyScanResult aCallback,
+    void *                   aCallbackContext)
 {
   Pre_OtCmdProcessing();
   /* Save Callback to global variable */
@@ -148,23 +148,6 @@ bool otLinkIsInTransmitState(otInstance *aInstance)
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (bool)p_ot_req->Data[0];
-}
-
-otError otLinkOutOfBandTransmitRequest(otInstance *aInstance, otRadioFrame *aOobFrame)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_LINK_OUT_OF_BAND_TRANSMIT_REQUEST;
-
-  p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t)aOobFrame;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
 }
 
 uint8_t otLinkGetChannel(otInstance *aInstance)
@@ -428,6 +411,7 @@ void otLinkSetMaxFrameRetriesIndirect(otInstance *aInstance, uint8_t aMaxFrameRe
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
+#if OPENTHREAD_CONFIG_MAC_FILTER_ENABLE
 otMacFilterAddressMode otLinkFilterGetAddressMode(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
@@ -444,7 +428,7 @@ otMacFilterAddressMode otLinkFilterGetAddressMode(otInstance *aInstance)
   return (otMacFilterAddressMode)p_ot_req->Data[0];
 }
 
-otError otLinkFilterSetAddressMode(otInstance *aInstance, otMacFilterAddressMode aMode)
+void otLinkFilterSetAddressMode(otInstance *aInstance, otMacFilterAddressMode aMode)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -458,7 +442,6 @@ otError otLinkFilterSetAddressMode(otInstance *aInstance, otMacFilterAddressMode
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
 }
 
 otError otLinkFilterAddAddress(otInstance *aInstance, const otExtAddress *aExtAddress)
@@ -478,7 +461,7 @@ otError otLinkFilterAddAddress(otInstance *aInstance, const otExtAddress *aExtAd
   return (otError)p_ot_req->Data[0];
 }
 
-otError otLinkFilterRemoveAddress(otInstance *aInstance, const otExtAddress *aExtAddress)
+void otLinkFilterRemoveAddress(otInstance *aInstance, const otExtAddress *aExtAddress)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -492,7 +475,6 @@ otError otLinkFilterRemoveAddress(otInstance *aInstance, const otExtAddress *aEx
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
 }
 
 void otLinkFilterClearAddresses(otInstance *aInstance)
@@ -546,7 +528,7 @@ otError otLinkFilterAddRssIn(otInstance *aInstance, const otExtAddress *aExtAddr
   return (otError) p_ot_req->Data[0];
 }
 
-otError otLinkFilterRemoveRssIn(otInstance *aInstance, const otExtAddress *aExtAddress)
+void otLinkFilterRemoveRssIn(otInstance *aInstance, const otExtAddress *aExtAddress)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -560,16 +542,46 @@ otError otLinkFilterRemoveRssIn(otInstance *aInstance, const otExtAddress *aExtA
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError) p_ot_req->Data[0];
 }
 
-void otLinkFilterClearRssIn(otInstance *aInstance)
+void otLinkFilterSetDefaultRssIn(otInstance *aInstance, int8_t aRss)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_LINK_FILTER_CLEAR_RSS_IN;
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_FILTER_SET_DEFAULT_RSS_IN;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aRss;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+void otLinkFilterClearDefaultRssIn(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_FILTER_CLEAR_DEFAULT_RSS_IN;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+void otLinkFilterClearAllRssIn(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_FILTER_CLEAR_ALL_RSS_IN;
 
   p_ot_req->Size=0;
 
@@ -595,6 +607,41 @@ otError otLinkFilterGetNextRssIn(otInstance *aInstance,otMacFilterIterator *aIte
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError) p_ot_req->Data[0];
 }
+
+#if OPENTHREAD_CONFIG_RADIO_LINK_IEEE_802_15_4_ENABLE
+void otLinkSetRadioFilterEnabled(otInstance *aInstance, bool aFilterEnabled)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_SET_RADIO_FILTER_ENABLED;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aFilterEnabled;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+bool otLinkIsRadioFilterEnabled(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_IS_RADIO_FILTER_ENABLED;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+#endif
+
+#endif // OPENTHREAD_CONFIG_MAC_FILTER_ENABLE
 
 uint8_t otLinkConvertRssToLinkQuality(otInstance *aInstance, int8_t aRss)
 {
@@ -629,6 +676,57 @@ int8_t otLinkConvertLinkQualityToRss(otInstance *aInstance, uint8_t aLinkQuality
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (uint8_t) p_ot_req->Data[0];
 }
+
+#if OPENTHREAD_CONFIG_MAC_RETRY_SUCCESS_HISTOGRAM_ENABLE
+const uint32_t *otLinkGetTxDirectRetrySuccessHistogram(otInstance *aInstance, uint8_t *aNumberOfEntries)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_GET_TX_DIRECT_RETRY_SUCCESS_HISTOGRAM;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aNumberOfEntries;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint32_t*) p_ot_req->Data[0];
+}
+
+const uint32_t *otLinkGetTxIndirectRetrySuccessHistogram(otInstance *aInstance, uint8_t *aNumberOfEntries)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_GET_TX_INDIRECT_RETRY_SUCCESS_HISTOGRAM;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aNumberOfEntries;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint32_t*) p_ot_req->Data[0];
+}
+
+void otLinkResetTxRetrySuccessHistogram(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_RESET_TX_RETRY_SUCCESS_HISTOGRAM;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+#endif // OPENTHREAD_CONFIG_MAC_RETRY_SUCCESS_HISTOGRAM_ENABLE
 
 const otMacCounters *otLinkGetCounters(otInstance *aInstance)
 {
@@ -727,6 +825,126 @@ uint16_t otLinkGetCcaFailureRate(otInstance *aInstance)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (uint16_t)p_ot_req->Data[0];
 }
+
+#if OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE
+uint8_t otLinkCslGetChannel(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_CSL_GET_CHANNEL;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_ot_req->Data[0];
+}
+
+otError otLinkCslSetChannel(otInstance *aInstance, uint8_t aChannel)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_CSL_SET_CHANNEL;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aChannel;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+uint16_t otLinkCslGetPeriod(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_CSL_GET_PERIOD;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint16_t)p_ot_req->Data[0];
+}
+
+otError otLinkCslSetPeriod(otInstance *aInstance, uint16_t aPeriod)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_CSL_SET_PERIOD;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aPeriod;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+uint32_t otLinkCslGetTimeout(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_CSL_GET_TIMEOUT;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint16_t)p_ot_req->Data[0];
+}
+
+otError otLinkCslSetTimeout(otInstance *aInstance, uint32_t aTimeout)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_CSL_SET_TIMEOUT;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aTimeout;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+#endif // OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE
+
+#if OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
+otError otLinkSendEmptyData(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_SEND_EMPTY_DATA;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+#endif
 
 otError otLinkSetEnabled(otInstance *aInstance, bool aEnable)
 {

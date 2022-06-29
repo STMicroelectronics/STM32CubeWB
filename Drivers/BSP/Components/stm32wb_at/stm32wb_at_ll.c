@@ -63,7 +63,7 @@ __weak uint8_t stm32wb_at_ll_Transmit(uint8_t *pBuff, uint16_t Size)
 
 /**
  * @brief  Triggers the reception of a byte
- * @param  new_frame containts the length of a new frame received in rx buffer, else 0
+ * @param  new_frame contains the length of a new frame received in rx buffer, else 0
  * @retval None
  */
 __weak void stm32wb_at_ll_Async_receive(uint8_t new_frame)

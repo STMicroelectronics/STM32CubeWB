@@ -671,6 +671,11 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_hci_le.c</FilePath>
             </File>
             <File>
+              <FileName>ble_l2cap_aci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_l2cap_aci.c</FilePath>
+            </File>            
+            <File>
               <FileName>hci_tl.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl.c</FilePath>

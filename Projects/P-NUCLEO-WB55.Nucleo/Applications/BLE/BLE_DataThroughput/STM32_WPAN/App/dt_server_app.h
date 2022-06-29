@@ -1,4 +1,4 @@
-
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
  * @file    dt_server_app.h
@@ -16,37 +16,59 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DTS_SERVER_APP_H
-#define __DTS_SERVER_APP_H
+#ifndef DTS_SERVER_APP_H
+#define DTS_SERVER_APP_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define BUTTON_PRESSED GPIO_PIN_RESET
+/* Includes ------------------------------------------------------------------*/
 
-/* Exported typedefs ---------------------------------------------*/
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+#define BUTTON_PRESSED                                            GPIO_PIN_RESET
+
+/* Exported types ------------------------------------------------------------*/
 typedef GPIO_PinState BUTTON_STATE;
 typedef void (* IO_RECEIVE_DATA_USER_CALLBACK_TYPE) (uint8_t * rx_data, uint16_t data_size);
+/* USER CODE BEGIN ET */
 
-  /* Includes ------------------------------------------------------------------*/
-  /* Exported types ------------------------------------------------------------*/
-  /* Exported constants --------------------------------------------------------*/
-  /* External variables --------------------------------------------------------*/
-  /* Exported macros -----------------------------------------------------------*/
-  /* Exported functions ------------------------------------------------------- */
-  void DTS_App_Init(void);
-  void DTS_App_KeyButtonAction(void);
-  void DTS_App_KeyButton2Action( void );
-  void DTS_App_KeyButton3Action( void );
-  void DTS_App_TxPoolAvailableNotification(void);
+/* USER CODE END ET */
 
+/* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
+
+/* USER CODE END EC */
+
+/* External variables --------------------------------------------------------*/
+/* USER CODE BEGIN EV */
+
+/* USER CODE END EV */
+
+/* Exported macros -----------------------------------------------------------*/
+/* USER CODE BEGIN EM */
+
+/* USER CODE END EM */
+
+/* Exported functions --------------------------------------------------------*/
+void DTS_App_Init(void);
+void DTS_App_KeyButton1Action(void);
+void DTS_App_KeyButton2Action( void );
+void DTS_App_KeyButton3Action( void );
+void DTS_App_TxPoolAvailableNotification(void);
+/* USER CODE BEGIN EF */
+
+/* USER CODE END EF */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__DTS_SERVER_APP_H */
+#endif /* DTS_SERVER_APP_H */

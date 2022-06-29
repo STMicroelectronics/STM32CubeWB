@@ -1,8 +1,9 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
- * @file    ble_conf.h
- * @author  MCD Application Team
- * @brief   BLE configuration file
+  * @file    ble_conf.h
+  * @author  MCD Application Team
+  * @brief   Configuration file for BLE Middleware.
   ******************************************************************************
   * @attention
   *
@@ -15,11 +16,11 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __BLE_CONF_H
-#define __BLE_CONF_H
+#ifndef BLE_CONF_H
+#define BLE_CONF_H
 
 #include "app_conf.h"
 
@@ -59,4 +60,4 @@
  ******************************************************************************/
 #define BLE_CFG_UNKNOWN_APPEARANCE                  (0)
 #define BLE_CFG_GAP_APPEARANCE                      (BLE_CFG_UNKNOWN_APPEARANCE)
-#endif /*__BLE_CONF_H */
+#endif /* BLE_CONF_H */

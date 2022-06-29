@@ -99,6 +99,59 @@ void otInstanceFinalize(otInstance *aInstance)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
+void otInstanceReset(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_INSTANCE_RESET;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_TransferWithNotif();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+#if OPENTHREAD_CONFIG_UPTIME_ENABLE
+uint64_t otInstanceGetUptime(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_INSTANCE_GET_UP_TIME;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_TransferWithNotif();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  /* 64bit word is returned with two 32bits words (MSB are at offset 1 and LSB are offset 0) */
+  return (uint64_t)((p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
+}
+
+void otInstanceGetUptimeAsString(otInstance *aInstance, char *aBuffer, uint16_t aSize)
+{
+  Pre_OtCmdProcessing();
+  /* Store the callback function */
+  otStateChangedCb = aCallback;
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_INSTANCE_GET_UP_TIME_AS_STRING;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t)aBuffer;
+  p_ot_req->Data[1] = (uint32_t)aSize;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+#endif
+
 #if OPENTHREAD_MTD || OPENTHREAD_FTD
 otError otSetStateChangedCallback(otInstance *aInstance, otStateChangedCallback aCallback,
     void *aContext)
@@ -139,21 +192,6 @@ void otRemoveStateChangeCallback(otInstance *aInstance, otStateChangedCallback a
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-void otInstanceReset(otInstance *aInstance)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_INSTANCE_RESET;
-
-  p_ot_req->Size=0;
-
-  Ot_Cmd_TransferWithNotif();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-}
-
 void otInstanceFactoryReset(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
@@ -185,6 +223,23 @@ otError otInstanceErasePersistentInfo(otInstance *aInstance)
   return (otError)p_ot_req->Data[0];
 }
 #endif // OPENTHREAD_MTD || OPENTHREAD_FTD
+
+#if OPENTHREAD_RADIO
+void otInstanceResetRadioStack(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_INSTANCE_RESET_RADIO_STACK;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+#endif
 
 const char *otGetVersionString(void)
 {

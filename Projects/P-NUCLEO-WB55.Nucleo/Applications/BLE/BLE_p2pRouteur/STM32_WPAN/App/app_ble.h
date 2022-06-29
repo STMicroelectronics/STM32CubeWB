@@ -36,23 +36,23 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 
-  typedef enum
-    {
-      APP_BLE_IDLE,
-      APP_BLE_FAST_ADV,
-      APP_BLE_LP_ADV,
-      APP_BLE_SCAN,
-      APP_BLE_CONNECTING,
-      APP_BLE_CONNECTED,
+typedef enum
+{
+  APP_BLE_IDLE,
+  APP_BLE_FAST_ADV,
+  APP_BLE_LP_ADV,
+  APP_BLE_SCAN,
+  APP_BLE_CONNECTING,
+  APP_BLE_CONNECTED,
 
-      APP_BLE_DISCOVER_SERVICES,
-      APP_BLE_DISCOVER_CHARACS,
-      APP_BLE_DISCOVER_LED_CHAR_DESC,
-      APP_BLE_DISCOVER_BUTTON_CHAR_DESC,
-      APP_BLE_DISCOVER_NOTIFICATION_CHAR_DESC,
-      APP_BLE_ENABLE_NOTIFICATION_BUTTON_DESC,
-      APP_BLE_DISABLE_NOTIFICATION_TX_DESC
-    } APP_BLE_ConnStatus_t;
+  APP_BLE_DISCOVER_SERVICES,
+  APP_BLE_DISCOVER_CHARACS,
+  APP_BLE_DISCOVER_LED_CHAR_DESC,
+  APP_BLE_DISCOVER_BUTTON_CHAR_DESC,
+  APP_BLE_DISCOVER_NOTIFICATION_CHAR_DESC,
+  APP_BLE_ENABLE_NOTIFICATION_BUTTON_DESC,
+  APP_BLE_DISABLE_NOTIFICATION_TX_DESC
+} APP_BLE_ConnStatus_t;
 
 typedef enum
 {
@@ -63,8 +63,8 @@ typedef enum
 
 typedef struct
 {
-  uint8_t * pPayload;
-  uint8_t     Length;
+  uint8_t *pPayload;
+  uint8_t Length;
 }P2P_Client_Data_t;
 
 typedef struct
@@ -94,14 +94,14 @@ typedef struct
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void APP_BLE_Init( void );
+void APP_BLE_Init(void);
 
-  APP_BLE_ConnStatus_t APP_BLE_Get_Client_Connection_Status( uint16_t Connection_Handle );
+APP_BLE_ConnStatus_t APP_BLE_Get_Client_Connection_Status( uint16_t Connection_Handle );
 
 /* USER CODE BEGIN EF */
-  void APP_BLE_Key_Button1_Action(void);
-  void APP_BLE_Key_Button2_Action(void);
-  void APP_BLE_Key_Button3_Action(void);
+void APP_BLE_Key_Button1_Action(void);
+void APP_BLE_Key_Button2_Action(void);
+void APP_BLE_Key_Button3_Action(void);
 /* USER CODE END EF */
 
 #ifdef __cplusplus

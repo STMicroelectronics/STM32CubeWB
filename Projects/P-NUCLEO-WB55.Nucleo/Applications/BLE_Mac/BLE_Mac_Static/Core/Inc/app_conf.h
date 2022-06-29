@@ -564,10 +564,13 @@ typedef enum
   CFG_TASK_SERVICE_COORD,    /* FFD Service Task - Handle Service request/response */
   CFG_TASK_DATA_COORD,       /* FFD DATA Task - Handle Service request/response */
   CFG_TASK_MSG_FROM_RF_CORE,
+  CFG_TASK_RECEIVE_DATA,     /* Handle the reception of a frame */
 
   /* Concurrent Mode management */
   CFG_TASK_INIT_SWITCH_PROTOCOL,
   CFG_TASK_ACTIVATE_PROTOCOL,
+
+
 
   CFG_LAST_TASK_ID_WITH_HCICMD, /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;
@@ -580,10 +583,10 @@ typedef enum
 /* USER CODE BEGIN CFG_Task_Id_With_NO_HCI_Cmd_t */
 
 /* USER CODE END CFG_Task_Id_With_NO_HCI_Cmd_t */
-    CFG_LAST_TASK_ID_WITHO_NO_HCICMD                                            /**< Shall be LAST in the list */
+    CFG_LAST_TASK_ID_WITH_NO_HCICMD                                            /**< Shall be LAST in the list */
 } CFG_Task_Id_With_NO_HCI_Cmd_t;
 
-#define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITHO_NO_HCICMD
+#define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITH_NO_HCICMD
 
 
 /**

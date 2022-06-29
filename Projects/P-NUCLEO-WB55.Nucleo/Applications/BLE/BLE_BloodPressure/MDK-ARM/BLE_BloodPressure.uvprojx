@@ -470,6 +470,11 @@
               <FileType>1</FileType>
               <FilePath>../STM32_WPAN/App/bls_app.c</FilePath>
             </File>
+            <File>
+              <FileName>dis_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../STM32_WPAN/App/dis_app.c</FilePath>
+            </File>            
           </Files>
         </Group>
         <Group>

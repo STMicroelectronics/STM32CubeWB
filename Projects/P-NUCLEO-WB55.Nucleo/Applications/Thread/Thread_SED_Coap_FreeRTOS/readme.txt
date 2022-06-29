@@ -20,7 +20,7 @@
 
 @par Application Description 
 
-How to exchange a Coap message using the Thread protocol.
+How to exchange a Coap message using the Thread protocol (using FreeRTOS porting).
 
 This application requires two STM32WB55xx boards.
 

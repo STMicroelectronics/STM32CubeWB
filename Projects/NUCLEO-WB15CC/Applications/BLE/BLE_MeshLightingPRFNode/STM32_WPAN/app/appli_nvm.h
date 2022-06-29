@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_NVM_H
-#define __APPLI_NVM_H
+#ifndef APPLI_NVM_H
+#define APPLI_NVM_H
 
 /* Includes ------------------------------------------------------------------*/
 
@@ -102,6 +102,6 @@ MOBLE_RESULT AppliNVM_Retrieve_FlashTesting(MOBLEUINT8 *buffer,
                                             MOBLEUINT16 buffer_size);
 
 
-#endif /* __APPLI_NVM_H */
+#endif /* APPLI_NVM_H */
 
 

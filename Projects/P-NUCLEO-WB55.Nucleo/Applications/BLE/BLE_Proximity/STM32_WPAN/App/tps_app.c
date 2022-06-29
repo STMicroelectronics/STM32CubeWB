@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    tps_app.c
@@ -15,8 +16,7 @@
   *
   ******************************************************************************
   */
-
-
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -26,14 +26,28 @@
 #include "stm32_seq.h"
 #include "app_ble.h"
 
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 
+/* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 static int8_t TxPower;
 
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
 
 /* Private defines -----------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
 /* Private macros ------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
 /**
  * START of Section BLE_APP_CONTEXT
@@ -45,12 +59,17 @@ PLACE_IN_SECTION("BLE_APP_CONTEXT") static int8_t TxPower;
  * END of Section BLE_APP_CONTEXT
  */
 
-/* Global variables ----------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-/* Functions Definition ------------------------------------------------------*/
-/* Private functions ----------------------------------------------------------*/
-/* Public functions ----------------------------------------------------------*/
+/* USER CODE BEGIN PV */
 
+/* USER CODE END PV */
+
+/* External variables --------------------------------------------------------*/
+
+/* USER CODE BEGIN EV */
+
+/* USER CODE END EV */
+
+/* Functions Definition ------------------------------------------------------*/
 void TPSAPP_Init(void)
 {
   /**
@@ -62,3 +81,6 @@ void TPSAPP_Init(void)
   return;
 }
 
+/* USER CODE BEGIN FD */
+
+/* USER CODE END FD */

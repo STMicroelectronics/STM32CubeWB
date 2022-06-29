@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_LIGHT_LC_H
-#define __APPLI_LIGHT_LC_H
+#ifndef APPLI_LIGHT_LC_H
+#define APPLI_LIGHT_LC_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -74,6 +74,6 @@ MOBLE_RESULT Appli_Light_LC_SensorPropertyUpdate(MOBLEUINT8 elementIndex,
                                                  MOBLEUINT32 value);
 void Appli_Light_LC_SerialCmd(char *rcvdStringBuff, 
                               uint16_t rcvdStringSize);
-#endif /* __APPLI_LIGHT_LC_H */
+#endif /* APPLI_LIGHT_LC_H */
 
 

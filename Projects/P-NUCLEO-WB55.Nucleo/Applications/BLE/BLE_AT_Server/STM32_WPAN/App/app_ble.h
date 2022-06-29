@@ -231,5 +231,5 @@ void APP_BLE_Key_Button3_Action(void);
 }
 #endif
 
-#endif /*APP_BLE_H */
+#endif /* APP_BLE_H */
 

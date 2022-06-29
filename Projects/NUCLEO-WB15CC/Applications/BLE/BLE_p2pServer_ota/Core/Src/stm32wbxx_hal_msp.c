@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file         stm32wbxx_hal_msp.c
-  * @brief        This file provides code for the MSP Initialization
-  *               and de-Initialization codes.
+  * @file          : stm32wbxx_hal_msp.c
+  * @brief         : This file provides code for the MSP Initialization 
+  *                  and de-Initialization codes.
   ******************************************************************************
   * @attention
   *
@@ -135,6 +135,61 @@ void HAL_IPCC_MspDeInit(IPCC_HandleTypeDef* hipcc)
 }
 
 /**
+* @brief RNG MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hrng: RNG handle pointer
+* @retval None
+*/
+void HAL_RNG_MspInit(RNG_HandleTypeDef* hrng)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+  if(hrng->Instance==RNG)
+  {
+  /* USER CODE BEGIN RNG_MspInit 0 */
+
+  /* USER CODE END RNG_MspInit 0 */
+
+  /** Initializes the peripherals clock
+  */
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RNG;
+    PeriphClkInitStruct.RngClockSelection = RCC_RNGCLKSOURCE_LSE;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    /* Peripheral clock enable */
+    __HAL_RCC_RNG_CLK_ENABLE();
+  /* USER CODE BEGIN RNG_MspInit 1 */
+
+  /* USER CODE END RNG_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief RNG MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hrng: RNG handle pointer
+* @retval None
+*/
+void HAL_RNG_MspDeInit(RNG_HandleTypeDef* hrng)
+{
+  if(hrng->Instance==RNG)
+  {
+  /* USER CODE BEGIN RNG_MspDeInit 0 */
+
+  /* USER CODE END RNG_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_RNG_CLK_DISABLE();
+  /* USER CODE BEGIN RNG_MspDeInit 1 */
+
+  /* USER CODE END RNG_MspDeInit 1 */
+  }
+
+}
+
+/**
 * @brief RTC MSP Initialization
 * This function configures the hardware resources used in this example
 * @param hrtc: RTC handle pointer
@@ -142,6 +197,7 @@ void HAL_IPCC_MspDeInit(IPCC_HandleTypeDef* hipcc)
 */
 void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
 {
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   if(hrtc->Instance==RTC)
   {
   /* USER CODE BEGIN RTC_MspInit 0 */
@@ -155,9 +211,22 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
 
   __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE); /**< Select LSI as RTC Input */
   /* USER CODE END RTC_MspInit 0 */
+
+  /** Initializes the peripherals clock
+  */
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+    PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
     /* Peripheral clock enable */
     __HAL_RCC_RTC_ENABLE();
     __HAL_RCC_RTCAPB_CLK_ENABLE();
+    /* RTC interrupt Init */
+    HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
   /* USER CODE BEGIN RTC_MspInit 1 */
   HAL_RTCEx_EnableBypassShadow(hrtc);
   /* USER CODE END RTC_MspInit 1 */
@@ -181,6 +250,9 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
     /* Peripheral clock disable */
     __HAL_RCC_RTC_DISABLE();
     __HAL_RCC_RTCAPB_CLK_DISABLE();
+
+    /* RTC interrupt DeInit */
+    HAL_NVIC_DisableIRQ(RTC_WKUP_IRQn);
   /* USER CODE BEGIN RTC_MspDeInit 1 */
 
   /* USER CODE END RTC_MspDeInit 1 */
@@ -197,11 +269,22 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   if(huart->Instance==USART1)
   {
   /* USER CODE BEGIN USART1_MspInit 0 */
 
   /* USER CODE END USART1_MspInit 0 */
+
+  /** Initializes the peripherals clock
+  */
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART1;
+    PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
     /* Peripheral clock enable */
     __HAL_RCC_USART1_CLK_ENABLE();
 

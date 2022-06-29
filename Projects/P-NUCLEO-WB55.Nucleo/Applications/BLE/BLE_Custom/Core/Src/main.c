@@ -61,7 +61,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-IPCC_HandleTypeDef hipcc;
+ IPCC_HandleTypeDef hipcc;
 
 UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart1;
@@ -140,6 +140,7 @@ int main(void)
 
   /* Init code for STM32_WPAN */
   MX_APPE_Init();
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while(1)
@@ -165,9 +166,11 @@ void SystemClock_Config(void)
   */
   HAL_PWR_EnableBkUpAccess();
   __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -183,6 +186,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -410,6 +414,7 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
+
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
@@ -424,6 +429,7 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
+
   /** Enable the WakeUp
   */
   if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
@@ -464,11 +470,45 @@ static void MX_DMA_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(Blue_Led_GPIO_Port, Blue_Led_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : SW1_User_Pin */
+  GPIO_InitStruct.Pin = SW1_User_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(SW1_User_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : SW2_User_Pin SW3_User_Pin */
+  GPIO_InitStruct.Pin = SW2_User_Pin|SW3_User_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Blue_Led_Pin */
+  GPIO_InitStruct.Pin = Blue_Led_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(Blue_Led_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
 
 }
 

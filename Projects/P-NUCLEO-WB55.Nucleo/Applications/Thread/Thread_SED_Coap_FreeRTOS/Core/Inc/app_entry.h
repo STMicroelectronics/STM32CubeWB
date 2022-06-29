@@ -32,7 +32,7 @@ extern "C" {
 
 /* USER CODE END Includes */
 
-  /* Exported types ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
 /* USER CODE END ET */
@@ -53,10 +53,10 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void MX_APPE_Config( void );
-  void MX_APPE_Init( void );
-  void Init_Exti( void );
-  void Init_Smps( void );
+void MX_APPE_Config(void);
+void MX_APPE_Init(void);
+void Init_Exti(void);
+void Init_Smps(void);
 
 /* USER CODE BEGIN EF */
 

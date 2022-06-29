@@ -17,8 +17,8 @@
   */
   
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APP_STTS22H_H
-#define __APP_STTS22H_H
+#ifndef APP_STTS22H_H
+#define APP_STTS22H_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stts22h_reg.h" 
@@ -40,4 +40,4 @@ void STTS22H_Start_Measure(void);
 void STTS22H_Stop_Measure(void);
 void STTS22H_PrintValues(void);
 
-#endif /* __APP_STTS22H_H */
+#endif /* APP_STTS22H_H */

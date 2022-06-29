@@ -30,7 +30,7 @@ process 2 : Set LED1 On.
 First, semaphore (9) is taken using HAL API HAL_HSEM_Take with process ID  set to "12". 
 if the semaphore is taken LED2 every 500 ms .
 The semaphore is released after 5 seconds, using HAL API HAL_HSEM_Release. During this period, the LED2 
-is toogling to mention that the semaphore is not available.
+is toggling to mention that the semaphore is not available.
 
 Note that HAL_HSEM_Take use the 2-Step semaphore take method (refer to the HW Semaphore
 description in the reference manual)

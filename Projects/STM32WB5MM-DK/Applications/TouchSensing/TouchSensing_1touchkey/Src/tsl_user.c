@@ -277,40 +277,35 @@ tsl_user_status_t tsl_user_Exec(void)
 }
 
 /**
- * Interrupt TSC management. See below code example for 3 sensors in main.c:
-  * while (1)
+ * Interrupt TSC management. See below code example for N sensors in main.c:
+while (1)
   {
-#define TKEY_DET(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_DETECT)
-#define TKEY_PRX(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_PROX)
-#define TKEY_REL(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_RELEASE)
-#define TKEY_CAL(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_CALIB)
+    #define TKEY_DET(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_DETECT)
+    #define TKEY_PRX(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_PROX)
+    #define TKEY_REL(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_RELEASE)
+    #define TKEY_CAL(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_CALIB)
     if(tsl_user_Exec_IT() != TSL_USER_STATUS_BUSY){
-      if(!TKEY_CAL(0) && !TKEY_CAL(1) && !TKEY_CAL(2) ){
-        printf("Delta: sensor0 %3d sensor1 %3d sensor2 %3d\n"
-               ,MyTKeys[0].p_ChD->Delta
-               ,MyTKeys[1].p_ChD->Delta
-               ,MyTKeys[2].p_ChD->Delta);
-        if(TKEY_DET(0)){
-          HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-        }else if(TKEY_REL(0)){
-          HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-        }
-        if(TKEY_DET(1)){
-          HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
-        }else if(TKEY_REL(1)){
-          HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
-        }
-        if(TKEY_DET(2)){
-          HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
-        }else if(TKEY_REL(2)){
-          HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
+      int id;
+      for(id=0; id < TSLPRM_TOTAL_CHANNELS; id++){
+        if(!TKEY_CAL(id)){
+          printf("Sensor%d: Delta %3d Ref %3d Measurement %3d StateId %3d\n"
+                 ,id
+                 ,MyTKeys[id].p_ChD->Delta
+                 ,MyTKeys[id].p_ChD->Ref
+                 ,MyTKeys[id].p_ChD->Meas
+                 ,MyTKeys[id].p_Data->StateId);
+          if(TKEY_DET(id)){
+    // we detect a touch
+          }else if(TKEY_REL(id)){
+          // No more detection
+          }
         }
       }
     }else{
-      HAL_Delay(1); Can be replace by __WFI()
+      HAL_Delay(1); //Can be replace by __WFI()
     }
   }
- */
+*/
 
 /**
  * Local variable used for interrupt acquisition mode
@@ -401,6 +396,10 @@ tsl_user_status_t tsl_user_Exec_IT(void)
     {
       status = TSL_USER_STATUS_OK_NO_ECS;
     }
+
+/* USER CODE BEGIN prepare_acq_done_it */
+
+/* USER CODE END prepare_acq_done_it */
 
     // Restart TSLPRM_TOTAL_BANKS banks acquisition
     idx_bank_it = 0;

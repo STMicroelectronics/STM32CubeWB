@@ -301,6 +301,7 @@ void SystemClock_Config(void)
 
   /** Configure LSE Drive Capability 
   */
+  HAL_PWR_EnableBkUpAccess();
   __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
   /** Configure the main internal regulator output voltage 
   */
@@ -448,7 +449,12 @@ static void BLE_Init( void )
     CFG_BLE_MAX_COC_INITIATOR_NBR,
     CFG_BLE_MIN_TX_POWER,
     CFG_BLE_MAX_TX_POWER,
-    CFG_BLE_RX_MODEL_CONFIG}
+    CFG_BLE_RX_MODEL_CONFIG,
+     CFG_BLE_MAX_ADV_SET_NBR, 
+     CFG_BLE_MAX_ADV_DATA_LEN,
+     CFG_BLE_TX_PATH_COMPENS,
+     CFG_BLE_RX_PATH_COMPENS
+    }
   };
   
   /**

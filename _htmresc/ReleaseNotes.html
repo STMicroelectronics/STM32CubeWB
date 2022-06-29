@@ -1,22 +1,77 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US"><head></head>
-<body>
-<font color="blue"><b><u>STM32CubeWB Firmware Package V1.11.0 / 12-February-2021</u></b></font><br>
-<br>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes</span></u></b></p><span style="font-weight: bold;"></span><span style="display: inline ! important; float: none; background-color: rgb(250, 250, 250); color: rgb(17, 17, 17); font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; line-height: 1.4; orphans: 2; text-align: left; text-decoration: none; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px;"></span><h3 id="add-new-devices-stm32wb15xx-stm32wb10xx-and-new-boards-stm32wb5mm-dk-and-nucleo-wb15cc" style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.2; font-weight: 500; color: rgb(17, 17, 17); font-style: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;">Add new devices STM32WB15xx, STM32WB10xx and new boards STM32WB5MM-DK and NUCLEO-WB15CC</h3><ul style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4; font-size: 14px; color: rgb(17, 17, 17); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;"><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Introduce hal, ll and STM32WPAN support for stm32wb15xx and stm32wb10xx</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Introduce STM32WB5MM-DK and NUCLEO-WB15CC BSP support</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">BLE-Mesh library version 1.13.002:<ul style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;"><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Updated
-max number of element to 5 and max number of Model per element to 11
-(support lighting control system with occupancy sensing). &nbsp;</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Bug fix: Client API, Light LC model and sensor status, modify Light LC FSM default Lightness values</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Sensor &amp; Light LC Server Models updated</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Client Models updated</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Config Model APIs callbacks added over application layer</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Save &amp; Restore APIs for Models parameters in Flash updated</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Publication enabled for multiple elements</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Remove double disconnection to accelerate provisioning with IOS ST BLE Mesh App version 1.08.001</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Bug correction during unprovisioning with ST BLE Mesh App of non GATT connected Nodes. &nbsp; &nbsp; &nbsp;&nbsp;</li></ul></li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">BLE:<ul style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;"><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">HID:
-added: Battery Service and Device Information Service, connection and
-disconnection events -&nbsp;ID 97936:&nbsp; L2CAP update to support IP
-over BLE (M.6874), SHCI_C2_BLE_init() updated parameters to be provided
-to CPU2 with new BLE stack Options flags</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">ID 95186:&nbsp; SHCI_C2_FUS_GetState fixed to identify when wireless stack&nbsp;running (with correct error code)</li></ul></li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">THREAD:<ul style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;"><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Update OpenThread stack to<span>&nbsp;</span><strong style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4; font-size: 1em; font-weight: 700;">SHA-1: 3dbd91aa2b70c7d5cc71b2c465ce3583a13dea79</strong><span>&nbsp;</span>(thread-reference-20191113)</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">ID 91270: CoapSecure support added</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">ID 96955: Fix for entering standby mode while Thread stop procedure is called. New system command SHCI_C2_802_15_4_DeInit added</li></ul></li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Zigbee:<ul style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;"><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Clarification of PICS information inside the Clusters API interface include files&nbsp;</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">New directory structure used to store Clusters API interfaces include files</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Range input parameter checks added when managing Clusters</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">ZCL
-Commissioning Cluster improvement&nbsp;to allow joining commissioning
-network and sending unicast frames (as well as Inter-PAN)</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Support
-of a Custom Cluster (Refer to the appropriate applications to see how
-to use it : Zigbee_custom_ls_Server_Coord, and
-Zigbee_custom_ls_Client_Router)</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Support
-of new APIs to control &nbsp;TouchLink features (Refer to
-&nbsp;zcl.touchlink.h file for more details). Adding of TouchLink
-utility commands</li><li style="font-family: -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Roboto,Ubuntu,&quot;Helvetica Neue&quot;,Helvetica,sans-serif; line-height: 1.4;">Minor fixes in DRLC, Voice over Zigbee &amp; RSSI location Clusters</li></ul></li></ul><ol></ol>
-</body></html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+  <head>
+    <title>_htmresc\ReleaseNotes.html</title>
+  </head>
+  <body style="font-size: 10pt; font-family: Verdana;">
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.14.0 / 08-June-2022</h3>
+    <div style="margin-left: 18pt;">
+      <p>
+        <b><u>Main Changes</u></b>
+      </p>
+      <p>
+        <b>Maintenance Release for BLE, 802.15.4, Thread and Zigbee updates:</b>
+      </p>
+      <p>
+        <li> <strong>BLE</strong> updates: 
+          <ul>
+            <li>Support BLEv5.3</li>
+            <li>ThreadX OS support</li>
+          </ul>
+        </li>
+        <li> <strong>Zigbee</strong> updates: 
+          <ul>
+            <li>BDB 3.0.1 & ZCL 8 update</li>
+            <li>Network Leave management update</li>
+            <li>TX power setting of Zigbee before establising network</li>
+            <li>Manufacturer ID persistence on ZbStartup</li>
+            <li>Multichannel Scan fix</li>
+            <li>Export ZbNlmeEdScanReq on M4 side</li>
+            <li>ThreadX OS support with two new applications (Zigbee_OnOff_ClientRouter_ThreadX)</li>
+            <li>New Zigbee applications (Zigbee_OnOff_ChannelsAgility)</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Thread</strong> updates: 
+          <ul>
+            <li>Support Threadv1.1 based on Openthreadv1.2 (commit ec02abc47c6d7663f82132d64555839a5c93e018) 
+              <ul>
+                <li>N.B.: This revision is not certified do not pass 5.2.6 & 5.2.7 GRL test. </li>
+                <li>  Certifiable solution can be done using FW 1.13.x </li>
+              </ul>
+            </li>
+             <li>Provide the choice to customer to handle Thread NVM at application processor level</li>
+             <li>ThreadX OS support​​​​​ (hread_Coap_Generic_ThreadX)</li>
+          </ul>
+        </li>
+      </p>
+      <p>
+        <b>Maintenance Release for CMSIS, HAL/LL Drivers and Projects updates:</b>
+      </p>
+      <p>
+        <li> <strong>HAL/LL Drivers</strong> updates: 
+          <ul>
+            <li>
+              Update HAL/LL drivers to include latest corrections
+                <ul>
+                  <li>Update of HAL COMP, EXTI, FLASH, GPIO, I2C, IRDA, LPTIM, PKA, PWR, RCC, SAI, SMARTCARD, TIM, UART, USART and USB drivers</li>
+                  <li>HAL code quality enhancement for MISRA-C Rule-8.13 by adding Cont qualifiers</li>
+                  <li>Update of LL COMP, I2C, LPTIM, RCC, TIM, UART, USART and USB drivers</li>
+                </ul>
+            </li>
+            <li> Refer to <a href="../Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details </li>
+          </ul>
+        </li>
+        <li> <strong>HAL/LL Drivers</strong> updates: 
+         <ul>
+            <li>
+              Update of FW projects following changes in latest version of HAL/LL and Middlewares
+            </li>
+        </li>
+      </p>
+
+
+
+    </div>
+  </body>
+</html>

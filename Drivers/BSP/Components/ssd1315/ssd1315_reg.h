@@ -1,18 +1,18 @@
-/*
- ******************************************************************************
- * @file    ssd1315_reg.h
- * @author  MCD Application Team
- * @brief   This file contains all the functions prototypes for the
- *          ssd1315_reg.c driver.
+/**
+  ******************************************************************************
+  * @file    ssd1315_reg.h
+  * @author  MCD Application Team
+  * @brief   This file contains all the functions prototypes for the
+  *          ssd1315_reg.c driver.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2020 STMicroelectronics</center></h2>
+  * Copyright (c) 2020 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -43,6 +43,7 @@
 /** @defgroup SSD1315_REG_Exported_Constants SSD1315 REG Exported Constants
   * @{
   */
+  
 /**
   * @brief  SSD1315 Colors
   */
@@ -140,5 +141,3 @@ int32_t ssd1315_read_reg(ssd1315_ctx_t *ctx, uint16_t reg, uint8_t *pdata, uint1
 #endif
 
 #endif /* SSD1315_REG_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -1053,25 +1053,25 @@
                 <group>
                     <name>src</name>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
+                        <name>$PROJ_DIR$\..\Core\src\app_entry.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
+                        <name>$PROJ_DIR$\..\Core\src\hw_uart.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\Src\hw_uart.c</name>
+                        <name>$PROJ_DIR$\..\Core\src\main.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\Src\main.c</name>
+                        <name>$PROJ_DIR$\..\Core\src\stm32_lpm_if.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
+                        <name>$PROJ_DIR$\..\Core\src\stm32wbxx_it.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\Src\stm_logging.c</name>
+                        <name>$PROJ_DIR$\..\Core\src\stm_logging.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\Src\system_stm32wbxx.c</name>
+                        <name>$PROJ_DIR$\..\Core\src\system_stm32wbxx.c</name>
                     </file>
                 </group>
             </group>
@@ -1080,10 +1080,10 @@
                 <group>
                     <name>app</name>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\app_rfd_mac_802_15_4.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\app_rfd_mac_802_15_4.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\app_rfd_mac_802_15_4_process.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\app_rfd_mac_802_15_4_process.c</name>
                     </file>
                 </group>
                 <group>
@@ -1131,6 +1131,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_exti.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_flash.c</name>

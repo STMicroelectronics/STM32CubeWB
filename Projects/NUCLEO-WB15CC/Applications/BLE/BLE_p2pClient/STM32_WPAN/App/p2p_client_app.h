@@ -18,8 +18,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __P2P_APPLICATION_H
-#define __P2P_APPLICATION_H
+#ifndef P2P_APPLICATION_H
+#define P2P_APPLICATION_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,5 +76,4 @@ void P2PC_APP_SW1_Button_Action(void);
 }
 #endif
 
-#endif /*__P2P_APPLICATION_H */
-
+#endif /*P2P_APPLICATION_H */

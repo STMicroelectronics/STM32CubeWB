@@ -37,21 +37,22 @@ extern otLinkRawEnergyScanDone otLinkRawEnergyScanDoneCb;
 
 #if OPENTHREAD_RADIO || OPENTHREAD_CONFIG_LINK_RAW_ENABLE
 
-otError otLinkRawSetEnable(otInstance *aInstance, bool aEnabled)
+otError otLinkRawSetReceiveDone(otInstance *aInstance, otLinkRawReceiveDone aCallback)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_LINK_RAW_SET_ENABLE;
+  otLinkRawReceiveDoneCb = aCallback;
 
-  p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t) aEnabled;
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_RAW_SET_RECEIVE_DONE;
+
+  p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  return (bool)p_ot_req->Data[0];
 }
 
 bool otLinkRawIsEnabled(otInstance *aInstance)
@@ -139,7 +140,7 @@ otError otLinkRawSleep(otInstance *aInstance)
 otError otLinkRawReceive(otInstance *aInstance, otLinkRawReceiveDone aCallback)
 {
   Pre_OtCmdProcessing();
-  otLinkRawReceiveDoneCb = aCallback;
+
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
@@ -354,6 +355,65 @@ otError otLinkRawSrcMatchClearExtEntries(otInstance *aInstance)
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
+}
+
+otError otLinkRawSetMacKey(otInstance *    aInstance,
+                           uint8_t         aKeyIdMode,
+                           uint8_t         aKeyId,
+                           const otMacKey *aPrevKey,
+                           const otMacKey *aCurrKey,
+                           const otMacKey *aCurrKey)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_RAW_SET_MAC_KEY;
+
+  p_ot_req->Size=5;
+  p_ot_req->Data[0] = (uint32_t) aKeyIdMode;
+  p_ot_req->Data[1] = (uint32_t) aKeyId;
+  p_ot_req->Data[2] = (uint32_t) aPrevKey;
+  p_ot_req->Data[3] = (uint32_t) aCurrKey;
+  p_ot_req->Data[4] = (uint32_t) aCurrKey;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otLinkRawSetMacFrameCounter(otInstance *aInstance, uint32_t aMacFrameCounter)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_RAW_SET_MAC_FRAME_COUNTER;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+uint64_t otLinkRawGetRadioTime(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_RAW_GET_RADIO_TIME;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  /* 64bit word is returned with two 32bits words (MSB are at offset 1 and LSB are offset 0) */
+  return (uint64_t)((p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
 }
 
 #endif /* OPENTHREAD_RADIO || OPENTHREAD_CONFIG_LINK_RAW_ENABLE */

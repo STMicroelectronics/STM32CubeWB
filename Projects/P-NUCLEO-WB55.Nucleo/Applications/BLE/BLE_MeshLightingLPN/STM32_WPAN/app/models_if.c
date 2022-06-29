@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    models_if.c
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Mesh Modes interface file of the application
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"
@@ -43,8 +45,10 @@
 #include "appli_light_client.h"
 #include "appli_sensors_client.h"
 
+#if (( CFG_LPM_SUPPORTED == 0) && (ENABLE_PWM_SUPPORT == 1))
 #include "PWM_config.h"
 #include "PWM_handlers.h"
+#endif
 
 /** @addtogroup ST_BLE_Mesh
 *  @{
@@ -243,7 +247,6 @@ __attribute__((aligned(4)))const Appli_Light_cb_t LightAppli_cb =
   Appli_Light_HslRange_Status
 };
 
-/*#ifdef ENABLE_SENSOR_MODEL_CLIENT*/
 __attribute__((aligned(4))) const sensor_client_cb_t SensorAppli_cb = 
 {
   Appli_Sensor_Descriptor_Status,
@@ -254,7 +257,6 @@ __attribute__((aligned(4))) const sensor_client_cb_t SensorAppli_cb =
   Appli_Sensor_Column_Status,
   Appli_Sensor_Series_Status
 };
-/*#endif*/
 
 __attribute__((aligned(4)))const MODEL_SIG_cb_t Model_SIG_cb[] = 
 {
@@ -343,19 +345,19 @@ __attribute__((aligned(4)))const APPLI_RETRIEVE_MODEL_TEST_STATE_CB RetrieveMode
 
 #define MODEL_SIG_COUNT ( ( sizeof(Model_SIG_cb)/sizeof(Model_SIG_cb[0]) - 1 ))
                                    
+#ifdef ENABLE_VENDOR_MODEL_SERVER
 __attribute__((aligned(4)))const MODEL_Vendor_cb_t Model_Vendor_cb[] = 
 {
-#ifdef ENABLE_VENDOR_MODEL_SERVER  
   {
     VendorModel_PID1_GetOpcodeTableCb,
     VendorModel_PID1_GetStatusRequestCb,
     VendorModel_PID1_ProcessMessageCb
   },
-#endif  
   { 0, 0,0 }
 };
 
 #define MODEL_VENDOR_COUNT ( ( sizeof(Model_Vendor_cb)/sizeof(Model_Vendor_cb[0]) - 1 ))
+#endif
 
 extern MOBLEUINT8 NumberOfElements;
 
@@ -364,10 +366,12 @@ extern MOBLEUINT8 NumberOfElements;
 
 void GetApplicationVendorModels(const MODEL_Vendor_cb_t** pModelsTable, MOBLEUINT32* VendorModelscount)
 {
+#ifdef ENABLE_VENDOR_MODEL_SERVER
   *pModelsTable = Model_Vendor_cb       ;
   *VendorModelscount = MODEL_VENDOR_COUNT;
   
    TRACE_M(TF_VENDOR_M, "GetApplicationVendorModels \r\n");
+#endif
 }
 
 /**
@@ -378,15 +382,8 @@ void GetApplicationVendorModels(const MODEL_Vendor_cb_t** pModelsTable, MOBLEUIN
 void BLEMesh_ModelsInit(void)
 {
   
-#ifdef ENABLE_SAVE_MODEL_STATE_NVM
-  
   MOBLEUINT16 modelStateLoad_Size;
   MOBLEUINT8 modelStateLoadBuff[APP_NVM_MODEL_SIZE];    
-  
-#ifdef CLIENT
-  MOBLEUINT8 PrvnStateLoad_Size;
-  MOBLEUINT8 PrvnlStateLoadBuff[16]; 
-#endif
   
 #if 0
 #ifdef ENABLE_NVM_TEST	
@@ -395,8 +392,10 @@ void BLEMesh_ModelsInit(void)
 #endif	
 #endif
   
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
   /* Inintialise the light model range states with default values */
   Light_ModelRangeInit();
+#endif
   
   /* Callbacks used by BlueNRG-Mesh Models */
   BLEMesh_SetSIGModelsCbMap(Model_SIG_cb, MODEL_SIG_COUNT);
@@ -406,8 +405,9 @@ void BLEMesh_ModelsInit(void)
   Appli_Sensor_Init();
 #endif  
 
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC
   Appli_Light_LCs_Init();
-#endif  
+#endif
   
   /* Load generic model states from nvm */
   AppliNvm_LoadModelState(modelStateLoadBuff, &modelStateLoad_Size);
@@ -416,11 +416,6 @@ void BLEMesh_ModelsInit(void)
     /* update states of generic model */
     Model_RestoreStates(modelStateLoadBuff, modelStateLoad_Size);
   }
-  
-#ifdef CLIENT
-  AppliPrvnNvm_LoadData(PrvnlStateLoadBuff,&PrvnStateLoad_Size);
-#endif
-  
 }
 
 /**

@@ -59,14 +59,25 @@ extern "C" {
 /**
  * This function processes a factory diagnostics command line.
  *
+ * The output of this function (the content written to @p aOutput) MUST terminate with `\0` and the `\0` is within the
+ * output buffer.
+ *
  * @param[in]   aInstance       The OpenThread instance for current request.
- * @param[in]   argc            The argument counter of diagnostics command line.
- * @param[in]   argv            The argument vector of diagnostics command line.
+ * @param[in]   aArgsLength     The number of arguments in @p aArgs.
+ * @param[in]   aArgs           The arguments of diagnostics command line.
  * @param[out]  aOutput         The diagnostics execution result.
  * @param[in]   aOutputMaxLen   The output buffer size.
  *
+ * @retval  OT_ERROR_INVALID_ARGS       The command is supported but invalid arguments provided.
+ * @retval  OT_ERROR_NONE               The command is successfully process.
+ * @retval  OT_ERROR_INVALID_COMMAND    The command is not valid or not supported.
+ *
  */
-void otPlatDiagProcess(otInstance *aInstance, int argc, char *argv[], char *aOutput, size_t aOutputMaxLen);
+otError otPlatDiagProcess(otInstance *aInstance,
+                          uint8_t     aArgsLength,
+                          char *      aArgs[],
+                          char *      aOutput,
+                          size_t      aOutputMaxLen);
 
 /**
  * This function enables/disables the factory diagnostics mode.

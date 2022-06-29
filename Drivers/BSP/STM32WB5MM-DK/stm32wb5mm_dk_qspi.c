@@ -145,17 +145,21 @@ int32_t BSP_QSPI_Init(uint32_t Instance, BSP_QSPI_Init_t *Init)
         {
           ret = BSP_ERROR_COMPONENT_FAILURE;
         }/* Force Flash enter 4 Byte address mode */
-        else if(S25FL128S_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != S25FL128S_OK)
+        else if(S25FL128S_AutoPollingMemReady(&hqspi, Init->InterfaceMode) != S25FL128S_OK)
         {
           ret = BSP_ERROR_COMPONENT_FAILURE;
         }
-        else if(S25FL128S_Enter4BytesAddressMode(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != S25FL128S_OK)
+        else if(S25FL128S_Enter4BytesAddressMode(&hqspi, Init->InterfaceMode) != S25FL128S_OK)
         {
           ret = BSP_ERROR_COMPONENT_FAILURE;
         }/* Configuration of the dummy cycles on QSPI memory side */
         else if(QSPI_DummyCyclesCfg(Instance) != BSP_ERROR_NONE)
         {
           ret = BSP_ERROR_COMPONENT_FAILURE;
+        }
+        else
+        {
+          QSPI_Ctx[Instance].InterfaceMode = Init->InterfaceMode;
         }
       }
     }
@@ -440,6 +444,10 @@ int32_t BSP_QSPI_EraseBlock(uint32_t Instance, uint32_t BlockAddress, BSP_QSPI_E
     {
       /* Issue Block Erase command */
       if(S25FL128S_BlockErase(&hqspi, QSPI_Ctx[Instance].InterfaceMode, BlockAddress, BlockSize) != S25FL128S_OK)
+      {
+        ret = BSP_ERROR_COMPONENT_FAILURE;
+      }
+      if(S25FL128S_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != S25FL128S_OK)
       {
         ret = BSP_ERROR_COMPONENT_FAILURE;
       }
@@ -779,7 +787,7 @@ static void QSPI_MspDeInit(QSPI_HandleTypeDef *hQspi)
 
 /**
   * @brief  This function reset the QSPI Flash memory.
-  *         Fore QPI+SPI reset to avoid system come from unknown status.
+  *         For SPI reset to avoid system come from unknown status.
   *         Flash accept 1-1-1, 1-1-2, 1-2-2 commands after reset.
   * @param  Instance  QSPI instance
   * @retval BSP status
@@ -788,16 +796,8 @@ static int32_t QSPI_ResetMemory(uint32_t Instance)
 {
   int32_t ret = BSP_ERROR_NONE;
 
-  /* Send RESET ENABLE command in QPI mode (QUAD I/Os, 4-4-4) */
-  if(S25FL128S_ResetEnable(&hqspi, S25FL128S_QPI_MODE) != S25FL128S_OK)
-  {
-    ret =BSP_ERROR_COMPONENT_FAILURE;
-  }/* Send RESET memory command in QPI mode (QUAD I/Os, 4-4-4) */
-  else if(S25FL128S_ResetMemory(&hqspi, S25FL128S_QPI_MODE) != S25FL128S_OK)
-  {
-    ret = BSP_ERROR_COMPONENT_FAILURE;
-  }/* Wait Flash ready */
-  else if(S25FL128S_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != S25FL128S_OK)
+  /* Wait Flash ready */
+  if(S25FL128S_AutoPollingMemReady(&hqspi, QSPI_Ctx[Instance].InterfaceMode) != S25FL128S_OK)
   {
     ret = BSP_ERROR_COMPONENT_FAILURE;
   }/* Send RESET ENABLE command in SPI mode (1-1-1) */

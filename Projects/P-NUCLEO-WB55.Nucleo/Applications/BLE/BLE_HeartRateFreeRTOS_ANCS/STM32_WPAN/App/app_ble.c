@@ -318,6 +318,7 @@ static void GapProcReq(GapProcId_t GapProcId);
 /* Functions Definition ------------------------------------------------------*/
 void APP_BLE_Init( void )
 {
+  SHCI_CmdStatus_t status;
 /* USER CODE BEGIN APP_BLE_Init_1 */
 
 /* USER CODE END APP_BLE_Init_1 */
@@ -345,7 +346,12 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_COC_INITIATOR_NBR,
     CFG_BLE_MIN_TX_POWER,
     CFG_BLE_MAX_TX_POWER,
-    CFG_BLE_RX_MODEL_CONFIG}
+    CFG_BLE_RX_MODEL_CONFIG,
+     CFG_BLE_MAX_ADV_SET_NBR, 
+     CFG_BLE_MAX_ADV_DATA_LEN,
+     CFG_BLE_TX_PATH_COMPENS,
+     CFG_BLE_RX_PATH_COMPENS
+    }
   };
 
   /**
@@ -366,9 +372,16 @@ void APP_BLE_Init( void )
   /**
    * Starts the BLE Stack on CPU2
    */
-  if (SHCI_C2_BLE_Init( &ble_init_cmd_packet ) != SHCI_Success)
+  status = SHCI_C2_BLE_Init(&ble_init_cmd_packet);
+  if (status != SHCI_Success)
   {
+    APP_DBG_MSG("  Fail   : SHCI_C2_BLE_Init command, result: 0x%02x\n\r", status);
+    /* if you are here, maybe CPU2 doesn't contain STM32WB_Copro_Wireless_Binaries, see Release_Notes.html */
     Error_Handler();
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: SHCI_C2_BLE_Init command\n\r");
   }
 
   /**

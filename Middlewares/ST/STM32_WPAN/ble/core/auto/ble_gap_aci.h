@@ -34,7 +34,7 @@ tBleStatus aci_gap_set_non_discoverable( void );
 /**
  * @brief ACI_GAP_SET_LIMITED_DISCOVERABLE
  * Put the device in limited discoverable mode (as defined in Bluetooth spec.
- * v.5.2 [Vol 3, Part C, 9.2.3]). The device will be discoverable for maximum
+ * v.5.3 [Vol 3, Part C, 9.2.3]). The device will be discoverable for maximum
  * period of TGAP (lim_adv_timeout) = 180 seconds (from errata). The
  * advertising can be disabled at any time by issuing
  * ACI_GAP_SET_NON_DISCOVERABLE command.
@@ -126,7 +126,7 @@ tBleStatus aci_gap_set_limited_discoverable( uint8_t Advertising_Type,
 /**
  * @brief ACI_GAP_SET_DISCOVERABLE
  * Put the device in general discoverable mode (as defined in Bluetooth spec.
- * v.5.2 [Vol 3, Part C, 9.2.4]). The device will be discoverable until the
+ * v.5.3 [Vol 3, Part C, 9.2.4]). The device will be discoverable until the
  * host issues the ACI_GAP_SET_NON_DISCOVERABLE command. The Adv_Interval_Min
  * and Adv_Interval_Max parameters are optional. If both are set to 0, the GAP
  * uses the default values for adv intervals for general discoverable mode.
@@ -221,7 +221,7 @@ tBleStatus aci_gap_set_discoverable( uint8_t Advertising_Type,
 /**
  * @brief ACI_GAP_SET_DIRECT_CONNECTABLE
  * Set the device in direct connectable mode (as defined in Bluetooth spec.
- * v.5.2 [Vol 3, Part C, 9.3.3]). Device uses direct connectable mode to
+ * v.5.3 [Vol 3, Part C, 9.3.3]). Device uses direct connectable mode to
  * advertise using High Duty cycle advertisement events or Low Duty cycle
  * advertisement events and the address as either what is specified in the Own
  * Address Type parameter. The command specifies the type of the advertising
@@ -417,6 +417,8 @@ tBleStatus aci_gap_authorization_resp( uint16_t Connection_Handle,
  * Note that if the Peripheral Preferred Connection Parameters characteristic
  * is added, its handle is equal to the Appearance characteristic handle plus
  * 2.
+ * Note also that if privacy is enabled, this comamnd automatically unmasks the
+ * HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT event.
  * 
  * @param Role Bitmap of allowed roles.
  *        Flags:
@@ -771,17 +773,15 @@ tBleStatus aci_gap_start_general_discovery_proc( uint16_t LE_Scan_Interval,
  *        - 0x01: Static random address
  *        - 0x02: Resolvable private address
  * @param Conn_Interval_Min Minimum value for the connection event interval.
- *        This shall be less than or equal to Conn_Interval_Max.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
- *        This shall be greater than or equal to Conn_Interval_Min.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Conn_Latency Slave latency for the connection in number of connection
- *        events.
+ * @param Conn_Latency Maximum Peripheral latency for the connection in number
+ *        of connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Supervision_Timeout Supervision timeout for the LE Link.
@@ -994,7 +994,7 @@ tBleStatus aci_gap_start_selective_connection_establish_proc( uint8_t LE_Scan_Ty
  * HCI_LE_CREATE_CONNECTION_CANCEL call will be made to the controller by GAP.
  * On termination of the procedure, a HCI_LE_CONNECTION_COMPLETE_EVENT event is
  * returned. The procedure can be explicitly terminated by the upper layer by
- * issuing the command ACI_GAP_TERMINATE_GAP_PROC with the procedure_code set
+ * issuing the command ACI_GAP_TERMINATE_GAP_PROC with the Procedure_Code set
  * to 0x40.
  * If privacy is enabled and the peer device (advertiser) is in the resolving
  * list then the link layer will generate a RPA, if it is not then the RPA
@@ -1027,17 +1027,15 @@ tBleStatus aci_gap_start_selective_connection_establish_proc( uint8_t LE_Scan_Ty
  *        - 0x01: Static random address
  *        - 0x02: Resolvable private address
  * @param Conn_Interval_Min Minimum value for the connection event interval.
- *        This shall be less than or equal to Conn_Interval_Max.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
- *        This shall be greater than or equal to Conn_Interval_Min.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Conn_Latency Slave latency for the connection in number of connection
- *        events.
+ * @param Conn_Latency Maximum Peripheral latency for the connection in number
+ *        of connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Supervision_Timeout Supervision timeout for the LE Link.
@@ -1100,17 +1098,15 @@ tBleStatus aci_gap_terminate_gap_proc( uint8_t Procedure_Code );
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
- *        This shall be less than or equal to Conn_Interval_Max.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
- *        This shall be greater than or equal to Conn_Interval_Min.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Conn_Latency Slave latency for the connection in number of connection
- *        events.
+ * @param Conn_Latency Maximum Peripheral latency for the connection in number
+ *        of connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Supervision_Timeout Supervision timeout for the LE Link.
@@ -1641,7 +1637,8 @@ tBleStatus aci_gap_additional_beacon_set_data( uint8_t Adv_Data_Length,
  *        Values:
  *        - 0x01: Secondary advertisement PHY is LE 1M
  *        - 0x02: Secondary advertisement PHY is LE 2M
- *        - 0x03: Secondary advertisement PHY is LE Coded (not supported)
+ *        - 0x03: Secondary advertisement PHY is LE Coded (not supported on
+ *          STM32WB)
  * @param Adv_SID Value of the Advertising SID subfield in the ADI field of the
  *        PDU.
  *        Values:
@@ -1709,7 +1706,7 @@ tBleStatus aci_gap_adv_set_enable( uint8_t Enable,
  *        - 0x01: The Controller should not fragment or should minimize
  *          fragmentation of data
  * @param Advertising_Data_Length Length of Advertising_Data in octets
- * @param Advertising_Data Data formatted as defined in Bluetooth spec. v.5.2
+ * @param Advertising_Data Data formatted as defined in Bluetooth spec. v.5.3
  *        [Vol 3, Part C, 11].
  * @return Value indicating success or error code.
  */
@@ -1739,7 +1736,7 @@ tBleStatus aci_gap_adv_set_adv_data( uint8_t Advertising_Handle,
  *        - 0x01: The Controller should not fragment or should minimize
  *          fragmentation of data
  * @param Scan_Response_Data_Length Length of Scan_Response_Data in octets
- * @param Scan_Response_Data Data formatted as defined in Bluetooth spec. v.5.2
+ * @param Scan_Response_Data Data formatted as defined in Bluetooth spec. v.5.3
  *        [Vol 3, Part C, 11].
  * @return Value indicating success or error code.
  */

@@ -108,7 +108,7 @@ struct zigbee_app_info
 static struct zigbee_app_info zigbee_app_info;
 
 /* ON OFF CLUSTER */
-/* On Off  Attributes peristent flag set */
+/* On Off  Attributes persistent flag set */
 static const struct ZbZclAttrT zcl_onoff_server_attr_list[] = {
     {
         ZCL_ONOFF_ATTR_ONOFF, ZCL_DATATYPE_BOOLEAN,
@@ -490,7 +490,7 @@ static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
    }
    else
    {
-       /* Failed toi restart from persistence */ 
+       /* Failed to restart from persistence */ 
        APP_DBG("APP_ZIGBEE_ZbStartupPersist: no persistence data to restore");
        status = ZB_STATUS_ALLOC_FAIL;
    }
@@ -560,7 +560,7 @@ static bool APP_ZIGBEE_persist_load(void)
     if ((cache_persistent_data.U32_data[0] == 0) ||
         (cache_persistent_data.U32_data[0] > ST_PERSIST_MAX_ALLOC_SZ))
     {
-        APP_DBG("No data or too large lenght : %d",cache_persistent_data.U32_data[0]);
+        APP_DBG("No data or too large length : %d",cache_persistent_data.U32_data[0]);
         return false;
     }
     return true;
@@ -672,7 +672,7 @@ static bool APP_ZIGBEE_NVM_Read(void)
     ee_status = EE_Read(0, ZIGBEE_DB_START_ADDR, &cache_persistent_data.U32_data[0]);
     if (ee_status != EE_OK)
     {
-        APP_DBG("Read -> persistent data lenght not found ERASE to be done - Read Stopped");
+        APP_DBG("Read -> persistent data length not found ERASE to be done - Read Stopped");
         status = false;
     }
       /* Check length is not too big nor zero */
@@ -957,6 +957,34 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
       APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
       break;
     }
+    // print the application name
+    char* __PathProject__ =(strstr(__FILE__, "Zigbee") ? strstr(__FILE__, "Zigbee") + 7 : __FILE__);
+    char *del;
+    if ( (strchr(__FILE__, '/')) == NULL)
+        {del = strchr(__PathProject__, '\\');}
+    else 
+        {del = strchr(__PathProject__, '/');}
+    
+        int index = (int) (del - __PathProject__);
+        APP_DBG("Application flashed: %*.*s",index,index,__PathProject__);
+    
+    //print channel
+    APP_DBG("Channel used: %d", CHANNEL);
+    //print Link Key
+    APP_DBG("Link Key: %.16s", sec_key_ha);
+    //print Link Key value hex   
+    char Z09_LL_string[ZB_SEC_KEYSIZE*3+1];
+    Z09_LL_string[0]=0;
+    for(int str_index=0; str_index < ZB_SEC_KEYSIZE; str_index++)
+      {           
+        sprintf(&Z09_LL_string[str_index*3],"%02x ",sec_key_ha[str_index]);
+      }
+  
+    APP_DBG("Link Key value: %s",Z09_LL_string);
+    //print clusters allocated
+    APP_DBG("Clusters allocated are:");  
+    APP_DBG("OnOff Client on Endpoint %d",SW1_ENDPOINT);
+    APP_DBG("OnOff Server on Endpoint %d",SW2_ENDPOINT);
     APP_DBG("**********************************************************");
   }
 } /* APP_ZIGBEE_CheckWirelessFirmwareInfo */
@@ -1026,7 +1054,7 @@ static void APP_ZIGBEE_SW3_Process()
 
 
 /**
- * @brief Init NVM Diagnostic test. Init test pattern and reset NVM memeory.
+ * @brief Init NVM Diagnostic test. Init test pattern and reset NVM memory.
  * This will DESTROY the existing NVM data
  * @param  None
  * @retval None
@@ -1036,7 +1064,7 @@ static void APP_ZIGBEE_NVM_Diag_Init(void)
    /* disable notification */
     ZbPersistNotifyRegister(zigbee_app_info.zb,NULL,NULL);
     
-    /* Display informtion on the configuration */
+    /* Display information on the configuration */
     APP_DBG("");
     APP_DBG("NVM DIAGNOSTICS TEST STARTED")
     APP_DBG("NVM CONFIGURATION");

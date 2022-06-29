@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_CONFIG_H
-#define __APPLI_CONFIG_H
+#ifndef APPLI_CONFIG_H
+#define APPLI_CONFIG_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -46,5 +46,5 @@ void Appli_GetSubOverwriteParamsCb(model_subParams_t*);
 void Appli_GetPublicationSetParamsCb(model_publicationparams_t*);
 void Appli_GetPublicationGetParamsCb(model_publicationparams_t*);
 
-#endif /* __APPLI_CONFIG_H */
+#endif /* APPLI_CONFIG_H */
 

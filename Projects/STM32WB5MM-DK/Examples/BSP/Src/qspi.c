@@ -53,8 +53,8 @@ void QSPI_demo (void)
   /* QSPI info structure */
   BSP_QSPI_Info_t pQSPI_Info;
   uint8_t status;
-  S25FL128S_Interface_t Tab[3]={S25FL128S_SPI_MODE, S25FL128S_DPI_MODE, S25FL128S_QPI_MODE};
-  char* Tab1[3]={"SPI MODE", "DPI MODE", "QPI MODE"};
+  S25FL128S_Interface_t Tab[3]={S25FL128S_SPI_MODE, S25FL128S_SPI_1I2O_MODE, S25FL128S_SPI_4IO_MODE};
+  char* Tab1[3]={"SPI MODE", "SPI 1I2O MODE", "SPI 4IO MODE"};
   
   /*##-1- Configure the QSPI device ##########################################*/
   /* QSPI device configuration */
@@ -72,11 +72,11 @@ void QSPI_demo (void)
   HAL_Delay(5000);
   BSP_LCD_Clear(0,SSD1315_COLOR_BLACK);
   BSP_LCD_Refresh(0);
-  
+
   BSP_QSPI_Init_t init ;
   init.TransferRate= S25FL128S_STR_TRANSFER ;
   init.DualFlashMode= S25FL128S_DUALFLASH_DISABLE;
-  
+
   for(int i=0; i<3; i++)
   {
     if(CheckForUserInput() > 0)
@@ -86,25 +86,26 @@ void QSPI_demo (void)
     }
     init.InterfaceMode = Tab[i];
     status = BSP_QSPI_Init(0,&init);
+
     UTIL_LCD_DisplayStringAt(0, 30, (uint8_t*)Tab1[i], CENTER_MODE);
     UTIL_LCD_DrawRect(0, 30, 127 , 11, SSD1315_COLOR_WHITE);
     BSP_LCD_Refresh(0);
     HAL_Delay(2000);
     BSP_LCD_Clear(0,SSD1315_COLOR_BLACK);
     BSP_LCD_Refresh(0);
-    
+
     if (status != BSP_ERROR_NONE)
     {
       UTIL_LCD_DisplayStringAt(0, 0, (uint8_t*)"QSPI Init:FAILED", LEFT_MODE);
       BSP_LCD_Refresh(0);
     }
-    
+
     else
     {
       UTIL_LCD_DisplayStringAt(0, 0, (uint8_t*)"QSPI Init:OK", LEFT_MODE);
       BSP_LCD_Refresh(0);
       HAL_Delay(500);
-      
+
       /*##-2- Read & check the QSPI info #######################################*/
       /* Initialize the structure */
       pQSPI_Info.FlashSize          = (uint32_t)0x00;
@@ -112,16 +113,16 @@ void QSPI_demo (void)
       pQSPI_Info.EraseSectorsNumber = (uint32_t)0x00;
       pQSPI_Info.ProgPageSize       = (uint32_t)0x00;
       pQSPI_Info.ProgPagesNumber    = (uint32_t)0x00;
-      
+
       /* Read the QSPI memory info */
       BSP_QSPI_GetInfo(0,&pQSPI_Info);
-      
+
       /* Test the correctness */
       if((pQSPI_Info.FlashSize != 0x1000000) || (pQSPI_Info.EraseSectorSize != 0x1000)  ||
          (pQSPI_Info.ProgPageSize != 0x100)  || (pQSPI_Info.EraseSectorsNumber != 0x1000) ||
            (pQSPI_Info.ProgPagesNumber != 0x10000))
       {
-        
+
         UTIL_LCD_DisplayStringAt(0, 16, (uint8_t*)"QSPI GET INFO:FAILED", LEFT_MODE);
         BSP_LCD_Refresh(0);
       }
@@ -144,7 +145,7 @@ void QSPI_demo (void)
           /*##-4- QSPI memory read/write access  #################################*/
           /* Fill the buffer to write */
           Fill_Buffer(qspi_aTxBuffer, BUFFER_SIZE, 0xD20F);
-          
+
           /* Write data to the QSPI memory */
           if(BSP_QSPI_Write(0,qspi_aTxBuffer, WRITE_READ_ADDR, BUFFER_SIZE) != BSP_ERROR_NONE)
           {
@@ -158,7 +159,7 @@ void QSPI_demo (void)
             HAL_Delay(500);
             BSP_LCD_Clear(0,SSD1315_COLOR_BLACK);
             BSP_LCD_Refresh(0);
-            
+
             /* Read back data from the QSPI memory */
             if(BSP_QSPI_Read(0,qspi_aRxBuffer, WRITE_READ_ADDR, BUFFER_SIZE) != BSP_ERROR_NONE)
             {
@@ -170,7 +171,7 @@ void QSPI_demo (void)
               UTIL_LCD_DisplayStringAt(0, 0, (uint8_t*)"QSPI READ:OK", LEFT_MODE);
               BSP_LCD_Refresh(0);
               HAL_Delay(500);
-              
+
               /*##-5- Checking data integrity ############################################*/
               if(Buffercmp(qspi_aRxBuffer, qspi_aTxBuffer, BUFFER_SIZE) > 0)
               {
@@ -250,6 +251,7 @@ void QSPI_demo (void)
                     HAL_Delay(500);
                     BSP_LCD_Clear(0,SSD1315_COLOR_BLACK);
                     BSP_LCD_Refresh(0);
+                    BSP_QSPI_DeInit(0);
                   }
                 }
               }
@@ -257,6 +259,14 @@ void QSPI_demo (void)
           }
         }
       }
+    }
+
+    /* De-Initialization */
+    status = BSP_QSPI_DeInit(0);
+    if (status != BSP_ERROR_NONE)
+    {
+      UTIL_LCD_DisplayStringAt(0, 0, (uint8_t*)"QSPI DeInit:FAILED", LEFT_MODE);
+      BSP_LCD_Refresh(0);
     }
   }
 }

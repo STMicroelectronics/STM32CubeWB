@@ -84,6 +84,20 @@ void zb_heap_free(struct ZigBeeT *zb, void *ptr, const char *funcname, unsigned 
 # define ZbHeapFree(_zb_, _ptr_)             zb_heap_free(_zb_, _ptr_, "", 0)
 #endif
 
+/* Memory debug --------------------------------------------------------------*/
+/* to do - make configurable from Makefile */
+/* #define CONFIG_ZB_M4_MALLOC_DEBUG_SZ            512U */
+
+#ifdef CONFIG_ZB_M4_MALLOC_DEBUG_SZ
+PACKED_STRUCT zb_malloc_tracking_t {
+    void *ptr;
+    unsigned int sz;
+};
+#endif
+
+static void * zb_malloc_track(void *ptr, unsigned int sz);
+static void * zb_malloc_untrack(void *ptr);
+
 /* API Wrapper Helpers -------------------------------------------------------*/
 #define IPC_REQ_FUNC(name, cmd_id, req_type) \
     void \
@@ -234,7 +248,11 @@ PACKED_STRUCT zb_ipc_globals_t {
         const char *fmt, va_list argptr);
     uint32_t log_mask;
     bool log_enable;
-    unsigned zb_alloc_sz; /* ZbMalloc (MSG_M0TOM4_ZB_MALLOC) */
+#ifdef CONFIG_ZB_M4_MALLOC_DEBUG_SZ
+    struct zb_malloc_tracking_t zb_malloc_info[CONFIG_ZB_M4_MALLOC_DEBUG_SZ];
+#else
+    unsigned int zb_alloc_sz;
+#endif
 };
 static struct zb_ipc_globals_t zb_ipc_globals;
 
@@ -1409,7 +1427,7 @@ PACKED_STRUCT zb_msg_filter_cb_info_t {
     void *arg;
 };
 
-#define ZB_IPC_MSG_FILTER_CB_LIST_MAX               32
+#define ZB_IPC_MSG_FILTER_CB_LIST_MAX               32U
 static struct zb_msg_filter_cb_info_t zb_msg_filter_cb_list[ZB_IPC_MSG_FILTER_CB_LIST_MAX];
 
 struct ZbMsgFilterT *
@@ -1770,6 +1788,11 @@ ZbNwkGetActiveKey(struct ZigBeeT *zb, struct ZbNwkSecMaterialT *active_key)
 
 IPC_REQ_CALLBACK_FUNC(ZbNlmeNetDiscReq, MSG_M4TOM0_NLME_NET_DISC, struct ZbNlmeNetDiscReqT, struct ZbNlmeNetDiscConfT);
 /* Followed up in MSG_M0TOM4_NLME_NET_DISC_CB handler */
+
+#ifndef CONFIG_ZB_ENDNODE
+IPC_REQ_CALLBACK_FUNC(ZbNlmeEdScanReq, MSG_M4TOM0_NLME_ED_SCAN, struct ZbNlmeEdScanReqT, struct ZbNlmeEdScanConfT);
+/* Followed up in MSG_M0TOM4_NLME_ED_SCAN_CB handler */
+#endif
 
 IPC_REQ_CALLBACK_FUNC(ZbNlmeLeaveReq, MSG_M4TOM0_NLME_LEAVE, struct ZbNlmeLeaveReqT, struct ZbNlmeLeaveConfT);
 /* Followed up in MSG_M0TOM4_NLME_LEAVE_CB handler */
@@ -2503,22 +2526,25 @@ ZbZclClusterCommandRspWithCb(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrI
     /* Followed up in MSG_M0TOM4_ZCL_CLUSTER_CMD_RSP_CONF_CB handler */
 }
 
+/* NOTE: This API changed for ZCL8. Both the M0 and M4 binaries must be updated if
+ * upgrading from ZCL7 to ZCL8. */
 enum ZclStatusCodeT
 ZbZclSendClusterStatusResponse(struct ZbZclClusterT *clusterPtr, struct ZbApsdeDataIndT *dataIndPtr,
-    struct ZbZclHeaderT *zclHdrPtr, uint8_t cmdId, uint8_t *zclPayload, uint8_t zclPaylen)
+    struct ZbZclHeaderT *zclHdrPtr, uint8_t cmdId, uint8_t *zclPayload, uint8_t zclPaylen, bool allow_bcast)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
 
     Pre_ZigbeeCmdProcessing();
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
     ipcc_req->ID = MSG_M4TOM0_ZCL_CLUSTER_CMD_RSP_WITH_STATUS;
-    ipcc_req->Size = 6;
+    ipcc_req->Size = 7;
     ipcc_req->Data[0] = (uint32_t)clusterPtr;
     ipcc_req->Data[1] = (uint32_t)dataIndPtr;
     ipcc_req->Data[2] = (uint32_t)zclHdrPtr;
     ipcc_req->Data[3] = (uint32_t)cmdId;
     ipcc_req->Data[4] = (uint32_t)zclPayload;
     ipcc_req->Data[5] = (uint32_t)zclPaylen;
+    ipcc_req->Data[6] = (uint32_t)allow_bcast;
     ZIGBEE_CmdTransfer();
     return (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
 }
@@ -3472,6 +3498,19 @@ Zigbee_CallBackProcessing(void)
             }
             break;
 
+#ifndef CONFIG_ZB_ENDNODE
+        case MSG_M0TOM4_NLME_ED_SCAN_CB:
+            assert(p_notification->Size == 2);
+            info = (struct zb_ipc_m4_cb_info_t *)p_notification->Data[1];
+            if ((info != NULL) && (info->callback != NULL)) {
+                void (*callback)(struct ZbNlmeEdScanConfT *conf, void *arg);
+
+                callback = (void (*)(struct ZbNlmeEdScanConfT *conf, void *arg))info->callback;
+                callback((struct ZbNlmeEdScanConfT *)p_notification->Data[0], info->arg);
+            }
+            break;
+#endif
+
         case MSG_M0TOM4_NLME_LEAVE_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info_t *)p_notification->Data[1];
@@ -3870,7 +3909,7 @@ Zigbee_CallBackProcessing(void)
 
             assert(p_notification->Size == 3);
             if (zigbee_m4_tl_callbacks.ep_info_cb == NULL) {
-                retval = (uint32_t)ZCL_STATUS_UNSUPP_CLUSTER_COMMAND;
+                retval = (uint32_t)ZCL_STATUS_UNSUPP_COMMAND;
                 break;
             }
             cmd = (struct ZbTlEpInfoCmd *)p_notification->Data[0];
@@ -3917,6 +3956,7 @@ Zigbee_M0RequestProcessing(void)
             break;
         }
 
+        /* ZbMalloc */
         case MSG_M0TOM4_ZB_MALLOC:
         {
             void *ptr;
@@ -3924,34 +3964,28 @@ Zigbee_M0RequestProcessing(void)
 
             assert(p_logging->Size == 1);
             alloc_sz = (uint32_t)p_logging->Data[0];
+#ifndef CONFIG_ZB_M4_MALLOC_DEBUG_SZ
+            /* Make room for tracking size at start of memory block */
+            alloc_sz += 4U;
+#endif
             ptr = malloc(alloc_sz);
             if (ptr != NULL) {
-                *(uint32_t *)ptr = alloc_sz;
-                ptr = ((uint8_t *)ptr) + 4U;
-                zb_ipc_globals.zb_alloc_sz += alloc_sz;
+                ptr = zb_malloc_track(ptr, alloc_sz);
             }
             /* Return ptr in second argument */
             p_logging->Data[1] = (uint32_t)ptr;
             break;
         }
 
+        /* ZbFree */
         case MSG_M0TOM4_ZB_FREE:
         {
             void *ptr;
-            uint32_t alloc_sz;
 
             assert(p_logging->Size == 1);
             ptr = (void *)p_logging->Data[0];
             assert(ptr != NULL);
-            alloc_sz = *(uint32_t *)ptr;
-            /* Sanity check */
-            if (alloc_sz <= zb_ipc_globals.zb_alloc_sz) {
-                zb_ipc_globals.zb_alloc_sz -= alloc_sz;
-            }
-            else {
-                zb_ipc_globals.zb_alloc_sz = 0;
-            }
-            ptr = ((uint8_t *)ptr) - 4U;
+            ptr = zb_malloc_untrack(ptr);
             free(ptr);
             break;
         }
@@ -3966,10 +4000,73 @@ Zigbee_M0RequestProcessing(void)
 }
 
 /* ZbMalloc (MSG_M0TOM4_ZB_MALLOC) Debugging */
+static void *
+zb_malloc_track(void *ptr, unsigned int sz)
+{
+#ifdef CONFIG_ZB_M4_MALLOC_DEBUG_SZ
+    unsigned int i;
+
+    for (i=0; i<CONFIG_ZB_M4_MALLOC_DEBUG_SZ; i++) {
+        if (zb_ipc_globals.zb_malloc_info[i].ptr == NULL) {
+            zb_ipc_globals.zb_malloc_info[i].ptr = ptr;
+            zb_ipc_globals.zb_malloc_info[i].sz = sz;
+            return;
+        }
+    }
+    ZbLogPrintf(zb_ipc_globals.zb, ZB_LOG_MASK_HEAP, __func__, "Warning, can't track allocation (p=%p, sz=%d)", ptr, sz);
+    return ptr;
+
+#else
+    void *ret;
+
+    *(uint32_t *)ptr = sz;
+    ret = ((uint8_t *)ptr) + 4U;
+    zb_ipc_globals.zb_alloc_sz += sz;
+    return ret;
+#endif
+}
+
+static void *
+zb_malloc_untrack(void *ptr)
+{
+#ifdef CONFIG_ZB_M4_MALLOC_DEBUG_SZ
+    unsigned int i;
+
+    for (i=0; i<CONFIG_ZB_M4_MALLOC_DEBUG_SZ; i++) {
+        if (zb_ipc_globals.zb_malloc_info[i].ptr == ptr) {
+            zb_ipc_globals.zb_malloc_info[i].ptr = NULL;
+            return;
+        }
+    }
+    ZbLogPrintf(zb_ipc_globals.zb, ZB_LOG_MASK_HEAP, __func__, "Warning, can't find allocation (p=%p)", ptr);
+    return ptr;
+
+#else
+    uint32_t sz;
+    void *ret;
+
+    ret = ((uint8_t *)ptr) - 4U;
+    sz = *(uint32_t *)ret;
+    zb_ipc_globals.zb_alloc_sz -= sz;
+    return ret;
+#endif
+}
+
 unsigned int
 zb_malloc_current_sz(void)
 {
+#ifdef CONFIG_ZB_M4_MALLOC_DEBUG_SZ
+    unsigned int i, alloc_sz = 0U;
+
+    for (i=0; i<CONFIG_ZB_M4_MALLOC_DEBUG_SZ; i++) {
+        if (zb_ipc_globals.zb_malloc_info[i].ptr != NULL) {
+            alloc_sz += zb_ipc_globals.zb_malloc_info[i].sz;
+        }
+    }
+    return alloc_sz;
+#else
     return zb_ipc_globals.zb_alloc_sz;
+#endif
 }
 
 /* This is only for ZB_LOG_MASK_ZCL log messages from M4 */

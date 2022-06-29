@@ -308,6 +308,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/App/bls_app.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/STM32_WPAN/App/dis_app.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/App/dis_app.c</locationURI>
+		</link>        
+		<link>
 			<name>Application/User/STM32_WPAN/Target/hw_ipcc.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/Target/hw_ipcc.c</locationURI>

@@ -1,12 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : App/template_server_app.h
-  * Description        : P2P Server Application
+  * @file    App/template_server_app.h
+  * @author  MCD Application Team
+  * @brief   Header for p2p_server_app.c module
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,8 +19,8 @@
 /* USER CODE END Header */
 /* USER CODE BEGIN UserCode */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TEMPLATE_SERVER_APP_H
-#define __TEMPLATE_SERVER_APP_H
+#ifndef TEMPLATE_SERVER_APP_H
+#define TEMPLATE_SERVER_APP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,6 +38,4 @@ extern "C" {
 }
 #endif
 
-#endif /*__P2P_SERVER_APP_H */
-
-/* USER CODE END UserCode*/
+#endif /*P2P_SERVER_APP_H */

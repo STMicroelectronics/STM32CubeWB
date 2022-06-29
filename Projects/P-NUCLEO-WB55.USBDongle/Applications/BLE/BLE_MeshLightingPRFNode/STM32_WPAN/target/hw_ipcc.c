@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : Target/hw_ipcc.c
-  * Description        : Hardware IPCC source file for STM32WPAN Middleware.
-  *
+  * @file    hw_ipcc.c
+  * @author  MCD Application Team
+  * @brief   Hardware IPCC source file for STM32WPAN Middleware.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -26,6 +28,11 @@
 #define HW_IPCC_RX_PENDING( channel )  (LL_C2_IPCC_IsActiveFlag_CHx( IPCC, channel )) && (((~(IPCC->C1MR)) & (channel << 0U)))
 
 /* Private macros ------------------------------------------------------------*/
+#if ( (STM32WB15xx != 0) && (CFG_LPM_STANDBY_SUPPORTED != 0) )
+#define HW_IPCC_SET_FLAG_CHX(x) HW_IPCC_SetFlagCHx(x)
+#else
+#define HW_IPCC_SET_FLAG_CHX(x) LL_C1_IPCC_SetFlag_CHx(IPCC, x)
+#endif
 /* Private typedef -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static void (*FreeBufCb)( void );
@@ -65,6 +72,10 @@ static void HW_IPCC_ZIGBEE_StackNotifEvtHandler( void );
 static void HW_IPCC_ZIGBEE_StackM0RequestHandler( void );
 #endif
 
+#if ( (STM32WB15xx != 0) && (CFG_LPM_STANDBY_SUPPORTED != 0) )
+static void IPCC_Wakeup_CPU2(void);
+static void HW_IPCC_SetFlagCHx(uint32_t Channel);
+#endif
 /* Public function definition -----------------------------------------------*/
 
 /******************************************************************************
@@ -161,7 +172,6 @@ void HW_IPCC_Tx_Handler( void )
       HW_IPCC_ZIGBEE_CmdEvtHandler();
   }
 #endif /* ZIGBEE_WB */
-
   else if (HW_IPCC_TX_PENDING( HW_IPCC_MM_RELEASE_BUFFER_CHANNEL ))
   {
     HW_IPCC_MM_FreeBufHandler();
@@ -180,15 +190,16 @@ void HW_IPCC_Enable( void )
 {
   /**
   * Such as IPCC IP available to the CPU2, it is required to keep the IPCC clock running
-    when FUS is running on CPU2 and CPU1 enters deep sleep mode
+  * when FUS is running on CPU2 and CPU1 enters deep sleep mode
   */
   LL_C2_AHB3_GRP1_EnableClock(LL_C2_AHB3_GRP1_PERIPH_IPCC);
 
-   /**
-   * When the device is out of standby, it is required to use the EXTI mechanism to wakeup CPU2
-   */
-  LL_C2_EXTI_EnableEvent_32_63( LL_EXTI_LINE_41 );
+  /**
+  * When the device is out of standby, it is required to use the EXTI mechanism to wakeup CPU2
+  */
   LL_EXTI_EnableRisingTrig_32_63( LL_EXTI_LINE_41 );
+  /* It is required to have at least a system clock cycle before a SEV after LL_EXTI_EnableRisingTrig_32_63() */
+  LL_C2_EXTI_EnableEvent_32_63( LL_EXTI_LINE_41 );
 
   /**
    * In case the SBSFU is implemented, it may have already set the C2BOOT bit to startup the CPU2.
@@ -466,7 +477,6 @@ static void HW_IPCC_LLDTESTS_ReceiveM0CmdHandler( void )
   return;
 }
 
-
 void HW_IPCC_LLDTESTS_SendM0CmdAck( void )
 {
   LL_C1_IPCC_ClearFlag_CHx( IPCC, HW_IPCC_LLDTESTS_M0_CMD_CHANNEL );
@@ -514,7 +524,6 @@ static void HW_IPCC_LLD_BLE_ReceiveM0CmdHandler( void )
   HW_IPCC_LLD_BLE_ReceiveM0Cmd();
   return;
 }
-
 
 void HW_IPCC_LLD_BLE_SendM0CmdAck( void )
 {

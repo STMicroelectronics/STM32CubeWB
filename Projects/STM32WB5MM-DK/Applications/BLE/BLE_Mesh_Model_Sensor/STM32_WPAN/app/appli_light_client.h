@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_LIGHT_CLIENT_H
-#define __APPLI_LIGHT_CLIENT_H
+#ifndef APPLI_LIGHT_CLIENT_H
+#define APPLI_LIGHT_CLIENT_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -104,6 +104,6 @@ MOBLE_RESULT Appli_LightClient_API(MOBLEUINT8 elementIndex,
                                    MOBLEUINT16 msg_opcode, 
                                    MOBLEUINT8* msg_params);
  
-#endif /* __APPLI_LIGHT_CLIENT_H */
+#endif /* APPLI_LIGHT_CLIENT_H */
 
 

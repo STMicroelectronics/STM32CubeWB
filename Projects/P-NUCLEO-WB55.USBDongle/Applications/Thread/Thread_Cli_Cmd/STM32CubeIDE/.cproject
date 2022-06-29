@@ -57,6 +57,8 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/vcp"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl"/>
 									<listOptionValue builtIn="false" value="../../STM32_WPAN/App"/>
@@ -154,6 +156,8 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/vcp"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl"/>
 									<listOptionValue builtIn="false" value="../../STM32_WPAN/App"/>

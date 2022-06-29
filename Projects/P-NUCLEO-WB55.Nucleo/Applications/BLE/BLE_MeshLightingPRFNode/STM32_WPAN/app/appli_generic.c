@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    appli_generic.c
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Application interface for Generic Mesh Models 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_conf.h"
@@ -48,7 +50,9 @@ extern MOBLEUINT8 RestoreFlag;
 extern MOBLEUINT16 IntensityValue;
 extern MOBLEUINT8 IntensityFlag;
 extern MOBLEUINT8 PowerOnOff_flag;
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
 extern Appli_LightPwmValue_t Appli_LightPwmValue;
+#endif
 
 Appli_Generic_OnOffSet AppliOnOffSet[APPLICATION_NUMBER_OF_ELEMENTS];
 Appli_Generic_LevelSet AppliLevelSet[APPLICATION_NUMBER_OF_ELEMENTS];
@@ -94,15 +98,17 @@ MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam,
     AppliOnOffSet[elementIndex].Present_OnOffValue = pGeneric_OnOffParam->Present_OnOff_Value; 
 
     /* This condition is applicable when user want to on off the light with some 
-       default transition value, or optionalValid =IN_TRANSITION ,
-       transition is in progress.
+      default transition value, or optionalValid =IN_TRANSITION ,
+      transition is in progress.
     */
     if((OptionalValid == DEFAULT_TRANSITION) || (OptionalValid == IN_TRANSITION))
     {
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
       Appli_LightPwmValue.IntensityValue = AppliOnOffSet[elementIndex].Present_OnOffValue;
       Light_UpdateLedValue(LOAD_STATE ,Appli_LightPwmValue);
-
-#if 0 /* EME */
+#endif
+      
+  #if 0 /* EME */
       if(AppliOnOffSet[elementIndex].Present_OnOff == APPLI_LED_ON)
       {
         AppliOnOffSet[elementIndex].TargetValue = PWM_TIME_PERIOD;
@@ -111,9 +117,9 @@ MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam,
       {
         AppliOnOffSet[elementIndex].TargetValue = APPLI_LED_OFF;
       }
-#else
+  #else
       AppliOnOffSet[elementIndex].TargetValue = pGeneric_OnOffParam->Target_OnOff; 
-#endif /* EME */
+  #endif /* EME */
 
       if(AppliOnOffSet[elementIndex].Present_OnOffValue == AppliOnOffSet[elementIndex].TargetValue)
       {
@@ -131,17 +137,21 @@ MOBLE_RESULT Appli_Generic_OnOff_Set(Generic_OnOffStatus_t* pGeneric_OnOffParam,
     {
       if((AppliOnOffSet[elementIndex].Present_OnOff == APPLI_LED_ON) && (OptionalValid == NO_TRANSITION))
       { 
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
         Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
         Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+#endif
         BSP_LED_On(LED_BLUE);
       }
       else
       {  
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
         Appli_LightPwmValue.IntensityValue = PWM_VALUE_OFF;
         Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);
+#endif
         BSP_LED_Off(LED_BLUE);
-      } 
-    }
+      }
+    } 
   }
   
   TRACE_M(TF_GENERIC, "Appli_Generic_OnOff_Set callback received for elementIndex %d \r\n", elementIndex);           
@@ -201,10 +211,12 @@ MOBLE_RESULT Appli_Generic_Level_Set(Generic_LevelStatus_t* plevelParam,
   {
      AppliLevelSet[elementIndex].Present_Level16 = 0;
   }
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
   duty = PwmValueMapping(AppliLevelSet[elementIndex].Present_Level16 , 0x7FFF ,0x0000); 
   Appli_LightPwmValue.IntensityValue = duty;
   Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
-
+#endif
+  
   TRACE_M(TF_GENERIC,"Appli_Generic_Level_Set callback received for elementIndex %d \r\n", elementIndex);
   TRACE_M(TF_SERIAL_CTRL,"#8206!for elementIndex %d \r\n", elementIndex);
   
@@ -234,13 +246,17 @@ MOBLE_RESULT Appli_Generic_Delta_Set(Generic_LevelStatus_t* pdeltalevelParam,
   /* For demo, if Level is more than 50, switch ON the LED */
   if (AppliLevelSet[elementIndex].Present_Level16 >= 50)
   {
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
     Appli_LightPwmValue.IntensityValue = PWM_TIME_PERIOD;
     Light_UpdateLedValue(LOAD_STATE , Appli_LightPwmValue);
+#endif
     BSP_LED_On(LED_BLUE);
   }
   else
   {
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LIGHTNESS
     Light_UpdateLedValue(RESET_STATE , Appli_LightPwmValue);
+#endif
     BSP_LED_Off(LED_BLUE);
   }
   
@@ -279,7 +295,7 @@ MOBLE_RESULT Appli_Generic_Move_Set(Generic_LevelStatus_t* pdeltaMoveParam,
   
     TRACE_M(TF_GENERIC,"Generic_LevelMove_Set callback received for element %d \r\n", elementIndex);
     TRACE_M(TF_SERIAL_CTRL,"#820B! \r\n");
-  return MOBLE_RESULT_SUCCESS;
+    return MOBLE_RESULT_SUCCESS;
   
 }
 

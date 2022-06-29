@@ -8,7 +8,7 @@
   * @brief   Description of the USART_WakeUpFromStop1_Init USART example.
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -19,8 +19,10 @@
   @endverbatim
 
 @par Example Description
-  
-Configuration of GPIO and USART1 peripherals to allow the characters received on USART_RX pin to wake up the MCU from low-power mode. 
+
+Configuration of GPIO and USART1 peripherals to allow the characters received on
+USART_RX pin to wake up the MCU from low-power "STOP1" mode.
+ 
 This example is based on the STM32WBxx USART1 LL API. The peripheral 
 initialization uses LL unitary service functions for optimization purposes (performance and size).
 

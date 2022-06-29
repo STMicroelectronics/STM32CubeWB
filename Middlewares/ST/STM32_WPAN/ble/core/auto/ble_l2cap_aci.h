@@ -33,17 +33,15 @@
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
- *        This shall be less than or equal to Conn_Interval_Max.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
- *        This shall be greater than or equal to Conn_Interval_Min.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Slave_latency Slave latency for the connection in number of
- *        connection events.
+ * @param Slave_latency Maximum Peripheral latency for the connection in number
+ *        of connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Timeout_Multiplier Defines connection timeout parameter in the
@@ -67,17 +65,15 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
  *        Values:
  *        - 0x0000 ... 0x0EFF
  * @param Conn_Interval_Min Minimum value for the connection event interval.
- *        This shall be less than or equal to Conn_Interval_Max.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
  * @param Conn_Interval_Max Maximum value for the connection event interval.
- *        This shall be greater than or equal to Conn_Interval_Min.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Slave_latency Slave latency for the connection in number of
- *        connection events.
+ * @param Slave_latency Maximum Peripheral latency for the connection in number
+ *        of connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Timeout_Multiplier Defines connection timeout parameter in the

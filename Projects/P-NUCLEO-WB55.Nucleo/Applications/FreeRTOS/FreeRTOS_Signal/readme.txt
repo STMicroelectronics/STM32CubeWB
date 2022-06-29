@@ -59,7 +59,7 @@ on STM32Cube with RTOS".
 
 @par Keywords
 
-RTOS, FreeRTOS, Thread, Signal,
+RTOS, FreeRTOS, Threading, Signal,
 
 @par Directory contents
     - FreeRTOS/FreeRTOS_Signal/Src/main.c                       Main program

@@ -75,7 +75,7 @@ on STM32Cube with RTOS".
 
 @par Keywords
 
-RTOS, FreeRTOS, Thread, Mutexes
+RTOS, FreeRTOS, Threading, Mutexes
 
 @par Directory contents
     - FreeRTOS/FreeRTOS_Mutexes/Src/main.c                       Main program

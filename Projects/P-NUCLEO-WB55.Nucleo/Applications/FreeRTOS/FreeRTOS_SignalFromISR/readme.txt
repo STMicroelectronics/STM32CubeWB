@@ -45,7 +45,7 @@ on STM32Cube with RTOS".
 
 @par Keywords
 
-RTOS, FreeRTOS, Thread, Signal, ISR, Interrupt
+RTOS, FreeRTOS, Threading, Signal, ISR, Interrupt
 
 @par Directory contents
     - FreeRTOS/FreeRTOS_SignalFromISR/Src/main.c                       Main program

@@ -18,8 +18,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __CUSTOM_APP_H
-#define __CUSTOM_APP_H
+#ifndef CUSTOM_APP_H
+#define CUSTOM_APP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,5 +74,5 @@ typedef struct
 }
 #endif
 
-#endif /*__CUSTOM_APP_H */
+#endif /* CUSTOM_APP_H */
 

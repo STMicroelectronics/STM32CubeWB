@@ -417,4 +417,3 @@ void EXTI1_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW3_PIN);
 }
 /* USER CODE END 1 */
-

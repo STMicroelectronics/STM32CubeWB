@@ -133,30 +133,35 @@ SECTIONS
     _edata = .;        /* define a global symbol at data end */
   } >RAM1 AT> FLASH
 
-
   /* Uninitialized data section */
   . = ALIGN(4);
   .bss1 :
   {
     /* This is used by the startup in order to initialize the .bss section */
-    _sbss = .;         /* define a global symbol at bss start */
-    __bss_start__ = _sbss;
+    _sbss1 = .;         /* define a global symbol at bss start */
+    __bss1_start__ = _sbss1;
     *(.bss)
+    *(.bss*)
     *(COMMON)
 
     . = ALIGN(4);
-    _ebss = .;         /* define a global symbol at bss end */
-    __bss_end__ = _ebss;
+    _ebss1 = .;         /* define a global symbol at bss end */
+    __bss1_end__ = _ebss1;
   } >RAM1
 
   .bss2 :
   {
-    . = ALIGN(4);
-    __bss2_start__ = .;
+    /* This is used by the startup in order to initialize the .bss section */
+    _sbss2 = .;         /* define a global symbol at bss start */
+    __bss2_start__ = _sbss2;
+    *(.bss)
     *(.bss*)
+    *(COMMON)
+
     . = ALIGN(4);
-    __bss2_end__ = .;
-  } > RAM_SHARED2 AT > RAM_SHARED2
+    _ebss2 = .;         /* define a global symbol at bss end */
+    __bss2_end__ = _ebss2;
+  } >RAM_SHARED2
   
     /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
@@ -167,9 +172,7 @@ SECTIONS
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
-  } >RAM1
-
-  
+  } >RAM_SHARED2
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

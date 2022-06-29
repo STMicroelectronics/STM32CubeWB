@@ -57,7 +57,7 @@ To setup the application :
   a)  Start the first board (it can be either Device1 or Device2), wait for four seconds. 
       Start the second board, wait for four seconds. Do the same for the other boards if applicable.
       Note : In order to create correctly the zigbee network, it is important to NOT switch on all the boards 
-             at the same time. Otherwise independant network can be created because we use distributed network configuration.
+             at the same time. Otherwise independent network can be created because we use distributed network configuration.
       
   b)  At this stage, the Zigbee network is automatically created and BLUE LED (LED1) is ON on all devices.
       it is now possible to send OnOff Cluster commands from the client to the server in multicast mode 

@@ -48,19 +48,3 @@ otError otRandomCryptoFillBuffer(uint8_t *aBuffer, uint16_t aSize)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
-
-mbedtls_ctr_drbg_context *otRandomCryptoMbedTlsContextGet(void)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_RANDOM_CRYPTO_MBDED_TLS_CONTEXT_GET;
-
-  p_ot_req->Size=0;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (mbedtls_ctr_drbg_context *)p_ot_req->Data[0];
-}

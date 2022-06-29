@@ -29,6 +29,8 @@
 #include "shci_tl.h"
 #include "stm32_lpm.h"
 #include "app_debug.h"
+#include "dbg_trace.h"
+#include "shci.h"
 #include "otp.h"
 
 #include "appli_mesh.h"
@@ -36,9 +38,6 @@
 #include "pal_nvm.h"
 #include "lp_timer.h"
 #include "mesh_cfg.h"
-
-#include "shci.h"
-#include "dbg_trace.h"
 
 
 /* Private includes -----------------------------------------------------------*/
@@ -98,7 +97,7 @@ static void Reset_Device( void );
 #if ( CFG_HW_RESET_BY_FW == 1 )
 static void Reset_IPCC( void );
 static void Reset_BackupDomain( void );
-#endif /* CFG_HW_RESET_BY_FW */
+#endif /* CFG_HW_RESET_BY_FW == 1*/
 static void System_Init( void );
 static void SystemPower_Config( void );
 static void appe_Tl_Init( void );
@@ -201,7 +200,7 @@ void Init_Smps( void )
   LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
   LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
   LL_PWR_SMPS_Enable();
-#endif
+#endif /* CFG_USE_SMPS != 0 */
 
   return;
 }
@@ -209,7 +208,7 @@ void Init_Smps( void )
 void Init_Exti( void )
 {
   /* Enable IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
-  LL_EXTI_EnableIT_32_63( LL_EXTI_LINE_36 & LL_EXTI_LINE_38 );
+  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_36 | LL_EXTI_LINE_38);
 
   return;
 }
@@ -229,7 +228,7 @@ static void Reset_Device( void )
   Reset_BackupDomain();
 
   Reset_IPCC();
-#endif /* CFG_HW_RESET_BY_FW */
+#endif /* CFG_HW_RESET_BY_FW == 1 */
 
   return;
 }
@@ -290,7 +289,7 @@ static void Reset_IPCC( void )
 
   return;
 }
-#endif /* CFG_HW_RESET_BY_FW */
+#endif /* CFG_HW_RESET_BY_FW == 1 */
 
 static void Config_HSE(void)
 {
@@ -357,7 +356,7 @@ static void SystemPower_Config( void )
    *  Enable USB power
    */
   HAL_PWREx_EnableVddUSB();
-#endif
+#endif /* CFG_USB_INTERFACE_ENABLE != 0 */
   /**
    * Active SRAM retention for standby support
    */
@@ -413,45 +412,47 @@ static void APPE_SysUserEvtRx( void * pPayload )
   
   p_sys_event = (TL_AsynchEvt_t*)(((tSHCI_UserEvtRxParam*)pPayload)->pckt->evtserial.evt.payload);
   
+  switch(p_sys_event->subevtcode)
+  {
+  case SHCI_SUB_EVT_CODE_READY:
   /* Read the firmware version of both the wireless firmware and the FUS */
   SHCI_GetWirelessFwInfo( &WirelessInfo );
   APP_DBG_MSG("Wireless Firmware version %d.%d.%d\n", WirelessInfo.VersionMajor, WirelessInfo.VersionMinor, WirelessInfo.VersionSub);
   APP_DBG_MSG("Wireless Firmware build %d\n", WirelessInfo.VersionReleaseType);
-  APP_DBG_MSG("FUS version %d.%d.%d\n\n", WirelessInfo.FusVersionMajor, WirelessInfo.FusVersionMinor, WirelessInfo.FusVersionSub);
+    APP_DBG_MSG("FUS version %d.%d.%d\n", WirelessInfo.FusVersionMajor, WirelessInfo.FusVersionMinor, WirelessInfo.FusVersionSub);
   
-  switch(p_sys_event->subevtcode)
-  {
-  case SHCI_SUB_EVT_CODE_READY:
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_CODE_READY\n\r");
     APPE_SysEvtReadyProcessing(pPayload);
     break;
     
   case SHCI_SUB_EVT_ERROR_NOTIF:
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_ERROR_NOTIF \n\r");
     APPE_SysEvtError(pPayload);
     break;
     
   case SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE:
-    APP_DBG_MSG("-- BLE NVM RAM HAS BEEN UPDATED BY CMO+ \n");
-    APP_DBG_MSG("SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE : StartAddress = %lx , Size = %ld\n",
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE -- BLE NVM RAM HAS BEEN UPDATED BY CPU2 \n");
+    APP_DBG_MSG("     - StartAddress = %lx , Size = %ld\n",
         ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->StartAddress,
         ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->Size);
     break;
     
   case SHCI_SUB_EVT_NVM_START_WRITE:
-    APP_DBG_MSG("SHCI_SUB_EVT_NVM_START_WRITE : NumberOfWords = %ld\n",
+    APP_DBG_MSG("==>> SHCI_SUB_EVT_NVM_START_WRITE : NumberOfWords = %ld\n",
                 ((SHCI_C2_NvmStartWrite_Evt_t*)p_sys_event->payload)->NumberOfWords);
     break;
     
   case SHCI_SUB_EVT_NVM_END_WRITE:
-    APP_DBG_MSG("SHCI_SUB_EVT_NVM_END_WRITE\n");
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_NVM_END_WRITE\n\r");
     break;
     
   case SHCI_SUB_EVT_NVM_START_ERASE:
-    APP_DBG_MSG("SHCI_SUB_EVT_NVM_START_ERASE : NumberOfSectors = %ld\n",
+    APP_DBG_MSG("==>>SHCI_SUB_EVT_NVM_START_ERASE : NumberOfSectors = %ld\n",
                 ((SHCI_C2_NvmStartErase_Evt_t*)p_sys_event->payload)->NumberOfSectors);
     break;
     
   case SHCI_SUB_EVT_NVM_END_ERASE:
-    APP_DBG_MSG("SHCI_SUB_EVT_NVM_END_ERASE\n");
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_NVM_END_ERASE\n\r");
     break;
     
   default:
@@ -462,8 +463,33 @@ static void APPE_SysUserEvtRx( void * pPayload )
 }
 
 /**
-* @brief Notify when ready system event from the M0 firmware
-*/
+ * @brief Notify a system error coming from the M0 firmware
+ * @param  ErrorCode  : errorCode detected by the M0 firmware
+ *
+ * @retval None
+ */
+static void APPE_SysEvtError(void * pPayload)
+{
+  TL_AsynchEvt_t *p_sys_event;
+  SCHI_SystemErrCode_t *p_sys_error_code;
+
+  p_sys_event = (TL_AsynchEvt_t*)(((tSHCI_UserEvtRxParam*)pPayload)->pckt->evtserial.evt.payload);
+  p_sys_error_code = (SCHI_SystemErrCode_t*) p_sys_event->payload;
+
+  APP_DBG_MSG(">>== SHCI_SUB_EVT_ERROR_NOTIF WITH REASON %x \n\r",(*p_sys_error_code));
+
+  if ((*p_sys_error_code) == ERR_BLE_INIT)
+  {
+    /* Error during BLE stack initialization */
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_ERROR_NOTIF WITH REASON - ERR_BLE_INIT \n");
+  }
+  else
+  {
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_ERROR_NOTIF WITH REASON - BLE ERROR \n");
+  }
+  return;
+}
+
 static void APPE_SysEvtReadyProcessing( void * pPayload )
 {
   TL_AsynchEvt_t *p_sys_event;
@@ -480,7 +506,7 @@ static void APPE_SysEvtReadyProcessing( void * pPayload )
     /**
     * The wireless firmware is running on the CPU2
     */
-    APP_DBG_MSG("SHCI_SUB_EVT_CODE_READY - WIRELESS_FW_RUNNING \n");
+    APP_DBG_MSG(">>== WIRELESS_FW_RUNNING \n");
     
     /* Traces channel initialization */
     APPD_EnableCPU2( );
@@ -495,7 +521,6 @@ static void APPE_SysEvtReadyProcessing( void * pPayload )
               +  SHCI_C2_CONFIG_EVTMASK1_BIT5_NVM_START_ERASE_ENABLE
                 +  SHCI_C2_CONFIG_EVTMASK1_BIT6_NVM_END_ERASE_ENABLE;
 
-    
     /* Read revision identifier */
     /**
     * @brief  Return the device revision identifier
@@ -505,14 +530,13 @@ static void APPE_SysEvtReadyProcessing( void * pPayload )
     */
     RevisionID = LL_DBGMCU_GetRevisionID();
     
-    APP_DBG_MSG("DBGMCU_GetRevisionID= %lx \n\n", RevisionID);
+    APP_DBG_MSG(">>== DBGMCU_GetRevisionID= %lx \n\r", RevisionID);
     
     config_param.RevisionID = RevisionID;
     (void)SHCI_C2_Config(&config_param);
     
     APP_BLE_Init( );
     UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
-    
   }
   else  if (p_sys_ready_event->sysevt_ready_rsp == FUS_FW_RUNNING) 
   {
@@ -520,37 +544,16 @@ static void APPE_SysEvtReadyProcessing( void * pPayload )
     * The FUS firmware is running on the CPU2
     * In the scope of this application, there should be no case when we get here
     */
-    APP_DBG_MSG("SHCI_SUB_EVT_CODE_READY - FUS_FW_RUNNING \n");
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_CODE_READY - FUS_FW_RUNNING \n\r");
     
     /* The packet shall not be released as this is not supported by the FUS */
     ((tSHCI_UserEvtRxParam*)pPayload)->status = SHCI_TL_UserEventFlow_Disable;
-    
-  } else {
-    
-    APP_DBG_MSG("SHCI_SUB_EVT_CODE_READY – UNEXPECTED CASE \n");
   }
-  return;
+  else
+  {
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_CODE_READY - UNEXPECTED CASE \n\r");
 }
 
-/**
-* @brief Notify a system error coming from the M0 firmware
-*/
-static void APPE_SysEvtError( void * pPayload)
-{
-  TL_AsynchEvt_t *p_sys_event;
-  SCHI_SystemErrCode_t *p_sys_error_code;
-    
-  p_sys_event = (TL_AsynchEvt_t*)(((tSHCI_UserEvtRxParam*)pPayload)->pckt->evtserial.evt.payload);
-  p_sys_error_code = (SCHI_SystemErrCode_t*) p_sys_event->payload;
-       
-  APP_DBG_MSG("SHCI_SUB_EVT_ERROR_NOTIF WITH REASON %x \n",(*p_sys_error_code));
-  
-  if ((*p_sys_error_code) == ERR_BLE_INIT) {
-    /* Error during BLE stack initialization */
-    APP_DBG_MSG("SHCI_SUB_EVT_ERROR_NOTIF WITH REASON – ERR_BLE_INIT \n");
-  } else {
-    APP_DBG_MSG("SHCI_SUB_EVT_ERROR_NOTIF WITH REASON – BLE ERROR \n");    
-  }
   return;
 }
 
@@ -614,7 +617,7 @@ void HAL_Delay(uint32_t Delay)
      */
   #if defined ( __CC_ARM)
     __force_stores();
-  #endif
+  #endif /* __CC_ARM */
 
     __WFI( );
   }
@@ -659,7 +662,7 @@ void UTIL_SEQ_Idle( void )
     UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_REQ_ID, CFG_SCH_PRIO_0);
   }
 #endif
-#endif
+#endif /* CFG_LPM_SUPPORTED == 1 */
   return;
 }
 
@@ -677,6 +680,8 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 #else
   UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
 #endif
+
+  return;
 }
 
 void shci_notify_asynch_evt(void* pdata)

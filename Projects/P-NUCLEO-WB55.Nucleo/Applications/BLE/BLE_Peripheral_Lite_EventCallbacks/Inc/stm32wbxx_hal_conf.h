@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32WBxx_HAL_CONF_H
-#define __STM32WBxx_HAL_CONF_H
+#ifndef STM32WBxx_HAL_CONF_H
+#define STM32WBxx_HAL_CONF_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -154,7 +154,7 @@
    
 #if !defined  (LSE_STARTUP_TIMEOUT)
 #define LSE_STARTUP_TIMEOUT    5000U      /*!< Time out for LSE start up, in ms */
-#endif /* HSE_STARTUP_TIMEOUT */
+#endif /* LSE_STARTUP_TIMEOUT */
 
 /**
   * @brief External clock source for SAI1 peripheral
@@ -349,4 +349,4 @@
 }
 #endif
 
-#endif /* __STM32WBxx_HAL_CONF_H */
+#endif /* STM32WBxx_HAL_CONF_H */

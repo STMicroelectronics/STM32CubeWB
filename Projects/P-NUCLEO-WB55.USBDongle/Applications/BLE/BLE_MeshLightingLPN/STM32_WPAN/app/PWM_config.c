@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
- * @file    PWM_config.c
- * @author  BLE Mesh Team
- * @brief   Configuration file for PWM.
+  * @file    PWM_config.c
+  * @author  MCD Application Team
+  * @brief   Configuration file for PWM.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"

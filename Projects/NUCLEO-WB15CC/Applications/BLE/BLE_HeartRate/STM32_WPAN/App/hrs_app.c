@@ -225,4 +225,3 @@ static uint32_t HRSAPP_Read_RTC_SSR_SS ( void )
 /* USER CODE BEGIN FD */
 
 /* USER CODE END FD */
-

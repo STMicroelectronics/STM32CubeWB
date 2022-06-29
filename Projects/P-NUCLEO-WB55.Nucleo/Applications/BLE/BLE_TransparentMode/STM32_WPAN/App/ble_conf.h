@@ -31,7 +31,7 @@
  *
  ******************************************************************************/
 
- /**
+/**
  * This setting shall be set to '1' if the device needs to support the Peripheral Role
  * In the MS configuration, both BLE_CFG_PERIPHERAL and BLE_CFG_CENTRAL shall be set to '1'
  */

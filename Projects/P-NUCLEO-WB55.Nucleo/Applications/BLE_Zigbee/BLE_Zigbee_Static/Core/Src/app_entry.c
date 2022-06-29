@@ -395,7 +395,7 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 
     case EVENT_ZIGBEE_STARTUP_ENDED:
       /* Do not authorize any switch of protocol until the EVENT_ZIGBEE_STARTUP_ENDED has been received.startup ended has been received in order
-       * The purpose is to be not restart a nework form once the previous one has been completed
+       * The purpose is to be not restart a network form once the previous one has been completed
        */
       UTIL_SEQ_Run(~(1U <<CFG_TASK_INIT_SWITCH_PROTOCOL));
       break;

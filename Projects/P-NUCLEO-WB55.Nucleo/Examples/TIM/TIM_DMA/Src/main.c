@@ -136,7 +136,7 @@ int main(void)
       3) each time HAL_RCC_ClockConfig() is called to configure the system clock frequency
   -----------------------------------------------------------------------------*/
 
-  /* Compute the value of ARR regiter to generate signal frequency at 17.57 Khz */
+  /* Compute the value of ARR register to generate signal frequency at 17.57 Khz */
   uwTimerPeriod = (uint32_t)((SystemCoreClock / 17570) - 1);
   
   /* USER CODE END SysInit */

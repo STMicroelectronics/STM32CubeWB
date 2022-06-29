@@ -32,12 +32,15 @@ In our Application which uses two devices, one device will act as a Leader (Rout
 and the other one will act as an End Device(mode child)
 
 After the reset of the 2 boards, one board will be in Leader mode (Green LED2 ON) 
-The other one will be in Child mode (Red LED3 ON)
+The other one will be in Child mode (Red LED3 ON).
  
 Let's name indifferently one board A and one board B. 
 To send a COAP command from board A to board B, press the SW1 Push-Button on board A. 
-The board B will receive the COAP command to light on its blue LED1. 
-Pressing again same push-button will light off the blue LED1. And so-on. 
+The board B will receive two COAP commands to toggle its blue LED1, second command is 
+happening 5 seconds (WAIT_TIMEOUT) after the first command. 
+Pressing again same push-button will repeat the toggling (taking 5 seconds) of the blue LED1. 
+Pressing every second will reset the timer, hence, the second COAP command will not happen (need 
+to have 5 seconds without pressing the push button).
 Same COAP commands can be sent from board B to board A. 
 
   ___________________________                       ___________________________
@@ -65,8 +68,8 @@ Same COAP commands can be sent from board B to board A.
   |                         |                       |         |               |
   |                         |                       |         v               |
   | CoapDataRespHandler()<--|<===== COAP <==========| <-------                |
-  |                         |                       |                         |
-  |                         |                       |                         |  |                         |
+  |                         |                       | BLUE LED TOGGLE (ON/OFF)|  -- IF WAIT_TIMEOUT elapsed, BLUE LED TOGGLE again
+  |                         |                       |                         |  
   ---------------------------                       ---------------------------
   | Role : Child            |                       | Role : Leader           |
   |                         |                       |                         |

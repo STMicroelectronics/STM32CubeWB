@@ -67,7 +67,7 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
   - BLE/BLE_HeartRateFreeRTOS_ANCS/STM32_WPAN/App/ble_dbg_conf.h      BLE Traces configuration of the BLE services
   - BLE/BLE_HeartRateFreeRTOS_ANCS/STM32_WPAN/App/dis_app.h           Header for dis_app.c module
   - BLE/BLE_HeartRateFreeRTOS_ANCS/STM32_WPAN/App/hrs_app.h           Header for hrs_app.c module
-  - BLE/BLE_HeartRateFreeRTOS_ANCS/STM32_WPAN/App/FreeRTOSConfig.h  Configuration file of FreeRTOS
+  - BLE/BLE_HeartRateFreeRTOS_ANCS/STM32_WPAN/App/FreeRTOSConfig.h    Configuration file of FreeRTOS
 
   - BLE/BLE_HeartRateFreeRTOS_ANCS/Core/Src/app_debug.c
   - BLE/BLE_HeartRateFreeRTOS_ANCS/Core/Src/app_entry.c               Initialization of the application
@@ -106,15 +106,9 @@ Wireless Coprocessor binary.
 In order to make the program work, you must do the following:
  - Open your toolchain 
  - Rebuild all files and flash the board with the executable file
-
- On the android/ios device, enable the Bluetooth communications, and if not done before,
- - Install the ST BLE Profile application on the android device
-	https://play.google.com/store/apps/details?id=com.stm.bluetoothlevalidation&hl=en
-    https://itunes.apple.com/fr/App/st-ble-profile/id1081331769?mt=8
-
  - Install the ST BLE Sensor application on the ios/android device
-	https://play.google.com/store/apps/details?id=com.st.bluems
-	https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
+      https://play.google.com/store/apps/details?id=com.st.bluems
+      https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
 
 Considering connection with ios device:
  - Power on the Nucleo board with the BLE_HeartRateFreeRTOS_ANCS application

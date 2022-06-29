@@ -216,13 +216,9 @@
                 <option>
                     <name>CCDefines</name>
                     <state>USE_STM32WBXX_NUCLEO</state>
-                    <state>STM32WB55xx</state>
                     <state>USE_HAL_DRIVER</state>
-                    <state>CORE_CM4</state>
-                    <state>STM32</state>
+                    <state>STM32WB55xx</state>
                     <state>ENABLE_USART</state>
-                    <state>TRACE_ENABLE_NO_FUNCTION</state>
-                    <state>SERVER</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -1052,102 +1048,102 @@
     <group>
         <name>Application</name>
         <group>
-            <name>Core</name>
-            <file>
-                <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Core\Src\hw_flash.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Core\Src\hw_uart.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Core\Src\lp_timer.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Core\Src\main.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
-            </file>
-        </group>
-        <group>
             <name>EWARM</name>
             <file>
                 <name>$PROJ_DIR$\startup_stm32wb55xx_cm4.s</name>
             </file>
         </group>
         <group>
-            <name>STM32_WPAN</name>
+            <name>User</name>
             <group>
-                <name>app</name>
+                <name>Core</name>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\app_ble.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config_client.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\flash_driver.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_generic.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_generic_client.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\hw_uart.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\lp_timer.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light_client.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\main.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light_lc.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_mesh.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_nvm.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_sensor.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_sensors_client.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_vendor.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\models_if.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\pal_nvm.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\PWM_config.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\PWM_handlers.c</name>
+                    <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
                 </file>
             </group>
             <group>
-                <name>target</name>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\target\hw_ipcc.c</name>
-                </file>
+                <name>STM32_WPAN</name>
+                <group>
+                    <name>App</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\app_ble.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config_client.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_generic.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_generic_client.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light_client.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light_lc.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_mesh.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_nvm.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_sensor.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_sensors_client.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_vendor.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\models_if.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\app\pal_nvm.c</name>
+                    </file>
+                </group>
+                <group>
+                    <name>Target</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\target\hw_ipcc.c</name>
+                    </file>
+                </group>
             </group>
         </group>
     </group>
@@ -1186,6 +1182,12 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_exti.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_flash.c</name>
             </file>
             <file>
@@ -1195,10 +1197,16 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_gpio.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_ipcc.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr.c</name>
@@ -1211,6 +1219,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc.c</name>

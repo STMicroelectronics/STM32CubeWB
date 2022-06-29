@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
  * @file    appli_config_client.c
- * @author  BLE Mesh Team
+  * @author  MCD Application Team
  * @brief   Application interface for Config CLient Mesh Model
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"
@@ -22,8 +24,8 @@
 #include "appli_generic.h"
 #include "appli_light.h"
 #include "common.h"
-#include "mesh_cfg.h"
 #include "mesh_cfg_usr.h"
+#include "mesh_cfg.h"
 #include "appli_nvm.h"
 #include "config_client.h"
 #include "appli_config_client.h"

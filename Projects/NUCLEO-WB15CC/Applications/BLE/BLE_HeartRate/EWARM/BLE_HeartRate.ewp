@@ -1068,7 +1068,7 @@
           <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\Core\Src\standby_stm32wb15.c</name>
+          <name>$PROJ_DIR$/../Core/Src/standby.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>

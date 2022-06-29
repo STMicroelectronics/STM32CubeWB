@@ -36,7 +36,7 @@ How to use an updated OnOff cluster Zigbee application previously downloaded via
 
 This application is to be used when playing with the Zigbee_OTA_Client_Router and Zigbee_OTA_Server_Coord applications.
 When running the OTA example (based on Zigbee_OTA_Client_Router and Zigbee_OTA_Server_Coord applications), this application
-is the one that can be transfered from the Coordinator to the Router. 
+is the one that can be transferred from the Coordinator to the Router. 
 
 
 The purpose of this application is to show how to create a Zigbee centralized network, and 
@@ -98,7 +98,7 @@ As with the persistent data demo applications set, the NVM can be cleared by pre
         - Persistence Data read from NVM are valid -> the router takes back is role in the network. 
           GREEN LED2 is ON indicating a restart form persistence.
           
-        - No persitence data found or wrong data,a fresh start is perfomed, the Zigbee network is automatically created 
+        - No persitence data found or wrong data,a fresh start is performed, the Zigbee network is automatically created 
           and BLUE LED (LED1) is ON on all devices.
         
           

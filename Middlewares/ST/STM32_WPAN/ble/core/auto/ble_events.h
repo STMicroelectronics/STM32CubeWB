@@ -78,7 +78,7 @@ void hci_disconnection_complete_event( uint8_t Status,
  * Secure_Connections_Host_Support is 'disabled' or the Connection_Handle
  * refers to an LE link, the Controller shall only use Encryption_Enabled
  * values 0x00 (OFF) and 0x01 (ON).
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.8].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.8].
  * 
  * @param Status Status error code.
  * @param Connection_Handle Connection handle for which the event applies.
@@ -113,7 +113,7 @@ void hci_encryption_change_event( uint8_t Status,
  * Version event parameter shall be Link Layer VersNr parameter, the
  * Manufacturer_Name event parameter shall be the CompId parameter, and the
  * Subversion event parameter shall be the SubVersNr parameter.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.12].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.12].
  * 
  * @param Status Status error code.
  * @param Connection_Handle Connection handle for which the event applies.
@@ -212,7 +212,7 @@ void hci_encryption_key_refresh_complete_event( uint8_t Status,
  * or was successful.
  * The Master_Clock_Accuracy parameter is only valid for a slave. On a master,
  * this parameter shall be set to 0x00.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.1].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.1].
  * 
  * @param Status Status error code.
  * @param Connection_Handle Connection handle for which the event applies.
@@ -232,8 +232,8 @@ void hci_encryption_key_refresh_complete_event( uint8_t Status,
  *        Time = N * 1.25 ms
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Conn_Latency Slave latency for the connection in number of connection
- *        events.
+ * @param Conn_Latency Maximum Peripheral latency for the connection in number
+ *        of connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Supervision_Timeout Supervision timeout for the LE Link.
@@ -270,7 +270,7 @@ void hci_le_connection_complete_event( uint8_t Status,
  * have responded to an active scan or received some information during a
  * passive scan. The Controller may queue these advertising reports and send
  * information from multiple devices in one LE Advertising Report event.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.2].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.2].
  * Note: in the current BLE stack version, only one report is sent per event
  * (Num_Reports = 1).
  * 
@@ -291,7 +291,7 @@ void hci_le_advertising_report_event( uint8_t Num_Reports,
  * not be issued.
  * On a master, this event shall be issued if the Connection_Update command was
  * sent.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.3].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.3].
  * 
  * @param Status Status error code.
  * @param Connection_Handle Connection handle for which the event applies.
@@ -301,8 +301,8 @@ void hci_le_advertising_report_event( uint8_t Num_Reports,
  *        Time = N * 1.25 ms
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Conn_Latency Slave latency for the connection in number of connection
- *        events.
+ * @param Conn_Latency Maximum Peripheral latency for the connection in number
+ *        of connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Supervision_Timeout Supervision timeout for the LE Link.
@@ -325,7 +325,7 @@ void hci_le_connection_update_complete_event( uint8_t Status,
  * completion of the process of the Controller obtaining the used features of
  * the remote Bluetooth device specified by the Connection_Handle event
  * parameter.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.4].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.4].
  * 
  * @param Status Status error code.
  * @param Connection_Handle Connection handle for which the event applies.
@@ -344,7 +344,7 @@ void hci_le_read_remote_features_complete_event( uint8_t Status,
  * The LE Long Term Key Request event indicates that the master device is
  * attempting to encrypt or re-encrypt the link and is requesting the Long Term
  * Key from the Host.
- * See Bluetooth spec. v.5.2 [Vol 6, Part B, 5.1.3] and [Vol 4, Part E,
+ * See Bluetooth spec. v.5.3 [Vol 6, Part B, 5.1.3] and [Vol 4, Part E,
  * 7.7.65.5].
  * 
  * @param Connection_Handle Connection handle for which the event applies.
@@ -366,7 +366,7 @@ void hci_le_long_term_key_request_event( uint16_t Connection_Handle,
  * the connection following the change, except that on the LE Coded PHY a
  * packet taking up to 2704 us to transmit may be sent even though the
  * corresponding parameter has a lower value.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.7] and [Vol 6, Part B,
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.7] and [Vol 6, Part B,
  * 4.5.10].
  * 
  * @param Connection_Handle Connection handle for which the event applies.
@@ -402,7 +402,7 @@ void hci_le_data_length_change_event( uint16_t Connection_Handle,
 /**
  * @brief HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_EVENT
  * This event is generated when local P-256 key generation is complete.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.8].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.8].
  * 
  * @param Status Status error code.
  * @param Local_P256_Public_Key Local P-256 public key.
@@ -415,7 +415,7 @@ void hci_le_read_local_p256_public_key_complete_event( uint8_t Status,
  * @brief HCI_LE_GENERATE_DHKEY_COMPLETE_EVENT
  * This event indicates that LE Diffie Hellman key generation has been
  * completed by the Controller.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.9].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.9].
  * 
  * @param Status Status error code.
  * @param DHKey Diffie Hellman Key
@@ -440,7 +440,7 @@ void hci_le_generate_dhkey_complete_event( uint8_t Status,
  * or was successful.
  * The Master_Clock_Accuracy parameter is only valid for a slave. On a master,
  * this parameter shall be set to 0x00.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.10].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.10].
  * 
  * @param Status Status error code.
  * @param Connection_Handle Connection handle for which the event applies.
@@ -478,8 +478,8 @@ void hci_le_generate_dhkey_complete_event( uint8_t Status,
  *        Time = N * 1.25 ms
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Conn_Latency Slave latency for the connection in number of connection
- *        events.
+ * @param Conn_Latency Maximum Peripheral latency for the connection in number
+ *        of connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Supervision_Timeout Supervision timeout for the LE Link.
@@ -514,15 +514,14 @@ void hci_le_enhanced_connection_complete_event( uint8_t Status,
 
 /**
  * @brief HCI_LE_DIRECT_ADVERTISING_REPORT_EVENT
- * The LE Direct Advertising Report event indicates that directed
- * advertisements have been received where the advertiser is using a resolvable
- * private address for the InitA field in the ADV_DIRECT_IND PDU and the
- * Scanning_Filter_Policy is equal to 0x02 or 0x03, see
- * HCI_LE_Set_Scan_Parameters.
+ * This event indicates that directed advertisements have been received where
+ * the advertiser is using a resolvable private address for the InitA field in
+ * the ADV_DIRECT_IND PDU and the Scanning_Filter_Policy is equal to 0x02 or
+ * 0x03, see HCI_LE_Set_Scan_Parameters.
  * Direct_Address_Type and Direct_Addres is the address the directed
  * advertisements are being directed to. Address_Type and Address is the
  * address of the advertiser sending the directed advertisements.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.11].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.11].
  * 
  * @param Num_Reports Number of responses in this event.
  *        Values:
@@ -541,7 +540,7 @@ void hci_le_direct_advertising_report_event( uint8_t Num_Reports,
  * PHYs, this event shall be issued.
  * If an LE_Set_PHY command was sent and the Controller determines that neither
  * PHY will change as a result, it issues this event immediately.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.12].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.12].
  * 
  * @param Status Status error code.
  * @param Connection_Handle Connection handle for which the event applies.
@@ -552,13 +551,13 @@ void hci_le_direct_advertising_report_event( uint8_t Num_Reports,
  *        - 0x01: The transmitter PHY for the connection is LE 1M
  *        - 0x02: The transmitter PHY for the connection is LE 2M
  *        - 0x03: The transmitter PHY for the connection is LE Coded (not
- *          supported)
+ *          supported on STM32WB)
  * @param RX_PHY Receiver PHY in use
  *        Values:
  *        - 0x01: The receiver PHY for the connection is LE 1M
  *        - 0x02: The receiver PHY for the connection is LE 2M
  *        - 0x03: The receiver PHY for the connection is LE Coded (not
- *          supported)
+ *          supported on STM32WB)
  * @return None
  */
 void hci_le_phy_update_complete_event( uint8_t Status,
@@ -571,7 +570,7 @@ void hci_le_phy_update_complete_event( uint8_t Status,
  * The HCI_LE_Extended_Advertising_Report event indicates that a Bluetooth
  * device has responded to an active scan or has broadcast advertisements that
  * were received during a passive scan.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.13].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.13].
  * 
  * @param Num_Reports Number of responses in this event.
  *        Values:
@@ -639,7 +638,7 @@ void hci_le_phy_update_complete_event( uint8_t Status,
  *        device.
  * @param Data_Length Length of Data
  * @param Data Octets of advertising or scan response data formatted as defined
- *        in Bluetooth spec. v.5.2 [Vol 3, Part C, 11].
+ *        in Bluetooth spec. v.5.3 [Vol 3, Part C, 11].
  * @return None
  */
 void hci_le_extended_advertising_report_event( uint8_t Num_Reports,
@@ -661,7 +660,7 @@ void hci_le_extended_advertising_report_event( uint8_t Num_Reports,
  * @brief HCI_LE_SCAN_TIMEOUT_EVENT
  * The HCI_LE_Scan_Timeout event indicates that scanning has ended because the
  * duration has expired.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.17].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.17].
  * 
  * @return None
  */
@@ -672,7 +671,7 @@ void hci_le_scan_timeout_event( void );
  * The HCI_LE_Advertising_Set_Terminated event indicates that the Controller
  * has terminated advertising in the advertising sets specified by the
  * Advertising_Handle parameter.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.18].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.18].
  * 
  * @param Status Status error code.
  * @param Advertising_Handle Used to identify an advertising set.
@@ -698,7 +697,7 @@ void hci_le_advertising_set_terminated_event( uint8_t Status,
  * AUX_SCAN_REQ PDU has been received by the advertiser. The request contains a
  * device address from a scanner that is allowed by the advertising filter
  * policy. The advertising set is identified by Advertising_Handle.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.19].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.19].
  * 
  * @param Advertising_Handle Used to identify an advertising set.
  *        Values:
@@ -724,7 +723,7 @@ void hci_le_scan_request_received_event( uint8_t Advertising_Handle,
  * @brief HCI_LE_CHANNEL_SELECTION_ALGORITHM_EVENT
  * The HCI_LE_Channel_Selection_Algorithm event indicates which channel
  * selection algorithm is used on a data physical channel connection.
- * See Bluetooth spec. v.5.2 [Vol 4, Part E, 7.7.65.20].
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.65.20].
  * 
  * @param Connection_Handle Connection handle for which the event applies.
  *        Values:
@@ -1223,7 +1222,7 @@ void aci_gatt_error_resp_event( uint16_t Connection_Handle,
  * This event can be generated during a "Discover Characteristics By UUID"
  * procedure or a "Read using Characteristic UUID" procedure.
  * The attribute value will be a service declaration as defined in Bluetooth
- * spec. v.5.2 [Vol 3, Part G, 3.3.1], when a "Discover Characteristics By
+ * spec. v.5.3 [Vol 3, Part G, 3.3.1], when a "Discover Characteristics By
  * UUID" has been started. It will be the value of the Characteristic if a*
  * "Read using Characteristic UUID" has been performed.
  * 
@@ -1233,7 +1232,7 @@ void aci_gatt_error_resp_event( uint16_t Connection_Handle,
  * @param Attribute_Handle The handle of the attribute
  * @param Attribute_Value_Length Length of Attribute_Value in octets
  * @param Attribute_Value The attribute value will be a service declaration as
- *        defined in Bluetooth spec. v.5.2 [Vol 3, Part G, 3.3.1], when a
+ *        defined in Bluetooth spec. v.5.3 [Vol 3, Part G, 3.3.1], when a
  *        "Discover Characteristics By UUID" has been started.
  *        It will be the value of the Characteristic if a "Read using
  *        Characteristic UUID" has been performed.
@@ -1497,18 +1496,16 @@ void aci_l2cap_proc_timeout_event( uint16_t Connection_Handle,
  * @param Identifier This is the identifier which associate the request to the
  *        response.
  * @param L2CAP_Length Length of the L2CAP connection update request.
- * @param Interval_Min Minimum value for the connection event interval. This
- *        shall be less than or equal to Conn_Interval_Max.
+ * @param Interval_Min Minimum value for the connection event interval.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Interval_Max Maximum value for the connection event interval. This
- *        shall be greater than or equal to Conn_Interval_Min.
+ * @param Interval_Max Maximum value for the connection event interval.
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Slave_Latency Slave latency for the connection in number of
- *        connection events.
+ * @param Slave_Latency Maximum Peripheral latency for the connection in number
+ *        of connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Timeout_Multiplier Defines connection timeout parameter in the
@@ -1549,7 +1546,7 @@ void aci_l2cap_command_reject_event( uint16_t Connection_Handle,
  * @brief ACI_L2CAP_COC_CONNECT_EVENT
  * This event is generated when receiving a valid Credit Based Connection
  * Request packet.
- * See Bluetooth spec. v.5.2 [Vol 3, Part A].
+ * See Bluetooth spec. v.5.3 [Vol 3, Part A].
  * 
  * @param Connection_Handle Handle of the connection where this event occurred.
  *        Values:
@@ -1586,7 +1583,7 @@ void aci_l2cap_coc_connect_event( uint16_t Connection_Handle,
  * @brief ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT
  * This event is generated when receiving a valid Credit Based Connection
  * Response packet.
- * See Bluetooth spec. v.5.2 [Vol 3, Part A].
+ * See Bluetooth spec. v.5.3 [Vol 3, Part A].
  * 
  * @param Connection_Handle Handle of the connection where this event occurred.
  *        Values:
@@ -1626,7 +1623,7 @@ void aci_l2cap_coc_connect_confirm_event( uint16_t Connection_Handle,
  * @brief ACI_L2CAP_COC_RECONF_EVENT
  * This event is generated when receiving a valid Credit Based Reconfigure
  * Request packet.
- * See Bluetooth spec. v.5.2 [Vol 3, Part A].
+ * See Bluetooth spec. v.5.3 [Vol 3, Part A].
  * 
  * @param Connection_Handle Handle of the connection where this event occurred.
  *        Values:
@@ -1655,7 +1652,7 @@ void aci_l2cap_coc_reconf_event( uint16_t Connection_Handle,
  * @brief ACI_L2CAP_COC_RECONF_CONFIRM_EVENT
  * This event is generated when receiving a valid Credit Based Reconfigure
  * Response packet.
- * See Bluetooth spec. v.5.2 [Vol 3, Part A].
+ * See Bluetooth spec. v.5.3 [Vol 3, Part A].
  * 
  * @param Connection_Handle Handle of the connection where this event occurred.
  *        Values:
@@ -1674,7 +1671,7 @@ void aci_l2cap_coc_reconf_confirm_event( uint16_t Connection_Handle,
  * @brief ACI_L2CAP_COC_DISCONNECT_EVENT
  * This event is generated when a connection-oriented channel is disconnected
  * following an L2CAP channel termination procedure.
- * See Bluetooth spec. v.5.2 [Vol 3, Part A].
+ * See Bluetooth spec. v.5.3 [Vol 3, Part A].
  * 
  * @param Channel_Index Index of the connection-oriented channel for which the
  *        primitive applies.
@@ -1686,7 +1683,7 @@ void aci_l2cap_coc_disconnect_event( uint8_t Channel_Index );
  * @brief ACI_L2CAP_COC_FLOW_CONTROL_EVENT
  * This event is generated when receiving a valid Flow Control Credit signaling
  * packet.
- * See Bluetooth spec. v.5.2 [Vol 3, Part A].
+ * See Bluetooth spec. v.5.3 [Vol 3, Part A].
  * 
  * @param Channel_Index Index of the connection-oriented channel for which the
  *        primitive applies.
@@ -1704,7 +1701,7 @@ void aci_l2cap_coc_flow_control_event( uint8_t Channel_Index,
  * @brief ACI_L2CAP_COC_RX_DATA_EVENT
  * This event is generated when receiving a valid K-frame packet on a
  * connection-oriented channel.
- * See Bluetooth spec. v.5.2 [Vol 3, Part A].
+ * See Bluetooth spec. v.5.3 [Vol 3, Part A].
  * Note: for the first K-frame of the SDU, the Information data contains the
  * L2CAP SDU Length coded on two octets followed by the K-frame information
  * payload. For the next K-frames of the SDU, the Information data only

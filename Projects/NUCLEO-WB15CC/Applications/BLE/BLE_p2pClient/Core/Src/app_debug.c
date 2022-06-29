@@ -127,7 +127,7 @@ static const APPD_GpioConfig_t aGpioConfigList[GPIO_CFG_NBR_OF_FEATURES] =
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_CLEANUP - Set on Entry / Reset on Exit */
 /* From v1.4.0 */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* NVMA_START - Set on Entry / Reset on Exit */
-    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_EOP - Set on Entry / Reset on Exit */
+    { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_EOP - Set on Entry / Reset on Exit */   /* The FLASH_EOP Debug GPIO trace is not supported since v1.5.0 */
 /* From v1.5.0 */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_WRITE - Set on Entry / Reset on Exit */
     { GPIOA, LL_GPIO_PIN_0, 0, 0},  /* FLASH_ERASE - Set on Entry / Reset on Exit */
@@ -394,18 +394,18 @@ void DbgOutputInit( void )
 {
 /* USER CODE BEGIN DbgOutputInit */
 #ifdef CFG_DEBUG_TRACE_UART
-if (CFG_DEBUG_TRACE_UART == hw_lpuart1)
-{
+  if (CFG_DEBUG_TRACE_UART == hw_lpuart1)
+  {
 #if(CFG_HW_LPUART1_ENABLED == 1)
     MX_LPUART1_UART_Init();
 #endif
-}
-else if (CFG_DEBUG_TRACE_UART == hw_uart1)
-{
+  }
+  else if (CFG_DEBUG_TRACE_UART == hw_uart1)
+  {
 #if(CFG_HW_USART1_ENABLED == 1)
     MX_USART1_UART_Init();
 #endif
-}
+  }
 #endif
 
 /* USER CODE END DbgOutputInit */

@@ -2,7 +2,7 @@
  * @file zcl.enum.h
  * @brief Zigbee ZCL Enumerations header file.
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ENUM_H
@@ -273,7 +273,7 @@ enum ZclDataTypeT {
 #define ZCL_INVALID_SIGNED_40BIT                (-549755813888LL) /* 0x8000000000 */
 #define ZCL_INVALID_SIGNED_48BIT                (-140737488355328LL) /* 0x800000000000 */
 #define ZCL_INVALID_SIGNED_56BIT                (-36028797018963968LL) /* 0x80000000000000 */
-/*lint -e9048 [ unsigned integer literal without a 'U' suffix <Rule 7.2 REQUIRED> ]*/
+/*lint -e9048 "unsigned integer literal without a 'U' suffix [MISRA Rule 7.2 REQUIRED]"*/
 #define ZCL_INVALID_SIGNED_64BIT                0x8000000000000000 /* integer constant is so large that it is unsigned  */
 /*lint -restore */
 
@@ -341,25 +341,26 @@ enum ZclStatusCodeT {
     ZCL_STATUS_REQUEST_DENIED = 0x70,
     ZCL_STATUS_NOT_AUTHORIZED = 0x7e,
     ZCL_STATUS_MALFORMED_COMMAND = 0x80,
-    ZCL_STATUS_UNSUPP_CLUSTER_COMMAND = 0x81,
-    ZCL_STATUS_UNSUPP_GENERAL_COMMAND = 0x82,
-    ZCL_STATUS_UNSUPP_MFR_CLUSTER_COMMAND = 0x83,
-    ZCL_STATUS_UNSUPP_MFR_GENERAL_COMMAND = 0x84,
+    ZCL_STATUS_UNSUPP_COMMAND = 0x81,
+    /* ZCL_STATUS_UNSUPP_CLUSTER_COMMAND deprecated. Changed to ZCL_STATUS_UNSUPP_COMMAND. Use ZCL_STATUS_UNSUPP_COMMAND. */
+    /* 0x82 reserved, ZCL_STATUS_UNSUPP_GENERAL_COMMAND deprecated. Use ZCL_STATUS_UNSUPP_COMMAND */
+    /* 0x83 reserved, ZCL_STATUS_UNSUPP_MFR_CLUSTER_COMMAND deprecated. Use ZCL_STATUS_UNSUPP_COMMAND */
+    /* 0x84 reserved, ZCL_STATUS_UNSUPP_MFR_GENERAL_COMMAND deprecated. Use ZCL_STATUS_UNSUPP_COMMAND */
     ZCL_STATUS_INVALID_FIELD = 0x85,
     ZCL_STATUS_UNSUPP_ATTRIBUTE = 0x86,
     ZCL_STATUS_INVALID_VALUE = 0x87,
     ZCL_STATUS_READ_ONLY = 0x88,
     ZCL_STATUS_INSUFFICIENT_SPACE = 0x89,
-    ZCL_STATUS_DUPLICATE_EXISTS = 0x8a,
+    /* 0x8a reserved, ZCL_STATUS_DUPLICATE_EXISTS deprecated. Use ZCL_STATUS_FAILURE */
     ZCL_STATUS_NOT_FOUND = 0x8b,
     ZCL_STATUS_UNREPORTABLE_ATTRIBUTE = 0x8c,
     ZCL_STATUS_INVALID_DATA_TYPE = 0x8d,
     ZCL_STATUS_INVALID_SELECTOR = 0x8e,
-    ZCL_STATUS_WRITE_ONLY = 0x8f,
-    ZCL_STATUS_INCONSISTENT_STARTUP_STATE = 0x90,
-    ZCL_STATUS_DEFINED_OUT_OF_BAND = 0x91,
-    ZCL_STATUS_INCONSISTENT = 0x92,
-    ZCL_STATUS_ACTION_DENIED = 0x93,
+    /* 0x8f reserved, ZCL_STATUS_WRITE_ONLY deprecated. Use ZCL_STATUS_NOT_AUTHORIZED */
+    /* 0x90 reserved, ZCL_STATUS_INCONSISTENT_STARTUP_STATE deprecated. Use ZCL_STATUS_FAILURE */
+    /* 0x91 reserved, ZCL_STATUS_DEFINED_OUT_OF_BAND deprecated. Use ZCL_STATUS_FAILURE */
+    /* 0x92 reserved CCB 2477 Status Code Cleanup: ZCL_STATUS_INCONSISTENT never used */
+    /* 0x93 reserved, ZCL_STATUS_ACTION_DENIED deprecated. Use ZCL_STATUS_FAILURE */
     ZCL_STATUS_TIMEOUT = 0x94,
     ZCL_STATUS_ABORT = 0x95,
     ZCL_STATUS_INVALID_IMAGE = 0x96,
@@ -367,11 +368,11 @@ enum ZclStatusCodeT {
     ZCL_STATUS_NO_IMAGE_AVAILABLE = 0x98,
     ZCL_STATUS_REQUIRE_MORE_IMAGE = 0x99,
     ZCL_STATUS_NOTIFICATION_PENDING = 0x9A,
-    ZCL_STATUS_HARDWARE_FAILURE = 0xc0,
-    ZCL_STATUS_SOFTWARE_FAILURE = 0xc1,
+    /* 0xc0 reserved, ZCL_STATUS_HARDWARE_FAILURE deprecated. Use ZCL_STATUS_FAILURE */
+    /* 0xc1 reserved, ZCL_STATUS_SOFTWARE_FAILURE deprecated. Use ZCL_STATUS_FAILURE */
     ZCL_STATUS_CALIBRATION_ERROR = 0xc2,
     ZCL_STATUS_UNSUPP_CLUSTER = 0xc3,
-    ZCL_STATUS_LIMIT_REACHED = 0xc4,
+    /* 0xc4 reserved, ZCL_STATUS_LIMIT_REACHED deprecated. Use ZCL_STATUS_SUCCESS */
 
     /* Exegin add-ons */
     ZCL_STATUS_ALLOC_FAIL = 0xfe,
@@ -537,7 +538,7 @@ enum ZbZclDeviceIdT {
     ZCL_DEVICE_DOSAGE_SENSOR = 0x1081,
     ZCL_DEVICE_BODY_TEMPERATURE_SENSOR = 0x1082
 
-    /* ZCL_DEVICE_GREEN_POWER_DEVICES = 0x20xx */
+        /* ZCL_DEVICE_GREEN_POWER_DEVICES = 0x20xx */
 };
 
 /* Cluster ID Ranges */
@@ -579,8 +580,7 @@ enum ZbZclClusterIdT {
     ZCL_CLUSTER_GREEN_POWER = 0x0021,
     ZCL_CLUSTER_NEAREST_GATEWAY = 0x0024,
     ZCL_CLUSTER_KEEP_ALIVE = 0x0025,
-    ZCL_CLUSTER_METER_ID = 0x0b01,
-    ZCL_CLUSTER_DIAGNOSTICS = 0x0b05,
+    ZCL_CLUSTER_ZDD = 0x003d,
 
     /* Closures Cluster IDs */
     ZCL_CLUSTER_CLOSURE_SHADE_CONFIG = 0x0100,
@@ -656,14 +656,11 @@ enum ZbZclClusterIdT {
     /* Telecommunication */
     ZCL_CLUSTER_VOICE_OVER_ZIGBEE = 0x0904,
 
+    ZCL_CLUSTER_METER_ID = 0x0b01,
+    ZCL_CLUSTER_DIAGNOSTICS = 0x0b05,
+
     /* TOUCHLINK */
     ZCL_CLUSTER_TOUCHLINK = 0x1000,
-
-
-    /* MANUFACTURER CUSTOM CLUSTER */
-    /* Note :These are just example of custom clusters provided by ST */
-    ZCL_CLUSTER_CUSTOM_LS = 0xfc01,      /* Long string custom cluster */
-    ZCL_CLUSTER_CUSTOM_MATRIX = 0xfc02,  /* Matrix custom cluster      */
 
     /* Custom, internal use only, for handling cluster persistence.
      * Used with ZCL_MANUF_CODE_INTERNAL. */

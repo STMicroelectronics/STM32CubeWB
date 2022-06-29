@@ -99,7 +99,7 @@ static SVCCTL_EvtAckStatus_t CRS_Event_Handler(void *Event)
   hci_event_pckt *event_pckt;
   evt_blecore_aci *blecore_evt;
   aci_gatt_attribute_modified_event_rp0    * attribute_modified;
-  CRSAPP_Notification_evt_t Notification;
+  CRS_STM_Notification_evt_t Notification;
 
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
@@ -126,14 +126,14 @@ static SVCCTL_EvtAckStatus_t CRS_Event_Handler(void *Event)
                 if(attribute_modified->Attr_Data[0] & COMSVC_Notification)
                 {
                   Notification.CRS_Evt_Opcode = CRS_NOTIFY_ENABLED_EVT;
-                  CRSAPP_Notification(&Notification);
+                  CRS_STM_Notification(&Notification);
 
                 }
                 else
                 {
                   Notification.CRS_Evt_Opcode = CRS_NOTIFY_DISABLED_EVT;
 
-                  CRSAPP_Notification(&Notification);
+                  CRS_STM_Notification(&Notification);
 
                 }
               }
@@ -145,7 +145,7 @@ static SVCCTL_EvtAckStatus_t CRS_Event_Handler(void *Event)
                 Notification.CRS_Evt_Opcode = CRS_WRITE_EVT;
                 Notification.DataTransfered.Length = attribute_modified->Attr_Data_Length;
                 Notification.DataTransfered.pPayload = attribute_modified->Attr_Data;
-                CRSAPP_Notification(&Notification);  
+                CRS_STM_Notification(&Notification);  
               }            
             }
             break;
@@ -274,7 +274,7 @@ void CRS_STM_Init(void)
  * @param  Service_Instance: Instance of the service to which the characteristic belongs
  * 
  */
-tBleStatus CRSAPP_Update_Char(uint16_t UUID, uint8_t *pPayload) 
+tBleStatus CRS_STM_Update_Char(uint16_t UUID, uint8_t *p_Payload) 
 {
   tBleStatus result = BLE_STATUS_INVALID_PARAMS;
   switch(UUID)
@@ -284,7 +284,7 @@ tBleStatus CRSAPP_Update_Char(uint16_t UUID, uint8_t *pPayload)
       uint8_t size;
       
       size = 0;
-      while(pPayload[size] != '\0')
+      while(p_Payload[size] != '\0')
       {
         size++;
       }
@@ -292,7 +292,7 @@ tBleStatus CRSAPP_Update_Char(uint16_t UUID, uint8_t *pPayload)
                                           CRSContext.CRSRXCharHdle,
                                           0, /* charValOffset */
                                           size/*CRS_MAX_RX_CHAR_LEN*/, /* charValueLen */
-                                          (uint8_t *)  pPayload);
+                                          (uint8_t *)  p_Payload);
     }
     break;
 
@@ -301,7 +301,7 @@ tBleStatus CRSAPP_Update_Char(uint16_t UUID, uint8_t *pPayload)
   }
 
   return result;
-}/* end CRSAPP_Update_Char() */
+}/* end CRS_STM_Update_Char() */
 
 
 

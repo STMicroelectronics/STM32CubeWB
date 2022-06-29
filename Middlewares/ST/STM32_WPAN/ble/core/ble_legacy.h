@@ -283,6 +283,14 @@ typedef	uint8_t	tBDAddr[6];
         hci_le_receiver_test_v2
 #define hci_le_enhanced_transmitter_test \
         hci_le_transmitter_test_v2
+#define hci_le_read_white_list_size \
+        hci_le_read_filter_accept_list_size
+#define hci_le_clear_white_list \
+        hci_le_clear_filter_accept_list
+#define hci_le_add_device_to_white_list \
+        hci_le_add_device_to_filter_accept_list
+#define hci_le_remove_device_from_white_list \
+        hci_le_remove_device_from_filter_accept_list
 
 
 /* ------------------------------------------------------------------------- */

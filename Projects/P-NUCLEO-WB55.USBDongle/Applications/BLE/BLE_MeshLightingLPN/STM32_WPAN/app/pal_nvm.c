@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    pal_nvm.c
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Flash management for the Controller
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -26,10 +28,9 @@
 #include "shci.h"
 #include "mesh_cfg_usr.h"
 
-#include "hw_flash.h"
+#include "flash_driver.h"
 
 /* Private define ------------------------------------------------------------*/
-#define FLASH_SECTOR_SIZE                                                 0x1000
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -57,48 +58,6 @@ static MOBLEUINT32 GetPage(MOBLEUINT32 Addr)
   return page;
 }
 
-#if 0
-/**
-* @brief  PalNvmErase
-* @param  None
-* @retval Result
-*/
-MOBLE_RESULT PalNvmErase(MOBLEUINT32 address,
-                         MOBLEUINT32 offset)
-{
-  HAL_StatusTypeDef status = HAL_OK;
-  uint32_t pageError = 0;
-
-//  printf("PalNvmErase >>>\r\n");
-  
-  FLASH_EraseInitTypeDef erase;
-  erase.TypeErase = FLASH_TYPEERASE_PAGES;
-  erase.Page = GetPage(address + offset); /* 126 or 127 */;
-  erase.NbPages = FLASH_SECTOR_SIZE >> 12;
-  
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_FLASH_SEMID ) );
-  HAL_FLASH_Unlock();
-  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | 
-                         FLASH_FLAG_WRPERR | 
-                         FLASH_FLAG_OPTVERR);
-  
-  SHCI_C2_FLASH_EraseActivity( ERASE_ACTIVITY_ON);
-
-  while(LL_FLASH_IsActiveFlag_OperationSuspended());
-  status = HAL_FLASHEx_Erase(&erase, &pageError);
-  while(LL_FLASH_IsActiveFlag_OperationSuspended());
-  
-  SHCI_C2_FLASH_EraseActivity( ERASE_ACTIVITY_OFF);
-
-  HAL_FLASH_Lock();
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_FLASH_SEMID, 0 );
-  
-//  printf("PalNvmErase <<<\r\n");
-  
-  return status == HAL_OK ? MOBLE_RESULT_SUCCESS : MOBLE_RESULT_FAIL;
-}
-#endif
-
 /**
 * @brief  returns NVM write protect status
 * @param  None
@@ -113,14 +72,12 @@ MOBLEBOOL PalNvmIsWriteProtected(void)
 /**
 * @brief  Read NVM
 * @param  address: read start address of nvm
-* @param  offset: offset read start address of nvm
 * @param  buf: copy of read content
 * @param  size: size of memory to be read
 * @param  backup: If read from backup memory
 * @retval Result of read operation
 */
 MOBLE_RESULT PalNvmRead(MOBLEUINT32 address,
-                        MOBLEUINT32 offset, 
                         void *buf, 
                         MOBLEUINT32 size, 
                         MOBLEBOOL backup)
@@ -129,7 +86,7 @@ MOBLE_RESULT PalNvmRead(MOBLEUINT32 address,
   
 //  printf("MoblePalNvmRead >>>\r\n");  
 
-  if (offset > NVM_SIZE)
+  if (address > (NVM_BASE + NVM_SIZE))
   {
     result = MOBLE_RESULT_INVALIDARG;
   }
@@ -137,13 +94,13 @@ MOBLE_RESULT PalNvmRead(MOBLEUINT32 address,
   {
     result = MOBLE_RESULT_FALSE;
   }
-  else if (offset + size > NVM_SIZE)
+  else if ((address + size) > (NVM_BASE + NVM_SIZE))
   {
     result = MOBLE_RESULT_INVALIDARG;
   }
   else
   {
-    memcpy(buf, (void *)(address + offset), size);
+    memcpy(buf, (void *)(address), size);
   }
   
 //  printf("MoblePalNvmRead <<<\r\n");  
@@ -153,14 +110,12 @@ MOBLE_RESULT PalNvmRead(MOBLEUINT32 address,
 /**
 * @brief  Compare with NVM
 * @param  offset: start address of nvm to compare
-* @param  offset: offset start address of nvm
 * @param  buf: copy of content
 * @param  size: size of memory to be compared
 * @param  comparison: outcome of comparison
 * @retval Result
 */
 MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
-                           MOBLEUINT32 offset, 
                            void const *buf, 
                            MOBLEUINT32 size, 
                            MOBLE_NVM_COMPARE* comparison)
@@ -168,14 +123,13 @@ MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   MOBLEUINT32 i;
 
-#ifdef ENABLE_SAVE_MODEL_STATE_NVM
 //  printf("MoblePalNvmCompare >>>\r\n");
   
   if ((comparison == NULL) || (buf == NULL))
   {
     result = MOBLE_RESULT_INVALIDARG;
   }
-  else if (offset > NVM_SIZE)
+  else if (address > (NVM_BASE + NVM_SIZE))
   {
     result = MOBLE_RESULT_INVALIDARG;
   }
@@ -183,11 +137,11 @@ MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
   {
     result = MOBLE_RESULT_FALSE;
   }
-  else if (offset + size > NVM_SIZE)
+  else if ((address + size) > (NVM_BASE + NVM_SIZE))
   {
     result = MOBLE_RESULT_INVALIDARG;
   }
-  else if (offset & 3)
+  else if (address & 3)
   {
     result = MOBLE_RESULT_INVALIDARG;
   }
@@ -201,7 +155,7 @@ MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
     size >>= 2;
 
     MOBLEUINT32 * src = (MOBLEUINT32*)buf;
-    MOBLEUINT32 * dst = (MOBLEUINT32*)(address + offset);
+    MOBLEUINT32 * dst = (MOBLEUINT32*)(address);
     
     i = 0;
     do
@@ -215,9 +169,6 @@ MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
   }
   
 //  printf("MoblePalNvmCompare <<<\r\n");
-#else
-  *comparison = MOBLE_NVM_COMPARE_EQUAL;
-#endif  
   return result;
 }
 
@@ -227,61 +178,30 @@ MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
 * @retval Result
 */
 MOBLE_RESULT PalNvmErase(MOBLEUINT32 address,
-                         MOBLEUINT32 offset)
+                         MOBLEUINT8 nb_pages)
 {
-  HAL_StatusTypeDef status = HAL_OK;
+  if(FD_EraseSectors(GetPage(address), nb_pages) != 1)
+  {
+    return MOBLE_RESULT_FAIL;
+  }
 
-  uint32_t pageError = 0;
-
-//  printf("MoblePalNvmErase >>>\r\n");
-  
-  FLASH_EraseInitTypeDef erase;
-  erase.TypeErase = FLASH_TYPEERASE_PAGES;
-  erase.Page = GetPage(address + offset); /* 126 or 127 */;
-  erase.NbPages = FLASH_SECTOR_SIZE >> 12;
-  
-  while( LL_HSEM_1StepLock( HSEM, CFG_HW_FLASH_SEMID ) );
-  HAL_FLASH_Unlock();
-  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | 
-                         FLASH_FLAG_WRPERR | 
-                         FLASH_FLAG_OPTVERR);
-  
-  SHCI_C2_FLASH_EraseActivity( ERASE_ACTIVITY_ON);
-
-  while(LL_FLASH_IsActiveFlag_OperationSuspended());
-  status = HAL_FLASHEx_Erase(&erase, &pageError);
-  while(LL_FLASH_IsActiveFlag_OperationSuspended());
-  
-  SHCI_C2_FLASH_EraseActivity( ERASE_ACTIVITY_OFF);
-  
-  HAL_FLASH_Lock();
-  LL_HSEM_ReleaseLock( HSEM, CFG_HW_FLASH_SEMID, 0 );
-  
-//  printf("MoblePalNvmErase <<<\r\n");
-  
-  return status == HAL_OK ? MOBLE_RESULT_SUCCESS : MOBLE_RESULT_FAIL;
+  return MOBLE_RESULT_SUCCESS;
 }
 
 /**
 * @brief  Write to NVM
 * @param  offset: wrt start address of nvm
-* @param  offset: offset wrt start address of nvm
 * @param  buf: copy of write content
 * @param  size: size of memory to be written
 * @retval Result
 */
 MOBLE_RESULT PalNvmWrite(MOBLEUINT32 address,
-                          MOBLEUINT32 offset, 
                           void const *buf, 
                           MOBLEUINT32 size)
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
 
-#ifdef ENABLE_SAVE_MODEL_STATE_NVM
-  
-  //  printf("MoblePalNvmWrite >>>\r\n");
-  
-  if (offset > NVM_SIZE)
+  if (address > (NVM_BASE + NVM_SIZE))
   {
     result = MOBLE_RESULT_INVALIDARG;
   }
@@ -289,11 +209,11 @@ MOBLE_RESULT PalNvmWrite(MOBLEUINT32 address,
   {
     result = MOBLE_RESULT_FALSE;
   }
-  else if (offset + size > NVM_SIZE)
+  else if ((address + size) > (NVM_BASE + NVM_SIZE))
   {
     result = MOBLE_RESULT_INVALIDARG;
   }
-  else if (offset & 3)
+  else if (address & 3)
   {
     result = MOBLE_RESULT_INVALIDARG;
   }
@@ -311,34 +231,9 @@ MOBLE_RESULT PalNvmWrite(MOBLEUINT32 address,
     if(remain > 0)
       nb_dword += 1;
     
-    uint64_t* src = (uint64_t*)buf;
-    
-    while( LL_HSEM_1StepLock( HSEM, CFG_HW_FLASH_SEMID ) );
-    HAL_FLASH_Unlock();
-    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | 
-                           FLASH_FLAG_WRPERR | 
-                           FLASH_FLAG_OPTVERR | 
-                           FLASH_FLAG_PGSERR | 
-                           FLASH_FLAG_SIZERR | 
-                           FLASH_FLAG_PGAERR);
-
-    for (size_t i = 0; i < nb_dword/*size*/; i++)
-    {
-      do
-      {
-        while(LL_FLASH_IsActiveFlag_OperationSuspended());
-        HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, 
-                          address + offset + (i <<3), 
-                          src[i]);
-        while(LL_FLASH_IsActiveFlag_OperationSuspended());
-      } while(*((uint64_t*)(address + offset + (i <<3))) != src[i]);
-    }
-
-    HAL_FLASH_Lock();
-    LL_HSEM_ReleaseLock( HSEM, CFG_HW_FLASH_SEMID, 0 );
+  if(FD_WriteData(address, (uint64_t*)buf, nb_dword) != 0)
+    result = MOBLE_RESULT_FAIL;
   }
-//  printf("MoblePalNvmWrite <<<\r\n");
-#endif
   
   return result;
 }

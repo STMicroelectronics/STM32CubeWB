@@ -19,8 +19,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __ANCS_APPLICATION_H
-#define __ANCS_APPLICATION_H
+#ifndef ANCS_APPLICATION_H
+#define ANCS_APPLICATION_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -268,4 +268,4 @@ void ANCS_App_Notification( Connection_Context_t *pNotification );
 }
 #endif
 
-#endif /*__ANCS_APPLICATION_H */
+#endif /* ANCS_APPLICATION_H */

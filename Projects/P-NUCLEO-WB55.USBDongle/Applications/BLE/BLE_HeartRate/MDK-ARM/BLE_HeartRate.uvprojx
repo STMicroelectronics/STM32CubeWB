@@ -10,13 +10,14 @@
       <TargetName>BLE_HeartRate</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32WB55CGUx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx_DFP.1.1.1</PackID>
-          <PackURL>http://www.keil.com/pack</PackURL>
+          <PackID>Keil.STM32WBxx_DFP.1.2.0</PackID>
+          <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -53,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -183,6 +184,8 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
+            <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -349,7 +352,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -584,6 +587,11 @@
               <FileName>stm32wbxx_ll_usb.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_ll_usb.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_rng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</FilePath>
             </File>
           </Files>
         </Group>

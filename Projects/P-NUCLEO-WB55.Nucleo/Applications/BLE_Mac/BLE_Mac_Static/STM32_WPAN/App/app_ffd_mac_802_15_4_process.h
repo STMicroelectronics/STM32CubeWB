@@ -57,6 +57,8 @@ MAC_Status_t APP_MAC_mlmeGtsCnfCb( const MAC_gtsCnf_t * pGtsCnf);
 MAC_Status_t APP_MAC_mlmeGtsIndCb( const MAC_GtsInd_t * pGtsInd );
 MAC_Status_t APP_MAC_mlmePollIndCb( const MAC_pollInd_t * pPollInd );
 
+void APP_MAC_ReceiveData(void);
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

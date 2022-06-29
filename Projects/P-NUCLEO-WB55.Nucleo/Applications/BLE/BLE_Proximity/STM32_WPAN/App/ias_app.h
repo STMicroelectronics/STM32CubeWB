@@ -1,4 +1,4 @@
-
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
  * @file    ias_app.h
@@ -16,28 +16,50 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __IAS_APP_H
-#define __IAS_APP_H
+#ifndef IAS_APP_H
+#define IAS_APP_H
 
 #ifdef __cplusplus
-extern "C" 
-{
+extern "C"{
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
 /* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN ET */
+
+/* USER CODE END ET */
+
 /* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
+
+/* USER CODE END EC */
+
 /* External variables --------------------------------------------------------*/
-/* Exported macros -----------------------------------------------------------*/
+/* USER CODE BEGIN EV */
+
+/* USER CODE END EV */
+
+/* Exported macro ------------------------------------------------------------*/
+/* USER CODE BEGIN EM */
+
+/* USER CODE END EM */
+
 /* Exported functions ------------------------------------------------------- */
 void IASAPP_Init(void);
 
+/* USER CODE BEGIN EF */
+
+/* USER CODE END EF */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__IAS_APP_H */
+#endif /* IAS_APP_H */

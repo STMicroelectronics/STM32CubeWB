@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    models_if.h
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Mesh Modes interface file header 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MODELS_H
-#define __MODELS_H
+#ifndef MODELS_H
+#define MODELS_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -44,6 +46,6 @@ MOBLE_RESULT MeshClient_SetRemotePublication(MOBLEUINT32 modelId, MOBLEUINT8 ele
                                               MOBLEUINT32 length, MOBLEBOOL ack_flag,
                                               MOBLEUINT8 isVendor);
 
-#endif /* __MODELS_H */
+#endif /* MODELS_H */
 
 

@@ -237,5 +237,33 @@ void otChannelManagerSetFavoredChannels(otInstance *aInstance, uint32_t aChannel
   Ot_Cmd_Transfer();
 }
 
+uint16_t otChannelManagerGetCcaFailureRateThreshold(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_CHANNEL_MANAGER_GET_CCA_FAILURE_RATE_THRESHOLD;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+  return (uint32_t)p_ot_req->Data[0];
+}
+
+void otChannelManagerSetCcaFailureRateThreshold(otInstance *aInstance, uint16_t aThreshold)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_CHANNEL_MANAGER_SET_CCA_FAILURE_RATE_THRESHOLD;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = aThreshold;
+
+  Ot_Cmd_Transfer();
+}
+
 #endif  /* OPENTHREAD_CONFIG_CHANNEL_MANAGER_ENABLE && OPENTHREAD_FTD */
 

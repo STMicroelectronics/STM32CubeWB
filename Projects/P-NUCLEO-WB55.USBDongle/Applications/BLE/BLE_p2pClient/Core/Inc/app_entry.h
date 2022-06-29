@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -33,7 +33,7 @@ extern "C" {
 
 /* USER CODE END Includes */
 
-  /* Exported types ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
 /* USER CODE END ET */
@@ -54,14 +54,18 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void APPE_Init( void );
+void MX_APPE_Config(void);
+void MX_APPE_Init(void);
+void MX_APPE_Process(void);
+void Init_Exti(void);
+void Init_Smps(void);
+
 /* USER CODE BEGIN EF */
-  void APPE_Led_Init( void );
-  void APPE_Button_Init( void );
+
 /* USER CODE END EF */
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /*APP_ENTRY_H */
+#endif /* APP_ENTRY_H */

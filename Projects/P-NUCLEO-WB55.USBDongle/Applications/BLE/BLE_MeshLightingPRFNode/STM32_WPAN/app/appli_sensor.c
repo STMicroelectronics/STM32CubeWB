@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    appli_sensor.c
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Application interface for Sensor Mesh Models 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 
@@ -417,7 +419,7 @@ MOBLE_RESULT Appli_Sensor_ReadValue(MOBLEUINT8 sensorOffset,
       else /* Value not to be read from sensor */
       {
         pValueParams->data[0] = PresentTemperatureValue;
-      }
+    }
     }
     else if (sensorOffset == 1) /* Pressure */
     {

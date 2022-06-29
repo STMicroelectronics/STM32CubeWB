@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    appli_nvm.h
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Header file for the NVM application file 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_NVM_H
-#define __APPLI_NVM_H
+#ifndef APPLI_NVM_H
+#define APPLI_NVM_H
 
 /* Includes ------------------------------------------------------------------*/
 
@@ -29,7 +31,11 @@
 extern const void *prvsnr_data;
 
 /* offset defined for the embedded provisioner node */
+#if defined(STM32WB55xx)
 #define PRVN_NVM_PAGE_SIZE                                                 4096U
+#elif defined(STM32WB15xx)
+#define PRVN_NVM_PAGE_SIZE                                                 2048U
+#endif
 #define PRVN_NVM_BASE_OFFSET                         ((unsigned int)prvsnr_data)
 #define PRVN_NVM_CHUNK_SIZE         (sizeof(NvmPerNode_t)) /* Number of bytes saved per Element */
 #define PRVN_NVM_SUBPAGE_SIZE       (sizeof(NvmPerNode_t)) /* Number of bytes saved per Element */
@@ -37,7 +43,11 @@ extern const void *prvsnr_data;
 #define PRVN_NVM_SUBPAGE_OFFSET(i)  (unsigned int)(PRVN_NVM_SUBPAGE_SIZE*(i))
 
 #define APP_NVM_BASE                                  ((unsigned int)appNvmBase)
+#if defined(STM32WB55xx)
 #define APP_NVM_SIZE                                                       4096U
+#elif defined(STM32WB15xx)
+#define APP_NVM_SIZE                                                       2048U
+#endif
 
 /* Exported variables  ------------------------------------------------------- */
 typedef struct
@@ -47,7 +57,7 @@ typedef struct
 #if ENABLE_SAVE_UUID_PER_NODE  
   MOBLEUINT8 node_UUID[UUID_SIZE];
 #endif
- 
+  MOBLEUINT8 dummy[4];                    /*  4 bytes more for 3 or 5 words of 64 bits */
 } NvmPerNode_t;
 
 /* Exported Functions Prototypes ---------------------------------------------*/
@@ -92,6 +102,6 @@ MOBLE_RESULT AppliNVM_Retrieve_FlashTesting(MOBLEUINT8 *buffer,
                                             MOBLEUINT16 buffer_size);
 
 
-#endif /* __APPLI_NVM_H */
+#endif /* APPLI_NVM_H */
 
 

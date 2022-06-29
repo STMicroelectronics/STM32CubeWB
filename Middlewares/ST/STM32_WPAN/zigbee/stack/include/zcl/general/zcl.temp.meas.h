@@ -4,7 +4,7 @@
  * @brief ZCL Temperature Measurement cluster header
  * ZCL 7 section 4.4
  * ZCL 8 section 4.4
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_MEASURE_H
@@ -40,7 +40,6 @@ enum ZbZclTempMeasSvrAttrT {
 };
 
 /* Temperature Measurement Defines */
-#define ZCL_TEMP_MEAS_MEASURED_DEFAULT                       0xffff
 #define ZCL_TEMP_MEAS_UNKNOWN                                0x8000
 #define ZCL_TEMP_MEAS_MIN_MEAS_VAL_MIN              (int16_t)0x954d
 #define ZCL_TEMP_MEAS_MIN_MEAS_VAL_MAX              (int16_t)0x7ffe

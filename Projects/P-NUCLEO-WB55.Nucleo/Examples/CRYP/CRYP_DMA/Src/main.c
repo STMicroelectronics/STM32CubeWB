@@ -64,7 +64,7 @@ DMA_HandleTypeDef hdma_aes1_out;
 
 #if (USE_VCP_CONNECTION == 1)
 /**
-  * @brief Defines related to Timeout to uart tranmission
+  * @brief Defines related to Timeout to uart transmission
   */
 #define UART_TIMEOUT_VALUE  1000 /* 1 Second */
 

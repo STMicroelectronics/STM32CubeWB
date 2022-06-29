@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -77,13 +77,12 @@ extern "C" {
 void APP_BLE_Init( void );
 uint8_t APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen );
 void BLE_SVC_L2CAP_Conn_Update_7_5(void);
+/* USER CODE BEGIN EF */
 void APP_BLE_Key_Button1_Action(void);
 void APP_BLE_Key_Button2_Action(void);
 void APP_BLE_Key_Button3_Action(void);
 
   APP_BLE_ConnStatus_t APP_BLE_Get_Client_Connection_Status( uint16_t Connection_Handle );
-
-/* USER CODE BEGIN EF */
 
 /* USER CODE END EF */
 
@@ -91,4 +90,4 @@ void APP_BLE_Key_Button3_Action(void);
 }
 #endif
 
-#endif /*APP_BLE_H */
+#endif /* APP_BLE_H */

@@ -27,26 +27,9 @@
 /* Include definition of compilation flags requested for OpenThread configuration */
 #include OPENTHREAD_CONFIG_FILE
 
-#include "diag.h"
-
 #if OPENTHREAD_CONFIG_DIAG_ENABLE
 
-void otDiagProcessCmd(otInstance *aInstance, int aArgCount, char *aArgVector[], char *aOutput, size_t aOutputMaxLen);
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_DIAG_PROCESS_CMD;
-
-  p_ot_req->Size=4;
-  p_ot_req->Data[0] = (uint32_t) aArgCount;
-  p_ot_req->Data[1] = (uint32_t) aArgVector;
-  p_ot_req->Data[2] = (uint32_t) aOutput;
-  p_ot_req->Data[3] = (uint32_t) aOutputMaxLen;
-
-  Ot_Cmd_Transfer();
-}
+#include "diag.h"
 
 void otDiagProcessCmdLine(otInstance *aInstance, const char *aString, char *aOutput, size_t aOutputMaxLen)
 {
@@ -60,6 +43,23 @@ void otDiagProcessCmdLine(otInstance *aInstance, const char *aString, char *aOut
   p_ot_req->Data[0] = (uint32_t) aString;
   p_ot_req->Data[1] = (uint32_t) aOutput;
   p_ot_req->Data[2] = (uint32_t) aOutputMaxLen;
+
+  Ot_Cmd_Transfer();
+}
+
+otError otDiagProcessCmd(otInstance *aInstance, uint8_t aArgsLength, char *aArgs[], char *aOutput, size_t aOutputMaxLen)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_DIAG_PROCESS_CMD;
+
+  p_ot_req->Size=4;
+  p_ot_req->Data[0] = (uint32_t) aArgsLength;
+  p_ot_req->Data[1] = (uint32_t) aArgs;
+  p_ot_req->Data[2] = (uint32_t) aOutput;
+  p_ot_req->Data[3] = (uint32_t) aOutputMaxLen;
 
   Ot_Cmd_Transfer();
 }

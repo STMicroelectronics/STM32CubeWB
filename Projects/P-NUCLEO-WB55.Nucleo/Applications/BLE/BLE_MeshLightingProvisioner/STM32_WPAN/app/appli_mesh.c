@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    appli_mesh.c
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   User Application file 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,8 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "ble_common.h"
 #include "app_conf.h"
@@ -224,11 +227,13 @@ void Appli_OobAuthenticationProcess(void);
 #endif
 void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason);
 void Appli_LowPowerProcess(void);
-MOBLEUINT16 BLEMesh_PvnrDataInputCallback(MOBLEUINT8* devKey, MOBLEUINT8* appKey, MOBLEUINT8 noOfElements);
 #if (APPLI_OPTIM == 1)
 static void AppliMeshTask(void);
 #endif
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
+MOBLEUINT16 BLEMesh_PvnrDataInputCallback(MOBLEUINT8* devKey, MOBLEUINT8* appKey, MOBLEUINT8 noOfElements);
 void Appli_SelfConfigurationProcess(void);
+#endif
 void Appli_GetPublicationParamsCb(model_publicationparams_t* pPubParameters);
 WEAK_FUNCTION (void SerialPrvn_ProvisioningStatusUpdateCb(uint8_t flagPrvningInProcess, 
                                                           MOBLEUINT16 nodeAddress));
@@ -426,10 +431,10 @@ static void Mesh_Task()
   {
     UnprovisionInProgress = 0;
     AppliNvm_ClearModelState();
-    PalNvmErase(NVM_BASE, 0);      
-    PalNvmErase(NVM_BASE, 0x1000);
-    PalNvmErase(APP_NVM_BASE, 0);
-    PalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
+    PalNvmErase(NVM_BASE, 1);      
+    PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
+    PalNvmErase(APP_NVM_BASE, 1);
+    PalNvmErase(PRVN_NVM_BASE_OFFSET, 1);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
   }
@@ -564,7 +569,7 @@ MOBLE_RESULT Appli_BleSetTxPowerCb(void)
 MOBLE_RESULT Appli_BleSetUUIDCb(MOBLEUINT8 *uuid_prefix_data)
 {
   /* UUID is 128 bits (16 bytes) and can guarantee uniqueness across space and time.
-     It can be “Time-based “ UUID or “truly-random or pseudo-random numbers”
+     It can be "Time-based" UUID or "truly-random or pseudo-random numbers"
  
      In this buffer user need to fill 10 bytes of UUID data. 
      Remaining 6 bytes, library fill this data with BDaddress.
@@ -573,8 +578,8 @@ MOBLE_RESULT Appli_BleSetUUIDCb(MOBLEUINT8 *uuid_prefix_data)
         F81D4FAE-7DEC-XBC4-Y12F-17D1AD07A961 (16 bytes)
         <any number> |_|  |_|   <BDAddress>
 
-      X = 1 i.e. “Time Base UUID” 
-      X = 4 i.e. “Random Number“
+      X = 1 i.e. "Time Base UUID"
+      X = 4 i.e. "Random Number"
       Y = 4 i.e. Conforming to the current spec 
     For UUID information refer RFC4122
   */
@@ -830,10 +835,13 @@ void Appli_CheckForUnprovision(void)
     wait until user releases button*/
     if (!interrupted)
     {
-      PalNvmErase(NVM_BASE, 0); 
-      PalNvmErase(NVM_BASE, 0x1000);
-      PalNvmErase(APP_NVM_BASE, 0);
-      PalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
+      /* No GATT connection */
+      BLEMesh_StopAdvScan();
+
+      PalNvmErase(NVM_BASE, 1); 
+      PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
+      PalNvmErase(APP_NVM_BASE, 1);
+      PalNvmErase(PRVN_NVM_BASE_OFFSET, 1);
       TRACE_M(TF_PROVISION,"NVM erased\r\n");      
       
       BLEMesh_Unprovision();
@@ -884,10 +892,10 @@ void Appli_Unprovision(void)
     /* No GATT connection */
     BLEMesh_StopAdvScan();
       
-    PalNvmErase(NVM_BASE, 0);      
-    PalNvmErase(NVM_BASE, 0x1000);
-    PalNvmErase(APP_NVM_BASE, 0);
-    PalNvmErase(PRVN_NVM_BASE_OFFSET, 0);
+    PalNvmErase(NVM_BASE, 1);      
+    PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
+    PalNvmErase(APP_NVM_BASE, 1);
+    PalNvmErase(PRVN_NVM_BASE_OFFSET, 1);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
     BLEMesh_Unprovision();
@@ -1023,7 +1031,7 @@ static void Appli_GetMACfromUniqueNumber(void)
 #if 0 
 /**
 * @brief  provides the information of the power saving mode
-* @param  sleepMode curently unused, to be used in future 
+* @param  sleepMode currently unused, to be used in future 
 * @retval SleepModes returns the mode of the controller
 */
 SleepModes App_SleepMode_Check(SleepModes sleepMode)
@@ -1348,7 +1356,9 @@ void BLEMesh_PbAdvLinkOpenCb(void)
 { 
   ProvisionFlag = 0;
   TRACE_M(TF_PROVISION,"PB-ADV Link opened successfully \n\r");    
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
   SerialPrvn_ProvisioningStatusUpdateCb(MOBLE_TRUE, 0);
+#endif
   /* Turn ON Red LED*/
 #if LOW_POWER_FEATURE
   /* do nothing */
@@ -1371,16 +1381,19 @@ void BLEMesh_PbAdvLinkCloseCb(void)
   /* do nothing */
 #else
   BSP_LED_Off(LED_RED);
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
   SerialPrvn_ProvisioningStatusUpdateCb(MOBLE_FALSE, NodeUnderProvisionParam.nodeAddress);
 #endif
+#endif
 
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
   if (ProvisionFlag == 1)
   {
     SaveProvisionedNodeAddress();
     ProvisionFlag = 0;
     Appli_ConfigClientStartNodeConfiguration(1);
   }
-
+#endif
 }
 
 
@@ -1488,7 +1501,7 @@ void BLEMesh_LpnFriendshipEstablishedCallback(MOBLE_ADDRESS fnAddress)
 }
 
 /**
-* @brief  callback for friendship cleare by low power node
+* @brief  callback for friendship clear by low power node
 * @param  reason of friendship clear.
 *         0: reserved
 *         1: No response received from friend node
@@ -1820,9 +1833,11 @@ void Appli_Process(void)
   AppliNvm_Process();
 #endif
   
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
 #if (SAVE_EMBD_PROVISION_DATA == 1)  
   AppliPrvnNvm_Process();
 #endif    
+#endif
     
 #ifdef ENABLE_AUTH_TYPE_OUTPUT_OOB
   if(PrvngInProcess)
@@ -1833,8 +1848,10 @@ void Appli_Process(void)
   }
 #endif
 
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
   Appli_ConfigClient_Process();
   Appli_SelfConfigurationProcess();
+#endif
 
 #ifdef TPT_LAYER_BUSY_TEST      
   if(BLEMesh_TrsptIsBusyState())
@@ -1915,7 +1932,7 @@ static void LowPowerNodeApiTask(void)
 
 #ifdef SAVE_MODEL_STATE_POWER_FAILURE_DETECTION       
 /**
-* @brief function to inintiallise the GPIO interrupt fot Power down 
+* @brief function to inintiallise the GPIO interrupt for Power down 
 * @param  void
 * @retval void
 */
@@ -1979,6 +1996,7 @@ void Appli_Init(MOBLEUINT8 *flag)
   GPIO_InitNVICPowerOff();
 #endif 
   
+#if 0
 #if (( CFG_LPM_SUPPORTED == 0) && (ENABLE_PWM_SUPPORT == 1))
   __HAL_RCC_TIM1_CLK_ENABLE();
   __HAL_RCC_TIM2_CLK_ENABLE();
@@ -1994,6 +2012,7 @@ void Appli_Init(MOBLEUINT8 *flag)
   Modify_PWM(RED_LED, 1); 
   Modify_PWM(GREEN_LED, 1); 
   Modify_PWM(BLUE_LED, 1);
+#endif
 #endif
 #endif
   
@@ -2038,7 +2057,7 @@ void Appli_GetPublicationParamsCb(model_publicationparams_t* pPubParameters)
           cool temperature for the light.
 * @param  colourValue: Temperature value ratio
 * @param  brightValue: Lightness value ratio.
-* @retval duty: duty fot the PWM
+* @retval duty: duty for the PWM
 */ 
 MOBLEUINT16 PWM_CoolValue(float colourValue ,float brightValue)
 {
@@ -2057,7 +2076,7 @@ MOBLEUINT16 PWM_CoolValue(float colourValue ,float brightValue)
           warm temperature for the light.
 * @param  colourValue: Temperature value ratio
 * @param  brightValue: Lightness value ratio.
-* @retval duty: duty fot the PWM
+* @retval duty: duty for the PWM
 */ 
 MOBLEUINT16 PWM_WarmValue(float colourValue ,float brightValue)
 {

@@ -59,7 +59,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-IPCC_HandleTypeDef hipcc;
+ IPCC_HandleTypeDef hipcc;
 
 RNG_HandleTypeDef hrng;
 
@@ -131,6 +131,7 @@ int main(void)
 
   /* Init code for STM32_WPAN */
   MX_APPE_Init();
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -156,6 +157,7 @@ void SystemClock_Config(void)
   */
   HAL_PWR_EnableBkUpAccess();
   __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -170,6 +172,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -280,6 +283,7 @@ void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
+
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
@@ -293,6 +297,7 @@ void MX_RTC_Init(void)
   {
     Error_Handler();
   }
+
   /** Enable the WakeUp
   */
   if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)

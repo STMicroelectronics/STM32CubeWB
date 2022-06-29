@@ -366,6 +366,7 @@
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
                 </option>
                 <option>

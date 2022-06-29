@@ -18,8 +18,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __P2P_SERVER_APP_H
-#define __P2P_SERVER_APP_H
+#ifndef P2P_SERVER_APP_H
+#define P2P_SERVER_APP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,5 +75,5 @@ typedef struct
 }
 #endif
 
-#endif /*__P2P_SERVER_APP_H */
+#endif /* P2P_SERVER_APP_H */
 

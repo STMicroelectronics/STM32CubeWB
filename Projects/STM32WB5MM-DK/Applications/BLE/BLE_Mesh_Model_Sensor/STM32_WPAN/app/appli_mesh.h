@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_MESH_H
-#define __APPLI_MESH_H
+#ifndef APPLI_MESH_H
+#define APPLI_MESH_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -131,6 +131,6 @@ void LED_Deinit(void);
 void LED_On(aPwmLedGsData_TypeDef aPwmLedGsData);
 void LED_Off(void);
 
-#endif /* __APPLI_MESH_H */
+#endif /* APPLI_MESH_H */
 
 

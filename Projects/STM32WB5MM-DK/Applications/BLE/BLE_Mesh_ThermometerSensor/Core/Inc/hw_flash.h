@@ -16,8 +16,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __HW_FLASH_H
-#define __HW_FLASH_H
+#ifndef HW_FLASH_H
+#define HW_FLASH_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -81,4 +81,4 @@ uint32_t HW_FLASH_OB_GetSNBRSA(void);
 }
 #endif
 
-#endif /*__HW_FLASH_H */
+#endif /* HW_FLASH_H */

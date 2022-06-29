@@ -42,6 +42,7 @@
 #include "zcl/se/zcl.message.h"
 #include "zcl/general/zcl.time.h"
 
+
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
 
@@ -93,8 +94,8 @@ static enum ZclStatusCodeT zcl_attr_cb(struct ZbZclClusterT *clusterPtr, struct 
 static enum ZclStatusCodeT zcl_attr_write_cb(struct ZbZclClusterT *clusterPtr, const struct ZbApsAddrT *src, uint16_t attributeId,
   const uint8_t *inputData, unsigned int inputMaxLen, void *attrData, ZclWriteModeT mode, void *app_cb_arg);
 
-static uint8_t APP_ZIGBEE_IAS_WD_Server_StartWarning_cb(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclIasWdClientStartWarningReqT *warn_req);
-static uint8_t APP_ZIGBEE_IAS_WD_Server_Squawk_cb(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclIasWdClientSquawkReqT *squawk_req);
+static enum ZclStatusCodeT APP_ZIGBEE_IAS_WD_Server_StartWarning_cb(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclIasWdClientStartWarningReqT *warn_req);
+static enum ZclStatusCodeT APP_ZIGBEE_IAS_WD_Server_Squawk_cb(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclIasWdClientSquawkReqT *squawk_req);
 static void APP_ZIGBEE_IAS_WD_Server_Squawk_Processing(void);
 static void APP_ZIGBEE_IAS_WD_Server_Alarm_Processing(void);
 
@@ -215,7 +216,7 @@ zcl_attr_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclAttrCbInfoT *cb)
  * @param  warn_req: StartWarning request
  * @retval ZCL status
  */
-static uint8_t APP_ZIGBEE_IAS_WD_Server_StartWarning_cb(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclIasWdClientStartWarningReqT *warn_req){
+static enum ZclStatusCodeT APP_ZIGBEE_IAS_WD_Server_StartWarning_cb(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclIasWdClientStartWarningReqT *warn_req){
   APP_DBG("[IAS WD] IAS WD StartWarning command received.");
 
   /* Dumping the request parameters */
@@ -239,7 +240,7 @@ static uint8_t APP_ZIGBEE_IAS_WD_Server_StartWarning_cb(struct ZbZclClusterT *cl
  * @param  warn_req: Squawk request
  * @retval ZCL status
  */
-static uint8_t APP_ZIGBEE_IAS_WD_Server_Squawk_cb(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclIasWdClientSquawkReqT *squawk_req){
+static enum ZclStatusCodeT APP_ZIGBEE_IAS_WD_Server_Squawk_cb(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclIasWdClientSquawkReqT *squawk_req){
   APP_DBG("[IAS WD] IAS WD Squawk command received.");
 
   /* Dumping the request parameters */
@@ -255,7 +256,7 @@ static uint8_t APP_ZIGBEE_IAS_WD_Server_Squawk_cb(struct ZbZclClusterT *clusterP
 }
 
 /**
- * @brief  Zigbee application IAS WD StartWarning command proccessing
+ * @brief  Zigbee application IAS WD StartWarning command processing
  * @param  None
  * @retval None
  */
@@ -295,7 +296,7 @@ static void APP_ZIGBEE_IAS_WD_Server_Alarm_Processing(void){
 }
 
 /**
- * @brief  Zigbee application IAS WD Squawk command proccessing
+ * @brief  Zigbee application IAS WD Squawk command processing
  * @param  None
  * @retval None
  */
@@ -666,6 +667,37 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
       APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
       break;
     }
+    // print the application name
+    char* __PathProject__ =(strstr(__FILE__, "Zigbee") ? strstr(__FILE__, "Zigbee") + 7 : __FILE__);
+    char *del;
+    if ( (strchr(__FILE__, '/')) == NULL)
+        {del = strchr(__PathProject__, '\\');}
+    else 
+        {del = strchr(__PathProject__, '/');}
+    
+        int index = (int) (del - __PathProject__);
+        APP_DBG("Application flashed: %*.*s",index,index,__PathProject__);
+    
+    //print channel
+    APP_DBG("Channel used: %d", CHANNEL);
+    //print Link Key
+    APP_DBG("Link Key: %.16s", sec_key_ha);
+    //print Link Key value hex   
+    char Z09_LL_string[ZB_SEC_KEYSIZE*3+1];
+    Z09_LL_string[0]=0;
+    for(int str_index=0; str_index < ZB_SEC_KEYSIZE; str_index++)
+      {           
+        sprintf(&Z09_LL_string[str_index*3],"%02x ",sec_key_ha[str_index]);
+      }
+  
+    APP_DBG("Link Key value: %s",Z09_LL_string);
+    //print clusters allocated
+    APP_DBG("Clusters allocated are:");  
+    APP_DBG("OnOFF Server on Endpoint %d",SW1_ENDPOINT);
+    APP_DBG("Identify Server on Endpoint %d",SW1_ENDPOINT);
+    APP_DBG("Scenes Server on Endpoint %d",SW1_ENDPOINT);
+    APP_DBG("IAS WD Server on Endpoint %d",SW1_ENDPOINT);
+    APP_DBG("Messaging Server on Endpoint %d",SW1_ENDPOINT);
     APP_DBG("**********************************************************");
   }
 }

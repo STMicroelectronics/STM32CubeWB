@@ -69,9 +69,9 @@ To setup the application :
       
   b)  At this stage, the Zigbee network is automatically created Join OK is displayed on both devices.
       it is now possible to receive a 10s duty cycle report form Server (blue LED toggling) 
-      by pressing on the SW1 push button. 
+      by pressing on the SW2 (B2) push button. 
       You start a 500ms duty cycle send a read temp request to server (purple LED toggling)  
-      by pressing on the SW2 push button.
+      by pressing on the SW1 (B1) push button.
       You stop the 1s duty cycle read. (reporting is still running though)  
 
 

@@ -40,7 +40,7 @@ typedef struct
   /* My_Heart_Rate */
   uint8_t               Hrs_m_Notification_Status;
   /* USER CODE BEGIN CUSTOM_APP_Context_t */
-
+  uint8_t               SW1_Status;
   /* USER CODE END CUSTOM_APP_Context_t */
 
   uint16_t              ConnectionHandle;
@@ -58,6 +58,8 @@ typedef struct
 #define CUSTOM_STM_HRS_ENERGY_RESET     0x00
 #define CUSTOM_STM_HRS_ENERGY_NOT_RESET 0x01
 
+#define TOGGLE_ON                       1
+#define TOGGLE_OFF                      0
 /* USER CODE END PD */
 
 /* Private macros -------------------------------------------------------------*/
@@ -76,21 +78,18 @@ PLACE_IN_SECTION("BLE_APP_CONTEXT") static Custom_App_Context_t Custom_App_Conte
  * END of Section BLE_APP_CONTEXT
  */
 
-/* USER CODE BEGIN PV */
 uint8_t UpdateCharData[247];
 uint8_t NotifyCharData[247];
 
-uint8_t SecureReadData;
-
+/* USER CODE BEGIN PV */
 uint8_t hr_energy_reset = CUSTOM_STM_HRS_ENERGY_NOT_RESET;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-  /* My_P2P_Server */
+/* My_P2P_Server */
 static void Custom_Switch_c_Update_Char(void);
 static void Custom_Switch_c_Send_Notification(void);
-  /* My_Heart_Rate */
+/* My_Heart_Rate */
 static void Custom_Hrs_m_Update_Char(void);
 static void Custom_Hrs_m_Send_Notification(void);
 
@@ -105,13 +104,13 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
   static uint16_t hr_value, hr_energy;
     
   /* USER CODE END CUSTOM_STM_App_Notification_1 */
-  switch(pNotification->Custom_Evt_Opcode)
+  switch (pNotification->Custom_Evt_Opcode)
   {
     /* USER CODE BEGIN CUSTOM_STM_App_Notification_Custom_Evt_Opcode */
 
     /* USER CODE END CUSTOM_STM_App_Notification_Custom_Evt_Opcode */
 
-  /* My_P2P_Server */
+    /* My_P2P_Server */
     case CUSTOM_STM_LED_C_READ_EVT:
       /* USER CODE BEGIN CUSTOM_STM_LED_C_READ_EVT */
        PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Led_Char Read\n");
@@ -121,32 +120,38 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
 
     case CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT:
       /* USER CODE BEGIN CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT */
-       PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Led_Char Write\n");
-
+      APP_DBG_MSG("\r\n\r** CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT \n");
+      APP_DBG_MSG("\r\n\r** Write Data: 0x%02X %02X \n", pNotification->DataTransfered.pPayload[0], pNotification->DataTransfered.pPayload[1]);
+      if (pNotification->DataTransfered.pPayload[1] == 0x01)
+      {
+        HAL_GPIO_WritePin(Blue_Led_GPIO_Port, Blue_Led_Pin, GPIO_PIN_SET); 
+      }
+      if (pNotification->DataTransfered.pPayload[1] == 0x00)
+      {
+        HAL_GPIO_WritePin(Blue_Led_GPIO_Port, Blue_Led_Pin, GPIO_PIN_RESET); 
+      } 
       /* USER CODE END CUSTOM_STM_LED_C_WRITE_NO_RESP_EVT */
       break;
 
     case CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT:
       /* USER CODE BEGIN CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT */
-       PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Switch_Char NOTIFICATION_ENABLED\n");
-       
-       Custom_App_Context.Switch_c_Notification_Status = 1;        /* My_Switch_Char notification status has been enabled */
-       Custom_Switch_c_Send_Notification();
+      APP_DBG_MSG("\r\n\r** CUSTOM_STM_BUTTON_C_NOTIFY_ENABLED_EVT \n");
+
+      Custom_App_Context.Switch_c_Notification_Status = TOGGLE_ON;        /* My_Switch_Char notification status has been enabled */
       /* USER CODE END CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT */
       break;
 
     case CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT:
       /* USER CODE BEGIN CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT */
-      PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_Switch_Char NOTIFICATION_DISABLED\n");
-      
-      Custom_App_Context.Switch_c_Notification_Status = 0;         /* My_Switch_Char notification status has been disabled */
+      APP_DBG_MSG("\r\n\r** CUSTOM_STM_BUTTON_C_NOTIFY_DISABLED_EVT \n");
+
+      Custom_App_Context.Switch_c_Notification_Status = TOGGLE_OFF;        /* My_Switch_Char notification status has been disabled */
       /* USER CODE END CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT */
       break;
 
-  /* My_Heart_Rate */
+    /* My_Heart_Rate */
     case CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT:
       /* USER CODE BEGIN CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT */
-
        PRINT_MESG_DBG("ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE My_HRS_Meas NOTIFICATION_ENABLED\n");
 
        Custom_App_Context.Hrs_m_Notification_Status = 1;         /* Hrs_m notification status has been enabled */
@@ -226,7 +231,7 @@ void Custom_APP_Notification(Custom_App_ConnHandle_Not_evt_t *pNotification)
 
   /* USER CODE END CUSTOM_APP_Notification_1 */
 
-  switch(pNotification->Custom_Evt_Opcode)
+  switch (pNotification->Custom_Evt_Opcode)
   {
     /* USER CODE BEGIN CUSTOM_APP_Notification_Custom_Evt_Opcode */
 
@@ -267,6 +272,11 @@ void Custom_APP_Init(void)
   
   Custom_Switch_c_Update_Char();
   Custom_Hrs_m_Update_Char();
+
+  UTIL_SEQ_RegTask(1<< CFG_TASK_SW1_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, Custom_Switch_c_Send_Notification);
+
+  Custom_App_Context.Switch_c_Notification_Status = TOGGLE_OFF;   
+  Custom_App_Context.SW1_Status = 0;                 
   /* USER CODE END CUSTOM_APP_Init */
   return;
 }
@@ -281,58 +291,113 @@ void Custom_APP_Init(void)
  *
  *************************************************************/
 
-  /* My_P2P_Server */
+/* My_P2P_Server */
 void Custom_Switch_c_Update_Char(void) /* Property Read */
 {
-  Custom_STM_App_Update_Char(CUSTOM_STM_SWITCH_C, (uint8_t *)UpdateCharData);
-  /* USER CODE BEGIN Switch_c_UC*/
+  uint8_t updateflag = 0;
 
-  /* USER CODE END Switch_c_UC*/
+  /* USER CODE BEGIN Switch_c_UC_1*/
+
+  /* USER CODE END Switch_c_UC_1*/
+
+  if (updateflag != 0)
+  {
+    Custom_STM_App_Update_Char(CUSTOM_STM_SWITCH_C, (uint8_t *)UpdateCharData);
+  }
+
+  /* USER CODE BEGIN Switch_c_UC_Last*/
+
+  /* USER CODE END Switch_c_UC_Last*/
   return;
 }
 
 void Custom_Switch_c_Send_Notification(void) /* Property Notification */
- {
-  if(Custom_App_Context.Switch_c_Notification_Status)
+{
+  uint8_t updateflag = 0;
+
+  /* USER CODE BEGIN Switch_c_NS_1*/
+  if (Custom_App_Context.Switch_c_Notification_Status == TOGGLE_ON)
   {
-    Custom_STM_App_Update_Char(CUSTOM_STM_SWITCH_C, (uint8_t *)NotifyCharData);
-    /* USER CODE BEGIN Switch_c_NS*/
-    APP_DBG_MSG("-- Custom_Switch_c_Send_Notification() -  NOTIFICATION ENABLED\n ");
-    /* USER CODE END Switch_c_NS*/
+    updateflag = 1;
+    
+    if (Custom_App_Context.SW1_Status == 0)
+    {
+      Custom_App_Context.SW1_Status = 1;
+      NotifyCharData[0] = 0x00;
+      NotifyCharData[1] = 0x01;
+    }
+    else
+    {
+      Custom_App_Context.SW1_Status = 0;
+      NotifyCharData[0] = 0x00;
+      NotifyCharData[1] = 0x00;
+    }
+
+    APP_DBG_MSG("-- CUSTOM APPLICATION SERVER  : INFORM CLIENT BUTTON 1 PUSHED \n");
   }
   else
   {
-    APP_DBG_MSG("-- CUSTOM APPLICATION : CAN'T INFORM CLIENT -  NOTIFICATION DISABLED\n ");
+    APP_DBG_MSG("-- CUSTOM APPLICATION : CAN'T INFORM CLIENT -  NOTIFICATION DISABLED\n");
+  }     
+  /* USER CODE END Switch_c_NS_1*/
+
+  if (updateflag != 0)
+  {
+    Custom_STM_App_Update_Char(CUSTOM_STM_SWITCH_C, (uint8_t *)NotifyCharData);
   }
+
+  /* USER CODE BEGIN Switch_c_NS_Last*/
+
+  /* USER CODE END Switch_c_NS_Last*/
+
   return;
 }
 
-  /* My_Heart_Rate */
+/* My_Heart_Rate */
 void Custom_Hrs_m_Update_Char(void) /* Property Read */
 {
-  Custom_STM_App_Update_Char(CUSTOM_STM_HRS_M, (uint8_t *)UpdateCharData);
-  /* USER CODE BEGIN Hrs_m_UC*/
+  uint8_t updateflag = 0;
 
-  /* USER CODE END Hrs_m_UC*/
+  /* USER CODE BEGIN Hrs_m_UC_1*/
+
+  /* USER CODE END Hrs_m_UC_1*/
+
+  if (updateflag != 0)
+  {
+    Custom_STM_App_Update_Char(CUSTOM_STM_HRS_M, (uint8_t *)UpdateCharData);
+  }
+
+  /* USER CODE BEGIN Hrs_m_UC_Last*/
+
+  /* USER CODE END Hrs_m_UC_Last*/
   return;
 }
 
 void Custom_Hrs_m_Send_Notification(void) /* Property Notification */
- {
-  if(Custom_App_Context.Hrs_m_Notification_Status)
+{
+  uint8_t updateflag = 0;
+
+  /* USER CODE BEGIN Hrs_m_NS_1*/
+
+  /* USER CODE END Hrs_m_NS_1*/
+
+  if (updateflag != 0)
   {
     Custom_STM_App_Update_Char(CUSTOM_STM_HRS_M, (uint8_t *)NotifyCharData);
-    /* USER CODE BEGIN Hrs_m_NS*/
+  }
 
-    /* USER CODE END Hrs_m_NS*/
-  }
-  else
-  {
-    APP_DBG_MSG("-- CUSTOM APPLICATION : CAN'T INFORM CLIENT -  NOTIFICATION DISABLED\n ");
-  }
+  /* USER CODE BEGIN Hrs_m_NS_Last*/
+
+  /* USER CODE END Hrs_m_NS_Last*/
+
   return;
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS*/
+void SW1_Button_Action(void)
+{
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_SW1_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
 
+  return;
+}
 /* USER CODE END FD_LOCAL_FUNCTIONS*/

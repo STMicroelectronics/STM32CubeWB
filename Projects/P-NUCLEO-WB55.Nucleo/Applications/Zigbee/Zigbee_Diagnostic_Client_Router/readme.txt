@@ -52,7 +52,7 @@ Two Diagnostic attributes related to unicast RX/TX are used :
 - ZCL_DIAG_ATTR_APS_RX_UCAST
 - ZCL_DIAG_ATTR_APS_TX_UCAST_SUCCESS
 
-When the user reads these attributes, thier changes change because the ZCL read is based on RX/TX too.
+When the user reads these attributes, their changes change because the ZCL read is based on RX/TX too.
 It's the same for the ZCL OnOff commands.
     
 
@@ -65,7 +65,7 @@ It's the same for the ZCL OnOff commands.
              |        |                                                                      |        |
              |        |                                                                      |        |
              |        |                      ZbZclOnOffClientToggleReq()                     |        |
-  PushB SW1=>|        | -------------------------------------------------------------------> |        |=> GREEN LED toogle
+  PushB SW1=>|        | -------------------------------------------------------------------> |        |=> GREEN LED toggle
              |        | <------------------------------------------------------------------- |        |
              |        |                                                                      |        |
              |        |                            ZbZclReadReq()                            |        |

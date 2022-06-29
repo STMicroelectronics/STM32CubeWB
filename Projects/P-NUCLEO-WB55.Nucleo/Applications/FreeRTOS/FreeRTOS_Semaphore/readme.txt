@@ -55,7 +55,7 @@ on STM32Cube with RTOS".
 
 @par Keywords
 
-RTOS, FreeRTOS, Thread, Semaphore, Priorities
+RTOS, FreeRTOS, Threading, Semaphore, Priorities
 
 @par Directory contents
     - FreeRTOS/FreeRTOS_Semaphore/Src/main.c                       Main program

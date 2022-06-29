@@ -47,9 +47,9 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_entry.c</locationURI>
 		</link>
 		<link>
-			<name>Application/Core/hw_flash.c</name>
+			<name>Application/Core/flash_driver.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/hw_flash.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/flash_driver.c</locationURI>
 		</link>
 		<link>
 			<name>Application/Core/hw_timerserver.c</name>
@@ -77,6 +77,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32_lpm_if.c</locationURI>
 		</link>
 		<link>
+			<name>Application/Core/stm32wbxx_hal_msp.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/stm32wbxx_hal_msp.c</locationURI>
+		</link>
+		<link>
 			<name>Application/Core/stm32wbxx_it.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32wbxx_it.c</locationURI>
@@ -102,6 +107,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_dma_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_flash.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash.c</locationURI>
@@ -117,6 +127,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_gpio.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_hsem.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_i2c.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_i2c.c</locationURI>
@@ -125,6 +140,11 @@
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_i2c_ex.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_i2c_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_ipcc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_pcd.c</name>
@@ -155,6 +175,11 @@
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rcc_ex.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rng.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rng.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rtc.c</name>
@@ -212,19 +237,19 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c</locationURI>
 		</link>
 		<link>
-			<name>Application/STM32_WPAN/app/PWM_config.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/PWM_config.c</locationURI>
-		</link>
-		<link>
-			<name>Application/STM32_WPAN/app/PWM_handlers.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/PWM_handlers.c</locationURI>
-		</link>
-		<link>
 			<name>Application/STM32_WPAN/app/app_ble.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/app_ble.c</locationURI>
+		</link>
+		<link>
+			<name>Application/STM32_WPAN/app/appli_config.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/appli_config.c</locationURI>
+		</link>
+		<link>
+			<name>Application/STM32_WPAN/app/appli_config_client.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/appli_config_client.c</locationURI>
 		</link>
 		<link>
 			<name>Application/STM32_WPAN/app/appli_generic.c</name>
@@ -287,16 +312,6 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/pal_nvm.c</locationURI>
 		</link>
 		<link>
-			<name>Application/STM32_WPAN/app/appli_config.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/appli_config.c</locationURI>
-		</link>
-		<link>
-			<name>Application/STM32_WPAN/app/appli_config_client.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/appli_config_client.c</locationURI>
-		</link>
-		<link>
 			<name>Application/STM32_WPAN/target/hw_ipcc.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/target/hw_ipcc.c</locationURI>
@@ -342,6 +357,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/common.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/ble/blesvc/config_client.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/config_client.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/ble/blesvc/generic.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/generic.c</locationURI>
@@ -385,11 +405,6 @@
 			<name>Middlewares/STM32_WPAN/ble/blesvc/sensors_client.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/sensors_client.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/ble/blesvc/config_client.c</name>
-			<type>1</type>
-			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/config_client.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/ble/blesvc/svc_ctl.c</name>

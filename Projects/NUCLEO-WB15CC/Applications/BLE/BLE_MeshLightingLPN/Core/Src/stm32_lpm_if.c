@@ -22,6 +22,8 @@
 #include "stm32_lpm_if.h"
 #include "stm32_lpm.h"
 #include "app_conf.h"
+#include "main.h"
+#include "standby.h"
 /* USER CODE BEGIN include */
 
 /* USER CODE END include */
@@ -39,20 +41,11 @@ const struct UTIL_LPM_Driver_s UTIL_PowerDriver =
   PWR_ExitOffMode,
 };
 
-extern uint32_t boot_after_standby;
 extern RTC_HandleTypeDef hrtc;
 
-#define CSTACK_PREAMBLE_NUMBER 16
-uint32_t cStackPreamble[CSTACK_PREAMBLE_NUMBER];
-
-typedef void( *intfunc )( void );
-typedef union { intfunc __fun; void * __ptr; } intvec_elem;
-extern const intvec_elem __vector_table[];
-
 void CPUcontextSave(void); /* this function is implemented in startup assembly file */
-void standby_hw_save(void);
-void standby_hw_restore(void);
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 
 /* Private function prototypes -----------------------------------------------*/
 static void Switch_On_HSI( void );
@@ -97,6 +90,7 @@ void PWR_EnterOffMode( void )
    * at this time, the device may enter either OffMode or StopMode.
    */
   HAL_SuspendTick();
+  __HAL_RCC_CLEAR_RESET_FLAGS();
 
   EnterLowPower();
 
@@ -124,25 +118,11 @@ void PWR_EnterOffMode( void )
 #endif
 
 #if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
-  /* This part of code must not put in a function as it deals with C stack calls.
-   * A function call will push data in C stack and impact algorithm.
-   */
-  /* local variable are here for better view */
-  uint8_t i = 0;
-  uint32_t* ptr;
-  /* Save part of the stack that will be restored at wakeup */
-  ptr = __vector_table[0].__ptr ;
-  ptr -= CSTACK_PREAMBLE_NUMBER;
-  do {
-    cStackPreamble[i] = *ptr;
-    i++;
-    ptr++;
-  } while (i < CSTACK_PREAMBLE_NUMBER);
-
+  LL_EXTI_EnableRisingTrig_32_63(LL_EXTI_LINE_40);
   LL_EXTI_EnableEvent_32_63( LL_EXTI_LINE_40 );
-  LL_EXTI_EnableRisingTrig_32_63( LL_EXTI_LINE_40 );
 
-  standby_hw_save();
+  STBY_AppHwSave();
+  STBY_SysHwSave();
 
   CPUcontextSave();/* this function will call WFI instruction */
 #endif
@@ -164,34 +144,16 @@ void PWR_ExitOffMode( void )
 
 /* USER CODE END PWR_ExitOffMode_1 */
 #if ( CFG_LPM_STANDBY_SUPPORTED != 0 )
-  /* This part of code must not put in a function as it deals with C stack calls.
-   * A function call will push data in C stack and impact algorithm.
-   */
-  if(boot_after_standby != 0)
+  if(STBY_BootStatus != 0)
   {
-    boot_after_standby = 0;
-    /* local variable are here for better view */
-    uint8_t i = 0;
-    uint32_t* ptr;
-    /* Restore the part of stack that has been saved before the sleep */
-    ptr = __vector_table[0].__ptr ;
-    ptr -= CSTACK_PREAMBLE_NUMBER;
-    do {
-      *ptr = cStackPreamble[i];
-      i++;
-      ptr++;
-    } while (i < CSTACK_PREAMBLE_NUMBER);
-
-    standby_hw_restore();
-
+    STBY_SysHwRestore();
     ExitLowPower_standby();
+    STBY_AppHwRestore();
   }
   else
   {
     ExitLowPower();
   }
-
-  HAL_ResumeTick();
 #endif
 /* USER CODE BEGIN PWR_ExitOffMode_2 */
 
@@ -321,6 +283,25 @@ void PWR_ExitSleepMode( void )
   return;
 }
 
+/**
+* @brief Weak CPUcontextSave function definition to implement in startup file.
+* @param none
+* @retval none
+*/
+__WEAK void CPUcontextSave(void)
+{
+#if (CFG_LPM_STANDBY_SUPPORTED != 0)
+  /*
+   * If you are here, you have to update your startup_stm32wb15xx_cm4.s file to
+   * implement CPUcontextSave function like done in latest STM32CubeWB package
+   * into STM32WB15 BLE applications.
+   */
+  Error_Handler();
+#endif
+
+  return;
+}
+
 /*************************************************************
  *
  * LOCAL FUNCTIONS
@@ -347,11 +328,13 @@ static void EnterLowPower( void )
       LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
 
       Switch_On_HSI( );
+      __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_0);
     }
   }
   else
   {
     Switch_On_HSI( );
+    __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_0);
   }
 
   /* Release RCC semaphore */
@@ -415,6 +398,7 @@ static void ExitLowPower_standby( void )
   while( LL_HSEM_1StepLock( HSEM, CFG_HW_RCC_SEMID ) );
 /* USER CODE BEGIN ExitLowPower_standby */
   SystemClock_Config();
+  PeriphCommonClock_Config();
 /* USER CODE END ExitLowPower_standby */
   __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
 

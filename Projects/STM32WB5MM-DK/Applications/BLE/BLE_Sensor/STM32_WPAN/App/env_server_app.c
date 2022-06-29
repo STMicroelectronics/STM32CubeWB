@@ -65,7 +65,7 @@ PLACE_IN_SECTION("BLE_APP_CONTEXT") static ENV_Server_App_Context_t ENV_Server_A
 
 /* Global variables ----------------------------------------------------------*/
 extern int debug_trace_enabled;
-extern uint8_t manuf_data[14];
+extern uint8_t a_ManufData[14];
 
 /* Private function prototypes -----------------------------------------------*/
 static void ENV_Handle_Sensor(void);
@@ -213,21 +213,21 @@ static void EnvSensor_GetCaps(void)
   /* Update BLE ADV field (Env) */
   if(ENV_Server_App_Context.hasTemperature > 1)
   {
-    manuf_data[5] |= 0x05; /* Two Temperature values*/
+    a_ManufData[5] |= 0x05; /* Two Temperature values*/
   }
   else if(ENV_Server_App_Context.hasTemperature == 1)
   {
-    manuf_data[5] |= 0x04; /* One Temperature value*/
+    a_ManufData[5] |= 0x04; /* One Temperature value*/
   }
 
   if(ENV_Server_App_Context.hasHumidity)
   {
-    manuf_data[5] |= 0x08; /* Humidity value */
+    a_ManufData[5] |= 0x08; /* Humidity value */
   }
 
   if(ENV_Server_App_Context.hasPressure)
   {
-    manuf_data[5] |= 0x10; /* Pressure value*/
+    a_ManufData[5] |= 0x10; /* Pressure value*/
   }
 }
 

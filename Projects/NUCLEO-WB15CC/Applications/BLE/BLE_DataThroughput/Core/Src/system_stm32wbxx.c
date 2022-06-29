@@ -83,7 +83,6 @@
   */
 
 #include "stm32wbxx.h"
-#include "otp.h"
 
 #if !defined  (HSE_VALUE)
   #define HSE_VALUE    (32000000UL) /*!< Value of the External oscillator in Hz */
@@ -191,42 +190,48 @@
   */
 void SystemInit(void)
 {
-	OTP_ID0_t * p_otp;
+  /* Configure the Vector Table location add offset address ------------------*/
+#if defined(VECT_TAB_SRAM) && defined(VECT_TAB_BASE_ADDRESS)  
+  /* program in SRAMx */
+  SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET;  /* Vector Table Relocation in Internal SRAMx for CPU1 */
+#else    /* program in FLASH */
+  SCB->VTOR = VECT_TAB_OFFSET;              /* Vector Table Relocation in Internal FLASH */
+#endif
 
 	/* FPU settings ------------------------------------------------------------*/
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
     SCB->CPACR |= ((3UL << (10UL*2UL))|(3UL << (11UL*2UL)));  /* set CP10 and CP11 Full Access */
 #endif
 
-	/**
-	 * Read HSE_Tuning from OTP
-	 */
-	p_otp = (OTP_ID0_t *) OTP_Read(0);
-	if (p_otp)
-	{
-		LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
-	}
+  /* Reset the RCC clock configuration to the default reset state ------------*/
+  /* Set MSION bit */
+  RCC->CR |= RCC_CR_MSION;
 
-	LL_RCC_HSE_Enable();
+  /* Reset CFGR register */
+  RCC->CFGR = 0x00070000U;
 
-	/**
-	 * Set FLASH latency to 1WS
-	 */
-	LL_FLASH_SetLatency( LL_FLASH_LATENCY_1 );
-	while( LL_FLASH_GetLatency() != LL_FLASH_LATENCY_1 );
+  /* Reset PLLSAI1ON, PLLON, HSECSSON, HSEON, HSION, and MSIPLLON bits */
+  RCC->CR &= (uint32_t)0xFAF6FEFBU;
 
-	/**
-	 * Switch to HSE
-	 *
-	 */
-	while(!LL_RCC_HSE_IsReady());
-	LL_RCC_SetSysClkSource( LL_RCC_SYS_CLKSOURCE_HSE );
-	while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);
+  /*!< Reset LSI1 and LSI2 bits */
+  RCC->CSR &= (uint32_t)0xFFFFFFFAU;
+  
+  /*!< Reset HSI48ON  bit */
+  RCC->CRRCR &= (uint32_t)0xFFFFFFFEU;
 
-	/**
-	 * Switch OFF MSI
-	 */
-	LL_RCC_MSI_Disable();
+  /* Reset PLLCFGR register */
+  RCC->PLLCFGR = 0x22041000U;
+
+#if defined(STM32WB55xx) || defined(STM32WB5Mxx)
+  /* Reset PLLSAI1CFGR register */
+  RCC->PLLSAI1CFGR = 0x22041000U;
+#endif
+
+  /* Reset HSEBYP bit */
+  RCC->CR &= 0xFFFBFFFFU;
+
+  /* Disable all interrupts */
+  RCC->CIER = 0x00000000;
 }
 
 /**

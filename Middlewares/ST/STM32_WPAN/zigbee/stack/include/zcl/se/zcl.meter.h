@@ -982,7 +982,7 @@ struct ZbZclMeterServerCallbacksT {
     enum ZclStatusCodeT (*optional)(struct ZbZclClusterT *cluster,
         struct ZbZclHeaderT *zclHdrPtr, struct ZbApsdeDataIndT *dataIndPtr);
     /**< Optional commands not parsed into a struct or specific callback. If this is NULL,
-     * the cluster will return a Default Response with status of ZCL_STATUS_UNSUPP_CLUSTER_COMMAND.
+     * the cluster will return a Default Response with status of ZCL_STATUS_UNSUPP_COMMAND.
      * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
      */
 };
@@ -1129,7 +1129,7 @@ struct ZbZclMeterClientCallbacksT {
     enum ZclStatusCodeT (*optional)(struct ZbZclClusterT *cluster,
         struct ZbZclHeaderT *zclHdrPtr, struct ZbApsdeDataIndT *dataIndPtr);
     /**< Optional commands not parsed into a struct or specific callback. If this is NULL,
-     * the cluster will return a Default Response with status of ZCL_STATUS_UNSUPP_CLUSTER_COMMAND.
+     * the cluster will return a Default Response with status of ZCL_STATUS_UNSUPP_COMMAND.
      * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
      */
 };

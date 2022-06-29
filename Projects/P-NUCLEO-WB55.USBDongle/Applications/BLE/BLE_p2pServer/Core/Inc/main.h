@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef MAIN_H
+#define MAIN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,6 +34,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -69,4 +70,4 @@ void   MX_USART1_UART_Init(void);
 }
 #endif
 
-#endif /* __MAIN_H */
+#endif /* MAIN_H */

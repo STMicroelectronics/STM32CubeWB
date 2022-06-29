@@ -18,8 +18,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __GATT_SERVICE_H
-#define __GATT_SERVICE_H
+#ifndef GATT_SERVICE_H
+#define GATT_SERVICE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,4 +55,4 @@ tBleStatus MyVeryOwnWriteCharacteristic_Update(uint16_t UUID, uint16_t newValueL
 }
 #endif
 
-#endif /* __GATT_SERVICE_H */
+#endif /* GATT_SERVICE_H */

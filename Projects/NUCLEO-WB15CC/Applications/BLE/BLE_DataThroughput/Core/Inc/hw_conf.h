@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -214,4 +214,4 @@
 #define CFG_HW_USART1_TX_DMA_IRQn             DMA1_Channel4_IRQn
 #define CFG_HW_USART1_DMA_TX_IRQHandler       DMA1_Channel4_IRQHandler
 
-#endif /*HW_CONF_H */
+#endif /* HW_CONF_H */

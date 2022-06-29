@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -394,11 +394,6 @@
               <FilePath>../Core/Src/app_entry.c</FilePath>
             </File>
             <File>
-              <FileName>hw_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/hw_flash.c</FilePath>
-            </File>
-            <File>
               <FileName>hw_timerserver.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/hw_timerserver.c</FilePath>
@@ -427,6 +422,21 @@
               <FileName>stm32wbxx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\flash_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\stm32wbxx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>standby.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\standby.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -632,6 +642,11 @@
               <FileName>stm32wbxx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_rng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</FilePath>
             </File>
           </Files>
         </Group>

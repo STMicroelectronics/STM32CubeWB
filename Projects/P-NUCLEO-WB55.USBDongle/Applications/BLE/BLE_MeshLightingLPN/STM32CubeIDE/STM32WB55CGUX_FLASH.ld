@@ -41,7 +41,8 @@ MEMORY
 {
 FLASH (rx)                 : ORIGIN = 0x08000000, LENGTH = 512K
 RAM1 (xrw)                 : ORIGIN = 0x20000008, LENGTH = 0x2FFF8
-RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K
+RAM_SHARED1 (xrw)          : ORIGIN = 0x20030000, LENGTH = 0x28
+RAM_SHARED2 (xrw)          : ORIGIN = 0x20030028, LENGTH = 0x27D8
 }
 
 /* Define output sections */
@@ -163,9 +164,9 @@ SECTIONS
   }
 
   .ARM.attributes 0       : { *(.ARM.attributes) }
-   MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED
-   MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED
-   MB_MEM2 (NOLOAD)       : { _sMB_MEM2 = . ; *(MB_MEM2) ; _eMB_MEM2 = . ; } >RAM_SHARED
+   MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED1
+   MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED2
+   MB_MEM2 (NOLOAD)       : { _sMB_MEM2 = . ; *(MB_MEM2) ; _eMB_MEM2 = . ; } >RAM_SHARED2
 }
 
 

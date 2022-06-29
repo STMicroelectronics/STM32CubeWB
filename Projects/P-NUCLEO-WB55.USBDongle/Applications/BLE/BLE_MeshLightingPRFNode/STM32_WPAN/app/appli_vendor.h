@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    appli_vendor.h
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Application interface for Vendor Mesh Models  
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_VENDOR_H
-#define __APPLI_VENDOR_H
+#ifndef APPLI_VENDOR_H
+#define APPLI_VENDOR_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -39,6 +41,6 @@ MOBLE_RESULT Appli_Vendor_SendBigDataPacket(void);
 MOBLE_RESULT Appli_Vendor_SetBigDataPacket(MOBLEUINT8 *data, MOBLEUINT32 length,
                                        MOBLEUINT8 elementIndex , MOBLE_ADDRESS dst_peer);
 void Appli_Vendor_Publish(MOBLE_ADDRESS srcAddress);
-#endif /* __APPLI_VENDOR_H */
+#endif /* APPLI_VENDOR_H */
 
 

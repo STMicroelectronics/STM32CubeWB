@@ -8,7 +8,7 @@
   * @brief   Description of the SPI Half Duplex IT example.
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -21,7 +21,8 @@
 @par Example Description 
 
 Data buffer transmission/reception between 
-two boards via SPI using Polling (LL driver) and Interrupt modes (HAL driver).
+two boards via SPI using Polling (LL driver) and Interrupt modes (HAL driver). This
+example is for the Slave board.
 
    _________________________                        _________________________
   |       ___________ ______|                      |__________________       |

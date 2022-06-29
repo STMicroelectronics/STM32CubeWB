@@ -40,12 +40,22 @@
 
 #include "stm_logging.h"
 
+
 #define HOST_SYS_EVTCODE                (0xFFU)
 #define HOST_SYS_SUBEVTCODE_BASE        (0x9200U)
 #define HOST_SYS_SUBEVTCODE_READY        (HOST_SYS_SUBEVTCODE_BASE + 0U)
 #define POOL_SIZE (CFG_TL_EVT_QUEUE_LENGTH * 4U * DIVC(( sizeof(TL_PacketHeader_t) + TL_EVENT_FRAME_SIZE ), 4U))
 
+/* Section specific to button management using UART */
+static void RxUART_Init(void);
+static void RxCpltCallback(void);
+static void UartCmdExecute(void);
+
 #define C_SIZE_CMD_STRING               256U
+#define RX_BUFFER_SIZE          8U
+
+static uint8_t aRxBuffer[RX_BUFFER_SIZE];
+EXTI_HandleTypeDef exti_handle;
 
 extern void APP_RFD_MAC_802_15_4_SetupTask(void);
 extern void APP_RFD_MAC_802_15_4_NodeSrvTask(void);
@@ -103,6 +113,8 @@ void APP_ENTRY_Init( APP_ENTRY_InitMode_t InitMode )
    */
   UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_DISABLE);
   Led_Init();
+  HW_UART_Init(CFG_CLI_UART);
+  RxUART_Init();
   appe_Tl_Init(); /* Initialize all transport layers */
 
   /**
@@ -416,3 +428,65 @@ static void Receive_Notification_From_RFCore(void)
   UTIL_SEQ_SetTask(TASK_MSG_FROM_RF_CORE,CFG_SCH_PRIO_0);
 }
 
+static void RxUART_Init(void)
+{
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void RxCpltCallback(void)
+{
+  /* Filling buffer and wait for '\r' char */
+  if (indexReceiveChar < C_SIZE_CMD_STRING)
+  {
+    if (aRxBuffer[0] == '\r')
+    {
+      APP_DBG("received %s", CommandString);
+
+      UartCmdExecute();
+
+      /* Clear receive buffer and character counter*/
+      indexReceiveChar = 0;
+      memset(CommandString, 0, C_SIZE_CMD_STRING);
+    }
+    else if (aRxBuffer[0] == '\n')
+    {
+      /* Clear receive buffer and character counter*/
+      indexReceiveChar = 0;
+      memset(CommandString, 0, C_SIZE_CMD_STRING);
+    }
+    else
+    {
+      CommandString[indexReceiveChar++] = aRxBuffer[0];
+    }
+  }
+
+  /* Once a character has been sent, put back the device in reception mode */
+  HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void UartCmdExecute(void)
+{
+  /* Parse received CommandString */
+  if(strcmp((char const*)CommandString, "SW1") == 0)
+  {
+    APP_DBG("SW1 OK");
+    exti_handle.Line = EXTI_LINE_4;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW2") == 0)
+  {
+    APP_DBG("SW2 OK");
+    exti_handle.Line = EXTI_LINE_0;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW3") == 0)
+  {
+    APP_DBG("SW3 OK");
+    exti_handle.Line = EXTI_LINE_1;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else
+  {
+    APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
+  }
+}

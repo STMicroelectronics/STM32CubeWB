@@ -74,6 +74,100 @@ typedef PACKED(struct)
   uint8_t Max_Extended_Advertising_Events;
 } Adv_Set_t;
 
+/* Definition of Scan_Param_Phy_t */
+typedef PACKED(struct)
+{
+  /**
+   * Passive or active scanning. With passive scanning, no scan request PDUs
+   * are sent.
+   * Values:
+   * - 0x00: Passive scanning
+   * - 0x01: Active scanning
+   */
+  uint8_t Scan_Type;
+  /**
+   * Time interval from when the Controller started its last scan until it
+   * begins the subsequent scan on the primary advertising physical channel.
+   * Time = N * 0.625 ms.
+   * Values:
+   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+   */
+  uint16_t Scan_Interval;
+  /**
+   * Duration of the scan on the primary advertising physical channel.
+   * Time = N * 0.625 ms.
+   * Values:
+   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+   */
+  uint16_t Scan_Window;
+} Scan_Param_Phy_t;
+
+/* Definition of Init_Param_Phy_t */
+typedef PACKED(struct)
+{
+  /**
+   * Time interval from when the Controller started its last scan until it
+   * begins the subsequent scan on the primary advertising physical channel.
+   * Time = N * 0.625 ms.
+   * Values:
+   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+   */
+  uint16_t Scan_Interval;
+  /**
+   * Duration of the scan on the primary advertising physical channel.
+   * Time = N * 0.625 ms.
+   * Values:
+   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+   */
+  uint16_t Scan_Window;
+  /**
+   * Minimum value for the connection event interval.
+   * Time = N * 1.25 ms.
+   * Values:
+   * - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
+   */
+  uint16_t Conn_Interval_Min;
+  /**
+   * Maximum value for the connection event interval.
+   * Time = N * 1.25 ms.
+   * Values:
+   * - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
+   */
+  uint16_t Conn_Interval_Max;
+  /**
+   * Maximum Peripheral latency for the connection in number of connection
+   * events.
+   * Values:
+   * - 0x0000 ... 0x01F3
+   */
+  uint16_t Conn_Latency;
+  /**
+   * Supervision timeout for the LE Link.
+   * It shall be a multiple of 10 ms and larger than (1 + connSlaveLatency) *
+   * connInterval * 2.
+   * Time = N * 10 ms.
+   * Values:
+   * - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
+   */
+  uint16_t Supervision_Timeout;
+  /**
+   * Information parameter about the minimum length of connection needed for
+   * this LE connection.
+   * Time = N * 0.625 ms.
+   * Values:
+   * - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
+   */
+  uint16_t Min_CE_Length;
+  /**
+   * Information parameter about the maximum length of connection needed for
+   * this LE connection.
+   * Time = N * 0.625 ms.
+   * Values:
+   * - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
+   */
+  uint16_t Max_CE_Length;
+} Init_Param_Phy_t;
+
 /* Definition of Whitelist_Entry_t */
 typedef PACKED(struct)
 {
@@ -272,7 +366,7 @@ typedef PACKED(struct)
   uint8_t Length_Data;
   /**
    * Octets of advertising or scan response data formatted as defined in
-   * Bluetooth spec. v.5.2 [Vol 3, Part C, 11].
+   * Bluetooth spec. v.5.3 [Vol 3, Part C, 11].
    */
   const uint8_t* Data;
   /**
@@ -620,34 +714,34 @@ typedef PACKED(struct)
 {
   uint8_t Status;
   uint8_t White_List_Size;
-} hci_le_read_white_list_size_rp0;
+} hci_le_read_filter_accept_list_size_rp0;
 
 typedef PACKED(struct)
 {
   uint8_t Status;
-} hci_le_clear_white_list_rp0;
+} hci_le_clear_filter_accept_list_rp0;
 
 typedef PACKED(struct)
 {
   uint8_t Address_Type;
   uint8_t Address[6];
-} hci_le_add_device_to_white_list_cp0;
+} hci_le_add_device_to_filter_accept_list_cp0;
 
 typedef PACKED(struct)
 {
   uint8_t Status;
-} hci_le_add_device_to_white_list_rp0;
+} hci_le_add_device_to_filter_accept_list_rp0;
 
 typedef PACKED(struct)
 {
   uint8_t Address_Type;
   uint8_t Address[6];
-} hci_le_remove_device_from_white_list_cp0;
+} hci_le_remove_device_from_filter_accept_list_cp0;
 
 typedef PACKED(struct)
 {
   uint8_t Status;
-} hci_le_remove_device_from_white_list_rp0;
+} hci_le_remove_device_from_filter_accept_list_rp0;
 
 typedef PACKED(struct)
 {
@@ -1091,9 +1185,7 @@ typedef PACKED(struct)
   uint8_t Own_Address_Type;
   uint8_t Scanning_Filter_Policy;
   uint8_t Scanning_PHYs;
-  uint8_t Scan_Type;
-  uint16_t Scan_Interval;
-  uint16_t Scan_Window;
+  Scan_Param_Phy_t Scan_Param_Phy[2];
 } hci_le_set_extended_scan_parameters_cp0;
 
 typedef PACKED(struct)
@@ -1121,14 +1213,7 @@ typedef PACKED(struct)
   uint8_t Peer_Address_Type;
   uint8_t Peer_Address[6];
   uint8_t Initiating_PHYs;
-  uint16_t Scan_Interval;
-  uint16_t Scan_Window;
-  uint16_t Conn_Interval_Min;
-  uint16_t Conn_Interval_Max;
-  uint16_t Conn_Latency;
-  uint16_t Supervision_Timeout;
-  uint16_t Min_CE_Length;
-  uint16_t Max_CE_Length;
+  Init_Param_Phy_t Init_Param_Phy[3];
 } hci_le_extended_create_connection_cp0;
 
 typedef PACKED(struct)

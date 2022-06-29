@@ -63,7 +63,7 @@ void MPU_Config(void)
   /* Disable MPU */
   HAL_MPU_Disable();
 
-  /* Configure RAM region as Region N°0, 256KB of size and R/W region */
+  /* Configure RAM region as Region #0, 256KB of size and R/W region */
   MPU_InitStruct.Enable = MPU_REGION_ENABLE;
   MPU_InitStruct.BaseAddress = EXAMPLE_RAM_ADDRESS_START;
   MPU_InitStruct.Size = EXAMPLE_RAM_SIZE;
@@ -78,14 +78,14 @@ void MPU_Config(void)
 
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
-  /* Configure FLASH region as REGION N°1, 1MB of size and R/W region */
+  /* Configure FLASH region as REGION #1, 1MB of size and R/W region */
   MPU_InitStruct.BaseAddress = EXAMPLE_FLASH_ADDRESS_START;
   MPU_InitStruct.Size = EXAMPLE_FLASH_SIZE;
   MPU_InitStruct.Number = EXAMPLE_FLASH_REGION_NUMBER;
 
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
-  /* Configure Peripheral region as REGION N°2, 512MB of size, R/W and Execute
+  /* Configure Peripheral region as REGION #2, 512MB of size, R/W and Execute
   Never region */
   MPU_InitStruct.BaseAddress = EXAMPLE_PERIPH_ADDRESS_START;
   MPU_InitStruct.Size = EXAMPLE_PERIPH_SIZE;
@@ -107,7 +107,7 @@ void MPU_AccessPermConfig(void)
 {
   MPU_Region_InitTypeDef MPU_InitStruct;
 
-  /* Configure region for PrivilegedReadOnlyArray as REGION N°3, 32byte and R
+  /* Configure region for PrivilegedReadOnlyArray as REGION #3, 32byte and R
      only in privileged mode */
   /* Disable MPU */
   HAL_MPU_Disable();

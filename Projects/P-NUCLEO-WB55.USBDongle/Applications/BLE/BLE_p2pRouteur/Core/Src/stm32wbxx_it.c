@@ -205,7 +205,6 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32wbxx.s).                    */
 /******************************************************************************/
 
-
 /**
   * @brief  This function handles USB FS global interrupt request.
   * @param  None

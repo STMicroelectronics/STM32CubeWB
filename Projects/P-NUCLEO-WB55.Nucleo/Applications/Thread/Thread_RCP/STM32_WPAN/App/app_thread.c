@@ -122,6 +122,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliNotBuffer;
 extern uint8_t g_ot_notification_allowed;
 
 /* USER CODE BEGIN PV */
@@ -202,6 +203,9 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
     break;
   case ERR_THREAD_ERASE_PERSISTENT_INFO :
     APP_THREAD_TraceError("ERROR : ERR_THREAD_ERASE_PERSISTENT_INFO ",ErrCode);
+    break;
+  case ERR_THREAD_SET_NETWORK_KEY :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_NETWORK_KEY ",ErrCode);
     break;
   case ERR_THREAD_CHECK_WIRELESS :
     APP_THREAD_TraceError("ERROR : ERR_THREAD_CHECK_WIRELESS ",ErrCode);
@@ -669,6 +673,7 @@ void APP_THREAD_TL_THREAD_INIT(void)
   ThreadConfigBuffer.p_ThreadOtCmdRspBuffer = (uint8_t*)&ThreadOtCmdBuffer;
   ThreadConfigBuffer.p_ThreadNotAckBuffer = (uint8_t*)ThreadNotifRspEvtBuffer;
   ThreadConfigBuffer.p_ThreadCliRspBuffer = (uint8_t*)&ThreadCliCmdBuffer;
+  ThreadConfigBuffer.p_ThreadCliNotBuffer = (uint8_t*)&ThreadCliNotBuffer;
 
   TL_THREAD_Init( &ThreadConfigBuffer );
 }
@@ -775,7 +780,7 @@ void RCP_PacketFromM0_Processing() {
 #if !HDLC_FRAMING_CHECK
 	// Just send received buffer on UART without checking HDLC framing
 	HW_UART_Transmit_IT(CFG_CLI_UART, p_RCPPacket->RCP_packetPayload, p_RCPPacket->RCP_packetLength, TL_THREAD_SendAck);
-	APP_DBG("<-M4(%d)\n\r", p_RCPPacket->RCP_packetLength);
+	//APP_DBG("<-M4(%d)\n\r", p_RCPPacket->RCP_packetLength);
 #else
 	// First copy received HDLC frame at its right place
 	if (HdlcFrameCounter < HDLC_MAX_APPENDED_FRAME_NUMBER)

@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APP_DEBUG_H
-#define __APP_DEBUG_H
+#ifndef APP_DEBUG_H
+#define APP_DEBUG_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,4 +64,4 @@ extern "C" {
 } /* extern "C" */
 #endif
 
-#endif /*__APP_DEBUG_H */
+#endif /*APP_DEBUG_H */

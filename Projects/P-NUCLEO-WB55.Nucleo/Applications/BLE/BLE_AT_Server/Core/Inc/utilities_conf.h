@@ -62,5 +62,5 @@ extern "C" {
 }
 #endif
 
-#endif /*UTILITIES_CONF_H */
+#endif /* UTILITIES_CONF_H */
 

@@ -1,11 +1,11 @@
 /**
-  @page BLE_HeartRate example
+  @page BLE_HeartRate application
   
   @verbatim
   ******************************************************************************
   * @file    BLE/BLE_HeartRate/readme.txt 
   * @author  MCD Application Team
-  * @brief   Description of the BLE_HeartRate example.
+  * @brief   Description of the BLE_HeartRate application.
   ******************************************************************************
   *
   * Copyright (c) 2019-2021 STMicroelectronics.
@@ -18,7 +18,7 @@
   ******************************************************************************
   @endverbatim
 
-@par Example Description
+@par application Description
 
 How to use the Heart Rate profile as specified by the BLE SIG.
 
@@ -37,88 +37,92 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
 
 @par Directory contents 
   
-  - BLE/BLE_HeartRate/Core/Inc/stm32wbxx_hal_conf.h	    HAL configuration file
-  - BLE/BLE_HeartRate/Core/Inc/stm32wbxx_it.h          	Interrupt handlers header file
-  - BLE/BLE_HeartRate/Core/Inc/main.h                  	Header for main.c module
-  - BLE/BLE_HeartRate/STM32_WPAN/App/app_ble.h          Header for app_ble.c module
-  - BLE/BLE_HeartRate/Core/Inc/app_common.h            	Header for all modules with common definition
-  - BLE/BLE_HeartRate/Core/Inc/app_conf.h              	Parameters configuration file of the application
-  - BLE/BLE_HeartRate/Core/Inc/app_entry.h            	Parameters configuration file of the application
-  - BLE/BLE_HeartRate/STM32_WPAN/App/ble_conf.h         BLE Services configuration
-  - BLE/BLE_HeartRate/STM32_WPAN/App/ble_dbg_conf.h     BLE Traces configuration of the BLE services
-  - BLE/BLE_HeartRate/STM32_WPAN/App/dis_app.h          Header for dis_app.c module
-  - BLE/BLE_HeartRate/STM32_WPAN/App/hrs_app.h          Header for hrs_app.c module
-  - BLE/BLE_HeartRate/Core/Inc/hw_conf.h           		Configuration file of the HW
-  - BLE/BLE_HeartRate/Core/Inc/utilities_conf.h    		Configuration file of the utilities
-  - BLE/BLE_HeartRate/Core/Src/stm32wbxx_it.c          	Interrupt handlers
-  - BLE/BLE_HeartRate/Core/Src/main.c                  	Main program
-  - BLE/BLE_HeartRate/Core/Src/system_stm32wbxx.c      	stm32wbxx system source file
-  - BLE/BLE_HeartRate/STM32_WPAN/App/app_ble.c      	BLE Profile implementation
-  - BLE/BLE_HeartRate/Core/Src/app_entry.c      		Initialization of the application
-  - BLE/BLE_HeartRate/STM32_WPAN/App/dis_app.c      	Device Information Service application
-  - BLE/BLE_HeartRate/STM32_WPAN/App/hrs_app.c      	Heart Rate Service application
-  - BLE/BLE_HeartRate/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_HeartRate/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
-  - BLE/BLE_HeartRate/Core/Src/hw_timerserver.c 		Timer Server based on RTC
-  - BLE/BLE_HeartRate/Core/Src/hw_uart.c 				UART Driver
+  - BLE/BLE_HeartRate/Core/Inc/app_common.h                Header for all modules with common definition
+  - BLE/BLE_HeartRate/Core/Inc/app_conf.h                  Application configuration file for STM32WPAN Middleware
+  - BLE/BLE_HeartRate/Core/Inc/app_debug.h                 Header for app_debug.c module
+  - BLE/BLE_HeartRate/Core/Inc/app_entry.h                 Interface to the application
+  - BLE/BLE_HeartRate/Core/Inc/hw_conf.h                   Configuration file of the HW
+  - BLE/BLE_HeartRate/Core/Inc/hw_if.h                     Hardware Interface
+  - BLE/BLE_HeartRate/Core/Inc/main.h                      Header for main.c module
+  - BLE/BLE_HeartRate/Core/Inc/stm32wbxx_hal_conf.h        HAL configuration file
+  - BLE/BLE_HeartRate/Core/Inc/stm32wbxx_it.h              Interrupt handlers header file
+  - BLE/BLE_HeartRate/Core/Inc/stm32_lpm_if.h              Header for stm32_lpm_if.c module (device specific LP management)
+  - BLE/BLE_HeartRate/Core/Inc/utilities_conf.h            Configuration file of the utilities
+  - BLE/BLE_HeartRate/Core/Inc/vcp_conf.h                  Configuration of the vcp interface
+  - BLE/BLE_HeartRate/STM32_WPAN/App/app_ble.h             Header for app_ble.c module
+  - BLE/BLE_HeartRate/STM32_WPAN/App/ble_conf.h            BLE Services configuration
+  - BLE/BLE_HeartRate/STM32_WPAN/App/ble_dbg_conf.h        BLE Traces configuration of the BLE services
+  - BLE/BLE_HeartRate/STM32_WPAN/App/dis_app.h             Header for dis_app.c module
+  - BLE/BLE_HeartRate/STM32_WPAN/App/hrs_app.h             Header for hrs_app.c module
+  - BLE/BLE_HeartRate/STM32_WPAN/App/tl_dbg_conf.h         Debug configuration file for stm32wpan transport layer interface
+  - BLE/BLE_HeartRate/Core/Src/app_debug.c                 Debug capabilities source file for STM32WPAN Middleware
+  - BLE/BLE_HeartRate/Core/Src/app_entry.c                 Initialization of the application
+  - BLE/BLE_HeartRate/Core/Src/hw_timerserver.c            Timer Server based on RTC
+  - BLE/BLE_HeartRate/Core/Src/hw_uart.c                   UART Driver
+  - BLE/BLE_HeartRate/Core/Src/main.c                      Main program
+  - BLE/BLE_HeartRate/Core/Src/stm32wbxx_hal_msp.c         This file provides code for the MSP Initialization and de-Initialization
+  - BLE/BLE_HeartRate/Core/Src/stm32wbxx_it.c              Interrupt handlers
+  - BLE/BLE_HeartRate/Core/Src/stm32_lpm_if.c              Low Power Manager Interface
+  - BLE/BLE_HeartRate/Core/Src/system_stm32wbxx.c          stm32wbxx system source file
+  - BLE/BLE_HeartRate/STM32_WPAN/App/app_ble.c             BLE Profile implementation
+  - BLE/BLE_HeartRate/STM32_WPAN/App/dis_app.c             Device Information Service application
+  - BLE/BLE_HeartRate/STM32_WPAN/App/hrs_app.c             Heart Rate Service Application
+  - BLE/BLE_HeartRate/STM32_WPAN/Target/hw_ipcc.c          IPCC Driver
 
-     
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices.
+  - This application runs on STM32WB55xx devices.
   
-  - This example has been tested with an STMicroelectronics USB DONGLE board (MB1293C)
-    and can be easily tailored to any other supported device and development board.
+  - This application has been tested with an STMicroelectronics USB DONGLE board (MB1293C)
+    and can be easily tailored to any other supported device 
+    and development board.
 
 @par How to use it ? 
 
 This application requires having the stm32wb5x_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
-Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
 Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the detailed procedure to change the
-Wireless Coprocessor binary.  
+Wireless Coprocessor binary or see following wiki for Hardware setup:
+https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_BLE_Hardware_Setup
 
 In order to make the program work, you must do the following:
  - Open your toolchain 
  - Rebuild all files and flash the board with the executable file
-
-Debug traces can be enabled/disabled in app_conf.h 
-Please note that debug traces are disabled. 
-If debug traces are enabled, a debug window (ex teraterm) must be opened (if not program won't work properly).
+ - OR use the BLE_HeartRate_reference.hex from Binary directory
 
  On the android/ios device, enable the Bluetooth communications, and if not done before,
- - Install the ST BLE Profile application on the android device
-	https://play.google.com/store/apps/details?id=com.stm.bluetoothlevalidation&hl=en
-    	https://itunes.apple.com/fr/App/st-ble-profile/id1081331769?mt=8
-
- - Install the ST BLE Sensor application on the ios/android device
-	https://play.google.com/store/apps/details?id=com.st.bluems
-	https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
+ - Install the ST BLE Sensor and/or ST BLE Toolbox applications:
+    https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_smartphone_applications#ST_BLE_Sensor
+    https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_smartphone_applications#ST_BLE_Toolbox
 
  - Power on the USB DONGLE board with the BLE_HeartRate application
- - Then, click on the App icon, ST BLE Sensor (android device)
+ - click on the ST BLE Sensor app
  - connect to a device
  - select the HRSTM in the device list
 
-The Heart Rate is displayed each second on the android device.
+The Heart Rate is displayed each second on the android/ios device.
 
-=> Getting traces:
-  To get the traces, you have to enable CFG_USB_INTERFACE_ENABLE, with CFG_DEBUG_BLE_TRACE for BLE services traces 
-  or with CFG_DEBUG_APP_TRACE for application traces.
-  You need also to connect your Board to the Hyperterminal (through USB STVirtual COM Port).
-  The UART must be configured as follows:
-    - BaudRate = 115200 baud  
-    - Word Length = 8 Bits 
-    - Stop Bit = 1 bit
-    - Parity = none
-    - Flow control = none
+@note Debug traces can be enabled/disabled in app_conf.h 
+      
+      To get the traces, you have to enable CFG_USB_INTERFACE_ENABLE, with CFG_DEBUG_BLE_TRACE for BLE services traces 
+      or with CFG_DEBUG_APP_TRACE for application traces.
 
-=> Running the application
+      On the PC side:
+       - open a terminal window with the following settings:
+         baud rate of 115200
+         Byte size of 8
+         Parity None
+         Stop bits 1
+         Data Flow Control None
 
-For more details refer to the Application Note: 
-  AN5289 - Building a Wireless application 
+Available Wiki pages:
+  - https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_overview
+  - https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_HeartRate
  
+For more details refer to the application Note: 
+  AN5289 - Building a Wireless application 
+
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */
  

@@ -1050,16 +1050,10 @@
       <group>
         <name>Core</name>
         <file>
-          <name>$PROJ_DIR$/../Core/Src/app_entry.c</name>
-        </file>
-        <file>
           <name>$PROJ_DIR$/../Core/Src/main.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$/../Core/Src/stm32wbxx_it.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../Core/Src/stm32wbxx_hal_msp.c</name>
+          <name>$PROJ_DIR$/../Core/Src/app_entry.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$/../Core/Src/app_debug.c</name>
@@ -1072,6 +1066,12 @@
         </file>
         <file>
           <name>$PROJ_DIR$/../Core/Src/stm32_lpm_if.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$/../Core/Src/stm32wbxx_it.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$/../Core/Src/stm32wbxx_hal_msp.c</name>
         </file>
       </group>
       <group>
@@ -1120,9 +1120,6 @@
     <group>
       <name>STM32WBxx_HAL_Driver</name>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</name>
       </file>
       <file>
@@ -1160,6 +1157,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart.c</name>

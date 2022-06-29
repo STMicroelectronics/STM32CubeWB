@@ -1,7 +1,7 @@
 
 /**
   ******************************************************************************
- * @file    bats_app.h
+ * @file    bas_app.h
  * @author  MCD Application Team
  * @brief   Header for bats_app.c module
   ******************************************************************************
@@ -18,8 +18,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __BAS_APP_H
-#define __BAS_APP_H
+#ifndef BAS_APP_H
+#define BAS_APP_H
 
 #ifdef __cplusplus
 extern "C" 
@@ -40,4 +40,4 @@ void BASAPP_Level(void);
 }
 #endif
 
-#endif /*__BAS_APP_H */
+#endif /* BAS_APP_H */

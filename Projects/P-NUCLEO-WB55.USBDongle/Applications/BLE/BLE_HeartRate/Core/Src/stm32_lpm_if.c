@@ -277,12 +277,14 @@ static void EnterLowPower( void )
       /* Release ENTRY_STOP_MODE semaphore */
       LL_HSEM_ReleaseLock( HSEM, CFG_HW_ENTRY_STOP_MODE_SEMID, 0 );
 
-      Switch_On_HSI( );
+      Switch_On_HSI();
+      __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_0);
     }
   }
   else
   {
-    Switch_On_HSI( );
+    Switch_On_HSI();
+    __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_0);
   }
 
   /* Release RCC semaphore */

@@ -16,8 +16,8 @@
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx_DFP.1.0.0</PackID>
-          <PackURL>http://www.keil.com/pack</PackURL>
+          <PackID>Keil.STM32WBxx_DFP.1.2.0</PackID>
+          <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -185,6 +185,7 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -351,7 +352,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -379,9 +380,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>::CMSIS</GroupName>
-        </Group>
         <Group>
           <GroupName>Application/Core</GroupName>
           <Files>
@@ -424,6 +422,11 @@
               <FileName>flash_driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Src\flash_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\stm32wbxx_hal_msp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -585,6 +588,26 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32wbxx_hal_hsem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_ipcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_ipcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_rng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -716,6 +739,9 @@
               <FilePath>../../../../../../Utilities/sequencer/stm32_seq.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>

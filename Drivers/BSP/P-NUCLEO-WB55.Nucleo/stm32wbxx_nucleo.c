@@ -44,7 +44,7 @@
   */
 #define __STM32WBxx_NUCLEO_BSP_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define __STM32WBxx_NUCLEO_BSP_VERSION_SUB1   (0x00U) /*!< [23:16] sub1 version */
-#define __STM32WBxx_NUCLEO_BSP_VERSION_SUB2   (0x04U) /*!< [15:8]  sub2 version */
+#define __STM32WBxx_NUCLEO_BSP_VERSION_SUB2   (0x05U) /*!< [15:8]  sub2 version */
 #define __STM32WBxx_NUCLEO_BSP_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */ 
 #define __STM32WBxx_NUCLEO_BSP_VERSION        ((__STM32WBxx_NUCLEO_BSP_VERSION_MAIN << 24)\
                                              |(__STM32WBxx_NUCLEO_BSP_VERSION_SUB1 << 16)\
@@ -374,7 +374,7 @@ JOYState_TypeDef BSP_JOY_GetState(void)
   /* Wait for the end of conversion */
   HAL_ADC_PollForConversion(&hnucleo_Adc, 10);
   
-  /* Check if the continous conversion of regular channel is finished */
+  /* Check if the continuous conversion of regular channel is finished */
   if(HAL_ADC_GetState(&hnucleo_Adc) & HAL_ADC_STATE_REG_EOC)
   {
     /* Get the converted value of regular channel */

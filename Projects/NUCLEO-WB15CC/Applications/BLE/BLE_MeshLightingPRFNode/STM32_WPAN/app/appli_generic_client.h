@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_GENERIC_CLIENT_H
-#define __APPLI_GENERIC_CLIENT_H
+#ifndef APPLI_GENERIC_CLIENT_H
+#define APPLI_GENERIC_CLIENT_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -35,6 +35,6 @@
 MOBLE_RESULT Appli_ConfigClient_Set(void); 
 MOBLE_RESULT Appli_GenericClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opcode, MOBLEUINT8 *msg_params);
 
-#endif /* __APPLI_GENERIC_CLIENT_H */
+#endif /* APPLI_GENERIC_CLIENT_H */
 
 

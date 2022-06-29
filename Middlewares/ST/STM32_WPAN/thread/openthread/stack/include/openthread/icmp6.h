@@ -29,7 +29,7 @@
 /**
  * @file
  * @brief
- *  This file defines the top-level icmp6 functions for the OpenThread library.
+ *  This file defines the top-level ICMPv6 functions for the OpenThread library.
  */
 
 #ifndef OPENTHREAD_ICMP6_H_
@@ -58,11 +58,14 @@ extern "C" {
  */
 typedef enum otIcmp6Type
 {
-    OT_ICMP6_TYPE_DST_UNREACH   = 1,   ///< Destination Unreachable
-    OT_ICMP6_TYPE_PACKET_TO_BIG = 2,   ///< Packet To Big
-    OT_ICMP6_TYPE_TIME_EXCEEDED = 3,   ///< Time Exceeded
-    OT_ICMP6_TYPE_ECHO_REQUEST  = 128, ///< Echo Request
-    OT_ICMP6_TYPE_ECHO_REPLY    = 129, ///< Echo Reply
+    OT_ICMP6_TYPE_DST_UNREACH       = 1,   ///< Destination Unreachable
+    OT_ICMP6_TYPE_PACKET_TO_BIG     = 2,   ///< Packet To Big
+    OT_ICMP6_TYPE_TIME_EXCEEDED     = 3,   ///< Time Exceeded
+    OT_ICMP6_TYPE_PARAMETER_PROBLEM = 4,   ///< Parameter Problem
+    OT_ICMP6_TYPE_ECHO_REQUEST      = 128, ///< Echo Request
+    OT_ICMP6_TYPE_ECHO_REPLY        = 129, ///< Echo Reply
+    OT_ICMP6_TYPE_ROUTER_SOLICIT    = 133, ///< Router Solicitation
+    OT_ICMP6_TYPE_ROUTER_ADVERT     = 134, ///< Router Advertisement
 } otIcmp6Type;
 
 /**

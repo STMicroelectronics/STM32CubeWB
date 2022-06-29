@@ -386,8 +386,6 @@ void GetApplicationVendorModels(const MODEL_Vendor_cb_t** pModelsTable, MOBLEUIN
 void BLEMesh_ModelsInit(void)
 {
   
-#ifdef ENABLE_SAVE_MODEL_STATE_NVM
-  
   MOBLEUINT16 modelStateLoad_Size;
   MOBLEUINT8 modelStateLoadBuff[APP_NVM_MODEL_SIZE];    
   
@@ -419,7 +417,6 @@ void BLEMesh_ModelsInit(void)
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC
   Appli_Light_LCs_Init();
 #endif
-#endif  
   
   /* Load generic model states from nvm */
   AppliNvm_LoadModelState(modelStateLoadBuff, &modelStateLoad_Size);

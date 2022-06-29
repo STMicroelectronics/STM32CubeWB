@@ -100,7 +100,8 @@ static void Serial_RxCpltCallback( void )
 {
   CircularQueue_Add(&RxQueue, &InputCharFromUart,1,1);
 
-  Serial_InterfaceProcess();
+//  Serial_InterfaceProcess();
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_SERIAL_REQ_ID, CFG_SCH_PRIO_0);
   UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_UART_RX_REQ_ID, CFG_SCH_PRIO_0);
 
   return;
@@ -419,6 +420,7 @@ void Serial_Init(void)
   CircularQueue_Init(&RxQueue, RxQueueBuffer, RX_BUFFER_SIZE, 1, CIRCULAR_QUEUE_NO_WRAP_FLAG);
   
 //  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, &InputCharFromUart, 1, Serial_RxCpltCallback);
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SERIAL_REQ_ID, UTIL_SEQ_RFU, Serial_InterfaceProcess );
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_UART_RX_REQ_ID, UTIL_SEQ_RFU, Serial_Uart_Rx_Task );
   UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_UART_RX_REQ_ID, CFG_SCH_PRIO_0);
 

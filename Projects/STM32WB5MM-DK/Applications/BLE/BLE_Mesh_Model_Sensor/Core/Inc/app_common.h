@@ -18,8 +18,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APP_COMMON_H
-#define __APP_COMMON_H
+#ifndef APP_COMMON_H
+#define APP_COMMON_H
 
 #ifdef __cplusplus
 extern "C"
@@ -116,4 +116,4 @@ extern "C"
 }
 #endif
 
-#endif /*__APP_COMMON_H */
+#endif /* APP_COMMON_H */

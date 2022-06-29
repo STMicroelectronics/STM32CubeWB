@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MODELS_H
-#define __MODELS_H
+#ifndef MODELS_H
+#define MODELS_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -44,6 +44,6 @@ MOBLE_RESULT MeshClient_SetRemotePublication(MOBLEUINT32 modelId, MOBLEUINT8 ele
                                               MOBLEUINT32 length, MOBLEBOOL ack_flag,
                                               MOBLEUINT8 isVendor);
 
-#endif /* __MODELS_H */
+#endif /* MODELS_H */
 
 

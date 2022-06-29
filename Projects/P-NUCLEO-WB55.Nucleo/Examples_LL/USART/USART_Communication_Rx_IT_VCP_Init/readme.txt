@@ -8,7 +8,7 @@
   * @brief   Description of the USART_Communication_Rx_IT_VCP_Init example.
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -22,7 +22,8 @@
 
 This example shows how to configure GPIO and USART peripheral for receiving characters
 from HyperTerminal (PC) in Asynchronous mode using Interrupt mode. Peripheral initialization is done
-using LL initialization function to demonstrate LL init usage.
+using LL initialization function to demonstrate LL init usage. Virtual Com Port (VCP) feature of STLINK 
+is used for UART communication between board and PC.
 
 USART Peripheral is configured in asynchronous mode (115200 bauds, 8 data bit, 1 start bit, 1 stop bit, no parity).
 No HW flow control is used.

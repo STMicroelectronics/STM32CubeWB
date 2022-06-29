@@ -14,7 +14,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -92,6 +92,13 @@ LoopFillZerobss:
 Reset_Handler:
   ldr   r0, =_estack
   mov   sp, r0          /* set stack pointer */
+  /* If we exit from standby mode, restore CPU context and jump to asleep point. */
+  bl    STBY_BootManager
+  cmp   R0, #1
+  beq   CPUcontextRestore
+/* buffer for local variables (up to 10)from STBY_BootManager*/
+  SUB   SP, SP, #0x28
+/* end of specific code section for standby */
 /* Call the clock system initialization function.*/
   bl  SystemInit
 
@@ -109,6 +116,28 @@ Reset_Handler:
 
 LoopForever:
   b LoopForever
+
+/* These 2 functions are designed to save and then restore CPU context. */
+  .global CPUcontextSave
+  .type CPUcontextSave, %function
+CPUcontextSave:
+  PUSH   { R4 - R12, LR }        /* store R4 to R12 and LR (10 words) onto the stack */
+  LDR    R4, =STBY_BackupMSP     /* load address of STBY_BackupMSP into R4 */
+  MOV    R3, SP                  /* load the stack pointer into R3 */
+  STR    R3, [R4]                /* store the MSP into STBY_BackupMSP */
+  DSB
+  WFI                            /* all saved, trigger deep sleep */
+
+CPUcontextRestore:
+  /* Even if we fall through the WFI instruction, we will immediately
+   * execute a context restore and end up where we left off with no
+   * ill effects.  Normally at this point the core will either be
+   * powered off or reset (depending on the deep sleep level). */
+  LDR    R4, =STBY_BackupMSP     /* load address of STBY_BackupMSP into R4 */
+  LDR    R4, [R4]                /* load the SP from STBY_BackupMSP */
+  MOV    SP, R4                  /* restore the SP from R4 */
+  POP    { R4 - R12, PC }        /* load R4 to R12 and PC (10 words) from the stack */
+/* end of specific code section for standby */
     
 .size	Reset_Handler, .-Reset_Handler
 

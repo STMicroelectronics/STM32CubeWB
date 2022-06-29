@@ -46,7 +46,7 @@ MEMORY
 {
 FLASH (rx)                 : ORIGIN = 0x08000000, LENGTH = 98K
 RAM1 (xrw)                 : ORIGIN = 0x20000008, LENGTH = 0x2FF8
-RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K
+RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 4K
 }
 
 /* Define output sections */

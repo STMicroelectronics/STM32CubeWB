@@ -40,31 +40,31 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
 
 @par Directory contents 
   
-  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/stm32wbxx_hal_conf.h		HAL configuration file
-  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/stm32wbxx_it.h          	Interrupt handlers header file
-  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/main.h                  	Header for main.c module
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/app_ble.h          Header for app_ble.c module
-  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/app_common.h            	Header for all modules with common definition
-  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/app_conf.h              	Parameters configuration file of the application
-  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/app_entry.h            	Parameters configuration file of the application
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/ble_conf.h         BLE Services configuration
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/ble_dbg_conf.h     BLE Traces configuration of the BLE services
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/dis_app.h          Header for dis_app.c module
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/hrs_app.h          Header for hrs_app.c module
-  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/hw_conf.h           		Configuration file of the HW
-  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/utilities_conf.h    		Configuration file of the utilities
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/FreeRTOSConfig.h   Configuration file of FreeRTOS
-  - BLE/BLE_HeartRateFreeRTOS/Core/Src/stm32wbxx_it.c          	Interrupt handlers
-  - BLE/BLE_HeartRateFreeRTOS/Core/Src/main.c                  	Main program
-  - BLE/BLE_HeartRateFreeRTOS/Core/Src/system_stm32wbxx.c      	stm32wbxx system source file
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/app_ble.c      	BLE Profile implementation
-  - BLE/BLE_HeartRateFreeRTOS/Core/Src/app_entry.c      		Initialization of the application
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/dis_app.c      	Device Information Service application
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/hrs_app.c      	Heart Rate Service application
-  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_HeartRateFreeRTOS/Core/Src/stm32_lpm_if.c			Low Power Manager Interface
-  - BLE/BLE_HeartRateFreeRTOS/Core/Src/hw_timerserver.c 		Timer Server based on RTC
-  - BLE/BLE_HeartRateFreeRTOS/Core/Src/hw_uart.c 				UART Driver
+  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/stm32wbxx_hal_conf.h    HAL configuration file
+  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/stm32wbxx_it.h          Interrupt handlers header file
+  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/main.h                  Header for main.c module
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/app_ble.h         Header for app_ble.c module
+  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/app_common.h            Header for all modules with common definition
+  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/app_conf.h              Parameters configuration file of the application
+  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/app_entry.h             Parameters configuration file of the application
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/ble_conf.h        BLE Services configuration
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/ble_dbg_conf.h    BLE Traces configuration of the BLE services
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/dis_app.h         Header for dis_app.c module
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/hrs_app.h         Header for hrs_app.c module
+  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/hw_conf.h               Configuration file of the HW
+  - BLE/BLE_HeartRateFreeRTOS/Core/Inc/utilities_conf.h        Configuration file of the utilities
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/FreeRTOSConfig.h  Configuration file of FreeRTOS
+  - BLE/BLE_HeartRateFreeRTOS/Core/Src/stm32wbxx_it.c          Interrupt handlers
+  - BLE/BLE_HeartRateFreeRTOS/Core/Src/main.c                  Main program
+  - BLE/BLE_HeartRateFreeRTOS/Core/Src/system_stm32wbxx.c      stm32wbxx system source file
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/app_ble.c         BLE Profile implementation
+  - BLE/BLE_HeartRateFreeRTOS/Core/Src/app_entry.c             Initialization of the application
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/dis_app.c         Device Information Service application
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/App/hrs_app.c         Heart Rate Service application
+  - BLE/BLE_HeartRateFreeRTOS/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
+  - BLE/BLE_HeartRateFreeRTOS/Core/Src/stm32_lpm_if.c          Low Power Manager Interface
+  - BLE/BLE_HeartRateFreeRTOS/Core/Src/hw_timerserver.c        Timer Server based on RTC
+  - BLE/BLE_HeartRateFreeRTOS/Core/Src/hw_uart.c               UART Driver
 
      
 @par Hardware and Software environment
@@ -89,13 +89,10 @@ In order to make the program work, you must do the following:
  - Rebuild all files and flash the board with the executable file
 
  On the android/ios device, enable the Bluetooth communications, and if not done before,
- - Install the ST BLE Profile application on the android device
-	https://play.google.com/store/apps/details?id=com.stm.bluetoothlevalidation&hl=en
-    https://itunes.apple.com/fr/App/st-ble-profile/id1081331769?mt=8
 
  - Install the ST BLE Sensor application on the ios/android device
-	https://play.google.com/store/apps/details?id=com.st.bluems
-	https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
+      https://play.google.com/store/apps/details?id=com.st.bluems
+      https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
 
  - Power on the Nucleo board with the BLE_HeartRateFreeRTOS application
  - Then, click on the App icon, ST BLE Sensor (android device)

@@ -628,7 +628,6 @@ uint8_t P2P_Client_APP_Get_State( void ) {
  */
 tBleStatus Write_Char(uint16_t UUID, uint8_t Service_Instance, uint8_t *pPayload)
 {
-
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
   uint8_t index;
 
@@ -636,17 +635,14 @@ tBleStatus Write_Char(uint16_t UUID, uint8_t Service_Instance, uint8_t *pPayload
   while((index < BLE_CFG_CLT_MAX_NBR_CB) &&
           (aP2PClientContext[index].state != APP_BLE_IDLE))
   {
-
     switch(UUID)
     {
       case P2P_WRITE_CHAR_UUID: /* SERVER RX -- so CLIENT TX */
-        ret =aci_gatt_write_without_resp(aP2PClientContext[index].connHandle,
+        ret = aci_gatt_write_without_resp(aP2PClientContext[index].connHandle,
                                          aP2PClientContext[index].P2PWriteToServerCharHdle,
                                          2, /* charValueLen */
                                          (uint8_t *)  pPayload);
-
         break;
-
       default:
         break;
     }
@@ -658,14 +654,13 @@ tBleStatus Write_Char(uint16_t UUID, uint8_t Service_Instance, uint8_t *pPayload
 
 void Button_Trigger_Received(void)
 {
-
-
   APP_DBG_MSG("-- P2P APPLICATION CLIENT  : BUTTON PUSHED - WRITE TO SERVER \n ");
   APP_DBG_MSG(" \n\r");
-  if(P2P_Client_App_Context.ButtonStatus.Button1==0x00){
-    P2P_Client_App_Context.ButtonStatus.Button1=0x01;
+  if(P2P_Client_App_Context.ButtonStatus.Button1 == 0x00)
+  {
+    P2P_Client_App_Context.ButtonStatus.Button1 = 0x01;
   }else {
-    P2P_Client_App_Context.ButtonStatus.Button1=0x00;
+    P2P_Client_App_Context.ButtonStatus.Button1 = 0x00;
   }
 
   Write_Char( P2P_WRITE_CHAR_UUID, 0, (uint8_t *)&P2P_Client_App_Context.ButtonStatus);
@@ -677,18 +672,14 @@ void Update_Service()
 {
   uint16_t enable = 0x0001;
   uint16_t disable = 0x0000;
-
   uint8_t index;
 
   index = 0;
   while((index < BLE_CFG_CLT_MAX_NBR_CB) &&
           (aP2PClientContext[index].state != APP_BLE_IDLE))
   {
-
-
     switch(aP2PClientContext[index].state)
     {
-
       case APP_BLE_DISCOVER_SERVICES:
         APP_DBG_MSG("P2P_DISCOVER_SERVICES\n");
         break;
@@ -697,21 +688,18 @@ void Update_Service()
         aci_gatt_disc_all_char_of_service(aP2PClientContext[index].connHandle,
                                           aP2PClientContext[index].P2PServiceHandle,
                                           aP2PClientContext[index].P2PServiceEndHandle);
-
         break;
       case APP_BLE_DISCOVER_WRITE_DESC: /* Not Used - No descriptor */
         APP_DBG_MSG("* GATT : Discover Descriptor of TX - Write Characteritic\n");
         aci_gatt_disc_all_char_desc(aP2PClientContext[index].connHandle,
                                     aP2PClientContext[index].P2PWriteToServerCharHdle,
                                     aP2PClientContext[index].P2PWriteToServerCharHdle+2);
-
         break;
       case APP_BLE_DISCOVER_NOTIFICATION_CHAR_DESC:
         APP_DBG_MSG("* GATT : Discover Descriptor of Rx - Notification Characteritic\n");
         aci_gatt_disc_all_char_desc(aP2PClientContext[index].connHandle,
                                     aP2PClientContext[index].P2PNotificationCharHdle,
                                     aP2PClientContext[index].P2PNotificationCharHdle+2);
-
         break;
       case APP_BLE_ENABLE_NOTIFICATION_DESC:
         APP_DBG_MSG("* GATT : Enable Server Notification\n");
@@ -719,10 +707,8 @@ void Update_Service()
                                  aP2PClientContext[index].P2PNotificationDescHandle,
                                  2,
                                  (uint8_t *)&enable);
-
         aP2PClientContext[index].state = APP_BLE_CONNECTED_CLIENT;
         BSP_LED_Off(LED_RED);
-
         break;
       case APP_BLE_DISABLE_NOTIFICATION_DESC :
         APP_DBG_MSG("* GATT : Disable Server Notification\n");
@@ -730,9 +716,7 @@ void Update_Service()
                                  aP2PClientContext[index].P2PNotificationDescHandle,
                                  2,
                                  (uint8_t *)&disable);
-
         aP2PClientContext[index].state = APP_BLE_CONNECTED_CLIENT;
-
         break;
       default:
         break;

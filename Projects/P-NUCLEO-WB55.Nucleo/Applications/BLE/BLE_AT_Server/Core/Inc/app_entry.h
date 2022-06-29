@@ -64,5 +64,5 @@ extern "C" {
 } /* extern "C" */
 #endif
 
-#endif /*APP_ENTRY_H */
+#endif /* APP_ENTRY_H */
 

@@ -8,7 +8,7 @@
   * @brief   Description of the LPUART_WakeUpFromStop_Init LPUART example.
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -21,7 +21,7 @@
 @par Example Description
   
 Configuration of GPIO and LPUART peripherals to allow characters 
-received on LPUART_RX pin to wake up the MCU from low-power mode. This example is based 
+received on LPUART_RX pin to wake up the MCU from low-power "STOP0" mode. This example is based 
 on the LPUART LL API. The peripheral initialization uses LL 
 initialization function to demonstrate LL init usage.
 

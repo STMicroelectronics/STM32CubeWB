@@ -85,9 +85,8 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
   /* System interrupt init*/
+  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* USER CODE BEGIN Init */
 
@@ -449,14 +448,14 @@ void UserButton_Callback(void)
 
 /**
   * @brief  Function to manage SMPS forced bypass IRQ Handler
-  * @note   Function called when Vdd droped below BORH level.
+  * @note   Function called when Vdd dropped below BORH level.
   *         SMPS forced from step-down to bypass mode automatically, by hardware.
   * @param  None
   * @retval None
   */
 void PWR_SMPS_ForcedBypass_Callback(void)
 {
-  /* Optionaly: User code to be implemented here */
+  /* Optionally: User code to be implemented here */
   __NOP();
 }
 

@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    PWM_handlers.c
-* @author  BLE Mesh Team
-* @brief   Handlers for PWM and other support functions.
+  * @file    PWM_handlers.c
+  * @author  MCD Application Team
+  * @brief   Handlers for PWM and other support functions.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"

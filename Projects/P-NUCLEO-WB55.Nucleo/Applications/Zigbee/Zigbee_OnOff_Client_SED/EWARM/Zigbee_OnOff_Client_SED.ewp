@@ -1128,12 +1128,6 @@
     <group>
       <name>STM32WBxx_HAL_Driver</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim_ex.c</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c</name>
       </file>
       <file>
@@ -1186,6 +1180,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc_ex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim_ex.c</name>
       </file>
     </group>
   </group>

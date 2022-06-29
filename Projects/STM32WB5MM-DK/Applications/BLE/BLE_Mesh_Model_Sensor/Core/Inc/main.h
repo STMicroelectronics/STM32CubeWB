@@ -18,8 +18,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef MAIN_H
+#define MAIN_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wbxx_hal.h"
@@ -34,4 +34,4 @@ extern RTC_HandleTypeDef hrtc; /**< RTC handler declaration */
 void Error_Handler(void);
 /* Exported functions ------------------------------------------------------- */
 
-#endif /* __MAIN_H */
+#endif /* MAIN_H */

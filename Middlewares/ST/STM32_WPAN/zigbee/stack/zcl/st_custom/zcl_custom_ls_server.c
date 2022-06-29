@@ -90,7 +90,7 @@ custom_ls_command_handler(struct ZbZclClusterT *clusterPtr, struct ZbZclHeaderT 
             memset(&req, 0, sizeof(req));
 
             if (custom_ls_cluster->callbacks.set_custom_ls_command == NULL) {
-                return_status = ZCL_STATUS_UNSUPP_CLUSTER_COMMAND;
+                return_status = ZCL_STATUS_UNSUPP_COMMAND;
                 break;
             }
 
@@ -103,7 +103,7 @@ custom_ls_command_handler(struct ZbZclClusterT *clusterPtr, struct ZbZclHeaderT 
             break;
         }
         default:
-            return_status = ZCL_STATUS_UNSUPP_CLUSTER_COMMAND;
+            return_status = ZCL_STATUS_UNSUPP_COMMAND;
             break;
     }
     return return_status;

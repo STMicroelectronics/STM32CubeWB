@@ -32,7 +32,7 @@
        HAL_RTC_MODULE_ENABLED define in stm32wbxx_hal_conf.h 
 
     [..]
-    (@) HAL RTC alarm and HAL RTC wakeup drivers can’t be used with low power modes:
+    (@) HAL RTC alarm and HAL RTC wakeup drivers can't be used with low power modes:
         The wake up capability of the RTC may be intrusive in case of prior low power mode
         configuration requiring different wake up sources.
         Application/Example behavior is no more guaranteed 
@@ -102,19 +102,19 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority)
   RCC_PeriphCLKInitTypeDef  PeriphClkInitStruct;
 
 #ifdef RTC_CLOCK_SOURCE_LSE
-  /* Configue LSE as RTC clock soucre */
+  /* Configure LSE as RTC clock source */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
 #elif defined (RTC_CLOCK_SOURCE_LSI)
-  /* Configue LSI as RTC clock soucre */
+  /* Configure LSI as RTC clock source */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI1;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
 #elif defined (RTC_CLOCK_SOURCE_HSE)
-  /* Configue HSE as RTC clock soucre */
+  /* Configure HSE as RTC clock source */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;

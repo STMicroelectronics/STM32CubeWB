@@ -120,7 +120,43 @@ otError otUdpOpen(otInstance *aInstance, otUdpSocket *aSocket, otUdpReceive aCal
   return (otError)p_ot_req->Data[0];
 }
 
-otError otUdpClose(otUdpSocket *aSocket)
+bool otUdpIsOpen(otInstance *aInstance, const otUdpSocket *aSocket)
+{
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_IS_OPEN;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aSocket;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (bool)p_ot_req->Data[0];
+}
+
+bool otUdpIsPortInUse(otInstance *aInstance, uint16_t port)
+{
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_UDP_IS_PORT_IN_USE;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)port;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (bool)p_ot_req->Data[0];
+}
+
+otError otUdpClose(otInstance *aInstance, otUdpSocket *aSocket)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -137,7 +173,7 @@ otError otUdpClose(otUdpSocket *aSocket)
   return (otError)p_ot_req->Data[0];
 }
 
-otError otUdpBind(otUdpSocket *aSocket, otSockAddr *aSockName)
+otError otUdpBind(otInstance *aInstance, otUdpSocket *aSocket, const otSockAddr *aSockName, otNetifIdentifier aNetif)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -145,9 +181,10 @@ otError otUdpBind(otUdpSocket *aSocket, otSockAddr *aSockName)
 
   p_ot_req->ID = MSG_M4TOM0_OT_UDP_BIND;
 
-  p_ot_req->Size=2;
+  p_ot_req->Size=3;
   p_ot_req->Data[0] = (uint32_t)aSocket;
   p_ot_req->Data[1] = (uint32_t)aSockName;
+  p_ot_req->Data[2] = (uint32_t)aNetif;
 
   Ot_Cmd_Transfer();
 
@@ -155,7 +192,7 @@ otError otUdpBind(otUdpSocket *aSocket, otSockAddr *aSockName)
   return (otError)p_ot_req->Data[0];
 }
 
-otError otUdpConnect(otUdpSocket *aSocket, otSockAddr *aSockName)
+otError otUdpConnect(otInstance *aInstance, otUdpSocket *aSocket, const otSockAddr *aSockName)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -173,7 +210,7 @@ otError otUdpConnect(otUdpSocket *aSocket, otSockAddr *aSockName)
   return (otError)p_ot_req->Data[0];
 }
 
-otError otUdpSend(otUdpSocket *aSocket, otMessage *aMessage, const otMessageInfo *aMessageInfo)
+otError otUdpSend(otInstance *aInstance, otUdpSocket *aSocket, otMessage *aMessage, const otMessageInfo *aMessageInfo)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */

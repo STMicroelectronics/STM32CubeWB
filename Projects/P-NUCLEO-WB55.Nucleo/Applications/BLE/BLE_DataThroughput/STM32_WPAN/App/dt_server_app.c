@@ -15,7 +15,7 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -32,8 +32,13 @@
 #include "stm32_lpm.h"
 
 #include "ble_common.h"
-#include "ble_clock.h"
 
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
 typedef enum
 {
   DTS_APP_FLOW_OFF,
@@ -53,44 +58,64 @@ typedef struct
   DTS_App_Transfer_Req_Status_t ButtonTransferReq;
   DTS_App_Flow_Status_t DtFlowStatus;
 } DTS_App_Context_t;
+/* USER CODE BEGIN PTD */
 
-/* Private defines -----------------------------------------------------------*/
+/* USER CODE END PTD */
+
+/* Private defines ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
 /* Private macros ------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-DTS_App_Context_t DataTransferServerContext;
-static uint8_t Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE]; /* DATA_NOTIFICATION_MAX_PACKET_SIZE data + CRC */
-uint32_t DataReceived;
-
-/* Global variables ----------------------------------------------------------*/
-/* Functions Definition ------------------------------------------------------*/
-/* Private functions ----------------------------------------------------------*/
-static void ButtonTriggerReceived(void);
-static void DT_App_Button2_Trigger_Received( void );
-static void DT_App_Button3_Trigger_Received( void );
-static void SendData(void);
-static void BLE_App_Delay_DataThroughput( void );
-extern uint16_t Att_Mtu_Exchanged;
-extern uint8_t TimerDataThroughputWrite_Id;
-
 #define DEFAULT_TS_MEASUREMENT_INTERVAL   (1000000/CFG_TS_TICK_VAL)  /**< 1s */
 #define DELAY_1s  (1*DEFAULT_TS_MEASUREMENT_INTERVAL)
 #define TIMEUNIT  1
 
 #define BOUNCE_THRESHOLD                20U
 #define LONG_PRESS_THRESHOLD            1000U
-/*************************************************************
- *
- * PUBLIC FUNCTIONS
- *
- *************************************************************/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+/**
+ * START of Section BLE_APP_CONTEXT
+ */
+
+PLACE_IN_SECTION("BLE_APP_CONTEXT") DTS_App_Context_t DTS_Context;
+
+/**
+ * END of Section BLE_APP_CONTEXT
+ */
+static uint8_t Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE]; /* DATA_NOTIFICATION_MAX_PACKET_SIZE data + CRC */
+uint32_t DataReceived;
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
+/* Private functions prototypes-----------------------------------------------*/
+static void DTS_App_Button1_Trigger_Received( void );
+static void DTS_App_Button2_Trigger_Received( void );
+static void DTS_App_Button3_Trigger_Received( void );
+static void SendData(void);
+static void BLE_App_Delay_DataThroughput( void );
+extern uint16_t Att_Mtu_Exchanged;
+extern uint8_t TimerDataThroughputWrite_Id;
+/* USER CODE BEGIN PFP */
+
+/* USER CODE END PFP */
+
+/* Functions Definition ------------------------------------------------------*/
 void DTS_App_Init(void)
 {
   uint8_t i;
 
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_BUTTON_ID, UTIL_SEQ_RFU, ButtonTriggerReceived);
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_SW2_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, DT_App_Button2_Trigger_Received);
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_SW3_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, DT_App_Button3_Trigger_Received);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SW1_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, DTS_App_Button1_Trigger_Received);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SW2_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, DTS_App_Button2_Trigger_Received);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SW3_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, DTS_App_Button3_Trigger_Received);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_TRANSFER_UPDATE_ID, UTIL_SEQ_RFU, SendData);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_PHY_UPDATE_ID, UTIL_SEQ_RFU, BLE_SVC_GAP_Change_PHY);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_WRITE_ID, UTIL_SEQ_RFU, BLE_App_Delay_DataThroughput);
 
   /**
@@ -101,29 +126,29 @@ void DTS_App_Init(void)
     Notification_Data_Buffer[i] = i;
   }
 
-  DataTransferServerContext.NotificationTransferReq = DTS_APP_TRANSFER_REQ_OFF;
-  DataTransferServerContext.ButtonTransferReq = DTS_APP_TRANSFER_REQ_OFF;
-  DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_ON;
+  DTS_Context.NotificationTransferReq = DTS_APP_TRANSFER_REQ_OFF;
+  DTS_Context.ButtonTransferReq = DTS_APP_TRANSFER_REQ_OFF;
+  DTS_Context.DtFlowStatus = DTS_APP_FLOW_ON;
 }
 
-void DTS_App_KeyButtonAction( void )
+void DTS_App_KeyButton1Action( void )
 {
-  UTIL_SEQ_SetTask(1 << CFG_TASK_BUTTON_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_SW1_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
 }
 
 void DTS_App_KeyButton2Action( void )
 {
-    UTIL_SEQ_SetTask(1 << CFG_TASK_SW2_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_SW2_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
 }
 
 void DTS_App_KeyButton3Action( void )
 {
-    UTIL_SEQ_SetTask(1 << CFG_TASK_SW3_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1 << CFG_TASK_SW3_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
 }
 
 void DTS_App_TxPoolAvailableNotification(void)
 {
-  DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_ON;
+  DTS_Context.DtFlowStatus = DTS_APP_FLOW_ON;
   UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
 
   return;
@@ -138,26 +163,33 @@ void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification )
 {
   switch (pNotification->Evt_Opcode)
   {
-    case DTS_STM__NOTIFICATION_ENABLED:
-      DataTransferServerContext.NotificationTransferReq = DTS_APP_TRANSFER_REQ_ON;
+    case DTS_TX_NOTIFICATION_ENABLED:
+    {
+      DTS_Context.NotificationTransferReq = DTS_APP_TRANSFER_REQ_ON;
       UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
-      break;
+    }
+    break;
 
-    case DTS_STM_NOTIFICATION_DISABLED:
-      DataTransferServerContext.NotificationTransferReq = DTS_APP_TRANSFER_REQ_OFF;
-      break;
+    case DTS_TX_NOTIFICATION_DISABLED:
+    {
+      DTS_Context.NotificationTransferReq = DTS_APP_TRANSFER_REQ_OFF;
+    }
+    break;
       
-    case DTC_NOTIFICATION_ENABLED:
+    case DTS_THROUGHPUT_NOTIFICATION_ENABLED:
+    {
       BLE_SVC_L2CAP_Conn_Update_7_5();
-      //DataTransferServerContext.NotificationClientTransferFlag = 0x01;
-      break;
+    }
+    break;
       
-    case DTC_NOTIFICATION_DISABLED:
-      //DataTransferServerContext.NotificationClientTransferFlag = 0x00;
+    case DTS_THROUGHPUT_NOTIFICATION_DISABLED:
+    {
       APP_DBG_MSG("write data notification disabled \n");
-      break;
+    }
+    break;
       
-    case DTS_STM_DATA_RECEIVED:
+    case DTS_DATA_RECEIVED:
+    {
       if (DataReceived == 0)
       {
         /* start timer */
@@ -168,12 +200,15 @@ void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification )
       {
         DataReceived += pNotification->DataTransfered.Length;
       }
-      break;
+    }
+    break;
 
     case DTS_STM_GATT_TX_POOL_AVAILABLE:
-      DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_ON;
+    {
+      DTS_Context.DtFlowStatus = DTS_APP_FLOW_ON;
       UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
-      break;
+    }
+    break;
 
     default:
       break;
@@ -192,9 +227,9 @@ static void SendData( void )
   tBleStatus status = BLE_STATUS_INVALID_PARAMS;
   uint8_t crc_result;
 
-  if( (DataTransferServerContext.ButtonTransferReq != DTS_APP_TRANSFER_REQ_OFF)
-      && (DataTransferServerContext.NotificationTransferReq != DTS_APP_TRANSFER_REQ_OFF)
-      && (DataTransferServerContext.DtFlowStatus != DTS_APP_FLOW_OFF) )
+  if( (DTS_Context.ButtonTransferReq != DTS_APP_TRANSFER_REQ_OFF)
+      && (DTS_Context.NotificationTransferReq != DTS_APP_TRANSFER_REQ_OFF)
+      && (DTS_Context.DtFlowStatus != DTS_APP_FLOW_OFF) )
   {   
     /*Data Packet to send to remote*/
     Notification_Data_Buffer[0] += 1;
@@ -202,14 +237,13 @@ static void SendData( void )
     crc_result = APP_BLE_ComputeCRC8((uint8_t*) Notification_Data_Buffer, (DATA_NOTIFICATION_MAX_PACKET_SIZE - 1));
     Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE - 1] = crc_result;
 
-    DataTransferServerContext.TxData.pPayload = Notification_Data_Buffer;
-    //DataTransferServerContext.TxData.Length = DATA_NOTIFICATION_MAX_PACKET_SIZE; /* DATA_NOTIFICATION_MAX_PACKET_SIZE */
-    DataTransferServerContext.TxData.Length =  DATA_NOTIFICATION_MAX_PACKET_SIZE; //Att_Mtu_Exchanged-10;
+    DTS_Context.TxData.pPayload = Notification_Data_Buffer;
+    DTS_Context.TxData.Length =  DATA_NOTIFICATION_MAX_PACKET_SIZE; //Att_Mtu_Exchanged-10;
 
-    status = DTS_STM_UpdateChar(DATA_TRANSFER_TX_CHAR_UUID, (uint8_t *) &DataTransferServerContext.TxData);
+    status = DTS_STM_UpdateChar(DT_TX_CHAR_UUID, (uint8_t *) &DTS_Context.TxData);
     if (status == BLE_STATUS_INSUFFICIENT_RESOURCES)
     {
-      DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_OFF;
+      DTS_Context.DtFlowStatus = DTS_APP_FLOW_OFF;
       (Notification_Data_Buffer[0])-=1;
     }
     else
@@ -219,60 +253,102 @@ static void SendData( void )
   }
   return;
 }
+
 void Resume_Notification(void)
 {
-  DataTransferServerContext.DtFlowStatus = DTS_APP_FLOW_ON;
+  DTS_Context.DtFlowStatus = DTS_APP_FLOW_ON;
 }
-static void ButtonTriggerReceived( void )
+
+static void DTS_Button1TriggerReceived( void )
 {
-  if(DataTransferServerContext.ButtonTransferReq != DTS_APP_TRANSFER_REQ_OFF)
+  if(DTS_Context.ButtonTransferReq != DTS_APP_TRANSFER_REQ_OFF)
   {
     BSP_LED_Off(LED_BLUE);
-    DataTransferServerContext.ButtonTransferReq = DTS_APP_TRANSFER_REQ_OFF;
+    DTS_Context.ButtonTransferReq = DTS_APP_TRANSFER_REQ_OFF;
   }
   else
   {
     BSP_LED_On(LED_BLUE);
-    DataTransferServerContext.ButtonTransferReq = DTS_APP_TRANSFER_REQ_ON;
+    DTS_Context.ButtonTransferReq = DTS_APP_TRANSFER_REQ_ON;
     UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
   }
 
   return;
 }
 
-static void DT_App_Button2_Trigger_Received( void )
+static void DTS_Button2TriggerReceived( void )
 {
   APP_DBG_MSG("**CHANGE PHY \n");
-  BLE_SVC_GAP_Change_PHY();
+  UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_PHY_UPDATE_ID, CFG_SCH_PRIO_0);
   return;
 }
 
-static void Appli_UpdateButtonState(int isPressed)
+static void Appli_UpdateButtonState(Button_TypeDef button, int isPressed)
 {
   uint32_t t0 = 0,t1 = 1;
 
-  t0 = Clock_Time(); /* SW3 press timing */
+  t0 = HAL_GetTick(); /* SW3 press timing */
   
-  while(BSP_PB_GetState(BUTTON_SW3) == BUTTON_PRESSED);
-  t1 = Clock_Time(); /* SW3 release timing */
+  while(BSP_PB_GetState(button) == BUTTON_PRESSED);
+  t1 = HAL_GetTick(); /* SW3 release timing */
   
   if((t1 - t0) > LONG_PRESS_THRESHOLD)
   {
-    /* Button 3 long press action */
-    APP_DBG_MSG("clear database \n");
-    BLE_SVC_GAP_Clear_DataBase();
+    if(button == BUTTON_SW1)
+    {
+      /* Button 1 long press action */
+      DTS_Button1TriggerReceived();
+    }
+    else if(button == BUTTON_SW2)
+    {
+      /* Button 2 long press action */
+      DTS_Button2TriggerReceived();
+    }
+    else if(button == BUTTON_SW3)
+    {
+      /* Button 3 long press action */
+      APP_DBG_MSG("clear database \n");
+      BLE_SVC_GAP_Clear_DataBase();
+    }
   }
   else if((t1 - t0) > BOUNCE_THRESHOLD)
   {
-    /* Button 3 short press action */
-    APP_DBG_MSG("slave security request \n");
-    BLE_SVC_GAP_Security_Req();
+    if(button == BUTTON_SW1)
+    {
+      /* Button 1 short press action */
+      DTS_Button1TriggerReceived();
+    }
+    else if(button == BUTTON_SW2)
+    {
+      /* Button 2 short press action */
+      DTS_Button2TriggerReceived();
+    }
+    else if(button == BUTTON_SW3)
+    {
+      /* Button 3 short press action */
+      APP_DBG_MSG("slave security request \n");
+      BLE_SVC_GAP_Security_Req();
+    }
   }
 }
 
-static void DT_App_Button3_Trigger_Received(void)
+static void DTS_App_Button1_Trigger_Received(void)
 {
-  Appli_UpdateButtonState(BSP_PB_GetState(BUTTON_SW3) == BUTTON_PRESSED);
+  Appli_UpdateButtonState(BUTTON_SW1, BSP_PB_GetState(BUTTON_SW1) == BUTTON_PRESSED);
+  
+  return;
+}
+
+static void DTS_App_Button2_Trigger_Received(void)
+{
+  Appli_UpdateButtonState(BUTTON_SW2, BSP_PB_GetState(BUTTON_SW2) == BUTTON_PRESSED);
+  
+  return;
+}
+
+static void DTS_App_Button3_Trigger_Received(void)
+{
+  Appli_UpdateButtonState(BUTTON_SW3, BSP_PB_GetState(BUTTON_SW3) == BUTTON_PRESSED);
   
   return;
 }
@@ -288,6 +364,10 @@ static void BLE_App_Delay_DataThroughput(void)
   ThroughputToSend.Length = 4;
   ThroughputToSend.pPayload = (uint8_t*)&DataThroughput;
   
-  DTS_STM_UpdateCharThroughput( (DTS_STM_Payload_t*) &ThroughputToSend);  
+  DTS_STM_UpdateChar(DT_THROUGHPUT_CHAR_UUID, (uint8_t*)&ThroughputToSend );
   DataReceived = 0;
 }
+
+/* USER CODE BEGIN FD */
+
+/* USER CODE END FD */

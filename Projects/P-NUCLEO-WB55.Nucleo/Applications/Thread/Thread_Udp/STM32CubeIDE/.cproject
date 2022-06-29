@@ -70,6 +70,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/utilities"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/Include"/>
+                                    <listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1836344130" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -111,6 +112,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/utilities"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/Include"/>
+                                    <listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.914439978" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
 							</tool>
@@ -206,6 +208,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/utilities"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/Include"/>
+                                    <listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.177313203" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -246,6 +249,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/utilities"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/Include"/>
+                                    <listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.1382636164" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp"/>
 							</tool>

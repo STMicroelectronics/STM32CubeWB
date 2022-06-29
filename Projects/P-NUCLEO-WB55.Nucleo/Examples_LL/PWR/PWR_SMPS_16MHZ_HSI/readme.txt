@@ -8,7 +8,7 @@
   * @brief   Description of the PWR SMPS example.
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -21,7 +21,8 @@
 @par Example Description
 
 This example shows how to use power converters of STM32WB (SMPS, LDO and LP-LDO)
-depending on Vdd voltage and low-power mode.
+depending on Vdd voltage and low-power mode. In this example, 
+the system clock source is the HSI at 16MHz.
 
 User can act on 2 parameters to use power converters of STM32WB:
 
@@ -45,7 +46,7 @@ User can act on 2 parameters to use power converters of STM32WB:
    - If device enters in low-power mode:
      Vcore is supplied by LP-LDO (Vdd is connected directly to the LP-LDO)
      If SMPS was in mode step-down, then it is switching to mode open to preserve energy stored in decoupling capacitor.
-     Note: Other low-power modes that can use LP-LDO: stop1, stop2, standy, shutdown
+     Note: Other low-power modes that can use LP-LDO: stop1, stop2, standby, shutdown
      LED2 is turned off.
    - If device exit from low-power mode:
      Vcore is supplied by SMPS+LDO or LDO (refer to case above).

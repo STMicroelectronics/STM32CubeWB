@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __P2P_ROUTEUR_APP_H
-#define __P2P_ROUTEUR_APP_H
+#ifndef P2P_ROUTEUR_APP_H
+#define P2P_ROUTEUR_APP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,4 +75,4 @@ void P2PR_APP_End_Device_Mgt_Connection_Update( P2PR_APP_Device_Status_t *p_devi
 }
 #endif
 
-#endif /*__P2P_ROUTEUR_APP_H */
+#endif /* P2P_ROUTEUR_APP_H */

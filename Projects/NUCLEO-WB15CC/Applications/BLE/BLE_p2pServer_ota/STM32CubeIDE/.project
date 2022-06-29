@@ -151,6 +151,11 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rng.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rng.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/ble_gap_aci.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c</locationURI>
@@ -266,9 +271,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/main.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/Core/standby_stm32wb15.c</name>
+			<name>Application/User/Core/standby.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/standby_stm32wb15.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/standby.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/stm32_lpm_if.c</name>

@@ -4,7 +4,7 @@
  * @brief ZCL Over-The-Air (OTA) Upgrade cluster header
  * ZCL 7 section 11
  * ZCL 8 section 11
- * @copyright Copyright [2014 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2014 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 /* @PICS.ZCL.OTA
@@ -109,12 +109,32 @@ struct ZbZclCommandRspT;
 /** OTA Upgrade Server Attribute IDs */
 enum ZbZclOtaSvrAttrId {
     ZCL_OTA_ATTR_UPGRADE_SERVER_ID = 0x0000, /**< UpgradeServerID */
-    ZCL_OTA_ATTR_FILE_OFFSET = 0x0001, /**< FileOffset (Optional) */
+    ZCL_OTA_ATTR_FILE_OFFSET = 0x0001,
+    /**< FileOffset (Optional).
+     *
+     * When writing a non-zero value to ZCL_OTA_ATTR_FILE_OFFSET,
+     * the entire OTA Header must have already been received by this cluster.
+     * This can be used to resume a transfer that was interupted by the local device
+     * being power cycled in the middle of an OTA download. The procedure in this case is
+     * to start the transfer over (ZbZclOtaClientImageTransferStart) and during the first
+     * write_image() callback to the application, you write a new value to the FileOffset
+     * attribute before returning from the callback. The OTA Client will then request the
+     * next block starting from the new FileOffset.
+     *
+     * During the write_image() callback, the application can also compare
+     * that the current OTA header matches the previous one, if saved before the reset.
+     *
+     * Since some data will be skipped by the OTA Client after the reset, the application
+     * must define it's own image_validate() callback. The default image_validate()
+     * callback will have computed an invalid hash of the incoming data. */
     ZCL_OTA_ATTR_CURRENT_FILE_VERSION = 0x0002, /**< CurrentFileVersion (Optional) */
     ZCL_OTA_ATTR_CURRENT_STACK_VERSION = 0x0003, /**< CurrentZigBeeStackVersion (Optional) */
     ZCL_OTA_ATTR_DOWNLOAD_FILE_VERSION = 0x0004, /**< DownloadedFileVersion (Optional) */
     ZCL_OTA_ATTR_DOWNLOAD_STACK_VERSION = 0x0005, /**< DownloadedZigBeeStackVersion (Optional) */
-    ZCL_OTA_ATTR_IMAGE_UPGRADE_STATUS = 0x0006, /**< ImageUpgradeStatus (Optional) */
+    ZCL_OTA_ATTR_IMAGE_UPGRADE_STATUS = 0x0006,
+    /**< ImageUpgradeStatus (Optional).
+     *
+     * Writing ZCL_OTA_STATUS_NORMAL (0) to this attribute will reset the cluster back to defaults. */
     ZCL_OTA_ATTR_MANUFACTURER_ID = 0x0007, /**< ManufacturerID (Optional) */
     ZCL_OTA_ATTR_IMAGE_TYPE_ID = 0x0008, /**< ImageTypeID (Optional) */
     ZCL_OTA_ATTR_MIN_BLOCK_PERIOD = 0x0009, /**< MinimumBlockPeriod (Optional) */
@@ -123,7 +143,7 @@ enum ZbZclOtaSvrAttrId {
     ZCL_OTA_ATTR_UPGRADE_TIMEOUT_POLICY = 0x000c /**< UpgradeTimeoutPolicy (Optional) */
 };
 
-/** OTA Upgrade Status Attribute Values */
+/** OTA Upgrade Status Attribute Values (ImageUpgradeStatus) */
 enum ZbZclOtaStatus {
     ZCL_OTA_STATUS_NORMAL = 0, /**< Normal */
     ZCL_OTA_STATUS_DOWNLOAD_IN_PROGRESS = 1, /**< Download in progress */
@@ -198,17 +218,27 @@ enum ZbZclOtaImageBlkReqFldCtrl {
 
 #define ZCL_OTA_HEADER_FILE_IDENTIFIER              0x0BEEF11E
 #define ZCL_OTA_HEADER_FILE_VERSION                 0x0100
+
+#define ZCL_OTA_FILE_VERSION_WILDCARD               0xffffffffU
+
+/* The client SHOULD wait for a (upgrade) command from the server.
+ * Note that value of 0xffffffff SHOULD not be used for RequestTime. */
+#define ZCL_OTA_UPGRADE_TIME_WAIT                   0xffffffffU
+
 #define ZCL_OTA_HEADER_LENGTH_MIN                   56U /* no optional fields */
 #define ZCL_OTA_HEADER_LENGTH_MAX                   69U /* all optional fields */
 #define ZCL_OTA_IMAGE_BLOCK_SUB_ELEMENT_HEADER      6U /* tag id [2] tag length [4] */
-#define ZCL_OTA_IMAGE_BLOCK_ZCL_MESSAGE_SIZE        14U /* size of Image Block Response ZCL excluding data */
+
+#define ZCL_OTA_IMAGE_BLOCK_REQ_HDR_SIZE_MIN        14U
+#define ZCL_OTA_IMAGE_BLOCK_REQ_HDR_SIZE_MAX        24U /* + RequestNodeAddress, MinimumBlockPeriod */
+#define ZCL_OTA_IMAGE_BLOCK_RSP_HDR_SIZE            14U /* size of Image Block Response ZCL excluding data */
 
 /* If NWK secured only, then safe max = 66 - 3 - 14 = 49 */
 #define ZCL_OTA_BLOCK_DATA_SIZE_NWKSEC_MAX \
-    (ZB_APS_CONST_SAFE_NWKSEC_PAYLOAD_SIZE - ZCL_HEADER_MIN_SIZE - ZCL_OTA_IMAGE_BLOCK_ZCL_MESSAGE_SIZE)
+    (ZB_APS_CONST_SAFE_NWKSEC_PAYLOAD_SIZE - ZCL_HEADER_MIN_SIZE - ZCL_OTA_IMAGE_BLOCK_RSP_HDR_SIZE)
 /* If APS and NWK secured, then safe max = 57 - 3 -14 = 40 */
 #define ZCL_OTA_BLOCK_DATA_SIZE_APSSEC_MAX \
-    (ZB_APS_CONST_SAFE_APSSEC_PAYLOAD_SIZE - ZCL_HEADER_MIN_SIZE - ZCL_OTA_IMAGE_BLOCK_ZCL_MESSAGE_SIZE)
+    (ZB_APS_CONST_SAFE_APSSEC_PAYLOAD_SIZE - ZCL_HEADER_MIN_SIZE - ZCL_OTA_IMAGE_BLOCK_RSP_HDR_SIZE)
 
 /** OTA Upgrade Header Fields structure */
 struct ZbZclOtaHeader {
@@ -288,7 +318,7 @@ struct ZbZclOtaEndResponseTimes {
 /* OTA Client API */
 /** OTA Upgrade callbacks configuration */
 struct ZbZclOtaClientCallbacksT {
-    enum ZclStatusCodeT (*discover_complete)(struct ZbZclClusterT *cluster, void *arg);
+    void (*discover_complete)(struct ZbZclClusterT *cluster, enum ZclStatusCodeT status, void *arg);
     /**< Callback to Server, invoked on discovery of OTA Upgrade Server.
      * If NULL and ZbZclOtaClientDiscover is successful, the default handler
      * will automatically call ZbZclOtaClientQueryNextImageReq.
@@ -309,24 +339,35 @@ struct ZbZclOtaClientCallbacksT {
 
     enum ZclStatusCodeT (*update_raw)(struct ZbZclClusterT *cluster, uint8_t length, uint8_t *data, void *arg);
     /**< Raw image data is sent through this callback, to update running hash of image for example.
-     * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
+     * Normally, this callback should be left to use the cluster's default internal handler, but if
+     * the application does define its own callback, it must also provide its own handler for the
+     * 'image_validate' callback.
+     * Return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+     * (e.g. ZCL_STATUS_FAILURE).
      */
 
     enum ZclStatusCodeT (*write_tag)(struct ZbZclClusterT *cluster, struct ZbZclOtaHeader *header,
         uint16_t tag_id, uint32_t tag_length, uint8_t data_length, uint8_t *data, void *arg);
-    /**< Callback to write tag sub-element information
-     * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
+    /**< Callback to write tag sub-element information. Normally this is left as-is after the
+     * cluster is allocated to use the default internal callback handler. The default handler will
+     * call the 'write_image' callback to process any image tag data (i.e. the actual firmware binary).
+     * Return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+     * (e.g. ZCL_STATUS_FAILURE).
      */
 
     enum ZclStatusCodeT (*write_image)(struct ZbZclClusterT *cluster, struct ZbZclOtaHeader *header,
         uint8_t length, uint8_t *data, void *arg);
-    /**< If set, called by the 'write_tag' default handler (ZbZclOtaClientImageWriteTagCb)
-     * for ZCL_OTA_SUB_TAG_UPGRADE_IMAGE data. The return status codes tell the OTA Client what
-     * to do next:
+    /**< If set, this is called by the cluster's default 'write_tag' handler for
+     * ZCL_OTA_SUB_TAG_UPGRADE_IMAGE data. If the application has defined a different 'write_tag'
+     * handler, then this callback will never be called. In that case, the handling of image tags
+     * would take place in the 'write_tag' callback.
+     *
+     * The return status codes tell the OTA Client what to do next:
      *      ZCL_STATUS_SUCCESS              : request the next block
      *      ZCL_STATUS_WAIT_FOR_DATA        : wait before requesting the next block.
      *      Anything else                   : abort the OTA download
-     * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
+     * Return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
+     * (e.g. ZCL_STATUS_FAILURE).
      */
 
     enum ZclStatusCodeT (*image_validate)(struct ZbZclClusterT *cluster, struct ZbZclOtaHeader *header, void *arg);
@@ -336,8 +377,13 @@ struct ZbZclOtaClientCallbacksT {
 
     enum ZclStatusCodeT (*upgrade_end)(struct ZbZclClusterT *cluster, struct ZbZclOtaHeader *header,
         uint32_t current_time, uint32_t upgrade_time, void *arg);
-    /**< Callback to handle Upgrade End Request command.
-     * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
+    /**< Callback to handle Upgrade End Request command. The application should update the
+     * ZCL_OTA_ATTR_IMAGE_UPGRADE_STATUS attribute accordingly. Writing ZCL_OTA_STATUS_NORMAL to
+     * the ZCL_OTA_ATTR_IMAGE_UPGRADE_STATUS attribute will reset the cluster back to defaults.
+     * If the callback returns ZCL_STATUS_SUCCESS, the cluster data is not reset, since the OTA
+     * upgrade may be waiting to finish through an external event or timeout.
+     * If the callback returns a ZCL error status (e.g. ZCL_STATUS_FAILURE), the cluster is
+     * reset back to defaults.
      */
 
     void (*reboot)(struct ZbZclClusterT *cluster, void *arg);
@@ -346,8 +392,19 @@ struct ZbZclOtaClientCallbacksT {
      */
 
     enum ZclStatusCodeT (*abort_download)(struct ZbZclClusterT *cluster, enum ZbZclOtaCommandId commandId, void *arg);
-    /**< Abort Download. Shall not be NULL.
-     * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
+    /**< Callback to inform application of a problem with the download. It gives the application
+     * the option to perform network diagnostics or repairs (e.g. NWK Route Discovery) before
+     * attempting to restart the OTA transfer where it left off. The application can also tell the
+     * OTA Client to abort this transfer by returning ZCL_STATUS_SUCCESS.
+     * This callback cannot be set to NULL.
+     *
+     * The commandId is the OTA command responsible for aborting the transmission
+     * (e.g. ZCL_OTA_COMMAND_IMAGE_BLOCK_RESPONSE).
+     *
+     * If the application returns ZCL_STATUS_SUCCESS, the OTA transfer will be aborted and cluster
+     * reset to defaults, ready for a new transfer.
+     * If the application returns an error (i.e. ZCL_STATUS_FAILURE), the OTA transfer will be paused
+     * rather than aborted, and can be resumed by the application calling ZbZclOtaClientImageTransferResume.
      */
 };
 
@@ -421,16 +478,17 @@ enum ZclStatusCodeT ZbZclOtaClientQueryNextImageReq(struct ZbZclClusterT *cluste
     uint16_t hardware_version);
 
 /**
- * Initiate a OTA Upgrade transfer
+ * Initiate an OTA Upgrade transfer.
  * @param cluster Cluster instance from which to send this command
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
 enum ZclStatusCodeT ZbZclOtaClientImageTransferStart(struct ZbZclClusterT *cluster);
 
 /**
- * Resume an OTA Upgrade transfer
- * ZbZclOtaClientImageTransferResume is only called by the NHLE if it returned
- * ZCL_STATUS_WAIT_FOR_DATA for the write_image callback.
+ * Resume an OTA Upgrade transfer.
+ * ZbZclOtaClientImageTransferResume is called if the NHLE (app) returned
+ * ZCL_STATUS_WAIT_FOR_DATA for the write_image callback. The OTA Client won't request
+ * the next block of data in this case, until this function is called.
  * @param cluster Cluster instance from which to send this command
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */

@@ -23,54 +23,80 @@
 #define HCI_COMMAND_PKT_TYPE             0x01U
 #define HCI_ACLDATA_PKT_TYPE             0x02U
 #define HCI_EVENT_PKT_TYPE               0x04U
+#define HCI_ISODATA_PKT_TYPE             0x05U
 
 /* HCI packet header size */
 #define HCI_COMMAND_HDR_SIZE             4
 #define HCI_ACLDATA_HDR_SIZE             5
 #define HCI_EVENT_HDR_SIZE               3
+#define HCI_ISODATA_HDR_SIZE             5
 
 /* HCI parameters length */
 #define HCI_COMMAND_MAX_PARAM_LEN        255
-#define HCI_ACLDATA_MAX_DATA_LEN         251  /* HC_LE_Data_Packet_Length */
+#define HCI_ACLDATA_MAX_DATA_LEN         251  /* LE_ACL_Data_Packet_Length */
 #define HCI_EVENT_MAX_PARAM_LEN          255
+#define HCI_ISODATA_MAX_DATA_LEN         300  /* ISO_Data_Packet_Length */
 
 /* HCI packet maximum size */
 #define HCI_COMMAND_PKT_MAX_SIZE \
-            (HCI_COMMAND_HDR_SIZE + HCI_COMMAND_MAX_PARAM_LEN)
+          (HCI_COMMAND_HDR_SIZE + HCI_COMMAND_MAX_PARAM_LEN)
 #define HCI_ACLDATA_PKT_MAX_SIZE \
-            (HCI_ACLDATA_HDR_SIZE + HCI_ACLDATA_MAX_DATA_LEN)
+          (HCI_ACLDATA_HDR_SIZE + HCI_ACLDATA_MAX_DATA_LEN)
 #define HCI_EVENT_PKT_MAX_SIZE \
-            (HCI_EVENT_HDR_SIZE   + HCI_EVENT_MAX_PARAM_LEN)
+          (HCI_EVENT_HDR_SIZE   + HCI_EVENT_MAX_PARAM_LEN)
+#define HCI_ISODATA_PKT_MAX_SIZE \
+          (HCI_ISODATA_HDR_SIZE + HCI_ISODATA_MAX_DATA_LEN)
 
 /* HCI event code */
-#define HCI_DISCONNECTION_COMPLETE_EVT_CODE                    0x05U
-#define HCI_ENCRYPTION_CHANGE_EVT_CODE                         0x08U
-#define HCI_READ_REMOTE_VERSION_INFORMATION_COMPLETE_EVT_CODE  0x0CU
-#define HCI_COMMAND_COMPLETE_EVT_CODE                          0x0EU
-#define HCI_COMMAND_STATUS_EVT_CODE                            0x0FU
-#define HCI_HARDWARE_ERROR_EVT_CODE                            0x10U
-#define HCI_NUMBER_OF_COMPLETED_PACKETS_EVT_CODE               0x13U
-#define HCI_DATA_BUFFER_OVERFLOW_EVT_CODE                      0x1AU
-#define HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVT_CODE           0x30U
-#define HCI_LE_META_EVT_CODE                                   0x3EU
-#define HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE                     0xFFU
+#define HCI_DISCONNECTION_COMPLETE_EVT_CODE                            0x05U
+#define HCI_ENCRYPTION_CHANGE_EVT_CODE                                 0x08U
+#define HCI_READ_REMOTE_VERSION_INFORMATION_COMPLETE_EVT_CODE          0x0CU
+#define HCI_COMMAND_COMPLETE_EVT_CODE                                  0x0EU
+#define HCI_COMMAND_STATUS_EVT_CODE                                    0x0FU
+#define HCI_HARDWARE_ERROR_EVT_CODE                                    0x10U
+#define HCI_NUMBER_OF_COMPLETED_PACKETS_EVT_CODE                       0x13U
+#define HCI_DATA_BUFFER_OVERFLOW_EVT_CODE                              0x1AU
+#define HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVT_CODE                   0x30U
+#define HCI_LE_META_EVT_CODE                                           0x3EU
+#define HCI_AUTHENTICATED_PAYLOAD_TIMEOUT_EXPIRED_EVT_CODE             0x57U
+#define HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE                             0xFFU
 
 /* HCI LE subevent code */
-#define HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE                 0x01U
-#define HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE                  0x02U
-#define HCI_LE_CONNECTION_UPDATE_COMPLETE_SUBEVT_CODE          0x03U
-#define HCI_LE_READ_REMOTE_FEATURES_COMPLETE_SUBEVT_CODE       0x04U
-#define HCI_LE_LONG_TERM_KEY_REQUEST_SUBEVT_CODE               0x05U
-#define HCI_LE_DATA_LENGTH_CHANGE_SUBEVT_CODE                  0x07U
-#define HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_SUBEVT_CODE 0x08U
-#define HCI_LE_GENERATE_DHKEY_COMPLETE_SUBEVT_CODE             0x09U
-#define HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE        0x0AU
-#define HCI_LE_DIRECT_ADVERTISING_REPORT_SUBEVT_CODE           0x0BU
-#define HCI_LE_PHY_UPDATE_COMPLETE_SUBEVT_CODE                 0x0CU
-#define HCI_LE_EXTENDED_ADVERTISING_REPORT_SUBEVT_CODE         0x0DU
-#define HCI_LE_SCAN_TIMEOUT_SUBEVT_CODE                        0x11U
-#define HCI_LE_ADVERTISING_SET_TERMINATED_SUBEVT_CODE          0x12U
-#define HCI_LE_SCAN_REQUEST_RECEIVED_SUBEVT_CODE               0x13U
+#define HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE                         0x01U
+#define HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE                          0x02U
+#define HCI_LE_CONNECTION_UPDATE_COMPLETE_SUBEVT_CODE                  0x03U
+#define HCI_LE_READ_REMOTE_FEATURES_COMPLETE_SUBEVT_CODE               0x04U
+#define HCI_LE_LONG_TERM_KEY_REQUEST_SUBEVT_CODE                       0x05U
+#define HCI_LE_REMOTE_CONNECTION_PARAMETER_REQUEST_SUBEVT_CODE         0x06U
+#define HCI_LE_DATA_LENGTH_CHANGE_SUBEVT_CODE                          0x07U
+#define HCI_LE_READ_LOCAL_P256_PUBLIC_KEY_COMPLETE_SUBEVT_CODE         0x08U
+#define HCI_LE_GENERATE_DHKEY_COMPLETE_SUBEVT_CODE                     0x09U
+#define HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE                0x0AU
+#define HCI_LE_DIRECT_ADVERTISING_REPORT_SUBEVT_CODE                   0x0BU
+#define HCI_LE_PHY_UPDATE_COMPLETE_SUBEVT_CODE                         0x0CU
+#define HCI_LE_EXTENDED_ADVERTISING_REPORT_SUBEVT_CODE                 0x0DU
+#define HCI_LE_PERIODIC_ADVERTISING_SYNC_ESTABLISHED_SUBEVT_CODE       0x0EU
+#define HCI_LE_PERIODIC_ADVERTISING_REPORT_SUBEVT_CODE                 0x0FU
+#define HCI_LE_PERIODIC_ADVERTISING_SYNC_LOST_SUBEVT_CODE              0x10U
+#define HCI_LE_SCAN_TIMEOUT_SUBEVT_CODE                                0x11U
+#define HCI_LE_ADVERTISING_SET_TERMINATED_SUBEVT_CODE                  0x12U
+#define HCI_LE_SCAN_REQUEST_RECEIVED_SUBEVT_CODE                       0x13U
+#define HCI_LE_CHANNEL_SELECTION_ALGORITHM_SUBEVT_CODE                 0x14U
+#define HCI_LE_CONNECTIONLESS_IQ_REPORT_SUBEVT_CODE                    0x15U
+#define HCI_LE_CONNECTION_IQ_REPORT_SUBEVT_CODE                        0x16U
+#define HCI_LE_CTE_REQUEST_FAILED_SUBEVT_CODE                          0x17U
+#define HCI_LE_PERIODIC_ADVERTISING_SYNC_TRANSFER_RECEIVED_SUBEVT_CODE 0x18U
+#define HCI_LE_CIS_ESTABLISHED_SUBEVT_CODE                             0x19U
+#define HCI_LE_CIS_REQUEST_SUBEVT_CODE                                 0x1AU
+#define HCI_LE_CREATE_BIG_COMPLETE_SUBEVT_CODE                         0x1BU
+#define HCI_LE_TERMINATE_BIG_COMPLETE_SUBEVT_CODE                      0x1CU
+#define HCI_LE_BIG_SYNC_ESTABLISHED_SUBEVT_CODE                        0x1DU
+#define HCI_LE_BIG_SYNC_LOST_SUBEVT_CODE                               0x1EU
+#define HCI_LE_REQUEST_PEER_SCA_COMPLETE_SUBEVT_CODE                   0x1FU
+#define HCI_LE_PATH_LOSS_THRESHOLD_SUBEVT_CODE                         0x20U
+#define HCI_LE_TRANSMIT_POWER_REPORTING_SUBEVT_CODE                    0x21U
+#define HCI_LE_BIGINFO_ADVERTISING_REPORT_SUBEVT_CODE                  0x22U
+#define HCI_LE_SUBRATE_CHANGE_SUBEVT_CODE                              0x23U
 
 /* HCI error code */
 #define HCI_SUCCESS_ERR_CODE                                   0x00U
@@ -192,6 +218,11 @@
 /* HCI_LE_Set_Extended_Scan_Parameters: Scanning_PHYs */
 #define HCI_SCANNING_PHYS_LE_1M                        0x01U
 #define HCI_SCANNING_PHYS_LE_CODED                     0x04U
+
+/* HCI_LE_Extended_Create_Connection: Initiating_PHYs */
+#define HCI_INIT_PHYS_SCAN_CONN_LE_1M                  0x01U
+#define HCI_INIT_PHYS_CONN_LE_2M                       0x02U
+#define HCI_INIT_PHYS_SCAN_CONN_LE_CODED               0x04U
 
 /* HCI_LE_Receiver_Test/HCI_LE_Transmitter_Test [v2]: PHY */
 #define HCI_TEST_PHY_LE_1M                             0x01U

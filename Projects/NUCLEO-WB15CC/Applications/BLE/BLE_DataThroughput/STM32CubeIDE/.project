@@ -71,9 +71,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/main.c</locationURI>
 		</link>
 		<link>
-			<name>Application/Core/standby_stm32wb15.c</name>
+			<name>Application/Core/standby.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/standby_stm32wb15.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/standby.c</locationURI>
 		</link>
 		<link>
 			<name>Application/Core/stm32_lpm_if.c</name>
@@ -124,7 +124,7 @@
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_dma_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</locationURI>
-		</link>        
+		</link>
 		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_exti.c</name>
 			<type>1</type>
@@ -136,14 +136,14 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_gpio.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_ipcc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</locationURI>
-		</link>        
-		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_hsem.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_ipcc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_pwr.c</name>
@@ -164,6 +164,11 @@
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rcc_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rng.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rng.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rtc.c</name>

@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    appli_light_client.h
-* @author  BLE Mesh Team
-* @brief   Application interface for Generic Mesh Models  
+  * @file    appli_light_client.h
+  * @author  MCD Application Team
+  * @brief   Application interface for Generic Mesh Models  
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_LIGHT_CLIENT_H
-#define __APPLI_LIGHT_CLIENT_H
+#ifndef APPLI_LIGHT_CLIENT_H
+#define APPLI_LIGHT_CLIENT_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -104,6 +106,6 @@ MOBLE_RESULT Appli_LightClient_API(MOBLEUINT8 elementIndex,
                                    MOBLEUINT16 msg_opcode, 
                                    MOBLEUINT8* msg_params);
  
-#endif /* __APPLI_LIGHT_CLIENT_H */
+#endif /* APPLI_LIGHT_CLIENT_H */
 
 

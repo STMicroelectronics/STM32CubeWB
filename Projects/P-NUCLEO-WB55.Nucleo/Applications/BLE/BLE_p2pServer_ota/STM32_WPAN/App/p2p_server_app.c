@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
- * @file    p2p_server_app.c
- * @author  MCD Application Team
- * @brief   peer to peer Server Application
+  * @file    p2p_server_app.c
+  * @author  MCD Application Team
+  * @brief   Peer to peer Server Application
   ******************************************************************************
   * @attention
   *
@@ -116,7 +116,7 @@ void P2PS_STM_App_Notification(P2PS_STM_App_Notification_evt_t *pNotification)
       APP_DBG_MSG(" \n\r");
 /* USER CODE END P2PS_STM_NOTIFY_DISABLED_EVT */
       break;
-      
+
     case P2PS_STM_WRITE_EVT:
 /* USER CODE BEGIN P2PS_STM_WRITE_EVT */
       if(pNotification->DataTransfered.pPayload[0] == 0x00){ /* ALL Deviceselected - may be necessary as LB Routeur informs all connection */
@@ -279,7 +279,7 @@ void P2PS_APP_Notification(P2PS_APP_ConnHandle_Not_evt_t *pNotification)
        P2PS_APP_LED_BUTTON_context_Init();       
 /* USER CODE END PEER_DISCON_HANDLE_EVT */
     break;
-    
+
     default:
 /* USER CODE BEGIN P2PS_APP_Notification_default */
 

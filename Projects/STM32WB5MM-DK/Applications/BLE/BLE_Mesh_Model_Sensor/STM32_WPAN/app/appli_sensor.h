@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_SENSOR_H
-#define __APPLI_SENSOR_H
+#ifndef APPLI_SENSOR_H
+#define APPLI_SENSOR_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -104,6 +104,6 @@ MOBLE_RESULT Appli_Sensor_Update(MOBLEUINT8 sensorOffset,
                                  MOBLEUINT32 value);
 void Appli_Sensor_SerialCmd(char *rcvdStringBuff, 
                             uint16_t rcvdStringSize);
-#endif /* __APPLI_SENSOR_H */
+#endif /* APPLI_SENSOR_H */
 
 

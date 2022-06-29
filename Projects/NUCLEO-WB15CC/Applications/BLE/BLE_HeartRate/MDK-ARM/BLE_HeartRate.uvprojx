@@ -420,9 +420,9 @@
               <FilePath>../Core/Src/stm32_lpm_if.c</FilePath>
             </File>
             <File>
-              <FileName>standby_stm32wb15.c</FileName>
+              <FileName>standby.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/standby_stm32wb15.c</FilePath>
+              <FilePath>../Core/Src/standby.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_it.c</FileName>

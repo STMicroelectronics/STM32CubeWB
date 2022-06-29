@@ -23,54 +23,6 @@
 #include "dbg_trace.h"
 #include "dts.h"   
 
-#define UUID_128_SUPPORTED 1
-
-#if (UUID_128_SUPPORTED == 1)
-#define DT_UUID_LENGTH  UUID_TYPE_128
-#else
-#define DT_UUID_LENGTH  UUID_TYPE_16
-#endif
-
-#if (UUID_128_SUPPORTED == 1)
-const uint8_t DT_REQ_CHAR_UUID[16] =
-{ 0x19, 0xed, 0x82, 0xae,
-  0xed, 0x21, 0x4c, 0x9d,
-  0x41, 0x45, 0x22, 0x8e,
-  0x81, 0xFE, 0x00, 0x00};
-#else
-const uint8_t DT_REQ_CHAR_UUID[2] = { 0x81, 0xFE };
-#endif
-
-#if (UUID_128_SUPPORTED == 1)
-const uint8_t DT_REQ_CHAR2_UUID[16] =
-{ 0x19, 0xed, 0x82, 0xae,
-  0xed, 0x21, 0x4c, 0x9d,
-  0x41, 0x45, 0x22, 0x8e,
-  0x82, 0xFE, 0x00, 0x00};
-#else
-const uint8_t DT_REQ_CHAR2_UUID[2] = { 0x82, 0xFE };
-#endif
-
-#if (UUID_128_SUPPORTED == 1)
-const uint8_t DT_REQ_CHAR3_UUID[16] =
-{ 0x19, 0xed, 0x82, 0xae,
-  0xed, 0x21, 0x4c, 0x9d,
-  0x41, 0x45, 0x22, 0x8e,
-  0x83, 0xFE, 0x00, 0x00};
-#else
-const uint8_t DT_REQ_CHAR3_UUID[2] = { 0x83, 0xFE };
-#endif
-
-#if (UUID_128_SUPPORTED == 1)
-const uint8_t DT_REQ_SERV_UUID[16] =
-{ 0x19, 0xed, 0x82, 0xae,
-  0xed, 0x21, 0x4c, 0x9d,
-  0x41, 0x45, 0x22, 0x8e,
-  0x80, 0xFE, 0x00, 0x00};
-#else
-const uint8_t DT_REQ_SERV_UUID[2] = { 0x80, 0xFE };
-#endif
-
 /* Private typedef -----------------------------------------------------------*/
 typedef enum
 {
@@ -80,22 +32,50 @@ typedef enum
 
 typedef struct
 {
-uint16_t DataTransferSvcHdle; /**< Service handle */
-uint16_t DataTransferTxCharHdle; /**< Characteristic handle */
-uint16_t DataTransferRxCharHdle; /**< Characteristic handle */
-uint16_t DataTransferTxChar3Hdle; /**< Characteristic handle */
+uint16_t DataTransferSvcHdle;            /**< Service handle */
+uint16_t DataTransferTxCharHdle;         /**< Characteristic handle */
+uint16_t DataTransferRxCharHdle;         /**< Characteristic handle */
+uint16_t DataTransferThroughputCharHdle; /**< Characteristic handle */
 } DataTransferSvcContext_t;
 
 /* Private defines -----------------------------------------------------------*/
+/* Private macros ------------------------------------------------------------*/
+#if (UUID_128BIT_FORMAT == 1)
+#define DT_UUID_LENGTH  UUID_TYPE_128
+#else
+#define DT_UUID_LENGTH  UUID_TYPE_16
+#endif
 #define DATA_TRANSFER_NOTIFICATION_LEN_MAX                                 (255)
 
-/* Private macros ------------------------------------------------------------*/
+#define COPY_UUID_128(uuid_struct, uuid_15, uuid_14, uuid_13, uuid_12, uuid_11, uuid_10, uuid_9, uuid_8, uuid_7, uuid_6, uuid_5, uuid_4, uuid_3, uuid_2, uuid_1, uuid_0) \
+do {\
+    uuid_struct[0] = uuid_0; uuid_struct[1] = uuid_1; uuid_struct[2] = uuid_2; uuid_struct[3] = uuid_3; \
+        uuid_struct[4] = uuid_4; uuid_struct[5] = uuid_5; uuid_struct[6] = uuid_6; uuid_struct[7] = uuid_7; \
+            uuid_struct[8] = uuid_8; uuid_struct[9] = uuid_9; uuid_struct[10] = uuid_10; uuid_struct[11] = uuid_11; \
+                uuid_struct[12] = uuid_12; uuid_struct[13] = uuid_13; uuid_struct[14] = uuid_14; uuid_struct[15] = uuid_15; \
+}while(0)
+
+/* Hardware Characteristics Service */
+#define COPY_DT_SERVICE_UUID(uuid_struct)              COPY_UUID_128(uuid_struct,0x00,0x00,0xFE,0x80,0x8E,0x22,0x45,0x41,0x9D,0x4C,0x21,0xED,0xAE,0x82,0xED,0x19)
+#define COPY_DT_TX_CHAR_UUID(uuid_struct)              COPY_UUID_128(uuid_struct,0x00,0x00,0xFE,0x81,0x8E,0x22,0x45,0x41,0x9D,0x4C,0x21,0xED,0xAE,0x82,0xED,0x19)
+#define COPY_DT_RX_CHAR_UUID(uuid_struct)              COPY_UUID_128(uuid_struct,0x00,0x00,0xFE,0x82,0x8E,0x22,0x45,0x41,0x9D,0x4C,0x21,0xED,0xAE,0x82,0xED,0x19)
+#define COPY_DT_THOUGHPUT_CHAR_UUID(uuid_struct)       COPY_UUID_128(uuid_struct,0x00,0x00,0xFE,0x83,0x8E,0x22,0x45,0x41,0x9D,0x4C,0x21,0xED,0xAE,0x82,0xED,0x19)
+
 /* Private variables ---------------------------------------------------------*/
-/* Private function prototypes -----------------------------------------------*/
-static tBleStatus TX_Update_Char( DTS_STM_Payload_t *pDataValue );
-static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *pckt );
-static DataTransferSvcContext_t aDataTransferContext;
+/**
+ * START of Section BLE_APP_CONTEXT
+ */
+
+PLACE_IN_SECTION("BLE_APP_CONTEXT") static DataTransferSvcContext_t aDataTransferContext;
+
+/**
+ * END of Section BLE_APP_CONTEXT
+ */
+
 extern uint16_t Att_Mtu_Exchanged;
+
+/* Private function prototypes -----------------------------------------------*/
+static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *pckt );
 extern void BLE_SVC_L2CAP_Conn_Update_7_5(void);
 
 /* Functions Definition ------------------------------------------------------*/
@@ -129,11 +109,13 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
       switch (blecore_evt->ecode)
       {
         case ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE:
+        {
           exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blecore_evt->data;
           APP_DBG_MSG("**MTU_size = %d \n",exchange_mtu_resp->Server_RX_MTU );
           APP_DBG_MSG("\r\n\r");
           Att_Mtu_Exchanged = exchange_mtu_resp->Server_RX_MTU;
-          break;
+        }
+        break;
         /* server */
         case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
         {
@@ -147,18 +129,18 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
             {
               APP_DBG_MSG("**NOTIFICATION ENABLED \n");
               APP_DBG_MSG("\r\n\r");
-              Notification.Evt_Opcode = DTS_STM__NOTIFICATION_ENABLED;
+              Notification.Evt_Opcode = DTS_TX_NOTIFICATION_ENABLED;
               DTS_Notification(&Notification);
             }
             else
             {
               APP_DBG_MSG("**NOTIFICATION DISABLED \n");
               APP_DBG_MSG("\r\n\r");
-              Notification.Evt_Opcode = DTS_STM_NOTIFICATION_DISABLED;
+              Notification.Evt_Opcode = DTS_TX_NOTIFICATION_DISABLED;
               DTS_Notification(&Notification);
             }
           }
-          if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferTxChar3Hdle + 2))
+          if (attribute_modified->Attr_Handle == (aDataTransferContext.DataTransferThroughputCharHdle + 2))
           {
             /**
             * Notify to application to start measurement
@@ -168,14 +150,14 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
               APP_DBG_MSG("**WRITE RESULT NOTIFICATION ENABLED \n");
               APP_DBG_MSG("\r\n\r");
               BLE_SVC_L2CAP_Conn_Update_7_5();
-              Notification.Evt_Opcode = DTC_NOTIFICATION_ENABLED;
+              Notification.Evt_Opcode = DTS_THROUGHPUT_NOTIFICATION_ENABLED;
               DTS_Notification(&Notification);
             }
             else
             {
               APP_DBG_MSG("**WRITE RESULT NOTIFICATION DISABLED \n");
               APP_DBG_MSG("\r\n\r");
-              Notification.Evt_Opcode = DTC_NOTIFICATION_DISABLED;
+              Notification.Evt_Opcode = DTS_THROUGHPUT_NOTIFICATION_DISABLED;
               DTS_Notification(&Notification);
             }
           }
@@ -183,27 +165,37 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
           {
             return_value = SVCCTL_EvtAckFlowEnable;
             
-            Notification.Evt_Opcode = DTS_STM_DATA_RECEIVED;
+            Notification.Evt_Opcode = DTS_DATA_RECEIVED;
             Notification.DataTransfered.Length=attribute_modified->Attr_Data_Length;
             DTS_Notification(&Notification); 
           }
-          }
-          break;
+        }
+        break;
+        
         case ACI_GATT_TX_POOL_AVAILABLE_VSEVT_CODE:
+        {
           Resume_Notification();
-          break; 
+        }
+        break; 
           
-      case ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE:
-        //APP_DBG_MSG("WRITE PERMIT RESP \r\n");
-        write_permit_req = (aci_gatt_write_permit_req_event_rp0 *) blecore_evt->data;
-        aci_gatt_write_resp( write_permit_req->Connection_Handle, write_permit_req->Attribute_Handle, 0, 0, write_permit_req->Data_Length, write_permit_req->Data);        
+        case ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE:
+        {
+          //APP_DBG_MSG("WRITE PERMIT RESP \r\n");
+          write_permit_req = (aci_gatt_write_permit_req_event_rp0 *) blecore_evt->data;
+          aci_gatt_write_resp( write_permit_req->Connection_Handle, 
+                              write_permit_req->Attribute_Handle, 
+                              0, 
+                              0, 
+                              write_permit_req->Data_Length, 
+                              write_permit_req->Data); 
+        }
         break;
 
         default:
           break;
       }
     }
-      break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
+    break; /* HCI_HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE_SPECIFIC */
 
     default:
       break;
@@ -211,29 +203,6 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
 
   return (return_value);
 }/* end SVCCTL_EvtAckStatus_t */
-
-/**
- * @brief  Feature Characteristic update
- * @param  Service_Instance: Instance of the service to which the characteristic belongs
- * @param  pFeatureValue: The address of the new value to be written
- * @retval None
- */
-static tBleStatus TX_Update_Char( DTS_STM_Payload_t *pDataValue )
-{
-  tBleStatus ret;
-
-  /**
-   *  Notification Data Transfer Packet
-   */
-  ret = aci_gatt_update_char_value(
-                                   aDataTransferContext.DataTransferSvcHdle,
-                                   aDataTransferContext.DataTransferTxCharHdle,
-                                   0, /* charValOffset */
-                                   pDataValue->Length, /* charValueLen */
-                                   (uint8_t *) pDataValue->pPayload);
-
-  return ret;
-}/* end TX_Update_Char() */
 
 /* Public functions ----------------------------------------------------------*/
 
@@ -245,6 +214,7 @@ static tBleStatus TX_Update_Char( DTS_STM_Payload_t *pDataValue )
 void DTS_STM_Init( void )
 {
   tBleStatus hciCmdResult = BLE_STATUS_FAILED;
+  Char_UUID_t  uuid16;
 
   /**
    *	Register the event handler to the BLE controller
@@ -252,9 +222,12 @@ void DTS_STM_Init( void )
   SVCCTL_RegisterSvcHandler(DTS_Event_Handler);
 
   /* DT service and characteristics */
-  hciCmdResult = aci_gatt_add_service(DT_UUID_LENGTH, (Service_UUID_t *) DT_REQ_SERV_UUID,
-  PRIMARY_SERVICE,
-                                      10, &(aDataTransferContext.DataTransferSvcHdle));
+  COPY_DT_SERVICE_UUID(uuid16.Char_UUID_128);
+  uuid16.Char_UUID_16 = DT_SERVICE_UUID; 
+  hciCmdResult = aci_gatt_add_service(DT_UUID_LENGTH, (Service_UUID_t *) &uuid16,
+                                      PRIMARY_SERVICE,
+                                      10, 
+                                      &(aDataTransferContext.DataTransferSvcHdle));
   if (hciCmdResult != 0)
   {
     APP_DBG_MSG("error add service 0x%x\n", hciCmdResult);
@@ -263,16 +236,18 @@ void DTS_STM_Init( void )
   /**
    *  Add Data Transfer TX Characteristic
    */
+  COPY_DT_TX_CHAR_UUID(uuid16.Char_UUID_128);
+  uuid16.Char_UUID_16 = DT_TX_CHAR_UUID; 
   hciCmdResult = aci_gatt_add_char(aDataTransferContext.DataTransferSvcHdle,
-  DT_UUID_LENGTH,
-                    (Char_UUID_t *) DT_REQ_CHAR_UUID,
-                    DATA_TRANSFER_NOTIFICATION_LEN_MAX,
-                    CHAR_PROP_NOTIFY,
-                    ATTR_PERMISSION_NONE,
-                    GATT_DONT_NOTIFY_EVENTS, /* gattEvtMask */
-                    10, /* encryKeySize */
-                    1, /* isVariable */
-                    &(aDataTransferContext.DataTransferTxCharHdle));
+                                   DT_UUID_LENGTH,
+                                   (Char_UUID_t *) &uuid16,
+                                   DATA_TRANSFER_NOTIFICATION_LEN_MAX,
+                                   CHAR_PROP_NOTIFY,
+                                   ATTR_PERMISSION_NONE,
+                                   GATT_DONT_NOTIFY_EVENTS, /* gattEvtMask */
+                                   10, /* encryKeySize */
+                                   1, /* isVariable */
+                                   &(aDataTransferContext.DataTransferTxCharHdle));
   if (hciCmdResult != 0)
   {
     APP_DBG_MSG("error add char Tx 0x%x\n", hciCmdResult);
@@ -281,34 +256,38 @@ void DTS_STM_Init( void )
   /**
    *  Add Data Transfer RX Characteristic
    */
+  COPY_DT_RX_CHAR_UUID(uuid16.Char_UUID_128);
+  uuid16.Char_UUID_16 = DT_RX_CHAR_UUID; 
   hciCmdResult = aci_gatt_add_char(aDataTransferContext.DataTransferSvcHdle,
-  DT_UUID_LENGTH,
-                    (Char_UUID_t *) DT_REQ_CHAR2_UUID,
-                    255, /* DATA_TRANSFER_NOTIFICATION_LEN_MAX, */
-                    CHAR_PROP_WRITE_WITHOUT_RESP,
-                    ATTR_PERMISSION_NONE,
-                    GATT_NOTIFY_ATTRIBUTE_WRITE, //GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP,/* gattEvtMask */
-                    10, /* encryKeySize */
-                    1, /* isVariable */
-                    &(aDataTransferContext.DataTransferRxCharHdle));
+                                   DT_UUID_LENGTH,
+                                   (Char_UUID_t *) &uuid16,
+                                   255, /* DATA_TRANSFER_NOTIFICATION_LEN_MAX, */
+                                   CHAR_PROP_WRITE_WITHOUT_RESP | CHAR_PROP_READ,
+                                   ATTR_PERMISSION_NONE,
+                                   GATT_NOTIFY_ATTRIBUTE_WRITE, /* gattEvtMask */
+                                   10, /* encryKeySize */
+                                   1, /* isVariable */
+                                   &(aDataTransferContext.DataTransferRxCharHdle));
   if (hciCmdResult != 0)
   {
     APP_DBG_MSG("error add char Tx\n");
   }
   
   /**
-   *  Add Data Transfer TX Characteristic
+   *  Add Data Transfer THROUGHPUT Characteristic
    */
+  COPY_DT_THOUGHPUT_CHAR_UUID(uuid16.Char_UUID_128);
+  uuid16.Char_UUID_16 = DT_THROUGHPUT_CHAR_UUID; 
   hciCmdResult = aci_gatt_add_char(aDataTransferContext.DataTransferSvcHdle,
-  DT_UUID_LENGTH,
-                    (Char_UUID_t *) DT_REQ_CHAR3_UUID,
-                    255, /* DATA_TRANSFER_NOTIFICATION_LEN_MAX, */
-                    CHAR_PROP_NOTIFY,
-                    ATTR_PERMISSION_NONE,
-                    GATT_DONT_NOTIFY_EVENTS, /* gattEvtMask */
-                    10, /* encryKeySize */
-                    1, /* isVariable */
-                    &(aDataTransferContext.DataTransferTxChar3Hdle));
+                                   DT_UUID_LENGTH,
+                                   (Char_UUID_t *) &uuid16,
+                                   255, /* DATA_TRANSFER_NOTIFICATION_LEN_MAX, */
+                                   CHAR_PROP_NOTIFY,
+                                   ATTR_PERMISSION_NONE,
+                                   GATT_DONT_NOTIFY_EVENTS, /* gattEvtMask */
+                                   10, /* encryKeySize */
+                                   1, /* isVariable */
+                                   &(aDataTransferContext.DataTransferThroughputCharHdle));
   if (hciCmdResult != 0)
   {
     APP_DBG_MSG("error add char Tx\n");
@@ -323,14 +302,38 @@ void DTS_STM_Init( void )
  * @param  Service_Instance: Instance of the service to which the characteristic belongs
  * 
  */
-tBleStatus DTS_STM_UpdateChar( uint16_t UUID , uint8_t *pPayload )
+tBleStatus DTS_STM_UpdateChar(uint16_t UUID, uint8_t *pPayload)
 {
   tBleStatus result = BLE_STATUS_INVALID_PARAMS;
+  DTS_STM_Payload_t *pDataValue = (DTS_STM_Payload_t*) pPayload;
+  
   switch (UUID)
   {
-    case DATA_TRANSFER_TX_CHAR_UUID:
-      result = TX_Update_Char((DTS_STM_Payload_t*) pPayload);
-      break;
+    case DT_TX_CHAR_UUID:
+    {
+      /**
+       *  Notification Data Transfer Packet
+       */
+      result = aci_gatt_update_char_value(aDataTransferContext.DataTransferSvcHdle,
+                                          aDataTransferContext.DataTransferTxCharHdle,
+                                          0, /* charValOffset */
+                                          pDataValue->Length, /* charValueLen */
+                                          (uint8_t *) pDataValue->pPayload);
+    }
+    break;
+
+    case DT_THROUGHPUT_CHAR_UUID:
+    {
+      /**
+       *  Notification Throughput Packet
+       */
+      result = aci_gatt_update_char_value(aDataTransferContext.DataTransferSvcHdle,
+                                          aDataTransferContext.DataTransferThroughputCharHdle,
+                                          0, /* charValOffset */
+                                          pDataValue->Length, /* charValueLen */
+                                          (uint8_t *) pDataValue->pPayload);
+    }
+    break;
 
     default:
       break;
@@ -338,6 +341,7 @@ tBleStatus DTS_STM_UpdateChar( uint16_t UUID , uint8_t *pPayload )
   return result;
 }/* end DTS_STM_UpdateChar() */
 
+#if 0
 tBleStatus DTS_STM_UpdateCharThroughput(DTS_STM_Payload_t *pDataValue )
 {
   tBleStatus result = BLE_STATUS_INVALID_PARAMS;
@@ -352,3 +356,4 @@ tBleStatus DTS_STM_UpdateCharThroughput(DTS_STM_Payload_t *pDataValue )
                                    (uint8_t *) pDataValue->pPayload);
   return result;
 }/* end DTS_STM_UpdateChar() */
+#endif

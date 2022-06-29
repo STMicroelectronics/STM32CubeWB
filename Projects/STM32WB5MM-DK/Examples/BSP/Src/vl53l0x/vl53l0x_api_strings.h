@@ -229,7 +229,7 @@ VL53L0X_Error VL53L0X_check_part_used(VL53L0X_DEV Dev,
 	#define  VL53L0X_STRING_DEVICEERROR_ALGOUNDERFLOW \
 			"Range Algo Underflow Error"
 	#define  VL53L0X_STRING_DEVICEERROR_ALGOOVERFLOW \
-			"Range Algo Overlow Error"
+			"Range Algo Overflow Error"
 	#define  VL53L0X_STRING_DEVICEERROR_RANGEIGNORETHRESHOLD \
 			"Range Ignore Threshold Error"
 	#define  VL53L0X_STRING_DEVICEERROR_UNKNOWN \

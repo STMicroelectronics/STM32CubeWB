@@ -67,7 +67,7 @@
  */
 #define CFG_DEBUG_TRACE_UART    hw_uart1
 #define CFG_CONSOLE_MENU
-#define CFG_CLI_UART    hw_lpuart1
+#define CFG_CLI_UART            hw_lpuart1
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -144,10 +144,10 @@
  * It divides the RTC CLK by 16
  */
 
-#define CFG_RTCCLK_DIV  (16)
-#define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (0x0F)
-#define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
+#define CFG_RTCCLK_DIV            (16)
+#define CFG_RTC_WUCKSEL_DIVIDER   (0)
+#define CFG_RTC_ASYNCH_PRESCALER  (0x0F)
+#define CFG_RTC_SYNCH_PRESCALER   (0x7FFF)
 
 #else
 
@@ -269,7 +269,7 @@ typedef enum
  * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
  */
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
-#define MAX_DBG_TRACE_MSG_SIZE 1024
+#define MAX_DBG_TRACE_MSG_SIZE   1024
 
 /******************************************************************************
  * Configure Log level for Application
@@ -295,6 +295,9 @@ typedef enum
 /******************************************************************************
  * FreeRTOS
  ******************************************************************************/
+/* USER CODE BEGIN FreeRTOS */
+
+/* USER CODE END FreeRTOS */
 #define CFG_SHCI_USER_EVT_PROCESS_NAME        "SHCI_USER_EVT_PROCESS"
 #define CFG_SHCI_USER_EVT_PROCESS_ATTR_BITS   (0)
 #define CFG_SHCI_USER_EVT_PROCESS_CB_MEM      (0)
@@ -346,11 +349,11 @@ typedef enum
  */
 typedef enum
 {
-    CFG_LPM_APP,
-    CFG_LPM_APP_THREAD,
-    /* USER CODE BEGIN CFG_LPM_Id_t */
+  CFG_LPM_APP,
+  CFG_LPM_APP_THREAD,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
 
-    /* USER CODE END CFG_LPM_Id_t */
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
 
 /******************************************************************************

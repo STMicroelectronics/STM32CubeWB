@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef MAIN_H
+#define MAIN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,7 +56,7 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-void   Init_Exti( void );
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -72,4 +72,4 @@ void   MX_RTC_Init(void);
 }
 #endif
 
-#endif /* __MAIN_H */
+#endif /* MAIN_H */

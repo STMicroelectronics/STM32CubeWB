@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    appli_vendor.c
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Application interface for Vendor Mesh Models 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,8 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_conf.h"
 #include "hal_common.h"
@@ -55,7 +58,9 @@ APPLI_SEND_BIG_DATA_PACKET Appli_VendorBigData;
 
 /*Variable to enable OTA for received vendor command*/
 extern MOBLEUINT8 Appli_LedState;
+#ifdef USER_BOARD_1LED
 extern uint16_t DUTY;
+#endif
 extern MOBLEUINT8 NumberOfElements;
 MOBLEUINT32 TestHitCounter = 0;
 extern Appli_LightPwmValue_t Appli_LightPwmValue;
@@ -214,6 +219,7 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
     }
   case APPLI_TEST_COUNTER:
     {
+#ifdef USER_BOARD_1LED
       if((DUTY <= PWM_TIME_PERIOD) && (DUTY > 1))
       {
         Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
@@ -229,11 +235,12 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
         ResponseBuffer[1] = Appli_LedState ;
         BuffLength = 2; 
       /*Insert Test related Commands here*/
+#endif
       break;
     }
   case APPLI_TEST_INC_COUNTER: 
     {
-                
+#ifdef USER_BOARD_1LED
       if((DUTY <= PWM_TIME_PERIOD) && (DUTY > 1))
       {
         Appli_LightPwmValue.IntensityValue = LED_OFF_VALUE;
@@ -250,6 +257,7 @@ MOBLE_RESULT Appli_Vendor_Test(MOBLEUINT8 const *data, MOBLEUINT32 length)
       ResponseBuffer[0] = subCmd;
       ResponseBuffer[1] = Appli_LedState ;
       BuffLength = 2;
+#endif
       /*Insert Test related Commands here*/
       break;
     }

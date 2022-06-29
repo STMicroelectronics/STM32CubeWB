@@ -54,8 +54,6 @@ extern Custom_Context_t Custom_Context;
 
 /* USER CODE END PV */
 
-uint8_t str_to_byte_tab(char *str_in, uint8_t *tab, uint8_t *tab_len);
-
 /* Private function prototypes -----------------------------------------------*/
 
 /* USER CODE BEGIN PFP */
@@ -493,80 +491,6 @@ uint8_t stm32wb_at_BLE_ADV_server_cb(char *buff)
   sprintf(buff, "%d", global_adv_enable);
 
   return 0;
-}
-
-uint8_t str_to_byte_tab(char *str_in, uint8_t *tab, uint8_t* tab_len)
-{
-  uint8_t status = 0;
-  uint16_t tab_limit, cpt, val;
-  
-  if( strncmp(str_in, "0x", 2) == 0 )
-  {
-    cpt = 0;
-    val = 0;
-    tab_limit = *tab_len;
-    *tab_len = 0;
-    str_in++;
-    str_in++;
-    
-    memset(tab, 0, tab_limit);
-    
-    do
-    {
-      if(*str_in == ' ')
-      {
-        str_in++;
-        continue;
-      }
-      else if( (*str_in >= '0') &&  (*str_in <= '9') )
-      {
-        val = *str_in - '0';
-      }
-      else if( (*str_in >= 'a') &&  (*str_in <= 'f') )
-      {
-        val = *str_in - 'a' + 10;
-      }
-      else if( (*str_in >= 'A') &&  (*str_in <= 'F') )
-      {
-        val = *str_in - 'A' + 10;
-      }
-      else
-      {
-        if( (cpt % 2) != 0)
-        {
-          tab[cpt >> 1] /= 16;
-        }
-        status = 0;
-        break;
-      }
-      
-      if( (cpt % 2) == 0)
-      {
-        tab[cpt >> 1] += val * 16;
-      }
-      else
-      {
-        tab[cpt >> 1] += val;
-      }
-      cpt++;
-      str_in++;
-    }while( cpt < tab_limit  );
-    
-    if(cpt == 1)
-    {
-      *tab_len = 1;
-    }
-    else
-    {
-      *tab_len = cpt >> 1;
-    }
-  }
-  else
-  {
-    status = 1;
-  }
-
-  return status;
 }
 
 /* USER CODE END 4 */

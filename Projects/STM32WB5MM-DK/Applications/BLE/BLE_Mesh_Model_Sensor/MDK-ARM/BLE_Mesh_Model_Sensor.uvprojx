@@ -406,11 +406,6 @@
               <FilePath>../Core/Src/app_vl53l0x.c</FilePath>
             </File>
             <File>
-              <FileName>hw_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/hw_flash.c</FilePath>
-            </File>
-            <File>
               <FileName>hw_timerserver.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/hw_timerserver.c</FilePath>
@@ -439,6 +434,11 @@
               <FileName>stm32wbxx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\flash_driver.c</FilePath>
             </File>
           </Files>
         </Group>

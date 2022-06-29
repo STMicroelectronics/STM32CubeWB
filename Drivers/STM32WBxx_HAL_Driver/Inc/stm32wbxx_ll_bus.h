@@ -174,7 +174,7 @@ extern "C" {
   * @{
   */
 #define LL_APB2_GRP1_PERIPH_ALL            (0xFFFFFFFFU)
-  
+
 #if defined(ADC_SUPPORT_2_5_MSPS)
 #define LL_APB2_GRP1_PERIPH_ADC            RCC_APB2ENR_ADCEN
 #endif

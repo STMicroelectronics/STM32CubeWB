@@ -29,9 +29,10 @@
 
 #include "thread_ftd.h"
 
-extern otNeighborTableCallback otNeighborTableCb;
-
 #if OPENTHREAD_FTD
+
+extern otNeighborTableCallback otNeighborTableCb;
+extern otThreadDiscoveryRequestCallback otThreadDiscoveryRequestCb;
 
 uint16_t otThreadGetMaxAllowedChildren(otInstance *aInstance)
 {
@@ -66,13 +67,48 @@ otError otThreadSetMaxAllowedChildren(otInstance *aInstance, uint16_t aMaxChildr
   return (otError)p_ot_req->Data[0];
 }
 
-bool otThreadIsRouterRoleEnabled(otInstance *aInstance)
+uint8_t otThreadGetMaxChildIpAddresses(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_FTD_IS_ROUTER_ROLE_ENABLED;
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_MAX_CHILD_IP_ADDRESS;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_ot_req->Data[0];
+}
+
+#if OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
+otError otThreadSetMaxChildIpAddresses(otInstance *aInstance, uint8_t aMaxIpAddresses)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_MAX_CHILD_IP_ADDRESS;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aMaxIpAddresses;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+#endif
+
+bool otThreadIsRouterEligible(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_IS_ROUTER_ELIGIBLE;
 
   p_ot_req->Size=0;
 
@@ -82,20 +118,20 @@ bool otThreadIsRouterRoleEnabled(otInstance *aInstance)
   return (bool)p_ot_req->Data[0];
 }
 
-void otThreadSetRouterRoleEnabled(otInstance *aInstance, bool aEnabled)
+otError otThreadSetRouterEligible(otInstance *aInstance, bool aEligible)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_FTD_SET_ROUTER_ROLE_ENABLED;
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_ROUTER_ELIGIBLE;
 
-  p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t)aEnabled;
+  p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
 }
 
 otError otThreadSetPreferredRouterId(otInstance *aInstance, uint8_t aRouterId)
@@ -147,13 +183,14 @@ void otThreadSetLocalLeaderWeight(otInstance *aInstance, uint8_t aWeight)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-uint32_t otThreadGetLocalLeaderPartitionId(otInstance *aInstance)
+#if OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
+uint32_t otThreadGetPreferredLeaderPartitionId(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_FTD_GET_LOCAL_LEADER_PARTITION_ID;
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_PREFERRED_LEADER_PARTITION_ID;
 
   p_ot_req->Size=0;
 
@@ -163,13 +200,13 @@ uint32_t otThreadGetLocalLeaderPartitionId(otInstance *aInstance)
   return (uint32_t)p_ot_req->Data[0];
 }
 
-void otThreadSetLocalLeaderPartitionId(otInstance *aInstance, uint32_t aPartitionId)
+void otThreadSetPreferredLeaderPartitionId(otInstance *aInstance, uint32_t aPartitionId)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_FTD_SET_LOCAL_LEADER_PARTITION_ID;
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_PREFERRED_LEADER_PARTITION_ID;
 
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t)aPartitionId;
@@ -178,6 +215,7 @@ void otThreadSetLocalLeaderPartitionId(otInstance *aInstance, uint32_t aPartitio
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
+#endif
 
 uint16_t otThreadGetJoinerUdpPort(otInstance *aInstance)
 {
@@ -545,17 +583,17 @@ otError otThreadGetRouterInfo(otInstance *aInstance, uint16_t aRouterId, otRoute
   return (otError)p_ot_req->Data[0];
 }
 
-otError otThreadGetEidCacheEntry(otInstance *aInstance, uint8_t aIndex, otEidCacheEntry *aEntry)
+otError otThreadGetNextCacheEntry(otInstance *aInstance, otCacheEntryInfo *aEntryInfo, otCacheEntryIterator *aIterator)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_FTD_GET_EID_CACHE_ENTRY;
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_FTD_GET_NEXT_CACHE_ENTRY;
 
   p_ot_req->Size=2;
-  p_ot_req->Data[0] = (uint32_t)aIndex;
-  p_ot_req->Data[1] = (uint32_t)aEntry;
+  p_ot_req->Data[0] = (uint32_t)aEntryInfo;
+  p_ot_req->Data[1] = (uint32_t)aIterator;
 
   Ot_Cmd_Transfer();
 
@@ -563,7 +601,7 @@ otError otThreadGetEidCacheEntry(otInstance *aInstance, uint8_t aIndex, otEidCac
   return (otError)p_ot_req->Data[0];
 }
 
-const otPskc *otThreadGetPskc(otInstance *aInstance)
+void otThreadGetPskc(otInstance *aInstance, otPskc *aPskc)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -576,8 +614,25 @@ const otPskc *otThreadGetPskc(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otPskc * )p_ot_req->Data[0];
 }
+
+#if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
+otPskcRef otThreadGetPskcRef(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_FTD_GET_PSKC_REF;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otPskcRef)p_ot_req->Data[0];
+}
+#endif
 
 otError otThreadSetPskc(otInstance *aInstance, const otPskc *aPskc)
 {
@@ -595,6 +650,25 @@ otError otThreadSetPskc(otInstance *aInstance, const otPskc *aPskc)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
+
+#if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
+otError otThreadSetPskcRef(otInstance *aInstance, otPskcRef aKeyRef)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_FTD_SET_PSKC_REF;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aKeyRef;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+#endif
 
 int8_t otThreadGetParentPriority(otInstance *aInstance)
 {
@@ -645,5 +719,141 @@ void otThreadRegisterNeighborTableCallback(otInstance *aInstance, otNeighborTabl
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
+
+void otThreadSetDiscoveryRequestCallback(otInstance *                     aInstance,
+                                         otThreadDiscoveryRequestCallback aCallback,
+                                         void *                           aContext)
+{
+  Pre_OtCmdProcessing();
+
+  otThreadDiscoveryRequestCb = aCallback;
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_DISCOVERY_REQUEST_CALLBACK;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aContext;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+#if OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
+void otThreadSendAddressNotification(otInstance *              aInstance,
+                                     otIp6Address *            aDestination,
+                                     otIp6Address *            aTarget,
+                                     otIp6InterfaceIdentifier *aMlIid)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SEND_ADDRESS_NOTIFICATION;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aDestination;
+  p_ot_req->Data[1] = (uint32_t)aTarget;
+  p_ot_req->Data[2] = (uint32_t)aMlIid;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+#if OPENTHREAD_CONFIG_BACKBONE_ROUTER_DUA_NDPROXYING_ENABLE
+otError otThreadSendProactiveBackboneNotification(otInstance *              aInstance,
+                                                  otIp6Address *            aTarget,
+                                                  otIp6InterfaceIdentifier *aMlIid,
+                                                  uint32_t                  aTimeSinceLastTransaction)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SEND_PROACTIVE_BACKBONE_NOTIFICATION;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aTarget;
+  p_ot_req->Data[1] = (uint32_t)aMlIid;
+  p_ot_req->Data[2] = (uint32_t)aTimeSinceLastTransaction;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+#endif // OPENTHREAD_CONFIG_BACKBONE_ROUTER_DUA_NDPROXYING_ENABLE
+
+void otThreadSetCcmEnabled(otInstance *aInstance, bool aEnabled)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_CCM_ENABLED;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aEnabled;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+void otThreadSetThreadVersionCheckEnabled(otInstance *aInstance, bool aEnabled)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_THREAD_VERSION_CHECK_ENABLED;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aEnabled;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+void otThreadGetRouterIdRange(otInstance *aInstance, uint8_t *aMinRouterId, uint8_t *aMaxRouterId)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_ROUTER_ID_RANGE;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t)aMinRouterId;
+  p_ot_req->Data[1] = (uint32_t)aMaxRouterId;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+otError otThreadSetRouterIdRange(otInstance *aInstance, uint8_t aMinRouterId, uint8_t aMaxRouterId)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_ROUTER_ID_RANGE;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t)aMinRouterId;
+  p_ot_req->Data[1] = (uint32_t)aMaxRouterId;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+#endif // OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
 
 #endif /* OPENTHREAD_FTD */

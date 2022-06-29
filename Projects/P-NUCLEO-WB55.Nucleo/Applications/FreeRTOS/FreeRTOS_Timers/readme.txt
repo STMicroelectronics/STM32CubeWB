@@ -44,7 +44,7 @@ on STM32Cube with RTOS".
 
 @par Keywords
 
-RTOS, FreeRTOS, Thread, Timer
+RTOS, FreeRTOS, Threading, Timer
 
 @par Directory contents
     - FreeRTOS/FreeRTOS_Timers/Src/main.c                       Main program

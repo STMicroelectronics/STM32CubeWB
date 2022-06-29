@@ -1,21 +1,20 @@
 /**
- ******************************************************************************
- * @file    stts22h.h
- * @author  MEMS Software Solutions Team
- * @brief   STTS22H header driver file
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may not use this file except in compliance with the
- * License. You may obtain a copy of the License at:
- *                        opensource.org/licenses/BSD-3-Clause
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    stts22h.h
+  * @author  MEMS Software Solutions Team
+  * @brief   STTS22H header driver file
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STTS22H_H
@@ -31,20 +30,20 @@ extern "C"
 #include <string.h>
 
 /** @addtogroup BSP BSP
- * @{
- */
+  * @{
+  */
 
 /** @addtogroup Component Component
- * @{
- */
+  * @{
+  */
 
 /** @addtogroup STTS22H STTS22H
- * @{
- */
+  * @{
+  */
 
 /** @defgroup STTS22H_Exported_Types STTS22H Exported Types
- * @{
- */
+  * @{
+  */
 
 typedef int32_t (*STTS22H_Init_Func)(void);
 typedef int32_t (*STTS22H_DeInit_Func)(void);
@@ -101,12 +100,12 @@ typedef struct
 } STTS22H_TEMP_Drv_t;
 
 /**
- * @}
- */
+  * @}
+  */
 
 /** @defgroup STTS22H_Exported_Constants STTS22H Exported Constants
- * @{
- */
+  * @{
+  */
 #define STTS22H_I2C_BUS           0U
 
 /** STTS22H error codes  **/
@@ -114,12 +113,12 @@ typedef struct
 #define STTS22H_ERROR             -1
 
 /**
- * @}
- */
+  * @}
+  */
 
 /** @addtogroup STTS22H_Exported_Functions STTS22H Exported Functions
- * @{
- */
+  * @{
+  */
 
 int32_t STTS22H_RegisterBusIO(STTS22H_Object_t *pObj, STTS22H_IO_t *pIO);
 int32_t STTS22H_Init(STTS22H_Object_t *pObj);
@@ -145,19 +144,19 @@ int32_t STTS22H_Set_One_Shot(STTS22H_Object_t *pObj);
 int32_t STTS22H_Get_One_Shot_Status(STTS22H_Object_t *pObj, uint8_t *Status);
 
 /**
- * @}
- */
+  * @}
+  */
 
 /** @addtogroup STTS22H_Exported_Variables STTS22H Exported Variables
- * @{
- */
+  * @{
+  */
 
 extern STTS22H_CommonDrv_t STTS22H_COMMON_Driver;
 extern STTS22H_TEMP_Drv_t STTS22H_TEMP_Driver;
 
 /**
- * @}
- */
+  * @}
+  */
 
 #ifdef __cplusplus
 }
@@ -166,15 +165,13 @@ extern STTS22H_TEMP_Drv_t STTS22H_TEMP_Driver;
 #endif
 
 /**
- * @}
- */
+  * @}
+  */
 
 /**
- * @}
- */
+  * @}
+  */
 
 /**
- * @}
- */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+  * @}
+  */

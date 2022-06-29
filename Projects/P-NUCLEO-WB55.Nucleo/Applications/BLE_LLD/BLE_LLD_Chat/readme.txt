@@ -120,11 +120,14 @@ You can start to Chat using Uart Com Terminal and you can press buttons
 
 After power On or Reset (ALL the LED are OFF) without pressing SW button:
  1) RadioInit is done and Default Encryption is set (LED1 is ON), Low-Power is not activated
+If Default Encryption is set it uses HAL API with ACK
+ 2) If text is received from another board it is printed through the Uart Com Terminal and an ACK is send
+ 3) If text is typed through the Uart Com Terminal Radio is no more listenning and text is send to another board and wait for ACK to be received
+If Encryption is unset it uses HAL API without ACK
  2) Radio is listening and if text is received from another board it is printed through the Uart Com Terminal
  3) If text is typed through the Uart Com Terminal Radio is no more listenning and text is send to another board
- 4) loop on step 2
+4) loop on step 2
 
-    
 Press SW1 to change Chat by applying or not Default Radio Encryption Communication
  1) If Default Encryption is set, Encryption is unset.
  2) If Encryption is not set, Default Encryption is set

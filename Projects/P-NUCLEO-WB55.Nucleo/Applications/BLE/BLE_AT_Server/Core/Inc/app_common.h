@@ -113,5 +113,5 @@ extern "C"{
 } /* extern "C" */
 #endif
 
-#endif /*APP_COMMON_H */
+#endif /* APP_COMMON_H */
 

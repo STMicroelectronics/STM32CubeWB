@@ -1060,7 +1060,7 @@
                 <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\hw_flash.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\flash_driver.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
@@ -1076,6 +1076,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
@@ -1095,7 +1098,7 @@
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\app_ble.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\\appli_config.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config_client.c</name>
@@ -1135,12 +1138,6 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\STM32_WPAN\app\pal_nvm.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\PWM_config.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\STM32_WPAN\app\PWM_handlers.c</name>
                 </file>
             </group>
             <group>
@@ -1195,10 +1192,16 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_gpio.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_ipcc.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr.c</name>
@@ -1211,6 +1214,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc.c</name>

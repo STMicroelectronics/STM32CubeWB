@@ -115,6 +115,10 @@ typedef int otLogLevel;
 /**
  * This enumeration represents log regions.
  *
+ * The support for log region is removed and instead each core module can define its own name to appended to the logs.
+ * However, the `otLogRegion` enumeration is still defined as before to help with platforms which we may be using it
+ * in their `otPlatLog()` implementation. The OT core will always emit all logs with `OT_LOG_REGION_CORE`.
+ *
  */
 typedef enum otLogRegion
 {
@@ -124,20 +128,30 @@ typedef enum otLogRegion
     OT_LOG_REGION_NET_DATA = 4,  ///< Network Data
     OT_LOG_REGION_ICMP     = 5,  ///< ICMPv6
     OT_LOG_REGION_IP6      = 6,  ///< IPv6
-    OT_LOG_REGION_MAC      = 7,  ///< IEEE 802.15.4 MAC
-    OT_LOG_REGION_MEM      = 8,  ///< Memory
-    OT_LOG_REGION_NCP      = 9,  ///< NCP
-    OT_LOG_REGION_MESH_COP = 10, ///< Mesh Commissioning Protocol
-    OT_LOG_REGION_NET_DIAG = 11, ///< Network Diagnostic
-    OT_LOG_REGION_PLATFORM = 12, ///< Platform
-    OT_LOG_REGION_COAP     = 13, ///< CoAP
-    OT_LOG_REGION_CLI      = 14, ///< CLI
-    OT_LOG_REGION_CORE     = 15, ///< OpenThread Core
-    OT_LOG_REGION_UTIL     = 16, ///< Utility module
+    OT_LOG_REGION_TCP      = 7,  ///< TCP
+    OT_LOG_REGION_MAC      = 8,  ///< IEEE 802.15.4 MAC
+    OT_LOG_REGION_MEM      = 9,  ///< Memory
+    OT_LOG_REGION_NCP      = 10, ///< NCP
+    OT_LOG_REGION_MESH_COP = 11, ///< Mesh Commissioning Protocol
+    OT_LOG_REGION_NET_DIAG = 12, ///< Network Diagnostic
+    OT_LOG_REGION_PLATFORM = 13, ///< Platform
+    OT_LOG_REGION_COAP     = 14, ///< CoAP
+    OT_LOG_REGION_CLI      = 15, ///< CLI
+    OT_LOG_REGION_CORE     = 16, ///< OpenThread Core
+    OT_LOG_REGION_UTIL     = 17, ///< Utility module
+    OT_LOG_REGION_BBR      = 18, ///< Backbone Router (available since Thread 1.2)
+    OT_LOG_REGION_MLR      = 19, ///< Multicast Listener Registration (available since Thread 1.2)
+    OT_LOG_REGION_DUA      = 20, ///< Domain Unicast Address (available since Thread 1.2)
+    OT_LOG_REGION_BR       = 21, ///< Border Router
+    OT_LOG_REGION_SRP      = 22, ///< Service Registration Protocol (SRP)
+    OT_LOG_REGION_DNS      = 23, ///< DNS
 } otLogRegion;
 
 /**
  * This function outputs logs.
+ *
+ * Note that the support for log region is removed. The OT core will always emit all logs with `OT_LOG_REGION_CORE`
+ * as @p aLogRegion.
  *
  * @param[in]  aLogLevel   The log level.
  * @param[in]  aLogRegion  The log region.
@@ -146,17 +160,6 @@ typedef enum otLogRegion
  *
  */
 void otPlatLog(otLogLevel aLogLevel, otLogRegion aLogRegion, const char *aFormat, ...);
-
-/**
- * This function outputs logs.
- *
- * @param[in]  aLogLevel   The log level.
- * @param[in]  aLogRegion  The log region.
- * @param[in]  aFormat     A pointer to the format string.
- * @param[in]  ap          va_list matching information for aFormat
- *
- */
-void otPlatLogv(otLogLevel aLogLevel, otLogRegion aLogRegion, const char *aFormat, va_list ap);
 
 /**
  * @}

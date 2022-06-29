@@ -93,6 +93,12 @@ typedef struct {
 *
 */
 
+/* This bit activates the radio frequency PLL calibration.
+ * 0: Radio frequency calibration disabled.
+ * 1: Radio frequency calibration enabled.
+ */
+#define PLL_TRIG                    0x01
+
 /* This bit determines if the action is an RX action or a TX action.
  * 1: TX
  * 0: RX

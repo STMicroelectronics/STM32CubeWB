@@ -169,6 +169,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
   /* USER CODE BEGIN LPUART1_MspInit 0 */
 
   /* USER CODE END LPUART1_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LPUART1;
@@ -356,6 +357,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
     __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE); /**< Select LSE as RTC Input */
 
   /* USER CODE END RTC_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
@@ -408,4 +410,3 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

@@ -22,7 +22,7 @@ LR_IROM3 0x08007144 0x116BC{
   }
   
   RW_IRAM1 0x20000008 0x2FF8  {  ; RW data
-  ANY (+RW +ZI)
+  .ANY (+RW +ZI)
   }
 
   RW_RAM_SHARED1 0x20030000 0x28  {  ; RW data 

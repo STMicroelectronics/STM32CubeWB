@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TL_CONF_H
-#define __TL_CONF_H
+#ifndef TL_CONF_H
+#define TL_CONF_H
 
 /**
  * It shall be set to 1 for power optimization when standby is supported
@@ -29,4 +29,4 @@
 
 
 
-#endif /*__TL_CONF_H */
+#endif /* TL_CONF_H */

@@ -58,7 +58,7 @@ on STM32Cube with RTOS".
 
 @par Keywords
 
-RTOS, FreeRTOS, Thread, Message, Queues
+RTOS, FreeRTOS, Threading, Message, Queues
 
 @par Directory contents
     - FreeRTOS/FreeRTOS_Queues/Src/main.c                       Main program

@@ -104,8 +104,6 @@ typedef struct
 #define BSP_QSPI_SPI_2IO_MODE        (BSP_QSPI_Interface_t)S25FL128S_SPI_2IO_MODE  /* 1 Cmd Line, 2 Address Lines and 2 Data Lines  */
 #define BSP_QSPI_SPI_1I4O_MODE       (BSP_QSPI_Interface_t)S25FL128S_SPI_1I4O_MODE /* 1 Cmd Line, 1 Address Line and 4 Data Lines   */
 #define BSP_QSPI_SPI_4IO_MODE        (BSP_QSPI_Interface_t)S25FL128S_SPI_4IO_MODE  /* 1 Cmd Line, 4 Address Lines and 4 Data Lines  */
-#define BSP_QSPI_DPI_MODE            (BSP_QSPI_Interface_t)S25FL128S_DPI_MODE      /* 2 Cmd Lines, 2 Address Lines and 2 Data Lines */
-#define BSP_QSPI_QPI_MODE            (BSP_QSPI_Interface_t)S25FL128S_QPI_MODE      /* 4 Cmd Lines, 4 Address Lines and 4 Data Lines */
 
 /* Definition for QSPI transfer rates */
 #define BSP_QSPI_STR_TRANSFER        (BSP_QSPI_Transfer_t)S25FL128S_STR_TRANSFER /* Single Transfer Rate */

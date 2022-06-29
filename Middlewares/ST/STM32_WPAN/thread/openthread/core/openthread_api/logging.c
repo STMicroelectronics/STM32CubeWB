@@ -46,7 +46,8 @@ otLogLevel otLoggingGetLevel(void)
   return (otError)p_ot_req->Data[0];
 }
 
-void otLoggingSetLevel(otLogLevel aLogLevel)
+#if OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
+otError otLoggingSetLevel(otLogLevel aLogLevel)
 {
   Pre_OtCmdProcessing();
 
@@ -61,5 +62,6 @@ void otLoggingSetLevel(otLogLevel aLogLevel)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return;
+  return (otError)p_ot_req->Data[0];
 }
+#endif

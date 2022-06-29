@@ -17,8 +17,8 @@
   */
   
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APP_VL53L0X_H
-#define __APP_VL53L0X_H
+#ifndef APP_VL53L0X_H
+#define APP_VL53L0X_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "vl53l0x_def.h"
@@ -40,4 +40,4 @@ uint16_t VL53L0X_PROXIMITY_GetDistance(void);
 void VL53L0X_PROXIMITY_PrintValue(void);
 void VL53L0X_Start_Measure(void);
 void VL53L0X_Stop_Measure(void);
-#endif /* __APP_VL53L0X_H */
+#endif /* APP_VL53L0X_H */

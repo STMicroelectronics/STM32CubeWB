@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    appli_light_lc.h
-* @author  BLE Mesh Team
-* @brief   Application interface for Light Control Mesh Models  
+  * @file    appli_light_lc.h
+  * @author  MCD Application Team
+  * @brief   Application interface for Light Control Mesh Models  
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_LIGHT_LC_H
-#define __APPLI_LIGHT_LC_H
+#ifndef APPLI_LIGHT_LC_H
+#define APPLI_LIGHT_LC_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -74,6 +76,6 @@ MOBLE_RESULT Appli_Light_LC_SensorPropertyUpdate(MOBLEUINT8 elementIndex,
                                                  MOBLEUINT32 value);
 void Appli_Light_LC_SerialCmd(char *rcvdStringBuff, 
                               uint16_t rcvdStringSize);
-#endif /* __APPLI_LIGHT_LC_H */
+#endif /* APPLI_LIGHT_LC_H */
 
 

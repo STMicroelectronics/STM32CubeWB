@@ -44,20 +44,20 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
 
 @par Directory contents 
   
-  - BLE/BLE_Peripheral_Lite/Inc/stm32wbxx_hal_conf.h	        HAL configuration file
-  - BLE/BLE_Peripheral_Lite/Inc/stm32wbxx_it.h          		Interrupt handlers header file
-  - BLE/BLE_Peripheral_Lite/Inc/main.h                  		Header for main.c module
-  - BLE/BLE_Peripheral_Lite/Inc/gatt_service.h           	    Header for gatt_service.c module
-  - BLE/BLE_Peripheral_Lite/Inc/app_common.h            		Header for all modules with common definition
-  - BLE/BLE_Peripheral_Lite/Inc/app_conf.h              		Parameters configuration file of the application
-  - BLE/BLE_Peripheral_Lite/Inc/hw_conf.h           	    	Configuration file of the HW
-  - BLE/BLE_Peripheral_Lite/Inc/utilities_conf.h         		Configuration file of the utilities 
-  - BLE/BLE_Peripheral_Lite/Src/stm32wbxx_it.c          		Interrupt handlers
-  - BLE/BLE_Peripheral_Lite/Src/main.c                  		Main program and BLE Profile implementation
-  - BLE/BLE_Peripheral_Lite/Src/system_stm32wbxx.c      		stm32wbxx system source file
-  - BLE/BLE_Peripheral_Lite/Src/gatt_service.c      		    custom STM my very own service implementation
-  - BLE/BLE_Peripheral_Lite/Src/hw_ipcc.c   		            IPCC Driver
-  - BLE/BLE_Peripheral_Lite/Src/app_debug.c   		            CPU2 debug and trace support
+  - BLE/BLE_Peripheral_Lite/Inc/stm32wbxx_hal_conf.h       HAL configuration file
+  - BLE/BLE_Peripheral_Lite/Inc/stm32wbxx_it.h             Interrupt handlers header file
+  - BLE/BLE_Peripheral_Lite/Inc/main.h                     Header for main.c module
+  - BLE/BLE_Peripheral_Lite/Inc/gatt_service.h             Header for gatt_service.c module
+  - BLE/BLE_Peripheral_Lite/Inc/app_common.h               Header for all modules with common definition
+  - BLE/BLE_Peripheral_Lite/Inc/app_conf.h                 Parameters configuration file of the application
+  - BLE/BLE_Peripheral_Lite/Inc/hw_conf.h                  Configuration file of the HW
+  - BLE/BLE_Peripheral_Lite/Inc/utilities_conf.h           Configuration file of the utilities 
+  - BLE/BLE_Peripheral_Lite/Src/stm32wbxx_it.c             Interrupt handlers
+  - BLE/BLE_Peripheral_Lite/Src/main.c                     Main program and BLE Profile implementation
+  - BLE/BLE_Peripheral_Lite/Src/system_stm32wbxx.c         stm32wbxx system source file
+  - BLE/BLE_Peripheral_Lite/Src/gatt_service.c             custom STM my very own service implementation
+  - BLE/BLE_Peripheral_Lite/Src/hw_ipcc.c                  IPCC Driver
+  - BLE/BLE_Peripheral_Lite/Src/app_debug.c                CPU2 debug and trace support
  
 @par Hardware and Software environment
 
@@ -80,13 +80,9 @@ In order to make the program work, you must do the following :
 
 First demonstration
 On the android/ios device, enable the Bluetooth communications, and if not done before,
- - Install the ST BLE Profile application on the android device
-	https://play.google.com/store/apps/details?id=com.stm.bluetoothlevalidation&hl=en
-    https://itunes.apple.com/fr/App/st-ble-profile/id1081331769?mt=8
-
  - Install the ST BLE Sensor application on the ios/android device
-	https://play.google.com/store/apps/details?id=com.st.bluems
-	https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
+      https://play.google.com/store/apps/details?id=com.st.bluems
+      https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
 
  - Power on the Nucleo board with the BLE_Peripheral_Lite application
  - Then, click on the App icon, ST BLE Sensor (android device)

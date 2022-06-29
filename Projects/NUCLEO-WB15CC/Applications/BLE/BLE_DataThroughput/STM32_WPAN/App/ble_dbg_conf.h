@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __BLE_DBG_CONF_H
-#define __BLE_DBG_CONF_H
+#ifndef BLE_DBG_CONF_H
+#define BLE_DBG_CONF_H
 
 /**
  * Enable or Disable traces from BLE
@@ -33,30 +33,6 @@
 #define BLE_DBG_BLS_EN             0
 #define BLE_DBG_HTS_EN             0
 #define BLE_DBG_P2P_STM_EN         0
-
-#define BLE_DBG_EDS_STM_EN         0
-#define BLE_DBG_LBS_STM_EN         0
-#define BLE_DBG_CTS_EN             0
-                                 
-#define BLE_DBG_HIDS_EN            0
-#define BLE_DBG_PASS_EN            0
-#define BLE_DBG_BLS_EN             0
-#define BLE_DBG_HTS_EN             0
-#define BLE_DBG_ANS_EN             0
-#define BLE_DBG_ESS_EN             0
-#define BLE_DBG_GLS_EN             0
-#define BLE_DBG_BAS_EN             0
-#define BLE_DBG_RTUS_EN            0
-#define BLE_DBG_HPS_EN             0
-#define BLE_DBG_TPS_EN             0
-#define BLE_DBG_LLS_EN             0
-#define BLE_DBG_IAS_EN             0
-#define BLE_DBG_DTS_EN             0
-#define BLE_DBG_WSS_EN             0
-#define BLE_DBG_LNS_EN             0
-#define BLE_DBG_SCPS_EN            0
-#define BLE_DBG_P2P_STM_EN         0
-#define BLE_DBG_CRS_STM_EN         0
 
 /**
  * Macro definition
@@ -226,4 +202,4 @@
 #endif
 
 
-#endif /*__BLE_DBG_CONF_H */
+#endif /* BLE_DBG_CONF_H */

@@ -75,10 +75,15 @@ enum{
 /* Private function prototypes -----------------------------------------------*/
 
 static void CHAT_ToggleEncrypt(void);
+static void sendPacketAckStart(char *text);
+static void sendPacketAckEnd(radioEventType cmd, ActionPacket *ap, void *data, uint8_t size);
+static void receivePacketAckStart(void);
+static void receivePacketAckEnd(radioEventType cmd, ActionPacket *ap, void *data, uint8_t size);
 static void sendPacketStart(char *text);
 static void sendPacketEnd(radioEventType cmd, ActionPacket *ap, void *data, uint8_t size);
 static void receivePacketStart(void);
 static void receivePacketEnd(radioEventType cmd, ActionPacket *ap, void *data, uint8_t size);
+
 static void CHAT_StartTone(void);
 static void CHAT_StopTone(void);
 
@@ -137,7 +142,11 @@ void CHAT_APP_Init(void)
   uartWriteRaw(PROMPT);
 
   APP_BLE_LLD_uartRxStart(uartRxCallback);
-  receivePacketStart();
+  if(chatEncrypt) {
+    receivePacketAckStart();
+  } else {
+    receivePacketStart();
+  }
 }
 
 static void radioInit(void)
@@ -174,7 +183,11 @@ static void uartRxBufferProcess(void)
   if (uartRxChar == '\n' || uartRxChar == '\r'){
     uartRxBuf[uartRxBufIdx] = '\0';
     uartRxBufIdx = 0;
-    sendPacketStart(uartRxBuf);
+    if(chatEncrypt) {
+      sendPacketAckStart(uartRxBuf);
+    } else {
+      sendPacketStart(uartRxBuf);
+    }
   } else if (uartRxBufIdx < (sizeof(uartRxBuf) - 1)){
     char echo[2];
     uartRxBuf[uartRxBufIdx] = uartRxChar;
@@ -202,10 +215,14 @@ static void CHAT_ToggleEncrypt(void)
   uartWrite("");
   uartWrite("************ %s **************", chatEncrypt ? "Encrypted" : "UnEncrypted");
   uartWriteRaw(PROMPT);
-  receivePacketStart();
+  if(chatEncrypt) {
+    receivePacketAckStart();
+  } else {
+    receivePacketStart();
+  }
 }
 
-static void sendPacketStart(char *text)
+static void sendPacketAckStart(char *text)
 {
   userPayload payload;
   uint8_t payloadSize;
@@ -216,10 +233,10 @@ static void sendPacketStart(char *text)
   HAL_BLE_LLD_SendPacketWithAck(&payload,
                                 payloadSize,
                                 RX_ACK_TIMEOUT_US,
-                                sendPacketEnd);
+                                sendPacketAckEnd);
 }
 
-static void sendPacketEnd(radioEventType cmd, ActionPacket *ap, void *data, uint8_t size)
+static void sendPacketAckEnd(radioEventType cmd, ActionPacket *ap, void *data, uint8_t size)
 {
   userPayload *payload = data;
 
@@ -238,11 +255,11 @@ static void sendPacketEnd(radioEventType cmd, ActionPacket *ap, void *data, uint
     uartWriteRaw(PROMPT);
   }
   if (RADIO_IS_READY(cmd)){
-    receivePacketStart();
+    receivePacketAckStart();
   }
 }
 
-static void receivePacketStart(void)
+static void receivePacketAckStart(void)
 {
   uint8_t status;
   userPayload payload;
@@ -251,7 +268,63 @@ static void receivePacketStart(void)
   status = HAL_BLE_LLD_ReceivePacketWithAck(&payload,
                                             payloadSize,
                                             RX_TIMEOUT_US,
-                                            receivePacketEnd);
+                                            receivePacketAckEnd);
+  if (SUCCESS_0 != status){
+    APP_DBG("HAL_BLE_LLD_ReceivePacketWithAck returned error 0x%X", status);
+  }
+}
+
+static void receivePacketAckEnd(radioEventType cmd, ActionPacket *ap, void *data, uint8_t size)
+{
+  char display[sizeof(userPayloadMsg)];
+  userPayload *payload = data;
+  APP_DBG("%s: event %s", __func__, eventToString(cmd));
+  // Display data as soon as it is received (ACK is still being sent)
+  if (cmd == RX_OK_BUSY){
+    if (!payloadMsgCheck(payload)){
+      APP_DBG("INFO: wrong packet type");
+    }else{
+      payloadMsgExtract(payload, display);
+      uartWriteRaw(display);
+      uartWrite("");
+      uartWriteRaw(PROMPT);
+    }
+  }
+  if (RADIO_IS_READY(cmd)){
+    receivePacketAckStart();
+  }
+}
+
+static void sendPacketStart(char *text)
+{
+  userPayload payload;
+  uint8_t payloadSize;
+  BLE_LLD_StopActivity();
+  radioInit();
+
+  payloadSize = payloadMsgPrepare(&payload, uartRxBuf);
+  HAL_BLE_LLD_SendPacket(&payload,
+                         payloadSize,
+                         sendPacketEnd);
+}
+
+static void sendPacketEnd(radioEventType cmd, ActionPacket *ap, void *data, uint8_t size)
+{
+  APP_DBG("%s: event %s", __func__, eventToString(cmd));
+  
+  uartWrite("");
+  uartWriteRaw(PROMPT);
+
+  if (RADIO_IS_READY(cmd)){
+    receivePacketStart();
+  }
+}
+
+static void receivePacketStart(void)
+{
+  uint8_t status;
+  status = HAL_BLE_LLD_ReceivePacket(RX_TIMEOUT_US,
+                                     receivePacketEnd);
   if (SUCCESS_0 != status){
     APP_DBG("HAL_BLE_LLD_ReceivePacketWithAck returned error 0x%X", status);
   }
@@ -263,7 +336,7 @@ static void receivePacketEnd(radioEventType cmd, ActionPacket *ap, void *data, u
   userPayload *payload = data;
   APP_DBG("%s: event %s", __func__, eventToString(cmd));
   // Display data as soon as it is received (ACK is still being sent)
-  if (cmd == RX_OK_BUSY){
+  if (cmd == RX_OK_READY){
     if (!payloadMsgCheck(payload)){
       APP_DBG("INFO: wrong packet type");
     }else{

@@ -1,40 +1,39 @@
 /**
- ******************************************************************************
- * @file    stts22h.c
- * @author  MEMS Software Solutions Team
- * @brief   STTS22H driver file
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may not use this file except in compliance with the
- * License. You may obtain a copy of the License at:
- *                        opensource.org/licenses/BSD-3-Clause
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    stts22h.c
+  * @author  MEMS Software Solutions Team
+  * @brief   STTS22H driver file
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stts22h.h"
 
 /** @addtogroup BSP BSP
- * @{
- */
+  * @{
+  */
 
 /** @addtogroup Component Component
- * @{
- */
+  * @{
+  */
 
 /** @defgroup STTS22H STTS22H
- * @{
- */
+  * @{
+  */
 
 /** @defgroup STTS22H_Exported_Variables STTS22H Exported Variables
- * @{
- */
+  * @{
+  */
 
 STTS22H_CommonDrv_t STTS22H_COMMON_Driver =
 {
@@ -54,29 +53,29 @@ STTS22H_TEMP_Drv_t STTS22H_TEMP_Driver =
 };
 
 /**
- * @}
- */
+  * @}
+  */
 
 /** @defgroup STTS22H_Private_Function_Prototypes STTS22H Private Function Prototypes
- * @{
- */
+  * @{
+  */
 
 static int32_t ReadRegWrap(void *Handle, uint8_t Reg, uint8_t *pData, uint16_t Length);
 static int32_t WriteRegWrap(void *Handle, uint8_t Reg, uint8_t *pData, uint16_t Length);
 
 /**
- * @}
- */
+  * @}
+  */
 
 /** @defgroup STTS22H_Exported_Functions STTS22H Exported Functions
- * @{
- */
+  * @{
+  */
 
 /**
- * @brief  Register Component Bus IO operations
- * @param  pObj the device pObj
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Register Component Bus IO operations
+  * @param  pObj the device pObj
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_RegisterBusIO(STTS22H_Object_t *pObj, STTS22H_IO_t *pIO)
 {
   int32_t ret;
@@ -113,10 +112,10 @@ int32_t STTS22H_RegisterBusIO(STTS22H_Object_t *pObj, STTS22H_IO_t *pIO)
 }
 
 /**
- * @brief  Initialize the STTS22H sensor
- * @param  pObj the device pObj
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Initialize the STTS22H sensor
+  * @param  pObj the device pObj
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_Init(STTS22H_Object_t *pObj)
 {
   if (pObj->is_initialized == 0U)
@@ -125,13 +124,13 @@ int32_t STTS22H_Init(STTS22H_Object_t *pObj)
     pObj->temp_odr = 1.0f;
 
     /* Enable BDU */
-    if(stts22h_block_data_update_set(&(pObj->Ctx), PROPERTY_ENABLE) != STTS22H_OK)
+    if (stts22h_block_data_update_set(&(pObj->Ctx), PROPERTY_ENABLE) != STTS22H_OK)
     {
       return STTS22H_ERROR;
     }
 
     /* Enable Automatic Address Increment */
-    if(stts22h_auto_increment_set(&(pObj->Ctx), PROPERTY_ENABLE) != STTS22H_OK)
+    if (stts22h_auto_increment_set(&(pObj->Ctx), PROPERTY_ENABLE) != STTS22H_OK)
     {
       return STTS22H_ERROR;
     }
@@ -149,10 +148,10 @@ int32_t STTS22H_Init(STTS22H_Object_t *pObj)
 }
 
 /**
- * @brief  Deinitialize the STTS22H sensor
- * @param  pObj the device pObj
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Deinitialize the STTS22H sensor
+  * @param  pObj the device pObj
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_DeInit(STTS22H_Object_t *pObj)
 {
   if (pObj->is_initialized == 1U)
@@ -170,11 +169,11 @@ int32_t STTS22H_DeInit(STTS22H_Object_t *pObj)
 }
 
 /**
- * @brief  Get WHO_AM_I value
- * @param  pObj the device pObj
- * @param  Id the WHO_AM_I value
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Get WHO_AM_I value
+  * @param  pObj the device pObj
+  * @param  Id the WHO_AM_I value
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_ReadID(STTS22H_Object_t *pObj, uint8_t *Id)
 {
   uint8_t buf;
@@ -190,11 +189,11 @@ int32_t STTS22H_ReadID(STTS22H_Object_t *pObj, uint8_t *Id)
 }
 
 /**
- * @brief  Get STTS22H sensor capabilities
- * @param  pObj Component object pointer
- * @param  Capabilities pointer to STTS22H sensor capabilities
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Get STTS22H sensor capabilities
+  * @param  pObj Component object pointer
+  * @param  Capabilities pointer to STTS22H sensor capabilities
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_GetCapabilities(STTS22H_Object_t *pObj, STTS22H_Capabilities_t *Capabilities)
 {
   /* Prevent unused argument(s) compilation warning */
@@ -211,11 +210,11 @@ int32_t STTS22H_GetCapabilities(STTS22H_Object_t *pObj, STTS22H_Capabilities_t *
 }
 
 /**
- * @brief  Get the STTS22H initialization status
- * @param  pObj the device pObj
- * @param  Status 1 if initialized, 0 otherwise
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Get the STTS22H initialization status
+  * @param  pObj the device pObj
+  * @param  Status 1 if initialized, 0 otherwise
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_Get_Init_Status(STTS22H_Object_t *pObj, uint8_t *Status)
 {
   if (pObj == NULL)
@@ -229,10 +228,10 @@ int32_t STTS22H_Get_Init_Status(STTS22H_Object_t *pObj, uint8_t *Status)
 }
 
 /**
- * @brief  Enable the STTS22H temperature sensor
- * @param  pObj the device pObj
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Enable the STTS22H temperature sensor
+  * @param  pObj the device pObj
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_TEMP_Enable(STTS22H_Object_t *pObj)
 {
   /* Check if the component is already enabled */
@@ -253,10 +252,10 @@ int32_t STTS22H_TEMP_Enable(STTS22H_Object_t *pObj)
 }
 
 /**
- * @brief  Disable the STTS22H temperature sensor
- * @param  pObj the device pObj
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Disable the STTS22H temperature sensor
+  * @param  pObj the device pObj
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_TEMP_Disable(STTS22H_Object_t *pObj)
 {
   /* Check if the component is already disabled */
@@ -283,11 +282,11 @@ int32_t STTS22H_TEMP_Disable(STTS22H_Object_t *pObj)
 }
 
 /**
- * @brief  Get the STTS22H temperature sensor output data rate
- * @param  pObj the device pObj
- * @param  Odr pointer where the output data rate is written
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Get the STTS22H temperature sensor output data rate
+  * @param  pObj the device pObj
+  * @param  Odr pointer where the output data rate is written
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_TEMP_GetOutputDataRate(STTS22H_Object_t *pObj, float *Odr)
 {
   int32_t ret = STTS22H_OK;
@@ -334,20 +333,20 @@ int32_t STTS22H_TEMP_GetOutputDataRate(STTS22H_Object_t *pObj, float *Odr)
 }
 
 /**
- * @brief  Set the STTS22H temperature sensor output data rate
- * @param  pObj the device pObj
- * @param  Odr the output data rate value to be set
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Set the STTS22H temperature sensor output data rate
+  * @param  pObj the device pObj
+  * @param  Odr the output data rate value to be set
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_TEMP_SetOutputDataRate(STTS22H_Object_t *pObj, float Odr)
 {
   stts22h_odr_temp_t new_odr;
 
-  new_odr = (Odr <= 1.0f   ) ? STTS22H_1Hz
-          : (Odr <= 25.0f  ) ? STTS22H_25Hz
-          : (Odr <= 50.0f  ) ? STTS22H_50Hz
-          : (Odr <= 100.0f ) ? STTS22H_100Hz
-          :                    STTS22H_200Hz;
+  new_odr = (Odr <= 1.0f) ? STTS22H_1Hz
+            : (Odr <= 25.0f) ? STTS22H_25Hz
+            : (Odr <= 50.0f) ? STTS22H_50Hz
+            : (Odr <= 100.0f) ? STTS22H_100Hz
+            :                    STTS22H_200Hz;
 
   if (stts22h_temp_data_rate_set(&(pObj->Ctx), new_odr) != STTS22H_OK)
   {
@@ -358,11 +357,11 @@ int32_t STTS22H_TEMP_SetOutputDataRate(STTS22H_Object_t *pObj, float Odr)
 }
 
 /**
- * @brief  Get the STTS22H temperature value
- * @param  pObj the device pObj
- * @param  Value pointer where the temperature value is written
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Get the STTS22H temperature value
+  * @param  pObj the device pObj
+  * @param  Value pointer where the temperature value is written
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_TEMP_GetTemperature(STTS22H_Object_t *pObj, float *Value)
 {
   int16_t raw_value;
@@ -379,11 +378,11 @@ int32_t STTS22H_TEMP_GetTemperature(STTS22H_Object_t *pObj, float *Value)
 }
 
 /**
- * @brief  Get the STTS22H temperature data ready bit value
- * @param  pObj the device pObj
- * @param  Status the status of data ready bit
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Get the STTS22H temperature data ready bit value
+  * @param  pObj the device pObj
+  * @param  Status the status of data ready bit
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_TEMP_Get_DRDY_Status(STTS22H_Object_t *pObj, uint8_t *Status)
 {
   uint8_t val;
@@ -393,10 +392,11 @@ int32_t STTS22H_TEMP_Get_DRDY_Status(STTS22H_Object_t *pObj, uint8_t *Status)
     return STTS22H_ERROR;
   }
 
-  if(val)
+  if (val)
   {
     *Status = 1;
-  } else
+  }
+  else
   {
     *Status = 0;
   }
@@ -405,11 +405,11 @@ int32_t STTS22H_TEMP_Get_DRDY_Status(STTS22H_Object_t *pObj, uint8_t *Status)
 }
 
 /**
- * @brief  Set the STTS22H high temperature threshold value
- * @param  pObj the device pObj
- * @param  Value the high temperature threshold to be set
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Set the STTS22H high temperature threshold value
+  * @param  pObj the device pObj
+  * @param  Value the high temperature threshold to be set
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_TEMP_SetHighTemperatureThreshold(STTS22H_Object_t *pObj, float Value)
 {
   uint8_t raw_value;
@@ -426,11 +426,11 @@ int32_t STTS22H_TEMP_SetHighTemperatureThreshold(STTS22H_Object_t *pObj, float V
 }
 
 /**
- * @brief  Set the STTS22H low temperature threshold value
- * @param  pObj the device pObj
- * @param  Value the high temperature threshold to be set
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Set the STTS22H low temperature threshold value
+  * @param  pObj the device pObj
+  * @param  Value the high temperature threshold to be set
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_TEMP_SetLowTemperatureThreshold(STTS22H_Object_t *pObj, float Value)
 {
   uint8_t raw_value;
@@ -447,12 +447,12 @@ int32_t STTS22H_TEMP_SetLowTemperatureThreshold(STTS22H_Object_t *pObj, float Va
 }
 
 /**
- * @brief  Get the STTS22H temperature limits status
- * @param  pObj the device pObj
- * @param  HighLimit indicates that high temperature limit has been exceeded
- * @param  LowhLimit indicates that low temperature limit has been exceeded
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Get the STTS22H temperature limits status
+  * @param  pObj the device pObj
+  * @param  HighLimit indicates that high temperature limit has been exceeded
+  * @param  LowhLimit indicates that low temperature limit has been exceeded
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_TEMP_GetTemperatureLimitStatus(STTS22H_Object_t *pObj, uint8_t *HighLimit, uint8_t *LowLimit)
 {
   stts22h_temp_trlhd_src_t status;
@@ -463,12 +463,12 @@ int32_t STTS22H_TEMP_GetTemperatureLimitStatus(STTS22H_Object_t *pObj, uint8_t *
     return STTS22H_ERROR;
   }
 
-  if(HighLimit != NULL)
+  if (HighLimit != NULL)
   {
     *HighLimit = status.over_thh;
   }
 
-  if(LowLimit != NULL)
+  if (LowLimit != NULL)
   {
     *LowLimit = status.under_thl;
   }
@@ -477,12 +477,12 @@ int32_t STTS22H_TEMP_GetTemperatureLimitStatus(STTS22H_Object_t *pObj, uint8_t *
 }
 
 /**
- * @brief  Get the STTS22H register value
- * @param  pObj the device pObj
- * @param  Reg address to be read
- * @param  Data pointer where the value is written
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Get the STTS22H register value
+  * @param  pObj the device pObj
+  * @param  Reg address to be read
+  * @param  Data pointer where the value is written
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_Read_Reg(STTS22H_Object_t *pObj, uint8_t Reg, uint8_t *Data)
 {
   if (stts22h_read_reg(&(pObj->Ctx), Reg, Data, 1) != STTS22H_OK)
@@ -494,12 +494,12 @@ int32_t STTS22H_Read_Reg(STTS22H_Object_t *pObj, uint8_t Reg, uint8_t *Data)
 }
 
 /**
- * @brief  Set the STTS22H register value
- * @param  pObj the device pObj
- * @param  Reg address to be written
- * @param  Data value to be written
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Set the STTS22H register value
+  * @param  pObj the device pObj
+  * @param  Reg address to be written
+  * @param  Data value to be written
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_Write_Reg(STTS22H_Object_t *pObj, uint8_t Reg, uint8_t Data)
 {
   if (stts22h_write_reg(&(pObj->Ctx), Reg, &Data, 1) != STTS22H_OK)
@@ -511,10 +511,10 @@ int32_t STTS22H_Write_Reg(STTS22H_Object_t *pObj, uint8_t Reg, uint8_t Data)
 }
 
 /**
- * @brief  Set the STTS22H One Shot Mode
- * @param  pObj the device pObj
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Set the STTS22H One Shot Mode
+  * @param  pObj the device pObj
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_Set_One_Shot(STTS22H_Object_t *pObj)
 {
   /* Start One Shot Measurement */
@@ -527,11 +527,11 @@ int32_t STTS22H_Set_One_Shot(STTS22H_Object_t *pObj)
 }
 
 /**
- * @brief  Get the STTS22H One Shot Status
- * @param  pObj the device pObj
- * @param  Status pointer to the one shot status (1 means measurements available, 0 means measurements not available yet)
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Get the STTS22H One Shot Status
+  * @param  pObj the device pObj
+  * @param  Status pointer to the one shot status (1 means measurements available, 0 means measurements not available yet)
+  * @retval 0 in case of success, an error code otherwise
+  */
 int32_t STTS22H_Get_One_Shot_Status(STTS22H_Object_t *pObj, uint8_t *Status)
 {
   stts22h_dev_status_t status;
@@ -555,21 +555,21 @@ int32_t STTS22H_Get_One_Shot_Status(STTS22H_Object_t *pObj, uint8_t *Status)
 }
 
 /**
- * @}
- */
+  * @}
+  */
 
 /** @defgroup STTS22H_Private_Functions STTS22H Private Functions
- * @{
- */
+  * @{
+  */
 
 /**
- * @brief  Wrap Read register component function to Bus IO function
- * @param  Handle the device handler
- * @param  Reg the register address
- * @param  pData the stored data pointer
- * @param  Length the length
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Wrap Read register component function to Bus IO function
+  * @param  Handle the device handler
+  * @param  Reg the register address
+  * @param  pData the stored data pointer
+  * @param  Length the length
+  * @retval 0 in case of success, an error code otherwise
+  */
 static int32_t ReadRegWrap(void *Handle, uint8_t Reg, uint8_t *pData, uint16_t Length)
 {
   uint16_t i;
@@ -592,13 +592,13 @@ static int32_t ReadRegWrap(void *Handle, uint8_t Reg, uint8_t *pData, uint16_t L
 }
 
 /**
- * @brief  Wrap Write register component function to Bus IO function
- * @param  Handle the device handler
- * @param  Reg the register address
- * @param  pData the stored data pointer
- * @param  Length the length
- * @retval 0 in case of success, an error code otherwise
- */
+  * @brief  Wrap Write register component function to Bus IO function
+  * @param  Handle the device handler
+  * @param  Reg the register address
+  * @param  pData the stored data pointer
+  * @param  Length the length
+  * @retval 0 in case of success, an error code otherwise
+  */
 static int32_t WriteRegWrap(void *Handle, uint8_t Reg, uint8_t *pData, uint16_t Length)
 {
   uint16_t i;
@@ -607,7 +607,7 @@ static int32_t WriteRegWrap(void *Handle, uint8_t Reg, uint8_t *pData, uint16_t 
 
   if (pObj->IO.BusType == (uint32_t)STTS22H_I2C_BUS) /* I2C */
   {
-	for (i = 0; i < Length; i++)
+    for (i = 0; i < Length; i++)
     {
       ret = pObj->IO.WriteReg(pObj->IO.Address, (Reg + i), &pData[i], 1);
       if (ret != STTS22H_OK)
@@ -635,5 +635,3 @@ static int32_t WriteRegWrap(void *Handle, uint8_t Reg, uint8_t *pData, uint16_t 
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -30,19 +30,3 @@
 #include "entropy.h"
 #include <mbedtls/entropy.h>
 
-mbedtls_entropy_context *otEntropyMbedTlsContextGet(void)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_ENTROPY_MBED_TLS_CONTEXT_GET;
-
-  p_ot_req->Size=0;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (mbedtls_entropy_context *)p_ot_req->Data[0];
-}
-

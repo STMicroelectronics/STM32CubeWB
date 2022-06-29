@@ -56,9 +56,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/app_vl53l0x.c</locationURI>
 		</link>
 		<link>
-			<name>Application/Core/hw_flash.c</name>
+			<name>Application/Core/flash_driver.c</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/hw_flash.c</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/flash_driver.c</locationURI>
 		</link>
 		<link>
 			<name>Application/Core/hw_timerserver.c</name>

@@ -36,7 +36,6 @@ extern "C"{
   /* -------------------------------- *
    *  Basic definitions               *
    * -------------------------------- */
-
 #undef NULL
 #define NULL                    0
 
@@ -56,7 +55,6 @@ extern "C"{
   /* -------------------------------- *
    *  Macro delimiters                *
    * -------------------------------- */
-
 #define M_BEGIN     do {
 
 #define M_END       } while(0)
@@ -64,7 +62,6 @@ extern "C"{
   /* -------------------------------- *
    *  Some useful macro definitions   *
    * -------------------------------- */
-
 #ifndef MAX
 #define MAX( x, y )          (((x)>(y))?(x):(y))
 #endif
@@ -80,11 +77,6 @@ extern "C"{
 #define MODADD( a, b, m )    M_BEGIN  (a)+=(b);  if ((a)>=(m)) (a)-=(m);  M_END
 
 #define MODSUB( a, b, m )    MODADD( a, (m)-(b), m )
-
-#define PAUSE( t )           M_BEGIN \
-                               __IO int _i; \
-                               for ( _i = t; _i > 0; _i -- ); \
-                             M_END
 
 #define DIVF( x, y )         ((x)/(y))
 
@@ -113,4 +105,4 @@ extern "C"{
 } /* extern "C" */
 #endif
 
-#endif /*APP_COMMON_H */
+#endif /* APP_COMMON_H */

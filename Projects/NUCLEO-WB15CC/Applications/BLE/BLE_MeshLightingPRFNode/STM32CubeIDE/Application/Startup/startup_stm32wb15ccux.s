@@ -14,7 +14,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -99,7 +99,8 @@ Reset_Handler:
   INIT_DATA _sdata, _edata, _sidata
 
 /* Zero fill the bss segments. */
-  INIT_BSS _sbss, _ebss
+  INIT_BSS _sbss1, _ebss1
+  INIT_BSS _sbss2, _ebss2
   INIT_BSS _sMB_MEM2, _eMB_MEM2
 
 /* Call static constructors */

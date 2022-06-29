@@ -26,9 +26,10 @@
 #include "hw_conf.h"
 #include "hw_if.h"
 #include "ble_bufsize.h"
+#include "main.h"
 
 /******************************************************************************
- * MESH Application Config
+ * Application Config
  ******************************************************************************/
 
 /**< generic parameters ******************************************************/
@@ -42,10 +43,12 @@
  * Define Advertising parameters
  */
 #define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
+#define CFG_BLE_ADDRESS_TYPE              PUBLIC_ADDR /**< Bluetooth address types defined in ble_legacy.h */
+
 #define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)  /**< 80ms */
-#define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)  /**< 100ms */
+#define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)      /**< 100ms */
 #define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x640) /**< 1s */
-#define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xFA0) /**< 2.5s */
+#define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xFA0)     /**< 2.5s */
 
 /**
  * Define IO Authentication
@@ -163,7 +166,7 @@
 
 /**
  * Maximum supported ATT_MTU size
- * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS is set to 1"
+ * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
 #define CFG_BLE_MAX_ATT_MTU             (23/*156*/)
 
@@ -176,19 +179,19 @@
  *  - 2*DTM_NUM_LINK, if client configuration descriptor is used
  *  - 2, if extended properties is used
  *  The total amount of memory needed is the sum of the above quantities for each attribute.
- * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS is set to 1"
+ * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
 #define CFG_BLE_ATT_VALUE_ARRAY_SIZE    (1290)
 
 /**
  * Prepare Write List size in terms of number of packet
- * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS is set to 1"
+ * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
 #define CFG_BLE_PREPARE_WRITE_LIST_SIZE         BLE_PREP_WRITE_X_ATT(CFG_BLE_MAX_ATT_MTU)
 
 /**
  * Number of allocated memory blocks
- * This parameter is overwritten by the CPU2 with an hardcoded optimal value when the parameter when CFG_BLE_OPTIONS is set to 1
+ * This parameter is overwritten by the CPU2 with an hardcoded optimal value when the parameter CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
 #define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, CFG_BLE_MAX_ATT_MTU, CFG_BLE_NUM_LINK))
 
@@ -216,11 +219,16 @@
 #define CFG_BLE_MASTER_SCA   0
 
 /**
- *  Source for the low speed clock for RF wake-up
- *  1 : external high speed crystal HSE/32/32 
- *  0 : external low speed crystal ( no calibration )
- */ 
-#define CFG_BLE_LSE_SOURCE  0
+ * LsSource
+ * Some information for Low speed clock mapped in bits field
+ * - bit 0:   1: Calibration for the RF system wakeup clock source   0: No calibration for the RF system wakeup clock source
+ * - bit 1:   1: STM32W5M Module device                              0: Other devices as STM32WBxx SOC, STM32WB1M module
+ */
+#if defined(STM32WB5Mxx)
+  #define CFG_BLE_LSE_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LSE_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LSE_MOD5MM_DEV)
+#else
+  #define CFG_BLE_LSE_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LSE_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LSE_OTHER_DEV)
+#endif
 
 /**
  * Start up time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 us (~2.44 us)
@@ -252,15 +260,16 @@
  * - SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2
  * - SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2
  * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
- * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 * which are used to set following configuration bits:
+ * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3
+ * which are used to set following configuration bits:
  * (bit 0): 1: LL only
  *          0: LL + host
  * (bit 1): 1: no service change desc.
  *          0: with service change desc.
  * (bit 2): 1: device name Read-Only
  *          0: device name R/W
- * (bit 3): 1: extended advertizing supported       [NOT SUPPORTED]
- *          0: extended advertizing not supported   [NOT SUPPORTED]
+ * (bit 3): 1: extended advertizing supported       
+ *          0: extended advertizing not supported   
  * (bit 4): 1: CS Algo #2 supported
  *          0: CS Algo #2 not supported
  * (bit 7): 1: LE Power Class 1
@@ -271,10 +280,9 @@
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 
-#define CFG_BLE_MIN_TX_POWER            (0)
+#define CFG_BLE_MIN_TX_POWER            (-40) 
 
-#define CFG_BLE_MAX_TX_POWER            (0)
-
+#define CFG_BLE_MAX_TX_POWER            (6) 
 
 /**
  * BLE Rx model configuration flags to be configured with:
@@ -286,7 +294,37 @@
  * other bits: reserved (shall be set to 0)
  */
 
-#define CFG_BLE_RX_MODEL_CONFIG         SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
+#define CFG_BLE_RX_MODEL_CONFIG         (SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY)
+
+/* Maximum number of advertising sets.
+ * Range: 1 .. 8 with limitation:
+ * This parameter is linked to CFG_BLE_MAX_ADV_DATA_LEN such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
+ * on Max Extended advertising configuration supported.
+ * This parameter is considered by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
+ */   
+
+#define CFG_BLE_MAX_ADV_SET_NBR     (2)
+
+ /* Maximum advertising data length (in bytes)
+ * Range: 31 .. 1650 with limitation:
+ * This parameter is linked to CFG_BLE_MAX_ADV_SET_NBR such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
+ * on Max Extended advertising configuration supported.
+ * This parameter is considered by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
+ */ 
+ 
+#define CFG_BLE_MAX_ADV_DATA_LEN    (414)
+ 
+ /* RF TX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
+  * Range: -1280 .. 1280
+  */
+
+#define CFG_BLE_TX_PATH_COMPENS    (0) 
+
+ /* RF RX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
+  * Range: -1280 .. 1280
+  */
+
+#define CFG_BLE_RX_PATH_COMPENS    (0)   
 
 /******************************************************************************
  * Transport Layer
@@ -567,6 +605,7 @@ typedef enum
   CFG_TASK_MESH_REQ_ID,
   CFG_TASK_MESH_BEACON_REQ_ID,
   CFG_TASK_MESH_UART_RX_REQ_ID,
+  CFG_TASK_MESH_SERIAL_REQ_ID,
   CFG_TASK_APPLI_REQ_ID,
   CFG_TASK_MESH_SW1_REQ_ID,
   CFG_TASK_MESH_SW3_REQ_ID,
@@ -583,14 +622,13 @@ typedef enum
 {
   CFG_FIRST_TASK_ID_WITH_NO_HCICMD = CFG_LAST_TASK_ID_WITH_HCICMD - 1, /**< Shall be FIRST in the list */
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
-
 /* USER CODE BEGIN CFG_Task_Id_With_NO_HCI_Cmd_t */
 
 /* USER CODE END CFG_Task_Id_With_NO_HCI_Cmd_t */
-
-  CFG_LAST_TASK_ID_WITHO_NO_HCICMD /**< Shall be LAST in the list */
+  CFG_LAST_TASK_ID_WITH_NO_HCICMD /**< Shall be LAST in the list */
 } CFG_Task_Id_With_NO_HCI_Cmd_t;
-#define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITHO_NO_HCICMD
+
+#define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITH_NO_HCICMD
 
 /**
  * This is the list of priority required by the application
@@ -599,7 +637,9 @@ typedef enum
 typedef enum
 {
     CFG_SCH_PRIO_0,
-  CFG_PRIO_NBR,
+  /* USER CODE BEGIN CFG_SCH_Prio_Id_t */
+
+  /* USER CODE END CFG_SCH_Prio_Id_t */
 } CFG_SCH_Prio_Id_t;
 
 /**
@@ -609,6 +649,9 @@ typedef enum
 {
   CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID,
   CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID,
+  /* USER CODE BEGIN CFG_IdleEvt_Id_t */
+
+  /* USER CODE END CFG_IdleEvt_Id_t */
 } CFG_IdleEvt_Id_t;
 
 /******************************************************************************
@@ -634,4 +677,5 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
-#endif /*APP_CONF_H */
+#endif /* APP_CONF_H */
+

@@ -117,7 +117,8 @@ void otCoapSecureSetPsk(otInstance *   aInstance,
 /**
  * This method returns the peer x509 certificate base64 encoded.
  *
- * @note This function requires the build-time feature `MBEDTLS_BASE64_C` to be enabled.
+ * @note This function requires the build-time features `MBEDTLS_BASE64_C` and
+ *       `MBEDTLS_SSL_KEEP_PEER_CERTIFICATE` to be enabled.
  *
  * @param[in]   aInstance        A pointer to an OpenThread instance.
  * @param[out]  aPeerCert        A pointer to the base64 encoded certificate buffer.
@@ -186,7 +187,7 @@ void otCoapSecureSetCaCertificateChain(otInstance *   aInstance,
  * This method initializes DTLS session with a peer.
  *
  * @param[in]  aInstance               A pointer to an OpenThread instance.
- * @param[in]  aSockAddr               A pointer to the remote sockaddr.
+ * @param[in]  aSockAddr               A pointer to the remote socket address.
  * @param[in]  aHandler                A pointer to a function that will be called when the DTLS connection
  *                                     state changes.
  * @param[in]  aContext                A pointer to arbitrary context information.
@@ -230,6 +231,35 @@ bool otCoapSecureIsConnected(otInstance *aInstance);
 bool otCoapSecureIsConnectionActive(otInstance *aInstance);
 
 /**
+ * This method sends a CoAP request block-wise over secure DTLS connection.
+ *
+ * This function is available when OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE configuration
+ * is enabled.
+ *
+ * If a response for a request is expected, respective function and context information should be provided.
+ * If no response is expected, these arguments should be NULL pointers.
+ * If Message Id was not set in the header (equal to 0), this function will assign unique Message Id to the message.
+ *
+ * @param[in]  aInstance     A pointer to an OpenThread instance.
+ * @param[in]  aMessage      A reference to the message to send.
+ * @param[in]  aHandler      A function pointer that shall be called on response reception or time-out.
+ * @param[in]  aContext      A pointer to arbitrary context information.
+ * @param[in]  aTransmitHook A function pointer that is called on Block1 response reception.
+ * @param[in]  aReceiveHook  A function pointer that is called on Block2 response reception.
+ *
+ * @retval OT_ERROR_NONE           Successfully sent CoAP message.
+ * @retval OT_ERROR_NO_BUFS        Failed to allocate retransmission data.
+ * @retval OT_ERROR_INVALID_STATE  DTLS connection was not initialized.
+ *
+ */
+otError otCoapSecureSendRequestBlockWise(otInstance *                aInstance,
+                                         otMessage *                 aMessage,
+                                         otCoapResponseHandler       aHandler,
+                                         void *                      aContext,
+                                         otCoapBlockwiseTransmitHook aTransmitHook,
+                                         otCoapBlockwiseReceiveHook  aReceiveHook);
+
+/**
  * This method sends a CoAP request over secure DTLS connection.
  *
  * If a response for a request is expected, respective function and context information should be provided.
@@ -257,11 +287,8 @@ otError otCoapSecureSendRequest(otInstance *          aInstance,
  * @param[in]  aInstance  A pointer to an OpenThread instance.
  * @param[in]  aResource  A pointer to the resource.
  *
- * @retval OT_ERROR_NONE     Successfully added @p aResource.
- * @retval OT_ERROR_ALREADY  The @p aResource was already added.
- *
  */
-otError otCoapSecureAddResource(otInstance *aInstance, otCoapResource *aResource);
+void otCoapSecureAddResource(otInstance *aInstance, otCoapResource *aResource);
 
 /**
  * This function removes a resource from the CoAP Secure server.
@@ -271,6 +298,24 @@ otError otCoapSecureAddResource(otInstance *aInstance, otCoapResource *aResource
  *
  */
 void otCoapSecureRemoveResource(otInstance *aInstance, otCoapResource *aResource);
+
+/**
+ * This function adds a block-wise resource to the CoAP Secure server.
+ *
+ * @param[in]  aInstance  A pointer to an OpenThread instance.
+ * @param[in]  aResource  A pointer to the resource.
+ *
+ */
+void otCoapSecureAddBlockWiseResource(otInstance *aInstance, otCoapBlockwiseResource *aResource);
+
+/**
+ * This function removes a block-wise resource from the CoAP Secure server.
+ *
+ * @param[in]  aInstance  A pointer to an OpenThread instance.
+ * @param[in]  aResource  A pointer to the resource.
+ *
+ */
+void otCoapSecureRemoveBlockWiseResource(otInstance *aInstance, otCoapBlockwiseResource *aResource);
 
 /**
  * This function sets the default handler for unhandled CoAP Secure requests.
@@ -294,6 +339,28 @@ void otCoapSecureSetDefaultHandler(otInstance *aInstance, otCoapRequestHandler a
 void otCoapSecureSetClientConnectedCallback(otInstance *                    aInstance,
                                             otHandleCoapSecureClientConnect aHandler,
                                             void *                          aContext);
+
+/**
+ * This function sends a CoAP response block-wise from the CoAP Secure server.
+ *
+ * This function is available when OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE configuration
+ * is enabled.
+ *
+ * @param[in]  aInstance     A pointer to an OpenThread instance.
+ * @param[in]  aMessage      A pointer to the CoAP response to send.
+ * @param[in]  aMessageInfo  A pointer to the message info associated with @p aMessage.
+ * @param[in]  aContext      A pointer to arbitrary context information. May be NULL if not used.
+ * @param[in]  aTransmitHook A function pointer that is called on Block1 request reception.
+ *
+ * @retval OT_ERROR_NONE     Successfully enqueued the CoAP response message.
+ * @retval OT_ERROR_NO_BUFS  Insufficient buffers available to send the CoAP response.
+ *
+ */
+otError otCoapSecureSendResponseBlockWise(otInstance *                aInstance,
+                                          otMessage *                 aMessage,
+                                          const otMessageInfo *       aMessageInfo,
+                                          void *                      aContext,
+                                          otCoapBlockwiseTransmitHook aTransmitHook);
 
 /**
  * This function sends a CoAP response from the CoAP Secure server.

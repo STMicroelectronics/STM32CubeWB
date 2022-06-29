@@ -68,7 +68,7 @@ To setup the application :
       the network created by the coordinator. Do the same for the other boards if applicable.
       
   b)  At this stage, the Zigbee network is automatically created.
-      You must see the LED1 toggling on the server side.
+      You must see the LED3 toggling on the server side.
 
 
  Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.

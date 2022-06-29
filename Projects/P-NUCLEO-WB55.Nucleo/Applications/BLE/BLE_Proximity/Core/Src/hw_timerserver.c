@@ -1,8 +1,9 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : hw_timerserver.c
-  * Description        : Hardware timerserver source file for STM32WPAN Middleware.
-  *
+  * @file    hw_timerserver.c
+  * @author  MCD Application Team
+  * @brief   Hardware timerserver source file for STM32WPAN Middleware.
   ******************************************************************************
   * @attention
   *
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"

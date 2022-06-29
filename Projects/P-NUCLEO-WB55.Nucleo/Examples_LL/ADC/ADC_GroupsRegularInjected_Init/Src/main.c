@@ -156,9 +156,8 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
   /* System interrupt init*/
+  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* USER CODE BEGIN Init */
 
@@ -823,7 +822,7 @@ void UserButton_Callback(void)
   LED_Off();
   
   /* Reset status variable of ADC group injected unitary conversion before    */
-  /* peforming a new ADC group injected conversion start.                     */
+  /* performing a new ADC group injected conversion start.                    */
   /* Note: Optionally, for this example purpose, check ADC unitary            */
   /*       conversion status before starting another ADC conversion.          */
 

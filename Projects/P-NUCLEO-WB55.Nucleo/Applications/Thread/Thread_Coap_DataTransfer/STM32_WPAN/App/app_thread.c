@@ -151,6 +151,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ThreadNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliCmdBuffer;
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadCliNotBuffer;
 extern uint8_t g_ot_notification_allowed;
 
 /* USER CODE BEGIN PV */
@@ -254,6 +255,9 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
   case ERR_THREAD_ERASE_PERSISTENT_INFO :
     APP_THREAD_TraceError("ERROR : ERR_THREAD_ERASE_PERSISTENT_INFO ",ErrCode);
     break;
+  case ERR_THREAD_SET_NETWORK_KEY :
+    APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_NETWORK_KEY ",ErrCode);
+    break;
   case ERR_THREAD_CHECK_WIRELESS :
     APP_THREAD_TraceError("ERROR : ERR_THREAD_CHECK_WIRELESS ",ErrCode);
     break;
@@ -330,6 +334,8 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
 static void APP_THREAD_DeviceConfig(void)
 {
   otError error;
+  otNetworkKey networkKey = {{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF}};
+
   error = otInstanceErasePersistentInfo(NULL);
   if (error != OT_ERROR_NONE)
   {
@@ -352,6 +358,11 @@ static void APP_THREAD_DeviceConfig(void)
   {
     APP_THREAD_Error(ERR_THREAD_SET_PANID,error);
   }
+  error = otThreadSetNetworkKey(NULL, &networkKey);
+  if (error != OT_ERROR_NONE)
+  {
+    APP_THREAD_Error(ERR_THREAD_SET_NETWORK_KEY,error);
+  }
   error = otIp6SetEnabled(NULL, true);
   if (error != OT_ERROR_NONE)
   {
@@ -371,17 +382,11 @@ static void APP_THREAD_DeviceConfig(void)
     APP_THREAD_Error(ERR_THREAD_COAP_START,error);
   }
   /* Add COAP resources */
-  error = otCoapAddResource(NULL, &OT_RessourceDataTransfer);
-  if (error != OT_ERROR_NONE)
-  {
-    APP_THREAD_Error(ERR_THREAD_COAP_ADD_RESSOURCE,error);
-  }
+  otCoapAddResource(NULL, &OT_RessourceDataTransfer);
+
   /* Add APP_THREAD_AskProvisioning resources */
-  error = otCoapAddResource(NULL, &OT_RessourceProvisionning);
-  if (error != OT_ERROR_NONE)
-  {
-    APP_THREAD_Error(ERR_THREAD_COAP_ADD_RESSOURCE,error);
-  }
+  otCoapAddResource(NULL, &OT_RessourceProvisionning);
+  
   /* USER CODE END DEVICECONFIG */
 }
 
@@ -1238,6 +1243,7 @@ void APP_THREAD_TL_THREAD_INIT(void)
   ThreadConfigBuffer.p_ThreadOtCmdRspBuffer = (uint8_t*)&ThreadOtCmdBuffer;
   ThreadConfigBuffer.p_ThreadNotAckBuffer = (uint8_t*)ThreadNotifRspEvtBuffer;
   ThreadConfigBuffer.p_ThreadCliRspBuffer = (uint8_t*)&ThreadCliCmdBuffer;
+  ThreadConfigBuffer.p_ThreadCliNotBuffer = (uint8_t*)&ThreadCliNotBuffer;
 
   TL_THREAD_Init( &ThreadConfigBuffer );
 }

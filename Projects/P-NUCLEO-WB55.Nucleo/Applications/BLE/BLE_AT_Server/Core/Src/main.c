@@ -54,14 +54,6 @@ UART_HandleTypeDef huart1;
 RTC_HandleTypeDef hrtc;
 RNG_HandleTypeDef hrng;
 
-float tab_conv_tx_power[32] = {-40.00f, -20.85f, -19.75f, -18.85f, 
-                               -17.60f, -16.50f, -15.25f, -14.10f,
-                               -13.15f, -12.05f, -10.90f, -9.90f,
-                               -8.85f, -7.80f, -6.90f, -5.90f,
-                               -4.95f, -4.00f, -3.15f, -2.45f,
-                               -1.80f, -1.30f, -0.85f, -0.50f,
-                               -0.15f, 0.00f, 1.00f, 2.00f,
-                               3.00f, 4.00f, 5.00f, 6.00f};
 extern uint8_t global_io_capability;
 extern uint8_t global_bonding;
 extern uint8_t global_mitm;
@@ -178,7 +170,7 @@ int main(void)
   memcpy(&global_bdaddress[0], BleGetBdAddress(), sizeof(global_bdaddress));
   
   global_tx_power_code = CFG_TX_POWER;
-  global_tx_power = tab_conv_tx_power[global_tx_power_code];
+  global_tx_power = -0.15f;
   
   global_adv_enable = 1;
   global_adv_type = 0;

@@ -135,6 +135,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.index = (uint8_t)strtol(str, NULL, 0);
                     }
                     else
@@ -148,6 +149,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                       token = strtok(NULL, AT_SEPARATOR);
                       if(token != 0)
                       {
+                        errno = 0;
                         param.svc_uuid_type = (uint8_t)strtol(token, NULL, 0);
                       }
                       else
@@ -158,6 +160,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                       token = strtok(NULL, AT_SEPARATOR);
                       if(token != 0)
                       {
+                        errno = 0;
                         param.svc_uuid = (uint16_t)strtol(token, NULL, 0);
                       }
                       else
@@ -168,6 +171,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                       token = strtok(NULL, AT_SEPARATOR);
                       if(token != 0)
                       {
+                        errno = 0;
                         param.max_attr_record = (uint8_t)strtol(token, NULL, 0);
                       }
                       else
@@ -210,6 +214,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.reset = (uint8_t)strtol(token, NULL, 0); 
                     }
                     else
@@ -246,6 +251,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.io_capability = (uint8_t)strtol(token, NULL, 0); 
                     }
                     else
@@ -284,6 +290,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.bonding_mode = (uint8_t)strtol(str, NULL, 0);
                     }
                     else
@@ -294,6 +301,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.mitm = (uint8_t)strtol(token, NULL, 0);
                     }
                     else
@@ -304,6 +312,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.sc_support = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -314,6 +323,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.use_fixed_pin = (uint8_t)strtol(token, NULL, 0);
                     }
                     else
@@ -323,6 +333,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.fixed_pin = (uint32_t)strtol(token, NULL, 0);
                     }
                     else
@@ -359,6 +370,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.enable = (uint32_t)strtol(token, NULL, 0);
                     }
                     else
@@ -394,6 +406,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.confirm_yes_no = (uint32_t)strtol(token, NULL, 0);
                     }
                     else
@@ -429,6 +442,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.pass_key_resp = (uint32_t)strtol(token, NULL, 0);                     
                     }
                     else
@@ -465,6 +479,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.dummy = (uint32_t)strtol(token, NULL, 0);
                     }
                     else
@@ -578,6 +593,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.cfg_rand_addr = (uint8_t)strtol(token, NULL, 0);
                     }
                     else
@@ -643,6 +659,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.svc_index = (uint8_t)strtol(token, NULL, 0);
                     }
                     else
@@ -653,6 +670,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.char_index = (uint8_t)strtol(token, NULL, 0);
                     }
                     else
@@ -670,6 +688,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                       }
                       else
                       {
+                        errno = 0;
                         data = (uint16_t)strtol(token, NULL, 0);
                         param.val_tab_len = sizeof(uint16_t);
                         memcpy(&param.val_tab[0], &data, sizeof(uint16_t));
@@ -710,6 +729,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.svc_index = (uint8_t)strtol(token, NULL, 0);
                     }
                     else
@@ -720,6 +740,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.char_index = (uint8_t)strtol(token, NULL, 0);
                     }
                     else
@@ -737,6 +758,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                       }
                       else
                       {
+                        errno = 0;
                         data = (uint16_t)strtol(token, NULL, 0);
                         param.val_tab_len = sizeof(uint16_t);
                         memcpy(&param.val_tab[0], &data, sizeof(uint16_t));
@@ -840,6 +862,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.entry_number = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -852,6 +875,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                       token = strtok(NULL, AT_SEPARATOR);
                       if(token != 0)
                       {
+                        errno = 0;
                         param.adv_type = (uint16_t)strtol(token, NULL, 0);
                       }
                       else
@@ -948,6 +972,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.enable = (uint8_t)strtol(token, NULL, 0); 
                     }
                     else
@@ -984,6 +1009,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.svc_id = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -994,6 +1020,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.char_id = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -1004,6 +1031,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.char_uuid_type = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -1014,6 +1042,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.char_uuid = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -1024,6 +1053,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.char_value_len = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -1034,6 +1064,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.char_properties = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -1043,7 +1074,8 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
-                    {                    
+                    {
+                      errno = 0;
                       param.sec_permission = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -1054,6 +1086,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(NULL, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.gatt_evt_mask = (uint16_t)strtol(token, NULL, 0);
                     }
                     else
@@ -1142,6 +1175,7 @@ uint8_t ble_at_server_Process_rx_frame(char * str)
                     token = strtok(str, AT_SEPARATOR);
                     if(token != 0)
                     {
+                      errno = 0;
                       param.init_set = (uint8_t)strtol(token, NULL, 0);
                     }
                     else

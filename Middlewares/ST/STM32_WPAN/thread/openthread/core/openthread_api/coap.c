@@ -30,9 +30,27 @@
 #include "thread.h"
 #include "coap.h"
 
+#if OPENTHREAD_CONFIG_COAP_API_ENABLE
+
 extern otCoapRequestHandler defaultCoapRequestHandlerCb;
 
-#if OPENTHREAD_CONFIG_COAP_API_ENABLE
+otMessage *otCoapNewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_NEW_MESSAGE;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aSettings;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otMessage *)p_ot_req->Data[0];
+
+}
 
 void otCoapMessageInit(otMessage *aMessage, otCoapType aType, otCoapCode aCode)
 {
@@ -201,6 +219,63 @@ otError otCoapMessageAppendUriPathOptions(otMessage *aMessage, const char *aUriP
   return (otError) p_ot_req->Data[0];
 }
 
+uint16_t otCoapBlockSizeFromExponent(otCoapBlockSzx aSize)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_BLOCK_SIZE_FROM_EXPONENT;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aSize;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint16_t) p_ot_req->Data[0];
+}
+
+otError otCoapMessageAppendBlock2Option(otMessage *aMessage, uint32_t aNum, bool aMore, otCoapBlockSzx aSize)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_MESSAGE_APPEND_BLOCK2_OPTION;
+
+  p_ot_req->Size=4;
+  p_ot_req->Data[0] = (uint32_t) aMessage;
+  p_ot_req->Data[1] = (uint32_t) aNum;
+  p_ot_req->Data[2] = (uint32_t) aMore;
+  p_ot_req->Data[3] = (uint32_t) aSize;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError) p_ot_req->Data[0];
+}
+
+otError otCoapMessageAppendBlock1Option(otMessage *aMessage, uint32_t aNum, bool aMore, otCoapBlockSzx aSize)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_MESSAGE_APPEND_BLOCK1_OPTION;
+
+  p_ot_req->Size=4;
+  p_ot_req->Data[0] = (uint32_t) aMessage;
+  p_ot_req->Data[1] = (uint32_t) aNum;
+  p_ot_req->Data[2] = (uint32_t) aMore;
+  p_ot_req->Data[3] = (uint32_t) aSize;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError) p_ot_req->Data[0];
+}
+
 otError otCoapMessageAppendProxyUriOption(otMessage *aMessage, const char *aUriPath)
 {
   Pre_OtCmdProcessing();
@@ -306,6 +381,23 @@ otCoapCode otCoapMessageGetCode(const otMessage *aMessage)
   return (otCoapCode)p_ot_req->Data[0];
 }
 
+void otCoapMessageSetCode(otMessage *aMessage, otCoapCode aCode)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_MESSAGE_SET_CODE;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t) aMessage;
+  p_ot_req->Data[1] = (uint32_t) aCode;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
 const char *otCoapMessageCodeToString(const otMessage *aMessage)
 {
   Pre_OtCmdProcessing();
@@ -374,50 +466,104 @@ const uint8_t *otCoapMessageGetToken(const otMessage *aMessage)
   return (uint8_t *)p_ot_req->Data[0];
 }
 
-const otCoapOption *otCoapMessageGetFirstOption(otMessage *aMessage)
+otError otCoapOptionIteratorInit(otCoapOptionIterator *aIterator, const otMessage *aMessage)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_COAP_MESSAGE_GET_FIRST_OPTION;
-
-  p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t) aMessage;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otCoapOption *)p_ot_req->Data[0];
-}
-
-const otCoapOption *otCoapMessageGetNextOption(otMessage *aMessage)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_COAP_MESSAGE_GET_NEXT_OPTION;
-
-  p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t) aMessage;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otCoapOption *)p_ot_req->Data[0];
-}
-
-otError otCoapMessageGetOptionValue(otMessage *aMessage, void *aValue)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_COAP_MESSAGE_GET_OPTION_VALUE;
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_OPTION_ITERATOR_INIT;
 
   p_ot_req->Size=2;
-  p_ot_req->Data[0] = (uint32_t) aMessage;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
+  p_ot_req->Data[1] = (uint32_t) aMessage;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+const otCoapOption *otCoapOptionIteratorGetFirstOptionMatching(otCoapOptionIterator *aIterator, uint16_t aOption)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_OPTION_ITERATOR_GET_FIRST_OPTION_MATCHING;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
+  p_ot_req->Data[1] = (uint32_t) aOption;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otCoapOption *)p_ot_req->Data[0];
+}
+
+const otCoapOption *otCoapOptionIteratorGetFirstOption(otCoapOptionIterator *aIterator)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_OPTION_ITERATOR_GET_FIRST_OPTION;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otCoapOption *)p_ot_req->Data[0];
+}
+
+const otCoapOption *otCoapOptionIteratorGetNextOptionMatching(otCoapOptionIterator *aIterator, uint16_t aOption)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_OPTION_ITERATOR_GET_NEXT_OPTION_MATCHING;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
+  p_ot_req->Data[1] = (uint32_t) aOption;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otCoapOption *)p_ot_req->Data[0];
+}
+
+const otCoapOption *otCoapOptionIteratorGetNextOption(otCoapOptionIterator *aIterator)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_OPTION_ITERATOR_GET_NEXT_OPTION;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otCoapOption *)p_ot_req->Data[0];
+}
+
+otError otCoapOptionIteratorGetOptionUintValue(otCoapOptionIterator *aIterator, uint64_t *aValue)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_OPTION_ITERATOR_GET_OPTION_UINT_VALUE;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
   p_ot_req->Data[1] = (uint32_t) aValue;
 
   Ot_Cmd_Transfer();
@@ -426,38 +572,75 @@ otError otCoapMessageGetOptionValue(otMessage *aMessage, void *aValue)
   return (otError)p_ot_req->Data[0];
 }
 
-otMessage *otCoapNewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
+otError otCoapOptionIteratorGetOptionValue(otCoapOptionIterator *aIterator, void *aValue)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_COAP_NEW_MESSAGE;
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_OPTION_ITERATOR_GET_OPTION_VALUE;
 
   p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t) aSettings;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
+  p_ot_req->Data[1] = (uint32_t) aValue;
 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otMessage *)p_ot_req->Data[0];
-
+  return (otError)p_ot_req->Data[0];
 }
 
-otError otCoapSendRequest(otInstance *aInstance,otMessage *aMessage, const otMessageInfo *aMessageInfo,
-    otCoapResponseHandler aHandler, void *aContext)
+#if OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE
+otError otCoapSendRequestBlockWiseWithParameters(otInstance *                aInstance,
+                                                 otMessage *                 aMessage,
+                                                 const otMessageInfo *       aMessageInfo,
+                                                 otCoapResponseHandler       aHandler,
+                                                 void *                      aContext,
+                                                 const otCoapTxParameters *  aTxParameters,
+                                                 otCoapBlockwiseTransmitHook aTransmitHook,
+                                                 otCoapBlockwiseReceiveHook  aReceiveHook)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_COAP_SEND_REQUEST;
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_SEND_REQUEST_BLOCK_WISE_WITH_PARAMETERS;
 
-  p_ot_req->Size=3;
+  p_ot_req->Size=7;
   p_ot_req->Data[0] = (uint32_t) aMessage;
   p_ot_req->Data[1] = (uint32_t) aMessageInfo;
   p_ot_req->Data[2] = (uint32_t) aHandler;
   p_ot_req->Data[3] = (uint32_t) aContext;
+  p_ot_req->Data[4] = (uint32_t) aTxParameters;
+  p_ot_req->Data[5] = (uint32_t) aTransmitHook;
+  p_ot_req->Data[6] = (uint32_t) aReceiveHook;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+#endif // OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE
+
+otError otCoapSendRequestWithParameters(otInstance *              aInstance,
+                                        otMessage *               aMessage,
+                                        const otMessageInfo *     aMessageInfo,
+                                        otCoapResponseHandler     aHandler,
+                                        void *                    aContext,
+                                        const otCoapTxParameters *aTxParameters)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_SEND_REQUEST_WITH_PARAMETERS;
+
+  p_ot_req->Size=5;
+  p_ot_req->Data[0] = (uint32_t) aMessage;
+  p_ot_req->Data[1] = (uint32_t) aMessageInfo;
+  p_ot_req->Data[2] = (uint32_t) aHandler;
+  p_ot_req->Data[3] = (uint32_t) aContext;
+  p_ot_req->Data[4] = (uint32_t) aTxParameters;
 
   Ot_Cmd_Transfer();
 
@@ -498,7 +681,41 @@ otError otCoapStop(otInstance *aInstance)
   return (otError)p_ot_req->Data[0];
 }
 
-otError otCoapAddResource(otInstance *aInstance, otCoapResource *aResource)
+#if OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE
+void otCoapAddBlockWiseResource(otInstance *aInstance, otCoapBlockwiseResource *aResource)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_ADD_BLOCK_WISE_RESOURCE;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint16_t) aResource;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
+void otCoapRemoveBlockWiseResource(otInstance *aInstance, otCoapBlockwiseResource *aResource)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_REMOVE_BLOCK_WISE_RESOURCE;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint16_t) aResource;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+#endif
+
+void otCoapAddResource(otInstance *aInstance, otCoapResource *aResource)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -512,7 +729,6 @@ otError otCoapAddResource(otInstance *aInstance, otCoapResource *aResource)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
 }
 
 void otCoapRemoveResource(otInstance *aInstance, otCoapResource *aResource)
@@ -550,17 +766,49 @@ void otCoapSetDefaultHandler(otInstance *aInstance, otCoapRequestHandler aHandle
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-otError otCoapSendResponse(otInstance *aInstance, otMessage *aMessage, const otMessageInfo *aMessageInfo)
+#if OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE
+otError otCoapSendResponseBlockWiseWithParameters(otInstance *                aInstance,
+                                                  otMessage *                 aMessage,
+                                                  const otMessageInfo *       aMessageInfo,
+                                                  const otCoapTxParameters *  aTxParameters,
+                                                  void *                      aContext,
+                                                  otCoapBlockwiseTransmitHook aTransmitHook)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_COAP_SEND_RESPONSE;
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_SEND_RESPONSE_BLOCK_WISE_WITH_PARAMETERS;
 
-  p_ot_req->Size=2;
+  p_ot_req->Size=5;
   p_ot_req->Data[0] = (uint32_t) aMessage;
   p_ot_req->Data[1] = (uint32_t) aMessageInfo;
+  p_ot_req->Data[2] = (uint32_t) aTxParameters;
+  p_ot_req->Data[3] = (uint32_t) aContext;
+  p_ot_req->Data[4] = (uint32_t) aTransmitHook;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+#endif
+
+otError otCoapSendResponseWithParameters(otInstance *              aInstance,
+                                         otMessage *               aMessage,
+                                         const otMessageInfo *     aMessageInfo,
+                                         const otCoapTxParameters *aTxParameters)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_SEND_RESPONSE_WITH_PARAMETERS;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t) aMessage;
+  p_ot_req->Data[1] = (uint32_t) aMessageInfo;
+  p_ot_req->Data[2] = (uint32_t) aTxParameters;
 
   Ot_Cmd_Transfer();
 

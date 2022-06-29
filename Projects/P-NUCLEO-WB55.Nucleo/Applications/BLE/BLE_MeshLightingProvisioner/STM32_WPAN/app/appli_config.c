@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    appli_config.c
-* @author  BLE Mesh Team
-* @brief   Config Model APIs callback from ST BLE Mesh Library
+  * @file    appli_config.c
+  * @author  MCD Application Team
+  * @brief   Config Model APIs callback from ST BLE Mesh Library
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,8 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
 #include "hal_common.h"

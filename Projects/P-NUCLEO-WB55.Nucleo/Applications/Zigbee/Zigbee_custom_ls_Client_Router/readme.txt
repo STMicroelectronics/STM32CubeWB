@@ -69,7 +69,7 @@ To run the application :
       Press on SW1  . You must see the message received in the coordinator trace the string is matching server one's
       Response is sent with a MATCH status by server -> the Green LED is on for 0.5s on client side.
       
-      Press on SW2  . Tou must see the message received in the coordinator trace the sting is mismatching server one's
+      Press on SW2  . Tou must see the message received in the coordinator trace the string is mismatching server one's
       Response is sent with a MISMATCH status by server -> the Red LED is on for 0.5s on client side.
 
  

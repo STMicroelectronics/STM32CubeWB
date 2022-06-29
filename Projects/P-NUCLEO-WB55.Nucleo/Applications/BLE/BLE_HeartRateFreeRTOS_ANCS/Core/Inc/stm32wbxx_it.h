@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32WBxx_IT_H
-#define __STM32WBxx_IT_H
+#ifndef STM32WBxx_IT_H
+#define STM32WBxx_IT_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -72,4 +72,4 @@ void PUSH_BUTTON_SW3_EXTI_IRQHandler(void);
 }
 #endif
 
-#endif /* __STM32WBxx_IT_H */
+#endif /* STM32WBxx_IT_H */

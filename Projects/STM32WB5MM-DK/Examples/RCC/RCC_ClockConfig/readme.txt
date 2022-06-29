@@ -35,7 +35,7 @@ by BLE applications:
 HSE is selected as system clock source, i.e. the system clock is running at 32 MHz.
 
 @note On the STM32WB5MM-DK board, MCO pins aren't output to the STMOD+ connectors
-      thus generated system clock signal cannot be observed whith an oscilloscope.
+      thus generated system clock signal cannot be observed with an oscilloscope.
 
 @note The application need to ensure that the SysTick time base is always set to 1 millisecond
       to have correct HAL operation.

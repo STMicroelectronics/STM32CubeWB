@@ -274,7 +274,7 @@ void Appli_Sensor_Status(const MOBLEUINT8 *pStatus,
     receivedPID=(MOBLEUINT16)(((pStatus[0] & 0xE0) >> 5)|(pStatus[1] << 3));
   }
   
-  TRACE_M(TF_SERIAL_CTRL,"Format: %d, Data Lenght: %lu, PID : 0x%04x\n\r", sensorStatusFormat, receivedLenght, receivedPID);
+  TRACE_M(TF_SERIAL_CTRL,"Format: %d, Data Length: %lu, PID : 0x%04x\n\r", sensorStatusFormat, receivedLenght, receivedPID);
   
   /*Display Data Buffer received */
 //  for(i = 0; i < receivedLenght; i++){

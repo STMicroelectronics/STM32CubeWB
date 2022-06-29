@@ -40,6 +40,7 @@
 /* Private function prototypes -----------------------------------------------*/
 static void APP_FFD_MAC_802_15_4_Config(void);
 
+
 /* variables -----------------------------------------------*/
 MAC_associateInd_t g_MAC_associateInd;
 MAC_callbacks_t macCbConfig ;
@@ -65,20 +66,16 @@ void APP_FFD_MAC_802_15_4_Init( APP_MAC_802_15_4_InitMode_t InitMode, TL_CmdPack
   /* Register task */
   /* Create the different tasks */
   UTIL_SEQ_RegTask( 1<<CFG_TASK_MSG_FROM_RF_CORE, UTIL_SEQ_RFU, APP_ENTRY_ProcessMsgFromRFCoreTask);
-
   UTIL_SEQ_RegTask( 1<<CFG_TASK_FFD, UTIL_SEQ_RFU,APP_FFD_MAC_802_15_4_SetupTask);
-
   UTIL_SEQ_RegTask( 1<<CFG_TASK_SERVICE_COORD, UTIL_SEQ_RFU,APP_FFD_MAC_802_15_4_CoordSrvTask);
-
   UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_COORD, UTIL_SEQ_RFU,APP_FFD_MAC_802_15_4_CoordDataTask);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_RECEIVE_DATA, UTIL_SEQ_RFU,APP_MAC_ReceiveData);
 
   /* Configuration MAC 802_15_4 */
   APP_FFD_MAC_802_15_4_Config();
 
-
   /*Start Main Coordinator - FFD Task*/
   UTIL_SEQ_SetTask( 1<< CFG_TASK_FFD, CFG_SCH_PRIO_0 );
-
 }
 
 void APP_FFD_MAC_802_15_4_Stop()
@@ -88,7 +85,10 @@ void APP_FFD_MAC_802_15_4_Stop()
   memset(&ResetReq,0x00,sizeof(MAC_resetReq_t));
   ResetReq.set_default_PIB = TRUE;
 
-  MAC_MLMEResetReq( &ResetReq );
+  if (MAC_MLMEResetReq( &ResetReq ) != MAC_SUCCESS)
+  {
+      APP_DBG("APP_FFD_MAC_802_15_4_Stop ERROR");
+  }
   UTIL_SEQ_WaitEvt(EVENT_DEVICE_RESET_CNF);
 
   /* Pause  the different MAC tasks */
@@ -96,6 +96,7 @@ void APP_FFD_MAC_802_15_4_Stop()
   UTIL_SEQ_PauseTask( 1<<CFG_TASK_FFD);
   UTIL_SEQ_PauseTask( 1<<CFG_TASK_SERVICE_COORD);
   UTIL_SEQ_PauseTask( 1<<CFG_TASK_DATA_COORD);
+  UTIL_SEQ_PauseTask( 1<<CFG_TASK_RECEIVE_DATA);
   BSP_LED_Off(LED_BLUE);
 }
 

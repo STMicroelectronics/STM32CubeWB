@@ -2,6 +2,8 @@ var stm32__seq_8h =
 [
     [ "UTIL_SEQ_DEFAULT", "group___s_e_q_u_e_n_c_e_r___exported__const.html#ga46541edfe05cb5082dec927f2bcf7b46", null ],
     [ "UTIL_SEQ_RFU", "group___s_e_q_u_e_n_c_e_r___exported__const.html#ga44641e680786c27986945f4d0589c83a", null ],
+    [ "UTIL_SEQ_TaskFunction", "group___s_e_q_u_e_n_c_e_r___exported__macro.html#gac4b0290fac7278810aa24b9be4574da1", null ],
+    [ "UTIL_SEQ_TaskParamDef", "group___s_e_q_u_e_n_c_e_r___exported__macro.html#ga99985a546d3297b5fd8ace7f5f045c14", null ],
     [ "UTIL_SEQ_bm_t", "group___s_e_q_u_e_n_c_e_r___exported__type.html#gaf1d37385aa3a7ce76c48447ba7dd5707", null ],
     [ "UTIL_SEQ_ClrEvt", "group___s_e_q_u_e_n_c_e_r___exported__function.html#ga2b48c77f677158e69ff072f7c05cded4", null ],
     [ "UTIL_SEQ_DeInit", "group___s_e_q_u_e_n_c_e_r___exported__function.html#ga91cceef5931daa30c4ec3a6577c11106", null ],

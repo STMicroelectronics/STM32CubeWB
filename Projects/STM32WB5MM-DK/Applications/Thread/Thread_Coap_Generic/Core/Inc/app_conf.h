@@ -105,6 +105,11 @@
 #define CFG_LPM_SUPPORTED   1
 #endif /* CFG_FULL_LOW_POWER */
 /******************************************************************************
+ * RTC interface
+ ******************************************************************************/
+#define HAL_RTCEx_WakeUpTimerIRQHandler(...)  HW_TS_RTC_Wakeup_Handler( )
+
+/******************************************************************************
  * Timer Server
  ******************************************************************************/
 /**
@@ -180,6 +185,7 @@
 
 /** tick timer value in us */
 #define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE )
+#define CFG_TS_TICK_VAL_PS        DIVR( ((uint64_t)CFG_RTCCLK_DIV * 1e12), (uint64_t)LSE_VALUE )
 
 typedef enum
 {

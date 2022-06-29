@@ -73,9 +73,12 @@
 /* Private variables ---------------------------------------------------------*/
 IPCC_HandleTypeDef hipcc;
 
-RTC_HandleTypeDef hrtc = { 0 }; /**< RTC handler declaration */
-TIM_HandleTypeDef htim1 = { 0 };
-TIM_HandleTypeDef htim2 = { 0 };
+RNG_HandleTypeDef hrng;
+
+RTC_HandleTypeDef hrtc;
+
+TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
 UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_lpuart1_tx;
@@ -86,6 +89,8 @@ DMA_HandleTypeDef hdma_usart1_tx;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config( void );
+void PeriphCommonClock_Config(void);
+static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -119,6 +124,9 @@ int main( void )
   /* Configure the system clock */
   SystemClock_Config();
 
+/* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
+
   /* IPCC initialisation */
   MX_IPCC_Init();
 
@@ -129,12 +137,14 @@ int main( void )
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_RTC_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
   /* Init code for STM32_WPAN */
   MX_APPE_Init();
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while(1)
@@ -155,12 +165,12 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure LSE Drive Capability 
   */
   HAL_PWR_EnableBkUpAccess();
   __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -175,6 +185,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers 
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -195,6 +206,16 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
   /** Initializes the peripherals clocks 
    */
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SMPS|RCC_PERIPHCLK_RFWAKEUP
@@ -206,6 +227,7 @@ void SystemClock_Config(void)
   PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSE;
   PeriphClkInitStruct.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSE;
   PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE1;
+
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -242,6 +264,33 @@ void MX_IPCC_Init(void)
 }
 
 /**
+  * @brief RNG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RNG_Init(void)
+{
+
+  /* USER CODE BEGIN RNG_Init 0 */
+
+  /* USER CODE END RNG_Init 0 */
+
+  /* USER CODE BEGIN RNG_Init 1 */
+
+  /* USER CODE END RNG_Init 1 */
+  hrng.Instance = RNG;
+  hrng.Init.ClockErrorDetection = RNG_CED_ENABLE;
+  if (HAL_RNG_Init(&hrng) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RNG_Init 2 */
+
+  /* USER CODE END RNG_Init 2 */
+
+}
+
+/**
   * @brief RTC Initialization Function
   * @param None
   * @retval None
@@ -256,6 +305,7 @@ void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
+
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
@@ -269,6 +319,7 @@ void MX_RTC_Init(void)
   {
     Error_Handler();
   }
+
   /** Enable the WakeUp
   */
   if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
@@ -312,10 +363,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+
   /* USER CODE END Error_Handler_Debug */
 }
 

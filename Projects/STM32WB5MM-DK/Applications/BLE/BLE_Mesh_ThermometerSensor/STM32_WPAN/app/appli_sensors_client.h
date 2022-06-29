@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_SENSOR_CLIENT_H
-#define __APPLI_SENSOR_CLIENT_H
+#ifndef APPLI_SENSOR_CLIENT_H
+#define APPLI_SENSOR_CLIENT_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -66,5 +66,5 @@ void Appli_Sensor_Series_Status(const MOBLEUINT8 *pSeries,
 
 
 
-#endif /* __APPLI_SENSOR_CLIENT_H */
+#endif /* APPLI_SENSOR_CLIENT_H */
 

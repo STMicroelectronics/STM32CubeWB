@@ -232,5 +232,5 @@
 #define CFG_HW_USART1_RX_SPEED                GPIO_SPEED_FREQ_VERY_HIGH
 #define CFG_HW_USART1_RX_ALTERNATE            GPIO_AF7_USART1
 
-#endif /*HW_CONF_H */
+#endif /* HW_CONF_H */
 

@@ -159,9 +159,8 @@ int main( void )
  *************************************************************/
 static void Init_Exti( void )
 {
-  /**< Disable all wakeup interrupt on CPU1  except IPCC(36), HSEM(38) */
-  LL_EXTI_DisableIT_0_31(~0);
-  LL_EXTI_DisableIT_32_63( (~0) & (~(LL_EXTI_LINE_36 | LL_EXTI_LINE_38)) );
+  /* Enable IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
+  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_36 | LL_EXTI_LINE_38);
 
   return;
 }
@@ -355,7 +354,7 @@ void SystemClock_Config(void)
 
   /** Configure LSE Drive Capability 
   */
-  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+ __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_MEDIUMHIGH);
   /** Configure the main internal regulator output voltage 
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);

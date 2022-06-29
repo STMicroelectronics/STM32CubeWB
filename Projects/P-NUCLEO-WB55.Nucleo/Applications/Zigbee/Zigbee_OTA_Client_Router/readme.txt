@@ -101,7 +101,7 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
    | Zigbee OTA server               |                                            | Zigbee OTA client               |                                  
    | (Coordinator)                   |                                            | (Router)                        |    
    +---------------------------------+                                            +---------------------------------+
-   |                                 |          /* Initalisation phase */         |                                 |
+   |                                 |          /* Initialisation phase */        |                                 |
    | Before starting FW for update   |                                            |                                 |
    | must be written at following    |         /* OTA server discovering */       |                                 |
    | @ = 0x08030000                  |                                            |                                 |

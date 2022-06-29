@@ -8,7 +8,7 @@
   * @brief   Description of the HSEM_DualProcess_IT example.
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -21,7 +21,9 @@
 @par Example Description
 
 How to use the low-layer HSEM API to initialize, lock, and unlock hardware 
-semaphore in the context of two processes accessing the same resource.
+semaphore in the context of two processes accessing the same resource. This 
+example configures HSEM in interrupt mode to trigger an interrupt when a 
+process takes the semaphore.
 
 Example execution:
 After startup from reset and system configuration, HSEM configuration is performed.

@@ -1,13 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    user_if.h
-* @author  BLE Mesh Team
-* @brief   Header file for User interface file 
+  * @file    user_if.h
+  * @author  MCD Application Team
+  * @brief   Header file for User interface file 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) STMicroelectronics</center></h2>
-(-2021) STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _USER_INTERFACE_H_

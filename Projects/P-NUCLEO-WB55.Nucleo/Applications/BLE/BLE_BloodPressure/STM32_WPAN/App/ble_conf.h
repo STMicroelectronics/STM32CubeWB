@@ -31,7 +31,7 @@
  *
  ******************************************************************************/
 
- /**
+/**
  * This setting shall be set to '1' if the device needs to support the Peripheral Role
  * In the MS configuration, both BLE_CFG_PERIPHERAL and BLE_CFG_CENTRAL shall be set to '1'
  */
@@ -53,6 +53,33 @@
 #define BLE_CFG_SVC_MAX_NBR_CB                                                 7
 
 #define BLE_CFG_CLT_MAX_NBR_CB                                                 0
+
+/******************************************************************************
+ * Device Information Service (DIS)
+ ******************************************************************************/
+/**< Options: Supported(1) or Not Supported(0) */
+#define BLE_CFG_DIS_MANUFACTURER_NAME_STRING                                   1
+#define BLE_CFG_DIS_MODEL_NUMBER_STRING                                        1
+#define BLE_CFG_DIS_SERIAL_NUMBER_STRING                                       0
+#define BLE_CFG_DIS_HARDWARE_REVISION_STRING                                   0
+#define BLE_CFG_DIS_FIRMWARE_REVISION_STRING                                   0
+#define BLE_CFG_DIS_SOFTWARE_REVISION_STRING                                   0
+#define BLE_CFG_DIS_SYSTEM_ID                                                  0
+#define BLE_CFG_DIS_IEEE_CERTIFICATION                                         0
+#define BLE_CFG_DIS_PNP_ID                                                     0
+
+/**
+ * device information service characteristic lengths
+ */
+#define BLE_CFG_DIS_SYSTEM_ID_LEN_MAX                                        (8)
+#define BLE_CFG_DIS_MODEL_NUMBER_STRING_LEN_MAX                              (32)
+#define BLE_CFG_DIS_SERIAL_NUMBER_STRING_LEN_MAX                             (32)
+#define BLE_CFG_DIS_FIRMWARE_REVISION_STRING_LEN_MAX                         (32)
+#define BLE_CFG_DIS_HARDWARE_REVISION_STRING_LEN_MAX                         (32)
+#define BLE_CFG_DIS_SOFTWARE_REVISION_STRING_LEN_MAX                         (32)
+#define BLE_CFG_DIS_MANUFACTURER_NAME_STRING_LEN_MAX                         (32)
+#define BLE_CFG_DIS_IEEE_CERTIFICATION_LEN_MAX                               (32)
+#define BLE_CFG_DIS_PNP_ID_LEN_MAX                                           (7)
 
  /******************************************************************************
  * Blood Pressure Service (BLS)

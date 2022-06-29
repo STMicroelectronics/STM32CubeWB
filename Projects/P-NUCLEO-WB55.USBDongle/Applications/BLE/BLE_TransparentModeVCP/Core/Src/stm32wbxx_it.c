@@ -2,11 +2,14 @@
 /**
   ******************************************************************************
   * @file    stm32wbxx_it.c
-  * @brief   Interrupt Service Routines.
+  * @author  MCD Application Team
+  * @brief   Main Interrupt Service Routines.
+  *          This file provides template for all exceptions handler and
+  *          peripherals interrupt service routine.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -201,7 +204,6 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32wbxx.s).                    */
 /******************************************************************************/
-
 
 /**
   * @brief  This function handles USB FS global interrupt request.

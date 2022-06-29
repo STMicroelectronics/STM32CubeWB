@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    appli_config_client.h
-* @author  BLE Mesh Team
-* @brief   Application interface for Generic Mesh Models  
+  * @file    appli_config_client.h
+  * @author  MCD Application Team
+  * @brief   Application interface for Generic Mesh Models  
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_CONFIG_CLIENT_H
-#define __APPLI_CONFIG_CLIENT_H
+#ifndef APPLI_CONFIG_CLIENT_H
+#define APPLI_CONFIG_CLIENT_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -84,8 +86,8 @@ MOBLEUINT8 GetCountSIGModelToPublish(MOBLEUINT8 elementIdx);
 
 MOBLEUINT8 GetCountVendorModelToPublish(MOBLEUINT8 elementIdx);
 
-#endif /*defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER) */
+#endif /* defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER) */
 
-#endif /* __APPLI_CONFIG_CLIENT_H */
+#endif /* APPLI_CONFIG_CLIENT_H */
 
 

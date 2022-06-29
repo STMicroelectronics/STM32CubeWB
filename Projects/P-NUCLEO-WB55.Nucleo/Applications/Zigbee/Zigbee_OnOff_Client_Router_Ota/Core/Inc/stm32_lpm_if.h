@@ -18,8 +18,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32_LPM_IF_H
-#define __STM32_LPM_IF_H
+#ifndef STM32_LPM_IF_H
+#define STM32_LPM_IF_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,4 +75,5 @@ void PWR_ExitSleepMode( void );
 }
 #endif
 
-#endif /*__STM32_LPM_IF_H */
+#endif /*STM32_LPM_IF_H */
+

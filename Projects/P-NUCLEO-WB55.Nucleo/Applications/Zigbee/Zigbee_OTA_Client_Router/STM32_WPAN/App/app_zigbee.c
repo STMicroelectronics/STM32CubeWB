@@ -67,7 +67,7 @@ static void Receive_Notification_From_M0(void);
 /* ZCL OTA cluster related functions */
 static void APP_ZIGBEE_OTA_Client_Init(void);
 
-static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_DiscoverComplete_cb(struct ZbZclClusterT *clusterPtr, void *arg);
+static void APP_ZIGBEE_OTA_Client_DiscoverComplete_cb(struct ZbZclClusterT *clusterPtr, enum ZclStatusCodeT status,void *arg);
 static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_ImageNotify_cb(struct ZbZclClusterT *clusterPtr, uint8_t payload_type, 
                                                                 uint8_t jitter, struct ZbZclOtaImageDefinition *image_definition,
                                                                 struct ZbApsdeDataIndT *data_ind, struct ZbZclHeaderT *zcl_header);
@@ -167,22 +167,22 @@ static uint8_t TS_ID2;
  * @brief  OTA client Discover callback
  * @param  clusterPtr: ZCL Cluster pointer
  * @param  arg: Passed argument
- * @retval ZCL status code
+ * @retval None
  */
-static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_DiscoverComplete_cb(struct ZbZclClusterT *clusterPtr, void *arg){
-  enum ZclStatusCodeT status = ZCL_STATUS_SUCCESS;
+static void APP_ZIGBEE_OTA_Client_DiscoverComplete_cb(struct ZbZclClusterT *clusterPtr, enum ZclStatusCodeT status,void *arg){
+  enum ZclStatusCodeT internal_status = ZCL_STATUS_SUCCESS;
   uint64_t requested_server_ext = 0;
+  UNUSED (status);
   
   /* The OTA server extended address in stored in ZCL_OTA_ATTR_UPGRADE_SERVER_ID attribute */
-  requested_server_ext = ZbZclAttrIntegerRead(zigbee_app_info.ota_client, ZCL_OTA_ATTR_UPGRADE_SERVER_ID, NULL, &status);
-  if(status != ZCL_STATUS_SUCCESS){
+  requested_server_ext = ZbZclAttrIntegerRead(zigbee_app_info.ota_client, ZCL_OTA_ATTR_UPGRADE_SERVER_ID, NULL, &internal_status);
+  if(internal_status != ZCL_STATUS_SUCCESS){
     APP_DBG("ZbZclAttrIntegerRead failed.\n");
   }
   
   APP_DBG("OTA Server located with EUI64 0x%016" PRIx64 ".", requested_server_ext);
   UTIL_SEQ_SetEvt(EVENT_ZIGBEE_OTA_SERVER_FOUND);
   
-  return status;
 }
 
 /**
@@ -783,7 +783,7 @@ static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
    }
    else
    {
-       /* Failed toi restart from persistence */ 
+       /* Failed to restart from persistence */ 
        APP_DBG("APP_ZIGBEE_ZbStartupPersist: no persistence data to restore");
        status = ZB_STATUS_ALLOC_FAIL;
    }
@@ -831,7 +831,7 @@ static bool APP_ZIGBEE_persist_load(void)
     if ((cache_persistent_data.U32_data[0] == 0) ||
         (cache_persistent_data.U32_data[0] > ST_PERSIST_MAX_ALLOC_SZ))
     {
-        APP_DBG("No data or too large lenght : %d",cache_persistent_data.U32_data[0]);
+        APP_DBG("No data or too large length : %d",cache_persistent_data.U32_data[0]);
         return false;
     }
     return true;
@@ -943,7 +943,7 @@ static bool APP_ZIGBEE_NVM_Read(void)
     ee_status = EE_Read(0, ZIGBEE_DB_START_ADDR, &cache_persistent_data.U32_data[0]);
     if (ee_status != EE_OK)
     {
-        APP_DBG("Read -> persistent data lenght not found ERASE to be done - Read Stopped");
+        APP_DBG("Read -> persistent data length not found ERASE to be done - Read Stopped");
         status = false;
     }
       /* Check length is not too big nor zero */
@@ -1461,6 +1461,33 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
       APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
       break;
     }
+    // print the application name
+    char* __PathProject__ =(strstr(__FILE__, "Zigbee") ? strstr(__FILE__, "Zigbee") + 7 : __FILE__);
+    char *del;
+    if ( (strchr(__FILE__, '/')) == NULL)
+        {del = strchr(__PathProject__, '\\');}
+    else 
+        {del = strchr(__PathProject__, '/');}
+    
+        int index = (int) (del - __PathProject__);
+        APP_DBG("Application flashed: %*.*s",index,index,__PathProject__);
+    
+    //print channel
+    APP_DBG("Channel used: %d", CHANNEL);
+    //print Link Key
+    APP_DBG("Link Key: %.16s", sec_key_ha);
+    //print Link Key value hex   
+    char Z09_LL_string[ZB_SEC_KEYSIZE*3+1];
+    Z09_LL_string[0]=0;
+    for(int str_index=0; str_index < ZB_SEC_KEYSIZE; str_index++)
+      {           
+        sprintf(&Z09_LL_string[str_index*3],"%02x ",sec_key_ha[str_index]);
+      }
+  
+    APP_DBG("Link Key value: %s",Z09_LL_string);
+    //print clusters allocated
+    APP_DBG("Clusters allocated are:");  
+    APP_DBG("OTA Client on Endpoint %d",SW1_ENDPOINT);
     APP_DBG("**********************************************************");
   }
 } /* APP_ZIGBEE_CheckWirelessFirmwareInfo */

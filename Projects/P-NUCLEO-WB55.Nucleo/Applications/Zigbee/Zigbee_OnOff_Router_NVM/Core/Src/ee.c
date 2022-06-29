@@ -172,7 +172,12 @@ int EE_Init( int format, uint32_t base_address )
     total_nb_pages =
       2 * (EE_var[0].nb_pages + (CFG_EE_BANK1_SIZE ? EE_var[1].nb_pages : 0));
 
-    if ( HW_FLASH_Erase( EE_FLASH_PAGE( EE_var, 0 ), total_nb_pages, 0 ) != 0 )
+//    if ( HW_FLASH_Erase( EE_FLASH_PAGE( EE_var, 0 ), total_nb_pages, 0 ) != 0 )
+//    {
+//      return EE_ERASE_ERROR;
+//    }
+
+    if ( FD_EraseSectors( EE_FLASH_PAGE( EE_var, 0 ), total_nb_pages) != 0 )
     {
       return EE_ERASE_ERROR;
     }
@@ -296,8 +301,13 @@ int EE_Clean( int bank, int interrupt )
   EE_DBG( EE_1 );
 
   /* Erase all the pages of the pool */
-  if ( HW_FLASH_Erase( EE_FLASH_PAGE( pv, page ), pv->nb_pages, interrupt )
-       != 0 )
+//  if ( HW_FLASH_Erase( EE_FLASH_PAGE( pv, page ), pv->nb_pages, interrupt )
+//       != 0 )
+//  {
+//    return EE_ERASE_ERROR;
+//  }
+
+  if( FD_EraseSectors(EE_FLASH_PAGE( pv, page ), pv->nb_pages) != 0 )
   {
     return EE_ERASE_ERROR;
   }
@@ -441,7 +451,11 @@ static int EE_Recovery( EE_var_t* pv )
       {
         if ( EE_GetState( pv, page ) != EE_STATE_ERASED )
         {
-          if ( HW_FLASH_Erase( EE_FLASH_PAGE( pv, page ), 1, 0 ) != 0 )
+//          if ( HW_FLASH_Erase( EE_FLASH_PAGE( pv, page ), 1, 0 ) != 0 )
+//          {
+//            return EE_ERASE_ERROR;
+//          }
+          if ( FD_EraseSectors( EE_FLASH_PAGE( pv, page ), 1) != 0 )
           {
             return EE_ERASE_ERROR;
           }
@@ -468,7 +482,7 @@ static int EE_Transfer( EE_var_t* pv, uint16_t addr, uint32_t page )
      or ACTIVE, except in case of recovery, where some pages may be already
      in ERASING state.
      However, in case of recovery, we do not not need to set ERASING,
-     as intialization phase erases the unactive pool. */
+     as initialization phase erases the unactive pool. */
   last_page =
     (page < pv->nb_pages) ? (2 * pv->nb_pages - 1) : (pv->nb_pages - 1);
 
@@ -580,7 +594,12 @@ static int EE_WriteEl( EE_var_t* pv, uint16_t addr, uint32_t data )
     EE_FLASH_ADDR( pv, pv->current_write_page ) + pv->next_write_offset;
 
   /* Write element in flash */
-  if ( HW_FLASH_Write( flash_addr, el ) != 0 )
+//  if ( HW_FLASH_Write( flash_addr, el ) != 0 )
+//  {
+//    return EE_WRITE_ERROR;
+//  }
+
+  if ( FD_WriteData( flash_addr, &el, 1 ) != 0 )
   {
     return EE_WRITE_ERROR;
   }
@@ -647,7 +666,13 @@ static int EE_SetState( const EE_var_t* pv, uint32_t page, uint32_t state )
   EE_DBG( EE_0 );
 
   /* Set new page state inside page header */
-  if ( HW_FLASH_Write( flash_addr, EE_PROGRAMMED ) != 0 )
+//  if ( HW_FLASH_Write( flash_addr, EE_PROGRAMMED ) != 0 )
+//  {
+//    return EE_WRITE_ERROR;
+//  }
+
+  uint64_t data = EE_PROGRAMMED;
+  if ( FD_WriteData( flash_addr, &data, 1 ) != 0 )
   {
     return EE_WRITE_ERROR;
   }

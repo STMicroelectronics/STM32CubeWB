@@ -60,6 +60,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/Include"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1519174318" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
@@ -148,6 +149,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/Include"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.592037016" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>

@@ -58,7 +58,7 @@ PLACE_IN_SECTION("BLE_APP_CONTEXT") static MOTION_Server_App_Context_t MOTION_Se
 
 /* Global variables ----------------------------------------------------------*/
 extern int debug_trace_enabled;
-extern uint8_t manuf_data[14];
+extern uint8_t a_ManufData[14];
 int stopPrintValue;
 /* Private function prototypes -----------------------------------------------*/
 static void MOTION_Handle_Sensor(void);
@@ -229,16 +229,16 @@ static void MOTION_GetCaps(void)
   /* Update BLE ADV field (Motion) */
   if(MOTION_Server_App_Context.hasAcc)
   {
-    manuf_data[5] |= 0x80; /* Acc value */
-    manuf_data[6] |= 0x04; /* Extended Acc events */
+    a_ManufData[5] |= 0x80; /* Acc value */
+    a_ManufData[6] |= 0x04; /* Extended Acc events */
   }
   if(MOTION_Server_App_Context.hasGyro)
   {
-    manuf_data[5] |= 0x40; /* Gyro value */
+    a_ManufData[5] |= 0x40; /* Gyro value */
   }
   if(MOTION_Server_App_Context.hasMag)
   {
-    manuf_data[5] |= 0x20; /* Mag value */
+    a_ManufData[5] |= 0x20; /* Mag value */
   }
 }
 

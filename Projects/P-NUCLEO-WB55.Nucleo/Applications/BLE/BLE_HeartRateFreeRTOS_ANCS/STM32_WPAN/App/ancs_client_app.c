@@ -176,7 +176,7 @@ static void GattParseNotification(aci_gatt_notification_event_rp0 *pr);
 
 #if (GET_ACTION_ID_FROM_UART == 1)
 static uint8_t ANCS_App_Get_Char(void);
-static ActionID ANCS_App_Get_ActionID(void)
+static ActionID ANCS_App_Get_ActionID(void);
 #endif
 static void ANCS_App_Update_Service( void );
 static SVCCTL_EvtAckStatus_t ANCS_Client_Event_Handler( void *Event );

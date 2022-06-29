@@ -1066,6 +1066,9 @@
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
             </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
+            </file>
         </group>
         <group>
             <name>EWARM</name>
@@ -1139,7 +1142,25 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash_ex.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_gpio.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr.c</name>
@@ -1154,6 +1175,9 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc_ex.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rng.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc.c</name>
             </file>
             <file>
@@ -1164,6 +1188,12 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart.c</name>

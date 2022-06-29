@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    appli_light_client.c
-* @author  BLE Mesh Team
-* @brief   Application interface for Generic Mesh Models 
+  * @file    appli_light_client.c
+  * @author  MCD Application Team
+  * @brief   Application interface for Generic Mesh Models 
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "hal_common.h"
@@ -409,7 +411,7 @@ MOBLE_RESULT Appli_LightClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opco
       }
     case LIGHT_LC_PROPERTY_SET:
       {
-
+        
         result = LightClient_LC_Property_Set_Ack(elementIndex,
                                               msg_params, 
                                               5);
@@ -417,7 +419,7 @@ MOBLE_RESULT Appli_LightClient_API(MOBLEUINT8 elementIndex, MOBLEUINT16 msg_opco
       }
   case LIGHT_LC_PROPERTY_SET_UNACK:
     {  
-
+      
       result = LightClient_LC_Property_Set_Unack(elementIndex,
                                               msg_params, 
                                               5);

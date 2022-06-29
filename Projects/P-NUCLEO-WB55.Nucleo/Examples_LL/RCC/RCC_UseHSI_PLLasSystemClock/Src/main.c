@@ -119,9 +119,8 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 
-  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-
   /* System interrupt init*/
+  NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
   /* USER CODE BEGIN Init */
 
@@ -425,7 +424,7 @@ uint32_t ChangePLL_HSI_Config(void)
 }
 
 /**
-  * @brief  Fonction to change Main PLL configuration
+  * @brief  Function to change Main PLL configuration
  #error
   * @retval RCC_ERROR_NONE if no error
   */

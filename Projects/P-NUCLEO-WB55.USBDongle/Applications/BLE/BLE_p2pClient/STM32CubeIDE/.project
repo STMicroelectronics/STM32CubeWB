@@ -80,7 +80,7 @@
 			<name>Application/Core/stm32wbxx_hal_msp.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32wbxx_hal_msp.c</locationURI>
-		</link>        
+		</link>
 		<link>
 			<name>Application/Core/stm32wbxx_it.c</name>
 			<type>1</type>
@@ -155,6 +155,11 @@
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rcc_ex.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rng.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rng.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_rtc.c</name>

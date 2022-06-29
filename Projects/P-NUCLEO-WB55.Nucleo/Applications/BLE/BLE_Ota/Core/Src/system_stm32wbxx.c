@@ -70,7 +70,6 @@
   ******************************************************************************
   */
 
-
 /** @addtogroup CMSIS
  * @{
  */
@@ -83,6 +82,8 @@
  * @{
  */
 
+#include "stm32wbxx.h"
+
 #include "app_common.h"
 #include "otp.h"
 
@@ -91,23 +92,23 @@
 #endif /* OTA_SBSFU */
 
 #if !defined  (HSE_VALUE)
-#define HSE_VALUE    ((uint32_t)32000000) /*!< Value of the External oscillator in Hz */
+  #define HSE_VALUE    (32000000UL) /*!< Value of the External oscillator in Hz */
 #endif /* HSE_VALUE */
 
 #if !defined  (MSI_VALUE)
-#define MSI_VALUE    ((uint32_t)4000000) /*!< Value of the Internal oscillator in Hz*/
+   #define MSI_VALUE    (4000000UL) /*!< Value of the Internal oscillator in Hz*/
 #endif /* MSI_VALUE */
 
 #if !defined  (HSI_VALUE)
-#define HSI_VALUE    ((uint32_t)16000000) /*!< Value of the Internal oscillator in Hz*/
+  #define HSI_VALUE    (16000000UL) /*!< Value of the Internal oscillator in Hz*/
 #endif /* HSI_VALUE */
 
 #if !defined  (LSI_VALUE) 
-#define LSI_VALUE  ((uint32_t)32000)       /*!< Value of LSI in Hz*/
+ #define LSI_VALUE  (32000UL)       /*!< Value of LSI in Hz*/
 #endif /* LSI_VALUE */ 
 
 #if !defined  (LSE_VALUE)
-#define LSE_VALUE    ((uint32_t)32768)    /*!< Value of LSE in Hz*/
+  #define LSE_VALUE    (32768UL)    /*!< Value of LSE in Hz*/
 #endif /* LSE_VALUE */
 
 /**
@@ -167,11 +168,11 @@ extern void * g_pfnVectors;
                is no need to call the 2 first functions listed above, since SystemCoreClock
                variable is updated automatically.
  */
-uint32_t SystemCoreClock  = 4000000; /*CPU1: M4 on MSI clock after startup (4MHz)*/
+uint32_t SystemCoreClock  = 4000000UL ; /*CPU1: M4 on MSI clock after startup (4MHz)*/
 
-const uint32_t AHBPrescTable[16] =   {1, 3, 5, 1, 1, 6, 10, 32, 2, 4, 8, 16, 64, 128, 256, 512};  /* eqv. division factor used for Dory*/
-/* index=[0,...15]*/
-const uint32_t APBPrescTable[8] =  {0, 0, 0, 0, 1, 2, 3, 4};
+const uint32_t AHBPrescTable[16UL] = {1UL, 3UL, 5UL, 1UL, 1UL, 6UL, 10UL, 32UL, 2UL, 4UL, 8UL, 16UL, 64UL, 128UL, 256UL, 512UL};
+
+const uint32_t APBPrescTable[8UL]  = {0UL, 0UL, 0UL, 0UL, 1UL, 2UL, 3UL, 4UL};
 
 const uint32_t MSIRangeTable[16UL] = {100000UL, 200000UL, 400000UL, 800000UL, 1000000UL, 2000000UL, \
     4000000UL, 8000000UL, 16000000UL, 24000000UL, 32000000UL, 48000000UL, 0UL, 0UL, 0UL, 0UL}; /* 0UL values are incorrect cases */
@@ -408,7 +409,7 @@ void SystemInit(void)
 
   /* FPU settings ------------------------------------------------------------*/
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
-  SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
+    SCB->CPACR |= ((3UL << (10UL*2UL))|(3UL << (11UL*2UL)));  /* set CP10 and CP11 Full Access */
 #endif
 
 /**
@@ -566,7 +567,7 @@ void SystemCoreClockUpdate(void)
          SYSCLK = PLL_VCO / PLLR
        */
       pllsource = (RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC);
-      pllm = ((RCC->PLLCFGR & RCC_PLLCFGR_PLLM) >> RCC_PLLCFGR_PLLM_Pos) + 1 ;
+      pllm = ((RCC->PLLCFGR & RCC_PLLCFGR_PLLM) >> RCC_PLLCFGR_PLLM_Pos) + 1UL ;
 
       switch (pllsource)
       {
@@ -584,7 +585,7 @@ void SystemCoreClockUpdate(void)
       }
 
       pllvco = pllvco * ((RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> RCC_PLLCFGR_PLLN_Pos);
-      pllr = (((RCC->PLLCFGR & RCC_PLLCFGR_PLLR) >> RCC_PLLCFGR_PLLR_Pos) + 1);
+      pllr = (((RCC->PLLCFGR & RCC_PLLCFGR_PLLR) >> RCC_PLLCFGR_PLLR_Pos) + 1UL);
 
       SystemCoreClock = pllvco/pllr;
       break;

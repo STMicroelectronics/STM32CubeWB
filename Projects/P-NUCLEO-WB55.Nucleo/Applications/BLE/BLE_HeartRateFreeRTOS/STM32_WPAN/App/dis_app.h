@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DIS_APP_H
-#define __DIS_APP_H
+#ifndef DIS_APP_H
+#define DIS_APP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,4 +71,4 @@ void DISAPP_Init(void);
 }
 #endif
 
-#endif /*__DIS_APP_H */
+#endif /*DIS_APP_H */

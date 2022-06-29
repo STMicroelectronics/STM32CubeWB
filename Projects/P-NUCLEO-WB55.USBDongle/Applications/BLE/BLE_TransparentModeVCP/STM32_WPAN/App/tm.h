@@ -18,8 +18,8 @@
 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TM_H
-#define __TM_H
+#ifndef TM_H
+#define TM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -61,4 +61,4 @@ extern "C" {
 }
 #endif
 
-#endif /*__TM_H */
+#endif /* TM_H */

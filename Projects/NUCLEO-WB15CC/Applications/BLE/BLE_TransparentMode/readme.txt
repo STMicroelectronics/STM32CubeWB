@@ -1,11 +1,11 @@
 /**
-  @page BLE_TransparentMode example
+  @page BLE_TransparentMode application
   
   @verbatim
   ******************************************************************************
   * @file    BLE/BLE_TransparentMode/readme.txt 
   * @author  MCD Application Team
-  * @brief   Description of the BLE_TransparentMode example.
+  * @brief   Description of the BLE_TransparentMode application.
   ******************************************************************************
   *
   * Copyright (c) 2019-2021 STMicroelectronics.
@@ -18,7 +18,7 @@
   ******************************************************************************
   @endverbatim
 
-@par Example Description
+@par application Description
 
 How to communicate with the STM32CubeMonitor-RF Tool using the transparent mode.
 
@@ -37,48 +37,56 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, Dual core
 
 @par Directory contents 
   
-  - BLE/BLE_TransparentMode/Core/Inc/stm32wbxx_hal_conf.h		HAL configuration file
-  - BLE/BLE_TransparentMode/Core/Inc/stm32wbxx_it.h          	Interrupt handlers header file
-  - BLE/BLE_TransparentMode/Core/Inc/main.h                  	Header for main.c module
-  - BLE/BLE_TransparentMode/STM32_WPAN/App/tm.h               	Header for tm.c module
-  - BLE/BLE_TransparentMode/Core/Inc/app_common.h            	Header for all modules with common definition
-  - BLE/BLE_TransparentMode/Core/Inc/app_conf.h              	Parameters configuration file of the application
-  - BLE/BLE_TransparentMode/Core/Inc/app_entry.h              	Parameters configuration file of the application
-  - BLE/BLE_TransparentMode/STM32_WPAN/App/ble_conf.h          	BLE Services configuration
-  - BLE/BLE_TransparentMode/STM32_WPAN/App/ble_dbg_conf.h      	BLE Traces configuration of the BLE services
-  - BLE/BLE_TransparentMode/Core/Inc/hw_conf.h           		Configuration file of the HW
-  - BLE/BLE_TransparentMode/Core/Inc/utilities_conf.h    		Configuration file of the utilities
-  - BLE/BLE_TransparentMode/Core/Src/stm32wbxx_it.c          	Interrupt handlers
-  - BLE/BLE_TransparentMode/Core/Src/main.c                  	Main program
-  - BLE/BLE_TransparentMode/Core/Src/system_stm32wbxx.c      	stm32wbxx system source file
-  - BLE/BLE_TransparentMode/Core/Src/app_entry.c      			Initialization of the application
-  - BLE/BLE_TransparentMode/STM32_WPAN/Target/hw_ipcc.c      	IPCC Driver
-  - BLE/BLE_TransparentMode/Core/Src/stm32_lpm_if.c				Low Power Manager Interface
-  - BLE/BLE_TransparentMode/Core/Src/hw_timerserver.c 			Timer Server based on RTC
-  - BLE/BLE_TransparentMode/Core/Src/hw_uart.c 					UART Driver
-  - BLE/BLE_TransparentMode/STM32_WPAN/App/tm.c 				Transparent Mode implementation
-  
+  - BLE/BLE_TransparentMode/Core/Inc/app_common.h                Header for all modules with common definition
+  - BLE/BLE_TransparentMode/Core/Inc/app_conf.h                  Application configuration file for STM32WPAN Middleware
+  - BLE/BLE_TransparentMode/Core/Inc/app_debug.h                 Header for app_debug.c module
+  - BLE/BLE_TransparentMode/Core/Inc/app_entry.h                 Interface to the application
+  - BLE/BLE_TransparentMode/Core/Inc/hw_conf.h                   Configuration file of the HW
+  - BLE/BLE_TransparentMode/Core/Inc/hw_if.h                     Hardware Interface
+  - BLE/BLE_TransparentMode/Core/Inc/main.h                      Header for main.c module
+  - BLE/BLE_TransparentMode/Core/Inc/nucleo_wb15cc_conf.h        NUCLEO-WB15CC board configuration file.
+  - BLE/BLE_TransparentMode/Core/Inc/standby.h                   Header for standby.c module (specific code for standby low power mode)
+  - BLE/BLE_TransparentMode/Core/Inc/stm32wbxx_hal_conf.h        HAL configuration file
+  - BLE/BLE_TransparentMode/Core/Inc/stm32wbxx_it.h              Interrupt handlers header file
+  - BLE/BLE_TransparentMode/Core/Inc/stm32_lpm_if.h              Header for stm32_lpm_if.c module (device specific LP management)
+  - BLE/BLE_TransparentMode/Core/Inc/utilities_conf.h            Configuration file of the utilities
+  - BLE/BLE_TransparentMode/STM32_WPAN/App/ble_conf.h          	 BLE Services configuration
+  - BLE/BLE_TransparentMode/STM32_WPAN/App/ble_dbg_conf.h      	 BLE Traces configuration of the BLE services
+  - BLE/BLE_TransparentMode/STM32_WPAN/App/tl_dbg_conf.h         Debug configuration file for stm32wpan transport layer interface
+  - BLE/BLE_TransparentMode/STM32_WPAN/App/tm.h               	 Header for tm.c module
+  - BLE/BLE_TransparentMode/Core/Src/app_debug.c                 Debug capabilities source file for STM32WPAN Middleware
+  - BLE/BLE_TransparentMode/Core/Src/app_entry.c                 Initialization of the application
+  - BLE/BLE_TransparentMode/Core/Src/hw_timerserver.c            Timer Server based on RTC
+  - BLE/BLE_TransparentMode/Core/Src/hw_uart.c                   UART Driver
+  - BLE/BLE_TransparentMode/Core/Src/main.c                      Main program
+  - BLE/BLE_TransparentMode/Core/Inc/standby.c                   Specific code for standby low power mode
+  - BLE/BLE_TransparentMode/Core/Src/stm32wbxx_hal_msp.c         This file provides code for the MSP Initialization and de-Initialization
+  - BLE/BLE_TransparentMode/Core/Src/stm32wbxx_it.c              Interrupt handlers
+  - BLE/BLE_TransparentMode/Core/Src/stm32_lpm_if.c              Low Power Manager Interface
+  - BLE/BLE_TransparentMode/Core/Src/system_stm32wbxx.c          stm32wbxx system source file
+  - BLE/BLE_TransparentMode/STM32_WPAN/App/tm.c 		 Transparent Mode implementation
+  - BLE/BLE_TransparentMode/STM32_WPAN/Target/hw_ipcc.c          IPCC Driver
      
 @par Hardware and Software environment
 
-  - This example runs on STM32WB15xx devices.
+  - This application runs on STM32WB15xx devices.
   
-  - This example has been tested with an STMicroelectronics STM32WB15CC-Nucleo
+  - This application has been tested with an STMicroelectronics STM32WB15CC-Nucleo
     board and can be easily tailored to any other supported device 
     and development board.
 
 @par How to use it ? 
 
-This application requires having the stm32wb15_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
+This application requires having the stm32wb15_BLE_Stack_full_extended_fw.bin binary flashed on the Wireless Coprocessor.
 If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
-Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
 Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the detailed procedure to change the
-Wireless Coprocessor binary.  
+Wireless Coprocessor binary or see following wiki for Hardware setup:
+https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_BLE_Hardware_Setup
 
 In order to make the program work, you must do the following:
- - Open your preferred toolchain 
- - Rebuild all files and load your image into Target memory
+ - Open your toolchain 
+ - Rebuild all files and flash the board with the executable file
  - OR use BLE_TransparentMode_reference.hex from Binary directory
  - to test the BLE Transparent Mode application, use the STM32CubeMonitor RF tool
  - make the connection between STM32CubeMonitor RF tool and BLE_TransparentMode application
@@ -87,6 +95,9 @@ In order to make the program work, you must do the following:
  
 For more details refer to the Application Note: 
   AN5289 - Building a Wireless application 
+
+Available Wiki pages:
+  - https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_overview
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

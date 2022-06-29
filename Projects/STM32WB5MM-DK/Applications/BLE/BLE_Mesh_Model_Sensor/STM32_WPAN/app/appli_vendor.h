@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_VENDOR_H
-#define __APPLI_VENDOR_H
+#ifndef APPLI_VENDOR_H
+#define APPLI_VENDOR_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -41,6 +41,6 @@ MOBLE_RESULT Appli_Vendor_SetBigDataPacket(MOBLEUINT8 *data, MOBLEUINT32 length,
 void Appli_Vendor_Publish(MOBLE_ADDRESS srcAddress);
 void Appli_Vendor_Publish_Temperature(MOBLE_ADDRESS srcAddress, MOBLEUINT8 temperature);
 
-#endif /* __APPLI_VENDOR_H */
+#endif /* APPLI_VENDOR_H */
 
 

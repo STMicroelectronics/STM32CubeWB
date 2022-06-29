@@ -98,13 +98,13 @@ struct ZbZclIasWdClientSquawkReqT {
 
 /** IAS Warning Server callbacks configuration */
 struct ZbZclIasWdServerCallbacksT {
-    uint8_t (*start_warning)(struct ZbZclClusterT *cluster, void *arg,
+    enum ZclStatusCodeT (*start_warning)(struct ZbZclClusterT *cluster, void *arg,
         struct ZbZclIasWdClientStartWarningReqT *warn_req);
     /**< Callback to handle Start Warning command.
      * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.
      */
 
-    uint8_t (*squawk)(struct ZbZclClusterT *cluster, void *arg,
+    enum ZclStatusCodeT (*squawk)(struct ZbZclClusterT *cluster, void *arg,
         struct ZbZclIasWdClientSquawkReqT *squawk_req);
     /**< Callback to handle Squawk command.
      * ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error.

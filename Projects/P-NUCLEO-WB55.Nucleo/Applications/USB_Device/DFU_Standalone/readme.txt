@@ -77,7 +77,7 @@ on the driver installation and PC host user interface.
       than the peripheral interrupt. Otherwise the caller ISR process will be blocked.
       To change the SysTick interrupt priority you have to use HAL_NVIC_SetPriority() function.
 
-@note The build-in USB peripheral of the stm32wbxx does not provide a specific interrupt for USB cable plug/unplug
+@note The built-in USB peripheral of the stm32wbxx does not provide a specific interrupt for USB cable plug/unplug
       detection. The correct way to detect the USB cable plug/unplug is to detect the availability of the VBUS line
       using a normal GPIO pin (external interrupt line).
 

@@ -1061,7 +1061,7 @@
                 <name>$PROJ_DIR$\..\Core\Src\main.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\standby_stm32wb15.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\standby.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
@@ -1176,6 +1176,15 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_ipcc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c</name>
             </file>
         </group>
     </group>

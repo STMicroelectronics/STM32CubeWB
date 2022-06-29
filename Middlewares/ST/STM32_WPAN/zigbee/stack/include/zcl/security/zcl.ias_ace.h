@@ -301,11 +301,11 @@ struct ZbZclIasAceServerCallbacksT {
 
     /* Emergency, Fire and Panic callbacks return a ZCL status to
      * return in the Default Response (e.g. ZCL_STATUS_SUCCESS) */
-    uint8_t (*emerg_req)(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclAddrInfoT *srcInfo);
+    enum ZclStatusCodeT (*emerg_req)(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclAddrInfoT *srcInfo);
     /**< Callback to application, invoked on receipt of Emergency command */
-    uint8_t (*fire_req)(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclAddrInfoT *srcInfo);
+    enum ZclStatusCodeT (*fire_req)(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclAddrInfoT *srcInfo);
     /**< Callback to application, invoked on receipt of Fire command */
-    uint8_t (*panic_req)(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclAddrInfoT *srcInfo);
+    enum ZclStatusCodeT (*panic_req)(struct ZbZclClusterT *clusterPtr, void *arg, struct ZbZclAddrInfoT *srcInfo);
     /**< Callback to application, invoked on receipt of Panic command */
 };
 

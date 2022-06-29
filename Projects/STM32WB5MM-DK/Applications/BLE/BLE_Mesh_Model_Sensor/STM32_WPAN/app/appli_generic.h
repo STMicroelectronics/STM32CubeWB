@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_GENERIC_H
-#define __APPLI_GENERIC_H
+#ifndef APPLI_GENERIC_H
+#define APPLI_GENERIC_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -151,6 +151,6 @@ MOBLE_RESULT Appli_Generic_GetDefaultTransitionStatus(MOBLEUINT8* pTransition_St
  
  
 
-#endif /* __APPLI_GENERIC_H */
+#endif /* APPLI_GENERIC_H */
 
 

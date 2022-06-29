@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    app_common.h
   * @author  MCD Application Team
-  * @brief   Common
+  * @brief   App Common application configuration file for STM32WPAN Middleware.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,15 +16,13 @@
   *
   ******************************************************************************
   */
-
-
+/* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APP_COMMON_H
-#define __APP_COMMON_H
+#ifndef APP_COMMON_H
+#define APP_COMMON_H
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C"{
 #endif
 
 #include <stdint.h>
@@ -37,7 +36,6 @@ extern "C"
 /* -------------------------------- *
  *  Basic definitions               *
  * -------------------------------- */
-
 #undef NULL
 #define NULL                    0
 
@@ -47,9 +45,9 @@ extern "C"
 #undef TRUE
 #define TRUE                    (!0)
 
-  /* -------------------------------- *
-   *  Critical Section definition     *
-   * -------------------------------- */
+/* -------------------------------- *
+ *  Critical Section definition     *
+ * -------------------------------- */
 #define BACKUP_PRIMASK()    uint32_t primask_bit= __get_PRIMASK()
 #define DISABLE_IRQ()       __disable_irq()
 #define RESTORE_PRIMASK()   __set_PRIMASK(primask_bit)
@@ -57,7 +55,6 @@ extern "C"
 /* -------------------------------- *
  *  Macro delimiters                *
  * -------------------------------- */
-
 #define M_BEGIN     do {
 
 #define M_END       } while(0)
@@ -65,7 +62,6 @@ extern "C"
 /* -------------------------------- *
  *  Some useful macro definitions   *
  * -------------------------------- */
-
 #ifndef MAX
 #define MAX( x, y )          (((x)>(y))?(x):(y))
 #endif
@@ -82,9 +78,8 @@ extern "C"
 
 #define MODSUB( a, b, m )    MODADD( a, (m)-(b), m )
 
-
 #define PAUSE( t )           M_BEGIN \
-                               volatile int _i; \
+                               __IO int _i; \
                                for ( _i = t; _i > 0; _i -- ); \
                              M_END
 
@@ -100,9 +95,9 @@ extern "C"
 
 #define BITNSET( w, n, b )   M_BEGIN (w)[(n)/32] |= ((U32)(b))<<((n)%32); M_END
 
-  /* -------------------------------- *
-   *  Compiler                         *
-   * -------------------------------- */
+/* -------------------------------- *
+ *  Compiler                         *
+ * -------------------------------- */
 #define PLACE_IN_SECTION( __x__ )  __attribute__((section (__x__)))
 
 #ifdef WIN32
@@ -111,9 +106,8 @@ extern "C"
 #define ALIGN(n)             __attribute__((aligned(n)))
 #endif
 
-
 #ifdef __cplusplus
-}
+} /* extern "C" */
 #endif
 
-#endif /*__APP_COMMON_H */
+#endif /* APP_COMMON_H */

@@ -1,3 +1,4 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    vcp_conf.h
@@ -6,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __VCP_CONF_H
-#define __VCP_CONF_H
+#ifndef VCP_CONF_H
+#define VCP_CONF_H
 
 #ifdef __cplusplus
 extern "C"
@@ -46,4 +48,4 @@ extern "C"
 }
 #endif
 
-#endif /*__VCP_CONF_H */
+#endif /* VCP_CONF_H */

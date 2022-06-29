@@ -96,4 +96,40 @@
 /* Define to 1 to enable IPv6 global addresses configuration utilities */
 #define OPENTHREAD_CONFIG_IP6_SLAAC_ENABLE 1
 
+/* Define as 1 to enable saving the settings in RAM instead of flash */
+#define OPENTHREAD_SETTINGS_RAM 0
+
+/* Define to 1 to use flash API */
+#define OPENTHREAD_CONFIG_PLATFORM_FLASH_API_ENABLE 1
+
+/* Define to 1 to support ping cli command */
+#define OPENTHREAD_CONFIG_PING_SENDER_ENABLE 1
+
+/* Define to 1 to enable Mle Link Metrics Initiator */
+#define OPENTHREAD_CONFIG_MLE_LINK_METRICS_INITIATOR_ENABLE 1
+
+/* Define to 1 to enable Mle Link Metrics Subject */
+#define OPENTHREAD_CONFIG_MLE_LINK_METRICS_SUBJECT_ENABLE 1
+
+/* Define to 1 to enable Backbone Router feature */
+#define OPENTHREAD_CONFIG_BACKBONE_ROUTER_ENABLE 1
+
+/* Define to 1 to support CSL feature */
+#define OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE 1
+
+/* Define to 1 if you want to enable microsecond backoff timer implemented in platform. */
+#define OPENTHREAD_CONFIG_PLATFORM_USEC_TIMER_ENABLE 1
+
+/* Define to 1 to support DUA feature */
+#define OPENTHREAD_CONFIG_DUA_ENABLE 1
+
+/* Define to 1 to enable Backbone router DUA ND Proxy */
+#define OPENTHREAD_CONFIG_BACKBONE_ROUTER_DUA_NDPROXYING_ENABLE 1
+
+/* Define to 1 to enable Thread Test Harness reference device support. */
+#define OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE 1
+
+/* Define to 1 to eanble Config MLR */
+#define OPENTHREAD_CONFIG_MLR_ENABLE 1
+
 #endif /* OPENTHREAD_API_CONFIG_MTD_H_ */

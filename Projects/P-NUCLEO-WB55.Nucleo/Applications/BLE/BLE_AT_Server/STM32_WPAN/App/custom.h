@@ -18,8 +18,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __CUSTOM_H
-#define __CUSTOM_H
+#ifndef CUSTOM_H
+#define CUSTOM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,5 +64,5 @@ void Custom_SVC_Init(void);
 }
 #endif
 
-#endif /*__CUSTOM_H */
+#endif /* CUSTOM_H */
 

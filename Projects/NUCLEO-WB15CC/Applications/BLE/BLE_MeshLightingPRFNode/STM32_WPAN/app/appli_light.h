@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_LIGHT_H
-#define __APPLI_LIGHT_H
+#ifndef APPLI_LIGHT_H
+#define APPLI_LIGHT_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -275,7 +275,7 @@ void Light_UpdateLedValue(MOBLEUINT8 state,
                           Appli_LightPwmValue_t light_state);
 
 /******************************************************************************/
-#endif /* __APPLI_LIGHT_H */
+#endif /* APPLI_LIGHT_H */
 /******************************************************************************/
 
 

@@ -17,8 +17,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_LIGHT_H
-#define __APPLI_LIGHT_H
+#ifndef APPLI_LIGHT_H
+#define APPLI_LIGHT_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -269,7 +269,7 @@ void RgbF_Create(MOBLEUINT16 value1,
                  MOBLEUINT8 elementIndex);
 
 /******************************************************************************/
-#endif /* __APPLI_LIGHT_H */
+#endif /* APPLI_LIGHT_H */
 /******************************************************************************/
 
 

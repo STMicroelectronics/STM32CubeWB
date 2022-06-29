@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    appli_generic.h
-  * @author  BLE Mesh Team
+  * @author  MCD Application Team
   * @brief   Application interface for Generic Mesh Models  
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,10 +16,11 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __APPLI_GENERIC_H
-#define __APPLI_GENERIC_H
+#ifndef APPLI_GENERIC_H
+#define APPLI_GENERIC_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
@@ -149,8 +151,8 @@ MOBLE_RESULT Appli_Generic_GetDefaultTransitionStatus(MOBLEUINT8* pTransition_St
                                                       MOBLEUINT16 dstPeer, 
                                                       MOBLEUINT8 elementIndex);
  
- 
 
-#endif /* __APPLI_GENERIC_H */
+
+#endif /* APPLI_GENERIC_H */
 
 

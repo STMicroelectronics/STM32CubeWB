@@ -1,4 +1,4 @@
-
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
  * @file    dt_client_app.h
@@ -16,27 +16,57 @@
   *
   ******************************************************************************
   */
-
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DTC_APPLICATION_H
-#define __DT_CLIENT_APP_H
+#ifndef DTC_APPLICATION_H
+#define DT_CLIENT_APP_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+
+#define BUTTON_PRESSED                                            GPIO_PIN_RESET
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
 /* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN ET */
+
+/* USER CODE END ET */
+
 /* Exported constants --------------------------------------------------------*/
+/* USER CODE BEGIN EC */
+
+/* USER CODE END EC */
+
 /* External variables --------------------------------------------------------*/
+/* USER CODE BEGIN EV */
+
+/* USER CODE END EV */
+
 /* Exported macros -----------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+/* USER CODE BEGIN EM */
+
+/* USER CODE END EM */
+
+/* Exported functions --------------------------------------------------------*/
 void DTC_App_Init(void);
 void DTC_App_LinkReadyNotification(uint16_t ConnectionHandle);
+void DTCAPP_Update_Service(void);
+void DTC_App_KeyButton1Action(void);
+void DTC_App_KeyButton2Action( void );
+void DTC_App_KeyButton3Action( void );
+/* USER CODE BEGIN EF */
+
+/* USER CODE END EF */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__DTC_APPLICATION_H */
+#endif /* DTC_APPLICATION_H */

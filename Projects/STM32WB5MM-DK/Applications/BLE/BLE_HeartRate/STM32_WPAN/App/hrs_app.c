@@ -408,4 +408,3 @@ void LCD_DrawIcon(uint16_t Xpos, uint16_t Ypos, uint16_t width, uint16_t height,
   }
 }
 /* USER CODE END FD */
-

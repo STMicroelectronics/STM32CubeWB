@@ -187,7 +187,7 @@ int main(void)
         /* Power off LED3*/
         BSP_LED_Off(LED3);
         HAL_Delay(100);
-        /* Increase tollerance (FELIM value) until no more warning */
+        /* Increase tolerance (FELIM value) until no more warning */
         CRSInitStruct.ErrorLimitValue += 1;
         /* Max value for FELIM has been reached? */
         if (CRSInitStruct.ErrorLimitValue > CRS_MAX_FELIM_VALUE)

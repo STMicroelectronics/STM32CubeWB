@@ -165,7 +165,7 @@ void APP_ZIGBEE_Init(void)
   
   /* Read attribute task */
    UTIL_SEQ_RegTask(1U << CFG_TASK_READ_ATTR, UTIL_SEQ_RFU, APP_ZIGBEE_Read_Temp_Attribute);
-   /* Create timer to get the measure of environement data */
+   /* Create timer to get the measure of environment data */
     HW_TS_Create(CFG_TIM_PROC_ID_ISR,
                  &APP_ZIGBEE_Update_Timer_Id,
                  hw_ts_Repeated,
@@ -452,6 +452,33 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
       APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
       break;
     }
+    // print the application name
+    char* __PathProject__ =(strstr(__FILE__, "Zigbee") ? strstr(__FILE__, "Zigbee") + 7 : __FILE__);
+    char *del;
+    if ( (strchr(__FILE__, '/')) == NULL)
+        {del = strchr(__PathProject__, '\\');}
+    else 
+        {del = strchr(__PathProject__, '/');}
+    
+        int index = (int) (del - __PathProject__);
+        APP_DBG("Application flashed: %*.*s",index,index,__PathProject__);
+    
+    //print channel
+    APP_DBG("Channel used: %d", CHANNEL);
+    //print Link Key
+    APP_DBG("Link Key: %.16s", sec_key_ha);
+    //print Link Key value hex   
+    char Z09_LL_string[ZB_SEC_KEYSIZE*3+1];
+    Z09_LL_string[0]=0;
+    for(int str_index=0; str_index < ZB_SEC_KEYSIZE; str_index++)
+      {           
+        sprintf(&Z09_LL_string[str_index*3],"%02x ",sec_key_ha[str_index]);
+      }
+  
+    APP_DBG("Link Key value: %s",Z09_LL_string);
+    //print clusters allocated
+    APP_DBG("Clusters allocated are:");  
+    APP_DBG("Temperature measurement Client on Endpoint %d",SW1_ENDPOINT);
     APP_DBG("**********************************************************");
   }
 } /* APP_ZIGBEE_CheckWirelessFirmwareInfo */
@@ -889,6 +916,7 @@ static void APP_ZIGBEE_ReportConfig(void)
   report.dst.mode = ZB_APSDE_ADDRMODE_SHORT;
   report.dst.nwkAddr = 0x0000;
   report.num_records = 1;
+  report.record_list[0].direction = ZCL_REPORT_DIRECTION_NORMAL;
   report.record_list[0].min = ZCL_MIN_REPORT;
   report.record_list[0].max = ZCL_MAX_REPORT;
   report.record_list[0].change = 0;

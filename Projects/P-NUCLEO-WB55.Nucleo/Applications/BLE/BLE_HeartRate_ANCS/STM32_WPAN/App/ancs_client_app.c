@@ -174,7 +174,7 @@ static void GattParseNotification(aci_gatt_notification_event_rp0 *pr);
 
 #if (GET_ACTION_ID_FROM_UART == 1)
 static uint8_t ANCS_App_Get_Char(void);
-static ActionID ANCS_App_Get_ActionID(void)
+static ActionID ANCS_App_Get_ActionID(void);
 #endif
 static void ANCS_App_Update_Service( void );
 static SVCCTL_EvtAckStatus_t ANCS_Client_Event_Handler( void *Event );
@@ -1394,7 +1394,7 @@ static SVCCTL_EvtAckStatus_t ANCS_Client_Event_Handler( void *Event )
         {
           aci_att_exchange_mtu_resp_event_rp0 * exchange_mtu_resp;
           exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blecore_evt->data;
-          APP_DBG_MSG("ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE Connection_Handle=0x%04X Server_RX_MTU = %d ==> ANCS_MTU_EXCHANGE_COMPLETE \n",
+          APP_DBG_MSG("ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE Connection_Handle=0x%04X Server_RX_MTU=%d ==> ANCS_MTU_EXCHANGE_COMPLETE \n",
           exchange_mtu_resp->Connection_Handle,
           exchange_mtu_resp->Server_RX_MTU );
           

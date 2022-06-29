@@ -60,7 +60,6 @@ void IPCC_C1_RX_IRQHandler(void);
 void IPCC_C1_TX_IRQHandler(void);
 void HSEM_IRQHandler(void);
 /* USER CODE BEGIN EFP */
-void RTC_WKUP_IRQHandler(void);
 void PUSH_BUTTON_SW1_EXTI_IRQHandler(void);
 void PUSH_BUTTON_SW2_EXTI_IRQHandler(void);
 void PUSH_BUTTON_SW3_EXTI_IRQHandler(void);

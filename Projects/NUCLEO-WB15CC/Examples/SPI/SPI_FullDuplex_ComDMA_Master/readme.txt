@@ -8,7 +8,7 @@
   * @brief   Description of the SPI Full Duplex DMA example.
   ******************************************************************************
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2022 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -20,7 +20,8 @@
 
 @par Example Description 
 
-Data buffer transmission/reception between two boards via SPI using DMA.
+Data buffer transmission/reception between two boards via SPI using DMA. This 
+example is for the Master board.
 
 Board: NUCLEO-WB15CC (embeds a STM32WB15CC device)
 CLK Pin: PA5 (CN10, pin 11)

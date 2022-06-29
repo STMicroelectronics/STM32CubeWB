@@ -1,11 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
-  ***************************************************************************************
-  * File Name          : lp_timer.c
-  * Description        : Low power timer to be used within Mesh Application.
-  ***************************************************************************************
+  ******************************************************************************
+  * @file    lp_timer.c
+  * @author  MCD Application Team
+  * @brief   Low power timer to be used within Mesh Application.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -14,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/  
 #include "app_common.h"
@@ -128,5 +131,4 @@ static void LpTimerCb( void )
 
   return;
 }
-
 
