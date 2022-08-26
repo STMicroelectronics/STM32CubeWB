@@ -24,6 +24,7 @@
 #include "ble_std.h"
 #include "ble_defs.h"
 #include "osal.h"
+#include "compiler.h"
 
 
 /* Default BLE variant */

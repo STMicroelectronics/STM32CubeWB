@@ -70,16 +70,12 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, Dual core
 
 @par How to use it ? 
 
-This application requires having the stm32wb15_BLE_Stack_full_fw.bin or stm32wb1x_BLE_Stack_light_fw.bin
-binary flashed on the Wireless Coprocessor. If it is not the case, you need to use STM32CubeProgrammer 
-to load the appropriate binary.
+This application requires having the stm32wb15_BLE_Stack_full_fw.bin binary flashed on the Wireless Coprocessor.
+If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
 All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
 Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
 Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the detailed procedure to change the
 Wireless Coprocessor binary.  
-In case of use of stm32wb15_BLE_Stack_full_fw.bin only FUS and user application can be updated via OTA. 
-To be able to update user application, FUS and wireless stack FW via OTA, you need to use stm32wb1x_BLE_Stack_light_fw.bin.
-In case of wireless stack FW update, user application will be deleted. 
 
 In order to make the program work, you must do the following:
  - Open your preferred toolchain 
@@ -109,7 +105,7 @@ For Wireless FW binary update example:
  - with Smart Phone "ST BLE Sensor" application, scan and connect to "STM_OTA" Application.
  - Next, select the binary to be downloaded on the Stack Processor
    - copy into Smart phone directory binaries available in STM32WB_Copro_Wireless_Binaries folder
-     as stm32wb15_FUS_fw.bin or stm32wb1x_BLE_Stack_light_fw.bin
+     as stm32wb15_FUS_fw.bin or stm32wb15_BLE_Stack_full_fw.bin 
     (please refer to UM2551 - STM32CubeWB Nucleo demonstration firmware, chapter 4.3)
  - Start download in free area of non secure Flash memory
  - New Application is running and can be connected

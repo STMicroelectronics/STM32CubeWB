@@ -19,12 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef TL_DBG_CONF_H
-#define TL_DBG_CONF_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#ifndef __TL_DBG_CONF_H
+#define __TL_DBG_CONF_H
 
 /* USER CODE BEGIN Tl_Conf */
 
@@ -126,8 +122,4 @@ extern "C" {
 
 /* USER CODE END Tl_Conf */
 
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* TL_DBG_CONF_H */
+#endif /*__TL_DBG_CONF_H */

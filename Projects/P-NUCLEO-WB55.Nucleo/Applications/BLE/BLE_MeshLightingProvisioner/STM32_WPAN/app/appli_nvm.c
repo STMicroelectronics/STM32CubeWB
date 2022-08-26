@@ -86,8 +86,8 @@ extern const void* prvsnr_data;
 #define APP_NVM_LIGHT_MODEL_OFFSET        (unsigned int)(APP_NVM_VALID_FLAG_SIZE+APP_NVM_RESET_COUNT_SIZE+APP_NVM_GENERIC_MODEL_SIZE)
 //#define APP_NVM_LIGHT_MODEL_SIZE          16U
 
-#define FIRST_PRVND_NODE_ADDRSS           2U
-#define LAST_PRVND_NODE_ADDRSS            (unsigned int)(PRVN_NVM_MAX_SUBPAGE+FIRST_PRVND_NODE_ADDRSS)
+#define FIRST_PRVND_NODE_ADDRESS           1U/*2U*/
+#define LAST_PRVND_NODE_ADDRESS            (unsigned int)(PRVN_NVM_MAX_SUBPAGE+FIRST_PRVND_NODE_ADDRESS)
 
 #define FLASH_EMPTY_SIGNATURE       0xFFFFFFFF
 
@@ -898,17 +898,17 @@ MOBLE_RESULT AppliPrvnNvm_SaveData(uint8_t* devkey,
 
 
 /**
-* @brief  Function to get the particular node device key with node address friom the 
+* @brief  Function to get the particular node device key address with node address from the 
 *         provisioner flash.
 * @param  MOBLE_ADDRESS: node address
 * @retval subPageAddrss: pointer to the sub page address
 */
-MOBLEUINT32* AppliPrvnNvm_GetNodeDevKey(MOBLE_ADDRESS addrss)
+MOBLEUINT32* AppliPrvnNvm_GetNodeDevKey(MOBLE_ADDRESS address)
 {
   MOBLEUINT16 subPageIndx;
   MOBLEUINT32 *subPageAddress;
   
-  subPageIndx = addrss - FIRST_PRVND_NODE_ADDRSS;
+  subPageIndx = address - FIRST_PRVND_NODE_ADDRESS;
     
   if(subPageIndx >= PRVN_NVM_MAX_SUBPAGE)
   {
@@ -917,8 +917,9 @@ MOBLEUINT32* AppliPrvnNvm_GetNodeDevKey(MOBLE_ADDRESS addrss)
   }
   else
   {
-    subPageAddress = (MOBLEUINT32 *)(PRVN_NVM_BASE_OFFSET + PRVN_NVM_SUBPAGE_OFFSET(subPageIndx));
-    TRACE_M(TF_PROVISION,"Address Of SubPage =  %p \r\n", (void *)subPageAddress);
+    /* In the NVM: the Node device key is after the Unicast Address (2 bytes) and the Number of Elements (2 bytes) */
+    subPageAddress = (MOBLEUINT32 *)(PRVN_NVM_BASE_OFFSET + PRVN_NVM_SUBPAGE_OFFSET(subPageIndx) + 4);
+//    TRACE_M(TF_PROVISION,"Address Of SubPage =  %p \r\n", (void *)subPageAddress);
   }
   return subPageAddress;
 }

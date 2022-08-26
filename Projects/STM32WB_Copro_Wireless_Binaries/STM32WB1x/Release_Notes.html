@@ -246,9 +246,92 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section8" checked aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.14.0 / 06-June-2022</label>
+<input type="checkbox" id="collapse-section9" checked aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.14.1 / 29-June-2022</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE:
+<ul>
+<li><p>ID 130531 : Wireless fw corrected to support OTA update for sizes corner case</p></li>
+<li>ID 103612 : Scanning only on selected channels: Added new parameter to ACI_HAL_WRITE_CONFIG_DATA</li>
+<li>ID 108072 : Possibility to trigger the NVM update: Added new command: ACI_GATT_STORE_DB</li>
+<li>ID 116535 : Reduce GATT information size in NVM: Added new “options” flag at BLE stack initialization: BLE_OPTIONS_REDUCED_DB_IN_NVM</li>
+<li>ID 128925 : Add the possibility to activate or not the blacklist mechanism: Added new parameter to ACI_HAL_WRITE_CONFIG_DATA</li>
+<li><p>ID 130115 : Add information in ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT and ACI_HAL_GET_LINK_STATUS for additional beacon synchro: Added slot numbers in ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT; Added new 0x81 value for additional beacon in ACI_HAL_GET_LINK_STATUS</p></li>
+<li><p>ID 130395 : LL_DDI_SCN_BV_71 Fail with Harmony due to extended scan privacy</p></li>
+</ul></li>
+</ul>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCILayer_extended_fw.bin</td>
+<td>0x0802E000</td>
+<td>V1.14.1<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_HCILayer_fw.bin</td>
+<td>0x08034000</td>
+<td>V1.14.1<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x0803D000</td>
+<td>V1.14.1<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_LLD_fw.bin</td>
+<td>0x0803F800</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_full_extended_fw.bin</td>
+<td>0x08018800</td>
+<td>V1.14.1<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_Stack_full_fw.bin</td>
+<td>0x08021000</td>
+<td>V1.14.1<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_light_fw.bin</td>
+<td>0x08028000</td>
+<td>V1.14.1<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Firmware Safeboot Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 4” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_Safeboot_fw.bin</td>
+<td>0x080<strong>44</strong>000</td>
+<td>V2.0.0<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.14.0 / 06-June-2022</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -340,7 +423,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.13.3 / 9-Mar-2022</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -428,7 +511,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.13.2 / 25-Jan-2022</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -516,7 +599,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -625,7 +708,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="false">V1.12.1 / 12-July-2021</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -687,7 +770,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -767,7 +850,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="false">V1.11.1 / 23-March-2021</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -829,7 +912,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="false">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of the binaries.</li>

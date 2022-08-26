@@ -240,6 +240,8 @@ tBleStatus aci_gatt_add_char_desc( uint16_t Service_Handle,
  * want to lose notifications because STM32WB buffer becomes full, it must
  * retry again till the function returns BLE_STATUS_SUCCESS or any other error
  * code.
+ * Note that the characteristic is updated only if the command returns
+ * BLE_STATUS_SUCCESS.
  * 
  * @param Service_Handle Handle of service to which the characteristic belongs
  * @param Char_Handle Handle of the characteristic declaration
@@ -1073,6 +1075,16 @@ tBleStatus aci_gatt_deny_read( uint16_t Connection_Handle,
 tBleStatus aci_gatt_set_access_permission( uint16_t Serv_Handle,
                                            uint16_t Attr_Handle,
                                            uint8_t Access_Permissions );
+
+/**
+ * @brief ACI_GATT_STORE_DB
+ * This command forces the saving of the GATT database for all active
+ * connections. Note taht, by default, the GATT database is saved per active
+ * connection at the time of disconnection.
+ * 
+ * @return Value indicating success or error code.
+ */
+tBleStatus aci_gatt_store_db( void );
 
 
 #endif /* BLE_GATT_ACI_H__ */

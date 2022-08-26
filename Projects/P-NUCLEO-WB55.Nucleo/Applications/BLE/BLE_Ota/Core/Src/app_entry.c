@@ -1,4 +1,3 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
  * @file    app_entry.c
@@ -16,107 +15,55 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
+
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
+
 #include "main.h"
 #include "app_entry.h"
 #include "app_ble.h"
+
 #include "ble.h"
 #include "tl.h"
+
 #include "stm32_seq.h"
+#include "shci.h"
 #include "shci_tl.h"
 #include "stm32_lpm.h"
+
+
 #include "app_debug.h"
-#include "dbg_trace.h"
-#include "shci.h"
-#include "otp.h"
 
-/* Private includes -----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-extern RTC_HandleTypeDef hrtc;
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
 /* Private defines -----------------------------------------------------------*/
-#define POOL_SIZE (CFG_TLBLE_EVT_QUEUE_LENGTH*4U*DIVC((sizeof(TL_PacketHeader_t) + TL_BLE_EVENT_FRAME_SIZE), 4U))
-
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
+#define POOL_SIZE (CFG_TLBLE_EVT_QUEUE_LENGTH*4*DIVC(( sizeof(TL_PacketHeader_t) + TL_BLE_EVENT_FRAME_SIZE ), 4))
 
 /* Private macros ------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
-PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private functions prototypes-----------------------------------------------*/
-static void Config_HSE(void);
-static void Reset_Device(void);
-#if (CFG_HW_RESET_BY_FW == 1)
-static void Reset_IPCC(void);
-static void Reset_BackupDomain(void);
-#endif /* CFG_HW_RESET_BY_FW == 1*/
-static void System_Init(void);
+/* Global variables ----------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
 static void SystemPower_Config( void );
 static void appe_Tl_Init( void );
-static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status);
-static void APPE_SysUserEvtRx(void * pPayload);
-static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt );
-static void APPE_SysEvtError(void * pPayload);
-static void Init_Rtc(void);
-
-/* USER CODE BEGIN PFP */
 static void Led_Init( void );
 static void Button_Init( void );
-/* USER CODE END PFP */
+static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
+static void APPE_SysUserEvtRx( void * pPayload );
+static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt );
 
 /* Functions Definition ------------------------------------------------------*/
-void MX_APPE_Config(void)
+void APPE_Init( void )
 {
-  /**
-   * The OPTVERR flag is wrongly set at power on
-   * It shall be cleared before using any HAL_FLASH_xxx() api
-   */
-  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
-
-  /**
-   * Reset some configurations so that the system behave in the same way
-   * when either out of nReset or Power On
-   */
-  Reset_Device();
-
-  /* Configure HSE Tuning */
-  Config_HSE();
-
-  return;
-}
-
-void MX_APPE_Init(void)
-{
-  System_Init();       /**< System initialization */
-
   SystemPower_Config(); /**< Configure the system Power Mode */
 
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
-/* USER CODE BEGIN APPE_Init_1 */
   APPD_Init( );
 
   /**
@@ -128,165 +75,23 @@ void MX_APPE_Init(void)
   Led_Init();
 
   Button_Init();
-/* USER CODE END APPE_Init_1 */
-  appe_Tl_Init();	/* Initialize all transport layers */
+
+  appe_Tl_Init();	/**< Initialize all transport layers */
 
   /**
    * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
    * received on the system channel before starting the Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
-/* USER CODE BEGIN APPE_Init_2 */
-
-/* USER CODE END APPE_Init_2 */
-  return;
-}
-
-void Init_Smps(void)
-{
-#if (CFG_USE_SMPS != 0)
-  /**
-   *  Configure and enable SMPS
-   *
-   *  The SMPS configuration is not yet supported by CubeMx
-   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
-   *  the SMPS output voltage shall be increased for higher RF output power
-   */
-  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
-  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
-  LL_PWR_SMPS_Enable();
-#endif /* CFG_USE_SMPS != 0 */
 
   return;
 }
-
-void Init_Exti(void)
-{
-  /* Enable IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
-  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_36 | LL_EXTI_LINE_38);
-
-
-  return;
-}
-
-/* USER CODE BEGIN FD */
-
-/* USER CODE END FD */
 
 /*************************************************************
  *
  * LOCAL FUNCTIONS
  *
  *************************************************************/
-static void Reset_Device(void)
-{
-#if (CFG_HW_RESET_BY_FW == 1)
-  Reset_BackupDomain();
-
-  Reset_IPCC();
-#endif /* CFG_HW_RESET_BY_FW == 1 */
-
-  return;
-}
-
-#if (CFG_HW_RESET_BY_FW == 1)
-static void Reset_BackupDomain(void)
-{
-  if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
-  {
-    HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
-
-    /**
-     *  Write twice the value to flush the APB-AHB bridge
-     *  This bit shall be written in the register before writing the next one
-     */
-    HAL_PWR_EnableBkUpAccess();
-
-    __HAL_RCC_BACKUPRESET_FORCE();
-    __HAL_RCC_BACKUPRESET_RELEASE();
-  }
-
-  return;
-}
-
-static void Reset_IPCC(void)
-{
-  LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_IPCC);
-
-  LL_C1_IPCC_ClearFlag_CHx(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C2_IPCC_ClearFlag_CHx(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C1_IPCC_DisableTransmitChannel(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C2_IPCC_DisableTransmitChannel(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C1_IPCC_DisableReceiveChannel(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C2_IPCC_DisableReceiveChannel(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  return;
-}
-#endif /* CFG_HW_RESET_BY_FW == 1 */
-
-static void Config_HSE(void)
-{
-    OTP_ID0_t * p_otp;
-
-  /**
-   * Read HSE_Tuning from OTP
-   */
-  p_otp = (OTP_ID0_t *) OTP_Read(0);
-  if (p_otp)
-  {
-    LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
-  }
-
-  return;
-}
-
-static void System_Init(void)
-{
-  Init_Smps();
-
-  Init_Exti();
-
-  Init_Rtc();
-
-  return;
-}
-
-static void Init_Rtc(void)
-{
-  /* Disable RTC registers write protection */
-  LL_RTC_DisableWriteProtection(RTC);
-
-  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
-
-  /* Enable RTC registers write protection */
-  LL_RTC_EnableWriteProtection(RTC);
-
-  return;
-}
-
 /**
  * @brief  Configure the system for power optimization
  *
@@ -297,6 +102,7 @@ static void Init_Rtc(void)
  */
 static void SystemPower_Config(void)
 {
+
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -312,7 +118,7 @@ static void SystemPower_Config(void)
    *  Enable USB power
    */
   HAL_PWREx_EnableVddUSB();
-#endif /* CFG_USB_INTERFACE_ENABLE != 0 */
+#endif
 
   return;
 }
@@ -321,6 +127,7 @@ static void appe_Tl_Init( void )
 {
   TL_MM_Config_t tl_mm_config;
   SHCI_TL_HciInitConf_t SHci_Tl_Init_Conf;
+
   /**< Reference table initialization */
   TL_Init();
 
@@ -342,9 +149,41 @@ static void appe_Tl_Init( void )
   return;
 }
 
+static void Led_Init( void )
+{
+#if (CFG_LED_SUPPORTED == 1)
+  /**
+   * Leds Initialization
+   */
+
+  BSP_LED_Init(LED_BLUE);
+  BSP_LED_Init(LED_GREEN);
+  BSP_LED_Init(LED_RED);
+
+  BSP_LED_On(LED_GREEN);
+#endif
+
+  return;
+}
+
+static void Button_Init( void )
+{
+#if (CFG_BUTTON_SUPPORTED == 1)
+  /**
+   * Button Initialization
+   */
+
+  BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+
+#endif
+
+  return;
+}
+
+
+
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
 {
-  UNUSED(status);
   return;
 }
 
@@ -360,85 +199,19 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
 static void APPE_SysUserEvtRx( void * pPayload )
 {
   TL_AsynchEvt_t *p_sys_event;
-  WirelessFwInfo_t WirelessInfo;
 
   p_sys_event = (TL_AsynchEvt_t*)(((tSHCI_UserEvtRxParam*)pPayload)->pckt->evtserial.evt.payload);
 
   switch(p_sys_event->subevtcode)
   {
     case SHCI_SUB_EVT_CODE_READY:
-      /* Read the firmware version of both the wireless firmware and the FUS */
-      SHCI_GetWirelessFwInfo(&WirelessInfo);
-//      APP_DBG_MSG("Wireless Firmware version %d.%d.%d\n", WirelessInfo.VersionMajor, WirelessInfo.VersionMinor, WirelessInfo.VersionSub);
-//      APP_DBG_MSG("Wireless Firmware build %d\n", WirelessInfo.VersionReleaseType);
-//      APP_DBG_MSG("FUS version %d.%d.%d\n", WirelessInfo.FusVersionMajor, WirelessInfo.FusVersionMinor, WirelessInfo.FusVersionSub);
-
-//      APP_DBG_MSG(">>== SHCI_SUB_EVT_CODE_READY\n\r");
       ((tSHCI_UserEvtRxParam*)pPayload)->status = APPE_SysevtReadyProcessing( (SHCI_C2_Ready_Evt_t*)p_sys_event->payload );
       break;
-
-    case SHCI_SUB_EVT_ERROR_NOTIF:
-//      APP_DBG_MSG(">>== SHCI_SUB_EVT_ERROR_NOTIF \n\r");
-      APPE_SysEvtError(pPayload);
-      break;
-
-//    case SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE:
-//      APP_DBG_MSG(">>== SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE -- BLE NVM RAM HAS BEEN UPDATED BY CMO+ \n");
-//      APP_DBG_MSG("     - StartAddress = %lx , Size = %ld\n",
-//                  ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->StartAddress,
-//                  ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->Size);
-//      break;
-
-//    case SHCI_SUB_EVT_NVM_START_WRITE:
-//      APP_DBG_MSG("==>> SHCI_SUB_EVT_NVM_START_WRITE : NumberOfWords = %ld\n",
-//                  ((SHCI_C2_NvmStartWrite_Evt_t*)p_sys_event->payload)->NumberOfWords);
-//      break;
-
-//    case SHCI_SUB_EVT_NVM_END_WRITE:
-//      APP_DBG_MSG(">>== SHCI_SUB_EVT_NVM_END_WRITE\n\r");
-//      break;
-
-//    case SHCI_SUB_EVT_NVM_START_ERASE:
-//      APP_DBG_MSG("==>>SHCI_SUB_EVT_NVM_START_ERASE : NumberOfSectors = %ld\n",
-//                  ((SHCI_C2_NvmStartErase_Evt_t*)p_sys_event->payload)->NumberOfSectors);
-//      break;
-
-//  case SHCI_SUB_EVT_NVM_END_ERASE:
-//    APP_DBG_MSG(">>== SHCI_SUB_EVT_NVM_END_ERASE\n\r");
-//    break;
 
     default:
       break;
   }
 
-  return;
-}
-
-/**
- * @brief Notify a system error coming from the M0 firmware
- * @param  ErrorCode  : errorCode detected by the M0 firmware
- *
- * @retval None
- */
-static void APPE_SysEvtError(void * pPayload)
-{
-  TL_AsynchEvt_t *p_sys_event;
-  SCHI_SystemErrCode_t *p_sys_error_code;
-
-  p_sys_event = (TL_AsynchEvt_t*)(((tSHCI_UserEvtRxParam*)pPayload)->pckt->evtserial.evt.payload);
-  p_sys_error_code = (SCHI_SystemErrCode_t*) p_sys_event->payload;
-
-  APP_DBG_MSG(">>== SHCI_SUB_EVT_ERROR_NOTIF WITH REASON %x \n\r",(*p_sys_error_code));
-
-  if ((*p_sys_error_code) == ERR_BLE_INIT)
-  {
-    /* Error during BLE stack initialization */
-    APP_DBG_MSG(">>== SHCI_SUB_EVT_ERROR_NOTIF WITH REASON - ERR_BLE_INIT \n");
-  }
-  else
-  {
-    APP_DBG_MSG(">>== SHCI_SUB_EVT_ERROR_NOTIF WITH REASON - BLE ERROR \n");
-  }
   return;
 }
 
@@ -593,88 +366,19 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
 
   return return_value;
 }
-/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
-static void Led_Init( void )
-{
-#if (CFG_LED_SUPPORTED == 1)
-  /**
-   * Leds Initialization
-   */
-  BSP_LED_Init(LED_BLUE);
-  BSP_LED_Init(LED_GREEN);
-  BSP_LED_Init(LED_RED);
 
-  BSP_LED_On(LED_GREEN);
-#endif
-
-  return;
-}
-
-static void Button_Init( void )
-{
-#if (CFG_BUTTON_SUPPORTED == 1)
-  /**
-   * Button Initialization
-   */
-  BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
-  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
-  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
-#endif
-
-  return;
-}
-/* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
  *
  * WRAP FUNCTIONS
  *
  *************************************************************/
-void HAL_Delay(uint32_t Delay)
-{
-  uint32_t tickstart = HAL_GetTick();
-  uint32_t wait = Delay;
-
-  /* Add a freq to guarantee minimum wait */
-  if (wait < HAL_MAX_DELAY)
-  {
-    wait += HAL_GetTickFreq();
-  }
-
-  while ((HAL_GetTick() - tickstart) < wait)
-  {
-    /************************************************************************************
-     * ENTER SLEEP MODE
-     ***********************************************************************************/
-    LL_LPM_EnableSleep(); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
-
-    /**
-     * This option is used to ensure that store operations are completed
-     */
-  #if defined (__CC_ARM)
-    __force_stores();
-  #endif /* __CC_ARM */
-
-    __WFI();
-  }
-}
-
-void MX_APPE_Process(void)
-{
-  /* USER CODE BEGIN MX_APPE_Process_1 */
-
-  /* USER CODE END MX_APPE_Process_1 */
-  UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
-  /* USER CODE BEGIN MX_APPE_Process_2 */
-
-  /* USER CODE END MX_APPE_Process_2 */
-}
 
 void UTIL_SEQ_Idle( void )
 {
 #if ( CFG_LPM_SUPPORTED == 1)
   UTIL_LPM_EnterLowPower( );
-#endif /* CFG_LPM_SUPPORTED == 1 */
+#endif
   return;
 }
 
@@ -688,13 +392,6 @@ void UTIL_SEQ_PostIdle( void )
 }
 #endif /* OTA_SBSFU */
 
-/**
-  * @brief  This function is called by the scheduler each time an event
-  *         is pending.
-  *
-  * @param  evt_waited_bm : Event pending.
-  * @retval None
-  */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
   UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
@@ -720,7 +417,6 @@ void shci_cmd_resp_wait(uint32_t timeout)
   return;
 }
 
-/* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 {
   switch (GPIO_Pin)
@@ -739,8 +435,6 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 
     default:
       break;
-
   }
   return;
 }
-/* USER CODE END FD_WRAP_FUNCTIONS */

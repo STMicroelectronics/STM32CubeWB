@@ -513,7 +513,7 @@ void hci_le_enhanced_connection_complete_event( uint8_t Status,
                                                 uint8_t Master_Clock_Accuracy );
 
 /**
- * @brief HCI_LE_DIRECT_ADVERTISING_REPORT_EVENT
+ * @brief HCI_LE_DIRECTED_ADVERTISING_REPORT_EVENT
  * This event indicates that directed advertisements have been received where
  * the advertiser is using a resolvable private address for the InitA field in
  * the ADV_DIRECT_IND PDU and the Scanning_Filter_Policy is equal to 0x02 or
@@ -529,8 +529,8 @@ void hci_le_enhanced_connection_complete_event( uint8_t Status,
  * @param Direct_Advertising_Report See @ref Direct_Advertising_Report_t
  * @return None
  */
-void hci_le_direct_advertising_report_event( uint8_t Num_Reports,
-                                             const Direct_Advertising_Report_t* Direct_Advertising_Report );
+void hci_le_directed_advertising_report_event( uint8_t Num_Reports,
+                                               const Direct_Advertising_Report_t* Direct_Advertising_Report );
 
 /**
  * @brief HCI_LE_PHY_UPDATE_COMPLETE_EVENT
@@ -1746,33 +1746,41 @@ void aci_l2cap_coc_tx_pool_available_event( void );
  * interval, switching antenna at the end of advertising or performing flash
  * erase operation while radio is idle.
  * 
- * @param Last_State Completed radio events
+ * @param Last_State Completed radio event
  *        Values:
  *        - 0x00: Idle
  *        - 0x01: Advertising
- *        - 0x02: Connection event slave
+ *        - 0x02: Connection slave
  *        - 0x03: Scanning
- *        - 0x04: Connection request
- *        - 0x05: Connection event slave
+ *        - 0x05: Connection master
  *        - 0x06: TX test mode
  *        - 0x07: RX test mode
- * @param Next_State Incoming radio events
+ * @param Next_State Incoming radio event
  *        Values:
  *        - 0x00: Idle
  *        - 0x01: Advertising
- *        - 0x02: Connection event slave
+ *        - 0x02: Connection slave
  *        - 0x03: Scanning
- *        - 0x04: Connection request
- *        - 0x05: Connection event slave
+ *        - 0x05: Connection master
  *        - 0x06: TX test mode
  *        - 0x07: RX test mode
  * @param Next_State_SysTime 32bit absolute current time expressed in internal
  *        time units.
+ * @param Last_State_Slot Slot number of completed radio event
+ *        Values:
+ *        - 0xFF: Idle
+ *        - 0x00 ... 0x07
+ * @param Next_State_Slot Slot number of incoming radio event
+ *        Values:
+ *        - 0xFF: Idle
+ *        - 0x00 ... 0x07
  * @return None
  */
 void aci_hal_end_of_radio_activity_event( uint8_t Last_State,
                                           uint8_t Next_State,
-                                          uint32_t Next_State_SysTime );
+                                          uint32_t Next_State_SysTime,
+                                          uint8_t Last_State_Slot,
+                                          uint8_t Next_State_Slot );
 
 /**
  * @brief ACI_HAL_SCAN_REQ_REPORT_EVENT

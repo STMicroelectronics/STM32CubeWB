@@ -1,13 +1,12 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    hw_timerserver.c
-  * @author  MCD Application Team
-  * @brief   Hardware timerserver source file for STM32WPAN Middleware.
+  * File Name          : hw_timerserver.c
+  * Description        : Hardware timerserver source file for STM32WPAN Middleware.
+  *
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -16,7 +15,6 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -890,3 +888,4 @@ __weak void HW_TS_RTC_Int_AppNot(uint32_t TimerProcessID, uint8_t TimerID, HW_TS
 
   return;
 }
+

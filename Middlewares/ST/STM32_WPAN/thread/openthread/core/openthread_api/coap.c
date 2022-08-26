@@ -580,7 +580,7 @@ otError otCoapOptionIteratorGetOptionValue(otCoapOptionIterator *aIterator, void
 
   p_ot_req->ID = MSG_M4TOM0_OT_COAP_OPTION_ITERATOR_GET_OPTION_VALUE;
 
-  p_ot_req->Size=1;
+  p_ot_req->Size=2;
   p_ot_req->Data[0] = (uint32_t) aIterator;
   p_ot_req->Data[1] = (uint32_t) aValue;
 

@@ -51,7 +51,10 @@ tBleStatus aci_hal_get_fw_build_number( uint16_t* Build_Number );
  *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_OFFSET;
  *          Static Random Address; 6 bytes
  *        - 0xB0: CONFIG_DATA_SMP_MODE_OFFSET;
- *          SMP mode (0: normal, 1:bypass); 1 byte
+ *          SMP mode (0: "normal", 1: "bypass", 2: "no blacklist"); 1 byte
+ *        - 0xC0: CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET;
+ *          LL scan channel map (same format as Primary_Adv_Channel_Map); 1
+ *          byte
  * @param Length Length of data to be written
  * @param Value Data to be written
  * @return Value indicating success or error code.
@@ -211,6 +214,7 @@ tBleStatus aci_hal_tone_stop( void );
  *        - 0x05: Connected in master role
  *        - 0x06: TX test mode
  *        - 0x07: RX test mode
+ *        - 0x81: Advertising with Additional Beacon
  * @param[out] Link_Connection_Handle Array of connection handles (2 bytes) for
  *        8 links.
  * @return Value indicating success or error code.
@@ -229,10 +233,9 @@ tBleStatus aci_hal_get_link_status( uint8_t* Link_Status,
  *        Flags:
  *        - 0x0001: Idle
  *        - 0x0002: Advertising
- *        - 0x0004: Connection event slave
+ *        - 0x0004: Connection slave
  *        - 0x0008: Scanning
- *        - 0x0010: Connection request
- *        - 0x0020: Connection event master
+ *        - 0x0020: Connection master
  *        - 0x0040: TX test mode
  *        - 0x0080: RX test mode
  * @return Value indicating success or error code.

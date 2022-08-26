@@ -1,13 +1,12 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
  * @file    ble_conf.h
  * @author  MCD Application Team
-  * @brief   Configuration file for BLE Middleware.
+ * @brief   BLE configuration file
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -16,11 +15,11 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
+
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef BLE_CONF_H
-#define BLE_CONF_H
+#ifndef __BLE_CONF_H
+#define __BLE_CONF_H
 
 #include "app_conf.h"
 
@@ -61,4 +60,4 @@
 #define BLE_CFG_HR_SENSOR_APPEARANCE                (832)
 #define BLE_CFG_GAP_APPEARANCE                      (BLE_CFG_UNKNOWN_APPEARANCE)
 
-#endif /* BLE_CONF_H */
+#endif /*__BLE_CONF_H */

@@ -18,8 +18,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef STM32WBxx_IT_H
-#define STM32WBxx_IT_H
+#ifndef __STM32WBxx_IT_H
+#define __STM32WBxx_IT_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -55,13 +55,15 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-void RTC_WKUP_IRQHandler(void);
+void DMA1_Channel3_IRQHandler(void);
 void DMA1_Channel4_IRQHandler(void);
 void USART1_IRQHandler(void);
-void IPCC_C1_RX_IRQHandler(void);
+void CFG_HW_USART1_DMA_TX_IRQHandler( void );
+void LPUART1_IRQHandler(void);
+void CFG_HW_LPUART1_DMA_TX_IRQHandler( void );
+void RTC_WKUP_IRQHandler(void);
 void IPCC_C1_TX_IRQHandler(void);
-void HSEM_IRQHandler(void);
-/* USER CODE BEGIN EFP */
+void IPCC_C1_RX_IRQHandler(void);
 void PUSH_BUTTON_SW1_EXTI_IRQHandler(void);
 void PUSH_BUTTON_SW2_EXTI_IRQHandler(void);
 void PUSH_BUTTON_SW3_EXTI_IRQHandler(void);
@@ -71,4 +73,4 @@ void PUSH_BUTTON_SW3_EXTI_IRQHandler(void);
 }
 #endif
 
-#endif /* STM32WBxx_IT_H */
+#endif /* __STM32WBxx_IT_H */

@@ -19,6 +19,14 @@
 #define COMPILER_H__
 
 
+#ifndef __PACKED_STRUCT
+#define __PACKED_STRUCT PACKED(struct)
+#endif
+
+#ifndef __PACKED_UNION
+#define __PACKED_UNION PACKED(union)
+#endif
+
 /**
   * @brief  This is the section dedicated to IAR toolchain
   */

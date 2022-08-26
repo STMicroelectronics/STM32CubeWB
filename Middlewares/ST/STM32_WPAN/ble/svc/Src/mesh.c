@@ -306,6 +306,9 @@ void Appli_ConfigurationInfoDump(void)
   TRACE_I(TF_MISC,"Elements per Node = %d \r\n", BLEMesh_GetNumberOfElements());
   TRACE_I(TF_MISC,"Models per Element = %d \r\n", BLEMesh_GetTotalModelsCount());
   TRACE_I(TF_MISC,"Subscription per Model = %d \r\n", BLEMesh_GetSubscriptionCount());
+  TRACE_I(TF_MISC,"Default TTL = %d \r\n", BLEMesh_GetTTL());
+  TRACE_I(TF_MISC,"Default Network Transmit Count = %d \r\n", BLEMesh_GetNetworkTransmitCount());
+  TRACE_I(TF_MISC,"Default Relay retransmit Count = %d \r\n", BLEMesh_GetRelayRetransmitCount());
   
   TRACE_I(TF_MISC,"\n[Enabled Models] \r\n");
   

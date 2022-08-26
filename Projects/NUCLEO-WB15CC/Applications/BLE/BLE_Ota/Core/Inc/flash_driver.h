@@ -173,4 +173,4 @@ uint32_t FD_EraseSectors(uint32_t FirstSector, uint32_t NbrOfSectors);
 }
 #endif
 
-#endif /* FLASH_DRIVER_H */
+#endif /*FLASH_DRIVER_H */

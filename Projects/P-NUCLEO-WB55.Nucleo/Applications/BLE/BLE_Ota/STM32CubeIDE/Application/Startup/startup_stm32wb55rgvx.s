@@ -14,7 +14,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -92,8 +92,6 @@ LoopFillZerobss:
 Reset_Handler:
   ldr   r0, =_estack
   mov   sp, r0          /* set stack pointer */
-/* Call the clock system initialization function.*/
-  bl  SystemInit
 
 /* Copy the data segment initializers from flash to SRAM */
   INIT_DATA _sdata, _edata, _sidata
@@ -102,6 +100,8 @@ Reset_Handler:
   INIT_BSS _sbss, _ebss
   INIT_BSS _sMB_MEM2, _eMB_MEM2
 
+/* Call the clock system initialization function.*/
+  bl  SystemInit
 /* Call static constructors */
   bl __libc_init_array
 /* Call the application s entry point.*/

@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef __MAIN_H
+#define __MAIN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,9 +28,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wbxx_hal.h"
-#include "app_conf.h"
-#include "app_entry.h"
-#include "app_common.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -56,22 +53,14 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+void   Init_Exti( void );
+void   SystemClock_Config( void );
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-void   MX_GPIO_Init(void);
-void   MX_DMA_Init(void);
-void   MX_IPCC_Init(void);
-void   MX_RF_Init(void);
-void   MX_RTC_Init(void);
-void   MX_USART1_UART_Init(void);
-/* USER CODE BEGIN Private defines */
-
-/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* MAIN_H */
+#endif /* __MAIN_H */

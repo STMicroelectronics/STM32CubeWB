@@ -70,7 +70,7 @@ otError otCommissionerStop(otInstance *aInstance)
 
   p_ot_req->Size=0;
 
-  Ot_Cmd_Transfer();
+  Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
@@ -149,7 +149,7 @@ otError otCommissionerRemoveJoiner(otInstance *aInstance, const otExtAddress *aE
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t) aEui64;
 
-  Ot_Cmd_Transfer();
+  Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
@@ -166,7 +166,7 @@ otError otCommissionerRemoveJoinerWithDiscerner(otInstance *aInstance, const otJ
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t) aDiscerner;
 
-  Ot_Cmd_Transfer();
+  Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];

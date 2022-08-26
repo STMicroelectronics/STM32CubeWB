@@ -126,7 +126,8 @@ otError otThreadSetRouterEligible(otInstance *aInstance, bool aEligible)
 
   p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_ROUTER_ELIGIBLE;
 
-  p_ot_req->Size=0;
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = aEligible;
 
   Ot_Cmd_Transfer();
 
@@ -609,7 +610,8 @@ void otThreadGetPskc(otInstance *aInstance, otPskc *aPskc)
 
   p_ot_req->ID = MSG_M4TOM0_OT_THREAD_FTD_GET_PSKC;
 
-  p_ot_req->Size=0;
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aPskc;
 
   Ot_Cmd_Transfer();
 

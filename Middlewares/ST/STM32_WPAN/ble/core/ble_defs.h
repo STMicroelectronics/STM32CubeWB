@@ -564,6 +564,7 @@
 
 /* GATT UUIDs
  */
+#define GATT_SERVICE_UUID                        0x1801U
 #define PRIMARY_SERVICE_UUID                     0x2800U
 #define SECONDARY_SERVICE_UUID                   0x2801U
 #define INCLUDE_SERVICE_UUID                     0x2802U
@@ -574,8 +575,10 @@
 #define CHAR_SERVER_CONFIG_DESC_UUID             0x2903U
 #define CHAR_FORMAT_DESC_UUID                    0x2904U
 #define CHAR_AGGR_FMT_DESC_UUID                  0x2905U
-#define GATT_SERVICE_UUID                        0x1801U
 #define SERVICE_CHANGED_UUID                     0x2A05U
+#define CLIENT_SUPPORTED_FEATURES_UUID           0X2B29U
+#define DATABASE_HASH_UUID                       0X2B2AU
+#define SERVER_SUPPORTED_FEATURES_UUID           0X2B3AU
 
 /* GAP UUIDs
  */
@@ -688,6 +691,7 @@
 #define CONFIG_DATA_IR_OFFSET                  0x18U
 #define CONFIG_DATA_RANDOM_ADDRESS_OFFSET      0x2EU
 #define CONFIG_DATA_SMP_MODE_OFFSET            0xB0U
+#define CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET    0xC0U
 
 /* Length for configuration values (see ACI_HAL_WRITE_CONFIG_DATA)
  */
@@ -696,6 +700,7 @@
 #define CONFIG_DATA_IR_LEN                    16
 #define CONFIG_DATA_RANDOM_ADDRESS_LEN         6
 #define CONFIG_DATA_SMP_MODE_LEN               1
+#define CONFIG_DATA_LL_SCAN_CHAN_MAP_LEN       1
 
 /* ------------------------------------------------------------------------- */
 

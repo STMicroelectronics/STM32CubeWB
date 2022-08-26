@@ -26,6 +26,7 @@
 #include "appli_config_client.h"
 #include "ble_mesh.h"
 #include "appli_mesh.h"
+#include "appli_nvm.h"
 
 /** @addtogroup MODEL_CONFIG
 *  @{
@@ -1409,8 +1410,8 @@ MOBLE_RESULT ConfigClientModel_SendMessage(MOBLE_ADDRESS dst_peer ,
   MOBLEUINT8 *pTargetDevKey;
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;  
   
-    pTargetDevKey = GetNewProvNodeDevKey();
-    
+  pTargetDevKey = (MOBLEUINT8 *)AppliPrvnNvm_GetNodeDevKey(dst_peer);
+  
   result = ConfigModel_SendMessage(peer_addr, dst_peer, opcode, 
                             pData, dataLength, pTargetDevKey); 
   return result;

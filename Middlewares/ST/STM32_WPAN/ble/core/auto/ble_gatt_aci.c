@@ -1451,3 +1451,17 @@ tBleStatus aci_gatt_set_access_permission( uint16_t Serv_Handle,
   return status;
 }
 
+tBleStatus aci_gatt_store_db( void )
+{
+  struct hci_request rq;
+  tBleStatus status = 0;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x130;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+

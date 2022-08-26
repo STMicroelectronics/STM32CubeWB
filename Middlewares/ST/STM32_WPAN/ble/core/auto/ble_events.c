@@ -34,7 +34,7 @@ static void hci_le_data_length_change_event_process( const uint8_t* in );
 static void hci_le_read_local_p256_public_key_complete_event_process( const uint8_t* in );
 static void hci_le_generate_dhkey_complete_event_process( const uint8_t* in );
 static void hci_le_enhanced_connection_complete_event_process( const uint8_t* in );
-static void hci_le_direct_advertising_report_event_process( const uint8_t* in );
+static void hci_le_directed_advertising_report_event_process( const uint8_t* in );
 static void hci_le_phy_update_complete_event_process( const uint8_t* in );
 static void hci_le_extended_advertising_report_event_process( const uint8_t* in );
 static void hci_le_scan_timeout_event_process( const uint8_t* in );
@@ -116,7 +116,7 @@ const hci_event_table_t hci_le_event_table[HCI_LE_EVENT_TABLE_SIZE] =
   { 0x0008U, hci_le_read_local_p256_public_key_complete_event_process },
   { 0x0009U, hci_le_generate_dhkey_complete_event_process },
   { 0x000AU, hci_le_enhanced_connection_complete_event_process },
-  { 0x000BU, hci_le_direct_advertising_report_event_process },
+  { 0x000BU, hci_le_directed_advertising_report_event_process },
   { 0x000CU, hci_le_phy_update_complete_event_process },
   { 0x000DU, hci_le_extended_advertising_report_event_process },
   { 0x0011U, hci_le_scan_timeout_event_process },
@@ -456,18 +456,18 @@ static void hci_le_enhanced_connection_complete_event_process( const uint8_t* in
                                              rp0->Master_Clock_Accuracy );
 }
 
-/* HCI_LE_DIRECT_ADVERTISING_REPORT_EVENT callback function */
-__WEAK void hci_le_direct_advertising_report_event( uint8_t Num_Reports,
-                                                    const Direct_Advertising_Report_t* Direct_Advertising_Report )
+/* HCI_LE_DIRECTED_ADVERTISING_REPORT_EVENT callback function */
+__WEAK void hci_le_directed_advertising_report_event( uint8_t Num_Reports,
+                                                      const Direct_Advertising_Report_t* Direct_Advertising_Report )
 {
 }
 
-/* HCI_LE_DIRECT_ADVERTISING_REPORT_EVENT process function */
-static void hci_le_direct_advertising_report_event_process( const uint8_t* in )
+/* HCI_LE_DIRECTED_ADVERTISING_REPORT_EVENT process function */
+static void hci_le_directed_advertising_report_event_process( const uint8_t* in )
 {
-  hci_le_direct_advertising_report_event_rp0 *rp0 = (void*)in;
-  hci_le_direct_advertising_report_event( rp0->Num_Reports,
-                                          rp0->Direct_Advertising_Report );
+  hci_le_directed_advertising_report_event_rp0 *rp0 = (void*)in;
+  hci_le_directed_advertising_report_event( rp0->Num_Reports,
+                                            rp0->Direct_Advertising_Report );
 }
 
 /* HCI_LE_PHY_UPDATE_COMPLETE_EVENT callback function */
@@ -588,7 +588,9 @@ static void hci_le_channel_selection_algorithm_event_process( const uint8_t* in 
 /* ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT callback function */
 __WEAK void aci_hal_end_of_radio_activity_event( uint8_t Last_State,
                                                  uint8_t Next_State,
-                                                 uint32_t Next_State_SysTime )
+                                                 uint32_t Next_State_SysTime,
+                                                 uint8_t Last_State_Slot,
+                                                 uint8_t Next_State_Slot )
 {
 }
 
@@ -598,7 +600,9 @@ static void aci_hal_end_of_radio_activity_event_process( const uint8_t* in )
   aci_hal_end_of_radio_activity_event_rp0 *rp0 = (void*)in;
   aci_hal_end_of_radio_activity_event( rp0->Last_State,
                                        rp0->Next_State,
-                                       rp0->Next_State_SysTime );
+                                       rp0->Next_State_SysTime,
+                                       rp0->Last_State_Slot,
+                                       rp0->Next_State_Slot );
 }
 
 /* ACI_HAL_SCAN_REQ_REPORT_EVENT callback function */

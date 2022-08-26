@@ -291,6 +291,13 @@ typedef	uint8_t	tBDAddr[6];
         hci_le_add_device_to_filter_accept_list
 #define hci_le_remove_device_from_white_list \
         hci_le_remove_device_from_filter_accept_list
+#define hci_le_direct_advertising_report_event \
+        hci_le_directed_advertising_report_event
+#define hci_le_direct_advertising_report_event_rp0 \
+        hci_le_directed_advertising_report_event_rp0
+
+#define HCI_LE_DIRECT_ADVERTISING_REPORT_SUBEVT_CODE \
+        HCI_LE_DIRECTED_ADVERTISING_REPORT_SUBEVT_CODE
 
 
 /* ------------------------------------------------------------------------- */
