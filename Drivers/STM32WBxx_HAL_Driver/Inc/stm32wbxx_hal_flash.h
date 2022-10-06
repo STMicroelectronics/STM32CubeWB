@@ -855,7 +855,7 @@ HAL_StatusTypeDef  FLASH_WaitForLastOperation(uint32_t Timeout);
 #define FLASH_END_ADDR                          (FLASH_BASE + FLASH_SIZE - 1U)
 
 #define FLASH_BANK_SIZE                         FLASH_SIZE   /*!< FLASH Bank Size */
-#if defined(STM32WB15xx) || defined(STM32WB1Mxx)
+#if defined(STM32WB15xx) || defined(STM32WB10xx) || defined(STM32WB1Mxx)
 #define FLASH_PAGE_SIZE                         0x00000800U  /*!< FLASH Page Size, 2 KBytes */
 #else
 #define FLASH_PAGE_SIZE                         0x00001000U  /*!< FLASH Page Size, 4 KBytes */
@@ -863,7 +863,7 @@ HAL_StatusTypeDef  FLASH_WaitForLastOperation(uint32_t Timeout);
 #define FLASH_PAGE_NB                           (FLASH_SIZE / FLASH_PAGE_SIZE)
 #define FLASH_TIMEOUT_VALUE                     1000U        /*!< FLASH Execution Timeout, 1 s */
 
-#if defined(STM32WB15xx) || defined(STM32WB1Mxx)
+#if defined(STM32WB15xx) || defined(STM32WB10xx) || defined(STM32WB1Mxx)
 #define FLASH_PCROP_GRANULARITY_OFFSET          10U                                      /*!< FLASH Code Readout Protection granularity offset */
 #define FLASH_PCROP_GRANULARITY                 (1UL << FLASH_PCROP_GRANULARITY_OFFSET)  /*!< FLASH Code Readout Protection granularity, 1 KBytes */
 #else
