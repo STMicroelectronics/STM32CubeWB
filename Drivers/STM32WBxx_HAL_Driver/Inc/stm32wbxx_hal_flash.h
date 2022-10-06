@@ -564,7 +564,7 @@ typedef struct
 #define SRAM2B_START_SECURE_ADDR_1       (SRAM2B_BASE + 0x0400U)  /*  When in secure mode (SRAM2B_BASE + 0x0400) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_START_SECURE_ADDR_2       (SRAM2B_BASE + 0x0800U)  /*  When in secure mode (SRAM2B_BASE + 0x0800) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_START_SECURE_ADDR_3       (SRAM2B_BASE + 0x0C00U)  /*  When in secure mode (SRAM2B_BASE + 0x0C00) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
-#if !defined(STM32WB15xx) && !defined(STM32WB1Mxx)
+#if !defined(STM32WB15xx) && !defined(STM32WB10xx) && !defined(STM32WB1Mxx)
 #define SRAM2B_START_SECURE_ADDR_4       (SRAM2B_BASE + 0x1000U)  /*  When in secure mode (SRAM2B_BASE + 0x1000) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_START_SECURE_ADDR_5       (SRAM2B_BASE + 0x1400U)  /*  When in secure mode (SRAM2B_BASE + 0x1400) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
 #define SRAM2B_START_SECURE_ADDR_6       (SRAM2B_BASE + 0x1800U)  /*  When in secure mode (SRAM2B_BASE + 0x1800) -> SRAM2B_END_ADDR is accessible only by M0 Plus  */
