@@ -6857,14 +6857,10 @@ static HAL_StatusTypeDef I2C_IsErrorOccurred(I2C_HandleTypeDef *hi2c, uint32_t T
             /* Check for the Timeout */
             if ((HAL_GetTick() - tickstart) > I2C_TIMEOUT_STOPF)
             {
-              hi2c->ErrorCode |= HAL_I2C_ERROR_TIMEOUT;
-              hi2c->State = HAL_I2C_STATE_READY;
-              hi2c->Mode = HAL_I2C_MODE_NONE;
-
-              /* Process Unlocked */
-              __HAL_UNLOCK(hi2c);
+              error_code |= HAL_I2C_ERROR_TIMEOUT;
 
               status = HAL_ERROR;
+              break;
             }
           }
         }
