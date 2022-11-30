@@ -32,7 +32,9 @@
 
 #include "tcp.h"
 
-otError otTcpEndpointInitialize(otInstance *aInstance, otTcpEndpoint *aEndpoint, otTcpEndpointInitializeArgs *aArgs)
+otError otTcpEndpointInitialize(otInstance *                       aInstance,
+                                otTcpEndpoint *                    aEndpoint,
+                                const otTcpEndpointInitializeArgs *aArgs)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -40,9 +42,9 @@ otError otTcpEndpointInitialize(otInstance *aInstance, otTcpEndpoint *aEndpoint,
 
   p_ot_req->ID = MSG_M4TOM0_OT_TCP_ENDPOINT_INITIALIZE;
 
-  p_ot_req->Size=1;
+  p_ot_req->Size=2;
   p_ot_req->Data[0] = (uint32_t) aEndpoint;
-  p_ot_req->Data[0] = (uint32_t) aArgs;
+  p_ot_req->Data[1] = (uint32_t) aArgs;
 
   Ot_Cmd_Transfer();
 
@@ -193,7 +195,7 @@ otError otTcpSendByExtension(otTcpEndpoint *aEndpoint, size_t aNumBytes, uint32_
   return (otError)p_ot_req->Data[0];
 }
 
-otError otTcpReceiveByReference(const otTcpEndpoint *aEndpoint, const otLinkedBuffer **aBuffer)
+otError otTcpReceiveByReference(otTcpEndpoint *aEndpoint, const otLinkedBuffer **aBuffer)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -275,7 +277,7 @@ otError otTcpAbort(otTcpEndpoint *aEndpoint)
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t) aEndpoint;
 
-  Ot_Cmd_Transfer();
+  Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
@@ -292,13 +294,15 @@ otError otTcpEndpointDeinitialize(otTcpEndpoint *aEndpoint)
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t) aEndpoint;
 
-  Ot_Cmd_Transfer();
+  Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
 
-otError otTcpListenerInitialize(otInstance *aInstance, otTcpListener *aListener, otTcpListenerInitializeArgs *aArgs)
+otError otTcpListenerInitialize(otInstance *                       aInstance,
+                                otTcpListener *                    aListener,
+                                const otTcpListenerInitializeArgs *aArgs)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */

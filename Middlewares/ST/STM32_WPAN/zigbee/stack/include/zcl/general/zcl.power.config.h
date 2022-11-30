@@ -4,7 +4,7 @@
  * @brief ZCL Power Configuration cluster header
  * ZCL 7 section 3.3
  * ZCL 8 section 3.3
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_POWER_H

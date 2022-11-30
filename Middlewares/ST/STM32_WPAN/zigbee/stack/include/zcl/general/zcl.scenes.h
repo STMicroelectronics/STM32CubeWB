@@ -1,16 +1,59 @@
 /**
  * @file zcl.scenes.h
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  * @heading Scenes
  * @brief ZCL Scenes cluster header
- * ZCL 7 section 3.7
+ *
  * ZCL 8 section 3.7
- * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
+ *
+ * A scene is a set of values for attributes from multiple clusters capable of being applied at the
+ * same time. The few clusters that support scenes are identified by a section with the title
+ * "Scene Table Extensions" in the ZCL 8 Specification (ZCL8) section for those cluster. There is
+ * only one scene table (list of attributes) for a cluster that supports scenes, and when a scene
+ * is invoked all scene table attributes are set to the values given in the scene table.
+ *
+ * To use the scene table for a cluster, the cluster must reside on an endpoint  which also hosts an
+ * instance of the Scenes cluster. There may be multiple scene table supporting clusters on a given
+ * endpoint. A scene is defined in the scenes cluster and contains scene tables for one or more
+ * clusters. Through the use of group addressing a scene may be applied to multiple endpoints on a node.
+ *
+ * A scene may be created by the scene cluster using the Add Scene command, where the application
+ * manually defines the scene table for each cluster included in that scene. All attributes must
+ * have values in the scene table, but inclusion of individual clusters is optional. A scene may
+ * also be created using the Store Scene command where the current value of all the attributes in
+ * the cluster at the time the Store Scene command is issued are recorded in the scene table for
+ * later use.
+ *
+ * The Scenes cluster Recall Scene command takes the scene table for each cluster in that scene
+ * and sets the values of every scene table attribute.
+ *
+ * For example, a node could contain three endpoints:
+ *
+ * * `0x01` with the OnOff and Window Covering clusters
+ * * `0x02` with the OnOff and Door Lock clusters
+ * * `0x03` with the OnOff and Level.
+ *
+ * A scene is defined with a scene tables for the:
+ *
+ * * OnOff cluster: `OnOff = On`
+ * * Level cluster: `CurrentLevel = 50%`
+ * * DoorLock cluster: `LockState = Locked`
+ *
+ * Additionally:
+ *
+ * * Endpoints `0x01` and `0x02` are in group `0x0001`
+ * * Endpoint `0x03` is not in group `0x0001`
+ *
+ * If the scenes cluster Recall Scenes command is issued with group address `0x0001` and the scene
+ * defined above, then on endpoint `0x01` and `0x02` the OnOff cluster OnOff attribute will be set
+ * on and the DoorLock on endpoint `0x02` will be locked.
+ *
+ * The Window Covering cluster on endpoint `0x01` will not be affected because this scene does not
+ * include a scene table for this cluster and all of endpoint `0x03` will be unaffected because it
+ * is not in group `0x0001`.
+ *
+ * For more information about the Scenes cluster, see Section 3.7 in ZCL8.
  */
-
-#ifndef ZCL_SCENES_H
-# define ZCL_SCENES_H
-
-#include "zcl/zcl.h"
 
 /* @PICS.ZCL.Scenes
  *
@@ -77,6 +120,11 @@
  * S.C.C41.Tx | Enhanced View Scene | True
  * S.C.C42.Tx | Copy Scene | True
  */
+
+#ifndef ZCL_SCENES_H
+# define ZCL_SCENES_H
+
+#include "zcl/zcl.h"
 
 /** Scenes Attribute IDs */
 enum ZbZclScenesAttrT {

@@ -49,6 +49,12 @@
 #ifndef TX_USER_H
 #define TX_USER_H
 
+#include "stm32wbxx_nucleo.h"
+
+#ifndef __UNSIGNED_LONG_LONG_MAX__
+#define __UNSIGNED_LONG_LONG_MAX__		( (uint64_t)0xFFFFFFFFFFFFFFFFu )
+#endif // __UNSIGNED_LONG_LONG_MAX__
+
 /* Define various build options for the ThreadX port.  The application should either make changes
    here by commenting or un-commenting the conditional compilation defined OR supply the defines
    though the compiler's equivalent of the -D option.
@@ -124,7 +130,7 @@
    enabled. If the application does not use preemption-threshold, it may be disabled to reduce
    code size and improve performance.  */
 
-#define TX_DISABLE_PREEMPTION_THRESHOLD
+/* #define TX_DISABLE_PREEMPTION_THRESHOLD */
 
 /* Determine if global ThreadX variables should be cleared. If the compiler startup code clears
    the .bss section prior to ThreadX running, the define can be used to eliminate unnecessary
@@ -223,7 +229,7 @@
 
 /* Define the common timer tick reference for use by other middleware components. */
 
-#define TX_TIMER_TICKS_PER_SECOND                100
+/*#define TX_TIMER_TICKS_PER_SECOND                100 */
 
 /* Determinate if the basic alignment type is defined. */
 
@@ -247,7 +253,8 @@
 /*#define TX_SAFETY_CRITICAL*/
 
 /* Threadx Tick per second */
-#define TX_TIMER_TICK_PER_SECOND (1000)
+#define TX_TIMER_TICK_PER_SECOND (1000u)
+      
 /* Define the LowPower macros and flags */
 /* Enable the Low Power support */
 // #define TX_LOW_POWER
@@ -255,20 +262,23 @@
 #ifdef TX_LOW_POWER
 
 
-#define TX_LOW_POWER_USER_ENTER
+/* A user defined macro to make the system enter in low power mode */
+extern void APP_THREAD_ThreadX_EnterLowPower( void );
+#define TX_LOW_POWER_USER_ENTER     APP_THREAD_ThreadX_EnterLowPower()
 
 /* Define the TX_LOW_POWER_TICKLESS to disable the internal ticks */
 // #define TX_LOW_POWER_TICKLESS
 
 /* Define a macro that sets up a low power clock and keep track of time */
-//void APP_THREAD_ThreadX_Low_Power_Setup(unsigned long tx_low_power_next_expiration);
-//#define TX_LOW_POWER_TIMER_SETUP    APP_THREAD_ThreadX_Low_Power_Setup
+extern void APP_THREAD_ThreadX_Low_Power_Setup( unsigned long tx_low_power_next_expiration );
+#define TX_LOW_POWER_TIMER_SETUP    APP_THREAD_ThreadX_Low_Power_Setup
 
 /* Used call wfi inside the low power section of TX scheduler */
-/* define TX_ENABLE_WFI */
+//#define TX_ENABLE_WFI
 
 /* A user defined macro to make the system exit low power mode */
-/* #define TX_LOW_POWER_USER_EXIT */
+extern void APP_THREAD_ThreadX_ExitLowPower( void );
+#define TX_LOW_POWER_USER_EXIT      APP_THREAD_ThreadX_ExitLowPower()
 
 /* User's low-power macro to obtain the amount of time (in ticks) the system has been in low power mode */
 //unsigned long APP_THREAD_Threadx_Low_Power_Adjust_Ticks(void);
@@ -276,4 +286,5 @@
 
 #endif // TX_LOW_POWER
 #endif // TX_USER_H
+
 

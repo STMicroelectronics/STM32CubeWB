@@ -54,7 +54,7 @@ typedef struct
 
 /* Private variables ---------------------------------------------------------*/
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static MOTION_Server_App_Context_t MOTION_Server_App_Context;
+static MOTION_Server_App_Context_t MOTION_Server_App_Context;
 
 /* Global variables ----------------------------------------------------------*/
 extern int debug_trace_enabled;

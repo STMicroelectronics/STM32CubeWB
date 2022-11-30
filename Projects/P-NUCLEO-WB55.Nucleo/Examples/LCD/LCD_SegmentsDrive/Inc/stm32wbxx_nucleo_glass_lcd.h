@@ -111,7 +111,7 @@ typedef enum
   * @{
 */
 /**
-  * @brief LCD digit defintion
+  * @brief LCD digit definition
   */
 #define COM_PER_DIGIT_NB          4/*!< Specifies number of COM to address a digit */
 #define SEG_PER_DIGIT_NB          4/*!< Specifies number of SEG to address a digit */

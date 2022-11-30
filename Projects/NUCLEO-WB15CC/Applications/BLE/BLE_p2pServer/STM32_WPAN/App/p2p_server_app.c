@@ -67,7 +67,7 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static P2P_Server_App_Context_t P2P_Server_App_Context;
+static P2P_Server_App_Context_t P2P_Server_App_Context;
 
 /**
  * END of Section BLE_APP_CONTEXT
@@ -309,6 +309,7 @@ void P2PS_APP_Init(void)
 void P2PS_APP_LED_BUTTON_context_Init(void){
   
   BSP_LED_Off(LED_BLUE);
+  APP_DBG_MSG("LED BLUE OFF\n");
   
   #if(P2P_SERVER1 != 0)
   P2P_Server_App_Context.LedControl.Device_Led_Selection=0x01; /* Device1 */

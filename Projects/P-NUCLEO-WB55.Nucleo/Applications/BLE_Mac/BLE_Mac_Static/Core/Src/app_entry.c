@@ -146,22 +146,6 @@ void APP_Init( void )
   return;
 }
 
-/*************************************************************
- *
- * Functions used to manage the switching of protocol between
- * BLE and MAC
- *
- *************************************************************/
-/**
- * @brief  Return the current protocol in use
- * @param  None
- * @retval None
- */
-SHCI_C2_CONCURRENT_Mode_Param_t APP_GetCurrentProtocolMode()
-{
-    return ConcurrentMode;
-}
-
 /**
  * @brief  Process used to initiate the protocol switch
  * @param  None

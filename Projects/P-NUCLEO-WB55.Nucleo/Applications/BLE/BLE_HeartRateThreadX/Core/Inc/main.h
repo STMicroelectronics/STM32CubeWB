@@ -38,9 +38,9 @@ extern "C" {
 /* USER CODE END Includes */
 
 /* Large memory allocations to give margin to add extra code */
-#define DEMO_STACK_SIZE_LARGE      (800)
-#define DEMO_STACK_SIZE_REDUCED    (600)
-#define DEMO_BYTE_POOL_SIZE        (6144)
+#define DEMO_STACK_SIZE_LARGE      (1024)
+#define DEMO_STACK_SIZE_REDUCED    (1024)
+#define DEMO_BYTE_POOL_SIZE        (9120)
 #define DEMO_BLOCK_POOL_SIZE       (100)
 
 /* Exported types ------------------------------------------------------------*/

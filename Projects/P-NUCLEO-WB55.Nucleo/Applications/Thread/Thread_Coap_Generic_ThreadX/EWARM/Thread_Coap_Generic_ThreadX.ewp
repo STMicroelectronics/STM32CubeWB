@@ -1247,6 +1247,9 @@
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_mutex_put.c</name>
                     </file>
                     <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_semaphore_ceiling_put.c</name>
+                    </file>
+                    <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_semaphore_cleanup.c</name>
                     </file>
                     <file>
@@ -1317,6 +1320,9 @@
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\txe_mutex_put.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\txe_semaphore_ceiling_put.c</name>
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\txe_semaphore_create.c</name>

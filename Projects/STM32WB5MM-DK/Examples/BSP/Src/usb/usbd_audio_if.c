@@ -109,7 +109,7 @@ static int8_t Audio_Record(void)
 }
 
 /**
-  * @brief  Controls AUDIO Volume.             
+  * @brief  Controls AUDIO Volume.
   * @param  vol: Volume level
   * @retval BSP_ERROR_NONE in case of success, AUDIO_ERROR otherwise
   */
@@ -117,7 +117,7 @@ static int8_t Audio_VolumeCtl(int16_t Volume)
 {
   /* Call low layer volume setting function */
   uint32_t j, mic_instance;
-  
+
   j = 0;
   /* Find the setting nearest to the desired setting */
   while(j<64 &&
@@ -130,7 +130,7 @@ static int8_t Audio_VolumeCtl(int16_t Volume)
 }
 
 /**
-  * @brief  Controls AUDIO Mute.              
+  * @brief  Controls AUDIO Mute.
   * @param  cmd: Command opcode
   * @retval BSP_ERROR_NONE in case of success, AUDIO_ERROR otherwise
   */
@@ -145,9 +145,9 @@ static int8_t Audio_MuteCtl(uint8_t cmd)
   * @retval BSP_ERROR_NONE in case of success, AUDIO_ERROR otherwise
   */
 static int8_t Audio_Stop(void)
-{  
-#ifndef DISABLE_USB_DRIVEN_ACQUISITION  
-  return BSP_AUDIO_IN_Stop(BSP_AUDIO_INSTANCE);  
+{
+#ifndef DISABLE_USB_DRIVEN_ACQUISITION
+  return BSP_AUDIO_IN_Stop(BSP_AUDIO_INSTANCE);
 #else
   return BSP_ERROR_NONE;
 #endif
@@ -169,7 +169,7 @@ static int8_t Audio_Pause(void)
   * @retval BSP_ERROR_NONE in case of success, AUDIO_ERROR otherwise
   */
 static int8_t Audio_Resume(void)
-{  
+{
   return BSP_ERROR_NONE;
 }
 
@@ -185,7 +185,7 @@ static int8_t Audio_CommandMgr(uint8_t cmd)
 
 /**
   * @brief  Fills USB audio buffer with the right amount of data, depending on the
-  *			channel/frequency configuration
+  *         channel/frequency configuration
   * @param  audioData: pointer to the PCM audio data
   * @param  PCMSamples: number of PCM samples to be passed to USB engine
   * @note Depending on the calling frequency, a coherent amount of samples must be passed to

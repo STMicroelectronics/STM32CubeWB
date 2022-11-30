@@ -584,6 +584,11 @@
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma.c</FilePath>
             </File>
             <File>
+              <FileName>stm32wbxx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32wbxx_hal_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash.c</FilePath>
@@ -592,6 +597,16 @@
               <FileName>stm32wbxx_hal_flash_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</FilePath>
+            </File>
+           <File>
+              <FileName>stm32wbxx_hal_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_hal_gpio.c</FileName>
@@ -673,11 +688,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</FilePath>
             </File>
-            <File>
-              <FileName>stm32wbxx_hal_dma_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -736,22 +746,22 @@
             <File>
               <FileName>generic_client.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\generic_client.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/generic_client.c</FilePath>
             </File>
             <File>
               <FileName>light_client.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\light_client.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/light_client.c</FilePath>
             </File>
             <File>
               <FileName>sensors_client.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\sensors_client.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/sensors_client.c</FilePath>
             </File>
             <File>
               <FileName>config_client.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Src\config_client.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/mesh/MeshModel/Src/config_client.c</FilePath>
             </File>
           </Files>
         </Group>

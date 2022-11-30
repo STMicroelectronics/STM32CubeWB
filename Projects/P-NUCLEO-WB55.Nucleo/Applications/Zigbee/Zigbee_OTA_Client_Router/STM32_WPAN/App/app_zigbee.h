@@ -94,6 +94,8 @@ struct APP_ZIGBEE_OtaContext_t{
   enum APP_ZIGBEE_OtaFileTypeDef_t  file_type;
   uint8_t file_version;
   uint32_t binary_size;
+  uint32_t binary_calc_crc;
+  uint32_t binary_srv_crc;
   uint32_t base_address;
   uint32_t magic_keyword;
 };

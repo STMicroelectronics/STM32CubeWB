@@ -17,6 +17,7 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef BLE_DBG_CONF_H

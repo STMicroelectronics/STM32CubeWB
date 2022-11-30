@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32wb5mm_dk_conf.h
   * @author  MCD Application Team
-  * @brief   Discovery Module configuration file.
+  * @brief   configuration file.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -28,15 +28,15 @@ extern "C" {
 #include "stm32wbxx_hal.h"
 
 /* Environmental Sensors usage */
-#define USE_ENV_SENSOR_HTS221_0              0U
+#define USE_ENV_SENSOR_STTS22H_0             0U
 #define USE_ENV_SENSOR_LPS22HH_0             0U
 
 /* Motion Sensors usage */
-#define USE_MOTION_SENSOR_ISM330DLC_0        0U
+#define USE_MOTION_SENSOR_ISM330DHCX_0       0U
 #define USE_MOTION_SENSOR_IIS2MDC_0          0U
 
 /* COM  port usage */
-#define USE_BSP_COM_FEATURE                  0U
+#define USE_BSP_COM_FEATURE                  1U
 #define USE_COM_LOG                          0U
 
 /* IRQ priorities */

@@ -125,7 +125,7 @@ MOBLE_RESULT AppliNvm_FindFirstEmptyPage(MOBLEINT16* subPageIndex,
                                          MOBLEUINT32 nvmBaseOffset);
 MOBLE_RESULT AppliNvm_MarkSubpageInvalid(void);
 MOBLE_RESULT AppliNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size);
-MOBLEUINT32* AppliPrvnNvm_GetSubPageData(MOBLE_ADDRESS addrss);
+MOBLEUINT32* AppliPrvnNvm_GetSubPageData(MOBLE_ADDRESS address);
 MOBLE_RESULT AppliPrvnNvm_FlashProgram(MOBLEUINT32 offset, void const *buf, MOBLEUINT32 size);
 
 #if 0 //#ifdef ENABLE_NVM_TEST

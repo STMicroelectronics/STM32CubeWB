@@ -189,11 +189,11 @@ Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurr
   It is now requested to associate an unique ID to each board. The ID of the 'leader' must always be equal to the 
   number of boards available inside the Thread network.
   Suppose you have 4 boards inside your network, you must associate the ID number 4 to the board acting as 'leader'.
-  ID number 1 and ID number 2 are then respectively associated to the two other boards which are acting as ‘router’ or
-  ‘child’. To associate ID 4 to the ‘leader’ board, press 4 times on the SW1 button. The first time you press on SW1, 
+  ID number 1 and ID number 2 are then respectively associated to the two other boards which are acting as 'router' or
+  'child'. To associate ID 4 to the 'leader' board, press 4 times on the SW1 button. The first time you press on SW1, 
   you should see the 'blue Led' blinking once. The second time you press on SW1, you should see the 'blue Led' blinking twice.
   The third time you pressed on SW1,you should see the 'blue Led' blinking three times. The fourth time you press on SW1,
-  you should see the 'blue Led' blinking 4 times. At this stage, in this example, the ID 4 is now associated to the ‘leader’ board. 
+  you should see the 'blue Led' blinking 4 times. At this stage, in this example, the ID 4 is now associated to the 'leader' board. 
 
  -Step 2c:
   Following the same rules as in Step2b, (in case there are 4 boards inside the network), it is now requested 

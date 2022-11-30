@@ -436,6 +436,11 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
             </File>
+            <File>
+              <FileName>hw_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/hw_uart.c</FilePath>
+            </File>             
           </Files>
         </Group>
         <Group>

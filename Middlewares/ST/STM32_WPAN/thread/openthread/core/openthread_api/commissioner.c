@@ -60,6 +60,39 @@ otError otCommissionerStart(otInstance *                 aInstance,
   return (otError)p_ot_req->Data[0];
 }
 
+const char *otCommissionerGetId(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COMMISSIONER_GET_ID;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (char *)p_ot_req->Data[0];
+}
+
+otError otCommissionerSetId(otInstance *aInstance, const char *aId)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COMMISSIONER_SET_ID;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aId;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
 otError otCommissionerStop(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();

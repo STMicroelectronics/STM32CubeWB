@@ -6,7 +6,7 @@
  * @brief ZCL Basic cluster header
  * ZCL 7 section 3.2
  * ZCL 8 section 3.2
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_BASIC_H

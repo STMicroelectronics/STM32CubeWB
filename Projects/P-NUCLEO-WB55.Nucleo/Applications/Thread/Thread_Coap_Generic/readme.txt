@@ -35,12 +35,14 @@ After the reset of the 2 boards, one board will be in Leader mode (Green LED2 ON
 The other one will be in Child mode (Red LED3 ON).
  
 Let's name indifferently one board A and one board B. 
-To send a COAP command from board A to board B, press the SW1 Push-Button on board A. 
-The board B will receive two COAP commands to toggle its blue LED1, second command is 
-happening 5 seconds (WAIT_TIMEOUT) after the first command. 
-Pressing again same push-button will repeat the toggling (taking 5 seconds) of the blue LED1. 
-Pressing every second will reset the timer, hence, the second COAP command will not happen (need 
-to have 5 seconds without pressing the push button).
+
+- press the SW1 Push-Button on board A. 
+To send a COAP command (Non-Confirmable) from board A to board B:
+The board B will receive COAP commands to toggle its blue LED1
+- press the SW2 Push-Button on boad A.
+To send a COAP command (Confirmable) from board A to board B:
+The board B will receive COAP commands and send to board A a Coap Data response and toggle its blue LED1
+
 Same COAP commands can be sent from board B to board A. 
 
   ___________________________                       ___________________________
@@ -48,27 +50,24 @@ Same COAP commands can be sent from board B to board A.
   |_________________________|                       |_________________________|  
   |                         |                       |                         |
   |                         |                       |                         |
-  |        Push Button -->  |======> COAP =========>| BLUE LED TOGGLE (ON/OFF)|
+  |                SW1 -->  |======> COAP =========>| BLUE LED TOGGLE (ON/OFF)|
   |                         | Resource "light"      |                         |
   |                         | Mode: Multicast       |                         |
   |                         | Type: Non-Confirmable |                         |
   |                         | Code: Put             |                         |
   |                         |                       |                         |
   |                         |                       |                         |
-  *************** WAIT 5 Seconds (configurable with WAIT_TIMEOUT) *************
-  |                         |                       |                         |
-  |                         |                       |                         |
-  |                         |=====> COAP ==========>|-------->                |
+  |                SW2 -->  |=====> COAP ==========>|-------->                |
   |                         | Resource "light"      |         |               |
   |                         | Mode: Multicast       |  CoapRequestHandler()   |
-  |                         | Type: Confirmable |             |               |
+  |                         | Type: Confirmable     |         |               |
   |                         | Code: Put             |         |               |
   |                         |                       |         v               |
   |                         |                       |  CoapSendDataResponse() |
   |                         |                       |         |               |
   |                         |                       |         v               |
   | CoapDataRespHandler()<--|<===== COAP <==========| <-------                |
-  |                         |                       | BLUE LED TOGGLE (ON/OFF)|  -- IF WAIT_TIMEOUT elapsed, BLUE LED TOGGLE again
+  |                         |                       | BLUE LED TOGGLE (ON/OFF)| 
   |                         |                       |                         |  
   ---------------------------                       ---------------------------
   | Role : Child            |                       | Role : Leader           |

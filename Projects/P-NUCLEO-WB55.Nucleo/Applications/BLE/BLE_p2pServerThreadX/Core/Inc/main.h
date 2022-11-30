@@ -47,6 +47,11 @@ extern "C" {
 #define DEMO_STACK_SIZE      (1024)
 #define DEMO_BYTE_POOL_SIZE  (9120)
 #define DEMO_BLOCK_POOL_SIZE (100)
+#ifdef TX_ENABLE_EVENT_TRACE
+#define TRACE_MEM_SIZE       (64*1024)
+#define TRACE_SIZE           (24)
+#define TRACE_FILTER (TX_TRACE_INTERNAL_EVENTS|TX_TRACE_INTERRUPT_CONTROL_EVENT|TX_TRACE_TIME_EVENTS)
+#endif
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/

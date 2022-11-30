@@ -67,11 +67,11 @@ static UCHAR memory_area[DEMO_BYTE_POOL_SIZE];
 /* USER CODE END PV */
 
 /* Global variables ----------------------------------------------------------*/
-CHAR* pointer = TX_NULL;
-TX_MUTEX MtxShciId;
-TX_SEMAPHORE SemShciId;
-TX_SEMAPHORE SemShciNotify;
-TX_THREAD ShciUserEvtProcessId;
+CHAR                * pointer = TX_NULL;
+TX_MUTEX            MtxShciId;
+TX_SEMAPHORE        SemShciId;
+TX_SEMAPHORE        SemShciNotify;
+TX_THREAD           ShciUserEvtProcessId;
 static TX_BYTE_POOL byte_pool_shci;
 
 /* Global function prototypes -----------------------------------------------*/
@@ -84,43 +84,57 @@ size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
 /* USER CODE END GFP */
 
 /* Private functions prototypes-----------------------------------------------*/
-static void ShciUserEvtProcess(ULONG thread_input);
-static void Config_HSE(void);
-static void Reset_Device(void);
-#if (CFG_HW_RESET_BY_FW == 1)
-static void Reset_IPCC(void);
-static void Reset_BackupDomain(void);
+static void ShciUserEvtProcess      ( ULONG thread_input );
+static void Config_HSE              ( void );
+static void Reset_Device            ( void );
+#if ( CFG_HW_RESET_BY_FW == 1 )
+static void Reset_IPCC              ( void );
+static void Reset_BackupDomain      ( void );
 #endif /* CFG_HW_RESET_BY_FW == 1*/
-static void System_Init(void);
-static void SystemPower_Config(void);
-static void Init_Debug(void);
-static void appe_Tl_Init(void);
-static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status);
-static void APPE_SysUserEvtRx(void * pPayload);
-static void APPE_SysEvtReadyProcessing(void);
-static void APPE_SysEvtError(SCHI_SystemErrCode_t ErrorCode);
+static void System_Init             ( void );
+static void SystemPower_Config      ( void );
+static void Init_Debug              ( void );
+static void appe_Tl_Init            ( void );
+static void APPE_SysStatusNot       ( SHCI_TL_CmdStatus_t status );
+static void APPE_SysUserEvtRx       ( void * pPayload );
+static void APPE_SysEvtReadyProcessing  ( void );
+static void APPE_SysEvtError        ( SCHI_SystemErrCode_t ErrorCode );
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
-extern void MX_LPUART1_UART_Init(void);
+extern void MX_LPUART1_UART_Init    ( void );
 #endif /* CFG_HW_LPUART1_ENABLED == 1 */
 #if (CFG_HW_USART1_ENABLED == 1)
-extern void MX_USART1_UART_Init(void);
+extern void MX_USART1_UART_Init     ( void );
 #endif /* CFG_HW_USART1_ENABLED == 1 */
-static void Init_Rtc(void);
+static void Init_Rtc                ( void );
 
 /* USER CODE BEGIN PFP */
-static void Led_Init( void );
-static void Button_Init( void );
+static void Led_Init                ( void );
+static void Button_Init             ( void );
+
+/* Section specific to button management using UART */
+static void RxUART_Init(void);
+static void RxCpltCallback(void);
+static void UartCmdExecute(void);
+
+#define C_SIZE_CMD_STRING       256U
+#define RX_BUFFER_SIZE          8U
+
+static uint8_t aRxBuffer[RX_BUFFER_SIZE];
+static uint8_t CommandString[C_SIZE_CMD_STRING];
+static uint16_t indexReceiveChar = 0;
+EXTI_HandleTypeDef exti_handle;
+
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
-void MX_APPE_Config(void)
+void MX_APPE_Config( void )
 {
   /**
    * The OPTVERR flag is wrongly set at power on
    * It shall be cleared before using any HAL_FLASH_xxx() api
    */
-  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
+  __HAL_FLASH_CLEAR_FLAG( FLASH_FLAG_OPTVERR );
 
   /**
    * Reset some configurations so that the system behave in the same way
@@ -134,7 +148,7 @@ void MX_APPE_Config(void)
   return;
 }
 
-void MX_APPE_Init(void)
+void MX_APPE_Init( void )
 {
   System_Init();       /**< System initialization */
 
@@ -142,17 +156,27 @@ void MX_APPE_Init(void)
 
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
-/* USER CODE BEGIN APPE_Init_1 */
+  /* USER CODE BEGIN APPE_Init_1 */
   Init_Debug();
 
-  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+#ifdef TX_LOW_POWER
+  /**
+   * The Standby mode should not be entered before the initialization is over
+   * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
+   */
+    
+  //UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+  APP_THREAD_ThreadX_LowPowerEnable( LOWPOWER_NONE );
+#endif // TX_LOW_POWER
+    
   Led_Init();
   Button_Init();
-/* USER CODE END APPE_Init_1 */
+  RxUART_Init();
+  /* USER CODE END APPE_Init_1 */
   appe_Tl_Init();	/* Initialize all transport layers */
 
   /**
-   * From now, the application is waiting for the ready event (VS_HCI_C2_Ready)
+   * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
    * received on the system channel before starting the Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
@@ -173,7 +197,7 @@ void MX_ThreadX_Init(void)
 
   /* USER CODE END  Before_Kernel_Start */
 
-    tx_kernel_enter();
+  tx_kernel_enter();
 
   /* USER CODE BEGIN  Kernel_Start_Error */
 
@@ -182,31 +206,37 @@ void MX_ThreadX_Init(void)
 
 void tx_application_define(void* first_unused_memory)
 {
-    /* Here we should declare all the initial ThreadX resources
-    * We should have at least one thread to be launched from the scheduler
-    * */
+  UINT ThreadXStatus = TX_THREAD_ERROR;
+
+  /* Here we should declare all the initial ThreadX resources
+   * We should have at least one thread to be launched from the scheduler
+   * */
 
   /* Create a byte memory pool from which to allocate the thread stacks, using static memory
-  * coming from memory_area array  */
+   * coming from memory_area array  */
   tx_byte_pool_create(&byte_pool_shci, "byte pool 0", memory_area, DEMO_BYTE_POOL_SIZE);
 
   tx_mutex_create(&MtxShciId, "MtxShciId", TX_NO_INHERIT);
-  tx_semaphore_create(&SemShciId, "SemShciId", 0); /*< Create the semaphore and make it busy at initialization */
-  tx_semaphore_create(&SemShciNotify, "SemShciNotify", 0); /*< Create the semaphore and make it busy at initialization */
+  tx_semaphore_create(&SemShciId, "SemShciId", 0);              /*< Create the semaphore and make it busy at initialization */
+  tx_semaphore_create(&SemShciNotify, "SemShciNotify", 0);      /*< Create the semaphore and make it busy at initialization */
+
   tx_byte_allocate(&byte_pool_shci, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
-  tx_thread_create(&ShciUserEvtProcessId,
-                   "ShciUserEvtProcessId",
-                   ShciUserEvtProcess,
-                   0,
-                   pointer,
-                   DEMO_STACK_SIZE_LARGE,
-                   16,
-                   16,
-                   TX_NO_TIME_SLICE,
-                   TX_AUTO_START);
+  ThreadXStatus = tx_thread_create(&ShciUserEvtProcessId,
+                   	   	   	   	   "ShciUserEvtProcessId",
+								   ShciUserEvtProcess,
+								   0,
+								   pointer,
+								   DEMO_STACK_SIZE_LARGE,
+								   SHCI_USER_EVT_PROCESS_PRIORITY,
+								   SHCI_USER_EVT_PROCESS_PRIORITY,
+								   TX_NO_TIME_SLICE,
+								   TX_AUTO_START);
+
+  if (ThreadXStatus != TX_SUCCESS)
+    { APP_THREAD_Error( ERR_THREAD_THREAD_X_FAILED, 1 ); }
 }
 
-void Init_Smps(void)
+void Init_Smps( void )
 {
 #if (CFG_USE_SMPS != 0)
   /**
@@ -224,11 +254,11 @@ void Init_Smps(void)
   return;
 }
 
-void Init_Exti(void)
+void Init_Exti( void )
 {
   /* Enable IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
-  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_36 | LL_EXTI_LINE_38);
-
+  LL_EXTI_EnableIT_32_63( LL_EXTI_LINE_36 | LL_EXTI_LINE_38 );
+  
   return;
 }
 
@@ -241,7 +271,7 @@ void Init_Exti(void)
  * LOCAL FUNCTIONS
  *
  *************************************************************/
-static void Init_Debug(void)
+static void Init_Debug( void )
 {
 #if (CFG_DEBUGGER_SUPPORTED == 1)
   /**
@@ -282,9 +312,11 @@ static void Init_Debug(void)
 
   return;
 }
-static void Reset_Device(void)
+
+
+static void Reset_Device( void )
 {
-#if (CFG_HW_RESET_BY_FW == 1)
+#if ( CFG_HW_RESET_BY_FW == 1 )
   Reset_BackupDomain();
 
   Reset_IPCC();
@@ -293,8 +325,8 @@ static void Reset_Device(void)
   return;
 }
 
-#if (CFG_HW_RESET_BY_FW == 1)
-static void Reset_BackupDomain(void)
+#if ( CFG_HW_RESET_BY_FW == 1 )
+static void Reset_BackupDomain( void )
 {
   if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
   {
@@ -313,7 +345,7 @@ static void Reset_BackupDomain(void)
   return;
 }
 
-static void Reset_IPCC(void)
+static void Reset_IPCC( void )
 {
   LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_IPCC);
 
@@ -367,7 +399,7 @@ static void Config_HSE(void)
   return;
 }
 
-static void System_Init(void)
+static void System_Init( void )
 {
   Init_Smps();
 
@@ -378,7 +410,7 @@ static void System_Init(void)
   return;
 }
 
-static void Init_Rtc(void)
+static void Init_Rtc( void )
 {
   /* Disable RTC registers write protection */
   LL_RTC_DisableWriteProtection(RTC);
@@ -408,6 +440,7 @@ static void SystemPower_Config(void)
 
   /* Initialize low power manager */
   UTIL_LPM_Init();
+
   /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
   LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
 
@@ -421,10 +454,11 @@ static void SystemPower_Config(void)
   return;
 }
 
-static void appe_Tl_Init(void)
+static void appe_Tl_Init( void )
 {
   TL_MM_Config_t tl_mm_config;
   SHCI_TL_HciInitConf_t SHci_Tl_Init_Conf;
+
   /**< Reference table initialization */
   TL_Init();
 
@@ -438,14 +472,14 @@ static void appe_Tl_Init(void)
   tl_mm_config.p_SystemSpareEvtBuffer = SystemSpareEvtBuffer;
   tl_mm_config.p_AsynchEvtPool = EvtPool;
   tl_mm_config.AsynchEvtPoolSize = POOL_SIZE;
-  TL_MM_Init(&tl_mm_config);
+  TL_MM_Init( &tl_mm_config );
 
   TL_Enable();
 
   return;
 }
 
-static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status)
+static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status )
 {
   switch (status)
   {
@@ -472,7 +506,7 @@ static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status)
  * (eg ((tSHCI_UserEvtRxParam*)pPayload)->status shall be set to SHCI_TL_UserEventFlow_Disable)
  * When the status is not filled, the buffer is released by default
  */
-static void APPE_SysUserEvtRx(void * pPayload)
+static void APPE_SysUserEvtRx( void * pPayload )
 {
   TL_AsynchEvt_t *p_sys_event;
   p_sys_event = (TL_AsynchEvt_t*)(((tSHCI_UserEvtRxParam*)pPayload)->pckt->evtserial.evt.payload);
@@ -482,9 +516,11 @@ static void APPE_SysUserEvtRx(void * pPayload)
      case SHCI_SUB_EVT_CODE_READY:
          APPE_SysEvtReadyProcessing();
          break;
+
      case SHCI_SUB_EVT_ERROR_NOTIF:
          APPE_SysEvtError((SCHI_SystemErrCode_t) (p_sys_event->payload[0]));
          break;
+
      default:
          break;
   }
@@ -497,36 +533,48 @@ static void APPE_SysUserEvtRx(void * pPayload)
  *
  * @retval None
  */
-static void APPE_SysEvtError(SCHI_SystemErrCode_t ErrorCode)
+static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode )
 {
   switch(ErrorCode)
   {
-  case ERR_THREAD_LLD_FATAL_ERROR:
-       APP_DBG("** ERR_THREAD : LLD_FATAL_ERROR \n");
-       break;
-  case ERR_THREAD_UNKNOWN_CMD:
-       APP_DBG("** ERR_THREAD : UNKNOWN_CMD \n");
-       break;
-  default:
-       APP_DBG("** ERR_THREAD : ErroCode=%d \n",ErrorCode);
-       break;
+  	case ERR_THREAD_LLD_FATAL_ERROR:
+  		APP_DBG("** ERR_THREAD : LLD_FATAL_ERROR\n");
+  		break;
+
+  	case ERR_THREAD_UNKNOWN_CMD:
+  		APP_DBG("** ERR_THREAD : UNKNOWN_CMD\n");
+  		break;
+
+  	default:
+  		APP_THREAD_TraceError("** ERR_THREAD : ErroCode=%d \n", ErrorCode);
+  		break;
   }
   return;
 }
 
-static void APPE_SysEvtReadyProcessing(void)
+static void APPE_SysEvtReadyProcessing( void )
 {
   /* Traces channel initialization */
   TL_TRACES_Init();
 
   APP_THREAD_Init(&byte_pool_shci);
- // UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+
+#ifdef TX_LOW_POWER
+  //UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  APP_THREAD_ThreadX_LowPowerEnable( LOWPOWER_SLEEPMODE );
+#endif // TX_LOW_POWER
   return;
 }
 
+/*************************************************************
+ *
+ * ThreadX WRAPPER FUNCTIONS
+ *
+*************************************************************/
 static void ShciUserEvtProcess(ULONG argument)
 {
   UNUSED(argument);
+
   for(;;)
   {
     /* USER CODE BEGIN SHCI_USER_EVT_PROCESS_1 */
@@ -537,8 +585,9 @@ static void ShciUserEvtProcess(ULONG argument)
     /* USER CODE BEGIN SHCI_USER_EVT_PROCESS_2 */
 
     /* USER CODE END SHCI_USER_EVT_PROCESS_2 */
-    }
+  }
 }
+
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 static void Led_Init( void )
 {
@@ -562,14 +611,18 @@ static void Button_Init( void )
   /**
    * Button Initialization
    */
-
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
   
   HAL_NVIC_SetPriority((IRQn_Type)BUTTON_SW1_EXTI_IRQn, 0x0E, 0x00);
+  HAL_NVIC_SetPriority((IRQn_Type)BUTTON_SW2_EXTI_IRQn, 0x0E, 0x00);
+  HAL_NVIC_SetPriority((IRQn_Type)BUTTON_SW3_EXTI_IRQn, 0x0E, 0x00);
 #endif
 
   return;
 }
+
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
@@ -598,7 +651,7 @@ void HAL_Delay(uint32_t Delay)
     /**
      * This option is used to ensure that store operations are completed
      */
-  #if defined (__CC_ARM)
+  #if defined ( __CC_ARM )
     __force_stores();
   #endif /* __CC_ARM */
 
@@ -666,6 +719,8 @@ void DbgOutputTraces(uint8_t *p_data, uint16_t size, void (*cb)(void))
 
   return;
 }
+
+
 #endif /* CFG_DEBUG_TRACE != 0 */
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
@@ -676,15 +731,84 @@ void DbgOutputTraces(uint8_t *p_data, uint16_t size, void (*cb)(void))
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  APP_DBG("*** HAL_GPIO_EXTI_Callback  GPIO_Pin = %d ****", GPIO_Pin);
+
   switch(GPIO_Pin)
   {
     case BUTTON_SW1_PIN:
-        APP_THREAD_LaunchPushButtonTask();
+        APP_THREAD_SW1_Task();
         break;
+        
+    case BUTTON_SW2_PIN:
+        APP_THREAD_SW2_Task();
+        break;
+        
+    case BUTTON_SW3_PIN: 
+        break;
+        
+    default:
+        break;
+  }
+}
 
-     default:
-        break;
+static void RxUART_Init(void)
+{
+  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void RxCpltCallback(void)
+{
+#ifdef TX_LOW_POWER
+  APP_THREAD_ThreadX_LowPowerEnable(0);
+#endif // TX_LOW_POWER
+  /* Filling buffer and wait for '\r' char */
+  if (indexReceiveChar < C_SIZE_CMD_STRING)
+  {
+    if (aRxBuffer[0] == '\r')
+    {
+      APP_DBG("received %s", CommandString);
+#ifdef TX_LOW_POWER        
+      APP_THREAD_ThreadX_LowPowerEnable(1);
+#endif // TX_LOW_POWER
+      UartCmdExecute();
+
+      /* Clear receive buffer and character counter*/
+      indexReceiveChar = 0;
+      memset(CommandString, 0, C_SIZE_CMD_STRING);
+    }
+    else
+    {
+      CommandString[indexReceiveChar++] = aRxBuffer[0];
+    }
+  }
+
+  /* Once a character has been sent, put back the device in reception mode */
+  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void UartCmdExecute(void)
+{
+  /* Parse received CommandString */
+  if(strcmp((char const*)CommandString, "SW1") == 0)
+  {
+    APP_DBG("SW1 OK");
+    exti_handle.Line = EXTI_LINE_4;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW2") == 0)
+  {
+    APP_DBG("SW2 OK");
+    exti_handle.Line = EXTI_LINE_0;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW3") == 0)
+  {
+    APP_DBG("SW3 OK");
+    exti_handle.Line = EXTI_LINE_1;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else
+  {
+    APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
   }
 }
 /* USER CODE END FD_WRAP_FUNCTIONS */

@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-#if   defined ( __CC_ARM )
+#if   defined ( __CC_ARM )||defined (__ARMCC_VERSION)
  #define __ASM            __asm                                      /*!< asm keyword for ARM Compiler          */
  #define __INLINE         __inline                                   /*!< inline keyword for ARM Compiler       */
  #define __STATIC_INLINE  static __inline

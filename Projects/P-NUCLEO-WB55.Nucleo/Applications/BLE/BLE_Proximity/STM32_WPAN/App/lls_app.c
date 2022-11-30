@@ -52,7 +52,7 @@
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static uint8_t AlertLevel;
+static uint8_t AlertLevel;
 
 /**
  * END of Section BLE_APP_CONTEXT
@@ -103,8 +103,11 @@ void LLS_App_Notification(LLS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("Connected with NO ALERT\n");
         BSP_LED_Off(LED_RED);
+        APP_DBG_MSG("LED RED OFF\n");
         BSP_LED_Off(LED_BLUE);
+        APP_DBG_MSG("LED BLUE OFF\n");        
         BSP_LED_On(LED_GREEN);
+        APP_DBG_MSG("LED GREEN ON\n");
       }
       break;
 
@@ -114,22 +117,31 @@ void LLS_App_Notification(LLS_App_Notification_evt_t *pNotification)
         {
           BLE_DBG_APP_MSG("Disconnected with NO ALERT\n");
           BSP_LED_Off(LED_RED);
+          APP_DBG_MSG("LED RED OFF\n");
           BSP_LED_Off(LED_BLUE);
+          APP_DBG_MSG("LED_BLUE OFF\n");
           BSP_LED_Off(LED_GREEN);
+          APP_DBG_MSG("LED GREEN OFF\n");
         }
         else if(AlertLevel == LLS_MID_ALERT_EVT)
         {
           BLE_DBG_APP_MSG("Disconnected with MILD ALERT\n");
           BSP_LED_Off(LED_RED);
+          APP_DBG_MSG("LED RED OFF\n");
           BSP_LED_On(LED_BLUE);
+          APP_DBG_MSG("LED BLUE ON\n");
           BSP_LED_Off(LED_GREEN);
+          APP_DBG_MSG("LED GREEN OFF\n");
         }
         else
         {
           BLE_DBG_APP_MSG("Disconnected with HIGH ALERT\n");
           BSP_LED_On(LED_RED);
+          APP_DBG_MSG("LED RED ON\n");
           BSP_LED_Off(LED_BLUE);
+          APP_DBG_MSG("LED_BLUE OFF\n");
           BSP_LED_Off(LED_GREEN);
+          APP_DBG_MSG("LED GREEN OFF\n");
         }
       }
       break;

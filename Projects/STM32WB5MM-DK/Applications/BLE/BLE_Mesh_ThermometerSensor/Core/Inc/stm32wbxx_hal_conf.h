@@ -123,7 +123,7 @@
   * @brief Internal Low Speed oscillator (LSI1) value.
   */
 #if !defined  (LSI1_VALUE) 
- #define LSI1_VALUE  ((uint32_t)32000)       /*!< LSI1 Typical Value in Hz*/
+  #define LSI1_VALUE  ((uint32_t)32000)       /*!< LSI1 Typical Value in Hz*/
 #endif /* LSI1_VALUE */                      /*!< Value of the Internal Low Speed oscillator in Hz
                                              The real value may vary depending on the variations
                                              in voltage and temperature.*/
@@ -131,7 +131,7 @@
   * @brief Internal Low Speed oscillator (LSI2) value.
   */
 #if !defined  (LSI2_VALUE) 
- #define LSI2_VALUE  ((uint32_t)32000)       /*!< LSI2 Typical Value in Hz*/
+  #define LSI2_VALUE  ((uint32_t)32000)       /*!< LSI2 Typical Value in Hz*/
 #endif /* LSI2_VALUE */                      /*!< Value of the Internal Low Speed oscillator in Hz
                                              The real value may vary depending on the variations
                                              in voltage and temperature.*/
@@ -141,7 +141,7 @@
   *        This value is used by the UART, RTC HAL module to compute the system frequency
   */
 #if !defined  (LSE_VALUE)
-  #define LSE_VALUE    ((uint32_t)32768) /*!< Value of the External oscillator in Hz*/
+  #define LSE_VALUE    32774U /*!< Value of the External oscillator in Hz*/
 #endif /* LSE_VALUE */
 
 /**

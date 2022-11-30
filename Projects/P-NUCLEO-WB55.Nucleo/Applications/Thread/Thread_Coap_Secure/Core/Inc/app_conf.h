@@ -288,8 +288,9 @@ typedef enum
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
   /* USER CODE BEGIN CFG_IdleTask_Id_t */
-  CFG_TASK_PROVISIONING,
-  CFG_TASK_SEND_COAP_SECURE,
+  CFG_TASK_BUTTON_SW1,
+  CFG_TASK_BUTTON_SW2,
+  CFG_TASK_BUTTON_SW3,
   /* USER CODE END CFG_IdleTask_Id_t */
   CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
@@ -298,8 +299,7 @@ typedef enum
 /*------------------------------------*/
 #define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
 /* USER CODE BEGIN DEFINE_TASK */
-#define TASK_PROVISIONING           (1U << CFG_TASK_PROVISIONING)
-#define TASK_SEND_COAP_SECURE       (1U << CFG_TASK_SEND_COAP_SECURE)
+
 /* USER CODE END DEFINE_TASK */
 
 /**

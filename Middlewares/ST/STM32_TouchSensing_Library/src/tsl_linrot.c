@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 20020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -600,8 +599,11 @@ TSL_Status_enum_T TSL_linrot_CalcPos(void)
   position_correction = THIS_POS_CORR;
 
   // Calculates: [ Sector_Size x ( Major / (Major + Minor) ) ]
-  sector_computation = major * sector_computation;
-  sector_computation = sector_computation / (major + minor);
+  if ((major + minor) != 0)
+  {
+    sector_computation = major * sector_computation;
+    sector_computation = sector_computation / (major + minor);
+  }
 
   // Use the sign bit from position table to define the interpretation direction.
   // The NewPosition is multiplied by 2 because the Offset stored in the ROM
@@ -2085,5 +2087,3 @@ TSL_tDelta_T TSL_linrot_NormDelta(TSL_ChannelData_T *ch, TSL_tIndex_T idx)
 
 #endif
 // #if TSLPRM_TOTAL_LNRTS > 0
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

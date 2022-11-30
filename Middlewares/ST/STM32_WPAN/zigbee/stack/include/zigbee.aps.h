@@ -1,8 +1,9 @@
 /**
  * @file zigbee.aps.h
+ * @heading APS Layer
  * @brief APS header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_APS_H
@@ -306,34 +307,6 @@ enum ZbApsmeIbAttrIdT {
     ZB_APS_IB_ID_FRAGMENTATION_THRESH /**< apsFragmentationThresh - Fragmentation Threshold */
 };
 
-/** APSME-GET.request */
-struct ZbApsmeGetReqT {
-    enum ZbApsmeIbAttrIdT attrId; /**< AIBAttribute */
-    void *attr; /**< Pointer to attribute */
-    unsigned int attrLength; /**< AIBAttributeLength  */
-    unsigned int attrIndex; /** Index of the attribute */
-};
-
-/** APSME-GET.confirm */
-struct ZbApsmeGetConfT {
-    enum ZbStatusCodeT status; /**< Status */
-    enum ZbApsmeIbAttrIdT attrId; /**< AIBAttribute */
-};
-
-/** APSME-SET.request */
-struct ZbApsmeSetReqT {
-    enum ZbApsmeIbAttrIdT attrId; /**< AIBAttribute */
-    const void *attr; /**< Pointer to attribute */
-    unsigned int attrLength; /**< AIBAttributeLength */
-    unsigned int attrIndex; /**< AIBAttributeValue */
-};
-
-/** APSME-SET.confirm */
-struct ZbApsmeSetConfT {
-    enum ZbStatusCodeT status; /**< Status */
-    enum ZbApsmeIbAttrIdT attrId; /**< AIBAttribute */
-};
-
 /** APSME-BIND.request */
 struct ZbApsmeBindReqT {
     uint64_t srcExtAddr; /**< SrcAddr */
@@ -462,26 +435,6 @@ struct ZbApsmeGroupT {
 };
 
 /**
- * Perform an APSME-GET.request.
- * The confirm message is returned via the getConfPtr parameter.
- * @param zb Zigbee stack instance
- * @param getReqPtr APSME-GET.request
- * @param getConfPtr APSME-GET.confirm
- * @return Returns void
- */
-void ZbApsmeGetReq(struct ZigBeeT *zb, struct ZbApsmeGetReqT *getReqPtr, struct ZbApsmeGetConfT *getConfPtr);
-
-/**
- * Perform an APSME-SET.request.
- * The confirm message is returned via the setConfPtr parameter.
- * @param zb Zigbee stack instance
- * @param setReqPtr APSME-SET.request
- * @param setConfPtr APSME-SET.confirm
- * @return Returns void
- */
-void ZbApsmeSetReq(struct ZigBeeT *zb, struct ZbApsmeSetReqT *setReqPtr, struct ZbApsmeSetConfT *setConfPtr);
-
-/**
  * Add an entry to the stack's binding table.
  * The size of the binding table is determined in the tableSizes parameter to ZbInit().
  * The binding table is maintained by the stack.
@@ -606,35 +559,6 @@ bool ZbApsmeEndpointClusterListAppend(struct ZigBeeT *zb, uint8_t endpoint,
  */
 bool ZbApsmeEndpointClusterListRemove(struct ZigBeeT *zb, uint8_t endpoint,
     uint16_t cluster_id, bool is_input);
-
-/**
- * Determine if a cluster is present on the specified endpoint
- * @param zb Zigbee stack instance
- * @param endpoint endpoint
- * @param cluster_id ID of cluster to be checked
- * @param is_input true if input cluster, false if output cluster
- * @return Returns true on success, false otherwise
- */
-bool ZbApsmeEndpointClusterPresent(struct ZigBeeT *zb, uint8_t endpoint,
-    uint16_t cluster_id, bool is_input);
-
-/**
- * Determine the number of input clusters.
- * Typically used with server clusters.
- * @param zb Zigbee stack instance
- * @param endpoint endpoint
- * @return Returns the number of input clusters
- */
-uint8_t ZbApsmeEndpointClusterListInputNum(struct ZigBeeT *zb, uint8_t endpoint);
-
-/**
- * Determine the number of output clusters.
- * Typically client clusters.
- * @param zb Zigbee stack instance
- * @param endpoint endpoint
- * @return Returns the number of output clusters
- */
-uint8_t ZbApsmeEndpointClusterListOutputNum(struct ZigBeeT *zb, uint8_t endpoint);
 
 /**
  * Determine if an endpoint currently exists.
@@ -1050,9 +974,8 @@ void ZbApsmeRemoveKeyReq(struct ZigBeeT *zb, struct ZbApsmeRemoveKeyReqT *req, s
 
 /**
  * Create an APSDE-DATA.indication filter for a specific endpoint, with no specific cluster
- * being filtered.
- * For any incoming APS data packets that match this filter, the provided
- * 'callback' function will be called.
+ * being filtered. For any incoming APS data packets that match this filter, the provided
+ * 'callback' function will be called. Filter is freed by calling ZbApsFilterEndpointFree.
  * @param zb Zigbee instance
  * @param endpoint Endpoint Id to match with incoming packets
  * @param profileId Profile Id to match with incoming packets
@@ -1065,9 +988,8 @@ struct ZbApsFilterT * ZbApsFilterEndpointAdd(struct ZigBeeT *zb, uint8_t endpoin
 
 /**
  * Create an APSDE-DATA.indication filter for a specific endpoint and cluster Id.
- * being filtered.
- * For any incoming APS data packets that match this filter, the provided
- * 'callback' function will be called.
+ * being filtered. For any incoming APS data packets that match this filter, the provided
+ * 'callback' function will be called. Filter is freed by calling ZbApsFilterEndpointFree.
  * @param zb Zigbee instance
  * @param endpoint Endpoint Id to match with incoming packets
  * @param clusterId Cluster Id to match with incoming packets
@@ -1089,34 +1011,41 @@ struct ZbApsFilterT * ZbApsFilterClusterAdd(struct ZigBeeT *zb, uint8_t endpoint
 void ZbApsFilterEndpointFree(struct ZigBeeT *zb, struct ZbApsFilterT *filter);
 
 /*---------------------------------------------------------------
- * Helper Functions
+ * APSME-GET.request / APSME-SET.request
  *---------------------------------------------------------------
  */
-
 /* ZbApsGet and ZbApsSet return the confirm status byte (SUCCESS == 0x00) */
 #define ZbApsGet(_zb_, _id_, _ptr_, _sz_) ZbApsGetIndex(_zb_, _id_, _ptr_, _sz_, 0)
 #define ZbApsSet(_zb_, _id_, _ptr_, _sz_) ZbApsSetIndex(_zb_, _id_, _ptr_, _sz_, 0)
 
 /**
- * Retrieve the value of the attribute corresponding to the supplied index.
+ * Performs an APSME-GET.request. Retrieve the value of the attribute
+ * corresponding to the supplied index.
  * @param zb Zigbee stack instance
  * @param attrId Attribute Id
  * @param attrPtr Attribute pointer
  * @param attrSz attribute size
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-enum ZbStatusCodeT ZbApsGetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId, void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
+enum ZbStatusCodeT ZbApsGetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId,
+    void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
 
 /**
- * Set the value of the attribute corresponding to the supplied index.
+ * Performs an APSME-SET.request. Set the value of the attribute
+ * corresponding to the supplied index.
  * @param zb Zigbee stack instance
  * @param attrId Attribute Id
  * @param attrPtr Attribute pointer
  * @param attrSz attribute size
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-enum ZbStatusCodeT ZbApsSetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId, const void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
+enum ZbStatusCodeT ZbApsSetIndex(struct ZigBeeT *zb, enum ZbApsmeIbAttrIdT attrId,
+    const void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
 
+/*---------------------------------------------------------------
+ * Helper Functions
+ *---------------------------------------------------------------
+ */
 /**
  * Check if the local device is a member of a specified group.
  * @param zb Zigbee stack instance

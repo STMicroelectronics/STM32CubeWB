@@ -29,6 +29,13 @@
 /******************************************************************************
  * Application Config
  ******************************************************************************/
+/**
+ * Define list of reboot reason
+ */
+#define CFG_REBOOT_ON_FW_APP          (0x00)
+#define CFG_REBOOT_ON_THREAD_OTA_APP  (0x01)
+#define CFG_REBOOT_ON_CPU2_UPGRADE    (0x02)
+
 /******************************************************************************
  * Transport Layer
  ******************************************************************************/
@@ -311,6 +318,7 @@ typedef enum
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
   /* USER CODE BEGIN CFG_IdleTask_Id_t */
   CFG_TASK_BUTTON_SW1,
+  CFG_TASK_BUTTON_SW3,
   /* USER CODE END CFG_IdleTask_Id_t */
   CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;

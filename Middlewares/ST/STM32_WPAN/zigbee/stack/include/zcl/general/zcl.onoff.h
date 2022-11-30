@@ -8,7 +8,7 @@
  * @brief ZCL OnOff cluster header
  * ZCL 7 section 3.8
  * ZCL 8 section 3.8
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ONOFF_H
@@ -86,15 +86,15 @@ enum ZbZclOnOffCmdT {
 struct ZbZclOnOffServerCallbacksT {
     enum ZclStatusCodeT (*off)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of an Off command. The application is expected to
-    * update ZCL_ONOFF_ATTR_ONOFF. */
+     * update ZCL_ONOFF_ATTR_ONOFF. */
 
     enum ZclStatusCodeT (*on)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of an On command. The application is expected to
-    * update ZCL_ONOFF_ATTR_ONOFF. */
+     * update ZCL_ONOFF_ATTR_ONOFF. */
 
     enum ZclStatusCodeT (*toggle)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of a Toggle command. The application is expected to
-    * update ZCL_ONOFF_ATTR_ONOFF. */
+     * update ZCL_ONOFF_ATTR_ONOFF. */
 };
 
 /**

@@ -24,7 +24,7 @@
 
 #define HCI_EVENT_TABLE_SIZE 6
 #define HCI_LE_EVENT_TABLE_SIZE 16
-#define HCI_VS_EVENT_TABLE_SIZE 51
+#define HCI_VS_EVENT_TABLE_SIZE 53
 
 typedef struct
 {
@@ -596,10 +596,10 @@ void hci_le_phy_update_complete_event( uint8_t Status,
  * @param Address Public Device Address, Random Device Address, Public Identity
  *        Address, or Random (static) Identity Address of the advertising
  *        device.
- * @param Primary_PHY Primary advetising PHY.
+ * @param Primary_PHY Primary advertising PHY.
  *        Values:
  *        - 0x01: Advertiser PHY is LE 1M
- * @param Secondary_PHY Secondary advetising PHY.
+ * @param Secondary_PHY Secondary advertising PHY.
  *        Values:
  *        - 0x00: No packets on the secondary advertising physical channel
  *        - 0x01: Advertiser PHY is LE 1M
@@ -893,7 +893,7 @@ void aci_gap_numeric_comparison_value_event( uint16_t Connection_Handle,
 /**
  * @brief ACI_GAP_KEYPRESS_NOTIFICATION_EVENT
  * This event is sent only during SC Pairing, when Keypress Notifications are
- * supported, in order to show the input type signalled by the peer device,
+ * supported, in order to show the input type signaled by the peer device,
  * having Keyboard only I/O capabilities. When this event is received, no
  * action is required to the User.
  * 
@@ -920,9 +920,13 @@ void aci_gap_keypress_notification_event( uint16_t Connection_Handle,
  * - write long characteristic value
  * - reliable write.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the attribute that was modified.
  * @param Offset Bits 14-0: offset from which the write has been performed by
  *        the peer device. Bit 15 is used as flag: when set to 1 it indicates
@@ -946,14 +950,18 @@ void aci_gatt_attribute_modified_event( uint16_t Connection_Handle,
  * disruption in the communication link or a mistake in the application which
  * does not provide a reply to GATT procedures. After this event, the GATT
  * channel is closed and no more GATT communication can be performed. The
- * applications is exptected to issue an ACI_GAP_TERMINATE to disconnect from
- * the peer device. It is important to leave an 100 ms blank window before
- * sending the ACI_GAP_TERMINATE, since immediately after this event, system
- * could save important information in non volatile memory.
+ * application is expected to issue an ACI_GAP_TERMINATE to disconnect from the
+ * peer device. It is important to leave a 100 ms blank window before sending
+ * the ACI_GAP_TERMINATE, since immediately after this event, system could save
+ * important information in non-volatile memory.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @return None
  */
 void aci_gatt_proc_timeout_event( uint16_t Connection_Handle );
@@ -978,9 +986,13 @@ void aci_att_exchange_mtu_resp_event( uint16_t Connection_Handle,
  * ACI_ATT_FIND_INFO_REQ and Find Information Response in Bluetooth Core spec.
  * This event is also generated in response to ACI_GATT_DISC_ALL_CHAR_DESC
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Format Format of the hanndle-uuid pairs
  * @param Event_Data_Length Length of Handle_UUID_Pair in octets
  * @param Handle_UUID_Pair A sequence of handle-uuid pairs. if format=1, each
@@ -997,9 +1009,13 @@ void aci_att_find_info_resp_event( uint16_t Connection_Handle,
  * @brief ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT
  * This event is generated in response to a ACI_ATT_FIND_BY_TYPE_VALUE_REQ
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Num_of_Handle_Pair Number of attribute, group handle pairs
  * @param Attribute_Group_Handle_Pair See @ref Attribute_Group_Handle_Pair_t
  * @return None
@@ -1013,9 +1029,13 @@ void aci_att_find_by_type_value_resp_event( uint16_t Connection_Handle,
  * This event is generated in response to a ACI_ATT_READ_BY_TYPE_REQ. See
  * ACI_GATT_FIND_INCLUDED_SERVICES and ACI_GATT_DISC_ALL_CHAR_DESC.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Handle_Value_Pair_Length The size of each attribute handle-value pair
  * @param Data_Length Length of Handle_Value_Pair_Data in octets
  * @param Handle_Value_Pair_Data Attribute Data List as defined in Bluetooth
@@ -1033,9 +1053,13 @@ void aci_att_read_by_type_resp_event( uint16_t Connection_Handle,
  * This event is generated in response to a Read Request. See
  * ACI_GATT_READ_CHAR_VALUE.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Event_Data_Length Length of following data
  * @param Attribute_Value The value of the attribute.
  * @return None
@@ -1049,9 +1073,13 @@ void aci_att_read_resp_event( uint16_t Connection_Handle,
  * This event can be generated during a read long characteristic value
  * procedure. See ACI_GATT_READ_LONG_CHAR_VALUE.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Event_Data_Length Length of following data
  * @param Attribute_Value Part of the attribute value.
  * @return None
@@ -1062,11 +1090,16 @@ void aci_att_read_blob_resp_event( uint16_t Connection_Handle,
 
 /**
  * @brief ACI_ATT_READ_MULTIPLE_RESP_EVENT
- * This event is generated in response to a Read Multiple Request.
+ * This event is generated in response to a Read Multiple Characteristic Values
+ * Request or a Read Multiple Variable Length Characteristic Values Request.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Event_Data_Length Length of following data
  * @param Set_Of_Values A set of two or more values.
  *        A concatenation of attribute values for each of the attribute handles
@@ -1082,9 +1115,13 @@ void aci_att_read_multiple_resp_event( uint16_t Connection_Handle,
  * This event is generated in response to a Read By Group Type Request. See
  * ACI_GATT_DISC_ALL_PRIMARY_SERVICES.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Data_Length The size of each attribute data
  * @param Data_Length Length of Attribute_Data_List in octets
  * @param Attribute_Data_List Attribute Data List as defined in Bluetooth Core
@@ -1102,9 +1139,13 @@ void aci_att_read_by_group_type_resp_event( uint16_t Connection_Handle,
  * @brief ACI_ATT_PREPARE_WRITE_RESP_EVENT
  * This event is generated in response to a ACI_ATT_PREPARE_WRITE_REQ.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Handle The handle of the attribute to be written
  * @param Offset The offset of the first octet to be written.
  * @param Part_Attribute_Value_Length Length of Part_Attribute_Value in octets
@@ -1121,9 +1162,13 @@ void aci_att_prepare_write_resp_event( uint16_t Connection_Handle,
  * @brief ACI_ATT_EXEC_WRITE_RESP_EVENT
  * This event is generated in response to an Execute Write Request.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @return None
  */
 void aci_att_exec_write_resp_event( uint16_t Connection_Handle );
@@ -1167,9 +1212,13 @@ void aci_gatt_notification_event( uint16_t Connection_Handle,
  * This event is generated when a GATT client procedure completes either with
  * error or successfully.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Error_Code Indicates whether the procedure completed with an error or
  *        was successful (see "Status error codes" section)
  * @return None
@@ -1184,9 +1233,13 @@ void aci_gatt_proc_complete_event( uint16_t Connection_Handle,
  * discovery procedures. This does not mean that the procedure ended with an
  * error, but this error event is part of the procedure itself.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Req_Opcode The request that generated this error response
  * @param Attribute_Handle The attribute handle that generated this error
  *        response
@@ -1226,9 +1279,13 @@ void aci_gatt_error_resp_event( uint16_t Connection_Handle,
  * UUID" has been started. It will be the value of the Characteristic if a*
  * "Read using Characteristic UUID" has been performed.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Handle The handle of the attribute
  * @param Attribute_Value_Length Length of Attribute_Value in octets
  * @param Attribute_Value The attribute value will be a service declaration as
@@ -1261,9 +1318,13 @@ void aci_gatt_disc_read_char_by_uuid_resp_event( uint16_t Connection_Handle,
  * In case of write/signed write commands, no response is sent to the client
  * but the attribute is not modified.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Handle The handle of the attribute
  * @param Data_Length Length of Data field
  * @param Data The data that the client has requested to write
@@ -1284,9 +1345,13 @@ void aci_gatt_write_permit_req_event( uint16_t Connection_Handle,
  * if it desires and when done, it must send the ACI_GATT_ALLOW_READ command to
  * indicate to the stack that it can send the response to the client.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Handle The handle of the attribute
  * @param Offset Contains the offset from which the read has been requested
  * @return None
@@ -1306,9 +1371,13 @@ void aci_gatt_read_permit_req_event( uint16_t Connection_Handle,
  * command to indicate to the stack that it can send the response to the
  * client.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Handle_Item See @ref Handle_Item_t
  * @return None
  */
@@ -1323,10 +1392,8 @@ void aci_gatt_read_multi_permit_req_event( uint16_t Connection_Handle,
  * there are at least two buffers available for notifications or write
  * commands.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
- *        Values:
- *        - 0x0000 ... 0x0EFF
- * @param Available_Buffers Number of buffers available
+ * @param Connection_Handle Not used.
+ * @param Available_Buffers Number of buffers available.
  * @return None
  */
 void aci_gatt_tx_pool_available_event( uint16_t Connection_Handle,
@@ -1358,9 +1425,13 @@ void aci_gatt_server_confirmation_event( uint16_t Connection_Handle );
  * will not be modified and an error response will be sent to the client, with
  * the error code as specified by the application.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Handle The handle of the attribute
  * @param Offset The offset from which the prepare write has been requested
  * @param Data_Length Length of Data field
@@ -1374,6 +1445,49 @@ void aci_gatt_prepare_write_permit_req_event( uint16_t Connection_Handle,
                                               const uint8_t* Data );
 
 /**
+ * @brief ACI_GATT_EATT_BEARER_EVENT
+ * This event informs the application of a change in status of the Enhanced ATT
+ * bearer handled by the specified L2CAP channel.
+ * 
+ * @param Channel_Index Index of the connection-oriented channel for which the
+ *        primitive applies.
+ * @param EAB_State Enhanced ATT bearer state.
+ *        Values:
+ *        - 0x00: Enhanced ATT bearer created
+ *        - 0x01: Enhanced ATT bearer terminated
+ * @param Status Status error code.
+ * @return None
+ */
+void aci_gatt_eatt_bearer_event( uint8_t Channel_Index,
+                                 uint8_t EAB_State,
+                                 uint8_t Status );
+
+/**
+ * @brief ACI_GATT_MULT_NOTIFICATION_EVENT
+ * This event is generated when a Multiple Handle Value notification is
+ * received from the server.
+ * 
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
+ * @param Offset Bits 14-0: offset in octets from which Attribute_Value data
+ *        starts. Bit 15 is used as flag: when set to 1 it indicates that more
+ *        data are to come (fragmented event in case of long attribute data).
+ * @param Data_Length Length of Data in bytes
+ * @param Data List of "Handle Length Value" tuples as defined in Bluetooth
+ *        Core specification
+ * @return None
+ */
+void aci_gatt_mult_notification_event( uint16_t Connection_Handle,
+                                       uint16_t Offset,
+                                       uint16_t Data_Length,
+                                       const uint8_t* Data );
+
+/**
  * @brief ACI_GATT_READ_EXT_EVENT
  * When it is enabled with ACI_GATT_SET_EVENT_MASK, this event is generated
  * instead of ACI_ATT_READ_RESP_EVENT / ACI_ATT_READ_BLOB_RESP_EVENT /
@@ -1382,9 +1496,13 @@ void aci_gatt_prepare_write_permit_req_event( uint16_t Connection_Handle,
  * (BLE_EVT_MAX_PARAM_LEN - 4) i.e. ATT_MTU > 251 for BLE_EVT_MAX_PARAM_LEN
  * default value.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Offset Bits 14-0: offset in octets from which Attribute_Value data
  *        starts. Bit 15 is used as flag: when set to 1 it indicates that more
  *        data are to come (fragmented event in case of long attribute data).
@@ -1432,9 +1550,13 @@ void aci_gatt_indication_ext_event( uint16_t Connection_Handle,
  * ATT_MTU > (BLE_EVT_MAX_PARAM_LEN - 4) i.e. ATT_MTU > 251 for
  * BLE_EVT_MAX_PARAM_LEN default value.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Handle The handle of the attribute
  * @param Offset Bits 14-0: offset in octets from which Attribute_Value data
  *        starts. Bit 15 is used as flag: when set to 1 it indicates that more
@@ -1737,7 +1859,7 @@ void aci_l2cap_coc_tx_pool_available_event( void );
  * Information provided includes type of radio activity and absolute time in
  * system ticks when a new radio activity is schedule, if any. Application can
  * use this information to schedule user activities synchronous to selected
- * radio activitities. A command ACI_HAL_SET_RADIO_ACTIVITY_MASK is provided to
+ * radio activities. A command ACI_HAL_SET_RADIO_ACTIVITY_MASK is provided to
  * enable radio activity events of user interests, by default no events are
  * enabled.
  * User should take into account that enabling radio events in application with

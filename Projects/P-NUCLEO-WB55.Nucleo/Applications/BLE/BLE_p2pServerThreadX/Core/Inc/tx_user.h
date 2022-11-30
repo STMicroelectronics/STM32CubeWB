@@ -149,7 +149,7 @@
    enabled. If the application does not use notify callbacks, they may be disabled to reduce
    code size and improve performance.  */
 
-#define TX_DISABLE_NOTIFY_CALLBACKS
+/* #define TX_DISABLE_NOTIFY_CALLBACKS */
 
 /* Determine if the tx_thread_resume and tx_thread_suspend services should have their internal
    code in-line. This results in a larger image, but improves the performance of the thread
@@ -166,7 +166,7 @@
    code size and overhead, but provides the ability to generate system trace information which
    is available for viewing in TraceX.  */
 
-/*#define TX_ENABLE_EVENT_TRACE*/
+#define TX_ENABLE_EVENT_TRACE
 
 /* Determine if block pool performance gathering is required by the application. When the following is
    defined, ThreadX gathers various block pool performance information. */

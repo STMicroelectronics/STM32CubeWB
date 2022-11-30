@@ -72,7 +72,7 @@
    beginning of the NVM (shall be within  allocation range of scatterfile)
  
    ST_PERSIST_MAX_ALLOC_SZ : max size of the RAM cache in bytes
-                             either an abitrary choice or the CFG_NVM_MAX_SIZE
+                             either an arbitrary choice or the CFG_NVM_MAX_SIZE
 
    ST_PERSIST_FLASH_DATA_OFFSET : offset in bytes of zigbee data
    (U8[4] for length  - 1st data[]...)

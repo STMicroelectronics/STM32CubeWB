@@ -45,7 +45,7 @@ typedef enum
 
 /* Private variables ---------------------------------------------------------*/
 
-PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static MotenvContext_t aMotenvContext;
+static MotenvContext_t aMotenvContext;
 
 /* Private function prototypes -----------------------------------------------*/
 static SVCCTL_EvtAckStatus_t Motenv_Event_Handler(void *pckt);

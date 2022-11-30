@@ -291,7 +291,7 @@ Either use 0 to disable or 1 to enable
 //#define ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP 
 
 /******* Define the following Macros to enable the vendor model  ******/
-//#define ENABLE_VENDOR_MODEL_SERVER                                           (1)
+#define ENABLE_VENDOR_MODEL_SERVER                                           (1)
 #define GENERIC_SERVER_MODEL_PUBLISH  
 
 /******************************************************************************/

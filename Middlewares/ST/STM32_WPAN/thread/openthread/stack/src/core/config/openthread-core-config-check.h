@@ -614,4 +614,22 @@
 #error "OPENTHREAD_CONFIG_LOG_PREPEND_REGION was removed and not longer supported"
 #endif
 
+#ifdef OPENTHREAD_CONFIG_SRP_SERVER_MAX_ADDRESSES_NUM
+#error "OPENTHREAD_CONFIG_SRP_SERVER_MAX_ADDRESSES_NUM was removed. "\
+       "SRP host uses dynamic heap array to store addresses so no need for config on max number of addresses".
+#endif
+
+#ifdef OPENTHREAD_CONFIG_PLATFORM_CSL_UNCERT
+#error "OPENTHREAD_CONFIG_PLATFORM_CSL_UNCERT was removed and no longer supported"
+#endif
+
+#ifdef OPENTHREAD_CONFIG_BORDER_ROUTING_VICARIOUS_RS_ENABLE
+#error "OPENTHREAD_CONFIG_BORDER_ROUTING_VICARIOUS_RS_ENABLE was removed and no longer supported"
+#endif
+
+#ifdef OPENTHREAD_CONFIG_SRP_CLIENT_UPDATE_TX_DELAY
+#error "OPENTHREAD_CONFIG_SRP_CLIENT_UPDATE_TX_DELAY was replaced with "\
+        "OPENTHREAD_CONFIG_SRP_CLIENT_UPDATE_TX_MIN_DELAY and OPENTHREAD_CONFIG_SRP_CLIENT_UPDATE_TX_MAX_DELAY"
+#endif
+
 #endif // OPENTHREAD_CORE_CONFIG_CHECK_H_

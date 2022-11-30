@@ -26,7 +26,7 @@
 /*  PORT SPECIFIC C INFORMATION                            RELEASE        */
 /*                                                                        */
 /*    tx_port.h                                         Cortex-M23/IAR    */
-/*                                                           6.1.9        */
+/*                                                           6.1.12       */
 /*                                                                        */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -55,9 +55,16 @@
 /*                                            conditional compilation     */
 /*                                            for ARMv8-M (Cortex M23/33) */
 /*                                            resulting in version 6.1.7  */
-/*  10-15-2021     Scott Larson             Modified comment(s), improved */
+/*  10-15-2021      Scott Larson            Modified comment(s), improved */
 /*                                            stack check error handling, */
 /*                                            resulting in version 6.1.9  */
+/*  04-25-2022      Scott Larson            Modified comments and added   */
+/*                                            volatile to registers,      */
+/*                                            resulting in version 6.1.11 */
+/*  07-29-2022      Scott Larson            Modified comments and changed */
+/*                                            secure stack initialization */
+/*                                            macro to port-specific,     */
+/*                                            resulting in version 6.1.12 */
 /*                                                                        */
 /**************************************************************************/
 
@@ -178,14 +185,14 @@ UINT    _tx_thread_secure_stack_free(struct TX_THREAD_STRUCT *tx_thread);
    For example, if the time source is at the address 0x0a800024 and is 16-bits in size, the clock 
    source constants would be:
 
-#define TX_TRACE_TIME_SOURCE                    *((ULONG *) 0x0a800024)
+#define TX_TRACE_TIME_SOURCE                    *((volatile ULONG *) 0x0a800024)
 #define TX_TRACE_TIME_MASK                      0x0000FFFFUL
 
 */
 
 #ifndef TX_MISRA_ENABLE
 #ifndef TX_TRACE_TIME_SOURCE
-#define TX_TRACE_TIME_SOURCE                    *((ULONG *) 0xE0001004)
+#define TX_TRACE_TIME_SOURCE                    *((volatile ULONG *) 0xE0001004)
 #endif
 #else
 ULONG   _tx_misra_time_stamp_get(VOID);
@@ -363,7 +370,7 @@ ULONG   _tx_misra_ipsr_get(VOID);
 #if !defined(TX_SINGLE_MODE_SECURE) && !defined(TX_SINGLE_MODE_NON_SECURE)
 /* Initialize secure stacks for threads calling secure functions. */
 extern void    _tx_thread_secure_stack_initialize(void);
-#define TX_INITIALIZE_KERNEL_ENTER_EXTENSION            _tx_thread_secure_stack_initialize();
+#define TX_PORT_SPECIFIC_PRE_INITIALIZATION             _tx_thread_secure_stack_initialize();
 #endif
 
 /* Define the macro to ensure _tx_thread_preempt_disable is set early in initialization in order to 
@@ -414,7 +421,7 @@ static void _tx_thread_system_return_inline(void)
 __istate_t interrupt_save;
 
     /* Set PendSV to invoke ThreadX scheduler.  */
-    *((ULONG *) 0xE000ED04) = ((ULONG) 0x10000000);
+    *((volatile ULONG *) 0xE000ED04) = ((ULONG) 0x10000000);
     if (__get_IPSR() == 0)
     {
         interrupt_save = __get_interrupt_state();
@@ -430,7 +437,7 @@ __istate_t interrupt_save;
 
 #ifdef TX_THREAD_INIT
 CHAR                            _tx_version_id[] = 
-                                    "Copyright (c) Microsoft Corporation. All rights reserved.  *  ThreadX Cortex-M23/IAR Version 6.1.9 *";
+                                    "Copyright (c) Microsoft Corporation. All rights reserved.  *  ThreadX Cortex-M23/IAR Version 6.1.12 *";
 #else
 #ifdef TX_MISRA_ENABLE
 extern  CHAR                    _tx_version_id[100];

@@ -1,8 +1,9 @@
 /**
  * @file zigbee.hash.h
+ * @heading Hash Utilities
  * @brief ZigBee AES Hash Implementation
  * @author Exegin Technologies
- * @copyright Copyright [2020] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2020 - 2022] Exegin Technologies Limited. All rights reserved.
  *
  * This file defines the Exegin specific ZigBee AES Hash structure and also provides
  * the declaration of Hashing API's. Customers with their own hashing implementation

@@ -35,9 +35,14 @@ After the reset of the 2 boards, one board will be in Leader mode (Green LED2 ON
 The other one will be in Child mode (Red LED3 ON)
  
 Let's name indifferently one board A and one board B. 
-To send a COAP command from board A to board B, press the SW1 Push-Button on board A. 
-The board B will receive the COAP command to light on its blue LED1. 
-Pressing again same push-button will light off the blue LED1. And so-on. 
+
+- press the SW1 Push-Button on board A. 
+To send a COAP command (Non-Confirmable) from board A to board B:
+The board B will receive COAP commands to toggle its blue LED1
+- press the SW2 Push-Button on boad A.
+To send a COAP command (Confirmable) from board A to board B:
+The board B will receive COAP commands and send to board A a Coap Data response and toggle its blue LED1
+
 Same COAP commands can be sent from board B to board A. 
 
   ___________________________                       ___________________________
@@ -45,17 +50,14 @@ Same COAP commands can be sent from board B to board A.
   |_________________________|                       |_________________________|  
   |                         |                       |                         |
   |                         |                       |                         |
-  |        Push Button -->  |======> COAP =========>| BLUE LED TOGGLE (ON/OFF)|
+  |                SW1 -->  |======> COAP =========>| BLUE LED TOGGLE (ON/OFF)|
   |                         | Resource "light"      |                         |
   |                         | Mode: Multicast       |                         |
   |                         | Type: Non-Confirmable |                         |
   |                         | Code: Put             |                         |
   |                         |                       |                         |
   |                         |                       |                         |
-  *************** WAIT 5 Seconds (configurable with WAIT_TIMEOUT) *************
-  |                         |                       |                         |
-  |                         |                       |                         |
-  |                         |=====> COAP ==========>|-------->                |
+  |                SW2 -->  |=====> COAP ==========>|-------->                |
   |                         | Resource "light"      |         |               |
   |                         | Mode: Multicast       |  CoapRequestHandler()   |
   |                         | Type: Confirmable |             |               |
@@ -65,8 +67,8 @@ Same COAP commands can be sent from board B to board A.
   |                         |                       |         |               |
   |                         |                       |         v               |
   | CoapDataRespHandler()<--|<===== COAP <==========| <-------                |
-  |                         |                       |                         |
-  |                         |                       |                         |  |                         |
+  |                         |                       | BLUE LED TOGGLE (ON/OFF)| 
+  |                         |                       |                         |  
   ---------------------------                       ---------------------------
   | Role : Child            |                       | Role : Leader           |
   |                         |                       |                         |

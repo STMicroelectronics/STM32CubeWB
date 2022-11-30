@@ -149,13 +149,13 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static P2P_ClientContext_t aP2PClientContext[BLE_CFG_CLT_MAX_NBR_CB];
+static P2P_ClientContext_t aP2PClientContext[BLE_CFG_CLT_MAX_NBR_CB];
 
 /**
  * END of Section BLE_APP_CONTEXT
  */
 /* USER CODE BEGIN PV */
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static P2P_Client_App_Context_t P2P_Client_App_Context;
+static P2P_Client_App_Context_t P2P_Client_App_Context;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -700,14 +700,14 @@ void Update_Service()
 
         break;
       case APP_BLE_DISCOVER_WRITE_DESC: /* Not Used - No descriptor */
-        APP_DBG_MSG("* GATT : Discover Descriptor of TX - Write Characteritic\n");
+        APP_DBG_MSG("* GATT : Discover Descriptor of TX - Write  Characteristic\n");
         aci_gatt_disc_all_char_desc(aP2PClientContext[index].connHandle,
                                     aP2PClientContext[index].P2PWriteToServerCharHdle,
                                     aP2PClientContext[index].P2PWriteToServerCharHdle+2);
 
         break;
       case APP_BLE_DISCOVER_NOTIFICATION_CHAR_DESC:
-        APP_DBG_MSG("* GATT : Discover Descriptor of Rx - Notification Characteritic\n");
+        APP_DBG_MSG("* GATT : Discover Descriptor of Rx - Notification  Characteristic\n");
         aci_gatt_disc_all_char_desc(aP2PClientContext[index].connHandle,
                                     aP2PClientContext[index].P2PNotificationCharHdle,
                                     aP2PClientContext[index].P2PNotificationCharHdle+2);

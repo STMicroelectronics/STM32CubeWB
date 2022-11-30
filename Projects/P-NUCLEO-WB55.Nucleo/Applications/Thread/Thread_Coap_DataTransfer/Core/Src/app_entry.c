@@ -102,6 +102,19 @@ static void Init_Rtc(void);
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
 static void Button_Init( void );
+/* Section specific to button management using UART */
+static void RxUART_Init(void);
+static void RxCpltCallback(void);
+static void UartCmdExecute(void);
+
+#define C_SIZE_CMD_STRING       256U
+#define RX_BUFFER_SIZE          8U
+
+static uint8_t aRxBuffer[RX_BUFFER_SIZE];
+static uint8_t CommandString[C_SIZE_CMD_STRING];
+static uint16_t indexReceiveChar = 0;
+EXTI_HandleTypeDef exti_handle;
+
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -139,6 +152,7 @@ void MX_APPE_Init(void)
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
   Led_Init();
   Button_Init();
+  RxUART_Init();
 /* USER CODE END APPE_Init_1 */
   appe_Tl_Init();	/* Initialize all transport layers */
 
@@ -486,6 +500,8 @@ static void Button_Init( void )
    */
 
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
 #endif
 
   return;
@@ -643,5 +659,85 @@ void DbgOutputTraces(uint8_t *p_data, uint16_t size, void (*cb)(void))
 #endif /* CFG_DEBUG_TRACE != 0 */
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
+/**
+  * @brief This function manage the Push button action
+  * @param  GPIO_Pin : GPIO pin which has been activated
+  * @retval None
+  */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+   switch (GPIO_Pin) {
+   case BUTTON_SW1_PIN:
+     UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW1,CFG_SCH_PRIO_1); 
+     break;
 
+   case BUTTON_SW2_PIN:
+     UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW2,CFG_SCH_PRIO_1);
+     break;
+
+   case BUTTON_SW3_PIN:
+     UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW3,CFG_SCH_PRIO_1); 
+     break;
+
+   default:
+    break;
+  }
+}
+
+static void RxUART_Init(void)
+{
+  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void RxCpltCallback(void)
+{
+  /* Filling buffer and wait for '\r' char */
+  if (indexReceiveChar < C_SIZE_CMD_STRING)
+  {
+    if (aRxBuffer[0] == '\r')
+    {
+      APP_DBG("received %s", CommandString);
+
+      UartCmdExecute();
+
+      /* Clear receive buffer and character counter*/
+      indexReceiveChar = 0;
+      memset(CommandString, 0, C_SIZE_CMD_STRING);
+    }
+    else
+    {
+      CommandString[indexReceiveChar++] = aRxBuffer[0];
+    }
+  }
+
+  /* Once a character has been sent, put back the device in reception mode */
+  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void UartCmdExecute(void)
+{
+  /* Parse received CommandString */
+  if(strcmp((char const*)CommandString, "SW1") == 0)
+  {
+    APP_DBG("SW1 OK");
+    exti_handle.Line = EXTI_LINE_4;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW2") == 0)
+  {
+    APP_DBG("SW2 OK");
+    exti_handle.Line = EXTI_LINE_0;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW3") == 0)
+  {
+    APP_DBG("SW3 OK");
+    exti_handle.Line = EXTI_LINE_1;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else
+  {
+    APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
+  }
+}
 /* USER CODE END FD_WRAP_FUNCTIONS */

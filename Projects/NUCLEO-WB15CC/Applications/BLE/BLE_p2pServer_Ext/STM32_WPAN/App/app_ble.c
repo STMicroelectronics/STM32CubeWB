@@ -220,8 +220,7 @@ static const uint8_t a_BLE_CfgErValue[16] = CFG_BLE_ERK;
 PLACE_IN_SECTION("TAG_OTA_END") const uint32_t MagicKeywordValue = 0x94448A29 ;
 PLACE_IN_SECTION("TAG_OTA_START") const uint32_t MagicKeywordAddress = (uint32_t)&MagicKeywordValue;
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static uint16_t AdvIntervalMin, AdvIntervalMax;
+static BleApplicationContext_t BleApplicationContext;
 
 P2PS_APP_ConnHandle_Not_evt_t HandleNotification;
 
@@ -305,7 +304,7 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ATT_MTU,
      CFG_BLE_SLAVE_SCA,
      CFG_BLE_MASTER_SCA,
-     CFG_BLE_LSE_SOURCE,
+     CFG_BLE_LS_SOURCE,
      CFG_BLE_MAX_CONN_EVENT_LENGTH,
      CFG_BLE_HSE_STARTUP_TIME,
      CFG_BLE_VITERBI_MODE,
@@ -318,7 +317,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_SET_NBR,
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
-     CFG_BLE_RX_PATH_COMPENS
+     CFG_BLE_RX_PATH_COMPENS,
+     CFG_BLE_CORE_VERSION
     }
   };
 
@@ -422,10 +422,6 @@ void APP_BLE_Init(void)
    */
   BleApplicationContext.BleApplicationContext_legacy.advtServUUID[0] = NULL;
   BleApplicationContext.BleApplicationContext_legacy.advtServUUIDlen = 0;
-
-  /* Initialize intervals for reconnexion without intervals update */
-  AdvIntervalMin = CFG_FAST_CONN_ADV_INTERVAL_MIN;
-  AdvIntervalMax = CFG_FAST_CONN_ADV_INTERVAL_MAX;
 
   /* USER CODE BEGIN APP_BLE_Init_2 */
   ADV_EXT_Config();
@@ -968,6 +964,10 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 #if (BLE_CFG_CENTRAL == 1)
   role |= GAP_CENTRAL_ROLE;
 #endif /* BLE_CFG_CENTRAL == 1 */
+
+/* USER CODE BEGIN Role_Mngt*/
+
+/* USER CODE END Role_Mngt */
 
   if (role > 0)
   {

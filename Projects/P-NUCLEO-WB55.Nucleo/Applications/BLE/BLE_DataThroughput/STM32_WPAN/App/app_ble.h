@@ -55,7 +55,16 @@ extern "C" {
     } APP_BLE_ConnStatus_t;
 
 /* USER CODE BEGIN ET */
-
+typedef struct
+{
+  uint16_t Connection_Handle;
+  uint8_t Identifier;
+  uint16_t L2CAP_Length;
+  uint16_t Interval_Min;
+  uint16_t Interval_Max;
+  uint16_t Slave_Latency;
+  uint16_t Timeout_Multiplier;
+} APP_BLE_Conn_Update_req_t;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -65,7 +74,17 @@ extern "C" {
 
 /* External variables --------------------------------------------------------*/
 /* USER CODE BEGIN EV */
+extern void DTS_Button1TriggerReceived( void );
+extern void DTS_Button2TriggerReceived( void );
+extern void DTS_Button2LongTriggerReceived( void );
+extern void DTS_Button3TriggerReceived( void );
 
+extern void DTC_Button1TriggerReceived( void );
+extern void DTC_Button2TriggerReceived( void );
+extern void DTC_Button3TriggerReceived( void );
+
+extern uint8_t LongPressButton;
+extern uint8_t ButtonEmulCase;
 /* USER CODE END EV */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -76,7 +95,7 @@ extern "C" {
 /* Exported functions ---------------------------------------------*/
 void APP_BLE_Init( void );
 uint8_t APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen );
-void BLE_SVC_L2CAP_Conn_Update_7_5(void);
+void BLE_SVC_L2CAP_Conn_Update_11_25(void);
 /* USER CODE BEGIN EF */
 void APP_BLE_Key_Button1_Action(void);
 void APP_BLE_Key_Button2_Action(void);

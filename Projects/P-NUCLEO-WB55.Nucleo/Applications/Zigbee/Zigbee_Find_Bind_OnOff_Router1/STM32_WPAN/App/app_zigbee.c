@@ -277,7 +277,7 @@ static void APP_ZIGBEE_NwkJoin(void)
         BSP_LED_On(LED_GREEN);
       }
       else {
-        /* No bindings was establised, leave network and try again */
+        /* No bindings was established, leave network and try again */
         struct ZbNlmeLeaveReqT req;
 
         BSP_LED_On(LED_RED);

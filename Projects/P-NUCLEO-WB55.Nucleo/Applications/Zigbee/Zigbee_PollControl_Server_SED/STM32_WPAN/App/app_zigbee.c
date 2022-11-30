@@ -45,7 +45,6 @@
 #define POLL_CONVERT_MS_TO_QS(ms)                   (ms / 250U)
 #define POLL_CONVERT_QS_TO_MS(qs)                   (qs * 250U)
 #define CHECKIN_INTERVAL                            (4*10)   /* 10s */
-#define LONG_POLL_INTERVAL                          (4*5)   /* 5s */
 
 /* external definition */
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
@@ -60,7 +59,7 @@ static void APP_ZIGBEE_SW1_Process(void);
 static void APP_ZIGBEE_PollControl_Server_Init(void);
 static void APP_ZIGBEE_PollControl_Server_ShowAttr(void);
 static void APP_ZIGBEE_PollControl_Server_FillingBindingTable(void);
-static void APP_ZIGBEE_PollControl_Server_CheckinRsp_cb(struct ZbZclClusterT *clusterPtr, struct zcl_poll_checkin_rsp_t *rsp_info, 
+static bool APP_ZIGBEE_PollControl_Server_CheckinRsp_cb(struct ZbZclClusterT *clusterPtr, struct zcl_poll_checkin_rsp_t *rsp_info, 
                                                struct ZbZclAddrInfoT *srcInfo, void *arg);
 static void APP_ZIGBEE_PollControl_FastPoll_End(void);
 
@@ -109,25 +108,35 @@ static uint8_t TS_ID1;
  * @param  arg: passed arguments
  * @retval None
  */
-static void APP_ZIGBEE_PollControl_Server_CheckinRsp_cb(struct ZbZclClusterT *clusterPtr, struct zcl_poll_checkin_rsp_t *rsp_info, 
-                                                        struct ZbZclAddrInfoT *srcInfo, void *arg){
+static bool APP_ZIGBEE_PollControl_Server_CheckinRsp_cb(struct ZbZclClusterT *clusterPtr, struct zcl_poll_checkin_rsp_t *rsp_info, 
+                                                        struct ZbZclAddrInfoT *srcInfo, void *arg)
+{
+  bool l_Error_bl = true;
   
   /* Check response status */                                                        
-  if(rsp_info->status != ZCL_STATUS_SUCCESS){   
+  if(rsp_info->status != ZCL_STATUS_SUCCESS)
+  {   
     APP_DBG("Error, checkin request no successfully handled by Poll Control client.");
-    return;
+    l_Error_bl =  false;
   }
+  else
+  {
+    APP_DBG("[POLL CONTROL] Checkin response received.");
   
-  APP_DBG("[POLL CONTROL] Checkin response received.");
+    if(rsp_info->start_fast_poll)
+    {
+      APP_DBG("[POLL CONTROL] Fast Poll enabled for %d seconds.\n", rsp_info->fast_poll_timeout/4); 
+      BSP_LED_On(LED_GREEN);
+      APP_DBG("GREEN LED ON\n");
+      HW_TS_Start(TS_ID1, POLL_CONVERT_QS_TO_MS(rsp_info->fast_poll_timeout)*HW_TS_SERVER_1MS_NB_TICKS);
+    }
+    else
+    {
+      APP_DBG("[POLL CONTROL] Continue with Long Poll.\n");
+    } 
+  }   
   
-  if(rsp_info->start_fast_poll){
-    APP_DBG("[POLL CONTROL] Fast Poll enabled for %d seconds.\n", rsp_info->fast_poll_timeout/4); 
-    BSP_LED_On(LED_GREEN);
-    APP_DBG("GREEN LED ON\n");
-    HW_TS_Start(TS_ID1, POLL_CONVERT_QS_TO_MS(rsp_info->fast_poll_timeout)*HW_TS_SERVER_1MS_NB_TICKS);
-  } else {
-    APP_DBG("[POLL CONTROL] Continue with Long Poll.\n");
-  }        
+  return l_Error_bl;
 }
 
 /**

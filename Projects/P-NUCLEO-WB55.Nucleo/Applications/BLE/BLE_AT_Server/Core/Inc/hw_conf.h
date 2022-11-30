@@ -1,8 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : hw_conf.h
-  * Description        : Hardware configuration file for STM32WPAN Middleware.
+  * @file    hw_conf.h
+  * @author  MCD Application Team
+  * @brief   Configuration of hardware interface
   ******************************************************************************
   * @attention
   *
@@ -198,6 +199,16 @@
 #define CFG_HW_LPUART1_RX_SPEED                GPIO_SPEED_FREQ_VERY_HIGH
 #define CFG_HW_LPUART1_RX_ALTERNATE            GPIO_AF8_LPUART1
 
+#define CFG_HW_LPUART1_DMA_TX_PREEMPTPRIORITY  0x0F
+#define CFG_HW_LPUART1_DMA_TX_SUBPRIORITY      0
+
+#define CFG_HW_LPUART1_DMAMUX_CLK_ENABLE       __HAL_RCC_DMAMUX1_CLK_ENABLE
+#define CFG_HW_LPUART1_DMA_CLK_ENABLE          __HAL_RCC_DMA1_CLK_ENABLE
+#define CFG_HW_LPUART1_TX_DMA_REQ              DMA_REQUEST_LPUART1_TX
+#define CFG_HW_LPUART1_TX_DMA_CHANNEL          DMA1_Channel4
+#define CFG_HW_LPUART1_TX_DMA_IRQn             DMA1_Channel4_IRQn
+#define CFG_HW_LPUART1_DMA_TX_IRQHandler       DMA1_Channel4_IRQHandler
+
 /**
  * UART1
  */
@@ -232,5 +243,14 @@
 #define CFG_HW_USART1_RX_SPEED                GPIO_SPEED_FREQ_VERY_HIGH
 #define CFG_HW_USART1_RX_ALTERNATE            GPIO_AF7_USART1
 
-#endif /* HW_CONF_H */
+#define CFG_HW_USART1_DMA_TX_PREEMPTPRIORITY  0x0F
+#define CFG_HW_USART1_DMA_TX_SUBPRIORITY      0
 
+#define CFG_HW_USART1_DMAMUX_CLK_ENABLE       __HAL_RCC_DMAMUX1_CLK_ENABLE
+#define CFG_HW_USART1_DMA_CLK_ENABLE          __HAL_RCC_DMA2_CLK_ENABLE
+#define CFG_HW_USART1_TX_DMA_REQ			  DMA_REQUEST_USART1_TX
+#define CFG_HW_USART1_TX_DMA_CHANNEL          DMA2_Channel4
+#define CFG_HW_USART1_TX_DMA_IRQn             DMA2_Channel4_IRQn
+#define CFG_HW_USART1_DMA_TX_IRQHandler       DMA2_Channel4_IRQHandler
+
+#endif /*HW_CONF_H */

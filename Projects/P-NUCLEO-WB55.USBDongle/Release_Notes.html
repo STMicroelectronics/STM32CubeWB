@@ -30,7 +30,7 @@
 <h1 id="purpose">Purpose</h1>
 <p>This directory contains the examples and applications to demonstrate the capabilities of the P-NUCLEO-WB55 Kit.</p>
 <p>Most of those projects are generated with STM32CubeMX tool to initialize the system, peripherals and middleware stacks.</p>
-<p>Several applications are provided ready to use with IAR, KEIL and SW4STM32 to demonstrate the Bluetooth Low Energy, Thread and Mac 802-15-4 capabilities of the device.</p>
+<p>Several applications are provided ready to use with IAR©, KEIL© and STM32CubeIDE© to demonstrate the Bluetooth Low Energy, Thread and Mac 802-15-4 capabilities of the device.</p>
 <p><strong>A particular attention must be taken when using BLE, Thread or Mac 802-15-4 as a specific binary must be loaded inside device memory for each application. You can refer to the readme.txt of each application for the detailed information and usage.</strong></p>
 <p>They can be found under the following directories:</p>
 <ul>
@@ -42,10 +42,27 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section15" checked aria-hidden="true"> <label for="collapse-section15" aria-hidden="true">V1.14.0 / 07-June-2022</label>
+<input type="checkbox" id="collapse-section16" checked aria-hidden="true"> <label for="collapse-section16" aria-hidden="true">V1.15.0 / 09-November-2022</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
 <h3 id="maintenance">Maintenance</h3>
+<ul>
+<li><p>Update of FW projects following changes in latest version of HAL/LL and Middlewares</p></li>
+<li>Update of sysmem.c &amp; syscalls.c files for all CubeIDE projects
+<ul>
+<li>Enhance code quality</li>
+<li>Fix problematic _sbrk implementations for CubeMX</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section15" aria-hidden="true"> <label for="collapse-section15" aria-hidden="true">V1.14.0 / 07-June-2022</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<h3 id="maintenance-1">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
 <li><strong>BLE</strong>:
@@ -62,8 +79,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="true">V1.13.0 / 12-November-2021</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
-<h3 id="maintenance-1">Maintenance</h3>
+<h2 id="main-changes-2">Main Changes</h2>
+<h3 id="maintenance-2">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
 </ul>
@@ -74,8 +91,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="true">V1.12.0 / 24-June-2021</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
-<h3 id="maintenance-2">Maintenance</h3>
+<h2 id="main-changes-3">Main Changes</h2>
+<h3 id="maintenance-3">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
 <li>Update linker files templates for all IDE (.icf/.sct/.ld)
@@ -90,8 +107,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="true">V1.11.1 / 02-April-2021</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
-<h3 id="maintenance-3">Maintenance</h3>
+<h2 id="main-changes-4">Main Changes</h2>
+<h3 id="maintenance-4">Maintenance</h3>
 <ul>
 <li>Update BLE applications:
 <ul>
@@ -109,8 +126,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="true">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
-<h3 id="maintenance-4">Maintenance</h3>
+<h2 id="main-changes-5">Main Changes</h2>
+<h3 id="maintenance-5">Maintenance</h3>
 <ul>
 <li>Ensure the option “required prototype” is enabled in all IAR projects.</li>
 <li>Ensure compatibility with STM32CubeMX 6.2.0</li>
@@ -120,8 +137,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="true">V1.10.0 / 30-October-2020</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
-<h3 id="maintenance-5">Maintenance</h3>
+<h2 id="main-changes-6">Main Changes</h2>
+<h3 id="maintenance-6">Maintenance</h3>
 <ul>
 <li>Ensure compatibility with STM32CubeMX 6.1.0</li>
 </ul>
@@ -130,14 +147,14 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">V1.9.0 / 24-September-2020</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <h3 id="update-ble-and-thread-example">Update BLE and Thread example</h3>
 </div>
 </div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section8"  aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">V1.8.0 / 19-June-2020</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <h3 id="replace-sw4stm32-by-stm32cubeide-projects-files-for-all-examples-and-application">Replace SW4STM32 by STM32CubeIDE projects files for all examples and application</h3>
 <ul>
 <li>Compatibility with STM32CubeMX 6.0.0</li>
@@ -147,7 +164,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <h3 id="add-ble-mesh-split-of-ble_meshlightingdemo-project-in">Add BLE Mesh split of BLE_MeshLightingDemo project in:</h3>
 <ul>
 <li>BLE_MeshLightingLPN (Low Power Node),</li>
@@ -158,8 +175,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
-<h3 id="maintenance-6">Maintenance</h3>
+<h2 id="main-changes-10">Main Changes</h2>
+<h3 id="maintenance-7">Maintenance</h3>
 <ul>
 <li><strong>Zigbee</strong>:
 <ul>
@@ -176,8 +193,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5"  aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.4.0 / 06-December-2019</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
-<h3 id="maintenance-7">Maintenance</h3>
+<h2 id="main-changes-11">Main Changes</h2>
+<h3 id="maintenance-8">Maintenance</h3>
 <ul>
 <li><strong>Zigbee</strong>:
 <ul>
@@ -193,8 +210,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.3.0 / 11-September-2019</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
-<h3 id="maintenance-8">Maintenance</h3>
+<h2 id="main-changes-12">Main Changes</h2>
+<h3 id="maintenance-9">Maintenance</h3>
 <ul>
 <li>Ensure compatibility with STM32CubeMX V5.4.</li>
 <li>Correct Ticket 65791 - .bin generated by SW4STM32 is too big</li>
@@ -204,15 +221,15 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.2.0 / 26-June-2019</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
-<h3 id="maintenance-9">Maintenance</h3>
+<h2 id="main-changes-13">Main Changes</h2>
+<h3 id="maintenance-10">Maintenance</h3>
 <p>Adapt applications to new utility directory tree.</p>
 </div>
 </div>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <h3 id="remove-binaries-addition-of-new-examples">Remove binaries, Addition of new examples</h3>
 <p>Change directory name to reflect board RPN: <a href="https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/stm32-nucleo-expansion-boards/p-nucleo-wb55.html">P-NUCLEO-WB55</a></p>
 <p>Add USB Device applications:</p>
@@ -225,7 +242,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1"  aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-14">Main Changes</h2>
+<h2 id="main-changes-15">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 </div>

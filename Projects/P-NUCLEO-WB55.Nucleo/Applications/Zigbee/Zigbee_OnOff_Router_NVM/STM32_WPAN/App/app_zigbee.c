@@ -258,7 +258,7 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
   memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;
   req.deviceId = ZCL_DEVICE_ONOFF_SWITCH;
-  memset(&req, 0, sizeof(req2));
+  memset(&req2, 0, sizeof(req2));
   req2.profileId = ZCL_PROFILE_HOME_AUTOMATION;
   req2.deviceId = ZCL_DEVICE_ONOFF_SWITCH;
  
@@ -456,7 +456,7 @@ void APP_ZIGBEE_Error(uint32_t ErrId, uint32_t ErrCode)
  *
  *************************************************************/
 /**
- * @brief  notify to save persitent data callback
+ * @brief  notify to save persistent data callback
  * @param  zb: Zigbee device object pointer, cbarg: callback arg pointer
  * @retval None
  */
@@ -501,7 +501,7 @@ static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
       could display bytes that are irrelevants to on off cluster */ 
    if(status == ZB_STATUS_SUCCESS)
    {
-     /* read the last bytes of data where the ZCL on off persitent data shall be*/
+     /* read the last bytes of data where the ZCL on off persistent data shall be*/
       uint32_t len = cache_persistent_data.U32_data[0] + 4 ;
       APP_DBG("ClusterID %02x %02x",cache_persistent_data.U8_data[len-9],cache_persistent_data.U8_data[len-10]);
       APP_DBG("Endpoint %02x %02x",cache_persistent_data.U8_data[len-7],cache_persistent_data.U8_data[len-8]);
@@ -548,7 +548,7 @@ static void APP_ZIGBEE_PersistCompleted_callback(enum ZbStatusCodeT status,void 
 
 
 /**
- * @brief  Load persitent data 
+ * @brief  Load persistent data 
  * @param  None
  * @retval true if success, false if fail
  */
@@ -711,7 +711,7 @@ static bool APP_ZIGBEE_NVM_Read(void)
     HAL_FLASH_Lock();
     if(status)
     {
-        APP_DBG("READ PERSITENT DATA LEN = %d",cache_persistent_data.U32_data[0]);
+        APP_DBG("READ PERSISTENT DATA LEN = %d",cache_persistent_data.U32_data[0]);
     }
     return status;
 } /* APP_ZIGBEE_NVM_Read */
@@ -983,7 +983,6 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
     APP_DBG("Link Key value: %s",Z09_LL_string);
     //print clusters allocated
     APP_DBG("Clusters allocated are:");  
-    APP_DBG("OnOff Client on Endpoint %d",SW2_ENDPOINT);
     APP_DBG("OnOff Server on Endpoint %d",SW1_ENDPOINT);
     APP_DBG("**********************************************************");
   }

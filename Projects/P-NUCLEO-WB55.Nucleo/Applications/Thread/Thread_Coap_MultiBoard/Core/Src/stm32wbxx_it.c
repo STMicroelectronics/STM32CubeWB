@@ -395,8 +395,6 @@ void FPU_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
-
 /**
   * @brief  This function handles EXTI4_IRQ Handler.
   * @param  None

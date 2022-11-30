@@ -228,7 +228,7 @@
  *  1 : internal RO
  *  0 : external crystal ( no calibration )
  */
-#define CFG_BLE_LSE_SOURCE  0
+#define CFG_BLE_LS_SOURCE  0
 
 /**
  * Start up time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 us (~2.44 us)
@@ -688,7 +688,7 @@ typedef enum
    beginning of the NVM (shall be within  allocation range of scatterfile)
 
    ST_PERSIST_MAX_ALLOC_SZ : max size of the RAM cache in bytes
-                             either an abitrary choice or the CFG_NVM_MAX_SIZE
+                             either an arbitrary choice or the CFG_NVM_MAX_SIZE
 
    ST_PERSIST_FLASH_DATA_OFFSET : offset in bytes of zigbee data
    (U8[4] for length  - 1st data[]...)

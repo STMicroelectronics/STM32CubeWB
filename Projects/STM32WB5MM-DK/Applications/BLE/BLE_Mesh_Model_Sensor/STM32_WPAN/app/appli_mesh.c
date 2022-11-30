@@ -338,10 +338,7 @@ static void Mesh_Task()
   {
     UnprovisionInProgress = 0;
     AppliNvm_ClearModelState();
-    PalNvmErase(NVM_BASE, 1);      
-    PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
-    PalNvmErase(APP_NVM_BASE, 1);
-    PalNvmErase(PRVN_NVM_BASE_OFFSET, 1);
+    PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
   }
@@ -776,7 +773,6 @@ void Appli_CheckForUnprovision(void)
       }
     }
     LED_Off();
-    NVIC_SystemReset();
   }
   
   /* Register the task for all MESH dedicated processes */
@@ -808,11 +804,9 @@ void Appli_Unprovision(void)
   {
     /* No GATT connection */
     BLEMesh_StopAdvScan();
+    HAL_Delay(10);
       
-    PalNvmErase(NVM_BASE, 1);      
-    PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
-    PalNvmErase(APP_NVM_BASE, 1);
-    PalNvmErase(PRVN_NVM_BASE_OFFSET, 1);
+    PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
     BLEMesh_Unprovision();
@@ -820,7 +814,6 @@ void Appli_Unprovision(void)
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
 
     BLEMesh_Process();
-
     NVIC_SystemReset();
   }
 }
@@ -960,7 +953,17 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason)
 #if PB_ADV_SUPPORTED
   BLEMesh_SetUnprovisionedDevBeaconInterval(PBADV_UNPROV_DEV_BEACON_INTERVAL);
 #endif
+  BLEMesh_StopAdvScan();
+  HAL_Delay(10);
+    
+  PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
+  TRACE_M(TF_PROVISION,"NVM erased\r\n");      
+  
+  BLEMesh_Unprovision();
   AppliNvm_ClearModelState();
+  TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
+
+  NVIC_SystemReset();
 }
 
 /**
@@ -1650,6 +1653,7 @@ void Appli_Init(MOBLEUINT8 *flag)
 #if (ENABLE_SENSOR_MODEL_SERVER != 0)
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SW3_REQ_ID, UTIL_SEQ_RFU, AppliMeshSW3Task );
 #endif
+
 }
 
 /*****************************Config Model Callbacks***************************/

@@ -31,11 +31,17 @@
 
 #if OPENTHREAD_CONFIG_PING_SENDER_ENABLE
 
+extern otPingSenderReplyCallback otPingSenderReplyCb;
+extern otPingSenderStatisticsCallback otPingSenderStatisticsCb;
+
 otError otPingSenderPing(otInstance *aInstance, const otPingSenderConfig *aConfig)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  otPingSenderReplyCb = aConfig->mReplyCallback;
+  otPingSenderStatisticsCb = aConfig->mStatisticsCallback;
 
   p_ot_req->ID = MSG_M4TOM0_OT_PING_SENDER_PING;
 

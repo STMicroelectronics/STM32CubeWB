@@ -7,7 +7,13 @@
  * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
-/* @PICS.ZCL.DRLC
+/* EXEGIN - removed '@'PICS escape sequence, since these are not the
+ * official PICS codes. These were added with the assumption that
+ * SE clusters are being brought into the Zigbee 3.0 fold and will
+ * use the same PICS codes and PICS format style. However, this has
+ * yet to occur. */
+
+/* ZCL.DRLC
  * DRLC.S | Server | True
  * DRLC.C | Client | True
  *

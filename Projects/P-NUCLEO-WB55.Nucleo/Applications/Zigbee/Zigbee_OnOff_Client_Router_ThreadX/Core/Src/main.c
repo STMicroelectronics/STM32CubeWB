@@ -88,6 +88,7 @@ static void MX_IPCC_Init(void);
 
 /* USER CODE END PFP */
 
+
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
@@ -117,7 +118,7 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-/* Configure the peripherals common clocks */
+  /* Configure the peripherals common clocks */
   PeriphCommonClock_Config();
 
   /* IPCC initialisation */
@@ -138,8 +139,10 @@ int main(void)
 
   /* Init code for STM32_WPAN */
   MX_APPE_Init();
+  
   /* Infinite loop */
   MX_ThreadX_Init();
+  
   /* USER CODE BEGIN WHILE */
   while (1)
   {
@@ -256,8 +259,8 @@ static void MX_IPCC_Init(void)
   */
 void MX_LPUART1_UART_Init(void)
 {
-
   /* USER CODE BEGIN LPUART1_Init 0 */
+  UART_WakeUpTypeDef UartWakeUpType = {0};
 
   /* USER CODE END LPUART1_Init 0 */
 
@@ -292,6 +295,11 @@ void MX_LPUART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN LPUART1_Init 2 */
+  
+  // -- Indicate WakeUp if StopMode is activated --
+  UartWakeUpType.WakeUpEvent = UART_WAKEUP_ON_STARTBIT;
+  HAL_UARTEx_StopModeWakeUpSourceConfig( &hlpuart1, UartWakeUpType );
+  HAL_UARTEx_EnableStopMode( &hlpuart1 );
 
   /* USER CODE END LPUART1_Init 2 */
 
@@ -395,8 +403,8 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-  /** Enable the WakeUp
-  */
+  
+  /** Enable the WakeUp */
   if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
   {
     Error_Handler();

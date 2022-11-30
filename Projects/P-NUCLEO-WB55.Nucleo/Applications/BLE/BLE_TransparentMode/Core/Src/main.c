@@ -61,7 +61,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- IPCC_HandleTypeDef hipcc;
+IPCC_HandleTypeDef hipcc;
 
 UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart1;
@@ -119,7 +119,7 @@ int main(void)
   PeriphCommonClock_Config();
 
   /* IPCC initialisation */
-   MX_IPCC_Init();
+  MX_IPCC_Init();
 
   /* USER CODE BEGIN SysInit */
 

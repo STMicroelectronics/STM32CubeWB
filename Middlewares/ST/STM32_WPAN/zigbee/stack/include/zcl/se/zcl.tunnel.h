@@ -4,10 +4,16 @@
  * @brief ZCL Tunneling cluster header
  * ZCL 7 section 10.6
  * ZCL 8 section 10.6
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
-/* @PICS.ZCL.Tunnel
+/* EXEGIN - removed '@'PICS escape sequence, since these are not the
+ * official PICS codes. These were added with the assumption that
+ * SE clusters are being brought into the Zigbee 3.0 fold and will
+ * use the same PICS codes and PICS format style. However, this has
+ * yet to occur. */
+
+/* ZCL.Tunnel
  * SETUN.S | Server | True
  * SETUN.C | Client | True
  *

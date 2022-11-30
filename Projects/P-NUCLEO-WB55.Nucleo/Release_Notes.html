@@ -30,7 +30,7 @@
 <h1 id="purpose">Purpose</h1>
 <p>This directory contains the examples and applications to demonstrate the capabilities of the P-NUCLEO-WB55 Kit.</p>
 <p>Most of those projects are generated with STM32CubeMX tool to initialize the system, peripherals and middleware stacks.</p>
-<p>Several applications are provided ready to use with IAR, KEIL and SW4STM32 to demonstrate the Bluetooth Low Energy, Thread and Mac 802-15-4 capabilities of the device.</p>
+<p>Several applications are provided ready to use with IAR©, KEIL© and STM32CubeIDE© to demonstrate the Bluetooth Low Energy, Thread and Mac 802-15-4 capabilities of the device.</p>
 <p><strong>A particular attention must be taken when using BLE, Thread or Mac 802-15-4 as a specific binary must be loaded inside device memory for each application. You can refer to the readme.txt of each application for the detailed information and usage.</strong></p>
 <p>They can be found under the following directories:</p>
 <ul>
@@ -45,10 +45,69 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section18" checked aria-hidden="true"> <label for="collapse-section18" aria-hidden="true">V1.14.1 / 19-July-2022</label>
+<input type="checkbox" id="collapse-section19" checked aria-hidden="true"> <label for="collapse-section19" aria-hidden="true">V1.15.0 / 09-November-2022</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
 <h3 id="maintenance">Maintenance</h3>
+<ul>
+<li>Update of FW projects following changes in latest version of HAL/LL and Middlewares
+<ul>
+<li>/Examples/I2C/I2C_WakeUpFromStop2</li>
+<li>/Examples/PWR/PWR_STOP2_RTC</li>
+<li>/Examples/UART/UART_ReceptionToIdle_CircularDMA</li>
+<li>/P-NUCLEO-WB55.Nucleo/Examples_LL/CRC/CRC_CalculateAndCheck</li>
+<li>/P-NUCLEO-WB55.Nucleo/Examples_LL/CRC/CRC_UserDefinedPolynomial</li>
+<li>/Examples_LL/I2C/I2C_TwoBoards_WakeUpFromStop2_IT_Init</li>
+</ul></li>
+<li>Update of sysmem.c &amp; syscalls.c files for all CubeIDE projects
+<ul>
+<li>Enhance code quality</li>
+<li>Fix problematic _sbrk implementations for CubeMX</li>
+</ul></li>
+<li>Updated examples:
+<ul>
+<li><strong>UART/UART_ReceptionToIdle_CircularDM</strong>
+<ul>
+<li>Enable “required prototype” option in IAR project</li>
+</ul></li>
+</ul></li>
+<li>Updated examples LL:
+<ul>
+<li><strong>CRC/CRC_CalculateAndCheck</strong>
+<ul>
+<li>Fix incorrect bytes stream handling by LL</li>
+</ul></li>
+<li><strong>CRC/CRC_UserDefinedPolynomial</strong>
+<ul>
+<li>Fix incorrect bytes stream handling by LL</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="known-limitations">Known limitations</h3>
+<ul>
+<li>Following applications remain not supported:
+<ul>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_Ota (STM32CubeIDE Debug)</li>
+</ul></li>
+<li>Following applications have been removed:
+<ul>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/BLE_Zigbee/BLE_Zigbee_Dyn_SED</li>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/Zigbee/Zigbee_OTA_Client_Router/STM32CubeIDE</li>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/Zigbee/Zigbee_OTA_Server_Coord/STM32CubeIDE</li>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/Zigbee/Zigbee_OnOff_Client_Router_FreeRTOS/STM32CubeIDE</li>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/Zigbee/Zigbee_OnOff_Server_Coord_FreeRTOS/STM32CubeIDE</li>
+<li>/P-NUCLEO-WB55.Nucleo/Applications/Thread/Thread_Coap_Generic_ThreadX/STM32CubeIDE</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section18" aria-hidden="true"> <label for="collapse-section18" aria-hidden="true">V1.14.1 / 19-July-2022</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<h3 id="maintenance-1">Maintenance</h3>
 <ul>
 <li><p>Updated applications:</p>
 <ul>
@@ -66,8 +125,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section17" aria-hidden="true"> <label for="collapse-section17" aria-hidden="true">V1.14.0 / 07-June-2022</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
-<h3 id="maintenance-1">Maintenance</h3>
+<h2 id="main-changes-2">Main Changes</h2>
+<h3 id="maintenance-2">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
 <li><p>Add support of new applications:</p>
@@ -103,7 +162,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section16" aria-hidden="true"> <label for="collapse-section16" aria-hidden="true">V1.13.2 / 15-February-2022</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <h3 id="patch">Patch</h3>
 <ul>
 <li>Introduced back the following application:
@@ -118,7 +177,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section15" aria-hidden="true"> <label for="collapse-section15" aria-hidden="true">V1.13.1 / 10-December-2021</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <h3 id="patch-1">Patch</h3>
 <ul>
 <li><p>Add missing Debug build configuration for /P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_DataThroughput/CubeIDE/</p></li>
@@ -135,8 +194,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="true">V1.13.0 / 12-November-2021</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
-<h3 id="maintenance-2">Maintenance</h3>
+<h2 id="main-changes-5">Main Changes</h2>
+<h3 id="maintenance-3">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
 <li>Add support of new applications:
@@ -153,8 +212,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="true">V1.12.0 / 24-June-2021</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
-<h3 id="maintenance-3">Maintenance</h3>
+<h2 id="main-changes-6">Main Changes</h2>
+<h3 id="maintenance-4">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
 <li>Add support of new applications:
@@ -176,8 +235,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="true">V1.11.1 / 02-April-2021</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
-<h3 id="maintenance-4">Maintenance</h3>
+<h2 id="main-changes-7">Main Changes</h2>
+<h3 id="maintenance-5">Maintenance</h3>
 <ul>
 <li>Update BLE applications:
 <ul>
@@ -206,8 +265,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="true">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
-<h3 id="maintenance-5">Maintenance</h3>
+<h2 id="main-changes-8">Main Changes</h2>
+<h3 id="maintenance-6">Maintenance</h3>
 <ul>
 <li>Ensure the option “required prototype” is enabled in all IAR projects.</li>
 <li>Following deprecation of Adafruit shield, the following projects are removed:
@@ -225,8 +284,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section10"  aria-hidden="true"> <label for="collapse-section10" aria-hidden="true">V1.10.0 / 30-October-2020</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
-<h3 id="maintenance-6">Maintenance</h3>
+<h2 id="main-changes-9">Main Changes</h2>
+<h3 id="maintenance-7">Maintenance</h3>
 <ul>
 <li>Ensure compatibility with STM32CubeMX 6.1.0</li>
 </ul>
@@ -235,7 +294,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">V1.9.0 / 24-September-2020</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <h3 id="introduce-blethread-and-blezigbee-dynamic-concurrent-mode-the-support-of-lld-ble-and-phy_802.15.4-cli-application">Introduce BLE/Thread and BLE/Zigbee dynamic concurrent mode, the support of LLD BLE and PHY_802.15.4 CLI application</h3>
 <ul>
 <li>Update Thread, BLE, BLE Mesh, LLD BLE, MAC 802.15.4and zigbee application.</li>
@@ -255,7 +314,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8"  aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">V1.8.0 / 19-June-2020</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <h3 id="replace-sw4stm32-by-stm32cubeide-projects-files-for-all-examples-and-application">Replace SW4STM32 by STM32CubeIDE projects files for all examples and application</h3>
 <ul>
 <li>Add new application “BLE_custom” to demonstrate how to create a BLE_Custom application using STM32CubeMX 6.0.0</li>
@@ -266,7 +325,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.6.0 / 26-March-2020</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <h3 id="ble">BLE</h3>
 <ul>
 <li><strong>Add BLE Mesh split of BLE_MeshLightingDemo project in</strong>:
@@ -315,7 +374,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <h3 id="add-blezigbee-static-concurrent-mode-support-and-additional-zigbee-applications">Add BLE/Zigbee static concurrent mode support and additional zigbee applications</h3>
 <ul>
 <li><strong>Add BLE/Zigbee static concurrent mode support</strong>
@@ -350,8 +409,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.4.0 / 06-December-2019</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
-<h3 id="maintenance-7">Maintenance</h3>
+<h2 id="main-changes-14">Main Changes</h2>
+<h3 id="maintenance-8">Maintenance</h3>
 <ul>
 <li>Add SW4STM32 and MDK-ARM IDE files for:
 <ul>
@@ -364,7 +423,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.3.0 / 11-September-2019</label>
 <div>
-<h2 id="main-changes-14">Main Changes</h2>
+<h2 id="main-changes-15">Main Changes</h2>
 <h3 id="introduction-of-zigbee-support">Introduction of ZIGBEE support</h3>
 <ul>
 <li>Ensure compatibility with <strong>STM32CubeMX V5.4</strong>.</li>
@@ -394,7 +453,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.2.0 / 26-June-2019</label>
 <div>
-<h2 id="main-changes-15">Main Changes</h2>
+<h2 id="main-changes-16">Main Changes</h2>
 <h3 id="addition-of-new-application">Addition of new application</h3>
 <p><strong>Add CKS (Customer Key Storage) application</strong></p>
 <ul>
@@ -409,7 +468,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2"  aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-16">Main Changes</h2>
+<h2 id="main-changes-17">Main Changes</h2>
 <h3 id="remove-binaries-addition-of-new-examples">Remove binaries, Addition of new examples</h3>
 <p>Change directory name to reflect board RPN: <a href="https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/stm32-nucleo-expansion-boards/p-nucleo-wb55.html">P-NUCLEO-WB55</a></p>
 <p>Add QSPI examples:</p>
@@ -432,7 +491,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-17">Main Changes</h2>
+<h2 id="main-changes-18">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 </div>

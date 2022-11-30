@@ -190,7 +190,7 @@ void APP_THREAD_Init( void )
   UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
 
   /* USER CODE BEGIN INIT TASKS */
-  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_COAP_MSG_BUTTON, UTIL_SEQ_RFU, APP_THREAD_SendCoapMsg);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_THREAD_SendCoapMsg);
   /* USER CODE END INIT TASKS */
 
   /* Initialize and configure the Thread device*/
@@ -580,7 +580,7 @@ static void APP_THREAD_SendCoapMsg(void)
 {
   OT_Command = 0x1;
 
-  APP_DBG("*** Send COAP nb **** %d", DebugTxCoapCpt++);
+  APP_DBG("Send COAP nb %d", DebugTxCoapCpt++);
 
   /* Send a NON-CONFIRMABLE PUT Request */
   APP_THREAD_CoapSendRequest(&OT_Ressource,
@@ -626,7 +626,7 @@ static void APP_THREAD_CoapRequestHandler(void                * pContext,
     if (OT_ReceivedCommand == 1U)
     {
       BSP_LED_Toggle(LED1);
-      APP_DBG("**** Recept COAP nb **** %d ",DebugRxCoapCpt++);
+      APP_DBG("Recept COAP nb %d",DebugRxCoapCpt++);
     }
 
   } while (false);

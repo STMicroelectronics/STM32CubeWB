@@ -82,7 +82,7 @@ MOBLE_RESULT AppliPrvnNvm_SaveData(uint8_t* data,
                                    uint8_t* pUUID, 
                                    uint8_t numElements);
 
-MOBLEUINT32* AppliPrvnNvm_GetNodeDevKey(MOBLE_ADDRESS addrss);
+MOBLEUINT32* AppliPrvnNvm_GetNodeDevKey(MOBLE_ADDRESS address);
 void AppliPrvnNvm_Process(void);
 
 MOBLE_RESULT AppliPrvnNvm_FactorySettingReset(MOBLEUINT8*flag);

@@ -148,3 +148,4 @@ void HAL_ResumeTick(void)
   /* Enable TIM17 Update interrupt */
   __HAL_TIM_ENABLE_IT(&htim17, TIM_IT_UPDATE);
 }
+

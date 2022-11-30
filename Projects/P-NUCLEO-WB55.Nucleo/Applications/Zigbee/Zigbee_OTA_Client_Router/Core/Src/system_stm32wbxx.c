@@ -194,7 +194,7 @@ static uint8_t  CheckFwAppValidity( void );
  */
 static void BootModeCheck( void )
 {
-  if(LL_RCC_IsActiveFlag_SFTRST( ) || LL_RCC_IsActiveFlag_OBLRST( ))
+  if ( LL_RCC_IsActiveFlag_SFTRST( ) || LL_RCC_IsActiveFlag_OBLRST( ) )
   {
     /**
      * The SRAM1 content is kept on Software Reset.
@@ -204,47 +204,62 @@ static void BootModeCheck( void )
     /**
      * Check Boot Mode from SRAM1
      */
-    if(((*(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_FW_APP) && (CheckFwAppValidity( ) != 0))
+    if ( ( *(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_DOWNLOADED_FW )
     {
-      /**
-       * The user has requested to start on the firmware application and it has been checked
-       * a valid application is ready
-       * Jump now on the application
-       */
-      JumpFwApp();
+      if ( CheckFwAppValidity( ) != 0 )
+      {
+        /**
+        * The user has requested to start on the firmware application and it has been checked
+        * a valid application is ready
+        * Jump now on the application
+        */
+        JumpFwApp();
+      }
+      else
+      {
+        /**
+         * The user has requested to start on the firmware application but there is no valid application
+         * Erase all sectors specified by byte1 and byte1 in SRAM1 to download a new App.
+         */
+        *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_OTA_FW;     /* Request to reboot on Thread_Ota application */
+        *((uint8_t*)SRAM1_BASE+1) = CFG_APP_START_SECTOR_INDEX;
+        *((uint8_t*)SRAM1_BASE+2) = 0xFF;
+      }
     }
-    else if(((*(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_FW_APP) && (CheckFwAppValidity( ) == 0))
+    else 
     {
-      /**
-       * The user has requested to start on the firmware application but there is no valid application
-       * Erase all sectors specified by byte1 and byte1 in SRAM1 to download a new App.
-       */
-      *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_THREAD_OTA_APP;     /* Request to reboot on Thread_Ota application */
-      *((uint8_t*)SRAM1_BASE+1) = CFG_APP_START_SECTOR_INDEX;
-      *((uint8_t*)SRAM1_BASE+2) = 0xFF;
-    }
-    else if((*(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_THREAD_OTA_APP)
-    {
-      /**
-       * It has been requested to reboot on Thread_Ota application to download data
-       */
-    }
-    else if((*(uint8_t*)SRAM1_BASE) == CFG_REBOOT_ON_CPU2_UPGRADE)
-    {
-      /**
-       * It has been requested to reboot on Thread_Ota application to keep running the firmware upgrade process
-       *
-       */
-    }
-    else
-    {
-      /**
-       * There should be no use case to be there because the device already starts from power up
-       * and the SRAM1 is then filled with the value define by the user
-       * However, it could be that a reset occurs just after a power up and in that case, the Thread_Ota
-       * will be running but the sectors to download a new App may not be erased
-       */
-      JumpSelectionOnPowerUp( );
+      if ( ( *(uint8_t*)SRAM1_BASE ) == CFG_REBOOT_ON_OTA_FW )
+      {
+        /**
+         * It has been requested to reboot on Thread_Ota application to download data
+         * If the FW-App Start Sector is at '0' or bad (random) set default FW-App Start Sector.
+         */
+        if ( *( (uint8_t*)SRAM1_BASE + 1 ) < CFG_APP_START_SECTOR_INDEX )
+        {
+          *((uint8_t*)SRAM1_BASE+1) = CFG_APP_START_SECTOR_INDEX;
+          *((uint8_t*)SRAM1_BASE+2) = 0xFF;
+        }
+      }
+      else 
+      {
+        if ( ( *(uint8_t*)SRAM1_BASE ) == CFG_REBOOT_ON_CPU2_UPGRADE )
+        {
+          /**
+           * It has been requested to reboot on Thread_Ota application to keep running the firmware upgrade process
+           *
+           */
+        }
+        else
+        {
+          /**
+           * There should be no use case to be there because the device already starts from power up
+           * and the SRAM1 is then filled with the value define by the user
+           * However, it could be that a reset occurs just after a power up and in that case, the Thread_Ota
+           * will be running but the sectors to download a new App may not be erased
+           */
+          JumpSelectionOnPowerUp( );
+        }
+      }
     }
   }
   else
@@ -268,13 +283,13 @@ static void JumpSelectionOnPowerUp( void )
   /**
    * Check if there is a FW App
    */
-  if(CheckFwAppValidity( ) != 0)
+  if ( CheckFwAppValidity( ) != 0 )
   {
     /**
-     * The SRAM1 is random
+     * The SRAM1 is random but Application FW exist.
      * Initialize SRAM1 to indicate we requested to reboot of firmware application
      */
-    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_FW_APP;
+    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_DOWNLOADED_FW;
 
     /**
      * A valid application is available
@@ -288,7 +303,7 @@ static void JumpSelectionOnPowerUp( void )
      * The SRAM1 is random
      * Initialize SRAM1 to indicate we requested to reboot of Thread_Ota application
      */
-    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_THREAD_OTA_APP;
+    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_OTA_FW;
 
     /**
      * There is no valid application available

@@ -1,18 +1,39 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
+ * @file    main.c
+ * @author  MCD Application Team
+ * @brief   BLE application with BLE core
+ *
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
+  ******************************************************************************
+  @verbatim
+  ==============================================================================
+                    ##### IMPORTANT NOTE #####
+  ==============================================================================
+
+  This application requests having the stm32wb5x_BLE_Stack_fw.bin binary
+  flashed on the Wireless Coprocessor.
+  If it is not the case, you need to use STM32CubeProgrammer to load the appropriate
+  binary.
+
+  All available binaries are located under following directory:
+  /Projects/STM32_Copro_Wireless_Binaries
+
+  Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
+  Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the
+  detailed procedure to change the Wireless Coprocessor binary.
+
+  @endverbatim
   ******************************************************************************
   */
 /* USER CODE END Header */
@@ -50,6 +71,8 @@ IPCC_HandleTypeDef hipcc;
 
 UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart1;
+DMA_HandleTypeDef hdma_lpuart1_tx;
+DMA_HandleTypeDef hdma_usart1_tx;
 
 RTC_HandleTypeDef hrtc;
 RNG_HandleTypeDef hrng;
@@ -84,14 +107,19 @@ void SystemClock_Config(void);
 #if ((CFG_LED_SUPPORTED == 1)||(CFG_BUTTON_SUPPORTED == 1))
 static void MX_GPIO_Init(void);
 #endif
+static void MX_DMA_Init(void);
 static void MX_IPCC_Init(void);
-static void MX_LPUART1_UART_Init(void);
-static void MX_USART1_UART_Init(void);
 static void MX_RF_Init(void);
 static void MX_RTC_Init(void);
 static void MX_RNG_Init(void);
 
 void lpuart_Receive_IT_cb(void);
+
+void PeriphCommonClock_Config(void);
+uint8_t stm32wb_at_ll_Transmit(uint8_t *pBuff, uint16_t Size);
+void stm32wb_at_ll_Async_receive(uint8_t new_frame);
+uint8_t stm32wb_at_client_Process_rx_frame(char *  str);
+
 /* USER CODE BEGIN PFP */
 #if defined ( __GNUC__) && !defined(__clang__)
 /* With GCC, small printf (option LD Linker->Libraries->Small printf
@@ -126,14 +154,18 @@ int main(void)
   MX_APPE_Config();
   
   /* USER CODE BEGIN Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-  /* USER CODE END SysInit */
   
   /* USER CODE END Init */
+  
+  /* Configure the system clock */
+  SystemClock_Config();
+  
+  /* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+  
+  /* USER CODE END SysInit */
 
   /* IPCC initialisation */
    MX_IPCC_Init();
@@ -143,6 +175,7 @@ int main(void)
 #if ((CFG_LED_SUPPORTED == 1)||(CFG_BUTTON_SUPPORTED == 1))
   MX_GPIO_Init();
 #endif
+  MX_DMA_Init();
   MX_LPUART1_UART_Init();
   MX_USART1_UART_Init();
   MX_RF_Init();
@@ -205,30 +238,32 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure LSE Drive Capability
   */
   HAL_PWR_EnableBkUpAccess();
   __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE
-                              |RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI
+                              |RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -245,19 +280,23 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the peripherals clocks
+}
+
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
   */
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SMPS|RCC_PERIPHCLK_RFWAKEUP
-                              |RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART1
-                              |RCC_PERIPHCLK_LPUART1
-                              |RCC_PERIPHCLK_RNG;
-  PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
-  PeriphClkInitStruct.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_PCLK1;
-  PeriphClkInitStruct.RngClockSelection = RCC_RNGCLKSOURCE_HSI48;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+void PeriphCommonClock_Config(void)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Initializes the peripherals clock
+  */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SMPS|RCC_PERIPHCLK_RFWAKEUP;
   PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSE;
-  PeriphClkInitStruct.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSI;
-  PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE0;
+  PeriphClkInitStruct.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSE;
+  PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE1;
+
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -298,7 +337,7 @@ static void MX_IPCC_Init(void)
   * @param None
   * @retval None
   */
-static void MX_LPUART1_UART_Init(void)
+void MX_LPUART1_UART_Init(void)
 {
 
   /* USER CODE BEGIN LPUART1_Init 0 */
@@ -346,7 +385,7 @@ static void MX_LPUART1_UART_Init(void)
   * @param None
   * @retval None
   */
-static void MX_USART1_UART_Init(void)
+void MX_USART1_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART1_Init 0 */
@@ -452,6 +491,7 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
+
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
@@ -466,9 +506,37 @@ static void MX_RTC_Init(void)
   {
     Error_Handler();
   }
+
+  /** Enable the WakeUp
+  */
+  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN RTC_Init 2 */
 
   /* USER CODE END RTC_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMAMUX1_CLK_ENABLE();
+  __HAL_RCC_DMA1_CLK_ENABLE();
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 15, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
+  /* DMA2_Channel4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Channel4_IRQn, 15, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Channel4_IRQn);
 
 }
 
@@ -503,14 +571,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PA11 PA12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF10_USB;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : B2_Pin B3_Pin */
   GPIO_InitStruct.Pin = B2_Pin|B3_Pin;

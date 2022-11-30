@@ -54,6 +54,8 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
+void   MX_LPUART1_UART_Init(void);
+void   MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN EFP */
 
@@ -71,8 +73,7 @@ void Error_Handler(void);
 #define SW3_User_EXTI_IRQn EXTI1_IRQn
 #define Blue_Led_Pin GPIO_PIN_5
 #define Blue_Led_GPIO_Port GPIOB
-void   MX_LPUART1_UART_Init(void);
-void   MX_USART1_UART_Init(void);
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

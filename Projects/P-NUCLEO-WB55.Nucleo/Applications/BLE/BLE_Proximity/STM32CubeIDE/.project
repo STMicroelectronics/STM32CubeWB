@@ -226,6 +226,11 @@
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/Target/hw_ipcc.c</locationURI>
 		</link>
+        <link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_exti.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</locationURI>
+		</link>
 		<link>
 			<name>Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c</name>
 			<type>1</type>

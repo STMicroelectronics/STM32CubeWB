@@ -135,8 +135,14 @@ int main(void)
   /* Configure Power IP */
   Configure_PWR();
 
+  /* Disable SysTick Interrupt */
+  CLEAR_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
+
   /* Enter Stop 2 mode */
   EnterSTOP2Mode();
+
+  /* Enable SysTick Interrupt */
+  SET_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
 #else /* MASTER_BOARD */
 
   /* Wait for User push-button (SW1) press to start transfer */

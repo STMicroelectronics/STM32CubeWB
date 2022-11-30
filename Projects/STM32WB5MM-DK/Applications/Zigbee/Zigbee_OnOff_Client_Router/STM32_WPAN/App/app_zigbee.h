@@ -79,7 +79,6 @@ void APP_ZIGBEE_ProcessNotifyM0ToM4(void);
 void APP_ZIGBEE_ProcessRequestM0ToM4(void);
 void APP_ZIGBEE_TL_INIT(void);
 void Pre_ZigbeeCmdProcessing(void);
-void APP_ZIGBEE_LCD_DisplayInit(void);
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */

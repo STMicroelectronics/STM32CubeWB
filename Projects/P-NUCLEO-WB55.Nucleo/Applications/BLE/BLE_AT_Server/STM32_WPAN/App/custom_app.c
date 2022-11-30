@@ -64,7 +64,7 @@ extern uint8_t global_indic_val_tab_len;
  * START of Section BLE_APP_CONTEXT
  */
 
-//PLACE_IN_SECTION("BLE_APP_CONTEXT") HRSAPP_Context_t HRSAPP_Context;
+//HRSAPP_Context_t HRSAPP_Context;
 
 /**
  * END of Section BLE_APP_CONTEXT

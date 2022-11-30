@@ -1,5 +1,5 @@
 /**
-  @page Zigbee_OnOff_Client_Router application
+  @page Zigbee_OnOff_Client_Router_ThreadX application
   
   @verbatim
   ******************************************************************************

@@ -156,7 +156,7 @@ typedef struct ancs_contextS {
 
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static ancs_context_type ancs_context;
+static ancs_context_type ancs_context;
 
 /* Global variables ----------------------------------------------------------*/
 uint16_t gCharUUID=0,gCharStartHandle=0,gCharValueHandle=0,gCharDescriptorHandle=0;

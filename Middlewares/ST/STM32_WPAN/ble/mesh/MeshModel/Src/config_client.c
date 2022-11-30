@@ -211,7 +211,7 @@ MOBLE_RESULT ConfigClient_CompositionDataGet(MOBLE_ADDRESS dst_peer)
     
   configClientGetCompositionMsg_t ccGetCompositionMsg;
   
-  TRACE_M(TF_CONFIG_CLIENT_M, "Config CompositionDataGet Message \r\n");  
+  TRACE_M(TF_CONFIG_CLIENT_M, "Config CompositionDataGet Message of Node %d\r\n", dst_peer);  
   ccGetCompositionMsg.Opcode = OPCODE_CONFIG_COMPOSITION_DATA_GET;
   ccGetCompositionMsg.page = COMPOSITION_PAGE0;
 
@@ -584,7 +584,7 @@ AppKey 16B : AppKey value
   pConfigData = (MOBLEUINT8*) &(configClientAppKeyAdd);
   dataLength = sizeof(configClientAppKeyAdd_t);
   
-  TRACE_M(TF_CONFIG_CLIENT_M, "Config Client App Key Add  \r\n");  
+  TRACE_M(TF_CONFIG_CLIENT_M, "Config Client App Key Add of Node %d\r\n", dst_peer);  
   ConfigClientModel_SendMessage(dst_peer,msg_opcode,pConfigData,dataLength);
 
   return result;
@@ -795,7 +795,7 @@ MOBLE_RESULT ConfigClient_PublicationSet (MOBLEUINT16 elementAddress,
   TRACE_M(TF_CONFIG_CLIENT_M, "Config Client Publication Add  \r\n");  
   TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", elementAddress);  
   TRACE_M(TF_CONFIG_CLIENT_M, "publishAddress = [%04x]\r\n", publishAddress); 
-  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", modelIdentifier);
   
   TRACE_I(TF_CONFIG_CLIENT_M, "Publication Set buffer \r\n");
   
@@ -902,7 +902,7 @@ MOBLE_RESULT ConfigClient_PublicationStatus(MOBLEUINT8 const *pPublicationStatus
   }  
   TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", configClientPublicationStatus.elementAddr);  
   TRACE_M(TF_CONFIG_CLIENT_M, "publishAddress = [%04x]\r\n", configClientPublicationStatus.publishAddr); 
-  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", configClientPublicationStatus.modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", configClientPublicationStatus.modelIdentifier);
   TRACE_M(TF_CONFIG_CLIENT_M, "status = [%02x]\r\n", configClientPublicationStatus.Status);  
 
   Appli_PublicationStatusCb(configClientPublicationStatus.Status);
@@ -992,7 +992,7 @@ Config Model Subscription Status message.
    
   TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", elementAddress);  
   TRACE_M(TF_CONFIG_CLIENT_M, "SubscriptionAddress = [%04x]\r\n", address); 
-  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", modelIdentifier);
    
   self_addr = BLEMesh_GetAddress();
 
@@ -1127,7 +1127,7 @@ MOBLE_RESULT ConfigClient_SubscriptionStatus(MOBLEUINT8 const *pSrcSubscriptionS
   
   TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", configClientSubscriptionStatus.elementAddress);  
   TRACE_M(TF_CONFIG_CLIENT_M, "SubscriptionAddress = [%04x]\r\n", configClientSubscriptionStatus.address); 
-  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", configClientSubscriptionStatus.modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", configClientSubscriptionStatus.modelIdentifier);
   TRACE_M(TF_CONFIG_CLIENT_M, "subscription status = [%02x]\r\n", configClientSubscriptionStatus.Status);
   
   Appli_SubscriptionAddStatusCb(configClientSubscriptionStatus.Status);
@@ -1221,7 +1221,7 @@ The response to a Config Model App Bind message is a Config Model App Status mes
 
   TRACE_M(TF_CONFIG_CLIENT_M, "Config Client App Key Bind message  \r\n");   
   TRACE_M(TF_CONFIG_CLIENT_M, "elementAddr = [%04x]\r\n", elementAddress);  
-  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08x]\r\n", modelIdentifier);
+  TRACE_M(TF_CONFIG_CLIENT_M, "modelIdentifier = [%08lx]\r\n", modelIdentifier);
   
   if(ADDRESS_IS_UNASSIGNED(elementAddress))
   {
@@ -1413,7 +1413,7 @@ MOBLE_RESULT ConfigClientModel_SendMessage(MOBLE_ADDRESS dst_peer ,
   pTargetDevKey = (MOBLEUINT8 *)AppliPrvnNvm_GetNodeDevKey(dst_peer);
   
   result = ConfigModel_SendMessage(peer_addr, dst_peer, opcode, 
-                            pData, dataLength, pTargetDevKey); 
+                                   pData, dataLength, pTargetDevKey); 
   return result;
 }
 

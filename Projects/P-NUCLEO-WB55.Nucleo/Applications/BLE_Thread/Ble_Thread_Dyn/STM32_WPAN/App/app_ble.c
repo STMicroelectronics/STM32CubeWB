@@ -211,8 +211,8 @@ static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
 */
 static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static uint16_t AdvIntervalMin, AdvIntervalMax;
+static BleApplicationContext_t BleApplicationContext;
+static uint16_t AdvIntervalMin, AdvIntervalMax;
 
 P2PS_APP_ConnHandle_Not_evt_t handleNotification;
 
@@ -388,7 +388,7 @@ void APP_BLE_Init_Dyn_1( void )
     CFG_BLE_MAX_ATT_MTU,
     CFG_BLE_SLAVE_SCA,
     CFG_BLE_MASTER_SCA,
-    CFG_BLE_LSE_SOURCE,
+    CFG_BLE_LS_SOURCE,
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,

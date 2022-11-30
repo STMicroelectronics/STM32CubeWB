@@ -76,40 +76,38 @@ static void Config_HSE(void);
   */
 int main(void)
 {
-    /**
-     * The OPTVERR flag is wrongly set at power on
-     * It shall be cleared before using any HAL_FLASH_xxx() api
-     */
-    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
+  /**
+   * The OPTVERR flag is wrongly set at power on
+   * It shall be cleared before using any HAL_FLASH_xxx() api
+   */
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
 
-    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-    HAL_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-    Reset_Device();
-    Config_HSE();
+  Reset_Device();
+  Config_HSE();
 
-    /* Configure the system clock */
-    SystemClock_Config();
+  /* Configure the system clock */
+  SystemClock_Config();
 
-    PeriphClock_Config();
-    Init_Exti(); /**< Configure the system Power Mode */
+  PeriphClock_Config();
+  Init_Exti(); /**< Configure the system Power Mode */
 
-    /* Initialize all configured peripherals */
-    MX_GPIO_Init();
-    MX_DMA_Init();
-    MX_RF_Init();
-    MX_RTC_Init();
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_RF_Init();
+  MX_RTC_Init();
 
-    /* Init the full application */
-    APPE_Init();
+  /* Init the full application */
+  APPE_Init();
 
-    /* Infinite loop */
-
-    while (1) {
-        UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-
-    }
-
+  /* Infinite loop */
+  while (1) 
+  {
+    UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+  }
 }
 
 /**

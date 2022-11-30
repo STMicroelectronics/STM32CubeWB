@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -28,8 +27,8 @@
 //------------------------------------------------------------------------------
 
 /* 
-Channel number can reach 37 on STM32L1 serie.
-On Group 2 and Group 7 all pins are not availlable at the same time.
+Channel number can reach 37 on STM32L1 series.
+On Group 2 and Group 7 all pins are not available at the same time.
    * Groupe 2 (IO1..IO5): we can use 4 IOs instead of 5 (PG0, PG1)
    * Groupe 7 (IO1..IO7): we can use 5 IOs insteag of 7 (PG2, PG3, PG4)
 This mean we can get only 37-1-2=34 channels.
@@ -406,5 +405,3 @@ On STM32 L0, L4, F0 and F3 we can have from 3 to 24 channels
 #endif
 
 #endif /* __TSL_CHECK_CONFIG_STM32L1XX_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

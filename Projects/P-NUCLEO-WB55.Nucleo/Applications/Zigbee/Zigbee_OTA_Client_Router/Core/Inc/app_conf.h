@@ -73,7 +73,7 @@
    beginning of the NVM (shall be within  allocation range of scatterfile)
  
    ST_PERSIST_MAX_ALLOC_SZ : max size of the RAM cache in bytes
-                             either an abitrary choice or the CFG_NVM_MAX_SIZE
+                             either an arbitrary choice or the CFG_NVM_MAX_SIZE
 
    ST_PERSIST_FLASH_DATA_OFFSET : offset in bytes of zigbee data
    (U8[4] for length  - 1st data[]...)
@@ -86,15 +86,18 @@
    CFG_EE_AUTO_CLEAN : Clean the flash automatically when needed
 */ 
     
-#define CFG_NB_OF_PAGE                          (16U)
+#define CFG_NB_OF_PAGE                          (16u)
 #define CFG_EE_BANK0_SIZE                       (CFG_NB_OF_PAGE * HW_FLASH_PAGE_SIZE) 
-#define CFG_NVM_BASE_ADDRESS                    ( 0x20000U )
-#define CFG_EE_BANK0_MAX_NB                     (1000U)                  // In U32 words
-#define ST_PERSIST_MAX_ALLOC_SZ                 (4U*CFG_EE_BANK0_MAX_NB) // Max data in bytes
-#define ST_PERSIST_FLASH_DATA_OFFSET            (4U)
-#define ZIGBEE_DB_START_ADDR                    (0U)
-#define CFG_EE_AUTO_CLEAN                       (1U)
-   
+#define CFG_NVM_BASE_ADDRESS                    ( 0x20000u )
+#define ZIGBEE_DB_START_ADDR                    (0u)
+#define CFG_EE_AUTO_CLEAN                       (1u)
+
+#define CFG_EE_BANK0_MAX_NB                     (1000u)                         /* Max persistent data words */
+#define ST_PERSIST_MAX_ALLOC_SZ                 (4u * CFG_EE_BANK0_MAX_NB)      /* Max persistent data in bytes */
+#define ST_PERSIST_FLASH_DATA_OFFSET            (8u)                            /* Other Persistent Data : Len + Tag */
+#define ST_PERSIST_MAX_ALLOC_BUFFER_SZ          (ST_PERSIST_MAX_ALLOC_SZ + ST_PERSIST_FLASH_DATA_OFFSET)   /* Max persistent Buffer in bytes */
+#define ST_PERSIST_TAG                          0xCAFEDECAu                     /* TAG for verifu if persistent info are good. */
+
    
 /******************************************************************************
  * UART interfaces
@@ -325,6 +328,7 @@ typedef enum {
   CFG_TASK_ZIGBEE_APP_START,
   CFG_TASK_ZIGBEE_OTA_REQUEST_UPGRADE,
   CFG_TASK_ZIGBEE_OTA_START_DOWNLOAD,
+  CFG_TASK_ZIGBEE_OTA_SERVER_DISCOVERY,
   CFG_TASK_ZIGBEE_WRITE_FLASH,
   CFG_TASK_FUOTA_RESET,
   CFG_TASK_BUTTON_SW2,
@@ -399,14 +403,14 @@ typedef enum {
 /**
  * Define the start address where the application shall be located
  */
-#define CFG_APP_START_SECTOR_INDEX          (0x30)
+#define CFG_APP_START_SECTOR_INDEX      (0x30)
 
 /**
  * Define list of reboot reason
  */
-#define CFG_REBOOT_ON_FW_APP          (0x00)
-#define CFG_REBOOT_ON_THREAD_OTA_APP  (0x01)
-#define CFG_REBOOT_ON_CPU2_UPGRADE    (0x02)
+#define CFG_REBOOT_ON_DOWNLOADED_FW     (0x00)    /* Rebbot on Downloaded FW */
+#define CFG_REBOOT_ON_OTA_FW            (0x01)    /* Rebbot on OTA FW */
+#define CFG_REBOOT_ON_CPU2_UPGRADE      (0x02)    /* Reboot on OTA FW to download CPU2 */
 
 #endif /*APP_CONF_H */
 

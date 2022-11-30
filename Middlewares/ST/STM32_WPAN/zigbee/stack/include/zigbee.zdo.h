@@ -838,8 +838,7 @@ enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkUpdateNotify(struct ZigBeeT *zb, struc
  * @return Pointer to filter structure
  */
 struct ZbZdoFilterT * ZbZdoNwkUpdateNotifyFilterRegister(struct ZigBeeT *zb,
-    int (*callback)(struct ZigBeeT *zb, struct ZbZdoNwkUpdateNotifyT *msg,
-        uint8_t seqno, void *arg), void *arg);
+    int (*callback)(struct ZigBeeT *zb, struct ZbZdoNwkUpdateNotifyT *msg, uint8_t seqno, void *arg), void *arg);
 
 /**
  * Perform a Mgmt_leave_req command.

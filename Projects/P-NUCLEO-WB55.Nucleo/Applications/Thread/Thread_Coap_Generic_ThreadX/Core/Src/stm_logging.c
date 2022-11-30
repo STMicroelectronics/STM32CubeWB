@@ -76,18 +76,23 @@ static inline uint16_t logRegion(char *aLogString, uint16_t aMaxSize,
     case APPLI_LOG_REGION_GENERAL:
       strcpy(logRegionString, "[M4 APPLICATION]");
       break;
+      
     case APPLI_LOG_REGION_OPENTHREAD_API:
       strcpy(logRegionString, "[M4 OPENTHREAD API]");
       break;
+      
     case APPLI_LOG_REGION_OT_API_LINK:
       strcpy(logRegionString, "[M4 LINK API]");
       break;
+      
     case APPLI_LOG_REGION_OT_API_INSTANCE:
       strcpy(logRegionString, "[M4 INSTANCE API]");
       break;
+      
     case APPLI_LOG_REGION_OT_API_MESSAGE:
       strcpy(logRegionString, "[M4 MESSAGE API]");
       break;
+      
     default:
       strcpy(logRegionString, "[M4]");
       break;
@@ -106,7 +111,7 @@ static inline uint16_t logRegion(char *aLogString, uint16_t aMaxSize,
  *
  * @returns  String with a log level color value.
  */
-static inline const char *levelToString(appliLogLevel_t aLogLevel)
+static inline const char * levelToString(appliLogLevel_t aLogLevel)
 {
   switch (aLogLevel)
   {
@@ -136,8 +141,7 @@ static inline const char *levelToString(appliLogLevel_t aLogLevel)
  *
  * @returns  Number of bytes successfully written to the log buffer.
  */
-static inline uint16_t logLevel(char *aLogString, uint16_t aMaxSize,
-                                appliLogLevel_t aLogLevel)
+static inline uint16_t logLevel(char *aLogString, uint16_t aMaxSize, appliLogLevel_t aLogLevel)
 {
   return snprintf(aLogString, aMaxSize, "%s", levelToString(aLogLevel));
 }
@@ -181,21 +185,18 @@ void logApplication(appliLogLevel_t aLogLevel, appliLogRegion_t aLogRegion, cons
 
 #if (LOG_RTT_COLOR_ENABLE == 1U)
   /* Add level information */
-  length += logLevel(&logString[length], (LOG_PARSE_BUFFER_SIZE - length),
-      aLogLevel);
+  length += logLevel(&logString[length], (LOG_PARSE_BUFFER_SIZE - length), aLogLevel);
 #endif
 
 #if (LOG_REGION_ENABLE == 1U)
   /* Add Region information */
-  length += logRegion(&logString[length], (LOG_PARSE_BUFFER_SIZE - length),
-      aLogRegion);
+  length += logRegion(&logString[length], (LOG_PARSE_BUFFER_SIZE - length), aLogRegion);
 #endif
 
   /* Parse user string */
   va_list paramList;
   va_start(paramList, aFormat);
-  length += vsnprintf(&logString[length], (LOG_PARSE_BUFFER_SIZE - length),
-      aFormat, paramList);
+  length += vsnprintf(&logString[length], (LOG_PARSE_BUFFER_SIZE - length), aFormat, paramList);
   logString[length++] = '\r';
   logString[length++] = '\n';
   logString[length++] = 0;
@@ -203,8 +204,9 @@ void logApplication(appliLogLevel_t aLogLevel, appliLogRegion_t aLogRegion, cons
 
   if (aLogLevel <= APPLI_CONFIG_LOG_LEVEL)
   {
-    printf("%s", logString);
-  }else
+	printf("%s", logString);
+  }
+  else
   {
     /* Print nothing */
   }

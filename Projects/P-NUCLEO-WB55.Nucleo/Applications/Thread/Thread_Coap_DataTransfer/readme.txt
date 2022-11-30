@@ -50,9 +50,12 @@ and the other one will act as an End Device (child mode)
 
 After the reset of the 2 boards, one board will be in Leader mode (Green LED2 ON) and 
 the other one will be in Child mode (Red LED3 ON) Once the child mode is established for 
-one of the devices, it starts the provisioning procedure in multicast mode in order to probe 
-the IP address of the leader device. Then this is used to start the File transfer procedure
-in unicast mode, which success is marked by the lightning of the blue LED.
+one of the devices:
+Push SW1 to starts the provisioning procedure in multicast mode in order to probe 
+the IP address of the leader device.
+Once READY to start Data Transfer displayed push the SW2 button to start the 
+File transfer procedure in unicast mode, which success is marked by the lightning
+of the blue LED.
  
 
   ___________________________                       ___________________________
@@ -64,7 +67,7 @@ in unicast mode, which success is marked by the lightning of the blue LED.
   |                         |                       |                         |
   |                         |                       |                         |
   |  Provisioning Request   |                       |                         |
-  |       send()            |======> COAP =========>|-------------            |
+  |       send()     SW1 => |======> COAP =========>|-------------            |
   |                         |Resource "provisioning"|             |           |
   |                         |Mode : Multicast       |             v           |
   |                         |Type : Non-Confirmable |    Provisioning Request |
@@ -81,7 +84,8 @@ in unicast mode, which success is marked by the lightning of the blue LED.
   |          Handler()      |Code : Put             |                         |
   |            |            |Payload : MeshLocal EUI|                         |
   |            |            |                       |                         |
-  |            |            |                       |                         |
+  |READY to start Data Transfer                     |                         |
+  |                         | <=SW2                 |                         |
   |            v            |                       |                         |
   | ---->Get_NextBuffer()   |                       |                         |
   ||           |            |                       |                         |

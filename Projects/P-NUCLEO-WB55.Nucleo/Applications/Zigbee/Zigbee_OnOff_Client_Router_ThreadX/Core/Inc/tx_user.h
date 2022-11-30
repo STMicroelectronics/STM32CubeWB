@@ -247,26 +247,36 @@
 /*#define TX_SAFETY_CRITICAL*/
 
 /* Threadx Tick per second */
-#define TX_TIMER_TICK_PER_SECOND (1000)
+#define TX_TIMER_TICK_PER_SECOND (1000u)
+      
 /* Define the LowPower macros and flags */
 /* Enable the Low Power support */
 // #define TX_LOW_POWER
+
 #ifdef TX_LOW_POWER
-/* A user defined macro to make the system enter low power mode */
-void  UTIL_LPM_EnterLowPower(void);
-#define TX_LOW_POWER_USER_ENTER     UTIL_LPM_EnterLowPower()
+
+
+/* A user defined macro to make the system enter in low power mode */
+extern void  APP_ZIGBEE_ThreadX_EnterLowPower( void );
+#define TX_LOW_POWER_USER_ENTER     APP_ZIGBEE_ThreadX_EnterLowPower()
 
 /* Define the TX_LOW_POWER_TICKLESS to disable the internal ticks */
 // #define TX_LOW_POWER_TICKLESS
 
-///* Define a macro that sets up a low power clock and keep track of time */
-// #define TX_LOW_POWER_TIMER_SETUP
+/* Define a macro that sets up a low power clock and keep track of time */
+extern void APP_ZIGBEE_ThreadX_Low_Power_Setup ( unsigned long tx_low_power_next_expiration );
+#define TX_LOW_POWER_TIMER_SETUP    APP_ZIGBEE_ThreadX_Low_Power_Setup
 
 /* Used call wfi inside the low power section of TX scheduler */
-/* define TX_ENABLE_WFI */
+//#define TX_ENABLE_WFI
 
 /* A user defined macro to make the system exit low power mode */
-/* #define TX_LOW_POWER_USER_EXIT */
+extern void  APP_ZIGBEE_ThreadX_ExitLowPower( void );
+#define TX_LOW_POWER_USER_EXIT      APP_ZIGBEE_ThreadX_ExitLowPower()
+
+/* User's low-power macro to obtain the amount of time (in ticks) the system has been in low power mode */
+//unsigned long APP_THREAD_Threadx_Low_Power_Adjust_Ticks(void);
+//#define TX_LOW_POWER_USER_TIMER_ADJUST  APP_ZIGBEE_Threadx_Low_Power_Adjust_Ticks()
 
 #endif // TX_LOW_POWER
 #endif // TX_USER_H

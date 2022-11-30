@@ -1,8 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    stm32_lpm_if.h
-* @brief   Header for stm32_lpm_if.c module (device specific LP management)
+  * @file    stm32_lpm_if.h
+  * @author  MCD Application Team
+  * @brief   Header for stm32_lpm_if.c module (device specific LP management)
   ******************************************************************************
   * @attention
   *
@@ -76,3 +77,4 @@ void PWR_ExitSleepMode( void );
 #endif
 
 #endif /*__STM32_LPM_IF_H */
+

@@ -112,6 +112,7 @@ otError otCryptoEcdsaSign(uint8_t *      aOutput,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
 }
 
 #endif // OPENTHREAD_CONFIG_ECDSA_ENABLE

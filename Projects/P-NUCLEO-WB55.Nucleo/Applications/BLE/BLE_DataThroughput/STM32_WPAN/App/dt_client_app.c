@@ -210,7 +210,7 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static DTC_Context_t DTC_Context;
+static DTC_Context_t DTC_Context;
 
 /**
  * END of Section BLE_APP_CONTEXT
@@ -345,6 +345,12 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
       switch (blecore_evt->ecode)
       {
 
+        case ACI_GATT_TX_POOL_AVAILABLE_VSEVT_CODE:
+        {
+          Resume_Write();
+        }
+        break;
+        
         case ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE:
         {
           aci_att_read_by_group_type_resp_event_rp0 *pr = (void*) blecore_evt->data;
@@ -706,7 +712,7 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
     return;
   }
 
-static void DTC_Button1TriggerReceived( void )
+void DTC_Button1TriggerReceived( void )
 {
   if(DTC_Context.ButtonTransferReq != DTC_APP_TRANSFER_REQ_OFF)
   {
@@ -723,7 +729,7 @@ static void DTC_Button1TriggerReceived( void )
   return;
 }
 
-static void DTC_Button2TriggerReceived( void )
+void DTC_Button2TriggerReceived( void )
 {
   APP_DBG_MSG("**CHANGE PHY \n");
   UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_PHY_UPDATE_ID, CFG_SCH_PRIO_0);
@@ -773,8 +779,8 @@ static void Appli_UpdateButtonState(Button_TypeDef button, int isPressed)
     else if(button == BUTTON_SW3)
     {
       /* Button 3 short press action */
-      APP_DBG_MSG("slave security request \n");
-      BLE_SVC_GAP_Security_Req();
+      APP_DBG_MSG("pairing request \n");
+      BLE_GAP_Pairing_Req();
     }
   }
 }
@@ -817,15 +823,16 @@ static void SendData( void )
     DTC_Context.TxData.pPayload = Notification_Data_Buffer;
     DTC_Context.TxData.Length =  DATA_NOTIFICATION_MAX_PACKET_SIZE; //Att_Mtu_Exchanged-10;
 
+    
     status = aci_gatt_write_without_resp(DTC_Context.connHandle,
                                          DTC_Context.RXCharHdle,
                                          DATA_NOTIFICATION_MAX_PACKET_SIZE,
-                                         (uint8_t *) &DTC_Context.TxData );
-    if ((status != BLE_STATUS_SUCCESS) && (status != BLE_STATUS_INSUFFICIENT_RESOURCES))
+                                         (const uint8_t*)(DTC_Context.TxData.pPayload));
+    
+    if (status == BLE_STATUS_INSUFFICIENT_RESOURCES)
     {
       DTC_Context.DtFlowStatus = DTC_APP_FLOW_OFF;
       (Notification_Data_Buffer[0])-=1;
-      APP_DBG_MSG("Write RX Char failed 0x%x ! \r\n", status);
     }
     else
     {
@@ -835,6 +842,10 @@ static void SendData( void )
   return;
 }
 
+void Resume_Write(void)
+{
+  DTC_Context.DtFlowStatus = DTC_APP_FLOW_ON;
+}
 /* USER CODE BEGIN FD */
 
 /* USER CODE END FD */

@@ -80,8 +80,11 @@ void IAS_App_Notification(IAS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("NO ALERT\n");
         BSP_LED_Off(LED_RED);
+        APP_DBG_MSG("LED RED OFF\n");
         BSP_LED_Off(LED_BLUE);
+        APP_DBG_MSG("LED_BLUE OFF\n");
         BSP_LED_On(LED_GREEN);
+        APP_DBG_MSG("LED GREEN ON\n");
       }
       break;
 
@@ -89,8 +92,11 @@ void IAS_App_Notification(IAS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("MILD ALERT\n");
         BSP_LED_Off(LED_GREEN);
+        APP_DBG_MSG("LED GREEN OFF\n");
         BSP_LED_Off(LED_RED);
+        APP_DBG_MSG("LED RED OFF\n");
         BSP_LED_On(LED_BLUE);
+        APP_DBG_MSG("LED BLUE ON\n");
       }
       break;
 
@@ -98,8 +104,11 @@ void IAS_App_Notification(IAS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("HIGH ALERT\n");
         BSP_LED_Off(LED_GREEN);
+        APP_DBG_MSG("LED GREEN OFF\n");
         BSP_LED_Off(LED_BLUE);
+        APP_DBG_MSG("LED_BLUE OFF\n");
         BSP_LED_On(LED_RED);
+        APP_DBG_MSG("LED RED ON\n");
       }
       break;
 

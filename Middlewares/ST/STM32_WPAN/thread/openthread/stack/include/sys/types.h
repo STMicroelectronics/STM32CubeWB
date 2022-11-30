@@ -1,4 +1,4 @@
-#ifdef CORE_CM0PLUS
+#if defined(CORE_CM0PLUS) || defined(STM32WBA55xx)
 
 /*-
  * Copyright (c) 1982, 1986, 1991, 1993

@@ -55,16 +55,23 @@ extern Custom_Context_t Custom_Context;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
+uint8_t stm32wb_at_BLE_ADV_cb(stm32wb_at_BLE_ADV_t *param);
+uint8_t stm32wb_at_BLE_ADV_PARAM_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_SVC_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_INIT_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_PUB_ADDR_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_RAND_ADDR_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_CFG_RAND_ADDR_server_cb(char *buff);
+
+uint8_t stm32wb_at_BLE_IO_CAPA_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_SET_AUTHEN_REQ_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_NAME_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_RF_POWER_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_CONN_INT_server_cb(char *buff);
+uint8_t stm32wb_at_BLE_ADV_server_cb(char *buff);
 
 /* USER CODE BEGIN PFP */
 
-#if defined ( __GNUC__) && !defined(__clang__)
-/* With GCC, small printf (option LD Linker->Libraries->Small printf
-   set to 'Yes') calls __io_putchar() */
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif /* __GNUC__ */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

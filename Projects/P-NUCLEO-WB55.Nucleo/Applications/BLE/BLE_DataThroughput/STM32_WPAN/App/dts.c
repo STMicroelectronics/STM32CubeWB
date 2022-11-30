@@ -21,6 +21,7 @@
 #include "ble_common.h"
 #include "ble.h"
 #include "dbg_trace.h"
+#include "app_ble.h" 
 #include "dts.h"   
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,7 +67,7 @@ do {\
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static DataTransferSvcContext_t aDataTransferContext;
+static DataTransferSvcContext_t aDataTransferContext;
 
 /**
  * END of Section BLE_APP_CONTEXT
@@ -76,7 +77,10 @@ extern uint16_t Att_Mtu_Exchanged;
 
 /* Private function prototypes -----------------------------------------------*/
 static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *pckt );
+static DTS_STM_App_Notification_evt_t Notification;
 extern void BLE_SVC_L2CAP_Conn_Update_7_5(void);
+uint32_t DTS_packet_lost = 0;
+uint32_t DTS_N = 0;
 
 /* Functions Definition ------------------------------------------------------*/
 /* Private functions ----------------------------------------------------------*/
@@ -94,8 +98,9 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
   aci_gatt_attribute_modified_event_rp0 * attribute_modified;
   aci_att_exchange_mtu_resp_event_rp0 * exchange_mtu_resp;
   aci_gatt_write_permit_req_event_rp0 * write_permit_req ;
+  uint8_t CRC_Result;
+  uint8_t CRC_Received;
 
-  DTS_STM_App_Notification_evt_t Notification;
 
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *) (((hci_uart_pckt*) Event)->data);
@@ -149,7 +154,7 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
             {
               APP_DBG_MSG("**WRITE RESULT NOTIFICATION ENABLED \n");
               APP_DBG_MSG("\r\n\r");
-              BLE_SVC_L2CAP_Conn_Update_7_5();
+              //BLE_SVC_L2CAP_Conn_Update_7_5();
               Notification.Evt_Opcode = DTS_THROUGHPUT_NOTIFICATION_ENABLED;
               DTS_Notification(&Notification);
             }
@@ -165,8 +170,38 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
           {
             return_value = SVCCTL_EvtAckFlowEnable;
             
-            Notification.Evt_Opcode = DTS_DATA_RECEIVED;
+            
             Notification.DataTransfered.Length=attribute_modified->Attr_Data_Length;
+            
+
+            Notification.DataTransfered.pPayload = (attribute_modified->Attr_Data);
+            Notification.DataTransfered.pPayload_n = *((uint32_t*) &(attribute_modified->Attr_Data[0]));
+
+            if ((Notification.DataTransfered.pPayload_n - Notification.DataTransfered.pPayload_n_1) != 0)
+            {
+              __disable_irq();
+              if (Notification.DataTransfered.pPayload_n >= (Notification.DataTransfered.pPayload_n_1 + 2))
+              {
+                DTS_packet_lost +=
+                  ((Notification.DataTransfered.pPayload_n - Notification.DataTransfered.pPayload_n_1) - 1);
+              }
+              __enable_irq();
+              /* CRC computation */
+              CRC_Result = APP_BLE_ComputeCRC8((uint8_t*) (attribute_modified->Attr_Data), (attribute_modified->Attr_Data_Length) - 1);
+              /* get low weight byte */
+              CRC_Received = (uint8_t) (attribute_modified->Attr_Data[Notification.DataTransfered.Length - 1]);
+              
+              if (CRC_Received != CRC_Result)
+              {
+                DTS_N+=1;
+                APP_DBG_MSG("** data error **  N= %d \r\n",(int)DTS_N);
+              }
+            }
+
+            Notification.DataTransfered.pPayload_n_1 = Notification.DataTransfered.pPayload_n;
+            
+            
+            Notification.Evt_Opcode = DTS_DATA_RECEIVED;
             DTS_Notification(&Notification); 
           }
         }

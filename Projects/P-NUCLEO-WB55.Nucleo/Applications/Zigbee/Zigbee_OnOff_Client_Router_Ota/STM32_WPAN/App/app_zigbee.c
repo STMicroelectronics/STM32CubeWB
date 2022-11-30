@@ -78,6 +78,7 @@ static void Receive_Notification_From_M0(void);
 
 /* USER CODE BEGIN PFP */
 static void APP_ZIGBEE_SW1_Process(void);
+static void APP_ZIGBEE_SW3_Process(void);
 static void APP_ZIGBEE_ConfigGroupAddr(void);
 /* USER CODE END PFP */
 
@@ -98,7 +99,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRequestBuffer[siz
  * The MagicKeywordAddress shall be mapped @0x140 from start of the binary image
  * The MagicKeywordValue is checked in the thread_ota application
  */
-PLACE_IN_SECTION("TAG_OTA_END") const uint32_t MagicKeywordValue = FUOTA_MAGIC_KEYWORD ;
+PLACE_IN_SECTION("TAG_OTA_END") const uint32_t MagicKeywordValue = FUOTA_MAGIC_KEYWORD;
 PLACE_IN_SECTION("TAG_OTA_START") const uint32_t MagicKeywordAddress = (uint32_t)&MagicKeywordValue;
 
 
@@ -151,6 +152,9 @@ void APP_ZIGBEE_Init(void)
   /* USER CODE BEGIN APP_ZIGBEE_INIT */
   /* Task associated with push button SW1 */
   UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_ZIGBEE_SW1_Process);
+  
+  /* Task associated with push button SW3 */
+  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW3, UTIL_SEQ_RFU, APP_ZIGBEE_SW3_Process);
   /* USER CODE END APP_ZIGBEE_INIT */
 
   /* Start the Zigbee on the CPU2 side */
@@ -682,6 +686,22 @@ static void APP_ZIGBEE_SW1_Process()
   if (ZbZclOnOffClientToggleReq(zigbee_app_info.onOff_client_1, &dst, NULL, NULL) != ZCL_STATUS_SUCCESS) {
     APP_DBG("Error, ZbZclOnOffClientToggleReq failed (SW1_ENDPOINT)");
   }
+}
+
+
+static void APP_ZIGBEE_SW3_Process()
+{
+  if(zigbee_app_info.zb == NULL)
+  {
+    return;
+  }
+  
+  APP_DBG("SW3 PUSHED (Reset to OTA)");
+  
+  *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_THREAD_OTA_APP;
+  *(uint8_t*)( SRAM1_BASE + 1u ) = 0x00;
+  *(uint8_t*)( SRAM1_BASE + 2u ) = 0x00;
+  NVIC_SystemReset();
 }
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */

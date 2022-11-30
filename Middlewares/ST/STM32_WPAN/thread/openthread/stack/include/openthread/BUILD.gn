@@ -27,27 +27,10 @@
 
 import("../../etc/gn/openthread.gni")
 
-copy("copy_openthread_config_generic") {
-  sources = [ "../../etc/cmake/openthread-config-generic.h.in" ]
-  outputs = [ "${root_gen_dir}/include/{{source_name_part}}" ]
-}
-
-config("openthread_config_generic_config") {
-  include_dirs = [ "${root_gen_dir}/include" ]
-}
-
-source_set("openthread_config_generic") {
-  sources = [ "${root_gen_dir}/include/openthread-config-generic.h" ]
-  deps = [ ":copy_openthread_config_generic" ]
-  public_configs = [ ":openthread_config_generic_config" ]
-}
-
 source_set("openthread_config") {
   public = [ "config.h" ]
 
-  if (openthread_config_file == "") {
-    public_deps = [ ":openthread_config_generic" ]
-  } else {
+  if (openthread_config_file != "") {
     public_deps = openthread_config_deps
   }
 
@@ -60,6 +43,7 @@ source_set("openthread") {
     "backbone_router_ftd.h",
     "border_agent.h",
     "border_router.h",
+    "border_routing.h",
     "channel_manager.h",
     "channel_monitor.h",
     "child_supervision.h",
@@ -90,6 +74,7 @@ source_set("openthread") {
     "logging.h",
     "message.h",
     "multi_radio.h",
+    "nat64.h",
     "ncp.h",
     "netdata.h",
     "netdata_publisher.h",
@@ -126,6 +111,7 @@ source_set("openthread") {
     "srp_server.h",
     "tasklet.h",
     "tcp.h",
+    "tcp_ext.h",
     "thread.h",
     "thread_ftd.h",
     "trel.h",

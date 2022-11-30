@@ -1,8 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : app_entry.h
-  * Description        : App entry configuration file for STM32WPAN Middleware.
+  * @file    app_entry.h
+  * @author  MCD Application Team
+  * @brief   Interface to the application
   ******************************************************************************
   * @attention
   *
@@ -32,7 +33,7 @@ extern "C" {
 
 /* USER CODE END Includes */
 
-  /* Exported types ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
 /* USER CODE END ET */
@@ -53,9 +54,9 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void MX_APPE_Config( void );
-  void MX_APPE_Init( void );
-  void MX_APPE_Process( void );
+ void MX_APPE_Config(void);
+ void MX_APPE_Init(void);
+ void MX_APPE_Process(void);
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */
@@ -64,5 +65,4 @@ extern "C" {
 } /* extern "C" */
 #endif
 
-#endif /* APP_ENTRY_H */
-
+#endif /*APP_ENTRY_H */

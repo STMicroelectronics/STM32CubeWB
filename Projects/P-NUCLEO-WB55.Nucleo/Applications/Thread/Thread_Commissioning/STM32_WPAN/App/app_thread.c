@@ -175,8 +175,8 @@ void APP_THREAD_Init( void )
   UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
 
   /* USER CODE BEGIN INIT TASKS */
-  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_CONFIG_LEADER, UTIL_SEQ_RFU,APP_THREAD_ConfigLeaderDevice);
-  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_START_JOINER, UTIL_SEQ_RFU,APP_THREAD_ConfigJoiner);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU,APP_THREAD_ConfigLeaderDevice);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_BUTTON_SW3, UTIL_SEQ_RFU,APP_THREAD_ConfigJoiner);
   UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_START_COMMISSIONER, UTIL_SEQ_RFU,APP_THREAD_StartCommissioner);
   /* USER CODE END INIT TASKS */
 
@@ -318,12 +318,14 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
       BSP_LED_On(LED3);
       ToggleBlueLedMode = NO_TOGGLING;
       BSP_LED_On(LED1);
+      APP_DBG("ROLE CHILD");
       /* USER CODE END OT_DEVICE_ROLE_CHILD */
       break;
     case OT_DEVICE_ROLE_ROUTER :
       /* USER CODE BEGIN OT_DEVICE_ROLE_ROUTER */
       BSP_LED_Off(LED2);
       BSP_LED_On(LED3);
+    
       /* USER CODE END OT_DEVICE_ROLE_ROUTER */
       break;
     case OT_DEVICE_ROLE_LEADER :
@@ -336,6 +338,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
       }
       ToggleBlueLedMode = NO_TOGGLING;
       BSP_LED_On(LED1);
+      APP_DBG("ROLE LEADER");
       /* USER CODE END OT_DEVICE_ROLE_LEADER */
       break;
     default:
@@ -503,7 +506,7 @@ static void APP_THREAD_StartCommissioner(void)
   otError error;
 
   HAL_Delay(1000U);
-  APP_DBG("**** APP_THREAD_StartCommissioner");
+  APP_DBG("APP_THREAD_StartCommissioner");
   /* Start the commissioner */
   error = otCommissionerStart(NULL,
       CommissionerStateCallback,
@@ -536,7 +539,7 @@ static void APP_THREAD_ConfigLeaderDevice(void)
 {
   otError error;
 
-  APP_DBG("**** APP_THREAD_ConfigLeaderDevice");
+  APP_DBG("APP_THREAD_ConfigLeaderDevice");
 
   error = otLinkSetChannel(NULL, C_CHANNEL_NB);
   if (error != OT_ERROR_NONE)
@@ -571,7 +574,7 @@ static void APP_THREAD_ConfigJoiner(void)
 {
   otError error;
 
-  APP_DBG("**** APP_THREAD_ConfigJoiner");
+  APP_DBG("APP_THREAD_ConfigJoiner");
   ToggleBlueLedMode = FAST_TOGGLING;
   error = otIp6SetEnabled(NULL, true);
   if (error != OT_ERROR_NONE)

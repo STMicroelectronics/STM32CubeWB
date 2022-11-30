@@ -63,6 +63,9 @@ void DTS_App_KeyButton1Action(void);
 void DTS_App_KeyButton2Action( void );
 void DTS_App_KeyButton3Action( void );
 void DTS_App_TxPoolAvailableNotification(void);
+
+void DTS_Button1TriggerReceived( void );
+void DTS_Button2TriggerReceived( void );
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */

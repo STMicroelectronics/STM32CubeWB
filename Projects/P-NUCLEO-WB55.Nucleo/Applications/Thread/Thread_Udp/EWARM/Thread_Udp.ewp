@@ -16,15 +16,15 @@
                 <debug>0</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Exe</state>
+                    <state>Thread_Udp\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Obj</state>
+                    <state>Thread_Udp\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\List</state>
+                    <state>Thread_Udp\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -66,7 +66,7 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
-                    <state>8.20.2.14834</state>
+                    <state>8.22.2.15993</state>
                 </option>
                 <option>
                     <name>GeneralEnableMisra</name>
@@ -373,6 +373,7 @@
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\include\mbedtls</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -672,7 +673,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Project.bin</state>
+                    <state>Thread_Udp.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>

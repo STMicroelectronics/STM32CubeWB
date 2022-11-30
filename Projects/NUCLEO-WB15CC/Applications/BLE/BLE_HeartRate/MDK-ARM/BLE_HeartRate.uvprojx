@@ -434,6 +434,11 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32wbxx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>hw_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/hw_uart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -583,6 +588,16 @@
               <FileName>stm32wbxx_hal_tim_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart_ex.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -735,11 +750,6 @@
     <Layers>
       <Layer>
         <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc></LayDesc>
-        <LayUrl></LayUrl>
-        <LayKeys></LayKeys>
-        <LayCat></LayCat>
-        <LayLic></LayLic>
         <LayTarg>0</LayTarg>
         <LayPrjMark>1</LayPrjMark>
       </Layer>

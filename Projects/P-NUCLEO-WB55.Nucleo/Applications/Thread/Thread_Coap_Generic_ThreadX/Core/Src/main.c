@@ -105,6 +105,7 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+
   /* Config code for STM32_WPAN (HSE Tuning must be done before system clock configuration) */
   MX_APPE_Config();
 
@@ -115,11 +116,11 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-/* Configure the peripherals common clocks */
+  /* Configure the peripherals common clocks */
   PeriphCommonClock_Config();
 
   /* IPCC initialisation */
-   MX_IPCC_Init();
+  MX_IPCC_Init();
 
   /* USER CODE BEGIN SysInit */
 
@@ -139,6 +140,7 @@ int main(void)
 
   /* Infinite loop */
   MX_ThreadX_Init();
+
   /* USER CODE BEGIN WHILE */
   while (1)
   {
@@ -254,8 +256,8 @@ static void MX_IPCC_Init(void)
   */
 void MX_LPUART1_UART_Init(void)
 {
-
   /* USER CODE BEGIN LPUART1_Init 0 */
+  UART_WakeUpTypeDef UartWakeUpType = {0};
 
   /* USER CODE END LPUART1_Init 0 */
 
@@ -290,7 +292,12 @@ void MX_LPUART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN LPUART1_Init 2 */
-
+    
+  // -- Indicate WakeUp if StopMode is activated --
+  UartWakeUpType.WakeUpEvent = UART_WAKEUP_ON_STARTBIT;
+  HAL_UARTEx_StopModeWakeUpSourceConfig( &hlpuart1, UartWakeUpType );
+  HAL_UARTEx_EnableStopMode( &hlpuart1 );
+  
   /* USER CODE END LPUART1_Init 2 */
 
 }
@@ -304,7 +311,7 @@ void MX_USART1_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART1_Init 0 */
-
+  UART_WakeUpTypeDef UartWakeUpType = {0};
   /* USER CODE END USART1_Init 0 */
 
   /* USER CODE BEGIN USART1_Init 1 */
@@ -338,7 +345,10 @@ void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
-
+  // -- Indicate WakeUp if StopMode is activated --
+  UartWakeUpType.WakeUpEvent = UART_WAKEUP_ON_STARTBIT;
+  HAL_UARTEx_StopModeWakeUpSourceConfig( &huart1, UartWakeUpType );
+  HAL_UARTEx_EnableStopMode( &huart1 );
   /* USER CODE END USART1_Init 2 */
 
 }

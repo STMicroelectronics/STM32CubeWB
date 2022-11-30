@@ -112,11 +112,17 @@ At startup the connection is established and encryption started(if #define ENCRY
  - The peripheral device starts advertising.
  - The central device scans and automatically connects to the peripheral (use of CFG_DEV_ID_PERIPH_SERVER). 
  - After pairing and authentication (if enabled),  
-   the client on each device starts to search the data transfer service and characteristic.
- - Each client enables the notification of the transmission characteristic.
+   the client starts to search the data transfer service and characteristic.
+ - the client enables the notification of the transmission characteristic.
 On server side, the notification is started when the SW1 button is pushed (blue LED is ON), 
 it stops when SW1 is pushed again (blue LED is OFF).
 The Data Transfer with write without response can be started and stopped from SW1 GATT Client board (indicated by blue LED).
+SW2 changes the PHY (1M or 2M). 
+SW3 (long push) clears the security database (aci_gap_clear_security_db command)
+On server: 
+SW3 (short push) sends the slave pairing request (aci_gap_slave_security_req command)
+On client:
+SW3 (short push) sends the pairing request (aci_gap_send_pairing_req command)
 On the client terminal receiving the current notification, the number of bytes per second is displayed.
 On the server terminal receiving the current write without response, the number of bytes per second is displayed.
 One P-NUCLEO-WB55 board is used as GATT Server and GAP peripheral.

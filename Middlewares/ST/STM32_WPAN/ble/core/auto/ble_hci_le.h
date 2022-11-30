@@ -73,13 +73,15 @@ tBleStatus hci_read_remote_version_information( uint16_t Connection_Handle );
  * event mask allows the Host to control how much it is interrupted.
  * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.3.1].
  * 
- * @param Event_Mask Event mask. Default: 0x20001FFFFFFFFFFF
+ * @param Event_Mask Event mask. Default: 0x2000FFFFFFFFFFFF
  *        Flags:
  *        - 0x0000000000000000: No events specified
  *        - 0x0000000000000010: Disconnection Complete Event
  *        - 0x0000000000000080: Encryption Change Event
  *        - 0x0000000000000800: Read Remote Version Information Complete Event
  *        - 0x0000000000008000: Hardware Error Event
+ *        - 0x0000000002000000: Data Buffer Overflow Event (not supported on
+ *          STM32WB)
  *        - 0x0000800000000000: Encryption Key Refresh Complete Event
  *        - 0x2000000000000000: LE Meta-Event
  * @return Value indicating success or error code.
@@ -202,15 +204,18 @@ tBleStatus hci_set_controller_to_host_flow_control( uint8_t Flow_Control_Enable 
  * 
  * @param Host_ACL_Data_Packet_Length Maximum length (in octets) of the data
  *        portion of each HCI ACL Data Packet that the Host is able to accept.
- *        Must be greater or equal to 251 bytes
+ *        Values:
+ *        - 251 ... 65535
  * @param Host_Synchronous_Data_Packet_Length Maximum length (in octets) of the
  *        data portion of each HCI synchronous Data Packet that the Host is
- *        able to accept.
+ *        able to accept. Not used.
  * @param Host_Total_Num_ACL_Data_Packets Total number of HCI ACL Data Packets
  *        that can be stored in the data buffers of the Host.
+ *        Values:
+ *        - 1 ... 65535
  * @param Host_Total_Num_Synchronous_Data_Packets Total number of HCI
  *        synchronous Data Packets that can be stored in the data buffers of
- *        the Host.
+ *        the Host. Not used.
  * @return Value indicating success or error code.
  */
 tBleStatus hci_host_buffer_size( uint16_t Host_ACL_Data_Packet_Length,
@@ -389,7 +394,7 @@ tBleStatus hci_read_rssi( uint16_t Connection_Handle,
  *        - 0x0000000000002000: LE Periodic Advertising Sync Established Event
  *        - 0x0000000000004000: LE Periodic Advertising Report Event
  *        - 0x0000000000008000: LE Periodic Advertising Sync Lost Event
- *        - 0x0000000000010000: LE Extended Scan Timeouout Event
+ *        - 0x0000000000010000: LE Extended Scan Timeout Event
  *        - 0x0000000000020000: LE Extended Advertising Set Terminated Event
  *        - 0x0000000000040000: LE Scan Request Received Event
  *        - 0x0000000000080000: LE Channel Selection Algorithm Event
@@ -675,10 +680,10 @@ tBleStatus hci_le_set_advertising_enable( uint8_t Advertising_Enable );
  *        Only. Directed advertising packets which are not addressed for this
  *        device shall be ignored
  *        0x02 Accept all undirected advertisement packets. Directed
- *        advertisement packets where initiator address is a RPA and Directed
+ *        advertisement packets where initiator address is an RPA and Directed
  *        advertisement packets addressed to this device shall be accepted.
  *        0x03 Accept all undirected advertisement packets from devices that
- *        are in the White List.Directed advertisement packets where initiator
+ *        are in the White List. Directed advertisement packets where initiator
  *        address is RPA and Directed advertisement packets addressed to this
  *        device shall be accepted.
  *        Values:
@@ -1307,8 +1312,8 @@ tBleStatus hci_le_read_local_p256_public_key( void );
  * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.8.37].
  * 
  * @param Remote_P256_Public_Key The remote P-256 public key in X, Y format:
- *        Octets 31-0: X co-ordinate
- *        Octets 63-32: Y co-ordinate
+ *        Octets 31-0: X coordinate
+ *        Octets 63-32: Y coordinate
  *        Little Endian Format
  * @return Value indicating success or error code.
  */

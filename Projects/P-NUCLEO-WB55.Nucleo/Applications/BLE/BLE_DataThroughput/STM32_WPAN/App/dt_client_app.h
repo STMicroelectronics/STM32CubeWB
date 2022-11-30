@@ -61,6 +61,9 @@ void DTCAPP_Update_Service(void);
 void DTC_App_KeyButton1Action(void);
 void DTC_App_KeyButton2Action( void );
 void DTC_App_KeyButton3Action( void );
+void Resume_Write(void);
+void DTC_Button1TriggerReceived( void );
+void DTC_Button2TriggerReceived( void );
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */

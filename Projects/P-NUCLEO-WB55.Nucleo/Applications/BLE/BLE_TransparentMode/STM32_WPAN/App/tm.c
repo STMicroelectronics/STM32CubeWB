@@ -31,6 +31,7 @@
 #include "shci_tl.h"
 #include "stm32_seq.h"
 #include "ble_bufsize.h"
+#include "dbg_trace.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -95,12 +96,7 @@ static void TM_SysLocalCmd(void);
 static void TM_TxToHost(void);
 static void TM_BleEvtRx(TL_EvtPacket_t *phcievt);
 static void TM_AclDataAck(void);
-#if (CFG_HW_LPUART1_ENABLED == 1)
-extern void MX_LPUART1_UART_Init(void);
-#endif
-#if (CFG_HW_USART1_ENABLED == 1)
 extern void MX_USART1_UART_Init(void);
-#endif
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -114,6 +110,10 @@ void TM_Init(void)
   TL_BLE_InitConf_t tl_ble_init_conf;
   uint32_t ipccdba;
   SHCI_CmdStatus_t status;
+
+  SHCI_C2_CONFIG_Cmd_Param_t config_param = {0};
+  uint32_t RevisionID=0;
+  uint32_t DeviceID=0;
 
   SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
   {
@@ -130,7 +130,7 @@ void TM_Init(void)
      CFG_BLE_MAX_ATT_MTU,
      CFG_BLE_SLAVE_SCA,
      CFG_BLE_MASTER_SCA,
-     CFG_BLE_LSE_SOURCE,
+     CFG_BLE_LS_SOURCE,
      CFG_BLE_MAX_CONN_EVENT_LENGTH,
      CFG_BLE_HSE_STARTUP_TIME,
      CFG_BLE_VITERBI_MODE,
@@ -143,7 +143,8 @@ void TM_Init(void)
      CFG_BLE_MAX_ADV_SET_NBR,
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
-     CFG_BLE_RX_PATH_COMPENS
+     CFG_BLE_RX_PATH_COMPENS,
+     CFG_BLE_CORE_VERSION
     }
   };
 
@@ -161,6 +162,25 @@ void TM_Init(void)
   LowPowerModeStatus = LOW_POWER_MODE_DISABLE;
 
   SysLocalCmdStatus = 0;
+
+  config_param.PayloadCmdSize = SHCI_C2_CONFIG_PAYLOAD_CMD_SIZE;
+  config_param.EvtMask1 = SHCI_C2_CONFIG_EVTMASK1_BIT0_ERROR_NOTIF_ENABLE
+    +  SHCI_C2_CONFIG_EVTMASK1_BIT1_BLE_NVM_RAM_UPDATE_ENABLE
+      +  SHCI_C2_CONFIG_EVTMASK1_BIT2_THREAD_NVM_RAM_UPDATE_ENABLE
+        +  SHCI_C2_CONFIG_EVTMASK1_BIT3_NVM_START_WRITE_ENABLE
+          +  SHCI_C2_CONFIG_EVTMASK1_BIT4_NVM_END_WRITE_ENABLE
+            +  SHCI_C2_CONFIG_EVTMASK1_BIT5_NVM_START_ERASE_ENABLE
+              +  SHCI_C2_CONFIG_EVTMASK1_BIT6_NVM_END_ERASE_ENABLE;
+
+  RevisionID = LL_DBGMCU_GetRevisionID();
+  APP_DBG_MSG(">>== DBGMCU_GetRevisionID= %lx \n\r", RevisionID);
+  config_param.RevisionID = RevisionID;
+
+  DeviceID = LL_DBGMCU_GetDeviceID();
+  APP_DBG_MSG(">>== DBGMCU_GetDeviceID= %lx \n\r", DeviceID);
+  config_param.DeviceID = DeviceID;
+
+  (void)SHCI_C2_Config(&config_param);
 
   status = SHCI_C2_BLE_Init(&ble_init_cmd_packet);
   if (status != SHCI_Success)

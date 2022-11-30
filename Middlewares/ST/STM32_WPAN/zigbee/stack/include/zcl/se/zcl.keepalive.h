@@ -1,9 +1,22 @@
 /**
  * @file zcl.keepalive.h
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  * @heading Keep Alive
  * @brief ZCL Keep Alive cluster header
- * ZCL 8 Section 3.18
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ *
+ * The Keep Alive clusters are typically used in Smart Energy applications.
+ *
+ * The Keep Alive server and client clusters are allocated by the stack if the application
+ * configures the Key Exchange information in the ZbStartup configuration (struct ZbStartupCbkeT).
+ * The Keep Alive server is allocated if the tc_keepalive_server_enable flag is set to true,
+ * otherwise the Keep Alive client is allocated. Typically, the Keep Alive server is allocated
+ * on the Trust Center, and the Keep Alive client is allocated on devices joining the SE network.
+ *
+ * If the Keep Alive client determines there's a problem communicating with the Trust Center,
+ * it will call the application callback 'tcso_callback' configured in the ZbStartup configuration.
+ * At which point, the stack will perform the necessary Trust Center Swap Out (TCSO) routines
+ * to attempt to find a newly swapped-out Trust Center, or if the current Trust Center has moved
+ * to a different channel or other configuration.
  */
 
 /*--------------------------------------------------------------------------

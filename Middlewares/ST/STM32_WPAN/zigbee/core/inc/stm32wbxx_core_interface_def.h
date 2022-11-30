@@ -1,14 +1,14 @@
 /**
-  ******************************************************************************
-  * @file    stm32wbxx_core_interface_def.h
-  * @author  MCD Application Team
-  * @brief   This file contains all the defines and structures used for the
-  *          communication between the two core M0 and M4 when using zigbee.
-  *          This file is shared between the code running on M4 and the code
-  *          running on M0.
-  *
-  ******************************************************************************
-  * @attention
+ ******************************************************************************
+ * @file    stm32wbxx_core_interface_def.h
+ * @author  MCD Application Team
+ * @brief   This file contains all the defines and structures used for the
+ *          communication between the two core M0 and M4 when using zigbee.
+ *          This file is shared between the code running on M4 and the code
+ *          running on M0.
+ *
+ ******************************************************************************
+ * @attention
  *
  * Copyright (c) 2018-2021 STMicroelectronics.
  * All rights reserved.
@@ -177,10 +177,10 @@ typedef enum {
     MSG_M0TOM4_ZDO_MGMT_NWK_UPDATE_FILTER_CB = 0x0125,
     MSG_M4TOM0_ZDO_FILTER_DEL = 0x0126, /* ZbZdoFilterRemove */
 #if 0 /* Not required for 2.4 GHz DUT */
-    MSG_M4TOM0_ZDO_MGMT_NWK_ENH_UPDATE_REQ = , /* ZbZdoNwkEnhUpdateReq */
-    MSG_M4TOM0_ZDO_MGMT_NWK_IEEE_JOIN_REQ = , /* ZbZdoNwkIeeeJoinListReq */
-    MSG_M4TOM0_ZDO_MGMT_NWK_ENH_UPDATE_NOTIFY = , /* ZbZdoUnsolicitedEnhUpdateNotify */
-    MSG_M4TOM0_ZDO_MGMT_NWK_IEEE_JOIN_BCAST = , /* ZbZdoNwkIeeeJoinListBcastAll */
+    MSG_M4TOM0_ZDO_MGMT_NWK_ENH_UPDATE_REQ =, /* ZbZdoNwkEnhUpdateReq */
+    MSG_M4TOM0_ZDO_MGMT_NWK_IEEE_JOIN_REQ =, /* ZbZdoNwkIeeeJoinListReq */
+    MSG_M4TOM0_ZDO_MGMT_NWK_ENH_UPDATE_NOTIFY =, /* ZbZdoUnsolicitedEnhUpdateNotify */
+    MSG_M4TOM0_ZDO_MGMT_NWK_IEEE_JOIN_BCAST =, /* ZbZdoNwkIeeeJoinListBcastAll */
 #endif
     /* Reserved to 0x01ff Future Use */
 
@@ -220,6 +220,7 @@ typedef enum {
     MSG_M4TOM0_APSME_ADD_KEY = 0x021c, /* ZbApsmeAddKeyReq */
     MSG_M4TOM0_APSME_GET_KEY = 0x021d, /* ZbApsmeGetKeyReq */
     MSG_M4TOM0_APSME_REMOVE_KEY = 0x021e, /* ZbApsmeRemoveKeyReq */
+    MSG_M4TOM0_APS_EP_CLUSTER_ID_DEL = 0x021f, /* ZbApsmeEndpointClusterListRemove */
     /* Reserved to 0x02ff for Future Use */
 
     /* NLME */
@@ -255,6 +256,10 @@ typedef enum {
     /* NLME-cont'd */
     MSG_M4TOM0_NLME_ED_SCAN = 0x031c, /* ZbNlmeEdScanReq */
     MSG_M0TOM4_NLME_ED_SCAN_CB = 0x031d,
+    /* MAC Filtering */
+    MSG_M4TOM0_NWK_MAC_FILTER_ADD = 0x031e, /* nwk_mac_filter_add */
+    MSG_M4TOM0_NWK_MAC_FILTER_DEL = 0x031f, /* nwk_mac_filter_del */
+    MSG_M4TOM0_NWK_MAC_FILTER_DEBUG = 0x0320, /* nwk_mac_filter_debug */
     /* Reserved to 0x03ff for Future Use */
 
     /* ZCL Endpoint */
@@ -303,11 +308,11 @@ typedef enum {
     /* ZCL Diagnostics Server */
     MSG_M4TOM0_ZCL_DIAG_SERVER_ALLOC = 0x0422, /* ZbZclDiagServerAlloc */
 #if 0 /* needed? */
-    /* ZCL Device Log - Cont'd */
-    MSG_M4TOM0_ZCL_DEVICE_LOG_ADD = , /* ZbZclDeviceLogAdd */
-    MSG_M4TOM0_ZCL_DEVICE_LOG_CLEAR = , /* ZbZclDeviceLogClear */
-    MSG_M4TOM0_ZCL_DEVICE_LOG_ENABLE = , /* ZbZclDeviceLogEnable */
-    MSG_M4TOM0_ZCL_DEVICE_LOG_REMOVE = , /* ZbZclDeviceLogRemove */
+      /* ZCL Device Log - Cont'd */
+    MSG_M4TOM0_ZCL_DEVICE_LOG_ADD =, /* ZbZclDeviceLogAdd */
+    MSG_M4TOM0_ZCL_DEVICE_LOG_CLEAR =, /* ZbZclDeviceLogClear */
+    MSG_M4TOM0_ZCL_DEVICE_LOG_ENABLE =, /* ZbZclDeviceLogEnable */
+    MSG_M4TOM0_ZCL_DEVICE_LOG_REMOVE =, /* ZbZclDeviceLogRemove */
 #endif
     /* Reserved to 0x04ff for Future Use */
 

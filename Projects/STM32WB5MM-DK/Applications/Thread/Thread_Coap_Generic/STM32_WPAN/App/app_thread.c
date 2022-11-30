@@ -318,6 +318,7 @@ static void APP_THREAD_DeviceConfig(void)
 {
   otError error;
   otNetworkKey networkKey = {{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF}};
+
   error = otInstanceErasePersistentInfo(NULL);
   if (error != OT_ERROR_NONE)
   {
@@ -817,6 +818,7 @@ Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void)
 
 static void Ot_Cmd_Transfer_Common(void)
 {
+
   /* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352 */
   p_thread_otcmdbuffer->cmdserial.cmd.cmdcode = 0x280U;
   /* Size = otCmdBuffer->Size (Number of OT cmd arguments : 1 arg = 32bits so multiply by 4 to get size in bytes)
@@ -828,6 +830,7 @@ static void Ot_Cmd_Transfer_Common(void)
 
   /* Wait completion of cmd */
   Wait_Getting_Ack_From_M0();
+
 }
 
 /**

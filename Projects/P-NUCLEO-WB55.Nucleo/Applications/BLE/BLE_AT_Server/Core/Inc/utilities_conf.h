@@ -1,10 +1,10 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : utilities_conf.h
-  * Description        : Configuration file for STM32 Utilities.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    utilities_conf.h
+  * @author  MCD Application Team
+  * @brief   Configuration file for STM32 Utilities.
+  ******************************************************************************
   * @attention
   *
   * Copyright (c) 2019-2021 STMicroelectronics.
@@ -62,5 +62,4 @@ extern "C" {
 }
 #endif
 
-#endif /* UTILITIES_CONF_H */
-
+#endif /*UTILITIES_CONF_H */

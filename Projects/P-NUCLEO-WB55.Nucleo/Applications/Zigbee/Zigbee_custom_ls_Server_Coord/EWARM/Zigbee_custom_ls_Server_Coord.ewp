@@ -16,15 +16,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Zigbee_custom_ls_Coord/Exe</state>
+                    <state>Zigbee_custom_ls_Server_Coord/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Zigbee_custom_ls_Coord/Obj</state>
+                    <state>Zigbee_custom_ls_Server_Coord/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Zigbee_custom_ls_Coord/List</state>
+                    <state>Zigbee_custom_ls_Server_Coord/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -661,7 +661,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Zigbee_custom_ls_Coord.bin</state>
+                    <state>Zigbee_custom_ls_Server_Coord.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>

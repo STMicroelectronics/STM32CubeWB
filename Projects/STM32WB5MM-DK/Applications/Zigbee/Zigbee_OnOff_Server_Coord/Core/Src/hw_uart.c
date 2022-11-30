@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : Src/hw_uart.c
-  * Description        : HW UART source file for STM32WPAN Middleware.
-  *
+  ******************************************************************************
+  * @file    Src/hw_uart.c
+  * @author  MCD Application Team
+  * @brief   HW UART source file for STM32WPAN Middleware.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -315,4 +315,3 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 
     return;
 }
-

@@ -1,8 +1,9 @@
 /**
  * @file zigbee.security.h
+ * @heading Security Utilities
  * @brief Zigbee security header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_SECURITY_H
@@ -216,8 +217,11 @@ struct ZbZclCbke2InfoT {
 /* Security Control Field of the Auxilliary Header */
 struct ZbSecAuxHdrCtrlT {
     uint8_t secLevel;
+    /**< Security level of the frame. */
     enum ZbSecHdrKeyIdT keyId;
+    /**< Key used to encrypt the frame. */
     bool extNonce;
+    /**< Extended nonce present. */
 };
 
 /* Structure containing the fields stored in the Aux Header */
@@ -310,7 +314,7 @@ enum ZbStatusCodeT ZbSecAddDeviceLinkKeyByInstallCode(struct ZigBeeT *zb, uint64
     uint8_t *ic, unsigned int len);
 
 /*---------------------------------------------------------------
- * ECDSA Signature Validation
+ * ECDSA Signature Validation (e.g. for OTA Upgrade)
  *---------------------------------------------------------------
  */
 enum ZbSecEcdsaSigType {
@@ -322,11 +326,11 @@ enum ZbSecEcdsaSigType {
 #define ZB_SEC_CRYPTO_SUITE_V2_SIG_LEN              80U /* IEEE[8] r[36] s[36] */
 
 /**
- * Description
- * @param zb
- * @param sig_type
- * @param ca_pub_key_array
- * @param ca_pub_key_len
+ * Elliptic Curve Digital Signature Algorithm (ECDSA) validator.
+ * @param zb Zigbee stack instance
+ * @param sig_type Signature suite type (e.g. ZB_SEC_ECDSA_SIG_SUITE_1)
+ * @param ca_pub_key_array Public key
+ * @param ca_pub_key_len Public key length
  * @param certificate Length must be ZB_SEC_CRYPTO_SUITE_V2_CERT_LEN (74 bytes)
  * @param signature Length must be ZB_SEC_CRYPTO_SUITE_V2_SIG_LEN (80 bytes)
  * @param image_digest Length is AES_BLOCK_SIZE (16 bytes)
@@ -338,4 +342,4 @@ enum ZbStatusCodeT ZbSecEcdsaValidate(struct ZigBeeT *zb, enum ZbSecEcdsaSigType
     const uint8_t *certificate, const uint8_t *signature,
     const uint8_t *image_digest, const uint8_t *cert_digest);
 
-#endif /* ZIGBEE_SECURITY_H */
+#endif

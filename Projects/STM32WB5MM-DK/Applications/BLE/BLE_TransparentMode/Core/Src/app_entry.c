@@ -28,6 +28,7 @@
 #include "stm_list.h"
 #include "stm32_lpm.h"
 #include "app_debug.h"
+#include "dbg_trace.h"
 #include "otp.h"
 
 /* Private includes -----------------------------------------------------------*/

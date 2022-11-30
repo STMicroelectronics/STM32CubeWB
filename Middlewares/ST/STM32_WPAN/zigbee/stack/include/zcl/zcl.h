@@ -789,8 +789,9 @@ enum ZclStatusCodeT ZbZclSendClusterStatusResponse(struct ZbZclClusterT *cluster
     uint8_t *zclPayload, uint8_t zclPaylen, bool allow_bcast);
 
 /* Send a Default Response. */
-void ZbZclSendDefaultResponse(struct ZbZclClusterT *cluster, struct ZbApsdeDataIndT *dataIndPtr,
-    struct ZbZclHeaderT *zclHdrPtr, enum ZclStatusCodeT status);
+void ZbZclSendDefaultResponse(struct ZbZclClusterT *cluster, struct ZbApsdeDataIndT *ind,
+    struct ZbZclHeaderT *hdr, enum ZclStatusCodeT status);
+
 /* Different version of ZbZclSendDefaultResponse, but takes in ZbZclAddrInfoT rather than
  * struct ZbApsdeDataIndT and ZbZclHeaderT */
 void ZbZclSendDefaultResponse2(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *dstInfo,

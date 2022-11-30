@@ -495,6 +495,7 @@ extern "C" {
    * Some information for Low speed clock mapped in bits field
    * - bit 0:   1: Calibration for the RF system wakeup clock source   0: No calibration for the RF system wakeup clock source
    * - bit 1:   1: STM32W5M Module device                              0: Other devices as STM32WBxx SOC, STM32WB1M module
+   * - bit 2:   1: HSE/1024 Clock config                               0: LSE Clock config   
    */
   uint8_t LsSource;
 
@@ -532,7 +533,11 @@ extern "C" {
    * - bit 2:   1: device name Read-Only            0: device name R/W
    * - bit 3:   1: extended advertizing supported   0: extended advertizing not supported
    * - bit 4:   1: CS Algo #2 supported             0: CS Algo #2 not supported
+   * - bit 5:   1: Reduced GATT database in NVM     0: Full GATT database in NVM 
+   * - bit 6:   1: GATT caching is used             0: GATT caching is not used
    * - bit 7:   1: LE Power Class 1                 0: LE Power Classe 2-3
+   * - bit 8:   1: appearance Writable              0: appearance Read-Only
+   * - bit 9:   1: Enhanced ATT supported           0: Enhanced ATT not supported
    * - other bits: reserved ( shall be set to 0)
    */
   uint8_t Options;
@@ -594,6 +599,11 @@ extern "C" {
    */
   int16_t rx_path_compens;
 
+  /* BLE core specification version (8-bit unsigned integer).
+   * values as: 11(5.2), 12(5.3)
+   */
+  uint8_t ble_core_version; 
+  
       } SHCI_C2_Ble_Init_Cmd_Param_t;
 
   typedef PACKED_STRUCT{
@@ -620,23 +630,43 @@ extern "C" {
   
 #define SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2                             (1<<4)
 #define SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2                          (0<<4)
+
+#define SHCI_C2_BLE_INIT_OPTIONS_REDUC_GATTDB_NVM                     (1<<5)
+#define SHCI_C2_BLE_INIT_OPTIONS_FULL_GATTDB_NVM                      (0<<5) 
+
+#define SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_USED                    (1<<6)
+#define SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED                 (0<<6)
   
 #define SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1                        (1<<7)
 #define SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3                      (0<<7)
 
+#define SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_WRITABLE                  (1<<8)
+#define SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY                  (0<<8)
+
+#define SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_SUPPORTED               (1<<9)
+#define SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED            (0<<9)
+  
     /**
    * RX models configuration
    */
 #define SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY                     (0<<0)
 #define SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_BLOCKER                    (1<<0)
 
+  /**
+   * BLE core version
+   */
+#define SHCI_C2_BLE_INIT_BLE_CORE_5_2               11 
+#define SHCI_C2_BLE_INIT_BLE_CORE_5_3               12
+  
    /**
    * LsSource information
    */
-#define SHCI_C2_BLE_INIT_CFG_BLE_LSE_NOCALIB                     (0<<0)
-#define SHCI_C2_BLE_INIT_CFG_BLE_LSE_CALIB                       (1<<0)
-#define SHCI_C2_BLE_INIT_CFG_BLE_LSE_OTHER_DEV                   (0<<1)  
-#define SHCI_C2_BLE_INIT_CFG_BLE_LSE_MOD5MM_DEV                  (1<<1)
+#define SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB                     (0<<0)
+#define SHCI_C2_BLE_INIT_CFG_BLE_LS_CALIB                       (1<<0)
+#define SHCI_C2_BLE_INIT_CFG_BLE_LS_OTHER_DEV                   (0<<1)  
+#define SHCI_C2_BLE_INIT_CFG_BLE_LS_MOD5MM_DEV                  (1<<1)
+#define SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_LSE                     (0<<2)  
+#define SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_HSE_1024                (1<<2)
   
 #define SHCI_OPCODE_C2_THREAD_INIT              (( SHCI_OGF << 10) + SHCI_OCF_C2_THREAD_INIT)
 /** No command parameters */
@@ -796,6 +826,7 @@ extern "C" {
       uint32_t BleNvmRamAddress;
       uint32_t ThreadNvmRamAddress;
       uint16_t RevisionID;
+      uint16_t DeviceID;
     } SHCI_C2_CONFIG_Cmd_Param_t;
 
 #define SHCI_OPCODE_C2_802_15_4_DEINIT    (( SHCI_OGF << 10) + SHCI_OCF_C2_802_15_4_DEINIT)
@@ -812,6 +843,12 @@ extern "C" {
 #define SHCI_C2_CONFIG_CUT2_0                        (0x2000)
 #define SHCI_C2_CONFIG_CUT2_1                        (0x2001)
 #define SHCI_C2_CONFIG_CUT2_2                        (0x2003)
+ 
+/**
+ * Device ID
+ */
+#define SHCI_C2_CONFIG_STM32WB55xx                   (0x495)    
+#define SHCI_C2_CONFIG_STM32WB15xx                   (0x494)
     
 /**
  * Config1

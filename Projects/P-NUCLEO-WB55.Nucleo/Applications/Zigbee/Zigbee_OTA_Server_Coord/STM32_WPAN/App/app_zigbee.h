@@ -56,6 +56,9 @@ extern "C" {
 #define FILE_VERSION_FW_APP                    0x02
 #define RAM_FIRMWARE_BUFFER_SIZE               1024
 
+#define OTA_NB_SIMULTANEOUS_TRANSFER           6u     /* Number of OTA Client that can be download in same time. */
+  
+
 /* Exported types ------------------------------------------------------------*/
 
 /*
@@ -79,23 +82,30 @@ enum APP_ZIGBEE_OtaFileTypeDef_t{
 
 struct APP_ZIGBEE_OtaContext_t{
   enum APP_ZIGBEE_OtaFileTypeDef_t  file_type;
-  uint8_t file_version;
-  uint32_t binary_size;
-  uint32_t base_address;
-  uint32_t magic_keyword;
+  uint8_t   file_version;
+  uint32_t  binary_size;
+  uint32_t  base_address;
+  uint32_t  binary_crc;
+  uint32_t  magic_keyword;
 };
 
 struct APP_ZIGBEE_OtaBlocTransfer_t{
-  uint32_t flash_addr;  
-  bool OTA_FileDataGenerated;
-  uint64_t max_buffer_offset;
-  uint8_t firmware_buffer[RAM_FIRMWARE_BUFFER_SIZE];
+  //uint64_t  dlClientExtAddress;  
+  //uint32_t  flash_addr;  
+  bool      OTA_FileDataGenerated;
+  uint32_t  header_size;
+  uint32_t  download_time;
+  //uint64_t  max_buffer_offset;
+  //uint8_t   firmware_buffer[RAM_FIRMWARE_BUFFER_SIZE];
+  uint8_t   header_buffer[RAM_FIRMWARE_BUFFER_SIZE];
+  
 };
 
 /* OTA server data */
 struct APP_ZIGBEE_OtaServerInfo {
   struct ZbZclOtaHeader requested_image_header;
   struct APP_ZIGBEE_OtaContext_t ctx;
+  //struct APP_ZIGBEE_OtaBlocTransfer_t block_transfer[OTA_NB_SIMULTANEOUS_TRANSFER];
   struct APP_ZIGBEE_OtaBlocTransfer_t block_transfer;
 };
 

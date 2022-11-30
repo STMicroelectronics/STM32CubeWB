@@ -4,7 +4,7 @@
  * @brief ZCL RSSI Location cluster header
  * ZCL 7 section 3.13
  * ZCL 8 section 3.13
- * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_RSSI_LOC_H
@@ -327,7 +327,8 @@ struct zcl_rssi_loc_client_callbacks_t {
  * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
  * @return Cluster pointer, or NULL if there is an error
  */
-struct ZbZclClusterT * ZbZclRssiLocClientAlloc(struct ZigBeeT *zb, uint8_t endpoint, struct zcl_rssi_loc_client_callbacks_t *callbacks, void *arg);
+struct ZbZclClusterT * ZbZclRssiLocClientAlloc(struct ZigBeeT *zb, uint8_t endpoint,
+    struct zcl_rssi_loc_client_callbacks_t *callbacks, void *arg);
 
 /**
  * Create a new instance of the RSSI Location Server cluster
@@ -337,7 +338,8 @@ struct ZbZclClusterT * ZbZclRssiLocClientAlloc(struct ZigBeeT *zb, uint8_t endpo
  * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
  * @return Cluster pointer, or NULL if there is an error
  */
-struct ZbZclClusterT * ZbZclRssiLocServerAlloc(struct ZigBeeT *zb, uint8_t endpoint, struct zcl_rssi_loc_server_callbacks_t *callbacks, void *arg);
+struct ZbZclClusterT * ZbZclRssiLocServerAlloc(struct ZigBeeT *zb, uint8_t endpoint,
+    struct zcl_rssi_loc_server_callbacks_t *callbacks, void *arg);
 
 /* Client API */
 

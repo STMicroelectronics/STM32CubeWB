@@ -141,8 +141,6 @@ int main(void)
   /* Init code for STM32_WPAN */
   /* Containing all application initialization could be run before kernel launching */
   MX_APPE_Init();
-  /* To be used if Traces required in CubeIDE env (see BZ ticket 91618) */
-  /* APP_DBG_MSG("*\n\r"); */
   /* Launching ThreadX kernel */
   MX_ThreadX_Init();
   /* Infinite loop */

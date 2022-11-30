@@ -43,142 +43,6 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-
-/**
- * security parameters structure
- */
-typedef struct _tSecurityParams
-{
-  /**
-  * IO capability of the device
-  */
-  uint8_t ioCapability;
-
-  /**
-  * Authentication requirement of the device
-  * Man In the Middle protection required?
-  */
-  uint8_t mitm_mode;
-
-  /**
-  * bonding mode of the device
-  */
-  uint8_t bonding_mode;
-
-  /**
-  * Flag to tell whether OOB data has
-  * to be used during the pairing process
-  */
-  uint8_t OOB_Data_Present;
-
-  /**
-  * a_OOB data to be used in the pairing process if
-  * OOB_Data_Present is set to TRUE
-  */
-  uint8_t a_OOB_Data[16];
-
-  /**
-  * this variable indicates whether to use a fixed pin
-  * during the pairing process or a passkey has to be
-  * requested to the application during the pairing process
-  * 0 implies use fixed pin and 1 implies request for passkey
-  */
-  uint8_t Use_Fixed_Pin;
-
-  /**
-  * minimum encryption key size requirement
-  */
-  uint8_t encryptionKeySizeMin;
-
-  /**
-  * maximum encryption key size requirement
-  */
-  uint8_t encryptionKeySizeMax;
-
-  /**
-  * fixed pin to be used in the pairing process if
-  * Use_Fixed_Pin is set to 1
-  */
-  uint32_t Fixed_Pin;
-
-  /**
-  * this flag indicates whether the host has to initiate
-  * the security, wait for pairing or does not have any security
-   * requirements.
-  * 0x00 : no security required
-  * 0x01 : host should initiate security by sending the slave security
-  *        request command
-  * 0x02 : host need not send the clave security request but it
-  * has to wait for paiirng to complete before doing any other
-  * processing
-  */
-  uint8_t initiateSecurity;
-  /* USER CODE BEGIN tSecurityParams*/
-
-  /* USER CODE END tSecurityParams */
-}tSecurityParams;
-
-/**
- * global context
- * contains the variables common to all
- * services
- */
-typedef struct _tBLEProfileGlobalContext
-{
-  /**
-   * security requirements of the host
-   */
-  tSecurityParams bleSecurityParam;
-
-    /**
-     * gap service handle
-     */
-  uint16_t gapServiceHandle;
-
-  /**
-   * device name characteristic handle
-   */
-  uint16_t devNameCharHandle;
-
-  /**
-   * appearance characteristic handle
-   */
-  uint16_t appearanceCharHandle;
-
-  /**
-   * connection handle of the current active connection
-   * When not in connection, the handle is set to 0xFFFF
-   */
-  uint16_t connectionHandle;
-
-    /**
-   * length of the UUID list to be used while advertising
-   */
-    uint8_t advtServUUIDlen;
-
-  /**
-   * the UUID list to be used while advertising
-   */
-    uint8_t advtServUUID[100];
-  /* USER CODE BEGIN BleGlobalContext_t*/
-
-  /* USER CODE END BleGlobalContext_t */
-}BleGlobalContext_t;
-
-typedef struct
-{
-  BleGlobalContext_t BleApplicationContext_legacy;
-  APP_BLE_ConnStatus_t Device_Connection_Status;
-
-   /**
-   * ID of the Advertising Timeout
-   */ 
-  uint8_t Advertising_mgr_timer_Id;
-  /* USER CODE BEGIN PTD_1*/
-
-  /* USER CODE END PTD_1 */
-} BleApplicationContext_t;
-
 /* USER CODE BEGIN PTD */
   
 /* USER CODE END PTD */
@@ -215,8 +79,6 @@ static const uint8_t a_MBdAddr[BD_ADDR_SIZE_LOCAL] =
 };
 
 static uint8_t a_BdAddrUdn[BD_ADDR_SIZE_LOCAL];
-
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
 
 /* USER CODE BEGIN PV */
 
@@ -266,7 +128,7 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_ATT_MTU,
     CFG_BLE_SLAVE_SCA,
     CFG_BLE_MASTER_SCA,
-    CFG_BLE_LSE_SOURCE,
+    CFG_BLE_LS_SOURCE,
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
     CFG_BLE_VITERBI_MODE,
@@ -279,7 +141,8 @@ void APP_BLE_Init( void )
      CFG_BLE_MAX_ADV_SET_NBR, 
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
-     CFG_BLE_RX_PATH_COMPENS
+     CFG_BLE_RX_PATH_COMPENS,
+     CFG_BLE_CORE_VERSION
     }
   };
 
@@ -290,7 +153,7 @@ void APP_BLE_Init( void )
 
 #if (CFG_LPM_STANDBY_SUPPORTED == 0)
   UTIL_LPM_SetOffMode(1U << CFG_LPM_APP_BLE, UTIL_LPM_DISABLE);
-#endif
+#endif /* CFG_LPM_STANDBY_SUPPORTED == 0 */
 
   /**
    * Do not allow stop mode in the application
@@ -338,22 +201,15 @@ void APP_BLE_Init( void )
    */
   SVCCTL_Init();
 
-  /**
-   * Initialization of the BLE App Context
-   */
-  BleApplicationContext.Device_Connection_Status = APP_BLE_IDLE;
-  BleApplicationContext.BleApplicationContext_legacy.connectionHandle = 0xFFFF;  
-  
   /*Radio mask Activity*/
 #if(RADIO_ACTIVITY_EVENT != 0)  
   aci_hal_set_radio_activity_mask(0x00FF);
 #endif  
 
-  BleApplicationContext.Device_Connection_Status = APP_BLE_FAST_ADV;
-
 /* USER CODE BEGIN APP_BLE_Init_2 */
 
 /* USER CODE END APP_BLE_Init_2 */
+
   return;
 }
 

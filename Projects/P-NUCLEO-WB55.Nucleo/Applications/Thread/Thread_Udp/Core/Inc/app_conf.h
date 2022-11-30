@@ -288,8 +288,11 @@ typedef enum
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
   /* USER CODE BEGIN CFG_IdleTask_Id_t */
-  CFG_TASK_UDP_SEND,
+  CFG_TASK_BUTTON_SW1,
+  CFG_TASK_BUTTON_SW2,
+  CFG_TASK_BUTTON_SW3,
   /* USER CODE END CFG_IdleTask_Id_t */
+
   CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
 

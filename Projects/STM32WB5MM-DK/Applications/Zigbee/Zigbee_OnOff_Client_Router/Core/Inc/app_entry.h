@@ -27,8 +27,10 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wb5mm_dk.h"
+#include "stm32wb5mm_dk_bus.h"
 #include "stm32wb5mm_dk_lcd.h"
 #include "stm32_lcd.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -55,9 +57,17 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void APPE_Init( void );
-/* USER CODE BEGIN EF */
+  void MX_APPE_Config( void );
+  void MX_APPE_Init( void );
+  void MX_APPE_Process( void );
+  void Init_Exti( void );
+  void Init_Smps( void );
 
+/* USER CODE BEGIN EF */
+  void LED_Deinit(void);
+  void LED_On(void);
+  void LED_Off(void);
+  void LED_Set_rgb(uint8_t r, uint8_t g, uint8_t b);
 /* USER CODE END EF */
 
 #ifdef __cplusplus
@@ -65,4 +75,3 @@ extern "C" {
 #endif
 
 #endif /*APP_ENTRY_H */
-

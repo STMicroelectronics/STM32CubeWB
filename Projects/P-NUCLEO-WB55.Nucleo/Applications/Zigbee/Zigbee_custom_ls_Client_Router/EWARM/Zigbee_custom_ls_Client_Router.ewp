@@ -16,15 +16,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Zigbee_custom_ls_Router/Exe</state>
+                    <state>Zigbee_custom_ls_Client_Router/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Zigbee_custom_ls_Router/Obj</state>
+                    <state>Zigbee_custom_ls_Client_Router/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Zigbee_custom_ls_Router/List</state>
+                    <state>Zigbee_custom_ls_Client_Router/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -661,7 +661,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Zigbee_custom_ls_Router.bin</state>
+                    <state>Zigbee_custom_ls_Client_Router.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>

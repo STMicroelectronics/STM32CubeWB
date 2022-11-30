@@ -4,7 +4,7 @@
  * @brief ZCL OnOff Switch Configuration cluster header
  * ZCL 7 section 3.9
  * ZCL 8 section 3.9
- * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ONOFF_SWCONFIG_H

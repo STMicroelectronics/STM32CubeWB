@@ -30,25 +30,44 @@
 <h1 id="purpose">Purpose</h1>
 <p>This directory contains the examples and applications to demonstrate the capabilities of the STM32WB5MM-DK.</p>
 <p>Most of those projects are generated with STM32CubeMX tool to initialize the system, peripherals and middleware stacks.</p>
+<p>Several applications are provided ready to use with IAR©, KEIL© and STM32CubeIDE© to demonstrate the Bluetooth Low Energy, Thread and Mac 802-15-4 capabilities of the device.</p>
 </div>
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.14.0 / 07-June-2022</label>
+<input type="checkbox" id="collapse-section5" checked aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.15.0 / 09-November-2022</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
 <h3 id="maintenance">Maintenance</h3>
 <ul>
-<li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
+<li>Update of FW projects following changes in latest version of HAL/LL and Middlewares
+<ul>
+<li>Examples/BSP</li>
+<li>Examples/RCC/RCC_Clock_Config</li>
+</ul></li>
+<li>Update of sysmem.c &amp; syscalls.c files for all CubeIDE projects
+<ul>
+<li>Enhance code quality</li>
+<li>Fix problematic _sbrk implementations for CubeMX</li>
+</ul></li>
+<li>Updated examples:
+<ul>
+<li><strong>RCC/RCC_ClockConfig-DK</strong>
+<ul>
+<li>Set LSE strength to Medium/high drive</li>
+<li>Change LSE configuration for new 32774Hz LSE frequency (For WB5M only)</li>
+</ul></li>
+</ul></li>
 </ul>
 <h3 id="known-limitations">Known limitations</h3>
 <ul>
 <li>The RGB Led behavior is not as expected due to current BSP API driver version.</li>
-<li>The projects impacted by this limitation are:
+<li>The projects still impacted by this limitation on different toolchains (EWARM, KEIL, STM32CubeIDE):
 <ul>
-<li>BLE_HeartRate (EWARM, STM32CubeIDE)</li>
-<li>BLE_Mesh_ThermometerSensor (MDK-ARM)</li>
-<li>BLE_p2pServer (MDK-ARM, STM32CubeIDE)</li>
+<li>BLE_HeartRate</li>
+<li>BLE_Mesh_ThermometerSensor</li>
+<li>BLE_p2pServer</li>
+<li>BLE_LLD_Chat</li>
 </ul></li>
 </ul>
 <p><br />
@@ -56,16 +75,12 @@
 </div>
 </div>
 <div class="collapse">
-<input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.13.0 / 12-November-2021</label>
+<input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.14.0 / 07-June-2022</label>
 <div>
 <h2 id="main-changes-1">Main Changes</h2>
 <h3 id="maintenance-1">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
-<li>Add support of new application:
-<ul>
-<li>/STM32WB5MM-DK/Applications/BLE/BLE_Mesh_Model_Sensor</li>
-</ul></li>
 </ul>
 <h3 id="known-limitations-1">Known limitations</h3>
 <ul>
@@ -82,10 +97,36 @@
 </div>
 </div>
 <div class="collapse">
-<input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.12.0 / 24-June-2021</label>
+<input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.13.0 / 12-November-2021</label>
 <div>
 <h2 id="main-changes-2">Main Changes</h2>
 <h3 id="maintenance-2">Maintenance</h3>
+<ul>
+<li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
+<li>Add support of new application:
+<ul>
+<li>/STM32WB5MM-DK/Applications/BLE/BLE_Mesh_Model_Sensor</li>
+</ul></li>
+</ul>
+<h3 id="known-limitations-2">Known limitations</h3>
+<ul>
+<li>The RGB Led behavior is not as expected due to current BSP API driver version.</li>
+<li>The projects impacted by this limitation are:
+<ul>
+<li>BLE_HeartRate (EWARM, STM32CubeIDE)</li>
+<li>BLE_Mesh_ThermometerSensor (MDK-ARM)</li>
+<li>BLE_p2pServer (MDK-ARM, STM32CubeIDE)</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.12.0 / 24-June-2021</label>
+<div>
+<h2 id="main-changes-3">Main Changes</h2>
+<h3 id="maintenance-3">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
 <li>Add support of new applications:
@@ -116,7 +157,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <h3 id="first-official-release">First official release</h3>
 <ul>
 <li>Ensure compatibility with STM32CubeMX 6.2.0</li>

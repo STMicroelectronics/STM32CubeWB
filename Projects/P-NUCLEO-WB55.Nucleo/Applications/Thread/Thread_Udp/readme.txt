@@ -32,12 +32,18 @@ Thread network. An End Device (or child) communicates primarily with a single Ro
 In our Application, which uses two devices, one device will act as a Leader (Router) 
 and the other one will act as an End Device (child mode)
 
+Test 1:
 After the reset of the 2 boards, one board will be in Leader mode (Green LED2 ON) and 
-the other one will be in Child mode (Red LED3 ON) Once the child mode is established for 
-one of the devices, it starts the UDP sending procedure in multicast mode.
-If the pattern is correctly received on the Leader side Blue LED is switch ON.
- 
+the other one will be in Child mode (Red LED3 ON).
+Once the child mode is established for one of the devices, the user pushes SW1 button
+to start a UDP sending procedure in multicast mode.
+If the pattern is correctly received on the Leader side Blue LED toggles its previous
+state (ON if it was OFF and OFF if it was ON).
 
+Test 2:
+Note: The same test can be performed from Leader to Child.
+ 
+-Test 1
   ___________________________                       ___________________________
   |  Device 1               |                       | Device 2                |
   |_________________________|                       |_________________________|  
@@ -45,7 +51,7 @@ If the pattern is correctly received on the Leader side Blue LED is switch ON.
   |                         |                       |  UDP open socket        |
   |                         |                       |  UDP bind to UDP_PORT   |
   |                         |                       |                         |
-  |                         |                       |                         |
+  |                         |<= Push Sw1            |                         |
   |                         |                       |                         |
   |     UDP send()          |======> UDP =========> |-------------            |
   |                         |UDP_PORT "1234"        |             |           |
@@ -56,12 +62,41 @@ If the pattern is correctly received on the Leader side Blue LED is switch ON.
   |                         |                       |             |           |
   |                         |                       |             |           |
   |                         |                       |             v           |
-  |                         |                       |        Blue Led ON      |
+  |                         |                       |        Blue Led TOGGLES |
   |                         |                       |                         |
   ---------------------------                       ---------------------------
   | Role : Child            |                       | Role : Leader           |
   |                         |                       |                         |
   | LED : Red               |                       | LED : Green             |
+  |                         |                       |                         |
+  |_________________________|                       |_________________________|
+
+
+-Test 2
+  ___________________________                       ___________________________
+  |  Device 2               |                       | Device 1                |
+  |_________________________|                       |_________________________|  
+  |                         |                       |                         |
+  |                         |                       |  UDP open socket        |
+  |                         |                       |  UDP bind to UDP_PORT   |
+  |                         |                       |                         |
+  |                         |<= Push Sw1            |                         |
+  |                         |                       |                         |
+  |     UDP send()          |======> UDP =========> |-------------            |
+  |                         |UDP_PORT "1234"        |             |           |
+  |                         |Address : ff02::1      |             |           |
+  |                         |Payload: udpBuffer[]   |             |           |
+  |                         |                       |             v           |
+  |                         |                       |        UDP Receive ()   |
+  |                         |                       |             |           |
+  |                         |                       |             |           |
+  |                         |                       |             v           |
+  |                         |                       |        Blue Led TOGGLES |
+  |                         |                       |                         |
+  ---------------------------                       ---------------------------
+  | Role : Leader           |                       | Role : Child            |
+  |                         |                       |                         |
+  | LED : Green             |                       |    LED : Red            |
   |                         |                       |                         |
   |_________________________|                       |_________________________|
 

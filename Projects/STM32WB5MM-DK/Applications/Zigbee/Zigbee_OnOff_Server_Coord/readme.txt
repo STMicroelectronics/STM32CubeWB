@@ -42,10 +42,13 @@ For this application it is requested to have:
               Device 1                                      Device 2
         
              ---------                                      ---------
-             |       |       ZbZclOnOffClientToggleReq      |       |
-     PushB1=>|Client | -----------------------------------> |Server | =>LCD message 'O' toggleling
+             |       |       ZbZclOnOffClientOn/OffReq      |       |
+     PushB1=>|Client | -----------------------------------> |Server | =>LED 
              |       |                                      |       |
              |       |                                      |       |
+             |       |                              PushB1=>|-------|-----|
+             |       |                                      |       |     | Permit Join request
+             |       |                                      |       |<----|
               --------                                      ---------
   
 To setup the application :
@@ -56,17 +59,19 @@ To setup the application :
 
   a)  Start the first board. It must be the coordinator of the Zigbee network so in this demo application it is
       the device running Zigbee_OnOff_Server_Coord application (Device2 in the above diagram). 
-      Wait for the message 'Join OK'  being displayed on the LCD. 
+      Wait for the message 'Network Ready' on the LCD screen. 
       Start the second board. This board is configured as Zigbee router and will attached to the network created 
       by the coordinator. Do the same for the other boards if applicable.
       
-  b)  At this stage, the Zigbee network is automatically created and the message 'Join OK' should
+  b)  At this stage, the Zigbee network is automatically created and the message 'Network Ready' should
       appear on the LCD screen.
       It is now possible to send OnOff Cluster commands from the client to the server in multicast mode 
-      by pressing on the B1 push button. 
-      You must see the message 'O' toggling on the LCD 
+      by pressing on the B1 push button on client board.
+      You must see the LED RGB toggling on the server side. 
 
- 
+  c)  After the Network forming timeout, a press on B1 push button on Server board send a request
+      to permit Join the network during PERMIT_JOIN_DELAY (60sec) for a new device.
+
 @par Keywords
 
 Zigbee

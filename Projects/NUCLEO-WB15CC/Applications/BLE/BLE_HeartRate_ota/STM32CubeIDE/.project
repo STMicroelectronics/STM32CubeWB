@@ -281,6 +281,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/stm32_lpm_if.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/Core/hw_uart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/hw_uart.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/Core/stm32wbxx_hal_msp.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/stm32wbxx_hal_msp.c</locationURI>

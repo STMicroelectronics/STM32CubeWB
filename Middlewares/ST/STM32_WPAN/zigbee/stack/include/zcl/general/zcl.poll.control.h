@@ -2,9 +2,22 @@
  * @file zcl.poll.control.h
  * @heading Poll Control
  * @brief ZCL Poll Control cluster header
- * ZCL 7 section 3.16
+ * @copyright Copyright [2019 - 2022] Exegin Technologies Limited. All rights reserved.
+ *
  * ZCL 8 section 3.16
- * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
+ *
+ * A Sleepy End Device (SED) may instantiate the Poll Control server to allow
+ * external devices to control its polling behaviour, including a short interval of
+ * rapid polling in order to communicate with the SED in a timely fashion. SEDs are
+ * usually in their sleep state where they are not able to receive packets, and
+ * devices may not know when those SEDs are awake and polling for data.
+ * The Poll Control cluster is used to solve this dilemma.
+ *
+ * Devices with Poll Control clients can use Finding & Binding to create the bindings
+ * necessary to communicate with the Poll Control servers. The Poll Control server will
+ * perform periodic check-ins with any bound Poll Control clients, where the check-in
+ * response may ask the SED to start fast polling to allow the server device to
+ * exchange messages with it.
  */
 
 #ifndef ZCL_POLL_CONTROL_H
@@ -89,9 +102,14 @@ struct zcl_poll_checkin_rsp_t {
 
 /** Poll Control Server callbacks configuration */
 struct ZbZclPollControlServerCallbackT {
-    void (*checkin_rsp)(struct ZbZclClusterT *clusterPtr,
+    bool (*checkin_rsp)(struct ZbZclClusterT *clusterPtr,
         struct zcl_poll_checkin_rsp_t *rsp_info, struct ZbZclAddrInfoT *srcInfo, void *arg);
-    /**< Callback to application, invoked on receipt of Check-in Response command */
+    /**< Callback to application, invoked on receipt of Check-in Response command.
+     * If the callback returns true, then the Check-in Response is allowed to start
+     * fast polling. The ZCL8 Spec makes it optional whether these commands allow
+     * the device to start fast polling, even if "Start Fast Polling" payload
+     * parameter is set to true. If the callback return false, then this command
+     * shall not have an effect on fast polling. */
 };
 
 /**

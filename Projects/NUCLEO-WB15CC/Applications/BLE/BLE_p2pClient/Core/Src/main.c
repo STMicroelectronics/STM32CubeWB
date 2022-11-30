@@ -59,7 +59,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- IPCC_HandleTypeDef hipcc;
+IPCC_HandleTypeDef hipcc;
 
 RTC_HandleTypeDef hrtc;
 
@@ -110,7 +110,7 @@ int main(void)
   PeriphCommonClock_Config();
 
   /* IPCC initialisation */
-   MX_IPCC_Init();
+  MX_IPCC_Init();
 
   /* USER CODE BEGIN SysInit */
 

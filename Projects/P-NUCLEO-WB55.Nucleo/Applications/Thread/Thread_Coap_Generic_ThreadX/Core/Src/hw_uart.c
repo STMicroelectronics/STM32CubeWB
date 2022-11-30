@@ -235,6 +235,33 @@ void HW_UART_Interrupt_Handler(hw_uart_id_t hw_uart_id)
     return;
 }
 
+
+uint8_t HW_UART_OnGoing( hw_uart_id_t hw_uart_id )
+{
+    uint8_t     cReturn = 0x00;
+    switch (hw_uart_id)
+    {
+#if (CFG_HW_USART1_ENABLED == 1)
+        case hw_uart1:
+        	if ( huart1.Instance == USART1 )
+        		{ cReturn = (uint8_t)( HAL_UART_GetState( &huart1 ) ) & 0x01; }
+            break;
+#endif
+
+#if (CFG_HW_LPUART1_ENABLED == 1)
+        case hw_lpuart1:
+            if ( hlpuart1.Instance == LPUART1 )
+            	{ cReturn = (uint8_t)( HAL_UART_GetState( &hlpuart1 ) ) & 0x01; }
+            break;
+#endif
+        default:
+            break;
+    }
+
+    return cReturn;
+}
+
+
 void HW_UART_DMA_Interrupt_Handler(hw_uart_id_t hw_uart_id)
 {
     switch (hw_uart_id)

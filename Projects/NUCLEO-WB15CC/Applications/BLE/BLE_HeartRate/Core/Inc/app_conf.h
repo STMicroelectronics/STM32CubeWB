@@ -42,7 +42,24 @@
  * Define Advertising parameters
  */
 #define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
-#define CFG_BLE_ADDRESS_TYPE              PUBLIC_ADDR /**< Bluetooth address types defined in ble_legacy.h */
+
+/**
+ * Define BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01)
+ */
+#define CFG_IDENTITY_ADDRESS              GAP_PUBLIC_ADDR
+
+/**
+ * Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED
+ */
+#define CFG_PRIVACY                       PRIVACY_DISABLED
+
+/**
+ * Define BLE Address Type
+ * Bluetooth address types defined in ble_legacy.h
+ * if CFG_PRIVACY equals PRIVACY_DISABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR
+ * if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR
+ */
+#define CFG_BLE_ADDRESS_TYPE              GAP_PUBLIC_ADDR
 
 #define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)      /**< 80ms */
 #define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)      /**< 100ms */
@@ -232,12 +249,14 @@
  * LsSource
  * Some information for Low speed clock mapped in bits field
  * - bit 0:   1: Calibration for the RF system wakeup clock source   0: No calibration for the RF system wakeup clock source
- * - bit 1:   1: STM32W5M Module device                              0: Other devices as STM32WBxx SOC, STM32WB1M module
+ * - bit 1:   1: STM32WB5M Module device                             0: Other devices as STM32WBxx SOC, STM32WB1M module
+ * - bit 2:   1: HSE/1024 Clock config                               0: LSE Clock config
+ * Note: Enable Calibration when LSI selected as RF system wakeup clock and "bit 2" is meaningless with LSI
  */
 #if defined(STM32WB5Mxx)
-  #define CFG_BLE_LSE_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LSE_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LSE_MOD5MM_DEV)
+  #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_MOD5MM_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_LSE)
 #else
-  #define CFG_BLE_LSE_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LSE_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LSE_OTHER_DEV)
+  #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_OTHER_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_LSE)
 #endif
 
 /**
@@ -269,8 +288,16 @@
  * - SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV
  * - SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2
  * - SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2
+ * - SHCI_C2_BLE_INIT_OPTIONS_REDUC_GATTDB_NVM
+ * - SHCI_C2_BLE_INIT_OPTIONS_FULL_GATTDB_NVM
+ * - SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_USED
+ * - SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED
  * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
  * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3
+ * - SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_WRITABLE
+ * - SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY
+ * - SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_SUPPORTED
+ * - SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED
  * which are used to set following configuration bits:
  * (bit 0): 1: LL only
  *          0: LL + host
@@ -282,11 +309,19 @@
  *          0: extended advertizing not supported
  * (bit 4): 1: CS Algo #2 supported
  *          0: CS Algo #2 not supported
+ * (bit 5): 1: Reduced GATT database in NVM
+ *          0: Full GATT database in NVM
+ * (bit 6): 1: GATT caching is used
+ *          0: GATT caching is not used
  * (bit 7): 1: LE Power Class 1
  *          0: LE Power Class 2-3
+ * (bit 8): 1: appearance Writable
+ *          0: appearance Read-Only
+ * (bit 9): 1: Enhanced ATT supported
+ *          0: Enhanced ATT not supported
  * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV | SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2 | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV | SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2 | SHCI_C2_BLE_INIT_OPTIONS_FULL_GATTDB_NVM | SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 | SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY | SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED)
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 
@@ -336,6 +371,14 @@
 
 #define CFG_BLE_RX_PATH_COMPENS    (0)
 
+  /* BLE core version (16-bit signed integer).
+   * - SHCI_C2_BLE_INIT_BLE_CORE_5_2
+   * - SHCI_C2_BLE_INIT_BLE_CORE_5_3
+   * which are used to set: 11(5.2), 12(5.3).
+   */
+
+#define CFG_BLE_CORE_VERSION   (SHCI_C2_BLE_INIT_BLE_CORE_5_3)
+
 /******************************************************************************
  * Transport Layer
  ******************************************************************************/
@@ -372,7 +415,7 @@
 /**
  * Select UART interfaces
  */
-#define CFG_DEBUG_TRACE_UART    0
+#define CFG_DEBUG_TRACE_UART    hw_uart1
 #define CFG_CONSOLE_MENU        0
 /******************************************************************************
  * USB interface
@@ -556,7 +599,7 @@ typedef enum
  * When both are set to 0, no trace are output
  * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
  */
-#define CFG_DEBUG_TRACE_LIGHT     0
+#define CFG_DEBUG_TRACE_LIGHT     1
 #define CFG_DEBUG_TRACE_FULL      0
 
 #if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
@@ -586,7 +629,7 @@ typedef enum
 #define MAX_DBG_TRACE_MSG_SIZE   1024
 
 /* USER CODE BEGIN Defines */
-#define CFG_LED_SUPPORTED         0
+#define CFG_LED_SUPPORTED         1
 #define CFG_BUTTON_SUPPORTED      1
 
 #define PUSH_BUTTON_SW1_EXTI_IRQHandler     EXTI0_IRQHandler
@@ -612,7 +655,9 @@ typedef enum
   CFG_TASK_MEAS_REQ_ID,
   CFG_TASK_HCI_ASYNCH_EVT_ID,
   /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
-
+  CFG_TASK_SW1_BUTTON_PUSHED_ID,
+  CFG_TASK_SW2_BUTTON_PUSHED_ID,
+  CFG_TASK_SW3_BUTTON_PUSHED_ID,
   /* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
   CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;

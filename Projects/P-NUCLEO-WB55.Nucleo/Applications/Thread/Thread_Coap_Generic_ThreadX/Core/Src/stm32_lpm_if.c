@@ -21,6 +21,7 @@
 #include "stm32_lpm_if.h"
 #include "stm32_lpm.h"
 #include "app_conf.h"
+
 /* USER CODE BEGIN include */
 
 /* USER CODE END include */
@@ -59,6 +60,7 @@ static void ExitLowPower( void );
 /* USER CODE END Private_Macro */
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Private_Variables */
+
 
 /* USER CODE END Private_Variables */
 
@@ -104,7 +106,9 @@ void PWR_EnterOffMode( void )
   __force_stores( );
 #endif
 
+  __DSB();      // Ensure no outstanding memory transactions
   __WFI();
+  __ISB();      // Ensure pipeline is flushed
 
 /* USER CODE BEGIN PWR_EnterOffMode_2 */
 
@@ -169,7 +173,9 @@ void PWR_EnterStopMode( void )
   __force_stores( );
 #endif
 
+  __DSB();      // Ensure no outstanding memory transactions
   __WFI();
+  __ISB();      // Ensure pipeline is flushed
 
 /* USER CODE BEGIN PWR_EnterStopMode_2 */
 
@@ -226,7 +232,10 @@ void PWR_EnterSleepMode( void )
   __force_stores();
 #endif
 
-  __WFI( );
+  __DSB();      // Ensure no outstanding memory transactions
+  __WFI();
+  __ISB();      // Ensure pipeline is flushed
+  
 /* USER CODE BEGIN PWR_EnterSleepMode_2 */
 
 /* USER CODE END PWR_EnterSleepMode_2 */
@@ -311,7 +320,10 @@ static void ExitLowPower( void )
     LL_RCC_HSE_Enable( );
     __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_1);
     while(!LL_RCC_HSE_IsReady( ));
+    
     LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSE);
+    LL_RCC_SetSMPSClockSource(LL_RCC_SMPS_CLKSOURCE_HSE);
+    
     while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);
 /* USER CODE END ExitLowPower_1 */
   }
@@ -338,13 +350,17 @@ static void Switch_On_HSI( void )
 {
   LL_RCC_HSI_Enable( );
   while(!LL_RCC_HSI_IsReady( ));
+  
   LL_RCC_SetSysClkSource( LL_RCC_SYS_CLKSOURCE_HSI );
   LL_RCC_SetSMPSClockSource(LL_RCC_SMPS_CLKSOURCE_HSI);
+  
   while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSI);
   return;
 }
 
 /* USER CODE BEGIN Private_Functions */
+
+
 
 /* USER CODE END Private_Functions */
 

@@ -361,8 +361,8 @@ uint8_t  a_ManufData[14] = {sizeof(a_ManufData)-1,
 
 P2P_ConnHandle_Not_evt_t handleNotification;
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
-PLACE_IN_SECTION("BLE_APP_CONTEXT") APP_BLE_p2p_Conn_Update_req_t APP_BLE_p2p_Conn_Update_req;
+static BleApplicationContext_t BleApplicationContext;
+APP_BLE_p2p_Conn_Update_req_t APP_BLE_p2p_Conn_Update_req;
 
 uint16_t connection_handle;
 
@@ -424,7 +424,7 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ATT_MTU,
      CFG_BLE_SLAVE_SCA,
      CFG_BLE_MASTER_SCA,
-     CFG_BLE_LSE_SOURCE,
+     CFG_BLE_LS_SOURCE,
      CFG_BLE_MAX_CONN_EVENT_LENGTH,
      CFG_BLE_HSE_STARTUP_TIME,
      CFG_BLE_VITERBI_MODE,
@@ -437,7 +437,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_SET_NBR,
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
-     CFG_BLE_RX_PATH_COMPENS
+     CFG_BLE_RX_PATH_COMPENS,
+     CFG_BLE_CORE_VERSION
     }
   };
 
@@ -546,6 +547,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
   hci_le_connection_complete_event_rp0        *p_connection_complete_event;
   hci_le_advertising_report_event_rp0         *p_le_advertising_event;
   hci_le_phy_update_complete_event_rp0        *p_evt_le_phy_update_complete;
+
 #if (CFG_DEBUG_APP_TRACE != 0)
   hci_le_connection_update_complete_event_rp0 *p_connection_update_complete_event;
 #endif /* CFG_DEBUG_APP_TRACE != 0 */
@@ -1042,6 +1044,8 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           }
 
           break; /* HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
+          
+        
 
         case HCI_LE_ADVERTISING_REPORT_SUBEVT_CODE:
 
@@ -1277,11 +1281,11 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 {
   uint8_t role;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
-#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
+
   const uint8_t *p_bd_addr;
-#endif
+
 #if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
-  uint32_t a_srd_bd_addr[2];
+  uint32_t a_srd_bd_addr[2] = {0,0};
 #endif
   uint16_t a_appearance[1] = {BLE_CFG_UNKNOWN_APPEARANCE};
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
@@ -1308,7 +1312,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   /**
    * Write the BD Address
    */
-#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
+
   p_bd_addr = BleGetBdAddress();
   ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET, CONFIG_DATA_PUBADDR_LEN, (uint8_t*) p_bd_addr);
   if (ret != BLE_STATUS_SUCCESS)
@@ -1321,6 +1325,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
     APP_DBG_MSG("  Public Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n",p_bd_addr[5],p_bd_addr[4],p_bd_addr[3],p_bd_addr[2],p_bd_addr[1],p_bd_addr[0]);
   }
 
+#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
   a_ManufData[ sizeof(a_ManufData)-6] = p_bd_addr[5];
   a_ManufData[ sizeof(a_ManufData)-5] = p_bd_addr[4];
@@ -1336,11 +1341,12 @@ static void Ble_Hci_Gap_Gatt_Init(void)
    * The lowest 32bits is read from the UDN to differentiate between devices
    * The RNG may be used to provide a random number on each power on
    */
+#if (CFG_IDENTITY_ADDRESS == GAP_STATIC_RANDOM_ADDR)
 #if defined(CFG_STATIC_RANDOM_ADDRESS)
   a_srd_bd_addr[0] = CFG_STATIC_RANDOM_ADDRESS & 0xFFFFFFFF;
   a_srd_bd_addr[1] = (uint32_t)((uint64_t)CFG_STATIC_RANDOM_ADDRESS >> 32);
-  a_srd_bd_addr[1] =  0x0000ED6E;
-#elif (CFG_BLE_ADDRESS_TYPE == RANDOM_ADDR)
+  a_srd_bd_addr[1] |= 0xC000; /* The two upper bits shall be set to 1 */
+#else
   /* Get RNG semaphore */
   while(LL_HSEM_1StepLock(HSEM, CFG_HW_RNG_SEMID));
 
@@ -1365,8 +1371,9 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   /* Release RNG semaphore */
   LL_HSEM_ReleaseLock(HSEM, CFG_HW_RNG_SEMID, 0);
 #endif /* CFG_STATIC_RANDOM_ADDRESS */
+#endif
 
-#if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE == GAP_STATIC_RANDOM_ADDR)
   /* BLE MAC in ADV Packet */
   a_ManufData[ sizeof(a_ManufData)-6] = a_srd_bd_addr[1] >> 8 ;
   a_ManufData[ sizeof(a_ManufData)-5] = a_srd_bd_addr[1];
@@ -1374,7 +1381,9 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   a_ManufData[ sizeof(a_ManufData)-3] = a_srd_bd_addr[0] >> 16;
   a_ManufData[ sizeof(a_ManufData)-2] = a_srd_bd_addr[0] >> 8;
   a_ManufData[ sizeof(a_ManufData)-1] = a_srd_bd_addr[0];
+#endif
 
+#if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
   ret = aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)a_srd_bd_addr);
   if (ret != BLE_STATUS_SUCCESS)
   {
@@ -1457,16 +1466,16 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   role |= GAP_CENTRAL_ROLE;
 #endif /* BLE_CFG_CENTRAL == 1 */
 
+/* USER CODE BEGIN Role_Mngt*/
+
+/* USER CODE END Role_Mngt */
+
   if (role > 0)
   {
     const char *name = "P2PROUT";
 
     ret = aci_gap_init(role,
-#if ((CFG_BLE_ADDRESS_TYPE == RESOLVABLE_PRIVATE_ADDR) || (CFG_BLE_ADDRESS_TYPE == NON_RESOLVABLE_PRIVATE_ADDR))
-                       2,
-#else
-                       0,
-#endif /* (CFG_BLE_ADDRESS_TYPE == RESOLVABLE_PRIVATE_ADDR) || (CFG_BLE_ADDRESS_TYPE == NON_RESOLVABLE_PRIVATE_ADDR) */
+                       CFG_PRIVACY,
                        APPBLE_GAP_DEVICE_NAME_LENGTH,
                        &gap_service_handle,
                        &gap_dev_name_char_handle,
@@ -1554,7 +1563,8 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                               CFG_BLE_ADDRESS_TYPE);
+                                               CFG_IDENTITY_ADDRESS);
+
   if (ret != BLE_STATUS_SUCCESS)
   {
     APP_DBG_MSG("  Fail   : aci_gap_set_authentication_requirement command, result: 0x%x \n", ret);

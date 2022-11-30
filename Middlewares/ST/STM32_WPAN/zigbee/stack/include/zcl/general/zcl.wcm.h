@@ -4,7 +4,7 @@
  * @brief ZCL Water Content Measurement cluster header
  * ZCL 7 section 4.7
  * ZCL 8 section 4.7
- * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 #ifndef ZCL_WATER_CONTENT_MEAS_H
 # define ZCL_WATER_CONTENT_MEAS_H

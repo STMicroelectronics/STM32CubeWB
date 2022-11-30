@@ -64,6 +64,7 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
+void   MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN EFP */
 
@@ -134,7 +135,7 @@ void Error_Handler(void);
 #define TSC_G6_IO2_GPIO_Port GPIOD
 #define RST_DISP_Pin GPIO_PIN_8
 #define RST_DISP_GPIO_Port GPIOC
-void   MX_USART1_UART_Init(void);
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

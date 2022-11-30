@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_conf.h
-  * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_conf.h
+  * @author  MCD Application Team
+  * @brief   Application configuration file for STM32WPAN Middleware.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -58,6 +58,7 @@
 #define CFG_TL_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 
 #define TL_EVENT_FRAME_SIZE ( TL_EVT_HDR_SIZE + CFG_TL_MOST_EVENT_PAYLOAD_SIZE )
+
 /******************************************************************************
  * UART interfaces
  ******************************************************************************/
@@ -66,8 +67,7 @@
  * Select UART interfaces
  */
 #define CFG_DEBUG_TRACE_UART    hw_uart1
-#define CFG_CONSOLE_MENU
-#define CFG_CLI_UART    hw_lpuart1
+#define CFG_CONSOLE_MENU      0
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -182,6 +182,7 @@
 
 /** tick timer value in us */
 #define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE )
+#define CFG_TS_TICK_VAL_PS        DIVR( ((uint64_t)CFG_RTCCLK_DIV * 1e12), (uint64_t)LSE_VALUE )
 
 typedef enum
 {
@@ -283,6 +284,7 @@ typedef enum
 #else
 #define CFG_LED_SUPPORTED         1
 #define CFG_BUTTON_SUPPORTED      1
+#define PUSH_BUTTON_SW_EXTI_IRQHandler                      EXTI15_10_IRQHandler
 #endif /* CFG_FULL_LOW_POWER */
 /* USER CODE END Defines */
 
@@ -300,19 +302,17 @@ typedef enum
   CFG_TASK_REQUEST_FROM_M0_TO_M4,
   CFG_TASK_ZIGBEE_NETWORK_FORM,
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
+  CFG_TASK_BUTTON_SW1,
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
   /* USER CODE BEGIN CFG_IdleTask_Id_t */
-  CFG_TASK_BUTTON_SW1,
   /* USER CODE END CFG_IdleTask_Id_t */
   CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
 
 /* Scheduler types and defines        */
 /*------------------------------------*/
-#define EVENT_ACK_FROM_M0_EVT        (1U << CFG_EVT_ACK_FROM_M0_EVT)
-#define EVENT_SYNCHRO_BYPASS_IDLE    (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
 /* USER CODE BEGIN DEFINE_TASK */
 
 /* USER CODE END DEFINE_TASK */
@@ -337,11 +337,10 @@ typedef enum
   CFG_EVT_ACK_FROM_M0_EVT,
   CFG_EVT_SYNCHRO_BYPASS_IDLE,
   CFG_EVT_ZIGBEE_STARTUP_ENDED,
-  /* USER CODE BEGIN CFG_IdleEvt_Id_t */
-
-  /* USER CODE END CFG_IdleEvt_Id_t */
+  CFG_EVT_ON_OFF_RSP,
 } CFG_IdleEvt_Id_t;
 
+#define EVENT_ON_OFF_RSP                (1U << CFG_EVT_ON_OFF_RSP)
 #define EVENT_ACK_FROM_M0_EVT           (1U << CFG_EVT_ACK_FROM_M0_EVT)
 #define EVENT_SYNCHRO_BYPASS_IDLE       (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
 #define EVENT_ZIGBEE_STARTUP_ENDED      (1U << CFG_EVT_ZIGBEE_STARTUP_ENDED)

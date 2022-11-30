@@ -101,7 +101,7 @@ Following diagram describes the Update procedure:
   ||             /      \             |                                |                                     |
   ||            /        \            |                                |                                     |
   ||   NO      / END OF   \           |                                |                                     |
-  | --------- /  TRASNFER? \          |                                |                                     |
+  | --------- /  TRANSFER? \          |                                |                                     |
   |           \  (MAGIC    /          |                                |                                     |
   |            \  KEYWORD /           |                                |                                     |
   |             \ FOUND) /            |                                |                                     |

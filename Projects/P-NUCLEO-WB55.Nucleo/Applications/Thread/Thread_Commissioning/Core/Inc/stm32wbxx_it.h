@@ -70,6 +70,7 @@ void IPCC_C1_TX_IRQHandler(void);
 void HSEM_IRQHandler(void);
 void FPU_IRQHandler(void);
 /* USER CODE BEGIN EFP */
+void EXTI0_IRQHandler(void);
 void EXTI4_IRQHandler(void);
 void EXTI1_IRQHandler(void);
 /* USER CODE END EFP */

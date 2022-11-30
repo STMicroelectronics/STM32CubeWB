@@ -53,11 +53,11 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void MX_APPE_Config( void );
-  void MX_APPE_Init( void );
-  void Init_Exti( void );
-  void Init_Smps( void );
-  void MX_ThreadX_Init(void);
+  void MX_APPE_Config   ( void );
+  void MX_APPE_Init     ( void );
+  void Init_Exti        ( void );
+  void Init_Smps        ( void );
+  void MX_ThreadX_Init  ( void );
   
 /* USER CODE BEGIN EF */
 

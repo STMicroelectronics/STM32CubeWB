@@ -4,7 +4,7 @@
  * @brief ZCL Thermostat User Interface cluster header
  * ZCL 7 section 6.6
  * ZCL 8 section 6.6
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_THERM_UI_H

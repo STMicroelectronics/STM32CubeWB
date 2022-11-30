@@ -74,9 +74,9 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static HTSAPP_Context_t HTSAPP_Context;
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static HTS_TemperatureValue_t HTSMeasurement[NB_SAVED_MEASURES];
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static int8_t HTS_CurrentIndex, HTS_OldIndex;
+static HTSAPP_Context_t HTSAPP_Context;
+static HTS_TemperatureValue_t HTSMeasurement[NB_SAVED_MEASURES];
+static int8_t HTS_CurrentIndex, HTS_OldIndex;
 
 /**
  * END of Section BLE_APP_CONTEXT

@@ -4,7 +4,7 @@
  * @brief ZCL Device Temperature Configuration cluster header
  * ZCL 7 section 3.4
  * ZCL 8 section 3.4
- * @copyright Copyright [2017 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2017 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_DEVICE_TEMP_H

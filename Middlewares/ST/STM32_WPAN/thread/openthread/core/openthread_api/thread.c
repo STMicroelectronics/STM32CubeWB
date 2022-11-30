@@ -30,6 +30,7 @@
 
 extern otHandleActiveScanResult otHandleActiveScanResultCb;
 extern otThreadParentResponseCallback otThreadParentResponseCb;
+extern otDetachGracefullyCallback otDetachGracefullyCb;
 
 #if OPENTHREAD_CONFIG_TMF_ANYCAST_LOCATOR_ENABLE
 extern otThreadAnycastLocatorCallback otThreadAnycastLocatorCb;
@@ -982,4 +983,23 @@ bool otThreadIsAnycastLocateInProgress(otInstance *aInstance)
   return (bool)p_ot_req->Data[0];
 }
 #endif
+
+otError otThreadDetachGracefully(otInstance *aInstance, otDetachGracefullyCallback aCallback, void *aContext)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  otDetachGracefullyCb = aCallback;
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_DETACH_GRACEFULLY;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aContext;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
 

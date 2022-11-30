@@ -48,8 +48,8 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>Zigbee_PressMeas_Coord\Exe\</OutputDirectory>
-          <OutputName>Zigbee_PressMeas_Coord</OutputName>
+          <OutputDirectory>.\Zigbee_PressMeas_Server_Coord\Exe\</OutputDirectory>
+          <OutputName>Zigbee_PressMeas_Server_Coord</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -715,11 +715,6 @@
     <Layers>
       <Layer>
         <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc></LayDesc>
-        <LayUrl></LayUrl>
-        <LayKeys></LayKeys>
-        <LayCat></LayCat>
-        <LayLic></LayLic>
         <LayTarg>0</LayTarg>
         <LayPrjMark>1</LayPrjMark>
       </Layer>

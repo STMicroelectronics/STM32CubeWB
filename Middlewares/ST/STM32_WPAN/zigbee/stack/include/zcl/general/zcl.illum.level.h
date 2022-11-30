@@ -4,7 +4,7 @@
  * @brief Illuminance Level Sensing cluster header
  * ZCL 7 section 4.3
  * ZCL 8 section 4.3
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_ILLUM_LEVEL_H

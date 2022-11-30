@@ -31,6 +31,7 @@
 #include "stm32wbxx_core_interface_def.h"
 #include "zigbee_types.h"
 #include "tx_api.h"
+#include "stm32_lpm_if.h"
 
 /* Private includes -----------------------------------------------------------*/
 #include <assert.h>
@@ -55,7 +56,7 @@
 #define PB_REBOUND_DELAY        250
 
 #ifdef TX_ENABLE_EVENT_TRACE
-#define APP_MAX_THREAD			8u
+#define APP_MAX_THREAD			14u
 #define DEBUG_TRACEX_SIZE		(64u * 1024u )
 #define APP_TRACE_INFO          (TX_TRACE_USER_EVENT_START + 1)
 #endif // TX_ENABLE_EVENT_TRACE
@@ -88,31 +89,36 @@ static void APP_ZIGBEE_ProcessRequestM0ToM4(ULONG thread_input);
 static void APP_ZIGBEE_ProcessNwkForm(ULONG thread_input);
 static void APP_ZIGBEE_ProcessPushButton(ULONG thread_input);
 
+static void APP_ZIGBEE_TimingElapsed(void);
+
 /* USER CODE BEGIN PFP */
 static void APP_ZIGBEE_SW1_Process(void);
 static void APP_ZIGBEE_ConfigGroupAddr(void);
 /* USER CODE END PFP */
 
 /* Private variables ---------------------------------------------------------*/
-static TL_CmdPacket_t *p_ZIGBEE_otcmdbuffer;
-static TL_EvtPacket_t *p_ZIGBEE_notif_M0_to_M4;
-static TL_EvtPacket_t *p_ZIGBEE_request_M0_to_M4;
-static __IO uint32_t CptReceiveNotifyFromM0 = 0;
-static __IO uint32_t CptReceiveRequestFromM0 = 0;
+static TL_CmdPacket_t   *p_ZIGBEE_otcmdbuffer;
+static TL_EvtPacket_t   *p_ZIGBEE_notif_M0_to_M4;
+static TL_EvtPacket_t   *p_ZIGBEE_request_M0_to_M4;
+static __IO uint32_t    CptReceiveNotifyFromM0 = 0;
+static __IO uint32_t    CptReceiveRequestFromM0 = 0;
 
-TX_THREAD OsTaskNotifyM0ToM4Id;
-TX_THREAD OsTaskRequestM0ToM4Id;
-TX_THREAD OsTaskNwkFormId;
-TX_THREAD OsTaskPushButtonId;
-TX_MUTEX MtxZigbeeId;
+static uint8_t  TimerID;
 
-TX_SEMAPHORE TransferToM0Semaphore;
-TX_SEMAPHORE StartupEndSemaphore;
+TX_THREAD       OsTaskNotifyM0ToM4Id;
+TX_THREAD       OsTaskRequestM0ToM4Id;
+TX_THREAD       OsTaskNwkFormId;
+TX_THREAD       OsTaskPushButtonId;
+TX_MUTEX        MtxZigbeeId;
 
-TX_SEMAPHORE NWKFormSemaphore;
-TX_SEMAPHORE NotifyM0ToM4Semaphore;
-TX_SEMAPHORE RequestM0ToM4Semaphore;
-TX_SEMAPHORE PushButtonSemaphore;
+TX_SEMAPHORE    TransferToM0Semaphore;
+TX_SEMAPHORE    StartupEndSemaphore;
+
+TX_SEMAPHORE    NWKFormSemaphore;
+TX_SEMAPHORE    NWKFormWaitSemaphore;
+TX_SEMAPHORE    NotifyM0ToM4Semaphore;
+TX_SEMAPHORE    RequestM0ToM4Semaphore;
+TX_SEMAPHORE    PushButtonSemaphore;
 
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_ZIGBEE_Config_t ZigbeeConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ZigbeeOtCmdBuffer;
@@ -136,6 +142,20 @@ static struct zigbee_app_info zigbee_app_info;
 static UCHAR	cDebugTraceX[DEBUG_TRACEX_SIZE];
 #endif // TX_ENABMLE_EVENT_TRACE
 
+#ifdef TX_LOW_POWER
+typedef struct
+{
+  uint32_t LpTXTimeLeftOnEntry;
+  uint8_t LpTXTimerThreadx_Id;
+} LpTXTimerContext_t;
+
+static LpTXTimerContext_t LpTXTimerContext;
+
+static uint32_t     lPreviousPriMask;
+static uint8_t      cLowPowerExecute = 0x00;
+static uint8_t      cLowPowerLevel = 0x00;
+#endif // TX_LOW_POWER
+
 /* USER CODE END PV */
 /* Functions Definition ------------------------------------------------------*/
 
@@ -151,6 +171,7 @@ void APP_ZIGBEE_Init(TX_BYTE_POOL* p_byte_pool)
   UINT ThreadXStatus = TX_THREAD_ERROR;
   
   APP_DBG("APP_ZIGBEE_Init");
+
   /* Check the compatibility with the Coprocessor Wireless Firmware loaded */
   APP_ZIGBEE_CheckWirelessFirmwareInfo();
 
@@ -172,21 +193,25 @@ void APP_ZIGBEE_Init(TX_BYTE_POOL* p_byte_pool)
   tx_semaphore_create(&StartupEndSemaphore, "StartupEndSemaphore", 0); /*< Create the semaphore and make it busy at initialization */
   tx_semaphore_create(&TransferToM0Semaphore, "TransferToM0Semaphore", 0); 
   tx_semaphore_create(&NWKFormSemaphore, "NWKFormSemaphore", 0);
+  tx_semaphore_create(&NWKFormWaitSemaphore, "NWKFormWaitSemaphore", 0);
   tx_semaphore_create(&NotifyM0ToM4Semaphore, "NotifyM0ToM4Semaphore", 0);
   tx_semaphore_create(&RequestM0ToM4Semaphore, "RequestM0ToM4Semaphore", 0);
   tx_semaphore_create(&PushButtonSemaphore, "PushButtonSemaphore", 0);
 
+  /* Create the Timer service */
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &TimerID, hw_ts_SingleShot, APP_ZIGBEE_TimingElapsed);
+  
   /* Register task */
   /* Create the different tasks */
   tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskNotifyM0ToM4Id,
-                                   "OsTaskNotifyM0ToM4Id",
+                                   "NotifyM0ToM4Id",
                                    APP_ZIGBEE_ProcessNotifyM0ToM4,
                                    0,
                                    pointer,
                                    DEMO_STACK_SIZE_LARGE,
-                                   16,
-                                   16,
+                                   NOTIFY_M0_TO_M4_PRIORITY,
+                                   NOTIFY_M0_TO_M4_PRIORITY,
                                    TX_NO_TIME_SLICE,
                                    TX_AUTO_START);
   if (ThreadXStatus != TX_SUCCESS)
@@ -194,13 +219,13 @@ void APP_ZIGBEE_Init(TX_BYTE_POOL* p_byte_pool)
   
   tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskRequestM0ToM4Id,
-                                   "OsTaskRequestM0ToM4Id",
+                                   "RequestM0ToM4Id",
                                    APP_ZIGBEE_ProcessRequestM0ToM4,
                                    0,
                                    pointer,
                                    DEMO_STACK_SIZE_LARGE,
-                                   16,
-                                   16,
+                                   REQUEST_M0_TO_M4_PRIORITY,
+                                   REQUEST_M0_TO_M4_PRIORITY,
                                    TX_NO_TIME_SLICE,
                                    TX_AUTO_START);
   if (ThreadXStatus != TX_SUCCESS)
@@ -209,35 +234,35 @@ void APP_ZIGBEE_Init(TX_BYTE_POOL* p_byte_pool)
   /* Task associated with network creation process */
   tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskNwkFormId,
-                                   "OsTaskNwkFormId",
+                                   "NwkFormId",
                                    APP_ZIGBEE_ProcessNwkForm,
                                    0,
                                    pointer,
                                    DEMO_STACK_SIZE_LARGE,
-                                   16,
-                                   16,
+                                   NWL_FORM_PRIORITY,
+                                   NWL_FORM_PRIORITY,
                                    TX_NO_TIME_SLICE,
                                    TX_AUTO_START);
   if (ThreadXStatus != TX_SUCCESS)
     { APP_ZIGBEE_Error(ERR_ZIGBEE_THREAD_X_FAILED,1); }
-    
+
   /* USER CODE BEGIN APP_ZIGBEE_INIT */
   /* Task associated with push button SW1 */
   tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskPushButtonId,
-                                   "OsTaskPushButtonId",
+                                   "PushButtonId",
                                    APP_ZIGBEE_ProcessPushButton,
                                    0,
                                    pointer,
                                    DEMO_STACK_SIZE_LARGE,
-                                   16,
-                                   16,
+                                   PUSH_BUTTON_PRIORITY,
+                                   PUSH_BUTTON_PRIORITY,
                                    TX_NO_TIME_SLICE,
                                    TX_AUTO_START);
   if (ThreadXStatus != TX_SUCCESS)
     { APP_ZIGBEE_Error(ERR_ZIGBEE_THREAD_X_FAILED,1); }
   /* USER CODE END APP_ZIGBEE_INIT */
-  
+
   /* Start the Zigbee on the CPU2 side */
   ZigbeeInitStatus = SHCI_C2_ZIGBEE_Init();
   /* Prevent unused argument(s) compilation warning */
@@ -309,6 +334,18 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
   /* USER CODE END CONFIG_ENDPOINT */
 } /* APP_ZIGBEE_ConfigEndpoints */
 
+
+/**
+  * @brief  Callback triggered when the Timer expire
+  * @param  None
+  * @retval None
+  */
+static void APP_ZIGBEE_TimingElapsed(void)
+{
+  APP_DBG("--- APP_ZIGBEE_InitWaitElapsed ---");
+  tx_semaphore_put(&NWKFormWaitSemaphore);
+}
+
 /**
  * @brief  Handle Zigbee network forming and joining task for ThreadX
  * @param  None
@@ -320,6 +357,12 @@ static void APP_ZIGBEE_ProcessNwkForm(ULONG argument)
   for(;;)
   {
     tx_semaphore_get(&NWKFormSemaphore, TX_WAIT_FOREVER);
+    if ( zigbee_app_info.join_status != ZB_STATUS_SUCCESS )
+    { 
+      //tx_thread_sleep( ( APP_ZIGBEE_STARTUP_FAIL_DELAY ) ); 
+      HW_TS_Start(TimerID, APP_ZIGBEE_STARTUP_FAIL_DELAY);
+      tx_semaphore_get(&NWKFormWaitSemaphore, TX_WAIT_FOREVER);
+    }
     APP_ZIGBEE_NwkForm();
   }
 }
@@ -331,7 +374,8 @@ static void APP_ZIGBEE_ProcessNwkForm(ULONG argument)
  */
 static void APP_ZIGBEE_NwkForm(void)
 {
-  if ((zigbee_app_info.join_status != ZB_STATUS_SUCCESS) && (HAL_GetTick() >= zigbee_app_info.join_delay))
+  //if ((zigbee_app_info.join_status != ZB_STATUS_SUCCESS) && (HAL_GetTick() >= zigbee_app_info.join_delay))
+  if (zigbee_app_info.join_status != ZB_STATUS_SUCCESS)
   {
     struct ZbStartupT config;
     enum ZbStatusCodeT status;
@@ -359,11 +403,17 @@ static void APP_ZIGBEE_NwkForm(void)
     APP_DBG("ZbStartup Callback (status = 0x%02x)", status);
     zigbee_app_info.join_status = status;
 
-    if (status == ZB_STATUS_SUCCESS) {
+    if (status == ZB_STATUS_SUCCESS) 
+    {
       /* USER CODE BEGIN 0 */
       zigbee_app_info.join_delay = 0U;
       zigbee_app_info.init_after_join = true;
+      APP_DBG("OnOff Client init done!\n"); 
       BSP_LED_On(LED_BLUE);
+      
+#ifdef TX_LOW_POWER
+      APP_ZIGBEE_ThreadX_LowPowerEnable( LOWPOWER_STOPMODE );
+#endif // TX_LOW_POWER
     }
     else
     {
@@ -378,7 +428,6 @@ static void APP_ZIGBEE_NwkForm(void)
   {
     tx_semaphore_put(&NWKFormSemaphore);
   }
-
   /* USER CODE BEGIN NW_FORM */
   else
   {
@@ -501,7 +550,7 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
   WirelessFwInfo_t wireless_info_instance;
   WirelessFwInfo_t *p_wireless_info = &wireless_info_instance;
 
-  if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success) 
+  if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success)
   {
     APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
   }
@@ -512,20 +561,22 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
     /* Print version */
     APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
 
-    switch (p_wireless_info->StackType) 
+    switch (p_wireless_info->StackType)
     {
       case INFO_STACK_TYPE_ZIGBEE_FFD:
         APP_DBG("FW Type : FFD Zigbee stack");
         break;
+
       case INFO_STACK_TYPE_ZIGBEE_RFD:
         APP_DBG("FW Type : RFD Zigbee stack");
         break;
+
       default:
         /* No Zigbee device supported ! */
         APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
         break;
     }
-	
+
     /* print the application name */
     char *__PathProject__ = (strstr(__FILE__, "Zigbee") ? strstr(__FILE__, "Zigbee") + 7 : __FILE__);
     char *pdel = NULL;
@@ -533,14 +584,14 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
     {
       pdel = strchr(__PathProject__, '\\');
     }
-    else 
+    else
     {
       pdel = strchr(__PathProject__, '/');
     }
-    
+
     int index = (int)(pdel - __PathProject__);
     APP_DBG("Application flashed: %*.*s", index, index, __PathProject__);
-    
+
     /* print channel */
     APP_DBG("Channel used: %d", CHANNEL);
     /* print Link Key */
@@ -549,10 +600,10 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
     char Z09_LL_string[ZB_SEC_KEYSIZE*3+1];
     Z09_LL_string[0] = 0;
     for(int str_index=0; str_index < ZB_SEC_KEYSIZE; str_index++)
-    {           
+    {
       sprintf(&Z09_LL_string[str_index*3],"%02x ",sec_key_ha[str_index]);
     }
-  
+
     APP_DBG("Link Key value: %s", Z09_LL_string);
     /* print clusters allocated */
     APP_DBG("Clusters allocated are:");  
@@ -723,20 +774,21 @@ void APP_ZIGBEE_TL_INIT(void)
  * @param  None
  * @retval None
  */
-void APP_ZIGBEE_ProcessNotifyM0ToM4(ULONG argument)
+void APP_ZIGBEE_ProcessNotifyM0ToM4( ULONG argument )
 {
     UNUSED(argument);
 
-    for ( ;;) {
+    for ( ;;) 
+    {
       tx_semaphore_get(&NotifyM0ToM4Semaphore, TX_WAIT_FOREVER);
-      if (CptReceiveNotifyFromM0 != 0) {
+      if (CptReceiveNotifyFromM0 != 0) 
+      {
         /* If CptReceiveNotifyFromM0 is > 1. it means that we did not serve all the events from the radio */
-        if (CptReceiveNotifyFromM0 > 1U) {
-          APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0);
-        }
-        else {
-          Zigbee_CallBackProcessing();
-        }
+        if (CptReceiveNotifyFromM0 > 1U) 
+            { APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0); }
+        else 
+            { Zigbee_CallBackProcessing(); }
+        
         /* Reset counter */
         CptReceiveNotifyFromM0 = 0;
       }
@@ -748,13 +800,16 @@ void APP_ZIGBEE_ProcessNotifyM0ToM4(ULONG argument)
  * @param
  * @return
  */
-void APP_ZIGBEE_ProcessRequestM0ToM4(ULONG argument)
+void APP_ZIGBEE_ProcessRequestM0ToM4( ULONG argument )
 {
   UNUSED(argument);
   
-  for ( ;;) {
+  for ( ;;) 
+  {
     tx_semaphore_get(&RequestM0ToM4Semaphore, TX_WAIT_FOREVER);
-    if (CptReceiveRequestFromM0 != 0) {
+    
+    if (CptReceiveRequestFromM0 != 0)
+    {
       Zigbee_M0RequestProcessing();
       CptReceiveRequestFromM0 = 0;
     }
@@ -765,28 +820,45 @@ void APP_ZIGBEE_LaunchPushButtonTask(void)
 {
 #ifdef TX_ENABLE_EVENT_TRACE    
     tx_trace_user_event_insert( APP_TRACE_INFO, 1, 0, 0, 1 );
-#endif // TX_ENABLE_EVENT_TRACE 
+#endif // TX_ENABLE_EVENT_TRACE
   tx_semaphore_put(&PushButtonSemaphore);
 }
+
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 
 static void APP_ZIGBEE_ProcessPushButton(ULONG argument)
 {
   UNUSED(argument);
-  uint32_t Detect_ReboundPB = 0;
+#ifndef TX_LOW_POWER
+  uint32_t          lCurrentTime;
+  static uint32_t   lDetectRebound = 0;
+#endif // TX_LOW_POWER
+  
   for(;;)
   {
      tx_semaphore_get(&PushButtonSemaphore, TX_WAIT_FOREVER);
-     if(HAL_GetTick() < Detect_ReboundPB)  /* restart tick should handle the PB process */
+     
+#ifdef TX_LOW_POWER
+     // -- During LowPower it's not possible to count Tick --
+     APP_ZIGBEE_SW1_Process(); 
+#else // TX_LOW_POWER     
+     lCurrentTime = HAL_GetTick();
+     if ( lCurrentTime < lDetectRebound )  /* restart tick should handle the PB process */
      {
-       Detect_ReboundPB = HAL_GetTick();
+       lDetectRebound = lCurrentTime;
        APP_ZIGBEE_SW1_Process(); 
      }
-     else if(HAL_GetTick() > (Detect_ReboundPB + PB_REBOUND_DELAY)) /* check if we have a rebound in the PushButton */
+     else 
      {
-       Detect_ReboundPB = HAL_GetTick();
-       APP_ZIGBEE_SW1_Process(); 
+       if ( lCurrentTime > ( lDetectRebound + PB_REBOUND_DELAY ) ) /* check if we have a rebound in the PushButton */
+       {
+         lDetectRebound = lCurrentTime;
+         APP_ZIGBEE_SW1_Process(); 
+       }
+       else
+        { APP_DBG("Error during Rebound : Current (%d) and Old (%d) ", lCurrentTime, lDetectRebound ) ; }
      }
+#endif // TX_LOW_POWER
   }
 }
 
@@ -812,17 +884,15 @@ static void APP_ZIGBEE_SW1_Process()
   struct ZbApsAddrT dst;
   uint64_t epid = 0U;
 
-  if(zigbee_app_info.zb == NULL){
-    return;
-  }
+  if(zigbee_app_info.zb == NULL)
+    { return; }
   
   /* Check if the router joined the network */
-  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) {
-    return;
-  }
-  if (epid == 0U) {
-    return;
-  }
+  if (ZbNwkGet(zigbee_app_info.zb, ZB_NWK_NIB_ID_ExtendedPanId, &epid, sizeof(epid)) != ZB_STATUS_SUCCESS) 
+    { return; }
+  
+  if (epid == 0U) 
+    { return; }
 
   memset(&dst, 0, sizeof(dst));
   dst.mode = ZB_APSDE_ADDRMODE_GROUP;
@@ -830,9 +900,185 @@ static void APP_ZIGBEE_SW1_Process()
   dst.nwkAddr = SW1_GROUP_ADDR;
 
   APP_DBG("SW1 PUSHED (SENDING TOGGLE TO GROUP 0x0001)");
-  if (ZbZclOnOffClientToggleReq(zigbee_app_info.onOff_client_1, &dst, NULL, NULL) != ZCL_STATUS_SUCCESS) {
-    APP_DBG("Error, ZbZclOnOffClientToggleReq failed (SW1_ENDPOINT)");
-  }
+  if ( ZbZclOnOffClientToggleReq(zigbee_app_info.onOff_client_1, &dst, NULL, NULL) != ZCL_STATUS_SUCCESS ) 
+    { APP_DBG("Error, ZbZclOnOffClientToggleReq failed (SW1_ENDPOINT)"); }
 }
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */
+
+#ifdef TX_LOW_POWER
+
+/**
+ * @brief  Request to start a low power timer
+ *
+ * @param  tx_low_power_next_expiration: Number of ThreadX ticks
+ * @retval None
+ */
+void APP_ZIGBEE_ThreadX_Low_Power_Setup(ULONG tx_low_power_next_expiration)
+{
+  uint64_t time;
+  static uint8_t    cDebugOneTime = 0;
+
+  // -- Execute only if LowPower enable or First time --
+  if ( ( cLowPowerLevel == 0x00u ) && ( cDebugOneTime == 0x01u ) )
+    { return; }
+  
+  if ( cDebugOneTime == 0x00u )
+  {
+    APP_DBG("APP_ZIGBEE_ThreadX_Low_Power_Setup : START");
+    cDebugOneTime = 0x01;
+  }  
+  
+  /* Timer was already created, here we need to start it */
+  /* By default, see  tx_initialize_low_level.S, each tick is 10 ms */
+  /* This function should be very similar to LpTimerStart used in freertos_port.c */
+  /* Converts the number of FreeRTOS ticks into hw timer tick */
+  if (tx_low_power_next_expiration > (__UNSIGNED_LONG_LONG_MAX__ / 1e12)) /* Prevent overflow in else statement */
+  {
+    time = 0xFFFF0000; /* Maximum value equal to 24 days */
+  }
+  else
+  {
+    /* The result always fits in uint32_t and is always less than 0xFFFF0000 */
+    time = tx_low_power_next_expiration * 1000000000000ULL;
+    time = (uint64_t)( time /  ( CFG_TS_TICK_VAL_PS * TX_TIMER_TICK_PER_SECOND ));
+  }
+
+  HW_TS_Start(LpTXTimerContext.LpTXTimerThreadx_Id, (uint32_t)time);
+
+  /**
+   * There might be other timers already running in the timer server that may elapse
+   * before this one.
+   * Store how long before the next event so that on wakeup, it will be possible to calculate
+   * how long the tick has been suppressed
+   */
+  LpTXTimerContext.LpTXTimeLeftOnEntry = HW_TS_RTC_ReadLeftTicksToCount( );
+
+  return;
+}
+
+/**
+ * @brief  Read how long the tick has been suppressed
+ *
+ * @param  None
+ * @retval The number of tick rate (FreeRTOS tick)
+ */
+unsigned long APP_ZIGBEE_ThreadX_Low_Power_Adjust_Ticks(void)
+{
+  uint64_t val_ticks, time_ps;
+  uint32_t LpTimeLeftOnExit;
+  static uint8_t    cDebugOneTime = 0;
+
+  if ( cDebugOneTime == 0x00u )
+  {
+    APP_DBG("APP_ZIGBEE_ThreadX_Low_Power_Adjust_Ticks : START");
+    cDebugOneTime = 0x01;
+  }
+  
+  LpTimeLeftOnExit = HW_TS_RTC_ReadLeftTicksToCount();
+  /* This cannot overflow. Max result is ~ 1.6e13 */
+  time_ps = (uint64_t)((CFG_TS_TICK_VAL_PS) * (uint64_t)(LpTXTimerContext.LpTXTimeLeftOnEntry - LpTimeLeftOnExit));
+
+  /* time_ps can be less than 1 RTOS tick in following situations
+   * a) MCU didn't go to STOP2 due to wake-up unrelated to Timer Server or woke up from STOP2 very shortly after.
+   *    Advancing RTOS clock by 1 ThreadX tick doesn't hurt in this case.
+   * b) APP_BLE_ThreadX_Low_Power_Setup(tx_low_power_next_expiration) was called with xExpectedIdleTime = 2 which is minimum value defined by configEXPECTED_IDLE_TIME_BEFORE_SLEEP.
+   *    The xExpectedIdleTime is decremented by one RTOS tick to wake-up in advance.
+   *    Ex: RTOS tick is 1ms, the timer Server wakes the MCU in ~977 us. RTOS clock should be advanced by 1 ms.
+   * */
+  if(time_ps <= (1e12 / TX_TIMER_TICK_PER_SECOND)) /* time_ps < RTOS tick */
+  {
+    val_ticks = 1;
+  }
+  else
+  {
+    /* Convert pS time into OS ticks */
+    val_ticks = time_ps * TX_TIMER_TICK_PER_SECOND; /* This cannot overflow. Max result is ~ 1.6e16 */
+    val_ticks = (uint64_t)(val_ticks / (1e12)); /* The result always fits in uint32_t */
+  }
+
+  /**
+   * The system may have been out from another reason than the timer
+   * Stop the timer after the elapsed time is calculated other wise, HW_TS_RTC_ReadLeftTicksToCount()
+   * may return 0xFFFF ( TIMER LIST EMPTY )
+   * It does not hurt stopping a timer that exists but is not running.
+   */
+  HW_TS_Stop(LpTXTimerContext.LpTXTimerThreadx_Id);
+
+  return (unsigned long)val_ticks;
+}
+
+
+void APP_ZIGBEE_ThreadX_LowPowerEnable( uint8_t cEnable )
+{
+  cLowPowerLevel = cEnable;
+}
+
+
+void APP_ZIGBEE_ThreadX_EnterLowPower( void )
+{
+  cLowPowerExecute = 0x00; 
+  
+  // -- Exucute only if LowPower enable --
+  if ( cLowPowerLevel == LOWPOWER_NONE )
+    { return; }
+  
+#if ( CFG_HW_USART1_ENABLED == 1 )
+  if ( HW_UART_OnGoing( CFG_DEBUG_TRACE_UART ) != 0x00u )
+    { return; }
+#endif // ( CFG_HW_USART1_ENABLED == 1 )
+#if (CFG_HW_LPUART1_ENABLED == 1)
+  if ( HW_UART_OnGoing( CFG_CLI_UART ) != 0x00u )
+    { return;  }
+#endif // ( CFG_HW_LPUART1_ENABLED == 1 )
+  
+  cLowPowerExecute = 0x01;
+//  BSP_LED_On(LED_RED);    // Only for Debug
+
+  // -- Enter Critical Section --
+  lPreviousPriMask = __get_PRIMASK( );
+  __disable_irq();
+
+  // -- Enter in LowPower --
+  switch ( cLowPowerLevel )
+  {
+    case LOWPOWER_SLEEPMODE :   PWR_EnterSleepMode();
+                                break;
+                                
+    case LOWPOWER_STOPMODE :    PWR_EnterStopMode();
+                                break;
+                                
+    case LOWPOWER_OFFMODE :     PWR_EnterOffMode();
+                                break;
+  }
+}
+
+
+void APP_ZIGBEE_ThreadX_ExitLowPower( void )
+{
+  // -- Exucute only if LowPower was executed --
+  if ( cLowPowerExecute != 0x00u ) 
+  { 
+    switch ( cLowPowerLevel )
+    {
+      case LOWPOWER_SLEEPMODE : PWR_ExitSleepMode();
+                                break;
+                                
+      case LOWPOWER_STOPMODE :  PWR_ExitStopMode();
+                                break;
+                                
+      case LOWPOWER_OFFMODE :   PWR_ExitOffMode();
+                                break;
+    }
+    
+    // -- Exit Critical Section --
+    __set_PRIMASK( lPreviousPriMask );
+    
+//    BSP_LED_Off(LED_RED);       // Only for Debug
+    
+    cLowPowerExecute = 0x00;
+  }
+}
+
+#endif // TX_LOW_POWER
+

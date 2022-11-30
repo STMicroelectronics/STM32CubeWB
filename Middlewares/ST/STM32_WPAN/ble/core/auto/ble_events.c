@@ -89,6 +89,8 @@ static void aci_gatt_read_multi_permit_req_event_process( const uint8_t* in );
 static void aci_gatt_tx_pool_available_event_process( const uint8_t* in );
 static void aci_gatt_server_confirmation_event_process( const uint8_t* in );
 static void aci_gatt_prepare_write_permit_req_event_process( const uint8_t* in );
+static void aci_gatt_eatt_bearer_event_process( const uint8_t* in );
+static void aci_gatt_mult_notification_event_process( const uint8_t* in );
 static void aci_gatt_read_ext_event_process( const uint8_t* in );
 static void aci_gatt_indication_ext_event_process( const uint8_t* in );
 static void aci_gatt_notification_ext_event_process( const uint8_t* in );
@@ -176,6 +178,8 @@ const hci_event_table_t hci_vs_event_table[HCI_VS_EVENT_TABLE_SIZE] =
   { 0x0C16U, aci_gatt_tx_pool_available_event_process },
   { 0x0C17U, aci_gatt_server_confirmation_event_process },
   { 0x0C18U, aci_gatt_prepare_write_permit_req_event_process },
+  { 0x0C19U, aci_gatt_eatt_bearer_event_process },
+  { 0x0C1AU, aci_gatt_mult_notification_event_process },
   { 0x0C1DU, aci_gatt_read_ext_event_process },
   { 0x0C1EU, aci_gatt_indication_ext_event_process },
   { 0x0C1FU, aci_gatt_notification_ext_event_process },
@@ -1351,6 +1355,40 @@ static void aci_gatt_prepare_write_permit_req_event_process( const uint8_t* in )
                                            rp0->Offset,
                                            rp0->Data_Length,
                                            rp0->Data );
+}
+
+/* ACI_GATT_EATT_BEARER_EVENT callback function */
+__WEAK void aci_gatt_eatt_bearer_event( uint8_t Channel_Index,
+                                        uint8_t EAB_State,
+                                        uint8_t Status )
+{
+}
+
+/* ACI_GATT_EATT_BEARER_EVENT process function */
+static void aci_gatt_eatt_bearer_event_process( const uint8_t* in )
+{
+  aci_gatt_eatt_bearer_event_rp0 *rp0 = (void*)in;
+  aci_gatt_eatt_bearer_event( rp0->Channel_Index,
+                              rp0->EAB_State,
+                              rp0->Status );
+}
+
+/* ACI_GATT_MULT_NOTIFICATION_EVENT callback function */
+__WEAK void aci_gatt_mult_notification_event( uint16_t Connection_Handle,
+                                              uint16_t Offset,
+                                              uint16_t Data_Length,
+                                              const uint8_t* Data )
+{
+}
+
+/* ACI_GATT_MULT_NOTIFICATION_EVENT process function */
+static void aci_gatt_mult_notification_event_process( const uint8_t* in )
+{
+  aci_gatt_mult_notification_event_rp0 *rp0 = (void*)in;
+  aci_gatt_mult_notification_event( rp0->Connection_Handle,
+                                    rp0->Offset,
+                                    rp0->Data_Length,
+                                    rp0->Data );
 }
 
 /* ACI_GATT_READ_EXT_EVENT callback function */

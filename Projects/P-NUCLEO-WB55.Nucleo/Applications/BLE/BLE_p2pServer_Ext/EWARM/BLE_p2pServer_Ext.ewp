@@ -279,7 +279,7 @@
                 <option>
                     <name>CCAllowList</name>
                     <version>1</version>
-                    <state>00000000</state>
+                    <state>11111110</state>
                 </option>
                 <option>
                     <name>CCDebugInfo</name>
@@ -311,7 +311,7 @@
                 </option>
                 <option>
                     <name>CCRequirePrototypes</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCDiagWarnAreErr</name>
@@ -378,16 +378,16 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>1</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
                     <version>0</version>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>1</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules98</name>
@@ -450,7 +450,7 @@
                 <option>
                     <name>CCOptStrategySlave</name>
                     <version>0</version>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCGuardCalls</name>
@@ -1083,13 +1083,13 @@
                 <group>
                     <name>App</name>
                     <file>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\adv_ext_app.c</name>
+                    </file>
+                    <file>
                         <name>$PROJ_DIR$\..\STM32_WPAN\App\app_ble.c</name>
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\STM32_WPAN\App\p2p_server_app.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\App\adv_ext_app.c</name>
                     </file>
                 </group>
                 <group>

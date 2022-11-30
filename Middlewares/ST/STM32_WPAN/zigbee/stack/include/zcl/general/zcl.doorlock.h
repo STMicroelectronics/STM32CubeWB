@@ -4,7 +4,7 @@
  * @brief ZCL Door Lock cluster header
  * ZCL 7 section 7.3
  * ZCL 8 section 7.3
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_DRLK_H
@@ -1459,57 +1459,132 @@ enum ZclStatusCodeT ZbZclDoorLockServerSendClrAllRfidRsp(struct ZbZclClusterT *c
 
 /** Door Lock Server callbacks configuration */
 struct ZbZclDoorLockServerCallbacksT {
-    enum ZclStatusCodeT (*lock)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockLockDoorReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+    enum ZclStatusCodeT (*lock)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockLockDoorReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Lock Door command. */
-    enum ZclStatusCodeT (*unlock)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockUnlockDoorReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*unlock)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockUnlockDoorReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Unlock Door command. */
-    enum ZclStatusCodeT (*toggle)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockToggleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*toggle)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockToggleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Toggle command. */
-    enum ZclStatusCodeT (*unlock_timeout)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockUnlockTimeoutReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*unlock_timeout)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockUnlockTimeoutReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Unlock with Timeout command. */
-    enum ZclStatusCodeT (*get_log)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockGetLogReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*get_log)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockGetLogReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Get Log Record command. */
-    enum ZclStatusCodeT (*set_pin)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockSetPinReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*set_pin)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockSetPinReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Set PIN Code command. */
-    enum ZclStatusCodeT (*get_pin)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockGetPinReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*get_pin)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockGetPinReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Get PIN Code command. */
-    enum ZclStatusCodeT (*clr_pin)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockClrPinReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*clr_pin)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockClrPinReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Clear PIN Code command. */
-    enum ZclStatusCodeT (*clr_all_pins)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*clr_all_pins)(struct ZbZclClusterT *cluster,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Clear All PIN Codes command. */
-    enum ZclStatusCodeT (*set_user_status)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockSetUserStatusReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*set_user_status)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockSetUserStatusReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Set User Status command. */
-    enum ZclStatusCodeT (*get_user_status)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockGetUserStatusReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*get_user_status)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockGetUserStatusReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Get User Status command. */
-    enum ZclStatusCodeT (*set_wd_sched)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockSetWDScheduleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*set_wd_sched)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockSetWDScheduleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Set Weekday Schedule command. */
-    enum ZclStatusCodeT (*get_wd_sched)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockGetWDScheduleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*get_wd_sched)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockGetWDScheduleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Get Weekday Schedule command. */
-    enum ZclStatusCodeT (*clr_wd_sched)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockClrWDScheduleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*clr_wd_sched)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockClrWDScheduleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Clear Weekday Schedule command. */
-    enum ZclStatusCodeT (*set_yd_sched)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockSetYDScheduleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*set_yd_sched)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockSetYDScheduleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Set Year Day Schedule command. */
-    enum ZclStatusCodeT (*get_yd_sched)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockGetYDScheduleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*get_yd_sched)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockGetYDScheduleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Get Year Day Schedule command. */
-    enum ZclStatusCodeT (*clr_yd_sched)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockClrYDScheduleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*clr_yd_sched)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockClrYDScheduleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Clear Year Day Schedule command. */
-    enum ZclStatusCodeT (*set_hd_sched)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockSetHDScheduleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*set_hd_sched)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockSetHDScheduleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Set Holiday Schedule command. */
-    enum ZclStatusCodeT (*get_hd_sched)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockGetHDScheduleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*get_hd_sched)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockGetHDScheduleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Get Holiday Schedule command. */
-    enum ZclStatusCodeT (*clr_hd_sched)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockClrHDScheduleReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*clr_hd_sched)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockClrHDScheduleReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Clear Holiday Schedule command. */
-    enum ZclStatusCodeT (*set_user_type)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockSetUserTypeReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*set_user_type)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockSetUserTypeReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Set User Type command. */
-    enum ZclStatusCodeT (*get_user_type)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockGetUserTypeReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*get_user_type)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockGetUserTypeReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Get User Type command. */
-    enum ZclStatusCodeT (*set_rfid)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockSetRfidReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*set_rfid)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockSetRfidReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Set RFID Code command. */
-    enum ZclStatusCodeT (*get_rfid)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockGetRfidReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*get_rfid)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockGetRfidReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Get RFID Code command. */
-    enum ZclStatusCodeT (*clr_rfid)(struct ZbZclClusterT *cluster, struct ZbZclDoorLockClrRfidReqT *req, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*clr_rfid)(struct ZbZclClusterT *cluster,
+        struct ZbZclDoorLockClrRfidReqT *req,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Clear RFID Code command. */
-    enum ZclStatusCodeT (*clr_all_rfids)(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+    enum ZclStatusCodeT (*clr_all_rfids)(struct ZbZclClusterT *cluster,
+        struct ZbZclAddrInfoT *srcInfo, void *arg);
     /**< Callback to application, invoked on receipt of Clear All RFID Codes command. */
 };
 

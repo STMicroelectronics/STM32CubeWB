@@ -4,7 +4,7 @@
  * @brief ZCL Security IAS Zone cluster header
  * ZCL 7 section 8.2
  * ZCL 8 section 8.2
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_IAS_ZONE_H
@@ -299,5 +299,10 @@ uint8_t ZbZclIasZoneClientInitiateNormalMode(struct ZbZclClusterT *cluster,
 uint8_t ZbZclIasZoneClientInitiateTestMode(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclIasZoneClientTestModeReqT *req,
     void (*callback)(struct ZbZclCommandRspT *zcl_rsp, void *arg), void *arg);
+
+/* For internal tesitng only ----------------------------------------------- */
+enum ZclStatusCodeT zcl_ias_zone_server_initiate_test_mode(struct ZbZclClusterT *clusterPtr,
+    struct ZbZclIasZoneClientTestModeReqT *req);
+enum ZclStatusCodeT zcl_ias_zone_server_initiate_normal_mode(struct ZbZclClusterT *clusterPtr);
 
 #endif

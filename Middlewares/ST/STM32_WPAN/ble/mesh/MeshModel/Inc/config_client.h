@@ -37,7 +37,8 @@
 #define APPKEY_SIZE  16
 
 #define CONFIGURATION_START_DELAY      2000  
-#define CONFIGCLIENT_RESPONSE_TIMEOUT  20000    /* 20 sec Timeout */
+//#define CONFIGCLIENT_RESPONSE_TIMEOUT  20000    /* 20 sec Timeout */
+#define CONFIGCLIENT_RESPONSE_TIMEOUT  2000    /* 2 sec Timeout */
 #define CONFIGCLIENT_MAX_TRIALS        3    /* Attempt 3 times retries  */
 
 

@@ -32,6 +32,7 @@
 #include "srp_client.h"
 
 extern otSrpClientCallback otSrpClientCb;
+extern otSrpClientAutoStartCallback otSrpClientAutoStartCb;
 
 otError otSrpClientStart(otInstance *aInstance, const otSockAddr *aServerSockAddr)
 {
@@ -130,7 +131,7 @@ void otSrpClientEnableAutoStartMode(otInstance *aInstance, otSrpClientAutoStartC
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t) aContext;
 
-  Ot_Cmd_Transfer();
+  Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
@@ -166,6 +167,36 @@ bool otSrpClientIsAutoStartModeEnabled(otInstance *aInstance)
   return (bool)p_ot_req->Data[0];
 }
 #endif // OPENTHREAD_CONFIG_SRP_CLIENT_AUTO_START_API_ENABLE
+
+uint32_t otSrpClientGetTtl(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_SRP_CLIENT_GET_TTL;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint32_t)p_ot_req->Data[0];
+}
+
+void otSrpClientSetTtl(otInstance *aInstance, uint32_t aTtl)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_SRP_CLIENT_SET_TTL;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aTtl;
+
+  Ot_Cmd_Transfer();
+}
 
 uint32_t otSrpClientGetLeaseInterval(otInstance *aInstance)
 {
@@ -257,6 +288,22 @@ otError otSrpClientSetHostName(otInstance *aInstance, const char *aName)
 
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t) aName;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otSrpClientEnableAutoHostAddress(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_SRP_CLIENT_ENABLE_AUTO_HOST_ADDRESS;
+
+  p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
 

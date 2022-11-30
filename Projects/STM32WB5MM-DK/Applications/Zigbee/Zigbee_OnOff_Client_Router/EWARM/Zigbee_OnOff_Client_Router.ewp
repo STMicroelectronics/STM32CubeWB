@@ -16,15 +16,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Zigbee_OnOff_Router/Exe</state>
+                    <state>Zigbee_OnOff_Client_Router/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Zigbee_OnOff_Router/Obj</state>
+                    <state>Zigbee_OnOff_Client_Router/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Zigbee_OnOff_Router/List</state>
+                    <state>Zigbee_OnOff_Client_Router/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -221,6 +221,7 @@
                     <name>CCDefines</name>
                     <state>USE_HAL_DRIVER</state>
                     <state>STM32WB55xx</state>
+                    <state>USE_STM32WB5M_DK</state>
                     <state>ZIGBEE_WB</state>
                 </option>
                 <option>
@@ -349,8 +350,6 @@
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$/../Core/Inc</state>
                     <state>$PROJ_DIR$/../STM32_WPAN/App</state>
-                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/STM32WB5MM-DK</state>
-                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/Components/Common</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN</state>
@@ -363,10 +362,14 @@
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/mac</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/STM32WB5MM-DK</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/Components/ssd1315</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/Components/Common</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/LCD</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/Fonts</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -662,7 +665,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Zigbee_OnOff_Router.bin</state>
+                    <state>Zigbee_OnOff_Client_Router.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -717,7 +720,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>Zigbee_OnOff_Router.out</state>
+                    <state>Zigbee_OnOff_Client_Router.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>

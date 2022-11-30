@@ -37,7 +37,7 @@ This example shows how to use the different LCD features to display string
 with different fonts, to display different shapes and to draw a bitmap.
 
 ### TEMPERATURE ###
-This example shows how to use the sensors to get tempearture values. Both, 
+This example shows how to use the sensors to get temperature values. Both, 
 STTS22H and LPS22HB sensors are used. 
 
 ### GYROSCOPE ###

@@ -46,7 +46,7 @@ For this application it is requested to have:
               Device 1                                      Device 2
         
              ---------                                      ---------
-             |       |       ZbZclReadReq (evey 500ms)	    |       |
+             |       |       ZbZclReadReq (every 500ms)	    |       |
     PushSW1=>|Client | -----------------------------------> |Server | =>LCD Local sensor temp 
   LCD sever<=|       | <-----ZbZclReadRsp------------------ |       |   500ms duty cycle
   temp       |       |                                      |       |

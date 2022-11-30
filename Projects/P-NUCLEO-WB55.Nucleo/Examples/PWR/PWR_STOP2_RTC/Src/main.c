@@ -116,10 +116,10 @@ int main(void)
     /* Insert 5 second delay */
     HAL_Delay(5000);
   
-   /* Turn off the LED2 */
+    /* Turn off the LED2 */
     BSP_LED_Off(LED2);
 
-     /* Enable GPIOs clock */
+    /* Enable GPIOs clock */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -162,12 +162,11 @@ int main(void)
   
   /* Disable all used wakeup source */
   HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
-  
-  
+
   /* Re-enable wakeup source */
   /* ## Setting the Wake up time ############################################*/
   /* RTC Wakeup Interrupt Generation: 
-    the wake-up counter is set to its maximum value to yield the longuest
+    the wake-up counter is set to its maximum value to yield the longest
     stop time to let the current reach its lowest operating point.
     The maximum value is 0xFFFF, corresponding to about 33 sec. when 
     RTC_WAKEUPCLOCK_RTCCLK_DIV = RTCCLK_Div16 = 16
@@ -183,11 +182,25 @@ int main(void)
     Therefore, with wake-up counter =  0xFFFF  = 65,535 
        Wakeup Time =  0,5 ms *  65,535 = 32,7675 s ~ 33 sec. */
     HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x0FFFF, RTC_WAKEUPCLOCK_RTCCLK_DIV16);
-  
+
+    /* Suspend SysTick */
+    /**
+     * When HAL_DBGMCU_EnableDBGStopMode() is called to keep the debugger active in Stop Mode,
+     * the systick shall be disabled otherwise the cpu may crash when moving out from stop mode
+     *
+     * When in production, the HAL_DBGMCU_EnableDBGStopMode() is not called so that the device can reach best power consumption
+     * However, the systick should be disabled anyway to avoid the case when it is about to expire at the same time the device enters
+     * stop mode (this will abort the Stop Mode entry).
+     */
+    HAL_SuspendTick();
+
     /* Enter STOP 2 mode */
     HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
-    
+
     /* ... Stop 2 mode ... */
+
+    /* Resume SysTick */
+    HAL_ResumeTick();
 
     /* Configure system clock after wake-up from STOP: enable MSI, PLL and select
     MSI as system clock source (MSI and PLL are disabled in STOP mode) */

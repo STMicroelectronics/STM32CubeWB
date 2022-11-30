@@ -68,7 +68,7 @@ do {\
 /**
 * START of Section BLE_DRIVER_CONTEXT
 */
-PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static MyVeryOwnServiceContext_t myVeryOwnServiceContext;
+static MyVeryOwnServiceContext_t myVeryOwnServiceContext;
 
 /**
 * END of Section BLE_DRIVER_CONTEXT

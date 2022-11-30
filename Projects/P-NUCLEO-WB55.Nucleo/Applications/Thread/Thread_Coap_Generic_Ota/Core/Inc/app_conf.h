@@ -286,7 +286,9 @@ typedef enum
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
   /* USER CODE BEGIN CFG_IdleTask_Id_t */
-  CFG_TASK_COAP_MSG_BUTTON,
+  CFG_TASK_BUTTON_SW1,
+  CFG_TASK_BUTTON_SW2,
+  CFG_TASK_BUTTON_SW3,
   CFG_TASK_FUOTA_REBOOT,
   /* USER CODE END CFG_IdleTask_Id_t */
   CFG_TASK_NBR  /**< Shall be last in the list */
@@ -296,7 +298,6 @@ typedef enum
 /*------------------------------------*/
 #define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
 /* USER CODE BEGIN DEFINE_TASK */ 
-#define TASK_COAP_MSG_BUTTON        (1U << CFG_TASK_COAP_MSG_BUTTON)
 #define TASK_FUOTA_REBOOT           (1U << CFG_TASK_FUOTA_REBOOT)
 /* USER CODE END DEFINE_TASK */  
  
@@ -321,14 +322,14 @@ typedef enum
   CFG_EVT_ACK_FROM_M0_EVT,
   CFG_EVT_SYNCHRO_BYPASS_IDLE,
   /* USER CODE BEGIN CFG_IdleEvt_Id_t */
-  CFG_EVT_TIMER,
+  
   /* USER CODE END CFG_IdleEvt_Id_t */
 } CFG_IdleEvt_Id_t;
 
 #define EVENT_ACK_FROM_M0_EVT           (1U << CFG_EVT_ACK_FROM_M0_EVT)
 #define EVENT_SYNCHRO_BYPASS_IDLE       (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
 /* USER CODE BEGIN DEFINE_EVENT */
-#define EVENT_TIMER                     (1U << CFG_EVT_TIMER)
+
 /* USER CODE END DEFINE_EVENT */
 
 /******************************************************************************

@@ -114,7 +114,7 @@ enum ZbZclOtaSvrAttrId {
      *
      * When writing a non-zero value to ZCL_OTA_ATTR_FILE_OFFSET,
      * the entire OTA Header must have already been received by this cluster.
-     * This can be used to resume a transfer that was interupted by the local device
+     * This can be used to resume a transfer that was interrupted by the local device
      * being power cycled in the middle of an OTA download. The procedure in this case is
      * to start the transfer over (ZbZclOtaClientImageTransferStart) and during the first
      * write_image() callback to the application, you write a new value to the FileOffset

@@ -58,6 +58,8 @@
 #include "srp_server.h"
 #include "netdata_publisher.h"
 #include "netdiag.h"
+#include "ping_sender.h"
+#include "tcp.h"
 
 #include "stm32wbxx_core_interface_def.h"
 #include "stm32wbxx_hal.h"

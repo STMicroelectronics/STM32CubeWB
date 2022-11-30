@@ -219,8 +219,8 @@ static const uint8_t a_BLE_CfgErValue[16] = CFG_BLE_ERK;
 PLACE_IN_SECTION("TAG_OTA_END") const uint32_t MagicKeywordValue = 0x94448A29 ;
 PLACE_IN_SECTION("TAG_OTA_START") const uint32_t MagicKeywordAddress = (uint32_t)&MagicKeywordValue;
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static uint16_t AdvIntervalMin, AdvIntervalMax;
+static BleApplicationContext_t BleApplicationContext;
+static uint16_t AdvIntervalMin, AdvIntervalMax;
 
 static const char a_LocalName[] = {AD_TYPE_COMPLETE_LOCAL_NAME ,'H','R','S','T','M'};
 uint8_t a_ManufData[14] = {sizeof(a_ManufData)-1,
@@ -287,6 +287,7 @@ static void Adv_Update(void);
 /* USER CODE END PFP */
 
 /* External variables --------------------------------------------------------*/
+extern RNG_HandleTypeDef hrng;
 
 /* USER CODE BEGIN EV */
 
@@ -314,7 +315,7 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ATT_MTU,
      CFG_BLE_SLAVE_SCA,
      CFG_BLE_MASTER_SCA,
-     CFG_BLE_LSE_SOURCE,
+     CFG_BLE_LS_SOURCE,
      CFG_BLE_MAX_CONN_EVENT_LENGTH,
      CFG_BLE_HSE_STARTUP_TIME,
      CFG_BLE_VITERBI_MODE,
@@ -327,7 +328,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_SET_NBR,
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
-     CFG_BLE_RX_PATH_COMPENS
+     CFG_BLE_RX_PATH_COMPENS,
+     CFG_BLE_CORE_VERSION
     }
   };
 
@@ -653,7 +655,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           break; /* ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE */    
 
         case (ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE):
-          APP_DBG_MSG(">>== ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE\n");
+          APP_DBG_MSG(">>== ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE\n");
           APP_DBG_MSG("     - numeric_value = %ld\n",
                       ((aci_gap_numeric_comparison_value_event_rp0 *)(p_blecore_evt->data))->Numeric_Value);
           APP_DBG_MSG("     - Hex_value = %lx\n",
@@ -873,11 +875,12 @@ static void Ble_Hci_Gap_Gatt_Init(void)
    * The lowest 32bits is read from the UDN to differentiate between devices
    * The RNG may be used to provide a random number on each power on
    */
+#if (CFG_IDENTITY_ADDRESS == GAP_STATIC_RANDOM_ADDR)
 #if defined(CFG_STATIC_RANDOM_ADDRESS)
   a_srd_bd_addr[0] = CFG_STATIC_RANDOM_ADDRESS & 0xFFFFFFFF;
   a_srd_bd_addr[1] = (uint32_t)((uint64_t)CFG_STATIC_RANDOM_ADDRESS >> 32);
   a_srd_bd_addr[1] |= 0xC000; /* The two upper bits shall be set to 1 */
-#elif (CFG_BLE_ADDRESS_TYPE == RANDOM_ADDR)
+#else
   /* Get RNG semaphore */
   while(LL_HSEM_1StepLock(HSEM, CFG_HW_RNG_SEMID));
 
@@ -910,6 +913,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   /* Release RNG semaphore */
   LL_HSEM_ReleaseLock(HSEM, CFG_HW_RNG_SEMID, 0);
 #endif /* CFG_STATIC_RANDOM_ADDRESS */
+#endif
 
 #if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
@@ -1002,15 +1006,15 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   role |= GAP_CENTRAL_ROLE;
 #endif /* BLE_CFG_CENTRAL == 1 */
 
+/* USER CODE BEGIN Role_Mngt*/
+
+/* USER CODE END Role_Mngt */
+
   if (role > 0)
   {
     const char *name = "HRSTM";
     ret = aci_gap_init(role,
-#if ((CFG_BLE_ADDRESS_TYPE == RESOLVABLE_PRIVATE_ADDR) || (CFG_BLE_ADDRESS_TYPE == NON_RESOLVABLE_PRIVATE_ADDR))
-                       2,
-#else
-                       0,
-#endif /* (CFG_BLE_ADDRESS_TYPE == RESOLVABLE_PRIVATE_ADDR) || (CFG_BLE_ADDRESS_TYPE == NON_RESOLVABLE_PRIVATE_ADDR) */
+                       CFG_PRIVACY,
                        APPBLE_GAP_DEVICE_NAME_LENGTH,
                        &gap_service_handle,
                        &gap_dev_name_char_handle,
@@ -1098,7 +1102,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                               CFG_BLE_ADDRESS_TYPE);
+                                               CFG_IDENTITY_ADDRESS);
   if (ret != BLE_STATUS_SUCCESS)
   {
     APP_DBG_MSG("  Fail   : aci_gap_set_authentication_requirement command, result: 0x%x \n", ret);

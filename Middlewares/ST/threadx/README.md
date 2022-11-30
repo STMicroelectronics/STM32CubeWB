@@ -87,11 +87,11 @@ Azure RTOS provides OEMs with components to secure communication and to create c
 
 # Adaptation layer for ThreadX
 
-Azure RTOS ThreadX is an advanced real-time operating system (RTOS) designed specifically for deeply embedded applications. To help ease application migration to Auzre RTOS, ThreadX provides [adaption layers](https://github.com/azure-rtos/threadx/tree/master/utility/rtos_compatibility_layers) for various legacy RTOS APIs (FreeRTOS, POSIX, OSEK, etc.).
+Azure RTOS ThreadX is an advanced real-time operating system (RTOS) designed specifically for deeply embedded applications. To help ease application migration to Azure RTOS, ThreadX provides [adaption layers](https://github.com/azure-rtos/threadx/tree/master/utility/rtos_compatibility_layers) for various legacy RTOS APIs (FreeRTOS, POSIX, OSEK, etc.).
 
 # Licensing
 
-License terms for using Azure RTOS are defined in the LICENSE.txt file of this repo. Please refer to this file for all definitive licensing information. No additional license fees are required for deploying Azure RTOS on hardware defined in the LICENSED-HARDWARE.txt file. If you are using hardware not defined in the LICENSED-HARDWARE.txt file or have licensing questions in general, please contact Microsoft directly at https://azure-rtos.ms-iot-contact.com/
+License terms for using Azure RTOS are defined in the LICENSE.txt file of this repo. Please refer to this file for all definitive licensing information. No additional license fees are required for deploying Azure RTOS on hardware defined in the LICENSED-HARDWARE.txt file. If you are using hardware not defined in the LICENSED-HARDWARE.txt file or have licensing questions in general, please contact Microsoft directly at https://aka.ms/azrtos-license.
 
 # Contribution, feedback, issues, and professional support
 
@@ -104,12 +104,14 @@ Professional support plans (https://azure.microsoft.com/en-us/support/options/) 
 # Additional Resources
 
 The following are references to additional Azure RTOS and Azure IoT in general:
-|   |   |
+| Content | Link |
 |---|---|
 | TraceX Installer | https://aka.ms/azrtos-tracex-installer |
 | Azure RTOS Documentation and Guides: | https://docs.microsoft.com/azure/rtos |
 | Azure RTOS Website: | https://azure.microsoft.com/services/rtos/ |
-| Azure RTOS Sales Questions: | https://azure-rtos.ms-iot-contact.com/ |
-| For technical questions check out Microsoft Q/A for Azure IoT: | https://aka.ms/QnA/azure-rtos |
-| Internet of Things Show for latest announcements and online training: | https://aka.ms/iotshow |
-| IoT Tech Community: | https://aka.ms/community/azure-rtos |
+| Azure RTOS Sales Questions: | https://aka.ms/azrtos-license |
+| Azure RTOS Product Support Policy | https://aka.ms/azrtos/lts |
+| Azure RTOS Functional Safety Artifacts | https://aka.ms/azrtos/tuv |
+| For technical questions check out Microsoft Q/A for Azure IoT | https://aka.ms/QnA/azure-rtos |
+| Internet of Things Show for latest announcements and online training | https://aka.ms/iotshow |
+| IoT Tech Community | https://aka.ms/community/azure-rtos |

@@ -248,11 +248,6 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/Core/app_azure_rtos.c</name>
-			<type>1</type>
-			<location>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_azure_rtos.c</location>
-		</link>
-		<link>
 			<name>Application/User/Core/app_debug.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_debug.c</locationURI>
@@ -261,11 +256,6 @@
 			<name>Application/User/Core/app_entry.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_entry.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/Core/app_threadx.c</name>
-			<type>1</type>
-			<location>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_threadx.c</location>
 		</link>
 		<link>
 			<name>Application/User/Core/hw_timerserver.c</name>
@@ -295,7 +285,7 @@
 		<link>
 			<name>Application/User/Core/stm32wbxx_hal_timebase_tim.c</name>
 			<type>1</type>
-			<location>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32wbxx_hal_timebase_tim.c</location>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32wbxx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/stm32wbxx_it.c</name>
@@ -305,7 +295,7 @@
 		<link>
 			<name>Application/User/Core/tx_initialize_low_level.S</name>
 			<type>1</type>
-			<location>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/tx_initialize_low_level.S</location>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/tx_initialize_low_level.S</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c</name>

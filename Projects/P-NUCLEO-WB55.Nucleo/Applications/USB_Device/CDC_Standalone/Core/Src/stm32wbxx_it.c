@@ -252,4 +252,3 @@ void USARTx_IRQHandler(void)
   HAL_UART_IRQHandler(&UartHandle);
 }
 /* USER CODE END 1 */
-

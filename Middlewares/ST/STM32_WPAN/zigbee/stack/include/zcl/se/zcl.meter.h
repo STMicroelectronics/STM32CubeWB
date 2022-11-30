@@ -7,7 +7,15 @@
  * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
  */
 
-/* @PICS.ZCL.Meter
+/* EXEGIN - removed '@'PICS escape sequence, since these are not the
+ * official PICS codes. These were added with the assumption that
+ * SE clusters are being brought into the Zigbee 3.0 fold and will
+ * use the same PICS codes and PICS format style. However, this has
+ * yet to occur.
+ * E.g. SE 1.4 defines the PICS for the Metering Server Cluster as
+ * MECS1. The ZCL way would be to define it as SEMT.S. */
+
+/* ZCL.Meter
  * SEMT.S | Server | True
  * SEMT.C | Client | True
  *

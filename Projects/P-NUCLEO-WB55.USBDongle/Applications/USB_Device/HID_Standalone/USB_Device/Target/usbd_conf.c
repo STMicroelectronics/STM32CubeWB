@@ -709,6 +709,7 @@ void USBD_LL_Delay(uint32_t Delay)
   */
 void *USBD_static_malloc(uint32_t size)
 {
+  UNUSED(size);
   static uint32_t mem[(sizeof(USBD_HID_HandleTypeDef)/4)+1];/* On 32-bit boundary */
   return mem;
 }
@@ -720,7 +721,7 @@ void *USBD_static_malloc(uint32_t size)
   */
 void USBD_static_free(void *p)
 {
-
+  UNUSED(p);
 }
 
 /* USER CODE BEGIN 5 */

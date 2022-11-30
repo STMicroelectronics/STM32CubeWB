@@ -127,4 +127,3 @@ void APP_THREAD_LCD_DisplayInit(void);
 #endif
 
 #endif /* APP_THREAD_H */
-

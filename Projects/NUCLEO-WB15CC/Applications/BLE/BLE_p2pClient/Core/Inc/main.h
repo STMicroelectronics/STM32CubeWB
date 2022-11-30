@@ -54,18 +54,19 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
-
-/* USER CODE BEGIN EFP */
-
-/* USER CODE END EFP */
-
-/* Private defines -----------------------------------------------------------*/
 void   MX_GPIO_Init(void);
 void   MX_DMA_Init(void);
 void   MX_IPCC_Init(void);
 void   MX_RF_Init(void);
 void   MX_RTC_Init(void);
 void   MX_USART1_UART_Init(void);
+
+/* USER CODE BEGIN EFP */
+
+/* USER CODE END EFP */
+
+/* Private defines -----------------------------------------------------------*/
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

@@ -224,8 +224,8 @@ void APP_THREAD_Init( void )
   UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
 
   /* USER CODE BEGIN INIT TASKS */
-  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_PROVISIONING, UTIL_SEQ_RFU, APP_THREAD_AskProvisioning);
-  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_SEND_COAP_SECURE, UTIL_SEQ_RFU, APP_THREAD_SendCoapSecureMsg);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_THREAD_AskProvisioning);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_BUTTON_SW2, UTIL_SEQ_RFU, APP_THREAD_SendCoapSecureMsg);
   /* USER CODE END INIT TASKS */
 
   /* Initialize and configure the Thread device*/
@@ -438,7 +438,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
       if (provisioning == 0)
       {
         HAL_Delay(3000U);
-        UTIL_SEQ_SetTask(TASK_PROVISIONING, CFG_SCH_PRIO_1);
+        
       }
       provisioning = 1U;
       /* USER CODE END OT_DEVICE_ROLE_CHILD */
@@ -540,7 +540,7 @@ static void APP_THREAD_CheckWirelessFirmwareInfo(void)
 static void APP_THREAD_ProvisioningReqSend()
 {
   static uint8_t l_PayloadWrite = 1;
-  APP_DBG("********* STEP 1: APP_THREAD_ProvisioningReqSend : Send a CoAP CONFIRMABLE GET Request *********");
+  APP_DBG("STEP 1: APP_THREAD_ProvisioningReqSend : Send a CoAP CONFIRMABLE GET Request");
   /* Send a CONFIRMABLE GET Request */
   APP_THREAD_CoapSendRequest(&OT_RessourceProvisionning,
       OT_COAP_TYPE_CONFIRMABLE,
@@ -573,7 +573,7 @@ static void APP_THREAD_ProvisioningRespHandler(
 
   if (Result == OT_ERROR_NONE)
   {
-    APP_DBG("**** STEP 4: Response received *****");
+    APP_DBG("STEP 4: Response received");
     uint16_t l_number_bytes_read = otMessageRead(pMessage, otMessageGetOffset(pMessage), &OT_Command, sizeof(OT_Command));
     APP_DBG("l_number_bytes_read = %d", l_number_bytes_read);
 
@@ -590,8 +590,7 @@ static void APP_THREAD_ProvisioningRespHandler(
       APP_DBG("resp_index = %d", resp_index);
       resp_index++;
       APP_DBG("IPv6 address of remote server retrieved!!!");
-      /* Ask to start the first transfer */
-      UTIL_SEQ_SetTask(TASK_SEND_COAP_SECURE, CFG_SCH_PRIO_1);
+ 
     }
     else
     {
@@ -617,7 +616,7 @@ static void APP_THREAD_ProvisioningReqHandler(void                * pContext,
                                               otMessage           * pMessage,
                                               const otMessageInfo * pMessageInfo)
 {
-  APP_DBG("**** STEP 2: Receives Provisioning request *****");
+  APP_DBG("STEP 2: Receives Provisioning request");
   if (otCoapMessageGetType(pMessage) == OT_COAP_TYPE_CONFIRMABLE)
   {
     if (APP_THREAD_ProvisioningRespSend(pMessage, pMessageInfo) != OT_ERROR_NONE)
@@ -639,7 +638,7 @@ static otError APP_THREAD_ProvisioningRespSend(otMessage    * pMessage,
 {
   otError  error = OT_ERROR_NONE;
   do{
-    APP_DBG("********* STEP 3: Provisioning Send Response *********");
+    APP_DBG("STEP 3: Provisioning Send Response");
 
     pOT_MessageResponse = otCoapNewMessage(NULL, NULL);
     if (pOT_MessageResponse == NULL)
@@ -856,7 +855,7 @@ static void APP_THREAD_CoapSendDataResponse(otMessage  * pMessage,
   otError  error = OT_ERROR_NONE;
 
   do{
-    APP_DBG(" ********* APP_THREAD_CoapSendDataResponse ********* ");
+    APP_DBG("APP_THREAD_CoapSendDataResponse");
 
     pOT_MessageResponse = otCoapNewMessage(NULL, NULL);
     if (pOT_MessageResponse == NULL)
@@ -1015,7 +1014,7 @@ static void APP_THREAD_SendCoapSecureMsg(void)
 
   APP_DBG("CoAP Secure connected so start data transfer");
 
-  APP_DBG("********* STEP 1: Send a CoAP Secure NON-CONFIRMABLE PUT Request *********");
+  APP_DBG("Send a CoAP Secure NON-CONFIRMABLE PUT Request");
   APP_THREAD_CoapSecureSendRequest(&OT_RessourceSecure,
       OT_COAP_TYPE_NON_CONFIRMABLE,
       OT_COAP_CODE_PUT,
@@ -1028,7 +1027,7 @@ static void APP_THREAD_SendCoapSecureMsg(void)
   HW_TS_Start(TimerID, (uint32_t)WAIT_TIMEOUT);
   UTIL_SEQ_WaitEvt(EVENT_TIMER);
 
-  APP_DBG("********* STEP 2: Send a CoAP Secure CONFIRMABLE PUT Request *********");
+  APP_DBG("Send a CoAP Secure CONFIRMABLE PUT Request");
   APP_THREAD_CoapSecureSendRequest(&OT_RessourceSecure,
       OT_COAP_TYPE_CONFIRMABLE,
       OT_COAP_CODE_PUT,

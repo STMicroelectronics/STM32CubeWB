@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2020] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved. */
 
 /*--------------------------------------------------------------------------
  * Copyright (c) 2013-2014, Exegin Technologies Limited
@@ -92,7 +92,8 @@ struct ZbZclKeClusterT;
 enum ZclStatusCodeT ZbZclKeAddCbke(struct ZbZclClusterT *clusterPtr, const struct ZbZclCbkeInfoT *info);
 enum ZclStatusCodeT ZbZclKeAddCbke2(struct ZbZclClusterT *clusterPtr, const struct ZbZclCbke2InfoT *info);
 struct ZbZclCertificateT * ZbZclParseCertificate(struct ZbZclCertificateT *dst, const void *src, unsigned int len);
-enum ZbZclKeyStatusT ZbZclCbke2ReconstPrivateKey(struct ZigBeeT *zb, const uint8_t *icu, const uint8_t *se, const uint8_t *du, uint8_t *wu);
+enum ZbZclKeyStatusT ZbZclCbke2ReconstPrivateKey(struct ZigBeeT *zb, const uint8_t *icu,
+    const uint8_t *se, const uint8_t *du, uint8_t *wu);
 
 /* Helper function to reconstruct a private key. */
 uint8_t ZbZclCbkeReconstPrivateKey(const unsigned char *icu, const unsigned char *se, const unsigned char *du, unsigned char *wu);

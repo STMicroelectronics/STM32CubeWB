@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : App/ble_conf.h
-  * Description        : Configuration file for BLE Middleware.
-  *
+  * @file    ble_conf.h
+  * @author  MCD Application Team
+  * @brief   Configuration file for BLE Middleware.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -101,4 +101,4 @@
  ******************************************************************************/
 #define BLE_CFG_OTA_REBOOT_CHAR         0/**< REBOOT OTA MODE CHARACTERISTIC */
 
-#endif /* BLE_CONF_H */
+#endif /*BLE_CONF_H */

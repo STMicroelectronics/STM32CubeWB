@@ -10,7 +10,7 @@
  * @brief ZCL Level cluster header
  * ZCL 7 section 3.10
  * ZCL 8 section 3.10
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_LEVEL_H
@@ -273,5 +273,14 @@ enum ZclStatusCodeT ZbZclLevelClientStepReq(struct ZbZclClusterT *cluster,
 enum ZclStatusCodeT ZbZclLevelClientStopReq(struct ZbZclClusterT *cluster,
     const struct ZbApsAddrT *dst, struct ZbZclLevelClientStopReqT *req,
     void (*callback)(struct ZbZclCommandRspT *rsp, void *arg), void *arg);
+
+/*-----------------------------------------------------------------------------
+ * Cluster Payload Helpers
+ *-----------------------------------------------------------------------------
+ */
+int ZbZclLevelClientMoveToLevelBuild(uint8_t *payload, unsigned int length, struct ZbZclLevelClientMoveToLevelReqT *req);
+int ZbZclLevelClientMoveBuild(uint8_t *payload, unsigned int length, struct ZbZclLevelClientMoveReqT *req);
+int ZbZclLevelClientStepBuild(uint8_t *payload, unsigned int length, struct ZbZclLevelClientStepReqT *req);
+int ZbZclLevelClientStopBuild(uint8_t *payload, unsigned int length, struct ZbZclLevelClientStopReqT *req);
 
 #endif /* ZCL_LEVEL_H */

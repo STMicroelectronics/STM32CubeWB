@@ -203,11 +203,22 @@ static MOBLE_RESULT SerialPrvn_UnProvisionDevice(char *text)
   sscanf(text, "UNPV %hd", &na);  
   if(na>1)
   {
-      result = ConfigClient_NodeReset(na);
+    result = ConfigClient_NodeReset(na);
+  }
+  else if(na == 1)
+  {
+    if(!BLEMesh_IsUnprovisioned())
+    {
+      Appli_Unprovision();
+    }
+    else
+    {
+      BLEMesh_PrintStringCb("Device is already unprovisioned !\r\n");
+    }
   }
   else 
   {
-      result = MOBLE_RESULT_INVALIDARG;
+    result = MOBLE_RESULT_INVALIDARG;
   }
 
   return result;

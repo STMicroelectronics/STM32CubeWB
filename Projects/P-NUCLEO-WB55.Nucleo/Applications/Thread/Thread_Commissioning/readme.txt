@@ -106,7 +106,7 @@ Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurr
           toggling slowly waiting for a user action. Both devices are in 'disabled' mode.
 
  Step 2 : On one device (Device1) , press on the SW1 push button. Following this action, Device1 will
-          reach the ‘leader’ state inside the Thread network after a few seconds and act as commissioner.
+          reach the 'leader' state inside the Thread network after a few seconds and act as commissioner.
           LED2 (green) should light on. 
 
           Note : Device1 behaves as if the user had typed the following Cli commands once it has reached
@@ -127,7 +127,7 @@ Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurr
  Step4 : The commissioning is now proceeding. This step can take more than 100 seconds. LED1 (blue) is 
          toggling quickly on Device2.
 
- Step5 : Once the commissioning is completed, the LED1 (blue) stays ‘On’ on both devices and the Thread network 
+ Step5 : Once the commissioning is completed, the LED1 (blue) stays 'On' on both devices and the Thread network 
          is now established. One device acts as a Leader (Green LED on) and the other device acts as a Child (Red LED on)
 
 

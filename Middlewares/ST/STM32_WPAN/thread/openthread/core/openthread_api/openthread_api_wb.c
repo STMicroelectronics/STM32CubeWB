@@ -56,6 +56,7 @@ otLinkMetricsEnhAckProbingIeReportCallback otLinkMetricsEnhAckProbingIeReportCb 
 
 /* THREAD */
 otThreadParentResponseCallback otThreadParentResponseCb = NULL;
+otDetachGracefullyCallback otDetachGracefullyCb = NULL;
 
 #if OPENTHREAD_CONFIG_TMF_ANYCAST_LOCATOR_ENABLE
 otThreadAnycastLocatorCallback otThreadAnycastLocatorCb = NULL;
@@ -168,6 +169,28 @@ otSrpClientAutoStartCallback otSrpClientAutoStartCb = NULL;
 #if OPENTHREAD_CONFIG_SRP_SERVER_ENABLE
 otSrpServerServiceUpdateHandler otSrpServerServiceUpdateHandlerCb = NULL;
 #endif
+
+/* PING SENDER */
+#if OPENTHREAD_CONFIG_PING_SENDER_ENABLE
+otPingSenderReplyCallback otPingSenderReplyCb = NULL;
+otPingSenderStatisticsCallback otPingSenderStatisticsCb = NULL;
+#endif // OPENTHREAD_CONFIG_PING_SENDER_ENABLE
+
+/* TCP */
+#if OPENTHREAD_CONFIG_TCP_ENABLE
+STTcpEndpointHandlerContextType* mySTTcpEndpointHandlerContext = NULL;
+STTcpListenerHandlerContextType* mySTTcpListenerHandlerContext = NULL;
+//otTcpBytesAcked otTcpBytesAckedCb = NULL;
+otTcpDisconnected otTcpDisconnectedCb = NULL;
+otTcpEstablished otTcpEstablishedCb = NULL;
+otTcpReceiveAvailable otTcpReceiveAvailableCb = NULL;
+otTcpSendDone otTcpSendDoneCb = NULL;
+//otTcpSendReady otTcpSendReadyCb = NULL;
+otTcpAcceptReady otTcpAcceptReadyCb = NULL;
+otTcpAcceptDone otTcpAcceptDoneCb = NULL;
+otTcpForwardProgress  mForwardProgressCallback = NULL;
+#endif // OPENTHREAD_CONFIG_TCP_ENABLE
+
 
 /**
  * @brief  This function is used to manage all the callbacks used by the
@@ -309,13 +332,13 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
           (const char *) p_notification->Data[1]);
     }
     break;
-  case MSG_M0TOM4_DNSSD_QUERY_UNSUBSCRIBE_CB:
-    if (otDnssdQueryUnsubscribeCb != NULL)
-    {
-      otDnssdQueryUnsubscribeCb((void *) p_notification->Data[0],
-          (const char *) p_notification->Data[1]);
-    }
-    break;
+  //case MSG_M0TOM4_DNSSD_QUERY_UNSUBSCRIBE_CB:
+  //  if (otDnssdQueryUnsubscribeCb != NULL)
+  //  {
+  //    otDnssdQueryUnsubscribeCb((void *) p_notification->Data[0],
+  //        (const char *) p_notification->Data[1]);
+  //  }
+  //  break;
 #endif // OPENTHREAD_CONFIG_DNSSD_SERVER_ENABLE
 #if OPENTHREAD_CONFIG_NETDATA_PUBLISHER_ENABLE
   case MSG_M0TOM4_NETDATA_DNS_SRP_SERVICE_PUBLISHER_CB:
@@ -332,7 +355,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     if (otNetDataPrefixPublisherCb != NULL)
     {
       otNetDataPrefixPublisherCb((otNetDataPublisherEvent) p_notification->Data[0],
-          (const otIp6Prefix *) p_notification->Data[1]
+          (const otIp6Prefix *) p_notification->Data[1],
           (void *) p_notification->Data[2]);
     }
     break;
@@ -340,7 +363,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
 #endif // OPENTHREAD_CONFIG_NETDATA_PUBLISHER_ENABLE
 #if OPENTHREAD_CONFIG_SRP_CLIENT_ENABLE
 #if OPENTHREAD_CONFIG_SRP_CLIENT_AUTO_START_API_ENABLE
-  case MSG_M0TOM4_NETDATA_PREFIX_PUBLISHER_CB:
+  case MSG_M0TOM4_SRP_CLIENT_AUTO_START_CB:
     if (otSrpClientAutoStartCb != NULL)
     {
       otSrpClientAutoStartCb((const otSockAddr *) p_notification->Data[0],
@@ -373,7 +396,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     break;
 #endif // OPENTHREAD_CONFIG_SRP_SERVER_ENABLE
 #if OPENTHREAD_FTD || OPENTHREAD_CONFIG_TMF_NETWORK_DIAG_MTD_ENABLE
-  case MSG_M0TOM4_SRP_SERVER_SERVICE_UPDATE_HANDLER_CB:
+  case MSG_M0TOM4_RECEIVE_DIAGNOSTIC_GET_CB:
     if (otReceiveDiagnosticGetCb != NULL)
     {
       otReceiveDiagnosticGetCb((otError) p_notification->Data[0],
@@ -397,9 +420,15 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
           (void *) p_notification->Data[1]);
     }
     break;
+  case MSG_M0TOM4_THREAD_DETACH_GRACEFULLY_CB:
+    if (otDetachGracefullyCb != NULL)
+    {
+      otDetachGracefullyCb((void *) p_notification->Data[0]);
+    }
+    break;
 #if OPENTHREAD_CONFIG_TMF_ANYCAST_LOCATOR_ENABLE
   case MSG_M0TOM4_THREAD_ANYCAST_LOCATOR_CB:
-    if (otThreadParentResponseCb != NULL)
+    if (otThreadAnycastLocatorCb != NULL)
     {
       otThreadAnycastLocatorCb((void *) p_notification->Data[0],
           (otError) p_notification->Data[1],
@@ -670,6 +699,126 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     }
     break;
 #endif
+#if OPENTHREAD_CONFIG_PING_SENDER_ENABLE
+  case MSG_M0TOM4_PING_SENDER_REPLY_CALLBACK:
+    if (otPingSenderReplyCb != NULL)
+    {
+      otPingSenderReplyCb((const otPingSenderReply *) p_notification->Data[0],
+          (void *) p_notification->Data[1]);
+    }
+    break;
+  case MSG_M0TOM4_PING_SENDER_STATISTICS_CALLBACK:
+    if (otPingSenderStatisticsCb != NULL)
+    {
+      otPingSenderStatisticsCb((const otPingSenderStatistics *) p_notification->Data[0],
+          (void *) p_notification->Data[1]);
+    }
+    break;
+#endif /* OPENTHREAD_CONFIG_PING_SENDER_ENABLE */
+#if OPENTHREAD_CONFIG_TCP_ENABLE
+//  case MSG_M0TOM4_TCP_BYTES_ACKED_CALLBACK:
+//    mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
+//
+//    otTcpBytesAckedCb = mySTTcpEndpointHandlerContext->mBytesAckedCallback;
+//
+//    if (otTcpBytesAckedCb != NULL)
+//    {
+//      otTcpBytesAckedCb((otTcpEndpoint *) p_notification->Data[0],
+//          (size_t) p_notification->Data[1]);
+//    }
+//    break;
+  case MSG_M0TOM4_TCP_DISCONNECTED_CALLBACK:
+    mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
+
+    otTcpDisconnectedCb = mySTTcpEndpointHandlerContext->mDisconnectedCallback;
+
+    if (otTcpDisconnectedCb != NULL)
+    {
+      otTcpDisconnectedCb((otTcpEndpoint *) p_notification->Data[0],
+          (otTcpDisconnectedReason) p_notification->Data[1]);
+    }
+    break;
+  case MSG_M0TOM4_TCP_ESTABLISHED_CALLBACK:
+    mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
+
+    otTcpEstablishedCb = mySTTcpEndpointHandlerContext->mEstablishedCallback;
+
+    if (otTcpEstablishedCb != NULL)
+    {
+      otTcpEstablishedCb((otTcpEndpoint *) p_notification->Data[0]);
+    }
+    break;
+  case MSG_M0TOM4_TCP_RECEIVE_AVAILABLE_CALLBACK:
+    mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
+
+    otTcpReceiveAvailableCb = mySTTcpEndpointHandlerContext->mReceiveAvailableCallback;
+
+    if (otTcpReceiveAvailableCb != NULL)
+    {
+      otTcpReceiveAvailableCb((otTcpEndpoint *) p_notification->Data[0],
+          (size_t) p_notification->Data[1],
+          (bool) p_notification->Data[2],
+          (size_t) p_notification->Data[3]);
+    }
+    break;
+  case MSG_M0TOM4_TCP_SEND_DONE_CALLBACK:
+    mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
+
+    otTcpSendDoneCb = mySTTcpEndpointHandlerContext->mSendDoneCallback;
+
+    if (otTcpSendDoneCb != NULL)
+    {
+      otTcpSendDoneCb((otTcpEndpoint *) p_notification->Data[0],
+          (otLinkedBuffer *) p_notification->Data[1]);
+    }
+    break;
+//  case MSG_M0TOM4_TCP_SEND_READY_CALLBACK:
+//    mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
+//
+//    otTcpSendReadyCb = mySTTcpEndpointHandlerContext->mSendReadyCallback;
+//
+//    if (otTcpSendReadyCb != NULL)
+//    {
+//      otTcpSendReadyCb((otTcpEndpoint *) p_notification->Data[0]);
+//    }
+//    break;
+  case MSG_M0TOM4_TCP_FORWARD_PROGRESS_CALLBACK:
+    mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
+
+    mForwardProgressCallback = mySTTcpEndpointHandlerContext->mForwardProgressCallback;
+
+    if (mForwardProgressCallback != NULL)
+    {
+      mForwardProgressCallback((otTcpEndpoint *)p_notification->Data[0],
+          (size_t) p_notification->Data[1],
+          (size_t) p_notification->Data[2]);
+    }
+    break;
+  case MSG_M0TOM4_TCP_ACCEPT_READY_CALLBACK:
+    mySTTcpListenerHandlerContext = (STTcpListenerHandlerContextType*) ((otTcpListener *)p_notification->Data[0])->mContext;
+
+    otTcpAcceptReadyCb = mySTTcpListenerHandlerContext->mAcceptReadyCallback;
+
+    if (otTcpAcceptReadyCb != NULL)
+    {
+      p_notification->Data[0] = otTcpAcceptReadyCb((otTcpListener *) p_notification->Data[0],
+          (const otSockAddr *) p_notification->Data[1],
+          (otTcpEndpoint **) p_notification->Data[2]);
+    }
+    break;
+  case MSG_M0TOM4_TCP_ACCEPT_DONE_CALLBACK:
+    mySTTcpListenerHandlerContext = (STTcpListenerHandlerContextType*) ((otTcpListener *)p_notification->Data[0])->mContext;
+
+    otTcpAcceptDoneCb = mySTTcpListenerHandlerContext->mAcceptDoneCallback;
+
+    if (otTcpAcceptDoneCb != NULL)
+    {
+      otTcpAcceptDoneCb((otTcpListener *) p_notification->Data[0],
+          (otTcpEndpoint *) p_notification->Data[1],
+          (const otSockAddr *) p_notification->Data[2]);
+    }
+    break;
+#endif /* OPENTHREAD_CONFIG_TCP_ENABLE */
   default:
     status = HAL_ERROR;
     break;

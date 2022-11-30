@@ -22,11 +22,11 @@
 
 #include "types.h"
 //#include "hal_types.h"
-#define BLE_MESH_APPLICATION_VERSION "1.13.002" 
+#define BLE_MESH_APPLICATION_VERSION "1.13.006" 
 /**
 * \mainpage ST BLE-Mesh Solutions Bluetooth LE Mesh Library
 *
-* \version 1.13.002
+* \version 1.13.006
 *
 * \subsection contents_sec Contents
 *

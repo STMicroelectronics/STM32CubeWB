@@ -27,7 +27,7 @@
  */
 
 /* Custom Cluster ID */
-#define ZCL_CLUSTER_MATRIX  0x80E1
+#define ZCL_CLUSTER_CUSTOM_MATRIX  0x80E1
 
 /* Attribute Identifiers */
 enum {

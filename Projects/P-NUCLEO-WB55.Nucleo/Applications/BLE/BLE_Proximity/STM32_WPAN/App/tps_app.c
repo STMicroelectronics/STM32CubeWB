@@ -53,7 +53,7 @@ static int8_t TxPower;
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static int8_t TxPower;
+static int8_t TxPower;
 
 /**
  * END of Section BLE_APP_CONTEXT

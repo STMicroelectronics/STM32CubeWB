@@ -1,4 +1,3 @@
-
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -37,6 +36,7 @@
 #include "zcl/general/zcl.onoff.h"
 
 /* USER CODE BEGIN Includes */
+#include "stm32wb5mm_dk.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +50,8 @@
 #define SW1_ENDPOINT                                17
 
 /* USER CODE BEGIN PD */
-#define SW1_GROUP_ADDR          0x0001
+#define SW1_GROUP_ADDR                              0x0001
+#define PERMIT_JOIN_DELAY                           60 /* 10s */
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/
@@ -59,6 +60,7 @@
 
 /* External definition -------------------------------------------------------*/
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
+extern uint32_t LCD_Inst;
 
 /* USER CODE BEGIN ED */
 /* USER CODE END ED */
@@ -67,7 +69,9 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
 static void APP_ZIGBEE_StackLayersInit(void);
 static void APP_ZIGBEE_ConfigEndpoints(void);
 static void APP_ZIGBEE_NwkForm(void);
-
+static void APP_ZIGBEE_PermitJoin(void);
+static void APP_ZIGBEE_ZbZdoPermitJoinReq_cb(struct ZbZdoPermitJoinRspT* rsp, void* arg);
+static void APP_ZIGBEE_ConfigGroupAddr(void);
 static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode);
 static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void);
 
@@ -75,11 +79,7 @@ static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
 
-/* USER CODE BEGIN PFP */
-static void APP_ZIGBEE_ConfigGroupAddr(void);
-/* USER CODE END PFP */
-
-/* Private variables ---------------------------------------------------------*/
+/* Private variables -----------------------------------------------*/
 static TL_CmdPacket_t *p_ZIGBEE_otcmdbuffer;
 static TL_EvtPacket_t *p_ZIGBEE_notif_M0_to_M4;
 static TL_EvtPacket_t *p_ZIGBEE_request_M0_to_M4;
@@ -91,94 +91,115 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ZigbeeOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRequestBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 
-struct zigbee_app_info {
-  bool has_init;
+struct zigbee_app_info 
+{
   struct ZigBeeT *zb;
   enum ZbStartType startupControl;
   enum ZbStatusCodeT join_status;
   uint32_t join_delay;
   bool init_after_join;
+  bool has_init;
 
-  struct ZbZclClusterT *onOff_server_1;
+  struct ZbZclClusterT *onOff_server;
 };
 static struct zigbee_app_info zigbee_app_info;
 
-/* OnOff server 1 custom callbacks */
-static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
-static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
-static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
 
-static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 = {
-  .off = onOff_server_1_off,
-  .on = onOff_server_1_on,
-  .toggle = onOff_server_1_toggle,
+/* Clusters definition ---------------------------------------------------------*/
+/* OnOff server 1 custom callbacks */
+static enum ZclStatusCodeT onOff_server_off_cb(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+static enum ZclStatusCodeT onOff_server_on_cb(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+static enum ZclStatusCodeT onOff_server_toggle_cb(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
+
+static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks = {
+  .off = onOff_server_off_cb,
+  .on = onOff_server_on_cb,
+  .toggle = onOff_server_toggle_cb,
 };
 
-/* USER CODE BEGIN PV */
-/* USER CODE END PV */
 /* Functions Definition ------------------------------------------------------*/
 
-/* OnOff server off 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
-  /* USER CODE BEGIN 0 OnOff server 1 off 1 */
-    uint8_t endpoint;
+/**
+ * @brief  OnOff server off command callback
+ * @param  clusterPtr pointer to cluster
+ * @param  srcInfo source addr of the device that send the command
+ * @param  arg extra arg 
+ * @retval stack status code
+ */
+static enum ZclStatusCodeT onOff_server_off_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg)
+{
+  uint8_t endpoint;
 
-    endpoint = ZbZclClusterGetEndpoint(cluster);
-    if (endpoint == SW1_ENDPOINT) {
-        APP_DBG("OnOff Toggle OFF");
-        UTIL_LCD_ClearStringLine(4);
-        UTIL_LCD_DisplayStringAt(6, LINE(4), (uint8_t *)"O", CENTER_MODE);
-        BSP_LCD_Refresh(0);
+  endpoint = ZbZclClusterGetEndpoint(clusterPtr);
+  if (endpoint == SW1_ENDPOINT)
+  {
+    APP_DBG("ZCL CB - LED OFF");
+    HAL_Delay(10);
+    LED_Off();
+    (void)ZbZclAttrIntegerWrite(clusterPtr, ZCL_ONOFF_ATTR_ONOFF, 0);
+  }
+  else
+  {
+    APP_DBG("Unknown endpoint");
+    return ZCL_STATUS_FAILURE;
+  }
+  return ZCL_STATUS_SUCCESS;
+} /* onOff_server_off_cb */
 
-        (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 0);
-    }
-    else {
-        /* Unknown endpoint */
-        return ZCL_STATUS_FAILURE;
-    }
-    return ZCL_STATUS_SUCCESS;
-  /* USER CODE END 0 OnOff server 1 off 1 */
-}
+/**
+ * @brief  OnOff server on command callback
+ * @param  clusterPtr pointer to cluster
+ * @param  srcInfo source addr
+ * @param  arg extra arg 
+ * @retval stack status code
+ */
+static enum ZclStatusCodeT onOff_server_on_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg)
+{
+  uint8_t endpoint;
 
-/* OnOff server on 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
-  /* USER CODE BEGIN 1 OnOff server 1 on 1 */
-    uint8_t endpoint;
+  endpoint = ZbZclClusterGetEndpoint(clusterPtr);
+  if (endpoint == SW1_ENDPOINT)
+  {
+    APP_DBG("ZCL CB - LED ON");
+    HAL_Delay(10);
+    LED_On();
+    (void)ZbZclAttrIntegerWrite(clusterPtr, ZCL_ONOFF_ATTR_ONOFF, 1);
+  }
+  else
+  {
+    APP_DBG("Unknown endpoint");
+    return ZCL_STATUS_FAILURE;
+  }
+  return ZCL_STATUS_SUCCESS;
+} /* onOff_server_on_cb */
 
-    endpoint = ZbZclClusterGetEndpoint(cluster);
-    if (endpoint == SW1_ENDPOINT) {
-        APP_DBG("OnOff Toggle ON");
-        UTIL_LCD_ClearStringLine(4);
-        UTIL_LCD_DisplayStringAt(16, LINE(4), (uint8_t *)"O", CENTER_MODE);
-        BSP_LCD_Refresh(0);
+/**
+ * @brief  OnOff server toggle 1 command callback
+ * @param  clusterPtr pointer to cluster
+ * @param  srcInfo source addr
+ * @param  arg extra arg 
+ * @retval stack status code
+ */
+static enum ZclStatusCodeT onOff_server_toggle_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclAddrInfoT *srcInfo, void *arg)
+{
+  uint8_t attrVal;
 
-        (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 1);
-    }
-    else {
-        /* Unknown endpoint */
-        return ZCL_STATUS_FAILURE;
-    }
-    return ZCL_STATUS_SUCCESS;
-  /* USER CODE END 1 OnOff server 1 on 1 */
-}
+  if (ZbZclAttrRead(clusterPtr, ZCL_ONOFF_ATTR_ONOFF, NULL,
+                    &attrVal, sizeof(attrVal), false) != ZCL_STATUS_SUCCESS)
+  {
+    return ZCL_STATUS_FAILURE;
+  }
 
-/* OnOff server toggle 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
-  /* USER CODE BEGIN 2 OnOff server 1 toggle 1 */
-    uint8_t attrVal;
+  if (attrVal != 0)
+  {
+    return onOff_server_off_cb(clusterPtr, srcInfo, arg);
+  }
+  else
+  {
+    return onOff_server_on_cb(clusterPtr, srcInfo, arg);
+  }
+} /* onOff_server_toggle_cb */
 
-    if (ZbZclAttrRead(cluster, ZCL_ONOFF_ATTR_ONOFF, NULL,
-            &attrVal, sizeof(attrVal), false) != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_FAILURE;
-    }
-    if (attrVal != 0) {
-        return onOff_server_1_off(cluster, srcInfo, arg);
-    }
-    else {
-        return onOff_server_1_on(cluster, srcInfo, arg);
-    }
-  /* USER CODE END 2 OnOff server 1 toggle 1 */
-}
 
 /**
  * @brief  Zigbee application initialization
@@ -209,6 +230,9 @@ void APP_ZIGBEE_Init(void)
   /* Task associated with network creation process */
   UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_NETWORK_FORM, UTIL_SEQ_RFU, APP_ZIGBEE_NwkForm);
 
+  /* Task associated with button action */
+  UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_ZIGBEE_PermitJoin);
+  
   /* USER CODE BEGIN APP_ZIGBEE_INIT */
   /* USER CODE END APP_ZIGBEE_INIT */
 
@@ -237,10 +261,19 @@ static void APP_ZIGBEE_StackLayersInit(void)
   /* Create the endpoint and cluster(s) */
   APP_ZIGBEE_ConfigEndpoints();
 
+  /* USER CODE BEGIN APP_ZIGBEE_StackLayersInit */
+  /* USER CODE END APP_ZIGBEE_StackLayersInit */
+
   /* Configure the joining parameters */
   zigbee_app_info.join_status = (enum ZbStatusCodeT) 0x01; /* init to error status */
   zigbee_app_info.join_delay = HAL_GetTick(); /* now */
   zigbee_app_info.startupControl = ZbStartTypeForm;
+
+  /* Text Feature */
+  BSP_LCD_Clear(LCD_Inst, SSD1315_COLOR_BLACK);
+  BSP_LCD_Refresh(LCD_Inst);
+  UTIL_LCD_DisplayStringAt(0, LINE(0), (uint8_t *)"OnOff Server Coord", CENTER_MODE);
+  BSP_LCD_Refresh(LCD_Inst);
 
   /* Initialization Complete */
   zigbee_app_info.has_init = true;
@@ -250,7 +283,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
 } /* APP_ZIGBEE_StackLayersInit */
 
 /**
- * @brief  Configure Zigbee application endpoints
+ * @brief  Configure and register Zigbee application endpoints, onoff callbacks
  * @param  None
  * @retval None
  */
@@ -258,10 +291,9 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
 {
   struct ZbApsmeAddEndpointReqT req;
   struct ZbApsmeAddEndpointConfT conf;
-
-  memset(&req, 0, sizeof(req));
-
+  
   /* Endpoint: SW1_ENDPOINT */
+  memset(&req, 0, sizeof(req));
   req.profileId = ZCL_PROFILE_HOME_AUTOMATION;
   req.deviceId = ZCL_DEVICE_ONOFF_SWITCH;
   req.endpoint = SW1_ENDPOINT;
@@ -269,9 +301,9 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
   assert(conf.status == ZB_STATUS_SUCCESS);
 
   /* OnOff server */
-  zigbee_app_info.onOff_server_1 = ZbZclOnOffServerAlloc(zigbee_app_info.zb, SW1_ENDPOINT, &OnOffServerCallbacks_1, NULL);
-  assert(zigbee_app_info.onOff_server_1 != NULL);
-  ZbZclClusterEndpointRegister(zigbee_app_info.onOff_server_1);
+  zigbee_app_info.onOff_server = ZbZclOnOffServerAlloc(zigbee_app_info.zb, SW1_ENDPOINT, &OnOffServerCallbacks, NULL);
+  assert(zigbee_app_info.onOff_server != NULL);
+  ZbZclClusterEndpointRegister(zigbee_app_info.onOff_server);
 
   /* USER CODE BEGIN CONFIG_ENDPOINT */
   /* USER CODE END CONFIG_ENDPOINT */
@@ -312,17 +344,34 @@ static void APP_ZIGBEE_NwkForm(void)
     APP_DBG("ZbStartup Callback (status = 0x%02x)", status);
     zigbee_app_info.join_status = status;
 
-    if (status == ZB_STATUS_SUCCESS) {
-      /* USER CODE BEGIN 3 */
+    if (status == ZB_STATUS_SUCCESS)
+    {
+      /* USER CODE BEGIN 0 */
       zigbee_app_info.join_delay = 0U;
       zigbee_app_info.init_after_join = true;
+	  
+      /* flash x3 Green LED to inform the joining connection*/
+      LED_Set_rgb(PWM_LED_GSDATA_OFF, PWM_LED_GSDATA_47_0, PWM_LED_GSDATA_OFF);
+      HAL_Delay(500);
+      LED_Off();
+      HAL_Delay(500);
+      LED_Set_rgb(PWM_LED_GSDATA_OFF, PWM_LED_GSDATA_47_0, PWM_LED_GSDATA_OFF);
+      HAL_Delay(500);
+      LED_Off();
+      HAL_Delay(500);
+      LED_Set_rgb(PWM_LED_GSDATA_OFF, PWM_LED_GSDATA_47_0, PWM_LED_GSDATA_OFF);
+      HAL_Delay(500);
+      LED_Off();
+      HAL_Delay(500);
+      LED_Off();
+      
       UTIL_LCD_ClearStringLine(2);
-      UTIL_LCD_DisplayStringAt(0, LINE(2), (uint8_t *)"Join OK", CENTER_MODE);
+      UTIL_LCD_DisplayStringAt(0, LINE(2), (uint8_t *)"Network Ready", CENTER_MODE);
       BSP_LCD_Refresh(0);
     }
     else
     {
-      /* USER CODE END 3 */
+      /* USER CODE END 0 */
       APP_DBG("Startup failed, attempting again after a short delay (%d ms)", APP_ZIGBEE_STARTUP_FAIL_DELAY);
       zigbee_app_info.join_delay = HAL_GetTick() + APP_ZIGBEE_STARTUP_FAIL_DELAY;
     }
@@ -346,7 +395,6 @@ static void APP_ZIGBEE_NwkForm(void)
     uint32_t bcast_timeout = 3;
     ZbNwkSet(zigbee_app_info.zb, ZB_NWK_NIB_ID_NetworkBroadcastDeliveryTime, &bcast_timeout, sizeof(bcast_timeout));
   }
-  /* USER CODE END NW_FORM */
 } /* APP_ZIGBEE_NwkForm */
 
 /*************************************************************
@@ -366,6 +414,12 @@ static void ZbStartupWaitCb(enum ZbStatusCodeT status, void *cb_arg)
   UTIL_SEQ_SetEvt(EVENT_ZIGBEE_STARTUP_ENDED);
 } /* ZbStartupWaitCb */
 
+/**
+ * @brief  startup wait function
+ * @param  zb :Zigbee device object pointer, config: startup config pointer
+ * @param  ErrCode
+ * @retval zigbee status stack code
+ */
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
 {
   struct ZbStartupWaitInfo *info;
@@ -404,30 +458,6 @@ void APP_ZIGBEE_Error(uint32_t ErrId, uint32_t ErrCode)
   }
 } /* APP_ZIGBEE_Error */
 
-/**
- * @brief Thread LCD initialisation
- * @param  None
- * @retval None
- */
-void APP_ZIGBEE_LCD_DisplayInit(void)
-{
-    BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE);
-    /* Set LCD Foreground Layer  */
-    UTIL_LCD_SetFuncDriver(&LCD_Driver); /* SetFunc before setting device */
-    UTIL_LCD_SetDevice(0);            /* SetDevice after funcDriver is set */
-    BSP_LCD_Clear(0,SSD1315_COLOR_BLACK);
-    BSP_LCD_DisplayOn(0);
-    BSP_LCD_Refresh(0);
-    UTIL_LCD_SetFont(&Font12);
-    /* Set the LCD Text Color */
-    UTIL_LCD_SetTextColor(SSD1315_COLOR_WHITE);
-    UTIL_LCD_SetBackColor(SSD1315_COLOR_BLACK);
-    BSP_LCD_Clear(0,SSD1315_COLOR_BLACK);
-    BSP_LCD_Refresh(0);
-    UTIL_LCD_DisplayStringAt(0, LINE(0), (uint8_t *)"OnOff Coord", CENTER_MODE);
-    BSP_LCD_Refresh(0);
-}
-
 /*************************************************************
  *
  * LOCAL FUNCTIONS
@@ -445,14 +475,11 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 {
   APP_DBG("**** Fatal error = %s (Err = %d)", pMess, ErrCode);
   /* USER CODE BEGIN TRACE_ERROR */
-  while (1U == 1U) {
+  while (1U == 1U)
+  {
     UTIL_LCD_ClearStringLine(4);
     UTIL_LCD_DisplayStringAt(0, LINE(4), (uint8_t *)"FATAL_ERROR", CENTER_MODE);
     BSP_LCD_Refresh(0);
-    HAL_Delay(500U);
-    UTIL_LCD_ClearStringLine(4);
-    BSP_LCD_Refresh(0);
-
   }
   /* USER CODE END TRACE_ERROR */
 
@@ -482,7 +509,7 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
     case INFO_STACK_TYPE_ZIGBEE_FFD:
       APP_DBG("FW Type : FFD Zigbee stack");
       break;
-   case INFO_STACK_TYPE_ZIGBEE_RFD:
+    case INFO_STACK_TYPE_ZIGBEE_RFD:
       APP_DBG("FW Type : RFD Zigbee stack");
       break;
     default:
@@ -554,7 +581,6 @@ Zigbee_Cmd_Request_t * ZIGBEE_Get_M0RequestPayloadBuffer(void)
 
 /**
  * @brief  This function is used to transfer the commands from the M4 to the M0.
- *
  * @param   None
  * @return  None
  */
@@ -575,9 +601,7 @@ void ZIGBEE_CmdTransfer(void)
 } /* ZIGBEE_CmdTransfer */
 
 /**
- * @brief  This function is called when the M0+ acknowledge the fact that it has received a Cmd
- *
- *
+ * @brief  This function is called when the M0+ acknowledge  the fact that it has received a Cmd
  * @param   Otbuffer : a pointer to TL_EvtPacket_t
  * @return  None
  */
@@ -591,7 +615,6 @@ void TL_ZIGBEE_CmdEvtReceived(TL_EvtPacket_t *Otbuffer)
 
 /**
  * @brief  This function is called when notification from M0+ is received.
- *
  * @param   Notbuffer : a pointer to TL_EvtPacket_t
  * @return  None
  */
@@ -617,7 +640,6 @@ void Pre_ZigbeeCmdProcessing(void)
 
 /**
  * @brief  This function waits for getting an acknowledgment from the M0.
- *
  * @param  None
  * @retval None
  */
@@ -652,7 +674,6 @@ static void Receive_Notification_From_M0(void)
 
 /**
  * @brief  This function is called when a request from M0+ is received.
- *
  * @param   Notbuffer : a pointer to TL_EvtPacket_t
  * @return  None
  */
@@ -699,8 +720,8 @@ void APP_ZIGBEE_ProcessNotifyM0ToM4(void)
 
 /**
  * @brief Process the requests coming from the M0.
- * @param
- * @return
+ * @param  None
+ * @return None
  */
 void APP_ZIGBEE_ProcessRequestM0ToM4(void)
 {
@@ -728,6 +749,41 @@ static void APP_ZIGBEE_ConfigGroupAddr(void)
 
 } /* APP_ZIGBEE_ConfigGroupAddr */
 
+/**
+ * @brief  Send the request to NWK layer a Permit to Join the network
+ * @param  None
+ * @retval None
+ */
+static void APP_ZIGBEE_PermitJoin(void)
+{
+  struct ZbZdoPermitJoinReqT req;
+  enum ZbStatusCodeT status;
+
+  memset(&req, 0, sizeof(req));
+  req.destAddr = ZB_NWK_ADDR_BCAST_ROUTERS;
+  req.tcSignificance = true;
+  req.duration = PERMIT_JOIN_DELAY;
+
+  APP_DBG("Send command Permit join during %ds", PERMIT_JOIN_DELAY);
+  status = ZbZdoPermitJoinReq(zigbee_app_info.zb, &req, APP_ZIGBEE_ZbZdoPermitJoinReq_cb, NULL);
+  UNUSED(status);
+
+  UTIL_SEQ_WaitEvt(EVENT_ZIGBEE_PERMIT_JOIN_REQ_RSP);
+}
+
+static void APP_ZIGBEE_ZbZdoPermitJoinReq_cb(struct ZbZdoPermitJoinRspT *rsp, void *arg)
+{
+  UNUSED(arg);
+  
+  if(rsp->status != ZB_STATUS_SUCCESS){
+    APP_DBG("Error, cannot set permit join duration");
+  } else {
+    APP_DBG("Permit join duration successfully changed.");
+  }
+  
+  /* Unlock the waiting on this event */
+  UTIL_SEQ_SetEvt(EVENT_ZIGBEE_PERMIT_JOIN_REQ_RSP);
+}
+
 /* USER CODE END FD_LOCAL_FUNCTIONS */
-
-
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

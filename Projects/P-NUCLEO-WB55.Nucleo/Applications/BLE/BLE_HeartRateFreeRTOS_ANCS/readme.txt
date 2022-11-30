@@ -25,8 +25,8 @@ and use the Heart Rate profile as specified by the BLE SIG with FreeRTOS.
 
 The purpose of the Apple Notification Center Service (ANCS) is to give Bluetooth accessories (that connect to iOS devices 
 through a Bluetooth Low Energy link) a simple and convenient way to access many kinds of notifications that are generated
-on iOS devices. The publisher of the ANCS service (the iOS phone device) is referred to as Notification Provider (NP)
-and the client of the ANCS service (ie. STM32 WB board) is referred to as a Notification Consumer (NC).This application 
+on iOS devices. The publisher of the ANCS service (the iOS phone device) is referred to as Notification Provider (NP)
+and the client of the ANCS service (ie. STM32 WB board) is referred to as a Notification Consumer (NC).This application 
 use STM32 sequencer API to schedule SW tasks.
 For more details about Apple Notification Center Service (ANCS) refer to Apple specification at:
 https://developer.apple.com/library/archive/documentation/CoreBluetooth/Reference/AppleNotificationCenterServiceSpecification/

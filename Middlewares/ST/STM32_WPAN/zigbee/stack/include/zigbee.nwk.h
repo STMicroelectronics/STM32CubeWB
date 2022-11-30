@@ -183,9 +183,30 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_JoiningListExpiryInterval, /* mibIeeeExpiryInterval minutes [uint16_t] */
     /* mibIeeeExpiryIntervalCountdown is not externally accessible */
 
-    ZB_NWK_NIB_ID_ActiveChannelList, /* struct ZbChannelListT - Get only. */
-    ZB_NWK_NIB_ID_PermitJoinCounter, /* uint8_t - Get only. Set through ZbNlmePermitJoinReq */
-    ZB_NWK_NIB_ID_PassiveAckEnabled /* uint8_t - Enable/Disable Broadcast Passive ACK */
+    ZB_NWK_NIB_ID_ActiveChannelList = 0x0413, /* struct ZbChannelListT - Get only. */
+    ZB_NWK_NIB_ID_PermitJoinCounter = 0x0414, /* uint8_t - Get only. Set through ZbNlmePermitJoinReq */
+    ZB_NWK_NIB_ID_PassiveAckEnabled = 0x0415, /* uint8_t - Enable/Disable Broadcast Passive ACK */
+
+    /* Exegin Custom Attributes */
+    ZB_NWK_NIB_ID_RouteCostPerHop = 0x04a0,
+    ZB_NWK_NIB_ID_RouteNeighborMaxCost = 0x04a1,
+    ZB_NWK_NIB_ID_KeepAliveInfo = 0x04a2, /* NIB for keeping track of which KA method is supported (R22 Table 3-55) */
+    ZB_NWK_NIB_ID_AllowLostParentFlag = 0x04a3,
+    /**< If true, then a stack internal flag will be set when ZB_NWK_STATUS_CODE_PARENT_LINK_FAILURE
+     * is generated via NLME-NWK-STATUS.indication. When the flag is set, the NLDE-DATA.request
+     * will return ZB_NWK_STATUS_INVALID_REQUEST if attempting to send packet to, or through,
+     * the parent. Note that all APSDE-DATA.request API calls will subsequently call the
+     * NLDE-DATA.request API to the network layer. By setting this flag, it gives the application
+     * an immediate error response if there's a problem communicating the parent, rather than
+     * waiting for the approximately 10 seconds for the APS retry mechanism to complete and
+     * ultimately fail. The flag is cleared once a packet is received by the parent, or if
+     * this attribute's value is set to 0. */
+
+    ZB_NWK_NIB_ID_SedTimeoutLeaveDuration = 0x04a4
+        /**< How long in seconds to keep trying to send a Network Leave Request indirectly to
+         * Sleepy End Device (SED) after it has timed-out from the NNT.
+         * Minimum duration is 30 seconds, and maximum duration is 1 hour.
+         * Default is 5 minutes. */
 };
 
 /* Possible values for struct ZbNlmeJoinReqT.rejoinNetwork */

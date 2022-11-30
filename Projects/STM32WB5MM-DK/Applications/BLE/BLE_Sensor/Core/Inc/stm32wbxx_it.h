@@ -62,6 +62,7 @@ void DMA2_Channel4_IRQHandler(void);
 void IPCC_C1_RX_IRQHandler(void);
 void IPCC_C1_TX_IRQHandler(void);
 void RTC_WKUP_IRQHandler(void);
+void TIM1_TRG_COM_TIM17_IRQHandler(void);
 void PUSH_BUTTON_SW_EXTI_IRQHandler(void);
 
 /* USER CODE END EFP */

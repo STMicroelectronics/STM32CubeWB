@@ -296,6 +296,24 @@ tBleStatus aci_hal_set_slave_latency( uint8_t Enable )
   return status;
 }
 
+tBleStatus aci_hal_read_rssi( uint8_t* RSSI )
+{
+  struct hci_request rq;
+  aci_hal_read_rssi_rp0 resp;
+  Osal_MemSet( &resp, 0, sizeof(resp) );
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x022;
+  rq.rparam = &resp;
+  rq.rlen = sizeof(resp);
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  if ( resp.Status )
+    return resp.Status;
+  *RSSI = resp.RSSI;
+  return BLE_STATUS_SUCCESS;
+}
+
 tBleStatus aci_hal_read_radio_reg( uint8_t Register_Address,
                                    uint8_t* reg_val )
 {

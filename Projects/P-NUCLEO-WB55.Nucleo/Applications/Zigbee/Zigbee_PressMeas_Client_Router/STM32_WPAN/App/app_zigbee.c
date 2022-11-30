@@ -213,7 +213,6 @@ zcl_press_meas_press_client_report(struct ZbZclClusterT *clusterPtr, struct ZbAp
         pressure = (float)attr_val/10;
    
         APP_DBG("[PRESS MEAS] Reported pressure from server %.1f kPa",pressure);
-        APP_DBG("");
     }
 
    

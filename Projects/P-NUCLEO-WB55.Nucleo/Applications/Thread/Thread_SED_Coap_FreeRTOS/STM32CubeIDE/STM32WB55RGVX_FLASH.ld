@@ -3,15 +3,15 @@
 **
 **  File        : stm32wb55xx_flash_cm4.ld
 **
-**  Abstract    : System Workbench Minimal System calls file
+**  Abstract    : STM32CubeIDE Minimal System calls file
 **
 ** 		          For more information about which c-functions
 **                need which of these lowlevel functions
 **                please consult the Newlib libc-manual
 **
-**  Environment : System Workbench for MCU
+**  Environment : STM32CubeIDE for MCU
 **
-**  Distribution: The file is distributed “as is,” without any warranty
+**  Distribution: The file is distributed as is, without any warranty
 **                of any kind.
 **
 *****************************************************************************
@@ -165,7 +165,7 @@ SECTIONS
   .ARM.attributes 0       : { *(.ARM.attributes) }
    MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED
    MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED
-   MB_MEM2                : { *(MB_MEM2) } >RAM_SHARED  
+   MB_MEM2 (NOLOAD)	      : { *(MB_MEM2) } >RAM_SHARED  
 }
 
 

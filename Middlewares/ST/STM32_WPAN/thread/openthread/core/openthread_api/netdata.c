@@ -70,6 +70,25 @@ otError otNetDataGetNextOnMeshPrefix(otInstance *aInstance, otNetworkDataIterato
   return (otError)p_ot_req->Data[0];
 }
 
+#if OPENTHREAD_FTD && OPENTHREAD_CONFIG_BORDER_ROUTING_ENABLE
+bool otNetDataContainsOmrPrefix(otInstance *aInstance, const otIp6Prefix *aPrefix)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_NET_DATA_CONTAINS_OMR_PREFIX;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aPrefix;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (bool)p_ot_req->Data[0];
+}
+#endif
+
 otError otNetDataGetNextRoute(otInstance *aInstance, otNetworkDataIterator *aIterator,
     otExternalRouteConfig *aConfig)
 {

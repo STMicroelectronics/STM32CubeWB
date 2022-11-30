@@ -139,7 +139,7 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static CRC_Context_t CRC_Context;
+static CRC_Context_t CRC_Context;
 
 /**
  * END of Section BLE_APP_CONTEXT

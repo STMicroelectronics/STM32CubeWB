@@ -72,7 +72,7 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static Custom_App_Context_t Custom_App_Context;
+static Custom_App_Context_t Custom_App_Context;
 
 /**
  * END of Section BLE_APP_CONTEXT

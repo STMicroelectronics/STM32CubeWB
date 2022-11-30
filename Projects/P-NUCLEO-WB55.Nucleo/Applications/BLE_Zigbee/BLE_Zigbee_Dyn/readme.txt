@@ -110,8 +110,8 @@ The BLE example implements Point-to-Point communication using BLE component.
 1- The ZB/BLE device (P2P Server) starts BLE advertising (Green LED toggling) and simultaneously starts to join the Zigbee Network.
 2- The node will then attach the existing Zigbee network (Zb coordinator running Zigbee_OnOff_Server_Coord application [1]).
 The blue led turns ON when the Zigbee join is successful.
-3- When the Zigbee connection is establised, the Zigbee router will send every second a ZB ON_OFF toggle to the ZB coordinator [1]
--- The RED Led toggles on the coordinator [1]. It is also possible to force the toggeling of the RED Led on the coordinator [1] via the push button SW1 on Board [2]. 
+3- When the Zigbee connection is established, the Zigbee router will send every second a ZB ON_OFF toggle to the ZB coordinator [1]
+-- The RED Led toggles on the coordinator [1]. It is also possible to force the toggling of the RED Led on the coordinator [1] via the push button SW1 on Board [2].
 4- The BLE connection will be started as follows, depending if your BLE device is a smartphone or a 3rd Nucleo board:
 4.1 If using a smartphone, then the ST BLE Sensor App (smart Phone Application) scans and can connect to the P2P Server 
 by selecting = "P2PZBSRV1" entry.

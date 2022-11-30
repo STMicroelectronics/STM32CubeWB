@@ -1,8 +1,9 @@
 /**
  * @file zigbee.startup.h
+ * @heading Startup
  * @brief Zigbee startup header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_STARTUP_H

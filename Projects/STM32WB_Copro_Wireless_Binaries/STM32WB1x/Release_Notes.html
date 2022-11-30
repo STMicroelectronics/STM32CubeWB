@@ -56,7 +56,7 @@
 <ul>
 <li>Following features are kept (based on Basic stack library compared to previous deliveries):
 <ul>
-<li>GAP peripheral, central (LL Master up to 6 links with Slave up to 2 links/ Master up to 7 links with Slave up to 1 links/ Master up to 8 links )</li>
+<li>GAP peripheral, central (Master up to 5 links/Slave up to 5 links/all combinations in between)</li>
 <li>GATT server, client</li>
 <li>Data length extension</li>
 <li>2Mbit PHY / PHY update</li>
@@ -81,7 +81,7 @@
 <ul>
 <li>Following features are kept:
 <ul>
-<li>GAP peripheral, central (LL Master up to 6 links with Slave up to 2 links/ Master up to 7 links with Slave up to 1 links/ Master up to 8 links )</li>
+<li>GAP peripheral, central (Master up to 5 links/Slave up to 5 links/all combinations in between)</li>
 <li>GATT server, client</li>
 <li>Data length extension</li>
 <li>2Mbit PHY / PHY update</li>
@@ -104,7 +104,7 @@
 <ul>
 <li>Following features are kept:
 <ul>
-<li>GAP peripheral only (LL Slave up to 2 links)</li>
+<li>GAP peripheral only (LL Slave up to 4 links)</li>
 <li>GATT server</li>
 <li>Data length extension</li>
 <li>Privacy</li>
@@ -118,11 +118,11 @@
 <li>Following features are removed:
 <ul>
 <li>BLE “Slave Only” stack implies that with this stack configuration, STM32WB is not able to scan and request a BLE connection.</li>
-<li>It will just advertise, and accept incoming connection request from other master devices (e.g. Smartphone) (Slave up to 2 links).</li>
-<li>While with the “full feature” BLE stack, STM32WB5xx is able to support both master and slave roles on different links (with the limitation of max 8 links in parallel, from which max 2 slave links).</li>
+<li>It will just advertise, and accept incoming connection request from other master devices (e.g. Smartphone).</li>
+<li>While with the “full feature” BLE stack, STM32WB1xx is able to support both master and slave roles on different links (with the limitation of max 5 links in parallel).</li>
 </ul></li>
 </ul></li>
-<li>stm32wb5x_BLE_HCILayer_fw.bin
+<li>stm32wb1x_BLE_HCILayer_fw.bin
 <ul>
 <li>HCI Layer only mode 5.2 certified : Link Layer, HCI with Direct Test Mode</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
@@ -246,9 +246,97 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section9" checked aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.14.1 / 29-June-2022</label>
+<input type="checkbox" id="collapse-section10" checked aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.15.0 / 20-Oct-2022</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE :
+<ul>
+<li>ID 105792 : some setting corrections related to Time execution variability of CM0+/CM4 StandBy Exit Procedure when CPU is existing from StandBy on STM32WB15</li>
+<li>ID 127091 : reconfiguration of External PA control IOs after exiting from standby on STM32WB15</li>
+<li>ID 131753 : handling of error returned by service update characteristic function</li>
+<li>ID 131820 : Solves Out of bound memory access while using SHCI_C2_FUS_GetState</li>
+<li>ID 132534 : The appearance characteristic is now optionally writable.</li>
+<li>ID 132729 : There is no more delay of one connection interval for the execution of the ACI_GAP_TERMINATE or HCI_DISCONNECT command.</li>
+<li>ID 135184 : Fixes stuck CM0+ when the Wireless stack reset is triggered during the radio event</li>
+<li>ID 131098 : parameter CFG_BLE_CORE_VERSION set by user to select BLE version returned by application, 5.3 by default</li>
+<li>ID 131586 : redefinition of CFG_BLE_ADDRESS_TYPE configuration in BLE applications</li>
+<li>ID 132481 : CFG_BLE_LS_SOURCE bit field added to select HSE/1024 wakeup Low speed clock configuration without calibration (using LS clock FREQ and Period characteristics)</li>
+<li>ID 133755 : BLE stack uses Device ID to update hw_version information used by APIs as READ_LOCAL_VERSION_INFORMATION</li>
+<li>ID 135824 : updated hw_version MSB value provided to BLE stack by Host BLE init to discriminate STM32WBx5 devices</li>
+</ul></li>
+</ul>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCILayer_extended_fw.bin</td>
+<td>0x0802E000</td>
+<td>V1.15.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_HCILayer_fw.bin</td>
+<td>0x08034000</td>
+<td>V1.15.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x0803D000</td>
+<td>V1.15.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_LLD_fw.bin</td>
+<td>0x0803F800</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_full_extended_fw.bin</td>
+<td>0x08018800</td>
+<td>V1.15.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_Stack_full_fw.bin</td>
+<td>0x08021000</td>
+<td>V1.15.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_light_fw.bin</td>
+<td>0x08028000</td>
+<td>V1.15.0<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Firmware Safeboot Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 4” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_Safeboot_fw.bin</td>
+<td>0x080<strong>44</strong>000</td>
+<td>V2.0.0<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.14.1 / 29-June-2022</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -331,7 +419,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.14.0 / 06-June-2022</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -423,7 +511,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.13.3 / 9-Mar-2022</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -511,7 +599,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.13.2 / 25-Jan-2022</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -599,7 +687,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -708,7 +796,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="false">V1.12.1 / 12-July-2021</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -770,7 +858,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -850,7 +938,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="false">V1.11.1 / 23-March-2021</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -912,7 +1000,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="false">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of the binaries.</li>

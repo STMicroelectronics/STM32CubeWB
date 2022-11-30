@@ -1,4 +1,4 @@
-/* Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef ZCL_PAYLOAD_H
 # define ZCL_PAYLOAD_H

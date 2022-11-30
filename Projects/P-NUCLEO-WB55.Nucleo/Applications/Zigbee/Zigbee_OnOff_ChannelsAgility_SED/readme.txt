@@ -5,7 +5,7 @@
   ******************************************************************************
   * @file    Zigbee/Zigbee_OnOff_ChannelsAgility_SED/readme.txt 
   * @author  MCD Application Team
-  * @brief   Description of the Zigbee Rejoin procedure in a centralized network. 
+  * @brief   Description of the Zigbee MultiChannels commissioning setup procedure in a centralized network. 
   ******************************************************************************
   *
   * Copyright (c) 2021 STMicroelectronics. All rights reserved.
@@ -20,7 +20,7 @@
 
 @par Application Description 
 
-How to use the OnOff cluster on a device on a Sleepy End Device (SED) acting as a Server within a Centralized Zigbee network.
+How to use the OnOff cluster on a device on a Sleepy End Device (SED) acting as a Client within a Centralized Zigbee network.
 
 The purpose of this application is to show how to create two (or more) Zigbee centralized network, and 
 how to communicate from one node to another one of these networks using the OnOff cluster. Channel agility is used at the creation 
@@ -53,9 +53,9 @@ Setup_1.2 Part SED1-ZR1-ZC1 CHANNEL 15 (Hypothesis that channel 15, first channe
               Device ZR1                                   Device ZC1
 Device        
              ---------                                      ---------
-             |       |       ZbZclOnOffClientToggleReq      |       |
-SED1  PushB=>|Client | -----------------------------------> |Server | =>LED_RED and LED_GREEN are toggling (AND LED_RED TOGGLE with ZR)
-------       |       |                                      |       |
+             |       |       ZbZclOnOffClientToggleReq      |       | =>when boot done on ZC1: BLUE_RED is ON.
+SED1  PushB=>|Client | -----------------------------------> |Server | =>with SED1: LED_RED is toggling (AND LED_RED can also TOGGLE ONCE with ZR)
+------       |       |                                      |       | =>with ZR1 PushB: LED_RED TOGGLE ONCE for each received PushB.
 |    |-------|Blue   |                                      |Blue   |
 |Blue|       ---------                                      ---------
 ------
@@ -66,9 +66,9 @@ Setup_1.4 Part SED2-ZR2-ZC2 CHANNEL 20 (Hypothesis: Channel20 also free)
               Device ZR2                                   Device ZC2
 Device        
              ---------                                      ---------
-             |       |       ZbZclOnOffClientToggleReq      |       |
-SED2  PushB=>|Client | -----------------------------------> |Server | =>LED_RED and LED_GREEN are toggling (AND LED_RED TOGGLE with ZR)
-------       |       |                                      |       |
+             |       |       ZbZclOnOffClientToggleReq      |       | =>when boot done on ZC2: BLUE_RED is ON.
+SED2  PushB=>|Client | -----------------------------------> |Server | =>with SED2: LED_RED is toggling (AND LED_RED can also TOGGLE ONCE with ZR)
+------       |       |                                      |       | =>with ZR2 PushB: LED_RED TOGGLE ONCE for each received PushB.
 |    |-------|Blue   |                                      |Blue   |
 |Blue|        --------                                      ---------
 ------
@@ -87,7 +87,7 @@ To setup the application :
  Additional detailed comments on the application :
 
   a)  Start coordinator first. So in this demo application it is
-      the device running Zigbee_OnOff_ChannelsAgility_ZCRejoin application (Device ZCx in the above diagram). 
+      the device running Zigbee_OnOff_ChannelsAgility_ZC application (Device ZCx in the above diagram). 
       Wait for the Blue LED (LED1) ON. 
       Second board: Zigbee Router. This board is configured as Zigbee router and will attached to the network created 
       by the coordinator. Do the same for the other boards if applicable.

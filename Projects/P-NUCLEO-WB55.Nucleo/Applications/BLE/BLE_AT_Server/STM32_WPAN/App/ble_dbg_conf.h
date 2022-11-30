@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : App/ble_dbg_conf.h
-  * Description        : Debug configuration file for BLE Middleware.
-  *
+  * @file    ble_dbg_conf.h
+  * @author  MCD Application Team
+  * @brief   Debug configuration file for BLE Middleware.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -37,49 +37,49 @@
 /**
  * Macro definition
  */
-#if ( BLE_DBG_APP_EN != 0 )
+#if (BLE_DBG_APP_EN != 0)
 #define BLE_DBG_APP_MSG             PRINT_MESG_DBG
 #else
 #define BLE_DBG_APP_MSG             PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_DIS_EN != 0 )
+#if (BLE_DBG_DIS_EN != 0)
 #define BLE_DBG_DIS_MSG             PRINT_MESG_DBG
 #else
 #define BLE_DBG_DIS_MSG             PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_HRS_EN != 0 )
+#if (BLE_DBG_HRS_EN != 0)
 #define BLE_DBG_HRS_MSG             PRINT_MESG_DBG
 #else
 #define BLE_DBG_HRS_MSG             PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_P2P_STM_EN != 0 )
+#if (BLE_DBG_P2P_STM_EN != 0)
 #define BLE_DBG_P2P_STM_MSG         PRINT_MESG_DBG
 #else
 #define BLE_DBG_P2P_STM_MSG         PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_TEMPLATE_STM_EN != 0 )
+#if (BLE_DBG_TEMPLATE_STM_EN != 0)
 #define BLE_DBG_TEMPLATE_STM_MSG         PRINT_MESG_DBG
 #else
 #define BLE_DBG_TEMPLATE_STM_MSG         PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_EDS_STM_EN != 0 )
+#if (BLE_DBG_EDS_STM_EN != 0)
 #define BLE_DBG_EDS_STM_MSG         PRINT_MESG_DBG
 #else
 #define BLE_DBG_EDS_STM_MSG         PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_LBS_STM_EN != 0 )
+#if (BLE_DBG_LBS_STM_EN != 0)
 #define BLE_DBG_LBS_STM_MSG         PRINT_MESG_DBG
 #else
 #define BLE_DBG_LBS_STM_MSG         PRINT_NO_MESG
 #endif
 
-#if ( BLE_DBG_SVCCTL_EN != 0 )
+#if (BLE_DBG_SVCCTL_EN != 0)
 #define BLE_DBG_SVCCTL_MSG          PRINT_MESG_DBG
 #else
 #define BLE_DBG_SVCCTL_MSG          PRINT_NO_MESG
@@ -195,5 +195,4 @@
 #define BLE_DBG_DTS_BUF             PRINT_NO_MESG
 #endif
 
-#endif /* BLE_DBG_CONF_H */
-
+#endif /*BLE_DBG_CONF_H */

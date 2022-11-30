@@ -4,7 +4,7 @@
  * @brief ZCL Dehumidification Control cluster header
  * ZCL 7 section 6.5
  * ZCL 8 section 6.5
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_DEHUM_CTRL_H

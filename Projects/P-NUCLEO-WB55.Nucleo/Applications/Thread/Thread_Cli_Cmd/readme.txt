@@ -73,12 +73,14 @@ mesh network by typing the following commands:
    Done
   >ifconfig up
    Done
+  >networkkey 00112233445566778899AABBCCDDEEFF
   >thread start
    Done
 
 At this point, the user can check the state of its device by using the cli command 'state' 
    >state
-   Leader
+   leader
+   Done
 
 - When running on two STM32WB55RG_Nucleo boards the same Thread_Cli_Cmd application, and by playing the 
  same scenario as described above on both boards, the first board should reach the state 'leader' 

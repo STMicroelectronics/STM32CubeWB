@@ -4,7 +4,7 @@
  * @brief ZCL Intruder Alarm Systems Ancillary Control Equipment cluster header
  * ZCL 7 section 8.3
  * ZCL 8 section 8.3
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 /*--------------------------------------------------------------------------

@@ -21,12 +21,12 @@
 
 @par Application Description 
 
-How to use the OTA cluster on a device acting as a Client with Router role within a Centralized Zigbee network.
+How to use the OTA cluster on multiple devices acting as a Client with Router role receiving and updating on a parallel way, the same OTA image from the ZC.
 
 The purpose of this application is to show how to create a Zigbee centralized network, 
 and how to operate a firmware upgrade using the OTA cluster. Once the Zigbee mesh network is created, 
 the user can start an OTA upgrade from server to client through push buttons 
-SW1 (M0 wireless coprocessor firmware) and SW2 (M4 application firmware).
+SW1 (M4 application firmware) and SW2 (M0 wireless coprocessor firmware).
 
 In order for the client to persist its stack parameters data, Zigbee persistence data mechamisim
 is used on the Zigbee_OTA_Client_Router application. This allows the client to reconnect to the 
@@ -38,7 +38,7 @@ For this application it is requested to have:
     - wireless coprocessor : stm32wb5x_Zigbee_FFD_fw.bin
     - application : Zigbee_OTA_Server_Coord
     
-- 1 or more STM32WB55xx board loaded with: 
+- n (at least 1, at maximum 20) STM32WB55xx board loaded with: 
     - wireless coprocessor : stm32wb5x_Zigbee_FFD_fw.bin
     - application : Zigbee_OTA_Client_Router
     
@@ -115,8 +115,8 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
    |                                 |                                            | SFSA (Option Byte) limit        |=> BLUE LED ON (when starting                                         
    |                                 |             /* Upgrade phase */            |                                 |  from scratch) 
    |                                 |                                            |                                 |  Note : If the Client start
-   |                                 |          /* Image Notify request */        |                                 |  from persistent, the green LED
-   |                                 |                                            |                                 |  will be on. At any time,          
+   |                                 |          /* Image Notify request */        |                                 |  from persistent, the GREEN LED
+   |                                 |                                            |                                 |  will be also on. At any time,          
    | Push Button                     |         ZbZclOtaServerImageNotifyReq       |                                 |  it is possible to clear the              
    |  - SW1 (OTA for APP Update)     | -----------------------------------------> |                                 |  NVM by pressing on SW2 and
    |  - SW2 (OTA for Copro Update)   | <----------------------------------------- |                                 |  so, restart from scratch.
@@ -201,15 +201,18 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
       Note : To ensure a correct match between the Coprocessor Wireless and the Application, both binaries must be based 
              on the same firmware package release. It is not possible to use an Application based on a firmware package version N
              with a Coprocessor Wireless binary based on firmware package version N+1 or N-1.
-
-
-  b)  Start the first board. It must be the coordinator of the Zigbee network so in this demo application it is
-      the device running Zigbee_OTA_Server_Coord application (Device 1 in the above diagram). 
       
-  c)  Start the second board. This board is configured as Zigbee router and will be attached to the network created 
+  b)  Start the ZR boards. This board is configured as Zigbee router and will be attached to the network created 
       by the coordinator. Do the same for the other boards if applicable.
       
-      At this stage the second board tries to start from persistence this leads to two choices:
+      At this stage the ZR boards tries to connect to the ZC and fails. No Blue Led on ZR.
+
+  c.1)  Start the ZC board. It must be the coordinator of the Zigbee network so in this demo application it is
+      the device running Zigbee_OTA_Server_Coord application (Device 1 in the above diagram).
+        
+  c.2)  ZR boards status:
+      
+      At this stage the ZR boards tries to start from persistence this leads to two choices:
         - Persistence Data read from NVM are valid -> the router takes back his role in the network. 
           GREEN LED is ON indicating a restart form persistence.
           
@@ -217,8 +220,9 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
           and BLUE LED is ON on all devices.
       
        Note: On the Zigbee OTA client router, it is possible to clean the NVM via the SW2 push button and in this case no persistent 
-             data will be found. A fresh start will be performed on next start up.
- 
+             data will be found. A fresh start will be performed on next start up hence the method is to stop the ZC, to press SW2 (on all ZR with Green Leds),
+             and to restart the ZR by pressing the rst button.
+
   d)  Start the data transfer from the Coordinator to the Router by pressing on the appropriate push button.
         Press on SW1 for the OTA for Application update
         Press on SW2 for the OTA Coprocessor Wireless update

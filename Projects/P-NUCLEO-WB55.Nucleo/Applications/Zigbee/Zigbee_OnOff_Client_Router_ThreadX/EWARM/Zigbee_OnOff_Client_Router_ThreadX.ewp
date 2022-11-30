@@ -16,15 +16,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Zigbee_OnOff_Router_ThreadX/Exe</state>
+                    <state>Zigbee_OnOff_Client_Router_ThreadX/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Zigbee_OnOff_Router_ThreadX/Obj</state>
+                    <state>Zigbee_OnOff_Client_Router_ThreadX/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Zigbee_OnOff_Router_ThreadX/List</state>
+                    <state>Zigbee_OnOff_Client_Router_ThreadX/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -224,6 +224,7 @@
                     <state>USE_STM32WBXX_NUCLEO</state>
                     <state>ZIGBEE_WB</state>
                     <state>TX_INCLUDE_USER_DEFINE_FILE</state>
+                    <state>TX_LOW_POWER</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -671,7 +672,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Zigbee_OnOff_Router_ThreadX.bin</state>
+                    <state>Zigbee_OnOff_Client_Router_ThreadX.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1049,6 +1050,11 @@
             <archiveVersion>0</archiveVersion>
             <data />
         </settings>
+        <settings>
+            <name>Coder</name>
+            <archiveVersion>0</archiveVersion>
+            <data />
+        </settings>
     </configuration>
     <group>
         <name>Application</name>
@@ -1275,6 +1281,9 @@
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_thread_shell_entry.c</name>
                     </file>
                     <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_thread_sleep.c</name>
+                    </file>
+                    <file>
                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_thread_system_preempt_check.c</name>
                     </file>
                     <file>
@@ -1333,6 +1342,45 @@
                     </file>
                 </group>
                 <group>
+                    <name>debug_trace</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_buffer_full_notify.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_disable.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_enable.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_event_filter.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_event_unfilter.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_initialize.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_interrupt_control.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_isr_enter_insert.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_isr_exit_insert.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_object_register.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_object_unregister.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_user_event_insert.c</name>
+                    </file>
+                </group>
+                <group>
                     <name>ports</name>
                     <group>
                         <name>cortex_m4</name>
@@ -1373,45 +1421,6 @@
                             </group>
                         </group>
                     </group>
-                </group>
-                <group>
-                    <name>debug_trace</name>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_buffer_full_notify.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_disable.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_enable.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_event_filter.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_event_unfilter.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_initialize.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_interrupt_control.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_isr_enter_insert.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_isr_exit_insert.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_object_register.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_object_unregister.c</name>
-                    </file>
-                    <file>
-                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_user_event_insert.c</name>
-                    </file>
                 </group>
                 <group>
                     <name>utility</name>

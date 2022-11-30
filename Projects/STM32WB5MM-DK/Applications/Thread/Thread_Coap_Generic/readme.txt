@@ -8,7 +8,7 @@
   * @brief   Description of Coap Generic Application 
   ******************************************************************************
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -22,7 +22,7 @@
 
 How to build Thread application based on Coap messages.
 
-This application requires two STM32WB5MM-DK boards.
+This application requires two STM32WB55xx boards.
 
 In a Thread network, nodes are split into two forwarding roles: Router or End Device.
 The Thread Leader is a Router that is responsible for managing the set of Routers in a 
@@ -31,24 +31,24 @@ Thread network. An End Device (or child) communicates primarily with a single Ro
 In our Application which uses two devices, one device will act as a Leader (Router) 
 and the other one will act as an End Device(mode child)
 
-After the reset of the 2 boards, one board will be in Leader mode.
-The other one will be in Child or Router mode.
-
-The role of the Thread device is displayed on the LCD of the STM32WB5MM-DK Board.
+After the reset of the 2 boards, one board will be in Leader mode (Green LED2 ON) 
+The other one will be in Child mode (Red LED3 ON).
  
 Let's name indifferently one board A and one board B. 
-To send a COAP command from board A to board B, press the B1 Push-Button on board A. 
-The board B will receive the COAP command 
-Same COAP commands can be sent from board B to board A.
-The reception of the COAP message is displayed on the LCD.
-
+To send a COAP command from board A to board B, press the SW1 Push-Button on board A. 
+The board B will receive two COAP commands to toggle its blue LED1, second command is 
+happening 5 seconds (WAIT_TIMEOUT) after the first command. 
+Pressing again same push-button will repeat the toggling (taking 5 seconds) of the blue LED1. 
+Pressing every second will reset the timer, hence, the second COAP command will not happen (need 
+to have 5 seconds without pressing the push button).
+Same COAP commands can be sent from board B to board A. 
 
   ___________________________                       ___________________________
   |  Device 1               |                       | Device 2                |
   |_________________________|                       |_________________________|  
   |                         |                       |                         |
   |                         |                       |                         |
-  |        Push Button -->  |======> COAP =========>|  Display 'O' on the LCD |
+  |        Push Button -->  |======> COAP =========>| BLUE LED TOGGLE (ON/OFF)|
   |                         | Resource "light"      |                         |
   |                         | Mode: Multicast       |                         |
   |                         | Type: Non-Confirmable |                         |
@@ -68,31 +68,67 @@ The reception of the COAP message is displayed on the LCD.
   |                         |                       |         |               |
   |                         |                       |         v               |
   | CoapDataRespHandler()<--|<===== COAP <==========| <-------                |
-  |                         |                       |                         |
-  |                         |                       |                         |
+  |                         |                       | BLUE LED TOGGLE (ON/OFF)|  -- IF WAIT_TIMEOUT elapsed, BLUE LED TOGGLE again
+  |                         |                       |                         |  
   ---------------------------                       ---------------------------
-  | Role : Child or Router  |                       | Role : Leader           |
+  | Role : Child            |                       | Role : Leader           |
   |                         |                       |                         |
-  |                         |                       |                         |
+  | LED : Red               |                       | LED : Green             |
   |                         |                       |                         |
   |_________________________|                       |_________________________|
-
-
-
 
       
 @par Keywords
 
 COAP,Thread
 
+@par Directory contents 
+  
+  - Thread/Thread_Coap_Generic/Core/Inc/app_common.h       	Header for all modules with common definition
+  - Thread/Thread_Coap_Generic/Core/Inc/app_conf.h         	Parameters configuration file of the application 
+  - Thread/Thread_Coap_Generic/Core/Inc/app_entry.h        	Parameters configuration file of the application
+  - Thread/Thread_Coap_Generic/STM32_WPAN/App/app_thread.h      Header for app_thread.c module
+  - Thread/Thread_Coap_Generic/Core/Inc/hw_conf.h          	Configuration file of the HW 
+  - Thread/Thread_Coap_Generic/Core/Inc/main.h                  Header for main.c module
+  - Thread/Thread_Coap_Generic/Core/Inc/stm_logging.h           Header for stm_logging.c module
+  - Thread/Thread_Coap_Generic/Core/Inc/stm32wbxx_hal_conf.h    HAL configuration file
+  - Thread/Thread_Coap_Generic/Core/Src/stm32wbxx_it.h          Interrupt header file
+  - Thread/Thread_Coap_Generic/Core/Inc/utilities_conf.h   	Configuration file of the utilities
+  - Thread/Thread_Coap_Generic/Core/Src/app_entry.c        	Initialization of the application
+  - Thread/Thread_Coap_Generic/STM32_WPAN/App/app_thread.c      Thread application implementation
+  - Thread/Thread_Coap_Generic/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
+  - Thread/Thread_Coap_Generic/Core/Src/stm32_lpm_if.c     	Low Power Manager Interface
+  - Thread/Thread_Coap_Generic/Core/Src/hw_timerserver.c   	Timer Server Driver
+  - Thread/Thread_Coap_Generic/Core/Src/hw_uart.c          	UART driver
+  - Thread/Thread_Coap_Generic/Core/Src/main.c                  Main program
+  - Thread/Thread_Coap_Generic/Core/Src/stm_logging.c           Logging module for traces
+  - Thread/Thread_Coap_Generic/Core/Src/stm32xx_it.c            Interrupt handlers
+  - Thread/Thread_Coap_Generic/Core/Src/system_stm32wbxx.c      stm32wbxx system source file
+ 
+ 
 @par Hardware and Software environment
 
-  - This example runs on STM32WB5MMxx devices (Nucleo board and dongle) 
+  - This example runs on STM32WB55xx devices (Nucleo board and dongle) 
   
-  - This example has been tested with an STMicroelectronics STM32WB5MMxx_Nucleo 
+  - This example has been tested with an STMicroelectronics STM32WB55xx_Nucleo 
     board and can be easily tailored to any other supported device 
     and development board.
     
+  - On STM32WB55RG_Nucleo, the jumpers must be configured as described
+    in this section. Starting from the top left position up to the bottom 
+    right position, the jumpers on the Board must be set as follows:
+
+     CN11:    GND         [OFF]
+     JP4:     VDDRF       [ON]
+     JP6:     VC0         [ON]
+     JP2:     +3V3        [ON] 
+     JP1:     USB_STL     [ON]   All others [OFF]
+     CN12:    GND         [OFF]
+     CN7:     <All>       [OFF]
+     JP3:     VDD_MCU     [ON]
+     JP5:     GND         [OFF]  All others [ON]
+     CN10:    <All>       [OFF]
+
 
 @par How to use it ? 
 
@@ -105,7 +141,7 @@ Wireless Coprocessor binary.
 
 
 In order to make the program work, you must do the following: 
- - Connect 2 STM32WB5MMxx_Nucleo boards to your PC 
+ - Connect 2 STM32WB55xx_Nucleo boards to your PC 
  - Open your preferred toolchain 
  - Rebuild all files and load your image into target memory
  - Run the application 

@@ -66,63 +66,63 @@ static UCHAR memory_area[DEMO_BYTE_POOL_SIZE];
 /* USER CODE END PV */
 
 /* Global variables ----------------------------------------------------------*/
-CHAR* pointer = TX_NULL;
-TX_MUTEX MtxShciId;
-TX_SEMAPHORE SemShciId;
-TX_SEMAPHORE SemShciNotify;
-TX_THREAD ShciUserEvtProcessId;
+CHAR                * pointer = TX_NULL;
+TX_MUTEX            MtxShciId;
+TX_SEMAPHORE        SemShciId;
+TX_SEMAPHORE        SemShciNotify;
+TX_THREAD           ShciUserEvtProcessId;
 static TX_BYTE_POOL byte_pool_Schi;
 
 /* Global function prototypes -----------------------------------------------*/
 #if(CFG_DEBUG_TRACE != 0)
 size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
-#endif
+#endif /* CFG_DEBUG_TRACE != 0 */
 
 /* USER CODE BEGIN GFP */
 
 /* USER CODE END GFP */
 
 /* Private functions prototypes-----------------------------------------------*/
-static void ShciUserEvtProcess(ULONG thread_input);
-static void Config_HSE(void);
-static void Reset_Device( void );
+static void ShciUserEvtProcess      ( ULONG thread_input );
+static void Config_HSE              ( void );
+static void Reset_Device            ( void );
 #if ( CFG_HW_RESET_BY_FW == 1 )
-static void Reset_IPCC( void );
-static void Reset_BackupDomain( void );
-#endif /* CFG_HW_RESET_BY_FW */
-static void System_Init( void );
-static void SystemPower_Config( void );
-static void Init_Debug( void );
-static void appe_Tl_Init( void );
-static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
-static void APPE_SysUserEvtRx( void * pPayload );
+static void Reset_IPCC              ( void );
+static void Reset_BackupDomain      ( void );
+#endif /* CFG_HW_RESET_BY_FW == 1*/
+static void System_Init             ( void );
+static void SystemPower_Config      ( void );
+static void Init_Debug              ( void );
+static void appe_Tl_Init            ( void );
+static void APPE_SysStatusNot       ( SHCI_TL_CmdStatus_t status );
+static void APPE_SysUserEvtRx       ( void * pPayload );
 static void APPE_SysEvtReadyProcessing( void );
-static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
+static void APPE_SysEvtError        ( SCHI_SystemErrCode_t ErrorCode );
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
-extern void MX_LPUART1_UART_Init(void);
-#endif
+extern void MX_LPUART1_UART_Init    ( void );
+#endif /* CFG_HW_LPUART1_ENABLED == 1 */
 #if (CFG_HW_USART1_ENABLED == 1)
-extern void MX_USART1_UART_Init(void);
-#endif
-static void Init_Rtc( void );
+extern void MX_USART1_UART_Init     ( void );
+#endif /* CFG_HW_USART1_ENABLED == 1 */
+static void Init_Rtc                ( void );
 
 /* USER CODE BEGIN PFP */
-static void Led_Init(void);
-static void Button_Init(void);
+static void Led_Init                ( void );
+static void Button_Init             ( void );
 
 /* Section specific to button management using UART */
-static void RxUART_Init(void);
-static void RxCpltCallback(void);
-static void UartCmdExecute(void);
+static void RxUART_Init             ( void );
+static void RxCpltCallback          ( void );
+static void UartCmdExecute          ( void );
 
-#define C_SIZE_CMD_STRING       256U
-#define RX_BUFFER_SIZE          8U
+#define C_SIZE_CMD_STRING           256U
+#define RX_BUFFER_SIZE              8U
 
-static uint8_t aRxBuffer[RX_BUFFER_SIZE];
-static uint8_t CommandString[C_SIZE_CMD_STRING];
-static uint16_t indexReceiveChar = 0;
-EXTI_HandleTypeDef exti_handle;
+static uint8_t          aRxBuffer[RX_BUFFER_SIZE];
+static uint8_t          CommandString[C_SIZE_CMD_STRING];
+static uint16_t         indexReceiveChar = 0;
+EXTI_HandleTypeDef      exti_handle;
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -138,7 +138,7 @@ void MX_APPE_Config( void )
    * Reset some configurations so that the system behave in the same way
    * when either out of nReset or Power On
    */
-  Reset_Device( );
+  Reset_Device();
 
   /* Configure HSE Tuning */
   Config_HSE();
@@ -148,23 +148,30 @@ void MX_APPE_Config( void )
 
 void MX_APPE_Init( void )
 {
-  System_Init( );       /**< System initialization */
+  System_Init();       /**< System initialization */
 
   SystemPower_Config(); /**< Configure the system Power Mode */
 
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
-/* USER CODE BEGIN APPE_Init_1 */
-    Init_Debug();
-    /**
-     * The Standby mode should not be entered before the initialization is over
-     * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
-     */
-    UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
-    Led_Init();
-    Button_Init();
-    RxUART_Init();
-/* USER CODE END APPE_Init_1 */
+  /* USER CODE BEGIN APPE_Init_1 */
+  Init_Debug();
+
+#ifdef TX_LOW_POWER
+  /**
+   * The Standby mode should not be entered before the initialization is over
+   * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
+   */
+    
+  //UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+  APP_ZIGBEE_ThreadX_LowPowerEnable( LOWPOWER_NONE );
+#endif // TX_LOW_POWER
+    
+  Led_Init();
+  Button_Init();
+  RxUART_Init();
+    
+  /* USER CODE END APPE_Init_1 */
   appe_Tl_Init();	/* Initialize all transport layers */
 
   /**
@@ -189,7 +196,7 @@ void MX_ThreadX_Init(void)
 
   /* USER CODE END  Before_Kernel_Start */
 
-	tx_kernel_enter();
+  tx_kernel_enter();
 
   /* USER CODE BEGIN  Kernel_Start_Error */
 
@@ -198,28 +205,34 @@ void MX_ThreadX_Init(void)
 
 void tx_application_define(void* first_unused_memory)
 {
-    /* Here we should declare all the initial ThreadX resources
-    * We should have at least one thread to be launched from the scheduler
-    * */
+  UINT ThreadXStatus = TX_THREAD_ERROR;
+
+  /* Here we should declare all the initial ThreadX resources
+   * We should have at least one thread to be launched from the scheduler
+   * */
 
   /* Create a byte memory pool from which to allocate the thread stacks, using static memory
-  * coming from memory_area array  */
+   * coming from memory_area array  */
   tx_byte_pool_create(&byte_pool_Schi, "byte pool 0", memory_area, DEMO_BYTE_POOL_SIZE);
           
   tx_mutex_create(&MtxShciId, "MtxShciId", TX_NO_INHERIT);
-  tx_semaphore_create(&SemShciId, "SemShciId", 0); /*< Create the semaphore and make it busy at initialization */
-  tx_semaphore_create(&SemShciNotify, "SemShciNotify", 0); /*< Create the semaphore and make it busy at initialization */
+  tx_semaphore_create(&SemShciId, "SemShciId", 0);              /*< Create the semaphore and make it busy at initialization */
+  tx_semaphore_create(&SemShciNotify, "SemShciNotify", 0);      /*< Create the semaphore and make it busy at initialization */
+  
   tx_byte_allocate(&byte_pool_Schi, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
-  tx_thread_create(&ShciUserEvtProcessId,
-                   "ShciUserEvtProcessId",
-                   ShciUserEvtProcess,
-                   0,
-                   pointer,
-                   DEMO_STACK_SIZE_LARGE,
-                   16,
-                   16,
-                   TX_NO_TIME_SLICE,
-                   TX_AUTO_START);
+  ThreadXStatus = tx_thread_create(&ShciUserEvtProcessId,
+                                    "ShciUserEvtProcessId",
+                                    ShciUserEvtProcess,
+                                    0,
+                                    pointer,
+                                    DEMO_STACK_SIZE_LARGE,
+                                    SHCI_USER_EVT_PROCESS_PRIORITY,
+                                    SHCI_USER_EVT_PROCESS_PRIORITY,
+                                    TX_NO_TIME_SLICE,
+                                    TX_AUTO_START);
+  
+  if (ThreadXStatus != TX_SUCCESS)
+    { APP_ZIGBEE_Error(ERR_ZIGBEE_THREAD_X_FAILED,1); }
 }
 
 void Init_Smps( void )
@@ -235,7 +248,7 @@ void Init_Smps( void )
   LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
   LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
   LL_PWR_SMPS_Enable();
-#endif
+#endif /* CFG_USE_SMPS != 0 */
 
   return;
 }
@@ -385,11 +398,11 @@ static void Config_HSE(void)
 
 static void System_Init( void )
 {
-  Init_Smps( );
+  Init_Smps();
 
-  Init_Exti( );
+  Init_Exti();
 
-  Init_Rtc( );
+  Init_Rtc();
 
   return;
 }
@@ -424,6 +437,7 @@ static void SystemPower_Config(void)
 
   /* Initialize low power manager */
   UTIL_LPM_Init();
+
   /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
   LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
 
@@ -441,10 +455,11 @@ static void appe_Tl_Init( void )
 {
   TL_MM_Config_t tl_mm_config;
   SHCI_TL_HciInitConf_t SHci_Tl_Init_Conf;
+
   /**< Reference table initialization */
   TL_Init();
 
-  
+  /**< System channel initialization */
   SHci_Tl_Init_Conf.p_cmdbuffer = (uint8_t*)&SystemCmdBuffer;
   SHci_Tl_Init_Conf.StatusNotCallBack = APPE_SysStatusNot;
   shci_init(APPE_SysUserEvtRx, (void*) &SHci_Tl_Init_Conf);
@@ -498,9 +513,11 @@ static void APPE_SysUserEvtRx( void * pPayload )
      case SHCI_SUB_EVT_CODE_READY:
          APPE_SysEvtReadyProcessing();
          break;
+
      case SHCI_SUB_EVT_ERROR_NOTIF:
          APPE_SysEvtError((SCHI_SystemErrCode_t) (p_sys_event->payload[0]));
          break;
+
      default:
          break;
   }
@@ -513,14 +530,15 @@ static void APPE_SysUserEvtRx( void * pPayload )
  *
  * @retval None
  */
-static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
+static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode )
 {
   switch(ErrorCode)
   {
-  case ERR_ZIGBEE_UNKNOWN_CMD:
+    case ERR_ZIGBEE_UNKNOWN_CMD:
        APP_DBG("** ERR_ZIGBEE : UNKNOWN_CMD \n");
        break;
-  default:
+
+    default:
        APP_DBG("** ERR_ZIGBEE : ErroCode=%d \n",ErrorCode);
        break;
   }
@@ -530,10 +548,14 @@ static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
 static void APPE_SysEvtReadyProcessing( void )
 {
   /* Traces channel initialization */
-  TL_TRACES_Init( );
+  TL_TRACES_Init();
 
   APP_ZIGBEE_Init(&byte_pool_Schi);
-  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  
+#ifdef TX_LOW_POWER
+  //UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+  APP_ZIGBEE_ThreadX_LowPowerEnable( LOWPOWER_SLEEPMODE );
+#endif // TX_LOW_POWER
   return;
 }
 
@@ -545,6 +567,7 @@ static void APPE_SysEvtReadyProcessing( void )
 static void ShciUserEvtProcess(ULONG argument)
 {
   UNUSED(argument);
+
   for(;;)
   {
     /* USER CODE BEGIN SHCI_USER_EVT_PROCESS_1 */
@@ -555,7 +578,7 @@ static void ShciUserEvtProcess(ULONG argument)
     /* USER CODE BEGIN SHCI_USER_EVT_PROCESS_2 */
 
     /* USER CODE END SHCI_USER_EVT_PROCESS_2 */
-    }
+  }
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
@@ -581,16 +604,16 @@ static void Button_Init( void )
   /**
    * Button Initialization
    */
-    BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
-    BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
-    BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
     
-    HAL_NVIC_SetPriority(BUTTON_SW1_EXTI_IRQn, 0x0E, 0x00);
-    HAL_NVIC_SetPriority(BUTTON_SW2_EXTI_IRQn, 0x0E, 0x00);
-    HAL_NVIC_SetPriority(BUTTON_SW3_EXTI_IRQn, 0x0E, 0x00);
+  HAL_NVIC_SetPriority(BUTTON_SW1_EXTI_IRQn, 0x0E, 0x00);
+  HAL_NVIC_SetPriority(BUTTON_SW2_EXTI_IRQn, 0x0E, 0x00);
+  HAL_NVIC_SetPriority(BUTTON_SW3_EXTI_IRQn, 0x0E, 0x00);
 #endif
 
-    return;
+  return;
 }
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */
@@ -616,12 +639,12 @@ void HAL_Delay(uint32_t Delay)
     /************************************************************************************
      * ENTER SLEEP MODE
      ***********************************************************************************/
-    LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
+    LL_LPM_EnableSleep(); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
 
     /**
      * This option is used to ensure that store operations are completed
      */
-  #if defined ( __CC_ARM)
+  #if defined ( __CC_ARM )
     __force_stores();
   #endif
 
@@ -699,19 +722,20 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  switch (GPIO_Pin) {
-  case BUTTON_SW1_PIN:
-    APP_ZIGBEE_LaunchPushButtonTask();
-    break;
+  switch (GPIO_Pin) 
+  {
+    case BUTTON_SW1_PIN:
+        APP_ZIGBEE_LaunchPushButtonTask();
+        break;
 
-  case BUTTON_SW2_PIN:
-    break;
+    case BUTTON_SW2_PIN:
+        break;
 
-  case BUTTON_SW3_PIN:
-    break;
+    case BUTTON_SW3_PIN:
+        break;
 
-  default:
-    break;
+    default:
+        break;
   }
 }
 

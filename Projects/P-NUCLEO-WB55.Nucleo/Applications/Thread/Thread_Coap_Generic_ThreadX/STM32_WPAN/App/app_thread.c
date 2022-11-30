@@ -30,6 +30,7 @@
 #include "stm_logging.h"
 #include "app_conf.h"
 #include "stm32_lpm.h"
+#include "stm32_lpm_if.h"
 #include "tx_api.h"
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #include "vcp.h"
@@ -42,16 +43,18 @@
 /* Private defines -----------------------------------------------------------*/
 #define C_SIZE_CMD_STRING       256U
 #define C_PANID                 0x1111U
-#define C_CHANNEL_NB            17U
+//#define C_CHANNEL_NB            17U     // To work with OpenThread + ThreadX
+#define C_CHANNEL_NB            14U       // To work with OpenTread Only
 
 /* USER CODE BEGIN PD */
 #define C_RESSOURCE             "light"
-#define COAP_PAYLOAD_LENGTH 2
-#define WAIT_TIMEOUT                     (5*1000*1000/CFG_TS_TICK_VAL) /**< 5s */
+#define COAP_PAYLOAD_LENGTH     2
+#define WAIT_TIMEOUT            ( 5u * 1000u * 1000u / CFG_TS_TICK_VAL) /**< 5s */
 #define PB_REBOUND_DELAY        250
 
+
 #ifdef TX_ENABLE_EVENT_TRACE
-#define APP_MAX_THREAD			8u
+#define APP_MAX_THREAD			14u
 #define DEBUG_TRACEX_SIZE		(64u * 512u )
 #define APP_TRACE_INFO          (TX_TRACE_USER_EVENT_START + 1)
 #endif // TX_ENABLE_EVENT_TRACE
@@ -68,7 +71,6 @@
 static void APP_THREAD_CheckWirelessFirmwareInfo(void);
 static void APP_THREAD_DeviceConfig(void);
 static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext);
-static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode);
 #if (CFG_FULL_LOW_POWER == 0)
 static void Send_CLI_To_M0_Task(ULONG argument);
 static void Send_CLI_To_M0(void);
@@ -80,7 +82,6 @@ static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
 static void APP_THREAD_ProcessCoapNotConfirmable(ULONG argument);
 static void APP_THREAD_ProcessCoapConfirmable(ULONG argument);
-static void APP_THREAD_ProcessCoapNotConfirmable(ULONG argument);
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern void MX_LPUART1_UART_Init(void);
@@ -121,7 +122,6 @@ static void APP_THREAD_CoapDataRespHandler( void                * aContext,
 static void APP_THREAD_InitPayloadWrite(void);
 static void APP_THREAD_SendCoapNonConf(void);
 static void APP_THREAD_SendCoapConf(void);
-static void APP_THREAD_TimingElapsed(void);
 static bool APP_THREAD_CheckMsgValidity(void);
 /* USER CODE END PFP */
 
@@ -181,7 +181,7 @@ static otMessage* pOT_MessageResponse = NULL;
 
 static uint8_t PayloadWrite[COAP_PAYLOAD_LENGTH]= {0};
 static uint8_t PayloadRead[COAP_PAYLOAD_LENGTH]= {0};
-static uint8_t TimerID;
+
 
 #ifdef TX_ENABLE_EVENT_TRACE
 static UCHAR	cDebugTraceX[DEBUG_TRACEX_SIZE];
@@ -195,6 +195,10 @@ typedef struct
 } LpTXTimerContext_t;
 
 static LpTXTimerContext_t LpTXTimerContext;
+
+static uint32_t     lPreviousPriMask;
+static uint8_t      cLowPowerExecute = 0x00;
+static uint8_t      cLowPowerLevel = 0x00;
 #endif // TX_LOW_POWER
 
 /* USER CODE END PV */
@@ -213,7 +217,7 @@ static LpTXTimerContext_t LpTXTimerContext;
 
 void APP_THREAD_Init(TX_BYTE_POOL* p_byte_pool)
 {
-  UINT ThreadXStatus = TX_THREAD_ERROR;
+  UINT ThreadXStatus;
   SHCI_CmdStatus_t ThreadInitStatus;
   CHAR* pointer = TX_NULL;
 
@@ -251,58 +255,57 @@ void APP_THREAD_Init(TX_BYTE_POOL* p_byte_pool)
   tx_semaphore_create(&CoapConfSemaphore, "CoapConfSemaphore", 0);
   tx_semaphore_create(&TimerSemaphore, "TimerSemaphore", 0);
 
-  /* Create the Timer service */
-  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &TimerID, hw_ts_SingleShot, APP_THREAD_TimingElapsed);
+
 
   /* Create the different tasks */
   /* Task to manage the messages from the M0 to the M4 */
   tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskMessageM0ToM4Id,
-                                   "OsTaskMessageM0ToM4Id",
+                                   "MessageM0ToM4",
                                    APP_THREAD_ProcessMsgM0ToM4,
                                    0,
                                    pointer,
                                    DEMO_STACK_SIZE_LARGE,
-                                   16,
-                                   16,
+                                   MESSAGE_M0_TO_M4_PRIORITY,
+                                   MESSAGE_M0_TO_M4_PRIORITY,
                                    TX_NO_TIME_SLICE,
                                    TX_AUTO_START);
   if (ThreadXStatus != TX_SUCCESS)
-    { APP_THREAD_Error(ERR_THREAD_THREAD_X_FAILED,1); }
+    { APP_THREAD_Error(ERR_THREAD_THREAD_X_FAILED, 3); }
 
   
   /* Task to manage the task used to send a COAP confirmable request */
   tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskCoapConfirmable,
-                                    "OsTaskCoapConfirmable",
+                                    "CoapConfirmable",
                                     APP_THREAD_ProcessCoapConfirmable,
                                     0,
                                     pointer,
                                     DEMO_STACK_SIZE_LARGE,
-                                    16, //16
-                                    16,  // 16
+                                    COAP_CONFIRMABLE_PRIORITY,
+                                    COAP_CONFIRMABLE_PRIORITY,
                                     TX_NO_TIME_SLICE,
                                     TX_AUTO_START);
 
   if (ThreadXStatus != TX_SUCCESS)
-    { APP_THREAD_Error(ERR_THREAD_THREAD_X_FAILED,2); }
+    { APP_THREAD_Error(ERR_THREAD_THREAD_X_FAILED, 4); }
 
   
   /* Task to manage the task used to send a COAP non- confirmable request */
   tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskCoapNotConfirmable,
-                                    "OsTaskCoapNotConfirmable",
+                                    "CoapNotConfirmable",
                                     APP_THREAD_ProcessCoapNotConfirmable,
                                     0,
                                     pointer,
                                     DEMO_STACK_SIZE_LARGE,
-                                    16,
-                                    16,
+                                    COAP_NON_CONFIRMABLE_PRIORITY,
+                                    COAP_NON_CONFIRMABLE_PRIORITY,
                                     TX_NO_TIME_SLICE,
                                     TX_AUTO_START);
   
   if ( ThreadXStatus != TX_SUCCESS )
-    { APP_THREAD_Error(ERR_THREAD_THREAD_X_FAILED,1); }
+    { APP_THREAD_Error(ERR_THREAD_THREAD_X_FAILED,5); }
 
 
   /* Configure UART for sending CLI command from M4 */
@@ -333,62 +336,79 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
   /* USER CODE END APP_THREAD_Error_1 */
   switch(ErrId)
   {
-  case ERR_REC_MULTI_MSG_FROM_M0 :
-    APP_THREAD_TraceError("ERROR : ERR_REC_MULTI_MSG_FROM_M0 ", ErrCode);
-    break;
-  case ERR_THREAD_SET_STATE_CB :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_STATE_CB ",ErrCode);
-    break;
-  case ERR_THREAD_SET_CHANNEL :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_CHANNEL ",ErrCode);
-    break;
-  case ERR_THREAD_SET_PANID :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_PANID ",ErrCode);
-    break;
-  case ERR_THREAD_IPV6_ENABLE :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_IPV6_ENABLE ",ErrCode);
-    break;
-  case ERR_THREAD_START :
-    APP_THREAD_TraceError("ERROR: ERR_THREAD_START ", ErrCode);
-    break;
-  case ERR_THREAD_ERASE_PERSISTENT_INFO :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_ERASE_PERSISTENT_INFO ",ErrCode);
-    break;
-  case ERR_THREAD_SET_NETWORK_KEY :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_NETWORK_KEY ",ErrCode);
-    break;
-  case ERR_THREAD_CHECK_WIRELESS :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_CHECK_WIRELESS ",ErrCode);
-    break;
-  /* USER CODE BEGIN APP_THREAD_Error_2 */
-  case ERR_THREAD_COAP_START :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_START ",ErrCode);
-    break;
-  case ERR_THREAD_COAP_ADD_RESSOURCE :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_ADD_RESSOURCE ",ErrCode);
-    break;
-  case ERR_THREAD_MESSAGE_READ :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_MESSAGE_READ ",ErrCode);
-    break;
-  case ERR_THREAD_COAP_SEND_RESPONSE :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_SEND_RESPONSE ",ErrCode);
-    break;
-  case ERR_THREAD_COAP_APPEND :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_APPEND ",ErrCode);
-    break;
-  case ERR_THREAD_COAP_SEND_REQUEST :
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_SEND_REQUEST ",ErrCode);
-    break;
-  case ERR_THREAD_MSG_COMPARE_FAILED:
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_MSG_COMPARE_FAILED ",ErrCode);
-    break;
-  case ERR_THREAD_THREAD_X_FAILED:
-    APP_THREAD_TraceError("ERROR : ERR_THREAD_THREAD_X_FAILED ",ErrCode);
-    break;
-  /* USER CODE END APP_THREAD_Error_2 */
-  default :
-    APP_THREAD_TraceError("ERROR Unknown ", 0);
-    break;
+  	case ERR_REC_MULTI_MSG_FROM_M0 :
+  		APP_THREAD_TraceError("ERROR : ERR_REC_MULTI_MSG_FROM_M0 ", ErrCode);
+  		break;
+
+  	case ERR_THREAD_SET_STATE_CB :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_STATE_CB ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_SET_CHANNEL :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_CHANNEL ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_SET_PANID :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_PANID ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_IPV6_ENABLE :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_IPV6_ENABLE ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_START :
+  		APP_THREAD_TraceError("ERROR: ERR_THREAD_START ", ErrCode);
+  		break;
+
+  	case ERR_THREAD_ERASE_PERSISTENT_INFO :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_ERASE_PERSISTENT_INFO ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_SET_NETWORK_KEY :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_SET_NETWORK_KEY ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_CHECK_WIRELESS :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_CHECK_WIRELESS ",ErrCode);
+  		break;
+
+  	/* USER CODE BEGIN APP_THREAD_Error_2 */
+  	case ERR_THREAD_COAP_START :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_START ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_COAP_ADD_RESSOURCE :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_ADD_RESSOURCE ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_MESSAGE_READ :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_MESSAGE_READ ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_COAP_SEND_RESPONSE :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_SEND_RESPONSE ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_COAP_APPEND :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_APPEND ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_COAP_SEND_REQUEST :
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_COAP_SEND_REQUEST ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_MSG_COMPARE_FAILED:
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_MSG_COMPARE_FAILED ",ErrCode);
+  		break;
+
+  	case ERR_THREAD_THREAD_X_FAILED:
+  		APP_THREAD_TraceError("ERROR : ERR_THREAD_THREAD_X_FAILED ",ErrCode);
+  		break;
+
+  	/* USER CODE END APP_THREAD_Error_2 */
+  	default :
+  		APP_THREAD_TraceError("ERROR Unknown ", 0);
+    	break;
   }
 }
 
@@ -480,42 +500,56 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
   {
     switch (otThreadGetDeviceRole(NULL))
     {
-    case OT_DEVICE_ROLE_DISABLED:
-      /* USER CODE BEGIN OT_DEVICE_ROLE_DISABLED */
-      BSP_LED_Off(LED2);
-      BSP_LED_Off(LED3);
-      /* USER CODE END OT_DEVICE_ROLE_DISABLED */
-      break;
-    case OT_DEVICE_ROLE_DETACHED:
-      /* USER CODE BEGIN OT_DEVICE_ROLE_DETACHED */
-      BSP_LED_Off(LED2);
-      BSP_LED_Off(LED3);
-      /* USER CODE END OT_DEVICE_ROLE_DETACHED */
-      break;
-    case OT_DEVICE_ROLE_CHILD:
-      /* USER CODE BEGIN OT_DEVICE_ROLE_CHILD */
-      BSP_LED_Off(LED2);
-      BSP_LED_On(LED3);
-      /* USER CODE END OT_DEVICE_ROLE_CHILD */
-      break;
-    case OT_DEVICE_ROLE_ROUTER :
-      /* USER CODE BEGIN OT_DEVICE_ROLE_ROUTER */
-      BSP_LED_Off(LED2);
-      BSP_LED_On(LED3);
+      case OT_DEVICE_ROLE_DISABLED:
+        /* USER CODE BEGIN OT_DEVICE_ROLE_DISABLED */
+        BSP_LED_Off(LED2);
+        BSP_LED_Off(LED3);
+        /* USER CODE END OT_DEVICE_ROLE_DISABLED */
+        break;
+      
+      case OT_DEVICE_ROLE_DETACHED:
+        /* USER CODE BEGIN OT_DEVICE_ROLE_DETACHED */
+        BSP_LED_Off(LED2);
+        BSP_LED_Off(LED3);
+        /* USER CODE END OT_DEVICE_ROLE_DETACHED */
+        break;
+      
+      case OT_DEVICE_ROLE_CHILD:
+        /* USER CODE BEGIN OT_DEVICE_ROLE_CHILD */
+        BSP_LED_Off(LED2);
+        BSP_LED_On(LED3);
+#ifdef TX_LOW_POWER
+        APP_THREAD_ThreadX_LowPowerEnable( LOWPOWER_STOPMODE );
+#endif // TX_LOW_POWER      
+        /* USER CODE END OT_DEVICE_ROLE_CHILD */
+        break;
+      
+      case OT_DEVICE_ROLE_ROUTER :
+        /* USER CODE BEGIN OT_DEVICE_ROLE_ROUTER */
+        BSP_LED_Off(LED2);
+        BSP_LED_On(LED3);
+#ifdef TX_LOW_POWER      
+        APP_THREAD_ThreadX_LowPowerEnable( LOWPOWER_STOPMODE );
+#endif // TX_LOW_POWER      
       /* USER CODE END OT_DEVICE_ROLE_ROUTER */
       break;
-    case OT_DEVICE_ROLE_LEADER :
-      /* USER CODE BEGIN OT_DEVICE_ROLE_LEADER */
-      BSP_LED_On(LED2);
-      BSP_LED_Off(LED3);
-      /* USER CODE END OT_DEVICE_ROLE_LEADER */
-      break;
-    default:
-      /* USER CODE BEGIN DEFAULT */
-      BSP_LED_Off(LED2);
-      BSP_LED_Off(LED3);
-      /* USER CODE END DEFAULT */
-      break;
+      
+      case OT_DEVICE_ROLE_LEADER :
+        /* USER CODE BEGIN OT_DEVICE_ROLE_LEADER */
+        BSP_LED_On(LED2);
+        BSP_LED_Off(LED3);
+#ifdef TX_LOW_POWER
+        APP_THREAD_ThreadX_LowPowerEnable( LOWPOWER_STOPMODE );
+#endif // TX_LOW_POWER        
+        /* USER CODE END OT_DEVICE_ROLE_LEADER */
+        break;
+        
+      default:
+        /* USER CODE BEGIN DEFAULT */
+        BSP_LED_Off(LED2);
+        BSP_LED_Off(LED3);
+        /* USER CODE END DEFAULT */
+        break;
     }
   }
 }
@@ -528,7 +562,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
   * @param  ErrCode: Error code associated to the module (OpenThread or other module if any)
   * @retval None
   */
-static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
+void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
 {
   /* USER CODE BEGIN TRACE_ERROR */
   APP_DBG("**** Fatal error = %s (Err = %d)", pMess, ErrCode);
@@ -552,47 +586,70 @@ static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
  */
 static void APP_THREAD_CheckWirelessFirmwareInfo(void)
 {
-  WirelessFwInfo_t wireless_info_instance;
-  WirelessFwInfo_t* p_wireless_info = &wireless_info_instance;
+  WirelessFwInfo_t 	wireless_info_instance;
+  WirelessFwInfo_t	* p_wireless_info = &wireless_info_instance;
+  SHCI_CmdStatus_t	eShciComdStatus;
 
-  if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success)
-  {
-    APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
-  }
-  else
-  {
-    APP_DBG("**********************************************************");
-    APP_DBG("WIRELESS COPROCESSOR FW:");
-    /* Print version */
-    APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
+  eShciComdStatus = SHCI_GetWirelessFwInfo(p_wireless_info);
 
-    switch(p_wireless_info->StackType)
-    {
-    case INFO_STACK_TYPE_THREAD_FTD :
-      APP_DBG("FW Type : Thread FTD");
-      break;
+  APP_DBG("**********************************************************");
+  APP_DBG("WIRELESS COPROCESSOR FW:");
+
+  /* Print version */
+  APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
+
+  switch(p_wireless_info->StackType)
+  {
+  	case INFO_STACK_TYPE_THREAD_FTD :
+  		APP_DBG("FW Type : Thread FTD");
+  		break;
+
     case INFO_STACK_TYPE_THREAD_MTD :
-      APP_DBG("FW Type : Thread MTD");
-      break;
+    	APP_DBG("FW Type : Thread MTD");
+    	break;
+
     case INFO_STACK_TYPE_BLE_THREAD_FTD_STATIC :
-      APP_DBG("FW Type : Static Concurrent Mode BLE/Thread");
-      break;
+    	APP_DBG("FW Type : Static Concurrent Mode BLE/Thread");
+    	break;
+
+    case INFO_STACK_TYPE_ZIGBEE_FFD :
+    	APP_DBG("FW Type : Zigbee FFD");
+    	break;
+
+    case INFO_STACK_TYPE_ZIGBEE_RFD :
+    	APP_DBG("FW Type : Zigbee RFD");
+    	break;
+
     default :
-      /* No Thread device supported ! */
-      APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
-      break;
-    }
-    APP_DBG("**********************************************************");
+    	/* No Thread device supported ! */
+    	APP_DBG("FW Type : Unsupported");
+    	eShciComdStatus = SHCI_ERR_UNSUPPORTED_FEATURE;
+    	break;
   }
+
+  if ( eShciComdStatus != SHCI_Success )
+  	  { APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL); }
+  else
+  	  { APP_DBG("**********************************************************"); }
 }
 
-void APP_THREAD_LaunchPushButtonTask(void)
+
+void APP_THREAD_SW1_Task(void)
 {
-    // -- Launch a ThreadX after a interrupt due to Key Presed --
+    // -- Launch a ThreadX after a interrupt due to Key Pressed --
 #ifdef TX_ENABLE_EVENT_TRACE
     tx_trace_user_event_insert( APP_TRACE_INFO, 3, 0, 0, 1 );
 #endif // TX_ENABLE_EVENT_TRACE
-    (void)tx_semaphore_put(&CoapNonConfSemaphore);
+    (void)tx_semaphore_ceiling_put(&CoapNonConfSemaphore,1);
+}
+
+void APP_THREAD_SW2_Task(void)
+{
+    // -- Launch a ThreadX after a interrupt due to Key Pressed --
+#ifdef TX_ENABLE_EVENT_TRACE
+    tx_trace_user_event_insert( APP_TRACE_INFO, 3, 0, 0, 1 );
+#endif // TX_ENABLE_EVENT_TRACE
+    (void)tx_semaphore_ceiling_put(&CoapConfSemaphore,1);
 }
 
 
@@ -615,10 +672,8 @@ static void APP_THREAD_ProcessCoapNotConfirmable(ULONG argument)
      
         // -- Send a Frame, via M0 --
         APP_THREAD_SendCoapNonConf();
-             
-        // -- Start the TimeOut --
-        HW_TS_Start(TimerID, (uint32_t)WAIT_TIMEOUT);
-  }
+
+    }
 }
 
 static void APP_THREAD_ProcessCoapConfirmable(ULONG argument)
@@ -657,6 +712,10 @@ void APP_THREAD_ThreadX_Low_Power_Setup(ULONG tx_low_power_next_expiration)
   uint64_t time;
   static uint8_t    cDebugOneTime = 0;
 
+  // -- Execute only if LowPower enable or First time --
+  if ( ( cLowPowerLevel == LOWPOWER_NONE ) && ( cDebugOneTime == 0x01u ) )
+    { return; }
+  
   if ( cDebugOneTime == 0x00u )
   {
     APP_DBG("APP_THREAD_ThreadX_Low_Power_Setup : START");
@@ -697,7 +756,7 @@ void APP_THREAD_ThreadX_Low_Power_Setup(ULONG tx_low_power_next_expiration)
  * @param  None
  * @retval The number of tick rate (FreeRTOS tick)
  */
-unsigned long APP_THREAD_Threadx_Low_Power_Adjust_Ticks(void)
+unsigned long APP_THREAD_ThreadX_Low_Power_Adjust_Ticks(void)
 {
   uint64_t val_ticks, time_ps;
   uint32_t LpTimeLeftOnExit;
@@ -705,7 +764,7 @@ unsigned long APP_THREAD_Threadx_Low_Power_Adjust_Ticks(void)
 
   if ( cDebugOneTime == 0x00u )
   {
-    APP_DBG("APP_THREAD_Threadx_Low_Power_Adjust_Ticks : START");
+    APP_DBG("APP_THREAD_ThreadX_Low_Power_Adjust_Ticks : START");
     cDebugOneTime = 0x01;
   }
   
@@ -742,6 +801,78 @@ unsigned long APP_THREAD_Threadx_Low_Power_Adjust_Ticks(void)
   return (unsigned long)val_ticks;
 }
 
+
+void APP_THREAD_ThreadX_LowPowerEnable( uint8_t cEnable )
+{
+	cLowPowerLevel = cEnable;
+}
+
+
+void APP_THREAD_ThreadX_EnterLowPower( void )
+{
+  cLowPowerExecute = 0x00; 
+  
+  // -- Exucute only if LowPower enable --
+  if ( cLowPowerLevel == LOWPOWER_NONE )
+    { return; }
+  
+#if ( CFG_HW_USART1_ENABLED == 1 )
+  if ( HW_UART_OnGoing( CFG_DEBUG_TRACE_UART ) != 0x00u )
+    { return; }
+#endif // ( CFG_HW_USART1_ENABLED == 1 )
+#if (CFG_HW_LPUART1_ENABLED == 1)
+  if ( HW_UART_OnGoing( CFG_CLI_UART ) != 0x00u )
+    { return;  }
+#endif // ( CFG_HW_LPUART1_ENABLED == 1 )
+  
+  cLowPowerExecute = 0x01;
+//  BSP_LED_On(LED_RED);    // Only for Debug
+
+  // -- Enter Critical Section --
+  lPreviousPriMask = __get_PRIMASK( );
+  __disable_irq();
+
+  // -- Enter in LowPower --
+  switch ( cLowPowerLevel )
+  {
+    case LOWPOWER_SLEEPMODE :   PWR_EnterSleepMode();
+                                break;
+
+    case LOWPOWER_STOPMODE :    PWR_EnterStopMode();
+                                break;
+
+    case LOWPOWER_OFFMODE :     PWR_EnterOffMode();
+                                break;
+  }
+}
+
+
+void APP_THREAD_ThreadX_ExitLowPower( void )
+{
+  // -- Exucute only if LowPower was executed --
+  if ( cLowPowerExecute != 0x00u ) 
+  { 
+	switch ( cLowPowerLevel )
+	{
+	  case LOWPOWER_SLEEPMODE : PWR_ExitSleepMode();
+								break;
+
+	  case LOWPOWER_STOPMODE :  PWR_ExitStopMode();
+								break;
+
+	  case LOWPOWER_OFFMODE :   PWR_ExitOffMode();
+								break;
+	}
+    
+    // -- Exit Critical Section --
+    __set_PRIMASK( lPreviousPriMask );
+    
+//    BSP_LED_Off(LED_RED);       // Only for Debug
+    
+    cLowPowerExecute = 0x00;
+  }
+}
+
 #endif // TX_LOW_POWER
 //#endif // (CFG_LPM_SUPPORTED == 1)
 
@@ -773,7 +904,8 @@ static void APP_THREAD_CoapSendRequest( otCoapResource      * aCoapRessource,
 {
   otError error = OT_ERROR_NONE;
 
-  do{
+  do
+  {
     pOT_Message = otCoapNewMessage(NULL, NULL);
     if (pOT_Message == NULL)
     {
@@ -782,10 +914,10 @@ static void APP_THREAD_CoapSendRequest( otCoapResource      * aCoapRessource,
     }
 
     otCoapMessageInit(pOT_Message, aCoapType, aCoapCode);
-    otCoapMessageAppendUriPathOptions(pOT_Message, aCoapRessource->mUriPath);
-    otCoapMessageSetPayloadMarker(pOT_Message);
+(void)    otCoapMessageAppendUriPathOptions(pOT_Message, aCoapRessource->mUriPath);
+(void)    otCoapMessageSetPayloadMarker(pOT_Message);
 
-    if((aPayload != NULL) && (Size > 0))
+    if ( ( aPayload != NULL ) && ( Size > 0 ) )
     {
       error = otMessageAppend(pOT_Message, aPayload, Size);
       if (error != OT_ERROR_NONE)
@@ -802,24 +934,26 @@ static void APP_THREAD_CoapSendRequest( otCoapResource      * aCoapRessource,
     memset(&OT_MessageInfo, 0, sizeof(OT_MessageInfo));
     OT_MessageInfo.mPeerPort = OT_DEFAULT_COAP_PORT;
 
-    if((aPeerAddress == NULL) && (aStringAddress != NULL))
+    if ( ( aPeerAddress == NULL ) && ( aStringAddress != NULL ) )
     {
       APP_DBG("Use String Address : %s ", aStringAddress);
-      otIp6AddressFromString(aStringAddress, &OT_MessageInfo.mPeerAddr);
-    }
-    else
-    if (aPeerAddress != NULL)
-    {
-      APP_DBG("Use Peer Address");
-      memcpy(&OT_MessageInfo.mPeerAddr, aPeerAddress, sizeof(OT_MessageInfo.mPeerAddr));
+(void)      otIp6AddressFromString(aStringAddress, &OT_MessageInfo.mPeerAddr);
     }
     else
     {
-      APP_DBG("ERROR: Address string and Peer Address not defined");
-      APP_THREAD_Error(ERR_THREAD_COAP_ADDRESS_NOT_DEFINED, 0);
+      if ( aPeerAddress != NULL )
+      {
+        APP_DBG("Use Peer Address");
+        memcpy(&OT_MessageInfo.mPeerAddr, aPeerAddress, sizeof(OT_MessageInfo.mPeerAddr));
+      }
+      else
+      {
+        APP_DBG("ERROR: Address string and Peer Address not defined");
+        APP_THREAD_Error(ERR_THREAD_COAP_ADDRESS_NOT_DEFINED, 0);
+      }
     }
 
-    if(aCoapType == OT_COAP_TYPE_NON_CONFIRMABLE)
+    if ( aCoapType == OT_COAP_TYPE_NON_CONFIRMABLE )
     {
       APP_DBG("aCoapType == OT_COAP_TYPE_NON_CONFIRMABLE");
       error = otCoapSendRequest(NULL,
@@ -828,7 +962,8 @@ static void APP_THREAD_CoapSendRequest( otCoapResource      * aCoapRessource,
           NULL,
           NULL);
     }
-    if(aCoapType == OT_COAP_TYPE_CONFIRMABLE)
+    
+    if ( aCoapType == OT_COAP_TYPE_CONFIRMABLE )
     {
       APP_DBG("aCoapType == OT_COAP_TYPE_CONFIRMABLE");
       error = otCoapSendRequest(NULL,
@@ -837,7 +972,9 @@ static void APP_THREAD_CoapSendRequest( otCoapResource      * aCoapRessource,
           aHandler,
           aContext);
     }
-  }while(false);
+  }
+  while(false);
+  
   if (error != OT_ERROR_NONE && pOT_Message != NULL)
   {
     otMessageFree(pOT_Message);
@@ -890,7 +1027,7 @@ static void APP_THREAD_CoapSendDataResponse(otMessage  * pMessage, const otMessa
   otError  error = OT_ERROR_NONE;
 
   do{
-    APP_DBG(" ********* APP_THREAD_CoapSendDataResponse ********* ");
+    APP_DBG("APP_THREAD_CoapSendDataResponse");
 
     pOT_MessageResponse = otCoapNewMessage(NULL, NULL);
     if (pOT_MessageResponse == NULL)
@@ -899,7 +1036,7 @@ static void APP_THREAD_CoapSendDataResponse(otMessage  * pMessage, const otMessa
       break;
     }
 
-    otCoapMessageInitResponse(pOT_MessageResponse,
+(void)    otCoapMessageInitResponse(pOT_MessageResponse,
         pMessage,
         OT_COAP_TYPE_ACKNOWLEDGMENT,
         OT_COAP_CODE_VALID);
@@ -962,7 +1099,7 @@ static void APP_THREAD_InitPayloadWrite(void)
  */
 static void APP_THREAD_SendCoapNonConf(void)
 {
-  APP_DBG("********* STEP 1: Send a CoAP NON-CONFIRMABLE PUT Request *********");
+  APP_DBG("Send a CoAP NON-CONFIRMABLE PUT Request");
   /* Send a NON-CONFIRMABLE PUT Request */
   APP_THREAD_CoapSendRequest(&OT_Ressource,
                               OT_COAP_TYPE_NON_CONFIRMABLE,
@@ -983,7 +1120,7 @@ static void APP_THREAD_SendCoapNonConf(void)
 static void APP_THREAD_SendCoapConf(void)
 {
 
-  APP_DBG("********* STEP 2: Send a CoAP CONFIRMABLE PUT Request *********");
+  APP_DBG("Send a CoAP CONFIRMABLE PUT Request");
   /* Send a CONFIRMABLE PUT Request */
   APP_THREAD_CoapSendRequest(&OT_Ressource,
                               OT_COAP_TYPE_CONFIRMABLE,
@@ -994,17 +1131,6 @@ static void APP_THREAD_SendCoapConf(void)
                               sizeof(PayloadWrite),
                               APP_THREAD_CoapDataRespHandler,
                               NULL);
-
-}
-/**
-  * @brief  Callback triggered when the Timer expire
-  * @param  None
-  * @retval None
-  */
-static void APP_THREAD_TimingElapsed(void)
-{
-  APP_DBG("--- APP_THREAD_TimingElapsed ---");
-  tx_semaphore_put(&CoapConfSemaphore);
 }
 
 /**
@@ -1157,12 +1283,8 @@ void Pre_OtCmdProcessing(void)
   */
 static void Wait_Getting_Ack_From_M0(void)
 {
-    UINT  iStatus;
-
-    do
-      { iStatus = tx_semaphore_get(&TransferToM0Semaphore, TX_NO_WAIT); }
-    while ( iStatus != TX_SUCCESS );
-
+  tx_semaphore_get(&TransferToM0Semaphore, TX_WAIT_FOREVER);
+  
   tx_mutex_put(&MtxThreadId);
 }
 
@@ -1236,7 +1358,7 @@ static uint32_t  ProcessCmdString( uint8_t * buf , uint32_t len )
   {
     memcpy(CommandString, buf,(i+1));
     indexReceiveChar = i + 1U; /* Length of the buffer containing the command string */
-    //UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0); ** TODO : will replace when USB-VCP activated
+    //UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
     tmp_start = i;
     for (j = 0; j < (len - tmp_start - 1U) ; j++)
     {
@@ -1270,6 +1392,9 @@ static void Send_CLI_To_M0_Task(ULONG argument)
     for(;;)
     {
         (void)tx_semaphore_get(&SendCliCmdSemaphore, TX_WAIT_FOREVER);
+#ifdef TX_ENABLE_EVENT_TRACE    
+        tx_trace_user_event_insert( APP_TRACE_INFO, 4, 0, 0, 1 );
+#endif // TX_ENABLE_EVENT_TRACE 
         Send_CLI_To_M0();
     }
 }
@@ -1315,20 +1440,25 @@ static void Send_CLI_Ack_For_OT(void)
 void APP_THREAD_Init_UART_CLI(TX_BYTE_POOL* p_byte_pool)
 {
 #if (CFG_FULL_LOW_POWER == 0)
+  UINT ThreadXStatus;
   CHAR* pointer = TX_NULL;
   
   tx_semaphore_create(&SendCliCmdSemaphore, "SendCliCmdSemaphore", 0);
   tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
-  tx_thread_create(&OsTaskSendCliToM0,
-                   "OsTaskSendCliToM0",
-                   Send_CLI_To_M0_Task,
-                   0,
-                   pointer,
-                   DEMO_STACK_SIZE_LARGE,
-                   16,
-                   16,
-                   TX_NO_TIME_SLICE,
-                   TX_AUTO_START);
+  ThreadXStatus = tx_thread_create(&OsTaskSendCliToM0,
+                   	   	   	   	   "OsTaskSendCliToM0",
+								   Send_CLI_To_M0_Task,
+								   0,
+								   pointer,
+								   DEMO_STACK_SIZE_LARGE,
+								   SEND_CLI_TO_M0_PRIORITY,
+								   SEND_CLI_TO_M0_PRIORITY,
+								   TX_NO_TIME_SLICE,
+								   TX_AUTO_START);
+
+  if (ThreadXStatus != TX_SUCCESS)
+    { APP_THREAD_Error( ERR_THREAD_THREAD_X_FAILED, 2 ); }
+
 
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 
@@ -1398,14 +1528,18 @@ void APP_THREAD_ProcessMsgM0ToM4(ULONG argument)
 {
     UNUSED(argument);
 
-    for ( ;;) {
+    for ( ;;) 
+    {
       tx_semaphore_get(&MessageM0ToM4Semaphore, TX_WAIT_FOREVER);
-      if (CptReceiveMsgFromM0 != 0) {
+      if (CptReceiveMsgFromM0 != 0) 
+      {
         /* If CptReceiveNotifyFromM0 is > 1. it means that we did not serve all the events from the radio */
-        if (CptReceiveMsgFromM0 > 1U) {
+        if (CptReceiveMsgFromM0 > 1U) 
+        {
             APP_THREAD_Error(ERR_REC_MULTI_MSG_FROM_M0, 0);
         }
-        else {
+        else 
+        {
             OpenThread_CallBack_Processing();
         }
         /* Reset counter */

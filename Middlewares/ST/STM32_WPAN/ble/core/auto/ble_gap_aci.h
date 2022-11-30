@@ -26,6 +26,7 @@
  * @brief ACI_GAP_SET_NON_DISCOVERABLE
  * Put the device in non-discoverable mode. This command disables the LL
  * advertising.
+ * Note: this command only supports legacy advertising.
  * 
  * @return Value indicating success or error code.
  */
@@ -53,6 +54,7 @@ tBleStatus aci_gap_set_non_discoverable( void );
  * - Power Level
  * When advertising timeout happens (i.e. limited discovery period has
  * elapsed), controller generates ACI_GAP_LIMITED_DISCOVERABLE_EVENT event.
+ * Note: this command only supports legacy advertising.
  * 
  * @param Advertising_Type Advertising type
  *        Values:
@@ -148,6 +150,7 @@ tBleStatus aci_gap_set_limited_discoverable( uint8_t Advertising_Type,
  * standard AD types:
  * - AD Flags
  * - TX Power Level
+ * Note: this command only supports legacy advertising.
  * 
  * @param Advertising_Type Advertising type
  *        Values:
@@ -228,7 +231,7 @@ tBleStatus aci_gap_set_discoverable( uint8_t Advertising_Type,
  * used.
  * If the privacy is enabled, the Type parameter in reconnection address is
  * used for advertising, otherwise the address of the type specified in
- * OwnAddrType is used.
+ * Own_Address_Type is used.
  * The device stays in directed connectable mode only for 1.28 seconds. If no
  * connection is established within this duration, the device enters non
  * discoverable mode and advertising has to be again enabled explicitly.
@@ -236,6 +239,7 @@ tBleStatus aci_gap_set_discoverable( uint8_t Advertising_Type,
  * status set to HCI_ADVERTISING_TIMEOUT_ERR_CODE if the connection was not
  * established and BLE_STATUS_SUCCESS (0x00) if the connection was successfully
  * established.
+ * Note: this command only supports legacy advertising.
  * 
  * @param Own_Address_Type Own address type: if Privacy is disabled, the
  *        address can be public or static random; otherwise, it can be a
@@ -374,7 +378,7 @@ tBleStatus aci_gap_set_authorization_requirement( uint16_t Connection_Handle,
 
 /**
  * @brief ACI_GAP_PASS_KEY_RESP
- * This command should be send by the host in response to
+ * This command should be sent by the host in response to
  * ACI_GAP_PASS_KEY_REQ_EVENT event. The command parameter contains the pass
  * key which will be used during the pairing process.
  * 
@@ -392,7 +396,7 @@ tBleStatus aci_gap_pass_key_resp( uint16_t Connection_Handle,
 
 /**
  * @brief ACI_GAP_AUTHORIZATION_RESP
- * Authorize a device to access attributes. This command should be send by the
+ * Authorize a device to access attributes. This command should be sent by the
  * host in response to ACI_GAP_AUTHORIZATION_REQ_EVENT event.
  * 
  * @param Connection_Handle Connection handle for which the command applies.
@@ -417,7 +421,7 @@ tBleStatus aci_gap_authorization_resp( uint16_t Connection_Handle,
  * Note that if the Peripheral Preferred Connection Parameters characteristic
  * is added, its handle is equal to the Appearance characteristic handle plus
  * 2.
- * Note also that if privacy is enabled, this comamnd automatically unmasks the
+ * Note also that if privacy is enabled, this command automatically unmasks the
  * HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT event.
  * 
  * @param Role Bitmap of allowed roles.
@@ -426,7 +430,7 @@ tBleStatus aci_gap_authorization_resp( uint16_t Connection_Handle,
  *        - 0x02: Broadcaster
  *        - 0x04: Central
  *        - 0x08: Observer
- * @param privacy_enabled This paremeter specifies if Privacy is enabled or
+ * @param privacy_enabled This parameter specifies if Privacy is enabled or
  *        not. N.B.: only Controller Privacy is supported.
  *        Values:
  *        - 0x00: Privacy disabled
@@ -473,7 +477,8 @@ tBleStatus aci_gap_set_non_connectable( uint8_t Advertising_Event_Type,
  * Put the device into undirected connectable mode.
  * If privacy is enabled in the device, a resolvable private address is
  * generated and used as the advertiser's address. If not, the address of the
- * type specified in own_addr_type is used for advertising.
+ * type specified in Own_Address_Type is used for advertising.
+ * Note: this command only supports legacy advertising.
  * 
  * @param Advertising_Interval_Min Minimum advertising interval.
  *        Time = N * 0.625 ms.
@@ -708,13 +713,19 @@ tBleStatus aci_gap_start_limited_discovery_proc( uint16_t LE_Scan_Interval,
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param Own_Address_Type Own address type: if Privacy is disabled, the
  *        address can be public or static random; otherwise, it can be a
  *        resolvable private address or a non-resolvable private address.
@@ -758,13 +769,19 @@ tBleStatus aci_gap_start_general_discovery_proc( uint16_t LE_Scan_Interval,
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param Own_Address_Type Own address type: if Privacy is disabled, the
  *        address can be public or static random; otherwise, it can be a
  *        resolvable private address.
@@ -825,7 +842,7 @@ tBleStatus aci_gap_start_auto_connection_establish_proc( uint16_t LE_Scan_Interv
  * to the upper layer using the event LE_Advertising_Report. The upper layer
  * then has to select one of the devices to which it wants to connect by
  * issuing the command ACI_GAP_CREATE_CONNECTION. If privacy is enabled, then
- * either a private resolvable address or a non resolvable address, based on
+ * either a private resolvable address or a non-resolvable address, based on
  * the address type specified in the command is set as the scanner address but
  * the gap create connection always uses a private resolvable address if the
  * general connection establishment procedure is active.
@@ -849,13 +866,19 @@ tBleStatus aci_gap_start_auto_connection_establish_proc( uint16_t LE_Scan_Interv
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param Own_Address_Type Own address type: if Privacy is disabled, the
  *        address can be public or static random; otherwise, it can be a
  *        resolvable private address or a non-resolvable private address.
@@ -865,17 +888,17 @@ tBleStatus aci_gap_start_auto_connection_establish_proc( uint16_t LE_Scan_Interv
  *        - 0x02: Resolvable private address
  *        - 0x03: Non-resolvable private address
  * @param Scanning_Filter_Policy Scanning filter policy:
- *         - 0x00 Accept all advertisement packets.Directed advertising packets
- *        which are not addressed for this device shall be ignored.
+ *         - 0x00 Accept all advertisement packets. Directed advertising
+ *        packets which are not addressed for this device shall be ignored.
  *         - 0x01 Ignore advertisement packets from devices not in the White
- *        List Only.Directed advertising packets which are not addressed for
+ *        List Only. Directed advertising packets which are not addressed for
  *        this device shall be ignored.
  *         - 0x02 Accept all undirected advertisement packets (it is allowed
  *        only if privacy is enabled). Directed advertisement packets where
- *        initiator address is a RPA and Directed advertisement packets
+ *        initiator address is an RPA and Directed advertisement packets
  *        addressed to this device shall be accepted.
  *         - 0x03 Accept all undirected advertisement packets from devices that
- *        are in the White List.Directed advertisement packets where initiator
+ *        are in the White List. Directed advertisement packets where initiator
  *        address is RPA and Directed advertisement packets addressed to this
  *        device shall be accepted.
  *         - NOTE: if privacy is enabled Scanning_Filter_Policy can only assume
@@ -929,13 +952,19 @@ tBleStatus aci_gap_start_general_connection_establish_proc( uint8_t LE_Scan_Type
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param Own_Address_Type Own address type: if Privacy is disabled, the
  *        address can be public or static random; otherwise, it can be a
  *        resolvable private address or a non-resolvable private address.
@@ -945,17 +974,17 @@ tBleStatus aci_gap_start_general_connection_establish_proc( uint8_t LE_Scan_Type
  *        - 0x02: Resolvable private address
  *        - 0x03: Non-resolvable private address
  * @param Scanning_Filter_Policy Scanning filter policy:
- *         - 0x00 Accept all advertisement packets.Directed advertising packets
- *        which are not addressed for this device shall be ignored.
+ *         - 0x00 Accept all advertisement packets. Directed advertising
+ *        packets which are not addressed for this device shall be ignored.
  *         - 0x01 Ignore advertisement packets from devices not in the White
- *        List Only.Directed advertising packets which are not addressed for
+ *        List Only. Directed advertising packets which are not addressed for
  *        this device shall be ignored.
  *         - 0x02 Accept all undirected advertisement packets (it is allowed
  *        only if privacy is enabled). Directed advertisement packets where
- *        initiator address is a RPA and Directed advertisement packets
+ *        initiator address is an RPA and Directed advertisement packets
  *        addressed to this device shall be accepted.
  *         - 0x03 Accept all undirected advertisement packets from devices that
- *        are in the White List.Directed advertisement packets where initiator
+ *        are in the White List. Directed advertisement packets where initiator
  *        address is RPA and Directed advertisement packets addressed to this
  *        device shall be accepted.
  *         - NOTE: if privacy is enabled Scanning_Filter_Policy can only assume
@@ -1006,13 +1035,19 @@ tBleStatus aci_gap_start_selective_connection_establish_proc( uint8_t LE_Scan_Ty
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param Peer_Address_Type The address type of the peer device.
  *        Values:
  *        - 0x00: Public Device Address
@@ -1177,7 +1212,8 @@ tBleStatus aci_gap_resolve_private_addr( const uint8_t* Address,
  * @brief ACI_GAP_SET_BROADCAST_MODE
  * This command puts the device into broadcast mode. A privacy enabled device
  * uses either a resolvable private address or a non-resolvable private address
- * as specified in the Own_Addr_Type parameter of the command.
+ * as specified in the Own_Address_Type parameter of the command.
+ * Note: this command only supports legacy advertising.
  * 
  * @param Advertising_Interval_Min Minimum advertising interval.
  *        Time = N * 0.625 ms.
@@ -1218,7 +1254,7 @@ tBleStatus aci_gap_set_broadcast_mode( uint16_t Advertising_Interval_Min,
 
 /**
  * @brief ACI_GAP_START_OBSERVATION_PROC
- * Starts an Observation procedure, when the device is in Observer Role. The
+ * Starts an Observation procedure when the device is in Observer Role. The
  * host enables scanning in the controller. The advertising reports are sent to
  * the upper layer using standard LE Advertising Report Event.
  * If privacy is enabled and the peer device (advertiser) is in the resolving
@@ -1231,13 +1267,19 @@ tBleStatus aci_gap_set_broadcast_mode( uint16_t Advertising_Interval_Min,
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param LE_Scan_Window Amount of time for the duration of the LE scan.
  *        LE_Scan_Window shall be less than or equal to LE_Scan_Interval.
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0004 (2.500 ms)  ... 0x4000 (10240.000 ms) : legacy advertising
+ *        - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : extended advertising
+ *          with STM32WB
  *        - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : extended advertising
+ *          with STM32WBA
  * @param LE_Scan_Type Passive or active scanning. With passive scanning, no
  *        scan request PDUs are sent.
  *        Values:
@@ -1264,7 +1306,7 @@ tBleStatus aci_gap_set_broadcast_mode( uint16_t Advertising_Interval_Min,
  *        this device shall be ignored.
  *         - 0x02 Accept all undirected advertisement packets (it is allowed
  *        only if privacy is enabled). Directed advertisement packets where
- *        initiator address is a RPA and Directed advertisement packets
+ *        initiator address is an RPA and Directed advertisement packets
  *        addressed to this device shall be accepted.
  *         - 0x03 Accept all undirected advertisement packets from devices that
  *        are in the White List. Directed advertisement packets where initiator
@@ -1558,7 +1600,7 @@ tBleStatus aci_gap_additional_beacon_set_data( uint8_t Adv_Data_Length,
 
 /**
  * @brief ACI_GAP_ADV_SET_CONFIGURATION
- * This command is used to set the extended advertising configration for one
+ * This command is used to set the extended advertising configuration for one
  * advertising set.
  * This command, in association with ACI_GAP_ADV_SET_SCAN_RESP_DATA,
  * ACI_GAP_ADV_SET_ADV_DATA and ACI_GAP_ADV_SET_ENABLE, enables to start

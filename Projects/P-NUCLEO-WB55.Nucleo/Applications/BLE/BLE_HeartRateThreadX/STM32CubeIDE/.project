@@ -72,6 +72,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_exti.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_flash.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash.c</locationURI>
@@ -284,7 +289,7 @@
 		<link>
 			<name>Application/User/Core/stm32wbxx_hal_timebase_tim.c</name>
 			<type>1</type>
-			<locationURI>$%257BPARENT-1-PROJECT_LOC%257D/Core/Src/stm32wbxx_hal_timebase_tim.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32wbxx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/stm32wbxx_it.c</name>
@@ -294,7 +299,7 @@
 		<link>
 			<name>Application/User/Core/tx_initialize_low_level.S</name>
 			<type>1</type>
-			<locationURI>$%257BPARENT-1-PROJECT_LOC%257D/Core/Src/tx_initialize_low_level.S</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/tx_initialize_low_level.S</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c</name>

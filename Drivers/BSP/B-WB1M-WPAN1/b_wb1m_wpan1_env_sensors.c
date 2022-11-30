@@ -114,7 +114,6 @@ int32_t BSP_ENV_SENSOR_Init(uint32_t Instance, uint32_t Functions)
         component_functions |= ENV_HUMIDITY;
       }
       break;
-      break;
 #endif /* USE_ENV_SENSOR_STTS22H_0 */
 
     default:

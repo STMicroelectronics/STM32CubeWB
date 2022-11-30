@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : main.h
-  * @brief          : Header for main.c file.
-  *                   This file contains the common defines of the application.
+  * @file    main.h
+  * @author  MCD Application Team
+  * @brief   Header for main.c module
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2019-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef __MAIN_H
+#define __MAIN_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,7 +54,8 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
-
+void MX_LPUART1_UART_Init(void);
+void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
@@ -90,4 +91,4 @@ void Error_Handler(void);
 }
 #endif
 
-#endif /* MAIN_H */
+#endif /* __MAIN_H */

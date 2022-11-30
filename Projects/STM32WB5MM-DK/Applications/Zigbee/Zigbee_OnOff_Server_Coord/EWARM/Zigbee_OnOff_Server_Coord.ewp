@@ -16,15 +16,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Zigbee_OnOff_Coord/Exe</state>
+                    <state>Zigbee_OnOff_Server_Coord\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Zigbee_OnOff_Coord/Obj</state>
+                    <state>Zigbee_OnOff_Server_Coord\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Zigbee_OnOff_Coord/List</state>
+                    <state>Zigbee_OnOff_Server_Coord\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -32,11 +32,11 @@
                 </option>
                 <option>
                     <name>Input description</name>
-                    <state>Full formatting, with multibyte support.</state>
+                    <state>Automatic choice of formatter, without multibyte support.</state>
                 </option>
                 <option>
                     <name>Output description</name>
-                    <state>Full formatting, with multibyte support.</state>
+                    <state>Automatic choice of formatter, without multibyte support.</state>
                 </option>
                 <option>
                     <name>GOutputBinary</name>
@@ -49,20 +49,20 @@
                 <option>
                     <name>GRuntimeLibSelect</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>GRuntimeLibSelectSlave</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>RTDescription</name>
-                    <state>Use the full configuration of the C/C++ runtime library. Full locale interface, C locale, file descriptor support, multibytes in printf and scanf, and hex floats in strtod.</state>
+                    <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
                 </option>
                 <option>
                     <name>OGProductVersion</name>
-                    <state>4.41A</state>
+                    <state>8.20.2.14834</state>
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32WB5MMG	ST STM32WB5MMG</state>
+                    <state>STM32WB55RG	ST STM32WB55RG</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -108,11 +108,11 @@
                 <option>
                     <name>GeneralMisraRules04</name>
                     <version>0</version>
-                    <state>011111111111111110111111111111011111111111111011110100111111111111111111111111111111111111111111101111111111111011111111111111111111111111111</state>
+                    <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
                 </option>
                 <option>
                     <name>RTConfigPath2</name>
-                    <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Full.h</state>
+                    <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
                 </option>
                 <option>
                     <name>GBECoreSlave</name>
@@ -138,7 +138,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32WB5MMG	ST STM32WB5MMG</state>
+                    <state>STM32WB55RG	ST STM32WB55RG</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -173,20 +173,20 @@
                 <option>
                     <name>OGPrintfVariant</name>
                     <version>0</version>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OGPrintfMultibyteSupport</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OGScanfVariant</name>
                     <version>0</version>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OGScanfMultibyteSupport</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>GenLocaleTags</name>
@@ -221,6 +221,7 @@
                     <name>CCDefines</name>
                     <state>USE_HAL_DRIVER</state>
                     <state>STM32WB55xx</state>
+                    <state>USE_STM32WB5M_DK</state>
                     <state>ZIGBEE_WB</state>
                 </option>
                 <option>
@@ -349,8 +350,6 @@
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$/../Core/Inc</state>
                     <state>$PROJ_DIR$/../STM32_WPAN/App</state>
-                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/STM32WB5MM-DK</state>
-                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/Components/Common</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN</state>
@@ -363,10 +362,14 @@
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/zigbee/stack/include/mac</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/STM32WB5MM-DK</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/Components/ssd1315</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/Components/Common</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
                     <state>$PROJ_DIR$/../../../../../../Utilities/LCD</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/Fonts</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -662,7 +665,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Zigbee_OnOff_Coord.bin</state>
+                    <state>Zigbee_OnOff_Server_Coord.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -717,7 +720,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>Zigbee_OnOff_Coord.out</state>
+                    <state>Zigbee_OnOff_Server_Coord.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>

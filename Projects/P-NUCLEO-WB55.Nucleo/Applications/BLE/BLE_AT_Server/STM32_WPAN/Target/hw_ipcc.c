@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : Target/hw_ipcc.c
-  * Description        : Hardware IPCC source file for STM32WPAN Middleware.
-  *
+  * @file    hw_ipcc.c
+  * @author  MCD Application Team
+  * @brief   Hardware IPCC source file for STM32WPAN Middleware.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -163,10 +163,6 @@ void HW_IPCC_Tx_Handler( void )
       HW_IPCC_ZIGBEE_CmdEvtHandler();
   }
 #endif /* ZIGBEE_WB */
-  else if (HW_IPCC_TX_PENDING( HW_IPCC_SYSTEM_CMD_RSP_CHANNEL ))
-  {
-    HW_IPCC_SYS_CmdEvtHandler();
-  }
   else if (HW_IPCC_TX_PENDING( HW_IPCC_MM_RELEASE_BUFFER_CHANNEL ))
   {
     HW_IPCC_MM_FreeBufHandler();
@@ -185,7 +181,7 @@ void HW_IPCC_Enable( void )
 {
   /**
   * Such as IPCC IP available to the CPU2, it is required to keep the IPCC clock running
-    when FUS is running on CPU2 and CPU1 enters deep sleep mode
+  * when FUS is running on CPU2 and CPU1 enters deep sleep mode
   */
   LL_C2_AHB3_GRP1_EnableClock(LL_C2_AHB3_GRP1_PERIPH_IPCC);
 
@@ -671,4 +667,3 @@ static void HW_IPCC_TRACES_EvtHandler( void )
 }
 
 __weak void HW_IPCC_TRACES_EvtNot( void ){};
-

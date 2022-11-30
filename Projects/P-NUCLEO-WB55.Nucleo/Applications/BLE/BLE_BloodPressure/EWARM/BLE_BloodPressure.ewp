@@ -32,11 +32,11 @@
         </option>
         <option>
           <name>Input description</name>
-          <state>No specifier n, no float nor long long, no scan set, no assignment suppressing, with multibyte support.</state>
+          <state>Full formatting, with multibyte support.</state>
         </option>
         <option>
           <name>Output description</name>
-          <state>No specifier a, A, no specifier n, no float nor long long, with multibyte support.</state>
+          <state>Full formatting, with multibyte support.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -314,7 +314,7 @@
         </option>
         <option>
           <name>CCRequirePrototypes</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -1088,7 +1088,7 @@
             <name>$PROJ_DIR$\..\STM32_WPAN\App\bls_app.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$/../STM32_WPAN/App/dis_app.c</name>
+            <name>$PROJ_DIR$\..\STM32_WPAN\App\dis_app.c</name>
           </file>
         </group>
         <group>
@@ -1130,6 +1130,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_ll_rcc.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc_ex.c</name>
@@ -1231,7 +1234,7 @@
         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_l2cap_aci.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/dis.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\dis.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\bls.c</name>

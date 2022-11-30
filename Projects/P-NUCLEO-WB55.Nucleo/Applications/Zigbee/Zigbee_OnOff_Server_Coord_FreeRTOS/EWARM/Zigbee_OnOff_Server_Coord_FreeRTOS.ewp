@@ -16,15 +16,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>Zigbee_OnOff_Coord_FreeRTOS/Exe</state>
+                    <state>Zigbee_OnOff_Server_Coord_FreeRTOS/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Zigbee_OnOff_Coord_FreeRTOS/Obj</state>
+                    <state>Zigbee_OnOff_Server_Coord_FreeRTOS/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Zigbee_OnOff_Coord_FreeRTOS/List</state>
+                    <state>Zigbee_OnOff_Server_Coord_FreeRTOS/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -664,7 +664,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Zigbee_OnOff_Coord_FreeRTOS.bin</state>
+                    <state>Zigbee_OnOff_Server_Coord_FreeRTOS.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>

@@ -4,7 +4,7 @@
  * @brief ZCL Window Covering cluster header
  * ZCL 7 section 7.4
  * ZCL 8 section 7.4
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_WINDOW_H

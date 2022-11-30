@@ -19,6 +19,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "common_blesvc.h"
+    
+/* Exported Variables ------------------------------------------------------- */
+uint8_t ToF_BoardPresent= 0;
 
 /* Private typedef -----------------------------------------------------------*/
 /**
@@ -31,6 +34,7 @@ typedef struct
   uint16_t	HWMotionCharHdle;   /**< Characteristic handle */
   uint16_t	HWEnvCharHdle;      /**< Characteristic handle */
   uint16_t	HWAccEventCharHdle; /**< Characteristic handle */
+  uint16_t	HWToFCharHdle;      /**< Characteristic handle */
 
   /* Handles for SW Service and Chars */
   uint16_t	SWSvcHdle;               /**< Service handle */
@@ -80,8 +84,9 @@ do {\
 #define COPY_HW_MOTION_CHAR_UUID(uuid_struct)     COPY_UUID_128(uuid_struct,0x00,0xE0,0x00,0x00,0x00,0x01,0x11,0xE1,0xAC,0x36,0x00,0x02,0xA5,0xD5,0xC5,0x1B)
 #define COPY_HW_ENV_CHAR_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0x00,0x1D,0x00,0x00,0x00,0x01,0x11,0xE1,0xAC,0x36,0x00,0x02,0xA5,0xD5,0xC5,0x1B)
 #define COPY_HW_ACC_EVENT_CHAR_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x00,0x00,0x04,0x00,0x00,0x01,0x11,0xE1,0xAC,0x36,0x00,0x02,0xA5,0xD5,0xC5,0x1B)
+#define COPY_TOF_MOBJ_CHAR_UUID(uuid_struct)      COPY_UUID_128(uuid_struct,0x00,0x00,0x00,0x13,0x00,0x02,0x11,0xe1,0xac,0x36,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
-#define HW_CHAR_NUMBER (3)
+#define HW_CHAR_NUMBER (4)
 
 /* Software Service and Characteristics */
 #define COPY_SW_SERVICE_UUID(uuid_struct)               COPY_UUID_128(uuid_struct,0x00,0x00,0x00,0x00,0x00,0x02,0x11,0xE1,0x9A,0xB4,0x00,0x02,0xA5,0xD5,0xC5,0x1B)
@@ -116,6 +121,7 @@ do {\
 #define MOTION_CHAR_LEN    (TIMESTAMP_LEN+(3*3*2)) //(ACC+GYRO+MAG)*(X+Y+Z)*2BYTES
 #define ENV_CHAR_LEN       (TIMESTAMP_LEN+(2*2)+2+4) //(2BYTES*2TEMP)+(2BYTES*HUM)+(4BYTES*PRESS)
 #define ACC_EVENT_CHAR_LEN (TIMESTAMP_LEN+3)
+#define TOF_CHAR_LEN       (TIMESTAMP_LEN+(2*4)+1)
 
 /* Software Characteristic Length */
 #define QUATERNION_NUM          (3)
@@ -295,6 +301,38 @@ static SVCCTL_EvtAckStatus_t Motenv_Event_Handler(void *Event)
               Notification.Motenv_Evt_Opcode = HW_ACC_EVENT_NOTIFY_DISABLED_EVT;
               MOTENV_STM_App_Notification(&Notification);
             }
+          }
+          
+          /* ToF char */
+          if(attribute_modified->Attr_Handle == (aMotenvContext.HWToFCharHdle + 2U))
+          {
+            /**
+            * Descriptor handle
+            */
+            return_value = SVCCTL_EvtAckFlowEnable;
+            /**
+            * Notify to application
+            */
+            if(attribute_modified->Attr_Data[0] & COMSVC_Notification)
+            {
+              Notification.Motenv_Evt_Opcode = HW_TOF_NOTIFY_ENABLED_EVT;
+              MOTENV_STM_App_Notification(&Notification);
+            }
+            else
+            {
+              Notification.Motenv_Evt_Opcode = HW_TOF_NOTIFY_DISABLED_EVT;
+              MOTENV_STM_App_Notification(&Notification);
+            }
+          }
+          
+          /* ToF char */
+          else if(attribute_modified->Attr_Handle == (aMotenvContext.HWToFCharHdle + 1U))
+          {
+            BLE_DBG_TEMPLATE_STM_MSG("-- GATT : WRITE TOF CHAR INFO RECEIVED\n");
+            Notification.Motenv_Evt_Opcode = HW_TOF_WRITE_EVT;
+            Notification.DataTransfered.Length=attribute_modified->Attr_Data_Length;
+            Notification.DataTransfered.pPayload=attribute_modified->Attr_Data;
+            MOTENV_STM_App_Notification(&Notification);
           }
 
           /* Motion char */
@@ -622,6 +660,23 @@ void MOTENV_STM_Init(void)
                             0, /* isVariable: 1 */
                             &(aMotenvContext.HWEnvCharHdle));
 
+     if(ToF_BoardPresent)
+     { 
+      /**
+       *   Add ToF Characteristic for HW Service
+       */
+       COPY_TOF_MOBJ_CHAR_UUID(uuid16.Char_UUID_128);
+       (void)aci_gatt_add_char(aMotenvContext.HWSvcHdle,
+                               UUID_TYPE_128, &uuid16,
+                               TOF_CHAR_LEN,
+                               CHAR_PROP_NOTIFY|CHAR_PROP_WRITE_WITHOUT_RESP|CHAR_PROP_WRITE,
+                               ATTR_PERMISSION_NONE,
+                               GATT_NOTIFY_ATTRIBUTE_WRITE|GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP, /* gattEvtMask */
+                               16, /* encryKeySize */
+                               1, /* isVariable: 1 */
+                               &(aMotenvContext.HWToFCharHdle));
+     }
+
     /**
      *   Add Acc Event Characteristic for HW Service
      */
@@ -829,6 +884,17 @@ tBleStatus MOTENV_STM_App_Update_Char(uint16_t UUID, uint8_t payloadLen, uint8_t
     
       break;
 
+      
+    case TOF_CHAR_UUID:
+
+     result = aci_gatt_update_char_value(aMotenvContext.HWSvcHdle,
+                                         aMotenvContext.HWToFCharHdle,
+                                         0, /* charValOffset */
+                                         payloadLen, /* charValueLen */
+                                         pPayload);
+    
+      break;
+	  
     case MOTION_CHAR_UUID:
 
      result = aci_gatt_update_char_value(aMotenvContext.HWSvcHdle,

@@ -431,10 +431,7 @@ static void Mesh_Task()
   {
     UnprovisionInProgress = 0;
     AppliNvm_ClearModelState();
-    PalNvmErase(NVM_BASE, 1);      
-    PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
-    PalNvmErase(APP_NVM_BASE, 1);
-    PalNvmErase(PRVN_NVM_BASE_OFFSET, 1);
+    PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
   }
@@ -837,11 +834,9 @@ void Appli_CheckForUnprovision(void)
     {
       /* No GATT connection */
       BLEMesh_StopAdvScan();
+      HAL_Delay(10);
 
-      PalNvmErase(NVM_BASE, 1); 
-      PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
-      PalNvmErase(APP_NVM_BASE, 1);
-      PalNvmErase(PRVN_NVM_BASE_OFFSET, 1);
+      PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
       TRACE_M(TF_PROVISION,"NVM erased\r\n");      
       
       BLEMesh_Unprovision();
@@ -859,7 +854,6 @@ void Appli_CheckForUnprovision(void)
       }
     }
     BSP_LED_Off(LED_BLUE);
-    NVIC_SystemReset();
   }
   
   /* Register the task for all MESH dedicated processes */
@@ -887,23 +881,27 @@ void Appli_CheckForUnprovision(void)
 
 void Appli_Unprovision(void)
 {
+  MOBLEUINT8 PrvnDevKeyFlag = 0;
+
   if(!ProxyFlag)
   {
     /* No GATT connection */
     BLEMesh_StopAdvScan();
+    HAL_Delay(10);
       
-    PalNvmErase(NVM_BASE, 1);      
-    PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
-    PalNvmErase(APP_NVM_BASE, 1);
-    PalNvmErase(PRVN_NVM_BASE_OFFSET, 1);
+    PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
     BLEMesh_Unprovision();
     AppliNvm_ClearModelState();     
+#if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
+    Appli_ProvisionerInit();
+    /* Scan the Provisioner data and Restore the address and num of elements */  
+    AppliPrvnNvm_FactorySettingReset(&PrvnDevKeyFlag);
+#endif
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
 
     BLEMesh_Process();
-
     NVIC_SystemReset();
   }
 }
@@ -1068,6 +1066,11 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason)
 #if (defined(ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER))
 /*----------------------------------------------------------------------------*/
 
+/**
+* @brief  Initializes Provisioner Node
+* @param  void 
+* @retval void
+*/
 void Appli_ProvisionerInit(void)
 {
    NodeUnderProvisionParam.nodeAddress = 0; 
@@ -1230,13 +1233,18 @@ void Appli_StartProvisionerMode(MOBLEUINT8 mode)
 #define SELF_PUBLISH_DEFAULT_STATE 5
 uint8_t self_config_state= SELF_CONFIG_IDLE_STATE;
 
+/**
+* @brief  Process to do the self configuration of provisioner node
+* @param  void
+* @retval void
+*/
 void Start_SelfConfiguration (void)
 {
   self_config_state = SELF_CONFIG_INIT_STATE;
 }
 
 /**
-* @brief  callback for getting the Node Address by provisioner & giving device key.
+* @brief  Process to do the self configuration of provisioner node
 * @param  void
 * @retval void
 */
@@ -1597,17 +1605,18 @@ void BLEMesh_NeighborAppearedCallback(const MOBLEUINT8* bdAddr,
 * @retval void
 */
 void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
-                                          MOBLEBOOL provisioned,
-                                          const MOBLEUINT8* uuid,
-                                          MOBLE_ADDRESS networkAddress,
-                                          MOBLEINT8 rssi)
+                                       MOBLEBOOL provisioned,
+                                       const MOBLEUINT8* uuid,
+                                       MOBLE_ADDRESS networkAddress,
+                                       MOBLEINT8 rssi)
 {
   TRACE_M(TF_NEIGHBOUR,"Existing neighbor refreshed. Neighbor MAC address:");
   
   for (MOBLEUINT8 count=0 ; count<6; count++)
   {
-    TRACE_M(TF_NEIGHBOUR,"%.2x ", bdAddr[count]);
+    TRACE_I(TF_NEIGHBOUR,"%.2x ", bdAddr[count]);
   }
+  TRACE_I(TF_NEIGHBOUR,"\n");
   
   if (provisioned == MOBLE_TRUE)
   {
@@ -1618,7 +1627,7 @@ void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
     TRACE_M(TF_NEIGHBOUR,"-> Unprovisioned device. \n\r");
   }
   
-  TRACE_M(TF_NEIGHBOUR,"rssi: %d. ", rssi);
+  TRACE_M(TF_NEIGHBOUR,"rssi: %d. \n", rssi);
   
   if (networkAddress != MOBLE_ADDRESS_UNASSIGNED)
   {
@@ -1641,14 +1650,14 @@ void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
       
       for (MOBLEUINT8 count=0 ; count<16; count++)
       {
-        TRACE_M(TF_NEIGHBOUR,"%.2x ", uuid[count]);
+        TRACE_I(TF_NEIGHBOUR,"%.2x ", uuid[count]);
       }
       
       break;
     }
   }
   
-  TRACE_M(TF_NEIGHBOUR,"\n\r");
+  TRACE_I(TF_NEIGHBOUR,"\n\r");
 }
 
 /** 
@@ -2033,6 +2042,8 @@ void Appli_Init(MOBLEUINT8 *flag)
 #if (ENABLE_SENSOR_MODEL_SERVER != 0)
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SW3_REQ_ID, UTIL_SEQ_RFU, AppliMeshSW3Task );
 #endif
+
+  
 }
 
 /*****************************Config Model Callbacks***************************/

@@ -23,7 +23,6 @@
 #include "stm32wb5mm_dk.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "hw.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,9 +57,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern IPCC_HandleTypeDef hipcc;
-extern DMA_HandleTypeDef hdma_lpuart1_tx;
 extern DMA_HandleTypeDef hdma_usart1_tx;
-extern UART_HandleTypeDef hlpuart1;
 extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
@@ -78,7 +75,9 @@ void NMI_Handler(void)
 
   /* USER CODE END NonMaskableInt_IRQn 0 */
   /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
-
+  while (1)
+  {
+  }
   /* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
@@ -244,34 +243,6 @@ void RCC_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles DMA1 channel1 global interrupt.
-  */
-void DMA1_Channel1_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_lpuart1_tx);
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 1 */
-}
-
-/**
-  * @brief This function handles DMA1 channel2 global interrupt.
-  */
-void DMA1_Channel2_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel2_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_usart1_tx);
-  /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel2_IRQn 1 */
-}
-
-/**
   * @brief This function handles CPU2 SEV interrupt through EXTI line 40 and PWR CPU2 HOLD wake-up interrupt.
   */
 void C2SEV_PWR_C2H_IRQHandler(void)
@@ -299,17 +270,31 @@ void USART1_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles LPUART1 global interrupt.
+  * @brief This function handles HSEM global interrupt.
   */
-void LPUART1_IRQHandler(void)
+void HSEM_IRQHandler(void)
 {
-  /* USER CODE BEGIN LPUART1_IRQn 0 */
+  /* USER CODE BEGIN HSEM_IRQn 0 */
 
-  /* USER CODE END LPUART1_IRQn 0 */
-  HAL_UART_IRQHandler(&hlpuart1);
-  /* USER CODE BEGIN LPUART1_IRQn 1 */
+  /* USER CODE END HSEM_IRQn 0 */
+  HAL_HSEM_IRQHandler();
+  /* USER CODE BEGIN HSEM_IRQn 1 */
 
-  /* USER CODE END LPUART1_IRQn 1 */
+  /* USER CODE END HSEM_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 channel4 global interrupt.
+  */
+void DMA2_Channel4_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Channel4_IRQn 0 */
+
+  /* USER CODE END DMA2_Channel4_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_tx);
+  /* USER CODE BEGIN DMA2_Channel4_IRQn 1 */
+
+  /* USER CODE END DMA2_Channel4_IRQn 1 */
 }
 
 /**
@@ -354,17 +339,13 @@ void IPCC_C1_TX_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles HSEM global interrupt.
+  * @brief  This function handles TIM17 IRQ Handler.
+  * @param  None
+  * @retval None
   */
-void HSEM_IRQHandler(void)
+void TIM1_TRG_COM_TIM17_IRQHandler(void)
 {
-  /* USER CODE BEGIN HSEM_IRQn 0 */
-
-  /* USER CODE END HSEM_IRQn 0 */
-  HAL_HSEM_IRQHandler();
-  /* USER CODE BEGIN HSEM_IRQn 1 */
-
-  /* USER CODE END HSEM_IRQn 1 */
+  BSP_PWM_LED_IRQHandler();
 }
 
 /**
@@ -387,11 +368,15 @@ void RTC_WKUP_IRQHandler(void)
 }
 
 /**
-  * @brief  This function handles EXTI15_10_IRQ Handler.
-  * @param  None
-  * @retval None
-  */
-void EXTI15_10_IRQHandler(void)
+ * @brief  This function handles External line
+ *         interrupt request.
+ * @param  None
+ * @retval None
+ */
+void PUSH_BUTTON_SW_EXTI_IRQHandler(void)
 {
-  HAL_GPIO_EXTI_IRQHandler(BUTTON_USER1_PIN);
+  BSP_PB_IRQHandler(BUTTON_USER1);
+  BSP_PB_IRQHandler(BUTTON_USER2);
 }
+
+/* USER CODE END 1 */

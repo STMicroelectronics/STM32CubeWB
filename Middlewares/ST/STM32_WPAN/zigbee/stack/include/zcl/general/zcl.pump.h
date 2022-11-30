@@ -4,7 +4,7 @@
  * @brief ZCL Pump Configuration and Control cluster header
  * ZCL 7 section 6.2
  * ZCL 8 section 6.2
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_PUMP_H

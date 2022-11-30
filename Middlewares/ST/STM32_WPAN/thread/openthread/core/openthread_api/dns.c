@@ -107,6 +107,7 @@ bool otDnsIsNameCompressionEnabled(void)
 #if OPENTHREAD_CONFIG_DNS_CLIENT_ENABLE
 
 extern otDnsAddressCallback otDnsAddressCb;
+extern otDnsBrowseCallback otDnsBrowseCb;
 
 const otDnsQueryConfig *otDnsClientGetDefaultConfig(otInstance *aInstance)
 {
@@ -168,6 +169,34 @@ otError otDnsClientResolveAddress(otInstance *            aInstance,
   return (otError)p_ot_req->Data[0];
 }
 
+#if OPENTHREAD_CONFIG_DNS_CLIENT_NAT64_ENABLE
+otError otDnsClientResolveIp4Address(otInstance *            aInstance,
+                                     const char *            aHostName,
+                                     otDnsAddressCallback    aCallback,
+                                     void *                  aContext,
+                                     const otDnsQueryConfig *aConfig)
+{
+  Pre_OtCmdProcessing();
+
+  otDnsAddressCb = aCallback;
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_DNS_CLIENT_NAT64_ENABLE;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t) aHostName;
+  p_ot_req->Data[1] = (uint32_t) aContext;
+  p_ot_req->Data[2] = (uint32_t) aConfig;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+#endif
+
 otError otDnsAddressResponseGetHostName(const otDnsAddressResponse *aResponse,
                                         char *                      aNameBuffer,
                                         uint16_t                    aNameBufferSize)
@@ -224,7 +253,7 @@ otError otDnsClientBrowse(otInstance *            aInstance,
 {
   Pre_OtCmdProcessing();
 
-  otDnsBrowseCallback otDnsBrowseCb = aCallback;
+  otDnsBrowseCb = aCallback;
 
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -276,10 +305,11 @@ otError otDnsBrowseResponseGetServiceInstance(const otDnsBrowseResponse *aRespon
 
   p_ot_req->ID = MSG_M4TOM0_OT_BROWSE_RESPONSE_GET_SERVICE_INSTANCE;
 
-  p_ot_req->Size=3;
+  p_ot_req->Size=4;
   p_ot_req->Data[0] = (uint32_t) aResponse;
-  p_ot_req->Data[1] = (uint32_t) aNameBuffer;
-  p_ot_req->Data[2] = (uint32_t) aNameBufferSize;
+  p_ot_req->Data[1] = (uint32_t) aIndex;
+  p_ot_req->Data[2] = (uint32_t) aLabelBuffer;
+  p_ot_req->Data[3] = (uint32_t) aLabelBufferSize;
 
   Ot_Cmd_Transfer();
 

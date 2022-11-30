@@ -46,13 +46,13 @@ Same COAP commands can be sent from board B to board A.
   |_________________________|                       |_________________________|  
   |                         |                       |                         |
   |                         |                       |                         |
-  |        Push Button      |======> COAP =========>|    BLUE LED ON/OFF      |
+  |        Push Button 1    |======> COAP =========>|    BLUE LED ON/OFF      |
   |                         |    Resource "light"   |                         |
   |                         |    Mode : Multicast   |                         |
   |                         |                       |                         |
   |                         |                       |                         |
   |                         |                       |                         |
-  |        BLUE LED ON/OFF  |<=====> COAP ==========|    Push Button          |
+  |        BLUE LED ON/OFF  |<=====> COAP ==========|    Push Button 1        |
   |                         |    Resource "light"   |                         |
   |                         |    Mode : Multicast   |                         |
   |                         |                       |                         |

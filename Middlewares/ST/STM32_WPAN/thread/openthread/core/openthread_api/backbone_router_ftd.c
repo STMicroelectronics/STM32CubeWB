@@ -58,6 +58,8 @@ otBackboneRouterState otBackboneRouterGetState(otInstance *aInstance)
   p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otBackboneRouterState)p_ot_req->Data[0];
 }
 
@@ -81,12 +83,14 @@ otError otBackboneRouterSetConfig(otInstance *aInstance, const otBackboneRouterC
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_BACKBONE_ROUTER_GET_CONFIG;
+  p_ot_req->ID = MSG_M4TOM0_OT_BACKBONE_ROUTER_SET_CONFIG;
 
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t) aConfig;
 
   Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
 
@@ -101,6 +105,8 @@ otError otBackboneRouterRegister(otInstance *aInstance)
   p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
 
@@ -115,6 +121,8 @@ uint8_t otBackboneRouterGetRegistrationJitter(otInstance *aInstance)
   p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (uint8_t)p_ot_req->Data[0];
 }
 
@@ -144,6 +152,8 @@ otError otBackboneRouterGetDomainPrefix(otInstance *aInstance, otBorderRouterCon
   p_ot_req->Data[0] = (uint32_t) aConfig;
 
   Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
 
@@ -201,6 +211,8 @@ otError otBackboneRouterGetNdProxyInfo(otInstance *                 aInstance,
   p_ot_req->Data[1] = (uint32_t) aNdProxyInfo;
 
   Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
 #endif // OPENTHREAD_CONFIG_BACKBONE_ROUTER_DUA_NDPROXYING_ENABLE
@@ -224,24 +236,26 @@ void otBackboneRouterSetMulticastListenerCallback(otInstance *                  
   p_ot_req->Size=1;
   p_ot_req->Data[0] = (uint32_t) aContext;
 
-  Ot_Cmd_Transfer();
+  Ot_Cmd_TransferWithNotif();
 }
 
-otError otBackboneRouterMulticastListenerGetNext(otInstance *                           aInstance,
-                                                 otChildIp6AddressIterator *            aIterator,
-                                                 otBackboneRouterMulticastListenerInfo *aListenerInfo)
+otError otBackboneRouterMulticastListenerGetNext(otInstance *                                   aInstance,
+                                                 otBackboneRouterMulticastListenerIterator      *aIterator,
+                                                 otBackboneRouterMulticastListenerInfo          *aListenerInfo)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
-  p_ot_req->ID = MSG_M4TOM0_OT_BACKBONE_ROUTER_GET_ND_PROXY_INFO;
+  p_ot_req->ID = MSG_M4TOM0_OT_BACKBONE_ROUTER_MULTICAST_LISTENER_GET_NEXT;
 
   p_ot_req->Size=2;
   p_ot_req->Data[0] = (uint32_t) aIterator;
   p_ot_req->Data[1] = (uint32_t) aListenerInfo;
 
   Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
 #endif
@@ -291,7 +305,7 @@ void otBackboneRouterMulticastListenerClear(otInstance *aInstance)
 
   p_ot_req->Size=0;
 
-  Ot_Cmd_Transfer();
+  Ot_Cmd_TransferWithNotif();
 }
 
 otError otBackboneRouterMulticastListenerAdd(otInstance *aInstance, const otIp6Address *aAddress, uint32_t aTimeout)
@@ -306,24 +320,12 @@ otError otBackboneRouterMulticastListenerAdd(otInstance *aInstance, const otIp6A
   p_ot_req->Data[0] = (uint32_t) aAddress;
   p_ot_req->Data[1] = (uint32_t) aTimeout;
 
-  Ot_Cmd_Transfer();
+  Ot_Cmd_TransferWithNotif();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
 #endif // OPENTHREAD_CONFIG_BACKBONE_ROUTER_MULTICAST_ROUTING_ENABLE
 #endif // OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
-
-void otBackboneRouterConfigSkipSeqNumIncrease(otInstance *aInstance, bool aSkip)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_BACKBONE_ROUTER_CONFIG_SKIP_SEQ_NUM_INCREASE;
-
-  p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t) aSkip;
-
-  Ot_Cmd_Transfer();
-}
 
 #endif // OPENTHREAD_FTD && OPENTHREAD_CONFIG_BACKBONE_ROUTER_ENABLE

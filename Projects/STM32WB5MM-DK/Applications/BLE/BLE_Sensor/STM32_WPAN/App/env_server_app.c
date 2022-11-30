@@ -61,7 +61,7 @@ typedef struct
  * @brief  Environmental Capabilities
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static ENV_Server_App_Context_t ENV_Server_App_Context;
+static ENV_Server_App_Context_t ENV_Server_App_Context;
 
 /* Global variables ----------------------------------------------------------*/
 extern int debug_trace_enabled;

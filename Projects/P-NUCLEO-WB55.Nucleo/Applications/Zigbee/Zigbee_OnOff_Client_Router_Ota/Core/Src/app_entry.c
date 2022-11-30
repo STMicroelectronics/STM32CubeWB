@@ -669,6 +669,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     break;
 
   case BUTTON_SW3_PIN:
+    UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW3,CFG_SCH_PRIO_1);
     break;
 
   default:

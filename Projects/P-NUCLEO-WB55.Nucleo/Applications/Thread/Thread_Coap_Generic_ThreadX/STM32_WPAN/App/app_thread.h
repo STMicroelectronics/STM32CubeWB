@@ -100,6 +100,28 @@ typedef enum
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
 
+// -- Previous defines --
+//#define SHCI_USER_EVT_PROCESS_PRIORITY  16u
+//#define MESSAGE_M0_TO_M4_PRIORITY       16u
+//#define COAP_CONFIRMABLE_PRIORITY       16u
+//#define COAP_NON_CONFIRMABLE_PRIORITY   16u
+//#define SEND_CLI_TO_M0_PRIORITY         16u
+
+
+// -- New priorities to do not have a loop in 'Wait_Getting_Ack_From_M0' --
+#define SHCI_USER_EVT_PROCESS_PRIORITY  6u
+#define MESSAGE_M0_TO_M4_PRIORITY       7u
+#define COAP_CONFIRMABLE_PRIORITY       5u
+#define COAP_NON_CONFIRMABLE_PRIORITY   5u
+#define SEND_CLI_TO_M0_PRIORITY         5u
+
+
+// -- Define the Level of LowPower --
+#define LOWPOWER_NONE               	0x00u
+#define LOWPOWER_SLEEPMODE          	0x01u
+#define LOWPOWER_STOPMODE           	0x02u
+#define LOWPOWER_OFFMODE            	0x03u
+
 /* USER CODE END EC */
 
 /* External variables --------------------------------------------------------*/
@@ -115,13 +137,21 @@ typedef enum
 /* Exported functions ------------------------------------------------------- */
 void APP_THREAD_Init(TX_BYTE_POOL* p_byte_pool);
 void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode);
+void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode);
 void APP_THREAD_RegisterCmdBuffer(TL_CmdPacket_t* p_buffer);
 void APP_THREAD_ProcessMsgM0ToM4(ULONG argument);
 void APP_THREAD_Init_UART_CLI(TX_BYTE_POOL* p_byte_pool);
 void APP_THREAD_TL_THREAD_INIT(void);
-void APP_THREAD_LaunchPushButtonTask(void);
-void APP_THREAD_ThreadX_Low_Power_Setup(ULONG tx_low_power_next_expiration);
-unsigned long APP_THREAD_Threadx_Low_Power_Adjust_Ticks(void);
+void APP_THREAD_SW1_Task(void);
+void APP_THREAD_SW2_Task(void);
+
+#ifdef TX_LOW_POWER
+void APP_THREAD_ThreadX_LowPowerEnable                  ( uint8_t cEnable );
+void APP_THREAD_ThreadX_EnterLowPower                   ( void );
+void APP_THREAD_ThreadX_ExitLowPower                    ( void );
+void APP_THREAD_ThreadX_Low_Power_Setup                 ( ULONG tx_low_power_next_expiration );
+unsigned long APP_THREAD_ThreadX_Low_Power_Adjust_Ticks ( void );
+#endif // TX_LOW_POWER
 
 /* USER CODE BEGIN EF */
 

@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -359,6 +358,11 @@
 
 /** Environment Change System delay in msec (range=0..5000)
   - The ECS will be started after this delay and when all sensors are in Release state.
+  - This setting establishes the periodic rate at which ECS() can be processed.
+  - This delay measurement is needed for the ECS() to start processing keys once all 
+    keys are in RELEASE state.
+  - Since user interaction with sensors is not synchronous to the time at which ECS() 
+    is measured, it may take up to 2 ECS() processes to continue processing objects again.
 */
 #define TSLPRM_ECS_DELAY (500)
 
@@ -424,6 +428,9 @@
     - 1: Input floating
 @note To ensure a correct operation in noisy environment, this parameter should
 be configured to output push-pull low (excepted for Linear sensors).
+Regarding Linear sensor,Input floating must be used only:
+    - if all channels can not be acquired simultaneosly
+      (Nb chanel > Nb availlable Groups)
 */
 #define TSLPRM_IODEF (0)
 
@@ -439,5 +446,3 @@ be configured to output push-pull low (excepted for Linear sensors).
 #include "tsl_acq_tsc.h" /* The TSC acquisition is used for this device. Do not change it! */
 
 #endif /* __TSL_CONF_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -10,19 +10,19 @@
       <TargetName>Thread_Coap_Generic</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
+      <pCCUsed>5050169::V5.05 update 2 (build 169)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32WB5MMGHx</Device>
+          <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32WBxx_DFP.1.2.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
-          <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) IRAM2(0x20030000-0x200327FF) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
+          <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
           <FlashDriverDll></FlashDriverDll>
-          <DeviceId>0</DeviceId>
+          <DeviceId></DeviceId>
           <RegisterFile></RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32WB5MMGHx$CMSIS\SVD\STM32WB55_CM4.svd</SFDFile>
+          <SFDFile>$$Device:STM32WB55RGVx$CMSIS\SVD\STM32WBxx_CM4.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -54,7 +54,7 @@
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>1</BrowseInformation>
+          <BrowseInformation>0</BrowseInformation>
           <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4101</DriverSelection>
+            <DriverSelection>4107</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>BIN\UL2V8M.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -186,7 +186,8 @@
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
-            <hadIRAM2>1</hadIRAM2>
+            <nBranchProt>0</nBranchProt>
+            <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>1</useUlib>
@@ -194,7 +195,7 @@
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>4</RwSelD>
+            <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -211,7 +212,7 @@
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
             <Im1Chk>1</Im1Chk>
-            <Im2Chk>1</Im2Chk>
+            <Im2Chk>0</Im2Chk>
             <OnChipMemories>
               <Ocm1>
                 <Type>0</Type>
@@ -305,8 +306,8 @@
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20030000</StartAddress>
-                <Size>0x2800</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -328,8 +329,8 @@
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>5</v6Lang>
-            <v6LangP>3</v6LangP>
+            <v6Lang>1</v6Lang>
+            <v6LangP>1</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -337,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_ftd.h&gt;,USE_HAL_DRIVER,STM32WB55xx,THREAD_WB</Define>
+              <Define>OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_ftd.h&gt;,USE_HAL_DRIVER,STM32WB5Mxx,THREAD_WB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/BSP/STM32WB5MM-DK;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Utilities/LCD;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/BSP/Components/Common;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/mbedtls</IncludePath>
+              <IncludePath>../Core/Inc;../STM32_WPAN/App;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/utilities;..\..\..\..\..\..\Utilities\LCD;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Drivers/CMSIS/Include;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform;../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include;..\..\..\..\..\..\Drivers\BSP\STM32WB5MM-DK;..\..\..\..\..\..\Drivers\BSP\Components\Common;..\..\..\..\..\..\Drivers\BSP\Components\ssd1315</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -367,14 +368,13 @@
             <noStLib>0</noStLib>
             <RepFail>1</RepFail>
             <useFile>0</useFile>
-            <TextAddressRange></TextAddressRange>
-            <DataAddressRange></DataAddressRange>
+            <TextAddressRange>0x08000000</TextAddressRange>
+            <DataAddressRange>0x20000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>stm32wb5mxx_flash_cm4.sct</ScatterFile>
+            <ScatterFile>.\stm32wb5mxx_flash_cm4.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--diag_suppress L6314W
---diag_suppress 1296</Misc>
+            <Misc></Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -387,7 +387,7 @@
             <File>
               <FileName>startup_stm32wb5mxx_cm4.s</FileName>
               <FileType>2</FileType>
-              <FilePath>startup_stm32wb5mxx_cm4.s</FilePath>
+              <FilePath>.\startup_stm32wb5mxx_cm4.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -395,9 +395,24 @@
           <GroupName>Application/User/Core</GroupName>
           <Files>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/main.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm_logging.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/stm_logging.c</FilePath>
+            </File>
+            <File>
               <FileName>app_entry.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/app_entry.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_lpm_if.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/stm32_lpm_if.c</FilePath>
             </File>
             <File>
               <FileName>hw_timerserver.c</FileName>
@@ -410,29 +425,14 @@
               <FilePath>../Core/Src/hw_uart.c</FilePath>
             </File>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/main.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32_lpm_if.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32_lpm_if.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32wbxx_hal_msp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/stm32wbxx_hal_msp.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32wbxx_it.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
             </File>
             <File>
-              <FileName>stm_logging.c</FileName>
+              <FileName>stm32wbxx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../Core/Src/stm_logging.c</FilePath>
+              <FilePath>../Core/Src/stm32wbxx_hal_msp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -457,47 +457,32 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Doc</GroupName>
-          <Files>
-            <File>
-              <FileName>readme.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>../readme.txt</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers/BSP/Component</GroupName>
-          <Files>
-            <File>
-              <FileName>ssd1315.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/BSP/Components/ssd1315/ssd1315.c</FilePath>
-            </File>
-            <File>
-              <FileName>ssd1315_reg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/BSP/Components/ssd1315/ssd1315_reg.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers/BSP/STM32WB5MM-DK</GroupName>
+          <GroupName>Drivers/BSP/ST32WB5MM-DK</GroupName>
           <Files>
             <File>
               <FileName>stm32wb5mm_dk.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk.c</FilePath>
+              <FilePath>..\..\..\..\..\..\Drivers\BSP\STM32WB5MM-DK\stm32wb5mm_dk.c</FilePath>
             </File>
             <File>
               <FileName>stm32wb5mm_dk_bus.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_bus.c</FilePath>
+              <FilePath>..\..\..\..\..\..\Drivers\BSP\STM32WB5MM-DK\stm32wb5mm_dk_bus.c</FilePath>
             </File>
             <File>
               <FileName>stm32wb5mm_dk_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/BSP/STM32WB5MM-DK/stm32wb5mm_dk_lcd.c</FilePath>
+              <FilePath>..\..\..\..\..\..\Drivers\BSP\STM32WB5MM-DK\stm32wb5mm_dk_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>ssd1315.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\BSP\Components\ssd1315\ssd1315.c</FilePath>
+            </File>
+            <File>
+              <FileName>ssd1315_reg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\BSP\Components\ssd1315\ssd1315_reg.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -560,9 +545,19 @@
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</FilePath>
             </File>
             <File>
+              <FileName>stm32wbxx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c_ex.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32wbxx_hal_ipcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</FilePath>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_ipcc.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_hal_pwr.c</FileName>
@@ -597,7 +592,7 @@
             <File>
               <FileName>stm32wbxx_hal_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_spi.c</FilePath>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_hal_tim.c</FileName>
@@ -619,30 +614,55 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</FilePath>
             </File>
-            <File>
-              <FileName>stm32wbxx_hal_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32wbxx_hal_i2c_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_i2c_ex.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Middlewares/STM32_WPAN</GroupName>
           <Files>
             <File>
-              <FileName>border_agent.c</FileName>
+              <FileName>shci_tl_if.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/border_agent.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</FilePath>
             </File>
             <File>
-              <FileName>border_router.c</FileName>
+              <FileName>tl_mbox.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/border_router.c</FilePath>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</FilePath>
+            </File>
+            <File>
+              <FileName>shci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c</FilePath>
+            </File>
+            <File>
+              <FileName>dbg_trace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</FilePath>
+            </File>
+            <File>
+              <FileName>otp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/otp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm_list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_list.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm_queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>tl_thread_hci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_thread_hci.c</FilePath>
+            </File>
+            <File>
+              <FileName>shci_tl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</FilePath>
             </File>
             <File>
               <FileName>channel_manager.c</FileName>
@@ -690,11 +710,6 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dataset_ftd.c</FilePath>
             </File>
             <File>
-              <FileName>dbg_trace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</FilePath>
-            </File>
-            <File>
               <FileName>diag.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/diag.c</FilePath>
@@ -703,16 +718,6 @@
               <FileName>dns.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/dns.c</FilePath>
-            </File>
-            <File>
-              <FileName>entropy.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/entropy.c</FilePath>
-            </File>
-            <File>
-              <FileName>errors.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/errors.c</FilePath>
             </File>
             <File>
               <FileName>icmp6.c</FileName>
@@ -750,11 +755,6 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/link_raw.c</FilePath>
             </File>
             <File>
-              <FileName>logging.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/logging.c</FilePath>
-            </File>
-            <File>
               <FileName>message.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/message.c</FilePath>
@@ -763,11 +763,6 @@
               <FileName>netdata.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/netdata.c</FilePath>
-            </File>
-            <File>
-              <FileName>network_time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/network_time.c</FilePath>
             </File>
             <File>
               <FileName>openthread.c</FileName>
@@ -780,59 +775,9 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/openthread_api_wb.c</FilePath>
             </File>
             <File>
-              <FileName>otp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/otp.c</FilePath>
-            </File>
-            <File>
-              <FileName>radio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/radio.c</FilePath>
-            </File>
-            <File>
-              <FileName>random_crypto.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/random_crypto.c</FilePath>
-            </File>
-            <File>
-              <FileName>random_noncrypto.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/random_noncrypto.c</FilePath>
-            </File>
-            <File>
               <FileName>server.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/server.c</FilePath>
-            </File>
-            <File>
-              <FileName>shci.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c</FilePath>
-            </File>
-            <File>
-              <FileName>shci_tl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</FilePath>
-            </File>
-            <File>
-              <FileName>shci_tl_if.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</FilePath>
-            </File>
-            <File>
-              <FileName>sntp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/sntp.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm_list.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_list.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm_queue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</FilePath>
             </File>
             <File>
               <FileName>tasklet.c</FileName>
@@ -850,19 +795,59 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/thread_ftd.c</FilePath>
             </File>
             <File>
-              <FileName>tl_mbox.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</FilePath>
-            </File>
-            <File>
-              <FileName>tl_thread_hci.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_thread_hci.c</FilePath>
-            </File>
-            <File>
               <FileName>udp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/udp.c</FilePath>
+            </File>
+            <File>
+              <FileName>radio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api/radio.c</FilePath>
+            </File>
+            <File>
+              <FileName>border_agent.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_agent.c</FilePath>
+            </File>
+            <File>
+              <FileName>border_router.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_router.c</FilePath>
+            </File>
+            <File>
+              <FileName>entropy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\entropy.c</FilePath>
+            </File>
+            <File>
+              <FileName>errors.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\errors.c</FilePath>
+            </File>
+            <File>
+              <FileName>logging.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\logging.c</FilePath>
+            </File>
+            <File>
+              <FileName>network_time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\network_time.c</FilePath>
+            </File>
+            <File>
+              <FileName>random_crypto.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\random_crypto.c</FilePath>
+            </File>
+            <File>
+              <FileName>random_noncrypto.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\random_noncrypto.c</FilePath>
+            </File>
+            <File>
+              <FileName>sntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\sntp.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -872,7 +857,7 @@
             <File>
               <FileName>stm32_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../../../../../Utilities/LCD/stm32_lcd.c</FilePath>
+              <FilePath>..\..\..\..\..\..\Utilities\LCD\stm32_lcd.c</FilePath>
             </File>
             <File>
               <FileName>stm32_lpm.c</FileName>
@@ -909,13 +894,7 @@
   <LayerInfo>
     <Layers>
       <Layer>
-        <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc></LayDesc>
-        <LayUrl></LayUrl>
-        <LayKeys></LayKeys>
-        <LayCat></LayCat>
-        <LayLic></LayLic>
-        <LayTarg>0</LayTarg>
+        <LayName>Thread_Coap_Generic</LayName>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
     </Layers>

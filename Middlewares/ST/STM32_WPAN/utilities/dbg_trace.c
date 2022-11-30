@@ -301,7 +301,7 @@ size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize)
   return ( chars_written );
 }
 
-#if   defined ( __CC_ARM )     /* Keil */
+#if defined ( __CC_ARM ) || defined (__ARMCC_VERSION) /* Keil */
 
 /**
   Called from assert() and prints a message on stderr and calls abort().

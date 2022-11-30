@@ -75,7 +75,7 @@ uint8_t SizeHrs_Ctrlp = 1;
 /**
  * START of Section BLE_DRIVER_CONTEXT
  */
-PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static CustomContext_t CustomContext;
+static CustomContext_t CustomContext;
 
 /**
  * END of Section BLE_DRIVER_CONTEXT

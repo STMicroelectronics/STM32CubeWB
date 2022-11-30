@@ -34,7 +34,15 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#ifdef  USE_STM32WBXX_NUCLEO
+#include "stm32wbxx_nucleo.h"
+#endif
+#ifdef  USE_X_NUCLEO_EPD
+#include "x_nucleo_epd.h"
+#endif
+#ifdef USE_STM32WB5M_DK
+#include "stm32wb5mm_dk.h"
+#endif
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -54,14 +62,18 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
+void MX_LPUART1_UART_Init(void);
+void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-void   MX_LPUART1_UART_Init(void);
-void   MX_USART1_UART_Init(void);
+#define VCP_RX_Pin GPIO_PIN_7
+#define VCP_RX_GPIO_Port GPIOB
+#define VCP_TX_Pin GPIO_PIN_6
+#define VCP_TX_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

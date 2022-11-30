@@ -1067,7 +1067,7 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
-            </file>            
+            </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
             </file>

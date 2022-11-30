@@ -1,0 +1,8 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\B-WB1M-WPAN1;..\..\..\..\..\..\Drivers\BSP\Components\ism330dhcx;..\..\..\..\..\..\Drivers\BSP\Components\stts22h;..\..\..\..\..\..\Drivers\BSP\Components\Common;
+[Others]
+Define=USE_STM32WB1M
+[Groups]
+Drivers/BSP/B-WB1M-WPAN1=../../../../../../Drivers/BSP/B-WB1M-WPAN1/b_wb1m_wpan1.c;../../../../../../Drivers/BSP/B-WB1M-WPAN1/b_wb1m_wpan1_bus.c;../../../../../../Drivers/BSP/B-WB1M-WPAN1/b_wb1m_wpan1_eeprom.c;../../../../../../Drivers/BSP/B-WB1M-WPAN1/b_wb1m_wpan1_env_sensors.c;../../../../../../Drivers/BSP/B-WB1M-WPAN1/b_wb1m_wpan1_env_sensors_ex.c;../../../../../../Drivers/BSP/B-WB1M-WPAN1/b_wb1m_wpan1_motion_sensors.c;../../../../../../Drivers/BSP/B-WB1M-WPAN1/b_wb1m_wpan1_motion_sensors_ex.c;
+Drivers/BSP/Components=../../../../../../Drivers/BSP/Components/ism330dhcx/ism330dhcx.c;../../../../../../Drivers/BSP/Components/ism330dhcx/ism330dhcx_reg.c;../../../../../../Drivers/BSP/Components/stts22h/stts22h.c;../../../../../../Drivers/BSP/Components/stts22h/stts22h_reg.c;
+Doc=../readme.txt;

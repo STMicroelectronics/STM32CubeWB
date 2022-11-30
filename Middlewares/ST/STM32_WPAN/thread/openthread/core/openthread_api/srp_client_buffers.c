@@ -182,7 +182,7 @@ const char **otSrpClientBuffersGetSubTypeLabelsArray(otSrpClientBuffersServiceEn
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char **)p_ot_req->Data[0];
+  return (const char **)p_ot_req->Data[0];
 }
 
 #endif // OPENTHREAD_CONFIG_SRP_CLIENT_BUFFERS_ENABLE

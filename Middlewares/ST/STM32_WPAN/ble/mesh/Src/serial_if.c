@@ -223,8 +223,14 @@ static int Serial_GetString(MOBLEUINT8* text, MOBLEUINT8 size)
     if (index_str > 0)
     {
       --index_str;
+      text[index_str] = 0x00;
     }
     TRACE_I(TF_SERIAL_CTRL,"\b");
+    fflush(stdout);
+    TRACE_I(TF_SERIAL_CTRL," ");
+    fflush(stdout);
+    TRACE_I(TF_SERIAL_CTRL,"\b");
+    fflush(stdout);
   }
   /* Check for the enter key*/
   else if ((ch == 0x0D) || (ch == 0xFFFFFF0D))
@@ -240,11 +246,13 @@ static int Serial_GetString(MOBLEUINT8* text, MOBLEUINT8 size)
     }
     index_str = 0;
     TRACE_I(TF_SERIAL_CTRL,"\n\r");
+    fflush(stdout);
  //   return stringSize;    
   }
   else
   {
     TRACE_I(TF_SERIAL_CTRL,"%c", ch);
+    fflush(stdout);
     if (index_str < size)
     {
       /* check if lowercase and convert it to upper case */

@@ -348,7 +348,6 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Device\ST\STM32WBxx\Include</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Inc</state>
-                    
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities</state>
@@ -1049,13 +1048,16 @@
         <group>
             <name>Core</name>
             <file>
-                <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\hw_uart.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Core\Src\main.c</name>

@@ -89,14 +89,16 @@ typedef __PACKED_STRUCT
    * begins the subsequent scan on the primary advertising physical channel.
    * Time = N * 0.625 ms.
    * Values:
-   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+   * - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : STM32WB
+   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : STM32WBA
    */
   uint16_t Scan_Interval;
   /**
    * Duration of the scan on the primary advertising physical channel.
    * Time = N * 0.625 ms.
    * Values:
-   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+   * - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : STM32WB
+   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : STM32WBA
    */
   uint16_t Scan_Window;
 } Scan_Param_Phy_t;
@@ -109,14 +111,16 @@ typedef __PACKED_STRUCT
    * begins the subsequent scan on the primary advertising physical channel.
    * Time = N * 0.625 ms.
    * Values:
-   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+   * - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : STM32WB
+   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : STM32WBA
    */
   uint16_t Scan_Interval;
   /**
    * Duration of the scan on the primary advertising physical channel.
    * Time = N * 0.625 ms.
    * Values:
-   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms)
+   * - 0x0004 (2.500 ms)  ... 0x5DC0 (15000.000 ms) : STM32WB
+   * - 0x0004 (2.500 ms)  ... 0xFFFF (40959.375 ms) : STM32WBA
    */
   uint16_t Scan_Window;
   /**
@@ -300,7 +304,7 @@ typedef __PACKED_UNION
 typedef __PACKED_STRUCT
 {
   /**
-   * The handles for which the attribute value has to be read
+   * Attribute handle
    */
   uint16_t Handle;
 } Handle_Entry_t;
@@ -1371,6 +1375,12 @@ typedef __PACKED_STRUCT
 {
   uint8_t Status;
 } aci_hal_set_slave_latency_rp0;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t Status;
+  uint8_t RSSI;
+} aci_hal_read_rssi_rp0;
 
 typedef __PACKED_STRUCT
 {
@@ -2696,6 +2706,30 @@ typedef __PACKED_STRUCT
 typedef __PACKED_STRUCT
 {
   uint16_t Connection_Handle;
+  uint8_t Number_of_Handles;
+  Handle_Entry_t Handle_Entry[(BLE_CMD_MAX_PARAM_LEN - 3)/sizeof(Handle_Entry_t)];
+} aci_gatt_send_mult_notification_cp0;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t Status;
+} aci_gatt_send_mult_notification_rp0;
+
+typedef __PACKED_STRUCT
+{
+  uint16_t Connection_Handle;
+  uint8_t Number_of_Handles;
+  Handle_Entry_t Handle_Entry[(BLE_CMD_MAX_PARAM_LEN - 3)/sizeof(Handle_Entry_t)];
+} aci_gatt_read_multiple_var_char_value_cp0;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t Status;
+} aci_gatt_read_multiple_var_char_value_rp0;
+
+typedef __PACKED_STRUCT
+{
+  uint16_t Connection_Handle;
   uint16_t Conn_Interval_Min;
   uint16_t Conn_Interval_Max;
   uint16_t Slave_latency;
@@ -3302,6 +3336,21 @@ typedef __PACKED_STRUCT
   uint8_t Data_Length;
   uint8_t Data[(BLE_EVT_MAX_PARAM_LEN - 2) - 7];
 } aci_gatt_prepare_write_permit_req_event_rp0;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t Channel_Index;
+  uint8_t EAB_State;
+  uint8_t Status;
+} aci_gatt_eatt_bearer_event_rp0;
+
+typedef __PACKED_STRUCT
+{
+  uint16_t Connection_Handle;
+  uint16_t Offset;
+  uint16_t Data_Length;
+  uint8_t Data[(BLE_EVT_MAX_PARAM_LEN - 2) - 6];
+} aci_gatt_mult_notification_event_rp0;
 
 typedef __PACKED_STRUCT
 {

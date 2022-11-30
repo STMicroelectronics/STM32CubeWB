@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_conf.h
-  * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_conf.h
+  * @author  MCD Application Team
+  * @brief   Application configuration file for STM32WPAN Middleware.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -66,13 +66,13 @@
 /**
  * Define IO capabilities
  */
-#define CFG_IO_CAPABILITY_DISPLAY_ONLY       (0x00)
-#define CFG_IO_CAPABILITY_DISPLAY_YES_NO     (0x01)
-#define CFG_IO_CAPABILITY_KEYBOARD_ONLY      (0x02)
-#define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT (0x03)
-#define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY   (0x04)
+#define CFG_IO_CAPABILITY_DISPLAY_ONLY        (0x00)
+#define CFG_IO_CAPABILITY_DISPLAY_YES_NO      (0x01)
+#define CFG_IO_CAPABILITY_KEYBOARD_ONLY       (0x02)
+#define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT  (0x03)
+#define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY    (0x04)
 
-#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_DISPLAY_YES_NO
+#define CFG_IO_CAPABILITY                     CFG_IO_CAPABILITY_DISPLAY_YES_NO
 
 /**
  * Define MITM modes
@@ -80,24 +80,24 @@
 #define CFG_MITM_PROTECTION_NOT_REQUIRED      (0x00)
 #define CFG_MITM_PROTECTION_REQUIRED          (0x01)
 
-#define CFG_MITM_PROTECTION             CFG_MITM_PROTECTION_REQUIRED
+#define CFG_MITM_PROTECTION                   CFG_MITM_PROTECTION_REQUIRED
 
 /**
  * Define Secure Connections Support
  */
-#define CFG_SECURE_NOT_SUPPORTED       (0x00)
-#define CFG_SECURE_OPTIONAL            (0x01)
-#define CFG_SECURE_MANDATORY           (0x02)
+#define CFG_SECURE_NOT_SUPPORTED              (0x00)
+#define CFG_SECURE_OPTIONAL                   (0x01)
+#define CFG_SECURE_MANDATORY                  (0x02)
 
-#define CFG_SC_SUPPORT                 CFG_SECURE_OPTIONAL
+#define CFG_SC_SUPPORT                        CFG_SECURE_OPTIONAL
 
 /**
  * Define Keypress Notification Support
  */
-#define CFG_KEYPRESS_NOT_SUPPORTED      (0x00)
-#define CFG_KEYPRESS_SUPPORTED          (0x01)
+#define CFG_KEYPRESS_NOT_SUPPORTED            (0x00)
+#define CFG_KEYPRESS_SUPPORTED                (0x01)
 
-#define CFG_KEYPRESS_NOTIFICATION_SUPPORT             CFG_KEYPRESS_NOT_SUPPORTED
+#define CFG_KEYPRESS_NOTIFICATION_SUPPORT     CFG_KEYPRESS_NOT_SUPPORTED
 
 /**
  * Numeric Comparison Answers
@@ -143,10 +143,9 @@
  * SMPS not used when Set to 0
  * SMPS used when Set to 1
  */
-#define CFG_USE_SMPS    1
+#define CFG_USE_SMPS    0
 
 /* USER CODE BEGIN Generic_Parameters */
-
 /* USER CODE END Generic_Parameters */
 
 /**< specific parameters */
@@ -288,12 +287,13 @@
  * LsSource
  * Some information for Low speed clock mapped in bits field
  * - bit 0:   1: Calibration for the RF system wakeup clock source   0: No calibration for the RF system wakeup clock source
- * - bit 1:   1: STM32W5M Module device                              0: Other devices as STM32WBxx SOC, STM32WB1M module
+ * - bit 1:   1: STM32WB5M Module device                             0: Other devices as STM32WBxx SOC, STM32WB1M module
+ * - bit 2:   1: HSE/1024 Clock config                               0: LSE Clock config   
  */
 #if defined(STM32WB5Mxx)
-  #define CFG_BLE_LSE_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LSE_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LSE_MOD5MM_DEV)
+  #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_MOD5MM_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_LSE)
 #else
-  #define CFG_BLE_LSE_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LSE_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LSE_OTHER_DEV)
+  #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_OTHER_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_LSE)
 #endif
 
 /**
@@ -325,8 +325,16 @@
  * - SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV
  * - SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2
  * - SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2
+ * - SHCI_C2_BLE_INIT_OPTIONS_REDUC_GATTDB_NVM 
+ * - SHCI_C2_BLE_INIT_OPTIONS_FULL_GATTDB_NVM
+ * - SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_USED
+ * - SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED
  * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
  * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3
+ * - SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_WRITABLE
+ * - SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY
+ * - SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_SUPPORTED
+ * - SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED
  * which are used to set following configuration bits:
  * (bit 0): 1: LL only
  *          0: LL + host
@@ -334,65 +342,81 @@
  *          0: with service change desc.
  * (bit 2): 1: device name Read-Only
  *          0: device name R/W
- * (bit 3): 1: extended advertizing supported       
- *          0: extended advertizing not supported   
+ * (bit 3): 1: extended advertizing supported
+ *          0: extended advertizing not supported
  * (bit 4): 1: CS Algo #2 supported
  *          0: CS Algo #2 not supported
+ * (bit 5): 1: Reduced GATT database in NVM 
+ *          0: Full GATT database in NVM 
+ * (bit 6): 1: GATT caching is used
+ *          0: GATT caching is not used
  * (bit 7): 1: LE Power Class 1
  *          0: LE Power Class 2-3
+ * (bit 8): 1: appearance Writable
+ *          0: appearance Read-Only
+ * (bit 9): 1: Enhanced ATT supported
+ *          0: Enhanced ATT not supported 
  * other bits: reserved (shall be set to 0)
  */
-#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV | SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2 | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
+#define CFG_BLE_OPTIONS  ( SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV | SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2 |\
+                           SHCI_C2_BLE_INIT_OPTIONS_FULL_GATTDB_NVM | SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 | SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY | SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED )
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 
-#define CFG_BLE_MIN_TX_POWER            (-40) 
+#define CFG_BLE_MIN_TX_POWER            (-40)
 
-#define CFG_BLE_MAX_TX_POWER            (6) 
-
+#define CFG_BLE_MAX_TX_POWER            (6)
 
 /**
  * BLE Rx model configuration flags to be configured with:
  * - SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
- * - SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_BLOCKER 
-* which are used to set following configuration bits:
+ * - SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_BLOCKER
+ * which are used to set following configuration bits:
  * (bit 0): 1: agc_rssi model improved vs RF blockers
  *          0: Legacy agc_rssi model
  * other bits: reserved (shall be set to 0)
  */
 
-#define CFG_BLE_RX_MODEL_CONFIG         SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
+#define CFG_BLE_RX_MODEL_CONFIG         (SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY)
 
 /* Maximum number of advertising sets.
  * Range: 1 .. 8 with limitation:
- * This parameter is linked to CFG_BLE_MAX_ADV_DATA_LEN such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
+ * This parameter is linked to CFG_BLE_MAX_ADV_DATA_LEN such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based
  * on Max Extended advertising configuration supported.
  * This parameter is considered by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
- */   
+ */
 
 #define CFG_BLE_MAX_ADV_SET_NBR     (3)
 
  /* Maximum advertising data length (in bytes)
  * Range: 31 .. 1650 with limitation:
- * This parameter is linked to CFG_BLE_MAX_ADV_SET_NBR such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
+ * This parameter is linked to CFG_BLE_MAX_ADV_SET_NBR such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based
  * on Max Extended advertising configuration supported.
  * This parameter is considered by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
- */ 
- 
-#define CFG_BLE_MAX_ADV_DATA_LEN    (1650) 
- 
+ */
+
+#define CFG_BLE_MAX_ADV_DATA_LEN    (1650)
+
  /* RF TX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
   * Range: -1280 .. 1280
   */
 
-#define CFG_BLE_TX_PATH_COMPENS    (0) 
+#define CFG_BLE_TX_PATH_COMPENS    (0)
 
  /* RF RX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
   * Range: -1280 .. 1280
   */
 
-#define CFG_BLE_RX_PATH_COMPENS    (0) 
-  
+#define CFG_BLE_RX_PATH_COMPENS    (0)
+
+  /* BLE core version (16-bit signed integer). 
+   * - SHCI_C2_BLE_INIT_BLE_CORE_5_2
+   * - SHCI_C2_BLE_INIT_BLE_CORE_5_3
+   * which are used to set: 11(5.2), 12(5.3).
+   */
+   
+#define CFG_BLE_CORE_VERSION   (SHCI_C2_BLE_INIT_BLE_CORE_5_3)
+
 
 /******************************************************************************
  * Transport Layer
@@ -430,8 +454,8 @@
 /**
  * Select UART interfaces
  */
-#define CFG_DEBUG_TRACE_UART    0
-#define CFG_CONSOLE_MENU      hw_uart1
+#define CFG_DEBUG_TRACE_UART    hw_uart1
+#define CFG_CONSOLE_MENU        0
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -500,10 +524,10 @@
  * It divides the RTC CLK by 16
  */
 
-#define CFG_RTCCLK_DIV  (16)
-#define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (0x0F)
-#define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
+#define CFG_RTCCLK_DIV            (16)
+#define CFG_RTC_WUCKSEL_DIVIDER   (0)
+#define CFG_RTC_ASYNCH_PRESCALER  (0x0F)
+#define CFG_RTC_SYNCH_PRESCALER   (0x7FFF)
 
 #else
 
@@ -541,8 +565,9 @@
 
 #endif
 
-/** tick timer value in us */
+/** tick timer values */
 #define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE )
+#define CFG_TS_TICK_VAL_PS        DIVR( ((uint64_t)CFG_RTCCLK_DIV * 1e12), (uint64_t)LSE_VALUE )
 
 typedef enum
 {
@@ -568,7 +593,7 @@ typedef enum
  * keep debugger enabled while in any low power mode when set to 1
  * should be set to 0 in production
  */
-#define CFG_DEBUGGER_SUPPORTED    1 //0
+#define CFG_DEBUGGER_SUPPORTED    1
 
 /**
  * When set to 1, the traces are enabled in the BLE services
@@ -593,7 +618,7 @@ typedef enum
 #if (CFG_DEBUG_TRACE != 0)
 #undef CFG_LPM_SUPPORTED
 #undef CFG_DEBUGGER_SUPPORTED
-#define CFG_LPM_SUPPORTED         0
+#define CFG_LPM_SUPPORTED           0
 #define CFG_DEBUGGER_SUPPORTED      1
 #endif
 
@@ -604,7 +629,7 @@ typedef enum
  * When both are set to 0, no trace are output
  * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
  */
-#define CFG_DEBUG_TRACE_LIGHT     0
+#define CFG_DEBUG_TRACE_LIGHT     1
 #define CFG_DEBUG_TRACE_FULL      0
 
 #if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
@@ -631,7 +656,7 @@ typedef enum
  * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
  */
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
-#define MAX_DBG_TRACE_MSG_SIZE 1024
+#define MAX_DBG_TRACE_MSG_SIZE   1024
 
 /* USER CODE BEGIN Defines */
 #define CFG_LED_SUPPORTED         0
@@ -652,44 +677,45 @@ typedef enum
 /**< Add in that list all tasks that may send a ACI/HCI command */
 typedef enum
 {
-    CFG_TASK_ADV_UPDATE_ID,
-    CFG_TASK_MEAS_REQ_ID,
-    CFG_TASK_ADV_CANCEL_ID,
+  CFG_TASK_ADV_UPDATE_ID,
+  CFG_TASK_MEAS_REQ_ID,
+  CFG_TASK_ADV_CANCEL_ID,
 #if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
-    CFG_TASK_CONN_UPDATE_REG_ID,
+  CFG_TASK_CONN_UPDATE_REG_ID,
 #endif
-    CFG_TASK_HCI_ASYNCH_EVT_ID,
+  CFG_TASK_HCI_ASYNCH_EVT_ID,
 /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
-    CFG_TASK_SW1_BUTTON_PUSHED_ID,
-    CFG_TASK_MANAGE_START_STOP_ADV_ID,
-    CFG_TASK_MANAGE_INIT_ID,
-    CFG_TASK_MANAGE_SERVICE_INIT_ID,
-    CFG_TASK_MANAGE_CUSTOM_SERVICE_INIT_ID,
-    CFG_TASK_MANAGE_CHARAC_INIT_ID,
-    CFG_TASK_MANAGE_SLAVE_SECUTITY_REQ_ID,
-    CFG_TASK_PAIRING_CONFIRM_ID,
-    CFG_TASK_PASS_KEY_RESP_ID,
-    CFG_TASK_IO_CAPA_ID,
-    CFG_TASK_SET_AUTHEN_REQ_ID,
-    CFG_TASK_CLEAR_DB_ID,
-    CFG_TASK_HCIRESET_ID,
-    CFG_TASK_MANAGE_CONN_PARAM_ID,
-    CFG_TASK_UPDATE_CHAR_ID,
-    CFG_TASK_INDICATION_UPDATE_CHAR_ID,
+  CFG_TASK_SW1_BUTTON_PUSHED_ID,
+  CFG_TASK_MANAGE_START_STOP_ADV_ID,
+  CFG_TASK_MANAGE_INIT_ID,
+  CFG_TASK_MANAGE_SERVICE_INIT_ID,
+  CFG_TASK_MANAGE_CUSTOM_SERVICE_INIT_ID,
+  CFG_TASK_MANAGE_CHARAC_INIT_ID,
+  CFG_TASK_MANAGE_SLAVE_SECUTITY_REQ_ID,
+  CFG_TASK_PAIRING_CONFIRM_ID,
+  CFG_TASK_PASS_KEY_RESP_ID,
+  CFG_TASK_IO_CAPA_ID,
+  CFG_TASK_SET_AUTHEN_REQ_ID,
+  CFG_TASK_CLEAR_DB_ID,
+  CFG_TASK_HCIRESET_ID,
+  CFG_TASK_MANAGE_CONN_PARAM_ID,
+  CFG_TASK_UPDATE_CHAR_ID,
+  CFG_TASK_INDICATION_UPDATE_CHAR_ID,
 /* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
-    CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
+  CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;
 
 /**< Add in that list all tasks that never send a ACI/HCI command */
 typedef enum
 {
-    CFG_FIRST_TASK_ID_WITH_NO_HCICMD = CFG_LAST_TASK_ID_WITH_HCICMD - 1,        /**< Shall be FIRST in the list */
-    CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
-/* USER CODE BEGIN CFG_Task_Id_With_NO_HCI_Cmd_t */
+  CFG_FIRST_TASK_ID_WITH_NO_HCICMD = CFG_LAST_TASK_ID_WITH_HCICMD - 1,        /**< Shall be FIRST in the list */
+  CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID,
+  /* USER CODE BEGIN CFG_Task_Id_With_NO_HCI_Cmd_t */
 
-/* USER CODE END CFG_Task_Id_With_NO_HCI_Cmd_t */
-    CFG_LAST_TASK_ID_WITH_NO_HCICMD                                            /**< Shall be LAST in the list */
+  /* USER CODE END CFG_Task_Id_With_NO_HCI_Cmd_t */
+  CFG_LAST_TASK_ID_WITH_NO_HCICMD                                            /**< Shall be LAST in the list */
 } CFG_Task_Id_With_NO_HCI_Cmd_t;
+
 #define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITH_NO_HCICMD
 
 /**
@@ -698,8 +724,10 @@ typedef enum
  */
 typedef enum
 {
-    CFG_SCH_PRIO_0,
-    CFG_PRIO_NBR,
+  CFG_SCH_PRIO_0,
+  /* USER CODE BEGIN CFG_SCH_Prio_Id_t */
+
+  /* USER CODE END CFG_SCH_Prio_Id_t */
 } CFG_SCH_Prio_Id_t;
 
 /**
@@ -707,8 +735,11 @@ typedef enum
  */
 typedef enum
 {
-    CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID,
-    CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID,
+  CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID,
+  CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID,
+  /* USER CODE BEGIN CFG_IdleEvt_Id_t */
+
+  /* USER CODE END CFG_IdleEvt_Id_t */
 } CFG_IdleEvt_Id_t;
 
 /******************************************************************************
@@ -720,8 +751,8 @@ typedef enum
  */
 typedef enum
 {
-    CFG_LPM_APP,
-    CFG_LPM_APP_BLE,
+  CFG_LPM_APP,
+  CFG_LPM_APP_BLE,
   /* USER CODE BEGIN CFG_LPM_Id_t */
 
   /* USER CODE END CFG_LPM_Id_t */
@@ -734,5 +765,5 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
-#endif /* APP_CONF_H */
+#endif /*APP_CONF_H */
 

@@ -395,7 +395,6 @@ void FPU_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
 /**
   * @brief  This function handles External External line 0 interrupt request.
   * @param  None
@@ -425,6 +424,5 @@ void EXTI4_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW1_PIN);
 }
-
 /* USER CODE END 1 */
 

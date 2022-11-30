@@ -122,7 +122,7 @@ static void RxCpltCallback(void);
 /* USER CODE BEGIN PFP */
 static otError UdpBind(uint16_t aPort);
 static void HandleUdpReceive(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo);
-static void APP_THREAD_UdpSend(void);
+static void APP_THREAD_SW1_Process(void); /* UdpSend */
 static otError UdpSend(void);
 /* USER CODE END PFP */
 
@@ -202,7 +202,9 @@ void APP_THREAD_Init( void )
   UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
 
   /* USER CODE BEGIN INIT TASKS */
-  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_UDP_SEND, UTIL_SEQ_RFU, APP_THREAD_UdpSend);
+  /* Task associated with push button SW1 */
+  UTIL_SEQ_RegTask( 1U << CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_THREAD_SW1_Process);
+
   /* USER CODE END INIT TASKS */
 
   /* Initialize and configure the Thread device*/
@@ -414,7 +416,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
       if (child_notif == 0)
       {
         HAL_Delay(3000U);
-        UTIL_SEQ_SetTask(TASK_UDP_SEND, CFG_SCH_PRIO_1);
+        
       }
       child_notif = 1U;
       /* USER CODE END OT_DEVICE_ROLE_CHILD */
@@ -565,12 +567,12 @@ static void HandleUdpReceive(void *aContext, otMessage *aMessage, const otMessag
 }
 
 /**
- * @brief This function initiates the APP_THREAD_UdpSend procedure
+ * @brief This function initiates after pushing SW1 the UdpSend procedure
  *
  * @param None
  * @retval None
  */
-static void APP_THREAD_UdpSend(void)
+static void APP_THREAD_SW1_Process(void)
 {
   HAL_Delay(1000U);
 

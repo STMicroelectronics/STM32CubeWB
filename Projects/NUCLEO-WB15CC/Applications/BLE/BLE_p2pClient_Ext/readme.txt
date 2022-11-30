@@ -1,5 +1,5 @@
 /**
-  @page BLE_p2pClient Extended Application
+  @page BLE_p2pClient_Ext Extended Application
 
   @verbatim
   ******************************************************************************

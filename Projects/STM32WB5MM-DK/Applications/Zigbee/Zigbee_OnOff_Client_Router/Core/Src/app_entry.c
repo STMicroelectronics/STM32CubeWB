@@ -22,18 +22,18 @@
 #include "main.h"
 #include "app_entry.h"
 #include "app_zigbee.h"
-#include "app_conf.h"
-#include "hw_conf.h"
 #include "stm32_seq.h"
-#include "stm_logging.h"
 #include "shci_tl.h"
 #include "stm32_lpm.h"
+#include "app_debug.h"
 #include "dbg_trace.h"
 #include "shci.h"
+#include "otp.h"
+#include "stlogo.h"
+#include "stm_logging.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,6 +47,8 @@ extern RTC_HandleTypeDef hrtc;
 #define POOL_SIZE (CFG_TL_EVT_QUEUE_LENGTH * 4U * DIVC(( sizeof(TL_PacketHeader_t) + TL_EVENT_FRAME_SIZE ), 4U))
 
 /* USER CODE BEGIN PD */
+aPwmLedGsData_TypeDef aPwmLedGsData;
+uint32_t LCD_Inst;
 
 /* USER CODE END PD */
 
@@ -74,6 +76,13 @@ size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
 /* USER CODE END GFP */
 
 /* Private functions prototypes-----------------------------------------------*/
+static void Config_HSE(void);
+static void Reset_Device( void );
+#if (CFG_HW_RESET_BY_FW == 1)
+static void Reset_IPCC(void);
+static void Reset_BackupDomain(void);
+#endif /* CFG_HW_RESET_BY_FW == 1*/
+static void System_Init(void);
 static void SystemPower_Config( void );
 static void Init_Debug( void );
 static void appe_Tl_Init( void );
@@ -81,53 +90,57 @@ static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
 static void APPE_SysEvtReadyProcessing( void );
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
-
-#if (CFG_HW_LPUART1_ENABLED == 1)
-extern void MX_LPUART1_UART_Init(void);
-#endif
-#if (CFG_HW_USART1_ENABLED == 1)
-extern void MX_USART1_UART_Init(void);
-#endif
+static void Init_Rtc(void);
 
 /* USER CODE BEGIN PFP */
 static void Led_Init(void);
 static void Button_Init(void);
+static void LCD_DisplayInit(void);
 
 /* Section specific to button management using UART */
-static void RxUART_Init(void);
-static void RxCpltCallback(void);
-static void UartCmdExecute(void);
-
 #define C_SIZE_CMD_STRING       256U
 #define RX_BUFFER_SIZE          8U
 
-static uint8_t aRxBuffer[RX_BUFFER_SIZE];
-static uint8_t CommandString[C_SIZE_CMD_STRING];
-static uint16_t indexReceiveChar = 0;
-EXTI_HandleTypeDef exti_handle;
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
-void APPE_Init( void )
+void MX_APPE_Config( void )
 {
+  /**
+   * The OPTVERR flag is wrongly set at power on
+   * It shall be cleared before using any HAL_FLASH_xxx() api
+   */
+  __HAL_FLASH_CLEAR_FLAG( FLASH_FLAG_OPTVERR );
+
+  /**
+   * Reset some configurations so that the system behave in the same way
+   * when either out of nReset or Power On
+   */
+  Reset_Device( );
+
+  /* Configure HSE Tuning */
+  Config_HSE();
+
+  return;
+}
+
+void MX_APPE_Init( void )
+{
+  System_Init( );       /**< System initialization */
+
   SystemPower_Config(); /**< Configure the system Power Mode */
 
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
-/* USER CODE BEGIN APPE_Init_1 */
-    Init_Debug();
-    /**
-     * The Standby mode should not be entered before the initialization is over
-     * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
-     */
-   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
-   Led_Init();
-   Button_Init();
-   RxUART_Init();
+/* USER CODE BEGIN MX_APPE_Init_1 */
+  Init_Debug();
+  
+  LCD_DisplayInit();
 
- APP_ZIGBEE_LCD_DisplayInit();
- 
-/* USER CODE END APPE_Init_1 */
+  Led_Init();
+  //Initialize user buttons
+  Button_Init();
+/* USER CODE END MX_APPE_Init_1 */
   appe_Tl_Init();	/* Initialize all transport layers */
 
   /**
@@ -135,12 +148,105 @@ void APPE_Init( void )
    * received on the system channel before starting the Stack
    * This system event is received with APPE_SysUserEvtRx()
    */
-/* USER CODE BEGIN APPE_Init_2 */
+/* USER CODE BEGIN MX_APPE_Init_2 */
 
-/* USER CODE END APPE_Init_2 */
+/* USER CODE END MX_APPE_Init_2 */
    return;
 }
+
+void Init_Smps(void)
+{
+#if (CFG_USE_SMPS != 0)
+  /**
+   *  Configure and enable SMPS
+   *
+   *  The SMPS configuration is not yet supported by CubeMx
+   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
+   *  the SMPS output voltage shall be increased for higher RF output power
+   */
+  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
+  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
+  LL_PWR_SMPS_Enable();
+#endif /* CFG_USE_SMPS != 0 */
+
+  return;
+}
+
+void Init_Exti(void)
+{
+  /* Enable IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
+  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_36 | LL_EXTI_LINE_38);
+
+  return;
+}
+
 /* USER CODE BEGIN FD */
+/**
+ * @brief  LED Deinitialisation to avoid conflict with LCD display
+ * @param  None
+ * @retval None
+ */
+void LED_Deinit(void)
+{
+  GPIO_InitTypeDef  GPIO_InitStructure = {0};
+  
+  /* RGB Led de-init */
+  BSP_PWM_LED_DeInit();
+ 
+  /* configure SPIx MOSI for LCD */
+  GPIO_InitStructure.Pin       = BUS_SPI1_MOSI_PIN;
+  GPIO_InitStructure.Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStructure.Pull      = GPIO_PULLDOWN;
+  GPIO_InitStructure.Speed     = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStructure.Alternate = BUS_SPI1_AF;
+  HAL_GPIO_Init(BUS_SPI1_GPIO_PORTA, &GPIO_InitStructure);
+}
+
+/**
+ * @brief  Wrapper for RGB LED on to avoid conflict with LCD Display
+ * @param  None
+ * @retval None
+ */
+void LED_On(void)
+{
+  aPwmLedGsData_TypeDef aPwmLedGsData;
+
+  BSP_PWM_LED_Init();
+  aPwmLedGsData[PWM_LED_RED] = PWM_LED_GSDATA_99_9;
+  aPwmLedGsData[PWM_LED_GREEN] = PWM_LED_GSDATA_99_9;
+  aPwmLedGsData[PWM_LED_BLUE] = PWM_LED_GSDATA_99_9;
+  BSP_PWM_LED_On(aPwmLedGsData);
+  LED_Deinit();
+}
+
+/**
+ * @brief  Wrapper for RGB LED off to avoid conflict with LCD Display
+ * @param  None
+ * @retval None
+ */
+void LED_Off(void)
+{
+  BSP_PWM_LED_Init();
+  BSP_PWM_LED_Off();
+  LED_Deinit();
+}
+
+/**
+ * @brief  Wrapper to set RGB LED to avoid conflict with LCD Display
+ * @param  None
+ * @retval None
+ */
+void LED_Set_rgb(uint8_t r, uint8_t g, uint8_t b)
+{
+  aPwmLedGsData_TypeDef aPwmLedGsData;
+  
+  BSP_PWM_LED_Init();
+  aPwmLedGsData[PWM_LED_RED] = r;
+  aPwmLedGsData[PWM_LED_GREEN] = g;
+  aPwmLedGsData[PWM_LED_BLUE] = b;
+  BSP_PWM_LED_On(aPwmLedGsData);
+  LED_Deinit();
+}
 
 /* USER CODE END FD */
 
@@ -149,6 +255,75 @@ void APPE_Init( void )
  * LOCAL FUNCTIONS
  *
  *************************************************************/
+static void Reset_Device(void)
+{
+#if (CFG_HW_RESET_BY_FW == 1)
+  Reset_BackupDomain();
+
+  Reset_IPCC();
+#endif /* CFG_HW_RESET_BY_FW == 1 */
+
+  return;
+}
+
+#if (CFG_HW_RESET_BY_FW == 1)
+static void Reset_BackupDomain(void)
+{
+  if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
+  {
+    HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
+
+    /**
+     *  Write twice the value to flush the APB-AHB bridge
+     *  This bit shall be written in the register before writing the next one
+     */
+    HAL_PWR_EnableBkUpAccess();
+
+    __HAL_RCC_BACKUPRESET_FORCE();
+    __HAL_RCC_BACKUPRESET_RELEASE();
+  }
+
+  return;
+}
+
+static void Reset_IPCC(void)
+{
+  LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_IPCC);
+
+  LL_C1_IPCC_ClearFlag_CHx(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C2_IPCC_ClearFlag_CHx(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C1_IPCC_DisableTransmitChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C2_IPCC_DisableTransmitChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C1_IPCC_DisableReceiveChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C2_IPCC_DisableReceiveChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  return;
+}
+#endif /* CFG_HW_RESET_BY_FW == 1 */
+
 static void Init_Debug( void )
 {
 #if (CFG_DEBUGGER_SUPPORTED == 1)
@@ -187,6 +362,46 @@ static void Init_Debug( void )
 #if(CFG_DEBUG_TRACE != 0)
   DbgTraceInit();
 #endif
+
+  return;
+}
+
+static void Config_HSE(void)
+{
+    OTP_ID0_t * p_otp;
+
+  /**
+   * Read HSE_Tuning from OTP
+   */
+  p_otp = (OTP_ID0_t *) OTP_Read(0);
+  if (p_otp)
+  {
+    LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
+  }
+
+  return;
+}
+
+static void System_Init( void )
+{
+  Init_Smps( );
+
+  Init_Exti( );
+
+  Init_Rtc( );
+
+  return;
+}
+
+static void Init_Rtc( void )
+{
+  /* Disable RTC registers write protection */
+  LL_RTC_DisableWriteProtection(RTC);
+
+  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
+
+  /* Enable RTC registers write protection */
+  LL_RTC_EnableWriteProtection(RTC);
 
   return;
 }
@@ -311,18 +526,42 @@ static void APPE_SysEvtReadyProcessing( void )
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
+/**
+ * @brief  RGB LED initialisation for the application
+ * @param  None
+ * @retval None
+ */
 static void Led_Init( void )
 {
 #if (CFG_LED_SUPPORTED == 1U)
   /**
    * Leds Initialization
    */
-
+  // LED Red;
+  LED_Set_rgb(PWM_LED_GSDATA_47_0, PWM_LED_GSDATA_OFF, PWM_LED_GSDATA_OFF);
+  HAL_Delay(300);
+  LED_Off();
+  HAL_Delay(300);
+  // LED Green;
+  LED_Set_rgb(PWM_LED_GSDATA_OFF, PWM_LED_GSDATA_47_0, PWM_LED_GSDATA_OFF);
+  HAL_Delay(300);
+  LED_Off();
+  HAL_Delay(300);
+  // LED Blue;
+  LED_Set_rgb(PWM_LED_GSDATA_OFF, PWM_LED_GSDATA_OFF, PWM_LED_GSDATA_47_0);
+  HAL_Delay(300);
+  LED_Off();
+  
 #endif
 
   return;
 }
 
+/**
+ * @brief  Buttons initialisation used in application
+ * @param  None
+ * @retval None
+ */
 static void Button_Init( void )
 {
 #if (CFG_BUTTON_SUPPORTED == 1U)
@@ -332,9 +571,36 @@ static void Button_Init( void )
     BSP_PB_Init(BUTTON_USER1, BUTTON_MODE_EXTI);
 #endif
 
-    return;
+  return;
 }
 
+/**
+ * @brief  LCD initialisation with ST logo
+ * @param  None
+ * @retval None
+ */
+void LCD_DisplayInit(void)
+{
+    BSP_LCD_Init(LCD_Inst, LCD_ORIENTATION_LANDSCAPE);
+    /* Set LCD Foreground Layer  */
+    UTIL_LCD_SetFuncDriver(&LCD_Driver); /* SetFunc before setting device */
+    UTIL_LCD_SetDevice(0);            /* SetDevice after funcDriver is set */
+    BSP_LCD_Clear(LCD_Inst,SSD1315_COLOR_BLACK);
+    BSP_LCD_DisplayOn(LCD_Inst);
+    BSP_LCD_Refresh(LCD_Inst);
+    UTIL_LCD_SetFont(&Font12);
+    /* Set the LCD Text Color */
+    UTIL_LCD_SetTextColor(SSD1315_COLOR_WHITE);
+    UTIL_LCD_SetBackColor(SSD1315_COLOR_BLACK);
+    BSP_LCD_Clear(LCD_Inst,SSD1315_COLOR_BLACK);
+    BSP_LCD_Refresh(LCD_Inst);
+    /* Display ST Logo */
+    BSP_LCD_Clear(LCD_Inst,SSD1315_COLOR_BLACK);
+    BSP_LCD_Refresh(LCD_Inst);
+    BSP_LCD_DrawBitmap(LCD_Inst, 0, 0, (uint8_t *)stlogo);
+    BSP_LCD_Refresh(LCD_Inst);
+    HAL_Delay(2000);
+}
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
@@ -342,6 +608,17 @@ static void Button_Init( void )
  * WRAP FUNCTIONS
  *
  *************************************************************/
+
+void MX_APPE_Process(void)
+{
+  /* USER CODE BEGIN MX_APPE_Process_1 */
+
+  /* USER CODE END MX_APPE_Process_1 */
+  UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
+  /* USER CODE BEGIN MX_APPE_Process_2 */
+
+  /* USER CODE END MX_APPE_Process_2 */
+}
 
 void UTIL_SEQ_Idle( void )
 {
@@ -415,6 +692,7 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
   /* Release buffer */
   TL_MM_EvtDone( hcievt );
 }
+
 /**
   * @brief  Initialisation of the trace mechanism
   * @param  None
@@ -447,75 +725,21 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 /**
   * @brief This function manage the Push button action
-  * @param  GPIO_Pin : GPIO pin which has been activated
+  * @param  Button which has been activated
   * @retval None
   */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+void BSP_PB_Callback(Button_TypeDef Button)
 {
-  switch (GPIO_Pin) {
-  case BUTTON_USER1_PIN:
-    UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW1,CFG_SCH_PRIO_1);
+  switch (Button)
+  {
+  case BUTTON_USER1:
+    UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW1, CFG_SCH_PRIO_1);
     break;
-
+  
   default:
     break;
   }
 }
 
-static void RxUART_Init(void)
-{
-  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
-}
-
-static void RxCpltCallback(void)
-{
-  /* Filling buffer and wait for '\r' char */
-  if (indexReceiveChar < C_SIZE_CMD_STRING)
-  {
-    if (aRxBuffer[0] == '\r')
-    {
-      APP_DBG("received %s", CommandString);
-
-      UartCmdExecute();
-
-      /* Clear receive buffer and character counter*/
-      indexReceiveChar = 0;
-      memset(CommandString, 0, C_SIZE_CMD_STRING);
-    }
-    else
-    {
-      CommandString[indexReceiveChar++] = aRxBuffer[0];
-    }
-  }
-
-  /* Once a character has been sent, put back the device in reception mode */
-  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
-}
-
-static void UartCmdExecute(void)
-{
-  /* Parse received CommandString */
-  if(strcmp((char const*)CommandString, "SW1") == 0)
-  {
-    APP_DBG("SW1 OK");
-    exti_handle.Line = EXTI_LINE_4;
-    HAL_EXTI_GenerateSWI(&exti_handle);
-  }
-  else if (strcmp((char const*)CommandString, "SW2") == 0)
-  {
-    APP_DBG("SW2 OK");
-    exti_handle.Line = EXTI_LINE_0;
-    HAL_EXTI_GenerateSWI(&exti_handle);
-  }
-  else if (strcmp((char const*)CommandString, "SW3") == 0)
-  {
-    APP_DBG("SW3 OK");
-    exti_handle.Line = EXTI_LINE_1;
-    HAL_EXTI_GenerateSWI(&exti_handle);
-  }
-  else
-  {
-    APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
-  }
-}
 /* USER CODE END FD_WRAP_FUNCTIONS */
+/*****************************************************************************/

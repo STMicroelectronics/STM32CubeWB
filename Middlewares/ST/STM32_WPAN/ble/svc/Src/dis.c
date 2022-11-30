@@ -492,7 +492,7 @@ tBleStatus DIS_UpdateChar(uint16_t UUID, DIS_Data_t *pPData)
 #endif
 
     default:
-      return_value = 0;
+      return_value = BLE_STATUS_ERROR;
       break;
   }
 

@@ -58,7 +58,7 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static HRSAPP_Context_t HRSAPP_Context;
+static HRSAPP_Context_t HRSAPP_Context;
 
 /**
  * END of Section BLE_APP_CONTEXT

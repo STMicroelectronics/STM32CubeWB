@@ -210,7 +210,7 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static DTC_Context_t DTC_Context;
+static DTC_Context_t DTC_Context;
 
 /**
  * END of Section BLE_APP_CONTEXT
@@ -345,6 +345,12 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
       switch (blecore_evt->ecode)
       {
 
+        case ACI_GATT_TX_POOL_AVAILABLE_VSEVT_CODE:
+        {
+          Resume_Write();
+        }
+        break;
+        
         case ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE:
         {
           aci_att_read_by_group_type_resp_event_rp0 *pr = (void*) blecore_evt->data;
@@ -371,30 +377,30 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
           if (pr->Attribute_Data_Length == 20)
 #else
           idx = 4;
-            if (pr->Attribute_Data_Length == 6)
+          if (pr->Attribute_Data_Length == 6)
 #endif
+          {
+            for (i = 0; i < numServ; i++)
             {
-              for (i = 0; i < numServ; i++)
+              uuid = UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx]);
+              if (uuid == DT_SERVICE_UUID)
               {
-                uuid = UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx]);
-                if (uuid == DT_SERVICE_UUID)
-                {
 #if (UUID_128BIT_FORMAT==1)
                 DTC_Context.ServiceHandle = UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx-16]);
                 DTC_Context.ServiceEndHandle = UNPACK_2_BYTE_PARAMETER (&pr->Attribute_Data_List[idx-14]);
 #else
                 DTC_Context.ServiceHandle =
-                      UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx - 4]);
+                    UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx - 4]);
                 DTC_Context.ServiceEndHandle =
-                      UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx - 2]);
+                    UNPACK_2_BYTE_PARAMETER(&pr->Attribute_Data_List[idx - 2]);
 #endif
-                  APP_DBG_MSG("DTC_Event_Handler: DT_SERVICE_UUID found !\n");
-                }
-                idx += 6;
+                APP_DBG_MSG("DTC_Event_Handler: DT_SERVICE_UUID found !\n");
               }
+              idx += 6;
             }
           }
-          break;
+        }
+        break;
 
         case ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE:
         {
@@ -414,7 +420,7 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
           idx = 17;
           if (pr->Handle_Value_Pair_Length == 21)
 #else
-            idx = 5;
+          idx = 5;
           /* we are interested in only 16 bit UUIDs */
           if (pr->Handle_Value_Pair_Length == 7)
 #endif
@@ -481,7 +487,7 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
               {
                 if(handle == DTC_Context.TXCharHdle + 1)
                 {
-                APP_DBG_MSG("DTC_Event_Handler: DTC_DISCOVER_TX_CHAR_DESC ready to enable notification\n");
+                  APP_DBG_MSG("DTC_Event_Handler: DTC_DISCOVER_TX_CHAR_DESC ready to enable notification\n");
                   DTC_Context.TXCCCDescHdle = handle;
                 }
                 else if(handle == DTC_Context.ThroughputCharHdle + 1) 
@@ -537,20 +543,20 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
         {
           UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_GATT_PROC_COMPLETE);
         }
-          break; /*ACI_GATT_PROC_COMPLETE_VSEVT_CODE*/
+        break; /*ACI_GATT_PROC_COMPLETE_VSEVT_CODE*/
 
-        default:
-          break;
-        }
-    }
-    break;
-    
         default:
           break;
       }
+    }
+    break;
+    
+    default:
+      break;
+ }
 
-    return (return_value);
-  }
+  return (return_value);
+}
 
   /*************************************************************
    *
@@ -596,14 +602,14 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
     {
       case DTC_PROC_MTU_UPDATE:
         {
-        APP_DBG_MSG("change ATT MTU size \n");
+          APP_DBG_MSG("change ATT MTU size \n");
 
           status = aci_gatt_exchange_config(DTC_Context.connHandle);
-        if (status != BLE_STATUS_SUCCESS)
-        {
-          APP_DBG_MSG("change MTU cmd failure: 0x%x\n", status);
-        }
-        UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GATT_PROC_COMPLETE);
+          if (status != BLE_STATUS_SUCCESS)
+          {
+            APP_DBG_MSG("change MTU cmd failure: 0x%x\n", status);
+          }
+          UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GATT_PROC_COMPLETE);
 
           APP_DBG_MSG("DTC_PROC_MTU_UPDATE complete event received \n");
         }
@@ -611,14 +617,14 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
 
       case DTC_DISC_ALL_PRIMARY_SERVICES:
         {
-        APP_DBG_MSG("Discover all primary services \n");
+          APP_DBG_MSG("Discover all primary services \n");
 
           status = aci_gatt_disc_all_primary_services(DTC_Context.connHandle);
-        if (status != BLE_STATUS_SUCCESS)
-        {
-          APP_DBG_MSG("Discover all primary services cmd failure: 0x%x\n", status);
-        }
-        UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GATT_PROC_COMPLETE);
+          if (status != BLE_STATUS_SUCCESS)
+          {
+            APP_DBG_MSG("Discover all primary services cmd failure: 0x%x\n", status);
+          }
+          UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GATT_PROC_COMPLETE);
 
           APP_DBG_MSG("DTC_DISC_ALL_PRIMARY_SERVICES complete event received \n");
         }
@@ -626,17 +632,17 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
 
       case DTC_DISCOVER_CHARACS:
         {
-        APP_DBG_MSG("Discover all char of service \n");
+          APP_DBG_MSG("Discover all char of service \n");
 
-        status = aci_gatt_disc_all_char_of_service(
+          status = aci_gatt_disc_all_char_of_service(
               DTC_Context.connHandle,
               DTC_Context.ServiceHandle,
               DTC_Context.ServiceEndHandle);
-        if (status != BLE_STATUS_SUCCESS)
-        {
-          APP_DBG_MSG("Discover all char of service cmd failure: 0x%x\n", status);
-        }
-        UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GATT_PROC_COMPLETE);
+          if (status != BLE_STATUS_SUCCESS)
+          {
+            APP_DBG_MSG("Discover all char of service cmd failure: 0x%x\n", status);
+          }
+          UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GATT_PROC_COMPLETE);
 
           APP_DBG_MSG("DTC_DISCOVER_CHARACS complete event received \n");
         }
@@ -646,7 +652,7 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
         {
           APP_DBG_MSG("Discover char descriptors \n");
 
-        status = aci_gatt_disc_all_char_desc(
+          status = aci_gatt_disc_all_char_desc(
               DTC_Context.connHandle,
               DTC_Context.ServiceHandle,
               DTC_Context.ServiceEndHandle);
@@ -690,11 +696,11 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
                                             2,
                                             (uint8_t *) &notification[0]);
 
-        if (status != BLE_STATUS_SUCCESS)
-        {
+          if (status != BLE_STATUS_SUCCESS)
+          {
             APP_DBG_MSG("Enable Throughput char descriptors cmd failure: 0x%x\n", status);
-        }
-        UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GATT_PROC_COMPLETE);
+          }
+          UTIL_SEQ_WaitEvt(1 << CFG_IDLEEVT_GATT_PROC_COMPLETE);
 
           APP_DBG_MSG("DTC_ENABLE_THROUGHPUT_NOTIFICATION complete event received \n");
         }
@@ -706,7 +712,7 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
     return;
   }
 
-static void DTC_Button1TriggerReceived( void )
+void DTC_Button1TriggerReceived( void )
 {
   if(DTC_Context.ButtonTransferReq != DTC_APP_TRANSFER_REQ_OFF)
   {
@@ -723,7 +729,7 @@ static void DTC_Button1TriggerReceived( void )
   return;
 }
 
-static void DTC_Button2TriggerReceived( void )
+void DTC_Button2TriggerReceived( void )
 {
   APP_DBG_MSG("**CHANGE PHY \n");
   UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_PHY_UPDATE_ID, CFG_SCH_PRIO_0);
@@ -773,8 +779,8 @@ static void Appli_UpdateButtonState(Button_TypeDef button, int isPressed)
     else if(button == BUTTON_SW3)
     {
       /* Button 3 short press action */
-      APP_DBG_MSG("slave security request \n");
-      BLE_SVC_GAP_Security_Req();
+      APP_DBG_MSG("pairing request \n");
+      BLE_GAP_Pairing_Req();
     }
   }
 }
@@ -817,15 +823,16 @@ static void SendData( void )
     DTC_Context.TxData.pPayload = Notification_Data_Buffer;
     DTC_Context.TxData.Length =  DATA_NOTIFICATION_MAX_PACKET_SIZE; //Att_Mtu_Exchanged-10;
 
+    
     status = aci_gatt_write_without_resp(DTC_Context.connHandle,
                                          DTC_Context.RXCharHdle,
                                          DATA_NOTIFICATION_MAX_PACKET_SIZE,
-                                         (uint8_t *) &DTC_Context.TxData );
-    if ((status != BLE_STATUS_SUCCESS) && (status != BLE_STATUS_INSUFFICIENT_RESOURCES))
+                                         (const uint8_t*)(DTC_Context.TxData.pPayload));
+    
+    if (status == BLE_STATUS_INSUFFICIENT_RESOURCES)
     {
       DTC_Context.DtFlowStatus = DTC_APP_FLOW_OFF;
       (Notification_Data_Buffer[0])-=1;
-      APP_DBG_MSG("Write RX Char failed 0x%x ! \r\n", status);
     }
     else
     {
@@ -835,6 +842,10 @@ static void SendData( void )
   return;
 }
 
+void Resume_Write(void)
+{
+  DTC_Context.DtFlowStatus = DTC_APP_FLOW_ON;
+}
 /* USER CODE BEGIN FD */
 
 /* USER CODE END FD */

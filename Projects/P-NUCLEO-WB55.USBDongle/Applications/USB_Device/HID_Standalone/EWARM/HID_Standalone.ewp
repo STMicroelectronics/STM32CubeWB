@@ -11,7 +11,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>30</version>
+        <version>29</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -32,11 +32,11 @@
         </option>
         <option>
           <name>Input description</name>
-          <state>Full formatting, with multibyte support.</state>
+          <state>No specifier n, no float nor long long, no scan set, no assignment suppressing, with multibyte support.</state>
         </option>
         <option>
           <name>Output description</name>
-          <state>Full formatting, with multibyte support.</state>
+          <state>No specifier a, A, no specifier n, no float nor long long, with multibyte support.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -66,7 +66,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>8.22.2.15993</state>
+          <state>8.20.1.14181</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -121,7 +121,7 @@
         </option>
         <option>
           <name>OGUseCmsis</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>OGUseCmsisDspLib</name>
@@ -138,12 +138,12 @@
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>STM32WB55CG	ST STM32WB55CG</state>
+          <state></state>
         </option>
         <option>
           <name>FPU2</name>
           <version>0</version>
-          <state>4</state>
+          <state>6</state>
         </option>
         <option>
           <name>NrRegs</name>
@@ -200,10 +200,6 @@
           <name>DSPExtension</name>
           <state>1</state>
         </option>
-        <option>
-          <name>TrustZone</name>
-          <state>0</state>
-        </option>
       </data>
     </settings>
     <settings>
@@ -221,6 +217,7 @@
           <name>CCDefines</name>
           <state>USE_HAL_DRIVER</state>
           <state>STM32WB55xx</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -313,7 +310,7 @@
         </option>
         <option>
           <name>CCRequirePrototypes</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -353,8 +350,8 @@
           <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc</state>
           <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc</state>
           <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include</state>
-          <state>$PROJ_DIR$/../../../../../../Drivers/BSP/P-NUCLEO-WB55.USBDongle</state>
           <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
+          <state>$PROJ_DIR$/../../../../../../Drivers/BSP/P-NUCLEO-WB55.USBDongle</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -375,7 +372,7 @@
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
@@ -438,7 +435,7 @@
         <option>
           <name>CCOptStrategySlave</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCGuardCalls</name>
@@ -1034,7 +1031,7 @@
     <group>
       <name>EWARM</name>
       <file>
-        <name>$PROJ_DIR$\startup_stm32wb55xx_cm4.s</name>
+        <name>$PROJ_DIR$/startup_stm32wb55xx_cm4.s</name>
       </file>
     </group>
     <group>
@@ -1042,30 +1039,30 @@
       <group>
         <name>Core</name>
         <file>
-          <name>$PROJ_DIR$\..\Core\Src\main.c</name>
+          <name>$PROJ_DIR$/../Core/Src/main.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
+          <name>$PROJ_DIR$/../Core/Src/stm32wbxx_it.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
+          <name>$PROJ_DIR$/../Core/Src/stm32wbxx_hal_msp.c</name>
         </file>
       </group>
       <group>
         <name>USB_Device</name>
         <group>
-          <name>App</name>
+          <name>Target</name>
           <file>
-            <name>$PROJ_DIR$\..\USB_Device\App\usbd_desc.c</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\USB_Device\App\usb_device.c</name>
+            <name>$PROJ_DIR$/../USB_Device/Target/usbd_conf.c</name>
           </file>
         </group>
         <group>
-          <name>Target</name>
+          <name>App</name>
           <file>
-            <name>$PROJ_DIR$\..\USB_Device\Target\usbd_conf.c</name>
+            <name>$PROJ_DIR$/../USB_Device/App/usbd_desc.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$/../USB_Device/App/usb_device.c</name>
           </file>
         </group>
       </group>
@@ -1074,19 +1071,13 @@
   <group>
     <name>Doc</name>
     <file>
-      <name>$PROJ_DIR$\..\readme.txt</name>
+      <name>$PROJ_DIR$/../readme.txt</name>
     </file>
   </group>
   <group>
     <name>Drivers</name>
     <group>
       <name>BSP</name>
-      <group>
-        <name>P-NUCLEO-WB55.USBDongle</name>
-        <file>
-          <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.USBDongle\stm32wbxx_usb_dongle.c</name>
-        </file>
-      </group>
       <group>
         <name>STM32WBxx_Usb_Dongle</name>
         <file>
@@ -1095,66 +1086,69 @@
       </group>
     </group>
     <group>
-      <name>CMSIS</name>
+      <name>STM32WBxx_HAL_Driver</name>
       <file>
-        <name>$PROJ_DIR$\..\Core\Src\system_stm32wbxx.c</name>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pcd.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pcd_ex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_ll_usb.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_ll_rcc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc_ex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash_ex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_gpio.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pwr.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pwr_ex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_cortex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</name>
       </file>
     </group>
     <group>
-      <name>STM32WBxx_HAL_Driver</name>
+      <name>CMSIS</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pcd.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pcd_ex.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_ll_usb.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc_ex.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_flash.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_flash_ex.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_gpio.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr_ex.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_cortex.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_exti.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_tim_ex.c</name>
+        <name>$PROJ_DIR$/../Core/Src/system_stm32wbxx.c</name>
       </file>
     </group>
   </group>
@@ -1163,16 +1157,16 @@
     <group>
       <name>USB_Device_Library</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Core\Src\usbd_core.c</name>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Core\Src\usbd_ctlreq.c</name>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Core\Src\usbd_ioreq.c</name>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Class\HID\Src\usbd_hid.c</name>
+        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Src/usbd_hid.c</name>
       </file>
     </group>
   </group>

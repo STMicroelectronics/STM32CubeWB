@@ -77,7 +77,8 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_UpgradeEnd_cb(struct ZbZclOtaIm
 static void APP_ZIGBEE_OTA_Server_ImageNotify(void);
 static int APP_ZIGBEE_OTA_Server_FindSuitableImage(struct ZbZclOtaImageDefinition *query);
 static uint8_t APP_ZIGBEE_OTA_Server_HeaderMake(const struct ZbZclOtaHeader* ota_header, uint8_t* payload);
-static uint32_t APP_ZIGBEE_GetBinSize(void);
+//static uint32_t APP_ZIGBEE_GetBinSize(void);
+static bool     APP_ZIGBEE_GetBinInfo( uint32_t * lSize, uint32_t * lCrc );
 static uint32_t GetFirstSecureSector(void);
 
 static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode);
@@ -181,10 +182,11 @@ static bool APP_ZIGBEE_OTA_Server_QueryNextImage_cb(struct ZbZclOtaImageDefiniti
                                              uint16_t hadware_version, uint32_t *image_size, void *arg){
   struct APP_ZIGBEE_OtaServerInfo* server_info = (struct APP_ZIGBEE_OtaServerInfo*) arg;
   int i = 0;
-                                               
+    
   APP_DBG("[OTA] Query Next Image request received.");
   APP_DBG("[OTA] Sender device manufacturer code: 0x%04x.", query_image->manufacturer_code);
   APP_DBG("[OTA] Sender device current file version: 0x%08x.", query_image->file_version);
+    
   if(field_control == ZCL_OTA_QUERY_FIELD_CONTROL_HW_VERSION){
     /* additional hardware info is provided by the sender */
     APP_DBG("[OTA] Sender device current hardware version: 0x%04x.", hadware_version);
@@ -206,6 +208,7 @@ static bool APP_ZIGBEE_OTA_Server_QueryNextImage_cb(struct ZbZclOtaImageDefiniti
   return true;
 }
 
+
 /**
  * @brief  OTA server Image Block callback
  * @param  image: Sender image query definition pointer
@@ -216,92 +219,93 @@ static bool APP_ZIGBEE_OTA_Server_QueryNextImage_cb(struct ZbZclOtaImageDefiniti
  * @param  arg: Passed argument
  * @retval ZCL status code
  */
-static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_ImageBlock_cb(struct ZbZclOtaImageDefinition *image,  struct ZbZclOtaImageData *image_data, 
+static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_ImageBlock_cb(struct ZbZclOtaImageDefinition * image,  struct ZbZclOtaImageData *image_data, 
                                                         uint8_t field_control, uint64_t request_node_address, 
-                                                        struct ZbZclOtaImageWaitForData *image_wait, void *arg){
+                                                        struct ZbZclOtaImageWaitForData * image_wait, void * arg){
   
   struct APP_ZIGBEE_OtaServerInfo* server_info = (struct APP_ZIGBEE_OtaServerInfo*) arg;                                                                                                      
-  uint8_t size = image_data->data_size;
-  uint32_t flash_copy_size = 0;
   uint8_t header_buffer[ZCL_OTA_HEADER_LENGTH_MAX];
-  unsigned int header_index, tag_index;
-  uint8_t upgrade_image_tag[ZCL_OTA_IMAGE_BLOCK_SUB_ELEMENT_HEADER];   
+  uint32_t  header_size, header_index;
+  uint8_t upgrade_image_tag[ZCL_OTA_IMAGE_BLOCK_SUB_ELEMENT_HEADER];
+  unsigned int tag_index;
   
   memset(image_data->data, 0, sizeof(image_data->data));
-  header_index = 0;
-  tag_index = 0;
   
-  /* Check if we need to update RAM buffer */
-  if(image_data->file_offset >= server_info->block_transfer.max_buffer_offset){
-    memset(server_info->block_transfer.firmware_buffer, 0, sizeof(server_info->block_transfer.firmware_buffer));
-    
-    /* Add ZCL OTA header info if not already done. Only one time */
-    if(!server_info->block_transfer.OTA_FileDataGenerated){
-      header_index = APP_ZIGBEE_OTA_Server_HeaderMake(&server_info->requested_image_header, header_buffer);
-      if(header_index != server_info->requested_image_header.header_length){
+  //* Indicate progress all 1024 Bytes */
+  if ( ( image_data->file_offset % RAM_FIRMWARE_BUFFER_SIZE ) < image_data->data_size ) 
+  {
+    /* Display Transfer Progress */
+    APP_DBG("[OTA] FUOTA Transfer at address 0x%08x", ( server_info->ctx.base_address + image_data->file_offset ) );
+  }
+  
+  /* Add ZCL OTA header info if not already done. Only one time */
+  if ( server_info->block_transfer.OTA_FileDataGenerated == false )
+  {
+    /* Construction of Header */
+    header_index = APP_ZIGBEE_OTA_Server_HeaderMake( &server_info->requested_image_header, header_buffer );
+    if ( header_index != ( server_info->requested_image_header.header_length ) )
+    {
         APP_DBG("Error, OTA header invalid.");
         return ZCL_STATUS_FAILURE;
-      }
-      memcpy(server_info->block_transfer.firmware_buffer, header_buffer, header_index);
-      
-      /* Add associated tag to transmit firmware data as OTA sub-element */
-      memset(upgrade_image_tag, 0, sizeof(upgrade_image_tag));
-    
-      /* Tag ID */
-      zb_zcl_append_uint16(upgrade_image_tag, sizeof(upgrade_image_tag), &tag_index, ZCL_OTA_SUB_TAG_UPGRADE_IMAGE);
-    
-      /* Length field */
-      zb_zcl_append_uint32(upgrade_image_tag, sizeof(upgrade_image_tag), &tag_index, server_info->ctx.binary_size);
-    
-      memcpy(server_info->block_transfer.firmware_buffer+header_index, upgrade_image_tag, sizeof(upgrade_image_tag));
-      
-      server_info->block_transfer.OTA_FileDataGenerated = true;   
-      server_info->block_transfer.flash_addr = server_info->ctx.base_address;  
     }
     
-    /* Add firmware data to RAM buffer */
-    flash_copy_size = server_info->requested_image_header.total_image_size - image_data->file_offset;
-    if(flash_copy_size>RAM_FIRMWARE_BUFFER_SIZE){
-      flash_copy_size = RAM_FIRMWARE_BUFFER_SIZE;
+    // -- Copy Image Header */
+    memcpy( server_info->block_transfer.header_buffer, header_buffer, header_index );
+    
+    /* Add associated tag to transmit firmware data as OTA sub-element */
+    memset( upgrade_image_tag, 0, sizeof(upgrade_image_tag) );
+  
+    /* Tag ID */
+    tag_index = 0;
+    zb_zcl_append_uint16( upgrade_image_tag, sizeof(upgrade_image_tag), &tag_index, ZCL_OTA_SUB_TAG_UPGRADE_IMAGE);
+  
+    /* Length field */
+    zb_zcl_append_uint32( upgrade_image_tag, sizeof(upgrade_image_tag), &tag_index, server_info->ctx.binary_size);
+  
+    memcpy( ( server_info->block_transfer.header_buffer + header_index ), upgrade_image_tag, sizeof(upgrade_image_tag) );
+    header_index += tag_index;
+   
+    server_info->block_transfer.OTA_FileDataGenerated = true;
+    server_info->block_transfer.header_size = header_index;
+    
+    server_info->block_transfer.download_time = HAL_GetTick();
+  }
+  
+  /* -- First copy Header -- */
+  if ( image_data->file_offset < server_info->block_transfer.header_size ) 
+  {
+    header_size = server_info->block_transfer.header_size - image_data->file_offset;
+    if ( header_size >= image_data->data_size ) 
+    {
+      header_size = image_data->data_size;
+      memcpy( image_data->data, &server_info->block_transfer.header_buffer[image_data->file_offset], header_size );
     }
-    flash_copy_size -= (header_index+tag_index);
+    else
+    {
+      memcpy( image_data->data, &server_info->block_transfer.header_buffer[image_data->file_offset], header_size );
+      memcpy( ( image_data->data + header_size ), (uint8_t *)( server_info->ctx.base_address ), ( image_data->data_size - header_size ) );
+    }
+  }
+  else
+  {
+    /* Beyond the end of the image */
+    if ( image_data->file_offset > server_info->requested_image_header.total_image_size ) 
+    {
+      APP_DBG("[OTA] Warning, offset requested (%d bytes) is too big regarding OTA file size (%d bytes)",
+                image_data->file_offset, server_info->requested_image_header.total_image_size);
+      return ZCL_STATUS_INVALID_VALUE;
+    }
     
-    memcpy(server_info->block_transfer.firmware_buffer+header_index+tag_index, 
-           (void const*)(server_info->block_transfer.flash_addr), flash_copy_size);
-    server_info->block_transfer.flash_addr += flash_copy_size;
-    server_info->block_transfer.max_buffer_offset += sizeof(server_info->block_transfer.firmware_buffer);
+    /* If needed adjust the last block for the end of the image */
+    if ( ( image_data->file_offset + image_data->data_size ) > server_info->requested_image_header.total_image_size) 
+    {
+      image_data->data_size = server_info->requested_image_header.total_image_size - image_data->file_offset;
+    }
+
+    /* Copy Data on Buffer */
+    memcpy( image_data->data, (uint8_t *)( server_info->ctx.base_address + ( image_data->file_offset - server_info->block_transfer.header_size ) ), image_data->data_size );
+  }
     
-    /* Display Transfer Progress */
-    APP_DBG("[OTA] FUOTA Transfer at address %x",server_info->block_transfer.flash_addr);
-
-  }
-  
-  /* Write OTA firmware data to destination buffer */
-  
-  /* If needed adjust the last block for the end of the image */
-  if (image_data->file_offset + size > server_info->requested_image_header.total_image_size) {
-    size = server_info->requested_image_header.total_image_size - image_data->file_offset;
-  }
-  
-  /* If needed, adjust block size regarding RAM buffer max size */
-  if(image_data->file_offset + size > server_info->block_transfer.max_buffer_offset){
-    size = server_info->block_transfer.max_buffer_offset - image_data->file_offset;
-  }
-
-  /* Beyond the end of the image */
-  if (size <= 0) {
-    APP_DBG("[OTA] Warning, offset requested (%d bytes) is too big regarding OTA file size (%d bytes)",
-            image_data->file_offset, server_info->requested_image_header.total_image_size);
-    return ZCL_STATUS_INVALID_VALUE;
-  }
-
-  /* Update with bytes actually read */
-  image_data->data_size = size;
-  
-  memcpy(image_data->data, 
-         server_info->block_transfer.firmware_buffer+(image_data->file_offset % sizeof(server_info->block_transfer.firmware_buffer)),
-         size);
-  
   return ZCL_STATUS_SUCCESS;                                             
 }
 
@@ -313,20 +317,24 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_ImageBlock_cb(struct ZbZclOtaIm
  * @param  arg: Passed argument
  * @retval ZCL status code
  */
-static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_UpgradeEnd_cb(struct ZbZclOtaImageDefinition *image_definition, enum ZclStatusCodeT *status, 
-                                                               struct ZbZclOtaEndResponseTimes *end_response_times, void *arg){
+static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_UpgradeEnd_cb(struct ZbZclOtaImageDefinition * image_definition, enum ZclStatusCodeT *status, 
+                                                               struct ZbZclOtaEndResponseTimes * end_response_times, void *arg){
+  uint32_t  upgrade_time;
+  double    upgrade_troughput;
+  struct APP_ZIGBEE_OtaServerInfo * server_info = (struct APP_ZIGBEE_OtaServerInfo *) arg;  
+  
   APP_DBG("**************************************************************\n");
   APP_DBG("[OTA] Upgrade End request received.");
   
   /* Show upgrade end status */
   switch (*status) {
     case ZCL_STATUS_SUCCESS:
-      end_response_times->current_time = 0;                        /* relative to now */
-      end_response_times->upgrade_time = OTA_CLIENT_UPGRADE_DELAY; /*  delay from now */
-  
+      upgrade_time = ( HAL_GetTick() - server_info->block_transfer.download_time ) / 1000;
+      upgrade_troughput = (((double)server_info->requested_image_header.total_image_size / upgrade_time ) / 1000) * 8;
+      
       APP_DBG("UpgradeEnd status SUCCESS, responding with:");
-      APP_DBG("  current time: %d", end_response_times->current_time);
-      APP_DBG("  upgrade time: %d\n", end_response_times->upgrade_time);
+      APP_DBG("  Upgrade time: %d", upgrade_time);
+      APP_DBG("  Average throughput: %.2f Kbits/s", upgrade_troughput);
       break;
 
     case ZCL_STATUS_INVALID_IMAGE:
@@ -460,8 +468,9 @@ static void APP_ZIGBEE_OTA_Server_ImageNotify(void){
   enum ZclStatusCodeT status = ZCL_STATUS_SUCCESS;
   struct ZbApsAddrT dst;
   struct ZbZclOtaImageDefinition image_definition;
-  uint64_t size;
-  int pos = 0; 
+  uint32_t  size;
+  uint32_t  crc = 0;
+  int       pos = 0; 
   
   /* We have to prevent OTA client devices that a new version is available */
   
@@ -477,28 +486,36 @@ static void APP_ZIGBEE_OTA_Server_ImageNotify(void){
   image_definition.image_type = OTA_server_info.ctx.file_type;
   
   pos = APP_ZIGBEE_OTA_Server_FindSuitableImage(&image_definition);
-  if(pos<0){
-    APP_DBG("[OTA] A such image is not available.\n");
+  if ( pos < 0 )
+  {
+    APP_DBG("[OTA] A such image is not available.");
     return;
   }
   
   image_definition.file_version = OTA_server_info.ctx.file_version;
   
   /* Obtain binary size from the binary stored in Flash */
-  size = APP_ZIGBEE_GetBinSize();
-  if(size == 0){
-    return;
+  if ( APP_ZIGBEE_GetBinInfo( &size, &crc ) == FALSE )
+  {
+     APP_DBG("[OTA] FUTOA not found.");
+     return;
   }
   OTA_server_info.ctx.binary_size = size;
+  OTA_server_info.ctx.binary_crc = crc;
   
   /* Update total image size of the OTA file 
      (will be dynamically generated from binary stored in Flash ) */
-  image_header_list[pos].total_image_size = size /* binary size */ 
-    + image_header_list[pos].header_length /* header size */
-    + ZCL_OTA_IMAGE_BLOCK_SUB_ELEMENT_HEADER; /* upgrade tag size */
-  
+  image_header_list[pos].total_image_size = size  /* binary size */
+    + image_header_list[pos].header_length        /* header size */
+    + ZCL_OTA_IMAGE_BLOCK_SUB_ELEMENT_HEADER;     /* upgrade tag size */
+    
+  APP_DBG("[OTA] Binary CRC: 0x%04X.", OTA_server_info.ctx.binary_crc);
   APP_DBG("[OTA] Binary size: %d bytes.", OTA_server_info.ctx.binary_size);
   APP_DBG("[OTA] OTA binary total size: %d bytes.", image_header_list[pos].total_image_size);
+  
+  /* Reset all Transfer Information */
+  OTA_server_info.block_transfer.header_size = 0x00;
+  OTA_server_info.block_transfer.OTA_FileDataGenerated = FALSE;
   
   /* Sending an Image Notify request to the client 
    * QueryJitter parameter set to 0 => No flooding prevention */
@@ -589,6 +606,7 @@ static uint8_t APP_ZIGBEE_OTA_Server_HeaderMake(const struct ZbZclOtaHeader* ota
     if (index + 32 > length) {
         return index;
     }
+    
     (void)memcpy(payload + index, ota_header->header_string, 32);
     index += 32;
 
@@ -623,55 +641,58 @@ static uint8_t APP_ZIGBEE_OTA_Server_HeaderMake(const struct ZbZclOtaHeader* ota
  * @param  None
  * @retval Size
  */
-static uint32_t APP_ZIGBEE_GetBinSize(void)
+//static uint32_t APP_ZIGBEE_GetBinSize(void)
+static bool APP_ZIGBEE_GetBinInfo( uint32_t * lSize, uint32_t * lCrc )
 {
   uint32_t flash_current_offset = 0;
   uint64_t read64 = 0;
   bool binary_parsing_on_going = TRUE;
-  bool error_keyword_or_size = FALSE;
+  bool no_error_keyword_or_size = TRUE;
   uint32_t first_secure_sector_idx;
   uint32_t maximum_reachable_offset;
-  uint32_t fuota_bin_size = 0;
 
   first_secure_sector_idx = GetFirstSecureSector();
 
   /* Compute Maximum reachable address */
-  maximum_reachable_offset = (first_secure_sector_idx * 0x1000) - 1;
+  maximum_reachable_offset = ( first_secure_sector_idx * 0x1000u ) - 1u;
   APP_DBG("maximum_reachable_offset =  0x%x", maximum_reachable_offset);
 
-  while(binary_parsing_on_going == TRUE){
-    read64 = *(uint64_t*)(OTA_server_info.ctx.base_address + flash_current_offset);
+  while ( binary_parsing_on_going == TRUE )
+  {
+    read64 = *(uint64_t*)( OTA_server_info.ctx.base_address + flash_current_offset );
 
     /* Test if current word contains magic keyword */
-    if((read64 & 0x00000000FFFFFFFF) == OTA_server_info.ctx.magic_keyword)
+    if ( ( ( read64 & 0x00000000FFFFFFFFu ) == OTA_server_info.ctx.magic_keyword )
+        || ( ( ( read64 & 0xFFFFFFFF00000000u ) >> 32u ) == OTA_server_info.ctx.magic_keyword ) )
     {
       binary_parsing_on_going = FALSE;
+      
+      // -- CRC have only magic Keyword --
+      if ( ( read64 & 0x00000000FFFFFFFFu ) == OTA_server_info.ctx.magic_keyword )
+      {
+        *lCrc = ( *lCrc ^ ( read64 & 0x00000000FFFFFFFFul ) );
+      }
+      else
+      {
+        *lCrc = ( *lCrc ^ ( read64 & 0x00000000FFFFFFFFul ) ) ^ ( ( read64 & 0xFFFFFFFF0000000ul ) >> 32u );
+      }
     }
-    else if (((read64 & 0xFFFFFFFF00000000) >> 32) == OTA_server_info.ctx.magic_keyword)
+    else
     {
-      binary_parsing_on_going = FALSE;
+      *lCrc = ( *lCrc ^ ( read64 & 0x00000000FFFFFFFFul ) ) ^ ( ( read64 & 0xFFFFFFFF0000000ul ) >> 32u );
     }
-
     flash_current_offset += 8;
 
     /* Test current offset is still below SFSA (Non-Secure Memory Address) */
-    if(flash_current_offset > maximum_reachable_offset)
+    if ( flash_current_offset > maximum_reachable_offset )
     {
-      error_keyword_or_size = TRUE;
+      no_error_keyword_or_size = FALSE;
       binary_parsing_on_going = FALSE;
     }
   }
 
-  if(error_keyword_or_size == TRUE)
-  {
-    APP_DBG("Error: FUOTA Keyword not found in FLASH memory, aborting!");
-  }
-  else
-  {
-    fuota_bin_size = flash_current_offset;
-  }
-
-  return fuota_bin_size;
+  *lSize = flash_current_offset;
+  return no_error_keyword_or_size;
 }
 
 /**
@@ -730,6 +751,12 @@ static void APP_ZIGBEE_App_Init(void){
  * @retval None
  */
 static void APP_ZIGBEE_OTA_Server_Init(void){
+  uint64_t dlExtendedAddress;
+  
+  //print EID
+  dlExtendedAddress = ZbExtendedAddress(zigbee_app_info.zb);
+  APP_DBG("OTA Server with EUI64 0x%016" PRIx64 ".", dlExtendedAddress );
+  
   APP_DBG("OTA server init done!\n");  
 } /* APP_ZIGBEE_OTA_Server_Init */
 
@@ -1020,7 +1047,7 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
 {
   WirelessFwInfo_t wireless_info_instance;
   WirelessFwInfo_t *p_wireless_info = &wireless_info_instance;
-
+  
   if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success) {
     APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
   }
@@ -1066,6 +1093,7 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
       }
   
     APP_DBG("Link Key value: %s",Z09_LL_string);
+        
     //print clusters allocated
     APP_DBG("Clusters allocated are:");  
     APP_DBG("OnOff Server on Endpoint %d",SW1_ENDPOINT);

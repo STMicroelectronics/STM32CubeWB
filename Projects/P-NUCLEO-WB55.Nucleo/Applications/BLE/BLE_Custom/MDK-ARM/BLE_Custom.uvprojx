@@ -48,7 +48,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>BLE_Custom\</OutputDirectory>
+          <OutputDirectory>BLE_Custom\Exe\</OutputDirectory>
           <OutputName>BLE_Custom</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>

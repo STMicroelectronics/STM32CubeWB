@@ -220,7 +220,7 @@
                     <state>USE_STM32WBXX_NUCLEO</state>
                     <state>STM32WB55xx</state>
                     <state>ST_OT_DEBUG</state>
-                    <state>OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_concurrent.h&gt;</state>
+                    <state>OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_ftd.h&gt;</state>
                     <state>THREAD_WB</state>
                     <state>DYNAMIC_MODE</state>
                 </option>

@@ -36,8 +36,9 @@ The other one will be in Child mode (Red LED3 ON)
  
 After the reset of the 2 boards, one board will be in Leader mode (Green LED2 ON) and 
 the other one will be in Child mode (Red LED3 ON) Once the child mode is established for 
-one of the devices, it starts the provisioning procedure in multicast mode in order to probe 
-the IP address of the leader device. Then this is used to start CoAP Secure procedure
+one of the devices, push the SW1 button to start the provisioning procedure in multicast
+mode in order to probe the IP address of the leader device.
+Then this is used to start CoAP Secure procedure with pushing button SW2
 in unicast mode, which success is marked by the toggling of the blue LED.
 
 
@@ -51,7 +52,7 @@ in unicast mode, which success is marked by the toggling of the blue LED.
   |                         |                        |                         |
   |                         |                        |                         |
   |  Provisioning Request   |                        |                         |
-  |       send()            |======> COAP =========> |-------------            |
+  |       send()      SW1 =>|======> COAP =========> |-------------            |
   |                         |Resource "provisioning" |             |           |
   |                         |Mode : Multicast        |             v           |
   |                         |Type : Non-Confirmable  |    Provisioning Request |
@@ -66,11 +67,11 @@ in unicast mode, which success is marked by the toggling of the blue LED.
   |            v            |Mode : Multicast        |                         |
   |  Provisioning Response  |Type : Non Confirmable  |                         |
   |          Handler()      |Code : Put              |                         |
-  |            |            |Payload : MeshLocal EUI |                         |
-  |            |            |                        |                         |
-  |            |            |                        |                         |
-  |            |            |                        |                         |
-  |   SendCoapSecureMsg()   |                        |                         |
+  |                         |Payload : MeshLocal EUI |                         |
+  |                         |                        |                         |
+  |                         |                        |                         |
+  |                         |                        |                         |
+  |   SendCoapSecureMsg()   | <=SW2                  |                         |
   |            |            |                        |                         |
   |   otCoapSecureConnect() |                        |                         |
   |            |            |                        |                         |

@@ -1465,3 +1465,58 @@ tBleStatus aci_gatt_store_db( void )
   return status;
 }
 
+tBleStatus aci_gatt_send_mult_notification( uint16_t Connection_Handle,
+                                            uint8_t Number_of_Handles,
+                                            const Handle_Entry_t* Handle_Entry )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_gatt_send_mult_notification_cp0 *cp0 = (aci_gatt_send_mult_notification_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Connection_Handle = Connection_Handle;
+  index_input += 2;
+  cp0->Number_of_Handles = Number_of_Handles;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Handle_Entry, (const void*)Handle_Entry, Number_of_Handles * (sizeof(Handle_Entry_t)) );
+  index_input += Number_of_Handles * (sizeof(Handle_Entry_t));
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x131;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus aci_gatt_read_multiple_var_char_value( uint16_t Connection_Handle,
+                                                  uint8_t Number_of_Handles,
+                                                  const Handle_Entry_t* Handle_Entry )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_gatt_read_multiple_var_char_value_cp0 *cp0 = (aci_gatt_read_multiple_var_char_value_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Connection_Handle = Connection_Handle;
+  index_input += 2;
+  cp0->Number_of_Handles = Number_of_Handles;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Handle_Entry, (const void*)Handle_Entry, Number_of_Handles * (sizeof(Handle_Entry_t)) );
+  index_input += Number_of_Handles * (sizeof(Handle_Entry_t));
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x132;
+  rq.event = 0x0F;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+

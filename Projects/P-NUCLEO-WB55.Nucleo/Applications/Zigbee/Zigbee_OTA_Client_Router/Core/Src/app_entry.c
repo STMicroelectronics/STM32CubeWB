@@ -48,7 +48,7 @@ size_t __write(int handle, const unsigned char *buf, size_t bufSize);
 /* Private functions prototypes-----------------------------------------------*/
 static void SystemPower_Config(void);
 static void Init_Debug(void);
-static void appe_Tl_Init(void);
+static void APPE_Tl_Init(void);
 static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status);
 static void APPE_SysUserEvtRx(void *pPayload);
 static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt );
@@ -82,28 +82,31 @@ EXTI_HandleTypeDef exti_handle;
 /* Functions Definition ------------------------------------------------------*/
 void APPE_Init( void )
 {
-    SystemPower_Config(); /**< Configure the system Power Mode */
+  /* Configure the system Power Mode */
+  SystemPower_Config(); 
 
-    HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
+  /* Initialize the TimerServer */
+  HW_TS_Init(hw_ts_InitMode_Full, &hrtc); 
 
-/* USER CODE BEGIN APPE_Init_1 */
-    Init_Debug();
-    /**
-     * The Standby mode should not be entered before the initialization is over
-     * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
-     */
-    UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
-    Led_Init();
-    Button_Init();
-    RxUART_Init();
-/* USER CODE END APPE_Init_1 */
-    appe_Tl_Init();	/* Initialize all transport layers */
+  Init_Debug();
+  
+  /**
+   * The Standby mode should not be entered before the initialization is over
+   * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
+   */
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+  Led_Init();
+  Button_Init();
+  RxUART_Init();
 
-    /**
-     * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-     * received on the system channel before starting the Stack
-     * This system event is received with APPE_SysUserEvtRx()
-     */
+  /* Initialize all transport layers */
+  APPE_Tl_Init();	
+
+  /**
+   * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
+   * received on the system channel before starting the Stack
+   * This system event is received with APPE_SysUserEvtRx()
+   */
 /* USER CODE BEGIN APPE_Init_2 */
 
 /* USER CODE END APPE_Init_2 */
@@ -128,7 +131,7 @@ static void Init_Debug( void )
   LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
   LL_C2_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
 
-#else
+#else /* (CFG_DEBUGGER_SUPPORTED == 1) */
 
   GPIO_InitTypeDef gpio_config = {0};
 
@@ -189,10 +192,11 @@ static void SystemPower_Config(void)
   return;
 }
 
-static void appe_Tl_Init( void )
+static void APPE_Tl_Init( void )
 {
   TL_MM_Config_t tl_mm_config;
   SHCI_TL_HciInitConf_t SHci_Tl_Init_Conf;
+  
   /**< Reference table initialization */
   TL_Init();
 
@@ -217,8 +221,8 @@ static void appe_Tl_Init( void )
 
 static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status)
 {
-    UNUSED(status);
-    return;
+  UNUSED(status);
+  return;
 }
 
 /**
@@ -264,16 +268,17 @@ static void APPE_SysUserEvtRx( void * pPayload )
  */
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
 {
-    switch (ErrorCode)
-    {
-        case ERR_ZIGBEE_UNKNOWN_CMD:
-            APP_DBG("** ERR_ZIGBEE : UNKNOWN_CMD \n");
-            break;
-        default:
-            APP_DBG("** ERR_ZIGBEE : ErroCode=%d \n", ErrorCode);
-            break;
-    }
-    return;
+  switch (ErrorCode)
+  {
+    case ERR_ZIGBEE_UNKNOWN_CMD:
+          APP_DBG("** ERR_ZIGBEE : UNKNOWN_CMD \n");
+          break;
+          
+    default:
+          APP_DBG("** ERR_ZIGBEE : ErroCode=%d \n", ErrorCode);
+          break;
+  }
+  return;
 }
 
 static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_Evt_t *pReadyEvt )
@@ -295,7 +300,9 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
        * The wireless stack update has been completed
        * Reboot on the firmware application
        */
-        *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_FW_APP;
+        APP_DBG("[OTA] : Wireless stack update complete. Reboot on the firmware application");
+        HAL_Delay(100);
+        *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_DOWNLOADED_FW;
         NVIC_SystemReset();
     }
     else
@@ -341,6 +348,8 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
        * This is the first time in the life of the product the FUS is involved. After this command, it will be properly initialized
        * Request the device to reboot to install the wireless firmware
        */
+      APP_DBG("[OTA] : First time in the life of the product the FUS is involved. Reboot to install the wireless firmware");
+      HAL_Delay(100);
       NVIC_SystemReset();
     }
     else if( fus_state_value != 0)
@@ -349,6 +358,8 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
        * An upgrade is on going
        * Wait to reboot on the wireless stack
        */
+      APP_DBG("[OTA] : An upgrade is on going. Wait to reboot on the wireless stack");
+      HAL_Delay(100);
 #if ( CFG_LED_SUPPORTED != 0)
       BSP_LED_On(LED_BLUE);
 #endif
@@ -370,7 +381,9 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
          * The FUS update has been completed
          * Reboot the CPU2 on the firmware application
          */
-        *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_FW_APP;
+        APP_DBG("[OTA] : FUS update has been completed. Reboot the on the firmware application");
+        HAL_Delay(100);
+        *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_DOWNLOADED_FW;
         SHCI_C2_FUS_StartWs( );
   #if ( CFG_LED_SUPPORTED != 0)
         BSP_LED_On(LED_BLUE);
@@ -382,6 +395,8 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
       }
       else
       {
+        APP_DBG("[OTA] : SHCI_C2_FUS_FwUpgrade launch. Next Reboot is on the wireless update");
+        HAL_Delay(100);
         *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_CPU2_UPGRADE;
         /**
          * Note:
@@ -403,6 +418,7 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
 
   return return_value;
 }
+
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 static void Led_Init( void )
@@ -427,12 +443,12 @@ static void Button_Init( void )
   /**
    * Button Initialization
    */
-    BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
-    BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
-    BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
-#endif
+  BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
+#endif /* (CFG_BUTTON_SUPPORTED == 1U) */
 
-    return;
+  return;
 }
 
 /*************************************************************
@@ -458,26 +474,28 @@ void UTIL_SEQ_Idle( void )
   */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
-  switch (evt_waited_bm) {
+  switch (evt_waited_bm) 
+  {
     case EVENT_ACK_FROM_M0_EVT:
-      /* Run only the task CFG_TASK_REQUEST_FROM_M0_TO_M4 to process
-      * direct requests from the M0 (e.g. ZbMalloc), but no stack notifications
-      * until we're done the request to the M0. */
-      UTIL_SEQ_Run((1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
-      break;
+        /* Run only the task CFG_TASK_REQUEST_FROM_M0_TO_M4 to process
+        * direct requests from the M0 (e.g. ZbMalloc), but no stack notifications
+        * until we're done the request to the M0. */
+        UTIL_SEQ_Run((1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
+        break;
 
     case EVENT_SYNCHRO_BYPASS_IDLE:
-      UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
-      /* Process notifications and requests from the M0 */
-      UTIL_SEQ_Run((1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4) | (1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
-      break;
+        UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
+        /* Process notifications and requests from the M0 */
+        UTIL_SEQ_Run((1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4) | (1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
+        break;
 
-        default:
-            /* default case */
-            UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
-            break;
+    default:
+        /* default case */
+        UTIL_SEQ_Run( UTIL_SEQ_DEFAULT );
+        break;
     }
 }
+
 
 void shci_notify_asynch_evt(void* pdata)
 {
@@ -486,6 +504,7 @@ void shci_notify_asynch_evt(void* pdata)
   return;
 }
 
+
 void shci_cmd_resp_release(uint32_t flag)
 {
   UNUSED(flag);
@@ -493,12 +512,14 @@ void shci_cmd_resp_release(uint32_t flag)
   return;
 }
 
+
 void shci_cmd_resp_wait(uint32_t timeout)
 {
   UNUSED(timeout);
   UTIL_SEQ_WaitEvt(1U << CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP);
   return;
 }
+
 
 /* Received trace buffer from M0 */
 void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
@@ -512,18 +533,21 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
   /* Release buffer */
   TL_MM_EvtDone( hcievt );
 }
+
+
 /**
   * @brief  Initialisation of the trace mechanism
   * @param  None
   * @retval None
   */
-#if(CFG_DEBUG_TRACE != 0)
+#if (CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
   MX_USART1_UART_Init(); 
 
   return;
 }
+
 
 /**
   * @brief  Management of the traces
@@ -538,7 +562,7 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 
   return;
 }
-#endif
+#endif /* (CFG_DEBUG_TRACE != 0) */
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 /**
@@ -548,26 +572,29 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  switch (GPIO_Pin) {
-  case BUTTON_SW1_PIN:
-    break;
+  switch (GPIO_Pin) 
+  {
+    case BUTTON_SW1_PIN:
+        break;
 
-  case BUTTON_SW2_PIN:
-    UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW2,CFG_SCH_PRIO_1);
-    break;
+    case BUTTON_SW2_PIN:
+        UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW2,CFG_SCH_PRIO_1);
+        break;
 
-  case BUTTON_SW3_PIN:
-    break;
+    case BUTTON_SW3_PIN:
+        break;
 
-  default:
-    break;
+    default:
+        break;
   }
 }
+
 
 static void RxUART_Init(void)
 {
   HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
 }
+
 
 static void RxCpltCallback(void)
 {
@@ -593,6 +620,7 @@ static void RxCpltCallback(void)
   /* Once a character has been sent, put back the device in reception mode */
   HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
 }
+
 
 static void UartCmdExecute(void)
 {

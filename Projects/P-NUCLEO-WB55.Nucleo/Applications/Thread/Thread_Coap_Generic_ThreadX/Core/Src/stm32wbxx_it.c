@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32wbxx_it.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "hw.h"
@@ -384,8 +385,6 @@ void TIM1_TRG_COM_TIM17_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
-
-
 /**
   * @brief  This function handles EXTI4_IRQ Handler.
   * @param  None
@@ -395,5 +394,23 @@ void EXTI4_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW1_PIN);
 }
+/**
+  * @brief  This function handles EXTI0_IRQ Handler.
+  * @param  None
+  * @retval None
+  */
+void EXTI0_IRQHandler(void)
+{
+  HAL_GPIO_EXTI_IRQHandler(BUTTON_SW2_PIN);
+}
 
+/**
+  * @brief  This function handles EXTI1_IRQ Handler.
+  * @param  None
+  * @retval None
+  */
+void EXTI1_IRQHandler(void)
+{
+  HAL_GPIO_EXTI_IRQHandler(BUTTON_SW3_PIN);
+}
 /* USER CODE END 1 */

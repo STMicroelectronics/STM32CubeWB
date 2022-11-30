@@ -41,9 +41,11 @@
 #define CHANNEL                                19
 
 #define HW_TS_SERVER_1S_NB_TICKS               (1*1000*1000/CFG_TS_TICK_VAL)
-#define LED_TOGGLE_TIMING                      (0.1*1000*1000/CFG_TS_TICK_VAL) /**< 0.5s */
+#define LED_TOGGLE_TIMING                      (0.1*1000*1000/CFG_TS_TICK_VAL)  /**< 0.5s */
 
-#define CFG_NVM                 1U /* use FLASH */
+#define CFG_NVM                                1u         /* use FLASH */
+//#define OTA_DISPLAY_TIMING                     1u         /* Display all times (load transaction & NVM or Eeprom save )  */
+
 
 /* external definition */
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
@@ -66,6 +68,7 @@ static void Receive_Notification_From_M0(void);
 
 /* ZCL OTA cluster related functions */
 static void APP_ZIGBEE_OTA_Client_Init(void);
+static void APP_ZIGBEE_OTA_Client_ServerDiscovery( void );
 
 static void APP_ZIGBEE_OTA_Client_DiscoverComplete_cb(struct ZbZclClusterT *clusterPtr, enum ZclStatusCodeT status,void *arg);
 static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_ImageNotify_cb(struct ZbZclClusterT *clusterPtr, uint8_t payload_type, 
@@ -75,6 +78,9 @@ static void APP_ZIGBEE_OTA_Client_QueryNextImage_cb(struct ZbZclClusterT *cluste
                                                     struct ZbZclOtaImageDefinition *image_definition, uint32_t image_size, void *arg);
 static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_WriteImage_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclOtaHeader *header,
                                                                uint8_t length, uint8_t *data, void *arg);
+//static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_WriteTag_cb(struct ZbZclClusterT * clusterPtr, struct ZbZclOtaHeader * header,
+//                                                             uint16_t tag_id, uint32_t tag_length, uint8_t data_length, 
+//                                                             uint8_t * data, void * arg);
 static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_ImageValidate_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclOtaHeader *header, void *arg);
 static void APP_ZIGBEE_OTA_Client_Reboot_cb(struct ZbZclClusterT *clusterPtr, void *arg);
 static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_AbortDownload_cb(struct ZbZclClusterT *clusterPtr, enum ZbZclOtaCommandId commandId, void *arg);
@@ -144,22 +150,23 @@ struct zigbee_app_info {
 };
 static struct zigbee_app_info zigbee_app_info;
 
-static uint8_t TS_ID_LED;
+static uint8_t      TS_ID_LED;
 
 /* NVM variables */
 /* cache in uninit RAM to store/retrieve persistent data */
 union cache
 {
-  uint8_t  U8_data[ST_PERSIST_MAX_ALLOC_SZ];     // in bytes 
-  uint32_t U32_data[ST_PERSIST_MAX_ALLOC_SZ/4U]; // in U32 words
+  uint8_t  U8_data[ST_PERSIST_MAX_ALLOC_BUFFER_SZ];   // In bytes 
+  uint32_t U32_data[ST_PERSIST_MAX_ALLOC_SZ / 4U];    // In U32 words
 };
-__attribute__ ((section(".noinit"))) union cache cache_persistent_data;
 
+__attribute__ ((section(".noinit"))) union cache cache_persistent_data;
 __attribute__ ((section(".noinit"))) union cache cache_diag_reference;
 
 /* timer to delay reading attribute back from persistence */
-static uint8_t TS_ID1; 
-static uint8_t TS_ID2; 
+static uint8_t  TS_ID1; 
+static uint8_t  TS_ID2; 
+static uint8_t  bPersistDataUsed;
 
 /* Functions Definition ------------------------------------------------------*/
 
@@ -172,17 +179,24 @@ static uint8_t TS_ID2;
 static void APP_ZIGBEE_OTA_Client_DiscoverComplete_cb(struct ZbZclClusterT *clusterPtr, enum ZclStatusCodeT status,void *arg){
   enum ZclStatusCodeT internal_status = ZCL_STATUS_SUCCESS;
   uint64_t requested_server_ext = 0;
-  UNUSED (status);
+  //UNUSED (status);
   
-  /* The OTA server extended address in stored in ZCL_OTA_ATTR_UPGRADE_SERVER_ID attribute */
-  requested_server_ext = ZbZclAttrIntegerRead(zigbee_app_info.ota_client, ZCL_OTA_ATTR_UPGRADE_SERVER_ID, NULL, &internal_status);
-  if(internal_status != ZCL_STATUS_SUCCESS){
-    APP_DBG("ZbZclAttrIntegerRead failed.\n");
+  if (status == ZCL_STATUS_SUCCESS )
+  {
+    /* The OTA server extended address in stored in ZCL_OTA_ATTR_UPGRADE_SERVER_ID attribute */
+    requested_server_ext = ZbZclAttrIntegerRead(zigbee_app_info.ota_client, ZCL_OTA_ATTR_UPGRADE_SERVER_ID, NULL, &internal_status);
+    if(internal_status != ZCL_STATUS_SUCCESS){
+      APP_DBG("ZbZclAttrIntegerRead failed.\n");
+    }
+    
+    APP_DBG("OTA Server located with EUI64 0x%016" PRIx64 ".", requested_server_ext);
+    UTIL_SEQ_SetEvt(EVENT_ZIGBEE_OTA_SERVER_FOUND);
   }
-  
-  APP_DBG("OTA Server located with EUI64 0x%016" PRIx64 ".", requested_server_ext);
-  UTIL_SEQ_SetEvt(EVENT_ZIGBEE_OTA_SERVER_FOUND);
-  
+  else
+  {
+    APP_DBG("OTA Server not found after TimeOut. Retry a discovery");
+    UTIL_SEQ_SetTask( 1U << CFG_TASK_ZIGBEE_OTA_SERVER_DISCOVERY, CFG_SCH_PRIO_0 );
+  }
 }
 
 /**
@@ -251,7 +265,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_ImageNotify_cb(struct ZbZclClus
   OTA_client_info.image_type = image_definition->image_type;
   OTA_client_info.current_file_version = OTA_currentFileVersionTab[pos].fileVersion;
   UTIL_SEQ_SetTask(1U << CFG_TASK_ZIGBEE_OTA_REQUEST_UPGRADE, CFG_SCH_PRIO_0);
-  
+    
   return ZCL_STATUS_SUCCESS;
 }
 
@@ -292,6 +306,8 @@ static void APP_ZIGBEE_OTA_Client_QueryNextImage_cb(struct ZbZclClusterT *cluste
       return;
   }
   client_info->requested_image_size = image_size;
+  client_info->ctx.binary_srv_crc = 0;
+  client_info->ctx.binary_calc_crc = 0;
   
   if(APP_ZIGBEE_CheckDeviceCapabilities() != APP_ZIGBEE_OK){
     APP_DBG("[OTA] Not enough space. No download.\n");
@@ -303,6 +319,34 @@ static void APP_ZIGBEE_OTA_Client_QueryNextImage_cb(struct ZbZclClusterT *cluste
   APP_DBG("[OTA] Starting download.\n");
 }
 
+
+/**
+ * @brief  OTA client Calc CRC for a payload 
+ * @param  data: payload to calc
+ * @param  size: length of payload
+ */
+static void APP_ZIGBEE_OTA_Client_Crc_Calc( struct Zigbee_OTA_client_info * client_info ) { 
+  uint8_t     modulo;
+  uint16_t    index, size;
+  uint32_t *  crc_data;
+    
+  // -- Prepare pointer & size --
+  size = client_info->write_info.firmware_buffer_current_offset;
+  crc_data = (uint32_t *)client_info->write_info.firmware_buffer;
+  modulo = size % 4u;
+  if ( modulo != 0u )
+  {
+      memset( &crc_data[size], 0, ( 4u - modulo ) );
+      size  += ( 4u - modulo );
+  }
+  
+  for ( index = 0; index < ( size / 4u ); index++ )
+  {
+    client_info->ctx.binary_calc_crc ^= crc_data[index];
+  }
+}
+
+
 /**
  * @brief  OTA client Write Image callback
  * @param  clusterPtr: ZCL Cluster pointer
@@ -313,14 +357,17 @@ static void APP_ZIGBEE_OTA_Client_QueryNextImage_cb(struct ZbZclClusterT *cluste
  * @retval ZCL status code
  */
 static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_WriteImage_cb(struct ZbZclClusterT *clusterPtr, struct ZbZclOtaHeader *header,
-                                                               uint8_t length, uint8_t *data, void *arg){
+                                                               uint8_t length, uint8_t * data, void *arg){
   static uint32_t current_offset = 0;
     
   struct Zigbee_OTA_client_info* client_info = (struct Zigbee_OTA_client_info*) arg;
   enum ZclStatusCodeT status = ZCL_STATUS_SUCCESS;
   uint8_t size = 0;
   uint8_t remaining_size = 0;
-  
+#ifdef OTA_DISPLAY_TIMING  
+  static uint32_t  lStartTime = 0;
+  uint32_t  lStopTime, lTime1, lTime2;
+#endif // OTA_DISPLAY_TIMING
   current_offset += length;
   size = length;
   
@@ -331,26 +378,88 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_WriteImage_cb(struct ZbZclClust
   } else if(client_info->write_info.firmware_buffer_current_offset+size == RAM_FIRMWARE_BUFFER_SIZE){
     client_info->write_info.buffer_full = true;
   }
+  
   memcpy((client_info->write_info.firmware_buffer+client_info->write_info.firmware_buffer_current_offset), data, size);
   client_info->write_info.firmware_buffer_current_offset += size;
   
   if(client_info->write_info.buffer_full){
-    /* Display Transfer Progress */
-    APP_DBG("[OTA] FUOTA Transfer (current_offset = %d)",current_offset);
-  
+#ifdef OTA_DISPLAY_TIMING
+    lStopTime = HAL_GetTick();
+#endif // OTA_DISPLAY_TIMING
+    
     /* Write to Flash Memory */
-    if(APP_ZIGBEE_OTA_Client_WriteFirmwareData(client_info) != APP_ZIGBEE_OK){
+    if ( APP_ZIGBEE_OTA_Client_WriteFirmwareData(client_info) != APP_ZIGBEE_OK ){
       return ZCL_STATUS_FAILURE;
     }
+    
+#ifdef OTA_DISPLAY_TIMING
+    /* Display Transfer Progress */
+    lTime1 = lStopTime - lStartTime;
+    lTime2 = ( HAL_GetTick() - lStopTime );
+    APP_DBG("[OTA] FUOTA Transfer (current_offset = 0x%04X, load time = %d ms and save time = %d ms)", current_offset, lTime1, lTime2);
+#else // OTA_DISPLAY_TIMING
+    APP_DBG("[OTA] FUOTA Transfer (current_offset = 0x%04X)", current_offset);
+#endif // OTA_DISPLAY_TIMING
+    
+    // -- Calc CRC --
+    APP_ZIGBEE_OTA_Client_Crc_Calc( client_info );
     
     memset(client_info->write_info.firmware_buffer, 0, RAM_FIRMWARE_BUFFER_SIZE);
     memcpy(client_info->write_info.firmware_buffer, data+size, remaining_size);
     client_info->write_info.firmware_buffer_current_offset = remaining_size;
     client_info->write_info.buffer_full = false;
+    
+#ifdef OTA_DISPLAY_TIMING    
+    lStartTime = HAL_GetTick();
+#endif // OTA_DISPLAY_TIMING
   }
   
   return status;
 }
+
+
+///**
+// * @brief  OTA client WriteTag callback
+// * @param  clusterPtr: ZCL Cluster pointer
+// * @param  header: ZCL OTA file format image header
+// * @param  tag_id: Tag identifier
+// * @param  tag_length : length of Tag 
+// * @param  data_length  : length of Tag data
+// * @param  data  : Tag data
+// * @param  arg: Passed arg
+// * @retval ZCL status code
+// */
+//static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_WriteTag_cb(struct ZbZclClusterT * clusterPtr, struct ZbZclOtaHeader * header,
+//                                                             uint16_t tag_id, uint32_t tag_length, uint8_t data_length, 
+//                                                             uint8_t * data, void * arg)
+//{
+//    struct Zigbee_OTA_client_info* client_info = (struct Zigbee_OTA_client_info*) arg;
+//    enum ZclStatusCodeT status = ZCL_STATUS_SUCCESS;
+//    UNUSED(tag_length);
+//
+//    switch (tag_id)
+//    {
+//        case ZCL_OTA_SUB_TAG_UPGRADE_IMAGE:
+//            APP_DBG("[OTA] Writing blocks. \n");
+//            status = APP_ZIGBEE_OTA_Client_WriteImage_cb(clusterPtr, header, data_length, data, arg);
+//            break;
+//
+//        case ZCL_OTA_SUB_TAG_IMAGE_INTEGRITY_CODE:
+//            APP_DBG("[OTA] Get check crc. \n");
+//            client_info->ctx.binary_srv_crc = (uint32_t)data[0] | ( (uint16_t)data[1] << 8 ); 
+//            if ( data_length == 4u )
+//            { 
+//              client_info->ctx.binary_srv_crc |= ( (uint32_t)data[2] << 16u ) | ( (uint32_t)data[3] << 24u ); 
+//            }
+//            break;
+//
+//        default:
+//            status = ZCL_STATUS_INVALID_FIELD;
+//            break;
+//    }
+//    return status;
+//}
+
 
 /**
  * @brief  OTA client Image Validate callback
@@ -388,7 +497,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_ImageValidate_cb(struct ZbZclCl
   client_info->write_info.flash_current_offset -= 8;
   memcpy(&last_double_word, (void const*)(client_info->ctx.base_address + client_info->write_info.flash_current_offset), 8);
   if(((last_double_word & 0x00000000FFFFFFFF) != client_info->ctx.magic_keyword)
-     && (((last_double_word & 0xFFFFFFFF00000000) >> 32)!= client_info->ctx.magic_keyword)){
+     && (((last_double_word & 0xFFFFFFFF00000000) >> 32) != client_info->ctx.magic_keyword)){
     APP_DBG("[OTA] Wrong magic keyword: invalid firmware.\n");
     status = ZCL_STATUS_INVALID_IMAGE;
     return status;
@@ -616,10 +725,10 @@ static inline void Delete_Sectors( void )
   if(p_erase_init.Page < (CFG_APP_START_SECTOR_INDEX - 1))
   {
     /**
-     * Something has been wrong as there is no case we should delete the BLE_Ota application
+     * Something has been wrong as there is no case we should delete the OTA application
      * Reboot on the firmware application
      */
-    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_FW_APP;
+    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_DOWNLOADED_FW;
     NVIC_SystemReset();
   }
   p_erase_init.NbPages = *((uint8_t*) SRAM1_BASE + 2);
@@ -698,37 +807,42 @@ static void APP_ZIGBEE_PerformReset(void)
   APP_DBG("*******************************************************");
   APP_DBG(" FUOTA_CLIENT : END OF TRANSFER COMPLETED");
 
-  if(OTA_client_info.image_type == fileType_APP)
+  if (OTA_client_info.image_type == fileType_APP)
   {
     APP_DBG("  --> Request to reboot on FW Application");
     APP_DBG("*******************************************************");
-    /**
-     * Reboot on FW Application
-     */
-    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_FW_APP;
+    
+    /* Reboot on Downloaded FW Application */
+    *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_DOWNLOADED_FW;
+    
+    HAL_Delay(100);
     NVIC_SystemReset();
   }
-  else if(OTA_client_info.image_type == fileType_COPRO_WIRELESS)
+  else 
   {
-    APP_DBG("  --> Request to reboot on FUS");
-    APP_DBG("*******************************************************");
-    /**
-     * Wireless firmware update is requested
-     * Request CPU2 to reboot on FUS by sending two FUS command
-     */
-    SHCI_C2_FUS_GetState( NULL );
-    SHCI_C2_FUS_GetState( NULL );
-    while(1)
+    if (OTA_client_info.image_type == fileType_COPRO_WIRELESS)
     {
-      HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+      APP_DBG("  --> Request to reboot on FUS");
+      APP_DBG("*******************************************************");
+      HAL_Delay(100);
+      
+      /**
+       * Wireless firmware update is requested
+       * Request CPU2 to reboot on FUS by sending two FUS command
+       */
+      SHCI_C2_FUS_GetState( NULL );
+      SHCI_C2_FUS_GetState( NULL );
+      while(1)
+      {
+        HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+      }
+    }
+    else
+    {
+      APP_DBG("APP_ZIGBEE_PerformReset: OtaContext.file_type not recognized");
+      return;
     }
   }
-  else
-  {
-    APP_DBG("APP_THREAD_PerformReset: OtaContext.file_type not recognized");
-    return;
-  }
-
 }
 
 /**
@@ -747,15 +861,29 @@ static void APP_ZIGBEE_LEDToggle(void)
  *
  *************************************************************/
 /**
- * @brief  notify to save persitent data callback
+ * @brief  notify to save persistent data callback
  * @param  zb: Zigbee device object pointer, cbarg: callback arg pointer
  * @retval None
  */
 static void APP_ZIGBEE_persist_notify_cb(struct ZigBeeT *zb, void *cbarg)
 {
-  APP_DBG("Notification to save persistent data requested from stack");
+#ifdef OTA_DISPLAY_TIMING 
+  static uint32_t lPersistentStartTime = 0;
+  uint32_t  lTime1, lTime2;
+  
+  lTime1 = ( HAL_GetTick() - lPersistentStartTime );
+  lPersistentStartTime = HAL_GetTick();
+#endif // OTA_DISPLAY_TIMING   
+  
   /* Save the persistent data */
+  APP_DBG("Notification to save persistent data requested from stack.");
   APP_ZIGBEE_persist_save();
+  
+#ifdef OTA_DISPLAY_TIMING   
+  lTime2 = ( HAL_GetTick() - lPersistentStartTime );
+  lPersistentStartTime = HAL_GetTick();
+  APP_DBG("Persistent Data: Interval Time : %d ms and Save Time : %d ms", lTime1, lTime2);
+#endif // OTA_DISPLAY_TIMING 
 }
 
 /**
@@ -779,7 +907,11 @@ static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
        
        /* Start-up from persistence */
        APP_DBG("APP_ZIGBEE_ZbStartupPersist: restoring stack persistence");
-       status = ZbStartupPersist(zb, &cache_persistent_data.U8_data[4], cache_persistent_data.U32_data[0],NULL, NULL, NULL);
+       status = ZbStartupPersist(zb, &cache_persistent_data.U8_data[ST_PERSIST_FLASH_DATA_OFFSET], cache_persistent_data.U32_data[0],NULL, NULL, NULL);
+       if (status == ZB_STATUS_SUCCESS)
+       {
+         bPersistDataUsed = TRUE;
+       }
    }
    else
    {
@@ -790,9 +922,9 @@ static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
 
    /* Only for debug purpose, depending of persistent data, following traces 
       could display bytes that are irrelevants to on off cluster */ 
-   if(status == ZB_STATUS_SUCCESS)
+   if (status == ZB_STATUS_SUCCESS)
    {
-     /* read the last bytes of data where the ZCL on off persitent data shall be*/
+      /* read the last bytes of data where the ZCL on off persistent data shall be*/
       uint32_t len = cache_persistent_data.U32_data[0] + 4 ;
       APP_DBG("ClusterID %02x %02x",cache_persistent_data.U8_data[len-9],cache_persistent_data.U8_data[len-10]);
       APP_DBG("Endpoint %02x %02x",cache_persistent_data.U8_data[len-7],cache_persistent_data.U8_data[len-8]);
@@ -817,7 +949,7 @@ static void APP_ZIGBEE_PersistCompleted_callback(void)
 
 
 /**
- * @brief  Load persitent data 
+ * @brief  Load persistent data 
  * @param  None
  * @retval true if success, false if fail
  */
@@ -825,8 +957,11 @@ static bool APP_ZIGBEE_persist_load(void)
 {
 #ifdef CFG_NVM
     APP_DBG("Retrieving persistent data from FLASH");
-    return APP_ZIGBEE_NVM_Read();
-#else
+    if ( APP_ZIGBEE_NVM_Read() == false )
+    { 
+      return false; 
+    }
+#else /* CFG_NVM */
     /* Check length range */
     if ((cache_persistent_data.U32_data[0] == 0) ||
         (cache_persistent_data.U32_data[0] > ST_PERSIST_MAX_ALLOC_SZ))
@@ -834,9 +969,18 @@ static bool APP_ZIGBEE_persist_load(void)
         APP_DBG("No data or too large length : %d",cache_persistent_data.U32_data[0]);
         return false;
     }
-    return true;
 #endif /* CFG_NVM */
+    
+    /* Verify Tag */
+    if ( cache_persistent_data.U32_data[1] != ST_PERSIST_TAG )
+    {
+      APP_DBG("Bad Verification TAG in RAM : 0x%04X",cache_persistent_data.U32_data[1]);
+      return false;
+    }
+    
+    return true;
 } /* APP_ZIGBEE_persist_load */
+
 
 /**
  * @brief  Save persistent data 
@@ -846,12 +990,16 @@ static bool APP_ZIGBEE_persist_load(void)
 static bool APP_ZIGBEE_persist_save(void)
 {
     uint32_t len;
+#ifdef OTA_DISPLAY_TIMING
+    static union cache  szPersistentDataTemp = { 0, };
+#endif // OTA_DISPLAY_TIMING
 
     /* Clear the RAM cache before saving */
-    memset(cache_persistent_data.U8_data, 0x00, ST_PERSIST_MAX_ALLOC_SZ);
+    memset(cache_persistent_data.U8_data, 0x00, ST_PERSIST_MAX_ALLOC_BUFFER_SZ);
 
     /* Call the satck API t get current persistent data */
     len = ZbPersistGet(zigbee_app_info.zb, 0, 0);
+    
     /* Check Length range */
     if (len == 0U)
     {
@@ -859,6 +1007,7 @@ static bool APP_ZIGBEE_persist_save(void)
         APP_DBG("APP_ZIGBEE_persist_save: no persistence data to save !");
         return false;
     }
+    
     if (len > ST_PERSIST_MAX_ALLOC_SZ)
     {
         /* if persistence length to big to store */
@@ -871,7 +1020,17 @@ static bool APP_ZIGBEE_persist_save(void)
 
     /* Store in cache the persistent data length */
     cache_persistent_data.U32_data[0] = len;
-   
+    
+    /* Store in cache the persistent verification Tag */
+    cache_persistent_data.U32_data[1] = ST_PERSIST_TAG;
+    
+#ifdef OTA_DISPLAY_TIMING
+    // -- Compare with previous --
+    if ( memcmp( szPersistentDataTemp.U8_data, cache_persistent_data.U8_data, ( len + 8 ) ) == 0 )
+      { APP_DBG("APP_ZIGBEE_persist_save: This Persistence is same as previous"); }
+    memcpy( szPersistentDataTemp.U8_data, cache_persistent_data.U8_data, (len + 8 ) );
+#endif // OTA_DISPLAY_TIMING
+    
     zigbee_app_info.persistNumWrites++;
     APP_DBG("APP_ZIGBEE_persist_save: Persistence written in cache RAM (num writes = %d) len=%d",
              zigbee_app_info.persistNumWrites, cache_persistent_data.U32_data[0]);
@@ -887,6 +1046,7 @@ static bool APP_ZIGBEE_persist_save(void)
     return true;
 } /* APP_ZIGBEE_persist_save */
 
+
 /**
  * @brief  Delete persistent data 
  * @param  None
@@ -895,16 +1055,21 @@ static bool APP_ZIGBEE_persist_save(void)
 static void APP_ZIGBEE_persist_delete(void)
 {
   /* Clear RAM cache */
-   memset(cache_persistent_data.U8_data, 0x00, ST_PERSIST_MAX_ALLOC_SZ);
-   APP_DBG("Persistent Data RAM cache cleared");
+  memset(cache_persistent_data.U8_data, 0x00, ST_PERSIST_MAX_ALLOC_BUFFER_SZ);
+  APP_DBG("Persistent Data RAM cache cleared");
 #ifdef CFG_NVM
-   APP_DBG("FLASH ERASED");
-   APP_ZIGBEE_NVM_Erase();
+  APP_DBG("FLASH ERASED");
+  APP_ZIGBEE_NVM_Erase();
 #endif /* CFG_NVM */
+   
+  // -- Reset Chip --
+  *(uint8_t*)SRAM1_BASE = CFG_REBOOT_ON_OTA_FW;
+  NVIC_SystemReset();
 } /* APP_ZIGBEE_persist_delete */
 
 
 #ifdef CFG_NVM
+
 /**
  * @brief  Init the NVM 
  * @param  None
@@ -917,7 +1082,7 @@ static void APP_ZIGBEE_NVM_Init(void)
   APP_DBG("Flash starting address = %x",HW_FLASH_ADDRESS  + CFG_NVM_BASE_ADDRESS);
   eeprom_init_status = EE_Init( 0 , HW_FLASH_ADDRESS + CFG_NVM_BASE_ADDRESS );
  
-  if(eeprom_init_status != EE_OK)
+  if (eeprom_init_status != EE_OK)
   {
     /* format NVM since init failed */
     eeprom_init_status= EE_Init( 1, HW_FLASH_ADDRESS + CFG_NVM_BASE_ADDRESS );
@@ -933,57 +1098,66 @@ static void APP_ZIGBEE_NVM_Init(void)
 */
 static bool APP_ZIGBEE_NVM_Read(void)
 {
-    uint16_t num_words = 0;
-    bool status = true;
-    int ee_status = 0;
-    HAL_FLASH_Unlock();
-    __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_PGSERR | FLASH_FLAG_WRPERR | FLASH_FLAG_OPTVERR); 
+  uint16_t  num_words;
+  uint16_t  num_bytes;
+  uint16_t  iIndex;
+  bool      status = true;
+  int       ee_status = 0;
+  
+  HAL_FLASH_Unlock();
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_PGSERR | FLASH_FLAG_WRPERR | FLASH_FLAG_OPTVERR); 
 
-    /* Read the data length from cache */
-    ee_status = EE_Read(0, ZIGBEE_DB_START_ADDR, &cache_persistent_data.U32_data[0]);
-    if (ee_status != EE_OK)
+  /* Read the data length from cache */
+  ee_status = EE_Read(0, ZIGBEE_DB_START_ADDR, &cache_persistent_data.U32_data[0]);
+  if (ee_status != EE_OK)
+  {
+    APP_DBG("Read -> persistent data length not found ERASE to be done - Read Stopped");
+    status = false;
+  }
+  else
+  {
+    /* Check length is not too big nor zero */
+    num_bytes = cache_persistent_data.U32_data[0];
+    if ( ( num_bytes == 0 ) || ( num_bytes > ST_PERSIST_MAX_ALLOC_SZ ) )
     {
-        APP_DBG("Read -> persistent data length not found ERASE to be done - Read Stopped");
-        status = false;
+      APP_DBG("No data or too large length : %d", num_bytes);
+      status = false;
     }
-      /* Check length is not too big nor zero */
-    else if((cache_persistent_data.U32_data[0] == 0) || 
-            (cache_persistent_data.U32_data[0]> ST_PERSIST_MAX_ALLOC_SZ))
-    {
-            APP_DBG("No data or too large length : %d", cache_persistent_data.U32_data[0]);
-            status = false;
-    }
-        /* Length is within range */
     else
     {
-           /* Adjust the length to be U32 aligned */
-            num_words = (uint16_t) (cache_persistent_data.U32_data[0]/4) ;
-            if (cache_persistent_data.U32_data[0] % 4 != 0)
-            {
-                num_words++;
-            }
+      /* Length is within range. Adjust the length to be U32 aligned */
+      num_words = (uint16_t) ( num_bytes / 4 ) ;
+      if ( cache_persistent_data.U32_data[0] % 4 != 0 )
+      {
+        num_words++;
+      }
+      // -- Add the Verification Tag  --
+      num_words++;
 
-            /* copy the read data from Flash to cache including length */
-            for (uint16_t local_length = 1; local_length <= num_words; local_length++)
-            {
-                /* read data from first data in U32 unit */
-                ee_status = EE_Read(0, local_length + ZIGBEE_DB_START_ADDR, &cache_persistent_data.U32_data[local_length] );
-                if (ee_status != EE_OK)
-                {
-                    APP_DBG("Read not found leaving");
-                    status = false;
-                    break;
-                }
-            }
+      /* copy the read data from Flash to cache including length */
+      for ( iIndex = 1; iIndex <= num_words; iIndex++)
+      {
+        /* read data from first data in U32 unit */
+        ee_status = EE_Read(0, iIndex + ZIGBEE_DB_START_ADDR, &cache_persistent_data.U32_data[iIndex] );
+        if (ee_status != EE_OK)
+        {
+          APP_DBG("Read not found leaving");
+          status = false;
+          break;
+        }
+      }
     }
+  }
     
-    HAL_FLASH_Lock();
-    if(status)
-    {
-        APP_DBG("READ PERSITENT DATA LEN = %d",cache_persistent_data.U32_data[0]);
-    }
-    return status;
+  HAL_FLASH_Lock();
+  if(status)
+  {
+    APP_DBG("READ PERSISTENT DATA LEN = %d", num_bytes);
+  }
+  
+  return status;
 } /* APP_ZIGBEE_NVM_Read */
+
 
 /**
  * @brief  Write the persistent data in NVM
@@ -992,53 +1166,50 @@ static bool APP_ZIGBEE_NVM_Read(void)
  */
 static bool APP_ZIGBEE_NVM_Write(void)
 {
-    int ee_status = 0;
+  int ee_status = 0;
+  uint16_t num_words;
+  uint16_t iIndex;
     
-    uint16_t num_words;
-    uint16_t local_current_size;
+  // -- Offset in Word for Length + Tag */
+  num_words = ( ST_PERSIST_FLASH_DATA_OFFSET / 4u );
+  num_words += (uint16_t) ( cache_persistent_data.U32_data[0] / 4u );
+        
+  /* Adjust the length to be U32 aligned */
+  if ( cache_persistent_data.U32_data[0] % 4 != 0 )
+  {
+    num_words++;
+  }
     
-
-    num_words = 1U; /* 1 words for the length */
-    num_words+= (uint16_t) (cache_persistent_data.U32_data[0]/4);
-    
-    
-    /* Adjust the length to be U32 aligned */
-    if (cache_persistent_data.U32_data[0] % 4 != 0)
+  // -- Save data in flash --
+  for ( iIndex = 0; iIndex < num_words; iIndex++ )
+  {
+    ee_status = EE_Write(0, (uint16_t)iIndex + ZIGBEE_DB_START_ADDR, cache_persistent_data.U32_data[iIndex]);
+    if (ee_status != EE_OK)
     {
-        num_words++;
+      if (ee_status == EE_CLEAN_NEEDED) /* Shall not be there if CFG_EE_AUTO_CLEAN = 1*/
+      {
+        APP_DBG("CLEAN NEEDED, CLEANING");
+        EE_Clean(0,0);
+      }
+      else
+      {
+        /* Failed to write , an Erase shall be done */
+        APP_DBG("APP_ZIGBEE_NVM_Write failed @ %d status %d", iIndex, ee_status);
+        break;
+      }
     }
+  }
+     
+  if(ee_status != EE_OK)
+  {
+     APP_DBG("WRITE STOPPED, need a FLASH ERASE");
+     return false;
+  }
     
-    //save data in flash
-    for (local_current_size = 0; local_current_size < num_words; local_current_size++)
-    {
-        ee_status = EE_Write(0, (uint16_t)local_current_size + ZIGBEE_DB_START_ADDR, cache_persistent_data.U32_data[local_current_size]);
-        if (ee_status != EE_OK)
-        {
-           if(ee_status == EE_CLEAN_NEEDED) /* Shall not be there if CFG_EE_AUTO_CLEAN = 1*/
-           {
-              APP_DBG("CLEAN NEEDED, CLEANING");
-              EE_Clean(0,0);
-           }
-           else
-           {
-              /* Failed to write , an Erase shall be done */
-              APP_DBG("APP_ZIGBEE_NVM_Write failed @ %d status %d", local_current_size,ee_status);
-              break;
-           }
-        }
-    }
-    
- 
-    if(ee_status != EE_OK)
-    {
-       APP_DBG("WRITE STOPPED, need a FLASH ERASE");
-       return false;
-    }
-    
-    APP_DBG("WRITTEN PERSISTENT DATA LEN = %d",cache_persistent_data.U32_data[0]);
-    return true;
-
+  APP_DBG("WRITTEN PERSISTENT DATA LEN = %d", cache_persistent_data.U32_data[0]);
+  return true;
 } /* APP_ZIGBEE_NVM_Write */
+
 
 /**
  * @brief  Erase the NVM
@@ -1062,6 +1233,7 @@ static void APP_ZIGBEE_App_Init(void){
   /* Tasks associated to OTA upgrade process */
   UTIL_SEQ_RegTask(1U << (uint32_t)CFG_TASK_ZIGBEE_OTA_REQUEST_UPGRADE, UTIL_SEQ_RFU, APP_ZIGBEE_OTA_Client_Request_Upgrade);
   UTIL_SEQ_RegTask(1U << (uint32_t)CFG_TASK_ZIGBEE_OTA_START_DOWNLOAD, UTIL_SEQ_RFU, APP_ZIGBEE_OTA_Client_StartDownload);
+  UTIL_SEQ_RegTask(1U << (uint32_t)CFG_TASK_ZIGBEE_OTA_SERVER_DISCOVERY, UTIL_SEQ_RFU, APP_ZIGBEE_OTA_Client_ServerDiscovery);
   UTIL_SEQ_RegTask(1U << (uint32_t)CFG_TASK_FUOTA_RESET, UTIL_SEQ_RFU, APP_ZIGBEE_PerformReset);
 
   /* Timer associated to GREEN LED toggling */
@@ -1071,21 +1243,11 @@ static void APP_ZIGBEE_App_Init(void){
   APP_ZIGBEE_OTA_Client_Init();
 } /* APP_ZIGBEE_App_Init */
 
-/**
- * @brief  OTA client initialization
- * @param  None
- * @retval None
- */
-static void APP_ZIGBEE_OTA_Client_Init(void){
-  enum ZclStatusCodeT status;
-  struct ZbApsAddrT dst;
-  
-  /* Client info fields set to 0 */
-  memset(&OTA_client_info, 0, sizeof(OTA_client_info));
-  
-  APP_DBG("Searching for OTA server.");
-  
-  /* Requesting a discovery for any available OTA server */
+
+static void APP_ZIGBEE_OTA_Client_ServerDiscovery( void )
+{
+  enum ZclStatusCodeT   status;
+  struct ZbApsAddrT     dst;
   
   /* Destination address configuration */
   memset(&dst, 0, sizeof(dst));
@@ -1093,13 +1255,35 @@ static void APP_ZIGBEE_OTA_Client_Init(void){
   dst.endpoint = SW1_ENDPOINT;
   dst.nwkAddr = 0x0;
   
-  /* Sending Discovery request to server */
   status = ZbZclOtaClientDiscover(zigbee_app_info.ota_client, &dst);
-  if(status != ZCL_STATUS_SUCCESS){
+  if(status != ZCL_STATUS_SUCCESS)
+  {
     APP_DBG("ZbZclOtaClientDiscover failed.\n");
   }
+}
+
+
+/**
+ * @brief  OTA client initialization
+ * @param  None
+ * @retval None
+ */
+static void APP_ZIGBEE_OTA_Client_Init(void)
+{
+  uint64_t dlExtendedAddress;
   
+  /* Client info fields set to 0 */
+  memset(&OTA_client_info, 0, sizeof(OTA_client_info));
+  
+  APP_DBG("Searching for OTA server.");
+  BSP_LED_On(LED_GREEN);
+  
+  /* Requesting a discovery for any available OTA server */
+  UTIL_SEQ_SetTask( 1U << CFG_TASK_ZIGBEE_OTA_SERVER_DISCOVERY, CFG_SCH_PRIO_0 );
+  
+  /* Wait a Discovery */
   UTIL_SEQ_WaitEvt(EVENT_ZIGBEE_OTA_SERVER_FOUND);
+  BSP_LED_Off(LED_GREEN);
   
   /**
    * This is a safe clear in case the engi bytes are not all written
@@ -1111,7 +1295,14 @@ static void APP_ZIGBEE_OTA_Client_Init(void){
   Delete_Sectors();
   
   BSP_LED_On(LED_BLUE);
-  APP_DBG("OTA client init done!\n");  
+  if ( bPersistDataUsed != FALSE )
+  {
+    BSP_LED_On(LED_GREEN);
+  }
+  
+  dlExtendedAddress = ZbExtendedAddress(zigbee_app_info.zb);
+  APP_DBG("OTA Client with EUI64 0x%016" PRIx64 ".", dlExtendedAddress );
+  APP_DBG("OTA Client init done!\n");  
   
 } /* APP_ZIGBEE_OTA_Client_Init */
 
@@ -1148,6 +1339,7 @@ void APP_ZIGBEE_Init(void)
   
   /* Task associated with application init */
   UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_APP_START, UTIL_SEQ_RFU, APP_ZIGBEE_App_Init);
+  
   /* Start the Zigbee on the CPU2 side */
   ZigbeeInitStatus = SHCI_C2_ZIGBEE_Init();
   /* Prevent unused argument(s) compilation warning */
@@ -1208,10 +1400,10 @@ static void APP_ZIGBEE_StackLayersInit(void)
      HW_TS_Create(CFG_TIM_WAIT_BEOFRE_READ_ATTR, &TS_ID1, hw_ts_SingleShot, APP_ZIGBEE_PersistCompleted_callback);
      HW_TS_Start(TS_ID1, 1000);
      
-     /* STEP3 - Activate back the persistent notofacation */
+     /* STEP3 - Activate back the persistent notification */
      /* Register Persistent data change notification */
      ZbPersistNotifyRegister(zigbee_app_info.zb,APP_ZIGBEE_persist_notify_cb,NULL);
-                                                         
+                                                              
      /* Call the callback once here to save persistence data */
      APP_ZIGBEE_persist_notify_cb(zigbee_app_info.zb,NULL);
      
@@ -1256,7 +1448,7 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
   client_config.callbacks.image_notify = APP_ZIGBEE_OTA_Client_ImageNotify_cb;
   client_config.callbacks.query_next = APP_ZIGBEE_OTA_Client_QueryNextImage_cb;
 //  .callbacks.update_raw = APP_ZIGBEE_OTA_Client_UpdateRaw_cb;
-//  .callbacks.write_tag = APP_ZIGBEE_OTA_Client_WriteTag_cb;
+//  client_config.callbacks.write_tag = APP_ZIGBEE_OTA_Client_WriteTag_cb;
   client_config.callbacks.write_image = APP_ZIGBEE_OTA_Client_WriteImage_cb; 
   client_config.callbacks.image_validate = APP_ZIGBEE_OTA_Client_ImageValidate_cb;
 //  client_config.callbacks.upgrade_end = APP_ZIGBEE_OTA_Client_UpgradeEnd_cb;
@@ -1296,7 +1488,7 @@ static void APP_ZIGBEE_NwkForm(void)
     config.channelList.count = 1;
     config.channelList.list[0].page = 0;
     config.channelList.list[0].channelMask = 1 << CHANNEL; /* Channel in use*/
-
+    
     /* Using ZbStartupWait (blocking) here instead of ZbStartup, in order to demonstrate how to do
      * a blocking call on the M4. */
     status = ZbStartupWait(zigbee_app_info.zb, &config);
@@ -1314,6 +1506,12 @@ static void APP_ZIGBEE_NwkForm(void)
     else
     {
       APP_DBG("Startup failed, attempting again after a short delay (%d ms)", APP_ZIGBEE_STARTUP_FAIL_DELAY);
+      
+      // -- Reset Zigbee to be sure that we re-start with a good setting --
+      if ( status == ZB_NWK_STATUS_INVALID_REQUEST ) {
+        ZbReset( zigbee_app_info.zb );
+      }
+        
       zigbee_app_info.join_delay = HAL_GetTick() + APP_ZIGBEE_STARTUP_FAIL_DELAY;
     }
   }

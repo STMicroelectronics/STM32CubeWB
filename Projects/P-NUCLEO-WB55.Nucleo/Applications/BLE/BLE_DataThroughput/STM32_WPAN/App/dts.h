@@ -68,6 +68,7 @@ tBleStatus DTS_STM_UpdateChar( uint16_t UUID , uint8_t *pPayload );
 void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification );
 void BLE_SVC_GAP_Change_PHY(void);
 void BLE_SVC_GAP_Security_Req(void);
+void BLE_GAP_Pairing_Req(void);
 void BLE_SVC_GAP_Clear_DataBase(void);
 void Resume_Notification(void);
 //tBleStatus DTS_STM_UpdateCharThroughput(DTS_STM_Payload_t *pDataValue );

@@ -1,8 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : App/p2p_server_app.c
-  * Description        : P2P Server Application
+  * @file    p2p_server_app.c
+  * @author  MCD Application Team
+  * @brief   Peer to peer Server Application
   ******************************************************************************
   * @attention
   *
@@ -69,7 +70,7 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static P2P_Server_App_Context_t P2P_Server_App_Context;
+static P2P_Server_App_Context_t P2P_Server_App_Context;
 
 /**
  * END of Section BLE_APP_CONTEXT

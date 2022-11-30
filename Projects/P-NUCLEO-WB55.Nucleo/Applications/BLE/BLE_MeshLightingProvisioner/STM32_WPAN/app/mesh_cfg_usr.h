@@ -167,7 +167,7 @@ Either use 0 to disable or 1 to enable
 #define TF_LIGHT_CLIENT_M                                                      1
 #define TF_LIGHT_LC_M                                                          0
 #define TF_VENDOR_M                                                            0
-#define TF_CONFIG_CLIENT_M                                                     0
+#define TF_CONFIG_CLIENT_M                                                     1
 #define TF_NEIGHBOUR                                                           0
 #define TF_MEMORY                                                              0
 #define TF_BEACON                                                              0
@@ -287,7 +287,7 @@ Either use 0 to disable or 1 to enable
 //#define ENABLE_LIGHT_MODEL_SERVER_XYL_SETUP 
 
 /******* Define the following Macros to enable the vendor model  ******/
-//#define ENABLE_VENDOR_MODEL_SERVER                                           (1)
+#define ENABLE_VENDOR_MODEL_SERVER                                           (1)
 #define GENERIC_SERVER_MODEL_PUBLISH  
 
 /* Define the following Macros to enable the usage of the Client Generic Models  */

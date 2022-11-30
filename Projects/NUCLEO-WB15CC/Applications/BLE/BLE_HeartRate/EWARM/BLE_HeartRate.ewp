@@ -310,7 +310,7 @@
         </option>
         <option>
           <name>CCRequirePrototypes</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCDiagWarnAreErr</name>
@@ -1065,6 +1065,9 @@
           <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
         </file>
         <file>
+          <name>$PROJ_DIR$\..\Core\Src\hw_uart.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
         </file>
         <file>
@@ -1132,6 +1135,9 @@
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_ll_rcc.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc_ex.c</name>
       </file>
       <file>
@@ -1181,6 +1187,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</name>
       </file>
     </group>
   </group>

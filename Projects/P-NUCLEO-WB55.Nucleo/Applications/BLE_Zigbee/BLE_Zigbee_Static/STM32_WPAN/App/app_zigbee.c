@@ -492,7 +492,7 @@ static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb)
 }/* APP_ZIGBEE_ZbStartupPersist */
 
 /**
- * @brief  notify to save persitent data callback
+ * @brief  notify to save persistent data callback
  * @param  zb: Zigbee device object pointer, cbarg: callback arg pointer
  * @retval None
  */
@@ -505,7 +505,7 @@ static void APP_ZIGBEE_persist_notify_cb(struct ZigBeeT *zb, void *cbarg)
 
 
 /**
- * @brief  Load persitent data
+ * @brief  Load persistent data
  * @param  None
  * @retval true if success, false if fail
  */

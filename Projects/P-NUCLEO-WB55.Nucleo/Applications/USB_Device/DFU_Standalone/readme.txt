@@ -85,7 +85,7 @@ on the driver installation and PC host user interface.
 @par USB Library Configuration
 
 It is possible to fine tune needed USB Device features by modifying defines values in USBD configuration
-file “usbd_conf.h” available under the project includes directory, in a way to fit the application
+file "usbd_conf.h" available under the project includes directory, in a way to fit the application
 requirements, such as:
  - USBD_DFU_APP_DEFAULT_ADD, specifying the address from where user's application will be downloaded.
 

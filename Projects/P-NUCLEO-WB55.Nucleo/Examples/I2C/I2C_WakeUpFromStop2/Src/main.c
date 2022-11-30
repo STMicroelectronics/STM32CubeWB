@@ -195,17 +195,24 @@ int main(void)
   if(HAL_I2C_Slave_Receive_IT(&hi2c3, (uint8_t *)aRxBuffer, RXBUFFERSIZE) != HAL_OK)
   {
     /* Transfer error in reception process */
-    Error_Handler();        
+    Error_Handler();
   }
  
   /* enter stop mode 2 */
   /* Turn LED1 on */
   BSP_LED_On(LED1);
+
+  /* Suspend SysTick */
+  HAL_SuspendTick();
+
   HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
 
   /* ... STOP mode 2 ... */
 
   /* Wake Up from Stop mode 2 */
+  /* Resume SysTick */
+  HAL_ResumeTick();
+
   /* Turn LED1 off */
   BSP_LED_Off(LED1);
 
@@ -232,11 +239,26 @@ int main(void)
   /* enter stop mode 2 */
   /* Turn LED1 on */
   BSP_LED_On(LED1);
+
+  /* Suspend SysTick */
+  /**
+   * When HAL_DBGMCU_EnableDBGStopMode() is called to keep the debugger active in Stop Mode,
+   * the systick shall be disabled otherwise the cpu may crash when moving out from stop mode
+   *
+   * When in production, the HAL_DBGMCU_EnableDBGStopMode() is not called so that the device can reach best power consumption
+   * However, the systick should be disabled anyway to avoid the case when it is about to expire at the same time the device enters
+   * stop mode (this will abort the Stop Mode entry).
+   */
+  HAL_SuspendTick();
+
   HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
 
-  /* ... STOP mode 2 ... */  
+  /* ... STOP mode 2 ... */
 
   /* Wake Up from Stop mode 2 */
+  /* Resume SysTick */
+  HAL_ResumeTick();
+
   /* Turn LED1 off */
   BSP_LED_Off(LED1);
 #endif /* MASTER_BOARD */
@@ -256,7 +278,7 @@ int main(void)
   if(Buffercmp((uint8_t*)aTxBuffer,(uint8_t*)aRxBuffer,RXBUFFERSIZE))
   {
     /* Processing Error */
-    Error_Handler();      
+    Error_Handler();
   }
   /* USER CODE END 2 */
 

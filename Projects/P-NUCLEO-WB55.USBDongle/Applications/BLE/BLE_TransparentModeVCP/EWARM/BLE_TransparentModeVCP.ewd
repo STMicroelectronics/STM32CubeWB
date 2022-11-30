@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB_M4.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB55_CM4.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -996,7 +996,7 @@
                 <option>
                     <name>CCSTLinkResetList</name>
                     <version>3</version>
-                    <state>0</state>
+                    <state>4</state>
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>

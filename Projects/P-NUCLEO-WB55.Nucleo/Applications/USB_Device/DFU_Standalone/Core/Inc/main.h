@@ -61,6 +61,7 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+
 /* USER CODE BEGIN Private defines */
 #define BUTTON_KEY                      BUTTON_SW1
 #define BUTTON_KEY_PIN                  BUTTON_SW1_PIN

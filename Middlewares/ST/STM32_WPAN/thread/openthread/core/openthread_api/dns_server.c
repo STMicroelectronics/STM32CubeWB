@@ -123,7 +123,7 @@ otDnssdQueryType otDnssdGetQueryTypeAndName(const otDnssdQuery *aQuery, char (*a
 
   p_ot_req->ID = MSG_M4TOM0_OT_DNSSD_GET_QUERY_TYPE_AND_NAME;
 
-  p_ot_req->Size=1;
+  p_ot_req->Size=2;
   p_ot_req->Data[0] = (uint32_t) aQuery;
   p_ot_req->Data[1] = (uint32_t) aNameOutput;
 
@@ -131,6 +131,23 @@ otDnssdQueryType otDnssdGetQueryTypeAndName(const otDnssdQuery *aQuery, char (*a
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otDnssdQueryType)p_ot_req->Data[0];
+}
+
+const otDnssdCounters *otDnssdGetCounters(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_DNSSD_GET_COUNTERS;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otDnssdCounters*)p_ot_req->Data[0];
 }
 
 #endif // OPENTHREAD_CONFIG_DNSSD_SERVER_ENABLE

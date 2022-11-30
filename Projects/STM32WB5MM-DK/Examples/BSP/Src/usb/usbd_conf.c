@@ -251,10 +251,10 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef * pdev)
   pdev->pData = &hpcd;
   /* Initialize LL Driver */
   HAL_PCD_Init(&hpcd);
-  
+
   HAL_PCDEx_PMAConfig(pdev->pData , 0x00 , PCD_SNG_BUF, 0x40);
   HAL_PCDEx_PMAConfig(pdev->pData , 0x80 , PCD_SNG_BUF, 0x80);
-  HAL_PCDEx_PMAConfig(pdev->pData , 0x81 , PCD_DBL_BUF, 0x00C00120); 
+  HAL_PCDEx_PMAConfig(pdev->pData , 0x81 , PCD_DBL_BUF, 0x01C00120); 
 
   return USBD_OK;
 }

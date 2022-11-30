@@ -518,7 +518,7 @@ enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT *zb)
 }
 
 /**
- * @brief  Load persitent data
+ * @brief  Load persistent data
  * @param  bufLen : pointer on buffer length
  * @retval None
  */

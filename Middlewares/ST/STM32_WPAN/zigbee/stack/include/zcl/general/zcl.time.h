@@ -4,7 +4,7 @@
  * @brief ZCL Time cluster header
  * ZCL 7 section 3.12
  * ZCL 8 section 3.12
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_TIME_H

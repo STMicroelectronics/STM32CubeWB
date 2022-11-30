@@ -1,12 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : App/p2p_server_app.h
-  * Description        : Header for p2p_server_app.c module
+  * @file    p2p_server_app.h
+  * @author  MCD Application Team
+  * @brief   PHeader for p2p_server_app.c module
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -76,5 +77,4 @@ typedef struct
 }
 #endif
 
-#endif /* P2P_SERVER_APP_H */
-
+#endif /*P2P_SERVER_APP_H */

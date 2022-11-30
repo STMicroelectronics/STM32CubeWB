@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -48,6 +48,9 @@ extern "C" {
 #endif
 #ifdef  USE_X_NUCLEO_EPD
 #include "x_nucleo_epd.h"
+#endif
+#ifdef USE_STM32WB5M_DK
+#include "stm32wb5mm_dk.h"
 #endif
 
 /* Private includes ----------------------------------------------------------*/

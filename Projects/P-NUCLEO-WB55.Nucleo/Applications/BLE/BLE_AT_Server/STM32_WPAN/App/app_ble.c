@@ -107,7 +107,7 @@ PLACE_IN_SECTION("TAG_OTA_END") const uint32_t MagicKeywordValue = 0x94448A29 ;
 PLACE_IN_SECTION("TAG_OTA_START") const uint32_t MagicKeywordAddress = (uint32_t)&MagicKeywordValue;
 
 BleApplicationContext_t BleApplicationContext;
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static uint16_t AdvIntervalMin, AdvIntervalMax;
+static uint16_t AdvIntervalMin, AdvIntervalMax;
 
 P2PS_APP_ConnHandle_Not_evt_t handleNotification;
 Custom_Context_t Custom_Context;
@@ -336,31 +336,32 @@ void APP_BLE_Init( void )
   {
     {{0,0,0}},                          /**< Header unused */
     {0,                                 /** pBleBufferAddress not used */
-    0,                                  /** BleBufferSize not used */
-    CFG_BLE_NUM_GATT_ATTRIBUTES,
-    CFG_BLE_NUM_GATT_SERVICES,
-    CFG_BLE_ATT_VALUE_ARRAY_SIZE,
-    CFG_BLE_NUM_LINK,
-    CFG_BLE_DATA_LENGTH_EXTENSION,
-    CFG_BLE_PREPARE_WRITE_LIST_SIZE,
-    CFG_BLE_MBLOCK_COUNT,
-    CFG_BLE_MAX_ATT_MTU,
-    CFG_BLE_SLAVE_SCA,
-    CFG_BLE_MASTER_SCA,
-    CFG_BLE_LSE_SOURCE,
-    CFG_BLE_MAX_CONN_EVENT_LENGTH,
-    CFG_BLE_HSE_STARTUP_TIME,
-    CFG_BLE_VITERBI_MODE,
-    CFG_BLE_OPTIONS,
-    0,
-    CFG_BLE_MAX_COC_INITIATOR_NBR,
-    CFG_BLE_MIN_TX_POWER,
-    CFG_BLE_MAX_TX_POWER,
-    CFG_BLE_RX_MODEL_CONFIG,
-     CFG_BLE_MAX_ADV_SET_NBR, 
+     0,                                 /** BleBufferSize not used */
+     CFG_BLE_NUM_GATT_ATTRIBUTES,
+     CFG_BLE_NUM_GATT_SERVICES,
+     CFG_BLE_ATT_VALUE_ARRAY_SIZE,
+     CFG_BLE_NUM_LINK,
+     CFG_BLE_DATA_LENGTH_EXTENSION,
+     CFG_BLE_PREPARE_WRITE_LIST_SIZE,
+     CFG_BLE_MBLOCK_COUNT,
+     CFG_BLE_MAX_ATT_MTU,
+     CFG_BLE_SLAVE_SCA,
+     CFG_BLE_MASTER_SCA,
+     CFG_BLE_LS_SOURCE,
+     CFG_BLE_MAX_CONN_EVENT_LENGTH,
+     CFG_BLE_HSE_STARTUP_TIME,
+     CFG_BLE_VITERBI_MODE,
+     CFG_BLE_OPTIONS,
+     0,
+     CFG_BLE_MAX_COC_INITIATOR_NBR,
+     CFG_BLE_MIN_TX_POWER,
+     CFG_BLE_MAX_TX_POWER,
+     CFG_BLE_RX_MODEL_CONFIG,
+     CFG_BLE_MAX_ADV_SET_NBR,
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
-     CFG_BLE_RX_PATH_COMPENS
+     CFG_BLE_RX_PATH_COMPENS,
+     CFG_BLE_CORE_VERSION
     }
   };
 
@@ -544,7 +545,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           }
           else
           {
-            printf("Read conf not succeess \n");
+            printf("Read conf not success \n");
           }
           /* USER CODE BEGIN EVT_LE_PHY_UPDATE_COMPLETE */
 
@@ -897,7 +898,11 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 
 #if (BLE_CFG_CENTRAL == 1)
   role |= GAP_CENTRAL_ROLE;
-#endif
+#endif /* BLE_CFG_CENTRAL == 1 */
+
+/* USER CODE BEGIN Role_Mngt*/
+
+/* USER CODE END Role_Mngt */
 
   if (role > 0)
   {

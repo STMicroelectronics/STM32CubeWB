@@ -43,7 +43,7 @@
 #define HAL_IPCC_MODULE_ENABLED
 /*#define HAL_IRDA_MODULE_ENABLED   */
 /*#define HAL_IWDG_MODULE_ENABLED   */
-/*#define HAL_LCD_MODULE_ENABLED   */
+#define HAL_LCD_MODULE_ENABLED
 /*#define HAL_LPTIM_MODULE_ENABLED   */
 /*#define HAL_PCD_MODULE_ENABLED   */
 /*#define HAL_PKA_MODULE_ENABLED   */
@@ -54,7 +54,7 @@
 /*#define HAL_SMBUS_MODULE_ENABLED   */
 /*#define HAL_SMARTCARD_MODULE_ENABLED   */
 #define HAL_SPI_MODULE_ENABLED
-#define HAL_TIM_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED   
 /*#define HAL_TSC_MODULE_ENABLED   */
 #define HAL_UART_MODULE_ENABLED
 /*#define HAL_USART_MODULE_ENABLED   */
@@ -308,9 +308,9 @@
  #include "stm32wbxx_hal_spi.h"
 #endif /* HAL_SPI_MODULE_ENABLED */
 
-#ifdef HAL_TIM_MODULE_ENABLED
+//#ifdef HAL_TIM_MODULE_ENABLED
  #include "stm32wbxx_hal_tim.h"
-#endif /* HAL_TIM_MODULE_ENABLED */
+//#endif /* HAL_TIM_MODULE_ENABLED */
 
 #ifdef HAL_TSC_MODULE_ENABLED
   #include "stm32wbxx_hal_tsc.h"

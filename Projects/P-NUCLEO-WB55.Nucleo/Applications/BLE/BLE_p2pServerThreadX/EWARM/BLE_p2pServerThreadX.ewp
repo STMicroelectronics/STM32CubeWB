@@ -222,7 +222,6 @@
                     <state>USE_STM32WBXX_NUCLEO</state>
                     <state>USE_HAL_DRIVER</state>
                     <state>STM32WB55xx</state>
-                    <state>TX_LOW_POWER</state>
                     <state>TX_INCLUDE_USER_DEFINE_FILE</state>
                 </option>
                 <option>
@@ -316,7 +315,7 @@
                 </option>
                 <option>
                     <name>CCRequirePrototypes</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCDiagWarnAreErr</name>
@@ -539,7 +538,7 @@
                 </option>
                 <option>
                     <name>ADefines</name>
-                    <state>TX_LOW_POWER</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>AList</name>
@@ -1379,6 +1378,45 @@
                             </group>
                         </group>
                     </group>
+                </group>
+                <group>
+                    <name>trace</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_buffer_full_notify.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_disable.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_enable.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_event_filter.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_event_unfilter.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_initialize.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_interrupt_control.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_isr_enter_insert.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_isr_exit_insert.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_object_register.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_object_unregister.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\threadx\common\src\tx_trace_user_event_insert.c</name>
+                    </file>
                 </group>
                 <group>
                     <name>utility</name>

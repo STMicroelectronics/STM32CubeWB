@@ -70,7 +70,9 @@ void HSEM_IRQHandler(void);
 void FPU_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 void RTC_WKUP_IRQHandler(void);
+void EXTI0_IRQHandler(void);
 void EXTI4_IRQHandler(void);
+void EXTI1_IRQHandler(void);
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

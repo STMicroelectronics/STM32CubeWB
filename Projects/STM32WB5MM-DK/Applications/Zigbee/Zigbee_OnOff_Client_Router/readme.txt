@@ -42,7 +42,7 @@ For this application it is requested to have:
               Device 1                                      Device 2
         
              ---------                                      ---------
-             |       |       ZbZclOnOffClientToggleReq      |       |
+             |       |       ZbZclOnOffClientOn/OffReq      |       |
      Push1B=>|Client | -----------------------------------> |Server | =>LCD message 'O' toggling
              |       |                                      |       |
              |       |                                      |       |

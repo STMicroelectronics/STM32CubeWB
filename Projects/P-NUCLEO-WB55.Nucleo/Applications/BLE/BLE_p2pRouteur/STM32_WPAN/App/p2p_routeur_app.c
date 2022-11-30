@@ -138,13 +138,13 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static P2P_ClientContext_t aP2PClientContext[BLE_CFG_CLT_MAX_NBR_CB];
+static P2P_ClientContext_t aP2PClientContext[BLE_CFG_CLT_MAX_NBR_CB];
 
 /**
  * END of Section BLE_APP_CONTEXT
  */
 /* USER CODE BEGIN PV */
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static P2P_Router_App_Context_t P2P_Router_App_Context;
+static P2P_Router_App_Context_t P2P_Router_App_Context;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -480,14 +480,14 @@ static void Client_Update_Service( void )
         {
             /* USER CODE BEGIN aP2PClientContext */
             case APP_BLE_DISCOVER_LED_CHAR_DESC: /* Not Used - No descriptor */
-                APP_DBG_MSG("* GATT : Discover Descriptor of Led Characteritic\n");
+                APP_DBG_MSG("* GATT : Discover Descriptor of Led  Characteristic\n");
                 aci_gatt_disc_all_char_desc(aP2PClientContext[index].connHandle,
                         aP2PClientContext[index].P2PLedCharHdle,
                         aP2PClientContext[index].P2PLedCharHdle+2);
 
                 break;
             case APP_BLE_DISCOVER_BUTTON_CHAR_DESC:
-                APP_DBG_MSG("* GATT : Discover Descriptor of Button Characteritic\n");
+                APP_DBG_MSG("* GATT : Discover Descriptor of Button  Characteristic\n");
                 aci_gatt_disc_all_char_desc(aP2PClientContext[index].connHandle,
                         aP2PClientContext[index].P2PClientCharHdle,
                         aP2PClientContext[index].P2PClientCharHdle+2);

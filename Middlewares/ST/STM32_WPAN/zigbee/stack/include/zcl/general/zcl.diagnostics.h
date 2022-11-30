@@ -4,7 +4,7 @@
  * @brief ZCL Diagnostics cluster header
  * ZCL 7 section 3.15
  * ZCL 8 section 3.15
- * @copyright Copyright [2019 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2019 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_DIAGNOSTICS_H
@@ -63,7 +63,9 @@
  * DIAG.C.Afffe | AttributeReportingStatus | True
  */
 
-/*lint -save -e621 "Identifier clash (symbol 'ZCL_DIAG_SVR_ATTR_APS_TX_UCAST_FAIL' [MISRA Rule 5.1 REQUIRED, MISRA Rule 5.2 REQUIRED, MISRA Rule 5.4 REQUIRED, MISRA Rule 5.5 REQUIRED]" */
+/*lint -save -e621 "Identifier clash (symbol 'ZCL_DIAG_SVR_ATTR_APS_TX_UCAST_FAIL'
+ [MISRA Rule 5.1 REQUIRED, MISRA Rule 5.2 REQUIRED, MISRA Rule 5.4 REQUIRED, MISRA Rule 5.5 REQUIRED]" */
+
 /** Diagnostics Server Attribute IDs */
 enum ZbZclDiagSvrAttrT {
     ZCL_DIAG_SVR_ATTR_RESETS = 0x0000, /**< NumberOfResets (Optional) */

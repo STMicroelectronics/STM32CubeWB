@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspace>
     <project>
-        <path>$WS_DIR$\Zigbee_OnOff_ZR.ewp</path>
+        <path>$WS_DIR$\Zigbee_OnOff_ChannelsAgility_ZR.ewp</path>
     </project>
     <batchBuild />
 </workspace>

@@ -180,11 +180,11 @@ MOBLE_RESULT PalNvmCompare(MOBLEUINT32 address,
 MOBLE_RESULT PalNvmErase(MOBLEUINT32 address,
                          MOBLEUINT8 nb_pages)
 {
-  if(FD_EraseSectors(GetPage(address), nb_pages) != 1)
+  if(FD_EraseSectors(GetPage(address), nb_pages) != nb_pages)
   {
     return MOBLE_RESULT_FAIL;
   }
-
+  
   return MOBLE_RESULT_SUCCESS;
 }
 

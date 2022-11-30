@@ -47,7 +47,7 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") BSAAPP_Context_t BASAPP_Context[BLE_CFG_BAS_NUMBER];
+BSAAPP_Context_t BASAPP_Context[BLE_CFG_BAS_NUMBER];
 
 /**
  * END of Section BLE_APP_CONTEXT

@@ -83,13 +83,14 @@ typedef struct
  * START of Section BLE_APP_CONTEXT
  */
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") DTS_App_Context_t DTS_Context;
+DTS_App_Context_t DTS_Context;
 
 /**
  * END of Section BLE_APP_CONTEXT
  */
 static uint8_t Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE]; /* DATA_NOTIFICATION_MAX_PACKET_SIZE data + CRC */
-uint32_t DataReceived;
+extern uint32_t DTS_packet_lost;
+extern uint32_t DTS_N;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -103,7 +104,7 @@ static void BLE_App_Delay_DataThroughput( void );
 extern uint16_t Att_Mtu_Exchanged;
 extern uint8_t TimerDataThroughputWrite_Id;
 /* USER CODE BEGIN PFP */
-
+static uint32_t DTS_DataReceived;
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -117,6 +118,7 @@ void DTS_App_Init(void)
   UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_TRANSFER_UPDATE_ID, UTIL_SEQ_RFU, SendData);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_PHY_UPDATE_ID, UTIL_SEQ_RFU, BLE_SVC_GAP_Change_PHY);
   UTIL_SEQ_RegTask( 1<<CFG_TASK_DATA_WRITE_ID, UTIL_SEQ_RFU, BLE_App_Delay_DataThroughput);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_CONN_INTERV_UPDATE_ID, UTIL_SEQ_RFU, BLE_SVC_L2CAP_Conn_Update_11_25);
 
   /**
    * Initialize data buffer
@@ -178,7 +180,7 @@ void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification )
       
     case DTS_THROUGHPUT_NOTIFICATION_ENABLED:
     {
-      BLE_SVC_L2CAP_Conn_Update_7_5();
+      //BLE_SVC_L2CAP_Conn_Update_7_5();
     }
     break;
       
@@ -190,15 +192,15 @@ void DTS_Notification( DTS_STM_App_Notification_evt_t *pNotification )
       
     case DTS_DATA_RECEIVED:
     {
-      if (DataReceived == 0)
+      if (DTS_DataReceived == 0)
       {
         /* start timer */
-        DataReceived += pNotification->DataTransfered.Length;
+        DTS_DataReceived += pNotification->DataTransfered.Length;
         HW_TS_Start(TimerDataThroughputWrite_Id, DELAY_1s);
       }
       else
       {
-        DataReceived += pNotification->DataTransfered.Length;
+        DTS_DataReceived += pNotification->DataTransfered.Length;
       }
     }
     break;
@@ -259,7 +261,7 @@ void Resume_Notification(void)
   DTS_Context.DtFlowStatus = DTS_APP_FLOW_ON;
 }
 
-static void DTS_Button1TriggerReceived( void )
+void DTS_Button1TriggerReceived( void )
 {
   if(DTS_Context.ButtonTransferReq != DTS_APP_TRANSFER_REQ_OFF)
   {
@@ -276,10 +278,17 @@ static void DTS_Button1TriggerReceived( void )
   return;
 }
 
-static void DTS_Button2TriggerReceived( void )
+void DTS_Button2TriggerReceived( void )
 {
   APP_DBG_MSG("**CHANGE PHY \n");
   UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_PHY_UPDATE_ID, CFG_SCH_PRIO_0);
+  return;
+}
+
+void DTS_Button2LongTriggerReceived( void )
+{
+  APP_DBG_MSG("**CHANGE CONN INTERVAL \n");
+  UTIL_SEQ_SetTask(1 << CFG_TASK_CONN_INTERV_UPDATE_ID, CFG_SCH_PRIO_0);
   return;
 }
 
@@ -302,7 +311,8 @@ static void Appli_UpdateButtonState(Button_TypeDef button, int isPressed)
     else if(button == BUTTON_SW2)
     {
       /* Button 2 long press action */
-      DTS_Button2TriggerReceived();
+      //DTS_Button2TriggerReceived();
+      DTS_Button2LongTriggerReceived();
     }
     else if(button == BUTTON_SW3)
     {
@@ -358,14 +368,16 @@ static void BLE_App_Delay_DataThroughput(void)
   uint32_t DataThroughput;
   DTS_STM_Payload_t ThroughputToSend; 
   
-  DataThroughput = (uint32_t)(DataReceived/TIMEUNIT);
-  APP_DBG_MSG("DataThroughput = %ld  bytes/s\n", DataThroughput);
+  DataThroughput = (uint32_t)(DTS_DataReceived/TIMEUNIT);
+//  APP_DBG_MSG("DataThroughput = %ld  bytes/s\n", DataThroughput);
+  APP_DBG_MSG("DataThroughput = %ld  bytes/s lost = %ld \n", DataThroughput, DTS_packet_lost);
   
   ThroughputToSend.Length = 4;
   ThroughputToSend.pPayload = (uint8_t*)&DataThroughput;
   
   DTS_STM_UpdateChar(DT_THROUGHPUT_CHAR_UUID, (uint8_t*)&ThroughputToSend );
-  DataReceived = 0;
+  DTS_DataReceived = 0;
+  DTS_packet_lost = 0;
 }
 
 /* USER CODE BEGIN FD */

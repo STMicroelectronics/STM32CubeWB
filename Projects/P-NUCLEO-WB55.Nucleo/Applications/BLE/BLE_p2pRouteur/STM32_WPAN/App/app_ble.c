@@ -365,8 +365,8 @@ uint8_t manuf_data[14] = {sizeof(manuf_data)-1,
 
 P2P_ConnHandle_Not_evt_t handleNotification;
 
-PLACE_IN_SECTION("BLE_APP_CONTEXT") static BleApplicationContext_t BleApplicationContext;
-PLACE_IN_SECTION("BLE_APP_CONTEXT") APP_BLE_p2p_Conn_Update_req_t APP_BLE_p2p_Conn_Update_req;
+static BleApplicationContext_t BleApplicationContext;
+APP_BLE_p2p_Conn_Update_req_t APP_BLE_p2p_Conn_Update_req;
 
 uint16_t connection_handle;
 
@@ -396,6 +396,7 @@ static void ConnReq6(void);
 /* USER CODE END PFP */
 
 /* External variables --------------------------------------------------------*/
+extern RNG_HandleTypeDef hrng;
 
 /* USER CODE BEGIN EV */
 
@@ -424,7 +425,7 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ATT_MTU,
      CFG_BLE_SLAVE_SCA,
      CFG_BLE_MASTER_SCA,
-     CFG_BLE_LSE_SOURCE,
+     CFG_BLE_LS_SOURCE,
      CFG_BLE_MAX_CONN_EVENT_LENGTH,
      CFG_BLE_HSE_STARTUP_TIME,
      CFG_BLE_VITERBI_MODE,
@@ -437,7 +438,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_SET_NBR,
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
-     CFG_BLE_RX_PATH_COMPENS
+     CFG_BLE_RX_PATH_COMPENS,
+     CFG_BLE_CORE_VERSION
     }
   };
 
@@ -1424,6 +1426,10 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 #if (BLE_CFG_CENTRAL == 1)
   role |= GAP_CENTRAL_ROLE;
 #endif
+
+/* USER CODE BEGIN Role_Mngt*/
+
+/* USER CODE END Role_Mngt */
 
   if (role > 0)
   {

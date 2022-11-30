@@ -776,7 +776,9 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
 
   /* If the Node is already configured, return from here  */
   if (eClientSendMsgState == ConfigurationDone_State) 
+  {
     return result;
+  }
   
   if (eClientSendMsgState == ClientIdle_State) 
   {
@@ -1029,104 +1031,141 @@ MOBLE_RESULT Appli_ConfigClient_DefaultAppKeyBind (void)
     switch(eServerRespRecdState)
     {
     case NodeIdle_State:
-      /* Start the AppBindModel_State message  */
+      {
+        /* Start the AppBindModel_State message  */
         elementIndex = 0; /* Initialize it for the complete loop */
         indexSIGmodels = 0; /* Initialize it for the complete loop */
         indexVendormodels = 0;
+      }
 
     case NodeNextSigModel_State:
+      {
         numSIGmodels = GetCountSIGModelToBindApp(elementIndex);
-        modelIdentifier = GetSIGModelToBindApp(elementIndex,
-                                               &indexSIGmodels, 
-                                               numSIGmodels);
+        if(numSIGmodels > 0)
+        {
+          modelIdentifier = GetSIGModelToBindApp(elementIndex,
+                                                 &indexSIGmodels, 
+                                                 numSIGmodels);
         
-        /* Switch to NodeSendMessage_State */
-        eServerRespRecdState = NodeSendMessage_State;
+          if(modelIdentifier != 0xffff)
+          {
+            /* Switch to NodeSendMessage_State */
+            eServerRespRecdState = NodeSendMessage_State;
+          }
+          else
+          {
+            /*No SIG Models, do binding for Vendor Model */
+            eServerRespRecdState = NodeNextVendorModel_State;
+          }
+        }
+        else
+        {
+          /*No SIG Models, do binding for Vendor Model */
+          eServerRespRecdState = NodeNextVendorModel_State;
+        }
+      }
       break;
 
     case NodeNextVendorModel_State:
-        modelIdentifier = GetVendorModelToBindApp(elementIndex,indexVendormodels );
-      /* Switch to NodeSendMessage_State */
-        eServerRespRecdState = NodeSendMessage_State;
+      {
+        numVendorModels = GetCountVendorModelToBindApp(elementIndex);
+        if(numVendorModels > 0)
+        {
+          modelIdentifier = GetVendorModelToBindApp(elementIndex,indexVendormodels );
+          /* Switch to NodeSendMessage_State */
+          eServerRespRecdState = NodeSendMessage_State;
+        }
+        else
+        {
+          /* Change the received state for application  */
+          eServerRespRecdState = AppBindModelAck_State;
+        }
+      }
       break;
       
      case NodeSendMessage_State:
-      /* Start the AppBindModel_State message  */
-        elementAddress = GetServerElementAddress(elementIndex);
+       {
+         /* Start the AppBindModel_State message  */
+         elementAddress = GetServerElementAddress(elementIndex);
 
-        /* Switch to InProgress_State */
-        eServerRespRecdState = InProgress_State;
+         /* Switch to InProgress_State */
+         eServerRespRecdState = InProgress_State;
 
-        ConfigClient_SaveMsgSendingTime();
+         ConfigClient_SaveMsgSendingTime();
         
-        /* Send the Message to the server */
-        ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
+         /* Send the Message to the server */
+         ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
+       }
       break;
 
     case AppBindModelAck_State:
-       /* Need to check if all SIG Models are binded ? */
+      {
+        /* Need to check if all SIG Models are binded ? */
 
-      ConfigClient_ResetTrials();
+        ConfigClient_ResetTrials();
             
-      numSIGmodels = GetCountSIGModelToBindApp(elementIndex);
-      numVendorModels = GetCountVendorModelToBindApp(elementIndex);
+        numSIGmodels = GetCountSIGModelToBindApp(elementIndex);
+        numVendorModels = GetCountVendorModelToBindApp(elementIndex);
       
-      if (indexSIGmodels < numSIGmodels )
-      { /* Even when all SIG Models are serviced, we need to start for Vendor Models */
-        indexSIGmodels++; 
-        indexVendormodels =0;  /* Reset back, bcoz, we are still process the SIG Models */
-      }
-      else if (indexVendormodels < numVendorModels)
-      {
-        indexVendormodels++; /* When SIG Models and Vendor Models are processed
-                                the loop condition will become true */
-      }
-      
-      if (indexSIGmodels < numSIGmodels )
-      {/* if index is still less, then we have scope of reading 1 more index */
-       
-        eServerRespRecdState = NodeNextSigModel_State;
-        /* Switch to InProgress_State */
-      }
-      else if (indexVendormodels < numVendorModels)
-      {
-        /*Now, do binding for Vendor Model */
-        eServerRespRecdState = NodeNextVendorModel_State;
-      }
-      else
-      {
-        /* Now, the element index is handled, change the element index */
-        elementIndex++;
-        numofElements = ConfigClient_GetNodeElements();  
-        if (elementIndex >=  numofElements)
-        {/* we are comparing Index whose counting started from 0, becomes equal, 
-            then exit the loop */
-          
-           eServerRespRecdState = AppBindModelAckCompleted_State; 
+        if (indexSIGmodels < numSIGmodels )
+        { /* Even when all SIG Models are serviced, we need to start for Vendor Models */
+          indexSIGmodels++; 
+          indexVendormodels =0;  /* Reset back, bcoz, we are still process the SIG Models */
         }
-        else if (elementIndex < numofElements)
-        { /* When the Element Index is still less than the total number of 
-             elements in the Node: So, Restart the cycle */
-          indexSIGmodels = 0; /* Initialize it for the complete loop */
-          indexVendormodels = 0;
+        else if (indexVendormodels < numVendorModels)
+        {
+          indexVendormodels++; /* When SIG Models and Vendor Models are processed
+                                  the loop condition will become true */
+        }
+      
+        if (indexSIGmodels < numSIGmodels )
+        {/* if index is still less, then we have scope of reading 1 more index */
+       
+          eServerRespRecdState = NodeNextSigModel_State;
+          /* Switch to InProgress_State */
+        }
+        else if (indexVendormodels < numVendorModels)
+        {
+          /*Now, do binding for Vendor Model */
+          eServerRespRecdState = NodeNextVendorModel_State;
+        }
+        else
+        {
+          /* Now, the element index is handled, change the element index */
+          elementIndex++;
+          numofElements = ConfigClient_GetNodeElements();  
+          if (elementIndex >=  numofElements)
+          {/* we are comparing Index whose counting started from 0, becomes equal, 
+              then exit the loop */
+          
+             eServerRespRecdState = AppBindModelAckCompleted_State; 
+          }
+          else if (elementIndex < numofElements)
+          { /* When the Element Index is still less than the total number of 
+               elements in the Node: So, Restart the cycle */
+            indexSIGmodels = 0; /* Initialize it for the complete loop */
+            indexVendormodels = 0;
         
-          eServerRespRecdState = NodeNextSigModel_State; 
-      }
+            eServerRespRecdState = NodeNextSigModel_State; 
+          }
+        }
       }
       break;
       
     case InProgress_State:
-      /* Just wait and let the messages be completed 
-         or look for timeout */
-      retry = ConfigClient_ChkRetries();
+      {
+        /* Just wait and let the messages be completed 
+           or look for timeout */
+        retry = ConfigClient_ChkRetries();
       
-      if (retry == CLIENT_TX_RETRY_ENDS)
-      {
-        eServerRespRecdState = NodeNoResponse_State;
-      }
-      else if (retry == CLIENT_TX_TIMEOUT)
-      {
-        eServerRespRecdState = NodeSendMessage_State; /* Run next re-trial cycle again */;
+        if (retry == CLIENT_TX_RETRY_ENDS)
+        {
+          eServerRespRecdState = NodeNoResponse_State;
+        }
+        else if (retry == CLIENT_TX_TIMEOUT)
+        {
+          eServerRespRecdState = NodeSendMessage_State; /* Run next re-trial cycle again */;
+        }
       }
       break;
      
@@ -1174,14 +1213,31 @@ MOBLE_RESULT AppliConfigClient_SubscriptionAddDefault (void)
                                                &indexSIGmodels, 
                                                numSIGmodels);
 
-        /* Switch to NodeSendMessage_State */
-        eServerRespRecdState = NodeSendMessage_State;
+        if(modelIdentifier != 0xffff)
+        {
+          /* Switch to NodeSendMessage_State */
+          eServerRespRecdState = NodeSendMessage_State;
+        }
+        else
+        {
+          /*No SIG Models, do binding for Vendor Model */
+          eServerRespRecdState = NodeNextVendorModel_State;
+        }
       break;
 
     case NodeNextVendorModel_State:
-        modelIdentifier = GetVendorModelToSubscribe(elementIndex,indexVendormodels );
-      /* Switch to NodeSendMessage_State */
-        eServerRespRecdState = NodeSendMessage_State;
+        numVendorModels = GetCountVendorModelToBindApp(elementIndex);
+        if(numVendorModels > 0)
+        {
+          modelIdentifier = GetVendorModelToSubscribe(elementIndex,indexVendormodels );
+          /* Switch to NodeSendMessage_State */
+          eServerRespRecdState = NodeSendMessage_State;
+        }
+        else
+        {
+          /* Change the received state for application  */
+          eServerRespRecdState = SubscriptionAck_State;
+        }
       break;
       
     case NodeSendMessage_State:
@@ -1313,14 +1369,31 @@ MOBLE_RESULT AppliConfigClient_PublicationSetDefault (void)
                                                &indexSIGmodels, 
                                                numSIGmodels);
         
-         /* Switch to NodeSendMessage_State */
-        eServerRespRecdState = NodeSendMessage_State;        
+        if(modelIdentifier != 0xffff)
+        {
+          /* Switch to NodeSendMessage_State */
+          eServerRespRecdState = NodeSendMessage_State;        
+        }
+        else
+        {
+          /*No SIG Models, do binding for Vendor Model */
+          eServerRespRecdState = NodeNextVendorModel_State;
+        }
       break;
         
     case NodeNextVendorModel_State:
-        modelIdentifier = GetVendorModelToPublish(elementIndex,indexVendormodels);
-      /* Switch to NodeSendMessage_State */
-        eServerRespRecdState = NodeSendMessage_State;
+        numVendorModels = GetCountVendorModelToBindApp(elementIndex);
+        if(numVendorModels > 0)
+        {
+          modelIdentifier = GetVendorModelToPublish(elementIndex,indexVendormodels);
+          /* Switch to NodeSendMessage_State */
+          eServerRespRecdState = NodeSendMessage_State;
+        }
+        else
+        {
+          /* Change the received state for application  */
+          eServerRespRecdState = PublicationStatus_State;
+        }        
       break;
 
       
