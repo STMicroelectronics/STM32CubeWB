@@ -249,10 +249,10 @@ void CRCAPP_Update_Service()
           else 
           {
             APP_DBG_MSG("All characteristics discovery sending failed with result: 0x%x\n", result);
-            if(result == BLE_STATUS_NOT_ALLOWED)
+            if(result == HCI_COMMAND_DISALLOWED_ERR_CODE)
             {
               CRC_Context.state = CRC_IDLE; /* redo a CRC_DISCOVER_CHARACS */
-              APP_DBG_MSG("BLE_STATUS_NOT_ALLOWED do another CRC_DISCOVER_CHARACS\n");
+              APP_DBG_MSG("HCI_COMMAND_DISALLOWED_ERR_CODE do another CRC_DISCOVER_CHARACS\n");
             }
           }
         }
@@ -273,10 +273,10 @@ void CRCAPP_Update_Service()
           else 
           {
             APP_DBG_MSG("Descriptors discovery sending failed \n");
-            if(result == BLE_STATUS_NOT_ALLOWED)
+            if(result == HCI_COMMAND_DISALLOWED_ERR_CODE)
             {
               CRC_Context.state = CRC_DISCOVER_CHARACS; /* redo a CRC_DISCOVER_DESC */
-              APP_DBG_MSG("BLE_STATUS_NOT_ALLOWED do another CRC_DISCOVER_DESC\n");
+              APP_DBG_MSG("HCI_COMMAND_DISALLOWED_ERR_CODE do another CRC_DISCOVER_DESC\n");
             }
           }
         }
@@ -295,10 +295,10 @@ void CRCAPP_Update_Service()
           else 
           {
             APP_DBG_MSG("Read CRC RX sending failed \n");
-            if(result == BLE_STATUS_NOT_ALLOWED)
+            if(result == HCI_COMMAND_DISALLOWED_ERR_CODE)
             {
               CRC_Context.state = CRC_READ_RX; /* redo a CRC_READ_RX */
-              APP_DBG_MSG("BLE_STATUS_NOT_ALLOWED do another CRC_READ_RX\n");
+              APP_DBG_MSG("HCI_COMMAND_DISALLOWED_ERR_CODE do another CRC_READ_RX\n");
             }
           }
         }
@@ -317,10 +317,10 @@ void CRCAPP_Update_Service()
           else 
           {
             APP_DBG_MSG("Read TX sent Failed \n");
-            if(result == BLE_STATUS_NOT_ALLOWED)
+            if(result == HCI_COMMAND_DISALLOWED_ERR_CODE)
             {
               CRC_Context.state = CRC_READ_TX; /* redo a CRC_READ_TX */
-              APP_DBG_MSG("BLE_STATUS_NOT_ALLOWED do another CRC_READ_TX\n");
+              APP_DBG_MSG("HCI_COMMAND_DISALLOWED_ERR_CODE do another CRC_READ_TX\n");
             }
           }
         }
@@ -339,10 +339,10 @@ void CRCAPP_Update_Service()
           else 
           {
             APP_DBG_MSG("Read RX sending failed \n");
-            if(result == BLE_STATUS_NOT_ALLOWED)
+            if(result == HCI_COMMAND_DISALLOWED_ERR_CODE)
             {
               CRC_Context.state = CRC_READ_RX_CCC; /* redo a CRC_READ_RX_CCC */
-              APP_DBG_MSG("BLE_STATUS_NOT_ALLOWED do another CRC_READ_RX_CCC\n");
+              APP_DBG_MSG("HCI_COMMAND_DISALLOWED_ERR_CODE do another CRC_READ_RX_CCC\n");
             }
           }
         }
@@ -367,10 +367,10 @@ void CRCAPP_Update_Service()
           else 
           {
             APP_DBG_MSG("Write TX sent Failed \n");
-            if(result == BLE_STATUS_NOT_ALLOWED)
+            if(result == HCI_COMMAND_DISALLOWED_ERR_CODE)
             {
               CRC_Context.state = CRC_WRITE_TX; /* redo a CRC_WRITE_TX */
-              APP_DBG_MSG("BLE_STATUS_NOT_ALLOWED do another CRC_WRITE_TX\n");
+              APP_DBG_MSG("HCI_COMMAND_DISALLOWED_ERR_CODE do another CRC_WRITE_TX\n");
             }
           }
         }
@@ -394,10 +394,10 @@ void CRCAPP_Update_Service()
           else 
           {
             APP_DBG_MSG("Enable CRC RX Notification Sent Failed \n");
-            if(result == BLE_STATUS_NOT_ALLOWED)
+            if(result == HCI_COMMAND_DISALLOWED_ERR_CODE)
             {
               CRC_Context.state = CRC_ENABLE_RX_NOTIFICATION; /* redo a CRC_ENABLE_RX_NOTIFICATION */
-              APP_DBG_MSG("BLE_STATUS_NOT_ALLOWED do another CRC_ENABLE_RX_NOTIFICATION\n");
+              APP_DBG_MSG("HCI_COMMAND_DISALLOWED_ERR_CODE do another CRC_ENABLE_RX_NOTIFICATION\n");
             }
           }
         }
@@ -420,10 +420,10 @@ void CRCAPP_Update_Service()
           else 
           {
             APP_DBG_MSG("Disable CRC RX Notification Sent Failed \n");
-            if(result == BLE_STATUS_NOT_ALLOWED)
+            if(result == HCI_COMMAND_DISALLOWED_ERR_CODE)
             {
               CRC_Context.state = CRC_DISABLE_RX_NOTIFICATION; /* redo a CRC_DISABLE_RX_NOTIFICATION */
-              APP_DBG_MSG("BLE_STATUS_NOT_ALLOWED do another CRC_DISABLE_RX_NOTIFICATION\n");
+              APP_DBG_MSG("HCI_COMMAND_DISALLOWED_ERR_CODE do another CRC_DISABLE_RX_NOTIFICATION\n");
             }
           }
         }
@@ -477,10 +477,10 @@ static void CRCAPP_Transmit(void)
   else 
   {
     APP_DBG_MSG("Write CRC TX Failed \n");
-//    if(result == BLE_STATUS_NOT_ALLOWED)
+//    if(result == HCI_COMMAND_DISALLOWED_ERR_CODE)
 //    {
 //      CRC_Context.state = CRC_WRITE_TX; /* redo a CRC_WRITE_TX */
-//      APP_DBG_MSG("BLE_STATUS_NOT_ALLOWED do another CRC_WRITE_TX\n");
+//      APP_DBG_MSG("HCI_COMMAND_DISALLOWED_ERR_CODE do another CRC_WRITE_TX\n");
 //    }
   }
 

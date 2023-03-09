@@ -29,9 +29,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wb5mm_dk_conf.h"
 #include "stm32wb5mm_dk_errno.h"
+#if (USE_COM_LOG == 1)
+#include <stdio.h>
+#endif /* USE_COM_LOG */
 
 /** @addtogroup BSP
-  * @{s
+  * @{
   */
 
 /** @addtogroup STM32WB5MM_DK
@@ -144,7 +147,7 @@ typedef struct
   */
 #define STM32WB5MM_DK_BSP_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define STM32WB5MM_DK_BSP_VERSION_SUB1   (0x00U) /*!< [23:16] sub1 version */
-#define STM32WB5MM_DK_BSP_VERSION_SUB2   (0x03U) /*!< [15:8]  sub2 version */
+#define STM32WB5MM_DK_BSP_VERSION_SUB2   (0x04U) /*!< [15:8]  sub2 version */
 #define STM32WB5MM_DK_BSP_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define STM32WB5MM_DK_BSP_VERSION    ((STM32WB5MM_DK_BSP_VERSION_MAIN << 24U)\
                                             |(STM32WB5MM_DK_BSP_VERSION_SUB1 << 16U)\
@@ -231,7 +234,7 @@ typedef struct
 #define BUTTON_USER2_EXTI_IRQn                    EXTI15_4_IRQn
 #else
 #define BUTTON_USER2_EXTI_IRQn                    EXTI15_10_IRQn
-#endif
+#endif /* CORE_CM0PLUS */
 
 #define BUTTON_USERx_GPIO_CLK_ENABLE(__INDEX__)    do { if ((__INDEX__) == BUTTON_USER1) BUTTON_USER1_GPIO_CLK_ENABLE(); else \
                                                         if ((__INDEX__) == BUTTON_USER2) BUTTON_USER2_GPIO_CLK_ENABLE();} while(0)
@@ -266,11 +269,11 @@ typedef struct
 #define COM_POLL_TIMEOUT                      1000
 
 #define MX_UART_InitTypeDef COM_InitTypeDef
+
 /**
   * @}
   */
 #endif /* (USE_BSP_COM_FEATURE == 1) */
-
 
 /**
   * @}
@@ -282,7 +285,7 @@ typedef struct
 extern EXTI_HandleTypeDef hpb_exti[];
 #if (USE_BSP_COM_FEATURE == 1)
 extern UART_HandleTypeDef hcom_uart[COMn];
-#endif
+#endif /* (USE_BSP_COM_FEATURE == 1) */
 
 /**
   * @}
@@ -332,12 +335,12 @@ int32_t BSP_COM_DeInit(COM_TypeDef COM);
 
 #if (USE_COM_LOG == 1)
 int32_t BSP_COM_SelectLogPort(COM_TypeDef COM);
-#endif
+#endif /* (USE_COM_LOG == 1) */
 
 #if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
 int32_t BSP_COM_RegisterDefaultMspCallbacks(COM_TypeDef COM);
 int32_t BSP_COM_RegisterMspCallbacks(COM_TypeDef COM, BSP_COM_Cb_t *CallBacks);
-#endif
+#endif /* (USE_HAL_UART_REGISTER_CALLBACKS == 1) */
 
 HAL_StatusTypeDef MX_LPUART1_Init(UART_HandleTypeDef *huart, MX_UART_InitTypeDef *COM_Init);
 /**
@@ -345,6 +348,13 @@ HAL_StatusTypeDef MX_LPUART1_Init(UART_HandleTypeDef *huart, MX_UART_InitTypeDef
   */
 #endif /* (USE_BSP_COM_FEATURE == 1) */
 
+#if (USE_COM_LOG == 1)
+#if !defined(__GNUC__)
+int fgetc(FILE *f);
+#else
+int __io_getchar(void);
+#endif /* !__GNUC__ */
+#endif /* USE_COM_LOG */
 /**
   * @}
   */

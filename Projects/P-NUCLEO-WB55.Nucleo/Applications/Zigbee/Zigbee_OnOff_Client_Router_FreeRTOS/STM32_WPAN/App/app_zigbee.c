@@ -125,7 +125,8 @@ const osThreadAttr_t TaskNotifyM0ToM4_attr = {
     .cb_mem = CFG_TASK_PROCESS_CB_MEM,
     .cb_size = CFG_TASK_PROCESS_CB_SIZE,
     .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
-    .priority = osPriorityNormal,
+    //.priority = osPriorityNormal,
+    .priority = osPriorityBelowNormal,
     .stack_size = CFG_TASK_PROCESS_STACK_SIZE
 };
 const osThreadAttr_t TaskRequestM0ToM4_attr = {
@@ -134,7 +135,8 @@ const osThreadAttr_t TaskRequestM0ToM4_attr = {
     .cb_mem = CFG_TASK_PROCESS_CB_MEM,
     .cb_size = CFG_TASK_PROCESS_CB_SIZE,
     .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
-    .priority = osPriorityNormal,
+    //.priority = osPriorityNormal,
+    .priority = osPriorityBelowNormal,
     .stack_size = CFG_TASK_PROCESS_STACK_SIZE
 };
 const osThreadAttr_t TaskNwkForm_attr = {
@@ -143,7 +145,8 @@ const osThreadAttr_t TaskNwkForm_attr = {
     .cb_mem = CFG_TASK_PROCESS_CB_MEM,
     .cb_size = CFG_TASK_PROCESS_CB_SIZE,
     .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
-    .priority = osPriorityNormal,
+    //.priority = osPriorityNormal,
+    .priority = osPriorityAboveNormal,
     .stack_size = CFG_TASK_PROCESS_STACK_SIZE
 };
 
@@ -153,7 +156,8 @@ const osThreadAttr_t TaskPushButton_attributes = {
     .cb_mem = CFG_TASK_PROCESS_CB_MEM,
     .cb_size = CFG_TASK_PROCESS_CB_SIZE,
     .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
-    .priority = osPriorityNormal,
+    //.priority = osPriorityNormal,
+    .priority = osPriorityAboveNormal,
     .stack_size = CFG_TASK_PROCESS_STACK_SIZE
 };
 

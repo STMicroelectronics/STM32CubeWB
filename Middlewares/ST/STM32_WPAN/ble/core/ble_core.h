@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2022 STMicroelectronics.
+ * Copyright (c) 2018-2023 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -24,6 +24,7 @@
 
 /* BLE stack API definitions */
 #include "ble_defs.h"
+#include "auto/ble_vs_codes.h"
 #include "auto/ble_gap_aci.h"
 #include "auto/ble_gatt_aci.h"
 #include "auto/ble_hal_aci.h"

@@ -24,6 +24,11 @@
 #if (USE_BSP_COM_FEATURE == 1)
 #if (USE_COM_LOG == 1)
 #include <stdio.h>
+
+#if defined(__ICCARM__)
+#include <LowLevelIOInterface.h>
+#endif /* __ICCARM__ */
+
 #endif /* USE_COM_LOG */
 #endif /* USE_BSP_COM_FEATURE */
 
@@ -42,7 +47,7 @@
   */
 
 
-/** @defgroup B_WB1M_WPAN1_COMMON_Exported_Variables COMMON Exported Variables
+/** @defgroup B_WB1M_WPAN1_COMMON_Exported_Variables B-WB1M-WPAN1 COMMON Exported Variables
   * @{
   */
 EXTI_HandleTypeDef hpb_exti[BUTTONn];
@@ -56,12 +61,28 @@ UART_HandleTypeDef hcom_uart[COMn];
 /** @defgroup B_WB1M_WPAN1_COMMON_Private_Defines B-WB1M-WPAN1 COMMON Private Defines
   * @{
   */
+#if (USE_COM_LOG == 1)
+/**
+  * @brief  Redirect console output to COM
+  */
+#if defined(__ICCARM__)
+/* New definition from EWARM V9, compatible with EWARM8 */
+int iar_fputc(int ch);
+#define PUTCHAR_PROTOTYPE int iar_fputc(int ch)
+#elif defined (__CC_ARM) || defined(__ARMCC_VERSION)
+/* ARM Compiler 5/6 */
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#elif defined(__GNUC__)
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#endif /* __ICCARM__ */
+
+#endif /* USE_COM_LOG */
 
 /**
   * @}
   */
 
-/** @defgroup B_WB1M_WPAN1_COMMON_Private_TypesDefinitions COMMON Private Typedef
+/** @defgroup B_WB1M_WPAN1_COMMON_Private_TypesDefinitions B-WB1M-WPAN1 COMMON Private Typedef
   * @{
   */
 typedef void (* BSP_EXTI_LineCallback)(void);
@@ -69,7 +90,7 @@ typedef void (* BSP_EXTI_LineCallback)(void);
   * @}
   */
 
-/** @defgroup B_WB1M_WPAN1_COMMON_Private_Variables COMMON Private Variables
+/** @defgroup B_WB1M_WPAN1_COMMON_Private_Variables B-WB1M-WPAN1 COMMON Private Variables
   * @{
   */
 static GPIO_TypeDef *LED_PORT[LEDn] = {LED1_GPIO_PORT};
@@ -86,7 +107,7 @@ static const IRQn_Type BUTTON_IRQn[BUTTONn] = {BUTTON_USER1_EXTI_IRQn};
 static USART_TypeDef  *COM_USART[COMn] = {COM1_UART1};
 
 #if (USE_COM_LOG > 0)
-static COM_TypeDef COM_ActiveLogPort = COM1;
+static COM_TypeDef COM_ActiveLogPort = COM1_UART;
 #endif /* (USE_COM_LOG > 0) */
 
 #if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
@@ -98,7 +119,7 @@ static uint32_t IsComMspCbValid[COMn] = {0};
   * @}
   */
 
-/** @defgroup B_WB1M_WPAN1_COMMON_Private_FunctionPrototypes B-WB1M-WPAN1 COMMON Private Function Prototypes
+/** @defgroup B_WB1M_WPAN1_COMMON_Private_FunctionPrototypes B-WB1M-WPAN1 COMMON Private Functions
   * @{
   */
 static void BUTTON_USER1_EXTI_Callback(void);
@@ -112,7 +133,7 @@ static void COM1_MspDeInit(UART_HandleTypeDef *huart);
   * @}
   */
 
-/** @defgroup B_WB1M_WPAN1_COMMON_Exported_Variables COMMON Exported Variables
+/** @defgroup B_WB1M_WPAN1_COMMON_Exported_Variables B-WB1M-WPAN1 COMMON Exported Variables
   * @{
   */
 EXTI_HandleTypeDef hpb_exti[BUTTONn];
@@ -133,7 +154,7 @@ UART_HandleTypeDef hcom_uart[COMn];
   */
 
 /**
-  * @brief  This method returns the B_WB1M_WPAN1 BSP Driver revision
+  * @brief  This method returns the B-WB1M-WPAN1 BSP Driver revision
   * @retval version: 0xXYZR (8bits for each decimal, R for RC)
   */
 int32_t BSP_GetVersion(void)
@@ -363,7 +384,7 @@ __weak void BSP_PB_Callback(Button_TypeDef Button)
   */
 
 #if (USE_BSP_COM_FEATURE == 1)
-/** @defgroup B_WB1M_WPAN1_COMMON_COM_Functions COMMON COM Functions
+/** @defgroup B_WB1M_WPAN1_COMMON_COM_Functions B-WB1M-WPAN1 COMMON COM Functions
   * @{
   */
 
@@ -554,6 +575,28 @@ int32_t BSP_COM_SelectLogPort(COM_TypeDef COM)
   return BSP_ERROR_NONE;
 }
 
+#if defined(__ICCARM__)
+/**
+  * @brief  Retargets the C library __write function to the IAR function iar_fputc.
+  * @param  file: file descriptor.
+  * @param  ptr: pointer to the buffer where the data is stored.
+  * @param  len: length of the data to write in bytes.
+  * @retval length of the written data in bytes.
+  */
+size_t __write(int file, unsigned char const *ptr, size_t len)
+{
+  size_t idx;
+  unsigned char const *pdata = ptr;
+
+  for (idx = 0; idx < len; idx++)
+  {
+    iar_fputc((int)*pdata);
+    pdata++;
+  }
+  return len;
+}
+#endif /* __ICCARM__ */
+
 /**
   * @brief Retargets the C library msg_info function to the USART.
   * @param None
@@ -563,29 +606,10 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the serial port and Loop until the end of transmission */
-  while (HAL_OK != HAL_UART_Transmit(&hcom_uart [COM_ActiveLogPort], (uint8_t *) &ch, 1, COM_POLL_TIMEOUT))
-  {
-    ;
-  }
+  (void) HAL_UART_Transmit(&hcom_uart [COM_ActiveLogPort], (uint8_t *) &ch, 1, COM_POLL_TIMEOUT);
   return ch;
 }
 
-/**
-  * @brief Retargets the C library scanf function to the USART.
-  * @param None
-  * @retval None
-  */
-GETCHAR_PROTOTYPE
-{
-  /* Place your implementation of fgetc here */
-  /* e.g. readwrite a character to the USART2 and Loop until the end of transmission */
-  uint8_t ch = 0;
-  while (HAL_OK != HAL_UART_Receive(&hcom_uart [COM_ActiveLogPort], (uint8_t *)&ch, 1, COM_POLL_TIMEOUT))
-  {
-    ;
-  }
-  return ch;
-}
 #endif /* USE_COM_LOG */
 
 /**

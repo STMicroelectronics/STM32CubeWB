@@ -98,6 +98,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
   HAL_RCCEx_WakeUpStopCLKConfig(RCC_STOP_WAKEUPCLOCK_HSI);
 
   /* USER CODE END I2C3_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_I2C3;

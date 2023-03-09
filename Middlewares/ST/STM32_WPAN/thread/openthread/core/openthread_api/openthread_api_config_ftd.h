@@ -101,4 +101,22 @@
 /* Define to 1 to enable ECDSA support */
 #define OPENTHREAD_CONFIG_ECDSA_ENABLE 1
 
+/* Define if OPENTHREAD_CONFIG_SRP_CLIENT_ENABLE defined to enable SRP Client buffer support */
+#define OPENTHREAD_CONFIG_SRP_CLIENT_BUFFERS_ENABLE OPENTHREAD_CONFIG_SRP_CLIENT_ENABLE
+
+/* Define to 1 to enable SRP Client AutoStart mode support */
+#define OPENTHREAD_CONFIG_SRP_CLIENT_AUTO_START_API_ENABLE 1
+
+/* Define to 1 to enable TCP support */
+#define OPENTHREAD_CONFIG_TCP_ENABLE 1
+
+/* Define to 1 to enable DNS CLIENT NAT64 mode support */
+#define OPENTHREAD_CONFIG_DNS_CLIENT_NAT64_ENABLE 1
+
+/* Define to 1 to enable DNS CLIENT NAT64 mode support */
+#define OPENTHREAD_CONFIG_DNS_CLIENT_DEFAULT_NAT64_ALLOWED 1
+
+/* Define to 1 to enable DNS CLIENT SD mode support */
+#define OPENTHREAD_CONFIG_DNS_CLIENT_SERVICE_DISCOVERY_ENABLE 1
+
 #endif /* OPENTHREAD_API_CONFIG_FTD_H_ */

@@ -431,7 +431,8 @@ void APP_BLE_Init(TX_BYTE_POOL* p_byte_pool)
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -993,7 +994,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *p_bd_addr;
 
-#if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   uint32_t a_srd_bd_addr[2] = {0,0};
 #endif
   uint16_t a_appearance[1] = {BLE_CFG_GAP_APPEARANCE};
@@ -1033,7 +1034,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
     APP_DBG_MSG("  Public Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n",p_bd_addr[5],p_bd_addr[4],p_bd_addr[3],p_bd_addr[2],p_bd_addr[1],p_bd_addr[0]);
   }
 
-#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
   a_ManufData[ sizeof(a_ManufData)-6] = p_bd_addr[5];
   a_ManufData[ sizeof(a_ManufData)-5] = p_bd_addr[4];
@@ -1041,7 +1042,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   a_ManufData[ sizeof(a_ManufData)-3] = p_bd_addr[2];
   a_ManufData[ sizeof(a_ManufData)-2] = p_bd_addr[1];
   a_ManufData[ sizeof(a_ManufData)-1] = p_bd_addr[0];
-#endif /* CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR */
+#endif /* CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR */
 
   /**
    * Static random Address
@@ -1099,7 +1100,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   a_ManufData[ sizeof(a_ManufData)-1] = a_srd_bd_addr[0];
 #endif
 
-#if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   ret = aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)a_srd_bd_addr);
   if (ret != BLE_STATUS_SUCCESS)
   {
@@ -1115,7 +1116,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                                                (uint8_t)(a_srd_bd_addr[0] >> 8),
                                                                                (uint8_t)(a_srd_bd_addr[0]));
   }
-#endif /* CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR */
+#endif /* CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR */
 
   /**
    * Write Identity root key used to derive LTK and CSRK

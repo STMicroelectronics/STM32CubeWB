@@ -6,7 +6,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2022 STMicroelectronics.
+ * Copyright (c) 2018-2023 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -948,9 +948,13 @@ tBleStatus aci_gatt_signed_write_without_resp( uint16_t Connection_Handle,
  * Allow application to confirm indication. This command has to be sent when
  * the application receives the event ACI_GATT_INDICATION_EVENT.
  * 
- * @param Connection_Handle Connection handle for which the command applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the command
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @return Value indicating success or error code.
  */
 tBleStatus aci_gatt_confirm_indication( uint16_t Connection_Handle );
@@ -1090,8 +1094,15 @@ tBleStatus aci_gatt_read_handle_value( uint16_t Attr_Handle,
  * support update of long attribute up to 512 bytes and indicate selectively
  * the generation of Indication/Notification.
  * 
- * @param Conn_Handle_To_Notify Connection handle to notify. Notify all
- *        subscribed clients if equal to 0x0000
+ * @param Conn_Handle_To_Notify Specifies the client(s) to be notified.
+ *        Values:
+ *        - 0x0000: Notify all subscribed clients on their unenhanced ATT
+ *          bearer
+ *        - 0x0001 ... 0x0EFF: Notify one client on the specified unenhanced
+ *          ATT bearer (the parameter is the connection handle)
+ *        - 0xEA00 ... 0xEA1F: Notify one client on the specified enhanced ATT
+ *          bearer (the LSB-byte of the parameter is the connection-oriented
+ *          channel index)
  * @param Service_Handle Handle of service to which the characteristic belongs
  * @param Char_Handle Handle of the characteristic declaration
  * @param Update_Type Allow Notification or Indication generation,

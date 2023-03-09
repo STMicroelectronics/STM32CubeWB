@@ -277,35 +277,35 @@ tsl_user_status_t tsl_user_Exec(void)
 }
 
 /**
- * Interrupt TSC management. See below code example for N sensors in main.c:
+  * Interrupt TSC management. See below code example for N sensors in main.c:
 while (1)
-  {
-    #define TKEY_DET(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_DETECT)
-    #define TKEY_PRX(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_PROX)
-    #define TKEY_REL(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_RELEASE)
-    #define TKEY_CAL(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_CALIB)
-    if(tsl_user_Exec_IT() != TSL_USER_STATUS_BUSY){
-      int id;
-      for(id=0; id < TSLPRM_TOTAL_CHANNELS; id++){
-        if(!TKEY_CAL(id)){
-          printf("Sensor%d: Delta %3d Ref %3d Measurement %3d StateId %3d\n"
-                 ,id
-                 ,MyTKeys[id].p_ChD->Delta
-                 ,MyTKeys[id].p_ChD->Ref
-                 ,MyTKeys[id].p_ChD->Meas
-                 ,MyTKeys[id].p_Data->StateId);
-          if(TKEY_DET(id)){
+{
+  #define TKEY_DET(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_DETECT)
+  #define TKEY_PRX(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_PROX)
+  #define TKEY_REL(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_RELEASE)
+  #define TKEY_CAL(NB) (MyTKeys[(NB)].p_Data->StateId == TSL_STATEID_CALIB)
+  if(tsl_user_Exec_IT() != TSL_USER_STATUS_BUSY){
+    int id;
+    for(id=0; id < TSLPRM_TOTAL_CHANNELS; id++){
+      if(!TKEY_CAL(id)){
+        printf("Sensor%d: Delta %3d Ref %3d Measurement %3d StateId %3d\n"
+        ,id
+        ,MyTKeys[id].p_ChD->Delta
+        ,MyTKeys[id].p_ChD->Ref
+        ,MyTKeys[id].p_ChD->Meas
+        ,MyTKeys[id].p_Data->StateId);
+        if(TKEY_DET(id)){
     // we detect a touch
-          }else if(TKEY_REL(id)){
-          // No more detection
-          }
+        }else if(TKEY_REL(id)){
+        // No more detection
         }
       }
-    }else{
-      HAL_Delay(1); //Can be replace by __WFI()
     }
+  }else{
+    HAL_Delay(1); //Can be replace by __WFI()
   }
-*/
+}
+  */
 
 /**
  * Local variable used for interrupt acquisition mode

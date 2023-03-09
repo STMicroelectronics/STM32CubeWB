@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2022 STMicroelectronics.
+ * Copyright (c) 2018-2023 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -18,173 +18,6 @@
 #ifndef BLE_DEFS_H__
 #define BLE_DEFS_H__
 
-
-/* ------------------------------------------------------------------------- */
-
-/* ACI GAP vendor specific event codes
- */
-
-/* ACI_GAP_LIMITED_DISCOVERABLE_EVENT code: */
-#define ACI_GAP_LIMITED_DISCOVERABLE_VSEVT_CODE         0x0400U
-
-/* ACI_GAP_PAIRING_COMPLETE_EVENT code: */
-#define ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE             0x0401U
-
-/* ACI_GAP_PASS_KEY_REQ_EVENT code: */
-#define ACI_GAP_PASS_KEY_REQ_VSEVT_CODE                 0x0402U
-
-/* ACI_GAP_AUTHORIZATION_REQ_EVENT code: */
-#define ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE            0x0403U
-
-/* ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT code: */
-#define ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE     0x0404U
-
-/* ACI_GAP_BOND_LOST_EVENT code: */
-#define ACI_GAP_BOND_LOST_VSEVT_CODE                    0x0405U
-
-/* ACI_GAP_PROC_COMPLETE_EVENT code: */
-#define ACI_GAP_PROC_COMPLETE_VSEVT_CODE                0x0407U
-
-/* ACI_GAP_ADDR_NOT_RESOLVED_EVENT code: */
-#define ACI_GAP_ADDR_NOT_RESOLVED_VSEVT_CODE            0x0408U
-
-/* ACI_GAP_NUMERIC_COMPARISON_VALUE_EVENT code: */
-#define ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE     0x0409U
-
-/* ACI_GAP_KEYPRESS_NOTIFICATION_EVENT code: */
-#define ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE        0x040AU
-
-/* ACI GATT/ATT vendor specific event codes
- */
-
-/* ACI_GATT_ATTRIBUTE_MODIFIED_EVENT code: */
-#define ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE          0x0C01U
-
-/* ACI_GATT_PROC_TIMEOUT_EVENT code: */
-#define ACI_GATT_PROC_TIMEOUT_VSEVT_CODE                0x0C02U
-
-/* ACI_ATT_EXCHANGE_MTU_RESP_EVENT code: */
-#define ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE            0x0C03U
-
-/* ACI_ATT_FIND_INFO_RESP_EVENT code: */
-#define ACI_ATT_FIND_INFO_RESP_VSEVT_CODE               0x0C04U
-
-/* ACI_ATT_FIND_BY_TYPE_VALUE_RESP_EVENT code: */
-#define ACI_ATT_FIND_BY_TYPE_VALUE_RESP_VSEVT_CODE      0x0C05U
-
-/* ACI_ATT_READ_BY_TYPE_RESP_EVENT code: */
-#define ACI_ATT_READ_BY_TYPE_RESP_VSEVT_CODE            0x0C06U
-
-/* ACI_ATT_READ_RESP_EVENT code: */
-#define ACI_ATT_READ_RESP_VSEVT_CODE                    0x0C07U
-
-/* ACI_ATT_READ_BLOB_RESP_EVENT code: */
-#define ACI_ATT_READ_BLOB_RESP_VSEVT_CODE               0x0C08U
-
-/* ACI_ATT_READ_MULTIPLE_RESP_EVENT code: */
-#define ACI_ATT_READ_MULTIPLE_RESP_VSEVT_CODE           0x0C09U
-
-/* ACI_ATT_READ_BY_GROUP_TYPE_RESP_EVENT code: */
-#define ACI_ATT_READ_BY_GROUP_TYPE_RESP_VSEVT_CODE      0x0C0AU
-
-/* ACI_ATT_PREPARE_WRITE_RESP_EVENT code: */
-#define ACI_ATT_PREPARE_WRITE_RESP_VSEVT_CODE           0x0C0CU
-
-/* ACI_ATT_EXEC_WRITE_RESP_EVENT code: */
-#define ACI_ATT_EXEC_WRITE_RESP_VSEVT_CODE              0x0C0DU
-
-/* ACI_GATT_INDICATION_EVENT code: */
-#define ACI_GATT_INDICATION_VSEVT_CODE                  0x0C0EU
-
-/* ACI_GATT_NOTIFICATION_EVENT code: */
-#define ACI_GATT_NOTIFICATION_VSEVT_CODE                0x0C0FU
-
-/* ACI_GATT_PROC_COMPLETE_EVENT code: */
-#define ACI_GATT_PROC_COMPLETE_VSEVT_CODE               0x0C10U
-
-/* ACI_GATT_ERROR_RESP_EVENT code: */
-#define ACI_GATT_ERROR_RESP_VSEVT_CODE                  0x0C11U
-
-/* ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT code: */
-#define ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_VSEVT_CODE 0x0C12U
-
-/* ACI_GATT_WRITE_PERMIT_REQ_EVENT code: */
-#define ACI_GATT_WRITE_PERMIT_REQ_VSEVT_CODE            0x0C13U
-
-/* ACI_GATT_READ_PERMIT_REQ_EVENT code: */
-#define ACI_GATT_READ_PERMIT_REQ_VSEVT_CODE             0x0C14U
-
-/* ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT code: */
-#define ACI_GATT_READ_MULTI_PERMIT_REQ_VSEVT_CODE       0x0C15U
-
-/* ACI_GATT_TX_POOL_AVAILABLE_EVENT code: */
-#define ACI_GATT_TX_POOL_AVAILABLE_VSEVT_CODE           0x0C16U
-
-/* ACI_GATT_SERVER_CONFIRMATION_EVENT code: */
-#define ACI_GATT_SERVER_CONFIRMATION_VSEVT_CODE         0x0C17U
-
-/* ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT code: */
-#define ACI_GATT_PREPARE_WRITE_PERMIT_REQ_VSEVT_CODE    0x0C18U
-
-/* ACI_GATT_READ_EXT_EVENT code: */
-#define ACI_GATT_READ_EXT_VSEVT_CODE                    0x0C1DU
-
-/* ACI_GATT_INDICATION_EXT_EVENT code: */
-#define ACI_GATT_INDICATION_EXT_VSEVT_CODE              0x0C1EU
-
-/* ACI_GATT_NOTIFICATION_EXT_EVENT code: */
-#define ACI_GATT_NOTIFICATION_EXT_VSEVT_CODE            0x0C1FU
-
-/* ACI L2CAP vendor specific event codes
- */
-
-/* ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT code: */
-#define ACI_L2CAP_CONNECTION_UPDATE_RESP_VSEVT_CODE     0x0800U
-
-/* ACI_L2CAP_PROC_TIMEOUT_EVENT code: */
-#define ACI_L2CAP_PROC_TIMEOUT_VSEVT_CODE               0x0801U
-
-/* ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT code: */
-#define ACI_L2CAP_CONNECTION_UPDATE_REQ_VSEVT_CODE      0x0802U
-
-/* ACI_L2CAP_COMMAND_REJECT_EVENT code: */
-#define ACI_L2CAP_COMMAND_REJECT_VSEVT_CODE             0x080AU
-
-/* ACI_L2CAP_COC_CONNECT_EVENT code: */
-#define ACI_L2CAP_COC_CONNECT_VSEVT_CODE                0x0810U
-
-/* ACI_L2CAP_COC_CONNECT_CONFIRM_EVENT code: */
-#define ACI_L2CAP_COC_CONNECT_CONFIRM_VSEVT_CODE        0x0811U
-
-/* ACI_L2CAP_COC_RECONF_EVENT code: */
-#define ACI_L2CAP_COC_RECONF_VSEVT_CODE                 0x0812U
-
-/* ACI_L2CAP_COC_RECONF_CONFIRM_EVENT code: */
-#define ACI_L2CAP_COC_RECONF_CONFIRM_VSEVT_CODE         0x0813U
-
-/* ACI_L2CAP_COC_DISCONNECT_EVENT code: */
-#define ACI_L2CAP_COC_DISCONNECT_VSEVT_CODE             0x0814U
-
-/* ACI_L2CAP_COC_FLOW_CONTROL_EVENT code: */
-#define ACI_L2CAP_COC_FLOW_CONTROL_VSEVT_CODE           0x0815U
-
-/* ACI_L2CAP_COC_RX_DATA_EVENT code: */
-#define ACI_L2CAP_COC_RX_DATA_VSEVT_CODE                0x0816U
-
-/* ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT code: */
-#define ACI_L2CAP_COC_TX_POOL_AVAILABLE_VSEVT_CODE      0x0817U
-
-/* ACI HAL vendor specific event codes
- */
-
-/* ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT code: */
-#define ACI_HAL_END_OF_RADIO_ACTIVITY_VSEVT_CODE        0x0004U
-
-/* ACI_HAL_SCAN_REQ_REPORT_EVENT code: */
-#define ACI_HAL_SCAN_REQ_REPORT_VSEVT_CODE              0x0005U
-
-/* ACI_HAL_FW_ERROR_EVENT code: */
-#define ACI_HAL_FW_ERROR_VSEVT_CODE                     0x0006U
 
 /* ------------------------------------------------------------------------- */
 
@@ -585,8 +418,6 @@
 #define GAP_SERVICE_UUID                         0x1800U
 #define DEVICE_NAME_UUID                         0x2A00U
 #define APPEARANCE_UUID                          0x2A01U
-#define PERIPHERAL_PRIVACY_FLAG_UUID             0x2A02U
-#define RECONNECTION_ADDR_UUID                   0x2A03U
 #define PERIPHERAL_PREFERRED_CONN_PARAMS_UUID    0x2A04U
 #define CENTRAL_ADDRESS_RESOLUTION_UUID          0x2AA6U
 #define RESOLVABLE_PRIVATE_ADDRESS_ONLY_UUID     0x2AC9U
@@ -638,10 +469,10 @@
  * Type of event generated by GATT server
  * See aci_gatt_add_char.
  */
-#define GATT_DONT_NOTIFY_EVENTS                       0x00 
-#define GATT_NOTIFY_ATTRIBUTE_WRITE                   0x01
-#define GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP  0x02
-#define GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP   0x04
+#define GATT_DONT_NOTIFY_EVENTS                       0x00U
+#define GATT_NOTIFY_ATTRIBUTE_WRITE                   0x01U
+#define GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP  0x02U
+#define GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP   0x04U
 
 /* Type of characteristic length (see ACI_GATT_ADD_CHAR)
  */
@@ -668,6 +499,15 @@
 
 /* ------------------------------------------------------------------------- */
 
+/* Advertising Type
+ */
+#define ADV_IND                                        0
+#define ADV_DIRECT_IND                                 1
+#define ADV_SCAN_IND                                   2
+#define ADV_NONCONN_IND                                3
+#define ADV_DIRECT_IND_LDC                             4
+#define SCAN_RSP                                       4
+
 /* Advertising policy for filtering (white list related)
  * See HCI_LE_SET_ADVERTISING_PARAMETERS
  */
@@ -692,6 +532,7 @@
 #define CONFIG_DATA_RANDOM_ADDRESS_OFFSET      0x2EU
 #define CONFIG_DATA_SMP_MODE_OFFSET            0xB0U
 #define CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET    0xC0U
+#define CONFIG_DATA_LL_BG_SCAN_MODE_OFFSET     0xC1U
 
 /* Length for configuration values (see ACI_HAL_WRITE_CONFIG_DATA)
  */

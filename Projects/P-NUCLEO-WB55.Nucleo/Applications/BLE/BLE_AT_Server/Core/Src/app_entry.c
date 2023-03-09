@@ -35,7 +35,8 @@
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stm32wb_at_ble.h"
+#include "ble_at_server.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,6 +72,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t BleSpareEvtBuffer[sizeof(TL_
 static uint8_t aRxBuffer[RX_BUFFER_SIZE];
 static uint8_t CommandString[C_SIZE_CMD_STRING];
 static uint16_t indexReceiveChar = 0;
+static uint8_t buffer_str[C_SIZE_CMD_STRING];
 
 /* USER CODE END PV */
 
@@ -711,6 +713,14 @@ static void UartCmdExecute(void)
     APP_DBG_MSG("SW3 OK\n");
     exti_handle.Line = EXTI_LINE_1;
     HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strncmp((char*)CommandString, "AT", strlen("AT")) == 0)
+  {   
+    (void)strcpy((char*)&buffer_str[0], (char*)CommandString);
+     
+     ble_at_server_Process_rx_frame((char*)buffer_str);
+    (void)memset(&buffer_str[0], 0, sizeof(buffer_str));
+
   }
   else
   {

@@ -40,7 +40,7 @@
 <ul>
 <li>stm32wb1x_BLE_HCI_AdvScan_fw.bin
 <ul>
-<li>HCI Layer only mode 5.2 certified : Link Layer, HCI</li>
+<li>HCI Layer only mode 5.3 certified : Link Layer, HCI</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
 <li>To be used for advertising and scanning through HCI interface</li>
 </ul></li>
@@ -51,7 +51,7 @@
 </ul></li>
 <li>stm32wb1x_BLE_Stack_full_fw.bin
 <ul>
-<li>Full BLE Stack 5.2 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>Full BLE Stack 5.3 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a>
 <ul>
 <li>Following features are kept (based on Basic stack library compared to previous deliveries):
@@ -77,7 +77,7 @@
 <li>stm32wb1x_BLE_Stack_full_extended_fw.bin
 <ul>
 <li>Full BLE Stack 5.3 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553</a>
 <ul>
 <li>Following features are kept:
 <ul>
@@ -93,13 +93,15 @@
 <li>L2CAP connection oriented channels support (IP over BLE enabler)</li>
 <li>Channel selection #2 (under application flag selection)</li>
 <li>BLE Extended advertising (under application SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag selection with following limitations on currently supported configurations as (max sets number, max advertising data length) equal to [(1,1650),(2,828),(3,414)] such as both parameters are compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based on Max Extended advertising configuration.</li>
+<li>BLE GATT caching supported (certified BLE 5.3)</li>
+<li>BLE Enhanced ATT supported (certified BLE 5.3)</li>
 </ul></li>
 </ul></li>
 </ul></li>
 <li>stm32wb1x_BLE_Stack_light_fw.bin
 <ul>
-<li>Full BLE Stack 5.2 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a></li>
+<li>Full BLE Stack 5.3 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553</a></li>
 <li>Wireless Ble stack Light configuration – Slave Only
 <ul>
 <li>Following features are kept:
@@ -113,6 +115,7 @@
 <li>Direct Test Mode</li>
 <li>HCI interface (reduced)</li>
 <li><strong>Additional beacon</strong></li>
+<li>Channel selection #2 [CSA2] feature added</li>
 </ul></li>
 </ul></li>
 <li>Following features are removed:
@@ -124,13 +127,13 @@
 </ul></li>
 <li>stm32wb1x_BLE_HCILayer_fw.bin
 <ul>
-<li>HCI Layer only mode 5.2 certified : Link Layer, HCI with Direct Test Mode</li>
+<li>HCI Layer only mode 5.3 certified : Link Layer, HCI with Direct Test Mode</li>
 <li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
 </ul></li>
 <li>stm32wb1x_BLE_HCILayer_extended_fw.bin
 <ul>
 <li>HCI Layer only mode 5.3 certified : Link Layer, HCI with Direct Test Mode</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553</a></li>
 <li>BLE Extended advertising (under application SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag selection with following limitations on currently supported configurations as (max sets number, max advertising data length) equal to [(1,1650),(2,828),(3,414)] such as both parameters are compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based on Max Extended advertising configuration.</li>
 </ul></li>
 <li>stm32wb1x_Safeboot_fw.bin
@@ -246,9 +249,100 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section10" checked aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.15.0 / 20-Oct-2022</label>
+<input type="checkbox" id="collapse-section11" checked aria-hidden="true"> <label for="collapse-section11" aria-hidden="false">V1.16.0 / 18-Jan-2023</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE :
+<ul>
+<li>BLE GATT caching supported (certified BLE 5.3)</li>
+<li>BLE Enhanced ATT supported (certified BLE 5.3)</li>
+<li>BLE Channel selection#2 (CSA2) feature activated for Light stack variant</li>
+<li>ID 124362 : Support the TCRL-2022-1</li>
+<li>ID 125651 : All BLE libraries now generated with IAR v9.20.1</li>
+<li>ID 136949 : For ACL_DATA activation, the BLE options flag has to be configured with SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY with Full and Full extended stack binaries and no special BLE options flag required in “HCI_ONLY” (ie Light, HCI layer, ext HCI layer binaries)</li>
+<li>ID 138520 : Application has now the possibility to have scan operation in background with respect to advertising &amp; Connection slave. It is configurable through ACI_HAL_WRITE_CONFIG_DATA command.</li>
+<li>ID 138609 : RSSI computation updated with respect to the second AGC Lookup table (SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_BLOCKER)</li>
+<li>ID 138976 : HCI_DISCONNECTION_COMPLETE_EVENT reason propagated with error code values returned</li>
+<li>ID 139393 : Fixed link disconnection issue with LL_RESPONSE_TIMEOUT error (0x22) when connection interval is large (&gt; 3s), PHY update procedure may not complete properly.</li>
+<li>ID 142059 : It is now possible to initialize GAP in observer or broadcaster only role without initializing GATT.</li>
+<li>ID 142061 : ACI_GAP_ADDR_NOT_RESOLVED_EVENT is now generated properly.</li>
+<li>ID 142200 : it is now possible to use non-connectable extended advertising with GAP role set as Broadcaster only.</li>
+<li>ID 144203 : In HCI only mode, it is now possible to update the random address used by advertising without setting again the advertising parameters</li>
+<li>ID 144078 : In stm32wb5x_BLE_HCI_AdvScan_fw variant, the “supported states” are now correctly reported</li>
+</ul></li>
+</ul>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCILayer_extended_fw.bin</td>
+<td>0x0802E000</td>
+<td>V1.16.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_HCILayer_fw.bin</td>
+<td>0x08033000</td>
+<td>V1.16.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x0803D000</td>
+<td>V1.16.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_LLD_fw.bin</td>
+<td>0x0803F800</td>
+<td>V1.13.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_full_extended_fw.bin</td>
+<td>0x08017800</td>
+<td>V1.16.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_Stack_full_fw.bin</td>
+<td>0x08021000</td>
+<td>V1.16.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_light_fw.bin</td>
+<td>0x08029000</td>
+<td>V1.16.0<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Firmware Safeboot Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 4” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_Safeboot_fw.bin</td>
+<td>0x080<strong>44</strong>000</td>
+<td>V2.0.0<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.15.0 / 20-Oct-2022</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -336,7 +430,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.14.1 / 29-June-2022</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -419,7 +513,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.14.0 / 06-June-2022</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -511,7 +605,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.13.3 / 9-Mar-2022</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -599,7 +693,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.13.2 / 25-Jan-2022</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -687,7 +781,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -796,7 +890,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="false">V1.12.1 / 12-July-2021</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -858,7 +952,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -938,7 +1032,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="false">V1.11.1 / 23-March-2021</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -1000,7 +1094,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="false">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of the binaries.</li>

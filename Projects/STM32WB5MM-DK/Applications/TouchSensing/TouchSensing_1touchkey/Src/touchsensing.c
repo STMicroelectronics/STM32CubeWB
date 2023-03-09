@@ -56,4 +56,3 @@ void MX_TOUCHSENSING_Init(void)
 /**
   * @}
   */
-

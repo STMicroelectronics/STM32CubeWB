@@ -300,7 +300,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -786,7 +787,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 #endif /* CFG_STATIC_RANDOM_ADDRESS */
 #endif
 
-#if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
 
   ret = aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)a_srd_bd_addr);
   if (ret != BLE_STATUS_SUCCESS)
@@ -803,7 +804,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                                                (uint8_t)(a_srd_bd_addr[0] >> 8),
                                                                                (uint8_t)(a_srd_bd_addr[0]));
   }
-#endif /* CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR */
+#endif /* CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR */
 
   /**
    * Write Identity root key used to derive LTK and CSRK

@@ -163,4 +163,3 @@ void HAL_CRYP_MspDeInit(CRYP_HandleTypeDef* hcryp)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

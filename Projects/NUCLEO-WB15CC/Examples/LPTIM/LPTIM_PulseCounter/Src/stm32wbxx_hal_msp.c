@@ -112,6 +112,7 @@ void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef* hlptim)
     __HAL_RCC_LPTIM1_RELEASE_RESET();
 
   /* USER CODE END LPTIM1_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LPTIM1;
@@ -201,4 +202,3 @@ void HAL_LPTIM_MspDeInit(LPTIM_HandleTypeDef* hlptim)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

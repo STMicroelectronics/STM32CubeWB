@@ -39,7 +39,7 @@ Note that when resorting to MDK-ARM KEIL IDE, plain data, encrypted data and dec
 data are displayed on debugger as follows:  View --> Serial Viewer --> Debug (printf) Viewer.
 When resorting to STM32CubeIDE:
 Command Code is displayed on debugger as follows: Window--> Show View--> Console.
-In Debug configuration : 
+In Debug configuration :
 - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
 - Window\Startup, add the command "monitor arm semihosting enable"
 

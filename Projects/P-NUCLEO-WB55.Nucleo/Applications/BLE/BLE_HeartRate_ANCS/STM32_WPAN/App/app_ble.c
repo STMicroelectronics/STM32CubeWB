@@ -328,7 +328,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -745,17 +746,17 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           pairing_complete = (aci_gap_pairing_complete_event_rp0*)p_blecore_evt->data;
 
           APP_DBG_MSG("ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE, Connection_Handle=0x%04X Status=%d Reason=0x%02x \n",pairing_complete->Connection_Handle,pairing_complete->Status,pairing_complete->Reason);
-          if (pairing_complete->Status == SM_PAIRING_TIMEOUT)
+          if (pairing_complete->Status == SMP_PAIRING_STATUS_SMP_TIMEOUT)
           {
             APP_DBG_MSG(" ** Pairing Timeout Status=%d Reason=0x%02x , \n\r !!! Please ignore this BLE Device on the iOS/Android Device Setting=>Bluetooth=>My Device or Paired Device !!! \n\r",pairing_complete->Status,pairing_complete->Reason);
             APP_BLE_Remove_Bonding_Info();
           }
-          else if (pairing_complete->Status == SM_PAIRING_FAILED)
+          else if (pairing_complete->Status == SMP_PAIRING_STATUS_PAIRING_FAILED)
           {
             APP_DBG_MSG(" ** Pairing KO Status=%d Reason=0x%02x , \n\r !!! Please ignore this BLE Device on the iOS/Android Device Setting=>Bluetooth=>My Device or Paired Device !!! \n\r",pairing_complete->Status,pairing_complete->Reason);
             APP_BLE_Remove_Bonding_Info();
           }
-          else if (pairing_complete->Status == SM_PAIRING_SUCCESS)
+          else if (pairing_complete->Status == SMP_PAIRING_STATUS_SUCCESS)
           {
             uint8_t Peer_Bonded,Security_Mode, Security_Level;
             Peer_Bonded = BleApplicationContext.Peer_Bonded;
@@ -787,7 +788,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
                 ANCS_App_Notification(&notification);
               }		 
             }
-          } /* SM_PAIRING_SUCCESS */
+          } /* SMP_PAIRING_STATUS_SUCCESS */
 
           if (BleApplicationContext.Security_Request == 0x01)
             gap_cmd_resp_release(0);
@@ -880,7 +881,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 
   const uint8_t *p_bd_addr;
 
-#if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   uint32_t a_srd_bd_addr[2] = {0,0};
 #endif
   uint16_t a_appearance[1] = {BLE_CFG_GAP_APPEARANCE};
@@ -920,7 +921,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
     APP_DBG_MSG("  Public Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n",p_bd_addr[5],p_bd_addr[4],p_bd_addr[3],p_bd_addr[2],p_bd_addr[1],p_bd_addr[0]);
   }
 
-#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
   a_ManufData[ sizeof(a_ManufData)-6] = p_bd_addr[5];
   a_ManufData[ sizeof(a_ManufData)-5] = p_bd_addr[4];
@@ -928,7 +929,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   a_ManufData[ sizeof(a_ManufData)-3] = p_bd_addr[2];
   a_ManufData[ sizeof(a_ManufData)-2] = p_bd_addr[1];
   a_ManufData[ sizeof(a_ManufData)-1] = p_bd_addr[0];
-#endif /* CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR */
+#endif /* CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR */
 
   /**
    * Static random Address
@@ -986,7 +987,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   a_ManufData[ sizeof(a_ManufData)-1] = a_srd_bd_addr[0];
 #endif
 
-#if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   ret = aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)a_srd_bd_addr);
   if (ret != BLE_STATUS_SUCCESS)
   {
@@ -1002,7 +1003,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                                                (uint8_t)(a_srd_bd_addr[0] >> 8),
                                                                                (uint8_t)(a_srd_bd_addr[0]));
   }
-#endif /* CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR */
+#endif /* CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR */
 
   /**
    * Write Identity root key used to derive LTK and CSRK

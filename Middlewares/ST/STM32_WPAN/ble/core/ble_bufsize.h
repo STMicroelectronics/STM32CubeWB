@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2022 STMicroelectronics.
+ * Copyright (c) 2018-2023 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -113,11 +113,11 @@
 #elif (LL_ONLY != 0)
 #define BLE_PER_LINK_SIZE_BYTES       244   /* LL only Full */
 #elif (SLAVE_ONLY != 0)
-#define BLE_PER_LINK_SIZE_BYTES       336   /* Peripheral only */
+#define BLE_PER_LINK_SIZE_BYTES       344   /* Peripheral only */
 #elif (BASIC_FEATURES != 0)
-#define BLE_PER_LINK_SIZE_BYTES       412   /* Basic Features */
+#define BLE_PER_LINK_SIZE_BYTES       420   /* Basic Features */
 #else
-#define BLE_PER_LINK_SIZE_BYTES       424   /* Full stack */
+#define BLE_PER_LINK_SIZE_BYTES       432   /* Full stack */
 #endif
 
 /*

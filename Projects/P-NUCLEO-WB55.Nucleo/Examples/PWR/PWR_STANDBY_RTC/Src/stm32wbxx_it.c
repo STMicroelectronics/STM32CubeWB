@@ -212,4 +212,3 @@ void RTC_WKUP_IRQHandler(void)
 }
 
 /* USER CODE END 1 */
-

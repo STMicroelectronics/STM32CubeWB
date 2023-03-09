@@ -57,6 +57,7 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+
 /* USER CODE BEGIN Private defines */
 #define STATE_OVER_THRESHOLD    0x00000001
 #define STATE_WITHIN_THRESHOLD  0x00000002

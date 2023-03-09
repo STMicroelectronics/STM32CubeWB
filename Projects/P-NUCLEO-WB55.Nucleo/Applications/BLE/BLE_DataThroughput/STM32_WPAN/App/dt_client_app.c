@@ -717,11 +717,13 @@ void DTC_Button1TriggerReceived( void )
   if(DTC_Context.ButtonTransferReq != DTC_APP_TRANSFER_REQ_OFF)
   {
     BSP_LED_Off(LED_BLUE);
+    APP_DBG_MSG("LED BLUE OFF");
     DTC_Context.ButtonTransferReq = DTC_APP_TRANSFER_REQ_OFF;
   }
   else
   {
     BSP_LED_On(LED_BLUE);
+    APP_DBG_MSG("LED BLUE ON");
     DTC_Context.ButtonTransferReq = DTC_APP_TRANSFER_REQ_ON;
     UTIL_SEQ_SetTask(1 << CFG_TASK_DATA_TRANSFER_UPDATE_ID, CFG_SCH_PRIO_0);
   }

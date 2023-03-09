@@ -50,3 +50,4 @@
 #endif
 
 #endif /* __STM32_ASSERT_H */
+

@@ -174,4 +174,3 @@ void I2C1_ER_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

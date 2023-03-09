@@ -104,6 +104,7 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* hi2c)
   RCC_PeriphCLKInitStruct.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
   HAL_RCCEx_PeriphCLKConfig(&RCC_PeriphCLKInitStruct);
   /* USER CODE END I2C1_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_I2C1;

@@ -42,7 +42,7 @@
  * Define Advertising parameters
  */
 #define CFG_ADV_BD_ADDRESS                (0)
-#define CFG_BLE_ADDRESS_TYPE              RANDOM_ADDR /**< Bluetooth address types defined in ble_legacy.h */
+#define CFG_BLE_ADDRESS_TYPE              GAP_STATIC_RANDOM_ADDR /**< Bluetooth address types defined in ble_legacy.h */
 /*#define CFG_STATIC_RANDOM_ADDRESS         (0xf257acd87a6c)*/ /**< Static Random Address fixed for lifetime of the device */
 
 #define CFG_MINI_CONN_ADV_INTERVAL_MIN    (0x20)   /**< 20ms */
@@ -126,8 +126,7 @@
   * Define random address
   */
 #define CFG_STATIC_RANDOM_ADDRESS              0xc122AABBCCDD 
-#define PUBLIC_ADDR                            0X00U
-#define STATIC_RANDOM_ADDR                     0X01U
+
 /**
 *   Identity root key used to derive LTK and CSRK
 */
@@ -331,10 +330,6 @@
  * - SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED
  * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1
  * - SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3
- * - SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_WRITABLE
- * - SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY
- * - SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_SUPPORTED
- * - SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED
  * which are used to set following configuration bits:
  * (bit 0): 1: LL only
  *          0: LL + host
@@ -352,14 +347,25 @@
  *          0: GATT caching is not used
  * (bit 7): 1: LE Power Class 1
  *          0: LE Power Class 2-3
- * (bit 8): 1: appearance Writable
- *          0: appearance Read-Only
- * (bit 9): 1: Enhanced ATT supported
- *          0: Enhanced ATT not supported 
- * other bits: reserved (shall be set to 0)
+ * other bits: complete with Options_extension flag
  */
 #define CFG_BLE_OPTIONS  ( SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV | SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2 |\
-                           SHCI_C2_BLE_INIT_OPTIONS_FULL_GATTDB_NVM | SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 | SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY | SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED )
+                           SHCI_C2_BLE_INIT_OPTIONS_FULL_GATTDB_NVM | SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3 )
+
+/**
+ * BLE stack Options_extension flags to be configured with:
+ * - SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_WRITABLE
+ * - SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY
+ * - SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_SUPPORTED
+ * - SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED
+ * which are used to set following configuration bits:
+ * (bit 0): 1: appearance Writable
+ *          0: appearance Read-Only
+ * (bit 1): 1: Enhanced ATT supported
+ *          0: Enhanced ATT not supported
+ * other bits: reserved (shall be set to 0)
+ */
+#define CFG_BLE_OPTIONS_EXT  (SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY | SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED)
 
 #define CFG_BLE_MAX_COC_INITIATOR_NBR   (32)
 

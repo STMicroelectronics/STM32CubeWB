@@ -88,6 +88,7 @@ void HAL_LCD_MspInit(LCD_HandleTypeDef* hlcd)
   /* USER CODE BEGIN LCD_MspInit 0 */
 
   /* USER CODE END LCD_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
@@ -244,4 +245,3 @@ void HAL_LCD_MspDeInit(LCD_HandleTypeDef* hlcd)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

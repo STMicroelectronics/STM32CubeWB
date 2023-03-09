@@ -149,4 +149,3 @@ void HAL_LPTIM_MspDeInit(LPTIM_HandleTypeDef* hlptim)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

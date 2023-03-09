@@ -361,7 +361,8 @@ void APP_BLE_Init( void )
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -755,7 +756,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   /**
    * Write the BD Address
    */
-  if ((global_ble_addr_type == PUBLIC_ADDR) && (global_ble_cfg_addr_type == PUBLIC_ADDR))
+  if ((global_ble_addr_type == GAP_PUBLIC_ADDR) && (global_ble_cfg_addr_type == GAP_PUBLIC_ADDR))
   {
     aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                               CONFIG_DATA_PUBADDR_LEN,
@@ -771,7 +772,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
     
     memcpy(&global_bdaddress[0], BleGetBdAddress(), sizeof(global_bdaddress));
   }
-  else if (global_ble_addr_type == STATIC_RANDOM_ADDR)
+  else if (global_ble_addr_type == GAP_STATIC_RANDOM_ADDR)
   {
    /**
    * Static random Address
@@ -795,7 +796,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
     manuf_data[ sizeof(manuf_data)-1] = global_rand_bdaddress[0];
     
   }
-  else if (global_ble_cfg_addr_type == STATIC_RANDOM_ADDR)
+  else if (global_ble_cfg_addr_type == GAP_STATIC_RANDOM_ADDR)
   {
 #if defined(CFG_STATIC_RANDOM_ADDRESS)
     srd_bd_addr[0] = CFG_STATIC_RANDOM_ADDRESS & 0xFFFFFFFF;

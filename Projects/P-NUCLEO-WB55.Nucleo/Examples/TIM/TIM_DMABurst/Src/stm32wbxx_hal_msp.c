@@ -172,4 +172,3 @@ void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* htim_pwm)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

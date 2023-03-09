@@ -279,4 +279,3 @@ void HAL_TIM_IC_MspDeInit(TIM_HandleTypeDef *htim)
 }
 
 /* USER CODE END 1 */
-

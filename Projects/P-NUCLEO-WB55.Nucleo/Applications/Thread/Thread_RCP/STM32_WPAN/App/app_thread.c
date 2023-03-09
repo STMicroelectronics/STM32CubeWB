@@ -60,7 +60,6 @@
 /* Private function prototypes -----------------------------------------------*/
 static void APP_THREAD_CheckWirelessFirmwareInfo(void);
 static void APP_THREAD_DeviceConfig(void);
-static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext);
 static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode);
 #if (CFG_FULL_LOW_POWER == 0)
 static void Send_CLI_To_M0(void);
@@ -232,76 +231,9 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
  */
 static void APP_THREAD_DeviceConfig(void)
 {
-  otError error;
-  error = otSetStateChangedCallback(NULL, APP_THREAD_StateNotif, NULL);
-  if (error != OT_ERROR_NONE)
-  {
-    APP_THREAD_Error((uint32_t)ERR_THREAD_SET_STATE_CB, (uint32_t)ERR_INTERFACE_FATAL);
-  }
-
   /* USER CODE BEGIN DEVICECONFIG */
 
   /* USER CODE END DEVICECONFIG */
-}
-
-/**
- * @brief Thread notification when the state changes.
- * @param  aFlags  : Define the item that has been modified
- *         aContext: Context
- *
- * @retval None
- */
-static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
-{
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(pContext);
-
-  /* USER CODE BEGIN APP_THREAD_STATENOTIF */
-
-  /* USER CODE END APP_THREAD_STATENOTIF */
-
-  if ((NotifFlags & (uint32_t)OT_CHANGED_THREAD_ROLE) == (uint32_t)OT_CHANGED_THREAD_ROLE)
-  {
-    switch (otThreadGetDeviceRole(NULL))
-    {
-    case OT_DEVICE_ROLE_DISABLED:
-      /* USER CODE BEGIN OT_DEVICE_ROLE_DISABLED */
-      BSP_LED_Off(LED2);
-      BSP_LED_Off(LED3);
-      /* USER CODE END OT_DEVICE_ROLE_DISABLED */
-      break;
-    case OT_DEVICE_ROLE_DETACHED:
-      /* USER CODE BEGIN OT_DEVICE_ROLE_DETACHED */
-      BSP_LED_Off(LED2);
-      BSP_LED_Off(LED3);
-      /* USER CODE END OT_DEVICE_ROLE_DETACHED */
-      break;
-    case OT_DEVICE_ROLE_CHILD:
-      /* USER CODE BEGIN OT_DEVICE_ROLE_CHILD */
-      BSP_LED_Off(LED2);
-      BSP_LED_On(LED3);
-      /* USER CODE END OT_DEVICE_ROLE_CHILD */
-      break;
-    case OT_DEVICE_ROLE_ROUTER :
-      /* USER CODE BEGIN OT_DEVICE_ROLE_ROUTER */
-      BSP_LED_Off(LED2);
-      BSP_LED_On(LED3);
-      /* USER CODE END OT_DEVICE_ROLE_ROUTER */
-      break;
-    case OT_DEVICE_ROLE_LEADER :
-      /* USER CODE BEGIN OT_DEVICE_ROLE_LEADER */
-      BSP_LED_On(LED2);
-      BSP_LED_Off(LED3);
-      /* USER CODE END OT_DEVICE_ROLE_LEADER */
-      break;
-    default:
-      /* USER CODE BEGIN DEFAULT */
-      BSP_LED_Off(LED2);
-      BSP_LED_Off(LED3);
-      /* USER CODE END DEFAULT */
-      break;
-    }
-  }
 }
 
 /**

@@ -11,9 +11,13 @@
             <name>General</name>
             <archiveVersion>3</archiveVersion>
             <data>
-                <version>30</version>
+                <version>34</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
+                <option>
+                    <name>BrowseInfoPath</name>
+                    <state>BLE_Hid\BrowseInfo</state>
+                </option>
                 <option>
                     <name>ExePath</name>
                     <state>BLE_Hid/Exe</state>
@@ -66,15 +70,7 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
-                    <state>8.20.2.14834</state>
-                </option>
-                <option>
-                    <name>GeneralEnableMisra</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>GeneralMisraVerbose</name>
-                    <state>0</state>
+                    <state>9.20.1.43525</state>
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
@@ -97,26 +93,12 @@
                     <state>0</state>
                 </option>
                 <option>
-                    <name>GeneralMisraRules98</name>
-                    <version>0</version>
-                    <state>1000111110110101101110011100111111101110011011000101110111101101100111111111111100110011111001110111001111111111111111111111111</state>
-                </option>
-                <option>
-                    <name>GeneralMisraVer</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>GeneralMisraRules04</name>
-                    <version>0</version>
-                    <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
-                </option>
-                <option>
                     <name>RTConfigPath2</name>
-                    <state>$TOOLKIT_DIR$/INC/c/DLib_Config_Full.h</state>
+                    <state>$TOOLKIT_DIR$\inc\c\DLib_Config_Full.h</state>
                 </option>
                 <option>
                     <name>GBECoreSlave</name>
-                    <version>26</version>
+                    <version>31</version>
                     <state>39</state>
                 </option>
                 <option>
@@ -133,7 +115,7 @@
                 </option>
                 <option>
                     <name>CoreVariant</name>
-                    <version>26</version>
+                    <version>31</version>
                     <state>39</state>
                 </option>
                 <option>
@@ -156,7 +138,7 @@
                 </option>
                 <option>
                     <name>GFPUCoreSlave2</name>
-                    <version>26</version>
+                    <version>31</version>
                     <state>39</state>
                 </option>
                 <option>
@@ -204,13 +186,30 @@
                     <name>TrustZone</name>
                     <state>0</state>
                 </option>
+                <option>
+                    <name>TrustZoneModes</name>
+                    <version>0</version>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>OGAarch64Abi</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>OG_32_64Device</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>BuildFilesPath</name>
+                    <state>BLE_Hid</state>
+                </option>
             </data>
         </settings>
         <settings>
             <name>ICCARM</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>34</version>
+                <version>37</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -338,10 +337,6 @@
                     <state></state>
                 </option>
                 <option>
-                    <name>CompilerMisraOverride</name>
-                    <state>0</state>
-                </option>
-                <option>
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto</state>
@@ -386,16 +381,6 @@
                 <option>
                     <name>CCOptLevelSlave</name>
                     <state>3</state>
-                </option>
-                <option>
-                    <name>CompilerMisraRules98</name>
-                    <version>0</version>
-                    <state>1000111110110101101110011100111111101110011011000101110111101101100111111111111100110011111001110111001111111111111111111111111</state>
-                </option>
-                <option>
-                    <name>CompilerMisraRules04</name>
-                    <version>0</version>
-                    <state>111101110010111111111000110111111111111111111111111110010111101111010101111111111111111111111111101111111011111001111011111011111111111111111</state>
                 </option>
                 <option>
                     <name>CCPosIndRopi</name>
@@ -478,13 +463,21 @@
                     <name>IccRTTI2</name>
                     <state>0</state>
                 </option>
+                <option>
+                    <name>OICompilerExtraOption</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>CCStackProtection</name>
+                    <state>0</state>
+                </option>
             </data>
         </settings>
         <settings>
             <name>AARM</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>10</version>
+                <version>11</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -640,6 +633,10 @@
                     <name>AsmNoLiteralPool</name>
                     <state>0</state>
                 </option>
+                <option>
+                    <name>PreInclude</name>
+                    <state></state>
+                </option>
             </data>
         </settings>
         <settings>
@@ -679,12 +676,8 @@
                 <extensions></extensions>
                 <cmdline></cmdline>
                 <hasPrio>0</hasPrio>
+                <buildSequence>inputOutputBased</buildSequence>
             </data>
-        </settings>
-        <settings>
-            <name>BICOMP</name>
-            <archiveVersion>0</archiveVersion>
-            <data />
         </settings>
         <settings>
             <name>BUILDACTION</name>
@@ -698,16 +691,12 @@
             <name>ILINK</name>
             <archiveVersion>0</archiveVersion>
             <data>
-                <version>20</version>
+                <version>26</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
                     <name>IlinkLibIOConfig</name>
                     <state>1</state>
-                </option>
-                <option>
-                    <name>XLinkMisraHandler</name>
-                    <state>0</state>
                 </option>
                 <option>
                     <name>IlinkInputFileSlave</name>
@@ -1010,6 +999,58 @@
                     <name>IlinkLocaleSelect</name>
                     <state>1</state>
                 </option>
+                <option>
+                    <name>IlinkTrustzoneImportLibraryOut</name>
+                    <state>###Unitialized###</state>
+                </option>
+                <option>
+                    <name>OILinkExtraOption</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>IlinkRawBinaryFile2</name>
+                    <state></state>
+                </option>
+                <option>
+                    <name>IlinkRawBinarySymbol2</name>
+                    <state></state>
+                </option>
+                <option>
+                    <name>IlinkRawBinarySegment2</name>
+                    <state></state>
+                </option>
+                <option>
+                    <name>IlinkRawBinaryAlign2</name>
+                    <state></state>
+                </option>
+                <option>
+                    <name>IlinkLogCrtRoutineSelection</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>IlinkLogFragmentInfo</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>IlinkLogInlining</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>IlinkLogMerging</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>IlinkDemangle</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>IlinkWrapperFileEnable</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>IlinkWrapperFile</name>
+                    <state></state>
+                </option>
             </data>
         </settings>
         <settings>
@@ -1034,11 +1075,6 @@
             </data>
         </settings>
         <settings>
-            <name>BILINK</name>
-            <archiveVersion>0</archiveVersion>
-            <data />
-        </settings>
-        <settings>
             <name>Coder</name>
             <archiveVersion>0</archiveVersion>
             <data />
@@ -1049,37 +1085,34 @@
         <group>
             <name>Core</name>
             <file>
-                <name>$PROJ_DIR$/../Core/Src/app_debug.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../Core/Src/app_entry.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../Core/Src/stm32wbxx_it.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../Core/Src/stm32wbxx_hal_msp.c</name>
-        </file>
-            <file>
-                <name>$PROJ_DIR$/../Core/Src/hw_timerserver.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../Core/Src/hw_uart.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../Core/Src/main.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\hw_uart.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../Core/Src/stm32_lpm_if.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\main.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../Core/Src/stm32wbxx_it.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
             </file>
         </group>
         <group>
             <name>EWARM</name>
             <file>
-                <name>$PROJ_DIR$/startup_stm32wb55xx_cm4.s</name>
+                <name>$PROJ_DIR$\startup_stm32wb55xx_cm4.s</name>
             </file>
         </group>
         <group>
@@ -1087,22 +1120,22 @@
             <group>
                 <name>app</name>
                 <file>
-                    <name>$PROJ_DIR$/../STM32_WPAN/App/app_ble.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\app_ble.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$/../STM32_WPAN/App/bas_app.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\bas_app.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$/../STM32_WPAN/App/dis_app.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\dis_app.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$/../STM32_WPAN/App/hids_app.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\App\hids_app.c</name>
                 </file>
             </group>
             <group>
                 <name>target</name>
                 <file>
-                    <name>$PROJ_DIR$/../STM32_WPAN/Target/hw_ipcc.c</name>
+                    <name>$PROJ_DIR$\..\STM32_WPAN\Target\hw_ipcc.c</name>
                 </file>
             </group>
         </group>
@@ -1110,7 +1143,7 @@
     <group>
         <name>Doc</name>
         <file>
-            <name>$PROJ_DIR$/../readme.txt</name>
+            <name>$PROJ_DIR$\..\readme.txt</name>
         </file>
     </group>
     <group>
@@ -1120,86 +1153,86 @@
             <group>
                 <name>P-NUCLEO-WB55.Nucleo</name>
                 <file>
-                    <name>$PROJ_DIR$/../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c</name>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo\stm32wbxx_nucleo.c</name>
                 </file>
             </group>
         </group>
         <group>
             <name>CMSIS</name>
             <file>
-                <name>$PROJ_DIR$/../Core/Src/system_stm32wbxx.c</name>
+                <name>$PROJ_DIR$\..\Core\Src\system_stm32wbxx.c</name>
             </file>
         </group>
         <group>
             <name>STM32WBxx_HAL_Driver</name>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_adc.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_adc.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_adc_ex.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_adc_ex.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_cortex.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_cortex.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma_ex.c</name>
-            </file>
-	    <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash.c</name>
-            </file>
-	    <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_flash_ex.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_exti.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_gpio.c</name>
-            </file>
-	    <file>
-        	<name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c</name>
-      	    </file>
-	    <file>
-      		<name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_ipcc.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_flash.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pwr.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_flash_ex.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_pwr_ex.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_gpio.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_hsem.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc_ex.c</name>
-            </file>
-	    <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rng.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_ipcc.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rtc.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rtc_ex.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr_ex.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_spi.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_spi_ex.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc_ex.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rtc_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_spi_ex.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart_ex.c</name>
             </file>
         </group>
     </group>
@@ -1212,46 +1245,46 @@
                 <group>
                     <name>blesvc</name>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/bas.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\bas.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/dis.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\dis.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/hids.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\hids.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/svc_ctl.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\svc\Src\svc_ctl.c</name>
                     </file>
                 </group>
                 <group>
                     <name>core</name>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_gap_aci.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_gatt_aci.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_hal_aci.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_hal_aci.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_hci_le.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_hci_le.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_l2cap_aci.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\auto\ble_l2cap_aci.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template/osal.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\core\template\osal.c</name>
                     </file>
                 </group>
                 <group>
                     <name>menu</name>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/menu/DispTools.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\menu\DispTools.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/menu/hids_mouse_menu.c</name>
+                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\menu\hids_mouse_menu.c</name>
                     </file>
                 </group>
             </group>
@@ -1264,25 +1297,25 @@
                         <group>
                             <name>shci</name>
                             <file>
-                                <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci/shci.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\shci\shci.c</name>
                             </file>
                         </group>
                         <group>
                             <name>tl</name>
                             <file>
-                                <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/hci_tl_if.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\hci_tl_if.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/shci_tl_if.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\shci_tl_if.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl/tl_mbox.c</name>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl\tl_mbox.c</name>
                             </file>
                         </group>
                     </group>
@@ -1291,16 +1324,16 @@
             <group>
                 <name>utilities</name>
                 <file>
-                    <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</name>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\dbg_trace.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/otp.c</name>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\otp.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_list.c</name>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\stm_list.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</name>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\stm_queue.c</name>
                 </file>
             </group>
         </group>
@@ -1308,11 +1341,10 @@
     <group>
         <name>Utilities</name>
         <file>
-            <name>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm/stm32_lpm.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\lpm\tiny_lpm\stm32_lpm.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$/../../../../../../Utilities/sequencer/stm32_seq.c</name>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer\stm32_seq.c</name>
         </file>
     </group>
 </project>
-

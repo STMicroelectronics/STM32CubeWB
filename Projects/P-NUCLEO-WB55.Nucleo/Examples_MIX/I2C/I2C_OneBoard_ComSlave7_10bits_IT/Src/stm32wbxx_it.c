@@ -249,4 +249,3 @@ void I2Cx_SLAVE_ER_IRQHandler(void)
 }
 
 /* USER CODE END 1 */
-

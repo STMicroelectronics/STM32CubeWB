@@ -280,7 +280,8 @@ void APP_BLE_Init( void )
     CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -529,7 +530,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                         PUBLIC_ADDR
+                                         GAP_PUBLIC_ADDR
   );
 
   /**

@@ -45,7 +45,7 @@
 
 /* Private defines -----------------------------------------------------------*/
 #define APP_ZIGBEE_STARTUP_FAIL_DELAY               500U
-#define CHANNEL                                     13
+#define CHANNEL                                     15
 
 #define SW1_ENDPOINT                                17
 

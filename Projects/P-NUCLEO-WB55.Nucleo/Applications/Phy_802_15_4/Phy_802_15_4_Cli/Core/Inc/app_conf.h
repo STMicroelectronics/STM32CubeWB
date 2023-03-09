@@ -82,6 +82,7 @@
 #if (CFG_FULL_LOW_POWER == 1)
 #undef CFG_LPM_SUPPORTED
 #define CFG_LPM_SUPPORTED   1
+#define CFG_PHY_CLI_LPM     1
 #endif /* CFG_FULL_LOW_POWER */
 
 // In LLD tests, need to support LPM without FULL low-power

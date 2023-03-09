@@ -53,7 +53,7 @@ typedef struct
 
 
 /* Exported constants --------------------------------------------------------*/
-#define CRS_MAX_DATA_LEN                                           (ATT_MTU - 3) /**< Maximum length of data (in bytes) that can be transmitted to the peer. */
+#define CRS_MAX_DATA_LEN                                           (BLE_DEFAULT_ATT_MTU - 3) /**< Maximum length of data (in bytes) that can be transmitted to the peer. */
 
 /* External variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/

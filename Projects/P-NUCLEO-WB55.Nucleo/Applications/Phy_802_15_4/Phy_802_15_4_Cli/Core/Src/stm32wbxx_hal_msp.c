@@ -90,7 +90,7 @@ void HAL_MspInit(void)
 */
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
-  HAL_DMA_MuxSyncConfigTypeDef pSyncConfig;
+  //HAL_DMA_MuxSyncConfigTypeDef pSyncConfig;
   
 #if (CFG_HW_LPUART1_ENABLED == 1)
   if(huart->Instance==LPUART1)

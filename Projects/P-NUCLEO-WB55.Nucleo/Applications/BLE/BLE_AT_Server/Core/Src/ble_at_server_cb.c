@@ -237,7 +237,7 @@ uint8_t stm32wb_at_BLE_PUB_ADDR_cb(stm32wb_at_BLE_PUB_ADDR_t *param)
 {
   uint8_t i;
   
-  global_ble_addr_type = PUBLIC_ADDR;
+  global_ble_addr_type = GAP_PUBLIC_ADDR;
   for (i = 0 ; i < sizeof(param->BD_address) ; i++)
   {
     global_bdaddress[sizeof(param->BD_address) - 1 - i] = param->BD_address[i];
@@ -250,7 +250,7 @@ uint8_t stm32wb_at_BLE_RAND_ADDR_cb(stm32wb_at_BLE_RAND_ADDR_t *param)
 {
   uint8_t i;
   
-  global_ble_addr_type = STATIC_RANDOM_ADDR;
+  global_ble_addr_type = GAP_STATIC_RANDOM_ADDR;
   for (i = 0 ; i < sizeof(param->BD_address) ; i++)
   {
     global_rand_bdaddress[sizeof(param->BD_address) - 1 - i] = param->BD_address[i];
@@ -393,7 +393,7 @@ uint8_t stm32wb_at_BLE_INIT_server_cb(char *buff)
   int8_t i;
   char str_tmp[20];
 
-  if ((global_ble_addr_type == PUBLIC_ADDR) && (global_ble_cfg_addr_type == PUBLIC_ADDR))
+  if ((global_ble_addr_type == GAP_PUBLIC_ADDR) && (global_ble_cfg_addr_type == GAP_PUBLIC_ADDR))
   {
     (void)strcat(buff, "0x");
     for(i = sizeof(global_bdaddress) - 1 ; i >= 0 ; i--)

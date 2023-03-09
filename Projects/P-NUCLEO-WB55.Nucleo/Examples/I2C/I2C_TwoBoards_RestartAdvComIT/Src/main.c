@@ -127,6 +127,11 @@ int main(void)
 #if defined(__GNUC__) && defined(MASTER_BOARD)
   initialise_monitor_handles();	/*rtt*/
 #endif
+
+#if (USE_VCP_CONNECTION == 1)
+  COM_InitTypeDef COM_Init;
+#endif /* USE_VCP_CONNECTION */
+
   /* STM32WBxx HAL library initialization:
        - Configure the Flash prefetch
        - Systick timer is configured by default as source of time base, but user 
@@ -162,6 +167,30 @@ int main(void)
   /* Configure LED2 and LED3 */
   BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
+
+#if (USE_VCP_CONNECTION == 1)
+  /* Configure COM port */
+  /* Put the UART peripheral in the Asynchronous mode (UART Mode) */
+  /* UART configured as follows:
+      - Word Length = 8 Bits
+      - Stop Bit = One Stop bit
+      - Parity = None
+      - BaudRate = 115200 baud
+      - Hardware flow control disabled (RTS and CTS signals) */
+  COM_Init.BaudRate   = 115200;
+  COM_Init.WordLength = COM_WORDLENGTH_8B;
+  COM_Init.StopBits   = COM_STOPBITS_1;
+  COM_Init.Parity     = COM_PARITY_NONE;
+  COM_Init.HwFlowCtl  = COM_HWCONTROL_NONE;
+  if (BSP_COM_Init(COM1, &COM_Init) != BSP_ERROR_NONE)
+  {
+    Error_Handler();
+  }
+  if (BSP_COM_SelectLogPort(COM1) != BSP_ERROR_NONE)
+  {
+    Error_Handler();
+  }
+#endif /* USE_VCP_CONNECTION */
 
 
 #ifdef MASTER_BOARD
@@ -210,7 +239,7 @@ int main(void)
 
         /*##-3- Wait for the end of the transfer #################################*/  
         /*  Before starting a new communication transfer, you need to check the current   
-            state of the peripheral; if it's busy you need to wait for the end of current
+            state of the peripheral; if it is busy you need to wait for the end of current
             transfer before starting a new one.
             For simplicity reasons, this example is just waiting till the end of the 
             transfer, but application may perform other tasks while transfer operation
@@ -250,7 +279,7 @@ int main(void)
 
         /*##-3- Wait for the end of the transfer #################################*/  
         /*  Before starting a new communication transfer, you need to check the current   
-            state of the peripheral; if it's busy you need to wait for the end of current
+            state of the peripheral; if it is busy you need to wait for the end of current
             transfer before starting a new one.
             For simplicity reasons, this example is just waiting till the end of the 
             transfer, but application may perform other tasks while transfer operation
@@ -278,7 +307,7 @@ int main(void)
 
         /*##-5- Wait for the end of the transfer #################################*/  
         /*  Before starting a new communication transfer, you need to check the current   
-            state of the peripheral; if it's busy you need to wait for the end of current
+            state of the peripheral; if it is busy you need to wait for the end of current
             transfer before starting a new one.
             For simplicity reasons, this example is just waiting till the end of the 
             transfer, but application may perform other tasks while transfer operation
@@ -372,6 +401,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -390,6 +420,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -436,18 +467,21 @@ static void MX_I2C1_Init(void)
   {
     Error_Handler();
   }
+
   /** Configure Analogue filter
   */
   if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
   {
     Error_Handler();
   }
+
   /** Configure Digital filter
   */
   if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
   {
     Error_Handler();
   }
+
   /** I2C Enable Fast Mode Plus
   */
   HAL_I2CEx_EnableFastModePlus(I2C_FASTMODEPLUS_I2C1);
@@ -464,13 +498,18 @@ static void MX_I2C1_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
+
 /**
   * @brief  Tx Transfer completed callback.
   * @param  I2cHandle: I2C handle 
@@ -662,4 +701,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-

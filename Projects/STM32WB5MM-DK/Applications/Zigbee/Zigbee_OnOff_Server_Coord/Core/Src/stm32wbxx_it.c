@@ -375,6 +375,7 @@ void RTC_WKUP_IRQHandler(void)
  */
 void PUSH_BUTTON_SW_EXTI_IRQHandler(void)
 {
+  HAL_Delay(300);
   BSP_PB_IRQHandler(BUTTON_USER1);
   BSP_PB_IRQHandler(BUTTON_USER2);
 }

@@ -439,7 +439,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -1258,7 +1259,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
     APP_DBG_MSG("  Success: aci_hal_write_config_data command\n\r");
   }
 
-#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
   manuf_data[ sizeof(manuf_data)-6] = bd_addr[5];
   manuf_data[ sizeof(manuf_data)-5] = bd_addr[4];
@@ -1308,7 +1309,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   srd_bd_addr[0] = CFG_STATIC_RANDOM_ADDRESS & 0xFFFFFFFF;
   srd_bd_addr[1] = (uint32_t)((uint64_t)CFG_STATIC_RANDOM_ADDRESS >> 32);
   srd_bd_addr[1] |= 0xC000; /* The two upper bits shall be set to 1 */
-#elif (CFG_BLE_ADDRESS_TYPE == RANDOM_ADDR)
+#elif (CFG_BLE_ADDRESS_TYPE == GAP_STATIC_RANDOM_ADDR)
   /* Get RNG semaphore */
   while(LL_HSEM_1StepLock(HSEM, CFG_HW_RNG_SEMID));
 
@@ -1342,7 +1343,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   LL_HSEM_ReleaseLock(HSEM, CFG_HW_RNG_SEMID, 0);
 #endif
 
-#if (CFG_BLE_ADDRESS_TYPE == STATIC_RANDOM_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE == GAP_STATIC_RANDOM_ADDR)
   /* BLE MAC in ADV Packet */
   manuf_data[ sizeof(manuf_data)-6] = srd_bd_addr[1] >> 8 ;
   manuf_data[ sizeof(manuf_data)-5] = srd_bd_addr[1];
@@ -1436,7 +1437,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
     const char *name = "P2PROUT";
 
     ret = aci_gap_init(role,
-#if ((CFG_BLE_ADDRESS_TYPE == RESOLVABLE_PRIVATE_ADDR) || (CFG_BLE_ADDRESS_TYPE == NON_RESOLVABLE_PRIVATE_ADDR))
+#if ((CFG_BLE_ADDRESS_TYPE == GAP_RESOLVABLE_PRIVATE_ADDR) || (CFG_BLE_ADDRESS_TYPE == GAP_NON_RESOLVABLE_PRIVATE_ADDR))
                        2,
 #else
                        0,
@@ -1554,7 +1555,7 @@ static void Scan_Request(void)
     /* USER CODE BEGIN APP_BLE_CONNECTED */
     BSP_LED_On(LED_BLUE);
     /* USER CODE END APP_BLE_CONNECTED */
-    result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, PUBLIC_ADDR, 1);
+    result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, GAP_PUBLIC_ADDR, 1);
     if (result == BLE_STATUS_SUCCESS)
     {
     /* USER CODE BEGIN BLE_SCAN_SUCCESS */
@@ -1657,9 +1658,9 @@ static void ConnReq1(void)
     /* USER CODE END APP_BLE_CONNECTED_SUCCESS_END_DEVICE_1 */
     result = aci_gap_create_connection(SCAN_P,
                                        SCAN_L,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        P2P_SERVER1_BDADDR,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        CONN_P1,
                                        CONN_P2,
                                        0,
@@ -1702,9 +1703,9 @@ static void ConnReq2(void)
   {
     result = aci_gap_create_connection(SCAN_P,
                                        SCAN_L,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        P2P_SERVER2_BDADDR,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        CONN_P1,
                                        CONN_P2,
                                        0,
@@ -1739,9 +1740,9 @@ static void ConnReq3(void)
   {
     result = aci_gap_create_connection(SCAN_P,
                                        SCAN_L,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        P2P_SERVER3_BDADDR,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        CONN_P1,
                                        CONN_P2,
                                        0,
@@ -1776,9 +1777,9 @@ static void ConnReq4(void)
   {
     result = aci_gap_create_connection(SCAN_P,
                                        SCAN_L,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        P2P_SERVER4_BDADDR,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        CONN_P1,
                                        CONN_P2,
                                        0,
@@ -1813,9 +1814,9 @@ static void ConnReq5(void)
   {
     result = aci_gap_create_connection(SCAN_P,
                                        SCAN_L,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        P2P_SERVER5_BDADDR,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        CONN_P1,
                                        CONN_P2,
                                        0,
@@ -1849,9 +1850,9 @@ static void ConnReq6(void)
   {
     result = aci_gap_create_connection(SCAN_P,
                                        SCAN_L,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        P2P_SERVER6_BDADDR,
-                                       PUBLIC_ADDR,
+                                       GAP_PUBLIC_ADDR,
                                        CONN_P1,
                                        CONN_P2,
                                        0,

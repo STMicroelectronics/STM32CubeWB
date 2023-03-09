@@ -1441,7 +1441,7 @@ static SVCCTL_EvtAckStatus_t ANCS_Client_Event_Handler( void *Event )
         case ACI_GATT_PROC_COMPLETE_VSEVT_CODE:
         {
           aci_gatt_proc_complete_event_rp0 *pr = (void*) blecore_evt->data;
-          if(pr->Error_Code != ERR_CMD_SUCCESS)
+          if(pr->Error_Code != HCI_SUCCESS_ERR_CODE)
           {
             APP_DBG_MSG("ACI_GATT_PROC_COMPLETE_VSEVT_CODE - Connection_Handle=0x%04x,Error_Code=0x%02X (0x41: Failed)\n\r", pr->Connection_Handle,pr->Error_Code);
           }
@@ -1782,8 +1782,8 @@ static void GattProcReq(GattProcId_t GattProcId)
         }
         else
         {
-          APP_DBG_MSG("ServiceChangedCharDescHdle=0x%04X notification enabled Failed BLE_STATUS_NOT_ALLOWED=0x%02x result=0x%02X\n",
-  	  	ancs_context.ServiceChangedCharDescHdle,BLE_STATUS_NOT_ALLOWED,result);
+          APP_DBG_MSG("ServiceChangedCharDescHdle=0x%04X notification enabled Failed HCI_COMMAND_DISALLOWED_ERR_CODE=0x%02x result=0x%02X\n",
+  	  	ancs_context.ServiceChangedCharDescHdle,HCI_COMMAND_DISALLOWED_ERR_CODE,result);
         }
       }
 
@@ -1805,8 +1805,8 @@ static void GattProcReq(GattProcId_t GattProcId)
         }
         else
         {
-          APP_DBG_MSG("ANCSDataSourceCharDescHdle=0x%04X notification enabled Failed BLE_STATUS_NOT_ALLOWED=0x%02x result=0x%02X\n",
-		  	ancs_context.ANCSDataSourceCharDescHdle,BLE_STATUS_NOT_ALLOWED,result);
+          APP_DBG_MSG("ANCSDataSourceCharDescHdle=0x%04X notification enabled Failed HCI_COMMAND_DISALLOWED_ERR_CODE=0x%02x result=0x%02X\n",
+		  	ancs_context.ANCSDataSourceCharDescHdle,HCI_COMMAND_DISALLOWED_ERR_CODE,result);
         }
       }
 

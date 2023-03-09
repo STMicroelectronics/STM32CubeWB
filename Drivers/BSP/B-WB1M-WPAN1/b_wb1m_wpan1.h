@@ -132,7 +132,7 @@ typedef struct
   */
 #define __B_WB1M_WPAN1_BSP_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define __B_WB1M_WPAN1_BSP_VERSION_SUB1   (0x00U) /*!< [23:16] sub1 version */
-#define __B_WB1M_WPAN1_BSP_VERSION_SUB2   (0x01U) /*!< [15:8]  sub2 version */
+#define __B_WB1M_WPAN1_BSP_VERSION_SUB2   (0x02U) /*!< [15:8]  sub2 version */
 #define __B_WB1M_WPAN1_BSP_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __B_WB1M_WPAN1_BSP_VERSION        ((__B_WB1M_WPAN1_BSP_VERSION_MAIN << 24U)\
                                            |(__B_WB1M_WPAN1_BSP_VERSION_SUB1 << 16U)\
@@ -185,7 +185,7 @@ typedef struct
   while(0)
 
 #define BUTTON_USERx_GPIO_CLK_DISABLE(__INDEX__)  \
-  do { if ((__INDEX__)== BUTTON_USER1) BUTTON_USER1_GPIO_CLK_DISABLE(); } \
+  do { if ((__INDEX__) == BUTTON_USER1) BUTTON_USER1_GPIO_CLK_DISABLE(); } \
   while(0)
 /**
   * @}

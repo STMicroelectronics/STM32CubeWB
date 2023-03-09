@@ -47,6 +47,9 @@ __IO uint8_t NbLoop = 1;
 
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
+extern void initialise_monitor_handles(void);
+#endif 
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -55,8 +58,17 @@ static void SystemClock_Config(void);
   * @param  None
   * @retval None
   */
-int32_t main(void)
+int main(void)
 {
+  /* USER CODE BEGIN 1 */
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
+  initialise_monitor_handles();
+  printf("Semihosting Test...\n\r"); 
+#endif
+#if (USE_VCP_CONNECTION == 1)
+  COM_InitTypeDef COM_Init;
+#endif /* USE_VCP_CONNECTION */
+  /* USER CODE END 1 */
   /* STM32WBxx HAL library initialization:
     - Configure the Flash prefetch, Flash preread and Buffer caches
     - Systick timer is configured by default as source of time base, but user
@@ -76,6 +88,23 @@ int32_t main(void)
 
   BSP_LED_Init(LED_BLUE);
 
+#if (USE_VCP_CONNECTION == 1)
+  /* Configure COM port */
+  COM_Init.BaudRate   = 115200;
+  COM_Init.WordLength = COM_WORDLENGTH_8B;
+  COM_Init.StopBits   = COM_STOPBITS_1;
+  COM_Init.Parity     = COM_PARITY_NONE;
+  COM_Init.HwFlowCtl  = COM_HWCONTROL_NONE;
+  if (BSP_COM_Init(COM1_UART, &COM_Init) != BSP_ERROR_NONE)
+  {
+    Error_Handler();
+  }
+  if (BSP_COM_SelectLogPort(COM1_UART) != BSP_ERROR_NONE)
+  {
+    Error_Handler();
+  }
+#endif /* USE_VCP_CONNECTION */
+  
   while (1)
   {
     if (ButtonState == 1)

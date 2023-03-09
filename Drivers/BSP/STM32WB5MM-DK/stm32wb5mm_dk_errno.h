@@ -44,4 +44,8 @@
 #define BSP_ERROR_BUS_ACKNOWLEDGE_FAILURE    -102
 #define BSP_ERROR_BUS_PROTOCOL_FAILURE       -103
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* STM32WB5MM_DK_ERRNO_H */

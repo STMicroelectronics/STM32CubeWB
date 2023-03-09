@@ -45,7 +45,7 @@
 
 /* Private defines -----------------------------------------------------------*/
 #define APP_ZIGBEE_STARTUP_FAIL_DELAY               500U
-#define CHANNEL                                     13
+#define CHANNEL                                     15
 
 #define SW1_ENDPOINT            17
 
@@ -683,20 +683,20 @@ static void APP_ZIGBEE_SW1_Process(void)
   }
 
   memset(&dst, 0, sizeof(dst));
-  dst.mode = ZB_APSDE_ADDRMODE_GROUP;
+  dst.mode = ZB_APSDE_ADDRMODE_SHORT;
   dst.endpoint = SW1_ENDPOINT;
-  dst.nwkAddr = SW1_GROUP_ADDR;
+  dst.nwkAddr = 0x0;
 
   /* Check value to send the correct command and not only Toggle */
   if (OnOffCtrl_On)
   {
     cmd_status = ZbZclOnOffClientOffReq(zigbee_app_info.onOff_client_1, &dst, APP_ZIGBEE_off_cb, NULL);
-    APP_DBG("SW1 PUSHED (SENDING LED OFF TO GROUP 0x0001)");
+    APP_DBG("SW1 PUSHED - SENDING LED OFF To Nwk 0x0000");
   }
   else
   {
     cmd_status = ZbZclOnOffClientOnReq(zigbee_app_info.onOff_client_1, &dst, APP_ZIGBEE_on_cb, NULL);
-    APP_DBG("SW1 PUSHED (SENDING LED ON TO GROUP 0x0001)");
+    APP_DBG("SW1 PUSHED - SENDING LED ON To Nwk 0x0000");
   }
   UTIL_SEQ_WaitEvt(EVENT_ON_OFF_RSP);
 
@@ -713,12 +713,6 @@ static void APP_ZIGBEE_SW1_Process(void)
   {
     OnOffCtrl_On = 1U;
   }
-
-  // APP_DBG("SW1 PUSHED (SENDING TOGGLE TO GROUP 0x0001)");
-  // if (ZbZclOnOffClientToggleReq(zigbee_app_info.onOff_client_1, &dst, APP_ZIGBEE_toggle_cb, NULL) != ZCL_STATUS_SUCCESS) {
-  //   APP_DBG("Error, ZbZclOnOffClientToggleReq failed (SW1_ENDPOINT)");
-  // }
-  // UTIL_SEQ_WaitEvt(EVENT_ON_OFF_RSP);
 } /* APP_ZIGBEE_SW1_Process */
 
 
@@ -730,6 +724,7 @@ static void APP_ZIGBEE_SW1_Process(void)
  */
 static void APP_ZIGBEE_on_cb(struct ZbZclCommandRspT *rsp, void *arg)
 {
+  // Available only in UNICAST
   if (rsp->status != ZCL_STATUS_SUCCESS)
   {
     APP_DBG("ON RSP FAIL status %d",rsp->status);
@@ -749,6 +744,7 @@ static void APP_ZIGBEE_on_cb(struct ZbZclCommandRspT *rsp, void *arg)
  */
 static void APP_ZIGBEE_off_cb(struct ZbZclCommandRspT *rsp, void *arg)
 {
+  // Available only in UNICAST
   if (rsp->status != ZCL_STATUS_SUCCESS)
   {
     APP_DBG("OFF RSP FAIL status %d",rsp->status);
@@ -837,4 +833,3 @@ static uint8_t get_channel_from_mask(uint32_t mask, uint16_t *first_channel)
 }
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

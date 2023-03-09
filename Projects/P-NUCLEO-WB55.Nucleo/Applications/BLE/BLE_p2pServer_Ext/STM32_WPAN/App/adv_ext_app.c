@@ -107,8 +107,8 @@ uint8_t ADV_EXT_Config(void)
   adv_set_param[i].tx_power = CFG_BLE_MAX_TX_POWER;
   adv_set_param[i].adv_channels = ADV_CH_37 | ADV_CH_38 | ADV_CH_39;
   adv_set_param[i].property = HCI_ADV_EVENT_PROP_SCANNABLE;
-  adv_set_param[i].address_type = RANDOM_ADDR;
-  adv_set_param[i].peer_address_type = PUBLIC_ADDR;
+  adv_set_param[i].address_type = GAP_STATIC_RANDOM_ADDR;
+  adv_set_param[i].peer_address_type = GAP_PUBLIC_ADDR;
   adv_set_param[i].p_peer_address = NULL;
   adv_set_param[i].adv_set.Advertising_Handle = i;
   adv_set_param[i].adv_set.Duration = 0;
@@ -126,8 +126,8 @@ uint8_t ADV_EXT_Config(void)
   adv_set_param[i].tx_power = CFG_BLE_MAX_TX_POWER;
   adv_set_param[i].adv_channels = ADV_CH_37 | ADV_CH_38 | ADV_CH_39;
   adv_set_param[i].property = 0x00;
-  adv_set_param[i].address_type = PUBLIC_ADDR;
-  adv_set_param[i].peer_address_type = PUBLIC_ADDR;
+  adv_set_param[i].address_type = GAP_PUBLIC_ADDR;
+  adv_set_param[i].peer_address_type = GAP_PUBLIC_ADDR;
   adv_set_param[i].p_peer_address = NULL;
   adv_set_param[i].adv_set.Advertising_Handle = i;
   adv_set_param[i].adv_set.Duration = 0;
@@ -153,8 +153,8 @@ uint8_t ADV_EXT_Config(void)
   adv_set_param[i].tx_power = CFG_BLE_MAX_TX_POWER;
   adv_set_param[i].adv_channels = ADV_CH_37 | ADV_CH_38 | ADV_CH_39;
   adv_set_param[i].property = HCI_ADV_EVENT_PROP_CONNECTABLE;
-  adv_set_param[i].address_type = RANDOM_ADDR;
-  adv_set_param[i].peer_address_type = PUBLIC_ADDR;
+  adv_set_param[i].address_type = GAP_STATIC_RANDOM_ADDR;
+  adv_set_param[i].peer_address_type = GAP_PUBLIC_ADDR;
   adv_set_param[i].p_peer_address = NULL;
   adv_set_param[i].adv_set.Advertising_Handle = i;
   adv_set_param[i].adv_set.Duration = 0;
@@ -183,8 +183,8 @@ uint8_t ADV_EXT_Config(void)
   adv_set_param[i].tx_power = CFG_BLE_MAX_TX_POWER;
   adv_set_param[i].adv_channels = ADV_CH_37 | ADV_CH_38 | ADV_CH_39;
   adv_set_param[i].property = HCI_ADV_EVENT_PROP_CONNECTABLE | HCI_ADV_EVENT_PROP_LEGACY | HCI_ADV_EVENT_PROP_SCANNABLE;
-  adv_set_param[i].address_type = PUBLIC_ADDR;
-  adv_set_param[i].peer_address_type = PUBLIC_ADDR;
+  adv_set_param[i].address_type = GAP_PUBLIC_ADDR;
+  adv_set_param[i].peer_address_type = GAP_PUBLIC_ADDR;
   adv_set_param[i].p_peer_address = NULL;
   adv_set_param[i].adv_set.Advertising_Handle = i;
   adv_set_param[i].adv_set.Duration = 0;
@@ -261,7 +261,7 @@ uint8_t ADV_EXT_Start(void)
         APP_DBG_MSG("  Fail   : aci_gap_adv_set_configuration, result: 0x%02X\n", status);
       }
       
-      if (adv_set_param[loop].address_type == RANDOM_ADDR)
+      if (adv_set_param[loop].address_type == GAP_STATIC_RANDOM_ADDR)
       {
         /* Get RNG semaphore */
         while(LL_HSEM_1StepLock(HSEM, CFG_HW_RNG_SEMID));

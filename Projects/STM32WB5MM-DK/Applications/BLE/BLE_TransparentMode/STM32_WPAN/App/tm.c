@@ -147,7 +147,8 @@ void TM_Init(void)
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -167,13 +168,6 @@ void TM_Init(void)
   SysLocalCmdStatus = 0;
 
   config_param.PayloadCmdSize = SHCI_C2_CONFIG_PAYLOAD_CMD_SIZE;
-  config_param.EvtMask1 = SHCI_C2_CONFIG_EVTMASK1_BIT0_ERROR_NOTIF_ENABLE
-    +  SHCI_C2_CONFIG_EVTMASK1_BIT1_BLE_NVM_RAM_UPDATE_ENABLE
-      +  SHCI_C2_CONFIG_EVTMASK1_BIT2_THREAD_NVM_RAM_UPDATE_ENABLE
-        +  SHCI_C2_CONFIG_EVTMASK1_BIT3_NVM_START_WRITE_ENABLE
-          +  SHCI_C2_CONFIG_EVTMASK1_BIT4_NVM_END_WRITE_ENABLE
-            +  SHCI_C2_CONFIG_EVTMASK1_BIT5_NVM_START_ERASE_ENABLE
-              +  SHCI_C2_CONFIG_EVTMASK1_BIT6_NVM_END_ERASE_ENABLE;
 
   RevisionID = LL_DBGMCU_GetRevisionID();
   APP_DBG_MSG(">>== DBGMCU_GetRevisionID= %lx \n\r", RevisionID);
@@ -183,7 +177,12 @@ void TM_Init(void)
   APP_DBG_MSG(">>== DBGMCU_GetDeviceID= %lx \n\r", DeviceID);
   config_param.DeviceID = DeviceID;
 
-  (void)SHCI_C2_Config(&config_param);
+  status = SHCI_C2_Config(&config_param);
+  if (status != SHCI_Success)
+  {
+    /* if you are here, maybe CPU2 doesn't contain STM32WB_Copro_Wireless_Binaries, see Release_Notes.html */
+    Error_Handler();
+  }
 
   status = SHCI_C2_BLE_Init(&ble_init_cmd_packet);
   if (status != SHCI_Success)

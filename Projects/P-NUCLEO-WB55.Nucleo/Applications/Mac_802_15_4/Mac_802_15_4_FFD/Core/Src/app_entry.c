@@ -79,7 +79,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) char mac_802_15_4_CnfIndNot[C_SIZE_CMD_STRI
 static TL_CmdPacket_t *p_mac_802_15_4_cmdbuffer;
 static TL_EvtPacket_t *p_mac_802_15_4_notif_RFCore_to_M4;
 
-static __IO uint32_t  CptReceiveMsgFromRFCore = 0U; /* Debug counter */
+static volatile uint8_t  pendingMsgFromRFCore = 0U; /* Pending Tx From Core Protocol status */
 
 
 /* Global function prototypes -----------------------------------------------*/
@@ -199,20 +199,10 @@ void APP_ENTRY_TL_MAC_802_15_4_Init(void)
  */
 void APP_ENTRY_ProcessMsgFromRFCoreTask(void)
 {
-
-  if (CptReceiveMsgFromRFCore != 0U)
+  if (pendingMsgFromRFCore != 0U)
   {
-    /* If CptReceiveMsgFromRFCore is > 1. it means that we did not serve all the events from the radio */
-    if (CptReceiveMsgFromRFCore > 1)
-    {
-      APP_FFD_MAC_802_15_4_Error(ERR_APPLI_REC_MULTI_MSG_FROM_RFCore, 0U);
-    }
-    else
-    {
+      pendingMsgFromRFCore = 0U;
       MAC_802_15_4_CallBack_Processing();
-    }
-    /* Reset counter */
-    CptReceiveMsgFromRFCore = 0U;
   }
 }
 
@@ -422,7 +412,7 @@ static void Receive_Ack_From_RFCore(void)
   */
 static void Receive_Notification_From_RFCore(void)
 {
-  CptReceiveMsgFromRFCore++;
+  pendingMsgFromRFCore = 1;
   UTIL_SEQ_SetTask(TASK_MSG_FROM_RF_CORE,CFG_SCH_PRIO_0);
 }
 

@@ -37,9 +37,14 @@ extern "C" {
 #define USE_MOTION_SENSOR_ISM330DHCX_0       1U
 #define USE_MOTION_SENSOR_IIS2MDC_0          1U
 
-/* COM  port usage */
+/* COM port usage */
+#if defined(USE_VCP_CONNECTION)
 #define USE_BSP_COM_FEATURE                  1U
+#define USE_COM_LOG                          1U
+#else
+#define USE_BSP_COM_FEATURE                  0U
 #define USE_COM_LOG                          0U
+#endif /* USE_VCP_CONNECTION */
 
 /* IRQ priorities */
 #define BSP_BUTTON_USERx_IT_PRIORITY         0x0FUL

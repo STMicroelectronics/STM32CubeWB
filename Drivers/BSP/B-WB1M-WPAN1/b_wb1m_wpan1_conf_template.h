@@ -35,13 +35,17 @@ extern "C" {
 /* Motion Sensors usage */
 #define USE_MOTION_SENSOR_ISM330DHCX_0       1U
 
-/* COM  port usage */
+/* COM port usage */
+#if defined(USE_VCP_CONNECTION)
 #define USE_BSP_COM_FEATURE                  1U
+#define USE_COM_LOG                          1U
+#else
+#define USE_BSP_COM_FEATURE                  0U
 #define USE_COM_LOG                          0U
+#endif /* USE_VCP_CONNECTION */
 
 /* IRQ priorities */
 #define BSP_BUTTON_USERx_IT_PRIORITY         0x0FUL
-#define PWM_LED_CLOCK_IT_PRIORITY            0x03UL
 
 /* I2C1 Frequency in Hz  */
 #define BUS_I2C1_FREQUENCY                   100000UL /* Frequency of I2C1 = 100 KHz*/

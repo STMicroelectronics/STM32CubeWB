@@ -69,11 +69,13 @@ struct WpanPublicT;
 /* A subset of WPAN_CHANNELMASK_2400MHZ (HA and SE preferred channels) */
 #define ZB_CHANNELMASK_2400MHZ_HA       0x0318C800U /* Channels 11, 14, 15, 19, 20, 24, 25 */
 
-/* A predefined time to let the stack run in order to send a response, before
- * proceeding to the next step. This is used to either prevent potential contention
- * on the RF or if a packet must be sent before the stack parameters are modified
- * or reset. */
-#define ZB_TIMER_DELAY_FOR_RESPONSE     200U
+/* Define a constant maximum allocation size for both zigbee.mem.heap.c and
+ * zigbee.mem.pool.c so both have the same behaviour. The memory pool has a max
+ * allocation size of 2048 minus some overhead (should be >= 2016 bytes).
+ * NOTE: The max allocation is not the total size of the heap, only the
+ * largest chunk of data we can allocate from it at a time.
+ * If we define both implementation limits to be 2000, we should be safe. */
+#define ZB_HEAP_MAX_ALLOC                   2000U
 
 /* ZigBee Status Codes */
 enum ZbStatusCodeT {

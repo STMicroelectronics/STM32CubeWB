@@ -6,7 +6,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2022 STMicroelectronics.
+ * Copyright (c) 2018-2023 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -1531,42 +1531,9 @@ tBleStatus aci_gap_add_devices_to_list( uint8_t Num_of_List_Entries,
  *        - 0x00: Public Device Address
  *        - 0x01: Random Device Address
  * @param Own_Address Public Device Address or Random Device Address.
- * @param PA_Level Power amplifier output level. Output power is indicative and
- *        depends on the PCB layout and associated components. Here the values
- *        are given at the STM32WB output.
+ * @param PA_Level Power amplifier output level.
  *        Values:
- *        - 0x00: -40 dBm
- *        - 0x01: -20.85 dBm
- *        - 0x02: -19.75 dBm
- *        - 0x03: -18.85 dBm
- *        - 0x04: -17.6 dBm
- *        - 0x05: -16.5 dBm
- *        - 0x06: -15.25 dBm
- *        - 0x07: -14.1 dBm
- *        - 0x08: -13.15 dBm
- *        - 0x09: -12.05 dBm
- *        - 0x0A: -10.9 dBm
- *        - 0x0B: -9.9 dBm
- *        - 0x0C: -8.85 dBm
- *        - 0x0D: -7.8 dBm
- *        - 0x0E: -6.9 dBm
- *        - 0x0F: -5.9 dBm
- *        - 0x10: -4.95 dBm
- *        - 0x11: -4 dBm
- *        - 0x12: -3.15 dBm
- *        - 0x13: -2.45 dBm
- *        - 0x14: -1.8 dBm
- *        - 0x15: -1.3 dBm
- *        - 0x16: -0.85 dBm
- *        - 0x17: -0.5 dBm
- *        - 0x18: -0.15 dBm
- *        - 0x19: 0 dBm
- *        - 0x1A: +1 dBm
- *        - 0x1B: +2 dBm
- *        - 0x1C: +3 dBm
- *        - 0x1D: +4 dBm
- *        - 0x1E: +5 dBm
- *        - 0x1F: +6 dBm
+ *        - 0x00 ... 0x23
  * @return Value indicating success or error code.
  */
 tBleStatus aci_gap_additional_beacon_start( uint16_t Adv_Interval_Min,

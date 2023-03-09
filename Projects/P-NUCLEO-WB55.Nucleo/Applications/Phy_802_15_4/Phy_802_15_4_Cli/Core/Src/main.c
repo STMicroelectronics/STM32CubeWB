@@ -102,6 +102,7 @@ static void Reset_IPCC( void );
 static void Reset_BackupDomain( void );
 static void Init_Exti( void );
 static void Config_HSE(void);
+void SystemPower_Config(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

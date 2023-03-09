@@ -176,4 +176,3 @@ void HAL_COMP_MspDeInit(COMP_HandleTypeDef* hcomp)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

@@ -225,4 +225,3 @@ void EXTI4_IRQHandler(void)
 }
 
 /* USER CODE END 1 */
-

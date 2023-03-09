@@ -6,7 +6,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2022 STMicroelectronics.
+ * Copyright (c) 2018-2023 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -40,14 +40,19 @@ extern const hci_event_table_t hci_vs_event_table[HCI_VS_EVENT_TABLE_SIZE];
 
 /**
  * @brief HCI_DISCONNECTION_COMPLETE_EVENT
- * The Disconnection Complete event occurs when a connection is terminated.
- * The status parameter indicates if the disconnection was successful or not.
- * The reason parameter indicates the reason for the disconnection if the
- * disconnection was successful. If the disconnection was not successful, the
- * value of the reason parameter can be ignored by the Host. For example, this
- * can be the case if the Host has issued the Disconnect command and there was
- * a parameter error, or the command was not presently allowed, or a
- * Connection_Handle that didn't correspond to a connection was given.
+ * This event occurs when a connection is terminated. The status parameter
+ * indicates if the disconnection was successful or not. The reason parameter
+ * indicates the reason for the disconnection if the disconnection was
+ * successful. If the disconnection was not successful, the value of the reason
+ * parameter shall be ignored by the Host.
+ * Note: if the connection is terminated by the remote device, the reason
+ * parameter of this event is set to the reason specified by the remote device
+ * only if it has an allowed value, otherwise the reason is forced to Remote
+ * User Terminated Connection error code (0x13). Allowed remote reason values
+ * are: Authentication Failure error code (0x05), Other End Terminated
+ * Connection error codes (0x13 to 0x15), Unsupported Remote Feature error code
+ * (0x1A), and Unacceptable Connection Parameters error code (0x3B).
+ * See Bluetooth spec. v.5.3 [Vol 4, Part E, 7.7.5].
  * 
  * @param Status Status error code.
  * @param Connection_Handle Connection handle for which the event applies.
@@ -138,14 +143,17 @@ void hci_read_remote_version_information_complete_event( uint8_t Status,
  * 
  * @param Hardware_Code Hardware Error Event code.
  *        Error code 0 is not used.
- *        Error code 1 is bluecore act2 error detected.
- *        Error code 2 is bluecore time overrun error detected.
+ *        Error code 1 is bluecore act2 error detected (only for STM32WB).
+ *        Error code 2 is bluecore time overrun error detected (only for
+ *        STM32WB).
  *        Error code 3 is internal FIFO full.
+ *        Error code 4 is ISR delay error detected (only for STM32WB and only
+ *        from cut 2.2).
  *        Values:
- *        - 0x00: Not used
  *        - 0x01: event_act2 error
  *        - 0x02: event_time_overrun error
  *        - 0x03: event_fifo_full error
+ *        - 0x04: event_isr_delay_error
  * @return None
  */
 void hci_hardware_error_event( uint8_t Hardware_Code );
@@ -863,9 +871,10 @@ void aci_gap_proc_complete_event( uint8_t Procedure_Code,
 
 /**
  * @brief ACI_GAP_ADDR_NOT_RESOLVED_EVENT
- * This event is sent only by a privacy enabled Peripheral. The event is sent
- * to the upper layers when the peripheral is unsuccessful in resolving the
- * resolvable address of the peer device after connecting to it.
+ * This event is sent only by a privacy enabled peripheral with a non-empty
+ * bonded device list. The event is sent to the application when the peripheral
+ * is unsuccessful in resolving the resolvable address of the peer device after
+ * connecting to it.
  * 
  * @param Connection_Handle Handle of the connection where this event occurred.
  *        Values:
@@ -1177,9 +1186,13 @@ void aci_att_exec_write_resp_event( uint16_t Connection_Handle );
  * @brief ACI_GATT_INDICATION_EVENT
  * This event is generated when an indication is received from the server.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Handle The handle of the attribute
  * @param Attribute_Value_Length Length of Attribute_Value in octets
  * @param Attribute_Value The current value of the attribute
@@ -1194,9 +1207,13 @@ void aci_gatt_indication_event( uint16_t Connection_Handle,
  * @brief ACI_GATT_NOTIFICATION_EVENT
  * This event is generated when a notification is received from the server.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Handle The handle of the attribute
  * @param Attribute_Value_Length Length of Attribute_Value in octets
  * @param Attribute_Value The current value of the attribute
@@ -1263,6 +1280,8 @@ void aci_gatt_proc_complete_event( uint16_t Connection_Handle,
  *        - 0x0F: Insufficient encryption
  *        - 0x10: Unsupported group type
  *        - 0x11: Insufficient resources
+ *        - 0x12: Database Out Of Sync
+ *        - 0x13: Value Not Allowed
  * @return None
  */
 void aci_gatt_error_resp_event( uint16_t Connection_Handle,
@@ -1404,9 +1423,13 @@ void aci_gatt_tx_pool_available_event( uint16_t Connection_Handle,
  * This event is generated when the client has sent the confirmation to a
  * previously sent indication
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @return None
  */
 void aci_gatt_server_confirmation_event( uint16_t Connection_Handle );
@@ -1524,9 +1547,13 @@ void aci_gatt_read_ext_event( uint16_t Connection_Handle,
  * > (BLE_EVT_MAX_PARAM_LEN - 4) i.e. ATT_MTU > 251 for BLE_EVT_MAX_PARAM_LEN
  * default value.
  * 
- * @param Connection_Handle Connection handle for which the event applies.
+ * @param Connection_Handle Specifies the ATT bearer for which the event
+ *        applies.
  *        Values:
- *        - 0x0000 ... 0x0EFF
+ *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
+ *          connection handle)
+ *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *          parameter is the connection-oriented channel index)
  * @param Attribute_Handle The handle of the attribute
  * @param Offset Bits 14-0: offset in octets from which Attribute_Value data
  *        starts. Bit 15 is used as flag: when set to 1 it indicates that more
@@ -1872,20 +1899,32 @@ void aci_l2cap_coc_tx_pool_available_event( void );
  *        Values:
  *        - 0x00: Idle
  *        - 0x01: Advertising
- *        - 0x02: Connection slave
+ *        - 0x02: Peripheral connection
  *        - 0x03: Scanning
- *        - 0x05: Connection master
+ *        - 0x05: Central connection
  *        - 0x06: TX test mode
  *        - 0x07: RX test mode
+ *        - 0x09: Periodic advertising (only for STM32WBA)
+ *        - 0x0A: Periodic sync (only for STM32WBA)
+ *        - 0x0B: Iso broadcast (only for STM32WBA)
+ *        - 0x0C: Iso sync (only for STM32WBA)
+ *        - 0x0D: Iso peripheral connection (only for STM32WBA)
+ *        - 0x0E: Iso central connection (only for STM32WBA)
  * @param Next_State Incoming radio event
  *        Values:
  *        - 0x00: Idle
  *        - 0x01: Advertising
- *        - 0x02: Connection slave
+ *        - 0x02: Peripheral connection
  *        - 0x03: Scanning
- *        - 0x05: Connection master
+ *        - 0x05: Central connection
  *        - 0x06: TX test mode
  *        - 0x07: RX test mode
+ *        - 0x09: Periodic advertising (only for STM32WBA)
+ *        - 0x0A: Periodic sync (only for STM32WBA)
+ *        - 0x0B: Iso broadcast (only for STM32WBA)
+ *        - 0x0C: Iso sync (only for STM32WBA)
+ *        - 0x0D: Iso peripheral connection (only for STM32WBA)
+ *        - 0x0E: Iso central connection (only for STM32WBA)
  * @param Next_State_SysTime 32bit absolute current time expressed in internal
  *        time units.
  * @param Last_State_Slot Slot number of completed radio event

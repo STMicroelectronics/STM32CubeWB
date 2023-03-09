@@ -28,15 +28,36 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wbxx_hal.h"
 
+/** @addtogroup BSP
+  * @{
+  */
+
+/** @addtogroup B_WB1M_WPAN1
+  * @{
+  */
+
+/** @defgroup B_WWB1M_WPAN1_CONFIG CONFIG
+  * @{
+  */
+
+/** @defgroup B_WB1M_WPAN1_CONFIG_Exported_Constants Exported Constants
+  * @{
+  */
+
 /* Environmental Sensors usage */
 #define USE_ENV_SENSOR_STTS22H_0             1U
 
 /* Motion Sensors usage */
 #define USE_MOTION_SENSOR_ISM330DHCX_0       1U
 
-/* COM  port usage */
+/* COM port usage */
+#if defined(USE_VCP_CONNECTION)
 #define USE_BSP_COM_FEATURE                  1U
+#define USE_COM_LOG                          1U
+#else
+#define USE_BSP_COM_FEATURE                  0U
 #define USE_COM_LOG                          0U
+#endif /* USE_VCP_CONNECTION */
 
 /* IRQ priorities */
 #define BSP_BUTTON_USERx_IT_PRIORITY         0x0FUL
@@ -51,12 +72,24 @@ extern "C" {
 
 #define B_WB1M_WPAN1_GetTick BSP_GetTick
 
-/* Number of millisecond of audio at each DMA interrupt */
-#define N_MS_PER_INTERRUPT               (20U)
+/**
+  * @}
+  */
 
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* B_WB1M_WPAN_CONF_H */
+#endif /* B_WB1M_WPAN1_CONF_H */

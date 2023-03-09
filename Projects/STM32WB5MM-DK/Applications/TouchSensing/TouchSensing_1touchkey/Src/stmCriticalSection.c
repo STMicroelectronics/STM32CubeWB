@@ -63,3 +63,4 @@ void enterLock (void) {
 void exitLock (void) {
     stm_studio_lock.flag[TARGET_LOCK_ID] = 0;
 }
+

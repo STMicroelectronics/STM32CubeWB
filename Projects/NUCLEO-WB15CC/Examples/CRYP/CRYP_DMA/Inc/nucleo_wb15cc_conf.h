@@ -42,11 +42,14 @@
 /** @defgroup NUCLEO_WB15CC_CONFIG_Exported_Constants Exported Constants
   * @{
   */
-/* COM usage define */
-#define USE_BSP_COM_FEATURE                 0U
-
-/* COM log define */
-#define USE_COM_LOG                         0U
+/* COM port usage */
+#if defined(USE_VCP_CONNECTION)
+#define USE_BSP_COM_FEATURE                  1U
+#define USE_COM_LOG                          1U
+#else
+#define USE_BSP_COM_FEATURE                  0U
+#define USE_COM_LOG                          0U
+#endif /* USE_VCP_CONNECTION */
 
 /* IRQ priorities */
 #define BSP_BUTTON_USER_IT_PRIORITY         15U

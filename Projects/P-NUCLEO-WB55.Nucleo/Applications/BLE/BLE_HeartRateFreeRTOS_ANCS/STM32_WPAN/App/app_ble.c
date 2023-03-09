@@ -351,7 +351,8 @@ void APP_BLE_Init( void )
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -481,7 +482,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
         BleApplicationContext.BleApplicationContext_legacy.connectionHandle = 0;
         BleApplicationContext.Device_Connection_Status = APP_BLE_IDLE;
 
-        if(disconnection_complete_event->Reason == ERR_CMD_SUCCESS){
+        if(disconnection_complete_event->Reason == HCI_SUCCESS_ERR_CODE){
           APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH CLIENT disconnection Reason=0x%02X success \n\r",disconnection_complete_event->Reason);
         }else if(disconnection_complete_event->Reason == HCI_CONNECTION_TERMINATED_BY_LOCAL_HOST_ERR_CODE){
           APP_DBG_MSG("\r\n\r** DISCONNECTION EVENT WITH CLIENT disconnection Reason=0x%02X Connection terminated by local host \n\r",disconnection_complete_event->Reason);
@@ -685,13 +686,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
             pairing_complete = (aci_gap_pairing_complete_event_rp0*)blecore_evt->data;
 
             APP_DBG_MSG("ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE, Connection_Handle=0x%04X Status=%d Reason=0x%02x \n",pairing_complete->Connection_Handle,pairing_complete->Status,pairing_complete->Reason);
-            if(pairing_complete->Status == SM_PAIRING_TIMEOUT){
+            if(pairing_complete->Status == SMP_PAIRING_STATUS_SMP_TIMEOUT){
               APP_DBG_MSG(" ** Pairing Timeout Status=%d Reason=0x%02x , \n\r !!! Please ignore this BLE Device on the iOS/Android Device Setting=>Bluetooth=>My Device or Paired Device !!! \n\r",pairing_complete->Status,pairing_complete->Reason);
               APP_BLE_Remove_Bonding_Info();
-            }else if(pairing_complete->Status == SM_PAIRING_FAILED){
+            }else if(pairing_complete->Status == SMP_PAIRING_STATUS_PAIRING_FAILED){
               APP_DBG_MSG(" ** Pairing KO Status=%d Reason=0x%02x , \n\r !!! Please ignore this BLE Device on the iOS/Android Device Setting=>Bluetooth=>My Device or Paired Device !!! \n\r",pairing_complete->Status,pairing_complete->Reason);
               APP_BLE_Remove_Bonding_Info();
-            }else if(pairing_complete->Status == SM_PAIRING_SUCCESS){
+            }else if(pairing_complete->Status == SMP_PAIRING_STATUS_SUCCESS){
               uint8_t Peer_Bonded,Security_Mode, Security_Level;
               Peer_Bonded = BleApplicationContext.Peer_Bonded;
               Security_Mode = BleApplicationContext.Security_Mode;
@@ -722,7 +723,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
                   ANCS_App_Notification(&Notification);
                 }		 
               }
-            } /* SM_PAIRING_SUCCESS */
+            } /* SMP_PAIRING_STATUS_SUCCESS */
 
 	     if(BleApplicationContext.Security_Request == 0x01)
              gap_cmd_resp_release(0);
@@ -1027,7 +1028,7 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
         ADV_IND,
         Min_Inter,
         Max_Inter,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         NO_WHITE_LIST_USE, /* use white list */
         sizeof(local_name),
         (uint8_t*) &local_name,

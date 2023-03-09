@@ -75,6 +75,13 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
     - P-NUCLEO-WB55 (MB1355C) Set-up    
        - Connect the Nucleo Board to your PC with a USB cable type A to mini-B to ST-LINK connector (USB_STLINK).
        - Please ensure that the ST-LINK connectors and jumpers are fitted.
+    
+    - Low power is used in the context of ThreadX OS, so be sure to use:
+      CFG_LPM_SUPPORTED = 0 with TX_LOW_POWER = 0 to disable low power
+      or
+      CFG_LPM_SUPPORTED = 1 with TX_LOW_POWER = 1 to enable low power
+      TX_LOW_POWER flag is managed at IDE project level (both compiler and assembler) 
+
 
 @par How to use it ? 
 

@@ -116,9 +116,9 @@ static SVCCTL_EvtAckStatus_t Custom_Event_Handler(void *Event)
       {
       /* USER CODE BEGIN ecode */
 
-        case EVT_BLUE_ATT_EXCHANGE_MTU_RESP:
+        case ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE:
         {
-          printf("EVT_BLUE_ATT_EXCHANGE_MTU_RESP \n");
+          printf("ACI_ATT_EXCHANGE_MTU_RESP_VSEVT_CODE \n");
           exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blecore_evt->data;
           printf("MTU_size = %d \n",exchange_mtu_resp->Server_RX_MTU );
           result = hci_le_set_data_length(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,251,2120);
@@ -132,7 +132,7 @@ static SVCCTL_EvtAckStatus_t Custom_Event_Handler(void *Event)
           }
         }
         break;
-        case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+        case ACI_GATT_ATTRIBUTE_MODIFIED_VSEVT_CODE:
         {
           uint8_t i;
           uint8_t id_svc;

@@ -143,6 +143,15 @@ struct ZbApsAddrT {
 /** Helper struct to send using binding */
 extern const struct ZbApsAddrT *ZbApsAddrBinding; /**< Pointer to APS address binding */
 
+/* Helpter to configure the loopback destination */
+static inline void
+zb_aps_dst_loopback(struct ZigBeeT *zb, struct ZbApsAddrT *dst, uint8_t endpoint)
+{
+    dst->mode = ZB_APSDE_ADDRMODE_EXT;
+    dst->extAddr = ZbExtendedAddress(zb);
+    dst->endpoint = endpoint;
+}
+
 /*
  * @name APSDE.DATA.request (TxOptions)
  * APSDE Transmit Options
@@ -265,26 +274,32 @@ enum ZbStatusCodeT ZB_WARN_UNUSED ZbApsdeDataReqCallback(struct ZigBeeT *zb, str
 /** APS IB Attributes */
 enum ZbApsmeIbAttrIdT {
     /* ZB_APS_IB_ID_ADDRESS_MAP = 0xc0, Removed in ZigBee 2007 */
-    ZB_APS_IB_ID_BINDING_TABLE = 0xc1, /**< apsBindingTable - 0xc1 (struct ZbApsmeBindT) */
-    ZB_APS_IB_ID_DESIGNATED_COORD, /**<0 apsDesignatedCoordinator - 0xc2 (uint8_t) */
-    ZB_APS_IB_ID_CHANNEL_MASK, /**< apsChannelMaskList - 0xc3 (struct ZbChannelListT) Converted to a list in R22 */
-    ZB_APS_IB_ID_USE_EPID, /**< apsUseExtendedPANID - 0xc4 (uint64_t) */
-    ZB_APS_IB_ID_GROUP_TABLE, /**< apsGroupTable - 0xc5 (struct ZbApsmeGroupT) */
-    ZB_APS_IB_ID_NONMEMBER_RADIUS, /* 0xc6 (uint8_t) */
-    ZB_APS_IB_ID_USE_INSECURE_JOIN = 0xc8, /**< apsUseInsecureJoin - 0xc8 (uint8_t) */
-    ZB_APS_IB_ID_INTERFRAME_DELAY, /**< apsInterframeDelay - 0xc9 (uint8_t) */
-    ZB_APS_IB_ID_LAST_CHANNEL_ENERGY, /**< apsLastChannelEnergy - 0xca (uint8_t) */
-    ZB_APS_IB_ID_LAST_CHANNEL_FAILRATE, /**< apsLastChannelFailureRate - 0xcb (uint8_t) */
-    ZB_APS_IB_ID_CHANNEL_TIMER, /**< apsChannelTimer - 0xcc (ZbUptimeT) */
-    ZB_APS_IB_ID_MAX_WINDOW_SIZE, /**< apsMaxWindow Size - 0xcd (uint8_t) */
+    ZB_APS_IB_ID_BINDING_TABLE = 0xc1, /**< apsBindingTable (type: struct ZbApsmeBindT, reset: yes) */
+    ZB_APS_IB_ID_DESIGNATED_COORD = 0xc2, /**< apsDesignatedCoordinator (type: uint8_t, reset: yes) */
+    ZB_APS_IB_ID_CHANNEL_MASK = 0xc3,
+    /**< apsChannelMaskList. Converted to a list in R22 (type: struct ZbChannelListT, reset: yes) */
+    ZB_APS_IB_ID_USE_EPID = 0xc4, /**< apsUseExtendedPANID (type: uint64_t, reset: yes) */
+    ZB_APS_IB_ID_GROUP_TABLE = 0xc5, /**< apsGroupTable (type: struct ZbApsmeGroupT, reset: yes) */
+    ZB_APS_IB_ID_NONMEMBER_RADIUS = 0xc6, /* (uint8_t) */
+    /* Removed -- 0xc7 (ZB_APS_IB_ID_PERMISSIONS_CONFIG) */
+    ZB_APS_IB_ID_USE_INSECURE_JOIN = 0xc8, /**< apsUseInsecureJoin (type: uint8_t, reset: yes) */
+    ZB_APS_IB_ID_INTERFRAME_DELAY = 0xc9, /**< apsInterframeDelay (type: uint8_t, reset: no) */
+    ZB_APS_IB_ID_LAST_CHANNEL_ENERGY = 0xca, /**< apsLastChannelEnergy (type: uint8_t, reset: yes) */
+    ZB_APS_IB_ID_LAST_CHANNEL_FAILRATE = 0xcb, /**< apsLastChannelFailureRate (type: uint8_t, reset: yes) */
+    ZB_APS_IB_ID_CHANNEL_TIMER = 0xcc, /**< apsChannelTimer (type: ZbUptimeT, reset: yes) */
+    ZB_APS_IB_ID_MAX_WINDOW_SIZE = 0xcd, /**< apsMaxWindow Size (type: uint8_t, reset: no) */
+    /* Removed -- 0xce (ZB_APS_IB_ID_PARENT_ANNOUNCE_TIMER) */
 
     /*** Security attributes ***/
-    ZB_APS_IB_ID_DEVICE_KEY_PAIR_SET = 0xaa, /**< apsDeviceKeyPairSet - 0xaa (struct ZbApsmeKeyPairT) */
-    ZB_APS_IB_ID_TRUST_CENTER_ADDRESS, /**< apsTrustCenterAddress - 0xab (uint64_t) */
-    ZB_APS_IB_ID_SECURITY_TIMEOUT_PERIOD, /**< apsSecurityTimeOutPeriod - 0xac (uint16_t), milliseconds */
+    ZB_APS_IB_ID_DEVICE_KEY_PAIR_SET = 0xaa,
+    /**< apsDeviceKeyPairSet (type: struct ZbApsmeKeyPairT, reset: yes) */
+    ZB_APS_IB_ID_TRUST_CENTER_ADDRESS = 0xab,
+    /**< apsTrustCenterAddress (type: uint64_t, reset: yes) */
+    ZB_APS_IB_ID_SECURITY_TIMEOUT_PERIOD = 0xac,
+    /**< apsSecurityTimeOutPeriod, milliseconds (type: uint16_t, reset: no) */
 
-    ZB_APS_IB_ID_TRUST_CENTER_POLICY,
-    /**< trustCenterPolicies - Trust center policy table bitmask (type = uint32_t, enum ZbApsmePolicyT)
+    ZB_APS_IB_ID_TRUST_CENTER_POLICY = 0xad,
+    /**< trustCenterPolicies. Trust center policy table bitmask
      * Represents the following AIBs:
      * allowJoins = 0xad,
      * requireInstallCodesOrPresetPassphrase = 0xaf,
@@ -295,16 +310,34 @@ enum ZbApsmeIbAttrIdT {
      * allowApplicationKeyRequests = 0xbb,
      * allowRemoteTcPolicyChange = 0xbd */
 
-    /* Exegin extensions (0x500 to 0x5ff reserved for custom AIBs) */
-    ZB_APS_IB_ID_SCAN_COUNT = 0x0500, /**<  ZDO join parameter - Is not modified by ZbApsReset (uint8_t) */
-    ZB_APS_IB_ID_LEAVE_REMOVE_CHILDREN, /**< ZDO leave parameter - (uint8_t) */
-    ZB_APS_IB_ID_PRECONFIGURED_LINK_KEY, /**< apsPreconfiguredLinkKey - Preconfigured Trust Center Link Key (uint8_t[ZB_SEC_KEYSIZE]) */
-    ZB_APS_IB_ID_DISTRIBUTED_GLOBAL_KEY, /**< apsDistributedGlobalKey - (uint8_t[ZB_SEC_KEYSIZE]) */
-    ZB_APS_IB_ID_KEY_UPDATE_PERIOD, /**< KeyUpdatePeriod - From the trust center policy table (uint32_t) */
-    ZB_APS_IB_ID_MANUFACTURER_ID, /**< Manufacturer ID - (uint16_t) */
-    ZB_APS_IB_ID_SEND_PKT_COOLDOWN, /**< Send packet cooldown - (uint16_t) milliseconds */
-    ZB_APS_IB_ID_BIND_ADDR_RESOLVE_PERIOD, /**< Bind address resolve period - (uint16_t) seconds, 0 = disabled */
-    ZB_APS_IB_ID_FRAGMENTATION_THRESH /**< apsFragmentationThresh - Fragmentation Threshold */
+    /* Exegin extensions (0x0500 to 0x05ff reserved for custom AIBs) */
+    ZB_APS_IB_ID_SCAN_COUNT = 0x0500,
+    /**< ZDO join parameter. (type: uint8_t, reset: no) */
+    ZB_APS_IB_ID_LEAVE_REMOVE_CHILDREN = 0x0501,
+    /**< ZDO leave parameter (type: uint8_t, reset: yes) */
+    ZB_APS_IB_ID_PRECONFIGURED_LINK_KEY = 0x0502,
+    /**< apsPreconfiguredLinkKey. Preconfigured Trust Center Link Key.
+     * (type: array of uint8_t of size ZB_SEC_KEYSIZE, reset: yes) */
+    ZB_APS_IB_ID_DISTRIBUTED_GLOBAL_KEY = 0x0503,
+    /**< apsDistributedGlobalKey (type: array of uint8_t of size ZB_SEC_KEYSIZE, reset: yes) */
+    ZB_APS_IB_ID_KEY_UPDATE_PERIOD = 0x0504,
+    /**< KeyUpdatePeriod. From the trust center policy table. (type: uint32_t, reset: yes) */
+    ZB_APS_IB_ID_MANUFACTURER_ID = 0x0505,
+    /**< Manufacturer ID (type: uint16_t, reset: no) */
+    ZB_APS_IB_ID_SEND_PKT_COOLDOWN = 0x0506,
+    /**< Send packet cooldown in milliseconds (type: uint16_t, reset: no) */
+    ZB_APS_IB_ID_BIND_ADDR_RESOLVE_PERIOD = 0x0507,
+    /**< Bind address resolve period in seconds, 0 = disabled (type: uint16_t, reset: no) */
+    ZB_APS_IB_ID_FRAGMENTATION_THRESH = 0x0508,
+    /**< apsFragmentationThresh. Fragmentation Threshold (type: uint8_t, reset: no) */
+    /* 0x0509 - Reserved for R23 */
+    ZB_APS_IB_ID_MAX_IN_QUEUED_PACKETS = 0x050a,
+    /**< Maximum number of incoming packets the APS is allowed to queue.
+     * Default is 0, which means there's no limit, other than available memory.
+     * A SED may want to set this value between 2 to 4 so it doesn't get overwhelmed with
+     * requests during its wake cycle. (type: uint16_t, reset: no) */
+
+    ZB_APS_IB_ID_MAX = 0x05ff
 };
 
 /** APSME-BIND.request */
@@ -602,10 +635,6 @@ enum ZbApsmeDeviceStatusT {
 /* Shared key (value stored in apsPreconfiguredLinkKey) */
 /* Global Link Key */
 #define ZB_APSME_KEY_ATTR_SHARED            0x01U
-
-#if 0 /* provisional key is not used by stack */
-#define ZB_APSME_KEY_ATTR_PROVISIONAL       ZB_APSME_KEY_ATTR_SHARED
-#endif
 
 /* An unverified TCLK derived key. We should continue to use
  * apsPreconfiguredLinkKey until it gets verified by a

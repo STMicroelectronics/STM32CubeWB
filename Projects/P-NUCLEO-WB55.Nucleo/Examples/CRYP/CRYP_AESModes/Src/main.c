@@ -57,88 +57,6 @@ DMA_HandleTypeDef hdma_aes1_in;
 DMA_HandleTypeDef hdma_aes1_out;
 
 /* USER CODE BEGIN PV */
-#if (USE_VCP_CONNECTION == 1)
-/**
-  * @brief Defines related to Timeout to uart transmission
-  */
-#define UART_TIMEOUT_VALUE  1000 /* 1 Second */
-
-/* UART handler declaration */
-UART_HandleTypeDef UartHandle;
-void BSP_COM_Init(UART_HandleTypeDef* huart);
-/**
-  * @brief  Retargets the C library printf function to the USARTx.
-  * @param  ch: character to send
-  * @param  f: pointer to file (not used)
-  * @retval The character transmitted
-  */
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
-/* With GCC, small printf (option LD Linker->Libraries->Small printf
-   set to 'Yes') calls __io_putchar() */
-int __io_putchar(int ch)
-#else
-int fputc(int ch, FILE *f)
-#endif /* __GNUC__ */
-{
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the UART and Loop until the end of transmission */
-  HAL_UART_Transmit(&UartHandle, (uint8_t *)&ch, 1, UART_TIMEOUT_VALUE);
-
-  return ch;
-}
-
-void BSP_COM_Init(UART_HandleTypeDef* huart)
-{
-  GPIO_InitTypeDef GPIO_InitStruct;
-
-  /* Peripheral clock enable */
-  __HAL_RCC_USART1_CLK_ENABLE();
-  
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  /**USART1 GPIO Configuration    
-  PB6     ------> USART1_TX
-  PB7     ------> USART1_RX 
-  */
-  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /* Configure the UART peripheral                                        */
-  /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
-  /* UART configured as follows:
-      - Word Length = 8 Bits
-      - Stop Bit = One Stop bit
-      - Parity = None
-      - BaudRate = 115200 baud
-      - Hardware flow control disabled (RTS and CTS signals) */
-  UartHandle.Instance                    = USART1;
-  UartHandle.Init.BaudRate               = 115200;
-  UartHandle.Init.WordLength             = UART_WORDLENGTH_8B;
-  UartHandle.Init.StopBits               = UART_STOPBITS_1;
-  UartHandle.Init.Parity                 = UART_PARITY_NONE;
-  UartHandle.Init.HwFlowCtl              = UART_HWCONTROL_NONE;
-  UartHandle.Init.Mode                   = UART_MODE_TX_RX;
-  UartHandle.Init.HwFlowCtl              = UART_HWCONTROL_NONE;
-  UartHandle.Init.OverSampling           = UART_OVERSAMPLING_16;
-  UartHandle.Init.OneBitSampling         = UART_ONE_BIT_SAMPLE_DISABLE;
-  UartHandle.Init.ClockPrescaler         = UART_PRESCALER_DIV1;
-  UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  UartHandle.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  
-  if(HAL_UART_DeInit(&UartHandle) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  
-  if(HAL_UART_Init(&UartHandle) != HAL_OK)
-  {
-    Error_Handler();
-  }  
-}
-#endif
 
 /* Key size 256 bits */
  uint32_t aAES256key[8] = {0x603DEB10, 0x15CA71BE, 0x2B73AEF0, 0x857D7781,
@@ -257,6 +175,9 @@ int main(void)
 #if defined(__GNUC__) && !defined(__ARMCC_VERSION)
   initialise_monitor_handles(); 
 #endif
+#if (USE_VCP_CONNECTION == 1)
+  COM_InitTypeDef COM_Init;
+#endif
 
   /* STM32WBxx HAL library initialization:
        - Configure the Flash prefetch
@@ -294,8 +215,20 @@ int main(void)
   BSP_LED_Init(LED1);
   BSP_LED_Init(LED3);
 #if (USE_VCP_CONNECTION == 1)
-	/* Configure the virtual com port */
-  BSP_COM_Init(&UartHandle);
+  /* Configure COM port */
+  COM_Init.BaudRate   = 115200;
+  COM_Init.WordLength = COM_WORDLENGTH_8B;
+  COM_Init.StopBits   = COM_STOPBITS_1;
+  COM_Init.Parity     = COM_PARITY_NONE;
+  COM_Init.HwFlowCtl  = COM_HWCONTROL_NONE;
+  if (BSP_COM_Init(COM1, &COM_Init) != BSP_ERROR_NONE)
+  {
+    Error_Handler();
+  }
+  if (BSP_COM_SelectLogPort(COM1) != BSP_ERROR_NONE)
+  {
+    Error_Handler();
+  }
 #endif
 
   /*##- Configure the CRYP peripheral ######################################*/
@@ -755,6 +688,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -773,6 +707,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -1067,7 +1002,7 @@ static void Display_DecryptedData(uint8_t mode, uint16_t keysize, uint32_t datal
 void data_cmp(uint32_t *EncryptedText, uint32_t *RefText, uint8_t Size)
 {
   /*  Before starting a new process, you need to check the current state of the peripheral;
-      if it's busy you need to wait for the end of current transfer before starting a new one.
+      if it is busy you need to wait for the end of current transfer before starting a new one.
       For simplicity reasons, this example is just waiting till the end of the
       process, but application may perform other tasks while transfer operation
       is ongoing. */
@@ -1130,4 +1065,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-

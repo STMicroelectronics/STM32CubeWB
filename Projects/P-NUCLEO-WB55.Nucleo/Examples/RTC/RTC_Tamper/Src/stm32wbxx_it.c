@@ -108,4 +108,3 @@ void TAMP_STAMP_LSECSS_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

@@ -452,7 +452,8 @@ static void BLE_Init( void )
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
   
@@ -533,7 +534,7 @@ static void BLE_Advertising(FlagStatus newState)
       ret = aci_gap_set_discoverable(ADV_IND,                                       /*< Advertise as connectable, undirected. */
                                      CFG_FAST_CONN_ADV_INTERVAL_MIN,                /*< Set the advertising interval min value. */
                                      CFG_FAST_CONN_ADV_INTERVAL_MAX,                /*< Set the advertising interval max value. */
-                                     PUBLIC_ADDR,                                   /*< Use the public address. */
+                                     GAP_PUBLIC_ADDR,                                   /*< Use the public address. */
                                      NO_WHITE_LIST_USE,                             /*< No white list. */
                                      sizeof(ad_local_name), (uint8_t*)ad_local_name,/*< Use a local name. */
                                      0, NULL,                                       /*< Do not include the service UUID list. (no adopted services) */

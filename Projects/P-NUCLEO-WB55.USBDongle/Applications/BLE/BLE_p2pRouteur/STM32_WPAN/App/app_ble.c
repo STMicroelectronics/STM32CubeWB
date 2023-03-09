@@ -301,7 +301,7 @@ typedef struct
 
 /* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_CmdPacket_t BleCmdBuffer;
-#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR)
 static const uint8_t a_MBdAddr[BD_ADDR_SIZE_LOCAL] =
 {
   (uint8_t)((CFG_ADV_BD_ADDRESS & 0x0000000000FF)),
@@ -313,7 +313,7 @@ static const uint8_t a_MBdAddr[BD_ADDR_SIZE_LOCAL] =
 };
 
 static uint8_t a_BdAddrUdn[BD_ADDR_SIZE_LOCAL];
-#endif /* CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR */
+#endif /* CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR */
 /**
  *   Identity root key used to derive LTK and CSRK
  */
@@ -375,9 +375,9 @@ static void BLE_UserEvtRx(void * p_Payload);
 static void BLE_StatusNot(HCI_TL_CmdStatus_t Status);
 static void Ble_Tl_Init(void);
 static void Ble_Hci_Gap_Gatt_Init(void);
-#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR)
 static const uint8_t* BleGetBdAddress(void);
-#endif /*CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR */
+#endif /*CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR */
 static void Scan_Request(void);
 static void Evt_Notification(P2P_ConnHandle_Not_evt_t *pNotification);
 static void ConnReq1(void);
@@ -438,7 +438,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -1284,7 +1285,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 
   const uint8_t *p_bd_addr;
 
-#if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   uint32_t a_srd_bd_addr[2] = {0,0};
 #endif
   uint16_t a_appearance[1] = {BLE_CFG_UNKNOWN_APPEARANCE};
@@ -1325,7 +1326,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
     APP_DBG_MSG("  Public Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n",p_bd_addr[5],p_bd_addr[4],p_bd_addr[3],p_bd_addr[2],p_bd_addr[1],p_bd_addr[0]);
   }
 
-#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
   a_ManufData[ sizeof(a_ManufData)-6] = p_bd_addr[5];
   a_ManufData[ sizeof(a_ManufData)-5] = p_bd_addr[4];
@@ -1333,7 +1334,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   a_ManufData[ sizeof(a_ManufData)-3] = p_bd_addr[2];
   a_ManufData[ sizeof(a_ManufData)-2] = p_bd_addr[1];
   a_ManufData[ sizeof(a_ManufData)-1] = p_bd_addr[0];
-#endif /* CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR */
+#endif /* CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR */
 
   /**
    * Static random Address
@@ -1383,7 +1384,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   a_ManufData[ sizeof(a_ManufData)-1] = a_srd_bd_addr[0];
 #endif
 
-#if (CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   ret = aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)a_srd_bd_addr);
   if (ret != BLE_STATUS_SUCCESS)
   {
@@ -1399,7 +1400,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                                                (uint8_t)(a_srd_bd_addr[0] >> 8),
                                                                                (uint8_t)(a_srd_bd_addr[0]));
   }
-#endif /* CFG_BLE_ADDRESS_TYPE != PUBLIC_ADDR */
+#endif /* CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR */
 
   /**
    * Write Identity root key used to derive LTK and CSRK
@@ -1615,7 +1616,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   /* USER CODE BEGIN APP_BLE_CONNECTED */
   BSP_LED_On(LED_BLUE);
   /* USER CODE END APP_BLE_CONNECTED */
-  result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, PUBLIC_ADDR, 1);
+  result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, GAP_PUBLIC_ADDR, 1);
   if (result == BLE_STATUS_SUCCESS)
   {
     /* USER CODE BEGIN BLE_SCAN_SUCCESS */
@@ -1705,9 +1706,9 @@ static void ConnReq1(void)
         result = aci_gap_create_connection(
         SCAN_P,
         SCAN_L,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         P2P_SERVER1_BDADDR,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         CONN_P1,
         CONN_P2,
         0,
@@ -1751,9 +1752,9 @@ static void ConnReq2(void)
     result = aci_gap_create_connection(
         SCAN_P,
         SCAN_L,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         P2P_SERVER2_BDADDR,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         CONN_P1,
         CONN_P2,
         0,
@@ -1791,9 +1792,9 @@ static void ConnReq3(void)
     result = aci_gap_create_connection(
         SCAN_P,
         SCAN_L,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         P2P_SERVER3_BDADDR,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         CONN_P1,
         CONN_P2,
         0,
@@ -1831,9 +1832,9 @@ static void ConnReq4(void)
     result = aci_gap_create_connection(
         SCAN_P,
         SCAN_L,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         P2P_SERVER4_BDADDR,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         CONN_P1,
         CONN_P2,
         0,
@@ -1871,9 +1872,9 @@ static void ConnReq5(void)
     result = aci_gap_create_connection(
         SCAN_P,
         SCAN_L,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         P2P_SERVER5_BDADDR,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         CONN_P1,
         CONN_P2,
         0,
@@ -1910,9 +1911,9 @@ static void ConnReq6(void)
     result = aci_gap_create_connection(
         SCAN_P,
         SCAN_L,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         P2P_SERVER6_BDADDR,
-        PUBLIC_ADDR,
+        GAP_PUBLIC_ADDR,
         CONN_P1,
         CONN_P2,
         0,
@@ -2050,7 +2051,7 @@ void Evt_Notification(P2P_ConnHandle_Not_evt_t *pNotification)
   return;
 }
 
-#if (CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR)
 const uint8_t* BleGetBdAddress(void)
 {
   uint8_t *p_otp_addr;
@@ -2098,7 +2099,7 @@ const uint8_t* BleGetBdAddress(void)
 
   return p_bd_addr;
 }
-#endif /*CFG_BLE_ADDRESS_TYPE == PUBLIC_ADDR */
+#endif /*CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR */
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTION */
 

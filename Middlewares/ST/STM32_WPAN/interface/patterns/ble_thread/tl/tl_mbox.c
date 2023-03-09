@@ -77,7 +77,7 @@ static void OutputDbgTrace(TL_MB_PacketType_t packet_type, uint8_t* buffer);
 /* Public Functions Definition ------------------------------------------------------*/
 
 /******************************************************************************
- * GENERAL
+ * GENERAL - refer to AN5289 for functions description.
  ******************************************************************************/
 void TL_Enable( void )
 {

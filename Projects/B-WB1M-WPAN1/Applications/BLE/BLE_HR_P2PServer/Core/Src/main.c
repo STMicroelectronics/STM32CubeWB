@@ -56,8 +56,8 @@ void PeriphCommonClock_Config(void);
 static void MX_DMA_Init(void);
 static void MX_GPIO_Init(void);
 static void MX_IPCC_Init(void);
-static void MX_RF_Init(void);
 static void MX_RTC_Init(void);
+static void MX_RF_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -104,8 +104,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_DMA_Init();
   MX_GPIO_Init();
-  MX_RF_Init();
   MX_RTC_Init();
+  MX_RF_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -358,6 +358,8 @@ static void MX_DMA_Init(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -379,6 +381,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(Blue_Led_GPIO_Port, &GPIO_InitStruct);
 
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */

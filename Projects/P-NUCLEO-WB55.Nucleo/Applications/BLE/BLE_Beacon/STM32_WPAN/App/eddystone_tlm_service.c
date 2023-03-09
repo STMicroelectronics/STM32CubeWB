@@ -98,7 +98,7 @@ static tBleStatus EddystoneTLM_Init(EddystoneTLM_InitTypeDef *EddystoneTLM_Init)
 /* Put the device in a non-connectable mode. */
   ret = aci_gap_set_discoverable(ADV_NONCONN_IND,                          /*< Advertise as non-connectable, undirected. */
                                  AdvertisingInterval, AdvertisingInterval, /*< Set the advertising interval as 700 ms (0.625 us increment). */
-                                 PUBLIC_ADDR, NO_WHITE_LIST_USE,           /*< Use the public address, with no white list. */
+                                 GAP_PUBLIC_ADDR, NO_WHITE_LIST_USE,           /*< Use the public address, with no white list. */
                                  0, NULL,                                  /*< Do not use a local name. */
                                  0, NULL,                                  /*< Do not include the service UUID list. */
                                  0, 0);                                    /*< Do not set a slave connection interval. */

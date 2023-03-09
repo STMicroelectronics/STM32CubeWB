@@ -286,7 +286,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -992,7 +993,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                               PUBLIC_ADDR
+                                               GAP_PUBLIC_ADDR
                                               );
   if (ret != BLE_STATUS_SUCCESS)
   {
@@ -1032,7 +1033,7 @@ static void Scan_Request(void)
     BSP_LED_On(LED_BLUE);
     APP_DBG_MSG("    BD address    |   Type   |rssi |Conn  | Scan    |data|SID | info\n");
     /* USER CODE END APP_BLE_CONNECTED_CLIENT */
-    result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, PUBLIC_ADDR, 1);
+    result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, GAP_PUBLIC_ADDR, 1);
     if (result == BLE_STATUS_SUCCESS)
     {
     /* USER CODE BEGIN BLE_SCAN_SUCCESS */
@@ -1091,7 +1092,7 @@ static void Connect_Request(void)
       result = aci_gap_create_connection(SCAN_P,
                                          SCAN_L,
                                          ext_adv_address_type, ext_adv_server_remote_bd_addr,
-                                         PUBLIC_ADDR,
+                                         GAP_PUBLIC_ADDR,
                                          CONN_P1,
                                          CONN_P2,
                                          0,

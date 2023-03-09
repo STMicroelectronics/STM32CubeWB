@@ -82,6 +82,11 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
 
   - This application is by default configured to support low power mode ( No traces - No debugger )
     This can be modified in app_conf.h (CFG_LPM_SUPPORTED, CFG_DEBUG_BLE_TRACE, CFG_DEBUG_APP_TRACE)
+    Low power is used in the context of ThreadX OS, so be sure to use:
+    CFG_LPM_SUPPORTED = 0 with TX_LOW_POWER = 0 to disable low power
+    or
+    CFG_LPM_SUPPORTED = 1 with TX_LOW_POWER = 1 to enable low power
+    TX_LOW_POWER flag is managed at IDE project level (both compiler and assembler) 
 
   - SMPS can be used to obtain the best performance in power consumption.
     This feature depends on board components and its activation can be done through specific define (CFG_USE_SMPS)

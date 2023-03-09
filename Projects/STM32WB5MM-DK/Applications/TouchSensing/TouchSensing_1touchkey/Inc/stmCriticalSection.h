@@ -32,3 +32,4 @@ to him. Otherwise the first next one asking will own the turn. */
 void exitLock(void);
 
 #endif /* STM_CRITICAL_SECTION_H */
+

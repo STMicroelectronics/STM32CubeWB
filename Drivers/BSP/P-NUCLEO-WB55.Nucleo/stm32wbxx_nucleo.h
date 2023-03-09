@@ -26,6 +26,17 @@
  extern "C" {
 #endif
 
+/* Includes ------------------------------------------------------------------*/
+#include "stm32wbxx_nucleo_errno.h"
+
+#if (USE_BSP_COM_FEATURE > 0)
+  #if (USE_COM_LOG > 0)
+    #ifndef __GNUC__
+      #include "stdio.h"
+    #endif /* !__GNUC__ */
+  #endif /* USE_COM_LOG */
+#endif /* USE_BSP_COM_FEATURE */
+   
 /** @addtogroup BSP
   * @{
   */
@@ -40,7 +51,7 @@
 /** @defgroup STM32WBXX_NUCLEO_Exported_Types Exported Types
   * @{
   */
-typedef enum 
+typedef enum
 {
   LED1 = 0,
   LED2 = 1,
@@ -49,23 +60,76 @@ typedef enum
   LED_BLUE   = LED1,
   LED_GREEN  = LED2,
   LED_RED    = LED3
-}Led_TypeDef;
+} Led_TypeDef;
 
-typedef enum 
-{  
+typedef enum
+{
   BUTTON_SW1 = 0,
   BUTTON_SW2 = 1,
   BUTTON_SW3 = 2,
-}Button_TypeDef;
+} Button_TypeDef;
 
-typedef enum 
-{  
+typedef enum
+{
   BUTTON_MODE_GPIO = 0,
   BUTTON_MODE_EXTI = 1
-}ButtonMode_TypeDef;
+} ButtonMode_TypeDef;
 
-typedef enum 
-{ 
+#if (USE_BSP_COM_FEATURE > 0)
+typedef enum
+{
+  COM1 = 0U,
+  COMn
+} COM_TypeDef;
+
+typedef enum
+{
+  COM_STOPBITS_1     =   UART_STOPBITS_1,
+  COM_STOPBITS_2     =   UART_STOPBITS_2,
+} COM_StopBitsTypeDef;
+
+typedef enum
+{
+  COM_PARITY_NONE     =  UART_PARITY_NONE,
+  COM_PARITY_EVEN     =  UART_PARITY_EVEN,
+  COM_PARITY_ODD      =  UART_PARITY_ODD,
+} COM_ParityTypeDef;
+
+typedef enum
+{
+  COM_HWCONTROL_NONE    =  UART_HWCONTROL_NONE,
+  COM_HWCONTROL_RTS     =  UART_HWCONTROL_RTS,
+  COM_HWCONTROL_CTS     =  UART_HWCONTROL_CTS,
+  COM_HWCONTROL_RTS_CTS =  UART_HWCONTROL_RTS_CTS,
+} COM_HwFlowCtlTypeDef;
+
+typedef enum
+{
+  COM_WORDLENGTH_7B = UART_WORDLENGTH_7B,
+  COM_WORDLENGTH_8B = UART_WORDLENGTH_8B,
+  COM_WORDLENGTH_9B = UART_WORDLENGTH_9B,
+} COM_WordLengthTypeDef;
+
+typedef struct
+{
+  uint32_t              BaudRate;
+  COM_WordLengthTypeDef WordLength;
+  COM_StopBitsTypeDef   StopBits;
+  COM_ParityTypeDef     Parity;
+  COM_HwFlowCtlTypeDef  HwFlowCtl;
+} COM_InitTypeDef;
+
+#if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
+typedef struct
+{
+  pUART_CallbackTypeDef  pMspInitCb;
+  pUART_CallbackTypeDef  pMspDeInitCb;
+} BSP_COM_Cb_t;
+#endif /* (USE_HAL_UART_REGISTER_CALLBACKS == 1) */
+#endif /* (USE_BSP_COM_FEATURE > 0) */
+
+typedef enum
+{
   JOY_NONE  = 0,
   JOY_SEL   = 1,
   JOY_DOWN  = 2,
@@ -76,15 +140,15 @@ typedef enum
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup STM32WBXX_NUCLEO_Exported_Constants Exported Constants
   * @{
-  */ 
+  */
 
-/** 
+/**
   * @brief Define for STM32WBXX_NUCLEO board  
-  */ 
+  */
 #if !defined (USE_STM32WBXX_NUCLEO)
  #define USE_STM32WBXX_NUCLEO
 #endif
@@ -111,17 +175,18 @@ typedef enum
 
 #define LEDx_GPIO_CLK_ENABLE(__INDEX__)         __HAL_RCC_GPIOB_CLK_ENABLE() /* All Led on same port */
 #define LEDx_GPIO_CLK_DISABLE(__INDEX__)        __HAL_RCC_GPIOB_CLK_DISABLE() /* All Led on same port */
+
 /**
   * @}
-  */ 
-  
+  */
+
 /** @defgroup STM32WBXX_NUCLEO_BUTTON BUTTON Constants
   * @{
-  */  
+  */
 #define BUTTONn                                 3
 
 /**
- * @brief Key push-button
+ * @brief Key push-buttons
  */
 #define BUTTON_SW1_PIN                          GPIO_PIN_4
 #define BUTTON_SW1_GPIO_PORT                    GPIOC
@@ -132,7 +197,7 @@ typedef enum
 #define BUTTON_SW1_EXTI_IRQn                    EXTI15_4_IRQn
 #else
 #define BUTTON_SW1_EXTI_IRQn                    EXTI4_IRQn
-#endif
+#endif /* CORE_CM0PLUS */
 
 #define BUTTON_SW2_PIN                          GPIO_PIN_0
 #define BUTTON_SW2_GPIO_PORT                    GPIOD
@@ -143,7 +208,7 @@ typedef enum
 #define BUTTON_SW2_EXTI_IRQn                    EXTI1_0_IRQn
 #else
 #define BUTTON_SW2_EXTI_IRQn                    EXTI0_IRQn
-#endif
+#endif /* CORE_CM0PLUS */
 
 #define BUTTON_SW3_PIN                          GPIO_PIN_1
 #define BUTTON_SW3_GPIO_PORT                    GPIOD
@@ -154,7 +219,7 @@ typedef enum
 #define BUTTON_SW3_EXTI_IRQn                    EXTI1_0_IRQn
 #else
 #define BUTTON_SW3_EXTI_IRQn                    EXTI1_IRQn
-#endif
+#endif /* CORE_CM0PLUS */
 
 #define BUTTONx_GPIO_CLK_ENABLE(__INDEX__)    do { if ((__INDEX__) == BUTTON_SW1) BUTTON_SW1_GPIO_CLK_ENABLE(); else \
                                               if ((__INDEX__) == BUTTON_SW2) BUTTON_SW2_GPIO_CLK_ENABLE(); else \
@@ -163,6 +228,37 @@ typedef enum
 #define BUTTONx_GPIO_CLK_DISABLE(__INDEX__)    do { if ((__INDEX__) == BUTTON_SW1) BUTTON_SW1_GPIO_CLK_DISABLE(); else \
                                               if ((__INDEX__) == BUTTON_SW2) BUTTON_SW2_GPIO_CLK_DISABLE(); else \
                                               if ((__INDEX__) == BUTTON_SW3) BUTTON_SW3_GPIO_CLK_DISABLE();} while(0)
+
+/**
+  * @}
+  */
+
+#if (USE_BSP_COM_FEATURE > 0)
+/** @defgroup STM32WBXX_NUCLEO_LOW_LEVEL_COM LOW LEVEL COM Port Constants
+  * @{
+  */
+#define COM1_UART                             USART1
+#define COM1_CLK_ENABLE()                     __HAL_RCC_USART1_CLK_ENABLE()
+#define COM1_CLK_DISABLE()                    __HAL_RCC_USART1_CLK_DISABLE()
+
+#define COM1_TX_PIN                           GPIO_PIN_6
+#define COM1_TX_GPIO_PORT                     GPIOB
+#define COM1_TX_GPIO_CLK_ENABLE()             __HAL_RCC_GPIOB_CLK_ENABLE()
+#define COM1_TX_GPIO_CLK_DISABLE()            __HAL_RCC_GPIOB_CLK_DISABLE()
+#define COM1_TX_AF                            GPIO_AF7_USART1
+
+#define COM1_RX_PIN                           GPIO_PIN_7
+#define COM1_RX_GPIO_PORT                     GPIOB
+#define COM1_RX_GPIO_CLK_ENABLE()             __HAL_RCC_GPIOB_CLK_ENABLE()
+#define COM1_RX_GPIO_CLK_DISABLE()            __HAL_RCC_GPIOB_CLK_DISABLE()
+#define COM1_RX_AF                            GPIO_AF7_USART1
+#define COM_POLL_TIMEOUT                      1000
+
+#define MX_UART_InitTypeDef COM_InitTypeDef
+/**
+  * @}
+  */
+#endif /* (USE_BSP_COM_FEATURE > 0)*/
 
 /**
   * @}
@@ -240,7 +336,7 @@ typedef enum
   */
 #define NUCLEO_ADCx                                 ADC1
 #define NUCLEO_ADCx_CLK_ENABLE()                    __HAL_RCC_ADC_CLK_ENABLE()
-    
+
 #define NUCLEO_ADCx_GPIO_PORT                       GPIOA
 #define NUCLEO_ADCx_GPIO_PIN                        GPIO_PIN_0
 #define NUCLEO_ADCx_GPIO_CLK_ENABLE()               __HAL_RCC_GPIOA_CLK_ENABLE()
@@ -257,7 +353,7 @@ typedef enum
 /** @addtogroup STM32WBXX_NUCLEO_Exported_Functions
   * @{
   */
-uint32_t         BSP_GetVersion(void);  
+uint32_t         BSP_GetVersion(void);
 
 /** @addtogroup STM32WBXX_NUCLEO_LED_Functions
   * @{
@@ -281,6 +377,26 @@ uint32_t         BSP_PB_GetState(Button_TypeDef Button);
 uint8_t          BSP_JOY_Init(void);
 JOYState_TypeDef BSP_JOY_GetState(void);
 #endif /* HAL_ADC_MODULE_ENABLED */
+
+#if (USE_BSP_COM_FEATURE > 0)
+/** @defgroup STM32WLXX_NUCLEO_LOW_LEVEL_COM_Functions LOW LEVEL COM Port Functions
+  * @{
+  */
+int32_t  BSP_COM_Init(COM_TypeDef COM, COM_InitTypeDef *COM_Init);
+int32_t  BSP_COM_DeInit(COM_TypeDef COM);
+#if (USE_COM_LOG > 0)
+int32_t  BSP_COM_SelectLogPort (COM_TypeDef COM);
+#endif
+#if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
+int32_t  BSP_COM_RegisterDefaultMspCallbacks(COM_TypeDef COM);
+int32_t  BSP_COM_RegisterMspCallbacks(COM_TypeDef COM , BSP_COM_Cb_t *Callback);
+#endif /* USE_HAL_UART_REGISTER_CALLBACKS */
+HAL_StatusTypeDef MX_LPUART1_Init(UART_HandleTypeDef *huart, MX_UART_InitTypeDef *COM_Init);
+/**
+  * @}
+  */
+#endif /* (USE_BSP_COM_FEATURE > 0) */
+
 /**
   * @}
   */

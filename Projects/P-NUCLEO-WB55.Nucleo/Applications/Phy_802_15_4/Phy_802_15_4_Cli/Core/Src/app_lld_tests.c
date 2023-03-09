@@ -134,8 +134,6 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t LldTestsCliCmdRspPack
 
 /* USER CODE BEGIN PV */
 
-/* USER CODE END PV */
-
 /* Functions Definition ------------------------------------------------------*/
 
 void APP_LLDTESTS_Init( void )

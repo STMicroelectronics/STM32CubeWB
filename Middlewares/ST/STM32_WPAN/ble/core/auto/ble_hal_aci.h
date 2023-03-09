@@ -6,7 +6,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2022 STMicroelectronics.
+ * Copyright (c) 2018-2023 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -52,9 +52,12 @@ tBleStatus aci_hal_get_fw_build_number( uint16_t* Build_Number );
  *          Static Random Address; 6 bytes
  *        - 0xB0: CONFIG_DATA_SMP_MODE_OFFSET;
  *          SMP mode (0: "normal", 1: "bypass", 2: "no blacklist"); 1 byte
- *        - 0xC0: CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET;
+ *        - 0xC0: CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET (only for STM32WB);
  *          LL scan channel map (same format as Primary_Adv_Channel_Map); 1
  *          byte
+ *        - 0xC1: CONFIG_DATA_LL_BG_SCAN_MODE_OFFSET (only for STM32WB);
+ *          LL background scan mode (0: "BG scan disabled", 1: "BG scan
+ *          enabled"); 1 byte
  * @param Length Length of data to be written
  * @param Value Data to be written
  * @return Value indicating success or error code.
@@ -100,48 +103,15 @@ tBleStatus aci_hal_read_config_data( uint8_t Offset,
  * The system will keep the last received TX power level from the command, i.e.
  * the 2nd command overwrites the previous TX power level. The new TX power
  * level remains until another Set TX Power command, or the system reboots.
+ * Refer to Annex for the dBm corresponding values of PA_Level parameter.
  * 
- * @param En_High_Power Enable High Power mode - Deprecated and ignored on
- *        STM32WB
+ * @param En_High_Power Enable High Power mode - Deprecated and ignored
  *        Values:
  *        - 0x00: Standard Power
  *        - 0x01: High Power
- * @param PA_Level Power amplifier output level. Output power is indicative and
- *        depends on the PCB layout and associated components. Here the values
- *        are given at the STM32WB output.
+ * @param PA_Level Power amplifier output level.
  *        Values:
- *        - 0x00: -40 dBm
- *        - 0x01: -20.85 dBm
- *        - 0x02: -19.75 dBm
- *        - 0x03: -18.85 dBm
- *        - 0x04: -17.6 dBm
- *        - 0x05: -16.5 dBm
- *        - 0x06: -15.25 dBm
- *        - 0x07: -14.1 dBm
- *        - 0x08: -13.15 dBm
- *        - 0x09: -12.05 dBm
- *        - 0x0A: -10.9 dBm
- *        - 0x0B: -9.9 dBm
- *        - 0x0C: -8.85 dBm
- *        - 0x0D: -7.8 dBm
- *        - 0x0E: -6.9 dBm
- *        - 0x0F: -5.9 dBm
- *        - 0x10: -4.95 dBm
- *        - 0x11: -4 dBm
- *        - 0x12: -3.15 dBm
- *        - 0x13: -2.45 dBm
- *        - 0x14: -1.8 dBm
- *        - 0x15: -1.3 dBm
- *        - 0x16: -0.85 dBm
- *        - 0x17: -0.5 dBm
- *        - 0x18: -0.15 dBm
- *        - 0x19: 0 dBm
- *        - 0x1A: +1 dBm
- *        - 0x1B: +2 dBm
- *        - 0x1C: +3 dBm
- *        - 0x1D: +4 dBm
- *        - 0x1E: +5 dBm
- *        - 0x1F: +6 dBm
+ *        - 0x00 ... 0x23
  * @return Value indicating success or error code.
  */
 tBleStatus aci_hal_set_tx_power_level( uint8_t En_High_Power,
@@ -150,7 +120,7 @@ tBleStatus aci_hal_set_tx_power_level( uint8_t En_High_Power,
 /**
  * @brief ACI_HAL_LE_TX_TEST_PACKET_NUMBER
  * This command returns the number of packets sent in Direct Test Mode.
- * When the Direct TX test is started, a 32-bit counter is used to count how
+ * When the Direct TX test is started, a 16-bit counter is used to count how
  * many packets have been transmitted.
  * This command can be used to check how many packets have been sent during the
  * Direct TX test.
@@ -200,7 +170,7 @@ tBleStatus aci_hal_tone_stop( void );
 
 /**
  * @brief ACI_HAL_GET_LINK_STATUS
- * This command returns the status of the 8 Bluetooth low energy links managed
+ * This command returns the status of the 8 Bluetooth Low Energy links managed
  * by the device
  * 
  * @param[out] Link_Status Array of link status (8 links). Each link status is
@@ -214,7 +184,7 @@ tBleStatus aci_hal_tone_stop( void );
  *        - 0x05: Connected in master role
  *        - 0x06: TX test mode
  *        - 0x07: RX test mode
- *        - 0x81: Advertising with Additional Beacon (only for STM32WB)
+ *        - 0x81: Advertising with Additional Beacon
  * @param[out] Link_Connection_Handle Array of connection handles (2 bytes) for
  *        8 links. Valid only if the link status is "connected" (0x02 or 0x05)
  * @return Value indicating success or error code.
@@ -233,11 +203,17 @@ tBleStatus aci_hal_get_link_status( uint8_t* Link_Status,
  *        Flags:
  *        - 0x0001: Idle
  *        - 0x0002: Advertising
- *        - 0x0004: Connection slave
+ *        - 0x0004: Peripheral connection
  *        - 0x0008: Scanning
- *        - 0x0020: Connection master
+ *        - 0x0020: Central connection
  *        - 0x0040: TX test mode
  *        - 0x0080: RX test mode
+ *        - 0x0200: Periodic advertising (only for STM32WBA)
+ *        - 0x0400: Periodic sync (only for STM32WBA)
+ *        - 0x0800: Iso broadcast (only for STM32WBA)
+ *        - 0x1000: Iso sync (only for STM32WBA)
+ *        - 0x2000: Iso peripheral connection (only for STM32WBA)
+ *        - 0x4000: Iso central connection (only for STM32WBA)
  * @return Value indicating success or error code.
  */
 tBleStatus aci_hal_set_radio_activity_mask( uint16_t Radio_Activity_Mask );
@@ -265,6 +241,7 @@ tBleStatus aci_hal_get_anchor_period( uint32_t* Anchor_Period,
  *        Flags:
  *        - 0x00000000: No events specified (Default)
  *        - 0x00000001: ACI_HAL_SCAN_REQ_REPORT_EVENT
+ *        - 0x00000002: ACI_HAL_SYNC_EVENT (only for STM32WBA)
  * @return Value indicating success or error code.
  */
 tBleStatus aci_hal_set_event_mask( uint32_t Event_Mask );

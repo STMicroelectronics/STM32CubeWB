@@ -26,7 +26,7 @@ How to use the OnOff cluster on a device acting as a Server with Coordinator rol
 The purpose of this application is to show how to create a Zigbee centralized network, and 
 how to communicate from one node to another one using the OnOff cluster. Once the Zigbee mesh 
 network is created, the user can send requests from the client to the server through the push button. 
-The reception of the message triggers a specific message 'O' which is displayed on the LCD.
+The reception of the message triggers a RGB LED.
 
 For this application it is requested to have:
 
@@ -43,13 +43,13 @@ For this application it is requested to have:
         
              ---------                                      ---------
              |       |       ZbZclOnOffClientOn/OffReq      |       |
-     PushB1=>|Client | -----------------------------------> |Server | =>LED 
+     PushB1=>|Client | -----------------------------------> |Server | =>LED bright On/Off
              |       |                                      |       |
              |       |                                      |       |
              |       |                              PushB1=>|-------|-----|
              |       |                                      |       |     | Permit Join request
              |       |                                      |       |<----|
-              --------                                      ---------
+             ---------                                      ---------
   
 To setup the application :
 
@@ -64,10 +64,10 @@ To setup the application :
       by the coordinator. Do the same for the other boards if applicable.
       
   b)  At this stage, the Zigbee network is automatically created and the message 'Network Ready' should
-      appear on the LCD screen.
-      It is now possible to send OnOff Cluster commands from the client to the server in multicast mode 
+      appear on the LCD screen of the coordinator board and "Join Channel: 15' on the client board.
+      It is now possible to send OnOff Cluster commands from the client to the server in unicast mode 
       by pressing on the B1 push button on client board.
-      You must see the LED RGB toggling on the server side. 
+      You must see the RGB LED toggling on the server side. 
 
   c)  After the Network forming timeout, a press on B1 push button on Server board send a request
       to permit Join the network during PERMIT_JOIN_DELAY (60sec) for a new device.

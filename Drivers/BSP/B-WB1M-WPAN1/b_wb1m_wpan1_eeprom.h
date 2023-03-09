@@ -36,7 +36,7 @@
   * @{
   */
 
-/** @addtogroupB_WB1M_WPAN1_EEPROM B-WB1M-WPAN1 EEPROM
+/** @addtogroup B_WB1M_WPAN1_EEPROM B-WB1M-WPAN1 EEPROM
   * @brief This file includes the I2C EEPROM driver of B-WB1M-WPAN1 board.
   * @{
   */

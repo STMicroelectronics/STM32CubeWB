@@ -59,6 +59,7 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+
 /* USER CODE BEGIN Private defines */
 /* Compute the prescaler value to have TIMx counter clock equal to 10 kHz */
 #define  PRESCALER_VALUE   (((SystemCoreClock) / 10000) - 1)

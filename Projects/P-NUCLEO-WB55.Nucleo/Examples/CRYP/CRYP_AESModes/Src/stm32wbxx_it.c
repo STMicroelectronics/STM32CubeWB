@@ -212,4 +212,3 @@ void AES1_IRQHandler(void)
   HAL_CRYP_IRQHandler(&hcryp1);
 }
 /* USER CODE END 1 */
-

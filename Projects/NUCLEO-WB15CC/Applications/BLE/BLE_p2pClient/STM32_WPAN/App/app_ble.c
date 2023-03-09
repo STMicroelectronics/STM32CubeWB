@@ -199,7 +199,6 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
 };
 
 static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
-
 /**
 *   Identity root key used to derive LTK and CSRK
 */
@@ -211,6 +210,7 @@ static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
 static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
 
 tBDAddr SERVER_REMOTE_BDADDR;
+uint8_t SERVER_REMOTE_ADDR_TYPE;
 
 P2PC_APP_ConnHandle_Not_evt_t handleNotification;
 
@@ -281,7 +281,8 @@ void APP_BLE_Init(void)
      CFG_BLE_MAX_ADV_DATA_LEN,
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION
+     CFG_BLE_CORE_VERSION,
+     CFG_BLE_OPTIONS_EXT
     }
   };
 
@@ -432,7 +433,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
             }
             break;
 
-#if (OOB_DEMO != 0)
+   #if (OOB_DEMO != 0)
           case ACI_L2CAP_CONNECTION_UPDATE_REQ_VSEVT_CODE:
             {
               /* USER CODE BEGIN EVT_BLUE_L2CAP_CONNECTION_UPDATE_REQ */
@@ -489,15 +490,15 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
             }
             break;
 
-          case 0x0004:
+          case ACI_HAL_END_OF_RADIO_ACTIVITY_VSEVT_CODE:
             {
               /* USER CODE BEGIN RADIO_ACTIVITY_EVENT */
               BSP_LED_On(LED_GREEN);
               HW_TS_Start(BleApplicationContext.SwitchOffGPIO_timer_Id, (uint32_t)LED_ON_TIMEOUT);
               /* USER CODE END RADIO_ACTIVITY_EVENT */
             }
-            break;
-#endif
+            break; /* ACI_HAL_END_OF_RADIO_ACTIVITY_VSEVT_CODE */
+  #endif
 
           /* USER CODE BEGIN BLUE_EVT */
 
@@ -541,6 +542,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
           /* USER CODE BEGIN subevent */
 
           /* USER CODE END subevent */
+
           case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
             /* USER CODE BEGIN EVT_LE_CONN_COMPLETE */
 
@@ -553,7 +555,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
             BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_CLIENT;
 
             /* CONNECTION WITH CLIENT */
-            APP_DBG_MSG("\r\n\r** CONNECTION EVENT WITH SERVER \n\r");
+            APP_DBG_MSG("\r\n\r**  CONNECTION COMPLETE EVENT WITH SERVER \n\r");
             handleNotification.P2P_Evt_Opcode = PEER_CONN_HANDLE_EVT;
             handleNotification.ConnectionHandle = BleApplicationContext.BleApplicationContext_legacy.connectionHandle;
             P2PC_APP_Notification(&handleNotification);
@@ -623,16 +625,17 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                         APP_DBG_MSG("--- ST MANUFACTURER ID --- \n\r");
                         switch (adv_report_data[k + 3])
                         {   /* Demo ID */
-                          case CFG_DEV_ID_P2P_SERVER1: /* End Device 1 */
-                            APP_DBG_MSG("-- SERVER DETECTED -- VIA MAN ID\n\r");
-                            BleApplicationContext.DeviceServerFound = 0x01;
-                            SERVER_REMOTE_BDADDR[0] = le_advertising_event->Advertising_Report[0].Address[0];
-                            SERVER_REMOTE_BDADDR[1] = le_advertising_event->Advertising_Report[0].Address[1];
-                            SERVER_REMOTE_BDADDR[2] = le_advertising_event->Advertising_Report[0].Address[2];
-                            SERVER_REMOTE_BDADDR[3] = le_advertising_event->Advertising_Report[0].Address[3];
-                            SERVER_REMOTE_BDADDR[4] = le_advertising_event->Advertising_Report[0].Address[4];
-                            SERVER_REMOTE_BDADDR[5] = le_advertising_event->Advertising_Report[0].Address[5];
-                            break;
+                           case CFG_DEV_ID_P2P_SERVER1: /* End Device 1 */
+                           APP_DBG_MSG("-- SERVER DETECTED -- VIA MAN ID\n\r");
+                           BleApplicationContext.DeviceServerFound = 0x01;
+                           SERVER_REMOTE_ADDR_TYPE = le_advertising_event->Advertising_Report[0].Address_Type;
+                           SERVER_REMOTE_BDADDR[0] = le_advertising_event->Advertising_Report[0].Address[0];
+                           SERVER_REMOTE_BDADDR[1] = le_advertising_event->Advertising_Report[0].Address[1];
+                           SERVER_REMOTE_BDADDR[2] = le_advertising_event->Advertising_Report[0].Address[2];
+                           SERVER_REMOTE_BDADDR[3] = le_advertising_event->Advertising_Report[0].Address[3];
+                           SERVER_REMOTE_BDADDR[4] = le_advertising_event->Advertising_Report[0].Address[4];
+                           SERVER_REMOTE_BDADDR[5] = le_advertising_event->Advertising_Report[0].Address[5];
+                           break;
 
                           default:
                             break;
@@ -742,7 +745,6 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   uint8_t role;
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   const uint8_t *bd_addr;
-  uint32_t srd_bd_addr[2];
   uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
 
@@ -762,39 +764,22 @@ static void Ble_Hci_Gap_Gatt_Init(void)
     APP_DBG_MSG("  Success: hci_reset command\n\r");
   }
 
-  /**
+ /**
    * Write the BD Address
    */
-  bd_addr = BleGetBdAddress();
-  ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
+   bd_addr = BleGetBdAddress();
+   ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                                   CONFIG_DATA_PUBADDR_LEN,
                                   (uint8_t*) bd_addr);
-  if (ret != BLE_STATUS_SUCCESS)
-  {
-    APP_DBG_MSG("  Fail   : aci_hal_write_config_data command, result: 0x%x \n\r", ret);
-  }
-  else
-  {
-    APP_DBG_MSG("  Success: aci_hal_write_config_data command\n\r");
-  }
 
-  /**
-   * Static random Address
-   * The two upper bits shall be set to 1
-   * The lowest 32bits is read from the UDN to differentiate between devices
-   * The RNG may be used to provide a random number on each power on
-   */
-  srd_bd_addr[1] =  0x0000ED6E;
-  srd_bd_addr[0] =  LL_FLASH_GetUDN();
-  ret = aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr);
-  if (ret != BLE_STATUS_SUCCESS)
-  {
+   if (ret != BLE_STATUS_SUCCESS)
+   {
     APP_DBG_MSG("  Fail   : aci_hal_write_config_data command, result: 0x%x \n\r", ret);
-  }
-  else
-  {
+   }
+   else
+   {
     APP_DBG_MSG("  Success: aci_hal_write_config_data command\n\r");
-  }
+   }
 
   /**
    * Write Identity root key used to derive LTK and CSRK
@@ -870,11 +855,12 @@ static void Ble_Hci_Gap_Gatt_Init(void)
     const char *name = "P2PCLI";
 
     ret = aci_gap_init(role,
-                       0,
+                       CFG_PRIVACY,
                        APPBLE_GAP_DEVICE_NAME_LENGTH,
                        &gap_service_handle,
                        &gap_dev_name_char_handle,
                        &gap_appearance_char_handle);
+
     if (ret != BLE_STATUS_SUCCESS)
     {
       APP_DBG_MSG("  Fail   : aci_gap_init command, result: 0x%x \n\r", ret);
@@ -926,13 +912,12 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   ret = aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode,
                                                CFG_SC_SUPPORT,
-                                               CFG_KEYPRESS_NOTIFICATION_SUPPORT,
-                                               BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
+                                               CFG_KEYPRESS_NOTIFICATION_SUPPORT,                                               BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                               PUBLIC_ADDR
-                                              );
+                                               CFG_IDENTITY_ADDRESS);
+
   if (ret != BLE_STATUS_SUCCESS)
   {
     APP_DBG_MSG("  Fail   : aci_gap_set_authentication_requirement command, result: 0x%x \n\r", ret);
@@ -970,7 +955,7 @@ static void Scan_Request(void)
     /* USER CODE BEGIN APP_BLE_CONNECTED_CLIENT */
     BSP_LED_On(LED_BLUE);
     /* USER CODE END APP_BLE_CONNECTED_CLIENT */
-    result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, PUBLIC_ADDR, 1);
+    result = aci_gap_start_general_discovery_proc(SCAN_P, SCAN_L, CFG_BLE_ADDRESS_TYPE, 1);
     if (result == BLE_STATUS_SUCCESS)
     {
     /* USER CODE BEGIN BLE_SCAN_SUCCESS */
@@ -1005,8 +990,8 @@ static void Connect_Request(void)
   {
     result = aci_gap_create_connection(SCAN_P,
                                        SCAN_L,
-                                       PUBLIC_ADDR, SERVER_REMOTE_BDADDR,
-                                       PUBLIC_ADDR,
+                                       SERVER_REMOTE_ADDR_TYPE, SERVER_REMOTE_BDADDR,
+                                       CFG_BLE_ADDRESS_TYPE,
                                        CONN_P1,
                                        CONN_P2,
                                        0,

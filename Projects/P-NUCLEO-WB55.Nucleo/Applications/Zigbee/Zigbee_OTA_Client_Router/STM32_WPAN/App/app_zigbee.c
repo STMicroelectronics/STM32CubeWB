@@ -185,11 +185,12 @@ static void APP_ZIGBEE_OTA_Client_DiscoverComplete_cb(struct ZbZclClusterT *clus
   {
     /* The OTA server extended address in stored in ZCL_OTA_ATTR_UPGRADE_SERVER_ID attribute */
     requested_server_ext = ZbZclAttrIntegerRead(zigbee_app_info.ota_client, ZCL_OTA_ATTR_UPGRADE_SERVER_ID, NULL, &internal_status);
+    UNUSED (requested_server_ext);
     if(internal_status != ZCL_STATUS_SUCCESS){
       APP_DBG("ZbZclAttrIntegerRead failed.\n");
     }
     
-    APP_DBG("OTA Server located with EUI64 0x%016" PRIx64 ".", requested_server_ext);
+    APP_DBG("OTA Server located ...");
     UTIL_SEQ_SetEvt(EVENT_ZIGBEE_OTA_SERVER_FOUND);
   }
   else
@@ -473,6 +474,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_ImageValidate_cb(struct ZbZclCl
   enum ZclStatusCodeT status = ZCL_STATUS_SUCCESS;
   uint64_t last_double_word = 0;
   double l_transfer_throughput = 0;
+  uint32_t lTransfertThroughputInt, lTransfertThroughputDec;
   
   /* Download finished => stop Toggling of the LED */
   HW_TS_Stop(TS_ID_LED);
@@ -506,6 +508,8 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_ImageValidate_cb(struct ZbZclCl
   APP_DBG("[OTA] The downloaded firmware is valid.\n");
   client_info->download_time = (HAL_GetTick()- client_info->download_time)/1000;
   l_transfer_throughput = (((double)client_info->requested_image_size/client_info->download_time) / 1000) * 8;
+  lTransfertThroughputInt = (uint32_t)l_transfer_throughput;
+  lTransfertThroughputDec = (uint32_t)( ( l_transfer_throughput - lTransfertThroughputInt ) * 100 );
   
   APP_DBG("**************************************************************");
   APP_DBG(" FUOTA : END OF TRANSFER COMPLETED");
@@ -517,7 +521,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Client_ImageValidate_cb(struct ZbZclCl
   }
   
   APP_DBG("  - %d bytes downloaded in %d seconds.",  client_info->requested_image_size, client_info->download_time);
-  APP_DBG("  - Average throughput = %.2f kbit/s.", l_transfer_throughput);
+  APP_DBG("  - Average throughput = %d.%d kbit/s.", lTransfertThroughputInt, lTransfertThroughputDec );
   APP_DBG("**************************************************************");
   
   BSP_LED_On(LED_GREEN);
@@ -1270,7 +1274,7 @@ static void APP_ZIGBEE_OTA_Client_ServerDiscovery( void )
  */
 static void APP_ZIGBEE_OTA_Client_Init(void)
 {
-  uint64_t dlExtendedAddress;
+  uint16_t  iShortAddress;
   
   /* Client info fields set to 0 */
   memset(&OTA_client_info, 0, sizeof(OTA_client_info));
@@ -1300,8 +1304,8 @@ static void APP_ZIGBEE_OTA_Client_Init(void)
     BSP_LED_On(LED_GREEN);
   }
   
-  dlExtendedAddress = ZbExtendedAddress(zigbee_app_info.zb);
-  APP_DBG("OTA Client with EUI64 0x%016" PRIx64 ".", dlExtendedAddress );
+  iShortAddress = ZbShortAddress( zigbee_app_info.zb );
+  APP_DBG("OTA Client with Short Address 0x%04X.", iShortAddress );
   APP_DBG("OTA Client init done!\n");  
   
 } /* APP_ZIGBEE_OTA_Client_Init */

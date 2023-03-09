@@ -238,6 +238,43 @@ typedef struct
   uint8_t *p_cmdbuffer;
 } TL_SYS_InitConf_t;
 
+/*****************************************************************************************
+ * Event type copied from ble_legacy.h 
+ */
+
+typedef PACKED_STRUCT
+{
+  uint8_t type;
+  uint8_t data[1];
+} hci_uart_pckt;
+
+typedef PACKED_STRUCT
+{
+  uint8_t         evt;
+  uint8_t         plen;
+  uint8_t         data[1];
+} hci_event_pckt;
+
+typedef PACKED_STRUCT
+{
+  uint8_t         subevent;
+  uint8_t         data[1];
+} evt_le_meta_event;
+
+/**
+ * Vendor specific event for BLE core.
+ */
+typedef PACKED_STRUCT
+{
+  uint16_t ecode; /**< One of the BLE core event codes. */
+  uint8_t  data[1];
+} evt_blecore_aci;
+
+/* Bluetooth 48 bit address (in little-endian order).
+ */
+typedef	uint8_t	tBDAddr[6];
+
+
 /* Exported constants --------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/

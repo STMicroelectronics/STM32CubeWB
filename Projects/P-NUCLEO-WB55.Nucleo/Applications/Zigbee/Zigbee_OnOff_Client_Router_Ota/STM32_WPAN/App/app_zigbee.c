@@ -68,6 +68,7 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config);
 static void APP_ZIGBEE_StackLayersInit(void);
 static void APP_ZIGBEE_ConfigEndpoints(void);
 static void APP_ZIGBEE_NwkForm(void);
+static void APP_ZIGBEE_App_Init(void);
 
 static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode);
 static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void);
@@ -156,6 +157,9 @@ void APP_ZIGBEE_Init(void)
   /* Task associated with push button SW3 */
   UTIL_SEQ_RegTask(1U << CFG_TASK_BUTTON_SW3, UTIL_SEQ_RFU, APP_ZIGBEE_SW3_Process);
   /* USER CODE END APP_ZIGBEE_INIT */
+
+  /* Task associated with application init */
+  UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_APP_START, UTIL_SEQ_RFU, APP_ZIGBEE_App_Init);
 
   /* Start the Zigbee on the CPU2 side */
   ZigbeeInitStatus = SHCI_C2_ZIGBEE_Init();
@@ -294,9 +298,22 @@ static void APP_ZIGBEE_NwkForm(void)
     /* Since we're using group addressing (broadcast), shorten the broadcast timeout */
     uint32_t bcast_timeout = 3;
     ZbNwkSet(zigbee_app_info.zb, ZB_NWK_NIB_ID_NetworkBroadcastDeliveryTime, &bcast_timeout, sizeof(bcast_timeout));
+
+    /* Call the ZIGBEE app init */
+    UTIL_SEQ_SetTask(1U << CFG_TASK_ZIGBEE_APP_START, CFG_SCH_PRIO_0);
   }
   /* USER CODE END NW_FORM */
 } /* APP_ZIGBEE_NwkForm */
+
+
+static void APP_ZIGBEE_App_Init(void)
+{
+  uint16_t  iShortAddress;
+
+  iShortAddress = ZbShortAddress( zigbee_app_info.zb );
+  APP_DBG("OnOff Client with Short Address 0x%04X.", iShortAddress );
+  APP_DBG("OnOff Client init done!\n");
+}
 
 /*************************************************************
  * ZbStartupWait Blocking Call

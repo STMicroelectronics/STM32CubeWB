@@ -420,7 +420,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
           (void *) p_notification->Data[1]);
     }
     break;
-  case MSG_M0TOM4_THREAD_DETACH_GRACEFULLY_CB:
+  case MSG_M0TOM4_DETACH_GRACEFULLY_CALLBACK:
     if (otDetachGracefullyCb != NULL)
     {
       otDetachGracefullyCb((void *) p_notification->Data[0]);

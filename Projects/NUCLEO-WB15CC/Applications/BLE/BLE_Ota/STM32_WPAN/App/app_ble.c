@@ -403,7 +403,7 @@ static void Adv_Request(void){
   aci_gap_set_discoverable(ADV_IND,
                                CFG_FAST_CONN_ADV_INTERVAL_MIN,
                                CFG_FAST_CONN_ADV_INTERVAL_MAX,
-                               PUBLIC_ADDR,
+                               GAP_PUBLIC_ADDR,
                                NO_WHITE_LIST_USE, sizeof(local_name), (uint8_t*) &local_name, 0, 0, 0, 0);
 
   /* Send Advertising data */

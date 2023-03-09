@@ -209,14 +209,9 @@ void LED_Deinit(void)
  */
 void LED_On(void)
 {
-  aPwmLedGsData_TypeDef aPwmLedGsData;
-
-  BSP_PWM_LED_Init();
-  aPwmLedGsData[PWM_LED_RED] = PWM_LED_GSDATA_99_9;
-  aPwmLedGsData[PWM_LED_GREEN] = PWM_LED_GSDATA_99_9;
-  aPwmLedGsData[PWM_LED_BLUE] = PWM_LED_GSDATA_99_9;
-  BSP_PWM_LED_On(aPwmLedGsData);
-  LED_Deinit();
+  LED_Set_rgb((uint8_t) PWM_LED_GSDATA_99_9,
+              (uint8_t) PWM_LED_GSDATA_99_9,
+              (uint8_t) PWM_LED_GSDATA_99_9);
 }
 
 /**
@@ -241,6 +236,7 @@ void LED_Set_rgb(uint8_t r, uint8_t g, uint8_t b)
   aPwmLedGsData_TypeDef aPwmLedGsData;
   
   BSP_PWM_LED_Init();
+  HAL_Delay(50);
   aPwmLedGsData[PWM_LED_RED] = r;
   aPwmLedGsData[PWM_LED_GREEN] = g;
   aPwmLedGsData[PWM_LED_BLUE] = b;
@@ -651,6 +647,10 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
     UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
     /* Process notifications and requests from the M0 */
     UTIL_SEQ_Run((1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4) | (1U << CFG_TASK_REQUEST_FROM_M0_TO_M4));
+    break;
+  case EVENT_ON_OFF_RSP:
+    /* Run all task except CFG_TASK_BUTTON_SW1 */
+    UTIL_SEQ_Run(~(1U << CFG_TASK_BUTTON_SW1));
     break;
   default :
     /* default case */

@@ -149,47 +149,47 @@
 		<link>
 			<name>Application/User/Core/src/app_entry.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/src/app_entry.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_entry.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/src/main.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/src/main.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/main.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/src/stm32_lpm_if.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/src/stm32_lpm_if.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32_lpm_if.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/src/stm32wbxx_hal_msp.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/src/stm32wbxx_hal_msp.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32wbxx_hal_msp.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/src/stm32wbxx_it.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/src/stm32wbxx_it.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/stm32wbxx_it.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/src/system_stm32wbxx.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/src/system_stm32wbxx.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/system_stm32wbxx.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/STM32_WPAN/app/app_lpm_transmit_mac_802_15_4.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/app_lpm_transmit_mac_802_15_4.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/App/app_lpm_transmit_mac_802_15_4.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/STM32_WPAN/app/app_lpm_transmit_mac_802_15_4_process.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/app/app_lpm_transmit_mac_802_15_4_process.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/App/app_lpm_transmit_mac_802_15_4_process.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/STM32_WPAN/target/hw_ipcc.c</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/target/hw_ipcc.c</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/STM32_WPAN/Target/hw_ipcc.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/utilities/mac_802_15_4/inc/802_15_4_mac_config.h</name>

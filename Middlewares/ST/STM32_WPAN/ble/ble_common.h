@@ -34,6 +34,9 @@ extern "C" {
 #include "ble_conf.h"
 #include "ble_dbg_conf.h"
 
+/* Event types copied from MW Legacy file*/
+#include "tl.h"
+
 /* -------------------------------- *
  *  Basic definitions               *
  * -------------------------------- */
@@ -104,8 +107,6 @@ extern "C" {
    *  Compiler                         *
    * -------------------------------- */
 #define PLACE_IN_SECTION( __x__ )  __attribute__((section (__x__)))
-
-
 
 #ifdef __cplusplus
 }

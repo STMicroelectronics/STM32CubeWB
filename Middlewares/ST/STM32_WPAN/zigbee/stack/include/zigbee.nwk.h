@@ -2,7 +2,7 @@
  * @file zigbee.nwk.h
  * @brief NWK header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_NWK_H
@@ -140,57 +140,44 @@ enum ZbNwkNibAttrIdT {
 
     /* 0x400 to 0x4ff reserved for custom NIBs. */
     ZB_NWK_NIB_ID_Depth = 0x0400,
-    ZB_NWK_NIB_ID_FrameCounterSet,
-    /* Adds a delay in milliseconds  between receiving the first RREP
-     * and sending any pending packets awaiting the completion of route
-     * discovery. Default is 0, meaning packets are sent after the
-     * first RREP is received. If a better route is discovered later on,
-     * subsequent packets will use the better route. */
-    ZB_NWK_NIB_ID_RouteDiscoverySendDelay,
-    ZB_NWK_NIB_ID_FastPollPeriod, /* Only used as sleepy end devices to set the fast polling inverval. */
-    ZB_NWK_NIB_ID_FrameCounterCooldown, /* Cooldown timer (in seconds) to apply to frame counter resets. */
-    ZB_NWK_NIB_ID_OutgoingCounter, /* Global outgoing frame counter. */
-    ZB_NWK_NIB_ID_PersistCounter, /* Persisted outgoing frame counter. */
+    ZB_NWK_NIB_ID_FrameCounterSet = 0x0401,
+    /* discontinuity */
+    ZB_NWK_NIB_ID_FastPollPeriod = 0x0403, /* Only used as sleepy end devices to set the fast polling inverval. */
+    ZB_NWK_NIB_ID_FrameCounterCooldown = 0x0404, /* Cooldown timer (in seconds) to apply to frame counter resets. */
+    ZB_NWK_NIB_ID_OutgoingCounter = 0x0405, /* Global outgoing frame counter. */
+    ZB_NWK_NIB_ID_PersistCounter = 0x0406, /* Persisted outgoing frame counter. */
 
     /* R21+ attributes */
-    /* EXEGIN - The following NIBs should have IDs from 0xaa to 0xad, but
-     * these are already being used by APS security. I think the only place
-     * this would be a problem is the Gateway API which has a single generic
-     * GET/SET API, which means attribute IDs must be unique and not overlap. */
-    ZB_NWK_NIB_ID_LeaveRequestAllowed,
-    ZB_NWK_NIB_ID_ParentInformation,
-    ZB_NWK_NIB_ID_EndDeviceTimeoutDefault,
-    ZB_NWK_NIB_ID_EdkaFailThreshold,
+    ZB_NWK_NIB_ID_LeaveRequestAllowed = 0x0407,
+    ZB_NWK_NIB_ID_ParentInformation = 0x0408,
+    ZB_NWK_NIB_ID_EndDeviceTimeoutDefault = 0x0409,
+    ZB_NWK_NIB_ID_EdkaFailThreshold = 0x040a,
     /**< Number of consecutive EDKA request failures before triggering a PARENT_LINK_FAILURE.
      * Valid range is 1 to 4. Default is 1. */
-    ZB_NWK_NIB_ID_LeaveRequestWithoutRejoinAllowed,
-    ZB_NWK_NIB_ID_DisablePeriodicTimers,
+    ZB_NWK_NIB_ID_LeaveRequestWithoutRejoinAllowed = 0x040b,
+    ZB_NWK_NIB_ID_DisablePeriodicTimers = 0x040c,
     /**< If set, NWK layer disables automatic EDKA and Link Power Negotiation timers.
      * Default is 0 (automatic timers are enabled). If automatic EDKA is disabled,
      * the application can call ZbNwkSendEdkaReq() periodically itself to refresh
      * the timeout on its Parent. */
 
     /* R22+ attributes */
-    /* EXEGIN - nwkIeeeAddress (should be 0xae, but already being used by APS security) */
-    /* EXEGIN - nwkMacInterfaceTable (should be 0xaf, but already being used by APS security) */
-    ZB_NWK_NIB_ID_TxPowerMgmtSupported, /* not affected by nwk_reset_nib, keeps value. */
-    ZB_NWK_NIB_ID_LinkPowerDeltaPeriod,
+    ZB_NWK_NIB_ID_TxPowerMgmtSupported = 0x040d, /* not affected by nwk_reset_nib, keeps value. */
+    ZB_NWK_NIB_ID_LinkPowerDeltaPeriod = 0x040e,
 
     /* R22 MAC PIB Attributes that are maintained by our NWK layer, since we support multiple interfaces. */
-    ZB_NWK_NIB_ID_JoiningListUpdateId, /* IeeeJoiningListUpdateID [uint8_t] */
-    ZB_NWK_NIB_ID_JoiningPolicy, /* mibJoiningPolicy [uint8_t] */
-    ZB_NWK_NIB_ID_JoiningListTotal, /* IeeeJoiningListTotal [uint8_t] */
-    ZB_NWK_NIB_ID_JoiningListExpiryInterval, /* mibIeeeExpiryInterval minutes [uint16_t] */
+    ZB_NWK_NIB_ID_JoiningListUpdateId = 0x040f, /* IeeeJoiningListUpdateID [uint8_t] */
+    ZB_NWK_NIB_ID_JoiningPolicy = 0x0410, /* mibJoiningPolicy [uint8_t] */
+    ZB_NWK_NIB_ID_JoiningListTotal = 0x0411, /* IeeeJoiningListTotal [uint8_t] */
+    ZB_NWK_NIB_ID_JoiningListExpiryInterval = 0x0412, /* mibIeeeExpiryInterval minutes [uint16_t] */
     /* mibIeeeExpiryIntervalCountdown is not externally accessible */
 
     ZB_NWK_NIB_ID_ActiveChannelList = 0x0413, /* struct ZbChannelListT - Get only. */
     ZB_NWK_NIB_ID_PermitJoinCounter = 0x0414, /* uint8_t - Get only. Set through ZbNlmePermitJoinReq */
     ZB_NWK_NIB_ID_PassiveAckEnabled = 0x0415, /* uint8_t - Enable/Disable Broadcast Passive ACK */
 
+    /* discontinuity */
     /* Exegin Custom Attributes */
-    ZB_NWK_NIB_ID_RouteCostPerHop = 0x04a0,
-    ZB_NWK_NIB_ID_RouteNeighborMaxCost = 0x04a1,
-    ZB_NWK_NIB_ID_KeepAliveInfo = 0x04a2, /* NIB for keeping track of which KA method is supported (R22 Table 3-55) */
     ZB_NWK_NIB_ID_AllowLostParentFlag = 0x04a3,
     /**< If true, then a stack internal flag will be set when ZB_NWK_STATUS_CODE_PARENT_LINK_FAILURE
      * is generated via NLME-NWK-STATUS.indication. When the flag is set, the NLDE-DATA.request
@@ -202,14 +189,21 @@ enum ZbNwkNibAttrIdT {
      * ultimately fail. The flag is cleared once a packet is received by the parent, or if
      * this attribute's value is set to 0. */
 
-    ZB_NWK_NIB_ID_SedTimeoutLeaveDuration = 0x04a4
-        /**< How long in seconds to keep trying to send a Network Leave Request indirectly to
-         * Sleepy End Device (SED) after it has timed-out from the NNT.
-         * Minimum duration is 30 seconds, and maximum duration is 1 hour.
-         * Default is 5 minutes. */
+    ZB_NWK_NIB_ID_SedTimeoutLeaveDuration = 0x04a4,
+    /**< How long in seconds to keep trying to send a Network Leave Request indirectly to
+     * Sleepy End Device (SED) after it has timed-out from the NNT.
+     * Minimum duration is 30 seconds, and maximum duration is 1 hour.
+     * Default is 5 minutes. */
+
+    ZB_NWK_NIB_ID_SedLeaveRspDuringRejoin = 0x04a5,
+    /**< This flag controls whether we are we allowed to send a Network Leave Response
+     * for a Leave Request while we're in the middle of a rejoin. By default,
+     * and since R22.2 especially, the SED should not send a Leave Response. */
+
+    ZB_NWK_NIB_ID_Max = 0x04ff
 };
 
-/* Possible values for struct ZbNlmeJoinReqT.rejoinNetwork */
+/* Possible values for ZbNlmeJoinReqT.rejoinNetwork */
 enum ZbNwkRejoinTypeT {
     ZB_NWK_REJOIN_TYPE_ASSOC = 0x00,
     ZB_NWK_REJOIN_TYPE_ORPHAN,
@@ -238,7 +232,7 @@ enum WpanJoinPolicyT {
 #define ZB_NWK_CONST_MAX_BROADCAST_JITTER           0x40U /* In ms. */
 #define ZB_NWK_CONST_INITIAL_RREQ_RETRIES           0x03U
 #define ZB_NWK_CONST_RREQ_RETRIES                   0x02U
-#define ZB_NWK_CONST_RREQ_RETRY_INTERVAL            0xfeU /* In ms. */
+#define ZB_NWK_CONST_RREQ_RETRY_INTERVAL            0xfeU /* 254 mS */
 #define ZB_NWK_CONST_MIN_RREQ_JITTER                0x01U /* In 2 ms slots. */
 #define ZB_NWK_CONST_MAX_RREQ_JITTER                0x40U /* In 2 ms slots. */
 #define ZB_NWK_CONST_MAC_FRAME_OVERHEAD             0x0bU /* See D.4 of 053474r17. */

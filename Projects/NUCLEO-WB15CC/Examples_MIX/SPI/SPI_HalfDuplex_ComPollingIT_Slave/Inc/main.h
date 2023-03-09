@@ -58,6 +58,7 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+
 /* USER CODE BEGIN Private defines */
 /* Size of buffer */
 #define BUFFERSIZE                       (COUNTOF(aTxBuffer) - 1)

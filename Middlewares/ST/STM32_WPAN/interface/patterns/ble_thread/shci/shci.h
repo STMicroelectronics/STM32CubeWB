@@ -536,9 +536,7 @@ extern "C" {
    * - bit 5:   1: Reduced GATT database in NVM     0: Full GATT database in NVM 
    * - bit 6:   1: GATT caching is used             0: GATT caching is not used
    * - bit 7:   1: LE Power Class 1                 0: LE Power Classe 2-3
-   * - bit 8:   1: appearance Writable              0: appearance Read-Only
-   * - bit 9:   1: Enhanced ATT supported           0: Enhanced ATT not supported
-   * - other bits: reserved ( shall be set to 0)
+   * - other bits: complete with Options_extension flag
    */
   uint8_t Options;
 
@@ -603,7 +601,15 @@ extern "C" {
    * values as: 11(5.2), 12(5.3)
    */
   uint8_t ble_core_version; 
-  
+ 
+   /**
+   * Options flags extension
+   * - bit 0:   1: appearance Writable              0: appearance Read-Only
+   * - bit 1:   1: Enhanced ATT supported           0: Enhanced ATT not supported
+   * - other bits: reserved ( shall be set to 0)
+   */
+  uint8_t Options_extension;
+
       } SHCI_C2_Ble_Init_Cmd_Param_t;
 
   typedef PACKED_STRUCT{
@@ -640,11 +646,16 @@ extern "C" {
 #define SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_1                        (1<<7)
 #define SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3                      (0<<7)
 
-#define SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_WRITABLE                  (1<<8)
-#define SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY                  (0<<8)
+  /**
+   * Options extension
+   * Each definition below may be added together to build the Options value
+   * WARNING : Only one definition per bit shall be added to build the Options value
+   */
+#define SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_WRITABLE                  (1<<0)
+#define SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY                  (0<<0)
 
-#define SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_SUPPORTED               (1<<9)
-#define SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED            (0<<9)
+#define SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_SUPPORTED               (1<<1)
+#define SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED            (0<<1)
   
     /**
    * RX models configuration

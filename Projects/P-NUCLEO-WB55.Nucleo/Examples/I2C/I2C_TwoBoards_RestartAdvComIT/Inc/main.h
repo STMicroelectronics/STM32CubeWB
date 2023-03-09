@@ -64,6 +64,7 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 #define I2C_ADDRESS 0x3C
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
