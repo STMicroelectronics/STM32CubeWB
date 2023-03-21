@@ -314,6 +314,7 @@ typedef  void (*pI2C_AddrCallbackTypeDef)(I2C_HandleTypeDef *hi2c, uint8_t Trans
  */
 #define  I2C_OTHER_FRAME                (0x000000AAU)
 #define  I2C_OTHER_AND_LAST_FRAME       (0x0000AA00U)
+#define  I2C_OTHER_AND_NEXT_FRAME       (0x00AA0000U)
 /**
   * @}
   */
@@ -781,8 +782,9 @@ uint32_t             HAL_I2C_GetError(const I2C_HandleTypeDef *hi2c);
                                                    ((REQUEST) == I2C_LAST_FRAME_NO_STOP)   || \
                                                    IS_I2C_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST))
 
-#define IS_I2C_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST) (((REQUEST) == I2C_OTHER_FRAME)     || \
-                                                        ((REQUEST) == I2C_OTHER_AND_LAST_FRAME))
+#define IS_I2C_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST) (((REQUEST) == I2C_OTHER_FRAME)           || \
+                                                        ((REQUEST) == I2C_OTHER_AND_LAST_FRAME)  || \
+                                                        ((REQUEST) == I2C_OTHER_AND_NEXT_FRAME))
 
 #define I2C_RESET_CR2(__HANDLE__)                 ((__HANDLE__)->Instance->CR2 &= \
                                                    (uint32_t)~((uint32_t)(I2C_CR2_SADD   | I2C_CR2_HEAD10R | \

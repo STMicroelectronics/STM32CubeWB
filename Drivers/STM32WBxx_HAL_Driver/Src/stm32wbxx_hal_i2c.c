@@ -146,6 +146,8 @@
                               with option I2C_FIRST_FRAME then I2C_OTHER_FRAME.
                             Then usage of this option I2C_OTHER_AND_LAST_FRAME at the last frame to help automatic
                             generation of STOP condition.
+                            Usage of I2C_OTHER_AND_NEXT_FRAME allow to manage a sequence with a reset condition
+                            and continue to send bytes in the same direction.
 
       (+) Different sequential I2C interfaces are listed below:
       (++) Sequential transmit in master I2C mode an amount of data in non-blocking mode using
@@ -7295,6 +7297,10 @@ static void I2C_ConvertOtherXferOptions(I2C_HandleTypeDef *hi2c)
   else if (hi2c->XferOptions == I2C_OTHER_AND_LAST_FRAME)
   {
     hi2c->XferOptions = I2C_FIRST_AND_LAST_FRAME;
+  }
+  else if (hi2c->XferOptions == I2C_OTHER_AND_NEXT_FRAME)
+  {
+    hi2c->XferOptions = I2C_FIRST_AND_NEXT_FRAME;
   }
   else
   {
