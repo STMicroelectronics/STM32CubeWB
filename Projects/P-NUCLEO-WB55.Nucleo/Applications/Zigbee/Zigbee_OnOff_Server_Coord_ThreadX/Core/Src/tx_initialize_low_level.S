@@ -60,13 +60,12 @@
     .global     __tx_PendSVHandler                  @ PendSV
     .global     __tx_SysTickHandler                 @ SysTick
     .global     __tx_IntHandler                     @ Int 0
+#ifdef USE_DYNAMIC_MEMORY_ALLOCATION
     .global     Image$$RW_IRAM1$$ZI$$Limit
+#endif
     .global     __Vectors
 @
 @
-@/* CPU1 running at 32 MHz */
-@/* SYSTICK programmed at 1 ms */
-@/* ThreadX Tick Rate 1000 Hz */
 SYSTEM_CLOCK      =   32000000
 SYSTICK_CYCLES    =   ((SYSTEM_CLOCK / 1000) -1)
 
@@ -208,8 +207,16 @@ __tx_IntHandler:
 @ VOID InterruptHandler (VOID)
 @ {
     PUSH    {r0, lr}
+#ifdef TX_EXECUTION_PROFILE_ENABLE
+    BL      _tx_execution_isr_enter             @ Call the ISR enter function
+#endif
+
 @    /* Do interrupt handler work here */
 @    /* BL <your C Function>.... */
+
+#ifdef TX_EXECUTION_PROFILE_ENABLE
+    BL      _tx_execution_isr_exit              @ Call the ISR exit function
+#endif
     POP     {r0, lr}
     BX      LR
 @ }
@@ -225,7 +232,13 @@ SysTick_Handler:
 @ {
 @
     PUSH    {r0, lr}
+#ifdef TX_EXECUTION_PROFILE_ENABLE
+    BL      _tx_execution_isr_enter             @ Call the ISR enter function
+#endif
     BL      _tx_timer_interrupt
+#ifdef TX_EXECUTION_PROFILE_ENABLE
+    BL      _tx_execution_isr_exit              @ Call the ISR exit function
+#endif
     POP     {r0, lr}
     BX      LR
 @ }
@@ -274,10 +287,6 @@ __tx_DBGHandler:
     EXTERN  _tx_execution_isr_exit
 ;
 ;
-;/* CPU1 running at 32 MHz */
-;/* SYSTICK programmed at 1 ms */
-;/* ThreadX Tick Rate 1000 Hz */
-
 SYSTEM_CLOCK      EQU   32000000
 SYSTICK_CYCLES    EQU   ((SYSTEM_CLOCK / 1000) -1)
 
@@ -407,11 +416,11 @@ SysTick_Handler:
 ; {
 ;
     PUSH    {r0, lr}
-#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
+#ifdef TX_EXECUTION_PROFILE_ENABLE
     BL      _tx_execution_isr_enter             ; Call the ISR enter function
 #endif
     BL      _tx_timer_interrupt
-#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
+#ifdef TX_EXECUTION_PROFILE_ENABLE
     BL      _tx_execution_isr_exit              ; Call the ISR exit function
 #endif
     POP     {r0, lr}
@@ -461,9 +470,7 @@ SysTick_Handler:
     .global     __tx_IntHandler                     @ Int 0
 @
 @
-@/* CPU1 running at 32 MHz */
-@/* SYSTICK programmed at 1 ms */
-@/* ThreadX Tick Rate 1000 Hz */
+
 SYSTEM_CLOCK      =   32000000
 SYSTICK_CYCLES    =   ((SYSTEM_CLOCK / 1000) -1)
 
@@ -609,14 +616,14 @@ __tx_IntHandler:
 @ VOID InterruptHandler (VOID)
 @ {
     PUSH    {r0, lr}
-#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
+#ifdef TX_EXECUTION_PROFILE_ENABLE
     BL      _tx_execution_isr_enter             @ Call the ISR enter function
 #endif
 
 @    /* Do interrupt handler work here */
 @    /* BL <your C Function>.... */
 
-#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
+#ifdef TX_EXECUTION_PROFILE_ENABLE
     BL      _tx_execution_isr_exit              @ Call the ISR exit function
 #endif
     POP     {r0, lr}
@@ -634,11 +641,11 @@ SysTick_Handler:
 @ {
 @
     PUSH    {r0, lr}
-#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
+#ifdef TX_EXECUTION_PROFILE_ENABLE
     BL      _tx_execution_isr_enter             @ Call the ISR enter function
 #endif
     BL      _tx_timer_interrupt
-#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
+#ifdef TX_EXECUTION_PROFILE_ENABLE
     BL      _tx_execution_isr_exit              @ Call the ISR exit function
 #endif
     POP     {r0, lr}

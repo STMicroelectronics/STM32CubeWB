@@ -792,7 +792,7 @@ MOBLE_RESULT LightClient_Ctl_Set_Unack(MOBLEUINT8 elementIndex,
 
 {
 /*  
-  6.3.2.3 Light CTL Set Unacknowleged
+  6.3.2.3 Light CTL Set Unacknowledged
   CTL Lightness: 2B The target value of the Light CTL Lightness state.
   CTL Temperature: 2B The target value of the Light CTL Temperature state.
   CTL Delta UV: 2B The target value of the Light CTL Delta UV state.
@@ -937,7 +937,7 @@ MOBLE_RESULT LightClient_Ctl_Temperature_Set_Unack(MOBLEUINT8 elementIndex,
 
 {
 /*  
-  6.3.2.7 Light CTL Temperature Set Unacknowleged
+  6.3.2.7 Light CTL Temperature Set Unacknowledged
   CTL Temperature: 2B The target value of the Light CTL Temperature state.
   CTL Delta UV: 2B The target value of the Light CTL Delta UV state.
   TID :  1B Transaction Identifier
@@ -1070,7 +1070,7 @@ MOBLE_RESULT LightClient_Ctl_Temperature_Range_Set_Unack(MOBLEUINT8 elementIndex
 
 {
 /*  
-  6.3.2.11 Light CTL Temperature Range Set Unacknowleged
+  6.3.2.11 Light CTL Temperature Range Set Unacknowledged
   Range Min: 2B The value of the Temperature Range Min field of the Light CTL Temperature Range state
   Range Max 2B The value of the Temperature Range Max field of the Light CTL Temperature Range state
 */   
@@ -1193,7 +1193,7 @@ MOBLE_RESULT LightClient_Ctl_Default_Set_Unack(MOBLEUINT8 elementIndex,
 
 {
 /*  
-  6.3.2.15 Light CTL Default Set Unacknowleged
+  6.3.2.15 Light CTL Default Set Unacknowledged
   CTL Lightness: 2B The target value of the Light CTL Lightness Default state.
   CTL Temperature: 2B The target value of the Light CTL Temperature Default state.
   CTL Delta UV: 2B The target value of the Light CTL Delta UV Default state.
@@ -1336,7 +1336,7 @@ MOBLE_RESULT LightClient_Hsl_Set_Unack(MOBLEUINT8 elementIndex,
 
 {
 /*  
-  6.3.3.3 Light HSL Set Unacknowleged
+  6.3.3.3 Light HSL Set Unacknowledged
   HSL Lightness: 2B The target value of the Light HSL Lightness state
   HSL Hue: 2B The target value of the Light HSL Hue state
   HSL Saturation: 2B The target value of the Light HSL Saturation state
@@ -1471,7 +1471,7 @@ MOBLE_RESULT LightClient_Hsl_Default_Set_Unack(MOBLEUINT8 elementIndex,
 
 {
 /*  
-  6.3.3.17 Light HSL Default Set Unacknowleged
+  6.3.3.17 Light HSL Default Set Unacknowledged
   Lightness: 2B The value of the Light HSL Lightness Default state
   Hue: 2B The value of the Light HSL Hue Default state
   Saturation: 2B The value of the Light HSL Saturation Default state
@@ -1595,7 +1595,7 @@ MOBLE_RESULT LightClient_Hsl_Range_Set_Unack(MOBLEUINT8 elementIndex,
 
 {
 /*  
-  6.3.3.21 Light HSL Range Set Unacknowleged
+  6.3.3.21 Light HSL Range Set Unacknowledged
   Hue Range Min: 2B The value of the Hue Range Min field of the Light HSL Hue Range state
   Hue Range Max: 2B The value of the Hue Range Max field of the Light HSL Hue Range state
   Saturation Range Min: 2B The value of the Saturation Range Min field of the Light HSL Saturation Range state
@@ -1728,7 +1728,7 @@ MOBLE_RESULT LightClient_Hsl_Hue_Set_Unack(MOBLEUINT8 elementIndex,
 
 {
 /*  
-  6.3.3.9 Light HSL Hue Set Unacknowleged
+  6.3.3.9 Light HSL Hue Set Unacknowledged
   HSL Hue: 2B The target value of the Light HSL Hue state
   TID :  1B Transaction Identifier
   Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
@@ -1877,7 +1877,7 @@ MOBLE_RESULT LightClient_Hsl_Saturation_Set_Unack(MOBLEUINT8 elementIndex,
 
 {
 /*  
-  6.3.3.9 Light HSL Saturation Set Unacknowleged
+  6.3.3.9 Light HSL Saturation Set Unacknowledged
   HSL Saturation: 2B The target value of the Light HSL Saturation state
   TID :  1B Transaction Identifier
   Transition Time: 1B Format as defined in Section 3.1.3. (Optional)
@@ -3021,7 +3021,7 @@ MOBLE_RESULT LightClient_LC_Property_Set_Unack(MOBLEUINT8 elementIndex,
 * @param  plength: Pointer to the Length of the data, to be updated by application
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT LightModelClient_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam, 
@@ -3049,7 +3049,7 @@ MOBLE_RESULT LightModelClient_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgPara
 * @param  response: if TRUE, the message is an acknowledged message
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT LightModelClient_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParam, 

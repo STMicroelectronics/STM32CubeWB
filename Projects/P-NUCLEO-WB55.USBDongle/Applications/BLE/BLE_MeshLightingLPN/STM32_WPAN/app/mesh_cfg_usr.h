@@ -65,10 +65,10 @@
          for printf and scanf functionality */
 
 /* Enables the serial interface using Uart */
-#define ENABLE_SERIAL_INTERFACE                                                1
-#define ENABLE_SIG_MODELS_AT_COMMANDS                                          1
+#define ENABLE_SERIAL_INTERFACE                                                0
+#define ENABLE_SIG_MODELS_AT_COMMANDS                                          0
 #define ENABLE_VENDOR_MODELS_AT_COMMANDS                                       0
-#define ENABLE_UT                                                              1
+#define ENABLE_UT                                                              0
       
 /* Macros Used for user defined serial print data for models. 
 Either use 0 to disable or 1 to enable

@@ -427,21 +427,11 @@ static void APPE_SysEvtReadyProcessing()
  * @retval None
  */
 void APP_ENTRY_ProcessMsgFromRFCoreTask(void)
-{
-
+{  
   if (CptReceiveMsgFromRFCore != 0U)
   {
-    /* If CptReceiveMsgFromRFCore is > 1. it means that we did not serve all the events from the radio */
-    if (CptReceiveMsgFromRFCore > 1)
-    {
-      APP_ScheduleError(ERR_APPLI_REC_MULTI_MSG_FROM_RFCore);
-    }
-    else
-    {
-      MAC_802_15_4_CallBack_Processing();
-    }
-    /* Reset counter */
     CptReceiveMsgFromRFCore = 0U;
+    MAC_802_15_4_CallBack_Processing();
   }
 }
 
@@ -784,7 +774,7 @@ static void Receive_Ack_From_RFCore(void)
   */
 static void Receive_Notification_From_RFCore(void)
 {
-  CptReceiveMsgFromRFCore++;
+  CptReceiveMsgFromRFCore = 1;
   UTIL_SEQ_SetTask(TASK_MSG_FROM_RF_CORE,CFG_SCH_PRIO_0);
 }
 

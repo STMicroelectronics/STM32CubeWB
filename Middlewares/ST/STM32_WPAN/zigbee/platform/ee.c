@@ -469,7 +469,7 @@ static int EE_Transfer( EE_var_t* pv, uint16_t addr, uint32_t page )
      or ACTIVE, except in case of recovery, where some pages may be already
      in ERASING state.
      However, in case of recovery, we do not not need to set ERASING,
-     as intialization phase erases the unactive pool. */
+     as initialization phase erases the unactive pool. */
   last_page =
     (page < pv->nb_pages) ? (2 * pv->nb_pages - 1) : (pv->nb_pages - 1);
 

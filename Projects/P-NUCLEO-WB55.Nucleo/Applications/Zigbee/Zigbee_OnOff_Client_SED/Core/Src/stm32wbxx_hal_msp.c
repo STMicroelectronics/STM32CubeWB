@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : stm32wbxx_hal_msp.c
-  * Description        : This file provides code for the MSP Initialization 
-  *                      and de-Initialization codes.
+  * @file         stm32wbxx_hal_msp.c
+  * @brief        This file provides code for the MSP Initialization
+  *               and de-Initialization codes.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -21,7 +21,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 /* USER CODE BEGIN Includes */
-#include "app_conf.h"
+
 /* USER CODE END Includes */
 extern DMA_HandleTypeDef hdma_lpuart1_tx;
 
@@ -34,7 +34,7 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN Define */
- 
+
 /* USER CODE END Define */
 
 /* Private macro -------------------------------------------------------------*/
@@ -346,15 +346,17 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   if(hrtc->Instance==RTC)
   {
   /* USER CODE BEGIN RTC_MspInit 0 */
-    HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
+    /* Enable access to the RTC registers */
+    HAL_PWR_EnableBkUpAccess(); 
 
-    /**
+    /*
      *  Write twice the value to flush the APB-AHB bridge
      *  This bit shall be written in the register before writing the next one
      */
     HAL_PWR_EnableBkUpAccess();
 
-    __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE); /**< Select LSE as RTC Input */
+    /* Select LSE as RTC Input */
+    __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE); 
 
   /* USER CODE END RTC_MspInit 0 */
 

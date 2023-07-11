@@ -65,3 +65,88 @@ otError otLoggingSetLevel(otLogLevel aLogLevel)
   return (otError)p_ot_req->Data[0];
 }
 #endif
+
+void otDumpCritPlat(const char *aText, const void *aData, uint16_t aDataLength)
+{
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_DUMP_CRIT_PLAT;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aText;
+  p_ot_req->Data[1] = (uint32_t)aData;
+  p_ot_req->Data[2] = (uint32_t)aDataLength;
+
+  Ot_Cmd_Transfer();
+}
+
+void otDumpWarnPlat(const char *aText, const void *aData, uint16_t aDataLength)
+{
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_DUMP_WARN_PLAT;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aText;
+  p_ot_req->Data[1] = (uint32_t)aData;
+  p_ot_req->Data[2] = (uint32_t)aDataLength;
+
+  Ot_Cmd_Transfer();
+}
+
+void otDumpNotePlat(const char *aText, const void *aData, uint16_t aDataLength)
+{
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_DUMP_NOTE_PLAT;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aText;
+  p_ot_req->Data[1] = (uint32_t)aData;
+  p_ot_req->Data[2] = (uint32_t)aDataLength;
+
+  Ot_Cmd_Transfer();
+}
+
+void otDumpInfoPlat(const char *aText, const void *aData, uint16_t aDataLength)
+{
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_DUMP_INFO_PLAT;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aText;
+  p_ot_req->Data[1] = (uint32_t)aData;
+  p_ot_req->Data[2] = (uint32_t)aDataLength;
+
+  Ot_Cmd_Transfer();
+}
+
+void otDumpDebgPlat(const char *aText, const void *aData, uint16_t aDataLength)
+{
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_DUMP_DEBG_PLAT;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aText;
+  p_ot_req->Data[1] = (uint32_t)aData;
+  p_ot_req->Data[2] = (uint32_t)aDataLength;
+
+  Ot_Cmd_Transfer();
+}

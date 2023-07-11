@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -28,6 +28,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wbxx_hal.h"
+
 #include "app_conf.h"
 #include "app_entry.h"
 #include "app_common.h"
@@ -62,6 +63,12 @@ void MX_USART1_UART_Init(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define JTMS_Pin GPIO_PIN_13
+#define JTMS_GPIO_Port GPIOA
+#define JTCK_Pin GPIO_PIN_14
+#define JTCK_GPIO_Port GPIOA
+#define JTDO_Pin GPIO_PIN_3
+#define JTDO_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

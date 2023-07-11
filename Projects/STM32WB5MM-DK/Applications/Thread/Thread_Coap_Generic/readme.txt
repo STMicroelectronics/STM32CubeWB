@@ -31,14 +31,14 @@ Thread network. An End Device (or child) communicates primarily with a single Ro
 In our Application which uses two devices, one device will act as a Leader (Router) 
 and the other one will act as an End Device(mode child)
 
-After the reset of the 2 boards, one board will be in Leader mode (Green LED2 ON) 
-The other one will be in Child mode (Red LED3 ON).
+After the reset of the 2 boards, one board will be in Leader mode (displays it LCD) 
+The other one will be in Child mode (displays it LCD).
  
 Let's name indifferently one board A and one board B. 
 To send a COAP command from board A to board B, press the SW1 Push-Button on board A. 
-The board B will receive two COAP commands to toggle its blue LED1, second command is 
+The board B will receive two COAP commands to toggle on LCD 'O' letter (line 4), second command is 
 happening 5 seconds (WAIT_TIMEOUT) after the first command. 
-Pressing again same push-button will repeat the toggling (taking 5 seconds) of the blue LED1. 
+Pressing again same push-button will repeat the toggling (taking 5 seconds) of the LCD 'O'. 
 Pressing every second will reset the timer, hence, the second COAP command will not happen (need 
 to have 5 seconds without pressing the push button).
 Same COAP commands can be sent from board B to board A. 
@@ -48,7 +48,7 @@ Same COAP commands can be sent from board B to board A.
   |_________________________|                       |_________________________|  
   |                         |                       |                         |
   |                         |                       |                         |
-  |        Push Button -->  |======> COAP =========>| BLUE LED TOGGLE (ON/OFF)|
+  |        Push Button -->  |======> COAP =========>| LCD TOGGLE 'O'  (ON/OFF)|
   |                         | Resource "light"      |                         |
   |                         | Mode: Multicast       |                         |
   |                         | Type: Non-Confirmable |                         |
@@ -68,12 +68,10 @@ Same COAP commands can be sent from board B to board A.
   |                         |                       |         |               |
   |                         |                       |         v               |
   | CoapDataRespHandler()<--|<===== COAP <==========| <-------                |
-  |                         |                       | BLUE LED TOGGLE (ON/OFF)|  -- IF WAIT_TIMEOUT elapsed, BLUE LED TOGGLE again
+  |                         |                       | LCD TOGGLE 'O'  (ON/OFF)|  -- IF WAIT_TIMEOUT elapsed, BLUE LED TOGGLE again
   |                         |                       |                         |  
   ---------------------------                       ---------------------------
   | Role : Child            |                       | Role : Leader           |
-  |                         |                       |                         |
-  | LED : Red               |                       | LED : Green             |
   |                         |                       |                         |
   |_________________________|                       |_________________________|
 
@@ -108,28 +106,12 @@ COAP,Thread
  
 @par Hardware and Software environment
 
-  - This example runs on STM32WB55xx devices (Nucleo board and dongle) 
+  - This example runs on STM32WB55xx devices (DK, Nucleo board and dongle) 
   
-  - This example has been tested with an STMicroelectronics STM32WB55xx_Nucleo 
+  - This example has been tested with an STMicroelectronics STM32WB5MM-DK 
     board and can be easily tailored to any other supported device 
     and development board.
     
-  - On STM32WB55RG_Nucleo, the jumpers must be configured as described
-    in this section. Starting from the top left position up to the bottom 
-    right position, the jumpers on the Board must be set as follows:
-
-     CN11:    GND         [OFF]
-     JP4:     VDDRF       [ON]
-     JP6:     VC0         [ON]
-     JP2:     +3V3        [ON] 
-     JP1:     USB_STL     [ON]   All others [OFF]
-     CN12:    GND         [OFF]
-     CN7:     <All>       [OFF]
-     JP3:     VDD_MCU     [ON]
-     JP5:     GND         [OFF]  All others [ON]
-     CN10:    <All>       [OFF]
-
-
 @par How to use it ? 
 
 This application requests having the stm32wb5x_Thread_FTD_fw.bin binary flashed on the Wireless Coprocessor.
@@ -141,12 +123,12 @@ Wireless Coprocessor binary.
 
 
 In order to make the program work, you must do the following: 
- - Connect 2 STM32WB55xx_Nucleo boards to your PC 
+ - Connect 2 STM32WB5MM-DK boards to your PC 
  - Open your preferred toolchain 
  - Rebuild all files and load your image into target memory
  - Run the application 
  
- Note: when LED1, LED2 and LED3 are toggling it is indicating an error has occurred on application.
+ Note: when an error has occurred on application it is indicating on LCD Line 4.
  
  If you want to control this application, you can directly send and
  retrieve Cli commands connecting an HyperTerminal with the ST_Link cable.

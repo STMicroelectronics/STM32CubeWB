@@ -48,7 +48,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>BLE_HeartRate\</OutputDirectory>
+          <OutputDirectory>BLE_HeartRate\Exe\</OutputDirectory>
           <OutputName>BLE_HeartRate</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>

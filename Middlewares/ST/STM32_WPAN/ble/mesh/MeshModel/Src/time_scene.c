@@ -103,7 +103,7 @@ MOBLE_RESULT Time_SceneModelServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam
 * @param  plength: Pointer to the Length of the data, to be updated by application
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT Time_SceneModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr, 
@@ -161,7 +161,7 @@ MOBLE_RESULT Time_SceneModelServer_GetStatusRequestCb(MOBLE_ADDRESS peer_addr,
 * @param  response: if TRUE, the message is an acknowledged message 
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT Time_SceneModelServer_ProcessMessageCb(MOBLE_ADDRESS peer_addr, 

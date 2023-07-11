@@ -907,7 +907,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *p_Pckt )
               APP_BLE_Conn_Update_req.L2CAP_Length = pr->L2CAP_Length;
               APP_BLE_Conn_Update_req.Interval_Min = pr->Interval_Min;
               APP_BLE_Conn_Update_req.Interval_Max = pr->Interval_Max;
-              APP_BLE_Conn_Update_req.Slave_Latency = pr->Slave_Latency;
+              APP_BLE_Conn_Update_req.Slave_Latency = pr->Latency;
               APP_BLE_Conn_Update_req.Timeout_Multiplier = pr->Timeout_Multiplier;
 
               result = aci_l2cap_connection_parameter_update_resp(APP_BLE_Conn_Update_req.Connection_Handle,

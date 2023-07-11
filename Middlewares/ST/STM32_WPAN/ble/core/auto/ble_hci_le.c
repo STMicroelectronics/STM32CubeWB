@@ -645,7 +645,7 @@ tBleStatus hci_le_create_connection_cancel( void )
   return status;
 }
 
-tBleStatus hci_le_read_filter_accept_list_size( uint8_t* White_List_Size )
+tBleStatus hci_le_read_filter_accept_list_size( uint8_t* Filter_Accept_List_Size )
 {
   struct hci_request rq;
   hci_le_read_filter_accept_list_size_rp0 resp;
@@ -659,7 +659,7 @@ tBleStatus hci_le_read_filter_accept_list_size( uint8_t* White_List_Size )
     return BLE_STATUS_TIMEOUT;
   if ( resp.Status )
     return resp.Status;
-  *White_List_Size = resp.White_List_Size;
+  *Filter_Accept_List_Size = resp.Filter_Accept_List_Size;
   return BLE_STATUS_SUCCESS;
 }
 
@@ -1949,6 +1949,31 @@ tBleStatus hci_le_set_privacy_mode( uint8_t Peer_Identity_Address_Type,
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x08;
   rq.ocf = 0x04e;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus hci_le_generate_dhkey_v2( const uint8_t* Remote_P256_Public_Key,
+                                     uint8_t Key_Type )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  hci_le_generate_dhkey_v2_cp0 *cp0 = (hci_le_generate_dhkey_v2_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  Osal_MemCpy( (void*)&cp0->Remote_P256_Public_Key, (const void*)Remote_P256_Public_Key, 64 );
+  index_input += 64;
+  cp0->Key_Type = Key_Type;
+  index_input += 1;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x08;
+  rq.ocf = 0x05e;
+  rq.event = 0x0F;
   rq.cparam = cmd_buffer;
   rq.clen = index_input;
   rq.rparam = &status;

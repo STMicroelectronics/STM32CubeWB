@@ -746,7 +746,8 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   uint16_t gap_service_handle, gap_dev_name_char_handle, gap_appearance_char_handle;
   uint32_t srd_bd_addr[2];
   uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE };
-
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
+  
   /**
    * Initialize HCI layer
    */
@@ -758,9 +759,19 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    */
   if ((global_ble_addr_type == GAP_PUBLIC_ADDR) && (global_ble_cfg_addr_type == GAP_PUBLIC_ADDR))
   {
-    aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
+    ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                               CONFIG_DATA_PUBADDR_LEN,
                               (uint8_t*) global_bdaddress);
+    
+    if (ret != BLE_STATUS_SUCCESS)
+    {
+      APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_PUBADDR_OFFSET, result: 0x%x \n", ret);
+    }
+    else
+    {
+      APP_DBG_MSG("  Success: aci_hal_write_config_data command - CONFIG_DATA_PUBADDR_OFFSET\n");
+      APP_DBG_MSG("  Public Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n",global_bdaddress[5],global_bdaddress[4],global_bdaddress[3],global_bdaddress[2],global_bdaddress[1],global_bdaddress[0]);
+    } 
     
     /* BLE MAC in ADV Packet */
     manuf_data[ sizeof(manuf_data)-6] = global_bdaddress[5];
@@ -783,10 +794,25 @@ static void Ble_Hci_Gap_Gatt_Init(void){
     /* set the two upper bits to fit with random address definition */
     global_rand_bdaddress[5] |= 0xC0;
   
-    aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET,
+    ret = aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET,
                               CONFIG_DATA_RANDOM_ADDRESS_LEN,
                               (uint8_t*) global_rand_bdaddress);
-    
+ 
+    if (ret != BLE_STATUS_SUCCESS)
+    {
+      APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_RANDOM_ADDRESS_OFFSET, result: 0x%x \n", ret);
+    }
+    else
+    {
+      APP_DBG_MSG("  Success: aci_hal_write_config_data command - CONFIG_DATA_RANDOM_ADDRESS_OFFSET\n");
+      APP_DBG_MSG("  Random Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n", (uint8_t)(global_rand_bdaddress[5]),
+                                                                                 (uint8_t)(global_rand_bdaddress[4]),
+                                                                                 (uint8_t)(global_rand_bdaddress[3]),
+                                                                                 (uint8_t)(global_rand_bdaddress[2]),
+                                                                                 (uint8_t)(global_rand_bdaddress[1]),
+                                                                                 (uint8_t)(global_rand_bdaddress[0]));
+    }
+  
     /* BLE MAC in ADV Packet */
     manuf_data[ sizeof(manuf_data)-6] = global_rand_bdaddress[5];
     manuf_data[ sizeof(manuf_data)-5] = global_rand_bdaddress[4];
@@ -845,7 +871,23 @@ static void Ble_Hci_Gap_Gatt_Init(void){
     manuf_data[ sizeof(manuf_data)-2] = srd_bd_addr[0] >> 8;
     manuf_data[ sizeof(manuf_data)-1] = srd_bd_addr[0];
     
-    aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
+    ret = aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
+
+    if (ret != BLE_STATUS_SUCCESS)
+    {
+      APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_RANDOM_ADDRESS_OFFSET, result: 0x%x \n", ret);
+    }
+    else
+    {
+      APP_DBG_MSG("  Success: aci_hal_write_config_data command - CONFIG_DATA_RANDOM_ADDRESS_OFFSET\n");
+      APP_DBG_MSG("  Random Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n", (uint8_t)(srd_bd_addr[1] >> 8),
+                                                                                 (uint8_t)(srd_bd_addr[1]),
+                                                                                 (uint8_t)(srd_bd_addr[0] >> 24),
+                                                                                 (uint8_t)(srd_bd_addr[0] >> 16),
+                                                                                 (uint8_t)(srd_bd_addr[0] >> 8),
+                                                                                 (uint8_t)(srd_bd_addr[0]));
+    }
+    
   }
 
   /**

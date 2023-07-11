@@ -13,13 +13,13 @@ LR_IROM1 0x08000000 0x00080000  {    ; load region size_region
   }
 
    RW_RAM_SHARED1 0x20030000 0x28  {  ; RW data 
-      *(MAPPING_TABLE)
+   *(MAPPING_TABLE)
    }
    RW_RAM_SHARED2 0x20030028 0x27D8  { ; RW data      
-    *(MB_MEM1)
-    *(MB_MEM2)
+   *(MB_MEM1)
+   *(MB_MEM2)
     .ANY (+RW +ZI)
-   }
+  }
 
   }
 

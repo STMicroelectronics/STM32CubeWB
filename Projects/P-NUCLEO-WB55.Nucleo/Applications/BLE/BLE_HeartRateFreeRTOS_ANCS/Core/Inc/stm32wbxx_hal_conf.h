@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef STM32WBxx_HAL_CONF_H
-#define STM32WBxx_HAL_CONF_H
+#ifndef __STM32WBxx_HAL_CONF_H
+#define __STM32WBxx_HAL_CONF_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -48,7 +48,7 @@
 /*#define HAL_PCD_MODULE_ENABLED   */
 /*#define HAL_PKA_MODULE_ENABLED   */
 /*#define HAL_QSPI_MODULE_ENABLED   */
-/*#define HAL_RNG_MODULE_ENABLED   */
+#define HAL_RNG_MODULE_ENABLED
 #define HAL_RTC_MODULE_ENABLED
 /*#define HAL_SAI_MODULE_ENABLED   */
 /*#define HAL_SMBUS_MODULE_ENABLED   */
@@ -174,7 +174,7 @@
   */
 
 #define  VDD_VALUE				3300U                   /*!< Value of VDD in mv */
-#define  TICK_INT_PRIORITY            0U      /*!< tick interrupt priority */
+#define  TICK_INT_PRIORITY            15U      /*!< tick interrupt priority */
 #define  USE_RTOS                     0U
 #define  PREFETCH_ENABLE              1U
 #define  INSTRUCTION_CACHE_ENABLE     1U
@@ -349,4 +349,4 @@
 }
 #endif
 
-#endif /* STM32WBxx_HAL_CONF_H */
+#endif /* __STM32WBxx_HAL_CONF_H */

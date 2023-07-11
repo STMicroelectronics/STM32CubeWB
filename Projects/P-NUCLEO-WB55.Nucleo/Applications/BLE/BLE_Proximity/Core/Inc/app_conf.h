@@ -43,18 +43,24 @@
  */
 #define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
 
-/* BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01) */
-#define CFG_IDENTITY_ADDRESS           GAP_STATIC_RANDOM_ADDR   /* GAP_PUBLIC_ADDR */
+/**
+ * Define BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01)
+ */
+#define CFG_IDENTITY_ADDRESS                    GAP_STATIC_RANDOM_ADDR
 #define CFG_STATIC_RANDOM_ADDRESS               (0x1234567890ab) /**< Static Random Address fixed for lifetime of the device */
 
-/* Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED */
-#define CFG_PRIVACY                       PRIVACY_DISABLED /* PRIVACY_ENABLED */
+/**
+ * Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED
+ */
+#define CFG_PRIVACY                       PRIVACY_DISABLED
 
-/* if CFG_PRIVACY equals PRIVACY_DISABLED,  CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR */
-#define CFG_BLE_ADDRESS_TYPE              CFG_IDENTITY_ADDRESS /**< Bluetooth address types defined in ble_legacy.h */
-
-/* if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR */
-//#define CFG_BLE_ADDRESS_TYPE              GAP_RESOLVABLE_PRIVATE_ADDR /* GAP_NON_RESOLVABLE_PRIVATE_ADDR */
+/**
+ * Define BLE Address Type
+ * Bluetooth address types defined in ble_legacy.h
+ * if CFG_PRIVACY equals PRIVACY_DISABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR
+ * if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR
+ */
+#define CFG_BLE_ADDRESS_TYPE              GAP_STATIC_RANDOM_ADDR
 
 #define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)      /**< 80ms */
 #define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xa0)      /**< 100ms */
@@ -339,7 +345,7 @@
  * other bits: reserved (shall be set to 0)
  */
 
-#define CFG_BLE_RX_MODEL_CONFIG         SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
+#define CFG_BLE_RX_MODEL_CONFIG         (SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY)
 
 /* Maximum number of advertising sets.
  * Range: 1 .. 8 with limitation:
@@ -417,7 +423,7 @@
  * Select UART interfaces
  */
 #define CFG_DEBUG_TRACE_UART    hw_uart1
-#define CFG_CONSOLE_MENU        0
+#define CFG_CONSOLE_MENU        hw_lpuart1
 /******************************************************************************
  * USB interface
  ******************************************************************************/

@@ -7,7 +7,7 @@
   *
   *          Usually, inside the OpenThread stack, the functions located under
   *          openthread/platform don't need to be exported on M4 side since
-  *          they are used internaly by the stack. It is why the functions
+  *          they are used internally by the stack. It is why the functions
   *          otPlatRadioXXX provided by OpenThread are not supposed to be
   *          expported to the Application layer.
   *          The only exception to this rule concerns the functions used to

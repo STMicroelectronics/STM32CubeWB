@@ -3,7 +3,7 @@
 **
 **  File        : LinkerScript.ld
 **
-**  Author		: STM32CubeIDE
+**  Author      : STM32CubeIDE
 **
 **  Abstract    : Linker script for STM32WB55xG Device
 **                      1024Kbytes FLASH
@@ -22,7 +22,7 @@
 *****************************************************************************
 ** @attention
 **
-** Copyright (c) 2020 STMicroelectronics.
+** Copyright (c) 2023 STMicroelectronics.
 ** All rights reserved.
 **
 ** This software is licensed under terms that can be found in the LICENSE file
@@ -118,12 +118,14 @@ SECTIONS
   _sidata = LOADADDR(.data);
 
   /* Initialized data sections goes into RAM, load LMA copy after code */
-  .data : 
+  .data :
   {
     . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
+    *(.RamFunc)        /* .RamFunc sections */
+    *(.RamFunc*)       /* .RamFunc* sections */
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */

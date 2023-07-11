@@ -1,12 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : hw_conf.h
-  * Description        : Hardware configuration file for STM32WPAN Middleware.
+  * @file    hw_conf.h
+  * @author  MCD Application Team
+  * @brief   Configuration of hardware interface
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -20,7 +21,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef HW_CONF_H
 #define HW_CONF_H
-
 
 /******************************************************************************
  * Semaphores
@@ -262,4 +262,3 @@
 #define CFG_HW_USART1_DMA_TX_IRQHandler       DMA1_Channel2_IRQHandler
 
 #endif /*HW_CONF_H */
-

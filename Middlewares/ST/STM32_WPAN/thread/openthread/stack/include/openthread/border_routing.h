@@ -141,29 +141,44 @@ otError otBorderRoutingInit(otInstance *aInstance, uint32_t aInfraIfIndex, bool 
 otError otBorderRoutingSetEnabled(otInstance *aInstance, bool aEnabled);
 
 /**
- * This function gets the preference used when advertising Route Info Options (e.g., for discovered OMR prefixes) in
- * Router Advertisement messages sent over the infrastructure link.
+ * This function gets the current preference used when advertising Route Info Options (RIO) in Router Advertisement
+ * messages sent over the infrastructure link.
  *
- * @param[in] aInstance A pointer to an OpenThread instance.
+ * The RIO preference is determined as follows:
  *
- * @returns The OMR prefix advertisement preference.
+ * - If explicitly set by user by calling `otBorderRoutingSetRouteInfoOptionPreference()`, the given preference is
+ *   used.
+ * - Otherwise, it is determined based on device's current role: Medium preference when in router/leader role and
+ *   low preference when in child role.
+ *
+ * @returns The current Route Info Option preference.
  *
  */
 otRoutePreference otBorderRoutingGetRouteInfoOptionPreference(otInstance *aInstance);
 
 /**
- * This function sets the preference to use when advertising Route Info Options in Router Advertisement messages sent
- * over the infrastructure link, for example for discovered OMR prefixes.
+ * This function explicitly sets the preference to use when advertising Route Info Options (RIO) in Router
+ * Advertisement messages sent over the infrastructure link.
  *
- * By default BR will use `medium` preference level, but this function allows the default value to be changed. As an
- * example, it can be set to `low` preference in the case where device is a temporary BR (a mobile BR or a
- * battery-powered BR) to indicate that other BRs (if any) should be preferred over this BR on the infrastructure link.
+ * After a call to this function, BR will use the given preference for all its advertised RIOs. The preference can be
+ * cleared by calling `otBorderRoutingClearRouteInfoOptionPreference()`.
  *
  * @param[in] aInstance     A pointer to an OpenThread instance.
  * @param[in] aPreference   The route preference to use.
  *
  */
 void otBorderRoutingSetRouteInfoOptionPreference(otInstance *aInstance, otRoutePreference aPreference);
+
+/**
+ * This function clears a previously set preference value for advertised Route Info Options.
+ *
+ * After a call to this function, BR will use device's role to determine the RIO preference: Medium preference when
+ * in router/leader role and low preference when in child role.
+ *
+ * @param[in] aInstance     A pointer to an OpenThread instance.
+ *
+ */
+void otBorderRoutingClearRouteInfoOptionPreference(otInstance *aInstance);
 
 /**
  * Gets the local Off-Mesh-Routable (OMR) Prefix, for example `fdfc:1ff5:1512:5622::/64`.
@@ -190,7 +205,7 @@ otError otBorderRoutingGetOmrPrefix(otInstance *aInstance, otIp6Prefix *aPrefix)
  * @param[out]  aPrefix      A pointer to output the favored OMR prefix.
  * @param[out]  aPreference  A pointer to output the preference associated the favored prefix.
  *
- * @retval  OT_ERROR_INVALID_STATE  The Border Routing Manager is not initialized yet.
+ * @retval  OT_ERROR_INVALID_STATE  The Border Routing Manager is not running yet.
  * @retval  OT_ERROR_NONE           Successfully retrieved the favored OMR prefix.
  *
  */
@@ -216,7 +231,7 @@ otError otBorderRoutingGetOnLinkPrefix(otInstance *aInstance, otIp6Prefix *aPref
  *
  * NAT64 Prefix might not be advertised in the Thread network.
  *
- * `OPENTHREAD_CONFIG_BORDER_ROUTING_NAT64_ENABLE` must be enabled.
+ * `OPENTHREAD_CONFIG_NAT64_BORDER_ROUTING_ENABLE` must be enabled.
  *
  * @param[in]   aInstance   A pointer to an OpenThread instance.
  * @param[out]  aPrefix     A pointer to where the prefix will be output to.
@@ -226,6 +241,23 @@ otError otBorderRoutingGetOnLinkPrefix(otInstance *aInstance, otIp6Prefix *aPref
  *
  */
 otError otBorderRoutingGetNat64Prefix(otInstance *aInstance, otIp6Prefix *aPrefix);
+
+/**
+ * Gets the currently favored NAT64 prefix.
+ *
+ * The favored NAT64 prefix can be discovered from infrastructure link or can be this device's local NAT64 prefix.
+ *
+ * @param[in]   aInstance    A pointer to an OpenThread instance.
+ * @param[out]  aPrefix      A pointer to output the favored NAT64 prefix.
+ * @param[out]  aPreference  A pointer to output the preference associated the favored prefix.
+ *
+ * @retval  OT_ERROR_INVALID_STATE  The Border Routing Manager is not initialized yet.
+ * @retval  OT_ERROR_NONE           Successfully retrieved the favored NAT64 prefix.
+ *
+ */
+otError otBorderRoutingGetFavoredNat64Prefix(otInstance        *aInstance,
+                                             otIp6Prefix       *aPrefix,
+                                             otRoutePreference *aPreference);
 
 /**
  * This function initializes an `otBorderRoutingPrefixTableIterator`.
@@ -254,9 +286,9 @@ void otBorderRoutingPrefixTableInitIterator(otInstance *aInstance, otBorderRouti
  * @retval OT_ERROR_NOT_FOUND   No more entries in the table.
  *
  */
-otError otBorderRoutingGetNextPrefixTableEntry(otInstance *                        aInstance,
+otError otBorderRoutingGetNextPrefixTableEntry(otInstance                         *aInstance,
                                                otBorderRoutingPrefixTableIterator *aIterator,
-                                               otBorderRoutingPrefixTableEntry *   aEntry);
+                                               otBorderRoutingPrefixTableEntry    *aEntry);
 
 /**
  * @}

@@ -79,7 +79,7 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
 
 @par Hardware and Software environment
 
-  - This application uses two STM32WB55xx devices.
+  - This application uses three STM32WB55xx devices.
   
   - This example has been tested with an STMicroelectronics STM32WB55RG-Nucleo 
     board and can be easily tailored to any other supported device 
@@ -103,15 +103,16 @@ BLE_LLD, Connectivity, BLE, LLD, IPCC, HAL, Dual core, send and receive Packet
 
 @par How to use it ? 
 
+This application requires having the stm32wb5x_BLE_LLD_fw.bin binary flashed on the Wireless Coprocessor.
+If it is not the case, you need to use STM32CubeProgrammer to load the appropriate binary.
+All available binaries are located under /Projects/STM32_Copro_Wireless_Binaries directory.
+Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the detailed procedure to change the
+Wireless Coprocessor binary.
+
 In order to make the program work, you must do the following: 
- - Connect 3 STM32WB55xx-Nucleo boards to your PC
+ - Connect the STM32WB55xx-Nucleo boards to your PC
  - Open your preferred toolchain 
- - Rebuild all files and load your image into one target memory
- - Rebuild all files of BLE_LLD/BLE_LLD_Datarate application 
-   and load your image into the other target memory
-   + load stm32wb5x_BLE_LLD_fw.bin
- - Run the application
- 
+ - Rebuild all files and load your image into target memory of all the boards
 
 You can control this application, after power and reset Pressing SW1 or SW2 to set respectively in Reception or Transmission the board 
 In this order and described into main.c:
@@ -120,15 +121,14 @@ After power On or Reset (ALL the LED are OFF):
  1) Radio Init is done and the Action Packets are configured
  2) Press SW1 to set the first board in reception 
  3) Press SW2 to set the second board in transmission, it will be master board
- 4) Second board (master) Transmits to First board (reception) every 1500us a Payload containing the LED to Toggle (LED1 or LED2)
-    Alternativaly master board send 1000 first packets with LED1 into the payload and 1000 next packets with LED2 into the payload
-    Each time that reception board receive 100 packets it toggle the LED. Then the LED1 toggle 10 times and after this is the LED2 that toggle
+ 4) Second board (master) Transmits to First board (reception) every 1500us a Payload.  
+    Alternativaly master board send 1000 first packets with LED1 into the payload and 1000 next packets with LED2 state into the payload
+    Each time that reception board receive 100 packets it toggle the corresponding LED. So, the LED1 toggle 10 times and after this is the LED2 that toggle 10 times
  5) Press SW2 to set the last board in transmission, it will be slave board
- 6) Last board (slave) Transmits to First board (reception) every 1500us a Payload containing the LED to Toggle (LED3) with a 750us delay shift compared to the master board
+ 6) Last board (slave) Transmits to First board (reception) every 1500us a Payload. The packet contains the LED to Toggle (LED3) with a 750us delay shift compared to the master board
  7) master and slave are alternatively in transmission and reception
  8) When master transmits, slave receives (LED1 or LED2 also toggle). when slave transmits, master receives (LED3 also toggle)
  9) When master and slave are activated, every 750us a packet is send and it is received to the reception board
-
 
 Serial Port Setup TERMINAL
 Baud Rate:115200 / Data:8 bits / Parity:none / Stop:1bit / Flow Control:none 

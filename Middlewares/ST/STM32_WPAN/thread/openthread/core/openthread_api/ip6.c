@@ -667,3 +667,47 @@ const char *otIp6ProtoToString(uint8_t aIpProto)
   return (char*)p_ot_req->Data[0];
 }
 
+void otIp6GetPrefix(const otIp6Address *aAddress, uint8_t aLength, otIp6Prefix *aPrefix)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_GET_PREFIX;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t) aAddress;
+  p_ot_req->Data[1] = (uint32_t) aLength;
+  p_ot_req->Data[2] = (uint32_t) aPrefix;
+
+  Ot_Cmd_Transfer();
+}
+
+const otBorderRoutingCounters *otIp6GetBorderRoutingCounters(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_GET_BORDER_ROUTING_COUNTERS;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otBorderRoutingCounters*)p_ot_req->Data[0];
+}
+
+void otIp6ResetBorderRoutingCounters(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_RESET_BORDER_ROUTING_COUNTERS;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+}

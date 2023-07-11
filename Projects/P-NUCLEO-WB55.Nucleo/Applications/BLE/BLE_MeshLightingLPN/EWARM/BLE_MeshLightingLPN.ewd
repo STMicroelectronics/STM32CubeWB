@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Lighting_LPN</name>
+        <name>BLE_MeshLightingLPN</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>

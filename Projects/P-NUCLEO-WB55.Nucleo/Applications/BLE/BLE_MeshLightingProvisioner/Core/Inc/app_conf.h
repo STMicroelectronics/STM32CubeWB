@@ -648,10 +648,11 @@ typedef enum
 /* USER CODE BEGIN CFG_Task_Id_With_NO_HCI_Cmd_t */
 
 /* USER CODE END CFG_Task_Id_With_NO_HCI_Cmd_t */
-  CFG_LAST_TASK_ID_WITHO_NO_HCICMD /**< Shall be LAST in the list */
+
+  CFG_LAST_TASK_ID_WITH_NO_HCICMD /**< Shall be LAST in the list */
 } CFG_Task_Id_With_NO_HCI_Cmd_t;
 
-#define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITHO_NO_HCICMD
+#define CFG_TASK_NBR    CFG_LAST_TASK_ID_WITH_NO_HCICMD
 
 /**
  * This is the list of priority required by the application
@@ -672,6 +673,7 @@ typedef enum
 {
   CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID,
   CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID,
+  CFG_IDLEEVT_INPUT_OOB_RSP_ID,
   /* USER CODE BEGIN CFG_IdleEvt_Id_t */
 
   /* USER CODE END CFG_IdleEvt_Id_t */

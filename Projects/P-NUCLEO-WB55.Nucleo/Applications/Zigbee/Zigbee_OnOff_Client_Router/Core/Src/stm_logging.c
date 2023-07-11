@@ -1,14 +1,14 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : stm_logging.c
-  * Description        : This file contains all the defines and functions used
+  * @file    stm_logging.c
+  * @author  MCD Application Team
+  * @brief   This file contains all the defines and functions used
   *                     for logging on Application examples.
-  *
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file

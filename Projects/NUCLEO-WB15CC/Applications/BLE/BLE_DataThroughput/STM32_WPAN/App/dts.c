@@ -258,7 +258,6 @@ void DTS_STM_Init( void )
 
   /* DT service and characteristics */
   COPY_DT_SERVICE_UUID(uuid16.Char_UUID_128);
-  uuid16.Char_UUID_16 = DT_SERVICE_UUID; 
   hciCmdResult = aci_gatt_add_service(DT_UUID_LENGTH, (Service_UUID_t *) &uuid16,
                                       PRIMARY_SERVICE,
                                       10, 
@@ -272,7 +271,6 @@ void DTS_STM_Init( void )
    *  Add Data Transfer TX Characteristic
    */
   COPY_DT_TX_CHAR_UUID(uuid16.Char_UUID_128);
-  uuid16.Char_UUID_16 = DT_TX_CHAR_UUID; 
   hciCmdResult = aci_gatt_add_char(aDataTransferContext.DataTransferSvcHdle,
                                    DT_UUID_LENGTH,
                                    (Char_UUID_t *) &uuid16,
@@ -292,7 +290,6 @@ void DTS_STM_Init( void )
    *  Add Data Transfer RX Characteristic
    */
   COPY_DT_RX_CHAR_UUID(uuid16.Char_UUID_128);
-  uuid16.Char_UUID_16 = DT_RX_CHAR_UUID; 
   hciCmdResult = aci_gatt_add_char(aDataTransferContext.DataTransferSvcHdle,
                                    DT_UUID_LENGTH,
                                    (Char_UUID_t *) &uuid16,
@@ -312,7 +309,6 @@ void DTS_STM_Init( void )
    *  Add Data Transfer THROUGHPUT Characteristic
    */
   COPY_DT_THOUGHPUT_CHAR_UUID(uuid16.Char_UUID_128);
-  uuid16.Char_UUID_16 = DT_THROUGHPUT_CHAR_UUID; 
   hciCmdResult = aci_gatt_add_char(aDataTransferContext.DataTransferSvcHdle,
                                    DT_UUID_LENGTH,
                                    (Char_UUID_t *) &uuid16,

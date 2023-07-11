@@ -94,7 +94,7 @@
                 </option>
                 <option>
                     <name>RTConfigPath2</name>
-                    <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Full.h</state>
+                    <state>$TOOLKIT_DIR$\inc\c\DLib_Config_Full.h</state>
                 </option>
                 <option>
                     <name>GBECoreSlave</name>
@@ -1415,10 +1415,16 @@
             <group>
                 <name>utilities</name>
                 <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\advanced_memory_manager.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\dbg_trace.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\otp.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\stm32_mm.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\stm_list.c</name>

@@ -70,9 +70,9 @@ extern MOBLEUINT8 sendCounter=0;
 
 /**
 * @brief  SerialResponse_Process: This function extracts the command and variables from
-the recieved string and passes it to BluenrgMesh library.
-* @param  rcvdStringBuff: Pointer to the recieved ascii character array from the user
-* @param  rcvdStringSize: Size of the recieved array
+the received string and passes it to BluenrgMesh library.
+* @param  rcvdStringBuff: Pointer to the received ascii character array from the user
+* @param  rcvdStringSize: Size of the received array
 * @retval void
 */ 
 void SerialResponse_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
@@ -115,9 +115,9 @@ void SerialResponse_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 
 /**
 * @brief  SerialResponse_GetFunctionIndex: This function returns the calculated index 
-of the command recieved by the user
-* @param  rcvdStringBuff: Pointer to the recieved ascii character array from the user
-* @param  rcvdStringSize: Size of the recieved array
+of the command received by the user
+* @param  rcvdStringBuff: Pointer to the received ascii character array from the user
+* @param  rcvdStringSize: Size of the received array
 * @retval MOBLEUINT16
 */  
 static MOBLEUINT16 SerialResponse_GetFunctionIndex(char *text)
@@ -181,7 +181,7 @@ MOBLE_RESULT Test_ApplicationTest_Set01(MOBLEUINT32 testCount ,MOBLE_ADDRESS src
 {
   MOBLEUINT8 elementIndex = 0;
 
-  /* The function will called untill the testcount will not become zero */     
+  /* The function will called until the testcount will not become zero */     
   if(testCount != 0)
   {
     if(processDelay(TEST_1_WAIT_PERIOD) == 0x01)
@@ -235,7 +235,7 @@ MOBLE_RESULT Test_ApplicationTest_Set02(MOBLEUINT32 testCount ,MOBLE_ADDRESS src
 
 /**
 * @brief  Read_CommandCount: This function read the number of 
-  command received by the reciver successfully.
+  command received by the receiver successfully.
 * @param  src: source address of the node
 * @param  dst: destination address of the node
 * @retval MOBLE_RESULT
@@ -281,7 +281,7 @@ MOBLE_RESULT Packet_ResponseTimeStamp(MOBLEUINT32 rcvTimeStamp)
   RecvCount ++;
   DiffTimeStamp = rcvTimeStamp - timeStampSend; 
       
-  /* Adding the differnce time stamp for calculation of average time of packet 
+  /* Adding the difference time stamp for calculation of average time of packet 
     sending and receiving 
   */ 
   totalTimeStamp = totalTimeStamp + DiffTimeStamp;
@@ -354,7 +354,7 @@ MOBLEUINT8 processDelay(MOBLEUINT16 waitPeriod)
     Check_time = Clock_Time();
     Clockflag = CLOCK_FLAG_ENABLE;
   } 
-  /* The function will called untill the testcount will not become zero */     
+  /* The function will called until the testcount will not become zero */     
 
   if(((Clock_Time()- Check_time) >= waitPeriod))
   {

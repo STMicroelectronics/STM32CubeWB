@@ -499,6 +499,11 @@ static void UartCmdExecute(void)
     exti_handle.Line = EXTI_LINE_1;
     HAL_EXTI_GenerateSWI(&exti_handle);
   }
+  else if (strcmp((char const*)CommandString, "RST") == 0)
+  {
+    APP_DBG("RESET CMD RECEIVED");
+    HAL_NVIC_SystemReset();
+  }  
   else
   {
     APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);

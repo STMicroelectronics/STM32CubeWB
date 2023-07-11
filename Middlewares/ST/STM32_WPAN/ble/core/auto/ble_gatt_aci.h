@@ -111,6 +111,8 @@ tBleStatus aci_gatt_include_service( uint16_t Service_Handle,
  * For instance, if CHAR_PROP_NOTIFY is selected but not CHAR_PROP_BROADCAST
  * nor CHAR_PROP_EXT, then the Client Characteristic Configuration attribute
  * handle is Char_Handle + 2.
+ * Additional descriptors can be added to the characteristic by calling the
+ * ACI_GATT_ADD_CHAR_DESC command immediately after calling this command.
  * 
  * @param Service_Handle Handle of the Service to which the characteristic will
  *        be added
@@ -145,6 +147,7 @@ tBleStatus aci_gatt_include_service( uint16_t Service_Handle,
  *        - 0x01: GATT_NOTIFY_ATTRIBUTE_WRITE
  *        - 0x02: GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP
  *        - 0x04: GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP
+ *        - 0x08: GATT_NOTIFY_NOTIFICATION_COMPLETION
  * @param Enc_Key_Size Minimum encryption key size required to read the
  *        characteristic.
  *        Values:
@@ -172,6 +175,10 @@ tBleStatus aci_gatt_add_char( uint16_t Service_Handle,
 /**
  * @brief ACI_GATT_ADD_CHAR_DESC
  * Add a characteristic descriptor to a service.
+ * Note that this command allocates the new handle for the descriptor after the
+ * currently allocated handles. It is therefore advisable to call this command
+ * following the call of the command ACI_GATT_ADD_CHAR which created the
+ * characteristic containing this descriptor.
  * 
  * @param Service_Handle Handle of service to which the characteristic belongs
  * @param Char_Handle Handle of the characteristic to which description has to
@@ -243,12 +250,12 @@ tBleStatus aci_gatt_add_char_desc( uint16_t Service_Handle,
  * application calls ACI_GATT_UPDATE_CHAR_VALUE at an higher rate than what is
  * allowed by the link.
  * Throughput on BLE link depends on connection interval and connection length
- * parameters (decided by the master, see
- * aci_l2cap_connection_parameter_update_request() for more info on how to
- * suggest new connection parameters from a slave). If the application does not
- * want to lose notifications because STM32WB buffer becomes full, it must
- * retry again till the function returns BLE_STATUS_SUCCESS or any other error
- * code.
+ * parameters (decided by the Central, see
+ * ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ for more information on how to
+ * suggest new connection parameters from a Peripheral). If the application
+ * does not want to lose notifications because STM32WB buffer becomes full, it
+ * must retry again till the function returns BLE_STATUS_SUCCESS or any other
+ * error code.
  * Note that the characteristic is updated only if the command returns
  * BLE_STATUS_SUCCESS.
  * 
@@ -306,8 +313,9 @@ tBleStatus aci_gatt_del_include_service( uint16_t Serv_Handle,
 
 /**
  * @brief ACI_GATT_SET_EVENT_MASK
- * Mask events from the GATT. The default configuration is all the events
- * masked.
+ * Mask events from the GATT. If the bit in the GATT_Evt_Mask is set to a one,
+ * then the event associated with that bit will be enabled.
+ * The default configuration is all the events masked.
  * 
  * @param GATT_Evt_Mask GATT/ATT event mask.
  *        Values:
@@ -506,7 +514,7 @@ tBleStatus aci_att_execute_write_req( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @return Value indicating success or error code.
  */
@@ -526,7 +534,7 @@ tBleStatus aci_gatt_disc_all_primary_services( uint16_t Connection_Handle );
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param UUID_Type UUID type: 0x01 = 16 bits UUID while 0x02 = 128 bits UUID
  * @param UUID See @ref UUID_t
@@ -549,7 +557,7 @@ tBleStatus aci_gatt_disc_primary_service_by_uuid( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Start_Handle Start attribute handle of the service
  * @param End_Handle End attribute handle of the service
@@ -571,7 +579,7 @@ tBleStatus aci_gatt_find_included_services( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Start_Handle Start attribute handle of the service
  * @param End_Handle End attribute handle of the service
@@ -593,7 +601,7 @@ tBleStatus aci_gatt_disc_all_char_of_service( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Start_Handle Start attribute handle of the service
  * @param End_Handle End attribute handle of the service
@@ -620,7 +628,7 @@ tBleStatus aci_gatt_disc_char_by_uuid( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Char_Handle Handle of the characteristic value
  * @param End_Handle End handle of the characteristic
@@ -642,7 +650,7 @@ tBleStatus aci_gatt_disc_all_char_desc( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the characteristic value to be read
  * @return Value indicating success or error code.
@@ -667,7 +675,7 @@ tBleStatus aci_gatt_read_char_value( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Start_Handle Starting handle of the range to be searched
  * @param End_Handle End handle of the range to be searched
@@ -693,7 +701,7 @@ tBleStatus aci_gatt_read_using_char_uuid( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the characteristic value to be read
  * @param Val_Offset Offset from which the value needs to be read
@@ -717,7 +725,7 @@ tBleStatus aci_gatt_read_long_char_value( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Number_of_Handles Number of handles in the following table
  *        Values:
@@ -740,7 +748,7 @@ tBleStatus aci_gatt_read_multiple_char_value( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the characteristic value to be written
  * @param Attribute_Val_Length Length of the value to be written
@@ -764,7 +772,7 @@ tBleStatus aci_gatt_write_char_value( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the characteristic value to be written
  * @param Val_Offset Offset at which the attribute has to be written
@@ -790,7 +798,7 @@ tBleStatus aci_gatt_write_long_char_value( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the attribute to be written
  * @param Val_Offset Offset at which the attribute has to be written
@@ -816,7 +824,7 @@ tBleStatus aci_gatt_write_char_reliable( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the attribute to be written
  * @param Val_Offset Offset at which the attribute has to be written
@@ -842,7 +850,7 @@ tBleStatus aci_gatt_write_long_char_desc( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the characteristic descriptor
  * @param Val_Offset Offset from which the value needs to be read
@@ -863,7 +871,7 @@ tBleStatus aci_gatt_read_long_char_desc( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the attribute to be written
  * @param Attribute_Val_Length Length of the value to be written
@@ -888,7 +896,7 @@ tBleStatus aci_gatt_write_char_desc( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the descriptor to be read
  * @return Value indicating success or error code.
@@ -909,7 +917,7 @@ tBleStatus aci_gatt_read_char_desc( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the characteristic value to be written
  * @param Attribute_Val_Length Length of the value to be written
@@ -953,7 +961,7 @@ tBleStatus aci_gatt_signed_write_without_resp( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @return Value indicating success or error code.
  */
@@ -973,7 +981,7 @@ tBleStatus aci_gatt_confirm_indication( uint16_t Connection_Handle );
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Attr_Handle Handle of the attribute that was passed in the event
  *        ACI_GATT_WRITE_PERMIT_REQ_EVENT
@@ -1015,7 +1023,7 @@ tBleStatus aci_gatt_write_resp( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @return Value indicating success or error code.
  */
@@ -1100,7 +1108,7 @@ tBleStatus aci_gatt_read_handle_value( uint16_t Attr_Handle,
  *          bearer
  *        - 0x0001 ... 0x0EFF: Notify one client on the specified unenhanced
  *          ATT bearer (the parameter is the connection handle)
- *        - 0xEA00 ... 0xEA1F: Notify one client on the specified enhanced ATT
+ *        - 0xEA00 ... 0xEA3F: Notify one client on the specified enhanced ATT
  *          bearer (the LSB-byte of the parameter is the connection-oriented
  *          channel index)
  * @param Service_Handle Handle of service to which the characteristic belongs
@@ -1149,7 +1157,7 @@ tBleStatus aci_gatt_update_char_value_ext( uint16_t Conn_Handle_To_Notify,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Error_Code Error code for the command
  *        Values:
@@ -1202,7 +1210,7 @@ tBleStatus aci_gatt_store_db( void );
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Number_of_Handles Number of handles in the following table
  *        Values:
@@ -1229,7 +1237,7 @@ tBleStatus aci_gatt_send_mult_notification( uint16_t Connection_Handle,
  *        Values:
  *        - 0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the
  *          connection handle)
- *        - 0xEA00 ... 0xEA1F: Enhanced ATT bearer (the LSB-byte of the
+ *        - 0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the
  *          parameter is the connection-oriented channel index)
  * @param Number_of_Handles Number of handles in the following table
  *        Values:

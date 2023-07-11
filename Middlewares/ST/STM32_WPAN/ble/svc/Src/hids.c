@@ -488,6 +488,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                   Notification.HIDS_Evt_Opcode = HIDS_REPORT_NOTIFICATION_DISABLED;
                   HIDS_Notification(&Notification);
                 }
+                aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
               }
             } /* End for(i = 0; i < HIDS_INPUT_REPORT_NB + HIDS_OUTPUT_REPORT_NB + BLE_CFG_HIDS_FEATURE_REPORT_NB ; i++) */
 #endif
@@ -531,6 +532,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                 Notification.HIDS_Evt_Opcode = HIDS_KEYB_INPUT_NOTIFY_DISABLED;
                 HIDS_Notification(&Notification);
               }
+              aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
             }
             /* Keyboard Report Output characteristic write */
             if(attribute_modified->Attr_Handle == (HIDS_Context[service_instance].HidKeyboardReportOutputCharHdle) + 1)
@@ -581,6 +583,7 @@ static SVCCTL_EvtAckStatus_t HIDS_Event_Handler(void *Event)
                 Notification.HIDS_Evt_Opcode = HIDS_MOUSE_INPUT_NOTIFY_DISABLED;
                 HIDS_Notification(&Notification);
               }
+              aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
             }
 #endif
             /*  Control Point Characteristic write */
@@ -705,12 +708,12 @@ void HIDS_Init(void)
                                      &(HIDS_Context[service_instance].HidProtocolModeCharHdle));
     if (hciCmdResult == BLE_STATUS_SUCCESS)
     {
-      BLE_DBG_HIDS_MSG ("Protocol Mode Characterisitic is added Successfully %04X\n", 
+      BLE_DBG_HIDS_MSG ("Protocol Mode Characteristic is added Successfully %04X\n", 
                            HIDS_Context[service_instance].HidProtocolModeCharHdle);
     }
     else
     {
-      BLE_DBG_HIDS_MSG ("FAILED to add Protocol Mode Characterisitic, Error: %02X !!\n", 
+      BLE_DBG_HIDS_MSG ("FAILED to add Protocol Mode Characteristic, Error: %02X !!\n", 
                            hciCmdResult);
     }
     protocol_mode = BLE_CFG_HIDS_PROTOCOL_MODE;
@@ -766,12 +769,12 @@ void HIDS_Init(void)
                                          &(HIDS_Context[service_instance].HidReportCharHdle[i]));
         if (hciCmdResult == BLE_STATUS_SUCCESS)
         {
-          BLE_DBG_HIDS_MSG ("Input Report Characterisitic is added Successfully %04X\n", 
+          BLE_DBG_HIDS_MSG ("Input Report Characteristic is added Successfully %04X\n", 
                                HIDS_Context[service_instance].HidReportCharHdle[i]);
         }
         else
         {
-          BLE_DBG_HIDS_MSG ("FAILED to add Input Report Characterisitic, Error: %02X !!\n", 
+          BLE_DBG_HIDS_MSG ("FAILED to add Input Report Characteristic, Error: %02X !!\n", 
                                hciCmdResult);
         }
         
@@ -820,12 +823,12 @@ void HIDS_Init(void)
                                          &(HIDS_Context[service_instance].HidReportCharHdle[i]));
         if (hciCmdResult == BLE_STATUS_SUCCESS)
         {
-          BLE_DBG_HIDS_MSG ("Output Report Characterisitic is added Successfully %04X\n", 
+          BLE_DBG_HIDS_MSG ("Output Report Characteristic is added Successfully %04X\n", 
                                HIDS_Context[service_instance].HidReportReferenceDescHdle[i]);
         }
         else
         {
-          BLE_DBG_HIDS_MSG ("FAILED to add Output Report Characterisitic, Error: %02X !!\n", 
+          BLE_DBG_HIDS_MSG ("FAILED to add Output Report Characteristic, Error: %02X !!\n", 
                                hciCmdResult);
         }
 
@@ -874,12 +877,12 @@ void HIDS_Init(void)
                                          &(HIDS_Context[service_instance].HidReportCharHdle[i]));
         if (hciCmdResult == BLE_STATUS_SUCCESS)
         {
-          BLE_DBG_HIDS_MSG ("Feature Report Characterisitic is added Successfully %04X\n", 
+          BLE_DBG_HIDS_MSG ("Feature Report Characteristic is added Successfully %04X\n", 
                                HIDS_Context[service_instance].HidReportReferenceDescHdle[i]);
         }
         else
         {
-          BLE_DBG_HIDS_MSG ("FAILED to add Feature Report Characterisitic, Error: %02X !!\n", 
+          BLE_DBG_HIDS_MSG ("FAILED to add Feature Report Characteristic, Error: %02X !!\n", 
                                hciCmdResult);
         }
 
@@ -930,12 +933,12 @@ void HIDS_Init(void)
                                      &(HIDS_Context[service_instance].HidReportMapCharHdle));
     if (hciCmdResult == BLE_STATUS_SUCCESS)
     {
-      BLE_DBG_HIDS_MSG ("Report Map Characterisitic is added Successfully %04X\n", 
+      BLE_DBG_HIDS_MSG ("Report Map Characteristic is added Successfully %04X\n", 
                            HIDS_Context[service_instance].HidReportMapCharHdle);
     }
     else
     {
-      BLE_DBG_HIDS_MSG ("FAILED to add Report Map Characterisitic, Error: %02X !!\n", 
+      BLE_DBG_HIDS_MSG ("FAILED to add Report Map Characteristic, Error: %02X !!\n", 
                            hciCmdResult);
     }
 
@@ -994,12 +997,12 @@ void HIDS_Init(void)
                                      &(HIDS_Context[service_instance].HidKeyboardReportInputCharHdle));
     if (hciCmdResult == BLE_STATUS_SUCCESS)
     {
-      BLE_DBG_HIDS_MSG ("Boot Keyboard Input Report Characterisitic is added Successfully %04X\n", 
+      BLE_DBG_HIDS_MSG ("Boot Keyboard Input Report Characteristic is added Successfully %04X\n", 
                            HIDS_Context[service_instance].HidKeyboardReportInputCharHdle);
     }
     else
     {
-      BLE_DBG_HIDS_MSG ("FAILED to add Boot Keyboard Input Report Characterisitic, Error: %02X !!\n", 
+      BLE_DBG_HIDS_MSG ("FAILED to add Boot Keyboard Input Report Characteristic, Error: %02X !!\n", 
                            hciCmdResult);
     }
 
@@ -1019,12 +1022,12 @@ void HIDS_Init(void)
                                      &(HIDS_Context[service_instance].HidKeyboardReportOutputCharHdle));
     if (hciCmdResult == BLE_STATUS_SUCCESS)
     {
-      BLE_DBG_HIDS_MSG ("Boot Keyboard Output Report Characterisitic is added Successfully %04X\n", 
+      BLE_DBG_HIDS_MSG ("Boot Keyboard Output Report Characteristic is added Successfully %04X\n", 
                            HIDS_Context[service_instance].HidKeyboardReportOutputCharHdle);
     }
     else
     {
-      BLE_DBG_HIDS_MSG ("FAILED to add Boot Keyboard Output Report Characterisitic, Error: %02X !!\n", 
+      BLE_DBG_HIDS_MSG ("FAILED to add Boot Keyboard Output Report Characteristic, Error: %02X !!\n", 
                            hciCmdResult);
     }
 #endif
@@ -1054,12 +1057,12 @@ void HIDS_Init(void)
                                      &(HIDS_Context[service_instance].HidMouseReportInputCharHdle));
     if (hciCmdResult == BLE_STATUS_SUCCESS)
     {
-      BLE_DBG_HIDS_MSG ("Boot Mouse Input Report Characterisitic is added Successfully %04X\n", 
+      BLE_DBG_HIDS_MSG ("Boot Mouse Input Report Characteristic is added Successfully %04X\n", 
                            HIDS_Context[service_instance].HidMouseReportInputCharHdle);
     }
     else
     {
-      BLE_DBG_HIDS_MSG ("FAILED to add Boot Mouse Input Report Characterisitic, Error: %02X !!\n", 
+      BLE_DBG_HIDS_MSG ("FAILED to add Boot Mouse Input Report Characteristic, Error: %02X !!\n", 
                            hciCmdResult);
     }
 #endif
@@ -1077,12 +1080,12 @@ void HIDS_Init(void)
                                      &(HIDS_Context[service_instance].HidInformationCharHdle));
     if (hciCmdResult == BLE_STATUS_SUCCESS)
     {
-      BLE_DBG_HIDS_MSG ("HID Information Characterisitic is added Successfully %04X\n", 
+      BLE_DBG_HIDS_MSG ("HID Information Characteristic is added Successfully %04X\n", 
                            HIDS_Context[service_instance].HidInformationCharHdle);
     }
     else
     {
-      BLE_DBG_HIDS_MSG ("FAILED to add HID Information Characterisitic, Error: %02X !!\n", 
+      BLE_DBG_HIDS_MSG ("FAILED to add HID Information Characteristic, Error: %02X !!\n", 
                            hciCmdResult);
     }
 
@@ -1099,12 +1102,12 @@ void HIDS_Init(void)
                                      &(HIDS_Context[service_instance].HidControlPointCharHdle));
     if (hciCmdResult == BLE_STATUS_SUCCESS)
     {
-      BLE_DBG_HIDS_MSG ("HID Control Point Characterisitic is added Successfully %04X\n", 
+      BLE_DBG_HIDS_MSG ("HID Control Point Characteristic is added Successfully %04X\n", 
                            HIDS_Context[service_instance].HidControlPointCharHdle);
     }
     else
     {
-      BLE_DBG_HIDS_MSG ("FAILED to add HID Control Point Characterisitic, Error: %02X !!\n", 
+      BLE_DBG_HIDS_MSG ("FAILED to add HID Control Point Characteristic, Error: %02X !!\n", 
                            hciCmdResult);
     }
 

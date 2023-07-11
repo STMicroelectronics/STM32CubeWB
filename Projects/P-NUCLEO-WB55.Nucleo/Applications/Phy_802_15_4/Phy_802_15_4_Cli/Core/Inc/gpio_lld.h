@@ -9,7 +9,7 @@
 #if defined (USE_SIMU) || defined (USE_FPGA)
 /* Be careful with GPIO used on SIMU plateform */
 // GPIOA port is used for CRC management on MASTER only
-// GPIOC ad GPIOD ports are used to send messages between the 2 DORYs
+// GPIOC ad GPIOD ports are used to send messages between the 2 STM32WBx
 #define GPIO_TX_PIN            GPIO_PIN_8
 #define GPIO_TX_PORT           GPIOB
 

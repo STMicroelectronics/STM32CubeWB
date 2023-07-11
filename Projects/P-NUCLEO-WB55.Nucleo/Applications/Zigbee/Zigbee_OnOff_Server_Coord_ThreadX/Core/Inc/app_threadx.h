@@ -30,7 +30,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "main.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -71,6 +71,7 @@ void MX_ThreadX_Init(void);
 
 #define THREAD_ONE_EVT                           0x01
 #define THREAD_TWO_EVT                           0x02
+
 /* USER CODE END PD */
 
 /* USER CODE BEGIN 1 */

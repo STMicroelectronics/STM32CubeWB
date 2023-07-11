@@ -314,7 +314,7 @@ MOBLE_RESULT Generic_OnOff_Status(MOBLEUINT8* pOnOff_status,
   if((Generic_ModelFlag[pmsgParam->elementIndex].GenericOptionalParam == 1) || (Generic_TimeParam[pmsgParam->elementIndex].StepValue != 0))
   {   
     /*  
-    When optional parameter received present value,targert value, remaing time be sent in status message
+    When optional parameter received present value,targert value, remaining time be sent in status message
     length of received data is equal to 4B
     */
     TRACE_M(TF_GENERIC_M, "Generic_OnOff_Status sent with Transition \r\n"); 
@@ -835,7 +835,7 @@ MOBLE_RESULT GenericModelServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t 
 * @param  plength: Pointer to the Length of the data, to be updated by application
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT GenericModelServer_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam,
@@ -1062,7 +1062,7 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
     else
     {
 
-      pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for respons
+      pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for response
       Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
     }
   }
@@ -1087,7 +1087,7 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
     {
 
       pmsgParam->peer_addr = publishAddress;
-      pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for respons
+      pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for response
       Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
     }
                 
@@ -1127,11 +1127,11 @@ MOBLE_RESULT Generic_TransitionBehaviour(MOBLEUINT8 *GetValue,
   {
     Punblication_OneSecTimer();
   }
-  /* Values from application are copied into Temporary vaiables for processing */
+  /* Values from application are copied into Temporary variables for processing */
   
   Generic_TemporaryStatus[elementIndex].PresentValue16  = GetValue[1] << 8;
   Generic_TemporaryStatus[elementIndex].PresentValue16 |= GetValue[0];
-  /* if condition to wait untill the time is equal to the given resolution time */
+  /* if condition to wait until the time is equal to the given resolution time */
   if(((Clock_Time()- Check_time) >= Generic_TimeParam[elementIndex].Res_Value))
   {     
     if(Generic_TimeParam[elementIndex].StepValue == 0)
@@ -1253,7 +1253,7 @@ void Generic_Process(void)
 #ifdef ENABLE_GENERIC_MODEL_SERVER_ONOFF   
     if(Generic_ModelFlag[elementIndex].GenericTransitionFlag == GENERIC_ON_OFF_TRANSITION_START)
     {   
-      /* Fetching the state value from the applcation layer to middle layer */
+      /* Fetching the state value from the application layer to middle layer */
       (Appli_GenericState_cb.GetOnOffValue_cb)(Generic_GetBuff, my_Address, elementIndex); 
       
       Generic_TemporaryStatus[elementIndex].TargetValue16  = Generic_GetBuff[3] << 8;
@@ -1280,7 +1280,7 @@ void Generic_Process(void)
 #ifdef ENABLE_GENERIC_MODEL_SERVER_LEVEL       
     if(Generic_ModelFlag[elementIndex].GenericTransitionFlag == GENERIC_LEVEL_TRANSITION_START)
     {    
-      /* Fetching the state value from the applcation layer to middle layer */
+      /* Fetching the state value from the application layer to middle layer */
       (Appli_GenericState_cb.GetLevelStatus_cb)(Generic_GetBuff, my_Address, elementIndex); 
       /* Transition function called to change the state in transition */
       Generic_TransitionBehaviour(Generic_GetBuff, elementIndex); 
@@ -1321,7 +1321,7 @@ void Generic_Process(void)
 }
 
 /**
-* @brief Generic_OnOffStateUpdate_Process:Function to update the parametes of 
+* @brief Generic_OnOffStateUpdate_Process:Function to update the parameters of 
 *        Generic On Off model in application file from Temporary parameter in model file.
 * @param void
 * return MOBLE_RESULT.
@@ -1388,7 +1388,7 @@ void Generic_Publish(MOBLE_ADDRESS srcAddress)
 
 
 /**
-* @brief Generic_LevelStateUpdate_Process:function to update the parametes of Generic 
+* @brief Generic_LevelStateUpdate_Process:function to update the parameters of Generic 
 *        Level model in application file from Temporary parameter in model file.
 * @param void
 * return MOBLE_RESULT.
@@ -1613,7 +1613,7 @@ void Generic_DeltaDefaultTransitionValue(MOBLEUINT8 elementIndex, MOBLEUINT32 de
 }
 
 /**
-* @brief Function called when message received without optonal parameter, stop the running transition.
+* @brief Function called when message received without optional parameter, stop the running transition.
 * @param void
 * @param void
 */

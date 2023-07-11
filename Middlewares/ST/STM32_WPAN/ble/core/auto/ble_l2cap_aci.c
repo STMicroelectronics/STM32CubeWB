@@ -21,7 +21,7 @@
 tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle,
                                                       uint16_t Conn_Interval_Min,
                                                       uint16_t Conn_Interval_Max,
-                                                      uint16_t Slave_latency,
+                                                      uint16_t Latency,
                                                       uint16_t Timeout_Multiplier )
 {
   struct hci_request rq;
@@ -35,7 +35,7 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
   index_input += 2;
   cp0->Conn_Interval_Max = Conn_Interval_Max;
   index_input += 2;
-  cp0->Slave_latency = Slave_latency;
+  cp0->Latency = Latency;
   index_input += 2;
   cp0->Timeout_Multiplier = Timeout_Multiplier;
   index_input += 2;
@@ -55,7 +55,7 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
 tBleStatus aci_l2cap_connection_parameter_update_resp( uint16_t Connection_Handle,
                                                        uint16_t Conn_Interval_Min,
                                                        uint16_t Conn_Interval_Max,
-                                                       uint16_t Slave_latency,
+                                                       uint16_t Latency,
                                                        uint16_t Timeout_Multiplier,
                                                        uint16_t Minimum_CE_Length,
                                                        uint16_t Maximum_CE_Length,
@@ -73,7 +73,7 @@ tBleStatus aci_l2cap_connection_parameter_update_resp( uint16_t Connection_Handl
   index_input += 2;
   cp0->Conn_Interval_Max = Conn_Interval_Max;
   index_input += 2;
-  cp0->Slave_latency = Slave_latency;
+  cp0->Latency = Latency;
   index_input += 2;
   cp0->Timeout_Multiplier = Timeout_Multiplier;
   index_input += 2;

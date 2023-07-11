@@ -49,6 +49,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
+static uint8_t VcpRxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Receive buffer over USB */
 #endif
 
 /* Global function prototypes -----------------------------------------------*/
@@ -407,7 +408,7 @@ void DbgOutputInit( void )
 #if (CFG_USB_INTERFACE_ENABLE == 0)
   MX_USART1_UART_Init(); 
 #else
-  VCP_Init( &VcpTxBuffer[0], 0 );
+  VCP_Init(&VcpTxBuffer[0], &VcpRxBuffer[0]);
 #endif
   return;
 }

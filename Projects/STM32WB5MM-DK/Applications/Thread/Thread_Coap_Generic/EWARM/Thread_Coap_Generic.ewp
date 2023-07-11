@@ -94,7 +94,7 @@
                 </option>
                 <option>
                     <name>RTConfigPath2</name>
-                    <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Full.h</state>
+                    <state>$TOOLKIT_DIR$\inc\c\DLib_Config_Full.h</state>
                 </option>
                 <option>
                     <name>GBECoreSlave</name>
@@ -1007,7 +1007,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>###Unitialized###</state>
+                    <state>Thread_Coap_Generic_import_lib.o</state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>
@@ -1435,10 +1435,16 @@
     <group>
         <name>Utilities</name>
         <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\advanced_memory_manager.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\LCD\stm32_lcd.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\lpm\tiny_lpm\stm32_lpm.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\stm32_mm.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer\stm32_seq.c</name>

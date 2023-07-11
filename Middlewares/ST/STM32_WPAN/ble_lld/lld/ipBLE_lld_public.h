@@ -143,7 +143,7 @@ typedef struct {
 #define TIMESTAMP_POSITION          0x80
 
 // Event sent by radio CPU to application CPU at the end of an action packet
-// Because of filtering implemenation, first event must be 1 and there must
+// Because of filtering implementation, first event must be 1 and there must
 // be at most 32 events
 typedef enum
 {

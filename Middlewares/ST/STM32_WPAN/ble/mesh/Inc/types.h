@@ -25,7 +25,7 @@
 * \brief This file defines Motorola Solutions Bluetooth LE Mesh Library types.
 *
 * This file contains data types defined in the ST BLE-Mesh Library . Please refer to the
-* desription of each type to get the information on it's purpose.
+* description of each type to get the information on it's purpose.
 */
 
 #ifndef NULL

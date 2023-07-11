@@ -48,7 +48,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>BLE_p2pServer\</OutputDirectory>
+          <OutputDirectory>BLE_p2pServer\Exe\</OutputDirectory>
           <OutputName>BLE_p2pServer</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>

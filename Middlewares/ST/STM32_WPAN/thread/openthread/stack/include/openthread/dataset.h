@@ -49,6 +49,8 @@ extern "C" {
  *
  * @{
  *
+ * For FTD and MTD builds, the Operational Dataset API includes functions to manage Active and Pending datasets
+ * and dataset TLVs.
  */
 
 #define OT_NETWORK_KEY_SIZE 16 ///< Size of the Thread Network Key (bytes)
@@ -339,7 +341,7 @@ typedef void (*otDatasetMgmtSetCallback)(otError aResult, void *aContext);
 bool otDatasetIsCommissioned(otInstance *aInstance);
 
 /**
- * This function gets the Active Operational Dataset.
+ * Gets the Active Operational Dataset.
  *
  * @param[in]   aInstance A pointer to an OpenThread instance.
  * @param[out]  aDataset  A pointer to where the Active Operational Dataset will be placed.
@@ -363,7 +365,7 @@ otError otDatasetGetActive(otInstance *aInstance, otOperationalDataset *aDataset
 otError otDatasetGetActiveTlvs(otInstance *aInstance, otOperationalDatasetTlvs *aDataset);
 
 /**
- * This function sets the Active Operational Dataset.
+ * Sets the Active Operational Dataset.
  *
  * If the dataset does not include an Active Timestamp, the dataset is only partially complete.
  *
@@ -439,7 +441,7 @@ otError otDatasetGetPending(otInstance *aInstance, otOperationalDataset *aDatase
 otError otDatasetGetPendingTlvs(otInstance *aInstance, otOperationalDatasetTlvs *aDataset);
 
 /**
- * This function sets the Pending Operational Dataset.
+ * Sets the Pending Operational Dataset.
  *
  * @param[in]  aInstance A pointer to an OpenThread instance.
  * @param[in]  aDataset  A pointer to the Pending Operational Dataset.
@@ -465,7 +467,7 @@ otError otDatasetSetPending(otInstance *aInstance, const otOperationalDataset *a
 otError otDatasetSetPendingTlvs(otInstance *aInstance, const otOperationalDatasetTlvs *aDataset);
 
 /**
- * This function sends MGMT_ACTIVE_GET.
+ * Sends MGMT_ACTIVE_GET.
  *
  * @param[in]  aInstance           A pointer to an OpenThread instance.
  * @param[in]  aDatasetComponents  A pointer to a Dataset Components structure specifying which components to request.
@@ -477,14 +479,14 @@ otError otDatasetSetPendingTlvs(otInstance *aInstance, const otOperationalDatase
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer space to send.
  *
  */
-otError otDatasetSendMgmtActiveGet(otInstance *                          aInstance,
+otError otDatasetSendMgmtActiveGet(otInstance                           *aInstance,
                                    const otOperationalDatasetComponents *aDatasetComponents,
-                                   const uint8_t *                       aTlvTypes,
+                                   const uint8_t                        *aTlvTypes,
                                    uint8_t                               aLength,
-                                   const otIp6Address *                  aAddress);
+                                   const otIp6Address                   *aAddress);
 
 /**
- * This function sends MGMT_ACTIVE_SET.
+ * Sends MGMT_ACTIVE_SET.
  *
  * @param[in]  aInstance  A pointer to an OpenThread instance.
  * @param[in]  aDataset   A pointer to operational dataset.
@@ -498,15 +500,15 @@ otError otDatasetSendMgmtActiveGet(otInstance *                          aInstan
  * @retval OT_ERROR_BUSY          A previous request is ongoing.
  *
  */
-otError otDatasetSendMgmtActiveSet(otInstance *                aInstance,
+otError otDatasetSendMgmtActiveSet(otInstance                 *aInstance,
                                    const otOperationalDataset *aDataset,
-                                   const uint8_t *             aTlvs,
+                                   const uint8_t              *aTlvs,
                                    uint8_t                     aLength,
                                    otDatasetMgmtSetCallback    aCallback,
-                                   void *                      aContext);
+                                   void                       *aContext);
 
 /**
- * This function sends MGMT_PENDING_GET.
+ * Sends MGMT_PENDING_GET.
  *
  * @param[in]  aInstance           A pointer to an OpenThread instance.
  * @param[in]  aDatasetComponents  A pointer to a Dataset Components structure specifying which components to request.
@@ -518,14 +520,14 @@ otError otDatasetSendMgmtActiveSet(otInstance *                aInstance,
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer space to send.
  *
  */
-otError otDatasetSendMgmtPendingGet(otInstance *                          aInstance,
+otError otDatasetSendMgmtPendingGet(otInstance                           *aInstance,
                                     const otOperationalDatasetComponents *aDatasetComponents,
-                                    const uint8_t *                       aTlvTypes,
+                                    const uint8_t                        *aTlvTypes,
                                     uint8_t                               aLength,
-                                    const otIp6Address *                  aAddress);
+                                    const otIp6Address                   *aAddress);
 
 /**
- * This function sends MGMT_PENDING_SET.
+ * Sends MGMT_PENDING_SET.
  *
  * @param[in]  aInstance  A pointer to an OpenThread instance.
  * @param[in]  aDataset   A pointer to operational dataset.
@@ -539,12 +541,12 @@ otError otDatasetSendMgmtPendingGet(otInstance *                          aInsta
  * @retval OT_ERROR_BUSY          A previous request is ongoing.
  *
  */
-otError otDatasetSendMgmtPendingSet(otInstance *                aInstance,
+otError otDatasetSendMgmtPendingSet(otInstance                 *aInstance,
                                     const otOperationalDataset *aDataset,
-                                    const uint8_t *             aTlvs,
+                                    const uint8_t              *aTlvs,
                                     uint8_t                     aLength,
                                     otDatasetMgmtSetCallback    aCallback,
-                                    void *                      aContext);
+                                    void                       *aContext);
 
 /**
  * This function generates PSKc from a given pass-phrase, network name, and extended PAN ID.
@@ -560,15 +562,15 @@ otError otDatasetSendMgmtPendingSet(otInstance *                aInstance,
  * @retval OT_ERROR_INVALID_ARGS  If any of the input arguments is invalid.
  *
  */
-otError otDatasetGeneratePskc(const char *           aPassPhrase,
-                              const otNetworkName *  aNetworkName,
+otError otDatasetGeneratePskc(const char            *aPassPhrase,
+                              const otNetworkName   *aNetworkName,
                               const otExtendedPanId *aExtPanId,
-                              otPskc *               aPskc);
+                              otPskc                *aPskc);
 
 /**
- * This function sets an `otNetworkName` instance from a given null terminated C string.
+ * Sets an `otNetworkName` instance from a given null terminated C string.
  *
- * This function also validates that the given @p aNameString follows UTF-8 encoding and its length is not longer than
+ * @p aNameString must follow UTF-8 encoding and the Network Name length must not be longer than
  * `OT_NETWORK_NAME_MAX_SIZE`.
  *
  * @param[out] aNetworkName        A pointer to the `otNetworkName` to set.

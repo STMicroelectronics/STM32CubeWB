@@ -132,7 +132,7 @@ void MX_APPE_Init(void)
 
 /* USER CODE BEGIN APPE_Init_1 */
   APPD_Init();
-
+  
   /**
    * The Standby mode should not be entered before the initialization is over
    * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
@@ -502,7 +502,7 @@ static void APPE_SysEvtReadyProcessing(void * pPayload)
     APP_DBG_MSG(">>== DBGMCU_GetRevisionID= %lx \n\r", RevisionID);
 
     config_param.RevisionID = (uint16_t)RevisionID;
-    
+
     DeviceID = LL_DBGMCU_GetDeviceID();
     APP_DBG_MSG(">>== DBGMCU_GetDeviceID= %lx \n\r", DeviceID);
     config_param.DeviceID = (uint16_t)DeviceID;

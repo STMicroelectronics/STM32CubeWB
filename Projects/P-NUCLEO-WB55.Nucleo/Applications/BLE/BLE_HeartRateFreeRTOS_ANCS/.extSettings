@@ -1,0 +1,8 @@
+[ProjectFiles]
+HeaderPath=..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.Nucleo
+[Others]
+Define=USE_STM32WBXX_NUCLEO
+[Groups]
+Drivers/BSP/P-NUCLEO-WB55.Nucleo=../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo/stm32wbxx_nucleo.c;
+Application/User/STM32_WPAN/App=../STM32_WPAN/App/ancs_client_app.c;
+Doc=../readme.txt;

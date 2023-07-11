@@ -175,7 +175,7 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size);
 #endif
 
 #if  (!(GENERATE_STATIC_RANDOM_MAC)) &&  (!(EXTERNAL_MAC_ADDR_MGMT)) && (!(INTERNAL_UNIQUE_NUMBER_MAC))
-#error "Please select atleast one MAC address Option"
+#error "Please select at least one MAC address Option"
 #endif 
 
 #ifdef ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE
@@ -221,7 +221,7 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size);
 
 
 #if  (PB_ADV_SUPPORTED == 0 && PB_GATT_SUPPORTED == 0)
-#error "Atleast one of PB-ADV and PB-GATT should be defined"
+#error "At least one of PB-ADV and PB-GATT should be defined"
 #endif
 
 #define BLUENRG_MESH_PRVN_BEARER_INFO (PB_ADV_SUPPORTED << 0 | PB_GATT_SUPPORTED << 1)
@@ -316,7 +316,7 @@ void MemoryDumpHex(const MOBLEUINT8* memory_addr, int size);
 #error "Number of neighbor alive time should be nonzero"
 #endif /* NEIGHBOR_ALIVE_TIME */
 #if ((NEIGHBOR_UNPRVND_DEV_BEACON_NTU == 0) && (NEIGHBOR_MSG_TTLX_NTU == 0) && (NEIGHBOR_SECURE_NET_BEACON_NTU == 0))
-#error "Atleast one of Network Table Update trigger should be enabled"
+#error "At least one of Network Table Update trigger should be enabled"
 #endif
 #if (NEIGHBOR_UNPRVND_DEV_BEACON_NTU > 1)
 #error "Invalid valid of NEIGHBOR_UNPRVND_DEV_BEACON_NTU. Allowed value: 0 and 1"

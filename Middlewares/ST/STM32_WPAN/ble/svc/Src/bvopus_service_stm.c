@@ -121,7 +121,7 @@ uint32_t BVOPUS_ENC_getMemorySize(OPUS_IF_ENC_ConfigTypeDef *ENC_configOpus);
   * @param  attr_handle: Attribute handle.
   * @param  attr_len: Attribute length.
   * @param  attr_value: Attribute value.
-  * @retval BVOPUS_STM_evt_code_t: Value indicating the operatione code.
+  * @retval BVOPUS_STM_evt_code_t: Value indicating the operation code.
   */
 BVOPUS_STM_evt_code_t BluevoiceOPUS_AttributeModified_CB(uint16_t attr_handle, uint16_t attr_len, uint8_t *attr_value);
 
@@ -230,7 +230,7 @@ static SVCCTL_EvtAckStatus_t BVOPUS_Event_Handler(void *Event)
   * @param  attr_handle: Attribute handle.
   * @param  attr_len: Attribute length.
   * @param  attr_value: Attribute value.
-  * @retval BVOPUS_STM_evt_code_t: Value indicating the operatione code.
+  * @retval BVOPUS_STM_evt_code_t: Value indicating the operation code.
  */
 BVOPUS_STM_evt_code_t BluevoiceOPUS_AttributeModified_CB(uint16_t attr_handle, uint16_t attr_len, uint8_t *attr_value)
 {    

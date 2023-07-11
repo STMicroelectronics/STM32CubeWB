@@ -134,9 +134,13 @@ union cache
   uint8_t  U8_data[ST_PERSIST_MAX_ALLOC_SZ];     // in bytes 
   uint32_t U32_data[ST_PERSIST_MAX_ALLOC_SZ/4U]; // in U32 words
 };
-__attribute__ ((section(".noinit"))) union cache cache_persistent_data;
+// __attribute__ ((section(".noinit"))) union cache cache_persistent_data;
 
-__attribute__ ((section(".noinit"))) union cache cache_diag_reference;
+// __attribute__ ((section(".noinit"))) union cache cache_diag_reference;
+
+union cache cache_persistent_data;
+union cache cache_diag_reference;
+
 
 /* timer to delay reading attribute back from persistence */
 //static uint8_t TS_ID1; 
@@ -1142,22 +1146,21 @@ static void APP_ZIGBEE_NVM_Diag_Exec(void)
   }
   if(write_err)
   {
-     APP_DBG("TEST #%d --> FAILED (write error)",test);
+     APP_DBG("NVM DIAGNOSTIC TESTS STATUS --> FAILED (write error)",test);
   }
   else if(read_err)
   {
-     APP_DBG("TEST #%d --> FAILED (read error)",test);
+     APP_DBG("NVM DIAGNOSTIC TESTS STATUS --> FAILED (read error)",test);
   }
   else if(data_err)
   {
-     APP_DBG("TEST #%d --> FAILED (data integrity error)",test);
+     APP_DBG("NVM DIAGNOSTIC TESTS STATUS --> FAILED (data integrity error)",test);
   }
-  else{}
+  else{
+    APP_DBG("NVM DIAGNOSTIC TESTS STATUS --> PASSED",test);
+  }
   APP_DBG("");
   APP_DBG("NVM DIAGNOSTIC TESTS IS OVER");
-  
-  
-  
 }
 
 /**

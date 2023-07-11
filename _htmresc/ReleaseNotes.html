@@ -4,7 +4,7 @@
     <title>_htmresc\ReleaseNotes.html</title>
   </head>
   <body style="font-size: 10pt; font-family: Verdana;">
-    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.16.0 / 08-February-2023</h3>
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.17.0 / 7-June-2023</h3>
     <div style="margin-left: 18pt;">
       <p>
         <b><u>Main Changes</u></b>
@@ -13,38 +13,41 @@
         <b>Maintenance Release for BLE, 802.15.4, Thread and Zigbee updates</b>
       </p>
       <p>
-	  <bl> Porting IAR toolChain 9.20.1. </bl>
         <li> <strong>THREAD</strong> updates
           <ul>
-            <li>TxPower API support added.</li>
+            <li>SED role is now supported for FTD.</li>
+            <li>SSED role is now supported for FTD and MTD.</li>
+            <li>Improved global stability and robustness.</li>
+            <li>Improved security.</li>
           </ul>
         </li>
         <li> <strong>Zigbee</strong> updates
           <ul>
-            <li> Update default ZB_NWK parameter and add new configuration (ZB_NWK/ZB_APS).</li>
+            <li>- Robustness improvement in case of radio noisy environment</li>
           </ul>
         </li>
         <li>
           <strong>BLE</strong> updates
           <ul>
-            <li> BLE GATT caching and Enhanced ATT supported (certified BLE 5.3 - TCRL 2022-1).</li>
-			<li> Application has now the possibility to have scan operation in background with respect to advertising & Connection slave.</li>
+            <li>Compliancy TCRL 2022-2.</li>
+            <li>ACI BLE primitives naming alignment to standard.</li>
+            <li>HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT is now automatically used instead of HCI_LE_CONNECTION_COMPLETE_EVENT when advertising extensions are used.</li>
+            <li>Additional check on HSE Startup time.</li>
           </ul>
         </li>
 		<li> <strong>MAC 802.15.4</strong> updates
           <ul>
-            <li> LowPower application optimization.</li>
-			<li> Improve robustness in case of overloaded 802.15.4 network.</li>
+            <li>Improvement of radio robustness over heavy overloaded and noisy environment.</li>
           </ul>
         </li>
 		<li> <strong>BLE/MAC Static</strong> updates
           <ul>
-            <li> Improve robustness in case of overloaded 802.15.4 network.</li>
+            <li>Improvement of radio robustness over heavy overloaded and noisy environment.</li>
           </ul>
         </li>
 		<li> <strong>BLE/Zigbee Dynamic</strong> updates
           <ul>
-            <li> Improve robustness when switching from BLE to Zigbee.</li>
+            <li>Bug corrected in Dynamic Concurrent applications to prevent switching from 802.15.4 to BLE while radio is in an incorrect state.</li>
           </ul>
         </li>
       </p>
@@ -57,7 +60,8 @@
             <li>
               Update HAL/LL drivers to include latest corrections
                 <ul>
-                <li>Update of HAL FLASH, Generic, I2C, SAI, TSC, UART drivers.</li>
+                <li>- Update of HAL CRYP, Generic, I2C, SMBUS, TSC, UART, SPI drivers.</li>
+                <li>- Update of LL USB drivers</li>
                 </ul>
             </li>
             <li> Refer to <a href="../Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details </li>
@@ -70,15 +74,11 @@
             <li>
               Update of FW projects following changes in latest version of HAL/LL and Middlewares and alignments with CubeMx
                 <ul>
-                  <li>/NUCLEO-WB15CC/Examples/CRYP/CRYP_DMA</li>
-				  <li>/NUCLEO-WB15CC/UART/UART_Print</li>
-				  <li>/P-NUCLEO-WB55.Nucleo/Examples/CRYP/CRYP_AESModes</li>
-				  <li>/P-NUCLEO-WB55.Nucleo/Examples/I2C/I2C_TwoBoards_RestartAdvComIT</li>
-				  <li>/P-NUCLEO-WB55.Nucleo/Examples/CRYP/CRYP_DMA</li>
-				  <li>/P-NUCLEO-WB55.Nucleo/Examples/UART/UART_Console</li>
-				  <li>/P-NUCLEO-WB55.Nucleo/Examples/UART/UART_Printf</li>
-				  <li>/STM32WB5MM-DK/Examples/BSP</li>
-				  <li>/STM32WB5MM-DK/Examples/UART/UART_Console</li>
+                  <li>- /B-WB1M-WPAN1/Examples/BSP/BSP_Example</li>
+                  <li>- /STM32WB5MM-DK/Examples/BSP/BSP_Example</li>
+                  <li>- /NUCLEO-WB15CC/Examples/FLASH/FLASH_EraseProgram</li>
+                  <li>- /NUCLEO-WB15CC/Examples/CRYP/CRYP_DMA</li>
+                  <li>- /P-NUCLEO-WB55.Nucleo/Examples/CRYP/CRYP_DMA</li>
                 </ul>
             </li>
           </ul>

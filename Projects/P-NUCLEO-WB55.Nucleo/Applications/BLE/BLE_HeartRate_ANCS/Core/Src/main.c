@@ -81,10 +81,10 @@ void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
-static void MX_RF_Init(void);
 static void MX_RTC_Init(void);
 static void MX_IPCC_Init(void);
 static void MX_RNG_Init(void);
+static void MX_RF_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -122,7 +122,7 @@ int main(void)
   PeriphCommonClock_Config();
 
   /* IPCC initialisation */
-   MX_IPCC_Init();
+  MX_IPCC_Init();
 
   /* USER CODE BEGIN SysInit */
 
@@ -131,9 +131,9 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_RF_Init();
   MX_RTC_Init();
   MX_RNG_Init();
+  MX_RF_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -143,8 +143,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	while(1)
-	{
+  while(1)
+  {
     /* USER CODE END WHILE */
     MX_APPE_Process();
 
@@ -470,12 +470,16 @@ static void MX_DMA_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */

@@ -35,6 +35,10 @@ typedef struct{
   uint16_t  CustomHrs_MHdle;                  /**< My_HRS_Meas handle */
   uint16_t  CustomHrs_SlHdle;                  /**< My_Sensor_Loc handle */
   uint16_t  CustomHrs_CtrlpHdle;                  /**< My_HRS_CTRL_Point handle */
+/* USER CODE BEGIN Context */
+  /* Place holder for Characteristic Descriptors Handle*/
+
+/* USER CODE END Context */
 }CustomContext_t;
 
 /* USER CODE BEGIN PTD */
@@ -370,6 +374,8 @@ void SVCCTL_InitCustomSvc(void)
 
   Char_UUID_t  uuid;
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
+  uint8_t max_attr_record;
+
   /* USER CODE BEGIN SVCCTL_InitCustomSvc_1 */
 
   /* USER CODE END SVCCTL_InitCustomSvc_1 */
@@ -388,13 +394,22 @@ void SVCCTL_InitCustomSvc(void)
    *                                2 for My_Switch_Char +
    *                                1 for My_Switch_Char configuration descriptor +
    *                              = 6
+   *
+   * This value doesn't take into account number of descriptors manually added
+   * In case of descriptors addded, please update the max_attr_record value accordingly in the next SVCCTL_InitService User Section
    */
+  max_attr_record = 6;
+
+  /* USER CODE BEGIN SVCCTL_InitService */
+  /* max_attr_record to be updated if descriptors have been added */
+
+  /* USER CODE END SVCCTL_InitService */
 
   COPY_MY_P2P_SERVER_UUID(uuid.Char_UUID_128);
   ret = aci_gatt_add_service(UUID_TYPE_128,
                              (Service_UUID_t *) &uuid,
                              PRIMARY_SERVICE,
-                             6,
+                             max_attr_record,
                              &(CustomContext.CustomMy_P2PsHdle));
   if (ret != BLE_STATUS_SUCCESS)
   {
@@ -426,6 +441,11 @@ void SVCCTL_InitCustomSvc(void)
   {
     APP_DBG_MSG("  Success: aci_gatt_add_char command   : LED_C \n\r");
   }
+
+  /* USER CODE BEGIN SVCCTL_Init_Service1_Char1/ */
+  /* Place holder for Characteristic Descriptors */
+
+  /* USER CODE END SVCCTL_Init_Service1_Char1 */
   /**
    *  My_Switch_Char
    */
@@ -448,6 +468,11 @@ void SVCCTL_InitCustomSvc(void)
     APP_DBG_MSG("  Success: aci_gatt_add_char command   : SWITCH_C \n\r");
   }
 
+  /* USER CODE BEGIN SVCCTL_Init_Service1_Char2/ */
+  /* Place holder for Characteristic Descriptors */
+
+  /* USER CODE END SVCCTL_Init_Service1_Char2 */
+
   /**
    *          My_Heart_Rate
    *
@@ -458,13 +483,22 @@ void SVCCTL_InitCustomSvc(void)
    *                                2 for My_HRS_CTRL_Point +
    *                                1 for My_HRS_Meas configuration descriptor +
    *                              = 8
+   *
+   * This value doesn't take into account number of descriptors manually added
+   * In case of descriptors addded, please update the max_attr_record value accordingly in the next SVCCTL_InitService User Section
    */
+  max_attr_record = 8;
+
+  /* USER CODE BEGIN SVCCTL_InitService */
+  /* max_attr_record to be updated if descriptors have been added */
+
+  /* USER CODE END SVCCTL_InitService */
 
   uuid.Char_UUID_16 = 0x180d;
   ret = aci_gatt_add_service(UUID_TYPE_16,
                              (Service_UUID_t *) &uuid,
                              PRIMARY_SERVICE,
-                             8,
+                             max_attr_record,
                              &(CustomContext.CustomMy_HrsHdle));
   if (ret != BLE_STATUS_SUCCESS)
   {
@@ -496,6 +530,11 @@ void SVCCTL_InitCustomSvc(void)
   {
     APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_M \n\r");
   }
+
+  /* USER CODE BEGIN SVCCTL_Init_Service2_Char1/ */
+  /* Place holder for Characteristic Descriptors */
+
+  /* USER CODE END SVCCTL_Init_Service2_Char1 */
   /**
    *  My_Sensor_Loc
    */
@@ -517,6 +556,11 @@ void SVCCTL_InitCustomSvc(void)
   {
     APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_SL \n\r");
   }
+
+  /* USER CODE BEGIN SVCCTL_Init_Service2_Char2/ */
+  /* Place holder for Characteristic Descriptors */
+
+  /* USER CODE END SVCCTL_Init_Service2_Char2 */
   /**
    *  My_HRS_CTRL_Point
    */
@@ -538,6 +582,11 @@ void SVCCTL_InitCustomSvc(void)
   {
     APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_CTRLP \n\r");
   }
+
+  /* USER CODE BEGIN SVCCTL_Init_Service2_Char3/ */
+  /* Place holder for Characteristic Descriptors */
+
+  /* USER CODE END SVCCTL_Init_Service2_Char3 */
 
   /* USER CODE BEGIN SVCCTL_InitCustomSvc_2 */
 

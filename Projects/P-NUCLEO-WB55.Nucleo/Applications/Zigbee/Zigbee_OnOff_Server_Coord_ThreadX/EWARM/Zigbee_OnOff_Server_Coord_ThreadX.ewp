@@ -94,7 +94,7 @@
                 </option>
                 <option>
                     <name>RTConfigPath2</name>
-                    <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Full.h</state>
+                    <state>$TOOLKIT_DIR$\inc\c\DLib_Config_Full.h</state>
                 </option>
                 <option>
                     <name>GBECoreSlave</name>
@@ -708,7 +708,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>Zigbee_OnOff_Coord_ThreadX.out</state>
+                    <state>Zigbee_OnOff_Server_Coord_ThreadX.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
@@ -1005,7 +1005,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>###Unitialized###</state>
+                    <state>Zigbee_OnOff_Server_Coord_ThreadX_import_lib.o</state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>
@@ -1078,9 +1078,23 @@
                 </option>
             </data>
         </settings>
+        <settings>
+            <name>Coder</name>
+            <archiveVersion>0</archiveVersion>
+            <data />
+        </settings>
     </configuration>
     <group>
         <name>Application</name>
+        <group>
+            <name>AZURE_RTOS</name>
+            <group>
+                <name>App</name>
+                <file>
+                    <name>$PROJ_DIR$\..\AZURE_RTOS\App\app_azure_rtos.c</name>
+                </file>
+            </group>
+        </group>
         <group>
             <name>EWARM</name>
             <file>
@@ -1093,6 +1107,9 @@
                 <name>Core</name>
                 <file>
                     <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Core\Src\app_threadx.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Core\Src\hw_timerserver.c</name>

@@ -1,5 +1,5 @@
 /**
-  @page Thread_Coap_Generic application
+  @page Thread_Coap_Generic_ThreadX application
   
   @verbatim
   ******************************************************************************
@@ -83,27 +83,27 @@ COAP,Thread
 
 @par Directory contents 
   
-  - Thread/Thread_Coap_Generic/Core/Inc/app_common.h       	Header for all modules with common definition
-  - Thread/Thread_Coap_Generic/Core/Inc/app_conf.h         	Parameters configuration file of the application 
-  - Thread/Thread_Coap_Generic/Core/Inc/app_entry.h        	Parameters configuration file of the application
-  - Thread/Thread_Coap_Generic/STM32_WPAN/App/app_thread.h      Header for app_thread.c module
-  - Thread/Thread_Coap_Generic/Core/Inc/hw_conf.h          	Configuration file of the HW 
-  - Thread/Thread_Coap_Generic/Core/Inc/main.h                  Header for main.c module
-  - Thread/Thread_Coap_Generic/Core/Inc/stm_logging.h           Header for stm_logging.c module
-  - Thread/Thread_Coap_Generic/Core/Inc/stm32wbxx_hal_conf.h    HAL configuration file
-  - Thread/Thread_Coap_Generic/Core/Src/stm32wbxx_it.h          Interrupt header file
-  - Thread/Thread_Coap_Generic/Core/Inc/utilities_conf.h   	Configuration file of the utilities
-  - Thread/Thread_Coap_Generic/Core/Src/app_entry.c        	Initialization of the application
-  - Thread/Thread_Coap_Generic/STM32_WPAN/App/app_thread.c      Thread application implementation
-  - Thread/Thread_Coap_Generic/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
-  - Thread/Thread_Coap_Generic/Core/Src/stm32_lpm_if.c     	Low Power Manager Interface
-  - Thread/Thread_Coap_Generic/Core/Src/hw_timerserver.c   	Timer Server Driver
-  - Thread/Thread_Coap_Generic/Core/Src/hw_uart.c          	UART driver
-  - Thread/Thread_Coap_Generic/Core/Src/main.c                  Main program
-  - Thread/Thread_Coap_Generic/Core/Src/stm_logging.c           Logging module for traces
-  - Thread/Thread_Coap_Generic/Core/Src/stm32xx_it.c            Interrupt handlers
-  - Thread/Thread_Coap_Generic/Core/Src/system_stm32wbxx.c      stm32wbxx system source file
- 
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Inc/app_common.h       	Header for all modules with common definition
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Inc/app_conf.h         	Parameters configuration file of the application 
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Inc/app_entry.h        	Parameters configuration file of the application
+  - Thread/Thread_Coap_Generic_ThreadX/STM32_WPAN/App/app_thread.h      Header for app_thread.c module
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Inc/hw_conf.h          	Configuration file of the HW 
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Inc/main.h                  Header for main.c module
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Inc/stm_logging.h           Header for stm_logging.c module
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Inc/stm32wbxx_hal_conf.h    HAL configuration file
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Src/stm32wbxx_it.h          Interrupt header file
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Inc/utilities_conf.h   	Configuration file of the utilities
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Src/app_entry.c        	Initialization of the application
+  - Thread/Thread_Coap_Generic_ThreadX/STM32_WPAN/App/app_thread.c      Thread application implementation
+  - Thread/Thread_Coap_Generic_ThreadX/STM32_WPAN/Target/hw_ipcc.c      IPCC Driver
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Src/stm32_lpm_if.c     	Low Power Manager Interface
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Src/hw_timerserver.c   	Timer Server Driver
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Src/hw_uart.c          	UART driver
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Src/main.c                  Main program
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Src/stm_logging.c           Logging module for traces
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Src/stm32xx_it.c            Interrupt handlers
+  - Thread/Thread_Coap_Generic_ThreadX/Core/Src/system_stm32wbxx.c      stm32wbxx system source file
+ _ThreadX
  
 @par Hardware and Software environment
 
@@ -164,12 +164,12 @@ For the Cli control and for the traces, the UART must be configured as follows:
 
 => Trace for TheadX :
 	- On the IAR project :
-		-  	A new directory (debug_traces) is added to integrate all 'tx_trace*.c') files.
+		- A new directory (debug_traces) is added to integrate all 'tx_trace*.c' files.
 		-	A new 'macro' file named 'TraceForThreadX.mac' is added on EWARM directory.
 		-	This new 'macro' file is defined on the 'option .. debugger .. Setup .. Setup macros'.
 	- On the 'tx_user.h' file, the #define 'TX_ENABLE_EVENT_TRACE' is uncommented.
 	- On the 'app_thread.c' 
-		-	Definition of a 'Trace' Buffer (named 'cDebugTraceX') that can contains 512 event described by 64 bytes).
+		-	Definition of a 'Trace' Buffer (named 'cDebugTraceX') that can contains 512 event described by 64 bytes.
 		-	Initialisation of trace by 'tx_trace_enable()' function.
 		-	ThreadX trace all events concerning Thread/Semaphore/Mutex. User can add a 'manual' event with the function 'tx_trace_user_event_insert()'
 	-To obtains the Trace :

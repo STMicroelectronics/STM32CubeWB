@@ -1,12 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : app_zigbee.h
-  * Description        : Header for Zigbee Application.
+  * @file    App/app_zigbee.h
+  * @author  MCD Application Team
+  * @brief   Header for Zigbee Application.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -57,6 +58,7 @@ typedef enum
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
+
 /* USER CODE BEGIN EC */
 
 /* USER CODE END EC */
@@ -75,8 +77,6 @@ typedef enum
 void APP_ZIGBEE_Init(void);
 void APP_ZIGBEE_Error(uint32_t ErrId, uint32_t ErrCode);
 void APP_ZIGBEE_RegisterCmdBuffer(TL_CmdPacket_t *p_buffer);
-void APP_ZIGBEE_ProcessNotifyM0ToM4(void);
-void APP_ZIGBEE_ProcessRequestM0ToM4(void);
 void APP_ZIGBEE_TL_INIT(void);
 void Pre_ZigbeeCmdProcessing(void);
 /* USER CODE BEGIN EF */

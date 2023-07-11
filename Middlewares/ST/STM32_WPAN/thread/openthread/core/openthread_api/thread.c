@@ -1003,3 +1003,18 @@ otError otThreadDetachGracefully(otInstance *aInstance, otDetachGracefullyCallba
   return (otError)p_ot_req->Data[0];
 }
 
+otError otThreadSearchForBetterParent(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SEARCH_FOR_BETTER_PARENT;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}

@@ -1,8 +1,9 @@
 /**
  * @file zigbee.h
+ * @heading Zigbee Utilities
  * @brief Zigbee header file.
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2023] Exegin Technologies Limited. All rights reserved.
  *
  * This file groups global/external definitions from all the layer specific header files
  * e.g, aps, nwk, zdo etc... into a single place, so that one can just include zigbee.h for
@@ -219,17 +220,12 @@ enum ZbTcsoStatusT {
 #define ZB_LOG_MASK_APS_FRAG            0x00000800U /* APS fragmentation debugging */
 /* ZDO */
 #define ZB_LOG_MASK_ZDO_ANNCE           0x00001000U /* Print on reception of ZDO Device_Annce */
-/* ZCL */
 #define ZB_LOG_MASK_ZCL                 0x00002000U
-/* Green Power */
 #define ZB_LOG_MASK_GREENPOWER          0x00004000U
-/* Diagnostics */
 #define ZB_LOG_MASK_DIAG                0x00008000U
-/* ZbHeapAlloc / ZbHeapFree debugging */
 #define ZB_LOG_MASK_HEAP                0x00010000U
-/* ZbTimer */
 #define ZB_LOG_MASK_TIMER               0x00020000U
-/* MAC */
+#define ZB_LOG_MASK_SLEEPY              0x01000000U /* Sleepy (e.g. Polling) */
 #define ZB_LOG_MASK_MAC_RSSI            0x10000000U /* Print debug message per MCPS-DATA.indication showing RSSI */
 
 /* Log mask helpers */
@@ -561,6 +557,7 @@ enum ZbStatusCodeT ZbStateResume(struct ZigBeeT *zb);
  * Test Case Hooks
  *---------------------------------------------------------------
  */
+#ifdef CONFIG_TEST_HOOK
 /* These represent bits in a 32-bit bitmask. */
 enum ZbTestcaseT {
     ZB_TESTCASE_NONE = 0,
@@ -603,7 +600,7 @@ uint32_t ZbTestCaseCurrent(struct ZigBeeT *zb);
 
 /* Should only be required for the stack */
 bool ZbTestCaseIsEnabled(struct ZigBeeT *zb, enum ZbTestcaseT testcase);
-
+#endif // CONFIG_TEST_HOOK
 /*---------------------------------------------------------------
  * Misc. Helper Functions
  *---------------------------------------------------------------
@@ -625,6 +622,13 @@ unsigned long ZbHeapHighWaterMark(struct ZigBeeT *zb);
 int zb_hex_str_to_bin(const char *string, void *out, unsigned int maxlen);
 unsigned int zb_hex_bin_to_str(const uint8_t *in_data, unsigned int in_len, char *out_str, unsigned int max_len,
     const char delimiter, unsigned int interval);
+
+/*---------------------------------------------------------------
+ * Misc Debug (may not be available on all platforms)
+ *---------------------------------------------------------------
+ */
+void ZbDebugMemory(struct ZigBeeT *zb);
+void ZbDebugInfo(struct ZigBeeT *zb);
 
 /*---------------------------------------------------------------
  * Additional Layer Includes

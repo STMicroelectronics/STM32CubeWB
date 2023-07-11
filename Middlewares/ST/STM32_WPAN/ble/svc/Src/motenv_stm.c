@@ -833,7 +833,7 @@ void MOTENV_STM_Init(void)
                              1+(3*CONSOLE_CHAR_NUMBER), /*Max_Attribute_Records*/
                              &(aMotenvContext.ConsoleSvcHdle));
   /**
-   *   Add Cosole Term Characteristic for Config Service
+   *   Add Console Term Characteristic for Config Service
    */
   COPY_TERM_CHAR_UUID(uuid16.Char_UUID_128);
   (void)aci_gatt_add_char(aMotenvContext.ConsoleSvcHdle,

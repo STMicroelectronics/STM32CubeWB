@@ -57,7 +57,7 @@ void gpio_lld_phy_init(void) {
 #endif
 
 #if defined (USE_SIMU)
-  // Initialize GPIO used to detect if current DORY is master or slave
+  // Initialize GPIO used to detect if current STM32WB5x is master or slave
   // 4 GPIOs are needed while only one is enough but this must be kept as it is 
   // because this is also used by tests which are not managed by MDG-RF
   GPIO_InitStruct.Pin = (GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
@@ -66,7 +66,7 @@ void gpio_lld_phy_init(void) {
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH  ;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
   
-  // Initialize GPIOs used to have both DORYs communicating over 
+  // Initialize GPIOs used to have both STM32WB5x communicating over
   // 13 bits of the port C and D which are cross connected in SIMU test bench
   GPIO_InitStruct.Pin = (GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13);
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -240,7 +240,7 @@ void gpio_lld_phy_extPaEn_down(void) {
 }
 
 #ifdef USE_SIMU
-/* Initialize GPIOs for master DORY of the SIMU */
+/* Initialize GPIOs for master STM32WB5x of the SIMU */
 void gpio_lld_SimuMaster_init(void) {
   GPIO_InitTypeDef  GPIO_InitStruct;
   
@@ -255,14 +255,14 @@ void gpio_lld_SimuMaster_init(void) {
   __HAL_RCC_C2GPIOB_CLK_ENABLE();
 #endif
   
-  // In DORY master only : initialize GPIO port A pin 0, 1 and, 2 to send CRC result to simulator
+  // In STM32WB5x master only : initialize GPIO port A pin 0, 1 and, 2 to send CRC result to simulator
   GPIO_InitStruct.Pin = (GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2);
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  // In DORY master only : initialize GPIO port B pin 8 and pin 9 to be used for debug purposes
+  // In STM32WB5x master only : initialize GPIO port B pin 8 and pin 9 to be used for debug purposes
   GPIO_InitStruct.Pin = (GPIO_TX_PIN);
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -276,9 +276,9 @@ void gpio_lld_SimuMaster_init(void) {
   HAL_GPIO_Init(GPIO_1_PORT, &GPIO_InitStruct);
 }
 
-/* Initialize GPIOs for slave DORY of the SIMU */
+/* Initialize GPIOs for slave STM32WB5x of the SIMU */
 void gpio_lld_SimuSlave_init(void) {
-// No GPIO to initialize in DORY slave
+// No GPIO to initialize in STM32WB5x slave
 }
 #endif
 
@@ -368,8 +368,8 @@ void gpio_lld_lpuart_init(void) {
 #endif
   
   /* LPUART1 GPIO Configuration
-       LPUART1_TX : PB5 on Little DORY or PC1 on DORY
-       LPUART1_RX : PA3 on Little DORY or PC0 on DORY
+       LPUART1_TX : PB5 on STM32WB3x or PC1 on STM32WB5x
+       LPUART1_RX : PA3 on STM32WB3x or PC0 on STM32WB5x
   */
 #ifdef STM32WB35xx
   GPIO_InitStruct.Pin = GPIO_PIN_3;
@@ -398,8 +398,8 @@ void gpio_lld_lpuart_init(void) {
 /* De-initialize GPIOs used by LPUART */
 void gpio_lld_lpuart_deInit(void) {
   /* LPUART1 GPIO Configuration
-       LPUART1_TX : PB5 on Little DORY PC1 on DORY
-       LPUART1_RX : PA3 on Little DORY PC0 on DORY
+       LPUART1_TX : PB5 on STM32WB3x PC1 on STM32WB5x
+       LPUART1_RX : PA3 on STM32WB3x PC0 on STM32WB5x
   */
 #ifdef STM32WB35xx
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_3);

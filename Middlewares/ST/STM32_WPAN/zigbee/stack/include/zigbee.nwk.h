@@ -2,7 +2,7 @@
  * @file zigbee.nwk.h
  * @brief NWK header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2023] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_NWK_H
@@ -142,7 +142,7 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_Depth = 0x0400,
     ZB_NWK_NIB_ID_FrameCounterSet = 0x0401,
     /* discontinuity */
-    ZB_NWK_NIB_ID_FastPollPeriod = 0x0403, /* Only used as sleepy end devices to set the fast polling inverval. */
+    ZB_NWK_NIB_ID_FastPollPeriod = 0x0403, /* Only used as sleepy end devices to set the fast polling interval. */
     ZB_NWK_NIB_ID_FrameCounterCooldown = 0x0404, /* Cooldown timer (in seconds) to apply to frame counter resets. */
     ZB_NWK_NIB_ID_OutgoingCounter = 0x0405, /* Global outgoing frame counter. */
     ZB_NWK_NIB_ID_PersistCounter = 0x0406, /* Persisted outgoing frame counter. */
@@ -386,6 +386,7 @@ struct ZbNwkRouteEntryT {
     uint16_t destAddr;
     uint16_t nextAddr;
     ZbUptimeT lastUsed; /* Used to measure route table ageing. */
+    ZbUptimeT lastUpdate;
     uint8_t cost; /* Currently not being used. */
 };
 
@@ -882,13 +883,5 @@ bool ZbNwkFastPollRelease(struct ZigBeeT *zb, struct nwk_fastpoll_entry_t *handl
  * @return Number of outstanding fast polling requests.
  */
 unsigned int ZbNwkFastPollResourceCount(struct ZigBeeT *zb);
-
-/*---------------------------------------------------------------
- * Status Code to String
- *---------------------------------------------------------------
- */
-const char * ZbNwkStatusCodeStr(enum ZbNwkNetworkStatusCodeT status);
-const char * ZbNwkStackProfileIdToStr(uint8_t stackProfile);
-const char * ZbNwkRouteStatusToStr(enum ZbNwkRouteStatusT status);
 
 #endif /* ZIGBEE_NWK_H */

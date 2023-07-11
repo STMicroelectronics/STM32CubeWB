@@ -72,7 +72,7 @@
 #define DEFAULT_DELAY_PACKET_FROM         500U
 #define DEFAULT_DELAY_PACKET_RANDOM_TIME  500U
 #define USER_OUTPUT_OOB_APPLI_PROCESS           0U
-#define INPUT_OOB_TIMEOUT                       300U /* input Oob30 Sec timeout*/
+#define INPUT_OOB_TIMEOUT                       30*(1000000/CFG_TS_TICK_VAL) /* input Oob 30 Sec timeout*/
 #define PBADV_UNPROV_DEV_BEACON_INTERVAL        100U /* 100 ms */
 
 #define DEVICE_KEY_SIZE                         16U
@@ -125,6 +125,7 @@ static MOBLEUINT32 OutputOobBlinkCount = 0;
 #ifdef ENABLE_AUTH_TYPE_INPUT_OOB
 MOBLEUINT8 InputOobData[8] = {0};
 MOBLEUINT8 inputOOBDataReady = 0;
+MOBLEUINT8 InputOOBTimeOut_Id;
 #endif
 
 /*Number Of Elements selected per Node. Maximum Elements supported = 3*/
@@ -212,11 +213,18 @@ const void *prvsnr_data;
 #error "Unknown compiler"
 #endif /* __GNUC__ || defined(__IAR_SYSTEMS_ICC__) || defined(__CC_ARM) */
 
+#if ENABLE_SERIAL_INTERFACE
+extern uint8_t button_emulation;
+#endif
+
 /* Private function prototypes -----------------------------------------------*/
 static void Appli_LongButtonPress(void);
 static void Appli_ShortButtonPress(void);
 #if USER_OUTPUT_OOB_APPLI_PROCESS
 void Appli_OobAuthenticationProcess(void);
+#endif
+#ifdef ENABLE_AUTH_TYPE_INPUT_OOB
+static void InputOOBTimeOutTask(void);
 #endif
 void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason);
 void Appli_LowPowerProcess(void);
@@ -697,6 +705,20 @@ void Appli_OobAuthenticationProcess(void)
 #endif
 
 
+#ifdef ENABLE_AUTH_TYPE_INPUT_OOB
+/**
+* @brief  Time out call back function for Input OOB information providing
+* @param  None
+* @retval None 
+*/ 
+static void InputOOBTimeOutTask(void)
+{
+  inputOOBDataReady = 0;
+  /* Set event for Input OOB information in Terminal */
+  UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_INPUT_OOB_RSP_ID);
+}
+#endif
+
 /**
 * @brief  Call back function to provide Input OOB information
 * @param  MOBLEUINT8 size
@@ -705,6 +727,7 @@ void Appli_OobAuthenticationProcess(void)
 MOBLEUINT8* Appli_BleInputOOBAuthCb(MOBLEUINT8 size)
 {
 #if defined (ENABLE_AUTH_TYPE_INPUT_OOB) && (ENABLE_SERIAL_INTERFACE)
+#if 0
   MOBLEUINT16 inputTimer = 0; 
   TRACE_M(TF_PROVISION,"Input OOB information for provisioner-Size: %d\n\r", size);   
   while(1)
@@ -722,6 +745,18 @@ MOBLEUINT8* Appli_BleInputOOBAuthCb(MOBLEUINT8 size)
       inputTimer++;
   }
   return InputOobData; 
+#else
+  TRACE_M(TF_PROVISION,"Input OOB information for provisioner-Size: %d\n\r", size);
+  
+  /* Start the timer for Input OOB information timeout: 30s */
+  HW_TS_Start(InputOOBTimeOut_Id, INPUT_OOB_TIMEOUT);
+  /* Wait for Input OOB information in Terminal */
+  UTIL_SEQ_ClrEvt( 1 << CFG_IDLEEVT_INPUT_OOB_RSP_ID );
+  UTIL_SEQ_WaitEvt( 1<< CFG_IDLEEVT_INPUT_OOB_RSP_ID );
+  
+  inputOOBDataReady = 0;
+  return InputOobData; 
+#endif
 #else
   return NULL;
 #endif
@@ -741,6 +776,11 @@ void Appli_BleSerialInputOOBValue(char *rcvdStringBuff, uint16_t rcvdStringSize)
     sscanf(rcvdStringBuff + 5, "%lld", &InputOobDatatemp);
     memmove(&InputOobData, &InputOobDatatemp, sizeof(InputOobDatatemp));
     inputOOBDataReady = 1;
+
+  /* Stop the timer for Input OOB information timeout */
+  HW_TS_Stop(InputOOBTimeOut_Id);
+  /* Set event for Input OOB information in Terminal */
+  UTIL_SEQ_SetEvt(1 << CFG_IDLEEVT_INPUT_OOB_RSP_ID);
 #endif
 }
 
@@ -1066,7 +1106,6 @@ void BLEMesh_PbAdvLinkOpenCb(void)
   aPwmLedGsData_TypeDef aPwmLedGsData_app;
   ProvisionFlag = 0;
   TRACE_M(TF_PROVISION,"PB-ADV Link opened successfully \n\r");
-  
   /* Turn ON Red LED*/
 #if LOW_POWER_FEATURE
   /* do nothing */
@@ -1556,7 +1595,6 @@ void Appli_Process(void)
     //SdkEvalLedOff(LED1);
   }
 #endif
-  
 }
 
 #if PB_ADV_SUPPORTED
@@ -1590,8 +1628,21 @@ static void AppliMeshTask(void)
 
 static void AppliMeshSW1Task(void)
 {
-  Appli_UpdateButtonState(BSP_PB_GetState(BUTTON_USER1) == BUTTON_PRESSED);
-  
+  /* Check if button action is emulated with SW1 command on USART1 */
+#if ENABLE_SERIAL_INTERFACE
+  if(!button_emulation)
+  {
+    Appli_UpdateButtonState(BSP_PB_GetState(BUTTON_USER1) == BUTTON_PRESSED);
+  }
+  else
+  {
+    /* Button 1 short press action */
+    Appli_ShortButtonPress();
+    button_emulation = 0;
+  }
+#else
+    Appli_UpdateButtonState(BSP_PB_GetState(BUTTON_USER1) == BUTTON_PRESSED);
+#endif  
   return;
 }
 
@@ -1602,6 +1653,10 @@ static void AppliMeshSW3Task(void)
   
   Appli_Sensor_Update(0, 1);
   
+#if ENABLE_SERIAL_INTERFACE
+  /* Reset button_emulation state in case of emulation with SW3 command on USART1 */
+  button_emulation = 0;
+#endif  
   return;
 }
 #endif
@@ -1687,7 +1742,8 @@ void Appli_Init(MOBLEUINT8 *flag)
   BLEMesh_SetCustomBeaconInterval(CUSTOM_BEACON_INTERVAL);
 #endif
 
-#if (LOW_POWER_FEATURE == 1)  /**
+#if (LOW_POWER_FEATURE == 1)  
+  /**
   * Create Timer to control unprovisioned device beacons
   */
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &lowPowerNodeApiTimer_Id, hw_ts_SingleShot, LowPowerNodeApiTask);
@@ -1697,6 +1753,13 @@ void Appli_Init(MOBLEUINT8 *flag)
 #endif
 #if (ENABLE_SENSOR_MODEL_SERVER != 0)
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SW3_REQ_ID, UTIL_SEQ_RFU, AppliMeshSW3Task );
+#endif
+
+#ifdef ENABLE_AUTH_TYPE_INPUT_OOB
+  /**
+  * Create Timer to control Input OOB information
+  */
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &InputOOBTimeOut_Id, hw_ts_SingleShot, InputOOBTimeOutTask);
 #endif
 
 }

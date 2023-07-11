@@ -6,14 +6,14 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
-  ******************************************************************************
+ ******************************************************************************
   */
 /* USER CODE END Header */
 
@@ -27,7 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "app_common.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -53,11 +53,13 @@ void BusFault_Handler(void);
 void UsageFault_Handler(void);
 void DebugMon_Handler(void);
 void PVD_PVM_IRQHandler(void);
+void RTC_WKUP_IRQHandler(void);
 void FLASH_IRQHandler(void);
 void RCC_IRQHandler(void);
 void DMA1_Channel1_IRQHandler(void);
 void DMA1_Channel2_IRQHandler(void);
 void C2SEV_PWR_C2H_IRQHandler(void);
+void TIM1_TRG_COM_TIM17_IRQHandler(void);
 void USART1_IRQHandler(void);
 void LPUART1_IRQHandler(void);
 void PWR_SOTF_BLEACT_802ACT_RFPHASE_IRQHandler(void);
@@ -66,11 +68,10 @@ void IPCC_C1_TX_IRQHandler(void);
 void HSEM_IRQHandler(void);
 void FPU_IRQHandler(void);
 /* USER CODE BEGIN EFP */
-void RTC_WKUP_IRQHandler(void);
 void EXTI0_IRQHandler(void);
 void EXTI1_IRQHandler(void);
 void EXTI4_IRQHandler(void);
-void TIM1_TRG_COM_TIM17_IRQHandler(void);
+
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

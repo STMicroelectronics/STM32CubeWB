@@ -6,14 +6,14 @@
         <toolchain>
             <name>ARM</name>
         </toolchain>
-        <debug>0</debug>
+        <debug>1</debug>
         <settings>
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
                 <version>32</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>CInput</name>
                     <state>1</state>
@@ -36,7 +36,7 @@
                 </option>
                 <option>
                     <name>MacFile</name>
-                    <state>$PROJ_DIR$\enableCPU2.mac</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>MemOverride</name>
@@ -60,7 +60,7 @@
                 </option>
                 <option>
                     <name>CExtraOptions</name>
-                    <state>--stlink_use_server</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>CFpuProcessor</name>
@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>7.60.2.11347</state>
+                    <state>9.20.1.43525</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -116,7 +116,7 @@
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCImagesPath1</name>
@@ -144,7 +144,7 @@
                 </option>
                 <option>
                     <name>OCImagesOffset1</name>
-                    <state></state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCImagesOffset2</name>
@@ -230,7 +230,7 @@
             <data>
                 <version>1</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>OCSimDriverInfo</name>
                     <state>1</state>
@@ -255,7 +255,7 @@
             <data>
                 <version>0</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>CCadiMemory</name>
                     <state>1</state>
@@ -284,11 +284,7 @@
             <data>
                 <version>4</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
-                <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
+                <debug>1</debug>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -408,6 +404,10 @@
                     <state>1</state>
                 </option>
                 <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
+                <option>
                     <name>CatchHARDERR</name>
                     <state>1</state>
                 </option>
@@ -463,7 +463,7 @@
             <data>
                 <version>0</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -500,11 +500,7 @@
             <data>
                 <version>9</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
-                <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
+                <debug>1</debug>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -516,7 +512,7 @@
                 <option>
                     <name>IjetResetList</name>
                     <version>1</version>
-                    <state>9</state>
+                    <state>10</state>
                 </option>
                 <option>
                     <name>IjetHWResetDuration</name>
@@ -544,7 +540,7 @@
                 </option>
                 <option>
                     <name>IjetInterfaceRadio</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>IjetInterfaceCmdLine</name>
@@ -581,7 +577,7 @@
                 </option>
                 <option>
                     <name>IjetCpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>IjetSwoPrescalerList</name>
@@ -657,6 +653,10 @@
                     <state>1</state>
                 </option>
                 <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
+                <option>
                     <name>CatchHARDERR</name>
                     <state>1</state>
                 </option>
@@ -686,7 +686,7 @@
                 </option>
                 <option>
                     <name>IjetSelectedCPUBehaviour</name>
-                    <state></state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>ICpuName</name>
@@ -782,11 +782,7 @@
             <data>
                 <version>16</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
-                <option>
-                    <name>CCCatchSFERR</name>
-                    <state>0</state>
-                </option>
+                <debug>1</debug>
                 <option>
                     <name>JLinkSpeed</name>
                     <state>1000</state>
@@ -891,7 +887,7 @@
                 <option>
                     <name>CCJLinkResetList</name>
                     <version>6</version>
-                    <state>5</state>
+                    <state>7</state>
                 </option>
                 <option>
                     <name>CCJLinkInterfaceCmdLine</name>
@@ -926,6 +922,10 @@
                     <state>0</state>
                 </option>
                 <option>
+                    <name>CCCatchSFERR</name>
+                    <state>0</state>
+                </option>
+                <option>
                     <name>CCCatchHARDERR</name>
                     <state>0</state>
                 </option>
@@ -952,7 +952,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -982,7 +982,7 @@
             <data>
                 <version>3</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -1028,7 +1028,7 @@
             <data>
                 <version>0</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -1049,7 +1049,7 @@
             <data>
                 <version>3</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -1074,7 +1074,7 @@
             <data>
                 <version>7</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -1175,7 +1175,7 @@
                 </option>
                 <option>
                     <name>CCSTLinkDAPNumber</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCSTLinkDebugAccessPortRadio</name>
@@ -1198,10 +1198,10 @@
             <data>
                 <version>0</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>CThirdPartyDriverDll</name>
-                    <state>###Uninitialized###</state>
+                    <state>Browse to your third-party driver</state>
                 </option>
                 <option>
                     <name>CThirdPartyLogFileCheck</name>
@@ -1223,7 +1223,7 @@
             <data>
                 <version>1</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
+                <debug>1</debug>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -1247,7 +1247,7 @@
                 </option>
                 <option>
                     <name>CCMSPFetTargetVoltage</name>
-                    <state>###Uninitialized###</state>
+                    <state>3.0</state>
                 </option>
                 <option>
                     <name>CCMSPFetVCCDefault</name>
@@ -1294,11 +1294,7 @@
             <data>
                 <version>9</version>
                 <wantNonLocal>1</wantNonLocal>
-                <debug>0</debug>
-                <option>
-                    <name>CCXds100CatchSFERR</name>
-                    <state>0</state>
-                </option>
+                <debug>1</debug>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -1309,11 +1305,11 @@
                 </option>
                 <option>
                     <name>TIPackage</name>
-                    <state></state>
+                    <state>C:\ti\ccs_base</state>
                 </option>
                 <option>
                     <name>BoardFile</name>
-                    <state></state>
+                    <state>$TOOLKIT_DIR$\config\debugger\TexasInstruments\xds\UNKNOWN_XDS100v2_JTAG.dat</state>
                 </option>
                 <option>
                     <name>DoLogfile</name>
@@ -1392,6 +1388,10 @@
                     <state>0</state>
                 </option>
                 <option>
+                    <name>CCXds100CatchSFERR</name>
+                    <state>0</state>
+                </option>
+                <option>
                     <name>CCXds100CatchHARDERR</name>
                     <state>0</state>
                 </option>
@@ -1401,7 +1401,7 @@
                 </option>
                 <option>
                     <name>CCXds100CpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>CCXds100SwoClockAuto</name>
@@ -1435,7 +1435,7 @@
                 </option>
                 <option>
                     <name>CCXds100InterfaceRadio</name>
-                    <state>2</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCXds100InterfaceCmdLine</name>
@@ -1444,7 +1444,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>

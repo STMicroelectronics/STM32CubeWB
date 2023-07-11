@@ -71,4 +71,4 @@ void DISAPP_Init(void);
 }
 #endif
 
-#endif /* DIS_APP_H */
+#endif /*DIS_APP_H */

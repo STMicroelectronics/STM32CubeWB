@@ -68,4 +68,4 @@ void Init_Smps(void);
 } /* extern "C" */
 #endif
 
-#endif /* APP_ENTRY_H */
+#endif /*APP_ENTRY_H */

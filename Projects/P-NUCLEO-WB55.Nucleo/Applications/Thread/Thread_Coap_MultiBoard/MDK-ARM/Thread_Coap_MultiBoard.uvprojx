@@ -588,6 +588,11 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_ll_usb.c</FilePath>
             </File>
+	    <File>
+              <FileName>stm32wbxx_hal_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -832,6 +837,16 @@
               <FileName>stm_list.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_list.c</FilePath>
+            </File>
+			<File>
+              <FileName>advanced_memory_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/advanced_memory_manager.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_mm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm32_mm.c</FilePath>
             </File>
             <File>
               <FileName>stm_queue.c</FileName>

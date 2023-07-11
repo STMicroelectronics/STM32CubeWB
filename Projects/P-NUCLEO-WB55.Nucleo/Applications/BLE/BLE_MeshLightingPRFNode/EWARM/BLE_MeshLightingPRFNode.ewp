@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Lighting_PRF_Node</name>
+        <name>BLE_MeshLightingPRFNode</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,19 +16,19 @@
                 <debug>0</debug>
                 <option>
                     <name>BrowseInfoPath</name>
-                    <state>Lighting_PRF_Node\BrowseInfo</state>
+                    <state>BLE_MeshLightingPRFNode\BrowseInfo</state>
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>Lighting_PRF_Node\Exe</state>
+                    <state>BLE_MeshLightingPRFNode\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Lighting_PRF_Node\Obj</state>
+                    <state>BLE_MeshLightingPRFNode\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Lighting_PRF_Node\List</state>
+                    <state>BLE_MeshLightingPRFNode\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -201,7 +201,7 @@
                 </option>
                 <option>
                     <name>BuildFilesPath</name>
-                    <state>Lighting_PRF_Node</state>
+                    <state>BLE_MeshLightingPRFNode</state>
                 </option>
             </data>
         </settings>

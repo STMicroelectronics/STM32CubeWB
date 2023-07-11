@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : stm32wbxx_hal_msp.c
-  * Description        : This file provides code for the MSP Initialization 
-  *                      and de-Initialization codes.
+  * @file         stm32wbxx_hal_msp.c
+  * @brief        This file provides code for the MSP Initialization
+  *               and de-Initialization codes.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -20,8 +20,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 /* USER CODE BEGIN Includes */
-#include "app_conf.h"
+
 /* USER CODE END Includes */
 extern DMA_HandleTypeDef hdma_lpuart1_tx;
 
@@ -34,7 +35,7 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN Define */
- 
+
 /* USER CODE END Define */
 
 /* Private macro -------------------------------------------------------------*/
@@ -169,10 +170,10 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
   /* USER CODE BEGIN LPUART1_MspInit 0 */
 
   /* USER CODE END LPUART1_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LPUART1;
-    //PeriphClkInitStruct.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_PCLK1;
     PeriphClkInitStruct.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_HSI;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
@@ -228,7 +229,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART1;
-    //PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
     PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_HSI;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
@@ -359,7 +359,8 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   if(hrtc->Instance==RTC)
   {
   /* USER CODE BEGIN RTC_MspInit 0 */
-    HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
+    /* Enable access to the RTC registers */
+    HAL_PWR_EnableBkUpAccess(); 
 
     /**
      *  Write twice the value to flush the APB-AHB bridge
@@ -367,9 +368,11 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
      */
     HAL_PWR_EnableBkUpAccess();
 
-    __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE); /**< Select LSE as RTC Input */
+    /* Select LSE as RTC Input */
+    __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE); 
 
   /* USER CODE END RTC_MspInit 0 */
+
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
@@ -386,7 +389,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
     HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
   /* USER CODE BEGIN RTC_MspInit 1 */
-    
+
     MODIFY_REG(RTC->CR, RTC_CR_WUCKSEL, CFG_RTC_WUCKSEL_DIVIDER);
   /* USER CODE END RTC_MspInit 1 */
   }
@@ -422,4 +425,3 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

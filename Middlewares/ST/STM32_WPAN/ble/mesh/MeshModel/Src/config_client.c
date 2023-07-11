@@ -50,7 +50,8 @@ __attribute__((aligned(4)))Elements_Page0_t aNodeElements[CLIENT_MAX_ELEMENTS_PE
 /* ALIGN(4)*/
 __attribute__((aligned(4)))NodeInfo_t NodeInfo;
 
-const MODEL_OpcodeTableParam_t Config_Client_Opcodes_Table[] = {
+const MODEL_OpcodeTableParam_t Config_Client_Opcodes_Table[] = 
+{
   /*    MOBLEUINT32 opcode, MOBLEBOOL reliable, MOBLEUINT16 min_payload_size, 
   MOBLEUINT16 max_payload_size;
   Here in this array, Handler is not defined; */
@@ -291,7 +292,7 @@ MOBLE_RESULT ConfigClient_CompositionDataStatusResponse(MOBLEUINT8 const *pSrcCo
 
     /******************* Copy the SIG Models **********************************/    
     /* Prepare the variables to find the number of SIG Models, SInce header is already copied,
-       it can use used directly for the comparision */
+       it can use used directly for the comparison */
     /* This is to be used for running the loop for data copy */
       
     if (length >= (parsedDataLength+2))
@@ -445,7 +446,7 @@ MOBLEUINT32 GetVendorModelFromCompositionData(MOBLEUINT8 elementIdx, MOBLEUINT8 
   MOBLEUINT32 model;
 
   model = aNodeElements[elementIdx].aVendorModels[idxVendor]; 
-  /* Maybe little endien conversion may be needed */
+  /* Maybe little endian conversion may be needed */
   
   return model;
 }
@@ -1462,7 +1463,7 @@ MOBLEUINT8 ConfigClient_ChkRetrialState (eServerRespRecdState_t* peRespRecdState
   nowClockTime = Clock_Time();
   if(( (nowClockTime - NodeInfo.Initial_time) >= CONFIGCLIENT_RESPONSE_TIMEOUT))
   {
-    /* Timeout occured, Do retry or enter the error state  */
+    /* Timeout occurred, Do retry or enter the error state  */
     NodeInfo.numberOfAttemptsTx++;
     
     if (NodeInfo.numberOfAttemptsTx >= CONFIGCLIENT_MAX_TRIALS)
@@ -1499,7 +1500,7 @@ MOBLEUINT8 ConfigClient_ChkRetries (void)
   nowClockTime = Clock_Time();
   if(( (nowClockTime - NodeInfo.Initial_time) >= CONFIGCLIENT_RESPONSE_TIMEOUT))
   {
-    /* Timeout occured, Do retry or enter the error state  */
+    /* Timeout occurred, Do retry or enter the error state  */
     NodeInfo.numberOfAttemptsTx++;
     
     if (NodeInfo.numberOfAttemptsTx >= CONFIGCLIENT_MAX_TRIALS)
@@ -1571,7 +1572,7 @@ from the library to send response to the message from peer
 * @param  plength: Pointer to the Length of the data, to be updated by application
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT ConfigClientModel_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam,
@@ -1612,7 +1613,7 @@ the library whenever a Generic Model message is received
 * @param  response: if TRUE, the message is an acknowledged message
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT ConfigClientModel_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParam, 

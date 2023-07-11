@@ -31,6 +31,9 @@
 #include "dbg_trace.h"
 #include "shci.h"
 #include "otp.h"
+#include "stm_list.h"
+#include "advanced_memory_manager.h"
+#include "stm32_mm.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -39,6 +42,41 @@
 
 /* Private typedef -----------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
+
+/**
+ * Strucuture of Trace_Elt_t
+ * buffer : trace buffer
+ * size : size of the trace buffer
+ */
+typedef __PACKED_STRUCT
+{
+  uint32_t *next;
+  uint32_t *prev;
+} TraceEltHeader_t;
+
+/**
+ * Strucuture of Trace_Elt_t
+ * buffer : trace buffer
+ * size : size of the trace buffer
+ */
+typedef __PACKED_STRUCT
+{
+  uint8_t   buffer[255];
+  uint32_t  size;
+} TraceElt_t;
+
+/**
+ * Strucuture of Trace_Elt_t
+ * buffer : trace buffer
+ * size : size of the trace buffer
+ */
+typedef struct __attribute__((packed, aligned(4)))
+{
+  TraceEltHeader_t header;
+  TraceElt_t trace;
+} TraceEltPacket_t;
+
+
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -62,7 +100,42 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 uint8_t g_ot_notification_allowed = 0U;
 
+#if (CFG_AMM_ENABLED != 0)
+static tListNode TraceBufferList;
+static uint32_t TracePool[CFG_AMM_POOL_SIZE];
+
+/* AMM_BCKGND_TASK related resources */
+osThreadId_t AMM_BCKGND_Thread;
+const osThreadAttr_t AMM_BCKGND_Thread_Attr;
+osSemaphoreId_t AMM_BCKGND_Thread_Sem;
+const osSemaphoreAttr_t AMM_BCKGND_Thread_Sem_Attr;
+
+/* TRC_BCKGND_TASK related resources */
+osThreadId_t TRC_BCKGND_Thread;
+const osThreadAttr_t TRC_BCKGND_Thread_Attr;
+osSemaphoreId_t TRC_BCKGND_Thread_Sem;
+const osSemaphoreAttr_t TRC_BCKGND_Thread_Sem_Attr;
+
+osMutexId_t LINK_LAYER_Thread_Mutex;
+static AMM_VirtualMemoryConfig_t vmConfig[CFG_AMM_VIRTUAL_MEMORY_NUMBER] = {
+  /* Virtual Memory #1 */
+  {
+    .Id = CFG_AMM_VIRTUAL_APP_TRACE,
+    .BufferSize = CFG_AMM_VIRTUAL_APP_TRACE_BUFFER_SIZE
+  }
+};
+
+static AMM_InitParameters_t ammInitConfig =
+{
+  .p_PoolAddr = TracePool,
+  .PoolSize = CFG_AMM_POOL_SIZE,
+  .VirtualMemoryNumber = CFG_AMM_VIRTUAL_MEMORY_NUMBER,
+  .p_VirtualMemoryConfigList = vmConfig
+};
+#endif
+
 /* USER CODE BEGIN PV */
+
 
 /* USER CODE END PV */
 
@@ -106,7 +179,12 @@ static void APPE_SysStatusNot(SHCI_TL_CmdStatus_t status);
 static void APPE_SysUserEvtRx(void * pPayload);
 static void APPE_SysEvtReadyProcessing(void);
 static void APPE_SysEvtError(SCHI_SystemErrCode_t ErrorCode);
-
+#if (CFG_AMM_ENABLED != 0)
+static void TRC_BackgroundProcess(void);
+#endif
+#if(CFG_DEBUG_TRACE != 0)
+static void writeTrace(char * buffer, uint32_t size);
+#endif /* CFG_DEBUG_TRACE */
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern void MX_LPUART1_UART_Init(void);
 #endif /* CFG_HW_LPUART1_ENABLED == 1 */
@@ -118,7 +196,42 @@ static void Init_Rtc(void);
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
 static void Button_Init( void );
+
+#if (CFG_AMM_ENABLED != 0)
+/**
+ * @brief Wrapper for init function of the MM for the AMM
+ *
+ * @param p_PoolAddr: Address of the pool to use - Not use -
+ * @param PoolSize: Size of the pool - Not use -
+ *
+ * @return None
+ */
+static void AMM_WrapperInit (uint32_t * const p_PoolAddr, const uint32_t PoolSize);
+
+/**
+ * @brief Wrapper for allocate function of the MM for the AMM
+ *
+ * @param BufferSize
+ *
+ * @return Allocated buffer
+ */
+static uint32_t * AMM_WrapperAllocate (const uint32_t BufferSize);
+
+/**
+ * @brief Wrapper for free function of the MM for the AMM
+ *
+ * @param p_BufferAddr
+ *
+ * @return None
+ */
+static void AMM_WrapperFree (uint32_t * const p_BufferAddr);
+#endif
 /* USER CODE END PFP */
+
+#if (CFG_AMM_ENABLED != 0)
+static void AMM_BackgroundProcess_Entry(void* thread_input);
+static void TRC_BackgroundProcess_Entry(void* thread_input);
+#endif
 
 /* Functions Definition ------------------------------------------------------*/
 void MX_APPE_Config(void)
@@ -146,6 +259,21 @@ void MX_APPE_Init(void)
   System_Init();       /**< System initialization */
 
   SystemPower_Config(); /**< Configure the system Power Mode */
+
+#if (CFG_AMM_ENABLED != 0)
+  /* Initialize the Advance Memory Manager */
+  AMM_Init (&ammInitConfig);
+
+  /* Register the AMM background task */
+  AMM_BCKGND_Thread_Sem = osSemaphoreNew(1, 0, &AMM_BCKGND_Thread_Sem_Attr);
+  AMM_BCKGND_Thread = osThreadNew(AMM_BackgroundProcess_Entry, NULL, &AMM_BCKGND_Thread_Attr);
+
+  /* Register the TRC background task */
+  TRC_BCKGND_Thread_Sem = osSemaphoreNew(1, 0, &TRC_BCKGND_Thread_Sem_Attr);
+  TRC_BCKGND_Thread = osThreadNew(TRC_BackgroundProcess_Entry, NULL, &TRC_BCKGND_Thread_Attr);
+
+  LST_init_head (&TraceBufferList);
+#endif
 
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
@@ -524,7 +652,7 @@ static void Led_Init( void )
    * Leds Initialization
    */
 #if (CFG_HW_LPUART1_ENABLED != 1) || ! defined (STM32WB35xx)
-  // On Little DORY, LED_BLUE share the GPIO PB5 with LPUART
+  // On STM32WB3x, LED_BLUE share the GPIO PB5 with LPUART
   BSP_LED_Init(LED_BLUE);
 #endif
   
@@ -587,6 +715,75 @@ void HAL_Delay(uint32_t Delay)
   }
 }
 
+#if (CFG_AMM_ENABLED != 0)
+static void AMM_WrapperInit (uint32_t * const p_PoolAddr, const uint32_t PoolSize)
+{
+  UTIL_MM_Init ((uint8_t *)p_PoolAddr, ((size_t)PoolSize * sizeof(uint32_t)));
+}
+
+static uint32_t * AMM_WrapperAllocate (const uint32_t BufferSize)
+{
+  return (uint32_t *)UTIL_MM_GetBuffer (((size_t)BufferSize * sizeof(uint32_t)));
+}
+
+static void AMM_WrapperFree (uint32_t * const p_BufferAddr)
+{
+  UTIL_MM_ReleaseBuffer ((void *)p_BufferAddr);
+}
+
+void AMM_BackgroundProcess_Entry(void* thread_input)
+{
+  (void)(thread_input);
+
+  while(1)
+  {
+    osSemaphoreAcquire(AMM_BCKGND_Thread_Sem , osWaitForever);
+    AMM_BackgroundProcess();
+  }
+}
+
+void AMM_RegisterBasicMemoryManager (AMM_BasicMemoryManagerFunctions_t * const p_BasicMemoryManagerFunctions)
+{
+  /* Fulfill the function handle */
+  p_BasicMemoryManagerFunctions->Init = AMM_WrapperInit;
+  p_BasicMemoryManagerFunctions->Allocate = AMM_WrapperAllocate;
+  p_BasicMemoryManagerFunctions->Free = AMM_WrapperFree;
+}
+
+void AMM_ProcessRequest (void)
+{
+  /* Ask for AMM background task scheduling */
+  osSemaphoreRelease(AMM_BCKGND_Thread_Sem);
+}
+
+void TRC_BackgroundProcess(void)
+{
+  TraceEltPacket_t * traceElt = NULL;
+  while (LST_is_empty (&TraceBufferList) == FALSE)
+  {
+    LST_remove_tail (&TraceBufferList, (tListNode**)&traceElt);
+    if (traceElt != NULL)
+    {
+#if(CFG_DEBUG_TRACE != 0)
+      DbgTraceWrite(1U, (const unsigned char *) traceElt->trace.buffer, traceElt->trace.size);
+#endif /* CFG_DEBUG_TRACE */
+      AMM_Free((uint32_t *)traceElt);
+    }
+  }
+}
+
+void TRC_BackgroundProcess_Entry(void* thread_input)
+{
+  (void)(thread_input);
+
+  while(1)
+  {
+    osSemaphoreAcquire(TRC_BCKGND_Thread_Sem , osWaitForever);
+    TRC_BackgroundProcess();
+  }
+}
+#endif
+
 void shci_notify_asynch_evt(void* pdata)
 {
   UNUSED(pdata);
@@ -609,17 +806,33 @@ void shci_cmd_resp_wait(uint32_t timeout)
 }
 
 /* Received trace buffer from M0 */
-void TL_TRACES_EvtReceived(TL_EvtPacket_t * hcievt)
+void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 {
-#if (CFG_DEBUG_TRACE != 0)
-  /* Call write/print function using DMA from dbg_trace */
-  /* - Cast to TL_AsynchEvt_t* to get "real" payload (without Sub Evt code 2bytes),
-     - (-2) to size to remove Sub Evt Code */
-  DbgTraceWrite(1U, (const unsigned char *) ((TL_AsynchEvt_t *)(hcievt->evtserial.evt.payload))->payload, hcievt->evtserial.evt.plen - 2U);
-#endif /* CFG_DEBUG_TRACE != 0 */
+#if(CFG_DEBUG_TRACE != 0)
+  writeTrace(( char *) ((TL_AsynchEvt_t *)(hcievt->evtserial.evt.payload))->payload, hcievt->evtserial.evt.plen - 2U);
+#endif /* CFG_DEBUG_TRACE */
   /* Release buffer */
-  TL_MM_EvtDone(hcievt);
+  TL_MM_EvtDone( hcievt );
 }
+
+#if(CFG_DEBUG_TRACE != 0)
+void writeTrace(char * buffer, uint32_t size)
+{
+#if (CFG_AMM_ENABLED != 0)
+  TraceEltPacket_t * traceElt = NULL;
+  if(AMM_ERROR_OK == AMM_Alloc (CFG_AMM_VIRTUAL_APP_TRACE, DIVC(sizeof(TraceEltPacket_t), sizeof(uint32_t)), (uint32_t **)&traceElt, NULL))
+  {
+    if(traceElt != NULL)
+    {
+      memcpy(traceElt->trace.buffer, (const unsigned char *) buffer, size);
+      traceElt->trace.size = size;
+      LST_insert_head (&TraceBufferList, (tListNode *)traceElt);
+      osSemaphoreRelease(TRC_BCKGND_Thread_Sem);
+    }
+  }
+#endif
+}
+#endif /* CFG_DEBUG_TRACE */
 /**
   * @brief  Initialisation of the trace mechanism
   * @param  None

@@ -29,8 +29,8 @@
 #include "zcl/key/zcl.key.h" /* ZbZclKeWithDevice */
 #include "zcl/general/zcl.diagnostics.h"
 #include "zcl/zcl.touchlink.h"
-#include "extras/zigbee.extras.h"
 #include "ieee802154_crc.h"
+
 
 #ifdef ZIGBEE_DIRECT_ACTIVATED
 /* SHA-256 */
@@ -1988,6 +1988,7 @@ ZbNwkSendEdkaReq(struct ZigBeeT *zb)
 
 /* For testing purposes only, and only available on M0 if built with
  * Golden Unit features (CONFIG_ZB_ENABLE_GU) */
+#ifdef CONFIG_ZB_ENABLE_GU
 void
 ZbNwkAddrSetNextChildAddr(struct ZigBeeT *zb, uint16_t nextChildAddr)
 {
@@ -2000,7 +2001,7 @@ ZbNwkAddrSetNextChildAddr(struct ZigBeeT *zb, uint16_t nextChildAddr)
     ipcc_req->Data[0] = (uint32_t)nextChildAddr;
     ZIGBEE_CmdTransfer();
 }
-
+#endif 
 bool
 ZbNwkCommissioningConfig(struct ZigBeeT *zb, struct ZbNwkCommissioningInfo *commission_info)
 {
@@ -2128,7 +2129,7 @@ ZbZdoMatchDescMulti(struct ZigBeeT *zb, struct ZbZdoMatchDescReqT *req,
     enum ZbStatusCodeT status;
 
     /* The callback must be static so we can receive multiple responses. We don't check here if
-     * we're overwriting an existing callback, so application cannot effecticely perform more
+     * we're overwriting an existing callback, so application cannot effectively perform more
      * than one of these at a time. */
 
     /* Check if a request is already active */
@@ -2781,6 +2782,8 @@ ZbZclKeWithDevice(struct ZigBeeT *zb, uint64_t partnerAddr, bool aps_req_key,
  * Certification Test Hooks
  ******************************************************************************
  */
+ 
+#ifdef CONFIG_TEST_HOOK
 void
 ZbTestCaseClear(struct ZigBeeT *zb)
 {
@@ -2859,7 +2862,7 @@ ZbApsFragDropTxClear(struct ZigBeeT *zb)
     ipcc_req->Size = 0;
     ZIGBEE_CmdTransfer();
 }
-
+#endif //CONFIG_TEST_HOOK 
 /******************************************************************************
  * AES & Hashing
  ******************************************************************************
@@ -3186,6 +3189,37 @@ hmacResult(HMACContext *context, uint8_t digest[USHAMaxHashSize])
 }
 
 #endif /* ZIGBEE_DIRECT_ACTIVATED */
+
+
+/******************************************************************************
+ * Misc Debug
+ ******************************************************************************
+ */
+void
+ZbDebugMemory(struct ZigBeeT *zb)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_DEBUG_MEMORY;
+    ipcc_req->Size = 0;
+    /* ipcc_req->Data[0] = (uint32_t)xxx; */
+    ZIGBEE_CmdTransfer();
+}
+
+void
+ZbDebugInfo(struct ZigBeeT *zb)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_DEBUG_INFO;
+    ipcc_req->Size = 0;
+    /* ipcc_req->Data[0] = (uint32_t)xxx; */
+    ZIGBEE_CmdTransfer();
+}
 
 /******************************************************************************
  * Memory Helpers

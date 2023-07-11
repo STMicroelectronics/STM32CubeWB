@@ -1,12 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_entry.c
-  * Description        : Entry application source file for STM32WPAN Middleware.
+  ******************************************************************************
+  * @file    app_entry.c
+  * @author  MCD Application Team
+  * @brief   Entry point of the application
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -114,6 +115,7 @@ static uint8_t aRxBuffer[RX_BUFFER_SIZE];
 static uint8_t CommandString[C_SIZE_CMD_STRING];
 static uint16_t indexReceiveChar = 0;
 EXTI_HandleTypeDef exti_handle;
+
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -146,15 +148,12 @@ void MX_APPE_Init(void)
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
 /* USER CODE BEGIN APPE_Init_1 */
-    Init_Debug();
-    /**
-     * The Standby mode should not be entered before the initialization is over
-     * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
-     */
-    UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
-    Led_Init();
-    Button_Init();
-    RxUART_Init();
+  Init_Debug();
+  
+  Led_Init();
+  Button_Init();
+  RxUART_Init();
+
 /* USER CODE END APPE_Init_1 */
   appe_Tl_Init();	/* Initialize all transport layers */
 
@@ -166,6 +165,7 @@ void MX_APPE_Init(void)
 /* USER CODE BEGIN APPE_Init_2 */
 
 /* USER CODE END APPE_Init_2 */
+
    return;
 }
 
@@ -364,8 +364,7 @@ static void Init_Rtc(void)
  */
 static void SystemPower_Config(void)
 {
-  // Before going to stop or standby modes, do the settings so that system clock and IP80215.4 clock start on HSI automatically
-  // start on HSI automatically
+  /* Before going to stop or standby modes, do the settings so that system clock and IP80215.4 clock start on HSI automatically */
   LL_RCC_HSI_EnableAutoFromStop();
 
   /**
@@ -378,7 +377,7 @@ static void SystemPower_Config(void)
   /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
   LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
 
-  /* Disable low power mode until INIT is complete */
+  /* Disable Stop & Off Modes until Initialisation is complete */
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
   UTIL_LPM_SetStopMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
 
@@ -396,6 +395,7 @@ static void appe_Tl_Init(void)
 {
   TL_MM_Config_t tl_mm_config;
   SHCI_TL_HciInitConf_t SHci_Tl_Init_Conf;
+
   /**< Reference table initialization */
   TL_Init();
 
@@ -477,7 +477,6 @@ static void APPE_SysEvtReadyProcessing(void)
   TL_TRACES_Init();
 
   APP_ZIGBEE_Init();
-  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
   return;
 }
 
@@ -485,15 +484,11 @@ static void APPE_SysEvtReadyProcessing(void)
 static void Led_Init( void )
 {
 #if (CFG_LED_SUPPORTED == 1U)
-  /**
-   * Leds Initialization
-   */
-
+  /* Leds Initialization */
   BSP_LED_Init(LED_BLUE);
   BSP_LED_Init(LED_GREEN);
   BSP_LED_Init(LED_RED);
-
-#endif
+#endif /* (CFG_LED_SUPPORTED == 1U) */
 
   return;
 }
@@ -501,15 +496,13 @@ static void Led_Init( void )
 static void Button_Init( void )
 {
 #if (CFG_BUTTON_SUPPORTED == 1U)
-  /**
-   * Button Initialization
-   */
-    BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
-    BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
-    BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
-#endif
+  /* Button Initialization */
+  BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
+#endif /* (CFG_BUTTON_SUPPORTED == 1U) */
 
-    return;
+  return;
 }
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */
@@ -593,7 +586,7 @@ void UTIL_SEQ_EvtIdle(UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm)
     break;
   default :
     /* default case */
-  UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
+    UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
     break;
   }
 }
@@ -668,18 +661,19 @@ void DbgOutputTraces(uint8_t *p_data, uint16_t size, void (*cb)(void))
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  switch (GPIO_Pin) {
-  case BUTTON_SW1_PIN:
-    break;
+  switch (GPIO_Pin) 
+  {
+    case BUTTON_SW1_PIN:
+      break;
 
-  case BUTTON_SW2_PIN:
-    break;
+    case BUTTON_SW2_PIN:
+      break;
 
-  case BUTTON_SW3_PIN:
-    break;
+    case BUTTON_SW3_PIN:
+      break;
 
-  default:
-    break;
+    default:
+      break;
   }
 }
 
@@ -734,9 +728,15 @@ static void UartCmdExecute(void)
     exti_handle.Line = EXTI_LINE_1;
     HAL_EXTI_GenerateSWI(&exti_handle);
   }
+  else if (strcmp((char const*)CommandString, "RST") == 0)
+  {
+    APP_DBG("RESET CMD RECEIVED");
+    HAL_NVIC_SystemReset();
+  }
   else
   {
     APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
   }
 }
+
 /* USER CODE END FD_WRAP_FUNCTIONS */

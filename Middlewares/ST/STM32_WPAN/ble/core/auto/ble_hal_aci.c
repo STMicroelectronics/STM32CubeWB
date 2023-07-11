@@ -275,11 +275,11 @@ tBleStatus aci_hal_get_pm_debug_info( uint8_t* Allocated_For_TX,
   return BLE_STATUS_SUCCESS;
 }
 
-tBleStatus aci_hal_set_slave_latency( uint8_t Enable )
+tBleStatus aci_hal_set_peripheral_latency( uint8_t Enable )
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  aci_hal_set_slave_latency_cp0 *cp0 = (aci_hal_set_slave_latency_cp0*)(cmd_buffer);
+  aci_hal_set_peripheral_latency_cp0 *cp0 = (aci_hal_set_peripheral_latency_cp0*)(cmd_buffer);
   tBleStatus status = 0;
   int index_input = 0;
   cp0->Enable = Enable;

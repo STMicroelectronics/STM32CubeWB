@@ -203,7 +203,7 @@ enum ZbZclAttrCbTypeT {
      * cluster will handle the incoming requests. */
     ZCL_ATTR_CB_TYPE_NOTIFY
     /**< Write notification callback. Can be used if ZCL_ATTR_CB_TYPE_WRITE
-     * is not being used and the applicaiton needs to be notified of
+     * is not being used and the application needs to be notified of
      * ZCL Write Requests. */
 };
 
@@ -780,7 +780,7 @@ enum ZclStatusCodeT ZbZclClusterCommandRspWithCb(struct ZbZclClusterT *cluster, 
 
 /* ZbZclSendClusterStatusResponse is a wrapper to ZbZclClusterCommandRsp. The parameters
  * zclPayload and zclPaylen must be populated and the first byte must represent a status
- * code of some sort with success == 0x00. Most ZCL respones follow this format. If the
+ * code of some sort with success == 0x00. Most ZCL responses follow this format. If the
  * request was broadcast (address or endpoint) and status != 0x00 (ZCL_STATUS_SUCCESS),
  * then the response will not be sent. This simplifies the cluster application from having
  * to make these checks. */

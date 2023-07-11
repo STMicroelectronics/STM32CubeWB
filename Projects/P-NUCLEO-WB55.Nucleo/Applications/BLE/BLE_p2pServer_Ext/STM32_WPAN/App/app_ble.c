@@ -625,6 +625,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
             {
               /* Connection as server */
               BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_SERVER;
+              APP_DBG_MSG("\r\n\r**  ENHANCED CONNECTION COMPLETE EVENT WITH CENTRAL \n\r");
             }
             BleApplicationContext.BleApplicationContext_legacy.connectionHandle = p_enhanced_connection_complete_event->Connection_Handle;
             /* USER CODE BEGIN HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE */

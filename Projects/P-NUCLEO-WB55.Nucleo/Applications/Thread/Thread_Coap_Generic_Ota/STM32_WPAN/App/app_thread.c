@@ -48,7 +48,7 @@
 /* Private defines -----------------------------------------------------------*/
 #define C_SIZE_CMD_STRING       256U
 #define C_PANID                 0x1111U
-#define C_CHANNEL_NB            14U
+#define C_CHANNEL_NB            15U
 
 /* USER CODE BEGIN PD */
 #define FUOTA_MAGIC_KEYWORD                0x94448A29

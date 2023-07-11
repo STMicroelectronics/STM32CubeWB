@@ -78,6 +78,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static SHCI_C2_DEBUG_GeneralConfig_t APPD_G
 
 #if(CFG_DEBUG_TRACE != 0)
 static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
+static uint8_t VcpRxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Receive buffer over USB */
 #endif
 
 /**
@@ -385,7 +386,7 @@ void DbgOutputInit( void )
 {
 /* USER CODE BEGIN DbgOutputInit */
 
-  VCP_Init( &VcpTxBuffer[0], 0 );
+  VCP_Init( &VcpTxBuffer[0], &VcpRxBuffer[0] );
 
 /* USER CODE END DbgOutputInit */
   return;
@@ -397,6 +398,7 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
   VCP_SendData ( p_data , size , cb );
   
   HW_UART_Transmit_DMA(CFG_DEBUG_TRACE_UART, p_data, size, cb);
+  
 /* USER CODE END DbgOutputTraces */
   return;
 }

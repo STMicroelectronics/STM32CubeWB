@@ -1,12 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ***************************************************************************************
-  * File Name          : stm32_lpm_if.c
-  * Description        : Low layer function to enter/exit low power modes (stop, sleep).
+  * @file    stm32_lpm_if.c
+  * @author  MCD Application Team
+  * @brief   Low layer function to enter/exit low power modes (stop, sleep).
   ***************************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -313,6 +314,7 @@ static void ExitLowPower(void)
     while(!LL_RCC_HSE_IsReady( ));
     LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSE);
     while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);
+
 /* USER CODE END ExitLowPower_1 */
   }
   else

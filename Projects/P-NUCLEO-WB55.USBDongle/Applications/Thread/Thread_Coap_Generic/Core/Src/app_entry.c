@@ -30,6 +30,9 @@
 #include "stm32_lpm.h"
 #include "dbg_trace.h"
 #include "shci.h"
+#include "stm_list.h"
+#include "advanced_memory_manager.h"
+#include "stm32_mm.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -38,12 +41,46 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+/**
+ * Structure of Trace_Elt_t
+ * buffer : trace buffer
+ * size : size of the trace buffer
+ */
+typedef __PACKED_STRUCT
+{
+  uint32_t *next;
+  uint32_t *prev;
+} TraceEltHeader_t;
+
+/**
+ * Structure of Trace_Elt_t
+ * buffer : trace buffer
+ * size : size of the trace buffer
+ */
+typedef __PACKED_STRUCT
+{
+  uint8_t   buffer[255];
+  uint32_t  size;
+} TraceElt_t;
+
+
+/**
+ * Structure of Trace_Elt_t
+ * buffer : trace buffer
+ * size : size of the trace buffer
+ */
+typedef struct __attribute__((packed, aligned(4)))
+{
+  TraceEltHeader_t header;
+  TraceElt_t trace;
+} TraceEltPacket_t;
 
 /* USER CODE END PTD */
 
 /* Private defines -----------------------------------------------------------*/
 /* POOL_SIZE = 2(TL_PacketHeader_t) + 258 (3(TL_EVT_HDR_SIZE) + 255(Payload size)) */
 #define POOL_SIZE (CFG_TL_EVT_QUEUE_LENGTH * 4U * DIVC(( sizeof(TL_PacketHeader_t) + TL_EVENT_FRAME_SIZE ), 4U))
+#define POOL_TRACE_SIZE  CFG_AMM_VIRTUAL_APP_TRACE_BUFFER_SIZE + CFG_AMM_VIRTUAL_MEMORY_NUMBER * AMM_VIRTUAL_INFO_ELEMENT_SIZE
 
 /* USER CODE BEGIN PD */
 
@@ -59,6 +96,25 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 uint8_t g_ot_notification_allowed = 0U;
+
+static tListNode TraceBufferList;
+static uint32_t TracePool[POOL_TRACE_SIZE];
+
+static AMM_VirtualMemoryConfig_t vmConfig[CFG_AMM_VIRTUAL_MEMORY_NUMBER] = {
+  /* Virtual Memory #1 */
+  { 
+    .Id = CFG_AMM_VIRTUAL_APP_TRACE,  
+    .BufferSize = CFG_AMM_VIRTUAL_APP_TRACE_BUFFER_SIZE
+  }
+};
+
+static AMM_InitParameters_t ammInitConfig =
+{
+  .p_PoolAddr = TracePool,
+  .PoolSize = POOL_TRACE_SIZE,
+  .VirtualMemoryNumber = CFG_AMM_VIRTUAL_MEMORY_NUMBER,
+  .p_VirtualMemoryConfigList = vmConfig
+};
 
 /* USER CODE BEGIN PV */
 
@@ -76,6 +132,7 @@ static void APPE_SysUserEvtRx( void * pPayload );
 static void APPE_SysEvtReadyProcessing( void );
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
 static void appe_Tl_Init( void );
+static void writeTrace(char * buffer, uint32_t size);
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
 static void Button_Init( void );
@@ -85,6 +142,17 @@ static void Button_Init( void );
 void APPE_Init( void )
 {
   SystemPower_Config(); /**< Configure the system Power Mode */
+
+  /* Initialize the Advance Memory Manager */
+  AMM_Init (&ammInitConfig);
+  
+  /* Register the AMM background task */
+  UTIL_SEQ_RegTask( 1U << CFG_TASK_AMM_BCKGND, UTIL_SEQ_RFU, AMM_BackgroundProcess);
+    
+  /* Register the Trace background task */
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_TRACE, UTIL_SEQ_RFU, ProcessTrace);
+  
+  LST_init_head (&TraceBufferList); 
 
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
@@ -361,6 +429,35 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
   }
 }
 
+static void AMM_WrapperInit (uint32_t * const p_PoolAddr, const uint32_t PoolSize)
+{
+  UTIL_MM_Init ((uint8_t *)p_PoolAddr, ((size_t)PoolSize * sizeof(uint32_t)));
+}
+
+static uint32_t * AMM_WrapperAllocate (const uint32_t BufferSize)
+{
+  return (uint32_t *)UTIL_MM_GetBuffer (((size_t)BufferSize * sizeof(uint32_t)));
+}
+
+static void AMM_WrapperFree (uint32_t * const p_BufferAddr)
+{
+  UTIL_MM_ReleaseBuffer ((void *)p_BufferAddr);
+}
+
+void AMM_RegisterBasicMemoryManager (AMM_BasicMemoryManagerFunctions_t * const p_BasicMemoryManagerFunctions)
+{
+  /* Fulfill the function handle */
+  p_BasicMemoryManagerFunctions->Init = AMM_WrapperInit;
+  p_BasicMemoryManagerFunctions->Allocate = AMM_WrapperAllocate;
+  p_BasicMemoryManagerFunctions->Free = AMM_WrapperFree;
+}
+
+void AMM_ProcessRequest (void)
+{
+  /* Ask for AMM background task scheduling */
+  UTIL_SEQ_SetTask(1U << CFG_TASK_AMM_BCKGND, CFG_SCH_PRIO_0);
+}
+
 void shci_notify_asynch_evt(void* pdata)
 {
   UNUSED(pdata);
@@ -386,14 +483,36 @@ void shci_cmd_resp_wait(uint32_t timeout)
 void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 {
 #if(CFG_DEBUG_TRACE != 0)
-  /* Call write/print function using DMA from dbg_trace */
-  /* - Cast to TL_AsynchEvt_t* to get "real" payload (without Sub Evt code 2bytes),
-     - (-2) to size to remove Sub Evt Code */
-  DbgTraceWrite(1U, (const unsigned char *) ((TL_AsynchEvt_t *)(hcievt->evtserial.evt.payload))->payload, hcievt->evtserial.evt.plen - 2U);
+  writeTrace(( char *) ((TL_AsynchEvt_t *)(hcievt->evtserial.evt.payload))->payload, hcievt->evtserial.evt.plen - 2U);
 #endif /* CFG_DEBUG_TRACE */
   /* Release buffer */
   TL_MM_EvtDone( hcievt );
 }
+
+/**
+ * @brief Process the traces coming from the M0 or M4.
+ * @param  None
+ * @retval None
+ */
+void ProcessTrace(void)
+{
+  TraceEltPacket_t * traceElt = NULL;
+  
+  while (LST_is_empty (&TraceBufferList) == FALSE)
+  {
+    /* Remove the head element */
+    LST_remove_tail (&TraceBufferList, (tListNode**)&traceElt);
+    
+    if (traceElt != NULL)
+    {
+#if(CFG_DEBUG_TRACE != 0)
+      DbgTraceWrite(1U, (const unsigned char *) traceElt->trace.buffer, traceElt->trace.size);
+#endif /* CFG_DEBUG_TRACE */
+      AMM_Free((uint32_t *)traceElt);
+    }
+  }
+}
+
 /**
   * @brief  Initialisation of the trace mechanism
   * @param  None
@@ -422,6 +541,26 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 #endif
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
+static void writeTrace(char * buffer, uint32_t size)
+{
+  TraceEltPacket_t * traceElt = NULL;
+  
+  /* Allocate memory for the message to store in the trace pool */
+  if(AMM_ERROR_OK == AMM_Alloc (CFG_AMM_VIRTUAL_APP_TRACE, DIVC(sizeof(TraceEltPacket_t), sizeof(uint32_t)), (uint32_t **)&traceElt, NULL))
+  {
+    if(traceElt != NULL)
+    {
+      /* Copy the M0 message in the dedicated memory */
+      memcpy(traceElt->trace.buffer, (const unsigned char *) buffer, size);
+      traceElt->trace.size = size;
+      /* Add M0 message to the trace list */
+      LST_insert_head (&TraceBufferList, (tListNode *)traceElt);
+      
+      UTIL_SEQ_SetTask(1 <<CFG_TASK_TRACE, CFG_SCH_PRIO_1);
+    }
+  }
+}
+
 /**
   * @brief This function manage the Push button action
   * @param  GPIO_Pin : GPIO pin which has been activated

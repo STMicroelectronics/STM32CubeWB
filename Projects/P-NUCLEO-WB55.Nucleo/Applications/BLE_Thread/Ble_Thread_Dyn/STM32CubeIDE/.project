@@ -148,6 +148,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/Core/src/app_debug.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_debug.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/Core/src/app_entry.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_entry.c</locationURI>

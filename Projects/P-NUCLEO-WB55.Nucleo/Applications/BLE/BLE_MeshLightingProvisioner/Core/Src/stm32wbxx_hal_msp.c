@@ -1,8 +1,8 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : stm32wbxx_hal_msp.c
-  * Description        : This file provides code for the MSP Initialization 
+  * @file          : stm32wbxx_hal_msp.c
+  * @brief         : This file provides code for the MSP Initialization 
   *               and de-Initialization codes.
   ******************************************************************************
   * @attention

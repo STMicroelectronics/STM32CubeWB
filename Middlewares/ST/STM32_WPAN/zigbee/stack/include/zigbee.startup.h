@@ -121,7 +121,7 @@ struct ZbStartupT {
     /**< Startup Type. Not applicable if BDB_COMMISSION_MODE_TOUCHLINK commissioning mode is set.
      *
      * If startup type is ZbStartTypeJoin, the ZB_APS_IB_ID_SCAN_COUNT attribute is used to
-     * control the number of scans to perform while searching for a network to join. Similarily,
+     * control the number of scans to perform while searching for a network to join. Similarly,
      * the ZB_BDB_ScanDuration attribute is used to configure the MAC scan duration to use for
      * scans during network joining and forming.
      */

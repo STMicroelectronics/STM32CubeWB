@@ -24,9 +24,9 @@
 
 /**
  * @brief ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ
- * Send an L2CAP connection parameter update request from the slave to the
- * master.
- * An ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT event is raised when the master
+ * Send an L2CAP connection parameter update request from the Peripheral to the
+ * Central.
+ * An ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT event is raised when the Central
  * responds to the request (accepts or rejects).
  * 
  * @param Connection_Handle Connection handle for which the command applies.
@@ -40,8 +40,8 @@
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Slave_latency Maximum Peripheral latency for the connection in number
- *        of connection events.
+ * @param Latency Maximum Peripheral latency for the connection in number of
+ *        connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Timeout_Multiplier Defines connection timeout parameter in the
@@ -51,7 +51,7 @@
 tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle,
                                                       uint16_t Conn_Interval_Min,
                                                       uint16_t Conn_Interval_Max,
-                                                      uint16_t Slave_latency,
+                                                      uint16_t Latency,
                                                       uint16_t Timeout_Multiplier );
 
 /**
@@ -72,8 +72,8 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
  *        Time = N * 1.25 ms.
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Slave_latency Maximum Peripheral latency for the connection in number
- *        of connection events.
+ * @param Latency Maximum Peripheral latency for the connection in number of
+ *        connection events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Timeout_Multiplier Defines connection timeout parameter in the
@@ -99,7 +99,7 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
 tBleStatus aci_l2cap_connection_parameter_update_resp( uint16_t Connection_Handle,
                                                        uint16_t Conn_Interval_Min,
                                                        uint16_t Conn_Interval_Max,
-                                                       uint16_t Slave_latency,
+                                                       uint16_t Latency,
                                                        uint16_t Timeout_Multiplier,
                                                        uint16_t Minimum_CE_Length,
                                                        uint16_t Maximum_CE_Length,

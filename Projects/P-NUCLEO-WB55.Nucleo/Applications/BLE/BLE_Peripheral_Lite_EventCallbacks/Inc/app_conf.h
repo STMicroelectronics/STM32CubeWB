@@ -33,8 +33,8 @@
 
 /**
  * Define Tx Power
- */   
-#define CFG_TX_POWER                      (0x18) /**< 0dbm */
+ */
+#define CFG_TX_POWER                      (0x18) /* -0.15dBm */
 
 /**
  * Radio activity event
@@ -44,6 +44,8 @@
 /**
  * Define Advertising parameters
  */
+#define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
+
 #define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x00C8)  /**< 250ms */
 #define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0x00C8)  /**< 250ms */
 #define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x0640)  /**< 1s */

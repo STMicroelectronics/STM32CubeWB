@@ -1785,7 +1785,7 @@ from the library to send response to the message from peer
 * @param  plength: Pointer to the Length of the data, to be updated by application
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT LightModelServer_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam, 
@@ -1914,7 +1914,7 @@ MOBLE_RESULT LightModelServer_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgPara
 * @param  response: if TRUE, the message is an acknowledged message 
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT LightModelServer_ProcessMessageCb(MODEL_MessageHeader_t* pmsgParam, 
@@ -2176,7 +2176,7 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MODEL_MessageHeader_t* pmsgParam,
     }
     else{
 
-      pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for respons
+      pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for response
       Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);   
     }
   }
@@ -2211,9 +2211,9 @@ MOBLE_RESULT LightModelServer_ProcessMessageCb(MODEL_MessageHeader_t* pmsgParam,
 }
 
 /**
-* @brief Light_TransitionBehaviourSingle_Param funtion is used for the Light Lightness model
+* @brief Light_TransitionBehaviourSingle_Param function is used for the Light Lightness model
 *         when transition time is  received in message.This function is used for 
-*         single paramter transition.
+*         single parameter transition.
 * @param GetValue: Pointer of the array
 * @retval MOBLE_RESULT
 */
@@ -2238,10 +2238,10 @@ MOBLE_RESULT Light_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue,
     Punblication_OneSecTimer();
   }
   
-  /* Values from application are copied into temporary vaiables for processing */    
+  /* Values from application are copied into temporary variables for processing */    
   Light_TemporaryStatus[elementIndex].PresentParam_1 = GetValue[1] << 8;
   Light_TemporaryStatus[elementIndex].PresentParam_1 |= GetValue[0];   
-  /*if condition to wait untill the time is equal to the given resolution time */  
+  /*if condition to wait until the time is equal to the given resolution time */  
   if(((Clock_Time()- Check_time) >= Light_TimeParam[elementIndex].Res_Value))
   {
     if(Light_TimeParam[elementIndex].StepValue == 0)
@@ -2251,7 +2251,7 @@ MOBLE_RESULT Light_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue,
     
     if(Light_TemporaryStatus[elementIndex].TargetParam_1 > Light_TemporaryStatus[elementIndex].PresentParam_1)
     {
-      /* calulating the target range to be acheived which is target value
+      /* calculating the target range to be achieved which is target value
       which is target value minus present value if target value is greater 
       than present value.   
       */
@@ -2298,7 +2298,7 @@ MOBLE_RESULT Light_TransitionBehaviourSingle_Param(MOBLEUINT8 *GetValue,
 
 
 /**
-* @brief Light_TransitionBehaviourMulti_Param funtion is used for the Light Lightness model
+* @brief Light_TransitionBehaviourMulti_Param function is used for the Light Lightness model
 *         when transition time is  received in message.This function is used for
 *         the multiple parameters in transition.
 * @param GetValue: Pointer of the array
@@ -2330,14 +2330,14 @@ MOBLE_RESULT Light_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue ,
     Punblication_OneSecTimer();
   }
   
-  /* Values from application are copied into Temporary vaiables for processing */
+  /* Values from application are copied into Temporary variables for processing */
   Light_TemporaryStatus[elementIndex].PresentParam_1 = GetValue[1] << 8;
   Light_TemporaryStatus[elementIndex].PresentParam_1 |= GetValue[0];
   Light_TemporaryStatus[elementIndex].PresentParam_2 = GetValue[3] << 8;
   Light_TemporaryStatus[elementIndex].PresentParam_2 |= GetValue[2];
   Light_TemporaryStatus[elementIndex].PresentParam_3 = GetValue[5] << 8;
   Light_TemporaryStatus[elementIndex].PresentParam_3 |= GetValue[4];
-  /* if condition to wait untill the time is equal to the given resolution time */   
+  /* if condition to wait until the time is equal to the given resolution time */   
   if(((Clock_Time()- Check_time) >= Light_TimeParam[elementIndex].Res_Value))
   {
     if(Light_TimeParam[elementIndex].StepValue == 0)
@@ -2347,7 +2347,7 @@ MOBLE_RESULT Light_TransitionBehaviourMulti_Param(MOBLEUINT8 *GetValue ,
     
     if(Light_TemporaryStatus[elementIndex].TargetParam_1 > Light_TemporaryStatus[elementIndex].PresentParam_1)
     {
-      /* calulating the target range to be acheived which is target value
+      /* calculating the target range to be achieved which is target value
       which is target value minus present value if target value is greater 
       than present value.   
       */
@@ -2460,7 +2460,7 @@ void Model_BindingPublishStatus(void)
       if(publishAddress != 0x0000) 
       {
         /*Using the same API used for Acknowledgement, where src & dst getting interchanged.
-        Therefore PublishAddress is copied in peer_addr & vice versa*/  
+        Therefore PublishAddress is copied in peer_addr & vice-versa*/  
         Model_SendResponse(&msgParam, opcode, pRxData, dataLength);
         TRACE_M(TF_LIGHT_M, "Binded publishing address %.2x opcode %.2x model id %.2x \r\n",
                 publishAddress,Light_PublishOpcodeList[elementIndex].PublishStateOpcode[Publication1SecFlag.count],
@@ -2581,7 +2581,7 @@ void Lighting_Process(void)
   }  
   if(Light_ModelFlag[elementIndex].LightTransitionFlag == LIGHT_LINEAR_TRANSITION_START)
   {
-    /* Fetching the state value from the applcation layer to middle layer */
+    /* Fetching the state value from the application layer to middle layer */
     (Appli_Light_GetStatus_cb.GetLightLightnessLinear_cb)(Light_GetBuff,my_Address, elementIndex);
     /* Transition function called to change the state in transition */
     Light_TransitionBehaviourSingle_Param(Light_GetBuff,elementIndex);
@@ -2694,7 +2694,7 @@ void Lighting_Process(void)
     if(publishAddress != 0x00)
     {
       /*Using the same API used for Acknowledgement, where src & dst getting interchanged.
-        Therefore PublishAddress is copied in peer_addr & vice versa*/ 
+        Therefore PublishAddress is copied in peer_addr & vice-versa*/ 
       Model_SendResponse(&msgParam, Model_Binding_Var.Model_Rx_Opcode, pRxData, dataLength);
       TRACE_M(TF_LIGHT_M, "Publishing the status after transition complete opcode %.2x model id %.2x \r\n",
        Model_Binding_Var.Model_Rx_Opcode,Model_Binding_Var.Model_ID);
@@ -2710,7 +2710,7 @@ void Lighting_Process(void)
 
 
 /**
-* @brief Light_LightnessStateUpdate_Process:Function to update the parametes of light
+* @brief Light_LightnessStateUpdate_Process:Function to update the parameters of light
 *         lightness model in application file from Temporary parameter in model file.
 * @param  elementIndex: index of the element received from peer for this node which
 *                     is elementNumber-1
@@ -2800,7 +2800,7 @@ void Light_LightnessLinearUpdate(MOBLEUINT8 elementIndex, MOBLEUINT16 linear)
 
 #if 0
 /**
-* @brief Light_LC_LightnessStateUpdate_Process:Function to update the parametes of light
+* @brief Light_LC_LightnessStateUpdate_Process:Function to update the parameters of light
 *        lightness model in application file from Temporary parameter in model file.
 * @param  elementIndex: index of the element received from peer for this node which
 *                     is elementNumber-1
@@ -2836,7 +2836,7 @@ MOBLE_RESULT LightLightness_ActualUpdate(MOBLEUINT16 lightActual, MOBLEUINT8 ele
 
 
 /**
-* @brief Light_LinearStateUpdate_Process:function to update the parametes of light 
+* @brief Light_LinearStateUpdate_Process:function to update the parameters of light 
 *        lightness linear model in application file from Temporary parameter in model file.
 * @param  elementIndex: index of the element received from peer for this node which
 *                     is elementNumber-1
@@ -2852,7 +2852,7 @@ MOBLE_RESULT Light_LinearStateUpdate_Process(MOBLEUINT8 elementIndex)
 
 
 /**
-* @brief Light_CtlStateUpdate_Process:Function to update the parametes of light  
+* @brief Light_CtlStateUpdate_Process:Function to update the parameters of light  
 *        CTL model in application file from Temporary parameter in model file.
 * @param  elementIndex: index of the element received from peer for this node which
 *                     is elementNumber-1
@@ -2869,7 +2869,7 @@ MOBLE_RESULT Light_CtlStateUpdate_Process(MOBLEUINT8 elementIndex)
 
 
 /**
-* @brief Light_CtlTemperatureStateUpdate_Process:Function to update the parametes of 
+* @brief Light_CtlTemperatureStateUpdate_Process:Function to update the parameters of 
 *        light CTL Temperature model in application  file from Temporary parameter in model file.
 * @param  elementIndex: index of the element received from peer for this node which
 *                     is elementNumber-1
@@ -2885,7 +2885,7 @@ MOBLE_RESULT Light_CtlTemperatureStateUpdate_Process(MOBLEUINT8 elementIndex)
 
 
 /**
-* @brief Light_HslStateUpdate_Process:Function to update the parametes of 
+* @brief Light_HslStateUpdate_Process:Function to update the parameters of 
 *        light HSL model in application  file from Temporary parameter in model file.
 * @param  elementIndex: index of the element received from peer for this node which
 *                     is elementNumber-1
@@ -2902,7 +2902,7 @@ MOBLE_RESULT Light_HslStateUpdate_Process(MOBLEUINT8 elementIndex)
 
 
 /**
-* @brief Light_HslHueStateUpdate_Process:Function to update the parametes of 
+* @brief Light_HslHueStateUpdate_Process:Function to update the parameters of 
 *        light HSL Hue model in application  file from Temporary parameter in model file.
 * @param  elementIndex: index of the element received from peer for this node which
 *                     is elementNumber-1
@@ -2917,7 +2917,7 @@ MOBLE_RESULT Light_HslHueStateUpdate_Process(MOBLEUINT8 elementIndex)
 
 
 /**
-* @brief Light_HslSaturationStateUpdate_Process:Function to update the parametes of 
+* @brief Light_HslSaturationStateUpdate_Process:Function to update the parameters of 
 *        light HSL Saturation model in application  file from Temporary parameter in model file.
 * @param  elementIndex: index of the element received from peer for this node which
 *                     is elementNumber-1
@@ -3228,7 +3228,7 @@ void GenericOnOff_LightActualBinding(Generic_OnOffStatus_t* onOff_param, MOBLEUI
     {
       /* no condition to Execute */
     }
-    TRACE_M(TF_LIGHT_M, "Generic On Off binding with Ligth Actual \r\n"); 
+    TRACE_M(TF_LIGHT_M, "Generic On Off binding with Light Actual \r\n"); 
 
     result = Chk_OpcodePresent((MOBLEUINT16)LIGHT_LIGHTNESS_SET_UNACK ,elementIndex); 
   
@@ -3241,7 +3241,7 @@ void GenericOnOff_LightActualBinding(Generic_OnOffStatus_t* onOff_param, MOBLEUI
   }
 #endif
   
-  /*As Generic on off changes, it will chnage the value of the light linear due to change in the light lightness 
+  /*As Generic on off changes, it will change the value of the light linear due to change in the light lightness 
     value due to binding of the states.
  */
    
@@ -3996,7 +3996,7 @@ void Light_HSLSaturationDefaultTransitionValue(Light_HslParam_t* pHSLSaturationV
 #endif
 
 /**
-* @brief Function called when message received without optonal parameter, stop the running transition.
+* @brief Function called when message received without optional parameter, stop the running transition.
 * @param void
 * @param void
 */

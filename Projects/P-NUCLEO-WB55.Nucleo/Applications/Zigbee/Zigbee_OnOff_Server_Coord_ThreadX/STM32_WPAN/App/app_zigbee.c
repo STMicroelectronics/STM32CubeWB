@@ -2,12 +2,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : App/app_zigbee.c
-  * Description        : Zigbee Application.
+  * @file    App/app_zigbee.c
+  * @author  MCD Application Team
+  * @brief   Zigbee Application.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -19,7 +20,6 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
 #include "app_common.h"
 #include "app_entry.h"
 #include "dbg_trace.h"
@@ -31,7 +31,6 @@
 #include "stm32wbxx_core_interface_def.h"
 #include "zigbee_types.h"
 #include "tx_api.h"
-#include "stm32_lpm_if.h"
 
 /* Private includes -----------------------------------------------------------*/
 #include <assert.h>
@@ -52,14 +51,8 @@
 #define SW1_ENDPOINT                                17
 
 /* USER CODE BEGIN PD */
-#define SW1_GROUP_ADDR          0x0001
+#define SW1_GROUP_ADDR                              0x0001
 
-
-#ifdef TX_ENABLE_EVENT_TRACE
-#define APP_MAX_THREAD			14u
-#define DEBUG_TRACEX_SIZE		(64u * 1024u )
-#define APP_TRACE_INFO          (TX_TRACE_USER_EVENT_START + 1)
-#endif // TX_ENABLE_EVENT_TRACE
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/
@@ -84,9 +77,9 @@ static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
 
-static void APP_ZIGBEE_ProcessNotifyM0ToM4(ULONG thread_input);
-static void APP_ZIGBEE_ProcessRequestM0ToM4(ULONG thread_input);
-static void APP_ZIGBEE_ProcessNwkForm(ULONG thread_input);
+static void APP_ZIGBEE_ProcessNotifyM0ToM4(ULONG argument);
+static void APP_ZIGBEE_ProcessRequestM0ToM4(ULONG argument);
+static void APP_ZIGBEE_ProcessNwkForm(ULONG argument);
 
 static void APP_ZIGBEE_TimingElapsed(void);
 
@@ -106,7 +99,6 @@ static uint8_t  TimerID;
 TX_THREAD       OsTaskNotifyM0ToM4Id;
 TX_THREAD       OsTaskRequestM0ToM4Id;
 TX_THREAD       OsTaskNwkFormId;
-TX_THREAD       OsTaskPushButtonId;
 TX_MUTEX        MtxZigbeeId;
 
 TX_SEMAPHORE    TransferToM0Semaphore;
@@ -133,7 +125,6 @@ struct zigbee_app_info
 
   struct ZbZclClusterT *onOff_server_1;
 };
-
 static struct zigbee_app_info zigbee_app_info;
 
 /* OnOff server 1 custom callbacks */
@@ -141,7 +132,7 @@ static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, str
 static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
 static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
 
-static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 = 
+static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 =
 {
   .off = onOff_server_1_off,
   .on = onOff_server_1_on,
@@ -149,81 +140,74 @@ static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 =
 };
 
 /* USER CODE BEGIN PV */
-#ifdef TX_ENABLE_EVENT_TRACE
-static UCHAR	cDebugTraceX[DEBUG_TRACEX_SIZE];
-#endif // TX_ENABMLE_EVENT_TRACE
-
-#ifdef TX_LOW_POWER
-typedef struct
-{
-  uint32_t LpTXTimeLeftOnEntry;
-  uint8_t LpTXTimerThreadx_Id;
-} LpTXTimerContext_t;
-
-static LpTXTimerContext_t LpTXTimerContext;
-
-static uint32_t     lPreviousPriMask;
-static uint8_t      cLowPowerExecute = 0x00;
-static uint8_t      cLowPowerLevel = 0x00;
-#endif // TX_LOW_POWER
+TX_THREAD       OsTaskPushButtonId;
 
 /* USER CODE END PV */
 /* Functions Definition ------------------------------------------------------*/
 
 /* OnOff server off 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_off( struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg )
+static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg)
 {
   /* USER CODE BEGIN 0 OnOff server 1 off 1 */
-    uint8_t endpoint;
+  uint8_t endpoint;
 
-    endpoint = ZbZclClusterGetEndpoint(cluster);
-    if (endpoint == SW1_ENDPOINT) {
-        APP_DBG("LED_RED OFF");
-        BSP_LED_Off(LED_RED);
-        (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 0);
-    }
-    else {
-        /* Unknown endpoint */
-        return ZCL_STATUS_FAILURE;
-    }
-    return ZCL_STATUS_SUCCESS;
+  endpoint = ZbZclClusterGetEndpoint(cluster);
+  if (endpoint == SW1_ENDPOINT) 
+  {
+    APP_DBG("LED_RED OFF");
+    BSP_LED_Off(LED_RED);
+    (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 0);
+  }
+  else 
+  {
+    /* Unknown endpoint */
+    return ZCL_STATUS_FAILURE;
+  }
+  return ZCL_STATUS_SUCCESS;
   /* USER CODE END 0 OnOff server 1 off 1 */
 }
 
 /* OnOff server on 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
+static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg)
+{
   /* USER CODE BEGIN 1 OnOff server 1 on 1 */
-    uint8_t endpoint;
+  uint8_t endpoint;
 
-    endpoint = ZbZclClusterGetEndpoint(cluster);
-    if (endpoint == SW1_ENDPOINT) {
-        APP_DBG("LED_RED ON");
-        BSP_LED_On(LED_RED);
-        (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 1);
-    }
-    else {
-        /* Unknown endpoint */
-        return ZCL_STATUS_FAILURE;
-    }
-    return ZCL_STATUS_SUCCESS;
+  endpoint = ZbZclClusterGetEndpoint(cluster);
+  if (endpoint == SW1_ENDPOINT) 
+  {
+    APP_DBG("LED_RED ON");
+    BSP_LED_On(LED_RED);
+    (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 1);
+  }
+  else 
+  {
+    /* Unknown endpoint */
+    return ZCL_STATUS_FAILURE;
+  }
+  return ZCL_STATUS_SUCCESS;
   /* USER CODE END 1 OnOff server 1 on 1 */
 }
 
 /* OnOff server toggle 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
+static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg)
+{
   /* USER CODE BEGIN 2 OnOff server 1 toggle 1 */
-    uint8_t attrVal;
+  uint8_t attrVal;
 
-    if (ZbZclAttrRead(cluster, ZCL_ONOFF_ATTR_ONOFF, NULL,
-            &attrVal, sizeof(attrVal), false) != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_FAILURE;
-    }
-    if (attrVal != 0) {
-        return onOff_server_1_off(cluster, srcInfo, arg);
-    }
-    else {
-        return onOff_server_1_on(cluster, srcInfo, arg);
-    }
+  if (ZbZclAttrRead(cluster, ZCL_ONOFF_ATTR_ONOFF, NULL,
+          &attrVal, sizeof(attrVal), false) != ZCL_STATUS_SUCCESS)
+  {
+    return ZCL_STATUS_FAILURE;
+  }
+  if (attrVal != 0) 
+  {
+    return onOff_server_1_off(cluster, srcInfo, arg);
+  }
+  else 
+  {
+    return onOff_server_1_on(cluster, srcInfo, arg);
+  }
   /* USER CODE END 2 OnOff server 1 toggle 1 */
 }
 
@@ -232,22 +216,17 @@ static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, 
  * @param  None
  * @retval None
  */
-void APP_ZIGBEE_Init(TX_BYTE_POOL* p_byte_pool)
+void APP_ZIGBEE_Init(void)
 {
   SHCI_CmdStatus_t ZigbeeInitStatus;
-  CHAR* pointer = TX_NULL;
-  UINT ThreadXStatus = TX_THREAD_ERROR;
-  
+  UINT ThreadXStatus;
+  CHAR * pTempBuf = TX_NULL;
+
   APP_DBG("APP_ZIGBEE_Init");
 
   /* Check the compatibility with the Coprocessor Wireless Firmware loaded */
   APP_ZIGBEE_CheckWirelessFirmwareInfo();
 
-#ifdef TX_ENABLE_EVENT_TRACE
-  // -- Enable ThreadX Trace --
-  tx_trace_enable( cDebugTraceX, sizeof(cDebugTraceX), APP_MAX_THREAD );
-#endif // TX_ENABLE_EVENT_TRACE
-  
   /* Register cmdbuffer */
   APP_ZIGBEE_RegisterCmdBuffer(&ZigbeeOtCmdBuffer);
 
@@ -256,62 +235,68 @@ void APP_ZIGBEE_Init(TX_BYTE_POOL* p_byte_pool)
 
   /* Initialize the mutex */
   tx_mutex_create(&MtxZigbeeId, "MtxZigbeeId", TX_NO_INHERIT);
-  
+
   /* Initialize the semaphores */
   tx_semaphore_create(&StartupEndSemaphore, "StartupEndSemaphore", 0); /*< Create the semaphore and make it busy at initialization */
-  tx_semaphore_create(&TransferToM0Semaphore, "TransferToM0Semaphore", 0); 
+  tx_semaphore_create(&TransferToM0Semaphore, "TransferToM0Semaphore", 0);
   tx_semaphore_create(&NWKFormSemaphore, "NWKFormSemaphore", 0);
   tx_semaphore_create(&NWKFormWaitSemaphore, "NWKFormWaitSemaphore", 0);
   tx_semaphore_create(&NotifyM0ToM4Semaphore, "NotifyM0ToM4Semaphore", 0);
   tx_semaphore_create(&RequestM0ToM4Semaphore, "RequestM0ToM4Semaphore", 0);
-  
+
   /* Create the Timer service */
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &TimerID, hw_ts_SingleShot, APP_ZIGBEE_TimingElapsed);
-  
+
   /* Register task */
   /* Create the different tasks */
-  tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
+  tx_byte_allocate(pBytePool, (VOID**) &pTempBuf, THREADX_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskNotifyM0ToM4Id,
                                    "NotifyM0ToM4Id",
                                    APP_ZIGBEE_ProcessNotifyM0ToM4,
                                    0,
-                                   pointer,
-                                   DEMO_STACK_SIZE_LARGE,
+                                   pTempBuf,
+                                   THREADX_STACK_SIZE_LARGE,
                                    NOTIFY_M0_TO_M4_PRIORITY,
                                    NOTIFY_M0_TO_M4_PRIORITY,
                                    TX_NO_TIME_SLICE,
                                    TX_AUTO_START);
   if (ThreadXStatus != TX_SUCCESS)
-    { APP_ZIGBEE_Error(ERR_ZIGBEE_THREAD_X_FAILED,1); }
-  
-  tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
+  {
+    APP_ZIGBEE_Error(ERR_ZIGBEE_THREAD_X_FAILED, 1);
+  }
+
+  tx_byte_allocate(pBytePool, (VOID**) &pTempBuf, THREADX_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskRequestM0ToM4Id,
                                    "RequestM0ToM4Id",
                                    APP_ZIGBEE_ProcessRequestM0ToM4,
                                    0,
-                                   pointer,
-                                   DEMO_STACK_SIZE_LARGE,
+                                   pTempBuf,
+                                   THREADX_STACK_SIZE_LARGE,
                                    REQUEST_M0_TO_M4_PRIORITY,
                                    REQUEST_M0_TO_M4_PRIORITY,
                                    TX_NO_TIME_SLICE,
                                    TX_AUTO_START);
   if (ThreadXStatus != TX_SUCCESS)
-    { APP_ZIGBEE_Error(ERR_ZIGBEE_THREAD_X_FAILED,1); }
-    
+  {
+    APP_ZIGBEE_Error(ERR_ZIGBEE_THREAD_X_FAILED, 1);
+  }
+
   /* Task associated with network creation process */
-  tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
+  tx_byte_allocate(pBytePool, (VOID**) &pTempBuf, THREADX_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskNwkFormId,
                                    "NwkFormId",
                                    APP_ZIGBEE_ProcessNwkForm,
                                    0,
-                                   pointer,
-                                   DEMO_STACK_SIZE_LARGE,
+                                   pTempBuf,
+                                   THREADX_STACK_SIZE_LARGE,
                                    NWL_FORM_PRIORITY,
                                    NWL_FORM_PRIORITY,
                                    TX_NO_TIME_SLICE,
                                    TX_AUTO_START);
   if (ThreadXStatus != TX_SUCCESS)
-    { APP_ZIGBEE_Error(ERR_ZIGBEE_THREAD_X_FAILED,1); }
+  {
+    APP_ZIGBEE_Error(ERR_ZIGBEE_THREAD_X_FAILED, 1);
+  }
 
   /* USER CODE BEGIN APP_ZIGBEE_INIT */
   /* USER CODE END APP_ZIGBEE_INIT */
@@ -324,7 +309,7 @@ void APP_ZIGBEE_Init(TX_BYTE_POOL* p_byte_pool)
   /* Initialize Zigbee stack layers */
   APP_ZIGBEE_StackLayersInit();
 
-} /* APP_ZIGBEE_Init */
+}
 
 /**
  * @brief  Initialize Zigbee stack layers
@@ -357,7 +342,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
 
   /* run the task */
   tx_semaphore_put(&NWKFormSemaphore);
-} /* APP_ZIGBEE_StackLayersInit */
+}
 
 /**
  * @brief  Configure Zigbee application endpoints
@@ -385,8 +370,7 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
 
   /* USER CODE BEGIN CONFIG_ENDPOINT */
   /* USER CODE END CONFIG_ENDPOINT */
-} /* APP_ZIGBEE_ConfigEndpoints */
-
+}
 
 /**
   * @brief  Callback triggered when the Timer expire
@@ -407,12 +391,12 @@ static void APP_ZIGBEE_TimingElapsed(void)
 static void APP_ZIGBEE_ProcessNwkForm(ULONG argument)
 {
   UNUSED(argument);
+
   for(;;)
   {
     tx_semaphore_get(&NWKFormSemaphore, TX_WAIT_FOREVER);
     if ( zigbee_app_info.join_status != ZB_STATUS_SUCCESS )
-    { 
-      //tx_thread_sleep( ( APP_ZIGBEE_STARTUP_FAIL_DELAY ) ); 
+    {
       HW_TS_Start(TimerID, APP_ZIGBEE_STARTUP_FAIL_DELAY);
       tx_semaphore_get(&NWKFormWaitSemaphore, TX_WAIT_FOREVER);
     }
@@ -427,7 +411,6 @@ static void APP_ZIGBEE_ProcessNwkForm(ULONG argument)
  */
 static void APP_ZIGBEE_NwkForm(void)
 {
-  //if ((zigbee_app_info.join_status != ZB_STATUS_SUCCESS) && (HAL_GetTick() >= zigbee_app_info.join_delay))
   if (zigbee_app_info.join_status != ZB_STATUS_SUCCESS)
   {
     struct ZbStartupT config;
@@ -456,19 +439,23 @@ static void APP_ZIGBEE_NwkForm(void)
     APP_DBG("ZbStartup Callback (status = 0x%02x)", status);
     zigbee_app_info.join_status = status;
 
-    if (status == ZB_STATUS_SUCCESS) 
+    if (status == ZB_STATUS_SUCCESS)
     {
-      /* USER CODE BEGIN 3 */
       zigbee_app_info.join_delay = 0U;
       zigbee_app_info.init_after_join = true;
-      APP_DBG("OnOff Server init done!\n"); 
+      APP_DBG("Startup done !\n");
+      /* USER CODE BEGIN 3 */
       BSP_LED_On(LED_BLUE);
+
+      /* USER CODE END 3 */
     }
     else
     {
-      /* USER CODE END 3 */
       APP_DBG("Startup failed, attempting again after a short delay (%d ms)", APP_ZIGBEE_STARTUP_FAIL_DELAY);
       zigbee_app_info.join_delay = HAL_GetTick() + APP_ZIGBEE_STARTUP_FAIL_DELAY;
+      /* USER CODE BEGIN 4 */
+
+      /* USER CODE END 4 */
     }
   }
 
@@ -490,12 +477,13 @@ static void APP_ZIGBEE_NwkForm(void)
     ZbNwkSet(zigbee_app_info.zb, ZB_NWK_NIB_ID_NetworkBroadcastDeliveryTime, &bcast_timeout, sizeof(bcast_timeout));
   }
   /* USER CODE END NW_FORM */
-} /* APP_ZIGBEE_NwkForm */
+}
 
 /*************************************************************
  * ZbStartupWait Blocking Call
  *************************************************************/
-struct ZbStartupWaitInfo {
+struct ZbStartupWaitInfo
+{
   bool active;
   enum ZbStatusCodeT status;
 };
@@ -507,7 +495,7 @@ static void ZbStartupWaitCb(enum ZbStatusCodeT status, void *cb_arg)
   info->status = status;
   info->active = false;
   tx_semaphore_put(&StartupEndSemaphore);
-} /* ZbStartupWaitCb */
+}
 
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
 {
@@ -515,22 +503,25 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
   enum ZbStatusCodeT status;
 
   info = malloc(sizeof(struct ZbStartupWaitInfo));
-  if (info == NULL) {
+  if (info == NULL)
+  {
     return ZB_STATUS_ALLOC_FAIL;
   }
   memset(info, 0, sizeof(struct ZbStartupWaitInfo));
 
   info->active = true;
   status = ZbStartup(zb, config, ZbStartupWaitCb, info);
-  if (status != ZB_STATUS_SUCCESS) {
+  if (status != ZB_STATUS_SUCCESS)
+  {
     info->active = false;
     return status;
   }
+
   tx_semaphore_get(&StartupEndSemaphore, TX_WAIT_FOREVER);
   status = info->status;
   free(info);
   return status;
-} /* ZbStartupWait */
+}
 
 /**
  * @brief  Trace the error or the warning reported.
@@ -540,18 +531,17 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
  */
 void APP_ZIGBEE_Error(uint32_t ErrId, uint32_t ErrCode)
 {
-  switch (ErrId) 
+  switch (ErrId)
   {
     case ERR_ZIGBEE_THREAD_X_FAILED:
-        APP_ZIGBEE_TraceError("ERROR : ERR_ZIGBEE_THREAD_X_FAILED ", ErrCode);
-        break;
-    
-    default:
-        APP_ZIGBEE_TraceError("ERROR Unknown ", 0);
-        break;
-  }
-} /* APP_ZIGBEE_Error */
+      APP_ZIGBEE_TraceError("ERROR : ERR_ZIGBEE_THREAD_X_FAILED ", ErrCode);
+      break;
 
+    default:
+      APP_ZIGBEE_TraceError("ERROR Unknown ", 0);
+      break;
+  }
+}
 
 /*************************************************************
  *
@@ -570,7 +560,8 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 {
   APP_DBG("**** Fatal error = %s (Err = %d)", pMess, ErrCode);
   /* USER CODE BEGIN TRACE_ERROR */
-  while (1U == 1U) {
+  while (1U == 1U) 
+  {
     BSP_LED_Toggle(LED1);
     HAL_Delay(500U);
     BSP_LED_Toggle(LED2);
@@ -580,14 +571,8 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
   }
   /* USER CODE END TRACE_ERROR */
 
-} /* APP_ZIGBEE_TraceError */
+}
 
-/**
- * @brief Check if the Coprocessor Wireless Firmware loaded supports Zigbee
- *        and display associated information
- * @param  None
- * @retval None
- */
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Zigbee
  *        and display associated information
@@ -648,18 +633,18 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
     /* print Link Key value hex */
     char Z09_LL_string[ZB_SEC_KEYSIZE*3+1];
     Z09_LL_string[0] = 0;
-    for(int str_index=0; str_index < ZB_SEC_KEYSIZE; str_index++)
+    for (int str_index = 0; str_index < ZB_SEC_KEYSIZE; str_index++)
     {
-      sprintf(&Z09_LL_string[str_index*3],"%02x ",sec_key_ha[str_index]);
+      sprintf(&Z09_LL_string[str_index*3], "%02x ", sec_key_ha[str_index]);
     }
 
     APP_DBG("Link Key value: %s", Z09_LL_string);
     /* print clusters allocated */
-    APP_DBG("Clusters allocated are:");  
-    APP_DBG("OnOff Server on Endpoint %d", SW1_ENDPOINT);
+    APP_DBG("Clusters allocated are:");
+    APP_DBG("onOff Server on Endpoint %d", SW1_ENDPOINT);
     APP_DBG("**********************************************************");
   }
-} /* APP_ZIGBEE_CheckWirelessFirmwareInfo */
+}
 
 /*************************************************************
  *
@@ -670,22 +655,22 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
 void APP_ZIGBEE_RegisterCmdBuffer(TL_CmdPacket_t *p_buffer)
 {
   p_ZIGBEE_otcmdbuffer = p_buffer;
-} /* APP_ZIGBEE_RegisterCmdBuffer */
+}
 
 Zigbee_Cmd_Request_t * ZIGBEE_Get_OTCmdPayloadBuffer(void)
 {
   return (Zigbee_Cmd_Request_t *)p_ZIGBEE_otcmdbuffer->cmdserial.cmd.payload;
-} /* ZIGBEE_Get_OTCmdPayloadBuffer */
+}
 
 Zigbee_Cmd_Request_t * ZIGBEE_Get_OTCmdRspPayloadBuffer(void)
 {
   return (Zigbee_Cmd_Request_t *)((TL_EvtPacket_t *)p_ZIGBEE_otcmdbuffer)->evtserial.evt.payload;
-} /* ZIGBEE_Get_OTCmdRspPayloadBuffer */
+}
 
 Zigbee_Cmd_Request_t * ZIGBEE_Get_NotificationPayloadBuffer(void)
 {
   return (Zigbee_Cmd_Request_t *)(p_ZIGBEE_notif_M0_to_M4)->evtserial.evt.payload;
-} /* ZIGBEE_Get_NotificationPayloadBuffer */
+}
 
 Zigbee_Cmd_Request_t * ZIGBEE_Get_M0RequestPayloadBuffer(void)
 {
@@ -712,7 +697,7 @@ void ZIGBEE_CmdTransfer(void)
 
   /* Wait completion of cmd */
   Wait_Getting_Ack_From_M0();
-} /* ZIGBEE_CmdTransfer */
+}
 
 /**
  * @brief  This function is called when the M0+ acknowledge the fact that it has received a Cmd
@@ -727,7 +712,7 @@ void TL_ZIGBEE_CmdEvtReceived(TL_EvtPacket_t *Otbuffer)
   UNUSED(Otbuffer);
 
   Receive_Ack_From_M0();
-} /* TL_ZIGBEE_CmdEvtReceived */
+}
 
 /**
  * @brief  This function is called when notification from M0+ is received.
@@ -740,7 +725,7 @@ void TL_ZIGBEE_NotReceived(TL_EvtPacket_t *Notbuffer)
   p_ZIGBEE_notif_M0_to_M4 = Notbuffer;
 
   Receive_Notification_From_M0();
-} /* TL_ZIGBEE_NotReceived */
+}
 
 /**
  * @brief  This function is called before sending any ot command to the M0
@@ -753,7 +738,7 @@ void TL_ZIGBEE_NotReceived(TL_EvtPacket_t *Notbuffer)
 void Pre_ZigbeeCmdProcessing(void)
 {
   tx_mutex_get(&MtxZigbeeId, TX_WAIT_FOREVER);
-} /* Pre_ZigbeeCmdProcessing */
+}
 
 /**
  * @brief  This function waits for getting an acknowledgment from the M0.
@@ -765,7 +750,7 @@ static void Wait_Getting_Ack_From_M0(void)
 {
    tx_semaphore_get(&TransferToM0Semaphore, TX_WAIT_FOREVER);
    tx_mutex_put(&MtxZigbeeId);
-} /* Wait_Getting_Ack_From_M0 */
+}
 
 /**
  * @brief  Receive an acknowledgment from the M0+ core.
@@ -776,8 +761,8 @@ static void Wait_Getting_Ack_From_M0(void)
  */
 static void Receive_Ack_From_M0(void)
 {
-   tx_semaphore_put(&TransferToM0Semaphore);
-} /* Receive_Ack_From_M0 */
+  tx_semaphore_put(&TransferToM0Semaphore);
+}
 
 /**
  * @brief  Receive a notification from the M0+ through the IPCC.
@@ -787,8 +772,8 @@ static void Receive_Ack_From_M0(void)
  */
 static void Receive_Notification_From_M0(void)
 {
-    CptReceiveNotifyFromM0++;
-    tx_semaphore_put(&NotifyM0ToM4Semaphore);
+  CptReceiveNotifyFromM0++;
+  tx_semaphore_put(&NotifyM0ToM4Semaphore);
 }
 
 /**
@@ -799,10 +784,10 @@ static void Receive_Notification_From_M0(void)
  */
 void TL_ZIGBEE_M0RequestReceived(TL_EvtPacket_t *Reqbuffer)
 {
-    p_ZIGBEE_request_M0_to_M4 = Reqbuffer;
+  p_ZIGBEE_request_M0_to_M4 = Reqbuffer;
 
-    CptReceiveRequestFromM0++;
-    tx_semaphore_put(&RequestM0ToM4Semaphore);
+  CptReceiveRequestFromM0++;
+  tx_semaphore_put(&RequestM0ToM4Semaphore);
 }
 
 /**
@@ -812,10 +797,10 @@ void TL_ZIGBEE_M0RequestReceived(TL_EvtPacket_t *Reqbuffer)
  */
 void APP_ZIGBEE_TL_INIT(void)
 {
-    ZigbeeConfigBuffer.p_ZigbeeOtCmdRspBuffer = (uint8_t *)&ZigbeeOtCmdBuffer;
-    ZigbeeConfigBuffer.p_ZigbeeNotAckBuffer = (uint8_t *)ZigbeeNotifRspEvtBuffer;
-    ZigbeeConfigBuffer.p_ZigbeeNotifRequestBuffer = (uint8_t *)ZigbeeNotifRequestBuffer;
-    TL_ZIGBEE_Init(&ZigbeeConfigBuffer);
+  ZigbeeConfigBuffer.p_ZigbeeOtCmdRspBuffer = (uint8_t *)&ZigbeeOtCmdBuffer;
+  ZigbeeConfigBuffer.p_ZigbeeNotAckBuffer = (uint8_t *)ZigbeeNotifRspEvtBuffer;
+  ZigbeeConfigBuffer.p_ZigbeeNotifRequestBuffer = (uint8_t *)ZigbeeNotifRequestBuffer;
+  TL_ZIGBEE_Init(&ZigbeeConfigBuffer);
 }
 
 /**
@@ -823,25 +808,29 @@ void APP_ZIGBEE_TL_INIT(void)
  * @param  None
  * @retval None
  */
-void APP_ZIGBEE_ProcessNotifyM0ToM4( ULONG argument )
+static void APP_ZIGBEE_ProcessNotifyM0ToM4( ULONG argument )
 {
-    UNUSED(argument);
+  UNUSED(argument);
 
-    for ( ;;) 
+  for ( ;;)
+  {
+    tx_semaphore_get(&NotifyM0ToM4Semaphore, TX_WAIT_FOREVER);
+    if (CptReceiveNotifyFromM0 != 0)
     {
-      tx_semaphore_get(&NotifyM0ToM4Semaphore, TX_WAIT_FOREVER);
-      if (CptReceiveNotifyFromM0 != 0) 
+      /* If CptReceiveNotifyFromM0 is > 1. it means that we did not serve all the events from the radio */
+      if (CptReceiveNotifyFromM0 > 1U)
       {
-        /* If CptReceiveNotifyFromM0 is > 1. it means that we did not serve all the events from the radio */
-        if (CptReceiveNotifyFromM0 > 1U) 
-            { APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0); }
-        else 
-            { Zigbee_CallBackProcessing(); }
-        
-        /* Reset counter */
-        CptReceiveNotifyFromM0 = 0;
+        APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0);
       }
+      else
+      {
+        Zigbee_CallBackProcessing();
+      }
+
+      /* Reset counter */
+      CptReceiveNotifyFromM0 = 0;
     }
+  }
 }
 
 /**
@@ -849,14 +838,14 @@ void APP_ZIGBEE_ProcessNotifyM0ToM4( ULONG argument )
  * @param
  * @return
  */
-void APP_ZIGBEE_ProcessRequestM0ToM4( ULONG argument )
+static void APP_ZIGBEE_ProcessRequestM0ToM4( ULONG argument )
 {
   UNUSED(argument);
-  
-  for ( ;;) 
+
+  for ( ;;)
   {
     tx_semaphore_get(&RequestM0ToM4Semaphore, TX_WAIT_FOREVER);
-    
+
     if (CptReceiveRequestFromM0 != 0)
     {
       Zigbee_M0RequestProcessing();
@@ -864,6 +853,7 @@ void APP_ZIGBEE_ProcessRequestM0ToM4( ULONG argument )
     }
   }
 }
+
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 
 /**
@@ -881,183 +871,6 @@ static void APP_ZIGBEE_ConfigGroupAddr(void)
   req.groupAddr = SW1_GROUP_ADDR;
   ZbApsmeAddGroupReq(zigbee_app_info.zb, &req, &conf);
 
-} /* APP_ZIGBEE_ConfigGroupAddr */
+}
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */
-
-#ifdef TX_LOW_POWER
-
-/**
- * @brief  Request to start a low power timer
- *
- * @param  tx_low_power_next_expiration: Number of ThreadX ticks
- * @retval None
- */
-void APP_ZIGBEE_ThreadX_Low_Power_Setup(ULONG tx_low_power_next_expiration)
-{
-  uint64_t time;
-  static uint8_t    cDebugOneTime = 0;
-
-  // -- Execute only if LowPower enable or First time --
-  if ( ( cLowPowerLevel == 0x00u ) && ( cDebugOneTime == 0x01u ) )
-    { return; }
-  
-  if ( cDebugOneTime == 0x00u )
-  {
-    APP_DBG("APP_ZIGBEE_ThreadX_Low_Power_Setup : START");
-    cDebugOneTime = 0x01;
-  }  
-  
-  /* Timer was already created, here we need to start it */
-  /* By default, see  tx_initialize_low_level.S, each tick is 10 ms */
-  /* This function should be very similar to LpTimerStart used in freertos_port.c */
-  /* Converts the number of FreeRTOS ticks into hw timer tick */
-  if (tx_low_power_next_expiration > (__UNSIGNED_LONG_LONG_MAX__ / 1e12)) /* Prevent overflow in else statement */
-  {
-    time = 0xFFFF0000; /* Maximum value equal to 24 days */
-  }
-  else
-  {
-    /* The result always fits in uint32_t and is always less than 0xFFFF0000 */
-    time = tx_low_power_next_expiration * 1000000000000ULL;
-    time = (uint64_t)( time /  ( CFG_TS_TICK_VAL_PS * TX_TIMER_TICK_PER_SECOND ));
-  }
-
-  HW_TS_Start(LpTXTimerContext.LpTXTimerThreadx_Id, (uint32_t)time);
-
-  /**
-   * There might be other timers already running in the timer server that may elapse
-   * before this one.
-   * Store how long before the next event so that on wakeup, it will be possible to calculate
-   * how long the tick has been suppressed
-   */
-  LpTXTimerContext.LpTXTimeLeftOnEntry = HW_TS_RTC_ReadLeftTicksToCount( );
-
-  return;
-}
-
-/**
- * @brief  Read how long the tick has been suppressed
- *
- * @param  None
- * @retval The number of tick rate (FreeRTOS tick)
- */
-unsigned long APP_ZIGBEE_ThreadX_Low_Power_Adjust_Ticks(void)
-{
-  uint64_t val_ticks, time_ps;
-  uint32_t LpTimeLeftOnExit;
-  static uint8_t    cDebugOneTime = 0;
-
-  if ( cDebugOneTime == 0x00u )
-  {
-    APP_DBG("APP_ZIGBEE_ThreadX_Low_Power_Adjust_Ticks : START");
-    cDebugOneTime = 0x01;
-  }
-  
-  LpTimeLeftOnExit = HW_TS_RTC_ReadLeftTicksToCount();
-  /* This cannot overflow. Max result is ~ 1.6e13 */
-  time_ps = (uint64_t)((CFG_TS_TICK_VAL_PS) * (uint64_t)(LpTXTimerContext.LpTXTimeLeftOnEntry - LpTimeLeftOnExit));
-
-  /* time_ps can be less than 1 RTOS tick in following situations
-   * a) MCU didn't go to STOP2 due to wake-up unrelated to Timer Server or woke up from STOP2 very shortly after.
-   *    Advancing RTOS clock by 1 ThreadX tick doesn't hurt in this case.
-   * b) APP_BLE_ThreadX_Low_Power_Setup(tx_low_power_next_expiration) was called with xExpectedIdleTime = 2 which is minimum value defined by configEXPECTED_IDLE_TIME_BEFORE_SLEEP.
-   *    The xExpectedIdleTime is decremented by one RTOS tick to wake-up in advance.
-   *    Ex: RTOS tick is 1ms, the timer Server wakes the MCU in ~977 us. RTOS clock should be advanced by 1 ms.
-   * */
-  if(time_ps <= (1e12 / TX_TIMER_TICK_PER_SECOND)) /* time_ps < RTOS tick */
-  {
-    val_ticks = 1;
-  }
-  else
-  {
-    /* Convert pS time into OS ticks */
-    val_ticks = time_ps * TX_TIMER_TICK_PER_SECOND; /* This cannot overflow. Max result is ~ 1.6e16 */
-    val_ticks = (uint64_t)(val_ticks / (1e12)); /* The result always fits in uint32_t */
-  }
-
-  /**
-   * The system may have been out from another reason than the timer
-   * Stop the timer after the elapsed time is calculated other wise, HW_TS_RTC_ReadLeftTicksToCount()
-   * may return 0xFFFF ( TIMER LIST EMPTY )
-   * It does not hurt stopping a timer that exists but is not running.
-   */
-  HW_TS_Stop(LpTXTimerContext.LpTXTimerThreadx_Id);
-
-  return (unsigned long)val_ticks;
-}
-
-
-void APP_ZIGBEE_ThreadX_LowPowerEnable( uint8_t cEnable )
-{
-  cLowPowerLevel = cEnable;
-}
-
-
-void APP_ZIGBEE_ThreadX_EnterLowPower( void )
-{
-  cLowPowerExecute = 0x00; 
-  
-  // -- Exucute only if LowPower enable --
-  if ( cLowPowerLevel == LOWPOWER_NONE )
-    { return; }
-  
-#if ( CFG_HW_USART1_ENABLED == 1 )
-  if ( HW_UART_OnGoing( CFG_DEBUG_TRACE_UART ) != 0x00u )
-    { return; }
-#endif // ( CFG_HW_USART1_ENABLED == 1 )
-#if (CFG_HW_LPUART1_ENABLED == 1)
-  if ( HW_UART_OnGoing( CFG_CLI_UART ) != 0x00u )
-    { return;  }
-#endif // ( CFG_HW_LPUART1_ENABLED == 1 )
-  
-  cLowPowerExecute = 0x01;
-//  BSP_LED_On(LED_RED);    // Only for Debug
-
-  // -- Enter Critical Section --
-  lPreviousPriMask = __get_PRIMASK( );
-  __disable_irq();
-
-  // -- Enter in LowPower --
-  switch ( cLowPowerLevel )
-  {
-    case LOWPOWER_SLEEPMODE :   PWR_EnterSleepMode();
-                                break;
-                                
-    case LOWPOWER_STOPMODE :    PWR_EnterStopMode();
-                                break;
-                                
-    case LOWPOWER_OFFMODE :     PWR_EnterOffMode();
-                                break;
-  }
-}
-
-
-void APP_ZIGBEE_ThreadX_ExitLowPower( void )
-{
-  // -- Exucute only if LowPower was executed --
-  if ( cLowPowerExecute != 0x00u ) 
-  { 
-    switch ( cLowPowerLevel )
-    {
-      case LOWPOWER_SLEEPMODE : PWR_ExitSleepMode();
-                                break;
-                                
-      case LOWPOWER_STOPMODE :  PWR_ExitStopMode();
-                                break;
-                                
-      case LOWPOWER_OFFMODE :   PWR_ExitOffMode();
-                                break;
-    }
-    
-    // -- Exit Critical Section --
-    __set_PRIMASK( lPreviousPriMask );
-    
-//    BSP_LED_Off(LED_RED);       // Only for Debug
-    
-    cLowPowerExecute = 0x00;
-  }
-}
-
-#endif // TX_LOW_POWER
-

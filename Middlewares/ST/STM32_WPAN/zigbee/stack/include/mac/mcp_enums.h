@@ -91,8 +91,9 @@ enum mcp_attr_id {
     mcp_macMaxFrameTotalWaitTime            = 0x58,
     mcp_macMaxFrameRetries                  = 0x59,
     mcp_macMinBE                            = 0x4f,
+	mcp_macMaxCSMARetries                   = 0xfd,
 
-    mcp_macPanId                            = 0x50,
+	mcp_macPanId                            = 0x50,
     mcp_macPromiscuousMode                  = 0x51,
     mcp_macResponseWaitTime                 = 0x5a,
     mcp_macRxOnWhenIdle                     = 0x52,

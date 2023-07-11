@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2021 STMicroelectronics.
+  * Copyright (c) 2020-2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -43,6 +43,29 @@
  */
 #define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
 
+/**
+ * Define BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01)
+ */
+#define CFG_IDENTITY_ADDRESS              GAP_PUBLIC_ADDR
+//#define CFG_STATIC_RANDOM_ADDRESS               (0x1234567890ab) /**< Static Random Address fixed for lifetime of the device */
+
+/**
+ * Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED
+ */
+#define CFG_PRIVACY                       PRIVACY_DISABLED
+
+/**
+ * Define BLE Address Type
+ * if CFG_PRIVACY equals PRIVACY_DISABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR
+ * if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR
+ */
+#if ( CFG_PRIVACY == PRIVACY_DISABLED )
+/* if CFG_PRIVACY equals PRIVACY_DISABLED,  CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR */
+#define CFG_BLE_ADDRESS_TYPE              CFG_IDENTITY_ADDRESS
+#else
+/* if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR */
+#define CFG_BLE_ADDRESS_TYPE              GAP_RESOLVABLE_PRIVATE_ADDR /* GAP_NON_RESOLVABLE_PRIVATE_ADDR */
+#endif
 /**
  * Define IO Authentication
  */
@@ -226,7 +249,7 @@
  * - bit 0:   1: Calibration for the RF system wakeup clock source   0: No calibration for the RF system wakeup clock source
  * - bit 1:   1: STM32WB5M Module device                             0: Other devices as STM32WBxx SOC, STM32WB1M module
  * - bit 2:   1: HSE/1024 Clock config                               0: LSE Clock config
- * Note: Enable Calibration when LSI selected as RF system wakeup clock and "bit 2" is meaningless with LSI   
+ * Note: Enable Calibration when LSI selected as RF system wakeup clock and "bit 2" is meaningless with LSI
  */
 #if defined(STM32WB5Mxx)
   #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_MOD5MM_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_LSE)

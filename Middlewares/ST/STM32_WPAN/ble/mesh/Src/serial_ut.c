@@ -82,9 +82,9 @@ static MOBLEUINT16 SerialUt_GetFunctionIndex(char *text);
 
 /**
 * @brief  SerialUt_Process: This function extracts the command and variables from
-the recieved string and passes it to BLEMesh library.
-* @param  rcvdStringBuff: Pointer to the recieved ascii character array from the user
-* @param  rcvdStringSize: Size of the recieved array
+the received string and passes it to BLEMesh library.
+* @param  rcvdStringBuff: Pointer to the received ascii character array from the user
+* @param  rcvdStringSize: Size of the received array
 * @retval void
 */
 void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
@@ -124,7 +124,7 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   case CMD_INDEX_SET_01: 
     /* test signal in IV Update */
   case CMD_INDEX_SET_04:     
-    /* Breakes the exsisting friendship */
+    /* Breaks the existing friendship */
   case CMD_INDEX_SET_06:      
     /* Clears the reply protection list */
   case CMD_INDEX_SET_07:     
@@ -231,9 +231,9 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
           
 /**
 * @brief  SerialUt_GetFunctionIndex: This function returns the calculated index 
-of the command recieved by the user
-* @param  rcvdStringBuff: Pointer to the recieved ascii character array from the user
-* @param  rcvdStringSize: Size of the recieved array
+of the command received by the user
+* @param  rcvdStringBuff: Pointer to the received ascii character array from the user
+* @param  rcvdStringSize: Size of the received array
 * @retval MOBLEUINT16
 */
 static MOBLEUINT16 SerialUt_GetFunctionIndex(char *text)
@@ -290,13 +290,13 @@ static void SerialUt_doubleHexToHex(MOBLEUINT8* hexArray,MOBLEUINT8* outputArray
 * @brief  BLEMesh_UpperTesterDataProcess:THis funcrion is for testing ,If implemented in library, 
 *         linker would replace weak linking from here.
 * @param  testFunctionIndex: Index of the command to be executed by the user
-* @param  testFunctionParm: Pointer to recieved parameters from the user
+* @param  testFunctionParm: Pointer to received parameters from the user
 * @retval MOBLE_RESULT
 */
 __weak MOBLE_RESULT BLEMesh_UpperTesterDataProcess(MOBLEUINT8 testFunctionIndex, MOBLEUINT8* testFunctionParm)
 { 
-  printf("RECIEVED FUNCTION INDEX = %d\r\n",testFunctionIndex); 
-  printf("RECIEVED FUNCTION PARAMETER = %s\r\n",testFunctionParm); 
+  printf("RECEIVED FUNCTION INDEX = %d\r\n",testFunctionIndex); 
+  printf("RECEIVED FUNCTION PARAMETER = %s\r\n",testFunctionParm); 
   printf("\r\n"); 
 
   return MOBLE_RESULT_SUCCESS;

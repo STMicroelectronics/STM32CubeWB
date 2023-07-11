@@ -107,7 +107,7 @@ enum
 {
   CHAR_CTRLC = 3,
   CHAR_ESC   = 27,
-  CHAR_DEL   = 127
+  CHAR_DEL   = 8
 };
 
 static uint8_t  txBusy;

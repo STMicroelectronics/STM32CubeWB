@@ -128,6 +128,17 @@ static uint8_t ad_manufacturer_specific_data[14] = { /* Manufacturer specific da
     0x00  /* BlueST Device MAC byte 0 */
 };
 
+static const uint8_t a_MBdAddr[BD_ADDR_SIZE_LOCAL] =
+{
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x0000000000FF)),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x00000000FF00) >> 8),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x000000FF0000) >> 16),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x0000FF000000) >> 24),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0x00FF00000000) >> 32),
+  (uint8_t)((CFG_ADV_BD_ADDRESS & 0xFF0000000000) >> 40)
+};
+
+
 /* More details about BlueST protocol and how it is used in our demos and examples
    can be found in the related documentation, e.g. in UM2496 */
 
@@ -648,7 +659,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   * Initialize GAP
   */
   ret = aci_gap_init(GAP_PERIPHERAL_ROLE,
-                     0,
+                     PRIVACY_DISABLED,
                      APP_BLE_GAP_DEVICE_NAME_LENGTH,
                      &gap_service_handle,
                      &gap_dev_name_char_handle,
@@ -694,32 +705,50 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 */
 const uint8_t* Ble_GetBdAddress(void)
 {
-  const uint8_t *bd_address;
+  uint8_t *p_otp_addr;
+  const uint8_t *p_bd_addr;
   uint32_t udn;
   uint32_t company_id;
   uint32_t device_id;
-  
+
   udn = LL_FLASH_GetUDN();
-  
-  if(udn != 0xFFFFFFFF)
+
+  if (udn != 0xFFFFFFFF)
   {
     company_id = LL_FLASH_GetSTCompanyID();
     device_id = LL_FLASH_GetDeviceID();
-    
+
+    /**
+     * Public Address with the ST company ID
+     * bit[47:24] : 24bits (OUI) equal to the company ID
+     * bit[23:16] : Device ID.
+     * bit[15:0] : The last 16bits from the UDN
+     * Note: In order to use the Public Address in a final product, a dedicated
+     * 24bits company ID (OUI) shall be bought.
+     */
     bd_address_udn[0] = (uint8_t)(udn & 0x000000FF);
-    bd_address_udn[1] = (uint8_t)( (udn & 0x0000FF00) >> 8 );
-    bd_address_udn[2] = (uint8_t)( (udn & 0x00FF0000) >> 16 );
-    bd_address_udn[3] = (uint8_t)device_id;
-    bd_address_udn[4] = (uint8_t)(company_id & 0x000000FF);
-    bd_address_udn[5] = (uint8_t)( (company_id & 0x0000FF00) >> 8 );
-    
-    bd_address = (const uint8_t *)bd_address_udn;
+    bd_address_udn[1] = (uint8_t)((udn & 0x0000FF00) >> 8);
+    bd_address_udn[2] = (uint8_t)device_id;
+    bd_address_udn[3] = (uint8_t)(company_id & 0x000000FF);
+    bd_address_udn[4] = (uint8_t)((company_id & 0x0000FF00) >> 8);
+    bd_address_udn[5] = (uint8_t)((company_id & 0x00FF0000) >> 16);
+
+    p_bd_addr = (const uint8_t *)bd_address_udn;
   }
-  else {
-    Error_Handler(); /* UNEXPECTED */
+  else
+  {
+    p_otp_addr = OTP_Read(0);
+    if (p_otp_addr)
+    {
+      p_bd_addr = ((OTP_ID0_t*)p_otp_addr)->bd_address;
+    }
+    else
+    {
+      p_bd_addr = a_MBdAddr;
+    }
   }
-  
-  return bd_address;
+
+  return p_bd_addr;
 }
 
 /**

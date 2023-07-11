@@ -55,9 +55,9 @@ typedef struct
     
   int application;                                      /*!< Specifies the application type (OPUS_APPLICATION_VOIP, OPUS_APPLICATION_AUDIO, OPUS_APPLICATION_RESTRICTED_LOWDELAY) see opus_define.h. */
  
-  uint32_t bitrate;                                     /*!< Specifies the choosen encoding bitrate [bps] (from 6000 to 510000). */
+  uint32_t bitrate;                                     /*!< Specifies the chosen encoding bitrate [bps] (from 6000 to 510000). */
   
-  uint8_t complexity;                                   /*!< Specifies the choosen encoding complexity (from 0 to 10). */
+  uint8_t complexity;                                   /*!< Specifies the chosen encoding complexity (from 0 to 10). */
     
 } OPUS_IF_ENC_ConfigTypeDef;
 
@@ -73,7 +73,7 @@ typedef struct
    
   uint8_t channels;                                     /*!< Number of audio input channels */
 
-  uint32_t bitrate;                                     /*!< Specifies the choosen encoding bitrate [bps] (from 6000 to 510000). */
+  uint32_t bitrate;                                     /*!< Specifies the chosen encoding bitrate [bps] (from 6000 to 510000). */
    
 } OPUS_IF_DEC_ConfigTypeDef;
 
@@ -170,7 +170,7 @@ OPUS_IF_Status OPUS_IF_ENC_Force_CELTmode(void);
  * @brief  Encoding functions.
  * @param  buf_in: pointer to the PCM buffer to be encoded.
  * @param  buf_out: pointer to the Encoded buffer.
- * @retval Number of bytes in case of success, 0 viceversa.
+ * @retval Number of bytes in case of success, 0 vice-versa.
  */
 int OPUS_IF_ENC_Encode(uint8_t * buf_in, uint8_t * buf_out);
 

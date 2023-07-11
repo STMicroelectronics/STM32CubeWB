@@ -130,4 +130,4 @@ extern "C" {
 }
 #endif
 
-#endif /* TL_DBG_CONF_H */
+#endif /*TL_DBG_CONF_H */

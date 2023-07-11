@@ -1085,6 +1085,11 @@
                 </option>
             </data>
         </settings>
+        <settings>
+            <name>Coder</name>
+            <archiveVersion>0</archiveVersion>
+            <data />
+        </settings>
     </configuration>
     <group>
         <name>Application</name>
@@ -1100,6 +1105,9 @@
                 <name>Core</name>
                 <group>
                     <name>src</name>
+                    <file>
+                        <name>$PROJ_DIR$\..\Core\Src\app_debug.c</name>
+                    </file>
                     <file>
                         <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
                     </file>

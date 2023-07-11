@@ -2,7 +2,6 @@
 /**
   ******************************************************************************
   * @file    stm32wbxx_it.h
-  * @author  MCD Application Team
   * @brief   This file contains the headers of the interrupt handlers.
   ******************************************************************************
   * @attention

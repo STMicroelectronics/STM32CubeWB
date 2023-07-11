@@ -73,7 +73,7 @@ typedef enum
   MSG_M4TOM0_MAC_MLME_ASSOCIATE_RES,
   /*! MAC Message ID to request a MAC Disassociation */
   MSG_M4TOM0_MAC_MLME_DISASSOCIATE_REQ,
-  /*! MAC Message ID to retrieve PIB Attibute value */
+  /*! MAC Message ID to retrieve PIB Attribute value */
   MSG_M4TOM0_MAC_MLME_GET_REQ,
   /*! MAC Message ID to perform a GTS request*/
   MSG_M4TOM0_MAC_MLME_GTS_REQ,

@@ -502,7 +502,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
   case MSG_M0TOM4_NOTIFY_STACK_RESET:
     /* Store Thread NVM data in Flash*/
     SHCI_C2_FLASH_StoreData(THREAD_IP);
-    /* Perform an NVIC Reset in order to reinitalize the device */
+    /* Perform an NVIC Reset in order to reinitialize the device */
     HAL_NVIC_SystemReset();
     break;
   case MSG_M0TOM4_IP6_RECEIVE:

@@ -22,11 +22,11 @@
 
 #include "types.h"
 //#include "hal_types.h"
-#define BLE_MESH_APPLICATION_VERSION "1.13.006" 
+#define BLE_MESH_APPLICATION_VERSION "1.13.007" 
 /**
 * \mainpage ST BLE-Mesh Solutions Bluetooth LE Mesh Library
 *
-* \version 1.13.006
+* \version 1.13.007
 *
 * \subsection contents_sec Contents
 *
@@ -60,12 +60,12 @@
 *
 * Proper operation of ST BLE-Mesh Library requires:
 * - Call BLEMesh_Init() function before any calls to library functions
-* - Call BLEMesh_Process() on each iteraction in application main loop
+* - Call BLEMesh_Process() on each iteration in application main loop
 *
 * \subsection brief_descr_sec API brief description
 * 4) API brief description:
 * ST BLE-Mesh Library sends and receives data from remote devices by itself when 
-* required and provides data to the user applicaton by calling the appropriate callbacks.
+* required and provides data to the user application by calling the appropriate callbacks.
 *
 * User application operation:
 * - User application defines a callback map (\a MOBLE_VENDOR_CB_MAP)
@@ -467,7 +467,7 @@ typedef struct
   * This is the structure of opcode of set, get and status message with the maximum 
   *              and maximum parameter value for set,get and status messages.
   * \param[in] opcode: opcode of message type.
-  * \param[in] reliable :wheather mesaage is acknowledge or unacknowledge. 
+  * \param[in] reliable :whether mesaage is acknowledge or unacknowledge. 
   * \param[in] min_payload_size: minimum length of message.
   * \param[in] max_payload_size: maximum length of message.
   * \param[in] response_opcode: opcode for status message
@@ -501,7 +501,7 @@ typedef struct
                                     MOBLEUINT16 *length);
   
   /** \brief get message/status message process callback
-  * This function called when there will acknowleged message received or Get message is
+  * This function called when there will acknowledged message received or Get message is
   * is received to get the status of the message.
   * \param[in] *pmsgParam Pointer to structure of message header for parameters:
   *             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
@@ -554,7 +554,7 @@ typedef struct
                                     MOBLEUINT16 *length);
   
   /** \brief get message/status message process callback
-  * This function called when there will acknowleged message received or Get message is
+  * This function called when there will acknowledged message received or Get message is
   * is received to get the status of the message.
   * \param[in] *pmsgParam Pointer to structure of message header for parameters:
   *             src, dst addresses, TTL, RSSI, NetKey & AppKey Offset
@@ -625,7 +625,7 @@ typedef struct
 * Other ST BLE-Mesh Library functions should NOT be called until the library is initialized
 *
 * \param[in] bdaddr A pointer to the array with MAC address. If equals NULL then 
-*                          default MAC adress is used, i.e. it is not hanged.
+*                          default MAC address is used, i.e. it is not hanged.
 * \param[in] features Features to be supported by library
 *                     Bit0 Relay feature
 *                     Bit1 Proxy feature
@@ -671,7 +671,7 @@ MOBLE_RESULT BLEMesh_Process(void);
 */
 MOBLE_RESULT BLEMesh_SetVendorCbMap(MOBLE_VENDOR_CB_MAP const * map);
 
-/** \brief Set remote data on the given peer. The usage of this API is depracated and replaced with
+/** \brief Set remote data on the given peer. The usage of this API is deprecated and replaced with
 *                                                     BluenrgMesh_SetRemotePublication
 * User is responsible for serializing data into \a data buffer. Vendor_WriteLocalDataCb 
 *                                  callback will be called on the remote device.
@@ -761,7 +761,7 @@ MOBLE_RESULT BLEMesh_ReadRemoteData(MODEL_MessageHeader_t *pmsgParam,
                                         MOBLEUINT8 const * data, 
                                         MOBLEUINT32 length);
 
-/** \brief Send response on received packet.The usage of this API is depracated and replaced with VendorModel_SendResponse
+/** \brief Send response on received packet.The usage of this API is deprecated and replaced with VendorModel_SendResponse
 * \param[in] peer Destination address. Must be a device address (0b0xxx xxxx xxxx xxxx, but not 0).
 * \param[in] dst Source Address of Node
 * \param[in] status Status of response.
@@ -963,16 +963,16 @@ MOBLE_RESULT BLEMesh_SetTTL(MOBLEUINT8 ttl);
 */
 MOBLEUINT8 BLEMesh_GetTTL(void);
 
-/** \brief Set Netwrok Transmit Count value.
+/** \brief Set Network Transmit Count value.
 * When message is sent to mesh network, it is replicated NetworkTransmitCount 
-* + 1 times. User shall call this function to set Netwrok Transmit value used 
+* + 1 times. User shall call this function to set Network Transmit value used 
 * during message transmission.
 * \param[in] count Network Transmit value. Supported values are 1-8.
 * \return MOBLE_RESULT_SUCCESS on success.
 */
 MOBLE_RESULT BLEMesh_SetNetworkTransmitCount(MOBLEUINT8 count);
 
-/** \brief Get Netwrok Transmit Count value.
+/** \brief Get Network Transmit Count value.
 * \return Default Network Transmit Count value.
 */
 MOBLEUINT8 BLEMesh_GetNetworkTransmitCount(void);

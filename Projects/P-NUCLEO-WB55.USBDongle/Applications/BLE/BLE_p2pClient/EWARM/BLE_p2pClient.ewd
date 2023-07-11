@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Production</name>
+        <name>BLE_p2pClient</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB55CG.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB55_CM4.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -76,7 +76,7 @@
                 </option>
                 <option>
                     <name>OCDownloadVerifyAll</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCProductVersion</name>
@@ -84,7 +84,7 @@
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
-                    <state>ARMSIM_ID</state>
+                    <state>STLINK_ID</state>
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
@@ -140,7 +140,7 @@
                 </option>
                 <option>
                     <name>OverrideDefFlashBoard</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCImagesOffset1</name>
@@ -1090,11 +1090,11 @@
                 <option>
                     <name>CCSTLinkResetList</name>
                     <version>3</version>
-                    <state>0</state>
+                    <state>4</state>
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state></state>
+                    <state>32.0</state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>

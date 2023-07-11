@@ -195,4 +195,4 @@
 #define BLE_DBG_DTS_BUF             PRINT_NO_MESG
 #endif
 
-#endif /* BLE_DBG_CONF_H */
+#endif /*BLE_DBG_CONF_H */

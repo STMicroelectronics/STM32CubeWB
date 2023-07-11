@@ -416,4 +416,22 @@ uint64_t otLinkRawGetRadioTime(otInstance *aInstance)
   return (uint64_t)((p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
 }
 
+otError otLinkRawSetMacFrameCounterIfLarger(otInstance *aInstance, uint32_t aMacFrameCounter)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_RAW_SET_MAC_FRAME_COUNTER_IF_LARGER;
+
+  p_ot_req->Size=1;
+
+  p_ot_req->Data[0] = aMacFrameCounter;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
 #endif /* OPENTHREAD_RADIO || OPENTHREAD_CONFIG_LINK_RAW_ENABLE */

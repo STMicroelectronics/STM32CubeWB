@@ -47,6 +47,7 @@
  * Define BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01)
  */
 #define CFG_IDENTITY_ADDRESS              GAP_PUBLIC_ADDR
+//#define CFG_STATIC_RANDOM_ADDRESS               (0x1234567890ab) /**< Static Random Address fixed for lifetime of the device */
 
 /**
  * Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED
@@ -55,12 +56,16 @@
 
 /**
  * Define BLE Address Type
- * Bluetooth address types defined in ble_legacy.h
  * if CFG_PRIVACY equals PRIVACY_DISABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR
  * if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR
  */
+#if ( CFG_PRIVACY == PRIVACY_DISABLED )
+/* if CFG_PRIVACY equals PRIVACY_DISABLED,  CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR */
 #define CFG_BLE_ADDRESS_TYPE              CFG_IDENTITY_ADDRESS
-   
+#else
+/* if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR */
+#define CFG_BLE_ADDRESS_TYPE              GAP_RESOLVABLE_PRIVATE_ADDR /* GAP_NON_RESOLVABLE_PRIVATE_ADDR */
+#endif
 /**
  * Define IO Authentication
  */

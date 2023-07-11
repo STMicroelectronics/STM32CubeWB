@@ -152,9 +152,9 @@ static void Init_Debug( void )
   /* Send a first trace to debug trace port to see that M4 is alive */
   APP_DBG("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 #ifdef STM32WB35xx
-  APP_DBG("traces init done on Little DORY M4");
+  APP_DBG("traces init done on STM32WB3x M4");
 #else
-  APP_DBG("traces init done on DORY M4");
+  APP_DBG("traces init done on STM32WB5x M4");
 #endif
   APP_DBG("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
@@ -284,7 +284,7 @@ static void Led_Init( void )
    * Leds Initialization
    */
 #if (CFG_HW_LPUART1_ENABLED != 1) || ! defined (STM32WB35xx)
-  // On Little DORY, LED_BLUE share the GPIO PB5 with LPUART
+  // On STM32WB3x, LED_BLUE share the GPIO PB5 with LPUART
   BSP_LED_Init(LED_BLUE);
 #endif
   

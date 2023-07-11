@@ -174,7 +174,7 @@
 #define PACKET_CACHE_SIZE                                                      2
 /* Exported variables  ------------------------------------------------------ */
 
-/* Temporary  message to store the application vaiables*/
+/* Temporary  message to store the application variables*/
 #pragma pack(push, 1)
 
 typedef struct

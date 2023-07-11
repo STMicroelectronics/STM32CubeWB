@@ -318,12 +318,13 @@ typedef enum
   CFG_TASK_MSG_FROM_M0_TO_M4,
   CFG_TASK_SEND_CLI_TO_M0,
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
+  CFG_TASK_TRACE,
+  CFG_TASK_AMM_BCKGND,
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
   /* USER CODE BEGIN CFG_IdleTask_Id_t */
   CFG_TASK_COAP_SEND_MSG,
-  CFG_TASK_SET_THREAD_MODE,
   /* USER CODE END CFG_IdleTask_Id_t */
   CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
@@ -333,7 +334,6 @@ typedef enum
 #define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
 /* USER CODE BEGIN DEFINE_TASK */
 #define TASK_COAP_SEND_MSG          (1U << CFG_TASK_COAP_SEND_MSG)
-#define TASK_SET_THREAD_MODE        (1U << CFG_TASK_SET_THREAD_MODE)
 /* USER CODE END DEFINE_TASK */
 
 /**
@@ -391,5 +391,16 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
+/******************************************************************************
+ * MEMORY MANAGER
+ ******************************************************************************/
+#define CFG_MM_POOL_SIZE				(4096U)
+#define CFG_AMM_VIRTUAL_MEMORY_NUMBER			(1U)
+#define CFG_AMM_VIRTUAL_APP_TRACE                    	(1U)
+#define CFG_AMM_VIRTUAL_APP_TRACE_BUFFER_SIZE        	(1024U)
+#define CFG_AMM_POOL_SIZE                           	(CFG_MM_POOL_SIZE / sizeof (uint32_t)) \
+							+ (AMM_VIRTUAL_INFO_ELEMENT_SIZE * CFG_AMM_VIRTUAL_MEMORY_NUMBER)
+
+#define CFG_AMM_ENABLED                             	(1U)
 #endif /*APP_CONF_H */
 

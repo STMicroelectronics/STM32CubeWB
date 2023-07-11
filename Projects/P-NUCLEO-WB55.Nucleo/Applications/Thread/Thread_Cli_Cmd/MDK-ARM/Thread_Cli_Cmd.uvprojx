@@ -618,6 +618,16 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_queue.c</FilePath>
             </File>
+			<File>
+              <FileName>advanced_memory_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/advanced_memory_manager.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_mm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm32_mm.c</FilePath>
+            </File>
             <File>
               <FileName>tl_thread_hci.c</FileName>
               <FileType>1</FileType>

@@ -1264,6 +1264,30 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+	<File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>84</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm32_mm.c</PathWithFileName>
+      <FilenameWithoutPath>stm32_mm.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+	<File>
+      <GroupNumber>12</GroupNumber>
+      <FileNumber>85</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>../../../../../../Middlewares/ST/STM32_WPAN/utilities/advanced_memory_manager.c</PathWithFileName>
+      <FilenameWithoutPath>advanced_memory_manager.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
   </Group>
 
   <Group>

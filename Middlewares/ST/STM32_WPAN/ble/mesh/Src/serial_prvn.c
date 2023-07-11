@@ -115,7 +115,7 @@ void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
      /* Command to start the unprovisioned devices */
   else if (!strncmp(rcvdStringBuff+COMMAND_OFFSET, "RESET",5))
   {
-        BLEMesh_PrintStringCb("Reseting Board...\r\n");
+        BLEMesh_PrintStringCb("Resetting Board...\r\n");
         NVIC_SystemReset();
   }
   /* Command to scan the unprovisioned devices - Used By node only */

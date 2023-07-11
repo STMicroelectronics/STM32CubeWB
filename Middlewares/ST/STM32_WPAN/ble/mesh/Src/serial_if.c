@@ -54,8 +54,9 @@
 */
 
 /* Private define ------------------------------------------------------------*/
-#define RECEIVE_STRING_SIZE                                                   48
-#define RX_BUFFER_SIZE                                                        48/*64*/
+#define C_SIZE_CMD_STRING                                                   256U
+#define RX_BUFFER_SIZE                                                        8U
+
 #define ESC                                                                 0x1b
 
 /* Private macro -------------------------------------------------------------*/
@@ -66,18 +67,16 @@ typedef enum
 }tSerialState;
 
 /* Private variables ---------------------------------------------------------*/
-static char Rcvd_String[RECEIVE_STRING_SIZE];
+uint8_t button_emulation; /* Button emulation state */
 tSerialState SerialCurrentState = STATE_IDLE;
 
-static uint8_t InputCharFromUart; 
-static queue_t RxQueue;
-static uint8_t RxQueueBuffer[RX_BUFFER_SIZE];  
-static int stringSize;
-static int ch;
-static int index_str;
+static uint8_t aRxBuffer[RX_BUFFER_SIZE];
+static uint8_t CommandString[C_SIZE_CMD_STRING];
+static uint16_t indexReceiveChar = 0;
+
+extern EXTI_HandleTypeDef exti_handle;
 
 /* Private function prototypes -----------------------------------------------*/
-static int Serial_GetString(MOBLEUINT8* text, MOBLEUINT8 size);
 #if (!ENABLE_UT)
 __weak void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
 #endif 
@@ -98,11 +97,37 @@ __weak void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize);
  */
 static void Serial_RxCpltCallback( void )
 {
-  CircularQueue_Add(&RxQueue, &InputCharFromUart,1,1);
-
-//  Serial_InterfaceProcess();
-  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_SERIAL_REQ_ID, CFG_SCH_PRIO_0);
-  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_UART_RX_REQ_ID, CFG_SCH_PRIO_0);
+  /* Filling buffer and wait for '\r' char */
+  if (indexReceiveChar < C_SIZE_CMD_STRING)
+  {
+    if (aRxBuffer[0] == '\r')
+    {
+      CommandString[indexReceiveChar] = 0; /* Make last char NULL for string comp */
+        
+      TRACE_I(TF_SERIAL_PRINTS,"received %s\n", CommandString);
+      
+      UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_SERIAL_REQ_ID, CFG_SCH_PRIO_0);
+    }
+#if 1
+    else if (aRxBuffer[0] == '\b')
+    {
+      if (indexReceiveChar > 1)
+      {
+        indexReceiveChar--;
+      }
+      UTIL_SEQ_SetTask( 1<< CFG_TASK_MESH_UART_RX_REQ_ID, CFG_SCH_PRIO_0);
+    }
+#endif
+    else
+    {
+      if ((aRxBuffer[0] >= 'a') && (aRxBuffer[0] <= 'z'))
+      {
+        aRxBuffer[0] = aRxBuffer[0] + 'A' - 'a';
+      }
+      CommandString[indexReceiveChar++] = aRxBuffer[0];
+      UTIL_SEQ_SetTask( 1<< CFG_TASK_MESH_UART_RX_REQ_ID, CFG_SCH_PRIO_0);
+    }
+  }
 
   return;
  }
@@ -113,159 +138,9 @@ static void Serial_RxCpltCallback( void )
  */
 static void Serial_Uart_Rx_Task( void )
 {
-  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, &InputCharFromUart, 1, Serial_RxCpltCallback);
+  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, Serial_RxCpltCallback);
 }
  
-/**
- * *****************************************************************************
- * @fn    char UartReadChar(uint8_t blocking)
- * @author  -
- * @brief   Wait until the receipt of a character from an Uart or JTAG,
- *          then convert it into ASCII and return the character
- * @param   blocking : blocking mode
- * @return  Return the character received from the serial link or the JTAG.
- * *****************************************************************************
- */
-static char UartReadChar(uint8_t blocking)
-{
-  uint16_t size;
-  uint8_t *c;
-  static uint8_t  ESC_Seq = 0;
-  uint8_t leave = 0;
-  char retc = 0;
-  static uint16_t ESC_Timeout = 0;
-    
-  while (!leave)
-  {
-    c = CircularQueue_Remove(&RxQueue, &size);
-    if (!c) 
-    { 
-     if (ESC_Seq == 1)
-     {
-       if (--ESC_Timeout == 0) 
-       {
-         retc = ESC;
-         ESC_Seq = 0;
-         break; /* Assume ESC have been hit */ 
-       }
-     }
-     if (!blocking) leave=1;
-    }
-    else if (c) /* I got a char */
-    {
-      retc = *c;
-      if ((*c == ESC) && (ESC_Seq == 0))  /* ESC sequence */
-      {
-        ESC_Timeout = 5000;  /* Maybe better to arm a timer */
-        ESC_Seq = 1;          /* If ESC AND Esc_seq ==> error case, here we just restart ESC sequence */
-        retc = 0;
-      }
-      else if (ESC_Seq == 1)  /* check second char in ESC sequence */
-      {
-        if (*c == '[')  /* True ESC sequence */
-        {
-          /* wait for next char in ESC seq */
-          ESC_Seq++;   
-          retc = 0;
-          ESC_Timeout = 0;
-        }
-        else          /* Unexpected char follwing ESC, so ESC hit [no ESC sequence ] */
-        {
-          leave = 1;
-          ESC_Seq = 0;
-          retc = ESC;
-          ESC_Timeout = 0;
-        }
-      }
-      else if (ESC_Seq == 2)
-      {
-        leave = 1;
-        ESC_Seq = 0;
-        retc = *c | 0x80;  
-      }
-      else
-      {
-        leave = 1;
-      }
-    }  
-  }
-  
-  return retc;       
-}
-
-/**
-* @brief  Gets the input from user from Serial port
-* @param  text: String to take input 
-* @param  size: Size of string
-* @retval int: Running Status of the test case
-*/
-static int Serial_GetString(MOBLEUINT8* text, MOBLEUINT8 size)
-{
-//  static int index_str = 0;
-  stringSize = 0;
-
-#ifndef __IAR_SYSTEMS_ICC__
-  clearerr(stdin);
-#endif
-  ch = (int)(UartReadChar(FALSE));
-  /* Note: Please use Full Library configuration in project options to use the full 
-       configuration of the C/C++ runtime library for printf and scanf functionality */
-  /* Check for error in get function */
-  if (ch == EOF)
-  {                       
-#ifndef __IAR_SYSTEMS_ICC__
-    clearerr(stdin);
-#endif
-  }
-  /* check for backspace press */
-  else if (ch == 0x08)
-  {
-    if (index_str > 0)
-    {
-      --index_str;
-      text[index_str] = 0x00;
-    }
-    TRACE_I(TF_SERIAL_CTRL,"\b");
-    fflush(stdout);
-    TRACE_I(TF_SERIAL_CTRL," ");
-    fflush(stdout);
-    TRACE_I(TF_SERIAL_CTRL,"\b");
-    fflush(stdout);
-  }
-  /* Check for the enter key*/
-  else if ((ch == 0x0D) || (ch == 0xFFFFFF0D))
-  {
-    /* check for first time enter to display help message */
-    if (index_str == 0)
-    {
-      stringSize = 1;
-    }
-    else
-    {
-      stringSize = index_str;
-    }
-    index_str = 0;
-    TRACE_I(TF_SERIAL_CTRL,"\n\r");
-    fflush(stdout);
- //   return stringSize;    
-  }
-  else
-  {
-    TRACE_I(TF_SERIAL_CTRL,"%c", ch);
-    fflush(stdout);
-    if (index_str < size)
-    {
-      /* check if lowercase and convert it to upper case */
-      if ((ch >= 'a') && (ch <= 'z'))
-      {
-        ch = ch + 'A' - 'a';
-      }
-      text[index_str++] = (char)ch;
-    }
-  }
-  return stringSize;
-}
-
 /**
 * @brief  This funcrion is used to parse the string given by the user(If 
 *         implemented in application, 
@@ -312,87 +187,90 @@ __weak void SerialPrvn_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
 */
 void Serial_InterfaceProcess(void)
 {
-  Serial_GetString((MOBLEUINT8*)Rcvd_String, sizeof(Rcvd_String) - 1);
-  /* Check if no input has come from user */
-  if (!stringSize)
-  {
-//    TRACE_I(TF_SERIAL_CTRL,"No input come from user\r\n");  
-    return;
-  }
-  else
-  {
-    Rcvd_String[stringSize] = 0; /* Make last char NULL for string comp */
-
-    /* Check if correct string has been entered or not */
-        
-    if ( 1 != 1 )
-    {
-      /* This will ALWAYS FAIL
-         This statement is put here so, next all statements can enter 
-     "else if" 
-      */
-    }
+  /* Reset button emulation state */
+  button_emulation = 0;
 #ifdef ENABLE_SERIAL_CONTROL
-    if (!strncmp(Rcvd_String, "ATCL", 4))
-    {            
-      SerialCtrl_Process(Rcvd_String, stringSize);
-    }
-    else if (!strncmp(Rcvd_String, "ATVR", 4))
-    {            
-      SerialCtrlVendorRead_Process(Rcvd_String, stringSize);
-    }
-    else if (!strncmp(Rcvd_String, "ATVW", 4))
-    {            
-      SerialCtrlVendorWrite_Process(Rcvd_String, stringSize);
-    }
+  if (!strncmp((char const*)CommandString, "ATCL", 4))
+  {            
+    SerialCtrl_Process((char *)CommandString, indexReceiveChar);
+  }
+  else if (!strncmp((char const*)CommandString, "ATVR", 4))
+  {            
+    SerialCtrlVendorRead_Process((char *)CommandString, indexReceiveChar);
+  }
+  else if (!strncmp((char const*)CommandString, "ATVW", 4))
+  {            
+    SerialCtrlVendorWrite_Process((char *)CommandString, indexReceiveChar);
+  }
 #endif
 #if ENABLE_UT
-    else if(!strncmp(Rcvd_String, "ATUT", 4))
-    {
-      SerialUt_Process(Rcvd_String, stringSize);  
-    }
+  else if(!strncmp((char const*)CommandString, "ATUT", 4))
+  {
+    SerialUt_Process((char *)CommandString, indexReceiveChar);  
+  }
 #endif
 #if ENABLE_APPLI_TEST
-    else if(!strncmp(Rcvd_String, "ATAP", 4))
-    {
-      SerialResponse_Process(Rcvd_String, stringSize);  
-    }
+  else if(!strncmp((char const*)CommandString, "ATAP", 4))
+  {
+    SerialResponse_Process((char *)CommandString, indexReceiveChar);  
+  }
 #endif
 #ifdef ENABLE_AUTH_TYPE_INPUT_OOB        
-    else if(!strncmp(Rcvd_String, "ATIN", 4))
-    {
-      Appli_BleSerialInputOOBValue(Rcvd_String, stringSize);  
-    }
+  else if(!strncmp((char const*)CommandString, "ATIN", 4))
+  {
+    Appli_BleSerialInputOOBValue((char *)CommandString, indexReceiveChar);  
+  }
 #endif
 #if ENABLE_SERIAL_PRVN        
-    else if(!strncmp(Rcvd_String, "ATEP", 4))
-    {
-       SerialPrvn_Process(Rcvd_String, stringSize);
-    }
+  else if(!strncmp((char const*)CommandString, "ATEP", 4))
+  {
+     SerialPrvn_Process((char *)CommandString, indexReceiveChar);
+  }
 #endif        
 #ifdef ENABLE_SENSOR_MODEL_SERVER_SETUP
-    else if(!strncmp(Rcvd_String, "ATSNR", 5))
-    {
-      Appli_Sensor_SerialCmd(Rcvd_String, stringSize);
-    }
+  else if(!strncmp((char const*)CommandString, "ATSNR", 5))
+  {
+    Appli_Sensor_SerialCmd((char *)CommandString, indexReceiveChar);
+  }
 #endif
 #ifdef ENABLE_LIGHT_MODEL_SERVER_LC
-    else if(!strncmp(Rcvd_String, "ATLLC", 5))
-    {
-      Appli_Light_LC_SerialCmd(Rcvd_String, stringSize);
-    }
-#endif
-
-    else
-    {
-      TRACE_I(TF_SERIAL_PRINTS,"Not Entered valid test parameters\r\n");  
-      SerialCurrentState = STATE_IDLE;
-    }      
-    while(stringSize)
-    {
-      Rcvd_String[--stringSize] = 0;
-    }
+  else if(!strncmp((char const*)CommandString, "ATLLC", 5))
+  {
+    Appli_Light_LC_SerialCmd((char *)CommandString, indexReceiveChar);
   }
+#endif
+  else if(!strncmp((char const*)CommandString, "SW1", 3))
+  {
+    button_emulation = 1; /* Set the button emulation */
+    TRACE_I(TF_SERIAL_PRINTS,"SW1 OK\r\n");
+    exti_handle.Line = EXTI_LINE_4;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if(!strncmp((char const*)CommandString, "SW2", 3))
+  {
+    button_emulation = 1; /* Set the button emulation */
+    TRACE_I(TF_SERIAL_PRINTS,"SW2 OK\r\n");
+    exti_handle.Line = EXTI_LINE_0;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if(!strncmp((char const*)CommandString, "SW3", 3))
+  {
+    button_emulation = 1; /* Set the button emulation */
+    TRACE_I(TF_SERIAL_PRINTS,"SW3 OK\r\n");
+    exti_handle.Line = EXTI_LINE_1;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+
+  else
+  {
+    TRACE_I(TF_SERIAL_PRINTS,"Not Entered valid test parameters\r\n");  
+    SerialCurrentState = STATE_IDLE;
+  }      
+  while(indexReceiveChar)
+  {
+    CommandString[--indexReceiveChar] = 0;
+  }
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_UART_RX_REQ_ID, CFG_SCH_PRIO_0);
 }
 
 /**
@@ -425,12 +303,11 @@ MOBLEUINT8 Serial_CharToHexConvert(char addr)
   */
 void Serial_Init(void)
 {
-  CircularQueue_Init(&RxQueue, RxQueueBuffer, RX_BUFFER_SIZE, 1, CIRCULAR_QUEUE_NO_WRAP_FLAG);
-  
-//  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, &InputCharFromUart, 1, Serial_RxCpltCallback);
-  UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SERIAL_REQ_ID, UTIL_SEQ_RFU, Serial_InterfaceProcess );
+  button_emulation = 0; /* Reset the button emulation state */
+
+  UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SERIAL_REQ_ID, UTIL_SEQ_RFU, Serial_InterfaceProcess);
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_UART_RX_REQ_ID, UTIL_SEQ_RFU, Serial_Uart_Rx_Task );
-  UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_UART_RX_REQ_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<< CFG_TASK_MESH_UART_RX_REQ_ID, CFG_SCH_PRIO_0);
 
   return;
 }

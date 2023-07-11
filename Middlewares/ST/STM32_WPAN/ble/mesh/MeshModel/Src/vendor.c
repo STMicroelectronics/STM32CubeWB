@@ -154,7 +154,7 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MODEL_MessageHeader_t *pmsgParams,
              }
            }
                    
-         /* this expression is used to send the status of data received wheather it
+         /* this expression is used to send the status of data received wether it
          is correct or not , First 3 bits are for status and last 5 bit are for sub commands
          */
          ResponseBuffer[0] = ResponseBuffer[0] | (status << 5);
@@ -295,7 +295,7 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MODEL_MessageHeader_t *pmsgParams,
             {
               /* 
               Message Received with Command APPLI_DATA_CNTRL_CMD
-              Call the Data Read Callback to fill Response Buffer with local datas
+              Call the Data Read Callback to fill Response Buffer with local data
               */ 
               status =  VendorAppli_cb.DataControlCommand_cb(data, length);
               break;       
@@ -309,11 +309,11 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MODEL_MessageHeader_t *pmsgParams,
             
           }
   
-        /* this expression is used to send the status of data received wheather it
+        /* this expression is used to send the status of data received wether it
         is correct or not , First 3 bits are for status and last 5 bit are for sub commands
         */
         ResponseBuffer[0] = ResponseBuffer[0] | (status << 5);
-        /* Check if the command executed sucessfully or not */ 
+        /* Check if the command executed successfully or not */ 
         
         if (MOBLE_RESULT_SUCCESS == status)
         {
@@ -413,7 +413,7 @@ MOBLE_RESULT Vendor_OnResponseDataCb(MODEL_MessageHeader_t *pmsgParam,
                }
              case APPLI_TEST_COUNTER:
                { 
-         /* this case is responsible for the printing the time stamp when the responce 
+         /* this case is responsible for the printing the time stamp when the response 
             is received by the sender node.
          */
                  timeStampRcv = Clock_Time();
@@ -619,7 +619,7 @@ void Vendor_TestCounterInc(MOBLE_ADDRESS src ,MOBLE_ADDRESS dst ,MOBLEUINT8 elem
 */          
 void Vendor_SendDataFreq(MOBLEUINT8 freq)
 {
-    /* Data to be sent continuosly with out any time gap */ 
+    /* Data to be sent continuously with out any time gap */ 
     if ((freq == 0xFF) || (freq == 0x00))
     {
         Vendor_SendDataFreqState = freq;
@@ -654,7 +654,7 @@ from the library to send response to the message from peer
 * @param  plength: Pointer to the Length of the data, to be updated by application
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT VendorModel_PID1_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParams,  
@@ -680,7 +680,7 @@ the library whenever a Generic Model message is received
 * @param  response: if TRUE, the message is an acknowledged message
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParams,  

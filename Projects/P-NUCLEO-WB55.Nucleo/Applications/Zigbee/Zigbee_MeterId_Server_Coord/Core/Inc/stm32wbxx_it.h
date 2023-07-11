@@ -6,14 +6,14 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2020-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
-  ******************************************************************************
+ ******************************************************************************
   */
 /* USER CODE END Header */
 
@@ -27,7 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "app_common.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -73,6 +73,7 @@ void FPU_IRQHandler(void);
 void EXTI0_IRQHandler(void);
 void EXTI1_IRQHandler(void);
 void EXTI4_IRQHandler(void);
+
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

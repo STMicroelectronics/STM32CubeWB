@@ -3,11 +3,10 @@
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
-  *
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,38 +14,14 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
-  @verbatim
-  ==============================================================================
-                    ##### IMPORTANT NOTE #####
-  ==============================================================================
-
-  This application requests having the stm32wb5x_Zigbee_fw.bin binary
-  flashed on the Wireless Coprocessor.
-  If it is not the case, you need to use STM32CubeProgrammer to load the appropriate
-  binary.
-
-  All available binaries are located under following directory:
-  /Projects/STM32_Copro_Wireless_Binaries
-
-  Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
-  Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the
-  detailed procedure to change the Wireless Coprocessor binary.
-
-  @endverbatim
-  ******************************************************************************
-  ******************************************************************************
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
-#include "dbg_trace.h"
-#include "hw_conf.h"
-#include "otp.h"
-#include "cmsis_os.h"
 
 /* USER CODE END Includes */
 
@@ -57,6 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -74,50 +50,30 @@ DMA_HandleTypeDef hdma_usart1_tx;
 
 RTC_HandleTypeDef hrtc;
 
-osThreadId_t defaultTaskId;
-osThreadId_t OsTaskInitId;
-
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 1024 * 4
 };
-
-/* FreeRtos stacks attributes */
-const osThreadAttr_t TaskInit_attributes = {
-    .name = CFG_TASK_INIT_PROCESS_NAME,
-    .attr_bits = CFG_TASK_PROCESS_ATTR_BITS,
-    .cb_mem = CFG_TASK_PROCESS_CB_MEM,
-    .cb_size = CFG_TASK_PROCESS_CB_SIZE,
-    .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
-    .priority = osPriorityNormal, /* osPriorityLow */
-    .stack_size = CFG_TASK_PROCESS_STACK_SIZE
-};
-
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
-static void MX_RF_Init(void);
-static void MX_RTC_Init(void);
 static void MX_IPCC_Init(void);
+static void MX_RTC_Init(void);
+static void MX_RF_Init(void);
+void StartDefaultTask(void *argument);
+
 /* USER CODE BEGIN PFP */
 
-void PeriphClock_Config(void);
-static void Reset_Device(void);
-static void Reset_IPCC(void);
-static void Reset_BackupDomain(void);
-static void Init_Exti(void);
-static void Config_HSE(void);
-static void StartDefaultTask(void *argument);
-static void TaskInit(void *argument);
-
 /* USER CODE END PFP */
-
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
@@ -132,80 +88,82 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-  /**
-   * The OPTVERR flag is wrongly set at power on
-   * It shall be cleared before using any HAL_FLASH_xxx() api
-   */
-  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+  /* Config code for STM32_WPAN (HSE Tuning must be done before system clock configuration) */
+  MX_APPE_Config();
 
   /* USER CODE BEGIN Init */
-  
-  Reset_Device();
-  Config_HSE();
-  
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
+/* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
+
   /* IPCC initialisation */
-   MX_IPCC_Init();
+  MX_IPCC_Init();
 
   /* USER CODE BEGIN SysInit */
-  PeriphClock_Config();
-  Init_Exti(); /**< Configure the system Power Mode */
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_RF_Init();
   MX_RTC_Init();
+  MX_RF_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
+
   /* Init scheduler */
-   osKernelInitialize();
+  osKernelInitialize();
 
-   /* USER CODE BEGIN RTOS_MUTEX */
-   /* add mutexes, ... */
-   /* USER CODE END RTOS_MUTEX */
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
 
-   /* USER CODE BEGIN RTOS_SEMAPHORES */
-   /* add semaphores, ... */
-   /* USER CODE END RTOS_SEMAPHORES */
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
 
-   /* USER CODE BEGIN RTOS_TIMERS */
-   /* start timers, add new ones, ... */
-   /* USER CODE END RTOS_TIMERS */
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
 
-   /* USER CODE BEGIN RTOS_QUEUES */
-   /* add queues, ... */
-   /* USER CODE END RTOS_QUEUES */
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
 
-   /* Create the thread(s) */
-   /* creation of defaultTask */
-   
-  OsTaskInitId = osThreadNew(TaskInit, NULL,&TaskInit_attributes);
-  defaultTaskId = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  /* Create the thread(s) */
+  /* creation of defaultTask */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* Start scheduler */   
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
+
+  /* Init code for STM32_WPAN */
+  MX_APPE_Init();
+
+  /* Start scheduler */
   osKernelStart();
-  
   /* We should never get here as control is now taken by the scheduler */
-  
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
- 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -221,15 +179,16 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
   /** Configure LSE Drive Capability
   */
   HAL_PWR_EnableBkUpAccess();
   __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -244,6 +203,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -260,17 +220,23 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the peripherals clocks
+}
+
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
   */
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SMPS|RCC_PERIPHCLK_RFWAKEUP
-                              |RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART1
-                              |RCC_PERIPHCLK_LPUART1;
-  PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
-  PeriphClkInitStruct.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_PCLK1;
-  PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+void PeriphCommonClock_Config(void)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Initializes the peripherals clock
+  */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SMPS|RCC_PERIPHCLK_RFWAKEUP;
   PeriphClkInitStruct.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSE;
   PeriphClkInitStruct.SmpsClockSelection = RCC_SMPSCLKSOURCE_HSE;
   PeriphClkInitStruct.SmpsDivSelection = RCC_SMPSCLKDIV_RANGE0;
+
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -438,6 +404,7 @@ static void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 1 */
 
   /* USER CODE END RTC_Init 1 */
+
   /** Initialize RTC Only
   */
   hrtc.Instance = RTC;
@@ -449,6 +416,13 @@ static void MX_RTC_Init(void)
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
   if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Enable the WakeUp
+  */
+  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
   {
     Error_Handler();
   }
@@ -485,213 +459,38 @@ static void MX_DMA_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+/* USER CODE BEGIN MX_GPIO_Init_1 */
+/* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
+/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
-void PeriphClock_Config(void)
+
+/* USER CODE END 4 */
+
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void *argument)
 {
-  #if (CFG_USB_INTERFACE_ENABLE != 0)
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = { 0 };
-  RCC_CRSInitTypeDef RCC_CRSInitStruct = { 0 };
-
-  /**
-   * This prevents the CPU2 to disable the HSI48 oscillator when
-   * it does not use anymore the RNG IP
-   */
-  LL_HSEM_1StepLock( HSEM, 5 );
-
-  LL_RCC_HSI48_Enable();
-
-  while(!LL_RCC_HSI48_IsReady());
-
-  /* Select HSI48 as USB clock source */
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
-  PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
-  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
-
-  /*Configure the clock recovery system (CRS)**********************************/
-
-  /* Enable CRS Clock */
-  __HAL_RCC_CRS_CLK_ENABLE();
-
-  /* Default Synchro Signal division factor (not divided) */
-  RCC_CRSInitStruct.Prescaler = RCC_CRS_SYNC_DIV1;
-
-  /* Set the SYNCSRC[1:0] bits according to CRS_Source value */
-  RCC_CRSInitStruct.Source = RCC_CRS_SYNC_SOURCE_USB;
-
-  /* HSI48 is synchronized with USB SOF at 1KHz rate */
-  RCC_CRSInitStruct.ReloadValue = RCC_CRS_RELOADVALUE_DEFAULT;
-  RCC_CRSInitStruct.ErrorLimitValue = RCC_CRS_ERRORLIMIT_DEFAULT;
-
-  RCC_CRSInitStruct.Polarity = RCC_CRS_SYNC_POLARITY_RISING;
-
-  /* Set the TRIM[5:0] to the default value*/
-  RCC_CRSInitStruct.HSI48CalibrationValue = RCC_CRS_HSI48CALIBRATION_DEFAULT;
-
-  /* Start automatic synchronization */
-  HAL_RCCEx_CRSConfig(&RCC_CRSInitStruct);
-#endif
-
-  return;
-}
-
-/*************************************************************
- *
- * LOCAL FUNCTIONS
- *
- *************************************************************/
-
-static void Config_HSE(void)
-{
-    OTP_ID0_t * p_otp;
-
-  /**
-   * Read HSE_Tuning from OTP
-   */
-  p_otp = (OTP_ID0_t *) OTP_Read(0);
-  if (p_otp)
-  {
-    LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
-  }
-
-  return;
-}
-
-
-static void Reset_Device( void )
-{
-#if ( CFG_HW_RESET_BY_FW == 1 )
-  Reset_BackupDomain();
-
-  Reset_IPCC();
-#endif
-
-  return;
-}
-
-static void Reset_IPCC( void )
-{
-  LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_IPCC);
-
-  LL_C1_IPCC_ClearFlag_CHx(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C2_IPCC_ClearFlag_CHx(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C1_IPCC_DisableTransmitChannel(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C2_IPCC_DisableTransmitChannel(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C1_IPCC_DisableReceiveChannel(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  LL_C2_IPCC_DisableReceiveChannel(
-      IPCC,
-      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
-      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
-
-  return;
-}
-
-static void Reset_BackupDomain( void )
-{
-  if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
-  {
-    HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
-
-    /**
-     *  Write twice the value to flush the APB-AHB bridge
-     *  This bit shall be written in the register before writing the next one
-     */
-    HAL_PWR_EnableBkUpAccess();
-
-    __HAL_RCC_BACKUPRESET_FORCE();
-    __HAL_RCC_BACKUPRESET_RELEASE();
-  }
-
-  return;
-}
-
-static void Init_Exti( void )
-{
-  /* Enable LPUART(25), IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
-  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_25 | LL_EXTI_LINE_36 | LL_EXTI_LINE_38);
-
-  return;
-}
-
-/*************************************************************
- *
- * WRAP FUNCTIONS
- *
- *************************************************************/
-
-
-static void TaskInit(void *argument)
-{
-  /* This task will manage the CPU2 initialization and will get terminated after it is done */
-  APPE_Init();
-  osThreadTerminate(OsTaskInitId);
-  /* All job done */
-}
-
-
-static void StartDefaultTask(void *argument)
-{
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
   for(;;)
   {
-     osThreadFlagsWait(1,osFlagsWaitAll,osWaitForever);
-     /* Put your own code here */
+    osDelay(1);
   }
-}
-
-void HAL_Delay(uint32_t Delay)
-{
-  uint32_t tickstart = HAL_GetTick();
-  uint32_t wait = Delay;
-
-  /* Add a freq to guarantee minimum wait */
-  if (wait < HAL_MAX_DELAY)
-  {
-    wait += HAL_GetTickFreq();
-  }
-
-  while ((HAL_GetTick() - tickstart) < wait)
-  {
-    /************************************************************************************
-     * ENTER SLEEP MODE
-     ***********************************************************************************/
-    LL_LPM_EnableSleep( ); /**< Clear SLEEPDEEP bit of Cortex System Control Register */
-
-    /**
-     * This option is used to ensure that store operations are completed
-     */
-  #if defined ( __CC_ARM)
-    __force_stores();
-  #endif
-
-    __WFI( );
-  }
+  /* USER CODE END 5 */
 }
 
 /**
@@ -715,8 +514,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE END Callback 1 */
 }
 
-/* USER CODE END 4 */
-
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
@@ -725,7 +522,10 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+  __disable_irq();
+  while (1)
+  {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
 
@@ -741,7 +541,7 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

@@ -10,13 +10,13 @@
       <TargetName>BLE_Proximity</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx_DFP.1.2.0</PackID>
+          <PackID>Keil.STM32WBxx_DFP.1.2.1</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -418,6 +418,11 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32wbxx_it.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32wbxx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\stm32wbxx_hal_msp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -597,6 +602,11 @@
               <FileName>stm32wbxx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32wbxx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</FilePath>
             </File>
           </Files>
         </Group>

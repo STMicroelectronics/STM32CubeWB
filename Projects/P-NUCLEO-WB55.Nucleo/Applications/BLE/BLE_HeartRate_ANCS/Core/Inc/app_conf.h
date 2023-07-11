@@ -43,18 +43,23 @@
  */
 #define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
 
-/* BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01) */
-#define CFG_IDENTITY_ADDRESS           GAP_PUBLIC_ADDR   /* GAP_STATIC_RANDOM_ADDR */
-//#define CFG_STATIC_RANDOM_ADDRESS               (0x1234567890ab) /**< Static Random Address fixed for lifetime of the device */
+/**
+ * Define BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01)
+ */
+#define CFG_IDENTITY_ADDRESS              GAP_PUBLIC_ADDR
 
-/* Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED */
-#define CFG_PRIVACY                       PRIVACY_DISABLED /* PRIVACY_ENABLED */
+/**
+ * Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED
+ */
+#define CFG_PRIVACY                       PRIVACY_DISABLED
 
-/* if CFG_PRIVACY equals PRIVACY_DISABLED,  CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR */
-#define CFG_BLE_ADDRESS_TYPE              CFG_IDENTITY_ADDRESS /**< Bluetooth address types defined in ble_legacy.h */
-
-/* if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR */
-//#define CFG_BLE_ADDRESS_TYPE              GAP_RESOLVABLE_PRIVATE_ADDR /* GAP_NON_RESOLVABLE_PRIVATE_ADDR */
+/**
+ * Define BLE Address Type
+ * Bluetooth address types defined in ble_legacy.h
+ * if CFG_PRIVACY equals PRIVACY_DISABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR
+ * if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR
+ */
+#define CFG_BLE_ADDRESS_TYPE              GAP_PUBLIC_ADDR
 
 #define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)      /**< 80ms */
 #define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xa0)      /**< 100ms */
@@ -79,9 +84,7 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT  (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY    (0x04)
 
-//#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_DISPLAY_YES_NO /* for iOS Device */ /* need to press YES on iOS device side */
-//#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_DISPLAY_ONLY /* for iOS Device */ /* need to input password (111111) on iOS device side */
-#define CFG_IO_CAPABILITY              CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT /* compatible for Android Device *//* need to press Pairing on iOS device side */
+#define CFG_IO_CAPABILITY                      CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT
 
 /**
  * Define MITM modes
@@ -89,9 +92,7 @@
 #define CFG_MITM_PROTECTION_NOT_REQUIRED      (0x00)
 #define CFG_MITM_PROTECTION_REQUIRED          (0x01)
 
-
-//#define CFG_MITM_PROTECTION             CFG_MITM_PROTECTION_REQUIRED /* for iOS Device */
-#define CFG_MITM_PROTECTION             CFG_MITM_PROTECTION_NOT_REQUIRED /* compatible for Android Device */
+#define CFG_MITM_PROTECTION                   CFG_MITM_PROTECTION_NOT_REQUIRED
 
 /**
  * Define Secure Connections Support
@@ -204,10 +205,7 @@
  * Maximum supported ATT_MTU size
  * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
-#define CFG_BLE_MAX_ATT_MTU                     (250)
-
-//#define CFG_BLE_MAX_ATT_MTU                     (251)
-//#define CFG_BLE_MAX_ATT_MTU_TX_TIME             (2120)
+#define CFG_BLE_MAX_ATT_MTU             (156)
 
 /**
  * Size of the storage area for Attribute values
@@ -262,7 +260,7 @@
  * Some information for Low speed clock mapped in bits field
  * - bit 0:   1: Calibration for the RF system wakeup clock source   0: No calibration for the RF system wakeup clock source
  * - bit 1:   1: STM32WB5M Module device                             0: Other devices as STM32WBxx SOC, STM32WB1M module
- * - bit 2:   1: HSE/1024 Clock config                               0: LSE Clock config   
+ * - bit 2:   1: HSE/1024 Clock config                               0: LSE Clock config
  */
 #if defined(STM32WB5Mxx)
   #define CFG_BLE_LS_SOURCE  (SHCI_C2_BLE_INIT_CFG_BLE_LS_NOCALIB | SHCI_C2_BLE_INIT_CFG_BLE_LS_MOD5MM_DEV | SHCI_C2_BLE_INIT_CFG_BLE_LS_CLK_LSE)
@@ -299,7 +297,7 @@
  * - SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV
  * - SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2
  * - SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2
- * - SHCI_C2_BLE_INIT_OPTIONS_REDUC_GATTDB_NVM 
+ * - SHCI_C2_BLE_INIT_OPTIONS_REDUC_GATTDB_NVM
  * - SHCI_C2_BLE_INIT_OPTIONS_FULL_GATTDB_NVM
  * - SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_USED
  * - SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED
@@ -316,8 +314,8 @@
  *          0: extended advertizing not supported
  * (bit 4): 1: CS Algo #2 supported
  *          0: CS Algo #2 not supported
- * (bit 5): 1: Reduced GATT database in NVM 
- *          0: Full GATT database in NVM 
+ * (bit 5): 1: Reduced GATT database in NVM
+ *          0: Full GATT database in NVM
  * (bit 6): 1: GATT caching is used
  *          0: GATT caching is not used
  * (bit 7): 1: LE Power Class 1
@@ -357,7 +355,7 @@
  * other bits: reserved (shall be set to 0)
  */
 
-#define CFG_BLE_RX_MODEL_CONFIG         SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
+#define CFG_BLE_RX_MODEL_CONFIG         (SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY)
 
 /* Maximum number of advertising sets.
  * Range: 1 .. 8 with limitation:
@@ -389,14 +387,13 @@
 
 #define CFG_BLE_RX_PATH_COMPENS    (0)
 
-  /* BLE core version (16-bit signed integer). 
+  /* BLE core version (16-bit signed integer).
    * - SHCI_C2_BLE_INIT_BLE_CORE_5_2
    * - SHCI_C2_BLE_INIT_BLE_CORE_5_3
    * which are used to set: 11(5.2), 12(5.3).
    */
-   
-#define CFG_BLE_CORE_VERSION   (SHCI_C2_BLE_INIT_BLE_CORE_5_3)
 
+#define CFG_BLE_CORE_VERSION   (SHCI_C2_BLE_INIT_BLE_CORE_5_3)
 
 /******************************************************************************
  * Transport Layer
@@ -567,7 +564,7 @@ typedef enum
  * This shall be set to 0 in a final product
  *
  */
-#define CFG_HW_RESET_BY_FW         1
+#define CFG_HW_RESET_BY_FW         0
 
 /**
  * keep debugger enabled while in any low power mode when set to 1
@@ -734,5 +731,5 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
-#endif /* APP_CONF_H */
+#endif /*APP_CONF_H */
 

@@ -607,7 +607,7 @@ typedef struct {
     uint8_t status;
     /*! The name of the PIB attribute attempted to read*/
     uint8_t PIB_attribute;
-    /*! The lenght of the PIB attribute Value return*/
+    /*! The length of the PIB attribute Value return*/
     uint8_t PIB_attribute_value_len;
    /*! Byte Stuffing to keep 32 bit alignment*/
     uint8_t a_stuffing[1];

@@ -36,13 +36,14 @@
 <li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/dm00513965.pdf">AN5185</a> : ST FW upgrade services for STM32WB</li>
 <li><a href="https://www.st.com/resource/en/user_manual/dm00403500-stm32cubeprogrammer-software-description-stmicroelectronics.pdf">UM2237</a> : STM32CubeProgrammer User Manual</li>
 </ul>
+<p>Please refer to document « STM32WB Bluetooth LE and 802.15.4 Certifications » providing information details on available QDIDs BLE certification and related STM32WB5x products at: <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb50cg.html#documentation">certification_stm32wb50cg</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55cc.html#documentation">certification_stm32wb55cc</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55ce.html#documentation">certification_stm32wb55ce</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55cg.html#documentation">certification_stm32wb55rg</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55rc.html#documentation">certification_stm32wb55rc</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55re.html#documentation">certification_stm32wb55re</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55rg.html#documentation">certification_stm32wb55rg</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55vc.html#documentation">certification_stm32wb55vc</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55ve.html#documentation">certification_stm32wb55ve</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55vg.html#documentation">certification_stm32wb55vg</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55vy.html#documentation">certification_stm32wb55vy</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb5mmg.html#documentation">certification_stm32wb5mmg</a>;</p>
 <p>Here is the list of the supported binaries:</p>
 <ul>
 <li>stm32wb5x_BLE_HCI_AdvScan_fw.bin
 <ul>
-<li>HCI Layer only mode 5.3 certified : Link Layer, HCI</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
 <li>To be used for advertising and scanning through HCI interface</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120678">Declaration ID D042213 / QDID 160726</a></li>
+<li>HCI Layer only mode, layers supported : Link Layer, HCI</li>
 </ul></li>
 <li>stm32wb5x_BLE_LLD_fw.bin
 <ul>
@@ -51,8 +52,8 @@
 </ul></li>
 <li>stm32wb5x_BLE_Stack_full_fw.bin
 <ul>
-<li>Full BLE Stack 5.3 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/59722">Declaration ID D042164</a>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
+<li>Full BLE Stack, layers supported : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database
 <ul>
 <li>Following features are kept (based on Basic stack library compared to previous deliveries):
 <ul>
@@ -76,8 +77,9 @@
 </ul></li>
 <li>stm32wb5x_BLE_Stack_full_extended_fw.bin
 <ul>
-<li>Full BLE Stack 5.3 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553</a>
+<li>BT SIG Certification listing (1) : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553 / QDID 182505</a></li>
+<li>BT SIG Certification listing (2) : <a href="https://launchstudio.bluetooth.com/ListingDetails/170086">Declaration ID D063069 / QDID 201968</a></li>
+<li>Full BLE Stack extended, layers supported : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database
 <ul>
 <li>Following features are kept:
 <ul>
@@ -106,8 +108,8 @@
 </ul></li>
 <li>stm32wb5x_BLE_Stack_light_fw.bin
 <ul>
-<li>Full BLE Stack 5.3 certified : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553</a></li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
+<li>Full BLE Stack, layers supported : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
 <li>Wireless Ble stack Light configuration – Slave Only
 <ul>
 <li>Following features are kept:
@@ -133,13 +135,14 @@
 </ul></li>
 <li>stm32wb5x_BLE_HCILayer_fw.bin
 <ul>
-<li>HCI Layer only mode 5.3 certified : Link Layer, HCI with Direct Test Mode</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/70712">Declaration ID D042213</a></li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120678">Declaration ID D042213 / QDID 160726</a></li>
+<li>HCI Layer only mode, layers supported : Link Layer, HCI with Direct Test Mode</li>
 </ul></li>
 <li>stm32wb5x_BLE_HCILayer_extended_fw.bin
 <ul>
-<li>HCI Layer only mode 5.3 certified : Link Layer, HCI with Direct Test Mode</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553</a></li>
+<li>BT SIG Certification listing (1) : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553 / QDID 182505</a></li>
+<li>BT SIG Certification listing (2) : <a href="https://launchstudio.bluetooth.com/ListingDetails/170086">Declaration ID D063069 / QDID 201968</a></li>
+<li>HCI Layer only mode extended, layers supported : Link Layer, HCI with Direct Test Mode</li>
 <li>BLE Extended advertising (under application SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag selection with following limitations on currently supported configurations as (max sets number, max advertising data length) equal to [(1,1650),(2,1650),(3,1650),(4,1035),(5,621),(6,414),(7,207),(8,207)] such as both parameters are compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based on Max Extended advertising configuration.</li>
 </ul></li>
 <li>stm32wb5x_Thread_FTD_fw.bin
@@ -162,12 +165,14 @@
 <li>stm32wb5x_BLE_Thread_static_fw.bin
 <ul>
 <li>Static Concurrent Mode BLE Thread</li>
-<li>Supports Full BLE Stack 5.3 certified and Full Thread Device v1.3 ready</li>
+<li>Supports Full BLE Stack and Full Thread Device v1.3 ready</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
 </ul></li>
 <li>stm32wb5x_BLE_Thread_dynamic_fw.bin
 <ul>
 <li>Dynamic Concurrent Mode BLE Thread</li>
-<li>Supports Full BLE Stack 5.3 certified and Full Thread Device v1.3 ready</li>
+<li>Supports Full BLE Stack and Full Thread Device v1.3 ready</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
 </ul></li>
 <li>stm32wb5x_Mac_802_15_4_fw.bin
 <ul>
@@ -195,29 +200,34 @@
 <li>stm32wb5x_BLE_Mac_802_15_4_fw.bin
 <ul>
 <li>Static Concurrent Mode BLE MAC 802.15.4.</li>
-<li>Supports Full BLE Stack 5.3 certified and MAC 802.15.4 API based on latest official <a href="http://grouper.ieee.org/groups/802/15/pub/Download.html">IEEE Std 802.15.4-2011</a></li>
+<li>Supports Full BLE Stack and MAC 802.15.4 API based on latest official <a href="http://grouper.ieee.org/groups/802/15/pub/Download.html">IEEE Std 802.15.4-2011</a></li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
 </ul></li>
 <li>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin
 <ul>
 <li>Static Concurrent Mode BLE Zigbee FFD.</li>
-<li>Supports Full BLE Stack 5.3 certified and Zigbee FFD(Full Function Device) Compliant Platform ready</li>
+<li>Supports Full BLE Stack and Zigbee FFD(Full Function Device) Compliant Platform ready.</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
 </ul></li>
 <li>stm32wb5x_BLE_Zigbee_RFD_static_fw.bin
 <ul>
 <li>Static Concurrent Mode BLE Zigbee RFD.</li>
-<li>Supports Full BLE Stack 5.3 certified and Zigbee RFD(Reduced Function Device) Compliant Platform ready.</li>
+<li>Supports Full BLE Stack and Zigbee RFD(Reduced Function Device) Compliant Platform ready.</li>
 <li>Optimized for Power consumption.</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
 </ul></li>
 <li>stm32wb5x_BLE_Zigbee_FFD_dynamic_fw.bin
 <ul>
 <li>Dynamic Concurrent Mode BLE Zigbee FFD.</li>
-<li>Supports Full BLE Stack 5.3 certified and Zigbee FFD(Full Function Device) Compliant Platform ready</li>
+<li>Supports Full BLE Stack and Zigbee FFD(Full Function Device) Compliant Platform ready.</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
 </ul></li>
 <li>stm32wb5x_BLE_Zigbee_RFD_dynamic_fw.bin
 <ul>
 <li>Dynamic Concurrent Mode BLE Zigbee RFD.</li>
-<li>Supports Full BLE Stack 5.3 certified and Zigbee RFD(Reduced Function Device) Compliant Platform ready.</li>
+<li>Supports Full BLE Stack and Zigbee RFD(Reduced Function Device) Compliant Platform ready.</li>
 <li>Optimized for Power consumption.</li>
+<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
 </ul></li>
 <li>stm32wb5x_FUS_fw_1_0_2.bin
 <ul>
@@ -275,7 +285,7 @@
 </tr>
 <tr class="odd">
 <td>stm32wb5x_BLE_Stack_light_fw.bin</td>
-<td>PO = " Peripheral Only "</td>
+<td>PO = “Peripheral Only”</td>
 <td>SLAVE_ONLY</td>
 </tr>
 <tr class="even">
@@ -290,7 +300,7 @@
 </tr>
 <tr class="even">
 <td>stm32wb5x_BLE_HCI_AdvScan_fw.bin</td>
-<td>BO = " Beacon Only "</td>
+<td>BO = “Beacon Only”</td>
 <td>BEACON_ONLY (2)</td>
 </tr>
 </tbody>
@@ -543,9 +553,348 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section25" checked aria-hidden="true"> <label for="collapse-section25" aria-hidden="false">V1.16.0 / 08-February-2023</label>
+<input type="checkbox" id="collapse-section26" checked aria-hidden="true"> <label for="collapse-section26" aria-hidden="false">V1.17.0 / 24-May-2023</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE:
+<ul>
+<li>ID 140649: Additional check on HSE Startup time.</li>
+<li>ID 143246: Requirement to print BD Address on ALL BLE applications for functional validation automation.</li>
+<li>ID 144725: HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT is now automatically used instead of        HCI_LE_CONNECTION_COMPLETE_EVENT when advertising extensions are used.</li>
+<li>ID 145545: A GATT Server application can now be notified when the BLE stack has completed to send all notifications linked with a local characteristic update.</li>
+<li>ID 145580: Reception of ATT_READ_BY_GROUP_TYPE_REQ with 128-bit UUID is fixed.</li>
+<li>ID 145677: Robustness regarding pairing collision has been done.</li>
+<li>ID 146449: The ACI_HAL_WRITE_CONFIG_DATA command can now be used to increase the number of default records in the GAP service.</li>
+<li>ID 147098: The command HCI_LE_Generate_DHKey [v2] is now supported.</li>
+<li>ID 147618: Usage of Secure Connections debug key can now be forced by the ACI_HAL_WRITE_CONFIG_DATA command.</li>
+<li>ID 147806: The BLE host stack enables the Enhanced Connection Complete event when Extended Advertising is used.</li>
+<li>ID 147917: Implementation of the Bluetooth SIG recommendation regarding Impersonation in the Passkey Entry Protocol vulnerability.</li>
+<li>ID 149715: aci_gap_add_devices_to_list command fixed to have expected status returned.</li>
+<li>ID 149754: hci and shci commands response status reset before sending a command.</li>
+<li>ID 149909: The GAP designation for the Filter Accept List has been aligned with that of the controller defined by the SIG.  </li>
+<li>ID 150375: The following BLE primitives have been renamed: ACI_HAL_SET_SLAVE_LATENCY, ACI_GAP_SLAVE_SECURITY_REQ and ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT to ACI_HAL_SET_PERIPHERAL_LATENCY, ACI_GAP_PERIPHERAL_SECURITY_REQ and ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT, respectively. Moreover, the event parameters Slave_Latency and Master_Clock_Accuray have been renamed to Latency and Central_Clock_Accuracy, respectively.</li>
+</ul></li>
+<li>BLE LLD:
+<ul>
+<li>ID 131911: Correct clock tree configuration</li>
+</ul></li>
+<li>Thread:
+<ul>
+<li>ID 147645: SED role is now supported for FTD.</li>
+<li>ID 138110: SSED role is now supported for FTD and MTD.</li>
+<li>ID 147244: Logs from M0 are now all correctly deactivated when disabling them from M4’s side.</li>
+<li>ID 147259: Corrected a bug where the last frame could be transmitted instead of a MAC-ACK.</li>
+<li>ID 147267: Corrected a bug in the state machine that could occur in a high traffic network.</li>
+<li>ID 147269: Corrected a bug where a frame could be acknowledged but not handled in a high traffic network.</li>
+<li>ID 147272: Corrected a bug with the timers management in ms and µs that could a cause a deadlock.</li>
+<li>ID 148517: EUI64 generation is now following the Thread specification.</li>
+<li>ID 147426: Compatibility issue solved between different FW releases (starting from v1.16.0).</li>
+<li>Corrected a bug on energy scan when scanning multiple channel.</li>
+<li>Removed support of DHCP server for FTD and commissioner for MTD.</li>
+<li>Reduced the amount of RAM1 needed by FTD and MTD coprocessor, they now both use 16kB of RAM1 (0x2002C000).</li>
+</ul></li>
+<li>Zigbee:
+<ul>
+<li>ID 146636 : Memory leak fixes. It concerns the network layer in case a sleepy end device is removed from its parent</li>
+<li>ID 151445:  Robustness improvement in case of radio noisy environment:  
+<ul>
+<li>Change CSMA configuration to have better performance. For a sleepy end device, the ZB_MAC_MAX_BE is set to 4. For a non sleepy end device the ZB_MAC_MAX_BE is set to 5.In both cases, the ZB_MAC_MIN_BE is set to 3 and the ZB_MAC_MAC_CSMA_BACKOFFS is set to 5. </li>
+<li>In parallel to the new CSMA values, the system allows up to 5 full CSMA procedure retries before notifying the Zigbee Network layer.</li>
+</ul></li>
+<li>ID 146639: Binding management enhancement: 
+<ul>
+<li>When a binding table entry is added, or re-added, the associated address is flagged to be verified with a ZDO IEEE ADDR request. This solves the problem where a destination EUI-64 has changed short addresses without the local device made aware. </li>
+<li>The time to wait after receiving a Bind Request before attempting to resolve the EUI64 to a network address, if no mapping exists as been increase from 3 to 17 seconds. </li>
+<li>Enhancement of binding address resolutions when a child loose its parent</li>
+</ul></li>
+</ul></li>
+<li>Mac 802.15.4:
+<ul>
+<li>ID 147930 : Improvement of radio robustness over heavy overloaded network</li>
+<li>ID 145293: On heavy noisy environment, MAC active Scan confirmation return now CSMA-CA Error with expected unscanned channels bitmap as described in the 802.15.4 standard.</li>
+<li>ID 151211/151604: Add new proprietary MAC Pib attribute to be able to perform several CSMA-CA retries in noisy environment .</li>
+<li>ID 146612: Robustness improvement on overloaded network for End Device when OTA frames do not respect standardized minimum IFS delay</li>
+<li>ID 151209: Grant MAC Data Poll confirmation message generation on every Data Poll request. On noisy environment it has been observed that Data Poll confirmation message is missing due to corrupted frame.</li>
+</ul></li>
+<li>BLE/Mac :
+<ul>
+<li>ID 147930 : Improvement of radio robustness over heavy overloaded network</li>
+</ul></li>
+<li>BLE_Zigbee_Dynamic and BLE_Thread_Dynamic :
+<ul>
+<li>ID 143495 : Corrected a bug in Dynamic Concurrent applications to prevent switching from 802.15.4 to BLE while radio is in an incorrect state.</li>
+<li>ID 117038 : Debug GPIOs added to monitor RF bandwidth in Dynamic Concurrent applications.</li>
+</ul></li>
+</ul>
+<p><strong>Firmware Upgrade Services Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640K)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw_for_fus_0_5_3.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>9A</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>V1.2.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>9A</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>V1.2.0<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 7” via USB or via SWD/JTAG.</p>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 14%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640k)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_BLE_HCILayer_extended_fw.bin</td>
+<td>0x080DA000</td>
+<td>0x08086000</td>
+<td>0x08066000</td>
+<td>0x08026000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_HCILayer_fw.bin</td>
+<td>0x080E0000</td>
+<td>0x0808C000</td>
+<td>0x0806C000</td>
+<td>0x0802C000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x080EB000</td>
+<td>0x08097000</td>
+<td>0x08077000</td>
+<td>0x08037000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_LLD_fw.bin</td>
+<td>0x080ED000</td>
+<td>0x08099000</td>
+<td>0x08079000</td>
+<td>0x08039000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Mac_802_15_4_fw.bin</td>
+<td>0x080B9000</td>
+<td>0x08065000</td>
+<td>0x08045000</td>
+<td>0x08005000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Stack_full_extended_fw.bin</td>
+<td>0x080C5000</td>
+<td>0x08071000</td>
+<td>0x08051000</td>
+<td>0x08011000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Stack_full_fw.bin</td>
+<td>0x080CE000</td>
+<td>0x0807A000</td>
+<td>0x0805A000</td>
+<td>0x0801A000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Stack_light_fw.bin</td>
+<td>0x080D5000</td>
+<td>0x08081000</td>
+<td>0x08061000</td>
+<td>0x08021000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Thread_dynamic_fw.bin</td>
+<td>0x08059000</td>
+<td>0x08005000</td>
+<td>NA</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Thread_static_fw.bin</td>
+<td>0x0805B000</td>
+<td>0x08007000</td>
+<td>NA</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Zigbee_FFD_dynamic_fw.bin</td>
+<td>0x08075000</td>
+<td>0x08021000</td>
+<td>0x08001000</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin</td>
+<td>0x08077000</td>
+<td>0x08023000</td>
+<td>0x08003000</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Zigbee_RFD_dynamic_fw.bin</td>
+<td>0x08084000</td>
+<td>0x08030000</td>
+<td>0x08010000</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Zigbee_RFD_static_fw.bin</td>
+<td>0x08087000</td>
+<td>0x08033000</td>
+<td>0x08013000</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td>0x080E1000</td>
+<td>0x0808D000</td>
+<td>0x0806D000</td>
+<td>0x0802D000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Phy_802_15_4_fw.bin</td>
+<td>0x080E7000</td>
+<td>0x08093000</td>
+<td>0x08073000</td>
+<td>0x08033000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x08083000</td>
+<td>0x0802F000</td>
+<td>0x0800F000</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x08098000</td>
+<td>0x08044000</td>
+<td>0x08024000</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_RCP_fw.bin</td>
+<td>0x080DE000</td>
+<td>0x0808A000</td>
+<td>0x0806A000</td>
+<td>0x0802A000</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Zigbee_FFD_fw.bin</td>
+<td>0x080A0000</td>
+<td>0x0804C000</td>
+<td>0x0802C000</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Zigbee_RFD_fw.bin</td>
+<td>0x080B0000</td>
+<td>0x0805C000</td>
+<td>0x0803C000</td>
+<td>NA</td>
+<td>V1.17.0<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Firmware Safeboot Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5/6” via USB or via SWD/JTAG.</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640k)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_Safeboot_fw.bin</td>
+<td>0x080<strong>F0</strong>000</td>
+<td>0x080<strong>9F</strong>000</td>
+<td>0x080<strong>7F</strong>000</td>
+<td>0x080<strong>3F</strong>000</td>
+<td>V2.0.0<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section25" aria-hidden="true"> <label for="collapse-section25" aria-hidden="false">V1.16.0 / 08-February-2023</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -850,7 +1199,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section24" aria-hidden="true"> <label for="collapse-section24" aria-hidden="false">V1.15.0 / 05-Nov-2022</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -1153,7 +1502,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section23" aria-hidden="true"> <label for="collapse-section23" aria-hidden="false">V1.14.1 / 29-June-2022</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1447,7 +1796,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section22" aria-hidden="true"> <label for="collapse-section22" aria-hidden="false">V1.14.0 / 06-June-2022</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1750,7 +2099,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section21" aria-hidden="true"> <label for="collapse-section21" aria-hidden="false">V1.13.3 / 17-Mar-2022</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -2046,7 +2395,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section20" aria-hidden="true"> <label for="collapse-section20" aria-hidden="false">V1.13.2 / 09-Feb-2022</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -2346,7 +2695,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section19" aria-hidden="true"> <label for="collapse-section19" aria-hidden="false">V1.13.1 / 06-Dec-2021</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE updates:
@@ -2618,7 +2967,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section18" aria-hidden="true"> <label for="collapse-section18" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -2630,7 +2979,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <li>ID 108789 : ACI_GAP_START_NAME_DISCOVERY_PROC command is deprecated</li>
 <li>ID 109676 : New HCI error status overlap with ACI error status<br />
 </li>
-<li>ID 111208 : Support Dory Cut2.1 in parallel to Cut2.2 with new SHCI_C2_CONFIG parameter.</li>
+<li>ID 111208 : Support Cut2.1 in parallel to Cut2.2 with new SHCI_C2_CONFIG parameter.</li>
 <li>ID 111218 : STM32WB: potential issue with NVM RAM data not properly bounded<br />
 </li>
 <li>ID 111277 : SHCI event parsing function improved in WPAN examples  <br />
@@ -2923,7 +3272,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section17" aria-hidden="true"> <label for="collapse-section17" aria-hidden="false">V1.12.1 / 12-July-2021</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -3158,7 +3507,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section16" aria-hidden="true"> <label for="collapse-section16" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <ul>
 <li>Thread:
 <ul>
@@ -3423,7 +3772,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section15" aria-hidden="true"> <label for="collapse-section15" aria-hidden="false">V1.11.1 / 23-March-2021</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <ul>
 <li>BLE:
 <ul>
@@ -3687,7 +4036,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.11.0 / 5-February-2021</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Support of new binary:
@@ -3968,7 +4317,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="false">V1.10.0 / 26-October-2020</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -4211,7 +4560,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="false">V1.9.0 / 21-September-2020</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Introducing following new binaries:
@@ -4500,7 +4849,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.8.0 / 19-June-2020</label>
 <div>
-<h2 id="main-changes-14">Main Changes</h2>
+<h2 id="main-changes-15">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -4696,7 +5045,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-15">Main Changes</h2>
+<h2 id="main-changes-16">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>MAC:
@@ -4892,7 +5241,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-16">Main Changes</h2>
+<h2 id="main-changes-17">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>FUS:
@@ -5084,7 +5433,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-17">Main Changes</h2>
+<h2 id="main-changes-18">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -5229,7 +5578,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 09-September-2019</label>
 <div>
-<h2 id="main-changes-18">Main Changes</h2>
+<h2 id="main-changes-19">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -5369,7 +5718,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 3rd-July-2019</label>
 <div>
-<h2 id="main-changes-19">Main Changes</h2>
+<h2 id="main-changes-20">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE Link layer : fix issues with pairing</li>
@@ -5482,7 +5831,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-20">Main Changes</h2>
+<h2 id="main-changes-21">Main Changes</h2>
 <p><strong>Associated changes in Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>Add support for STM32WB5xE(512K) and STM32WB5xC(256K) devices.</li>
@@ -5588,7 +5937,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-21">Main Changes</h2>
+<h2 id="main-changes-22">Main Changes</h2>
 <p><strong>Introduction of the Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>This feature is embedded inside stm32wb5x_FUS_fw.bin.</li>
@@ -5697,7 +6046,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-22">Main Changes</h2>
+<h2 id="main-changes-23">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 <p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 6” of flash procedure.</p>

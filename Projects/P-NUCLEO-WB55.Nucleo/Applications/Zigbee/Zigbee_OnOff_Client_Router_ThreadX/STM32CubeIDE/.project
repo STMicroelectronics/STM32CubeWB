@@ -156,6 +156,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/app_entry.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/Core/app_threadx.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Core/Src/app_threadx.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/Core/hw_timerserver.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/hw_timerserver.c</locationURI>
@@ -229,6 +234,11 @@
 			<name>Utilities/lpm/tiny_lpm/stm32_lpm.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Utilities/lpm/tiny_lpm/stm32_lpm.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/AZURE_RTOS/App/app_azure_rtos.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/AZURE_RTOS/App/app_azure_rtos.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/STM32_WPAN/App/app_zigbee.c</name>

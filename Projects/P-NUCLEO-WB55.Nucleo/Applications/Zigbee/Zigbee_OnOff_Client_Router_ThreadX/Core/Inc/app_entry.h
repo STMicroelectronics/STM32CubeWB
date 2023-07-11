@@ -1,12 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_entry.h
-  * Description        : App entry configuration file for STM32WPAN Middleware.
+  ******************************************************************************
+  * @file    app_entry.h
+  * @author  MCD Application Team
+  * @brief   Interface to the application
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -26,23 +27,32 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include        "tx_api.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
-  /* Exported types ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
+#define THREADX_BYTE_POOL_SIZE          (9120u)
+#define THREADX_BLOCK_POOL_SIZE         (100u)
+
+#define THREADX_STACK_SIZE_LARGE        (1024u)
+#define THREADX_STACK_SIZE_REDUCED      (512u)
+
 /* USER CODE BEGIN EC */
 
 /* USER CODE END EC */
 
 /* Exported variables --------------------------------------------------------*/
+extern TX_BYTE_POOL        * pBytePool;
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -53,12 +63,11 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions ---------------------------------------------*/
-  void MX_APPE_Config   ( void );
-  void MX_APPE_Init     ( void );
-  void Init_Exti        ( void );
-  void Init_Smps        ( void );
-  void MX_ThreadX_Init  ( void );
-  
+void MX_APPE_Config(void);
+uint32_t MX_APPE_Init(void *p_param);
+void Init_Exti(void);
+void Init_Smps(void);
+
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */

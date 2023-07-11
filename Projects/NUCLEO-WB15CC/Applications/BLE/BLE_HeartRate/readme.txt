@@ -62,6 +62,7 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
   - BLE/BLE_HeartRate/Core/Src/stm32wbxx_hal_msp.c         This file provides code for the MSP Initialization and de-Initialization
   - BLE/BLE_HeartRate/Core/Src/stm32wbxx_it.c              Interrupt handlers
   - BLE/BLE_HeartRate/Core/Src/stm32_lpm_if.c              Low Power Manager Interface
+  - BLE/BLE_HeartRate/Core/Src/standby.c                   Standby low power mode specific functions
   - BLE/BLE_HeartRate/Core/Src/system_stm32wbxx.c          stm32wbxx system source file
   - BLE/BLE_HeartRate/STM32_WPAN/App/app_ble.c             BLE Profile implementation
   - BLE/BLE_HeartRate/STM32_WPAN/App/dis_app.c             Device Information Service application
@@ -76,8 +77,8 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
     board and can be easily tailored to any other supported device 
     and development board.
 
-  - This application is by default configured to support low power mode (STOP1) ( No traces - No debugger )
-    This can be modified in app_conf.h (CFG_LPM_SUPPORTED, CFG_DEBUG_BLE_TRACE, CFG_DEBUG_APP_TRACE)
+  - This application is by default configured to support low power mode (STANDBY) ( No traces - No debugger )
+    This can be modified in app_conf.h (CFG_LPM_SUPPORTED, CFG_LPM_STANDBY_SUPPORTED, CFG_DEBUG_BLE_TRACE, CFG_DEBUG_APP_TRACE)
 
   - SMPS can be used to obtain the best performance in power consumption.
     This feature depends on board components and its activation can be done through specific define (CFG_USE_SMPS)

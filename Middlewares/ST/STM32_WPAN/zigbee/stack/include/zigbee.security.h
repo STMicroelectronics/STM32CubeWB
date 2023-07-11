@@ -69,7 +69,7 @@ struct ZigBeeT;
 /* The length of the CCM* nonce. */
 #define ZB_SEC_NONCE_LENGTH                 13U
 
-/* The maximum size of the auxilliary header. */
+/* The maximum size of the auxiliary header. */
 #define ZB_SEC_MAX_HEADER_SIZE              14U
 
 /* Masks for the Security control header fields. (section 4.5.1)*/
@@ -214,7 +214,7 @@ struct ZbZclCbke2InfoT {
  * Auxiliary Frame Functions
  *---------------------------------------------------------------
  */
-/* Security Control Field of the Auxilliary Header */
+/* Security Control Field of the Auxiliary Header */
 struct ZbSecAuxHdrCtrlT {
     uint8_t secLevel;
     /**< Security level of the frame. */
@@ -242,10 +242,10 @@ struct ZbSecAuxHdrT {
 int ZbSecParseAuxHdr(const uint8_t *data, unsigned int dataLen, struct ZbSecAuxHdrT *auxHdrPtr);
 
 /**
- * Append an auxillary security header to a packet
+ * Append an auxiliary security header to a packet
  * @param data Packet buffer
  * @param dataLen Packet length
- * @param auxHdrPtr auxillary header struct to use
+ * @param auxHdrPtr auxiliary header struct to use
  * @return Number of bytes written, or <0 on error.
  */
 int ZbSecAppendAuxHdr(uint8_t *data, unsigned int dataLen, struct ZbSecAuxHdrT *auxHdrPtr);
@@ -254,7 +254,7 @@ int ZbSecAppendAuxHdr(uint8_t *data, unsigned int dataLen, struct ZbSecAuxHdrT *
  * Builds the CCM* nonce from the source address, frame counter and security control bits.
  * The nonce buffer must be at least ZB_SEC_NONCE_LENGTH in size.
  * @param nonce Nonce buffer (output)
- * @param extAddr Source extended addres
+ * @param extAddr Source extended address
  * @param frameCounter Frame counter
  * @param secCtrl Security control field
  * @return None
@@ -282,7 +282,7 @@ bool ZbAesMmoHash(uint8_t const *data, const unsigned int length, uint8_t *diges
  * key-load and key-transport keys.
  * @param key The encryption key to use
  * @param input The input data byte
- * @param keyOut The resultant tranformed key
+ * @param keyOut The resultant transformed key
  * @return None
  */
 void ZbSecKeyTransform(uint8_t *key, uint8_t input, uint8_t *keyOut);

@@ -91,6 +91,7 @@ void Appli_BleGattConnectionCompleteCb(void);
 void Appli_BleGattDisconnectionCompleteCb(void);
 MOBLEUINT8 Appli_BleSetNumberOfElementsCb(void);
 MOBLE_RESULT Appli_BleAttentionTimerCb(void);
+void Appli_OobAuthenticationProcess(void);
 void Appli_BleOutputOOBAuthCb(MOBLEUINT8* output_oob, MOBLEUINT8 size);
 MOBLEUINT8* Appli_BleInputOOBAuthCb(MOBLEUINT8 size);
 void Appli_BleSerialInputOOBValue(char *rcvdStringBuff, uint16_t rcvdStringSize);

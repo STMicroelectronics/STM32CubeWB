@@ -1,11 +1,11 @@
 /**
-  @page BLE_HR_P2PServer Application
+  @page BLE_HR_p2pServer Application
 
   @verbatim
   ******************************************************************************
-  * @file    BLE/BLE_HR_P2PServer/readme.txt
+  * @file    BLE/BLE_HR_p2pServer/readme.txt
   * @author  MCD Application Team
-  * @brief   Description of the BLE_HR_P2PServer application
+  * @brief   Description of the BLE_HR_p2pServer application
   ******************************************************************************
   *
   * Copyright (c) 2019-2021 STMicroelectronics.
@@ -33,40 +33,40 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
 
 @par Directory contents
 
-  - BLE/BLE_HR_P2PServer/Core/Inc/app_common.h                  Header for all modules with common definition
-  - BLE/BLE_HR_P2PServer/Core/Inc/app_conf.h                    Parameters configuration file of the application
-  - BLE/BLE_HR_P2PServer/Core/Inc/app_debug.h                   Header for app_debug.c module
-  - BLE/BLE_HR_P2PServer/Core/Inc/app_entry.h                   Parameters configuration file of the application
-  - BLE/BLE_HR_P2PServer/Core/Inc/b_wb1m_wpan1_conf.h           Configuration file of the board
-  - BLE/BLE_HR_P2PServer/Core/Inc/hw_conf.h                     Configuration file of the HW
-  - BLE/BLE_HR_P2PServer/Core/Inc/hw_if.h                       Hardware Interface header file
-  - BLE/BLE_HR_P2PServer/Core/Inc/main.h                        Header for main.c module
-  - BLE/BLE_HR_P2PServer/Core/Inc/standby.h                     Header for standby.c module
-  - BLE/BLE_HR_P2PServer/Core/Inc/stm32_lpm_if.h                Header for stm32_lpm_if.c module  
-  - BLE/BLE_HR_P2PServer/Core/Inc/stm32wbxx_hal_conf.h          HAL configuration file
-  - BLE/BLE_HR_P2PServer/Core/Inc/stm32wbxx_it.h                Interrupt handlers header file
-  - BLE/BLE_HR_P2PServer/Core/Inc/utilities_conf.h              Configuration file of the utilities
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/app_ble.h               Header for app_ble.c module
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/ble_conf.h              BLE Services configuration
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/ble_dbg_conf.h          BLE Traces configuration of the BLE services
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/custom_app.h            Header for custom_app.c module
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/custom_stm.h            Header for custom_stm.c module
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/template_server_app.h   Header for p2p_server_app.c module
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/tl_dbg_conf.h           Debug configuration file for stm32wpan transport layer interface
-  - BLE/BLE_HR_P2PServer/Core/Src/app_debug.c                   Debug utilities
-  - BLE/BLE_HR_P2PServer/Core/Src/app_entry.c                   Initialization of the application
-  - BLE/BLE_HR_P2PServer/Core/Src/hw_timerserver.c              Timer Server based on RTC
-  - BLE/BLE_HR_P2PServer/Core/Src/hw_uart.c                     UART Driver
-  - BLE/BLE_HR_P2PServer/Core/Src/main.c                        Main program
-  - BLE/BLE_HR_P2PServer/Core/Src/standby.c                     Specific code for standby low power mode
-  - BLE/BLE_HR_P2PServer/Core/Src/stm32_lpm_if.c                Low Power Manager Interface
-  - BLE/BLE_HR_P2PServer/Core/Src/stm32wbxx_hal_msp.c           MSP Initialization Module
-  - BLE/BLE_HR_P2PServer/Core/Src/stm32wbxx_it.c                Interrupt handlers
-  - BLE/BLE_HR_P2PServer/Core/Src/system_stm32wbxx.c            stm32wbxx system source file
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/app_ble.c               BLE Profile implementation
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/custom_app.c            Custom example application
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/App/custom_stm.c            Custom example services definition
-  - BLE/BLE_HR_P2PServer/STM32_WPAN/Target/hw_ipcc.c            IPCC Driver
+  - BLE/BLE_HR_p2pServer/Core/Inc/app_common.h                  Header for all modules with common definition
+  - BLE/BLE_HR_p2pServer/Core/Inc/app_conf.h                    Parameters configuration file of the application
+  - BLE/BLE_HR_p2pServer/Core/Inc/app_debug.h                   Header for app_debug.c module
+  - BLE/BLE_HR_p2pServer/Core/Inc/app_entry.h                   Parameters configuration file of the application
+  - BLE/BLE_HR_p2pServer/Core/Inc/b_wb1m_wpan1_conf.h           Configuration file of the board
+  - BLE/BLE_HR_p2pServer/Core/Inc/hw_conf.h                     Configuration file of the HW
+  - BLE/BLE_HR_p2pServer/Core/Inc/hw_if.h                       Hardware Interface header file
+  - BLE/BLE_HR_p2pServer/Core/Inc/main.h                        Header for main.c module
+  - BLE/BLE_HR_p2pServer/Core/Inc/standby.h                     Header for standby.c module
+  - BLE/BLE_HR_p2pServer/Core/Inc/stm32_lpm_if.h                Header for stm32_lpm_if.c module  
+  - BLE/BLE_HR_p2pServer/Core/Inc/stm32wbxx_hal_conf.h          HAL configuration file
+  - BLE/BLE_HR_p2pServer/Core/Inc/stm32wbxx_it.h                Interrupt handlers header file
+  - BLE/BLE_HR_p2pServer/Core/Inc/utilities_conf.h              Configuration file of the utilities
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/app_ble.h               Header for app_ble.c module
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/ble_conf.h              BLE Services configuration
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/ble_dbg_conf.h          BLE Traces configuration of the BLE services
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/custom_app.h            Header for custom_app.c module
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/custom_stm.h            Header for custom_stm.c module
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/template_server_app.h   Header for p2p_server_app.c module
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/tl_dbg_conf.h           Debug configuration file for stm32wpan transport layer interface
+  - BLE/BLE_HR_p2pServer/Core/Src/app_debug.c                   Debug utilities
+  - BLE/BLE_HR_p2pServer/Core/Src/app_entry.c                   Initialization of the application
+  - BLE/BLE_HR_p2pServer/Core/Src/hw_timerserver.c              Timer Server based on RTC
+  - BLE/BLE_HR_p2pServer/Core/Src/hw_uart.c                     UART Driver
+  - BLE/BLE_HR_p2pServer/Core/Src/main.c                        Main program
+  - BLE/BLE_HR_p2pServer/Core/Src/standby.c                     Specific code for standby low power mode
+  - BLE/BLE_HR_p2pServer/Core/Src/stm32_lpm_if.c                Low Power Manager Interface
+  - BLE/BLE_HR_p2pServer/Core/Src/stm32wbxx_hal_msp.c           MSP Initialization Module
+  - BLE/BLE_HR_p2pServer/Core/Src/stm32wbxx_it.c                Interrupt handlers
+  - BLE/BLE_HR_p2pServer/Core/Src/system_stm32wbxx.c            stm32wbxx system source file
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/app_ble.c               BLE Profile implementation
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/custom_app.c            Custom example application
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/App/custom_stm.c            Custom example services definition
+  - BLE/BLE_HR_p2pServer/STM32_WPAN/Target/hw_ipcc.c            IPCC Driver
 
 @par Hardware and Software environment
 
@@ -95,7 +95,7 @@ In order to make the program work, you must do the following:
  - Enable Bluetooth communications
  - Open ST BLE Toolbox and Start Scanning.
  - Connect to WB1M_HR application to access all the services and associated characteristics
- - The BLE_HR_P2PServer information are displayed on the smartphone
+ - The BLE_HR_p2pServer information are displayed on the smartphone
  - Open Heart Rate and enable Heart Rate Measurement notification:
    - Heart Rate Measurement are sent each second to the smartphone
  - Open P2P_Server and enable P2P Notify:

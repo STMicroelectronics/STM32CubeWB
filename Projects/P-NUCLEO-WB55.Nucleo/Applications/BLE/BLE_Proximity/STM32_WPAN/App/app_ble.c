@@ -198,12 +198,12 @@ static uint8_t a_BdAddrUdn[BD_ADDR_SIZE_LOCAL];
 /**
  *   Identity root key used to derive LTK and CSRK
  */
-static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
+static const uint8_t a_BLE_CfgIrValue[16] = CFG_BLE_IRK;
 
 /**
  * Encryption root key used to derive LTK and CSRK
  */
-static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
+static const uint8_t a_BLE_CfgErValue[16] = CFG_BLE_ERK;
 
 /**
  * These are the two tags used to manage a power failure during OTA
@@ -840,7 +840,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   const uint8_t *p_bd_addr;
 
 #if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
-  uint32_t a_srd_bd_addr[2] = {0,0};;
+  uint32_t a_srd_bd_addr[2] = {0,0};
 #endif
   uint16_t a_appearance[1] = {BLE_CFG_GAP_APPEARANCE};
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
@@ -935,7 +935,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 #endif /* CFG_STATIC_RANDOM_ADDRESS */
 #endif
 
-#if (CFG_BLE_ADDRESS_TYPE == GAP_STATIC_RANDOM_ADDR)
+#if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
   a_ManufData[ sizeof(a_ManufData)-6] = a_srd_bd_addr[1] >> 8 ;
   a_ManufData[ sizeof(a_ManufData)-5] = a_srd_bd_addr[1];
@@ -943,9 +943,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   a_ManufData[ sizeof(a_ManufData)-3] = a_srd_bd_addr[0] >> 16;
   a_ManufData[ sizeof(a_ManufData)-2] = a_srd_bd_addr[0] >> 8;
   a_ManufData[ sizeof(a_ManufData)-1] = a_srd_bd_addr[0];
-#endif
 
-#if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   ret = aci_hal_write_config_data(CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)a_srd_bd_addr);
   if (ret != BLE_STATUS_SUCCESS)
   {
@@ -966,7 +964,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   /**
    * Write Identity root key used to derive LTK and CSRK
    */
-  ret = aci_hal_write_config_data(CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE);
+  ret = aci_hal_write_config_data(CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)a_BLE_CfgIrValue);
   if (ret != BLE_STATUS_SUCCESS)
   {
     APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_IR_OFFSET, result: 0x%x \n", ret);
@@ -979,7 +977,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   /**
    * Write Encryption root key used to derive LTK and CSRK
    */
-  ret = aci_hal_write_config_data(CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)BLE_CFG_ER_VALUE);
+  ret = aci_hal_write_config_data(CONFIG_DATA_ER_OFFSET, CONFIG_DATA_ER_LEN, (uint8_t*)a_BLE_CfgErValue);
   if (ret != BLE_STATUS_SUCCESS)
   {
     APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_ER_OFFSET, result: 0x%x \n", ret);
@@ -990,7 +988,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   }
 
   /**
-   * Set TX Power to 0dBm.
+   * Set TX Power.
    */
   ret = aci_hal_set_tx_power_level(1, CFG_TX_POWER);
   if (ret != BLE_STATUS_SUCCESS)
@@ -1125,7 +1123,6 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
                                                CFG_IDENTITY_ADDRESS);
-
   if (ret != BLE_STATUS_SUCCESS)
   {
     APP_DBG_MSG("  Fail   : aci_gap_set_authentication_requirement command, result: 0x%x \n", ret);

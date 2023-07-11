@@ -558,7 +558,7 @@ enum ZbZclMeterCliAttrT {
 #define ZCL_METER_NOTIF_FLAG_2_PUBLISH_PRICE_MATRIX                 0x00000100U /* bit  8 */
 #define ZCL_METER_NOTIF_FLAG_2_PUBLISH_BLOCK_THRESH                 0x00000200U /* bit  9 */
 #define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CURRENCY_CONV                0x00000400U /* bit 10 */
-/* Reserverd */
+/* Reserved */
 #define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CREDIT_PAY_INFO              0x00001000U /* bit 12 */
 #define ZCL_METER_NOTIF_FLAG_2_PUBLISH_CPP_EVENT                    0x00002000U /* bit 13 */
 #define ZCL_METER_NOTIF_FLAG_2_PUBLISH_TIER_LABELS                  0x00004000U /* bit 14 */

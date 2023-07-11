@@ -393,6 +393,11 @@
         <Group>
           <GroupName>Application/User/Core/src</GroupName>
           <Files>
+		  	<File>
+              <FileName>app_debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/app_debug.c</FilePath>
+            </File>
             <File>
               <FileName>app_entry.c</FileName>
               <FileType>1</FileType>

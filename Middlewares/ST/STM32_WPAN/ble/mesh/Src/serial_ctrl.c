@@ -373,8 +373,8 @@ MOBLEUINT8 SerialCtrl_GetData(char *rcvdStringBuff, uint16_t rcvdStringSize, MOB
       byteBuff[byteCounter]  = msb << 4;
       byteBuff[byteCounter] |= lsb;
       
-      i++;      /*increament for loop counter as two values are used */
-      byteCounter++;   /*increament byteCounter counter*/
+      i++;      /*increment for loop counter as two values are used */
+      byteCounter++;   /*increment byteCounter counter*/
     }
   }
         

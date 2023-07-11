@@ -41,9 +41,6 @@
 /* Define to 1 to enable DHCPv6 Client. */
 #define OPENTHREAD_CONFIG_DHCP6_CLIENT_ENABLE 1
 
-/* Define to 1 to enable DHCPv6 SERVER. */
-#define OPENTHREAD_CONFIG_DHCP6_SERVER_ENABLE 1
-
 /* Define to 1 to enable MAC whitelist/blacklist feature. */
 #define OPENTHREAD_CONFIG_MAC_FILTER_ENABLE 1
 
@@ -77,6 +74,9 @@
 /* Define to 1 to enable Mle Link Metrics Subject */
 #define OPENTHREAD_CONFIG_MLE_LINK_METRICS_SUBJECT_ENABLE 1
 
+/* Define to 1 to support CSL feature */
+#define OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE 1
+
 /* Define to 1 if you want to enable microsecond backoff timer implemented in platform. */
 #define OPENTHREAD_CONFIG_PLATFORM_USEC_TIMER_ENABLE 1
 
@@ -86,7 +86,7 @@
 /* Define to 1 to enable Thread Test Harness reference device support. */
 #define OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE 1
 
-/* Define to 1 to eanble Config MLR */
+/* Define to 1 to enable Config MLR */
 #define OPENTHREAD_CONFIG_MLR_ENABLE 1
 
 /* Define to 1 to enable DNS Client support */

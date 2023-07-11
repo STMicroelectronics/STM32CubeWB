@@ -63,7 +63,7 @@
  * It accounts for network latency, etc. */
 #define ZCL_KEY_TIMEOUT_SLACK_SEC                   10U
 
-/* Attirbute identifiers. */
+/* Attribute identifiers. */
 #define ZCL_KEY_ATTR_SUITE                          0x0000U
 
 /* Command identifiers. */
@@ -113,7 +113,7 @@ const char * ZbZclKeStatusToStr(uint8_t statusCode);
  * Note, CBKE with a Trust Center is already handled by the ZbStartup code, including Trust Cetner Swap Out (TCSO)
  *
  * If aps_req_key is true, and partnerAddr is not the TC, then an APS Request Key is sent to the TC with the partner
- * address set to the partnerAddr paramter.
+ * address set to the partnerAddr parameter.
  *
  * The callback is called once KE is done, or there was an error, only if ZbZclKeWithDevice returns ZCL_STATUS_SUCCESS. */
 enum ZclStatusCodeT ZbZclKeWithDevice(struct ZigBeeT *zb, uint64_t partnerAddr, bool aps_req_key,

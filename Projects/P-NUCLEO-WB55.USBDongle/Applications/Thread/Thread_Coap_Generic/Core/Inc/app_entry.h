@@ -33,7 +33,7 @@ extern "C" {
 
 
 void APPE_Init( void );
-
+void ProcessTrace(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

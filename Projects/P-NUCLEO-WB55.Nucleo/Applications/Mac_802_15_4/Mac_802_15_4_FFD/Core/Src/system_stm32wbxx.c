@@ -153,7 +153,7 @@
   */
 uint32_t SystemCoreClock  = 4000000; /*CPU1: M4 on MSI clock after startup (4MHz)*/
 
-const uint32_t AHBPrescTable[16] =   {1, 3, 5, 1, 1, 6, 10, 32, 2, 4, 8, 16, 64, 128, 256, 512};  /* eqv. division factor used for Dory*/
+const uint32_t AHBPrescTable[16] =   {1, 3, 5, 1, 1, 6, 10, 32, 2, 4, 8, 16, 64, 128, 256, 512};
 /* index=[0,...15]*/
 const uint32_t APBPrescTable[8] =  {0, 0, 0, 0, 1, 2, 3, 4};
 

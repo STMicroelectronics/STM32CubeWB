@@ -1422,4 +1422,10 @@
             <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer\stm32_seq.c</name>
         </file>
     </group>
+    <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\advanced_memory_manager.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\stm32_mm.c</name>
+    </file>
 </project>

@@ -146,8 +146,8 @@ typedef __PACKED_STRUCT
   uint16_t Conn_Latency;
   /**
    * Supervision timeout for the LE Link.
-   * It shall be a multiple of 10 ms and larger than (1 + connSlaveLatency) *
-   * connInterval * 2.
+   * It shall be a multiple of 10 ms and larger than (1 +
+   * connPeripheralLatency) * connInterval * 2.
    * Time = N * 10 ms.
    * Values:
    * - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
@@ -171,7 +171,7 @@ typedef __PACKED_STRUCT
   uint16_t Max_CE_Length;
 } Init_Param_Phy_t;
 
-/* Definition of Whitelist_Entry_t */
+/* Definition of Peer_Entry_t */
 typedef __PACKED_STRUCT
 {
   /**
@@ -185,7 +185,7 @@ typedef __PACKED_STRUCT
    * Public Device Address or Random Device Address.
    */
   uint8_t Peer_Address[6];
-} Whitelist_Entry_t;
+} Peer_Entry_t;
 
 /* Definition of Bonded_Device_Entry_t */
 typedef __PACKED_STRUCT
@@ -203,21 +203,21 @@ typedef __PACKED_STRUCT
   uint8_t Address[6];
 } Bonded_Device_Entry_t;
 
-/* Definition of Whitelist_Identity_Entry_t */
+/* Definition of Identity_Entry_t */
 typedef __PACKED_STRUCT
 {
   /**
-   * Identity address type.
+   * Identity address type
    * Values:
    * - 0x00: Public Identity Address
    * - 0x01: Random (static) Identity Address
    */
   uint8_t Peer_Identity_Address_Type;
   /**
-   * Public or Random (static) Identity address of the peer device
+   * Public or Random (static) Identity Address of the peer device
    */
   uint8_t Peer_Identity_Address[6];
-} Whitelist_Identity_Entry_t;
+} Identity_Entry_t;
 
 /* Definition of List_Entry_t */
 typedef __PACKED_STRUCT
@@ -369,7 +369,7 @@ typedef __PACKED_STRUCT
   uint8_t Length_Data;
   /**
    * Octets of advertising or scan response data formatted as defined in
-   * Bluetooth spec. v.5.3 [Vol 3, Part C, 11].
+   * Bluetooth spec. v.5.4 [Vol 3, Part C, 11].
    */
   const uint8_t* Data;
   /**
@@ -716,7 +716,7 @@ typedef __PACKED_STRUCT
 typedef __PACKED_STRUCT
 {
   uint8_t Status;
-  uint8_t White_List_Size;
+  uint8_t Filter_Accept_List_Size;
 } hci_le_read_filter_accept_list_size_rp0;
 
 typedef __PACKED_STRUCT
@@ -1263,6 +1263,17 @@ typedef __PACKED_STRUCT
 
 typedef __PACKED_STRUCT
 {
+  uint8_t Remote_P256_Public_Key[64];
+  uint8_t Key_Type;
+} hci_le_generate_dhkey_v2_cp0;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t Status;
+} hci_le_generate_dhkey_v2_rp0;
+
+typedef __PACKED_STRUCT
+{
   uint8_t Status;
   uint16_t Build_Number;
 } aci_hal_get_fw_build_number_rp0;
@@ -1369,12 +1380,12 @@ typedef __PACKED_STRUCT
 typedef __PACKED_STRUCT
 {
   uint8_t Enable;
-} aci_hal_set_slave_latency_cp0;
+} aci_hal_set_peripheral_latency_cp0;
 
 typedef __PACKED_STRUCT
 {
   uint8_t Status;
-} aci_hal_set_slave_latency_rp0;
+} aci_hal_set_peripheral_latency_rp0;
 
 typedef __PACKED_STRUCT
 {
@@ -1454,8 +1465,8 @@ typedef __PACKED_STRUCT
 
 typedef __PACKED_STRUCT
 {
-  uint16_t Slave_Conn_Interval_Min;
-  uint16_t Slave_Conn_Interval_Max;
+  uint16_t Conn_Interval_Min;
+  uint16_t Conn_Interval_Max;
 } aci_gap_set_limited_discoverable_cp2;
 
 typedef __PACKED_STRUCT
@@ -1482,8 +1493,8 @@ typedef __PACKED_STRUCT
 
 typedef __PACKED_STRUCT
 {
-  uint16_t Slave_Conn_Interval_Min;
-  uint16_t Slave_Conn_Interval_Max;
+  uint16_t Conn_Interval_Min;
+  uint16_t Conn_Interval_Max;
 } aci_gap_set_discoverable_cp2;
 
 typedef __PACKED_STRUCT
@@ -1609,12 +1620,12 @@ typedef __PACKED_STRUCT
 typedef __PACKED_STRUCT
 {
   uint16_t Connection_Handle;
-} aci_gap_slave_security_req_cp0;
+} aci_gap_peripheral_security_req_cp0;
 
 typedef __PACKED_STRUCT
 {
   uint8_t Status;
-} aci_gap_slave_security_req_rp0;
+} aci_gap_peripheral_security_req_rp0;
 
 typedef __PACKED_STRUCT
 {
@@ -1662,7 +1673,7 @@ typedef __PACKED_STRUCT
 typedef __PACKED_STRUCT
 {
   uint8_t Status;
-} aci_gap_configure_whitelist_rp0;
+} aci_gap_configure_filter_accept_list_rp0;
 
 typedef __PACKED_STRUCT
 {
@@ -1727,8 +1738,8 @@ typedef __PACKED_STRUCT
   uint16_t Supervision_Timeout;
   uint16_t Minimum_CE_Length;
   uint16_t Maximum_CE_Length;
-  uint8_t Num_of_Whitelist_Entries;
-  Whitelist_Entry_t Whitelist_Entry[(BLE_CMD_MAX_PARAM_LEN - 18)/sizeof(Whitelist_Entry_t)];
+  uint8_t Num_of_Peer_Entries;
+  Peer_Entry_t Peer_Entry[(BLE_CMD_MAX_PARAM_LEN - 18)/sizeof(Peer_Entry_t)];
 } aci_gap_start_auto_connection_establish_proc_cp0;
 
 typedef __PACKED_STRUCT
@@ -1759,8 +1770,8 @@ typedef __PACKED_STRUCT
   uint8_t Own_Address_Type;
   uint8_t Scanning_Filter_Policy;
   uint8_t Filter_Duplicates;
-  uint8_t Num_of_Whitelist_Entries;
-  Whitelist_Entry_t Whitelist_Entry[(BLE_CMD_MAX_PARAM_LEN - 9)/sizeof(Whitelist_Entry_t)];
+  uint8_t Num_of_Peer_Entries;
+  Peer_Entry_t Peer_Entry[(BLE_CMD_MAX_PARAM_LEN - 9)/sizeof(Peer_Entry_t)];
 } aci_gap_start_selective_connection_establish_proc_cp0;
 
 typedef __PACKED_STRUCT
@@ -1848,8 +1859,8 @@ typedef __PACKED_STRUCT
 
 typedef __PACKED_STRUCT
 {
-  uint8_t Num_of_Whitelist_Entries;
-  Whitelist_Entry_t Whitelist_Entry[(BLE_CMD_MAX_PARAM_LEN - 8)/sizeof(Whitelist_Entry_t)];
+  uint8_t Num_of_Peer_Entries;
+  Peer_Entry_t Peer_Entry[(BLE_CMD_MAX_PARAM_LEN - 8)/sizeof(Peer_Entry_t)];
 } aci_gap_set_broadcast_mode_cp1;
 
 typedef __PACKED_STRUCT
@@ -1945,7 +1956,7 @@ typedef __PACKED_STRUCT
 typedef __PACKED_STRUCT
 {
   uint8_t Num_of_Resolving_list_Entries;
-  Whitelist_Identity_Entry_t Whitelist_Identity_Entry[(BLE_CMD_MAX_PARAM_LEN - 2)/sizeof(Whitelist_Identity_Entry_t)];
+  Identity_Entry_t Identity_Entry[(BLE_CMD_MAX_PARAM_LEN - 2)/sizeof(Identity_Entry_t)];
 } aci_gap_add_devices_to_resolving_list_cp0;
 
 typedef __PACKED_STRUCT
@@ -2732,7 +2743,7 @@ typedef __PACKED_STRUCT
   uint16_t Connection_Handle;
   uint16_t Conn_Interval_Min;
   uint16_t Conn_Interval_Max;
-  uint16_t Slave_latency;
+  uint16_t Latency;
   uint16_t Timeout_Multiplier;
 } aci_l2cap_connection_parameter_update_req_cp0;
 
@@ -2746,7 +2757,7 @@ typedef __PACKED_STRUCT
   uint16_t Connection_Handle;
   uint16_t Conn_Interval_Min;
   uint16_t Conn_Interval_Max;
-  uint16_t Slave_latency;
+  uint16_t Latency;
   uint16_t Timeout_Multiplier;
   uint16_t Minimum_CE_Length;
   uint16_t Maximum_CE_Length;
@@ -2898,7 +2909,7 @@ typedef __PACKED_STRUCT
   uint16_t Conn_Interval;
   uint16_t Conn_Latency;
   uint16_t Supervision_Timeout;
-  uint8_t Master_Clock_Accuracy;
+  uint8_t Central_Clock_Accuracy;
 } hci_le_connection_complete_event_rp0;
 
 typedef __PACKED_STRUCT
@@ -2963,7 +2974,7 @@ typedef __PACKED_STRUCT
   uint16_t Conn_Interval;
   uint16_t Conn_Latency;
   uint16_t Supervision_Timeout;
-  uint8_t Master_Clock_Accuracy;
+  uint8_t Central_Clock_Accuracy;
 } hci_le_enhanced_connection_complete_event_rp0;
 
 typedef __PACKED_STRUCT
@@ -3104,7 +3115,7 @@ typedef __PACKED_STRUCT
   uint16_t L2CAP_Length;
   uint16_t Interval_Min;
   uint16_t Interval_Max;
-  uint16_t Slave_Latency;
+  uint16_t Latency;
   uint16_t Timeout_Multiplier;
 } aci_l2cap_connection_update_req_event_rp0;
 
@@ -3351,6 +3362,11 @@ typedef __PACKED_STRUCT
   uint16_t Data_Length;
   uint8_t Data[(BLE_EVT_MAX_PARAM_LEN - 2) - 6];
 } aci_gatt_mult_notification_event_rp0;
+
+typedef __PACKED_STRUCT
+{
+  uint16_t Attr_Handle;
+} aci_gatt_notification_complete_event_rp0;
 
 typedef __PACKED_STRUCT
 {

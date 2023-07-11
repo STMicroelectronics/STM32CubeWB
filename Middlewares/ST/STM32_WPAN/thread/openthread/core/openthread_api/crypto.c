@@ -85,34 +85,3 @@ void otCryptoAesCcm(const otCryptoKey *aKey,
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
-
-#if OPENTHREAD_CONFIG_ECDSA_ENABLE
-
-otError otCryptoEcdsaSign(uint8_t *      aOutput,
-                          uint16_t *     aOutputLength,
-                          const uint8_t *aInputHash,
-                          uint16_t       aInputHashLength,
-                          const uint8_t *aPrivateKey,
-                          uint16_t       aPrivateKeyLength)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_CRYPTO_ECDSA_SIGN;
-
-  p_ot_req->Size=6;
-  p_ot_req->Data[0]  = (uint32_t) aOutput;
-  p_ot_req->Data[1]  = (uint32_t) aOutputLength;
-  p_ot_req->Data[2]  = (uint32_t) aInputHash;
-  p_ot_req->Data[3]  = (uint32_t) aInputHashLength;
-  p_ot_req->Data[4]  = (uint32_t) aPrivateKey;
-  p_ot_req->Data[5]  = (uint32_t) aPrivateKeyLength;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
-}
-
-#endif // OPENTHREAD_CONFIG_ECDSA_ENABLE

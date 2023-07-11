@@ -531,7 +531,7 @@ __weak MOBLE_RESULT Sensor_ExtractSensorOffset(MOBLEUINT8 elementIdx,
   * @param  reference to sensor parameters
   * @param  reference to buffer to be filled
   * @param  reference to length incremented for descriptor parameters
-  * @retval Fail if sensor parameters not intialized
+  * @retval Fail if sensor parameters not initialized
   *         Fail if application not able to locate particular sensor
   *         else Success
   */
@@ -989,7 +989,7 @@ __weak MOBLE_RESULT Sensor_SettingsStatus(MOBLEUINT8* offsetBuff,
   * @param  pidMatch indicates if pid field of incoming message
   *         is present and matched
   * @param  if incoming message try to write setting which is read only, read
-  *         read violtaion occurrs
+  *         read violtaion occurs
   * @param  sensor parameters
   * @param  settings parameter
   * @param  Property ID received which doesn't exist
@@ -1562,7 +1562,7 @@ __weak MOBLE_RESULT Sensor_ColumnStatus(MOBLEUINT8* offsetBuff,
             }
             else
             {
-              TRACE_M(TF_SENSOR_M, "Sereis column not intialized\r\n");
+              TRACE_M(TF_SENSOR_M, "Sereis column not initialized\r\n");
             }
           }
         }
@@ -1724,7 +1724,7 @@ __weak MOBLE_RESULT Sensor_SeriesStatus(MOBLEUINT8* offsetBuff,
             }
             else
             {
-              TRACE_M(TF_SENSOR_M, "Sereis column not intialized\r\n");
+              TRACE_M(TF_SENSOR_M, "Sereis column not initialized\r\n");
               result = MOBLE_RESULT_FAIL;
             }
             
@@ -3319,7 +3319,7 @@ __weak MOBLE_RESULT SensorModelServer_GetOpcodeTableCb(const MODEL_OpcodeTablePa
   * @param  plength: Length of tata, updated by application
   * @param  pRxData: data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wheather message is acknowledged meassage or not.
+* @param  response: Value to indicate wether message is acknowledged meassage or not.
   * @retval Success
 */
 __weak MOBLE_RESULT SensorModelServer_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParams, 
@@ -3417,11 +3417,11 @@ __weak MOBLE_RESULT SensorModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pm
   *         returns max time after which call to process Sensor_Process is required
   *         to publish appropriate sensor status
   * @param  None
-  * @retval sleep time in miliseconds
+  * @retval sleep time in milliseconds
   */
 __weak MOBLEUINT32 Sensor_SleepDurationMs_Get(void)
 {
-  MOBLEUINT32 sleepDuration = 96*60*60*1000; /* 96 hours in miliseconds */
+  MOBLEUINT32 sleepDuration = 96*60*60*1000; /* 96 hours in milliseconds */
   MOBLEUINT32 timeRemaining = 0;
   MOBLEUINT32 current = Clock_Time();
   sensor_params_t* pParams = NULL; 
@@ -3737,7 +3737,7 @@ __weak MOBLE_RESULT Sensor_UpdateCadence(MOBLEUINT8 sensorOffset,
   }
   else
   {
-    TRACE_M(TF_SENSOR_M, "Sensor parameters not intialized\r\n");
+    TRACE_M(TF_SENSOR_M, "Sensor parameters not initialized\r\n");
     result = MOBLE_RESULT_FAIL;
   }
   
@@ -3797,7 +3797,7 @@ __weak MOBLE_RESULT Sensor_UpdatePublishState(MOBLEUINT8 sensorOffset, MOBLEUINT
   }
   else
   {
-    TRACE_M(TF_SENSOR_M, "Sensor parameters not intialized\r\n");
+    TRACE_M(TF_SENSOR_M, "Sensor parameters not initialized\r\n");
     result = MOBLE_RESULT_FAIL;
   }
   
@@ -3933,7 +3933,7 @@ __weak void Sensor_Process(void)
   }
   else
   {
-    /* Sensor server not initalized */
+    /* Sensor server not initialized */
   }
 }
 
@@ -4159,7 +4159,7 @@ __weak MOBLE_RESULT SensorServer_Init(void* sensorBuff,
     SensorServer->pSensorParams = (sensor_params_t*)(((MOBLEUINT8*)SensorServer)+buffStartTempIndex);
     buffStartTempIndex += SensorServer->sensorsCount*sizeof(sensor_params_t);
     
-    /* intialize sensor structure with init values */
+    /* initialize sensor structure with init values */
     for (MOBLEUINT8 count=0; count<SensorServer->sensorsCount; count++)
     {
       pParams = SensorServer->pSensorParams + count;

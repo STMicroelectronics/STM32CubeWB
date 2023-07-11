@@ -30,7 +30,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "main.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -57,20 +57,21 @@ void MX_ThreadX_Init(void);
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define APP_STACK_SIZE                           512
+#define APP_STACK_SIZE                           512u
 
-#define THREAD_ONE_PRIO                          10
+#define THREAD_ONE_PRIO                          10u
 #define THREAD_ONE_PREEMPTION_THRESHOLD          THREAD_ONE_PRIO
-#define THREAD_TWO_PRIO                          10
-#define THREAD_TWO_PREEMPTION_THRESHOLD          9
-#define MAIN_THREAD_PRIO                         5
+#define THREAD_TWO_PRIO                          10u
+#define THREAD_TWO_PREEMPTION_THRESHOLD          9u
+#define MAIN_THREAD_PRIO                         5u
 #define MAIN_THREAD_PREEMPTION_THRESHOLD         MAIN_THREAD_PRIO
 
-#define NEW_THREAD_TWO_PRIO                      8
-#define NEW_THREAD_TWO_PREEMPTION_THRESHOLD      8
+#define NEW_THREAD_TWO_PRIO                      8u
+#define NEW_THREAD_TWO_PREEMPTION_THRESHOLD      8u
 
-#define THREAD_ONE_EVT                           0x01
-#define THREAD_TWO_EVT                           0x02
+#define THREAD_ONE_EVT                           0x01u
+#define THREAD_TWO_EVT                           0x02u
+
 /* USER CODE END PD */
 
 /* USER CODE BEGIN 1 */

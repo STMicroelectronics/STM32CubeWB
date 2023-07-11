@@ -101,4 +101,4 @@
  ******************************************************************************/
 #define BLE_CFG_OTA_REBOOT_CHAR         0/**< REBOOT OTA MODE CHARACTERISTIC */
 
-#endif /* BLE_CONF_H */
+#endif /*BLE_CONF_H */

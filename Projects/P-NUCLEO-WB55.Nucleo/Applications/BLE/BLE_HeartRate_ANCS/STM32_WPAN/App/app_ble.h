@@ -68,7 +68,6 @@ typedef enum
 
 /* Exported functions ---------------------------------------------*/
 void APP_BLE_Init(void);
-
 APP_BLE_ConnStatus_t APP_BLE_Get_Server_Connection_Status(void);
 
 /* USER CODE BEGIN EF */
@@ -86,4 +85,4 @@ void APP_BLE_Remove_Bonding_Info(void);
 }
 #endif
 
-#endif /* APP_BLE_H */
+#endif /*APP_BLE_H */

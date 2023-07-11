@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>7.10.3.6927</state>
+                    <state>9.20.1.43525</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -116,7 +116,7 @@
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OCImagesPath1</name>
@@ -144,7 +144,7 @@
                 </option>
                 <option>
                     <name>OCImagesOffset1</name>
-                    <state></state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCImagesOffset2</name>
@@ -286,10 +286,6 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
-                <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
                 </option>
@@ -408,6 +404,10 @@
                     <state>1</state>
                 </option>
                 <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
+                <option>
                     <name>CatchHARDERR</name>
                     <state>1</state>
                 </option>
@@ -501,10 +501,6 @@
                 <version>9</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
-                <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
                 <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
@@ -657,6 +653,10 @@
                     <state>1</state>
                 </option>
                 <option>
+                    <name>CatchSFERR</name>
+                    <state>1</state>
+                </option>
+                <option>
                     <name>CatchHARDERR</name>
                     <state>1</state>
                 </option>
@@ -708,7 +708,7 @@
                 <option>
                     <name>IjetTraceSizeList</name>
                     <version>0</version>
-                    <state>4</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>FlashBoardPathSlave</name>
@@ -783,10 +783,6 @@
                 <version>16</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
-                <option>
-                    <name>CCCatchSFERR</name>
-                    <state>0</state>
-                </option>
                 <option>
                     <name>JLinkSpeed</name>
                     <state>1000</state>
@@ -923,6 +919,10 @@
                 </option>
                 <option>
                     <name>CCCatchINTERR</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>CCCatchSFERR</name>
                     <state>0</state>
                 </option>
                 <option>
@@ -1175,7 +1175,7 @@
                 </option>
                 <option>
                     <name>CCSTLinkDAPNumber</name>
-                    <state></state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCSTLinkDebugAccessPortRadio</name>
@@ -1201,7 +1201,7 @@
                 <debug>1</debug>
                 <option>
                     <name>CThirdPartyDriverDll</name>
-                    <state>###Uninitialized###</state>
+                    <state>Browse to your third-party driver</state>
                 </option>
                 <option>
                     <name>CThirdPartyLogFileCheck</name>
@@ -1247,7 +1247,7 @@
                 </option>
                 <option>
                     <name>CCMSPFetTargetVoltage</name>
-                    <state>###Uninitialized###</state>
+                    <state>3.0</state>
                 </option>
                 <option>
                     <name>CCMSPFetVCCDefault</name>
@@ -1305,11 +1305,11 @@
                 </option>
                 <option>
                     <name>TIPackage</name>
-                    <state></state>
+                    <state>C:\ti\ccs_base</state>
                 </option>
                 <option>
                     <name>BoardFile</name>
-                    <state></state>
+                    <state>$TOOLKIT_DIR$\config\debugger\TexasInstruments\xds\UNKNOWN_XDS100v2_JTAG.dat</state>
                 </option>
                 <option>
                     <name>DoLogfile</name>
@@ -1401,7 +1401,7 @@
                 </option>
                 <option>
                     <name>CCXds100CpuClockEdit</name>
-                    <state></state>
+                    <state>72.0</state>
                 </option>
                 <option>
                     <name>CCXds100SwoClockAuto</name>

@@ -187,7 +187,7 @@
 #define AD_TYPE_CLASS_OF_DEVICE                      0x0DU
 #define AD_TYPE_SEC_MGR_TK_VALUE                     0x10U
 #define AD_TYPE_SEC_MGR_OOB_FLAGS                    0x11U
-#define AD_TYPE_SLAVE_CONN_INTERVAL                  0x12U
+#define AD_TYPE_PERIPHERAL_CONN_INTERVAL             0x12U
 #define AD_TYPE_SERV_SOLICIT_16_BIT_UUID_LIST        0x14U
 #define AD_TYPE_SERV_SOLICIT_128_BIT_UUID_LIST       0x15U
 #define AD_TYPE_SERVICE_DATA                         0x16U
@@ -301,6 +301,13 @@
 #define GAP_STATIC_RANDOM_ADDR                       0x01U
 #define GAP_RESOLVABLE_PRIVATE_ADDR                  0x02U
 #define GAP_NON_RESOLVABLE_PRIVATE_ADDR              0x03U
+
+/* Bitmap definitions for Mode of ACI_GAP_ADD_DEVICES_TO_LIST
+ */
+#define GAP_ADD_DEV_MODE_RESOLVING_LIST_ONLY         0x00U
+#define GAP_ADD_DEV_MODE_CLEAR                       0x01U
+#define GAP_ADD_DEV_MODE_FILTER_ACC_LIST_ONLY        0x02U
+#define GAP_ADD_DEV_MODE_BOTH_LISTS                  0x04U 
 
 /* ------------------------------------------------------------------------- */
 
@@ -421,6 +428,8 @@
 #define PERIPHERAL_PREFERRED_CONN_PARAMS_UUID    0x2A04U
 #define CENTRAL_ADDRESS_RESOLUTION_UUID          0x2AA6U
 #define RESOLVABLE_PRIVATE_ADDRESS_ONLY_UUID     0x2AC9U
+#define ENCRYPTED_DATA_KEY_MATERIAL_UUID         0x2B88U
+#define LE_GATT_SECURITY_LEVELS_UUID             0x2BF5U
 
 /* Access permissions for an attribute
  */
@@ -473,6 +482,7 @@
 #define GATT_NOTIFY_ATTRIBUTE_WRITE                   0x01U
 #define GATT_NOTIFY_WRITE_REQ_AND_WAIT_FOR_APPL_RESP  0x02U
 #define GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP   0x04U
+#define GATT_NOTIFY_NOTIFICATION_COMPLETION           0x08U
 
 /* Type of characteristic length (see ACI_GATT_ADD_CHAR)
  */
@@ -497,6 +507,12 @@
 #define UNIT_TEMP_CELSIUS                      0x272F
 #define UNIT_PRESSURE_BAR                      0x2780
 
+/* Update_Type definitions for ACI_GATT_UPDATE_CHAR_VALUE_EXT
+ */
+#define GATT_CHAR_UPDATE_LOCAL_ONLY                   0x00U
+#define GATT_CHAR_UPDATE_SEND_NOTIFICATION            0x01U
+#define GATT_CHAR_UPDATE_SEND_INDICATION              0x02U
+
 /* ------------------------------------------------------------------------- */
 
 /* Advertising Type
@@ -507,14 +523,6 @@
 #define ADV_NONCONN_IND                                3
 #define ADV_DIRECT_IND_LDC                             4
 #define SCAN_RSP                                       4
-
-/* Advertising policy for filtering (white list related)
- * See HCI_LE_SET_ADVERTISING_PARAMETERS
- */
-#define NO_WHITE_LIST_USE                      0X00U
-#define WHITE_LIST_FOR_ONLY_SCAN               0X01U
-#define WHITE_LIST_FOR_ONLY_CONN               0X02U
-#define WHITE_LIST_FOR_ALL                     0X03U
 
 /* Advertising channels
  */
@@ -530,6 +538,8 @@
 #define CONFIG_DATA_ER_OFFSET                  0x08U
 #define CONFIG_DATA_IR_OFFSET                  0x18U
 #define CONFIG_DATA_RANDOM_ADDRESS_OFFSET      0x2EU
+#define CONFIG_DATA_GAP_ADD_REC_NBR_OFFSET     0x34U
+#define CONFIG_DATA_SC_KEY_TYPE_OFFSET         0x35U
 #define CONFIG_DATA_SMP_MODE_OFFSET            0xB0U
 #define CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET    0xC0U
 #define CONFIG_DATA_LL_BG_SCAN_MODE_OFFSET     0xC1U
@@ -540,8 +550,11 @@
 #define CONFIG_DATA_ER_LEN                    16
 #define CONFIG_DATA_IR_LEN                    16
 #define CONFIG_DATA_RANDOM_ADDRESS_LEN         6
+#define CONFIG_DATA_GAP_ADD_REC_NBR_LEN        1
+#define CONFIG_DATA_SC_KEY_TYPE_LEN            1
 #define CONFIG_DATA_SMP_MODE_LEN               1
 #define CONFIG_DATA_LL_SCAN_CHAN_MAP_LEN       1
+#define CONFIG_DATA_LL_BG_SCAN_MODE_LEN        1
 
 /* ------------------------------------------------------------------------- */
 

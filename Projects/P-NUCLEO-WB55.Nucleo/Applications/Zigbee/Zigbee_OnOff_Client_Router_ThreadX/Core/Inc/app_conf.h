@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_conf.h
-  * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_conf.h
+  * @author  MCD Application Team
+  * @brief   Application configuration file for STM32WPAN Middleware.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -67,7 +67,7 @@
  */
 #define CFG_DEBUG_TRACE_UART    hw_uart1
 #define CFG_CONSOLE_MENU
-#define CFG_CLI_UART    hw_lpuart1
+#define CFG_CLI_UART            hw_lpuart1
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -144,10 +144,10 @@
  * It divides the RTC CLK by 16
  */
 
-#define CFG_RTCCLK_DIV  (16)
-#define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (0x0F)
-#define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
+#define CFG_RTCCLK_DIV            (16)
+#define CFG_RTC_WUCKSEL_DIVIDER   (0)
+#define CFG_RTC_ASYNCH_PRESCALER  (0x0F)
+#define CFG_RTC_SYNCH_PRESCALER   (0x7FFF)
 
 #else
 
@@ -269,7 +269,7 @@ typedef enum
  * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
  */
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
-#define MAX_DBG_TRACE_MSG_SIZE 1024
+#define MAX_DBG_TRACE_MSG_SIZE   1024
 
 /******************************************************************************
  * Configure Log level for Application
@@ -290,70 +290,19 @@ typedef enum
 #define CFG_LED_SUPPORTED         1
 #define CFG_BUTTON_SUPPORTED      1
 #endif /* CFG_FULL_LOW_POWER */
+
 /* USER CODE END Defines */
 
 /******************************************************************************
- * Scheduler
+ * THREADX
  ******************************************************************************/
-  /**
-   * This is the list of task id required by the application
-   * Each Id shall be in the range 0..31
-   */
+/* USER CODE BEGIN THREADX */
 
-typedef enum
-{
-  CFG_TASK_NOTIFY_FROM_M0_TO_M4,
-  CFG_TASK_REQUEST_FROM_M0_TO_M4,
-  CFG_TASK_ZIGBEE_NETWORK_FORM,
-  CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-  CFG_TASK_VCP_SEND_DATA,
-#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
-  /* USER CODE BEGIN CFG_IdleTask_Id_t */
-  CFG_TASK_BUTTON_SW1,
-  /* USER CODE END CFG_IdleTask_Id_t */
-  CFG_TASK_NBR  /**< Shall be last in the list */
-} CFG_IdleTask_Id_t;
+/* USER CODE END THREADX */
 
-/* Scheduler types and defines        */
-/*------------------------------------*/
-#define EVENT_ACK_FROM_M0_EVT        (1U << CFG_EVT_ACK_FROM_M0_EVT)
-#define EVENT_SYNCHRO_BYPASS_IDLE    (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
-/* USER CODE BEGIN DEFINE_TASK */
+/* USER CODE BEGIN THREADX_Defines */
 
-/* USER CODE END DEFINE_TASK */
-
-/**
- * This is the list of priority required by the application
- * Each Id shall be in the range 0..31
- */
-typedef enum
-{
-    CFG_SCH_PRIO_0,
-    CFG_SCH_PRIO_1,
-    CFG_PRIO_NBR,
-} CFG_SCH_Prio_Id_t;
-
-  /**
-   * This is a bit mapping over 32bits listing all events id supported in the application
-   */
-typedef enum
-{
-  CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP,
-  CFG_EVT_ACK_FROM_M0_EVT,
-  CFG_EVT_SYNCHRO_BYPASS_IDLE,
-  CFG_EVT_ZIGBEE_STARTUP_ENDED,
-  /* USER CODE BEGIN CFG_IdleEvt_Id_t */
-
-  /* USER CODE END CFG_IdleEvt_Id_t */
-} CFG_IdleEvt_Id_t;
-
-#define EVENT_ACK_FROM_M0_EVT           (1U << CFG_EVT_ACK_FROM_M0_EVT)
-#define EVENT_SYNCHRO_BYPASS_IDLE       (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
-#define EVENT_ZIGBEE_STARTUP_ENDED      (1U << CFG_EVT_ZIGBEE_STARTUP_ENDED)
-/* USER CODE BEGIN DEFINE_EVENT */
-
-/* USER CODE END DEFINE_EVENT */
+/* USER CODE END THREADX_Defines */
 
 /******************************************************************************
  * LOW POWER
@@ -364,10 +313,10 @@ typedef enum
  */
 typedef enum
 {
-    CFG_LPM_APP,
-    /* USER CODE BEGIN CFG_LPM_Id_t */
+  CFG_LPM_APP,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
 
-    /* USER CODE END CFG_LPM_Id_t */
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
 
 /******************************************************************************

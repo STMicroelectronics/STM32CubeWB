@@ -393,6 +393,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   const uint8_t mode = BLE_CFG_DATA_ROLE_MODE;
 #endif
   uint16_t appearance[1] = { BLE_CFG_GAP_APPEARANCE }; 
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
 
   /**
    * Initialize HCI layer
@@ -405,10 +406,21 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    */
 
   bd_addr = BleGetBdAddress();
-  aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
+  ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
                             CONFIG_DATA_PUBADDR_LEN,
                             (uint8_t*) bd_addr);
 
+  if (ret != BLE_STATUS_SUCCESS)
+  {
+    APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_PUBADDR_OFFSET, result: 0x%x \n", ret);
+  }
+  else
+  {
+    APP_DBG_MSG("  Success: aci_hal_write_config_data command - CONFIG_DATA_PUBADDR_OFFSET\n");
+    APP_DBG_MSG("  Public Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n",bd_addr[5],bd_addr[4],bd_addr[3],bd_addr[2],bd_addr[1],bd_addr[0]);
+  }
+    
+    
   /**
    * Static random Address
    * The two upper bits shall be set to 1

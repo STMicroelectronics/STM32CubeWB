@@ -161,6 +161,8 @@ int hci_send_req(struct hci_request *p_cmd, uint8_t async)
   NotifyCmdStatus(HCI_TL_CmdBusy);
   local_cmd_status = HCI_TL_CmdBusy;
   opcode = ((p_cmd->ocf) & 0x03ff) | ((p_cmd->ogf) << 10);
+  
+  CmdRspStatusFlag = HCI_TL_CMD_RESP_WAIT;
   SendCmd(opcode, p_cmd->clen, p_cmd->cparam);
 
   while(local_cmd_status == HCI_TL_CmdBusy)
@@ -291,7 +293,6 @@ __WEAK void hci_cmd_resp_wait(uint32_t timeout)
 {
   (void)timeout;
 
-  CmdRspStatusFlag = HCI_TL_CMD_RESP_WAIT;
   while(CmdRspStatusFlag != HCI_TL_CMD_RESP_RELEASE);
 
   return;

@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_conf.h
-  * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_conf.h
+  * @author  MCD Application Team
+  * @brief   Application configuration file for STM32WPAN Middleware.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -290,6 +290,7 @@ typedef enum
 #define CFG_LED_SUPPORTED         1
 #define CFG_BUTTON_SUPPORTED      1
 #endif /* CFG_FULL_LOW_POWER */
+
 /* USER CODE END Defines */
 
 /******************************************************************************
@@ -334,6 +335,7 @@ typedef enum
   /* USER CODE BEGIN CFG_SCH_Prio_Id_t */
 
   /* USER CODE END CFG_SCH_Prio_Id_t */
+  CFG_SCH_PRIO_NBR  /**< Shall be last in the list */
 } CFG_SCH_Prio_Id_t;
 
 /**

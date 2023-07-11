@@ -1,12 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-* @file    stm32_lpm_if.h
-* @brief   Header for stm32_lpm_if.c module (device specific LP management)
+  * @file    stm32_lpm_if.h
+  * @author  MCD Application Team
+  * @brief   Header for stm32_lpm_if.c module (device specific LP management)
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32_LPM_IF_H
-#define __STM32_LPM_IF_H
+#ifndef STM32_LPM_IF_H
+#define STM32_LPM_IF_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,4 +76,5 @@ void PWR_ExitSleepMode( void );
 }
 #endif
 
-#endif /*__STM32_LPM_IF_H */
+#endif /*STM32_LPM_IF_H */
+

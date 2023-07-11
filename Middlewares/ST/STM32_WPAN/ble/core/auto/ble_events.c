@@ -48,7 +48,7 @@ static void aci_gap_limited_discoverable_event_process( const uint8_t* in );
 static void aci_gap_pairing_complete_event_process( const uint8_t* in );
 static void aci_gap_pass_key_req_event_process( const uint8_t* in );
 static void aci_gap_authorization_req_event_process( const uint8_t* in );
-static void aci_gap_slave_security_initiated_event_process( const uint8_t* in );
+static void aci_gap_peripheral_security_initiated_event_process( const uint8_t* in );
 static void aci_gap_bond_lost_event_process( const uint8_t* in );
 static void aci_gap_proc_complete_event_process( const uint8_t* in );
 static void aci_gap_addr_not_resolved_event_process( const uint8_t* in );
@@ -91,6 +91,7 @@ static void aci_gatt_server_confirmation_event_process( const uint8_t* in );
 static void aci_gatt_prepare_write_permit_req_event_process( const uint8_t* in );
 static void aci_gatt_eatt_bearer_event_process( const uint8_t* in );
 static void aci_gatt_mult_notification_event_process( const uint8_t* in );
+static void aci_gatt_notification_complete_event_process( const uint8_t* in );
 static void aci_gatt_read_ext_event_process( const uint8_t* in );
 static void aci_gatt_indication_ext_event_process( const uint8_t* in );
 static void aci_gatt_notification_ext_event_process( const uint8_t* in );
@@ -137,7 +138,7 @@ const hci_event_table_t hci_vs_event_table[HCI_VS_EVENT_TABLE_SIZE] =
   { 0x0401U, aci_gap_pairing_complete_event_process },
   { 0x0402U, aci_gap_pass_key_req_event_process },
   { 0x0403U, aci_gap_authorization_req_event_process },
-  { 0x0404U, aci_gap_slave_security_initiated_event_process },
+  { 0x0404U, aci_gap_peripheral_security_initiated_event_process },
   { 0x0405U, aci_gap_bond_lost_event_process },
   { 0x0407U, aci_gap_proc_complete_event_process },
   { 0x0408U, aci_gap_addr_not_resolved_event_process },
@@ -180,6 +181,7 @@ const hci_event_table_t hci_vs_event_table[HCI_VS_EVENT_TABLE_SIZE] =
   { 0x0C18U, aci_gatt_prepare_write_permit_req_event_process },
   { 0x0C19U, aci_gatt_eatt_bearer_event_process },
   { 0x0C1AU, aci_gatt_mult_notification_event_process },
+  { 0x0C1BU, aci_gatt_notification_complete_event_process },
   { 0x0C1DU, aci_gatt_read_ext_event_process },
   { 0x0C1EU, aci_gatt_indication_ext_event_process },
   { 0x0C1FU, aci_gatt_notification_ext_event_process },
@@ -286,7 +288,7 @@ __WEAK void hci_le_connection_complete_event( uint8_t Status,
                                               uint16_t Conn_Interval,
                                               uint16_t Conn_Latency,
                                               uint16_t Supervision_Timeout,
-                                              uint8_t Master_Clock_Accuracy )
+                                              uint8_t Central_Clock_Accuracy )
 {
 }
 
@@ -302,7 +304,7 @@ static void hci_le_connection_complete_event_process( const uint8_t* in )
                                     rp0->Conn_Interval,
                                     rp0->Conn_Latency,
                                     rp0->Supervision_Timeout,
-                                    rp0->Master_Clock_Accuracy );
+                                    rp0->Central_Clock_Accuracy );
 }
 
 /* HCI_LE_ADVERTISING_REPORT_EVENT callback function */
@@ -439,7 +441,7 @@ __WEAK void hci_le_enhanced_connection_complete_event( uint8_t Status,
                                                        uint16_t Conn_Interval,
                                                        uint16_t Conn_Latency,
                                                        uint16_t Supervision_Timeout,
-                                                       uint8_t Master_Clock_Accuracy )
+                                                       uint8_t Central_Clock_Accuracy )
 {
 }
 
@@ -457,7 +459,7 @@ static void hci_le_enhanced_connection_complete_event_process( const uint8_t* in
                                              rp0->Conn_Interval,
                                              rp0->Conn_Latency,
                                              rp0->Supervision_Timeout,
-                                             rp0->Master_Clock_Accuracy );
+                                             rp0->Central_Clock_Accuracy );
 }
 
 /* HCI_LE_DIRECTED_ADVERTISING_REPORT_EVENT callback function */
@@ -692,15 +694,15 @@ static void aci_gap_authorization_req_event_process( const uint8_t* in )
   aci_gap_authorization_req_event( rp0->Connection_Handle );
 }
 
-/* ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT callback function */
-__WEAK void aci_gap_slave_security_initiated_event( void )
+/* ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT callback function */
+__WEAK void aci_gap_peripheral_security_initiated_event( void )
 {
 }
 
-/* ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT process function */
-static void aci_gap_slave_security_initiated_event_process( const uint8_t* in )
+/* ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT process function */
+static void aci_gap_peripheral_security_initiated_event_process( const uint8_t* in )
 {
-  aci_gap_slave_security_initiated_event( );
+  aci_gap_peripheral_security_initiated_event( );
 }
 
 /* ACI_GAP_BOND_LOST_EVENT callback function */
@@ -808,7 +810,7 @@ __WEAK void aci_l2cap_connection_update_req_event( uint16_t Connection_Handle,
                                                    uint16_t L2CAP_Length,
                                                    uint16_t Interval_Min,
                                                    uint16_t Interval_Max,
-                                                   uint16_t Slave_Latency,
+                                                   uint16_t Latency,
                                                    uint16_t Timeout_Multiplier )
 {
 }
@@ -822,7 +824,7 @@ static void aci_l2cap_connection_update_req_event_process( const uint8_t* in )
                                          rp0->L2CAP_Length,
                                          rp0->Interval_Min,
                                          rp0->Interval_Max,
-                                         rp0->Slave_Latency,
+                                         rp0->Latency,
                                          rp0->Timeout_Multiplier );
 }
 
@@ -1389,6 +1391,18 @@ static void aci_gatt_mult_notification_event_process( const uint8_t* in )
                                     rp0->Offset,
                                     rp0->Data_Length,
                                     rp0->Data );
+}
+
+/* ACI_GATT_NOTIFICATION_COMPLETE_EVENT callback function */
+__WEAK void aci_gatt_notification_complete_event( uint16_t Attr_Handle )
+{
+}
+
+/* ACI_GATT_NOTIFICATION_COMPLETE_EVENT process function */
+static void aci_gatt_notification_complete_event_process( const uint8_t* in )
+{
+  aci_gatt_notification_complete_event_rp0 *rp0 = (void*)in;
+  aci_gatt_notification_complete_event( rp0->Attr_Handle );
 }
 
 /* ACI_GATT_READ_EXT_EVENT callback function */

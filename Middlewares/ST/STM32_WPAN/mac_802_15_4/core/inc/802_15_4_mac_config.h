@@ -366,6 +366,17 @@ typedef enum MAC_Pib_Ids_Tag {
 #endif
     /*! Attribute ID of enabling the promiscuous mode */
     g_MAC_PROMISCUOUS_MODE_c = (uint8_t) 0x51,
+    
+    /*! -Id configure MAC MAX CSMA-CA Number of Retry */
+    /*! - Default value : 1 */
+    /*! - Range : [1..5] */
+    g_MAC_PROP_MAX_CSMA_RETRY_c =  (uint8_t) 0xFD,
+    
+    /*! -Id to do not wait if PB is not set within DataPollReq ACK */
+    /*! -using this may lead to interrop issue */
+    g_MAC_PROP_STRICT_DATA_POLL_REQ_c =  (uint8_t) 0xFE,
+    
+	
 } MAC_Pib_Ids_t;
 
 

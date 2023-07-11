@@ -305,6 +305,8 @@ typedef enum
   CFG_TASK_MSG_FROM_M0_TO_M4,
   CFG_TASK_SEND_CLI_TO_M0,
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
+  CFG_TASK_TRACE,
+  CFG_TASK_AMM_BCKGND,
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
@@ -376,5 +378,16 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
+/******************************************************************************
+ * MEMORY MANAGER
+ ******************************************************************************/
+#define CFG_MM_POOL_SIZE				(4096U)
+#define CFG_AMM_VIRTUAL_MEMORY_NUMBER			(1U)
+#define CFG_AMM_VIRTUAL_APP_TRACE                    	(1U)
+#define CFG_AMM_VIRTUAL_APP_TRACE_BUFFER_SIZE        	(1024U)
+#define CFG_AMM_POOL_SIZE                           	(CFG_MM_POOL_SIZE / sizeof (uint32_t)) \
+							+ (AMM_VIRTUAL_INFO_ELEMENT_SIZE * CFG_AMM_VIRTUAL_MEMORY_NUMBER)
+
+#define CFG_AMM_ENABLED                             	(1U)
 #endif /*APP_CONF_H */
 

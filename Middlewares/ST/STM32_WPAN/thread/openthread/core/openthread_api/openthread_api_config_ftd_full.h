@@ -90,7 +90,7 @@
 /* Define to 1 to enable Thread Test Harness reference device support. */
 #define OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE 1
 
-/* Define to 1 to eanble Config MLR */
+/* Define to 1 to enable Config MLR */
 #define OPENTHREAD_CONFIG_MLR_ENABLE 1
 
 /* Define to 1 to enable DNS Client support */

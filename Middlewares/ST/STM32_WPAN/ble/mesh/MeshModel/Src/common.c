@@ -432,7 +432,7 @@ MOBLE_RESULT TimeDttFGet(MOBLEUINT32 timeMs, MOBLEUINT8* timeDttF)
 
 /**
 * @brief  Get actual value in milliseconds from default transition step resolution 
-* @param  time_param: intger value received for transition time
+* @param  time_param: integer value received for transition time
 * @retval stepResolution 
  */                                         
 MOBLEUINT32 Get_StepResolutionValue(MOBLEUINT8 time_param)
@@ -1200,7 +1200,7 @@ MOBLEUINT8 Tid_CheckAndUpdate(MOBLEUINT8 currentMsgTid,
   * @brief Function is used to retrieve the byte by byte values from 16 bit variable
   * and copy in one byte size array.  
   * @param pArray: pointer too the input array
-  * @param inputWord: 16 bit varibale  
+  * @param inputWord: 16 bit variabale  
 */
 void CopyU8LittleEndienArray_fromU16word (MOBLEUINT8* pArray, MOBLEUINT16 inputWord)
 {
@@ -1257,7 +1257,7 @@ MOBLEUINT32 CopyU8LittleEndienArrayToU32word (MOBLEUINT8* pArray)
   * @brief Function is used to retrieve the byte by byte values from 32 bit variable
   * and copy in one byte size array.  
   * @param pArray: pointer too the input array
-  * @param inputWord: 32 bit varibale  
+  * @param inputWord: 32 bit variabale  
 */
 void CopyU8LittleEndienArray_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputWord)
 {
@@ -1272,7 +1272,7 @@ void CopyU8LittleEndienArray_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputW
   * @brief Function is used to retrieve only two last byte values from 32 bit variable
   * and copy in one byte size array.  
   * @param pArray: pointer too the input array
-  * @param inputWord: 16 bit varibale  
+  * @param inputWord: 16 bit variabale  
 */
 void CopyU8LittleEndienArray_2B_fromU32word (MOBLEUINT8* pArray, MOBLEUINT32 inputWord)
 {
@@ -1380,7 +1380,7 @@ transition_event_e Transition_Sm(transition_params_t* pTrParams,
   if (pTrParams->trStatus == TRANSITION_STATUS_STOP)
   {
     if(pTrParams->trTimeMs > 2000 &&
-       /* optimization to not generate publish event if step resoltuion is comparable to transition time */
+       /* optimization to not generate publish event if step resolution is comparable to transition time */
        pTrParams->stepResolutionMs < pTrParams->trTimeMs)
   {
       /* Intermediate publish event to be generated after 1 second of start */
@@ -1432,7 +1432,7 @@ transition_event_e Transition_Sm(transition_params_t* pTrParams,
   {
     if(pTrParams->trStatus == TRANSITION_STATUS_DELAY)
     {
-      /* Switcht to run state and timer started */
+      /* Switch to run state and timer started */
       pTrParams->trStatus = TRANSITION_STATUS_RUNNING;
       transitionEvent = TRANSITION_EVENT_TIMER_START;
     }
@@ -1868,7 +1868,7 @@ MOBLEBOOL Wait_RandomTime(void)
                                         
      Clockflag = 1;
    } 
-/* The function will called untill the testcount will not become zero */     
+/* The function will called until the testcount will not become zero */     
 
      if((Clock_Time() - check_Time) >=  wait_Time)
      {

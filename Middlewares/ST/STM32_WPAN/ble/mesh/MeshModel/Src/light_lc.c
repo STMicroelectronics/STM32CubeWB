@@ -104,7 +104,7 @@ typedef struct
   MOBLEUINT32 luxLevelOut;
   /* Used to calculate intermediate lux value in transition */
   MOBLEUINT32 initialLightLuxOut;
-  /* Used to caluculate intermediate lux value in transition */
+  /* Used to calculate intermediate lux value in transition */
   MOBLEUINT32 targetLightLuxOut;
   /* Last lightness update tick in PI regulator */
   MOBLEUINT32 piLightnessUpdateTick;
@@ -420,7 +420,7 @@ MOBLE_RESULT LightLcServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **dat
   * @param  plength: Pointer to the Length of the data, to be updated by application
   * @param  pRxData: Pointer to the data received in packet.
   * @param  dataLength: length of the data in packet.
-  * @param  response: Value to indicate wheather message is acknowledged meassage or not.
+  * @param  response: Value to indicate wether message is acknowledged meassage or not.
   * @retval MOBLE_RESULT_SUCCESS
   */
 __weak
@@ -2287,7 +2287,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
                                            LIGHT_CONTROL_TIME_RUN_ON_PID,
                                            LC_TIME_RUN_ON_PID_INDEX,
                                            &tempVal);
-        /* step resoultion = transition time to avoid intermediate trigger in run */
+        /* step resolution = transition time to avoid intermediate trigger in run */
         transitionEvent = Light_LC_TransitionUpdate
           (pLcParams, 0, 1, 0, tempVal, tempVal);
         
@@ -3207,7 +3207,7 @@ MOBLE_RESULT Light_LC_Fsm(lc_event_e event,
 /**
   * @brief  Light LC property table initialization
   * @param  Reference to LC parameters
-  * @retval Fail if proeprty id or index inappropriate, else success
+  * @retval Fail if property id or index inappropriate, else success
   */
 static
 MOBLE_RESULT Light_LC_PropertyTableInit(lc_param_t* pLcParams)
@@ -3433,8 +3433,8 @@ void LightLC_SaveModelStates(MOBLEUINT8 elementIndex,
   * @param  Binded Generic onPowerUp
   * @param  Binded Light Lightness Default
   * @param  Binded Light Lightness Last
-  * @param  Binded Light Lightness Acutal last known value
-  * @param  Reference to Light Acutal to be set
+  * @param  Binded Light Lightness Actual last known value
+  * @param  Reference to Light Actual to be set
   * @retval If set Light Actual to be updated
   */
 __weak
@@ -3659,7 +3659,7 @@ MOBLE_RESULT Light_LC_SetTransitionTimeZero(MOBLEUINT8 elementIndex)
   *         MOTION_SENSED_PID, PEOPLE_COUNT_PID, PRESENCE_DETECTED_PID,
   *         TIME_SINCE_MOTION_SENSED_PID and PRESENT_AMBIENT_LIGHT_LEVEL_PID
   *         Used for reporting occupancy sensing
-  *         Mandatory requirement for LC Server to process sensor client with these porperty IDs
+  *         Mandatory requirement for LC Server to process sensor client with these property IDs
   * @param  Targeted LC Server lement index
   * @param  Property id
   * @param  Property value
@@ -3821,7 +3821,7 @@ void Light_LC_LigtnessLinearUnsolicitedChange(MOBLEUINT8 lightnessLinearelementI
   *         returns max time after which call to process Light_LC_Process is required
   *         to adjust internal states or to adjust Light Lightness or to publish status
   * @param  None
-  * @retval sleep time in miliseconds
+  * @retval sleep time in milliseconds
   */
 __weak
 MOBLEUINT32 Light_LC_SleepDurationMs_Get(void)
@@ -4049,7 +4049,7 @@ MOBLE_RESULT Light_LCs_Init(void* lcsBuff,
       
       LcServerP->ambientLuxLevel = 0xFFFFFF; /* corresponds to value not known */
       
-      /* Retreiving property values from NVM pending */
+      /* Retrieving property values from NVM pending */
     }
   }
   
@@ -4082,7 +4082,7 @@ MOBLE_RESULT Light_LCs_Init(void* lcsBuff,
   * @param  Generic On Off Server elements as defined by user
   * @param  Generic On Off Setup Server elements as defined by user
   * @param  Light Lightness Server elements as defined by user
-  * @retval Success if dependcies are appropriate
+  * @retval Success if dependencies are appropriate
   */
 __weak
 MOBLE_RESULT ExtractLcServerElementIndex(MOBLEUINT8* pLcsElementIndex,
@@ -4099,7 +4099,7 @@ MOBLE_RESULT ExtractLcServerElementIndex(MOBLEUINT8* pLcsElementIndex,
   if(noOfElements < 2)
   {
     result = MOBLE_RESULT_FAIL;
-    TRACE_M(TF_LIGHT_LC_M, "Atleast 2 elements are required for LC server\r\n");
+    TRACE_M(TF_LIGHT_LC_M, "At least 2 elements are required for LC server\r\n");
   }
   else
   {

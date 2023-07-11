@@ -58,7 +58,6 @@ void MX_APPE_Init(void);
 void MX_APPE_Process(void);
 void Init_Exti(void);
 void Init_Smps(void);
-
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */

@@ -51,7 +51,7 @@ typedef struct ActPac_s {
   uint8_t StateMachineNo ;      /* State machine number (0 - 7) */
   uint8_t ActionTag;            /* Bitfield for configuration of the action packet
                                  * PLL_TRIG, TXRX, TIMER_WAKEUP, TIMESTAMP_POSITION */
-  uint32_t WakeupTime;          /* Time before runing the action packet (us) */
+  uint32_t WakeupTime;          /* Time before running the action packet (us) */
                                 /* Applicable only if TIMER_WAKEUP flag is set in ActionTag */
   uint32_t ReceiveWindowLength; /* Rx window size in (us). Applicable only for Rx */
   void * data;                  /* Payload to send. Applicable only for Tx */

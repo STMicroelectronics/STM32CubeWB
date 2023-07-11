@@ -148,7 +148,7 @@ void MESH_Init(void)
   /* This function also checks for Power OnOff Cycles     
      Define the following Macro "ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE" 
      to check the Power-OnOff Cycles
-    5 Continous cycles of OnOff with Ontime <2 sec will cause unprovisioning
+    5 Continuous cycles of OnOff with Ontime <2 sec will cause unprovisioning
   */
   Appli_Init(&PrvnDevKeyFlag);
   
@@ -161,7 +161,7 @@ void MESH_Init(void)
   /* Checks if the node is already provisioned or not */
   if (BLEMesh_IsUnprovisioned() == MOBLE_TRUE)
   {
-    BLEMesh_InitUnprovisionedNode(); /* Initalizes Unprovisioned node */
+    BLEMesh_InitUnprovisionedNode(); /* Initializes  Unprovisioned node */
 
     TRACE_I(TF_PROVISION,"Unprovisioned device \r\n");
     
@@ -171,7 +171,7 @@ void MESH_Init(void)
   }
   else
   {
-    BLEMesh_InitProvisionedNode();  /* Initalizes Provisioned node */
+    BLEMesh_InitProvisionedNode();  /* Initializes  Provisioned node */
     TRACE_I(TF_PROVISION,"Provisioned node \r\n");
     TRACE_I(TF_INIT,"Provisioned Node Address: [%04x] \n\r", BLEMesh_GetAddress());       
   }
@@ -180,7 +180,7 @@ void MESH_Init(void)
   /* This function also checks for Power OnOff Cycles     
      Define the following Macro "ENABLE_UNPROVISIONING_BY_POWER_ONOFF_CYCLE" 
      to check the Power-OnOff Cycles
-    5 Continous cycles of OnOff with Ontime <2 sec will cause unprovisioning
+    5 Continuous cycles of OnOff with Ontime <2 sec will cause unprovisioning
   */
 //  Appli_Init(&PrvnDevKeyFlag);
 //#if PROVISIONER_FEATURE  

@@ -32,7 +32,7 @@
  * SEMS.S.C02.Tx | Display Protected Message | True
  * SEMS.S.C03.Tx | Cancel All Messages | True
  *
- * Client Atributes
+ * Client Attributes
  * SEMS.C.Afffd | ClusterRevision | True
  * SEMS.C.Afffe | AttributeReportingStatus | True
  *
@@ -141,7 +141,7 @@ struct ZbZclMsgMessageConfT {
     uint8_t confirm_response[ZCL_MESSAGE_CONF_RSP_LEN]; /**< Message Confirmation Response */
 };
 
-/** Get Messsage Cancellation command structure */
+/** Get Message Cancellation command structure */
 struct ZbZclMsgGetMsgCancellationT {
     uint32_t earliest_impl_time; /**< Earliest Implementation Time */
 };

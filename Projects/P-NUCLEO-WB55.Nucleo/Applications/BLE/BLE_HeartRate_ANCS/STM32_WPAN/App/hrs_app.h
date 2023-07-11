@@ -63,4 +63,4 @@ void HRSAPP_Init( void );
 }
 #endif
 
-#endif /* HRS_APP_H */
+#endif /*HRS_APP_H */

@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_conf.h
-  * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_conf.h
+  * @author  MCD Application Team
+  * @brief   Application configuration file for STM32WPAN Middleware.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -67,7 +67,7 @@
  */
 #define CFG_DEBUG_TRACE_UART    hw_uart1
 #define CFG_CONSOLE_MENU
-#define CFG_CLI_UART    hw_lpuart1
+#define CFG_CLI_UART            hw_lpuart1
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -107,6 +107,11 @@
 #define CFG_LPM_SUPPORTED   1
 #endif /* CFG_FULL_LOW_POWER */
 /******************************************************************************
+ * RTC interface
+ ******************************************************************************/
+#define HAL_RTCEx_WakeUpTimerIRQHandler(...)  HW_TS_RTC_Wakeup_Handler( )
+
+/******************************************************************************
  * Timer Server
  ******************************************************************************/
 /**
@@ -139,10 +144,10 @@
  * It divides the RTC CLK by 16
  */
 
-#define CFG_RTCCLK_DIV  (16)
-#define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (0x0F)
-#define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
+#define CFG_RTCCLK_DIV            (16)
+#define CFG_RTC_WUCKSEL_DIVIDER   (0)
+#define CFG_RTC_ASYNCH_PRESCALER  (0x0F)
+#define CFG_RTC_SYNCH_PRESCALER   (0x7FFF)
 
 #else
 
@@ -180,8 +185,9 @@
 
 #endif
 
-/** tick timer value in us */
+/** tick timer values */
 #define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE )
+#define CFG_TS_TICK_VAL_PS        DIVR( ((uint64_t)CFG_RTCCLK_DIV * 1e12), (uint64_t)LSE_VALUE )
 
 typedef enum
 {
@@ -236,7 +242,7 @@ typedef enum
  * When both are set to 0, no trace are output
  * When both are set to 1,  CFG_DEBUG_TRACE_FULL is selected
  */
-#define CFG_DEBUG_TRACE_LIGHT     1
+#define CFG_DEBUG_TRACE_LIGHT     0
 #define CFG_DEBUG_TRACE_FULL      0
 
 #if (( CFG_DEBUG_TRACE != 0 ) && ( CFG_DEBUG_TRACE_LIGHT == 0 ) && (CFG_DEBUG_TRACE_FULL == 0))
@@ -263,7 +269,7 @@ typedef enum
  * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
  */
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
-#define MAX_DBG_TRACE_MSG_SIZE 1024
+#define MAX_DBG_TRACE_MSG_SIZE   1024
 
 /******************************************************************************
  * Configure Log level for Application
@@ -284,20 +290,24 @@ typedef enum
 #define CFG_LED_SUPPORTED         1
 #define CFG_BUTTON_SUPPORTED      1
 #endif /* CFG_FULL_LOW_POWER */
+
 /* USER CODE END Defines */
 
 /******************************************************************************
  * FreeRTOS
  ******************************************************************************/
+/* USER CODE BEGIN FreeRTOS */
 
+/* USER CODE END FreeRTOS */
 #define CFG_SHCI_USER_EVT_PROCESS_NAME        "SHCI_USER_EVT_PROCESS"
 #define CFG_SHCI_USER_EVT_PROCESS_ATTR_BITS   (0)
 #define CFG_SHCI_USER_EVT_PROCESS_CB_MEM      (0)
 #define CFG_SHCI_USER_EVT_PROCESS_CB_SIZE     (0)
 #define CFG_SHCI_USER_EVT_PROCESS_STACK_MEM   (0)
 #define CFG_SHCI_USER_EVT_PROCESS_PRIORITY    osPriorityNone
-#define CFG_SHCI_USER_EVT_PROCESS_STACK_SIZE  (128 * 7)
+#define CFG_SHCI_USER_EVT_PROCESS_STACK_SIZE  (128 * 20)
 
+/* USER CODE BEGIN FreeRTOS_Defines */
 #define CFG_TASK_NOTIFY_M0_TO_M4_PROCESS_NAME        "TASK_NOTIFY_M0_TO_M4_PROCESS"
 #define CFG_TASK_REQUEST_M0_TO_M4_PROCESS_NAME       "TASK_REQUEST_M0_TO_M4_PROCESS"
 #define CFG_TASK_NWK_FORM_PROCESS_NAME               "TASK_NWK_FORM_PROCESS"
@@ -322,7 +332,7 @@ typedef enum
  */
 typedef enum
 {
-    CFG_LPM_APP,
+  CFG_LPM_APP,
   /* USER CODE BEGIN CFG_LPM_Id_t */
 
   /* USER CODE END CFG_LPM_Id_t */

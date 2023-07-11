@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -22,7 +22,6 @@
 #include "stm32wbxx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "hw.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,7 +60,9 @@ extern DMA_HandleTypeDef hdma_lpuart1_tx;
 extern DMA_HandleTypeDef hdma_usart1_tx;
 extern UART_HandleTypeDef hlpuart1;
 extern UART_HandleTypeDef huart1;
+extern RTC_HandleTypeDef hrtc;
 extern TIM_HandleTypeDef htim17;
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -78,7 +79,9 @@ void NMI_Handler(void)
 
   /* USER CODE END NonMaskableInt_IRQn 0 */
   /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
-
+  while (1)
+  {
+  }
   /* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
@@ -177,6 +180,20 @@ void PVD_PVM_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles RTC wake-up interrupt through EXTI line 19.
+  */
+void RTC_WKUP_IRQHandler(void)
+{
+  /* USER CODE BEGIN RTC_WKUP_IRQn 0 */
+
+  /* USER CODE END RTC_WKUP_IRQn 0 */
+  HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
+  /* USER CODE BEGIN RTC_WKUP_IRQn 1 */
+
+  /* USER CODE END RTC_WKUP_IRQn 1 */
+}
+
+/**
   * @brief This function handles Flash global interrupt.
   */
 void FLASH_IRQHandler(void)
@@ -242,6 +259,20 @@ void C2SEV_PWR_C2H_IRQHandler(void)
   /* USER CODE BEGIN C2SEV_PWR_C2H_IRQn 1 */
 
   /* USER CODE END C2SEV_PWR_C2H_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM1 trigger and commutation interrupts and TIM17 global interrupt.
+  */
+void TIM1_TRG_COM_TIM17_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 0 */
+
+  /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim17);
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 1 */
+
+  /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 1 */
 }
 
 /**
@@ -340,27 +371,7 @@ void FPU_IRQHandler(void)
   /* USER CODE END FPU_IRQn 1 */
 }
 
-/**
-  * @brief This function handles TIM1 trigger and commutation interrupts and TIM17 global interrupt.
-  */
-void TIM1_TRG_COM_TIM17_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 0 */
-
-  /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim17);
-  /* USER CODE BEGIN TIM1_TRG_COM_TIM17_IRQn 1 */
-
-  /* USER CODE END TIM1_TRG_COM_TIM17_IRQn 1 */
-}
-
-
 /* USER CODE BEGIN 1 */
-void RTC_WKUP_IRQHandler(void)
-{
-  HW_TS_RTC_Wakeup_Handler();
-}
-
 /**
   * @brief  This function handles External External line 4 interrupt request.
   * @param  None

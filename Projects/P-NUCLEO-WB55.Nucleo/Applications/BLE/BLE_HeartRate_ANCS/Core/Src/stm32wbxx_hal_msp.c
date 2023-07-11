@@ -390,28 +390,6 @@ void HAL_RNG_MspDeInit(RNG_HandleTypeDef* hrng)
 */
 void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
 {
-//  if(hrtc->Instance==RTC)
-//  {
-//  /* USER CODE BEGIN RTC_MspInit 0 */
-//  HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
-//
-//  /**
-//  *  Write twice the value to flush the APB-AHB bridge
-//  *  This bit shall be written in the register before writing the next one
-//  */
-//  HAL_PWR_EnableBkUpAccess();
-//
-//  __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE); /**< Select LSI as RTC Input */
-//  /* USER CODE END RTC_MspInit 0 */
-//    /* Peripheral clock enable */
-//    __HAL_RCC_RTC_ENABLE();
-//    __HAL_RCC_RTCAPB_CLK_ENABLE();
-//    
-//  /* USER CODE BEGIN RTC_MspInit 1 */
-//  HAL_RTCEx_EnableBypassShadow(hrtc);
-//  /* USER CODE END RTC_MspInit 1 */
-//  }
-//
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   if(hrtc->Instance==RTC)
   {
@@ -470,4 +448,3 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

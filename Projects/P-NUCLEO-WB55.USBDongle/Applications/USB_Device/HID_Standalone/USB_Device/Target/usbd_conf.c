@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include "main.h"
 #include "stm32wbxx.h"
 #include "stm32wbxx_hal.h"
 #include "usbd_def.h"

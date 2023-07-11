@@ -109,7 +109,7 @@ struct ZbZclClusterT * ZbZclOnOffServerAlloc(struct ZigBeeT *zb, uint8_t endpoin
     struct ZbZclOnOffServerCallbacksT *callbacks, void *arg);
 
 /**
- * Callback to notify Level cluster when an OnOff command is recevied.
+ * Callback to notify Level cluster when an OnOff command is received.
  * @param level_cluster Level cluster instance to be notified
  * @param on_off_command OnOff command ID that was received
  * @return Void

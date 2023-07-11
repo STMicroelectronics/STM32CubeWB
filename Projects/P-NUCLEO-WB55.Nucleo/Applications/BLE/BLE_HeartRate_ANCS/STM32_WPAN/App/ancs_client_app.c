@@ -1458,7 +1458,7 @@ void ANCS_App_KeyButton2Action(void)
 }
 void ANCS_App_KeyButton3Action(void)
 {
-
+  
 }
 
 #if (GET_ACTION_ID_FROM_UART == 1)

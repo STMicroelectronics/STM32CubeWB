@@ -3,37 +3,16 @@
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
-  *
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2020-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
-  ******************************************************************************
-  @verbatim
-  ==============================================================================
-                    ##### IMPORTANT NOTE #####
-  ==============================================================================
-
-  This application requests having the stm32wb5x_Zigbee_fw.bin binary
-  flashed on the Wireless Coprocessor.
-  If it is not the case, you need to use STM32CubeProgrammer to load the appropriate
-  binary.
-
-  All available binaries are located under following directory:
-  /Projects/STM32_Copro_Wireless_Binaries
-
-  Refer to UM2237 to learn how to use/install STM32CubeProgrammer.
-  Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the
-  detailed procedure to change the Wireless Coprocessor binary.
-
-  @endverbatim
-  ******************************************************************************
   ******************************************************************************
   */
 /* USER CODE END Header */
@@ -42,11 +21,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
-#include "dbg_trace.h"
-#include "hw_conf.h"
-#include "otp.h"
-#include "stm32_seq.h"
 
 /* USER CODE END Includes */
 
@@ -57,6 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -65,7 +40,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- IPCC_HandleTypeDef hipcc;
+IPCC_HandleTypeDef hipcc;
 
 UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart1;
@@ -123,7 +98,7 @@ int main(void)
   PeriphCommonClock_Config();
 
   /* IPCC initialisation */
-   MX_IPCC_Init();
+  MX_IPCC_Init();
 
   /* USER CODE BEGIN SysInit */
 
@@ -465,7 +440,10 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+  __disable_irq();
+  while (1)
+  {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
 

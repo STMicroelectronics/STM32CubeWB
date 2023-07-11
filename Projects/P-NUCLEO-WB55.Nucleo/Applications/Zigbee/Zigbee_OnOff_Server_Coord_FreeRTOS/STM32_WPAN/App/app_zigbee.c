@@ -2,12 +2,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : App/app_zigbee.c
-  * Description        : Zigbee Application.
+  * @file    App/app_zigbee.c
+  * @author  MCD Application Team
+  * @brief   Zigbee Application.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -50,7 +51,7 @@
 #define SW1_ENDPOINT                                17
 
 /* USER CODE BEGIN PD */
-#define SW1_GROUP_ADDR          0x0001
+#define SW1_GROUP_ADDR                              0x0001
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/
@@ -78,32 +79,33 @@ static void Receive_Notification_From_M0(void);
 static void APP_ZIGBEE_ProcessNotifyM0ToM4(void * argument);
 static void APP_ZIGBEE_ProcessRequestM0ToM4(void * argument);
 static void APP_ZIGBEE_ProcessNwkForm(void * argument);
+
 /* USER CODE BEGIN PFP */
 static void APP_ZIGBEE_ConfigGroupAddr(void);
 /* USER CODE END PFP */
 
 /* Private variables ---------------------------------------------------------*/
-static TL_CmdPacket_t *p_ZIGBEE_otcmdbuffer;
-static TL_EvtPacket_t *p_ZIGBEE_notif_M0_to_M4;
-static TL_EvtPacket_t *p_ZIGBEE_request_M0_to_M4;
-static __IO uint32_t CptReceiveNotifyFromM0 = 0;
-static __IO uint32_t CptReceiveRequestFromM0 = 0;
-static volatile int FlagReceiveAckFromM0 = 0;
+static TL_CmdPacket_t   *p_ZIGBEE_otcmdbuffer;
+static TL_EvtPacket_t   *p_ZIGBEE_notif_M0_to_M4;
+static TL_EvtPacket_t   *p_ZIGBEE_request_M0_to_M4;
+static __IO uint32_t    CptReceiveNotifyFromM0 = 0;
+static __IO uint32_t    CptReceiveRequestFromM0 = 0;
 
-static osThreadId_t OsTaskNotifyM0ToM4Id;
-static osThreadId_t OsTaskRequestM0ToM4Id;
-static osThreadId_t OsTaskNwkFormId;
-static osMutexId_t MtxZigbeeId;
+static osThreadId_t   OsTaskNotifyM0ToM4Id;
+static osThreadId_t   OsTaskRequestM0ToM4Id;
+static osThreadId_t   OsTaskNwkFormId;
+static osMutexId_t    MtxZigbeeId;
 
-osSemaphoreId_t TransferToM0Semaphore;
-osSemaphoreId_t StartupEndSemaphore;
+osSemaphoreId_t       TransferToM0Semaphore;
+osSemaphoreId_t       StartupEndSemaphore;
 
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_ZIGBEE_Config_t ZigbeeConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ZigbeeOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRequestBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 
-struct zigbee_app_info {
+struct zigbee_app_info
+{
   bool has_init;
   struct ZigBeeT *zb;
   enum ZbStartType startupControl;
@@ -115,47 +117,50 @@ struct zigbee_app_info {
 };
 static struct zigbee_app_info zigbee_app_info;
 
-/* FreeRtos stacks attributes */
-const osThreadAttr_t TaskNotifyM0ToM4_attr = {
-    .name = CFG_TASK_NOTIFY_M0_TO_M4_PROCESS_NAME,
-    .attr_bits = CFG_TASK_PROCESS_ATTR_BITS,
-    .cb_mem = CFG_TASK_PROCESS_CB_MEM,
-    .cb_size = CFG_TASK_PROCESS_CB_SIZE,
-    .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
-    //.priority = osPriorityNormal,
-    .priority = osPriorityBelowNormal,
-    .stack_size = CFG_TASK_PROCESS_STACK_SIZE
-};
-const osThreadAttr_t TaskRequestM0ToM4_attr = {
-    .name = CFG_TASK_REQUEST_M0_TO_M4_PROCESS_NAME,
-    .attr_bits = CFG_TASK_PROCESS_ATTR_BITS,
-    .cb_mem = CFG_TASK_PROCESS_CB_MEM,
-    .cb_size = CFG_TASK_PROCESS_CB_SIZE,
-    .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
-    //.priority = osPriorityNormal,
-    .priority = osPriorityBelowNormal,
-    .stack_size = CFG_TASK_PROCESS_STACK_SIZE
-};
-const osThreadAttr_t TaskNwkForm_attr = {
-    .name = CFG_TASK_NWK_FORM_PROCESS_NAME,
-    .attr_bits = CFG_TASK_PROCESS_ATTR_BITS,
-    .cb_mem = CFG_TASK_PROCESS_CB_MEM,
-    .cb_size = CFG_TASK_PROCESS_CB_SIZE,
-    .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
-    //.priority = osPriorityNormal,
-    .priority = osPriorityAboveNormal,
-    .stack_size = CFG_TASK_PROCESS_STACK_SIZE
-};
-
 /* OnOff server 1 custom callbacks */
 static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
 static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
 static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg);
 
-static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 = {
+static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 =
+{
   .off = onOff_server_1_off,
   .on = onOff_server_1_on,
   .toggle = onOff_server_1_toggle,
+};
+
+/* FreeRtos stacks attributes */
+const osThreadAttr_t TaskNotifyM0ToM4_attr =
+{
+    .name = CFG_TASK_NOTIFY_M0_TO_M4_PROCESS_NAME,
+    .attr_bits = CFG_TASK_PROCESS_ATTR_BITS,
+    .cb_mem = CFG_TASK_PROCESS_CB_MEM,
+    .cb_size = CFG_TASK_PROCESS_CB_SIZE,
+    .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
+    .priority = osPriorityBelowNormal,
+    .stack_size = CFG_TASK_PROCESS_STACK_SIZE
+};
+
+const osThreadAttr_t TaskRequestM0ToM4_attr =
+{
+    .name = CFG_TASK_REQUEST_M0_TO_M4_PROCESS_NAME,
+    .attr_bits = CFG_TASK_PROCESS_ATTR_BITS,
+    .cb_mem = CFG_TASK_PROCESS_CB_MEM,
+    .cb_size = CFG_TASK_PROCESS_CB_SIZE,
+    .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
+    .priority = osPriorityBelowNormal,
+    .stack_size = CFG_TASK_PROCESS_STACK_SIZE
+};
+
+const osThreadAttr_t TaskNwkForm_attr =
+{
+    .name = CFG_TASK_NWK_FORM_PROCESS_NAME,
+    .attr_bits = CFG_TASK_PROCESS_ATTR_BITS,
+    .cb_mem = CFG_TASK_PROCESS_CB_MEM,
+    .cb_size = CFG_TASK_PROCESS_CB_SIZE,
+    .stack_mem = CFG_TASK_PROCESS_STACK_MEM,
+    .priority = osPriorityAboveNormal,
+    .stack_size = CFG_TASK_PROCESS_STACK_SIZE
 };
 
 /* USER CODE BEGIN PV */
@@ -163,58 +168,71 @@ static struct ZbZclOnOffServerCallbacksT OnOffServerCallbacks_1 = {
 /* Functions Definition ------------------------------------------------------*/
 
 /* OnOff server off 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
+static enum ZclStatusCodeT onOff_server_1_off(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg)
+{
   /* USER CODE BEGIN 0 OnOff server 1 off 1 */
-    uint8_t endpoint;
+  uint8_t endpoint;
 
-    endpoint = ZbZclClusterGetEndpoint(cluster);
-    if (endpoint == SW1_ENDPOINT) {
-        APP_DBG("LED_RED OFF");
-        BSP_LED_Off(LED_RED);
-        (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 0);
-    }
-    else {
-        /* Unknown endpoint */
-        return ZCL_STATUS_FAILURE;
-    }
-    return ZCL_STATUS_SUCCESS;
+  endpoint = ZbZclClusterGetEndpoint(cluster);
+  if (endpoint == SW1_ENDPOINT) 
+  {
+    APP_DBG("LED_RED OFF");
+    BSP_LED_Off(LED_RED);
+    (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 0);
+  }
+  else 
+  {
+    /* Unknown endpoint */
+    return ZCL_STATUS_FAILURE;
+  }
+
+  return ZCL_STATUS_SUCCESS;
   /* USER CODE END 0 OnOff server 1 off 1 */
 }
 
 /* OnOff server on 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
+static enum ZclStatusCodeT onOff_server_1_on(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg)
+{
   /* USER CODE BEGIN 1 OnOff server 1 on 1 */
-    uint8_t endpoint;
+  uint8_t endpoint;
 
-    endpoint = ZbZclClusterGetEndpoint(cluster);
-    if (endpoint == SW1_ENDPOINT) {
-        APP_DBG("LED_RED ON");
-        BSP_LED_On(LED_RED);
-        (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 1);
-    }
-    else {
-        /* Unknown endpoint */
-        return ZCL_STATUS_FAILURE;
-    }
-    return ZCL_STATUS_SUCCESS;
+  endpoint = ZbZclClusterGetEndpoint(cluster);
+  if (endpoint == SW1_ENDPOINT) 
+  {
+    APP_DBG("LED_RED ON");
+    BSP_LED_On(LED_RED);
+    (void)ZbZclAttrIntegerWrite(cluster, ZCL_ONOFF_ATTR_ONOFF, 1);
+  }
+  else 
+  {
+    /* Unknown endpoint */
+    return ZCL_STATUS_FAILURE;
+  }
+  
+  return ZCL_STATUS_SUCCESS;
   /* USER CODE END 1 OnOff server 1 on 1 */
 }
 
 /* OnOff server toggle 1 command callback */
-static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg){
+static enum ZclStatusCodeT onOff_server_1_toggle(struct ZbZclClusterT *cluster, struct ZbZclAddrInfoT *srcInfo, void *arg)
+{
   /* USER CODE BEGIN 2 OnOff server 1 toggle 1 */
-    uint8_t attrVal;
+  uint8_t attrVal;
 
-    if (ZbZclAttrRead(cluster, ZCL_ONOFF_ATTR_ONOFF, NULL,
-            &attrVal, sizeof(attrVal), false) != ZCL_STATUS_SUCCESS) {
-        return ZCL_STATUS_FAILURE;
-    }
-    if (attrVal != 0) {
-        return onOff_server_1_off(cluster, srcInfo, arg);
-    }
-    else {
-        return onOff_server_1_on(cluster, srcInfo, arg);
-    }
+  if (ZbZclAttrRead(cluster, ZCL_ONOFF_ATTR_ONOFF, NULL,
+            &attrVal, sizeof(attrVal), false) != ZCL_STATUS_SUCCESS) 
+  {
+    return ZCL_STATUS_FAILURE;
+  }
+  
+  if (attrVal != 0) 
+  {
+    return onOff_server_1_off(cluster, srcInfo, arg);
+  }
+  else 
+  {
+    return onOff_server_1_on(cluster, srcInfo, arg);
+  }
   /* USER CODE END 2 OnOff server 1 toggle 1 */
 }
 
@@ -240,14 +258,13 @@ void APP_ZIGBEE_Init(void)
 
   /* Initialize the mutex */
   MtxZigbeeId = osMutexNew( NULL );
-    
+
   /* Initialize the semaphores */
   StartupEndSemaphore = osSemaphoreNew( 1, 0, NULL ); /*< Create the semaphore and make it busy at initialization */
   TransferToM0Semaphore = osSemaphoreNew( 1, 0, NULL );
 
   /* Register task */
   /* Create the different tasks */
-
   OsTaskNotifyM0ToM4Id = osThreadNew(APP_ZIGBEE_ProcessNotifyM0ToM4, NULL,&TaskNotifyM0ToM4_attr);
   OsTaskRequestM0ToM4Id = osThreadNew(APP_ZIGBEE_ProcessRequestM0ToM4, NULL,&TaskRequestM0ToM4_attr);
 
@@ -265,7 +282,7 @@ void APP_ZIGBEE_Init(void)
   /* Initialize Zigbee stack layers */
   APP_ZIGBEE_StackLayersInit();
 
-} /* APP_ZIGBEE_Init */
+}
 
 /**
  * @brief  Initialize Zigbee stack layers
@@ -298,7 +315,7 @@ static void APP_ZIGBEE_StackLayersInit(void)
 
   /* run the task */
   osThreadFlagsSet(OsTaskNwkFormId,1);
-} /* APP_ZIGBEE_StackLayersInit */
+}
 
 /**
  * @brief  Configure Zigbee application endpoints
@@ -323,9 +340,10 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
   zigbee_app_info.onOff_server_1 = ZbZclOnOffServerAlloc(zigbee_app_info.zb, SW1_ENDPOINT, &OnOffServerCallbacks_1, NULL);
   assert(zigbee_app_info.onOff_server_1 != NULL);
   ZbZclClusterEndpointRegister(zigbee_app_info.onOff_server_1);
+
   /* USER CODE BEGIN CONFIG_ENDPOINT */
   /* USER CODE END CONFIG_ENDPOINT */
-} /* APP_ZIGBEE_ConfigEndpoints */
+}
 
 /**
  * @brief  Handle Zigbee network forming and joining task for FreeRTOS
@@ -335,6 +353,7 @@ static void APP_ZIGBEE_ConfigEndpoints(void)
 static void APP_ZIGBEE_ProcessNwkForm(void *argument)
 {
   UNUSED(argument);
+
   for(;;)
   {
     osThreadFlagsWait(1,osFlagsWaitAll,osWaitForever);
@@ -347,7 +366,7 @@ static void APP_ZIGBEE_ProcessNwkForm(void *argument)
  * @param  None
  * @retval None
  */
-static void APP_ZIGBEE_NwkForm()
+static void APP_ZIGBEE_NwkForm(void)
 {
   if ((zigbee_app_info.join_status != ZB_STATUS_SUCCESS) && (HAL_GetTick() >= zigbee_app_info.join_delay))
   {
@@ -371,23 +390,28 @@ static void APP_ZIGBEE_NwkForm()
     config.channelList.list[0].page = 0;
     config.channelList.list[0].channelMask = 1 << CHANNEL; /*Channel in use */
 
-    /* Using ZbStartupWait (non-blocking) */
+    /* Using ZbStartupWait (blocking) */
     status = ZbStartupWait(zigbee_app_info.zb, &config);
 
     APP_DBG("ZbStartup Callback (status = 0x%02x)", status);
     zigbee_app_info.join_status = status;
 
-    if (status == ZB_STATUS_SUCCESS) {
-      /* USER CODE BEGIN 0 */
+    if (status == ZB_STATUS_SUCCESS)
+    {
       zigbee_app_info.join_delay = 0U;
       zigbee_app_info.init_after_join = true;
-      BSP_LED_On(LED_BLUE);
+      APP_DBG("Startup done !\n");
+      /* USER CODE BEGIN 3 */
+       BSP_LED_On(LED_BLUE);
+      /* USER CODE END 3 */
     }
     else
     {
-      /* USER CODE END 0 */
       APP_DBG("Startup failed, attempting again after a short delay (%d ms)", APP_ZIGBEE_STARTUP_FAIL_DELAY);
       zigbee_app_info.join_delay = HAL_GetTick() + APP_ZIGBEE_STARTUP_FAIL_DELAY;
+      /* USER CODE BEGIN 4 */
+
+      /* USER CODE END 4 */
     }
   }
 
@@ -396,7 +420,6 @@ static void APP_ZIGBEE_NwkForm()
   {
     osThreadFlagsSet(OsTaskNwkFormId,1);
   }
-
   /* USER CODE BEGIN NW_FORM */
   else
   {
@@ -410,12 +433,13 @@ static void APP_ZIGBEE_NwkForm()
     ZbNwkSet(zigbee_app_info.zb, ZB_NWK_NIB_ID_NetworkBroadcastDeliveryTime, &bcast_timeout, sizeof(bcast_timeout));
   }
   /* USER CODE END NW_FORM */
-} /* APP_ZIGBEE_NwkForm */
+}
 
 /*************************************************************
  * ZbStartupWait Blocking Call
  *************************************************************/
-struct ZbStartupWaitInfo {
+struct ZbStartupWaitInfo
+{
   bool active;
   enum ZbStatusCodeT status;
 };
@@ -426,8 +450,8 @@ static void ZbStartupWaitCb(enum ZbStatusCodeT status, void *cb_arg)
 
   info->status = status;
   info->active = false;
-  osSemaphoreRelease( StartupEndSemaphore );
-} /* ZbStartupWaitCb */
+  osSemaphoreRelease(StartupEndSemaphore);
+}
 
 enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
 {
@@ -435,23 +459,25 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
   enum ZbStatusCodeT status;
 
   info = malloc(sizeof(struct ZbStartupWaitInfo));
-  if (info == NULL) {
+  if (info == NULL)
+  {
     return ZB_STATUS_ALLOC_FAIL;
   }
   memset(info, 0, sizeof(struct ZbStartupWaitInfo));
 
   info->active = true;
   status = ZbStartup(zb, config, ZbStartupWaitCb, info);
-  if (status != ZB_STATUS_SUCCESS) {
+  if (status != ZB_STATUS_SUCCESS)
+  {
     info->active = false;
     return status;
   }
 
-  osSemaphoreAcquire( StartupEndSemaphore, osWaitForever );
+  osSemaphoreAcquire(StartupEndSemaphore, osWaitForever);
   status = info->status;
   free(info);
   return status;
-} /* ZbStartupWait */
+}
 
 /**
  * @brief  Trace the error or the warning reported.
@@ -461,12 +487,13 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
  */
 void APP_ZIGBEE_Error(uint32_t ErrId, uint32_t ErrCode)
 {
-  switch (ErrId) {
-  default:
-    APP_ZIGBEE_TraceError("ERROR Unknown ", 0);
-    break;
+  switch (ErrId)
+  {
+    default:
+      APP_ZIGBEE_TraceError("ERROR Unknown ", 0);
+      break;
   }
-} /* APP_ZIGBEE_Error */
+}
 
 /*************************************************************
  *
@@ -485,7 +512,8 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 {
   APP_DBG("**** Fatal error = %s (Err = %d)", pMess, ErrCode);
   /* USER CODE BEGIN TRACE_ERROR */
-  while (1U == 1U) {
+  while (1U == 1U) 
+  {
     BSP_LED_Toggle(LED1);
     HAL_Delay(500U);
     BSP_LED_Toggle(LED2);
@@ -495,7 +523,7 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
   }
   /* USER CODE END TRACE_ERROR */
 
-} /* APP_ZIGBEE_TraceError */
+}
 
 /**
  * @brief Check if the Coprocessor Wireless Firmware loaded supports Zigbee
@@ -508,57 +536,67 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
   WirelessFwInfo_t wireless_info_instance;
   WirelessFwInfo_t *p_wireless_info = &wireless_info_instance;
 
-  if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success) {
+  if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success)
+  {
     APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
   }
-  else {
+  else
+  {
     APP_DBG("**********************************************************");
     APP_DBG("WIRELESS COPROCESSOR FW:");
     /* Print version */
     APP_DBG("VERSION ID = %d.%d.%d", p_wireless_info->VersionMajor, p_wireless_info->VersionMinor, p_wireless_info->VersionSub);
 
-    switch (p_wireless_info->StackType) {
-    case INFO_STACK_TYPE_ZIGBEE_FFD:
-      APP_DBG("FW Type : FFD Zigbee stack");
-      break;
-   case INFO_STACK_TYPE_ZIGBEE_RFD:
-      APP_DBG("FW Type : RFD Zigbee stack");
-      break;
-    default:
-      /* No Zigbee device supported ! */
-      APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
-      break;
+    switch (p_wireless_info->StackType)
+    {
+      case INFO_STACK_TYPE_ZIGBEE_FFD:
+        APP_DBG("FW Type : FFD Zigbee stack");
+        break;
+
+      case INFO_STACK_TYPE_ZIGBEE_RFD:
+        APP_DBG("FW Type : RFD Zigbee stack");
+        break;
+
+      default:
+        /* No Zigbee device supported ! */
+        APP_ZIGBEE_Error((uint32_t)ERR_ZIGBEE_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL);
+        break;
     }
-     // print the application name
-    char* __PathProject__ =(strstr(__FILE__, "Zigbee") ? strstr(__FILE__, "Zigbee") + 7 : __FILE__);
-    char *del;
-    if ( (strchr(__FILE__, '/')) == NULL)
-        {del = strchr(__PathProject__, '\\');}
-    else 
-        {del = strchr(__PathProject__, '/');}
-    
-        int index = (int) (del - __PathProject__);
-        APP_DBG("Application flashed: %*.*s",index,index,__PathProject__);
-    
-    //print channel
+
+    /* print the application name */
+    char *__PathProject__ = (strstr(__FILE__, "Zigbee") ? strstr(__FILE__, "Zigbee") + 7 : __FILE__);
+    char *pdel = NULL;
+    if((strchr(__FILE__, '/')) == NULL)
+    {
+      pdel = strchr(__PathProject__, '\\');
+    }
+    else
+    {
+      pdel = strchr(__PathProject__, '/');
+    }
+
+    int index = (int)(pdel - __PathProject__);
+    APP_DBG("Application flashed: %*.*s", index, index, __PathProject__);
+
+    /* print channel */
     APP_DBG("Channel used: %d", CHANNEL);
-    //print Link Key
+    /* print Link Key */
     APP_DBG("Link Key: %.16s", sec_key_ha);
-    //print Link Key value hex   
+    /* print Link Key value hex */
     char Z09_LL_string[ZB_SEC_KEYSIZE*3+1];
-    Z09_LL_string[0]=0;
-    for(int str_index=0; str_index < ZB_SEC_KEYSIZE; str_index++)
-      {           
-        sprintf(&Z09_LL_string[str_index*3],"%02x ",sec_key_ha[str_index]);
-      }
-  
-    APP_DBG("Link Key value: %s",Z09_LL_string);
-    //print clusters allocated
-    APP_DBG("Clusters allocated are:");  
-    APP_DBG("OnOff Server on Endpoint %d",SW1_ENDPOINT);
+    Z09_LL_string[0] = 0;
+    for (int str_index = 0; str_index < ZB_SEC_KEYSIZE; str_index++)
+    {
+      sprintf(&Z09_LL_string[str_index*3], "%02x ", sec_key_ha[str_index]);
+    }
+
+    APP_DBG("Link Key value: %s", Z09_LL_string);
+    /* print clusters allocated */
+    APP_DBG("Clusters allocated are:");
+    APP_DBG("onOff Server on Endpoint %d", SW1_ENDPOINT);
     APP_DBG("**********************************************************");
   }
-} /* APP_ZIGBEE_CheckWirelessFirmwareInfo */
+}
 
 /*************************************************************
  *
@@ -569,22 +607,22 @@ static void APP_ZIGBEE_CheckWirelessFirmwareInfo(void)
 void APP_ZIGBEE_RegisterCmdBuffer(TL_CmdPacket_t *p_buffer)
 {
   p_ZIGBEE_otcmdbuffer = p_buffer;
-} /* APP_ZIGBEE_RegisterCmdBuffer */
+}
 
 Zigbee_Cmd_Request_t * ZIGBEE_Get_OTCmdPayloadBuffer(void)
 {
   return (Zigbee_Cmd_Request_t *)p_ZIGBEE_otcmdbuffer->cmdserial.cmd.payload;
-} /* ZIGBEE_Get_OTCmdPayloadBuffer */
+}
 
 Zigbee_Cmd_Request_t * ZIGBEE_Get_OTCmdRspPayloadBuffer(void)
 {
   return (Zigbee_Cmd_Request_t *)((TL_EvtPacket_t *)p_ZIGBEE_otcmdbuffer)->evtserial.evt.payload;
-} /* ZIGBEE_Get_OTCmdRspPayloadBuffer */
+}
 
 Zigbee_Cmd_Request_t * ZIGBEE_Get_NotificationPayloadBuffer(void)
 {
   return (Zigbee_Cmd_Request_t *)(p_ZIGBEE_notif_M0_to_M4)->evtserial.evt.payload;
-} /* ZIGBEE_Get_NotificationPayloadBuffer */
+}
 
 Zigbee_Cmd_Request_t * ZIGBEE_Get_M0RequestPayloadBuffer(void)
 {
@@ -611,7 +649,7 @@ void ZIGBEE_CmdTransfer(void)
 
   /* Wait completion of cmd */
   Wait_Getting_Ack_From_M0();
-} /* ZIGBEE_CmdTransfer */
+}
 
 /**
  * @brief  This function is called when the M0+ acknowledge the fact that it has received a Cmd
@@ -626,7 +664,7 @@ void TL_ZIGBEE_CmdEvtReceived(TL_EvtPacket_t *Otbuffer)
   UNUSED(Otbuffer);
 
   Receive_Ack_From_M0();
-} /* TL_ZIGBEE_CmdEvtReceived */
+}
 
 /**
  * @brief  This function is called when notification from M0+ is received.
@@ -639,7 +677,7 @@ void TL_ZIGBEE_NotReceived(TL_EvtPacket_t *Notbuffer)
   p_ZIGBEE_notif_M0_to_M4 = Notbuffer;
 
   Receive_Notification_From_M0();
-} /* TL_ZIGBEE_NotReceived */
+}
 
 /**
  * @brief  This function is called before sending any ot command to the M0
@@ -651,9 +689,8 @@ void TL_ZIGBEE_NotReceived(TL_EvtPacket_t *Notbuffer)
  */
 void Pre_ZigbeeCmdProcessing(void)
 {
-  osMutexAcquire( MtxZigbeeId, osWaitForever );
-} /* Pre_ZigbeeCmdProcessing */
-
+  osMutexAcquire(MtxZigbeeId, osWaitForever);
+}
 
 /**
  * @brief  This function waits for getting an acknowledgment from the M0.
@@ -663,9 +700,9 @@ void Pre_ZigbeeCmdProcessing(void)
  */
 static void Wait_Getting_Ack_From_M0(void)
 {
-    osSemaphoreAcquire( TransferToM0Semaphore, osWaitForever );
-  osMutexRelease( MtxZigbeeId );
-} /* Wait_Getting_Ack_From_M0 */
+  osSemaphoreAcquire(TransferToM0Semaphore, osWaitForever);
+  osMutexRelease(MtxZigbeeId);
+}
 
 /**
  * @brief  Receive an acknowledgment from the M0+ core.
@@ -676,9 +713,8 @@ static void Wait_Getting_Ack_From_M0(void)
  */
 static void Receive_Ack_From_M0(void)
 {
-    osSemaphoreRelease( TransferToM0Semaphore);
-} /* Receive_Ack_From_M0 */
-
+  osSemaphoreRelease(TransferToM0Semaphore);
+}
 
 /**
  * @brief  Receive a notification from the M0+ through the IPCC.
@@ -688,8 +724,8 @@ static void Receive_Ack_From_M0(void)
  */
 static void Receive_Notification_From_M0(void)
 {
-    CptReceiveNotifyFromM0++;
-    osThreadFlagsSet(OsTaskNotifyM0ToM4Id,1);
+  CptReceiveNotifyFromM0++;
+  osThreadFlagsSet(OsTaskNotifyM0ToM4Id,1);
 }
 
 /**
@@ -700,10 +736,10 @@ static void Receive_Notification_From_M0(void)
  */
 void TL_ZIGBEE_M0RequestReceived(TL_EvtPacket_t *Reqbuffer)
 {
-    p_ZIGBEE_request_M0_to_M4 = Reqbuffer;
+  p_ZIGBEE_request_M0_to_M4 = Reqbuffer;
 
-    CptReceiveRequestFromM0++;
-    osThreadFlagsSet(OsTaskRequestM0ToM4Id,1);
+  CptReceiveRequestFromM0++;
+  osThreadFlagsSet(OsTaskRequestM0ToM4Id,1);
 }
 
 /**
@@ -713,10 +749,10 @@ void TL_ZIGBEE_M0RequestReceived(TL_EvtPacket_t *Reqbuffer)
  */
 void APP_ZIGBEE_TL_INIT(void)
 {
-    ZigbeeConfigBuffer.p_ZigbeeOtCmdRspBuffer = (uint8_t *)&ZigbeeOtCmdBuffer;
-    ZigbeeConfigBuffer.p_ZigbeeNotAckBuffer = (uint8_t *)ZigbeeNotifRspEvtBuffer;
-    ZigbeeConfigBuffer.p_ZigbeeNotifRequestBuffer = (uint8_t *)ZigbeeNotifRequestBuffer;
-    TL_ZIGBEE_Init(&ZigbeeConfigBuffer);
+  ZigbeeConfigBuffer.p_ZigbeeOtCmdRspBuffer = (uint8_t *)&ZigbeeOtCmdBuffer;
+  ZigbeeConfigBuffer.p_ZigbeeNotAckBuffer = (uint8_t *)ZigbeeNotifRspEvtBuffer;
+  ZigbeeConfigBuffer.p_ZigbeeNotifRequestBuffer = (uint8_t *)ZigbeeNotifRequestBuffer;
+  TL_ZIGBEE_Init(&ZigbeeConfigBuffer);
 }
 
 /**
@@ -726,22 +762,26 @@ void APP_ZIGBEE_TL_INIT(void)
  */
 static void APP_ZIGBEE_ProcessNotifyM0ToM4(void * argument)
 {
-    UNUSED(argument);
-    for(;;)
-     {
-     osThreadFlagsWait(1,osFlagsWaitAll,osWaitForever);
-     if (CptReceiveNotifyFromM0 != 0) {
-        /* If CptReceiveNotifyFromM0 is > 1. it means that we did not serve all the events from the radio */
-        if (CptReceiveNotifyFromM0 > 1U) {
-            APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0);
-        }
-        else {
-            Zigbee_CallBackProcessing();
-        }
-        /* Reset counter */
-        CptReceiveNotifyFromM0 = 0;
+  UNUSED(argument);
+
+  for(;;)
+  {
+    osThreadFlagsWait(1,osFlagsWaitAll,osWaitForever);
+    if (CptReceiveNotifyFromM0 != 0)
+    {
+      /* If CptReceiveNotifyFromM0 is > 1. it means that we did not serve all the events from the radio */
+      if (CptReceiveNotifyFromM0 > 1U)
+      {
+        APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0);
+      }
+      else
+      {
+        Zigbee_CallBackProcessing();
+      }
+      /* Reset counter */
+      CptReceiveNotifyFromM0 = 0;
     }
-     }
+  }
 }
 
 /**
@@ -751,18 +791,20 @@ static void APP_ZIGBEE_ProcessNotifyM0ToM4(void * argument)
  */
 static void APP_ZIGBEE_ProcessRequestM0ToM4(void * argument)
 {
-    UNUSED(argument);
-     for(;;)
-     {
-       osThreadFlagsWait(1,osFlagsWaitAll,osWaitForever);
-       if (CptReceiveRequestFromM0 != 0) {
-          Zigbee_M0RequestProcessing();
-          CptReceiveRequestFromM0 = 0;
-       }
-     }
-}
-/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
+  UNUSED(argument);
 
+  for(;;)
+  {
+    osThreadFlagsWait(1,osFlagsWaitAll,osWaitForever);
+    if (CptReceiveRequestFromM0 != 0)
+    {
+      Zigbee_M0RequestProcessing();
+      CptReceiveRequestFromM0 = 0;
+    }
+  }
+}
+
+/* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
 /**
  * @brief  Set group addressing mode
  * @param  None
@@ -778,8 +820,6 @@ static void APP_ZIGBEE_ConfigGroupAddr(void)
   req.groupAddr = SW1_GROUP_ADDR;
   ZbApsmeAddGroupReq(zigbee_app_info.zb, &req, &conf);
 
-} /* APP_ZIGBEE_ConfigGroupAddr */
+}
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */
-
-

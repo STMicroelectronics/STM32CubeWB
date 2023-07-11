@@ -54,6 +54,7 @@ extern "C" {
 
 /* Exported functions ---------------------------------------------*/
   void APPE_Init( void );
+  void ProcessTrace(void);
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */

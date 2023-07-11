@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Lighting_Provisioner</name>
+        <name>BLE_MeshLightingProvisioner</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,19 +16,19 @@
                 <debug>0</debug>
                 <option>
                     <name>BrowseInfoPath</name>
-                    <state>Lighting_Provisioner\BrowseInfo</state>
+                    <state>BLE_MeshLightingProvisioner\BrowseInfo</state>
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>Lighting_Provisioner\Exe</state>
+                    <state>BLE_MeshLightingProvisioner\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>Lighting_Provisioner\Obj</state>
+                    <state>BLE_MeshLightingProvisioner\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>Lighting_Provisioner\List</state>
+                    <state>BLE_MeshLightingProvisioner\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -201,7 +201,7 @@
                 </option>
                 <option>
                     <name>BuildFilesPath</name>
-                    <state>Lighting_Provisioner</state>
+                    <state>BLE_MeshLightingProvisioner</state>
                 </option>
             </data>
         </settings>

@@ -316,5 +316,11 @@ typedef enum
 
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
+/******************************************************************************
+ * MEMORY MANAGER
+ ******************************************************************************/
+#define CFG_AMM_VIRTUAL_MEMORY_NUMBER               (1U)
+#define CFG_AMM_VIRTUAL_APP_TRACE                   (1U)
+#define CFG_AMM_VIRTUAL_APP_TRACE_BUFFER_SIZE       (DBG_TRACE_MSG_QUEUE_SIZE / 4U)
 #endif /*APP_CONF_H */
 

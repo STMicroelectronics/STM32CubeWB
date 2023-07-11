@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_conf.h
-  * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_conf.h
+  * @author  MCD Application Team
+  * @brief   Application configuration file for STM32WPAN Middleware.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -194,6 +194,7 @@ typedef enum
   CFG_TIM_PROC_ID_ISR,
   /* USER CODE BEGIN CFG_TimProcID_t */
   CFG_TIM_ZIGBEE_APP_ONOFF_TOOGLE_REPEAT,
+
   /* USER CODE END CFG_TimProcID_t */
 } CFG_TimProcID_t;
 
@@ -311,6 +312,7 @@ typedef enum
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
   /* USER CODE BEGIN CFG_IdleTask_Id_t */
   CFG_TASK_ZIGBEE_APP_START,
+
   /* USER CODE END CFG_IdleTask_Id_t */
   CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
@@ -334,6 +336,7 @@ typedef enum
   /* USER CODE BEGIN CFG_SCH_Prio_Id_t */
 
   /* USER CODE END CFG_SCH_Prio_Id_t */
+  CFG_SCH_PRIO_NBR  /**< Shall be last in the list */
 } CFG_SCH_Prio_Id_t;
 
 /**

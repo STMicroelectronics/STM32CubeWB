@@ -31,6 +31,7 @@
 #include "stm32_lpm.h"
 #include "app_ble.h"
 #include "shci.h"
+#include "app_debug.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -108,6 +109,8 @@ void APPE_Init( void )
 
   /* Display Dynamic concurrent mode (BLE and Thread)  */
   displayConcurrentMode();
+  
+  APPD_Init();
 
   /**
    * The Standby mode should not be entered before the initialization is over
@@ -323,7 +326,7 @@ static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
 static void APPE_SysEvtReadyProcessing( void )
 {
   /* Traces channel initialization */
-  TL_TRACES_Init( );
+  APPD_EnableCPU2();
 
   /* In the Context of Dynamic Concurrent mode, the Init and start of each stack must be split and executed
    * in the following order :

@@ -1,14 +1,14 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : stm_logging.c
-  * Description        : This file contains all the defines and functions used
+  * @file    stm_logging.c
+  * @author  MCD Application Team
+  * @brief   This file contains all the defines and functions used
   *                     for logging on Application examples.
-  *
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -76,7 +76,6 @@ static inline uint16_t logRegion(char *aLogString, uint16_t aMaxSize,
     case APPLI_LOG_REGION_GENERAL:
       strcpy(logRegionString, "[M4 APPLICATION]");
       break;
-      
     case APPLI_LOG_REGION_ZIGBEE_API:
       strcpy(logRegionString, "[M4 ZIGBEE API]");
       break;
@@ -128,7 +127,8 @@ static inline const char *levelToString(appliLogLevel_t aLogLevel)
  *
  * @returns  Number of bytes successfully written to the log buffer.
  */
-static inline uint16_t logLevel(char *aLogString, uint16_t aMaxSize, appliLogLevel_t aLogLevel)
+static inline uint16_t logLevel(char *aLogString, uint16_t aMaxSize,
+                                appliLogLevel_t aLogLevel)
 {
   return snprintf(aLogString, aMaxSize, "%s", levelToString(aLogLevel));
 }
@@ -172,18 +172,21 @@ void logApplication(appliLogLevel_t aLogLevel, appliLogRegion_t aLogRegion, cons
 
 #if (LOG_RTT_COLOR_ENABLE == 1U)
   /* Add level information */
-  length += logLevel(&logString[length], (LOG_PARSE_BUFFER_SIZE - length), aLogLevel);
+  length += logLevel(&logString[length], (LOG_PARSE_BUFFER_SIZE - length),
+      aLogLevel);
 #endif
 
 #if (LOG_REGION_ENABLE == 1U)
   /* Add Region information */
-  length += logRegion(&logString[length], (LOG_PARSE_BUFFER_SIZE - length), aLogRegion);
+  length += logRegion(&logString[length], (LOG_PARSE_BUFFER_SIZE - length),
+      aLogRegion);
 #endif
 
   /* Parse user string */
   va_list paramList;
   va_start(paramList, aFormat);
-  length += vsnprintf(&logString[length], (LOG_PARSE_BUFFER_SIZE - length), aFormat, paramList);
+  length += vsnprintf(&logString[length], (LOG_PARSE_BUFFER_SIZE - length),
+      aFormat, paramList);
   logString[length++] = '\r';
   logString[length++] = '\n';
   logString[length++] = 0;
@@ -192,8 +195,7 @@ void logApplication(appliLogLevel_t aLogLevel, appliLogRegion_t aLogRegion, cons
   if (aLogLevel <= APPLI_CONFIG_LOG_LEVEL)
   {
     printf("%s", logString);
-  }
-  else
+  }else
   {
     /* Print nothing */
   }

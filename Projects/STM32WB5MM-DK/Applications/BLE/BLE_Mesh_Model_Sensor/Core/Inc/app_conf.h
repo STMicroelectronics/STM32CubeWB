@@ -659,6 +659,7 @@ typedef enum
 {
   CFG_IDLEEVT_HCI_CMD_EVT_RSP_ID,
   CFG_IDLEEVT_SYSTEM_HCI_CMD_EVT_RSP_ID,
+  CFG_IDLEEVT_INPUT_OOB_RSP_ID,
 } CFG_IdleEvt_Id_t;
 
 /******************************************************************************

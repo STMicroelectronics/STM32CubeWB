@@ -833,6 +833,16 @@
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm_list.c</FilePath>
             </File>
+			<File>
+              <FileName>advanced_memory_manager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/advanced_memory_manager.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32_mm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/utilities/stm32_mm.c</FilePath>
+            </File>
             <File>
               <FileName>stm_queue.c</FileName>
               <FileType>1</FileType>

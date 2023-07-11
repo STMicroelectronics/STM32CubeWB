@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2020-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -44,15 +44,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-//#define DEMO_STACK_SIZE_LARGE       800u
-//#define DEMO_STACK_SIZE_REDUCED     300u
-//#define DEMO_BYTE_POOL_SIZE         4096u
-//#define DEMO_BLOCK_POOL_SIZE        100u
-  
-#define DEMO_STACK_SIZE_LARGE       (1024u)
-#define DEMO_STACK_SIZE_REDUCED     (1024u)
-#define DEMO_BYTE_POOL_SIZE         (9120u)
-#define DEMO_BLOCK_POOL_SIZE        (100u)
+
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -62,14 +54,21 @@ extern "C" {
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
+void MX_LPUART1_UART_Init(void);
+void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-void   MX_LPUART1_UART_Init(void);
-void   MX_USART1_UART_Init(void);
+#define JTMS_Pin GPIO_PIN_13
+#define JTMS_GPIO_Port GPIOA
+#define JTCK_Pin GPIO_PIN_14
+#define JTCK_GPIO_Port GPIOA
+#define JTDO_Pin GPIO_PIN_3
+#define JTDO_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

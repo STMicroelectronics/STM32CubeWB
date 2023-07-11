@@ -333,7 +333,7 @@ OPUS_IF_Status OPUS_IF_ENC_Force_CELTmode(void)
  * @brief  Encoding functions.
  * @param  buf_in: pointer to the PCM buffer to be encoded.
  * @param  buf_out: pointer to the Encoded buffer.
- * @retval Number of bytes in case of success, 0 viceversa.
+ * @retval Number of bytes in case of success, 0 vice-versa.
  */
 int OPUS_IF_ENC_Encode(uint8_t * buf_in, uint8_t * buf_out) 
 {

@@ -30,7 +30,7 @@ int HW_FLASH_Write(uint32_t address, uint64_t data)
   HAL_FLASH_Unlock();
   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_WRPERR |FLASH_FLAG_PGSERR | FLASH_FLAG_OPTVERR); 
 
-  /*Enable EOP interupt */
+  /*Enable EOP interrupt */
   __HAL_FLASH_ENABLE_IT(FLASH_IT_EOP);
   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP);
   

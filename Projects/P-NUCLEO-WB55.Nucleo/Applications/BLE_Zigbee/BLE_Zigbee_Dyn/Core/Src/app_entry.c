@@ -31,6 +31,7 @@
 #include "stm32_lpm.h"
 #include "app_ble.h"
 #include "shci.h"
+#include "app_debug.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -98,6 +99,8 @@ void APPE_Init( void )
   Init_Debug();
 
   APP_DBG("ConcurrentMode = %d", ConcurrentMode);
+  
+  APPD_Init();
 
   /**
    * The Standby mode should not be entered before the initialization is over
@@ -291,7 +294,7 @@ static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
 static void APPE_SysEvtReadyProcessing( void )
 {
     /* Traces channel initialization */
-    TL_TRACES_Init();
+    APPD_EnableCPU2();
 
     APP_DBG("==> Start_BLE");   /* Start BLE first */
     APP_BLE_Init();

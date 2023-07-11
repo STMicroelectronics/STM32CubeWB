@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : tl_dbg_conf.h
-  * Description        : Debug configuration file for stm32wpan transport layer interface.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    App/tl_dbg_conf.h
+  * @author  MCD Application Team
+  * @brief   Debug configuration file for stm32wpan transport layer interface.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __TL_DBG_CONF_H
-#define __TL_DBG_CONF_H
+#ifndef TL_DBG_CONF_H
+#define TL_DBG_CONF_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -130,4 +130,4 @@ extern "C" {
 }
 #endif
 
-#endif /*__TL_DBG_CONF_H */
+#endif /*TL_DBG_CONF_H */

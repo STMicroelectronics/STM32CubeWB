@@ -591,6 +591,47 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           /* USER CODE END HCI_EVT_LE_CONN_COMPLETE */
           break; /* HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE */
         }
+        case HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE:
+          {
+            hci_le_enhanced_connection_complete_event_rp0 *p_enhanced_connection_complete_event;
+            p_enhanced_connection_complete_event = (hci_le_enhanced_connection_complete_event_rp0 *) p_meta_evt->data;
+            
+            /**
+            * The connection is done, there is no need anymore to schedule the LP ADV
+            */
+            
+            HW_TS_Stop(BleApplicationContext.Advertising_mgr_timer_Id);
+            
+            APP_DBG_MSG(">>== HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE - Connection handle: 0x%x\n", p_enhanced_connection_complete_event->Connection_Handle);
+            APP_DBG_MSG("     - Connection established with Central: @:%02x:%02x:%02x:%02x:%02x:%02x\n",
+                        p_enhanced_connection_complete_event->Peer_Address[5],
+                        p_enhanced_connection_complete_event->Peer_Address[4],
+                        p_enhanced_connection_complete_event->Peer_Address[3],
+                        p_enhanced_connection_complete_event->Peer_Address[2],
+                        p_enhanced_connection_complete_event->Peer_Address[1],
+                        p_enhanced_connection_complete_event->Peer_Address[0]);
+            APP_DBG_MSG("     - Connection Interval:   %.2f ms\n     - Connection latency:    %d\n     - Supervision Timeout: %d ms\n\r",
+                        p_enhanced_connection_complete_event->Conn_Interval*1.25,
+                        p_enhanced_connection_complete_event->Conn_Latency,
+                        p_enhanced_connection_complete_event->Supervision_Timeout*10
+                          );
+            if (BleApplicationContext.Device_Connection_Status == APP_BLE_LP_CONNECTING)
+            {
+              /* Connection as client */
+              BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_CLIENT;
+            }
+            else
+            {
+              /* Connection as server */
+              BleApplicationContext.Device_Connection_Status = APP_BLE_CONNECTED_SERVER;
+              APP_DBG_MSG("\r\n\r**  ENHANCED CONNECTION COMPLETE EVENT WITH CENTRAL \n\r");
+            }
+            BleApplicationContext.BleApplicationContext_legacy.connectionHandle = p_enhanced_connection_complete_event->Connection_Handle;
+            /* USER CODE BEGIN HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE */
+            
+            /* USER CODE END HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE */
+            break; /* HCI_LE_ENHANCED_CONNECTION_COMPLETE_SUBEVT_CODE */
+          }
 
         default:
           /* USER CODE BEGIN SUBEVENT_DEFAULT */
@@ -663,7 +704,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           break; /* ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE */    
 
         case (ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE):
-          APP_DBG_MSG(">>== ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE\n");
+          APP_DBG_MSG(">>== ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE\n");
           APP_DBG_MSG("     - numeric_value = %ld\n",
                       ((aci_gap_numeric_comparison_value_event_rp0 *)(p_blecore_evt->data))->Numeric_Value);
           APP_DBG_MSG("     - Hex_value = %lx\n",
@@ -845,11 +886,12 @@ static void Ble_Hci_Gap_Gatt_Init(void)
    * The lowest 32bits is read from the UDN to differentiate between devices
    * The RNG may be used to provide a random number on each power on
    */
+#if (CFG_IDENTITY_ADDRESS == GAP_STATIC_RANDOM_ADDR)
 #if defined(CFG_STATIC_RANDOM_ADDRESS)
   a_srd_bd_addr[0] = CFG_STATIC_RANDOM_ADDRESS & 0xFFFFFFFF;
   a_srd_bd_addr[1] = (uint32_t)((uint64_t)CFG_STATIC_RANDOM_ADDRESS >> 32);
   a_srd_bd_addr[1] |= 0xC000; /* The two upper bits shall be set to 1 */
-#elif (CFG_BLE_ADDRESS_TYPE == GAP_STATIC_RANDOM_ADDR)
+#else
   /* Get RNG semaphore */
   while(LL_HSEM_1StepLock(HSEM, CFG_HW_RNG_SEMID));
 
@@ -874,6 +916,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   /* Release RNG semaphore */
   LL_HSEM_ReleaseLock(HSEM, CFG_HW_RNG_SEMID, 0);
 #endif /* CFG_STATIC_RANDOM_ADDRESS */
+#endif
 
 #if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
@@ -974,11 +1017,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   {
     const char *name = "P2PSRV1";
     ret = aci_gap_init(role,
-#if ((CFG_BLE_ADDRESS_TYPE == GAP_RESOLVABLE_PRIVATE_ADDR) || (CFG_BLE_ADDRESS_TYPE == GAP_NON_RESOLVABLE_PRIVATE_ADDR))
-                       2,
-#else
-                       0,
-#endif /* (CFG_BLE_ADDRESS_TYPE == GAP_RESOLVABLE_PRIVATE_ADDR) || (CFG_BLE_ADDRESS_TYPE == GAP_NON_RESOLVABLE_PRIVATE_ADDR) */
+                       CFG_PRIVACY,
                        APPBLE_GAP_DEVICE_NAME_LENGTH,
                        &gap_service_handle,
                        &gap_dev_name_char_handle,
@@ -1066,7 +1105,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
-                                               CFG_BLE_ADDRESS_TYPE);
+                                               CFG_IDENTITY_ADDRESS);
   if (ret != BLE_STATUS_SUCCESS)
   {
     APP_DBG_MSG("  Fail   : aci_gap_set_authentication_requirement command, result: 0x%x \n", ret);

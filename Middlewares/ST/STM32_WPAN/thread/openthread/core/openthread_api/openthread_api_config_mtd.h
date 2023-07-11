@@ -32,9 +32,6 @@
 /* Define to 1 to enable COAP. */
 #define OPENTHREAD_CONFIG_COAP_API_ENABLE 1
 
-/* Define to 1 to enable the commissioner role. */
-#define OPENTHREAD_CONFIG_COMMISSIONER_ENABLE 1
-
 /* Define to 1 to enable the joiner role. */
 #define OPENTHREAD_CONFIG_JOINER_ENABLE 1
 
@@ -83,7 +80,7 @@
 /* Define to 1 to enable Thread Test Harness reference device support. */
 #define OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE 1
 
-/* Define to 1 to eanble Config MLR */
+/* Define to 1 to enable Config MLR */
 #define OPENTHREAD_CONFIG_MLR_ENABLE 1
 
 /* Define to 1 to enable DNS Client support */

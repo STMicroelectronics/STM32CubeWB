@@ -855,7 +855,59 @@ otError otThreadSetRouterIdRange(otInstance *aInstance, uint8_t aMinRouterId, ui
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
-
 #endif // OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
+
+uint8_t otThreadGetChildRouterLinks(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_CHILD_ROUTER_LINKS;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_ot_req->Data[0];
+}
+
+otError otThreadSetChildRouterLinks(otInstance *aInstance, uint8_t aChildRouterLinks)
+{
+   Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_CHILD_ROUTER_LINKS;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aChildRouterLinks;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+void otThreadGetNextHopAndPathCost(otInstance *aInstance,
+                                   uint16_t    aDestRloc16,
+                                   uint16_t   *aNextHopRloc16,
+                                   uint8_t    *aPathCost)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_NEXT_HOP_AND_PAST_COST;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t)aDestRloc16;
+  p_ot_req->Data[1] = (uint32_t)aNextHopRloc16;
+  p_ot_req->Data[2] = (uint32_t)aPathCost;
+
+  Ot_Cmd_Transfer();
+}
+
 
 #endif /* OPENTHREAD_FTD */

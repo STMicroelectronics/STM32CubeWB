@@ -70,10 +70,10 @@
          for printf and scanf functionality */
 
 /* Enables the serial interface using Uart */
-#define ENABLE_SERIAL_INTERFACE                                                1
-#define ENABLE_SIG_MODELS_AT_COMMANDS                                          1
+#define ENABLE_SERIAL_INTERFACE                                                0
+#define ENABLE_SIG_MODELS_AT_COMMANDS                                          0
 #define ENABLE_VENDOR_MODELS_AT_COMMANDS                                       0
-#define ENABLE_UT                                                              1
+#define ENABLE_UT                                                              0
       
 /* Provisioner feature related configuration */
 #if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)

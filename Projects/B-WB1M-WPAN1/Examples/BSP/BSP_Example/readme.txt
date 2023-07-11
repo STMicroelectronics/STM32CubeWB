@@ -75,7 +75,7 @@ in enabling USE_VCP_CONNECTION compilation switch and with the proper configurat
 @par Keywords
 
 BSP, Led, EEProm, Memory, Button, Temperature, Sensor,
-Accelerometer, Giroscope, STTS22H, ISM330DHCX.
+Accelerometer, Gyroscope, STTS22H, ISM330DHCX.
 
 @par Directory contents 
 

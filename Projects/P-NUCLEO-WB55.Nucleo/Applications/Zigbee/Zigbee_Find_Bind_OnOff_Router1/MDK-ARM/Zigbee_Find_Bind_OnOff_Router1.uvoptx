@@ -871,7 +871,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\zigbee\utilities\zigbee.string.c</PathWithFileName>
+      <PathWithFileName>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\zigbee\stack\zigbee.string.c</PathWithFileName>
       <FilenameWithoutPath>zigbee.string.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>

@@ -145,7 +145,7 @@ void EDS_STM_Init(void)
      *
      * Max_Attribute_Records = 2*no_of_char + 1
      * service_max_attribute_record = 1 for End Device Mgt service +
-     *                                2 for End Device Staus characteristic +
+     *                                2 for End Device Status characteristic +
      *                                1 for client char configuration descriptor 
      *                                
      */
@@ -171,7 +171,7 @@ void EDS_STM_Init(void)
                       1, /* isVariable */
                       &(aEndDeviceManagementContext.EndDeviceStatusCharHdle));
     
-     BLE_DBG_EDS_STM_MSG("-- End Device Managment Service (EDMS) is added Successfully %04X\n",
+     BLE_DBG_EDS_STM_MSG("-- End Device Management Service (EDMS) is added Successfully %04X\n",
                  aEndDeviceManagementContext.EndDeviceManagementSvcHdle);
 
     return;

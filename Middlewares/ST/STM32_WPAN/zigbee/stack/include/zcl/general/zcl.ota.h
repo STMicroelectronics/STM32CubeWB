@@ -496,7 +496,7 @@ enum ZclStatusCodeT ZbZclOtaClientImageTransferResume(struct ZbZclClusterT *clus
 
 /* OTA Upgrade Server */
 
-/* OTA Uprade Server callbacks */
+/* OTA Upgrade Server callbacks */
 /**
  * Callback to determine if a suitable image exists
  * Implements policies for the OTA server

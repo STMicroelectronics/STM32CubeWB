@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>Production</name>
+        <name>BLE_p2pClient</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,7 +16,7 @@
                 <debug>0</debug>
                 <option>
                     <name>BrowseInfoPath</name>
-                    <state>Production\BrowseInfo</state>
+                    <state>BLE_p2pClient\BrowseInfo</state>
                 </option>
                 <option>
                     <name>ExePath</name>
@@ -201,7 +201,7 @@
                 </option>
                 <option>
                     <name>BuildFilesPath</name>
-                    <state>Production</state>
+                    <state>BLE_p2pClient</state>
                 </option>
             </data>
         </settings>
@@ -678,7 +678,7 @@
             <data>
                 <extensions></extensions>
                 <cmdline></cmdline>
-                <hasPrio>0</hasPrio>
+                <hasPrio>128</hasPrio>
                 <buildSequence>inputOutputBased</buildSequence>
             </data>
         </settings>
@@ -1004,7 +1004,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>###Unitialized###</state>
+                    <state>BLE_p2pClient_import_lib.o</state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>

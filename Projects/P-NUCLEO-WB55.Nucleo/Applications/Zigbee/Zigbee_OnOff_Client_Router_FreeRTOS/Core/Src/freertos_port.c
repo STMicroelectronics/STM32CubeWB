@@ -1,13 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : freertos_port.c
-  * Description        : Custom porting of FreeRTOS functionalities
-  *
+  * @file    freertos_port.c
+  * @author  MCD Application Team
+  * @brief   Custom porting of FreeRTOS functionalities
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -320,4 +320,3 @@ static uint32_t LpGetElapsedTime( void )
   return (uint32_t)val_ticks;
 }
 #endif
-

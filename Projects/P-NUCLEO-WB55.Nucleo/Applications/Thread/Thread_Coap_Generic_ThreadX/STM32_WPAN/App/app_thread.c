@@ -259,7 +259,7 @@ void APP_THREAD_Init(TX_BYTE_POOL* p_byte_pool)
 
   /* Create the different tasks */
   /* Task to manage the messages from the M0 to the M4 */
-  tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
+  ThreadXStatus = tx_byte_allocate(p_byte_pool, (VOID**) &pointer, DEMO_STACK_SIZE_LARGE, TX_NO_WAIT);
   ThreadXStatus = tx_thread_create(&OsTaskMessageM0ToM4Id,
                                    "MessageM0ToM4",
                                    APP_THREAD_ProcessMsgM0ToM4,

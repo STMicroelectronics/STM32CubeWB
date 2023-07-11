@@ -649,4 +649,34 @@ void otSrpServerServiceGetLeaseInfo(const otSrpServerService *aService, otSrpSer
   Ot_Cmd_Transfer();
 }
 
+void otSrpServerSetAutoEnableMode(otInstance *aInstance, bool aEnabled)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_SRP_SERVER_SET_AUTO_ENABLE_MODE;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aEnabled;
+
+  Ot_Cmd_Transfer();
+}
+
+bool otSrpServerIsAutoEnableMode(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_SRP_SERVER_IS_AUTO_ENABLE_MODE;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (bool)p_ot_req->Data[0];
+}
+
 #endif // OPENTHREAD_CONFIG_SRP_SERVER_ENABLE

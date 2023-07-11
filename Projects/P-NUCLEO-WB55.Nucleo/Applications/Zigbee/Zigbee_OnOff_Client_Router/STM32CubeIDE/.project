@@ -158,6 +158,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_ll_rcc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_ll_rcc.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/dbg_trace.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/utilities/dbg_trace.c</locationURI>

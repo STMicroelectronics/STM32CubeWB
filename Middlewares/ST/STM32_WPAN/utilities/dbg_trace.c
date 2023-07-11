@@ -138,7 +138,7 @@ const char *DbgTraceGetFileName(const char *fullpath)
  * @param  *pBuffer  Pointer on buffer to be output
  * @param  u32Length buffer Size
  * @paramt strFormat string as expected by "printf" function. Used to desrcibe buffer content information.
- * @param  ...       Paremeters to be "formatted" in strFormat string (if any)
+ * @param  ...       Parameters to be "formatted" in strFormat string (if any)
  * @retval None
  */
 

@@ -381,7 +381,7 @@
  * This parameter is considered by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
  */
 
-#define CFG_BLE_MAX_ADV_SET_NBR     (3)
+#define CFG_BLE_MAX_ADV_SET_NBR     (2)
 
  /* Maximum advertising data length (in bytes)
  * Range: 31 .. 1650 with limitation:

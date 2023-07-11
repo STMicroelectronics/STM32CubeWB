@@ -590,7 +590,7 @@ struct ZbZdoNwkIeeeJoinListRspT {
 uint8_t ZbZdoGetNextSeqNum(struct ZigBeeT *zb);
 
 /**
- * Retrive the 16-bit short address for a device if given an extended address.
+ * Retrieve the 16-bit short address for a device if given an extended address.
  * @param zb Zigbee stack instance
  * @param req NWK_Addr_req
  * @param callback Function to call on completion
@@ -601,7 +601,7 @@ enum ZbStatusCodeT ZB_WARN_UNUSED ZbZdoNwkAddrReq(struct ZigBeeT *zb, struct ZbZ
     void (*callback)(struct ZbZdoNwkAddrRspT *rsp, void *cb_arg), void *arg);
 
 /**
- * Retrive the 64-bit extended address for a device if given a short network address.
+ * Retrieve the 64-bit extended address for a device if given a short network address.
  * @param zb Zigbee stack instance
  * @param req IEEE_Addr_req
  * @param callback Function to call on completion
