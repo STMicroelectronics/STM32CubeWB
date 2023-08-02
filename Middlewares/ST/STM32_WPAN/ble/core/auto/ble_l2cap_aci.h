@@ -24,8 +24,8 @@
 
 /**
  * @brief ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ
- * Send an L2CAP connection parameter update request from the Peripheral to the
- * Central.
+ * Sends an L2CAP connection parameter update request from the Peripheral to
+ * the Central.
  * An ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT event is raised when the Central
  * responds to the request (accepts or rejects).
  * 
@@ -56,7 +56,7 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
 
 /**
  * @brief ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_RESP
- * Accept or reject a connection update. This command should be sent in
+ * Accepts or rejects a connection update. This command should be sent in
  * response to an ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT event from the
  * controller. The accept parameter has to be set if the connection parameters
  * given in the event are acceptable.
@@ -122,7 +122,7 @@ tBleStatus aci_l2cap_connection_parameter_update_resp( uint16_t Connection_Handl
  *        - 23 ... 65535
  * @param MPS Maximum payload size (in octets).
  *        Values:
- *        - 23 ... 65533
+ *        - 23 ... 248
  * @param Initial_Credits Number of K-frames that can be received on the
  *        created channel(s) by the L2CAP layer entity sending this packet.
  *        Values:
@@ -157,7 +157,7 @@ tBleStatus aci_l2cap_coc_connect( uint16_t Connection_Handle,
  *        - 23 ... 65535
  * @param MPS Maximum payload size (in octets).
  *        Values:
- *        - 23 ... 65533
+ *        - 23 ... 248
  * @param Initial_Credits Number of K-frames that can be received on the
  *        created channel(s) by the L2CAP layer entity sending this packet.
  *        Values:
@@ -196,7 +196,7 @@ tBleStatus aci_l2cap_coc_connect_confirm( uint16_t Connection_Handle,
  *        - 23 ... 65535
  * @param MPS Maximum payload size (in octets).
  *        Values:
- *        - 23 ... 65533
+ *        - 23 ... 248
  * @param Channel_Number Number of created channels. It is the length of
  *        Channel_Index_List.
  *        Values:

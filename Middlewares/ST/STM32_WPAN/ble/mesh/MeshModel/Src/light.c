@@ -1785,7 +1785,7 @@ from the library to send response to the message from peer
 * @param  plength: Pointer to the Length of the data, to be updated by application
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wether message is acknowledged meassage or not.
+* @param  response: Value to indicate whether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT LightModelServer_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam, 
@@ -1914,7 +1914,7 @@ MOBLE_RESULT LightModelServer_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgPara
 * @param  response: if TRUE, the message is an acknowledged message 
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wether message is acknowledged meassage or not.
+* @param  response: Value to indicate whether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT LightModelServer_ProcessMessageCb(MODEL_MessageHeader_t* pmsgParam, 

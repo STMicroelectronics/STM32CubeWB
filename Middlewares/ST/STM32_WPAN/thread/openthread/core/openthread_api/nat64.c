@@ -29,7 +29,9 @@
 
 #include "nat64.h"
 
+#if OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE 
 extern otNat64ReceiveIp4Callback otNat64ReceiveIp4Cb;
+
 
 void otNat64GetCounters(otInstance *aInstance, otNat64ProtocolCounters *aCounters)
 {
@@ -44,6 +46,7 @@ void otNat64GetCounters(otInstance *aInstance, otNat64ProtocolCounters *aCounter
 
   Ot_Cmd_Transfer();
 }
+#endif
 
 void otNat64GetErrorCounters(otInstance *aInstance, otNat64ErrorCounters *aCounters)
 {
@@ -73,6 +76,7 @@ void otNat64InitAddressMappingIterator(otInstance *aInstance, otNat64AddressMapp
   Ot_Cmd_Transfer();
 }
 
+#if OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE
 otError otNat64GetNextAddressMapping(otInstance                    *aInstance,
                                      otNat64AddressMappingIterator *aIterator,
                                      otNat64AddressMapping         *aMapping)
@@ -109,6 +113,7 @@ otNat64State otNat64GetTranslatorState(otInstance *aInstance)
   return (otNat64State)p_ot_req->Data[0];
 
 }
+#endif
 
 otNat64State otNat64GetPrefixManagerState(otInstance *aInstance)
 {
@@ -126,6 +131,7 @@ otNat64State otNat64GetPrefixManagerState(otInstance *aInstance)
   return (otNat64State)p_ot_req->Data[0];
 }
 
+#if (OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE || OPENTHREAD_CONFIG_NAT64_BORDER_ROUTING_ENABLE )
 void otNat64SetEnabled(otInstance *aInstance, bool aEnable)
 {
   Pre_OtCmdProcessing();
@@ -139,7 +145,9 @@ void otNat64SetEnabled(otInstance *aInstance, bool aEnable)
 
   Ot_Cmd_Transfer();
 }
+#endif
 
+#if OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE
 otMessage *otIp4NewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
 {
   Pre_OtCmdProcessing();
@@ -156,6 +164,7 @@ otMessage *otIp4NewMessage(otInstance *aInstance, const otMessageSettings *aSett
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otMessage *)p_ot_req->Data[0];
 }
+#endif
 
 otError otNat64SetIp4Cidr(otInstance *aInstance, const otIp4Cidr *aCidr)
 {
@@ -191,6 +200,7 @@ otError otNat64Send(otInstance *aInstance, otMessage *aMessage)
   return (otError)p_ot_req->Data[0];
 }
 
+#if OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE
 void otNat64SetReceiveIp4Callback(otInstance *aInstance, otNat64ReceiveIp4Callback aCallback, void *aContext)
 {
   Pre_OtCmdProcessing();
@@ -223,6 +233,7 @@ otError otNat64GetCidr(otInstance *aInstance, otIp4Cidr *aCidr)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
+#endif
 
 bool otIp4IsAddressEqual(const otIp4Address *aFirst, const otIp4Address *aSecond)
 {

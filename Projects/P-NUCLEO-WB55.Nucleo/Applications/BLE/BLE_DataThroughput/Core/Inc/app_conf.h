@@ -185,7 +185,7 @@
 #define CFG_FEATURE_DT                              (0x70)
 
 #define MAX_HCI_CMD_EVENT_PAYLOAD_SIZE 255
-#define DATA_NOTIFICATION_MAX_PACKET_SIZE           240 
+#define DATA_NOTIFICATION_MAX_PACKET_SIZE           244 
 
 
 /**

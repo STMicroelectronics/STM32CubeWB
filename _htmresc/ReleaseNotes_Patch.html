@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+  <head>
+    <title>_htmresc\ReleaseNotes.html</title>
+  </head>
+  <body style="font-size: 10pt; font-family: Verdana;">
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.17.1 / 28-July-2023</h3>
+    <div style="margin-left: 18pt;">
+      <p>
+        <b><u>Main Changes</u></b>
+      </p>
+      <p>
+        <b>Patch Release for BLE, 802.15.4, Thread and Zigbee updates</b>
+      </p>
+      <p>
+        <li> <strong>CKS</strong> updates
+          <ul>
+            <li>Security improvement.</li>
+          </ul>
+        </li>
+        <li> <strong>BLE </strong> updates
+          <ul>
+            <li>Compliancy TCRL-2023-1 with BLE 5.4 certification.</li>
+			<li>New BT SIG Certification: [Declaration ID D063070 / QDID 216169] (https://launchstudio.bluetooth.com/ListingDetails/186628).</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Zigbee</strong> updates
+          <ul>
+            <li>In case of FreeRTOS Application, a new mutex is now being used to protect the sending of commands to the M0.</li>
+          </ul>
+        </li>
+		<li> <strong>Thread</strong> updates
+          <ul>
+            <li>Thread Compliant Platform Certification done on current version.</li>
+          </ul>
+        </li>
+		<li> <strong>MAC 802.15.4</strong> updates
+          <ul>
+            <li>Proprietary MAC Pib Attribute has been introduced to let End Device to enter in sleep mode once MacDataPollReq is acknowledged with empty data pending field information.</li>
+          </ul>
+        </li>
+		<li> <strong>BLE/Zigbee Dynamic</strong> updates
+          <ul>
+            <li>Corrected an issue on radio access between BLE and Thread that could cause a freeze in the firmware.</li>
+          </ul>
+        </li>
+      </p>
+    </div>
+  </body>
+</html>

@@ -289,7 +289,7 @@ char UartReadChar(uint8_t blocking)
           retc = 0;
           ESC_Timeout = 0;
         }
-        else          /* Unexpected char follwing ESC, so ESC hit [no ESC sequence ] */
+        else          /* Unexpected char following ESC, so ESC hit [no ESC sequence ] */
         {
           leave = 1;
           ESC_Seq = 0;
@@ -638,7 +638,7 @@ uint8_t IsSpace(int8_t cCar)
  *******************************************************************************
  * @fn    uint16_t StringLength(const int8_t * szString)
  * @author  -
- * @brief   Return the lenght of a string.
+ * @brief   Return the length of a string.
  * @param   szString : String pointer
  * @return  Length of the string without the '\0' char
  *******************************************************************************
@@ -1261,7 +1261,7 @@ static void _DisplayMenu(int8_t MenuHandle, uint8_t flag)
 }
 
 
-/* Create the menu intenal data */
+/* Create the menu internal data */
 int8_t CreateMenu(STRUCTMENU_T * menu, uint8_t x, uint8_t y, int8_t flag, int8_t MenuHandle)
 {
   uint16_t length;
@@ -1374,7 +1374,7 @@ int8_t CreateMenu(STRUCTMENU_T * menu, uint8_t x, uint8_t y, int8_t flag, int8_t
       break;
     }
     
-    /* New colomn */
+    /* New column */
     if (* MenuCtrlData[Handle].MenuItems[i].Item == '\t')   
     {
       /* adjust Windows size  */      
@@ -1415,7 +1415,7 @@ int8_t CreateMenu(STRUCTMENU_T * menu, uint8_t x, uint8_t y, int8_t flag, int8_t
         break;
       }      
        
-      MenuCtrlData[Handle].nbEntries++;  /* count Colum separator as entry */
+      MenuCtrlData[Handle].nbEntries++;  /* count Column separator as entry */
       /* adjust cur_x */
       cur_x = cur_x + desc_max_length + cursor_offset + val_max_length +  col_inter_space; 
 
@@ -2052,7 +2052,7 @@ uint16_t SelectNumberBox(int32_t * ptTabNber, uint8_t iLineNumb,
  *      'ENTER' key. This function will return the converted number only when 
  *      the number was correctly decoded.
  *
- * @param szFmt : Points the formated string containing informations on the 
+ * @param szFmt : Points the formatted string containing information on the 
  *                message to display,
  *                and on the number to get.
  * @param CaptureVal : Is the default value to display

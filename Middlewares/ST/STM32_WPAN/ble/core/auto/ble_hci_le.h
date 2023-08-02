@@ -270,34 +270,26 @@ tBleStatus hci_host_number_of_completed_packets( uint8_t Number_Of_Handles,
 /**
  * @brief HCI_READ_LOCAL_VERSION_INFORMATION
  * This command reads the values for the version information for the local
- * Controller. The HCI Version information defines the version information of
- * the HCI layer. The LMP/PAL Version information defines the version of the
- * LMP or PAL. The Manufacturer_Name information indicates the manufacturer of
- * the local device. The HCI Revision and LMP/PAL Subversion are implementation
- * dependent.
+ * Controller.
  * See Bluetooth spec. v.5.4 [Vol 4, Part E, 7.4.1].
  * 
- * @param[out] HCI_Version See Bluetooth Assigned Numbers
- *        (https://www.bluetooth.org/en-us/specification/assigned-numbers)
- * @param[out] HCI_Revision Revision of the Current HCI in the BR/EDR
- *        Controller.
- * @param[out] LMP_PAL_Version Version of the Current LMP or PAL in the
- *        Controller.
- *        See Bluetooth Assigned Numbers (https://www.bluetooth.org/en-
- *        us/specification/assigned-numbers)
- * @param[out] Manufacturer_Name Manufacturer Name of the BR/EDR Controller.
- *        See Bluetooth Assigned Numbers (https://www.bluetooth.org/en-
- *        us/specification/assigned-numbers)
- * @param[out] LMP_PAL_Subversion Subversion of the Current LMP or PAL in the
- *        Controller. This value is
- *        implementation dependent.
+ * @param[out] HCI_Version Version of the HCI Specification supported by the
+ *        Controller. See Bluetooth Assigned Numbers.
+ * @param[out] HCI_Subversion Revision of the HCI implementation in the
+ *        Controller. This value is vendor-specific.
+ * @param[out] LMP_Version Version of the Current LMP supported by the
+ *        Controller. See Bluetooth Assigned Numbers.
+ * @param[out] Company_Identifier Company identifier for the manufacturer of
+ *        the Controller. See Bluetooth Assigned Numbers.
+ * @param[out] LMP_Subversion Subversion of the Current LMP in the Controller.
+ *        This value is vendor-specific.
  * @return Value indicating success or error code.
  */
 tBleStatus hci_read_local_version_information( uint8_t* HCI_Version,
-                                               uint16_t* HCI_Revision,
-                                               uint8_t* LMP_PAL_Version,
-                                               uint16_t* Manufacturer_Name,
-                                               uint16_t* LMP_PAL_Subversion );
+                                               uint16_t* HCI_Subversion,
+                                               uint8_t* LMP_Version,
+                                               uint16_t* Company_Identifier,
+                                               uint16_t* LMP_Subversion );
 
 /**
  * @brief HCI_READ_LOCAL_SUPPORTED_COMMANDS
@@ -1537,8 +1529,8 @@ tBleStatus hci_le_read_maximum_data_length( uint16_t* supportedMaxTxOctets,
 
 /**
  * @brief HCI_LE_READ_PHY
- * The LE_Read_PHY command is used to read the current transmitter PHY and
- * receiver PHY on the connection identified by the Connection_Handle.
+ * This command is used to read the current transmitter PHY and receiver PHY on
+ * the connection identified by the Connection_Handle.
  * See Bluetooth spec. v.5.4 [Vol 4, Part E, 7.8.47].
  * 
  * @param Connection_Handle Connection handle for which the command applies.
@@ -1564,9 +1556,9 @@ tBleStatus hci_le_read_phy( uint16_t Connection_Handle,
 
 /**
  * @brief HCI_LE_SET_DEFAULT_PHY
- * The LE_Set_Default_PHY command allows the Host to specify its preferred
- * values for the transmitter PHY and receiver PHY to be used for all
- * subsequent connections over the LE transport.
+ * This command allows the Host to specify its preferred values for the
+ * transmitter PHY and receiver PHY to be used for all subsequent connections
+ * over the LE transport.
  * The ALL_PHYS parameter is a bit field that allows the Host to specify, for
  * each
  * direction, whether it has no preference among the PHYs that the Controller
@@ -1599,7 +1591,7 @@ tBleStatus hci_le_set_default_phy( uint8_t ALL_PHYS,
 
 /**
  * @brief HCI_LE_SET_PHY
- * The LE_Set_PHY command is used to set the PHY preferences for the connection
+ * This command is used to set the PHY preferences for the connection
  * identified by the Connection_Handle. The Controller might not be able to
  * make the change (e.g. because the peer does not support the requested PHY)
  * or may decide that the current PHY is preferable.
@@ -1642,7 +1634,15 @@ tBleStatus hci_le_set_default_phy( uint8_t ALL_PHYS,
  * @param RX_PHYS Host preferences for RX PHY (no LE coded support on STM32WB)
  *        Values:
  *        - 0x00 ... 0x03
- * @param PHY_options Not supported
+ * @param PHY_options Bit field used to specify options for PHYs (not used on
+ *        STM32WB)
+ *        Values:
+ *        - 0x0000: the Host has no preferred coding when transmitting on the
+ *          LE Coded PHY
+ *        - 0x0001: the Host prefers that S=2 coding be used when transmitting
+ *          on the LE Coded PHY
+ *        - 0x0002: the Host prefers that S=8 coding be used when transmitting
+ *          on the LE Coded PHY
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_set_phy( uint16_t Connection_Handle,

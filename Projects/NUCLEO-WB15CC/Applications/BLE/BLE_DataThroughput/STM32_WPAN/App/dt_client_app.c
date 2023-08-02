@@ -522,7 +522,7 @@ static SVCCTL_EvtAckStatus_t DTC_Event_Handler( void *Event )
             /* CRC computation */
             CRC_Result = APP_BLE_ComputeCRC8((uint8_t*) (pr->Attribute_Value), (pr->Attribute_Value_Length) - 1);
             /* get low weight byte */
-            CRC_Received = (uint8_t) (pr->Attribute_Value[DATA_NOTIFICATION_MAX_PACKET_SIZE-1]);
+            CRC_Received = (uint8_t) (pr->Attribute_Value[Att_Mtu_Exchanged-1]);
 
             if (CRC_Received != CRC_Result)
             {
@@ -817,16 +817,16 @@ static void SendData( void )
     /*Data Packet to send to remote*/
     Notification_Data_Buffer[0] += 1;
     /* compute CRC */
-    crc_result = APP_BLE_ComputeCRC8((uint8_t*) Notification_Data_Buffer, (DATA_NOTIFICATION_MAX_PACKET_SIZE - 1));
-    Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE - 1] = crc_result;
+    crc_result = APP_BLE_ComputeCRC8((uint8_t*) Notification_Data_Buffer, (Att_Mtu_Exchanged - 1));
+    Notification_Data_Buffer[Att_Mtu_Exchanged - 1] = crc_result;
 
     DTC_Context.TxData.pPayload = Notification_Data_Buffer;
-    DTC_Context.TxData.Length =  DATA_NOTIFICATION_MAX_PACKET_SIZE; //Att_Mtu_Exchanged-10;
+    DTC_Context.TxData.Length =  Att_Mtu_Exchanged;
 
     
     status = aci_gatt_write_without_resp(DTC_Context.connHandle,
                                          DTC_Context.RXCharHdle,
-                                         DATA_NOTIFICATION_MAX_PACKET_SIZE,
+                                         Att_Mtu_Exchanged,
                                          (const uint8_t*)(DTC_Context.TxData.pPayload));
     
     if (status == BLE_STATUS_INSUFFICIENT_RESOURCES)

@@ -3319,7 +3319,7 @@ __weak MOBLE_RESULT SensorModelServer_GetOpcodeTableCb(const MODEL_OpcodeTablePa
   * @param  plength: Length of tata, updated by application
   * @param  pRxData: data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wether message is acknowledged meassage or not.
+* @param  response: Value to indicate whether message is acknowledged meassage or not.
   * @retval Success
 */
 __weak MOBLE_RESULT SensorModelServer_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParams, 

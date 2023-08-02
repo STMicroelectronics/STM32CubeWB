@@ -538,10 +538,10 @@ typedef __PACKED_STRUCT
 {
   uint8_t Status;
   uint8_t HCI_Version;
-  uint16_t HCI_Revision;
-  uint8_t LMP_PAL_Version;
-  uint16_t Manufacturer_Name;
-  uint16_t LMP_PAL_Subversion;
+  uint16_t HCI_Subversion;
+  uint8_t LMP_Version;
+  uint16_t Company_Identifier;
+  uint16_t LMP_Subversion;
 } hci_read_local_version_information_rp0;
 
 typedef __PACKED_STRUCT

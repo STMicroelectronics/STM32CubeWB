@@ -323,10 +323,6 @@ static void APP_THREAD_DeviceConfig(void)
     APP_THREAD_Error(ERR_THREAD_SET_NETWORK_KEY,error);
   }
   error = otLinkSetPollPeriod(NULL, THREAD_LINK_POLL_PERIOD_MS);
-  /*if (error != OT_ERROR_NONE)
-  {
-    APP_THREAD_Error(ERR_THREAD_TO_BE_DEFINED,error); // l'erreur pour la pollperiod n'existe pas
-  }*/
   error = otThreadSetLinkMode(NULL, OT_LinkMode);
   if (error != OT_ERROR_NONE)
   {

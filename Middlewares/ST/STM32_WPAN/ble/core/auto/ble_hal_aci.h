@@ -96,17 +96,20 @@ tBleStatus aci_hal_read_config_data( uint8_t Offset,
 
 /**
  * @brief ACI_HAL_SET_TX_POWER_LEVEL
- * This command sets the TX power level of the device. By controlling the
- * PA_LEVEL, that determines the output power level (dBm) at the IC pin.
- * When the system starts up or reboots, the default TX power level will be
- * used, which is the maximum value of 6 dBm. Once this command is given, the
- * output power will be changed instantly, regardless if there is Bluetooth
- * communication going on or not. For example, for debugging purpose, the
- * device can be set to advertise all the time. And use this command to observe
- * the signal strength changing.
- * The system will keep the last received TX power level from the command, i.e.
- * the 2nd command overwrites the previous TX power level. The new TX power
- * level remains until another Set TX Power command, or the system reboots.
+ * This command sets the TX power level of the device. By controlling the PA
+ * level, that determines the output power level (dBm) at the IC pin.
+ * When the system starts up or reboots, the default TX power level is used,
+ * which is the maximum value. Once this command is given, the output power
+ * changes instantly, regardless if there is Bluetooth communication going on
+ * or not. For example, for debugging purpose, the device can be set to
+ * advertise all the time. By using this command, one can then observe the
+ * evolution of the TX signal strength.
+ * The system keeps the last received TX power level from the command, i.e. the
+ * 2nd command overwrites the previous TX power level. The new TX power level
+ * remains until another ACI_HAL_SET_TX_POWER_LEVEL command, or the system
+ * reboots. However, note that the advertising extensions commands allow, per
+ * advertising set, to override the value of TX power determined by
+ * ACI_HAL_SET_TX_POWER_LEVEL command (e.g. see ACI_GAP_ADV_SET_CONFIGURATION).
  * Refer to Annex for the dBm corresponding values of PA_Level parameter.
  * 
  * @param En_High_Power Enable High Power mode - Deprecated and ignored

@@ -299,7 +299,7 @@ __WEAK SVCCTL_UserEvtFlowStatus_t SVCCTL_UserEvtRx( void *pckt )
 
   /**
    * When no registered handlers (either Service or Client) has acknowledged the GATT event, it is reported to the application
-   * a GAP event is always reported to the applicaiton.
+   * a GAP event is always reported to the application.
    */
   switch (event_notification_status)
   {

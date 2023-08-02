@@ -45,7 +45,7 @@ extern RTC_HandleTypeDef hrtc;
 
 
 /**
- * Strucuture of Trace_Elt_t
+ * Structure of Trace_Elt_t
  * buffer : trace buffer
  * size : size of the trace buffer
  */
@@ -56,7 +56,7 @@ typedef __PACKED_STRUCT
 } TraceEltHeader_t;
 
 /**
- * Strucuture of Trace_Elt_t
+ * Structure of Trace_Elt_t
  * buffer : trace buffer
  * size : size of the trace buffer
  */
@@ -68,7 +68,7 @@ typedef __PACKED_STRUCT
 
 
 /**
- * Strucuture of Trace_Elt_t
+ * Structure of Trace_Elt_t
  * buffer : trace buffer
  * size : size of the trace buffer
  */
@@ -767,7 +767,7 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 
 #if (CFG_AMM_ENABLED != 0)
 /**
- * @brief Process the traces comming from the M0 or M4.
+ * @brief Process the traces coming from the M0 or M4.
  * @param  None
  * @retval None
  */

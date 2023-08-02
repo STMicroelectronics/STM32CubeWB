@@ -44,7 +44,7 @@
 extern RTC_HandleTypeDef hrtc;
 
 /**
- * Strucuture of Trace_Elt_t
+ * Structure of Trace_Elt_t
  * buffer : trace buffer
  * size : size of the trace buffer
  */
@@ -55,7 +55,7 @@ typedef __PACKED_STRUCT
 } TraceEltHeader_t;
 
 /**
- * Strucuture of Trace_Elt_t
+ * Structure of Trace_Elt_t
  * buffer : trace buffer
  * size : size of the trace buffer
  */
@@ -66,7 +66,7 @@ typedef __PACKED_STRUCT
 } TraceElt_t;
 
 /**
- * Strucuture of Trace_Elt_t
+ * Structure of Trace_Elt_t
  * buffer : trace buffer
  * size : size of the trace buffer
  */

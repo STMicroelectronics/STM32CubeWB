@@ -118,7 +118,14 @@ static SVCCTL_EvtAckStatus_t DTS_Event_Handler( void *Event )
           exchange_mtu_resp = (aci_att_exchange_mtu_resp_event_rp0 *)blecore_evt->data;
           APP_DBG_MSG("**MTU_size = %d \n",exchange_mtu_resp->Server_RX_MTU );
           APP_DBG_MSG("\r\n\r");
-          Att_Mtu_Exchanged = exchange_mtu_resp->Server_RX_MTU;
+          if (exchange_mtu_resp->Server_RX_MTU < DATA_NOTIFICATION_MAX_PACKET_SIZE)
+          {
+            Att_Mtu_Exchanged = exchange_mtu_resp->Server_RX_MTU - 3;
+          }
+          else
+          {
+            Att_Mtu_Exchanged = DATA_NOTIFICATION_MAX_PACKET_SIZE;
+          }
         }
         break;
         /* server */

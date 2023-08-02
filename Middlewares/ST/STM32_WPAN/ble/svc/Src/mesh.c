@@ -225,7 +225,7 @@ void MESH_Init(void)
   }
   TRACE_I(TF_INIT,"\r\n");
 
-  /* Models intialization */  
+  /* Models initialization */  
   BLEMesh_ModelsInit();
 
   /* Turn on Yellow LED */

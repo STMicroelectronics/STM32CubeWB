@@ -154,7 +154,7 @@ MOBLE_RESULT Vendor_WriteLocalDataCb(MODEL_MessageHeader_t *pmsgParams,
              }
            }
                    
-         /* this expression is used to send the status of data received wether it
+         /* this expression is used to send the status of data received whether it
          is correct or not , First 3 bits are for status and last 5 bit are for sub commands
          */
          ResponseBuffer[0] = ResponseBuffer[0] | (status << 5);
@@ -309,7 +309,7 @@ MOBLE_RESULT Vendor_ReadLocalDataCb(MODEL_MessageHeader_t *pmsgParams,
             
           }
   
-        /* this expression is used to send the status of data received wether it
+        /* this expression is used to send the status of data received whether it
         is correct or not , First 3 bits are for status and last 5 bit are for sub commands
         */
         ResponseBuffer[0] = ResponseBuffer[0] | (status << 5);
@@ -654,7 +654,7 @@ from the library to send response to the message from peer
 * @param  plength: Pointer to the Length of the data, to be updated by application
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wether message is acknowledged meassage or not.
+* @param  response: Value to indicate whether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT VendorModel_PID1_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParams,  
@@ -680,7 +680,7 @@ the library whenever a Generic Model message is received
 * @param  response: if TRUE, the message is an acknowledged message
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wether message is acknowledged meassage or not.
+* @param  response: Value to indicate whether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT VendorModel_PID1_ProcessMessageCb(MODEL_MessageHeader_t *pmsgParams,  

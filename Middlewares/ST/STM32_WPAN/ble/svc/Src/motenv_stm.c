@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2018-2021 STMicroelectronics.
+  * Copyright (c) 2018-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -19,7 +19,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "common_blesvc.h"
-    
+#include "motenv_stm_conf.h"
+
 /* Exported Variables ------------------------------------------------------- */
 uint8_t ToF_BoardPresent= 0;
 
@@ -45,6 +46,9 @@ typedef struct
   uint16_t	SWGestureRecCharHdle;    /**< Characteristic handle */
   uint16_t	SWPedometerCharHdle;     /**< Characteristic handle */
   uint16_t	SWIntensityDetCharHdle;  /**< Characteristic handle */
+#if(MOTENVWB_CFG_OTA_REBOOT_CHAR != 0)
+  uint16_t  RebootReqCharHdle;                /**< Characteristic handle */
+#endif
 
   /* Handles for Config Service and Chars */
   uint16_t	ConfigSvcHdle;  /**< Service handle */
@@ -61,6 +65,29 @@ typedef struct
 /* Private macros ------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
+#define UUID_128_SUPPORTED  1
+
+#if (UUID_128_SUPPORTED == 1)
+#define BM_UUID_LENGTH  UUID_TYPE_128
+#else
+#define BM_UUID_LENGTH  UUID_TYPE_16
+#endif
+
+#define BM_REQ_CHAR_SIZE    (3)
+/**
+ * Reboot Characteristic UUID
+ * 0000fe11-8e22-4541-9d4c-21edae82ed19
+ */
+#if(MOTENVWB_CFG_OTA_REBOOT_CHAR != 0)
+#if (UUID_128_SUPPORTED == 1)
+static const uint8_t BM_REQ_CHAR_UUID[16] = {0x19, 0xed, 0x82, 0xae,
+                                       0xed, 0x21, 0x4c, 0x9d,
+                                       0x41, 0x45, 0x22, 0x8e,
+                                       0x11, 0xFE, 0x00, 0x00};
+#else
+static const uint8_t BM_REQ_CHAR_UUID[2] = {0x11, 0xFE};
+#endif
+#endif
 
 PLACE_IN_SECTION("BLE_DRIVER_CONTEXT") static MotenvContext_t aMotenvContext;
 
@@ -99,7 +126,7 @@ do {\
 #define COPY_SW_PEDOMETER_CHAR_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0x00,0x00,0x00,0x01,0x00,0x01,0x11,0xE1,0xAC,0x36,0x00,0x02,0xA5,0xD5,0xC5,0x1B)
 #define COPY_SW_INTENSITY_DET_CHAR_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0x00,0x00,0x00,0x20,0x00,0x01,0x11,0xE1,0xAC,0x36,0x00,0x02,0xA5,0xD5,0xC5,0x1B)
 
-#define SW_CHAR_NUMBER (7)
+#define SW_CHAR_NUMBER (8)
 
 /* Configuration Service and Characteristics */
 #define COPY_CONFIG_SERVICE_UUID(uuid_struct)       COPY_UUID_128(uuid_struct,0x00,0x00,0x00,0x00,0x00,0x0F,0x11,0xE1,0x9A,0xB4,0x00,0x02,0xA5,0xD5,0xC5,0x1B)
@@ -586,6 +613,17 @@ static SVCCTL_EvtAckStatus_t Motenv_Event_Handler(void *Event)
               MOTENV_STM_App_Notification(&Notification);
             }
           }
+          /* OTA char */
+#if(MOTENVWB_CFG_OTA_REBOOT_CHAR != 0)
+          else if(attribute_modified->Attr_Handle == (aMotenvContext.RebootReqCharHdle + 1))
+          {
+            BLE_DBG_P2P_STM_MSG("-- GATT : REBOOT REQUEST RECEIVED\n");
+            Notification.Motenv_Evt_Opcode = MOTENV_STM_BOOT_REQUEST_EVT;
+            Notification.DataTransfered.Length=attribute_modified->Attr_Data_Length;
+            Notification.DataTransfered.pPayload=attribute_modified->Attr_Data;
+            MOTENV_STM_App_Notification(&Notification);
+          }
+#endif
           else
           {
             /* do nothing */
@@ -859,6 +897,21 @@ void MOTENV_STM_Init(void)
                           1, /* isVariable: 1 */
                           &(aMotenvContext.ConsoleStderrCharHdle));
 
+#if(MOTENVWB_CFG_OTA_REBOOT_CHAR != 0)
+    /**
+     *  Add Boot Request Characteristic
+     */
+    (void)aci_gatt_add_char(aMotenvContext.SWSvcHdle,
+                            BM_UUID_LENGTH,
+                            (Char_UUID_t *)BM_REQ_CHAR_UUID,
+                            BM_REQ_CHAR_SIZE,
+                            CHAR_PROP_WRITE_WITHOUT_RESP,
+                            ATTR_PERMISSION_NONE,
+                            GATT_NOTIFY_ATTRIBUTE_WRITE,
+                            10,
+                            0,
+                            &(aMotenvContext.RebootReqCharHdle));
+#endif
   return;
 } /* end MOTENV_STM_Init */
 

@@ -420,7 +420,7 @@ MOBLE_RESULT LightLcServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **dat
   * @param  plength: Pointer to the Length of the data, to be updated by application
   * @param  pRxData: Pointer to the data received in packet.
   * @param  dataLength: length of the data in packet.
-  * @param  response: Value to indicate wether message is acknowledged meassage or not.
+  * @param  response: Value to indicate whether message is acknowledged meassage or not.
   * @retval MOBLE_RESULT_SUCCESS
   */
 __weak

@@ -287,7 +287,7 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   RemoteWriteReq.dst.panId = ZB_PANID_WILDCARD; /* wildcard value */
   RemoteWriteReq.dst.extAddr = ZR_EXT_ADDR;
   RemoteWriteReq.dst.endpoint = ZB_ENDPOINT_INTERPAN;
-  RemoteWriteReq.count = 8;
+  RemoteWriteReq.count = 4;
   
   APP_DBG("Remotely writing Commissioning server attributes.");
   
@@ -321,34 +321,53 @@ static void APP_ZIGBEE_Commissioning_Client_SetNwkCfg_cmd(uint8_t config_num, st
   putle32((uint8_t*)&channelMask, 1 << params->channelMask);
   RemoteWriteReq.attr[3].value = (uint8_t const*)&channelMask;
   RemoteWriteReq.attr[3].length = 4;
+    
+  status = ZbZclWriteReq(zigbee_app_info.commissioning_client, &RemoteWriteReq, APP_ZIGBEE_Commissioning_Client_RemoteWrite_cb, NULL);
+  if (status != ZCL_STATUS_SUCCESS) {
+    APP_DBG("Error, ZbZclWriteReq failed");
+    assert(0);
+  }
+  
+  UTIL_SEQ_WaitEvt(EVENT_ZIGBEE_CONTINUE_INIT);
+  /* Remotely writing Commissioning client nwk configuration (request 1) */
+  memset(&RemoteWriteReq, 0, sizeof(RemoteWriteReq));
+  RemoteWriteReq.dst.mode = ZB_APSDE_ADDRMODE_EXT;
+  /* We want to address any device with INTERPAN, 
+   * even if not connected to ZC's network */
+  RemoteWriteReq.dst.panId = ZB_PANID_WILDCARD; /* wildcard value */
+  RemoteWriteReq.dst.extAddr = ZR_EXT_ADDR;
+  RemoteWriteReq.dst.endpoint = ZB_ENDPOINT_INTERPAN;
+  RemoteWriteReq.count = 4;
+  
+  APP_DBG("Remotely writing Commissioning server attributes.");
   
   /* Use Insecure Join attribute */
   APP_DBG("Modifying insecure join.");
-  RemoteWriteReq.attr[4].attrId = ZCL_COMMISSION_SVR_ATTR_USEINSECJOIN;
-  RemoteWriteReq.attr[4].type = ZCL_DATATYPE_BOOLEAN;
-  RemoteWriteReq.attr[4].value = (uint8_t const*)&params->useInsecureJoin;
-  RemoteWriteReq.attr[4].length = 1;
+  RemoteWriteReq.attr[0].attrId = ZCL_COMMISSION_SVR_ATTR_USEINSECJOIN;
+  RemoteWriteReq.attr[0].type = ZCL_DATATYPE_BOOLEAN;
+  RemoteWriteReq.attr[0].value = (uint8_t const*)&params->useInsecureJoin;
+  RemoteWriteReq.attr[0].length = 1;
   
   /* Preconfigured Link Key attribute */
   APP_DBG("Modifying preconfigured link key.");
-  RemoteWriteReq.attr[5].attrId = ZCL_COMMISSION_SVR_ATTR_PRECONFLINKKEY;
-  RemoteWriteReq.attr[5].type = ZCL_DATATYPE_SECURITY_KEY128;
-  RemoteWriteReq.attr[5].value = (uint8_t const*)&sec_key_ha;
-  RemoteWriteReq.attr[5].length = 16;
+  RemoteWriteReq.attr[1].attrId = ZCL_COMMISSION_SVR_ATTR_PRECONFLINKKEY;
+  RemoteWriteReq.attr[1].type = ZCL_DATATYPE_SECURITY_KEY128;
+  RemoteWriteReq.attr[1].value = (uint8_t const*)&sec_key_ha;
+  RemoteWriteReq.attr[1].length = 16;
   
   /* Network Key type attribute */
   APP_DBG("Modifying NWK key type.");
-  RemoteWriteReq.attr[6].attrId = ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE;
-  RemoteWriteReq.attr[6].type = ZCL_DATATYPE_ENUMERATION_8BIT;
-  RemoteWriteReq.attr[6].value = (uint8_t const*)&params->nwkKeyType;
-  RemoteWriteReq.attr[6].length = 1;
+  RemoteWriteReq.attr[2].attrId = ZCL_COMMISSION_SVR_ATTR_NWKKEYTYPE;
+  RemoteWriteReq.attr[2].type = ZCL_DATATYPE_ENUMERATION_8BIT;
+  RemoteWriteReq.attr[2].value = (uint8_t const*)&params->nwkKeyType;
+  RemoteWriteReq.attr[2].length = 1;
   
   /* Startup Control attribute */
   APP_DBG("Modifying startup control.");
-  RemoteWriteReq.attr[7].attrId = ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL;
-  RemoteWriteReq.attr[7].type = ZCL_DATATYPE_ENUMERATION_8BIT;
-  RemoteWriteReq.attr[7].value = (uint8_t const*)&params->startupControl;
-  RemoteWriteReq.attr[7].length = 1;
+  RemoteWriteReq.attr[3].attrId = ZCL_COMMISSION_SVR_ATTR_STARTUPCONTROL;
+  RemoteWriteReq.attr[3].type = ZCL_DATATYPE_ENUMERATION_8BIT;
+  RemoteWriteReq.attr[3].value = (uint8_t const*)&params->startupControl;
+  RemoteWriteReq.attr[3].length = 1;
     
   status = ZbZclWriteReq(zigbee_app_info.commissioning_client, &RemoteWriteReq, APP_ZIGBEE_Commissioning_Client_RemoteWrite_cb, NULL);
   if (status != ZCL_STATUS_SUCCESS) {

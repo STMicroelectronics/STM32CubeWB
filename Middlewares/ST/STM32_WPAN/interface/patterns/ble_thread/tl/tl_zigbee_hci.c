@@ -45,6 +45,7 @@
 
 /* Private functions ----------------------------------------------------------*/
 __weak void Pre_ZigbeeCmdProcessing(void){return;}
+__weak void Post_ZigbeeCmdProcessing(void){return;}
 __weak void ZIGBEE_CmdTransfer(void){return;}
 __weak Zigbee_Cmd_Request_t* ZIGBEE_Get_OTCmdPayloadBuffer(void){return 0;}
 __weak Zigbee_Cmd_Request_t* ZIGBEE_Get_OTCmdRspPayloadBuffer(void){return 0;}

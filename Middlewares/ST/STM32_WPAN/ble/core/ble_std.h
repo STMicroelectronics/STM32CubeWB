@@ -243,9 +243,125 @@
 
 /* Bluetooth Core Specification versions
  */
-#define BLE_CORE_5_2                     11
-#define BLE_CORE_5_3                     12
-#define BLE_CORE_5_4                     13
+#define BLE_CORE_5_2                                   11
+#define BLE_CORE_5_3                                   12
+#define BLE_CORE_5_4                                   13
+
+/* AD types for advertising data and scan response data
+ */
+#define AD_TYPE_FLAGS                                  0x01U
+#define AD_TYPE_16_BIT_SERV_UUID                       0x02U
+#define AD_TYPE_16_BIT_SERV_UUID_CMPLT_LIST            0x03U
+#define AD_TYPE_32_BIT_SERV_UUID                       0x04U
+#define AD_TYPE_32_BIT_SERV_UUID_CMPLT_LIST            0x05U
+#define AD_TYPE_128_BIT_SERV_UUID                      0x06U
+#define AD_TYPE_128_BIT_SERV_UUID_CMPLT_LIST           0x07U
+#define AD_TYPE_SHORTENED_LOCAL_NAME                   0x08U
+#define AD_TYPE_COMPLETE_LOCAL_NAME                    0x09U
+#define AD_TYPE_TX_POWER_LEVEL                         0x0AU
+#define AD_TYPE_CLASS_OF_DEVICE                        0x0DU
+#define AD_TYPE_SEC_MGR_TK_VALUE                       0x10U
+#define AD_TYPE_SEC_MGR_OOB_FLAGS                      0x11U
+#define AD_TYPE_PERIPHERAL_CONN_INTERVAL               0x12U
+#define AD_TYPE_SERV_SOLICIT_16_BIT_UUID_LIST          0x14U
+#define AD_TYPE_SERV_SOLICIT_128_BIT_UUID_LIST         0x15U
+#define AD_TYPE_SERVICE_DATA                           0x16U
+#define AD_TYPE_APPEARANCE                             0x19U
+#define AD_TYPE_ADVERTISING_INTERVAL                   0x1AU
+#define AD_TYPE_LE_ROLE                                0x1CU
+#define AD_TYPE_SERV_SOLICIT_32_BIT_UUID_LIST          0x1FU
+#define AD_TYPE_URI                                    0x24U
+#define AD_TYPE_MANUFACTURER_SPECIFIC_DATA             0xFFU
+
+/* Flag bits for Flags AD Type
+ */
+#define FLAG_BIT_LE_LIMITED_DISCOVERABLE_MODE          0x01
+#define FLAG_BIT_LE_GENERAL_DISCOVERABLE_MODE          0x02
+#define FLAG_BIT_BR_EDR_NOT_SUPPORTED                  0x04
+#define FLAG_BIT_LE_BR_EDR_CONTROLLER                  0x08
+#define FLAG_BIT_LE_BR_EDR_HOST                        0x10
+
+/* Appearance values
+ */
+#define GAP_APPEARANCE_UNKNOWN                                 0x0000
+#define GAP_APPEARANCE_GENERIC_PHONE                           0x0040
+#define GAP_APPEARANCE_GENERIC_COMPUTER                        0x0080
+#define GAP_APPEARANCE_GENERIC_WATCH                           0x00C0
+#define GAP_APPEARANCE_WATCH_SPORT_WATCH                       0x00C1
+#define GAP_APPEARANCE_GENERIC_CLOCK                           0x0100
+#define GAP_APPEARANCE_GENERIC_DISPLAY                         0x0140
+#define GAP_APPEARANCE_GENERIC_REMOTE_CONTROL                  0x0180
+#define GAP_APPEARANCE_GENERIC_EYE_GLASSES                     0x01C0
+#define GAP_APPEARANCE_GENERIC_TAG                             0x0200
+#define GAP_APPEARANCE_GENERIC_KEYRING                         0x0240
+#define GAP_APPEARANCE_GENERIC_MEDIA_PLAYER                    0x0280
+#define GAP_APPEARANCE_GENERIC_BARCODE_SCANNER                 0x02C0
+#define GAP_APPEARANCE_GENERIC_THERMOMETER                     0x0300
+#define GAP_APPEARANCE_THERMOMETER_EAR                         0x0301
+#define GAP_APPEARANCE_GENERIC_HEART_RATE_SENSOR               0x0340
+#define GAP_APPEARANCE_HEART_RATE_SENSOR_HEART_RATE_BELT       0x0341
+#define GAP_APPEARANCE_GENERIC_BLOOD_PRESSURE                  0x0380
+#define GAP_APPEARANCE_BLOOD_PRESSURE_ARM                      0x0381
+#define GAP_APPEARANCE_BLOOD_PRESSURE_WRIST                    0x0382
+#define GAP_APPEARANCE_HUMAN_INTERFACE_DEVICE                  0x03C0
+#define GAP_APPEARANCE_KEYBOARD                                0x03C1
+#define GAP_APPEARANCE_MOUSE                                   0x03C2
+#define GAP_APPEARANCE_JOYSTICK                                0x03C3
+#define GAP_APPEARANCE_GAMEPAD                                 0x03C4
+#define GAP_APPEARANCE_DIGITIZER_TABLET                        0x03C5
+#define GAP_APPEARANCE_CARD_READER                             0x03C6
+#define GAP_APPEARANCE_DIGITAL_PEN                             0x03C7
+#define GAP_APPEARANCE_BARCODE_SCANNER                         0x03C8
+#define GAP_APPEARANCE_GENERIC_GLUCOSE_METER                   0x0400
+#define GAP_APPEARANCE_GENERIC_RUNNING_WALKING_SENSOR          0x0440
+#define GAP_APPEARANCE_RUNNING_WALKING_IN_SHOE                 0x0441
+#define GAP_APPEARANCE_RUNNING_WALKING_ON_SHOE                 0x0442
+#define GAP_APPEARANCE_RUNNING_WALKING_ON_HIP                  0x0443
+#define GAP_APPEARANCE_GENERIC_CYCLING                         0x0480
+#define GAP_APPEARANCE_CYCLING_CYCLING_COMPUTER                0x0481
+#define GAP_APPEARANCE_CYCLING_SPEED_SENSOR                    0x0482
+#define GAP_APPEARANCE_CYCLING_CADENCE_SENSOR                  0x0483
+#define GAP_APPEARANCE_CYCLING_POWER_SENSOR                    0x0484
+#define GAP_APPEARANCE_CYCLING_SPEED_AND_CADENCE_SENSOR        0x0485
+#define GAP_APPEARANCE_GENERIC_PULSE_OXYMETER                  0x0C40
+#define GAP_APPEARANCE_FINGERTIP                               0x0C41
+#define GAP_APPEARANCE_WRIST_WORN                              0x0C42
+#define GAP_APPEARANCE_GENERIC_WEIGHT_SCALE                    0x0C80
+#define GAP_APPEARANCE_GENERIC_OUTDOOR_SPORT_ACTIVITY          0x1440
+#define GAP_APPEARANCE_LOCATION_DISPLAY_DEVICE                 0x1441
+#define GAP_APPEARANCE_LOCATION_AND_NAVIGATION_DISPLAY_DEVICE  0x1442
+#define GAP_APPEARANCE_LOCATION_POD                            0x1443
+#define GAP_APPEARANCE_LOCATION_AND_NAVIGATION_POD             0x1444
+#define GAP_APPEARANCE_GENERIC_ENVIRONMENTAL_SENSOR            0x1640
+
+/* GATT UUIDs
+ */
+#define GATT_SERVICE_UUID                        0x1801U
+#define PRIMARY_SERVICE_UUID                     0x2800U
+#define SECONDARY_SERVICE_UUID                   0x2801U
+#define INCLUDE_SERVICE_UUID                     0x2802U
+#define CHARACTERISTIC_UUID                      0x2803U
+#define CHAR_EXTENDED_PROP_DESC_UUID             0x2900U
+#define CHAR_USER_DESC_UUID                      0x2901U
+#define CHAR_CLIENT_CONFIG_DESC_UUID             0x2902U
+#define CHAR_SERVER_CONFIG_DESC_UUID             0x2903U
+#define CHAR_FORMAT_DESC_UUID                    0x2904U
+#define CHAR_AGGR_FMT_DESC_UUID                  0x2905U
+#define SERVICE_CHANGED_UUID                     0x2A05U
+#define CLIENT_SUPPORTED_FEATURES_UUID           0X2B29U
+#define DATABASE_HASH_UUID                       0X2B2AU
+#define SERVER_SUPPORTED_FEATURES_UUID           0X2B3AU
+
+/* GAP UUIDs
+ */
+#define GAP_SERVICE_UUID                         0x1800U
+#define DEVICE_NAME_UUID                         0x2A00U
+#define APPEARANCE_UUID                          0x2A01U
+#define PERIPHERAL_PREFERRED_CONN_PARAMS_UUID    0x2A04U
+#define CENTRAL_ADDRESS_RESOLUTION_UUID          0x2AA6U
+#define RESOLVABLE_PRIVATE_ADDRESS_ONLY_UUID     0x2AC9U
+#define ENCRYPTED_DATA_KEY_MATERIAL_UUID         0x2B88U
+#define LE_GATT_SECURITY_LEVELS_UUID             0x2BF5U
 
 
 #endif /* BLE_STD_H__ */

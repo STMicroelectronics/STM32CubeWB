@@ -2,7 +2,7 @@
  * @file zigbee.bdb.h
  * @brief BDB header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2023] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_BDB_H
@@ -147,6 +147,9 @@ enum ZbBdbTouchlinkKeyIndexT {
  * time. The ED scan also causes the device to go offline for a period of time,
  * which can cause further network problems. */
 #define ZB_BDB_FLAG_ZDO_NWK_UPDATE_SCAN_DISABLE         0x00000100U
+
+/* Used for debugging APS layer */
+#define ZB_BDB_FLAG_DEBUG_APS                           0x00000200U
 
 /** BDB IB Attributes */
 enum ZbBdbAttrIdT {

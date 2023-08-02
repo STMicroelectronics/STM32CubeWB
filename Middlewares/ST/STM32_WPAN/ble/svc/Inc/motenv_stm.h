@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2018-2021 STMicroelectronics.
+  * Copyright (c) 2018-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -65,6 +65,7 @@ typedef enum
   SW_PEDOMETER_READ_EVT,
   SW_INTENSITY_DET_NOTIFY_ENABLED_EVT,
   SW_INTENSITY_DET_NOTIFY_DISABLED_EVT,
+  MOTENV_STM_BOOT_REQUEST_EVT,
   /* Config Service Chars related events */
   CONFIG_NOTIFY_ENABLED_EVT,
   CONFIG_NOTIFY_DISABLED_EVT,

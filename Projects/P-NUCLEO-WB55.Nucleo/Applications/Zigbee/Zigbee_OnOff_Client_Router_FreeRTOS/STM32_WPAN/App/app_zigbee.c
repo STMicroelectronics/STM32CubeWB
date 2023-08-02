@@ -618,16 +618,25 @@ void TL_ZIGBEE_NotReceived(TL_EvtPacket_t *Notbuffer)
 }
 
 /**
- * @brief  This function is called before sending any ot command to the M0
- *         core. The purpose of this function is to be able to check if
- *         there are no notifications coming from the M0 core which are
- *         pending before sending a new ot command.
+ * @brief  This function is called before sending any zigbee command to the M0
+ *         core.
  * @param  None
  * @retval None
  */
 void Pre_ZigbeeCmdProcessing(void)
 {
   osMutexAcquire(MtxZigbeeId, osWaitForever);
+}
+
+/**
+ * @brief  This function is called just after having received the result associated to the command
+ *         send to the M0
+ * @param  None
+ * @retval None
+ */
+void Post_ZigbeeCmdProcessing(void)
+{
+  osMutexRelease(MtxZigbeeId);
 }
 
 /**
@@ -639,7 +648,6 @@ void Pre_ZigbeeCmdProcessing(void)
 static void Wait_Getting_Ack_From_M0(void)
 {
   osSemaphoreAcquire(TransferToM0Semaphore, osWaitForever);
-  osMutexRelease(MtxZigbeeId);
 }
 
 /**

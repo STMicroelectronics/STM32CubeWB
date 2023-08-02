@@ -631,6 +631,12 @@ void ZbDebugMemory(struct ZigBeeT *zb);
 void ZbDebugInfo(struct ZigBeeT *zb);
 
 /*---------------------------------------------------------------
+ * Misc Debug (may not be available on all platforms)
+ *---------------------------------------------------------------
+ */
+
+uint8_t  MacSetPropStrictDataPollReq(uint8_t val);
+/*---------------------------------------------------------------
  * Additional Layer Includes
  *---------------------------------------------------------------
  */

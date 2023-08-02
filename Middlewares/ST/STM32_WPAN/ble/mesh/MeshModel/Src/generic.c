@@ -835,7 +835,7 @@ MOBLE_RESULT GenericModelServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t 
 * @param  plength: Pointer to the Length of the data, to be updated by application
 * @param  pRxData: Pointer to the data received in packet.
 * @param  dataLength: length of the data in packet.
-* @param  response: Value to indicate wether message is acknowledged meassage or not.
+* @param  response: Value to indicate whether message is acknowledged meassage or not.
 * @retval MOBLE_RESULT
 */ 
 MOBLE_RESULT GenericModelServer_GetStatusRequestCb(MODEL_MessageHeader_t *pmsgParam,
@@ -1496,7 +1496,7 @@ void Light_HslHue_GenericLevelBinding(Light_HslStatus_t* bHslHueParam,
                                       MOBLEUINT8 elementIndex)
 { 
   /*  6.1.4.1.1 Binding with the Generic Level state
-  Generic Level = Light HSL Hue � 32768
+  Generic Level = Light HSL Hue - 32768
   */
   Generic_LevelStatus[elementIndex].Present_Level16 = (MOBLEINT16)(bHslHueParam->PresentHslHueLightness16 - 32768);
  

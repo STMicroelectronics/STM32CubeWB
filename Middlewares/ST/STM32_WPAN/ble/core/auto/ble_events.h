@@ -319,10 +319,9 @@ void hci_le_connection_update_complete_event( uint8_t Status,
 
 /**
  * @brief HCI_LE_READ_REMOTE_FEATURES_COMPLETE_EVENT
- * The LE Read Remote Features Complete event is used to indicate the
- * completion of the process of the Controller obtaining the used features of
- * the remote Bluetooth device specified by the Connection_Handle event
- * parameter.
+ * This event is used to indicate the completion of the process of the
+ * Controller obtaining the used features of the remote Bluetooth device
+ * specified by the Connection_Handle event parameter.
  * See Bluetooth spec. v.5.4 [Vol 4, Part E, 7.7.65.4].
  * 
  * @param Status Status error code.
@@ -339,9 +338,8 @@ void hci_le_read_remote_features_complete_event( uint8_t Status,
 
 /**
  * @brief HCI_LE_LONG_TERM_KEY_REQUEST_EVENT
- * The LE Long Term Key Request event indicates that the Central is attempting
- * to encrypt or re-encrypt the link and is requesting the Long Term Key from
- * the Host.
+ * This event indicates that the Central is attempting to encrypt or re-encrypt
+ * the link and is requesting the Long Term Key from the Host.
  * See Bluetooth spec. v.5.4 [Vol 6, Part B, 5.1.3] and [Vol 4, Part E,
  * 7.7.65.5].
  * 
@@ -358,12 +356,12 @@ void hci_le_long_term_key_request_event( uint16_t Connection_Handle,
 
 /**
  * @brief HCI_LE_DATA_LENGTH_CHANGE_EVENT
- * The LE Data Length Change event notifies the Host of a change to either the
- * maximum Payload length or the maximum transmission time of packets in either
- * direction. The values reported are the maximum that will actually be used on
- * the connection following the change, except that on the LE Coded PHY a
- * packet taking up to 2704 us to transmit may be sent even though the
- * corresponding parameter has a lower value.
+ * This event notifies the Host of a change to either the maximum Payload
+ * length or the maximum transmission time of packets in either direction. The
+ * values reported are the maximum that will actually be used on the connection
+ * following the change, except that on the LE Coded PHY a packet taking up to
+ * 2704 us to transmit may be sent even though the corresponding parameter has
+ * a lower value.
  * See Bluetooth spec. v.5.4 [Vol 4, Part E, 7.7.65.7] and [Vol 6, Part B,
  * 4.5.10].
  * 
@@ -424,12 +422,11 @@ void hci_le_generate_dhkey_complete_event( uint8_t Status,
 
 /**
  * @brief HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT
- * The LE Enhanced Connection Complete event indicates to both of the Hosts
- * forming the connection that a new connection has been created. Upon the
- * creation of the connection a Connection_Handle shall be assigned by the
- * Controller, and passed to the Host in this event. If the connection
- * establishment fails, this event shall be provided to the Host that had
- * issued the LE_Create_Connection command.
+ * This event indicates to both of the Hosts forming the connection that a new
+ * connection has been created. Upon the creation of the connection a
+ * Connection_Handle shall be assigned by the Controller, and passed to the
+ * Host in this event. If the connection establishment fails, this event shall
+ * be provided to the Host that had issued the LE_Create_Connection command.
  * If this event is unmasked and LE Connection Complete event is unmasked, only
  * the LE Enhanced Connection Complete event is sent when a new connection has
  * been completed.
@@ -533,8 +530,8 @@ void hci_le_directed_advertising_report_event( uint8_t Num_Reports,
 
 /**
  * @brief HCI_LE_PHY_UPDATE_COMPLETE_EVENT
- * The LE PHY Update Complete Event is used to indicate that the Controller has
- * changed the transmitter PHY or receiver PHY in use.
+ * This event is used to indicate that the Controller has changed the
+ * transmitter PHY or receiver PHY in use.
  * If the Controller changes the transmitter PHY, the receiver PHY, or both
  * PHYs, this event shall be issued.
  * If an LE_Set_PHY command was sent and the Controller determines that neither
@@ -657,8 +654,8 @@ void hci_le_extended_advertising_report_event( uint8_t Num_Reports,
 
 /**
  * @brief HCI_LE_SCAN_TIMEOUT_EVENT
- * The HCI_LE_Scan_Timeout event indicates that scanning has ended because the
- * duration has expired.
+ * This event indicates that scanning has ended because the duration has
+ * expired.
  * See Bluetooth spec. v.5.4 [Vol 4, Part E, 7.7.65.17].
  * 
  * @return None
@@ -667,9 +664,8 @@ void hci_le_scan_timeout_event( void );
 
 /**
  * @brief HCI_LE_ADVERTISING_SET_TERMINATED_EVENT
- * The HCI_LE_Advertising_Set_Terminated event indicates that the Controller
- * has terminated advertising in the advertising sets specified by the
- * Advertising_Handle parameter.
+ * This event indicates that the Controller has terminated advertising in the
+ * advertising sets specified by the Advertising_Handle parameter.
  * See Bluetooth spec. v.5.4 [Vol 4, Part E, 7.7.65.18].
  * 
  * @param Status Status error code.
@@ -692,10 +688,10 @@ void hci_le_advertising_set_terminated_event( uint8_t Status,
 
 /**
  * @brief HCI_LE_SCAN_REQUEST_RECEIVED_EVENT
- * The HCI_LE_Scan_Request_Received event indicates that a SCAN_REQ PDU or an
- * AUX_SCAN_REQ PDU has been received by the advertiser. The request contains a
- * device address from a scanner that is allowed by the advertising filter
- * policy. The advertising set is identified by Advertising_Handle.
+ * This event indicates that a SCAN_REQ PDU or an AUX_SCAN_REQ PDU has been
+ * received by the advertiser. The request contains a device address from a
+ * scanner that is allowed by the advertising filter policy. The advertising
+ * set is identified by Advertising_Handle.
  * See Bluetooth spec. v.5.4 [Vol 4, Part E, 7.7.65.19].
  * 
  * @param Advertising_Handle Used to identify an advertising set.
@@ -720,8 +716,8 @@ void hci_le_scan_request_received_event( uint8_t Advertising_Handle,
 
 /**
  * @brief HCI_LE_CHANNEL_SELECTION_ALGORITHM_EVENT
- * The HCI_LE_Channel_Selection_Algorithm event indicates which channel
- * selection algorithm is used on a data physical channel connection.
+ * This event indicates which channel selection algorithm is used on a data
+ * physical channel connection.
  * See Bluetooth spec. v.5.4 [Vol 4, Part E, 7.7.65.20].
  * 
  * @param Connection_Handle Connection handle for which the event applies.
@@ -764,20 +760,22 @@ void aci_gap_limited_discoverable_event( void );
  *        - 0x01: SMP timeout
  *        - 0x02: Pairing failed
  *        - 0x03: Encryption failed
- * @param Reason Pairing reason error code (valid in case of pairing failed
+ * @param Reason Pairing failed reason code (valid in case of pairing failed
  *        status)
  *        Values:
- *        - 0x02: OOB_NOT_AVAILABLE
- *        - 0x03: AUTH_REQ_CANNOT_BE_MET
- *        - 0x04: CONFIRM_VALUE_FAILED
- *        - 0x05: PAIRING_NOT_SUPPORTED
- *        - 0x06: INSUFF_ENCRYPTION_KEY_SIZE
- *        - 0x07: CMD_NOT_SUPPORTED
- *        - 0x08: UNSPECIFIED_REASON
- *        - 0x09: VERY_EARLY_NEXT_ATTEMPT
- *        - 0x0A: SM_INVALID_PARAMS
- *        - 0x0B: SMP_SC_DHKEY_CHECK_FAILED
- *        - 0x0C: SMP_SC_NUMCOMPARISON_FAILED
+ *        - 0x01: Passkey Entry Failed
+ *        - 0x02: OOB Not Available
+ *        - 0x03: Authentication Requirements
+ *        - 0x04: Confirm Value Failed
+ *        - 0x05: Pairing Not Supported
+ *        - 0x06: Encryption Key Size
+ *        - 0x07: Command Not Supported
+ *        - 0x08: Unspecified Reason
+ *        - 0x09: Repeated Attempts
+ *        - 0x0A: Invalid Parameters
+ *        - 0x0B: DHKey Check Failed
+ *        - 0x0C: Numeric Comparison Failed
+ *        - 0x0F: Key Rejected
  * @return None
  */
 void aci_gap_pairing_complete_event( uint16_t Connection_Handle,
@@ -1712,7 +1710,7 @@ void aci_l2cap_command_reject_event( uint16_t Connection_Handle,
  *        - 23 ... 65535
  * @param MPS Maximum payload size (in octets).
  *        Values:
- *        - 23 ... 65533
+ *        - 23 ... 248
  * @param Initial_Credits Number of K-frames that can be received on the
  *        created channel(s) by the L2CAP layer entity sending this packet.
  *        Values:
@@ -1746,7 +1744,7 @@ void aci_l2cap_coc_connect_event( uint16_t Connection_Handle,
  *        - 23 ... 65535
  * @param MPS Maximum payload size (in octets).
  *        Values:
- *        - 23 ... 65533
+ *        - 23 ... 248
  * @param Initial_Credits Number of K-frames that can be received on the
  *        created channel(s) by the L2CAP layer entity sending this packet.
  *        Values:
@@ -1786,7 +1784,7 @@ void aci_l2cap_coc_connect_confirm_event( uint16_t Connection_Handle,
  *        - 23 ... 65535
  * @param MPS Maximum payload size (in octets).
  *        Values:
- *        - 23 ... 65533
+ *        - 23 ... 248
  * @param Channel_Number Number of created channels. It is the length of
  *        Channel_Index_List.
  *        Values:

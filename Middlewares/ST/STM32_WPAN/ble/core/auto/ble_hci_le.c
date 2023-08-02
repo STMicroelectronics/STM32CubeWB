@@ -205,10 +205,10 @@ tBleStatus hci_host_number_of_completed_packets( uint8_t Number_Of_Handles,
 }
 
 tBleStatus hci_read_local_version_information( uint8_t* HCI_Version,
-                                               uint16_t* HCI_Revision,
-                                               uint8_t* LMP_PAL_Version,
-                                               uint16_t* Manufacturer_Name,
-                                               uint16_t* LMP_PAL_Subversion )
+                                               uint16_t* HCI_Subversion,
+                                               uint8_t* LMP_Version,
+                                               uint16_t* Company_Identifier,
+                                               uint16_t* LMP_Subversion )
 {
   struct hci_request rq;
   hci_read_local_version_information_rp0 resp;
@@ -223,10 +223,10 @@ tBleStatus hci_read_local_version_information( uint8_t* HCI_Version,
   if ( resp.Status )
     return resp.Status;
   *HCI_Version = resp.HCI_Version;
-  *HCI_Revision = resp.HCI_Revision;
-  *LMP_PAL_Version = resp.LMP_PAL_Version;
-  *Manufacturer_Name = resp.Manufacturer_Name;
-  *LMP_PAL_Subversion = resp.LMP_PAL_Subversion;
+  *HCI_Subversion = resp.HCI_Subversion;
+  *LMP_Version = resp.LMP_Version;
+  *Company_Identifier = resp.Company_Identifier;
+  *LMP_Subversion = resp.LMP_Subversion;
   return BLE_STATUS_SUCCESS;
 }
 

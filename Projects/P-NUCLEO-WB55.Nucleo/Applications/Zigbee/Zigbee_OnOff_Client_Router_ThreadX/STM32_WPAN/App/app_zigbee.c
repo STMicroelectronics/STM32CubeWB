@@ -686,6 +686,18 @@ void Pre_ZigbeeCmdProcessing(void)
 }
 
 /**
+ * @brief  This function is called just after having received the result associated to the command
+ *         send to the M0
+ * @param  None
+ * @retval None
+ */
+void Post_ZigbeeCmdProcessing(void)
+{
+  tx_mutex_put(&MtxZigbeeId);
+}
+
+
+/**
  * @brief  This function waits for getting an acknowledgment from the M0.
  *
  * @param  None
@@ -694,7 +706,7 @@ void Pre_ZigbeeCmdProcessing(void)
 static void Wait_Getting_Ack_From_M0(void)
 {
    tx_semaphore_get(&TransferToM0Semaphore, TX_WAIT_FOREVER);
-   tx_mutex_put(&MtxZigbeeId);
+   
 }
 
 /**

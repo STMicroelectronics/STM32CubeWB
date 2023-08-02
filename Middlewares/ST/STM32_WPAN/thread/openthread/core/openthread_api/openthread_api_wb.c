@@ -34,6 +34,11 @@
 /* INSTANCE */
 otStateChangedCallback otStateChangedCb = NULL;
 
+/* NAT64 */
+#if OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE 
+otNat64ReceiveIp4Callback otNat64ReceiveIp4Cb = NULL;
+#endif
+
 /* IP6 */
 #if OPENTHREAD_CONFIG_IP6_SLAAC_ENABLE
 otIp6SlaacPrefixFilter otIp6SlaacPrefixFilterCb = NULL;

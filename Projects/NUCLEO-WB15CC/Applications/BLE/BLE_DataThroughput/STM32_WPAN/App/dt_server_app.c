@@ -236,11 +236,11 @@ static void SendData( void )
     /*Data Packet to send to remote*/
     Notification_Data_Buffer[0] += 1;
     /* compute CRC */
-    crc_result = APP_BLE_ComputeCRC8((uint8_t*) Notification_Data_Buffer, (DATA_NOTIFICATION_MAX_PACKET_SIZE - 1));
-    Notification_Data_Buffer[DATA_NOTIFICATION_MAX_PACKET_SIZE - 1] = crc_result;
+    crc_result = APP_BLE_ComputeCRC8((uint8_t*) Notification_Data_Buffer, (Att_Mtu_Exchanged - 1));
+    Notification_Data_Buffer[Att_Mtu_Exchanged - 1] = crc_result;
 
     DTS_Context.TxData.pPayload = Notification_Data_Buffer;
-    DTS_Context.TxData.Length =  DATA_NOTIFICATION_MAX_PACKET_SIZE; //Att_Mtu_Exchanged-10;
+    DTS_Context.TxData.Length =  Att_Mtu_Exchanged;
 
     status = DTS_STM_UpdateChar(DT_TX_CHAR_UUID, (uint8_t *) &DTS_Context.TxData);
     if (status == BLE_STATUS_INSUFFICIENT_RESOURCES)
