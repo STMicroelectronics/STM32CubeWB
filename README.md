@@ -26,7 +26,7 @@ Details about the content of this release are available in the release note [her
 
 ## Boards available
 
-  * STM32WB55
+  * STM32WB
     * [NUCLEO-WB15CC](https://www.st.com/en/evaluation-tools/nucleo-wb15cc.html)
     * [P-NUCLEO-WB55.Nucleo](https://www.st.com/en/evaluation-tools/p-nucleo-wb55.html)
     * [P-NUCLEO-WB55.USBDongle](https://www.st.com/en/evaluation-tools/p-nucleo-wb55.html)
