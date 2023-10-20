@@ -615,10 +615,10 @@ uint32_t HAL_PWREx_GetBORConfig(void)
   * @note   Hold CPU2 with CPU1 as master by default.
   * @retval None
   */
-void HAL_PWREx_HoldCore(uint32_t CPU)
+void HAL_PWREx_HoldCore(uint32_t cpu)
 {
   /* Check the parameters */
-  assert_param(IS_PWR_CORE_HOLD_RELEASE(CPU));
+  assert_param(IS_PWR_CORE_HOLD_RELEASE(cpu));
 
   LL_PWR_DisableBootC2();
 }
@@ -630,10 +630,10 @@ void HAL_PWREx_HoldCore(uint32_t CPU)
   *             @arg PWR_CORE_CPU2: Release the CPU2 from holding.
   * @retval None
   */
-void HAL_PWREx_ReleaseCore(uint32_t CPU)
+void HAL_PWREx_ReleaseCore(uint32_t cpu)
 {
   /* Check the parameters */
-  assert_param(IS_PWR_CORE_HOLD_RELEASE(CPU));
+  assert_param(IS_PWR_CORE_HOLD_RELEASE(cpu));
 
   LL_PWR_EnableBootC2();
 }
