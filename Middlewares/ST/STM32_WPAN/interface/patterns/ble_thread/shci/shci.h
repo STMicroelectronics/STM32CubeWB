@@ -227,6 +227,7 @@ extern "C" {
     SHCI_OCF_C2_CONCURRENT_GET_NEXT_BLE_EVT_TIME,
     SHCI_OCF_C2_CONCURRENT_ENABLE_NEXT_802154_EVT_NOTIFICATION,
     SHCI_OCF_C2_802_15_4_DEINIT,
+    SHCI_OCF_C2_SET_SYSTEM_CLOCK,
   } SHCI_OCF_t;
 
 #define SHCI_OPCODE_C2_FUS_GET_STATE         (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_GET_STATE)
@@ -843,6 +844,15 @@ extern "C" {
     } SHCI_C2_CONFIG_Cmd_Param_t;
 
 #define SHCI_OPCODE_C2_802_15_4_DEINIT    (( SHCI_OGF << 10) + SHCI_OCF_C2_802_15_4_DEINIT)
+    
+#define SHCI_OPCODE_C2_SET_SYSTEM_CLOCK   (( SHCI_OGF << 10) + SHCI_OCF_C2_SET_SYSTEM_CLOCK)
+  /** Command parameters */
+    typedef enum
+    {
+      SET_SYSTEM_CLOCK_HSE_TO_PLL,
+      SET_SYSTEM_CLOCK_PLL_ON_TO_HSE,
+      SET_SYSTEM_CLOCK_PLL_OFF_TO_HSE,
+    }SHCI_C2_SET_SYSTEM_CLOCK_Cmd_Param_t;
 
 /**
  * PayloadCmdSize
@@ -1364,6 +1374,19 @@ typedef struct {
    * @retval Status
    */
   SHCI_CmdStatus_t SHCI_C2_802_15_4_DeInit( void );
+  
+  /**
+  * SHCI_C2_SetSystemClock
+  * @brief Request CPU2 to change system clock
+  *
+  * @param clockSel: It can be one of the following list
+  *                -  SET_SYSTEM_CLOCK_HSE_TO_PLL : CPU2 set system clock to PLL, PLL must be configured and started before.
+  *                -  SET_SYSTEM_CLOCK_PLL_ON_TO_HSE : CPU2 set System clock to HSE, PLL is still ON after command exection. 
+  *                -  SET_SYSTEM_CLOCK_PLL_OFF_TO_HSE : CPU2 set System clock to HSE, PLL is turned OFF after command exection. 
+  *
+  * @retval Status
+  */
+  SHCI_CmdStatus_t SHCI_C2_SetSystemClock( SHCI_C2_SET_SYSTEM_CLOCK_Cmd_Param_t clockSel );
 
 
 #ifdef __cplusplus

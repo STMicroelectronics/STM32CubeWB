@@ -4,20 +4,59 @@
     <title>_htmresc\ReleaseNotes.html</title>
   </head>
   <body style="font-size: 10pt; font-family: Verdana;">
-    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.17.2 / 09-August-2023</h3>
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.17.3 / 15-September-2023</h3>
     <div style="margin-left: 18pt;">
       <p>
         <b><u>Main Changes</u></b>
       </p>
       <p>
-        <b>Patch Release for BLE updates</b>
+        <b>Patch Release for BLE, 802.15.4, Thread and Zigbee updates</b>
       </p>
       <p>
-	    <p> This patch release V1.17.2 has to be installed on top of V1.17.1 patch release (based on V1.17.0).
-        </p>
-        <li> <strong>BLE</strong> updates
+        <p> This patch release V1.17.3 has to be installed on top of V1.17.2 patch release (based on V1.17.0).</p>
+        <li> <strong>CKS</strong> updates
           <ul>
             <li>Security improvement.</li>
+          </ul>
+        </li>
+        <li> <strong>BLE </strong> updates
+          <ul>
+            <li>In case of using PLL as system clock source, a new system command SHCI_C2_SetSystemClock is available.</li>
+            <li>Security improvement.</li>
+            <li>Compliancy TCRL-2023-1 with BLE 5.4 certification.</li>
+            <li>New BT SIG Certification: [Declaration ID D063070 / QDID 216169] (https://launchstudio.bluetooth.com/ListingDetails/186628).</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Zigbee</strong> updates
+          <ul>
+            <li>In case of FreeRTOS Application, a new mutex is now being used to protect the sending of commands to the M0.</li>
+          </ul>
+        </li>
+        <li> <strong>Thread</strong> updates
+          <ul>
+            <li>Thread Compliant Platform Certification done on current version.</li>
+          </ul>
+        </li>
+        <li> <strong>MAC 802.15.4</strong> updates
+          <ul>
+            <li>Proprietary MAC Pib Attribute has been introduced to let End Device to enter in sleep mode once MacDataPollReq is acknowledged with empty data pending field information.</li>
+          </ul>
+        </li>
+        <li> <strong>BLE/Zigbee Dynamic</strong> updates
+          <ul>
+            <li>Corrected an issue on radio access between BLE and Thread that could cause a freeze in the firmware.</li>
+          </ul>
+        </li>
+        </p>
+      </p>
+      <p>
+        <b><u>Known Limitations</u></b>
+      </p>
+      <p>
+        <li>BLE 
+          <ul>
+            <li>/NUCLEO-WB15CC : Use of PLL as system clock is not supported when using standby low power mode and RF.</li>
           </ul>
         </li>
       </p>
