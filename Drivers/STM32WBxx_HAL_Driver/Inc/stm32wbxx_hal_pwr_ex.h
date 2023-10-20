@@ -891,8 +891,8 @@ void              HAL_PWREx_Disable802ActivityIT(void);
 void              HAL_PWREx_EnableHOLDC2IT(void);
 void              HAL_PWREx_DisableHOLDC2IT(void);
 
-void              HAL_PWREx_HoldCore(uint32_t CPU);
-void              HAL_PWREx_ReleaseCore(uint32_t CPU);
+void              HAL_PWREx_HoldCore(uint32_t cpu);
+void              HAL_PWREx_ReleaseCore(uint32_t cpu);
 
 HAL_StatusTypeDef HAL_PWREx_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber);
 HAL_StatusTypeDef HAL_PWREx_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber);
