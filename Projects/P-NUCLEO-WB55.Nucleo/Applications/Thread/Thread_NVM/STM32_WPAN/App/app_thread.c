@@ -597,6 +597,9 @@ static void APP_THREAD_NVM_Init(void)
 {
   int eeprom_init_status;
 
+  /* Take semaphore to make sure there will be no modification of the NVM Ram buffer during Flash operation */
+  while( LL_HSEM_1StepLock( HSEM, CFG_HW_THREAD_NVM_SRAM_SEMID ) );
+
   APP_DBG("Flash starting address = %x", HW_FLASH_ADDRESS  + CFG_NVM_BASE_ADDRESS);
   eeprom_init_status = EE_Init( 0 , HW_FLASH_ADDRESS + CFG_NVM_BASE_ADDRESS );
 
@@ -612,6 +615,9 @@ static void APP_THREAD_NVM_Init(void)
   if ( APP_THREAD_NVM_Read() == false ){
     APP_DBG("APP_ZIGBEE_NVM_Read failed!");
   }
+
+  /* Release semaphore to allow operation of NVM Ram buffer on CPU2 side */
+  LL_HSEM_ReleaseLock( HSEM, CFG_HW_THREAD_NVM_SRAM_SEMID, 0 );
 }
 
 /**
@@ -662,6 +668,9 @@ static bool APP_THREAD_NVM_Write(void)
   int ee_status = 0;
   int index = 0;
 
+  /* Take semaphore to make sure there will be no modification of the NVM Ram buffer during Flash operation */
+  while( LL_HSEM_1StepLock( HSEM, CFG_HW_THREAD_NVM_SRAM_SEMID ) );
+
   for (index = 0; index < CFG_EE_BANK0_MAX_NB; index++)
   {
     ee_status = EE_Write(0, (uint16_t)index, OT_NvmRamBuffer[index]);
@@ -680,6 +689,9 @@ static bool APP_THREAD_NVM_Write(void)
       }
     }
   }
+
+  /* Release semaphore to allow operation of NVM Ram buffer on CPU2 side */
+  LL_HSEM_ReleaseLock( HSEM, CFG_HW_THREAD_NVM_SRAM_SEMID, 0 );
 
   if(ee_status != EE_OK)
   {

@@ -20,15 +20,15 @@
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Exe</state>
+                    <state>BLE_Zigbee_Dyn\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Obj</state>
+                    <state>BLE_Zigbee_Dyn\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\List</state>
+                    <state>BLE_Zigbee_Dyn\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -686,7 +686,7 @@
             <data>
                 <extensions></extensions>
                 <cmdline></cmdline>
-                <hasPrio>0</hasPrio>
+                <hasPrio>224</hasPrio>
                 <buildSequence>inputOutputBased</buildSequence>
             </data>
         </settings>

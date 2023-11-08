@@ -1986,6 +1986,7 @@ void aci_hal_scan_req_report_event( uint8_t RSSI,
  *        - 0x02: GATT unexpected peer message
  *        - 0x03: NVM level warning
  *        - 0x04: COC RX data length too large
+ *        - 0x05: ECOC already assigned DCID
  * @param Data_Length Length of Data in octets
  * @param Data The error event info
  * @return None

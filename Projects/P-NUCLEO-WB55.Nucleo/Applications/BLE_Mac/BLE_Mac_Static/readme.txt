@@ -122,8 +122,8 @@ change the Wireless Coprocessor binary.
                   |      Start in 802_15_4 mode|                            .
                   |                            |                    Boot ==>|  
                   |    On in coming association|                            |
-                  |    request FFD's green LED |                            |
-                  |    blinks                  |                            |
+                  |    request FFD's blue LED  |                            |
+                  |    goes on                 |                            |
                   |                            |                            | 
                   |                            |     Once the association   |
                   |                            |     between two devices is |

@@ -114,12 +114,12 @@
 #define CFG_BLE_DATA_LENGTH_EXTENSION   1
 
 /**
- * Sleep clock accuracy in Slave mode (ppm value)
+ * Sleep clock accuracy in Peripheral mode (ppm value)
  */
-#define CFG_BLE_SLAVE_SCA   500
+#define CFG_BLE_PERIPHERAL_SCA   500
 
 /**
- * Sleep clock accuracy in Master mode
+ * Sleep clock accuracy in Central mode
  * 0 : 251 ppm to 500 ppm
  * 1 : 151 ppm to 250 ppm
  * 2 : 101 ppm to 150 ppm
@@ -129,7 +129,7 @@
  * 6 : 21 ppm to 30 ppm
  * 7 : 0 ppm to 20 ppm
  */
-#define CFG_BLE_MASTER_SCA   0
+#define CFG_BLE_CENTRAL_SCA   0
 
 /**
  * LsSource
@@ -150,7 +150,7 @@
 #define CFG_BLE_HSE_STARTUP_TIME  0x148
 
 /**
- * Maximum duration of the connection event when the device is in Slave mode in units of 625/256 us (~2.44 us)
+ * Maximum duration of the connection event when the device is in Peripheral mode in units of 625/256 us (~2.44 us)
  */
 #define CFG_BLE_MAX_CONN_EVENT_LENGTH  (0xFFFFFFFF)
 
@@ -265,13 +265,14 @@
 
 #define CFG_BLE_RX_PATH_COMPENS    (0)
 
-  /* BLE core version (16-bit signed integer). 
+  /* BLE core version (16-bit signed integer).
    * - SHCI_C2_BLE_INIT_BLE_CORE_5_2
    * - SHCI_C2_BLE_INIT_BLE_CORE_5_3
-   * which are used to set: 11(5.2), 12(5.3).
+   * - SHCI_C2_BLE_INIT_BLE_CORE_5_4
+   * which are used to set: 11(5.2), 12(5.3), 13(5.4).
    */
    
-#define CFG_BLE_CORE_VERSION   (SHCI_C2_BLE_INIT_BLE_CORE_5_3)
+#define CFG_BLE_CORE_VERSION   (SHCI_C2_BLE_INIT_BLE_CORE_5_4)
  
   
 
@@ -310,8 +311,8 @@
  * Debug
  ******************************************************************************/
 /**
- * When set, this resets some hw resources to set the device in the same state than the power up
- * The FW resets only register that may prevent the FW to run properly
+ * When set, this resets some hw resources to put the device in the same state as at power up.
+ * It resets only register that may prevent the FW to run properly.
  *
  * This shall be set to 0 in a final product
  *

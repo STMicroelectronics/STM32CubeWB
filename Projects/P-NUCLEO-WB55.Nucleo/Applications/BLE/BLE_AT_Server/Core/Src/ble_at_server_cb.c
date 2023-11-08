@@ -173,7 +173,7 @@ uint8_t stm32wb_at_BLE_CHAR_ADD_cb(stm32wb_at_BLE_CHAR_ADD_t *param)
 
 uint8_t stm32wb_at_BLE_PERIPH_SEC_REQ_cb(stm32wb_at_BLE_PERIPH_SEC_REQ_t *param)
 {
-  UTIL_SEQ_SetTask( 1<<CFG_TASK_MANAGE_SLAVE_SECUTITY_REQ_ID, CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_MANAGE_PERIPHERAL_SECUTITY_REQ_ID, CFG_SCH_PRIO_0);
   
   return 0;
 }

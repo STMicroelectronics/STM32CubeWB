@@ -315,7 +315,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     }
     break;
   case MSG_M0TOM4_DNS_SERVICE_CB:
-    if (otDnsAddressCb != NULL)
+    if (otDnsServiceCb != NULL)
     {
       otDnsServiceCb((otError) p_notification->Data[0],
           (const otDnsServiceResponse *) p_notification->Data[1],

@@ -320,10 +320,6 @@ static void HRSAPP_Measurement(void)
 /* USER CODE BEGIN HRSAPP_Measurement */
   uint32_t measurement;
   char measurementText[20];
-  aPwmLedGsData_TypeDef aPwmLedGsData;
-  aPwmLedGsData[PWM_LED_RED]   = PWM_LED_GSDATA_7_0;
-  aPwmLedGsData[PWM_LED_GREEN] = PWM_LED_GSDATA_OFF;
-  aPwmLedGsData[PWM_LED_BLUE]  = PWM_LED_GSDATA_7_0;
   
   measurement = ((HRSAPP_Read_RTC_SSR_SS()) & 0x07) + 65;
   
@@ -337,7 +333,6 @@ static void HRSAPP_Measurement(void)
 #endif
   
   HRS_UpdateChar(HEART_RATE_MEASURMENT_UUID, (uint8_t *)&HRSAPP_Context.MeasurementvalueChar);
-  LED_On(aPwmLedGsData);
 
   BSP_LCD_Clear(0,SSD1315_COLOR_BLACK);
   BSP_LCD_Refresh(0);
@@ -354,7 +349,6 @@ static void HRSAPP_Measurement(void)
   /* ---- Display SMALL HEART ---- */
   LCD_DrawIcon(0, 0 , 64, 64, (uint8_t *)heart_small);
   BSP_LCD_Refresh(0);
-  LED_Off();
 /* USER CODE END HRSAPP_Measurement */
   return;
 }

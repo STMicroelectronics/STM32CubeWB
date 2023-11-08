@@ -32,13 +32,7 @@ typedef struct{
 
 /* Private defines -----------------------------------------------------------*/
 /* My Very Own Service and Characteristics UUIDs */
-/*
-The following 128bits UUIDs have been generated from the random UUID
-generator:
-D973F2E0-B19E-11E2-9E96-0800200C9A66: Service 128bits UUID
-D973F2E1-B19E-11E2-9E96-0800200C9A66: Characteristic_1 128bits UUID
-D973F2E2-B19E-11E2-9E96-0800200C9A66: Characteristic_2 128bits UUID
-*/
+
 #define COPY_MY_VERY_OWN_SERVICE_UUID(uuid_struct)                 COPY_UUID_128(uuid_struct,0x00,0x00,0xfe,0x40,0xcc,0x7a,0x48,0x2a,0x98,0x4a,0x7f,0x2e,0xd5,0xb3,0xe5,0x8f)
 #define COPY_MY_VERY_OWN_WRITE_CHARACTERISTIC_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0x00,0x00,0xfe,0x41,0x8e,0x22,0x45,0x41,0x9d,0x4c,0x21,0xed,0xae,0x82,0xed,0x19)
 #define COPY_MY_VERY_OWN_NOTIFY_CHARACTERISTIC_UUID(uuid_struct)   COPY_UUID_128(uuid_struct,0x00,0x00,0xfe,0x42,0x8e,0x22,0x45,0x41,0x9d,0x4c,0x21,0xed,0xae,0x82,0xed,0x19)

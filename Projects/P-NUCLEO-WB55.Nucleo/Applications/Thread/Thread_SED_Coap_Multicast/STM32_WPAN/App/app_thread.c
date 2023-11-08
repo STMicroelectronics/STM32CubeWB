@@ -49,12 +49,12 @@
 #define C_SIZE_CMD_STRING       256U
 #define C_PANID                 0x2222U
 #define C_CHANNEL_NB            12U
+#define THREAD_LINK_POLL_PERIOD_MS      (5000)                        /**< 5s */
 
 /* USER CODE BEGIN PD */
 #define C_RESSOURCE                     "light"
 
 #define COAP_SEND_TIMEOUT               (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
-#define THREAD_LINK_POLL_PERIOD_MS      (5000)                        /**< 5s */
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/

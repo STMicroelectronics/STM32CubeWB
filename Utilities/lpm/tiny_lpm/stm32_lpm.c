@@ -65,7 +65,7 @@
 #endif
 
 /**
- * @brief macro used to exit the critical section when exting Low Power
+ * @brief macro used to exit the critical section when exiting Low Power mode
  * @note  the behavior of the macro shall be symmetrical with the macro 
  *        UTIL_LPM_ENTER_CRITICAL_SECTION_ELP
  */

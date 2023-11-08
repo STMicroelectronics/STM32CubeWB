@@ -178,7 +178,7 @@ typedef struct
 #define BD_ADDR_SIZE_LOCAL    6
 
 /* USER CODE BEGIN PD */
-#define LED_ON_TIMEOUT                 (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -202,14 +202,14 @@ static const uint8_t a_MBdAddr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t a_BdAddrUdn[BD_ADDR_SIZE_LOCAL];
 
 /**
- *   Identity root key used to derive LTK and CSRK
+ *   Identity root key used to derive IRK and DHK(Legacy)
  */
-static const uint8_t a_BLE_CfgIrValue[16] = CFG_BLE_IRK;
+static const uint8_t a_BLE_CfgIrValue[16] = CFG_BLE_IR;
 
 /**
- * Encryption root key used to derive LTK and CSRK
+ * Encryption root key used to derive LTK(Legacy) and CSRK
  */
-static const uint8_t a_BLE_CfgErValue[16] = CFG_BLE_ERK;
+static const uint8_t a_BLE_CfgErValue[16] = CFG_BLE_ER;
 
 /**
  * These are the two tags used to manage a power failure during OTA
@@ -290,8 +290,8 @@ void APP_BLE_Init(void)
      CFG_BLE_PREPARE_WRITE_LIST_SIZE,
      CFG_BLE_MBLOCK_COUNT,
      CFG_BLE_MAX_ATT_MTU,
-     CFG_BLE_SLAVE_SCA,
-     CFG_BLE_MASTER_SCA,
+     CFG_BLE_PERIPHERAL_SCA,
+     CFG_BLE_CENTRAL_SCA,
      CFG_BLE_LS_SOURCE,
      CFG_BLE_MAX_CONN_EVENT_LENGTH,
      CFG_BLE_HSE_STARTUP_TIME,
@@ -405,8 +405,7 @@ void APP_BLE_Init(void)
   Adv_Request(APP_BLE_FAST_ADV);
 
   /* USER CODE BEGIN APP_BLE_Init_2 */
-   LED_Off();
-   
+
    /* Displays the board information: MAC Address, Stack version, FUS version*/ 
    if (SHCI_GetWirelessFwInfo(p_wireless_info) != SHCI_Success)
    {
@@ -483,7 +482,6 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
       }
 
       /* USER CODE BEGIN EVT_DISCONN_COMPLETE_1 */
-      LED_Off();
       bdaddr= BleGetBdAddress();
       sprintf(BdAddress, "BD_ad=%02x%02x%02x%02x%02x%02x", bdaddr[5], bdaddr[4], bdaddr[3], bdaddr[2], bdaddr[1], bdaddr[0]);
 
@@ -651,9 +649,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           APP_DBG_MSG(">>== ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE\n");
           break; /* ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE */
 
-        case ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE:   
-          APP_DBG_MSG("==>> ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE \n");
-          break; /* ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE */
+        case ACI_GAP_PERIPHERAL_SECURITY_INITIATED_VSEVT_CODE:   
+          APP_DBG_MSG("==>> ACI_GAP_PERIPHERAL_SECURITY_INITIATED_VSEVT_CODE \n");
+          break; /* ACI_GAP_PERIPHERAL_SECURITY_INITIATED_VSEVT_CODE */
 
         case ACI_GAP_BOND_LOST_VSEVT_CODE:    
           APP_DBG_MSG("==>> ACI_GAP_BOND_LOST_VSEVT_CODE \n");
@@ -918,7 +916,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 #endif /* CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR */
 
   /**
-   * Write Identity root key used to derive LTK and CSRK
+   * Write Identity root key used to derive IRK and DHK(Legacy)
    */
   ret = aci_hal_write_config_data(CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)a_BLE_CfgIrValue);
   if (ret != BLE_STATUS_SUCCESS)

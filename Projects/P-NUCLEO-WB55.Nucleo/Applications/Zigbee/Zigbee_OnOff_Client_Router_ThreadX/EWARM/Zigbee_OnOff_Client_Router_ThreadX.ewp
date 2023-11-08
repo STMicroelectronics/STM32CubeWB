@@ -1643,9 +1643,6 @@
           <name>$PROJ_DIR$/../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_setup.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$/../../../../../../Middlewares/ST/threadx/ports/cortex_m4/iar/src/tx_iar.c</name>
-        </file>
-        <file>
           <name>$PROJ_DIR$/../../../../../../Middlewares/ST/threadx/common/src/tx_block_allocate.c</name>
         </file>
         <file>
@@ -2103,6 +2100,9 @@
         </file>
         <file>
           <name>$PROJ_DIR$/../../../../../../Middlewares/ST/threadx/common/src/txe_timer_info_get.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$/../../../../../../Middlewares/ST/threadx/ports/cortex_m4/iar/src/tx_iar.c</name>
         </file>
       </group>
       <group>

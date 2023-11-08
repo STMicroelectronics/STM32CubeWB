@@ -103,6 +103,20 @@ typedef enum
   MSG_M4TOM0_MAC_MCPS_DATA_REQ,
   /*! MAC Message ID to request a purge of the pending MSDU from Transaction Queue*/
   MSG_M4TOM0_MAC_MCPS_PURGE_REQ,
+  /*! PHY Message ID to request test mode enablement/disblement */
+  MSG_M4TOM0_PHY_TEST_MODE,
+  /*! PHY Message ID to request a change of channel */
+  MSG_M4TOM0_PHY_SET_CHANNEL,
+  /*! PHY Message ID to request a continuous wave start */
+  MSG_M4TOM0_PHY_CONTINUOUS_WAVE_START,
+  /*! PHY Message ID to request a continuous wave stop */
+  MSG_M4TOM0_PHY_CONTINUOUS_WAVE_STOP,
+  /*! PHY Message ID to request a Tx start */
+  MSG_M4TOM0_PHY_TX_START,
+  /*! PHY Message ID to request a Rx start */
+  MSG_M4TOM0_PHY_RX_START,
+  /*! PHY Message ID to request a Rx stop */
+  MSG_M4TOM0_PHY_RX_STOP,
 } MAC_802_15_4_MsgIdM4ToM0_t;
 
 /* List of messages sent by the M0 to the M4 */
@@ -153,6 +167,17 @@ typedef enum
   ERR_INTERFACE_WARNING = 2U
 } Error_Interface_Level_Enum_t;
 
+
+/**
+ * @brief   This system function is used to set defined command ID in message between
+ *          Application core and Rf core.
+ *
+ *
+ * @param  None
+ * @retval None
+ */
+
+void utils_mac_set_cmdCode(uint16_t cmdCode);
 
 /** @addtogroup STM32WB55_MAC_CORE
  *

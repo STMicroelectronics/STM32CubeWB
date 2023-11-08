@@ -572,8 +572,8 @@ void AppliNvm_Process(void)
       (!LL_FLASH_IsActiveFlag_OperationSuspended()))
   {
     if(StopRadioInProgress == 0)
-  {
-    /* save reserve flash area */
+    {
+      /* save reserve flash area */
       memcpy((void*)reserveAreaCopy, 
              (void*)APP_NVM_BASE, 
              APP_NVM_RESERVED_SIZE);
@@ -581,26 +581,26 @@ void AppliNvm_Process(void)
       TRACE_M(TF_PROVISION,"Erase flash page\r\n");
       result = PalNvmErase(APP_NVM_BASE, 1);
 
-    if(result == MOBLE_RESULT_OUTOFMEMORY)
-    {
-      AppliNvm_Reqs.erasePageReq = MOBLE_TRUE;
+      if(result == MOBLE_RESULT_OUTOFMEMORY)
+      {
+        AppliNvm_Reqs.erasePageReq = MOBLE_TRUE;
 #if (LOW_POWER_FEATURE == 1)
-      UTIL_SEQ_SetTask( 1<<CFG_TASK_APPLI_REQ_ID, CFG_SCH_PRIO_0);
+        UTIL_SEQ_SetTask( 1<<CFG_TASK_APPLI_REQ_ID, CFG_SCH_PRIO_0);
 #endif
-    }  
-    else
-    {
-      AppliNvm_Reqs.erasePageReq = MOBLE_FALSE;
-      AppliNvm_Reqs.writeReq = MOBLE_TRUE;
+      }  
+      else
+      {
+        AppliNvm_Reqs.erasePageReq = MOBLE_FALSE;
+        AppliNvm_Reqs.writeReq = MOBLE_TRUE;
 #if (LOW_POWER_FEATURE == 1)
-      UTIL_SEQ_SetTask( 1<<CFG_TASK_APPLI_REQ_ID, CFG_SCH_PRIO_0);
+        UTIL_SEQ_SetTask( 1<<CFG_TASK_APPLI_REQ_ID, CFG_SCH_PRIO_0);
 #endif
       /* restore reserve area */
-/*      FLASH_ProgramWordBurst(APP_NVM_BASE, (uint32_t*)reserveAreaCopy); */
-      result = AppliNvm_FlashProgram(0,
-                                     (uint32_t*)&reserveAreaCopy, 
-                                     APP_NVM_RESERVED_SIZE);
-        BLEMesh_ResumeAdvScan();
+      /* FLASH_ProgramWordBurst(APP_NVM_BASE, (uint32_t*)reserveAreaCopy); */
+        result = AppliNvm_FlashProgram(0,
+                                       (uint32_t*)&reserveAreaCopy, 
+                                       APP_NVM_RESERVED_SIZE);
+          BLEMesh_ResumeAdvScan();
       }
     }
     else
@@ -1063,29 +1063,15 @@ MOBLE_RESULT AppliPrvnNvm_FactorySettingReset(MOBLEUINT8 *flag)
       *flag = 1;
     }
       
-    if(currSubPageIdx > 1)
-    {
-      NodeUnderProvisionParam.nodeAddress = currSubPageIdx;  
-    }
-    
-      
     if(currSubPageIdx > 0)
-    { /* If 1st page is empty, then decrementing by 1 will cause pointer to 
-         wrong address */
-      currSubPageIdx = currSubPageIdx-1;
-     
-      /* Load last Provisioner data saved from nvm */       
+    { /* Load last Provisioner data saved from nvm */       
       memcpy((void*)PrvnNvm_Reqs.prvnData, 
              (void*)(PRVN_NVM_BASE_OFFSET + PRVN_NVM_SUBPAGE_OFFSET(currSubPageIdx-1)),
-              PRVN_NVM_CHUNK_SIZE);    
+             PRVN_NVM_CHUNK_SIZE);    
 
       NodeUnderProvisionParam.nodeAddress = CopyU8LittleEndienArrayToU16word (&PrvnNvm_Reqs.prvnData[0]);  
       NodeUnderProvisionParam.numOfElements = PrvnNvm_Reqs.prvnData[2];  
     }
-      
-//    TRACE_I(TF_PROVISION,"Next NVM Address %.8x \r\n",
-//            PRVN_NVM_BASE_OFFSET + PRVN_NVM_SUBPAGE_OFFSET(currSubPageIdx));
-      
   }
      
   return result;

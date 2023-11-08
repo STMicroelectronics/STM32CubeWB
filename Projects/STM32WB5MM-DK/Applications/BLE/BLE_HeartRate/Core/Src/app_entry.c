@@ -150,8 +150,6 @@ void MX_APPE_Init(void)
   UTIL_LCD_DisplayStringAt(0, 0, (uint8_t *)"ST BLE Heart Rate", CENTER_MODE);
   BSP_LCD_Refresh(0);
 
-  //Switch RGB LED off
-  LED_Off();
   //Initialize user buttons
   Button_Init();
 
@@ -199,36 +197,6 @@ void Init_Exti(void)
 
 /* USER CODE BEGIN FD */
 
-void LED_Deinit(void)
-{
-  GPIO_InitTypeDef  GPIO_InitStructure = {0};
-  
-  /* RGB Led de-init */
-  BSP_PWM_LED_DeInit();
-
-  /* configure SPIx MOSI for LCD */
-  GPIO_InitStructure.Pin       = BUS_SPI1_MOSI_PIN;
-  GPIO_InitStructure.Mode      = GPIO_MODE_AF_PP;
-  GPIO_InitStructure.Pull      = GPIO_PULLDOWN;
-  GPIO_InitStructure.Speed     = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStructure.Alternate = BUS_SPI1_AF;
-  HAL_GPIO_Init(BUS_SPI1_GPIO_PORTA, &GPIO_InitStructure);
-}
-
-
-void LED_On(aPwmLedGsData_TypeDef aPwmLedGsData)
-{
-  BSP_PWM_LED_Init();
-  BSP_PWM_LED_On(aPwmLedGsData);
-  LED_Deinit();
-}
-
-void LED_Off(void)
-{
-  BSP_PWM_LED_Init();
-  BSP_PWM_LED_Off();
-  LED_Deinit();
-}
 /* USER CODE END FD */
 
 /*************************************************************

@@ -362,7 +362,8 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
     /* Enable access to the RTC registers */
     HAL_PWR_EnableBkUpAccess(); 
 
-    /*  Write twice the value to flush the APB-AHB bridge
+    /**
+     *  Write twice the value to flush the APB-AHB bridge
      *  This bit shall be written in the register before writing the next one
      */
     HAL_PWR_EnableBkUpAccess();

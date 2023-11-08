@@ -16,19 +16,19 @@
                 <debug>0</debug>
                 <option>
                     <name>BrowseInfoPath</name>
-                    <state>ble_mac_static\BrowseInfo</state>
+                    <state>BLE_Mac_Static\BrowseInfo</state>
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Exe</state>
+                    <state>BLE_Mac_Static\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Obj</state>
+                    <state>BLE_Mac_Static\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\List</state>
+                    <state>BLE_Mac_Static\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -201,7 +201,7 @@
                 </option>
                 <option>
                     <name>BuildFilesPath</name>
-                    <state>ble_mac_static</state>
+                    <state>BLE_Mac_Static</state>
                 </option>
             </data>
         </settings>
@@ -661,7 +661,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Project.bin</state>
+                    <state>BLE_Mac_Static.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -708,7 +708,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>Project.out</state>
+                    <state>BLE_Mac_Static.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
@@ -1005,7 +1005,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>###Unitialized###</state>
+                    <state>ble_mac_static_import_lib.o</state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>

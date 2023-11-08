@@ -210,7 +210,10 @@ void P2PS_STM_Init(void)
     aci_gatt_add_service(UUID_TYPE_128,
                       (Service_UUID_t *) &uuid16,
                       PRIMARY_SERVICE,
-                      8,
+#if (BLE_CFG_OTA_REBOOT_CHAR != 0)
+                      2+
+#endif                      
+                      6,
                       &(aPeerToPeerContext.PeerToPeerSvcHdle));
 
     /**

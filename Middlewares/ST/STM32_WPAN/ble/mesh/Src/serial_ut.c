@@ -186,7 +186,6 @@ void SerialUt_Process(char *rcvdStringBuff, uint16_t rcvdStringSize)
   /* Unprovisions the Node */
   case CMD_INDEX_SET_02:
     {
-      BLEMesh_StopAdvScan();
       unprovisioned = BLEMesh_IsUnprovisioned();
       result = BLEMesh_UpperTesterDataProcess(commandIndex, testFunctionParm);
     }

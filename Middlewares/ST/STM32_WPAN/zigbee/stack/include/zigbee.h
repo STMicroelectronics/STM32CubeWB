@@ -553,54 +553,7 @@ void ZbShutdown(struct ZigBeeT *zb);
 enum ZbStatusCodeT ZbStatePause(struct ZigBeeT *zb, void (*callback)(void *arg), void *arg);
 enum ZbStatusCodeT ZbStateResume(struct ZigBeeT *zb);
 
-/*---------------------------------------------------------------
- * Test Case Hooks
- *---------------------------------------------------------------
- */
-#ifdef CONFIG_TEST_HOOK
-/* These represent bits in a 32-bit bitmask. */
-enum ZbTestcaseT {
-    ZB_TESTCASE_NONE = 0,
-    ZB_TESTCASE_SE1X_15_47, /* Server sends a truncated INITIATE_KEY response */
-    ZB_TESTCASE_SE1X_15_48, /* Client sends a truncated EPHEMERAL_DATA request */
-    ZB_TESTCASE_CBKE_DELAY_EPH_DATA, /* e.g. SE 1.4 test case 15.25 */
-    ZB_TESTCASE_CBKE_DELAY_RESPONSE, /* e.g. SE 1.4 test case 15.26 */
-    ZB_TESTCASE_NWK_ENH_BEACON_REQ_06, /* Bogus EBR */
-    /* Override tx power management in the MAC and always set a minimum
-     * power level. Useful for co-ax testing to prevent cross-talk. */
-    ZB_TESTCASE_NWK_ENH_BEACON_MIN_TX_POWER,
-    ZB_TESTCASE_NWK_ENH_BEACON_REQ_DROP,
-    ZB_TESTCASE_NWK_STD_BEACON_REQ_DROP,
-    ZB_TESTCASE_NWK_LINKPOWER_DROP_NOTIFY,
-    ZB_TESTCASE_NWK_LINKPOWER_DROP_REQUEST,
-    ZB_TESTCASE_NWK_REJOIN_DROP_RSP,
-    ZB_TESTCASE_NWK_REJOIN_RETURN_FULL,
-    ZB_TESTCASE_NWK_EDKA_DROP_REQUEST,
-    ZB_TESTCASE_NWK_ASSOC_RSP_FULL,
-    ZB_TESTCASE_NWK_ROUTE_THRU_NNT_IGNORE_COST, /*  */
-    ZB_TESTCASE_NWK_FC_MAX_ALLOW,
-    ZB_TESTCASE_DLK_NOT_ALLOWED,
-    ZB_TESTCASE_DLK_INVALID_KEY_NEGO_STATE,
-    ZB_TESTCASE_DLK_INVALID_TLV,
-    ZB_TESTCASE_DLK_MISSING_TLV,
-    ZB_TESTCASE_DLK_NO_TLV,
-    ZB_TESTCASE_DLK_OUT_OF_ORDER_TLVS,
-    ZB_TESTCASE_APS_REQUEST_KEY_DROP,
-    ZB_TESTCASE_APS_DISABLE_FC_SYNC,
-    ZB_TESTCASE_ZDO_SEC_CHLNG_WITH_EXTRA_TLVS,
-    ZB_TESTCASE_TOUCHLINK_DEBUG_KEY,
-    ZB_TESTCASE_ZED_STACK_SHUTDOWN
-};
 
-/* External API */
-void ZbTestCaseEnable(struct ZigBeeT *zb, enum ZbTestcaseT testcase);
-void ZbTestCaseDisable(struct ZigBeeT *zb, enum ZbTestcaseT testcase);
-void ZbTestCaseClear(struct ZigBeeT *zb);
-uint32_t ZbTestCaseCurrent(struct ZigBeeT *zb);
-
-/* Should only be required for the stack */
-bool ZbTestCaseIsEnabled(struct ZigBeeT *zb, enum ZbTestcaseT testcase);
-#endif // CONFIG_TEST_HOOK
 /*---------------------------------------------------------------
  * Misc. Helper Functions
  *---------------------------------------------------------------

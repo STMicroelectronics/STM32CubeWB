@@ -150,7 +150,7 @@ static inline uint16_t logLevel(char *aLogString, uint16_t aMaxSize,
 static inline uint16_t logTimestamp(char *aLogString, uint16_t aMaxSize)
 {
   return snprintf(aLogString, aMaxSize, "%s[%010ld]", RTT_COLOR_CODE_DEFAULT,
-                  otPlatAlarmMilliGetNow());
+                  HAL_GetTick());
 }
 #endif /* LOG_TIMESTAMP_ENABLE */
 

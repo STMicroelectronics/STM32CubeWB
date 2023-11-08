@@ -359,9 +359,9 @@
 /** Environment Change System delay in msec (range=0..5000)
   - The ECS will be started after this delay and when all sensors are in Release state.
   - This setting establishes the periodic rate at which ECS() can be processed.
-  - This delay measurement is needed for the ECS() to start processing keys once all 
+  - This delay measurement is needed for the ECS() to start processing keys once all
     keys are in RELEASE state.
-  - Since user interaction with sensors is not synchronous to the time at which ECS() 
+  - Since user interaction with sensors is not synchronous to the time at which ECS()
     is measured, it may take up to 2 ECS() processes to continue processing objects again.
 */
 #define TSLPRM_ECS_DELAY (500)
@@ -417,9 +417,9 @@
 
 /** Delay for discharging Cx and Cs capacitors (range=0..65535)
     - The value corresponds to the Softdelay function parameter.
-    -  500 gives around  63 µs delay whatever HCLK
-    - 1000 gives around 125 µs delay whatever HCLK
-    - 2000 gives around 250 µs delay whatever HCLK
+    -  500 gives around  63 us delay whatever HCLK
+    - 1000 gives around 125 us delay whatever HCLK
+    - 2000 gives around 250 us delay whatever HCLK
 */
 #define TSLPRM_DELAY_DISCHARGE_ALL (1000)
 
@@ -429,8 +429,8 @@
 @note To ensure a correct operation in noisy environment, this parameter should
 be configured to output push-pull low (excepted for Linear sensors).
 Regarding Linear sensor,Input floating must be used only:
-    - if all channels can not be acquired simultaneosly
-      (Nb chanel > Nb availlable Groups)
+    - if all channels can not be acquired simultaneously
+      (Nb channel > Nb available Groups)
 */
 #define TSLPRM_IODEF (0)
 

@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>P-NUCLEO-WB55.Nucleo\Exe\</OutputDirectory>
-          <OutputName>Project</OutputName>
+          <OutputName>Ble_Thread_Dyn</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -506,6 +506,11 @@
               <FileName>stm32wbxx_hal_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_dma.c</FilePath>
+            </File>
+                        <File>
+              <FileName>stm32wbxx_hal_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</FilePath>
             </File>
             <File>
               <FileName>stm32wbxx_hal_gpio.c</FileName>

@@ -60,10 +60,10 @@
     .global     __tx_PendSVHandler                  @ PendSV
     .global     __tx_SysTickHandler                 @ SysTick
     .global     __tx_IntHandler                     @ Int 0
+    .global     __Vectors
 #ifdef USE_DYNAMIC_MEMORY_ALLOCATION
     .global     Image$$RW_IRAM1$$ZI$$Limit
 #endif
-    .global     __Vectors
 @
 @
 SYSTEM_CLOCK      =   32000000
@@ -72,6 +72,7 @@ SYSTICK_CYCLES    =   ((SYSTEM_CLOCK / 1000) -1)
     .text 32
     .align 4
     .syntax unified
+
 @/**************************************************************************/
 @/*                                                                        */
 @/*  FUNCTION                                               RELEASE        */

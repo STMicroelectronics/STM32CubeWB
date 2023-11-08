@@ -160,7 +160,7 @@ typedef struct
   uint16_t L2CAP_Length;
   uint16_t Interval_Min;
   uint16_t Interval_Max;
-  uint16_t Slave_Latency;
+  uint16_t Latency;
   uint16_t Timeout_Multiplier;
 } APP_BLE_p2p_Conn_Update_req_t;
 #endif
@@ -200,14 +200,14 @@ static const uint8_t a_MBdAddr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t a_BdAddrUdn[BD_ADDR_SIZE_LOCAL];
 #endif /* CFG_BLE_ADDRESS_TYPE == GAP_PUBLIC_ADDR */
 /**
- *   Identity root key used to derive LTK and CSRK
+ *   Identity root key used to derive IRK and DHK(Legacy)
  */
-static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
+static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IR;
 
 /**
- * Encryption root key used to derive LTK and CSRK
+ * Encryption root key used to derive LTK(Legacy) and CSRK
  */
-static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
+static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ER;
 
 tBDAddr SERVER_REMOTE_BDADDR;
 
@@ -281,8 +281,8 @@ void APP_BLE_Init(void)
      CFG_BLE_PREPARE_WRITE_LIST_SIZE,
      CFG_BLE_MBLOCK_COUNT,
      CFG_BLE_MAX_ATT_MTU,
-     CFG_BLE_SLAVE_SCA,
-     CFG_BLE_MASTER_SCA,
+     CFG_BLE_PERIPHERAL_SCA,
+     CFG_BLE_CENTRAL_SCA,
      CFG_BLE_LS_SOURCE,
      CFG_BLE_MAX_CONN_EVENT_LENGTH,
      CFG_BLE_HSE_STARTUP_TIME,
@@ -454,13 +454,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           APP_BLE_p2p_Conn_Update_req.L2CAP_Length = pr->L2CAP_Length;
           APP_BLE_p2p_Conn_Update_req.Interval_Min = pr->Interval_Min;
           APP_BLE_p2p_Conn_Update_req.Interval_Max = pr->Interval_Max;
-          APP_BLE_p2p_Conn_Update_req.Slave_Latency = pr->Latency;
+          APP_BLE_p2p_Conn_Update_req.Latency = pr->Latency;
           APP_BLE_p2p_Conn_Update_req.Timeout_Multiplier = pr->Timeout_Multiplier;
 
           result = aci_l2cap_connection_parameter_update_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,
                                                            APP_BLE_p2p_Conn_Update_req.Interval_Min,
                                                            APP_BLE_p2p_Conn_Update_req.Interval_Max,
-                                                           APP_BLE_p2p_Conn_Update_req.Slave_Latency,
+                                                           APP_BLE_p2p_Conn_Update_req.Latency,
                                                            APP_BLE_p2p_Conn_Update_req.Timeout_Multiplier,
                                                            CONN_L1,
                                                            CONN_L2,
@@ -929,7 +929,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 #endif /* CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR */
 
   /**
-   * Write Identity root key used to derive LTK and CSRK
+   * Write Identity root key used to derive IRK and DHK(Legacy)
    */
   ret = aci_hal_write_config_data(CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE);
   if (ret != BLE_STATUS_SUCCESS)

@@ -40,6 +40,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
+
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */

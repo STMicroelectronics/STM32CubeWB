@@ -22,7 +22,8 @@
 #define  __RTE_COMPONENTS_H__
 
 /* Defines ------------------------------------------------------------------*/
-/* STMicroelectronics.X-CUBE-AZRTOS-WB.1.1.0 */
+/* STMicroelectronics.X-CUBE-AZRTOS-WB.2.0.0 */
 #define THREADX_ENABLED
+#define TRACEX_SUPPORT_ENABLED
 
 #endif /* __RTE_COMPONENTS_H__ */

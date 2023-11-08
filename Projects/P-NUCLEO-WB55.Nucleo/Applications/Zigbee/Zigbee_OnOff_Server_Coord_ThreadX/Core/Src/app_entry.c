@@ -40,6 +40,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
+
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -107,21 +108,21 @@ extern void MX_USART1_UART_Init(void);
 static void Init_Rtc(void);
 
 /* USER CODE BEGIN PFP */
-static void Led_Init(void);
-static void Button_Init(void);
+static void Led_Init                ( void );
+static void Button_Init             ( void );
 
 /* Section specific to button management using UART */
-static void RxUART_Init(void);
-static void RxCpltCallback(void);
-static void UartCmdExecute(void);
+static void RxUART_Init             ( void );
+static void RxCpltCallback          ( void );
+static void UartCmdExecute          ( void );
 
-#define C_SIZE_CMD_STRING       256U
-#define RX_BUFFER_SIZE          8U
+#define C_SIZE_CMD_STRING           256U
+#define RX_BUFFER_SIZE              8U
 
-static uint8_t aRxBuffer[RX_BUFFER_SIZE];
-static uint8_t CommandString[C_SIZE_CMD_STRING];
-static uint16_t indexReceiveChar = 0;
-EXTI_HandleTypeDef exti_handle;
+static uint8_t          aRxBuffer[RX_BUFFER_SIZE];
+static uint8_t          CommandString[C_SIZE_CMD_STRING];
+static uint16_t         indexReceiveChar = 0;
+EXTI_HandleTypeDef      exti_handle;
 
 /* USER CODE END PFP */
 
@@ -672,7 +673,6 @@ void DbgOutputTraces(uint8_t *p_data, uint16_t size, void (*cb)(void))
   return;
 }
 #endif /* CFG_DEBUG_TRACE != 0 */
-
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 /**
   * @brief This function manage the Push button action
@@ -752,7 +752,7 @@ static void UartCmdExecute(void)
   {
     APP_DBG("RESET CMD RECEIVED");
     HAL_NVIC_SystemReset();
-  }  
+  }
   else
   {
     APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);

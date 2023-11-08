@@ -202,14 +202,14 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
 
 /**
-*   Identity root key used to derive LTK and CSRK 
+*   Identity root key used to derive IRK and DHK(Legacy) 
 */
-static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
+static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IR;
 
 /**
-* Encryption root key used to derive LTK and CSRK
+* Encryption root key used to derive LTK(Legacy) and CSRK
 */
-static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
+static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ER;
 
 static BleApplicationContext_t BleApplicationContext;
 static uint16_t AdvIntervalMin, AdvIntervalMax;
@@ -386,8 +386,8 @@ void APP_BLE_Init_Dyn_1( void )
     CFG_BLE_PREPARE_WRITE_LIST_SIZE,
     CFG_BLE_MBLOCK_COUNT,
     CFG_BLE_MAX_ATT_MTU,
-    CFG_BLE_SLAVE_SCA,
-    CFG_BLE_MASTER_SCA,
+    CFG_BLE_PERIPHERAL_SCA,
+    CFG_BLE_CENTRAL_SCA,
     CFG_BLE_LS_SOURCE,
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
@@ -739,7 +739,7 @@ static void Ble_Tl_Init( void )
   aci_hal_write_config_data( CONFIG_DATA_RANDOM_ADDRESS_OFFSET, CONFIG_DATA_RANDOM_ADDRESS_LEN, (uint8_t*)srd_bd_addr );
 
   /**
-   * Write Identity root key used to derive LTK and CSRK 
+   * Write Identity root key used to derive IRK and DHK(Legacy) 
    */
     aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
     
@@ -1044,13 +1044,13 @@ void BLE_SVC_L2CAP_Conn_Update(uint16_t Connection_Handle)
     index_con_int = (index_con_int + 1)%SIZE_TAB_CONN_INT;
     uint16_t interval_min = CONN_P(tab_conn_interval[index_con_int]);
     uint16_t interval_max = CONN_P(tab_conn_interval[index_con_int]);
-    uint16_t slave_latency = L2CAP_SLAVE_LATENCY;
+    uint16_t peripheral_latency = L2CAP_PERIPHERAL_LATENCY;
     uint16_t timeout_multiplier = L2CAP_TIMEOUT_MULTIPLIER;
     tBleStatus result;
 
     result = aci_l2cap_connection_parameter_update_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,
                                                        interval_min, interval_max,
-                                                       slave_latency, timeout_multiplier);
+                                                       peripheral_latency, timeout_multiplier);
     if( result == BLE_STATUS_SUCCESS )
     {
       APP_DBG_MSG("BLE_SVC_L2CAP_Conn_Update(), Successfully \r\n\r");

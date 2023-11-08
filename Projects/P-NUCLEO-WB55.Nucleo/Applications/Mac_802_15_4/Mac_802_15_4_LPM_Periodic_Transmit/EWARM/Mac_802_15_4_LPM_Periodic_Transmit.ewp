@@ -16,19 +16,19 @@
                 <debug>0</debug>
                 <option>
                     <name>BrowseInfoPath</name>
-                    <state>P-NUCLEO-WB55.Mac_802_15_4_LPM_Periodic_Transmit\BrowseInfo</state>
+                    <state>Mac_802_15_4_LPM_Periodic_Transmit\BrowseInfo</state>
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Exe</state>
+                    <state>Mac_802_15_4_LPM_Periodic_Transmit\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Obj</state>
+                    <state>Mac_802_15_4_LPM_Periodic_Transmit\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\List</state>
+                    <state>Mac_802_15_4_LPM_Periodic_Transmit\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -201,7 +201,7 @@
                 </option>
                 <option>
                     <name>BuildFilesPath</name>
-                    <state>P-NUCLEO-WB55.Mac_802_15_4_LPM_Periodic_Transmit</state>
+                    <state>Mac_802_15_4_LPM_Periodic_Transmit</state>
                 </option>
             </data>
         </settings>
@@ -1089,22 +1089,22 @@
                 <group>
                     <name>src</name>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\src\app_entry.c</name>
+                        <name>$PROJ_DIR$\..\Core\Src\app_entry.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\src\main.c</name>
+                        <name>$PROJ_DIR$\..\Core\Src\main.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\src\stm32_lpm_if.c</name>
+                        <name>$PROJ_DIR$\..\Core\Src\stm32_lpm_if.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\src\stm32wbxx_hal_msp.c</name>
+                        <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_hal_msp.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\src\stm32wbxx_it.c</name>
+                        <name>$PROJ_DIR$\..\Core\Src\stm32wbxx_it.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Core\src\system_stm32wbxx.c</name>
+                        <name>$PROJ_DIR$\..\Core\Src\system_stm32wbxx.c</name>
                     </file>
                 </group>
             </group>
@@ -1113,16 +1113,16 @@
                 <group>
                     <name>app</name>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\app_lpm_transmit_mac_802_15_4.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\app_lpm_transmit_mac_802_15_4.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\app_lpm_transmit_mac_802_15_4_process.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\app_lpm_transmit_mac_802_15_4_process.c</name>
                     </file>
                 </group>
                 <group>
                     <name>target</name>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\target\hw_ipcc.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\Target\hw_ipcc.c</name>
                     </file>
                 </group>
             </group>

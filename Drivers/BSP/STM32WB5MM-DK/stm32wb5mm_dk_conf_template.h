@@ -46,6 +46,9 @@ extern "C" {
 #define USE_COM_LOG                          0U
 #endif /* USE_VCP_CONNECTION */
 
+/* Auto reconfig of the PA7 Pin which is shared between the LCD MOSI PIN and the RGB LED */
+#define PA7_AUTO_MANAGEMENT                  1U
+
 /* IRQ priorities */
 #define BSP_BUTTON_USERx_IT_PRIORITY         0x0FUL
 #define PWM_LED_CLOCK_IT_PRIORITY            0x03UL

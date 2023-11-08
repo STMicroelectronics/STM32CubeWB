@@ -29,9 +29,8 @@
 /* Private defines -----------------------------------------------------------*/
 #define ACC_BYTES               (2)
 #define GYRO_BYTES              (2)
-#define MAG_BYTES               (2)
 
-#define VALUE_LEN_MOTION        (2+3*ACC_BYTES+3*GYRO_BYTES+3*MAG_BYTES)
+#define VALUE_LEN_MOTION        (2+3*ACC_BYTES+3*GYRO_BYTES)
 
 /* Private typedef -----------------------------------------------------------*/
 

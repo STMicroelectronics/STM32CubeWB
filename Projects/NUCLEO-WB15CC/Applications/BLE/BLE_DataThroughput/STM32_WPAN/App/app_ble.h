@@ -62,7 +62,7 @@ typedef struct
   uint16_t L2CAP_Length;
   uint16_t Interval_Min;
   uint16_t Interval_Max;
-  uint16_t Slave_Latency;
+  uint16_t Latency;
   uint16_t Timeout_Multiplier;
 } APP_BLE_Conn_Update_req_t;
 /* USER CODE END ET */

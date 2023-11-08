@@ -24,7 +24,7 @@
 /*  PORT SPECIFIC C INFORMATION                            RELEASE        */
 /*                                                                        */
 /*    tx_user.h                                           PORTABLE C      */
-/*                                                           6.0          */
+/*                                                           6.1.11       */
 /*                                                                        */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -42,12 +42,33 @@
 /*                                                                        */
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  05-19-2020     William E. Lamie         Initial Version 6.0           */
+/*  05-19-2020      William E. Lamie        Initial Version 6.0           */
+/*  09-30-2020      Yuxin Zhou              Modified comment(s),          */
+/*                                            resulting in version 6.1    */
+/*  03-02-2021      Scott Larson            Modified comment(s),          */
+/*                                            added option to remove      */
+/*                                            FileX pointer,              */
+/*                                            resulting in version 6.1.5  */
+/*  06-02-2021      Scott Larson            Added options for multiple    */
+/*                                            block pool search & delay,  */
+/*                                            resulting in version 6.1.7  */
+/*  10-15-2021      Yuxin Zhou              Modified comment(s), added    */
+/*                                            user-configurable symbol    */
+/*                                            TX_TIMER_TICKS_PER_SECOND   */
+/*                                            resulting in version 6.1.9  */
+/*  04-25-2022      Wenhui Xie              Modified comment(s),          */
+/*                                            optimized the definition of */
+/*                                            TX_TIMER_TICKS_PER_SECOND,  */
+/*                                            resulting in version 6.1.11 */
 /*                                                                        */
 /**************************************************************************/
 
 #ifndef TX_USER_H
 #define TX_USER_H
+
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */
 
 /* Define various build options for the ThreadX port.  The application should either make changes
    here by commenting or un-commenting the conditional compilation defined OR supply the defines
@@ -64,6 +85,7 @@
         TX_REACTIVATE_INLINE
         TX_DISABLE_STACK_FILLING
         TX_INLINE_THREAD_RESUME_SUSPEND
+        TX_DISABLE_ERROR_CHECKING
 
    For minimum size, the following should be defined:
 
@@ -71,6 +93,7 @@
         TX_DISABLE_PREEMPTION_THRESHOLD
         TX_DISABLE_REDUNDANT_CLEARING
         TX_DISABLE_NOTIFY_CALLBACKS
+        TX_NO_FILEX_POINTER
         TX_NOT_INTERRUPTABLE
         TX_TIMER_PROCESS_IN_ISR
 
@@ -151,6 +174,10 @@
 
 #define TX_DISABLE_NOTIFY_CALLBACKS
 
+/*Defined, the basic parameter error checking is disabled.*/
+
+/*#define TX_DISABLE_ERROR_CHECKING*/
+
 /* Determine if the tx_thread_resume and tx_thread_suspend services should have their internal
    code in-line. This results in a larger image, but improves the performance of the thread
    resume and suspend services.  */
@@ -208,22 +235,17 @@
 
 /*#define TX_TIMER_ENABLE_PERFORMANCE_INFO*/
 
-/* Define if the execution change notify is enabled. */
-
-/*#define TX_ENABLE_EXECUTION_CHANGE_NOTIFY*/
-
-/* Define the get system state macro. */
-
-/*#define TX_THREAD_GET_SYSTEM_STATE() _tx_thread_system_state */
-
-/* Define the check for whether or not to call the
-    _tx_thread_system_return function (TX_THREAD_SYSTEM_RETURN_CHECK(c)). */
-
-/*#define TX_THREAD_SYSTEM_RETURN_CHECK (c)  ((ULONG) _tx_thread_preempt_disable)*/
-
 /* Define the common timer tick reference for use by other middleware components. */
 
 #define TX_TIMER_TICKS_PER_SECOND                1000
+
+/* Determine if there is a FileX pointer in the thread control block.
+   By default, the pointer is there for legacy/backwards compatibility.
+   The pointer must also be there for applications using FileX.
+   Define this to save space in the thread control block.
+*/
+
+/*#define TX_NO_FILEX_POINTER*/
 
 /* Determinate if the basic alignment type is defined. */
 
@@ -237,7 +259,7 @@
 
 /*#define TX_MEMSET  memset((a),(b),(c))*/
 
-#ifdef __IAR_SYSTEMS_ASM__
+#ifdef __ICCARM__
 /* Define if the IAR library is supported. */
 /*#define TX_ENABLE_IAR_LIBRARY_SUPPORT*/
 #endif
@@ -265,6 +287,10 @@ void APP_ZIGBEE_ThreadX_ExitLowPower(void);
 
 /* User's low-power macro to obtain the amount of time (in ticks) the system has been in low power mode */
 /*#define TX_LOW_POWER_USER_TIMER_ADJUST */
+
+/* USER CODE BEGIN 2 */
+
+/* USER CODE END 2 */
 
 #endif
 

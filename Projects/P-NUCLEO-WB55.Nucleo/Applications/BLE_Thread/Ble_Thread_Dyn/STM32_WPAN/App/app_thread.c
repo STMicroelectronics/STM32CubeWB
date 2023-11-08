@@ -490,8 +490,11 @@ static void APP_THREAD_CheckWirelessFirmwareInfo(void)
     case INFO_STACK_TYPE_THREAD_MTD :
       APP_DBG("FW Type : Thread MTD");
       break;
-    case INFO_STACK_TYPE_BLE_THREAD_FTD_DYAMIC :
-      APP_DBG("FW Type : Dynamic Concurrent Mode BLE/Thread");
+    case INFO_STACK_TYPE_BLE_THREAD_FTD_DYNAMIC :
+      APP_DBG("FW Type : Dynamic Concurrent Mode BLE/Thread FTD");
+      break;
+    case INFO_STACK_TYPE_BLE_THREAD_LIGHT_DYNAMIC :
+      APP_DBG("FW Type : Dynamic Concurrent Mode BLE/Thread Light");
       break;
     default :
       /* No Thread device supported ! */

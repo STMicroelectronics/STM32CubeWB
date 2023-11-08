@@ -88,8 +88,10 @@ static void MX_IPCC_Init(void);
 /* USER CODE BEGIN PFP */
 void PeriphClock_Config(void);
 static void Reset_Device( void );
+#if (CFG_HW_RESET_BY_FW == 1)
 static void Reset_IPCC( void );
 static void Reset_BackupDomain( void );
+#endif /* CFG_HW_RESET_BY_FW == 1*/
 static void Init_Exti( void );
 static void Config_HSE(void);
 /* USER CODE END PFP */
@@ -521,6 +523,7 @@ static void Reset_Device( void )
   return;
 }
 
+#if ( CFG_HW_RESET_BY_FW == 1 )
 static void Reset_IPCC( void )
 {
   LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_IPCC);
@@ -557,7 +560,9 @@ static void Reset_IPCC( void )
 
   return;
 }
+#endif /* CFG_HW_RESET_BY_FW == 1*/
 
+#if( CFG_HW_RESET_BY_FW == 1 )
 static void Reset_BackupDomain( void )
 {
   if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
@@ -576,7 +581,7 @@ static void Reset_BackupDomain( void )
 
   return;
 }
-
+#endif /* CFG_HW_RESET_BY_FW == 1*/
 
 static void Init_Exti( void )
 {

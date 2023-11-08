@@ -49,6 +49,7 @@
 #define C_SIZE_CMD_STRING       256U
 #define C_PANID                 0x2222U
 #define C_CHANNEL_NB            12U
+#define THREAD_LINK_POLL_PERIOD_MS      (5000)                        /**< 5s */
 
 osMutexId_t MtxOtCmdId;
 
@@ -83,8 +84,6 @@ typedef enum
 #define C_RESSOURCE                     "light"
 
 #define COAP_SEND_TIMEOUT               (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
-#define THREAD_CHANGE_MODE_TIMEOUT      (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
-#define THREAD_LINK_POLL_PERIOD_MS      (5000)                        /**< 5s */
 
 /* FreeRtos stacks attributes */
 const osThreadAttr_t ThreadSendCoapMsgProcess_attr = {
@@ -95,16 +94,6 @@ const osThreadAttr_t ThreadSendCoapMsgProcess_attr = {
     .stack_mem = CFG_THREAD_SEND_COAP_MSG_PROCESS_STACK_MEM,
     .priority = CFG_THREAD_SEND_COAP_MSG_PROCESS_PRIORITY,
     .stack_size = CFG_THREAD_SEND_COAP_MSG_PROCESS_STACk_SIZE
-};
-
-const osThreadAttr_t ThreadSetSedModeProcess_attr = {
-    .name = CFG_THREAD_SET_SED_MODE_PROCESS_NAME,
-    .attr_bits = CFG_THREAD_SET_SED_MODE_PROCESS_ATTR_BITS,
-    .cb_mem = CFG_THREAD_SET_SED_MODE_PROCESS_CB_MEM,
-    .cb_size = CFG_THREAD_SET_SED_MODE_PROCESS_CB_SIZE,
-    .stack_mem = CFG_THREAD_SET_SED_MODE_PROCESS_STACK_MEM,
-    .priority = CFG_THREAD_SET_SED_MODE_PROCESS_PRIORITY,
-    .stack_size = CFG_THREAD_SET_SED_MODE_PROCESS_STACk_SIZE
 };
 /* USER CODE END PD */
 
@@ -154,13 +143,10 @@ static void APP_THREAD_CoapRequestHandler(void                 * pContext,
                                           otMessage           * pMessage,
                                           const otMessageInfo * pMessageInfo);
 
-static void APP_THREAD_FreeRTOSSetModeTask(void *argument);
 static void APP_THREAD_FreeRTOSSendCoapMsgTask(void *argument);
-
-static void APP_THREAD_SetSleepyEndDeviceMode(void);
 static void APP_THREAD_CoapTimingElapsed( void );
-static void APP_THREAD_SetThreadMode( void );
 static void APP_THREAD_SendCoapMsg(void );
+static void APP_THREAD_StartCoapTimer(void);
 /* USER CODE END PFP */
 
 /* Private variables -----------------------------------------------*/
@@ -203,12 +189,8 @@ static otMessageInfo OT_MessageInfo = {0};
 static uint8_t OT_Command = 0;
 static uint8_t OT_ReceivedCommand = 0;
 static otMessage   * pOT_Message = NULL;
-static otLinkModeConfig OT_LinkMode = {0};
-static uint32_t sleepyEndDeviceFlag = FALSE;
 static osThreadId_t OsTaskSendCoapMsgId;    /* Task managing the COAP transfer             */
-static osThreadId_t OsTaskSetSedModeId;     /* Task managing the switch to Thread SED mode */
 static uint8_t sedCoapTimerID;
-static uint8_t setThreadModeTimerID;
 
 /* Debug */
 static uint32_t DebugRxCoapCpt = 0;
@@ -258,11 +240,9 @@ void APP_THREAD_Init( void )
    * Create timer to handle COAP request sending
    */
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &sedCoapTimerID, hw_ts_Repeated, APP_THREAD_CoapTimingElapsed);
+  /* Allow the 800_15_4 IP to enter in low power mode */
+  SHCI_C2_RADIO_AllowLowPower(THREAD_IP,TRUE);
 
-  /**
-   * Create timer to change Thread Mode to SED
-   */
-  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &setThreadModeTimerID, hw_ts_SingleShot, APP_THREAD_SetThreadMode);
   /* USER CODE END APP_THREAD_INIT_TIMER */
 
   /* Create the different FreeRTOS tasks requested to run this Thread application*/
@@ -270,7 +250,6 @@ void APP_THREAD_Init( void )
 
   /* USER CODE BEGIN APP_THREAD_INIT_FREERTOS */
   OsTaskSendCoapMsgId = osThreadNew(APP_THREAD_FreeRTOSSendCoapMsgTask, NULL,&ThreadSendCoapMsgProcess_attr);
-  OsTaskSetSedModeId = osThreadNew(APP_THREAD_FreeRTOSSetModeTask, NULL,&ThreadSetSedModeProcess_attr);
   /* USER CODE END APP_THREAD_INIT_FREERTOS */
 
   /* Configure the Thread device at start */
@@ -370,6 +349,13 @@ static void APP_THREAD_DeviceConfig(void)
   otError error;
   otNetworkKey networkKey = {{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF}};
 
+  otLinkModeConfig OT_LinkMode = {0};
+/* Set the sleepy end device mode */
+  OT_LinkMode.mRxOnWhenIdle = 0;
+  OT_LinkMode.mDeviceType = 0;
+  OT_LinkMode.mNetworkData = 1U;
+  
+  
   error = otInstanceErasePersistentInfo(NULL);
   if (error != OT_ERROR_NONE)
   {
@@ -397,6 +383,18 @@ static void APP_THREAD_DeviceConfig(void)
   {
     APP_THREAD_Error(ERR_THREAD_SET_NETWORK_KEY,error);
   }
+  
+  error = otLinkSetPollPeriod(NULL, THREAD_LINK_POLL_PERIOD_MS);
+  /*if (error != OT_ERROR_NONE)
+  {
+    APP_THREAD_Error(ERR_THREAD_TO_BE_DEFINED,error); // l'erreur pour la pollperiod n'existe pas
+  }*/
+  error = otThreadSetLinkMode(NULL, OT_LinkMode);
+  if (error != OT_ERROR_NONE)
+  {
+    APP_THREAD_Error(ERR_THREAD_LINK_MODE,error);
+  }
+  
   error = otIp6SetEnabled(NULL, true);
   if (error != OT_ERROR_NONE)
   {
@@ -459,7 +457,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
       BSP_LED_On(LED3);
       /* Set the mode sleepy end device */
       /* Start the timer */
-      HW_TS_Start(setThreadModeTimerID, (uint32_t)THREAD_CHANGE_MODE_TIMEOUT);
+            APP_THREAD_StartCoapTimer();
       /* USER CODE END OT_DEVICE_ROLE_CHILD */
       break;
     case OT_DEVICE_ROLE_ROUTER :
@@ -468,7 +466,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
       BSP_LED_On(LED3);
       /* Set the mode sleepy end device */
       /* Start the timer */
-      HW_TS_Start(setThreadModeTimerID, (uint32_t)THREAD_CHANGE_MODE_TIMEOUT);
+            APP_THREAD_StartCoapTimer();
       /* USER CODE END OT_DEVICE_ROLE_ROUTER */
       break;
     case OT_DEVICE_ROLE_LEADER :
@@ -591,7 +589,7 @@ static void APP_THREAD_FreeRTOSSendCLIToM0Task(void *argument)
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 
 /* USER CODE BEGIN FREERTOS_WRAPPER_FUNCTIONS */
-static void APP_THREAD_FreeRTOSSetModeTask(void *argument)
+/*static void APP_THREAD_FreeRTOSSetModeTask(void *argument)
 {
   UNUSED(argument);
   for(;;)
@@ -599,7 +597,7 @@ static void APP_THREAD_FreeRTOSSetModeTask(void *argument)
     osThreadFlagsWait(1,osFlagsWaitAll,osWaitForever);
     APP_THREAD_SetSleepyEndDeviceMode();
   }
-}
+}*/
 
 static void APP_THREAD_FreeRTOSSendCoapMsgTask(void *argument)
 {
@@ -718,49 +716,8 @@ static void APP_THREAD_CoapSendRequest(otCoapResource* aCoapRessource,
  * @param None
  * @retval None
  */
-static void APP_THREAD_SetSleepyEndDeviceMode(void)
+static void APP_THREAD_StartCoapTimer(void)
 {
-  otError   error = OT_ERROR_NONE;
-
-  /* Set the pool period to 5 sec. It means that when the device will enter
-   * in 'sleepy end device' mode, it will send an ACK_Request every 5 sec.
-   * This message will act as keep alive message.
-   */
-  otLinkSetPollPeriod(NULL, THREAD_LINK_POLL_PERIOD_MS);
-
-  /* Set the sleepy end device mode */
-  OT_LinkMode.mRxOnWhenIdle = 0;
-  OT_LinkMode.mDeviceType = 0;
-  OT_LinkMode.mNetworkData = 1U;
-
-  error = otThreadSetLinkMode(NULL,OT_LinkMode);
-  if (error != OT_ERROR_NONE)
-    APP_THREAD_Error(ERR_THREAD_LINK_MODE,error);
-
-  /* After reaching the child or router state, the system
-   *   a) sets the 'sleepy end device' mode
-   *   b) perform a Thread stop
-   *   c) perform a Thread start.
-   *
-   *  NOTE : According to the Thread specification, it is necessary to set the
-   *         mode before starting Thread.
-   *
-   * A Child that has attached to its Parent indicating it is an FTD MUST NOT use Child UpdateRequest
-   * to modify its mode to MTD.
-   * As a result, you need to first detach from the network before switching from FTD to MTD at runtime,
-   * then reattach.
-   *
-   */
-  if (sleepyEndDeviceFlag == FALSE)
-  {
-    error = otThreadSetEnabled(NULL, false);
-    if (error != OT_ERROR_NONE)
-      APP_THREAD_Error(ERR_THREAD_LINK_MODE,error);
-    error = otThreadSetEnabled(NULL, true);
-    if (error != OT_ERROR_NONE)
-      APP_THREAD_Error(ERR_THREAD_LINK_MODE,error);
-    sleepyEndDeviceFlag = TRUE;
-  }
 
   /* Start the timer */
   HW_TS_Start(sedCoapTimerID, (uint32_t)COAP_SEND_TIMEOUT);
@@ -868,17 +825,11 @@ static void APP_THREAD_CoapTimingElapsed( void )
   BSP_LED_Toggle(LED1);
   */
   {
-    if (sleepyEndDeviceFlag == TRUE)
-    {
+
         osThreadFlagsSet(OsTaskSendCoapMsgId,4);
-    }
   }
 }
 
-static void APP_THREAD_SetThreadMode( void )
-{
-  osThreadFlagsSet(OsTaskSetSedModeId,1);
-}
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 

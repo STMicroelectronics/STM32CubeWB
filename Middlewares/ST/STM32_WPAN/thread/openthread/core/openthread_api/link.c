@@ -638,6 +638,7 @@ bool otLinkIsRadioFilterEnabled(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (bool)p_ot_req->Data[0];
 }
 #endif
 

@@ -123,7 +123,8 @@
  ******************************************************************************/
 
 #define BLE_CFG_UNKNOWN_APPEARANCE                                           (0)
-#define BLE_CFG_HID_SENSOR_APPEARANCE                                      (962)
-#define BLE_CFG_GAP_APPEARANCE                   (BLE_CFG_HID_SENSOR_APPEARANCE)
+#define BLE_CFG_HID_MOUSE_APPEARANCE                                       (962)
+#define BLE_CFG_HID_KEYBOARD_APPEARANCE                                    (961)
+#define BLE_CFG_GAP_APPEARANCE                 (BLE_CFG_HID_KEYBOARD_APPEARANCE)
 
 #endif /* BLE_CONF_H */

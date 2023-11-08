@@ -55,6 +55,7 @@ extern "C" {
 
 /* Exported functions ---------------------------------------------*/
   void APPE_Init( void );
+  void Init_Smps(void);
 /* USER CODE BEGIN EF */
   void APPE_Led_Init( void );
   void APPE_Button_Init( void );

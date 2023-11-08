@@ -386,7 +386,7 @@ void SVCCTL_InitCustomSvc(void)
    *                              = 6
    *
    * This value doesn't take into account number of descriptors manually added
-   * In case of descriptors addded, please update the max_attr_record value accordingly in the next SVCCTL_InitService User Section
+   * In case of descriptors added, please update the max_attr_record value accordingly in the next SVCCTL_InitService User Section
    */
   max_attr_record = 6;
 
@@ -475,7 +475,7 @@ void SVCCTL_InitCustomSvc(void)
    *                              = 8
    *
    * This value doesn't take into account number of descriptors manually added
-   * In case of descriptors addded, please update the max_attr_record value accordingly in the next SVCCTL_InitService User Section
+   * In case of descriptors added, please update the max_attr_record value accordingly in the next SVCCTL_InitService User Section
    */
   max_attr_record = 8;
 

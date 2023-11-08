@@ -79,14 +79,14 @@ static uint8_t a_BdAddrUdn[BD_ADDR_SIZE_LOCAL];
 #endif
 
 /**
- *   Identity root key used to derive LTK and CSRK
+ *   Identity root key used to derive IRK and DHK(Legacy)
  */
-static const uint8_t a_BLE_CfgIrValue[16] = CFG_BLE_IRK;
+static const uint8_t a_BLE_CfgIrValue[16] = CFG_BLE_IR;
 
 /**
- * Encryption root key used to derive LTK and CSRK
+ * Encryption root key used to derive LTK(Legacy) and CSRK
  */
-static const uint8_t a_BLE_CfgErValue[16] = CFG_BLE_ERK;
+static const uint8_t a_BLE_CfgErValue[16] = CFG_BLE_ER;
 
 static const char a_LocalName[] = { AD_TYPE_COMPLETE_LOCAL_NAME, 'S', 'T', 'M','_', 'O', 'T', 'A' };
 uint8_t a_ManufData[14] = { 
@@ -154,8 +154,8 @@ void APP_BLE_Init( void )
      CFG_BLE_PREPARE_WRITE_LIST_SIZE,
      CFG_BLE_MBLOCK_COUNT,
      CFG_BLE_MAX_ATT_MTU,
-     CFG_BLE_SLAVE_SCA,
-     CFG_BLE_MASTER_SCA,
+     CFG_BLE_PERIPHERAL_SCA,
+     CFG_BLE_CENTRAL_SCA,
      CFG_BLE_LS_SOURCE,
      CFG_BLE_MAX_CONN_EVENT_LENGTH,
      CFG_BLE_HSE_STARTUP_TIME,
@@ -484,7 +484,7 @@ static void Ble_Hci_Gap_Gatt_Init(void)
 #endif /* CFG_IDENTITY_ADDRESS != GAP_PUBLIC_ADDR */
 
   /**
-   * Write Identity root key used to derive LTK and CSRK 
+   * Write Identity root key used to derive IRK and DHK(Legacy) 
    */
   ret = aci_hal_write_config_data(CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)a_BLE_CfgIrValue);
   if (ret != BLE_STATUS_SUCCESS)

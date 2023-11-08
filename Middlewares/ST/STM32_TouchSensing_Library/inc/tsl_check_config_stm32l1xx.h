@@ -29,8 +29,8 @@
 /* 
 Channel number can reach 37 on STM32L1 series.
 On Group 2 and Group 7 all pins are not available at the same time.
-   * Groupe 2 (IO1..IO5): we can use 4 IOs instead of 5 (PG0, PG1)
-   * Groupe 7 (IO1..IO7): we can use 5 IOs insteag of 7 (PG2, PG3, PG4)
+   * Group 2 (IO1..IO5): we can use 4 IOs instead of 5 (PG0, PG1)
+   * Group 7 (IO1..IO7): we can use 5 IOs instead of 7 (PG2, PG3, PG4)
 This mean we can get only 37-1-2=34 channels.
 On STM32 L0, L4, F0 and F3 we can have from 3 to 24 channels
 */ 

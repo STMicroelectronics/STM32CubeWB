@@ -367,29 +367,56 @@ tBleStatus hci_read_rssi( uint16_t Connection_Handle,
  * regardless of how the LE_Event_Mask is set.
  * See Bluetooth spec. v.5.4 [Vol 4, Part E, 7.8.1].
  * 
- * @param LE_Event_Mask LE event mask. Default: 0x000000000003185F.
+ * @param LE_Event_Mask LE event mask. Default: 0x000000C7FFF7F85F. Note that
+ *        the BLE stack ignores the bits which represent events it does not
+ *        support (according to its variant).
  *        Flags:
  *        - 0x0000000000000000: No LE events specified
- *        - 0x0000000000000001: LE Connection Complete Event
- *        - 0x0000000000000002: LE Advertising Report Event
- *        - 0x0000000000000004: LE Connection Update Complete Event
- *        - 0x0000000000000008: LE Read Remote Used Features Complete Event
- *        - 0x0000000000000010: LE Long Term Key Request Event
- *        - 0x0000000000000020: LE Remote Connection Parameter Request Event
- *        - 0x0000000000000040: LE Data Length Change Event
- *        - 0x0000000000000080: LE Read Local P-256 Public Key Complete Event
- *        - 0x0000000000000100: LE Generate DHKey Complete Event
- *        - 0x0000000000000200: LE Enhanced Connection Complete Event
- *        - 0x0000000000000400: LE Direct Advertising Report Event
- *        - 0x0000000000000800: LE PHY Update Complete Event
- *        - 0x0000000000001000: LE Extended Advertising Report Event
- *        - 0x0000000000002000: LE Periodic Advertising Sync Established Event
- *        - 0x0000000000004000: LE Periodic Advertising Report Event
- *        - 0x0000000000008000: LE Periodic Advertising Sync Lost Event
- *        - 0x0000000000010000: LE Extended Scan Timeout Event
- *        - 0x0000000000020000: LE Extended Advertising Set Terminated Event
- *        - 0x0000000000040000: LE Scan Request Received Event
- *        - 0x0000000000080000: LE Channel Selection Algorithm Event
+ *        - 0x0000000000000001: LE Connection Complete event
+ *        - 0x0000000000000002: LE Advertising Report event
+ *        - 0x0000000000000004: LE Connection Update Complete event
+ *        - 0x0000000000000008: LE Read Remote Features Complete event
+ *        - 0x0000000000000010: LE Long Term Key Request event
+ *        - 0x0000000000000020: LE Remote Connection Parameter Request event
+ *        - 0x0000000000000040: LE Data Length Change event
+ *        - 0x0000000000000080: LE Read Local P-256 Public Key Complete event
+ *        - 0x0000000000000100: LE Generate DHKey Complete event
+ *        - 0x0000000000000200: LE Enhanced Connection Complete event
+ *        - 0x0000000000000400: LE Directed Advertising Report event
+ *        - 0x0000000000000800: LE PHY Update Complete event
+ *        - 0x0000000000001000: LE Extended Advertising Report event
+ *        - 0x0000000000002000: LE Periodic Advertising Sync Established event
+ *        - 0x0000000000004000: LE Periodic Advertising Report event
+ *        - 0x0000000000008000: LE Periodic Advertising Sync Lost event
+ *        - 0x0000000000010000: LE Scan Timeout event
+ *        - 0x0000000000020000: LE Advertising Set Terminated event
+ *        - 0x0000000000040000: LE Scan Request Received event
+ *        - 0x0000000000080000: LE Channel Selection Algorithm event
+ *        - 0x0000000000100000: LE Connectionless IQ Report event
+ *        - 0x0000000000200000: LE Connection IQ Report event
+ *        - 0x0000000000400000: LE CTE Request Failed event
+ *        - 0x0000000000800000: LE Periodic Advertising Sync Transfer Received
+ *          event
+ *        - 0x0000000001000000: LE CIS Established event
+ *        - 0x0000000002000000: LE CIS Request event
+ *        - 0x0000000004000000: LE Create BIG Complete event
+ *        - 0x0000000008000000: LE Terminate BIG Complete event
+ *        - 0x0000000010000000: LE BIG Sync Established event
+ *        - 0x0000000020000000: LE BIG Sync Lost event
+ *        - 0x0000000040000000: LE Request Peer SCA Complete event
+ *        - 0x0000000080000000: LE Path Loss Threshold event
+ *        - 0x0000000100000000: LE Transmit Power Reporting event
+ *        - 0x0000000200000000: LE BIGInfo Advertising Report event
+ *        - 0x0000000400000000: LE Subrate Change event
+ *        - 0x0000000800000000: LE Periodic Advertising Sync Established event
+ *          [v2]
+ *        - 0x0000001000000000: LE Periodic Advertising Report event [v2]
+ *        - 0x0000002000000000: LE Periodic Advertising Sync Transfer Received
+ *          event [v2]
+ *        - 0x0000004000000000: LE Periodic Advertising Subevent Data Request
+ *          event
+ *        - 0x0000008000000000: LE Periodic Advertising Response Report event
+ *        - 0x0000010000000000: LE Enhanced Connection Complete event [v2]
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_set_event_mask( const uint8_t* LE_Event_Mask );
@@ -1667,7 +1694,9 @@ tBleStatus hci_le_set_phy( uint16_t Connection_Handle,
  *        - 0x01: Transmitter set to use the LE 1M PHY
  *        - 0x02: Transmitter set to use the LE 2M PHY
  *        - 0x03: Transmitter set to use the LE Coded PHY with S=8 data coding
+ *          (not supported on STM32WB)
  *        - 0x04: Transmitter set to use the LE Coded PHY with S=2 data coding
+ *          (not supported on STM32WB)
  * @param Modulation_Index Modulation index capability of the transmitter
  *        Values:
  *        - 0x00: Assume transmitter will have a standard modulation index
@@ -1711,7 +1740,9 @@ tBleStatus hci_le_receiver_test_v2( uint8_t RX_Frequency,
  *        - 0x01: Transmitter set to use the LE 1M PHY
  *        - 0x02: Transmitter set to use the LE 2M PHY
  *        - 0x03: Transmitter set to use the LE Coded PHY with S=8 data coding
+ *          (not supported on STM32WB)
  *        - 0x04: Transmitter set to use the LE Coded PHY with S=2 data coding
+ *          (not supported on STM32WB)
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_transmitter_test_v2( uint8_t TX_Frequency,
@@ -1791,6 +1822,7 @@ tBleStatus hci_le_set_advertising_set_random_address( uint8_t Advertising_Handle
  *          Filter Accept List.
  * @param Adv_TX_Power Advertising TX power. Units: dBm.
  *        Values:
+ *        - 127: Host has no preference
  *        - -127 ... 20
  * @param Primary_Adv_PHY Primary advertising PHY.
  *        Values:

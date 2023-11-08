@@ -358,10 +358,22 @@ USBD_StatusTypeDef  USBD_UnRegisterClassComposite(USBD_HandleTypeDef *pdev)
 
   return ret;
 }
-
-
 #endif /* USE_USBD_COMPOSITE */
 
+#if (USBD_USER_REGISTER_CALLBACK == 1U)
+/**
+  * @brief  USBD_RegisterDevStateCallback
+  * @param  pdev : Device Handle
+  * @param  pUserCallback: User Callback
+  * @retval USBD Status
+  */
+USBD_StatusTypeDef USBD_RegisterDevStateCallback(USBD_HandleTypeDef *pdev, USBD_DevStateCallbackTypeDef pUserCallback)
+{
+  pdev->DevStateCallback = pUserCallback;
+
+  return USBD_OK;
+}
+#endif /* USBD_USER_REGISTER_CALLBACK */
 /**
   * @brief  USBD_Start
   *         Start the USB Device Core.

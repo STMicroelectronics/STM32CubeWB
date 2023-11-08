@@ -792,6 +792,8 @@ bool ZbNwkToggleDutyCycle(struct ZigBeeT *zb, bool enable);
  * ZB_NWK_NIB_ID_DisablePeriodicTimers is set to 1 (automatic EDKA is disabled). */
 bool ZbNwkSendEdkaReq(struct ZigBeeT *zb);
 
+
+
 /* Network Link power delta request & notify commands. */
 bool ZbNwkSendLinkPowerDeltaReq(struct ZigBeeT *zb);
 bool ZbNwkSendLinkPowerDeltaNotify(struct ZigBeeT *zb);
@@ -883,5 +885,8 @@ bool ZbNwkFastPollRelease(struct ZigBeeT *zb, struct nwk_fastpoll_entry_t *handl
  * @return Number of outstanding fast polling requests.
  */
 unsigned int ZbNwkFastPollResourceCount(struct ZigBeeT *zb);
+
+/* For test only...*/
+void ZbNwkAddrSetNextChildAddr(struct ZigBeeT *zb, uint16_t nextChildAddr);
 
 #endif /* ZIGBEE_NWK_H */

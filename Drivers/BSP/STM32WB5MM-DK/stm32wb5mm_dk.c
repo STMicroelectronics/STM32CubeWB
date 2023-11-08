@@ -21,6 +21,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wb5mm_dk.h"
 
+#if (PA7_AUTO_MANAGEMENT == 1)
+#include "stm32wb5mm_dk_bus.h"
+#endif /* PA7_AUTO_MANAGEMENT == 1*/
+
 #if (USE_BSP_COM_FEATURE == 1)
 #if (USE_COM_LOG == 1)
 
@@ -247,6 +251,9 @@ int32_t BSP_PWM_LED_DeInit(void)
     /* TIM17 MSP de-initialization */
     TIM17_MspDeInit(&PwmLed_TimerHandle);
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS == 1*/
+#if (PA7_AUTO_MANAGEMENT == 1)
+    BSP_PWM_LED_Pin_AutoManagement();
+#endif /* PA7_AUTO_MANAGEMENT == 1*/
   
   return ret;
 }
@@ -353,6 +360,26 @@ int32_t BSP_PWM_LED_RegisterMspCallbacks(BSP_PWM_LED_Cb_t *CallBacks)
   return ret;
 }
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS == 1 */
+
+#if (PA7_AUTO_MANAGEMENT == 1)
+/**
+  * @brief Reconfigure the GPIO PA7 Pin for SPI1 MOSI Pin to be able to continue sending message on LCD.
+  * @note This API is helpful to manage the hardware limitation available on STM32WB5MM-DK board: PA7 Pin is 
+  * shared between LCD MOSI PIN and RGB LED.
+  * @retval BSP error code
+  */
+void BSP_PWM_LED_Pin_AutoManagement(void)
+{
+  GPIO_InitTypeDef  GPIO_InitStructure = {0};
+  /* configure SPIx MOSI for LCD */
+  GPIO_InitStructure.Pin       = BUS_SPI1_MOSI_PIN;
+  GPIO_InitStructure.Mode      = GPIO_MODE_AF_PP;
+  GPIO_InitStructure.Pull      = GPIO_PULLDOWN;
+  GPIO_InitStructure.Speed     = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStructure.Alternate = BUS_SPI1_AF;
+  HAL_GPIO_Init(BUS_SPI1_GPIO_PORTA, &GPIO_InitStructure);
+}
+#endif /* PA7_AUTO_MANAGEMENT == 1*/
 /**
   * @}
   */
@@ -838,12 +865,18 @@ static int32_t PWM_LED_WriteData(aPwmLedGsData_TypeDef aPwmLedGsData)
   }
   
   /* Enable Grayscale (GS) Control */
+  HAL_GPIO_WritePin(PWM_LED_SELECT_GPIO_PORT, PWM_LED_SELECT_GPIO_PIN, GPIO_PIN_RESET);
+  HAL_Delay(10);
   HAL_GPIO_WritePin(PWM_LED_SELECT_GPIO_PORT, PWM_LED_SELECT_GPIO_PIN, GPIO_PIN_SET);
   
   /* TCycle measurement sequence */
-  HAL_GPIO_WritePin(PWM_LED_SDI_GPIO_PORT, PWM_LED_SDI_GPIO_PIN, GPIO_PIN_SET);
-  PWM_LED_Wait(DELAY);
   HAL_GPIO_WritePin(PWM_LED_SDI_GPIO_PORT, PWM_LED_SDI_GPIO_PIN, GPIO_PIN_RESET);
+  PWM_LED_Wait(DELAY);
+  HAL_GPIO_WritePin(PWM_LED_SDI_GPIO_PORT, PWM_LED_SDI_GPIO_PIN, GPIO_PIN_SET);
+  PWM_LED_Wait(T_CYCLE_0);
+  HAL_GPIO_WritePin(PWM_LED_SDI_GPIO_PORT, PWM_LED_SDI_GPIO_PIN, GPIO_PIN_RESET);
+  PWM_LED_Wait(DELAY);
+  HAL_GPIO_WritePin(PWM_LED_SDI_GPIO_PORT, PWM_LED_SDI_GPIO_PIN, GPIO_PIN_SET);
   PWM_LED_Wait(T_CYCLE_0);
   
   /* Write command */

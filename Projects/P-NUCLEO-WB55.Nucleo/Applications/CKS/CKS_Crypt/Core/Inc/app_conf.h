@@ -84,14 +84,14 @@
 #define RX_2M                                           0x02 
 
 /**
-*   Identity root key used to derive LTK and CSRK
+*   Identity root key used to derive IRK and DHK(Legacy)
 */
-#define CFG_BLE_IRK     {0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0,0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0}
+#define CFG_BLE_IR     {0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0,0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0}
 
 /**
-* Encryption root key used to derive LTK and CSRK
+* Encryption root key used to derive LTK(Legacy) and CSRK
 */
-#define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
+#define CFG_BLE_ER     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
 
 /**< specific parameters */
 /*****************************************************/
@@ -348,8 +348,8 @@ typedef enum
  * Debug
  ******************************************************************************/
 /**
- * When set, this resets some hw resources to set the device in the same state than the power up
- * The FW resets only register that may prevent the FW to run properly
+ * When set, this resets some hw resources to put the device in the same state as at power up.
+ * It resets only register that may prevent the FW to run properly.
  *
  * This shall be set to 0 in a final product
  *

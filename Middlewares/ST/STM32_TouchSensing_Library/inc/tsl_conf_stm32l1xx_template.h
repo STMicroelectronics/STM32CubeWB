@@ -436,7 +436,7 @@ be configured to output push-pull low (excepted for Linear sensors).
 */
 #define TSLPRM_USE_SHIELD (1)
 
-/** Charge/transfer Period (in µs) (= high pulse + low pulse)
+/** Charge/transfer Period (in us) (= high pulse + low pulse)
     - This is used to calculate the Timer reload value.
 @note For HW acquisition only
   */
@@ -448,10 +448,10 @@ be configured to output push-pull low (excepted for Linear sensors).
   */
 #define TSLPRM_TIMER_FREQ (32)
 
-/** Delay for transfering charges from Cx to Cs capacitor and then discharge Cx
+/** Delay for transferring charges from Cx to Cs capacitor and then discharge Cx
    (range=0..65535)
-   - 0: no delay (it takes about 2.8µs for a CT cycle)
-   - (1..65535): delay (in µs) = 0.75 * TSLPRM_DELAY_TRANSFER + 1
+   - 0: no delay (it takes about 2.8us for a CT cycle)
+   - (1..65535): delay (in us) = 0.75 * TSLPRM_DELAY_TRANSFER + 1
 @note for SW acquisition only
 */
 #define TSLPRM_DELAY_TRANSFER (1)

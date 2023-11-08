@@ -94,6 +94,10 @@ void APPE_Init( void )
   APPE_Led_Init();
 
   APPE_Button_Init();
+  
+  /* clock enable periph CRC */
+  LL_C2_AHB1_GRP1_EnableClock(LL_C2_AHB1_GRP1_PERIPH_CRC);
+  
 /* USER CODE END APPE_Init_1 */
   appe_Tl_Init();	/* Initialize all transport layers */
 
@@ -107,6 +111,25 @@ void APPE_Init( void )
 /* USER CODE END APPE_Init_2 */
    return;
 }
+
+void Init_Smps(void)
+{
+#if (CFG_USE_SMPS != 0)
+  /**
+   *  Configure and enable SMPS
+   *
+   *  The SMPS configuration is not yet supported by CubeMx
+   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
+   *  the SMPS output voltage shall be increased for higher RF output power
+   */
+  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
+  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
+  LL_PWR_SMPS_Enable();
+#endif /* CFG_USE_SMPS != 0 */
+
+  return;
+}
+
 /* USER CODE BEGIN FD */
 
 /* USER CODE END FD */
@@ -222,6 +245,9 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
   if(pReadyEvt->sysevt_ready_rsp == WIRELESS_FW_RUNNING)
   {
     return_value = SHCI_TL_UserEventFlow_Enable;
+    
+    /* clock disable periph CRC */
+    LL_C2_AHB1_GRP1_DisableClock(LL_C2_AHB1_GRP1_PERIPH_CRC);
 
     if(CFG_OTA_REBOOT_VAL_MSG == CFG_REBOOT_ON_CPU2_UPGRADE)
     {
@@ -297,7 +323,7 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
          * In case an error is detected during the upgrade process, restart the device
          * The BLE_Ota state machine will request a SHCI_C2_FUS_StartWs() on the next reboot.
          */
-        HAL_Delay(10000);   /* Poll the FUS each 10s to make sure process is going fine */
+        HAL_Delay(20000);   /* Poll the FUS each 20s to make sure process is going fine */
         fus_state_value = SHCI_C2_FUS_GetState( NULL );
         if( (fus_state_value < FUS_STATE_VALUE_FW_UPGRD_ONGOING) || (fus_state_value > FUS_STATE_VALUE_FUS_UPGRD_ONGOING_END) )
         {
@@ -348,7 +374,7 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
            * In case an error is detected during the upgrade process, restart the device
            * The BLE_Ota state machine will request a SHCI_C2_FUS_StartWs() on the next reboot.
            */
-          HAL_Delay(10000);   /* Poll the FUS each 10s to make sure process is going fine */
+          HAL_Delay(20000);   /* Poll the FUS each 20s to make sure process is going fine */
           fus_state_value = SHCI_C2_FUS_GetState( NULL );
           if( (fus_state_value < FUS_STATE_VALUE_FW_UPGRD_ONGOING) || (fus_state_value > FUS_STATE_VALUE_FUS_UPGRD_ONGOING_END) )
           {

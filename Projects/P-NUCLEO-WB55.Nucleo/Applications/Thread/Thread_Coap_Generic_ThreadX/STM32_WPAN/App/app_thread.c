@@ -147,24 +147,17 @@ static TL_EvtPacket_t *p_thread_notif_M0_to_M4;
 static __IO uint32_t  CptReceiveMsgFromM0 = 0;
 
 TX_THREAD OsTaskMessageM0ToM4Id;
-TX_THREAD OsTaskRequestM0ToM4Id;
-TX_THREAD OsTaskNwkFormId;
 TX_THREAD OsTaskSendCliToM0;
 TX_THREAD OsTaskCoapNotConfirmable;
 TX_THREAD OsTaskCoapConfirmable;
+
 TX_MUTEX MtxThreadId;
 
 TX_SEMAPHORE TransferToM0Semaphore;
-TX_SEMAPHORE StartupEndSemaphore;
-
-TX_SEMAPHORE NWKFormSemaphore; 
 TX_SEMAPHORE MessageM0ToM4Semaphore;
-TX_SEMAPHORE RequestM0ToM4Semaphore;
 TX_SEMAPHORE CoapNonConfSemaphore;
 TX_SEMAPHORE CoapConfSemaphore;
 TX_SEMAPHORE SendCliCmdSemaphore;
-TX_SEMAPHORE TimerSemaphore;
-
 
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
@@ -248,14 +241,10 @@ void APP_THREAD_Init(TX_BYTE_POOL* p_byte_pool)
   tx_mutex_create(&MtxThreadId, "MtxThreadId", TX_NO_INHERIT);
 
   /* Initialize the semaphores */
-  tx_semaphore_create(&StartupEndSemaphore, "StartupEndSemaphore", 0);
   tx_semaphore_create(&TransferToM0Semaphore, "TransferToM0Semaphore", 0);
   tx_semaphore_create(&MessageM0ToM4Semaphore, "MessageM0ToM4Semaphore", 0);
   tx_semaphore_create(&CoapNonConfSemaphore, "CoapNonConfSemaphore", 0);
   tx_semaphore_create(&CoapConfSemaphore, "CoapConfSemaphore", 0);
-  tx_semaphore_create(&TimerSemaphore, "TimerSemaphore", 0);
-
-
 
   /* Create the different tasks */
   /* Task to manage the messages from the M0 to the M4 */

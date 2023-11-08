@@ -189,7 +189,7 @@
  */
 #define GAP_LIMITED_DISCOVERY_PROC                   0x01U
 #define GAP_GENERAL_DISCOVERY_PROC                   0x02U
-#define GAP_NAME_DISCOVERY_PROC                      0x04U
+#define GAP_PERIODIC_ADVERTISING_CONNECTION_PROC     0x04U
 #define GAP_AUTO_CONNECTION_ESTABLISHMENT_PROC       0x08U
 #define GAP_GENERAL_CONNECTION_ESTABLISHMENT_PROC    0x10U
 #define GAP_SELECTIVE_CONNECTION_ESTABLISHMENT_PROC  0x20U
@@ -436,6 +436,17 @@
 #define RADIO_ACT_MASK_ISO_SYNC                    0x1000U
 #define RADIO_ACT_MASK_ISO_PERIPH_CONNECT          0x2000U
 #define RADIO_ACT_MASK_ISO_CENTR_CONNECT           0x4000U
+
+/* ------------------------------------------------------------------------- */
+
+/* Definitions for FW_Error_Type
+ * (ACI_HAL_FW_ERROR_EVENT)
+ */
+#define FW_L2CAP_RECOMBINATION_ERROR                 0x01U
+#define FW_GATT_UNEXPECTED_PEER_MESSAGE              0x02U
+#define FW_NVM_LEVEL_WARNING                         0x03U
+#define FW_COC_RX_DATA_LENGTH_TOO_LARGE              0x04U
+#define FW_ECOC_CONN_RSP_ALREADY_ASSIGNED_DCID       0x05U
 
 /* ------------------------------------------------------------------------- */
 

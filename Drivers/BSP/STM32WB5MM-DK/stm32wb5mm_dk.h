@@ -147,7 +147,7 @@ typedef struct
   */
 #define STM32WB5MM_DK_BSP_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
 #define STM32WB5MM_DK_BSP_VERSION_SUB1   (0x00U) /*!< [23:16] sub1 version */
-#define STM32WB5MM_DK_BSP_VERSION_SUB2   (0x04U) /*!< [15:8]  sub2 version */
+#define STM32WB5MM_DK_BSP_VERSION_SUB2   (0x05U) /*!< [15:8]  sub2 version */
 #define STM32WB5MM_DK_BSP_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define STM32WB5MM_DK_BSP_VERSION    ((STM32WB5MM_DK_BSP_VERSION_MAIN << 24U)\
                                             |(STM32WB5MM_DK_BSP_VERSION_SUB1 << 16U)\
@@ -310,6 +310,9 @@ void    BSP_PWM_LED_IRQHandler(void);
 int32_t BSP_PWM_LED_RegisterDefaultMspCallbacks(void);
 int32_t BSP_PWM_LED_RegisterMspCallbacks(BSP_PWM_LED_Cb_t *CallBacks);
 #endif /* USE_HAL_TIM_REGISTER_CALLBACKS == 1 */
+#if (PA7_AUTO_MANAGEMENT == 1)
+void    BSP_PWM_LED_Pin_AutoManagement(void);
+#endif /* PA7_AUTO_MANAGEMENT == 1*/
 /**
   * @}
   */

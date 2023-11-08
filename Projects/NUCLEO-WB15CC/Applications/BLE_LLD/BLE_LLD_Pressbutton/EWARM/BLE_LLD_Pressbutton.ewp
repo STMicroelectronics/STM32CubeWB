@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>BLE_LLD</name>
+        <name>BLE_LLD_Pressbutton</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,19 +16,19 @@
                 <debug>1</debug>
                 <option>
                     <name>BrowseInfoPath</name>
-                    <state>BLE_LLD\BrowseInfo</state>
+                    <state>BLE_LLD_Pressbutton\BrowseInfo</state>
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>BLE_LLD/Exe</state>
+                    <state>BLE_LLD_Pressbutton/Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>BLE_LLD/Obj</state>
+                    <state>BLE_LLD_Pressbutton/Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>BLE_LLD/List</state>
+                    <state>BLE_LLD_Pressbutton/List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -201,7 +201,7 @@
                 </option>
                 <option>
                     <name>BuildFilesPath</name>
-                    <state>BLE_LLD</state>
+                    <state>BLE_LLD_Pressbutton</state>
                 </option>
             </data>
         </settings>

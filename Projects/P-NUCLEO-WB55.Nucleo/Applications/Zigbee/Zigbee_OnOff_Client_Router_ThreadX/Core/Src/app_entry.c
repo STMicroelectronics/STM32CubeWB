@@ -40,6 +40,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
+
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -568,10 +569,9 @@ static void Button_Init( void )
   BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
   BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
   BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
-    
-  HAL_NVIC_SetPriority(BUTTON_SW1_EXTI_IRQn, 0x0E, 0x00);
-  HAL_NVIC_SetPriority(BUTTON_SW2_EXTI_IRQn, 0x0E, 0x00);
-  HAL_NVIC_SetPriority(BUTTON_SW3_EXTI_IRQn, 0x0E, 0x00);
+  
+  /* only button 1 is used */
+  HAL_NVIC_SetPriority((IRQn_Type)BUTTON_SW1_EXTI_IRQn, 0x0E, 0x00);
 #endif /* (CFG_BUTTON_SUPPORTED == 1U) */
 
   return;
@@ -674,7 +674,6 @@ void DbgOutputTraces(uint8_t *p_data, uint16_t size, void (*cb)(void))
   return;
 }
 #endif /* CFG_DEBUG_TRACE != 0 */
-
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 /**
   * @brief This function manage the Push button action

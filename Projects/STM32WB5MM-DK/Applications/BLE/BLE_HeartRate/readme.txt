@@ -117,7 +117,6 @@ In order to make the program work, you must do the following:
  - This application supports switch to 2Mbits PHY ( SW3 is used to enable the feature )
  
 The Heart Rate is displayed each second on the android/ios device.
-And a purple LED will blink at the same frequency on the board.
 
 Available Wiki pages:
   - https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_overview

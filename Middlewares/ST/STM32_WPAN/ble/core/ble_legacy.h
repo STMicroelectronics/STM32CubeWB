@@ -32,6 +32,8 @@
 #define BLE_STATUS_INSUFFICIENT_ENC_KEYSIZE        0x5FU
 #define BLE_STATUS_CHARAC_ALREADY_EXISTS           0x63U
 
+#define GAP_NAME_DISCOVERY_PROC                    0x04U
+
 /* Deprecated names for ACI/HCI commands and events
  */
 

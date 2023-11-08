@@ -16,19 +16,19 @@
                 <debug>0</debug>
                 <option>
                     <name>BrowseInfoPath</name>
-                    <state>no_ota\BrowseInfo</state>
+                    <state>Ble_Thread_Dyn_SED\BrowseInfo</state>
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Exe</state>
+                    <state>Ble_Thread_Dyn_SED\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\Obj</state>
+                    <state>Ble_Thread_Dyn_SED\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>P-NUCLEO-WB55.Nucleo\List</state>
+                    <state>Ble_Thread_Dyn_SED\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -201,7 +201,7 @@
                 </option>
                 <option>
                     <name>BuildFilesPath</name>
-                    <state>no_ota</state>
+                    <state>Ble_Thread_Dyn_SED</state>
                 </option>
             </data>
         </settings>
@@ -669,7 +669,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>Project.bin</state>
+                    <state>Ble_Thread_Dyn_SED.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -687,7 +687,7 @@
             <data>
                 <extensions></extensions>
                 <cmdline></cmdline>
-                <hasPrio>0</hasPrio>
+                <hasPrio>224</hasPrio>
                 <buildSequence>inputOutputBased</buildSequence>
             </data>
         </settings>
@@ -716,7 +716,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>Project.out</state>
+                    <state>Ble_Thread_Dyn_SED.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
@@ -1013,7 +1013,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>###Unitialized###</state>
+                    <state>ble_thread_Dyn_SED_import_lib.o</state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>

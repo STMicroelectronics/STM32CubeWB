@@ -166,7 +166,7 @@ void HIDS_Notification(HIDS_App_Notification_evt_t *pNotification)
       break;
 #endif
 
-#if(BLE_CFG_HIDS_REPORT_CHAR != 0)
+#if(BLE_CFG_HIDS_OUTPUT_REPORT_NB != 0)
     case HIDS_OUTPUT_REPORT:
       {
         uint8_t i;

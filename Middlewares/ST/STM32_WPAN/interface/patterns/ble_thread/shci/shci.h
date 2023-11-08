@@ -437,7 +437,7 @@ extern "C" {
    * PrWriteListSize
    * NOTE: This parameter is ignored by the CPU2 when the parameter "Options" is set to "LL_only" ( see Options description in that structure )
    *
-   * Maximum number of supported “prepare write request”
+   * Maximum number of supported "prepare write request"
    *    - Min value: given by the macro DEFAULT_PREP_WRITE_LIST_SIZE
    *    - Max value: a value higher than the minimum required can be specified, but it is not recommended
    */
@@ -465,20 +465,20 @@ extern "C" {
   uint16_t AttMtu;
 
   /**
-   * SlaveSca
-   * The sleep clock accuracy (ppm value) that used in BLE connected slave mode to calculate the window widening
+   * PeripheralSca
+   * The sleep clock accuracy (ppm value) that used in BLE connected Peripheral mode to calculate the window widening
    * (in combination with the sleep clock accuracy sent by master in CONNECT_REQ PDU),
    * refer to BLE 5.0 specifications - Vol 6 - Part B - chap 4.5.7 and 4.2.2
    *     - Min value: 0
    *     - Max value: 500 (worst possible admitted by specification)
    */
-  uint16_t SlaveSca;
+  uint16_t PeripheralSca;
 
   /**
-   * MasterSca
-   * The sleep clock accuracy handled in master mode. It is used to determine the connection and advertising events timing.
+   * CentralSca
+   * The sleep clock accuracy handled in Central mode. It is used to determine the connection and advertising events timing.
    * It is transmitted to the slave in CONNEC_REQ PDU used by the slave to calculate the window widening,
-   * see SlaveSca and Bluetooth Core Specification v5.0 Vol 6 - Part B - chap 4.5.7 and 4.2.2
+   * see PeripheralSca and Bluetooth Core Specification v5.0 Vol 6 - Part B - chap 4.5.7 and 4.2.2
    * Possible values:
    *    - 251 ppm to 500 ppm: 0
    *    - 151 ppm to 250 ppm: 1
@@ -489,7 +489,7 @@ extern "C" {
    *    - 21 ppm to 30 ppm: 6
    *    - 0 ppm to 20 ppm: 7
    */
-  uint8_t MasterSca;
+  uint8_t CentralSca;
   
   /**
    * LsSource
@@ -504,7 +504,7 @@ extern "C" {
    * MaxConnEventLength
    * This parameter determines the maximum duration of a slave connection event. When this duration is reached the slave closes
    * the current connections event (whatever is the CE_length parameter specified by the master in HCI_CREATE_CONNECTION HCI command),
-   * expressed in units of 625/256 µs (~2.44 µs)
+   * expressed in units of 625/256 us (~2.44 us)
    *    - Min value: 0 (if 0 is specified, the master and slave perform only a single TX-RX exchange per connection event)
    *    - Max value: 1638400 (4000 ms). A higher value can be specified (max 0xFFFFFFFF) but results in a maximum connection time
    *      of 4000 ms as specified. In this case the parameter is not applied, and the predicted CE length calculated on slave is not shortened
@@ -513,7 +513,7 @@ extern "C" {
 
   /**
    * HsStartupTime
-   * Startup time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 µs (~2.44 µs).
+   * Startup time of the high speed (16 or 32 MHz) crystal oscillator in units of 625/256 us (~2.44 us).
    *    - Min value: 0
    *    - Max value:  820 (~2 ms). A higher value can be specified, but the value that implemented in stack is forced to ~2 ms
    */
@@ -976,7 +976,8 @@ extern "C" {
 #define INFO_STACK_TYPE_ZIGBEE_RFD                  0x31
 #define INFO_STACK_TYPE_MAC                         0x40
 #define INFO_STACK_TYPE_BLE_THREAD_FTD_STATIC       0x50
-#define INFO_STACK_TYPE_BLE_THREAD_FTD_DYAMIC       0x51
+#define INFO_STACK_TYPE_BLE_THREAD_FTD_DYNAMIC      0x51
+#define INFO_STACK_TYPE_BLE_THREAD_LIGHT_DYNAMIC    0x52
 #define INFO_STACK_TYPE_802154_LLD_TESTS            0x60
 #define INFO_STACK_TYPE_802154_PHY_VALID            0x61
 #define INFO_STACK_TYPE_BLE_PHY_VALID               0x62
@@ -1381,8 +1382,8 @@ typedef struct {
   *
   * @param clockSel: It can be one of the following list
   *                -  SET_SYSTEM_CLOCK_HSE_TO_PLL : CPU2 set system clock to PLL, PLL must be configured and started before.
-  *                -  SET_SYSTEM_CLOCK_PLL_ON_TO_HSE : CPU2 set System clock to HSE, PLL is still ON after command exection. 
-  *                -  SET_SYSTEM_CLOCK_PLL_OFF_TO_HSE : CPU2 set System clock to HSE, PLL is turned OFF after command exection. 
+  *                -  SET_SYSTEM_CLOCK_PLL_ON_TO_HSE : CPU2 set System clock to HSE, PLL is still ON after command execution. 
+  *                -  SET_SYSTEM_CLOCK_PLL_OFF_TO_HSE : CPU2 set System clock to HSE, PLL is turned OFF after command execution. 
   *
   * @retval Status
   */

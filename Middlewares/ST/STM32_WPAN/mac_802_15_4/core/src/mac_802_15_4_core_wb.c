@@ -64,7 +64,7 @@ extern MAC_callbacks_t macCbConfig;
  * @retval None
  */
 
-static void utils_mac_set_cmdCode(uint16_t cmdCode)
+void utils_mac_set_cmdCode(uint16_t cmdCode)
 {
   /* Set ID of the cmd in cmdcode field */
 

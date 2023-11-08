@@ -79,7 +79,7 @@ void PWM_Init()
   HAL_TIM_PWM_Init(&htim2);
 
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  sMasterConfig.MasterPeripheralMode = TIM_MASTERSLAVEMODE_DISABLE;
   HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig);
   HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig);
 

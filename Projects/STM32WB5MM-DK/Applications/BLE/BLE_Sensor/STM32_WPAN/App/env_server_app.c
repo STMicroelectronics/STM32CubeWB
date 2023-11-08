@@ -30,11 +30,9 @@
    
 
 /* Private defines -----------------------------------------------------------*/
-#define PRESSURE_BYTES          (4)
-#define HUMIDITY_BYTES          (2)
 #define TEMPERATURE_BYTES       (2)
 
-#define VALUE_LEN_ENV           (2+PRESSURE_BYTES+HUMIDITY_BYTES+TEMPERATURE_BYTES/*Temp2*/+TEMPERATURE_BYTES/*Temp1*/)
+#define VALUE_LEN_ENV           (2+TEMPERATURE_BYTES/*Temp1*/)
 
 /* Private typedef -----------------------------------------------------------*/
 
@@ -145,18 +143,6 @@ void ENV_Update(void)
 
   /* Timestamp */
   STORE_LE_16(value, (HAL_GetTick()>>3));
-
-  if(ENV_Server_App_Context.hasPressure == 1)
-  {
-    STORE_LE_32(&value[BuffPos], ENV_Server_App_Context.PressureValue);
-  }
-  BuffPos += PRESSURE_BYTES;
-  
-  if(ENV_Server_App_Context.hasHumidity == 1)
-  {
-    STORE_LE_16(&value[BuffPos], ENV_Server_App_Context.HumidityValue);    
-  }
-  BuffPos += HUMIDITY_BYTES;
 
   for(tempIndex = 0; tempIndex < ENV_Server_App_Context.hasTemperature; tempIndex++)
   {

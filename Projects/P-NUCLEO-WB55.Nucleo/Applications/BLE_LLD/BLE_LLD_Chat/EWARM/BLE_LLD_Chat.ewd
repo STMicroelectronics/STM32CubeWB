@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>BLE_LLD</name>
+        <name>BLE_LLD_Chat</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>

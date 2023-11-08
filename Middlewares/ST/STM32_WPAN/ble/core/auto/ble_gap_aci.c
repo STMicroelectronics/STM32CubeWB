@@ -1593,3 +1593,98 @@ tBleStatus aci_gap_adv_set_random_address( uint8_t Advertising_Handle,
   return status;
 }
 
+tBleStatus aci_gap_ext_start_scan( uint8_t Scan_Mode,
+                                   uint8_t Procedure,
+                                   uint8_t Own_Address_Type,
+                                   uint8_t Filter_Duplicates,
+                                   uint16_t Duration,
+                                   uint16_t Period,
+                                   uint8_t Scanning_Filter_Policy,
+                                   uint8_t Scanning_PHYs,
+                                   const Scan_Param_Phy_t* Scan_Param_Phy )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_gap_ext_start_scan_cp0 *cp0 = (aci_gap_ext_start_scan_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Scan_Mode = Scan_Mode;
+  index_input += 1;
+  cp0->Procedure = Procedure;
+  index_input += 1;
+  cp0->Own_Address_Type = Own_Address_Type;
+  index_input += 1;
+  cp0->Filter_Duplicates = Filter_Duplicates;
+  index_input += 1;
+  cp0->Duration = Duration;
+  index_input += 2;
+  cp0->Period = Period;
+  index_input += 2;
+  cp0->Scanning_Filter_Policy = Scanning_Filter_Policy;
+  index_input += 1;
+  cp0->Scanning_PHYs = Scanning_PHYs;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Scan_Param_Phy, (const void*)Scan_Param_Phy, 10 );
+  index_input += 10;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x0d0;
+  rq.event = 0x0F;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus aci_gap_ext_create_connection( uint8_t Initiating_Mode,
+                                          uint8_t Procedure,
+                                          uint8_t Own_Address_Type,
+                                          uint8_t Peer_Address_Type,
+                                          const uint8_t* Peer_Address,
+                                          uint8_t Advertising_Handle,
+                                          uint8_t Subevent,
+                                          uint8_t Initiator_Filter_Policy,
+                                          uint8_t Initiating_PHYs,
+                                          const Init_Param_Phy_t* Init_Param_Phy )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_gap_ext_create_connection_cp0 *cp0 = (aci_gap_ext_create_connection_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Initiating_Mode = Initiating_Mode;
+  index_input += 1;
+  cp0->Procedure = Procedure;
+  index_input += 1;
+  cp0->Own_Address_Type = Own_Address_Type;
+  index_input += 1;
+  cp0->Peer_Address_Type = Peer_Address_Type;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Peer_Address, (const void*)Peer_Address, 6 );
+  index_input += 6;
+  cp0->Advertising_Handle = Advertising_Handle;
+  index_input += 1;
+  cp0->Subevent = Subevent;
+  index_input += 1;
+  cp0->Initiator_Filter_Policy = Initiator_Filter_Policy;
+  index_input += 1;
+  cp0->Initiating_PHYs = Initiating_PHYs;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Init_Param_Phy, (const void*)Init_Param_Phy, 48 );
+  index_input += 48;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x0d1;
+  rq.event = 0x0F;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+

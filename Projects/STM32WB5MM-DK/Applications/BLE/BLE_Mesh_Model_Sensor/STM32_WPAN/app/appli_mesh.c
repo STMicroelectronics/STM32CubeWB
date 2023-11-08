@@ -792,10 +792,11 @@ void Appli_CheckForUnprovision(void)
     wait until user releases button*/
     if (!interrupted)
     {
-      PalNvmErase(NVM_BASE, 1); 
-      PalNvmErase(NVM_BASE + PAGE_SIZE, 1);
-      PalNvmErase(APP_NVM_BASE, 1);
-      PalNvmErase(PRVN_NVM_BASE_OFFSET, 1);
+      /* No GATT connection */
+      BLEMesh_StopAdvScan();
+      HAL_Delay(10);
+
+      PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
       TRACE_M(TF_PROVISION,"NVM erased\r\n");      
       
       BLEMesh_Unprovision();
@@ -849,8 +850,6 @@ void Appli_Unprovision(void)
     PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
-    BLEMesh_Unprovision();
-    AppliNvm_ClearModelState();     
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
 
     BLEMesh_Process();
@@ -999,8 +998,6 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason)
   PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
   TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
-  BLEMesh_Unprovision();
-  AppliNvm_ClearModelState();
   TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
 
   NVIC_SystemReset();

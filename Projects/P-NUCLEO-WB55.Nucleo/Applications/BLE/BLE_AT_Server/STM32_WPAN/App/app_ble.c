@@ -89,14 +89,14 @@ static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =
 static uint8_t bd_addr_udn[BD_ADDR_SIZE_LOCAL];
 
 /**
-*   Identity root key used to derive LTK and CSRK
+*   Identity root key used to derive IRK and DHK(Legacy)
 */
-static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IRK;
+static const uint8_t BLE_CFG_IR_VALUE[16] = CFG_BLE_IR;
 
 /**
-* Encryption root key used to derive LTK and CSRK
+* Encryption root key used to derive LTK(Legacy) and CSRK
 */
-static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ERK;
+static const uint8_t BLE_CFG_ER_VALUE[16] = CFG_BLE_ER;
 
 /**
  * These are the two tags used to manage a power failure during OTA
@@ -313,7 +313,7 @@ static void Manage_Update_Charac(void);
 static void Manage_Indication_Update_Charac(void);
 static void Manage_Custom_Service_Init(void);
 static void Manage_Charac_Init(void);
-static void Manage_Slave_Security_Request(void);
+static void Manage_Peripheral_Security_Request(void);
 static void Manage_Pairing_Confirm_Answer(void);
 static void Manage_Pass_Key_Resp(void);
 static void Manage_IO_Capability(void);
@@ -345,8 +345,8 @@ void APP_BLE_Init( void )
      CFG_BLE_PREPARE_WRITE_LIST_SIZE,
      CFG_BLE_MBLOCK_COUNT,
      CFG_BLE_MAX_ATT_MTU,
-     CFG_BLE_SLAVE_SCA,
-     CFG_BLE_MASTER_SCA,
+     CFG_BLE_PERIPHERAL_SCA,
+     CFG_BLE_CENTRAL_SCA,
      CFG_BLE_LS_SOURCE,
      CFG_BLE_MAX_CONN_EVENT_LENGTH,
      CFG_BLE_HSE_STARTUP_TIME,
@@ -416,8 +416,8 @@ void APP_BLE_Init( void )
   UTIL_SEQ_RegTask( 1<<CFG_TASK_MANAGE_CUSTOM_SERVICE_INIT_ID, UTIL_SEQ_RFU, Manage_Custom_Service_Init);
   /* Custom Charac */
   UTIL_SEQ_RegTask( 1<<CFG_TASK_MANAGE_CHARAC_INIT_ID, UTIL_SEQ_RFU, Manage_Charac_Init);
-  /* Slave Security Request */
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_MANAGE_SLAVE_SECUTITY_REQ_ID, UTIL_SEQ_RFU, Manage_Slave_Security_Request);
+  /* Peripheral Security Request */
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_MANAGE_PERIPHERAL_SECUTITY_REQ_ID, UTIL_SEQ_RFU, Manage_Peripheral_Security_Request);
   /* Pairing Confirm Answer */
   UTIL_SEQ_RegTask( 1<<CFG_TASK_PAIRING_CONFIRM_ID, UTIL_SEQ_RFU, Manage_Pairing_Confirm_Answer);
   /* Pass_Key_Resp */
@@ -628,8 +628,8 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           break; /* ACI_GAP_PASS_KEY_REQ_VSEVT_CODE */
       case ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE:
           break; /* ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE */
-      case ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE:
-          break; /* ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE */
+      case ACI_GAP_PERIPHERAL_SECURITY_INITIATED_VSEVT_CODE:
+          break; /* ACI_GAP_PERIPHERAL_SECURITY_INITIATED_VSEVT_CODE */
       case ACI_GAP_BOND_LOST_VSEVT_CODE:
           break; /* ACI_GAP_BOND_LOST_VSEVT_CODE */
       case ACI_GAP_ADDR_NOT_RESOLVED_VSEVT_CODE:
@@ -891,7 +891,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   }
 
   /**
-   * Write Identity root key used to derive LTK and CSRK
+   * Write Identity root key used to derive IRK and DHK(Legacy)
    */
   aci_hal_write_config_data(CONFIG_DATA_IR_OFFSET,
                             CONFIG_DATA_IR_LEN,
@@ -906,7 +906,7 @@ static void Ble_Hci_Gap_Gatt_Init(void){
 
 
   /**
-   * Write Identity root key used to derive LTK and CSRK
+   * Write Identity root key used to derive IRK and DHK(Legacy)
    */
     aci_hal_write_config_data( CONFIG_DATA_IR_OFFSET, CONFIG_DATA_IR_LEN, (uint8_t*)BLE_CFG_IR_VALUE );
 
@@ -1199,13 +1199,13 @@ void BLE_SVC_L2CAP_Conn_Update(uint16_t Connection_Handle)
     index_con_int = (index_con_int + 1)%SIZE_TAB_CONN_INT;
     uint16_t interval_min = CONN_P(tab_conn_interval[index_con_int]);
     uint16_t interval_max = CONN_P(tab_conn_interval[index_con_int]);
-    uint16_t slave_latency = L2CAP_SLAVE_LATENCY;
+    uint16_t peripheral_latency = L2CAP_PERIPHERAL_LATENCY;
     uint16_t timeout_multiplier = L2CAP_TIMEOUT_MULTIPLIER;
     tBleStatus result;
 
     result = aci_l2cap_connection_parameter_update_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,
                                                        interval_min, interval_max,
-                                                       slave_latency, timeout_multiplier);
+                                                       peripheral_latency, timeout_multiplier);
     if( result == BLE_STATUS_SUCCESS )
     {
       APP_DBG_MSG("BLE_SVC_L2CAP_Conn_Update(), Successfully \r\n\r");
@@ -1462,18 +1462,18 @@ static void Manage_Charac_Init(void)
   return;
 }
 
-static void Manage_Slave_Security_Request(void)
+static void Manage_Peripheral_Security_Request(void)
 {
   tBleStatus result;
   
   result = aci_gap_slave_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
   if( result == BLE_STATUS_SUCCESS )
   {
-    printf("Slave_security_req(), Successfully \r\n\r");
+    printf("Peripheral_security_req(), Successfully \r\n\r");
   }
   else
   {
-    printf("Slave_security_req(), Failed \r\n\r");
+    printf("Peripheral_security_req(), Failed \r\n\r");
   }
   
   return;
@@ -1582,7 +1582,7 @@ static void Manage_Update_Connection(void)
   result = aci_l2cap_connection_parameter_update_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle,
                                                      (uint16_t)(global_conn_int_min / 1.25f),
                                                      (uint16_t)(global_conn_int_max / 1.25f),
-                                                     L2CAP_SLAVE_LATENCY, L2CAP_TIMEOUT_MULTIPLIER);
+                                                     L2CAP_PERIPHERAL_LATENCY, L2CAP_TIMEOUT_MULTIPLIER);
   if( result == BLE_STATUS_SUCCESS )
   {
     printf("BLE_SVC_L2CAP_Conn_Update(), Successfully \r\n\r");

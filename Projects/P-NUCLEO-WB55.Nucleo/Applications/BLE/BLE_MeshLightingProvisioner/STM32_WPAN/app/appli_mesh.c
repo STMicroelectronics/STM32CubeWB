@@ -922,22 +922,25 @@ void Appli_CheckForUnprovision(void)
 void Appli_Unprovision(void)
 {
   MOBLEUINT8 PrvnDevKeyFlag = 0;
+  MOBLE_RESULT res = MOBLE_RESULT_FAIL;
 
   if(!ProxyFlag)
   {
     /* No GATT connection */
     BLEMesh_StopAdvScan();
     HAL_Delay(10);
-      
+    
     PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
-    BLEMesh_Unprovision();
-    AppliNvm_ClearModelState();     
 #if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
     Appli_ProvisionerInit();
     /* Scan the Provisioner data and Restore the address and num of elements */  
-    AppliPrvnNvm_FactorySettingReset(&PrvnDevKeyFlag);
+    res = AppliPrvnNvm_FactorySettingReset(&PrvnDevKeyFlag);
+    if(res != MOBLE_RESULT_SUCCESS)
+    {
+      TRACE_M(TF_PROVISION,"Reset with Factory Setting failed %d\r\n", res);      
+    }
 #endif
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
 
@@ -1113,10 +1116,7 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason)
 */
 void Appli_ProvisionerInit(void)
 {
-   NodeUnderProvisionParam.nodeAddress = 0; 
-   NodeUnderProvisionParam.numOfElements = 0;
-   NodeUnderProvisionParam.Reserved1 = 0;
-   NodeUnderProvisionParam.saveToNVM = NVM_INIT;
+  memset((void*)&NodeUnderProvisionParam, 0x00, sizeof(NodeUnderProvisionParam_t));
 }
 
 

@@ -200,13 +200,13 @@ typedef enum
  * Debug
  ******************************************************************************/
 /**
- * When set, this resets some hw resources to set the device in the same state than the power up
- * The FW resets only register that may prevent the FW to run properly
+ * When set, this resets some hw resources to put the device in the same state as at power up.
+ * It resets only register that may prevent the FW to run properly.
  *
  * This shall be set to 0 in a final product
  *
  */
-#define CFG_HW_RESET_BY_FW         1
+#define CFG_HW_RESET_BY_FW         0
 
 /**
  * keep debugger enabled while in any low power mode when set to 1

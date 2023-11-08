@@ -85,14 +85,14 @@
 
 
 /**
-*   Identity root key used to derive LTK and CSRK
+*   Identity root key used to derive IRK and DHK(Legacy)
 */
-#define CFG_BLE_IRK     {0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0,0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0}
+#define CFG_BLE_IR     {0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0,0x12,0x34,0x56,0x78,0x9a,0xbc,0xde,0xf0}
 
 /**
-* Encryption root key used to derive LTK and CSRK
+* Encryption root key used to derive LTK(Legacy) and CSRK
 */
-#define CFG_BLE_ERK     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
+#define CFG_BLE_ER     {0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21,0xfe,0xdc,0xba,0x09,0x87,0x65,0x43,0x21}
 
 /* USER CODE BEGIN Generic_Parameters */
 /**
@@ -144,7 +144,7 @@
 
 #define L2CAP_INTERVAL_MIN              CONN_P(1000) /* 1s */
 #define L2CAP_INTERVAL_MAX              CONN_P(1000) /* 1s */
-#define L2CAP_SLAVE_LATENCY             0x0000
+#define L2CAP_PERIPHERAL_LATENCY             0x0000
 #define L2CAP_TIMEOUT_MULTIPLIER        0x1F4
 
 /******************************************************************************
@@ -204,12 +204,12 @@
 #define CFG_BLE_DATA_LENGTH_EXTENSION   1
 
 /**
- * Sleep clock accuracy in Slave mode (ppm value)
+ * Sleep clock accuracy in Peripheral mode (ppm value)
  */
-#define CFG_BLE_SLAVE_SCA   500
+#define CFG_BLE_PERIPHERAL_SCA   500
 
 /**
- * Sleep clock accuracy in Master mode
+ * Sleep clock accuracy in Central mode
  * 0 : 251 ppm to 500 ppm
  * 1 : 151 ppm to 250 ppm
  * 2 : 101 ppm to 150 ppm
@@ -219,7 +219,7 @@
  * 6 : 21 ppm to 30 ppm
  * 7 : 0 ppm to 20 ppm
  */
-#define CFG_BLE_MASTER_SCA   0
+#define CFG_BLE_CENTRAL_SCA   0
 
 /**
  *  Source for the 32 kHz slow speed clock
@@ -234,7 +234,7 @@
 #define CFG_BLE_HSE_STARTUP_TIME  0x148
 
 /**
- * Maximum duration of the connection event when the device is in Slave mode in units of 625/256 us (~2.44 us)
+ * Maximum duration of the connection event when the device is in Peripheral mode in units of 625/256 us (~2.44 us)
  */
 #define CFG_BLE_MAX_CONN_EVENT_LENGTH  ( 0xFFFFFFFF )
 
@@ -425,8 +425,8 @@ typedef enum
  * Debug
  ******************************************************************************/
 /**
- * When set, this resets some hw resources to set the device in the same state than the power up
- * The FW resets only register that may prevent the FW to run properly
+ * When set, this resets some hw resources to put the device in the same state as at power up.
+ * It resets only register that may prevent the FW to run properly.
  *
  * This shall be set to 0 in a final product
  *
@@ -559,7 +559,6 @@ typedef enum
   CFG_TASK_MSG_FROM_M0_TO_M4,
   CFG_TASK_SEND_CLI_TO_M0,
   CFG_TASK_COAP_SEND_MSG,
-  CFG_TASK_SET_THREAD_MODE,
 
   /* Concurrent System */
   CFG_Task_Switch_Protocol,
@@ -594,7 +593,6 @@ typedef enum
 #define TASK_COAP_MSG_BUTTON        (1U << CFG_TASK_COAP_MSG_BUTTON)
 #define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
 #define TASK_COAP_SEND_MSG          (1U << CFG_TASK_COAP_SEND_MSG)
-#define TASK_SET_THREAD_MODE        (1U << CFG_TASK_SET_THREAD_MODE)
 /**
  * This is a bit mapping over 32bits listing all events id supported in the application
  */

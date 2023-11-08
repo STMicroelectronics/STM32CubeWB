@@ -17,6 +17,7 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __APP_THREADX_H__
 #define __APP_THREADX_H__
@@ -24,7 +25,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 /* Includes ------------------------------------------------------------------*/
 #include "tx_api.h"
 
@@ -43,7 +43,32 @@ extern "C" {
 
 /* USER CODE END EC */
 
+/* Private defines -----------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+#define APP_STACK_SIZE                           512u
+
+#define THREAD_ONE_PRIO                          10u
+#define THREAD_ONE_PREEMPTION_THRESHOLD          THREAD_ONE_PRIO
+#define THREAD_TWO_PRIO                          10u
+#define THREAD_TWO_PREEMPTION_THRESHOLD          9u
+#define MAIN_THREAD_PRIO                         5u
+#define MAIN_THREAD_PREEMPTION_THRESHOLD         MAIN_THREAD_PRIO
+
+#define NEW_THREAD_TWO_PRIO                      8u
+#define NEW_THREAD_TWO_PREEMPTION_THRESHOLD      8u
+
+#define THREAD_ONE_EVT                           0x01u
+#define THREAD_TWO_EVT                           0x02u
+
+/* USER CODE END PD */
+
+/* Main thread defines -------------------------------------------------------*/
+/* USER CODE BEGIN MTD */
+
+/* USER CODE END MTD */
+
 /* Exported macro ------------------------------------------------------------*/
+
 /* USER CODE BEGIN EM */
 
 /* USER CODE END EM */
@@ -54,25 +79,6 @@ void MX_ThreadX_Init(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
-
-/* Private defines -----------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-#define APP_STACK_SIZE                           512
-
-#define THREAD_ONE_PRIO                          10
-#define THREAD_ONE_PREEMPTION_THRESHOLD          THREAD_ONE_PRIO
-#define THREAD_TWO_PRIO                          10
-#define THREAD_TWO_PREEMPTION_THRESHOLD          9
-#define MAIN_THREAD_PRIO                         5
-#define MAIN_THREAD_PREEMPTION_THRESHOLD         MAIN_THREAD_PRIO
-
-#define NEW_THREAD_TWO_PRIO                      8
-#define NEW_THREAD_TWO_PREEMPTION_THRESHOLD      8
-
-#define THREAD_ONE_EVT                           0x01
-#define THREAD_TWO_EVT                           0x02
-
-/* USER CODE END PD */
 
 /* USER CODE BEGIN 1 */
 

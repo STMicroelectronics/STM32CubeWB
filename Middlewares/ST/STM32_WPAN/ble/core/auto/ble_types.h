@@ -2119,6 +2119,43 @@ typedef __PACKED_STRUCT
 
 typedef __PACKED_STRUCT
 {
+  uint8_t Scan_Mode;
+  uint8_t Procedure;
+  uint8_t Own_Address_Type;
+  uint8_t Filter_Duplicates;
+  uint16_t Duration;
+  uint16_t Period;
+  uint8_t Scanning_Filter_Policy;
+  uint8_t Scanning_PHYs;
+  Scan_Param_Phy_t Scan_Param_Phy[2];
+} aci_gap_ext_start_scan_cp0;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t Status;
+} aci_gap_ext_start_scan_rp0;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t Initiating_Mode;
+  uint8_t Procedure;
+  uint8_t Own_Address_Type;
+  uint8_t Peer_Address_Type;
+  uint8_t Peer_Address[6];
+  uint8_t Advertising_Handle;
+  uint8_t Subevent;
+  uint8_t Initiator_Filter_Policy;
+  uint8_t Initiating_PHYs;
+  Init_Param_Phy_t Init_Param_Phy[3];
+} aci_gap_ext_create_connection_cp0;
+
+typedef __PACKED_STRUCT
+{
+  uint8_t Status;
+} aci_gap_ext_create_connection_rp0;
+
+typedef __PACKED_STRUCT
+{
   uint8_t Status;
 } aci_gatt_init_rp0;
 

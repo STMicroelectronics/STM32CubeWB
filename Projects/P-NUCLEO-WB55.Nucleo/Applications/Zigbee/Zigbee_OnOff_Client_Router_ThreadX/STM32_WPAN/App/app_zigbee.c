@@ -459,7 +459,7 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
   status = ZbStartup(zb, config, ZbStartupWaitCb, info);
   if (status != ZB_STATUS_SUCCESS)
   {
-    info->active = false;
+    free(info);
     return status;
   }
 
@@ -506,7 +506,8 @@ static void APP_ZIGBEE_TraceError(const char *pMess, uint32_t ErrCode)
 {
   APP_DBG("**** Fatal error = %s (Err = %d)", pMess, ErrCode);
   /* USER CODE BEGIN TRACE_ERROR */
-  while (1U == 1U) {
+  while (1U == 1U) 
+  {
     BSP_LED_Toggle(LED1);
     HAL_Delay(500U);
     BSP_LED_Toggle(LED2);
@@ -686,18 +687,6 @@ void Pre_ZigbeeCmdProcessing(void)
 }
 
 /**
- * @brief  This function is called just after having received the result associated to the command
- *         send to the M0
- * @param  None
- * @retval None
- */
-void Post_ZigbeeCmdProcessing(void)
-{
-  tx_mutex_put(&MtxZigbeeId);
-}
-
-
-/**
  * @brief  This function waits for getting an acknowledgment from the M0.
  *
  * @param  None
@@ -706,7 +695,7 @@ void Post_ZigbeeCmdProcessing(void)
 static void Wait_Getting_Ack_From_M0(void)
 {
    tx_semaphore_get(&TransferToM0Semaphore, TX_WAIT_FOREVER);
-   
+   tx_mutex_put(&MtxZigbeeId);
 }
 
 /**
@@ -774,26 +763,16 @@ static void APP_ZIGBEE_ProcessNotifyM0ToM4( ULONG argument )
     tx_semaphore_get(&NotifyM0ToM4Semaphore, TX_WAIT_FOREVER);
     if (CptReceiveNotifyFromM0 != 0)
     {
-      /* If CptReceiveNotifyFromM0 is > 1. it means that we did not serve all the events from the radio */
-      if (CptReceiveNotifyFromM0 > 1U)
-      {
-        APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0);
-      }
-      else
-      {
-        Zigbee_CallBackProcessing();
-      }
-
-      /* Reset counter */
       CptReceiveNotifyFromM0 = 0;
+      Zigbee_CallBackProcessing();
     }
   }
 }
 
 /**
  * @brief Process the requests coming from the M0.
- * @param
- * @return
+ * @param  None
+ * @retval None
  */
 static void APP_ZIGBEE_ProcessRequestM0ToM4( ULONG argument )
 {
@@ -805,8 +784,8 @@ static void APP_ZIGBEE_ProcessRequestM0ToM4( ULONG argument )
 
     if (CptReceiveRequestFromM0 != 0)
     {
-      Zigbee_M0RequestProcessing();
       CptReceiveRequestFromM0 = 0;
+      Zigbee_M0RequestProcessing();
     }
   }
 }

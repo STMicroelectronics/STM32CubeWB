@@ -58,6 +58,8 @@ static void APP_ZIGBEE_persist_delete(void);
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
+static void APP_ZIGBEE_ProcessNotifyM0ToM4(void);
+static void APP_ZIGBEE_ProcessRequestM0ToM4(void);
 
 static enum ZbStatusCodeT APP_ZIGBEE_ZbStartupPersist(struct ZigBeeT* zb);
 static void APP_ZIGBEE_persist_notify_cb(struct ZigBeeT *zb, void *cbarg);
@@ -106,7 +108,7 @@ __attribute__ ((section(".noinit"))) union cache cache_persistent_data;
 
 static struct zigbee_app_info zigbee_app_info;
 static uint32_t join_start_time;
-static double join_time_duration;
+static uint32_t join_time_duration;
 static uint8_t zigbee_complete_join_cpt = 1U;
 
 /* Functions Definition ------------------------------------------------------*/
@@ -305,8 +307,8 @@ static void APP_ZIGBEE_NwkForm(void)
       zigbee_app_info.join_status = status;
 
       if (status == ZB_STATUS_SUCCESS) {
-        join_time_duration = (double)(HAL_GetTick() - join_start_time)/1000;
-        APP_DBG("JOIN SUCCESS, Duration = (%.2f seconds)", join_time_duration);
+        join_time_duration = HAL_GetTick() - join_start_time;
+        APP_DBG("JOIN SUCCESS, Duration = (%d ms)", join_time_duration);
         zigbee_app_info.join_delay = 0U;
         zigbee_app_info.init_after_join = true;
         APP_ZIGBEE_IncrCompleteJoinCpt();
@@ -416,8 +418,8 @@ enum ZbStatusCodeT ZbStartupWait(struct ZigBeeT *zb, struct ZbStartupT *config)
 
   info->active = true;
   status = ZbStartup(zb, config, ZbStartupWaitCb, info);
-  if (status != ZB_STATUS_SUCCESS) {
-    info->active = false;
+  if (status != ZB_STATUS_SUCCESS)
+  {
     free(info);
     return status;
   }
@@ -816,31 +818,26 @@ void APP_ZIGBEE_TL_INIT(void)
  * @param  None
  * @retval None
  */
-void APP_ZIGBEE_ProcessNotifyM0ToM4(void)
+static void APP_ZIGBEE_ProcessNotifyM0ToM4(void)
 {
-    if (CptReceiveNotifyFromM0 != 0) {
-        /* If CptReceiveNotifyFromM0 is > 1. it means that we did not serve all the events from the radio */
-        if (CptReceiveNotifyFromM0 > 1U) {
-            APP_ZIGBEE_Error(ERR_REC_MULTI_MSG_FROM_M0, 0);
-        }
-        else {
-            Zigbee_CallBackProcessing();
-        }
-        /* Reset counter */
-        CptReceiveNotifyFromM0 = 0;
-    }
+  if (CptReceiveNotifyFromM0 != 0)
+  {
+    /* Reset counter */
+    CptReceiveNotifyFromM0 = 0;
+    Zigbee_CallBackProcessing();
+  }
 }
 
 /**
  * @brief Process the requests coming from the M0.
- * @param
- * @return
+ * @param None
+ * @return None
  */
-void APP_ZIGBEE_ProcessRequestM0ToM4(void)
+static void APP_ZIGBEE_ProcessRequestM0ToM4(void)
 {
     if (CptReceiveRequestFromM0 != 0) {
-        Zigbee_M0RequestProcessing();
         CptReceiveRequestFromM0 = 0;
+        Zigbee_M0RequestProcessing();
     }
 }
 

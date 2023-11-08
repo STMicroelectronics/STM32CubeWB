@@ -201,8 +201,8 @@ typedef enum
  * Debug
  ******************************************************************************/
 /**
- * When set, this resets some hw resources to set the device in the same state than the power up
- * The FW resets only register that may prevent the FW to run properly
+ * When set, this resets some hw resources to put the device in the same state as at power up.
+ * It resets only register that may prevent the FW to run properly.
  *
  * This shall be set to 0 in a final product
  *
@@ -301,24 +301,6 @@ typedef enum
 /* USER CODE END THREADX */
 
 /* USER CODE BEGIN THREADX_Defines */
-#define CFG_SHCI_USER_EVT_PROCESS_NAME        "SHCI_USER_EVT_PROCESS"
-#define CFG_SHCI_USER_EVT_PROCESS_ATTR_BITS   (0)
-#define CFG_SHCI_USER_EVT_PROCESS_CB_MEM      (0)
-#define CFG_SHCI_USER_EVT_PROCESS_CB_SIZE     (0)
-#define CFG_SHCI_USER_EVT_PROCESS_STACK_MEM   (0)
-#define CFG_SHCI_USER_EVT_PROCESS_PRIORITY    osPriorityNone
-#define CFG_SHCI_USER_EVT_PROCESS_STACK_SIZE  (128 * 7)
-
-#define CFG_TASK_NOTIFY_M0_TO_M4_PROCESS_NAME        "TASK_NOTIFY_M0_TO_M4_PROCESS"
-#define CFG_TASK_REQUEST_M0_TO_M4_PROCESS_NAME       "TASK_REQUEST_M0_TO_M4_PROCESS"
-#define CFG_TASK_NWK_FORM_PROCESS_NAME               "TASK_NWK_FORM_PROCESS"
-#define CFG_TASK_INIT_PROCESS_NAME                   "TASK_INIT_PROCESS"
-#define CFG_TASK_PROCESS_ATTR_BITS   (0)
-#define CFG_TASK_PROCESS_CB_MEM      (0)
-#define CFG_TASK_PROCESS_CB_SIZE     (0)
-#define CFG_TASK_PROCESS_STACK_MEM   (0)
-#define CFG_THREAD_MSG_M0_TO_M4_PROCESS_PRIORITY    osPriorityLow
-#define CFG_TASK_PROCESS_STACK_SIZE  (128 * 8)
 
 /* USER CODE END THREADX_Defines */
 

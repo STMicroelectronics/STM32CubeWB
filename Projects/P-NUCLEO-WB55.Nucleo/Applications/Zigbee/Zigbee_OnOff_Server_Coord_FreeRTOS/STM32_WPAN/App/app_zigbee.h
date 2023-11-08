@@ -46,7 +46,6 @@ extern "C" {
  */
 typedef enum
 {
-  ERR_REC_MULTI_MSG_FROM_M0,
   ERR_ZIGBE_CMD_TO_M0,
 /* USER CODE BEGIN ERROR_APPLI_ENUM */
 

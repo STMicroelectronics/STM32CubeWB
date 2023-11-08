@@ -75,6 +75,9 @@ void APPE_Init( void )
   Led_Init();
 
   Button_Init();
+  
+  /* clock enable periph CRC */
+  LL_C2_AHB1_GRP1_EnableClock(LL_C2_AHB1_GRP1_PERIPH_CRC);
 
   appe_Tl_Init();	/**< Initialize all transport layers */
 
@@ -227,6 +230,9 @@ static SHCI_TL_UserEventFlowStatus_t APPE_SysevtReadyProcessing( SHCI_C2_Ready_E
   if(pReadyEvt->sysevt_ready_rsp == WIRELESS_FW_RUNNING)
   {
     return_value = SHCI_TL_UserEventFlow_Enable;
+    
+    /* clock disable periph CRC */
+    LL_C2_AHB1_GRP1_DisableClock(LL_C2_AHB1_GRP1_PERIPH_CRC);
 
     if(CFG_OTA_REBOOT_VAL_MSG == CFG_REBOOT_ON_CPU2_UPGRADE)
     {

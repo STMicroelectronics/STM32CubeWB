@@ -1566,7 +1566,7 @@ void ANCS_App_Update_Service( )
 	  
       if ( (ancs_context.ANCSServiceStartHandle != 0x0000) && (ancs_context.ANCSServiceEndHandle != 0x0000) )
       {
-          APP_BLE_Slave_Security_Request();
+          APP_BLE_Peripheral_Security_Request();
       }
 		
       GattProcReq(GATT_PROC_ENABLE_ALL_NOTIFICATIONS);

@@ -4,7 +4,7 @@
     <title>_htmresc\ReleaseNotes.html</title>
   </head>
   <body style="font-size: 10pt; font-family: Verdana;">
-    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.17.0 / 7-June-2023</h3>
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.18.0 / 31-October-2023</h3>
     <div style="margin-left: 18pt;">
       <p>
         <b><u>Main Changes</u></b>
@@ -13,41 +13,23 @@
         <b>Maintenance Release for BLE, 802.15.4, Thread and Zigbee updates</b>
       </p>
       <p>
-        <li> <strong>THREAD</strong> updates
-          <ul>
-            <li>SED role is now supported for FTD.</li>
-            <li>SSED role is now supported for FTD and MTD.</li>
-            <li>Improved global stability and robustness.</li>
-            <li>Improved security.</li>
-          </ul>
-        </li>
-        <li> <strong>Zigbee</strong> updates
-          <ul>
-            <li>- Robustness improvement in case of radio noisy environment</li>
-          </ul>
-        </li>
         <li>
           <strong>BLE</strong> updates
           <ul>
-            <li>Compliancy TCRL 2022-2.</li>
-            <li>ACI BLE primitives naming alignment to standard.</li>
-            <li>HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT is now automatically used instead of HCI_LE_CONNECTION_COMPLETE_EVENT when advertising extensions are used.</li>
-            <li>Additional check on HSE Startup time.</li>
+            <li>New GAP commands for extended scan and connection have been created: ACI_GAP_EXT_START_SCAN and ACI_GAP_EXT_CREATE_CONNECTION.</li>
+			<li>New parameter setting SHCI_C2_BLE_INIT_BLE_CORE_5_4 for upgraded QDID and declaration ID of Stack BLE 5.4.</li>
+			<li>The following BLE primitives have been renamed: ACI_HAL_SET_SLAVE_LATENCY, ACI_GAP_SLAVE_SECURITY_REQ and ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT to ACI_HAL_SET_PERIPHERAL_LATENCY, ACI_GAP_PERIPHERAL_SECURITY_REQ and ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT, respectively. Moreover, the event parameters Slave_Latency and Master_Clock_Accuray have been renamed to Latency and Central_Clock_Accuracy, respectively.</li>
           </ul>
         </li>
-		<li> <strong>MAC 802.15.4</strong> updates
+		<li> <strong>MAC 802.15.4 / Thread / Zigbee</strong> updates
           <ul>
-            <li>Improvement of radio robustness over heavy overloaded and noisy environment.</li>
+            <li>Enabling of some PHY features (continuous wave start/stop, rx_start/stop, tx_start, set_channel) in MAC/Thread/Zigbee and concurrent firmware.</li>
+			<li>Improvement of the trace mechanism in order to get M4 log timestamp available on all Thread/Zigbee and concurrent applications.</li>
           </ul>
         </li>
-		<li> <strong>BLE/MAC Static</strong> updates
+		<li> <strong>Zigbee</strong> updates
           <ul>
-            <li>Improvement of radio robustness over heavy overloaded and noisy environment.</li>
-          </ul>
-        </li>
-		<li> <strong>BLE/Zigbee Dynamic</strong> updates
-          <ul>
-            <li>Bug corrected in Dynamic Concurrent applications to prevent switching from 802.15.4 to BLE while radio is in an incorrect state.</li>
+            <li>Inter core communication improvement (M4-M0+) on all Zigbee applications making it more robust in very extreme conditions (Environment in which with multiple messages need tobe processed at the same time).</li>
           </ul>
         </li>
       </p>
@@ -60,8 +42,8 @@
             <li>
               Update HAL/LL drivers to include latest corrections
                 <ul>
-                <li>- Update of HAL CRYP, Generic, I2C, SMBUS, TSC, UART, SPI drivers.</li>
-                <li>- Update of LL USB drivers</li>
+                <li>Update of HAL I2C, SAI, QSPI, TIM, RTC, UART drivers.</li>
+				<li>Update of LL I2C, TIM, RTC drivers.</li>
                 </ul>
             </li>
             <li> Refer to <a href="../Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details </li>
@@ -74,11 +56,7 @@
             <li>
               Update of FW projects following changes in latest version of HAL/LL and Middlewares and alignments with CubeMx
                 <ul>
-                  <li>- /B-WB1M-WPAN1/Examples/BSP/BSP_Example</li>
-                  <li>- /STM32WB5MM-DK/Examples/BSP/BSP_Example</li>
-                  <li>- /NUCLEO-WB15CC/Examples/FLASH/FLASH_EraseProgram</li>
-                  <li>- /NUCLEO-WB15CC/Examples/CRYP/CRYP_DMA</li>
-                  <li>- /P-NUCLEO-WB55.Nucleo/Examples/CRYP/CRYP_DMA</li>
+                  <li>/STM32WB5MM-DK/Examples/BSP/BSP_Example</li>
                 </ul>
             </li>
           </ul>

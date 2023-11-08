@@ -447,8 +447,8 @@ static void BLE_Init( void )
     CFG_BLE_PREPARE_WRITE_LIST_SIZE,
     CFG_BLE_MBLOCK_COUNT,
     CFG_BLE_MAX_ATT_MTU,
-    CFG_BLE_SLAVE_SCA,
-    CFG_BLE_MASTER_SCA,
+    CFG_BLE_PERIPHERAL_SCA,
+    CFG_BLE_CENTRAL_SCA,
     CFG_BLE_LS_SOURCE,
     CFG_BLE_MAX_CONN_EVENT_LENGTH,
     CFG_BLE_HSE_STARTUP_TIME,
@@ -1177,7 +1177,7 @@ void hci_disconnection_complete_event( uint8_t Status,
  * This event indicates to the Host which issued a LE_Create_Connection command
  * and received a Command Status event if the connection establishment failed
  * or was successful.
- * The Master_Clock_Accuracy parameter is only valid for a slave. On a master,
+ * The Central_Clock_Accuracy parameter is only valid for a slave. On a master,
  * this parameter shall be set to 0x00. See Bluetooth spec 5.0 vol 2 [part E]
  * 7.7.65.1
  * 
@@ -1187,8 +1187,8 @@ void hci_disconnection_complete_event( uint8_t Status,
  *        - 0x0000 ... 0x0EFF
  * @param Role Role of the local device in the connection.
  *        Values:
- *        - 0x00: Master
- *        - 0x01: Slave
+ *        - 0x00: Central
+ *        - 0x01: Peripheral
  * @param Peer_Address_Type The address type of the peer device.
  *        Values:
  *        - 0x00: Public Device Address
@@ -1199,17 +1199,17 @@ void hci_disconnection_complete_event( uint8_t Status,
  *        Time = N * 1.25 msec
  *        Values:
  *        - 0x0006 (7.50 ms)  ... 0x0C80 (4000.00 ms)
- * @param Conn_Latency Slave latency for the connection in number of connection
+ * @param Conn_Latency Peripheral latency for the connection in number of connection
  *        events.
  *        Values:
  *        - 0x0000 ... 0x01F3
  * @param Supervision_Timeout Supervision timeout for the LE Link.
  *        It shall be a multiple of 10 ms and larger than (1 +
- *        connSlaveLatency) * connInterval * 2.
+ *        connPeripheralLatency) * connInterval * 2.
  *        Time = N * 10 msec.
  *        Values:
  *        - 0x000A (100 ms)  ... 0x0C80 (32000 ms)
- * @param Master_Clock_Accuracy Master clock accuracy. Only valid for a slave.
+ * @param Central_Clock_Accuracy Central clock accuracy. Only valid for a slave.
  *        Values:
  *        - 0x00: 500 ppm
  *        - 0x01: 250 ppm
@@ -1229,7 +1229,7 @@ void hci_le_connection_complete_event( uint8_t Status,
                                        uint16_t Conn_Interval,
                                        uint16_t Conn_Latency,
                                        uint16_t Supervision_Timeout,
-                                       uint8_t Master_Clock_Accuracy )
+                                       uint8_t Central_Clock_Accuracy )
 {
   APP_FLAG_RESET(APP_FLAG_BLE_ADVERTISING);
   APP_FLAG_SET(APP_FLAG_BLE_CONNECTED);

@@ -40,6 +40,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
+
 /* USER CODE BEGIN PTD */
 EXTI_HandleTypeDef exti_handle;
 
@@ -156,6 +157,7 @@ void MX_APPE_Init(void)
 /* USER CODE BEGIN APPE_Init_2 */
 
 /* USER CODE END APPE_Init_2 */
+
    return;
 }
 
@@ -337,6 +339,7 @@ static void appe_Tl_Init(void)
 {
   TL_MM_Config_t tl_mm_config;
   SHCI_TL_HciInitConf_t SHci_Tl_Init_Conf;
+
   /**< Reference table initialization */
   TL_Init();
 
@@ -625,7 +628,6 @@ void UTIL_SEQ_Idle(void)
 void UTIL_SEQ_EvtIdle(UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm)
 {
   UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
-
   return;
 }
 

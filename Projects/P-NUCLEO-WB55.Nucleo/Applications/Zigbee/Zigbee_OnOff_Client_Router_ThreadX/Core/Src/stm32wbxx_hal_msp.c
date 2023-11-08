@@ -369,7 +369,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
     HAL_PWR_EnableBkUpAccess();
 
     /* Select LSE as RTC Input */
-    __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE); 
+    __HAL_RCC_RTC_CONFIG(RCC_RTCCLKSOURCE_LSE);
 
   /* USER CODE END RTC_MspInit 0 */
 

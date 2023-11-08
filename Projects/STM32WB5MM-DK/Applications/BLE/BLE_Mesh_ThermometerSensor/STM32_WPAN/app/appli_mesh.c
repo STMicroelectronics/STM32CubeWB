@@ -894,8 +894,6 @@ void Appli_Unprovision(void)
     PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
     TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
-    BLEMesh_Unprovision();
-    AppliNvm_ClearModelState();     
     TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
 
     BLEMesh_Process();
@@ -1044,8 +1042,6 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason)
   PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
   TRACE_M(TF_PROVISION,"NVM erased\r\n");      
   
-  BLEMesh_Unprovision();
-  AppliNvm_ClearModelState();
   TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
 
   NVIC_SystemReset();

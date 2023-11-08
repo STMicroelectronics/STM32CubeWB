@@ -1938,7 +1938,7 @@ TSL_Status_enum_T TSL_linrot_ProcessCh_One_DeltaAboveEqu(TSL_tThreshold_T th, TS
 
 
 /**
-  * @brief  Check if at least one channel is stricly above a threshold
+  * @brief  Check if at least one channel is strictly above a threshold
   * @param  th Threshold
   * @param  coeff Enable or Disable the multiplier coefficient on threshold
   * @retval Status

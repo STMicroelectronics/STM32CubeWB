@@ -2808,8 +2808,8 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td>0</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=131><p id="Applications">Applications</p></td>
-        <td align=left rowspan=35><p id="BLE">BLE</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=135><p id="Applications">Applications</p></td>
+        <td align=left rowspan=39><p id="BLE">BLE</p></td>
         <td align=left><p id="BLE_AT_Server">BLE_AT_Server</p></td>
         <td align=left>
 How to demonstrate Point-to-Point communication using BLE component (as GATT server).
@@ -2889,6 +2889,18 @@ How to use data throughput via notification from server to client using BLE comp
         <td><font size="5" color=green>CubeMx</font></td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_HR_p2p_Sensor">BLE_HR_p2p_Sensor</p></td>
+        <td align=left>
+
+@note This application includes three BLE services, the first one is a BLE_P2P_Server like, including two characteristics; the second one is a BLE_Heart_Rate like with three characteristics.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_HealthThermometer">BLE_HealthThermometer</p></td>
         <td align=left>
 How to use the Health Thermometer profile as specified by the BLE SIG.
@@ -2934,6 +2946,17 @@ and use the Heart Rate profile as specified by the BLE SIG with FreeRTOS.
         <td>-</td>
       </tr>
       <tr align=center>
+        <td align=left><p id="BLE_HeartRateFreeRTOS_PLL">BLE_HeartRateFreeRTOS_PLL</p></td>
+        <td align=left>
+How to use the Heart Rate profile as specified by the BLE SIG with FreeRTOS.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
         <td align=left><p id="BLE_HeartRateThreadX">BLE_HeartRateThreadX</p></td>
         <td align=left>
 How to use the Heart Rate profile as specified by the BLE SIG using ThreadX OS.
@@ -2953,6 +2976,17 @@ and use Heart Rate profile as specified by the BLE SIG.
         <td>-</td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_HeartRate_PLL">BLE_HeartRate_PLL</p></td>
+        <td align=left>
+How to use the Heart Rate profile as specified by the BLE SIG.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td>-</td>
         <td>-</td>
       </tr>
@@ -3062,6 +3096,18 @@ How to communicate with simple BLE peripheral with minimum activated features wi
         <td>-</td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="BLE_Power_Peripheral">BLE_Power_Peripheral</p></td>
+        <td align=left>
+
+@note This application is to demonstrate that a BLE_Power_Peripheral application can be created using CubeMX.
+</td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td>-</td>
         <td>-</td>
       </tr>
@@ -3683,7 +3729,7 @@ How to exchange a Coap message using the Thread protocol.
 </td>
         <td>-</td>
         <td><font size="5" color=green>X</font></td>
-        <td><font size="5" color=green>X</font></td>
+        <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
         <td>-</td>
       </tr>
@@ -4264,20 +4310,20 @@ How to use the Custom long string cluster on a device acting as a Server with Co
         <td>-</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-        <td colspan="3"><b>Total number of applications: 169</b></td>
+        <td colspan="3"><b>Total number of applications: 173</b></td>
         <td>14</td>
         <td>19</td>
-        <td>121</td>
+        <td>124</td>
         <td>14</td>
-        <td>1</td>
+        <td>2</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
-      	<td colspan="4"><b>Total number of projects: 465</b></td>
+      	<td colspan="4"><b>Total number of projects: 469</b></td>
       	<td>24</td>
       	<td>20</td>
-      	<td>327</td>
+      	<td>330</td>
       	<td>90</td>
-      	<td>4</td>
+      	<td>5</td>
       </tr>
     </table>
   </body>
