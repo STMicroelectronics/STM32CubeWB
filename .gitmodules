@@ -6,3 +6,23 @@
 	path = Drivers/CMSIS/Device/ST/STM32WBxx
 	url = https://github.com/STMicroelectronics/cmsis_device_wb.git
 	branch = master
+[submodule "Drivers/BSP/NUCLEO-WB15CC"]
+	path = Drivers/BSP/NUCLEO-WB15CC
+	url = https://github.com/STMicroelectronics/nucleo-wb15cc-bsp
+	branch = main
+[submodule "Drivers/BSP/P-NUCLEO-WB55.Nucleo"]
+	path = Drivers/BSP/P-NUCLEO-WB55.Nucleo
+	url = https://github.com/STMicroelectronics/p-nucleo-wb55-nucleo-bsp
+	branch = main
+[submodule "Drivers/BSP/P-NUCLEO-WB55.USBDongle"]
+	path = Drivers/BSP/P-NUCLEO-WB55.USBDongle
+	url = https://github.com/STMicroelectronics/p-nucleo-wb55-usb-dongle-bsp
+	branch = main
+[submodule "Drivers/BSP/STM32WB5MM-DK"]
+	path = Drivers/BSP/STM32WB5MM-DK
+	url = https://github.com/STMicroelectronics/stm32wb5mm-dk-bsp
+	branch = main
+[submodule "Drivers/BSP/B-WB1M-WPAN1"]
+	path = Drivers/BSP/B-WB1M-WPAN1
+	url = https://github.com/STMicroelectronics/b-wb1m-wpan1-bsp
+	branch = main
