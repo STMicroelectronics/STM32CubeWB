@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2023 STMicroelectronics.
+ * Copyright (c) 2018-2024 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -41,7 +41,7 @@
 #define BLE_STATUS_IRK_NOT_FOUND                        0x5BU
 
 /* A search for a specific remote device was unsuccessful because no entry
- * exists either into NVM Database or in volatile database. 
+ * exists either into NVM Database or in volatile database.
  */
 #define BLE_STATUS_DEV_NOT_FOUND                        0x5CU
 
@@ -59,9 +59,9 @@
  */
 #define BLE_STATUS_OUT_OF_HANDLE                        0x61U
 
-/* The requested GATT operation is not allowed in this context/status or using 
- * the provided parameters. 
- * This is a specific GATT error, different from generic Not Allowed error, 
+/* The requested GATT operation is not allowed in this context/status or using
+ * the provided parameters.
+ * This is a specific GATT error, different from generic Not Allowed error,
  * because it refers to specific GATT specifications/rules.
  */
 #define BLE_STATUS_INVALID_OPERATION                    0x62U
@@ -75,7 +75,7 @@
 
 /* Notification/Indication can't be sent to the requested remote device because
  * it doesn't satisfy the needed security permission.
- */ 
+ */
 #define BLE_STATUS_SEC_PERMISSION_ERROR                 0x65U
 
 /* The address of the device could not be resolved using the IRK stored\n
@@ -124,8 +124,8 @@
 #define BLE_STATUS_BUSY                                 0x93U
 
 /* The operation requested cannot be completed immediately by the Host
- * (usually because of lack of resources). 
- * The operation is generally put on hold by the caller and it's usually 
+ * (usually because of lack of resources).
+ * The operation is generally put on hold by the caller and it's usually
  * retried on later time.
  */
 #define BLE_STATUS_PENDING                              0x95U
@@ -136,7 +136,7 @@
 #define BLE_STATUS_ERROR                                0x97U
 
 /* The requested operation failed because of lack of memory.
- * Out of memory shall be returned for situations where memory will never 
+ * Out of memory shall be returned for situations where memory will never
  * become available again (e.g. ATT database)
  */
 #define BLE_STATUS_OUT_OF_MEMORY                        0x98U
@@ -208,7 +208,7 @@
 #define GAP_ADD_DEV_MODE_RESOLVING_LIST_ONLY         0x00U
 #define GAP_ADD_DEV_MODE_CLEAR                       0x01U
 #define GAP_ADD_DEV_MODE_FILTER_ACC_LIST_ONLY        0x02U
-#define GAP_ADD_DEV_MODE_BOTH_LISTS                  0x04U 
+#define GAP_ADD_DEV_MODE_BOTH_LISTS                  0x04U
 
 /* ------------------------------------------------------------------------- */
 

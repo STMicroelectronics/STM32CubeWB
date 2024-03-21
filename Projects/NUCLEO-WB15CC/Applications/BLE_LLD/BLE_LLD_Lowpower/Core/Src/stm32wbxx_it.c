@@ -300,10 +300,13 @@ void BUTTON_SW3_EXTI_IRQHandler(void)
   HAL_GPIO_EXTI_IRQHandler(BUTTON_SW3_PIN);
 }
 
+
+#if (CFG_LPM_SUPPORTED == 1U)
 void RTC_WKUP_IRQHandler(void)
 {
   HW_TS_RTC_Wakeup_Handler();
 }
+#endif
 
 void IPCC_C1_TX_IRQHandler(void)
 {

@@ -231,6 +231,8 @@ static void receiveCb(radioEventType cmd, ActionPacket *ap, void *data, uint8_t 
         led1Toggle=0;
         BSP_LED_Off(LED2);
         BSP_LED_Toggle(LED1);
+        uartWrite("receiveCb(): LED2 OFF");
+        uartWrite("receiveCb(): LED1 TOGGLE");
       } else {
         led1Toggle++;
       }
@@ -240,6 +242,8 @@ static void receiveCb(radioEventType cmd, ActionPacket *ap, void *data, uint8_t 
         led2Toggle=0;
         BSP_LED_Off(LED1);
         BSP_LED_Toggle(LED2);
+        uartWrite("receiveCb(): LED1 OFF");
+        uartWrite("receiveCb(): LED2 TOGGLE");
       } else {
         led2Toggle++;
       }
@@ -248,6 +252,7 @@ static void receiveCb(radioEventType cmd, ActionPacket *ap, void *data, uint8_t 
       {
         led3Toggle=0;
         BSP_LED_Toggle(LED3);
+        uartWrite("receiveCb(): LED3 TOGGLE");
       } else {
         led3Toggle++;
       }
@@ -275,6 +280,7 @@ static void transmitCbMaster(radioEventType cmd, ActionPacket *ap, void *data, u
       {
         led3Toggle=0;
         BSP_LED_Toggle(LED3);
+        uartWrite("transmitCbMaster(): LED3 TOGGLE");
       } else {
         led3Toggle++;
       }
@@ -312,6 +318,8 @@ static void transmitCbSlave(radioEventType cmd, ActionPacket *ap, void *data, ui
         led1Toggle=0;
         BSP_LED_Off(LED2);
         BSP_LED_Toggle(LED1);
+        uartWrite("transmitCbSlave(): LED2 OFF");
+        uartWrite("transmitCbSlave(): LED1 TOGGLE");
       } else {
         led1Toggle++;
       }
@@ -321,6 +329,8 @@ static void transmitCbSlave(radioEventType cmd, ActionPacket *ap, void *data, ui
         led2Toggle=0;
         BSP_LED_Off(LED1);
         BSP_LED_Toggle(LED2);
+        uartWrite("transmitCbSlave(): LED1 OFF");
+        uartWrite("transmitCbSlave(): LED2 TOGGLE");
       } else {
         led2Toggle++;
       }

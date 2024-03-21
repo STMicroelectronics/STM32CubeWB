@@ -784,34 +784,37 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
   {
     /* Waiting for the Provisioning to be done before to Start the 
        node configuration procedure */
-      return result;
+    return result;
   }
   
   if (eServerRespRecdState == NodeNoResponse_State) 
   {
     /* No Response received from Node under Provisioning for some config 
        messages. So, no need to do the trials  */
-      return MOBLE_RESULT_FAIL;
+    return MOBLE_RESULT_FAIL;
   }
   
   if (eClientSendMsgState == ProvisioningDone_State) 
   {
     /* Start the node configuration procedure */
+    TRACE_I(TF_CONFIG_CLIENT,"Start Node Configuration ...\n\r");   
+    TRACE_I(TF_CONFIG_CLIENT,"Get composition data ...\n\r");   
     eClientSendMsgState = CompositionGet_State;
     ConfigClient_SaveMsgSendingTime();
   }
   
   else if (eClientSendMsgState == CompositionGet_State)
   {
-     nowClockTime = Clock_Time();
-     if( (nowClockTime - NodeInfo.Initial_time) < CONFIGURATION_START_DELAY)
-     {
-       return result;
-     }
-     /*------------- Add the delay before to start the configuration messages */
+    nowClockTime = Clock_Time();
+    if( (nowClockTime - NodeInfo.Initial_time) < CONFIGURATION_START_DELAY)
+    {
+     return result;
+    }
+    /*------------- Add the delay before to start the configuration messages */
     
     if (eServerRespRecdState == CompositionRecdCompleted_State)
     {
+      TRACE_I(TF_CONFIG_CLIENT,"Add default application and network keys ...\n\r");   
       eClientSendMsgState = AppKeyAdd_State;  /* Change the state to Next */
       eServerRespRecdState = NodeIdle_State;
     }
@@ -826,41 +829,44 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
   {
     if (eServerRespRecdState == AppkeyAckCompleted_State)
     {
+      TRACE_I(TF_CONFIG_CLIENT,"Bind the element(node) with application key index and models ...\n\r");   
       eClientSendMsgState = AppBindModel_State;  /* Change the send state */
       eServerRespRecdState = NodeIdle_State;
     }
     else
     {
       /* Continue the AppKeyAdd servicing */
-    Appli_ConfigClient_DefaultAppKeyAdd();
-  }
+      Appli_ConfigClient_DefaultAppKeyAdd();
+    }
   }  
   
   else if (eClientSendMsgState == AppBindModel_State)
   {
     if (eServerRespRecdState == AppBindModelAckCompleted_State)
     {
+      TRACE_I(TF_CONFIG_CLIENT,"Add subscription to the element(node) for default settings ...\n\r");   
       eClientSendMsgState = AddSubscription_State;  /* Change the send state */
       eServerRespRecdState = NodeIdle_State;
     }
     else
     {
-       /* Continue the AppKeyBIND servicing */
-    Appli_ConfigClient_DefaultAppKeyBind();
-  }
+      /* Continue the AppKeyBIND servicing */
+      Appli_ConfigClient_DefaultAppKeyBind();
+    }
   }
   
   else if (eClientSendMsgState == AddSubscription_State)
   {
     if (eServerRespRecdState == SubscriptionAckCompleted_State)
     {
+      TRACE_I(TF_CONFIG_CLIENT,"Add publication settings to the element(node) for default settings ...\n\r");   
       eClientSendMsgState = SetPublication_State;  /* Change the send state */
       eServerRespRecdState = NodeIdle_State;
     }
     else 
     {
       /* Continue the Subscription add servicing */
-    AppliConfigClient_SubscriptionAddDefault();
+      AppliConfigClient_SubscriptionAddDefault();
     }    
   }
 
@@ -870,12 +876,12 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
     {
       eClientSendMsgState = ConfigurationDone_State;  /* Change the send state */
       eServerRespRecdState = NodeIdle_State;
-      TRACE_M(TF_CONFIG_CLIENT,"**Node is configured** \r\n");  
+      TRACE_I(TF_CONFIG_CLIENT,"**Node is configured** \r\n");  
     }
     else 
     {
       /* Continue the Publication add servicing */
-    AppliConfigClient_PublicationSetDefault();
+      AppliConfigClient_PublicationSetDefault();
     }
   }
   
@@ -891,52 +897,56 @@ MOBLE_RESULT Appli_ConfigClient_ConfigureNode(void)
 */ 
 MOBLE_RESULT Appli_ConfigClient_GetCompositionData (void)
 {
-    MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
-    MOBLEUINT8 retry;
-    MOBLEUINT16 dst_peer;
-    
-    switch(eServerRespRecdState)
-    {
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 retry;
+  MOBLEUINT16 dst_peer;
+  
+  switch(eServerRespRecdState)
+  {
     case NodeIdle_State:
-
-      ConfigClient_SaveMsgSendingTime();
-      
-      dst_peer = GetAddressToConfigure(); 
-      
-      /* Start the Get Composition Message */
-      ConfigClient_CompositionDataGet(dst_peer);
-      
-      /* Switch to InProgress_State */
-      eServerRespRecdState = InProgress_State;
+      {
+        ConfigClient_SaveMsgSendingTime();
+        
+        dst_peer = GetAddressToConfigure(); 
+        
+        /* Start the Get Composition Message */
+        ConfigClient_CompositionDataGet(dst_peer);
+        
+        /* Switch to InProgress_State */
+        eServerRespRecdState = InProgress_State;
+      }
       break;
 
     case CompositionRecd_State:
-      /* Switch the state to next state AddAppKey_State */
-      ConfigClient_ResetTrials();
-      eServerRespRecdState = CompositionRecdCompleted_State;
+      {
+        /* Switch the state to next state AddAppKey_State */
+        ConfigClient_ResetTrials();
+        eServerRespRecdState = CompositionRecdCompleted_State;
+      }
       break;
       
     case InProgress_State:
-      /* Just wait and let the messages be completed 
-         or look for timeout */
+      {
+        /* Just wait and let the messages be completed 
+           or look for timeout */
 
-      retry = ConfigClient_ChkRetries();
-      
-      if (retry == CLIENT_TX_RETRY_ENDS)
-      {
-        eServerRespRecdState = NodeNoResponse_State;
+        retry = ConfigClient_ChkRetries();
+        
+        if (retry == CLIENT_TX_RETRY_ENDS)
+        {
+          eServerRespRecdState = NodeNoResponse_State;
+        }
+        else if (retry == CLIENT_TX_TIMEOUT)
+        {
+          eServerRespRecdState = NodeIdle_State; /* Run next re-trial cycle again */
+        }
       }
-      else if (retry == CLIENT_TX_TIMEOUT)
-      {
-        eServerRespRecdState = NodeIdle_State; /* Run next re-trial cycle again */
-      }
-      
       break;
       
     default:
       /* Error State */
       break;
-    }
+  }
     
   return result;
 }
@@ -950,58 +960,63 @@ MOBLE_RESULT Appli_ConfigClient_GetCompositionData (void)
 */ 
 MOBLE_RESULT Appli_ConfigClient_DefaultAppKeyAdd (void)
 {
-   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
   MOBLEUINT8 retry; 
-   MOBLEUINT8 *pAppKey;  
-   MOBLEUINT16 netKeyIndex = DEFAULT_NETKEY_INDEX;
-   MOBLEUINT16 appKeyIndex = DEFAULT_APPKEY_INDEX;
+  MOBLEUINT8 *pAppKey;  
+  MOBLEUINT16 netKeyIndex = DEFAULT_NETKEY_INDEX;
+  MOBLEUINT16 appKeyIndex = DEFAULT_APPKEY_INDEX;
   MOBLE_ADDRESS dst_addr;
 
-   pAppKey = GetNewProvNodeAppKey();
-   
-    switch(eServerRespRecdState)
-    {
+  pAppKey = GetNewProvNodeAppKey();
+
+  switch(eServerRespRecdState)
+  {
     case NodeIdle_State:
-      ConfigClient_SaveMsgSendingTime();
-      
-      dst_addr = GetAddressToConfigure(); 
-      
-      /* Start the Set Appkey message  */
-      ConfigClient_AppKeyAdd ( dst_addr,
-                               netKeyIndex, 
-                                  appKeyIndex,
-                                  pAppKey);
-      
-      /* Switch to InProgress_State */
-      eServerRespRecdState = InProgress_State; 
+      {
+        ConfigClient_SaveMsgSendingTime();
+        
+        dst_addr = GetAddressToConfigure(); 
+        
+        /* Start the Set Appkey message  */
+        ConfigClient_AppKeyAdd ( dst_addr,
+                                 netKeyIndex, 
+                                 appKeyIndex,
+                                 pAppKey);
+        
+        /* Switch to InProgress_State */
+        eServerRespRecdState = InProgress_State;
+      }
       break;
 
     case AppkeyAck_State:
-      ConfigClient_ResetTrials();
-      eServerRespRecdState = AppkeyAckCompleted_State;
+      {
+        ConfigClient_ResetTrials();
+        eServerRespRecdState = AppkeyAckCompleted_State;
+      }
       break;
       
     case InProgress_State:
-      /* Just wait and let the messages be completed 
-         or look for timeout */
-
-      retry = ConfigClient_ChkRetries();
-      
-      if (retry == CLIENT_TX_RETRY_ENDS)
       {
-        eServerRespRecdState = NodeNoResponse_State;
-      }
-      else if (retry == CLIENT_TX_TIMEOUT)
-      {
-        eServerRespRecdState = NodeIdle_State; /* Run next re-trial cycle again */
-      }
+        /* Just wait and let the messages be completed 
+           or look for timeout */
 
+        retry = ConfigClient_ChkRetries();
+        
+        if (retry == CLIENT_TX_RETRY_ENDS)
+        {
+          eServerRespRecdState = NodeNoResponse_State;
+        }
+        else if (retry == CLIENT_TX_TIMEOUT)
+        {
+          eServerRespRecdState = NodeIdle_State; /* Run next re-trial cycle again */
+        }
+      }
       break;
 
     default:
       /* Error State */
       break;
-}
+  }
 
   return result;
 }
@@ -1015,21 +1030,21 @@ MOBLE_RESULT Appli_ConfigClient_DefaultAppKeyAdd (void)
 */ 
 MOBLE_RESULT Appli_ConfigClient_DefaultAppKeyBind (void)
 {
-   static MOBLEUINT32 modelIdentifier;
-   static MOBLEUINT8 elementIndex;
-   static MOBLEUINT8  indexSIGmodels;
-   static MOBLEUINT8  indexVendormodels;
-   MOBLEUINT16 elementAddress;
-   MOBLEUINT16 appKeyIndex = DEFAULT_APPKEY_INDEX;
+  static MOBLEUINT32 modelIdentifier;
+  static MOBLEUINT8 elementIndex;
+  static MOBLEUINT8  indexSIGmodels;
+  static MOBLEUINT8  indexVendormodels;
+  MOBLEUINT16 elementAddress;
+  MOBLEUINT16 appKeyIndex = DEFAULT_APPKEY_INDEX;
 
-   MOBLEUINT8  numSIGmodels;
-   MOBLEUINT8  numVendorModels;
-   MOBLEUINT8  numofElements;        
-   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
-   MOBLEUINT8 retry;  
-  
-    switch(eServerRespRecdState)
-    {
+  MOBLEUINT8  numSIGmodels;
+  MOBLEUINT8  numVendorModels;
+  MOBLEUINT8  numofElements;        
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 retry;  
+
+  switch(eServerRespRecdState)
+  {
     case NodeIdle_State:
       {
         /* Start the AppBindModel_State message  */
@@ -1083,20 +1098,20 @@ MOBLE_RESULT Appli_ConfigClient_DefaultAppKeyBind (void)
       }
       break;
       
-     case NodeSendMessage_State:
-       {
-         /* Start the AppBindModel_State message  */
-         elementAddress = GetServerElementAddress(elementIndex);
+    case NodeSendMessage_State:
+     {
+       /* Start the AppBindModel_State message  */
+       elementAddress = GetServerElementAddress(elementIndex);
 
-         /* Switch to InProgress_State */
-         eServerRespRecdState = InProgress_State;
+       /* Switch to InProgress_State */
+       eServerRespRecdState = InProgress_State;
 
-         ConfigClient_SaveMsgSendingTime();
-        
-         /* Send the Message to the server */
-         ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
-       }
-      break;
+       ConfigClient_SaveMsgSendingTime();
+      
+       /* Send the Message to the server */
+       ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
+     }
+     break;
 
     case AppBindModelAck_State:
       {
@@ -1172,7 +1187,7 @@ MOBLE_RESULT Appli_ConfigClient_DefaultAppKeyBind (void)
     default:
       /* Error State */
       break;
-    }
+  }
     
   return result;
 }
@@ -1186,28 +1201,31 @@ MOBLE_RESULT Appli_ConfigClient_DefaultAppKeyBind (void)
 */ 
 MOBLE_RESULT AppliConfigClient_SubscriptionAddDefault (void) 
 {
-   static MOBLEUINT32 modelIdentifier;
-   static MOBLEUINT16 elementAddress;
-   static MOBLEUINT8 elementIndex;
-   static MOBLEUINT8  indexSIGmodels;
-   static MOBLEUINT8  indexVendormodels;
-   MOBLEUINT8  numSIGmodels;
-   MOBLEUINT8  numVendorModels;
-   MOBLEUINT8  numofElements;        
-   MOBLEUINT16 address = DEFAULT_GROUP_ADDR;
-   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
-   MOBLEUINT8 retry; 
-      
-    switch(eServerRespRecdState)
-    {
+  static MOBLEUINT32 modelIdentifier;
+  static MOBLEUINT16 elementAddress;
+  static MOBLEUINT8 elementIndex;
+  static MOBLEUINT8  indexSIGmodels;
+  static MOBLEUINT8  indexVendormodels;
+  MOBLEUINT8  numSIGmodels;
+  MOBLEUINT8  numVendorModels;
+  MOBLEUINT8  numofElements;        
+  MOBLEUINT16 address = DEFAULT_GROUP_ADDR;
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 retry; 
+    
+  switch(eServerRespRecdState)
+  {
     case NodeIdle_State:
-      /* Start the SubscriptionAdd message  */
+      {
+        /* Start the SubscriptionAdd message  */
 
         elementIndex = 0; /* Initialize it for the complete loop */
         indexSIGmodels = 0; /* Initialize it for the complete loop */
         indexVendormodels = 0;
+      }
 
     case NodeNextSigModel_State:
+      {
         numSIGmodels = GetCountSIGModelToSubscribe(elementIndex);
         modelIdentifier = GetSIGModelToSubscribe(elementIndex,
                                                &indexSIGmodels, 
@@ -1223,9 +1241,11 @@ MOBLE_RESULT AppliConfigClient_SubscriptionAddDefault (void)
           /*No SIG Models, do binding for Vendor Model */
           eServerRespRecdState = NodeNextVendorModel_State;
         }
+      }
       break;
 
     case NodeNextVendorModel_State:
+      {
         numVendorModels = GetCountVendorModelToBindApp(elementIndex);
         if(numVendorModels > 0)
         {
@@ -1238,90 +1258,95 @@ MOBLE_RESULT AppliConfigClient_SubscriptionAddDefault (void)
           /* Change the received state for application  */
           eServerRespRecdState = SubscriptionAck_State;
         }
+      }
       break;
       
     case NodeSendMessage_State:
+      {
         elementAddress = GetServerElementAddress(elementIndex);
         ConfigClient_SaveMsgSendingTime();
 
          /* Switch to InProgress_State */
         eServerRespRecdState = InProgress_State;        
         ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
-      
+      }
       break;
 
-       
     case SubscriptionAck_State:
-       /* Need to check if all SIG Models are subscribed ? */
-      ConfigClient_ResetTrials();
+      {
+         /* Need to check if all SIG Models are subscribed ? */
+        ConfigClient_ResetTrials();
 
-      numSIGmodels = GetCountSIGModelToSubscribe(elementIndex);
-      numVendorModels = GetCountVendorModelToSubscribe(elementIndex);
-      elementAddress = GetServerElementAddress(elementIndex);
-      
-      if (indexSIGmodels < numSIGmodels )
-      { /* Even when all SIG Models are serviced, we need to start for Vendor Models */
-        indexSIGmodels++; 
-        indexVendormodels =0;  /* Reset back, bcoz, we are still process the SIG Models */
-      }
-      else if (indexVendormodels < numVendorModels)
-      {
-        indexVendormodels++; /* When SIG Models and Vendor Models are processed
-                                the loop condition will become true */
-      }
-      
-      if (indexSIGmodels < numSIGmodels )
-      {/* if index is still less, then we have scope of reading 1 more index */
-       
-        /* Get the Next Model and Bind it again till all SIG Models are binded */
-        eServerRespRecdState = NodeNextSigModel_State;
+        numSIGmodels = GetCountSIGModelToSubscribe(elementIndex);
+        numVendorModels = GetCountVendorModelToSubscribe(elementIndex);
+        elementAddress = GetServerElementAddress(elementIndex);
         
-      }
-      else if (indexVendormodels < numVendorModels)
-{
-        eServerRespRecdState = NodeNextVendorModel_State;
-      }
-      else
-      {
-        /* Now, the element index is handled, change the element index */
-        elementIndex++;
-        numofElements = ConfigClient_GetNodeElements();  
-        if (elementIndex ==  numofElements)
-        {/* we are comparing Index whose counting started from 0, becomes equal, 
-            then exit the loop */
-           eServerRespRecdState = SubscriptionAckCompleted_State; 
+        if (indexSIGmodels < numSIGmodels )
+        { /* Even when all SIG Models are serviced, we need to start for Vendor Models */
+          indexSIGmodels++; 
+          indexVendormodels =0;  /* Reset back, bcoz, we are still process the SIG Models */
         }
-        else if (elementIndex < numofElements)
-        { /* When the Element Index is still less than the total number of 
-             elements in the Node: So, Restart the cycle */
+        else if (indexVendormodels < numVendorModels)
+        {
+          indexVendormodels++; /* When SIG Models and Vendor Models are processed
+                                  the loop condition will become true */
+        }
         
+        if (indexSIGmodels < numSIGmodels )
+        {/* if index is still less, then we have scope of reading 1 more index */
+         
+          /* Get the Next Model and Bind it again till all SIG Models are binded */
+          eServerRespRecdState = NodeNextSigModel_State;
+          
+        }
+        else if (indexVendormodels < numVendorModels)
+        {
+          eServerRespRecdState = NodeNextVendorModel_State;
+        }
+        else
+        {
+          /* Now, the element index is handled, change the element index */
+          elementIndex++;
+          numofElements = ConfigClient_GetNodeElements();  
+          if (elementIndex ==  numofElements)
+          {/* we are comparing Index whose counting started from 0, becomes equal, 
+              then exit the loop */
+            eServerRespRecdState = SubscriptionAckCompleted_State; 
+          }
+          else if (elementIndex < numofElements)
+          { /* When the Element Index is still less than the total number of 
+               elements in the Node: So, Restart the cycle */
+          
           eServerRespRecdState = NodeNextSigModel_State; 
           indexSIGmodels =0; /* Reset the variable again for the next element */
-        indexVendormodels = 0;
-      }
+          indexVendormodels = 0;
+          }
+        }
       }
       break;
       
     case InProgress_State:
-      /* Just wait and let the messages be completed 
-         or look for timeout */
-      retry = ConfigClient_ChkRetries();
-      
-      if (retry == CLIENT_TX_RETRY_ENDS)
       {
-        eServerRespRecdState = NodeNoResponse_State;
-      }
-      else if (retry == CLIENT_TX_TIMEOUT)
-      {
-        eServerRespRecdState = NodeSendMessage_State; /* Run next re-trial cycle again */;
+        /* Just wait and let the messages be completed 
+           or look for timeout */
+        retry = ConfigClient_ChkRetries();
+        
+        if (retry == CLIENT_TX_RETRY_ENDS)
+        {
+          eServerRespRecdState = NodeNoResponse_State;
+        }
+        else if (retry == CLIENT_TX_TIMEOUT)
+        {
+          eServerRespRecdState = NodeSendMessage_State; /* Run next re-trial cycle again */;
+        }
       }
       break;
       
     default:
       /* Error State */
       break;
-    }
-    
+  }
+  
   return result;
 }
 
@@ -1342,28 +1367,30 @@ MOBLE_RESULT AppliConfigClient_PublicationSetDefault (void)
   MOBLEUINT8 publishPeriod = DEFAULT_PUBLISH_PERIOD;
   MOBLEUINT8 publishRetransmitCount = DEFAULT_PUBLISH_RETRANSMIT_COUNT;
   MOBLEUINT8 publishRetransmitIntervalSteps= DEFAULT_PUBLISH_RETRANSMIT_INTERVAL_STEPS;
-  
-   static MOBLEUINT16 elementAddress;
-   static MOBLEUINT32 modelIdentifier;
-   static MOBLEUINT8 elementIndex;
-   static MOBLEUINT8  indexSIGmodels;
-   static MOBLEUINT8  indexVendormodels;
-   MOBLEUINT8  numSIGmodels;
-   MOBLEUINT8  numVendorModels;
-   MOBLEUINT8  numofElements;        
-   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
-   MOBLEUINT8 retry; 
-      
-    switch(eServerRespRecdState)
-    {
-    case NodeIdle_State:
-      /* Start the Publication Add message  */
 
+  static MOBLEUINT16 elementAddress;
+  static MOBLEUINT32 modelIdentifier;
+  static MOBLEUINT8 elementIndex;
+  static MOBLEUINT8  indexSIGmodels;
+  static MOBLEUINT8  indexVendormodels;
+  MOBLEUINT8  numSIGmodels;
+  MOBLEUINT8  numVendorModels;
+  MOBLEUINT8  numofElements;        
+  MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;
+  MOBLEUINT8 retry; 
+      
+  switch(eServerRespRecdState)
+  {
+    case NodeIdle_State:
+      {
+        /* Start the Publication Add message  */
         elementIndex = 0; /* Initialize it for the complete loop */
         indexSIGmodels = 0; /* Initialize it for the complete loop */
         indexVendormodels = 0;
+      }
 
     case NodeNextSigModel_State:
+      {
         numSIGmodels = GetCountSIGModelToPublish(elementIndex);
         modelIdentifier = GetSIGModelToPublish(elementIndex,
                                                &indexSIGmodels, 
@@ -1379,9 +1406,11 @@ MOBLE_RESULT AppliConfigClient_PublicationSetDefault (void)
           /*No SIG Models, do binding for Vendor Model */
           eServerRespRecdState = NodeNextVendorModel_State;
         }
+      }
       break;
         
     case NodeNextVendorModel_State:
+      {
         numVendorModels = GetCountVendorModelToBindApp(elementIndex);
         if(numVendorModels > 0)
         {
@@ -1393,11 +1422,13 @@ MOBLE_RESULT AppliConfigClient_PublicationSetDefault (void)
         {
           /* Change the received state for application  */
           eServerRespRecdState = PublicationStatus_State;
-        }        
+        }
+      }        
       break;
 
       
     case NodeSendMessage_State:
+      {
         elementAddress = GetServerElementAddress(elementIndex);
 
         ConfigClient_SaveMsgSendingTime();
@@ -1413,79 +1444,83 @@ MOBLE_RESULT AppliConfigClient_PublicationSetDefault (void)
                               publishRetransmitCount,
                               publishRetransmitIntervalSteps,
                               modelIdentifier);
-
+      }
       break;
 
       
     case PublicationStatus_State:
-       /* Need to check if all SIG Models are subscribed ? */
-      ConfigClient_ResetTrials();
-
-      numSIGmodels = GetCountSIGModelToPublish(elementIndex);
-      numVendorModels = GetCountVendorModelToPublish(elementIndex);
-      elementAddress = GetServerElementAddress(elementIndex);
-      
-      if (indexSIGmodels < numSIGmodels )
-      { /* Even when all SIG Models are serviced, we need to start for Vendor Models */
-        indexSIGmodels++; 
-        indexVendormodels =0;  /* Reset back, bcoz, we are still process the SIG Models */
-      }
-      else if (indexVendormodels < numVendorModels)
       {
-        indexVendormodels++; /* When SIG Models and Vendor Models are processed
-                                the loop condition will become true */
-      }
+        /* Need to check if all SIG Models are subscribed ? */
+        ConfigClient_ResetTrials();
 
-      
-      if (indexSIGmodels < numSIGmodels )
-      {/* if index is still less, then we have scope of reading 1 more index */
-        eServerRespRecdState = NodeNextSigModel_State;        
-      }
-      else if (indexVendormodels < numVendorModels)
-      {
-        eServerRespRecdState = NodeNextVendorModel_State;        
-      }
-      else
-      {
-        /* Now, the element index is handled, change the element index */
-        elementIndex++;
-        numofElements = ConfigClient_GetNodeElements();  
-
-        if (elementIndex ==  numofElements)
-        {/* we are comparing Index whose counting started from 0, becomes equal, 
-            then exit the loop */
-           eServerRespRecdState = PublicationStatusCompleted_State; 
-        }
-        else if (elementIndex < numofElements)
-        { /* When the Element Index is still less than the total number of 
-             elements in the Node: So, Restart the cycle */
+        numSIGmodels = GetCountSIGModelToPublish(elementIndex);
+        numVendorModels = GetCountVendorModelToPublish(elementIndex);
+        elementAddress = GetServerElementAddress(elementIndex);
         
-          eServerRespRecdState = NodeNextSigModel_State; 
-          indexSIGmodels =0; /* Reset the variable again for the next element */
-        indexVendormodels = 0;
-      }
+        if (indexSIGmodels < numSIGmodels )
+        { /* Even when all SIG Models are serviced, we need to start for Vendor Models */
+          indexSIGmodels++; 
+          indexVendormodels =0;  /* Reset back, bcoz, we are still process the SIG Models */
+        }
+        else if (indexVendormodels < numVendorModels)
+        {
+          indexVendormodels++; /* When SIG Models and Vendor Models are processed
+                                  the loop condition will become true */
+        }
+
+        
+        if (indexSIGmodels < numSIGmodels )
+        {/* if index is still less, then we have scope of reading 1 more index */
+          eServerRespRecdState = NodeNextSigModel_State;        
+        }
+        else if (indexVendormodels < numVendorModels)
+        {
+          eServerRespRecdState = NodeNextVendorModel_State;        
+        }
+        else
+        {
+          /* Now, the element index is handled, change the element index */
+          elementIndex++;
+          numofElements = ConfigClient_GetNodeElements();  
+
+          if (elementIndex ==  numofElements)
+          {/* we are comparing Index whose counting started from 0, becomes equal, 
+              then exit the loop */
+             eServerRespRecdState = PublicationStatusCompleted_State; 
+          }
+          else if (elementIndex < numofElements)
+          { /* When the Element Index is still less than the total number of 
+               elements in the Node: So, Restart the cycle */
+          
+            eServerRespRecdState = NodeNextSigModel_State; 
+            indexSIGmodels =0; /* Reset the variable again for the next element */
+            indexVendormodels = 0;
+          }
+        }
       }
       break;
       
     case InProgress_State:
-      /* Just wait and let the messages be completed 
-         or look for timeout */
-      retry = ConfigClient_ChkRetries();
-      
-      if (retry == CLIENT_TX_RETRY_ENDS)
       {
-        eServerRespRecdState = NodeNoResponse_State;
-      }
-      else if (retry == CLIENT_TX_TIMEOUT)
-      {
-        eServerRespRecdState = NodeSendMessage_State; /* Run next re-trial cycle again */;
+        /* Just wait and let the messages be completed 
+           or look for timeout */
+        retry = ConfigClient_ChkRetries();
+        
+        if (retry == CLIENT_TX_RETRY_ENDS)
+        {
+          eServerRespRecdState = NodeNoResponse_State;
+        }
+        else if (retry == CLIENT_TX_TIMEOUT)
+        {
+          eServerRespRecdState = NodeSendMessage_State; /* Run next re-trial cycle again */;
+        }
       }
       break;
       
     default:
       /* Error State */
       break;
-    }
+  }
 
   return result;
 }
@@ -1537,22 +1572,26 @@ MOBLE_RESULT AppliConfigClient_SelfPublicationSetDefault (void)
 
       else
       {
-        ConfigClient_PublicationSet(elementAddress,
-                                    publishAddress,
-                                    appKeyIndex,
-                                    credentialFlag,
-                                    publishTTL,
-                                    publishPeriod,
-                                    publishRetransmitCount,
-                                    publishRetransmitIntervalSteps,
-                                    modelIdentifier);
+        result = ConfigClient_PublicationSet(elementAddress,
+                                             publishAddress,
+                                             appKeyIndex,
+                                             credentialFlag,
+                                             publishTTL,
+                                             publishPeriod,
+                                             publishRetransmitCount,
+                                             publishRetransmitIntervalSteps,
+                                             modelIdentifier);
+        if(result)
+        {
+          return result;
+        }
       }
     }
     
 #ifdef ENABLE_VENDOR_MODEL_SERVER  
     /*Checking for VENDOR Models*/
     for (MOBLEUINT8 index=0; index < APPLICATION_VENDOR_MODELS_MAX_COUNT;  index++)
-  {
+    {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
 
@@ -1564,16 +1603,20 @@ MOBLE_RESULT AppliConfigClient_SelfPublicationSetDefault (void)
       }
       else
       {
-    ConfigClient_PublicationSet(elementAddress,
-                                publishAddress,
-                                appKeyIndex,
-                                credentialFlag,
-                                publishTTL,
-                                publishPeriod,
-                                publishRetransmitCount,
-                                publishRetransmitIntervalSteps,
-                                modelIdentifier);
-  }
+        result = ConfigClient_PublicationSet(elementAddress,
+                                             publishAddress,
+                                             appKeyIndex,
+                                             credentialFlag,
+                                             publishTTL,
+                                             publishPeriod,
+                                             publishRetransmitCount,
+                                             publishRetransmitIntervalSteps,
+                                             modelIdentifier);
+        if(result)
+        {
+          return result;
+        }
+      }
     }
 #endif  
   }
@@ -1620,14 +1663,18 @@ MOBLE_RESULT AppliConfigClient_SelfSubscriptionSetDefault (void)
       }
       else
       {
-        ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
+        result = ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
+        if(result)
+        {
+          return result;
+        }
       }
     }
   
 #ifdef ENABLE_VENDOR_MODEL_SERVER  
     /*Checking for Vendor Models*/
     for (MOBLEUINT8 index=0; index < APPLICATION_VENDOR_MODELS_MAX_COUNT;  index++)
-  {
+    {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
     
@@ -1638,8 +1685,12 @@ MOBLE_RESULT AppliConfigClient_SelfSubscriptionSetDefault (void)
       }
       else
       {
-    ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
-  }
+        result = ConfigClient_SubscriptionAdd (elementAddress, address, modelIdentifier);
+        if(result)
+        {
+          return result;
+        }
+      }
     }
 #endif  
   }
@@ -1685,15 +1736,19 @@ MOBLE_RESULT Appli_ConfigClient_SelfDefaultAppKeyBind (void)
         /* Do NOTHING, let the next Model be picked */
       }
       else
-  {
-        ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
+      {
+        result = ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
+        if(result)
+        {
+          return result;
+        }
       }
     }
   
 #ifdef ENABLE_VENDOR_MODEL_SERVER  
     /*Checking for VENDOR Models*/
     for (MOBLEUINT8 index=0; index < APPLICATION_VENDOR_MODELS_MAX_COUNT;  index++)
-  {
+    {
       elementAddress = BLEMesh_GetAddress();
       elementAddress += elementIndex;
       
@@ -1705,9 +1760,13 @@ MOBLE_RESULT Appli_ConfigClient_SelfDefaultAppKeyBind (void)
       }
       else
       {
-    ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
-  }      
-  }
+        result = ConfigClient_ModelAppBind (elementAddress, appKeyIndex, modelIdentifier);
+        if(result)
+        {
+          return result;
+        }
+      }      
+    }
 #endif    
   }
   return result;
@@ -1785,6 +1844,7 @@ void Appli_PublicationStatusCb(MOBLEUINT8 status)
 */ 
 void Appli_NodeResetStatusCb(void)
 {
+   TRACE_I(TF_CONFIG_CLIENT,"Node is reset and removed from the network\r\n");  
    /* Change the received state for application  */
    eServerRespRecdState = NodeResetStatus_State;
 }

@@ -374,7 +374,7 @@ void APP_BLE_Init(void)
   HRSAPP_Init();
 
   /* USER CODE BEGIN APP_BLE_Init_3 */
-
+  a_ManufData[sizeof(a_ManufData)-11] = CFG_DEV_ID_HEARTRATE;
   /* USER CODE END APP_BLE_Init_3 */
 
   /**
@@ -668,6 +668,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
 
           /* USER CODE END EVT_BLUE_GAP_PROCEDURE_COMPLETE */
           break; /* ACI_GAP_PROC_COMPLETE_VSEVT_CODE */
+
+        case ACI_GATT_INDICATION_VSEVT_CODE:
+        {
+          APP_DBG_MSG(">>== ACI_GATT_INDICATION_VSEVT_CODE \r");
+          aci_gatt_confirm_indication(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
+        }
+        break;
 
         /* USER CODE BEGIN BLUE_EVT */
 

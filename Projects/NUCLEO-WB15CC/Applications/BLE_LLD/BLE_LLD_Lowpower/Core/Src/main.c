@@ -82,7 +82,6 @@ static void PeriphClock_Config(void);
 static void Reset_Device( void );
 static void Reset_IPCC( void );
 static void Reset_BackupDomain( void );
-static void Init_Exti( void );
 static void Config_HSE(void);
 /* USER CODE END PFP */
 
@@ -124,13 +123,14 @@ int main(void)
   /* USER CODE BEGIN SysInit */
   PeriphClock_Config();
   Init_Exti();
+  //Init_Smps();
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_DMA_Init();
   MX_RTC_Init();
-    
+
   /* Init code for STM32_WPAN */
   APPE_Init();
 
@@ -490,7 +490,7 @@ static void Reset_BackupDomain( void )
   return;
 }
 
-static void Init_Exti( void )
+void Init_Exti( void )
 {
   /* Enable LPUART(25), IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
   LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_25 | LL_EXTI_LINE_36 | LL_EXTI_LINE_38);
@@ -565,7 +565,7 @@ void HAL_Delay(uint32_t Delay)
     /**
      * This option is used to ensure that store operations are completed
      */
-  #if defined ( __CC_ARM)
+  #if defined (__CC_ARM) || defined (__ARMCC_VERSION)
     __force_stores();
   #endif
 

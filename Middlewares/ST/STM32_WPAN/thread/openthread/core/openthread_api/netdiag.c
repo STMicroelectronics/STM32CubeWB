@@ -27,9 +27,9 @@
 /* Include definition of compilation flags requested for OpenThread configuration */
 #include OPENTHREAD_CONFIG_FILE
 
-#if OPENTHREAD_FTD || OPENTHREAD_CONFIG_TMF_NETWORK_DIAG_MTD_ENABLE
-
 #include "netdiag.h"
+
+#if OPENTHREAD_CONFIG_TMF_NETDIAG_CLIENT_ENABLE
 
 extern otReceiveDiagnosticGetCallback otReceiveDiagnosticGetCb;
 
@@ -103,4 +103,52 @@ otError otThreadSendDiagnosticReset(otInstance *        aInstance,
   return (otError)p_ot_req->Data[0];
 }
 
-#endif // OPENTHREAD_FTD || OPENTHREAD_CONFIG_TMF_NETWORK_DIAG_MTD_ENABLE
+#endif // OPENTHREAD_CONFIG_TMF_NETDIAG_CLIENT_ENABLE
+
+const char *otThreadGetVendorName(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_VENDOR_NAME;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (const char*)p_ot_req->Data[0];
+}
+
+const char *otThreadGetVendorModel(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_VENDOR_MODEL;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (const char*)p_ot_req->Data[0];
+}
+
+const char *otThreadGetVendorSwVersion(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_VENDOR_SW_VERSION;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (const char*)p_ot_req->Data[0];
+}

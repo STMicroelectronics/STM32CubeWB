@@ -30,8 +30,6 @@
 #include "stm32_lpm.h"
 #include "app_debug.h"
 
-
-
 #include "appli_mesh.h"
 #include "appli_nvm.h"
 #include "pal_nvm.h"
@@ -72,6 +70,9 @@ extern volatile uint8_t BleProcessInit;
 /* USER CODE BEGIN PTD */
 /* Section specific to button management using UART */
 EXTI_HandleTypeDef exti_handle;
+extern uint8_t LongPressButton;
+extern uint8_t button_emulation;
+
 /* USER CODE END PTD */
 
 /* Private defines -----------------------------------------------------------*/
@@ -123,6 +124,10 @@ static void Button_Init( void );
 static void RxUART_Init(void);
 static void RxCpltCallback(void);
 static void UartCmdExecute(void);
+
+extern void Appli_LongButtonPress(void);
+extern void Appli_ShortButtonPress(void);
+
 /* USER CODE END PFP */
 
 uint8_t Mesh_Stop_Mode;
@@ -517,7 +522,27 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
 
   case GPIO_PIN_12: //BUTTON_SW1_PIN
       {
-        UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_SW1_REQ_ID, CFG_SCH_PRIO_0);
+       if (button_emulation != 1){
+          UTIL_SEQ_SetTask( 1<<CFG_TASK_MESH_SW1_REQ_ID, CFG_SCH_PRIO_0);
+      }
+      else{
+        if (LongPressButton==1){
+#ifdef ENABLE_SENSOR_MODEL_CLIENT
+          /* Button 1 long press action */
+          APP_DBG_MSG("The Client ask the Time Of Flight measurement to the Server \n");
+          Appli_LongButtonPress();
+#endif
+          LongPressButton = 0;
+        }
+        else{
+#ifdef ENABLE_SENSOR_MODEL_CLIENT 
+          /* Button 1 short press action */
+          APP_DBG_MSG("The Client ask the Temperature to the Server \n");
+          Appli_ShortButtonPress();
+#endif
+        }
+        button_emulation = 0;
+      }        
       }
       break;
 
@@ -578,13 +603,20 @@ static void UartCmdExecute(void)
     APP_DBG_MSG("SW1 OK\n");
     exti_handle.Line = BUTTON_USER1_EXTI_LINE;
     HAL_EXTI_GenerateSWI(&exti_handle);
+    button_emulation=1;
   }
   else if (strcmp((char const*)CommandString, "SW2") == 0)
   {
     APP_DBG_MSG("SW2 OK\n");
     exti_handle.Line = BUTTON_USER2_EXTI_LINE;
     HAL_EXTI_GenerateSWI(&exti_handle);
+    button_emulation=1;
   }
+  else if (strcmp((char const*)CommandString, "LONG_PRESS") == 0)
+  {
+    APP_DBG_MSG("LONG_PRESS OK\n");
+    LongPressButton=1;
+  } 
   else
   {
     APP_DBG_MSG("NOT RECOGNIZED COMMAND : %s\n", CommandString);

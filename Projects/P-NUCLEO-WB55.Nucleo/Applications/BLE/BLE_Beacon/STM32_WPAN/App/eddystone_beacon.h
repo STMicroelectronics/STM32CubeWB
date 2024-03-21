@@ -28,7 +28,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#if defined (__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
 	#define ASSERT_CONCAT_(a, b) a##b
 	#define ASSERT_CONCAT(a, b) ASSERT_CONCAT_(a, b)
 	/* These can't be used after statements in c89. */
@@ -77,7 +77,7 @@ enum
 #endif
 
 #if (0 != (CFG_BEACON_TYPE & CFG_EDDYSTONE_URL_BEACON_TYPE))
-#if defined (__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   STATIC_ASSERT(sizeof(PHYSICAL_WEB_URL) < 17, "The URL must be less than 17 characters.");
 #elif defined (__ICCARM__)
   static_assert(sizeof(PHYSICAL_WEB_URL) < 17, "The URL must be less than 17 characters.");

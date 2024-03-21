@@ -215,11 +215,12 @@ const void *prvsnr_data;
 
 #if ENABLE_SERIAL_INTERFACE
 extern uint8_t button_emulation;
+extern uint8_t LongPressButton;
 #endif
 
 /* Private function prototypes -----------------------------------------------*/
-static void Appli_LongButtonPress(void);
-static void Appli_ShortButtonPress(void);
+void Appli_LongButtonPress(void);
+void Appli_ShortButtonPress(void);
 #if USER_OUTPUT_OOB_APPLI_PROCESS
 void Appli_OobAuthenticationProcess(void);
 #endif
@@ -274,7 +275,7 @@ void LED_Off(void)
 * @param  void
 * @retval void
 */ 
-static void Appli_ShortButtonPress(void)
+void Appli_ShortButtonPress(void)
 {
   //MESH_MODEL_SENSOR_APP_CODE: Begin
 #ifdef ENABLE_SENSOR_MODEL_CLIENT
@@ -293,7 +294,7 @@ static void Appli_ShortButtonPress(void)
 * @param  void
 * @retval void
 */ 
-static void Appli_LongButtonPress(void)
+void Appli_LongButtonPress(void)
 {
   //MESH_MODEL_SENSOR_APP_CODE: Begin
 #ifdef ENABLE_SENSOR_MODEL_CLIENT
@@ -1589,8 +1590,21 @@ static void AppliMeshSW1Task(void)
   }
   else
   {
-    /* Button 1 short press action */
-    Appli_ShortButtonPress();
+    if (LongPressButton==1){
+#ifdef ENABLE_SENSOR_MODEL_CLIENT
+      /* Button 1 long press action */
+      TRACE_I(TF_SERIAL_PRINTS,"The Client ask the Time Of Flight measurement to the Server\r\n");
+      Appli_LongButtonPress();
+#endif
+      LongPressButton = 0;
+    }
+    else{
+#ifdef ENABLE_SENSOR_MODEL_CLIENT 
+      /* Button 1 short press action */
+      TRACE_I(TF_SERIAL_PRINTS,"The Client ask the Temperature to the Server\r\n");
+      Appli_ShortButtonPress();
+#endif
+    }
     button_emulation = 0;
   }
 #else

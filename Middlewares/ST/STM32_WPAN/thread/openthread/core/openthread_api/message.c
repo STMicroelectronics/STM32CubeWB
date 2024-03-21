@@ -343,3 +343,20 @@ void otMessageGetBufferInfo(otInstance *aInstance, otBufferInfo *aBufferInfo)
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
+
+#if OPENTHREAD_FTD || OPENTHREAD_MTD
+void otMessageResetBufferInfo(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_MESSAGE_RESET_BUFFER_INFO;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer(); 
+}
+#endif // OPENTHREAD_FTD || OPENTHREAD_MTD

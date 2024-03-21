@@ -116,7 +116,6 @@ Infinite_Loop:
 ******************************************************************************/
  	.section	.isr_vector,"a",%progbits
 	.type	g_pfnVectors, %object
-	.size	g_pfnVectors, .-g_pfnVectors
 
 
 g_pfnVectors:
@@ -199,6 +198,8 @@ g_pfnVectors:
   .word DMA2_Channel6_IRQHandler
   .word DMA2_Channel7_IRQHandler
   .word DMAMUX1_OVR_IRQHandler
+
+	.size	g_pfnVectors, .-g_pfnVectors
 
 /*******************************************************************************
 *

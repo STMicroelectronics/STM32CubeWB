@@ -200,7 +200,7 @@
 /** < The application shall check the selected source clock is enable */
 #define CFG_HW_USART1_SOURCE_CLOCK              RCC_USART1CLKSOURCE_SYSCLK
 
-#define CFG_HW_USART1_BAUDRATE                115200
+#define CFG_HW_USART1_BAUDRATE                57600
 #define CFG_HW_USART1_WORDLENGTH              UART_WORDLENGTH_8B
 #define CFG_HW_USART1_STOPBITS                UART_STOPBITS_1
 #define CFG_HW_USART1_PARITY                  UART_PARITY_NONE

@@ -191,22 +191,23 @@ static enum ZclStatusCodeT APP_ZIGBEE_Commissioning_SaveStartup_cb(struct ZbZclC
   APP_DBG("SaveStartup request received.");
   
   /* Check boundary */
-  if(index>MAX_CONFIG_TAB_SIZE){
+  if(index>=MAX_CONFIG_TAB_SIZE){
     APP_DBG("Error, index out of bound.\n");
     rsp.status = ZCL_STATUS_FAILURE; 
   }
-  
-  /* Get the current network configuration from Commissioning server attributes */
-  status = ZbZclCommissionServerGetStartup(zigbee_app_info.commissioning_server, &currentConfig);
-  if(status!=ZCL_STATUS_SUCCESS){
-    APP_DBG("Error, ZbZclCommissionServerGetStartup failed.\n");
-    rsp.status = status;
-  } else {
-    APP_DBG("Configuration saved with index %d.\n", req->index);
-    
-    /* Save the current network configuration */
-    memset(&SavedConfigTab[index], 0, sizeof(struct ZbStartupT));
-    SavedConfigTab[index] = currentConfig;
+  else {
+      /* Get the current network configuration from Commissioning server attributes */
+      status = ZbZclCommissionServerGetStartup(zigbee_app_info.commissioning_server, &currentConfig);
+      if(status!=ZCL_STATUS_SUCCESS){
+        APP_DBG("Error, ZbZclCommissionServerGetStartup failed.\n");
+        rsp.status = status;
+      } else {
+        APP_DBG("Configuration saved with index %d.\n", req->index);
+
+        /* Save the current network configuration */
+        memset(&SavedConfigTab[index], 0, sizeof(struct ZbStartupT));
+        SavedConfigTab[index] = currentConfig;
+      }
   }
   
   (void) ZbZclCommissionServerSendSaveStartupRsp(zigbee_app_info.commissioning_server, srcInfo, &rsp);
@@ -230,18 +231,19 @@ static enum ZclStatusCodeT APP_ZIGBEE_Commissioning_RestoreStartup_cb(struct ZbZ
   
   APP_DBG("RestoreStartup request received."); 
   
-  if(index>MAX_CONFIG_TAB_SIZE){
+  if(index>=MAX_CONFIG_TAB_SIZE){
     APP_DBG("Error, index out of bound.\n");
     rsp.status = ZCL_STATUS_FAILURE; 
   }
-  
-  /* Set the Commissioning server attributes to the values present at the requested index */
-  status = ZbZclCommissionServerSetStartup(zigbee_app_info.commissioning_server, &SavedConfigTab[index]);
-  if(status!=ZCL_STATUS_SUCCESS){
-    APP_DBG("Error, ZbZclCommissionServerSetStartup failed.\n");
-    rsp.status = status;
-  } else {
-    APP_DBG("Startup parameters restored with index %d.\n", index);
+  else {
+      /* Set the Commissioning server attributes to the values present at the requested index */
+      status = ZbZclCommissionServerSetStartup(zigbee_app_info.commissioning_server, &SavedConfigTab[index]);
+      if(status!=ZCL_STATUS_SUCCESS){
+        APP_DBG("Error, ZbZclCommissionServerSetStartup failed.\n");
+        rsp.status = status;
+      } else {
+        APP_DBG("Startup parameters restored with index %d.\n", index);
+      }
   }
   
   (void) ZbZclCommissionServerSendRestoreStartupRsp(zigbee_app_info.commissioning_server, srcInfo, &rsp);

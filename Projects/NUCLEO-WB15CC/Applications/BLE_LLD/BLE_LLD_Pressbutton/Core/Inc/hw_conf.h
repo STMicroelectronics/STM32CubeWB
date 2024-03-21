@@ -26,6 +26,11 @@
  * THIS SHALL NO BE CHANGED AS THESE SEMAPHORES ARE USED AS WELL ON THE CM0+
  *****************************************************************************/
 /**
+* Index of the semaphore used the prevent conflicts after standby sleep.
+* Each CPUs takes this semaphore at standby wakeup until conclicting elements are restored.
+*/
+#define CFG_HW_PWR_STANDBY_SEMID                    10
+/**
 *  The CPU2 may be configured to store the Thread persistent data either in internal NVM storage on CPU2 or in
 *  SRAM2 buffer provided by the user application. This can be configured with the system command SHCI_C2_Config()
 *  When the CPU2 is requested to store persistent data in SRAM2, it can write data in this buffer at any time when needed.
@@ -56,6 +61,8 @@
 *  The CPU1 shall not either write or erase in flash when this semaphore is taken by the CPU2
 *  When the CPU1 needs to either write or erase in flash, it shall first get the semaphore and release it just
 *  after writing a raw (64bits data) or erasing one sector.
+*  Once the Semaphore has been released, there shall be at least 1us before it can be taken again. This is required
+*  to give the opportunity to CPU2 to take it.
 *  On v1.4.0 and older CPU2 wireless firmware, this semaphore is unused and CPU2 is using PES bit.
 *  By default, CPU2 is using the PES bit to protect its timing. The CPU1 may request the CPU2 to use the semaphore
 *  instead of the PES bit by sending the system command SHCI_C2_SetFlashActivityControl()
@@ -161,14 +168,14 @@
 #if (CFG_LPM_SUPPORTED == 0)
 #define CFG_HW_LPUART1_ENABLED           1
 #define CFG_HW_LPUART1_DMA_TX_SUPPORTED  1
-#define CFG_HW_USART1_ENABLED           1
-#define CFG_HW_USART1_DMA_TX_SUPPORTED  1
+#define CFG_HW_USART1_ENABLED            1
+#define CFG_HW_USART1_DMA_TX_SUPPORTED   1
    
 #else
 #define CFG_HW_LPUART1_ENABLED           0
 #define CFG_HW_LPUART1_DMA_TX_SUPPORTED  0
-#define CFG_HW_USART1_ENABLED           0
-#define CFG_HW_USART1_DMA_TX_SUPPORTED  0  
+#define CFG_HW_USART1_ENABLED            0
+#define CFG_HW_USART1_DMA_TX_SUPPORTED   0
 #endif
 /******************************************************************************
  * External PA

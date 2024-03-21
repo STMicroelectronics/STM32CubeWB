@@ -364,6 +364,8 @@ typedef enum MAC_Pib_Ids_Tag {
     /*! Attribute ID of proprietary attribute to force FC security field to 'Enabled'  */
     g_MAC_CERTIF_SET_FC_SECURITY_FRAME_c = (uint8_t) 0x91,
 #endif
+    /*! Attribute ID of enabling the filter by FCS (only available in promiscuous mode) */
+    g_MAC_FCS_MODE = (uint8_t) 0x92,
     /*! Attribute ID of enabling the promiscuous mode */
     g_MAC_PROMISCUOUS_MODE_c = (uint8_t) 0x51,
     

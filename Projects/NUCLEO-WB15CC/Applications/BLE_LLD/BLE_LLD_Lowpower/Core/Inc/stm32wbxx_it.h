@@ -61,8 +61,9 @@ void DMA1_Channel5_IRQHandler(void);
 void USART1_IRQHandler(void);
 void LPUART1_IRQHandler(void);
 /* USER CODE BEGIN EFP */
+#if (CFG_LPM_SUPPORTED == 1U)
 void RTC_WKUP_IRQHandler(void);
-
+#endif
 void IPCC_C1_TX_IRQHandler(void);
 void IPCC_C1_RX_IRQHandler(void);
 

@@ -182,6 +182,7 @@ static void appe_Tl_Init( void )
   shci_init(APPE_SysUserEvtRx, (void*) &SHci_Tl_Init_Conf);
 
   /**< Memory Manager channel initialization */
+  memset(&tl_mm_config, 0, sizeof(TL_MM_Config_t));
   tl_mm_config.p_BleSpareEvtBuffer = 0;
   tl_mm_config.p_SystemSpareEvtBuffer = SystemSpareEvtBuffer;
   tl_mm_config.p_AsynchEvtPool = EvtPool;

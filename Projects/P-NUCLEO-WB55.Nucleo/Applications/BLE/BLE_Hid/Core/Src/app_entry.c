@@ -588,9 +588,9 @@ void HAL_Delay(uint32_t Delay)
     /**
      * This option is used to ensure that store operations are completed
      */
-  #if defined (__CC_ARM)
+  #if defined (__CC_ARM) || defined (__ARMCC_VERSION)
     __force_stores();
-  #endif /* __CC_ARM */
+  #endif /*__ARMCC_VERSION */
 
     __WFI();
   }

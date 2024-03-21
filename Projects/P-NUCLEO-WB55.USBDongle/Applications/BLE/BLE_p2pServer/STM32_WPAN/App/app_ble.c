@@ -829,6 +829,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
         }
           break;    
         /* USER CODE END ecode */
+        case ACI_GATT_INDICATION_VSEVT_CODE:
+        {
+          APP_DBG_MSG(">>== ACI_GATT_INDICATION_VSEVT_CODE \r");
+          aci_gatt_confirm_indication(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
+        }
+        break;
       /**
        * SPECIFIC to P2P Server APP
        */

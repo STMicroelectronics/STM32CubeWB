@@ -493,7 +493,7 @@ For STMicroelectronics : it is 0x0030 */
 *  should be less than poll timeout
 *  100  ->  10s
 */
-#define LPN_FRIEND_POLL_FREQUENCY                                            25U
+#define LPN_FRIEND_POLL_FREQUENCY                                            20U/*25U*/
 
 /* 
 *  Minimum RSSI required by low power node

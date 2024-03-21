@@ -890,6 +890,23 @@ otError otThreadSetChildRouterLinks(otInstance *aInstance, uint8_t aChildRouterL
   return (otError)p_ot_req->Data[0];
 }
 
+bool otThreadIsRouterIdAllocated(otInstance *aInstance, uint8_t aRouterId)
+{
+   Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_IS_ROUTER_ID_ALLOCATED;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aRouterId;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (bool)p_ot_req->Data[0];
+}
+
 void otThreadGetNextHopAndPathCost(otInstance *aInstance,
                                    uint16_t    aDestRloc16,
                                    uint16_t   *aNextHopRloc16,

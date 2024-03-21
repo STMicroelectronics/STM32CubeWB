@@ -651,6 +651,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           /* USER CODE END ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE*/
           break;
         /* PAIRING */
+        case ACI_GATT_INDICATION_VSEVT_CODE:
+        {
+          APP_DBG_MSG(">>== ACI_GATT_INDICATION_VSEVT_CODE \r");
+          aci_gatt_confirm_indication(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
+        }
+        break;
 
         /* USER CODE BEGIN BLUE_EVT */
 

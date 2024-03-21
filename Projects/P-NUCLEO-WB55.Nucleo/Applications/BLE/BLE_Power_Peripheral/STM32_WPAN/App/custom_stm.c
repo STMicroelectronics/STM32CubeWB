@@ -109,6 +109,7 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
   hci_event_pckt *event_pckt;
   evt_blecore_aci *blecore_evt;
   aci_gatt_attribute_modified_event_rp0 *attribute_modified;
+  aci_gatt_notification_complete_event_rp0    *notification_complete;
   Custom_STM_App_Notification_evt_t     Notification;
   /* USER CODE BEGIN Custom_STM_Event_Handler_1 */
 
@@ -201,6 +202,22 @@ static SVCCTL_EvtAckStatus_t Custom_STM_Event_Handler(void *Event)
 
           /* USER CODE END EVT_BLUE_GATT_WRITE_PERMIT_REQ_END */
           break;
+
+		case ACI_GATT_NOTIFICATION_COMPLETE_VSEVT_CODE:
+        {
+          /* USER CODE BEGIN EVT_BLUE_GATT_NOTIFICATION_COMPLETE_BEGIN */
+
+          /* USER CODE END EVT_BLUE_GATT_NOTIFICATION_COMPLETE_BEGIN */
+          notification_complete = (aci_gatt_notification_complete_event_rp0*)blecore_evt->data;
+          Notification.Custom_Evt_Opcode = CUSTOM_STM_NOTIFICATION_COMPLETE_EVT;
+          Notification.AttrHandle = notification_complete->Attr_Handle;
+          Custom_STM_App_Notification(&Notification);
+          /* USER CODE BEGIN EVT_BLUE_GATT_NOTIFICATION_COMPLETE_END */
+
+          /* USER CODE END EVT_BLUE_GATT_NOTIFICATION_COMPLETE_END */
+          break;
+        }
+
         /* USER CODE BEGIN BLECORE_EVT */
 
         /* USER CODE END BLECORE_EVT */

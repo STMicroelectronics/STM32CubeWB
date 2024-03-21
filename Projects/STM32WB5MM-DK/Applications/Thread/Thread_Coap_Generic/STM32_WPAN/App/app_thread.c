@@ -113,7 +113,8 @@ static void APP_THREAD_CoapDataRespHandler(
     otError result);
 
 static void APP_THREAD_InitPayloadWrite(void);
-static void APP_THREAD_SendCoapMsg(void);
+static void APP_THREAD_SendCoapMsgWithNoConf(void);
+static void APP_THREAD_SendCoapMsgWithConf(void);
 static void APP_THREAD_TimingElapsed(void);
 static bool APP_THREAD_CheckMsgValidity(void);
 /* USER CODE END PFP */
@@ -198,7 +199,8 @@ void APP_THREAD_Init( void )
   UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_MSG_FROM_M0_TO_M4, UTIL_SEQ_RFU, APP_THREAD_ProcessMsgM0ToM4);
 
   /* USER CODE BEGIN INIT TASKS */
-  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_COAP_MSG_BUTTON, UTIL_SEQ_RFU, APP_THREAD_SendCoapMsg);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_BUTTON_SW1, UTIL_SEQ_RFU, APP_THREAD_SendCoapMsgWithNoConf);
+  UTIL_SEQ_RegTask( 1<<(uint32_t)CFG_TASK_BUTTON_SW2, UTIL_SEQ_RFU, APP_THREAD_SendCoapMsgWithConf);
   /* USER CODE END INIT TASKS */
 
   /* Initialize and configure the Thread device*/
@@ -719,13 +721,13 @@ static void APP_THREAD_InitPayloadWrite(void)
 }
 
 /**
- * @brief Task associated to the push button.
+ * @brief Task associated to the push button 1.
  * @param  None
  * @retval None
  */
-static void APP_THREAD_SendCoapMsg(void)
+static void APP_THREAD_SendCoapMsgWithNoConf(void)
 {
-  APP_DBG("********* STEP 1: Send a CoAP NON-CONFIRMABLE PUT Request *********");
+  APP_DBG("Send a CoAP NON-CONFIRMABLE PUT Request");
   /* Send a NON-CONFIRMABLE PUT Request */
   APP_THREAD_CoapSendRequest(&OT_Ressource,
       OT_COAP_TYPE_NON_CONFIRMABLE,
@@ -737,23 +739,27 @@ static void APP_THREAD_SendCoapMsg(void)
       NULL,
       NULL);
 
-  /* Insert Delay here using Hw timer server */
-  /* Start the timer */
-  HW_TS_Start(TimerID, (uint32_t)WAIT_TIMEOUT);
-  UTIL_SEQ_WaitEvt(EVENT_TIMER);
-
-  APP_DBG("********* STEP 2: Send a CoAP CONFIRMABLE PUT Request *********");
-  /* Send a CONFIRMABLE PUT Request */
-  APP_THREAD_CoapSendRequest(&OT_Ressource,
-      OT_COAP_TYPE_CONFIRMABLE,
-      OT_COAP_CODE_PUT,
-      MULICAST_FTD_MED,
-      NULL,
-      PayloadWrite,
-      sizeof(PayloadWrite),
-      APP_THREAD_CoapDataRespHandler,
-      NULL);
 }
+/**
+ * @brief Task associated to the push button 2.
+ * @param  None
+ * @retval None
+ */
+static void APP_THREAD_SendCoapMsgWithConf(void)
+{
+ APP_DBG("Send a CoAP CONFIRMABLE PUT Request");
+  /* Send a CONFIRMABLE PUT Request */
+ APP_THREAD_CoapSendRequest(&OT_Ressource,
+     OT_COAP_TYPE_CONFIRMABLE,
+     OT_COAP_CODE_PUT,
+     MULICAST_FTD_MED,
+     NULL,
+     PayloadWrite,
+     sizeof(PayloadWrite),
+     APP_THREAD_CoapDataRespHandler,
+     NULL);
+}
+
 
 static void APP_THREAD_TimingElapsed(void)
 {

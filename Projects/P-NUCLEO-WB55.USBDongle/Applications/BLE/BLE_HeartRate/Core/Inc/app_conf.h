@@ -158,7 +158,7 @@
 /* LSB - Second Byte */
 #define CFG_FEATURE_OTA_REBOOT                  (0x20)
 /* USER CODE BEGIN Specific_Parameters */
-
+#define CFG_DEV_ID_HEARTRATE                    (0x89)
 /* USER CODE END Specific_Parameters */
 
 /******************************************************************************

@@ -246,9 +246,11 @@ void APP_BLE_LLD_DeInit_UART(void)
 
 static void uartRxStart(void)
 {
+#ifdef CFG_UART  
   if (HW_UART_Receive_IT(CFG_UART, (uint8_t *)&uartRxBuf, 1, uartRxCpltCallback) != hw_uart_ok){
     APP_DBG("ERROR returned by HW_UART_Receive_IT()");
   }
+#endif  
 }
 
 void APP_BLE_LLD_uartRxStart(void(*callback)(char))
@@ -301,6 +303,7 @@ void uartWriteRaw(const char *str)
 // must be called inside critical section
 // loop on itself via the UART callback
 static void uartTxSendChunk(void){
+#ifdef CFG_UART  
   static char hwBuf[UART_TX_CHUNK_SIZE];
   char *charPtr;
   uint32_t count = 0;
@@ -320,6 +323,7 @@ static void uartTxSendChunk(void){
   }else{
     txBusy = false;
   }
+#endif  
 }
 
 static void m0CmdProcess(void)

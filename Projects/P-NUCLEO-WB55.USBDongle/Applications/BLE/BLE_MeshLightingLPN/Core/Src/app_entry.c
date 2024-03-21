@@ -428,7 +428,7 @@ static void APPE_SysUserEvtRx( void * pPayload )
     break;
     
   case SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE:
-    APP_DBG_MSG(">>== SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE -- BLE NVM RAM HAS BEEN UPDATED BY CMO+ \n");
+    APP_DBG_MSG(">>== SHCI_SUB_EVT_BLE_NVM_RAM_UPDATE -- BLE NVM RAM HAS BEEN UPDATED BY CPU2 \n");
     APP_DBG_MSG("     - StartAddress = %lx , Size = %ld\n",
         ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->StartAddress,
         ((SHCI_C2_BleNvmRamUpdate_Evt_t*)p_sys_event->payload)->Size);
@@ -566,6 +566,7 @@ static void Led_Init( void )
   /**
    * Leds Initialization
    */
+
   BSP_LED_Init(LED_BLUE);
   BSP_LED_Init(LED_GREEN);
   BSP_LED_Init(LED_RED);
@@ -615,9 +616,9 @@ void HAL_Delay(uint32_t Delay)
     /**
      * This option is used to ensure that store operations are completed
      */
-  #if defined ( __CC_ARM)
+  #if defined (__CC_ARM) || defined (__ARMCC_VERSION)
     __force_stores();
-  #endif /* __CC_ARM */
+  #endif /*__ARMCC_VERSION */
 
     __WFI( );
   }

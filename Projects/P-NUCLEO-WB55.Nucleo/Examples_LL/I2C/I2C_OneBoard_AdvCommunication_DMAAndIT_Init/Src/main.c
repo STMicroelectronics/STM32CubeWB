@@ -124,7 +124,7 @@ void     LED_Blinking(uint32_t Period);
 void     WaitForUserButtonPress(void);
 void     Handle_I2C_Master_Transmit(void);
 void     Handle_I2C_Master_TransmitReceive(void);
-#if defined(__GNUC__)
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
 extern void initialise_monitor_handles(void);	/*rtt*/
 #endif
 
@@ -172,7 +172,7 @@ int main(void)
   MX_I2C1_Init();
   MX_I2C3_Init();
   /* USER CODE BEGIN 2 */
-#if defined(__GNUC__)
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION)
   initialise_monitor_handles();	/*rtt*/
 #endif
 

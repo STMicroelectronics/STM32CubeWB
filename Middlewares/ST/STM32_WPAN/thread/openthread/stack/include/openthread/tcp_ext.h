@@ -53,7 +53,7 @@ extern "C" {
  */
 
 /**
- * This structure represents a circular send buffer for use with a TCP endpoint.
+ * Represents a circular send buffer for use with a TCP endpoint.
  *
  * Using a circular send buffer is optional. Applications can use a TCP
  * endpoint to send data by managing otLinkedBuffers directly. However, some
@@ -108,7 +108,7 @@ typedef struct otTcpCircularSendBuffer
 void otTcpCircularSendBufferInitialize(otTcpCircularSendBuffer *aSendBuffer, void *aDataBuffer, size_t aCapacity);
 
 /**
- * This enumeration defines flags passed to @p otTcpCircularSendBufferWrite.
+ * Defines flags passed to @p otTcpCircularSendBufferWrite.
  *
  */
 enum
@@ -240,7 +240,7 @@ int otTcpMbedTlsSslSendCallback(void *aCtx, const unsigned char *aBuf, size_t aL
  *
  * @param[in]   aCtx  A pointer to an otTcpEndpointAndCircularSendBuffer.
  * @param[out]  aBuf  The buffer into which to receive data.
- * @param[in]   aLen  The maxmimum amount of data that can be received.
+ * @param[in]   aLen  The maximum amount of data that can be received.
  *
  * @returns The number of bytes received, or an mbedtls error code.
  */

@@ -113,7 +113,7 @@ void PWR_EnterOffMode(void)
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined (__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   __force_stores();
 #endif
 
@@ -197,7 +197,7 @@ void PWR_EnterStopMode(void)
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined (__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   __force_stores();
 #endif
 
@@ -254,7 +254,7 @@ void PWR_EnterSleepMode(void)
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined (__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   __force_stores();
 #endif
 

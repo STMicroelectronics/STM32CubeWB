@@ -29,6 +29,10 @@
 
 #include "ip6.h"
 
+#ifdef ENABLE_OPENTHREAD_CLI
+#include "tmf.h"
+#endif
+
 #if OPENTHREAD_CONFIG_IP6_SLAAC_ENABLE
 extern otIp6SlaacPrefixFilter otIp6SlaacPrefixFilterCb;
 #endif // OPENTHREAD_CONFIG_IP6_SLAAC_ENABLE
@@ -435,6 +439,24 @@ otError otIp6AddressFromString(const char *aString, otIp6Address *aAddress)
   p_ot_req->Size=2;
   p_ot_req->Data[0] = (uint32_t) aString;
   p_ot_req->Data[1] = (uint32_t) aAddress;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otIp6PrefixFromString(const char *aString, otIp6Prefix *aPrefix)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_IP6_PREFIX_FROM_STRING;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t) aString;
+  p_ot_req->Data[1] = (uint32_t) aPrefix;
 
   Ot_Cmd_Transfer();
 

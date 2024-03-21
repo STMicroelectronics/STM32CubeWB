@@ -89,9 +89,18 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   if (timeDifference(latest, HAL_GetTick()) > DEBOUNCE_MS){
     latest = HAL_GetTick();
     switch (GPIO_Pin){
-      case BUTTON_SW1_PIN: ledToToggle = LED1; break;
-      case BUTTON_SW2_PIN: ledToToggle = LED2; break;
-      case BUTTON_SW3_PIN: ledToToggle = LED3; break;
+      case BUTTON_SW1_PIN: 
+        ledToToggle = LED1; 
+        //APP_BLE_Key_Button1_Action();
+        break;
+      case BUTTON_SW2_PIN: 
+        ledToToggle = LED2;
+        //APP_BLE_Key_Button2_Action();
+        break;
+      case BUTTON_SW3_PIN: 
+        ledToToggle = LED3; 
+        //APP_BLE_Key_Button3_Action();
+        break;
       default: return;
     }
     UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON, CFG_SCH_PRIO_0);

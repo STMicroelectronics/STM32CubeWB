@@ -39,14 +39,14 @@ ENTRY(Reset_Handler)
 _estack = 0x20003000;    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0x400 ;      /* required amount of heap  */
-_Min_Stack_Size = 0x1000 ;   /* required amount of stack */
+_Min_Stack_Size = 0x800 ;   /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
 {
-FLASH (rx)                 : ORIGIN = 0x08000000, LENGTH = 110K
+FLASH (rx)                 : ORIGIN = 0x08000000, LENGTH = 98K
 RAM1 (xrw)                 : ORIGIN = 0x20000008, LENGTH = 0x2FF8
-RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K
+RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 4K
 }
 
 /* Define output sections */
@@ -118,7 +118,7 @@ SECTIONS
   _sidata = LOADADDR(.data);
 
   /* Initialized data sections goes into RAM, load LMA copy after code */
-  .data : 
+  .data :
   {
     . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
@@ -131,7 +131,6 @@ SECTIONS
     _edata = .;        /* define a global symbol at data end */
   } >RAM1 AT> FLASH
 
-  
   /* Uninitialized data section */
   . = ALIGN(4);
   .bss :
@@ -158,8 +157,6 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM1
-
-  
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

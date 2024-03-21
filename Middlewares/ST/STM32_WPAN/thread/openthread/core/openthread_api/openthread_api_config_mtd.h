@@ -41,6 +41,9 @@
 /* Define to 1 to enable MAC whitelist/blacklist feature. */
 #define OPENTHREAD_CONFIG_MAC_FILTER_ENABLE 1
 
+/* Define to 1 to enable support for IEEE802.15.4 radio link. */
+#define OPENTHREAD_CONFIG_RADIO_LINK_IEEE_802_15_4_ENABLE 1
+
 /* Define to 1 to enable Service feature. */
 #define OPENTHREAD_CONFIG_TMF_NETDATA_SERVICE_ENABLE 1
 

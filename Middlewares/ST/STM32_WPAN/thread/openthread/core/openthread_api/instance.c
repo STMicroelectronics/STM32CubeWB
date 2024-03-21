@@ -68,6 +68,22 @@ otInstance *otInstanceInitSingle(void)
 }
 #endif /* #if OPENTHREAD_CONFIG_MULTIPLE_INSTANCE_ENABLE */
 
+uint32_t otInstanceGetId(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_INSTANCE_GET_ID;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint32_t)p_ot_req->Data[0];
+}
+
 bool otInstanceIsInitialized(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
@@ -129,14 +145,12 @@ uint64_t otInstanceGetUptime(otInstance *aInstance)
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   /* 64bit word is returned with two 32bits words (MSB are at offset 1 and LSB are offset 0) */
-  return (uint64_t)((p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
+  return (uint64_t)(((uint64_t)p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
 }
 
 void otInstanceGetUptimeAsString(otInstance *aInstance, char *aBuffer, uint16_t aSize)
 {
   Pre_OtCmdProcessing();
-  /* Store the callback function */
-  otStateChangedCb = aCallback;
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 

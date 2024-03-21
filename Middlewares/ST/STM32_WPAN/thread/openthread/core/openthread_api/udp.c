@@ -272,7 +272,6 @@ void otUdpForwardReceive(otInstance *        aInstance,
 }
 #endif /* OPENTHREAD_CONFIG_UDP_FORWARD_ENABLE */
 
-#if OPENTHREAD_CONFIG_PLATFORM_UDP_ENABLE
 otUdpSocket *otUdpGetSockets(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
@@ -288,4 +287,3 @@ otUdpSocket *otUdpGetSockets(otInstance *aInstance)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otUdpSocket *)p_ot_req->Data[0];
 }
-#endif /* OPENTHREAD_CONFIG_PLATFORM_UDP_ENABLE */

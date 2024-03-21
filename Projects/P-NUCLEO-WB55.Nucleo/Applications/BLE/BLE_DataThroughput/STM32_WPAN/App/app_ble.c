@@ -945,7 +945,7 @@ APP_BLE_ConnStatus_t APP_BLE_Get_Client_Connection_Status(uint16_t Connection_Ha
   return BleApplicationContext.Device_Connection_Status;
 }
 
-#if defined(__GNUC__)
+#if defined(__GNUC__)&& !defined(__ARMCC_VERSION)
 uint8_t __attribute__((optimize("Os"))) APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen )
 #else
 uint8_t APP_BLE_ComputeCRC8( uint8_t *DataPtr , uint8_t Datalen )

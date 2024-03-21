@@ -164,16 +164,16 @@ void gpio_lld_led3_toggle(void);
 #define LPUART_CLK_ENABLE()                    __HAL_RCC_LPUART1_CLK_ENABLE()
 
 #define LPUART_TX_AF                          GPIO_AF8_LPUART1
-#define LPUART_TX_GPIO_PORT                   GPIOC
-#define LPUART_TX_PIN                         GPIO_PIN_1
-#define LPUART_TX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOC_CLK_ENABLE()
-#define LPUART_TX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOC_CLK_DISABLE()
+#define LPUART_TX_GPIO_PORT                   GPIOA
+#define LPUART_TX_PIN                         GPIO_PIN_2
+#define LPUART_TX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOA_CLK_ENABLE()
+#define LPUART_TX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOA_CLK_DISABLE()
 
 #define LPUART_RX_AF                          GPIO_AF8_LPUART1
-#define LPUART_RX_GPIO_PORT                   GPIOC
-#define LPUART_RX_PIN                         GPIO_PIN_0
-#define LPUART_RX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOC_CLK_ENABLE()
-#define LPUART_RX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOC_CLK_DISABLE()
+#define LPUART_RX_GPIO_PORT                   GPIOA
+#define LPUART_RX_PIN                         GPIO_PIN_3
+#define LPUART_RX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOA_CLK_ENABLE()
+#define LPUART_RX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOA_CLK_DISABLE()
 #endif
 
 #endif /* GPIO_LLD_H_ */

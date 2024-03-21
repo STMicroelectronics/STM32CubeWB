@@ -43,7 +43,7 @@ extern "C" {
  *   Records the history of different events, for example RX and TX messages or network info changes. All tracked
  *   entries are timestamped.
  *
- * The functions in this module are available when `OPENTHREAD_CONFIG_HISTOR_TRACKER_ENABLE` is enabled.
+ * The functions in this module are available when `OPENTHREAD_CONFIG_HISTORY_TRACKER_ENABLE` is enabled.
  *
  * @{
  *
@@ -60,7 +60,7 @@ extern "C" {
 #define OT_HISTORY_TRACKER_ENTRY_AGE_STRING_SIZE 21 ///< Recommended size for string representation of an entry age.
 
 /**
- * This type represents an iterator to iterate through a history list.
+ * Represents an iterator to iterate through a history list.
  *
  * The fields in this type are opaque (intended for use by OpenThread core) and therefore should not be accessed/used
  * by caller.
@@ -75,7 +75,7 @@ typedef struct otHistoryTrackerIterator
 } otHistoryTrackerIterator;
 
 /**
- * This structure represents Thread network info.
+ * Represents Thread network info.
  *
  */
 typedef struct otHistoryTrackerNetworkInfo
@@ -87,7 +87,7 @@ typedef struct otHistoryTrackerNetworkInfo
 } otHistoryTrackerNetworkInfo;
 
 /**
- * This enumeration defines the events for an IPv6 (unicast or multicast) address info (i.e., whether address is added
+ * Defines the events for an IPv6 (unicast or multicast) address info (i.e., whether address is added
  * or removed).
  *
  */
@@ -98,7 +98,7 @@ typedef enum
 } otHistoryTrackerAddressEvent;
 
 /**
- * This structure represent a unicast IPv6 address info.
+ * Represent a unicast IPv6 address info.
  *
  */
 typedef struct otHistoryTrackerUnicastAddressInfo
@@ -114,7 +114,7 @@ typedef struct otHistoryTrackerUnicastAddressInfo
 } otHistoryTrackerUnicastAddressInfo;
 
 /**
- * This structure represent an IPv6 multicast address info.
+ * Represent an IPv6 multicast address info.
  *
  */
 typedef struct otHistoryTrackerMulticastAddressInfo
@@ -137,7 +137,7 @@ enum
 };
 
 /**
- * This structure represents a RX/TX IPv6 message info.
+ * Represents a RX/TX IPv6 message info.
  *
  * Some of the fields in this struct are applicable to a RX message or a TX message only, e.g., `mAveRxRss` is the
  * average RSS of all fragment frames that form a received message and is only applicable for a RX message.
@@ -152,7 +152,7 @@ typedef struct otHistoryTrackerMessageInfo
     uint16_t   mChecksum;            ///< Message checksum (valid only for UDP/TCP/ICMP6).
     uint8_t    mIpProto;             ///< IP Protocol number (`OT_IP6_PROTO_*` enumeration).
     uint8_t    mIcmp6Type;           ///< ICMP6 type if msg is ICMP6, zero otherwise (`OT_ICMP6_TYPE_*` enumeration).
-    int8_t     mAveRxRss;            ///< RSS of received message or OT_RADIO_INVALI_RSSI if not known.
+    int8_t     mAveRxRss;            ///< RSS of received message or OT_RADIO_INVALID_RSSI if not known.
     bool       mLinkSecurity : 1;    ///< Indicates whether msg used link security.
     bool       mTxSuccess : 1;       ///< Indicates TX success (e.g., ack received). Applicable for TX msg only.
     uint8_t    mPriority : 2;        ///< Message priority (`OT_HISTORY_TRACKER_MSG_PRIORITY_*` enumeration).
@@ -161,7 +161,7 @@ typedef struct otHistoryTrackerMessageInfo
 } otHistoryTrackerMessageInfo;
 
 /**
- * This enumeration defines the events in a neighbor info (i.e. whether neighbor is added, removed, or changed).
+ * Defines the events in a neighbor info (i.e. whether neighbor is added, removed, or changed).
  *
  * Event `OT_HISTORY_TRACKER_NEIGHBOR_EVENT_RESTORING` is applicable to child neighbors only. It is triggered after
  * the device (re)starts and when the previous children list is retrieved from non-volatile settings and the device
@@ -177,7 +177,7 @@ typedef enum
 } otHistoryTrackerNeighborEvent;
 
 /**
- * This structure represents a neighbor info.
+ * Represents a neighbor info.
  *
  */
 typedef struct otHistoryTrackerNeighborInfo
@@ -193,7 +193,36 @@ typedef struct otHistoryTrackerNeighborInfo
 } otHistoryTrackerNeighborInfo;
 
 /**
- * This enumeration defines the events for a Network Data entry (i.e., whether an entry is added or removed).
+ * Defines the events in a router info (i.e. whether router is added, removed, or changed).
+ *
+ */
+typedef enum
+{
+    OT_HISTORY_TRACKER_ROUTER_EVENT_ADDED            = 0, ///< Router is added (router ID allocated).
+    OT_HISTORY_TRACKER_ROUTER_EVENT_REMOVED          = 1, ///< Router entry is removed (router ID released).
+    OT_HISTORY_TRACKER_ROUTER_EVENT_NEXT_HOP_CHANGED = 2, ///< Router entry next hop and cost changed.
+    OT_HISTORY_TRACKER_ROUTER_EVENT_COST_CHANGED     = 3, ///< Router entry path cost changed (next hop as before).
+} otHistoryTrackerRouterEvent;
+
+#define OT_HISTORY_TRACKER_NO_NEXT_HOP 63 ///< No next hop - For `mNextHop` in `otHistoryTrackerRouterInfo`.
+
+#define OT_HISTORY_TRACKER_INFINITE_PATH_COST 0 ///< Infinite path cost - used in `otHistoryTrackerRouterInfo`.
+
+/**
+ * Represents a router table entry event.
+ *
+ */
+typedef struct otHistoryTrackerRouterInfo
+{
+    uint8_t mEvent : 2;       ///< Router entry event (`OT_HISTORY_TRACKER_ROUTER_EVENT_*` enumeration).
+    uint8_t mRouterId : 6;    ///< Router ID.
+    uint8_t mNextHop;         ///< Next Hop Router ID - `OT_HISTORY_TRACKER_NO_NEXT_HOP` if no next hop.
+    uint8_t mOldPathCost : 4; ///< Old path cost - `OT_HISTORY_TRACKER_INFINITE_PATH_COST` if infinite or unknown.
+    uint8_t mPathCost : 4;    ///< New path cost - `OT_HISTORY_TRACKER_INFINITE_PATH_COST` if infinite or unknown.
+} otHistoryTrackerRouterInfo;
+
+/**
+ * Defines the events for a Network Data entry (i.e., whether an entry is added or removed).
  *
  */
 typedef enum
@@ -203,7 +232,7 @@ typedef enum
 } otHistoryTrackerNetDataEvent;
 
 /**
- * This structure represent a Network Data on mesh prefix info.
+ * Represent a Network Data on mesh prefix info.
  *
  */
 typedef struct otHistoryTrackerOnMeshPrefixInfo
@@ -213,7 +242,7 @@ typedef struct otHistoryTrackerOnMeshPrefixInfo
 } otHistoryTrackerOnMeshPrefixInfo;
 
 /**
- * This structure represent a Network Data extern route info.
+ * Represent a Network Data extern route info.
  *
  */
 typedef struct otHistoryTrackerExternalRouteInfo
@@ -223,7 +252,7 @@ typedef struct otHistoryTrackerExternalRouteInfo
 } otHistoryTrackerExternalRouteInfo;
 
 /**
- * This function initializes an `otHistoryTrackerIterator`.
+ * Initializes an `otHistoryTrackerIterator`.
  *
  * An iterator MUST be initialized before it is used.
  *
@@ -239,7 +268,7 @@ typedef struct otHistoryTrackerExternalRouteInfo
 void otHistoryTrackerInitIterator(otHistoryTrackerIterator *aIterator);
 
 /**
- * This function iterates over the entries in the network info history list.
+ * Iterates over the entries in the network info history list.
  *
  * @param[in]     aInstance   A pointer to the OpenThread instance.
  * @param[in,out] aIterator   A pointer to an iterator. MUST be initialized or the behavior is undefined.
@@ -256,7 +285,7 @@ const otHistoryTrackerNetworkInfo *otHistoryTrackerIterateNetInfoHistory(otInsta
                                                                          uint32_t                 *aEntryAge);
 
 /**
- * This function iterates over the entries in the unicast address history list.
+ * Iterates over the entries in the unicast address history list.
  *
  * @param[in]     aInstance  A pointer to the OpenThread instance.
  * @param[in,out] aIterator  A pointer to an iterator. MUST be initialized or the behavior is undefined.
@@ -274,7 +303,7 @@ const otHistoryTrackerUnicastAddressInfo *otHistoryTrackerIterateUnicastAddressH
     uint32_t                 *aEntryAge);
 
 /**
- * This function iterates over the entries in the multicast address history list.
+ * Iterates over the entries in the multicast address history list.
  *
  * @param[in]     aInstance  A pointer to the OpenThread instance.
  * @param[in,out] aIterator  A pointer to an iterator. MUST be initialized or the behavior is undefined.
@@ -292,7 +321,7 @@ const otHistoryTrackerMulticastAddressInfo *otHistoryTrackerIterateMulticastAddr
     uint32_t                 *aEntryAge);
 
 /**
- * This function iterates over the entries in the RX message history list.
+ * Iterates over the entries in the RX message history list.
  *
  * @param[in]     aInstance  A pointer to the OpenThread instance.
  * @param[in,out] aIterator  A pointer to an iterator. MUST be initialized or the behavior is undefined.
@@ -309,7 +338,7 @@ const otHistoryTrackerMessageInfo *otHistoryTrackerIterateRxHistory(otInstance  
                                                                     uint32_t                 *aEntryAge);
 
 /**
- * This function iterates over the entries in the TX message history list.
+ * Iterates over the entries in the TX message history list.
  *
  * @param[in]     aInstance  A pointer to the OpenThread instance.
  * @param[in,out] aIterator  A pointer to an iterator. MUST be initialized or the behavior is undefined.
@@ -326,7 +355,7 @@ const otHistoryTrackerMessageInfo *otHistoryTrackerIterateTxHistory(otInstance  
                                                                     uint32_t                 *aEntryAge);
 
 /**
- * This function iterates over the entries in the neighbor history list.
+ * Iterates over the entries in the neighbor history list.
  *
  * @param[in]     aInstance  A pointer to the OpenThread instance.
  * @param[in,out] aIterator  A pointer to an iterator. MUST be initialized or the behavior is undefined.
@@ -343,7 +372,24 @@ const otHistoryTrackerNeighborInfo *otHistoryTrackerIterateNeighborHistory(otIns
                                                                            uint32_t                 *aEntryAge);
 
 /**
- * This function iterates over the entries in the Network Data on mesh prefix entry history list.
+ * Iterates over the entries in the router history list.
+ *
+ * @param[in]     aInstance  A pointer to the OpenThread instance.
+ * @param[in,out] aIterator  A pointer to an iterator. MUST be initialized or the behavior is undefined.
+ * @param[out]    aEntryAge  A pointer to a variable to output the entry's age. MUST NOT be NULL.
+ *                           Age is provided as the duration (in milliseconds) from when entry was recorded to
+ *                           @p aIterator initialization time. It is set to `OT_HISTORY_TRACKER_MAX_AGE` for entries
+ *                           older than max age.
+ *
+ * @returns The `otHistoryTrackerRouterInfo` entry or `NULL` if no more entries in the list.
+ *
+ */
+const otHistoryTrackerRouterInfo *otHistoryTrackerIterateRouterHistory(otInstance               *aInstance,
+                                                                       otHistoryTrackerIterator *aIterator,
+                                                                       uint32_t                 *aEntryAge);
+
+/**
+ * Iterates over the entries in the Network Data on mesh prefix entry history list.
  *
  * @param[in]     aInstance  A pointer to the OpenThread instance.
  * @param[in,out] aIterator  A pointer to an iterator. MUST be initialized or the behavior is undefined.
@@ -360,7 +406,7 @@ const otHistoryTrackerOnMeshPrefixInfo *otHistoryTrackerIterateOnMeshPrefixHisto
                                                                                    uint32_t                 *aEntryAge);
 
 /**
- * This function iterates over the entries in the Network Data external route entry history list.
+ * Iterates over the entries in the Network Data external route entry history list.
  *
  * @param[in]     aInstance  A pointer to the OpenThread instance.
  * @param[in,out] aIterator  A pointer to an iterator. MUST be initialized or the behavior is undefined.
@@ -378,7 +424,7 @@ const otHistoryTrackerExternalRouteInfo *otHistoryTrackerIterateExternalRouteHis
     uint32_t                 *aEntryAge);
 
 /**
- * This function converts a given entry age to a human-readable string.
+ * Converts a given entry age to a human-readable string.
  *
  * The entry age string follows the format "<hh>:<mm>:<ss>.<mmmm>" for hours, minutes, seconds and millisecond (if
  * shorter than one day) or "<dd> days <hh>:<mm>:<ss>.<mmmm>" (if longer than one day).

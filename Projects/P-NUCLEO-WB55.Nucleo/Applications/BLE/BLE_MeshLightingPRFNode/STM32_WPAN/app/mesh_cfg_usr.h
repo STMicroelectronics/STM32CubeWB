@@ -162,19 +162,19 @@ Either use 0 to disable or 1 to enable
 #define TF_SERIAL_CTRL                                                         1
 /* Disabled by default */
 #define TF_COMMON                                                              0
-#define TF_GENERIC_M                                                           1
-#define TF_GENERIC_CLIENT_M                                                    1
-#define TF_SENSOR_M                                                            1
-#define TF_SENSOR_CLIENT_M                                                     1
+#define TF_GENERIC_M                                                           0
+#define TF_GENERIC_CLIENT_M                                                    0
+#define TF_SENSOR_M                                                            0
+#define TF_SENSOR_CLIENT_M                                                     0
 #define TF_LIGHT_M                                                             0
-#define TF_LIGHT_CLIENT_M                                                      1
-#define TF_LIGHT_LC_M                                                          1
-#define TF_VENDOR_M                                                            1
+#define TF_LIGHT_CLIENT_M                                                      0
+#define TF_LIGHT_LC_M                                                          0
+#define TF_VENDOR_M                                                            0
 #define TF_CONFIG_CLIENT_M                                                     0
 #define TF_NEIGHBOUR                                                           0
 #define TF_MEMORY                                                              0
 #define TF_BEACON                                                              0
-#define TF_VENDOR_APPLI_TEST                                                   1  /* Vendor commands testing */
+#define TF_VENDOR_APPLI_TEST                                                   0  /* Vendor commands testing */
 #define TF_NVM                                                                 0
 #endif
 

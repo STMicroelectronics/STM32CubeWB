@@ -396,7 +396,7 @@ void EnterStandbyMode(void)
   LL_LPM_EnableDeepSleep();
   
   /* This option is used to ensure that store operations are completed */
-#if defined ( __CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   __force_stores();
 #endif
   /* Request Wait For Interrupt */

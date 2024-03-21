@@ -30,7 +30,6 @@
 /******************************************************************************
  * Application Config
  ******************************************************************************/
-
 /**< generic parameters ******************************************************/
 
 /**
@@ -65,7 +64,6 @@
 #define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)      /**< 100ms */
 #define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x640)     /**< 1s */
 #define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xFA0)     /**< 2.5s */
-
 /**
  * Define IO Authentication
  */
@@ -164,7 +162,7 @@
 /* LSB - Second Byte */
 #define CFG_FEATURE_OTA_REBOOT                  (0x20)
 /* USER CODE BEGIN Specific_Parameters */
-
+#define CFG_DEV_ID_HEARTRATE                    (0x89)
 /* USER CODE END Specific_Parameters */
 
 /******************************************************************************
@@ -717,4 +715,3 @@ typedef enum
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 #endif /*APP_CONF_H */
-

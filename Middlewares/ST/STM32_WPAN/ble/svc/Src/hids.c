@@ -924,7 +924,7 @@ void HIDS_Init(void)
                                      (Char_UUID_t *) &uuid ,
                                      BLE_CFG_HIDS_REPORT_MAP_MAX_LEN,
                                      CHAR_PROP_READ,
-                                     ATTR_PERMISSION_NONE,
+                                     ATTR_PERMISSION_ENCRY_READ,
                                      GATT_DONT_NOTIFY_EVENTS, /* gattEvtMask */
                                      10, /* encryKeySize */
                                      CHAR_VALUE_LEN_VARIABLE,

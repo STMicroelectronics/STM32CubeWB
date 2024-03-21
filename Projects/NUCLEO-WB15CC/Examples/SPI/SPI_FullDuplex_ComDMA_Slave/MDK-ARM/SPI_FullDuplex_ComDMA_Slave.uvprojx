@@ -8,11 +8,14 @@
 		<Target>
 			<TargetName>SPI_FullDuplex_ComDMA_Slave</TargetName>
 			<ToolsetNumber>0x4</ToolsetNumber>
-			<ToolsetName>ARM-ADS</ToolsetName>
-			<TargetOption>
+      <ToolsetName>ARM-ADS</ToolsetName>
+      <uAC6>1</uAC6>
+      <TargetOption>
 				<TargetCommonOption>
-					<Device>STM32WB15CCUx</Device>
-					<Vendor>STMicroelectronics</Vendor>
+          <Device>STM32WB15CCUx</Device>
+          <Vendor>STMicroelectronics</Vendor>
+          <PackID>Keil.STM32WBxx_DFP.1.3.0</PackID>
+          <PackURL>https://www.keil.com/pack/</PackURL>
 					<Cpu>IRAM(0x20000000-0x2000BFFF) IROM(0x8000000-0x804FFFF) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
 					<FlashUtilSpec/>
 					<StartupFile/>
@@ -177,14 +180,15 @@
 						<hadIROM>1</hadIROM>
 						<hadIRAM>1</hadIRAM>
 						<hadXRAM>0</hadXRAM>
-						<uocXRam>0</uocXRam>
-						<RvdsVP>2</RvdsVP>
-						<RvdsMve>0</RvdsMve>
-						<hadIRAM2>1</hadIRAM2>
-						<hadIROM2>1</hadIROM2>
-						<StupSel>8</StupSel>
-						<useUlib>1</useUlib>
-						<EndSel>1</EndSel>
+						<uocXRam>0</uocXRam>            <RvdsVP>2</RvdsVP>
+            <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
+            <hadIRAM2>0</hadIRAM2>
+            <hadIROM2>0</hadIROM2>
+            <StupSel>8</StupSel>
+            <useUlib>1</useUlib>
+            <EndSel>0</EndSel>
 						<uLtcg>0</uLtcg>
 						<nSecure>0</nSecure>
 						<RoSelD>3</RoSelD>
@@ -322,8 +326,8 @@
 						<uC99>1</uC99>
 						<uGnu>0</uGnu>
 						<useXO>0</useXO>
-						<v6Lang>5</v6Lang>
-						<v6LangP>3</v6LangP>
+            <v6Lang>3</v6Lang>
+            <v6LangP>5</v6LangP>
 						<vShortEn>1</vShortEn>
 						<vShortWch>1</vShortWch>
 						<v6Lto>0</v6Lto>
@@ -345,9 +349,9 @@
 						<SwStkChk>0</SwStkChk>
 						<NoWarn>0</NoWarn>
 						<uSurpInc>0</uSurpInc>
-						<useXO>0</useXO>
-						<uClangAs>0</uClangAs>
-						<VariousControls>
+            <useXO>0</useXO>
+            <ClangAsOpt>4</ClangAsOpt>
+            <VariousControls>
 							<MiscControls/>
 							<Define/>
 							<Undefine/>
@@ -532,10 +536,10 @@
 
 	<RTE>
 		<apis/>
-		<components>
-			<component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="4.3.0" condition="CMSIS Core">
-				<package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="4.5.0"/>
-				<targetInfos>
+    <components>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.6.0" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.7.7" url="http://www.keil.com/pack/" vendor="ARM" version="5.9.0"/>
+        <targetInfos>
 					<targetInfo name="SPI_FullDuplex_ComDMA_Slave"/>
 				</targetInfos>
 			</component>

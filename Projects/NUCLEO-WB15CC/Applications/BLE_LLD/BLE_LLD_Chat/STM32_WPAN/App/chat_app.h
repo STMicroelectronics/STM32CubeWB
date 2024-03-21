@@ -38,6 +38,11 @@ extern "C" {
 
 /* Exported functions ------------------------------------------------------- */
 void CHAT_APP_Init(void);
+
+//void APP_BLE_Key_Button1_Action(void);
+//void APP_BLE_Key_Button2_Action(void);
+//void APP_BLE_Key_Button3_Action(void);
+
 void Appli_TIM_IC_CaptureCallback(void);
 void Appli_TIM_PeriodElapsedCallback(void);
 #ifdef __cplusplus

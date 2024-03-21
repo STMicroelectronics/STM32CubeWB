@@ -8,14 +8,17 @@ LR_IROM1 0x08000000 0x00018800  {    ; load region size_region
    *(InRoot$$Sections)
    .ANY (+RO)
   }
-  RW_IRAM1 0x20000008 0x3000  {  ; RW data
+  RW_IRAM1 0x20000008 0x2FF8  {  ; RW data
    .ANY (+RW +ZI)
   }
-  RW_RAM_SHARED 0x20030000 0x1000  {  ; RW data
+  RW_RAM_SHARED1 0x20030000 0x28  {  ; RW data 
    *(MAPPING_TABLE)
+  }
+  RW_RAM_SHARED2 0x20030028 0xFD8  {  ; RW data
    *(MB_MEM1)
    *(MB_MEM2)
+   .ANY (+RW +ZI)
   }
-  }
+}
 
 

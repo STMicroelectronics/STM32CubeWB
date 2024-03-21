@@ -811,13 +811,21 @@ MOBLE_RESULT ConfigClient_PublicationSet (MOBLEUINT16 elementAddress,
   if ((elementAddress >= self_addr) && (elementAddress < (self_addr+APPLICATION_NUMBER_OF_ELEMENTS)) )
   {
     /* Provisioner needs to be configured */
-    ConfigModel_SelfPublishConfig(elementAddress,
+    result = ConfigModel_SelfPublishConfig(elementAddress,
                                          msg_opcode,pConfigData,dataLength);
+    if(result)
+    {
+      TRACE_I(TF_CONFIG_CLIENT_M, "Failed to Set Publication in Mesh library\r\n");
+    }
   }
   else
   {
     /* Node address to be configured */
-    ConfigClientModel_SendMessage(elementAddress,msg_opcode,pConfigData,dataLength);
+    result = ConfigClientModel_SendMessage(elementAddress,msg_opcode,pConfigData,dataLength);
+    if(result)
+    {
+      TRACE_I(TF_CONFIG_CLIENT_M, "Failed to send Node address to be configured message\r\n");
+    }
   }
 
   return result;
@@ -1000,12 +1008,12 @@ Config Model Subscription Status message.
   if ((elementAddress >= self_addr) && (elementAddress < (self_addr+APPLICATION_NUMBER_OF_ELEMENTS)) )
   {
     /* Provisioner needs to be configured */
-    ConfigModel_SelfSubscriptionConfig(elementAddress,
+    result = ConfigModel_SelfSubscriptionConfig(elementAddress,
                                               msg_opcode,pConfigData,dataLength);
   }
   else
   {
-    ConfigClientModel_SendMessage(elementAddress,msg_opcode,pConfigData,dataLength);  
+    result = ConfigClientModel_SendMessage(elementAddress,msg_opcode,pConfigData,dataLength);  
   }
   
   return result;
@@ -1233,13 +1241,21 @@ The response to a Config Model App Bind message is a Config Model App Status mes
   if ((elementAddress >= self_addr) && (elementAddress < (self_addr+APPLICATION_NUMBER_OF_ELEMENTS)) )
   {
     /* Provisioner needs to be configured */
-    ConfigClient_SelfModelAppBindConfig(self_addr,
+    result = ConfigClient_SelfModelAppBindConfig(self_addr,
                                         msg_opcode,pConfigData,dataLength);
+    if(result)
+    {
+      TRACE_I(TF_PROVISION,"Failed to Send Application binding to the provisioner\r\n");
+    }
   }
   else
   {
     /* Node address to be configured */
-    ConfigClientModel_SendMessage(elementAddress,msg_opcode,pConfigData,dataLength);
+    result = ConfigClientModel_SendMessage(elementAddress,msg_opcode,pConfigData,dataLength);
+    if(result)
+    {
+      TRACE_I(TF_PROVISION,"Failed to Send message Node address to be configured\r\n");
+    }
   }
   
   return result;
@@ -1350,7 +1366,7 @@ There are no Parameters for this message.
 
   dst_peer = elementAddress; 
 
-  TRACE_M(TF_CONFIG_CLIENT_M, "Config Client Node Reset message  \r\n");   
+  TRACE_I(TF_CONFIG_CLIENT, "Config Client Node Reset message: to reset node and remove it from network\r\n");   
   if(ADDRESS_IS_UNASSIGNED(elementAddress))
   {
     return MOBLE_RESULT_INVALIDARG;
@@ -1430,7 +1446,12 @@ MOBLE_RESULT ApplicationGetConfigServerDeviceKey(MOBLE_ADDRESS src,
                                                  const MOBLEUINT8 **ppkeyTbUse)
 {
   MOBLE_RESULT result = MOBLE_RESULT_SUCCESS;  
+
+#if 0
   *ppkeyTbUse= GetNewProvNodeDevKey();
+#else
+  *ppkeyTbUse = (MOBLEUINT8 *)AppliPrvnNvm_GetNodeDevKey(src);
+#endif
   
   return result;  
 }

@@ -37,6 +37,11 @@ extern "C" {
 
 /* Exported functions ------------------------------------------------------- */
 void APP_BLE_LLD_Init(void);
+
+//void APP_BLE_Key_Button1_Action(void);
+//void APP_BLE_Key_Button2_Action(void);
+//void APP_BLE_Key_Button3_Action(void);
+
 void APP_BLE_LLD_Error(uint32_t ErrId, uint32_t ErrCode);
 void APP_BLE_LLD_Init_UART(void);
 void APP_BLE_LLD_DeInit_UART(void);

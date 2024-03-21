@@ -72,6 +72,7 @@ void MX_UART_Init(hw_uart_id_t uart)
 #endif
       handle = &huart1;
       instance = USART1;
+      handle->Init.BaudRate = 115200;
       break;
     case hw_lpuart1:
 #if (CFG_HW_LPUART1_ENABLED != 1)
@@ -79,11 +80,11 @@ void MX_UART_Init(hw_uart_id_t uart)
 #endif
       handle = &hlpuart1;
       instance = LPUART1;
+      handle->Init.BaudRate = 9600;
       break;
     default: Error_Handler();
   }
   handle->Instance = instance;
-  handle->Init.BaudRate = 115200;
   handle->Init.WordLength = UART_WORDLENGTH_8B;
   handle->Init.StopBits = UART_STOPBITS_1;
   handle->Init.Parity = UART_PARITY_NONE;

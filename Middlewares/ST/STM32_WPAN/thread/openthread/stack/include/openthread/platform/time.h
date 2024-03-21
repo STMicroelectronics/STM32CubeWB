@@ -43,10 +43,12 @@ extern "C" {
 
 #if defined ( __ICCARM__ ) /* IAR */
 typedef uint64_t time_t;
-#endif
   
-#if defined ( __ARMCC_VERSION ) /* KEIL with ARMCC or Clang */
+#elif defined ( __ARMCC_VERSION ) /* KEIL with ARMCC or Clang */
 typedef unsigned int time_t;
+
+#elif defined ( __GNUC__ ) /* CubeIDE GCC */
+typedef long long int time_t;
 #endif
 
 /**

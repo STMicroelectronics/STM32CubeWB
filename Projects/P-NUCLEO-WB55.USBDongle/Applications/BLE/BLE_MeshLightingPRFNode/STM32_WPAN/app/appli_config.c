@@ -325,6 +325,9 @@ void Appli_GetSubOverwriteParamsCb(model_subParams_t* subOverwriteParams)
 */ 
 void Appli_GetPublicationSetParamsCb(model_publicationparams_t* pPubParameters)
 {
+  TRACE_I(TF_CONFIG_SERVER,"Publication Add received for modelID %.2lx & elementAddress %.2x \r\n",
+          pPubParameters->modelID,
+          pPubParameters->elementAddress); 
   if(pPubParameters->modelID == SENSOR_SERVER_MODEL_ID)
   {
     Sensor_ModelPublishSet(pPubParameters);

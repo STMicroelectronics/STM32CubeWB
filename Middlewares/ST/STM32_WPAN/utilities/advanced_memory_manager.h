@@ -147,7 +147,7 @@ typedef struct AMM_VirtualMemoryCallbackFunction
 /* Exported constants --------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+/* Exported functions prototypes ---------------------------------------------*/
 
 /**
  * @brief  Initialize the Advance Memory Manager Pool

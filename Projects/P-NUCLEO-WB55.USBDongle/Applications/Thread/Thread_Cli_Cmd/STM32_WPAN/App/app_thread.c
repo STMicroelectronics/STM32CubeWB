@@ -34,6 +34,9 @@
 #include "vcp.h"
 #include "vcp_conf.h"
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
+#ifdef ENABLE_OPENTHREAD_CLI
+#include "uart.h"
+#endif /* ENABLE_OPENTHREAD_CLI */
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -83,6 +86,9 @@ static uint32_t ProcessCmdString(uint8_t* buf , uint32_t len);
 static void RxCpltCallback(void);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
+#ifdef ENABLE_OPENTHREAD_CLI
+extern void otAppCliInit(otInstance *aInstance);
+#endif /* ENABLE_OPENTHREAD_CLI */
 
 /* USER CODE BEGIN PFP */
 
@@ -223,6 +229,14 @@ void APP_THREAD_Error(uint32_t ErrId, uint32_t ErrCode)
 static void APP_THREAD_DeviceConfig(void)
 {
   otError error;
+  
+#ifdef ENABLE_OPENTHREAD_CLI
+  static otInstance *PtOpenThreadInstance;
+  otInstanceFinalize(NULL);
+  PtOpenThreadInstance = otInstanceInitSingle();
+  otAppCliInit(PtOpenThreadInstance);
+#endif /* ENABLE_OPENTHREAD_CLI */
+  
   error = otSetStateChangedCallback(NULL, APP_THREAD_StateNotif, NULL);
   if (error != OT_ERROR_NONE)
   {
@@ -230,7 +244,7 @@ static void APP_THREAD_DeviceConfig(void)
   }
 
   /* USER CODE BEGIN DEVICECONFIG */
-
+  
   /* USER CODE END DEVICECONFIG */
 }
 
@@ -391,6 +405,7 @@ Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void)
 
 static void Ot_Cmd_Transfer_Common(void)
 {
+
   /* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352 */
   p_thread_otcmdbuffer->cmdserial.cmd.cmdcode = 0x280U;
   /* Size = otCmdBuffer->Size (Number of OT cmd arguments : 1 arg = 32bits so multiply by 4 to get size in bytes)
@@ -402,6 +417,7 @@ static void Ot_Cmd_Transfer_Common(void)
 
   /* Wait completion of cmd */
   Wait_Getting_Ack_From_M0();
+
 }
 
 /**
@@ -580,7 +596,25 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
  * @retval None
  */
 static void Send_CLI_To_M0(void)
-{
+{ 
+#ifdef ENABLE_OPENTHREAD_CLI
+  /* Don't use the ThreadCliCmdBuffer when buffer is too large as data may be overwritten.
+     Use locals variables instead */
+  uint16_t l_plen = 0;
+  uint8_t l_ThreadCliCmdBuffer[255] = {0};
+  
+  memcpy(l_ThreadCliCmdBuffer, CommandString, indexReceiveChar);
+  l_plen = indexReceiveChar;
+  
+    /* Clear receive buffer, character counter and command complete */
+  CptReceiveCmdFromUser = 0;
+  indexReceiveChar = 0;
+  memset(CommandString, 0, C_SIZE_CMD_STRING);
+  
+  APP_DBG("[Send_CLI_To_M0] payload : %s", l_ThreadCliCmdBuffer);
+
+  otPlatUartReceived(l_ThreadCliCmdBuffer, l_plen);  
+#else
   memset(ThreadCliCmdBuffer.cmdserial.cmd.payload, 0x0U, 255U);
   memcpy(ThreadCliCmdBuffer.cmdserial.cmd.payload, CommandString, indexReceiveChar);
   ThreadCliCmdBuffer.cmdserial.cmd.plen = indexReceiveChar;
@@ -591,9 +625,61 @@ static void Send_CLI_To_M0(void)
   indexReceiveChar = 0;
   memset(CommandString, 0, C_SIZE_CMD_STRING);
 
+  APP_DBG("[Send_CLI_To_M0] payload : %s", ThreadCliCmdBuffer.cmdserial.cmd.payload);
+
   TL_CLI_SendCmd();
+#endif /* ENABLE_OPENTHREAD_CLI */
 }
 #endif /* (CFG_FULL_LOW_POWER == 0) */
+
+#ifdef ENABLE_OPENTHREAD_CLI
+/**
+ * @brief  Wrapper function to flush UART data (called from the OpenThread stack)
+           Not used but definition needed.
+ * @param  None
+ * @retval OT_ERROR_NONE
+ */
+otError otPlatUartFlush(void)
+{
+  return OT_ERROR_NONE;
+}
+
+/**
+ * @brief  Wrapper function to send data through the UART from the OpenThread stack
+ * @param  aBuf: Buffer of data to transmit
+ * @param  aBufLength: Number of data to transmit (in bytes)
+ * @retval OT_ERROR_NONE
+ */
+otError otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLength)
+{
+  bool l_vcp_send = false;
+  bool l_send_bypass = false;
+
+   /* WORKAROUND: if string to output is "> " then respond directly to M0 and do not output it */
+  if (strcmp((const char *)aBuf, "> ") != 0)
+  {
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+    VCP_SendData((uint8_t*)aBuf, aBufLength, HostTxCb);
+    l_vcp_send = true;
+#else
+    /* Write to CLI UART */
+    HW_UART_Transmit(CFG_CLI_UART, (uint8_t*)aBuf, aBufLength, 100);
+#endif
+  }
+  else
+  {
+    otPlatUartSendDone();
+    l_send_bypass = true;
+  }
+  
+  if ((l_vcp_send == false) && (l_send_bypass == false))
+  {
+    otPlatUartSendDone();
+  }
+  
+  return OT_ERROR_NONE;
+}
+#endif /* ENABLE_OPENTHREAD_CLI */
 
 /**
  * @brief Send notification for CLI TL Channel.
@@ -677,7 +763,8 @@ void TL_THREAD_CliNotReceived( TL_EvtPacket_t * Notbuffer )
  */
 void HostTxCb(void)
 {
-  Send_CLI_Ack_For_OT();
+  //Send_CLI_Ack_For_OT();
+  otPlatUartSendDone();
 }
 
 /**
@@ -719,7 +806,7 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
   uint32_t char_remaining = 0;
   static uint32_t len_total = 0;
 
-  /* Copy the characters  in the temporary buffer */
+  /* Copy the characters in the temporary buffer */
   for (i = 0; i < *Len; i++)
   {
     TmpString[len_total++] = Buf[i];

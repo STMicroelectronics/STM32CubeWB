@@ -87,6 +87,7 @@ static const uint8_t a_BLE_CfgIrValue[16] = CFG_BLE_IR;
  * Encryption root key used to derive LTK(Legacy) and CSRK
  */
 static const uint8_t a_BLE_CfgErValue[16] = CFG_BLE_ER;
+static uint16_t connectionHandle;
 
 static const char a_LocalName[] = { AD_TYPE_COMPLETE_LOCAL_NAME, 'S', 'T', 'M','_', 'O', 'T', 'A' };
 uint8_t a_ManufData[14] = { 
@@ -274,6 +275,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *p_Pckt )
   hci_event_pckt *p_event_pckt;
   evt_le_meta_event *p_meta_evt;
   evt_blecore_aci *p_blecore_evt;
+  hci_le_connection_complete_event_rp0        *p_connection_complete_event;
 
   
   p_event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) p_Pckt)->data;
@@ -303,6 +305,9 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *p_Pckt )
       switch (p_meta_evt->subevent)
       {
         case HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE:
+          p_connection_complete_event = (hci_le_connection_complete_event_rp0 *) p_meta_evt->data;
+          connectionHandle = p_connection_complete_event->Connection_Handle;
+          
           /* USER CODE BEGIN HCI_EVT_LE_CONN_COMPLETE */
 
           /* USER CODE END HCI_EVT_LE_CONN_COMPLETE */
@@ -327,6 +332,12 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *p_Pckt )
           /* USER CODE END EVT_VENDOR */
           switch (p_blecore_evt->ecode)
           {
+          case ACI_GATT_INDICATION_VSEVT_CODE:
+            {
+              APP_DBG_MSG(">>== ACI_GATT_INDICATION_VSEVT_CODE \r");
+              aci_gatt_confirm_indication(connectionHandle);
+            }
+            break;
             /* USER CODE BEGIN ecode */
             case ACI_GAP_PROC_COMPLETE_VSEVT_CODE:
               /* USER CODE BEGIN EVT_BLUE_GAP_PROCEDURE_COMPLETE */

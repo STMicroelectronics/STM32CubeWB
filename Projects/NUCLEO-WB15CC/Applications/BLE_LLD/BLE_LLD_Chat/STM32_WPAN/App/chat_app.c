@@ -335,16 +335,19 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
   {
     case BUTTON_SW1_PIN:
       UTIL_SEQ_SetTask(1U << CFG_TASK_HAL_BLE_ENCRYPT, CFG_SCH_PRIO_0);
+        //APP_BLE_Key_Button1_Action();
       break;
 
     case BUTTON_SW2_PIN:
       HAL_NVIC_DisableIRQ(BUTTON_SW2_EXTI_IRQn);
       UTIL_SEQ_SetTask(1U << CFG_TASK_HAL_BLE_STARTTONE, CFG_SCH_PRIO_0);
+      //APP_BLE_Key_Button2_Action();
       break;
 
     case BUTTON_SW3_PIN:
       HAL_NVIC_DisableIRQ(BUTTON_SW3_EXTI_IRQn);
       UTIL_SEQ_SetTask(1U << CFG_TASK_HAL_BLE_STOPTONE, CFG_SCH_PRIO_0);
+      //APP_BLE_Key_Button3_Action();
       break;
 
     default:

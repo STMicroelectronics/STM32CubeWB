@@ -37,7 +37,7 @@ A number of experiments are described in this readme, with multiple ZC (ZigbeeCo
     - application : Zigbee_OnOff_ChannelsAgility_ZR
     
 - 1 STM32WB55xx board loaded with: 
-    - wireless coprocessor : stm32wb5x_Zigbee_FFD_fw.bin
+    - wireless coprocessor : stm32wb5x_Zigbee_RFD_fw.bin
     - application : Zigbee_OnOff_ChannelsAgility_SED
     
 TABLE_OF_CONTENT_DEMO_DESCRIPTION

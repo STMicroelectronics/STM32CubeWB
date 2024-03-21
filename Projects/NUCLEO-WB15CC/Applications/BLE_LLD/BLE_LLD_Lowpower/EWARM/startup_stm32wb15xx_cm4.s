@@ -50,6 +50,7 @@
 
         EXTERN  __iar_program_start
         EXTERN  SystemInit
+        EXTERN  STBY_BootManager
         PUBLIC  __vector_table
 
         DATA
@@ -143,13 +144,41 @@ __vector_table
 ;;
         THUMB
 
+        IMPORT  STBY_BackupMSP
+        EXPORT  CPUcontextSave
         PUBWEAK Reset_Handler
         SECTION .text:CODE:NOROOT:REORDER(2)
 Reset_Handler
+/* If we exit from standby mode, restore CPU context and jump to asleep point. */
+        BL      STBY_BootManager
+        CMP     R0, #1
+        BEQ     CPUcontextRestore
+/* buffer for local variables (up to 10)from STBY_BootManager*/
+        SUB     SP, SP, #0x28
+/* end of specific code section for standby */
         LDR     R0, =SystemInit
         BLX     R0
         LDR     R0, =__iar_program_start
         BX      R0
+/* These 2 functions are designed to save and then restore CPU context. */        
+CPUcontextSave
+        PUSH   { R4 - R12, LR }        /* store R4 to R12 and LR (10 words) onto the stack */
+        LDR    R4, =STBY_BackupMSP     /* load address of STBY_BackupMSP into R4 */
+        MOV    R3, SP                  /* load the stack pointer into R3 */
+        STR    R3, [R4]                /* store the MSP into STBY_BackupMSP */              
+        DSB
+        WFI                            /* all saved, trigger deep sleep */
+
+CPUcontextRestore
+  /* Even if we fall through the WFI instruction, we will immediately
+   * execute a context restore and end up where we left off with no
+   * ill effects.  Normally at this point the core will either be
+   * powered off or reset (depending on the deep sleep level). */
+        LDR    R4, =STBY_BackupMSP     /* load address of STBY_BackupMSP into R4 */
+        LDR    R4, [R4]                /* load the SP from STBY_BackupMSP */
+        MOV    SP, R4                  /* restore the SP from R4 */
+        POP    { R4 - R12, PC }        /* load R4 to R12 and PC (10 words) from the stack */
+/* end of specific code section for standby */
 
         PUBWEAK NMI_Handler
         SECTION .text:CODE:NOROOT:REORDER(1)

@@ -571,6 +571,7 @@ static void Button_Init( void )
    * Button Initialization
    */
   BSP_PB_Init(BUTTON_USER1, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_USER2, BUTTON_MODE_EXTI);
 #endif
 
   return;
@@ -603,9 +604,9 @@ void HAL_Delay(uint32_t Delay)
     /**
      * This option is used to ensure that store operations are completed
      */
-  #if defined (__CC_ARM)
+  #if defined (__CC_ARM) || defined (__ARMCC_VERSION)
     __force_stores();
-  #endif /* __CC_ARM */
+  #endif /*__ARMCC_VERSION */
 
     __WFI();
   }
@@ -804,16 +805,19 @@ void DbgOutputTraces(uint8_t *p_data, uint16_t size, void (*cb)(void))
   * @param  GPIO_Pin : GPIO pin which has been activated
   * @retval None
   */
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   APP_DBG("*** HAL_GPIO_EXTI_Callback  GPIO_Pin = %d ****", GPIO_Pin);
   switch(GPIO_Pin)
   {
-     case BUTTON_USER1_PIN:
-        UTIL_SEQ_SetTask(TASK_COAP_MSG_BUTTON,CFG_SCH_PRIO_1);
-        break;
-     case BUTTON_USER2_PIN: /* SW button 2 */
-        break;
+   case BUTTON_USER1_PIN:
+     UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW1,CFG_SCH_PRIO_1); 
+     break;
+
+   case BUTTON_USER2_PIN:
+     UTIL_SEQ_SetTask(1U << CFG_TASK_BUTTON_SW2,CFG_SCH_PRIO_1);
+     break;
 
      default:
         break;

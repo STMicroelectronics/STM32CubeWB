@@ -29,7 +29,7 @@
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size		EQU     0x400
+Stack_Size		EQU     0x1000
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
@@ -40,7 +40,7 @@ __initial_sp
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size      EQU     0x200
+Heap_Size      EQU     0x400
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
@@ -149,13 +149,41 @@ __Vectors_Size  EQU  __Vectors_End - __Vectors
 Reset_Handler    PROC
                  EXPORT  Reset_Handler                 [WEAK]
         IMPORT  SystemInit
-        IMPORT  __main
-
+        IMPORT  __main        
+        IMPORT  STBY_BootManager
+        IMPORT  STBY_BackupMSP
+	    EXPORT  CPUcontextSave
+; If we exit from standby mode, restore CPU context and jump to asleep point. 
+                BL      STBY_BootManager
+                CMP     R0, #1
+                BEQ     CPUcontextRestore
+; buffer for local variables (up to 10)from is_boot_from_standby
+                SUB     SP, SP, #0x28
+; end of specific code section for standby 
                  LDR     R0, =SystemInit
                  BLX     R0
                  LDR     R0, =__main
                  BX      R0
                  ENDP
+;/* These 2 functions are designed to save and then restore CPU context. */
+CPUcontextSave
+                 PUSH   { R4 - R12, lr }        ;/* store R4 to R12 and LR (10 words) onto the stack */
+                 LDR    R4, =STBY_BackupMSP     ;/* load address of STBY_BackupMSP into R4 */
+                 MOV    R3, SP                  ;/* load the stack pointer into R3 */
+                 STR    R3, [R4]                ;/* store the MSP into STBY_BackupMSP */
+                 DSB
+                 WFI                            ;/* all saved, trigger deep sleep */
+
+CPUcontextRestore
+;  /* Even if we fall through the WFI instruction, we will immediately
+;   * execute a context restore and end up where we left off with no
+;   * ill effects.  Normally at this point the core will either be
+;   * powered off or reset (depending on the deep sleep level). */
+                LDR    R4, =STBY_BackupMSP   ;/* load address of STBY_BackupMSP into R4 */
+                LDR    R4, [R4]              ;/* load the SP from STBY_BackupMSP */
+                MOV    SP, R4                ;/* restore the SP from R4 */
+                POP   { R4 - R12, PC }       ;/* load R4-R12 and PC (10 words) from the stack */
+;/* end of specific code section for standby */
 
 ; Dummy Exception Handlers (infinite loops which can be modified)
 

@@ -395,6 +395,34 @@ otError otDnsClientResolveService(otInstance *            aInstance,
   return (otError)p_ot_req->Data[0];
 }
 
+otError otDnsClientResolveServiceAndHostAddress(otInstance             *aInstance,
+                                                const char             *aInstanceLabel,
+                                                const char             *aServiceName,
+                                                otDnsServiceCallback    aCallback,
+                                                void                   *aContext,
+                                                const otDnsQueryConfig *aConfig)
+{
+  Pre_OtCmdProcessing();
+
+  otDnsServiceCb = aCallback;
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_DNS_CLIENT_RESOLVE_SERVICE_AND_HOST_ADDRESS;
+
+  p_ot_req->Size=4;
+  p_ot_req->Data[0] = (uint32_t) aInstanceLabel;
+  p_ot_req->Data[1] = (uint32_t) aServiceName;
+  p_ot_req->Data[2] = (uint32_t) aContext;
+  p_ot_req->Data[3] = (uint32_t) aConfig;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];  
+}
+
 otError otDnsServiceResponseGetServiceName(const otDnsServiceResponse *aResponse,
                                            char *                      aLabelBuffer,
                                            uint8_t                     aLabelBufferSize,

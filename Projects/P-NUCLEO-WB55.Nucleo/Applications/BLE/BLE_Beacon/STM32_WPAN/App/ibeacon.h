@@ -28,7 +28,7 @@ extern "C"
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#if defined (__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
 	#define ASSERT_CONCAT_(a, b) a##b
 	#define ASSERT_CONCAT(a, b) ASSERT_CONCAT_(a, b)
 	/* These can't be used after statements in c89. */

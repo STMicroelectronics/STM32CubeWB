@@ -35,6 +35,8 @@
 #ifndef CONFIG_TMF_H_
 #define CONFIG_TMF_H_
 
+#include "config/border_router.h"
+
 /**
  * @def OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_ENTRIES
  *
@@ -42,7 +44,11 @@
  *
  */
 #ifndef OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_ENTRIES
+#if OPENTHREAD_CONFIG_BORDER_ROUTER_ENABLE
+#define OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_ENTRIES 256
+#else
 #define OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_ENTRIES 32
+#endif
 #endif
 
 /**
@@ -173,13 +179,16 @@
 #endif
 
 /**
- * @def OPENTHREAD_CONFIG_TMF_NETWORK_DIAG_MTD_ENABLE
+ * @def OPENTHREAD_CONFIG_TMF_NETDIAG_CLIENT_ENABLE
  *
- * Define to 1 to enable TMF network diagnostics on MTDs.
+ * Define to 1 to enable TMF network diagnostics client.
+ *
+ * The network diagnostic client add API to send diagnostic requests and queries to other node and process the response.
+ * It is enabled by default on Border Routers.
  *
  */
-#ifndef OPENTHREAD_CONFIG_TMF_NETWORK_DIAG_MTD_ENABLE
-#define OPENTHREAD_CONFIG_TMF_NETWORK_DIAG_MTD_ENABLE 0
+#ifndef OPENTHREAD_CONFIG_TMF_NETDIAG_CLIENT_ENABLE
+#define OPENTHREAD_CONFIG_TMF_NETDIAG_CLIENT_ENABLE OPENTHREAD_CONFIG_BORDER_ROUTING_ENABLE
 #endif
 
 /**
@@ -225,7 +234,7 @@
 /**
  * @def OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE
  *
- * This setting configures the Multicast Listener Registration parent proxing in Thread 1.2.
+ * This setting configures the Multicast Listener Registration parent proxying in Thread 1.2.
  *
  */
 #ifndef OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE

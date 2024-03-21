@@ -60,6 +60,7 @@
 #include "netdiag.h"
 #include "ping_sender.h"
 #include "tcp.h"
+#include "mesh_diag.h"
 
 #include "stm32wbxx_core_interface_def.h"
 #include "stm32wbxx_hal.h"

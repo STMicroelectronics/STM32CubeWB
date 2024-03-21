@@ -209,11 +209,12 @@ static MOBLE_RESULT SerialPrvn_UnProvisionDevice(char *text)
   {
     if(!BLEMesh_IsUnprovisioned())
     {
+      BLEMesh_PrintStringCb("Provisioner unprovisioning ...\r\n");
       Appli_Unprovision();
     }
     else
     {
-      BLEMesh_PrintStringCb("Device is already unprovisioned !\r\n");
+      BLEMesh_PrintStringCb("Provisioner is already unprovisioned !\r\n");
     }
   }
   else 

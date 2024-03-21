@@ -406,6 +406,7 @@ void FPU_IRQHandler(void)
 void EXTI15_10_IRQHandler(void)
 {
   HAL_GPIO_EXTI_IRQHandler(BUTTON_USER1_PIN);
+  HAL_GPIO_EXTI_IRQHandler(BUTTON_USER2_PIN);
 }
 
 /* USER CODE END 1 */

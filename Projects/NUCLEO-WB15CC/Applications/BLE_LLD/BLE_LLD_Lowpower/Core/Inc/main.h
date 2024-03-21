@@ -27,6 +27,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+#include "stm32wbxx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -52,7 +53,7 @@ extern "C" {
 void Error_Handler(void);
 void SystemClock_Config_HSE(uint32_t usePLL);
 void SystemClock_Config_MSI(uint32_t usePLL);
-
+void Init_Exti( void );
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

@@ -68,6 +68,7 @@ typedef enum
 
 /* Private variables ---------------------------------------------------------*/
 uint8_t button_emulation; /* Button emulation state */
+uint8_t LongPressButton; /* Button press state */
 tSerialState SerialCurrentState = STATE_IDLE;
 
 static uint8_t aRxBuffer[RX_BUFFER_SIZE];
@@ -189,6 +190,7 @@ void Serial_InterfaceProcess(void)
 {
   /* Reset button emulation state */
   button_emulation = 0;
+  LongPressButton = 0;
 #ifdef ENABLE_SERIAL_CONTROL
   if (!strncmp((char const*)CommandString, "ATCL", 4))
   {            
@@ -260,7 +262,11 @@ void Serial_InterfaceProcess(void)
     exti_handle.Line = EXTI_LINE_1;
     HAL_EXTI_GenerateSWI(&exti_handle);
   }
-
+  else if (strcmp((char const*)CommandString, "LONG_PRESS") == 0)
+  {
+    TRACE_I(TF_SERIAL_PRINTS,"LONG_PRESS OK\r\n");
+    LongPressButton=1;
+  } 
   else
   {
     TRACE_I(TF_SERIAL_PRINTS,"Not Entered valid test parameters\r\n");  
@@ -304,7 +310,8 @@ MOBLEUINT8 Serial_CharToHexConvert(char addr)
 void Serial_Init(void)
 {
   button_emulation = 0; /* Reset the button emulation state */
-
+  LongPressButton = 0; /* Reset the button press state */
+  
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_SERIAL_REQ_ID, UTIL_SEQ_RFU, Serial_InterfaceProcess);
   UTIL_SEQ_RegTask( 1<< CFG_TASK_MESH_UART_RX_REQ_ID, UTIL_SEQ_RFU, Serial_Uart_Rx_Task );
   UTIL_SEQ_SetTask( 1<< CFG_TASK_MESH_UART_RX_REQ_ID, CFG_SCH_PRIO_0);

@@ -174,12 +174,12 @@ typedef struct
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-#ifdef ENABLE_LIGHT_MODEL_SERVER_LC
 
 lc_param_t* LcServerP = NULL;
 
 MODEL_OpcodeTableParam_t Light_LC_Opcodes_Table[] = {
 /* model_id                       opcode                       reliable      min_payload_size max_payload_size response_opcode           min_response_size max_response_size */
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC
  {LIGHT_LC_SERVER_MODEL_ID,       LIGHT_LC_MODE_GET,           MOBLE_TRUE,   0,               0,               LIGHT_LC_MODE_STATUS  ,   1,                1},
  {LIGHT_LC_SERVER_MODEL_ID,       LIGHT_LC_MODE_SET,           MOBLE_TRUE,   1,               1,               LIGHT_LC_MODE_STATUS  ,   1,                1},
  {LIGHT_LC_SERVER_MODEL_ID,       LIGHT_LC_MODE_SET_UNACK,     MOBLE_FALSE,  1,               1,               LIGHT_LC_MODE_STATUS  ,   1,                1},
@@ -196,10 +196,12 @@ MODEL_OpcodeTableParam_t Light_LC_Opcodes_Table[] = {
  {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_GET,       MOBLE_TRUE,   2,               2,               LIGHT_LC_PROPERTY_STATUS, 2,                10},
  {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_SET,       MOBLE_TRUE,   2,               10,              LIGHT_LC_PROPERTY_STATUS, 2,                10},
  {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_SET_UNACK, MOBLE_FALSE,  2,               10,              LIGHT_LC_PROPERTY_STATUS, 2,                10},
- {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_STATUS,    MOBLE_FALSE,  2,               10,              0                       , 2,                10}, 
+ {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_STATUS,    MOBLE_FALSE,  2,               10,              0                       , 2,                10}, #endif /* ENABLE_LIGHT_MODEL_SERVER_LC */#endif /* ENABLE_LIGHT_MODEL_SERVER_LC */
+#endif /* ENABLE_LIGHT_MODEL_SERVER_LC */
  {0}
 };
 
+#ifdef ENABLE_LIGHT_MODEL_SERVER_LC
 /* 
   Light LC property table
     Property ID
@@ -301,9 +303,7 @@ const light_lc_propertyId_t LC_PropertyId[LC_PROPERTY_TABLE_COUNT] =
   }
 };
 #else
-lc_param_t* LcServerP = NULL;
 const light_lc_propertyId_t* LC_PropertyId = NULL;
-const MODEL_OpcodeTableParam_t* Light_LC_Opcodes_Table = NULL;
 #endif /* ENABLE_LIGHT_MODEL_SERVER_LC */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -405,7 +405,7 @@ MOBLE_RESULT LightLcServer_GetOpcodeTableCb(const MODEL_OpcodeTableParam_t **dat
                                             MOBLEUINT16 *length)
 {
   *data = Light_LC_Opcodes_Table;
-  *length = sizeof(Light_LC_Opcodes_Table)/sizeof(MODEL_OpcodeTableParam_t);
+  *length = sizeof(Light_LC_Opcodes_Table)/sizeof(Light_LC_Opcodes_Table[0]);
   return MOBLE_RESULT_SUCCESS;
 }
 

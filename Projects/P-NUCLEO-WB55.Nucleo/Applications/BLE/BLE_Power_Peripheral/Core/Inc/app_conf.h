@@ -30,7 +30,6 @@
 /******************************************************************************
  * Application Config
  ******************************************************************************/
-
 /**< generic parameters ******************************************************/
 
 /**
@@ -68,7 +67,6 @@
 #define ADV_TYPE                          ADV_IND
 #define BLE_ADDR_TYPE                     GAP_PUBLIC_ADDR
 #define ADV_FILTER                        NO_WHITE_LIST_USE
-
 /**
  * Define IO Authentication
  */
@@ -789,4 +787,3 @@ typedef enum
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 #endif /*APP_CONF_H */
-

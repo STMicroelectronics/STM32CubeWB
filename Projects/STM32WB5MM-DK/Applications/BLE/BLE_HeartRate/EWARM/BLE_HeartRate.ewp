@@ -74,7 +74,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32WB5MMG	ST STM32WB5MMG</state>
+                    <state>STM32WB55MMG	ST STM32WB55MMG</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -120,7 +120,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32WB5MMG	ST STM32WB5MMG</state>
+                    <state>STM32WB55MMG	ST STM32WB55MMG</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -189,7 +189,7 @@
                 <option>
                     <name>TrustZoneModes</name>
                     <version>0</version>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OGAarch64Abi</name>
@@ -1006,7 +1006,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>###Unitialized###</state>
+                    <state>BLE_HeartRate_import_lib.o</state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>

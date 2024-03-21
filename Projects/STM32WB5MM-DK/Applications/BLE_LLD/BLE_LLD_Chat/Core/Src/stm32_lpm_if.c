@@ -100,7 +100,7 @@ void PWR_EnterOffMode( void )
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined ( __CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   __force_stores( );
 #endif
 
@@ -165,7 +165,7 @@ void PWR_EnterStopMode( void )
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined ( __CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   __force_stores( );
 #endif
 
@@ -222,7 +222,7 @@ void PWR_EnterSleepMode( void )
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined ( __CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   __force_stores();
 #endif
 
@@ -308,6 +308,7 @@ static void ExitLowPower( void )
 /* USER CODE BEGIN ExitLowPower_1 */
     LL_RCC_HSE_Enable( );
     __HAL_FLASH_SET_LATENCY(FLASH_LATENCY_1);
+    while(__HAL_FLASH_GET_LATENCY() != FLASH_LATENCY_1);
     while(!LL_RCC_HSE_IsReady( ));
     LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_HSE);
     while (LL_RCC_GetSysClkSource( ) != LL_RCC_SYS_CLKSOURCE_STATUS_HSE);

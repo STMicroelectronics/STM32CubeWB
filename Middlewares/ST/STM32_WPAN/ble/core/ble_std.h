@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2023 STMicroelectronics.
+ * Copyright (c) 2018-2024 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -275,11 +275,11 @@
 
 /* Flag bits for Flags AD Type
  */
-#define FLAG_BIT_LE_LIMITED_DISCOVERABLE_MODE          0x01
-#define FLAG_BIT_LE_GENERAL_DISCOVERABLE_MODE          0x02
-#define FLAG_BIT_BR_EDR_NOT_SUPPORTED                  0x04
-#define FLAG_BIT_LE_BR_EDR_CONTROLLER                  0x08
-#define FLAG_BIT_LE_BR_EDR_HOST                        0x10
+#define FLAG_BIT_LE_LIMITED_DISCOVERABLE_MODE          0x01U
+#define FLAG_BIT_LE_GENERAL_DISCOVERABLE_MODE          0x02U
+#define FLAG_BIT_BR_EDR_NOT_SUPPORTED                  0x04U
+#define FLAG_BIT_LE_BR_EDR_CONTROLLER                  0x08U
+#define FLAG_BIT_LE_BR_EDR_HOST                        0x10U
 
 /* Appearance values
  */

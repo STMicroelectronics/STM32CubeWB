@@ -30,6 +30,10 @@
 #include "thread.h"
 #include <string.h>
 
+#ifdef ENABLE_OPENTHREAD_CLI
+#include "radio_link.h"
+#endif
+
 extern otHandleActiveScanResult otHandleActiveScanResultCb;
 extern otHandleEnergyScanResult otHandleEnergyScanResultCb;
 extern otLinkPcapCallback otLinkPcapCb;

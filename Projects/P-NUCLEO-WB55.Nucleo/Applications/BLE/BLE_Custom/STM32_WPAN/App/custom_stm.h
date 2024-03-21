@@ -58,6 +58,7 @@ typedef enum
   CUSTOM_STM_HRS_SL_READ_EVT,
   /* My_HRS_CTRL_Point */
   CUSTOM_STM_HRS_CTRLP_WRITE_EVT,
+  CUSTOM_STM_NOTIFICATION_COMPLETE_EVT,
 
   CUSTOM_STM_BOOT_REQUEST_EVT
 } Custom_STM_Opcode_evt_t;
@@ -74,6 +75,7 @@ typedef struct
   Custom_STM_Data_t             DataTransfered;
   uint16_t                      ConnectionHandle;
   uint8_t                       ServiceInstance;
+  uint16_t                      AttrHandle;
 } Custom_STM_App_Notification_evt_t;
 
 /* USER CODE BEGIN ET */

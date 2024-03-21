@@ -268,90 +268,90 @@ static void Appli_ShortButtonPress(void)
 static void Appli_LongButtonPress(void)
 {
   /** GENERIC ONOFF **/  
-//  TRACE_M(TF_GENERIC_CLIENT_M, "----------- Generic API ONOFF GET ------------- \r\n");
+//  TRACE_I(TF_GENERIC_CLIENT_M, "----------- Generic API ONOFF GET ------------- \r\n");
 //  Appli_GenericClient_API(0, GENERIC_ON_OFF_GET, NULL);  
   
   /** GENERIC LEVEL **/  
-//  TRACE_M(TF_GENERIC_CLIENT_M, "----------- Generic API LEVEL GET ------------- \r\n");
+//  TRACE_I(TF_GENERIC_CLIENT_M, "----------- Generic API LEVEL GET ------------- \r\n");
 //  Appli_GenericClient_API(0, GENERIC_LEVEL_GET, NULL);  
   
   /** GENERIC POWER ONOFF **/  
-//  TRACE_M(TF_GENERIC_CLIENT_M, "----------- Generic API POWER ON OFF GET ------------- \r\n");
+//  TRACE_I(TF_GENERIC_CLIENT_M, "----------- Generic API POWER ON OFF GET ------------- \r\n");
 //  Appli_GenericClient_API(0, GENERIC_POWER_ON_OFF_GET, NULL);  
   
   /** GENERIC TRANSITION TIME **/ 
-//  TRACE_M(TF_GENERIC_CLIENT_M, "----------- Generic API DEFAULT TRANSITION TIME GET ------------- \r\n");
+//  TRACE_I(TF_GENERIC_CLIENT_M, "----------- Generic API DEFAULT TRANSITION TIME GET ------------- \r\n");
 //  Appli_GenericClient_API(0, GENERIC_DEFAULT_TRANSITION_TIME_GET, NULL);  
   
   /** LIGHT LIGHTNESS **/   
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LIGHTNESS_GET, NULL);  
   
   /** LIGHT LIGHTNESS LINEAR **/ 
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS LINEAR GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS LINEAR GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LIGHTNESS_LINEAR_GET, NULL);  
   
   /** LIGHT LIGHTNESS DEFAULT **/ 
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS DEFAULT GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS DEFAULT GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LIGHTNESS_DEFAULT_GET, NULL);  
   
   /** LIGHT LIGHTNESS RANGE **/ 
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS RANGE GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT LIGHTNESS RANGE GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LIGHTNESS_RANGE_GET, NULL); 
   
   /** LIGHT LIGHTNESS CTL **/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_CTL_GET, NULL);  
   
   /** LIGHT LIGHTNESS CTL TEMPERATURE **/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL TEMPERATURE GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL TEMPERATURE GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_CTL_TEMPERATURE_GET, NULL);  
   
   /** LIGHT LIGHTNESS CTL TEMPERATURE RANGE **/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL TEMPERATURE RANGE GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL TEMPERATURE RANGE GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_CTL_TEMPERATURE_RANGE_GET, NULL);  
   
   /** LIGHT LIGHTNESS CTL DEFAULT **/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL DEFAULT GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT CTL DEFAULT GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_CTL_DEFAULT_GET, NULL);  
   
   /** LIGHT LIGHTNESS HSL **/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_HSL_GET, NULL);  
 
   /** LIGHT LIGHTNESS HSL DEFAULT **/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL DEFAULT GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL DEFAULT GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_HSL_DEFAULT_GET, NULL);  
 
   /** LIGHT LIGHTNESS HSL RANGE**/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL RANGE GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL RANGE GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_HSL_RANGE_GET, NULL);  
   
   /** LIGHT LIGHTNESS HSL HUE**/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL HUE GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL HUE GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_HSL_HUE_GET, NULL);
   
   /** LIGHT LIGHTNESS HSL SATURATION**/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL SATURATION GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT HSL SATURATION GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_HSL_SATURATION_GET, NULL);
 
   /** LIGHT LC MODE**/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC MODE GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC MODE GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LC_MODE_GET, NULL);
   
   /** LIGHT LC OM**/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC OM GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC OM GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LC_OM_GET, NULL);
   
   /** LIGHT LC ON OFF**/
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC ON OFF GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC ON OFF GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LC_ON_OFF_GET, NULL);
   
   /** LIGHT LC PROPERTY **/
 //LIGHT_CONTROL_AMBIENT_LUXLEVEL_ON_PID  : 0x002B
   pPropertyId[0]= 0x2B;           // Property ID byte 0 : Property ID identifying a Light LC Property.
   pPropertyId[1]= 0x00;           // Property ID byte 1 : Property ID identifying a Light LC Property.
-//  TRACE_M(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC PROPERTY GET ------------- \r\n");
+//  TRACE_I(TF_LIGHT_CLIENT_M, "----------- API LIGHT LC PROPERTY GET ------------- \r\n");
 //  Appli_LightClient_API(0, LIGHT_LC_PROPERTY_GET, pPropertyId);
   
 
@@ -361,38 +361,38 @@ static void Appli_LongButtonPress(void)
   pPropertyId[1]= 0x00;           // Property ID byte 1 : Property ID for the sensor
   
   /** SENSOR DESCRIPTOR**/
-//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR DESCRIPTOR GET ------------- \r\n");
+//  TRACE_I(TF_SENSOR_CLIENT_M, "----------- API SENSOR DESCRIPTOR GET ------------- \r\n");
 //  Appli_SensorsClient_API(0, SENSOR_DESCRIPTOR_GET, pPropertyId);
   
   /** SENSOR CADENCE**/
-//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR CADENCE GET ------------- \r\n");
+//  TRACE_I(TF_SENSOR_CLIENT_M, "----------- API SENSOR CADENCE GET ------------- \r\n");
 //  Appli_SensorsClient_API(0, SENSOR_CADENCE_GET, pPropertyId);
   
     /** SENSOR SETTINGS **/
-//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR SETTINGS GET ------------- \r\n");
+//  TRACE_I(TF_SENSOR_CLIENT_M, "----------- API SENSOR SETTINGS GET ------------- \r\n");
 //  Appli_SensorsClient_API(0, SENSOR_SETTINGS_GET, pPropertyId);
   
     /** SENSOR SETTING **/
   pPropertyId[2]= 0xAD;           // Sensor Setting Property ID byte 0 : Property ID for the sensor setting
   pPropertyId[3]= 0x00;           // Sensor Setting Property ID byte 1 : Property ID for the sensor setting
  
-//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR SETTING GET ------------- \r\n");
+//  TRACE_I(TF_SENSOR_CLIENT_M, "----------- API SENSOR SETTING GET ------------- \r\n");
 //  Appli_SensorsClient_API(0, SENSOR_SETTING_GET, pPropertyId);
   
   /** SENSOR GET **/
-//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR GET ------------- \r\n");
+//  TRACE_I(TF_SENSOR_CLIENT_M, "----------- API SENSOR GET ------------- \r\n");
 //  Appli_SensorsClient_API(0, SENSOR_GET, pPropertyId);
   
   /** SENSOR COLUMN **/
 //  pPropertyId[2]= 0x01;           // Raw Value X byte 0 : Raw value identifying a column
 //  pPropertyId[3]= 0x00;           // Raw Value X byte 1 : Raw value identifying a column
-//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR COLUMN GET ------------- \r\n");
+//  TRACE_I(TF_SENSOR_CLIENT_M, "----------- API SENSOR COLUMN GET ------------- \r\n");
 //  Appli_SensorsClient_API(0, SENSOR_COLUMN_GET, pPropertyId);
   
   /** SENSOR SERIES **/
 //  pPropertyId[2]= 0x01;           // Raw Value X1 byte 0 : Raw value identifying a starting column.
 //  pPropertyId[3]= 0x02;           // Raw Value X2 byte 0 : Raw value identifying an ending column.
-//  TRACE_M(TF_SENSOR_CLIENT_M, "----------- API SENSOR SERIES GET ------------- \r\n");
+//  TRACE_I(TF_SENSOR_CLIENT_M, "----------- API SENSOR SERIES GET ------------- \r\n");
 //  Appli_SensorsClient_API(0, SENSOR_SERIES_GET, pPropertyId);
   
   IntensityPublish();
@@ -440,8 +440,8 @@ static void Mesh_Task()
     UnprovisionInProgress = 0;
     AppliNvm_ClearModelState();
     PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
-    TRACE_M(TF_PROVISION,"NVM erased\r\n");      
-    TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
+    TRACE_I(TF_PROVISION,"NVM erased\r\n");      
+    TRACE_I(TF_PROVISION,"Device is unprovisioned by application \r\n");      
   }
     
 #if (APPLI_OPTIM == 0)
@@ -666,7 +666,7 @@ void Appli_BleUnprovisionedIdentifyCb(MOBLEUINT8 data)
 #ifdef ENABLE_AUTH_TYPE_OUTPUT_OOB
   PrvngInProcess = 1;  
 #endif   
-  TRACE_M(TF_PROVISION,"Unprovisioned Node Identifier received: %02x\n\r", data);    
+  TRACE_I(TF_PROVISION,"Unprovisioned Node Identifier received: %02x\n\r", data);    
 }
 
 /**
@@ -678,13 +678,13 @@ MOBLEUINT8 Appli_BleSetNumberOfElementsCb(void)
 {
   if(NumberOfElements > BLEMesh_GetNumberOfElements())
   {
-    TRACE_M(TF_MISC, "Number of Elements enabled in application exceeding from Library Capability!\r\n"); 
+    TRACE_I(TF_MISC, "Number of Elements enabled in application exceeding from Library Capability!\r\n"); 
     return BLEMesh_GetNumberOfElements();
   }
   
   else if(NumberOfElements == 0)
   {
-    TRACE_M(TF_MISC,"Number Of Elements must be 1 or greater than 1!\r\n"); 
+    TRACE_I(TF_MISC,"Number Of Elements must be 1 or greater than 1!\r\n"); 
     return 1;
   }
   
@@ -703,7 +703,7 @@ MOBLE_RESULT Appli_BleAttentionTimerCb(void)
 {
 /* avoid printf, if low power feature is supported */  
 #if (LOW_POWER_FEATURE == 0)
-  TRACE_M(TF_MISC, " \r\n");
+/*  TRACE_I(TF_MISC, " \r\n"); */
 #endif /* LOW_POWER_FEATURE == 0 */
   return MOBLE_RESULT_SUCCESS;
 }
@@ -724,7 +724,7 @@ void Appli_BleOutputOOBAuthCb(MOBLEUINT8* output_oob, MOBLEUINT8 size)
         ooBData |= (output_oob[i] << 8*i);
     }
     OutputOobData = ooBData;
-    TRACE_M(TF_PROVISION,"Output OOB information for provisioner: %ld\n\r", ooBData);
+    TRACE_I(TF_PROVISION,"Output OOB information for provisioner: %ld\n\r", ooBData);
   #endif
 }
   
@@ -779,7 +779,7 @@ MOBLEUINT8* Appli_BleInputOOBAuthCb(MOBLEUINT8 size)
 #if defined (ENABLE_AUTH_TYPE_INPUT_OOB) && (ENABLE_SERIAL_INTERFACE)
 #if 0
   MOBLEUINT16 inputTimer = 0; 
-  TRACE_M(TF_PROVISION,"Input OOB information for provisioner-Size: %d\n\r", size);   
+  TRACE_I(TF_PROVISION,"Input OOB information for provisioner-Size: %d\n\r", size);   
   while(1)
   {
       Serial_InterfaceProcess();
@@ -796,7 +796,7 @@ MOBLEUINT8* Appli_BleInputOOBAuthCb(MOBLEUINT8 size)
   }
   return InputOobData; 
 #else
-  TRACE_M(TF_PROVISION,"Input OOB information for provisioner-Size: %d\n\r", size);
+  TRACE_I(TF_PROVISION,"Input OOB information for provisioner-Size: %d\n\r", size);
   
   /* Start the timer for Input OOB information timeout: 30s */
   HW_TS_Start(InputOOBTimeOut_Id, INPUT_OOB_TIMEOUT);
@@ -874,14 +874,14 @@ void Appli_CheckForUnprovision(void)
     {
       /* No GATT connection */
       BLEMesh_StopAdvScan();
-      HAL_Delay(10);
+      HAL_Delay(100);
 
       PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
-      TRACE_M(TF_PROVISION,"NVM erased\r\n");      
+      TRACE_I(TF_PROVISION,"NVM erased\r\n");      
       
       BLEMesh_Unprovision();
       AppliNvm_ClearModelState();     
-      TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
+      TRACE_I(TF_PROVISION,"Device is unprovisioned by application \r\n");      
       t = Clock_Time();
       while ((Clock_Time() - t) < FLASH_ERASE_TIME)
       {
@@ -921,30 +921,35 @@ void Appli_CheckForUnprovision(void)
 
 void Appli_Unprovision(void)
 {
-  MOBLEUINT8 PrvnDevKeyFlag = 0;
-  MOBLE_RESULT res = MOBLE_RESULT_FAIL;
+//  MOBLEUINT8 PrvnDevKeyFlag = 0;
+//  MOBLE_RESULT res = MOBLE_RESULT_FAIL;
 
   if(!ProxyFlag)
   {
     /* No GATT connection */
     BLEMesh_StopAdvScan();
-    HAL_Delay(10);
+    HAL_Delay(100);
     
     PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
-    TRACE_M(TF_PROVISION,"NVM erased\r\n");      
+    TRACE_I(TF_PROVISION,"NVM erased\r\n");      
   
+#if 0
 #if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
     Appli_ProvisionerInit();
     /* Scan the Provisioner data and Restore the address and num of elements */  
     res = AppliPrvnNvm_FactorySettingReset(&PrvnDevKeyFlag);
     if(res != MOBLE_RESULT_SUCCESS)
     {
-      TRACE_M(TF_PROVISION,"Reset with Factory Setting failed %d\r\n", res);      
+      TRACE_I(TF_PROVISION,"Reset with Factory Setting failed %d\r\n", res);      
     }
 #endif
-    TRACE_M(TF_PROVISION,"Device is unprovisioned by application \r\n");      
+    TRACE_I(TF_PROVISION,"Device is unprovisioned by application \r\n");      
 
-    BLEMesh_Process();
+    BLEMesh_Process(); /* to send ack of MESH Node Reset message */
+#endif
+
+    TRACE_I(TF_PROVISION,"Reset Device\r\n");      
+    HAL_Delay(100);
     NVIC_SystemReset();
   }
 }
@@ -972,7 +977,7 @@ int Appli_CheckBdMacAddr(void)
                                     bdaddr); 
   if(status != BLE_STATUS_SUCCESS) 
   {
-    TRACE_M(TF_PROVISION, "Failed to read Public Address %d", status);
+    TRACE_I(TF_PROVISION, "Failed to read Public Address %d", status);
   }
 
   Appli_GetMACfromUniqueNumber();
@@ -1002,7 +1007,7 @@ int Appli_CheckBdMacAddr(void)
                                     bdaddr); 
   if(status != BLE_STATUS_SUCCESS) 
   {
-    TRACE_M(TF_PROVISION, "Failed to read Random Address %d", status);
+    TRACE_I(TF_PROVISION, "Failed to read Random Address %d", status);
   }
 
   bdaddr[7] = GENERATE_STATIC_RANDOM_MAC;   
@@ -1097,11 +1102,23 @@ void BLEMesh_UnprovisionCallback(MOBLEUINT8 reason)
 {
   ProvisionFlag = 0; 
   
-  TRACE_I(TF_PROVISION,"Device is unprovisioned by provisioner \n\r");
+  BLEMesh_Process();
+  HAL_Delay(100);
 #if PB_ADV_SUPPORTED
   BLEMesh_SetUnprovisionedDevBeaconInterval(PBADV_UNPROV_DEV_BEACON_INTERVAL);
 #endif
-  AppliNvm_ClearModelState();
+  BLEMesh_StopAdvScan();
+  HAL_Delay(100);
+    
+  TRACE_I(TF_PROVISION,"Device is unprovisioned by application \r\n");      
+
+  PalNvmErase(PRVN_NVM_BASE_OFFSET, 4);
+  TRACE_I(TF_PROVISION,"NVM erased\r\n");      
+  TRACE_I(TF_PROVISION,"Reset Device\r\n");      
+
+  HAL_Delay(100);
+
+  NVIC_SystemReset();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1200,7 +1217,7 @@ MOBLEUINT16 BLEMesh_PvnrDataInputCallback(MOBLEUINT8* devKey,
   memcpy(&NodeUnderProvisionParam.NewProvNodeAppKey[0], appKey, APP_KEY_SIZE);
   
   /* Print the keys for user */
-  TRACE_M(TF_PROVISION,"Device Key: ");
+  TRACE_I(TF_PROVISION,"Device Key: ");
   for (MOBLEUINT8 count=0 ; count<DEVICE_KEY_SIZE; count++)
   {
     TRACE_I(TF_PROVISION,"%.2x ", NodeUnderProvisionParam.NewProvNodeDevKey[count]);
@@ -1208,7 +1225,7 @@ MOBLEUINT16 BLEMesh_PvnrDataInputCallback(MOBLEUINT8* devKey,
 
   TRACE_I(TF_PROVISION,"\r\n");
   
-  TRACE_M(TF_PROVISION,"App Key: ");
+  TRACE_I(TF_PROVISION,"App Key: ");
   for (MOBLEUINT8 count=0 ; count<DEVICE_KEY_SIZE; count++)
   {
     TRACE_I(TF_PROVISION,"%.2x ", NodeUnderProvisionParam.NewProvNodeAppKey[count]);
@@ -1217,7 +1234,7 @@ MOBLEUINT16 BLEMesh_PvnrDataInputCallback(MOBLEUINT8* devKey,
   TRACE_I(TF_PROVISION,"\r\n");
   
   newNodeAddressToProvision = GetNewAddressToProvision();
-  TRACE_M(TF_PROVISION,"Node Address Assigned = %d \r\n",newNodeAddressToProvision);
+  TRACE_I(TF_PROVISION,"Node Address Assigned = %d \r\n",newNodeAddressToProvision);
   
   /* Save Dev key and number of Elements  */   
   AppliPrvnNvm_SaveData(NodeUnderProvisionParam.NewProvNodeDevKey,
@@ -1242,14 +1259,17 @@ void Appli_StartProvisionerMode(MOBLEUINT8 mode)
   MOBLEUINT8 PrvnDevKeyFlag = mode;
      
   /* Initializes Mesh network parameters */
-  BLEMesh_CreateNetwork(prvsnrDevKey);
+  if(BLEMesh_CreateNetwork(prvsnrDevKey) != MOBLE_RESULT_SUCCESS)
+  {
+    TRACE_I(TF_PROVISION,"Failed to Create Network\r\n");
+  }
   
   /* Following functions help to Configure the Provisioner to default settings*/
   Start_SelfConfiguration();
 
   TRACE_I(TF_PROVISION,"Provisioner node \r\n");
   TRACE_I(TF_PROVISION,"Provisioner Dev Key:");
-   for(MOBLEUINT8 i=0;i<16;i++)
+  for(MOBLEUINT8 i=0;i<16;i++)
   {
     TRACE_I(TF_INIT,"[%02x] ",prvsnrDevKey[i]);
   }
@@ -1294,54 +1314,86 @@ void Appli_SelfConfigurationProcess(void)
     
   switch (self_config_state)
   {
-  case SELF_CONFIG_IDLE_STATE:
-   /* Nothing to do, just wait*/ 
-    return;
-    
-  case SELF_CONFIG_INIT_STATE:
-     /* This state is just to make a "NVM Process" to run once, because the 
-         function will exit after changing the state*/
-    self_config_state = SELF_CONFIG_START_STATE;
-    break;
-  
-  case SELF_CONFIG_START_STATE:
-    {
-      if(ApplicationSetNodeSigModelList())
+    case SELF_CONFIG_IDLE_STATE:
+     /* Nothing to do, just wait*/ 
+      break;
+      
+    case SELF_CONFIG_INIT_STATE:
       {
-        self_config_state = SELF_APPKEY_BIND_STATE;
+         /* This state is just to make a "NVM Process" to run once, because the 
+             function will exit after changing the state*/
+        self_config_state = SELF_CONFIG_START_STATE;
       }
-      else
+      break;
+    
+    case SELF_CONFIG_START_STATE:
       {
-        TRACE_I(TF_PROVISION,"The number of Models enabled exceed the limit of %d !\r\n",
-                APPLICATION_SIG_MODELS_MAX_COUNT);   
-        /* LED continuously blinks if library fails to initialize */
-        while (1)
+        if(ApplicationSetNodeSigModelList())
         {
-          Appli_LedBlink();
+          self_config_state = SELF_APPKEY_BIND_STATE;
+        }
+        else
+        {
+          TRACE_I(TF_PROVISION,"The number of Models enabled exceed the limit of %d !\r\n",
+                  APPLICATION_SIG_MODELS_MAX_COUNT);   
+          /* LED continuously blinks if library fails to initialize */
+          while (1)
+          {
+            Appli_LedBlink();
+          }
         }
       }
-    }
-   break;
+     break;
+      
+    case SELF_APPKEY_BIND_STATE:
+      {
+        if(Appli_ConfigClient_SelfDefaultAppKeyBind())
+        {
+          TRACE_I(TF_PROVISION,"Failed to Bind Default Application Key: retry\r\n");   
+          self_config_state = SELF_APPKEY_BIND_STATE;
+        }
+        else
+        {
+          TRACE_I(TF_PROVISION,"Bind Default Application Key\r\n");   
+          self_config_state = SELF_SUBSCRIBE_DEFAULT_STATE;
+        }
+      }
+      break;
     
-  case SELF_APPKEY_BIND_STATE:
-    Appli_ConfigClient_SelfDefaultAppKeyBind();
-    self_config_state = SELF_SUBSCRIBE_DEFAULT_STATE;
-    break;
-  
-  case SELF_SUBSCRIBE_DEFAULT_STATE:
-    AppliConfigClient_SelfSubscriptionSetDefault();
-    self_config_state = SELF_PUBLISH_DEFAULT_STATE;
-    break;
+    case SELF_SUBSCRIBE_DEFAULT_STATE:
+      {
+        if(AppliConfigClient_SelfSubscriptionSetDefault())
+        {
+          TRACE_I(TF_PROVISION,"Failed to Set Default Subscription: retry\r\n");   
+          self_config_state = SELF_SUBSCRIBE_DEFAULT_STATE;
+        }
+        else
+        {
+          TRACE_I(TF_PROVISION,"Set Default Subscription\r\n");   
+          self_config_state = SELF_PUBLISH_DEFAULT_STATE;
+        }
+      }
+      break;
 
-  case SELF_PUBLISH_DEFAULT_STATE:
-    AppliConfigClient_SelfPublicationSetDefault();
-    self_config_state = SELF_CONFIG_IDLE_STATE;
-    TRACE_I(TF_PROVISION,"**Provisioner Node configured**\r\n");   
-    break;
-    
-    
-  default:
-    break;
+    case SELF_PUBLISH_DEFAULT_STATE:
+      {
+        if(AppliConfigClient_SelfPublicationSetDefault())
+        {
+          TRACE_I(TF_PROVISION,"Failed to Set Default Publication: retry\r\n");   
+          self_config_state = SELF_PUBLISH_DEFAULT_STATE;
+        }
+        else
+        {
+          self_config_state = SELF_CONFIG_IDLE_STATE;
+          TRACE_I(TF_PROVISION,"Set Default Publication\r\n");   
+          TRACE_I(TF_PROVISION,"**Provisioner Node configured**\r\n");
+        }
+      }
+      break;
+      
+      
+    default:
+      break;
   }
 }
 
@@ -1403,7 +1455,7 @@ MOBLE_RESULT BLEMesh_ProvisionDevice(neighbor_params_t *unprovDeviceArray, MOBLE
 void BLEMesh_PbAdvLinkOpenCb(void)
 { 
   ProvisionFlag = 0;
-  TRACE_M(TF_PROVISION,"PB-ADV Link opened successfully \n\r");    
+  TRACE_I(TF_PROVISION,"PB-ADV Link opened successfully \n\r");    
 #if defined (ENABLE_PROVISIONER_FEATURE) || defined(DYNAMIC_PROVISIONER)
   SerialPrvn_ProvisioningStatusUpdateCb(MOBLE_TRUE, 0);
 #endif
@@ -1423,7 +1475,7 @@ void BLEMesh_PbAdvLinkOpenCb(void)
 */ 
 void BLEMesh_PbAdvLinkCloseCb(void)
 {
-  TRACE_M(TF_PROVISION,"PB-ADV Link Closed successfully \n\r");   
+  TRACE_I(TF_PROVISION,"PB-ADV Link Closed successfully \n\r");   
   /* Turn Off Red LED*/
 #if LOW_POWER_FEATURE
   /* do nothing */
@@ -1496,13 +1548,13 @@ void BLEMesh_FnFriendshipEstablishedCallback(MOBLE_ADDRESS lpnAddress,
                                              MOBLEUINT8 lpnNumElements,
                                              MOBLE_ADDRESS lpnPrevFriendAddress)
 { 
-  TRACE_M(TF_LPN_FRND,"Friendship established. Low power node address 0x%.4X \r\n", lpnAddress);
-  TRACE_M(TF_LPN_FRND,"Low power node receive delay %dms \r\n", lpnReceiveDelay);
-  TRACE_M(TF_LPN_FRND,"Low power node poll timeout %ldms \r\n", lpnPollTimeout*100);
-  TRACE_M(TF_LPN_FRND,"Low power node number of elements %d \r\n", lpnNumElements);
+  TRACE_I(TF_LPN_FRND,"Friendship established with low power node address 0x%.4X \r\n", lpnAddress);
+  TRACE_I(TF_LPN_FRND,"Low power node receive delay %dms \r\n", lpnReceiveDelay);
+  TRACE_I(TF_LPN_FRND,"Low power node poll timeout %ldms \r\n", lpnPollTimeout*100);
+  TRACE_I(TF_LPN_FRND,"Low power node number of elements %d \r\n", lpnNumElements);
   if (lpnPrevFriendAddress != MOBLE_ADDRESS_UNASSIGNED)
   {
-    TRACE_M(TF_LPN_FRND,"Low power node previous friend address 0x%.4X \r\n", lpnPrevFriendAddress);
+    TRACE_I(TF_LPN_FRND,"Low power node previous friend address 0x%.4X \r\n", lpnPrevFriendAddress);
   }
 }
 
@@ -1518,21 +1570,21 @@ void BLEMesh_FnFriendshipEstablishedCallback(MOBLE_ADDRESS lpnAddress,
 */
 void BLEMesh_FnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS lpnAddress)
 {
-  TRACE_M(TF_LPN_FRND,"Friendship cleared. Low power node address 0x%.4X \r\n", lpnAddress);
+  TRACE_I(TF_LPN_FRND,"Friendship cleared. Low power node address 0x%.4X \r\n", lpnAddress);
   
   switch(reason)
   {
   case FN_CLEARED_REPEAT_REQUEST: 
-    TRACE_M(TF_LPN_FRND,"Reason: New friend request received from existing low power node \r\n");
+    TRACE_I(TF_LPN_FRND,"Reason: New friend request received from existing low power node \r\n");
     break;
   case FN_CLEARED_POLL_TIMEOUT:
-    TRACE_M(TF_LPN_FRND,"Reason: Low power node poll timeout occurred \r\n");
+    TRACE_I(TF_LPN_FRND,"Reason: Low power node poll timeout occurred \r\n");
     break;
   case FN_CLEARED_FRIEND_CLEAR:
-    TRACE_M(TF_LPN_FRND,"Reason: Friend clear received \r\n");
+    TRACE_I(TF_LPN_FRND,"Reason: Friend clear received \r\n");
     break;
   default:
-    TRACE_M(TF_LPN_FRND,"Reason: Invalid \r\n");
+    TRACE_I(TF_LPN_FRND,"Reason: Invalid \r\n");
     break;
   }
 }
@@ -1545,7 +1597,7 @@ void BLEMesh_FnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS lpnAdd
 void BLEMesh_LpnFriendshipEstablishedCallback(MOBLE_ADDRESS fnAddress)
 {
   /* Friendship established */
-  TRACE_M(TF_LPN_FRND,"Friend node responding, friendship established.\r\n");
+  TRACE_I(TF_LPN_FRND,"Friend node responding, friendship established.\r\n");
 }
 
 /**
@@ -1557,15 +1609,15 @@ void BLEMesh_LpnFriendshipEstablishedCallback(MOBLE_ADDRESS fnAddress)
 */
 void BLEMesh_LpnFriendshipClearedCallback(MOBLEUINT8 reason, MOBLE_ADDRESS fnAddress)
 { 
-  TRACE_M(TF_LPN_FRND,"Friendship cleared. Friend node address 0x%.4x \r\n", fnAddress);
+  TRACE_I(TF_LPN_FRND,"Friendship cleared. Friend node address 0x%.4x \r\n", fnAddress);
   
   if (reason == LPN_CLEARED_NO_RESPONSE)
   {
-    TRACE_M(TF_LPN_FRND,"Reason: Friend node not responding \r\n");
+    TRACE_I(TF_LPN_FRND,"Reason: Friend node not responding \r\n");
   }
   else
   {
-    TRACE_M(TF_LPN_FRND,"Reason: Invalid \r\n");
+    TRACE_I(TF_LPN_FRND,"Reason: Invalid \r\n");
   } 
 }
 
@@ -1585,31 +1637,31 @@ void BLEMesh_NeighborAppearedCallback(const MOBLEUINT8* bdAddr,
                                           MOBLE_ADDRESS networkAddress,
                                           MOBLEINT8 rssi)
 {
-  TRACE_M(TF_NEIGHBOUR,"New neighbor appeared. Neighbor MAC address:");
+  TRACE_I(TF_NEIGHBOUR,"New neighbor appeared. Neighbor MAC address:");
   
   for (MOBLEUINT8 count=0 ; count<6; count++)
   {
-    TRACE_M(TF_NEIGHBOUR,"%.2x ", bdAddr[count]);
+    TRACE_I(TF_NEIGHBOUR,"%.2x ", bdAddr[count]);
   }
   
   if (provisioned == MOBLE_TRUE)
   {
-    TRACE_M(TF_NEIGHBOUR,"-> Provisioned node. \n\r");
+    TRACE_I(TF_NEIGHBOUR,"-> Provisioned node. \n\r");
   }
   else
   {
-    TRACE_M(TF_NEIGHBOUR,"-> Unprovisioned device. \n\r");
+    TRACE_I(TF_NEIGHBOUR,"-> Unprovisioned device. \n\r");
   }
   
-  TRACE_M(TF_NEIGHBOUR,"rssi: %d. ", rssi);
+  TRACE_I(TF_NEIGHBOUR,"rssi: %d. ", rssi);
   
   if (networkAddress != MOBLE_ADDRESS_UNASSIGNED)
   {
-    TRACE_M(TF_NEIGHBOUR,"Network address: 0x%.4x\n\r", networkAddress);
+    TRACE_I(TF_NEIGHBOUR,"Network address: 0x%.4x\n\r", networkAddress);
   }
   else
   {
-    TRACE_M(TF_NEIGHBOUR,"Network address not available\n\r");
+    TRACE_I(TF_NEIGHBOUR,"Network address not available\n\r");
   }
 
   for (MOBLEUINT8 i=0; i<16; i++)
@@ -1620,18 +1672,18 @@ void BLEMesh_NeighborAppearedCallback(const MOBLEUINT8* bdAddr,
     }
     else
     {
-      TRACE_M(TF_NEIGHBOUR,"UUID: ");
+      TRACE_I(TF_NEIGHBOUR,"UUID: ");
       
       for (MOBLEUINT8 count=0 ; count<16; count++)
       {
-        TRACE_M(TF_NEIGHBOUR,"%.2x ", uuid[count]);
+        TRACE_I(TF_NEIGHBOUR,"%.2x ", uuid[count]);
       }
       
       break;
     }
   }
   
-  TRACE_M(TF_NEIGHBOUR,"\n\r");
+  TRACE_I(TF_NEIGHBOUR,"\n\r");
 }
 
 /** 
@@ -1650,7 +1702,7 @@ void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
                                        MOBLE_ADDRESS networkAddress,
                                        MOBLEINT8 rssi)
 {
-  TRACE_M(TF_NEIGHBOUR,"Existing neighbor refreshed. Neighbor MAC address:");
+  TRACE_I(TF_NEIGHBOUR,"Existing neighbor refreshed. Neighbor MAC address:");
   
   for (MOBLEUINT8 count=0 ; count<6; count++)
   {
@@ -1660,22 +1712,22 @@ void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
   
   if (provisioned == MOBLE_TRUE)
   {
-    TRACE_M(TF_NEIGHBOUR,"-> Provisioned node. \n\r");
+    TRACE_I(TF_NEIGHBOUR,"-> Provisioned node. \n\r");
   }
   else
   {
-    TRACE_M(TF_NEIGHBOUR,"-> Unprovisioned device. \n\r");
+    TRACE_I(TF_NEIGHBOUR,"-> Unprovisioned device. \n\r");
   }
   
-  TRACE_M(TF_NEIGHBOUR,"rssi: %d. \n", rssi);
+  TRACE_I(TF_NEIGHBOUR,"rssi: %d. \n", rssi);
   
   if (networkAddress != MOBLE_ADDRESS_UNASSIGNED)
   {
-    TRACE_M(TF_NEIGHBOUR,"Network address: 0x%.4x\n\r", networkAddress);
+    TRACE_I(TF_NEIGHBOUR,"Network address: 0x%.4x\n\r", networkAddress);
   }
   else
   {
-    TRACE_M(TF_NEIGHBOUR,"Network address not available\n\r");
+    TRACE_I(TF_NEIGHBOUR,"Network address not available\n\r");
   }
   
   for (MOBLEUINT8 i=0; i<16; i++)
@@ -1686,7 +1738,7 @@ void BLEMesh_NeighborRefreshedCallback(const MOBLEUINT8* bdAddr,
     }
     else
     {
-      TRACE_M(TF_NEIGHBOUR,"UUID: ");
+      TRACE_I(TF_NEIGHBOUR,"UUID: ");
       
       for (MOBLEUINT8 count=0 ; count<16; count++)
       {
@@ -1722,14 +1774,14 @@ void BLEMesh_CustomBeaconReceivedCallback(const MOBLEUINT8* bdAddr,
   if (length < 2)
   {
     result = MOBLE_RESULT_FAIL;
-    TRACE_M(TF_BEACON, "Message is too small \r\n");
+    TRACE_I(TF_BEACON, "Message is too small \r\n");
   }
   
   if (result == MOBLE_RESULT_SUCCESS)
   {
     if (data[1] == CUSTOM_BEACON_AD_TYPE)
     {
-      TRACE_M(TF_BEACON, "Message length(%d), rssi(%d) \r\n", length, rssi);
+      TRACE_I(TF_BEACON, "Message length(%d), rssi(%d) \r\n", length, rssi);
   
       if (TF_BEACON == 1)
       {

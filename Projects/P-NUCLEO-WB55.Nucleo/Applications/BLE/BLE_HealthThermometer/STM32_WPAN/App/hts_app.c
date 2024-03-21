@@ -88,17 +88,11 @@ static int8_t HTS_CurrentIndex, HTS_OldIndex;
 
 /* Private function prototypes -----------------------------------------------*/
 static void HTSAPP_Update_TimeStamp(void);
-static uint32_t HTSAPP_Read_RTC_SSR_SS ( void );
 /* USER CODE BEGIN PFP */
-
+static uint32_t HTSAPP_Get_Pseudo_Random_Sensor_Value ( void );
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
-static uint32_t HTSAPP_Read_RTC_SSR_SS ( void )
-{
-  return ((uint32_t)(READ_BIT(RTC->SSR, RTC_SSR_SS)));
-}
-
 static void HTSAPP_UpdateMeasurement( void )
 {
 /* USER CODE BEGIN HTSAPP_UpdateMeasurement */
@@ -442,10 +436,10 @@ void HTSAPP_Measurement(void)
     measurement = HTSAPP_Context.IntermediateTemperatureChar.MeasurementValue;
   else
   {
-    measurement = ((HTSAPP_Read_RTC_SSR_SS()) & 0x03) + 37;
+    measurement = ((HTSAPP_Get_Pseudo_Random_Sensor_Value()) & 0x03) + 37;
   }  
 #else
-  measurement = ((HTSAPP_Read_RTC_SSR_SS()) & 0x03) + 37;
+  measurement = ((HTSAPP_Get_Pseudo_Random_Sensor_Value()) & 0x03) + 37;
 #endif
 
   HTSAPP_Context.TemperatureMeasurementChar.MeasurementValue = measurement;
@@ -493,7 +487,7 @@ void HTSAPP_IntermediateTemperature(void)
 /* USER CODE BEGIN HTSAPP_IntermediateTemperature */
   #if(BLE_CFG_HTS_INTERMEDIATE_TEMPERATURE != 0)
   uint32_t measurement;
-  measurement = ((HTSAPP_Read_RTC_SSR_SS()) & 0x03) + 37;
+  measurement = ((HTSAPP_Get_Pseudo_Random_Sensor_Value()) & 0x03) + 37;
 
   HTSAPP_Context.IntermediateTemperatureChar.MeasurementValue = measurement;
   
@@ -575,5 +569,8 @@ void HTSAPP_Profile_UpdateChar(void)
 }
 
 /* USER CODE BEGIN FD */
-
+static uint32_t HTSAPP_Get_Pseudo_Random_Sensor_Value ( void )
+{
+  return ((uint32_t)(READ_BIT(RTC->SSR, RTC_SSR_SS)));
+}
 /* USER CODE END FD */

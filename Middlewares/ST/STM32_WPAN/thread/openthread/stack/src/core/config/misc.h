@@ -78,6 +78,19 @@
 #endif
 
 /**
+ * @def OPENTHREAD_CONFIG_DEVICE_POWER_SUPPLY
+ *
+ * Specifies the default device power supply config. This config MUST use values from `otPowerSupply` enumeration.
+ *
+ * Device manufacturer can use this config to set the power supply config used by the device. This is then used as part
+ * of default `otDeviceProperties` to determine the Leader Weight used by the device.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_DEVICE_POWER_SUPPLY
+#define OPENTHREAD_CONFIG_DEVICE_POWER_SUPPLY OT_POWER_SUPPLY_EXTERNAL
+#endif
+
+/**
  * @def OPENTHREAD_CONFIG_ECDSA_ENABLE
  *
  * Define to 1 to enable ECDSA support.
@@ -90,7 +103,7 @@
 /**
  * @def OPENTHREAD_CONFIG_DETERMINISTIC_ECDSA_ENABLE
  *
- * Define to 1 to generate ECDSA signatures determinsitically
+ * Define to 1 to generate ECDSA signatures deterministically
  * according to RFC 6979 instead of randomly.
  *
  */
@@ -105,7 +118,7 @@
  *
  */
 #ifndef OPENTHREAD_CONFIG_UPTIME_ENABLE
-#define OPENTHREAD_CONFIG_UPTIME_ENABLE 0
+#define OPENTHREAD_CONFIG_UPTIME_ENABLE OPENTHREAD_FTD
 #endif
 
 /**
@@ -181,7 +194,7 @@
  * to that on 32bit system. As a result, the first message always have some
  * bytes left for small packets.
  *
- * Some configuration options can increase the buffer size requirments, including
+ * Some configuration options can increase the buffer size requirements, including
  * OPENTHREAD_CONFIG_MLE_MAX_CHILDREN and OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE.
  *
  */
@@ -197,32 +210,6 @@
  */
 #ifndef OPENTHREAD_CONFIG_DEFAULT_TRANSMIT_POWER
 #define OPENTHREAD_CONFIG_DEFAULT_TRANSMIT_POWER 0
-#endif
-
-/**
- * @def OPENTHREAD_CONFIG_DROP_MESSAGE_ON_FRAGMENT_TX_FAILURE
- *
- * Define as 1 for OpenThread to drop a message (and not send any remaining fragments of the message) if all transmit
- * attempts fail for a fragment of the message. For a direct transmission, a failure occurs after all MAC transmission
- * attempts for a given fragment are unsuccessful. For an indirect transmission, a failure occurs after all data poll
- * triggered transmission attempts for a given fragment fail.
- *
- * If set to zero (disabled), OpenThread will attempt to send subsequent fragments, whether or not all transmission
- * attempts fail for a given fragment.
- *
- */
-#ifndef OPENTHREAD_CONFIG_DROP_MESSAGE_ON_FRAGMENT_TX_FAILURE
-#define OPENTHREAD_CONFIG_DROP_MESSAGE_ON_FRAGMENT_TX_FAILURE 1
-#endif
-
-/**
- * @def OPENTHREAD_CONFIG_6LOWPAN_REASSEMBLY_TIMEOUT
- *
- * The reassembly timeout between 6LoWPAN fragments in seconds.
- *
- */
-#ifndef OPENTHREAD_CONFIG_6LOWPAN_REASSEMBLY_TIMEOUT
-#define OPENTHREAD_CONFIG_6LOWPAN_REASSEMBLY_TIMEOUT 2
 #endif
 
 /**
@@ -258,9 +245,9 @@
 /**
  * @def OPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS
  *
- * Define as 1 to enable bultin-mbedtls.
+ * Define as 1 to enable builtin-mbedtls.
  *
- * Note that the OPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS determines whether to use bultin-mbedtls as well as
+ * Note that the OPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS determines whether to use builtin-mbedtls as well as
  * whether to manage mbedTLS internally, such as memory allocation and debug.
  *
  */
@@ -271,7 +258,7 @@
 /**
  * @def OPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS_MANAGEMENT
  *
- * Define as 1 to enable bultin mbedtls management.
+ * Define as 1 to enable builtin mbedtls management.
  *
  * OPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS_MANAGEMENT determines whether to manage mbedTLS memory
  * allocation and debug config internally.  If not configured, the default is to enable builtin
@@ -439,94 +426,6 @@
 #endif
 
 /**
- * @def OPENTHREAD_CONFIG_NUM_FRAGMENT_PRIORITY_ENTRIES
- *
- * The number of fragment priority entries.
- *
- */
-#ifndef OPENTHREAD_CONFIG_NUM_FRAGMENT_PRIORITY_ENTRIES
-#define OPENTHREAD_CONFIG_NUM_FRAGMENT_PRIORITY_ENTRIES 8
-#endif
-
-/**
- * @def OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_ENABLE
- *
- * Define to 1 to enable delay-aware queue management for the send queue.
- *
- * When enabled device will monitor time-in-queue of messages in the direct tx queue and if the wait time is lager than
- * specified thresholds it may update ECN flag (if message indicates it is ECN-capable) or drop the message.
- *
- */
-#ifndef OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_ENABLE
-#define OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_ENABLE \
-    (OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_3)
-#endif
-
-/**
- * @OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_MARK_ECN_INTERVAL
- *
- * Specifies the time-in-queue threshold interval in milliseconds to mark ECN on a message if it is ECN-capable or
- * drop the message if not ECN-capable.
- *
- */
-#ifndef OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_MARK_ECN_INTERVAL
-#define OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_MARK_ECN_INTERVAL 500
-#endif
-
-/**
- * @OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_DROP_MSG_INTERVAL
- *
- * Specifies the time-in-queue threshold interval in milliseconds to drop a message.
- *
- */
-#ifndef OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_DROP_MSG_INTERVAL
-#define OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_DROP_MSG_INTERVAL 1000
-#endif
-
-/**
- * OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_FRAG_TAG_RETAIN_TIME
- *
- * Specifies the max retain time in seconds of a mesh header fragmentation tag entry in the list.
- *
- * The entry in list is used to track whether an earlier fragment of same message was dropped by the router and if so
- * the next fragments are also dropped. The entry is removed once last fragment is processed or after the retain time
- * specified by this config parameter expires.
- *
- */
-#ifndef OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_FRAG_TAG_RETAIN_TIME
-#define OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_FRAG_TAG_RETAIN_TIME (4 * 60) // 4 minutes
-#endif
-
-/**
- * OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_FRAG_TAG_ENTRY_LIST_SIZE
- *
- * Specifies the number of mesh header fragmentation tag entries in the list for delay-aware queue management.
- *
- * The list is used to track whether an earlier fragment of same message was dropped by the router and if so the next
- * fragments are also dropped.
- *
- */
-#ifndef OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_FRAG_TAG_ENTRY_LIST_SIZE
-#define OPENTHREAD_CONFIG_DELAY_AWARE_QUEUE_MANAGEMENT_FRAG_TAG_ENTRY_LIST_SIZE 16
-#endif
-
-/**
- * @def OPENTHREAD_CONFIG_MAX_FRAMES_IN_DIRECT_TX_QUEUE
- *
- * Specifies the maximum number of frames in direct tx queue before new direct tx messages are dropped.
- *
- * If set to zero then the behavior is disabled, i.e., no check is performed on tx queue length.
- *
- */
-#ifndef OPENTHREAD_CONFIG_MAX_FRAMES_IN_DIRECT_TX_QUEUE
-#if (OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_3)
-#define OPENTHREAD_CONFIG_MAX_FRAMES_IN_DIRECT_TX_QUEUE 100
-#else
-#define OPENTHREAD_CONFIG_MAX_FRAMES_IN_DIRECT_TX_QUEUE 0
-#endif
-#endif
-
-/**
  * @def OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_SUPPORT
  *
  * Define to 1 to support proprietary radio configurations defined by platform.
@@ -582,16 +481,6 @@
 #endif // OPENTHREAD_CONFIG_DEFAULT_CHANNEL
 
 /**
- * @def OPENTHREAD_CONFIG_LEGACY_ENABLE
- *
- * Define to 1 to enable legacy network support.
- *
- */
-#ifndef OPENTHREAD_CONFIG_LEGACY_ENABLE
-#define OPENTHREAD_CONFIG_LEGACY_ENABLE 0
-#endif
-
-/**
  * @def OPENTHREAD_CONFIG_OTNS_ENABLE
  *
  * Define to 1 to enable OTNS interactions.
@@ -639,6 +528,18 @@
  */
 #ifndef OPENTHREAD_CONFIG_ALLOW_EMPTY_NETWORK_NAME
 #define OPENTHREAD_CONFIG_ALLOW_EMPTY_NETWORK_NAME 0
+#endif
+
+/**
+ * @def OPENTHREAD_CONFIG_OPERATIONAL_DATASET_AUTO_INIT
+ *
+ * Define as 1 to enable support for locally initializing an Active Operational Dataset.
+ *
+ * @note This functionality is deprecated and not recommended.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_OPERATIONAL_DATASET_AUTO_INIT
+#define OPENTHREAD_CONFIG_OPERATIONAL_DATASET_AUTO_INIT 0
 #endif
 
 #endif // CONFIG_MISC_H_

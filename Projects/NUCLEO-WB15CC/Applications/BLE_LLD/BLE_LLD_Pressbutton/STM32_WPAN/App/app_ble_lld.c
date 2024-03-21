@@ -202,6 +202,28 @@ void CheckWirelessFirmwareInfo(void)
   }
 }
 
+/* USER CODE BEGIN FD*/
+/*
+void APP_BLE_Key_Button1_Action(void)
+{
+  //P2PS_APP_SW1_Button_Action();
+}
+
+void APP_BLE_Key_Button2_Action(void)
+{
+#if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )    
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_CONN_UPDATE_REG_ID, CFG_SCH_PRIO_0);
+#endif
+  
+  return;
+}
+
+void APP_BLE_Key_Button3_Action(void)
+{
+}
+*/
+/* USER CODE END FD*/
+
 /*************************************************************
  *
  * LOCAL FUNCTIONS
@@ -246,9 +268,11 @@ void APP_BLE_LLD_DeInit_UART(void)
 
 static void uartRxStart(void)
 {
+#ifdef CFG_UART  
   if (HW_UART_Receive_IT(CFG_UART, (uint8_t *)&uartRxBuf, 1, uartRxCpltCallback) != hw_uart_ok){
     APP_DBG("ERROR returned by HW_UART_Receive_IT()");
   }
+#endif  
 }
 
 void APP_BLE_LLD_uartRxStart(void(*callback)(char))
@@ -301,6 +325,7 @@ void uartWriteRaw(const char *str)
 // must be called inside critical section
 // loop on itself via the UART callback
 static void uartTxSendChunk(void){
+#ifdef CFG_UART  
   static char hwBuf[UART_TX_CHUNK_SIZE];
   char *charPtr;
   uint32_t count = 0;
@@ -320,6 +345,7 @@ static void uartTxSendChunk(void){
   }else{
     txBusy = false;
   }
+#endif  
 }
 
 static void m0CmdProcess(void)

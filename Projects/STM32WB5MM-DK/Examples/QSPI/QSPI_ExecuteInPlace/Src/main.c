@@ -47,7 +47,7 @@ DMA_HandleTypeDef hdma_quadspi;
 /* USER CODE BEGIN PV */
 aPwmLedGsData_TypeDef aPwmLedGsData;
 
-#if defined(__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
 extern uint32_t Load$$QSPI$$Base;
 extern uint32_t Load$$QSPI$$Length;
 #elif defined(__ICCARM__)
@@ -139,7 +139,7 @@ int main(void)
   sCommand.DdrMode           = QSPI_DDR_MODE_DISABLE;
   sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
-#if defined(__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   max_size = (uint32_t)(&Load$$QSPI$$Length);
 #elif defined(__ICCARM__)
   max_size = __section_size(".qspi_init");
@@ -184,7 +184,7 @@ int main(void)
           /* Configure automatic polling mode to wait for end of erase ------- */
           QSPI_AutoPollingMemReady(&hqspi);
 
-#if defined(__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
           flash_addr = (uint8_t *)(&Load$$QSPI$$Base);
 #elif defined(__ICCARM__)
           flash_addr = (uint8_t *)(__section_begin(".qspi_init"));
@@ -566,9 +566,9 @@ static void QSPI_AutoPollingMemReady(QSPI_HandleTypeDef *hqspi)
   * @param  None
   * @retval None
   */
-#if defined(__CC_ARM)
-#pragma arm section code = ".qspi"
-#pragma no_inline
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
+__attribute__((section(".qspi")))
+__attribute__((noinline))
 static void GpioToggle(void)
 #elif defined(__ICCARM__)
 static void GpioToggle(void) @ ".qspi"
@@ -601,9 +601,6 @@ static void __attribute__((section(".qspi"), noinline)) GpioToggle(void)
   /* Insert delay 100 ms */
   HAL_Delay(100);
 }
-#if defined(__CC_ARM)
-#pragma arm section code
-#endif
 
 /* USER CODE END 4 */
 

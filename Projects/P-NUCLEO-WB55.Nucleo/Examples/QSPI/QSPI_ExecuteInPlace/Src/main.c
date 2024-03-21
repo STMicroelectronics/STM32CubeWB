@@ -50,7 +50,7 @@ UART_HandleTypeDef huart1;
 PCD_HandleTypeDef hpcd_USB_FS;
 
 /* USER CODE BEGIN PV */
-#if defined(__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
 extern uint32_t Load$$QSPI$$Base;
 extern uint32_t Load$$QSPI$$Length;
 #elif defined(__ICCARM__)
@@ -139,7 +139,7 @@ int main(void)
   flash_addr = 0;
   size = 0;
 
-#if defined(__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
   max_size = (uint32_t)(&Load$$QSPI$$Length);
 #elif defined(__ICCARM__)
   max_size = __section_size(".qspi_init");
@@ -184,7 +184,7 @@ int main(void)
           /* Configure automatic polling mode to wait for end of erase ------- */
           QSPI_AutoPollingMemReady(&hqspi);
 
-#if defined(__CC_ARM)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
           flash_addr = (uint8_t *)(&Load$$QSPI$$Base);
 #elif defined(__ICCARM__)
           flash_addr = (uint8_t *)(__section_begin(".qspi_init"));

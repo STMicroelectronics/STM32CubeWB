@@ -56,7 +56,14 @@ extern "C" {
 /* Exported functions ---------------------------------------------*/
   void APPE_Init( void );
 /* USER CODE BEGIN EF */
-
+  void Led_Init( void );
+  void Button_Init( void );
+  
+  void Init_Smps(void);
+ 
+  void SystemPower_Config( void ); 
+  void Init_Debug( void );
+  void RxUART_Init(void);
 /* USER CODE END EF */
 
 #ifdef __cplusplus

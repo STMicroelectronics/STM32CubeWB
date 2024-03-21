@@ -1,4 +1,3 @@
-/* USER CODE BEGIN Header */
 /*
  * FreeRTOS Kernel V10.4.1
  * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
@@ -26,23 +25,22 @@
  */
 
 /**
-  ******************************************************************************
-  * @file    stm32_mm.c
-  * @author  MCD Application Team
-  * @brief   Memory Manager Utility
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
+ ******************************************************************************
+ * @file    stm32_mm.c
+ * @author  MCD Application Team
+ * @brief   Memory Manager Utility
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2018-2021 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 
 /*
  * A sample implementation of pvPortMalloc() and vPortFree() that combines
@@ -110,7 +108,7 @@
 #undef xTaskResumeAll
 #define xTaskResumeAll()  (0)
 
-#endif
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
 
 /* Block sizes must not get too small. */
 #define heapMINIMUM_BLOCK_SIZE    ( ( size_t ) ( xHeapStructSize << 1 ) )
@@ -128,7 +126,7 @@
 #else
     PRIVILEGED_DATA static uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
 #endif /* configAPPLICATION_ALLOCATED_HEAP */
-#endif
+#endif  /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
 
 /* Define the linked list structure.  This is used to link free blocks in order
  * of their memory address. */
@@ -137,6 +135,11 @@ typedef struct A_BLOCK_LINK
     struct A_BLOCK_LINK * pxNextFreeBlock; /*<< The next free block in the list. */
     size_t xBlockSize;                     /*<< The size of the free block. */
 } BlockLink_t;
+
+#if ((KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4))
+static BlockLink_t * pFirstValidAddress;
+static BlockLink_t * pLastValidAddress;
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4) */
 
 /*-----------------------------------------------------------*/
 
@@ -154,7 +157,11 @@ static void prvInsertBlockIntoFreeList( BlockLink_t * pxBlockToInsert ) PRIVILEG
  */
 #if (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0)
 static void prvHeapInit( void ) PRIVILEGED_FUNCTION;
-#endif
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
+
+#if ((KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4))
+static void CheckIntegrity( BlockLink_t * pAddressToCheck );
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4) */
 
 /*-----------------------------------------------------------*/
 
@@ -183,7 +190,7 @@ PRIVILEGED_DATA static size_t xBlockAllocatedBit = 0;
 void * UTIL_MM_GetBuffer( size_t xWantedSize )
 #else
 void * pvPortMalloc( size_t xWantedSize )
-#endif
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) */
 {
     BlockLink_t * pxBlock, * pxPreviousBlock, * pxNewBlockLink;
     void * pvReturn = NULL;
@@ -198,7 +205,7 @@ void * pvPortMalloc( size_t xWantedSize )
             prvHeapInit();
         }
         else
-#endif
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
         {
             mtCOVERAGE_TEST_MARKER();
         }
@@ -250,6 +257,10 @@ void * pvPortMalloc( size_t xWantedSize )
                  * was	not found. */
                 if( pxBlock != pxEnd )
                 {
+#if ((KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4))
+                    CheckIntegrity( pxBlock );
+                    CheckIntegrity( pxPreviousBlock );
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4) */
                     /* Return the memory space pointed to - jumping over the
                      * BlockLink_t structure at its start. */
                     pvReturn = ( void * ) ( ( ( uint8_t * ) pxPreviousBlock->pxNextFreeBlock ) + xHeapStructSize );
@@ -269,6 +280,9 @@ void * pvPortMalloc( size_t xWantedSize )
                         pxNewBlockLink = ( void * ) ( ( ( uint8_t * ) pxBlock ) + xWantedSize );
                         configASSERT( ( ( ( size_t ) pxNewBlockLink ) & portBYTE_ALIGNMENT_MASK ) == 0 );
 
+#if ((KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4))
+                        CheckIntegrity( pxNewBlockLink );
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4) */
                         /* Calculate the sizes of two blocks split from the
                          * single block. */
                         pxNewBlockLink->xBlockSize = pxBlock->xBlockSize - xWantedSize;
@@ -340,7 +354,7 @@ void * pvPortMalloc( size_t xWantedSize )
 void UTIL_MM_ReleaseBuffer( void * pv )
 #else
 void vPortFree( void * pv )
-#endif
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) */
 {
     uint8_t * puc = ( uint8_t * ) pv;
     BlockLink_t * pxLink;
@@ -354,6 +368,9 @@ void vPortFree( void * pv )
         /* This casting is to keep the compiler from issuing warnings. */
         pxLink = ( void * ) puc;
 
+#if ((KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4))
+        CheckIntegrity( pxLink );
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4) */
         /* Check the block is actually allocated. */
         configASSERT( ( pxLink->xBlockSize & xBlockAllocatedBit ) != 0 );
         configASSERT( pxLink->pxNextFreeBlock == NULL );
@@ -406,10 +423,13 @@ void vPortInitialiseBlocks( void )
     /* This just exists to keep the linker quiet. */
 }
 /*-----------------------------------------------------------*/
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
+
+#if (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0)
 static void prvHeapInit( void ) /* PRIVILEGED_FUNCTION */
 #else
 void UTIL_MM_Init(uint8_t *p_pool, uint32_t pool_size)
-#endif
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
 {
     BlockLink_t * pxFirstFreeBlock;
     uint8_t * pucAlignedHeap;
@@ -419,16 +439,29 @@ void UTIL_MM_Init(uint8_t *p_pool, uint32_t pool_size)
 #else
     size_t xTotalHeapSize;
     xTotalHeapSize = pool_size;
-#endif
+
+#if (__CORTEX_M < 4)
+    pFirstValidAddress = (BlockLink_t *) p_pool;
+    pLastValidAddress = (BlockLink_t *)((uint32_t)p_pool + pool_size - 1 - sizeof( BlockLink_t ));
+#endif /* (__CORTEX_M < 4) */
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
 
     /* Ensure the heap starts on a correctly aligned boundary. */
+#if (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0)
+    uxAddress = ( size_t ) ucHeap;
+#else
     uxAddress = ( size_t ) p_pool;
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
 
     if( ( uxAddress & portBYTE_ALIGNMENT_MASK ) != 0 )
     {
         uxAddress += ( portBYTE_ALIGNMENT - 1 );
         uxAddress &= ~( ( size_t ) portBYTE_ALIGNMENT_MASK );
+#if (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0)
+        xTotalHeapSize -= uxAddress - ( size_t ) ucHeap;
+#else
         xTotalHeapSize -= uxAddress - ( size_t ) p_pool;
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
     }
 
     pucAlignedHeap = ( uint8_t * ) uxAddress;
@@ -474,6 +507,10 @@ static void prvInsertBlockIntoFreeList( BlockLink_t * pxBlockToInsert ) /* PRIVI
         /* Nothing to do here, just iterate to the right position. */
     }
 
+#if ((KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4))
+    CheckIntegrity( pxIterator );
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4) */
+
     /* Do the block being inserted, and the block it is being inserted after
      * make a contiguous block of memory? */
     puc = ( uint8_t * ) pxIterator;
@@ -487,6 +524,10 @@ static void prvInsertBlockIntoFreeList( BlockLink_t * pxBlockToInsert ) /* PRIVI
     {
         mtCOVERAGE_TEST_MARKER();
     }
+
+#if ((KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4))
+    CheckIntegrity( pxBlockToInsert );
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4) */
 
     /* Do the block being inserted, and the block it is being inserted before
      * make a contiguous block of memory? */
@@ -575,4 +616,34 @@ void vPortGetHeapStats( HeapStats_t * pxHeapStats )
     }
     taskEXIT_CRITICAL();
 }
-#endif
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS != 0) */
+
+#if ((KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4))
+/**
+ * When the pool of memory can be written by a non secure firmware, it may corrupt the metadata
+ * used by the memory manager to make the secure firmware to write at non expected address
+ * The purpose of this API is to make sure the secure firmware writes the metada in a location
+ * within the memory pool.
+ * There is no objective to ensure the memory will keep running fine as anyway the meta data
+ * are corrupted. The only goal is to ensure the secure firmware is not writing data at an
+ * address that may break the security.
+ */
+static void CheckIntegrity( BlockLink_t * pAddressToCheck )
+{
+  /**
+   * In some cases, the pointer is initialized to the local structure address  xStart
+   * In that case, it is easier to run the check here every time instead of trying
+   * to check this when needed in the implementation before calling CheckIntegrity()
+   */
+  if(pAddressToCheck != &xStart)
+  {
+    if ((pAddressToCheck < pFirstValidAddress) || (pAddressToCheck > pLastValidAddress))
+    {
+      while(1);
+      NVIC_SystemReset( );
+    }
+  }
+
+  return;
+}
+#endif /* (KEEP_ORIGINAL_CODE_FROM_FREERTOS == 0) &&  (__CORTEX_M < 4) */

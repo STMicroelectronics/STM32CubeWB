@@ -704,6 +704,13 @@ static bool APP_ZIGBEE_NVM_Read(void)
             /* copy the read data from Flash to cache including length */
             for (uint16_t local_length = 1; local_length <= num_words; local_length++)
             {
+            	if (local_length >= ST_PERSIST_MAX_ALLOC_SZ/4)
+            	{
+                    APP_DBG("Local length exceeds the size of the cache persistent data!");
+                    status = false;
+                    break;
+            	}
+
                 /* read data from first data in U32 unit */
                 ee_status = EE_Read(0, local_length + ZIGBEE_DB_START_ADDR, &cache_persistent_data.U32_data[local_length] );
                 if (ee_status != EE_OK)
@@ -1149,18 +1156,18 @@ static void APP_ZIGBEE_NVM_Diag_Exec(void)
   }
   if(write_err)
   {
-     APP_DBG("NVM DIAGNOSTIC TESTS STATUS --> FAILED (write error)",test);
+     APP_DBG("NVM DIAGNOSTIC TESTS STATUS #%d --> FAILED (write error)",test);
   }
   else if(read_err)
   {
-     APP_DBG("NVM DIAGNOSTIC TESTS STATUS --> FAILED (read error)",test);
+     APP_DBG("NVM DIAGNOSTIC TESTS STATUS #%d --> FAILED (read error)",test);
   }
   else if(data_err)
   {
-     APP_DBG("NVM DIAGNOSTIC TESTS STATUS --> FAILED (data integrity error)",test);
+     APP_DBG("NVM DIAGNOSTIC TESTS STATUS #%d --> FAILED (data integrity error)",test);
   }
   else{
-    APP_DBG("NVM DIAGNOSTIC TESTS STATUS --> PASSED",test);
+    APP_DBG("NVM DIAGNOSTIC TESTS STATUS #%d --> PASSED",test);
   }
   APP_DBG("");
   APP_DBG("NVM DIAGNOSTIC TESTS IS OVER");

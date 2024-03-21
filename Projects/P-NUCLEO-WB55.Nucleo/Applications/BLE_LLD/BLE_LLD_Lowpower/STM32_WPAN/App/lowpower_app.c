@@ -101,7 +101,8 @@ static void radioInit(void)
   ap1->nextFalse = APACKET_STOP;
   ap1->callback = sendLed1;
   BLE_LLD_SetReservedArea(ap1);
-
+  uartWrite("radioInit(): MSG LED1");
+  
   ActionPacket *ap2;
   userPayload payload2;
   payload2.led = LED2;
@@ -118,7 +119,8 @@ static void radioInit(void)
   ap2->nextFalse = APACKET_STOP;
   ap2->callback = sendLed2;
   BLE_LLD_SetReservedArea(ap2);
-
+  uartWrite("radioInit(): MSG LED2");
+  
   ActionPacket *ap3;
   userPayload payload3;
   payload3.led = LED3;
@@ -135,12 +137,14 @@ static void radioInit(void)
   ap3->nextFalse = APACKET_STOP;
   ap3->callback = sendLed3;
   BLE_LLD_SetReservedArea(ap3);
+  uartWrite("radioInit(): MSG LED3");
 }
 
 
 static void sendStart(void)
 {
   BLE_LLD_MakeActionPacketPending(&apSend[APACKET_1]);
+  uartWrite("sendStart(): BLE_LLD_MakeActionPacketPending");
 }
 
 static void sendLed1(radioEventType cmd, ActionPacket *ap, void *data, uint8_t size)

@@ -29,7 +29,9 @@
 #include "thread.h"
 
 extern otHandleActiveScanResult otHandleActiveScanResultCb;
+#if OPENTHREAD_CONFIG_MLE_PARENT_RESPONSE_CALLBACK_API_ENABLE
 extern otThreadParentResponseCallback otThreadParentResponseCb;
+#endif /* OPENTHREAD_CONFIG_MLE_PARENT_RESPONSE_CALLBACK_API_ENABLE */
 extern otDetachGracefullyCallback otDetachGracefullyCb;
 
 #if OPENTHREAD_CONFIG_TMF_ANYCAST_LOCATOR_ENABLE
@@ -925,6 +927,7 @@ void otThreadResetMleCounters(otInstance *aInstance)
   Ot_Cmd_Transfer();
 }
 
+#if OPENTHREAD_CONFIG_MLE_PARENT_RESPONSE_CALLBACK_API_ENABLE
 void otThreadRegisterParentResponseCallback(otInstance *                   aInstance,
                                             otThreadParentResponseCallback aCallback,
                                             void *                         aContext)
@@ -942,6 +945,7 @@ void otThreadRegisterParentResponseCallback(otInstance *                   aInst
 
   Ot_Cmd_Transfer();
 }
+#endif // OPENTHREAD_CONFIG_MLE_PARENT_RESPONSE_CALLBACK_API_ENABLE
 
 #if OPENTHREAD_CONFIG_TMF_ANYCAST_LOCATOR_ENABLE
 otError otThreadLocateAnycastDestination(otInstance *                   aInstance,
@@ -1018,3 +1022,24 @@ otError otThreadSearchForBetterParent(otInstance *aInstance)
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   return (otError)p_ot_req->Data[0];
 }
+
+#if OPENTHREAD_CONFIG_UPTIME_ENABLE
+void otConvertDurationInSecondsToString(uint32_t aDuration, char *aBuffer, uint16_t aSize)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_CONVERT_DURATION_IN_SECONDS_TO_STRING;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t) aDuration;
+  p_ot_req->Data[1] = (uint32_t) aBuffer;
+  p_ot_req->Data[2] = (uint32_t) aSize;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+
+}
+#endif // OPENTHREAD_CONFIG_UPTIME_ENABLE

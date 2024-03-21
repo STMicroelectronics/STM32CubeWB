@@ -32,6 +32,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>BLE_HR_p2p_Sensor.ioc</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/BLE_HR_p2p_Sensor.ioc</locationURI>
+		</link>
+		<link>
 			<name>Doc/readme.txt</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/readme.txt</locationURI>

@@ -23,11 +23,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "types.h"
 #include "ble_mesh.h"
-
+#include "sensors.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /* Variable-------------------------------------------------------------------*/
-#pragma pack(1)
+#pragma pack(push, 1)
+
 typedef union  
 {
   sensor_CadenceCbParam_t sSensor_CadenceParam;
@@ -74,6 +75,8 @@ typedef struct
                                   MOBLE_ADDRESS dstPeer,
                                   MOBLEUINT8 elementIndex);  
 } sensor_client_cb_t;
+
+#pragma pack(pop)
 
 extern const sensor_client_cb_t SensorAppli_cb;
 

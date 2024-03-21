@@ -107,7 +107,7 @@ static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 static void FlushBuffer8(uint8_t* pBuffer1, uint16_t BufferLength);
-#if defined(__GNUC__) && defined(MASTER_BOARD)
+#if defined(__GNUC__) && defined(MASTER_BOARD) && !defined(__ARMCC_VERSION)
 extern void initialise_monitor_handles(void); /*rtt*/
 #endif
 /* USER CODE END PFP */
@@ -124,7 +124,7 @@ extern void initialise_monitor_handles(void); /*rtt*/
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-#if defined(__GNUC__) && defined(MASTER_BOARD)
+#if defined(__GNUC__) && defined(MASTER_BOARD) && !defined(__ARMCC_VERSION)
   initialise_monitor_handles();	/*rtt*/
 #endif
 

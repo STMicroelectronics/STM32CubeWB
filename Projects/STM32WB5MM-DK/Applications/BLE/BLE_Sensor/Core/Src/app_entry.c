@@ -39,6 +39,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
+
 /* USER CODE BEGIN PTD */
 /* Section specific to button management using UART */
 EXTI_HandleTypeDef exti_handle;
@@ -169,6 +170,7 @@ void MX_APPE_Init(void)
 /* USER CODE BEGIN APPE_Init_2 */
 
 /* USER CODE END APPE_Init_2 */
+
    return;
 }
 
@@ -616,9 +618,9 @@ void HAL_Delay(uint32_t Delay)
     /**
      * This option is used to ensure that store operations are completed
      */
-  #if defined (__CC_ARM)
+  #if defined (__CC_ARM) || defined (__ARMCC_VERSION)
     __force_stores();
-  #endif /* __CC_ARM */
+  #endif /* __ARMCC_VERSION */
 
     __WFI();
   }
@@ -653,7 +655,6 @@ void UTIL_SEQ_Idle(void)
 void UTIL_SEQ_EvtIdle(UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm)
 {
   UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
-
   return;
 }
 

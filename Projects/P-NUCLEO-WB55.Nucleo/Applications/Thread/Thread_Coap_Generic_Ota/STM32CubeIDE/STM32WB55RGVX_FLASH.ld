@@ -34,14 +34,14 @@ ENTRY(Reset_Handler)
 _estack = 0x20024000;    /* end of RAM1 usable, higher addresses will overlap with Thread on Copro side  */
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0x400;      /* required amount of heap  */
-_Min_Stack_Size = 0x1000; /* required amount of stack */
+_Min_Stack_Size = 0x1000 ;   /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
 {
-FLASH (rx)                 : ORIGIN = 0x08010000, LENGTH = 448K
+FLASH (rx)                 : ORIGIN = 0x08010000, LENGTH = 503K
 RAM1 (xrw)                 : ORIGIN = 0x20000008, LENGTH = 0x23FF8
-RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K      
+RAM_SHARED (xrw)           : ORIGIN = 0x20030000, LENGTH = 10K
 }
 
 /* Define output sections */
@@ -54,7 +54,7 @@ SECTIONS
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
-  
+
   .ota_region 0x08010140:
   {
 	KEEP(*(TAG_OTA_START))
@@ -114,13 +114,7 @@ SECTIONS
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
   } >FLASH
-  
-  .ota_region_end :
-  {
-	. = ALIGN(4);
-	KEEP(*(TAG_OTA_END))
-	. = ALIGN(4);
-  } >FLASH
+
 
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
@@ -135,8 +129,14 @@ SECTIONS
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
-  }>RAM1 AT> FLASH
+  } >RAM1 AT> FLASH
 
+  .ota_region_end :
+  {
+  . = ALIGN(4);
+  KEEP(*(TAG_OTA_END))
+  . = ALIGN(4);
+  } >FLASH
   
   /* Uninitialized data section */
   . = ALIGN(4);

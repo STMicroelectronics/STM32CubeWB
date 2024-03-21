@@ -68,6 +68,9 @@
 /* Define to 1 to enable MAC whitelist/blacklist feature. */
 #define OPENTHREAD_CONFIG_MAC_FILTER_ENABLE 1
 
+/* Define to 1 to enable support for IEEE802.15.4 radio link. */
+#define OPENTHREAD_CONFIG_RADIO_LINK_IEEE_802_15_4_ENABLE 1
+
 /* Define to 1 to enable Service feature. */
 #define OPENTHREAD_CONFIG_TMF_NETDATA_SERVICE_ENABLE 1
 
@@ -135,7 +138,7 @@
 #define OPENTHREAD_CONFIG_SRP_CLIENT_AUTO_START_DEFAULT_MODE 1  // Difference with classic MTD
 
 /* Define to 1 to enable TCP support */
-#define OPENTHREAD_CONFIG_TCP_ENABLE 1
+#define OPENTHREAD_CONFIG_TCP_ENABLE 0	// Difference with classic MTD
 
 /* Define to 1 to enable DNS CLIENT NAT64 mode support */
 #define OPENTHREAD_CONFIG_DNS_CLIENT_NAT64_ENABLE 1

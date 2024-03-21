@@ -155,6 +155,12 @@ AMM_Function_Error_t AMM_Init (const AMM_InitParameters_t * const p_InitParams)
   {
     error = AMM_ERROR_BAD_POOL_CONFIG;
   }
+  /* Check that Virtual memories can not be declared without a proper configuration list */
+  else if ((p_InitParams->VirtualMemoryNumber != 0x00) &&
+           (p_InitParams->p_VirtualMemoryConfigList == NULL))
+  {
+      error = AMM_ERROR_BAD_VIRTUAL_CONFIG;
+  }
   else
   {
     neededPoolSize = p_InitParams->VirtualMemoryNumber * AMM_VIRTUAL_INFO_ELEMENT_SIZE;
@@ -502,8 +508,8 @@ AMM_Function_Error_t AMM_Free (uint32_t * const p_BufferAddr)
     p_TmpAllocAddr = (uint32_t *)(p_BufferAddr - VIRTUAL_MEMORY_HEADER_SIZE);
 
     /* Get the virtual memory information */
-    virtualId = (*p_TmpAllocAddr >> VIRTUAL_MEMORY_HEADER_ID_POS) & VIRTUAL_MEMORY_HEADER_ID_MASK;
-    allocatedSize = (*p_TmpAllocAddr >> VIRTUAL_MEMORY_HEADER_BUFFER_SIZE_POS) & VIRTUAL_MEMORY_HEADER_BUFFER_SIZE_MASK;
+    virtualId = (*p_TmpAllocAddr & VIRTUAL_MEMORY_HEADER_ID_MASK) >> VIRTUAL_MEMORY_HEADER_ID_POS;
+    allocatedSize = (*p_TmpAllocAddr & VIRTUAL_MEMORY_HEADER_BUFFER_SIZE_MASK) >> VIRTUAL_MEMORY_HEADER_BUFFER_SIZE_POS;
 
     /* Free the allocated memory */
     AmmBmmFunctionsHandler.Free(p_TmpAllocAddr);

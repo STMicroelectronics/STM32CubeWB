@@ -18,6 +18,7 @@
   */
 /* USER CODE END Header */
 
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef VCP_CONF_H
 #define VCP_CONF_H

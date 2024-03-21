@@ -980,9 +980,6 @@ void AppliPrvnNvm_Process(void)
     }
     else
     {
-      TRACE_M(TF_PROVISION,"Saving provisioning data in SubPage[%.8x]\r\n", 
-              PRVN_NVM_SUBPAGE_OFFSET(subPageIdx));
-
       result = AppliPrvnNvm_FlashProgram(PRVN_NVM_SUBPAGE_OFFSET(subPageIdx), 
                                          PrvnNvm_Reqs.prvnData,
                                          PrvnNvm_Reqs.size);    
@@ -990,6 +987,13 @@ void AppliPrvnNvm_Process(void)
       if (result == MOBLE_RESULT_SUCCESS)
       {
         PrvnNvm_Reqs.writeReq = MOBLE_FALSE;
+        TRACE_I(TF_PROVISION,"Saving provisioning data in SubPage[%.8x]\r\n", 
+                PRVN_NVM_SUBPAGE_OFFSET(subPageIdx));
+      }
+      else
+      {
+        TRACE_I(TF_PROVISION,"Failed to save provisioning data in SubPage[%.8x]\r\n", 
+                PRVN_NVM_SUBPAGE_OFFSET(subPageIdx));
       }
     }
   }

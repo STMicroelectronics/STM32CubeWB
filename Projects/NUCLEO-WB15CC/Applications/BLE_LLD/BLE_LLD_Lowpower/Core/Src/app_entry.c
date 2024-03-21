@@ -40,6 +40,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 extern RTC_HandleTypeDef hrtc;
+EXTI_HandleTypeDef exti_handle;
 
 /* USER CODE END PTD */
 
@@ -48,6 +49,9 @@ extern RTC_HandleTypeDef hrtc;
 #define POOL_SIZE (CFG_TL_EVT_QUEUE_LENGTH * 4U * DIVC(( sizeof(TL_PacketHeader_t) + TL_EVENT_FRAME_SIZE ), 4U))
 
 /* USER CODE BEGIN PD */
+/* Section specific to button management using UART */
+#define C_SIZE_CMD_STRING       256U
+#define RX_BUFFER_SIZE          8U
 
 /* USER CODE END PD */
 
@@ -62,6 +66,10 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 
 /* USER CODE BEGIN PV */
+/* Section specific to button management using UART */
+static uint8_t aRxBuffer[RX_BUFFER_SIZE];
+static uint8_t CommandString[C_SIZE_CMD_STRING];
+static uint16_t indexReceiveChar = 0;
 
 /* USER CODE END PV */
 
@@ -75,8 +83,6 @@ size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
 /* USER CODE END GFP */
 
 /* Private functions prototypes-----------------------------------------------*/
-static void SystemPower_Config( void );
-static void Init_Debug( void );
 static void appe_Tl_Init( void );
 static void APPE_SysStatusNot( SHCI_TL_CmdStatus_t status );
 static void APPE_SysUserEvtRx( void * pPayload );
@@ -84,8 +90,10 @@ static void APPE_SysEvtReadyProcessing( void );
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
 
 /* USER CODE BEGIN PFP */
-static void Led_Init( void );
-static void Button_Init( void );
+
+/* Section specific to button management using UART */
+static void RxCpltCallback(void);
+static void UartCmdExecute(void);
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -103,6 +111,7 @@ void APPE_Init( void )
   Led_Init();
   Button_Init();
   
+  RxUART_Init();
 /* USER CODE END APPE_Init_1 */
   /* Initialize all transport layers and start CPU2 which will send back a ready event to CPU1 */
   appe_Tl_Init();
@@ -118,7 +127,23 @@ void APPE_Init( void )
    return;
 }
 /* USER CODE BEGIN FD */
+void Init_Smps(void)
+{
+#if (CFG_USE_SMPS != 0)
+  /**
+   *  Configure and enable SMPS
+   *
+   *  The SMPS configuration is not yet supported by CubeMx
+   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
+   *  the SMPS output voltage shall be increased for higher RF output power
+   */
+  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
+  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
+  LL_PWR_SMPS_Enable();
+#endif /* CFG_USE_SMPS != 0 */
 
+  return;
+}
 /* USER CODE END FD */
 
 /*************************************************************
@@ -126,7 +151,7 @@ void APPE_Init( void )
  * LOCAL FUNCTIONS
  *
  *************************************************************/
-static void Init_Debug( void )
+void Init_Debug( void )
 {
 #if (CFG_DEBUGGER_SUPPORTED == 1)
   /**
@@ -171,7 +196,8 @@ static void Init_Debug( void )
  * @param  None
  * @retval None
  */
-static void SystemPower_Config( void )
+
+void SystemPower_Config( void )
 {
   // Disable internal wake-up which is active by default and is for RTC wake-up
   LL_PWR_DisableInternWU();
@@ -302,7 +328,7 @@ static void APPE_SysEvtReadyProcessing( void )
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
-static void Led_Init( void )
+void Led_Init( void )
 {
 #if (CFG_LED_SUPPORTED == 1U)
   /**
@@ -319,7 +345,7 @@ static void Led_Init( void )
   return;
 }
 
-static void Button_Init( void )
+void Button_Init( void )
 {
 #if (CFG_BUTTON_SUPPORTED == 1U)
   /**
@@ -416,4 +442,60 @@ void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 
+void RxUART_Init(void)
+{
+  HW_UART_Receive_IT((hw_uart_id_t)CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void RxCpltCallback(void)
+{
+  /* Filling buffer and wait for '\r' char */
+  if (indexReceiveChar < C_SIZE_CMD_STRING)
+  {
+    if (aRxBuffer[0] == '\r')
+    {
+      APP_DBG("received %s\n", CommandString);
+
+      UartCmdExecute();
+
+      /* Clear receive buffer and character counter*/
+      indexReceiveChar = 0;
+      memset(CommandString, 0, C_SIZE_CMD_STRING);
+    }
+    else
+    {
+      CommandString[indexReceiveChar++] = aRxBuffer[0];
+    }
+  }
+
+  /* Once a character has been sent, put back the device in reception mode */
+  HW_UART_Receive_IT((hw_uart_id_t)CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
+}
+
+static void UartCmdExecute(void)
+{
+  /* Parse received CommandString */
+  if(strcmp((char const*)CommandString, "SW1") == 0)
+  {
+    APP_DBG("SW1 OK\n");
+    exti_handle.Line = EXTI_LINE_0;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW2") == 0)
+  {
+    APP_DBG("SW2 OK\n");
+    exti_handle.Line = EXTI_LINE_4;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else if (strcmp((char const*)CommandString, "SW3") == 0)
+  {
+    APP_DBG("SW3 OK\n");
+    exti_handle.Line = EXTI_LINE_6;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else
+  {
+    APP_DBG("NOT RECOGNIZED COMMAND : %s\n", CommandString);
+  }
+}
 /* USER CODE END FD_WRAP_FUNCTIONS */

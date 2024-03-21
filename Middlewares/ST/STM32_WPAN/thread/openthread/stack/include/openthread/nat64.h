@@ -57,7 +57,7 @@ extern "C" {
 /**
  * @struct otIp4Address
  *
- * This structure represents an IPv4 address.
+ * Represents an IPv4 address.
  *
  */
 OT_TOOL_PACKED_BEGIN
@@ -71,7 +71,7 @@ struct otIp4Address
 } OT_TOOL_PACKED_END;
 
 /**
- * This structure represents an IPv4 address.
+ * Represents an IPv4 address.
  *
  */
 typedef struct otIp4Address otIp4Address;
@@ -79,7 +79,7 @@ typedef struct otIp4Address otIp4Address;
 /**
  * @struct otIp4Cidr
  *
- * This structure represents an IPv4 CIDR block.
+ * Represents an IPv4 CIDR block.
  *
  */
 typedef struct otIp4Cidr
@@ -317,7 +317,7 @@ otMessage *otIp4NewMessage(otInstance *aInstance, const otMessageSettings *aSett
 /**
  * Sets the CIDR used when setting the source address of the outgoing translated IPv4 packets.
  *
- * This function is available only when OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE is enabled.
+ * Is available only when OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE is enabled.
  *
  * @note A valid CIDR must have a non-zero prefix length. The actual addresses pool is limited by the size of the
  * mapping pool and the number of addresses available in the CIDR block.
@@ -358,7 +358,7 @@ otError otNat64SetIp4Cidr(otInstance *aInstance, const otIp4Cidr *aCidr);
 otError otNat64Send(otInstance *aInstance, otMessage *aMessage);
 
 /**
- * This function pointer is called when an IPv4 datagram (translated by NAT64 translator) is received.
+ * Pointer is called when an IPv4 datagram (translated by NAT64 translator) is received.
  *
  * @param[in]  aMessage  A pointer to the message buffer containing the received IPv6 datagram. This function transfers
  *                       the ownership of the @p aMessage to the receiver of the callback. The message should be
@@ -434,6 +434,18 @@ void otIp4ExtractFromIp6Address(uint8_t aPrefixLength, const otIp6Address *aIp6A
 void otIp4AddressToString(const otIp4Address *aAddress, char *aBuffer, uint16_t aSize);
 
 #define OT_IP4_CIDR_STRING_SIZE 20 ///< Length of 000.000.000.000/00 plus a suffix NUL
+
+/**
+ * Converts a human-readable IPv4 CIDR string into a binary representation.
+ *
+ * @param[in]   aString   A pointer to a NULL-terminated string.
+ * @param[out]  aCidr     A pointer to an IPv4 CIDR.
+ *
+ * @retval OT_ERROR_NONE          Successfully parsed the string.
+ * @retval OT_ERROR_INVALID_ARGS  Failed to parse the string.
+ *
+ */
+otError otIp4CidrFromString(const char *aString, otIp4Cidr *aCidr);
 
 /**
  * Converts the IPv4 CIDR to a string.

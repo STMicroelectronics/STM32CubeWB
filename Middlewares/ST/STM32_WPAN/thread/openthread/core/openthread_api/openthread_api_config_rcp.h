@@ -39,9 +39,6 @@
 /* Define to 1 to enable the commissioner role. */
 #define OPENTHREAD_CONFIG_COMMISSIONER_ENABLE 0
 
-/* Define to 1 if you want to enable legacy network. */
-#define OPENTHREAD_CONFIG_LEGACY_ENABLE 0
-
 /* Define to 1 to enable dtls support. */
 #define OPENTHREAD_CONFIG_DTLS_ENABLE 0
 
@@ -56,9 +53,6 @@
 
 /* Define to 1 to enable channel monitor. */
 #define OPENTHREAD_CONFIG_CHANNEL_MONITOR_ENABLE 0
-
-/* Define to 1 to enable child supervision. */
-#define OPENTHREAD_CONFIG_CHILD_SUPERVISION_ENABLE 0
 
 /* Define to 1 to enable DHCPv6 Client. */
 #define OPENTHREAD_CONFIG_DHCP6_CLIENT_ENABLE 0

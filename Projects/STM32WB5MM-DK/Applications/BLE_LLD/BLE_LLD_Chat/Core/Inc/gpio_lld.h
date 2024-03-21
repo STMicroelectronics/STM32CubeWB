@@ -56,4 +56,124 @@ void gpio_lld_led1_toggle(void);
 void gpio_lld_led2_toggle(void);
 void gpio_lld_led3_toggle(void);
 
+#ifdef STM32WB15xx
+#define BUTTON_SW1_EXTI_IRQHandler              EXTI0_IRQHandler
+#define BUTTON_SW2_EXTI_IRQHandler              EXTI4_IRQHandler
+#define BUTTON_SW3_EXTI_IRQHandler              EXTI9_5_IRQHandler
+
+/**
+  * @brief  USART pins
+  */
+#define USART_CLK_ENABLE()                    __HAL_RCC_USART1_CLK_ENABLE()
+
+#define USART_TX_AF                           GPIO_AF7_USART1
+#define USART_TX_GPIO_PORT                    GPIOA
+#define USART_TX_PIN                          GPIO_PIN_9
+#define USART_TX_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOA_CLK_ENABLE()
+#define USART_TX_GPIO_CLK_DISABLE()           __HAL_RCC_GPIOA_CLK_DISABLE()
+
+#define USART_RX_AF                           GPIO_AF7_USART1
+#define USART_RX_GPIO_PORT                    GPIOA
+#define USART_RX_PIN                          GPIO_PIN_10
+#define USART_RX_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOA_CLK_ENABLE()
+#define USART_RX_GPIO_CLK_DISABLE()           __HAL_RCC_GPIOA_CLK_DISABLE()
+
+/**
+  * @brief  LPUART pins
+  */
+#define LPUART_CLK_ENABLE()                    __HAL_RCC_LPUART1_CLK_ENABLE()
+
+#define LPUART_TX_AF                          GPIO_AF8_LPUART1
+#define LPUART_TX_GPIO_PORT                   GPIOA
+#define LPUART_TX_PIN                         GPIO_PIN_2
+#define LPUART_TX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOA_CLK_ENABLE()
+#define LPUART_TX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOA_CLK_DISABLE()
+
+#define LPUART_RX_AF                          GPIO_AF8_LPUART1
+#define LPUART_RX_GPIO_PORT                   GPIOA
+#define LPUART_RX_PIN                         GPIO_PIN_3
+#define LPUART_RX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOA_CLK_ENABLE()
+#define LPUART_RX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOA_CLK_DISABLE()
+#endif
+
+#ifdef STM32WB35xx
+#define BUTTON_SW1_EXTI_IRQHandler              EXTI0_IRQHandler
+#define BUTTON_SW2_EXTI_IRQHandler              EXTI4_IRQHandler
+#define BUTTON_SW3_EXTI_IRQHandler              EXTI9_5_IRQHandler
+
+/**
+  * @brief  USART pins
+  */
+#define USART_CLK_ENABLE()                    __HAL_RCC_USART1_CLK_ENABLE()
+
+#define USART_TX_AF                           GPIO_AF7_USART1
+#define USART_TX_GPIO_PORT                    GPIOB
+#define USART_TX_PIN                          GPIO_PIN_6
+#define USART_TX_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOB_CLK_ENABLE()
+#define USART_TX_GPIO_CLK_DISABLE()           __HAL_RCC_GPIOB_CLK_DISABLE()
+
+#define USART_RX_AF                           GPIO_AF7_USART1
+#define USART_RX_GPIO_PORT                    GPIOB
+#define USART_RX_PIN                          GPIO_PIN_7
+#define USART_RX_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOB_CLK_ENABLE()
+#define USART_RX_GPIO_CLK_DISABLE()           __HAL_RCC_GPIOB_CLK_DISABLE()
+
+/**
+  * @brief  LPUART pins
+  */
+#define LPUART_CLK_ENABLE()                    __HAL_RCC_LPUART1_CLK_ENABLE()
+
+#define LPUART_TX_AF                          GPIO_AF8_LPUART1
+#define LPUART_TX_GPIO_PORT                   GPIOB
+#define LPUART_TX_PIN                         GPIO_PIN_5
+#define LPUART_TX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOB_CLK_ENABLE()
+#define LPUART_TX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOB_CLK_DISABLE()
+
+#define LPUART_RX_AF                          GPIO_AF8_LPUART1
+#define LPUART_RX_GPIO_PORT                   GPIOA
+#define LPUART_RX_PIN                         GPIO_PIN_3
+#define LPUART_RX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOA_CLK_ENABLE()
+#define LPUART_RX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOA_CLK_DISABLE()
+#endif
+
+#ifdef STM32WB55xx
+#define BUTTON_SW1_EXTI_IRQHandler              EXTI4_IRQHandler
+#define BUTTON_SW2_EXTI_IRQHandler              EXTI0_IRQHandler
+#define BUTTON_SW3_EXTI_IRQHandler              EXTI1_IRQHandler
+
+/**
+  * @brief  USART pins
+  */
+#define USART_CLK_ENABLE()                    __HAL_RCC_USART1_CLK_ENABLE()
+
+#define USART_TX_AF                           GPIO_AF7_USART1
+#define USART_TX_GPIO_PORT                    GPIOB
+#define USART_TX_PIN                          GPIO_PIN_6
+#define USART_TX_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOB_CLK_ENABLE()
+#define USART_TX_GPIO_CLK_DISABLE()           __HAL_RCC_GPIOB_CLK_DISABLE()
+
+#define USART_RX_AF                           GPIO_AF7_USART1
+#define USART_RX_GPIO_PORT                    GPIOB
+#define USART_RX_PIN                          GPIO_PIN_7
+#define USART_RX_GPIO_CLK_ENABLE()            __HAL_RCC_GPIOB_CLK_ENABLE()
+#define USART_RX_GPIO_CLK_DISABLE()           __HAL_RCC_GPIOB_CLK_DISABLE()
+
+/**
+  * @brief  LPUART pins
+  */
+#define LPUART_CLK_ENABLE()                    __HAL_RCC_LPUART1_CLK_ENABLE()
+
+#define LPUART_TX_AF                          GPIO_AF8_LPUART1
+#define LPUART_TX_GPIO_PORT                   GPIOA
+#define LPUART_TX_PIN                         GPIO_PIN_2
+#define LPUART_TX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOA_CLK_ENABLE()
+#define LPUART_TX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOA_CLK_DISABLE()
+
+#define LPUART_RX_AF                          GPIO_AF8_LPUART1
+#define LPUART_RX_GPIO_PORT                   GPIOA
+#define LPUART_RX_PIN                         GPIO_PIN_3
+#define LPUART_RX_GPIO_CLK_ENABLE()           __HAL_RCC_GPIOA_CLK_ENABLE()
+#define LPUART_RX_GPIO_CLK_DISABLE()          __HAL_RCC_GPIOA_CLK_DISABLE()
+#endif
+
 #endif /* GPIO_LLD_H_ */

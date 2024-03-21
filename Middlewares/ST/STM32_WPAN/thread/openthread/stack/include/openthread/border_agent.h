@@ -52,7 +52,31 @@ extern "C" {
  */
 
 /**
- * This enumeration defines the Border Agent state.
+ * The length of Border Agent/Router ID in bytes.
+ *
+ */
+#define OT_BORDER_AGENT_ID_LENGTH (16)
+
+/**
+ * @struct otBorderAgentId
+ *
+ * Represents a Border Agent ID.
+ *
+ */
+OT_TOOL_PACKED_BEGIN
+struct otBorderAgentId
+{
+    uint8_t mId[OT_BORDER_AGENT_ID_LENGTH];
+} OT_TOOL_PACKED_END;
+
+/**
+ * Represents a Border Agent ID.
+ *
+ */
+typedef struct otBorderAgentId otBorderAgentId;
+
+/**
+ * Defines the Border Agent state.
  *
  */
 typedef enum otBorderAgentState
@@ -81,6 +105,42 @@ otBorderAgentState otBorderAgentGetState(otInstance *aInstance);
  *
  */
 uint16_t otBorderAgentGetUdpPort(otInstance *aInstance);
+
+/**
+ * Gets the randomly generated Border Agent ID.
+ *
+ * The ID is saved in persistent storage and survives reboots. The typical use case of the ID is to
+ * be published in the MeshCoP mDNS service as the `id` TXT value for the client to identify this
+ * Border Router/Agent device.
+ *
+ * @param[in]    aInstance  A pointer to an OpenThread instance.
+ * @param[out]   aId        A pointer to buffer to receive the ID.
+ *
+ * @retval OT_ERROR_NONE  If successfully retrieved the Border Agent ID.
+ * @retval ...            If failed to retrieve the Border Agent ID.
+ *
+ * @sa otBorderAgentSetId
+ *
+ */
+otError otBorderAgentGetId(otInstance *aInstance, otBorderAgentId *aId);
+
+/**
+ * Sets the Border Agent ID.
+ *
+ * The Border Agent ID will be saved in persistent storage and survive reboots. It's required to
+ * set the ID only once after factory reset. If the ID has never been set by calling this function,
+ * a random ID will be generated and returned when `otBorderAgentGetId` is called.
+ *
+ * @param[in]    aInstance  A pointer to an OpenThread instance.
+ * @param[out]   aId        A pointer to the Border Agent ID.
+ *
+ * @retval OT_ERROR_NONE  If successfully set the Border Agent ID.
+ * @retval ...            If failed to set the Border Agent ID.
+ *
+ * @sa otBorderAgentGetId
+ *
+ */
+otError otBorderAgentSetId(otInstance *aInstance, const otBorderAgentId *aId);
 
 /**
  * @}

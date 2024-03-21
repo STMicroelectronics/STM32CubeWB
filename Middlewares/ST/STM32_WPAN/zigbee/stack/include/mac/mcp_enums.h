@@ -1,7 +1,9 @@
-/* Copyright [2015 - 2020] Exegin Technologies Limited. All rights reserved. */
+/* Copyright [2015 - 2023] Exegin Technologies Limited. All rights reserved. */
 
 #ifndef MCP_ENUMS_H_
 # define MCP_ENUMS_H_
+
+/* *INDENT-OFF* */
 
 /*lint -save -e726 [!MISRA - extra comma ignored (end of enum)] */
 /* IEEE 802.15.4 Status Values */
@@ -91,9 +93,8 @@ enum mcp_attr_id {
     mcp_macMaxFrameTotalWaitTime            = 0x58,
     mcp_macMaxFrameRetries                  = 0x59,
     mcp_macMinBE                            = 0x4f,
-	mcp_macMaxCSMARetries                   = 0xfd,
 
-	mcp_macPanId                            = 0x50,
+    mcp_macPanId                            = 0x50,
     mcp_macPromiscuousMode                  = 0x51,
     mcp_macResponseWaitTime                 = 0x5a,
     mcp_macRxOnWhenIdle                     = 0x52,
@@ -105,8 +106,9 @@ enum mcp_attr_id {
     mcp_macTimestampSupported               = 0x5c,
     mcp_macTransactionPersistenceTime       = 0x55,
 
-    _mcp_Spare_1                            = 0x5e,
-    _mcp_Spare_2                            = 0x5f,
+    /* Source address whitelist lengths. */
+    mcp_macAcceptSourceAddr64Entries        = 0x5e, /* Read/Write - Number of EUI-64 entries in the whitelist table. */
+    mcp_macAcceptSourceAddr16Entries        = 0x5f, /* Read/Write - Number of short addr entries in the whitelist table. */
 
     /* Exegin Add-ons. */
     mcp_phySymbolRate                       = 0x60, /* Read only - rate in symbols/seconds of current phy. */
@@ -140,8 +142,9 @@ enum mcp_attr_id {
     mcp_macAutoRequestKeyIndex              = 0x7b,
     mcp_macDefaultKeySource                 = 0x7c,
 
-    mcp_macPanCoordExtendedAddress          = 0x7d, /* ??? This seems to duplicate macCoordExtendedAddress */
-    mcp_macPanCoordShortAddress             = 0x7e, /* ??? This seems to duplicate macCoordShortAddress */
+    /* Source address whitelist entries. */
+    mcp_macAcceptSourceAddr64               = 0x7d, /* Read/Write - Get or set EUI-64 entries in the whitelist table. */
+    mcp_macAcceptSourceAddr16               = 0x7e, /* Read/Write - Get or set short addr entries in the whitelist table. */
 
     /* TX duty-cycle attributes */
     mcp_macTxTotalDuration                  = 0x7f, /* Total number of transmitted symbols */
@@ -149,6 +152,7 @@ enum mcp_attr_id {
     mcp_macTxControlPauseDuration           = 0x81, /* Paused phase of TX duty cycle in milliseconds */
 
     mcp_macPacketDiagInfoEnable             = 0x82, /* Controls if Diagnostic TLVs are added to packet indication messages */
+    mcp_macTapType                          = 0x83, /* Type of data sent to the TAP interface */
 
     mcp_enhancedBeaconIEs                   = 0x0101, /* HIEs, MIEs, and PIEs to include in enhanced beacon */
 
@@ -189,6 +193,8 @@ enum mcp_attr_id {
     /* WiSUN PHY PIB Attributes */
     mcp_phyWisunRegion                      = 0x0220,
     mcp_phyWisunOperatingMode               = 0x0221,
+    mcp_phyWisunChannelPlanDesc             = 0x0222, /* Wi-SUN FAN 1.1 */
+    mcp_phyWisunNumModeSwitchEntries        = 0x0223,
 
     /* Exegin PHY Add-ons. */
     mcp_phyFSKDW                            = 0x0280, /* Deprecated */
@@ -235,6 +241,14 @@ enum mcp_attr_id {
     mcp_macWisunPcK                         = 0x0453,   /* PAN Configuration trickle timer redundancy constant */
     mcp_macWisunPcsAttempts                 = 0x0454,   /* PAN Configuration Solicit Attempts */
     mcp_macWisunExcludedChannelBitmask      = 0x0455,   /* Excluded Channels as array of 8 64-bit masks */
+    mcp_macWisunRoutingLimit                = 0x0456,   /* Limit how large the routing cost can become, as 32-bit int. */
+    mcp_macWisunMeshId                      = 0x0457,   /* Vendor Specific Mesh Id (RPL DODAG) for network steering. */
+    mcp_macWisunLFNWindowStyle              = 0x0458,   /* Wi-SUN FAN 1.1 */
+    mcp_macWisunLFNDiscoverySlots           = 0x0459,   /* Wi-SUN FAN 1.1 - x DST (macHopDwellTime) for LFN Discovery Response Period */
+    mcp_macWisunLFNListenInterval           = 0x045a,   /* Wi-SUN FAN 1.1 */
+    mcp_macWisunNbrTable                    = 0x045b,   /* Information on a Wi-SUN neighbor */
+    mcp_macWisunNbrEntries                  = 0x045c,   /* Number of Wi-SUN neighbor entries */
+    mcp_macWisunJoinMetrics                 = 0x045d,   /* Information in the Join Metrics IE */
 
     /* Hopping Sequence PIB Attributes */
     mcp_macHoppingSequenceID                = 0x0480,
@@ -262,17 +276,28 @@ enum mcp_attr_id {
     mcp_macBcastHopDwellTime                = 0x0496,
     mcp_macBcastHopInterval                 = 0x0497,
     mcp_macBcastHopId                       = 0x0498,
+    mcp_macLFNBcastHopInterval              = 0x0499,
+    mcp_macLFNBcastHopId                    = 0x049a,
+    mcp_macLFNBcastSyncPeriod               = 0x049b,
+    mcp_macNetworkExcludedChannels          = 0x049c,   /* Network-Wide Excluded Channels as array of 8 64-bit masks */
 
-    /* Zigbee R22 add-ons for GB-868 */
+    /* Zigbee R22+ */
     mcp_macDCCurrentMeas                    = 0x0500, /* Current Duty Cycle over the last hour (hundredths of %) */
     mcp_macDCCurrentBytes                   = 0x0501, /* Current Duty Cycle over the last hour (bytes) */
     mcp_macJoinList                         = 0x0502, /* IEEE Joining List (used if mibJoiningPolicy == IEEELIST_JOIN) */
-    mcp_reserved_0503                       = 0x0503, /* was mcp_macJoinPolicy */
+    mcp_macDCAccelerated                    = 0x0503, /* Governs whether the Duty Cycle timing is accelerated (1) or normal (0) */
     mcp_macLBTTxRetries                     = 0x0504,
     mcp_macTxPowerMgmtSupported             = 0x0505,
     mcp_macDutyCycleSupported               = 0x0506,
-    /* ZCL 7 Diagnostics Cluster Info */
-    mcp_macDiagClusterInfo                  = 0x0507,
+    mcp_macDiagClusterInfo                  = 0x0507, /* ZCL 7 Diagnostics Cluster Info */
+    mcp_macZdRemoteEui64                    = 0x0508, /* Zigbee Direct EUI-64 of remote connected device */
+    mcp_macSimDeafTxDiv                     = 0x0509, /* Control simulating deafness during Tx backoff (MAC CSMA-CA) */
+    mcp_macZdSecureSession                  = 0x050a, /* Zigbee Direct BLE secure session currently setup between ZDD & ZVD. */
+    mcp_macMaxCSMARetries                   = 0x050b,
+    /**< Used if the MAC has decoupled CSMA retries from mcp_macMaxFrameRetries. It defines the number
+     * of retries the MAC should perform for a CSMA-CA failure, which is after mcp_macMaxCsmaBackoffs
+     * and CCA attempts. Normally, we just combine CSMA-CA failures and missed ACK failures, and use a
+     * single counter for both, with the upper limit set to mcp_macMaxFrameRetries. */
 
     /* Note, large gap of IDs until 0x40a0. */
 
@@ -282,7 +307,19 @@ enum mcp_attr_id {
     mcp_macEbrLinkQuality                   = 0x40A2,
     mcp_macEbrPercentFilter                 = 0x40A3,
     mcp_macEbrAttributeList                 = 0x40A4,
-    mcp_macBeaconAutoRespond                = 0x40A5
+    mcp_macBeaconAutoRespond                = 0x40A5,
+
+    /* Beacon Appendix Length. It is the length of the beacon appendix, if any, within the
+     * Beacon Payload. It is always the trailing part of the Beacon Payload and must be less
+     * than or equal to mcp_macBeaconPayloadLength. */
+    mcp_macBeaconAppendixLength             = 0x40A6,
+
+    /*
+     * IDs in this range are reserved for customers to add features
+     * specific to their implementation.
+     */
+    mcp_customerFeatureStart                = 0xF000,
+    mcp_customerFeatureEnd                  = 0xF7FF
 };
 
 /* Frequency Bands */
@@ -358,12 +395,42 @@ enum {
     mcp_BPSK_L          = 257,  /* Legacy BPSK */
 };
 
+/* PHR Types */
+enum {
+    mcp_PHR_RAW             = 0U,
+    mcp_PHR_O_QPSK          = 1U,
+    mcp_PHR_CSS             = 2U,
+    mcp_PHR_HRP_UWB         = 3U,
+    mcp_PHR_MSK             = 4U,
+    mcp_PHR_LRP_UWB         = 5U,
+    mcp_PHR_SUN_FSK         = 6U,
+    mcp_PHR_SUN_OFDM        = 7U,
+    mcp_PHR_SUN_O_QPSK      = 8U,
+    mcp_PHR_LECIM_FSK       = 9U,
+    mcp_PHR_TVWS_FSK        = 10U,
+    mcp_PHR_TVWS_OFDM       = 11U,
+    mcp_PHR_TVWS_NB_OFDM    = 12U,
+    mcp_PHR_RCC_LMR         = 13U,
+    mcp_PHR_CMB_O_QPSK      = 14U,
+    mcp_PHR_CMB_GFSK        = 15U,
+    mcp_PHR_TASK            = 16U,
+    mcp_PHR_RS_GFSK         = 17U,
+    mcp_PHR_WISUN_FSK_MS    = 18U,
+};
+
 /* FCS Type (mcp_macFCSType). */
 enum {
     mcp_FCS_TYPE_LONG      = 0,     /* 4 byte FCS is automatically generated by the PHY. */
     mcp_FCS_TYPE_SHORT     = 1,     /* 2 byte FCS is automatically generated by the PHY. */
     mcp_FCS_TYPE_LONG_RAW  = 0x80,  /* 4 byte FCS is not generated by the PHY, but the PHR is modified appropriately. */
     mcp_FCS_TYPE_SHORT_RAW = 0x81,  /* 2 byte FCS is not generated by the PHY, but the PHR is modified appropriately. */
+};
+
+/* TAP Types */
+enum {
+    mcp_TAP_NONE                    = 0U,
+    mcp_TAP_RAW_RX_TX               = 1U, /* RX and TX frames. */
+    mcp_TAP_FILTERED_UNSECURED_RX   = 2U, /* For Wi-SUN TBU frame subscription. */
 };
 
 /* TSCH specific definitions. */
@@ -465,7 +532,7 @@ enum {
     mcp_WS_DOMAIN_VIETNAM = 0x0f,
 };
 
-/* Wi-SUN PHY Operating Modes */
+/* Wi-SUN FAN 1.0 FSK PHY Operating Modes */
 enum {
     mcp_WS_OPMODE_1A = 0x00,
     mcp_WS_OPMODE_1B = 0x01,
@@ -475,6 +542,53 @@ enum {
     mcp_WS_OPMODE_4A = 0x05,
     mcp_WS_OPMODE_4B = 0x06,
     mcp_WS_OPMODE_5  = 0x07,
+};
+
+/* Wi-SUN FAN 1.1 PHY Types */
+#define WS_PHYTYPE_SHIFT        4U  /* PHY Type is in upper 4 bits of FAN 1.1 PhyModeID. */
+enum {
+    mcp_WS_MOD_FSK          = (0x00UL << (WS_PHYTYPE_SHIFT)),
+    mcp_WS_MOD_FSK_FEC      = (0x01UL << (WS_PHYTYPE_SHIFT)),
+    mcp_WS_MOD_OFDM_OPT1    = (0x02UL << (WS_PHYTYPE_SHIFT)),
+    mcp_WS_MOD_OFDM_OPT2    = (0x03UL << (WS_PHYTYPE_SHIFT)),
+    mcp_WS_MOD_OFDM_OPT3    = (0x04UL << (WS_PHYTYPE_SHIFT)),
+    mcp_WS_MOD_OFDM_OPT4    = (0x05UL << (WS_PHYTYPE_SHIFT)),
+};
+
+/* Wi-SUN FAN 1.1 OFDM MCS levels */
+enum {
+    mcp_WS_OFDM_MCS_0   = (0x00UL),
+    mcp_WS_OFDM_MCS_1   = (0x01UL),
+    mcp_WS_OFDM_MCS_2   = (0x02UL),
+    mcp_WS_OFDM_MCS_3   = (0x03UL),
+    mcp_WS_OFDM_MCS_4   = (0x04UL),
+    mcp_WS_OFDM_MCS_5   = (0x05UL),
+    mcp_WS_OFDM_MCS_6   = (0x06UL),
+};
+
+/* Wi-SUN FAN 1.1 Channel Plan ID values */
+enum {
+    mcp_WS_CHPLANID_902_928_200 =   (1U),   /* ChanCenterFreq0 902.2 MHz, ChanSpacing 200 kHz */
+    mcp_WS_CHPLANID_902_928_400 =   (2U),   /* ChanCenterFreq0 902.4 MHz, ChanSpacing 400 kHz */
+    mcp_WS_CHPLANID_902_928_600 =   (3U),   /* ChanCenterFreq0 902.6 MHz, ChanSpacing 600 kHz */
+    mcp_WS_CHPLANID_902_928_800 =   (4U),   /* ChanCenterFreq0 902.7 MHz, ChanSpacing 800 kHz */
+    mcp_WS_CHPLANID_902_928_1200 =  (5U),   /* ChanCenterFreq0 903.2 MHz, ChanSpacing 1200 kHz */
+    /* 6 - 20 reserved */
+    mcp_WS_CHPLANID_920_928_200 =   (21U),   /* ChanCenterFreq0 920.6 MHz, ChanSpacing 200 kHz */
+    mcp_WS_CHPLANID_920_928_400 =   (22U),   /* ChanCenterFreq0 920.9 MHz, ChanSpacing 400 kHz */
+    mcp_WS_CHPLANID_920_928_600 =   (23U),   /* ChanCenterFreq0 920.8 MHz, ChanSpacing 600 kHz */
+    mcp_WS_CHPLANID_920_928_800 =   (24U),   /* ChanCenterFreq0 921.1 MHz, ChanSpacing 800 kHz */
+    /* 25 - 31 reserved */
+    mcp_WS_CHPLANID_863_870_100 =   (32U),   /* ChanCenterFreq0 863.1 MHz, ChanSpacing 100 kHz */
+    mcp_WS_CHPLANID_863_870_200 =   (33U),   /* ChanCenterFreq0 863.1 MHz, ChanSpacing 200 kHz */
+    mcp_WS_CHPLANID_870_876_100 =   (34U),   /* ChanCenterFreq0 870.1 MHz, ChanSpacing 100 kHz */
+    mcp_WS_CHPLANID_870_876_200 =   (35U),   /* ChanCenterFreq0 870.2 MHz, ChanSpacing 200 kHz */
+    mcp_WS_CHPLANID_863_876_100 =   (36U),   /* ChanCenterFreq0 863.1 MHz, ChanSpacing 100 kHz */
+    mcp_WS_CHPLANID_863_876_200 =   (37U),   /* ChanCenterFreq0 863.1 MHz, ChanSpacing 200 kHz */
+    mcp_WS_CHPLANID_863_876_400 =   (38U),   /* ChanCenterFreq0 863.5 MHz, ChanSpacing 400 kHz */
+    mcp_WS_CHPLANID_865_868_100 =   (39U),   /* ChanCenterFreq0 865.1 MHz, ChanSpacing 100 kHz */
+    mcp_WS_CHPLANID_865_868_200 =   (40U),   /* ChanCenterFreq0 865.1 MHz, ChanSpacing 200 kHz */
+    /* 41 - 63 reserved */
 };
 
 /* MLME-ASSOCIATE.request capabilities */

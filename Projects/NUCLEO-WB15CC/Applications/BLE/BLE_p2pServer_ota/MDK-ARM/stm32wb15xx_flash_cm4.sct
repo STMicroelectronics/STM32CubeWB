@@ -8,14 +8,14 @@ LR_IROM1 0x08007000 0x140{    ; load region size_region
   }  
  }
 
-LR_IROM2 0x08007140 0x4{    ; load region size_region  
-  ER_IROM2_LOW 0x08007140 0x4  {
+LR_IROM2 0x08007140 0x10{    ; load region size_region  
+  ER_IROM2_LOW 0x08007140 0x10  {
  *.o (TAG_OTA_START) 
   }  
  }
  
-LR_IROM3 0x08007144 0x116BC{
-  ER_IROM1_HIGH 0x08007144 0x116BC {  ; load address = execution address	
+LR_IROM3 0x08007150 0x116B0{
+  ER_IROM1_HIGH 0x08007150 0x116B0 {  ; load address = execution address	
   *(InRoot$$Sections)
   .ANY (+RO)  
   *.o (TAG_OTA_END)	

@@ -794,6 +794,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           break; /* ACI_HAL_END_OF_RADIO_ACTIVITY_VSEVT_CODE */
 #endif /* RADIO_ACTIVITY_EVENT != 0 */
 
+        case ACI_GATT_INDICATION_VSEVT_CODE:
+        {
+          APP_DBG_MSG(">>== ACI_GATT_INDICATION_VSEVT_CODE \r");
+          aci_gatt_confirm_indication(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
+        }
+        break;
+
         /* USER CODE BEGIN BLUE_EVT */
 
         /* USER CODE END BLUE_EVT */

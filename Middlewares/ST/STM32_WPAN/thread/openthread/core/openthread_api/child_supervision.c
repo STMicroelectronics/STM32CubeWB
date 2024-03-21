@@ -30,7 +30,6 @@
 #include "child_supervision.h"
 
 
-#if OPENTHREAD_CONFIG_CHILD_SUPERVISION_ENABLE
 
 uint16_t otChildSupervisionGetInterval(otInstance *aInstance)
 {
@@ -96,4 +95,33 @@ void otChildSupervisionSetCheckTimeout(otInstance *aInstance, uint16_t aTimeout)
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
 }
 
-#endif /* OPENTHREAD_CONFIG_CHILD_SUPERVISION_ENABLE */
+uint16_t otChildSupervisionGetCheckFailureCounter(otInstance *aInstance)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_CHILD_SUPERVISION_GET_CHECK_FAILURE_COUNTER;
+
+    p_ot_req->Size=0;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    return (uint16_t)p_ot_req->Data[0];
+}
+
+void otChildSupervisionResetCheckFailureCounter(otInstance *aInstance)
+{
+    Pre_OtCmdProcessing();
+    /* prepare buffer */
+    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+    p_ot_req->ID = MSG_M4TOM0_OT_CHILD_SUPERVISION_RESET_CHECK_FAILURE_COUNTER;
+
+    p_ot_req->Size=0;
+
+    Ot_Cmd_Transfer();
+
+    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}

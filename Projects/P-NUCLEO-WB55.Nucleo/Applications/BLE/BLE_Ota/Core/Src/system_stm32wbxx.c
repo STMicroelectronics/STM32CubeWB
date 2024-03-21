@@ -133,7 +133,7 @@ typedef void (*fct_t)(void);
 /*!< Vector Table base offset field. This value must be a multiple of 0x200. */
 /* #define VECT_TAB_OFFSET  0x0U*/
 #ifdef OTA_SBSFU
-#if defined(__ARMCC_VERSION)
+#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
 extern void * __Vectors;
 #define VECT_TAB_OFFSET ((uint32_t) & __Vectors)
 #elif defined(__ICCARM__)

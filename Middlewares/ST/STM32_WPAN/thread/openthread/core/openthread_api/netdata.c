@@ -51,6 +51,53 @@ otError otNetDataGet(otInstance *aInstance, bool aStable, uint8_t *aData,
   return (otError)p_ot_req->Data[0];
 }
 
+uint8_t otNetDataGetLength(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_NET_DATA_GET_LENGTH;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_ot_req->Data[0];
+}
+
+uint8_t otNetDataGetMaxLength(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_NET_DATA_GET_MAX_LENGTH;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_ot_req->Data[0];
+}
+
+void otNetDataResetMaxLength(otInstance *aInstance)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_NET_DATA_RESET_MAX_LENGTH;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+}
+
 otError otNetDataGetNextOnMeshPrefix(otInstance *aInstance, otNetworkDataIterator *aIterator,
     otBorderRouterConfig *aConfig)
 {
@@ -119,6 +166,26 @@ otError otNetDataGetNextService(otInstance *aInstance, otNetworkDataIterator *aI
   p_ot_req->Size=2;
   p_ot_req->Data[0] = (uint32_t) aIterator;
   p_ot_req->Data[1] = (uint32_t) aConfig;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (otError)p_ot_req->Data[0];
+}
+
+otError otNetDataGetNextLowpanContextInfo(otInstance            *aInstance,
+                                          otNetworkDataIterator *aIterator,
+                                          otLowpanContextInfo   *aContextInfo)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_NET_DATA_GET_NEXT_LOWPAN_CONTEXT_INFO;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
+  p_ot_req->Data[1] = (uint32_t) aContextInfo;
 
   Ot_Cmd_Transfer();
 
