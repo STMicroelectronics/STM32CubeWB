@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    ble_const.h
- * @author  MDG
+ *
  * @brief   This file contains the definitions which are compiler dependent.
  *****************************************************************************
  * @attention
@@ -43,6 +43,9 @@
 #ifndef BEACON_ONLY
 #define BEACON_ONLY 0
 #endif
+
+/* Defintion to determine BLE Host stack presence */
+#define BLE_HOST_PRESENT (!(LL_ONLY || LL_ONLY_BASIC || BEACON_ONLY))
 
 
 /* Size of command/events buffers:

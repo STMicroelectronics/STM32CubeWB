@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    ble_defs.h
- * @author  MDG
+ *
  * @brief   This file contains definitions used for BLE Stack interface.
  *****************************************************************************
  * @attention

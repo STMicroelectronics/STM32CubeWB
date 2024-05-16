@@ -1,13 +1,13 @@
 /**
  ******************************************************************************
- * @file    cli.c
+ * @file    cli_platform.c
  * @author  MCD Application Team
- * @brief   This file contains the CLI interface shared between M0 and
- *          M4.
+ * @brief   This file contains the functions to enable the OpenThread Command
+ *          Line Interface on M4 processor.
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+ * Copyright (c) 2024 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under Ultimate Liberty license
@@ -21,58 +21,86 @@
 #if defined(ENABLE_OPENTHREAD_CLI) || defined(__ARMCC_VERSION)
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32wbxx_hal.h"
-
-#include "stm32wbxx_core_interface_def.h"
-#include "tl_thread_hci.h"
+#include "alarm-milli.h"
+#include "app_conf.h"
 #include "entropy.h"
 #include "logging.h"
-#include "app_conf.h"
+#include "stm32wbxx_core_interface_def.h"
+#include "stm32wbxx_hal.h"
+#include "tl_thread_hci.h"
+#include "uart.h"
 
 #include OPENTHREAD_PROJECT_CORE_CONFIG_FILE
 
-#define OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MIN       11
-#define OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MASK      0xffff << OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MIN
+/* Private defines -----------------------------------------------------------*/
+#define OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MASK      0x07FFF800      // Represent channels 11 to 26
 
-void otPlatAlarmMilliStartAt(otInstance *aInstance, uint32_t aT0, uint32_t aDt);
-uint32_t otPlatAlarmMilliGetNow(void);
-void otPlatAlarmMilliStop(otInstance *aInstance);
-otError otPlatUartEnable(void);
+/* Private variables ---------------------------------------------------------*/
+static uint8_t alarmMilliTimerID;       // Alarm ID used for HW_timeserver
+static otInstance *g_aInstance;         // OpenThread instance pointer
 
-/* NOT IMPLEMENTED ON M0 */
-otError otPlatRadioGetCcaEnergyDetectThreshold(otInstance *aInstance, int8_t *aThreshold)
+/* Functions Definition ------------------------------------------------------*/
+/**
+ * @brief  This function is not implemented on M0 and is only necessary to build.
+ * @retval OT_ERROR_NOT_IMPLEMENTED
+ */
+__weak otError otPlatRadioGetCcaEnergyDetectThreshold(otInstance *aInstance, int8_t *aThreshold)
 {
   return OT_ERROR_NOT_IMPLEMENTED;
 }
 
-/* NOT IMPLEMENTED ON M0 */
-otError otPlatRadioSetCcaEnergyDetectThreshold(otInstance *aInstance, int8_t aThreshold)
+/**
+ * @brief  This function is not implemented on M0 and is only necessary to build.
+ * @retval OT_ERROR_NOT_IMPLEMENTED
+ */
+__weak otError otPlatRadioSetCcaEnergyDetectThreshold(otInstance *aInstance, int8_t aThreshold)
 {
   return OT_ERROR_NOT_IMPLEMENTED;
 }
 
+/**
+ * @brief  Get the radio supported channel mask that the device is allowed to be on.
+ * @param  aInstance   The OpenThread instance structure.
+ * @retval The radio supported channel mask.
+ */
 uint32_t otPlatRadioGetSupportedChannelMask(otInstance *aInstance)
 {
   return OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MASK;
 }
 
+/**
+ * @brief  Gets the radio preferred channel mask that the device prefers to form on.
+ * @param  aInstance   The OpenThread instance structure.
+ * @retval The radio preferred channel mask.
+ */
 uint32_t otPlatRadioGetPreferredChannelMask(otInstance *aInstance)
 {
   return otPlatRadioGetSupportedChannelMask(NULL);
 }
 
-/* NOT IMPLEMENTED ON M0 */
+/**
+ * @brief  This function is not implemented on M0 and is only necessary to build.
+ * @retval OT_ERROR_NOT_IMPLEMENTED
+ */
 otError otPlatRadioGetFemLnaGain(otInstance *aInstance, int8_t *aGain)
 {
   return OT_ERROR_NOT_IMPLEMENTED;
 }
 
-/* NOT IMPLEMENTED ON M0 */
+/**
+ * @brief  This function is not implemented on M0 and is only necessary to build.
+ * @retval OT_ERROR_NOT_IMPLEMENTED
+ */
 otError otPlatRadioSetFemLnaGain(otInstance *aInstance, int8_t aGain)
 {
   return OT_ERROR_NOT_IMPLEMENTED;
 }
 
+/**
+ * @brief  Get the status of promiscuous mode.
+ * @param  aInstance  The OpenThread instance structure.
+ * @retval TRUE if promiscuous mode is enabled, FALSE otherwise
+ */
 bool otPlatRadioGetPromiscuous(otInstance *aInstance)
 {
   Pre_OtCmdProcessing();
@@ -89,18 +117,29 @@ bool otPlatRadioGetPromiscuous(otInstance *aInstance)
   return (bool) p_ot_req->Data[0];
 }
 
-/* NOT IMPLEMENTED ON M0 */
+/**
+ * @brief  This function is not implemented on M0 and is only necessary to build.
+ * @retval OT_ERROR_NOT_IMPLEMENTED
+ */
 otError otPlatRadioGetRegion(otInstance *aInstance, uint16_t *aRegionCode)
 {
   return OT_ERROR_NOT_IMPLEMENTED;
 }
 
-/* NOT IMPLEMENTED ON M0 */
+/**
+ * @brief  This function is not implemented on M0 and is only necessary to build.
+ * @retval OT_ERROR_NOT_IMPLEMENTED
+ */
 otError otPlatRadioSetRegion(otInstance *aInstance, uint16_t aRegionCode)
 {
   return OT_ERROR_NOT_IMPLEMENTED;
 }
 
+/**
+ * @brief  Get the radio version string.
+ * @param  aInstance   The OpenThread instance structure.
+ * @retval A pointer to the OpenThread radio version.
+ */
 const char *otPlatRadioGetVersionString(otInstance *aInstance)
 {
   static char sVersion[100];
@@ -108,6 +147,12 @@ const char *otPlatRadioGetVersionString(otInstance *aInstance)
   return sVersion;
 }
 
+/**
+ * @brief  Fill buffer with entropy.
+ * @param  aOutput         A pointer to where the true random values are placed.  Must not be NULL.
+ * @param  aOutputLength   Size of @p aBuffer.
+ * @retval OT_ERROR_NONE, OT_ERROR_FAILED or OT_ERROR_INVALID_ARGS
+ */
 otError otPlatEntropyGet(uint8_t *aOutput, uint16_t aOutputLength)
 {
   Pre_OtCmdProcessing();
@@ -126,24 +171,37 @@ otError otPlatEntropyGet(uint8_t *aOutput, uint16_t aOutputLength)
   return (otError) p_ot_req->Data[0];
 }
 
-void otPlatAlarmMilliStartAt(otInstance *aInstance, uint32_t aT0, uint32_t aDt)
+/**
+ * @brief  Callback function when timer set in otPlatAlarmMilliStartAt() is fired
+ * @param  None
+ * @retval None
+ */
+static void callbackOtPlatAlarmMilliFired(void)
 {
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_ALARM_MILLI_START_AT;
-
-  p_ot_req->Size=2;
-  p_ot_req->Data[0] = (uint32_t) aT0;
-  p_ot_req->Data[1] = (uint32_t) aDt;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  otPlatAlarmMilliFired(g_aInstance);
 }
 
+/**
+ * @brief  Set the alarm to fire at @p aDt milliseconds after @p aT0.
+ * @param  aInstance  The OpenThread instance structure.
+ * @param  aT0        The reference time.
+ * @param  aDt        The time delay in milliseconds from @p aT0.
+ * @retval None
+ */
+void otPlatAlarmMilliStartAt(otInstance *aInstance, uint32_t aT0, uint32_t aDt)
+{
+  // Keep instance pointer to set it back in callback function
+  g_aInstance = aInstance;
 
+  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &alarmMilliTimerID, hw_ts_SingleShot, callbackOtPlatAlarmMilliFired);
+  HW_TS_Start(alarmMilliTimerID, aDt);
+}
+
+/**
+ * @brief  Get the current time.
+ * @param  None
+ * @retval The current time in milliseconds.
+ */
 uint32_t otPlatAlarmMilliGetNow(void)
 {
   Pre_OtCmdProcessing();
@@ -160,32 +218,37 @@ uint32_t otPlatAlarmMilliGetNow(void)
   return (uint32_t) p_ot_req->Data[0];
 }
 
+/**
+ * @brief  Stop the alarm.
+ * @param  aInstance  The OpenThread instance structure.
+ * @retval None
+ */
 void otPlatAlarmMilliStop(otInstance *aInstance)
 {
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_ALARM_MILLI_STOP;
-
-  p_ot_req->Size=0;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  HW_TS_Stop(alarmMilliTimerID);
+  HW_TS_Delete(alarmMilliTimerID);
 }
 
-/* NOT IMPLEMENTED ON M0 */
-otError otPlatUartEnable(void)
+/**
+ * @brief  This function is not implemented on M0 and is only necessary to build.
+ * @retval OT_ERROR_NONE
+ */
+__weak otError otPlatUartEnable(void)
 {
   return OT_ERROR_NONE;
 }
 
-/* TO BE IMPLEMENTED */
-void otLogWarnPlat(const char *aFormat, ...) {}
+/**
+ * @brief  This function is not implemented on M0 and is only necessary to build.
+ * @retval None
+ */
+__weak void otLogWarnPlat(const char *aFormat, ...) {}
 
 #if defined ( __ARMCC_VERSION ) /* KEIL with ARMCC or Clang */
-// Prevent compilation error with KEIL - these functions are not called though
+/* 
+  These functions are defined empty or return 0 to prevent compilation errors 
+  with KEIL, even if none of them are used. They are discarded at link obviously.
+*/
 void otLogDebgPlat(const char *aFormat, ...) {}
 void otPlatReset(otInstance *aInstance) {}
 void otPlatLog(otLogLevel aLogLevel, otLogRegion aLogRegion, const char *aFormat, ...) {}
@@ -220,7 +283,7 @@ void otPlatFlashWrite(otInstance *aInstance, uint8_t aSwapIndex, uint32_t aOffse
 #if (CFG_FULL_LOW_POWER != 0) || !defined(ENABLE_OPENTHREAD_CLI)
 otError otPlatUartFlush(void)	 { return 0; }
 otError otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLength) { return 0; }
-#endif /* (CFG_FULL_LOW_POWER != 0) */
+#endif /* (CFG_FULL_LOW_POWER != 0) || !defined(ENABLE_OPENTHREAD_CLI) */
 #endif /* __ARMCC_VERSION */
 
-#endif /* ENABLE_OPENTHREAD_CLI */
+#endif /* ENABLE_OPENTHREAD_CLI || __ARMCC_VERSION */

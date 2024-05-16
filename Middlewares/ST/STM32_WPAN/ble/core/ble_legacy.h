@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    ble_legacy.h
- * @author  MDG
+ *
  * @brief   This file contains legacy definitions used for BLE.
  *****************************************************************************
  * @attention

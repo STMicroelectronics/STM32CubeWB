@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    osal.c
- * @author  MDG
+ *
  * @brief   Implements the interface defined in "osal.h" needed by the stack.
  *          Actually, only memset, memcpy and memcmp wrappers are implemented.
  *****************************************************************************

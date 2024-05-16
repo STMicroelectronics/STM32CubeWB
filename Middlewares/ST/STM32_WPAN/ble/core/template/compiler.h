@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    compiler.h
- * @author  MDG
+ *
  * @brief   This file contains the definitions which are compiler dependent.
  *****************************************************************************
  * @attention

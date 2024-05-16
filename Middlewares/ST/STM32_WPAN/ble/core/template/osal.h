@@ -1,6 +1,6 @@
 /*****************************************************************************
  * @file    osal.h
- * @author  MDG
+ *
  * @brief   This header file defines the OS abstraction layer used by
  *          the BLE stack. OSAL defines the set of functions which needs to be
  *          ported to target operating system and target platform.

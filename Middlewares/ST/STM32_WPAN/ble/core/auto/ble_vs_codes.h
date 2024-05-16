@@ -1,6 +1,5 @@
 /*****************************************************************************
  * @file    ble_vs_codes.h
- * @author  MDG
  * @brief   STM32WB BLE API (vendor specific event codes)
  *          Auto-generated file: do not edit!
  *****************************************************************************
