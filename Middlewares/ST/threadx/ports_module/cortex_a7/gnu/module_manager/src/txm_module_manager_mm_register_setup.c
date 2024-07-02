@@ -36,7 +36,7 @@ extern ULONG _txm_ttbr1_page_table[TXM_MAXIMUM_MODULES][TXM_MASTER_PAGE_TABLE_EN
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _txm_module_manager_inside_data_check           Cortex-A7/MMU/GNU   */
-/*                                                           6.x          */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -66,7 +66,7 @@ extern ULONG _txm_ttbr1_page_table[TXM_MAXIMUM_MODULES][TXM_MASTER_PAGE_TABLE_EN
 /*                                                                        */
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  xx-xx-xxxx      Scott Larson            Initial Version 6.x           */
+/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
 /*                                                                        */
 /**************************************************************************/
 UINT _txm_module_manager_inside_data_check(ULONG pointer)
@@ -93,7 +93,7 @@ ULONG translation;
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _txm_module_manager_assign_asid                 Cortex-A7/MMU/GNU   */
-/*                                                           6.x          */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -123,7 +123,7 @@ ULONG translation;
 /*                                                                        */
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  xx-xx-xxxx      Scott Larson            Initial Version 6.x           */
+/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
 /*                                                                        */
 /**************************************************************************/
 UINT    _txm_module_manager_assign_asid(TXM_MODULE_INSTANCE *module_instance)
@@ -154,7 +154,7 @@ UINT    i = 1;
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _txm_module_manager_remove_asid                 Cortex-A7/MMU/GNU   */
-/*                                                           6.x          */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -183,7 +183,7 @@ UINT    i = 1;
 /*                                                                        */
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  xx-xx-xxxx      Scott Larson            Initial Version 6.x           */
+/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
 /*                                                                        */
 /**************************************************************************/
 VOID    _txm_module_manager_remove_asid(TXM_MODULE_INSTANCE *module_instance)
@@ -200,7 +200,7 @@ VOID    _txm_module_manager_remove_asid(TXM_MODULE_INSTANCE *module_instance)
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _txm_module_manager_mm_register_setup           Cortex-A7/MMU/GNU   */
-/*                                                           6.x          */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -230,7 +230,7 @@ VOID    _txm_module_manager_remove_asid(TXM_MODULE_INSTANCE *module_instance)
 /*                                                                        */
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  xx-xx-xxxx      Scott Larson            Initial Version 6.x           */
+/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
 /*                                                                        */
 /**************************************************************************/
 VOID  _txm_module_manager_mm_register_setup(TXM_MODULE_INSTANCE *module_instance)

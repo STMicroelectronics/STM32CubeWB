@@ -325,7 +325,7 @@ static void hci_le_advertising_report_event_process( const uint8_t* in )
     Advertising_Report[0].Data = &in[9];
     in += 9 + in[8];
     Advertising_Report[0].RSSI = in[0];
-    hci_le_advertising_report_event( 1, Advertising_Report );
+    (void)hci_le_advertising_report_event( 1, Advertising_Report );
   }
 }
 

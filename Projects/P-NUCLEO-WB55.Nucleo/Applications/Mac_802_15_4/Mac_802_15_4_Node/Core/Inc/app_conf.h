@@ -101,12 +101,23 @@
 /******************************************************************************
  * UART interfaces
  ******************************************************************************/
-
-
-
 #define CFG_DEBUG_TRACE_UART      hw_lpuart1
 #define CFG_CLI_UART                hw_uart1
 
+/* USER CODE BEGIN Defines */
+/******************************************************************************
+ * User interaction
+ * When CFG_LED_SUPPORTED is set, LEDS are activated if requested
+ * When CFG_BUTTON_SUPPORTED is set, the push button are activated if requested
+ ******************************************************************************/
+#if (CFG_FULL_LOW_POWER == 1)
+#define CFG_LED_SUPPORTED         0
+#define CFG_BUTTON_SUPPORTED      0
+#else
+#define CFG_LED_SUPPORTED         1
+#define CFG_BUTTON_SUPPORTED      1
+#endif /* CFG_FULL_LOW_POWER */
+/* USER CODE END Defines */
 
 /******************************************************************************
  * Transport Layer

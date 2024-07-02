@@ -856,45 +856,6 @@ static void Ble_Hci_Gap_Gatt_Init(void)
    * The lowest 32bits is read from the UDN to differentiate between devices
    * The RNG may be used to provide a random number on each power on
    */
-#if (CFG_IDENTITY_ADDRESS == GAP_STATIC_RANDOM_ADDR)
-#if defined(CFG_STATIC_RANDOM_ADDRESS)
-  a_srd_bd_addr[0] = CFG_STATIC_RANDOM_ADDRESS & 0xFFFFFFFF;
-  a_srd_bd_addr[1] = (uint32_t)((uint64_t)CFG_STATIC_RANDOM_ADDRESS >> 32);
-  a_srd_bd_addr[1] |= 0xC000; /* The two upper bits shall be set to 1 */
-#else
-  /* Get RNG semaphore */
-  while(LL_HSEM_1StepLock(HSEM, CFG_HW_RNG_SEMID));
-
-  /* Enable RNG */
-  __HAL_RNG_ENABLE(&hrng);
-
-  /* Enable HSI48 oscillator */
-  LL_RCC_HSI48_Enable();
-  /* Wait until HSI48 is ready */
-  while(! LL_RCC_HSI48_IsReady());
-
-  if (HAL_RNG_GenerateRandomNumber(&hrng, &a_srd_bd_addr[1]) != HAL_OK)
-  {
-    /* Random number generation error */
-    Error_Handler();
-  }
-  if (HAL_RNG_GenerateRandomNumber(&hrng, &a_srd_bd_addr[0]) != HAL_OK)
-  {
-    /* Random number generation error */
-    Error_Handler();
-  }
-  a_srd_bd_addr[1] |= 0xC000; /* The two upper bits shall be set to 1 */
-
-  /* Disable HSI48 oscillator */
-  LL_RCC_HSI48_Disable();
-
-  /* Disable RNG */
-  __HAL_RNG_DISABLE(&hrng);
-
-  /* Release RNG semaphore */
-  LL_HSEM_ReleaseLock(HSEM, CFG_HW_RNG_SEMID, 0);
-#endif /* CFG_STATIC_RANDOM_ADDRESS */
-#endif
 
 #if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */

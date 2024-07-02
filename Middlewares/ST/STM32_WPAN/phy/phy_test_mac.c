@@ -86,6 +86,50 @@ uint8_t phyTestSetChannel(uint8_t channel_nb)
 }
 
 /**
+ * @brief  PHY test continuous Tx start on the current channel
+ *
+ * @param  none
+ * @retval 0 if successful, 2 if bad argument
+ */
+uint8_t phyTestContinuousTxStart(void)
+{
+  Mac_802_15_4_PreCmdProcessing();
+  /* prepare buffer */
+  TL_CmdPacket_t* p_mac_req = MAC_802_15_4_GetCmdBuffer();
+  
+  utils_mac_set_cmdCode(MSG_M4TOM0_PHY_CONTINUOUS_TX_START);
+  
+  p_mac_req->cmdserial.cmd.plen=0;
+  
+  Mac_802_15_4_CmdTransfer();
+  
+  TL_Evt_t* p_mac_rsp_evt = MAC_802_15_4_GetRspPayEvt();
+  return (uint8_t)p_mac_rsp_evt->payload[0];
+}
+
+/**
+ * @brief  PHY test continuous Tx stop
+ *
+ * @param  None
+ * @retval 0 if successful, 0xFF otherwise
+ */
+uint8_t phyTestContinuousTxStop(void)
+{
+  Mac_802_15_4_PreCmdProcessing();
+  /* prepare buffer */
+  TL_CmdPacket_t* p_mac_req = MAC_802_15_4_GetCmdBuffer();
+  
+  utils_mac_set_cmdCode(MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP);
+  
+  p_mac_req->cmdserial.cmd.plen=0;
+  
+  Mac_802_15_4_CmdTransfer();
+  
+  TL_Evt_t* p_mac_rsp_evt = MAC_802_15_4_GetRspPayEvt();
+  return (uint8_t)p_mac_rsp_evt->payload[0];
+}
+
+/**
  * @brief  PHY test continuous wave start
  *
  * @param  frq_mhz: the frequency of the continuous wave

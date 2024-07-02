@@ -26,7 +26,7 @@
 /*  PORT SPECIFIC C INFORMATION                            RELEASE        */
 /*                                                                        */
 /*    tx_port.h                                         Cortex-M33/AC6    */
-/*                                                           6.1.12       */
+/*                                                           6.2.1        */
 /*                                                                        */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -76,6 +76,8 @@
 /*                                            macro to port-specific,     */
 /*                                            described BASEPRI usage,    */
 /*                                            resulting in version 6.1.12 */
+/*  03-08-2023      Scott Larson            Removed unneeded #include,    */
+/*                                            resulting in version 6.2.1  */
 /*                                                                        */
 /**************************************************************************/
 
@@ -106,10 +108,6 @@
 #include <yvals.h>
 #endif /* TX_ENABLE_IAR_LIBRARY_SUPPORT */
 #endif /* __ICCARM__ */
-
-#ifdef __ARMCOMPILER_VERSION
-#include <arm_compat.h>
-#endif
 
 
 /* Define ThreadX basic types for this port.  */
@@ -648,7 +646,7 @@ VOID                                            _tx_thread_interrupt_restore(UIN
 
 #ifdef TX_THREAD_INIT
 CHAR                            _tx_version_id[] =
-                                    "Copyright (c) Microsoft Corporation. All rights reserved. * ThreadX Cortex-M33/AC6 Version 6.1.12 *";
+                                    "Copyright (c) Microsoft Corporation. All rights reserved. * ThreadX Cortex-M33/AC6 Version 6.2.1 *";
 #else
 #ifdef TX_MISRA_ENABLE
 extern  CHAR                    _tx_version_id[100];

@@ -142,6 +142,9 @@ SingleFlashOperationStatus_t FD_EraseSingleSector(uint32_t SectorNumber)
 {
   SingleFlashOperationStatus_t return_value;
 
+  /* Add at least 5us (CPU1 up to 64MHz) to guarantee that CPU2 can take SEM7 to protect BLE timing */
+  for (volatile uint32_t i = 0; i < 35; i++);
+
   /* The last parameter is unused in that case and set to 0 */
   return_value =  ProcessSingleFlashOperation(FLASH_ERASE, SectorNumber, 0);
 

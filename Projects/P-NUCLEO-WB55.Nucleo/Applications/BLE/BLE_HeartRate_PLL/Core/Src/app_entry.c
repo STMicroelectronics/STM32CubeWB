@@ -615,13 +615,19 @@ void MX_APPE_Process(void)
 void UTIL_SEQ_Idle(void)
 {
 #if (CFG_LPM_SUPPORTED == 1)
+  SHCI_CmdStatus_t status;
+  
   HAL_SuspendTick();
   if(CPU2_started != 0)
   {
     LL_RCC_HSE_Enable();
     if(LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_PLL)
-    {
-      SHCI_C2_SetSystemClock(SET_SYSTEM_CLOCK_PLL_ON_TO_HSE);
+    {      
+      status = SHCI_C2_SetSystemClock(SET_SYSTEM_CLOCK_PLL_ON_TO_HSE);
+      if(status != SHCI_Success)
+      {
+        Error_Handler();
+      }
     }
   }
 
@@ -630,7 +636,11 @@ void UTIL_SEQ_Idle(void)
   if(CPU2_started != 0)
   {
     LL_RCC_PLL_Enable();
-    SHCI_C2_SetSystemClock(SET_SYSTEM_CLOCK_HSE_TO_PLL);    
+    status = SHCI_C2_SetSystemClock(SET_SYSTEM_CLOCK_HSE_TO_PLL); 
+    if(status != SHCI_Success)
+    {
+      Error_Handler();
+    }
   }
   SystemCoreClockUpdate();
   HAL_InitTick(HAL_GetTickPrio());

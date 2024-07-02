@@ -234,6 +234,10 @@ at running time during the data transfer (ZCL OTA block request/response sequenc
       is now an RFD which is running and no more an FFD.
       If you have downloaded the new application (Zigbee_OnOff_Client_Router_Ota), you should see in the traces the message :
       "New M4 OTA firmware successfully running" being displayed.
+	  It might be needed to power off power on the Coordinator to see that the OTA has been successfull since the Coordinator window
+	  commissioning is set to 3 minutes (default window). If OTA end AFTER 3 minutes (0 minutes time is the Power on of the Coordinator),
+	  then the "new application Zigbee_OnOff_Client_Router_Ota" will not find a network to connect, unless you reopen a window by doing
+	  a power off power on of the Coordinator. 
 
    g) To play again with this use case and load a new image,  perform a full cleanup of the Flash of the OTA Client device using 
       Cube Programmer and reload the Zigbee_OTA_Client_Router associated with the stm32wb5x_Zigbee_FFD_fw binary.

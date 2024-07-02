@@ -64,8 +64,6 @@ static void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode);
 #if (CFG_FULL_LOW_POWER == 0)
 static void Send_CLI_To_M0(void);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
-static void Send_CLI_Ack_For_OT(void);
-static void HostTxCb( void );
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
@@ -152,6 +150,7 @@ void APP_THREAD_Init( void )
    * Do not allow standby in the application
    */
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP_THREAD, UTIL_LPM_DISABLE);
+  UTIL_LPM_SetStopMode(1 << CFG_LPM_APP_THREAD, UTIL_LPM_DISABLE);
 
   /* Init config buffer and call TL_THREAD_Init */
   APP_THREAD_TL_THREAD_INIT();
@@ -233,6 +232,23 @@ static void APP_THREAD_DeviceConfig(void)
 {
   /* USER CODE BEGIN DEVICECONFIG */
 
+  /* Disable traces in RCP for maximum efficiency and robustness */
+  SHCI_C2_DEBUG_TracesConfig_t APPD_TracesConfig;
+  APPD_TracesConfig.thread_config = 0x0; // Set to 1 to enable Thread traces, 0 to disable
+
+  SHCI_C2_DEBUG_Init_Cmd_Packet_t DebugCmdPacket =
+  {
+    {{0,0,0}},
+    {(uint8_t *)NULL,
+    (uint8_t *)&APPD_TracesConfig,
+    (uint8_t *)NULL,
+    0,
+    0,
+    0}
+  };
+
+  SHCI_C2_DEBUG_Init(&DebugCmdPacket);
+
   /* USER CODE END DEVICECONFIG */
 }
 
@@ -286,15 +302,6 @@ static void APP_THREAD_CheckWirelessFirmwareInfo(void)
     {
     case INFO_STACK_TYPE_THREAD_FTD :
       APP_DBG("FW Type : Thread FTD");
-      break;
-    case INFO_STACK_TYPE_THREAD_MTD :
-      APP_DBG("FW Type : Thread MTD");
-      break;
-    //case INFO_STACK_TYPE_THREAD_RCP :
-      //APP_DBG("FW Type : Thread RCP");
-      //break;
-    case INFO_STACK_TYPE_BLE_THREAD_FTD_STATIC :
-      APP_DBG("FW Type : Static Concurrent Mode BLE/Thread");
       break;
     default :
       /* No Thread device supported ! */
@@ -456,7 +463,7 @@ static void Receive_Ack_From_M0(void)
 static void Receive_Notification_From_M0(void)
 {
   CptReceiveMsgFromM0++;
-  UTIL_SEQ_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
+  UTIL_SEQ_SetTask(1U << CFG_TASK_MSG_FROM_M0_TO_M4, CFG_SCH_PRIO_0);
 }
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
@@ -464,32 +471,22 @@ static void Receive_Notification_From_M0(void)
 #if (CFG_FULL_LOW_POWER == 0)
 static void RxCpltCallback(void)
 {
-  /* Filling buffer and wait for '\r' char */
   if (indexReceiveChar < C_SIZE_CMD_STRING)
   {
-#ifndef OPENTHREAD_RCP
-    CommandString[indexReceiveChar++] = aRxBuffer[0];
-    if (aRxBuffer[0] == '\r')
-    {
-      CptReceiveCmdFromUser = 1U;
-
-      /* UART task scheduling*/
-      UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
-    }
-#else
     // Prepare Message to M0
     CommandString[indexReceiveChar++] = aRxBuffer[0];
 
-    if (aRxBuffer[0] == 0x7E)
-    	hdlc_Flag  = !hdlc_Flag;
+    if (aRxBuffer[0] == 0x7E) {
+      hdlc_Flag  = !hdlc_Flag;
+    }
 
     /* UART task scheduling*/
     if (!hdlc_Flag)
-    	UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
-
-#endif // OPENTHREAD_RCP
+    {
+      UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
+      hdlc_Flag = FALSE;
+    }
   }
-
   /* Once a character has been sent, put back the device in reception mode */
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
 }
@@ -559,18 +556,6 @@ static void Send_CLI_To_M0(void)
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 
 /**
- * @brief Send notification for CLI TL Channel.
- * @param  None
- * @retval None
- */
-static void Send_CLI_Ack_For_OT(void)
-{
-
-  /* Notify M0 that characters have been sent to UART */
-  TL_THREAD_CliSendAck();
-}
-
-/**
  * @brief Perform initialization of CLI UART interface.
  * @param  None
  * @retval None
@@ -578,18 +563,19 @@ static void Send_CLI_Ack_For_OT(void)
 void APP_THREAD_Init_UART_CLI(void)
 {
 #if (CFG_FULL_LOW_POWER == 0)
-  UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU,Send_CLI_To_M0);
+  UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU, Send_CLI_To_M0);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #else
 #if (CFG_FULL_LOW_POWER == 0)
-#ifdef OPENTHREAD_RCP
-  MX_LPUART1_UART_Init();
-#else
-  MX_USART1_UART_Init();
-#endif
-
+  if (CFG_CLI_UART == hw_uart1) {
+    MX_USART1_UART_Init();
+  }
+  else if (CFG_CLI_UART == hw_lpuart1) {
+    MX_LPUART1_UART_Init();
+  }
+  
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
@@ -611,56 +597,6 @@ void APP_THREAD_TL_THREAD_INIT(void)
 }
 
 /**
- * @brief  This function is called when notification on CLI TL Channel from M0+ is received.
- *
- * @param   Notbuffer : a pointer to TL_EvtPacket_t
- * @return  None
- */
-void TL_THREAD_CliNotReceived( TL_EvtPacket_t * Notbuffer )
-{
-  TL_CmdPacket_t* l_CliBuffer = (TL_CmdPacket_t*)Notbuffer;
-  uint8_t l_size = l_CliBuffer->cmdserial.cmd.plen;
-
-#ifdef OPENTHREAD_RCP
-  if (l_size) {
-	  HW_UART_Transmit_IT(CFG_CLI_UART, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
-  }
-  Send_CLI_Ack_For_OT();
-
-#else
-  /* WORKAROUND: if string to output is "> " then respond directly to M0 and do not output it */
-  if (strcmp((const char *)l_CliBuffer->cmdserial.cmd.payload, "> ") != 0)
-  {
-    /* Write to CLI UART */
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-    VCP_SendData( l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
-#else
-    HW_UART_Transmit_IT(CFG_CLI_UART, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
-#endif /*USAGE_OF_VCP */
-  }
-  else
-  {
-    Send_CLI_Ack_For_OT();
-  }
-#endif
-}
-
-/**
- * @brief  End of transfer callback for CLI UART sending.
- *
- * @param   Notbuffer : a pointer to TL_EvtPacket_t
- * @return  None
- */
-void HostTxCb(void)
-{
-#ifdef OPENTHREAD_RCP
-	return;
-#else
-  Send_CLI_Ack_For_OT();
-#endif
-}
-
-/**
  * @brief Process the messages coming from the M0.
  * @param  None
  * @retval None
@@ -676,88 +612,88 @@ void APP_THREAD_ProcessMsgM0ToM4(void)
     }
     else
     {
-#ifdef OPENTHREAD_RCP
       RCP_PacketFromM0_Processing();
-#else
-      OpenThread_CallBack_Processing();
-#endif
     }
     /* Reset counter */
     CptReceiveMsgFromM0 = 0;
   }
 }
 
-// RCP Packet received from M0, send it to OT Host thru LPUART
-void RCP_PacketFromM0_Processing() {
-
-
-	/* Get pointer on received RCP Packet buffer from M0 */
-	RCP_Packet_t* p_RCPPacket = THREAD_Get_RCPPayloadBuffer();
-
-	// Check if we reveived a M0 RCP Command or a RCP M0 Packet
-	if (p_RCPPacket->RCP_packetLength == 1) {
-		// We have a Command, as HDLC framing implies at list 5 byyes
-		switch (p_RCPPacket->RCP_packetPayload[0]) {
-		  case 'R' :
-			  APP_DBG("[M4 SPINEL] : Received a Reset Command from M0...");
-			  /* Perform an NVIC Reset in order to reinitialize the device */
-			  HAL_NVIC_SystemReset();
-			  break;
-                default:
-		  	  APP_DBG("[M4 SPINEL] : Received an UNKNOWN Command from M0 !!");
-		      break;
-		}
-	}
-
+/**
+ * @brief  This function send the packets coming from the M0 to the Host
+ *
+ * @param   None
+ * @return  None
+ */
+void RCP_PacketFromM0_Processing(void) 
+{
+  /* Get pointer on received RCP Packet buffer from M0 */
+  RCP_Packet_t* p_RCPPacket = THREAD_Get_RCPPayloadBuffer();
+  
+  // Check if we reveived a M0 RCP Command or a RCP M0 Packet
+  if (p_RCPPacket->RCP_packetLength == 1) {
+    // We have a Command, as HDLC framing implies at list 5 byyes
+    switch (p_RCPPacket->RCP_packetPayload[0]) {
+      case 'R' :
+        APP_DBG("[M4 SPINEL] : Received a Reset Command from M0...");
+        /* Perform an NVIC Reset in order to reinitialize the device */
+        HAL_NVIC_SystemReset();
+        break;
+      default:
+        APP_DBG("[M4 SPINEL] : Received an UNKNOWN Command from M0 !!");
+        break;
+    }
+  }
+  
 #if !HDLC_FRAMING_CHECK
-	// Just send received buffer on UART without checking HDLC framing
-	HW_UART_Transmit_IT(CFG_CLI_UART, p_RCPPacket->RCP_packetPayload, p_RCPPacket->RCP_packetLength, TL_THREAD_SendAck);
-	//APP_DBG("<-M4(%d)\n\r", p_RCPPacket->RCP_packetLength);
+  // Just send received buffer on UART without checking HDLC framing
+  HW_UART_Transmit_DMA(CFG_CLI_UART, p_RCPPacket->RCP_packetPayload, p_RCPPacket->RCP_packetLength, TL_THREAD_SendAck);
+  //APP_DBG("<-M4(%d)\n\r", p_RCPPacket->RCP_packetLength);
 #else
-	// First copy received HDLC frame at its right place
-	if (HdlcFrameCounter < HDLC_MAX_APPENDED_FRAME_NUMBER)
-	{
-		memcpy(HdlcAppendBuffer+(HdlcFrameCounter*128), p_RCPPacket->RCP_packetPayload, p_RCPPacket->RCP_packetLength);
-		HdlcAppendBufferLength += p_RCPPacket->RCP_packetLength;
-
-		if (p_RCPPacket->RCP_packetLength == 128) {
-			// In that case, whether we have a well formatted HDLC frame of 128 bytes, so ending with a 0x7E,
-			// or we are in the middle os a HDLC frame and we need to append it with the coming buffer...
-			// buffer is coming...
-			if (p_RCPPacket->RCP_packetPayload[127] == 0x7E) {
-				APP_DBG("[M4 SPINEL] : HDLC frame is 128 sharp !!");
-				HdlcFrameReadyToBeSent = TRUE;
-				// Nothing more to do here, just send it over uart interface...
-			}
-			else {
-				// Need to append to save part of HDLC frame into a buffer
-				HdlcFrameCounter++;
-				HdlcFrameReadyToBeSent = FALSE;
-				APP_DBG("%d-M4 ", HdlcFrameCounter);
-			}
-		} else
-		{
-			HdlcFrameReadyToBeSent = TRUE;
-		}
-
-		// Send to LPUART
-		if (HdlcAppendBufferLength && HdlcFrameReadyToBeSent)
-		{
-			APP_DBG("<-M4\n\r");
-			HW_UART_Transmit_IT(CFG_CLI_UART, HdlcAppendBuffer, HdlcAppendBufferLength, /*HostTxCb*/TL_THREAD_SendAck);
-			HdlcFrameCounter = 0;
-			HdlcAppendBufferLength = 0;
-		} else {
-			// bytes copied into HdlcAppendBuffer, ready to receive more...
-			TL_THREAD_SendAck();
-		}
-
-	} else  {
-		APP_DBG("[M4 SPINEL] : Warning Max number of HDLC frames reached ! %d", HdlcFrameCounter);
-		HdlcFrameCounter = 0;
-	    HdlcAppendBufferLength = 0;
-	    HdlcFrameReadyToBeSent = TRUE;
-	}
+  // First copy received HDLC frame at its right place
+  if (HdlcFrameCounter < HDLC_MAX_APPENDED_FRAME_NUMBER)
+  {
+    memcpy(HdlcAppendBuffer+(HdlcFrameCounter*128), p_RCPPacket->RCP_packetPayload, p_RCPPacket->RCP_packetLength);
+    HdlcAppendBufferLength += p_RCPPacket->RCP_packetLength;
+    
+    if (p_RCPPacket->RCP_packetLength == 128) {
+      // In that case, whether we have a well formatted HDLC frame of 128 bytes, so ending with a 0x7E,
+      // or we are in the middle os a HDLC frame and we need to append it with the coming buffer...
+      // buffer is coming...
+      if (p_RCPPacket->RCP_packetPayload[127] == 0x7E) {
+        APP_DBG("[M4 SPINEL] : HDLC frame is 128 sharp !!");
+        HdlcFrameReadyToBeSent = TRUE;
+        // Nothing more to do here, just send it over uart interface...
+      }
+      else {
+        // Need to append to save part of HDLC frame into a buffer
+        HdlcFrameCounter++;
+        HdlcFrameReadyToBeSent = FALSE;
+        APP_DBG("%d-M4 ", HdlcFrameCounter);
+      }
+    } else
+    {
+      HdlcFrameReadyToBeSent = TRUE;
+    }
+    
+    // Send to LPUART
+    if (HdlcAppendBufferLength && HdlcFrameReadyToBeSent)
+    {
+      APP_DBG("<-M4\n\r");
+      HW_UART_Transmit_DMA(CFG_CLI_UART, HdlcAppendBuffer, HdlcAppendBufferLength, TL_THREAD_SendAck);
+      HdlcFrameCounter = 0;
+      HdlcAppendBufferLength = 0;
+    } else {
+      // bytes copied into HdlcAppendBuffer, ready to receive more...
+      TL_THREAD_SendAck();
+    }
+    
+  } else  {
+    APP_DBG("[M4 SPINEL] : Warning Max number of HDLC frames reached ! %d", HdlcFrameCounter);
+    HdlcFrameCounter = 0;
+    HdlcAppendBufferLength = 0;
+    HdlcFrameReadyToBeSent = TRUE;
+  }
 #endif
 
 }

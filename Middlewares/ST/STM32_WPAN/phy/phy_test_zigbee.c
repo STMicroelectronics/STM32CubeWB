@@ -84,6 +84,50 @@ uint8_t phyTestSetChannel(uint8_t channel_nb)
 }
 
 /**
+ * @brief  PHY test continuous Tx start on the current channel
+ *
+ * @param  none
+ * @retval 0 if successful, 2 if bad argument
+ */
+uint8_t phyTestContinuousTxStart()
+{
+  Pre_ZigbeeCmdProcessing();
+  /* prepare buffer */
+  Zigbee_Cmd_Request_t* p_zb_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+  
+  p_zb_req->ID = MSG_M4TOM0_PHY_CONTINUOUS_TX_START;
+  
+  p_zb_req->Size=0;
+  
+  ZIGBEE_CmdTransfer();
+  
+  p_zb_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_zb_req->Data[0];
+}
+
+/**
+ * @brief  PHY test continuous Tx stop
+ *
+ * @param  None
+ * @retval 0 if successful, 0xFF otherwise
+ */
+uint8_t phyTestContinuousTxStop(void)
+{
+  Pre_ZigbeeCmdProcessing();
+  /* prepare buffer */
+  Zigbee_Cmd_Request_t* p_zb_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+  
+  p_zb_req->ID = MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP;
+  
+  p_zb_req->Size=0;
+  
+  ZIGBEE_CmdTransfer();
+  
+  p_zb_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_zb_req->Data[0];
+}
+
+/**
  * @brief  PHY test continuous wave start
  *
  * @param  frq_mhz: the frequency of the continuous wave

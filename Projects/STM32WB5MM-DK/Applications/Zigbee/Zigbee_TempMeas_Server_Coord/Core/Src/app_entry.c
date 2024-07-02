@@ -105,6 +105,7 @@ static uint8_t aRxBuffer[RX_BUFFER_SIZE];
 static uint8_t CommandString[C_SIZE_CMD_STRING];
 static uint16_t indexReceiveChar = 0;
 EXTI_HandleTypeDef exti_handle;
+
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -406,6 +407,7 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
   /* Release buffer */
   TL_MM_EvtDone( hcievt );
 }
+
 /**
   * @brief  Initialisation of the trace mechanism
   * @param  None
@@ -450,8 +452,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   case BUTTON_USER2_PIN:
     break;
 
-
-
   default:
     break;
   }
@@ -493,24 +493,22 @@ static void UartCmdExecute(void)
   if(strcmp((char const*)CommandString, "SW1") == 0)
   {
     APP_DBG("SW1 OK");
-    exti_handle.Line = EXTI_LINE_4;
-    HAL_EXTI_GenerateSWI(&exti_handle);
+//    exti_handle.Line = EXTI_LINE_4;
+//    HAL_EXTI_GenerateSWI(&exti_handle);
+    HAL_GPIO_EXTI_Callback(BUTTON_USER1_PIN);
   }
   else if (strcmp((char const*)CommandString, "SW2") == 0)
   {
     APP_DBG("SW2 OK");
-    exti_handle.Line = EXTI_LINE_0;
-    HAL_EXTI_GenerateSWI(&exti_handle);
-  }
-  else if (strcmp((char const*)CommandString, "SW3") == 0)
-  {
-    APP_DBG("SW3 OK");
-    exti_handle.Line = EXTI_LINE_1;
-    HAL_EXTI_GenerateSWI(&exti_handle);
+//    exti_handle.Line = EXTI_LINE_0;
+//    HAL_EXTI_GenerateSWI(&exti_handle);
+    HAL_GPIO_EXTI_Callback(BUTTON_USER2_PIN);
   }
   else
   {
     APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
   }
 }
+
+
 /* USER CODE END FD_WRAP_FUNCTIONS */

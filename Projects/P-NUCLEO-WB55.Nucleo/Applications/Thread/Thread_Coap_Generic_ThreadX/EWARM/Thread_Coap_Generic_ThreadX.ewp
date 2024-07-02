@@ -224,7 +224,6 @@
                     <state>USE_STM32WBXX_NUCLEO</state>
                     <state>THREAD_WB</state>
                     <state>TX_INCLUDE_USER_DEFINE_FILE</state>
-                    <state>TX_LOW_POWER</state>
                     <state>OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_ftd.h&gt;</state>
                     <state>OPENTHREAD_PROJECT_CORE_CONFIG_FILE=&lt;stm32wb-openthread-ftd-config.h&gt;</state>
                     <state>MBEDTLS_CONFIG_FILE=&lt;mbedtls-config.h&gt;</state>
@@ -398,7 +397,7 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
@@ -407,7 +406,7 @@
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCPosIndRopi</name>

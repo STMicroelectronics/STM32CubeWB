@@ -117,6 +117,10 @@ typedef enum
   MSG_M4TOM0_PHY_RX_START,
   /*! PHY Message ID to request a Rx stop */
   MSG_M4TOM0_PHY_RX_STOP,
+  /*! PHY Message ID to request a continuous Tx start */
+  MSG_M4TOM0_PHY_CONTINUOUS_TX_START,
+  /*! PHY Message ID to request a continuous Tx stop */
+  MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP,
 } MAC_802_15_4_MsgIdM4ToM0_t;
 
 /* List of messages sent by the M0 to the M4 */

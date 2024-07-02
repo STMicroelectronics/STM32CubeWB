@@ -20,6 +20,10 @@
 /**************************************************************************/
 /**************************************************************************/
 
+#ifdef TX_INCLUDE_USER_DEFINE_FILE
+#include "tx_user.h"
+#endif
+
     EXTERN  _tx_thread_current_ptr
     EXTERN  _tx_thread_execute_ptr
     EXTERN  _tx_timer_time_slice
@@ -43,7 +47,7 @@
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _tx_thread_schedule                               Cortex-M33/IAR    */
-/*                                                           6.1.11       */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -84,6 +88,8 @@
 /*                                            resulting in version 6.1.7  */
 /*  04-25-2022      Scott Larson            Added BASEPRI support,        */
 /*                                            resulting in version 6.1.11 */
+/*  03-08-2023      Scott Larson            Added preproc FPU option,     */
+/*                                            resulting in version 6.2.1  */
 /*                                                                        */
 /**************************************************************************/
 // VOID   _tx_thread_schedule(VOID)
@@ -374,6 +380,8 @@ _tx_svc_secure_init:
 
     PUBLIC  _tx_vfp_access
 _tx_vfp_access:
+#ifdef __ARMVFP__
     VMOV.F32 s0, s0                                 // Simply access the VFP
+#endif
     BX       lr                                     // Return to caller
     END

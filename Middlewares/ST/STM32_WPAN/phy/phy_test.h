@@ -23,6 +23,9 @@
 uint8_t phyTestMode(uint8_t enableDisable);
 uint8_t phyTestSetChannel(uint8_t channel_nb);
 
+uint8_t phyTestContinuousTxStart(void);
+uint8_t phyTestContinuousTxStop(void);
+
 uint8_t phyTestContinuousWaveStart(uint16_t frq_mhz);
 uint8_t phyTestContinuousWaveStop(void);
 

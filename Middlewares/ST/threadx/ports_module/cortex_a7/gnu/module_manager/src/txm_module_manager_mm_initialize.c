@@ -64,7 +64,7 @@ __attribute__ ((aligned (1024))) ULONG _txm_level2_external_page_pool[TXM_LEVEL2
 /*  FUNCTION                                               RELEASE        */ 
 /*                                                                        */ 
 /*    _txm_module_manager_mm_initialize                Cortex-A7/MMU/GNU  */ 
-/*                                                           6.x          */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -93,7 +93,7 @@ __attribute__ ((aligned (1024))) ULONG _txm_level2_external_page_pool[TXM_LEVEL2
 /*                                                                        */ 
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  xx-xx-xxxx      Scott Larson            Initial Version 6.x           */
+/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
 /*                                                                        */
 /**************************************************************************/
 UINT  _txm_module_manager_mm_initialize(VOID)

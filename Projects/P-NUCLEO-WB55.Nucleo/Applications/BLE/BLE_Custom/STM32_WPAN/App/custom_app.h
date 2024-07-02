@@ -69,6 +69,7 @@ void Custom_APP_Init(void);
 void Custom_APP_Notification(Custom_App_ConnHandle_Not_evt_t *pNotification);
 /* USER CODE BEGIN EF */
 void SW1_Button_Action(void);
+void SW2_Button_Action(void);
 /* USER CODE END EF */
 
 #ifdef __cplusplus

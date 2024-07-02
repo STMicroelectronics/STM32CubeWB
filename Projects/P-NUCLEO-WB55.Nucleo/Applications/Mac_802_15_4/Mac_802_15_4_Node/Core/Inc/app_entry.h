@@ -32,13 +32,11 @@ extern "C" {
 #endif
 
 
-typedef enum
-{
-  APPE_LIMITED,
-  APPE_FULL,
-} APP_ENTRY_InitMode_t;
-
-void APP_ENTRY_Init( APP_ENTRY_InitMode_t InitMode );
+void MX_APPE_Config(void);
+void MX_APPE_Init(void);
+void MX_APPE_Process(void);
+void Init_Exti(void);
+void Init_Smps(void);
 void APP_ENTRY_RegisterCmdBuffer(TL_CmdPacket_t* p_buffer);
 
 void APP_ENTRY_ProcessMsgFromRFCoreTask(void);

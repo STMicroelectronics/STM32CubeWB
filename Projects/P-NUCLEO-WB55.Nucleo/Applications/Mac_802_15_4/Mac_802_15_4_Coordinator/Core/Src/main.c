@@ -51,6 +51,8 @@ static void Init_Debug( void );
 void MX_RNG_Init(void);
 
 RNG_HandleTypeDef hrng;
+IPCC_HandleTypeDef hipcc;
+extern UART_HandleTypeDef huart1;
 
 /**
   * @brief  Main function
@@ -58,7 +60,6 @@ RNG_HandleTypeDef hrng;
   * @param  None
   * @retval 0
   */
-
 int main(void)
 {
   /**
@@ -81,13 +82,14 @@ int main(void)
 
   Init_Debug();
   
+  MX_USART1_UART_Init();
   MX_RNG_Init();
 
   APP_DBG("**********************************************************\0");
   APP_DBG("************** MAC COORDINATOR 802.15.4 APP **************\0");
   APP_DBG("**********************************************************\0");
   /* Application init */
-  APP_ENTRY_Init(APPE_FULL);
+  MX_APPE_Init();
 
   /* Main Loop  */
   while (1)
@@ -425,3 +427,67 @@ void HAL_RNG_MspDeInit(RNG_HandleTypeDef* hrng)
 
 }
 #endif
+
+
+/**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 57600;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_8;
+  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_EnableFifoMode(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1)
+  {
+  }
+  /* USER CODE END Error_Handler_Debug */
+}

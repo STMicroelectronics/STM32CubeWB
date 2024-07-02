@@ -393,7 +393,6 @@ static void APPE_SysEvtReadyProcessing( void )
   TL_TRACES_Init( );
 
   APP_THREAD_Init();
-  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
   return;
 }
 
@@ -465,7 +464,7 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
     if(g_ot_notification_allowed == 1U)
     {
       /* Some OT API send M0 to M4 notifications so allow notifications when waiting for OT Cmd response */
-      UTIL_SEQ_Run(TASK_MSG_FROM_M0_TO_M4);
+      APP_THREAD_ProcessMsgM0ToM4();
     }
     else
     {
@@ -476,7 +475,7 @@ void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
   case EVENT_SYNCHRO_BYPASS_IDLE:
     UTIL_SEQ_SetEvt(EVENT_SYNCHRO_BYPASS_IDLE);
     /* Run only the task CFG_TASK_MSG_FROM_M0_TO_M4 */
-    UTIL_SEQ_Run(TASK_MSG_FROM_M0_TO_M4);
+    APP_THREAD_ProcessMsgM0ToM4();
     break;
   default :
     /* default case */
@@ -579,11 +578,12 @@ void ProcessTrace(void)
 void DbgOutputInit( void )
 {
 #ifdef CFG_DEBUG_TRACE_UART
-#ifdef OPENTHREAD_RCP
-  MX_USART1_UART_Init();
-#else
-  MX_LPUART1_UART_Init();
-#endif
+  if (CFG_DEBUG_TRACE_UART == hw_uart1) {
+    MX_USART1_UART_Init();
+  }
+  else if (CFG_DEBUG_TRACE_UART == hw_lpuart1) {
+    MX_LPUART1_UART_Init();
+  }
   return;
 #endif
 }

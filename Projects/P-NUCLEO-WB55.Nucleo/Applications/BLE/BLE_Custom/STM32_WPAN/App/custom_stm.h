@@ -37,6 +37,7 @@ typedef enum
   /* My_P2P_Server */
   CUSTOM_STM_LED_C,
   CUSTOM_STM_SWITCH_C,
+  CUSTOM_STM_LONG_C,
   /* My_Heart_Rate */
   CUSTOM_STM_HRS_M,
   CUSTOM_STM_HRS_SL,
@@ -51,6 +52,9 @@ typedef enum
   /* My_Switch_Char */
   CUSTOM_STM_SWITCH_C_NOTIFY_ENABLED_EVT,
   CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT,
+  /* MyLongChar */
+  CUSTOM_STM_LONG_C_NOTIFY_ENABLED_EVT,
+  CUSTOM_STM_LONG_C_NOTIFY_DISABLED_EVT,
   /* My_HRS_Meas */
   CUSTOM_STM_HRS_M_NOTIFY_ENABLED_EVT,
   CUSTOM_STM_HRS_M_NOTIFY_DISABLED_EVT,
@@ -102,11 +106,12 @@ typedef enum
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
-extern uint8_t SizeLed_C;
-extern uint8_t SizeSwitch_C;
-extern uint8_t SizeHrs_M;
-extern uint8_t SizeHrs_Sl;
-extern uint8_t SizeHrs_Ctrlp;
+extern uint16_t SizeLed_C;
+extern uint16_t SizeSwitch_C;
+extern uint16_t SizeLong_C;
+extern uint16_t SizeHrs_M;
+extern uint16_t SizeHrs_Sl;
+extern uint16_t SizeHrs_Ctrlp;
 
 /* USER CODE BEGIN EC */
 
@@ -126,6 +131,8 @@ extern uint8_t SizeHrs_Ctrlp;
 void SVCCTL_InitCustomSvc(void);
 void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotification);
 tBleStatus Custom_STM_App_Update_Char(Custom_STM_Char_Opcode_t CharOpcode,  uint8_t *pPayload);
+tBleStatus Custom_STM_App_Update_Char_Variable_Length(Custom_STM_Char_Opcode_t CharOpcode, uint8_t *pPayload, uint8_t size);
+tBleStatus Custom_STM_App_Update_Char_Ext(uint16_t Connection_Handle, Custom_STM_Char_Opcode_t CharOpcode, uint8_t *pPayload);
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */

@@ -20,6 +20,9 @@
 @/**************************************************************************/
 @/**************************************************************************/
 
+#ifdef TX_INCLUDE_USER_DEFINE_FILE
+#include "tx_user.h"
+#endif
 
     .text 32
     .align 4
@@ -30,7 +33,7 @@
 @/*  FUNCTION                                               RELEASE        */
 @/*                                                                        */
 @/*    _tx_thread_interrupt_disable                      Cortex-M0/AC6     */
-@/*                                                           6.1          */
+@/*                                                           6.2.1        */
 @/*  AUTHOR                                                                */
 @/*                                                                        */
 @/*    William E. Lamie, Microsoft Corporation                             */
@@ -60,6 +63,8 @@
 @/*    DATE              NAME                      DESCRIPTION             */
 @/*                                                                        */
 @/*  09-30-2020     William E. Lamie         Initial Version 6.1           */
+@/*  03-08-2023      Scott Larson            Include tx_user.h,            */
+@/*                                            resulting in version 6.2.1  */
 @/*                                                                        */
 @/**************************************************************************/
 @/* UINT   _tx_thread_interrupt_disable(VOID)

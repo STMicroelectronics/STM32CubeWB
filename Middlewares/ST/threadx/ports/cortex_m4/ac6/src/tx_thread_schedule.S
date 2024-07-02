@@ -20,6 +20,10 @@
 /**************************************************************************/
 /**************************************************************************/
 
+#ifdef TX_INCLUDE_USER_DEFINE_FILE
+#include "tx_user.h"
+#endif
+
     .global _tx_thread_current_ptr
     .global _tx_thread_execute_ptr
     .global _tx_timer_time_slice
@@ -39,7 +43,7 @@
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _tx_thread_schedule                              Cortex-M4/AC6      */
-/*                                                           6.1.11       */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -74,6 +78,8 @@
 /*  06-02-2021      Scott Larson            Initial Version 6.1.7         */
 /*  04-25-2022      Scott Larson            Added BASEPRI support,        */
 /*                                            resulting in version 6.1.11 */
+/*  03-08-2023      Scott Larson            Include tx_user.h,            */
+/*                                            resulting in version 6.2.1  */
 /*                                                                        */
 /**************************************************************************/
 // VOID   _tx_thread_schedule(VOID)

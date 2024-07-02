@@ -16,5 +16,5 @@
 | STM32_Audio_PDM                 | STMicroelectronics                 | SLA0047                                   |
 | STM32_WPAN                      | STMicroelectronics                 | SLA0044                                   |
 | Azure RTOS ThreadX              | Microsoft Corporation              | Microsoft Software License for Azure RTOS |
-| STM32 Projects                  | STMicroelectronics                 | SLA0044 (BSD-3-Clause for basic Examples) |
+| STM32 Projects                  | STMicroelectronics                 | SLA0044                                   |
 | STM32 Utilities                 | STMicroelectronics                 | BSD-3-Clause                              |

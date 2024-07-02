@@ -313,6 +313,46 @@ tBleStatus aci_hal_read_rssi( uint8_t* RSSI )
   return BLE_STATUS_SUCCESS;
 }
 
+tBleStatus aci_hal_ead_encrypt_decrypt( uint8_t Mode,
+                                        const uint8_t* Key,
+                                        const uint8_t* IV,
+                                        uint16_t In_Data_Length,
+                                        const uint8_t* In_Data,
+                                        uint16_t* Out_Data_Length,
+                                        uint8_t* Out_Data )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_hal_ead_encrypt_decrypt_cp0 *cp0 = (aci_hal_ead_encrypt_decrypt_cp0*)(cmd_buffer);
+  aci_hal_ead_encrypt_decrypt_rp0 resp;
+  Osal_MemSet( &resp, 0, sizeof(resp) );
+  int index_input = 0;
+  cp0->Mode = Mode;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Key, (const void*)Key, 16 );
+  index_input += 16;
+  Osal_MemCpy( (void*)&cp0->IV, (const void*)IV, 8 );
+  index_input += 8;
+  cp0->In_Data_Length = In_Data_Length;
+  index_input += 2;
+  Osal_MemCpy( (void*)&cp0->In_Data, (const void*)In_Data, In_Data_Length );
+  index_input += In_Data_Length;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x02f;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &resp;
+  rq.rlen = sizeof(resp);
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  if ( resp.Status )
+    return resp.Status;
+  *Out_Data_Length = resp.Out_Data_Length;
+  Osal_MemCpy( (void*)Out_Data, (const void*)resp.Out_Data, *Out_Data_Length);
+  return BLE_STATUS_SUCCESS;
+}
+
 tBleStatus aci_hal_read_radio_reg( uint8_t Register_Address,
                                    uint8_t* reg_val )
 {

@@ -72,8 +72,8 @@ typedef struct
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
-extern uint8_t SizePwrco_Write;
-extern uint8_t SizePwrco_Notify;
+extern uint16_t SizePwrco_Write;
+extern uint16_t SizePwrco_Notify;
 
 /* USER CODE BEGIN EC */
 
@@ -93,6 +93,8 @@ extern uint8_t SizePwrco_Notify;
 void SVCCTL_InitCustomSvc(void);
 void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotification);
 tBleStatus Custom_STM_App_Update_Char(Custom_STM_Char_Opcode_t CharOpcode,  uint8_t *pPayload);
+tBleStatus Custom_STM_App_Update_Char_Variable_Length(Custom_STM_Char_Opcode_t CharOpcode, uint8_t *pPayload, uint8_t size);
+tBleStatus Custom_STM_App_Update_Char_Ext(uint16_t Connection_Handle, Custom_STM_Char_Opcode_t CharOpcode, uint8_t *pPayload);
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */

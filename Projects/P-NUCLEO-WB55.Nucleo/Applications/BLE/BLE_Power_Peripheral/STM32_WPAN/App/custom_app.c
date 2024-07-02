@@ -85,9 +85,9 @@ static Custom_App_Context_t Custom_App_Context;
  * END of Section BLE_APP_CONTEXT
  */
 
-uint8_t UpdateCharData[247];
-uint8_t NotifyCharData[247];
-
+uint8_t UpdateCharData[512];
+uint8_t NotifyCharData[512];
+uint16_t Connection_Handle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -227,7 +227,7 @@ void Custom_APP_Init(void)
  *************************************************************/
 
 /* PwrConso_Service */
-void Custom_Pwrco_notify_Update_Char(void) /* Property Read */
+__USED void Custom_Pwrco_notify_Update_Char(void) /* Property Read */
 {
   uint8_t updateflag = 0;
 
@@ -237,7 +237,7 @@ void Custom_Pwrco_notify_Update_Char(void) /* Property Read */
 
   if (updateflag != 0)
   {
-    Custom_STM_App_Update_Char(CUSTOM_STM_PWRCO_NOTIFY, (uint8_t *)UpdateCharData);
+	Custom_STM_App_Update_Char_Ext(Connection_Handle, CUSTOM_STM_PWRCO_NOTIFY, (uint8_t *)UpdateCharData);
   }
 
   /* USER CODE BEGIN Pwrco_notify_UC_Last*/
@@ -256,7 +256,7 @@ void Custom_Pwrco_notify_Send_Notification(void) /* Property Notification */
 
   if (updateflag != 0)
   {
-    Custom_STM_App_Update_Char(CUSTOM_STM_PWRCO_NOTIFY, (uint8_t *)NotifyCharData);
+	Custom_STM_App_Update_Char_Ext(Connection_Handle, CUSTOM_STM_PWRCO_NOTIFY, (uint8_t *)NotifyCharData);
   }
 
   /* USER CODE BEGIN Pwrco_notify_NS_Last*/

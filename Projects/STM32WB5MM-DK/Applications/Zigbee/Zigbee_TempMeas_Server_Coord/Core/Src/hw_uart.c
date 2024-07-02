@@ -72,12 +72,14 @@ void HW_UART_Receive_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size,
     {
 #if (CFG_HW_USART1_ENABLED == 1)
         case hw_uart1:
+            HW_huart1RxCb = cb;
             HW_UART_RX_IT(huart1, USART1);
             break;
 #endif
 
 #if (CFG_HW_LPUART1_ENABLED == 1)
         case hw_lpuart1:
+            HW_hlpuart1RxCb = cb;
             HW_UART_RX_IT(hlpuart1, LPUART1);
             break;
 #endif

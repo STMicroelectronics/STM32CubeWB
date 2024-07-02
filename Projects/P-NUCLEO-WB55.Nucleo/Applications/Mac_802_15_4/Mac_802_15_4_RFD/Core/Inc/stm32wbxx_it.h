@@ -72,3 +72,4 @@ void EXTI1_IRQHandler(void);
 #endif
 
 #endif /* STM32WB_IT_H */
+

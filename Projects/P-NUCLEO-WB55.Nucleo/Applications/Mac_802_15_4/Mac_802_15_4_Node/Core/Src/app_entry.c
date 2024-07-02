@@ -86,37 +86,286 @@ size_t DbgTraceWrite(int handle, const unsigned char * buf, size_t bufSize);
 /* Private function prototypes -----------------------------------------------*/
 static void appe_Tl_Init(void);
 static void Led_Init(void);
+static void Button_Init(void);
 static void Wait_Getting_Ack_From_RFCore(void);
 static void Receive_Ack_From_RFCore(void);
 static void Receive_Notification_From_RFCore(void);
 static void APPE_StatusNot(SHCI_TL_CmdStatus_t status);
 static void APPE_UserEvtRx(void * pPayload);
+static void Config_HSE(void);
+static void Reset_Device(void);
+#if (CFG_HW_RESET_BY_FW == 1)
+static void Reset_IPCC(void);
+static void Reset_BackupDomain(void);
+#endif /* CFG_HW_RESET_BY_FW == 1*/
+static void System_Init(void);
+static void SystemPower_Config(void);
+static void Init_Debug(void);
+static void Init_Rtc(void);
 
-
-void APP_ENTRY_Init( APP_ENTRY_InitMode_t InitMode )
+void MX_APPE_Config(void)
 {
   /**
-   * The Standby mode should not be entered before the initialization is over
-   * The default state of the Low Power Manager is to allow the Standby Mode so an request is needed here
+   * The OPTVERR flag is wrongly set at power on
+   * It shall be cleared before using any HAL_FLASH_xxx() api
    */
-  UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_DISABLE);
-  HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
-  HW_UART_Init(CFG_CLI_UART);
-  RxUART_Init();
-  /* Initialize the button in interrupt mode */
-  BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
-  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
-  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
-  Led_Init();
-  appe_Tl_Init(); /* Initialize all transport layers */
+  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_OPTVERR);
 
   /**
-   * From now, the application is waiting for the ready event ( VS_HCI_C2_Ready )
-   * received on the system channel before starting the BLE Stack
-   * This system event is received with APPE_UserEvtRx()
+   * Reset some configurations so that the system behave in the same way
+   * when either out of nReset or Power On
    */
+  Reset_Device();
+
+  /* Configure HSE Tuning */
+  Config_HSE();
 
   return;
+}
+
+static void Init_Debug(void)
+{
+#if (CFG_DEBUGGER_SUPPORTED == 1)
+  /**
+   * Keep debugger enabled while in any low power mode
+   */
+  HAL_DBGMCU_EnableDBGSleepMode();
+
+  /***************** ENABLE DEBUGGER *************************************/
+  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
+  LL_C2_EXTI_EnableIT_32_63(LL_EXTI_LINE_48);
+
+#else
+
+  GPIO_InitTypeDef gpio_config = {0};
+
+  gpio_config.Pull = GPIO_NOPULL;
+  gpio_config.Mode = GPIO_MODE_ANALOG;
+
+  gpio_config.Pin = GPIO_PIN_15 | GPIO_PIN_14 | GPIO_PIN_13;
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  HAL_GPIO_Init(GPIOA, &gpio_config);
+  __HAL_RCC_GPIOA_CLK_DISABLE();
+
+  gpio_config.Pin = GPIO_PIN_4 | GPIO_PIN_3;
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  HAL_GPIO_Init(GPIOB, &gpio_config);
+  __HAL_RCC_GPIOB_CLK_DISABLE();
+
+  HAL_DBGMCU_DisableDBGSleepMode();
+  HAL_DBGMCU_DisableDBGStopMode();
+  HAL_DBGMCU_DisableDBGStandbyMode();
+
+#endif /* (CFG_DEBUGGER_SUPPORTED == 1) */
+
+#if (CFG_DEBUG_TRACE != 0)
+  DbgTraceInit();
+#endif /* CFG_DEBUG_TRACE != 0 */
+
+  return;
+}
+static void Reset_Device(void)
+{
+#if (CFG_HW_RESET_BY_FW == 1)
+  Reset_BackupDomain();
+
+  Reset_IPCC();
+#endif /* CFG_HW_RESET_BY_FW == 1 */
+
+  return;
+}
+
+#if (CFG_HW_RESET_BY_FW == 1)
+static void Reset_BackupDomain(void)
+{
+  if ((LL_RCC_IsActiveFlag_PINRST() != FALSE) && (LL_RCC_IsActiveFlag_SFTRST() == FALSE))
+  {
+    HAL_PWR_EnableBkUpAccess(); /**< Enable access to the RTC registers */
+
+    /**
+     *  Write twice the value to flush the APB-AHB bridge
+     *  This bit shall be written in the register before writing the next one
+     */
+    HAL_PWR_EnableBkUpAccess();
+
+    __HAL_RCC_BACKUPRESET_FORCE();
+    __HAL_RCC_BACKUPRESET_RELEASE();
+  }
+
+  return;
+}
+
+static void Reset_IPCC(void)
+{
+  LL_AHB3_GRP1_EnableClock(LL_AHB3_GRP1_PERIPH_IPCC);
+
+  LL_C1_IPCC_ClearFlag_CHx(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C2_IPCC_ClearFlag_CHx(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C1_IPCC_DisableTransmitChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C2_IPCC_DisableTransmitChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C1_IPCC_DisableReceiveChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  LL_C2_IPCC_DisableReceiveChannel(
+      IPCC,
+      LL_IPCC_CHANNEL_1 | LL_IPCC_CHANNEL_2 | LL_IPCC_CHANNEL_3 | LL_IPCC_CHANNEL_4
+      | LL_IPCC_CHANNEL_5 | LL_IPCC_CHANNEL_6);
+
+  return;
+}
+#endif /* CFG_HW_RESET_BY_FW == 1 */
+
+static void Config_HSE(void)
+{
+    OTP_ID0_t * p_otp;
+
+  /**
+   * Read HSE_Tuning from OTP
+   */
+  p_otp = (OTP_ID0_t *) OTP_Read(0);
+  if (p_otp)
+  {
+    LL_RCC_HSE_SetCapacitorTuning(p_otp->hse_tuning);
+  }
+
+  return;
+}
+
+
+void Init_Smps(void)
+{
+#if (CFG_USE_SMPS != 0)
+  /**
+   *  Configure and enable SMPS
+   *
+   *  The SMPS configuration is not yet supported by CubeMx
+   *  when SMPS output voltage is set to 1.4V, the RF output power is limited to 3.7dBm
+   *  the SMPS output voltage shall be increased for higher RF output power
+   */
+  LL_PWR_SMPS_SetStartupCurrent(LL_PWR_SMPS_STARTUP_CURRENT_80MA);
+  LL_PWR_SMPS_SetOutputVoltageLevel(LL_PWR_SMPS_OUTPUT_VOLTAGE_1V40);
+  LL_PWR_SMPS_Enable();
+#endif /* CFG_USE_SMPS != 0 */
+
+  return;
+}
+
+void Init_Exti(void)
+{
+  /* Enable IPCC(36), HSEM(38) wakeup interrupts on CPU1 */
+  LL_EXTI_EnableIT_32_63(LL_EXTI_LINE_36 | LL_EXTI_LINE_38);
+
+  return;
+}
+
+
+static void System_Init(void)
+{
+  Init_Smps();
+
+  Init_Exti();
+
+  Init_Rtc();
+
+  return;
+}
+
+static void Init_Rtc(void)
+{
+  /* Disable RTC registers write protection */
+  LL_RTC_DisableWriteProtection(RTC);
+
+  LL_RTC_WAKEUP_SetClock(RTC, CFG_RTC_WUCKSEL_DIVIDER);
+
+  /* Enable RTC registers write protection */
+  LL_RTC_EnableWriteProtection(RTC);
+
+  return;
+}
+
+/**
+ * @brief  Configure the system for power optimization
+ *
+ * @note  This API configures the system to be ready for low power mode
+ *
+ * @param  None
+ * @retval None
+ */
+static void SystemPower_Config(void)
+{
+  /* Before going to stop or standby modes, do the settings so that system clock and IP80215.4 clock start on HSI automatically */
+  LL_RCC_HSI_EnableAutoFromStop();
+
+  /**
+   * Select HSI as system clock source after Wake Up from Stop mode
+   */
+  LL_RCC_SetClkAfterWakeFromStop(LL_RCC_STOP_WAKEUPCLOCK_HSI);
+
+  /* Initialize low power manager */
+  UTIL_LPM_Init();
+  /* Initialize the CPU2 reset value before starting CPU2 with C2BOOT */
+  LL_C2_PWR_SetPowerMode(LL_PWR_MODE_SHUTDOWN);
+
+  /* Disable Stop & Off Modes until Initialisation is complete */
+  UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+  UTIL_LPM_SetStopMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
+
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+  /**
+   *  Enable USB power
+   */
+  HAL_PWREx_EnableVddUSB();
+#endif /* CFG_USB_INTERFACE_ENABLE != 0 */
+
+  return;
+}
+
+void MX_APPE_Init(void)
+{
+  System_Init();       /**< System initialization */
+
+  SystemPower_Config(); /**< Configure the system Power Mode */
+
+  HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
+
+/* USER CODE BEGIN APPE_Init_1 */
+  Init_Debug();
+
+  Led_Init();
+  Button_Init();
+  RxUART_Init();
+
+/* USER CODE END APPE_Init_1 */
+  appe_Tl_Init();	/* Initialize all transport layers */
+
+  /**
+   * From now, the application is waiting for the ready event (VS_HCI_C2_Ready)
+   * received on the system channel before starting the Stack
+   * This system event is received with APPE_SysUserEvtRx()
+   */
+/* USER CODE BEGIN APPE_Init_2 */
+
+/* USER CODE END APPE_Init_2 */
+
+   return;
 }
 
 static void appe_Tl_Init( void )
@@ -155,6 +404,18 @@ static void Led_Init( void )
   BSP_LED_Init(LED_GREEN);
   BSP_LED_Init(LED_RED);
 #endif
+  return;
+}
+
+static void Button_Init( void )
+{
+#if (CFG_BUTTON_SUPPORTED == 1U)
+  /* Button Initialization */
+  BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW2, BUTTON_MODE_EXTI);
+  BSP_PB_Init(BUTTON_SW3, BUTTON_MODE_EXTI);
+#endif /* (CFG_BUTTON_SUPPORTED == 1U) */
+
   return;
 }
 
@@ -422,18 +683,12 @@ static void RxCpltCallback(void)
   /* Filling buffer and wait for '\r' char */
   if (indexReceiveChar < C_SIZE_CMD_STRING)
   {
-    if (aRxBuffer[0] == '\r')
+    if (aRxBuffer[0] == '\r' || aRxBuffer[0] == '\n') 
     {
       APP_DBG("received %s", CommandString);
 
       UartCmdExecute();
 
-      /* Clear receive buffer and character counter*/
-      indexReceiveChar = 0;
-      memset(CommandString, 0, C_SIZE_CMD_STRING);
-    }
-    else if (aRxBuffer[0] == '\n')
-    {
       /* Clear receive buffer and character counter*/
       indexReceiveChar = 0;
       memset(CommandString, 0, C_SIZE_CMD_STRING);

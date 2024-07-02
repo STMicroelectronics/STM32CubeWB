@@ -38,7 +38,7 @@ extern ULONG _txm_ttbr1_page_table[TXM_MAXIMUM_MODULES][TXM_MASTER_PAGE_TABLE_EN
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _txm_level2_page_get                            Cortex-A7/MMU/GNU   */
-/*                                                           6.x          */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -69,7 +69,7 @@ extern ULONG _txm_ttbr1_page_table[TXM_MAXIMUM_MODULES][TXM_MASTER_PAGE_TABLE_EN
 /*                                                                        */
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  xx-xx-xxxx      Scott Larson            Initial Version 6.x           */
+/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
 /*                                                                        */
 /**************************************************************************/
 ULONG _txm_level2_page_get(TXM_MODULE_INSTANCE *module_instance, ULONG *page_addr)
@@ -133,7 +133,7 @@ UINT    pool_index;
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _txm_level2_page_clear                          Cortex-A7/MMU/GNU   */
-/*                                                           6.x          */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -163,7 +163,7 @@ UINT    pool_index;
 /*                                                                        */
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  xx-xx-xxxx      Scott Larson            Initial Version 6.x           */
+/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
 /*                                                                        */
 /**************************************************************************/
 VOID    _txm_level2_page_clear(TXM_MODULE_INSTANCE *module_instance)
@@ -188,7 +188,7 @@ UINT    i;
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _txm_module_manager_external_memory_enable      Cortex-A7/MMU/GNU   */
-/*                                                           6.x          */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -224,7 +224,7 @@ UINT    i;
 /*                                                                        */
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  xx-xx-xxxx      Scott Larson            Initial Version 6.x           */
+/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
 /*                                                                        */
 /**************************************************************************/
 UINT  _txm_module_manager_external_memory_enable(   TXM_MODULE_INSTANCE *module_instance,

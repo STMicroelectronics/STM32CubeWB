@@ -11,7 +11,7 @@ INTERNATIONAL N.V, SWISS BRANCH AND/OR ITS AFFILIATED COMPANIES
 BEHALF OF ANY ENTITY BY WHICH SUCH RECIPIENT IS EMPLOYED AND/OR ENGAGED AGREES
 TO BE BOUND BY THIS SOFTWARE LICENSE AGREEMENT.
 
-Under STMicroelectronics’ intellectual property rights, the redistribution,
+Under STMicroelectronics' intellectual property rights, the redistribution,
 reproduction and use in source and binary forms of the software or any part
 thereof, with or without modification, are permitted provided that the following
 conditions are met:
@@ -38,7 +38,7 @@ for STMicroelectronics.
 
 5. No use, reproduction or redistribution of this software partially or totally
 may be done in any manner that would subject this software to any Open Source
-Terms. “Open Source Terms” shall mean any open source license which requires as
+Terms. "Open Source Terms"� shall mean any open source license which requires as
 part of distribution of software that the source code of such software is
 distributed therewith or otherwise made available, or open source license that
 substantially complies with the Open Source definition specified at

@@ -2,13 +2,14 @@
  * @file zigbee.nwk.h
  * @brief NWK header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2023] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2024] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_NWK_H
 # define ZIGBEE_NWK_H
 
-/*lint -e621 "Identifier clash [MISRA Rule 5.1 (REQUIRED), MISRA Rule 5.2 (REQUIRED), MISRA Rule 5.4 (REQUIRED), MISRA Rule 5.5 (REQUIRED)]" */
+/*lint -e621 "Identifier clash [MISRA Rule 5.1 (REQUIRED), MISRA Rule 5.2 (REQUIRED),
+    MISRA Rule 5.4 (REQUIRED), MISRA Rule 5.5 (REQUIRED)]" */
 
 /*---------------------------------------------------------------
  * Misc. Definitions and Structures
@@ -151,9 +152,9 @@ enum ZbNwkNibAttrIdT {
     ZB_NWK_NIB_ID_LeaveRequestAllowed = 0x0407,
     ZB_NWK_NIB_ID_ParentInformation = 0x0408,
     ZB_NWK_NIB_ID_EndDeviceTimeoutDefault = 0x0409,
-    ZB_NWK_NIB_ID_EdkaFailThreshold = 0x040a,
-    /**< Number of consecutive EDKA request failures before triggering a PARENT_LINK_FAILURE.
-     * Valid range is 1 to 4. Default is 1. */
+
+    /* Discontinuity, 0x040a previously used as ZB_NWK_NIB_ID_EdkaFailThreshold. */
+
     ZB_NWK_NIB_ID_LeaveRequestWithoutRejoinAllowed = 0x040b,
     ZB_NWK_NIB_ID_DisablePeriodicTimers = 0x040c,
     /**< If set, NWK layer disables automatic EDKA and Link Power Negotiation timers.
@@ -239,7 +240,8 @@ enum WpanJoinPolicyT {
 /* The following are added by Exegin */
 #define ZB_NWK_CONST_SECURITY_OVERHEAD              (14U + ZB_SEC_MIC_LENGTH_5)
 /* 127 - 8 - 11 = 108 bytes */
-#define ZB_NWK_CONST_MAX_PAYLOAD_SIZE               (WPAN_CONST_MAX_PHY_PACKET_SIZE - ZB_NWK_CONST_MIN_HEADER_OVERHEAD - ZB_NWK_CONST_MAC_FRAME_OVERHEAD)
+#define ZB_NWK_CONST_MAX_PAYLOAD_SIZE \
+    (WPAN_CONST_MAX_PHY_PACKET_SIZE - ZB_NWK_CONST_MIN_HEADER_OVERHEAD - ZB_NWK_CONST_MAC_FRAME_OVERHEAD)
 
 #define ZB_NWK_BCNPAYLOAD_MIN_SIZE                  15U
 #define ZB_NWK_ENH_BCNPAYLOAD_SIZE                  19U
@@ -792,8 +794,6 @@ bool ZbNwkToggleDutyCycle(struct ZigBeeT *zb, bool enable);
  * ZB_NWK_NIB_ID_DisablePeriodicTimers is set to 1 (automatic EDKA is disabled). */
 bool ZbNwkSendEdkaReq(struct ZigBeeT *zb);
 
-
-
 /* Network Link power delta request & notify commands. */
 bool ZbNwkSendLinkPowerDeltaReq(struct ZigBeeT *zb);
 bool ZbNwkSendLinkPowerDeltaNotify(struct ZigBeeT *zb);
@@ -806,8 +806,10 @@ bool ZbNwkSendLinkPowerDeltaNotify(struct ZigBeeT *zb);
 enum ZbStatusCodeT ZbNwkGet(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr, unsigned int attrSz);
 enum ZbStatusCodeT ZbNwkSet(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr, unsigned int attrSz);
 
-enum ZbStatusCodeT ZbNwkGetIndex(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
-enum ZbStatusCodeT ZbNwkSetIndex(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
+enum ZbStatusCodeT ZbNwkGetIndex(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr, \
+    unsigned int attrSz, unsigned int attrIndex);
+enum ZbStatusCodeT ZbNwkSetIndex(struct ZigBeeT *zb, enum ZbNwkNibAttrIdT attrId, void *attrPtr, \
+    unsigned int attrSz, unsigned int attrIndex);
 
 /*---------------------------------------------------------------
  * NIB Attribute Helper Functions
@@ -834,9 +836,6 @@ bool ZbNwkClearActiveKey(struct ZigBeeT *zb);
  * NNT Helper Functions
  *---------------------------------------------------------------
  */
-const char * ZbNwkNeighborRelationshipToStr(enum ZbNwkNeighborRelT relationship);
-const char * ZbNwkNeighborDeviceTypeToStr(enum ZbNwkNeighborTypeT deviceType);
-
 /* Parent Functions */
 uint64_t ZbNwkGetParentExtAddr(struct ZigBeeT *zb);
 uint16_t ZbNwkGetParentShortAddr(struct ZigBeeT *zb);

@@ -111,80 +111,86 @@ __STATIC_INLINE void  Configure_TIMPWMOutput(void)
   /*************************/
   /* Enable the peripheral clock of GPIOs */
   LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOA);
-  
+
   /* GPIO TIM2_CH1 configuration */
   LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_5, LL_GPIO_MODE_ALTERNATE);
   LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_5, LL_GPIO_PULL_DOWN);
   LL_GPIO_SetPinSpeed(GPIOA, LL_GPIO_PIN_5, LL_GPIO_SPEED_FREQ_HIGH);
   LL_GPIO_SetAFPin_0_7(GPIOA, LL_GPIO_PIN_5, LL_GPIO_AF_1);
-  
+
   /***********************************************/
   /* Configure the NVIC to handle TIM2 interrupt */
   /***********************************************/
   NVIC_SetPriority(TIM2_IRQn, 0);
   NVIC_EnableIRQ(TIM2_IRQn);
-  
+
   /******************************/
   /* Peripheral clocks enabling */
   /******************************/
   /* Enable the timer peripheral clock */
   LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2); 
-  
+
   /***************************/
   /* Time base configuration */
   /***************************/
   /* Set counter mode */
   /* Reset value is LL_TIM_COUNTERMODE_UP */
   //LL_TIM_SetCounterMode(TIM2, LL_TIM_COUNTERMODE_UP);
-  
+
   /* Set the pre-scaler value to have TIM2 counter clock equal to 10 kHz */
   LL_TIM_SetPrescaler(TIM2, __LL_TIM_CALC_PSC(SystemCoreClock, 10000));
-  
+
   /* Enable TIM2_ARR register preload. Writing to or reading from the         */
   /* auto-reload register accesses the preload register. The content of the   */
   /* preload register are transferred into the shadow register at each update */
   /* event (UEV).                                                             */  
   LL_TIM_EnableARRPreload(TIM2);
-  
+
   /* Set the auto-reload value to have a counter frequency of 100 Hz */
   /* TIM2CLK = SystemCoreClock / (APB prescaler & multiplier)               */
   TimOutClock = SystemCoreClock/1;
   LL_TIM_SetAutoReload(TIM2, __LL_TIM_CALC_ARR(TimOutClock, LL_TIM_GetPrescaler(TIM2), 100));
-  
+
   /*********************************/
   /* Output waveform configuration */
   /*********************************/
   /* Set output mode */
   /* Reset value is LL_TIM_OCMODE_FROZEN */
   LL_TIM_OC_SetMode(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_OCMODE_PWM1);
-  
+
   /* Set output channel polarity */
   /* Reset value is LL_TIM_OCPOLARITY_HIGH */
   //LL_TIM_OC_SetPolarity(TIM2, LL_TIM_CHANNEL_CH1, LL_TIM_OCPOLARITY_HIGH);
-  
+
   /* Set compare value to half of the counter period (50% duty cycle ) */
   LL_TIM_OC_SetCompareCH1(TIM2, ( (LL_TIM_GetAutoReload(TIM2) + 1 ) / 2));
-  
+
   /* Enable TIM2_CCR1 register preload. Read/Write operations access the      */
   /* preload register. TIM2_CCR1 preload value is loaded in the active        */
   /* at each update event.                                                    */
   LL_TIM_OC_EnablePreload(TIM2, LL_TIM_CHANNEL_CH1);
-  
+
+  /* Enable the outputs (MOE) when the break feature is supported */
+  if (IS_TIM_BREAK_INSTANCE(TIM2))
+  {
+    LL_TIM_EnableAllOutputs(TIM2);
+  }
+
   /**************************/
   /* TIM2 interrupts set-up */
   /**************************/
   /* Enable the capture/compare interrupt for channel 1*/
   LL_TIM_EnableIT_CC1(TIM2);
-  
+
   /**********************************/
   /* Start output signal generation */
   /**********************************/
   /* Enable output channel 1 */
   LL_TIM_CC_EnableChannel(TIM2, LL_TIM_CHANNEL_CH1);
-  
+
   /* Enable counter */
   LL_TIM_EnableCounter(TIM2);
-  
+
   /* Force update generation */
   LL_TIM_GenerateEvent_UPDATE(TIM2);
 }

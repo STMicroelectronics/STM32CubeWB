@@ -52,7 +52,7 @@
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _tx_thread_schedule                             Cortex-A7/MMU/GNU   */
-/*                                                           6.x          */
+/*                                                           6.2.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -85,7 +85,7 @@
 /*                                                                        */
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
-/*  xx-xx-xxxx      Scott Larson            Initial Version 6.x           */
+/*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
 /*                                                                        */
 /**************************************************************************/
 // VOID   _tx_thread_schedule(VOID)
@@ -143,6 +143,7 @@ __tx_swi_interrupt:
 // Unknown SVC argument
 /////////////////////////////////////////////////////////////////////
     // Unrecognized service call
+    .weak _tx_handler_svc_unrecognized
 _tx_handler_svc_unrecognized:
 
 _tx_handler_svc_unrecognized_loop:          // We should never get here

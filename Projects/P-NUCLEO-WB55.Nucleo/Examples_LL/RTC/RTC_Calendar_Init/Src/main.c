@@ -74,8 +74,8 @@
 /* USER CODE BEGIN PV */
 
 /* Buffers used for displaying Time and Date */
-uint8_t aShowTime[] = "hh:ms:ss";
-uint8_t aShowDate[] = "mm:dd:aaaa";
+uint8_t aShowTime[16] = "hh:ms:ss";
+uint8_t aShowDate[16] = "mm:dd:aaaa";
 
 #if (USE_TIMEOUT == 1)
 uint32_t Timeout = 0; /* Variable used for Timeout management */

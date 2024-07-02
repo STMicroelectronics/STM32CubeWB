@@ -1,21 +1,20 @@
 /**
- ******************************************************************************
- * File Name          : flash_driver.c
- * Description        : Dual core Flash driver
- *
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * File Name          : flash_driver.c
+  * Description        : Dual core Flash driver
+  *
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2019-2021 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
@@ -142,6 +141,9 @@ uint32_t FD_WriteData(uint32_t DestAddress, uint64_t * pSrcBuffer, uint32_t NbrO
 SingleFlashOperationStatus_t FD_EraseSingleSector(uint32_t SectorNumber)
 {
   SingleFlashOperationStatus_t return_value;
+
+  /* Add at least 5us (CPU1 up to 64MHz) to guarantee that CPU2 can take SEM7 to protect BLE timing */
+  for (volatile uint32_t i = 0; i < 35; i++);
 
   /* The last parameter is unused in that case and set to 0 */
   return_value =  ProcessSingleFlashOperation(FLASH_ERASE, SectorNumber, 0);
@@ -320,4 +322,3 @@ __WEAK WaitedSemStatus_t FD_WaitForSemAvailable(WaitedSemId_t WaitedSemId)
   return WAITED_SEM_BUSY;
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -20,6 +20,9 @@
 @/**************************************************************************/
 @/**************************************************************************/
 @
+#ifdef TX_INCLUDE_USER_DEFINE_FILE
+#include "tx_user.h"
+#endif
 @
     .global  _tx_thread_current_ptr
     .global  _tx_thread_execute_ptr
@@ -43,7 +46,7 @@
 @/*  FUNCTION                                               RELEASE        */
 @/*                                                                        */
 @/*    _tx_thread_schedule                               Cortex-M0/AC6     */
-@/*                                                           6.1.5        */
+@/*                                                           6.2.1        */
 @/*  AUTHOR                                                                */
 @/*                                                                        */
 @/*    William E. Lamie, Microsoft Corporation                             */
@@ -80,6 +83,8 @@
 @/*  03-02-2021     Scott Larson            Modified comment(s), add       */
 @/*                                           low power code,              */
 @/*                                           resulting in version 6.1.5   */
+@/*  03-08-2023      Scott Larson            Include tx_user.h,            */
+@/*                                            resulting in version 6.2.1  */
 @/*                                                                        */
 @/**************************************************************************/
 @VOID   _tx_thread_schedule(VOID)

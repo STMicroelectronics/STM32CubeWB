@@ -37,10 +37,12 @@ typedef struct
 {
   /* My_P2P_Server */
   uint8_t               Switch_c_Notification_Status;
+  uint8_t               Long_c_Notification_Status;
   /* My_Heart_Rate */
   uint8_t               Hrs_m_Notification_Status;
   /* USER CODE BEGIN CUSTOM_APP_Context_t */
   uint8_t               SW1_Status;
+  uint8_t               SW2_Status;
   /* USER CODE END CUSTOM_APP_Context_t */
 
   uint16_t              ConnectionHandle;
@@ -78,8 +80,9 @@ static Custom_App_Context_t Custom_App_Context;
  * END of Section BLE_APP_CONTEXT
  */
 
-uint8_t UpdateCharData[247];
-uint8_t NotifyCharData[247];
+uint8_t UpdateCharData[512];
+uint8_t NotifyCharData[512];
+uint16_t Connection_Handle;
 
 /* USER CODE BEGIN PV */
 uint8_t hr_energy_reset = CUSTOM_STM_HRS_ENERGY_NOT_RESET;
@@ -89,6 +92,8 @@ uint8_t hr_energy_reset = CUSTOM_STM_HRS_ENERGY_NOT_RESET;
 /* My_P2P_Server */
 static void Custom_Switch_c_Update_Char(void);
 static void Custom_Switch_c_Send_Notification(void);
+static void Custom_Long_c_Update_Char(void);
+static void Custom_Long_c_Send_Notification(void);
 /* My_Heart_Rate */
 static void Custom_Hrs_m_Update_Char(void);
 static void Custom_Hrs_m_Send_Notification(void);
@@ -102,6 +107,7 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
 {
   /* USER CODE BEGIN CUSTOM_STM_App_Notification_1 */
   static uint16_t hr_value, hr_energy;
+  tBleStatus        ret = BLE_STATUS_INVALID_PARAMS;
     
   /* USER CODE END CUSTOM_STM_App_Notification_1 */
   switch (pNotification->Custom_Evt_Opcode)
@@ -147,6 +153,29 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
 
       Custom_App_Context.Switch_c_Notification_Status = TOGGLE_OFF;        /* My_Switch_Char notification status has been disabled */
       /* USER CODE END CUSTOM_STM_SWITCH_C_NOTIFY_DISABLED_EVT */
+      break;
+
+    case CUSTOM_STM_LONG_C_NOTIFY_ENABLED_EVT:
+      /* USER CODE BEGIN CUSTOM_STM_LONG_C_NOTIFY_ENABLED_EVT */
+      APP_DBG_MSG("\r\n\r** CUSTOM_STM_LONG_C_NOTIFY_ENABLED_EVT \n");
+      Custom_App_Context.Long_c_Notification_Status = TOGGLE_ON;
+      ret = aci_gatt_exchange_config(Connection_Handle);
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("aci_gatt_exchange_config failure: reason=0x%02X\n", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("==>> aci_gatt_exchange_config : Success\n");
+      }
+      /* USER CODE END CUSTOM_STM_LONG_C_NOTIFY_ENABLED_EVT */
+      break;
+
+    case CUSTOM_STM_LONG_C_NOTIFY_DISABLED_EVT:
+      /* USER CODE BEGIN CUSTOM_STM_LONG_C_NOTIFY_DISABLED_EVT */
+      APP_DBG_MSG("\r\n\r** CUSTOM_STM_LONG_C_NOTIFY_DISABLED_EVT \n");
+      Custom_App_Context.Long_c_Notification_Status = TOGGLE_OFF;
+      /* USER CODE END CUSTOM_STM_LONG_C_NOTIFY_DISABLED_EVT */
       break;
 
     /* My_Heart_Rate */
@@ -244,13 +273,13 @@ void Custom_APP_Notification(Custom_App_ConnHandle_Not_evt_t *pNotification)
     /* USER CODE END P2PS_CUSTOM_Notification_Custom_Evt_Opcode */
     case CUSTOM_CONN_HANDLE_EVT :
       /* USER CODE BEGIN CUSTOM_CONN_HANDLE_EVT */
-          
+      Connection_Handle = pNotification->ConnectionHandle;
       /* USER CODE END CUSTOM_CONN_HANDLE_EVT */
       break;
 
     case CUSTOM_DISCON_HANDLE_EVT :
       /* USER CODE BEGIN CUSTOM_DISCON_HANDLE_EVT */
-      
+      Connection_Handle = pNotification->ConnectionHandle;
       /* USER CODE END CUSTOM_DISCON_HANDLE_EVT */
       break;
 
@@ -280,9 +309,12 @@ void Custom_APP_Init(void)
   Custom_Hrs_m_Update_Char();
 
   UTIL_SEQ_RegTask(1<< CFG_TASK_SW1_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, Custom_Switch_c_Send_Notification);
-
+  UTIL_SEQ_RegTask(1<< CFG_TASK_SW2_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, Custom_Long_c_Send_Notification);
+  
+  Custom_App_Context.Long_c_Notification_Status = TOGGLE_OFF; 
   Custom_App_Context.Switch_c_Notification_Status = TOGGLE_OFF;   
-  Custom_App_Context.SW1_Status = 0;                 
+  Custom_App_Context.SW1_Status = 0; 
+  Custom_App_Context.SW2_Status = 0;
   /* USER CODE END CUSTOM_APP_Init */
   return;
 }
@@ -298,7 +330,7 @@ void Custom_APP_Init(void)
  *************************************************************/
 
 /* My_P2P_Server */
-void Custom_Switch_c_Update_Char(void) /* Property Read */
+__USED void Custom_Switch_c_Update_Char(void) /* Property Read */
 {
   uint8_t updateflag = 0;
 
@@ -359,8 +391,68 @@ void Custom_Switch_c_Send_Notification(void) /* Property Notification */
   return;
 }
 
+__USED void Custom_Long_c_Update_Char(void) /* Property Read */
+{
+  uint8_t updateflag = 0;
+
+  /* USER CODE BEGIN Long_c_UC_1*/
+
+  APP_DBG_MSG("-- CUSTOM APPLICATION SERVER  : INFORM CLIENT BUTTON 2 PUSHED \n");
+
+  /* USER CODE END Long_c_UC_1*/
+
+  if (updateflag != 0)
+  {
+    Custom_STM_App_Update_Char_Ext(Connection_Handle, CUSTOM_STM_LONG_C, (uint8_t *)UpdateCharData);
+  }
+
+  /* USER CODE BEGIN Long_c_UC_Last*/
+
+  /* USER CODE END Long_c_UC_Last*/
+  return;
+}
+
+void Custom_Long_c_Send_Notification(void) /* Property Notification */
+{
+  uint8_t updateflag = 0;
+
+  /* USER CODE BEGIN Long_c_NS_1*/
+  uint16_t i;
+  
+  if (Custom_App_Context.Long_c_Notification_Status == TOGGLE_ON)
+  {
+    updateflag = 1;
+    
+    for (i=0;i<SizeLong_C;i++)
+    {
+      NotifyCharData[i] = 0xAA;
+    }
+    
+    if (Custom_App_Context.SW2_Status == 0)
+    {
+      Custom_App_Context.SW2_Status = 1;
+    }
+    else
+    {
+      Custom_App_Context.SW2_Status = 0;
+    }
+  }
+  /* USER CODE END Long_c_NS_1*/
+
+  if (updateflag != 0)
+  {
+    Custom_STM_App_Update_Char_Ext(Connection_Handle, CUSTOM_STM_LONG_C, (uint8_t *)NotifyCharData);
+  }
+
+  /* USER CODE BEGIN Long_c_NS_Last*/
+
+  /* USER CODE END Long_c_NS_Last*/
+
+  return;
+}
+
 /* My_Heart_Rate */
-void Custom_Hrs_m_Update_Char(void) /* Property Read */
+__USED void Custom_Hrs_m_Update_Char(void) /* Property Read */
 {
   uint8_t updateflag = 0;
 
@@ -400,9 +492,17 @@ void Custom_Hrs_m_Send_Notification(void) /* Property Notification */
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS*/
+
 void SW1_Button_Action(void)
 {
   UTIL_SEQ_SetTask( 1<<CFG_TASK_SW1_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
+
+  return;
+}
+
+void SW2_Button_Action(void)
+{
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_SW2_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
 
   return;
 }

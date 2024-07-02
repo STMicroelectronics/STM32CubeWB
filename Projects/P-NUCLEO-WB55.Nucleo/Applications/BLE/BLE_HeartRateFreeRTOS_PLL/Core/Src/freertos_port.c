@@ -272,6 +272,8 @@ static void LpTimerStart( uint32_t time_to_sleep )
 #if ( CFG_LPM_SUPPORTED != 0)
 static void LpEnter( void )
 {
+  SHCI_CmdStatus_t status;
+  
   currently_in_idle = 1;
   HAL_SuspendTick();
   if(CPU2_started != 0)
@@ -279,7 +281,11 @@ static void LpEnter( void )
     LL_RCC_HSE_Enable();
     if(LL_RCC_GetSysClkSource() == LL_RCC_SYS_CLKSOURCE_STATUS_PLL)
     {
-      SHCI_C2_SetSystemClock(SET_SYSTEM_CLOCK_PLL_ON_TO_HSE);
+      status = SHCI_C2_SetSystemClock(SET_SYSTEM_CLOCK_PLL_ON_TO_HSE);
+      if(status != SHCI_Success)
+      {
+        while(1);
+      }
     }
   }
 #if ( CFG_LPM_SUPPORTED == 1)
@@ -288,7 +294,11 @@ static void LpEnter( void )
   if(CPU2_started != 0)
   {
     LL_RCC_PLL_Enable();
-    SHCI_C2_SetSystemClock(SET_SYSTEM_CLOCK_HSE_TO_PLL);
+    status = SHCI_C2_SetSystemClock(SET_SYSTEM_CLOCK_HSE_TO_PLL);
+    if(status != SHCI_Success)
+    {
+      while(1);
+    }
   }
   
   SystemCoreClockUpdate();

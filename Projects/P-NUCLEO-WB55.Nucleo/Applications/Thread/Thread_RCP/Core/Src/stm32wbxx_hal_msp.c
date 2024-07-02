@@ -179,7 +179,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF8_LPUART1;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -193,7 +193,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     hdma_lpuart1_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_lpuart1_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
     hdma_lpuart1_tx.Init.Mode = DMA_NORMAL;
-    hdma_lpuart1_tx.Init.Priority = DMA_PRIORITY_LOW;
+    if (CFG_DEBUG_TRACE_UART == hw_lpuart1) {
+      hdma_lpuart1_tx.Init.Priority = DMA_PRIORITY_LOW;
+    }
+    else if (CFG_CLI_UART == hw_lpuart1) {
+      hdma_lpuart1_tx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+    }
     if (HAL_DMA_Init(&hdma_lpuart1_tx) != HAL_OK)
     {
       Error_Handler();
@@ -202,7 +207,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     __HAL_LINKDMA(huart,hdmatx,hdma_lpuart1_tx);
 
     /* LPUART1 interrupt Init */
-    HAL_NVIC_SetPriority(LPUART1_IRQn, 0, 0);
+    if (CFG_DEBUG_TRACE_UART == hw_lpuart1) {
+      HAL_NVIC_SetPriority(LPUART1_IRQn, 1, 0);
+    }
+    else if (CFG_CLI_UART == hw_lpuart1) {
+      HAL_NVIC_SetPriority(LPUART1_IRQn, 0, 0);
+    }
     HAL_NVIC_EnableIRQ(LPUART1_IRQn);
   /* USER CODE BEGIN LPUART1_MspInit 1 */
 
@@ -224,7 +234,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
@@ -238,7 +248,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     hdma_usart1_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_usart1_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
     hdma_usart1_tx.Init.Mode = DMA_NORMAL;
-    hdma_usart1_tx.Init.Priority = DMA_PRIORITY_LOW;
+    if (CFG_DEBUG_TRACE_UART == hw_uart1) {
+      hdma_usart1_tx.Init.Priority = DMA_PRIORITY_LOW;
+    }
+    else if (CFG_CLI_UART == hw_uart1) {
+      hdma_usart1_tx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+    }
     if (HAL_DMA_Init(&hdma_usart1_tx) != HAL_OK)
     {
       Error_Handler();
@@ -247,7 +262,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     __HAL_LINKDMA(huart,hdmatx,hdma_usart1_tx);
 
     /* USART1 interrupt Init */
-    HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+    if (CFG_DEBUG_TRACE_UART == hw_uart1) {
+      HAL_NVIC_SetPriority(USART1_IRQn, 1, 0);
+    }
+    else if (CFG_CLI_UART == hw_uart1) {
+      HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+    }
     HAL_NVIC_EnableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspInit 1 */
 

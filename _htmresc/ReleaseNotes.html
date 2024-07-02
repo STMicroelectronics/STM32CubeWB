@@ -4,38 +4,58 @@
     <title>_htmresc\ReleaseNotes.html</title>
   </head>
   <body style="font-size: 10pt; font-family: Verdana;">
-    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.19.0 / 07-February-2024</h3>
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.20.0 / 05-June-2024</h3>
     <div style="margin-left: 18pt;">
       <p>
         <b><u>Main Changes</u></b>
       </p>
       <p>
-        <b>Maintenance Release for BLE, 802.15.4, Thread and Zigbee updates</b>
+        <b>Maintenance Release for BLE, 802.15.4, Concurrent, Thread and Zigbee updates</b>
       </p>
       <p>
-        <p>
-          <li>Update Examples and Applications to MDK-ARM (Keil) v5.38.</li>
-        </p>
         <li>
           <strong>BLE</strong> updates
           <ul>
-            <li> BLE Light stack support 2Mbit TX/RX PHY update.</li>
+            <li> A new command ACI_HAL_EAD_ENCRYPT_DECRYPT is added to ease implementation of Encrypted Advertising Data feature.</li>
           </ul>
         </li>
-        <li> <strong>BLE Zigbee</strong> updates
+        <li>
+          <strong>MAC</strong> updates
           <ul>
-            <li> Correct an issue in the management of the AES driver when Zigbee is used in concurrency mode with BLE.</li>
+            <li> To reduce the ROM footprint, optional features have been excluded from the MAC RFD configuration.</li>
+            <li> Correct PANID conflict notification that might return wrong channel.</li>
           </ul>
         </li>
-		    <li> <strong>Thread</strong> updates
+        <li>
+          <strong>Thread</strong> updates
           <ul>
-            <li> OT stack update to SHA-1: 8bc25042ba5cde20605eec2a329c0dff575303f4 (07/07/2023).</li>
-            <li> OpenThread Command Line Interface (CLI) moved from M0 to M4 in order to optimize memory footprint on the coprocessor.</li>
+            <li> Increased speed of Thread commissioning and SRP key exchanges, using PKA HW accelerator when possible.</li>
+            <li> Increased Thread RCP stability, robustness and efficiency.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Zigbee</strong> updates
+          <ul>
+            <li> Fix startup memory leak issue when using TouchLink.</li>
+            <li> Fixed zcl_send_response issue for loopback Default Response.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>BLE Thread</strong> updates
+          <ul>
+            <li> Corrected a low-power over consumption when BLE advertising is started or stopped during runtime.</li>
+            <li> Corrected a bug that prevented to erase flash during BLE activity.</li>
+          </ul>
+        </li>
+        <li> 
+          <strong>BLE Zigbee</strong> updates
+          <ul>
+            <li> Corrected a bug that prevented to erase flash during BLE activity.</li>
           </ul>
         </li>
       </p>
       <p>
-        <b>Maintenance Release for CMSIS, HAL/LL Drivers and Projects updates</b>
+        <b>Maintenance Release for HAL/LL Drivers and Projects updates</b>
       </p>
       <p>
         <li> <strong>HAL/LL Drivers</strong> updates
@@ -43,8 +63,8 @@
             <li>
                Update HAL/LL drivers to include latest corrections
                 <ul>
-                  <li> Update of HAL GPIO, CRYP, I2C, SMBUS, QSPI, CORTEX, TIM, LPTIM drivers.</li>
-				          <li> Update of LL UTILS drivers.</li>
+                  <li> Update of HAL  CRYP, I2C, QSPI, TIM, UART drivers.</li>
+                  <li> Update of LL LPUART, TIM drivers.</li>
                 </ul>
             </li>
             <li> Refer to <a href="../Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details </li>
@@ -56,7 +76,9 @@
          <ul>
             <li>
               Update of FW projects following changes in latest version of HAL/LL and Middlewares and alignments with CubeMx
-/STM32WB5MM-DK/Examples/BSP/BSP_Example.
+              <ul>
+                <li>P-NUCLEO-WB55.Nucleo/Examples_LL/TIM/TIM_PWMOutput.</li>
+              </ul>
             </li>
           </ul>
         </li>

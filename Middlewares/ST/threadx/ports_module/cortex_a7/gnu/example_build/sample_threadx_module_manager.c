@@ -28,6 +28,9 @@ unsigned char module_data_area[MODULE_DATA_SIZE];
 TXM_MODULE_INSTANCE   my_module1;
 TXM_MODULE_INSTANCE   my_module2;
 
+/* Module code is in an array created by module_to_c_array utility.  */
+extern unsigned char module_code[];
+
 /* Define the count of memory faults.  */
 ULONG   memory_faults;
 
@@ -79,10 +82,10 @@ void    module_manager_entry(ULONG thread_input)
     txm_module_manager_mm_initialize();
     
     /* Load the module that is already there, in this example it is placed there by the multiple image download.  */
-    txm_module_manager_in_place_load(&my_module1, "my module1", (VOID *) 0xSOME_ADDRESS);
+    txm_module_manager_in_place_load(&my_module1, "my module1", (VOID *) module_code);
     
     /* Load a second instance of the module.  */
-    //txm_module_manager_in_place_load(&my_module2, "my module2", (VOID *) 0xSOME_ADDRESS);
+    //txm_module_manager_in_place_load(&my_module2, "my module2", (VOID *) module_code);
     
     /* Enable shared memory regions for one module.  */
     //txm_module_manager_external_memory_enable(&my_module2, (void*)0x90000000, 0x010000, 0x3F);

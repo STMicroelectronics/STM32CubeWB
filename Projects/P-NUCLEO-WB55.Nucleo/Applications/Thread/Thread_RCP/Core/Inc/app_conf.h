@@ -65,15 +65,10 @@
 /**
  * Select UART interfaces
  */
-#ifndef OPENTHREAD_RCP
 #define CFG_DEBUG_TRACE_UART    hw_lpuart1
 #define CFG_CONSOLE_MENU
-#define CFG_CLI_UART    hw_uart1
-#else
-#define CFG_DEBUG_TRACE_UART    hw_uart1
-#define CFG_CONSOLE_MENU
-#define CFG_CLI_UART    hw_lpuart1
-#endif
+#define CFG_CLI_UART            hw_uart1
+
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -316,9 +311,6 @@ typedef enum
   CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
 
-/* Scheduler types and defines        */
-/*------------------------------------*/
-#define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
 /* USER CODE BEGIN DEFINE_TASK */
 
 /* USER CODE END DEFINE_TASK */

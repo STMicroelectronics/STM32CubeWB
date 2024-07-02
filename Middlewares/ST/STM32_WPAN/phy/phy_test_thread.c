@@ -84,6 +84,50 @@ uint8_t phyTestSetChannel(uint8_t channel_nb)
 }
 
 /**
+ * @brief  PHY test continuous Tx start on the current channel
+ *
+ * @param  none
+ * @retval 0 if successful, 2 if bad argument
+ */
+uint8_t phyTestContinuousTxStart()
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  
+  p_ot_req->ID = MSG_M4TOM0_PHY_CONTINUOUS_TX_START;
+  
+  p_ot_req->Size=0;
+  
+  Ot_Cmd_Transfer();
+  
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_ot_req->Data[0];
+}
+
+/**
+ * @brief  PHY test continuous Tx stop
+ *
+ * @param  None
+ * @retval 0 if successful, 0xFF otherwise
+ */
+uint8_t phyTestContinuousTxStop(void)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+  
+  p_ot_req->ID = MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP;
+  
+  p_ot_req->Size=0;
+  
+  Ot_Cmd_Transfer();
+  
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_ot_req->Data[0];
+}
+
+/**
  * @brief  PHY test continuous wave start
  *
  * @param  frq_mhz: the frequency of the continuous wave (2400 <= frq_mhz <= 2482)
