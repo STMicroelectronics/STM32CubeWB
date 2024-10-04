@@ -26,3 +26,27 @@
 	path = Drivers/BSP/B-WB1M-WPAN1
 	url = https://github.com/STMicroelectronics/b-wb1m-wpan1-bsp
 	branch = main
+[submodule "Drivers/BSP/Components/Common"]
+	path = Drivers/BSP/Components/Common
+	url = https://github.com/STMicroelectronics/stm32-bsp-common.git
+	branch = main
+[submodule "Drivers/BSP/Components/ism330dhcx"]
+	path = Drivers/BSP/Components/ism330dhcx
+	url = https://github.com/STMicroelectronics/stm32-ism330dhcx.git
+	branch = main
+[submodule "Drivers/BSP/Components/s25fl128s"]
+	path = Drivers/BSP/Components/s25fl128s
+	url = https://github.com/STMicroelectronics/stm32-s25fl128s.git
+	branch = main
+[submodule "Drivers/BSP/Components/ssd1315"]
+	path = Drivers/BSP/Components/ssd1315
+	url = https://github.com/STMicroelectronics/stm32-ssd1315.git
+	branch = main
+[submodule "Drivers/BSP/Components/stm32wb_at"]
+	path = Drivers/BSP/Components/stm32wb_at
+	url = https://github.com/STMicroelectronics/stm32-wb-at.git
+	branch = main
+[submodule "Drivers/BSP/Components/stts22h"]
+	path = Drivers/BSP/Components/stts22h
+	url = https://github.com/STMicroelectronics/stm32-stts22h.git
+	branch = main
